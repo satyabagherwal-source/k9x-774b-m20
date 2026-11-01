@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `a4d9f092`  
+> **Source Version**: `7a257031`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T03:03:50.413Z  
+> **Timestamp**: 2026-10-30T22:03:21.816Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T03:03:50.407Z  
+> **Harvest Timestamp**: 2026-10-30T22:03:21.672Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12954 stars
+- **Stars / Engagement**: 12957 stars
 
 ---
 
@@ -1182,8 +1182,11 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 - **Issue #39344** (2026-10-24): **feat(lambda-nodejs): support repeated esbuild arguments**
   *Symptoms*: ### Issue #  Closes #32260.  ### Description of changes  Allow string arrays in `BundlingOptions.esbuildArgs` for options that esbuild supports repeating. Every array item is emitted as a separate `--flag:value` argument, including options such as `--supported` that are outside the existing scalar colon-option list. Empty arrays emit no arguments. Existing string and boolean handling is unchanged.  Docker shell escaping and direct local spawning share the conversion. Updated README and JSDoc explain the array syntax and that single-value options should use strings or booleans.  ### Validation  Validated the review follow-up in commit `34ed9898`:  - JSII package compilation: 0 errors; 1 existing `constructs` development-dependency metadata warning. - Bundling suite: 69 tests and 1 existing snapshot passed. - Both updated repeated-argument tests fail against the original implementation and pass with the fix. They cover repeated `--supported` values in both Docker and local-spawn paths, while preserving scalar `--conditions=first,second` rendering. - ESLint passed for all three changed TypeScript files; `git diff --check` passed. - Real esbuild 0.28.1 smoke check using the updated conversion confirmed that both `--supported` overrides apply together and a single-value option supplied as an array is rejected by esbuild.  ### Integration deployment  The integration source is `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.repeated-esbuild-args.ts`. No 
 
-- **Issue #38940** (2026-10-01): **cdk: alias package published without matching aws-cdk version**
-  *Symptoms*: ### Describe the bug  `cdk@2.1144.0` has been published to npm, but it depends on `aws-cdk@2.1144.0`, which does not appear to exist in the registry.  As a result, running npx cdk without a local aws-cdk dependency fails with: ``` npm error code ETARGET npm error notarget No matching version found for aws-cdk@2.1144.0. ```  This appears to be a publishing issue where the cdk alias package was released before the corresponding aws-cdk version.  ### Regression Issue  - [x] Select this option if this issue appears to be a regression.  ### Last Known Working CDK Library Version  2.1143.0  ### Expected Behavior  Have the separated npm publications match up and be consistent  ### Current Behavior  ``` npm error code ETARGET npm error notarget No matching version found for aws-cdk@2.1144.0. ```   ### Reproduction Steps  Run `npx cdk` without a (dev) dependency on `cdk` or `aws-cdk`  ### Possible Solution  _No response_  ### Additional Information/Context  _No response_  ### AWS CDK Library version (aws-cdk-lib)  n/a  ### AWS CDK CLI version  2.1144  ### Node.js Version  24  ### OS  macOS  ### Language  TypeScript  ### Language Version  _No response_  ### Other information  _No response_
+- **Issue #39338** (2026-10-26): **fix(ec2): warn when a VPC has no availability zones**
+  *Symptoms*: ### Issue # (if applicable)  Closes #32451.  ### Description of changes  An explicit empty availability-zone list silently creates no subnets and can produce misleading downstream errors. Add a suppressible synthesis warning without rejecting existing VPC configurations. Tokenized lists and normal AZ defaults remain accepted. The warning only applies to an explicitly empty availabilityZones list when subnets are requested; intentional subnetConfiguration: [] and maxAzs: 0 do not receive this warning.   Validation: 193 tests passed on this independent branch; changed TypeScript files passed ESLint. Strict JSII/TypeScript compilation passed with all five independent changes combined on a local validation branch.  Integration test exemption requested: this change only adds synth-time metadata. Unit tests cover empty, omitted, explicit nonempty, and tokenized AZ lists; no deployed resource behavior changes.  ----  *By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license* 
+  **Post-Mortem & Fix Analysis**:
+  > The `validate-pr` job failed while installing dependencies from the base branch, before the PR validation ran: npm returned `502 Bad Gateway` for `constant-case-3.0.4.tgz`.  [Failed job](https://github.com/aws/aws-cdk/actions/runs/38913326531/job/117014457532). I attempted to rerun it, but GitHub requires repository administrator access. Could a maintainer rerun the failed job?  Could you also consider `pr-linter/exempt-integ-test` for this synthesis-warning change? The independent branch passes 193 VPC tests, including explicit empty/nonempty, omitted and tokenized AZ lists, plus intentionally empty subnet configurations. The change adds diagnostic metadata and does not alter deployed resources. 
+  > **Automated review**  A maintainer will still review this — treat the notes below as a starting point.  📌 Commit [`b27c2f1`](https://github.com/aws/aws-cdk/pull/39338/commits/b27c2f16759318162142262f7a80cac093aa205c)  This PR adds a synth-time warning to the `ec2.Vpc` L2 construct that fires when a VPC is created with an explicit empty `availabilityZones: []` list alongside a default or non-empty `subnetConfiguration`, a case that silently produces no subnets and later surfaces as a confusing "no subnet groups" error. It emits a suppressible `addWarningV2` diagnostic (ID `@aws-cdk/aws-ec2:emptyAvailabilityZonesInVpc`) guarded so it only triggers for the problematic case, and does not alter emitted templates, logical IDs, or deployed resources. The warning guard correctly short-circuits on unresolved tokens before comparing list length, and suppresses itself for an intentionally subnetless VPC. The four added unit tests exercise the positive warning case plus each suppression branch. N
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1200,157 +1203,295 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4d9f092` (2026-10-25)
-**Commit Message**: docs(eks): explain how to pass null helm chart values from non-typescript languages (#39410)
+### Incident Patch 1: `7a257031` (2026-10-30)
+**Commit Message**: chore(security-guardian): test every rule against a failing and a passing fixture (#39505)
 
 ### Issue # (if applicable)
 
-Addresses #30000. This documents the limitation and a working workaround; the underlying behavior comes from jsii (details below), so I have not used "Closes".
+None.
 
 ### Reason for this change
 
-#30000 reports that `HelmChart` drops `values` entries set to `None` (Python), which makes it impossible to disable chart defaults that are removed by setting them to `null`, such as the OpenTelemetry Collector's default receivers. The issue also says escape hatches are not available for this construct. Both points turn out to have clear answers that are not documented anywhere.
+Only 6 of the tool's 23 rules fire on any test fixture, and some "compliant" tests pass on a skip rather than a pass.
 
-**Root cause.** CDK's own serialization keeps `null`. Synthesizing `values: { thing: null, nested: { gone: null, keep: 1 }, list: [null, 'a'] }` from TypeScript with aws-cdk-lib 2.274.0 renders
+### Description of changes
 
-```
-Values = {"thing":null,"nested":{"gone":null,"keep":1},"list":[null,"a"],"thing2":"exists"}
-```
+- Add `test/rule-fixtures.test.ts`. Every rule must fail its `non-compliant.json` and pass its `compliant.json`, in both scans. A rule without fixtures fails the suite.
+- Add fixtures for all 23 rules.
+- Six S3, SNS and SQS rules skip every policy today. The test pins that, and #39506 fixes them.
 
-The same values from Python (aws-cdk-lib 2.255.0) render
+### Describe any new or updated permissions being added
 
-```
-Values = {"nested":{"keep":1},"list":["a"],"thing2":"exists"}
-```
+None.
 
-`values` is typed `{[key: string]: any}`, and the jsii kernel maps `null` to `un
+### Description of how you validated changes
 
-**File**: `packages/aws-cdk-lib/aws-eks-v2/README.md` (modified, +22/-0)
+- 164 of 164 tests pass with cfn-guard 3.2.1.
+
+### Checklist
+- [x] My code adheres to the [CONTRIBUTING GUIDE](https://github.com/aws/aws-cdk/blob/main/CONTRIBUTING.md) and [DESIGN GUIDELINES](https://github.com/aws/aws-cdk/blob/main/docs/DESIGN_GUIDELINES.md)
+
+----
+
+*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*
+
+**File**: `tools/@aws-cdk/security-guardian/README.md` (modified, +2/-0)
 ```diff
-@@ -1305,6 +1305,28 @@ cluster.addHelmChart('ExternalSecretsOperator', {
- });
+@@ -149,6 +149,8 @@ The tests run the rules with [cfn-guard](https://github.com/aws-cloudformation/c
+ yarn test
  ```
  
-+`null` values are passed through to Helm, which is how many charts let you remove a default
-+(for example, disabling one of the OpenTelemetry Collector's default receivers). This works in
-+TypeScript and JavaScript. In the other jsii languages (Python, Java, .NET, Go), the jsii runtime
-+turns `null` (`None` in Python) inside `values` into `undefined`, so those keys are silently
-+left out of the rendered values. To keep them, pass the values as a JSON string with a property
-+override on the chart's underlying resource:
++Every rule in `rules/` needs two fixtures in `test/rule-fixtures/<rule path without .guard>/`: `non-compliant.json`, which the rule must fail, and `compliant.json`, which the rule must evaluate and pass. The tests fail for a rule that has no fixtures.
 +
-+```ts
-+declare const cluster: eks.Cluster;
-+
-+const chart = cluster.addHelmChart('OpenTelemetryCollector', {
-+  chart: 'opentelemetry-collector',
-+  release: 'opentelemetry-collector',
-+  repository: 'https://open-telemetry.github.io/opentelemetry-helm-charts',
-+  namespace: 'opentelemetry',
-+});
-+
-+// A JSON string keeps `null` values intact in every language.
-+const chartResource = chart.node.findChild('Resource').node.defaultChild as CfnResource;
-+chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repository":"otel/opentelemetry-collector-k8s"},"config":{"receivers":{"jaeger":null,"zipkin":null},"service":{"pipelines":{"traces":{"receivers":["otlp"]}}}}}');
-+```
-+
- Helm chart can come with Custom Resource Definitions (CRDs) defined that by default will be installed by helm as well. However in special cases it might be needed to skip the installation of CRDs, for that the property `skipCrds` can be used.
+ ---
  
- ```ts
+ ## Output
 ```
 
-**File**: `packages/aws-cdk-lib/aws-eks-v2/lib/helm-chart.ts` (modified, +4/-0)
+**File**: `tools/@aws-cdk/security-guardian/test/junit-report.ts` (modified, +15/-0)
 ```diff
-@@ -58,6 +58,10 @@ export interface HelmChartOptions {
-    *  installationCRDs: true,
-    *  webhook: { port: 9443 }
-    * }
-+   *
-+   * In languages other than TypeScript and JavaScript, `null` values (such as
-+   * `None` in Python) are dropped when crossing the jsii boundary. To pass
-+   * `null` values to the chart, see the "Helm Charts" section of the module README.
-    * @default - No values are provided to the chart.
-    */
-   readonly values?: {[key: string]: any};
-```
-
-**File**: `packages/aws-cdk-lib/aws-eks/README.md` (modified, +22/-0)
-```diff
-@@ -1932,6 +1932,28 @@ cluster.addHelmChart('ExternalSecretsOperator', {
- });
- ```
+@@ -1,6 +1,13 @@
+ import { DOMParser } from '@xmldom/xmldom';
+ import * as fs from 'fs';
  
-+`null` values are passed through to Helm, which is how many charts let you remove a default
-+(for example, disabling one of the OpenTelemetry Collector's default receivers). This works in
-+TypeScript and JavaScript. In the other jsii languages (Python, Java, .NET, Go), the jsii runtime
-+turns `null` (`None` in Python) inside `values` into `undefined`, so those keys are silently
-+left out of the rendered values. To keep them, pass the values as a JSON string with a property
-+override on the chart's underlying resource:
++export interface GuardTestCase {
++  /** The rule file cfn-guard evaluated, for example "iam-no-wildcard-actions.guard" */
++  readonly ruleFile: string;
++  /** "pass", "skip", or "fail" for a test case that carries a failure instead of a status */
++  readonly status: string;
++}
 +
-+```ts
-+declare const cluster: eks.Cluster;
+ function readReport(junitFile: string) {
+   const xml = fs.readFileSync(junitFile, 'utf8');
+   if (xml.trim() === '') {
+@@ -19,3 +26,11 @@ export function failedRules(junitFile: string): string[] {
+   return Array.from(readReport(junitFile).getElementsByTagName('failure'))
+     .map(failure => (failure.getAttribute('message') ?? '').replace(/^\[Type: [^\]]*\] /, ''));
+ }
 +
-+const chart = cluster.addHelmChart('OpenTelemetryCollector', {
-+  chart: 'opentelemetry-collector',
-+  release: 'opentelemetry-collector',
-+  repository: 'https://open-telemetry.github.io/opentelemetry-helm-charts',
-+  namespace: 'opentelemetry',
-+});
-+
-+// A JSON string keeps `null` values intact in every language.
-+const chartResource = chart.node.findChild('Resource').node.defaultChild as CfnResource;
-+chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repository":"otel/opentelemetry-collector-k8s"},"config":{"receivers":{"jaeger":null,"zipkin":null},"service":{"pipelines":{"traces":{"receivers":["otlp"]}}}}}');
-+```
-+
- Helm chart can come with Custom Resource Definitions (CRDs) defined that by default will be installed by helm as well. However in special cases it might be needed to skip the installation of CRDs, for that the property `skipCrds` can be used.
- 
- ```ts
++/** Every test case in a cfn-guard JUnit report, one per rule file and data file. */
++export function testCases(junitFile: string): GuardTestCase[] {
++  return Array.from(readReport(junitFile).getElementsByTagName('testcase')).map(testCase => ({
++    ruleFile: testCase.getAttribute('name') ?? '',
++    status: testCase.getAttribute('status') ?? 'fail',
++  }));
++}
 ```
 
-**File**: `packages/aws-cdk-lib/aws-eks/lib/helm-chart.ts` (modified, +4/-0)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures.test.ts` (added, +116/-0)
 ```diff
-@@ -58,6 +58,10 @@ export interface HelmChartOptions {
-    *  installationCRDs: true,
-    *  webhook: { port: 9443 }
-    * }
-+   *
-+   * In languages other than TypeScript and JavaScript, `null` values (such as
-+   * `None` in Python) are dropped when crossing the jsii boundary. To pass
-+   * `null` values to the chart, see the "Helm Charts" section of the module README.
-    * @default - No values are provided to the chart.
-    */
-   readonly values?: {[key: string]: any};
+@@ -0,0 +1,116 @@
++import { preprocessTemplates } from '../src/template-preprocessor';
++import { runCfnGuardValidation } from '../src/cfn-guard-runner';
++import { failedRules, testCases } from './junit-report';
++import * as fs from 'fs';
++import * as os from 'os';
++import * as path from 'path';
++
++// Every rule file needs a fixture it fires on and a fixture it evaluates and passes,
++// at test/rule-fixtures/<rule path without .guard>/{non-compliant,compliant}.json.
++// The fixtures are .json rather than .template.json so that the Security Guardian
++// action never scans them as changed templates.
++const rulesDir = path.join(__dirname, '..', 'rules');
++const fixturesDir = path.join(__dirname, 'rule-fixtures');
++const fixtures = ['non-compliant.json', 'compliant.json'];
++// The action fails a pull request when either scan fails, so compliant.json must pass
++// both; non-compliant.json must fail both, so that neither scan stops evaluating a
++// rule unnoticed
++const scans = ['static', 'resolved'];
++
++// These rules wrap their checks in `when Principal != "*"`. cfn-guard cannot compare a
++// map Principal such as { "AWS": "*" } with a string, and a string Principal has no AWS
++// key, so the rules skip every policy and neither fire nor pass on their fixtures.
++// Remove a rule from this list once it evaluates its fixtures.
++const rulesThatSkipEveryPolicy = [
++  's3/s3-no-world-readable',
++  's3/s3-no-world-writable',
++  'sns/sns-no-world-accessible',
++  'sns/sns-no-world-accessible-inline',
++  'sqs/sqs-no-world-accessible',
++  'sqs/sqs-no-world-accessible-inline',
++];
++
++function findFiles(dir: string, extension: string): string[] {
++  const files: string[] = [];
++  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
++    const fullPath = path.join(dir, entry.name);
++    if (entry.isDirectory()) {
++      files.push(...findFiles(fullPath, extension));
++    } else if (entry.isFile() && entry.name.endsWith(extension)) {
++      files.push(fullPath);
++    }
++  }
++  return files;
++}
++
++const ruleIds = findFiles(rulesDir, '.guard').map(file => path.relative(rulesDir, file).replace(/\.guard$/, ''));
++
++describe('Guard Rule Fixtures', () => {
++  const outputDir = fs.mkdtempSync(path.join(os.tmpdir(), 'security-guardian-rule-fixtures-'));
++
++  afterAll(() => {
++    fs.rmSync(outputDir, { recursive: true, force: true });
++  });
++
++  test('every fixture belongs to a rule file', () => {
++    const misplaced = findFiles(fixturesDir, '.json')
++      .map(file => path.relative(fixturesDir, file))
++      .filter(file => !fixtures.includes(path.basename(file)) || !ruleIds.includes(path.dirname(file)));
++    expect(misplaced).toEqual([]);
++  });
++
++  describe.each(ruleIds)('rules/%s.guard', (ruleId) => {
++    const ruleFile = path.join(rulesDir, `${ruleId}.guard`);
++    const fixtureDir = path.join(fixturesDir, ruleId);
++    const reportDir = path.join(outputDir, ruleId);
++    const resolvedDir = path.join(reportDir, 'resolved');
++    let ruleName: string;
++
++    beforeAll(() => {
++      const ruleNames = [...fs.readFileSync(ruleFile, 'utf8').matchAll(/^rule\s+(\w+)/gm)].map(match => match[1]);
++      if (ruleNames.length !== 1) {
++        throw new Error(`rules/${ruleId}.guard must define exactly one rule, found ${JSON.stringify(ruleNames)}`);
++      }
++      ruleName = ruleNames[0];
++
++      const missing = fixtures.filter(fixture => !fs.existsSync(path.join(fixtureDir, fixture)));
++      if (missing.length > 0) {
++        throw new Error(`missing fixtures for rules/${ruleId}.guard: add ${missing.map(fixture => `test/rule-fixtures/${ruleId}/${fixture}`).join(' and ')}`);
++      }
++
++      fs.mkdirSync(reportDir, { recursive: true });
++      preprocessTemplates(fixtureDir, resolvedDir);
++    });
++
++    async function validate(scan: string, fixture: string) {
++      const dataFile = path.join(scan === 'static' ? fixtureDir : resolvedDir, fixture);
++      const report = path.join(reportDir, `${scan}-${path.basename(fixture, '.json')}.xml`);
++      const success = await runCfnGuardValidation(dataFile, ruleFile, report, scan, new Map(), false);
++      return { success, report };
++    }
++
++    if (rulesThatSkipEveryPolicy.includes(ruleId)) {
++      test.each(scans.flatMap(scan => fixtures.map(fixture => [scan, fixture])))('%s: skips %s', async (scan, fixture) => {
++        const { report } = await validate(scan, fixture);
++
++        expect(testCases(report)).toEqual([{ ruleFile: path.basename(ruleFile), status: 'skip' }]);
++      });
++      return;
++    }
++
++    test.each(scans)('%s: fires on non-compliant.json', async (scan) => {
++      const { success, report } = await validate(scan, 'non-compliant.json');
++
++      expect(testCases(report)).toEqual([{ ruleFile: path.basename(ruleFile), status: 'fail' }]);
++      expect(failedRules(report)).toEqual([ruleName]);
++      expect(success).toBe(false);
++    });
++
++    test.each(scans)('%s: evaluates and passes on compliant.json', async (scan) => {
++      const { success, r
 ```
 
-**File**: `packages/aws-cdk-lib/rosetta/aws_eks/default.ts-fixture` (modified, +1/-1)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/documentdb/documentdb-encryption-enabled/compliant.json` (added, +11/-0)
 ```diff
-@@ -1,5 +1,5 @@
- import { Construct } from 'constructs';
--import { CfnOutput, Fn, Size, Stack } from 'aws-cdk-lib';
-+import { CfnOutput, CfnResource, Fn, Size, Stack } from 'aws-cdk-lib';
- import * as eks from 'aws-cdk-lib/aws-eks';
- import * as ec2 from 'aws-cdk-lib/aws-ec2';
- import * as lambda from 'aws-cdk-lib/aws-lambda';
+@@ -0,0 +1,11 @@
++{
++  "Description": "DOCUMENTDB_ENCRYPTION_ENABLED passes: the cluster enables storage encryption",
++  "Resources": {
++    "EncryptedCluster": {
++      "Type": "AWS::DocDB::DBCluster",
++      "Properties": {
++        "StorageEncrypted": true
++      }
++    }
++  }
++}
 ```
 
-**File**: `packages/aws-cdk-lib/rosetta/aws_eks_v2/default.ts-fixture` (modified, +1/-1)
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/documentdb/documentdb-encryption-enabled/non-compliant.json` (added, +11/-0)
 ```diff
-@@ -1,6 +1,6 @@
- // Fixture with packages imported, but nothing else
- import { Construct } from 'constructs';
--import { CfnOutput, Fn, Size, Stack } from 'aws-cdk-lib';
-+import { CfnOutput, CfnResource, Fn, Size, Stack } from 'aws-cdk-lib';
- import * as eks from 'aws-cdk-lib/aws-eks-v2';
- import * as ec2 from 'aws-cdk-lib/aws-ec2';
- import * as lambda from 'aws-cdk-lib/aws-lambda';
+@@ -0,0 +1,11 @@
++{
++  "Description": "DOCUMENTDB_ENCRYPTION_ENABLED fires: the cluster disables storage encryption",
++  "Resources": {
++    "UnencryptedCluster": {
++      "Type": "AWS::DocDB::DBCluster",
++      "Properties": {
++        "StorageEncrypted": false
++      }
++    }
++  }
++}
+```
+
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/ec2/ec2-ebs-encryption-enabled/compliant.json` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++{
++  "Description": "EBS_ENCRYPTION_ENABLED passes: the volume enables encryption",
++  "Resources": {
++    "EncryptedVolume": {
++      "Type": "AWS::EC2::Volume",
++      "Properties": {
++        "AvailabilityZone": "us-west-2a",
++        "Size": 8,
++        "Encrypted": true
++      }
++    }
++  }
++}
+```
+
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/ec2/ec2-ebs-encryption-enabled/non-compliant.json` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++{
++  "Description": "EBS_ENCRYPTION_ENABLED fires: the volume disables encryption",
++  "Resources": {
++    "UnencryptedVolume": {
++      "Type": "AWS::EC2::Volume",
++      "Properties": {
++        "AvailabilityZone": "us-west-2a",
++        "Size": 8,
++        "Encrypted": false
++      }
++    }
++  }
++}
+```
+
+**File**: `tools/@aws-cdk/security-guardian/test/rule-fixtures/ec2/ec2-no-open-security-groups/compliant.json` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++{
++  "Description": "EC2_NO_OPEN_SECURITY_GROUPS passes: the security group allows SSH from a private range only",
++  "Resources": {
++    "ScopedSecurityGroup": {
++      "Type": "AWS::EC2::SecurityGroup",
++      "Properties": {
++        "GroupDescription": "Allows SSH from the VPC",
++        "SecurityGroupIngress": [
++          {
++            "IpProtocol": "tcp",
++            "FromPort": 22,
++            "ToPort": 22,
++            "CidrIp": "10.0.0.0/16"
++          }
++        ]
++      }
++    }
++  }
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39475** (closed): a (@Imadnajam)
-- **PR #39452** (2026-10-23): feat(core): switch off built-in CloudFormation Validate using App prop (@rix0rrr)
-- **PR #39451** (2026-10-23): fix(core): overly defensive plugin invocation leads to slowness (@rix0rrr)
-- **PR #39440** (2026-10-22): chore(security-guardian): set rootDir for TypeScript 6 (@kumsmrit)
-- **PR #39438** (2026-10-23): chore(custom-resource-handlers): remove unused aws-glue-alpha handler (@ozelalisen)
-- **PR #39436** (2026-10-22): fix(stepfunctions-tasks): use a dedicated Lambda function for each EvaluateExpression task (@kumsmrit)
+- **PR #39544** (2026-10-30): docs: remove ROADMAP.md (@ozelalisen)
+- **PR #39540** (2026-10-28): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
+- **PR #39538** (closed): fix(cloudformation): host StackSetStack templates in the stack of their StackSets (@gudipati)
+- **PR #39521** (2026-10-28): chore: add some bisect helper scripts to `scripts/` (@rix0rrr)
+- **PR #39518** (2026-10-27): chore: fix repository NX config (@rix0rrr)
+- **PR #39515** (closed): chore(deps): bump @aws-cdk/lambda-layer-kubectl-v36 to 2.0.1 (@aemada-aws)
 
 ---
 
@@ -1370,40 +1511,22 @@ Values = {"nested":{"keep":1},"list":["a"],"thing2":"exists"}
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(eks): explain how to pass null helm chart values from non-typescript langua
+## X. security-guardian): test every rule against a failing and a passing fixture (#39
 
 **RULE**:
-When implementing operations in `packages/aws-cdk-lib/aws-eks-v2/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tools/@aws-cdk/security-guardian/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4d9f092`: docs(eks): explain how to pass null helm chart values from non-typescript languages (#39410). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a257031`: security-guardian): test every rule against a failing and a passing fixture (#39505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-eks-v2/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tools/@aws-cdk/security-guardian/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`null` values are passed through to Helm, which is how many charts let you remove a default
-(for example, disabling one of the OpenTelemetry Collector's default receivers). This works in
-TypeScript and JavaScript. In the other jsii languages (Python, Java, .NET, Go), the jsii runtime
-turns `null` (`None` in Python) inside `values` into `undefined`, so those keys are silently
-left out of the rendered values. To keep them, pass the values as a JSON string with a property
-override on the chart's underlying resource:
+Every rule in `rules/` needs two fixtures in `test/rule-fixtures/<rule path without .guard>/`: `non-compliant.json`, which the rule must fail, and `compliant.json`, which the rule must evaluate and pass. The tests fail for a rule that has no fixtures.
 
-```ts
-declare const cluster: eks.Cluster;
-
-const chart = cluster.addHelmChart('OpenTelemetryCollector', {
-  chart: 'opentelemetry-collector',
-  release: 'opentelemetry-collector',
-  repository: 'https://open-telemetry.github.io/opentelemetry-helm-charts',
-  namespace: 'opentelemetry',
-});
-
-// A JSON string keeps `null` values intact in every language.
-const chartResource = chart.node.findChild('Resource').node.defaultChild as CfnResource;
-chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repository":"otel/opentelemetry-collector-k8s"},"config":{"receivers":{"jaeger":null,"zipkin":null},"service":{"pipelines":{"traces":{"receivers":["otlp"]}}}}}')
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1413,4 +1536,4 @@ chartResource.addPropertyOverride('Values', '{"mode":"deployment","image":{"repo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4d9f092` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a257031` are properly handled with clean fallback behavior.

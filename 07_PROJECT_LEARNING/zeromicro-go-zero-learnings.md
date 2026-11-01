@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source**: github ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
-> **Source Version**: `fd59ce39`  
+> **Source Version**: `f3be7b00`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:51:44.261Z  
+> **Timestamp**: 2026-10-31T20:23:13.564Z  
 > **Learning ID**: `learn-github-zeromicro-go-zero`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeromicro-go-zero-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeromicro/go-zero](https://github.com/zeromicro/go-zero))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:51:44.253Z  
+> **Harvest Timestamp**: 2026-10-31T20:23:13.456Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud-native Go microservices framework with cli tool for productivity.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 33403 stars
+- **Stars / Engagement**: 33419 stars
 
 ---
 
@@ -1305,161 +1305,283 @@ func Gunzip(bs []byte) ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd59ce39` (2026-10-25)
-**Commit Message**: fix(filex): return EOF at range end (#5805)
+### Incident Patch 1: `963ae7ef` (2026-10-31)
+**Commit Message**: fix(rest): avoid unbounded gzip body dump on JWT auth failure (#5865)
 
-Co-authored-by: kevin <[REDACTED_EMAIL]>
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `core/filex/rangereader.go` (modified, +8/-1)
+**File**: `rest/handler/authhandler.go` (modified, +22/-0)
 ```diff
-@@ -2,6 +2,7 @@ package filex
+@@ -1,8 +1,10 @@
+ package handler
  
  import (
++	"bytes"
+ 	"context"
  	"errors"
 +	"io"
- 	"os"
- )
+ 	"net/http"
+ 	"net/http/httputil"
  
-@@ -31,7 +32,13 @@ func (rr *RangeReader) Read(p []byte) (n int, err error) {
- 		return 0, err
- 	}
+@@ -98,6 +100,26 @@ func WithUnauthorizedCallback(callback UnauthorizedCallback) AuthorizeOption {
+ }
  
--	if rr.stop < rr.start || rr.start >= stat.Size() {
-+	if rr.stop < rr.start || rr.start > stat.Size() {
-+		return 0, errExceedFileSize
+ func detailAuthLog(r *http.Request, reason string) {
++	// Cap the body read for the dump so that an attacker cannot force the
++	// server to fully read/decompress (e.g. a gzip-encoded) request body
++	// just by failing authentication. See GHSA-h4vj-585c-2r8x.
++	if r.Body != nil {
++		body := r.Body
++		var prefix bytes.Buffer
++		r.Body = io.NopCloser(io.LimitReader(io.TeeReader(body, &prefix), limitDetailedBodyBytes))
++		// Replay only the bytes consumed for logging, then continue reading the
++		// original body so unauthorized callbacks can still read the full request.
++		defer func() {
++			r.Body = struct {
++				io.Reader
++				io.Closer
++			}{
++				Reader: io.MultiReader(&prefix, body),
++				Closer: body,
++			}
++		}()
 +	}
-+	if rr.start == rr.stop {
-+		return 0, io.EOF
-+	}
-+	if rr.start == stat.Size() {
- 		return 0, errExceedFileSize
- 	}
- 
++
+ 	// discard dump error, only for debug purpose
+ 	details, _ := httputil.DumpRequest(r, true)
+ 	logc.Errorf(r.Context(), "authorize failed: %s\n=> %+v", reason, string(details))
 ```
 
-**File**: `core/filex/rangereader_test.go` (modified, +42/-0)
+**File**: `rest/handler/authhandler_test.go` (modified, +109/-0)
 ```diff
-@@ -1,6 +1,7 @@
- package filex
+@@ -2,6 +2,9 @@ package handler
  
  import (
+ 	"bufio"
++	"bytes"
++	"compress/gzip"
 +	"io"
- 	"os"
- 	"testing"
- 
-@@ -25,6 +26,10 @@ world`
- 	assert.Equal(t, 3, n)
- 	assert.Equal(t, `
- wo`, string(buf[:n]))
-+
-+	n, err = reader.Read(buf)
-+	assert.Zero(t, n)
-+	assert.ErrorIs(t, err, io.EOF)
+ 	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -31,6 +34,112 @@ func TestAuthHandlerFailed(t *testing.T) {
+ 	assert.Equal(t, http.StatusUnauthorized, resp.Code)
  }
  
- func TestRangeReader_OutOfRange(t *testing.T) {
-@@ -42,3 +47,40 @@ world`
- 	_, err = reader.Read(buf)
- 	assert.NotNil(t, err)
- }
++type countingReadCloser struct {
++	io.Reader
++	total  int64
++	closed bool
++}
 +
-+func TestRangeReader_AtFileEOF(t *testing.T) {
-+	const text = "hello\nworld"
-+	file, err := fs.TempFileWithText(text)
-+	if !assert.NoError(t, err) {
-+		return
-+	}
-+	t.Cleanup(func() {
-+		file.Close()
-+		os.Remove(file.Name())
-+	})
++func (c *countingReadCloser) Read(p []byte) (int, error) {
++	n, err := c.Reader.Read(p)
++	c.total += int64(n)
++	return n, err
++}
 +
-+	for _, test := range []struct {
-+		name  string
-+		start int64
-+		want  string
-+		err   error
++func (c *countingReadCloser) Close() error {
++	c.closed = true
++	return nil
++}
++
++func TestAuthHandlerUnauthorizedCallbackBody(t *testing.T) {
++	for _, tc := range []struct {
++		name string
++		size int
 +	}{
-+		{name: "range ending at file EOF", start: 5, want: "\nworld"},
-+		{name: "empty range at file EOF", start: int64(len(text)), err: io.EOF},
++		{name: "empty"},
++		{name: "small", size: 128},
++		{name: "limit", size: limitDetailedBodyBytes},
++		{name: "large", size: limitDetailedBodyBytes * 2},
 +	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			reader := NewRangeReader(file, test.start, int64(len(text)))
-+			buf := make([]byte, len(text)+1)
-+			n, err := reader.Read(buf)
-+			assert.Equal(t, len(test.want), n)
-+			assert.Equal(t, test.want, string(buf[:n]))
-+			assert.ErrorIs(t, err, test.err)
++		t.Run(tc.name, func(t *testing.T) {
++			for _, encoding := range []string{"plain", "gzip"} {
++				t.Run(encoding, func(t *testing.T) {
++					payload := bytes.Repeat([]byte("a"), tc.size)
++					var packed bytes.Buffer
++					var input io.Reader = bytes.NewReader(payload)
++					if encoding == "gzip" {
++						zw := gzip.NewWriter(&packed)
++						_, err := zw.Write(payload)
++						assert.NoError(t, err)
++						assert.NoError(t, zw.Close())
++						input = &packed
++					}
 +
-+			for i := 0; i < 2; i++ {
-+				n, err = reader.Read(buf)
-+				assert.Zero(t, n)
-+				assert.ErrorIs(t, err, io.EOF)
++					body := &countingReadCloser{Reader: input}
++					req := httptest.NewRequest(http.MethodPost, "http://localhost", nil)
++					req.Body = body
++					if encoding == "gzip" {
++						req.Header.Set("Content-Encoding", "gzip")
++					}
++
++					var called bool
++					handler := GunzipHandler(Authorize("secret", WithUnauthorizedCallback(
++						func(w http.ResponseWriter, r *http.Request, err error) {
++							called = true
++							assert.Error(t, err)
++							assert.False(t, body.closed)
++							got, readErr := io.ReadAll(r.Body)
++							assert.NoError(t, readErr)
++							assert.Equal(t, payload, got)
++							assert.NoError(t, r.Body.Close())
++							if encoding == "plain" {
++								assert.True(t, body.closed)
++							}
++						}))(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++						t.Error("unauthorized request reached the handler")
++					})))
++
++					resp := httptest.NewRecorder()
++					handler.ServeHTTP(resp, req)
++					assert.True(t, called)
++					assert.Equal(t, http.StatusUnauthorized, resp.Code)
++				})
 +			}
 +		})
 +	}
 +}
++
++// TestAuthHandlerFailedWithGzipBody guards against GHSA-h4vj-585c-2r8x: a
++// failed JWT authentication must not force the server to read/decompress
++// the full (potentially huge) gzip-encoded request body just to log it.
++func TestAuthHandlerFailedWithGzipBody(t *testing.T) {
++	// highly compressible payload, so a small compressed input unpacks to
++	// a payload far larger than the detailed-log limit.
++	plain := bytes.Repeat([]byte("A"), 16<<20) // 16 MiB decompressed
++	var packed bytes.Buffer
++	zw := gzip.NewWriter(&packed)
++	_, err := zw.Write(plain)
++	assert.Nil(t, err)
++	assert.Nil(t, zw.Close())
++
++	counter := &countingReadCloser{Reader: bytes.NewReader(packed.Bytes())}
++	req := httptest.NewRequest(http.MethodPost, "http://localhost", nil)
++	req.Body = counter
++	req.Header.Set("Content-Encoding", "gzip")
++
++	handler := GunzipHandler(Authorize("B63F477D-BBA3-4E52-96D3-C0034C27694A")(
++		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			w.WriteHeader(http.StatusOK)
++		})))
++
++	resp := httptest.NewRecorder()
++	handler.ServeHTTP(resp, req)
++	assert.Equal(t, http.StatusUnauthorized, resp.Code)
++	// the compressed bytes actually consumed must stay far below the full
++	// compressed payload size, proving the body wasn't fully decompressed.
++	assert.Less(t, counter.total, int64(packed.Len()))
++}
++
+ func TestAuthHandler(t *testing.T) {
+ 	const key = "B63F477D-BBA3-4E52-96D3-C0034C27694A"
+ 	req := httptest.NewRequest(http.MethodGet, "http://localhost", http.NoBody)
 ```
 
 ---
 
-### Incident Patch 2: `98fe33f5` (2026-10-25)
-**Commit Message**: fix: stop text line scanner at empty EOF (#5798)
+### Incident Patch 2: `f3be7b00` (2026-10-31)
+**Commit Message**: fix: preserve YAML null values (#5816)
 
-**File**: `core/iox/textlinescanner.go` (modified, +1/-1)
+**File**: `internal/encoding/encoding.go` (modified, +1/-1)
 ```diff
-@@ -33,7 +33,7 @@ func (scanner *TextLineScanner) Scan() bool {
- 	scanner.line = strings.TrimRight(line, "\n")
- 	if errors.Is(err, io.EOF) {
- 		scanner.hasNext = false
--		return true
-+		return len(line) > 0
- 	} else if err != nil {
- 		scanner.err = err
- 		return false
+@@ -120,7 +120,7 @@ func toStringKeyMap(v any) any {
+ 		return convertSlice(v)
+ 	case map[any]any:
+ 		return convertKeyToString(v)
+-	case bool, string:
++	case nil, bool, string:
+ 		return v
+ 	case int, uint, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float32, float64:
+ 		return convertNumberToJsonNumber(v)
 ```
 
-**File**: `core/iox/textlinescanner_test.go` (modified, +23/-0)
+**File**: `internal/encoding/encoding_test.go` (modified, +9/-0)
 ```diff
-@@ -24,6 +24,29 @@ func TestScanner(t *testing.T) {
- 	assert.EqualValues(t, []string{"1", "2", "3", "4"}, lines)
+@@ -118,6 +118,15 @@ func TestYamlToJsonSlice(t *testing.T) {
+ `, string(b))
  }
  
-+func TestScannerDoesNotReturnEmptyEOF(t *testing.T) {
-+	tests := []struct {
-+		input string
-+		want  []string
-+	}{
-+		{input: ""},
-+		{input: "one\n", want: []string{"one"}},
-+		{input: "\n", want: []string{""}},
-+		{input: "one\n\n", want: []string{"one", ""}},
-+	}
-+
-+	for _, test := range tests {
-+		scanner := NewTextLineScanner(strings.NewReader(test.input))
-+		var lines []string
-+		for scanner.Scan() {
-+			line, err := scanner.Line()
-+			assert.NoError(t, err)
-+			lines = append(lines, line)
-+		}
-+		assert.Equal(t, test.want, lines)
-+	}
++func TestYamlToJsonNull(t *testing.T) {
++	b, err := YamlToJson([]byte(`top: null
++nested:
++  value: ~
++items: [null]`))
++	assert.NoError(t, err)
++	assert.JSONEq(t, `{"top":null,"nested":{"value":null},"items":[null]}`, string(b))
 +}
 +
- func TestBadScanner(t *testing.T) {
- 	scanner := NewTextLineScanner(iotest.ErrReader(iotest.ErrTimeout))
- 	assert.False(t, scanner.Scan())
+ func TestJson5ToJson(t *testing.T) {
+ 	tests := []struct {
+ 		name   string
+```
+
+---
+
+### Incident Patch 3: `5e318f9f` (2026-10-31)
+**Commit Message**: fix(iox): close redirected pipe on restore (#5827)
+
+Co-authored-by: kevin <[REDACTED_EMAIL]>
+
+**File**: `core/iox/pipe.go` (modified, +2/-0)
+```diff
+@@ -17,6 +17,8 @@ func RedirectInOut() (restore func(), err error) {
+ 	restore = func() {
+ 		os.Stdin = or
+ 		os.Stdout = ow
++		_ = r.Close()
++		_ = w.Close()
+ 	}
+ 
+ 	return
+```
+
+**File**: `core/iox/pipe_test.go` (modified, +20/-2)
+```diff
+@@ -1,13 +1,31 @@
+ package iox
+ 
+ import (
++	"os"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ )
+ 
+ func TestRedirectInOut(t *testing.T) {
++	originalStdin, originalStdout := os.Stdin, os.Stdout
+ 	restore, err := RedirectInOut()
+-	assert.Nil(t, err)
+-	defer restore()
++	require.NoError(t, err)
++
++	stdin, stdout := os.Stdin, os.Stdout
++	t.Cleanup(func() {
++		restore()
++		// Also clean up when testing an implementation that leaks the pipe.
++		_ = stdin.Close()
++		_ = stdout.Close()
++	})
++
++	restore()
++	assert.Same(t, originalStdin, os.Stdin)
++	assert.Same(t, originalStdout, os.Stdout)
++	_, err = stdin.Stat()
++	assert.ErrorIs(t, err, os.ErrClosed)
++	_, err = stdout.Stat()
++	assert.ErrorIs(t, err, os.ErrClosed)
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5846** (closed): ci: add merge_group trigger to CodeQL and Go workflows (@kevwan)
-- **PR #5845** (2026-10-24): fix(ci): run required workflows for merge queue (@kevwan)
-- **PR #5841** (closed): fix(discov): keep the newest state when a snapshot is applied (@FireChickenMP4)
-- **PR #5839** (2026-10-21): chore(deps): bump github/codeql-action from 4.38.3 to 4.39.0 (@dependabot[bot])
-- **PR #5838** (2026-10-21): chore(deps): bump github.com/gookit/color from 1.6.2 to 1.6.3 in /tools/goctl (@dependabot[bot])
-- **PR #5836** (closed): chore(deps): bump go.opentelemetry.io/otel/exporters/otlp/otlptrace from 1.43.0 to 1.45.0 in /tools/goctl in the go_modules group across 1 directory (@dependabot[bot])
+- **PR #5865** (2026-10-31): fix(rest): avoid unbounded gzip body dump on JWT auth failure (@kevwan)
+- **PR #5862** (2026-10-31): fix(deps): bump go.opentelemetry.io/otel/exporters/zipkin to v1.46.0 in tools/goctl (@kevwan)
+- **PR #5861** (closed): chore(deps): bump golang.org/x/net from 0.58.0 to 0.62.0 (@dependabot[bot])
+- **PR #5860** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 in /tools/goctl (@dependabot[bot])
+- **PR #5859** (closed): chore(deps): bump google.golang.org/grpc from 1.84.0 to 1.85.0 (@dependabot[bot])
+- **PR #5858** (2026-10-30): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 in the go_modules group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -1479,35 +1601,49 @@ Co-authored-by: kevin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. filex): return EOF at range end (#5805)
+## X. rest): avoid unbounded gzip body dump on JWT auth failure (#5865)
 
 **RULE**:
-When implementing operations in `core/filex/rangereader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rest/handler/authhandler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeromicro/go-zero. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd59ce39`: filex): return EOF at range end (#5805). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `963ae7ef`: rest): avoid unbounded gzip body dump on JWT auth failure (#5865). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/filex/rangereader.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `rest/handler/authhandler.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+	"bytes"
 	"io"
-	if rr.stop < rr.start || rr.start > stat.Size() {
-		return 0, errExceedFileSize
+	// Cap the body read for the dump so that an attacker cannot force the
+	// server to fully read/decompress (e.g. a gzip-encoded) request body
+	// just by failing authentication. See GHSA-h4vj-585c-2r8x.
+	if r.Body != nil {
+		body := r.Body
+		var prefix bytes.Buffer
+		r.Body = io.NopCloser(io.LimitReader(io.TeeReader(body, &prefix), limitDetailedBodyBytes))
+		// Replay only the bytes consumed for logging, then continue reading the
+		// original body so unauthorized callbacks can still read the full request.
+		defer func() {
+			r.Body = struct {
+				io.Reader
+				io.Closer
+			}{
+				Reader: io.MultiReader(&prefix, body),
+				Closer: body,
+			}
+		}()
 	}
-	if rr.start == rr.stop {
-		return 0, io.EOF
-	}
-	if rr.start == stat.Size() {
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if rr.stop < rr.start || rr.start >= stat.Size() {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd59ce39` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `963ae7ef` are properly handled with clean fallback behavior.

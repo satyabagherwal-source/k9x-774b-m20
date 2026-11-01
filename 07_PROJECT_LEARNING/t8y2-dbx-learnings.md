@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `febdfe08`  
+> **Source Version**: `a3add88d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:10:25.067Z  
+> **Timestamp**: 2026-11-01T00:03:04.017Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:10:25.058Z  
+> **Harvest Timestamp**: 2026-11-01T00:03:03.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 27740 stars
+- **Stars / Engagement**: 28372 stars
 
 ---
 
@@ -36,6 +36,153 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `agents/drivers/oracle-go/pldebug_statement.go`
+```
+package main
+
+import (
+	"context"
+	"database/sql/driver"
+	"errors"
+	"fmt"
+	"time"
+)
+
+type plDebugStatement struct {
+	driver.Stmt
+	allocation     *plDebugAllocation
+	closeRequested bool
+	closeStarted   bool
+	closeDone      chan struct{}
+	closeDeadline  time.Time
+	closeErr       error
+}
+
+func (s *plDebugStatement) Close() error {
+	a := s.allocation
+	a.mu.Lock()
+	if !s.closeRequested {
+		s.closeRequested = true
+		s.closeDone = make(chan struct{})
+		a.closingStatements++
+		s.closeDeadline = time.Now().Add(plDebugReleaseTimeout)
+		if !a.cleanupDeadline.IsZero() && a.cleanupDeadline.Before(s.closeDeadline) {
+			s.closeDeadline = a.cleanupDeadline
+		}
+	}
+	if a.active != nil || a.unknown || len(a.rows) != 0 {
+		a.mu.Unlock()
+		return errPLDebugAllocationUnknown
+	}
+	if !s.closeStarted {
+		s.closeStarted = true
+		go s.closeRaw()
+	}
+	done, deadline := s.closeDone, s.closeDeadline
+	a.mu.Unlock()
+	select {
+	case <-done:
+		return s.result()
+	default:
+	}
+	timer := time.NewTimer(time.Until(deadline))
+	defer timer.Stop()
+	select {
+	case <-done:
+		return s.result()
+	case <-timer.C:
+		return errPLDebugAllocationUnknown
+	}
+}
+
+func (s *plDebugStatement) result() error {
+	s.allocation.mu.Lock()
+	defer s.allocation.mu.Unlock()
+	return s.closeErr
+}
+
+func (s *plDebugStatement) closeRaw() {
+	var err error
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			err = fmt.Errorf("PL/SQL statement close panicked: %v", recovered)
+		}
+		a := s.allocation
+		a.mu.Lock()
+		s.closeErr = err
+		if err != nil {
+			a.unknown = true
+		} else {
+			delete(a.statements, s)
+		}
+		a.closingStatements--
+		close(s.closeDone)
+		retiring := a.retiring && !a.unknown && len(a.statements) == 0 && len(a.rows) == 0
+		a.mu.Unlock()
+		if retiring {
+			_ = a.close()
+		}
+	}()
+	err = s.Stmt.Close()
+}
+
+func (s *plDebugStatement) CheckNamedValue(value *driver.NamedValue) error {
+	if checker, ok := s.Stmt.(driver.NamedValueChecker); ok {
+		return checker.CheckNamedValue(value)
+	}
+	return driver.ErrSkip
+}
+
+func (s *plDebugStatement) ExecContext(ctx context.Context, args []driver.NamedValue) (driver.Result, error) {
+	return s.allocation.exec(ctx, func(private context.Context) (driver.Result, error) {
+		if stmt, ok := s.Stmt.(driver.StmtExecContext); ok {
+			return stmt.ExecContext(private, args)
+		}
+		values := make([]driver.Value, len(args))
+		for i, arg := range args {
+			if arg.Name != "" {
+				return nil, errors.New("legacy PL/SQL statement does not support named arguments")
+			}
+			values[i] = arg.Value
+		}
+		return s.Stmt.Exec(values)
+	})
+}
+
+func (s *plDebugStatement) Exec(args []driver.Value) (driver.Result, error) {
+	values := make([]driver.NamedValue, len(args))
+	for i, arg := range args {
+		values[i] = driver.NamedValue{Ordinal: i + 1, Value: arg}
+	}
+	return s.ExecContext(context.Background(), values)
+}
+
+func (s *plDebugStatement) QueryContext(ctx context.Context, args []driver.NamedValue) (driver.Rows, error) {
+	return s.allocation.query(ctx, func(private context.Context) (driver.Rows, error) {
+		if stmt, ok := s.Stmt.(driver.StmtQueryContext); ok {
+			return stmt.QueryContext(private, args)
+		}
+		values := make([]driver.Value, len(args))
+		for i, arg := range args {
+			if arg.Name != "" {
+				return nil, errors.New("legacy PL/SQL statement does not support named arguments")
+			}
+			values[i] = arg.Value
+		}
+		return s.Stmt.Query(values)
+	})
+}
+
+func (s *plDebugStatement) Query(args []driver.Value) (driver.Rows, error) {
+	values := make([]driver.NamedValue, len(args))
+	for i, arg := range args {
+		values[i] = driver.NamedValue{Ordinal: i + 1, Value: arg}
+	}
+	return s.QueryContext(context.Background(), values)
+}
+
+```
 
 ### Core Architecture Module: `agents/drivers/tdengine/src/config.rs`
 ```
@@ -1835,252 +1982,20 @@ func (b *Binary) GetValues() []byte {
 
 ```
 
-### Core Architecture Module: `apps/desktop/src/components/editor/useQueryEditorDocumentState.ts`
-```
-import { watch, nextTick } from "vue";
-import { Transaction } from "@codemirror/state";
-import type { EditorView as EditorViewType } from "@codemirror/view";
-import { createDeferredEditorTask } from "@/lib/editor/deferredEditorTask";
-import { focusEditorView } from "@/lib/editor/queryEditorFocus";
-import type { ShallowRef, Ref } from "vue";
-import type { QueryEditorProps } from "./queryEditorTypes";
-
-const BEFORE_TAB_SWITCH_EVENT = "dbx:before-tab-switch";
-
-interface QueryEditorDocumentStateRuntime {
-  historyResetComp: import("@codemirror/state").Compartment | null;
-  codeMirrorHistory: typeof import("@codemirror/commands").history | null;
-  codeMirrorEditorSelection: typeof import("@codemirror/state").EditorSelection | null;
-  editorIsActive: boolean;
-}
-
-interface QueryEditorDocumentStateOptions {
-  props: Readonly<QueryEditorProps>;
-  view: ShallowRef<EditorViewType | null>;
-  previewContextSql: Readonly<Ref<string>>;
-  runtime: QueryEditorDocumentStateRuntime;
-  emit: {
-    (event: "selectionStateChange", selection: { anchor: number; head: number }): void;
-    (event: "viewportChange", viewport: { scrollTop: number; scrollLeft: number }, tabId?: string): void;
-    (event: "editorStateFlushed"): void;
-    (event: "editorRevealConsumed"): void;
-    (event: "previewChangesAvailable", value: boolean): void;
-  };
-  scheduleSemanticDiagnostics: (delay?: number, options?: { preserveOutsideRanges?: boolean }) => void;
-  clearScheduledPreviewContextRefresh: () => void;
-  syncContextMenuState: (view: EditorViewType) => void;
-  applyEditorAppearance: () => Promise<void>;
-  applyEditorShortcutKeymaps: () => void;
-  applyEditorIndentExtension: () => void;
-  applyEditorCompletionExtension: () => void;
-  invalidateSemanticDiagnosticsForDocumentChange: () => void;
-  currentEditorDocText: (view: EditorViewType) => string;
-  scheduleDocumentSearchUpdate: () => void;
-  isEditorComposing: (view: EditorViewType) => boolean;
-}
-
-export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOptions) {
-  const { isEditorComposing } = options;
-  const {
-    props,
-    view,
-    previewContextSql,
-    runtime,
-    emit,
-    scheduleDocumentSearchUpdate,
-    scheduleSemanticDiagnostics,
-    clearScheduledPreviewContextRefresh,
-    syncContextMenuState,
-    applyEditorAppearance,
-    applyEditorShortcutKeymaps,
-    applyEditorIndentExtension,
-    applyEditorCompletionExtension,
-    invalidateSemanticDiagnosticsForDocumentChange,
-    currentEditorDocText,
-  } = options;
-
-  let viewportOwnerTabId = props.tabId;
-  const viewportEmitTask = createDeferredEditorTask(() => {
-    if (latestViewport) emitEditorViewport(latestViewport);
-  }, 150);
-  let viewportRestoreFrame: number | null = null;
-  let latestViewport: { scrollTop: number; scrollLeft: number } | undefined = props.initialViewport;
-  let lastEmittedViewport: { scrollTop: number; scrollLeft: number } | undefined = props.initialViewport;
-  let tabSwitchStateCaptured = false;
-  let latestSelection: { anchor: number; head: number } | undefined = props.initialSelection;
-
-  // A single editor instance serves every tab, so the document swap on tab
-  // switches must not push "previous tab's content → new content" onto a shared
-  // undo history (one undo in the new tab restored the old tab's text). Each
-  // tab's editor state — including its undo history — is cached per tabId and
-  // reinstalled with setState; first-seen tabs get the document swapped in with a
-  // transaction excluded from history, and the history extension is dropped and
-  // re-added in two separate transactions (a compartment reconfigure alone keeps
-  // the old field value) so the previous tab's edits cannot leak in.
-  interface CachedTabState {
-    state: import("@codemirror/state").EditorState;
-    viewport: { scrollTop: number; scrollLeft: number };
-  }
-  const tabStateCache = new Map<string, CachedTabState>();
-  const MAX_CACHED_TAB_STATES = 16;
-
-  function swapEditorDocument(doc: string) {
-    const currentView = view.value;
-    if (!currentView || !runtime.historyResetComp || !runtime.codeMirrorHistory) return;
-    if (doc !== currentView.state.doc.toString()) {
-      currentView.dispatch({
-        changes: { from: 0, to: currentView.state.doc.length, insert: doc },
-        annotations: Transaction.addToHistory.of(false),
-      });
-    }
-    currentView.dispatch({ effects: runtime.historyResetComp.reconfigure([]) });
-    currentView.dispatch({ effects: runtime.historyResetComp.reconfigure(runtime.codeMirrorHistory()) });
-    scheduleSemanticDiagnostics();
-  }
-
-  function activateTabDocument(prevTabId: string | undefined, tabId: string | undefined, doc: string) {
-    const currentView = view.value;
-    if (!currentView) return;
-    // Flush the outgoing document before props and restored scroll positions
-    // become the new tab's state. The event carries its original owner. A
-    // before-tab-switch capture already flushed this editor while it was still
-    // visible, so avoid reading the reset scroll position during the transition.
-    if (!tabSwitchStateCaptured) {
-      flushEditorViewport();
-      flushEditorSelection();
-    }
-    viewportOwnerTabId = tabId;
-    lastEmittedViewport = undefined;
-    clearScheduledPreviewContextRefresh();
-    if (prevTabId !== undefined) {
-      tabStateCache.set(prevTabId, {
-        state: currentView.state,
-        viewport: readEditorViewport(currentView),
-      });
-      if (tabStateCache.size > MAX_CACHED_TAB_STATES) {
-        const oldest = tabStateCache.keys().next();
-        if (!oldest.done) tabStateCache.delete(oldest.value);
-      }
-    }
-    const cached = tabId === undefined ? undefined : tabStateCache.get(tabId);
-    if (!cached) {
-      swapEditorDocument(doc);
-      // First activation in this editor instance (or a cache-evicted tab, e.g.
-      // beyond MAX_CACHED_TAB_STATES): restore the tab's saved cursor and scroll
-      // position exactly like the cached-state branch, otherwise the swapped-in
-      // document keeps whatever scroll offset the dispatch left behind (#8374).
-      // A brand-new tab has no saved state, so reset it instead of falling back
-      // to the previous tab's latest position (#8378).
-      const initialSel = props.initialSelection ?? { anchor: 0, head: 0 };
-      const initialVp = props.initialViewport ?? { scrollTop: 0, scrollLeft: 0 };
-      latestSelection = initialSel;
-      latestViewport = initialVp;
-      restoreEditorSelection(initialSel, !props.initialViewport);
-      restoreEditorViewport(initialVp);
-      clearScheduledPreviewContextRefresh();
-      syncContextMenuState(currentView);
-      emit("previewChangesAvailable", !!previewContextSql.value);
-      return;
-    }
-    // setState swaps doc, selection, undo history and all fields at once, but it
-    // is not a transaction, so update-listener side effects are re-run manually.
-    currentView.setState(cached.state);
-    // Compartments in the restored state may lag behind settings that changed
-    // while another tab was active; re-sync them from current values.
-    void applyEditorAppearance();
-    applyEditorShortcutKeymaps();
-    applyEditorIndentExtension();
-    applyEditorCompletionExtension();
-    if (doc !== currentView.state.doc.toString()) {
-      // Content changed while the tab was inactive (external file change, AI
-      // edit, another split group): apply it as a regular undoable edit.
-      currentView.dispatch({
-        changes: { from: 0, to: currentView.state.doc.length, insert: doc },
-      });
-    }
-    scheduleDocumentSearchUpdate();
-    invalidateSemanticDiagnosticsForDocumentChange();
-    if (props.initialSelection !== undefined) {
-      restoreEditorSelection(props.initialSelection, !props.initialViewport);
-    }
-    latestSelection = readEditorSelection(currentView);
-    const targetViewport = props.initialViewport ?? cached.viewport;
-    latestViewport = targetViewport;
-    restoreEditorViewport(targetViewport);
-    clearScheduledPreviewContextRefresh();
-    syncContextMenuState(currentView);
-    emit("previewChangesAvailable", !!previewContextSql.value);
-    scheduleSemanticDiagnostics();
-  }
-
-  watch([() => props.tabId, () => props.modelValue], ([tabId, val], [prevTabId]) => {
-    if (!view.value) return;
-    if (tabId !== prevTabId) {
-      activateTabDocument(prevTabId, tabId, val);
-      if (props.autoFocus) restoreEditorFocus();
-      return;
-    }
-    if (val !== currentEditorDocText(view.value)) {
-      if (isEditorComposing(view.value)) return;
-      view.value.dispatch({
-        changes: { from: 0, to: view.value.state.doc.length, insert: val },
-      });
-      scheduleSemanticDiagnostics();
-    }
-  });
-
-  watch(
-    () => props.initialViewport,
-    (viewport, previousViewport) => {
-      if (!view.value || !viewport || previousViewport) return;
-      // Saved SQL content can hydrate after the editor has already mounted. In
-      // that case the initial prop was undefined and the mount-time restore had
-      // nothing to apply.
-      latestViewport = { ...viewport };
-      lastEmittedViewport = { ...viewport };
-      restoreEditorViewport(viewport);
-    },
-    { deep: true },
-  );
-
-  watch(
-    () => props.initialSelection,
-    (selection, previousSelection) => {
-      if (!view.value || !selection || previousSelection) return;
-      // Keep the cursor and viewport in sync when a saved SQL tab hydrates after
-      // the editor component has already been mounted.
-      restoreEditorSelection(selection, !props.initialViewport);
-    },
-    { deep: true },
-  );
-
-  function captureEditorStateBeforeTabSwitch(event: Event) {
-    const fromTabId = (event as CustomEvent<{ fromTabId?: string }>).detail?.fromTabId;
-    if (!view.value || !fromTabId || fromTabId !== props.tabId) return;
-    // Capture while the outgoing editor is still visible. Once KeepAlive starts
-    // deactivating the surface, WebKit can report a reset scrollTop of zero.
-    flushEditorViewport();
-    flushEditorSelection();
-    emit("editorStateFl
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13382** (2026-10-25): **[Bug] kafka消费者组加载不出来，主题也无法看到对应的消费者信息**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  kafka  ### 问题描述 / Problem description  > 还是之前的问题，我让ai 分析了下，给你下结果， #13252  197 个消费者组时加载卡死并杀掉 agent。根因为串行查询：实测单组 222ms，197 组约 43.7 秒，超过内部超时（约 20-30 秒）。建议：① 并发查询（实测并发 12 只需 4 秒）；② 消费者组列表分页/懒加载，不要一次拉全量；③ agent 被杀后要能自动重启，而不是让 UI 永久挂死。   ### 支持信息 / Support information  DBX 版本/ Version: v0.6.53 运行环境/Runtime: Desktop 操作系统/OS: macOS tahoe26.0 系统架构 / Architecture: aarch64  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+- **Issue #13929** (2026-10-30): **[Bug] 代码片段无法自定义排版格式，切换数据库类型自动替换失效**
+  *Symptoms*: ### 来源 QQ 群反馈 · **反馈人**：,,,  ### 数据库类型和版本 MsSql  ### AI 摘要 在设置代码片段时，无法自定义维护排版格式；将SQL语句压缩为单行后，切换到MsSql数据库类型时，LIMIT自动替换脚本失效。  ### 原始描述 设置--代码片段：无法自定义维护排版格式，切换据库类型自动替换脚本失效。 例如：将 SELECT * FROM table LIMIT 100; 改为 SELECT * FROM table LIMIT 100; 切换到MsSql后limit替换失效。
   **Post-Mortem & Fix Analysis**:
-  > <!-- dbx-similar-issues --> 以下 Issue 可能与当前问题相关：  - #13252  这些结果由机器人自动检索，尚未确认重复。如属于同一问题，建议在已有 Issue 中补充信息。
-  > 最终让ai,完全分析下，找到了原因，看能不能修复下 197 个消费者组时加载卡死并杀掉 agent。根因为串行查询：实测单组 222ms，197 组约 43.7 秒，超过内部超时（约 20-30 秒）。建议：① 并发查询（实测并发 12 只需 4 秒）；② 消费者组列表分页/懒加载，不要一次拉全量；③ agent 被杀后要能自动重启，而不是让 UI 永久挂死。
+  > /claim  ## 原因  `apps/desktop/src/lib/sql/sqlSnippetTemplates.ts` 中的 `resolveSqlSnippetBodyForDatabase` 只在片段正文与内置默认值**完全相等**（`snippet.body !== rule.defaultBody` 严格比较）时才按数据库方言生成写法，否则视为用户自定义内容原样返回。  这一规则来自 #4375，本意是保护用户真正修改过的内容（例如 `LIMIT 7`），但严格比较把只调整换行/空格的情况也当成了“自定义”。因此把      SELECT *     FROM table     LIMIT 100;  改成单行 `SELECT * FROM table LIMIT 100;` 后，切换到 SQL Server 时不再生成 `SELECT TOP 100 ...`，仍保留 `LIMIT`。`upd`（ClickHouse）和 `at`（新增列）片段走同一判断，存在相同问题；默认正文若为 `\r\n` 换行也会静默失效。  ## 修复方案  1. 判断是否为默认值前，先将连续空白折叠为单个空格再比较，仅调整排版时仍视为默认片段。 2. 若方言写法与用户正文（折叠空白后）一致，直接返回用户原文，不覆盖用户的缩进和排版（例如 MySQL 下的单行 `sel`、改过缩进的 CTE）。 3. 方言写法确实不同时：用户正文为单行则输出单行方言写法（如 `SELECT TOP 100 * FROM table;`），多行则使用默认多行写法。 4. 内容真正改过的片段（如 `LIMIT 7`、修改表名）行为不变，#4375 的保护测试保持通过。  ## 测试  在 `sqlCompletion.snippet.spec.ts` 中以表格驱动方式补充用例：SQL Server 单行 `sel`、MySQL 单行 `sel` 保持原样、改过缩进的 CTE 保持原样、Oracle 下重排过的多行 `sel`、`\r\n` 换行的默认正文。  额外开销仅限 11 个内置片段的空白折叠，每次补全为微秒级，自定义片段路径不变。
+  > ✅ @seaways1015-afk 已认领 #13929，开始处理吧！
 
-- **Issue #13374** (2026-10-24): **[Bug] 「执行 SQL 文件」弹窗执行时进度区被挤到折叠线以下，不手动下翻看不到执行进度**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用  ### 问题描述 / Problem description  1. 复现步骤 / Steps:    打开「执行 SQL 文件」对话框 → 选择一个 SQL 文件（预览区显示文件内容）→ 点击「执行」。全程不做滚动操作。  2. 期望结果 / Expected:    点击执行后，进度区（进度条、已处理字节数、逐文件汇总）应立即出现在可视区域内；执行过程中进度持续可见；失败时失败原因也在可视区域内。  3. 实际结果 / Actual:    进度区完全落在弹窗滚动区的折叠线以下。点击「执行」后界面没有任何可见反馈，必须手动向下滚动才能看到进度条和字节计数；执行失败时失败原因同样要再往下翻才能读到。文件越大、预览区越高，问题越明显。  4. 附上截图和错误日志 / Attach screenshots and logs:    本地开发版（v0.6.53，Windows x64）可稳定复现，无错误日志。 https://github.com/user-attachments/assets/cf3baf18-ff8c-4143-b9aa-a381ad53d33a  ### 支持信息 / Support information  DBX 版本 / Version: v0.6.53（本地开发版，基于 upstream/main 8cdfb8929） 运行环境 / Runtime: 桌面端 / Desktop 操作系统 / OS: Windows 10 (10.0.19045) 系统架构 / Architecture: x86_64  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  - 根因：该弹窗的滚动区把「文件选择 → SQL 预览 → 执行进度」自上而下排列，而进度区是滚动区的最后一个子元素。预览区高度上限是 min(46vh, 420px)，选中文件后进度区必然落在折叠线以下。 - 与 #11350 的区别：#11350 说的是后台任务详情的入口路径（要回到原入口才能进详情页）；本 issue 说的是弹窗内进度区本身的可见性。两者诉求不同，即使 #11350 被解决，本 issue 仍然存在。 - 已实现并验证的方案：执行开始时自动把滚动区滚到底，使进度区立即可见；进度区在执行中变高时跟随滚动；用户主动向上滚动后立即交还滚动位置，不再把视图拉回底部。改动仅涉及前端，不新增任何用户可见文案。 - 已准备好对应的 PR，认领后即可提交。
-  **Post-Mortem & Fix Analysis**:
-  > /claim
-  > ✅ @Gaiokane 已认领 #13374，开始处理吧！
+- **Issue #13917** (2026-10-29): **[Bug][Windows ARM64] 打开查询页 / 默认查询即闪退：0xC00000FD 主线程栈溢出（aarch64-pc-windows-msvc 未设置 8 MiB 栈）**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  IBM DB2（JDBC 插件）。问题与数据库无关：打开查询编辑器标签页时就会崩溃。  ### 问题描述 / Problem description  Windows ARM64 原生安装包从 0.6.57 起，**打开任何 SQL 查询标签页都会立即闪退**。0.6.56 是否受影响未验证。  复现步骤： 1. 侧栏右键任意连接 → 「打开默认查询」，或点工具栏「新建查询」 2. 应用在 1 秒内直接退出，没有任何提示  本机在 0.6.57、0.6.58、0.6.60、0.6.61 上均 100% 复现。  **stderr**（GUI 进程，用重定向 stderr 的方式启动后捕获）：  ``` [STARTUP] setup complete in 254.159ms (total 742.597083ms) DBX MCP Streamable HTTP listening on http://127.0.0.1:5225/mcp  thread 'main' (2408) has overflowed its stack ```  **Windows 事件日志（Application Error / WER APPCRASH）：**  | 版本 | 异常代码 | 异常偏移 | | --- | --- | --- | | 0.6.57 | `c00000fd` | `0x3056360` | | 0.6.58 | `c00000fd` | `0x3057160` | | 0.6.60 | `c00000fd` | `0x3118060` | | 0.6.61 | `c00000fd` | `0x3118060` |  反汇编 0.6.61 的 `0x3118060`，位置在 ARM64 的 `__chkstk` 栈探测循环（`ldr xzr, [x17]`）里。也就是说，主线程上某个栈帧在探测栈页时越过了栈底。  **根因分析**  0.6.61 安装包里 `dbx.exe` 的 PE 头：  ``` Machine            : 0xAA64 (ARM64) SizeOfStackReserve : 0x100000 (1 MiB)   <- Windows 默认值 SizeOfStackCommit  : 0x1000 ```  当前 `main` 分支的 `.cargo/config.toml` 只给两个 x86_64 目标设置了 8 MiB 主线程栈：  ```toml [target.x86_64-pc-windows-msvc] rustflags = ["-C", "link-arg=/STACK:8388608"]  [target.x86_64-win7-windows-msvc] rustflags = ["-C", "link-arg=/STACK:8388608"] ```  **没有 `[target.aarch64-pc-windows-msvc]` 这一段**，所以 Windows ARM64 包的主线程栈仍是 1 MiB。  这和 #13671 是同一类问题。#13448（v0.6.56）让建连 / transport 的调用栈变深，1 MiB 主线程栈被撑爆。#13672 只修复了 Win7 / Server 2012 R2 的 x64 遗留包，ARM64 被漏掉了。  **验证**  把 `dbx.exe`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2097,502 +2012,411 @@ export function useQueryEditorDocumentState(options: QueryEditorDocumentStateOpt
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afc9374f` (2026-10-25)
-**Commit Message**: fix(sql): keep top-level SQL Server BEGIN blocks as one batch
+### Incident Patch 1: `708a2d3f` (2026-10-31)
+**Commit Message**: fix: refresh sidebar columns after saving table structure (#13850)
 
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts` (modified, +79/-0)
+**File**: `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts` (modified, +22/-0)
 ```diff
-@@ -2510,6 +2510,85 @@ WHERE t2.product_name = '12345'
-     expect(rangeSqlTexts(ranges)).toEqual(["BEGIN TRAN", "UPDATE dbo.T SET x = 1", "COMMIT"]);
+@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
+   executeTabSql: vi.fn(),
+   getColumns: vi.fn(),
+   invalidateCompletionTableCache: vi.fn(),
++  refreshTableColumnsTree: vi.fn(),
+   listIndexes: vi.fn(),
+   setErrorResult: vi.fn(),
+   setTableMeta: vi.fn(),
+@@ -34,6 +35,7 @@ vi.mock("@/stores/connectionStore", () => ({
+     connectionIdentifierQuote: () => undefined,
+     metadataGenerationFor: () => 0,
+     refreshObjectListTreeNode: vi.fn(),
++    refreshTableColumnsTree: mocks.refreshTableColumnsTree,
+     invalidateCompletionTableCache: mocks.invalidateCompletionTableCache,
+   }),
+ }));
+@@ -219,11 +221,31 @@ describe("useNavigationTargets openTableTarget", () => {
+       tableName: target.tableName,
+     });
+ 
++    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
+     expect(mocks.invalidateCompletionTableCache).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
+     expect(mocks.getColumns).toHaveBeenCalledTimes(2);
+     expect(mocks.tabs.map((tab) => tab.tableMeta?.primaryKeys)).toEqual([["fresh_id"], ["fresh_id"]]);
    });
  
-+  const sqlServerTryCatchBatch = [
-+    "SET XACT_ABORT ON;",
-+    "",
-+    "BEGIN TRY",
-+    "    BEGIN TRANSACTION;",
-+    "",
-+    "    UPDATE [dbo].[Documents]",
-+    "    SET [Deleted] = 0",
-+    "    WHERE [Deleted] = 1;",
-+    "",
-+    "    DECLARE @Updated int = @@ROWCOUNT;",
-+    "",
-+    "    IF EXISTS (SELECT 1 FROM [dbo].[Documents] WHERE [Deleted] = 1)",
-+    "        THROW 50001, N'Rows with Deleted = 1 still exist.', 1;",
-+    "",
-+    "    COMMIT TRANSACTION;",
-+    "",
-+    "    SELECT N'OK' AS Result, @Updated AS RowsUpdated;",
-+    "END TRY",
-+    "BEGIN CATCH",
-+    "    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;",
-+    "    THROW;",
-+    "END CATCH;",
-+  ].join("\n");
-+  // The batch range starts at the real `BEGIN TRY` token, so the blank line
-+  // and semicolon around the statement are not part of it.
-+  const sqlServerTryCatchRange = sqlServerTryCatchBatch.slice(sqlServerTryCatchBatch.indexOf("BEGIN TRY")).replace(/;$/, "");
-+
-+  // #13051: a top-level BEGIN TRY ... END TRY BEGIN CATCH ... END CATCH script
-+  // must execute as one batch — splitting it at the top-level `;` sends
-+  // fragments like `BEGIN TRANSACTION` alone and SQL Server rejects them.
-+  it("keeps a SQL Server top-level TRY/CATCH script as one batch after the leading statement", () => {
-+    const ranges = executableStatementRanges(sqlServerTryCatchBatch, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange]);
++  it("refreshes sidebar columns even without a data tab", async () => {
++    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
++    await useNavigationTargets(dialogs).onStructureEditorSaved(vi.fn(), vi.fn(), target);
++    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", undefined);
++    expect(mocks.getColumns).not.toHaveBeenCalled();
 +  });
 +
-+  it("keeps the statement after END CATCH as its own SQL Server range", () => {
-+    const ranges = executableStatementRanges(`${sqlServerTryCatchBatch}\nSELECT 999;`, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange, "SELECT 999"]);
++  it("still refreshes data tab metadata if the sidebar reload fails", async () => {
++    const navigation = useNavigationTargets(dialogs);
++    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
++    await navigation.openLineageTarget(target);
++    mocks.refreshTableColumnsTree.mockRejectedValueOnce(new Error("sidebar unavailable"));
++    mocks.getColumns.mockResolvedValueOnce([column("fresh_id")]);
++    const toast = vi.fn();
++    await navigation.onStructureEditorSaved(vi.fn(), toast, target);
++    expect(toast).toHaveBeenCalledWith("sidebar unavailable", 5000);
++    expect(mocks.tabs[0]?.tableMeta?.primaryKeys).toEqual(["fresh_id"]);
 +  });
 +
-+  it("keeps two consecutive SQL Server TRY/CATCH scripts as two ranges", () => {
-+    const second = sqlServerTryCatchBatch.replace(/\[dbo\]\.\[Documents\]/g, "[dbo].[Docs]");
-+    const ranges = executableStatementRanges(`${sqlServerTryCatchBatch}\n${second};`, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["SET XACT_ABORT ON", sqlServerTryCatchRange, "SET XACT_ABORT ON", second.slice(second.indexOf("BEGIN TRY")).replace(/;$/, "")]);
-+  });
-+
-+  it("keeps a SQL Server top-level plain BEGIN/END block whole", () => {
-+    const sql = ["BEGIN", "    SELECT 1;", "    SELECT 2;", "END"].join("\n");
-+    const ranges = executableStatementRanges(sql, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual([sql]);
-+  });
-+
-+  // A bare `BEGIN` is the first keystroke of every SQL Server block: the merge
-+  // reads the word after `BEGIN` to tell a block from `BEGIN TRAN`, and a
-+  // missing token must not be treated as one (it crashed the splitter).
-+  it("splits a lone SQL Server BEGIN without merging", () => {
-+    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN", "sqlserver"))).toEqual(["BEGIN"]);
-+  });
-+
-+  it("splits a SQL Server BEGIN terminated by a semicolon without merging", () => {
-+    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN;", "sqlserver"))).toEqual(["BEGIN"]);
-+  });
-+
-+  it("splits a SQL Server BEGIN followed by a comment without merging", () => {
-+    expect(rangeSqlTexts(splitSqlStatementRanges("BEGIN -- draft block", "sqlserver"))).toEqual(["BEGIN"]);
-+  });
-+
-+  it("ends a SQL Server TRY batch without a CATCH at END TRY", () => {
-+    const sql = ["BEGIN TRY", "    SELECT 1;", "END TRY", "SELECT 999;"].join("\n");
-+    const ranges = executableStatementRanges(sql, "sqlserver");
-+
-+    expect(rangeSqlTexts(ranges)).toEqual(["BEGIN TRY\n    SELECT 1;\nEND TRY", "SELECT 999"]);
-+  });
-+
-   // The depth carried across fragments decides where a batch ends: fragments
-   // after the closing `END` are independent statements, so every following
-   // statement keeps its own execution icon.
+   it("keeps row identity pending when shared metadata loading fails", async () => {
+     mocks.getColumns.mockRejectedValue(new Error("metadata unavailable"));
+ 
 ```
 
-**File**: `apps/desktop/src/lib/sql/sqlStatementRanges.ts` (modified, +48/-10)
+**File**: `apps/desktop/src/composables/__tests__/useNavigationTargets.store.spec.ts` (modified, +1/-0)
 ```diff
-@@ -1025,6 +1025,13 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
-     if (word === "END") {
-       if (next !== undefined && SQLSERVER_NON_BLOCK_END_KEYWORDS.has(next)) continue;
-       openBlocks -= 1;
-+      // `END TRY` must be followed by `BEGIN CATCH` within the same batch
-+      // (#13051): when the carried TRY block closes right where a CATCH block
-+      // opens, the batch continues instead of ending at the pair — the
-+      // following `BEGIN` re-opens the depth in its own branch below.
-+      if (initialOpenBlocks > 0 && openBlocks === 0 && next === "TRY" && words[index + 2] === "BEGIN" && words[index + 3] === "CATCH") {
-+        continue;
-+      }
-       // Only the closure of the *carried* block is a statement boundary: a
-       // block opened and closed inside this fragment (`IF ... BEGIN ... END`
-       // in one piece) belongs to the statement that contains it. A closure
-@@ -1033,8 +1040,11 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
-       // branch tail carries no semicolon) must still be able to replace it;
-       // a closure followed by anything else is final.
-       if (initialOpenBlocks > 0 && openBlocks === 0 && (closedAt === null || wordAfterClose === "ELSE")) {
--        closedAt = ends[index];
--        wordAfterClose = next ?? "";
-+        // `END TRY`/`END CATCH` are two-token closers; the statement boundary
-+        // sits after the pair, not between `END` and its keyword.
-+        const closesPairedKeyword = next === "TRY" || next === "CATCH";
-+        closedAt = closesPairedKeyword ? (ends[index + 1] ?? ends[index]) : ends[index];
-+        wordAfterClose = (closesPairedKeyword ? words[index + 2] : next) ?? "";
+@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
+     // 与真实 store 一致：setTableMeta 记录连接元数据代次
+     metadataGenerationFor: vi.fn(() => 0),
+     refreshObjectListTreeNode: vi.fn(),
++    refreshTableColumnsTree: vi.fn(),
+     invalidateCompletionTableCache: vi.fn(),
+   },
+   settingsStore: {
+```
+
+**File**: `apps/desktop/src/composables/useNavigationTargets.ts` (modified, +5/-0)
+```diff
+@@ -437,6 +437,11 @@ export function useNavigationTargets(dialogs: { showFieldLineageDialog: { value:
+     // 其它 loadTableMetadata 消费者最长 30 秒拿到旧列。不带 schema/catalog
+     // 维度（宁可多废，schema 形态在各消费点可能不同）
+     invalidateTableMetadataCache({ connectionId: context.connectionId, database: context.database, tableName: context.tableName, ...(context.exactIdentity ? { schema: context.schema } : {}) });
++    try {
++      await connectionStore.refreshTableColumnsTree(context.connectionId, context.database, context.tableName, context.schema, context.catalog);
++    } catch (e) {
++      toast(e instanceof Error ? e.message : String(e), 5000);
++    }
+     const matchingDataTabs = queryStore.tabs.filter((tab) => tab.mode === "data" && tab.connectionId === context.connectionId && tab.database === context.database && tab.tableMeta?.tableName === context.tableName && (tab.schema || tab.tableMeta.schema || "") === (context.schema || ""));
+     // 同一 catalog 只强制加载一次，结果分发给全部匹配 tab
+     const loadedByCatalog = new Map<string, { columns: ColumnInfo[]; primaryKeys: string[] }>();
+```
+
+**File**: `apps/desktop/src/stores/__tests__/connectionStore.refresh.spec.ts` (modified, +80/-1)
+```diff
+@@ -1,7 +1,8 @@
+ import { createPinia, setActivePinia } from "pinia";
+ import { beforeEach, describe, expect, it, vi } from "vitest";
+ import { isObjectCacheInvalidationError } from "@/lib/metadata/objectCacheInvalidationError";
+-import type { ConnectionConfig, TreeNode } from "@/types/database";
++import { createColumnDrafts } from "@/lib/table/tableStructureEditorState";
++import type { ColumnInfo, ConnectionConfig, TreeNode } from "@/types/database";
+ 
+ function installLocalStorage() {
+   const data = new Map<string, string>();
+@@ -104,6 +105,84 @@ describe("connectionStore tree refresh state", () => {
+     setActivePinia(createPinia());
+   });
+ 
++  it.each([
++    [true, "old"],
++    [false, "old"],
++    [true, "renamed"],
++    [false, "renamed"],
++  ] as const)("refreshes saved table columns without changing expansion (%s, %s)", async (expanded, name) => {
++    const getColumns = vi.fn().mockResolvedValue([column("old"), column("removed")]);
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
++    const otherSchema = { ...group, id: "other-schema", schema: "other", isExpanded: true, children: [] };
++    const otherCatalog = { ...group, id: "other-catalog", catalog: "external", isExpanded: true, children: [] };
++    const store = await createStore(schemaNode([group, otherSchema, otherCatalog]));
++    await store.loadColumns("pg-1", "app", "users", "public", group.id);
++    group.isExpanded = expanded;
++    const updated = { ...column(name), data_type: "character varying", character_maximum_length: 512, comment: "updated comment", is_nullable: false };
++    getColumns.mockResolvedValue([updated]);
++
++    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
++
++    expect(getColumns).toHaveBeenCalledTimes(2);
++    expect(getColumns).toHaveBeenLastCalledWith("pg-1", "app", "public", "users", undefined);
++    expect(group.children).toHaveLength(1);
++    expect(group.children![0]).toMatchObject({ label: `${name} (character varying)`, meta: updated });
++    expect(createColumnDrafts([group.children![0]!.meta as ColumnInfo], "postgres")[0]).toMatchObject({ dataType: "character varying(512)", comment: "updated comment", isNullable: false });
++    expect(group.objectCount).toBe(1);
++    expect(group.isExpanded).toBe(expanded);
++    expect(otherSchema.children).toEqual([]);
++    expect(otherCatalog.children).toEqual([]);
++  });
++
++  it("preserves old columns on a failed reload and retries an empty loaded group", async () => {
++    const getColumns = vi.fn().mockResolvedValue([]);
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
++    const store = await createStore(schemaNode([group]));
++    await store.loadColumns("pg-1", "app", "users", "public", group.id);
++    group.isExpanded = false;
++    getColumns.mockResolvedValueOnce([column("added")]);
++    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
++    expect(group.children![0]!.meta).toEqual(column("added"));
++    getColumns.mockRejectedValueOnce(new Error("metadata denied"));
++    await expect(store.refreshTableColumnsTree("pg-1", "app", "users", "public")).rejects.toThrow("metadata denied");
++    expect(group.children![0]!.meta).toEqual(column("added"));
++    expect(group.isExpanded).toBe(false);
++    expect(group.isLoading).toBe(false);
++  });
++
++  it("ignores an older column request that finishes after the saved structure reload", async () => {
++    let finishOld!: (value: ReturnType<typeof column>[]) => void;
++    const getColumns = vi
++      .fn()
++      .mockImplementationOnce(
++        () =>
++          new Promise((resolve) => {
++            finishOld = resolve;
++          }),
++      )
++      .mockResolvedValue([column("fresh")]);
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
++    const store = await createStore(schemaNode([group]));
++    const oldLoad = store.loadColumns("pg-1", "app", "users", "public", group.id);
++    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
++    finishOld([column("stale")]);
++    await oldLoad;
++    expect(group.children![0]!.meta).toEqual(column("fresh"));
++  });
++
++  it("does not load unopened column groups after a structure save", async () => {
++    const getColumns = vi.fn();
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users"
+```
+
+**File**: `apps/desktop/src/stores/connectionStore.ts` (modified, +24/-3)
+```diff
+@@ -8335,7 +8335,7 @@ export const useConnectionStore = defineStore("connection", () => {
+     }
+   }
+ 
+-  async function loadColumns(connectionId: string, database: string, table: string, schema?: string, nodeId?: string, catalog?: string) {
++  async function loadColumns(connectionId: string, database: string, table: string, schema?: string, nodeId?: string, catalog?: string, options?: { preserveExpansion?: boolean }) {
+     const parentId = nodeId ?? (schema ? `${connectionId}:${database}:${schema}:${table}:__columns` : `${connectionId}:${database}:${table}:__columns`);
+     const node = findNode(treeNodes.value, parentId);
+     if (!node) return;
+@@ -8368,7 +8368,7 @@ export const useConnectionStore = defineStore("connection", () => {
+             };
+           }),
+         );
+-        targetNode.isExpanded = true;
++        if (!options?.preserveExpansion) targetNode.isExpanded = true;
+         return;
        }
-       continue;
-     }
-@@ -1046,36 +1056,64 @@ function scanSqlServerControlFlow(sql: string, from: number, to: number, databas
-   return { openBlocks, closedAt, wordAfterClose, sawBlockBegin, hasControlFlowElse };
- }
+       const querySchema = metadataQuerySchema(connectionId, database, schema);
+@@ -8391,7 +8391,7 @@ export const useConnectionStore = defineStore("connection", () => {
+           meta: col,
+         })),
+       );
+-      targetNode.isExpanded = true;
++      if (!options?.preserveExpansion) targetNode.isExpanded = true;
+     } catch (e) {
+       recordMetadataLoadError(connectionId, e, load);
+       throw e;
+@@ -8913,6 +8913,26 @@ export const useConnectionStore = defineStore("connection", () => {
+     void loadSidebarTableStorage({ connectionId, database, schema: schema || "" }, { force: true });
+   }
  
-+/**
-+ * True when the first word is `BEGIN` followed by a keyword that opens a real
-+ * block — a plain `BEGIN ... END`, `BEGIN TRY`, `BEGIN CATCH` — rather than a
-+ * transaction or conversation, which has no matching `END` (#13051).
-+ */
-+function opensSqlServerTopLevelBlock(sql: string, from: number, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): boolean {
-+  const firstToken = nextSqlWordToken(sql, from, databaseType, parameterOptions);
-+  if (firstToken?.word !== "BEGIN") return false;
-+  const secondToken = nextSqlWordToken(sql, firstToken.end, databaseType, parameterOptions);
-+  return secondToken != null && !SQLSERVER_NON_BLOCK_BEGIN_KEYWORDS.has(secondToken.word);
-+}
-+
- /**
-  * True when `statement` is a whole T-SQL control-flow batch: an `IF`/`WHILE`
-  * whose body is a `BEGIN ... END` block or whose branches are plain statements
-- * with an `ELSE`. Such a batch contains no independent statements, so it must
-- * stay one execution range instead of being split at the line-oriented
-- * `BEGIN`/`EXEC`/`END` tokens.
-+ * with an `ELSE`, or a top-level block statement (`BEGIN ... END`, `BEGIN TRY
-+ * ... END TRY BEGIN CATCH ... END CATCH`). Such a batch contains no
-+ * independent statements, so it must stay one execution range instead of
-+ * being split at the line-oriented `BEGIN`/`EXEC`/`END` tokens.
-  */
- function isSqlServerControlFlowBatch(sql: string, statement: RawStatement, databaseType?: DatabaseType, parameterOptions?: SqlParameterOptions): boolean {
-   if (databaseType !== "sqlserver") return false;
-   const firstWord = nextSqlWordToken(sql, statement.from, databaseType, parameterOptions)?.word;
--  if (firstWord !== "IF" && firstWord !== "WHILE") return false;
-+  const opensTopLevelBlock = opensSqlServerTopLevelBlock(sql, statement.from, databaseType, parameterOptions);
-+  if (firstWord !== "IF" && firstWord !== "WHILE" && !opensTopLevelBlock) return false;
- 
-   const scan = scanSqlServerControlFlow(sql, statement.from, statement.to, databaseType, parameterOptions);
--  return scan.hasControlFlowElse || (scan.sawBlockBegin && scan.openBlocks === 0);
-+  if (firstWord === "IF" || firstWord === "WHILE") {
-+    return scan.hasControlFlowElse || (scan.sawBlockBegin && scan.openBlocks === 0);
++  // Saving structure does not replace existing sidebar column nodes. Reload only
++  // materialized groups so their labels and DDL metadata stay current, including
++  // groups the user has since collapsed, without opening new branches.
++  async function refreshTableColumnsTree(connectionId: string, database: string, table: string, schema?: string, catalog?: string) {
++    if (!connectedIds.value.has(connectionId)) return;
++    const querySchema = metadataQuerySchema(connectionId, database, schema);
++    const groups = findTreeNodes(
++      treeNodes.value,
++      (node) =>
++        node.type === "group-columns" &&
++        node.connectionId === connectionId &&
++        node.database === database &&
++        node.tableName === table &&
++        metadataQuerySchema(connectionId, database, node.schema) === querySchema &&
++        (node.catalog || "") === (catalog || "") &&
++        !!(node.isExpanded || node.isLoading || node.children?.length || isTreeNodeChildrenLoaded(node.id)),
++    );
++    await Promise.all(groups.map((node) => loadColumns(connectionId, database, table, node.schema, node.id, node.catalog, { preserveExpansion: true })));
 +  }
-+  // A top-level `BEGIN` block is one batch by itself: keep it whole whether
-+  // the block is balanced or still open mid-typing. `BEGIN TRAN[SACTION]` and
-+  // friends never reach this branch.
-+  return true;
- }
- 
- /**
-  * T-SQL does not end a `BEGIN ... END` block at a semicolon, so splitting on
-  * every top-level `;` cuts `IF ... BEGIN ... ; ... END` batches into fragments
-  * whose `BEGIN`/`EXEC`/`END` lines then look like independent statements
-- * (#9336). Re-join the fragments of such a batch so it stays one range.
-+ * (#9336). Top-level block statements — a plain `BEGIN ... END`, `BEGIN TRY
-+ * ... END TRY` plus its mandatory `BEGIN CATCH ... END CATCH` — hit the same
-+ * split and are re-joined here too (#13051); only `BEGIN` 
++
+   function isSchemaAwareDatabase(connectionId: string): boolean {
+     return isSchemaAware(getConfig(connectionId)?.db_type);
+   }
+@@ -11424,6 +11444,7 @@ export const useConnectionStore = defineStore("connection", () => {
+     refreshConnectionTreeNode,
+     refreshDatabaseTreeNode,
+     refreshObjectListTreeNode,
++    refreshTableColumnsTree,
+     connectedIds,
+     connectingIds,
+     isConnectionClosedByUser,
 ```
 
-**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +378/-11)
+---
+
+### Incident Patch 2: `4013855f` (2026-10-31)
+**Commit Message**: Revert "perf(window): lower the WebView2 memory target while the main window is hidden"
+
+This reverts commit 118f86ca3e74a370a88414a925140b58f20058c9.
+
+**File**: `src-tauri/src/lib.rs` (modified, +0/-8)
 ```diff
-@@ -1832,22 +1832,29 @@ fn find_sqlserver_statement_at_cursor(sql: &str, cursor_pos: usize) -> String {
+@@ -23,7 +23,6 @@ mod webview2_legacy_css;
+ mod webview2_preflight;
+ #[cfg(any(target_os = "windows", test))]
+ mod webview2_recovery;
+-mod webview_memory;
+ mod window_geometry;
+ mod window_state_guard;
+ #[cfg(target_os = "windows")]
+@@ -766,7 +765,6 @@ pub(crate) fn hide_main_window_for_close<R: tauri::Runtime>(app: &tauri::AppHand
+     }
  
-     for (idx, batch) in batches.iter().enumerate() {
-         if cursor >= batch.start && cursor <= batch.end {
--            if starts_with_sqlserver_control_flow_batch(&batch.text)
--                || (profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&batch.text))
--            {
-+            // Module DDL is checked before the block scan: a procedure body is
-+            // itself a `BEGIN ... END` block, and the whole `CREATE`/`ALTER`
-+            // batch is the execution unit there.
-+            if profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&batch.text) {
-                 return batch.text.clone();
-             }
-+            if let Some(statement) =
-+                sqlserver_control_flow_statement_at(&batch.text, Some(cursor.saturating_sub(batch.start)))
-+            {
-+                return statement;
-+            }
-             let relative_cursor = sql[..cursor].encode_utf16().count() - sql[..batch.start].encode_utf16().count();
-             return find_statement_at_cursor_with_options(&batch.text, relative_cursor, SqlParsingOptions::default());
-         }
+     let _ = window.hide();
+-    webview_memory::sync(app);
+ }
  
-         if cursor < batch.start {
-             if let Some(prev) = idx.checked_sub(1).and_then(|prev_idx| batches.get(prev_idx)) {
--                if starts_with_sqlserver_control_flow_batch(&prev.text)
--                    || (profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&prev.text))
--                {
-+                if profile.keeps_sqlserver_module_batch_at_cursor && starts_with_sqlserver_module_ddl(&prev.text) {
-                     return prev.text.clone();
+ pub(crate) fn request_app_close<R: tauri::Runtime>(app: &tauri::AppHandle<R>, target: &str) {
+@@ -2281,12 +2279,6 @@ pub fn run() {
                  }
-+                if let Some(statement) = sqlserver_control_flow_statement_at(&prev.text, None) {
-+                    return statement;
-+                }
-                 let relative_cursor = prev.text.encode_utf16().count();
-                 return find_statement_at_cursor_with_options(
-                     &prev.text,
-@@ -1862,12 +1869,271 @@ fn find_sqlserver_statement_at_cursor(sql: &str, cursor_pos: usize) -> String {
-     batches.last().map(|batch| batch.text.clone()).unwrap_or_else(|| sql.trim().to_string())
- }
- 
-+/// A top-level token of a SQL Server batch: a word or a `;` terminator outside
-+/// string literals, quoted identifiers, comments and parentheses. `CASE ... END`
-+/// inside a condition or select list therefore never looks like a block.
-+struct SqlServerTopLevelToken<'a> {
-+    text: &'a str,
-+    start: usize,
-+    end: usize,
-+}
-+
-+impl SqlServerTopLevelToken<'_> {
-+    fn is_word(&self, keyword: &str) -> bool {
-+        self.text.eq_ignore_ascii_case(keyword)
-+    }
-+}
-+
-+fn sqlserver_top_level_tokens(sql: &str) -> Vec<SqlServerTopLevelToken<'_>> {
-+    let bytes = sql.as_bytes();
-+    let mut tokens = Vec::new();
-+    let mut paren_depth = 0usize;
-+    let mut index = 0usize;
-+
-+    while index < bytes.len() {
-+        match bytes[index] {
-+            quote @ (b'\'' | b'"') => {
-+                index += 1;
-+                while index < bytes.len() {
-+                    if bytes[index] == quote {
-+                        if bytes.get(index + 1) == Some(&quote) {
-+                            index += 2;
-+                            continue;
-+                        }
-+                        index += 1;
-+                        break;
-+                    }
-+                    index += 1;
-+                }
-+            }
-+            b'[' => {
-+                index += 1;
-+                while index < bytes.len() {
-+                    if bytes[index] == b']' {
-+                        if bytes.get(index + 1) == Some(&b']') {
-+                            index += 2;
-+                            continue;
-+                        }
-+                        index += 1;
-+                        break;
-+                    }
-+                    index += 1;
-+                }
-+            }
-+            b'-' if bytes.get(index + 1) == Some(&b'-') => {
-+                index += 2;
-+                while index < bytes.len() && bytes[index] != b'\n' {
-+                    index += 1;
-+                }
-+            }
-+            b'/' if bytes.get(index + 1) == Some(&b'*') => {
-+                index += 2;
-+                while index < bytes.len() && !(bytes[index] == b'*' && bytes.get(index + 1) == Some(&b'/')) {
-+                    index += 1;
-+                }
-+                index = (index + 2).min(bytes.len());
-+            }
-+            b'(' => {
-+                paren_depth += 1;
-+                index += 1;
-+            }
-+            b')' => {
-+                paren_depth = paren_depth.saturating_sub(1);
-+                index += 1;
-+            }
-+            b';' if paren_depth == 0 => {
-+                tokens.push(SqlServerTopLevelToken { text: ";", start: index, end: index + 1 });
-+                index +=
+                 return;
+             }
+-            if window.label() == "main"
+-                && matches!(event, tauri::WindowEvent::Focused(_) | tauri::WindowEvent::Resized(_))
+-            {
+-                // Minimize / hide-to-tray / restore all surface as a focus or size change.
+-                webview_memory::sync(window.app_handle());
+-            }
+             if let tauri::WindowEvent::Destroyed = event {
+                 // A webview that no longer exists must not leave drop grants
+                 // behind for a future renderer to claim.
+```
+
+**File**: `src-tauri/src/webview_memory.rs` (removed, +0/-91)
+```diff
+@@ -1,91 +0,0 @@
+-//! Lowers the main WebView2's memory target while the window is not on screen.
+-//!
+-//! The app can sit in the tray or minimized for hours. WebView2 documents that setting
+-//! `MemoryUsageTargetLevel = Low` on an inactive WebView lets the engine drop cached data and
+-//! page memory to disk, and restoring `Normal` on return keeps full performance. See
+-//! <https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/performance#use-memory-management-apis>.
+-//!
+-//! Only a window the user cannot see qualifies. Merely losing focus (alt-tab to documentation)
+-//! keeps `Normal`: trimming a page the user is about to look at again makes the return sluggish.
+-//!
+-//! WKWebView and WebKitGTK expose no equivalent, so everything except the pure decision is
+-//! Windows-only.
+-
+-/// A window that is minimized or hidden to the tray cannot be seen.
+-#[cfg(any(target_os = "windows", test))]
+-fn wants_low_memory(minimized: bool, visible: bool) -> bool {
+-    minimized || !visible
+-}
+-
+-#[cfg(target_os = "windows")]
+-mod windows_impl {
+-    use super::wants_low_memory;
+-    use std::sync::atomic::{AtomicBool, Ordering};
+-    use tauri::{Manager, Runtime};
+-    use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2_19, COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL};
+-    use windows_core::Interface;
+-
+-    const MAIN_WINDOW_LABEL: &str = "main";
+-    // COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL_NORMAL / _LOW
+-    const LEVEL_NORMAL: i32 = 0;
+-    const LEVEL_LOW: i32 = 1;
+-
+-    static LOW_APPLIED: AtomicBool = AtomicBool::new(false);
+-
+-    fn apply(webview: &tauri::webview::PlatformWebview, low: bool) -> Result<(), String> {
+-        // SAFETY: `with_webview` runs this closure on the WebView2 UI thread, which the COM
+-        // contract requires. `ICoreWebView2_19` needs runtime >= 114; older runtimes fail the
+-        // cast and the caller only logs, leaving the default memory behavior unchanged.
+-        unsafe {
+-            let core = webview.controller().CoreWebView2().map_err(|error| error.to_string())?;
+-            let core19 = core.cast::<ICoreWebView2_19>().map_err(|error| error.to_string())?;
+-            let level = COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL(if low { LEVEL_LOW } else { LEVEL_NORMAL });
+-            core19.SetMemoryUsageTargetLevel(level).map_err(|error| error.to_string())
+-        }
+-    }
+-
+-    /// Re-evaluates the target level from the main window's current visibility.
+-    /// Cheap and idempotent: the WebView is only touched when the desired level changes.
+-    pub fn sync<R: Runtime>(app: &tauri::AppHandle<R>) {
+-        let Some(window) = app.get_webview_window(MAIN_WINDOW_LABEL) else {
+-            return;
+-        };
+-        let minimized = window.is_minimized().unwrap_or(false);
+-        let visible = window.is_visible().unwrap_or(true);
+-        let low = wants_low_memory(minimized, visible);
+-        if LOW_APPLIED.swap(low, Ordering::SeqCst) == low {
+-            return;
+-        }
+-        let result = window.with_webview(move |webview| {
+-            if let Err(error) = apply(&webview, low) {
+-                eprintln!("[WARN] failed to set WebView2 memory usage target: {error}");
+-            }
+-        });
+-        if let Err(error) = result {
+-            LOW_APPLIED.store(!low, Ordering::SeqCst);
+-            eprintln!("[WARN] failed to dispatch WebView2 memory usage target: {error}");
+-        }
+-    }
+-}
+-
+-/// Called after anything that can change whether the main window is on screen.
+-#[cfg(target_os = "windows")]
+-pub fn sync<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
+-    windows_impl::sync(app);
+-}
+-
+-#[cfg(not(target_os = "windows"))]
+-pub fn sync<R: tauri::Runtime>(_app: &tauri::AppHandle<R>) {}
+-
+-#[cfg(test)]
+-mod tests {
+-    use super::wants_low_memory;
+-
+-    #[test]
+-    fn only_an_invisible_window_gets_the_low_target() {
+-        assert!(!wants_low_memory(false, true));
+-        assert!(wants_low_memory(true, true));
+-        assert!(wants_low_memory(false, false));
+-        assert!(wants_low_memory(true, false));
+-    }
+-}
 ```
 
 ---
 
-### Incident Patch 2: `0566e0db` (2026-10-25)
-**Commit Message**: fix(mcp): clear readonly attribute on replacement temp cleanup
+### Incident Patch 3: `0b11c05e` (2026-10-31)
+**Commit Message**: Revert "docs(window): correct the WebView2 memory target version note"
 
-**File**: `.github/scripts/install-mcp-powershell.test.ps1` (modified, +7/-0)
-```diff
-@@ -134,6 +134,13 @@ try {
-     Remove-McpReplacementTempFiles (Join-Path $testRoot 'missing')
-     $script:count++
-     Write-Output 'PASS cleanup preserves active binary, marker, unrelated files and directories'
-+    $readonlyPath = Join-Path $installDir 'dbx-mcp.exe~RF8c73e4f.TMP'
-+    [IO.File]::WriteAllText($readonlyPath, 'readonly leftover')
-+    [IO.File]::SetAttributes($readonlyPath, [IO.FileAttributes]::ReadOnly)
-+    Remove-McpReplacementTempFiles $installDir
-+    Assert-True (!(Test-Path -LiteralPath $readonlyPath)) 'Cleanup kept a read-only replacement temp file'
-+    $script:count++
-+    Write-Output 'PASS cleanup removes read-only replacement temp files'
-     $linkTarget = Join-Path $testRoot 'linked-target'
-     [IO.Directory]::CreateDirectory($linkTarget) | Out-Null
-     $targetFile = Join-Path $linkTarget 'dbx-mcp.exe~RF789.TMP'
-```
+This reverts commit 10fe0dc0a2cd1ae8f1293336224ea6e3619b82c3.
 
-**File**: `docs/public/install-mcp.ps1` (modified, +3/-0)
+**File**: `src-tauri/src/webview_memory.rs` (modified, +2/-3)
 ```diff
-@@ -50,6 +50,9 @@ function Remove-McpReplacementTempFiles([string]$Directory) {
-             $_.Name -imatch '\Adbx-mcp\.exe~RF[0-9a-f]+\.TMP\z'
-         } | ForEach-Object {
-             # A running MCP process may still hold the old executable; retry on the next run.
-+            # A READONLY attribute makes [IO.File]::Delete throw, so one read-only
-+            # leftover would otherwise survive every install; clear it first.
-+            try { $_.Attributes = $_.Attributes -band (-bnot [IO.FileAttributes]::ReadOnly) } catch {}
-             try { [IO.File]::Delete($_.FullName) } catch {}
-         }
-     } catch {}
-```
-
-**File**: `src-tauri/src/commands/mcp_cleanup.rs` (modified, +32/-2)
-```diff
-@@ -39,8 +39,24 @@ pub(super) fn cleanup_directory(directory: &Path) -> io::Result<usize> {
-         }
-         let path = entry.path();
-         let Ok(metadata) = fs::symlink_metadata(&path) else { continue };
--        // Never recurse or follow links; locked/read-only leftovers can be retried next launch.
--        if metadata.is_file() && !is_link(&metadata) && fs::remove_file(&path).is_ok() {
-+        // Never recurse or follow links; locked leftovers can be retried next launch.
-+        if !metadata.is_file() || is_link(&metadata) {
-+            continue;
-+        }
-+        // A READONLY attribute makes fs::remove_file fail with Access Denied on
-+        // Windows, so one read-only leftover would otherwise survive every
-+        // startup pass. Clear the attribute (the name pattern is strict enough)
-+        // before deleting. This is Windows-only: on Unix unlinking only needs a
-+        // writable directory, and clearing the write bits would widen the mode
-+        // to 0666 if the delete failed. The clear is best-effort so a failed
-+        // attribute write never skips the delete attempt.
-+        #[cfg(windows)]
-+        if metadata.permissions().readonly() {
-+            let mut permissions = metadata.permissions();
-+            permissions.set_readonly(false);
-+            let _ = fs::set_permissions(&path, permissions);
-+        }
-+        if fs::remove_file(&path).is_ok() {
-             removed += 1;
-         }
-     }
-@@ -124,6 +140,20 @@ mod tests {
-         assert!(!missing.exists());
-     }
+@@ -34,9 +34,8 @@ mod windows_impl {
  
-+    #[test]
-+    fn removes_read_only_leftovers() {
-+        let directory = TestDirectory::new();
-+        let readonly_path = directory.0.join("dbx-mcp.exe~RF8c73e4f.TMP");
-+        fs::write(&readonly_path, b"readonly leftover").unwrap();
-+        let mut permissions = fs::metadata(&readonly_path).unwrap().permissions();
-+        permissions.set_readonly(true);
-+        fs::set_permissions(&readonly_path, permissions).unwrap();
-+        assert!(fs::metadata(&readonly_path).unwrap().permissions().readonly());
-+
-+        assert_eq!(cleanup_directory(&directory.0).unwrap(), 1);
-+        assert!(!readonly_path.exists());
-+    }
-+
-     #[cfg(unix)]
-     #[test]
-     fn skips_symlinked_files_and_directories() {
-```
-
----
-
-### Incident Patch 3: `7e2c6e20` (2026-10-25)
-**Commit Message**: fix(deps): update gson to 2.15.0
-
-**File**: `agents/common/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- dependencies {
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
-     compileOnly 'com.zaxxer:HikariCP:7.1.0'
-     testImplementation 'com.zaxxer:HikariCP:7.1.0'
-     testImplementation 'com.h2database:h2:2.3.232'
-```
-
-**File**: `agents/drivers/dameng/build.gradle` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@ dependencies {
-     implementation fileTree(dir: 'libs', include: ['*.jar'])
-     // DmJdbcDriver8 supports JDK 8+ (compatible with JRE 21 used by DAMENG agent).
-     implementation 'com.dameng:DmJdbcDriver8:8.1.5.45'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
-```
-
-**File**: `agents/drivers/db2/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- dependencies {
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
-     implementation fileTree(dir: 'libs', include: ['*.jar'])
-     implementation 'com.ibm.db2:jcc:11.5.9.0'
- }
-```
-
-**File**: `agents/drivers/h2/build.gradle` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ dependencies {
-     h2V1 'com.h2database:h2:1.4.200'
-     h2V2 'com.h2database:h2:2.1.214'
-     h2V3 'com.h2database:h2:2.4.240'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('processResources') {
-```
-
-**File**: `agents/drivers/kafka/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- dependencies {
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
-     implementation 'org.apache.kafka:kafka-clients:3.9.2'
-     implementation('org.apache.zookeeper:zookeeper:3.8.4') {
-         exclude group: 'log4j', module: 'log4j'
-```
-
-**File**: `agents/drivers/mongodb/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- dependencies {
-     implementation project(':common')
-     implementation 'org.mongodb:mongodb-driver-sync:3.12.14'
--    implementation 'com.google.code.gson:gson:2.14.0'
-+    implementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
-```
-
-**File**: `agents/drivers/oceanbase-oracle/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- dependencies {
-     implementation fileTree(dir: 'libs', include: ['*.jar'])
-     implementation 'com.oceanbase:oceanbase-client:2.4.19'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
-```
-
-**File**: `agents/drivers/transwarp/build.gradle` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- dependencies {
-     implementation files('libs/inceptor-sdk-transwarp-6.1.0-SNAPSHOT.jar')
-     testImplementation 'com.h2database:h2:2.4.240'
--    testImplementation 'com.google.code.gson:gson:2.14.0'
-+    testImplementation 'com.google.code.gson:gson:2.15.0'
- }
- 
- tasks.named('shadowJar') {
+     fn apply(webview: &tauri::webview::PlatformWebview, low: bool) -> Result<(), String> {
+         // SAFETY: `with_webview` runs this closure on the WebView2 UI thread, which the COM
+-        // contract requires. `ICoreWebView2_19` ships with newer WebView2 runtimes (the SDK
+-        // introduced it in 1.0.1823.32); on a runtime without it the cast fails and the caller only
+-        // logs, leaving the default memory behavior unchanged.
++        // contract requires. `ICoreWebView2_19` needs runtime >= 114; older runtimes fail the
++        // cast and the caller only logs, leaving the default memory behavior unchanged.
+         unsafe {
+             let core = webview.controller().CoreWebView2().map_err(|error| error.to_string())?;
+             let core19 = core.cast::<ICoreWebView2_19>().map_err(|error| error.to_string())?;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13441** (2026-10-25): feat(export): queue manual desktop exports (@efeire)
-- **PR #13440** (2026-10-25): fix(deps): update dependency com.google.code.gson:gson to v2.15.0 (@renovate[bot])
-- **PR #13439** (2026-10-25): fix(sql): keep top-level SQL Server BEGIN blocks as one execution batch (@caiyq925-cell)
-- **PR #13438** (closed): fix(deps): update dependency com.databricks:databricks-jdbc to v3.4.4 - autoclosed (@renovate[bot])
-- **PR #13437** (2026-10-25): fix(mcp): clear the READONLY attribute when cleaning replacement temp files (@caiyq925-cell)
-- **PR #13435** (2026-10-25): docs(database-docs): match zh-CN UI labels and explain the notes file (@dienaso)
+- **PR #14022** (closed): fix(mysql): 索引元数据查询对 MySQL 5.0 逐层降级列集，修复比较架构 1054 (@dienaso)
+- **PR #14014** (2026-10-31): docs(import): 记录表数据导入的「失败继续」选项 (@dienaso)
+- **PR #13961** (2026-10-31): Codex/issue 13888 mysql comment (@imcman)
+- **PR #13957** (2026-10-31): fix(ai): wrap composer context controls without squeezing icons (@khalil-shao)
+- **PR #13953** (2026-10-30): fix(sidebar): clear the collapsed marker when expanding a search result (@yiqiui)
+- **PR #13951** (2026-10-30): fix(grid): 精简选区统计并记住底栏显示指标 (@zipg)
 
 ---
 
@@ -2612,52 +2436,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sql): keep top-level SQL Server BEGIN blocks as one batch
+## X. refresh sidebar columns after saving table structure (#13850)
 
 **RULE**:
-When implementing operations in `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afc9374f`: sql): keep top-level SQL Server BEGIN blocks as one batch. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `708a2d3f`: refresh sidebar columns after saving table structure (#13850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/__tests__/sql/sqlStatementRanges.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  const sqlServerTryCatchBatch = [
-    "SET XACT_ABORT ON;",
-    "",
-    "BEGIN TRY",
-    "    BEGIN TRANSACTION;",
-    "",
-    "    UPDATE [dbo].[Documents]",
-    "    SET [Deleted] = 0",
-    "    WHERE [Deleted] = 1;",
-    "",
-    "    DECLARE @Updated int = @@ROWCOUNT;",
-    "",
-    "    IF EXISTS (SELECT 1 FROM [dbo].[Documents] WHERE [Deleted] = 1)",
-    "        THROW 50001, N'Rows with Deleted = 1 still exist.', 1;",
-    "",
-    "    COMMIT TRANSACTION;",
-    "",
-    "    SELECT N'OK' AS Result, @Updated AS RowsUpdated;",
-    "END TRY",
-    "BEGIN CATCH",
-    "    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;",
-    "    THROW;",
-    "END CATCH;",
-  ].join("\n");
-  // The batch range starts at the real `BEGIN TRY` token, so the blank line
-  // and semicolon around the statement are not part of it.
-  const sqlServerTryCatchRange = sqlServerTryCatchBatch.slice(sqlServerTryCatchBatch.indexOf("BEGIN TRY")).replace(/;$/, "");
+  refreshTableColumnsTree: vi.fn(),
+    refreshTableColumnsTree: mocks.refreshTableColumnsTree,
+    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
+  it("refreshes sidebar columns even without a data tab", async () => {
+    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
+    await useNavigationTargets(dialogs).onStructureEditorSaved(vi.fn(), vi.fn(), target);
+    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", undefined);
+    expect(mocks.getColumns).not.toHaveBeenCalled();
+  });
 
-  // #13051: a top-level BEGIN TRY ... END TRY BEGIN CATCH ... END CATCH script
-  // must execute as one batch — splitting it at the top-level `;` sends
-  // fragments like `BEGIN TRANSACTION` alone and SQL Server rejects them.
-  it("keeps a SQL Server top-level 
+  it("still refreshes data tab metadata if the sidebar reload fails", async () => {
+    const navigation = useNavigationTargets(dialogs);
+    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
+    await navigation.openLineageTarget(target);
+    mocks.refreshTableColumnsTree.mockRejectedValueOnce(new Error("sidebar unavailable"));
+    mocks.getColumns.mockResolvedValueOnce([column("fresh_id")]);
+    const toast = vi.fn();
+    await navigation.onStructureEditorSaved(vi.fn(), toast, 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2667,4 +2477,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afc9374f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `708a2d3f` are properly handled with clean fallback behavior.

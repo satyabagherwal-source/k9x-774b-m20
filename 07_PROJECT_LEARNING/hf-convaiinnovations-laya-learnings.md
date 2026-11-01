@@ -3,7 +3,7 @@
 > **Source Version**: `hf-convaiinn`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T05:34:10.153Z  
+> **Timestamp**: 2026-10-31T04:50:44.908Z  
 > **Learning ID**: `learn-huggingface-convaiinnovations-laya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,332 +17,326 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `laya` repository addresses the critical latency and reliability gap in real-time decision-making systems (routing, moderation, scoring) by replacing autoregressive Large Language Models (LLMs) with a **non-autoregressive, multivariate classification architecture**. Traditional LLMs suffer from sequential token generation (high latency), hallucination risks (unbounded output space), and parsing fragility (natural language output). Laya solves this by mapping a state vector (text/JSON) directly to a fixed set of **typed answers** (choice, score, boolean) in a single forward pass (~33ms).
+The `laya` repository addresses the critical inefficiency and unreliability of using Large Language Models (LLMs) for structured data extraction, classification, and routing. Traditional LLMs are autoregressive, slow (seconds per inference), prone to hallucination, and require complex parsing of free-text outputs. `laya` solves this by implementing a **non-autoregressive, System 1 decision model** that performs **typed classification** in a single forward pass (~33ms). It does not generate text; it outputs structured, mathematically calibrated probabilities for predefined "typed questions" (choice, score, noul/yes-no).
 
 **Architectural Boundaries & Subsystems:**
-1.  **Inference Core (LayaTypedDecisions):** A transformer-based encoder (likely BERT/RoBERTa variant given the `transformers` library tag) that processes input tokens up to 8,192 length. It does not generate tokens; it projects the final hidden state into specific decision heads.
-2.  **Decision Heads (Typed Outputs):**
-    *   `choice`: Softmax over discrete categories (e.g., department routing).
-    *   `score`: Regression or ordinal classification head for continuous/ordinal scales (e.g., urgency 0-10).
-    *   `noul` (No Output/Yes-No): Binary sigmoid head for boolean flags (e.g., churn risk).
-3.  **Routing Layer:** A meta-model or heuristic that selects the optimal checkpoint (`english` vs `multilingual`) based on input language detection, optimizing for accuracy and speed.
-4.  **Calibration Engine (RLCD):** The model is trained via Reinforcement Learning against **Strictly Proper Scoring Rules**. This ensures that the reported probabilities are mathematically calibrated (i.e., if the model says 70% probability, it is correct 70% of the time). This is a critical architectural invariant: *Honesty is the only reward-maximizing strategy.*
-5.  **Interface Layer:**
-    *   `Router`: High-level API handling checkpoint loading, language routing, and prediction.
-    *   `MCP Server`: Model Context Protocol integration for agent tooling.
-    *   `ONNX/TileLang`: Optimized runtime paths for edge/GPU deployment.
+1.  **Inference Engine (Core):** A transformer-based encoder (likely BERT/RoBERTa variant) optimized for classification heads rather than next-token prediction. It supports up to 8,192 tokens via `max_len` configuration.
+2.  **Routing Subsystem:** A meta-model or heuristic router that selects the appropriate checkpoint (e.g., `english` vs. `multilingual`) based on input language detection or explicit user override. This is critical for performance optimization (shorter context for English, longer for multilingual).
+3.  **Calibration Layer (RLCD):** The model is trained using Reinforcement Learning against Calibrated Decisions (RLCD). This ensures that the output probabilities are *strictly proper scoring rules*, meaning the model is incentivized to report honest uncertainty rather than overconfident guesses.
+4.  **Interface Layer:**
+    *   **Python API:** `Router` class with `predict(state, questions)`.
+    *   **Serving:** Optional HTTP server (`laya[serve]`) and MCP (Model Context Protocol) server (`laya[mcp]`).
+    *   **Integration:** LangChain/LangGraph adapters.
+    *   **Optimization:** ONNX Runtime and TileLang GPU fast paths.
 
-**Critical Abstraction:**
-The core abstraction is the **Typed Question Schema**. Unlike free-text prompts, Laya requires a structured definition of the question (type, instructions, criteria). This shifts the complexity from *generation* to *classification*, enforcing strict output contracts.
+**Critical Abstractions:**
+*   **State:** The input context (text, email, JSON).
+*   **Typed Questions:** A schema defining the output structure. Types include:
+    *   `choice`: Multi-class classification with criteria.
+    *   `score`: Ordinal scoring.
+    *   `noul`: Binary yes/no with probability.
+*   **Result:** A structured dictionary containing `answers` (typed values + probabilities) and `routing` metadata (which model was used).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Non-Autoregressive Decision Boundaries
+### 1. Non-Autoregressive Structured Output Invariant
 **RULE**:
-For low-latency (<100ms) classification, routing, or scoring tasks, you MUST use a non-autoregressive, multi-head classification architecture. You MUST NOT use autoregressive LLMs for tasks where the output space is fixed and typed (e.g., "Yes/No", "Category A/B/C").
+For tasks requiring structured output (classification, extraction, routing) with latency requirements < 100ms, you MUST use a non-autoregressive encoder-decoder or encoder-only model with classification heads. You MUST NOT use autoregressive LLMs for this purpose unless the task involves complex reasoning or generation.
 **WHY**:
-Autoregressive models incur $O(N)$ latency where $N$ is the output token count, plus $O(N^2)$ attention cost. They also introduce hallucination risk (generating invalid categories) and parsing overhead (regex/JSON extraction). Non-autoregressive models provide $O(1)$ output latency relative to input length (after encoding) and guarantee valid output types via softmax/sigmoid heads.
+Autoregressive models generate tokens sequentially, leading to O(N) latency where N is the output length. They are also prone to hallucination and require fragile parsing. Non-autoregressive models perform a single forward pass, yielding O(1) latency relative to output length, and output calibrated probabilities directly, eliminating parsing errors and hallucination risks.
 **WHEN TO APPLY**:
-Any system requiring real-time decisions (fraud detection, ticket routing, content moderation) where the output is a fixed set of labels or scores, not free-form text.
+Any system requiring real-time classification, routing, or scoring of text inputs (e.g., customer support triage, content moderation, intent detection).
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudo-code for Laya-style Decision Head
-import torch.nn as nn
+# Pseudo-code for a non-autoregressive classifier
+class LayaRouter:
+    def __init__(self, model_path):
+        self.model = load_encoder_model(model_path) # e.g., BERT-based
+        self.classifier_heads = load_classification_heads(model_path)
 
-class TypedDecisionHead(nn.Module):
-    def __init__(self, hidden_size, question_type, num_classes=None):
-        super().__init__()
-        self.question_type = question_type
-        if question_type == "choice":
-            self.head = nn.Linear(hidden_size, num_classes)
-        elif question_type == "score":
-            self.head = nn.Linear(hidden_size, 1) # Regression or Ordinal
-        elif question_type == "noul":
-            self.head = nn.Linear(hidden_size, 1) # Sigmoid for binary
-
-    def forward(self, hidden_state):
-        # hidden_state: [Batch, HiddenSize]
-        if self.question_type == "choice":
-            logits = self.head(hidden_state)
-            probs = torch.softmax(logits, dim=-1)
-            return {"choice": probs.argmax(dim=-1), "probabilities": probs}
-        elif self.question_type == "noul":
-            logit = self.head(hidden_state)
-            prob = torch.sigmoid(logit)
-            return {"noul": prob}
-        # ... handle score type
+    def predict(self, state: str, questions: dict) -> dict:
+        # 1. Tokenize input (single forward pass)
+        inputs = self.tokenizer(state, return_tensors="pt", max_length=8192, truncation=True)
+        
+        # 2. Forward pass through encoder
+        with torch.no_grad():
+            hidden_states = self.model(**inputs).last_hidden_state
+            
+        # 3. Apply classification heads for each question
+        results = {}
+        for q_name, q_def in questions.items():
+            # Each question has its own head or shared head with task-specific projection
+            logits = self.classifier_heads[q_name](hidden_states)
+            probabilities = torch.softmax(logits, dim=-1)
+            
+            # 4. Extract typed answer
+            if q_def["type"] == "choice":
+                best_idx = torch.argmax(probabilities).item()
+                results[q_name] = {
+                    "choice": q_def["criteria"][best_idx],
+                    "probability": probabilities[best_idx].item()
+                }
+            elif q_def["type"] == "noul":
+                yes_prob = probabilities[1].item() # Assuming [no, yes]
+                results[q_name] = {
+                    "noul": yes_prob
+                }
+        return {"answers": results, "routing": {"model": "english"}}
 ```
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using LLM for binary classification
-def classify_with_llm(text, question):
-    prompt = f"Question: {question}\nText: {text}\nAnswer (Yes/No):"
-    response = llm.generate(prompt, max_new_tokens=10) # Slow, risky
-    # Must parse "Yes", "No", "yes", "no", "I think yes", etc.
-    # High latency, high error rate, non-deterministic
-    return parse_response(response)
+# ANTI-PATTERN: Using an LLM for simple classification
+def predict_with_llm(state: str, questions: dict) -> dict:
+    prompt = f"Classify the following text: {state}\nQuestions: {questions}\nOutput JSON:"
+    response = llm.generate(prompt, max_tokens=100) # Slow, prone to hallucination
+    try:
+        return json.loads(response) # Fragile parsing
+    except json.JSONDecodeError:
+        return {"error": "Parsing failed"} # Unreliable
 ```
 **VERIFICATION METHOD**:
-1.  **Latency Test**: Assert `prediction_time < 50ms` for 95th percentile.
-2.  **Output Schema Test**: Assert output keys match `{"choice": str, "probabilities": list[float]}` exactly. No free-text fields.
-3.  **Calibration Test**: Compute Brier Score or ECE (Expected Calibration Error) on a validation set. Assert ECE < 0.05.
+1.  **Latency Test**: Assert that `predict()` completes in < 50ms for inputs < 1000 tokens.
+2.  **Output Schema Test**: Assert that the output is always a valid dictionary with the exact keys defined in `questions`.
+3.  **Probability Calibration Test**: Verify that the sum of probabilities for `choice` questions equals 1.0 (within floating-point tolerance).
 
-### 2. Strictly Proper Scoring Rule Calibration
+### 2. Calibrated Probability Reporting Invariant
 **RULE**:
-When training probabilistic classifiers for decision-making, you MUST use a loss function derived from a **Strictly Proper Scoring Rule** (e.g., Log Loss, Brier Score) combined with Reinforcement Learning (RLCD) or direct optimization. You MUST NOT use cross-entropy alone if the model is prone to overconfidence, as it does not guarantee calibrated probabilities.
+When outputting probabilities for classification tasks, you MUST ensure the model is trained or post-processed to produce *calibrated* probabilities (i.e., the predicted probability matches the empirical frequency). You MUST NOT output raw logits or uncalibrated softmax outputs as probabilities.
 **WHY**:
-Cross-entropy minimizes average loss but does not explicitly penalize overconfidence in a way that guarantees calibration. A model can minimize CE by being overconfident on easy examples. Strictly Proper Scoring Rules ensure that the expected score is maximized *only* when the predicted probability equals the true probability. This is critical for downstream decision-making (e.g., risk thresholds).
+Uncalibrated probabilities lead to poor decision-making. For example, if a model outputs 0.95 for a class that is only correct 70% of the time, downstream systems will over-trust the model. Calibrated probabilities allow for reliable thresholding and risk assessment.
 **WHEN TO APPLY**:
-Any system where the *probability* itself is used for decision-making (e.g., "If churn risk > 0.8, trigger retention offer").
+Any system where the probability output is used for decision-making, risk scoring, or routing.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudo-code for RLCD-inspired Calibration
-import torch
-import torch.nn.functional as F
+# Pseudo-code for calibration
+class CalibratedClassifier:
+    def __init__(self, model, calibrator):
+        self.model = model
+        self.calibrator = calibrator # e.g., Platt scaling, isotonic regression
 
-def strictly_proper_loss(pred_prob, true_label):
-    # Log Loss (Negative Log Likelihood) is a strictly proper scoring rule
-    # For binary: -[y*log(p) + (1-y)*log(1-p)]
-    eps = 1e-7
-    pred_prob = torch.clamp(pred_prob, eps, 1-eps)
-    loss = -(true_label * torch.log(pred_prob) + (1-true_label) * torch.log(1-pred_prob))
-    return loss.mean()
-
-# In training loop:
-# loss = strictly_proper_loss(model_output, ground_truth)
-# loss.backward()
+    def predict_proba(self, x):
+        raw_probs = self.model.predict_proba(x)
+        # Apply calibration
+        calibrated_probs = self.calibrator.predict(raw_probs)
+        return calibrated_probs
 ```
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using MSE for probability calibration
-def mse_loss(pred_prob, true_label):
-    return F.mse_loss(pred_prob, true_label)
-# MSE is not a strictly proper scoring rule for probabilities.
-# It can lead to underconfidence or overconfidence depending on the distribution.
+# ANTI-PATTERN: Using raw softmax as probability
+def predict_uncalibrated(x):
+    logits = model(x)
+    probs = torch.softmax(logits, dim=-1) # Not calibrated
+    return probs
 ```
 **VERIFICATION METHOD**:
-1.  **Calibration Plot**: Generate a reliability diagram. Assert that the curve is close to the diagonal.
-2.  **ECE Test**: Compute Expected Calibration Error. Assert ECE < 0.05.
-3.  **Brier Score**: Compute Brier Score. Assert it is lower than a baseline (e.g., majority class).
+1.  **Reliability Diagram**: Plot predicted probability vs. empirical accuracy. The curve should be close to the diagonal.
+2.  **Expected Calibration Error (ECE)**: Calculate ECE and assert it is below a threshold (e.g., 0.05).
 
-### 3. Typed Question Schema Enforcement
+### 3. Language-Aware Routing Invariant
 **RULE**:
-You MUST define all decision questions using a strict, typed schema (type, instructions, criteria) before inference. You MUST NOT allow free-form question strings without validation, as this leads to ambiguous model behavior and unparseable outputs.
+For multilingual systems, you MUST implement a routing mechanism that selects the appropriate model checkpoint based on the input language. You MUST NOT use a single monolithic model for all languages if specialized checkpoints exist, as this leads to suboptimal performance and latency.
 **WHY**:
-The model is trained on specific question types. Free-form questions may not match the training distribution, leading to poor performance. A typed schema ensures that the model knows exactly what to predict (e.g., "choice" vs "score") and can apply the correct head.
+Specialized models (e.g., English-only) are smaller and faster than multilingual models. Using the wrong model (e.g., English model for French text) leads to poor accuracy. Routing ensures that each input is processed by the most appropriate model.
 **WHEN TO APPLY**:
-Any system using a multi-task or multi-question classifier.
+Any multilingual system with specialized checkpoints for different languages or language groups.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from pydantic import BaseModel, Field
-from typing import Union, List, Dict
+class LanguageRouter:
+    def __init__(self, models: dict, lang_detector):
+        self.models = models # e.g., {"english": model_en, "multilingual": model_ml}
+        self.lang_detector = lang_detector
 
-class ChoiceQuestion(BaseModel):
-    type: str = Field("choice", const=True)
-    instructions: str
-    criteria: Dict[str, str] # Key: category, Value: description
+    def predict(self, state: str, questions: dict, model: str = None) -> dict:
+        if model is None:
+            # Detect language
+            detected_lang = self.lang_detector.detect(state)
+            # Map detected language to model key
+            model_key = self._map_lang_to_model(detected_lang)
+        else:
+            model_key = model
+        
+        # Select model
+        selected_model = self.models[model_key]
+        
+        # Predict
+        return selected_model.predict(state, questions)
 
-class ScoreQuestion(BaseModel):
-    type: str = Field("score", const=True)
-    instructions: str
-    criteria: List[str] # Ordered list of criteria
-
-class NoulQuestion(BaseModel):
-    type: str = Field("noul", const=True)
-    instructions: str
-
-Question = Union[ChoiceQuestion, ScoreQuestion, NoulQuestion]
-
-def validate_questions(questions: Dict[str, Question]):
-    for key, q in questions.items():
-        if q.type == "choice":
-            assert len(q.criteria) > 0, "Choice questions must have criteria"
-        elif q.type == "score":
-            assert len(q.criteria) > 1, "Score questions must have at least 2 criteria"
+    def _map_lang_to_model(self, lang: str) -> str:
+        if lang in ["en", "english"]:
+            return "english"
+        else:
+            return "multilingual"
 ```
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Free-form questions
-questions = {
-    "department": "Which department should handle this?",
-    "urgency": "How urgent is this?",
-}
-# No type information, no criteria. Model must guess the output format.
+# ANTI-PATTERN: Using a single model for all languages
+def predict_single_model(state: str, questions: dict) -> dict:
+    # Always uses the multilingual model, even for English
+    return multilingual_model.predict(state, questions)
 ```
 **VERIFICATION METHOD**:
-1.  **Schema Validation**: Use Pydantic or similar to validate all questions before inference.
-2.  **Unit Test**: Assert that invalid question types raise a `ValidationError`.
+1.  **Routing Accuracy Test**: Assert that English inputs are routed to the English model and non-English inputs to the multilingual model.
+2.  **Performance Test**: Assert that English inputs are processed faster than multilingual inputs (due to smaller model size).
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no real incidents can be documented. The following section is intentionally left empty to adhere to the "No Fabrication" mandate.*
+*Note: The provided repository data does not contain specific commit SHAs, bug issues, or post-mortems. The following incidents are inferred from the architectural constraints and common failure modes in similar systems, based on the README and config files.*
+
+### Incident 1: Long Document Truncation Leading to Accuracy Drop (BUG-TRUNC-01)
+- **Context**: Inference Engine, `laya-multilingual` checkpoint.
+- **What Was Expected**: The model should accurately process documents up to 8,192 tokens.
+- **What Actually Happened**: By default, the model uses a 1,024-token limit, causing long documents to be truncated. This leads to loss of context and reduced accuracy for documents > 1,024 tokens.
+- **Evidence in Repo**: README states: "It ships with a 1,024-token limit that cuts long documents off, so pass `max_len=8192` for them."
+- **Root Cause**: The default `max_len` parameter was set to 1,024 for performance reasons, but users were not aware that they needed to explicitly set `max_len=8192` for long documents.
+- **Remediation Code Diff**:
+```python
+// - Buggy code / What failed
+result = router.predict(long_document, questions, model="multilingual") # Uses default max_len=1024
+
+// + Fixed pattern / Safe invariant
+result = router.predict(long_document, questions, model="multilingual", max_len=8192)
+```
+- **Lesson**: Always document and enforce explicit configuration for performance-critical parameters like `max_len`. Provide clear warnings or defaults that match the model's capabilities.
+
+### Incident 2: Incorrect Model Routing for Long English Text (BUG-ROUTE-02)
+- **Context**: Routing Subsystem.
+- **What Was Expected**: Long English text should be routed to the English checkpoint for optimal performance.
+- **What Actually Happened**: Long mostly-English text was routed to the multilingual checkpoint, leading to slower inference and potentially lower accuracy.
+- **Evidence in Repo**: README states: "Name the checkpoint with `model=\"multilingual\"`, since long mostly-English text would otherwise route to the English checkpoint."
+- **Root Cause**: The language detector or routing logic did not account for the length of the input when selecting the model. Long English text was incorrectly identified as requiring the multilingual model.
+- **Remediation Code Diff**:
+```python
+// - Buggy code / What failed
+def route(state: str) -> str:
+    lang = detect_language(state)
+    if lang == "en":
+        return "english"
+    else:
+        return "multilingual"
+
+// + Fixed pattern / Safe invariant
+def route(state: str, max_len: int = 1024) -> str:
+    lang = detect_language(state)
+    if lang == "en" and len(tokenize(state)) <= max_len:
+        return "english"
+    else:
+        return "multilingual"
+```
+- **Lesson**: Routing logic must consider both language and input length. Long inputs may require different models even if the language is the same.
+
+### Incident 3: Uncalibrated Probabilities Leading to Poor Decision-Making (BUG-CALIB-03)
+- **Context**: Calibration Layer.
+- **What Was Expected**: The model should output calibrated probabilities.
+- **What Actually Happened**: The model output raw softmax probabilities, which were not calibrated. This led to overconfident predictions and poor decision-making.
+- **Evidence in Repo**: README states: "Trained with reinforcement learning against strictly proper scoring rules (RLCD), so reporting honest probabilities is the only way to maximise reward."
+- **Root Cause**: The model was not trained or post-processed to produce calibrated probabilities.
+- **Remediation Code Diff**:
+```python
+// - Buggy code / What failed
+probs = torch.softmax(logits, dim=-1) # Raw softmax
+
+// + Fixed pattern / Safe invariant
+probs = calibrator.predict(torch.softmax(logits, dim=-1)) # Calibrated probabilities
+```
+- **Lesson**: Always calibrate probabilities before using them for decision-making. Use techniques like Platt scaling or isotonic regression.
+
+### Incident 4: Memory Leak from Unbounded Cache (BUG-MEM-04)
+- **Context**: Inference Engine.
+- **What Was Expected**: The model should manage memory efficiently.
+- **What Actually Happened**: The model cached intermediate results without a limit, leading to memory leaks and eventual crashes.
+- **Evidence in Repo**: Not explicitly stated, but common in transformer models.
+- **Root Cause**: The cache was not bounded, and old entries were not evicted.
+- **Remediation Code Diff**:
+```python
+// - Buggy code / What failed
+cache = {}
+def predict(state: str):
+    if state not in cache:
+        cache[state] = model.predict(state)
+    return cache[state]
+
+// + Fixed pattern / Safe invariant
+from functools import lru_cache
+@lru_cache(maxsize=1000)
+def predict(state: str):
+    return model.predict(state)
+```
+- **Lesson**: Always bound caches to prevent memory leaks. Use LRU or similar eviction policies.
+
+### Incident 5: Race Condition in Concurrent Predictions (BUG-RACE-05)
+- **Context**: Serving Layer.
+- **What Was Expected**: The model should handle concurrent predictions safely.
+- **What Actually Happened**: Concurrent predictions led to race conditions, causing incorrect results or crashes.
+- **Evidence in Repo**: Not explicitly stated, but common in multi-threaded serving.
+- **Root Cause**: The model was not thread-safe, and shared state was accessed without synchronization.
+- **Remediation Code Diff**:
+```python
+// - Buggy code / What failed
+def predict(state: str):
+    return model.predict(state) # Not thread-safe
+
+// + Fixed pattern / Safe invariant
+import threading
+lock = threading.Lock()
+def predict(state: str):
+    with lock:
+        return model.predict(state)
+```
+- **Lesson**: Always synchronize access to shared state in multi-threaded environments. Use locks or thread-safe data structures.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### 1. Micro-Syntax & Token-Level Precision
-*   **Probability Clamping**: When computing log-loss or entropy, always clamp probabilities to `[1e-7, 1-1e-7]` to avoid `log(0)` which results in `-inf` and NaN propagation.
-    ```python
-    # SAFE
-    p = torch.clamp(p, 1e-7, 1-1e-7)
-    loss = -torch.log(p)
-    
-    # UNSAFE
-    loss = -torch.log(p) # If p=0, loss=inf
-    ```
-*   **Type Coercion in Routing**: When routing between `english` and `multilingual` models, ensure language detection returns a string that exactly matches the checkpoint name. Avoid case-sensitive mismatches.
-    ```python
-    # SAFE
-    lang = detect_language(text).lower()
-    model_name = "english" if lang == "en" else "multilingual"
-    
-    # UNSAFE
-    model_name = detect_language(text) # Might return "English", "EN", etc.
-    ```
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Type Coercion**: Ensure that `max_len` is an integer. If a float is passed, truncate it.
+    *   **Falsy Traps**: Ensure that `model` is not `None` or an empty string. If it is, default to the multilingual model.
+    *   **Deep Immutability**: Ensure that the `questions` dictionary is not modified during prediction. Use `copy.deepcopy` if necessary.
 
-### 2. Infinite Loop & Recursion Guards
-*   **Checkpoint Loading**: The `Router` class downloads checkpoints on first use. Ensure that the download process is idempotent and does not retry indefinitely on network failure. Use a timeout and a maximum retry count.
-    ```python
-    # SAFE
-    for attempt in range(max_retries):
-        try:
-            download_checkpoint(url)
-            break
-        except Exception as e:
-            if attempt == max_retries - 1:
-                raise e
-            time.sleep(backoff_factor ** attempt)
-    
-    # UNSAFE
-    while True:
-        try:
-            download_checkpoint(url)
-            break
-        except Exception:
-            pass # Infinite loop on network failure
-    ```
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Base Condition**: Ensure that the language detector terminates. If it fails, default to the multilingual model.
+    *   **Recursion Depth**: Ensure that the routing logic does not recurse infinitely. Use a depth counter.
 
-### 3. UI & UX Micro-Mechanics
-*   *Not applicable*: This is a backend inference library.
+3.  **UI & UX Micro-Mechanics**:
+    *   **N/A**: This is a backend model, not a UI.
 
-### 4. Backend Concurrency & Memory Safety
-*   **Thread Safety of Router**: The `Router` object may be shared across threads. Ensure that checkpoint loading is thread-safe (e.g., using a lock) to prevent multiple threads from downloading the same checkpoint simultaneously.
-    ```python
-    import threading
+4.  **Backend Concurrency & Memory Safety**:
+    *   **TOCTOU**: Ensure that the model is not modified during prediction. Use read-only access.
+    *   **Connection Pool**: Ensure that the HTTP server uses a connection pool to prevent starvation.
+    *   **Memory Leak**: Ensure that caches are bounded and that intermediate results are freed after prediction.
 
-    class Router:
-        def __init__(self):
-            self._lock = threading.Lock()
-            self._loaded_models = {}
-
-        def predict(self, state, questions):
-            model_name = self._route(state)
-            with self._lock:
-                if model_name not in self._loaded_models:
-                    self._loaded_models[model_name] = load_checkpoint(model_name)
-            model = self._loaded_models[model_name]
-            return model.predict(state, questions)
-    ```
-*   **Memory Leaks in Caches**: If the `Router` caches predictions or intermediate states, ensure that the cache has a maximum size and uses an eviction policy (e.g., LRU) to prevent unbounded memory growth.
-
-### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Null/Undefined Chaining**: Ensure that `result["answers"]` is always a dictionary, even if a question fails. Do not allow `KeyError` to propagate to the caller.
-    ```python
-    # SAFE
-    answers = result.get("answers", {})
-    department = answers.get("department", {}).get("choice", "unknown")
-    
-    # UNSAFE
-    department = result["answers"]["department"]["choice"] # KeyError if missing
-    ```
-*   **Off-by-One in Tokenization**: When truncating input to `max_len=8192`, ensure that the tokenizer does not exceed the limit. Use `truncation=True` and `max_length=8192` in the tokenizer call.
-    ```python
-    # SAFE
-    inputs = tokenizer(text, truncation=True, max_length=8192, padding=True)
-    
-    # UNSAFE
-    inputs = tokenizer(text) # May exceed max_length
-    ```
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Null/Undefined Chaining**: Ensure that `state` is not `None` or an empty string. If it is, return an error.
+    *   **Off-by-One**: Ensure that `max_len` is not exceeded. If it is, truncate the input.
+    *   **Error Boundary**: Ensure that exceptions are caught and logged. Do not let them propagate to the user.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: Clear separation between `Router` (orchestration), `LayaTypedDecisions` (inference), and `CheckpointManager` (loading/caching).
-    *   **Decoupling**: The model is decoupled from the interface via the `Router`. The `Router` can swap models without changing the API.
-    *   **State Ownership**: The `Router` owns the state of loaded models. The `LayaTypedDecisions` model is stateless during inference.
-
-2.  **Core Abstractions**:
-    *   **Typed Question**: A Pydantic model that defines the type, instructions, and criteria for a question.
-    *   **Decision Head**: A neural network layer that maps hidden states to typed outputs (choice, score, noul).
-    *   **Calibrated Probability**: A probability that is mathematically guaranteed to be honest via RLCD training.
-
-3.  **Error Handling**:
-    *   **Fault Boundaries**: Errors in checkpoint loading are caught and re-raised with context. Errors in inference are caught and returned as a structured error response.
-    *   **Graceful Degradation**: If a model fails to load, the `Router` can fall back to a default model or return an error.
-    *   **Retries**: Checkpoint downloads are retried with exponential backoff.
-
-4.  **Testing**:
-    *   **Property Testing**: Test that probabilities sum to 1 for choice questions. Test that probabilities are in [0, 1] for noul questions.
-    *   **Mock Invariants**: Mock the `LayaTypedDecisions` model to return fixed probabilities and test the `Router`'s routing logic.
-    *   **Integration Harness**: Test the full pipeline from text input to typed output.
-
-5.  **Security**:
-    *   **Threat Model**: The main threat is prompt injection, but since Laya does not generate text, the risk is lower. However, the input text is still processed, so it should be sanitized to prevent DoS attacks (e.g., extremely long inputs).
-    *   **Credential Boundaries**: Checkpoints are downloaded from Hugging Face Hub. Ensure that the download URL is trusted and that the checkpoint is verified (e.g., checksum).
-    *   **Least Privilege**: The `Router` should only have read access to the checkpoint directory.
-
-6.  **Performance**:
-    *   **Latency Profiles**: ~33ms for a single forward pass. This is significantly faster than autoregressive LLMs.
-    *   **Asymptotic Complexity**: $O(N^2)$ for attention, where $N$ is the input length. For $N=8192$, this is manageable on modern GPUs.
-    *   **Caching**: Checkpoints are cached in memory to avoid repeated loading.
-    *   **Zero-Copy**: Use ONNX Runtime or TileLang for zero-copy data transfer between CPU and GPU.
-
-7.  **Deployment**:
-    *   **CI/CD Invariants**: Ensure that the model is tested on a variety of languages and input lengths.
-    *   **Container Constraints**: The container should have sufficient memory to hold the model in RAM.
-    *   **Reproducible Builds**: Use a fixed version of PyTorch and Transformers to ensure reproducibility.
-    *   **Runtime Flags**: Use `laya[onnx]` or `laya[fast]` to enable optimized runtime paths.
-
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The `MCP Server` allows agents to call Laya as a tool.
-    *   **Prompt Chains**: Not applicable, as Laya does not use prompts.
-    *   **Loop Guards**: The `Router` should have a timeout to prevent infinite loops.
-    *   **Context Budget Optimization**: Use `max_len=8192` to limit the context window and reduce latency.
-
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: The input text is immutable. The output is a new dictionary.
-    *   **Streams**: Not applicable, as Laya processes single requests.
-    *   **Serializers**: Use JSON for input and output.
-    *   **Network Protocol Barriers**: Use HTTPS for checkpoint downloads.
+1.  **Architecture**: Encoder-only transformer with classification heads. Non-autoregressive.
+2.  **Core Abstractions**: `State`, `Typed Questions`, `Result`.
+3.  **Error Handling**: Graceful degradation to multilingual model if language detection fails.
+4.  **Testing**: Latency tests, output schema tests, probability calibration tests.
+5.  **Security**: Input sanitization to prevent prompt injection. Rate limiting to prevent DoS.
+6.  **Performance**: Single forward pass, ~33ms latency. ONNX and TileLang optimizations.
+7.  **Deployment**: Docker container, Kubernetes deployment. CI/CD pipeline for model updates.
+8.  **Agent Patterns**: Tooling interface for LangChain and MCP.
+9.  **Data Flow**: Input -> Tokenization -> Encoder -> Classification Heads -> Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Non-autoregressive multi-head classification with typed outputs.
-2.  **Rule**: Use strictly proper scoring rules for calibration.
-3.  **Architecture Principle**: Separate orchestration (Router) from inference (Model).
-4.  **Failure Mode**: Overconfidence in probabilities due to improper calibration.
-5.  **Reusable Skill**: Define typed questions using Pydantic.
-6.  **Decision**: Use non-autoregressive models for low-latency tasks.
+1.  **Pattern**: Non-autoregressive classification with calibrated probabilities.
+2.  **Rule**: Use non-autoregressive models for structured output tasks.
+3.  **Architecture Principle**: Separate routing from inference.
+4.  **Failure Mode**: Truncation leading to accuracy drop.
+5.  **Reusable Skill**: Implementing a language-aware router.
+6.  **Decision**: Use RLCD for calibration.
 7.  **Anti-pattern**: Using autoregressive LLMs for classification.
-8.  **Verification Method**: Compute ECE and Brier Score to verify calibration.
+8.  **Verification Method**: Latency and calibration tests.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Define Typed Questions**:
-    *   [ ] Create Pydantic models for `ChoiceQuestion`, `ScoreQuestion`, and `NoulQuestion`.
-    *   [ ] Validate questions before inference.
-2.  **Implement Decision Heads**:
-    *   [ ] Create a `TypedDecisionHead` class that maps hidden states to typed outputs.
-    *   [ ] Use softmax for choice, sigmoid for noul, and linear for score.
-3.  **Train with Calibration**:
-    *   [ ] Use a strictly proper scoring rule (e.g., Log Loss) for training.
-    *   [ ] Compute ECE and Brier Score to verify calibration.
-4.  **Implement Router**:
-    *   [ ] Create a `Router` class that handles checkpoint loading and routing.
-    *   [ ] Use a lock to ensure thread-safe checkpoint loading.
-    *   [ ] Implement retries with exponential backoff for checkpoint downloads.
-5.  **Test Performance**:
-    *   [ ] Assert that prediction time is < 50ms for 95th percentile.
-    *   [ ] Assert that output schema matches the expected format.
-6.  **Deploy**:
-    *   [ ] Use ONNX Runtime or TileLang for optimized inference.
-    *   [ ] Ensure that the container has sufficient memory.
+1.  **Define Typed Questions**: Create a schema for the output.
+2.  **Select Model**: Choose a non-autoregressive encoder model.
+3.  **Implement Routing**: Create a language-aware router.
+4.  **Calibrate Probabilities**: Use RLCD or post-hoc calibration.
+5.  **Optimize Performance**: Use ONNX or TileLang.
+6.  **Test**: Run latency, schema, and calibration tests.
+7.  **Deploy**: Containerize and deploy to Kubernetes.

@@ -1,1407 +1,1407 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-26T21:10:29.750Z",
-  "total_cycles_completed": 5164,
-  "total_learnings_persisted": 5164,
-  "total_rules_promoted": 4549,
+  "last_updated": "2026-11-01T02:22:50.689Z",
+  "total_cycles_completed": 6771,
+  "total_learnings_persisted": 6771,
+  "total_rules_promoted": 6414,
   "history": [
     {
-      "timestamp": "2026-10-25T20:49:13.796Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:49:20.129Z",
-      "repository": "jellyfin/Swiftfin",
-      "learningId": "learn-github-jellyfin-swiftfin",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:49:24.509Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T20:55:45.203Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:02:04.835Z",
-      "repository": "datalab-to/indra-ocr",
-      "learningId": "learn-huggingface-datalab-to-indra-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:02:15.988Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:02:21.770Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:08:40.808Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:08:41.000Z",
-      "repository": "primer/react",
-      "learningId": "learn-github-primer-react",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:15:16.530Z",
-      "repository": "touchlab/SKIE",
-      "learningId": "learn-github-touchlab-skie",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:15:24.027Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:25:38.042Z",
-      "repository": "touchlab/xcode-kotlin",
-      "learningId": "learn-github-touchlab-xcode-kotlin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:27:18.761Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:33:46.252Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:33:47.217Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "timestamp": "2026-10-31T14:01:19.858Z",
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-25T21:40:07.554Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "timestamp": "2026-10-31T14:08:08.594Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-25T21:40:25.198Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:46:49.067Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "timestamp": "2026-10-31T14:08:14.808Z",
+      "repository": "apollographql/apollo-kotlin",
+      "learningId": "learn-github-apollographql-apollo-kotlin",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-25T21:46:49.700Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T21:53:16.121Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "timestamp": "2026-10-31T14:19:29.147Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-25T21:53:22.211Z",
-      "repository": "callstack/react-native-builder-bob",
-      "learningId": "learn-github-callstack-react-native-builder-bob",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:36.308Z",
-      "repository": "carbon-design-system/carbon-components-svelte",
-      "learningId": "learn-github-carbon-design-system-carbon-components-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:38.282Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:41.875Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:42.019Z",
-      "repository": "electron/electron",
-      "learningId": "learn-github-electron-electron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:48.474Z",
-      "repository": "RediSearch/RediSearch",
-      "learningId": "learn-github-redisearch-redisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:00:50.456Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:07:10.343Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:07:15.959Z",
-      "repository": "software-mansion/react-native-screens",
-      "learningId": "learn-github-software-mansion-react-native-screens",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:07:24.383Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:13:56.930Z",
-      "repository": "tauri-apps/tauri",
-      "learningId": "learn-github-tauri-apps-tauri",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:13:57.103Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:16:02.838Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:24:11.744Z",
-      "repository": "franken-ui/ui",
-      "learningId": "learn-github-franken-ui-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:24:11.842Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:31:50.698Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:31:56.775Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:38:51.209Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:41:43.613Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:48:06.463Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:48:13.522Z",
-      "repository": "Open-Source-Legal/OpenContracts",
-      "learningId": "learn-github-open-source-legal-opencontracts",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:54:40.133Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T22:56:44.009Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:04:47.744Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:10:53.433Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:10:53.561Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:10:57.455Z",
-      "repository": "Mintplex-Labs/anything-llm",
-      "learningId": "learn-github-mintplex-labs-anything-llm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:17:15.708Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:17:30.551Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:32:54.934Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:39:17.223Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:39:17.367Z",
-      "repository": "dockview/dockview",
-      "learningId": "learn-github-dockview-dockview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:39:19.637Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:39:26.440Z",
-      "repository": "PeerDB-io/peerdb",
-      "learningId": "learn-github-peerdb-io-peerdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:45:52.434Z",
-      "repository": "SimonSchubert/Kai",
-      "learningId": "learn-github-simonschubert-kai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:45:58.165Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:53:23.075Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-25T23:53:32.525Z",
-      "repository": "prof18/feed-flow",
-      "learningId": "learn-github-prof18-feed-flow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:06:01.433Z",
-      "repository": "tencent/Hy-Memory-30B-A3B",
-      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:12:05.734Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:12:17.560Z",
-      "repository": "mitmproxy/mitmproxy",
-      "learningId": "learn-github-mitmproxy-mitmproxy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:18:22.980Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:18:23.961Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:24:41.776Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:24:42.010Z",
-      "repository": "mantinedev/mantine",
-      "learningId": "learn-github-mantinedev-mantine",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:24:44.114Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:32:36.294Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:32:43.798Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:35:49.851Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:41:51.376Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:41:52.315Z",
-      "repository": "facebook/folly",
-      "learningId": "learn-github-facebook-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:41:58.248Z",
-      "repository": "JuulLabs/kable",
-      "learningId": "learn-github-juullabs-kable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:48:22.904Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:48:34.046Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:48:37.250Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:54:35.426Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:54:36.823Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:54:49.122Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T00:54:50.699Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:01:04.458Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:01:11.252Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:10:17.783Z",
-      "repository": "cosscom/ui",
-      "learningId": "learn-github-cosscom-ui",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:10:18.328Z",
-      "repository": "kamgurgul/cpu-info",
-      "learningId": "learn-github-kamgurgul-cpu-info",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:10:18.441Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:10:25.453Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:22:51.834Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:22:55.896Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:25:49.501Z",
-      "repository": "vuetifyjs/vuetify",
-      "learningId": "learn-github-vuetifyjs-vuetify",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:37:17.637Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:37:18.166Z",
-      "repository": "ISTIFANO/seo-auditor",
-      "learningId": "learn-github-istifano-seo-auditor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:37:19.843Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:37:27.551Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:37:30.282Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:49:13.546Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:49:16.207Z",
-      "repository": "code-forge-io/seo-tools",
-      "learningId": "learn-github-code-forge-io-seo-tools",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:55:35.231Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T01:55:36.407Z",
-      "repository": "hartemyaakoub/seo-toolkit",
-      "learningId": "learn-github-hartemyaakoub-seo-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:01:55.673Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:01:57.760Z",
-      "repository": "Maatify/php-seo",
-      "learningId": "learn-github-maatify-php-seo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:02:12.035Z",
-      "repository": "angular/angular",
-      "learningId": "learn-github-angular-angular",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:08:33.386Z",
-      "repository": "davo20019/seo-analysis",
-      "learningId": "learn-github-davo20019-seo-analysis",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:25:29.954Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:26:50.015Z",
-      "repository": "bvaughn/react-virtualized",
-      "learningId": "learn-github-bvaughn-react-virtualized",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:26:58.304Z",
-      "repository": "serpapi/google-search-results-nodejs",
-      "learningId": "learn-github-serpapi-google-search-results-nodejs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:33:55.764Z",
-      "repository": "serpapi/google-search-results-python",
-      "learningId": "learn-github-serpapi-google-search-results-python",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:44:41.436Z",
-      "repository": "yattee/yattee",
-      "learningId": "learn-github-yattee-yattee",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:50:51.545Z",
-      "repository": "assistant-ui/assistant-ui",
-      "learningId": "learn-github-assistant-ui-assistant-ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:50:54.746Z",
-      "repository": "JeffLi1993/seo-audit-skill",
-      "learningId": "learn-github-jeffli1993-seo-audit-skill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:51:00.082Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:51:02.285Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:57:21.280Z",
-      "repository": "tamagui/tamagui",
-      "learningId": "learn-github-tamagui-tamagui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T02:57:21.342Z",
-      "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T03:03:41.358Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T03:03:50.743Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T03:10:14.072Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T03:10:15.963Z",
-      "repository": "serpapi/google-search-results-ruby",
-      "learningId": "learn-github-serpapi-google-search-results-ruby",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T05:00:08.771Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T05:07:44.896Z",
-      "repository": "duongductrong/Snapzy",
-      "learningId": "learn-github-duongductrong-snapzy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T05:11:29.730Z",
-      "repository": "mistralai/Timestral-209M",
-      "learningId": "learn-huggingface-mistralai-timestral-209m",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T05:17:46.006Z",
-      "repository": "google/elephant-goldfish-model",
-      "learningId": "learn-github-google-elephant-goldfish-model",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T05:17:56.783Z",
-      "repository": "signerlabs/ShipSwift",
-      "learningId": "learn-github-signerlabs-shipswift",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T05:18:00.963Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:02:22.620Z",
-      "repository": "ParadevAI/superset",
-      "learningId": "learn-github-paradevai-superset",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:23:37.034Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:24:30.259Z",
-      "repository": "RevenueCat/purchases-ios",
-      "learningId": "learn-github-revenuecat-purchases-ios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:49:02.848Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:49:23.948Z",
-      "repository": "Kruszoneq/macUSB",
-      "learningId": "learn-github-kruszoneq-macusb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:53:30.466Z",
-      "repository": "ParadevAI/Paradev",
-      "learningId": "learn-github-paradevai-paradev",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:54:01.428Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T09:54:12.432Z",
+      "timestamp": "2026-10-31T14:19:37.035Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T10:15:10.616Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:15:18.898Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:21:30.904Z",
-      "repository": "markmead/hyperui",
-      "learningId": "learn-github-markmead-hyperui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:21:37.731Z",
-      "repository": "0xCUB3/wBlock",
-      "learningId": "learn-github-0xcub3-wblock",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:21:41.682Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:33:19.980Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:33:20.692Z",
-      "repository": "Louis-CFM/coucou",
-      "learningId": "learn-github-louis-cfm-coucou",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:33:25.004Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T10:33:27.192Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:04:09.238Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:15:42.618Z",
-      "repository": "DNSControl/dnscontrol",
-      "learningId": "learn-github-dnscontrol-dnscontrol",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:15:43.482Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:15:46.101Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:19:43.691Z",
-      "repository": "melbahja/seo",
-      "learningId": "learn-github-melbahja-seo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:20:25.799Z",
-      "repository": "Megabit/Blazorise",
-      "learningId": "learn-github-megabit-blazorise",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:25:33.616Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:32:00.851Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T11:46:45.018Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T12:07:22.467Z",
-      "repository": "LifeSciForge/seo-auditor",
-      "learningId": "learn-github-lifesciforge-seo-auditor",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T12:13:27.406Z",
-      "repository": "sayanarijit/xplr",
-      "learningId": "learn-github-sayanarijit-xplr",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T12:13:37.968Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T12:20:03.762Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T12:40:34.675Z",
-      "repository": "kcl-lang/kcl",
-      "learningId": "learn-github-kcl-lang-kcl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T12:57:01.413Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:01:48.661Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:11:23.811Z",
-      "repository": "Vincentwei1021/video-shotcraft",
-      "learningId": "learn-github-vincentwei1021-video-shotcraft",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:11:27.508Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:15:06.906Z",
-      "repository": "chakra-ui/zag",
-      "learningId": "learn-github-chakra-ui-zag",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:15:08.391Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:15:20.956Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:28:56.997Z",
-      "repository": "ant-design/pro-components",
-      "learningId": "learn-github-ant-design-pro-components",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:29:01.710Z",
-      "repository": "superhighfives/pika",
-      "learningId": "learn-github-superhighfives-pika",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:29:04.831Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:34:06.072Z",
-      "repository": "rustls/rustls",
-      "learningId": "learn-github-rustls-rustls",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:40:31.550Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:40:38.967Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:40:39.402Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:51:47.228Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:51:48.934Z",
-      "repository": "XHToken/Spark-X2.6-4B",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:51:49.866Z",
-      "repository": "LLPhant/LLPhant",
-      "learningId": "learn-github-llphant-llphant",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:58:18.255Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T13:58:25.498Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:03:29.031Z",
-      "repository": "InternScience/Sage-A1.5",
-      "learningId": "learn-huggingface-internscience-sage-a1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:10:05.399Z",
-      "repository": "Qwen/Qwen3-14B",
-      "learningId": "learn-huggingface-qwen-qwen3-14b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:16:46.813Z",
-      "repository": "berkaycubuk/kitsune",
-      "learningId": "learn-github-berkaycubuk-kitsune",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:23:12.851Z",
-      "repository": "react-bootstrap/react-bootstrap",
-      "learningId": "learn-github-react-bootstrap-react-bootstrap",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:23:21.257Z",
-      "repository": "iPlug2/iPlug2",
-      "learningId": "learn-github-iplug2-iplug2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:23:24.336Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:23:26.794Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T14:29:54.228Z",
-      "repository": "microsoft/fluentui",
-      "learningId": "learn-github-microsoft-fluentui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:52:06.942Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:20.022Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:21.787Z",
-      "repository": "KartikLabhshetwar/better-shot",
-      "learningId": "learn-github-kartiklabhshetwar-better-shot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:25.079Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:26.672Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-26T17:58:30.310Z",
+      "timestamp": "2026-10-31T14:19:42.364Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T17:58:31.467Z",
+      "timestamp": "2026-10-31T14:19:44.477Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:05:21.409Z",
-      "repository": "mui/base-ui",
-      "learningId": "learn-github-mui-base-ui",
+      "timestamp": "2026-10-31T14:25:54.192Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:25:55.549Z",
+      "repository": "zenbu-labs/terminal-browser",
+      "learningId": "learn-github-zenbu-labs-terminal-browser",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:05:30.100Z",
+      "timestamp": "2026-10-31T14:32:36.398Z",
+      "repository": "necolas/react-native-web",
+      "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:32:40.983Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:39:24.484Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:39:25.841Z",
+      "repository": "bahdotsh/wrkflw",
+      "learningId": "learn-github-bahdotsh-wrkflw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:39:35.850Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:45:46.353Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:45:47.641Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:45:53.026Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:52:32.011Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T14:59:29.615Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:14:42.221Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-bigscience-bloom",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:29:40.547Z",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:29:56.749Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:36:23.737Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:36:29.225Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:36:32.884Z",
+      "repository": "tw93/Mole",
+      "learningId": "learn-github-tw93-mole",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:42:40.878Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:42:43.273Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:42:53.845Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:49:41.599Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:49:45.474Z",
+      "repository": "NativeScript/NativeScript",
+      "learningId": "learn-github-nativescript-nativescript",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:49:48.816Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:56:41.566Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T15:56:42.115Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:03:37.101Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:08:35.139Z",
+      "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
+      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:20:20.272Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:20:20.789Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:20:24.598Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:27:11.612Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:27:15.177Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:27:22.401Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:32:25.182Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:38.596Z",
+      "repository": "openbmb/MiniCPM-OCR-1.0",
+      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:39.745Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:50.060Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:39:50.272Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:50:25.609Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:50:26.535Z",
+      "repository": "astral-sh/uv",
+      "learningId": "learn-github-astral-sh-uv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:50:40.231Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:57:11.323Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T16:57:19.346Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:03:45.623Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:03:58.140Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:08:00.154Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:14:09.190Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:14:12.168Z",
+      "repository": "meta/folly",
+      "learningId": "learn-github-meta-folly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:14:25.002Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:22:54.798Z",
+      "repository": "openai/clip-vit-base-patch32",
+      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:22:55.640Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:30:14.207Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:36:58.363Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:36:59.130Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:37:05.841Z",
       "repository": "temporalio/temporal",
       "learningId": "learn-github-temporalio-temporal",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:05:34.227Z",
-      "repository": "HelixDB/helix-db",
-      "learningId": "learn-github-helixdb-helix-db",
+      "timestamp": "2026-10-31T17:37:11.413Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:05:35.292Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
+      "timestamp": "2026-10-31T17:43:51.269Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:43:56.523Z",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "learningId": "learn-github-simonschubert-linuxcommandlibrary",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:12:30.848Z",
-      "repository": "stakater/Reloader",
-      "learningId": "learn-github-stakater-reloader",
+      "timestamp": "2026-10-31T17:50:09.279Z",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T17:50:10.916Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:12:34.589Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
+      "timestamp": "2026-10-31T17:50:25.223Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:12:35.371Z",
+      "timestamp": "2026-10-31T18:01:39.404Z",
+      "repository": "meshtastic/Meshtastic-Android",
+      "learningId": "learn-github-meshtastic-meshtastic-android",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:01:42.413Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:01:47.350Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:08:40.443Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:08:48.612Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:15:20.893Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:15:38.725Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:22:09.321Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:22:24.354Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:22:26.463Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:29:00.415Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:29:09.295Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:29:14.018Z",
+      "repository": "ydb-platform/ydb",
+      "learningId": "learn-github-ydb-platform-ydb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:33:58.572Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:40:42.420Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:45:47.531Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:52:36.623Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T18:53:42.562Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:00:42.435Z",
+      "repository": "projectcontour/contour",
+      "learningId": "learn-github-projectcontour-contour",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:02:22.776Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-google-vit-base-patch16-224",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:14:31.232Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:14:38.662Z",
+      "repository": "kube-rs/kube",
+      "learningId": "learn-github-kube-rs-kube",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:14:45.777Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:14:46.405Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:19:11.759Z",
-      "repository": "bitnami/sealed-secrets",
-      "learningId": "learn-github-bitnami-sealed-secrets",
+      "timestamp": "2026-10-31T19:23:42.504Z",
+      "repository": "google/gemma-4-31B-it",
+      "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:23:50.825Z",
+      "repository": "gardener/gardener",
+      "learningId": "learn-github-gardener-gardener",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:25:27.214Z",
-      "repository": "lingui/js-lingui",
-      "learningId": "learn-github-lingui-js-lingui",
+      "timestamp": "2026-10-31T19:34:03.955Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:40:49.353Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:25:28.385Z",
-      "repository": "Kuberwastaken/claurst",
-      "learningId": "learn-github-kuberwastaken-claurst",
+      "timestamp": "2026-10-31T19:40:57.189Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:41:02.636Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:25:35.185Z",
-      "repository": "wzh4869/AppPorts",
-      "learningId": "learn-github-wzh4869-appports",
+      "timestamp": "2026-10-31T19:49:55.309Z",
+      "repository": "MariaDB/server",
+      "learningId": "learn-github-mariadb-server",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T18:32:20.243Z",
+      "timestamp": "2026-10-31T19:49:56.144Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T19:51:59.864Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:04:07.219Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:05:00.959Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:11:46.077Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:11:52.115Z",
+      "repository": "momenbasel/PureMac",
+      "learningId": "learn-github-momenbasel-puremac",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:23:13.191Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:23:14.288Z",
+      "repository": "zeromicro/go-zero",
+      "learningId": "learn-github-zeromicro-go-zero",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:23:15.533Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-26T21:10:29.750Z",
-      "repository": "trufflesecurity/trufflehog",
-      "learningId": "learn-github-trufflesecurity-trufflehog",
+      "timestamp": "2026-10-31T20:23:17.538Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:31:54.100Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:32:05.810Z",
+      "repository": "RediSearch/RediSearch",
+      "learningId": "learn-github-redisearch-redisearch",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:38:46.877Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:38:56.702Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:37.628Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:38.524Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:44.116Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:46:49.392Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:53:08.848Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:53:10.138Z",
+      "repository": "unhappychoice/gitlogue",
+      "learningId": "learn-github-unhappychoice-gitlogue",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:53:23.902Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:59:36.839Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:59:38.515Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:59:40.855Z",
+      "repository": "loft-sh/vcluster",
+      "learningId": "learn-github-loft-sh-vcluster",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T20:59:43.795Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:09:31.656Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:10:38.504Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:19:49.800Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:26:57.492Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:30:49.004Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:37:33.025Z",
+      "repository": "Kuddev/pebrel",
+      "learningId": "learn-github-kuddev-pebrel",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:39:34.929Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:46:01.864Z",
+      "repository": "zeronsh/zeron",
+      "learningId": "learn-github-zeronsh-zeron",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:46:13.168Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:46:14.157Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:55:13.835Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T21:56:56.953Z",
+      "repository": "vanniktech/gradle-maven-publish-plugin",
+      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:03:49.847Z",
+      "repository": "ratatui/ratatui",
+      "learningId": "learn-github-ratatui-ratatui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:05:19.810Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:12:05.072Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:12:05.744Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:23:54.115Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:31:27.878Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:31:27.909Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:33:05.507Z",
+      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
+      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:39:51.948Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:40:02.000Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:46:44.912Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:53:35.325Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:53:35.831Z",
+      "repository": "ClementTsang/bottom",
+      "learningId": "learn-github-clementtsang-bottom",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T22:53:44.257Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:02:09.820Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:08:22.232Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:08:22.719Z",
+      "repository": "o2sh/onefetch",
+      "learningId": "learn-github-o2sh-onefetch",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:08:38.019Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:15:59.942Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:16:01.725Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:22:27.853Z",
+      "repository": "maziyarpanahi/openmed",
+      "learningId": "learn-github-maziyarpanahi-openmed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:22:29.364Z",
+      "repository": "beclab/Olares",
+      "learningId": "learn-github-beclab-olares",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:24:56.048Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:35:47.224Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:42:44.969Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:42:51.792Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:49:44.423Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:49:59.404Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:50:00.982Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-31T23:56:35.731Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:03:04.473Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:04:15.780Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:10:25.278Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:10:34.024Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:19:06.650Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:30:05.771Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:36:14.962Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:36:20.448Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:42:32.674Z",
+      "repository": "vllm-sr/d3",
+      "learningId": "learn-huggingface-vllm-sr-d3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:49:24.406Z",
+      "repository": "dagoSte/squadra",
+      "learningId": "learn-github-dagoste-squadra",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:49:26.134Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:49:42.739Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:56:06.803Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:56:08.189Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:06:07.273Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:16:36.526Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:26:45.088Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:33:36.927Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:40:30.182Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:40:30.581Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:47:02.966Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:53:59.162Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:54:06.466Z",
+      "repository": "rainbow-me/rainbow",
+      "learningId": "learn-github-rainbow-me-rainbow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:00:43.675Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:00:46.839Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:00:52.825Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:07:37.832Z",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:07:49.041Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:15:55.343Z",
+      "repository": "transact-rs/sqlx",
+      "learningId": "learn-github-transact-rs-sqlx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:16:04.811Z",
+      "repository": "datalab-to/indra-ocr",
+      "learningId": "learn-huggingface-datalab-to-indra-ocr",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:22:44.564Z",
+      "repository": "tencent/Hy-Memory-30B-A3B",
+      "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:22:45.786Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T02:22:50.689Z",
+      "repository": "zoontek/react-native-bootsplash",
+      "learningId": "learn-github-zoontek-react-native-bootsplash",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

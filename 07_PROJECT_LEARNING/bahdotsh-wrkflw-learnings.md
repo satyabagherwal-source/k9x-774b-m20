@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source**: github ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
-> **Source Version**: `248a4190`  
+> **Source Version**: `153b8ee0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T08:58:36.925Z  
+> **Timestamp**: 2026-10-31T14:39:25.136Z  
 > **Learning ID**: `learn-github-bahdotsh-wrkflw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bahdotsh-wrkflw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bahdotsh/wrkflw](https://github.com/bahdotsh/wrkflw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T08:58:36.457Z  
+> **Harvest Timestamp**: 2026-10-31T14:39:25.127Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Validate and Run GitHub Actions locally.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3332 stars
+- **Stars / Engagement**: 3337 stars
 
 ---
 
@@ -57,6 +57,7 @@ use crate::action_resolver;
 use crate::dependency;
 use crate::docker;
 use crate::environment;
+use crate::kubernetes::{self, KubernetesConfig};
 use crate::podman;
 use wrkflw_logging;
 use wrkflw_matrix::MatrixCombination;
@@ -123,6 +124,7 @@ async fn execute_github_workflow(
     mut config: ExecutionConfig,
 ) -> Result<ExecutionResult, ExecutionError> {
     config.runtime_type = detect_runtime(config.runtime_type);
+    warn_if_overrides_unused(&config);
     // 1. Parse workflow file
     let workflow = parse_workflow(workflow_path)?;
 
@@ -141,6 +143,7 @@ async fn execute_github_workflow(
     let runtime = initialize_runtime(
         config.runtime_type.clone(),
         config.preserve_containers_on_failure,
+        &config.kubernetes,
     )?;
 
     // Create a temporary workspace directory
@@ -199,13 +202,7 @@ async fn execute_github_workflow(
     // Add runtime mode to environment
     env_context.insert(
         "WRKFLW_RUNTIME_MODE".to_string(),
-        match config.runtime_type {
-            RuntimeType::Auto => "auto".to_string(),
-            RuntimeType::Emulation => "emulation".to_string(),
-            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
-            RuntimeType::Docker => "docker".to_string(),
-            RuntimeType::Podman => "podman".to_string(),
-        },
+        config.runtime_type.mode_name().to_string(),
     );
 
     // show=true means hide=false (inverted for the env var)
@@ -263,7 +260,9 @@ async fn execute_github_workflow(
     let mut all_job_results: HashMap<String, String> = HashMap::new();
 
     for job_batch in execution_plan {
-        // Execute jobs in parallel if they don't depend on each other
+        // Execute jobs in parallel if they don't depend on each other.
+        // `needs:` failure propagation and `if:` evaluation happen per job inside
+        // `execute_job_with_matrix`, so this loop and `run_called_workflow` share them.
         let job_results = execute_job_batch(
             &job_batch,
             &workflow,
@@ -277,21 +276,28 @@ async fn execute_github_workflow(
             &all_job_results,
             &artifact_store,
             &cache_store,
+            &config.platform_overrides,
         )
         .await?;
 
-        // Collect job outputs and results for downstream jobs' `needs.*` context.
-        // For matrix jobs, multiple combinations share the same canonical_name — the last
-        // combination to complete wins.  This matches GitHub Actions' behavior where matrix
-        // job outputs are non-deterministic when multiple combinations set the same key.
+        record_job_results(&job_results, &mut all_job_outputs, &mut all_job_results);
+
+        // Check for job failures and collect details
         for job_result in &job_results {
-            if all_job_outputs.contains_key(&job_result.canonical_name)
-                && job_result.name != job_result.canonical_name
-            {
-                wrkflw_logging::warning(&format!(
-                    "Matrix job '{}' overwrites outputs for '{}' — \
-                     needs.{}.outputs will reflect the last combination only",
-                    job_result.name, job_result.canonical
+            if job_result.status == JobStatus::Failure {
+                has_failures = true;
+                failure_details.push_str(&format!(
+                    "\n{} Job failed: {}\n",
+                    wrkflw_logging::symbols::FAILURE,
+                    job_result.name
+                ));
+
+                // Add step details for failed jobs
+                for step in &job_result.steps {
+                    if step.status == StepStatus::Failure {
+                        failure_details.push_str(&format!(
+                            "  {} {}: {}\n",
+                           
 ```
 
 ### Core Architecture Module: `crates/ui/src/app/state.rs`
@@ -302,9 +308,11 @@ use crate::models::{
     ExecutionResultMsg, JobExecution, LogFilterLevel, QueuedExecution, StatusSeverity,
     StepExecution, TriggerMatchStatus, Workflow, WorkflowExecution, WorkflowStatus,
 };
+use crate::theme::{self, ThemeMode};
 use chrono::Local;
 use crossterm::event::KeyCode;
 use ratatui::widgets::{ListState, TableState};
+use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
@@ -313,6 +321,34 @@ use std::time::{Duration, Instant};
 use tokio::task::JoinHandle;
 use wrkflw_executor::{JobStatus, RuntimeType, StepStatus};
 use wrkflw_secrets::SecretConfig;
+
+/// Ask whether `runtime` answers, on a thread of its own: a cluster or a slow
+/// credential plugin can take seconds, and this must never stall the event
+/// loop. `None` for runtimes that have nothing to probe.
+fn start_availability_probe(
+    runtime: &RuntimeType,
+    kubernetes: &wrkflw_executor::KubernetesConfig,
+) -> Option<mpsc::Receiver<bool>> {
+    let runtime = runtime.clone();
+    if !matches!(
+        runtime,
+        RuntimeType::Docker | RuntimeType::Podman | RuntimeType::Kubernetes
+    ) {
+        return None;
+    }
+    let kubernetes = kubernetes.clone();
+    let (tx, rx) = mpsc::channel();
+    std::thread::spawn(move || {
+        let available = match runtime {
+            RuntimeType::Docker => wrkflw_executor::docker::is_available(),
+            RuntimeType::Podman => wrkflw_executor::podman::is_available(),
+            _ => wrkflw_executor::kubernetes::is_available_with(&kubernetes),
+        };
+        // The receiver is gone if the user has already moved on.
+        let _ = tx.send(available);
+    });
+    Some(rx)
+}
 
 /// Application state
 pub struct App {
@@ -324,6 +360,8 @@ pub struct App {
     pub runtime_type: RuntimeType,
     pub validation_mode: bool,
     pub preserve_containers_on_failure: bool,
+    pub platform_overrides: HashMap<String, String>,
+    pub kubernetes: wrkflw_executor::KubernetesConfig,
     pub show_action_messages: bool,
     pub execution_queue: Vec<QueuedExecution>, // Workflows queued for execution
     pub current_execution: Option<usize>,
@@ -366,6 +404,8 @@ pub struct App {
     // Cached container runtime availability (avoids re-checking every render frame)
     pub runtime_available: bool,
     pub last_availability_check: Instant,
+    /// Answer to a probe still running off the event loop, if any.
+    availability_probe: Option<mpsc::Receiver<bool>>,
 
     // Diff-aware trigger filtering
     pub diff_filter_active: bool,
@@ -462,46 +502,7 @@ pub struct App {
     /// When true, the Tweaks panel overlays the current tab. Toggled
     /// with `,` (mirrors the design's edit-mode entry point).
     pub tweaks_open: bool,
-    /// Accent color override. Matches the design's 5-slot palette.
-    /// The design exposes theme/density/graph-view too — we only ship
-    /// the knobs we actually plumb through (accent recolors the brand
-    /// + focused borders; the others would be dead toggles today).
-    pub tweaks_accent: Accent,
-}
 
-/// Outcome of a remote dispatch spawned from the Trigger tab.
-/// Reported back to the main event loop via an mpsc so the UI can
-/// surface the result on the status bar (instead of forcing the user
-/// to tab over to Logs).
-#[derive(Debug, Clone)]
-pub struct DispatchOutcome {
-    pub platform: TriggerPlatform,
-    pub workflow: String,
-    pub result: Result<(), String>,
-}
-
-/// Target platform for the remote-trigger UI. GitLab path uses the
-/// existing `wrkflw_gitlab::trigger_pipeline` so the form is honest
-/// about what it will call.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TriggerPlatform {
-    Github,
-    Gitlab,
-}
-
-impl TriggerPlatform {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            TriggerPlatform::Github => "github",
-            TriggerPlatform::Gitlab => "gitlab",
-        }
-    }
-    pub fn toggle(self) -> Self {
-        match self {
-            TriggerPlatform::Github => TriggerPlatform::Gitlab,
-            TriggerPlatform::Gitlab => TriggerPlatform::Github,
-        }
-   
 ```
 
 ### Core Architecture Module: `crates/ui/src/utils/mod.rs`
@@ -536,9 +537,9 @@ pub fn extract_job_names(path: &Path) -> Vec<String> {
 pub fn load_workflows(dir_path: &Path) -> Vec<Workflow> {
     let mut workflows = Vec::new();
 
-    // Default path is .github/workflows
-    let default_workflows_dir = Path::new(".github").join("workflows");
-    let is_default_dir = dir_path == default_workflows_dir || dir_path.ends_with("workflows");
+    // Any `workflows` directory counts, which covers both .github/workflows
+    // and .gitea/workflows.
+    let is_default_dir = dir_path.ends_with("workflows");
 
     if let Ok(entries) = std::fs::read_dir(dir_path) {
         for entry in entries.flatten() {
@@ -597,7 +598,43 @@ pub fn load_workflows(dir_path: &Path) -> Vec<Workflow> {
 ```
 // utils crate
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
+
+/// Default workflow directory for GitHub Actions.
+pub const GITHUB_WORKFLOWS_DIR: &str = ".github/workflows";
+
+/// Default workflow directory for Gitea Actions.
+pub const GITEA_WORKFLOWS_DIR: &str = ".gitea/workflows";
+
+/// Returns the default workflow directories that exist under `root`, in
+/// Gitea's lookup order: `.gitea/workflows` first, then `.github/workflows`.
+///
+/// Gitea itself only runs the first directory that exists, but a repository
+/// mirrored to both forges legitimately has both, so commands that can cover
+/// several directories should use all of them.
+pub fn default_workflow_dirs_in(root: &Path) -> Vec<PathBuf> {
+    [GITEA_WORKFLOWS_DIR, GITHUB_WORKFLOWS_DIR]
+        .iter()
+        .map(|dir| root.join(dir))
+        .filter(|dir| dir.is_dir())
+        .collect()
+}
+
+/// [`default_workflow_dirs_in`] relative to the current directory. Paths stay
+/// relative so they read as `.gitea/workflows`, not `./.gitea/workflows`.
+pub fn default_workflow_dirs() -> Vec<PathBuf> {
+    default_workflow_dirs_in(Path::new(""))
+}
+
+/// The single default workflow directory, for commands that take only one.
+/// Falls back to `.github/workflows` when neither directory exists, so the
+/// caller's "not found" error names the conventional location.
+pub fn default_workflow_dir() -> PathBuf {
+    default_workflow_dirs()
+        .into_iter()
+        .next()
+        .unwrap_or_else(|| PathBuf::from(GITHUB_WORKFLOWS_DIR))
+}
 
 pub fn is_workflow_file(path: &Path) -> bool {
     // First, check for GitLab CI files by name
@@ -776,6 +813,24 @@ pub mod fd {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn default_workflow_dirs_prefer_gitea_and_skip_missing() {
+        let tmp = std::env::temp_dir().join(format!("wrkflw-dirs-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&tmp);
+        std::fs::create_dir_all(&tmp).unwrap();
+        assert!(super::default_workflow_dirs_in(&tmp).is_empty());
+
+        let github = tmp.join(super::GITHUB_WORKFLOWS_DIR);
+        std::fs::create_dir_all(&github).unwrap();
+        assert_eq!(super::default_workflow_dirs_in(&tmp), vec![github.clone()]);
+
+        let gitea = tmp.join(super::GITEA_WORKFLOWS_DIR);
+        std::fs::create_dir_all(&gitea).unwrap();
+        assert_eq!(super::default_workflow_dirs_in(&tmp), vec![gitea, github]);
+
+        std::fs::remove_dir_all(&tmp).unwrap();
+    }
+
     use super::*;
 
     #[test]
@@ -1639,7 +1694,8 @@ mod tests {
 ```
 //! Local cache storage for GitHub Actions `actions/cache` emulation.
 //!
-//! Caches are stored under `~/.wrkflw/cache/` (persistent across runs)
+//! Caches are stored under the platform cache directory (persistent across
+//! runs), e.g. `$XDG_CACHE_HOME/wrkflw/cache/` on Linux,
 //! and keyed by a SHA-256 hash of the cache key string.
 
 use sha2::{Digest, Sha256};
@@ -1668,12 +1724,13 @@ pub struct CacheStore {
 }
 
 impl CacheStore {
-    /// Create a new cache store. Uses `~/.wrkflw/cache/` by default.
+    /// Create a new cache store. Uses `<cache dir>/wrkflw/cache/` by default,
+    /// where `<cache dir>` is `$XDG_CACHE_HOME` (or `~/.cache`) on Linux.
     pub fn new() -> Result<Self, String> {
-        let home = dirs::home_dir()
-            .or_else(|| std::env::var("HOME").ok().map(std::path::PathBuf::from))
-            .ok_or_else(|| "Could not determine home directory (HOME is not set).".to_string())?;
-        let root = home.join(".wrkflw").join("cache");
+        let root = dirs::cache_dir()
+            .ok_or_else(|| "Could not determine cache directory (HOME is not set).".to_string())?
+            .join("wrkflw")
+            .join("cache");
         std::fs::create_dir_all(&root).map_err(|e| {
             format!(
                 "Failed to create cache directory '{}': {}",
@@ -1889,10 +1946,7 @@ impl CacheStore {
         ] {
             if let Ok(stored) = std::fs::read_to_string(exact_path.join(CACHE_KEY_METADATA_FILE)) {
                 if stored == prefix {
-                    return Some(stored);
-                }
-            }
-        
+               
 ```
 
 ### Core Architecture Module: `crates/executor/src/dependency.rs`
@@ -2204,11 +2258,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #129** (2026-09-08): **refactor(ui): drop the write-only WorkflowExecution.logs field**
-  *Symptoms*: TODO item 4 (`P3`, refactor) from the follow-up list off the PR #116 review. Fourth and last item in that series, after #119, #127 and #128.  ## What the item asked for, and why this PR does something else  The item was written against a pre-#119 tree. It asked to delete the ad-hoc `trim_logs_to_cap()` calls in `check_diff_filter_results`, rewrite the stale comment block above them, and route ~7 hand-rolled `Local::now().format("%H:%M:%S")` sites through `add_timestamped_log`.  Auditing that against current `main`:  - **The trim calls and the stale comment are already gone.** #119 removed all six ad-hoc calls and the "Ad-hoc `self.logs.push(...)`" comment. The single surviving call lives in `mark_logs_for_update`, which is the choke point every log mutation routes through — it belongs there. - **Only three of the ~7 timestamp sites survived.** One is `add_timestamped_log` itself. The other two are in `process_execution_result`, and they write to `WorkflowExecution.logs` — not to the app log buffer.  `WorkflowExecution.logs` has five writers and zero readers. Every view that touches `execution_details` renders `.jobs`, `.start_time` or `.progress`; none of them read `.logs`.  Doing what the item literally said would have been a regression. Both arms of `process_execution_result` already report their outcome through `wrkflw_logging`, and `get_combined_logs` merges that store into the app buffer without deduplicating. Routing those two pushes through `add_timestamped_log` would 
+- **Issue #142** (2026-10-31): **feat(runtime): add a Kubernetes runtime backend**
+  *Symptoms*: Adds `--runtime kubernetes`, which runs each workflow step as a pod in the cluster `kubectl` points at. Closes #66.  ```bash wrkflw run --runtime kubernetes --k8s-context gpu --k8s-namespace ci \   --k8s-node-selector accelerator=a100 \   --k8s-resource nvidia.com/gpu=1 \   .github/workflows/train.yml ```  ## How it works  Each step gets one pod. An init container waits while the mounts are streamed into `emptyDir` volumes as tar. The step then runs, and a sidecar keeps the pod alive so the mounts can be streamed back. That is how `GITHUB_OUTPUT`, artifacts and workspace changes reach the next step.  It shells out to `kubectl`, so existing kubeconfigs, auth plugins and proxies keep working and there is no new client dependency. The runtime is never auto-detected and never falls back to emulation, because a GPU job silently running on a laptop is worse than a failed run.  ## Worth a close look  - **`$` escaping.** Kubernetes expands `$(VAR)` and collapses `$$` in args and env values, so `echo $$` reached the shell as `echo $`. Every `$` is now doubled in the manifest. - **Copy-out mirrors the pod.** A step's `rm` has to stay deleted, so this code removes host files based on what a workflow left in a pod. It rejects paths that leave the target, never follows symlinks, and prunes only after the whole archive has unpacked. Only the job's own workspace and `GITHUB_*` directories are pruned. User `container.volumes` directories only gain files, and a single-path volume stays in the
 
-- **Issue #128** (2026-09-08): **fix(ui): stop logging the same TUI message to both log sinks**
-  *Symptoms*: TODO item 3, follow-up from the review of PR #116.  ## The problem  The TUI keeps two log buffers: the app-local `logs` vec and the global `wrkflw_logging` store. `get_combined_logs` concatenates them with no deduplication, so any code path reporting an event to both sinks rendered it twice in the Logs and Execution tabs.  The ticket named one such message, "Executing workflow". Auditing the crate turned up **24 dual-logged sites**, not one:  | File | Sites | |---|---| | `crates/ui/src/app/state.rs` | 12 | | `crates/ui/src/app/mod.rs` | 6 | | `crates/ui/src/handlers/workflow.rs` | 6 |  Every workflow execution, trigger, and reset was being double-reported.  ## The fix  At each site the app-side push is deleted and the `wrkflw_logging` call kept. This is the same resolution PR #116 applied to the Docker and Podman warnings, and it is not an arbitrary choice: the global store stamps its own `[HH:MM:SS]` prefix and a level glyph, so the surviving copy is the one that renders with a real timestamp and the correct badge.  `add_timestamped_log` now documents the one-message-one-sink rule so this does not creep back in.  ## Badges improve as a side effect  `LogBadge::classify` checks the level glyph in the same tier as the level keyword, so five lines stop misreporting their severity:  - `Workflow 'x' failed: ...` was INFO, now ERROR - the "no workflow selected" lines were INFO, now WARN - `Cannot trigger workflow in Success state` was misbadged SUCCESS on the strength of the word i
+- **Issue #141** (2026-10-31): **feat: override runs-on images with --platform (#113)**
+  *Symptoms*: Closes #113  ## What  Adds `-P`/`--platform LABEL=IMAGE`, the same idea as act's flag, so `runs-on` labels can run in an image of your choice without editing the workflow:  ```bash wrkflw run -P ubuntu-latest=catthehacker/ubuntu:act-latest .github/workflows/ci.yml export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest ```  Image order is job `container:`, then `--platform`, then the built-in table. The default stays `ubuntu:latest`, because the act image is about 1.6 GB against about 130 MB.  The option is global, because bare `wrkflw` opens the TUI with no subcommand. It applies to `run`, `watch`, the TUI, matrix jobs and reusable workflows.  ## Two bugs the feature exposed  **Steps on act images never ran.** `docker.rs` treated any image matching `catthehacker` and `act-` as macOS emulation and wrapped commands in `bash -l -c`, which discarded them. With the override, `run: exit 7` reported success. This also affected `ubuntu-*-medium` runners today. The macOS runners map to `rust:latest`, so the heuristic was stale, and it is removed. See `BREAKING_CHANGES.md`.  **`setup-node` was shadowed.** The act image puts its bundled Node first on `PATH`, so `setup-node` with version 20 still ran v24. Combined images now put `/usr/local/bin` and `/usr/bin` first. This changes the Dockerfile hash, so existing combined images rebuild once.  ## Decisions for review  - `runs-on: ${{ matrix.os }}` is resolved for override matching only. The built-in table still sees the raw l
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2225,1467 +2279,1171 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebe8083f` (2026-04-21)
-**Commit Message**: feat(ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)
+### Incident Patch 1: `153b8ee0` (2026-10-31)
+**Commit Message**: feat(runtime): add a Kubernetes runtime backend (#142)
 
-* feat(ui): ship screens 4, 7, 8 and the Tweaks overlay
+* feat(runtime): add a Kubernetes runtime backend
 
-PR #104 landed three screens from the Claude Design handoff
-(Dashboard, Live Run, Step Inspector) and deliberately punted the
-rest because "a UI without backing data is worse than no UI." Fair.
-Picked up the remaining screens that actually *have* backing data
-today, and left the one that doesn't alone.
+People with GPUs in a cluster and a self-hosted forge want wrkflw to
+parse the workflow and dispatch it to Kubernetes, not to their
+laptop. Every runtime so far assumes the host and the container share
+a filesystem. A cluster doesn't, and that's the whole problem here.
 
-Three new top-level tabs:
+Add --runtime kubernetes. Each step becomes one pod, driven through
+kubectl, so any kubeconfig, auth plugin or proxy that already works
+keeps working and we grow no client library. An init container waits
+while the mounts are streamed into emptyDirs as tar, the step runs,
+and a sidecar keeps the pod alive so the mounts can be streamed back.
+That is what makes GITHUB_OUTPUT, artifacts and workspace changes
+reach the next step.
 
-  - DAG (tab 3) — full topological view of the selected workflow,
-    `g` toggles between the spatial column layout and a stage-list
-    layout. Reuses the existing `dag::topo_levels` so what you see
-    here is exactly what the mini-DAG in the Execution tab shows,
-    just bigger.
-  - Trigger (tab 5) — form + live curl preview, dispatches through
-    `wrkflw_github::trigger_workflow` or
-    `wrkflw_gitlab::trigger_pipeline`. `p` flips platform, `+` adds
-    a k=v input, `Tab` walks fields, `Enter` dispatches, `c` dumps
-    the curl into the log buffer because integrating with every
-    terminal's clipboard is not a fight I want to pick today.
-  - Secrets (tab 6) — reads SecretConfig::default(), shows the
-    providers the user actually ha
+Copy-out mirrors instead of merging, because a step's rm has to stay
+deleted. That code writes to the host based on what a workflow left
+in a pod, so it refuses to leave the target directory, never follows
+a symlink, and prunes only after the whole archive unpacked.
 
-**File**: `Cargo.lock` (modified, +6/-0)
+It turns out Kubernetes expands $(VAR) and collapses $$ in args and
+env values, so "echo $$" reached the shell as "echo $".
+
+**File**: `README.md` (modified, +65/-1)
 ```diff
-@@ -3596,6 +3596,7 @@ dependencies = [
-  "serde_json",
-  "serde_yaml",
-  "thiserror",
-+ "wrkflw-logging",
-  "wrkflw-models",
- ]
+@@ -14,6 +14,7 @@ A command-line tool for validating and executing GitHub Actions workflows locall
+ - **TUI interface** — interactive terminal UI with Workflows, Execution, DAG, Logs, Trigger, Secrets, and Help tabs
+ - **Workflow validation** — syntax checks, structural validation, and composite action input cross-checking with CI/CD-friendly exit codes
+ - **Local execution** — Docker, Podman, emulation, or sandboxed **secure emulation** (no containers)
++- **Kubernetes execution** — run each step as a pod in your own cluster, with node selectors and GPU resource requests
+ - **Diff-aware filtering** — skip workflows whose `on:` block doesn't match the simulated event and changed file set
+ - **Watch mode** — rerun workflows automatically on file changes, with trigger-aware filtering
+ - **Job selection** — run individual jobs with `--job` or via TUI job selection mode
+@@ -114,6 +115,9 @@ wrkflw run --runtime docker .github/workflows/ci.yml
+ # Run with Podman
+ wrkflw run --runtime podman .github/workflows/ci.yml
  
-@@ -3611,6 +3612,7 @@ dependencies = [
-  "serde_yaml",
-  "thiserror",
-  "urlencoding",
-+ "wrkflw-logging",
-  "wrkflw-models",
- ]
++# Run each step as a pod in a Kubernetes cluster
++wrkflw run --runtime kubernetes --k8s-namespace ci .github/workflows/ci.yml
++
+ # Run in emulation mode (no containers)
+ wrkflw run --runtime emulation .github/workflows/ci.yml
  
-@@ -3737,12 +3739,16 @@ dependencies = [
-  "serde_json",
-  "serde_yaml",
-  "tokio",
-+ "urlencoding",
-  "wrkflw-evaluator",
-  "wrkflw-executor",
-  "wrkflw-github",
-+ "wrkflw-gitlab",
-  "wrkflw-logging",
-+ "wrkflw-matrix",
-  "wrkflw-models",
-  "wrkflw-parser",
-+ "wrkflw-secrets",
-  "wrkflw-trigger-filter",
-  "wrkflw-utils",
- ]
+@@ -217,7 +221,7 @@ The TUI follows your terminal's background and uses a light or dark palette to m
+ | `a` / `n` | Select all / deselect all |
+ | `Shift+R` | Reset workflow status |
+ | `Shift+J` | View jobs in workflow |
+-| `e` | Cycle runtime (Docker / Podman / Emulation / Secure Emulation) |
++| `e` | Cycle runtime (Docker / Podman / Kubernetes / Secure Emulation / Emulation) |
+ | `v` | Toggle Execution / Validation mode |
+ | `d` / `D` | Toggle diff-aware filter / cycle simulated event |
+ | `t` | Trigger remote workflow |
+@@ -246,9 +250,69 @@ wrkflw trigger-gitlab --branch main --variable key=value
+ | **Auto** (default) | Detects Docker, then Podman, then falls back to emulation | Most users |
+ | **Docker** | Full container isolation, closest to GitHub runners | Production, CI/CD |
+ | **Podman** | Rootless containers, no daemon required | Security-conscious environments |
++| **Kubernetes** | Each step runs as a pod in a cluster you point `kubectl` at | GPU/XPU jobs, shared build clusters, self-hosted forges |
+ | **Emulation** | Runs directly on host, no containers needed | Quick local testing |
+ | **Secure Emulation** | Sandboxed host processes with filesystem/network restrictions | Running untrusted workflows without a container runtime |
+ 
++### Kubernetes runtime
++
++`--runtime kubernetes` dispatches every step to the cluster `kubectl` is configured for. It is never auto-detected, and it never falls back to running on your machine: if the cluster is unreachable, the run fails.
++
++```bash
++# Pick the cluster and namespace, then run as usual
++wrkflw run --runtime kubernetes --k8s-context gpu-cluster --k8s-namespace ci .github/workflows/train.yml
++
++# Land on GPU nodes and request an accelerator for every step
++wrkflw run --runtime kubernetes \
++  --k8s-node-selector accelerator=a100 \
++  --k8s-resource nvidia.com/gpu=1 --k8s-resource memory=16Gi \
++  .github/workflows/train.yml
++
++# Private registry, and a registry wrkflw can push locally built images to
++wrkflw run --runtime kubernetes --k8s-image-pull-secret regcred \
++  --k8s-registry registry.example.com/ci .github/workflows/ci.yml
++
++# Every flag has a WRKFLW_K8S_* environment variable, so set them once
++export WRKFLW_K8S_NAMESPACE=ci WRKFLW_K8S_RESOURCE=nvidia.com/gpu=1
++```
++
++| Flag | Environment variable | Purpose |
++|------|----------------------|---------|
++| `--k8s-context NAME` | `WRKFLW_K8S_CONTEXT` | kubeconfig context (default: current) |
++| `--k8s-namespace NAME` | `WRKFLW_K8S_NAMESPACE` | Namespace pods are created in (default: current) |
++| `--k8s-node-selector KEY=VALUE` | `WRKFLW_K8S_NODE_SELECTOR` | `nodeSelector` for every pod; repeatable |
++| `--k8s-resource NAME=QUANTITY` | `WRKFLW_K8S_RESOURCE` | Limits and requests for the step container, e.g. `nvidia.com/gpu=1`; repeatable |
++| `--k8s-image-pull-secret NAME` | `WRKFLW_K8S_IMAGE_PULL_SECRET` | `imagePullSecrets` for every pod; repeatable |
++| `--k8s-registry REGISTRY` | `WRKFLW_K8S_REGISTRY` | Where images built locally are pushed so the cluster can pull them |
++| `--k8s-helper-image IMAGE` | `WRKFLW_K8S_HELPER_IMAGE` | Image for the sync helpers (default `busybox:1.36`, pinned by digest; needs `sh` and `tar`) |
++| `--k8s-timeout SECONDS` | `WRKFLW_K8S_TIMEOUT` | Per-step limit, pod creation to sync-back (default 21600, the engine's job timeout) |
++| `--k8s-schedule-timeout SECONDS` | `WRKFLW_K8S_SCHEDULE_TIMEOUT` | How long a pod may stay unschedulable before the step fails (default 600) |
++
++How a step runs:
++
++1. A pod is created with one `emptyDir` per mount, an init container that waits for a ready marker, the step container, and a small sidecar. Pods are labelled `app.kubernetes.io/managed-by=wrkflw` and `wrkflw.dev/session=<id>`.
++2. The work
 ```
 
-**File**: `crates/github/Cargo.toml` (modified, +1/-0)
+**File**: `crates/executor/src/engine.rs` (modified, +465/-47)
 ```diff
-@@ -13,6 +13,7 @@ categories.workspace = true
- [dependencies]
- # Internal crates
- wrkflw-models.workspace = true
-+wrkflw-logging.workspace = true
+@@ -16,6 +16,7 @@ use crate::action_resolver;
+ use crate::dependency;
+ use crate::docker;
+ use crate::environment;
++use crate::kubernetes::{self, KubernetesConfig};
+ use crate::podman;
+ use wrkflw_logging;
+ use wrkflw_matrix::MatrixCombination;
+@@ -101,6 +102,7 @@ async fn execute_github_workflow(
+     let runtime = initialize_runtime(
+         config.runtime_type.clone(),
+         config.preserve_containers_on_failure,
++        &config.kubernetes,
+     )?;
  
- # External dependencies from workspace
- serde.workspace = true
-```
-
-**File**: `crates/github/src/lib.rs` (modified, +158/-46)
-```diff
-@@ -113,6 +113,33 @@ pub fn get_repo_info() -> Result<RepoInfo, GithubError> {
-     }
+     // Create a temporary workspace directory
+@@ -159,13 +161,7 @@ async fn execute_github_workflow(
+     // Add runtime mode to environment
+     env_context.insert(
+         "WRKFLW_RUNTIME_MODE".to_string(),
+-        match config.runtime_type {
+-            RuntimeType::Auto => "auto".to_string(),
+-            RuntimeType::Emulation => "emulation".to_string(),
+-            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
+-            RuntimeType::Docker => "docker".to_string(),
+-            RuntimeType::Podman => "podman".to_string(),
+-        },
++        config.runtime_type.mode_name().to_string(),
+     );
+ 
+     // show=true means hide=false (inverted for the env var)
+@@ -365,6 +361,7 @@ async fn execute_gitlab_pipeline(
+     let runtime = initialize_runtime(
+         config.runtime_type.clone(),
+         config.preserve_containers_on_failure,
++        &config.kubernetes,
+     )?;
+ 
+     // Create a temporary workspace directory
+@@ -377,13 +374,7 @@ async fn execute_gitlab_pipeline(
+     // Add runtime mode to environment
+     env_context.insert(
+         "WRKFLW_RUNTIME_MODE".to_string(),
+-        match config.runtime_type {
+-            RuntimeType::Auto => "auto".to_string(),
+-            RuntimeType::Emulation => "emulation".to_string(),
+-            RuntimeType::SecureEmulation => "secure_emulation".to_string(),
+-            RuntimeType::Docker => "docker".to_string(),
+-            RuntimeType::Podman => "podman".to_string(),
+-        },
++        config.runtime_type.mode_name().to_string(),
+     );
+ 
+     // Setup environment files
+@@ -612,11 +603,13 @@ pub fn detect_runtime(runtime_type: RuntimeType) -> RuntimeType {
+ fn initialize_runtime(
+     runtime_type: RuntimeType,
+     preserve_containers_on_failure: bool,
++    kubernetes: &KubernetesConfig,
+ ) -> Result<Box<dyn ContainerRuntime>, ExecutionError> {
+     match runtime_type {
+         RuntimeType::Auto => initialize_runtime(
+             detect_runtime(RuntimeType::Auto),
+             preserve_containers_on_failure,
++            kubernetes,
+         ),
+         RuntimeType::Docker => {
+             if docker::is_available() {
+@@ -645,6 +638,15 @@ fn initialize_runtime(
+                 Ok(Box::new(emulation::EmulationRuntime::new()))
+             }
+         }
++        // Kubernetes is never auto-detected and never silently replaced:
++        // a job meant for a GPU node must not quietly run on the laptop.
++        RuntimeType::Kubernetes => {
++            kubernetes::check_available(kubernetes).map_err(ExecutionError::Runtime)?;
++            Ok(Box::new(kubernetes::KubernetesRuntime::new(
++                kubernetes.clone(),
++                preserve_containers_on_failure,
++            )))
++        }
+         RuntimeType::Emulation => Ok(Box::new(emulation::EmulationRuntime::new())),
+         RuntimeType::SecureEmulation => Ok(Box::new(
+             wrkflw_runtime::secure_emulation::SecureEmulationRuntime::new(),
+@@ -659,10 +661,27 @@ pub enum RuntimeType {
+     Auto,
+     Docker,
+     Podman,
++    /// Run each step as a pod in a Kubernetes cluster. Selected explicitly
++    /// only; see `--k8s-*` flags and [`KubernetesConfig`].
++    Kubernetes,
+     Emulation,
+     SecureEmulation,
  }
  
-+/// Normalize a user-facing workflow identifier into the path segment
-+/// GitHub's `workflow_dispatch` endpoint expects as `{workflow_file_name}`
-+/// in `/repos/{owner}/{repo}/actions/workflows/{workflow_file_name}/dispatches`.
-+///
-+/// - Drops any directory prefix: `"release/prod.yml"` → `"prod.yml"`.
-+/// - Preserves an existing `.yml` or `.yaml` suffix so workflows stored
-+///   as `.yaml` don't have `.yml` tacked on.
-+/// - Appends `.yml` when no extension is present so the result is
-+///   always a valid filename reference.
-+/// - Returns `None` for inputs with no extractable basename (empty
-+///   string, bare path separator, trailing slash).
-+///
-+/// Used both by [`trigger_workflow`] to build the real dispatch URL
-+/// and by the TUI's Trigger-tab curl preview via this crate's public
-+/// API, so the preview and the actual POST land on the same endpoint.
-+pub fn workflow_dispatch_path_segment(name: &str) -> Option<String> {
-+    let basename = name.rsplit(['/', '\\']).next()?;
-+    if basename.is_empty() {
-+        return None;
-+    }
-+    if basename.ends_with(".yml") || basename.ends_with(".yaml") {
-+        Some(basename.to_string())
-+    } else {
-+        Some(format!("{basename}.yml"))
++impl RuntimeType {
++    /// The value steps see in `WRKFLW_RUNTIME_MODE`.
++    pub fn mode_name(&self) -> &'static str {
++        match self {
++            RuntimeType::Auto => "auto",
++            RuntimeType::Emulation => "emulation",
++            RuntimeType::SecureEmulation => "secure_emulation",
++            RuntimeType::Docker => "docker",
++            RuntimeType::Podman => "podman",
++            RuntimeType::Kubernetes => "kubernetes",
++        }
 +    }
 +}
 +
- /// Get the list of available workflows in the repository
- pub async fn list_workflows(_repo_info: &RepoInfo) -> Result<Vec<String>, GithubError> {
-     let workflows_dir = Path::new(".github/workflows");
-@@ -164,23 +191,25 @@ pub async fn trigger_workflow(
+ #[derive(Debug, Clone, Default)]
+ pub struct ExecutionConfig {
+     pub runtime_type: RuntimeType,
+@@ -676,6 +695,8 @@ pub struct ExecutionConfig {
+     /// lowercase, as [`parse_platform_override`] returns them, because labels
+     /// match case-insensitively.
+     pub platform_overrides: HashMap<String, String>,
++    /// Cluster settings used when `runtime_type` is [`RuntimeType::Kubernetes`].
++    pub kubernetes: KubernetesConfig,
+ }
  
-     // Get repository information
-     let repo_info = get_repo_info()?;
--    println!("Repository: {}/{}", repo_info.owner, repo_info.repo);
-+    wrkflw_logging::info(&format!(
-+        "Repository: {}/{}",
-+        repo_info.owner, repo_info.repo
-+    ));
- 
-     // Prepare the request payload
-     let branch_ref = branch.unwrap_or(&repo_info.default_branch);
--    println!("Using branch: {}", branch_ref);
+ /// Parse a `LABEL=IMAGE` runner override, as given to `--platform`.
+@@ -942,10 +963,7 @@ async fn prepare_action(
+         let dockerfile = action_dir.join("Dockerfile");
+         if dockerfile.exists() {
+             // It's a Docker action, build it
+-            let tag = format!("wrkflw-local-action:{}", uuid::Uuid::new_v4());
 -
--    // Extract just the workflow name from the path if it's a full path
--    let workflow_name = if workflow_name.contains('/') {
--        Path::new(workflow_name)
--            .file_stem()
--            .and_then(|s| s.to_str())
--            .ok_or_else(|| GithubError::GitParseError("Invalid workflow name".to_string()))?
--    } else {
--        workflow_name
--    };
-+    wrkflw_logging::info(&format!("Using branch: {}", branch_ref));
-+
-+    // Normalize the user-facing identifier into the dispatch URL
-+    // segment. Handles subdir prefixes (drop) and missing extensions
-+    // (append `.yml`) so `"ci"`, `"ci.yml"`, `"ci.yaml"`, and
-+    // `"release/prod.yml"` all produce the same URL shape the REST
-+    // API expects. The TUI preview goes through the same helper so
-+    // a copy-pasted curl lands on the same endpoint.
-+    let workflow_segment = workflow_dispatch_path_segment(workflow_name)
-+        .ok_or_else(|| GithubError::GitParseError("Invalid workflow name".to_string()))?;
- 
--    println!("Using workflow name: {}", workflow_name);
-+    wrkflw_logging::info(&format!("Using workflow file: {}", workflow_segment));
- 
-     // Create simplified payload
-     let mut payload = serde_json::json!({
-@@ -190,16 +219,16 @@ pub async fn trigger_workflow(
-     // Add inputs if provided
-     if let Some(input_map) = inputs {
-         payload["inputs"] = serde_json::json!(input_map);
--        println!("With inputs: {:?}", input_map);
-+        wrkflw_logging::info(&format!("With inputs: {:?}", input_map));
-     }
- 
-     // Send the workflow_dispatch event
-     let url = format!(
--        "https://api.github.com/repos/{}/{}/actions/workflows/{}.yml/dispatches",
--        repo_info.owner, repo_info.repo, workflow_name
-+        "https://api.github.com/repos/{}/{}/actions/workflows/{}/dispatches",
-+        repo_info.owner, repo_info.repo, workflow_segment
-     );
- 
--    println!("Triggering workflow at URL: {}", url);
-+    wrkflw_logging::info(&format!("Triggering workflow at URL: {}", url));
- 
-     // Create a reqwest client
-     let client = reqwest::Client::new();
-@@ -243,65 +272,62 @@ pub async fn trigger_workflow(
-         });
-     }
- 
--    println!("Workflow triggered successfully!");
--    println!(
--        "View runs at: https://github.com/{}/{}/actions/workflows/{}.yml",
--        repo_info.owner, repo_info.repo, workflow_name
--    );
-+    wrkflw_logging::info("Workflow triggered successfully!");
-+    wrkflw_logging::info(&format!(
-+        "View runs at: https://github.com/{}/{}/actions/workflows/{}",
-+        repo_info.owner, repo_info.repo, workflow_segment
-+    ));
- 
-     // Attempt to verify the workflow was actually triggered
--    match list_recent_workflow_runs(&repo_info, workflow_name, &token).await {
-+    match list_recent_workflow_runs(&repo_info, &workflow_segment, &token).await {
-         Ok(runs) => {
-             if !runs.is_empty() {
--                println!("\nRecent runs of this workflow:");
-+                wrkflw_logging::info("R
+-            runtime
+-                .build_image(&do
 ```
 
-**File**: `crates/gitlab/Cargo.toml` (modified, +1/-0)
+**File**: `crates/executor/src/environment.rs` (modified, +46/-0)
 ```diff
-@@ -13,6 +13,7 @@ categories.workspace = true
- [dependencies]
- # Internal crates
- wrkflw-models.workspace = true
-+wrkflw-logging.workspace = true
- 
- # External dependencies
- lazy_static.workspace = true
-```
-
-**File**: `crates/gitlab/src/lib.rs` (modified, +7/-7)
-```diff
-@@ -143,14 +143,14 @@ pub async fn trigger_pipeline(
- 
-     // Get repository information
-     let repo_info = get_repo_info()?;
--    println!(
-+    wrkflw_logging::info(&format!(
-         "GitLab Repository: {}/{}",
-         repo_info.namespace, repo_info.project
--    );
-+    ));
- 
-     // Prepare the request payload
-     let branch_ref = branch.unwrap_or(&repo_info.default_branch);
--    println!("Using branch: {}", branch_ref);
-+    wrkflw_logging::info(&format!("Using branch: {}", branch_ref));
- 
-     // Create simplified payload
-     let mut payload = serde_json::json!({
-@@ -171,7 +171,7 @@ pub async fn trigger_pipeline(
-             .collect();
- 
-         payload["variables"] = serde_json::json!(formatted_vars);
--        println!("With variables: {:?}", vars_map);
-+        wrkflw_logging::info(&format!("With variables: {:?}", vars_map));
-     }
- 
-     // URL encode the namespace and project for use in URL
-@@ -185,7 +185,7 @@ pub async fn trigger_pipeline(
-         encoded_project = encoded_project,
-     );
- 
--    println!("Triggering pipeline at URL: {}", url);
-+    wrkflw_logging::info(&format!("Triggering pipeline at URL: {}", url));
- 
-     // Create a reqwest client
-     let client = reqwest::Client::new();
-@@ -236,8 +236,8 @@ pub async fn trigger_pipeline(
-         repo_info.namespace, repo_info.project, pipeline_id
-     );
- 
--    println!("Pipeline triggered successfully!");
--    println!("View pipeline at: {}", pipeline_url);
-+    wrkflw_logging::info("Pipeline triggered successfully!");
-+    wrkflw_logging::info(&format!("View pipeline at: {}", pipeline_url));
- 
+@@ -25,6 +25,32 @@ pub fn setup_github_environment_files(workspace_dir: &Path) -> io::Result<()> {
      Ok(())
  }
-```
-
-**File**: `crates/ui/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -24,6 +24,9 @@ wrkflw-logging.workspace = true
- wrkflw-trigger-filter.workspace = true
- wrkflw-utils.workspace = true
- wrkflw-github.workspace = true
-+wrkflw-gitlab.workspace = true
-+wrkflw-matrix.workspace = true
-+wrkflw-secrets.workspace = true
  
- # External dependencies
- chrono.workspace = true
-@@ -37,3 +40,4 @@ serde_json.workspace = true
- reqwest = { workspace = true, features = ["json"] }
- regex.workspace = true
- futures.workspace = true
-+urlencoding.workspace = true
-```
-
-**File**: `crates/ui/src/app/mod.rs` (modified, +194/-85)
-```diff
-@@ -4,7 +4,10 @@ mod state;
- use crate::handlers::workflow::start_next_workflow_execution;
- use crate::models::{ExecutionResultMsg, QueuedExecution, Workflow, WorkflowStatus};
- use crate::utils::load_workflows;
--use crate::views::render_ui;
-+use crate::views::{
-+    render_ui, TAB_COUNT, TAB_DAG, TAB_EXECUTION, TAB_HELP, TAB_LOGS, TAB_SECRETS, TAB_TRIGGER,
-+    TAB_WORKFLOWS,
-+};
- use chrono::Local;
- use crossterm::{
-     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
-@@ -18,7 +21,7 @@ use std::sync::mpsc;
- use std::time::{Duration, Instant};
- use wrkflw_executor::RuntimeType;
- 
--pub use state::App;
-+pub use state::{Accent, App, TriggerPlatform};
- 
- // Main entry point for the TUI interface
- #[allow(clippy::ptr_arg)]
-@@ -209,6 +212,11 @@ fn run_tui_event_loop(
-             start_next_workflow_execution(app, tx_clone, verbose);
-         }
- 
-+        // Surface any completed Trigger-tab dispatches on the status bar
-+        // so the user sees the outcome where they fired it, rather than
-+        // having to switch tabs to Logs.
-+        app.drain_trigger_outcomes();
-+
-         // Start execution if we have a queued workflow and nothing is currently running
-         if app.running && app.current_execution.is_none() && !app.execution_queue.is_empty() {
-             start_next_workflow_execution(app, tx_clone, verbose);
-@@ -218,11 +226,47 @@ fn run_tui_event_loop(
-         if event::poll(event_poll_timeout)? {
-             if let Event::Key(key) = event::read()? {
-                 // Handle search input first if we're in search mode and logs tab
--                if app.selected_tab == 2 && app.log_search_active {
-+                if app.selected_tab == TAB_LOGS && app.log_search_active {
-                     app.handle_log_search_input(key.code);
-                     continue;
-                 }
- 
-+                // When the Tweaks overlay is open it is modal: only
-+                // its own shortcuts are honoured, everything else is
-+                // swallowed so keys like `d` or a tab number can't
-+                // silently fire the global handler while the user is
-+                // in edit-mode. `q` is the one exception — quit is
-+                // universally modal-safe in this TUI and swallowing
-+                // it silently was a discoverability trap.
-+                if app.tweaks_open {
-+                    match key.code {
-+                        KeyCode::Char('q') => {
-+                            break Ok(());
-+                        }
-+                        KeyCode::Esc | KeyCode::Char(',') => {
-+                            app.tweaks_open = false;
-+                        }
-+                        KeyCode::Char('a') | KeyCode::Char('A') => {
-+                            app.tweaks_accent = app.tweaks_accent.next();
-+                        }
-+                        _ => {}
-+                    }
-+                    continue;
-+                }
-+
-+                // Trigger tab: if a text field (branch or an input
-+                // row) is focused, route printable characters and
-+                // edit keys straight to that field before the global
-+                // key-map fires. Otherwise editing a value like
-+                // "notify=slack" would trip the `s` logs shortcut
-+                // below and jump tabs.
-+                if app.selected_tab == TAB_TRIGGER
-+                    && app.trigger_editing()
-+                    && app.trigger_handle_input_key(key.code)
-+                {
-+                    continue;
-+                }
-+
-                 // Handle help overlay scrolling
-                 if app.show_help {
-                     match key.code {
-@@ -263,77 +307,105 @@ fn run_tui_event_loop(
-                         // Inside the Step Inspector, Tab cycles inspector
-                         // sub-tabs (Output / Env / Files / Matrix / Timeline);
-                         // elsewhere it cycles top-level tabs.
--                        if app.selected_tab == 1 && app.detailed_view {
-+                        if app.selected_tab == TAB_EXECUTION && app.detailed_view {
-                             app.step_inspector_tab = (app.step_inspector_tab + 1) % 5;
-+                        } else if app.selected_tab == TAB_TRIGGER {
-+                            // In the Trigger tab Tab cycles inputs/fields.
-+                            app.trigger_tab_next_field();
-                         } else {
--                            app.switch_tab((app.selected_tab + 1) % 4);
-+                            app.switch_tab((app.selected_tab + 1) % TAB_COUNT);
-                         }
-                     }
-                     KeyCode::BackTab => {
--                        if app.selected_tab == 1 && app.detailed_view {
-+                        if app.selected_tab == TAB_EXECUTION && app.detailed_view {
-                             app.step_inspector_tab = (app.step_inspector_tab + 4) % 5;
-+                        } else if app.selected_tab
-```
-
-**File**: `crates/ui/src/app/state.rs` (modified, +1536/-2)
-```diff
-@@ -8,10 +8,13 @@ use chrono::Local;
- use crossterm::event::KeyCode;
- use ratatui::widgets::{ListState, TableState};
- use std::path::{Path, PathBuf};
-+use std::sync::atomic::{AtomicBool, Ordering};
- use std::sync::mpsc;
-+use std::sync::Arc;
- use std::time::{Duration, Instant};
- use tokio::task::JoinHandle;
- use wrkflw_executor::{JobStatus, RuntimeType, StepStatus};
-+use wrkflw_secrets::SecretConfig;
- 
- /// Application state
- pub struct App {
-@@ -99,6 +102,158 @@ pub struct App {
-     /// Active sub-tab inside the Step Inspector (job-detail) view.
-     /// 0 Output, 1 Env, 2 Files, 3 Matrix, 4 Timeline.
-     pub step_inspector_tab: usize,
-+
-+    // ── DAG tab ───────────────────────────────────────────────────
-+    /// When true, the DAG tab renders the topological-stage list view;
-+    /// when false, the spatial column layout. Matches the design's
-+    /// `graphView: 'graph' | 'list'` toggle (shortcut `g`).
-+    pub dag_list_view: bool,
-+
-+    // ── Trigger tab ───────────────────────────────────────────────
-+    /// Platform selected in the Trigger tab: "github" or "gitlab".
-+    /// Toggled with `p` to keep the keyboard story explicit.
-+    pub trigger_platform: TriggerPlatform,
-+    /// Cursor into `workflows` for the workflow-to-dispatch selector.
-+    pub trigger_workflow_idx: usize,
-+    /// The branch/ref input — owned by the app so typing doesn't lose
-+    /// state between draws. Empty string means "use the resolved
-+    /// default"; the curl preview and the dispatcher both honour that
-+    /// fallback. Edited when `trigger_branch_focused` is set.
-+    pub trigger_branch: String,
-+    /// True while the Branch / ref row holds the edit focus. Mutually
-+    /// exclusive with `trigger_input_cursor.is_some()` — the main key
-+    /// handler drives them as a single "is something being edited?"
-+    /// question via [`App::trigger_editing`].
-+    pub trigger_branch_focused: bool,
-+    /// Free-form `key=value` pairs to POST as `inputs:` (GitHub) or
-+    /// `variables:` (GitLab). Flat Vec rather than HashMap so the UI
-+    /// can show a deterministic cursor position and preserve user-typed
-+    /// order in the curl preview.
-+    pub trigger_inputs: Vec<(String, String)>,
-+    /// Index into `trigger_inputs` for the edit cursor. `None` when no
-+    /// row is being edited.
-+    pub trigger_input_cursor: Option<usize>,
-+    /// Which column of the currently-edited input row holds focus:
-+    /// false = key, true = value. Flipped with Tab.
-+    pub trigger_input_on_value: bool,
-+    /// Shared in-flight flag so a double-`Enter` can't fire two
-+    /// dispatches before the spawned task returns. Cleared by the
-+    /// dispatch task on completion (success *or* error).
-+    pub trigger_in_flight: Arc<AtomicBool>,
-+    /// Cached resolution of the remote target (owner/repo, default
-+    /// branch). Populated lazily by `trigger_tab_target()` so we don't
-+    /// shell out to `git remote` every frame; invalidated on platform
-+    /// toggle.
-+    pub trigger_target_cache: Option<TriggerTarget>,
-+    /// Sender for dispatch outcomes. Cloned into the spawned tokio
-+    /// task so the task can report success/failure back to the main
-+    /// event loop without touching `&mut App` directly.
-+    pub trigger_outcome_tx: mpsc::Sender<DispatchOutcome>,
-+    /// Receiver for dispatch outcomes. Drained every tick by
-+    /// [`App::drain_trigger_outcomes`] — the result updates the status
-+    /// bar so the user gets confirmation on the Trigger tab itself,
-+    /// not buried in the Logs tab.
-+    pub trigger_outcome_rx: mpsc::Receiver<DispatchOutcome>,
-+
-+    // ── Secrets tab ───────────────────────────────────────────────
-+    /// Selected row in the secrets list.
-+    pub secrets_list_state: ListState,
-+
-+    // ── Tweaks overlay ────────────────────────────────────────────
-+    /// When true, the Tweaks panel overlays the current tab. Toggled
-+    /// with `,` (mirrors the design's edit-mode entry point).
-+    pub tweaks_open: bool,
-+    /// Accent color override. Matches the design's 5-slot palette.
-+    /// The design exposes theme/density/graph-view too — we only ship
-+    /// the knobs we actually plumb through (accent recolors the brand
-+    /// + focused borders; the others would be dead toggles today).
-+    pub tweaks_accent: Accent,
-+}
-+
-+/// Outcome of a remote dispatch spawned from the Trigger tab.
-+/// Reported back to the main event loop via an mpsc so the UI can
-+/// surface the result on the status bar (instead of forcing the user
-+/// to tab over to Logs).
-+#[derive(Debug, Clone)]
-+pub struct DispatchOutcome {
-+    pub platform: TriggerPlatform,
-+    pub workflow: String,
-+    pub result: Result<(), String>,
-+}
-+
-+/// Target platform for the remote-trigger UI. GitLab path uses the
-+/// existing `wrkflw_gitlab::trigger_pipeline` so the form is honest
-+/// about what it will call.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub enum TriggerPlatform {
-+    Github,
-+    Gitlab,
-+}
-+
-+impl Tri
-```
-
----
-
-### Incident Patch 2: `a668d815` (2026-04-13)
-**Commit Message**: fix: artifact actions under --runtime emulation  (#93)
-
-* test(executor): cover run-step → upload/download-artifact handoff under emulation
-
-Drive a real EmulationRuntime through execute_step for three steps (run,
-upload-artifact, download-artifact) and assert the payload round-trips
-byte-for-byte. Reproduces #88: today the run step writes via the
-GITHUB_WORKSPACE reroute while upload reads ctx.working_dir, so the two
-workspaces diverge and the upload fails with "No files found matching
-pattern".
-
-Test is intentionally failing at this commit; the fix follows.
-
-* runtime(container): add resolve_host_working_dir helper
-
-Introduces a pure function that rebases a container-visible working
-directory onto its host-side volume source by finding the longest
-component-boundary prefix in the volumes list and grafting the suffix.
-
-This is the building block for making non-container runtimes
-(emulation, secure_emulation) honor the same mount semantics as docker,
-so a run: step and an artifact handler observe the same host workspace
-(fix for #88). The helper itself is pure and pub(crate); wiring follows
-in the next commit.
-
-Component-boundary matching (via Path::strip_prefix) ensures
-/github/wo
-
-**File**: `crates/executor/src/engine.rs` (modified, +183/-0)
-```diff
-@@ -7618,6 +7618,189 @@ runs:
-         assert!(dl_result.output.contains("Downloaded artifact 'my-build'"));
-     }
- 
-+    /// Regression test for #88.
-+    ///
-+    /// A `run:` step that writes a file must land in the same workspace that
-+    /// `actions/upload-artifact` subsequently reads from. Under the buggy
-+    /// emulation runtime, run steps were rerouted to `GITHUB_WORKSPACE` (i.e.
-+    /// the real project directory) while artifact handlers kept using the
-+    /// per-job tempdir — so uploads could never find files the run step had
-+    /// just written.
-+    ///
-+    /// This test drives a real `EmulationRuntime` end-to-end through
-+    /// run → upload-artifact → download-artifact and asserts the payload
-+    /// round-trips byte-for-byte.
-+    #[cfg(not(target_os = "windows"))]
-+    #[tokio::test]
-+    async fn run_step_upload_download_artifact_roundtrip_emulation() {
-+        let runtime = emulation::EmulationRuntime::new();
-+        let workflow = minimal_workflow();
-+        let working_dir = tempfile::tempdir().unwrap();
-+
-+        // Point GITHUB_WORKSPACE at an isolated tempdir. On buggy main this is
-+        // where the rerouted run step writes, so upload (which reads
-+        // `ctx.working_dir`) finds nothing and the test fails. After the fix,
-+        // emulation honors the volume mount and the run step writes directly
-+        // into `ctx.working_dir`, so this path is irrelevant — but we still
-+        // isolate it to keep the test from touching the real project tree.
-+        let fake_github_ws = tempfile::tempdir().unwrap();
-+
-+        let artifact_dir = tempfile::tempdir().unwrap();
-+        let artifact_store = crate::artifacts::ArtifactStore::new(artifact_dir.path()).unwrap();
-+        let cache_dir = tempfile::tempdir().unwrap();
-+        let cache_store =
-+            crate::cache::CacheStore::with_root(cache_dir.path().to_path_buf()).unwrap();
-+        let pending = std::sync::Mutex::new(Vec::<PendingCacheSave>::new());
-+
-+        let mut job_env = HashMap::new();
++/// Point `job_env` at a fresh set of `GITHUB_*` files owned by one job.
++///
++/// The run-level files are shared, but each step's env file updates are read
++/// back and truncated by the engine, so parallel jobs sharing them would eat
++/// each other's `GITHUB_ENV` and `GITHUB_OUTPUT` entries. The returned
++/// directory must outlive the job.
++pub fn isolate_github_environment_files(
++    job_env: &mut HashMap<String, String>,
++) -> io::Result<tempfile::TempDir> {
++    let dir = tempfile::tempdir()?;
++    setup_github_environment_files(dir.path())?;
++    let github_dir = dir.path().join("github");
++    for (key, file) in [
++        ("GITHUB_OUTPUT", "output"),
++        ("GITHUB_ENV", "env"),
++        ("GITHUB_PATH", "path"),
++        ("GITHUB_STEP_SUMMARY", "step_summary"),
++    ] {
 +        job_env.insert(
-+            "GITHUB_WORKSPACE".to_string(),
-+            fake_github_ws.path().to_string_lossy().to_string(),
++            key.to_string(),
++            github_dir.join(file).to_string_lossy().to_string(),
 +        );
-+
-+        // --- Step 1: run step that writes a file into the workspace ---
-+        let run_step = make_step_run("mkdir artifact-dir && echo hello > artifact-dir/payload.txt");
-+        let run_ctx = StepExecutionContext {
-+            step: &run_step,
-+            step_idx: 0,
-+            job_env: &job_env,
-+            working_dir: working_dir.path(),
-+            runtime: &runtime,
-+            workflow: &workflow,
-+            runner_image: "ubuntu:latest",
-+            verbose: false,
-+            matrix_combination: &None,
-+            container_config: None,
-+            workflow_defaults: None,
-+            job_defaults: None,
-+            step_outputs: &HashMap::new(),
-+            step_statuses: &HashMap::new(),
-+            job_status: "success",
-+            services: JobServices {
-+                secret_manager: None,
-+                secret_masker: None,
-+                secrets_context: &HashMap::new(),
-+                needs_context: &HashMap::new(),
-+                needs_results: &HashMap::new(),
-+                artifact_store: &artifact_store,
-+                cache_store: &cache_store,
-+            },
-+            pending_cache_saves: &pending,
-+        };
-+        let run_result = execute_step(run_ctx).await.unwrap();
-+        assert_eq!(
-+            run_result.status,
-+            StepStatus::Success,
-+            "run step failed: {}",
-+            run_result.output
-+        );
-+
-+        // --- Step 2: upload-artifact reads the file the run step just wrote ---
-+        let mut up_with = HashMap::new();
-+        up_with.insert("name".to_string(), "payload".to_string());
-+        up_with.insert("path".to_string(), "artifact-dir/payload.txt".to_string());
-+        let up_step = make_step(
-+            "upload",
-+            "actions/upload-artifact@v4",
-+            Some(up_with),
-+            HashMap::new(),
-+        );
-+        let up_ctx = StepExecutionContext {
-+            step: &up_step,
-+            step_idx: 1,
-+            job_env: &job_env,
-+            working_dir: working_dir.path(),
-+            runtime: &runtime,
-+            workflow: &workflow,
-+            runner_image: "ubuntu:latest",
-+            verbose: false,
-+            matrix_combination: &None,
-+            container_config: None,
-+            workflow_defaults: None,
-+            job_defaults: None,
-+            step_outputs: &HashMap::new(),
-+            step_statuses: &HashMap::new(),
-+            job_status: "success",
-+            services: JobServices {
-+                secret_manager: None,
-+                secret_masker: None,
-+                secrets_context: &HashMap::new(),
-+                needs_context: &HashMap::new(),
-+                needs_results: &HashMap::new(),
-+                artifact_store: &artifact_store,
-+                cache_store: &
-```
-
-**File**: `crates/runtime/src/container.rs` (modified, +238/-1)
-```diff
-@@ -1,5 +1,7 @@
- use async_trait::async_trait;
--use std::path::Path;
-+use std::fs;
-+use std::path::{Path, PathBuf};
-+use wrkflw_logging;
- 
- /// Prefix for all locally-built images. Used to skip registry pulls.
- pub const LOCAL_IMAGE_PREFIX: &str = "wrkflw-";
-@@ -67,6 +69,102 @@ pub enum ContainerError {
-     NetworkOperation(String),
- }
- 
-+/// Rebase a container-visible working directory onto its host-side volume
-+/// source.
-+///
-+/// Given a `container_dir` like `/github/workspace/sub` and a `volumes` list
-+/// that maps `(host, container)` pairs (e.g. `(/tmp/job-xxxx, /github/workspace)`),
-+/// return the corresponding host path (`/tmp/job-xxxx/sub`) by locating the
-+/// longest `container` path that is a component-boundary prefix of
-+/// `container_dir` and grafting the remainder onto its `host` counterpart.
-+///
-+/// Returns `None` if no volume covers `container_dir`.
-+///
-+/// This is the mount-semantics bridge used by non-container runtimes
-+/// (emulation, secure_emulation) so that a `run:` step and an
-+/// artifact/cache handler observe the same host workspace. It is the fix
-+/// for #88.
-+pub(crate) fn resolve_host_working_dir(
-+    container_dir: &Path,
-+    volumes: &[(&Path, &Path)],
-+) -> Option<PathBuf> {
-+    let mut best: Option<(usize, PathBuf)> = None;
-+    for (host, container) in volumes {
-+        if let Ok(suffix) = container_dir.strip_prefix(container) {
-+            // `Path::strip_prefix` respects component boundaries, so
-+            // `/github/workspace-foo` is NOT matched by `/github/workspace`.
-+            let depth = container.components().count();
-+            let candidate = host.join(suffix);
-+            match &best {
-+                // Equal-depth ties can only occur when two volume entries
-+                // share the same `container` prefix (two distinct container
-+                // paths that are both strict component-boundary prefixes of
-+                // the same `container_dir` must have different component
-+                // counts, because one has to contain the other). In that
-+                // duplicate-entry case, first-seen wins — the `>=` is the
-+                // intentional conflict resolution, not a typo for `>`.
-+                Some((best_depth, _)) if *best_depth >= depth => {}
-+                _ => best = Some((depth, candidate)),
-+            }
-+        }
 +    }
-+    best.map(|(_, path)| path)
++    Ok(dir)
 +}
 +
-+/// Resolve the host working directory for a non-container runtime call, or
-+/// return a `ContainerError` describing why it couldn't.
+ pub fn create_github_context(
+     workflow: &WorkflowDefinition,
+     workspace_dir: &Path,
+@@ -429,4 +455,24 @@ mod tests {
+     fn extract_repo_from_invalid_url() {
+         assert_eq!(extract_repo_from_url("not-a-url"), None);
+     }
++
++    #[test]
++    fn each_job_gets_its_own_empty_github_files() {
++        let mut first = HashMap::new();
++        let mut second = HashMap::new();
++        let first_dir = isolate_github_environment_files(&mut first).unwrap();
++        let second_dir = isolate_github_environment_files(&mut second).unwrap();
++
++        for key in [
++            "GITHUB_OUTPUT",
++            "GITHUB_ENV",
++            "GITHUB_PATH",
++            "GITHUB_STEP_SUMMARY",
++        ] {
++            assert_ne!(first[key], second[key], "{} is shared", key);
++            assert_eq!(fs::read_to_string(&first[key]).unwrap(), "");
++        }
++        assert!(Path::new(&first["GITHUB_ENV"]).starts_with(first_dir.path()));
++        assert!(Path::new(&second["GITHUB_ENV"]).starts_with(second_dir.path()));
++    }
+ }
+```
+
+**File**: `crates/executor/src/kubernetes/manifest.rs` (added, +551/-0)
+```diff
+@@ -0,0 +1,551 @@
++//! The pod a step runs in: which mounts it gets and how its manifest reads.
++//! Everything here is pure, so it is tested without a cluster.
++
++use super::{
++    KubernetesConfig, DEADLINE_MARGIN_SECS, MAIN_CONTAINER, MANAGED_BY_LABEL, READY_MARKER,
++    SESSION_ID, SESSION_LABEL, SYNC_CONTAINER, SYNC_DIR, SYNC_VOLUME, WAIT_CONTAINER,
++};
++use serde_json::{json, Value};
++use std::path::{Path, PathBuf};
++
++/// Container paths backed by directories the executor created for this job.
++/// Nothing else on those host directories can be lost, so only these are
++/// mirrored. `/github/action` is left out: a local action lives in the user's
++/// repository. Exact paths, so a user volume nested below one does not qualify.
++const MIRRORED_MOUNTS: &[&str] = &["/github/workspace", "/github/workflow"];
++
++/// One host directory and the container path it is exposed at. An empty
++/// `host` is a volume that exists only in the pod.
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub(super) struct Mount {
++    pub(super) host: PathBuf,
++    pub(super) container: PathBuf,
++}
++
++impl Mount {
++    /// True when the host directory must end up exactly as the pod left it,
++    /// deletions included. Any other mount belongs to the user and may hold
++    /// files the pod never saw, so copy-out only adds to it.
++    pub(super) fn mirrored(&self) -> bool {
++        MIRRORED_MOUNTS
++            .iter()
++            .any(|path| self.container == Path::new(path))
++    }
++}
++
++/// Turn the caller's `(host, container)` pairs into an ordered mount plan.
 +///
-+/// This is the shared wiring used by `EmulationRuntime::run_container` and
-+/// `SecureEmulationRuntime::run_container`. It enforces one invariant: when
-+/// `volumes` covers `working_dir`, the volume mapping **always wins** over
-+/// any accidentally-existing host path — so a dev-environment quirk like
-+/// `/github/workspace` happening to exist on the host cannot silently skip
-+/// the rebase and reintroduce #88.
-+///
-+/// - If a volume covers `working_dir`, rebase it, `create_dir_all` the host
-+///   side if it doesn't exist yet (matching docker's bind-mount behavior of
-+///   creating the mount target on first access), and return the host path.
-+/// - If no volume covers `working_dir` but `working_dir` itself exists on
-+///   the host, accept it as a caller-provided host path.
-+/// - Otherwise, return a loud, descriptive error. No silent fallback.
-+///
-+/// `runtime_label` is used as a prefix in log and error messages so the
-+/// reader can tell which runtime produced a given line.
-+pub(crate) fn rebase_working_dir_or_error(
-+    working_dir: &Path,
-+    volumes: &[(&Path, &Path)],
-+    runtime_label: &str,
-+) -> Result<PathBuf, ContainerError> {
-+    match resolve_host_working_dir(working_dir, volumes) {
-+        Some(host) => {
-+            if !host.exists() {
-+                fs::create_dir_all(&host).map_err(|e| {
-+                    ContainerError::ContainerExecution(format!(
-+                        "{}: failed to create host working directory '{}': {}",
-+                        runtime_label,
-+                        host.display(),
-+                        e
-+                    ))
-+                })?;
-+            }
-+            wrkflw_logging::info(&format!(
-+                "{}: rebased container path '{}' to host path '{}' via volume mount",
-+                runtime_label,
-+                working_dir.display(),
++/// Mounts are sorted by container path so a parent mount is populated before
++/// a mount nested inside it, and a container path requested twice keeps its
++/// first host directory, as a `docker run` with duplicate `-v` flags would.
++pub(super) fn plan_mounts(volumes: &[(&Path, &Path)]) -> Vec<Mount> {
++    let mut mounts: Vec<Mount> = Vec::new();
++    for (host, container) in volumes {
++        // An emptyDir cannot stand in for a file or a host socket such as
++        // /var/run/docker.sock, and a bare name is a Docker named volume.
++        if host.exists() && !host.is_dir() {
++            wrkflw_logging::warning(&format!(
++                "Kubernetes: skipping mount of {}: only directories can be synced into a pod",
 +                host.display()
 +            ));
-+            Ok(host)
++            continue;
 +        }
-+        None if working_dir.exists() => Ok(working_dir.to_path_buf()),
-+        None => Err(ContainerError::ContainerExecution(format!(
-+            "{}: container working dir '{}' is not covered by any volume mount; \
-+             caller must pass volumes",
-+            runtime_label,
-+            working_dir.display()
-+        ))),
++        if !host.is_absolute() && !host.as_os_str().is_empty() {
++            wrkflw_logging::warning(&format!(
++                "Kubernetes: mounting {} empty: host path '{}' is not absolute, \
++                 and named volumes do not exist on a cluster",
++                container.display(),
++                host.display()
++            ));
++        }
++        if mounts.iter().any(|m| m.container == *container) {
++            wrkflw_logging::warning(&format!(
++                "Kubernetes: container path {} is mounted twice; keeping the first mapping",
++                container.display()
++            ));
++            continue;
++        }
++        mounts.push(Mount {
++            host: host.to_path_buf(),
++            container: container.to_path_buf(),
++        });
 +    }
++    mounts.sort_by(|a, b| a.container.cmp(&b.container));
++    mounts
 +}
 +
- impl fmt::Display for ContainerError {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         match self {
-@@ -87,3 +185,142 @@ impl fmt
++/// Paths nested inside `mount` that belong to other mounts, relative to
++/// `mount.container` and prefixed with `./` the way `tar -C dir .` names
++/// them. They are excluded when the parent is streamed back out so a nested
++/// emptyDir is not copied into the parent's host directory.
++pub(super) fn nested_excludes(mount: &Mount, all: &[Mount]) -> Vec<String> {
++    all.iter()
++        .filter(|other| other.container != mount.container)
++        .filter_map(|other| other.container.strip_prefix(&mount.container).ok())
++        .map(|rel| {
++            let parts: Vec<_> = rel
++                .components()
++                .map(|c| c.as_os_str().to_string_lossy())
++                .collect();
++            format!("./{}", parts.join("/"))
++        })
++        .collect()
++}
++
++/// True when `mount` sits inside another mount. The parent's archive writes
++/// straight through into it, where Docker's bind mount would hide those files.
++pub(super) fn is_nested(mount: &Mount, all: &[Mount]) -> bool {
++    all.iter().any(|other| {
++        other.container != mount.container && mount.container.starts_with(&other.container)
++    })
++}
++
++/// Everything that goes into one pod, independent of the cluster.
++pub(super) struct PodInput<'a> {
++    pub(super) name: &'a str,
++    pub(super) image: &'a str,
++    pub(super) cmd: &'a [&'a str],
++    pub(super) env_vars: &'a [(&'a str, &'a str)],
++    pub(super) working_dir: &'a Path,
++    pub(super) mounts: &'a [Mount],
++    pub(super) entrypoint: Option<&'a str>,
++}
++
++/// Build the pod manifest. Pure, so it is unit-tested without a cluster.
++pub(super) fn build_pod_manifest(config: &KubernetesConfig, input: &PodInput<'_>) -> Value {
++    let volume_name = |i: usize| format!("vol-{}", i);
++
++
 ```
 
-**File**: `crates/runtime/src/emulation.rs` (modified, +45/-43)
+**File**: `crates/executor/src/kubernetes/mod.rs` (added, +2033/-0)
 ```diff
-@@ -1,4 +1,6 @@
--use crate::container::{ContainerError, ContainerOutput, ContainerRuntime};
-+use crate::container::{
-+    rebase_working_dir_or_error, ContainerError, ContainerOutput, ContainerRuntime,
-+};
- use async_trait::async_trait;
- use once_cell::sync::Lazy;
- use std::collections::HashMap;
-@@ -152,7 +154,7 @@ impl ContainerRuntime for EmulationRuntime {
-         command: &[&str],
-         env_vars: &[(&str, &str)],
-         working_dir: &Path,
--        _volumes: &[(&Path, &Path)],
-+        volumes: &[(&Path, &Path)],
-         _entrypoint: Option<&str>,
-     ) -> Result<ContainerOutput, ContainerError> {
-         // Build command string
-@@ -197,47 +199,13 @@ impl ContainerRuntime for EmulationRuntime {
-             wrkflw_logging::info(&format!("  {}={}", key, value));
-         }
- 
--        // Find actual working directory - determine if we should use the current directory instead
--        let actual_working_dir: PathBuf = if !working_dir.exists() {
--            // Look for GITHUB_WORKSPACE or CI_PROJECT_DIR in env_vars
--            let mut workspace_path = None;
--            for (key, value) in env_vars {
--                if *key == "GITHUB_WORKSPACE" || *key == "CI_PROJECT_DIR" {
--                    workspace_path = Some(PathBuf::from(value));
--                    break;
--                }
--            }
--
--            // If found, use that as the working directory
--            if let Some(path) = workspace_path {
--                if path.exists() {
--                    wrkflw_logging::info(&format!(
--                        "Using environment-defined workspace: {}",
--                        path.display()
--                    ));
--                    path
--                } else {
--                    // Fallback to current directory
--                    let current_dir =
--                        std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
--                    wrkflw_logging::info(&format!(
--                        "Using current directory: {}",
--                        current_dir.display()
--                    ));
--                    current_dir
--                }
--            } else {
--                // Fallback to current directory
--                let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
--                wrkflw_logging::info(&format!(
--                    "Using current directory: {}",
--                    current_dir.display()
--                ));
--                current_dir
--            }
--        } else {
--            working_dir.to_path_buf()
--        };
-+        // Resolve the host working directory via the shared mount-semantics
-+        // helper. When `volumes` covers `working_dir` (the normal case for
-+        // container-visible paths like `/github/workspace`), the rebase
-+        // always wins over an accidentally-existing host path — so a dev
-+        // environment with a real `/github/workspace` directory cannot
-+        // silently reintroduce #88.
-+        let actual_working_dir = rebase_working_dir_or_error(working_dir, volumes, "emulation")?;
- 
-         wrkflw_logging::info(&format!(
-             "Using actual working directory: {}",
-@@ -823,4 +791,38 @@ mod tests {
-         );
-         assert!(output.stdout.is_empty(), "stdout should be empty");
-     }
+@@ -0,0 +1,2033 @@
++//! Kubernetes runtime backend.
++//!
++//! Every [`ContainerRuntime::run_container`] call becomes one short-lived pod
++//! in the configured cluster. The pod carries one `emptyDir` per requested
++//! volume and three containers:
++//!
++//! * `wrkflw-wait`, an init container that blocks until a ready marker
++//!   appears. While it runs, every host volume is streamed into it as a tar
++//!   archive, so the workspace, GitHub env files and action checkouts are in
++//!   place before the step starts.
++//! * `main`, the step itself: the requested image, command, env and
++//!   working directory.
++//! * `wrkflw-sync`, a sidecar that keeps the pod alive after `main` exits so
++//!   the volumes can be streamed back to the host. That is how
++//!   `GITHUB_OUTPUT`, artifacts and workspace changes reach the executor and
++//!   the next step.
++//!
++//! Only `kubectl` is required on the host. Images the executor builds itself
++//! (combined runtime images, Dockerfile actions) additionally need Docker or
++//! Podman locally and a registry the cluster can pull from, given with
++//! `--k8s-registry`.
 +
-+    /// Regression for #88: if the caller passes a container-visible working
-+    /// directory that no volume covers, emulation must hard-error instead of
-+    /// silently rerouting to `GITHUB_WORKSPACE`. Symmetry test with the
-+    /// matching `secure_emulation_errors_when_volumes_dont_cover_working_dir`.
-+    #[tokio::test]
-+    async fn emulation_errors_when_volumes_dont_cover_working_dir() {
-+        let runtime = EmulationRuntime::new();
++mod manifest;
++mod sync;
 +
-+        // /github/workspace doesn't exist on host and no volume covers it.
-+        let result = runtime
-+            .run_container(
-+                "alpine:latest",
-+                &["echo", "nope"],
-+                &[],
-+                Path::new("/github/workspace"),
-+                &[],
-+                None,
-+            )
-+            .await;
-+
-+        let err = result.expect_err("should error when no volume covers working_dir");
-+        let msg = err.to_string();
-+        assert!(
-+            msg.contains("not covered by any volume mount"),
-+            "unexpected error: {}",
-+            msg
-+        );
-+        assert!(
-+            msg.contains("emulation:"),
-+            "error should carry runtime label, got: {}",
-+            msg
-+        );
-+    }
- }
-```
-
-**File**: `crates/runtime/src/sandbox.rs` (modified, +25/-175)
-```diff
-@@ -1,13 +1,18 @@
- use regex::Regex;
- use std::collections::HashSet;
--use std::fs;
--use std::path::{Path, PathBuf};
++use async_trait::async_trait;
++use manifest::{build_pod_manifest, is_nested, nested_excludes, plan_mounts, Mount, PodInput};
++use once_cell::sync::Lazy;
++use serde_json::Value;
++use std::collections::{BTreeMap, HashSet};
++use std::ffi::{OsStr, OsString};
 +use std::path::Path;
- use std::process::{Command, Stdio};
- use std::time::Duration;
--use tempfile::TempDir;
- use wrkflw_logging;
- 
--/// Configuration for sandbox execution
-+/// Configuration for sandbox execution.
++use std::process::Stdio;
++use std::sync::atomic::{AtomicBool, Ordering};
++use std::sync::{Arc, Mutex};
++use std::time::Duration;
++use sync::{copy_dir_into_pod, copy_dir_out_of_pod};
++use tokio::process::Command;
++use wrkflw_runtime::container::{
++    ContainerError, ContainerOutput, ContainerRuntime, COMBINED_IMAGE_PREFIX, LOCAL_IMAGE_PREFIX,
++};
++
++/// Image used for the wait and sync helper containers. Anything with `sh`,
++/// `tar`, `mkdir` and `touch` works.
 +///
-+/// Note: this sandbox provides **command-level** validation (whitelist,
-+/// blocklist, dangerous-pattern regexes) and **environment-variable**
-+/// filtering. It does NOT provide filesystem isolation — the command runs
-+/// in the caller's working directory as a plain subprocess, so absolute
-+/// paths and `..` sequences can reach anything the host user can reach.
-+/// If filesystem isolation is needed, use the Docker or Podman runtime.
- #[derive(Debug, Clone)]
- pub struct SandboxConfig {
-     /// Maximum execution time for commands
-@@ -20,10 +25,6 @@ pub struct SandboxConfig {
-     pub allowed_commands: HashSet<String>,
-     /// Blocked commands (blacklist)
-     pub blocked_commands: HashSet<String>,
--    /// Allowed file system paths (read-only)
--    pub allowed_read_paths: HashSet<PathBuf>,
--    /// Allowed file system paths (read-write)
--    pub allowed_write_paths: HashSet<PathBuf>,
-     /// Whether to enable network access
-     pub allow_network: bool,
-     /// Maximum number of processes
-@@ -143,8 +144,6 @@ impl Default for SandboxConfig {
-             max_cpu_percent: 80,
-             allowed_commands,
-             blocked_commands,
--            allowed_read_paths: HashSet::new(),
--            allowed_write_paths: HashSet::new(),
-             allow_network: false,
-             max_processes: 10,
-             strict_mode: true,
-@@ -180,32 +179,35 @@ pub enum SandboxError {
- /// Secure sandbox for executing commands in emulation mode
- pub struct Sandbox {
-     config: SandboxConfig,
--    workspace: TempDir,
-     dangerous_patterns: Vec<Regex>,
- }
- 
- impl Sandbox {
-     /// Create a new sandbox with the given configuration
-     pub fn new(config: SandboxConfig) -> Result<Self, SandboxError> {
--        let workspace = tempfile::tempdir().map_err(|e| SandboxError::SandboxSetupError {
--            reason: format!("Failed to create sandbox workspace: {}", e),
--        })?;
--
-         let dangerous_patterns = Self::compile_dangerous_patterns();
- 
--        wrkflw_logging::info(&format!(
--            "Created new sandbox with workspace: {}",
--            workspace.path().display()
--        ));
-+        wrkflw_logging::info("Created new sandbox");
- 
-         Ok(Self {
-             config,
--            workspace,
-             dangerous_patterns,
-         })
-     }
- 
--    /// Execute a command in the sandbox
-+    /// Execute a command in the sandbox.
-+    ///
-+    /// The command runs **in-place** in `working_dir` (no file copying). The
-+    /// caller is responsible for ensuring `working_dir` is the correct host
-+    /// workspace — `SecureEmulationRuntime::run_container` rebases container
-+    /// paths via the volume mount before calling in, matching the mount
-+    /// semantics of docker/podman (#88).
-+    ///
-+    /// Security is enforced by `validate_command` (command whitelist / blocked
-+    /// commands / dangerous patterns), `is_env_var_safe` (env var filtering),
-+    /// and `execute_with_limits` (timeout). The previous copy-files-to-a-
-+    /// private-workspace layer was not actually providing isolation — it was
-+    /// breaking the run-step / artifact-handler workspace invariant.
-     pub async fn execute_command(
-         &self,
-         command: &[&str],
-@@ -223,11 +225,8 @@ impl Sandbox {
-         // Step 1: Validate command
-         self.validate_command(&command_str)?;
- 
--        // Step 2: Setup sandbox environment
--        let sandbox_dir = self.setup_sandbox_environment(working_dir)?;
--
--        // Step 3: Execute with limits
--        self.execute_with_limits(command, env_vars, &sandbox_dir)
-+        // Step 2: Execute in-place with limits
-+        self.execute_with_limits(command, env_vars, working_dir)
-             .await
-     }
- 
-@@ -333,63 +332,6 @@ impl Sandbox {
-         builtins.contains(&command)
-     }
- 
--    /// Setup isolated sandbox environment
--    fn setup_sandbox_environment(&self, working_dir: &Path) -> Result<PathBuf, SandboxError> {
--        let sandbox_root = self.workspace.path();
--        let sandbox_workspace = sandbox_root.join("workspace");
--
--        // Create sandbox directory structure
--        fs::create_dir_all(&sandbox_workspace).map_err(|e| SandboxError::SandboxSetupError {
--            reason: format!("Failed to create sandbox workspace: {}", e),
--        })?;
--
--        // Copy allowed files to sandbox (if working_dir exists and is allowed)
--        if working_dir.exists() && self.is_path_allowed(working_dir, false) {
--            self.copy_safe_files(working_dir, &sandbox_workspace)?;
--        }
--
--        wrkflw_logging::info(&format!(
--            "Sandbox environment ready: {}",
--            sandbox_workspace.display()
-- 
++/// Pinned by digest because this image runs as root with every mount attached.
++pub const DEFAULT_HELPER_IMAGE: &str =
++    "busybox:1.36@sha256:73aaf090f3d85aa34ee199857f03fa3a95c8ede2ffd4cc2cdb5b94e566b11662";
++
++/// Upper bound for one step, from pod creation to volume sync-back. Matches
++/// the engine's default job timeout, so `timeout-minutes` governs as it does
++/// on Docker and a long training step is not cut short.
++pub const DEFAULT_TIMEOUT_SECS: u64 = 6 * 60 * 60;
++
++/// How long a pod may stay unschedulable. Long enough for an autoscaler to
++/// bring up a node, short enough that a mistyped selector does not take the
++/// whole step timeout to report.
++pub const DEFAULT_SCHEDULE_TIMEOUT_SECS: u64 = 10 * 60;
++
++/// Added to the step timeout for `activeDeadlineSeconds`, so the client's own
++/// timeout normally fires first and reports the failure properly.
++const DEADLINE_MARGIN_SECS: u64 = 30;
++
++const AVAILABILITY_TIMEOUT: Duration = Duration::from_secs(5);
++
++const MAIN_CONTAINER: &str = "main";
++const WAIT_CONTAINER: &str = "wrkflw-wait";
++const SYNC_CONTAINER: &str = "wrkflw-sync";
++const SYNC_VOLUME: &str = "wrkflw-sync";
++const SYNC_DIR: &str = "/wrkflw-sync";
++const READY_MARKER: &str = "/wrkflw-sync/ready";
++const MANAGED_BY_LABEL: &str = "app.kubernetes.io/managed-by";
++const SESSION_LABEL: &str = "wrkflw.dev/session";
++
++/// Waiting reasons that never resolve on their own. Anything else (plain
++/// `ContainerCreating`, `PodInitializing`) is waited out.
++const FATAL_WAITING_REASONS: &[&str] = &[
++    "ErrImageNeverPull",
++    "InvalidImageName",
++    "CreateContainerConfigError",
++    "CreateContainerError",
++];
++
++/// Waiting reasons of a pull the kubelet is still retrying. A bad image and a
++/// registry blip look the same here: both go from `ErrImagePull` to
++/// `ImagePullBackOff` within seconds. Only time tells them apart.
++const PULL_RETRY_REASONS: &[&str] = &["ErrImagePull", "ImagePullBackOff"];
++
++/// How long a pull may keep failing before the step gives up. The kubelet
++/// retries after 10, 20 and 40 seconds, so this covers two or three attempts.
++const PULL_RETRY_GRACE: Duration = Duration::from_secs(60);
++
++/// How long `kubectl get pod` may keep failing before a step gives up. A remote
++/// API server can drop a request at any time, and one lost poll must not cost
++/// a long step its work.
++const POLL_FAILURE_GRACE: Duration = Duration::from_secs(60);
++
++/// Passed to every status poll. Without it a request lost on the network
++/// hangs instead of failing, and no failure would ever be counted.
++const POLL_REQUEST_TIMEOUT: &str = "--request-timeout=30s";
++
++/// One id per process, stamped on every pod as a label so a crashed run's
++/// pods can be found with `kubectl get pods -l wrkflw.dev/session=<id>`.
++static SESSION_ID: Lazy<String> = Lazy::new(|| uuid::Uuid::new_v4().simple().to_string());
++
++/// Pods created by this process that have not been deleted yet.
++static RUNNING_PODS: Lazy<Mutex<Vec<PodRef>>> = Lazy::new(|| Mutex::new(Vec::new()));
++
++/// Registry references pushed by this process. Global so
 ```
 
-**File**: `crates/runtime/src/secure_emulation.rs` (modified, +70/-3)
+**File**: `crates/executor/src/kubernetes/sync.rs` (added, +845/-0)
 ```diff
-@@ -1,4 +1,6 @@
--use crate::container::{ContainerError, ContainerOutput, ContainerRuntime};
-+use crate::container::{
-+    rebase_working_dir_or_error, ContainerError, ContainerOutput, ContainerRuntime,
-+};
- use crate::sandbox::{create_workflow_sandbox_config, Sandbox, SandboxConfig, SandboxError};
- use async_trait::async_trait;
- use std::path::Path;
-@@ -52,7 +54,7 @@ impl ContainerRuntime for SecureEmulationRuntime {
-         command: &[&str],
-         env_vars: &[(&str, &str)],
-         working_dir: &Path,
--        _volumes: &[(&Path, &Path)],
-+        volumes: &[(&Path, &Path)],
-         entrypoint: Option<&str>,
-     ) -> Result<ContainerOutput, ContainerError> {
-         if let Some(ep) = entrypoint {
-@@ -70,10 +72,17 @@ impl ContainerRuntime for SecureEmulationRuntime {
-             image
-         ));
- 
-+        // Rebase the container-visible working_dir onto its host-side volume
-+        // source, matching EmulationRuntime and docker/podman (#88). Without
-+        // this, `run:` steps and artifact/cache handlers observe different
-+        // host directories.
-+        let host_working_dir =
-+            rebase_working_dir_or_error(working_dir, volumes, "secure_emulation")?;
+@@ -0,0 +1,845 @@
++//! Streaming mounts between the host and a pod as tar archives.
++//!
++//! The way back deserves the care it gets here: for mounts the executor owns
++//! it deletes host files based on what a workflow left in a pod.
 +
-         // Use sandbox to execute the command safely
-         let result = self
-             .sandbox
--            .execute_command(command, env_vars, working_dir)
-+            .execute_command(command, env_vars, &host_working_dir)
-             .await;
- 
-         match result {
-@@ -403,4 +412,62 @@ mod tests {
-         assert!(output.stdout.contains("hello world"));
-         assert_eq!(output.exit_code, 0);
-     }
++use super::manifest::Mount;
++use super::{SYNC_CONTAINER, WAIT_CONTAINER};
++use std::collections::HashSet;
++use std::ffi::OsStr;
++use std::io::{self, Read};
++use std::path::{Component, Path, PathBuf};
++use std::process::Stdio;
++use std::sync::atomic::{AtomicBool, Ordering};
++use wrkflw_runtime::container::ContainerError;
 +
-+    /// Regression for #88: a container-visible working dir must be rebased
-+    /// through the `volumes` mapping onto its host counterpart, so commands
-+    /// run in the caller's workspace rather than a hidden sandbox copy.
-+    #[cfg(not(target_os = "windows"))]
-+    #[tokio::test]
-+    async fn secure_emulation_rebases_container_working_dir_via_volumes() {
-+        let runtime = SecureEmulationRuntime::new();
-+        let host_tempdir = tempfile::tempdir().unwrap();
++/// How much of a sync's stderr is kept for its error message.
++const MAX_STDERR_BYTES: usize = 64 * 1024;
 +
-+        let host = host_tempdir.path();
-+        let container = Path::new("/github/workspace");
++/// Read `child`'s stderr to the end on its own thread, keeping the first
++/// [`MAX_STDERR_BYTES`].
++///
++/// Whoever is busy with the child's stdin or stdout cannot also read stderr.
++/// A child that fills that pipe would block with us blocked on it in turn,
++/// until `--k8s-timeout` ended the step.
++pub(super) fn drain_stderr(child: &mut std::process::Child) -> std::thread::JoinHandle<String> {
++    let stderr = child.stderr.take();
++    std::thread::spawn(move || {
++        let Some(mut stderr) = stderr else {
++            return String::new();
++        };
++        let mut kept = Vec::new();
++        let mut buf = [0u8; 8192];
++        while let Ok(n) = stderr.read(&mut buf) {
++            if n == 0 {
++                break;
++            }
++            let room = MAX_STDERR_BYTES - kept.len();
++            kept.extend_from_slice(&buf[..n.min(room)]);
++        }
++        String::from_utf8_lossy(&kept).trim().to_string()
++    })
++}
 +
-+        // Run `pwd` in the container workspace; with the rebase it should
-+        // print the host tempdir.
-+        let result = runtime
-+            .run_container(
-+                "alpine:latest",
-+                &["pwd"],
-+                &[],
-+                container,
-+                &[(host, container)],
-+                None,
-+            )
-+            .await
-+            .expect("secure_emulation run failed");
-+        assert_eq!(result.exit_code, 0, "stderr: {}", result.stderr);
-+        // `pwd` may canonicalize /var → /private/var on macOS, so compare
-+        // canonical forms.
-+        let canon_host = host.canonicalize().unwrap();
-+        let canon_pwd = PathBuf::from(result.stdout.trim()).canonicalize().unwrap();
-+        assert_eq!(canon_pwd, canon_host);
++/// Blocking: tar `mount.host` and pipe it into `tar -x` in the wait container.
++pub(super) fn copy_dir_into_pod(
++    kubectl: &OsStr,
++    kubectl_args: &[String],
++    pod: &str,
++    mount: &Mount,
++) -> Result<(), ContainerError> {
++    let dest = mount.container.to_string_lossy().to_string();
++    let mut command = std::process::Command::new(kubectl);
++    command.args(kubectl_args).args([
++        "exec",
++        "-i",
++        pod,
++        "-c",
++        WAIT_CONTAINER,
++        "--",
++        "tar",
++        "-C",
++        &dest,
++        "-xof",
++        "-",
++    ]);
++    stream_dir_into(command, mount)?;
++    wrkflw_logging::debug(&format!(
++        "Kubernetes: synced {} -> {}:{}",
++        mount.host.display(),
++        pod,
++        dest
++    ));
++    Ok(())
++}
++
++/// Blocking: write `mount.host` as a tar archive to `command`'s stdin.
++pub(super) fn stream_dir_into(
++    mut command: std::process::Command,
++    mount: &Mount,
++) -> Result<(), ContainerError> {
++    let mut child = command
++        .stdin(Stdio::piped())
++        .stdout(Stdio::null())
++        .stderr(Stdio::piped())
++        .spawn()
++        .map_err(|e| {
++            ContainerError::ContainerStart(format!("Failed to spawn kubectl exec: {}", e))
++        })?;
++    let stderr = drain_stderr(&mut child);
++
++    let stdin = child.stdin.take().ok_or_else(|| {
++        ContainerError::ContainerExecution("kubectl exec stdin was not captured".to_string())
++    })?;
++    let mut builder = tar::Builder::new(stdin);
++    // Keep mtimes and modes so tools comparing timestamps behave as they would
++    // on a bind mount. The host's uid means nothing in the pod, so `tar -xo`
++    // discards it. Symlinks are shipped as symlinks, not followed.
++    builder.mode(tar::HeaderMode::Complete);
++    builder.follow_symlinks(false);
++    let archived = append_tree(&mut builder, &mount.host)
++        .and_then(|_| builder.into_inner())
++        .map(drop);
++
++    let status = child.wait().map_err(|e| {
++        ContainerError::ContainerExecution(format!("kubectl exec did not complete: {}", e))
++    })?;
++    let stderr = stderr.join().unwrap_or_default();
++    if !status.success() {
++        return Err(ContainerError::ContainerExecution(format!(
++            "syncing {} into the pod failed: {}",
++            mount.host.display(),
++            stderr
++        )));
 +    }
++    archived.map_err(|e| {
++        ContainerError::ContainerExecution(format!(
++            "failed to archive {}: {}",
++            mount.host.display(),
++            e
++        ))
++    })
++}
 +
-+    #[tokio::test]
-+    async fn secure_emulation_errors_when_volumes_dont_cover_working_dir() {
-+        let runtime = SecureEmulationRuntime::new();
++/// Archive everything under `root` as `./...`, like `append_dir_all`, except
++/// that a socket is skipped: tar cannot carry one, and one left behind by a
++/// dev server must not fail the step. Copy-out leaves host sockets alone too.
++fn append_tree<W: io::Write>(builder: &mut tar::Builder<W>, root: &Path) -> io::Result<()> {
++    builder.append_path_with_name(root, ".")?;
++    let mut pending = vec![PathBuf::new()];
++    while let Some(rel) = pending.pop() {
++        for entry in std::fs::read_dir(root.join(&rel))? {
++            let entry = entry?;
++            let file_type = entry.file_type()?;
++            let child = rel.join(entry.file_name());
++            #[cfg(unix)]
++            {
++                use std::os::unix::fs::FileTypeExt;
++                if file_type.is_socket() {
+```
+
+**File**: `crates/executor/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -11,6 +11,7 @@ pub mod engine;
+ pub mod environment;
+ pub mod expression;
+ pub mod github_env_files;
++pub mod kubernetes;
+ pub mod podman;
+ pub mod substitution;
+ pub(crate) mod workflow_commands;
+@@ -21,3 +22,4 @@ pub use engine::{
+     detect_runtime, execute_workflow, parse_platform_override, ExecutionConfig, JobResult,
+     JobStatus, RuntimeType, StepResult, StepStatus,
+ };
++pub use kubernetes::{parse_key_value as parse_k8s_key_value, KubernetesConfig};
+```
+
+**File**: `crates/runtime/src/container.rs` (modified, +9/-1)
+```diff
+@@ -45,8 +45,16 @@ pub trait ContainerRuntime {
+         additional_packages: Option<Vec<String>>,
+     ) -> Result<String, ContainerError>;
+ 
+-    /// Check whether a Docker/OCI image exists locally.
++    /// Check whether a Docker/OCI image is usable by this runtime without
++    /// building it. A cheap, read-only check; callers may repeat it.
+     async fn image_exists(&self, tag: &str) -> Result<bool, ContainerError>;
 +
-+        // /github/workspace doesn't exist on host and no volume covers it.
-+        let result = runtime
-+            .run_container(
-+                "alpine:latest",
-+                &["echo", "nope"],
-+                &[],
-+                Path::new("/github/workspace"),
-+                &[],
-+                None,
-+            )
-+            .await;
-+
-+        let err = result.expect_err("should error when no volume covers working_dir");
-+        let msg = err.to_string();
-+        assert!(
-+            msg.contains("not covered by any volume mount"),
-+            "unexpected error: {}",
-+            msg
-+        );
++    /// True when `run_container` copies volumes to the step and back instead
++    /// of sharing them with the host, so a volume's contents end up on the
++    /// host whether or not the step meant them to.
++    fn mounts_are_copies(&self) -> bool {
++        false
 +    }
  }
+ 
+ #[derive(Debug)]
 ```
 
 ---
 
-### Incident Patch 3: `499a4e53` (2026-07-03)
-**Commit Message**: fix(ui): show real timestamps for remaining bare TUI log pushes (#119)
+### Incident Patch 2: `6a3eae53` (2026-10-31)
+**Commit Message**: feat: override runs-on images with --platform (#113) (#141)
 
-* fix(ui): timestamp the log pushes that #116 missed
+* feat: override runs-on images with --platform (#113)
 
-PR #116 claimed to fix the ??:??:?? timestamps for "all TUI log
-messages". It turns out "all" meant "most": four bare
-self.logs.push() sites survived — the diff-filter event rotation,
-the copy-curl recipe lines, the "Dispatching ..." line, and the
-dispatch outcome lines. All of them still rendered ??:??:?? in
-the Execution and Logs tabs.
+runs-on labels map to a hardcoded image table, so a workflow needing the
+tools of a real runner had to be edited to use a bigger image.
 
-The renderer derives the timestamp column *only* from a
-[HH:MM:SS] prefix on the line itself, so any push that skips
-add_timestamped_log() is silently unparseable. Route the four
-stragglers through add_timestamped_log(). Since that helper
-already trims the buffer, the hand-rolled trim_logs_to_cap()
-calls next to each push (and the `drained` counter that existed
-only to gate one of them) are now dead weight. Gone.
+Add a global -P/--platform LABEL=IMAGE option, also read from
+WRKFLW_PLATFORM. It sits between a job's container: and the built-in
+table, and reaches run, watch, the TUI, matrix jobs and reusable
+workflows.
 
-The new tests don't re-feed literal strings to the parser —
-that proves nothing about the call sites. They call the actual
-methods and run the actual appended lines through the actual
-parser, which needed nothing more than a pub(crate) on
-process_log_entry. The "Dispatching ..." site is the one
-exception: it tokio
+Remove the macOS emulation heuristic from the Docker runtime. It matched
+the act images and discarded step commands, so `exit 7` reported success.
 
-**File**: `crates/ui/src/app/mod.rs` (modified, +15/-21)
+Put /usr/local/bin and /usr/bin first on PATH in combined images, because
+the act image's bundled Node shadowed the version from setup-node.
+
+* fix(cli): make --platform labels deterministic and reject bad images
+
+The override map was keyed by whatever case the user typed, while
+lookups compared case-insensitively by scanning it. So with
+"-P ubuntu-latest=a -P Ubuntu-Latest=b" you got whichever entry the
+HashMap felt like yielding first. Random image per run. This is not
+great.
+
+Lowercase the label when parsing, so both spellings land on the same
+key, the last one wins, and the looku
+
+**File**: `BREAKING_CHANGES.md` (modified, +24/-0)
 ```diff
-@@ -8,7 +8,6 @@ use crate::views::{
-     render_ui, TAB_COUNT, TAB_DAG, TAB_EXECUTION, TAB_HELP, TAB_LOGS, TAB_SECRETS, TAB_TRIGGER,
-     TAB_WORKFLOWS,
+@@ -1,5 +1,29 @@
+ # Breaking Changes
+ 
++## `ExecutionConfig` gained a `platform_overrides` field (unreleased)
++
++Code that builds `wrkflw_executor::ExecutionConfig` as a struct literal must set
++the new field, or it no longer compiles. `ExecutionConfig` and `RuntimeType` now
++implement `Default`, so end a literal with `..Default::default()` to stay
++compatible with later additions. The default runtime is `RuntimeType::Auto`.
++
++## Jobs on act images now report real step results (unreleased)
++
++Under the Docker runtime, any image name containing both `catthehacker` and
++`act-` was treated as macOS emulation. Each step's command was discarded, so
++steps on `ubuntu-*-medium` runners passed without running. Those steps now run
++and can fail. Workflows that were passing there may start failing for real.
++
++This also affected `uses:` steps on any runner label, because actions such as
++`actions/cache` and the `actions/setup-*` family are sent to
++`catthehacker/ubuntu:act-latest`. Their commands now run too, including those
++derived from a `with.command` input, such as `npm run`, `cargo` and `pip`.
++
++`RUNNER_OS`, `PATH` and `HOME` are also no longer overridden for those images.
++
++Combined images for `actions/setup-*` jobs now put `/usr/local/bin` and
++`/usr/bin` first on `PATH`, so they are rebuilt once on the next run.
++
+ ## `~/.wrkflw` moved to the platform base directories (unreleased)
+ 
+ wrkflw no longer writes to a hardcoded `~/.wrkflw/`. The new locations follow
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ wrkflw-watcher = { path = "crates/watcher", version = "0.8.0" }
+ wrkflw-validators = { path = "crates/validators", version = "0.8.0" }
+ 
+ # External dependencies
+-clap = { version = "4.3", features = ["derive"] }
++clap = { version = "4.3", features = ["derive", "env"] }
+ colored = "2.0"
+ serde = { version = "1.0", features = ["derive"] }
+ serde_yaml = "0.9"
+```
+
+**File**: `README.md` (modified, +19/-0)
+```diff
+@@ -130,6 +130,25 @@ wrkflw run --jobs .github/workflows/ci.yml
+ wrkflw run --preserve-containers-on-failure .github/workflows/ci.yml
+ ```
+ 
++### Custom runner images
++
++By default `runs-on` maps to a small built-in image, so `ubuntu-latest` runs in `ubuntu:latest`, which has few of the tools a GitHub runner has. Use `-P`/`--platform` to pick the image for a label, for example the larger images made for [act](https://github.com/nektos/act):
++
++```bash
++wrkflw run -P ubuntu-latest=catthehacker/ubuntu:act-latest .github/workflows/ci.yml
++
++# Repeat the flag or separate entries with commas
++wrkflw run -P ubuntu-latest=my/image:1 -P ubuntu-22.04=my/image:2 .github/workflows/ci.yml
++
++# Set it once for every command, including the TUI and watch mode
++export WRKFLW_PLATFORM=ubuntu-latest=catthehacker/ubuntu:act-latest
++```
++
++- A job-level `container:` still wins over `--platform`, which wins over the built-in image.
++- Labels match case-insensitively, and the last value given for a label wins. Every label in `runs-on: [self-hosted, linux]` is tried, and `runs-on: ${{ matrix.os }}` is resolved per matrix combination.
++- Runtimes from `actions/setup-*` are installed on top of your image, so the image must be Debian or Ubuntu based for those jobs.
++- `--platform` replaces `WRKFLW_PLATFORM` entirely when both are set. It has no effect in emulation mode.
++
+ ### Trigger-aware execution
+ 
+ Skip workflows whose `on:` block wouldn't fire for a given event/change set. Strict mode is on by default: `wrkflw run --event …` without `--diff` or `--changed-files` is rejected up front rather than silently skipping every `paths:`-gated workflow.
+```
+
+**File**: `crates/executor/README.md` (modified, +1/-3)
+```diff
+@@ -21,10 +21,8 @@ use wrkflw_executor::{execute_workflow, ExecutionConfig, RuntimeType};
+ let cfg = ExecutionConfig {
+     runtime_type: RuntimeType::Docker,
+     verbose: true,
+-    preserve_containers_on_failure: false,
+-    secrets_config: None,
+-    show_action_messages: false,
+     target_job: Some("build".to_string()), // run a single job
++    ..Default::default()
  };
--use chrono::Local;
- use crossterm::{
-     event::{self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode, KeyModifiers},
-     execute,
-@@ -57,7 +56,7 @@ pub async fn run_wrkflw_tui(
+ 
+ let workflow_path = std::path::Path::new(".github/workflows/ci.yml");
+```
+
+**File**: `crates/executor/src/docker.rs` (modified, +101/-52)
+```diff
+@@ -867,6 +867,42 @@ impl ContainerRuntime for DockerRuntime {
+ }
+ 
+ // Move the actual implementation to internal methods
++/// Build the create-container config for a step.
++///
++/// The image name must not change how a step's command runs. Wrapping `cmd`
++/// in an entrypoint for particular images is how act images once lost every
++/// step's command while reporting success.
++fn build_container_config(
++    image: &str,
++    cmd: Vec<String>,
++    env: Vec<String>,
++    working_dir: &Path,
++    host_config: HostConfig,
++    is_windows_image: bool,
++    entrypoint: Option<&str>,
++) -> Config<String> {
++    Config {
++        image: Some(image.to_string()),
++        // Empty cmd means "use the image's built-in ENTRYPOINT/CMD"
++        cmd: if cmd.is_empty() { None } else { Some(cmd) },
++        env: Some(env),
++        working_dir: Some(working_dir.to_string_lossy().to_string()),
++        host_config: Some(host_config),
++        // Windows containers need specific configuration
++        user: if is_windows_image {
++            Some("ContainerAdministrator".to_string())
++        } else {
++            None
++        },
++        // An explicit entrypoint from action.yml wins. Otherwise keep the
++        // image's own, which an empty cmd relies on.
++        entrypoint: entrypoint
++            .filter(|s| !s.is_empty())
++            .map(|ep| vec![ep.to_string()]),
++        ..Default::default()
++    }
++}
++
+ impl DockerRuntime {
+     async fn run_container_inner(
+         &self,
+@@ -889,7 +925,7 @@ impl DockerRuntime {
+         }
+ 
+         // Collect environment variables
+-        let mut env: Vec<String> = env_vars
++        let env: Vec<String> = env_vars
+             .iter()
+             .map(|(k, v)| format!("{}={}", k, v))
+             .collect();
+@@ -905,7 +941,6 @@ impl DockerRuntime {
+ 
+         // Convert command vector to Vec<String>
+         let cmd_vec: Vec<String> = cmd.iter().map(|&s| s.to_string()).collect();
+-        let has_cmd = !cmd_vec.is_empty();
+ 
+         wrkflw_logging::debug(&format!("Running command in Docker: {:?}", cmd_vec));
+         wrkflw_logging::debug(&format!("Environment: {:?}", env));
+@@ -915,19 +950,6 @@ impl DockerRuntime {
+         let is_windows_image = image.contains("windows")
+             || image.contains("servercore")
+             || image.contains("nanoserver");
+-        let is_macos_emu =
+-            image.contains("act-") && (image.contains("catthehacker") || image.contains("nektos"));
+-
+-        // Add platform-specific environment variables
+-        if is_macos_emu {
+-            // Add macOS-specific environment variables
+-            env.push("RUNNER_OS=macOS".to_string());
+-            env.push("RUNNER_ARCH=X64".to_string());
+-            env.push("TMPDIR=/tmp".to_string());
+-            env.push("HOME=/root".to_string());
+-            env.push("GITHUB_WORKSPACE=/github/workspace".to_string());
+-            env.push("PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin".to_string());
+-        }
+ 
+         // Create appropriate container options based on platform
+         let options = Some(CreateContainerOptions {
+@@ -953,43 +975,15 @@ impl DockerRuntime {
+             }
+         };
+ 
+-        // Create container config with platform-specific settings
+-        let mut config = Config {
+-            image: Some(image.to_string()),
+-            // Empty cmd means "use the image's built-in ENTRYPOINT/CMD"
+-            cmd: if has_cmd { Some(cmd_vec) } else { None },
+-            env: Some(env),
+-            working_dir: Some(working_dir.to_string_lossy().to_string()),
+-            host_config: Some(host_config),
+-            // Windows containers need specific configuration
+-            user: if is_windows_image {
+-                Some("ContainerAdministrator".to_string())
+-            } else {
+-                None // Don't specify user for macOS emulation - use default root user
+-            },
+-            // Map appropriate entrypoint for different platforms.
+-            // Priority: explicit entrypoint from action.yml > macOS bash wrapper > image default.
+-            // Only apply the macOS bash wrapper when there is an explicit command to wrap;
+-            // an empty cmd means "use the image's native ENTRYPOINT/CMD"
+-            // and overriding it with bash would hang or discard the real entrypoint.
+-            entrypoint: if let Some(ep) = entrypoint.filter(|s| !s.is_empty()) {
+-                Some(vec![ep.to_string()])
+-            } else if is_macos_emu && has_cmd {
+-                // For macOS, ensure we use bash
+-                Some(vec!["bash".to_string(), "-l".to_string(), "-c".to_string()])
+-            } else {
+-                None
+-            },
+-            ..Default::default()
+-        };
+-
+-        // Run platform-specific container setup
+-        if is_macos_emu {
+-            // Add special labels for macOS
+-            let mut labels = HashMap::new();
+-            labels.insert("wrkflw.platform".to_string(), "macos".to_string());
+-  
+```
+
+**File**: `crates/executor/src/engine.rs` (modified, +335/-17)
+```diff
+@@ -82,6 +82,7 @@ async fn execute_github_workflow(
+     mut config: ExecutionConfig,
+ ) -> Result<ExecutionResult, ExecutionError> {
+     config.runtime_type = detect_runtime(config.runtime_type);
++    warn_if_overrides_unused(&config);
+     // 1. Parse workflow file
+     let workflow = parse_workflow(workflow_path)?;
+ 
+@@ -238,6 +239,7 @@ async fn execute_github_workflow(
+             &all_job_results,
+             &artifact_store,
+             &cache_store,
++            &config.platform_overrides,
+         )
+         .await?;
+ 
+@@ -332,6 +334,7 @@ async fn execute_gitlab_pipeline(
+     mut config: ExecutionConfig,
+ ) -> Result<ExecutionResult, ExecutionError> {
+     config.runtime_type = detect_runtime(config.runtime_type);
++    warn_if_overrides_unused(&config);
+     wrkflw_logging::info("Executing GitLab CI/CD pipeline");
+ 
+     // 1. Parse the GitLab pipeline file
+@@ -442,6 +445,7 @@ async fn execute_gitlab_pipeline(
+             &HashMap::new(),
+             &artifact_store,
+             &cache_store,
++            &config.platform_overrides,
+         )
+         .await?;
+ 
+@@ -648,24 +652,76 @@ fn initialize_runtime(
+     }
+ }
+ 
+-#[derive(Debug, Clone, PartialEq)]
++#[derive(Debug, Clone, Default, PartialEq)]
+ pub enum RuntimeType {
+     /// Detect Docker first, then Podman, then fall back to emulation.
++    #[default]
+     Auto,
+     Docker,
+     Podman,
+     Emulation,
+     SecureEmulation,
+ }
+ 
+-#[derive(Debug, Clone)]
++#[derive(Debug, Clone, Default)]
+ pub struct ExecutionConfig {
+     pub runtime_type: RuntimeType,
+     pub verbose: bool,
+     pub preserve_containers_on_failure: bool,
+     pub secrets_config: Option<SecretConfig>,
+     pub show_action_messages: bool,
+     pub target_job: Option<String>,
++    /// User-supplied `runs-on` label to image mappings. They win over the
++    /// built-in table but lose to a job-level `container:`. Keys must be
++    /// lowercase, as [`parse_platform_override`] returns them, because labels
++    /// match case-insensitively.
++    pub platform_overrides: HashMap<String, String>,
++}
++
++/// Parse a `LABEL=IMAGE` runner override, as given to `--platform`.
++///
++/// The label is lowercased so labels differing only by case share one map key.
++/// The image is later written to a Dockerfile `FROM` line, so whitespace is
++/// rejected. No valid image reference contains any.
++pub fn parse_platform_override(s: &str) -> Result<(String, String), String> {
++    let (label, image) = s
++        .split_once('=')
++        .ok_or_else(|| format!("invalid LABEL=IMAGE: no `=` found in `{}`", s))?;
++    let (label, image) = (label.trim(), image.trim());
++    if label.is_empty() || image.is_empty() {
++        return Err(format!(
++            "invalid LABEL=IMAGE: label and image must both be set in `{}`",
++            s
++        ));
++    }
++    if image.chars().any(char::is_whitespace) {
++        return Err(format!(
++            "invalid LABEL=IMAGE: image must not contain whitespace in `{}`",
++            s
++        ));
++    }
++    Ok((label.to_ascii_lowercase(), image.to_string()))
++}
++
++/// Overrides only change which image a container runs, so they do nothing
++/// when no container runs. Say so rather than ignoring the flag silently.
++fn warn_if_overrides_unused(config: &ExecutionConfig) {
++    if overrides_unused(&config.platform_overrides, &config.runtime_type) {
++        wrkflw_logging::warning(
++            "--platform has no effect in emulation mode: steps run on the host, not in an image",
++        );
++    }
++}
++
++fn overrides_unused(
++    platform_overrides: &HashMap<String, String>,
++    runtime_type: &RuntimeType,
++) -> bool {
++    !platform_overrides.is_empty()
++        && matches!(
++            runtime_type,
++            RuntimeType::Emulation | RuntimeType::SecureEmulation
++        )
+ }
+ 
+ pub struct ExecutionResult {
+@@ -1692,6 +1748,11 @@ fn generate_combined_dockerfile(runtimes: &[SetupRuntime], base_image: &str) ->
+ 
+     dockerfile.push_str(" && \\\n    rm -rf /var/lib/apt/lists/*\n");
+ 
++    // Base images can bundle tools ahead of the system directories. The act
++    // images do this with Node, which would shadow the version a setup action
++    // just installed. Every install script lands in one of these directories.
++    dockerfile.push_str("ENV PATH=/usr/local/bin:/usr/bin:$PATH\n");
++
+     dockerfile
+ }
+ 
+@@ -1814,8 +1875,10 @@ async fn resolve_runner_image(
+     job: &Job,
+     steps: &[Step],
+     runtime: &dyn ContainerRuntime,
++    platform_overrides: &HashMap<String, String>,
++    matrix: Option<&HashMap<String, Value>>,
+ ) -> Result<String, ExecutionError> {
+-    let base_image = get_effective_runner_image(job);
++    let base_image = get_effective_runner_image(job, platform_overrides, matrix);
+ 
+     if job.container.is_some() {
+         return Ok(base_image);
+@@ -1845,6 +1908,7 @@ async fn execute_job_batch(
+     all_job_results: &HashMap<String, String>,
+     artifact_store: &crate::artifacts::ArtifactStore,
+     cache_store: &crate::cache::Cach
+```
+
+**File**: `crates/executor/src/lib.rs` (modified, +2/-2)
+```diff
+@@ -18,6 +18,6 @@ pub(crate) mod workflow_commands;
+ // Re-export public items
+ pub use docker::cleanup_resources;
+ pub use engine::{
+-    detect_runtime, execute_workflow, ExecutionConfig, JobResult, JobStatus, RuntimeType,
+-    StepResult, StepStatus,
++    detect_runtime, execute_workflow, parse_platform_override, ExecutionConfig, JobResult,
++    JobStatus, RuntimeType, StepResult, StepStatus,
+ };
+```
+
+**File**: `crates/ui/src/app/mod.rs` (modified, +4/-0)
+```diff
+@@ -14,6 +14,7 @@ use crossterm::{
+     terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen},
+ };
+ use ratatui::{backend::CrosstermBackend, Terminal};
++use std::collections::HashMap;
+ use std::io::{self, stdout};
+ use std::path::PathBuf;
+ use std::sync::mpsc;
+@@ -33,6 +34,7 @@ pub async fn run_wrkflw_tui(
+     preserve_containers_on_failure: bool,
+     show_action_messages: bool,
+     theme: Option<ThemePreference>,
++    platform_overrides: HashMap<String, String>,
+ ) -> io::Result<()> {
+     // Picks the palette, which may query the terminal, so it has to
+     // happen before raw mode and the event loop take over the tty.
+@@ -66,6 +68,7 @@ pub async fn run_wrkflw_tui(
+         tx.clone(),
+         preserve_containers_on_failure,
+         show_action_messages,
++        platform_overrides.clone(),
      );
  
      if app.validation_mode {
--        app.logs.push("Starting in validation mode".to_string());
-+        app.add_timestamped_log("Starting in validation mode");
-         wrkflw_logging::info("Starting in validation mode");
-     }
- 
-@@ -558,14 +557,12 @@ fn run_tui_event_loop(
-                                     if workflow.status == WorkflowStatus::NotStarted {
-                                         app.trigger_selected_workflow();
-                                     } else if workflow.status == WorkflowStatus::Running {
--                                        app.logs.push(format!(
-+                                        let msg = format!(
-                                             "Workflow '{}' is already running",
-                                             workflow.name
--                                        ));
--                                        wrkflw_logging::warning(&format!(
--                                            "Workflow '{}' is already running",
--                                            workflow.name
--                                        ));
-+                                        );
-+                                        app.add_timestamped_log(&msg);
-+                                        wrkflw_logging::warning(&msg);
-                                     } else {
-                                         // First, get all the data we need from the workflow
-                                         let workflow_name = workflow.name.clone();
-@@ -588,19 +585,16 @@ fn run_tui_event_loop(
-                                         ));
- 
-                                         // Add log entries
--                                        app.logs.push(format!(
-+                                        app.add_timestamped_log(&format!(
-                                             "Cannot trigger workflow '{}' in {} state",
-                                             workflow_name, status_text
-                                         ));
- 
-                                         // Add hint about using reset
-                                         if needs_reset_hint {
--                                            let timestamp =
--                                                Local::now().format("%H:%M:%S").to_string();
--                                            app.logs.push(format!(
--                                                "[{}] Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
--                                                timestamp
--                                            ));
-+                                            app.add_timestamped_log(
-+                                                "Hint: Press 'Shift+R' to reset the workflow status and allow triggering",
-+                                            );
-                                         }
- 
-                                         wrkflw_logging::warning(&format!(
-@@ -610,20 +604,20 @@ fn run_tui_event_loop(
-                                     }
-                                 }
-                             } else {
--                                app.logs.push("No workflow selected to trigger".to_string());
-+                                app.add_timestamped_log("No workflow selected to trigger");
-                                 wrkflw_logging::warning("No workflow selected to trigger");
-                             }
-                         } else if app.running {
--                            app.logs.push(
--                                "Cannot trigger workflow while another operation is in progress"
--                                    .to_string(),
-+                            app.add_timestamped_log(
-+                                "Cannot trigger workflow while another operation is in progress",
-                             );
-                             wrkflw_logging::warning(
-                                 "Cannot trigger workflow while another operation is in progress",
-                             );
-                         } else if app.selected_tab != TAB_WORKFLOWS {
--                            app.logs
--                                .push("Switch to Workflows tab to trigger a workflow".to_string());
-+                            app.add_timestamped_log(
-+                                "Switch to Workflows tab to trigger a workflow",
-+                            );
-                             wrkflw_logging::warning(
-                                 "Switch to Workflows tab to trigger a workflow",
-                             );
-```
-
-**File**: `crates/ui/src/app/state.rs` (modified, +183/-127)
-```diff
-@@ -29,19 +29,19 @@ pub struct App {
-     pub show_action_messages: bool,
-     pub execution_queue: Vec<QueuedExecution>, // Workflows queued for execution
-     pub current_execution: Option<usize>,
--    pub logs: Vec<String>,                       // Overall execution logs
--    pub log_scroll: usize,                       // Scrolling position for logs
--    pub job_list_state: ListState,               // For viewing job details
--    pub detailed_view: bool,                     // Whether we're in detailed view mode
--    pub step_list_state: ListState,              // For selecting steps in detailed view
--    pub step_table_state: TableState,            // For the steps table in detailed view
--    pub last_tick: Instant,                      // For UI animations and updates
--    pub tick_rate: Duration,                     // How often to update the UI
--    pub spinner_frame: usize,                    // Current spinner animation frame
--    pub tx: mpsc::Sender<ExecutionResultMsg>,    // Channel for async communication
--    pub status_message: Option<String>,          // Temporary status message to display
-+    logs: Vec<String>, // Overall execution logs — private so every mutation routes through `add_log`
-+    pub log_scroll: usize, // Scrolling position for logs
-+    pub job_list_state: ListState, // For viewing job details
-+    pub detailed_view: bool, // Whether we're in detailed view mode
-+    pub step_list_state: ListState, // For selecting steps in detailed view
-+    pub step_table_state: TableState, // For the steps table in detailed view
-+    pub last_tick: Instant, // For UI animations and updates
-+    pub tick_rate: Duration, // How often to update the UI
-+    pub spinner_frame: usize, // Current spinner animation frame
-+    pub tx: mpsc::Sender<ExecutionResultMsg>, // Channel for async communication
-+    pub status_message: Option<String>, // Temporary status message to display
-     pub status_message_severity: StatusSeverity, // Severity of the current status message
--    pub status_message_time: Option<Instant>,    // When the message was set
-+    pub status_message_time: Option<Instant>, // When the message was set
- 
-     // Search and filter functionality
-     pub log_search_query: String, // Current search query for logs
-@@ -58,6 +58,7 @@ pub struct App {
-     pub processed_logs: Vec<ProcessedLogEntry>,
-     pub logs_need_update: bool,        // Flag to trigger log processing
-     pub last_system_logs_count: usize, // Track system log changes
-+    logs_revision: u64, // Bumped on every log/search/filter change; `logs.len()` goes stale at the cap
- 
-     // Job selection mode
-     pub job_selection_mode: bool, // Are we viewing jobs of a workflow?
-@@ -329,7 +330,6 @@ impl App {
-         step_table_state.select(Some(0));
- 
-         // Check container runtime availability if container runtime is selected
--        let mut initial_logs = Vec::new();
-         let runtime_type = match runtime_type {
-             RuntimeType::Auto => {
-                 let detected = match std::panic::catch_unwind(|| {
-@@ -361,10 +361,11 @@ impl App {
-                     RuntimeType::Docker => wrkflw_logging::info("Auto-detected Docker runtime"),
-                     RuntimeType::Podman => wrkflw_logging::info("Auto-detected Podman runtime"),
-                     _ => {
--                        initial_logs.push(
--                            "No container runtime found (tried Docker and Podman). Using emulation mode instead."
--                                .to_string(),
--                        );
-+                        // System-logged only, matching the Docker/Podman arms
-+                        // below. `get_combined_logs` folds the wrkflw_logging
-+                        // store into the Logs tab with a real timestamp, so a
-+                        // second app-side push would just render an
-+                        // untimestamped duplicate.
-                         wrkflw_logging::warning(
-                             "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
-                         );
-@@ -487,7 +488,7 @@ impl App {
-             show_action_messages,
-             execution_queue: Vec::new(),
-             current_execution: None,
--            logs: initial_logs,
-+            logs: Vec::new(),
-             log_scroll: 0,
-             job_list_state,
-             detailed_view: false,
-@@ -514,6 +515,7 @@ impl App {
-             processed_logs: Vec::new(),
-             logs_need_update: true,
-             last_system_logs_count: 0,
-+            logs_revision: 0,
- 
-             // Job selection mode
-             job_selection_mode: false,
-@@ -614,7 +616,7 @@ impl App {
-             .unwrap_or(0);
-         let next_idx = (current_idx + 1) % ROTATION.len();
-         let next = ROTATION[next_idx].to_string();
--        self.logs.push(format!(
-+        self.add_timestamped_log(&format!(
-             "Diff filter event: {} -> {}",
-             self.diff_filter_even
-```
-
-**File**: `crates/ui/src/handlers/workflow.rs` (modified, +12/-15)
-```diff
-@@ -469,13 +469,11 @@ pub fn start_next_workflow_execution(
- 
-         // Log whether verbose mode is enabled
-         if verbose {
--            app.logs
--                .push("Verbose mode: Step outputs will be displayed in full".to_string());
-+            app.add_timestamped_log("Verbose mode: Step outputs will be displayed in full");
-             wrkflw_logging::info("Verbose mode: Step outputs will be displayed in full");
-         } else {
--            app.logs.push(
--                "Standard mode: Only step status will be shown (use --verbose for full output)"
--                    .to_string(),
-+            app.add_timestamped_log(
-+                "Standard mode: Only step status will be shown (use --verbose for full output)",
-             );
-             wrkflw_logging::info(
-                 "Standard mode: Only step status will be shown (use --verbose for full output)",
-@@ -500,9 +498,8 @@ pub fn start_next_workflow_execution(
-                         wrkflw_logging::info("Auto-detected Podman runtime");
-                         RuntimeType::Podman
-                     } else {
--                        app.logs.push(
--                            "No container runtime found (tried Docker and Podman). Using emulation mode instead."
--                                .to_string(),
-+                        app.add_timestamped_log(
-+                            "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
-                         );
-                         wrkflw_logging::warning(
-                             "No container runtime found (tried Docker and Podman). Using emulation mode instead.",
-@@ -526,8 +523,9 @@ pub fn start_next_workflow_execution(
-                 };
- 
-                 if !is_docker_available {
--                    app.logs
--                        .push("Docker is not available. Using emulation mode instead.".to_string());
-+                    app.add_timestamped_log(
-+                        "Docker is not available. Using emulation mode instead.",
-+                    );
-                     wrkflw_logging::warning(
-                         "Docker is not available. Using emulation mode instead.",
-                     );
-@@ -551,8 +549,9 @@ pub fn start_next_workflow_execution(
-                 };
- 
-                 if !is_podman_available {
--                    app.logs
--                        .push("Podman is not available. Using emulation mode instead.".to_string());
-+                    app.add_timestamped_log(
-+                        "Podman is not available. Using emulation mode instead.",
-+                    );
-                     wrkflw_logging::warning(
-                         "Podman is not available. Using emulation mode instead.",
-                     );
-@@ -676,9 +675,7 @@ pub fn start_next_workflow_execution(
-         });
-     } else {
-         app.running = false;
--        let timestamp = Local::now().format("%H:%M:%S").to_string();
--        app.logs
--            .push(format!("[{}] All workflows completed execution", timestamp));
-+        app.add_timestamped_log("All workflows completed execution");
-         wrkflw_logging::info("All workflows completed execution");
-     }
- }
-```
-
-**File**: `crates/ui/src/log_processor.rs` (modified, +14/-8)
-```diff
-@@ -35,9 +35,13 @@ impl ProcessedLogEntry {
- pub struct LogProcessingRequest {
-     pub search_query: String,
-     pub filter_level: Option<LogFilterLevel>,
--    pub app_logs: Vec<String>,    // Complete app logs
--    pub app_logs_count: usize,    // To detect changes in app logs
--    pub system_logs_count: usize, // To detect changes in system logs
-+    pub app_logs: Vec<String>, // Complete app logs
-+    // Change signal for app logs AND search/filter edits. A revision
-+    // counter rather than `app_logs.len()`: once the app's buffer
-+    // hits its cap, pushes stop changing the length (one old entry is
-+    // dropped per new one), so a count would freeze the display.
-+    pub app_logs_revision: u64,
-+    pub system_logs_count: usize, // To detect changes in system logs (unbounded, so len works)
- }
- 
- /// Response with processed logs
-@@ -94,7 +98,9 @@ impl LogProcessor {
-         let mut last_request: Option<LogProcessingRequest> = None;
-         let mut last_processed_time = Instant::now();
-         let mut cached_logs: Vec<String> = Vec::new();
--        let mut cached_app_logs_count = 0;
-+        // u64::MAX so the first request always mismatches — the app's
-+        // revision starts at 0.
-+        let mut cached_app_logs_revision = u64::MAX;
-         let mut cached_system_logs_count = 0;
- 
-         loop {
-@@ -110,17 +116,17 @@ impl LogProcessor {
- 
-             if let Some(ref req) = last_request {
-                 let should_process = last_processed_time.elapsed() > Duration::from_millis(50)
--                    && (cached_app_logs_count != req.app_logs_count
-+                    && (cached_app_logs_revision != req.app_logs_revision
-                         || cached_system_logs_count != req.system_logs_count
-                         || cached_logs.is_empty());
- 
-                 if should_process {
--                    if cached_app_logs_count != req.app_logs_count
-+                    if cached_app_logs_revision != req.app_logs_revision
-                         || cached_system_logs_count != req.system_logs_count
-                         || cached_logs.is_empty()
-                     {
-                         cached_logs = Self::get_combined_logs(&req.app_logs);
--                        cached_app_logs_count = req.app_logs_count;
-+                        cached_app_logs_revision = req.app_logs_revision;
-                         cached_system_logs_count = req.system_logs_count;
-                     }
- 
-@@ -191,7 +197,7 @@ impl LogProcessor {
-     }
- 
-     /// Process a single log entry into display format
--    fn process_log_entry(log_line: &str, search_query: &str) -> ProcessedLogEntry {
-+    pub(crate) fn process_log_entry(log_line: &str, search_query: &str) -> ProcessedLogEntry {
-         // Extract timestamp from log format [HH:MM:SS]
-         let timestamp = if log_line.starts_with('[') && log_line.contains(']') {
-             let end = log_line.find(']').unwrap_or(0);
+@@ -163,6 +166,7 @@ pub async fn run_wrkflw_tui(
+                         runtime_type,
+                         verbose,
+                         show_action_messages,
++                        platform_overrides,
+                     )
+                     .await
+                 } else if path.is_dir() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #129** (2026-09-08): refactor(ui): drop the write-only WorkflowExecution.logs field (@bahdotsh)
-- **PR #128** (2026-09-08): fix(ui): stop logging the same TUI message to both log sinks (@bahdotsh)
-- **PR #127** (2026-09-08): fix(ui): show real timestamps on diff-filter log lines (@bahdotsh)
-- **PR #119** (2026-07-03): fix(ui): show real timestamps for remaining bare TUI log pushes (@bahdotsh)
-- **PR #118** (2026-06-10): fix(executor): deduplicate concurrent runtime image builds (@ammachado)
-- **PR #116** (2026-06-11): fix: show correct timestamp in execution tab for all TUI log messages (@ammachado)
+- **PR #142** (2026-10-31): feat(runtime): add a Kubernetes runtime backend (@bahdotsh)
+- **PR #141** (2026-10-31): feat: override runs-on images with --platform (#113) (@bahdotsh)
+- **PR #140** (2026-10-30): feat: support Gitea workflows in .gitea/workflows (#132) (@bahdotsh)
+- **PR #139** (2026-10-30): fix(ui): add a light theme for light terminals (#120) (@bahdotsh)
+- **PR #138** (2026-10-30): fix: use platform base directories instead of ~/.wrkflw (#117) (@bahdotsh)
+- **PR #137** (2026-10-30): feat(matrix): support expressions in matrix include and exclude (#112) (@bahdotsh)
 
 ---
 
@@ -3705,33 +3463,49 @@ exception: it tokio
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui): ship screens 4, 7, 8 and the Tweaks overlay (#105)
+## X. runtime): add a Kubernetes runtime backend (#142)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bahdotsh/wrkflw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebe8083f`: ui): ship screens 4, 7, 8 and the Tweaks overlay (#105). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `153b8ee0`: runtime): add a Kubernetes runtime backend (#142). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "wrkflw-logging",
- "wrkflw-logging",
- "urlencoding",
- "wrkflw-gitlab",
- "wrkflw-matrix",
- "wrkflw-secrets",
+- **Kubernetes execution** — run each step as a pod in your own cluster, with node selectors and GPU resource requests
+# Run each step as a pod in a Kubernetes cluster
+wrkflw run --runtime kubernetes --k8s-namespace ci .github/workflows/ci.yml
+
+| `e` | Cycle runtime (Docker / Podman / Kubernetes / Secure Emulation / Emulation) |
+| **Kubernetes** | Each step runs as a pod in a cluster you point `kubectl` at | GPU/XPU jobs, shared build clusters, self-hosted forges |
+### Kubernetes runtime
+
+`--runtime kubernetes` dispatches every step to the cluster `kubectl` is configured for. It is never auto-detected, and it never falls back to running on your machine: if the cluster is unreachable, the run fails.
+
+```bash
+# Pick the cluster and namespace, then run as usual
+wrkflw run --runtime kubernetes --k8s-context gpu-cluster --k8s-namespace ci .github/workflows/train.yml
+
+# Land on GPU nodes and request an accelerator for every step
+wrkflw run --runtime kubernetes \
+  --k8s-node-selector accelerator=a100 \
+  --k8s-resource nvidia.com/gpu=1 --k8s-resource memory=16Gi \
+  .github/workflows/train.yml
+
+# Private registry, and a registry wrkflw can push locally built images to
+wrkflw run --runtim
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+| `e` | Cycle runtime (Docker / Podman / Emulation / Secure Emulation) |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebe8083f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `153b8ee0` are properly handled with clean fallback behavior.

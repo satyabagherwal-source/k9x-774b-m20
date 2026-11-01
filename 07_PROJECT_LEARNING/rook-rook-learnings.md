@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `d4548cbb`  
+> **Source Version**: `285e01eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:05:02.949Z  
+> **Timestamp**: 2026-10-31T01:21:28.382Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:05:02.236Z  
+> **Harvest Timestamp**: 2026-10-31T01:21:27.297Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13693 stars
+- **Stars / Engagement**: 13699 stars
 
 ---
 
@@ -1427,121 +1427,73 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c1437ba3` (2026-10-21)
-**Commit Message**: ci: build release images with the newest Go patch release
+### Incident Patch 1: `285e01eb` (2026-10-30)
+**Commit Message**: Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver
 
-actions/setup-go resolves a version spec like "1.26" from the runner's tool cache before it consults the version manifest, so this job built with whatever 1.26.x the runner image carried, go1.26.9, rather than the newest patch.
+doc: add arttor to approvers list
 
-Set check-latest so published images are built with the current patch release. A Go security fix only reaches users through a binary rebuilt on a toolchain carrying it, and this is the job that builds what they run. go1.26.10 fixes CVE-2026-111943 in crypto/x509 (golang/go#82345).
-
-Co-Authored-By: Claude Opus 5 <[REDACTED_EMAIL]>
-Signed-off-by: Joshua Hoblitt <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/push-build.yaml` (modified, +1/-0)
+**File**: `CODE-OWNERS` (modified, +1/-1)
 ```diff
-@@ -38,6 +38,7 @@ jobs:
-       - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
-         with:
-           go-version: "1.26"
-+          check-latest: true
+@@ -11,6 +11,6 @@ approvers:
+ - sp98
+ - parth-gr
+ - jhoblitt
++- arttor
+ reviewers:
+ - Madhu-1
+-- arttor
+```
+
+**File**: `OWNERS.md` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ Maintainers will be added according to the [process for adding a maintainer](GOV
+ * Santosh Pillai <sapillai@redhat.com> ([sp98](https://github.com/sp98))
+ * Parth Arora <partharora1010@gmail.com> ([parth-gr](https://github.com/parth-gr))
+ * Joshua Hoblitt <josh@hoblitt.com> ([jhoblitt](https://github.com/jhoblitt))
++* Artem Torubarov <torubarov.a.a@gmail.com> ([arttor](https://github.com/arttor))
  
-         # docker/setup-qemu action installs QEMU static binaries, which are used to run builders for architectures other than the host.
-       - name: set up QEMU
+ ## Emeritus maintainers
+ 
 ```
 
 ---
 
-### Incident Patch 2: `4515dbc9` (2026-10-21)
-**Commit Message**: build: fix docs publish auth across GitHub redirect
+### Incident Patch 2: `ddf12871` (2026-10-30)
+**Commit Message**: doc: add arttor to approvers list
 
-The gh-pages push embeds the token in the remote URL
-(https://[REDACTED_EMAIL]/rook/rook.github.io.git). GitHub now redirects
-that push endpoint (rook.github.io.git -> rook.github.io.git/), and git
-drops URL-embedded credentials across the redirect, so the push arrives
-with no credential and fails with "could not read Username". The fetch is
-unaffected because it is a public read that needs no auth.
+Signed-off-by: Artem Torubarov <[REDACTED_EMAIL]>
 
-Authenticate with an http.extraheader instead. It is matched by host and
-re-sent to same-host redirect targets, so it survives the redirect (this
-is the same mechanism actions/checkout uses). xtrace is disabled around
-the git config so the encoded credential is not written to the build log.
-
-This is the minimal fix to restore docs publishing; the full refactor of
-docs publishing into its own serialized workflow is in #18603
-
-Co-Authored-By: Claude Opus 4.8 <[REDACTED_EMAIL]>
-Signed-off-by: Travis Nielsen <[REDACTED_EMAIL]>
-
-**File**: `tests/scripts/build-release.sh` (modified, +14/-1)
+**File**: `CODE-OWNERS` (modified, +1/-1)
 ```diff
-@@ -40,9 +40,22 @@ fi
- # shellcheck disable=SC2034
- export DOCS_GIT_REPO="${DOCS_GIT_REPO:-git@github.com:rook/rook.github.io.git}"
- if [ -n "${GIT_API_TOKEN}" ]; then
-+    # Use a plain HTTPS remote with no credentials embedded in the URL.
-     DOCS_GIT_REPO="${DOCS_GIT_REPO//git@/}"
-     DOCS_GIT_REPO="${DOCS_GIT_REPO//:/\/}"
--    export DOCS_GIT_REPO="https://${GIT_API_TOKEN}@${DOCS_GIT_REPO}"
-+    export DOCS_GIT_REPO="https://${DOCS_GIT_REPO}"
-+
-+    # Authenticate with an http.extraheader rather than embedding the token in
-+    # the remote URL. GitHub redirects the gh-pages push endpoint (e.g.
-+    # rook.github.io.git -> rook.github.io.git/), and git drops URL-embedded
-+    # credentials across that redirect, causing "could not read Username". An
-+    # extraheader is matched by host and re-sent to same-host redirect targets,
-+    # so it survives the redirect. Disable xtrace so the encoded credential is
-+    # not written to the build log (GitHub only masks the raw secret).
-+    { set +x; } 2>/dev/null
-+    git config --global "http.https://github.com/.extraheader" \
-+        "AUTHORIZATION: basic $(printf 'x-access-token:%s' "${GIT_API_TOKEN}" | base64 | tr -d '\n')"
-+    { set -x; } 2>/dev/null
- fi
- 
- TAGGED_RELEASE=false
+@@ -11,6 +11,6 @@ approvers:
+ - sp98
+ - parth-gr
+ - jhoblitt
++- arttor
+ reviewers:
+ - Madhu-1
+-- arttor
 ```
 
----
-
-### Incident Patch 3: `aaf6f211` (2026-10-21)
-**Commit Message**: Merge pull request #18616 from travisn/docs-publish-extraheader-fix
-
-build: fix docs publish auth across GitHub redirect
-
-**File**: `tests/scripts/build-release.sh` (modified, +14/-1)
+**File**: `OWNERS.md` (modified, +1/-0)
 ```diff
-@@ -40,9 +40,22 @@ fi
- # shellcheck disable=SC2034
- export DOCS_GIT_REPO="${DOCS_GIT_REPO:-git@github.com:rook/rook.github.io.git}"
- if [ -n "${GIT_API_TOKEN}" ]; then
-+    # Use a plain HTTPS remote with no credentials embedded in the URL.
-     DOCS_GIT_REPO="${DOCS_GIT_REPO//git@/}"
-     DOCS_GIT_REPO="${DOCS_GIT_REPO//:/\/}"
--    export DOCS_GIT_REPO="https://${GIT_API_TOKEN}@${DOCS_GIT_REPO}"
-+    export DOCS_GIT_REPO="https://${DOCS_GIT_REPO}"
-+
-+    # Authenticate with an http.extraheader rather than embedding the token in
-+    # the remote URL. GitHub redirects the gh-pages push endpoint (e.g.
-+    # rook.github.io.git -> rook.github.io.git/), and git drops URL-embedded
-+    # credentials across that redirect, causing "could not read Username". An
-+    # extraheader is matched by host and re-sent to same-host redirect targets,
-+    # so it survives the redirect. Disable xtrace so the encoded credential is
-+    # not written to the build log (GitHub only masks the raw secret).
-+    { set +x; } 2>/dev/null
-+    git config --global "http.https://github.com/.extraheader" \
-+        "AUTHORIZATION: basic $(printf 'x-access-token:%s' "${GIT_API_TOKEN}" | base64 | tr -d '\n')"
-+    { set -x; } 2>/dev/null
- fi
+@@ -26,6 +26,7 @@ Maintainers will be added according to the [process for adding a maintainer](GOV
+ * Santosh Pillai <sapillai@redhat.com> ([sp98](https://github.com/sp98))
+ * Parth Arora <partharora1010@gmail.com> ([parth-gr](https://github.com/parth-gr))
+ * Joshua Hoblitt <josh@hoblitt.com> ([jhoblitt](https://github.com/jhoblitt))
++* Artem Torubarov <torubarov.a.a@gmail.com> ([arttor](https://github.com/arttor))
  
- TAGGED_RELEASE=false
+ ## Emeritus maintainers
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #18618** (2026-10-21): build: fix docs publish auth across GitHub redirect (backport #18616) (@mergify[bot])
-- **PR #18617** (2026-10-21): build: fix docs publish auth across GitHub redirect (backport #18616) (@mergify[bot])
-- **PR #18616** (2026-10-21): build: fix docs publish auth across GitHub redirect (@travisn)
-- **PR #18614** (2026-10-21): nvmeof: enable SPDK interrupt mode to reduce idle CPU usage (backport #18599) (@mergify[bot])
-- **PR #18613** (2026-10-21): cluster: allow configuring the Prometheus scrape timeout (backport #18424) (@mergify[bot])
-- **PR #18612** (2026-10-21): cluster: allow configuring the Prometheus scrape timeout (backport #18424) (@mergify[bot])
+- **PR #18649** (2026-10-30): doc: add arttor to approvers list (@arttor)
+- **PR #18644** (2026-10-29): operator: retry CephCluster status update on conflict (backport #18639) (@mergify[bot])
+- **PR #18643** (closed): operator: retry CephCluster status update on conflict (backport #18639) (@mergify[bot])
+- **PR #18641** (closed): nvmeof: add ROOK_CEPH_NVMEOF_IMAGE env var for image override (@OdedViner)
+- **PR #18639** (2026-10-28): operator: retry CephCluster status update on conflict (@taraasrita10)
+- **PR #18635** (2026-10-26): build: Set release version to v1.21.1 (@travisn)
 
 ---
 
@@ -1561,28 +1513,28 @@ build: fix docs publish auth across GitHub redirect
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: build release images with the newest Go patch release
+## X. Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver
 
 **RULE**:
-When implementing operations in `.github/workflows/push-build.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CODE-OWNERS`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c1437ba3`: ci: build release images with the newest Go patch release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `285e01eb`: Merge pull request #18649 from cobaltcore-dev/add-arttor-as-approver. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/push-build.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CODE-OWNERS`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          check-latest: true
+- arttor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- arttor
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c1437ba3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `285e01eb` are properly handled with clean fallback behavior.

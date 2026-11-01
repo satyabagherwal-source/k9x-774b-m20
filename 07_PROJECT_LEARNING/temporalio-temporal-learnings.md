@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `cde13dc1`  
+> **Source Version**: `b818208e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:05:29.598Z  
+> **Timestamp**: 2026-10-31T17:37:05.147Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:05:28.897Z  
+> **Harvest Timestamp**: 2026-10-31T17:37:05.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 23996 stars
+- **Stars / Engagement**: 24104 stars
 
 ---
 
@@ -2121,805 +2121,255 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cde13dc1` (2026-10-26)
-**Commit Message**: Move query converter test cases to querytest (#12661)
+### Incident Patch 1: `b818208e` (2026-10-31)
+**Commit Message**: call chasm time skipping APIs in workflow time skipping path (#12848)
 
 ## What changed?
 
-Moved the query converter test cases shared by every visibility store to
-a new `store/query/querytest` package.
-
-**No test case changed**.
+call chasm isExecutionSkippable in workflow time skipping path 
 
 ## Why?
-
-`store/tests` imported every store implementation just to run one table
-of cases.
-
-With each store testing itself, the tests live next to the code they
-test.
-
-This unblocks [adding build tags to remove ES from the
-build](https://github.com/temporalio/temporal/pull/12659).
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `common/persistence/visibility/store/elasticsearch/query_converter_test.go` (modified, +41/-0)
-```diff
-@@ -1,6 +1,7 @@
- package elasticsearch
- 
- import (
-+	"encoding/json"
- 	"fmt"
- 	"testing"
- 	"time"
-@@ -9,7 +10,12 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/temporalio/sqlparser"
- 	enumspb "go.temporal.io/api/enums/v1"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/namespace"
- 	"go.temporal.io/server/common/persistence/visibility/store/query"
-+	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
-+	"go.temporal.io/server/common/searchattribute"
- )
- 
- func TestQueryConverter_GetDatetimeFormat(t *testing.T) {
-@@ -747,3 +753,38 @@ func TestQueryConverter_ConvertIsExpr(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestElasticsearchQueryConverter(t *testing.T) {
-+	t.Parallel()
-+	querytest.Run(
-+		t,
-+		querytest.Elasticsearch,
-+		newESQueryConverter,
-+		serializeESQuery,
-+	)
-+}
-+
-+func newESQueryConverter() *query.QueryConverter[elastic.Query] {
-+	return NewQueryConverter(
-+		namespace.Name("test-namespace"),
-+		searchattribute.TestNameTypeMap(),
-+		&searchattribute.TestMapper{},
-+		metrics.NoopMetricsHandler,
-+		log.NewNoopLogger(),
-+	)
-+}
-+
-+func serializeESQuery(q elastic.Query) (string, error) {
-+	if q == nil {
-+		return "", nil
-+	}
-+	source, err := q.Source()
-+	if err != nil {
-+		return "", err
-+	}
-+	data, err := json.Marshal(source)
-+	if err != nil {
-+		return "", err
-+	}
-+	return string(data), nil
-+}
-```
-
-**File**: `common/persistence/visibility/store/query/querytest/querytest.go` (renamed, +20/-98)
-```diff
-@@ -1,37 +1,25 @@
--package tests
-+// Package querytest provides the query converter test cases shared by every visibility store.
-+package querytest
- 
- import (
--	"encoding/json"
- 	"strings"
- 	"testing"
- 
--	"github.com/olivere/elastic/v7"
- 	"github.com/stretchr/testify/require"
- 	"github.com/temporalio/sqlparser"
--	"go.temporal.io/server/common/log"
--	"go.temporal.io/server/common/metrics"
--	"go.temporal.io/server/common/namespace"
--	"go.temporal.io/server/common/persistence/sql"
--	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
--	"go.temporal.io/server/common/persistence/sql/sqlplugin/postgresql"
--	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
--	"go.temporal.io/server/common/persistence/visibility/store/elasticsearch"
- 	"go.temporal.io/server/common/persistence/visibility/store/query"
--	vissql "go.temporal.io/server/common/persistence/visibility/store/sql"
--	"go.temporal.io/server/common/searchattribute"
- )
- 
-+// Dialect selects the expected results of the store under test.
-+type Dialect int
-+
- const (
--	testNamespaceName = namespace.Name("test-namespace")
-+	MySQL Dialect = iota
-+	PostgreSQL
-+	SQLite
-+	Elasticsearch
- )
- 
--var sqlPlugins = []string{
--	mysql.PluginName,
--	postgresql.PluginName,
--	postgresql.PluginNamePGX,
--	sqlite.PluginName,
--}
--
- type queryConverterTestCase struct {
- 	name string
- 	in   string
-@@ -62,21 +50,21 @@ type queryConverterTestCase struct {
- 	orderBy string
- }
- 
--func (tc *queryConverterTestCase) expected(store string) (out string, errMsg string) {
-+func (tc *queryConverterTestCase) expected(dialect Dialect) (out string, errMsg string) {
- 	if tc.err != "" {
- 		return "", tc.err
- 	}
--	if store == elasticsearch.PersistenceName {
-+	if dialect == Elasticsearch {
- 		return tc.es, tc.esErr
- 	}
- 
- 	var outOverride, errOverride string
--	switch store {
--	case mysql.PluginName:
-+	switch dialect {
-+	case MySQL:
- 		outOverride, errOverride = tc.mysql, tc.mysqlErr
--	case postgresql.PluginName, postgresql.PluginNamePGX:
-+	case PostgreSQL:
- 		outOverride, errOverride = tc.postgres, tc.postgresErr
--	case sqlite.PluginName:
-+	case SQLite:
- 		outOverride, errOverride = tc.sqlite, tc.sqliteErr
- 	default:
- 		// no-op
-@@ -1410,16 +1398,18 @@ var queryConverterTestCases = []queryConverterTestCase{
- 	},
- }
- 
--func runQueryConverterTest[T any](
-+// Run converts every test case with a new query converter, and checks the serialized query
-+// against the expected results of dialect.
-+func Run[T any](
- 	t *testing.T,
--	store string,
-+	dialect Dialect,
- 	newQueryConverter func() *query.QueryConverter[T],
- 	serialize func(T) (string, error),
- ) {
- 	for _, tc := range queryConverterTestCases {
- 		t.Run(tc.name, func(t *testing.T) {
- 			r := require.New(t)
--			expectedOut, expectedErr := tc.expected(store)
-+			expectedOut, expectedErr := tc.expected(dialect)
- 			// The query converter is stateful (e.g. it tracks if the query filtered by
- 			// namespace division), thus each test case requires a new instance.
- 			queryParams, err := newQueryConverter().Convert(tc.in)
-@@ -1445,71 +1435,3 @@ func runQueryConverterTest[T any](
- 		})
- 	}
- }
--
--func serializeSQLQuery(expr sqlparser.Expr) (string, error) {
--	if expr == nil {
--		return "", nil
--	}
--	return sqlparser.String(expr), nil
--}
--
--func serializeESQuery(q elastic.Query) (string, error) {
--	if q == nil {
--		return "", nil
--	}
--	source, err := q.Source()
--	if err != nil {
--		return "", err
--	}
--	data, err := json.Marshal(source)
--	if err != nil {
--		return "", err
--	}
--	return string(data), nil
--}
--
--func TestSQLQueryConverter(t *testing.T) {
--	t.Parallel()
--	for _, plugin := range sqlPlugins {
--		t.Run(plugin, func(t *testing.T) {
--			t.Parallel()
--			pluginVisQC, err := sql.GetPluginVisibilityQueryConverter(plugin)
--			require.NoError(t, err)
--			runQueryConverterTest(
--				t,
--				plugin,
--				func() *query.QueryConverter[sqlparser.Expr] {
--					return query.NewQueryConverter(
--						&vissql.SQLQueryConverter{VisibilityQueryConverter: pluginVisQC},
--						testNamespaceName,
--						searchattribute.TestNameTypeMap(),
--						&searchattribute.TestMapper{},
--						metrics.NoopMetricsHandler,
--						log.NewNoopLogger(),
--					)
--				},
--				serializeSQLQuery,
--			)
--		})
--	}
--}
--
--func TestElasticsearchQueryConverter(t *testing.T) {
--	t.Parallel()
--	runQueryConverterTest(
--		t,
--		elasticsearch.PersistenceName,
--		newESQueryConverter,
--		serializeESQuery,
--	)
--}
--
--func newESQueryConverter() *query.QueryConverter[elastic.Query] {
--	return elasticsearch.NewQueryConverter(
--		testNamespaceName,
--		searchattribute.TestNameTypeMap(),
--		&searchattribute.TestMapper{},
--		metrics.NoopMetricsHandler,
--		log.NewNoopLogger(),
--	)
--}
-```
-
-**File**: `common/persistence/visibility/store/sql/query_converter_test.go` (modified, +51/-0)
-```diff
-@@ -9,8 +9,17 @@ import (
- 	"github.com/stretchr/testify/require"
- 	"github.com/temporalio/sqlparser"
- 	enumspb "go.temporal.io/api/enums/v1"
-+	"go.temporal.io/server/common/log"
-+	"go.temporal.io/server/common/metrics"
-+	"go.temporal.io/server/common/namespace"
-+	persistencesql "go.temporal.io/server/common/persistence/sql"
- 	"go.temporal.io/server/common/persistence/sql/sqlplugin"
-+	"go.temporal.io/server/common/persistence/sql/sqlplugin/mysql"
-+	"go.temporal.io/server/common/persistence/sql/sqlplugin/postgresql"
-+	"go.temporal.io/server/common/persistence/sql/sqlplugin/sqlite"
- 	"go.temporal.io/server/common/persistence/visibility/store/query"
-+	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
-+	"go.temporal.io/server/common/searchattribute"
- 	"go.uber.org/mock/gomock"
- )
- 
-@@ -1053,3 +1062,45 @@ func parseWhereString(where string) sqlparser.Expr {
- 	}
- 	return stmt.(*sqlparser.Select).Where.Expr
- }
-+
-+func TestSQLQueryConverter(t *testing.T) {
-+	t.Parallel()
-+	plugins := []struct {
-+		name    string
-+		dialect querytest.Dialect
-+	}{
-+		{name: mysql.PluginName, dialect: querytest.MySQL},
-+		{name: postgresql.PluginName, dialect: querytest.PostgreSQL},
-+		{name: postgresql.PluginNamePGX, dialect: querytest.PostgreSQL},
-+		{name: sqlite.PluginName, dialect: querytest.SQLite},
-+	}
-+	for _, plugin := range plugins {
-+		t.Run(plugin.name, func(t *testing.T) {
-+			t.Parallel()
-+			pluginVisQC, err := persistencesql.GetPluginVisibilityQueryConverter(plugin.name)
-+			require.NoError(t, err)
-+			querytest.Run(
-+				t,
-+				plugin.dialect,
-+				func() *query.QueryConverter[sqlparser.Expr] {
-+					return query.NewQueryConverter(
-+						&SQLQueryConverter{VisibilityQueryConverter: pluginVisQC},
-+						namespace.Name("test-namespace"),
-+						searchattribute.TestNameTypeMap(),
-+						&searchattribute.TestMapper{},
-+						metrics.NoopMetricsHandler,
-+						log.NewNoopLogger(),
-+					)
-+				},
-+				serializeSQLQuery,
-+			)
-+		})
-+	}
-+}
-+
-+func serializeSQLQuery(expr sqlparser.Expr) (string, error) {
-+	if expr == nil {
-+		return "", nil
-+	}
-+	return sqlparser.String(expr), nil
-+}
-```
-
----
-
-### Incident Patch 2: `205b1599` (2026-10-26)
-**Commit Message**: Record and expose principal attribution for standalone activities (#12550)
-
-## What changed?
-
-Persist the authenticated principal of the worker that most recently
-accepted or responded to a standalone activity task. Return
-started_by_principal, closed_by_principal, and last_worker_principal
-through DescribeActivityExecution.
-
-## Why?
-
-Help users and operators investigate standalone activities by
-identifying who started or closed an execution and which worker
-principal most recently handled a task.
+nexus is migrated from HSM to CHASM
 
 ## How did you test it?
 - [x] built
 - [ ] run locally and tested manually
 - [x] covered by existing tests
 - [x] added new unit test(s)
-- [x] added new functional test(s)
+- [ ] added new functional test(s)
 
-**File**: `chasm/context.go` (modified, +9/-0)
+**File**: `chasm/lib/workflow/workflow.go` (modified, +9/-2)
 ```diff
-@@ -96,6 +96,12 @@ type ExecutionInfo struct {
- 	// An execution is closed when its root component reaches a terminal state in its lifecycle.
- 	// If the component is still running (not yet closed), it returns a zero time.Time value.
- 	CloseTime time.Time
-+	// StartedByPrincipal is the authenticated principal that created this execution.
-+	// It is nil when the execution was created without a principal.
-+	StartedByPrincipal *commonpb.Principal
-+	// ClosedByPrincipal is the authenticated principal that closed this execution.
-+	// It is nil when the execution remains open or was closed without a principal.
-+	ClosedByPrincipal *commonpb.Principal
+@@ -21,8 +21,9 @@ import (
+ // So while Workflow implements the [callback.Host] interface, WorkflowUpdate is only a [callback.Holder].
+ // And attaching completion callbacks to a WorkflowUpdate is done through an [updateCallbackHost].
+ var (
+-	_ callback.Host   = (*Workflow)(nil)
+-	_ callback.Holder = (*WorkflowUpdate)(nil)
++	_ callback.Host                 = (*Workflow)(nil)
++	_ callback.Holder               = (*WorkflowUpdate)(nil)
++	_ chasm.TimeSkippingRuntimeGate = (*Workflow)(nil)
+ )
+ 
+ type Workflow struct {
+@@ -71,6 +72,12 @@ func (w *Workflow) LifecycleState(
+ 	return w.MSPointer.LifecycleState()
  }
  
- type EndpointRegistry interface {
-@@ -206,6 +212,7 @@ func (c *immutableCtx) ExecutionKey() ExecutionKey {
- 
- func (c *immutableCtx) ExecutionInfo() ExecutionInfo {
- 	executionInfo := c.root.backend.GetExecutionInfo()
-+	rootAttributes := c.root.serializedNode.GetMetadata().GetComponentAttributes()
- 
- 	var closeTime time.Time
- 	closeTimestamp := executionInfo.GetCloseTime()
-@@ -218,6 +225,8 @@ func (c *immutableCtx) ExecutionInfo() ExecutionInfo {
- 		StateTransitionCount: executionInfo.GetStateTransitionCount(),
- 		ApproximateStateSize: c.root.backend.GetApproximatePersistedSize(),
- 		CloseTime:            closeTime,
-+		StartedByPrincipal:   rootAttributes.GetStartedByPrincipal(),
-+		ClosedByPrincipal:    rootAttributes.GetClosedByPrincipal(),
- 	}
- }
- 
-```
-
-**File**: `chasm/lib/activity/activity.go` (modified, +24/-0)
-```diff
-@@ -17,6 +17,7 @@ import (
- 	"go.temporal.io/server/chasm/lib/callback"
- 	"go.temporal.io/server/common"
- 	"go.temporal.io/server/common/contextutil"
-+	"go.temporal.io/server/common/headers"
- 	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/retrypolicy"
- 	serviceerrors "go.temporal.io/server/common/serviceerror"
-@@ -244,6 +245,7 @@ func (a *Activity) HandleStarted(ctx chasm.MutableContext, request *historyservi
- 		}
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, request.GetPollRequest().GetIdentity())
- 	if dispatchTime := a.dispatchTimeForAttempt(lastAttempt); dispatchTime != nil {
- 		metrics.TaskScheduleToStartLatency.With(a.taskScheduleToStartMetricsHandler(ctx)).Record(
- 			lastAttempt.GetStartedTime().AsTime().Sub(dispatchTime.AsTime()),
-@@ -366,6 +368,7 @@ func (a *Activity) HandleCompleted(
- 	}); err != nil {
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, event.Request.GetCompleteRequest().GetIdentity())
- 
- 	return &historyservice.RespondActivityTaskCompletedResponse{}, nil
- }
-@@ -405,6 +408,7 @@ func (a *Activity) HandleFailed(
- 	}
- 	if retryState == enumspb.RETRY_STATE_IN_PROGRESS {
- 		a.emitOnAttemptFailedMetrics(ctx, enrichedHandler)
-+		a.recordLastWorker(ctx, failedRequest.GetIdentity())
- 
- 		return &historyservice.RespondActivityTaskFailedResponse{}, nil
- 	}
-@@ -417,6 +421,7 @@ func (a *Activity) HandleFailed(
- 	}); err != nil {
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, failedRequest.GetIdentity())
- 
- 	return &historyservice.RespondActivityTaskFailedResponse{}, nil
- }
-@@ -442,10 +447,29 @@ func (a *Activity) HandleCanceled(
- 	}); err != nil {
- 		return nil, err
- 	}
-+	a.recordLastWorker(ctx, event.Request.GetCancelRequest().GetIdentity())
- 
- 	return &historyservice.RespondActivityTaskCanceledResponse{}, nil
- }
- 
-+func (a *Activity) recordLastWorker(
-+	ctx chasm.MutableContext,
-+	identity string,
-+) {
-+	attempt := a.LastAttempt.Get(ctx)
-+	attempt.LastWorkerIdentity = identity
-+	principalType := ctx.RequestHeader(headers.PrincipalTypeHeaderName)
-+	principalName := ctx.RequestHeader(headers.PrincipalNameHeaderName)
-+	if principalType != "" || principalName != "" {
-+		attempt.LastWorkerPrincipal = &commonpb.Principal{
-+			Type: principalType,
-+			Name: principalName,
-+		}
-+		return
-+	}
-+	attempt.LastWorkerPrincipal = nil
++// IsExecutionSkippable reports whether CHASM-owned workflow work permits time skipping.
++// Mutable State checks the workflow's legacy state and in-flight work separately.
++func (w *Workflow) IsExecutionSkippable(_ chasm.Context) bool {
++	return w.pendingNexusOperationCount() == 0
 +}
 +
- // Terminate implements the chasm.RootComponent interface.
- func (a *Activity) Terminate(
- 	ctx chasm.MutableContext,
+ func (w *Workflow) ContextMetadata(_ chasm.Context) map[string]string {
+ 	// TODO: Export workflow metadata from the CHASM workflow root instead of CloseTransaction().
+ 	return nil
 ```
 
-**File**: `chasm/lib/activity/activity_test.go` (modified, +199/-27)
+**File**: `service/history/workflow/timeskipping.go` (modified, +12/-0)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"github.com/stretchr/testify/require"
- 	apiactivitypb "go.temporal.io/api/activity/v1" //nolint:importas
- 	commonpb "go.temporal.io/api/common/v1"
-+	failurepb "go.temporal.io/api/failure/v1"
- 	nexuspb "go.temporal.io/api/nexus/v1"
- 	sdkpb "go.temporal.io/api/sdk/v1"
- 	"go.temporal.io/api/serviceerror"
-@@ -20,11 +21,13 @@ import (
+@@ -383,6 +383,18 @@ func (ms *MutableStateImpl) isWorkflowSkippable() bool {
+ 		noSkippingReason = "has pending nexus operations"
+ 		return false
+ 	}
++	if ms.ChasmEnabled() {
++		wf, chasmCtx, err := ms.ChasmWorkflowComponentReadOnly(context.Background())
++		if err != nil {
++			metrics.ExecutionTimeSkippingTransitionedErrorCounter.With(ms.metricsHandler).Record(1, ms.timeSkippingMetricTags()...)
++			ms.logger.Error("failed to check CHASM workflow time skipping eligibility", tag.Error(err))
++			return false
++		}
++		if !wf.IsExecutionSkippable(chasmCtx) {
++			noSkippingReason = "has pending CHASM nexus operations"
++			return false
++		}
++	}
+ 	if len(ms.GetPendingChildExecutionInfos()) > 0 {
+ 		noSkippingReason = "has pending child execution"
+ 		return false
+```
+
+**File**: `service/history/workflow/timeskipping_test.go` (modified, +48/-0)
+```diff
+@@ -14,6 +14,9 @@ import (
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
  	"go.temporal.io/server/chasm"
- 	"go.temporal.io/server/chasm/lib/activity/gen/activitypb/v1"
- 	"go.temporal.io/server/common/dynamicconfig"
-+	"go.temporal.io/server/common/headers"
+ 	"go.temporal.io/server/chasm/lib/activity"
++	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
++	nexusoperationpb "go.temporal.io/server/chasm/lib/nexusoperation/gen/nexusoperationpb/v1"
++	chasmworkflow "go.temporal.io/server/chasm/lib/workflow"
+ 	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/clock"
  	"go.temporal.io/server/common/metrics"
- 	"go.temporal.io/server/common/metrics/metricstest"
+@@ -494,6 +497,51 @@ func (s *mutableStateSuite) TestIsWorkflowSkippable() {
+ 	})
+ }
+ 
++func (s *mutableStateSuite) TestIsWorkflowSkippableWithCHASM() {
++	s.mockConfig.WorkflowTimeSkippingEnabled = func(string) bool { return true }
++	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
++		Config: &commonpb.TimeSkippingConfig{Enabled: true},
++	}
++
++	registry := chasm.NewRegistry(s.logger)
++	s.Require().NoError(registry.Register(&chasm.CoreLibrary{}))
++	s.Require().NoError(registry.Register(chasmworkflow.NewLibrary(chasmworkflow.NewRegistry())))
++	s.Require().NoError(registry.Register(chasmnexus.NewNilLibrary()))
++	tree := chasm.NewEmptyTree(registry, s.mutableState, chasm.DefaultPathEncoder, s.logger, metrics.NoopMetricsHandler)
++	s.mutableState.chasmTree = tree
++
++	// A workflow may have a CHASM tree without a persisted root component yet.
++	s.True(s.mutableState.isWorkflowSkippable())
++	s.False(tree.IsStateDirty(), "the eligibility check must only read the CHASM tree")
++
++	wf, chasmCtx, err := s.mutableState.ChasmWorkflowComponent(s.T().Context())
++	s.Require().NoError(err)
++	wf.Operations = chasm.Map[int64, *chasmnexus.Operation]{
++		1: chasm.NewComponentField(chasmCtx, chasmnexus.NewOperation(&nexusoperationpb.OperationState{})),
++	}
++	s.False(s.mutableState.isWorkflowSkippable(), "a pending CHASM Nexus operation blocks time skipping")
++}
++
++func (s *mutableStateSuite) TestIsWorkflowSkippableWithCHASMReadError() {
++	s.mockConfig.WorkflowTimeSkippingEnabled = func(string) bool { return true }
++	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
++		Config: &commonpb.TimeSkippingConfig{Enabled: true},
++	}
++
++	// The tree exists, but its workflow root type cannot be resolved by this registry.
++	registry := chasm.NewRegistry(s.logger)
++	s.mutableState.chasmTree = chasm.NewEmptyTree(
++		registry, s.mutableState, chasm.DefaultPathEncoder, s.logger, metrics.NoopMetricsHandler,
++	)
++	metricsHandler := metricstest.NewCaptureHandler()
++	capture := metricsHandler.StartCapture()
++	defer metricsHandler.StopCapture(capture)
++	s.mutableState.metricsHandler = metricsHandler
++
++	s.False(s.mutableState.isWorkflowSkippable())
++	s.Require().Len(capture.Snapshot()[metrics.ExecutionTimeSkippingTransitionedErrorCounter.Name()], 1)
++}
++
+ func (s *mutableStateSuite) TestIsWorkflowSkippableFeatureFlagDisabled() {
+ 	s.mutableState.executionInfo.TimeSkippingInfo = &persistencespb.TimeSkippingInfo{
+ 		Config: &commonpb.TimeSkippingConfig{Enabled: true},
+```
+
+**File**: `tests/timeskipping_test.go` (modified, +83/-0)
+```diff
+@@ -3,6 +3,7 @@ package tests
+ import (
+ 	"context"
+ 	"errors"
++	"strconv"
+ 	"sync/atomic"
+ 	"testing"
+ 	"time"
+@@ -24,6 +25,7 @@ import (
+ 	enumsspb "go.temporal.io/server/api/enums/v1"
+ 	persistencespb "go.temporal.io/server/api/persistence/v1"
+ 	"go.temporal.io/server/chasm"
++	chasmnexus "go.temporal.io/server/chasm/lib/nexusoperation"
+ 	"go.temporal.io/server/common"
+ 	"go.temporal.io/server/common/dynamicconfig"
  	"go.temporal.io/server/common/namespace"
- 	"go.temporal.io/server/common/searchattribute/sadefs"
- 	serviceerrors "go.temporal.io/server/common/serviceerror"
-+	"go.temporal.io/server/common/testing/protorequire"
- 	"google.golang.org/protobuf/types/known/durationpb"
- 	"google.golang.org/protobuf/types/known/fieldmaskpb"
- 	"google.golang.org/protobuf/types/known/timestamppb"
-@@ -112,26 +115,28 @@ func TestHandleStarted(t *testing.T) {
- 	startedTime := timestamppb.New(testTime.Add(-1 * time.Minute))
+@@ -1157,6 +1159,87 @@ func (s *TimeSkippingTestSuite) TestTimeSkipping_PendingNexusOperationBlocksSkip
+ 		"wall elapsed = %v; the 1h timer must be skipped once the nexus operation completes", wallElapsed)
+ }
  
- 	testCases := []struct {
--		name           string
--		activityStatus activitypb.ActivityExecutionStatus
--		attemptStamp   int32
--		requestStamp   int32
--		startRequestID string
--		requestID      string
--		attemptCount   int32
--		dispatchTime   *timestamppb.Timestamp
--		metricSamples  int
--		metricLatency  time.Duration
--		checkOutcome   func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error)
-+		name             string
-+		activityStatus   activitypb.ActivityExecutionStatus
-+		attemptStamp     int32
-+		requestStamp     int32
-+		startRequestID   string
-+		requestID        string
-+		attemptCount     int32
-+		dispatchTime     *timestamppb.Timestamp
-+		metricSamples    int
-+		metricLatency    time.Duration
-+		expectLastWorker bool
-+		checkOutcome     func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error)
- 	}{
- 		{
--			name:           "successful transition from scheduled",
--			activityStatus: activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
--			attemptStamp:   testStamp,
--			requestStamp:   testStamp,
--			requestID:      testRequestID,
--			metricSamples:  1,
--			metricLatency:  30 * time.Second,
-+			name:             "successful transition from scheduled",
-+			activityStatus:   activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
-+			attemptStamp:     testStamp,
-+			requestStamp:     testStamp,
-+			requestID:        testRequestID,
-+			metricSamples:    1,
-+			metricLatency:    30 * time.Second,
-+			expectLastWorker: true,
- 			checkOutcome: func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error) {
- 				require.Equal(t, int32(1), response.Attempt)
- 				require.NoError(t, err)
-@@ -140,15 +145,16 @@ func TestHandleStarted(t *testing.T) {
- 		{
- 			// Latency is measured from the attempt's dispatch time, 10s ago, not from the schedule
- 			// time 30s ago: a retry excludes the earlier attempts and the backoff between them.
--			name:           "successful transition from scheduled - retry attempt",
--			activityStatus: activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
--			attemptStamp:   testStamp,
--			requestStamp:   testStamp,
--			requestID:      testRequestID,
--			attemptCount:   2,
--			dispatchTime:   timestamppb.New(testTime.Add(-10 * time.Second)),
--			metricSamples:  1,
--			metricLatency:  10 * time.Second,
-+			name:             "successful transition from scheduled - retry attempt",
-+			activityStatus:   activitypb.ACTIVITY_EXECUTION_STATUS_SCHEDULED,
-+			attemptStamp:     testStamp,
-+			requestStamp:     testStamp,
-+			requestID:        testRequestID,
-+			attemptCount:     2,
-+			dispatchTime:     timestamppb.New(testTime.Add(-10 * time.Second)),
-+			metricSamples:    1,
-+			metricLatency:    10 * time.Second,
-+			expectLastWorker: true,
- 			checkOutcome: func(t *testing.T, response *historyservice.RecordActivityTaskStartedResponse, err error) {
- 				require.Equal(t, int32(2), response.Attempt)
- 				require.NoError(t, err)
-@@ -279,6 +285,7 @@ func TestHandleStarted(t *testing.T) {
- 					}),
- 				},
- 			}
-+			ctx.GoCtx = headers.SetPrincipal(ctx.GoCtx, &commonpb.Principal{Type: "jwt", Name: "poll-worker"})
- 
- 			// Setup activity state
- 			attemptState := &activitypb.ActivityAttemptState{
-@@ -327,12 +334,20 @@ func TestHandleStarted(t *testing.T) {
- 			request := &historyservice.RecordActivityTaskStartedRequest{
- 				Stamp:     tc.requestStamp,
- 				RequestId: tc.requestID,
-+				PollRequest: &workflowservice.PollActivityTaskQueueRequest{
-+					Namespace: "test-namespace",
-+					Identity:  "poll-worker-identity",
++// TestTimeSkipping_PendingCHASMNexusOperationBlocksSkip verifies that a workflow-owned
++// CHASM Nexus operation prevents the workflow's timer from advancing virtual time.
++// Completing the operation allows the next workflow task to skip to the timer.
++func (s *TimeSkippingTestSuite) TestTimeSkipping_PendingCHASMNexusOperationBlocksSkip() {
++	env := newNexusTestEnv(s.T(), true,
++		testcore.WithDynamicConfig(dynamicconfig.WorkflowTimeSkippingEnabled, true),
++		testcore.WithDynamicConfig(dynamicconfig.EnableChasm, true),
++		testcore.WithDynamicConfig(chasmnexus.Enabled, true),
++		testcore.WithDynamicConfig(chasmnexus.EnableChasmWorkflowOperations, true),
++		testcore.WithDynamicConfig(chasmnexus.ChasmWorkflowOperationsRolloutPercent, 100),
++	)
++	tv := testvars.New(s.T())
++	started := make(chan struct{}, 1)
++	release := make(chan struct{}, 1)
++	defer close(release)
++	handler := nexustest.Handler{
++		OnStartOperation: func(ctx context.Context, _, _ string, _ *nexus.LazyValue, _ nexus.StartOperationOptions) (nexus.HandlerStartOperationResult[any], error) {
++			select {
++			case started <- struct{}{}:
++			default:
++			}
++			select {
++			case <-release:
++				return &nexus.HandlerStartOperationResultSync[any]{Value: "ok"}, nil
++			case <-ctx.Done():
++				return nil, ctx.Err()
++			}
++		},
++	}
++	endpointName := env.createRandomExternalNexusServer(s.Context(), s.T(), handler)
++	runID := s.startWorkflowWithTimeSkipping(env.TestEnv, tv, 4*time.Hour)
++	poller := taskpoller.New(s.T(), env.FrontendClient(), env.Namespace().String())
++
++	_, err := poller.PollAndHandleWorkflowTask(tv, func(_ *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
++		return &workflowservice.RespondWorkflowTaskCompletedRequest{Commands: []*commandpb.Command{
++			{
++				CommandType: enumspb.COMMAND_TYPE_SCHEDULE_NEXUS_OPERATION,
++				Attributes: &commandpb.Command_ScheduleNexusOperationCommandAttributes{
++					ScheduleNexusOperationCommandAttributes: &commandpb.ScheduleNexusOperationCommandAttributes{
++						Endpoint: endpointName, Service: "service", Operation: "operation",
++						Input: testcore.MustToPayload(s.T(), "input"),
++					},
 +				},
- 			}
- 
- 			// Execute HandleStarted
- 			response, err := activity.HandleStarted(ctx, request)
- 
- 			tc.checkOutcome(t, response, err)
-+			if tc.expectLastWorker {
-+				require.Equal(t, "poll-worker-identity", attemptState.GetLastWorkerIdentity())
-+				protorequire.ProtoEqual(t, &common
-```
-
-**File**: `chasm/lib/activity/gen/activitypb/v1/activity_state.pb.go` (modified, +43/-30)
-```diff
-@@ -743,6 +743,9 @@ type ActivityAttemptState struct {
- 	// the started attempt is updated, so a task token issued at start remains valid until that attempt completes.
- 	StartedStamp       int32  `protobuf:"varint,14,opt,name=started_stamp,json=startedStamp,proto3" json:"started_stamp,omitempty"`
- 	LastWorkerIdentity string `protobuf:"bytes,7,opt,name=last_worker_identity,json=lastWorkerIdentity,proto3" json:"last_worker_identity,omitempty"`
-+	// The authenticated principal of the worker that most recently accepted or responded to an activity task.
-+	// It is updated with last_worker_identity.
-+	LastWorkerPrincipal *v1.Principal `protobuf:"bytes,15,opt,name=last_worker_principal,json=lastWorkerPrincipal,proto3" json:"last_worker_principal,omitempty"`
- 	// The Worker Deployment Version this activity was dispatched to most recently.
- 	// If nil, the activity has not yet been dispatched or was last dispatched to an unversioned worker.
- 	LastDeploymentVersion *v14.WorkerDeploymentVersion `protobuf:"bytes,8,opt,name=last_deployment_version,json=lastDeploymentVersion,proto3" json:"last_deployment_version,omitempty"`
-@@ -852,6 +855,13 @@ func (x *ActivityAttemptState) GetLastWorkerIdentity() string {
- 	return ""
- }
- 
-+func (x *ActivityAttemptState) GetLastWorkerPrincipal() *v1.Principal {
-+	if x != nil {
-+		return x.LastWorkerPrincipal
++			},
++			startTimerCmd("timer-1", time.Hour),
++		}}, nil
++	})
++	s.Require().NoError(err)
++
++	select {
++	case <-started:
++	case <-time.After(30 * time.Second):
++		s.FailNow("Nexus operation did not start")
 +	}
-+	return nil
++
++	ms := s.getMutableState(env.TestEnv, tv.WorkflowID(), runID)
++	history := env.GetHistory(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: tv.WorkflowID(), RunId: runID})
++	scheduledEvent := s.RequireHistoryEvent(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_SCHEDULED)
++	_, inCHASM := ms.State.ChasmNodes["Operations#"+strconv.FormatInt(scheduledEvent.EventId, 10)]
++	s.True(inCHASM, "pending Nexus operation must be stored in the CHASM tree")
++	s.Zero(ms.State.ExecutionInfo.GetTimeSkippingInfo().GetAccumulatedSkippedDuration().AsDuration())
++	s.False(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
++	s.False(hasEventType(history, enumspb.EVENT_TYPE_TIMER_FIRED))
++
++	release <- struct{}{}
++	_, err = poller.PollAndHandleWorkflowTask(tv, taskpoller.DrainWorkflowTask)
++	s.Require().NoError(err)
++	_, err = poller.PollAndHandleWorkflowTask(tv, func(_ *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
++		return &workflowservice.RespondWorkflowTaskCompletedRequest{Commands: []*commandpb.Command{completeWorkflowCmd()}}, nil
++	})
++	s.Require().NoError(err)
++
++	history = env.GetHistory(env.Namespace().String(), &commonpb.WorkflowExecution{WorkflowId: tv.WorkflowID(), RunId: runID})
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_COMPLETED))
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
++	s.Less(indexOfEventType(history, enumspb.EVENT_TYPE_NEXUS_OPERATION_COMPLETED),
++		indexOfEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_TIME_SKIPPING_TRANSITIONED))
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_TIMER_FIRED))
++	s.True(hasEventType(history, enumspb.EVENT_TYPE_WORKFLOW_EXECUTION_COMPLETED))
 +}
 +
- func (x *ActivityAttemptState) GetLastDeploymentVersion() *v14.WorkerDeploymentVersion {
- 	if x != nil {
- 		return x.LastDeploymentVersion
-@@ -1318,7 +1328,7 @@ const file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_rawD
- 	"\bidentity\x18\x02 \x01(\tR\bidentity\x12\x16\n" +
- 	"\x06reason\x18\x03 \x01(\tR\x06reason\x12\x1d\n" +
- 	"\n" +
--	"request_id\x18\x04 \x01(\tR\trequestId\"\x98\b\n" +
-+	"request_id\x18\x04 \x01(\tR\trequestId\"\xef\b\n" +
- 	"\x14ActivityAttemptState\x12\x14\n" +
- 	"\x05count\x18\x01 \x01(\x05R\x05count\x12O\n" +
- 	"\x16current_retry_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x14currentRetryInterval\x12=\n" +
-@@ -1327,7 +1337,8 @@ const file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_rawD
- 	"\x14last_failure_details\x18\x05 \x01(\v2T.temporal.server.chasm.lib.activity.proto.v1.ActivityAttemptState.LastFailureDetailsR\x12lastFailureDetails\x12\x14\n" +
- 	"\x05stamp\x18\x06 \x01(\x05R\x05stamp\x12#\n" +
- 	"\rstarted_stamp\x18\x0e \x01(\x05R\fstartedStamp\x120\n" +
--	"\x14last_worker_identity\x18\a \x01(\tR\x12lastWorkerIdentity\x12k\n" +
-+	"\x14last_worker_identity\x18\a \x01(\tR\x12lastWorkerIdentity\x12U\n" +
-+	"\x15last_worker_principal\x18\x0f \x01(\v2!.temporal.api.common.v1.PrincipalR\x13lastWorkerPrincipal\x12k\n" +
- 	"\x17last_deployment_version\x18\b \x01(\v23.temporal.api.deployment.v1.WorkerDeploymentVersionR\x15lastDeploymentVersion\x12(\n" +
- 	"\x10start_request_id\x18\t \x01(\tR\x0estartRequestId\x12\x19\n" +
- 	"\bsdk_name\x18\n" +
-@@ -1416,13 +1427,14 @@ var file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_goType
- 	(*v1.Priority)(nil),                             // 18: temporal.api.common.v1.Priority
- 	(*v12.ActivityOptions)(nil),                     // 19: temporal.api.activity.v1.ActivityOptions
- 	(*v13.CallbackMetadata)(nil),                    // 20: temporal.server.chasm.lib.callbacks.proto.v1.CallbackMetadata
--	(*v14.WorkerDeploymentVersion)(nil),             // 21: temporal.api.deployment.v1.WorkerDeploymentVersion
--	(*v1.Payloads)(nil),                             // 22: temporal.api.common.v1.Payloads
--	(*v1.Header)(nil),                               // 23: temporal.api.common.v1.Header
--	(*v15.UserMetadata)(nil),                        // 24: temporal.api.sdk.v1.UserMetadata
--	(*v16.PropagatedSerializationContext)(nil),      // 25: temporal.api.nexus.v1.PropagatedSerializationContext
--	(v17.RetryState)(0),                             // 26: temporal.api.enums.v1.RetryState
--	(*v18.Failure)(nil),                             // 27: temporal.api.failure.v1.Failure
-+	(*v1.Principal)(nil),                            // 21: temporal.api.common.v1.Principal
-+	(*v14.WorkerDeploymentVersion)(nil),             // 22: temporal.api.deployment.v1.WorkerDeploymentVersion
-+	(*v1.Payloads)(nil),                             // 23: temporal.api.common.v1.Payloads
-+	(*v1.Header)(nil),                               // 24: temporal.api.common.v1.Header
-+	(*v15.UserMetadata)(nil),                        // 25: temporal.api.sdk.v1.UserMetadata
-+	(*v16.PropagatedSerializationContext)(nil),      // 26: temporal.api.nexus.v1.PropagatedSerializationContext
-+	(v17.RetryState)(0),                             // 27: temporal.api.enums.v1.RetryState
-+	(*v18.Failure)(nil),                             // 28: temporal.api.failure.v1.Failure
- }
- var file_temporal_server_chasm_lib_activity_proto_v1_activity_state_proto_depIdxs = []int32{
- 	13, // 0: temporal.server.chasm.lib.activity.proto.v1.ActivityState.activity_type:type_name -> temporal.api.common.v1.ActivityType
-@@ -14
-```
-
-**File**: `chasm/lib/activity/handler.go` (modified, +8/-5)
-```diff
-@@ -228,18 +228,21 @@ func (h *handler) newActivityForStartExecution(
- 		}
- 	}
- 
--	if request.GetRequestEagerExecution() {
--		err = TransitionEagerStarted.Apply(newActivity, mutableContext, eagerStartEvent{
-+	eager := request.GetRequestEagerExecution()
-+	if eager {
-+		if err := TransitionEagerStarted.Apply(newActivity, mutableContext, eagerStartEvent{
- 			requestID: request.GetRequestId(),
--			identity:  request.GetIdentity(),
--		})
-+		}); err != nil {
-+			return nil, nil, err
-+		}
-+		newActivity.recordLastWorker(mutableContext, request.GetIdentity())
- 	} else {
- 		err = TransitionScheduled.Apply(newActivity, mutableContext, nil)
- 	}
- 	if err != nil {
- 		return nil, nil, err
- 	}
--	if !request.GetRequestEagerExecution() {
-+	if !eager {
- 		return newActivity, nil, nil
- 	}
- 
-```
-
-**File**: `chasm/lib/activity/proto/v1/activity_state.proto` (modified, +4/-0)
-```diff
-@@ -247,6 +247,10 @@ message ActivityAttemptState {
- 
-   string last_worker_identity = 7;
- 
-+  // The authenticated principal of the worker that most recently accepted or responded to an activity task.
-+  // It is updated with last_worker_identity.
-+  temporal.api.common.v1.Principal last_worker_principal = 15;
-+
-   // The Worker Deployment Version this activity was dispatched to most recently.
-   // If nil, the activity has not yet been dispatched or was last dispatched to an unversioned worker.
-   temporal.api.deployment.v1.WorkerDeploymentVersion last_deployment_version = 8;
-```
-
-**File**: `chasm/lib/activity/responses.go` (modified, +13/-0)
-```diff
-@@ -221,6 +221,7 @@ func (a *Activity) buildActivityExecutionInfo(
- 		ActivityType:                        a.GetActivityType(),
- 		Attempt:                             attempt.GetCount(),
- 		CanceledReason:                      a.CancelState.GetReason(),
-+		ClosedByPrincipal:                   resolvedPrincipal(executionInfo.ClosedByPrincipal),
- 		CloseTime:                           closeTime,
- 		CurrentRetryInterval:                a.currentRetryInterval(ctx, attempt),
- 		EagerExecutionAccepted:              a.GetEagerExecutionAccepted(),
-@@ -235,6 +236,7 @@ func (a *Activity) buildActivityExecutionInfo(
- 		LastHeartbeatTime:                   heartbeat.GetRecordedTime(),
- 		LastStartedTime:                     attempt.GetStartedTime(),
- 		LastWorkerIdentity:                  attempt.GetLastWorkerIdentity(),
-+		LastWorkerPrincipal:                 resolvedPrincipal(attempt.GetLastWorkerPrincipal()),
- 		LastDeploymentVersion:               attempt.GetLastDeploymentVersion(),
- 		SdkName:                             attempt.GetSdkName(),
- 		SdkVersion:                          attempt.GetSdkVersion(),
-@@ -248,6 +250,7 @@ func (a *Activity) buildActivityExecutionInfo(
- 		ScheduleToCloseTimeout:              a.GetScheduleToCloseTimeout(),
- 		ScheduleToStartTimeout:              a.GetScheduleToStartTimeout(),
- 		StartDelay:                          a.GetStartDelay(),
-+		StartedByPrincipal:                  resolvedPrincipal(executionInfo.StartedByPrincipal),
- 		StartToCloseTimeout:                 a.GetStartToCloseTimeout(),
- 		StateSizeBytes:                      int64(executionInfo.ApproximateStateSize),
- 		StateTransitionCount:                executionInfo.StateTransitionCount,
-@@ -266,6 +269,16 @@ func (a *Activity) buildActivityExecutionInfo(
- 	return info
- }
- 
-+func resolvedPrincipal(principal *commonpb.Principal) *commonpb.ResolvedPrincipal {
-+	if principal == nil {
-+		return nil
-+	}
-+	return &commonpb.ResolvedPrincipal{
-+		Type:            principal.GetType(),
-+		NameAtWriteTime: principal.GetName(),
-+	}
-+}
-+
- func (a *Activity) buildDescribeActivityExecutionResponse(
- 	ctx chasm.Context,
- 	req *activitypb.DescribeActivityExecutionRequest,
-```
-
-**File**: `chasm/lib/activity/statemachine.go` (modified, +0/-7)
-```diff
-@@ -37,7 +37,6 @@ func (a *Activity) SetStateMachineState(state activitypb.ActivityExecutionStatus
- type (
- 	eagerStartEvent struct {
- 		requestID string
--		identity  string
- 	}
- 
- 	rescheduleEvent struct {
-@@ -421,7 +420,6 @@ func (a *Activity) applyEagerStarted(ctx chasm.MutableContext, event eagerStartE
- 		a.FirstAttemptStartedTime = attempt.GetStartedTime()
- 	}
- 	attempt.StartRequestId = event.requestID
--	attempt.LastWorkerIdentity = event.identity
- 	attempt.SdkName = ctx.RequestHeader(headers.ClientNameHeaderName)
- 	attempt.SdkVersion = ctx.RequestHeader(headers.ClientVersionHeaderName)
- 	// TODO: Populate LastDeploymentVersion when standalone eager start supports worker versioning.
-@@ -479,7 +477,6 @@ func (a *Activity) applyStarted(ctx chasm.MutableContext, request *historyservic
- 		a.FirstAttemptStartedTime = attempt.GetStartedTime()
- 	}
- 	attempt.StartRequestId = request.GetRequestId()
--	attempt.LastWorkerIdentity = request.GetPollRequest().GetIdentity()
- 	attempt.SdkName = ctx.RequestHeader(headers.ClientNameHeaderName)
- 	attempt.SdkVersion = ctx.RequestHeader(headers.ClientVersionHeaderName)
- 	if versionDirective := request.GetVersionDirective().GetDeploymentVersion(); versionDirective != nil {
-@@ -527,7 +524,6 @@ func (a *Activity) applyCompleted(ctx chasm.MutableContext, event completeEvent)
- 			}
- 		}
- 		attempt.CompleteTime = timestamppb.New(ctx.Now(a))
--		attempt.LastWorkerIdentity = req.GetIdentity()
- 		outcome := a.Outcome.Get(ctx)
- 		outcome.Variant = &activitypb.ActivityOutcome_Successful_{
- 			Successful: &activitypb.ActivityOutcome_Successful{
-@@ -549,9 +545,6 @@ func (a *Activity) applyFailed(ctx chasm.MutableContext, event failedEvent) erro
- 		req := event.req.GetFailedRequest()
- 		a.Outcome.Get(ctx).RetryState = event.retryState
- 
--		attempt := a.LastAttempt.Get(ctx)
--		attempt.LastWorkerIdentity = req.GetIdentity()
--
- 		// A worker may respond failed without a Failure. Synthesize a generic terminal failure so
- 		// the closed activity still exposes a consumable outcome; otherwise PollActivityExecution
- 		// returns a nil outcome and a client cannot tell the closed activity apart from one that
+ // TestTimeSkipping_StartWithDelay_NoBound verifies that time-skipping with no
+ // bound shifts a W
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12729** (2026-10-26): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12720** (2026-10-25): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12714** (2026-10-26): Cloud/v1.33.0-165: Merge revisioned task queue user data during replication (@rkannan82)
-- **PR #12712** (2026-10-24): Cloud/v1.33.0-164: Merge revisioned task queue user data during replication (@rkannan82)
-- **PR #12709** (2026-10-24): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #12701** (2026-10-26): Fix V2 schedules forwarding empty last completion result (#12688) (@davidporter-id-au)
+- **PR #12865** (2026-10-31): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #12858** (closed): Separate parallel suite runner from server assertions (@stephanos)
+- **PR #12851** (2026-10-31): Bump auto-scaled-workers to include k8s build-tag gate (@gcristea-temporal)
+- **PR #12850** (2026-10-31): [release/v1.31.x] Bump auto-scaled-workers to v0.0.1-1.31.2 (@gcristea-temporal)
+- **PR #12849** (2026-10-31): [release/v1.32.x] Bump auto-scaled-workers to v0.2.1-1.32.0.158.0 (@gcristea-temporal)
+- **PR #12848** (2026-10-31): call chasm time skipping APIs in workflow time skipping path (@feiyang3cat)
 
 ---
 
@@ -2939,68 +2389,37 @@ principal most recently handled a task.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Move query converter test cases to querytest (#12661)
+## X. call chasm time skipping APIs in workflow time skipping path (#12848)
 
 **RULE**:
-When implementing operations in `common/persistence/visibility/store/elasticsearch/query_converter_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `chasm/lib/workflow/workflow.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cde13dc1`: Move query converter test cases to querytest (#12661). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b818208e`: call chasm time skipping APIs in workflow time skipping path (#12848). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/persistence/visibility/store/elasticsearch/query_converter_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chasm/lib/workflow/workflow.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"encoding/json"
-	"go.temporal.io/server/common/log"
-	"go.temporal.io/server/common/metrics"
-	"go.temporal.io/server/common/namespace"
-	"go.temporal.io/server/common/persistence/visibility/store/query/querytest"
-	"go.temporal.io/server/common/searchattribute"
-
-func TestElasticsearchQueryConverter(t *testing.T) {
-	t.Parallel()
-	querytest.Run(
-		t,
-		querytest.Elasticsearch,
-		newESQueryConverter,
-		serializeESQuery,
-	)
+	_ callback.Host                 = (*Workflow)(nil)
+	_ callback.Holder               = (*WorkflowUpdate)(nil)
+	_ chasm.TimeSkippingRuntimeGate = (*Workflow)(nil)
+// IsExecutionSkippable reports whether CHASM-owned workflow work permits time skipping.
+// Mutable State checks the workflow's legacy state and in-flight work separately.
+func (w *Workflow) IsExecutionSkippable(_ chasm.Context) bool {
+	return w.pendingNexusOperationCount() == 0
 }
 
-func newESQueryConverter() *query.QueryConverter[elastic.Query] {
-	return NewQueryConverter(
-		namespace.Name("test-namespace"),
-		searchattribute.TestNameTypeMap(),
-		&searchattribute.TestMapper{},
-		metrics.NoopMetricsHandler,
-		log.NewNoopLogger(),
-	)
-}
-
-func serializeESQuery(q elastic.Query) (string, error) {
-	if q == nil {
-		return "", nil
-	}
-	source, err := q.Source()
-	if err != nil {
-		return "", err
-	}
-	data, err := json.Marshal(source)
-	if err != nil {
-		return "", err
-	}
-	return string(data), nil
-}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	_ callback.Host   = (*Workflow)(nil)
+	_ callback.Holder = (*WorkflowUpdate)(nil)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cde13dc1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b818208e` are properly handled with clean fallback behavior.

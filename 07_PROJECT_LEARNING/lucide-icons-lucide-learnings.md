@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source**: github ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
-> **Source Version**: `7faf8762`  
+> **Source Version**: `2ca268e7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:25:09.436Z  
+> **Timestamp**: 2026-10-27T15:32:53.538Z  
 > **Learning ID**: `learn-github-lucide-icons-lucide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lucide-icons-lucide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lucide-icons/lucide](https://github.com/lucide-icons/lucide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:25:08.058Z  
+> **Harvest Timestamp**: 2026-10-27T15:32:52.654Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Beautiful & consistent icon toolkit made by the community. Open-source project and a fork of Feather Icons.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25278 stars
+- **Stars / Engagement**: 25336 stars
 
 ---
 
@@ -431,11 +431,16 @@ export default function IconShowcase() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5065** (2026-10-23): **fix(ci): prevent broken and duplicate metadata suggestions**
-  *Symptoms*: ## Description Follow-up to #5062. After it went live, the metadata suggestions on #3779 included suggestions that break the JSON when applied, plus several suggestions on the same lines. This PR fixes the three causes.  **1. Suggestions anchored to the wrong lines** - The review is anchored to the commit that triggered the run, but the icon JSON was read through the PR files' `raw_url`, which always points at the latest head. - When a commit was pushed while the action was running, suggestions landed on the wrong lines. On #3779 a `use-cases` block replaced the `"tags": [` line, and the `tags` and `categories` suggestions were attached to the closing `],` / `]` lines. - Each file is now read at the reviewed commit. `COMMIT_SHA` defaults to the PR's head commit, and files that don't exist at that commit are skipped (a later run covers them).  **2. The cache was never saved** - `pull_request_target` runs can't write to the Actions cache: `cache write denied: token has no writable scopes`. - So the model was asked again on every push, and it returned new values that were posted on the same lines as earlier suggestions. - The model's suggestions per icon name are now stored as hidden JSON (an HTML comment) in the review body and read back from the bot's earlier reviews. The API is only called for icons without stored suggestions. - This removes the `gh api` and `actions/cache` steps.  **3. Comments from older versions of the bot** - Values are now also read from the oldest comme
+- **Issue #5089** (2026-10-27): **fix(icons): renamed `archive-restore` to `archive-arrow-up`**
+  *Symptoms*: As per #4854   ## Before Submitting <!-- For every PR! --> <!-- All of these requirements must be fulfilled. --> - [x] I've read the [Contribution Guidelines](https://github.com/lucide-icons/lucide/blob/main/CONTRIBUTING.md). - [x] I've checked if there was an existing PR that solves the same issue. 
+  **Post-Mortem & Fix Analysis**:
+  > ### Added or changed icons <img title="archive-arrow-up" alt="archive-arrow-up"  src="https://lucide.dev/api/gh-icon/stroke-width/2/PHN2Zz48cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iNSIgeD0iMiIgeT0iMyIgcng9IjEiIC8+PHBhdGggZD0iTTQgOHYxMWEyIDIgMCAwIDAgMiAyaDIiIC8+PHBhdGggZD0iTTIwIDh2MTFhMiAyIDAgMCAxLTIgMmgtMiIgLz48cGF0aCBkPSJtOSAxNSAzLTMgMyAzIiAvPjxwYXRoIGQ9Ik0xMiAxMnY5IiAvPjwvc3ZnPg==.svg"/> <details> <summary>Preview cohesion</summary> <img title="square-activity" alt="square-activity"  src="https://lucide.dev/api/gh-icon/stroke-width/2/PHN2Zz48cmVjdCB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHg9IjMiIHk9IjMiIHJ4PSIyIiAvPjxwYXRoIGQ9Ik0xNyAxMmgtMmwtMiA1LTItMTAtMiA1SDciIC8+PC9zdmc+.svg"/><br/> <img title="archive-arrow-up" alt="archive-arrow-up"  src="https://lucide.dev/api/gh-icon/stroke-width/2/PHN2Zz48cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iNSIgeD0iMiIgeT0iMyIgcng9IjEiIC8+PHBhdGggZD0iTTQgOHYxMWEyIDIgMCAwIDAgMiAyaDIiIC8+PHBhdGggZD0iTTIwIDh2MTFhMiAyIDAgMCAxLTIgMmgtMiIgLz48cGF0aCBkPSJtOSAxNSAzLTMgMyAzIiAvPjxwYXRoIGQ9I
 
-- **Issue #5063** (2026-10-23): **feat(docs): add OpenPanel analytics alongside Plausible**
-  *Symptoms*: ## Description Adds [OpenPanel](https://openpanel.dev) analytics to the docs site next to Plausible. Events go to the self-hosted instance at `insights.lucide.dev`.  **What's tracked:** the same as the current Plausible script, which is page views on initial load and client-side navigations. Referrer, UTM, device, geo and sessions are derived on the server. Outgoing links and `data-track` attributes are off, matching the plain Plausible script.  **Implementation** - `@openpanel/web` is bundled from npm with a shared instance in `docs/.vitepress/theme/utils/openpanel.ts`, following the OpenPanel Vue guide. - Page views are sent from VitePress' `router.onAfterRouteChange` after `nextTick`, so `document.title` is already updated. The SDK's `trackScreenViews` sent the previous page's title. - Tracking runs only in the browser and only when `VITE_OPENPANEL_CLIENT_ID` is set at build time, so local dev, forks and previews send nothing. - Adds a preconnect to `insights.lucide.dev`. Plausible is unchanged, because the icon popularity script still reads its API.  **Deploy notes** - Set `VITE_OPENPANEL_CLIENT_ID` in the Vercel docs project. - Allow `https://lucide.dev` as a domain for the client in OpenPanel.  **Lockfile:** `pnpm-lock.yaml` also bumps some `packages/solid` deps. They use `next` dist-tags, so pnpm re-resolves them on any lockfile update.  **Tested:** dev server plus Playwright with a stubbed endpoint. - One `screen_view` with the correct path, title an
+- **Issue #5088** (2026-10-27): **feat(icons): added `earbuds-off`, `earbuds` icons**
+  *Symptoms*: <!-- Thank you for contributing! -->  <!-- Insert `closes #issueNumber` here if merging this PR will resolve an existing issue -->  ## What is the purpose of this pull request? - [x] New Icon  ### Description Added new `earbuds` icon.  Closes https://github.com/lucide-icons/lucide/issues/4964.  ### Icon use case <!-- What is the purpose of this icon? For each icon added, please insert at least two real life use cases (the more the better). Text like "it's a car icon" is not accepted. --> - Indicating, in e-commerce store catalogs, audio products or earbud accessories. - Application as UI button in music apps to seamlessly switch audio output to connected wireless earphones. - Featuring in user manuals to visually guide customers through the bluetooth pairing process. - Represent earbuds or its status indicator n device settings for connected earbud devices.  ### Alternative icon designs <!-- If you have any alternative icon designs, please attach them here. -->  ## Icon Design Checklist  ### Concept <!-- All of these requirements must be fulfilled. --> - [x] I have provided valid use cases for each icon. - [x] I have not added any a brand or logo icon. - [x] I have not used any hate symbols. - [x] I have not included any religious or political imagery.  ### Author, credits & license <!-- Please choose one of the following, and put an "x" next to it. --> - [x] The icons are solely my own creation. - [ ] The icons were originally created in #<issueNumber> by @<githubUser> - [ ]
+  **Post-Mortem & Fix Analysis**:
+  > ### Added or changed icons <img title="earbuds-off" alt="earbuds-off"  src="https://lucide.dev/api/gh-icon/stroke-width/2/PHN2Zz48cGF0aCBkPSJNMTAgMTB2OWEyIDIgMCAwMS00IDB2LThhNSA1IDAgMDEtMy43NS0xLjY5M0ExIDEgMCAwMTIgOC42NDZWNS4zNTRhMSAxIDAgMDEuMjUtLjY2MSA1IDUgMCAwMTEuMzU5LTEuMDg0IiAvPjxwYXRoIGQ9Ik0xNCAxNHY1YTIgMiA5MCAwMDQgMHYtMSIgLz48cGF0aCBkPSJNMTggMTIuMzQzVjExYTUgNSA5MCAwMDMuNzUtMS42OTMgMSAxIDkwIDAwLjI1LS42NjFWNS4zNTRhMSAxIDkwIDAwLS4yNS0uNjYxQTUgNSA5MCAwMDE4IDNhNCA0IDkwIDAwLTQgNHYxLjM0MyIgLz48cGF0aCBkPSJtMiAyIDIwIDIwIiAvPjwvc3ZnPg==.svg"/><img title="earbuds" alt="earbuds"  src="https://lucide.dev/api/gh-icon/stroke-width/2/PHN2Zz48cGF0aCBkPSJNMTggM2E0IDQgOTAgMDAtNCA0djEyYTIgMiA5MCAwMDQgMHYtOGE1IDUgOTAgMDAzLjc1LTEuNjkzIDEgMSA5MCAwMC4yNS0uNjYxVjUuMzU0YTEgMSA5MCAwMC0uMjUtLjY2MUE1IDUgOTAgMDAxOCAzIiAvPjxwYXRoIGQ9Ik02IDNhNCA0IDAgMDE0IDR2MTJhMiAyIDAgMDEtNCAwdi04YTUgNSAwIDAxLTMuNzUtMS42OTNBMSAxIDAgMDEyIDguNjQ2VjUuMzU0YTEgMSAwIDAxLjI1LS42NjFBNSA1IDAgMDE2IDMiIC8+PC9zdmc+.svg"/> <details> <summa
+  > Neat, I started creating a PR for this yesterday but got stuck on the use cases.  Can you also add the `-off` variant, as it was also requested in #4964?  <a title="Open lucide studio" target="_blank" href="https://studio.lucide.dev/edit?value=2.1p10v9B1-4nv-8a5_5R3.75-1.693AGo8.646V5.354E1.25-.66x5_5b11.359-1.084M14r4v5ae9i4nv-1M18r2.343V11a5_5_9i3.75-1.693rr_9i.25-.661V5.354a1r_9i-.25-.661A5_5_9i18_3a4_4_9i-4_4v1.343me2p20&name=earbuds-off&utm_source=lucide-studio&utm_medium=embed"><img alt="icons" width="200px" src="https://lucide.dev/api/gh-icon/PHN2ZwogIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIKICB3aWR0aD0iMjQiCiAgaGVpZ2h0PSIyNCIKICB2aWV3Qm94PSIwIDAgMjQgMjQiCiAgZmlsbD0ibm9uZSIKICBzdHJva2U9ImN1cnJlbnRDb2xvciIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cGF0aCBkPSJNMTAgMTB2OWEyIDIgMCAwMS00IDB2LThhNSA1IDAgMDEtMy43NS0xLjY5M0ExIDEgMCAwMTIgOC42NDZWNS4zNTRhMSAxIDAgMDEuMjUtLjY2MSA1IDUgMCAwMTEuMzU5LTEuMDg0IiAvPgogIDxwYXRoIGQ9
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -452,268 +457,372 @@ export default function IconShowcase() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7faf8762` (2026-10-23)
-**Commit Message**: fix(ci): prevent broken and duplicate metadata suggestions (#5065)
+### Incident Patch 1: `e8f86fc2` (2026-10-27)
+**Commit Message**: fix(lucide-react): ignore stale DynamicIcon loads after the name changes (#5060)
 
-* fix(ci): store metadata suggestions in the review instead of actions/cache
+When the name prop changes while the previous icon is still loading, the earlier import could resolve last and overwrite the newer icon, leaving DynamicIcon showing the wrong icon. The effect now ignores results from a superseded name.
 
-pull_request_target runs can't write to the Actions cache ("cache write
-denied: token has no writable scopes"), so the cache was never saved and
-the model was asked again on every push. That produced new suggestions
-anchored on the same lines as earlier ones.
-
-Store the model's suggestions per icon name as hidden JSON in the review
-body and read them back from the bot's earlier reviews, so the API is only
-called for icons without stored suggestions. This drops the gh api and
-actions/cache steps.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01TSdUq9uFpjuQsoobCBqz4j
-
-* fix(ci): handle earlier metadata suggestion comments on older PRs
-
-- Read values from the oldest comment format too, which doesn't start with
-  "Suggested `field`" and was posted without a closing fence; the field
-  is taken from the suggestion's `"field": [` line.
-- Skip a field while an earlier suggestion for it is still applicable (not
-  outdated), so two suggestions never replace overlapping lines.
-
-Co-Authored-By: Cla
-
-**File**: `.github/actions/suggest-metadata/.env.example` (modified, +1/-3)
+**File**: `packages/lucide-react/src/DynamicIcon.ts` (modified, +11/-1)
 ```diff
-@@ -12,11 +12,9 @@ PULL_REQUEST_NUMBER=
- # Optional
- # OpenAI model to use (default: gpt-5-mini)
- # OPENAI_API_MODEL=gpt-5-mini
--# Commit the review comments are anchored to (default: HEAD)
-+# Commit the review comments are anchored to (default: the pull request's head commit)
- # COMMIT_SHA=
- # Reviewer login used to skip PRs that were already reviewed (default: github-actions[bot])
- # REVIEWER=
- # Read icon JSON from the local checkout instead of the PR on GitHub (default: false)
- # USE_FILE_SYSTEM=true
--# Cache model suggestions per icon name in this file, so re-runs skip the API (default: no cache)
--# SUGGESTIONS_CACHE_FILE=.cache/suggestions.json
-```
-
-**File**: `.github/actions/suggest-metadata/action.yml` (modified, +0/-21)
-```diff
-@@ -22,26 +22,6 @@ inputs:
- runs:
-   using: composite
-   steps:
--    # Cache the suggestions by the pull request's icon names, so the API is only
--    # called again when icons are added, removed or renamed.
--    - name: Get changed icon names
--      id: icons
--      shell: bash
--      run: |
--        hash=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PULL_REQUEST_NUMBER/files" --paginate \
--          --jq '.[].filename | select(startswith("icons/") and endswith(".json"))' \
--          | sort | sha256sum | cut -d ' ' -f 1)
--        echo "hash=$hash" >> "$GITHUB_OUTPUT"
--      env:
--        GH_TOKEN: ${{ inputs.github-token }}
--        PULL_REQUEST_NUMBER: ${{ inputs.pull-request-number }}
--
--    - name: Cache suggestions
--      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
--      with:
--        path: ${{ runner.temp }}/suggest-metadata/suggestions.json
--        key: suggest-metadata-pr-${{ inputs.pull-request-number }}-${{ steps.icons.outputs.hash }}
--
-     - name: Generate metadata suggestions
-       shell: bash
-       run: node "$GITHUB_ACTION_PATH/suggestMetaData.mts"
-@@ -51,4 +31,3 @@ runs:
-         PULL_REQUEST_NUMBER: ${{ inputs.pull-request-number }}
-         COMMIT_SHA: ${{ inputs.commit-sha }}
-         OPENAI_API_MODEL: ${{ inputs.model }}
--        SUGGESTIONS_CACHE_FILE: ${{ runner.temp }}/suggest-metadata/suggestions.json
-```
-
-**File**: `.github/actions/suggest-metadata/suggestMetaData.mts` (modified, +66/-26)
-```diff
-@@ -34,9 +34,7 @@ const {
- const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
- const pullRequestNumber = Number(process.env.PULL_REQUEST_NUMBER);
- const username = process.env.REVIEWER ?? 'github-actions[bot]';
--const commitSha = process.env.COMMIT_SHA ?? "HEAD";
- const useFileSystem = process.env.USE_FILE_SYSTEM === 'true' || false;
--const cacheFile = process.env.SUGGESTIONS_CACHE_FILE;
+@@ -55,11 +55,21 @@ const DynamicIcon = forwardRef<SVGSVGElement, DynamicIconComponentProps>(
+     const [iconData, setIconData] = useState<LucideIconData>();
  
- const owner = 'lucide-icons';
- const repo = 'lucide';
-@@ -129,11 +127,28 @@ const metadataSchema = z.object({
- 
- type MetadataSuggestion = z.infer<typeof metadataSchema>;
- 
--// The action caches the suggestions under a key based on the pull request's
--// icon names, so a restored cache means the API doesn't need to be called again.
--const suggestionsCache: Record<string, MetadataSuggestion> = cacheFile
--  ? await fs.readFile(cacheFile, 'utf-8').then(JSON.parse, () => ({}))
--  : {};
-+// The model's suggestions per icon name are stored as hidden JSON in the body
-+// of each review, so later runs on the pull request only call the API for icons
-+// that don't have suggestions yet (e.g. new or renamed icons).
-+const CACHE_MARKER = /<!-- suggest-metadata-cache: (.*?) -->/;
+     useEffect(() => {
++      let ignore = false;
 +
-+const suggestionsCache: Record<string, MetadataSuggestion> = {};
-+const previousReviews = await octokit.paginate(octokit.pulls.listReviews, {
-+  owner,
-+  repo,
-+  pull_number: pullRequestNumber,
-+  per_page: 100,
+       getIconData(name)
+-        .then(setIconData)
++        .then((data) => {
++          if (!ignore) {
++            setIconData(data);
++          }
++        })
+         .catch((error) => {
+           console.error(error);
+         });
++
++      return () => {
++        ignore = true;
++      };
+     }, [name]);
+ 
+     if (iconData == null) {
+```
+
+**File**: `packages/lucide-react/tests/DynamicIcon.spec.tsx` (modified, +51/-1)
+```diff
+@@ -1,8 +1,32 @@
+-import { describe, it, expect } from 'vitest';
++import { describe, it, expect, vi } from 'vitest';
+ import { act, render, waitFor, type RenderResult } from '@testing-library/react';
+ 
+ import DynamicIcon from '../src/DynamicIcon';
+ 
++const { delayedImports, pendingImports } = vi.hoisted(() => ({
++  delayedImports: new Map<string, Promise<void>>(),
++  pendingImports: new Map<string, Promise<unknown>>(),
++}));
++
++vi.mock('../src/dynamicIconImports', async (importOriginal) => {
++  const { default: dynamicIconImports } =
++    await importOriginal<typeof import('../src/dynamicIconImports')>();
++
++  return {
++    default: Object.fromEntries(
++      Object.entries(dynamicIconImports).map(([name, importIcon]) => [
++        name,
++        () => {
++          const pendingImport = (delayedImports.get(name) ?? Promise.resolve()).then(importIcon);
++          pendingImports.set(name, pendingImport);
++
++          return pendingImport;
++        },
++      ]),
++    ),
++  };
 +});
-+for (const { user, body } of previousReviews) {
-+  const cache = user?.login === username ? body?.match(CACHE_MARKER)?.[1] : undefined;
-+  if (!cache) continue;
 +
-+  try {
-+    Object.assign(suggestionsCache, JSON.parse(cache));
-+  } catch {
-+    // Ignore a malformed cache.
-+  }
-+}
- 
- const { data: files } = await octokit.pulls.listFiles({
-   owner,
-@@ -151,6 +166,10 @@ const { data: pullRequest } = await octokit.pulls.get({
- 
- const prDescription = (pullRequest.body || '').slice(0, 4000);
- 
-+// The commit the review comments are anchored to. Icon files are read at this
-+// commit too, so line numbers match even if new commits are pushed mid-run.
-+const commitSha = process.env.COMMIT_SHA || pullRequest.head.sha;
+ describe('Using DynamicIcon Component', () => {
+   it('should render icon by given name', async () => {
+     let container: RenderResult['container'];
+@@ -81,4 +105,30 @@ describe('Using DynamicIcon Component', () => {
+       expect(ref.current).toBeInstanceOf(SVGSVGElement);
+     });
+   });
 +
- // The action runs on every update of the pull request. Collect the values that
- // were already suggested per file and field from the suggestion blocks of
- // earlier comments, so they are not suggested again. Comparing values rather
-@@ -166,9 +185,16 @@ const previousComments = (
- ).filter((comment) => comment.user?.login === username);
- 
- const previouslySuggestedValues = new Map<string, string[]>();
--for (const { path: filePath, body } of previousComments) {
--  const field = body.match(/^Suggested `([^`]+)`/)?.[1];
--  const suggestion = body.match(/```suggestion\r?\n([\s\S]*?)\r?\n```/)?.[1];
-+// Files and fields that still have a suggestion that can be applied. A second
-+// one would replace overlapping lines, and applying both would break the JSON.
-+const openSuggestions = new Set<string>();
-+for (const { path: filePath, body, line: commentLine } of previousComments) {
-+  // Comments of the oldest format were posted without a closing fence, and
-+  // don't start with "Suggested `field`". Their suggestion starts with the
-+  // field's own line (e.g. `"tags": [`), so the field is read from there.
-+  const suggestion = body.match(/```suggestion\r?\n([\s\S]*?)(?:\r?\n```|$)/)?.[1];
-+  const field =
-+    body.match(/^Suggested `([^`]+)`/)?.[1] ?? suggestion?.match(/^\s*"([^"]+)":/)?.[1];
-   if (!field || !suggestion) continue;
- 
-   const values = suggestion.split('\n').flatMap((line) => {
-@@ -178,6 +204,9 @@ for (const { path: filePath, body } of previousComments) {
- 
-   const key = `${filePath}:${field}`;
-   previouslySuggestedValues.set(key, [...(previouslySuggestedValues.get(key) ?? []), ...values]);
++  it('should render the latest icon when a previous icon finishes loading later', async () => {
++    let resolveCameraImport = () => {};
++    delayedImports.set(
++      'camera',
++      new Promise((resolve) => {
++        resolveCameraImport = resolve;
++      }),
++    );
 +
-+  // GitHub sets `line` to null once the commented lines have changed (outdated).
-+  if (commentLine != null) openSuggestions.add(key);
- }
- 
- const changedFiles = files.filter(
-@@ -333,22 +362,32 @@ async function getSuggestion(
-   return suggested;
- }
- 
--const suggestionsByFile = await Promise.all(
--  changedFiles.map(async ({ filename, raw_url }) => {
-+const suggestionsByFile = (await Promise.all(
-+  changedFiles.map(async ({ filename }) => {
-     const iconName = path.basename(filename, '.json');
- 
--    // Read the icon's current metadata (the PR head version) first, so we can
-+    // Read the icon's current metadata at the reviewed commit first, so we can
-     // both give it to the model as context and dedupe suggestions against it.
-     let fileContent: string
-     if (useFileSystem) {
-       fileContent = await fs.readFile(path.join(repoRoot, filename), 'utf-8');
-     } else {
--      const fileGithubRequest = await octokit.request(`GET ${raw_url}`, {
--        headers: {
--          'Accept': 'application/vnd.github.v3.raw',
--        },
--      });
--      fileContent = fileGithubRequest.data
-+      try {
-+        const { data } = await octokit.repos.getContent({
-+          owner,
-+          repo,
-+         
++    const { container, rerender } = render(<DynamicIcon name="camera" />);
++    rerender(<DynamicIcon name="smile" />);
++
++    await waitFor(() => {
++      expect(container.firstChild).toHaveClass('lucide-smile');
++    });
++
++    await act(async () => {
++      resolveCameraImport();
++      await pendingImports.get('camera');
++      await new Promise((resolve) => setTimeout(resolve));
++    });
++
++    expect(container.firstChild).toHaveClass('lucide-smile');
++    expect(container.firstChild).not.toHaveClass('lucide-camera');
++  });
+ });
 ```
 
 ---
 
-### Incident Patch 2: `9ad51a07` (2026-10-23)
-**Commit Message**: fix(build-icons): support Windows paths in dynamic imports for template and metadata (#5058)
+### Incident Patch 2: `555cc952` (2026-10-27)
+**Commit Message**: chore(icons): align use-cases with metadata guidelines (#5081)
 
-Co-authored-by: grzdev <[REDACTED_EMAIL]>
+Rewrite non-empty use-cases in icon metadata to follow
+.github/instructions/metadata.instructions.md: start with a capitalized
+present participle, no trailing periods, roughly 4-12 words, no first
+person, and variant-specific wording instead of copied lines.
 
-**File**: `tools/build-icons/cli.ts` (modified, +5/-1)
+
+Claude-Session: https://claude.ai/code/session_011ftUgp98e8VLgymjSb9qbQ
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `icons/a-large-small.json` (modified, +3/-3)
 ```diff
-@@ -1,6 +1,7 @@
- #!/usr/bin/env node
- import fs from 'fs';
- import path from 'path';
-+import { pathToFileURL } from 'url';
- import getArgumentOptions from 'minimist';
- 
- import { readSvgDirectory } from '@lucide/helpers';
-@@ -76,7 +77,9 @@ async function buildIcons() {
- 
-   const icons = await renderIconsObject(svgFiles, ICONS_DIR, renderUniqueKey);
- 
--  const { default: iconFileTemplate } = await import(path.resolve(process.cwd(), templateSrc));
-+  const { default: iconFileTemplate } = await import(
-+    pathToFileURL(path.resolve(process.cwd(), templateSrc)).href
-+  );
- 
-   const iconMetaData = await getIconMetaData(ICONS_DIR);
- 
-@@ -135,4 +138,5 @@ try {
-   await buildIcons();
- } catch (error) {
-   console.error(error);
-+  process.exitCode = 1;
- }
+@@ -1,9 +1,9 @@
+ {
+   "$schema": "../icon.schema.json",
+   "use-cases": [
+-    "indicating a large and small text size",
+-    "formatting text size",
+-    "indicating a heading and body text"
++    "Indicating large and small text sizes",
++    "Adjusting text size in text editors",
++    "Indicating heading and body text styles"
+   ],
+   "contributors": [
+     "it-is-not",
 ```
 
-**File**: `tools/build-icons/utils/getIconMetaData.ts` (modified, +4/-1)
+**File**: `icons/ad.json` (modified, +2/-2)
 ```diff
-@@ -1,4 +1,5 @@
- import path from 'path';
-+import { pathToFileURL } from 'url';
- import { readSvgDirectory } from '@lucide/helpers';
- import { type IconMetadata } from '../types.ts';
- 
-@@ -7,7 +8,9 @@ async function getIconMetaData(iconDirectory: string): Promise<Record<string, Ic
-   const aliasesEntries = await Promise.all(
-     iconJsons.map(async (jsonFile: string) => {
-       /** eslint-disable */
--      const file = await import(path.join(iconDirectory, jsonFile), { with: { type: 'json' } });
-+      const file = await import(pathToFileURL(path.join(iconDirectory, jsonFile)).href, {
-+        with: { type: 'json' },
-+      });
-       return [path.basename(jsonFile, '.json'), file.default];
-     }),
-   );
+@@ -7,8 +7,8 @@
+     "jguddas"
+   ],
+   "use-cases": [
+-    "marking content as sponsored",
+-    "linking to an advertise with us page"
++    "Marking content as sponsored",
++    "Linking to an advertise-with-us page"
+   ],
+   "tags": [
+     "advert",
+```
+
+**File**: `icons/angle.json` (modified, +5/-5)
+```diff
+@@ -4,11 +4,11 @@
+     "samuelalake"
+   ],
+   "use-cases": [
+-    "rotation input in a design inspector",
+-    "measurement tool in cad software",
+-    "dimensioning in technical drawings",
+-    "labeling angles in geometry exercises",
+-    "displaying degrees for rotation controls"
++    "Setting rotation in a design inspector",
++    "Measuring angles in CAD software",
++    "Dimensioning angles in technical drawings",
++    "Labeling angles in geometry exercises",
++    "Displaying degrees in rotation controls"
+   ],
+   "tags": [
+     "angle",
+```
+
+**File**: `icons/audio-lines-off.json` (modified, +9/-9)
+```diff
+@@ -5,15 +5,15 @@
+     "karsa-mistmere"
+   ],
+   "use-cases": [
+-    "indicating that audio levels, playback, or monitoring are turned off",
+-    "showing muted sound, silenced voice activity, or disabled audio output",
+-    "marking controls that pause waveform visualization or stop live audio analysis",
+-    "representing inactive music, radio, broadcast, or voice signal displays",
+-    "identifying settings that disable sound processing, hearing feedback, or media levels",
+-    "showing a muted microphone during voice or video calls",
+-    "indicating speaker or headphone output is disabled in system audio controls",
+-    "marking disabled waveform or spectrum visualization in audio editors and daws",
+-    "showing that sound notifications or alerts are silenced"
++    "Indicating that audio levels, playback, or monitoring are turned off",
++    "Showing muted sound, silenced voice activity, or disabled audio output",
++    "Marking controls that pause waveform visualization or stop live audio analysis",
++    "Representing inactive music, radio, broadcast, or voice signal displays",
++    "Identifying settings that disable sound processing, hearing feedback, or media levels",
++    "Showing a muted microphone during voice or video calls",
++    "Indicating speaker or headphone output is disabled in system audio controls",
++    "Marking disabled waveform or spectrum visualization in audio editors and DAWs",
++    "Showing that sound notifications or alerts are silenced"
+   ],
+   "tags": [
+     "audio",
+```
+
+**File**: `icons/audio-lines-x.json` (modified, +9/-9)
+```diff
+@@ -5,15 +5,15 @@
+     "karsa-mistmere"
+   ],
+   "use-cases": [
+-    "indicating muted, blocked, or unavailable audio playback",
+-    "showing that an audio track, waveform, or signal has been removed",
+-    "marking controls that disable sound, music, voice, or broadcast output",
+-    "representing cancelled recording, paused monitoring, or silenced audio analysis",
+-    "identifying error states for sound processing, voice activity, or media levels",
+-    "showing a device's speaker or system volume is turned off",
+-    "indicating a user's microphone or input is muted",
+-    "signaling muted notifications or alerts",
+-    "representing muted voice chat in conferencing or multiplayer games"
++    "Indicating muted, blocked, or unavailable audio playback",
++    "Showing that an audio track, waveform, or signal has been removed",
++    "Marking controls that disable sound, music, voice, or broadcast output",
++    "Representing cancelled recording, paused monitoring, or silenced audio analysis",
++    "Identifying error states for sound processing, voice activity, or media levels",
++    "Showing a device's speaker or system volume is turned off",
++    "Indicating a user's microphone or input is muted",
++    "Signaling muted notifications or alerts",
++    "Representing muted voice chat in conferencing or multiplayer games"
+   ],
+   "tags": [
+     "sound",
+```
+
+**File**: `icons/banknote-check.json` (modified, +2/-2)
+```diff
+@@ -4,8 +4,8 @@
+     "mfjramirezf"
+   ],
+   "use-cases": [
+-    "confirm a paid product",
+-    "confirm a payment method was added successfully"
++    "Confirming a product has been paid for",
++    "Confirming a payment method was added successfully"
+   ],
+   "tags": [
+     "banknote",
+```
+
+**File**: `icons/bone-fracture.json` (modified, +2/-2)
+```diff
+@@ -4,8 +4,8 @@
+     "Patolord"
+   ],
+   "use-cases": [
+-    "indicate injury or fracture status in health/fitness tracking",
+-    "show an error or failed state in healthcare UI flows"
++    "Indicating injury or fracture status in health and fitness tracking",
++    "Showing an error or failed state in healthcare interfaces"
+   ],
+   "tags": [
+     "bone",
+```
+
+**File**: `icons/briefcase-plus.json` (modified, +5/-5)
+```diff
+@@ -8,11 +8,11 @@
+     "jguddas"
+   ],
+   "use-cases": [
+-    "Indicating you're adding luggage",
+-    "adding a new business or company profile",
+-    "creating or saving a professional portfolio",
+-    "adding a job or role to a user's profile",
+-    "indicating add to briefcase or save for later in a product/service listing"
++    "Adding luggage to a booking in travel apps",
++    "Adding a new business or company profile",
++    "Creating or saving a professional portfolio",
++    "Adding a job or role to a user profile",
++    "Saving a product or service listing for later"
+   ],
+   "tags": [
+     "work",
+```
+
+---
+
+### Incident Patch 3: `80ce94b2` (2026-10-27)
+**Commit Message**: fix(icons): renamed `archive-restore` to `archive-arrow-up` (#5089)
+
+* fix(icons): renamed archive-restore to archive-arrow-up
+
+* Update icons/archive-arrow-up.json
+
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+---------
+
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+
+**File**: `icons/archive-arrow-up.json` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++{
++  "$schema": "../icon.schema.json",
++  "contributors": [
++    "karsa-mistmere",
++    "ericfennis",
++    "danielbayley"
++  ],
++  "use-cases": [
++    "Restoring archived email messages to an inbox",
++    "Restoring archived files and records to active storage"
++  ],
++  "tags": [
++    "unarchive",
++    "index",
++    "backup",
++    "box",
++    "storage",
++    "records",
++    "restore",
++    "retrieve",
++    "recover",
++    "reactivate"
++  ],
++  "aliases": [
++    {
++      "name": "archive-restore",
++      "deprecated": true,
++      "deprecationReason": "alias.name"
++    }
++  ],
++  "categories": [
++    "files",
++    "mail"
++  ]
++}
+```
+
+**File**: `icons/archive-restore.json` (removed, +0/-21)
+```diff
+@@ -1,21 +0,0 @@
+-{
+-  "$schema": "../icon.schema.json",
+-  "contributors": [
+-    "karsa-mistmere",
+-    "ericfennis",
+-    "danielbayley"
+-  ],
+-  "use-cases": [],
+-  "tags": [
+-    "unarchive",
+-    "index",
+-    "backup",
+-    "box",
+-    "storage",
+-    "records"
+-  ],
+-  "categories": [
+-    "files",
+-    "mail"
+-  ]
+-}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5065** (2026-10-23): fix(ci): prevent broken and duplicate metadata suggestions (@ericfennis)
-- **PR #5063** (2026-10-23): feat(docs): add OpenPanel analytics alongside Plausible (@ericfennis)
-- **PR #5062** (2026-10-23): ci(metadata-suggestions): run on every PR update with cached suggestions (@ericfennis)
-- **PR #5061** (2026-10-23): ci(metadata-suggestions): Improve suggest metadata action (@ericfennis)
-- **PR #5059** (2026-10-23): test(lucide): add tests for replaceElement and edge cases (@grzdev)
-- **PR #5058** (2026-10-23): fix(build-icons): support Windows paths in dynamic imports for template and metadata (@grzdev)
+- **PR #5089** (2026-10-27): fix(icons): renamed `archive-restore` to `archive-arrow-up` (@karsa-mistmere)
+- **PR #5088** (2026-10-27): feat(icons): added `earbuds-off`, `earbuds` icons (@rrod497)
+- **PR #5087** (2026-10-27): feat(icons): added `boxes-linked` icon (@ericfennis)
+- **PR #5086** (closed): feat(icons): added `chart-no-axes-column-distribution-bimodal`, `chart-no-axes-column-distribution-uniform`, `chart-no-axes-column-distribution-unimodal` icons (@Kukzze)
+- **PR #5083** (closed): feat(icons): added `emirati-dirham` icon (@karsa-mistmere)
+- **PR #5082** (closed): feat(icons): added `home-lock` icon (@j00zf)
 
 ---
 
@@ -733,30 +842,38 @@ Co-authored-by: grzdev <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): prevent broken and duplicate metadata suggestions (#5065)
+## X. lucide-react): ignore stale DynamicIcon loads after the name changes (#5060)
 
 **RULE**:
-When implementing operations in `.github/actions/suggest-metadata/.env.example`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/lucide-react/src/DynamicIcon.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lucide-icons/lucide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7faf8762`: ci): prevent broken and duplicate metadata suggestions (#5065). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8f86fc2`: lucide-react): ignore stale DynamicIcon loads after the name changes (#5060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/suggest-metadata/.env.example`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/lucide-react/src/DynamicIcon.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-# Commit the review comments are anchored to (default: the pull request's head commit)
+      let ignore = false;
+
+        .then((data) => {
+          if (!ignore) {
+            setIconData(data);
+          }
+        })
+
+      return () => {
+        ignore = true;
+      };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-# Commit the review comments are anchored to (default: HEAD)
-# Cache model suggestions per icon name in this file, so re-runs skip the API (default: no cache)
-# SUGGESTIONS_CACHE_FILE=.cache/suggestions.json
+        .then(setIconData)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7faf8762` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8f86fc2` are properly handled with clean fallback behavior.

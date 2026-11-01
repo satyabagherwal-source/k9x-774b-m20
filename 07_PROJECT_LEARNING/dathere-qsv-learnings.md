@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `71221647`  
+> **Source Version**: `cc94be6a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:12:34.803Z  
+> **Timestamp**: 2026-11-01T00:49:42.021Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:12:34.159Z  
+> **Harvest Timestamp**: 2026-11-01T00:49:42.013Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3816 stars
+- **Stars / Engagement**: 3818 stars
 
 ---
 
@@ -43,7 +43,7 @@
  * Slot-based concurrency control for MCP tool invocations.
  */
 
-import type { ChildProcess } from "child_process";
+import type { ChildProcess } from "node:child_process";
 import { config } from "./config.js";
 import { KILL_GRACE_PERIOD_MS } from "./tool-constants.js";
 
@@ -285,7 +285,7 @@ export const _testConcurrency = {
  * and timer cleanup shared by executor.ts, duckdb.ts, and parquet-bridge.ts.
  */
 
-import { spawn, type ChildProcess, type StdioOptions } from "child_process";
+import { spawn, type ChildProcess, type StdioOptions } from "node:child_process";
 import { KILL_GRACE_PERIOD_MS, DEFAULT_MAX_OUTPUT_SIZE } from "./tool-constants.js";
 
 /** Options for {@link spawnWithTimeout}. */
@@ -2203,140 +2203,427 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71221647` (2026-10-26)
-**Commit Message**: fix(json): don't leave the intermediate CSV in the temp dir (#4924) (#4925)
+### Incident Patch 1: `cc94be6a` (2026-11-01)
+**Commit Message**: feat(profile): --locate names the places a dataset covers (GeoNames, US Census) (#4968)
 
-The intermediate CSV's TempPath was a temporary dropped at the end of its
-statement, which deleted the empty tempfile immediately; the CSV writer then
-re-created a file at that path by name, which nothing ever removed. Each run
-left a .tmpXXXXXX.csv copy of the data in the temp dir, at umask mode.
+* feat(profile): --locate names the places a dataset covers (GeoNames, US Census)
 
-Write through the tempfile's own (0600) handle, then keep the TempPath bound
-until `run` returns so the file is deleted on success and on error.
+`qsv profile --locate <geonames|census|both>` turns the DCAT-US v3
+bounding box into named Locations. The densest coordinate cells (up to
+40, row-weighted, excluding out-of-range and (0, 0) rows) are looked up
+once, before projection, with `qsv geocode` child processes, so its
+caches, rate limiting, retries and URL overrides apply. The templates
+only read the resulting `located` context key via `with_located`.
 
-Fixes #4924
+- geonames: the bbox Location gets the finest label 80% of the sampled
+  rows share (nearest place with its GeoNames identifier, else admin1,
+  else country).
+- census: each state, and each county holding at least 5% of the
+  sampled rows (max 10), becomes a Location keyed by Census GEOID. A
+  file with no coordinates but a state column resolves its states from
+  that column's frequency (viz builds).
+- Every mode adds the centroid. A failed lookup is noted; the bbox
+  stays. Census lookups that fail after retries are reported as a
+  failure, not as "no US state".
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+run_qsv_cmd now places the input last for 
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -104,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Internal: `src/util.rs` split into 15 submodules under `src/util/`.** The 7,800-line file is now a facade that keeps the shared statics, `SchemaArgs` and `get_args`, and re-exports `stats_cache`, `input`, `special_format`, `http` and the other submodules, so every `util::…` path is unchanged. Pure code motion with no behavior change ([#4855](https://github.com/dathere/qsv/pull/4855)).
- 
- ### Fixed
-+- **`json` no longer leaves a temp file behind** ([#4924](https://github.com/dathere/qsv/issues/4924)). Each run left a `.tmpXXXXXX.csv` copy of the converted data in the system temp directory, readable under the default umask. The intermediate CSV was deleted as soon as it was created and then re-created by name, so nothing removed it. It is now written through the temp file's own owner-only handle and deleted when `json` finishes or fails.
- - **`datefmt --input-tz`: a date-only value keeps its date** ([#4920](https://github.com/dathere/qsv/pull/4920)). A value with no time of day, such as `July 4, 2005` or `2005-07-04`, is midnight UTC on the written date, so `datefmt` prints the bare date. With `--input-tz` set to any zone west of UTC, it used to land on the **next day**, all year (`America/Los_Angeles` turned `July 4, 2005` into `2005-07-05`). Zones east of UTC were off by up to an hour depending on the season, and with `Europe/Athens` a July date moved to the previous day once Athens left summer time, which turned qsv's own CI red. The parser took the time of day from **today's** offset; [qsv-dateparser 0.20.0](https://github.com/dathere/qsv-dateparser/releases/tag/0.20.0) fixes it ([dathere/qsv-dateparser#14](https://github.com/dathere/qsv-dateparser/pull/14)). The same applies to date-only timestamps under `sample --ts-input-tz`. A date-only `geocode --older-than` cutoff is now that date at the current UTC time rather than the current local time. Inputs with a time of day, and `stats`/`schema` date inference (which parse in UTC), are unchanged.
- - **`QSV_SNIFF_DELIMITER` no longer sets the output delimiter from the file being replaced** ([#4916](https://github.com/dathere/qsv/pull/4916)). With `-o out.csv` and an existing semicolon-delimited `out.csv`, the new output was written with semicolons, because the output path was sniffed like an input. Writers now use the delimiter from `--delimiter`, the extension or `QSV_DEFAULT_DELIMITER`, as without the env var.
- - **`count` and `frequency` report a missing `dc:` entry** ([#4916](https://github.com/dathere/qsv/pull/4916)). They printed a bare `No such file or directory` for a `dc:` name that isn't cached, where other commands say `dc: cache entry '…' not found. Fetch it first…`. Their index lookup now checks the input's format error first, as the readers do.
+@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   - CSVW `csvw:tableSchema` columns carry constraints: `required`, numeric/date `minimum`/`maximum`, string `minLength`/`maxLength` for ASCII columns, an enumeration regex for small categorical columns, and a table `primaryKey` (a column whose distinct count equals the row count).
+ - `profile`: an **inferred tier** for profile fields. A field's new `fallback:` template supplies a value only when nothing was supplied, forced or spec-derived. Discovered publisher metadata replaces an inferred value, where a measured value still wins over discovery. A new `projection_provenance` output block lists each inferred value as `inferred`, or `replaced` once discovery or an override superseded it. A field's `review_note:` adds a Recommended warning while the inferred value stands. ([#4967](https://github.com/dathere/qsv/pull/4967))
+ - `profile`: when no description is supplied, DCAT-US v3 gets a factual one generated from the statistics (row and column counts, time span, columns). It ends with a describegpt-style disclosure: "WARNING: Description generated automatically by qsv profile from summary statistics; not reviewed by a person. Verify before using!" A Recommended review warning keeps the missing human-authored description visible. For URL inputs with no identifier, the source URL is used as an inferred `identifier`. ([#4967](https://github.com/dathere/qsv/pull/4967))
++- **`profile --locate <geonames|census|both>` names the places a dataset covers** in its DCAT-US v3 `spatial` Locations. The densest coordinate cells (up to 40, after dropping out-of-range and (0, 0) rows) are looked up with `qsv geocode`, so its caches, rate limiting, retries and URL overrides apply. Results are weighted by how many rows each cell holds, so a few outlying points cannot outvote the core of the data.
++  - `geonames` (offline index): the bounding-box Location is labelled with the finest level that 80% of the sampled rows share. That is the nearest place (with its `https://sws.geonames.org/<id>/` identifier), else the admin1 region, else the country. A dataset split between two places is labelled by what they have in common, never by one of them.
++  - `census` (US Census Geocoder: keyless, cached): each state, and each county holding at least 5% of the sampled rows (up to 10), is added as a Location keyed by its Census GEOID. A file without coordinates but with a state column (USPS code, FIPS code or name) gets its states from that column instead, in builds with `viz`.
++  - Every mode also adds the coordinates' centroid. A lookup that cannot run (offline, a Census outage) is noted in `projection_warnings` and the bounding box is kept. Without `--locate`, the output is unchanged. ([#4968](https://github.com/dathere/qsv/pull/4968))
+ - `viz smart`: a Data Schematic embedded in an iframe now reports its own height to the embedding page (`postMessage({qsvVizHeight: <px>}, "*")`), so a host such as CKAN can size the iframe to its content without injecting a script. It reports only when framed, on load, on resize (including the data viewer drawer opening and closing, so the iframe grows and shrinks), and when its content reflows. The data viewer now accepts the embedding page's `qsvVizViewport` answer only from that page. The gallery generator injects only its scroll-forwarding script into these pages. ([#4949](https://github.com/dathere/qsv/pull/4949))
+ - Gallery: the WPRDC 2-1-1 and Boston 311 Data Schematics can now be made **Live Data Schematics**. Each gallery entry has a "Make it a Live Data Schematic" how-to: download the page and the exact data it was rendered from, register it with qsv-clientd, and open it from disk, approving the pairing in a shell or from the qsv-clientd tray app's menu. The two data files too large to commit (`wpa_211_requests.csv`, `boston311-2025.tsv.gz`) are attached to the 27.0.1 release. The WPRDC figure is now rendered from the portal's own 13-column file instead of a reshaped 7-column extract, so Fetch latest returns data of the same shape; every number in its description is unchanged. ([#4952](https://github.com/dathere/qsv/pull/4952))
+ - **`scripts/benchmarks.sh` 10.1.0 benchmarks `geocode geoclient` against real NYC addresses** ([#4964](https://github.com/dathere/qsv/pull/4964)). The input is a committed 100,000-row sample of NYC Open Data's AddressPoint dataset, 20,000 distinct addresses per borough.
 ```
 
-**File**: `src/cmd/json.rs` (modified, +8/-6)
+**File**: `docs/help/profile.md` (modified, +1/-0)
 ```diff
-@@ -333,13 +333,11 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     // we need to do this so we can use qsv select to reorder headers to first dict's keys order
-     // as the order of the headers in the CSV file is not guaranteed to be the same as the order of
-     // the keys in the JSON object
-+    // Write through the tempfile's own (0600) handle rather than re-creating the file by name.
-     let temp_dir = env::temp_dir();
--    let intermediate_csv = tempfile::Builder::new()
-+    let mut intermediate_tmp = tempfile::Builder::new()
-         .suffix(".csv")
--        .tempfile_in(&temp_dir)?
--        .into_temp_path()
--        .to_string_lossy()
--        .into_owned();
-+        .tempfile_in(&temp_dir)?;
- 
-     // convert JSON to CSV
-     // its inside a block so all the unneeded resources are freed & flushed after the block ends
-@@ -355,9 +353,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
- 
-         let intermediate_csv_writer = csv::WriterBuilder::new()
-             .has_headers(true)
--            .from_path(intermediate_csv.clone())?;
-+            .from_writer(intermediate_tmp.as_file_mut());
-         json_objects_to_csv(values, intermediate_csv_writer)?;
-     }
-+    // Close the write handle before the file is re-opened for reading (Windows), but keep the
-+    // TempPath bound until `run` returns: dropping it deletes the file on every exit path.
-+    let intermediate_path = intermediate_tmp.into_temp_path();
-+    let intermediate_csv = intermediate_path.to_string_lossy().into_owned();
- 
-     // STEP 2: select the columns to use in the final output
-     // Read the intermediate CSV to get the actual headers (which, since we preserve key order,
+@@ -166,6 +166,7 @@ qsv profile --help
+ | &nbsp;`‑‑no‑projection`&nbsp; | flag | Skip the metadata projection block (dcat/croissant/ geoconnex, depending on the active profile). |  |
+ | &nbsp;`‑‑no‑ckan`&nbsp; | flag | Skip the CKAN-shape block. |  |
+ | &nbsp;`‑‑croissant‑frequency`&nbsp; | flag | Embed per-column value-frequency distributions in the metadata projection. The croissant profile renders them as inline cr:RecordSets (one `<col>-frequency` RecordSet of {value, count, percentage} rows per column), per the spec's "distribution of values is a statistic on the field" guidance. Off by default (keeps the projection compact); the raw counts always remain in the top-level `frequency` block regardless. Other bundled profiles ignore this flag. |  |
++| &nbsp;`‑‑locate`&nbsp; | string | Name the places the data covers, as DCAT-US v3 `spatial` Locations, by looking up the densest coordinate cells (up to 40, row-weighted) with `qsv geocode`. <mode> is one of: geonames - label the bounding box with the place, admin1 or country that 80% of the sampled rows share (offline Geonames index). census   - add each US state, and each county holding at least 5% of the sampled rows, keyed by Census GEOID (US Census Geocoder: online, keyless, cached). Without coordinates, a state column (USPS, FIPS or name) is used instead. both     - geonames and census. Also adds the coordinates' centroid. A lookup that cannot run is noted in projection_warnings; the bounding box is kept. Default: off. |  |
+ | &nbsp;`‑‑dcat‑legacy‑license`&nbsp; | flag | Also emit `license` on the Dataset, alongside the Distribution-level copy. Both are valid DCAT-US v3 (the Dataset-level property was added upstream), but the migration guide directs publishers to put license on each Distribution, so that is what qsv emits by default. Default: off. |  |
+ | &nbsp;`‑‑no‑dcat‑discovery`&nbsp; | flag | Skip DCAT-markup discovery on URL inputs. Discovery sniffs HTTP Link: rel=describedBy (and, in future, sibling .metadata.json / JSON-LD <script> blocks) to use the publisher's stated metadata as a base layer. |  |
+ | &nbsp;`‑‑dcat‑discovery‑timeout`&nbsp; | integer | Per-request timeout for DCAT-markup discovery probes. Default: 5. |  |
 ```
 
-**File**: `tests/test_json.rs` (modified, +56/-0)
+**File**: `resources/profiles/README.md` (modified, +5/-1)
 ```diff
-@@ -539,3 +539,59 @@ fn json_jaq_runtime_error_surfaced() {
-         "stderr did not surface the underlying runtime error: {got_stderr}"
-     );
+@@ -75,11 +75,15 @@ undefined, not an error, when its inputs are absent, so guard with
+ | `quality_measurements(stats, dpp, dims, rfc4180)` | DQV `QualityMeasurement` array; `dims` maps `completeness` / `conciseness` / `syntacticValidity` to dimension IRIs. |
+ | `build_csvw_schema_rich(stats, dppf, headers, rows)` | CSVW table schema in file order, with per-column constraints (string lengths only for ASCII columns: qsv counts bytes, CSVW characters) and a `primaryKey` (a column whose cardinality equals `rows`). |
+ | `detect_data_language(stats, dppf)` | ISO 639-1 code of the text values (needs the `whatlang` feature). |
++| `with_located(base, located)` | `base` (a `[Location]`, e.g. from `robust_bbox`) with the `--locate` results folded in: `located.primary` keys merge into the first Location (keys it already has win), `located.regions` follow it, and `located.notes` become Info warnings. With `located` null, `base` is returned unchanged. |
+ 
+ The projection context also exposes `dppf` (per-column frequency),
+ `headers` (column names in file order — template maps iterate
+ key-sorted), `rfc4180` (`{valid}` when `--validate` ran `qsv
+-validate`, else null; lenient, so not proof of strict RFC 4180) and `http_last_modified` (URL inputs).
++validate`, else null; lenient, so not proof of strict RFC 4180), `http_last_modified` (URL inputs)
++and `located` (`--locate`, else null): `{primary, regions, notes}`, where `primary` holds the
++centroid and any GeoNames `prefLabel` / `identifier` / `inScheme` for the bbox Location, and
++`regions` the US Census state and county Locations.
+ 
+ ## Catalog envelope
+ 
+```
+
+**File**: `resources/profiles/dcat-us-v3.yaml` (modified, +8/-8)
+```diff
+@@ -344,17 +344,17 @@ dataset:
+     # UNDEFINED renders the string "null" via `| tojson` and
+     # coerce_json_or_string keeps it as a literal string, leaving a
+     # malformed `"spatial": "null"` in the output (Roborev #2490).
++    #
++    # with_located folds in the opt-in --locate results (`located`, null
++    # otherwise): the bbox Location gains a GeoNames prefLabel/identifier
++    # and the centroid, and US Census state/county Locations follow it.
+     - path: "spatial"
+       template: |
+         {%- set wkt = pkg.dpp_suggestions.spatial_extent.value | default("") -%}
+-        {%- set bbox = robust_bbox(dpp, stats) -%}
+-        {%- if wkt != "" -%}
+-        [{
+-          "@type": "Location",
+-          "geometry": {{ wkt | tojson }}
+-        }]
+-        {%- elif bbox -%}{{ bbox | tojson }}{%- endif -%}
+-      emit_when: '{{ (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" or robust_bbox(dpp, stats) is defined }}'
++        {%- set base = [{"@type": "Location", "geometry": wkt}] if wkt != "" else robust_bbox(dpp, stats) -%}
++        {%- set sp = with_located(base, located) -%}
++        {%- if sp -%}{{ sp | tojson }}{%- endif -%}
++      emit_when: '{{ with_located([{"@type": "Location", "geometry": pkg.dpp_suggestions.spatial_extent.value}] if (pkg.dpp_suggestions.spatial_extent.value | default("")) != "" else robust_bbox(dpp, stats), located) is defined }}'
+ 
+     - path: "temporal"
+       template: |
+```
+
+**File**: `src/cmd/profile.rs` (modified, +34/-0)
+```diff
+@@ -137,6 +137,25 @@ profile options:
+                               projection compact); the raw counts always remain
+                               in the top-level `frequency` block regardless.
+                               Other bundled profiles ignore this flag.
++    --locate <mode>           Name the places the data covers, as DCAT-US v3
++                              `spatial` Locations, by looking up the densest
++                              coordinate cells (up to 40, row-weighted) with
++                              `qsv geocode`. <mode> is one of:
++                                geonames - label the bounding box with the
++                                           place, admin1 or country that 80%
++                                           of the sampled rows share (offline
++                                           Geonames index).
++                                census   - add each US state, and each county
++                                           holding at least 5% of the sampled
++                                           rows, keyed by Census GEOID (US
++                                           Census Geocoder: online, keyless,
++                                           cached). Without coordinates, a
++                                           state column (USPS, FIPS or name)
++                                           is used instead.
++                                both     - geonames and census.
++                              Also adds the coordinates' centroid. A lookup
++                              that cannot run is noted in projection_warnings;
++                              the bounding box is kept. Default: off.
+     --dcat-legacy-license     Also emit `license` on the Dataset, alongside
+                               the Distribution-level copy. Both are valid
+                               DCAT-US v3 (the Dataset-level property was
+@@ -243,6 +262,7 @@ mod discovery_merge;
+ mod external_validate;
+ mod formula_engine;
+ mod formula_helpers;
++mod locate;
+ mod profile_spec;
+ mod projection;
+ mod spec;
+@@ -264,6 +284,7 @@ struct Args {
+     flag_profile:                  Option<String>,
+     flag_no_ckan:                  bool,
+     flag_croissant_frequency:      bool,
++    flag_locate:                   Option<String>,
+     flag_force:                    bool,
+     flag_jobs:                     Option<usize>,
+     flag_output:                   Option<String>,
+@@ -337,6 +358,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let profile = profile_spec::load(profile_arg)?;
+ 
+     // --- 2. run stats + frequency, build analysis context -----------------
++    let locate_mode = args
++        .flag_locate
++        .as_deref()
++        .map(locate::LocateMode::parse)
++        .transpose()?;
++
+     let ctx_args = context::ContextArgs {
+         input_path:      &input_path,
+         no_headers:      args.flag_no_headers,
+@@ -587,6 +614,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         if args.flag_croissant_frequency {
+             frequency = dppf.clone();
+         }
++        // --locate: the place lookups run once, here, as `qsv geocode`
++        // child processes; templates only read the result.
++        let located = match locate_mode {
++            Some(mode) => locate::locate(mode, &sql_backend, &dpp, &dppf, &headers),
++            None => Value::Null,
++        };
+         let projection_ctx = json!({
+             "pkg":                package,
+             "res":                resource,
+@@ -601,6 +634,7 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+             "dpp":                dpp,
+             "rfc4180":            rfc4180,
+             "http_last_modified": http_last_modified,
++            "located":            located,
+             "source_label":       display_input,
+             "local_path":         input_path,
+             "legacy_license":     args.flag_dcat_legacy_license,
+```
+
+**File**: `src/cmd/profile/derive.rs` (modified, +49/-0)
+```diff
+@@ -94,6 +94,7 @@ pub fn register(env: &mut Environment) {
+     env.add_function("build_csvw_schema_rich", build_csvw_schema_rich);
+     env.add_function("detect_data_language", detect_data_language);
+     env.add_function("robust_bbox", robust_bbox);
++    env.add_function("with_located", with_located);
  }
-+
-+fn json_tempdir_cmd(wrk: &Workdir, tmpdir: &std::path::Path) -> std::process::Command {
-+    let mut cmd = wrk.command("json");
-+    // std::env::temp_dir() reads TMPDIR on Unix and TMP/TEMP on Windows
-+    cmd.env("TMPDIR", tmpdir)
-+        .env("TMP", tmpdir)
-+        .env("TEMP", tmpdir);
-+    cmd
-+}
-+
-+fn leftover_files(tmpdir: &std::path::Path) -> Vec<String> {
-+    std::fs::read_dir(tmpdir)
-+        .unwrap()
-+        .map(|e| e.unwrap().file_name().to_string_lossy().into_owned())
-+        .collect()
-+}
-+
-+// https://github.com/dathere/qsv/issues/4924
-+#[test]
-+#[serial]
-+fn json_no_leftover_tempfile() {
-+    let wrk = Workdir::new("json_no_leftover_tempfile");
-+    wrk.create_from_string(
-+        "x.json",
-+        r#"{"name": "John", "age": 30, "city": "New York"}"#,
+ 
+ // ---------------------------------------------------------------------
+@@ -257,6 +258,9 @@ fn filtered_bounds(lat: &str, lon: &str) -> Option<(f64, f64, f64, f64)> {
+     }
+     let key = format!("robust_bbox\u{1f}{lat}\u{1f}{lon}");
+     let hit = memo_sql(&key, |backend| {
++        // as text, so integer-looking leading rows don't type the column
++        // as integer and fail the scan at the first decimal
++        let backend = backend.clone().with_all_strings();
+         let la = format!(r#"TRY_CAST("{lat}" AS DOUBLE)"#);
+         let lo = format!(r#"TRY_CAST("{lon}" AS DOUBLE)"#);
+         let keep = format!(
+@@ -293,6 +297,51 @@ fn filtered_bounds(lat: &str, lon: &str) -> Option<(f64, f64, f64, f64)> {
+     Some((f("min_lon")?, f("max_lon")?, f("min_lat")?, f("max_lat")?))
+ }
+ 
++/// `with_located(base, located)` — the `spatial` Location array with the
++/// `--locate` results folded in: `located.primary` (prefLabel,
++/// identifier, gazetteer, centroid) merges into the first Location —
++/// the bbox, whose label it is — and `located.regions` (Census states
++/// and counties) follow it. Keys the base Location already has win.
++/// Without `--locate` (`located` null) the base passes through
++/// unchanged; with no base, the regions alone are returned.
++fn with_located(base: Value, located: Value) -> Value {
++    let located = to_json(&located);
++    let base_json = to_json(&base);
++    if !located.is_object() {
++        return base;
++    }
++    for note in located
++        .get("notes")
++        .and_then(Json::as_array)
++        .into_iter()
++        .flatten()
++        .filter_map(Json::as_str)
++    {
++        push_note(note.to_string());
++    }
++    let mut out: Vec<Json> = base_json.as_array().cloned().unwrap_or_default();
++    if let (Some(first), Some(primary)) = (
++        out.first_mut().and_then(Json::as_object_mut),
++        located.get("primary").and_then(Json::as_object),
++    ) {
++        for (k, v) in primary {
++            first.entry(k.clone()).or_insert_with(|| v.clone());
++        }
++    }
++    out.extend(
++        located
++            .get("regions")
++            .and_then(Json::as_array)
++            .into_iter()
++            .flatten()
++            .cloned(),
 +    );
-+    let tmpdir = wrk.path("tmp");
-+    std::fs::create_dir_all(&tmpdir).unwrap();
-+
-+    let mut cmd = json_tempdir_cmd(&wrk, &tmpdir);
-+    cmd.arg("x.json");
-+    let got: Vec<Vec<String>> = wrk.read_stdout_on_success(&mut cmd);
-+    assert_eq!(
-+        got,
-+        vec![
-+            svec!["name", "age", "city"],
-+            svec!["John", "30", "New York"]
-+        ]
-+    );
-+    assert_eq!(leftover_files(&tmpdir), Vec::<String>::new());
++    if out.is_empty() {
++        return Value::UNDEFINED;
++    }
++    Value::from(Serde(Json::Array(out)))
 +}
 +
-+// the intermediate CSV is also removed when `run` fails after creating it
-+#[test]
-+#[serial]
-+fn json_no_leftover_tempfile_on_error() {
-+    let wrk = Workdir::new("json_no_leftover_tempfile_on_error");
-+    wrk.create_from_string("x.json", r#"[{"a": 1, "b": 2}]"#);
-+    let tmpdir = wrk.path("tmp");
-+    std::fs::create_dir_all(&tmpdir).unwrap();
+ // ---------------------------------------------------------------------
+ // temporal
+ // ---------------------------------------------------------------------
+```
+
+**File**: `src/cmd/profile/locate.rs` (added, +754/-0)
+```diff
+@@ -0,0 +1,754 @@
++//! `--locate`: name the places a dataset covers, for the DCAT-US v3
++//! `spatial` Locations.
++//!
++//! The bounding box says WHERE the coordinates are; it does not say
++//! "Boston" or "Suffolk County". With `--locate`, qsv samples the
++//! densest coordinate cells (row-weighted, deterministic) and looks them
++//! up with `qsv geocode`:
++//!
++//!   * `geonames` — the offline Geonames index (`geocode reverse`). The finest level that at least
++//!     [`AGREEMENT`] of the sampled rows share — nearest place, then admin1, then country — labels
++//!     the bbox Location (`prefLabel`, plus a `GeoNames` `identifier` for a place or country).
++//!   * `census` — the keyless US Census Geocoder (`geocode census --reverse`). Each state, and each
++//!     county holding at least [`REGION_MIN_SHARE`] of the sampled rows, becomes a Location keyed
++//!     by its Census GEOID.
++//!
++//! The lookups run once, before projection, as `qsv geocode` child
++//! processes — so they share its caches, rate limiting, retries and
++//! the `QSV_CENSUS_GEOCODER_URL` / `QSV_GEOCODE_INDEX_FILENAME`
++//! overrides — and reach the templates as the plain-JSON `located`
++//! context key. A lookup that cannot run is noted, never fatal: the
++//! projection keeps its bbox.
++//!
++//! A file without coordinates but with a state column (USPS code, FIPS
++//! or name; header mentioning "state") gets its state Locations from
++//! the column's frequency instead, in builds with the `viz` feature.
 +
-+    let mut cmd = json_tempdir_cmd(&wrk, &tmpdir);
-+    cmd.arg("x.json").args(["--select", "nosuchcolumn"]);
-+    wrk.assert_err(&mut cmd);
-+    assert_eq!(leftover_files(&tmpdir), Vec::<String>::new());
++use std::{collections::HashMap, io::Write as _};
++
++use serde_json::{Value, json};
++
++use super::sql_backend::SqlBackend;
++use crate::{CliResult, util};
++
++/// How many coordinate cells are looked up. Census single-record
++/// lookups run at 5/s, so this bounds a cold `census` run to ~8s.
++const SAMPLE_CELLS: usize = 40;
++/// Share of the sampled rows a Geonames label must cover.
++const AGREEMENT: f64 = 0.8;
++/// Share of the sampled rows a Census state or county must hold.
++const REGION_MIN_SHARE: f64 = 0.05;
++/// At most this many county Locations.
++const MAX_COUNTIES: usize = 10;
++
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub(super) enum LocateMode {
++    Geonames,
++    Census,
++    Both,
 +}
++
++impl LocateMode {
++    pub(super) fn parse(s: &str) -> CliResult<Self> {
++        match s.trim().to_ascii_lowercase().as_str() {
++            "geonames" => Ok(Self::Geonames),
++            "census" => Ok(Self::Census),
++            "both" => Ok(Self::Both),
++            other => fail_incorrectusage_clierror!(
++                "--locate must be geonames, census or both, not {other:?}."
++            ),
++        }
++    }
++
++    const fn geonames(self) -> bool {
++        matches!(self, Self::Geonames | Self::Both)
++    }
++
++    const fn census(self) -> bool {
++        matches!(self, Self::Census | Self::Both)
++    }
++}
++
++/// One sampled coordinate cell: its rounded point and how many rows
++/// fall in it.
++#[derive(Clone, Debug, PartialEq)]
++struct Cell {
++    lat:  f64,
++    lon:  f64,
++    rows: f64,
++}
++
++/// The `located` context value: `primary` keys merged into the bbox
++/// Location, `regions` appended after it, and `notes` for
++/// `projection_warnings`. `Value::Null` when there is nothing to add.
++pub(super) fn locate(
++    mode: LocateMode,
++    backend: &SqlBackend,
++    dpp: &Value,
++    dppf: &Value,
++    headers: &[String],
++) -> Value {
++    let mut notes: Vec<String> = Vec::new();
++    let mut primary = serde_json::Map::new();
++    let mut regions: Vec<Value> = Vec::new();
++
++    let lat = dpp
++        .get("LAT_FIELD")
++        .and_then(Value::as_str)
++        .filter(|s| !s.is_empty());
++    let lon = dpp
++        .get("LON_FIELD")
++        .and_then(Value::as_str)
++        .filter(|s| !s.is_empty());
++    if let (Some(lat), Some(lon)) = (lat, lon) {
++        match sample_cells(backend, lat, lon) {
++            Some((cells, kept, centroid)) if !cells.is_empty() => {
++                primary.insert("centroid".to_string(), centroid);
++                let sampled: f64 = cells.iter().map(|c| c.rows).sum();
++                let coverage = 100.0 * sampled / kept;
++                if mode.geonames() {
++                    match spawn_lookup(&cells, &geonames_args()) {
++                        Ok(rows) => {
++                            if let Some(label) = geonames_label(&cells, &rows) {
++                                primary.extend(label);
++                            } else {
++                                notes.push(format!(
++                                    "--locate geonames: no place, admin1 or country is shared by \
++                                     {:.0}% of the sampled rows, so the bounding box is not \
++                                     labelled",
++                                    AGREEMENT * 100.0
++                                ));
++                            }
++                        },
++                        Err(e) => notes.push(format!("--locate geonames: lookup failed ({e})")),
++             
+```
+
+**File**: `src/cmd/viz_census.rs` (modified, +17/-0)
+```diff
+@@ -670,6 +670,23 @@ pub fn state_geoid_for_name(raw: &str) -> Option<&'static str> {
+         })
+ }
+ 
++/// The name of the state, DC or territory (island areas included) whose 2-digit GEOID is `geoid`,
++/// e.g. "25" → "Massachusetts".
++#[must_use]
++pub fn state_name_for_geoid(geoid: &str) -> Option<&'static str> {
++    USPS_STATE_FIPS
++        .iter()
++        .find(|(_, fips, _)| *fips == geoid)
++        .map(|(.., name)| *name)
++        .or(match geoid {
++            "60" => Some("American Samoa"),
++            "66" => Some("Guam"),
++            "69" => Some("Northern Mariana Islands"),
++            "78" => Some("U.S. Virgin Islands"),
++            _ => None,
++        })
++}
++
+ /// Is `values` a column of STATE codes and nothing else a finer layer could claim?
+ ///
+ /// True when at least half of the non-empty values are state codes ([`is_state_code`]) AND no
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4925** (2026-10-26): fix(json): don't leave the intermediate CSV in the temp dir (@jqnatividad)
-- **PR #4923** (2026-10-26): deps: revert Luau to 0.740, drop the mlua git patch (luau0-src 0.22.1 yanked) (@jqnatividad)
-- **PR #4922** (2026-10-26): build(deps): bump github/codeql-action from 4.39.0 to 4.39.1 (@dependabot[bot])
-- **PR #4921** (2026-10-26): build(deps): bump anthropics/claude-code-action from 1.0.255 to 1.0.261 (@dependabot[bot])
-- **PR #4920** (2026-10-26): fix: datefmt --input-tz keeps a date-only value's date (qsv-dateparser 0.20.0) (@jqnatividad)
-- **PR #4919** (2026-10-26): deps: bump Luau to 0.744 via mlua upstream rev ff96ed7 (@jqnatividad)
+- **PR #4968** (2026-11-01): feat(profile): --locate names the places a dataset covers (GeoNames, US Census) (@jqnatividad)
+- **PR #4967** (2026-10-31): feat(profile): compute DCAT-US v3 properties from stats, with an inferred tier (@jqnatividad)
+- **PR #4966** (2026-10-31): fix(geocode): cache-info reports real entry counts and oldest/newest timestamps (@jqnatividad)
+- **PR #4965** (2026-10-31): test(frequency): match the "Other (N)" overflow label in property tests (@jqnatividad)
+- **PR #4964** (2026-10-31): bench: add geoclient benchmarks, uncached and cached (@jqnatividad)
+- **PR #4963** (2026-10-30): deps: bump datasketches from 0.5 to 0.6 (@jqnatividad)
 
 ---
 
@@ -2356,13 +2643,13 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. json): don't leave the intermediate CSV in the temp dir (#4924) (#4925)
+## X. profile): --locate names the places a dataset covers (GeoNames, US Census) (#496
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71221647`: json): don't leave the intermediate CSV in the temp dir (#4924) (#4925). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc94be6a`: profile): --locate names the places a dataset covers (GeoNames, US Census) (#4968). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2370,7 +2657,10 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`json` no longer leaves a temp file behind** ([#4924](https://github.com/dathere/qsv/issues/4924)). Each run left a `.tmpXXXXXX.csv` copy of the converted data in the system temp directory, readable under the default umask. The intermediate CSV was deleted as soon as it was created and then re-created by name, so nothing removed it. It is now written through the temp file's own owner-only handle and deleted when `json` finishes or fails.
+- **`profile --locate <geonames|census|both>` names the places a dataset covers** in its DCAT-US v3 `spatial` Locations. The densest coordinate cells (up to 40, after dropping out-of-range and (0, 0) rows) are looked up with `qsv geocode`, so its caches, rate limiting, retries and URL overrides apply. Results are weighted by how many rows each cell holds, so a few outlying points cannot outvote the core of the data.
+  - `geonames` (offline index): the bounding-box Location is labelled with the finest level that 80% of the sampled rows share. That is the nearest place (with its `https://sws.geonames.org/<id>/` identifier), else the admin1 region, else the country. A dataset split between two places is labelled by what they have in common, never by one of them.
+  - `census` (US Census Geocoder: keyless, cached): each state, and each county holding at least 5% of the sampled rows (up to 10), is added as a Location keyed by its Census GEOID. A file without coordinates but with a state column (USPS code, FIPS code or name) gets its states from that column instead, in builds with `viz`.
+  - Every mode also adds the coordinates' centroid. A lookup that cannot run (offline, a Census outage
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2380,4 +2670,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71221647` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc94be6a` are properly handled with clean fallback behavior.

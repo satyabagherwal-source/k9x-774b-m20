@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source**: github ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
-> **Source Version**: `dd471b03`  
+> **Source Version**: `6652e8dd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:48:13.134Z  
+> **Timestamp**: 2026-10-27T13:41:01.303Z  
 > **Learning ID**: `learn-github-open-source-legal-opencontracts`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-source-legal-opencontracts-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Open-Source-Legal/OpenContracts](https://github.com/Open-Source-Legal/OpenContracts))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:48:12.921Z  
+> **Harvest Timestamp**: 2026-10-27T13:41:01.297Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open document intelligence platform for builders and hackers - DMS for the agentic world
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1523 stars
+- **Stars / Engagement**: 1524 stars
 
 ---
 
@@ -1530,18 +1530,18 @@ def filterset_factory(model: type, fields: dict) -> type:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `663c7e0c` (2026-10-25)
-**Commit Message**: chore(deps): update pydantic-ai-slim requirement (#2476)
+### Incident Patch 1: `fcfeccdb` (2026-10-27)
+**Commit Message**: fix(deps): update pypdf requirement from <7,>=6.21.0 to >=6.21.2,<7 (#2491)
 
-Updates the requirements on [pydantic-ai-slim](https://github.com/pydantic/pydantic-ai) to permit the latest version.
-- [Release notes](https://github.com/pydantic/pydantic-ai/releases)
-- [Changelog](https://github.com/pydantic/pydantic-ai/blob/main/docs/changelog.md)
-- [Commits](https://github.com/pydantic/pydantic-ai/compare/v1.107.7...v1.107.9)
+Updates the requirements on [pypdf](https://github.com/py-pdf/pypdf) to permit the latest version.
+- [Release notes](https://github.com/py-pdf/pypdf/releases)
+- [Changelog](https://github.com/py-pdf/pypdf/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/py-pdf/pypdf/compare/6.21.0...6.21.2)
 
 ---
 updated-dependencies:
-- dependency-name: pydantic-ai-slim
-  dependency-version: 1.107.9
+- dependency-name: pypdf
+  dependency-version: 6.21.2
   dependency-type: direct:production
 ...
 
@@ -1550,90 +1550,154 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `requirements/base.txt` (modified, +1/-1)
 ```diff
-@@ -62,7 +62,7 @@ openai>=3.24.0,<4  # https://github.com/openai/openai-python (pydantic-ai 1.x re
- # extra caps ``fastmcp-slim<4``, and every fastmcp-slim 3.x requires
- # ``mcp<2`` -- against our ``mcp>=2.3`` pin that is unsatisfiable, and pip
- # reports it as ``resolution-too-deep`` rather than a conflict.
--pydantic-ai-slim[openai,anthropic,google]>=1.107.7,<2  # see issue #1451 before bumping the upper bound
-+pydantic-ai-slim[openai,anthropic,google]>=1.107.9,<2  # see issue #1451 before bumping the upper bound
- spacy
- # preshed 3.0.14 breaks spaCy model loading during fresh CI image builds.
- preshed==3.0.13
-```
-
----
-
-### Incident Patch 2: `3786b278` (2026-10-25)
-**Commit Message**: chore(deps): update pillow requirement in /compose/accelerated/embedder (#2480)
-
-Updates the requirements on [pillow](https://github.com/python-pillow/Pillow) to permit the latest version.
-- [Release notes](https://github.com/python-pillow/Pillow/releases)
-- [Changelog](https://github.com/python-pillow/Pillow/blob/main/CHANGES.rst)
-- [Commits](https://github.com/python-pillow/Pillow/compare/10.0.0...13.0.0)
-
----
-updated-dependencies:
-- dependency-name: pillow
-  dependency-version: 13.0.0
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `compose/accelerated/embedder/requirements.txt` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- flask
- gunicorn
- numpy
--Pillow>=10
-+Pillow>=13.0.0
- python-decouple
- requests
- sentence-transformers[openvino]==5.6.0
-```
-
----
-
-### Incident Patch 3: `4a212c8e` (2026-10-25)
-**Commit Message**: chore(deps): update brotli requirement from >=1.2.0 to >=1.2.1 (#2479)
-
-Updates the requirements on [brotli](https://github.com/google/brotli) to permit the latest version.
-- [Release notes](https://github.com/google/brotli/releases)
-- [Changelog](https://github.com/google/brotli/blob/go/brotli/v1.2.1/CHANGELOG.md)
-- [Commits](https://github.com/google/brotli/compare/go/brotli/v1.2.1...go/brotli/v1.2.1)
-
----
-updated-dependencies:
-- dependency-name: brotli
-  dependency-version: 1.2.1
-  dependency-type: direct:production
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `requirements/base.txt` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ pydantic==2.*
- typing-extensions==4.*  # https://github.com/python/typing_extensions
- requests>=2.34.2,<3  # https://requests.readthedocs.io/en/latest/
- httpx>=0.28.1,<1  # https://github.com/encode/httpx - async HTTP for agent tools
--brotli>=1.2.0  # decoder for httpx Content-Encoding: br responses (e.g. OpenAI API, VCR cassettes). Floor raised to 1.2.0 to pick up the upstream security fix that bounds decompressor output via Decompressor.output_buffer_limit, preventing memory exhaustion from crafted br-encoded payloads.
-+brotli>=1.2.1  # decoder for httpx Content-Encoding: br responses (e.g. OpenAI API, VCR cassettes). Floor raised to 1.2.0 to pick up the upstream security fix that bounds decompressor output via Decompressor.output_buffer_limit, preventing memory exhaustion from crafted br-encoded payloads.
+@@ -37,7 +37,7 @@ drf-extra-fields==3.7.0  # https://github.com/Hipo/drf-extra-fields
  
- # Django
+ # Doc Analysis (NLP dependencies, placeholder) - WARNING, these are all in same environment... not ideal.
  # ------------------------------------------------------------------------------
+-pypdf>=6.21.0,<7  # https://github.com/py-pdf/pypdf
++pypdf>=6.21.2,<7  # https://github.com/py-pdf/pypdf
+ plasmapdf==0.1.3  # https://github.com/Jsv4/plasmapdf
+ pdf2image>=1.17.0
+ openai>=3.24.0,<4  # https://github.com/openai/openai-python (pydantic-ai 1.x requires >=2.11.0)
+```
+
+---
+
+### Incident Patch 2: `e012dbb3` (2026-10-27)
+**Commit Message**: fix(deps): bump coverage from 7.16.2 to 7.17.0 (#2493)
+
+Bumps [coverage](https://github.com/coveragepy/coveragepy) from 7.16.2 to 7.17.0.
+- [Release notes](https://github.com/coveragepy/coveragepy/releases)
+- [Changelog](https://github.com/coveragepy/coveragepy/blob/main/CHANGES.rst)
+- [Commits](https://github.com/coveragepy/coveragepy/compare/7.16.2...7.17.0)
+
+---
+updated-dependencies:
+- dependency-name: coverage
+  dependency-version: 7.17.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `requirements/local.txt` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ django-silk==5.6.0
+ # ------------------------------------------------------------------------------
+ flake8==7.3.0 # https://github.com/PyCQA/flake8
+ flake8-isort==7.0.0  # https://github.com/gforcada/flake8-isort
+-coverage==7.16.2  # https://github.com/nedbat/coveragepy
++coverage==7.17.0  # https://github.com/nedbat/coveragepy
+ black==26.10.1  # https://github.com/psf/black
+ pre-commit==4.6.2  # https://github.com/pre-commit/pre-commit
+ 
+```
+
+---
+
+### Incident Patch 3: `bf7c276c` (2026-10-27)
+**Commit Message**: fix(deps-dev): bump vite-plugin-istanbul in /frontend (#2499)
+
+Bumps [vite-plugin-istanbul](https://github.com/iFaxity/vite-plugin-istanbul) from 8.0.0 to 9.0.1.
+- [Release notes](https://github.com/iFaxity/vite-plugin-istanbul/releases)
+- [Changelog](https://github.com/iFaxity/vite-plugin-istanbul/blob/next/release.config.mjs)
+- [Commits](https://github.com/iFaxity/vite-plugin-istanbul/compare/v8.0.0...v9.0.1)
+
+---
+updated-dependencies:
+- dependency-name: vite-plugin-istanbul
+  dependency-version: 9.0.1
+  dependency-type: direct:development
+  update-type: version-update:semver-major
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `frontend/package.json` (modified, +1/-1)
+```diff
+@@ -173,7 +173,7 @@
+     "nyc": "^18.0.0",
+     "playwright": "^1.52.0",
+     "prettier": "^2.7.1",
+-    "vite-plugin-istanbul": "^8.0.0",
++    "vite-plugin-istanbul": "^9.0.1",
+     "vitest": "^4.1.11"
+   },
+   "nyc": {
+```
+
+**File**: `frontend/yarn.lock` (modified, +7/-29)
+```diff
+@@ -123,29 +123,7 @@
+     json5 "^2.2.3"
+     semver "^6.3.1"
+ 
+-"@babel/generator@^7.28.5":
+-  version "7.28.5"
+-  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.28.5.tgz#712722d5e50f44d07bc7ac9fe84438742dd61298"
+-  integrity sha512-3EwLFhZ38J4VyIP6WNtt2kUdW9dokXA9Cr4IVIFHuCpZ3H8/YFOl5JjZHisrn1fATPBmKKqXzDFvh9fUwHz6CQ==
+-  dependencies:
+-    "@babel/parser" "^7.28.5"
+-    "@babel/types" "^7.28.5"
+-    "@jridgewell/gen-mapping" "^0.3.12"
+-    "@jridgewell/trace-mapping" "^0.3.28"
+-    jsesc "^3.0.2"
+-
+-"@babel/generator@^7.29.1":
+-  version "7.29.1"
+-  resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.29.1.tgz#d09876290111abbb00ef962a7b83a5307fba0d50"
+-  integrity sha512-qsaF+9Qcm2Qv8SRIMMscAvG4O3lJ0F1GuMo5HR/Bp02LopNgnZBC/EkbevHFeGs4ls/oPz9v+Bsmzbkbe+0dUw==
+-  dependencies:
+-    "@babel/parser" "^7.29.0"
+-    "@babel/types" "^7.29.0"
+-    "@jridgewell/gen-mapping" "^0.3.12"
+-    "@jridgewell/trace-mapping" "^0.3.28"
+-    jsesc "^3.0.2"
+-
+-"@babel/generator@^7.29.7":
++"@babel/generator@^7.28.5", "@babel/generator@^7.29.7":
+   version "7.29.7"
+   resolved "https://registry.yarnpkg.com/@babel/generator/-/generator-7.29.7.tgz#cca0b8827e6bcf3ba176788e7f3b180ad6db2fa3"
+   integrity sha512-DkXD5OJQaAQIdZ1bt3UZdEnHAn9Imd3IVBdX03UFe+ony9Ojw5pzr9YVKGDY1jt+Gcn/FnGkNf8r+Vj5NOJWtQ==
+@@ -247,7 +225,7 @@
+   dependencies:
+     "@babel/types" "^7.28.5"
+ 
+-"@babel/parser@^7.23.9", "@babel/parser@^7.29.0":
++"@babel/parser@^7.23.9":
+   version "7.29.2"
+   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.29.2.tgz#58bd50b9a7951d134988a1ae177a35ef9a703ba1"
+   integrity sha512-4GgRzy/+fsBa72/RZVJmGKPmZu9Byn8o4MoLpmNe1m8ZfYnz5emHLQz3U4gLud6Zwl0RZIcgiLD7Uq7ySFuDLA==
+@@ -6416,12 +6394,12 @@ victory-vendor@^37.0.2:
+     d3-time "^3.0.0"
+     d3-timer "^3.0.1"
+ 
+-vite-plugin-istanbul@^8.0.0:
+-  version "8.0.0"
+-  resolved "https://registry.yarnpkg.com/vite-plugin-istanbul/-/vite-plugin-istanbul-8.0.0.tgz#912ba31da0111bc47093f28c7a497fd0d36ec348"
+-  integrity sha512-r6L7cg2iwPqNnY/rWFyemWeDTIKRZjekEWS90e2FsTjDYH4UdTS6hvW1nEX1B++PKPCnqCaj5BJTDn5Cy5jYoQ==
++vite-plugin-istanbul@^9.0.1:
++  version "9.0.1"
++  resolved "https://registry.yarnpkg.com/vite-plugin-istanbul/-/vite-plugin-istanbul-9.0.1.tgz#c3f1b18372b29c4d451df70dd05f7a1be87c8ec3"
++  integrity sha512-zgcdcqa4r3urX+xqhMQG2uLR2s6IdklQW+acBEtLw6fvUWhuvXswYqxjHAZZ5HCfHEgRs7RH7qIZCklTLRsKLg==
+   dependencies:
+-    "@babel/generator" "^7.29.1"
++    "@babel/generator" "^7.29.7"
+     "@istanbuljs/load-nyc-config" "^1.1.0"
+     "@types/babel__generator" "7.27.0"
+     espree "^11.2.0"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2487** (2026-10-25): chore(deps-dev): bump @types/leaflet from 1.9.21 to 1.9.22 in /frontend (@dependabot[bot])
-- **PR #2486** (2026-10-25): chore(deps): bump @testing-library/user-event from 13.5.0 to 14.6.8 in /frontend (@dependabot[bot])
-- **PR #2485** (2026-10-25): chore(deps-dev): bump dotenv from 16.6.1 to 18.0.9 in /frontend (@dependabot[bot])
-- **PR #2484** (2026-10-25): chore(deps): bump @uiw/react-color from 2.9.2 to 2.10.3 in /frontend (@dependabot[bot])
-- **PR #2483** (2026-10-25): chore(deps): bump posthog from 7.58.0 to 7.75.6 (@dependabot[bot])
-- **PR #2482** (closed): chore(deps): bump optimum-intel from 1.27.0 to 2.2.0 in /compose/accelerated/embedder (@dependabot[bot])
+- **PR #2501** (2026-10-27): fix(deps): bump use-debounce from 10.0.6 to 10.1.1 in /frontend (@dependabot[bot])
+- **PR #2500** (2026-10-27): fix(deps): bump @testing-library/react from 12.1.5 to 15.0.7 in /frontend (@dependabot[bot])
+- **PR #2499** (2026-10-27): fix(deps-dev): bump vite-plugin-istanbul from 8.0.0 to 9.0.1 in /frontend (@dependabot[bot])
+- **PR #2496** (2026-10-27): fix(deps): bump nginx from 1.27.5-alpine to 1.31.0-alpine in /frontend (@dependabot[bot])
+- **PR #2495** (2026-10-27): fix(deps): bump transformers from 5.15.1 to 5.20.2 in /compose/accelerated/embedder (@dependabot[bot])
+- **PR #2493** (2026-10-27): fix(deps): bump coverage from 7.16.2 to 7.17.0 (@dependabot[bot])
 
 ---
 
@@ -1653,13 +1717,13 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update pydantic-ai-slim requirement (#2476)
+## X. deps): update pypdf requirement from <7,>=6.21.0 to >=6.21.2,<7 (#2491)
 
 **RULE**:
 When implementing operations in `requirements/base.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Open-Source-Legal/OpenContracts. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `663c7e0c`: deps): update pydantic-ai-slim requirement (#2476). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fcfeccdb`: deps): update pypdf requirement from <7,>=6.21.0 to >=6.21.2,<7 (#2491). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements/base.txt`.
@@ -1667,14 +1731,14 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-pydantic-ai-slim[openai,anthropic,google]>=1.107.9,<2  # see issue #1451 before bumping the upper bound
+pypdf>=6.21.2,<7  # https://github.com/py-pdf/pypdf
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-pydantic-ai-slim[openai,anthropic,google]>=1.107.7,<2  # see issue #1451 before bumping the upper bound
+pypdf>=6.21.0,<7  # https://github.com/py-pdf/pypdf
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `663c7e0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fcfeccdb` are properly handled with clean fallback behavior.

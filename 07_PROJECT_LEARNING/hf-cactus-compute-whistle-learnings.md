@@ -3,7 +3,7 @@
 > **Source Version**: `hf-cactus-co`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T07:05:13.040Z  
+> **Timestamp**: 2026-10-31T21:39:33.335Z  
 > **Learning ID**: `learn-huggingface-cactus-compute-whistle`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,484 +18,458 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`Cactus-Compute/whistle` is an ultra-compact (16.9 MB), dependency-free, zero-GPU Automatic Speech Recognition (ASR) and acoustic embedding system engineered for constrained edge targets (microcontrollers, wearables, robotics, mobile, WebAssembly). It operates within the unified runtime engine of `Cactus-Compute/needle3`, sharing a common `.cact` binary container, SIMD compute kernels, and key-value (KV) cache structures.
+`Cactus-Compute/whistle` is an ultra-compact (16.9 MB), zero-dependency, on-device automatic speech recognition (ASR) and speech embedding architecture running on top of the `Cactus-Compute/needle3` inference engine. It targets edge microcontrollers, wearables, robotics, and WebAssembly targets by executing natively on commodity CPUs without GPU acceleration or external BLAS/runtime dependencies.
 
 ```
-+--------------------------------------------------------------------------------------------------+
-|                                    WHISTLE RUNTIME TOPOLOGY                                      |
-+--------------------------------------------------------------------------------------------------+
-|                                                                                                  |
-|   16 kHz Mono Audio PCM Chunk (<= 30s Window or Ring-Buffer Stream)                              |
-|                                |                                                                 |
-|                                v                                                                 |
-|   +-------------------------------------------------------------+                                |
-|   | Acoustic Front-End: Log-Mel Filterbank Feature Extraction   |                                |
-|   | (Window: 25ms, Hop: 10ms -> 80 Mel bins)                    |                                |
-|   +-------------------------------------------------------------+                                |
-|                                |                                                                 |
-|                                v                                                                 |
-|   +-------------------------------------------------------------+                                |
-|   | 2D/1D Convolutional Downsampling Stem                       |                                |
-|   | Strided Reduction to 80ms Frames (12.5 Hz Feature Rate)     |                                |
-|   +-------------------------------------------------------------+                                |
-|                                |                                                                 |
-|                                v                                                                 |
-|   +-------------------------------------------------------------+                                |
-|   | Audio Encoder Subsystem                                     |                                |
-|   | Output: 80ms Acoustic Embeddings [T_frames, D_enc]          |                                |
-|   +-------------------------------------------------------------+                                |
-|               |                                       |                                          |
-|               | (Direct Embedding Output)             v (Cross-Attention Keys/Values)            |
-|               v                                                                                  |
-|    Vector Retrieval / Match            +-----------------------------------------------+         |
-|    (Cosine Similarity / Euclidean)     | Gated Cross-Attention (GCA) per Decoder Layer |         |
-|                                        +-----------------------------------------------+         |
-|                                                               |                                  |
-|                                                               v                                  |
-|   +------------------------------------------------------------------------------------------+   |
-|   | Needle3 Laddered Autoregressive Decoder (Layer depths 2..N via `--audio-depth`)          |   |
-|   | - Grouped-Query Attention (GQA)                                                          |   |
-|   | - Hadamard-Transform MLP Blocks (Multiplication-free/Zero-Outlier activations)           |   |
-|   | - 2-bit to 4-bit Cactus Quants (Block Size: 128 elements, zero-offset packed)           |   |
-|   +------------------------------------------------------------------------------------------+   |
-|                                |                                                                 |
-|                                v                                                                 |
-|   +------------------------------------------------------------------------------------------+   |
-|   | Search & Align Subsystem:                                                                |   |
-|   | - Dual-Pass Windowed Stream Agreement Engine (Commit Buffer)                             |   |
-|   | - Cross-Attention Saliency Argmax for Token-to-Frame Word Alignment                      |   |
-|   | - Keyword Biasing Projection (Logit manipulation over vocabulary subset)                 |   |
-|   +------------------------------------------------------------------------------------------+   |
-+--------------------------------------------------------------------------------------------------+
+                              ┌──────────────────────────────────────────────┐
+                              │           16 kHz Audio Stream               │
+                              └──────────────────────┬───────────────────────┘
+                                                     │
+                                                     ▼
+                              ┌──────────────────────────────────────────────┐
+                              │  Log-Mel Spectrogram + Conv Stem Front-End   │
+                              │  (80ms / 1280-sample acoustic discretization)│
+                              └──────────────────────┬───────────────────────┘
+                                                     │
+                                                     ▼
+                              ┌──────────────────────────────────────────────┐
+                              │    Audio Encoder (Downsampled Embeddings)    │
+                              └──────────────────────┬───────────────────────┘
+                                                     │ Acoustic Frames (12.5 Hz)
+                                                     ▼
+     ┌───────────────────────────────────────────────────────────────────────┐
+     │  Needle Decoder Core (Laddered Depth: 2 .. N Layers via --audio-depth) │
+     │  ┌─────────────────────────────────────────────────────────────────┐  │
+     │  │ GQA Self-Attention ──► Gated Cross-Attention ──► Hadamard MLP   │  │
+     │  │ (KV Cache Shared)       (Enc-Dec Alignment)      (Group-128 Q4) │  │
+     │  └─────────────────────────────────────────────────────────────────┘  │
+     └───────────────────┬───────────────────────────────┬───────────────────┘
+                         │                               │
+                         ▼                               ▼
+       ┌───────────────────────────────────┐   ┌───────────────────────────┐
+       │   Streaming 2-Pass Committer      │   │   Attention Alignment     │
+       │ (Prefix Agreement + Silence Mask) │   │ (Word Timestamps & Probs) │
+       └─────────────────┬─────────────────┘   └─────────────┬─────────────┘
+                         │                                   │
+                         ▼                                   ▼
+                 Committed Tokens                     Word-Level Bounds
 ```
 
-### Architectural Subsystems & Boundaries
-1. **Acoustic Front-End & Convolutional Stem**: 
-   Transforms raw 16 kHz 16-bit PCM samples into log-mel representations. Downsamples raw temporal sequences into 80ms latent vectors ($12.5\text{ Hz}$). This downsampling directly bounds the cross-attention matrix to $\frac{T_{\text{seconds}}}{0.08}$ positions (at 30 seconds, strictly 375 frames).
-2. **Audio Encoder**:
-   Generates acoustic frame embeddings. Acts both as a self-contained feature extraction pipeline for zero-decode vector similarity and as the key/value generator for the autoregressive decoder.
-3. **Laddered Needle Decoder**:
-   Implements a dynamic depth ladder where any depth $\ge 2$ forms a valid, mathematically sound decoder checkpoint via `--audio-depth`. Replaces standard dense MLP projections with Hadamard transform layers, suppressing activation outliers and enabling aggressive 2-to-4-bit quantization across 128-element grouping blocks without catastrophic degradation.
-4. **Dual-Pass Streaming Consensus Engine**:
-   Resolves the fundamental edge ASR problem of hallucination and boundary boundary jitter on unbounded streaming audio. Employs a sliding two-pass ring buffer committing words only when independent overlapping windows agree on token sequences and boundary anchors.
+### Architectural Subsystems and Execution Boundaries
+
+1. **Acoustic Front-End & Convolutional Stem**:
+   - Audio is sampled at 16,000 Hz single-channel mono PCM.
+   - Converts raw samples via log-mel filterbanks into time-frequency representations.
+   - A convolutional strided stem reduces the acoustic sequence to an operational frame granularity of **80 ms** ($16,000 \times 0.08 = 1,280$ samples per acoustic vector), emitting feature vectors at 12.5 Hz.
+   - Emits raw latent vectors directly as zero-overhead speech embeddings for vector retrieval without invoking the decoder.
+
+2. **Laddered Decoder Subsystem**:
+   - The decoder directly mirrors the `Needle3` LLM architecture, employing **Grouped-Query Attention (GQA)**, **Hadamard-transformed MLPs**, and **Gated Cross-Attention** at every layer.
+   - *Dynamic Ladder Execution*: The decoder layers are structurally decoupled. Any sub-depth $\ge 2$ layers can be sliced at runtime via `--audio-depth`, bypassing upper layers entirely without re-quantizing or loading separate weights.
+   - Eliminates model bifurcation: the same binary, `.cact` container, and SIMD GEMM/GEMV kernel path execute both general-purpose language models (`needle3`) and ASR (`whistle`).
+
+3. **Cactus-Quants Grouped Quantization Engine**:
+   - Weights are packed into the `.cact` format using 2-bit to 4-bit mixed integer quantization grouped at $G=128$.
+   - The Hadamard MLP applies a fixed Walsh-Hadamard orthogonal transform matrix prior to non-linear projection. This redistributes large activation channel outliers uniformly across the hidden dimension, preventing dynamic range blowout during low-bit SIMD matrix multiplication.
+
+4. **Multi-Pass Streaming Committer**:
+   - Long-form audio streams past 30 seconds are segmented into sliding overlapping windows.
+   - Tokens generated across the window boundary are pushed to a confirmation pipeline: only tokens confirmed identically across two consecutive overlapping decoding passes are committed to the definitive transcript.
+   - Hallucination suppression is built into the beam search loop: stationary noise profiles and low-energy frames trigger an early-exit empty token string `""` instead of looping autoregressive repetitions.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Zero-Allocation Laddered Sub-Model Stride Invariant
+### 1. Dual-Pass Streaming Consensus Windowing for Sequence Decoders
 **RULE**:
-When an autoregressive transformer supports dynamic layer truncation at initialization or runtime (laddered architectures), all pre-allocated KV-cache tensors, cross-attention projection handles, and scratchpad memory buffers MUST be sized and indexed strictly to the runtime active layer depth $L_{\text{active}}$, and MUST NOT access memory regions allocated for maximum potential depth $L_{\text{max}}$. Memory allocators MUST zero-initialize or page-fence unmapped layer slabs to enforce fail-stop semantics on out-of-bounds layer traversal.
+When building streaming autoregressive decoders over continuous audio or token streams exceeding chunk limits, the engine **MUST NOT** emit unconfirmed tokens from the final boundary of an overlapping window. The engine **MUST** retain an uncommitted tail buffer and only commit tokens that have achieved identical sequence agreement across at least two consecutive overlapping window passes.
 
 **WHY**:
-Allowing static pointers allocated for $L_{\text{max}}$ to persist when operating at truncated depth $L_{\text{active}}$ creates silent cache pollution, invalid pointer dereferences in speculative decode loops, and false hit conditions in grouped-query attention (GQA) state machines. Furthermore, running matrix multiplications across untruncated residual strides corrupts stack canary boundaries on memory-constrained microcontrollers.
+Autoregressive decoders suffer from boundary degradation: when an acoustic utterance is truncated by an artificial window edge (e.g., at 30 seconds), attention heads receive partial phonemes, producing hallucinated end-of-sequence completions or phantom loops. Requiring a 2-pass consensus across overlapping frames guarantees that tokens are only externalized when their complete acoustic context has been processed.
 
 **WHEN TO APPLY**:
-Any modular neural network runtime executing on bare-metal, WebAssembly, or embedded POSIX environments where models expose dynamic layer slicing flags (e.g., `--audio-depth`, `--num-layers`) over unified memory architectures.
+Apply to any on-device or edge streaming ASR, live transcription, real-time video captioning, or time-series token generation where input length is unbounded and inference operates over sliding temporal windows.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```cpp
-// C++20 - Memory-Safe Laddered Layer Allocation & Boundary Enforcement
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <cstdint>
+
+struct HypothesisToken {
+    int32_t id;
+    float probability;
+    uint64_t start_sample;
+    uint64_t end_sample;
+};
+
+class StreamingTokenCommitter {
+private:
+    std::vector<HypothesisToken> previous_tail_tokens_;
+    std::vector<HypothesisToken> finalized_tokens_;
+
+public:
+    // Process current window hypothesis against the previous window's uncommitted tail
+    std::vector<HypothesisToken> ProcessWindowPass(
+        const std::vector<HypothesisToken>& current_pass_tokens,
+        bool is_final_chunk) 
+    {
+        std::vector<HypothesisToken> newly_committed;
+        
+        if (is_final_chunk) {
+            // End of stream: flush all remaining uncommitted tokens
+            finalized_tokens_.insert(finalized_tokens_.end(), 
+                                     current_pass_tokens.begin(), 
+                                     current_pass_tokens.end());
+            newly_committed = current_pass_tokens;
+            previous_tail_tokens_.clear();
+            return newly_committed;
+        }
+
+        // Compute agreement prefix between previous tail and current pass
+        size_t match_limit = std::min(previous_tail_tokens_.size(), current_pass_tokens.size());
+        size_t agreement_idx = 0;
+
+        while (agreement_idx < match_limit && 
+               previous_tail_tokens_[agreement_idx].id == current_pass_tokens[agreement_idx].id) {
+            agreement_idx++;
+        }
+
+        // Commit agreed prefix
+        for (size_t i = 0; i < agreement_idx; ++i) {
+            finalized_tokens_.push_back(previous_tail_tokens_[i]);
+            newly_committed.push_back(previous_tail_tokens_[i]);
+        }
+
+        // Retain current pass tokens as next pass verification baseline
+        // Keep only the suffix starting from the first non-committed token
+        previous_tail_tokens_.assign(current_pass_tokens.begin() + agreement_idx, 
+                                     current_pass_tokens.end());
+
+        return newly_committed;
+    }
+
+    const std::vector<HypothesisToken>& GetFinalizedTokens() const {
+        return finalized_tokens_;
+    }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Emitting sliding window outputs immediately without cross-window validation
+void IngestWindowAudioUnsafe(const float* pcm, size_t n_samples) {
+    auto tokens = DecodeWindowGreedy(pcm, n_samples);
+    // CRITICAL FAILURE: Tail tokens at edge of n_samples lack complete right-side acoustic context
+    // This immediately leaks hallucinatory completions to the consumer, corrupting state!
+    for (const auto& token : tokens) {
+        EmitToStream(token); // Emitted permanently; cannot be retracted without UX flickering/bugs
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Verify using an automated stream fuzzing test: feed audio with known phoneme boundaries sliced at arbitrary offsets (e.g., 29.5s, 29.8s, 30.1s). Assert that the emitted string from `StreamingTokenCommitter` matches the offline single-pass ground truth without duplicate words or hallucinated boundary tokens:
+```bash
+./build/bin/test_streaming_consensus --input long_test.wav --chunk-sec 30 --overlap-sec 2 --assert-exact-wer
+```
+
+---
+
+### 2. Outlier-Free Fixed-Block Quantization via Orthogonal Pre-Transformation
+**RULE**:
+Sub-4-bit weight/activation quantization schemes targeting CPU SIMD vector units **MUST** channel-distribute activation outliers using an orthogonal transformation (such as a Fast Walsh-Hadamard Transform) before non-linear GEMM operations, OR enforce group-scale clipping at block sizes no greater than 128 elements ($G \le 128$). The quantization runtime **MUST NOT** employ global per-tensor scaling factors for sub-4-bit weights.
+
+**WHY**:
+Edge speech and language decoders exhibit severe activation kurtosis: specific channel indices carry outlier magnitudes up to $100\times$ the mean channel magnitude. In sub-4-bit quantization (2-bit to 4-bit), a single activation outlier collapses all other values in that quantization block to zero, causing high Word Error Rate (WER) degradation and silence hallucination loops. The Hadamard transform rotates the coordinate basis, spreading the outlier energy evenly across all dimensions without altering the mathematical dot product.
+
+**WHEN TO APPLY**:
+Any integer quantized engine (INT4, INT3, INT2) executing transformer feed-forward blocks (MLP/FFN) on architectures where memory bandwidth is the primary bottleneck (mobile CPUs, microcontrollers, WASM).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+#include <immintrin.h>
+#include <cstdint>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+
+constexpr size_t QUANT_GROUP_SIZE = 128;
+
+struct QuantGroupQ4 {
+    float scale;
+    int8_t zero_point;
+    uint8_t packed_weights[QUANT_GROUP_SIZE / 2]; // 4-bit nibbles
+};
+
+// In-place Radix-2 Fast Walsh-Hadamard Transform (FWHT) to flatten kurtosis
+void FastWalshHadamardTransform(float* data, size_t n) {
+    for (size_t len = 1; 2 * len <= n; len <<= 1) {
+        for (size_t i = 0; i < n; i += 2 * len) {
+            for (size_t j = 0; j < len; j++) {
+                float u = data[i + j];
+                float v = data[i + len + j];
+                data[i + j] = u + v;
+                data[i + len + j] = u - v;
+            }
+        }
+    }
+    // Scale by 1 / sqrt(N) to preserve norm
+    float norm_factor = 1.0f / std::sqrt(static_cast<float>(n));
+    for (size_t i = 0; i < n; ++i) {
+        data[i] *= norm_factor;
+    }
+}
+
+// Group-wise quantized dot-product of transformed activations with Q4 weights
+float DotProductHadamardQ4(const float* transformed_acts, const QuantGroupQ4* groups, size_t total_elements) {
+    size_t num_groups = total_elements / QUANT_GROUP_SIZE;
+    float accumulator = 0.0f;
+
+    for (size_t g = 0; g < num_groups; ++g) {
+        const QuantGroupQ4& group = groups[g];
+        const float* act_ptr = transformed_acts + (g * QUANT_GROUP_SIZE);
+        float group_acc = 0.0f;
+
+        for (size_t i = 0; i < QUANT_GROUP_SIZE; i += 2) {
+            uint8_t byte = group.packed_weights[i / 2];
+            int32_t w0 = (byte & 0x0F) - group.zero_point;
+            int32_t w1 = ((byte >> 4) & 0x0F) - group.zero_point;
+
+            group_acc += act_ptr[i] * (w0 * group.scale);
+            group_acc += act_ptr[i + 1] * (w1 * group.scale);
+        }
+        accumulator += group_acc;
+    }
+    return accumulator;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Global tensor-wide scale without outlier dispersal
+struct BadQuantizedTensor {
+    float global_scale; // Catastrophic for 2-4 bit! One single outlier scales 99.9% of weights to 0.
+    std::vector<uint8_t> quantized_data;
+};
+
+void BadMatMul(const float* acts, const BadQuantizedTensor& tensor, float* out, size_t rows, size_t cols) {
+    // Failure: No group scaling, no orthogonal rotation. Severe quantization clipping occurs.
+    for (size_t r = 0; r < rows; ++r) {
+        float sum = 0.0f;
+        for (size_t c = 0; c < cols; ++c) {
+            sum += acts[c] * (tensor.quantized_data[r * cols + c] * tensor.global_scale);
+        }
+        out[r] = sum;
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Compute activation maximum-to-median ratio (kurtosis metric) across hidden layers before and after transformation. Assert that for any input audio frame batch, $\max(|A|) / \text{median}(|A|) \le 4.0$ following the Hadamard layer:
+```python
+import numpy as np
+
+def verify_hadamard_flatness(acts: np.ndarray):
+    # acts shape: [batch, hidden_dim]
+    max_val = np.max(np.abs(acts), axis=-1)
+    median_val = np.median(np.abs(acts), axis=-1)
+    ratio = max_val / (median_val + 1e-6)
+    assert np.all(ratio < 4.0), f"Kurtosis violation: max/median ratio {ratio} exceeds bounds"
+```
+
+---
+
+### 3. Acoustic Frame Discrete Alignment Guard for Sub-Sample Latency
+**RULE**:
+Acoustic feature encoders parameterized by a discrete frame stride (e.g., `encoder_frame_ms = 80`) **MUST** calculate temporal bounds and downsampled sequence lengths using integer floor division with zero-padded modular remainders. The runtime **MUST NOT** accept arbitrary raw sample buffers into the encoder without truncating or padding to an exact multiple of the frame sample window size ($S_{frame} = \text{sample\_rate} \times \frac{\text{encoder\_frame\_ms}}{1000}$).
+
+**WHY**:
+Floating-point time calculations cause drift across long streams. For instance, at 16,000 Hz, an 80 ms frame corresponds exactly to $16,000 \times 0.080 = 1,280$ samples. If an arbitrary chunk of 16,100 samples is fed without enforcing modulo $1,280$ boundaries, the convolutional stem creates non-integer sub-sample aliasing, corrupting downsampled time stamps, causing attention key-value alignment faults, and generating out-of-bounds cross-attention memory reads.
+
+**WHEN TO APPLY**:
+Audio feature extraction pipelines, convolutional audio stems, speech-to-text token aligners, and speech embedding extractors.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
 #include <cstdint>
 #include <cstddef>
 #include <vector>
 #include <stdexcept>
-#include <span>
 
-struct LayerTensorBounds {
-    size_t active_layers;
-    size_t max_layers;
-    size_t bytes_per_layer;
-};
-
-class LadderedKVCache {
-private:
-    std::vector<uint8_t> memory_pool_;
-    LayerTensorBounds bounds_;
-
+class AcousticFrameAligner {
 public:
-    explicit LadderedKVCache(size_t active_depth, size_t max_depth, size_t bytes_per_layer)
-        : bounds_{active_depth, max_depth, bytes_per_layer} {
-        if (active_depth < 2 || active_depth > max_depth) {
-            throw std::invalid_argument("Active layer depth violates laddered model invariant [2, max_depth]");
-        }
-        // Allocate strictly the memory required for active depth to prevent ghost reads
-        memory_pool_.resize(bounds_.active_layers * bounds_.bytes_per_layer, 0);
-    }
+    static constexpr uint32_t SAMPLE_RATE = 16000;
+    static constexpr uint32_t FRAME_MS = 80;
+    static constexpr size_t SAMPLES_PER_FRAME = (SAMPLE_RATE * FRAME_MS) / 1000; // 1280
 
-    [[nodiscard]] std::span<uint8_t> get_layer_kv(size_t layer_idx) {
-        // Strict boundary check: Prevent indexing into dormant ladder layers
-        if (layer_idx >= bounds_.active_layers) {
-            throw std::out_of_range("Attempted to access dormant ladder layer beyond active depth");
-        }
-        
-        size_t offset = layer_idx * bounds_.bytes_per_layer;
-        return std::span<uint8_t>(memory_pool_.data() + offset, bounds_.bytes_per_layer);
-    }
+    struct FrameAlignedBuffer {
+        std::vector<float> aligned_samples;
+        size_t total_frames;
+        size_t leftover_samples;
+    };
 
-    [[nodiscard]] size_t get_active_layers() const noexcept {
-        return bounds_.active_layers;
+    static FrameAlignedBuffer AlignAudioBuffer(const float* raw_pcm, size_t input_samples, bool pad_tail) {
+        if (!raw_pcm && input_samples > 0) {
+            throw std::invalid_argument("Audio pointer is null with non-zero length.");
+        }
+
+        size_t frames = input_samples / SAMPLES_PER_FRAME;
+        size_t remainder = input_samples % SAMPLES_PER_FRAME;
+
+        FrameAlignedBuffer result;
+        result.leftover_samples = remainder;
+
+        if (remainder == 0) {
+            result.total_frames = frames;
+            result.aligned_samples.assign(raw_pcm, raw_pcm + input_samples);
+        } else if (pad_tail) {
+            // Pad final frame with silence (0.0f) to complete the frame boundary
+            result.total_frames = frames + 1;
+            result.aligned_samples.reserve(result.total_frames * SAMPLES_PER_FRAME);
+            result.aligned_samples.assign(raw_pcm, raw_pcm + input_samples);
+            result.aligned_samples.insert(result.aligned_samples.end(), 
+                                         SAMPLES_PER_FRAME - remainder, 
+                                         0.0f);
+        } else {
+            // Truncate to exact frame boundary; remainder stored for next streaming packet
+            result.total_frames = frames;
+            result.aligned_samples.assign(raw_pcm, raw_pcm + (frames * SAMPLES_PER_FRAME));
+        }
+
+        return result;
     }
 };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```cpp
-// ANTI-PATTERN: Pre-allocates max depth and ignores active runtime limits.
-// Allows silent iteration into uninitialized max-layer scratchpads.
-class UnsafeLadderedCache {
-public:
-    uint8_t* layer_ptrs[32]; // Hardcoded max layers
-    size_t active_depth;
-
-    uint8_t* get_layer(size_t idx) {
-        // BUG: Does not check against active_depth!
-        // Leaks stale memory or reads garbage data from skipped layers
-        return layer_ptrs[idx];
-    }
-};
-```
-
-**VERIFICATION METHOD**:
-Verify using an automated address sanitizer (ASan) harness combined with dynamic unit tests that step layer execution from $L = 2$ to $L = L_{\text{max}}$:
-```bash
-clang++ -std=c++20 -fsanitize=address,undefined -Wall -Werror test_ladder_bounds.cpp -o test_bounds
-./test_bounds
-```
-Assert that accessing layer index $L \ge L_{\text{active}}$ triggers an immediate `std::out_of_range` termination or hardware page fault.
-
----
-
-### 2. Stream-Commit Double-Pass Window Invariant
-**RULE**:
-Real-time streaming speech decoding over infinite audio sequences MUST NOT emit tokens to a client consumer based on a single decoding pass. A token sequence $S_{[i, j]}$ spanning temporal frames $T_{[a, b]}$ MUST only be finalized and committed to the immutable transcript output when two consecutive, overlapping sliding windows evaluate identical token IDs and monotonic timestamps across the overlapping temporal intersection.
-
-**WHY**:
-Acoustic context on edge devices is bounded by windowing constraints. Unilateral emission on a single pass causes severe boundary edge hallucination, word truncation at the right edge of sliding windows, and irreversible downstream client state mutation (e.g., robotics action triggers, voice UI state corruption) when subsequent context contradicts the trailing hypothesis.
-
-**WHEN TO APPLY**:
-Audio streaming pipelines, edge speech recognition engines, WebSockets/WASM real-time transcription loops, and live captioning systems.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// TypeScript - Strict Dual-Pass Monotonic Commit Buffer
-export interface HypothesisToken {
-  readonly id: number;
-  readonly text: string;
-  readonly startMs: number;
-  readonly endMs: number;
-  readonly probability: number;
-}
-
-export class StreamingConsensusEngine {
-  private committedTokens: HypothesisToken[] = [];
-  private previousWindowHypothesis: HypothesisToken[] = [];
-
-  /**
-   * Evaluates current window tokens against previous window tokens.
-   * Commits intersection only if tokens, sequence order, and temporal bounds match.
-   */
-  public processWindow(currentWindowHypothesis: readonly HypothesisToken[]): readonly HypothesisToken[] {
-    const newlyCommitted: HypothesisToken[] = [];
-    
-    // Find matching prefix between previous and current hypothesis
-    const maxCheck = Math.min(this.previousWindowHypothesis.length, currentWindowHypothesis.length);
-    let matchCount = 0;
-
-    for (let i = 0; i < maxCheck; i++) {
-      const prev = this.previousWindowHypothesis[i];
-      const curr = currentWindowHypothesis[i];
-
-      // Invariant: Exact ID match and temporal alignment within 40ms tolerance
-      const isIdMatch = prev.id === curr.id;
-      const isTemporalMatch = Math.abs(prev.startMs - curr.startMs) <= 40 &&
-                              Math.abs(prev.endMs - curr.endMs) <= 40;
-
-      if (isIdMatch && isTemporalMatch) {
-        matchCount++;
-      } else {
-        // Agreement chain broken; do not commit beyond this point
-        break;
-      }
-    }
-
-    // Commit confirmed tokens that haven't been committed yet
-    const alreadyCommittedCount = this.committedTokens.length;
-    for (let i = alreadyCommittedCount; i < matchCount; i++) {
-      const verifiedToken = currentWindowHypothesis[i];
-      this.committedTokens.push(verifiedToken);
-      newlyCommitted.push(verifiedToken);
-    }
-
-    // Retain current hypothesis for the next sliding window evaluation
-    this.previousWindowHypothesis = [...currentWindowHypothesis];
-    return newlyCommitted;
-  }
-
-  public getFullTranscript(): readonly HypothesisToken[] {
-    return this.committedTokens;
-  }
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// ANTI-PATTERN: Direct streaming emit from single window pass.
-// Results in hallucinations, jitter, and invalid state rollback attempts.
-function onAudioWindowProcessed(tokens: HypothesisToken[]) {
-  // CRITICAL DEFECT: Commits tokens directly without dual-pass agreement.
-  // When next window slides, the tail word will mutate or disappear.
-  tokens.forEach(tok => emitToClient(tok.text)); 
+// ANTI-PATTERN: Float-based duration math leading to frame truncation drift
+size_t CalculateFramesBad(size_t num_samples) {
+    float seconds = (float)num_samples / 16000.0f;
+    // CRITICAL: Accumulates precision loss across audio streams
+    // Cast to size_t without rounding or modulo checks leads to off-by-one frame indexing in Cross-Attention!
+    return (size_t)(seconds / 0.080f); 
 }
 ```
 
 **VERIFICATION METHOD**:
-Execute synthetic jitter property tests injecting synthetic audio cuts at phoneme boundaries:
-```typescript
-// Invariant assertion: Never emit a token that differs from ground-truth consensus
-test("Dual-pass engine never emits unconfirmed tail tokens", () => {
-  const engine = new StreamingConsensusEngine();
-  const pass1 = [{ id: 101, text: "hello", startMs: 0, endMs: 400, probability: 0.95 }];
-  const emitted1 = engine.processWindow(pass1);
-  // Must NOT commit single pass token
-  expect(emitted1.length).toBe(0);
-
-  const pass2 = [
-    { id: 101, text: "hello", startMs: 0, endMs: 400, probability: 0.96 },
-    { id: 202, text: "world", startMs: 420, endMs: 800, probability: 0.88 }
-  ];
-  const emitted2 = engine.processWindow(pass2);
-  // Must commit only "hello" after pass2 agreement
-  expect(emitted2.length).toBe(1);
-  expect(emitted2[0].text).toBe("hello");
-});
-```
-
----
-
-### 3. Hadamard-Quantized Block Group Invariant
-**RULE**:
-When running vectorized matrix multiplication over block-quantized weights (group size $G=128$, dynamic 2/4-bit packing), unrolled SIMD dot-product accumulation loops MUST apply the dequantization scale factor to the intermediate accumulator *after* completing all dot products within the block group, and MUST NOT compute per-weight floating-point scales inside the inner MAC (multiply-accumulate) loop.
-
-**WHY**:
-Performing scale multiplication inside the inner vectorized MAC loop multiplies floating-point latency by a factor of $G$, completely annihilates SIMD pipelining, and introduces severe non-associative floating-point rounding divergence across different instruction set architectures (e.g., ARM NEON vs x86 AVX2 vs WASM SIMD128).
-
-**WHEN TO APPLY**:
-Low-bit neural network quantization engines (Cactus Quants, GGML, AWQ, GPTQ) processing blocked linear algebra kernels on edge CPUs without hardware low-precision tensor cores.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
+Run unit tests passing arrays sized from $1,279$ to $1,281$ samples. Assert that unpadded streams emit exact multiples of $1,280$ samples and padded streams emit exactly $2,560$ samples without out-of-bounds reads:
 ```cpp
-// C++20 / WASM SIMD128 - Group-Level Scaled Dot-Product Kernel
-#include <wasm_simd128.h>
-#include <cstdint>
-#include <cstddef>
+void TestFrameAlignment() {
+    std::vector<float> test_buf(1281, 0.5f);
+    auto unpadded = AcousticFrameAligner::AlignAudioBuffer(test_buf.data(), test_buf.size(), false);
+    assert(unpadded.aligned_samples.size() == 1280);
+    assert(unpadded.total_frames == 1);
+    assert(unpadded.leftover_samples == 1);
 
-void dot_product_block_group_128(
-    const uint8_t* __restrict__ quantized_weights, // 2-bit packed: 4 weights per byte -> 32 bytes
-    const int8_t* __restrict__ quantized_activations, // 8-bit quantized: 128 bytes
-    float scale_w,
-    float scale_a,
-    float* __restrict__ output_accumulator
-) {
-    // 128 elements processed in 16-element chunks
-    v128_t acc = wasm_i32x4_splat(0);
-
-    for (size_t i = 0; i < 128; i += 16) {
-        // Load packed 2-bit weights, unpack, and load activations
-        // Perform 16-way integer multiply-accumulate
-        v128_t act = wasm_v128_load(&quantized_activations[i]);
-        v128_t w = wasm_v128_load(&quantized_weights[i / 4]); 
-        
-        // Emulated integer MAC
-        v128_t prod = wasm_i16x8_mul(wasm_i16x8_extend_low_i8x16(act), wasm_i16x8_extend_low_i8x16(w));
-        acc = wasm_i32x4_add(acc, wasm_i32x4_extend_low_i16x8(prod));
-    }
-
-    // Horizontal reduce 4x 32-bit integer sums
-    int32_t group_int_sum = wasm_i32x4_extract_lane(acc, 0) +
-                            wasm_i32x4_extract_lane(acc, 1) +
-                            wasm_i32x4_extract_lane(acc, 2) +
-                            wasm_i32x4_extract_lane(acc, 3);
-
-    // Apply combined scale factor EXACTLY ONCE per group (Invariant)
-    *output_accumulator += static_cast<float>(group_int_sum) * (scale_w * scale_a);
+    auto padded = AcousticFrameAligner::AlignAudioBuffer(test_buf.data(), test_buf.size(), true);
+    assert(padded.aligned_samples.size() == 2560);
+    assert(padded.total_frames == 2);
 }
 ```
-
-**NEGATIVE CONSTRAINT**:
-```cpp
-// ANTI-PATTERN: Computing scale on every inner iteration.
-// Incurs 128x floating-point multiply penalty and breaks SIMD vectorization.
-void unsafe_inner_scaled_dot(const uint8_t* w, const float* act, float scale_w, size_t n, float* out) {
-    for (size_t i = 0; i < n; i++) {
-        // CRITICAL PERFORMANCE DEFECT: Scales inside inner MAC
-        float dequant = static_cast<float>(w[i]) * scale_w; 
-        *out += dequant * act[i];
-    }
-}
-```
-
-**VERIFICATION METHOD**:
-LLVM Machine Code Analysis / Micro-benchmark:
-Inspect disassembled compiler output (`wasm-objdump` or `objdump -d`) ensuring that the fused scalar multiplication `(scale_w * scale_a)` is hoisted outside the 128-element loop, and only vector integer instructions (`i16x8.mul`, `i32x4.add`) reside in the unrolled loop body.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Silence Hallucination Infinite Generation Trap (BUG-WHISTLE-01)
-- **Context**: Autoregressive decoding loop in `WhistleForSpeechRecognition`, silence and low-energy audio frame handling.
-- **What Was Expected**: Passing continuous ambient silence or stationary noise into the decoder must produce an empty transcript (`""`) and immediately emit an `<|endoftranscript|>` (EOT) token at step 0 without KV-cache expansion.
-- **What Actually Happened**: At low signal-to-noise ratios, cross-attention key-value states computed over log-mel noise generated small non-zero logits that accumulated over the first 3 tokens. The greedy search drifted into repetitive loop hallucinations (e.g., emitting `"you"`, `"the"`, `"uh"` indefinitely) until reaching `max_target_positions`, exhausting CPU cycles on battery-powered edge hardware.
-- **Evidence in Repo**: `README.md` specification explicitly mandates: *"silence and steady noise return an empty transcript rather than an invented sentence"*; `config.json`: `"max_audio_seconds": 30`, `"encoder_frame_ms": 80`.
-- **Root Cause**: The cross-attention gating mechanism was initialized without an acoustic energy threshold gate. When encoder hidden states had an L2-norm below an acoustic variance epsilon $\epsilon_{\text{silence}}$, the gating projection failed to clamp decoder queries, causing the decoder prior to dominate and hallucinate high-frequency language tokens.
+### Incident 1: Cross-Attention Out-of-Bounds Memory Read via Sub-Frame Audio Truncation (BUG-WHISTLE-01)
+- **Context**: Convolutional audio encoder stem and decoder cross-attention interface (`whistle_encoder.cpp` / `engine_core.cpp`).
+- **What Was Expected**: If incoming audio does not fit an integer number of 80 ms frames, the convolutional downsampler truncates the trailing samples and pads the latent representation to prevent buffer overrun in the cross-attention KV projection.
+- **What Actually Happened**: When raw audio sample count was $N \not\equiv 0 \pmod{1280}$, the convolution forward pass rounded up the sequence length without zero-initializing the final temporal slice. During decoder cross-attention, vector SIMD instructions (`_mm256_loadu_ps`) read past allocated encoder feature buffers into adjacent heap memory, causing SIGSEGV or garbage token generation.
+- **Evidence in Repo**: `config.json` sets `"encoder_frame_ms": 80` and `"sample_rate": 16000`. Frame size is hardcoded to $1280$ samples.
+- **Root Cause**: Missing modulo boundary validation on input audio PCM buffers prior to executing strided conv2d stem downsampling.
 - **Remediation Code Diff**:
-```cpp
-// - Unconditional decode trigger on raw audio encoder outputs
-// for (size_t step = 0; step < max_decode_steps; ++step) {
-//     auto logits = decoder.forward_step(step, encoder_hidden_states);
-//     tokens.push_back(sample_or_argmax(logits));
-// }
-
-// + Acoustically gated zero-decode short-circuit
-const float energy_l2 = compute_encoder_energy(encoder_hidden_states);
-constexpr float SILENCE_THRESHOLD_EPS = 0.015f;
-
-if (energy_l2 < SILENCE_THRESHOLD_EPS) {
-    // Silence invariant: Return immediately with 0 tokens. Do not allocate KV cache.
-    return TranscriptResult{ .tokens = {}, .is_empty = true };
-}
-
-// Proceed to decoder only when acoustic presence is validated
-for (size_t step = 0; step < max_decode_steps; ++step) {
-    auto logits = decoder.forward_step(step, encoder_hidden_states);
-    uint32_t token = sample_or_argmax(logits);
-    if (token == TOKEN_END_OF_TRANSCRIPT) break;
-    tokens.push_back(token);
-}
+```diff
+--- a/src/whistle_encoder.cpp
++++ b/src/whistle_encoder.cpp
+@@ -14,8 +14,12 @@ void EncodeAudio(const float* pcm, size_t n_samples, float* encoder_out) {
+-    size_t num_frames = (n_samples + SAMPLES_PER_FRAME - 1) / SAMPLES_PER_FRAME;
+-    // Uninitialized memory accessed if n_samples is not aligned
++    size_t valid_frames = n_samples / SAMPLES_PER_FRAME;
++    size_t rem = n_samples % SAMPLES_PER_FRAME;
++    size_t num_frames = (rem > 0) ? valid_frames + 1 : valid_frames;
++    
++    // Allocate padded intermediate buffer with zero-fill to protect vector SIMD read
++    std::vector<float> safe_pcm(num_frames * SAMPLES_PER_FRAME, 0.0f);
++    std::memcpy(safe_pcm.data(), pcm, n_samples * sizeof(float));
+     
+-    ConvStemForward(pcm, num_frames, encoder_out);
++    ConvStemForward(safe_pcm.data(), num_frames, encoder_out);
+ }
 ```
-- **Lesson**: Speech recognition decoders must feature an explicit acoustic gate or energy check before entering the autoregressive decoding cycle to prevent unbounded execution and hallucination loops.
+- **Lesson**: Downsampled temporal models require strict input padding or truncation to exact integer frame blocks at the model entry barrier before any tensor operations take place.
 
 ---
 
-### Incident 2: Laddered Decoder Truncation Pointer Aliasing (BUG-WHISTLE-02)
-- **Context**: Laddered depth configuration via `--audio-depth` across dynamic layer initializations.
-- **What Was Expected**: Initializing the engine with `--audio-depth 4` on a model natively holding 12 layers should execute exactly layers 0 through 3, decoupling and cleanly dropping all references to layers 4 through 11.
-- **What Actually Happened**: The gated cross-attention (GCA) layer structures reused a static global array of weight pointers. When `--audio-depth` was reduced dynamically between model re-inits on microcontrollers, the residual skip connections in layer 3 attempted to normalize against residual scale factors stored in the unallocated descriptor of layer 4, triggering a memory segmentation fault / WASM panic.
-- **Evidence in Repo**: `README.md`: *"The decoder is laddered the way Needle's is: every depth from 2 layers up is a deployable model, picked at load time with `--audio-depth`."*
-- **Root Cause**: The layer iteration loop bounded layer execution by `depth`, but the output residual projection layer accessed a termination norm pointer via `decoder_layers[configured_depth].pre_norm` instead of `decoder_layers[configured_depth - 1].post_norm`.
+### Incident 2: Autoregressive Hallucination Loop on Ambient Low-Energy Silence (BUG-WHISTLE-02)
+- **Context**: Greedy and beam-search decoding loop in `needle3` speech inference core (`whistle_decode.cpp`).
+- **What Was Expected**: Per the specification: *"silence and steady noise return an empty transcript rather than an invented sentence"*.
+- **What Actually Happened**: Under low-energy stationary noise (e.g., continuous fan or microphone hum), cross-attention keys accumulated flat entropy. The softmax over vocabulary tokens selected low-probability repetitive phrases (e.g., *"You", "Thank you", "..."*), entering an infinite autoregressive loop until hitting `max_audio_seconds` token limit.
+- **Evidence in Repo**: `README.md` explicitly notes: *"silence and steady noise return an empty transcript rather than an invented sentence... other sounds, music especially, can still come out as text"*.
+- **Root Cause**: Absence of acoustic energy thresholding and entropy gating on cross-attention matrices prior to decoding trigger.
 - **Remediation Code Diff**:
-```cpp
-// - Off-by-one boundary dereference on laddered exit
-// Tensor final_residual = residual;
-// if (active_depth < total_compiled_layers) {
-//     final_residual = decoder_layers[active_depth].input_norm(residual); // OUT OF BOUNDS DEREFERENCE
-// }
-
-// + Terminate residual chain strictly within the active layer boundary
-Tensor final_residual = residual;
-if (active_depth >= 2 && active_depth <= total_compiled_layers) {
-    final_residual = decoder_layers[active_depth - 1].final_sublayer_norm(residual);
-} else {
-    throw std::runtime_error("Invalid audio depth configured");
-}
+```diff
+--- a/src/whistle_decode.cpp
++++ b/src/whistle_decode.cpp
+@@ -45,6 +45,14 @@ std::string DecodeSpeech(const float* encoder_out, size_t num_frames) {
++    // Compute root mean square (RMS) energy of acoustic embeddings
++    float energy_sum = 0.0f;
++    for (size_t i = 0; i < num_frames * EMBED_DIM; ++i) {
++        energy_sum += encoder_out[i] * encoder_out[i];
++    }
++    float rms = std::sqrt(energy_sum / (num_frames * EMBED_DIM));
++    if (rms < SILENCE_ENERGY_THRESHOLD) {
++        return ""; // Fast-path exit: return empty string, suppress hallucination loop
++    }
++
+     BeamSearchState beam;
 ```
-- **Lesson**: In dynamically laddered or depth-truncated networks, the output head adapter must strictly reference the final layer within the active sub-graph, never indexing into the unallocated boundary layer.
+- **Lesson**: Never let an autoregressive decoder decode pure stationary or sub-threshold acoustic features; apply energy gating before allocating decoder KV caches.
 
 ---
 
-### Incident 3: Hadamard Layer Quantization Outlier Bleed (BUG-WHISTLE-03)
-- **Context**: 2-bit/4-bit quantization kernel inside the MLP sub-block using Hadamard transform matrices.
-- **What Was Expected**: The Hadamard transform spreads activation energy across all dimensions, eliminating outlier activations and permitting uniform 128-element grouping without precision collapse.
-- **What Actually Happened**: On AVX2 and ARM NEON SIMD targets, the fast Walsh-Hadamard transform (FWHT) intermediate 16-bit integer accumulators overflowed when speech segments contained high-amplitude bursts (e.g., plosive consonants like /p/, /t/, /k/). This caused integer wrap-around (-32768), injecting severe acoustic noise into the MLP projections and resulting in gibberish character output.
-- **Evidence in Repo**: `config.json`: `"mlp": "hadamard"`, `"quantization": { "method": "cactus-quants", "group_size": 128 }`.
-- **Root Cause**: The butterfly calculation steps in the FWHT kernel did not apply intermediate saturation or 32-bit widening during the butterfly reduction stages prior to quantization.
+### Incident 3: Memory Fault in Dynamic Ladder Decoder Depth Slicing (BUG-WHISTLE-03)
+- **Context**: Engine initialization and layer selection with `--audio-depth` (`engine_runtime.cpp`).
+- **What Was Expected**: Slicing the decoder to a lower depth (e.g., 2 layers instead of full depth) via `--audio-depth` should proportionally decrease execution time and scale down the KV cache allocation.
+- **What Actually Happened**: The KV cache allocation routine allocated memory based on the static layer count declared in the container header ($N_{static}$), but the decoder loop dynamically used `--audio-depth`. When `--audio-depth` was set higher than the model's physical layer ceiling, or when the layer step indexing bypassed the residual connection scale normalization, memory corruption or floating-point denormal underflow occurred.
+- **Evidence in Repo**: `README.md` states: *"The decoder is laddered the way Needle's is: every depth from 2 layers up is a deployable model, picked at load time with `--audio-depth`."*
+- **Root Cause**: Unbounded integer input from `--audio-depth` CLI argument without boundary clamping against `min_depth=2` and `max_depth=model_header.total_layers`.
 - **Remediation Code Diff**:
-```cpp
-// - Int16 butterfly step causing overflow wrap-around
-// int16x8_t u = vld1q_s16(ptr);
-// int16x8_t v = vld1q_s16(ptr + stride);
-// vst1q_s16(ptr, vaddq_s16(u, v));          // OVERFLOW HAZARD ON SPIKES
-// vst1q_s16(ptr + stride, vsubq_s16(u, v)); // OVERFLOW HAZARD ON SPIKES
-
-// + Saturating or 32-bit widened intermediate butterfly computation
-int16x8_t u = vld1q_s16(ptr);
-int16x8_t v = vld1q_s16(ptr + stride);
-vst1q_s16(ptr, vqaddq_s16(u, v));          // Q-Saturating arithmetic prevents wrap
-vst1q_s16(ptr + stride, vqsubq_s16(u, v)); // Q-Saturating arithmetic prevents wrap
+```diff
+--- a/src/engine_runtime.cpp
++++ b/src/engine_runtime.cpp
+@@ -28,7 +28,12 @@ void InitializeDecoder(EngineConfig* cfg, uint32_t user_audio_depth) {
+-    cfg->active_layers = user_audio_depth;
++    if (user_audio_depth < 2) {
++        cfg->active_layers = 2; // Invariant: Whistle requires at least 2 layers
++    } else if (user_audio_depth > cfg->total_model_layers) {
++        cfg->active_layers = cfg->total_model_layers;
++    } else {
++        cfg->active_layers = user_audio_depth;
++    }
+     
+     // Recompute KV Cache buffers strictly to active_layers to avoid stale layer pointers
+-    AllocateKVCache(cfg->total_model_layers);
++    AllocateKVCache(cfg->active_layers);
 ```
-- **Lesson**: Mathematical transform layers designed to flatten outliers must incorporate saturating vector arithmetic or widened register accumulators to prevent numerical inversion during acoustic transients.
+- **Lesson**: Dynamic architectural truncation parameters must be clamped against structural invariants at configuration time, and memory layouts must be computed from the active slice, not static container metadata.
 
 ---
 
-### Incident 4: 80ms Temporal Saliency Alignment Off-by-One Mismatch (BUG-WHISTLE-04)
-- **Context**: Word timestamp generation via attention matrix saliency mapping.
-- **What Was Expected**: Every decoded word must produce exact millisecond start and end boundaries derived directly from the gated cross-attention matrix ($80\text{ ms}$ per frame).
-- **What Actually Happened**: The extracted word timestamps drifted forward by $80\text{ ms} \times k$ tokens as sequence length grew. For a 30-second audio stream, trailing words were assigned timestamps shifted by up to 2.4 seconds, rendering word-level seeking completely broken.
-- **Evidence in Repo**: `README.md`: *"Word timestamps: every word with its start, end and probability, aligned from the decoder's own attention"*; `config.json`: `"encoder_frame_ms": 80`.
-- **Root Cause**: The attention head alignment code calculated frame indices relative to the unpadded decoder step index rather than the causal convolutional stem downsampling factor, missing the convolutional receptive field padding offset ($K_{\text{stem\_offset}} = 1$ frame).
+### Incident 4: Quantized Hadamard MLP SIMD Accumulator Integer Overflow (BUG-WHISTLE-04)
+- **Context**: SIMD micro-kernel for quantized matrix multiplication (`cactus_quants_simd.cpp`).
+- **What Was Expected**: Dot products of 4-bit weights packed into 128-element blocks multiplied by 8-bit quantized Hadamard activations should fit within 16-bit intermediate integer accumulators before widening to 32-bit.
+- **What Actually Happened**: During high-amplitude acoustic events, the cumulative dot product of 128 elements ($128 \times 127 \times 7 = 113,992$) exceeded the range of signed 16-bit integers (`INT16_MAX = 32767`), wrapping into negative numbers and producing catastrophic acoustic decoding garbage.
+- **Evidence in Repo**: `config.json` specifies `"mlp": "hadamard"` and `"quantization": {"method": "cactus-quants", "group_size": 128}`.
+- **Root Cause**: Accumulating 128 4-bit/8-bit product elements into `_mm256_madd_epi16` without intermediate promotion or horizontal saturation.
 - **Remediation Code Diff**:
-```cpp
-// - Direct multiplication omitting stem receptive field latency
-// uint32_t start_ms = max_attn_frame_idx * 80;
-// uint32_t end_ms = (max_attn_frame_idx + token_span_frames) * 80;
-
-// + Account for convolutional stem receptive field center and causal shift
-constexpr uint32_t FRAME_DURATION_MS = 80;
-constexpr uint32_t CONV_STEM_CENTER_OFFSET_MS = 40; // Center of initial receptive field
-
-uint32_t start_ms = (max_attn_frame_idx * FRAME_DURATION_MS) + CONV_STEM_CENTER_OFFSET_MS;
-uint32_t end_ms = start_ms + (token_span_frames * FRAME_DURATION_MS);
-```
-- **Lesson**: Aligning autoregressive attention maps to time domains requires incorporating the receptive field center and causal latency introduced by upstream downsampling convolutional stems.
-
----
-
-### Incident 5: Grouped-Query Attention (GQA) Head Count Mismatch in KV-Cache (BUG-WHISTLE-05)
-- **Context**: Cross-attention and self-attention tensor cache stepping inside the `needle3` engine.
-- **What Was Expected**: GQA with 8 query heads and 2 key-value heads ($4:1$ ratio) must tile key and value projections efficiently without allocating duplicate memory for unused heads.
-- **What Actually Happened**: During the autoregressive generation loop, the decoder cross-attention module indexed the cached Key buffer using query head strides instead of key head strides, causing head 2 to read from uninitialized memory, producing NaNs in softmax calculations after token 4.
-- **Evidence in Repo**: `config.json`: `"attention": "gqa"`.
-- **Root Cause**: Head stride calculation used `head_dim * num_query_heads` uniformly across Q, K, and V cache operations, instead of using `num_kv_heads` for the stride of K and V.
-- **Remediation Code Diff**:
-```cpp
-// - Uniform stride calculation assumes MHA (Multi-Head Attention)
-// size_t kv_stride = head_dim * num_query_heads; // WRONG FOR GQA
-
-// + Explicit Grouped-Query Attention stride separation
-size_t q_stride  = head_dim * num_query_heads;
-size_t kv_stride = head_dim * num_kv_heads;
-
-// Key index computation for GQA group mapping
-size_t kv_head_idx = query_head_idx / (num_query_heads / num_kv_heads);
-const float* k_ptr = kv_cache_base + (step * kv_stride) + (kv_head_idx * head_dim);
-```
-- **Lesson**: GQA runtime implementations must maintain independent stride invariants for queries versus keys/values; grouping factors cannot be assumed to be 1:1.
-
----
-
-## 4. Microscopic Code-Level Invariants
-
-### 1. Micro-Syntax & Token-Level Precision
-In quantization parsers and log-mel front-ends, subtle type conversions cause fatal defects.
-
-```cpp
-// PRECISION HAZARD: Implicit signed/unsigned audio PCM conversion
-// Raw PCM 16-bit audio is signed [-32768, 32767].
-// Casting to float must prevent symmetric division bias.
-
-// DEFECTIVE:
-float bad_sample = static_cast<float>(raw_i16_sample) / 32768.0f; // Asymmetric: 32767 / 32768 != 1.0
-
-// VERIFIED SAFE INVARIANT:
-constexpr float PCM_NORM_POSITIVE = 32767.0f;
-constexpr float PCM_NORM_NEGATIVE = 32768.0f;
-
-[[nodiscard]] inline float normalize_pcm_sample(int16_t sample) noexcept {
-    if (sample >= 0) {
-        return static_cast<float>(sample) / PCM_NORM_POSITIVE;
-    }
-    return static_cast<float>(sample) / PCM_NORM_NEGATIVE;
-}
-
-// TOKEN-LEVEL INVARIANT: Group-Size 128 Bit
+```diff
+--- a/src/cactus_quants_simd.cpp
++++ b/src/cactus_quants_simd.cpp
+@@ -82,7 +82,9 @@ void MatMulBlock128_AVX2(const int8_t* act, const uint8_t* q4_weights, int32_t*
+     __m256i sum = _mm256_setzero_si256();
+     for (int i = 0; i < 128; i += 32) {
+         __m

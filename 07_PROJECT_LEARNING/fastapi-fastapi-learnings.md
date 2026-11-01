@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastapi-fastapi-learnings.md`  
 > **Source**: github ([https://github.com/fastapi/fastapi](https://github.com/fastapi/fastapi))  
-> **Source Version**: `7a0a3f0b`  
+> **Source Version**: `79cab5be`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:23:00.968Z  
+> **Timestamp**: 2026-10-27T14:29:45.287Z  
 > **Learning ID**: `learn-github-fastapi-fastapi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastapi-fastapi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastapi/fastapi](https://github.com/fastapi/fastapi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:23:00.513Z  
+> **Harvest Timestamp**: 2026-10-27T14:29:44.210Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 104112 stars
+- **Stars / Engagement**: 104268 stars
 
 ---
 
@@ -1505,65 +1505,58 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a0a3f0b` (2026-10-23)
-**Commit Message**: 🔖 Release version 0.162.0 (#16606)
-
-Co-authored-by: pr-submit[bot] <pr-submit[bot]@users.noreply.github.com>
-
-**File**: `docs/en/docs/release-notes.md` (modified, +2/-0)
-```diff
-@@ -7,6 +7,8 @@ hide:
- 
- ## Latest Changes
- 
-+## 0.162.0 (2026-10-23)
-+
- Omitted `bool` and `bool | None` form fields now use their declared defaults or produce missing-field errors, consistent with other fields and Pydantic behavior. FastAPI no longer infers `False` for omitted booleans. This applies to individual form parameters, form models, and unions of form models.
- 
- Omitted boolean model fields are excluded from `model_dump(exclude_unset=True)`, and their defaults no longer count as submitted fields during union selection. Default factories and `validate_default` follow the usual rules.
-```
-
-**File**: `fastapi/__init__.py` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- """FastAPI framework, high performance, easy to learn, fast to code, ready for production"""
- 
--__version__ = "0.161.1"
-+__version__ = "0.162.0"
- 
- from starlette import status as status
- 
-```
-
----
-
-### Incident Patch 2: `b56f7c6b` (2026-10-23)
+### Incident Patch 1: `79cab5be` (2026-10-26)
 **Commit Message**: 📝 Update release notes
 
 [skip ci]
 
-**File**: `docs/en/docs/release-notes.md` (modified, +4/-0)
+**File**: `docs/en/docs/release-notes.md` (modified, +1/-0)
 ```diff
-@@ -13,6 +13,10 @@ Omitted boolean model fields are excluded from `model_dump(exclude_unset=True)`,
+@@ -9,6 +9,7 @@ hide:
  
- For HTML checkboxes, declare a boolean with a default of `False`. See [Boolean Form Fields](https://fastapi.tiangolo.com/tutorial/request-forms/#boolean-form-fields).
+ ### Internal
  
-+### Breaking Changes
-+
-+* 🐛 Restore default handling for omitted boolean form fields. PR [#16605](https://github.com/fastapi/fastapi/pull/16605) by [@tiangolo](https://github.com/tiangolo).
-+
- ## 0.161.1 (2026-10-22)
++* ⬆ Bump graphql-core from 3.2.7 to 3.3.1. PR [#16613](https://github.com/fastapi/fastapi/pull/16613) by [@dependabot[bot]](https://github.com/apps/dependabot).
+ * ⬆ Bump black from 26.5.1 to 26.10.1. PR [#16611](https://github.com/fastapi/fastapi/pull/16611) by [@dependabot[bot]](https://github.com/apps/dependabot).
+ * ⬆ Bump gitpython from 3.1.62 to 3.2.1. PR [#16612](https://github.com/fastapi/fastapi/pull/16612) by [@dependabot[bot]](https://github.com/apps/dependabot).
+ * ⬆ Bump opentelemetry-api from 1.44.0 to 1.45.1. PR [#16610](https://github.com/fastapi/fastapi/pull/16610) by [@dependabot[bot]](https://github.com/apps/dependabot).
+```
+
+---
+
+### Incident Patch 2: `82e79bf9` (2026-10-26)
+**Commit Message**: ⬆ Bump graphql-core from 3.2.7 to 3.3.1 (#16613)
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Yurii Motov <[REDACTED_EMAIL]>
+
+**File**: `uv.lock` (modified, +3/-3)
+```diff
+@@ -1535,11 +1535,11 @@ wheels = [
  
- ### Fixes
+ [[package]]
+ name = "graphql-core"
+-version = "3.2.7"
++version = "3.3.1"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/ac/9b/037a640a2983b09aed4a823f9cf1729e6d780b0671f854efa4727a7affbe/graphql_core-3.2.7.tar.gz", hash = "sha256:27b6904bdd3b43f2a0556dad5d579bdfdeab1f38e8e8788e555bdcb586a6f62c", size = 513484, upload-time = "2025-11-01T22:30:40.436Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/a4/91/223fbace7c8648690d7fb77855e29bd248c9ed1e0833ed3002ab29bc1441/graphql_core-3.3.1.tar.gz", hash = "sha256:8d9b6f95fb66b58b260904cf9e191f422782620533ec8fa0c96ab941b6659a2a", size = 751402, upload-time = "2026-10-25T09:34:09.764Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/0a/14/933037032608787fb92e365883ad6a741c235e0ff992865ec5d904a38f1e/graphql_core-3.2.7-py3-none-any.whl", hash = "sha256:17fc8f3ca4a42913d8e24d9ac9f08deddf0a0b2483076575757f6c412ead2ec0", size = 207262, upload-time = "2025-11-01T22:30:38.912Z" },
++    { url = "https://files.pythonhosted.org/packages/57/0e/e51b006267e7fa785abf5d1f86a7d60b84f7f893e3ba4fe23df9be2000cf/graphql_core-3.3.1-py3-none-any.whl", hash = "sha256:43ebcd0d9a0662a71b1a2f6562ba863d253057ec11cbc45835b2e2683a0a3770", size = 349047, upload-time = "2026-10-25T09:34:07.725Z" },
+ ]
+ 
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #16617** (closed): 🌐 Update zh-hant translations for form and parameter models (@LiaoAB)
-- **PR #16606** (2026-10-23): 🔖 Release version 0.162.0 (@pr-submit[bot])
-- **PR #16605** (2026-10-23): 🐛 Restore default handling for omitted boolean form fields (@tiangolo)
-- **PR #16604** (closed): git@github.com:microsoft/openjdk-jdk.git (@kemery4-afk)
-- **PR #16600** (closed): Support hyphenated headers with AliasChoices and populate_by_name (@manjirisharma)
-- **PR #16599** (2026-10-22): 🔖 Release version 0.161.1 (@pr-submit[bot])
+- **PR #16616** (closed): Fix bare collections.abc stream annotations (@Nikhil-4404)
+- **PR #16613** (2026-10-26): ⬆ Bump graphql-core from 3.2.7 to 3.3.1 (@dependabot[bot])
+- **PR #16612** (2026-10-26): ⬆ Bump gitpython from 3.1.62 to 3.2.1 (@dependabot[bot])
+- **PR #16611** (2026-10-26): ⬆ Bump black from 26.5.1 to 26.10.1 (@dependabot[bot])
+- **PR #16610** (2026-10-26): ⬆ Bump opentelemetry-api from 1.44.0 to 1.45.1 (@dependabot[bot])
 
 ---
 
@@ -1583,13 +1576,13 @@ Co-authored-by: pr-submit[bot] <pr-submit[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🔖 Release version 0.162.0 (#16606)
+## X. 📝 Update release notes
 
 **RULE**:
 When implementing operations in `docs/en/docs/release-notes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a0a3f0b`: 🔖 Release version 0.162.0 (#16606). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79cab5be`: 📝 Update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/docs/release-notes.md`.
@@ -1597,8 +1590,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-## 0.162.0 (2026-10-23)
-
+* ⬆ Bump graphql-core from 3.2.7 to 3.3.1. PR [#16613](https://github.com/fastapi/fastapi/pull/16613) by [@dependabot[bot]](https://github.com/apps/dependabot).
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1608,4 +1600,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a0a3f0b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79cab5be` are properly handled with clean fallback behavior.

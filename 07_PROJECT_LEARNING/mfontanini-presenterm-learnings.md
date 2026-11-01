@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `5f8add11`  
+> **Source Version**: `11d2b279`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T01:07:12.651Z  
+> **Timestamp**: 2026-10-30T04:25:13.034Z  
 > **Learning ID**: `learn-github-mfontanini-presenterm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T01:07:12.643Z  
+> **Harvest Timestamp**: 2026-10-30T04:25:11.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8926 stars
+- **Stars / Engagement**: 8940 stars
 
 ---
 
@@ -760,7 +760,7 @@ use crate::{
         text_style::{Color, Colors, TextStyle},
     },
     terminal::image::Image,
-    theme::{Alignment, Margin},
+    theme::{Alignment, Margin, raw::BackgroundImageFit},
 };
 use std::{
     fmt::Debug,
@@ -769,6 +769,7 @@ use std::{
 };
 
 const DEFAULT_IMAGE_Z_INDEX: i32 = -2;
+const BACKGROUND_IMAGE_Z_INDEX: i32 = -3;
 
 /// A line of preformatted text to be rendered.
 #[derive(Clone, Debug, PartialEq)]
@@ -885,6 +886,18 @@ impl Default for ImageRenderProperties {
     }
 }
 
+impl ImageRenderProperties {
+    pub(crate) fn background(size: ImageSize) -> Self {
+        Self {
+            z_index: BACKGROUND_IMAGE_Z_INDEX,
+            size,
+            restore_cursor: true,
+            background_color: None,
+            position: ImagePosition::Cursor,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub(crate) enum ImagePosition {
     Cursor,
@@ -901,6 +914,19 @@ pub(crate) enum ImageSize {
     WidthScaled {
         ratio: f64,
     },
+    Stretch,
+    Cover,
+    Contain,
+}
+
+impl From<BackgroundImageFit> for ImageSize {
+    fn from(fit: BackgroundImageFit) -> Self {
+        match fit {
+            BackgroundImageFit::Stretch => Self::Stretch,
+            BackgroundImageFit::Cover => Self::Cover,
+            BackgroundImageFit::Contain => Self::Contain,
+        }
+    }
 }
 
 /// Slide properties, set on initialization.
@@ -1479,6 +1505,7 @@ use serde::{Deserializer, Serializer};
 use std::{
     fmt::{self, Display},
     marker::PhantomData,
+    path::{Path, PathBuf},
     str::FromStr,
 };
 
@@ -1549,6 +1576,24 @@ where
     S: Serializer,
 {
     serializer.serialize_str(&value.to_string())
+}
+
+pub trait PathExt {
+    fn presentation_index_path(&self) -> PathBuf;
+}
+
+impl PathExt for Path {
+    fn presentation_index_path(&self) -> PathBuf {
+        let extension = self
+            .extension()
+            .map(|extension| {
+                let mut extension = extension.to_os_string();
+                extension.push(".idx");
+                extension
+            })
+            .unwrap_or_else(|| "md.idx".into());
+        self.with_extension(extension)
+    }
 }
 
 ```
@@ -1840,11 +1885,11 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #913** (2026-08-10): **feat: load local syntaxes from bat's config directory**
-  *Symptoms*: Any `.sublime-syntax` file under `$(bat --config-dir)/syntaxes` is now loaded on startup, in addition to the syntaxes we bundle. Syntaxes are looked up recursively and take precedence over the bundled ones, and unlike bat there's no need to run `bat cache --build` first.  Languages we don't know about are now looked up by name/extension in the syntax set rather than defaulting to plain text, which is what makes locally installed syntaxes usable. As a side effect, syntaxes bat bundles but presenterm doesn't support natively can now be used as well.
+- **Issue #927** (2026-10-30): **ci: fix build**
+  *Symptoms*: * `with_added_extension` isn't supported in the rust version we use here. We probably should bump that but that can wait. * config-file-schema was missing langs. * No proper formatting.
 
-- **Issue #911** (2026-07-27): **Migrate PTY terminal backend from vt100 to rio-vt**
-  *Symptoms*: Swaps the PTY snippet's terminal backend from vt100 to [rio-vt](https://crates.io/crates/rio-vt), Rio's terminal engine.  The `ui/execution/pty` module parsed PTY output with vt100 and read each cell's contents and style to build `TextStyle`s. rio-vt does the same, exposed here through a small `PtyParser`/`PtyScreen`/`PtyCell` adapter that mirrors the vt100 surface this module used. rio-vt stores cells as packed handles into the grid style table, so the screen is resolved into owned cells on snapshot; rendering behavior is unchanged.  rio-vt is a full terminal engine (scrollback, wide chars/graphemes, sixel/Kitty/iTerm2 image protocols) rather than a parser plus screen model, and it parses and serializes a bit faster.  Benchmark against vt100 and alacritty_terminal: https://github.com/raphamorim/rio-vt-benchmark  Background on the engine and why it was split out of Rio: https://rioterm.com/blog/2026/07/27/rio-vt-and-librio 
+- **Issue #925** (2026-10-28): **docs: add Simplified Chinese README translation (README_zh.md)**
+  *Symptoms*: ### What this does  Adds a Simplified Chinese translation of the README as `README_zh.md` to help Chinese-speaking developers discover and adopt presenterm.  - Purely additive: one new file, no existing files modified. - Preserved unchanged (byte-for-byte): the entire setext title block (`presenterm` / `===`); the two badge reference lines (`[![crates-badge]][crates-package] … [![winget-badge]][winget-package]`) with every reference label intact; **every reference-style link definition** (all `[brew-badge]: …`, `[nix-badge]: …` shields URLs with `logo=nixos&labelColor=73C3D5`, all `[docs-*]: https://mfontanini.github.io/presenterm/…` URLs including their `#fragment`s, the `[scoop-package]` `#/apps?q=…&id=…` URL, and the YouTube/GitHub talk links); the empty-alt image `![](/docs/src/assets/demo.gif)`; the relative link targets `/examples/demo.md` and `/examples`; the `<!-- links -->` comment; all reference labels used inline (`[docs-images]`, `[docs-themes]`, … `[docs-speaker-notes]`, `[it-can-run-ratatui]`, …); the italic tool/product names (`_presenterm_`, `_kitty_`, `_iterm2_`, `_wezterm_`, `_ghostty_`, `_foot_`, `_LaTeX_`, `_typst_`); and every URL. - The eight "in action" bullet lines are left in English because they are talk/video titles and author names, not prose. - Translated: the intro paragraph, the section headings (文档 / 特性 / presenterm 实战), the feature bullet list, the closing "Gave a talk…" call-to-action, and human-readable link **display** text — while keeping 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1861,216 +1906,413 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3334f3f6` (2026-04-18)
-**Commit Message**: fix: fail export gracefully if async tasks fail (#877)
+### Incident Patch 1: `11d2b279` (2026-10-30)
+**Commit Message**: ci: fix build (#927)
 
-**File**: `src/export/exporter.rs` (modified, +23/-6)
+`with_added_extension` isn't supported in the rust version we use here.
+We probably should bump that but that can wait.
+
+**File**: `config-file-schema.json` (modified, +2/-0)
 ```diff
-@@ -137,8 +137,8 @@ impl<'a> Exporter<'a> {
-         let mut render = ExportRenderer::new(self.dimensions, output_directory, renderer);
-         Self::log("waiting for images to be generated and code to be executed, if any...")?;
-         match self.snippet_policy {
--            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation),
--            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation),
-+            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation)?,
-+            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation)?,
+@@ -911,13 +911,15 @@
+             "Julia",
+             "Kotlin",
+             "Latex",
++            "Lean",
+             "Lua",
+             "Makefile",
+             "Mermaid",
+             "Markdown",
+             "Nix",
+             "Nushell",
+             "OCaml",
++            "Odin",
+             "Perl",
+             "Php",
+             "PowerShell",
+```
+
+**File**: `src/main.rs` (modified, +2/-1)
+```diff
+@@ -14,6 +14,7 @@ use crate::{
+     },
+     theme::{raw::PresentationTheme, registry::PresentationThemeRegistry},
+     third_party::{ThirdPartyConfigs, ThirdPartyRender},
++    utils::PathExt,
+ };
+ use anyhow::anyhow;
+ use clap::{CommandFactory, Parser, error::ErrorKind};
+@@ -525,7 +526,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
+ 
+ fn load_start_slide(base: &Path, load: bool) -> Option<usize> {
+     if load {
+-        let path = base.with_added_extension("idx");
++        let path = base.presentation_index_path();
+         let Ok(txt) = std::fs::read_to_string(path) else {
+             return Some(0);
          };
- 
-         for (index, slide) in presentation.into_slides().into_iter().enumerate() {
-@@ -216,7 +216,7 @@ impl<'a> Exporter<'a> {
-         Ok(())
+```
+
+**File**: `src/presentation/builder/comment.rs` (modified, +4/-1)
+```diff
+@@ -262,7 +262,10 @@ impl CommentCommand {
+                     Alignment => {
+                         vec!["<!-- alignment: left -->", "<!-- alignment: center -->", "<!-- alignment: right -->"]
+                     }
+-                    BgImage => vec!["<!-- bg_image: {path: bg.png} -->", "<!-- bg_image: {path: bg.png, fit: cover, opacity: 80} -->"],
++                    BgImage => vec![
++                        "<!-- bg_image: {path: bg.png} -->",
++                        "<!-- bg_image: {path: bg.png, fit: cover, opacity: 80} -->",
++                    ],
+                     Column => vec!["<!-- column: 0 -->"],
+                     EndSlide => vec!["<!-- end_slide -->"],
+                     FontSize => vec!["<!-- font_size: 2 -->"],
+```
+
+**File**: `src/presenter.rs` (modified, +2/-1)
+```diff
+@@ -33,6 +33,7 @@ use crate::{
+         collapse_horizontal::CollapseHorizontalAnimation, fade::FadeAnimation,
+         slide_horizontal::SlideHorizontalAnimation,
+     },
++    utils::PathExt,
+ };
+ use std::{
+     fmt::Display,
+@@ -185,7 +186,7 @@ impl<'a> Presenter<'a> {
      }
  
--    fn wait_async_renders_parallel(presentation: &mut Presentation) {
-+    fn wait_async_renders_parallel(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         let mut pollables = Vec::new();
-         for (index, slide) in presentation.iter_slides().enumerate() {
-@@ -231,7 +231,13 @@ impl<'a> Exporter<'a> {
- 
-         // Poll until they're all done
-         for mut pollable in pollables {
--            while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+            loop {
-+                match pollable.poll() {
-+                    PollableState::Unmodified | PollableState::Modified => continue,
-+                    PollableState::Done => break,
-+                    PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                }
-+            }
-         }
- 
-         // Replace render asyncs with new operations that contains the replaced image
-@@ -245,9 +251,10 @@ impl<'a> Exporter<'a> {
-                 }
-             }
-         }
-+        Ok(())
+     fn save_start_slide(&self, base: &Path) -> Result<(), crate::io::Error> {
+-        let path = base.with_added_extension("idx");
++        let path = base.presentation_index_path();
+         let presentation = self.state.presentation();
+         let idx = presentation.current_slide_index();
+         std::fs::write(path, format!("{idx}\n"))?;
+```
+
+**File**: `src/resource.rs` (modified, +1/-4)
+```diff
+@@ -107,10 +107,7 @@ impl Resources {
      }
  
--    fn wait_async_renders_sequential(presentation: &mut Presentation) {
-+    fn wait_async_renders_sequential(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         for (index, slide) in presentation.iter_slides_mut().enumerate() {
-             for op in slide.iter_operations_mut() {
-@@ -257,7 +264,13 @@ impl<'a> Exporter<'a> {
- 
-                     // Poll until it's done
-                     let mut pollable = inner.pollable();
--                    while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+                    loop {
-+                        match pollable.poll() {
-+                            PollableState::Unmodified | PollableState::Modified => continue,
-+                            PollableState::Done => break,
-+                            PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                        }
-+                    }
- 
-                     // Replace it with its contents
-                     let window_size = WindowSize { rows: 0, columns: 0, width: 0, height: 0 };
-@@ -266,6 +279,7 @@ impl<'a> Exporter<'a> {
-                 }
-             }
-         }
-+        Ok(())
+     /// Register a generated (in-memory) image.
+-    pub(crate) fn register_generated_image(
+-        &self,
+-        image: image::DynamicImage,
+-    ) -> Result<Image, RegisterImageError> {
++    pub(crate) fn register_generated_image(&self, image: image::DynamicImage) -> Result<Image, RegisterImageError> {
+         let inner = self.inner.borrow();
+         inner.image_registry.register(ImageSpec::Generated(image))
+     }
+```
+
+**File**: `src/theme/clean.rs` (modified, +3/-6)
+```diff
+@@ -484,10 +484,8 @@ impl DefaultStyle {
+         let margin = margin.unwrap_or_default();
+         let style = TextStyle::colored(colors.resolve(palette)?);
+         let alignment = alignment.clone().unwrap_or_default().into();
+-        let background_image = background_image
+-            .as_ref()
+-            .map(|bg| Self::load_background_image(bg, resources))
+-            .transpose()?;
++        let background_image =
++            background_image.as_ref().map(|bg| Self::load_background_image(bg, resources)).transpose()?;
+         Ok(Self { margin, style, alignment, background_image })
      }
  
-     fn validate_weasyprint_exists() -> Result<(), ExportError> {
-@@ -323,6 +337,9 @@ pub enum ExportError {
-     #[error(transparent)]
-     Execution(#[from] ExecutionError),
+@@ -503,8 +501,7 @@ impl DefaultStyle {
+             return Ok(BackgroundImage { image, fit, source: None });
+         }
+         let path = resources.resolve_theme_image_path(&bg.path);
+-        let mut dynamic =
+-            resources.load_dynamic_image(&path).map_err(ProcessingThemeError::BackgroundImage)?;
++        let mut dynamic = resources.load_dynamic_image(&path).map_err(ProcessingThemeError::BackgroundImage)?;
+         if opacity < 100 {
+             crate::terminal::image::apply_opacity(&mut dynamic, opacity);
+         }
+```
+
+**File**: `src/utils.rs` (modified, +19/-0)
+```diff
+@@ -2,6 +2,7 @@ use serde::{Deserializer, Serializer};
+ use std::{
+     fmt::{self, Display},
+     marker::PhantomData,
++    path::{Path, PathBuf},
+     str::FromStr,
+ };
  
-+    #[error("async render failed: {0}")]
-+    RenderAsync(String),
+@@ -73,3 +74,21 @@ where
+ {
+     serializer.serialize_str(&value.to_string())
+ }
 +
-     #[error("weasyprint not found")]
-     WeasyprintMissing,
- 
++pub trait PathExt {
++    fn presentation_index_path(&self) -> PathBuf;
++}
++
++impl PathExt for Path {
++    fn presentation_index_path(&self) -> PathBuf {
++        let extension = self
++            .extension()
++            .map(|extension| {
++                let mut extension = extension.to_os_string();
++                extension.push(".idx");
++                extension
++            })
++            .unwrap_or_else(|| "md.idx".into());
++        self.with_extension(extension)
++    }
++}
 ```
 
 ---
 
-### Incident Patch 2: `ed98477a` (2026-04-15)
-**Commit Message**: fix: fail gracefully if async tasks fail
+### Incident Patch 2: `eca13d98` (2026-10-30)
+**Commit Message**: fix: add missing languages to config file schema
 
-**File**: `src/export/exporter.rs` (modified, +23/-6)
+**File**: `config-file-schema.json` (modified, +2/-0)
 ```diff
-@@ -137,8 +137,8 @@ impl<'a> Exporter<'a> {
-         let mut render = ExportRenderer::new(self.dimensions, output_directory, renderer);
-         Self::log("waiting for images to be generated and code to be executed, if any...")?;
-         match self.snippet_policy {
--            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation),
--            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation),
-+            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation)?,
-+            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation)?,
-         };
- 
-         for (index, slide) in presentation.into_slides().into_iter().enumerate() {
-@@ -216,7 +216,7 @@ impl<'a> Exporter<'a> {
-         Ok(())
-     }
- 
--    fn wait_async_renders_parallel(presentation: &mut Presentation) {
-+    fn wait_async_renders_parallel(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         let mut pollables = Vec::new();
-         for (index, slide) in presentation.iter_slides().enumerate() {
-@@ -231,7 +231,13 @@ impl<'a> Exporter<'a> {
- 
-         // Poll until they're all done
-         for mut pollable in pollables {
--            while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+            loop {
-+                match pollable.poll() {
-+                    PollableState::Unmodified | PollableState::Modified => continue,
-+                    PollableState::Done => break,
-+                    PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                }
-+            }
-         }
- 
-         // Replace render asyncs with new operations that contains the replaced image
-@@ -245,9 +251,10 @@ impl<'a> Exporter<'a> {
-                 }
-             }
-         }
-+        Ok(())
-     }
- 
--    fn wait_async_renders_sequential(presentation: &mut Presentation) {
-+    fn wait_async_renders_sequential(presentation: &mut Presentation) -> Result<(), ExportError> {
-         let poller = Poller::launch();
-         for (index, slide) in presentation.iter_slides_mut().enumerate() {
-             for op in slide.iter_operations_mut() {
-@@ -257,7 +264,13 @@ impl<'a> Exporter<'a> {
- 
-                     // Poll until it's done
-                     let mut pollable = inner.pollable();
--                    while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-+                    loop {
-+                        match pollable.poll() {
-+                            PollableState::Unmodified | PollableState::Modified => continue,
-+                            PollableState::Done => break,
-+                            PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-+                        }
-+                    }
- 
-                     // Replace it with its contents
-                     let window_size = WindowSize { rows: 0, columns: 0, width: 0, height: 0 };
-@@ -266,6 +279,7 @@ impl<'a> Exporter<'a> {
-                 }
-             }
-         }
-+        Ok(())
-     }
- 
-     fn validate_weasyprint_exists() -> Result<(), ExportError> {
-@@ -323,6 +337,9 @@ pub enum ExportError {
-     #[error(transparent)]
-     Execution(#[from] ExecutionError),
- 
-+    #[error("async render failed: {0}")]
-+    RenderAsync(String),
-+
-     #[error("weasyprint not found")]
-     WeasyprintMissing,
- 
+@@ -911,13 +911,15 @@
+             "Julia",
+             "Kotlin",
+             "Latex",
++            "Lean",
+             "Lua",
+             "Makefile",
+             "Mermaid",
+             "Markdown",
+             "Nix",
+             "Nushell",
+             "OCaml",
++            "Odin",
+             "Perl",
+             "Php",
+             "PowerShell",
 ```
 
 ---
 
-### Incident Patch 3: `d4c29336` (2026-04-24)
-**Commit Message**: chore: revert assumptions about size
+### Incident Patch 3: `d4dc222c` (2026-10-30)
+**Commit Message**: feat: add APNG animation support with loop count (#890)
 
-**File**: `src/main.rs` (modified, +1/-10)
+Hello! Thank you for your work on this lovely project! Just sharing
+something I came up with to get APNGs to play.
+
+**File**: `Cargo.lock` (modified, +10/-10)
 ```diff
-@@ -457,16 +457,7 @@ fn run(cli: Cli) -> Result<(), Box<dyn std::error::Error>> {
-                 height: dimensions.rows * DEFAULT_EXPORT_PIXELS_PER_ROW,
-                 width: dimensions.columns * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
+@@ -492,9 +492,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "gif"
+-version = "0.13.3"
++version = "0.14.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4ae047235e33e2829703574b54fdec96bfbad892062d97fed2f76022287de61b"
++checksum = "ee8cfcc411d9adbbaba82fb72661cc1bcca13e8bba98b364e62b2dba8f960159"
+ dependencies = [
+  "color_quant",
+  "weezl",
+@@ -536,9 +536,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "image"
+-version = "0.25.8"
++version = "0.25.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "529feb3e6769d234375c4cf1ee2ce713682b8e76538cb13f9fc23e1400a591e7"
++checksum = "85ab80394333c02fe689eaf900ab500fbd0c2213da414687ebf995a65d5a6104"
+ dependencies = [
+  "bytemuck",
+  "byteorder-lite",
+@@ -715,9 +715,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "moxcms"
+-version = "0.7.9"
++version = "0.8.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "0fbdd3d7436f8b5e892b8b7ea114271ff0fa00bc5acae845d53b07d498616ef6"
++checksum = "bb85c154ba489f01b25c0d36ae69a87e4a1c73a72631fc6c0eb6dde34a73e44b"
+ dependencies = [
+  "num-traits",
+  "pxfm",
+@@ -1966,15 +1966,15 @@ dependencies = [
+ 
+ [[package]]
+ name = "zune-core"
+-version = "0.4.12"
++version = "0.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3f423a2c17029964870cfaabb1f13dfab7d092a62a29a89264f4d36990ca414a"
++checksum = "cb8a0807f7c01457d0379ba880ba6322660448ddebc890ce29bb64da71fb40f9"
+ 
+ [[package]]
+ name = "zune-jpeg"
+-version = "0.4.21"
++version = "0.5.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "29ce2c8a9384ad323cf564b67da86e21d3cfdff87908bc1223ed5c99bc792713"
++checksum = "27bc9d5b815bc103f142aa054f561d9187d191692ec7c2d1e2b4737f8dbd7296"
+ dependencies = [
+  "zune-core",
+ ]
+```
+
+**File**: `src/terminal/image/printer.rs` (modified, +3/-0)
+```diff
+@@ -251,6 +251,9 @@ pub(crate) enum RegisterImageError {
+ 
+     #[error("printer can't register images")]
+     Unsupported,
++
++    #[error("no frames in apng image")]
++    ApngNoFrames,
+ }
+ 
+ impl PrintImageError {
+```
+
+**File**: `src/terminal/image/protocols/kitty.rs` (modified, +67/-21)
+```diff
+@@ -6,7 +6,11 @@ use crate::{
+     },
+ };
+ use base64::{Engine, engine::general_purpose::STANDARD};
+-use image::{AnimationDecoder, Delay, EncodableLayout, ImageReader, RgbaImage, codecs::gif::GifDecoder};
++use image::{
++    AnimationDecoder, Delay, DynamicImage, EncodableLayout, ImageReader, RgbaImage,
++    codecs::{gif::GifDecoder, png::PngDecoder},
++    metadata::LoopCount,
++};
+ use std::{
+     fmt,
+     fs::{self, File},
+@@ -43,7 +47,7 @@ const DIACRITICS: &[u32] = &[
+ 
+ enum GenericResource<B> {
+     Image(B),
+-    Gif(Vec<GifFrame<B>>),
++    Animated { frames: Vec<AnimationFrame<B>>, loop_count: LoopCount },
+ }
+ 
+ type RawResource = GenericResource<RgbaImage>;
+@@ -55,13 +59,16 @@ impl RawResource {
+                 dimensions: image.dimensions(),
+                 resource: GenericResource::Image(KittyBuffer::Memory(image.into_raw())),
              },
--            None => {
--                const DEFAULT_EXPORT_ROWS: u16 = 40;
--                const DEFAULT_EXPORT_COLUMNS: u16 = 120;
--                WindowSize {
--                    rows: DEFAULT_EXPORT_ROWS,
--                    columns: DEFAULT_EXPORT_COLUMNS,
--                    height: DEFAULT_EXPORT_ROWS * DEFAULT_EXPORT_PIXELS_PER_ROW,
--                    width: DEFAULT_EXPORT_COLUMNS * DEFAULT_EXPORT_PIXELS_PER_COLUMN,
--                }
--            }
-+            None => WindowSize::current(config.defaults.terminal_font_size)?,
+-            Self::Gif(frames) => {
++            Self::Animated { frames, loop_count } => {
+                 let dimensions = frames[0].buffer.dimensions();
+                 let frames = frames
+                     .into_iter()
+-                    .map(|frame| GifFrame { delay: frame.delay, buffer: KittyBuffer::Memory(frame.buffer.into_raw()) })
++                    .map(|frame| AnimationFrame {
++                        delay: frame.delay,
++                        buffer: KittyBuffer::Memory(frame.buffer.into_raw()),
++                    })
+                     .collect();
+-                let resource = GenericResource::Gif(frames);
++                let resource = GenericResource::Animated { frames, loop_count };
+                 KittyImage { dimensions, resource }
+             }
+         }
+@@ -77,7 +84,7 @@ impl KittyImage {
+     pub(crate) fn as_rgba8(&self) -> RgbaImage {
+         let first_frame = match &self.resource {
+             GenericResource::Image(buffer) => buffer,
+-            GenericResource::Gif(gif_frames) => &gif_frames[0].buffer,
++            GenericResource::Animated { frames: animation_frames, .. } => &animation_frames[0].buffer,
          };
-         let exporter = Exporter::new(
-             parser,
+         let buffer = match first_frame {
+             KittyBuffer::Filesystem(path) => {
+@@ -111,7 +118,7 @@ impl Drop for KittyBuffer {
+     }
+ }
+ 
+-struct GifFrame<T> {
++struct AnimationFrame<T> {
+     delay: Delay,
+     buffer: T,
+ }
+@@ -143,24 +150,28 @@ impl KittyPrinter {
+         Ok(resource)
+     }
+ 
+-    fn persist_gif(&self, frames: Vec<GifFrame<RgbaImage>>) -> io::Result<KittyImage> {
++    fn persist_animation(
++        &self,
++        frames: Vec<AnimationFrame<RgbaImage>>,
++        loop_count: LoopCount,
++    ) -> io::Result<KittyImage> {
+         let mut persisted_frames = Vec::new();
+         let mut dimensions = (0, 0);
+         for frame in frames {
+             let path = self.allocate_tempfile();
+             fs::write(&path, frame.buffer.as_bytes())?;
+             dimensions = frame.buffer.dimensions();
+ 
+-            let frame = GifFrame { delay: frame.delay, buffer: KittyBuffer::Filesystem(path) };
++            let frame = AnimationFrame { delay: frame.delay, buffer: KittyBuffer::Filesystem(path) };
+             persisted_frames.push(frame);
+         }
+-        Ok(KittyImage { dimensions, resource: GenericResource::Gif(persisted_frames) })
++        Ok(KittyImage { dimensions, resource: GenericResource::Animated { frames: persisted_frames, loop_count } })
+     }
+ 
+     fn persist_resource(&self, resource: RawResource) -> io::Result<KittyImage> {
+         match resource {
+             RawResource::Image(image) => self.persist_image(image),
+-            RawResource::Gif(frames) => self.persist_gif(frames),
++            RawResource::Animated { frames, loop_count } => self.persist_animation(frames, loop_count),
+         }
+     }
+ 
+@@ -205,20 +216,25 @@ impl KittyPrinter {
+         Ok(())
+     }
+ 
+-    fn print_gif<T>(
++    fn print_animation<T>(
+         &self,
+         dimensions: (u32, u32),
+-        frames: &[GifFrame<KittyBuffer>],
++        frames: &[AnimationFrame<KittyBuffer>],
++        loop_count: LoopCount,
+         terminal: &mut T,
+         print_options: &PrintOptions,
+     ) -> Result<(), PrintImageError>
+     where
+         T: TerminalIo,
+     {
++        let loops = match loop_count {
++            LoopCount::Infinite => 1u32,
++            LoopCount::Finite(n) => n.get() + 1,
++        };
+         let image_id = Self::generate_image_id();
++
+         for (frame_id, frame) in frames.iter().enumerate() {
+             let (num, denom) = frame.delay.numer_denom_ms();
+-            // default to 100ms in case somehow the denominator is 0
+             let delay = num.checked_div(denom).unwrap_or(100);
+             let mut options = vec![
+                 ControlOption::Format(ImageFormat::Rgba),
+@@ -252,7 +268,7 @@ impl KittyPrinter {
+                     ControlOption::Action(Action::Animate),
+                     ControlOption::ImageId(image_id),
+                     ControlOption::FrameId(1),
+-                    ControlOption::Loops(1),
++                    ControlOption:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #913** (closed): feat: load local syntaxes from bat's config directory (@gregerolsson)
-- **PR #911** (closed): Migrate PTY terminal backend from vt100 to rio-vt (@raphamorim)
-- **PR #897** (closed): doc: Very small typo in the install command (@arthuRHD)
-- **PR #895** (2026-05-22): feat: add exec support for ocaml (@kevinschweikert)
-- **PR #887** (2026-05-02): feat: add exec support for scala 3 (@hoop33)
-- **PR #885** (2026-04-25): feat: allow passing in env file to snippet (@mfontanini)
+- **PR #927** (2026-10-30): ci: fix build (@mfontanini)
+- **PR #925** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
+- **PR #923** (closed): Add --serve to expose the presentation over HTTP (@qjoly)
+- **PR #921** (2026-10-28): fix: include speaker notes from imported markdown (@jesko2004)
+- **PR #920** (2026-10-28): feat: add Lean lang support (@StamesJames)
+- **PR #916** (2026-10-28): feat: add Odin lang support (@rivethorn)
 
 ---
 
@@ -2090,54 +2332,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fail export gracefully if async tasks fail (#877)
+## X. ci: fix build (#927)
 
 **RULE**:
-When implementing operations in `src/export/exporter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `config-file-schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3334f3f6`: fail export gracefully if async tasks fail (#877). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `11d2b279`: ci: fix build (#927). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/export/exporter.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `config-file-schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation)?,
-            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation)?,
-    fn wait_async_renders_parallel(presentation: &mut Presentation) -> Result<(), ExportError> {
-            loop {
-                match pollable.poll() {
-                    PollableState::Unmodified | PollableState::Modified => continue,
-                    PollableState::Done => break,
-                    PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-                }
-            }
-        Ok(())
-    fn wait_async_renders_sequential(presentation: &mut Presentation) -> Result<(), ExportError> {
-                    loop {
-                        match pollable.poll() {
-                            PollableState::Unmodified | PollableState::Modified => continue,
-                            PollableState::Done => break,
-                            PollableState::Failed { error } => return Err(ExportError::RenderAsync(error)),
-                        }
-                    }
-        Ok(())
-    #[error("async render failed: {0}")]
-    RenderAsync(Str
+            "Lean",
+            "Odin",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            SnippetsExportPolicy::Parallel => Self::wait_async_renders_parallel(&mut presentation),
-            SnippetsExportPolicy::Sequential => Self::wait_async_renders_sequential(&mut presentation),
-    fn wait_async_renders_parallel(presentation: &mut Presentation) {
-            while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
-    fn wait_async_renders_sequential(presentation: &mut Presentation) {
-                    while let PollableState::Unmodified | PollableState::Modified = pollable.poll() {}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3334f3f6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `11d2b279` are properly handled with clean fallback behavior.

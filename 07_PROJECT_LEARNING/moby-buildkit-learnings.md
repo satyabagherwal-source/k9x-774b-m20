@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source**: github ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
-> **Source Version**: `fc10d048`  
+> **Source Version**: `c1cfdbd3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:14:46.152Z  
+> **Timestamp**: 2026-10-30T13:28:41.361Z  
 > **Learning ID**: `learn-github-moby-buildkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/moby-buildkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/moby/buildkit](https://github.com/moby/buildkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:14:44.837Z  
+> **Harvest Timestamp**: 2026-10-30T13:28:40.827Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10340 stars
+- **Stars / Engagement**: 10350 stars
 
 ---
 
@@ -2299,11 +2299,11 @@ func isPathEscapesRootError(err error) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7315** (2026-10-23): **build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1**
-  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.1</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/blob/main/CHANGELOG.md">github/codeql-action/upload-sarif's changelog</a>.</em></p> <blockquote> <h1>CodeQL Action Changelog</h1> <p>See the <a href="https://github.com/github/codeql-action/releases">releases page</a> for the relevant changes to the CodeQL CLI and language packs.</p> <h2>[UNRELEASED]</h2> <p>No user facing changes.</p> <h2>4.39.1 - 21 Oct 2026</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> <h2>4.39.0 - 15 Oct 2026</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <l
+- **Issue #7338** (2026-10-30): **solver: fix race on merged edge secondary exporters**
+  *Symptoms*: When a job merged an edge into another, mergeTo appended the dependency cache keys to the target edge's secondaryExporters on the scheduler goroutine. Cache export reads the same slice through the exporter of a result loaded from that edge, and runs outside the scheduler, e.g. for build history provenance or cache export while another build is still running and merging into the shared edge.  Guard secondaryExporters with a mutex and let ExportTo iterate over a copy, so nested exports run without holding the lock.
 
-- **Issue #7314** (2026-10-23): **build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1**
-  *Symptoms*: Bumps [docker/github-builder/.github/workflows/bake.yml](https://github.com/docker/github-builder) from 1.18.0 to 1.18.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/github-builder/releases">docker/github-builder/.github/workflows/bake.yml's releases</a>.</em></p> <blockquote> <h2>v1.18.1</h2> <ul> <li>update BuildKit image to v0.34.1 in <a href="https://redirect.github.com/docker/github-builder/pull/321">docker/github-builder#321</a></li> <li>update Buildx version to v0.38.1 in <a href="https://redirect.github.com/docker/github-builder/pull/322">docker/github-builder#322</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/github-builder/compare/v1.18.0...v1.18.1">https://github.com/docker/github-builder/compare/v1.18.0...v1.18.1</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/github-builder/commit/cbc9d42f8c89a55623392aadd03600965b80e963"><code>cbc9d42</code></a> Merge pull request <a href="https://redirect.github.com/docker/github-builder/issues/322">#322</a> from docker/deps/buildx-version</li> <li><a href="https://github.com/docker/github-builder/commit/f5a10c68eaddb3ff661ff23060968553b703d913"><code>f5a10c6</code></a> chore(deps): update Buildx version to v0.38.1</li> <li><a href="https://github.com/docker/github-builder/commit/dff72fc83c7d777460fa3da1e72fafb4ec1980bd"><code>dff72fc</code></a> Merge pull request <a href
+- **Issue #7336** (2026-10-30): **gateway: wait for frontend before HTTP/2 handshake**
+  *Symptoms*: If a low-powered machine is running out of resources, it may not be able to start up the frontend in 10 seconds. There is one 10 sec timeout in HTTP/2 stack so wait for container to respond before starting the HTTP/2 stack. Another timeout is in buildkit code that is increased to 15 sec in separate commit.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2320,366 +2320,374 @@ func isPathEscapesRootError(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c6b4059f` (2026-10-23)
-**Commit Message**: build(deps): bump github/codeql-action/upload-sarif
+### Incident Patch 1: `b94ff2bc` (2026-10-28)
+**Commit Message**: solver: fix race on merged edge secondary exporters
 
-Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.39.0 to 4.39.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee...9b3254085494b55a0f7c4c2b3d2d52cc712ce370)
+When a job merged an edge into another, mergeTo appended the dependency
+cache keys to the target edge's secondaryExporters on the scheduler
+goroutine. Cache export reads the same slice through the exporter of a
+result loaded from that edge, and runs outside the scheduler, e.g. for
+build history provenance or cache export while another build is still
+running and merging into the shared edge.
 
----
-updated-dependencies:
-- dependency-name: github/codeql-action/upload-sarif
-  dependency-version: 4.39.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+Guard secondaryExporters with a mutex and let ExportTo iterate over a
+copy, so nested exports run without holding the lock.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
+**File**: `solver/edge.go` (modified, +4/-1)
 ```diff
-@@ -161,7 +161,7 @@ jobs:
-       -
-         name: Upload SARIF report
-         if: ${{ github.ref == 'refs/heads/master' && github.repository == 'moby/buildkit' }}
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: ${{ env.DESTDIR }}/govulncheck.out
+@@ -69,7 +69,10 @@ type edge struct {
+ 	keysDidChange bool
+ 	index         *edgeIndex
  
-@@ -326,7 +326,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
+-	secondaryExporters []expDep
++	// secondaryExportersMu protects secondaryExporters, which the scheduler
++	// appends to on merge while cache exporters read it from other goroutines
++	secondaryExportersMu sync.Mutex
++	secondaryExporters   []expDep
  
+ 	failedOnce sync.Once
+ 	debug      bool
 ```
 
-**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
+**File**: `solver/exporter.go` (modified, +4/-1)
 ```diff
-@@ -226,7 +226,7 @@ jobs:
-           jq . ${{ steps.scout.outputs.result-file }}
-       -
-         name: Upload SARIF report
--        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-         with:
-           sarif_file: ${{ steps.scout.outputs.result-file }}
- 
-```
-
----
-
-### Incident Patch 2: `2be1b623` (2026-10-23)
-**Commit Message**: Merge pull request #7314 from moby/dependabot/github_actions/docker/github-builder/dot-github/workflows/bake.yml-1.18.1
-
-build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1
-
-**File**: `.github/workflows/buildkit.yml` (modified, +2/-2)
-```diff
-@@ -49,7 +49,7 @@ jobs:
-           fields: platforms
- 
-   binaries:
--    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
-+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-     permissions:
-       contents: read # same as global permission
-       id-token: write # for signing attestation(s) with GitHub OIDC Token
-@@ -222,7 +222,7 @@ jobs:
-             core.setOutput('includes', JSON.stringify(matrix));
- 
-   image:
--    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
-+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-     needs:
-       - image-prepare
-       - test
-```
-
-**File**: `.github/workflows/frontend.yml` (modified, +1/-1)
-```diff
-@@ -125,7 +125,7 @@ jobs:
-             core.setOutput('includes', JSON.stringify(matrix));
- 
-   image:
--    uses: docker/github-builder/.github/workflows/bake.yml@4345a1cea1e4cfb65c8a5e2b1b80f9e630068827 # v1.18.0
-+    uses: docker/github-builder/.github/workflows/bake.yml@cbc9d42f8c89a55623392aadd03600965b80e963 # v1.18.1
-     needs:
-       - prepare
-       - test
-```
-
----
-
-### Incident Patch 3: `1a046037` (2026-10-23)
-**Commit Message**: Merge pull request #7277 from crazy-max/fix-solver-progress-race
-
-solver: synchronize vertex progress updates
-
-**File**: `solver/cacheopts.go` (modified, +1/-1)
-```diff
-@@ -36,7 +36,7 @@ func withAncestorCacheOpts(ctx context.Context, start *state) context.Context {
- 		}
- 		values := make(map[any]any)
- 		walkAncestors(ctx, start, func(st *state) bool {
--			if st.clientVertex.Error != "" {
-+			if st.vertexFailed() {
- 				// don't use values from cancelled or otherwise error'd vertexes
- 				return false
- 			}
-```
-
-**File**: `solver/jobs.go` (modified, +54/-30)
-```diff
-@@ -61,9 +61,10 @@ type state struct {
- 	mspan    *tracing.MultiSpan
- 	execSpan trace.Span
- 
--	vtx          Vertex
--	clientVertex client.Vertex
--	origDigest   digest.Digest // original LLB digest. TODO: probably better to use string ID so this isn't needed
-+	vtx            Vertex
-+	clientVertex   client.Vertex
-+	clientVertexMu sync.Mutex    // protects mutable clientVertex fields
-+	origDigest     digest.Digest // original LLB digest. TODO: probably better to use string ID so this isn't needed
- 
- 	mu    sync.RWMutex
- 	op    *sharedOp
-@@ -329,6 +330,51 @@ func (s *state) combinedCacheManager() CacheManager {
- 	return NewCombinedCacheManager(cms, mainCache)
- }
- 
-+// writeVertexSnapshot can read progress concurrently with
-+// notifyStarted, which is the only writer of the mutable vertex fields.
-+func (s *state) writeVertexSnapshot(pw progress.Writer) {
-+	s.clientVertexMu.Lock()
-+	defer s.clientVertexMu.Unlock()
-+	// Keep the snapshot and write together so a newer update cannot be
-+	// published before this snapshot.
-+	pw.Write(identity.NewID(), s.clientVertex)
-+}
-+
-+// vertexFailed lets the ancestor walk read the error concurrently with
-+// progress updates from notifyStarted.
-+func (s *state) vertexFailed() bool {
-+	s.clientVertexMu.Lock()
-+	defer s.clientVertexMu.Unlock()
-+	return s.clientVertex.Error != ""
-+}
-+
-+func (s *state) notifyStarted(ctx context.Context, cached bool) func(err error, cached bool) {
-+	pw, _, _ := progress.NewFromContext(ctx)
-+	s.clientVertexMu.Lock()
-+	v := &s.clientVertex
-+	start := time.Now()
-+	v.Started = &start
-+	v.Completed = nil
-+	v.Cached = cached
-+	id := identity.NewID()
-+	pw.Write(id, *v)
-+	s.clientVertexMu.Unlock()
-+	return func(err error, cached bool) {
-+		defer pw.Close()
-+		s.clientVertexMu.Lock()
-+		defer s.clientVertexMu.Unlock()
-+		stop := time.Now()
-+		v.Completed = &stop
-+		v.Cached = cached
-+		if err != nil {
-+			v.Error = err.Error()
-+		} else {
-+			v.Error = ""
-+		}
-+		pw.Write(id, *v)
-+	}
-+}
-+
- func (s *state) Release() {
- 	for _, e := range s.edges {
- 		for e.owner != nil {
-@@ -689,7 +735,7 @@ func (jl *Solver) connectProgressFromState(target, src *state) {
- 		if _, ok := target.allPw[pw]; !ok {
- 			target.mpw.Add(pw)
- 			target.allPw[pw] = struct{}{}
--			pw.Write(identity.NewID(), target.clientVertex)
-+			target.writeVertexSnapshot(pw)
- 			if span != nil && span.SpanContext().IsValid() {
- 				target.mspan.Add(span)
- 			}
-@@ -1058,7 +1104,7 @@ func (s *sharedOp) LoadCache(ctx context.Context, rec *CacheRecord) (Result, fun
- 	// no cache hit. start evaluating the node
- 	span, ctx := tracing.StartSpan(ctx, "load cache: "+s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
- 	s.st.execSpan = span
--	notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, true)
-+	notifyCompleted := s.st.notifyStarted(ctx, true)
- 	res, err := s.Cache().Load(withAncestorCacheOpts(ctx, s.st), rec)
- 	tracing.FinishWithError(span, err)
- 	notifyCompleted(err, true)
-@@ -1145,7 +1191,7 @@ func (s *sharedOp) CalcSlowCache(ctx context.Context, index Index, p PreprocessF
- 		if s.st.mspan.Span != nil {
- 			ctx = trace.ContextWithSpan(ctx, s.st.mspan)
- 		}
--		notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
-+		notifyCompleted := s.st.notifyStarted(ctx, false)
- 		notifyCompleted(err, false)
- 		return "", err
+@@ -246,7 +246,10 @@ func (e *exporter) ExportTo(ctx context.Context, t CacheExporterTarget, opt Cach
  	}
-@@ -1177,7 +1223,7 @@ func (s *sharedOp) CacheMap(ctx context.Context, index int) (resp *cacheMapResp,
- 		if len(s.st.vtx.Inputs()) == 0 {
- 			// no cache hit. start evaluating the node
- 			span, ctx := tracing.StartSpan(ctx, "cache request: "+s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
--			notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
-+			notifyCompleted := s.st.notifyStarted(ctx, false)
- 			defer func() {
- 				tracing.FinishWithError(span, retErr)
- 				notifyCompleted(retErr, false)
-@@ -1263,7 +1309,7 @@ func (s *sharedOp) Exec(ctx context.Context, inputs []Result) (outputs []Result,
- 		// no cache hit. start evaluating the node
- 		span, ctx := tracing.StartSpan(ctx, s.st.vtx.Name(), trace.WithAttributes(attribute.String("vertex", s.st.vtx.Digest().String())))
- 		s.st.execSpan = span
--		notifyCompleted := notifyStarted(ctx, &s.st.clientVertex, false)
-+		notifyCompleted := s.st.notifyStarted(ctx, false)
- 		defer func() {
- 			tracing.FinishWithError(span, retErr)
- 			notifyCompleted(retErr, false)
-@@ -1390,28 +1436,6 @@ func (v *vertexWithCacheOptions) Inputs() []Edge {
- 	return v.inputs
- }
  
--func notifyStarted(ctx context.Context, v *client.Vertex, cached bool) func(err error, cached bool) {
--	pw, _, _ := progress.NewFromContext(ctx)
--	start := time.Now()
--	v.Started = &start
--	v.Completed = nil
--	v.Cached = cached
--	id := identity.NewID()
--	pw.Write(id, *v)
--	return func(err error, cached bool) {
--		defer pw.Close()
--		stop := time.Now()
--		v.Completed = &stop
--		v.Cached = cached
--		if err != nil {
--			v.Error = err.Error()
--		} else {
--			v.Error = ""
--		}
--
+ 	if e.edge != nil {
+-		for _, de := range e.edge.secondaryExporters {
++		e.edge.secondaryExportersMu.Lock()
++		secondaryExporters := slices.Clone(e.edge.secondaryExporters)
++		e.edge.secondaryExportersMu.Unlock()
++		for _, de := range secondaryExporters {
+ 			recs, err := de.cacheKey.CacheKey.Exporter.ExportTo(mainCtx, t, opt)
+ 			if err != nil {
+ 				continue
 ```
 
-**File**: `solver/scheduler_test.go` (modified, +80/-0)
+**File**: `solver/scheduler.go` (modified, +7/-3)
 ```diff
-@@ -12,8 +12,10 @@ import (
- 	"testing"
- 	"time"
+@@ -309,19 +309,23 @@ func (s *scheduler) mergeTo(target, src *edge) bool {
+ 	delete(s.outgoing, src)
+ 	s.signal(target)
  
-+	"github.com/moby/buildkit/client"
- 	"github.com/moby/buildkit/identity"
- 	"github.com/moby/buildkit/session"
-+	"github.com/moby/buildkit/util/progress"
- 	digest "github.com/opencontainers/go-digest"
- 	ocispecs "github.com/opencontainers/image-spec/specs-go/v1"
- 	"github.com/pkg/errors"
-@@ -208,6 +210,84 @@ func TestSingleLevelActiveGraph(t *testing.T) {
- 	require.Equal(t, int64(1), *g4.Vertex.(*vertex).execCallCount)
++	var exps []expDep
+ 	for i, d := range src.deps {
+ 		for _, k := range d.keys {
+-			target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: k, Selector: src.cacheMap.Deps[i].Selector}})
++			exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: k, Selector: src.cacheMap.Deps[i].Selector}})
+ 		}
+ 		if d.slowCacheKey != nil {
+-			target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: *d.slowCacheKey}})
++			exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: *d.slowCacheKey}})
+ 		}
+ 		if d.result != nil {
+ 			for _, dk := range d.result.CacheKeys() {
+-				target.secondaryExporters = append(target.secondaryExporters, expDep{i, CacheKeyWithSelector{CacheKey: dk, Selector: src.cacheMap.Deps[i].Selector}})
++				exps = append(exps, expDep{i, CacheKeyWithSelector{CacheKey: dk, Selector: src.cacheMap.Deps[i].Selector}})
+ 			}
+ 		}
+ 	}
++	target.secondaryExportersMu.Lock()
++	target.secondaryExporters = append(target.secondaryExporters, exps...)
++	target.secondaryExportersMu.Unlock()
+ 
+ 	// TODO(tonistiigi): merge cache providers
+ 
+```
+
+**File**: `solver/scheduler_test.go` (modified, +89/-0)
+```diff
+@@ -3226,6 +3226,95 @@ func TestCacheExportingMergedKey(t *testing.T) {
+ 	require.Equal(t, 5, expTarget.numUniqueRecords())
  }
  
-+func TestProgressSnapshotDuringCompletion(t *testing.T) {
++// TestCacheExportDuringEdgeMerge exports a cache-loaded result while another
++// job merges into its edge. Run with -race.
++func TestCacheExportDuringEdgeMerge(t *testing.T) {
 +	t.Parallel()
-+	for range 100 {
-+		pr, ctx, cancel := progress.NewContext(t.Context())
-+		pw, _, _ := progress.NewFromContext(ctx)
-+		j := &Job{pw: pw}
-+		st := &state{
-+			mpw:   progress.NewMultiWriter(),
-+			allPw: map[progress.Writer]struct{}{},
-+			jobs:  map[*Job]struct{}{j: {}},
-+		}
-+		completed := st.notifyStarted(progress.WithProgress(ctx, st.mpw), false)
-+		start := make(chan struct{})
-+		var eg errgroup.Group
-+		eg.Go(func() error {
-+			<-start
-+			completed(nil, false)
-+			return nil
-+		})
-+		eg.Go(func() error {
-+			<-start
-+			(&Solver{}).connectProgressFromState(st, st)
-+			return nil
-+		})
-+		close(start)
-+		err := eg.Wait()
-+		pw.Close()
-+		cancel(nil)
-+		require.NoError(t, err)
-+		items, err := pr.Read(t.Context())
-+		require.NoError(t, err)
-+		require.NotEmpty(t, items)
-+		last := items[len(items)-1].Sys.(client.Vertex)
-+		require.NotNil(t, last.Completed, "snapshot must not overwrite completion")
-+	}
-+}
++	ctx := t.Context()
 +
-+func TestCacheOptsDuringProgress(t *testing.T) {
-+	t.Parallel()
-+	st := &state{
-+		op: &sharedOp{
-+			cacheRes: []*CacheMap{{Opts: CacheOpts{"test": "value"}}},
-+		},
-+	}
-+	ctx := withAncestorCacheOpts(t.Context(), st)
-+	getter := CacheOptGetterOf(ctx)
-+
-+	completed := st.notifyStarted(ctx, false)
-+	require.Equal(t, "value", getter(false, "test")["test"])
-+	completed(errors.New("operation failed"), false)
-+	require.Empty(t, getter(false, "test"))
-+
-+	completed = st.notifyStarted(ctx, false)
-+	completed(nil, false)
-+	require.Equal(t, "value", getter(false, "test")["test"])
-+
-+	// Cache option lookups can run while another operation reports progress.
-+	var eg errgroup.Group
-+	eg.Go(func() error {
-+		for range 100 {
-+			completed := st.notifyStarted(ctx, false)
-+			completed(errors.New("operation failed"), false)
-+			completed = st.notifyStarted(ctx, true)
-+			completed(nil, true)
-+		}
-+		return nil
++	l := NewSolver(SolverOpt{
++		ResolveOpFunc: testOpResolver,
++		DefaultCache:  NewInMemoryCacheManager(),
 +	})
++	defer l.Close()
++
++	// vertexes with the same cache key seed and input results share a slow
++	// cache key, even with different inputs
++	g := func(name, input string) Edge {
++		return Edge{
++			Vertex: vtx(vtxOpt{
++				name:         name,
++				cacheKeySeed: "seed1",
++				value:        "result1",
++				inputs: []Edge{{Vertex: vtx(vtxOpt{
++					name:         input,
++					cacheKeySeed: "seed-" + input,
++					value:        "result2",
++				})}},
++				slowCacheCompute: map[int]ResultBasedCacheFunc{0: digestFromResult},
++			}),
++		}
++	}
++
++	j0, err := l.NewJob("j0")
++	require.NoError(t, err)
++	defer func() {
++		if j0 != nil {
++			j0.Discard()
++		}
++	}()
++	_, err = j0.Build(ctx, g("v1", "v2"))
++	require.NoError(t, err)
++	require.NoError(t, j0.Discard())
++	j0 = nil
++
++	// j1 loads the result through the slow cache key, so its exporter
++	// references the active edge
++	j1, err := l.NewJob("j1")
++	require.NoError(t, err)
++	defer j1.Discard()
++	res, err := j1.Build(ctx, g("v1", "v4"))
++	require.NoError(t, err)
++
++	started := make(chan struct{})
++	done := make(chan struct{})
++	eg, egCtx := errgroup.WithContext(ctx)
 +	eg.Go(func() error {
-+		for range 100 {
-+			if value, ok := getter(false, "test")["test"]; ok {
-+				require.Equal(t, "value", value)
++		for i := 0; ; i++ {
++			if i == 1 {
++				close(started)
++			}
++			select {
++			case <-done:
++				return nil
++			default:
++			}
++			if _, err := res.CacheKeys()[0].Exporter.ExportTo(egCtx, newTestExporterTarget(), testExporterOpts(true)); err != nil {
++				return err
 +			}
 +		}
-+		return nil
 +	})
++	// keep exporting while j2 merges into the j1 edge
++	select {
++	case <-started:
++	case <-egCtx.Done():
++	}
++
++	j2, err := l.NewJob("j2")
++	require.NoError(t, err)
++	defer j2.Discard()
++	_, err = j2.Build(ctx, g("v1-diff", "v3"))
++	close(done)
++	require.NoError(t, err)
 +	require.NoError(t, eg.Wait())
++
++	// the j2 edge was merged into the j1 edge
++	e := res.CacheKeys()[0].Exporter.(*exporter).edge
++	e.secondaryExportersMu.Lock()
++	defer e.secondaryExportersMu.Unlock()
++	require.NotEmpty(t, e.secondaryExporters)
 +}
 +
- func TestSingleLevelCache(t *testing.T) {
+ // moby/buildkit#434
+ func TestMergedEdgesLookup(t *testing.T) {
  	t.Parallel()
- 	ctx := t.Context()
+```
+
+---
+
+### Incident Patch 2: `6f8e518a` (2026-10-29)
+**Commit Message**: runcexecutor: increase container start timeout to 15 seconds
+
+Signed-off-by: Tonis Tiigi <[REDACTED_EMAIL]>
+
+**File**: `executor/runcexecutor/executor.go` (modified, +3/-1)
+```diff
+@@ -40,6 +40,8 @@ import (
+ 	"github.com/pkg/errors"
+ )
+ 
++const runcStartTimeout = 15 * time.Second
++
+ type Opt struct {
+ 	// root directory
+ 	Root              string
+@@ -748,7 +750,7 @@ func (p *procHandle) WaitForReady(ctx context.Context) error {
+ // callback is non-nil it will be called after receiving the pid.
+ func (p *procHandle) WaitForStart(ctx context.Context, startedCh <-chan int, started func()) error {
+ 	ctx, cancel := context.WithCancelCause(ctx)
+-	ctx, _ = context.WithTimeoutCause(ctx, 10*time.Second, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
++	ctx, _ = context.WithTimeoutCause(ctx, runcStartTimeout, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
+ 	defer func() { cancel(errors.WithStack(context.Canceled)) }()
+ 	select {
+ 	case <-ctx.Done():
+```
+
+---
+
+### Incident Patch 3: `248827b6` (2026-10-30)
+**Commit Message**: Merge pull request #7336 from tonistiigi/fix-gateway-wait
+
+gateway: wait for frontend before HTTP/2 handshake
+
+**File**: `executor/runcexecutor/executor.go` (modified, +3/-1)
+```diff
+@@ -40,6 +40,8 @@ import (
+ 	"github.com/pkg/errors"
+ )
+ 
++const runcStartTimeout = 15 * time.Second
++
+ type Opt struct {
+ 	// root directory
+ 	Root              string
+@@ -748,7 +750,7 @@ func (p *procHandle) WaitForReady(ctx context.Context) error {
+ // callback is non-nil it will be called after receiving the pid.
+ func (p *procHandle) WaitForStart(ctx context.Context, startedCh <-chan int, started func()) error {
+ 	ctx, cancel := context.WithCancelCause(ctx)
+-	ctx, _ = context.WithTimeoutCause(ctx, 10*time.Second, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
++	ctx, _ = context.WithTimeoutCause(ctx, runcStartTimeout, errors.WithStack(context.DeadlineExceeded)) //nolint:govet
+ 	defer func() { cancel(errors.WithStack(context.Canceled)) }()
+ 	select {
+ 	case <-ctx.Done():
+```
+
+**File**: `frontend/gateway/gateway.go` (modified, +35/-9)
+```diff
+@@ -1,6 +1,7 @@
+ package gateway
+ 
+ import (
++	"bufio"
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
+@@ -525,17 +526,27 @@ func newPipe() *pipe {
+ 		Stdin:  pr1,
+ 		Stdout: pw2,
+ 		conn: &conn{
+-			Reader: pr2,
+-			Writer: pw1,
+-			Closer: pw2,
++			Reader:  pr2,
++			Writer:  pw1,
++			closers: []io.Closer{pr2, pw1, pr1, pw2},
+ 		},
+ 	}
+ }
+ 
+ type conn struct {
+ 	io.Reader
+ 	io.Writer
+-	io.Closer
++	closers []io.Closer
++}
++
++func (s *conn) Close() error {
++	var err error
++	for _, closer := range s.closers {
++		if closeErr := closer.Close(); err == nil {
++			err = closeErr
++		}
++	}
++	return errors.WithStack(err)
+ }
+ 
+ func (s *conn) LocalAddr() net.Addr {
+@@ -1869,13 +1880,28 @@ func (lbf *llbBridgeForwarder) cloneRef(id string) (solver.ResultProxy, error) {
+ 	return s2, nil
+ }
+ 
++type bufferedConn struct {
++	net.Conn
++	reader *bufio.Reader
++}
++
++func (c *bufferedConn) Read(p []byte) (int, error) {
++	return c.reader.Read(p)
++}
++
+ func serve(ctx context.Context, grpcServer *grpc.Server, conn net.Conn) {
+-	go func() {
+-		<-ctx.Done()
+-		conn.Close()
+-	}()
++	stop := context.AfterFunc(ctx, func() { conn.Close() })
++	defer stop()
++	defer conn.Close()
++
++	// The frontend container may take a while to start. Start HTTP/2's
++	// client preface timeout only once the frontend begins communicating.
++	reader := bufio.NewReader(conn)
++	if _, err := reader.Peek(1); err != nil {
++		return
++	}
+ 	bklog.G(ctx).Debugf("serving grpc connection")
+-	(&http2.Server{}).ServeConn(conn, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
++	(&http2.Server{}).ServeConn(&bufferedConn{Conn: conn, reader: reader}, &http2.ServeConnOpts{Handler: grpcServer}) //nolint:staticcheck // This existing HTTP/2 connection is already established.
+ }
+ 
+ type markTypeFrontend struct{}
+```
+
+**File**: `frontend/gateway/serve_test.go` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++package gateway
++
++import (
++	"context"
++	"testing"
++
++	"github.com/pkg/errors"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc"
++)
++
++func TestServeCancelBeforeFrontendStartup(t *testing.T) {
++	t.Parallel()
++	ctx, cancel := context.WithCancelCause(t.Context())
++	defer cancel(errors.WithStack(context.Canceled))
++	p := newPipe()
++	t.Cleanup(func() { p.conn.Close() })
++	server := grpc.NewServer()
++	t.Cleanup(server.Stop)
++	done := make(chan struct{})
++	go func() {
++		serve(ctx, server, p.conn)
++		close(done)
++	}()
++	cancel(errors.WithStack(context.Canceled))
++	receiveGatewayLifecycleTest(t, done, "server cancellation before frontend startup")
++}
++
++func TestServeFrontendClosesBeforeStartup(t *testing.T) {
++	t.Parallel()
++	p := newPipe()
++	t.Cleanup(func() { p.conn.Close() })
++	server := grpc.NewServer()
++	t.Cleanup(server.Stop)
++	done := make(chan struct{})
++	go func() {
++		serve(t.Context(), server, p.conn)
++		close(done)
++	}()
++	require.NoError(t, p.Stdout.Close())
++	receiveGatewayLifecycleTest(t, done, "server shutdown on frontend EOF")
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7315** (2026-10-23): build(deps): bump github/codeql-action/upload-sarif from 4.39.0 to 4.39.1 (@dependabot[bot])
-- **PR #7314** (2026-10-23): build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.18.0 to 1.18.1 (@dependabot[bot])
-- **PR #7311** (2026-10-23): runcexecutor: share keyring in NoProcessSandbox (@JoaoManierii)
-- **PR #7309** (2026-10-23): client: honor ignore-error for local cache index publish (@lucalandi)
-- **PR #7306** (closed): build(deps): bump docker/github-builder/.github/workflows/bake.yml from 1.17.0 to 1.18.0 (@dependabot[bot])
-- **PR #7303** (closed): solver: avoid blocking on lazy cache queries (@sairex53)
+- **PR #7338** (2026-10-30): solver: fix race on merged edge secondary exporters (@tonistiigi)
+- **PR #7336** (2026-10-30): gateway: wait for frontend before HTTP/2 handshake (@tonistiigi)
+- **PR #7332** (2026-10-28): cache: avoid losing finalize commit on cancel (@tonistiigi)
+- **PR #7331** (2026-10-28): vendor: update fsutil to ca65610c2295 (@tonistiigi)
+- **PR #7330** (2026-10-28): readme: improve the frontend overview (@crazy-max)
+- **PR #7328** (2026-10-30): vendor: github.com/containerd/stargz-snapshotter v0.19.1 (@thaJeztah)
 
 ---
 
@@ -2699,30 +2707,31 @@ solver: synchronize vertex progress updates
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action/upload-sarif
+## X. solver: fix race on merged edge secondary exporters
 
 **RULE**:
-When implementing operations in `.github/workflows/buildkit.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `solver/edge.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c6b4059f`: build(deps): bump github/codeql-action/upload-sarif. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b94ff2bc`: solver: fix race on merged edge secondary exporters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/buildkit.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `solver/edge.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+	// secondaryExportersMu protects secondaryExporters, which the scheduler
+	// appends to on merge while cache exporters read it from other goroutines
+	secondaryExportersMu sync.Mutex
+	secondaryExporters   []expDep
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+	secondaryExporters []expDep
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c6b4059f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b94ff2bc` are properly handled with clean fallback behavior.

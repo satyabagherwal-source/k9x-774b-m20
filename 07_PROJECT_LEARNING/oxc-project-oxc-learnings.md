@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `3fbef5ba`  
+> **Source Version**: `d14dbd1e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:01:04.095Z  
+> **Timestamp**: 2026-10-31T15:49:40.898Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:01:03.886Z  
+> **Harvest Timestamp**: 2026-10-31T15:49:40.705Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23223 stars
+- **Stars / Engagement**: 23284 stars
 
 ---
 
@@ -42,12 +42,7 @@
 // `oxfmt` CLI - Worker Thread Entry Point
 
 // Re-exports core functions for use in `worker_threads`
-export {
-  formatEmbeddedCode,
-  formatEmbeddedDoc,
-  formatFile,
-  sortTailwindClasses,
-} from "./libs/apis";
+export { formatEmbeddedDoc, formatFile, sortTailwindClasses } from "./libs/apis";
 
 ```
 
@@ -58,7 +53,6 @@ import { toFormatFileResult, toNullable } from "../libs/napi-callbacks";
 import type { FormatFileResult } from "../libs/napi-callbacks";
 import type {
   FormatFileParam,
-  FormatEmbeddedCodeParam,
   FormatEmbeddedDocParam,
   SortTailwindClassesArgs,
 } from "../libs/apis";
@@ -119,19 +113,6 @@ export function formatFile(
 }
 
 // ---
-
-export function formatEmbeddedCode(
-  options: FormatEmbeddedCodeParam["options"],
-  code: string,
-): Promise<string | null> {
-  return toNullable(
-    getPool().then((pool) =>
-      pool.run({ options, code } satisfies FormatEmbeddedCodeParam, {
-        name: "formatEmbeddedCode",
-      }),
-    ),
-  );
-}
 
 export function formatEmbeddedDoc(
   options: FormatEmbeddedDocParam["options"],
@@ -1008,24 +989,31 @@ use std::sync::{Arc, OnceLock};
 
 use tracing::{debug, debug_span};
 
-use oxc_formatter::{CssInJsTemplate, JsEmbeddedIn, JsFormatOptions, MarkdownInJsTemplate};
+use oxc_formatter::{
+    CssInJsTemplate, HtmlInJsTemplate, JsEmbeddedIn, JsFormatOptions, MarkdownInJsTemplate,
+};
 use oxc_formatter_core::{
     DispatchRequest, DispatchResponse, EmbeddedIr, FormatDispatcher, FormatSession,
 };
 use oxc_formatter_core::{FormatOptions, PrinterOptions};
-use oxc_formatter_css::{CssFormatOptions, CssVariant};
+use oxc_formatter_css::{CssEmbeddedIn, CssFormatOptions, CssVariant};
 use oxc_formatter_graphql::GraphqlFormatOptions;
+use oxc_formatter_htmlish::{
+    CssInHtmlStyleAttribute, HtmlishEmbeddedIn, HtmlishFormatOptions, HtmlishVariant,
+    JsInHtmlEventHandler,
+};
 use oxc_formatter_json::{JsonFormatOptions, JsonVariant};
 use oxc_formatter_markdown::{MarkdownFormatOptions, XxxInMarkdownCodeBlock};
 use oxc_formatter_toml::TomlFormatOptions;
 use oxc_formatter_yaml::YamlFormatOptions;
 
+use super::jsdoc_fence::XxxInJsdocFence;
 use crate::core::{
     language::{Route, route_embedded},
     options::{
         ValidatedOptions, to_oxc_formatter, to_oxc_formatter_css, to_oxc_formatter_graphql,
-        to_oxc_formatter_json, to_oxc_formatter_markdown, to_oxc_formatter_toml,
-        to_oxc_formatter_yaml,
+        to_oxc_formatter_htmlish, to_oxc_formatter_json, to_oxc_formatter_markdown,
+        to_oxc_formatter_toml, to_oxc_formatter_yaml,
     },
     oxfmtrc::FormatConfig,
     support::{NativeLanguage, PrettierLanguage},
@@ -1056,13 +1044,14 @@ pub struct ResolvedDispatchConfig {
     json: [OnceLock<JsonFormatOptions>; 4],
     markdown: OnceLock<MarkdownFormatOptions>,
     toml: OnceLock<TomlFormatOptions>,
+    htmlish: OnceLock<HtmlishFormatOptions>,
     /// The options handed to Prettier; see [`PrettierOptions`].
     #[cfg(feature = "napi")]
     prettier: PrettierOptions,
 }
 
 /// The lazily-built options JSON handed to Prettier (+ plugins),
-/// consumed by the Doc→IR / string paths and the Tailwind sorter.
+/// consumed by the Doc→IR path and the Tailwind sorter.
 /// `path` is an ingredient, not a sibling datum: it becomes the JSON's `filepath` at last
 /// (see [`crate::core::options::build_prettier_options`]).
 ///
@@ -1090,6 +1079,7 @@ impl ResolvedDispatchConfig {
             json: [OnceLock::new(), OnceLock::new(), OnceLock::new(), OnceLock::new()],
             markdown: OnceLock::new(),
             toml: OnceLock::new(),
+            htmlish: OnceLock::new(),
             #[cfg(feature = "napi")]
             prettier: PrettierOptions::default(),
         }
@@ -1177,6 +1167,13 @@ impl ResolvedDispatchConfig {
         *self.toml.get_or_init(|| to_oxc_formatter_toml(&self.config, self.validated.core))
     }
 
+    pub fn htmlish_options(&self, variant: HtmlishVariant) -> HtmlishFormatOptions {
+        let options = self
+            .htmlish
+            .get_or_init(|| to_oxc_formatter_htmlish(&self.config, self.validated.core));
+        HtmlishFormatOptions { variant, ..options.clone() }
+    }
+
     /// Printer options from the shared resolved core bundle;
     /// the fence adapter ([`super::jsdoc_fence`]) derives its per-fence options from these
     /// (width overridden to the fence's effective width).
@@ -1205,22 +1202,7 @@ impl ResolvedDispatchConfig {
     /// [`Self::prettier_options`] for one `language`: its parser, plus the payload of the plugin it needs.
     /// `None` when that plugin is not enabled (svelte / astro without the config key): the part stays as-is.
     pub fn prettier_options_for(&self, language: PrettierLanguage) -> Option<serde_json::Value> {
-        if language.missing_plugin(&self.config).is_some() {
-            return None;
-        }
-
-        let mut options = self.prettier_options().clone();
-        crate::core::options::inject_parser(&mut options, language.parser());
-        // e.g. svelte-in-md (a ```svelte code block), svelte-in-mdx-in-md
-        crate::core::options::inject_opt_in_plugin_payloads(&mut options, language, &self.config);
-        Some(options)
-    }
-
-    /// The options JSON handed to Prettier
-    /// (see [`crate::core::options::build_prettier_options`]).
-    pub fn prettier_options(&self) -> &serde_json::Value {
-        self.prettier.options.get_or_init(|| {
-           
+        if language.missing_plugin(&self.config)
 ```
 
 
@@ -1229,11 +1211,13 @@ impl ResolvedDispatchConfig {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28156** (2026-10-25): **chore(deps): update dependency serialize-javascript to v7.1.3**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [serialize-javascript](https://redirect.github.com/yahoo/serialize-javascript) | [`7.1.2` → `7.1.3`](https://renovatebot.com/diffs/npm/serialize-javascript/7.1.2/7.1.3) | ![age](https://developer.mend.io/api/mc/badges/age/npm/serialize-javascript/7.1.3?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/serialize-javascript/7.1.3?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/serialize-javascript/7.1.2/7.1.3?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/serialize-javascript/7.1.2/7.1.3?slim=true) |  ---  ### Release Notes  <details> <summary>yahoo/serialize-javascript (serialize-javascript)</summary>  ### [`v7.1.3`](https://redirect.github.com/yahoo/serialize-javascript/releases/tag/v7.1.3)  [Compare Source](https://redirect.github.com/yahoo/serialize-javascript/compare/v7.1.2...v7.1.3)  See: <https://github.com/yahoo/serialize-javascript/security/advisories/GHSA-m5mm-p8h7-m29v>  #### What's Changed  - fix: escape `</script` at the end of a serialized function body by [@&#8203;redonkulus](https://redirect.github.com/redonkulus) in [#&#8203;235](https://redi
+- **Issue #28570** (2026-10-31): **chore(deps): update rust crate napi to v3.16.1**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [napi](https://redirect.github.com/napi-rs/napi-rs) | workspace.dependencies | patch | `3.16.0` → `3.16.1` |  ---  ### Release Notes  <details> <summary>napi-rs/napi-rs (napi)</summary>  ### [`v3.16.1`](https://redirect.github.com/napi-rs/napi-rs/releases/tag/napi-v3.16.1)  [Compare Source](https://redirect.github.com/napi-rs/napi-rs/compare/napi-v3.16.0...napi-v3.16.1)  ##### Fixed  - *(napi)* avoid a deadlock when a worker loads the addon during `block_on` ([#&#8203;3670](https://redirect.github.com/napi-rs/napi-rs/pull/3670))  </details>  ---  ### Configuration  📅 **Schedule**: (in timezone Asia/Shanghai)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR is behind base branch, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/oxc-project/oxc). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xODguMiIsInVwZGF0ZWRJblZlciI6IjQ0LjE4OC4yIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6W119--> 
 
-- **Issue #28155** (2026-10-26): **oxlint: under Bun, output through a pipe stops silently at 64 KiB (WouldBlock treated as end of output)**
-  *Symptoms*: ## Versions  - oxlint 1.89.0 (npm package: `node_modules/.bin/oxlint` → `dist/cli.js`) - Bun 1.4.4+38afee6c8, macOS 15.7.7 arm64 (pipe buffer 64 KiB) - Node 25.2.1 for comparison  ## Reproduction  ```sh mkdir repro && cd repro bun init -y bun add oxlint@1.89.0 for i in $(seq 3000); do echo 'debugger;'; done > many.js  bun node_modules/.bin/oxlint --format json | wc -c    # 65536, exit 0 bun node_modules/.bin/oxlint --format json > out.json  # 960969 bytes, exit 0 node node_modules/.bin/oxlint --format json | wc -c   # 960973 ```  Under Bun, the piped report ends mid-JSON at exactly 65,536 bytes. Nothing goes to stderr, and oxlint exits 0 (`no-debugger` is a warning), so a CI step or a script reading the pipe cannot tell the report is incomplete. With an error-level finding the exit code is 1 as it should be, but the list of diagnostics is still cut.  ## Cause  `dist/cli.js` makes stdio blocking before it hands over to the native linter:  ```js process.stdout.isTTY || (process.stdin._handle?.setBlocking?.(!0), process.stdout._handle?.setBlocking?.(!0)) ```  `_handle.setBlocking` is a Node internal. Bun has no `process.stdout._handle`, so the optional chain does nothing. Like libuv, Bun makes a piped fd 1 `O_NONBLOCK` once `process.stdout` is used; a probe holding the pipe's write end saw the flag set while the Bun process ran. The native writer then gets `EAGAIN` as soon as the pipe buffer is full, and since #20295 `check_for_writer_error` treats `WouldBlock` as benign, so the
+- **Issue #28568** (2026-10-31): **refactor(compiler,linter): reuse parenthesized type normalization**
+  *Symptoms*: Normalize transparent type parentheses before classification and metadata serialization. Implemented with AI.  ---  <sub>Stack created with <a href="https://github.com/github/gh-stack">GitHub Stacks CLI</a> • <a href="https://gh.io/stacks-feedback">Give Feedback 💬</a></sub>
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 82` untouched benchmarks   `⏩ 14` skipped benchmarks[^skipped]        ---  <sub>Comparing <code>ast-helper-reuse/parenthesized-types</code> (5680060) with <code>ast-helper-reuse/private-member-keys</code> (c7c6a28)</sub>  <a href="https://app.codspeed.io/oxc-project/oxc/branches/ast-helper-reuse%2Fparenthesized-types?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>   [^skipped]: 14 benchmarks were skipped, so the baseline results were used instead. If they were deleted from the codebase, [click he
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1250,229 +1234,327 @@ impl ResolvedDispatchConfig {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3fbef5ba` (2026-10-25)
-**Commit Message**: refactor(minifier): use ast helpers for enum tests (#28148)
+### Incident Patch 1: `987d5f14` (2026-10-30)
+**Commit Message**: fix(linter/unicorn/no-invalid-fetch-options): avoid treating unknown methods as GET (#28547)
 
-**File**: `crates/oxc_minifier/src/peephole/fold_constants.rs` (modified, +2/-2)
-```diff
-@@ -11,7 +11,7 @@ use oxc_ecmascript::{
- use oxc_semantic::IsGlobalReference;
- use oxc_span::{GetSpan, SPAN};
- use oxc_str::JSStr;
--use oxc_syntax::operator::{AssignmentOperator, BinaryOperator, LogicalOperator};
-+use oxc_syntax::operator::{BinaryOperator, LogicalOperator};
- 
- use crate::{TraverseCtx, generated::ancestor::Ancestor};
- 
-@@ -1209,7 +1209,7 @@ pub(super) fn is_cjs_module_exports_hint(expr: &Expression<'_>) -> bool {
-     let Expression::AssignmentExpression(assign) = expr else {
-         return false;
-     };
--    assign.operator == AssignmentOperator::Assign
-+    assign.operator.is_assign()
-         && assign
-             .left
-             .as_member_expression()
-```
+Treat unresolved `method` identifier bindings as unknown instead of retaining the default `GET` method. This avoids false positives for contextually typed destructured parameters and unannotated parameters, matching `eslint-plugin-unicorn`.
 
-**File**: `crates/oxc_minifier/src/peephole/inline.rs` (modified, +3/-7)
-```diff
-@@ -220,7 +220,7 @@ impl<'a> PeepholeOptimizations {
-                     matches!(
-                         prop,
-                         ObjectPropertyKind::ObjectProperty(p)
--                            if matches!(p.kind, PropertyKind::Set | PropertyKind::Get)
-+                            if p.kind.is_accessor()
-                                 || Self::expression_has_setter_or_getter(&p.value)
-                                 // `{ __proto__: ... }` sets the prototype chain and could
-                                 // install setters that make property writes side-effectful.
-@@ -267,11 +267,7 @@ impl<'a> PeepholeOptimizations {
-                     // A static getter OR setter makes a write to that key throw in
-                     // strict mode (a get-only accessor has no [[Set]]; a setter runs
-                     // on write), so neither is a droppable fresh-value write.
--                    || (method.r#static
--                        && matches!(
--                            method.kind,
--                            MethodDefinitionKind::Set | MethodDefinitionKind::Get
--                        ))
-+                    || (method.r#static && method.kind.is_accessor())
-             }
-             // `static accessor foo` auto-generates a getter+setter pair.
-             ClassElement::AccessorProperty(prop) => prop.r#static || !prop.decorators.is_empty(),
-@@ -295,7 +291,7 @@ impl<'a> PeepholeOptimizations {
-                 matches!(
-                     prop,
-                     ObjectPropertyKind::ObjectProperty(p)
--                        if matches!(p.kind, PropertyKind::Set | PropertyKind::Get)
-+                        if p.kind.is_accessor()
-                             || Self::expression_has_setter_or_getter(&p.value)
-                 )
-             }),
-```
+Add six regression cases covering these bindings with both `fetch()` and `new Request()`. Existing diagnostics for known `GET` and `HEAD` methods remain unchanged.
 
-**File**: `crates/oxc_minifier/src/peephole/minimize_conditional_expression.rs` (modified, +1/-1)
-```diff
-@@ -219,7 +219,7 @@ impl<'a> PeepholeOptimizations {
- 
-         // `a ? c : b && c` => `(a || b) && c`
-         if let Expression::LogicalExpression(logical_expr) = &mut expr.alternate
--            && logical_expr.operator == LogicalOperator::And
-+            && logical_expr.operator.is_and()
-             && ctx.expr_eq(&logical_expr.right, &expr.consequent)
-         {
-             let mut new_logical = logical_expr.take_in_box(ctx);
-```
+Fixes #27772
 
-**File**: `crates/oxc_minifier/src/peephole/minimize_conditions.rs` (modified, +1/-1)
+**File**: `crates/oxc_linter/src/rules/unicorn/no_invalid_fetch_options.rs` (modified, +11/-1)
 ```diff
-@@ -163,7 +163,7 @@ impl<'a> PeepholeOptimizations {
-         match expr {
-             Expression::Identifier(id) => Some(id),
-             Expression::AssignmentExpression(assign_expr) => {
--                if assign_expr.operator == AssignmentOperator::Assign
-+                if assign_expr.operator.is_assign()
-                     && let AssignmentTarget::AssignmentTargetIdentifier(id) = &assign_expr.left
-                 {
-                     return Some(id);
-```
-
-**File**: `crates/oxc_minifier/src/peephole/minimize_statements.rs` (modified, +2/-3)
-```diff
-@@ -355,8 +355,7 @@ impl<'a> PeepholeOptimizations {
-             };
-             if kind.name == id.name {
-                 if decl.init.is_none()
--                    && (declaration_kind == VariableDeclarationKind::Var
--                        || assign_expr.right.is_literal_value(true, ctx))
-+                    && (declaration_kind.is_var() || assign_expr.right.is_literal_value(true, ctx))
-                 {
-                     // "var a; a = b();" => "var a = b();"
-                     decl.init = Some(assign_expr.right.take_in(ctx));
-@@ -1356,7 +1355,7 @@ impl<'a> PeepholeOptimizations {
+@@ -239,7 +239,9 @@ fn is_invalid_fetch_options<'a>(
+                                 }
+                             }
+                         }
+-                        _ => {}
++                        _ => {
++                            method_name = UNKNOWN_METHOD_NAME;
++                        }
+                     }
                  }
-             }
-             Expression::UnaryExpression(unary_expr) => {
--                if unary_expr.operator != UnaryOperator::Delete
-+                if !unary_expr.operator.is_delete()
-                     && let Some(changed) = Self::substitute_single_use_symbol_in_expression(
-                         &mut unary_expr.argument,
-                         search_for,
+                 _ => {
+@@ -337,6 +339,14 @@ fn test() {
+         (r#"new Request("/url", { method: (options).method, body: "some body" });"#),
+         r#"enum M { A = "\uD800" } fetch(u, {method: M.A, body: "x"})"#,
+         r#"enum M { A = "\uD800", B = "GET" } fetch(u, {method: M.A, body: "x"})"#,
++        r#"type Handler = (input: { body?: string; method: string }) => Promise<Response>;
++        export const contextual: Handler = ({ body, method }) => fetch("/", { body, method });"#,
++        r#"type Handler = (input: { body?: string; method: string }) => Request;
++        export const contextual: Handler = ({ body, method }) => new Request("/", { body, method });"#,
++        r#"function request({ body, method }) { return fetch("/", { body, method }); }"#,
++        r#"function request({ body, method }) { return new Request("/", { body, method }); }"#,
++        r#"function request(method) { return fetch("/", { method, body: "foo=bar" }); }"#,
++        r#"function request(method) { return new Request("/", { method, body: "foo=bar" }); }"#,
+     ];
+ 
+     let fail = vec![
 ```
 
-**File**: `crates/oxc_minifier/src/peephole/normalize.rs` (modified, +2/-2)
+---
+
+### Incident Patch 2: `eaa8e900` (2026-10-30)
+**Commit Message**: fix(ecmascript): avoid numeric `+` folding when an operand may be a string (#28544)
+
+## Summary
+
+The constant evaluator used numeric addition whenever either operand was statically known to be numeric. An operand with an unknown static type can still evaluate to a string, so `(!1 || "5") + 1` was evaluated as `6` instead of `"51"`.
+
+The minifier can create that intermediate shape when it rewrites `true ? "5" : true` before recording a `const` value, then inline the incorrect cached value.
+
+This change only uses numeric or BigInt addition when both operands are known not to be strings. When either type is unknown, it evaluates the operands to primitive values and applies `+` to those values.
+
+fixes #28521
+
+**File**: `crates/oxc_ecmascript/src/constant_evaluation/mod.rs` (modified, +56/-23)
 ```diff
-@@ -54,7 +54,7 @@ impl<'a> Normalize {
- impl<'a> Traverse<'a> for Normalize {
-     fn exit_program(&mut self, node: &mut Program<'a>, _ctx: &mut TraverseCtx<'a>) {
-         if self.options.remove_unnecessary_use_strict && node.source_type.is_module() {
--            node.directives.drain_filter(|d| d.directive.as_str() == "use strict");
-+            node.directives.drain_filter(|d| d.is_use_strict());
+@@ -234,30 +234,37 @@ fn binary_operation_evaluate_value_to<'a>(
+             use crate::to_primitive::ToPrimitive;
+             let left_to_primitive = left.to_primitive(ctx);
+             let right_to_primitive = right.to_primitive(ctx);
+-            if left_to_primitive.is_string() == Some(true)
+-                || right_to_primitive.is_string() == Some(true)
+-            {
+-                let lval = left.evaluate_value_to_string(ctx)?;
+-                let rval = right.evaluate_value_to_string(ctx)?;
+-                // Concatenation repairs a surrogate pair split across the operand boundary.
+-                return Some(ConstantValue::String(JSStr::from_js_strs_array_in(
+-                    [lval, rval],
+-                    ctx,
+-                )));
+-            }
+-            let left_to_numeric_type = left_to_primitive.to_numeric(ctx);
+-            let right_to_numeric_type = right_to_primitive.to_numeric(ctx);
+-            if left_to_numeric_type.is_number() || right_to_numeric_type.is_number() {
+-                let lval = left.evaluate_value_to_number(ctx)?;
+-                let rval = right.evaluate_value_to_number(ctx)?;
+-                return Some(ConstantValue::Number(lval + rval));
+-            }
+-            if left_to_numeric_type.is_bigint() && right_to_numeric_type.is_bigint() {
+-                let lval = left.evaluate_value_to_bigint(ctx)?;
+-                let rval = right.evaluate_value_to_bigint(ctx)?;
+-                return Some(ConstantValue::BigInt(lval + rval));
++            match (left_to_primitive.is_string(), right_to_primitive.is_string()) {
++                (Some(true), _) | (_, Some(true)) => {
++                    let lval = left.evaluate_value_to_string(ctx)?;
++                    let rval = right.evaluate_value_to_string(ctx)?;
++                    // Concatenation repairs a surrogate pair split across the operand boundary.
++                    Some(ConstantValue::String(JSStr::from_js_strs_array_in([lval, rval], ctx)))
++                }
++                (Some(false), Some(false)) => {
++                    let left_to_numeric_type = left_to_primitive.to_numeric(ctx);
++                    let right_to_numeric_type = right_to_primitive.to_numeric(ctx);
++                    if left_to_numeric_type.is_number() && right_to_numeric_type.is_number() {
++                        let lval = left.evaluate_value_to_number(ctx)?;
++                        let rval = right.evaluate_value_to_number(ctx)?;
++                        return Some(ConstantValue::Number(lval + rval));
++                    }
++                    if left_to_numeric_type.is_bigint() && right_to_numeric_type.is_bigint() {
++                        let lval = left.evaluate_value_to_bigint(ctx)?;
++                        let rval = right.evaluate_value_to_bigint(ctx)?;
++                        return Some(ConstantValue::BigInt(lval + rval));
++                    }
++                    None
++                }
++                // An operand of unknown type may still evaluate to a string, which makes `+`
++                // concatenate. Use the evaluated primitive values instead. Evaluate the right
++                // operand first so an unknown operand in a left-nested chain bails out early.
++                _ => {
++                    let rval = right.evaluate_value(ctx)?;
++                    let lval = left.evaluate_value(ctx)?;
++                    add_primitive_values(lval, rval, ctx)
++                }
+             }
+-            None
          }
-     }
- 
-@@ -680,7 +680,7 @@ impl<'a> Normalize {
-                 .map(|scope_id| ctx.scoping().scope_flags(scope_id))
-                 .is_some_and(ScopeFlags::is_strict_mode)
-         {
--            body.directives.drain_filter(|d| d.directive.as_str() == "use strict");
-+            body.directives.drain_filter(|d| d.is_use_strict());
-         }
+         BinaryOperator::Subtraction => {
+             let lval = left.evaluate_value_to_number(ctx)?;
+@@ -433,6 +440,32 @@ fn binary_operation_evaluate_value_to<'a>(
      }
  }
+ 
++/// Apply `+` to primitive values.
++///
++/// <https://tc39.es/ecma262/#sec-applystringornumericbinaryoperator>
++fn add_primitive_values<'a>(
++    left: ConstantValue<'a>,
++    right: ConstantValue<'a>,
++    ctx: &impl ConstantEvaluationCtx<'a>,
++) -> Option<ConstantValue<'a>> {
++    match (left, right) {
++        (ConstantValue::String(lval), rval) => {
++            let rval = rval.into_js_str(ctx)?;
++            Some(ConstantValue::String(JSStr::from_js_strs_array_in([lval, rval], ctx)))
++        }
++        (lval, ConstantValue::String(rval)) => {
++            let lval = lval.into_js_str(ctx)?;
++            Some(ConstantValue::String(JSStr::from_js_strs_array_in([lval, rval], ctx)))
++        }
++        (ConstantValue::BigInt(lval), ConstantValue::BigInt(rval)) => {
++            Some(ConstantValue::BigInt(lval + rval))
++        }
++        // Mixing BigInt and other numeric values throws.
++        (ConstantValue::BigInt(_), _) | (_, ConstantValue::BigInt(_)) => None,
++        (lval, rval) => Some(ConstantValue::Number(lval.to_number(ctx)? + rval.to_number(ctx)?)),
++    }
++}
++
+ impl<'a> ConstantEvaluation<'a> for LogicalExpression<'a> {
+     fn evaluate_value_to(
+         &self,
 ```
 
-**File**: `crates/oxc_minifier/src/peephole/substitute_alternate_syntax.rs` (modified, +1/-1)
+**File**: `crates/oxc_minifier/tests/peephole/inline.rs` (modified, +12/-0)
 ```diff
-@@ -1174,7 +1174,7 @@ impl<'a> PeepholeOptimizations {
-             // `BigInt(1n)` -> `1n`
-             "BigInt" => match arg {
-                 None => None,
--                Some(arg) => matches!(arg, Expression::BigIntLiteral(_)).then(|| arg.take_in(ctx)),
-+                Some(arg) => arg.is_big_int_literal().then(|| arg.take_in(ctx)),
-             },
-             _ => None,
-         };
+@@ -602,6 +602,18 @@ fn r#const() {
+ 
+     test_options("let foo = 1; log(foo)", "log(1)", &options);
+     test_options("export let foo = 1; log(foo)", "export let foo = 1; log(1)", &options);
++
++    // A constant with a statically unknown type can still be a string.
++    test_options(
++        "function f() { const y = (true ? '5' : true) + 1; return [y, y]; } log(f());",
++        "function f() { return ['51', '51']; } log(f());",
++        &options,
++    );
++    test_options(
++        "function f() { const y = (true ? '5' : true) + null; return [y, y]; } log(f());",
++        "function f() { let y = '5null'; return [y, y]; } log(f());",
++        &options,
++    );
+ }
+ 
+ // https://github.com/oxc-project/oxc/issues/20282
+```
+
+**File**: `tasks/track_memory_allocations/allocs_minifier.yaml` (modified, +2/-2)
+```diff
+@@ -66,9 +66,9 @@ binder.ts:
+ 
+ kitchen-sink.tsx:
+   file size: 732898 # 732.90 kB
+-  sys allocs: 354
++  sys allocs: 356
+   sys reallocs: 174
+-  sys deallocs: 354
++  sys deallocs: 356
+   sys alloc bytes: 5284342 # 5.28 MB
+   sys peak growth: 3707425 # 3.71 MB
+   arena allocs: 31100
 ```
 
 ---
 
-### Incident Patch 2: `1a377316` (2026-10-25)
-**Commit Message**: chore(deps): update dependency serialize-javascript to v7.1.3 (#28156)
+### Incident Patch 3: `a205cd3e` (2026-10-30)
+**Commit Message**: fix(linter/eslint/no-control-regex): detect raw control characters (#28548)
 
-This PR contains the following updates:
+Report raw control characters in regex literals and strings passed to `RegExp`, matching ESLint on the reported cases.
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Adoption](https://docs.renovatebot.com/merge-confidence/) |
-[Passing](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|---|---|
-|
-[serialize-javascript](https://redirect.github.com/yahoo/serialize-javascript)
-| [`7.1.2` →
-`7.1.3`](https://renovatebot.com/diffs/npm/serialize-javascript/7.1.2/7.1.3)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/serialize-javascript/7.1.3?slim=true)
-|
-![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/serialize-javascript/7.1.3?slim=true)
-|
-![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/serialize-javascript/7.1.2/7.1.3?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/serialize-javascript/7.1.2/7.1.3?slim=true)
-|
+Compare the source character with its code point and restrict capture-group filtering to octal escapes so raw controls remain visible. Add regression coverage for raw controls and preserve the existing octal escape behavior and diagnostics.
 
----
+Fixes #28276
 
-### Release Notes
-
-<details>
-<summary>yahoo/serialize-javascript (serialize-javascript)</summary>
-
-###
-[`v7.1.3`](https://redirect.github.com/yahoo/serialize-javascript/releases/tag/v7.1.3)
-
-
-
-**File**: `pnpm-lock.yaml` (modified, +4/-4)
+**File**: `crates/oxc_linter/src/rules/eslint/no_control_regex.rs` (modified, +60/-15)
 ```diff
-@@ -372,7 +372,7 @@ importers:
-         version: 1.2.14
-       serialize-javascript:
-         specifier: ^7.0.4
--        version: 7.1.2
-+        version: 7.1.3
-       tsdown:
-         specifier: 'catalog:'
-         version: 0.23.1(@arethetypeswrong/core@0.18.5)(publint@0.3.24)(tsx@4.23.15)(typescript@6.0.3)
-@@ -5856,8 +5856,8 @@ packages:
-     resolution: {integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ==}
-     engines: {node: '>= 18'}
+@@ -21,7 +21,6 @@ fn no_control_regex_diagnostic(control_chars: &[Character]) -> OxcDiagnostic {
+                     )
+                 }
+                 _ => {
+-                    // Show the code point since the character itself is not printable
+                     format!("'U+{:04X}' is a control character.", ch.value)
+                 }
+             };
+@@ -118,32 +117,27 @@ struct ControlCharacterFinder<'a> {
+ impl<'a> Visit<'a> for ControlCharacterFinder<'a> {
+     fn visit_pattern(&mut self, it: &Pattern<'a>) {
+         walk::walk_pattern(self, it);
+-        // \1, \2, etc. are sometimes valid "control" characters as they can be
+-        // used to reference values from capturing groups. Note in this case
+-        // they're not actually control characters. However, if there's no
+-        // corresponding capturing group, they _are_ invalid control characters.
+-        //
+-        // Some important notes:
+-        // 1. Capture groups are 1-indexed.
+-        // 2. Capture groups can be nested.
+-        // 3. Capture groups may be referenced before they are defined. This is
+-        //    why we need to do this check here, instead of filtering inside of
+-        //    visit_character.
+         if self.num_capture_groups > 0 && !self.control_chars.is_empty() {
+-            self.control_chars.retain(|c| !(c.value > 0x01 && c.value <= self.num_capture_groups));
++            self.control_chars.retain(|c| {
++                !(matches!(
++                    c.kind,
++                    CharacterKind::Octal1 | CharacterKind::Octal2 | CharacterKind::Octal3
++                ) && c.value > 0x01
++                    && c.value <= self.num_capture_groups)
++            });
+         }
+     }
  
--  serialize-javascript@7.1.2:
--    resolution: {integrity: sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==}
-+  serialize-javascript@7.1.3:
-+    resolution: {integrity: sha512-kYEnegpAxWFjUw3dSYdSM9zVlTrsxDbsSkq/qd3B7VanqyJ+JdDy6qVyuqVGBhSfuD/rLZQEKuXsO5KZFCrVYQ==}
-     engines: {node: '>=20.0.0'}
+     fn visit_character(&mut self, ch: &Character) {
+-        // Control characters are in the range 0x00 to 0x1F
+         if ch.value <= 0x1F && ch.kind != CharacterKind::Null {
+             let text: &str = ch.span.source_text(self.source_text);
+             let is_code_point_match = text
+                 .trim_start_matches('\\')
+                 .chars()
+                 .nth(0)
+                 .is_some_and(|c| c.to_digit(16) == Some(ch.value));
+-            if is_code_point_match
++            if text.chars().next().is_some_and(|c| u32::from(c) == ch.value)
++                || is_code_point_match
+                 || text.starts_with("\\x")
+                 || text.starts_with("\\\\x")
+                 || text.starts_with("\\u")
+@@ -165,6 +159,57 @@ mod tests {
+     use super::*;
+     use crate::tester::Tester;
  
-   seroval-plugins@1.3.3:
-@@ -11575,7 +11575,7 @@ snapshots:
-     transitivePeerDependencies:
-       - supports-color
- 
--  serialize-javascript@7.1.2: {}
-+  serialize-javascript@7.1.3: {}
- 
-   seroval-plugins@1.3.3(seroval@1.3.2):
-     dependencies:
++    #[test]
++    fn test_raw_control_characters() {
++        let pass = vec![
++            "/ /",
++            "new RegExp(' ')",
++            r"/\t\n\r\f\v\0/",
++            r"new RegExp('\\t\\n\\r\\f\\v\\0')",
++            "/\\\x08/",
++        ];
++        let fail = vec![
++            "/\x00/",
++            "/a\x01b/",
++            "/\x08import/",
++            "/\t/",
++            "/\x0b/",
++            "/\x0c/",
++            "/a\x1fb/",
++            "/[\x08]/u",
++            "new RegExp('\x08import')",
++            "RegExp('\x08import')",
++            "new RegExp('\x00')",
++            "new RegExp('\t')",
++            "new RegExp('a\x1fb')",
++            "/(a)(b)\x02/",
++            "new RegExp('(a)(b)\x02')",
++        ];
++
++        Tester::new(NoControlRegex::NAME, NoControlRegex::PLUGIN, pass, fail).test();
++    }
++
++    #[test]
++    fn test_octal_escape_behavior() {
++        let pass = vec![
++            r"/\01/",
++            r"/\10/",
++            r"/(a)(b)[\2]/",
++            r"new RegExp('\\01')",
++            r"new RegExp('(a)(b)[\\2]')",
++        ];
++        let fail = vec![
++            r"/\1/",
++            r"/\2/",
++            r"/\00/",
++            r"/\000/",
++            r"new RegExp('\\1')",
++            r"new RegExp('\\00')",
++        ];
++
++        Tester::new(NoControlRegex::NAME, NoControlRegex::PLUGIN, pass, fail).test();
++    }
++
+     #[test]
+     fn test_hex_literals() {
+         let pass = vec![
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28156** (2026-10-25): chore(deps): update dependency serialize-javascript to v7.1.3 (@renovate[bot])
-- **PR #28152** (2026-10-25): chore(deps): update npm packages (@renovate[bot])
-- **PR #28149** (2026-10-25): perf(minifier): reuse is_error_constructor and simplify substitute_global_new_expression (@armano2)
-- **PR #28148** (2026-10-25): refactor(minifier): use ast helpers for enum tests (@armano2)
-- **PR #28139** (2026-10-23): perf(parser): move annotation comment handling out of hot paths (@camc314)
-- **PR #28138** (2026-10-23): fix(linter): use the type-aware rule's severity when another plugin has a rule with the same name (@NavpreetSSidhu)
+- **PR #28570** (2026-10-31): chore(deps): update rust crate napi to v3.16.1 (@renovate[bot])
+- **PR #28568** (2026-10-31): refactor(compiler,linter): reuse parenthesized type normalization (@camchenry)
+- **PR #28567** (2026-10-31): refactor(minifier,transformer): reuse private key helpers (@camchenry)
+- **PR #28566** (2026-10-31): refactor(compiler,linter): reuse formal parameter counts (@camchenry)
+- **PR #28565** (2026-10-31): refactor(linter): reuse member expression extraction (@camchenry)
+- **PR #28564** (2026-10-31): refactor(linter,react-compiler): reuse assignment target expression helper (@camchenry)
 
 ---
 
@@ -1492,30 +1574,38 @@ This PR contains the following updates:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. minifier): use ast helpers for enum tests (#28148)
+## X. linter/unicorn/no-invalid-fetch-options): avoid treating unknown methods as GET 
 
 **RULE**:
-When implementing operations in `crates/oxc_minifier/src/peephole/fold_constants.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/unicorn/no_invalid_fetch_options.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3fbef5ba`: minifier): use ast helpers for enum tests (#28148). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `987d5f14`: linter/unicorn/no-invalid-fetch-options): avoid treating unknown methods as GET (#28547). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_minifier/src/peephole/fold_constants.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/unicorn/no_invalid_fetch_options.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use oxc_syntax::operator::{BinaryOperator, LogicalOperator};
-    assign.operator.is_assign()
+                        _ => {
+                            method_name = UNKNOWN_METHOD_NAME;
+                        }
+        r#"type Handler = (input: { body?: string; method: string }) => Promise<Response>;
+        export const contextual: Handler = ({ body, method }) => fetch("/", { body, method });"#,
+        r#"type Handler = (input: { body?: string; method: string }) => Request;
+        export const contextual: Handler = ({ body, method }) => new Request("/", { body, method });"#,
+        r#"function request({ body, method }) { return fetch("/", { body, method }); }"#,
+        r#"function request({ body, method }) { return new Request("/", { body, method }); }"#,
+        r#"function request(method) { return fetch("/", { method, body: "foo=bar" }); }"#,
+        r#"function request(method) { return new Request("/", { method, body: "foo=bar" }); }"#,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-use oxc_syntax::operator::{AssignmentOperator, BinaryOperator, LogicalOperator};
-    assign.operator == AssignmentOperator::Assign
+                        _ => {}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3fbef5ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `987d5f14` are properly handled with clean fallback behavior.

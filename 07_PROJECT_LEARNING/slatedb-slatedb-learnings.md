@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `811dd4cd`  
+> **Source Version**: `0c22c032`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:11:22.268Z  
+> **Timestamp**: 2026-10-31T15:42:53.388Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:11:21.464Z  
+> **Harvest Timestamp**: 2026-10-31T15:42:53.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3588 stars
+- **Stars / Engagement**: 3604 stars
 
 ---
 
@@ -307,6 +307,7 @@ pub fn build_settings_compactor(rng: &mut impl Rng) -> CompactorOptions {
         metric_level: None,
         commit_compacted_interval: rng
             .random_range(Duration::from_millis(1)..Duration::from_secs(5)),
+        enable_experimental_incremental_compaction: rng.random_bool(0.5),
         checkpoint_lifetime: CompactorOptions::default().checkpoint_lifetime,
         worker_heartbeat_timeout,
         object_store_max_retries: None,
@@ -383,10 +384,7 @@ pub fn build_toxic(rand: &DbRand, root_path: &str, index: usize) -> Toxic {
                     jitter: Duration::from_millis(rng.random_range(0_u64..=15)),
                 },
                 direction,
-                rng.random_range(0.35..=0.95),
-            )
-        }
-        5..=6 
+           
 ```
 
 ### Core Architecture Module: `slatedb/src/compaction_worker.rs`
@@ -644,8 +642,10 @@ use ulid::Ulid;
 
 use crate::db_state::{SortedRun, SsTableHandle, SsTableView};
 use crate::error::SlateDBError;
+use crate::incremental_progress::IncrementalProgress;
 use crate::manifest::{Manifest, ManifestCore};
-use crate::subcompaction::Subcompaction;
+use crate::subcompaction::{Subcompaction, SubcompactionStatus};
+use slatedb_common::DbRand;
 use slatedb_txn_obj::DirtyObject;
 
 /// Identifier for a compaction input source.
@@ -817,6 +817,12 @@ impl CompactionSpec {
         matches!(self, CompactionSpec::DrainSegment(_))
     }
 
+    /// Returns whether this job reuses an input run as its destination.
+    pub(crate) fn reuses_input_run(&self) -> bool {
+        self.destination()
+            .is_some_and(|id| self.sources().contains(&SourceId::SortedRun(id)))
+    }
+
     /// Returns true if any of the compaction sources are L0 SST views.
     pub fn has_l0_sources(&self) -> bool {
         self.sources()
@@ -883,15 +889,7 @@ pub enum CompactionStatus {
     /// submission, or a reload of `.compactions`.
     Submitted,
     /// The coordinator has validated the spec against the current manifest
-    /// and promoted it; the job is ready to be claimed by a worker. Only the
-    /// coordinator writes this state.
-    Scheduled,
-    /// The compaction is currently running.
-    Running,
-    /// The worker finished execution and wrote its output SSTs; the
-    /// coordinator has not yet committed the result to the manifest.
-    Compacted,
-    /// The compaction finished 
+    /// and promoted it; the jo
 ```
 
 ### Core Architecture Module: `slatedb/src/compactor_state_protocols.rs`
@@ -1364,72 +1362,54 @@ impl SsTableView {
         &self.effective_range
     }
 
+    /// Returns the part of `range` that this view keeps when a projection narrows its
+    /// sorted run, or `None` if the view keeps nothing.
+    ///
+    /// `next_view` is the next view in the same sorted run. It is `None` for the last
+    /// view of a run and for L0 views, which can overlap. The result covers these cases:
+    /// - No next view: the view's own effective range, cut to `range`.
+    /// - Next view: the keys from this view's start up to the start of the next view,
+    ///   cut to `range`.
+    /// - Shared boundary key: if this view also contains the first key of the next
+    ///   view, the result includes that key. Two adjacent SSTs can split the versions
+    ///   of one key, for example `[a, m]` followed by `[m, z]`.
+    /// - Gap before the next view: the result stays inside the visible range of this
+    ///   view. An incremental commit can leave a view `[a, g)` before a view that
+    ///   starts at `m`, and the result must not show `[g, m)` again.
+    ///
+    /// TODO: If every SST records `last_entry`, this function can return
+    /// `self.effective_range.intersect(range)` and no longer needs `next_view`.
     pub(crate) fn compacted_intersection(
         &self,
         next_view: Option<&SsTableView>,
         range: &BytesRange,
     ) -> Option<BytesRange> {
         if let Some(next_view) = next_view {
-            BytesRange::new(
-                self.compacted_effective_start_bound(),
-                Excluded(next_view.compacted_effective_start_key().clone()),
-            )
-            .intersect(range)
+            let next_key = next_view.compacted_effective_start_key();
+            let end = if self.effective_range.contains(next_key) {
+                Included(next_key.clone())
+            } else {
+                Excluded(next_key.clone())
+            };
+            let intersection =
+                BytesRange::new(self.compacted_effective_start_bound(), end).intersect(range)?;
+            // A new projection must preserve gaps from earlier projections.
+            match &self.visible_range {
+                Some(visible) => intersection.intersect(visible),
+                None => Some(intersection),
+            }
         } else {
             self.effective_range.intersect(range)
         }
     }
 
-    pub(crate) fn intersects_range(&self, end_bound: Bound<Bytes>, range: &BytesRange) -> bool {
-        let sst_range =
-            BytesRange::new(Unbounded, end_bound.clone()).intersect(&self.effective_range);
-        match sst_range {
-            Some(sst_range) => BytesRange::new(sst_range.start_bound().cloned(), end_bound)
-                .intersect(range)
-                .is_some(),
-            None => false,
-        }
-    }
-
-    /// Calculate the view range for the given range.
+    /// Point-key form of [`Self::intersects_range`]: equivalent to
+    /// `self.intersects_range(end_bound, &BytesRange::from_slice(key..=key))`
+    /// without building or cloning any range.
     ///
-    /// This method determines the effective range that can be accessed within an SST by:
-    /// 1. Intersecting the requested range with the effective range
-    /// 2. Returning None if the requested range does not overlap with the effective range
-    pub(crate) fn calculate_view_range(&self, range: BytesRange) -> Option<BytesRange> {
-        if let Some(visible_range) = &self.visible_range {
-            return range.intersect(visible_range);
-        }
-        if self.sst.info.last_entry.is_some() {
-            return range.intersect(&self.effective_range);
-        }
-        Some(range)
-    }
-
-    /// Returns an estimate of the underlying SST's on-disk size in bytes.
-    pub fn estimate_size(&self) -> u64 {
-        self.sst.estimate_size()
-    }
-
-    pub(crate) fn estimate_visible_size(&self) -> u64 {
-        const MIN_ESTIMATED_SIZE_BYTES: f64 = 1.0;
-
-        let raw_size = self.sst.estimate_size();
-        if self.visible_range.is_none() {
-            return raw_size;
-        }
-        let fraction = self.visible_fraction();
-        ((raw_size as f64) * fraction)
-            .round()
-            .max(MIN_ESTIMATED_SIZE_BYTES) as u64
-    }
-
-    /// This function finds the size of the visible part of a file:
-    /// - Compares the start and end keys of the file and the view.
-    /// - Skips the bytes that are equal and reads the bytes after them.
-    /// - Uses these bytes to find the fraction of the full file size.
-    fn visible_fraction(&self) -> f64 {
-        const FULL_VISIBLE_
+    /// As there, `end_bound` replaces the view's own end, so a key in the gap
+    /// between this view's last key and `end_bound` still intersects.
+    pub(crate) fn intersects_point(&self, end_bound: Bound<&[u8]>, key: &[u8]) -> b
 ```
 
 ### Core Architecture Module: `slatedb/src/utils.rs`
@@ -2367,45 +2347,148 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `811dd4cd` (2026-10-22)
-**Commit Message**: Add Atomix to list of adopters (#2188)
+### Incident Patch 1: `8e62aeeb` (2026-10-30)
+**Commit Message**: Bug fix for issue causing database corruption through panic (#2181)
 
 **File**: `README.md` (modified, +1/-0)
 ```diff
-@@ -153,6 +153,7 @@ SlateDB follows Semantic Versioning. We release new versions approximately every
- See who's using SlateDB.
+@@ -150,6 +150,7 @@ See who's using SlateDB.
  
  - [4og.io](https://4og.io)
-+- [Atomix](https://www.atomix.com)
+ - [Atomix](https://www.atomix.com)
++- [Cloudmersive](https://cloudmersive.com)
  - [Dropbox](https://www.dropbox.com)
  - [Embucket](https://www.embucket.com)
  - [Gadget](https://gadget.dev)
 ```
 
----
-
-### Incident Patch 2: `3e30522d` (2026-10-22)
-**Commit Message**: Add to adopters section (#2187)
-
-**File**: `README.md` (modified, +1/-0)
+**File**: `slatedb/src/seq_tracker.rs` (modified, +276/-62)
 ```diff
-@@ -160,6 +160,7 @@ See who's using SlateDB.
- - [HelixDB](https://github.com/HelixDB/helix-db)
- - [Malstrom](https://github.com/MalstromDevelopers/malstrom)
- - [Massive](https://massive.com)
-+- [Mav9](https://mav9.com)
- - [Merklemap](https://merklemap.com)
- - [OpenData](https://www.opendata.dev)
- - [Prisma](https://www.prisma.io)
+@@ -10,8 +10,16 @@ const DEFAULT_CAPACITY: u32 = 8192;
+ /// Default reporting interval in seconds (60 seconds)
+ const DEFAULT_INTERVAL_SECS: u64 = 60;
+ 
+-/// Version number for the serialization format
+-const SERIALIZATION_VERSION: u8 = 1;
++/// Serialization format version 1. The Gorilla fallback slot holds 32 bits, so this
++/// version can only store a delta-of-delta in the `i32` range.
++const SERIALIZATION_VERSION_V1: u8 = 1;
++
++/// Serialization format version 2. The Gorilla fallback slot holds 64 bits.
++///
++/// The encoder writes version 2 only when a delta-of-delta is outside the `i32` range.
++/// Version 1 cannot store that data correctly. All other trackers stay in version 1, so
++/// older readers can still read them.
++const SERIALIZATION_VERSION_V2: u8 = 2;
+ 
+ #[derive(PartialEq, Clone, Copy)]
+ pub(crate) struct TrackedSeq {
+@@ -219,20 +227,31 @@ impl<'de> Deserialize<'de> for SequenceTracker {
+ fn encode_sequence_tracker(tracker: &SequenceTracker) -> Vec<u8> {
+     let mut result = Vec::new();
+ 
++    // Each series is walked once: the delta-of-deltas both choose the format version and feed
++    // the encoder. The sequence numbers are bit-cast to i64 as they stream through, so no
++    // converted copy of the array is made.
++    let sequences = DeltaSeries::new(tracker.sequence_numbers.iter().map(|&x| x as i64));
++    let timestamps = DeltaSeries::new(tracker.timestamps.iter().copied());
++
++    // Use version 2 only when version 1 cannot store a delta-of-delta.
++    let wide_fallback = sequences.needs_wide_fallback() || timestamps.needs_wide_fallback();
++
+     // Write version (u8)
+-    result.push(SERIALIZATION_VERSION);
++    result.push(if wide_fallback {
++        SERIALIZATION_VERSION_V2
++    } else {
++        SERIALIZATION_VERSION_V1
++    });
+ 
+     // Write length (as u32, little-endian)
+     let len = tracker.sequence_numbers.len() as u32;
+     result.extend_from_slice(&len.to_le_bytes());
+ 
+     // Encode sequence numbers using Gorilla encoding
+-    let encoded_seqs = encode_sequence_numbers(&tracker.sequence_numbers);
+-    result.extend_from_slice(&encoded_seqs);
++    result.extend_from_slice(&encode_gorilla_i64(&sequences, wide_fallback));
+ 
+     // Encode timestamps using Gorilla encoding
+-    let encoded_timestamps = encode_timestamps(&tracker.timestamps);
+-    result.extend_from_slice(&encoded_timestamps);
++    result.extend_from_slice(&encode_gorilla_i64(&timestamps, wide_fallback));
+ 
+     result
+ }
+@@ -247,9 +266,11 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+ 
+     // Read version
+     let version = buf[offset];
+-    if version != SERIALIZATION_VERSION {
+-        return Err(format!("Unsupported version: {}", version));
+-    }
++    let wide_fallback = match version {
++        SERIALIZATION_VERSION_V1 => false,
++        SERIALIZATION_VERSION_V2 => true,
++        _ => return Err(format!("Unsupported version: {}", version)),
++    };
+     offset += 1;
+ 
+     // Read length
+@@ -263,7 +284,8 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+     offset += 4;
+ 
+     // Decode sequence numbers
+-    let (encoded_seq_len, sequence_numbers) = decode_sequence_numbers_with_length(&buf[offset..])?;
++    let (encoded_seq_len, sequence_numbers) =
++        decode_sequence_numbers_with_length(&buf[offset..], wide_fallback)?;
+     if sequence_numbers.len() != len {
+         return Err(format!(
+             "Expected {} sequence numbers, got {}",
+@@ -274,7 +296,7 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+     offset += encoded_seq_len;
+ 
+     // Decode timestamps
+-    let timestamps = decode_timestamps(&buf[offset..])?;
++    let timestamps = decode_timestamps(&buf[offset..], wide_fallback)?;
+     if timestamps.len() != len {
+         return Err(format!(
+             "Expected {} timestamps, got {}",
+@@ -294,23 +316,74 @@ fn decode_sequence_tracker(buf: &[u8]) -> Result<SequenceTracker, String> {
+     Ok(tracker)
+ }
+ 
++/// A series prepared for Gorilla encoding: its first value, stored in full, and the
++/// delta-of-delta of every later value. Built once per series, because the delta-of-deltas both
++/// choose the format version and feed the encoder.
++///
++/// The arithmetic wraps. Sequence numbers are `u64` values cast to `i64`, so a delta can be
++/// outside the `i64` range. Wrapping keeps the encode and decode round trip exact.
++struct DeltaSeries {
++    first: Option<i64>,
++    dods: Vec<i64>,
++    /// True when a delta-of-delta is outside the range of the 32-bit fallback slot. Decided
++    /// while the delta-of-deltas are produced, so no second pass over them is needed.
++    needs_wide_fallback: bool,
++}
++
++impl DeltaSeries {
++    fn new(values: impl IntoIterator<Item = i64>) -> Self {
++        let mut values = values.into_iter();
++        let Some(first) = values.next() else {
++            return Self {
++                first: None,
++                dods: Vec::new(),
++                needs_wide_fa
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2189** (closed): Fix sequence tracker corruption when a delta-of-delta exceeds 32 bits (@zach-schoenberger)
-- **PR #2188** (2026-10-22): Add Atomix to list of adopters (@nomiero)
-- **PR #2187** (2026-10-22): Add to adopters section (@tom-mav9)
-- **PR #2185** (closed): Add Neon Object Storage example and tutorial (@rishi-raj-jain)
-- **PR #2184** (closed): Support seek for descending scans. Fixes #2069 (@PranavV205)
-- **PR #2183** (closed): fix(retrying_object_store): do not retry auth failures (@Tyagiquamar)
+- **PR #2208** (2026-10-30): Drop versions a memtable shadows at flush when the WAL is enabled (@sorenbs)
+- **PR #2207** (2026-10-29): Remove open PR contributions (@criccomini)
+- **PR #2205** (2026-10-30): RFC 0035 Incremental compaction impl (2/2) (@nomiero)
+- **PR #2203** (2026-10-29): Trim per-SST CPU on the point-lookup path (@zach-schoenberger)
+- **PR #2201** (2026-10-27): Regenerate Go bindings for status subscriptions (@criccomini)
+- **PR #2199** (2026-10-27): Defer SST path construction to cache-miss loaders (@zach-schoenberger)
 
 ---
 
@@ -2425,13 +2508,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add Atomix to list of adopters (#2188)
+## X. fix for issue causing database corruption through panic (#2181)
 
 **RULE**:
 When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `811dd4cd`: Add Atomix to list of adopters (#2188). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8e62aeeb`: fix for issue causing database corruption through panic (#2181). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
@@ -2439,7 +2522,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- [Atomix](https://www.atomix.com)
+- [Cloudmersive](https://cloudmersive.com)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2449,4 +2532,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `811dd4cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8e62aeeb` are properly handled with clean fallback behavior.

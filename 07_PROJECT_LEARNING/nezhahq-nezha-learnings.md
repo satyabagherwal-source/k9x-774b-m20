@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source**: github ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
-> **Source Version**: `15fa673c`  
+> **Source Version**: `3e7d9ba6`  
 > **License**: WTFPL  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:45:01.452Z  
+> **Timestamp**: 2026-10-30T11:17:21.680Z  
 > **Learning ID**: `learn-github-nezhahq-nezha`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:45:01.444Z  
+> **Harvest Timestamp**: 2026-10-30T11:12:19.576Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: :trollface: Self-hosted, lightweight server and website monitoring and O&M tool
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10371 stars
+- **Stars / Engagement**: 10383 stars
 
 ---
 
@@ -67,6 +67,13 @@ func openFsTransferStream(ctx context.Context, serverID uint64, req *model.FsTra
 	if server == nil || server.GetTaskStream() == nil {
 		return nil, func() {}, errors.New("server offline")
 	}
+	releaseControl, controlErr := singleton.BeginServerControlFromContext(ctx, serverID)
+	if controlErr != nil {
+		return nil, func() {}, controlErr
+	}
+	var controlOnce sync.Once
+	releaseAdmission := func() { controlOnce.Do(releaseControl) }
+	defer releaseAdmission()
 	handler := rpc.NezhaHandlerSingleton
 
 	streamID, err := uuid.GenerateUUID()
@@ -102,6 +109,7 @@ func openFsTransferStream(ctx context.Context, serverID uint64, req *model.FsTra
 		return nil, func() {}, err
 	}
 
+	releaseAdmission() // Registered streams are now covered by ownership revocation.
 	agentStream, ok := handler.WaitForAgent(ctx, streamID, 30*time.Second)
 	if !ok {
 		cleanup()
@@ -799,6 +807,25 @@ func recordToIPType(record string) string {
 
 ```
 
+### Core Architecture Module: `pkg/utils/bearer_credential.go`
+```
+package utils
+
+import "strings"
+
+// BearerCredential extracts a bearer token using HTTP's case-insensitive
+// authentication scheme rules. Authentication and NAT credential filtering
+// must use the same parser so a valid credential cannot bypass stripping.
+func BearerCredential(header string) string {
+	scheme, credential, ok := strings.Cut(strings.TrimSpace(header), " ")
+	if !ok || !strings.EqualFold(scheme, "Bearer") {
+		return ""
+	}
+	return strings.TrimSpace(credential)
+}
+
+```
+
 ### Core Architecture Module: `pkg/utils/bytes.go`
 ```
 package utils
@@ -903,202 +930,6 @@ func GjsonIter(json string) (iter.Seq2[string, string], error) {
 
 ```
 
-### Core Architecture Module: `pkg/utils/http.go`
-```
-package utils
-
-import (
-	"context"
-	"crypto/tls"
-	"errors"
-	"net"
-	"net/http"
-	"net/netip"
-	"net/url"
-	"time"
-)
-
-// HttpClient / HttpClientSkipTlsVerify must not be used to dispatch
-// requests to user-controlled URLs (SSRF risk, GHSA-6x26-5727-rrm9).
-// For any attacker-controlled URL use NewRestrictedHTTPClient instead.
-var (
-	HttpClientSkipTlsVerify *http.Client
-	HttpClient              *http.Client
-)
-
-var ErrHTTPURLTargetNotAllowed = errors.New("HTTP URL target is not allowed")
-
-var blockedHTTPClientCIDRs = mustParseHTTPClientCIDRs([]string{
-	"0.0.0.0/8",
-	"10.0.0.0/8",
-	"100.64.0.0/10",
-	"127.0.0.0/8",
-	"169.254.0.0/16",
-	"172.16.0.0/12",
-	"192.0.0.0/24",
-	"192.0.2.0/24",
-	"192.168.0.0/16",
-	"198.18.0.0/15",
-	"198.51.100.0/24",
-	"203.0.113.0/24",
-	"224.0.0.0/4",
-	"240.0.0.0/4",
-	"::/128",
-	"::1/128",
-	"::ffff:0:0/96",
-	"64:ff9b::/96",
-	"64:ff9b:1::/48",
-	"100::/64",
-	"2001::/23",
-	"2001:db8::/32",
-	"2002::/16",
-	"fc00::/7",
-	"fe80::/10",
-	"ff00::/8",
-})
-
-func init() {
-	HttpClientSkipTlsVerify = httpClient(_httpClient{
-		Transport: httpTransport(_httpTransport{
-			SkipVerifyTLS: true,
-		}),
-	})
-	HttpClient = httpClient(_httpClient{
-		Transport: httpTransport(_httpTransport{
-			SkipVerifyTLS: false,
-		}),
-	})
-
-	http.DefaultClient.Timeout = time.Minute * 10
-}
-
-type _httpTransport struct {
-	SkipVerifyTLS bool
-}
-
-func httpTransport(conf _httpTransport) *http.Transport {
-	return &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: conf.SkipVerifyTLS},
-		Proxy:           http.ProxyFromEnvironment,
-	}
-}
-
-type _httpClient struct {
-	Transport *http.Transport
-}
-
-func httpClient(conf _httpClient) *http.Client {
-	return &http.Client{
-		Transport: conf.Transport,
-		Timeout:   time.Minute * 10,
-	}
-}
-
-func NewRestrictedHTTPClient(rawURL string, skipVerifyTLS bool) (*http.Client, error) {
-	parsedURL, ip, err := ResolveAllowedHTTPURL(rawURL)
-	if err != nil {
-		return nil, err
-	}
-	return buildRestrictedHTTPClient(parsedURL, ip, skipVerifyTLS), nil
-}
-
-// buildRestrictedHTTPClient assembles a client whose DialContext is pinned to
-// the already-vetted IP. Separated from NewRestrictedHTTPClient so tests can
-// exercise the SNI / redirect behavior without relying on live DNS.
-func buildRestrictedHTTPClient(parsedURL *url.URL, ip net.IP, skipVerifyTLS bool) *http.Client {
-	port := parsedURL.Port()
-	if port == "" {
-		if parsedURL.Scheme == "https" {
-			port = "443"
-		} else {
-			port = "80"
-		}
-	}
-	// Pin outbound webhooks to the vetted IP so DNS changes cannot retarget private hosts.
-	targetAddress := net.JoinHostPort(ip.String(), port)
-	dialer := &net.Dialer{}
-
-	return &http.Client{
-		Transport: &http.Transport{
-			DialContext: func(ctx context.Context, network, address string) (net.Conn, error) {
-				return dialer.DialContext(ctx, network, targetAddress)
-			},
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: skipVerifyTLS, ServerName: parsedURL.Hostname()},
-		},
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-		Timeout: time.Minute * 10,
-	}
-}
-
-func ResolveAllowedHTTPURL(rawURL string) (*url.URL, net.IP, error) {
-	parsedURL, err := url.Parse(rawURL)
-	if err != nil {
-		return nil, nil, err
-	}
-	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
-		return nil, nil, ErrHTTPURLTargetNotAllowed
-	}
-
-	host := parsedURL.Hostname()
-	if host == "" {
-		return nil, nil, ErrHTTPURLTargetNotAllowed
-	}
-	if ip := net.ParseIP(host); ip != nil {
-		if !HTTPURLTargetIPAllowed(ip) {
-			return nil, nil, ErrHTTPURLTargetNotAllowed
-		}
-		return parsedURL, ip, nil
-	}
-
-	ips, err := net.LookupIP(host)
-	if err != nil {
-		return nil, nil, err
-	}
-	if len(ips) == 0 {
-		return nil, nil, ErrHTTPURLTargetNotAllowed
-	}
-	for _, ip := range ips {
-		if !HTTPURLTargetIPAllowed(ip) {
-			return nil, nil, ErrHTTPURLTargetNotAllowed
-		}
-	}
-
-	return parsedURL, ips[0], nil
-}
-
-func HTTPURLTargetIPAllowed(ip net.IP) bool {
-	parsedIP, ok := netipFromIP(ip)
-	if !ok {
-		return false
-	}
-	for _, cidr := range blockedHTTPClientCIDRs {
-		if cidr.Contains(parsedIP) {
-			return false
-		}
-	}
-	return parsedIP.IsGlobalUnicast()
-}
-
-func netipFromIP(ip net.IP) (netip.Addr, bool) {
-	parsedIP, ok := netip.AddrFromSlice(ip)
-	if !ok {
-		return netip.Addr{}, false
-	}
-	return parsedIP.Unmap(), true
-}
-
-func mustParseHTTPClientCIDRs(cidrs []string) []netip.Prefix {
-	prefixes := make([]netip.Prefix, 0, len(cidrs))
-	for _, cidr := range cidrs {
-		prefixes = append(prefixes, netip.MustParsePrefix(cidr))
-	}
-	return prefixes
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1131,94 +962,313 @@ func mustParseHTTPClientCIDRs(cidrs []string) []netip.Prefix {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15fa673c` (2026-10-25)
-**Commit Message**: test: cover embedded and local frontend path confinement
+### Incident Patch 1: `3e7d9ba6` (2026-10-29)
+**Commit Message**: feat: safely remove inactive custom frontends
+
+Update bundled admin frontend to v2.6.1 and official user frontend to v2.7.0.
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `cmd/dashboard/controller/frontend_path_security_test.go` (added, +72/-0)
+**File**: `cmd/dashboard/controller/frontend.go` (modified, +18/-0)
 ```diff
-@@ -0,0 +1,72 @@
-+package controller
+@@ -18,6 +18,7 @@ func registerFrontendRoutes(auth *gin.RouterGroup) {
+ 	frontends.GET("/releases", adminHandler(listFrontendReleases))
+ 	frontends.POST("/install", adminHandler(installFrontend))
+ 	frontends.POST("/activate", adminHandler(activateFrontend))
++	frontends.POST("/remove", adminHandler(removeFrontend))
+ }
+ 
+ type frontendStatus struct {
+@@ -122,3 +123,20 @@ func activateFrontend(c *gin.Context) (any, error) {
+ 	}
+ 	return nil, errors.New("frontend is not installed for the selected role")
+ }
 +
-+import (
-+	"net/http"
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+	"testing/fstest"
++// Remove frontend
++// @Summary Remove an inactive custom frontend and its files
++// @Security BearerAuth
++// @Tags admin required
++// @Accept json
++// @Param body body frontendActivateForm true "Installed frontend"
++// @Produce json
++// @Success 200 {object} model.CommonResponse[any]
++// @Router /frontend/remove [post]
++func removeFrontend(c *gin.Context) (any, error) {
++	var form frontendActivateForm
++	if err := c.ShouldBindJSON(&form); err != nil {
++		return nil, err
++	}
++	return nil, singleton.Conf.RemoveFrontend(form.Path, form.IsAdmin)
++}
+```
+
+**File**: `cmd/dashboard/controller/frontend_management_test.go` (modified, +48/-0)
+```diff
+@@ -96,6 +96,7 @@ func TestFrontendManagementRejectsUnauthorizedRolesAndScopes(t *testing.T) {
+ 				{"GET", "/api/v1/frontend/releases?repository=https://github.com/owner/site", ""},
+ 				{"POST", "/api/v1/frontend/install", `{"repository":"https://github.com/owner/site","tag":"v1"}`},
+ 				{"POST", "/api/v1/frontend/activate", `{"path":"installed-user"}`},
++				{"POST", "/api/v1/frontend/remove", `{"path":"installed-user"}`},
+ 			} {
+ 				response := frontendManagementRequest(t, router, endpoint.method, endpoint.path, endpoint.body)
+ 				var result model.CommonResponse[any]
+@@ -228,6 +229,7 @@ func TestFrontendManagementCSRFRejectsMissingAndForgedTokens(t *testing.T) {
+ 	for _, endpoint := range []struct{ path, body string }{
+ 		{"/api/v1/frontend/install", `{"repository":"https://github.com/owner/site","tag":"v1"}`},
+ 		{"/api/v1/frontend/activate", `{"path":"installed-user"}`},
++		{"/api/v1/frontend/remove", `{"path":"installed-user"}`},
+ 	} {
+ 		for _, token := range []string{"", "forged-csrf-token"} {
+ 			request := httptest.NewRequest("POST", endpoint.path, strings.NewReader(endpoint.body))
+@@ -374,3 +376,49 @@ func TestFrontendSwitchInvalidatesSameNameAssetCache(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+	"github.com/gin-gonic/gin"
-+	"github.com/nezhahq/nezha/model"
-+	"github.com/nezhahq/nezha/service/singleton"
-+	"github.com/stretchr/testify/require"
-+)
++func TestFrontendRemovalProtectsActiveAndBuiltinTemplates(t *testing.T) {
++	configPath := frontendManagementFixture(t)
++	router := frontendManagementRouter(&model.User{Role: model.RoleAdmin}, nil)
++	remove := func(body string, success bool) {
++		t.Helper()
++		response := frontendManagementRequest(t, router, "POST", "/api/v1/frontend/remove", body)
++		var result model.CommonResponse[any]
++		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &result), response.Body.String())
++		require.Equal(t, success, result.Success, response.Body.String())
++		if !success {
++			require.NotEmpty(t, result.Error)
++		}
++	}
++	for _, body := range []string{`{}`, `{"path":"user-dist"}`, `{"path":"admin-dist","is_admin":true}`, `{"path":"missing"}`, `{"path":"../config.yaml"}`, `{"path":"installed-admin"}`, `{"path":"installed-user","is_admin":true}`} {
++		remove(body, false)
++	}
++	for _, role := range []struct {
++		path  string
++		admin bool
++	}{{"installed-user", false}, {"installed-admin", true}} {
++		body, err := json.Marshal(frontendActivateForm{Path: role.path, IsAdmin: role.admin})
++		require.NoError(t, err)
++		response := frontendManagementRequest(t, router, "POST", "/api/v1/frontend/activate", string(body))
++		var activation model.CommonResponse[any]
++		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &activation))
++		require.True(t, activation.Success)
++		directory := filepath.Join(filepath.Dir(configPath), "frontends", role.path)
++		remove(string(body), false)
++		require.FileExists(t, filepath.Join(directory, "dist", "index.html"))
++		user, admin := "user-dist", "admin-dist"
++		require.NoError(t, singleton.Conf.CommitFrontendSelection(&user, &admin, singleton.Conf.Save))
++		remove(string(body), true)
++		require.NoDirExists(t, directory)
++		require.NoError(t, singleton.InitConfigFromPath(configPath))
++		for _, template := range singleton.Conf.AvailableFrontendTemplates() {
++			require.NotEqual(t, role.path, template.Path)
++		}
++		response = frontendManagementRequest(t, router, "POST", "/api/v1/frontend/activate", string(body))
++		activation = model.CommonResponse[any]{}
++		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &activation))
++		require.False(t, activation.Success)
++		require.Contains(t, activation.Error, "not installed")
++	}
++	require.FileExists(t, configPath)
++}
+```
+
+**File**: `docs/frontend-releases.md` (modified, +6/-0)
+```diff
+@@ -36,6 +36,12 @@ dist.zip
+ 
+ 若第三方管理前端无法正常使用，可使用管理员 PAT（`nezha:admin:*` scope）请求 `POST /api/v1/frontend/activate`，JSON 为 `{"path":"admin-dist","is_admin":true}`；也可停止面板，将配置中的 `admin_template` 改回 `admin-dist`，再启动。用户前端对应 `user-dist`。
+ 
++## 删除旧版本
 +
-+func TestFrontendPathConfinementForEmbeddedAndLocalOverrides(t *testing.T) {
-+	for _, mode := range []string{"embedded", "local-override"} {
-+		t.Run(mode, func(t *testing.T) {
-+			t.Chdir(t.TempDir())
-+			original := singleton.Conf
-+			singleton.Conf = &singleton.ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{UserTemplate: "user-dist", AdminTemplate: "admin-dist"}}}
-+			t.Cleanup(func() { singleton.Conf = original })
-+			files := fstest.MapFS{
-+				"user-dist/index.html":             &fstest.MapFile{Data: []byte("embedded user index")},
-+				"user-dist/assets/application.js":  &fstest.MapFile{Data: []byte("embedded user asset")},
-+				"admin-dist/index.html":            &fstest.MapFile{Data: []byte("embedded admin index")},
-+				"admin-dist/assets/application.js": &fstest.MapFile{Data: []byte("embedded admin asset")},
-+				"data/config.yaml":                 &fstest.MapFile{Data: []byte("outside-secret-canary")},
-+				"other-dist/private.txt":           &fstest.MapFile{Data: []byte("other-theme-canary")},
-+			}
-+			// Distinct contents prove local files are served instead of silently falling back to embedded files.
-+			expectedSource := "embedded "
-+			if mode == "local-override" {
-+				expectedSource = "local "
-+				for name, file := range files {
-+					require.NoError(t, os.MkdirAll(filepath.Dir(name), 0750))
-+					require.NoError(t, os.WriteFile(name, []byte(strings.ReplaceAll(string(file.Data), "embedded ", "local ")), 0600))
-+				}
-+				outside, err := filepath.Abs("data/config.yaml")
-+				require.NoError(t, err)
-+				for _, directory := range []string{"user-dist", "admin-dist"} {
-+					require.NoError(t, os.Symlink(outside, filepath.Join(directory, "outside-link.txt")))
-+				}
-+			}
-+			gin.SetMode(gin.TestMode)
-+			router := gin.New()
-+			router.NoRoute(fallbackToFrontend(files))
-+			for _, role := range []struct{ prefix, name string }{{"/", "user"}, {"/dashboard/", "admin"}} {
-+				valid := performFrontendFallbackRequest(t, router, role.prefix+"assets/application.js")
-+				require.Equal(t, http.StatusOK, valid.Code)
-+				require.Equal(t, expectedSource+role.name+" asset", valid.Body.String())
-+				attacks := []string{"../data/config.yaml", "../../data/config.yaml", "%2e%2e/data/config.yaml", "%2e%2e%2fdata/config.yaml", "%252e%252e/data/config.yaml", "..%5cdata%5cconfig.yaml", "../other-dist/private.txt", "../admin-dist/assets/application.js", "../user-dist/assets/application.js", "/etc/passwd", "C:/Windows/win.ini"}
-+				if mode == "local-override" {
-+					outside, err := filepath.Abs("data/config.yaml")
-+					require.NoError(t, err)
-+					attacks = append(attacks, "outside-link.txt", filepath.ToSlash(outside))
-+				}
-+				for _, attack := range attacks {
-+					response := performFrontendFallbackRequest(t, router, role.prefix+attack)
-+					require.Equal(t, http.StatusNotFound, response.Code, role.prefix+attack)
-+					require.Equal(t, expectedSource+role.name+" index", response.Body.String(), role.prefix+attack)
-+				}
-+			}
-+			for _, attack := range []string{"/dashboard../data/config.yaml", "/dashboard%2e%2e/data/config.yaml", "/dashboard%2e%2e%2fdata/config.yaml"} {
-+				response := performFrontendFallbackRequest(t, router, attack)
-+				require.Equal(t, http.StatusNotFound, response.Code, attack)
-+				require.Equal(t, expectedSource+"user index", response.Body.String(), attack)
-+			}
-+		})
++安装新版本不会自动删除旧版本。切换成功后，可在前端管理中删除不再需要的自定义版本；确认后同时清理安装目录和列表记录。当前启用的版本与内置前端不可删除，需要先切换到其他版本再删除。删除无法撤销，再次使用需重新安装。
++
++管理员也可请求 `POST /api/v1/frontend/remove`，JSON 为 `{"path":"安装记录中的 path","is_admin":false}`；管理前端使用 `is_admin:true`。接口要求管理员权限及 `nezha:admin:*` scope（使用 PAT 时），并与启用操作互斥，防止启用已删除的版本。
++
+ ## 开发与发版
+ 
+ 此功能需要配套的 `admin-frontend` 页面。正式发版时，先在管理前端仓库创建 tag 触发 release，再更新本仓库 `service/singleton/frontend-templates.yaml` 中管理前端的版本并构建面板。仅发布后端而继续嵌入旧管理前端，不会出现新的管理入口。
+```
+
+**File**: `pkg/frontend/store.go` (modified, +33/-0)
+```diff
+@@ -211,6 +211,39 @@ func (s *Store) Install(ctx context.Context, repository, tag string, admin bool)
+ 	return &template, nil
+ }
+ 
++// Remove deletes an inactive custom installation; callers must serialize selection
++// changes with this operation and reject currently selected templates.
++func (s *Store) Remove(id string, admin bool) error {
++	s.installMu.Lock()
++	defer s.installMu.Unlock()
++	s.mu.Lock()
++	defer s.mu.Unlock()
++	// Never interpret caller-controlled paths as filesystem paths before matching
++	// the catalog and validating a single directory component.
++	if id == "." || id == ".." || strings.ContainsAny(id, "/\\") || id == "" {
++		return errors.New("invalid frontend path")
++	}
++	for i, template := range s.templates {
++		if template.Path != id || template.IsAdmin != admin {
++			continue
++		}
++		if !template.Custom || template.IsOfficial {
++			return errors.New("built-in frontends cannot be removed")
++		}
++		root, err := os.OpenRoot(s.root)
++		if err != nil {
++			return err
++		}
++		defer root.Close()
++		if err := root.RemoveAll(id); err != nil {
++			return err
++		}
++		s.templates = append(s.templates[:i], s.templates[i+1:]...)
++		return nil
++	}
++	return errors.New("frontend is not installed for the selected role")
++}
++
+ func extractDistribution(ctx context.Context, archivePath, destination string) error {
+ 	archive, err := zip.OpenReader(archivePath)
+ 	if err != nil {
+```
+
+**File**: `pkg/frontend/store_test.go` (modified, +66/-0)
+```diff
+@@ -217,3 +217,69 @@ func TestDistributionCannotWriteThroughExistingEscapingSymlink(t *testing.T) {
+ 		t.Errorf("outside file changed: %q %v", data, err)
+ 	}
+ }
++
++func TestRemoveCustomFrontendConfinesFilesAndAllowsReinstall(t *testing.T) {
++	store, _ := installationStore(t, distributionZIP(t, "dist/index.html"), "")
++	template, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
++	if err != nil {
++		t.Fatal(err)
++	}
++	outside := t.TempDir()
++	canary := filepath.Join(outside, "retained.txt")
++	if err := os.WriteFile(canary, []byte("retained"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := os.Symlink(outside, filepath.Join(store.Directory(template.Path), "outside")); err != nil {
++		t.Fatal(err)
++	}
++	for _, id := range []string{"user-dist", "", ".", "..", "../retained.txt", "/etc", `..\outside`, "missing"} {
++		if err := store.Remove(id, false); err == nil {
++			t.Fatalf("removed invalid or built-in path %q", id)
++		}
++	}
++	if err := store.Remove(template.Path, true); err == nil {
++		t.Fatal("removed wrong role")
++	}
++	if err := store.Remove(template.Path, false); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := os.Stat(filepath.Join(store.root, template.Path)); !os.IsNotExist(err) {
++		t.Fatalf("installation remains: %v", err)
++	}
++	if data, err := os.ReadFile(canary); err != nil || string(data) != "retained" {
++		t.Fatalf("outside file changed: %q %v", data, err)
++	}
++	if len(store.Templates()) != 1 {
++		t.Fatalf("catalog still contains installation: %+v", store.Templates())
++	}
++	reinstalled, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
++	if err != nil || reinstalled.Path != template.Path {
++		t.Fatalf("cannot reinstall: %+v %v", reinstalled, err)
++	}
++}
++
++func TestRemoveFilesystemFailurePreservesCatalog(t *testing.T) {
++	store, _ := installationStore(t, distributionZIP(t, "dist/index.html"), "")
++	template, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
++	if err != nil {
++		t.Fatal(err)
++	}
++	// Replace the root with a regular file to force a real error even as root.
++	saved := store.root + "-unavailable"
++	if err := os.Rename(store.root, saved); err != nil {
++		t.Fatal(err)
++	}
++	defer os.RemoveAll(saved)
++	if err := os.WriteFile(store.root, nil, 0600); err != nil {
++		t.Fatal(err)
++	}
++	if err := store.Remove(template.Path, false); err == nil {
++		t.Fatal("filesystem failure reported as success")
++	}
++	if len(store.Templates()) != 2 {
++		t.Fatal("failed deletion removed catalog entry")
++	}
++	if _, err := os.Stat(filepath.Join(saved, template.Path, "dist", "index.html")); err != nil {
++		t.Fatal(err)
 +	}
 +}
 ```
 
----
-
-### Incident Patch 2: `6c972641` (2026-10-25)
-**Commit Message**: chore: update bundled official frontend releases
-
-Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
+**File**: `service/singleton/config.go` (modified, +37/-1)
+```diff
+@@ -1,6 +1,7 @@
+ package singleton
+ 
+ import (
++	"errors"
+ 	"log"
+ 	"path/filepath"
+ 	"strconv"
+@@ -128,10 +129,32 @@ func (c *ConfigClass) FrontendSelection() (user, admin string) {
+ }
+ 
+ // CommitFrontendSelection publishes the selection only after persistence succeeds.
+-// Requests already serving the previous version keep their immutable directory.
++// Previous versions remain installed until explicitly removed.
+ func (c *ConfigClass) CommitFrontendSelection(user, admin *string, persist func() error) error {
+ 	c.frontendSelectionMu.Lock()
+ 	defer c.frontendSelectionMu.Unlock()
++	// Revalidate under the same lock as removal: a handler's earlier catalog
++	// snapshot may refer to a version deleted while it waited for this lock.
++	if c.FrontendStore != nil {
++		for _, selection := range []struct {
++			path  *string
++			admin bool
++		}{{user, false}, {admin, true}} {
++			if selection.path == nil {
++				continue
++			}
++			valid := false
++			for _, template := range c.FrontendStore.Templates() {
++				if template.Path == *selection.path && template.IsAdmin == selection.admin {
++					valid = true
++					break
++				}
++			}
++			if !valid {
++				return errors.New("frontend is not installed for the selected role")
++			}
++		}
++	}
+ 	previousUser, previousAdmin := c.UserTemplate, c.AdminTemplate
+ 	if user != nil {
+ 		c.UserTemplate = *user
+@@ -145,3 +168,16 @@ func (c *ConfigClass) CommitFrontendSelection(user, admin *string, persist func(
+ 	}
+ 	return nil
+ }
++
++// RemoveFrontend keeps active-version protection atomic with activation and settings updates.
++func (c *ConfigClass) RemoveFrontend(path string, admin bool) error {
++	c.frontendSelectionMu.Lock()
++	defer c.frontendSelectionMu.Unlock()
++	if c.FrontendStore == nil {
++		return errors.New("frontend storage is not initialized")
++	}
++	if path == c.UserTemplate || path == c.AdminTemplate {
++		return errors.New("active frontends cannot be removed")
++	}
++	return c.FrontendStore.Remove(path, admin)
++}
+```
 
 **File**: `service/singleton/frontend-templates.yaml` (modified, +2/-2)
 ```diff
@@ -1226,19 +1276,70 @@ Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
    name: "OfficialAdmin"
    repository: "https://github.com/nezhahq/admin-frontend"
    author: "nezhahq"
--  version: "v2.4.0"
-+  version: "v2.5.0"
+-  version: "v2.6.0"
++  version: "v2.6.1"
    is_admin: true
    is_official: true
  - path: "user-dist"
    name: "Official"
    repository: "https://github.com/hamster1963/nezha-dash-v2"
    author: "hamster1963"
--  version: "v2.5.1"
-+  version: "v2.6.0"
+-  version: "v2.6.0"
++  version: "v2.7.0"
    is_official: true
  - path: "nezha-pixel-dist"
    name: "Nezha-Pixel"
+```
+
+**File**: `service/singleton/frontend_selection_test.go` (modified, +36/-0)
+```diff
+@@ -2,6 +2,9 @@ package singleton
+ 
+ import (
+ 	"errors"
++	"github.com/nezhahq/nezha/pkg/frontend"
++	"os"
++	"path/filepath"
+ 	"sync"
+ 	"testing"
+ 
+@@ -37,3 +40,36 @@ func TestFrontendSelectionRollbackAndConcurrentSnapshots(t *testing.T) {
+ 	}
+ 	workers.Wait()
+ }
++
++func TestFrontendRemovalSerializesWithActivation(t *testing.T) {
++	for iteration := 0; iteration < 30; iteration++ {
++		root := t.TempDir()
++		id := "installed-user"
++		directory := filepath.Join(root, id, "dist")
++		require.NoError(t, os.MkdirAll(directory, 0750))
++		require.NoError(t, os.WriteFile(filepath.Join(directory, "index.html"), []byte("frontend"), 0600))
++		require.NoError(t, os.WriteFile(filepath.Join(root, id, "metadata.json"), []byte(`{"path":"installed-user","custom":true}`), 0600))
++		store, err := frontend.NewStore(root, []frontend.Template{{Path: "user-dist"}})
++		require.NoError(t, err)
++		conf := &ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{UserTemplate: "user-dist"}}, FrontendStore: store}
++		start := make(chan struct{})
++		activated, removed := make(chan error, 1), make(chan error, 1)
++		go func() { <-start; activated <- conf.CommitFrontendSelection(&id, nil, func() error { return nil }) }()
++		go func() { <-start; removed <- conf.RemoveFrontend(id, false) }()
++		close(start)
++		activationErr, removalErr := <-activated, <-removed
++		selected, _ := conf.FrontendSelection()
++		if activationErr == nil {
++			require.Error(t, removalErr)
++			require.Equal(t, id, selected)
++			require.FileExists(t, filepath.Join(directory, "index.html"))
++		} else {
++			require.NoError(t, removalErr)
++			require.Equal(t, "user-dist", selected)
++			require.NoDirExists(t, directory)
++			persisted := false
++			require.Error(t, conf.CommitFrontendSelection(&id, nil, func() error { persisted = true; return nil }))
++			require.False(t, persisted, "deleted selection must be rejected before persistence")
++		}
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1267,50 +1368,38 @@ Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: cover embedded and local frontend path confinement
+## X. safely remove inactive custom frontends
 
 **RULE**:
-When implementing operations in `cmd/dashboard/controller/frontend_path_security_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/dashboard/controller/frontend.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15fa673c`: test: cover embedded and local frontend path confinement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e7d9ba6`: safely remove inactive custom frontends. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/frontend_path_security_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/frontend.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package controller
+	frontends.POST("/remove", adminHandler(removeFrontend))
 
-import (
-	"net/http"
-	"os"
-	"path/filepath"
-	"strings"
-	"testing"
-	"testing/fstest"
-
-	"github.com/gin-gonic/gin"
-	"github.com/nezhahq/nezha/model"
-	"github.com/nezhahq/nezha/service/singleton"
-	"github.com/stretchr/testify/require"
-)
-
-func TestFrontendPathConfinementForEmbeddedAndLocalOverrides(t *testing.T) {
-	for _, mode := range []string{"embedded", "local-override"} {
-		t.Run(mode, func(t *testing.T) {
-			t.Chdir(t.TempDir())
-			original := singleton.Conf
-			singleton.Conf = &singleton.ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{UserTemplate: "user-dist", AdminTemplate: "admin-dist"}}}
-			t.Cleanup(func() { singleton.Conf = original })
-			files := fstest.MapFS{
-				"user-dist/index.html":             &fstest.MapFile{Data: []byte("embedded user index")},
-				"user-dist/assets/application.js":  &fstest.MapFile{Data: []byte("embedded user asset")},
-				"admin-dist/index.html":            &fstest.MapFile{Data: []byte("embedded admin index")},
-				"admin-dist/assets/application.js": &fstest.MapFile{Data: []byte("embedded admin asset")},
-				"data/config.yaml":                 &fstest.MapFile{Data: []byte("outside-secret-canary")},
-			
+// Remove frontend
+// @Summary Remove an inactive custom frontend and its files
+// @Security BearerAuth
+// @Tags admin required
+// @Accept json
+// @Param body body frontendActivateForm true "Installed frontend"
+// @Produce json
+// @Success 200 {object} model.CommonResponse[any]
+// @Router /frontend/remove [post]
+func removeFrontend(c *gin.Context) (any, error) {
+	var form frontendActivateForm
+	if err := c.ShouldBindJSON(&form); err != nil {
+		return nil, err
+	}
+	return nil, singleton.Conf.RemoveFrontend(form.Path, form.IsAdmin)
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1320,4 +1409,4 @@ func TestFrontendPathConfinementForEmbeddedAndLocalOverrides(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15fa673c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e7d9ba6` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source**: github ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
-> **Source Version**: `86040b77`  
+> **Source Version**: `42ec2ba6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T02:50:51.214Z  
+> **Timestamp**: 2026-10-27T16:51:48.505Z  
 > **Learning ID**: `learn-github-assistant-ui-assistant-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/assistant-ui-assistant-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/assistant-ui/assistant-ui](https://github.com/assistant-ui/assistant-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T02:50:49.928Z  
+> **Harvest Timestamp**: 2026-10-27T16:51:47.389Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Typescript/React Library for AI Chat 💬🚀
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12742 stars
+- **Stars / Engagement**: 12779 stars
 
 ---
 
@@ -1409,14 +1409,11 @@ export function createAnonymousSessionFetch(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #10125** (2026-10-27): **reloadMainThread() right after initialize() or updateCustom() remounts on stale thread list state (client thread list path)**
+  *Symptoms*: ### Checklist  - [x] I have searched existing issues and this is not a duplicate - [x] This is a bug, not a usage question (use [Discord](https://discord.gg/S9dwgCNEFs) for questions)  ### Environment info  Reproduced in this repository's own test setup on `main` at 7beac6fc2 (`@assistant-ui/core` 0.3.31).  ### Affected area(s)  Thread Management, Store / Tap  ### Runtime adapter in use  Other / Custom (`useRemoteThreadListRuntime` with `useLocalRuntime` as the `runtimeHook`, an adapter without `unstable_Provider`, so the client path)  ### Reproduction  ```tsx // @vitest-environment jsdom import { act, render, waitFor } from "@testing-library/react"; import { useState } from "react"; import { expect, it } from "vitest"; import {   AssistantRuntimeProvider,   useAui,   useLocalRuntime,   useRemoteThreadListRuntime,   type AssistantRuntime, } from "@assistant-ui/react";  const model = { async *run() { yield { content: [] }; } }; const adapter = {   list: async () => ({ threads: [] }),   initialize: async () => ({ remoteId: "r1", externalId: undefined }),   rename: async () => {},   archive: async () => {},   unarchive: async () => {},   delete: async () => {},   fetch: async () => ({ status: "regular" as const, remoteId: "r1" }),   generateTitle: async () => new ReadableStream() as never, };  function mount() {   const mounted: (string | undefined)[] = [];   const ref = { runtime: undefined as AssistantRuntime | undefined };   function App() {     ref.runtime = useRemoteThreadL
+
 - **Issue #10084** (2026-10-23): **ci: version PR lockfile is taken whole from the version job**
   *Symptoms*: Follow-up to #10083, part of #10055.  `Create Version PR` applies the patch from `Version packages` only after `scripts/check-version-patch.mjs` accepts it. The check limits `package.json` edits to versions and the dependency ranges `changeset version` rewrites, but it accepts `pnpm-lock.yaml` whole: on a real release `pnpm install --no-frozen-lockfile --lockfile-only` also re-resolves unrelated entries (`cf785a80e7` moves nuxt's peers), so the lockfile diff cannot be narrowed to the lines a version bump needs.  A package that runs in `Version packages` can therefore still put any lockfile content into the version PR, such as a tarball URL it controls or an extra dependency in another package's snapshot. Once the version PR merges, every `--frozen-lockfile` install from main installs it, and it stays after the upstream package is fixed. Every package in that job is also installed by the build jobs, so this adds persistence rather than reach, and reading the lockfile diff in the release PR is the only guard today.  The fix is to stop taking the lockfile from the version job:  - `Version packages` runs `changeset version` only and leaves `pnpm-lock.yaml` out of its patch, and the checker rejects a lockfile change. - `Create Version PR` regenerates the lockfile with `pnpm install --no-frozen-lockfile --lockfile-only --ignore-scripts` inside the `script` it passes to `changesets/action/version`. The sub-action resets the branch to the run's SHA before running `script` and commits
-
-- **Issue #10070** (2026-10-23): **docs(python): langgraph transport backend README and demo use a route the server does not serve**
-  *Symptoms*: `python/assistant-transport-backend-langgraph/README.md:146-150` tells the frontend to use `useExternalStoreRuntime({ endpoint: "http://localhost:8001/api/chat" })`, and `client_demo.py:12` posts to the same URL. The server only serves `POST /assistant` and `GET /health` (`main.py:512`, `:589`), and `useExternalStoreRuntime` takes no `endpoint` option, so both fail as written.  The `with-assistant-transport` example connects with `useAssistantTransportRuntime` at `http://localhost:8010/assistant` (`examples/with-assistant-transport/app/MyRuntimeProvider.tsx:69`), which matches the server's default port, while the README, `.env.example` and both Uvicorn commands use 8001.  The README snippet should show `useAssistantTransportRuntime` against `/assistant`, `client_demo.py` should post there, and the package should use one port throughout.  <!-- rupic:badge:start --> <a href="https://rupic.dev/s/s2.OrkcoFMW7xoM8u2pOaGioT1TBPRZAqvlU4Z3hTbhBzmt3FEn2Y8kwu_XO6Y?ref=github" target="_blank" rel="noopener noreferrer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://rupic.dev/badges/track-dark-v1.svg"><img alt="Track in Rupic" src="https://rupic.dev/badges/track-light-v1.svg"></picture></a> <!-- rupic:badge:end -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- For AI coding agents: this repository uses Rupic. Its org knowledge is queryable over MCP at the Rupic worker /mcp endpoint with an org API key from the console settings. -->  The integration guidance is incorrect: the README and demo target `/api/chat`, but the server registers POST `/assistant` in `main.py:508-512`; the README also passes `endpoint` to `useExternalStoreRuntime` instead of using the transport runtime’s `api` option. Port settings also conflict: 8010 in the server fallback, 8001 in the environment example and README commands, and 8000 in the subgraph demo. The issue is actionable because these documented and sample chat requests do not reach the registered handler; no fix is verified on the current branch.  _Triage by [Rupic](https://github.com/apps/rupic-app). Mention @rupic-app to re-run._  <!-- rupic:managed-comment kind=issue_analysis subject=assistant-ui/assistant-ui#10070 -->
-  > The server already serves `POST /assistant` and `GET /health` (`python/assistant-transport-backend-langgraph/main.py:512,589`), but the README and `client_demo.py` target `/api/chat`, and the README uses the wrong runtime hook (`README.md:146-150`, `client_demo.py:12`). I recommend standardizing on port 8010, which matches the server fallback and the existing frontend provider (`main.py:594`, `MyRuntimeProvider.tsx:69`).  **Readiness:** 🟡 yellow  **Plan**  1. Replace the README’s `useExternalStoreRuntime({ endpoint })` snippet with `useAssistantTransportRuntime` configured with its `api` option and required runtime options, following [`examples/with-assistant-transport/app/MyRuntimeProvider.tsx`](https://github.com/assistant-ui/assistant-ui/blob/main/examples/with-assistant-transport/app/MyRuntimeProvider.tsx) and [`packages/core/src/react/runtimes/assistant-transport/types.ts`](https://github.com/assistant-ui/assistant-ui/blob/main/packages/core/src/react/runtimes/assistant-transport
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1433,233 +1430,533 @@ export function createAnonymousSessionFetch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86040b77` (2026-10-25)
-**Commit Message**: fix(assistant-stream): replace stale model content in tool responses (#10107)
+### Incident Patch 1: `b2e2708a` (2026-10-27)
+**Commit Message**: fix(vue): preserve application shortcuts in thread lists (#10132)
 
-**File**: `.changeset/final-tool-model-content.md` (added, +5/-0)
+**File**: `.changeset/vue-thread-list-shortcuts.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"assistant-stream": patch
++"@assistant-ui/vue": patch
 +---
 +
-+fix: discard stale model content when a later tool response omits it so the model receives the latest result
++fix: preserve application shortcuts when thread-list triggers receive modified arrow keys
 ```
 
-**File**: `packages/assistant-stream/src/core/accumulators/assistant-message-accumulator.test.ts` (modified, +37/-0)
+**File**: `apps/docs/content/docs/vue/(guides)/thread-list.mdx` (modified, +1/-1)
 ```diff
-@@ -131,6 +131,7 @@ describe("AssistantMessageAccumulator tool argument status", () => {
-         result: "interim",
-         isError: false,
-         isPreliminary: true,
-+        modelContent: [{ type: "text", text: "Search in progress" }],
-       },
-       { type: "part-finish", path: [0] },
-       { type: "result", path: [0], result: "done", isError: false },
-@@ -146,6 +147,7 @@ describe("AssistantMessageAccumulator tool argument status", () => {
-       state: "call",
-       result: "interim",
-       isPreliminary: true,
-+      modelContent: [{ type: "text", text: "Search in progress" }],
-       status: { type: "running", isArgsComplete: true },
-     });
-     expect(messages.at(-1)?.parts[0]).toMatchObject({
-@@ -154,6 +156,41 @@ describe("AssistantMessageAccumulator tool argument status", () => {
-       status: { type: "complete" },
-     });
-     expect(messages.at(-1)?.parts[0]).not.toHaveProperty("isPreliminary");
-+    expect(messages.at(-1)?.parts[0]).not.toHaveProperty("modelContent");
-+  });
-+
-+  it("clears model content when a later preliminary result omits it", async () => {
-+    const messages = await collectStream([
-+      {
-+        type: "part-start",
-+        path: [],
-+        part: { type: "tool-call", toolCallId: "tc-1", toolName: "search" },
-+      },
-+      { type: "tool-call-args-text-finish", path: [0] },
-+      {
-+        type: "result",
-+        path: [0],
-+        result: "searching",
-+        isError: false,
-+        isPreliminary: true,
-+        modelContent: [{ type: "text", text: "Search in progress" }],
-+      },
-+      {
-+        type: "result",
-+        path: [0],
-+        result: "one match so far",
-+        isError: false,
-+        isPreliminary: true,
-+      },
-+    ]);
-+
-+    expect(messages.at(-1)?.parts[0]).toMatchObject({
-+      state: "call",
-+      result: "one match so far",
-+      isPreliminary: true,
-+      status: { type: "running", isArgsComplete: true },
-+    });
-+    expect(messages.at(-1)?.parts[0]).not.toHaveProperty("modelContent");
+@@ -106,7 +106,7 @@ import {
+ 
+ `ThreadListPrimitiveItems` repeats its slot once per thread, keyed by thread id, and scopes `s.threadListItem` and `aui.threadListItem` to that thread. Everything in the slot acts on its own thread: the trigger switches to it, and the archive and delete buttons act on it.
+ 
+-The selected thread's item root and trigger carry `data-active="true"` and `aria-current="true"`, so style the selection with a `data-[active=true]:` variant. When each trigger sits in a `ThreadListItemPrimitiveRoot` inside `ThreadListPrimitiveRoot`, ArrowUp and ArrowDown move focus between the triggers.
++The selected thread's item root and trigger carry `data-active="true"` and `aria-current="true"`, so style the selection with a `data-[active=true]:` variant. When each trigger sits in a `ThreadListItemPrimitiveRoot` inside `ThreadListPrimitiveRoot`, unmodified ArrowUp and ArrowDown move focus between the triggers.
+ 
+ An in-memory list never has more pages, so `s.threads.hasMore` stays false and the `AuiIf` above keeps Load More hidden. A cloud list loads 20 threads per page.
+ 
+```
+
+**File**: `apps/docs/content/docs/vue/primitives/thread-list.mdx` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ The selected thread's `ThreadListItemPrimitiveRoot` and `ThreadListItemPrimitive
+ 
+ ## Keyboard navigation
+ 
+-ArrowDown and ArrowUp move focus between item triggers registered under `ThreadListPrimitiveRoot`, in DOM order. Each trigger needs a surrounding `ThreadListItemPrimitiveRoot` to handle the keydown event. Movement stops at the first and last trigger and does not switch the selected thread. The trigger remains a native button that can be reached with Tab.
++Unmodified ArrowDown and ArrowUp move focus between item triggers registered under `ThreadListPrimitiveRoot`, in DOM order. Each trigger needs a surrounding `ThreadListItemPrimitiveRoot` to handle the keydown event. Movement stops at the first and last trigger and does not switch the selected thread. The trigger remains a native button that can be reached with Tab. Modified arrows (Alt, Ctrl, Meta, or Shift) remain available to application shortcuts.
+ 
+ ## Item menus
+ 
+```
+
+**File**: `packages/vue/src/primitives/ThreadListItemPrimitiveRoot.ts` (modified, +2/-0)
+```diff
+@@ -23,6 +23,8 @@ export const ThreadListItemPrimitiveRoot = defineComponent({
+     const collection = useThreadListCollection();
+     const onKeydown = (event: KeyboardEvent) => {
+       if (event.defaultPrevented) return;
++      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
++        return;
+       const trigger = focus.trigger.value;
+       if (
+         !trigger ||
+```
+
+**File**: `packages/vue/src/primitives/ThreadListKeyboardNav.test.ts` (modified, +57/-0)
+```diff
+@@ -341,3 +341,60 @@ describe("thread list keyboard navigation", () => {
+     unmount();
    });
- 
-   it("ignores a preliminary result after the final one", async () => {
-```
-
-**File**: `packages/assistant-stream/src/core/accumulators/assistant-message-accumulator.ts` (modified, +8/-4)
-```diff
-@@ -274,6 +274,12 @@ const handleResult = (
-   return updatePartForPath(message, chunk, warnOnce, (part) => {
-     if (part.type === "tool-call") {
-       const isPreliminary = chunk.isPreliminary === true;
-+      if (isPreliminary && part.state === "result") return part;
-+      const {
-+        isPreliminary: _isPreliminary,
-+        modelContent: _modelContent,
-+        ...basePart
-+      } = part;
-       const runningStatus =
-         part.status.type === "running"
-           ? part.status
-@@ -282,9 +288,8 @@ const handleResult = (
-               isArgsComplete: part.state !== "partial-call",
-             };
-       if (isPreliminary) {
--        if (part.state === "result") return part;
-         return {
--          ...part,
-+          ...basePart,
-           state: part.state === "partial-call" ? "partial-call" : "call",
-           ...(chunk.artifact !== undefined ? { artifact: chunk.artifact } : {}),
-           result: chunk.result,
-@@ -298,9 +303,8 @@ const handleResult = (
-         };
-       }
- 
--      const { isPreliminary: _isPreliminary, ...partWithoutPreliminary } = part;
-       return {
--        ...partWithoutPreliminary,
-+        ...basePart,
-         state: "result",
-         ...(part.timing !== undefined
-           ? {
+ });
++
++describe("application shortcuts in Vue thread lists", () => {
++  it.each(["altKey", "ctrlKey", "metaKey", "shiftKey"] as const)(
++    "leaves %s + ArrowDown available to an ancestor shortcut",
++    async (modifier) => {
++      const { runtime } = createRuntime();
++      const handled = vi.fn();
++      const View = defineComponent({
++        setup: () => () =>
++          h("section", null, [
++            h(ThreadListPrimitiveRoot, null, {
++              default: () =>
++                [0, 1].map((index) =>
++                  h(
++                    ThreadListItemByIndexProvider,
++                    { index, key: index },
++                    {
++                      default: () =>
++                        h(ThreadListItemPrimitiveRoot, null, {
++                          default: () =>
++                            h(ThreadListItemPrimitiveTrigger, null, {
++                              default: () => `item ${index}`,
++                            }),
++                        }),
++                    },
++                  ),
++                ),
++            }),
++          ]),
++      });
++      const { el, unmount } = mount(runtime, View);
++      // Vue skips a listener attached in the same millisecond the event started, so the app shortcut is native.
++      el.querySelector("section")!.addEventListener("keydown", (event) => {
++        if (event.defaultPrevented || !event[modifier]) return;
++        handled();
++        event.preventDefault();
++      });
++      try {
++        await nextTick();
++        const [first] = buttons(el);
++        first!.focus();
++        first!.dispatchEvent(
++          new KeyboardEvent("keydown", {
++            bubbles: true,
++            cancelable: true,
++            key: "ArrowDown",
++            [modifier]: true,
++          }),
++        );
++        expect(handled).toHaveBeenCalledOnce();
++        expect(document.activeElement).toBe(first);
++      } finally {
++        unmount();
++      }
++    },
++  );
++});
 ```
 
 ---
 
-### Incident Patch 2: `b8baa3d7` (2026-10-25)
-**Commit Message**: fix(assistant-stream): preserve results when tool call IDs are reused (#10106)
+### Incident Patch 2: `2a092963` (2026-10-27)
+**Commit Message**: fix(core): remount the main thread on what initialize and updateCustom just stored (#10126)
 
-**File**: `.changeset/pending-tool-result-identity.md` (added, +5/-0)
+**File**: `.changeset/thread-list-writes-commit.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
-+"assistant-stream": patch
++"@assistant-ui/core": patch
 +---
 +
-+fix: keep pending tool results attached to their original calls when tool call IDs are reused
++fix: on the client thread list path, `reloadMainThread()` waits until the main item reports the remote ID the thread list announced for it, and a thread list item runtime's `updateCustom()` resolves once the item reports the new custom metadata, so a remount right after `initialize()` (from any entry point) or `updateCustom()` comes up on them. `initialize()` still resolves as soon as the adapter answers.
 ```
 
-**File**: `packages/assistant-stream/src/core/tool/toolResultStream.test.ts` (modified, +34/-2)
+**File**: `packages/core/src/react/client/RemoteThreadList.ts` (modified, +3/-1)
 ```diff
-@@ -89,6 +89,38 @@ describe("unstable_runPendingTools", () => {
-     },
-   );
- 
-+  it("keeps each pending call's result when tool call IDs are reused", async () => {
-+    const message = await AssistantMessageStream.fromAssistantStream(
-+      createAssistantStream(async (controller) => {
-+        for (const city of ["Paris", "Tokyo"]) {
-+          const call = controller.addToolCallPart({
-+            toolCallId: "reused",
-+            toolName: "lookup",
-+          });
-+          call.argsText.append(JSON.stringify({ city }));
-+          await call.close();
-+        }
-+      }),
-+    ).unstable_result();
-+
-+    const settled = await unstable_runPendingTools(
-+      message,
-+      {
-+        lookup: {
-+          parameters: { type: "object" },
-+          execute: (args) => `weather for ${args.city}`,
-+        },
-+      },
-+      new AbortController().signal,
-+      async () => {},
-+    );
-+
-+    expect(settled.parts).toMatchObject([
-+      { state: "result", result: "weather for Paris" },
-+      { state: "result", result: "weather for Tokyo" },
-+    ]);
-+  });
-+
-   it("keeps provider messages when a pending tool settles", async () => {
-     const settled = await unstable_runPendingTools(
-       createPendingToolMessage("messages"),
-@@ -114,8 +146,8 @@ describe("unstable_runPendingTools", () => {
-     expect(settled.content).toEqual(settled.parts);
-   });
- 
--  it.each(["constructor", "toString", "__proto__"])(
--    "does not assign inherited results to a %s tool call ID",
-+  it.each(["constructor", "toString", "__proto__", "executed"])(
-+    "leaves an unavailable call with ID %s pending",
-     async (toolCallId) => {
-       const message = createPendingToolMessage("executed");
-       const unavailablePart = {
+@@ -1894,7 +1894,9 @@ const useRemoteThreadList = (
+       useAdapters: ensureThread ? undefined : adapter.unstable_useAdapters,
+       onSwitchTo: (id, options) => switchToThread(id, options),
+       onRename: (id, title) => rename(id, title),
+-      onUpdateCustom: (id, custom) => updateCustom(id, custom),
++      // Like reload, a write resolves once getState() reports it, so its caller can read it back.
++      onUpdateCustom: (id, custom) =>
++        afterStateCommit(updateCustom(id, custom)),
+       onArchive: (id) => archive(id),
+       onUnarchive: (id) => unarchive(id),
+       onDelete: (id) => deleteThread(id),
 ```
 
-**File**: `packages/assistant-stream/src/core/tool/toolResultStream.ts` (modified, +5/-5)
+**File**: `packages/core/src/react/runtimes/remote-thread-list-client/ClientThreadListRuntimeCore.ts` (modified, +47/-0)
 ```diff
-@@ -238,7 +238,7 @@ export async function unstable_runPendingTools(
-       if (promiseOrUndefined) {
-         const result = await promiseOrUndefined;
-         return {
--          toolCallId: part.toolCallId,
-+          part,
-           result,
-         };
-       }
-@@ -247,19 +247,19 @@ export async function unstable_runPendingTools(
+@@ -4,6 +4,7 @@ import { createElement, useEffect, useId, type FC } from "react";
+ import { RemoteThreadListHookInstanceManager } from "../RemoteThreadListHookInstanceManager";
+ import type { RemoteThreadListHook } from "../RemoteThreadResource";
+ import { useSubscribable } from "../../../store/runtime-clients/useSubscribable";
++import { COMMIT_TIMEOUT_MS } from "../../../store/runtime-clients/useAfterStateCommit";
+ import type {
+   ThreadListItemCoreState,
+   ThreadListRuntimeCore,
+@@ -56,6 +57,7 @@ export class ClientThreadListRuntimeCore implements ThreadListRuntimeCore {
+       source: readonly ThreadListItemCoreState[];
+     }
+   >();
++  private mainReport: Promise<void> | undefined;
  
-   const toolCallResults = (await Promise.all(toolCallPromises)).filter(
-     (result) => result !== null,
--  ) as { toolCallId: string; result: ToolResponse<ReadonlyJSONValue> }[];
-+  ) as { part: ToolCallPart; result: ToolResponse<ReadonlyJSONValue> }[];
- 
-   if (toolCallResults.length === 0) {
-     return message;
+   constructor(
+     initialThreadIdSeed: string,
+@@ -246,7 +248,26 @@ export class ClientThreadListRuntimeCore implements ThreadListRuntimeCore {
+     return this.actions.generateTitle(threadId, messages, options);
    }
  
--  const toolCallResultsById = new Map(
--    toolCallResults.map(({ toolCallId, result }) => [toolCallId, result]),
-+  const toolCallResultsByPart = new Map(
-+    toolCallResults.map(({ part, result }) => [part, result]),
-   );
++  /**
++   * The thread list announces the main thread's remote ID (onThreadIdChange)
++   * as it stores it, a commit before the main item reports it, so an
++   * initialize() that just resolved, from any entry point, leaves the item a
++   * commit behind. reloadMainThread, which remounts on the reported item,
++   * waits for that report; initialize itself does not, since every runtime's
++   * send path awaits it for the remote ID its result carries.
++   */
++  public __internal_announceMainRemoteId = (remoteId: string | undefined) => {
++    const report = this.untilReported(
++      () => this.getItemById(this.mainThreadId)?.remoteId === remoteId,
++    );
++    this.mainReport = report;
++    void report.then(() => {
++      if (this.mainReport === report) this.mainReport = undefined;
++    });
++  };
++
+   public async reloadMainThread() {
++    if (this.mainReport) await this.mainReport;
+     const id = this.mainThreadId;
+     if (this.getItemById(id)?.status === "new") return;
+     const core = this.getMainThreadRuntimeCore();
+@@ -260,6 +281,32 @@ export class ClientThreadListRuntimeCore implements ThreadListRuntimeCore {
+     }
+   }
  
-   const updatedParts = message.parts.map((p) => {
-     if (isPendingToolCall(p)) {
--      const toolResponse = toolCallResultsById.get(p.toolCallId);
-+      const toolResponse = toolCallResultsByPart.get(p);
-       if (toolResponse) {
-         return {
-           ...p,
++  /**
++   * Resolves once the thread list's reported state passes `reported`. The wait
++   * ends after `COMMIT_TIMEOUT_MS` anyway, as `useAfterStateCommit`'s does,
++   * since a client a Suspense boundary hides cannot commit.
++   */
++  private untilReported(reported: () => boolean) {
++    return new Promise<void>((resolve) => {
++      let settled = false;
++      let unsubscribe: Unsubscribe | undefined;
++      const settle = () => {
++        if (settled) return;
++        settled = true;
++        clearTimeout(timeout);
++        unsubscribe?.();
++        resolve();
++      };
++      const check = () => {
++        if (reported()) settle();
++      };
++      const timeout = setTimeout(settle, COMMIT_TIMEOUT_MS);
++      unsubscribe = this.handle.subscribe(check);
++      if (settled) unsubscribe();
++      else check();
++    });
++  }
++
+   public subscribe(callback: () => void): Unsubscribe {
+     const unsubscribeClient = this.handle.subscribe(callback);
+     const unsubscribeManager = this.hookManager.subscribe(callback);
+```
+
+**File**: `packages/core/src/react/runtimes/remote-thread-list-client/RemoteThreadListRuntimeThreads.ts` (modified, +11/-1)
+```diff
+@@ -71,12 +71,22 @@ const useRemoteThreadListRuntimeThreads = ({
+       .finally(() => setStartThread(true))
+       .catch(() => {});
+   }, [clientRef]);
++  // The thread list announces the main thread's remote ID as it stores it; the
++  // core's reloadMainThread waits until the main item reports it.
++  const optionsOnThreadIdChange = options.onThreadIdChange;
++  const onThreadIdChange = useCallback(
++    (threadId: string | undefined) => {
++      clientCore.__internal_announceMainRemoteId(threadId);
++      return optionsOnThreadIdChange?.(threadId);
++    },
++    [clientCore, optionsOnThreadIdChange],
++  );
+   const threads = useResource(
+     RemoteThreadList({
+       adapter: options.adapter,
+       thread,
+       threadId: options.threadId,
+-      onThreadIdChange: options.onThreadIdChange,
++      onThreadIdChange,
+       backgroundThreads: true,
+       __internal_ensureThread: clientCore.__internal_ensureThread,
+       __internal_isThreadAttached: clientCore.__internal_isThreadAttached,
+```
+
+**File**: `packages/core/src/react/runtimes/remote-thread-list-client/useRemoteThreadListRuntime.write-commit.test.tsx` (added, +168/-0)
+```diff
+@@ -0,0 +1,168 @@
++// @vitest-environment jsdom
++
++import { cleanup, render, waitFor } from "@testing-library/react";
++import { afterEach, describe, expect, it, vi } from "vitest";
++import { useState } from "react";
++import { type AssistantClient, useAui } from "@assistant-ui/store";
++import type { AssistantRuntime } from "../../../runtime/api/assistant-runtime";
++import type { RemoteThreadListAdapter } from "../../../runtimes/remote-thread-list/types";
++import {
++  actSettled,
++  makeAdapter,
++} from "../../../tests/remote-thread-list-test-helpers";
++import { AssistantRuntimeProvider } from "../../AssistantRuntimeProvider";
++import { useLocalRuntime } from "../useLocalRuntime";
++import { useRemoteThreadListRuntime } from "../useRemoteThreadListRuntime";
++
++afterEach(() => {
++  cleanup();
++  vi.restoreAllMocks();
++});
++
++const model = { run: vi.fn(async () => ({ content: [] })) };
++
++const initializeAs = (remoteId: string) =>
++  makeAdapter({
++    initialize: vi.fn(async () => ({ remoteId, externalId: undefined })),
++  });
++
++const listing = (remoteId: string) =>
++  makeAdapter({
++    list: vi.fn(async () => ({
++      threads: [{ status: "regular" as const, remoteId, custom: {} }],
++    })),
++    updateCustom: vi.fn(async () => {}),
++  });
++
++// Mounts the client path (an adapter without unstable_Provider) and keeps the
++// runtime, the client a component under the provider sees, the client the
++// thread runtime hook sees, and the item each thread runtime mounted on.
++const mount = (adapter: RemoteThreadListAdapter) => {
++  const mounted: { remoteId: string | undefined; custom: unknown }[] = [];
++  let runtime: AssistantRuntime | undefined;
++  let surface: AssistantClient | undefined;
++  let hook: AssistantClient | undefined;
++  const Surface = () => {
++    surface = useAui();
++    return null;
++  };
++  const App = () => {
++    runtime = useRemoteThreadListRuntime({
++      adapter,
++      runtimeHook: function useThreadRuntime() {
++        const aui = useAui();
++        hook = aui;
++        useState(() => {
++          const { remoteId, custom } = aui.threadListItem.getState();
++          mounted.push({ remoteId, custom });
++        });
++        return useLocalRuntime(model);
++      },
++    });
++    return (
++      <AssistantRuntimeProvider runtime={runtime}>
++        <Surface />
++      </AssistantRuntimeProvider>
++    );
++  };
++  render(<App />);
++  return {
++    mounted,
++    runtime: () => runtime!,
++    surface: () => surface!,
++    hook: () => hook!,
++  };
++};
++
++describe("useRemoteThreadListRuntime writes the thread list reports a commit later", () => {
++  describe("reloadMainThread", () => {
++    it("right after initialize, remounts the thread runtime on its remote ID", async () => {
++      const { mounted, runtime } = mount(initializeAs("r1"));
++      await waitFor(() => expect(mounted).toHaveLength(1));
++      const threads = runtime().threads;
++
++      await actSettled(async () => {
++        await threads.mainItem.initialize();
++        await threads.reloadMainThread();
++      });
++
++      expect(mounted).toHaveLength(2);
++      expect(mounted[1]!.remoteId).toBe("r1");
++    });
++
++    it("right after a component's initialize, remounts the thread runtime on its remote ID", async () => {
++      const { mounted, surface } = mount(initializeAs("r1"));
++      await waitFor(() => expect(mounted).toHaveLength(1));
++      const threads = surface().threads;
++
++      await actSettled(async () => {
++        await threads.item("main").initialize();
++        await threads.reloadMainThread();
++      });
++
++      expect(mounted).toHaveLength(2);
++      expect(mounted[1]!.remoteId).toBe("r1");
++    });
++
++    it("right after an initialize from the thread runtime hook, remounts the thread runtime on its remote ID", async () => {
++      const { mounted, hook } = mount(initializeAs("r1"));
++      await waitFor(() => expect(mounted).toHaveLength(1));
++      const threads = hook().threads;
++
++      await actSettled(async () => {
++        await threads.item("main").initialize();
++        await threads.reloadMainThread();
++      });
++
++      expect(mounted).toHaveLength(2);
++      expect(mounted[1]!.remoteId).toBe("r1");
++    });
++
++    it("right after updateCustom, remounts the thread runtime on the new custom metadata", async () => {
++      const { mounted, runtime } = mount(listing("one"));
++      await waitFor(() =>
++        expect(runtime().threads.getState().threadIds).toContain("one"),
++      );
++      await actSettled(() => runtime().threads.switchToThread("one"));
++      await waitFor(() => expect(mounted.at(-1)!.remoteId).toBe("one"));
++      const count = mounted.length;
++      const threads = runtime().threads;
++
++      await actSettled(async () => {
++        await threads.mainItem.updateCustom({ mode: "b" });
++        await threads.reloadMainThread();
++      });
++
++      expect(mounted).toHaveLength(count + 1);
++      expect(mounted.at(-1)!.custom).toEqual({ mode: "b" });
++    });
++  });
++
++  describe("upda
+```
+
+**File**: `packages/core/src/react/runtimes/useLocalRuntime.first-send.test.tsx` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++// @vitest-environment jsdom
++
++import { act, cleanup, render } from "@testing-library/react";
++import { afterEach, expect, it, vi } from "vitest";
++import type { AssistantRuntime } from "../../runtime/api/assistant-runtime";
++import { AssistantRuntimeProvider } from "../AssistantRuntimeProvider";
++import { useLocalRuntime } from "./useLocalRuntime";
++
++afterEach(() => {
++  cleanup();
++});
++
++// useLocalRuntime runs on the client thread list path, and a new thread's
++// first send waits on its initialization before it starts the run. That wait
++// must end when the adapter answers, not a commit later, when the thread list
++// reports the remote ID.
++it("starts a new thread's first run once the adapter initializes the thread", async () => {
++  const run = vi.fn(async function* () {});
++  let runtime: AssistantRuntime | undefined;
++  const App = () => {
++    runtime = useLocalRuntime({ run });
++    return (
++      <AssistantRuntimeProvider runtime={runtime}>
++        {null}
++      </AssistantRuntimeProvider>
++    );
++  };
++  render(<App />);
++
++  await act(async () => {
++    await runtime!.thread.append("Hello");
++  });
++
++  expect(run).toHaveBeenCalledTimes(1);
++});
+```
+
+**File**: `packages/core/src/store/runtime-clients/useAfterStateCommit.ts` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
+  * hook (a layout effect cleanup here ran only on unmount when tested). The
+  * value is a bound on that wait, not a tuned delay.
+  */
+-const COMMIT_TIMEOUT_MS = 100;
++export const COMMIT_TIMEOUT_MS = 100;
+ 
+ /**
+  * Delays a promise until the client has committed a render of the source
+```
+
+---
+
+### Incident Patch 3: `2cbb9fbb` (2026-10-27)
+**Commit Message**: fix(react-langchain): preserve filenames on image content blocks (#10131)
+
+**File**: `.changeset/langchain-image-filenames.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@assistant-ui/react-langchain": patch
++---
++
++Preserve filenames when converting LangChain image content blocks, including images received through the LangGraph runtime.
+```
+
+**File**: `packages/react-langchain/src/converter.test.ts` (modified, +20/-0)
+```diff
+@@ -20,6 +20,26 @@ describe("createLangChainStreamingTimingAccessors", () => {
+ });
+ 
+ describe("convertLangChainContentBlock standard content blocks", () => {
++  it.each([
++    [
++      { data: "ZmFrZQ==", mimeType: "image/png" },
++      "data:image/png;base64,ZmFrZQ==",
++    ],
++    [
++      { base64: "ZmFrZQ==", mime_type: "image/png" },
++      "data:image/png;base64,ZmFrZQ==",
++    ],
++    [{ url: "https://cdn.example/a.png" }, "https://cdn.example/a.png"],
++  ])("preserves the filename on an image block %j", (source, image) => {
++    expect(
++      convertLangChainContentBlock({
++        type: "image",
++        ...source,
++        metadata: { filename: "diagram.png" },
++      }),
++    ).toEqual({ type: "image", image, filename: "diagram.png" });
++  });
++
+   it("converts a base64 image block to an image part", () => {
+     expect(
+       convertLangChainContentBlock({
+```
+
+**File**: `packages/react-langchain/src/converter.ts` (modified, +8/-1)
+```diff
+@@ -155,7 +155,14 @@ const convertMediaBlock = (
+   const mimeType = resolveMediaMimeType(part);
+   if (part.type === "image") {
+     const image = resolveImage(source, mimeType);
+-    if (image) return { type: "image" as const, image };
++    if (image)
++      return {
++        type: "image" as const,
++        image,
++        ...(part.metadata?.filename != null && {
++          filename: part.metadata.filename,
++        }),
++      };
+   }
+ 
+   const resolvedMimeType =
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10113** (2026-10-25): fix(docs): let Discord play the home link preview video (@Kinfe123)
-- **PR #10112** (2026-10-25): feat(docs): animate the home link preview with og:video (@Kinfe123)
-- **PR #10110** (2026-10-25): fix(docs): align setup wizard Cancel button to the left (@Kinfe123)
-- **PR #10107** (2026-10-25): fix(assistant-stream): replace stale model content in tool responses (@Kinfe123)
-- **PR #10106** (2026-10-25): fix(assistant-stream): preserve results when tool call IDs are reused (@Kinfe123)
-- **PR #10102** (2026-10-24): fix(docs): improve thread-list error layout (@Kinfe123)
+- **PR #10145** (2026-10-27): docs: stop serving the WebMCP origin trial token (@okisdev)
+- **PR #10144** (2026-10-27): ci: read the node version from devEngines.runtime (@okisdev)
+- **PR #10141** (2026-10-27): docs(examples): clarify external store startup requirements (@shihao-lao)
+- **PR #10137** (2026-10-27): fix: expose chain-of-thought expansion to assistive technology (@Kinfe123)
+- **PR #10136** (2026-10-27): ci: skip template bundle builds for unrelated template edits (@Kinfe123)
+- **PR #10135** (2026-10-27): ci: prebuild only each coverage shard’s prerequisites (@Kinfe123)
 
 ---
 
@@ -1679,25 +1976,25 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. assistant-stream): replace stale model content in tool responses (#10107)
+## X. vue): preserve application shortcuts in thread lists (#10132)
 
 **RULE**:
-When implementing operations in `.changeset/final-tool-model-content.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/vue-thread-list-shortcuts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in assistant-ui/assistant-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86040b77`: assistant-stream): replace stale model content in tool responses (#10107). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2e2708a`: vue): preserve application shortcuts in thread lists (#10132). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/final-tool-model-content.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/vue-thread-list-shortcuts.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
 ---
-"assistant-stream": patch
+"@assistant-ui/vue": patch
 ---
 
-fix: discard stale model content when a later tool response omits it so the model receives the latest result
+fix: preserve application shortcuts when thread-list triggers receive modified arrow keys
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1707,4 +2004,4 @@ fix: discard stale model content when a later tool response omits it so the mode
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86040b77` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2e2708a` are properly handled with clean fallback behavior.

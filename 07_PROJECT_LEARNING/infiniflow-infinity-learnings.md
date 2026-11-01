@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `5d27942c`  
+> **Source Version**: `6e4ce04b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:54:33.105Z  
+> **Timestamp**: 2026-10-27T16:38:32.234Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:54:33.098Z  
+> **Harvest Timestamp**: 2026-10-27T16:38:31.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4740 stars
+- **Stars / Engagement**: 4746 stars
 
 ---
 
@@ -1349,885 +1349,494 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `807af1b0` (2026-09-04)
-**Commit Message**: Fix corrupt WAL handling: out-of-bounds reads and over-aggressive purge (#3429)
+### Incident Patch 1: `76933d02` (2026-10-26)
+**Commit Message**: Fix mem-index (#3528)
 
-### Summary
+## Problem
+- Crash during a mem-index dump could lose the popped index, and startup recovery aborted with "Chunk index row alignment error" whenever the committed chunk chain was not contiguous.
+- AppendMemIndex leaked the mem-index update slot on early returns, and
+the appender resolved the indexer at dequeue time instead of at submit time.
+- A failed fulltext inversion left a hole in the sorted ring and was retried after later docs were committed, appending smaller doc ids behind larger ones in delta-encoded posting lists.
 
-This change fixes crashes and incorrect cleanup logic in the handling of
-corrupt WAL entries.
+## Changes
+- Dump transaction now owns the popped mem indexes: rollback puts them
+back, commit clears them and releases the tracer reservation; non-transactional
+  callers (build index, replay) clear immediately.
+- Recovery computes gaps from the full set of covered `[begin, end)`
+ranges (unordered, overlapping, holes), so missing chunks, empty blocks and
+narrow chunk declarations are rebuilt instead of being fatal. Pure helper
+exposed  for tests.
+- AppendMemIndex releases the update slot via RAII on every exit path.
+- AppendMemIndexTask binds its MemoryIndexer at submit time; the
+appender holds shared_ptr instead of raw pointers.
+- Full
 
-- Fixed an out-of-bounds crash in WalEntry::ReadAdv when a checksum
-mismatch logged the command type: the error path referenced cmds_[0]
-before the commands were parsed, so it now logs only the header fields.
-- Fixed an out-of-bounds read in WalEntry::ReadAdv that trusted the
-on-disk entry->size_ without bounding it against the caller's frame
-size; a corrupt size field could drive reads past the buffer, so it now
-returns nullptr when the size is out of range.
-- Fixed WalListIterator::PurgeBadEntriesAfterLatestCheckpoint deleting
-files that are merely damaged in the region already covered by a
-checkpoint: it now scans backward to confirm a checkpoint sits behind
-the bad entry and keeps the file intact instead of truncating or
-deleting the whole file.
-- Fixed an infinite loop in WalEntryIterator::GetAllEntries caused by a
-bad entry that returns nullptr without advancing the offset: iteration
-now stops on a nullptr.
-- Fixed a null-pointer crash in WalListIterator::Next when the purge
-empties the fil
-
-**File**: `src/storage/wal/wal_entry_impl.cpp` (modified, +58/-3)
+**File**: `src/storage/bg_task/bg_task.cppm` (modified, +7/-0)
 ```diff
-@@ -2223,15 +2223,23 @@ std::shared_ptr<WalEntry> WalEntry::ReadAdv(const char *&ptr, i32 max_bytes) {
-     entry->checksum_ = header->checksum_;
-     entry->txn_id_ = header->txn_id_;
-     entry->commit_ts_ = header->commit_ts_;
-+    // entry->size_ is read from the on-disk header and is not trustworthy on its own; it is also what indexes
-+    // into ptr below, so bound it against the frame (max_bytes) the caller handed us before touching
-+    // ptr + entry->size_. Without this, a torn header can drive the reads past the end of the buffer.
-+    if (entry->size_ <= static_cast<i32>(sizeof(WalEntryHeader)) || entry->size_ > max_bytes) {
-+        LOG_WARN(fmt::format("WalEntry size_ {} out of range for a frame of {} bytes", entry->size_, max_bytes));
-+        return nullptr;
+@@ -31,6 +31,7 @@ struct MemIndex;
+ struct ColumnVector;
+ class BaseMemIndex;
+ class EMVBIndexInMem;
++class MemoryIndexer;
+ class NewTxn;
+ 
+ export struct BGTask {
+@@ -194,6 +195,12 @@ public:
+ 
+ public:
+     std::shared_ptr<MemIndex> mem_index_{};
++    // The inverted index this task was prepared against. It is bound at submit time (in
++    // NewTxn::AppendMemIndex, right after AsyncInsertTop), because seq_inserted_/doc_count_
++    // are computed on that very indexer. Resolving it again at dequeue time (from mem_index_)
++    // can yield a different -- or already dumped/cleared -- indexer, which silently drops the
++    // rows. Holding a shared_ptr also keeps the indexer alive while the appender uses it.
++    std::shared_ptr<MemoryIndexer> memory_indexer_{};
+     std::shared_ptr<ColumnVector> input_column_{};
+     BlockOffset offset_{};
+     BlockOffset row_cnt_{};
+```
+
+**File**: `src/storage/bg_task/mem_index_appender_impl.cpp` (modified, +10/-5)
+```diff
+@@ -70,7 +70,10 @@ void MemIndexAppender::Submit(std::shared_ptr<BGTask> bg_task) {
+ void MemIndexAppender::Process() {
+     std::deque<std::shared_ptr<BGTask>> tasks;
+     StopProcessorTask *stop_task_{};
+-    std::vector<MemoryIndexer *> memory_indexers;
++    // Hold a shared_ptr here: the same mem index can be popped and cleared by a concurrent
++    // mem-index dump between the two phases of the loop below, which used to leave these
++    // raw pointers dangling (use-after-free inside Ring::GetBatch).
++    std::vector<std::shared_ptr<MemoryIndexer>> memory_indexers;
+     std::unordered_map<MemoryIndexer *, std::shared_ptr<AppendMemIndexBatch>> memory_indexer_map;
+     while (true) {
+         task_queue_.DequeueBulk(tasks);
+@@ -88,13 +91,15 @@ void MemIndexAppender::Process() {
+                     }
+                     if (storage_mode == StorageMode::kWritable) {
+                         auto append_mem_index_task = static_cast<AppendMemIndexTask *>(bg_task.get());
+-                        std::shared_ptr<MemoryIndexer> memory_indexer = append_mem_index_task->mem_index_->GetFulltextIndex();
++                        // Use the indexer the task was prepared against, never re-resolve it from
++                        // mem_index_ (which may have been dumped, cleared or replaced meanwhile).
++                        std::shared_ptr<MemoryIndexer> memory_indexer = append_mem_index_task->memory_indexer_;
+                         if (memory_indexer == nullptr) {
+                             // Only used for full text index, currently
+                             UnrecoverableError("Not inverted index");
+                         }
+                         if (memory_indexer_map.find(memory_indexer.get()) == memory_indexer_map.end()) {
+-                            memory_indexers.push_back(memory_indexer.get());
++                            memory_indexers.push_back(memory_indexer);
+                             memory_indexer_map.emplace(memory_indexer.get(), std::make_shared<AppendMemIndexBatch>());
+                         }
+                         AppendMemIndexBatch *append_mem_index_batch = memory_indexer_map[memory_indexer.get()].get();
+@@ -115,8 +120,8 @@ void MemIndexAppender::Process() {
+             }
+         }
+ 
+-        for (auto memory_indexer : memory_indexers) {
+-            AppendMemIndexBatch *append_mem_index_batch = memory_indexer_map[memory_indexer].get();
++        for (auto &memory_indexer : memory_indexers) {
++            AppendMemIndexBatch *append_mem_index_batch = memory_indexer_map[memory_indexer.get()].get();
+             append_mem_index_batch->WaitForCompletion();
+             memory_indexer->CommitSync();
+             for (auto &append_task : append_mem_index_batch->append_tasks_) {
+```
+
+**File**: `src/storage/catalog/meta/segment_index_meta.cppm` (modified, +1/-0)
+```diff
+@@ -64,6 +64,7 @@ public:
+ 
+     std::shared_ptr<MemIndex> GetMemIndex(bool for_update = false);
+     std::shared_ptr<MemIndex> PopMemIndex();
++    bool TrySetMemIndex(const std::shared_ptr<MemIndex> &mem_index);
+ 
+     std::shared_ptr<std::string> GetSegmentIndexDir() const;
+ 
+```
+
+**File**: `src/storage/catalog/meta/segment_index_meta_impl.cpp` (modified, +6/-0)
+```diff
+@@ -233,6 +233,12 @@ std::shared_ptr<MemIndex> SegmentIndexMeta::PopMemIndex() {
+     return new_catalog->PopMemIndex(mem_index_key);
+ }
+ 
++bool SegmentIndexMeta::TrySetMemIndex(const std::shared_ptr<MemIndex> &mem_index) {
++    std::string mem_index_key = GetSegmentIndexTag("mem_index");
++    NewCatalog *new_catalog = InfinityContext::instance().storage()->new_catalog();
++    return new_catalog->TrySetMemIndex(mem_index_key, mem_index);
++}
++
+ Status SegmentIndexMeta::LoadChunkIDs1() {
+     chunk_ids_ = std::vector<ChunkID>();
+     std::vector<ChunkID> &chunk_ids = *chunk_ids_;
+```
+
+**File**: `src/storage/catalog/new_catalog.cppm` (modified, +3/-0)
+```diff
+@@ -173,6 +173,9 @@ private:
+ public:
+     std::shared_ptr<MemIndex> GetMemIndex(const std::string &mem_index_key, bool for_update);
+     std::shared_ptr<MemIndex> PopMemIndex(const std::string &mem_index_key);
++    // Insert the mem index only when the key is free. Used to put back an index popped by an
++    // aborted dump. Returns false when a newer mem index already occupies the key.
++    bool TrySetMemIndex(const std::string &mem_index_key, const std::shared_ptr<MemIndex> &mem_index);
+     Status DropMemIndexByMemIndexKey(const std::string &mem_index_key);
+     std::vector<std::pair<std::string, std::string>> GetAllMemIndexInfo();
+ 
+```
+
+**File**: `src/storage/catalog/new_catalog_impl.cpp` (modified, +9/-0)
+```diff
+@@ -159,6 +159,15 @@ std::shared_ptr<MemIndex> NewCatalog::PopMemIndex(const std::string &mem_index_k
+     return nullptr;
+ }
+ 
++bool NewCatalog::TrySetMemIndex(const std::string &mem_index_key, const std::shared_ptr<MemIndex> &mem_index) {
++    if (mem_index == nullptr) {
++        return false;
 +    }
-     if (const i32 size2 = ReadBuf<i32>(ptr + entry->size_ - sizeof(i32)); entry->size_ != size2) {
-         return nullptr;
-     }
++    std::unique_lock<std::shared_mutex> lck(mem_index_mtx_);
++    auto [iter, inserted] = mem_index_map_.emplace(mem_index_key, mem_index);
++    return inserted;
++}
++
+ Status NewCatalog::DropMemIndexByMemIndexKey(const std::string &mem_index_key) {
+     bool delete_success = false;
      {
-         header->checksum_ = 0;
-         DeferFn defer([&] { header->checksum_ = entry->checksum_; });
-         if (const u32 checksum2 = CRC32IEEE::makeCRC(reinterpret_cast<const unsigned char *>(ptr), entry->size_); entry->checksum_ != checksum2) {
--            std::string error_msg = fmt::format("Command: {}, txn_id: {}, entry_size: {} checksum mismatch, expected: {}, actual: {}",
--                                                WalCmd::WalCommandTypeToString(entry->cmds_[0]->GetType()),
-+            // The commands are serialized after the header and have not been parsed yet, so cmds_ is empty
-+            // here; referencing cmds_[0] would index past its end and crash. Log the header fields only.
-+            std::string error_msg = fmt::format("txn_id: {}, entry_size: {} checksum mismatch, expected: {}, actual: {}",
-                                                 entry->txn_id_,
-                                                 entry->size_,
-                                                 entry->checksum_,
-@@ -2492,7 +2500,14 @@ std::shared_ptr<WalEntry> WalEntryIterator::GetEntryByIndex(i64 index) {
- std::vector<std::shared_ptr<WalEntry>> WalEntryIterator::GetAllEntries() {
-     std::vector<std::shared_ptr<WalEntry>> entries;
-     while (HasNext()) {
--        entries.emplace_back(Next());
-+        auto entry = Next();
-+        if (entry.get() == nullptr) {
-+            // Next() reports a corrupt entry by returning nullptr without advancing, so looping on HasNext()
-+            // alone would spin forever. Stop at the first corrupt entry.
-+            LOG_WARN(fmt::format("Stop reading {} at a corrupt entry (offset {})", file_name_, off_));
-+            break;
-+        }
-+        entries.emplace_back(entry);
-     }
-     if (is_backward_) {
-         std::reverse(entries.begin(), entries.end());
-@@ -2534,6 +2549,40 @@ void WalListIterator::PurgeBadEntriesAfterLatestCheckpoint(const std::vector<std
-             }
-         }
-         if (bad_offset != i64(-1)) {
-+            // A bad entry in front of a checkpoint in the same file only damages the region the checkpoint
-+            // already covers: replay reads from the latest checkpoint onward and never needs the entries
-+            // before it. Reaching such a bad entry must not take the file down. Peek backward from the tail,
-+            // which walks the intact entries between the tail and the checkpoint before it hits the bad one,
-+            // and when a checkpoint sits behind the bad entry, keep the file untouched. This applies whether
-+            // the bad entry is at the very start of the file (offset 0, which the caller would otherwise read
-+            // as a whole-file delete) or further in.
-+            bool ignore_bad_entry = false;
-+            {
-+                auto backward_iter = WalEntryIterator::Make(*it, true);
-+                while (backward_iter->HasNext()) {
-+                    auto backward_entry = backward_iter->Next();
-+                    if (backward_entry.get() == nullptr) {
-+                        break;
-+                    }
-+                    WalCmdCheckpointV2 *checkpoint_cmd = nullptr;
-+                    if (backward_entry->IsCheckPoint(checkpoint_cmd)) {
-+                        // GetOffset() after reading the checkpoint backward is the checkpoint's start offset.
-+                        // A checkpoint stored after the bad entry means the bad entry is already covered by it.
-+                        ignore_bad_entry = (backward_iter->GetOffset() > bad_offset);
-+                        break;
-+                    }
-+                }
-+            }
-+            if (ignore_bad_entry) {
-+                // The bad entry is covered by a checkpoint further on in the same file, so it is not part of
-+                // the region replay reads. Leave the file untouched and stop looking for an older checkpoint:
-+                // this file already carries one that replay can start from.
-+                LOG_WARN(fmt::format("Ignoring bad wal entry {}@{} (before a checkpoint in the same file
 ```
 
-**File**: `src/unit_test/storage/wal/wal_entry_ut.cpp` (modified, +343/-0)
+**File**: `src/storage/invertedindex/column_inverter.cppm` (modified, +2/-0)
 ```diff
-@@ -475,3 +475,346 @@ TEST_F(WalEntryTest, WalListIterator) {
-     EXPECT_EQ(max_commit_ts, 123ul);
-     EXPECT_EQ(replay_entries.size(), 1u);
- }
+@@ -56,6 +56,8 @@ public:
+ 
+     u32 GetDocCount() { return doc_count_; }
+ 
++    u32 GetBeginDocID() const { return begin_doc_id_; }
 +
-+// Byte offset of every entry of `wal_file_path`, in file order.
-+std::vector<i64> WalEntryOffsets(const std::string &wal_file_path) {
-+    std::vector<i64> offsets;
-+    auto iter = WalEntryIterator::Make(wal_file_path, false);
-+    while (iter->HasNext()) {
-+        offsets.push_back(iter->GetOffset());
-+        if (iter->Next() == nullptr) {
-+            break;
-+        }
+     u32 GetMerged() { return merged_; }
+ 
+     struct PosInfo {
+```
+
+**File**: `src/storage/invertedindex/memory_indexer.cppm` (modified, +30/-0)
+```diff
+@@ -81,6 +81,17 @@ public:
+     // InsertGap insert some empty documents. This is for abnormal case.
+     void InsertGap(u32 row_count);
+ 
++    // Called when the inversion of one task failed. It keeps the sorted ring contiguous (a
++    // missing sequence number would stall every later commit forever) and remembers the task
++    // so that Dump() can re-invert it before the chunk is written. Doc ids are preserved,
++    // therefore a successful retry makes the row visible exactly where it belongs.
++    void MarkInvertFailed(u64 seq, const std::shared_ptr<ColumnVector> &column_vector, u32 row_offset, u32 row_count, u32 start_doc_id);
++
++    bool HasFailedInvertTasks() const {
++        std::unique_lock<std::mutex> lock(mutex_);
++        return !failed_invert_tasks_.empty();
 +    }
-+    return offsets;
-+}
 +
-+// Flips a byte of the command count of the entry starting at `entry_offset`, so that the entry no longer
-+// matches its checksum. The size fields stay intact, so the entry is only rejected once it is read.
-+void CorruptEntry(const std::string &wal_file_path, i64 entry_offset) {
-+    const i64 offset = entry_offset + static_cast<i64>(sizeof(WalEntryHeader));
-+    std::fstream fs(wal_file_path, std::ios::in | std::ios::out | std::ios::binary);
-+    EXPECT_TRUE(fs.is_open());
-+    if (!fs.is_open()) {
-+        return;
-+    }
-+    fs.seekg(offset);
-+    char byte = 0;
-+    fs.read(&byte, 1);
-+    fs.seekp(offset);
-+    byte = static_cast<char>(byte ^ 0xFF);
-+    fs.write(&byte, 1);
-+}
-+
-+// Cuts the checkpoint and everything behind it off a freshly mocked WAL file, so that the file holds no
-+// checkpoint. Returns the offsets of the four entries left in it.
-+std::vector<i64> MockWalFileWithoutCheckpoint(const std::string &wal_file) {
-+    MockWalFile(wal_file, "catalog", "META_123.full.json");
-+    const std::vector<i64> offsets = WalEntryOffsets(wal_file);
-+    // ASSERT_* expands to `return;`, which does not compile in a function returning a value, so check
-+    // explicitly and bail out: offsets[4] below and the four offsets returned both need this many.
-+    if (offsets.size() < 5) {
-+        ADD_FAILURE() << "MockWalFile produced " << offsets.size() << " entries in " << wal_file << ", need at least 5";
-+        return {};
-+    }
-+    std::filesystem::resize_file(wal_file, static_cast<size_t>(offsets[4]));
-+    return std::vector<i64>(offsets.begin(), std::next(offsets.begin(), 4));
-+}
-+
-+// Builds a WAL pair and drops the checkpoint (and everything behind it) from the newer file, so that the
-+// purge has to look for the checkpoint in the older file. Returns the offsets of the entries left in the
-+// newer file, which are its first four entries.
-+std::vector<i64> MockWalPair(const std::string &newer_wal_file, const std::string &older_wal_file) {
-+    MockWalFile(older_wal_file, "catalog", "META_123.full.json");
-+    return MockWalFileWithoutCheckpoint(newer_wal_file);
-+}
-+
-+// Drains the iterator and returns the max commit ts of the first checkpoint it reaches.
-+TxnTimeStamp ReplayToFirstCheckpoint(WalListIterator &iterator) {
-+    TxnTimeStamp max_commit_ts = 0;
-+    while (iterator.HasNext()) {
-+        auto entry = iterator.Next();
-+        if (entry.get() == nullptr) {
-+            break;
-+        }
-+        WalCmdCheckpointV2 *checkpoint_cmd = nullptr;
-+        if (entry->IsCheckPoint(checkpoint_cmd)) {
-+            max_commit_ts = checkpoint_cmd->max_commit_ts_;
-+            break;
-+        }
-+    }
-+    return max_commit_ts;
-+}
-+
-+// Drains the iterator and returns the commit ts of every entry replay sees, in that order.
-+std::vector<TxnTimeStamp> DrainWalList(WalListIterator &iterator) {
-+    std::vector<TxnTimeStamp> commit_tss;
-+    while (iterator.HasNext()) {
-+        auto entry = iterator.Next();
-+        if (entry.get() == nullptr) {
-+            break;
-+        }
-+        commit_tss.push_back(entry->commit_ts_);
-+    }
-+    return commit_tss;
-+}
-+
-+// Damage in front of the checkpoint entry must be ignored: replay only reads the entries behind it, and
-+// the backward scan that locates the checkpoint must not walk the damaged prefix.
-+TEST_F(WalEntryTest, DamagedEntryBeforeCheckpointIsIgnored) {
-+    RemoveDbDirs();
-+    std::filesystem::create_directories(GetFullWalDir());
-+    const std::string wal_file = std::string(GetFullWalDir()) + "/wal.log";
-+    MockWalFile(wal_file, "catalog", "META_123.full.json");
-+
-+    const std::vector<i64> offsets = WalEntryOffsets(wal_file);
-+    ASSERT_FALSE(offsets.empty());
-+    const auto size_before = std::filesystem::file_size(wal_file);
-+    CorruptEntry(wal_file, offsets[0]);
-+
-+    WalListIterator iterator({wal_file});
-+    EXPECT_EQ(ReplayToFirstCheckpoint(iterator), 123ul);
-+    EXPECT_EQ(std::filesystem::file_size(wal_file), size_before);
-+}
-+
-+// Damage in a file that holds no checkpoint: the file is truncated at the first bad entry and replay
-+// continues into the older file, which still carries the checkpoint.
-+TEST_F(WalEntryTest, DamagedEntryTruncatesWalFile) {
-+    RemoveDbDirs();
-+    std::filesystem::create_directories(GetFullWalDir());
-+    const std::string wal_file1 = std::string(GetFullWalDir()) + "/wal.log";
-+    const std::string wal_file2 = std::string(GetFullWalDir()) + "/wal2
-```
-
----
-
-### Incident Patch 2: `473f4fa0` (2026-09-21)
-**Commit Message**: fix(fulltext): stop BMW scoring iterators on a stale posting block (#3496)
-
-### What
-
-Fix a server abort in fulltext search with many query terms. Fixes
-#3495.
-
-`match_text` with more than 15 terms could terminate the process from a
-query thread:
-
-```
-TerminateHandler: Unhandled Exception: number of bits is unsupported
-```
-
-(or `Decode posting FAILEDF@src/storage/common/int_encoder.cppm:109`),
-thrown under `BlockMaxWandIterator::Next` ->
-`TermDocIterator::BM25Score` ->
-`SkipIndexDecoder::DecodeCurrentTFBuffer`.
-
-### Approach
-
-- `BlockMaxWandIterator::Next` only partially sorted `sorted_iterators_`
-for more than `SORT_SKIP_THRESHOLD` terms. With the pivot in the
-unsorted tail, iterators in `[0, pivot]` could sit on an earlier doc;
-BMW called `NextShallow(d)` on them (block cursor moves, nothing
-decoded) and then `BM25Score()` without a `Next(d)`. The partial sort is
-removed, the iterators are always fully sorted.
-- `PostingIterator::SkipTo` now invalidates `current_row_id_` when the
-block cursor moves, so `GetCurrentTF` / `GetCurrentTTF` /
-`GetCurrentDocPayload` return 0 instead of decoding from the reader's
-stale position. Before, the only guard was an `assert` in
-`MultiPostingDeco
-
-**File**: `src/scheduler/fragment_task_impl.cpp` (modified, +3/-0)
-```diff
-@@ -101,6 +101,9 @@ void FragmentTask::OnExecute() {
-         } catch (UnrecoverableException &e) {
-             LOG_CRITICAL(e.what());
-             throw e;
-+        } catch (std::exception &e) {
-+            LOG_ERROR(e.what());
-+            operator_status = Status::UnexpectedError(e.what());
-         }
+     // Commit is non-blocking and thread-safe. There shall be a background thread which call this method regularly.
+     void Commit(bool offline = false);
  
-         profiler.End();
-```
-
-**File**: `src/storage/invertedindex/posting_iterator_impl.cpp` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ bool PostingIterator::SkipTo(RowID doc_id) {
-     if (doc_id > last_doc_id_in_current_block_ or last_doc_id_in_current_block_ == INVALID_ROWID) {
-         finish_decode_docid_ = false;
-         finish_decode_tf_ = false;
-+        current_row_id_ = INVALID_ROWID;
-         return posting_decoder_->SkipTo(doc_id,
-                                         last_doc_id_in_prev_block_,
-                                         lowest_possible_doc_id_in_current_block_,
-```
-
-**File**: `src/storage/invertedindex/search/blockmax_wand_iterator.cppm` (modified, +0/-2)
-```diff
-@@ -51,7 +51,6 @@ private:
-     size_t FindPivotOptimized(float threshold);
-     void UpdateScoreUpperBoundPrefixSums();
-     bool ShouldSkipSort() const;
--    void OptimizedPartialSort(size_t limit);
-     bool TryFastPivotEstimation(float threshold, size_t &estimated_pivot);
+@@ -158,6 +169,19 @@ private:
  
-     // Lucene-inspired MSM optimization methods
-@@ -70,7 +69,6 @@ private:
-     static constexpr u32 SORT_SKIP_THRESHOLD = 15;  // Reduced threshold for better balance
-     static constexpr u32 LAZY_SORT_INTERVAL = 3;    // More frequent sorting for accuracy
-     static constexpr u32 FAST_PIVOT_THRESHOLD = 50; // Use fast estimation for very large sets
--    static constexpr u32 PARTIAL_SORT_FACTOR = 3;   // Sort only top 1/3 for large sets
+     void TupleListToIndexFile(std::unique_ptr<SortMergerTermTuple<TermTuple, u32>> &merger);
  
-     std::vector<f32> score_ub_prefix_sums_; // Prefix sums for fast pivot calculation
-     std::vector<size_t> iterator_indices_;  // Cached indices for avoiding pointer chasing
-```
-
-**File**: `src/storage/invertedindex/search/blockmax_wand_iterator_impl.cpp` (modified, +3/-32)
-```diff
-@@ -159,18 +159,6 @@ bool BlockMaxWandIterator::ShouldSkipSort() const {
-     return iterations_since_sort_ < adaptive_interval;
- }
- 
--// Optimized partial sort that only sorts what we need
--void BlockMaxWandIterator::OptimizedPartialSort(size_t limit) {
--    const size_t num_iterators = sorted_iterators_.size();
--    if (limit >= num_iterators) {
--        std::sort(sorted_iterators_.begin(), sorted_iterators_.end(), [](const auto &a, const auto &b) { return a->DocID() < b->DocID(); });
--    } else {
--        std::partial_sort(sorted_iterators_.begin(), sorted_iterators_.begin() + limit, sorted_iterators_.end(), [](const auto &a, const auto &b) {
--            return a->DocID() < b->DocID();
--        });
--    }
--}
--
- // Aggressively optimized pivot estimation with safety guarantees
- bool BlockMaxWandIterator::TryFastPivotEstimation(float threshold, size_t &estimated_pivot) {
-     const size_t num_iterators = sorted_iterators_.size();
-@@ -283,15 +271,8 @@ bool BlockMaxWandIterator::Next(RowID doc_id) {
-             next_sort_cnt_++;
-             consecutive_skips_ = 0; // Reset consecutive skip counter
- 
--            if (num_iterators > SORT_SKIP_THRESHOLD) {
--                // For large keyword sets, use intelligent partial sort
--                size_t sort_limit = num_iterators / PARTIAL_SORT_FACTOR + 5;
--                sort_limit = std::min(sort_limit, num_iterators);
--                OptimizedPartialSort(sort_limit);
--            } else {
--                // For smaller keyword sets, use full sort
--                std::sort(sorted_iterators_.begin(), sorted_iterators_.end(), [](const auto &a, const auto &b) { return a->DocID() < b->DocID(); });
--            }
-+            // Full sort required: a partially sorted tail lets BM25Score() run on an iterator whose block was skipped but not decoded.
-+            std::sort(sorted_iterators_.begin(), sorted_iterators_.end(), [](const auto &a, const auto &b) { return a->DocID() < b->DocID(); });
-             iterations_since_sort_ = 0;
-             prefix_sums_valid_ = false; // Invalidate prefix sums after sorting
-         } else {
-@@ -329,17 +310,7 @@ bool BlockMaxWandIterator::Next(RowID doc_id) {
-         } else {
-             // Critical: BMW algorithm requires sorted order for correctness
-             if (!should_sort) {
--                // We must ensure sorted order for correct pivot calculation
--                // Use a more efficient sort for this critical path
--                if (num_iterators > FAST_PIVOT_THRESHOLD) {
--                    // For very large sets, sort only what we likely need
--                    size_t estimated_limit = std::min(num_iterators, num_iterators / 4 + 10);
--                    OptimizedPartialSort(estimated_limit);
--                } else {
--                    std::sort(sorted_iterators_.begin(), sorted_iterators_.end(), [](const auto &a, const auto &b) {
--                        return a->DocID() < b->DocID();
--                    });
--                }
-+                std::sort(sorted_iterators_.begin(), sorted_iterators_.end(), [](const auto &a, const auto &b) { return a->DocID() < b->DocID(); });
-                 iterations_since_sort_ = 0;
-                 prefix_sums_valid_ = false;
-             }
-```
-
-**File**: `src/unit_test/storage/invertedindex/posting_writer_ut.cpp` (modified, +39/-0)
-```diff
-@@ -30,6 +30,8 @@ import :segment_posting;
- import :posting_iterator;
- import :vector_with_lock;
- import :infinity_context;
-+import :virtual_store;
-+import :byte_slice;
- 
- import data_type;
- import internal_types;
-@@ -108,3 +110,40 @@ TEST_P(PostingWriterTest, test1) {
-         }
-     }
- }
-+
-+TEST_P(PostingWriterTest, tf_after_skip_to_across_segments) {
-+    VectorWithLock<u32> column_length_array(2000, 10);
-+    std::vector<std::vector<u8>> storage;
-+    auto seg_postings = std::make_shared<std::vector<SegmentPosting>>();
-+    for (u32 seg = 0; seg < 2; ++seg) {
-+        std::string path = file_ + "_seg" + std::to_string(seg);
-+        auto posting = std::make_shared<PostingWriter>(posting_format_, column_length_array);
-+        for (docid_t d = 1; d <= 300; ++d) {
-+            posting->AddPosition(1);
-+            posting->EndDocument(d, 0);
-+        }
-+        TermMeta term_meta(posting->GetDF(), posting->GetTotalTF());
-+        {
-+            auto file_writer = std::make_shared<FileWriter>(path, 128000);
-+            posting->Dump(file_writer, term_meta);
-+            file_writer->Sync();
-+        }
-+        size_t size = VirtualStore::GetFileSize(path);
-+        storage.emplace_back(size);
-+        FileReader file_reader(path, 128000);
-+        file_reader.Read((char *)storage.back().data(), size);
-+        auto slice_list = std::make_shared<ByteSliceList>(ByteSlice::NewSlice(storage.back().data(), size));
-+        SegmentPosting seg_posting;
-+        seg_posting.Init(slice_list, RowID(seg, 0), term_meta.doc_freq_, term_meta);
-+        seg_postings->push_back(seg_posting);
-+    }
-+    PostingIterator iter(flag_);
-+    iter.Init(seg_postings, 0);
-+
-+    ASSERT_EQ(iter.SeekDoc(RowID(0, 0)), RowID(0, 1));
-+    ASSERT_EQ(iter.GetCurrentTF(), 1u);
-+    ASSERT_TRUE(iter.SkipTo(RowID(1, 10)));
-+    ASSERT_EQ(iter.GetCurrentTF(), 0u);
-+    ASSERT_EQ(iter.SeekDoc(RowID(1, 10)), RowID(1, 10));
-+    ASSERT_EQ(iter.GetCurrentTF(), 1u);
-+}
-```
-
-**File**: `src/unit_test/storage/invertedindex/search/query_match_ut.cpp` (modified, +50/-0)
-```diff
-@@ -34,6 +34,7 @@ import :txn_state;
- import :new_txn_manager;
- import :new_txn;
- import :data_block;
-+import :fulltext_score_result_heap;
- 
- import logical_type;
- import column_def;
-@@ -158,6 +159,55 @@ TEST_P(QueryMatchTest, phrase) {
-     }
- }
- 
-+TEST_P(QueryMatchTest, bmw_many_terms) {
-+    CreateDBAndTable(db_name_, table_name_);
-+    CreateIndex(db_name_, table_name_, index_name_, "standard");
-+    std::mt19937 rng(42);
-+    auto pick = [&rng] { return fmt::format("term{:03d} ", rng() % (1 + rng() % 300)); };
-+    auto words = [&pick](u32 n) {
-+        std::string s;
-+        for (u32 i = 0; i < n; ++i) {
-+            s += pick();
-+        }
-+        return s;
++    struct FailedInvertTask {
++        std::shared_ptr<ColumnVector> column_vector_;
++        u32 row_offset_{0};
++        u32 row_count_{0};
++        u32 start_doc_id_{0};
 +    };
-+    for (u32 seg = 0; seg < 4; ++seg) {
-+        datas_.clear();
-+        for (u32 i = 0; i < 1500; ++i) {
-+            datas_.push_back({std::to_string(seg * 1500 + i), "title", words(40)});
-+        }
-+        InsertData(db_name_, table_name_);
-+    }
 +
-+    NewTxnManager *txn_mgr = InfinityContext::instance().storage()->new_txn_manager();
-+    auto *txn = txn_mgr->BeginTxn(std::make_unique<std::string>("query match"), TransactionType::kRead);
-+    auto [table_info, status] = txn->GetTableInfo(db_name_, table_name_);
-+    std::shared_ptr<IndexReader> index_reader;
-+    status = txn->GetFullTextIndexReader(db_name_, table_name_, index_reader);
-+    EXPECT_TRUE(status.ok());
-+    QueryBuilder query_builder(table_info);
-+    query_builder.Init(index_reader);
-+    SearchDriver driver(query_builder.GetColumn2Analyzer(), "text");
-+
-+    constexpr u32 topn = 10;
-+    FullTextQueryContext context(FulltextSimilarity::kBM25, BM25Params{}, MinimumShouldMatchOption{}, RankFeaturesOption{}, topn);
-+    context.early_term_algo_ = EarlyTermAlgo::kBMW;
-+    context.query_tree_ = driver.ParseSingleWithFields("text", words(200));
-+    std::unique_ptr<DocIterator> doc_iterator = query_builder.CreateSearch(context);
-+    ASSERT_EQ(doc_iterator->GetType(), DocIteratorType::kBMWIterator);
-+
-+    float scores[topn];
-+    RowID row_ids[topn];
-+    FullTextScoreResultHeap result_heap(topn, scores, row_ids);
-+    while (doc_iterator->Next()) {
-+        if (result_heap.AddResult(doc_iterator->Score(), doc_iterator->DocID())) {
-+            doc_iterator->UpdateScoreThreshold(result_heap.GetScoreThreshold());
-+        }
-+    }
-+    EXPECT_EQ(result_heap.GetResultSize(), topn);
-+    EXPECT_TRUE(txn_mgr->CommitTxn(txn).ok());
-+}
-+
- void QueryMatchTest::CreateDBAndTable(const std::string &db_name, const std::string &table_name) {
-     std::vector<std::shared_ptr<ColumnDef>> column_defs;
-     {
-```
-
----
-
-### Incident Patch 3: `7badfd94` (2026-07-30)
-**Commit Message**: Fix: prevent full-text inverting exceptions from deadlock (#3409)
-
-**Issue**
-Full-text invert tasks run in ctpl worker threads via lambdas that
-increment counters (task_count_ / inflight_tasks_) before executing
-InvertColumn→Sort→ring_sorted_.Put. If any of these steps throws (e.g.,
-simdjson INCORRECT_TYPE on empty JSON {}), the counter decrement /
-semaphore release code is never reached, causing the consumer to block
-forever.
-
-**Solution**
-Wrap all 4 inverting lambdas in try-catch:
-AsyncInsertBottom: --task_count_ + cv_.notify_one() always executes
-(outside try)
-AsyncInsert: on failure, release(sema) + --inflight_tasks_
-Insert (offline/online): on failure, --inflight_tasks_
-
---
-
-Make realtime the default for new full-text indexes
-
-**File**: `src/storage/catalog/new_catalog_static_impl.cpp` (modified, +63/-0)
-```diff
-@@ -339,6 +339,69 @@ Status NewCatalog::MemIndexRecover(NewTxn *txn) {
-             return status;
-         }
-     }
-+
-+    // Drain all pending fulltext index commits to ensure they complete before the checkpoint that follows.
-+    {
-+        auto DrainFulltextMemIndexes = [&](TableIndexMeta &table_index_meta) {
-+            auto [index_base, base_status] = table_index_meta.GetIndexBase();
-+            if (!base_status.ok() || index_base->index_type_ != IndexType::kFullText) {
-+                return;
-+            }
-+            auto [segment_ids_ptr, seg_status] = table_index_meta.GetSegmentIndexIDs1();
-+            if (!seg_status.ok()) {
-+                return;
-+            }
-+            for (SegmentID segment_id : *segment_ids_ptr) {
-+                SegmentIndexMeta segment_index_meta(segment_id, table_index_meta);
-+                std::shared_ptr<MemIndex> mem_index = segment_index_meta.GetMemIndex();
-+                if (mem_index == nullptr) {
-+                    continue;
-+                }
-+                std::shared_ptr<MemoryIndexer> memory_indexer = mem_index->GetFulltextIndex();
-+                if (memory_indexer != nullptr) {
-+                    memory_indexer->WaitForTaskCompletion();
-+                }
-+            }
-+        };
-+
-+        auto DrainTable = [&](TableMeta &table_meta) {
-+            std::vector<std::string> *index_id_strs_ptr = nullptr;
-+            std::vector<std::string> *index_name_strs_ptr = nullptr;
-+            Status st = table_meta.GetIndexIDs(index_id_strs_ptr, &index_name_strs_ptr);
-+            if (!st.ok()) {
-+                return;
-+            }
-+            for (size_t i = 0; i < index_id_strs_ptr->size(); ++i) {
-+                const std::string &index_id_str = (*index_id_strs_ptr)[i];
-+                const std::string &index_name_str = (*index_name_strs_ptr)[i];
-+                TableIndexMeta table_index_meta(index_id_str, index_name_str, table_meta);
-+                DrainFulltextMemIndexes(table_index_meta);
-+            }
-+        };
-+
-+        auto DrainDB = [&](DBMeta &db_meta) {
-+            std::vector<std::string> *table_id_strs_ptr = nullptr;
-+            std::vector<std::string> *table_names_ptr = nullptr;
-+            Status st = db_meta.GetTableIDs(table_id_strs_ptr, &table_names_ptr);
-+            if (!st.ok()) {
-+                return;
-+            }
-+            for (size_t i = 0; i < table_id_strs_ptr->size(); ++i) {
-+                const std::string &table_id_str = (*table_id_strs_ptr)[i];
-+                const std::string &table_name = (*table_names_ptr)[i];
-+                TableMeta table_meta(db_meta.db_id_str(), table_id_str, table_name, txn);
-+                DrainTable(table_meta);
-+            }
-+        };
-+
-+        for (size_t idx = 0; idx < db_count; ++idx) {
-+            const std::string &db_id_str = db_id_strs_ptr->at(idx);
-+            const std::string &db_name = db_names_ptr->at(idx);
-+            DBMeta db_meta(db_id_str, db_name, txn);
-+            DrainDB(db_meta);
-+        }
-+    }
-+
-     return Status::OK();
- }
- 
-```
-
-**File**: `src/storage/common/rcu_multimap.cppm` (modified, +67/-16)
-```diff
-@@ -618,6 +618,11 @@ private:
-     InnerMap *volatile read_map_;
-     std::size_t miss_time_;
- 
-+    // RCU reader count: incremented by readers before accessing read_map_,
-+    // decremented after the read is complete. Writers (CheckSwapInLock, CheckGc)
-+    // wait for this to reach 0 before freeing old maps, preventing use-after-free.
-+    mutable std::atomic<u64> rcu_reader_count_{0};
-+
-     mutable std::mutex dirty_lock_;
-     InnerMap *dirty_map_;
- 
-@@ -662,6 +667,9 @@ typename RcuMap<Key, Value>::MapValue RcuMap<Key, Value>::CreateMapValue(const V
- 
- template <typename Key, typename Value>
- Value *RcuMap<Key, Value>::Get(const Key &key, bool update_access_time) {
-+    // RCU read protection: prevent write-side GC from freeing read_map_ during iteration
-+    rcu_reader_count_.fetch_add(1, std::memory_order_acquire);
-+
-     // ULTRA-OPTIMIZED RCU READ PATTERN FOR READ-HEAVY WORKLOADS:
-     // Eliminate ALL overhead in the common case to match MapWithLock performance
- 
-@@ -686,9 +694,13 @@ Value *RcuMap<Key, Value>::Get(const Key &key, bool update_access_time) {
-                 }
-             }
-         }
-+        rcu_reader_count_.fetch_sub(1, std::memory_order_release);
-         return &(it->second.value_);
-     }
- 
-+    // RCU: temporarily release reader count while checking dirty_map under lock
-+    rcu_reader_count_.fetch_sub(1, std::memory_order_release);
-+
-     // PHASE 2: Check dirty_map for recent writes (SLOW PATH - MINIMIZED)
-     // This path should be rare in read-heavy workloads
-     {
-@@ -740,21 +752,25 @@ std::optional<Value> RcuMap<Key, Value>::GetValue(const Key &key, bool update_ac
- 
- template <typename Key, typename Value>
- Value *RcuMap<Key, Value>::GetWithRcuTime(const Key &key) {
-+    // RCU read protection
-+    rcu_reader_count_.fetch_add(1, std::memory_order_acquire);
-+
-     // ABSOLUTE FASTEST PATH: Zero overhead reads for maximum performance
--    // This should be as fast as MapWithLock::Get() with shared_lock
-     InnerMap *current_read = read_map_;
-     auto it = current_read->find(key);
- 
-     if (it != current_read->end()) {
-+        rcu_reader_count_.fetch_sub(1, std::memory_order_release);
-         return &(it->second.value_);
-     }
- 
-+    rcu_reader_count_.fetch_sub(1, std::memory_order_release);
-+
-     // Inline dirty_map check to avoid function call overhead
-     {
-         std::lock_guard<std::mutex> lock(dirty_lock_);
-         auto dirty_it = dirty_map_->find(key);
-         if (dirty_it != dirty_map_->end()) {
--            // No access time updates, no miss tracking - pure read performance
-             return &(dirty_it->second.value_);
-         }
-     }
-@@ -764,18 +780,18 @@ Value *RcuMap<Key, Value>::GetWithRcuTime(const Key &key) {
- 
- template <typename Key, typename Value>
- Value *RcuMap<Key, Value>::GetReadOnly(const Key &key) {
--    // BENCHMARK-OPTIMIZED READ: Absolute minimum overhead
--    // This method is designed to match MapWithLock performance exactly
--    // by eliminating ALL RCU-specific overhead
-+    // RCU read protection
-+    rcu_reader_count_.fetch_add(1, std::memory_order_acquire);
- 
--    // Try read_map first (should succeed in most cases for read-heavy workloads)
-     InnerMap *current_read = read_map_;
-     auto it = current_read->find(key);
-     if (it != current_read->end()) {
-+        rcu_reader_count_.fetch_sub(1, std::memory_order_release);
-         return &(it->second.value_);
-     }
- 
--    // If not found, try dirty_map (minimal overhead)
-+    rcu_reader_count_.fetch_sub(1, std::memory_order_release);
-+
-     std::lock_guard<std::mutex> lock(dirty_lock_);
-     auto dirty_it = dirty_map_->find(key);
-     if (dirty_it != dirty_map_->end()) {
-@@ -826,6 +842,12 @@ void RcuMap<Key, Value>::CheckSwapInLock() {
-     // std::set up new dirty_map for future writes
-     dirty_map_ = new_dirty_map;
- 
-+    // RCU SYNCHRONIZATION: Wait for all readers that saw the OLD read_map_ to finish.
-+    // Without this, a reader could still be iterating the old map when CheckGc frees it.
-+    while (rcu_reader_count_.load(std::memory_order_acquire) > 0) {
-+        std::this_thread::yield();
-+    }
-+
-     // Schedule old read_map for garbage collection
-     // Cannot delete immediately - readers may still be using it
-     deleted_map_list_.push_back(deleted_map);
-@@ -929,6 +951,12 @@ void RcuMap<Key, Value>::CheckGc(u64 min_delete_time) {
-     }
- 
-     for (auto &deleted_map : map_need_delete) {
-+        // RCU: Wait for any in-flight readers to finish before freeing old maps.
-+        // CheckSwapInLock already waited, but there may be readers that started before
-+        // the swap and haven't finished yet.
-+        while (rcu_reader_count_.load(std::memory_order_acquire) > 0) {
-+            std::this_thread::yield();
-+        }
-         delete deleted_map.deleted_entries_;
-         delete deleted_map.map_;
-     }
-@@ -991,20 +1019,31 @@ void RcuMap<Key, Value>::emplace(const Key &key, Args &&...args) {
- 
- template <typename Key, typename Value>
- u32 RcuM
-```
-
-**File**: `src/storage/invertedindex/column_inverter.cppm` (modified, +13/-0)
-```diff
-@@ -81,6 +81,18 @@ public:
- 
-     const std::vector<std::binary_semaphore *> &semas() const { return semas_; }
- 
-+    // Release all semaphores exactly once across all threads that process this inverter.
-+    void ReleaseSemas() {
-+        bool expected = false;
-+        if (!semas_released_.compare_exchange_strong(expected, true, std::memory_order_acq_rel)) {
-+            return;
-+        }
-+        for (auto *sema : semas_) {
-+            sema->release();
-+        }
-+        // semas_ does not need clearing since the atomic flag prevents re-entry.
-+    }
++    // Re-invert the tasks that could not even be re-inverted synchronously in MarkInvertFailed.
++    // Called by Dump() after all in-flight tasks are committed and before the chunk is written.
++    // Retried postings are appended to the shared posting writers, whose doc lists are delta
++    // encoded, so the retry is only valid while no larger doc id has been generated yet.
++    void RetryFailedInvertTasks();
 +
  private:
-     using TermBuffer = std::vector<char>;
-     using PosInfoVec = std::vector<PosInfo>;
-@@ -112,6 +124,7 @@ private:
+     std::string index_dir_;
+     std::string base_name_;
+@@ -175,6 +199,12 @@ private:
+     u64 inflight_tasks_{0};
+     std::condition_variable cv_;
+     mutable std::mutex mutex_;
++    // Guarded by mutex_. Tasks whose inversion threw; re-inverted by Dump().
++    std::vector<FailedInvertTask> failed_invert_tasks_;
++    // Upper bound (exclusive) of the doc ids already generated into the shared posting writers.
++    // Written by CommitSync (single writer, guarded by mutex_commit_) and read by
++    // RetryFailedInvertTasks to decide whether a retry can still keep the doc lists ordered.
++    std::atomic<u32> generated_doc_end_{0};
+     std::mutex mutex_commit_;
+     std::shared_mutex mutex_commit_sync_share_;
  
-     u32 merged_{1};
-     std::vector<std::binary_semaphore *> semas_{};
-+    std::atomic<bool> semas_released_{false};
- 
- protected:
-     size_t InvertColumn(u32 doc_id, const std::string &val);
 ```
 
-**File**: `src/storage/invertedindex/index_defines.cppm` (modified, +1/-1)
+---
+
+### Incident Patch 2: `6e4ce04b` (2026-10-27)
+**Commit Message**: fix(sdk): parse chained arithmetic left to right in the Go SDK (#3530)
+
+Fixes #3529
+
+**File**: `go/expression_parser.go` (modified, +69/-3)
 ```diff
-@@ -29,7 +29,7 @@ export {
-     typedef u32 tf_t;
-     typedef i64 ttf_t;
+@@ -172,9 +172,11 @@ func parseExpressionInternal(expr string) (*Expression, error) {
+ 		}
+ 	}
  
--    constexpr optionflag_t OPTION_FLAG_ALL = of_term_payload | of_doc_payload | of_position_list | of_term_frequency | of_block_max;
-+    constexpr optionflag_t OPTION_FLAG_ALL = of_term_payload | of_doc_payload | of_position_list | of_term_frequency | of_block_max | of_realtime;
-     constexpr optionflag_t NO_BLOCK_MAX = of_term_payload | of_doc_payload | of_position_list | of_term_frequency;
-     constexpr optionflag_t NO_TERM_FREQUENCY = of_term_payload | of_doc_payload;
-     constexpr optionflag_t OPTION_FLAG_NONE = of_none;
+-	// Check for arithmetic operators
+-	for _, op := range []string{"+", "-", "*", "/", "%"} {
+-		if left, right, found := splitByOperator(expr, op); found {
++	// Check for arithmetic operators, lowest precedence group first. Operators
++	// of equal precedence are left associative, so "c1 - c2 - c3" is
++	// "(c1 - c2) - c3": split at the rightmost operator of the group.
++	for _, ops := range [][]string{{"+", "-"}, {"*", "/", "%"}} {
++		if left, right, op, found := splitByLastOperator(expr, ops); found {
+ 			return &Expression{
+ 				Type:     ExprTypeBinary,
+ 				Operator: op,
+@@ -853,6 +855,70 @@ func splitByOperator(expr, op string) (*Expression, *Expression, bool) {
+ 	return nil, nil, false
+ }
+ 
++// splitByLastOperator splits an expression at the rightmost top-level
++// occurrence of any of the given single-character operators, respecting
++// parentheses and string literals. Splitting at the rightmost operator makes
++// operators of equal precedence left associative.
++func splitByLastOperator(expr string, ops []string) (*Expression, *Expression, string, bool) {
++	expr = strings.TrimSpace(expr)
++
++	var positions []int
++	parenCount := 0
++	inString := false
++	stringQuote := byte(0)
++
++	for i := 0; i < len(expr); i++ {
++		ch := expr[i]
++
++		// Handle string literals
++		if !inString && (ch == '\'' || ch == '"') {
++			inString = true
++			stringQuote = ch
++			continue
++		} else if inString && ch == stringQuote {
++			// Check for escaped quote (e.g., 'it''s')
++			if i+1 < len(expr) && expr[i+1] == stringQuote {
++				i++ // Skip the next quote
++				continue
++			}
++			inString = false
++			stringQuote = 0
++			continue
++		}
++
++		// Skip processing when inside a string literal
++		if inString {
++			continue
++		}
++
++		if ch == '(' {
++			parenCount++
++		} else if ch == ')' {
++			parenCount--
++		} else if parenCount == 0 {
++			for _, op := range ops {
++				if ch == op[0] {
++					positions = append(positions, i)
++					break
++				}
++			}
++		}
++	}
++
++	// Try the rightmost operator first. An operator that leaves an
++	// unparsable side, such as the unary minus in "c1 - -5", is skipped.
++	for j := len(positions) - 1; j >= 0; j-- {
++		i := positions[j]
++		left, err1 := parseExpressionInternal(strings.TrimSpace(expr[:i]))
++		right, err2 := parseExpressionInternal(strings.TrimSpace(expr[i+1:]))
++		if err1 == nil && err2 == nil {
++			return left, right, string(expr[i]), true
++		}
++	}
++
++	return nil, nil, "", false
++}
++
+ // isAlpha checks if a byte is an alphabetic character
+ func isAlpha(ch byte) bool {
+ 	return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')
 ```
 
-**File**: `src/storage/invertedindex/memory_indexer_impl.cpp` (modified, +124/-32)
+**File**: `go/tests/expression_parser_test.go` (modified, +17/-10)
 ```diff
-@@ -132,12 +132,27 @@ void MemoryIndexer::Insert(std::shared_ptr<ColumnVector> column_vector, u32 row_
-         auto inverter = std::make_shared<ColumnInverter>(provider, column_lengths_);
-         inverter->InitAnalyzer(this->analyzer_);
-         auto func = [this, task, inverter](int id) {
--            size_t column_length_sum = inverter->InvertColumn(task->column_vector_, task->row_offset_, task->row_count_, task->start_doc_id_);
--            term_cnt_ += column_length_sum;
--            if (column_length_sum > 0) {
--                inverter->SortForOfflineDump();
-+            bool success = false;
-+            try {
-+                size_t column_length_sum = inverter->InvertColumn(task->column_vector_, task->row_offset_, task->row_count_, task->start_doc_id_);
-+                term_cnt_ += column_length_sum;
-+                if (column_length_sum > 0) {
-+                    inverter->SortForOfflineDump();
-+                }
-+                this->ring_sorted_.Put(task->task_seq_, inverter);
-+                success = true;
-+            } catch (const std::exception &e) {
-+                LOG_ERROR(fmt::format("Insert(offline) invert task failed, seq={}, error: {}", task->task_seq_, e.what()));
-+            } catch (...) {
-+                LOG_ERROR(fmt::format("Insert(offline) invert task failed, seq={}, unknown error", task->task_seq_));
-+            }
-+            if (!success) {
-+                std::unique_lock lock(mutex_);
-+                --inflight_tasks_;
-+                if (inflight_tasks_ == 0) {
-+                    cv_.notify_one();
-+                }
-             }
--            this->ring_sorted_.Put(task->task_seq_, inverter);
-         };
-         {
-             std::unique_lock<std::mutex> lock(mutex_);
-@@ -151,13 +166,32 @@ void MemoryIndexer::Insert(std::shared_ptr<ColumnVector> column_vector, u32 row_
-         auto inverter = std::make_shared<ColumnInverter>(provider, column_lengths_);
-         inverter->InitAnalyzer(this->analyzer_);
-         auto func = [this, task, inverter](int id) {
--            // LOG_INFO(fmt::format("online inverter {} begin", id));
--            size_t column_length_sum = inverter->InvertColumn(task->column_vector_, task->row_offset_, task->row_count_, task->start_doc_id_);
--            term_cnt_ += column_length_sum;
--            inverter->MergePrepare();
--            inverter->Sort();
--            this->ring_sorted_.Put(task->task_seq_, inverter);
--            // LOG_INFO(fmt::format("online inverter {} end", id));
-+            bool success = false;
-+            try {
-+                // LOG_INFO(fmt::format("online inverter {} begin", id));
-+                size_t column_length_sum = inverter->InvertColumn(task->column_vector_, task->row_offset_, task->row_count_, task->start_doc_id_);
-+                term_cnt_ += column_length_sum;
-+                inverter->MergePrepare();
-+                inverter->Sort();
-+                this->ring_sorted_.Put(task->task_seq_, inverter);
-+                success = true;
-+                // LOG_INFO(fmt::format("online inverter {} end", id));
-+            } catch (const std::exception &e) {
-+                LOG_ERROR(fmt::format("Insert(online) invert task failed, seq={}, error: {}", task->task_seq_, e.what()));
-+            } catch (...) {
-+                LOG_ERROR(fmt::format("Insert(online) invert task failed, seq={}, unknown error", task->task_seq_));
-+            }
-+            if (success) {
-+                // Proactively drain the ring to prevent deadlock when the ring fills up.
-+                // CommitSync uses try_lock so it is safe and non-blocking if another thread is already committing.
-+                CommitSync(100);
-+            } else {
-+                std::unique_lock lock(mutex_);
-+                --inflight_tasks_;
-+                if (inflight_tasks_ == 0) {
-+                    cv_.notify_one();
-+                }
-+            }
-         };
-         {
-             std::unique_lock<std::mutex> lock(mutex_);
-@@ -210,13 +244,51 @@ void MemoryIndexer::AsyncInsertBottom(const std::shared_ptr<ColumnVector> &colum
-     auto inverter = std::make_shared<ColumnInverter>(provider, column_lengths_);
-     inverter->InitAnalyzer(this->analyzer_);
-     auto func = [this, task, inverter, append_batch](int id) {
--        // LOG_INFO(fmt::format("online inverter {} begin", id));
--        size_t column_length_sum = inverter->InvertColumn(task->column_vector_, task->row_offset_, task->row_count_, task->start_doc_id_);
--        term_cnt_ += column_length_sum;
--        inverter->MergePrepare();
--        inverter->Sort();
--        this->ring_sorted_.Put(task->task_seq_, inverter);
--        // LOG_INFO(fmt::format("online inverter {} end", id));
-+        try {
-+            size_t column_length_sum = inverter->InvertColumn(task->column_vector_, task->row_offset_, task->row_count_, task->start_doc_id_);
-+            term_cnt_ += column_length_sum;
-+            inverter->MergePrepare();
-+            inverter->Sort();
-
+@@ -170,10 +170,16 @@ func TestParseExprArithmetic(t *testing.T) {
+ 		{"division_slim", "c1/2", "/(c1, 2)"},
+ 		{"modulo_slim", "c1%2", "%(c1, 2)"},
+ 
+-		// Multiple operations (right associative - parser behavior)
+-		{"chain_addition", "c1 + c2 + c3", "+(c1, +(c2, c3))"},
+-		{"chain_subtraction", "c1 - c2 - c3", "-(c1, -(c2, c3))"},
+-		{"chain_multiplication", "c1 * c2 * c3", "*(c1, *(c2, c3))"},
++		// Multiple operations (left associative)
++		{"chain_addition", "c1 + c2 + c3", "+(+(c1, c2), c3)"},
++		{"chain_subtraction", "c1 - c2 - c3", "-(-(c1, c2), c3)"},
++		{"chain_multiplication", "c1 * c2 * c3", "*(*(c1, c2), c3)"},
++		{"chain_division", "c1 / c2 / c3", "/(/(c1, c2), c3)"},
++		{"sub_then_add", "c1 - c2 + c3", "+(-(c1, c2), c3)"},
++		{"mul_then_div", "c1 * c2 / c3", "/(*(c1, c2), c3)"},
++		{"div_then_mod", "c1 / c2 % c3", "%(/(c1, c2), c3)"},
++		{"chain_sub_negative", "c1 - c2 - -5", "-(-(c1, c2), -(5))"},
++		{"chain_sub_slim", "c1-c2-c3", "-(-(c1, c2), c3)"},
+ 
+ 		// Mixed operations (precedence)
+ 		{"add_mul_precedence", "c1 + c2 * c3", "+(c1, *(c2, c3))"},
+@@ -194,16 +200,16 @@ func TestParseExprArithmetic(t *testing.T) {
+ 		{"mul_reverse", "2 * c1", "*(2, c1)"},
+ 		{"div_reverse", "100 / c1", "/(100, c1)"},
+ 
+-		// Multiple terms (right associative - parser behavior)
+-		{"three_terms_add", "c1 + c2 + c3", "+(c1, +(c2, c3))"},
+-		{"mixed_three_terms", "c1 + c2 - c3", "+(c1, -(c2, c3))"},
+-		{"four_terms", "c1 + c2 + c3 + c4", "+(c1, +(c2, +(c3, c4)))"},
++		// Multiple terms (left associative)
++		{"three_terms_add", "c1 + c2 + c3", "+(+(c1, c2), c3)"},
++		{"mixed_three_terms", "c1 + c2 - c3", "-(+(c1, c2), c3)"},
++		{"four_terms", "c1 + c2 + c3 + c4", "+(+(+(c1, c2), c3), c4)"},
+ 
+ 		// Complex expressions
+ 		{"complex_nested", "c1 * c2 + c3 * c4", "+(*(c1, c2), *(c3, c4))"},
+ 		{"complex_nested2", "(c1 + c2) * (c3 - c4)", "*(+(c1, c2), -(c3, c4))"},
+-		// Complex expression with all operators - parser groups right due to equal precedence
+-		{"all_operators", "c1 + c2 - c3 * c4 / c5 % c6", "+(c1, -(c2, *(c3, /(c4, %(c5, c6)))))"},
++		// Complex expression with all operators - equal precedence groups left
++		{"all_operators", "c1 + c2 - c3 * c4 / c5 % c6", "-(+(c1, c2), %(/(*(c3, c4), c5), c6))"},
+ 
+ 		// Arithmetic with floats
+ 		{"add_float", "c1 + 3.14", "+(c1, 3.140000)"},
+@@ -862,6 +868,7 @@ func TestCondition(t *testing.T) {
+ 		// Arithmetic in conditions
+ 		{"addition in condition", "c1 + c2 > 10", ">(+(c1, c2), 10)"},
+ 		{"subtraction in condition", "c1 - c2 = 0", "=(-(c1, c2), 0)"},
++		{"chained subtraction in condition", "c1 - c2 - c3 > 0", ">(-(-(c1, c2), c3), 0)"},
+ 		{"multiplication in condition", "c1 * 2 < 100", "<(*(c1, 2), 100)"},
+ 		{"complex arithmetic", "(c1 + c2) * c3 > 100", ">(*(+(c1, c2), c3), 100)"},
+ 		// String comparisons
 ```
 
-**File**: `src/storage/new_txn/new_txn_index_impl.cpp` (modified, +8/-0)
+---
+
+### Incident Patch 3: `8cd094fe` (2026-10-27)
+**Commit Message**: fix(ci): install LLVM 20 from the Ubuntu archive instead of apt.llvm.org (#3532)
+
+**File**: `.github/workflows/tests.yml` (modified, +36/-18)
 ```diff
-@@ -859,7 +859,11 @@ NewTxn::AppendMemIndex(SegmentIndexMeta &segment_index_meta, BlockID block_id, c
-                 std::shared_ptr<std::string> index_dir = segment_index_meta.GetSegmentIndexDir();
-                 auto base_name = fmt::format("ft_{:016x}", base_row_id.ToUint64());
-                 auto full_path = fmt::format("{}/{}", InfinityContext::instance().config()->DataDir(), *index_dir);
-+                auto [db_name, table_name] = segment_index_meta.table_index_meta().table_meta().GetDBTableName();
-                 memory_indexer = std::make_unique<MemoryIndexer>(full_path, base_name, base_row_id, index_fulltext->flag_, index_fulltext->analyzer_);
-+                memory_indexer->db_name_ = db_name;
-+                memory_indexer->table_name_ = table_name;
-+                memory_indexer->index_name_ = *index_fulltext->index_name_;
-                 need_to_update_ft_segment_ts = true;
-                 mem_index->SetFulltextIndex(memory_indexer);
-             } else {
-@@ -1336,7 +1340,11 @@ Status NewTxn::PopulateFtIndexInner(std::shared_ptr<IndexBase> index_base,
-             RowID base_row_id(segment_index_meta.segment_id(), block_id * block_capacity);
-             auto base_name = fmt::format("ft_{:016x}", base_row_id.ToUint64());
-             auto full_path = fmt::format("{}/{}", InfinityContext::instance().config()->DataDir(), *index_dir);
-+            auto [db_name, table_name] = segment_index_meta.table_index_meta().table_meta().GetDBTableName();
-             memory_indexer = std::make_shared<MemoryIndexer>(full_path, base_name, base_row_id, index_fulltext->flag_, index_fulltext->analyzer_);
-+            memory_indexer->db_name_ = db_name;
-+            memory_indexer->table_name_ = table_name;
-+            memory_indexer->index_name_ = *index_fulltext->index_name_;
-             LOG_INFO(fmt::format("PopulateFtIndexInner created memory_indexer, base_name: {}", base_name));
-         }
-         BlockMeta block_meta(block_id, segment_meta);
+@@ -263,9 +263,12 @@ jobs:
+ 
+       - name: Install LLVM 20
+         run: |
+-          wget https://apt.llvm.org/llvm.sh
+-          chmod +x llvm.sh
+-          sudo ./llvm.sh 20
++          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
++          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
++          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
++          # llvm-profdata under /usr/lib/llvm-20/bin.
++          sudo apt-get update
++          sudo apt-get install -y llvm-20
+           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
+ 
+       - name: Wait for minio and run unit test
+@@ -355,9 +358,12 @@ jobs:
+ 
+       - name: Install LLVM 20
+         run: |
+-          wget https://apt.llvm.org/llvm.sh
+-          chmod +x llvm.sh
+-          sudo ./llvm.sh 20
++          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
++          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
++          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
++          # llvm-profdata under /usr/lib/llvm-20/bin.
++          sudo apt-get update
++          sudo apt-get install -y llvm-20
+           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
+ 
+       - name: Wait for infinity and run sqllogictest
+@@ -490,9 +496,12 @@ jobs:
+ 
+       - name: Install LLVM 20
+         run: |
+-          wget https://apt.llvm.org/llvm.sh
+-          chmod +x llvm.sh
+-          sudo ./llvm.sh 20
++          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
++          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
++          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
++          # llvm-profdata under /usr/lib/llvm-20/bin.
++          sudo apt-get update
++          sudo apt-get install -y llvm-20
+           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
+ 
+       - name: Wait for infinity and run pysdk test
+@@ -584,9 +593,12 @@ jobs:
+ 
+       - name: Install LLVM 20
+         run: |
+-          wget https://apt.llvm.org/llvm.sh
+-          chmod +x llvm.sh
+-          sudo ./llvm.sh 20
++          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
++          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
++          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
++          # llvm-profdata under /usr/lib/llvm-20/bin.
++          sudo apt-get update
++          sudo apt-get install -y llvm-20
+           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
+ 
+       - name: Wait for infinity and run Go tests
+@@ -669,9 +681,12 @@ jobs:
+ 
+       - name: Install LLVM 20
+         run: |
+-          wget https://apt.llvm.org/llvm.sh
+-          chmod +x llvm.sh
+-          sudo ./llvm.sh 20
++          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
++          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
++          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
++          # llvm-profdata under /usr/lib/llvm-20/bin.
++          sudo apt-get update
++          sudo apt-get install -y llvm-20
+           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
+ 
+       - name: Wait for infinity and run http test
+@@ -752,9 +767,12 @@ jobs:
+ 
+       - name: Install LLVM 20
+         run: |
+-          wget https://apt.llvm.org/llvm.sh
+-          chmod +x llvm.sh
+-          sudo ./llvm.sh 20
++          # apt.llvm.org publishes no llvm-toolchain-20 archive for Ubuntu 26.04
++          # (resolute), so llvm.sh adds a repo whose Release file is a 404.
++          # The Ubuntu archive itself ships LLVM 20, including llvm-cov and
++          # llvm-profdata under /usr/lib/llvm-20/bin.
++          sudo apt-get update
++          sudo apt-get install -y llvm-20
+           echo "/usr/lib/llvm-20/bin" >> $GITHUB_PATH
+ 
+       - name: Wait for infinity and run pysdk test
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3532** (2026-10-27): fix(ci): install LLVM 20 from the Ubuntu archive instead of apt.llvm.org (@qinling0210)
+- **PR #3530** (2026-10-27): fix(sdk): parse chained arithmetic left to right in the Go SDK (@RaphaelFakhri)
+- **PR #3528** (2026-10-26): Fix mem-index (@yingfeng)
 - **PR #3525** (2026-10-13): fix(ci): replace removed quay.io/minio image with pgsty/silo (@qinling0210)
 - **PR #3524** (2026-10-13): fix(sdk): a NOT clause must not swallow the following AND/OR clauses (@qinling0210)
 - **PR #3507** (2026-10-16): fix(optimizer): only extract regex runs every match contains (@Taranum01)
-- **PR #3504** (2026-09-23): Add sparsegram analyzer for regex queries (@yingfeng)
-- **PR #3503** (2026-09-23): fix(fulltext): avoid repeated UTF-8 validation in RAG replacement (@zhouyuchong)
-- **PR #3501** (2026-10-09): Update version to 0.7.4 (@qinling0210)
 
 ---
 
@@ -2247,44 +1856,34 @@ Make realtime the default for new full-text indexes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. corrupt WAL handling: out-of-bounds reads and over-aggressive purge (#3429)
+## X. mem-index (#3528)
 
 **RULE**:
-When implementing operations in `src/storage/wal/wal_entry_impl.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/storage/bg_task/bg_task.cppm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `807af1b0`: corrupt WAL handling: out-of-bounds reads and over-aggressive purge (#3429). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `76933d02`: mem-index (#3528). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/wal/wal_entry_impl.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/storage/bg_task/bg_task.cppm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    // entry->size_ is read from the on-disk header and is not trustworthy on its own; it is also what indexes
-    // into ptr below, so bound it against the frame (max_bytes) the caller handed us before touching
-    // ptr + entry->size_. Without this, a torn header can drive the reads past the end of the buffer.
-    if (entry->size_ <= static_cast<i32>(sizeof(WalEntryHeader)) || entry->size_ > max_bytes) {
-        LOG_WARN(fmt::format("WalEntry size_ {} out of range for a frame of {} bytes", entry->size_, max_bytes));
-        return nullptr;
-    }
-            // The commands are serialized after the header and have not been parsed yet, so cmds_ is empty
-            // here; referencing cmds_[0] would index past its end and crash. Log the header fields only.
-            std::string error_msg = fmt::format("txn_id: {}, entry_size: {} checksum mismatch, expected: {}, actual: {}",
-        auto entry = Next();
-        if (entry.get() == nullptr) {
-            // Next() reports a corrupt entry by returning nullptr without advancing, so looping on HasNext()
-            // alone would spin forever. Stop at the first corrupt entry.
-            LOG_WARN(fmt::format("Stop reading {} at a co
+class MemoryIndexer;
+    // The inverted index this task was prepared against. It is bound at submit time (in
+    // NewTxn::AppendMemIndex, right after AsyncInsertTop), because seq_inserted_/doc_count_
+    // are computed on that very indexer. Resolving it again at dequeue time (from mem_index_)
+    // can yield a different -- or already dumped/cleared -- indexer, which silently drops the
+    // rows. Holding a shared_ptr also keeps the indexer alive while the appender uses it.
+    std::shared_ptr<MemoryIndexer> memory_indexer_{};
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-            std::string error_msg = fmt::format("Command: {}, txn_id: {}, entry_size: {} checksum mismatch, expected: {}, actual: {}",
-                                                WalCmd::WalCommandTypeToString(entry->cmds_[0]->GetType()),
-        entries.emplace_back(Next());
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `807af1b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `76933d02` are properly handled with clean fallback behavior.

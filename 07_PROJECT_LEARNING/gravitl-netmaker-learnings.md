@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source**: github ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
-> **Source Version**: `f20acf34`  
+> **Source Version**: `ee6c2133`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:48:33.505Z  
+> **Timestamp**: 2026-10-30T16:39:41.602Z  
 > **Learning ID**: `learn-github-gravitl-netmaker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gravitl-netmaker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gravitl/netmaker](https://github.com/gravitl/netmaker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:48:33.499Z  
+> **Harvest Timestamp**: 2026-10-30T16:39:41.392Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and distributed virtual networks.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11838 stars
+- **Stars / Engagement**: 11848 stars
 
 ---
 
@@ -1017,166 +1017,318 @@ const CheckInInterval = 1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f20acf34` (2026-10-25)
-**Commit Message**: NM-356: keep AllowAll when both default ACL policies are open  (#4200)
+### Incident Patch 1: `9acda995` (2026-10-30)
+**Commit Message**: Pre-Release Fixes v1.8.0 (#4210)
 
-* NM-356: add username filter to nodes api
+* fix(go): validate traffic public key;
 
-* NM-356: disconnect user devices and force Desktop logout on disable/delete
+* feat(go): rekey tenant idp sync hook;
 
-When a user is disabled or deleted (including IdP sync), disconnect their
-nodes and publish FORCE_LOGOUT so Desktop sessions end immediately.
+* feat(go): check if membership exists before creating;
 
-* NM-356: rm force logout from delete user path
+* feat(go): parse node addr without cidr as well;
 
-* NM-356: keep AllowAll when both default ACL policies are open
+* feat(go): only check for orphans before the cursor;
 
-Uni/proto-scoped policies were defeating FwUpdate.AllowAll even with All
-Resources and All Users enabled, leaving clients on DROP + per-peer ACCEPT
-rules. Short-circuit on open defaults only, and document the constraint.
+* feat(go): normalize usernames in idp synced users;
 
-**File**: `.cursor/rules/netmaker-acls.mdc` (modified, +14/-5)
+* feat(go): allow patch method;
+
+* feat(go): allow master user to list all tenants;
+
+* feat(go): publish server sync for non-master pods on idp sync hook rekey;
+
+* feat(go): add before peer can be skipped;
+
+* feat(go): ignore vendor dir;
+
+* fix(go): use normalized usernames when verifying auth request;
+
+* fix(go): return error on user device host sso callback if user is disabled;
+
+**File**: `logic/peers.go` (modified, +9/-9)
 ```diff
-@@ -40,6 +40,11 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- 3. Minimal diffs — no speculative refactors of the whole ACL engine.
- 4. User devices are **not peers with each other** (`UserDevicesAreNotPeers`).
- 5. User-device hosts **skip** local FwUpdate ACL calc (`skipPeerUpdateAclCalc` / `IsUserOwnedHost`) — user→resource rules are emitted on **infra / egress / gateway** peer updates.
-+6. **Both open defaults ⇒ AllowAll, no exceptions from other ACLs.**
-+   - When All Resources (`*↔*`) and All Users (`*↔*`) are enabled, `defaultsAllowAllTraffic` / `FwUpdate.AllowAll` **must** be true.
-+   - Extra uni / proto / port / IP-scoped / tag-scoped policies **must not** defeat AllowAll. ACLs are allow-list only; with both defaults open they cannot restrict further.
-+   - Do **not** reintroduce `CheckIfAnyPolicyisUniDirectional` (or similar) into the AllowAll short-circuit. Uni/port enforcement belongs only on the fine-grained path when a default is off.
-+   - Symptom of regression: client `NETMAKER-ACL-IN` has per-peer ACCEPTs + DROP tail (and FWD DROPs) even though both defaults are on in the UI.
- 
- ## Enforcement split (routing vs firewall)
- 
-@@ -57,8 +62,10 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- 
- ### Peer update / firewall (`logic/peers.go`)
- 
--- **Both defaults on** (All Resources + All Users) → AllowAll short-circuit, including when user devices exist (All Users already grants broad user access).
--- **Either default off** → full rule path: `networkAllowAll=false`, `FwUpdate.AllowAll=false`, then `GetAclRulesForNode` / egress / user-device hooks (needed for custom user-policy IP limits).
-+- Gate: `defaultsAllowAllTraffic(deviceDefault, userDefault, acls)` — true only when an enabled device policy and user policy are both open on every side (`src=*` and `dst=*`). Also accepts open `*↔*` policies found in the loaded ACL list (in case `GetDefaultPolicy` disagrees). On CE, user side is treated as on.
-+- **Both defaults on** → AllowAll short-circuit (`FwUpdate.AllowAll=true`), including when user devices exist and when other uni/proto/port/IP policies remain enabled. Netclient chain default ACCEPT; no per-peer DROP posture.
-+- **Either default off** → full rule path: `networkAllowAll=false`, `FwUpdate.AllowAll=false`, then `GetAclRulesForNode` / egress / user-device hooks (needed for custom user-policy IP limits). Only here may uni/port policies shape the chain.
-+- Tests: `TestDefaultsAllowAllTrafficRequiresBothDefaults` — must keep asserting that a uni or ICMP-scoped sibling ACL does **not** flip AllowAll off when both defaults are open.
- 
- ### Egress forward rules (`GetEgressRulesForNode`)
- 
-@@ -104,7 +111,7 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- |------------|-----------------|--------------|
- | All Resources | Broad resource access | **Must not** grant mesh/egress/exit |
- | All Users | N/A (user policies) | Broad user access (existing RAC semantics) |
--| Both | AllowAll peer path | AllowAll (no per-device rules); fine-grained rules only when a default is off |
-+| Both | AllowAll peer path (ignore other ACLs) | AllowAll (no per-device rules); fine-grained only when a default is off |
- 
- ## Where to change what
- 
-@@ -122,15 +129,17 @@ Goal: keep **host-backed user devices** governed by **user policies**, never by
- ## Testing expectations
- 
- - Targeted tests exist in `logic/acls_user_device_test.go`, `pro/logic/user_device_acls_test.go`, `pro/logic/user_device_extclient_test.go`, `logic/exit_node_test.go`.
--- Prefer small table/unit tests around helpers (drop user devices from `*`, no default-route site-to-site sources, exit picker ignores All Resources for user devices, IP-restricted user-device egress dst, user-device → tagged extclient + ExtraAllowedIPs on ingress FwRules).
-+- Prefer small table/unit tests around helpers (drop user devices from `*`, no default-route site-to-site sources, exit picker ignores All Resources for user devices, IP-restricted user-device egress dst, user-device → tagged extclient + ExtraAllowedIPs on ingress FwRules, both defaults on ⇒ AllowAll despite uni/ICMP siblings).
- - Avoid full `TestCheckPorts` / hanging host-create suites when iterating.
- - After behavior changes that affect live firewall: verify on the **egress/routing host** `FwUpdate` (`allow_all`, `#user-device` rule `src`/`dst`, absence of `0.0.0.0/0 → egress LAN`); for extclients also check **ingress** `IngressInfo.Rules` include user-device → overlay and → ExtraAllowedIPs.
-+- When both defaults are on: client should show `allow_all` / ACCEPT-all chain — **not** per-peer ACCEPTs + `NETMAKER-ACL-*` DROP tails.
- 
- ## Anti-patterns (seen in NM-356)
- 
- - Stuffing host-backed devices into `getStaticUserNodesByNetwork` / fake `StaticNode` for ACL.
- - Using mesh CIDR as firewall source under All Resources.
--- AllowAll / empty-Dst rules “for simplicity” when user devices exist.
-+- AllowAll / empty-Ds
+@@ -407,6 +407,15 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
+ 			if UserDevicesAreNotPeers(host, peerHost) {
+ 				continue
+ 			}
++			if host.EnableFlowLogs {
++				peerIdentity := nodeFlowIdentity(&peer, peerHost)
++				if peer.Address.IP != nil {
++					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
++				}
++				if peer.Address6.IP != nil {
++					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
++				}
++			}
+ 			peerConfig := wgtypes.PeerConfig{
+ 				PublicKey:                   peerHost.PublicKey.Key,
+ 				PersistentKeepaliveInterval: &peerHost.PersistentKeepalive,
+@@ -643,15 +652,6 @@ func (g *PeerGraph) PeerUpdateForHost(ctx context.Context, network string, host
+ 				hostPeerUpdate.PeerIDs[peerHost.PublicKey.String()] = ida
+ 				hostPeerUpdate.NodePeers = append(hostPeerUpdate.NodePeers, nodePeer)
+ 			}
+-			if host.EnableFlowLogs {
+-				peerIdentity := nodeFlowIdentity(&peer, peerHost)
+-				if peer.Address.IP != nil {
+-					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
+-				}
+-				if peer.Address6.IP != nil {
+-					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
+-				}
+-			}
+ 		}
+ 		logInternetEgressBypassConfig(&node, hostPeerUpdate)
+ 		var extPeers []wgtypes.PeerConfig
 ```
 
-**File**: `logic/peers.go` (modified, +5/-10)
+**File**: `pro/auth/azure-ad.go` (modified, +7/-2)
 ```diff
-@@ -233,9 +233,9 @@ func computeHostPeerInfo(ctx context.Context, host *schema.Host, allNodes []mode
- // unrestricted in protocol and ports. The loaded ACL list is checked as well
- // as the policies returned by GetDefaultPolicy, so an enabled All Nodes and
- // All Users pair is not missed when the default-policy lookup disagrees.
--// A unidirectional policy that applies to node keeps the host off the
--// ACCEPT-all chain, so that policy is still enforced.
--func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl, node models.Node) bool {
-+// Extra uni / proto / port / IP-scoped policies do not defeat this: ACLs are
-+// allow-list only, so with both defaults open they cannot restrict further.
-+func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl) bool {
- 	deviceOn := device.Enabled && aclOpenBothSides(device)
- 	userOn := user.Enabled && aclOpenBothSides(user)
- 	if !servercfg.IsPro {
-@@ -252,9 +252,6 @@ func defaultsAllowAllTraffic(device, user models.Acl, acls []models.Acl, node mo
- 			userOn = true
+@@ -186,15 +186,18 @@ func (p *AzureADProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.UserPrincipalName,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
++		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+@@ -256,6 +259,8 @@ func (p *AzureADProvider) GetUserInfo(state string, code string) (*OAuthUser, er
+ 	if userInfo.Email == "" && userInfo.UserPrincipalName != "" {
+ 		userInfo.Email = userInfo.UserPrincipalName
+ 	}
++	userInfo.Email = normalizeUsername(userInfo.Email)
++	userInfo.UserPrincipalName = normalizeUsername(userInfo.UserPrincipalName)
+ 	if userInfo.Email == "" {
+ 		return userInfo, errors.New("failed to fetch user email from SSO state")
+ 	}
+```
+
+**File**: `pro/auth/github.go` (modified, +8/-4)
+```diff
+@@ -196,15 +196,18 @@ func (p *GitHubProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.Email,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
++		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+@@ -224,8 +227,8 @@ func (p *GitHubProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 		},
+ 		Origin: schema.Dashboard,
+ 	})
+-	logger.Log(1, "completed github OAuth signin for", content.Email)
+-	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+content.Email, http.StatusPermanentRedirect)
++	logger.Log(1, "completed github OAuth signin for", user.Username)
++	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+user.Username, http.StatusPermanentRedirect)
+ }
+ 
+ func (p *GitHubProvider) GetUserInfo(state, code string) (*OAuthUser, error) {
+@@ -270,6 +273,7 @@ func (p *GitHubProvider) GetUserInfo(state, code string) (*OAuthUser, error) {
+ 			logger.Log(0, "failed to fetch user's email from github: ", err.Error())
  		}
  	}
--	if CheckIfAnyPolicyisUniDirectional(node, acls) {
--		return false
--	}
- 	return deviceOn && userOn
- }
- 
-@@ -379,11 +376,9 @@ func GetPeerUpdateForHost(ctx context.Context, network string, host *schema.Host
- 		currentPeers := GetNetworkNodesMemory(allNodes, node.Network)
- 		// User hosts skip ACL/FwUpdate calc: user policies are uni user→server and
- 		// are emitted on the server's peer update via GetUserAclRulesForNode.
--		// The chain tail accepts the whole network only when both default policies
--		// are open on every side. A tag-scoped policy does not, so the tail stays
--		// DROP and the per-client rules carry the permits.
-+		// Both open defaults (*↔*) → AllowAll. Otherwise fine-grained rules + DROP tail.
- 		if !skipPeerUpdateAclCalc(host) {
--			if defaultsAllowAllTraffic(defaultDevicePolicy, defaultUserPolicy, acls, node) {
-+			if defaultsAllowAllTraffic(defaultDevicePolicy, defaultUserPolicy, acls) {
- 				aclRule := models.AclRule{
- 					ID:              fmt.Sprintf("%s-allowed-network-rules", node.ID.String()),
- 					AllowedProtocol: models.ALL,
++	userInfo.Email = normalizeUsername(userInfo.Email)
+ 	if userInfo.Email == "" {
+ 		return userInfo, errors.New("failed to fetch user email from SSO state")
+ 	}
 ```
 
-**File**: `logic/peers_test.go` (modified, +9/-17)
+**File**: `pro/auth/google.go` (modified, +8/-4)
 ```diff
-@@ -38,26 +38,18 @@ func TestDefaultsAllowAllTrafficRequiresBothDefaults(t *testing.T) {
- 	allNodes := open(models.DevicePolicy, true)
- 	allUsers := open(models.UserPolicy, true)
+@@ -187,15 +187,18 @@ func (p *GoogleProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
  
--	node := models.Node{CommonNode: models.CommonNode{Network: "net"}}
--	assert.True(t, defaultsAllowAllTraffic(allNodes, allUsers, nil, node))
--	assert.False(t, defaultsAllowAllTraffic(open(models.DevicePolicy, false), allUsers, nil, node))
--	assert.False(t, defaultsAllowAllTraffic(allNodes, open(models.UserPolicy, false), nil, node))
--	assert.False(t, defaultsAllowAllTraffic(scoped, models.Acl{}, []models.Acl{scoped}, node))
--	assert.True(t, defaultsAllowAllTraffic(models.Acl{}, models.Acl{}, []models.Acl{allNodes, allUsers, scoped}, node))
-+	assert.True(t, defaultsAllowAllTraffic(allNodes, allUsers, nil))
-+	assert.False(t, defaultsAllowAllTraffic(open(models.DevicePolicy, false), allUsers, nil))
-+	assert.False(t, defaultsAllowAllTraffic(allNodes, open(models.UserPolicy, false), nil))
-+	assert.False(t, defaultsAllowAllTraffic(scoped, models.Acl{}, []models.Acl{scoped}))
-+	assert.True(t, defaultsAllowAllTraffic(models.Acl{}, models.Acl{}, []models.Acl{allNodes, allUsers, scoped}))
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.Email,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", authRequest.UserName)
++		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
  
-+	// Uni / proto-scoped policies must not defeat AllowAll when both defaults are open.
- 	uni := allNodes
- 	uni.AllowedDirection = models.TrafficDirectionUni
--	original := CheckIfAnyPolicyisUniDirectional
--	CheckIfAnyPolicyisUniDirectional = func(target models.Node, acls []models.Acl) bool {
--		for _, acl := range acls {
--			if acl.Enabled && acl.AllowedDirection == models.TrafficDirectionUni {
--				return true
--			}
--		}
--		return false
--	}
--	t.Cleanup(func() { CheckIfAnyPolicyisUniDirectional = original })
--	assert.False(t, defaultsAllowAllTraffic(allNodes, allUsers, []models.Acl{allNodes, allUsers, uni}, node))
-+	icmp := allUsers
-+	icmp.Proto = models.ICMP
-+	assert.True(t, defaultsAllowAllTraffic(allNodes, allUsers, []models.Acl{allNodes, allUsers, uni, icmp}))
+@@ -216,8 +219,8 @@ func (p *GoogleProvider) HandleCallback(w http.ResponseWriter, r *http.Request)
+ 		Origin: schema.Dashboard,
+ 	})
+ 
+-	logger.Log(1, "completed google OAuth signin for", content.Email)
+-	http.Redirect(w, r, fmt.Sprintf("%s/login?login=%s&user=%s", servercfg.GetFrontendURL(), jwt, content.Email), http.StatusPermanentRedirect)
++	logger.Log(1, "completed google OAuth signin for", user.Username)
++	http.Redirect(w, r, fmt.Sprintf("%s/login?login=%s&user=%s", servercfg.GetFrontendURL(), jwt, user.Username), http.StatusPermanentRedirect)
  }
  
- func TestDeduplicateEgressRoutesMergesRangesForSamePeerAndNetwork(t *testing.T) {
+ func (p *GoogleProvider) GetUserInfo(state string, code string) (*OAuthUser, error) {
+@@ -248,5 +251,6 @@ func (p *GoogleProvider) GetUserInfo(state string, code string) (*OAuthUser, err
+ 		return nil, fmt.Errorf("failed parsing email from response data: %s", err.Error())
+ 	}
+ 	userInfo.AccessToken = string(data)
++	userInfo.Email = normalizeUsername(userInfo.Email)
+ 	return userInfo, nil
+ }
+```
+
+**File**: `pro/auth/headless_callback.go` (modified, +6/-3)
+```diff
+@@ -97,18 +97,21 @@ func HandleHeadlessSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 	}
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), models.UserAuthParams{
+ 		UserName: user.Username,
+ 		Password: newPass,
+ 	}, logic.NetclientApp)
+ 	if jwtErr != nil {
+-		logger.Log(1, "could not parse jwt for user", userClaims.getUserName())
++		logger.Log(1, "could not parse jwt for user", user.Username, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+-	logger.Log(1, "headless SSO login by user:", userClaims.getUserName())
++	logger.Log(1, "headless SSO login by user:", user.Username)
+ 
+ 	// Send OK to user in the browser
+ 	var response bytes.Buffer
+@@ -117,7 +120,7 @@ func HandleHeadlessSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 		Verb: "authenticated",
+ 	}); err != nil {
+ 		logger.Log(0, "Could not render SSO callback template ", err.Error())
+-		response := returnErrTemplate(userClaims.getUserName(), "Could not render SSO callback template", state, reqKeyIf)
++		response := returnErrTemplate(user.Username, "Could not render SSO callback template", state, reqKeyIf)
+ 		w.WriteHeader(http.StatusInternalServerError)
+ 		w.Write(response)
+ 	} else {
+```
+
+**File**: `pro/auth/oidc.go` (modified, +7/-3)
+```diff
+@@ -196,15 +196,18 @@ func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) {
+ 
+ 	newPass, fetchErr := logic.FetchOAuthSecret(r.Context())
+ 	if fetchErr != nil {
++		logger.Log(0, "failed to fetch oauth secret:", fetchErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 	authRequest := models.UserAuthParams{
+-		UserName: content.Email,
++		UserName: user.Username,
+ 		Password: newPass,
+ 	}
+ 	jwt, jwtErr := logic.VerifyAuthRequest(r.Context(), authRequest, state.AppName)
+ 	if jwtErr != nil {
+ 		logger.Log(1, "could not parse jwt for user", authRequest.UserName, jwtErr.Error())
++		handleSomethingWentWrong(w)
+ 		return
+ 	}
+ 
+@@ -224,8 +227,8 @@ func (p *OIDCProvider) HandleCallback(w http.ResponseWriter, r *http.Request) {
+ 		},
+ 		Origin: schema.Dashboard,
+ 	})
+-	logger.Log(1, "completed OIDC OAuth signin for", content.Email)
+-	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+content.Email, http.StatusPermanentRedirect)
++	logger.Log(1, "completed OIDC OAuth signin for", user.Username)
++	http.Redirect(w, r, servercfg.GetFrontendURL()+"/login?login="+jwt+"&user="+user.Username, http.StatusPermanentRedirect)
+ }
+ 
+ func (p *OIDCProvider) GetUserInfo(state string, code string) (u *OAuthUser, e error) {
+@@ -265,5 +268,6 @@ func (p *OIDCProvider) GetUserInfo(state string, code string) (u *OAuthUser, e e
+ 		e = fmt.Errorf("error when claiming OIDCUser: %w", err)
+ 	}
+ 	u.ID = StringOrInt(idToken.Subject)
++	u.Email = normalizeUsername(u.Email)
+ 	return
+ }
+```
+
+**File**: `pro/auth/register_callback.go` (modified, +10/-4)
+```diff
+@@ -76,17 +76,23 @@ func HandleHostSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
+ 	if user.PlatformRoleID != schema.AdminRole && user.PlatformRoleID != schema.SuperAdminRole {
+-		response := returnErrTemplate(userClaims.getUserName(), "only admin users can register using SSO", state, reqKeyIf)
++		response := returnErrTemplate(user.Username, "only admin users can register using SSO", state, reqKeyIf)
+ 		w.WriteHeader(http.StatusForbidden)
+ 		w.Write(response)
+ 		return
+ 	}
+-	logger.Log(1, "registering host for user:", userClaims.getUserName(), reqKeyIf.Host.Name, reqKeyIf.Host.ID.String())
++	if user.AccountDisabled {
++		response := returnErrTemplate(user.Username, "user is disabled", state, reqKeyIf)
++		w.WriteHeader(http.StatusForbidden)
++		w.Write(response)
++		return
++	}
++	logger.Log(1, "registering host for user:", user.Username, reqKeyIf.Host.Name, reqKeyIf.Host.ID.String())
+ 
+ 	// Send OK to user in the browser
+ 	var response bytes.Buffer
+ 	if err := ssoCallbackTemplate.Execute(&response, ssoCallbackTemplateConfig{
+-		User: userClaims.getUserName(),
++		User: user.Username,
+ 		Verb: "authenticated",
+ 	}); err != nil {
+ 		logger.Log(0, "Could not render SSO callback template ", err.Error())
+@@ -98,7 +104,7 @@ func HandleHostSSOCallback(w http.ResponseWriter, r *http.Request) {
+ 		w.Write(response.Bytes())
+ 	}
+ 
+-	reqKeyIf.User = userClaims.getUserName() // set the cached registering hosts' user
++	reqKeyIf.User = user.Username // set the cached registering hosts' user
+ 	if err = netcache.Set(state, reqKeyIf); err != nil {
+ 		logger.Log(0, "machine failed to complete join on network,", reqKeyIf.Network, "-", err.Error())
+ 		return
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4212** (2026-10-30): NM-356: network-role API access and user-device host auth , Reject host-password JWTs for user-owned devices; AuthorizeHost accepts a user session plus X-Host-ID instead. (@abhishek9686)
+- **PR #4211** (2026-10-30): NM-356: enrich topology and connections with location, is_gw, and egresses  (@abhishek9686)
+- **PR #4210** (2026-10-30): Pre-Release Fixes v1.8.0 (@VishalDalwadi)
+- **PR #4208** (2026-10-29): List Auto Relayed Peers for a Node API (@VishalDalwadi)
+- **PR #4207** (closed): V1.8.0 nm 356 (@abhishek9686)
 - **PR #4206** (2026-10-25): v1.7.0: fix: load user groups via membership for ACL expansion (@abhishek9686)
-- **PR #4200** (2026-10-25): NM-356: keep AllowAll when both default ACL policies are open  (@abhishek9686)
-- **PR #4199** (2026-10-22): NM-356: send force logout on disabling/deleting user accounts and cleanup user devices (@abhishek9686)
-- **PR #4198** (2026-10-21): NM-356: add username filter to nodes api (@abhishek9686)
-- **PR #4197** (2026-10-23): Fixes: Pre-Release v1.8.0 (@VishalDalwadi)
-- **PR #4196** (closed): Revert "Fixes: Auto Select Gateway" (@abhishek9686)
 
 ---
 
@@ -1196,38 +1348,44 @@ rules. Short-circuit on open defaults only, and document the constraint.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NM-356: keep AllowAll when both default ACL policies are open  (#4200)
+## X. Pre-Release Fixes v1.8.0 (#4210)
 
 **RULE**:
-When implementing operations in `.cursor/rules/netmaker-acls.mdc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `logic/peers.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gravitl/netmaker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f20acf34`: NM-356: keep AllowAll when both default ACL policies are open  (#4200). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9acda995`: Pre-Release Fixes v1.8.0 (#4210). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cursor/rules/netmaker-acls.mdc`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `logic/peers.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-6. **Both open defaults ⇒ AllowAll, no exceptions from other ACLs.**
-   - When All Resources (`*↔*`) and All Users (`*↔*`) are enabled, `defaultsAllowAllTraffic` / `FwUpdate.AllowAll` **must** be true.
-   - Extra uni / proto / port / IP-scoped / tag-scoped policies **must not** defeat AllowAll. ACLs are allow-list only; with both defaults open they cannot restrict further.
-   - Do **not** reintroduce `CheckIfAnyPolicyisUniDirectional` (or similar) into the AllowAll short-circuit. Uni/port enforcement belongs only on the fine-grained path when a default is off.
-   - Symptom of regression: client `NETMAKER-ACL-IN` has per-peer ACCEPTs + DROP tail (and FWD DROPs) even though both defaults are on in the UI.
-- Gate: `defaultsAllowAllTraffic(deviceDefault, userDefault, acls)` — true only when an enabled device policy and user policy are both open on every side (`src=*` and `dst=*`). Also accepts open `*↔*` policies found in the loaded ACL list (in case `GetDefaultPolicy` disagrees). On CE, user side is treated as on.
-- **Both defaults on** → AllowAll short-circuit (`FwUpdate.AllowAll=true`), including when user devices exist and when other uni/proto/port/IP policies remain enabled. Netcl
+			if host.EnableFlowLogs {
+				peerIdentity := nodeFlowIdentity(&peer, peerHost)
+				if peer.Address.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
+				}
+				if peer.Address6.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
+				}
+			}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-- **Both defaults on** (All Resources + All Users) → AllowAll short-circuit, including when user devices exist (All Users already grants broad user access).
-- **Either default off** → full rule path: `networkAllowAll=false`, `FwUpdate.AllowAll=false`, then `GetAclRulesForNode` / egress / user-device hooks (needed for custom user-policy IP limits).
-| Both | AllowAll peer path | AllowAll (no per-device rules); fine-grained rules only when a default is off |
-- Prefer small table/unit tests around helpers (drop user devices from `*`, no default-route site-to-site sources, exit picker ignores All Resources for user devices, IP-restricted user-device egress dst, user-device → tagged extclient + ExtraAllowedIPs on ingress FwRules).
-- AllowAll / empty-Dst rules “for simplicity” when user devices exist.
+			if host.EnableFlowLogs {
+				peerIdentity := nodeFlowIdentity(&peer, peerHost)
+				if peer.Address.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address.IP.String()+"/32"] = peerIdentity
+				}
+				if peer.Address6.IP != nil {
+					hostPeerUpdate.AddressIdentityMap[peer.Address6.IP.String()+"/128"] = peerIdentity
+				}
+			}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f20acf34` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9acda995` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md`  
 > **Source**: github ([https://github.com/litmuschaos/litmus](https://github.com/litmuschaos/litmus))  
-> **Source Version**: `b957f314`  
+> **Source Version**: `97a397fb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T13:53:46.472Z  
+> **Timestamp**: 2026-10-27T12:56:55.151Z  
 > **Learning ID**: `learn-github-litmuschaos-litmus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/litmuschaos-litmus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/litmuschaos/litmus](https://github.com/litmuschaos/litmus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T13:53:46.119Z  
+> **Harvest Timestamp**: 2026-10-27T12:56:54.714Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Litmus helps  SREs and developers practice chaos engineering in a Cloud-native way. Chaos experiments are published at the ChaosHub  (https://hub.litmuschaos.io). Community notes is at https://hackmd.io/a4Zu_sH4TZGeih-xCimi3Q
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5730 stars
+- **Stars / Engagement**: 5733 stars
 
 ---
 
@@ -42,7 +42,7 @@
 package utils
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -52,7 +52,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
+func GetProjectFilters(c *gin.Context) (*entities.ListProjectRequest, error) {
 	var request entities.ListProjectRequest
 
 	uID, exists := c.Get("uid")
@@ -73,8 +73,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 	if createdByMeStr != "" {
 		createdByMe, err := strconv.ParseBool(createdByMeStr)
 		if err != nil {
-			log.Fatal(err)
-			return nil
+			return nil, fmt.Errorf("invalid value for %s: %w", types.CreatedByMe, err)
 		}
 		request.Filter.CreatedByMe = &createdByMe
 	}
@@ -106,8 +105,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 	if ascendingStr != "" {
 		ascending, err := strconv.ParseBool(ascendingStr)
 		if err != nil {
-			log.Fatal(err)
-			return nil
+			return nil, fmt.Errorf("invalid value for %s: %w", types.Ascending, err)
 		}
 		request.Sort.Ascending = &ascending
 	}
@@ -139,7 +137,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
 
 	request.Pagination = &pagination
 
-	return &request
+	return &request, nil
 }
 
 func CreateMatchStage(userID string) bson.D {
@@ -1218,682 +1216,539 @@ var Config Envs
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b957f314` (2026-10-20)
-**Commit Message**: refactor: fix unimplemented concurrency in CheckComponentStatus (#5522)
+### Incident Patch 1: `2967753b` (2026-10-26)
+**Commit Message**: chore(chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660)
 
-* test(subscriber): extract deploymentHealthy and add unit tests
+Move the production build of the Chaos Center web UI from Yarn-in-CI into a
+multi-stage Dockerfile that uses pnpm with BuildKit cache mounts, so the build
+is reproducible, self-contained, and fast to rebuild.
 
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
+- Add a build stage (node:22-alpine + pnpm via corepack) that installs with
+  `pnpm install --frozen-lockfile` behind a `--mount=type=cache` store mount
+  and runs the webpack build; the runtime stage copies only `dist` into the
+  existing nginx image (no sources or node_modules in the final image).
+- Pin the build stage to `--platform=$BUILDPLATFORM` so multi-arch builds run
+  the Node/webpack step natively instead of under QEMU emulation (the output
+  assets are architecture-independent).
+- Add pnpm-lock.yaml (imported from yarn.lock). The hoisted node_modules
+  layout this legacy, phantom-dependency-reliant tree needs (e.g. tslib) is set
+  via an .npmrc generated inside the build, so no developer registry
+  credentials can leak into the repo or build context.
+- Mirror the Yarn `resolutions` security pins into `pnpm.overrides`; both are
+  kept in sync (the react-router path-to-regexp pin 
 
-* test(subscriber): add allDeploymentsHealthy and unit tests
-
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
-
-* test(susbcriber): add checkComponentStatus with retry orchestration tests
-
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
-
-* refactor(subscriber): parallelize deployment health checks per retry round
-
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
-
-* fix(subscriber): rename the import alaises of fake to improve code readability
-
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
-
-* fix(subscriber): fix code suggested by copilot
-
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
-
-* fix(subscriber/k8s): log selector and errors in deploymentHealthy checks
-
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Yoonseo Han <[REDACTED_EMAIL]>
-Co-authored-by: Pritesh Kiri <[REDACTED_EMAIL]>
-Co-authored-by: Udit Gaurav <[REDACTED_EMAIL]>
-
-**File**: `chaoscenter/subscriber/pkg/k8s/operations.go` (modified, +53/-60)
+**File**: `.github/workflows/build.yml` (modified, +4/-3)
 ```diff
-@@ -7,6 +7,7 @@ import (
- 	"fmt"
- 	"strings"
- 	"sync"
-+	"sync/atomic"
- 	"time"
+@@ -229,12 +229,13 @@ jobs:
+       - name: Checkout code
+         uses: actions/checkout@v4
  
- 	"k8s.io/apimachinery/pkg/labels"
-@@ -35,9 +36,7 @@ const (
- )
+-      - name: yarn build check
+-        run: |
+-          cd chaoscenter/web && yarn && yarn build
++      - name: Set up Docker Buildx
++        uses: docker/setup-buildx-action@v3
  
- type InfraComponents struct {
--	Deployments      []string `yaml:"DEPLOYMENTS"`
--	LiveStatus       bool
--	AccessLiveStatus sync.Mutex
-+	Deployments []string `yaml:"DEPLOYMENTS"`
- }
- 
- var (
-@@ -57,74 +56,68 @@ func (k8s *k8sSubscriber) CheckComponentStatus(componentEnv string) error {
- 	}
- 
- 	var components InfraComponents
--
--	err = yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components)
--	if err != nil {
-+	if err := yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components); err != nil {
- 		return err
- 	}
- 
--	components.LiveStatus = true
--	components.AccessLiveStatus = sync.Mutex{}
--
--	wait := sync.WaitGroup{}
-+	ctx := context.TODO()
-+	for retry := 0; retry < LiveCheckMaxTries; retry++ {
-+		if allDeploymentsHealthy(ctx, clientset, InfraNamespace, components.Deployments) {
-+			logrus.Info("All infra deployments are up")
-+			return nil
-+		}
-+		if retry < LiveCheckMaxTries-1 {
-+			time.Sleep(30 * time.Second)
-+		}
-+	}
-+	return errors.New("all components failed to startup")
-+}
- 
--	// add all agent components to waitgroup
--	wait.Add(1)
--	go k8s.checkDeploymentStatus(&components, clientset, &wait)
-+func allDeploymentsHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, selectors []string) bool {
-+	if len(selectors) == 0 {
-+		return true
-+	}
- 
--	wait.Wait()
--	if !components.LiveStatus {
--		return errors.New("all components failed to startup")
-+	var (
-+		wg     sync.WaitGroup
-+		failed atomic.Int32
-+	)
-+	wg.Add(len(selectors))
-+	for _, curSelector := range selectors {
-+		go func(labelSelector string) {
-+			defer wg.Done()
-+			if !deploymentHealthy(ctx, clientSet, namespace, labelSelector) {
-+				failed.Add(1)
-+			}
-+		}(curSelector)
- 	}
--	return nil
-+	wg.Wait()
-+
-+	return failed.Load() == 0
- }
- 
--func (k8s *k8sSubscriber) checkDeploymentStatus(components *InfraComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {
--	ctx := context.TODO()
--	downCount := 0
--	retries := 0
--	defer wait.Done()
--	for retries < LiveCheckMaxTries {
--		for _, dep := range components.Deployments {
--			podList, err := clientset.CoreV1().Pods(InfraNamespace).List(ctx, metav1.ListOptions{LabelSelector: dep})
--			if err != nil {
--				logrus.Errorf("failed to get deployment pods %v , err : %v", dep, err.Error())
--				downCount += 1
--				continue
--			}
--			if len(podList.Items) == 0 {
--				logrus.Errorf("failed to get deployments pods %v , err : pods not found", dep)
--				downCount += 1
--				continue
--			}
--		outer:
--			for _, pod := range podList.Items {
--				if pod.Status.Phase != corev1.PodRunning {
--					logrus.Errorf("failed to get running pods for dep %v", dep)
--					downCount += 1
--					break
--				}
--				for _, containerStatus := range pod.Status.ContainerStatuses {
--					if !containerStatus.Ready {
--						logrus.Errorf("failed to get ready containers for pod %v, dep %v", pod.Name, dep)
--						downCount += 1
--						break outer
--					}
--				}
--			}
-+func deploymentHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, labelSelector string) bool {
-+	podList, err := clientSet.CoreV1().Pods(namespace).List(ctx, metav1.ListOptions{LabelSelector: labelSelector})
-+	if err != nil {
-+		logrus.WithError(err).WithField("selector", labelSelector).Warn("failed to list pods for selector")
-+		return false
-+	}
-+	if len(podList.Items) == 0 {
-+		logrus.WithField("selector", labelSelector).Warn("no pods found for selector")
-+		return false
-+	}
-+
-+	for _, pod := range podList.Items {
-+		if pod.Status.Phase != corev1.PodRunning {
-+			return false
- 		}
--		if downCount == 0 {
--			logrus.Info("All infra deployments are up")
--			return
--		} else {
--			retries += 1
--			downCount = 0
--			time.Sleep(30 * time.Second)
-+		for _, containerStatus := range pod.Status.ContainerStatuses {
-+			if !containerStatus.Ready {
-+				return false
-+			}
- 		}
- 	}
--	components.AccessLiveStatus.Lock()
--	defer components.AccessLiveStatus.Unlock()
--	components.LiveStatus = false
-+	return true
- }
- 
- func (k8s *k8sSubscriber) IsAgentConfirmed() (bool, string, error) {
+       - name: web docker build check
+         shell: bash
++        env:
++          DOCKER_BUILDKIT: "1"
+         run: |
+           cd chaoscenter/web
+           docker build . -f Dockerfile --build-arg TARGETARCH=amd64 -t docker.io/litmuschaos/litmusportal-frontend:${{ github.sha }}
 ```
 
-**File**: `chaoscenter/subscriber/pkg/k8s/operations_test.go` (modified, +157/-3)
+**File**: `.github/workflows/push.yml` (modified, +1/-8)
 ```diff
-@@ -9,7 +9,8 @@ import (
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
- 	"k8s.io/apimachinery/pkg/runtime"
--	"k8s.io/client-go/dynamic/fake"
-+	dynamicfake "k8s.io/client-go/dynamic/fake"
-+	kubefake "k8s.io/client-go/kubernetes/fake"
- )
+@@ -254,14 +254,6 @@ jobs:
+         with:
+           version: latest
  
- func TestAddCustomLabels(t *testing.T) {
-@@ -101,7 +102,7 @@ func TestApplyRequest(t *testing.T) {
- 	s := runtime.NewScheme()
- 	s.AddKnownTypes(corev1.SchemeGroupVersion, &corev1.Pod{})
+-      - uses: actions/setup-node@v4
+-        with:
+-          node-version: 16
+-
+-      - name: yarn build
+-        run: |
+-          cd web && yarn && yarn build
+-
+       - name: Login to DockerHub
+         uses: docker/login-action@v1
+         with:
+@@ -270,6 +262,7 @@ jobs:
  
--	fakeDynamicClient := fake.NewSimpleDynamicClient(s, objToGet)
-+	fakeDynamicClient := dynamicfake.NewSimpleDynamicClient(s, objToGet)
+       - name: Push frontend docker image ( ${{ matrix.frontend.image_name }} )
+         env:
++          DOCKER_BUILDKIT: "1"
+           IMG_TAG: ${IMG_TAG}
+           PLATFORMS: ${{ secrets.PLATFORMS }}
+           REPONAME: ${{ secrets.REPONAME }}
+```
+
+**File**: `chaoscenter/web/.dockerignore` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++# Dependencies and build output are produced inside the image, never copied in.
++node_modules
++**/node_modules
++dist
++coverage
++.nyc_output
++reports
++cypress-coverage
++merged-coverage
++cypress/videos
++
++# Local tooling, caches and secrets that must not enter the build context.
++# .npmrc is excluded so developer registry credentials never reach the image;
++# the build generates its own minimal .npmrc (see Dockerfile).
++.husky
++.yalc
++yalc.lock
++.env
++.npmrc
++certificates
++tsconfig.tmp
++temp
++junit.xml
++yarn-error.log
++*.log
++
++# VCS / editor / OS cruft.
++.git
++.gitignore
++.idea
++.vscode
++.DS_Store
++
++# The image is built with pnpm; the yarn lockfile is not needed in context.
++yarn.lock
++
++# Docker artifacts themselves.
++Dockerfile
++.dockerignore
+```
+
+**File**: `chaoscenter/web/Dockerfile` (modified, +51/-2)
+```diff
+@@ -1,6 +1,55 @@
++# syntax=docker/dockerfile:1
++
++# ----------------------------------------------------------------------------
++# Build stage: install dependencies and build the production bundle with pnpm.
++# BuildKit cache mounts keep the pnpm content-addressable store warm across
++# builds, so repeat/CI builds reinstall dependencies in seconds on a cache hit.
++#
++# --platform=$BUILDPLATFORM pins this stage to the builder's native architecture.
++# The output is architecture-independent static assets, so on a multi-arch build
++# the Node/webpack step runs natively instead of under slow, memory-heavy QEMU
++# emulation for the non-native target(s).
++# ----------------------------------------------------------------------------
++FROM --platform=$BUILDPLATFORM node:22-alpine AS build
++
++# pnpm is provided via corepack, pinned to a known-good version for
++# reproducible installs across CI and local builds.
++ENV PNPM_HOME="/pnpm"
++ENV PATH="$PNPM_HOME:$PATH"
++ENV COREPACK_ENABLE_AUTO_PIN=0
++RUN corepack enable && corepack prepare pnpm@10.6.1 --activate
++
++WORKDIR /app
++
++# Use a flat, hoisted node_modules layout (like npm/Yarn). This project predates
++# pnpm and relies on "phantom" dependencies (e.g. tslib) being hoisted to the top
++# level, so pnpm's default isolated layout breaks the webpack build. This .npmrc
++# is generated here rather than committed so that no developer registry
++# credentials can ever leak into the repository or the build context.
++RUN printf 'node-linker=hoisted\nauto-install-peers=true\n' > .npmrc
++
++# Install dependencies first so this layer is cached unless the manifest or
++# lockfile changes. --frozen-lockfile enforces an install that exactly matches
++# pnpm-lock.yaml (fails if the lockfile is out of date). --ignore-scripts skips
++# lifecycle scripts (husky git hooks, optional native rebuilds) that are neither
++# available nor needed inside the image.
++COPY package.json pnpm-lock.yaml ./
++RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
++    pnpm install --frozen-lockfile --ignore-scripts --store-dir=/pnpm/store
++
++# Build the static assets.
++COPY . .
++ARG PUBLIC_URL=""
++ENV PUBLIC_URL=${PUBLIC_URL}
++RUN pnpm run build
++
++# ----------------------------------------------------------------------------
++# Runtime stage: serve the prebuilt assets with nginx. Only the compiled
++# bundle is copied in, so the final image carries no sources or node_modules.
++# ----------------------------------------------------------------------------
+ FROM registry.access.redhat.com/ubi10/nginx-126:10.1
  
- 	// The 'dr' (dynamic resource) variable needs to be set, just like in the real code
- 	// We tell it to look for "pods" in the "litmus" namespace
-@@ -141,7 +142,7 @@ func TestApplyRequest_Create(t *testing.T) {
- 	// Create an EMPTY fake dynamic client (it has no objects yet)
- 	s := runtime.NewScheme()
- 	s.AddKnownTypes(corev1.SchemeGroupVersion, &corev1.ConfigMap{})
--	fakeDynamicClient := fake.NewSimpleDynamicClient(s)
-+	fakeDynamicClient := dynamicfake.NewSimpleDynamicClient(s)
+-COPY dist /opt/chaos
++COPY --from=build /app/dist /opt/chaos
+ COPY nginx/nginx.conf /etc/nginx/
+ COPY ./entrypoint.sh /opt
  
- 	// Set the global 'dr' variable for the test
- 	dr = fakeDynamicClient.Resource(corev1.SchemeGroupVersion.WithResource("configmaps")).Namespace("litmus")
-@@ -163,3 +164,156 @@ func TestApplyRequest_Create(t *testing.T) {
- 		t.Errorf("Failed to 'get' the newly created object from the fake client: %v", err)
- 	}
+@@ -16,4 +65,4 @@ USER 65534
+ 
+ EXPOSE 8185
+ 
+-ENTRYPOINT ["sh", "/opt/entrypoint.sh"]
+\ No newline at end of file
++ENTRYPOINT ["sh", "/opt/entrypoint.sh"]
+```
+
+**File**: `chaoscenter/web/package.json` (modified, +14/-2)
+```diff
+@@ -180,7 +180,19 @@
+     "d3-color": "3.1.0",
+     "lodash": "4.18.1",
+     "lodash-es": "4.18.1",
+-    "**/react-router/path-to-regexp": "1.9.0",
+-    "**/picomatch": "2.3.2"
++    "picomatch": "2.3.2"
++  },
++  "pnpm": {
++    "overrides": {
++      "@types/react": "^17.0.27",
++      "@types/react-dom": "^17.0.9",
++      "create-react-context": "0.3.0",
++      "@blueprintjs/core": "3.26.1",
++      "d3-color": "3.1.0",
++      "lodash": "4.18.1",
++      "lodash-es": "4.18.1",
++      "react-router>path-to-regexp": "1.9.0",
++      "picomatch": "2.3.2"
++    }
+   }
  }
-+
-+func readyPod(name, namespace string, labels map[string]string) *corev1.Pod {
-+	return &corev1.Pod{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      name,
-+			Namespace: namespace,
-+			Labels:    labels,
-+		},
-+		Status: corev1.PodStatus{
-+			Phase: corev1.PodRunning,
-+			ContainerStatuses: []corev1.ContainerStatus{
-+				{
-+					Ready: true,
-+				},
-+			},
-+		},
-+	}
-+}
-+
-+func notRunningPod(name, namespace string, labels map[string]string) *corev1.Pod {
-+	return &corev1.Pod{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      name,
-+			Namespace: namespace,
-+			Labels:    labels,
-+		},
-+		Status: corev1.PodStatus{
-+			Phase: corev1.PodPending,
-+			ContainerStatuses: []corev1.ContainerStatus{
-+				{
-+					Ready: false,
-+				},
-+			},
-+		},
-+	}
-+}
-+
-+func TestDeploymentHealthy(t *testing.T) {
-+	t.Parallel()
-+
-+	const defaultNamespace = "litmus"
-+
-+	testCases := []struct {
-+		name     string
-+		pods     []runtime.Object
-+		selector string
-+		healthy  bool
-+	}{
-+		{
-+			name: "Ready pod matches selector",
-+			pods: []runtime.Object{
-+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-+			},
-+			selector: "app=chaos-exporter",
-+			healthy:  true,
-+		},
-+		{
-+			name:     "No pod found",
-+			pods:     []runtime.Object{},
-+			selector: "app=chaos-exporter",
-+			healthy:  false,
-+		},
-+		{
-+			name: "Selector doesn't match any pod",
-+			pods: []runtime.Object{
-+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-+			},
-+			selector: "app=chaos-operator",
-+			healthy:  false,
-+		},
-+		{
-+			name: "Pod not running",
-+			pods: []runtime.Object{
-+				notRunningPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-+			},
-+			selector: "app=chaos-exporter",
-+			healthy:  false,
-+		},
-+	}
-+
-+	// Run test cases
-+	for _, tc := range testCases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+
-+			client := kubefake.NewSimpleClientset(tc.pods...)
-+			got := deploymentHealthy(context.Background(), client, defaultNamespace, tc.selector)
-+
-+			if got != tc.healthy {
-+				t.Errorf("deploymentHealthy(%q, %q) = %v, want %v", tc.selector, tc.name, got, tc.healthy)
-+			}
-+		})
-+	}
-+}
-+
-+func TestAllDeploymentsHealthy(t *testing.T) {
-+	t.Parallel()
-+
-+	const defaultNamespace = "litmus"
-+
-+	testCases := []struct {
-+		name           string
-+		pods           []runtime.Object
-+		selectors      []string
-+		expectedStatus bool
-+	}{
-+		{
-+			name: "all selectors healthy",
-+			pods: []runtime.Object{
-+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-+				readyPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
-+			},
-+			selectors:      []string{"app=chaos-exporter", "name=chaos-operator"},
-+			expectedStatus: true,
-+		},
-+		{
-+			name: "one selector missing pods",
-+			pods: []runtime.Object{
-+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-+			},
-+			selectors:      []string{"app=chaos-exporter", "name=chaos-operator"},
-+			expectedStatus: false,
-+		},
-+		{
-+			name: "one selector unhealthy",
-+			pods: []runtime.Object{
-+				readyPod("exp-1", defaultNamespace, map[string]string{"app": "chaos-exporter"}),
-+				notRunningPod("op-1", defaultNamespace, map[string]string{"name": "chaos-operator"}),
-+			},
-+			selectors:      []string{"app=chaos-exporter", "name=chaos-operator"},
-+			expectedStatus: false,
-+		},
-+		{
-+			name:           "empty selector list",
-+			pods:           []runtime.Object{},
-+			selectors:      []string{},
-+			expectedStatus: true,
-+		},
 ```
 
 ---
 
-### Incident Patch 2: `e4095919` (2026-10-20)
-**Commit Message**: fix: trivy docker build pass (#5657)
+### Incident Patch 2: `9751c430` (2026-10-26)
+**Commit Message**: fix(graphql-server): chaos-infra stuck INACTIVE after abrupt subscriber disconnect (#5621)
 
-Signed-off-by: Animesh Pathak <[REDACTED_EMAIL]>
+* allow chaos-infra reconnect to replace stale connection
+
+Signed-off-by: VarshaUN <[REDACTED_EMAIL]>
+
+* don't close stale channel, guard cleanup by connection ownership
+
+Signed-off-by: VarshaUN <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: VarshaUN <[REDACTED_EMAIL]>
+Co-authored-by: Pritesh Kiri <[REDACTED_EMAIL]>
+Co-authored-by: Shubham Chaudhary <[REDACTED_EMAIL]>
 Co-authored-by: Udit Gaurav <[REDACTED_EMAIL]>
 
-**File**: `chaoscenter/authentication/go.mod` (modified, +5/-5)
+**File**: `chaoscenter/graphql/server/graph/chaos_infrastructure.resolvers.go` (modified, +17/-12)
 ```diff
-@@ -12,7 +12,7 @@ require (
- 	github.com/sirupsen/logrus v1.9.4
- 	github.com/stretchr/testify v1.11.1
- 	go.mongodb.org/mongo-driver v1.17.9
--	golang.org/x/crypto v0.56.0
-+	golang.org/x/crypto v0.57.0
- 	golang.org/x/oauth2 v0.36.0
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.11
-@@ -55,10 +55,10 @@ require (
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
- 	go.mongodb.org/mongo-driver/v2 v2.5.0 // indirect
- 	golang.org/x/arch v0.25.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	gopkg.in/yaml.v3 v3.0.1 // indirect
+@@ -6,7 +6,6 @@ package graph
+ 
+ import (
+ 	"context"
+-	"errors"
+ 	"fmt"
+ 	"net/http"
+ 	"net/url"
+@@ -298,29 +297,35 @@ func (r *subscriptionResolver) InfraConnect(ctx context.Context, request model.I
+ 		return infraAction, err
+ 	}
+ 	data_store.Store.Mutex.Lock()
+-	if infra_channel, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
+-		data_store.Store.Mutex.Unlock()
+-		logrus.Print("ALREADY CONNECTED, FORCED DISCONNECT: ", request.InfraID)
+-		close(infra_channel)
+-		return infraAction, errors.New("CLUSTER ALREADY CONNECTED")
++	if _, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok {
++		// A previous connection for this infra is still registered (e.g. the old
++		// subscriber pod was force-deleted and the server hasn't yet detected the
++		// drop). Rather than rejecting this new, already-verified connection and
++		// leaving the infra stuck INACTIVE forever, tear down the stale entry and
++		// let the new connection take over.
++		logrus.Print("STALE CONNECTION FOUND, REPLACING: ", request.InfraID)
+ 	}
+ 	data_store.Store.ConnectedInfra[request.InfraID] = infraAction
+ 	data_store.Store.Mutex.Unlock()
+ 	go func() {
+ 		<-ctx.Done()
+-		verifiedInfra.IsActive = false
+ 		logrus.Print("Context Done, will handle disconnection for: ", request.InfraID)
+-		newVerifiedInfra := model.Infra{}
+-		copier.Copy(&newVerifiedInfra, &verifiedInfra)
+-
+-		r.chaosInfrastructureService.SendInfraEvent("infra-status", "Infra Offline", "Infra Disconnect", newVerifiedInfra, *data_store.Store)
+ 
+ 		data_store.Store.Mutex.Lock()
++		if current, ok := data_store.Store.ConnectedInfra[request.InfraID]; ok && current != infraAction {
++			data_store.Store.Mutex.Unlock()
++			return
++		}
+ 		delete(data_store.Store.ConnectedInfra, request.InfraID)
+ 		data_store.Store.Mutex.Unlock()
++
++		verifiedInfra.IsActive = false
++		newVerifiedInfra := model.Infra{}
++		copier.Copy(&newVerifiedInfra, &verifiedInfra)
++		r.chaosInfrastructureService.SendInfraEvent("infra-status", "Infra Offline", "Infra Disconnect", newVerifiedInfra, *data_store.Store)
++
+ 		query := bson.D{{"infra_id", request.InfraID}}
+ 		update := bson.D{{"$set", bson.D{{"is_active", false}, {"updated_at", time.Now().UnixMilli()}}}}
+-
+ 		err = r.chaosInfrastructureService.UpdateInfra(query, update)
+ 		if err != nil {
+ 			logrus.Print("Error", err)
+```
+
+**File**: `chaoscenter/graphql/server/graph/chaos_infrastructure.resolvers_test.go` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++package graph
++
++import (
++	"context"
++	"testing"
++	"time"
++
++	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/graph/model"
++	"github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/chaos_infrastructure/model/mocks"
++	data_store "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/data-store"
++	dbChaosInfra "github.com/litmuschaos/litmus/chaoscenter/graphql/server/pkg/database/mongodb/chaos_infrastructure"
++	"github.com/stretchr/testify/mock"
++	"github.com/stretchr/testify/require"
++)
++
++// TestInfraConnect_ReplacesStaleConnection reproduces litmuschaos/litmus#4789:
++// a stale ConnectedInfra map entry (left behind by an abruptly-killed subscriber)
++// must not permanently block the infra from reconnecting.
++func TestInfraConnect_ReplacesStaleConnection(t *testing.T) {
++	infraID := "test-infra-stale"
++
++	mockService := new(mocks.InfraService)
++	mockService.On("VerifyInfra", mock.Anything).
++		Return(&dbChaosInfra.ChaosInfra{InfraID: infraID}, nil)
++	mockService.On("UpdateInfra", mock.Anything, mock.Anything).
++		Return(nil)
++	mockService.On("SendInfraEvent", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
++		Return().Maybe()
++
++	r := &subscriptionResolver{&Resolver{chaosInfrastructureService: mockService}}
++	staleChannel := make(chan *model.InfraActionResponse, 1)
++	data_store.Store.Mutex.Lock()
++	data_store.Store.ConnectedInfra[infraID] = staleChannel
++	data_store.Store.Mutex.Unlock()
++
++	ctx, cancel := context.WithCancel(context.Background())
++	defer cancel()
++
++	newChannel, err := r.InfraConnect(ctx, model.InfraIdentity{InfraID: infraID})
++
++	require.NoError(t, err, "a verified reconnect must not be rejected because of a stale entry")
++	select {
++	case _, ok := <-staleChannel:
++		require.True(t, ok, "stale channel must not be closed")
++	default:
++	}
++	data_store.Store.Mutex.Lock()
++	current := data_store.Store.ConnectedInfra[infraID]
++	data_store.Store.Mutex.Unlock()
++	require.Equal(t, newChannel, (<-chan *model.InfraActionResponse)(current))
++
++	cancel()
++	time.Sleep(50 * time.Millisecond)
++}
++
++func TestInfraConnect_SecondConnectSucceedsAfterFirst(t *testing.T) {
++	infraID := "test-infra-reconnect"
++
++	mockService := new(mocks.InfraService)
++	mockService.On("VerifyInfra", mock.Anything).
++		Return(&dbChaosInfra.ChaosInfra{InfraID: infraID}, nil)
++	mockService.On("UpdateInfra", mock.Anything, mock.Anything).
++		Return(nil)
++	mockService.On("SendInfraEvent", mock.Anything, mock.Anything, mock.Anything, mock.Anything, mock.Anything).
++		Return().Maybe()
++
++	r := &subscriptionResolver{&Resolver{chaosInfrastructureService: mockService}}
++
++	ctx1, cancel1 := context.WithCancel(context.Background())
++	defer cancel1()
++	ctx2, cancel2 := context.WithCancel(context.Background())
++	defer cancel2()
++
++	_, err := r.InfraConnect(ctx1, model.InfraIdentity{InfraID: infraID})
++	require.NoError(t, err)
++
++	secondChannel, err := r.InfraConnect(ctx2, model.InfraIdentity{InfraID: infraID})
++	require.NoError(t, err, "reconnect must succeed instead of returning CLUSTER ALREADY CONNECTED")
++
++	data_store.Store.Mutex.Lock()
++	current := data_store.Store.ConnectedInfra[infraID]
++	data_store.Store.Mutex.Unlock()
++	require.Equal(t, secondChannel, (<-chan *model.InfraActionResponse)(current))
++
++	cancel1()
++	time.Sleep(50 * time.Millisecond)
++	data_store.Store.Mutex.Lock()
++	current = data_store.Store.ConnectedInfra[infraID]
++	data_store.Store.Mutex.Unlock()
++	require.Equal(t, secondChannel, (<-chan *model.InfraActionResponse)(current),
++		"old connection's cleanup must not remove the new connection")
++
++	cancel2()
++	time.Sleep(50 * time.Millisecond)
++	data_store.Store.Mutex.Lock()
++	_, exists := data_store.Store.ConnectedInfra[infraID]
++	data_store.Store.Mutex.Unlock()
++	require.False(t, exists)
++}
+```
+
+---
+
+### Incident Patch 3: `b4fce793` (2026-10-26)
+**Commit Message**: fix(authentication): return 400 on invalid list_projects query params (#5649)
+
+Signed-off-by: Barbie Rajput <[REDACTED_EMAIL]>
+Co-authored-by: Pritesh Kiri <[REDACTED_EMAIL]>
+Co-authored-by: Udit Gaurav <[REDACTED_EMAIL]>
+
+**File**: `chaoscenter/authentication/api/handlers/rest/project_handler.go` (modified, +10/-2)
+```diff
+@@ -58,7 +58,11 @@ func GetUserWithProject(service services.ApplicationService) gin.HandlerFunc {
+ 			return
+ 		}
+ 
+-		request := projectUtils.GetProjectFilters(c)
++		request, err := projectUtils.GetProjectFilters(c)
++		if err != nil {
++			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
++			return
++		}
+ 		request.UserID = user.ID
+ 
+ 		res, err := service.GetProjectsByUserID(request)
+@@ -135,7 +139,11 @@ func GetProject(service services.ApplicationService) gin.HandlerFunc {
+ // GetProjectsByUserID queries the project with a given userID from the database and returns it in the appropriate format
+ func GetProjectsByUserID(service services.ApplicationService) gin.HandlerFunc {
+ 	return func(c *gin.Context) {
+-		request := projectUtils.GetProjectFilters(c)
++		request, err := projectUtils.GetProjectFilters(c)
++		if err != nil {
++			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
++			return
++		}
+ 
+ 		res, err := service.GetProjectsByUserID(request)
+ 		if res == nil || (res.TotalNumberOfProjects != nil && *res.TotalNumberOfProjects == 0) {
+```
+
+**File**: `chaoscenter/authentication/api/utils/project_utils.go` (modified, +5/-7)
+```diff
+@@ -1,7 +1,7 @@
+ package utils
+ 
+ import (
+-	"log"
++	"fmt"
+ 	"strconv"
+ 
+ 	"github.com/gin-gonic/gin"
+@@ -11,7 +11,7 @@ import (
+ 	"go.mongodb.org/mongo-driver/bson/primitive"
  )
-```
-
-**File**: `chaoscenter/authentication/go.sum` (modified, +10/-10)
-```diff
-@@ -133,36 +133,36 @@ golang.org/x/arch v0.25.0 h1:qnk6Ksugpi5Bz32947rkUgDt9/s5qvqDPl/gBKdMJLE=
- golang.org/x/arch v0.25.0/go.mod h1:0X+GdSIP+kL5wPmpK7sdkEVTt2XoYP0cSjQSbZBwOi8=
- golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
--golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
--golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
- golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
- golang.org/x/net v0.0.0-20210226172049-e18ecbb05110/go.mod h1:m0MpNAwzfU5UDzcl9v0D8zg8gWTRqZa9RBIspLL5mdg=
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
- golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
- golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.3.8/go.mod h1:E6s5w1FMmriuDzIBO73fBruAKo1PCIq6d2Q6DHfQ8WQ=
--golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
--golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
-+golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
-+golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
- golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
- golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
-```
-
-**File**: `chaoscenter/event-tracker/Dockerfile` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- # BUILD STAGE
--FROM golang:1.25 AS builder
-+FROM golang:1.26 AS builder
  
- LABEL maintainer="LitmusChaos"
+-func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
++func GetProjectFilters(c *gin.Context) (*entities.ListProjectRequest, error) {
+ 	var request entities.ListProjectRequest
  
+ 	uID, exists := c.Get("uid")
+@@ -32,8 +32,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
+ 	if createdByMeStr != "" {
+ 		createdByMe, err := strconv.ParseBool(createdByMeStr)
+ 		if err != nil {
+-			log.Fatal(err)
+-			return nil
++			return nil, fmt.Errorf("invalid value for %s: %w", types.CreatedByMe, err)
+ 		}
+ 		request.Filter.CreatedByMe = &createdByMe
+ 	}
+@@ -65,8 +64,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
+ 	if ascendingStr != "" {
+ 		ascending, err := strconv.ParseBool(ascendingStr)
+ 		if err != nil {
+-			log.Fatal(err)
+-			return nil
++			return nil, fmt.Errorf("invalid value for %s: %w", types.Ascending, err)
+ 		}
+ 		request.Sort.Ascending = &ascending
+ 	}
+@@ -98,7 +96,7 @@ func GetProjectFilters(c *gin.Context) *entities.ListProjectRequest {
+ 
+ 	request.Pagination = &pagination
+ 
+-	return &request
++	return &request, nil
+ }
+ 
+ func CreateMatchStage(userID string) bson.D {
 ```
 
-**File**: `chaoscenter/event-tracker/go.mod` (modified, +5/-5)
+**File**: `chaoscenter/authentication/api/utils/project_utils_test.go` (added, +41/-0)
 ```diff
-@@ -1,6 +1,6 @@
- module github.com/litmuschaos/litmus/chaoscenter/event-tracker
- 
--go 1.25.0
-+go 1.26.0
- 
- require (
- 	github.com/jmespath/go-jmespath v0.4.0
-@@ -52,11 +52,11 @@ require (
- 	go.uber.org/multierr v1.6.0 // indirect
- 	go.uber.org/zap v1.24.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.4 // indirect
--	golang.org/x/net v0.56.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
- 	golang.org/x/oauth2 v0.27.0 // indirect
--	golang.org/x/sys v0.46.0 // indirect
--	golang.org/x/term v0.44.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/time v0.3.0 // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.3.0 // indirect
- 	google.golang.org/protobuf v1.36.7 // indirect
-```
-
-**File**: `chaoscenter/event-tracker/go.sum` (modified, +14/-14)
-```diff
-@@ -162,8 +162,8 @@ golang.org/x/lint v0.0.0-20190930215403-16217165b5de/go.mod h1:6SW0HCj/g11FgYtHl
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.4.2/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.38.0 h1:MECBjubtXD7yj4HrhIUcywNaGeNVUdfVnxmPajOk4yk=
--golang.org/x/mod v0.38.0/go.mod h1:V6Xz0pq8TQ3dGqVQ1FVHuelZpAL0uNhSkk9ogYP3c40=
-+golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
-+golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
- golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
-@@ -172,8 +172,8 @@ golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod h1:z5CRVTTTmAJ677TzLL
- golang.org/x/net v0.0.0-20200520004742-59133d7f0dd7/go.mod h1:qpuaurCH72eLCgpAm/N6yyVIVM9cpaDIP3A8BGJEC5A=
- golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
- golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod h1:p54w0d4576C0XHj96bSt6lcn1PtDYWL6XObtHCRCNQM=
--golang.org/x/net v0.56.0 h1:Rw8j/hFzGvJUZwNBXnAtf5sVDVt+65SK2C7IxCxZt5o=
--golang.org/x/net v0.56.0/go.mod h1:D3Ku6r+V6JROoZK144D2XfMHFcMq/0zSfLelVTCFKec=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.27.0 h1:da9Vo7/tDv5RH/7nZDz1eMGS/q1Vv1N/7FCrBhI9I3M=
- golang.org/x/oauth2 v0.27.0/go.mod h1:onh5ek6nERTohokkhCD/y2cV4Do3fxFHFuAejCkRWT8=
- golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
-@@ -182,8 +182,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -197,15 +197,15 @@ golang.org/x/sys v0.0.0-20210112080510-489259a85091/go.mod h1:h1NjWce9XRLGQEsW7w
- golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
- golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220908164124-27713097b956/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.46.0 h1:noSf2Fq6F8DBgS+LysIkx7rIExoNHJsxOAtPp4rthXw=
--golang.org/x/sys v0.46.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
--golang.org/x/term v0.44.0 h1:0rLvDRCtNj0gZkyIXhCyOb2OAzEhLVqc4B+hrsBhrmc=
--golang.org/x/term v0.44.0/go.mod h1:7ze4MdzUzLXpSAoFP1H0bOI9aXDqveSvatT5vKcFh2Y=
-+golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
-+golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
--golang.org/x/text v0.41.0 h1:vz/seA0lnX87Othu2f/0L24RcgrXD9/YFTSuGjj3rH8=
--golang.org/x/text v0.41.0/go.mod h1:jvf1O8ajNzZqhSrQBPbutR/EB83Cc0CFrezNQIwbb5M=
-+golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
-+golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
- golang.org/x/time v0.3.0 h1:rg5rLMjNzMS1RkNLzCG38eapWhnYLFYXDXj2gOlr8j4=
- golang.org/x/time v0.3.0/go.mod h1:tRJNPiyCQ0inRvYxbN9jk5I+vvW/OXSQhTDSoE431IQ=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
-@@ -215,8 +215,8 @@ golang.org/x/tools v0.0.0-2020061
-```
-
-**File**: `chaoscenter/graphql/server/go.mod` (modified, +6/-7)
-```diff
-@@ -25,7 +25,7 @@ require (
- 	github.com/tidwall/sjson v1.2.5
- 	github.com/vektah/gqlparser/v2 v2.5.16
- 	go.mongodb.org/mongo-driver v1.17.7
--	golang.org/x/crypto v0.56.0
-+	golang.org/x/crypto v0.57.0
- 	google.golang.org/grpc v1.83.2
- 	google.golang.org/protobuf v1.36.11
- 	gopkg.in/yaml.v2 v2.4.0
-@@ -36,7 +36,6 @@ require (
- 
- require (
- 	dario.cat/mergo v1.0.2 // indirect
--	github.com/AdamKorcz/go-118-fuzz-build v0.0.0-20250520111509-a70c2aa677fa // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
- 	github.com/ProtonMail/go-crypto v1.3.0 // indirect
- 	github.com/agnivade/levenshtein v1.1.1 // indirect
-@@ -108,12 +107,12 @@ require (
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
- 	go.yaml.in/yaml/v2 v2.4.2 // indirect
- 	golang.org/x/arch v0.8.0 // indirect
--	golang.org/x/net v0.58.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sync v0.22.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sync v0.23.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/time v0.11.0 // indirect
- 	google.golang.org/genproto v0.0.0-20250603155806-513f23925822 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
-```
-
-**File**: `chaoscenter/graphql/server/go.sum` (modified, +12/-14)
-```diff
-@@ -47,8 +47,6 @@ github.com/99designs/gqlgen v0.17.49 h1:b3hNGexHd33fBSAd4NDT/c3NCcQzcAVkknhN9ym3
- github.com/99designs/gqlgen v0.17.49/go.mod h1:tC8YFVZMed81x7UJ7ORUwXF4Kn6SXuucFqQBhN8+BU0=
- github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 h1:bvDV9vkmnHYOMsOr4WLk+Vo07yKIzd94sVoIqshQ4bU=
- github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24/go.mod h1:8o94RPi1/7XTJvwPpRSzSUedZrtlirdB3r9Z20bi2f8=
--github.com/AdamKorcz/go-118-fuzz-build v0.0.0-20250520111509-a70c2aa677fa h1:x6kFzdPgBoLbyoNkA/jny0ENpoEz4wqY8lPTQL2DPkg=
--github.com/AdamKorcz/go-118-fuzz-build v0.0.0-20250520111509-a70c2aa677fa/go.mod h1:gCLVsLfv1egrcZu+GoJATN5ts75F2s62ih/457eWzOw=
- github.com/Azure/azure-sdk-for-go v32.5.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
- github.com/Azure/azure-sdk-for-go v35.0.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
- github.com/Azure/azure-sdk-for-go v43.0.0+incompatible/go.mod h1:9XXNKU+eRnpl9moKnB4QOLf1HestfXbmab5FXxiDBjc=
-@@ -1286,8 +1284,8 @@ golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0/go.mod h1:LzIPMQfyMNhhGPh
- golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83/go.mod h1:jdWPYTVW3xRLrWPugEBEK3UY2ZEsg3UU495nc5E+M+I=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.56.0 h1:GUh5Ii4J5jtcseSMiRqr1jXCNHoxjeV9Fmekc2oLy6Y=
--golang.org/x/crypto v0.56.0/go.mod h1:OMW5y6CY9l38uPLmxU6l6pwcXp1obtLo3e6gT7gQR2I=
-+golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
-+golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
-@@ -1393,8 +1391,8 @@ golang.org/x/net v0.0.0-20210525063256-abc453219eb5/go.mod h1:9nx3DQGgdP8bBQD5qx
- golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2/go.mod h1:9nx3DQGgdP8bBQD5qxJ1jj9UTztislL4KSBs9R2vV5Y=
- golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug+ECip1KBveYUHfp+8e9klMJ9c=
--golang.org/x/net v0.58.0 h1:ynWG7rqYi4ccpTEuPZ2QGWHktVEM9DMCj9yzDE0Q7To=
--golang.org/x/net v0.58.0/go.mod h1:YwCddHnFlT7eLQqVprV19OnhLGtc5xOKgE0RyqgfWAU=
-+golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
-+golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
- golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20181106182150-f42d05182288/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
- golang.org/x/oauth2 v0.0.0-20190226205417-e64efc72b421/go.mod h1:gOpvHmFTYa4IltrdGE7lF6nIHvwfUNPOp7c8zoXwtLw=
-@@ -1424,8 +1422,8 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20201207232520-09787c993a3a/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.22.0 h1:SZjpbeLmrCk4xhRSZFNZW5gFUeCeFgjekvI/+gfScek=
--golang.org/x/sync v0.22.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
-+golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
-+golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20170830134202-bb24a47a89ea/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20171026204733-164713f0dfce/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180117170059-2c42eef0765b/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -1516,14 +1514,14 @@ golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.47.0 h1:o7XGOvZQCADBQQ4Y7VNq2dRWQR7JmOUW8Kxx4ZsNgWs=
--golang.org/x/sys v0.47.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
-+golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
-+golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201117132131-f
-```
-
-**File**: `chaoscenter/subscriber/go.mod` (modified, +5/-5)
-```diff
-@@ -4,7 +4,7 @@ go 1.26.0
- 
- require (
- 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24
--	github.com/argoproj/argo-workflows/v3 v3.7.14
-+	github.com/argoproj/argo-workflows/v3 v3.7.15
- 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
- 	github.com/golang/mock v1.6.0
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674
-@@ -42,11 +42,11 @@ require (
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/spf13/pflag v1.0.6 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
--	golang.org/x/net v0.58.0 // indirect
-+	golang.org/x/net v0.60.0 // indirect
- 	golang.org/x/oauth2 v0.36.0 // indirect
--	golang.org/x/sys v0.47.0 // indirect
--	golang.org/x/term v0.45.0 // indirect
--	golang.org/x/text v0.41.0 // indirect
-+	golang.org/x/sys v0.48.0 // indirect
-+	golang.org/x/term v0.46.0 // indirect
-+	golang.org/x/text v0.42.0 // indirect
- 	golang.org/x/time v0.11.0 // indirect
- 	google.golang.org/genproto v0.0.0-20250603155806-513f23925822 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+@@ -0,0 +1,41 @@
++package utils
++
++import (
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/gin-gonic/gin"
++	"github.com/litmuschaos/litmus/chaoscenter/authentication/api/types"
++)
++
++func TestGetProjectFilters(t *testing.T) {
++	gin.SetMode(gin.TestMode)
++
++	tests := []struct {
++		name    string
++		query   string
++		wantErr bool
++	}{
++		{"no params", "", false},
++		{"valid createdByMe", types.CreatedByMe + "=true", false},
++		{"valid ascending", types.Ascending + "=false", false},
++		{"invalid createdByMe", types.CreatedByMe + "=notabool", true},
++		{"invalid ascending", types.Ascending + "=notabool", true},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			c, _ := gin.CreateTestContext(httptest.NewRecorder())
++			c.Request = httptest.NewRequest(http.MethodGet, "/list_projects?"+tt.query, nil)
++
++			req, err := GetProjectFilters(c)
++			if (err != nil) != tt.wantErr {
++				t.Fatalf("GetProjectFilters() error = %v, wantErr %v", err, tt.wantErr)
++			}
++			if !tt.wantErr && req == nil {
++				t.Fatal("expected a non-nil request")
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5687** (2026-10-27): chore(3.33.0): Add the installation manifest for 3.33.0 version (@ispeakc0de)
+- **PR #5681** (2026-10-26): Updating email address for oumkale (@oumkale)
+- **PR #5673** (closed): build(deps): Bump github.com/klauspost/compress from 1.18.2 to 1.18.7 in /chaoscenter/graphql/server (@dependabot[bot])
+- **PR #5672** (closed): build(deps): Bump github.com/klauspost/compress from 1.18.4 to 1.18.7 in /chaoscenter/authentication (@dependabot[bot])
+- **PR #5660** (2026-10-26): Build frontend image with pnpm multi-stage Dockerfile (@yashgoyal0110)
 - **PR #5657** (2026-10-20): fix: resolve Trivy HIGH vulnerabilities in chaoscenter images (@Sonichigo)
-- **PR #5646** (2026-10-14): fix(chaoscenter): include the year when comparing date ranges (@ajmani-x)
-- **PR #5644** (2026-10-14): fix: keep the experiment manifest in git when deleting a single run (@Aryanbhargava18)
-- **PR #5643** (2026-10-14): fix: return FindUsersByUID errors before using the result in GetProjectById (@Aryanbhargava18)
-- **PR #5642** (2026-10-14): fix: sort experiments by name in the requested order (@Aryanbhargava18)
-- **PR #5637** (2026-10-14): fix(manifests): move CUSTOM_TLS_CERT from subscriber config to subscriber secret  (@mimo-to)
 
 ---
 
@@ -1913,96 +1768,33 @@ Co-authored-by: Udit Gaurav <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix unimplemented concurrency in CheckComponentStatus (#5522)
+## X. chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660)
 
 **RULE**:
-When implementing operations in `chaoscenter/subscriber/pkg/k8s/operations.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in litmuschaos/litmus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in litmuschaos/litmus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b957f314`: fix unimplemented concurrency in CheckComponentStatus (#5522). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2967753b`: chaoscenter-web): build frontend image with pnpm multi-stage Dockerfile (#5660). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `chaoscenter/subscriber/pkg/k8s/operations.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"sync/atomic"
-	Deployments []string `yaml:"DEPLOYMENTS"`
-	if err := yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components); err != nil {
-	ctx := context.TODO()
-	for retry := 0; retry < LiveCheckMaxTries; retry++ {
-		if allDeploymentsHealthy(ctx, clientset, InfraNamespace, components.Deployments) {
-			logrus.Info("All infra deployments are up")
-			return nil
-		}
-		if retry < LiveCheckMaxTries-1 {
-			time.Sleep(30 * time.Second)
-		}
-	}
-	return errors.New("all components failed to startup")
-}
-func allDeploymentsHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, selectors []string) bool {
-	if len(selectors) == 0 {
-		return true
-	}
-	var (
-		wg     sync.WaitGroup
-		failed atomic.Int32
-	)
-	wg.Add(len(selectors))
-	for _, curSelector := range selectors {
-		go func(labelSelector string) {
-			defer wg.Done()
-			if !deploymentHealthy(ctx, clientSet, namespace, labelSelector) {
-				failed.Add(1)
-			}
-		}(curSelector)
-	wg.Wait()
-
-	return failed.Load() == 0
-func deploymentHealthy(ctx context.Context, clientSet kubernetes.Interface, namespace string, labelSelector string) bool {
-	podList, err := clientSet.CoreV1().Pods(namespace).List(ctx, metav1.ListOpt
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        env:
+          DOCKER_BUILDKIT: "1"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	Deployments      []string `yaml:"DEPLOYMENTS"`
-	LiveStatus       bool
-	AccessLiveStatus sync.Mutex
-
-	err = yaml2.Unmarshal([]byte(strings.TrimSpace(componentEnv)), &components)
-	if err != nil {
-	components.LiveStatus = true
-	components.AccessLiveStatus = sync.Mutex{}
-
-	wait := sync.WaitGroup{}
-	// add all agent components to waitgroup
-	wait.Add(1)
-	go k8s.checkDeploymentStatus(&components, clientset, &wait)
-	wait.Wait()
-	if !components.LiveStatus {
-		return errors.New("all components failed to startup")
-	return nil
-func (k8s *k8sSubscriber) checkDeploymentStatus(components *InfraComponents, clientset *kubernetes.Clientset, wait *sync.WaitGroup) {
-	ctx := context.TODO()
-	downCount := 0
-	retries := 0
-	defer wait.Done()
-	for retries < LiveCheckMaxTries {
-		for _, dep := range components.Deployments {
-			podList, err := clientset.CoreV1().Pods(InfraNamespace).List(ctx, metav1.ListOptions{LabelSelector: dep})
-			if err != nil {
-				logrus.Errorf("failed to get deployment pods %v , err : %v", dep, err.Error())
-				downCount += 1
-				continue
-			}
-			if len(podList.Items) == 0 {
-				logrus.Errorf("failed to get deployments pods %v , err : pods not found", dep)
-				downCount += 1
-				cont
+      - name: yarn build check
+        run: |
+          cd chaoscenter/web && yarn && yarn build
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b957f314` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2967753b` are properly handled with clean fallback behavior.

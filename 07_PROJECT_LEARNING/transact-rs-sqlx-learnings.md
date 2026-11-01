@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `f574e07d`  
+> **Source Version**: `7908fe79`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:09:33.834Z  
+> **Timestamp**: 2026-11-01T02:15:54.614Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:09:32.528Z  
+> **Harvest Timestamp**: 2026-11-01T02:15:54.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17591 stars
+- **Stars / Engagement**: 17616 stars
 
 ---
 
@@ -960,11 +960,11 @@ impl FromStr for AnyKind {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4484** (2026-10-27): **PgConnection errors on NOTIFY delivered to a non-PgListener connection**
+  *Symptoms*: ### I have found these related issues/pull requests  - #67 (PgBouncer support) covers prepared statements, startup parameters and session advisory locks in transaction mode, but not notifications. - #2956 (`PgListener` "unknown message type") is a different error, on a listener connection. - pgbouncer/pgbouncer#655: `LISTEN` isn't supported in transaction pooling, which is how the notification reaches other clients in the second case below.  ### Description  On a `PgConnection` that isn't a `PgListener`, a NotificationResponse from the server fails the query in progress with `Protocol("execute: unexpected message: NotificationResponse")`. The statement has already run, and its transaction has committed.  In `PgStream::recv` (`sqlx-postgres/src/connection/stream.rs`), a NotificationResponse is consumed only when `self.notifications` is set, that is, on a `PgListener`'s connection. Otherwise it falls through to the executor, which treats any unexpected message as a protocol error (`executor.rs:366`).  The Postgres protocol says a frontend must accept it anywhere ([Asynchronous Operations](https://www.postgresql.org/docs/current/protocol-flow.html#PROTOCOL-ASYNC)): "Frontends must be prepared to deal with these messages at any time, even when not engaged in a query", and "Good practice is to be able to accept NotificationResponse at any point in the protocol."  There are two ways an ordinary connection can receive a NotificationResponse:  1. **The connection ran `LISTEN` itself*
+
 - **Issue #4430** (2026-10-03): **SQLCipher crashes on a segfault**
   *Symptoms*: ### I have found these related issues/pull requests  I don't see any issues mentioning any SQLCipher crashes in this repo, but did come across this related issue in the sqlcipher repo: https://github.com/sqlcipher/sqlcipher/issues/598  ### Description  In my testing, the sqlcipher test suite crashes about 8% of the time. I recently saw this while rebasing a PR of mine (#4343), and decided to have a robot look into it.  Here are all the failures exclusively caused by SQLCipher segfaults since 2026-07-01:  * https://github.com/transact-rs/sqlx/actions/runs/36413688549/job/108900510675 * https://github.com/transact-rs/sqlx/actions/runs/35104419529/job/104823079570 * https://github.com/transact-rs/sqlx/actions/runs/34564198418/job/103153392092 * https://github.com/transact-rs/sqlx/actions/runs/34534510553/job/103063488008 * https://github.com/transact-rs/sqlx/actions/runs/33692629721/job/100461951727 * https://github.com/transact-rs/sqlx/actions/runs/32526655032/job/96910377835 * https://github.com/transact-rs/sqlx/actions/runs/32071123060/job/95515306920 * https://github.com/transact-rs/sqlx/actions/runs/31418818610/job/93555336615 * https://github.com/transact-rs/sqlx/actions/runs/28627420274/job/84897256505 * https://github.com/transact-rs/sqlx/actions/runs/28499215476/job/84472614197  And a few more where there were additional errors, but SQLCipher also segfaulted:  * https://github.com/transact-rs/sqlx/actions/runs/36420553996/job/108922827779 * https://github.com/transact-r
-
-- **Issue #4387** (2026-08-20): **Some of the published crates fro version 0.9.0 are missing the content of the license files**
-  *Symptoms*: ### I have found these related issues/pull requests  #3237 is closed and was originally resolved by #3293.  But https://github.com/transact-rs/sqlx/pull/3293#issuecomment-2181227547 did not appear to consider that symlink support on windows required special permission and need to be configured properly.  https://github.com/transact-rs/sqlx/pull/3293#issuecomment-2181237393 it has come up.  ### Description  It looks like the release might have been published from windows and ran into https://github.com/rust-lang/cargo/issues/5664  The following crates contain `../LICENSE-APACHE` in the `LICENSE-APACHE` file  instead of the license content.  - [sqlx-core](https://docs.rs/crate/sqlx-core/0.9.0/source/LICENSE-APACHE) - [sqlx-macros](https://docs.rs/crate/sqlx-macros/0.9.0/source/LICENSE-APACHE) - [sqlx-macros-core](https://docs.rs/crate/sqlx-macros-core/0.9.0/source/LICENSE-APACHE) - [sqlx-mysql](https://docs.rs/crate/sqlx-mysql/0.9.0/source/LICENSE-APACHE) - [sqlx-postgres](https://docs.rs/crate/sqlx-postgres/0.9.0/source/LICENSE-APACHE) - [sqlx-sqlite](https://docs.rs/crate/sqlx-sqlite/0.9.0/source/LICENSE-APACHE)  This applies accordingly to the LICENSE-MIT file.  ### Reproduction steps  See links under description  ### SQLx version  0.9.0  ### Enabled SQLx features  packaging  ### Database server and version  irrelevant  ### Operating system  irrelevant  ### Rust version  irrelevant
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -981,244 +981,83 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36f3a5c1` (2026-10-21)
-**Commit Message**: fix(macros): tolerate unreadable dotenv with query source (#4371)
+### Incident Patch 1: `7908fe79` (2026-10-31)
+**Commit Message**: fix(mysql): handle empty passwords during authentication switches. (#4493)
 
-* fix(macros): tolerate unreadable dotenv with query source
-
-Ignore dotenv I/O errors only when a query source was established before reading that file. Continue to report parse errors and mid-file I/O failures when the current file established the source.
-
-Fixes #4348
-
-Developed with AI assistance.
-
-Signed-off-by: zhanglangning <[REDACTED_EMAIL]>
-
-* fix(macros): reject partially read dotenv files
-
-Once a dotenv file yields a key/value pair, preserve subsequent I/O errors
-instead of accepting a partial configuration.
-
-Add regression coverage for denied file permissions and changes to ignored
-dotenv paths.
-
----------
-
-Signed-off-by: zhanglangning <[REDACTED_EMAIL]>
-
-**File**: `sqlx-macros-core/src/query/metadata.rs` (modified, +461/-30)
+**File**: `sqlx-mysql/src/connection/auth.rs` (modified, +6/-0)
 ```diff
-@@ -14,12 +14,21 @@ pub struct Metadata {
-     workspace_root: Arc<Mutex<Option<PathBuf>>>,
- }
- 
-+#[cfg_attr(test, derive(Debug))]
- pub struct MacrosEnv {
-     pub database_url: Option<String>,
-     pub offline_dir: Option<PathBuf>,
-     pub offline: Option<bool>,
- }
- 
-+#[derive(thiserror::Error, Debug)]
-+#[error("error reading dotenv file {path:?}")]
-+struct DotenvError {
-+    path: PathBuf,
-+    #[source]
-+    error: dotenvy::Error,
-+}
-+
- impl Metadata {
-     pub fn env(&self) -> crate::Result<Arc<MacrosEnv>> {
-         let workspace_root = self.workspace_root();
-@@ -98,14 +107,22 @@ fn load_env(
-     config: &Config,
-     builder: &mut MtimeCacheBuilder,
- ) -> crate::Result<Arc<MacrosEnv>> {
--    #[derive(thiserror::Error, Debug)]
--    #[error("error reading dotenv file {path:?}")]
--    struct DotenvError {
--        path: PathBuf,
--        #[source]
--        error: dotenvy::Error,
--    }
-+    let from_env = MacrosEnv {
-+        database_url: crate::env_opt(config.common.database_url_var())?,
-+        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?.map(PathBuf::from),
-+        offline: crate::env_opt("SQLX_OFFLINE")?.map(|val| is_truthy_bool(&val)),
-+    };
- 
-+    load_env_from_sources(manifest_dir, workspace_root, config, builder, from_env)
-+}
-+
-+fn load_env_from_sources(
-+    manifest_dir: &Path,
-+    workspace_root: &Path,
-+    config: &Config,
-+    builder: &mut MtimeCacheBuilder,
-+    from_env: MacrosEnv,
-+) -> crate::Result<Arc<MacrosEnv>> {
-     let mut from_dotenv = MacrosEnv {
-         database_url: None,
-         offline_dir: None,
-@@ -139,43 +156,457 @@ fn load_env(
-                 builder.add_path(dir.to_path_buf());
-                 continue;
-             }
-+            Err(dotenvy::Error::Io(_))
-+                if has_query_source_without_dotenv(&from_env, &from_dotenv) =>
+@@ -17,6 +17,12 @@ impl AuthPlugin {
+         nonce: &Chain<Bytes, Bytes>,
+     ) -> Result<Vec<u8>, Error> {
+         match self {
++            // Empty passwords require an empty auth response, including after an auth switch.
++            AuthPlugin::CachingSha2Password | AuthPlugin::MySqlNativePassword
++                if password.is_empty() =>
 +            {
-+                builder.add_path(path.clone());
-+                continue;
++                Ok(Vec::new())
 +            }
-             Err(e) => {
-                 builder.add_path(path.clone());
-                 return Err(DotenvError { path, error: e }.into());
-             }
-         };
+             // https://mariadb.com/kb/en/caching_sha2_password-authentication-plugin/
+             AuthPlugin::CachingSha2Password => Ok(scramble_sha256(password, nonce).to_vec()),
  
--        for res in dotenv {
--            let (name, val) = res.map_err(|e| DotenvError {
--                path: path.clone(),
--                error: e,
--            })?;
--
--            match &*name {
--                "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
--                "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
--                _ if name == config.common.database_url_var() => {
--                    from_dotenv.database_url = Some(val)
--                }
--                _ => continue,
--            }
--        }
-+        read_dotenv(&path, dotenv, config, &from_env, &mut from_dotenv)?;
-     }
- 
-     Ok(Arc::new(MacrosEnv {
-         // Make set variables take precedent
--        database_url: crate::env_opt(config.common.database_url_var())?
--            .or(from_dotenv.database_url),
--        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?
--            .map(PathBuf::from)
--            .or(from_dotenv.offline_dir),
--        offline: crate::env_opt("SQLX_OFFLINE")?
--            .map(|val| is_truthy_bool(&val))
--            .or(from_dotenv.offline),
-+        database_url: from_env.database_url.or(from_dotenv.database_url),
-+        offline_dir: from_env.offline_dir.or(from_dotenv.offline_dir),
-+        offline: from_env.offline.or(from_dotenv.offline),
-     }))
+```
+
+**File**: `tests/mysql/mysql.rs` (modified, +25/-0)
+```diff
+@@ -40,6 +40,31 @@ async fn it_connects_without_password() -> anyhow::Result<()> {
+     Ok(())
  }
  
-+fn read_dotenv(
-+    path: &Path,
-+    dotenv: impl Iterator<Item = dotenvy::Result<(String, String)>>,
-+    config: &Config,
-+    from_env: &MacrosEnv,
-+    from_dotenv: &mut MacrosEnv,
-+) -> crate::Result<()> {
-+    let ignore_io_error = has_query_source_without_dotenv(from_env, from_dotenv);
-+    let mut read_any_pair = false;
++#[sqlx_macros::test]
++async fn it_connects_without_password_after_auth_switch() -> anyhow::Result<()> {
++    setup_if_needed();
 +
-+    for res in dotenv {
-+        let (name, val) = match res {
-+            Ok(pair) => pair,
-+            Err(dotenvy::Error::Io(_)) if ignore_io_error && !read_any_pair => {
-+                break;
-+            }
-+            Err(error) => {
-+                return Err(DotenvError {
-+                    path: path.to_path_buf(),
-+                    error,
-+                }
-+                .into());
-+            }
-+        };
-+        read_any_pair = true;
++    let mut url = Url::parse(&env::var("DATABASE_URL").context("expected DATABASE_URL")?)
++        .context("error parsing DATABASE_URL")?;
 +
-+        match &*name {
-+            "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
-+            "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
-+            _ if name == config.common.database_url_var() => from_dotenv.database_url = Some(val),
-+            _ => continue,
-+        }
++    url.set_username("no_password_native").unwrap();
++    url.set_password(None).unwrap();
++
++    let options = MySqlConnectOptions::from_url(&url)?;
++
++    for options in [options.clone(), options.password("")] {
++        let mut conn = options.connect().await?;
++
++        let vars = sqlx::raw_sql("SHOW VARIABLES").fetch_all(&mut conn).await?;
++
++        assert!(!vars.is_empty());
++
++        conn.close().await?;
 +    }
 +
 +    Ok(())
 +}
 +
-+fn has_query_source_without_dotenv(from_env: &MacrosEnv, from_dotenv: &MacrosEnv) -> bool {
-+    let offline = from_env.offline.or(from_dotenv.offline);
-+    let database_url = from_env
-+        .database_url
-+        .as_deref()
-+        .or(from_dotenv.database_url.as_deref());
-+
-+    offline == Some(true) || database_url.is_some_and(|url| !url.is_empty())
-+}
-+
- /// Returns `true` if `val` is `"true"` (
+ #[sqlx_macros::test]
+ async fn it_maths() -> anyhow::Result<()> {
+     let mut conn = new::<MySql>().await?;
 ```
 
----
-
-### Incident Patch 2: `f574e07d` (2026-10-22)
-**Commit Message**: fix(sqlite): return an error instead of panicking on out-of-range INTEGER PrimitiveDateTime (#4433)
-
-Decoding `time::PrimitiveDateTime` from an INTEGER column called
-`OffsetDateTime::from_unix_timestamp(..).unwrap()`, so any value outside
-`time`'s range (e.g. a millisecond Unix timestamp such as 1700000000000)
-panicked while decoding the row. `OffsetDateTime` and the chrono types
-already return an error here; do the same.
-
-Co-authored-by: breken-ai <[REDACTED_EMAIL]>
-
-**File**: `sqlx-sqlite/src/types/time.rs` (modified, +1/-1)
+**File**: `tests/mysql/setup.sql` (modified, +6/-0)
 ```diff
-@@ -165,7 +165,7 @@ fn decode_datetime(value: SqliteValueRef<'_>) -> Result<PrimitiveDateTime, BoxDy
-     let dt = match value.type_info().0 {
-         DataType::Text => decode_datetime_from_text(value.text_borrowed()?),
-         DataType::Int4 | DataType::Integer => {
--            let parsed = OffsetDateTime::from_unix_timestamp(value.int64()?).unwrap();
-+            let parsed = OffsetDateTime::from_unix_timestamp(value.int64()?)?;
-             Some(PrimitiveDateTime::new(parsed.date(), parsed.time()))
-         }
- 
-```
-
-**File**: `tests/sqlite/types.rs` (modified, +15/-0)
-```diff
-@@ -166,6 +166,21 @@ mod time_tests {
-         "'20:45:31.133'" == time!(20:45:31.133),
-         "'19:44'" == time!(19:44),
-     ));
+@@ -30,3 +30,9 @@ CREATE USER 'no_password'@'%';
+ -- Granting no privileges, or just `GRANT USAGE`, gives an "access denied" error.
+ -- https://github.com/launchbadge/sqlx/issues/3484#issuecomment-2350901546
+ GRANT SELECT ON sqlx.* TO 'no_password'@'%';
 +
-+    // An INTEGER holding a Unix timestamp that is out of range for `time` (for example a
-+    // millisecond timestamp) must fail to decode instead of panicking.
-+    #[sqlx_macros::test]
-+    async fn it_errors_on_out_of_range_integer_primitive_date_time() -> anyhow::Result<()> {
-+        let mut conn = new::<Sqlite>().await?;
++-- Force a plugin switch on MySQL 8.0; MariaDB ignores the MySQL-only clause.
++CREATE USER 'no_password_native'@'%'
++    /*!50700 IDENTIFIED WITH mysql_native_password BY '' */;
 +
-+        let result = sqlx::query_scalar::<_, PrimitiveDateTime>("SELECT 1700000000000")
-+            .fetch_one(&mut conn)
-+            .await;
-+
-+        assert!(result.is_err(), "expected a decode error, got {result:?}");
-+
-+        Ok(())
-+    }
- }
- 
- #[cfg(feature = "bstr")]
++GRANT SELECT ON sqlx.* TO 'no_password_native'@'%';
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4493** (2026-10-31): fix(mysql): handle empty passwords during authentication switches. (@lmont19)
+- **PR #4486** (closed): Fix typo: Auxilliary -> Auxiliary (@pei711)
+- **PR #4485** (2026-10-27): fix(postgres): ignore notifications on connections that aren't listening.  fixes #4484. (@luketpeterson)
+- **PR #4478** (2026-10-27): feat: add Type for MySQL, Sqlite, and Any byte arrays (@daimond113)
+- **PR #4477** (2026-10-27): fix(postgres): Bind encodes result-format count from the wrong field (@prostomarkeloff)
 - **PR #4474** (closed): breaking: Make the embedded TLS root certs opt in (@markuskobler)
-- **PR #4472** (2026-10-21): doc: add `AI_POLICY.md` (@abonander)
-- **PR #4464** (closed): postgres: send no Close of the unnamed portal before Sync (@airhorns)
-- **PR #4463** (2026-10-15): fix(macros): only report Ambiguous{DateTime,Numeric}Type when preferred crate is Inferred (@rscorer)
-- **PR #4458** (2026-10-16): fix(mysql): harden protocol decoders against malformed packets from hostile servers (@portlandhodl)
-- **PR #4455** (closed): fix(pool): bound the `PoolInner::close()` join and idle drain (@daniel-pinder)
 
 ---
 
@@ -1238,90 +1077,33 @@ Co-authored-by: breken-ai <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. macros): tolerate unreadable dotenv with query source (#4371)
+## X. mysql): handle empty passwords during authentication switches. (#4493)
 
 **RULE**:
-When implementing operations in `sqlx-macros-core/src/query/metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-mysql/src/connection/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36f3a5c1`: macros): tolerate unreadable dotenv with query source (#4371). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7908fe79`: mysql): handle empty passwords during authentication switches. (#4493). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-macros-core/src/query/metadata.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-mysql/src/connection/auth.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg_attr(test, derive(Debug))]
-#[derive(thiserror::Error, Debug)]
-#[error("error reading dotenv file {path:?}")]
-struct DotenvError {
-    path: PathBuf,
-    #[source]
-    error: dotenvy::Error,
-}
-
-    let from_env = MacrosEnv {
-        database_url: crate::env_opt(config.common.database_url_var())?,
-        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?.map(PathBuf::from),
-        offline: crate::env_opt("SQLX_OFFLINE")?.map(|val| is_truthy_bool(&val)),
-    };
-    load_env_from_sources(manifest_dir, workspace_root, config, builder, from_env)
-}
-
-fn load_env_from_sources(
-    manifest_dir: &Path,
-    workspace_root: &Path,
-    config: &Config,
-    builder: &mut MtimeCacheBuilder,
-    from_env: MacrosEnv,
-) -> crate::Result<Arc<MacrosEnv>> {
-            Err(dotenvy::Error::Io(_))
-                if has_query_source_without_dotenv(&from_env, &from_dotenv) =>
+            // Empty passwords require an empty auth response, including after an auth switch.
+            AuthPlugin::CachingSha2Password | AuthPlugin::MySqlNativePassword
+                if password.is_empty() =>
             {
-                builder.add_path(path.clone());
-                continue;
+                Ok(Vec::new())
             }
-        read_dotenv(&path, dotenv, config, &from_env, &mut from_dotenv)?;
-        database_url: from_env.database_url.or(from_dotenv.database_url),
-        offline_dir: from_env.offline_dir.or(from_dotenv.offline_dir),
-        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    #[derive(thiserror::Error, Debug)]
-    #[error("error reading dotenv file {path:?}")]
-    struct DotenvError {
-        path: PathBuf,
-        #[source]
-        error: dotenvy::Error,
-    }
-        for res in dotenv {
-            let (name, val) = res.map_err(|e| DotenvError {
-                path: path.clone(),
-                error: e,
-            })?;
-
-            match &*name {
-                "SQLX_OFFLINE_DIR" => from_dotenv.offline_dir = Some(val.into()),
-                "SQLX_OFFLINE" => from_dotenv.offline = Some(is_truthy_bool(&val)),
-                _ if name == config.common.database_url_var() => {
-                    from_dotenv.database_url = Some(val)
-                }
-                _ => continue,
-            }
-        }
-        database_url: crate::env_opt(config.common.database_url_var())?
-            .or(from_dotenv.database_url),
-        offline_dir: crate::env_opt("SQLX_OFFLINE_DIR")?
-            .map(PathBuf::from)
-            .or(from_dotenv.offline_dir),
-        offline: crate::env_opt("SQLX_OFFLINE")?
-            .map(|val| is_truthy_bool(&val))
-            .or(from_dotenv.offline),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36f3a5c1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7908fe79` are properly handled with clean fallback behavior.

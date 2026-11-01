@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `7b23d81b`  
+> **Source Version**: `067b1b93`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T17:49:08.667Z  
+> **Timestamp**: 2026-11-01T02:00:46.213Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T17:49:08.660Z  
+> **Harvest Timestamp**: 2026-11-01T02:00:46.207Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24880 stars
+- **Stars / Engagement**: 24903 stars
 
 ---
 
@@ -743,7 +743,7 @@ use std::{
 };
 
 use actix_web::{dev::ServiceResponse, HttpRequest, HttpResponse};
-use percent_encoding::{utf8_percent_encode, CONTROLS};
+use percent_encoding::{utf8_percent_encode, AsciiSet, NON_ALPHANUMERIC};
 use v_htmlescape::escape_fmt;
 
 /// A directory; responds with the generated directory listing.
@@ -782,10 +782,26 @@ impl Directory {
 pub(crate) type DirectoryRenderer =
     dyn Fn(&Directory, &HttpRequest) -> Result<ServiceResponse, io::Error>;
 
-/// Returns percent encoded file URL path.
+// Leave only RFC 3986 unreserved characters unencoded within each path segment.
+const PATH_SEGMENT: &AsciiSet = &NON_ALPHANUMERIC
+    .remove(b'-')
+    .remove(b'.')
+    .remove(b'_')
+    .remove(b'~');
+
+/// Returns a percent encoded file URL path escaped for an HTML attribute.
 macro_rules! encode_file_url {
     ($path:ident) => {
-        utf8_percent_encode(&$path, CONTROLS)
+        escape_fmt(
+            &$path
+                .split('/')
+                .map(|segment| utf8_percent_encode(segment, PATH_SEGMENT).to_string())
+                .collect::<Vec<_>>()
+                .join("/"),
+        )
+        .to_string()
+        // Slashes are safe in a quoted attribute. Keep path separators literal.
+        .replace("&#x2f;", "/")
     };
 }
 
@@ -1316,11 +1332,13 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4355** (2026-10-23): **ci: verify locked GitHub Actions tags**
-  *Symptoms*: ## PR Type  Other  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Update workflow action references to use version tags, with commit SHAs recorded in `.github/workflows/actions.lock`. Add a CI step that verifies the lockfile and configure Zizmor to accept tag references because the lockfile provides commit pinning.  The MSRV reusable workflow uses a version tag but is outside the lockfile's current support. `setup-mold@v1` is a rolling tag; its resolved commit is recorded in the lockfile.
+- **Issue #4374** (2026-10-31): **fix(web): return allowed methods for macro route mismatches**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  When separate `#[get("/items")]` and `#[post("/items")]` services are registered, a `DELETE /items` request currently reaches the built-in app default and returns 404. This change reads the request's existing `RegisteredMethods` accumulator in that default and returns 405 with `Allow: GET, POST`.  The change also applies to scopes that inherit the built-in default. Explicit custom defaults remain in control. Tests cover both service registration orders, all six GET/POST/DELETE request orders, direct and scoped registration, unknown paths, and a custom default.  This is a minimal implementation with broader behavior changes: other method-guarded services and scopes also return 405 where they previously returned 404. The accumulator still records guards that ran, rather than all eligible routes. Scope method guards can record methods after a prefix match before a child path is checked; compound and custom guards retain the existing accumulator limitations. These cases need review before this draft is made ready.  Validation:  - The new macro-routing regression failed with 404 before the production change. - `cargo test -p actix-web --lib`: 419 
 
-- **Issue #4353** (2026-10-23): **fix: deny vulnerable TLS dependency versions**
-  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [ ] Tests for the changes have been added / updated. - [ ] Documentation comments have been added / updated. - [ ] A changelog entry has been made for the appropriate packages. - [ ] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  Update the lockfile to patched TLS dependency versions. Add version bans so future vulnerable releases of these dependencies fail the cargo-deny check, while keeping documented exceptions for affected legacy rustls dependencies. Remove the obsolete advisory exception.  The action-equivalent audit passes with all features enabled and warnings denied.
+- **Issue #4373** (2026-10-31): **test(files): cover directory listing hrefs on Windows**
+  *Symptoms*: ## PR Type  Other: test coverage.  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. (Not applicable: tests only.) - [x] A changelog entry has been made for the appropriate packages. (Not applicable: tests only.) - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status. (`A-files` is applied; no release impact.)  ## Overview  The directory listing href regression previously ran only on Unix. Run it on all platforms and restrict only filenames containing Windows-incompatible characters to Unix. Windows now gets coverage for backticks, ampersands, hashes, spaces, percent signs, plus signs, and unreserved characters.  Add a nested-directory regression that checks literal URL separators and encoded file and folder names. Production behavior and public APIs are unchanged.  Validation on macOS:  - `cargo test -p actix-files`: 83 unit, 11 integration, and 9 doc tests passed; 1 doc test ignored. Run outside the sandbox so test servers could bind sockets. - `cargo clippy -p actix-files --all-targets`: passed. - `cargo fmt -p actix-files`: completed without changes; emitted warnings for nightly-only settings. - `cargo +nightly fmt -p actix-files`: passed.  Windows execution has not been verified locally. 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/976f633e0b40b9f953695df9adec04432d9a85e3">976f633</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:test-directory-listing-windows">test-directory-listi...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/89670dc3d33217ff19c98682e0ccb86e6e907384">89670dc</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  --- <sub>Updated <relative-time datetime="2026-10-31T18:30:38Z">October 31, 2026 18:30 UTC</relative-time></sub> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1337,329 +1355,333 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6cb998e0` (2026-10-23)
-**Commit Message**: fix: deny vulnerable TLS dependency versions (#4353)
+### Incident Patch 1: `067b1b93` (2026-10-31)
+**Commit Message**: fix(web): return allowed methods for macro route mismatches (#4374)
 
-- Update rustls-webpki and webpki-roots to patched releases
-- Scope advisory exceptions to legacy dependency versions
-
-**File**: `Cargo.lock` (modified, +10/-10)
+**File**: `actix-web-codegen/tests/routes.rs` (modified, +5/-1)
 ```diff
-@@ -2826,7 +2826,7 @@ dependencies = [
-  "log",
-  "once_cell",
-  "rustls-pki-types",
-- "rustls-webpki 0.103.15",
-+ "rustls-webpki 0.103.16",
-  "subtle",
-  "zeroize",
- ]
-@@ -2866,7 +2866,7 @@ dependencies = [
-  "rustls 0.23.46",
-  "rustls-native-certs",
-  "rustls-platform-verifier-android",
-- "rustls-webpki 0.103.15",
-+ "rustls-webpki 0.103.16",
-  "security-framework",
-  "security-framework-sys",
-  "webpki-root-certs 0.26.11",
-@@ -2902,9 +2902,9 @@ dependencies = [
+@@ -400,5 +400,9 @@ async fn test_query() {
  
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "aws-lc-rs",
-  "ring 0.17.14",
-@@ -3794,14 +3794,14 @@ version = "0.26.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "75c7f0ef91146ebfb530314f5f1d24528d7f0767efbfd31dce919275413e393e"
- dependencies = [
-- "webpki-root-certs 1.0.9",
-+ "webpki-root-certs 1.0.11",
- ]
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.9"
-+version = "1.0.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
-+checksum = "e49d0e65abc00c142e8f9428da991da9f1a250c39be97459901eb12b9b49f62a"
- dependencies = [
-  "rustls-pki-types",
- ]
-@@ -3827,14 +3827,14 @@ version = "0.26.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
- dependencies = [
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.11",
- ]
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.9"
-+version = "1.0.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
-+checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
- dependencies = [
-  "rustls-pki-types",
- ]
+     let request = srv.request(http::Method::GET, srv.url("/test"));
+     let response = request.send().await.unwrap();
+-    assert_eq!(response.status(), StatusCode::NOT_FOUND);
++    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
++    assert_eq!(
++        response.headers().get(http::header::ALLOW).unwrap(),
++        "QUERY"
++    );
+ }
 ```
 
-**File**: `deny.toml` (modified, +9/-1)
+**File**: `actix-web/CHANGES.md` (modified, +2/-0)
 ```diff
-@@ -33,6 +33,13 @@ license-files = [
- [bans]
- multiple-versions = "allow"
+@@ -2,6 +2,8 @@
  
-+# Keep the legacy advisory exceptions below from allowing affected modern TLS dependencies.
-+deny = [
-+    { crate = "rustls-webpki:>=0.103, <0.103.16", reason = "RUSTSEC-2026-0382" },
-+    { crate = "webpki-roots:>=0.26, <0.26.11", reason = "RUSTSEC-2026-0381" },
-+    { crate = "webpki-roots:>=0.27, <1.0.10", reason = "RUSTSEC-2026-0381" },
-+]
+ ## Unreleased
+ 
++- Return 405 with an `Allow` header from the built-in app default when method guards reject matching resources, including macro routes.
 +
- [bans.build]
- executables = "deny"
+ ## 4.18.1
  
-@@ -50,6 +57,7 @@ ignore = [
-     "RUSTSEC-2026-0258",
-     # FIXME: needs to eliminate old rustls dependency
-     "RUSTSEC-2026-0346",
--    "RUSTSEC-2026-0348",
-     "RUSTSEC-2026-0349",
-+    { id = "RUSTSEC-2026-0381", reason = "Legacy rustls 0.20 and 0.21 require webpki-roots 0.22 and 0.25, which have no patched releases." },
-+    { id = "RUSTSEC-2026-0382", reason = "Legacy rustls 0.21 and 0.22 require rustls-webpki 0.101 and 0.102, which have no patched releases." },
- ]
+ - Add `TestRequest::query()` method for constructing HTTP `QUERY` test requests.
+```
+
+**File**: `actix-web/src/app_service.rs` (modified, +125/-9)
+```diff
+@@ -11,14 +11,15 @@ use crate::{
+     config::{AppConfig, AppService},
+     data::FnDataFactory,
+     dev::Extensions,
+-    guard::Guard,
++    guard::{Guard, RegisteredMethods},
++    http::header,
+     request::{HttpRequest, HttpRequestPool},
+     rmap::ResourceMap,
+     service::{
+         AppServiceFactory, BoxedHttpService, BoxedHttpServiceFactory, ServiceRequest,
+         ServiceResponse,
+     },
+-    Error, HttpResponse,
++    Error, HttpMessage as _, HttpResponse,
+ };
+ 
+ /// Service factory to convert [`Request`] to a [`ServiceRequest<S>`].
+@@ -64,13 +65,24 @@ where
+     type Future = LocalBoxFuture<'static, Result<Self::Service, Self::InitError>>;
+ 
+     fn new_service(&self, config: AppConfig) -> Self::Future {
+-        // set AppService's default service to 404 NotFound
+-        // if no user defined default service exists.
+-        let default = self.default.clone().unwrap_or_else(|| {
+-            Rc::new(boxed::factory(fn_service(|req: ServiceRequest| async {
+-                Ok(req.into_response(HttpResponse::NotFound()))
+-            })))
+-        });
++        async fn default_handler(req: ServiceRequest) -> Result<ServiceResponse, Error> {
++            let allowed = req.extensions().get::<RegisteredMethods>().cloned();
++
++            let response = match allowed {
++                Some(methods) => HttpResponse::MethodNotAllowed()
++                    .insert_header(header::Allow(methods.0))
++                    .finish(),
++                None => HttpResponse::NotFound().finish(),
++            };
++
++            Ok(req.into_response(response))
++        }
++
++        // Use the built-in routing fallback if no user-defined default service exists.
++        let default = self
++            .default
++            .clone()
++            .unwrap_or_else(|| Rc::new(boxed::factory(fn_service(default_handler))));
+ 
+         // create App config to pass to child services
+         let mut config = AppService::new(config, Rc::clone(&default));
+@@ -421,4 +433,108 @@ mod tests {
+         }
+         assert!(data.load(Ordering::Relaxed));
+     }
++
++    #[cfg(feature = "macros")]
++    mod macro_routing {
++        use crate::{
++            get,
++            http::{header, Method, StatusCode},
++            post,
++            test::{call_service, init_service, TestRequest},
++            web, App, HttpResponse,
++        };
++
++        #[get("/items")]
++        async fn get_items() -> HttpResponse {
++            HttpResponse::Ok().finish()
++        }
++
++        #[post("/items")]
++        async fn post_items() -> HttpResponse {
++            HttpResponse::Created().finish()
++        }
++
++        #[actix_rt::test]
++        async fn macro_routes_allow_methods_in_any_order() {
++            for reverse_registration in [false, true] {
++                for scoped in [false, true] {
++                    let app = App::new().configure(|cfg| {
++                        let mut services = web::scope(if scoped { "/api" } else { "" });
++
++                        services = if reverse_registration {
++                            services.service(post_items).service(get_items)
++                        } else {
++                            services.service(get_items).service(post_items)
++                        };
++
++                        if scoped {
++                            cfg.service(services);
++                        } else if reverse_registration {
++                            cfg.service(post_items).service(get_items);
++                        } else {
++                            cfg.service(get_items).service(post_items);
++                        }
++                    });
++                    let app = init_service(app).await;
++                    let path = if scoped { "/api/items" } else { "/items" };
++
++                    for methods in [
++                        [Method::DELETE, Method::GET, Method::POST],
++                        [Method::DELETE, Method::POST, Method::GET],
++                        [Method::POST, Method::GET, Method::DELETE],
++                        [Method::POST, Method::DELETE, Method::GET],
++                        [Method::GET, Method::DELETE, Method::POST],
++                        [Method::GET, Method::POST, Method::DELETE],
++                    ] {
++                        for method in methods {
++                            let expected = match method {
++                                Method::GET => StatusCode::OK,
++                                Method::POST => StatusCode::CREATED,
++                                _ => StatusCode::METHOD_NOT_ALLOWED,
++                            };
++                            let req = TestRequest::with_uri(path).method(method).to_request();
++                            let res = call_service(&app, req).await;
++
++                            assert_eq!(res.status(), expected);
++
++                            if expected == StatusCode::METHOD_NOT_ALLOWED {
++                                let mut allowed: Vec<_> = res
++                                    .hea
+```
+
+**File**: `actix-web/src/lib.rs` (modified, +3/-0)
+```diff
+@@ -83,6 +83,9 @@
+ #![doc(html_favicon_url = "https://actix.rs/favicon.ico")]
+ #![cfg_attr(docsrs, feature(doc_cfg))]
+ 
++#[cfg(all(test, feature = "macros"))]
++extern crate self as actix_web;
++
+ pub use actix_http::{body, HttpMessage};
+ #[cfg(feature = "cookies")]
+ #[doc(inline)]
+```
+
+**File**: `actix-web/src/scope.rs` (modified, +3/-3)
+```diff
+@@ -716,7 +716,7 @@ mod tests {
+             .method(Method::POST)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+     }
+ 
+     #[actix_rt::test]
+@@ -764,7 +764,7 @@ mod tests {
+             .method(Method::POST)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+ 
+         let req = TestRequest::with_uri("/app/path1")
+             .method(Method::GET)
+@@ -856,7 +856,7 @@ mod tests {
+             .method(Method::POST)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+ 
+         let req = TestRequest::with_uri("/app/t1/path1")
+             .method(Method::GET)
+```
+
+**File**: `actix-web/src/service.rs` (modified, +1/-1)
+```diff
+@@ -757,7 +757,7 @@ mod tests {
+             .method(http::Method::PUT)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), http::StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), http::StatusCode::METHOD_NOT_ALLOWED);
+     }
+ 
+     // allow deprecated App::data
 ```
 
 ---
 
-### Incident Patch 2: `7b23d81b` (2026-10-24)
-**Commit Message**: build(deps): bump base64 from 0.22.1 to 0.23.1 (#4348)
+### Incident Patch 2: `e390a71d` (2026-10-30)
+**Commit Message**: fix(files): encode directory listing hrefs per path segment
 
-Bumps [base64](https://github.com/marshallpierce/rust-base64) from 0.22.1 to 0.23.1.
-- [Changelog](https://github.com/marshallpierce/rust-base64/blob/master/RELEASE-NOTES.md)
-- [Commits](https://github.com/marshallpierce/rust-base64/compare/v0.22.1...v0.23.1)
-
----
-updated-dependencies:
-- dependency-name: base64
-  dependency-version: 0.23.1
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-8)
+**File**: `actix-files/src/directory.rs` (modified, +19/-3)
 ```diff
-@@ -60,7 +60,7 @@ dependencies = [
-  "actix-web",
-  "async-stream",
-  "awc",
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "bitflags 2.13.2",
-  "brotli",
-  "bytes",
-@@ -624,7 +624,7 @@ dependencies = [
-  "actix-tls",
-  "actix-utils",
-  "actix-web",
-- "base64 0.22.1",
-+ "base64 0.23.1",
-  "brotli",
-  "bytes",
-  "cfg-if",
-@@ -689,12 +689,6 @@ version = "0.20.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0ea22880d78093b0cbe17c89f64a7d457941e65759157ec6cb31a31d652b05e5"
+@@ -6,7 +6,7 @@ use std::{
+ };
  
--[[package]]
--name = "base64"
--version = "0.22.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
--
- [[package]]
- name = "base64"
- version = "0.23.1"
-```
-
----
-
-### Incident Patch 3: `852b892d` (2026-10-24)
-**Commit Message**: build(deps): bump taiki-e/install-action from 2.87.27 to 2.87.30 (#4349)
-
-Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.87.27 to 2.87.30.
-- [Release notes](https://github.com/taiki-e/install-action/releases)
-- [Changelog](https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/taiki-e/install-action/compare/v2.87.27...v2.87.30)
-
----
-updated-dependencies:
-- dependency-name: taiki-e/install-action
-  dependency-version: 2.87.29
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/actions.lock` (modified, +8/-8)
-```diff
-@@ -9,18 +9,18 @@ workflows:
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.27'
-+        - 'taiki-e/install-action@v2.87.30'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/ci.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'ilammy/setup-nasm@v1.5.2'
-         - 'rui314/setup-mold@v1'
--        - 'taiki-e/install-action@v2.87.27'
-+        - 'taiki-e/install-action@v2.87.30'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/coverage.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
-         - 'actions/upload-code-coverage@v1.4.4'
--        - 'taiki-e/install-action@v2.87.27'
-+        - 'taiki-e/install-action@v2.87.30'
-         - 'useblacksmith/checkout@v1.8.1'
-     '.github/workflows/labeler.yml':
-         - 'actions/labeler@v7.0.0'
-@@ -30,12 +30,12 @@ workflows:
-         - 'embarkstudios/cargo-deny-action@v2.1.1'
-         - 'giraffate/clippy-action@v1.0.1'
-         - 'taiki-e/cache-cargo-install-action@v3.0.8'
--        - 'taiki-e/install-action@v2.87.27'
-+        - 'taiki-e/install-action@v2.87.30'
-         - 'useblacksmith/checkout@v1.8.1'
-         - 'zizmorcore/zizmor-action@v0.7.1'
-     '.github/workflows/semver-checks.yml':
-         - 'actions-rust-lang/setup-rust-toolchain@v2.0.0'
--        - 'taiki-e/install-action@v2.87.27'
-+        - 'taiki-e/install-action@v2.87.30'
-         - 'useblacksmith/checkout@v1.8.1'
- dependencies:
-     'actions-rust-lang/setup-rust-toolchain@v2.0.0':
-@@ -97,9 +97,9 @@ dependencies:
-         repo_id: 588643148
-         uses:
-             - 'actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9'
--    'taiki-e/install-action@v2.87.27':
--        ref: 'v2.87.27'
--        commit: 'sha1-ab6895351a88b908e96a4697860d4ffea5e57dbe'
-+    'taiki-e/install-action@v2.87.30':
-+        ref: 'v2.87.30'
-+        commit: 'sha1-a4d3f3f761dcd95cce1b72cb61cb6d1963438177'
-         owner_id: 43724913
-         repo_id: 442947557
-     'useblacksmith/checkout@v1.8.1':
-```
-
-**File**: `.github/workflows/ci-post-merge.yml` (modified, +2/-2)
-```diff
-@@ -57,7 +57,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+ use actix_web::{dev::ServiceResponse, HttpRequest, HttpResponse};
+-use percent_encoding::{utf8_percent_encode, CONTROLS};
++use percent_encoding::{utf8_percent_encode, AsciiSet, NON_ALPHANUMERIC};
+ use v_htmlescape::escape_fmt;
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.27
-+        uses: taiki-e/install-action@v2.87.30
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
+ /// A directory; responds with the generated directory listing.
+@@ -45,10 +45,26 @@ impl Directory {
+ pub(crate) type DirectoryRenderer =
+     dyn Fn(&Directory, &HttpRequest) -> Result<ServiceResponse, io::Error>;
  
-@@ -97,7 +97,7 @@ jobs:
-           cache-key: feature-powerset-${{ matrix.partition }}
- 
-       - name: Install just, cargo-hack
--        uses: taiki-e/install-action@v2.87.27
-+        uses: taiki-e/install-action@v2.87.30
-         with:
-           tool: just,cargo-hack
+-/// Returns percent encoded file URL path.
++// Leave only RFC 3986 unreserved characters unencoded within each path segment.
++const PATH_SEGMENT: &AsciiSet = &NON_ALPHANUMERIC
++    .remove(b'-')
++    .remove(b'.')
++    .remove(b'_')
++    .remove(b'~');
++
++/// Returns a percent encoded file URL path escaped for an HTML attribute.
+ macro_rules! encode_file_url {
+     ($path:ident) => {
+-        utf8_percent_encode(&$path, CONTROLS)
++        escape_fmt(
++            &$path
++                .split('/')
++                .map(|segment| utf8_percent_encode(segment, PATH_SEGMENT).to_string())
++                .collect::<Vec<_>>()
++                .join("/"),
++        )
++        .to_string()
++        // Slashes are safe in a quoted attribute. Keep path separators literal.
++        .replace("&#x2f;", "/")
+     };
+ }
  
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-2)
+**File**: `actix-files/src/lib.rs` (modified, +48/-0)
 ```diff
-@@ -72,7 +72,7 @@ jobs:
-           toolchain: ${{ matrix.version.version }}
+@@ -1609,6 +1609,54 @@ mod tests {
+         assert!(format!("{:?}", bytes).contains("/tests/test.png"));
+     }
  
-       - name: Install just, cargo-hack, cargo-nextest, cargo-ci-cache-clean
--        uses: taiki-e/install-action@v2.87.27
-+        uses: taiki-e/install-action@v2.87.30
-         with:
-           tool: just,cargo-hack,cargo-nextest,cargo-ci-cache-clean
- 
-@@ -107,7 +107,7 @@ jobs:
-           toolchain: nightly
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.27
-+        uses: taiki-e/install-action@v2.87.30
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/coverage.yml` (modified, +1/-1)
-```diff
-@@ -32,7 +32,7 @@ jobs:
-           components: llvm-tools
- 
-       - name: Install just, cargo-llvm-cov, cargo-nextest
--        uses: taiki-e/install-action@v2.87.27
-+        uses: taiki-e/install-action@v2.87.30
-         with:
-           tool: just,cargo-llvm-cov,cargo-nextest
- 
-```
-
-**File**: `.github/workflows/lint.yml` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ jobs:
-           toolchain: ${{ vars.RUST_VERSION_EXTERNAL_TYPES }}
- 
-       - name: Install just
--        uses: taiki-e/install-action@v2.87.27
-+        uses: taiki-e/install-action@v2.87.30
-         with:
-           tool: just
- 
-```
-
-**File**: `.github/workflows/semver-checks.yml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-           toolchain: stable
- 
-       - name: Install cargo-semver-checks
--        uses: taiki-e/install-action@v2.87.27
-+        uses: taiki-e/install-action@v2.87.30
-         with:
-           tool: cargo-semver-checks
- 
++    #[cfg(unix)]
++    #[actix_rt::test]
++    async fn test_directory_listing_href_escaping() {
++        let dir = tempfile::tempdir().unwrap();
++        let cases = [
++            ("safe.txt", "/safe.txt"),
++            (
++                "x\"><img src=x onerror=alert(1)>.txt",
++                "/x%22%3E%3Cimg%20src%3Dx%20onerror%3Dalert%281%29%3E.txt",
++            ),
++            ("`&#? %+ .txt", "/%60%26%23%3F%20%25%2B%20.txt"),
++            ("AZaz09-._~.txt", "/AZaz09-._~.txt"),
++        ];
++
++        for (name, _) in cases {
++            std::fs::write(dir.path().join(name), "file contents").unwrap();
++        }
++
++        let service = Files::new("/", dir.path())
++            .show_files_listing()
++            .new_service(())
++            .await
++            .unwrap();
++
++        let req = TestRequest::with_uri("/").to_srv_request();
++        let resp = test::call_service(&service, req).await;
++        assert_eq!(resp.status(), StatusCode::OK);
++
++        let body = test::read_body(resp).await;
++        let body = std::str::from_utf8(&body).unwrap();
++        assert_eq!(body.matches("<a ").count(), cases.len());
++        assert_eq!(body.matches("</a>").count(), cases.len());
++
++        for anchor in body.split("<a href=\"").skip(1) {
++            let href = anchor.split('"').next().unwrap();
++            assert!(!href.contains('<'));
++            assert!(
++                href.ends_with(".txt"),
++                "href does not contain the whole file name: {href}"
++            );
++        }
++
++        for (name, href) in cases {
++            let text = v_htmlescape::escape_fmt(name);
++            assert!(body.contains(&format!("<a href=\"{href}\">{text}</a>")));
++        }
++    }
++
+     #[actix_rt::test]
+     async fn test_path_filter() {
+         // prevent searching subdirectories
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4355** (2026-10-23): ci: verify locked GitHub Actions tags (@robjtede)
-- **PR #4353** (2026-10-23): fix: deny vulnerable TLS dependency versions (@robjtede)
-- **PR #4352** (2026-10-23): feat(test): add QUERY helpers to test servers (@robjtede)
-- **PR #4351** (2026-10-23): feat(awc): add QUERY request helper (@robjtede)
-- **PR #4349** (2026-10-24): build(deps): bump taiki-e/install-action from 2.87.27 to 2.87.30 (@dependabot[bot])
-- **PR #4348** (2026-10-24): build(deps): bump base64 from 0.22.1 to 0.23.1 (@dependabot[bot])
+- **PR #4374** (2026-10-31): fix(web): return allowed methods for macro route mismatches (@robjtede)
+- **PR #4373** (2026-10-31): test(files): cover directory listing hrefs on Windows (@robjtede)
+- **PR #4371** (2026-10-31): docs(actix-http): document encoding module behavior (@robjtede)
+- **PR #4370** (closed): ci: probe Windows Defender status (@robjtede)
+- **PR #4366** (2026-10-28): build(deps): bump smallvec from 1.16.3 to 1.16.4 (@dependabot[bot])
+- **PR #4365** (2026-10-28): build(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
 
 ---
 
@@ -1679,46 +1701,32 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deny vulnerable TLS dependency versions (#4353)
+## X. web): return allowed methods for macro route mismatches (#4374)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-web-codegen/tests/routes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6cb998e0`: deny vulnerable TLS dependency versions (#4353). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `067b1b93`: web): return allowed methods for macro route mismatches (#4374). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-web-codegen/tests/routes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "rustls-webpki 0.103.16",
- "rustls-webpki 0.103.16",
-version = "0.103.16"
-checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- "webpki-root-certs 1.0.11",
-version = "1.0.11"
-checksum = "e49d0e65abc00c142e8f9428da991da9f1a250c39be97459901eb12b9b49f62a"
- "webpki-roots 1.0.11",
-version = "1.0.11"
-checksum = "f5f280bbb2b287bc8e7de7e3852945a0ff50d1bbcb5ed42b6c7a568c546df171"
+    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
+    assert_eq!(
+        response.headers().get(http::header::ALLOW).unwrap(),
+        "QUERY"
+    );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "rustls-webpki 0.103.15",
- "rustls-webpki 0.103.15",
-version = "0.103.15"
-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
- "webpki-root-certs 1.0.9",
-version = "1.0.9"
-checksum = "b96554aa2acc8ccdb7e1c9a58a7a68dd5d13bccc69cd124cb09406db612a1c9b"
- "webpki-roots 1.0.9",
-version = "1.0.9"
-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
+    assert_eq!(response.status(), StatusCode::NOT_FOUND);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6cb998e0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `067b1b93` are properly handled with clean fallback behavior.

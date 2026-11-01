@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source**: github ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
-> **Source Version**: `1c5d15fd`  
+> **Source Version**: `c40e86c6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:12:39.535Z  
+> **Timestamp**: 2026-10-31T18:22:23.727Z  
 > **Learning ID**: `learn-github-greptimeteam-greptimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:12:39.136Z  
+> **Harvest Timestamp**: 2026-10-31T18:22:23.722Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source observability database. One columnar engine for metrics, logs, and traces, on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6762 stars
+- **Stars / Engagement**: 6778 stars
 
 ---
 
@@ -1651,13 +1651,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9937** (2026-10-24): **refactor(promql): remove NodePath and own the runtime tree recursively**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  ## What's changed and what's your intention?  **Summarize your change**  The native PromQL runtime addressed a node by the path that reached it. Every execution walked that path again to find the node's state, every metric export walked it to name a node, and the state itself lived in tables keyed by that path. This removes `NodePath` and the tables keyed by it, and replaces them with one recursive runtime tree: each node owns its children, its operator state, its metrics, and — once settled — nothing it no longer needs.  **How it works**  `NativeExecutionState` now holds a `RuntimeTree { root: RuntimeNode }`. A `RuntimeNode` carries its own `Box`ed children, its `Option` payload (the evaluator, the retained operands, the fold, the collected input), its lifecycle state and a shared `Arc<NodeMetrics>`, so there is no side table to look a node up in. Pulling, settling, flushing after a subtree closes, EOF, errors and drop all recurse through that tree.  An `InputId` is assigned only to the leaves that actually receive a feed, by a depth-first walk of the built tree. A scalar leaf takes no id, so no node is addressed by position and no flat registry stands in for the topology. The feed API is `push_raw(InputId, chunk)` / `push_evaluated(InputId, chunk)`; there is no `push_at` shim and no `input_count` nobody calls.  `E
-  **Post-Mortem & Fix Analysis**:
-  > <!-- pr-open-limit --> > [!WARNING] > @discord9 has **18** open non-draft pull requests in this repository, over the limit of **5**.  Review is the scarcest resource here. Please land or close some of these before pushing this one forward.  - [PR 9404: feat\(query\)\: add opt\-in distributed broadcast join planner](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9404) - [PR 9463: fix\(flow\)\: clean up cross\-mode replacements without checker deadlocks](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9463) - [PR 9496: test\: query option regressions separate from capability](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9496) - [PR 9524: fix\(query\)\: stop windowed sort on precision\-lowering time casts](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9524) - [PR 9600: fix\(query\)\: avoid lossy casts in partition pruning](https://redirect.github.com/GreptimeTeam/greptimedb/pull/9600) - [PR 9601: fix\(query\)\: preserve IGNORE NULLS semantics in d
+- **Issue #10061** (2026-10-31): **docs: link the observability database definition from README**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Depends on GreptimeTeam/docs#3013, which adds the `#what-an-observability-database-is` section the first link points to. Merge after that PR is deployed.  ## What's changed and what's your intention?  README-only change. The README calls GreptimeDB an observability database without saying what that means. The term now links to the definition in the docs, and Project Status links the blog post that explains it.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [ ] I have written the necessary rustdoc comments. - [ ] I have added the necessary unit tests and integration tests. - [ ] This PR requires documentation updates. - [ ] API changes are backward compatible. - [ ] Schema or data changes are backward compatible. - [ ] This PR needs to be backported to release branches, and I have added the `backport-<target>` labels (e.g. `backport-v1.3` targets `release/v1.3`). 
 
-- **Issue #9919** (2026-10-23): **fix: upload staging manifests in chunks**
-  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  Fixes #9903.  ## What's changed and what's your intention?  Large staging manifests generated during repartition were uploaded without explicit chunking and could exceed a storage endpoint's per-request limit. Route `StagingBlobStorage::put` through the existing manifest write helper, using its 64 MiB chunks without caching. Object paths and serialized contents remain unchanged.  Add a regression test covering small objects, the 64 MiB boundary, and larger objects. It enforces an artificial per-write limit, checks write sizes and completion, and verifies the stored bytes. With the same test and payload, the original implementation failed in both comparison runs and the fix passed in both. This exercises the underlying writer with a local filesystem backend; it does not test a live cloud multipart endpoint.  Validation: - `cargo nextest run -p mito2`: 1810 tests passed on the updated PR base (`5523cf38741`). - Focused regression: passed twice with the fix; failed as expected twice with the original upload call. - Changed-file `rustfmt --check` and `git diff --check`: passed. - Workspace-wide clippy, tests, and unused-dependency checks have not been run.  ## PR Checklist Please convert it to a draft if some of the following conditions are not met.  - [x] I have written the necessary rustdoc comments. - [x] I have adde
+- **Issue #10056** (2026-10-29): **ci: authenticate ECR Public pulls in benchmark workflows**
+  *Symptoms*: I hereby agree to the terms of the [GreptimeDB CLA](https://github.com/GreptimeTeam/.github/blob/main/CLA.md).  ## Refer to a related PR or issue link (optional)  - Failed anonymous pull: https://github.com/GreptimeTeam/greptimedb/actions/runs/40809997410 - Agent benchmark with authenticated pulls: https://github.com/GreptimeTeam/greptimedb/actions/runs/40813622374  ## What's changed and what's your intention?  Agent Observability could not start because anonymous ECR Public runtime pulls repeatedly returned `Data limit exceeded`. Authenticate before the first pull in both validation and benchmark jobs for Agent Observability, Tracesbench, VMBench Long Range, and OS WAL S3 Benchmark.  Reuse the existing `AWS_ECR_ACCESS_KEY_ID` and `AWS_ECR_SECRET_ACCESS_KEY` credentials and `aws-actions/amazon-ecr-login@v2`, with the ECR Public authentication region fixed to `us-east-1`. Both credential setup and login run only when the runtime image starts with `public.ecr.aws/`. EC2 provisioning and benchmark resource settings are unchanged; the existing S3 steps keep their explicit bucket credentials.  Validation:  - `actionlint` passed for all four workflows; `git diff --check` passed. - Existing CI runner tests: 34 passed; version-comparison tests: 6 passed; OS WAL benchmark tests: 62 passed. The OS WAL tests required a rerun outside the socket-restricted sandbox so their local HTTP fixtures could bind. - The Agent benchmark run above passed validation and provisioning and advanced past 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1674,551 +1672,193 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cb01d0d` (2026-10-23)
-**Commit Message**: fix(mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied (#9898)
+### Incident Patch 1: `c40e86c6` (2026-10-31)
+**Commit Message**: fix(datanode): pick a node epoch above the recorded one (#9984)
 
-* fix(mito2): keep SSTs when a manifest save ends with RateLimited
+* fix(datanode): pick a node epoch above the recorded one
 
-The object store's retry layer retries temporary errors and returns the
-last attempt's error. A manifest delta PUT can be stored by the server
-while the client sees a timeout, reset or 5xx, and the retries that
-follow can be throttled, so the save ends with RateLimited even though
-the delta exists. may_have_persisted_manifest_update treated RateLimited
-as proof that nothing was written, so flush and compaction deleted the
-SSTs the stored delta references. A later open or follower sync replays
-the delta and reads fail on the missing files.
+The metasrv fences a datanode whose node epoch is lower than the
+highest one it has recorded for the node id. A datanode used its start
+time as its epoch, so after a restart on a host whose clock is behind
+the previous process's, or after the clock stepped back, the new
+process picked a lower epoch and was fenced for good: no region lease,
+no keep-alive.
 
-Treat RateLimited like other ambiguous errors: the SSTs are kept and
-become orphans when the save really failed.
-
-Fixes #9897
+Before it creates the heartbeat task, the datanode now reads the
+recorded epoch through its metadata backend and uses one more than it
+if its start time is not higher. The node info still reports the local
+start time. A failed read fails the startup, like the other metadata
+reads.
 
 Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
 
-* fix(mito2): keep SSTs when a manifest save ends with PermissionDenied
+* test(datanode): tighten the node epoch tests
 
-The retry layer returns the last attempt's error, so a 403 from a revoked
-key, a changed bucket policy or clock skew can follow a delta PUT that
-the server already stored. Like RateLimited, PermissionDenied does not
-prove that nothing was written, 
+Use a lower record that leaves room below the start time, so the test
+fails if the start time is ignored, and a nonzero node id, so it fails
+if the node id is ignored. Clarify the doc comment of the epoch choice.
 
-**File**: `src/mito2/src/engine/compaction_test.rs` (modified, +1/-1)
+This assumes the previous process of a node id has stopped before a new
+one starts.
+
+Signed-off-by: jeremyhi <[REDACTED_EMAIL]>
+
+
+
+**File**: `src/datanode/src/heartbeat.rs` (modified, +94/-5)
 ```diff
-@@ -1414,7 +1414,7 @@ impl object_store::layers::mock::Write for FailingManifestWriter {
-     ) -> object_store::layers::mock::Result<()> {
-         if matches!(self.failure, ManifestWriteFailure::BeforeWrite) {
-             return Err(object_store::layers::mock::Error::new(
--                object_store::layers::mock::ErrorKind::PermissionDenied,
-+                object_store::layers::mock::ErrorKind::Unsupported,
-                 "manifest write rejected before persistence",
-             ));
-         }
-```
-
-**File**: `src/mito2/src/error.rs` (modified, +15/-8)
-```diff
-@@ -1445,7 +1445,9 @@ impl Error {
-     /// Returns whether a failed manifest update may have been persisted.
-     ///
-     /// Unknown errors are treated conservatively because deleting output SSTs after an ambiguous
--    /// manifest write could leave the manifest referencing missing files.
-+    /// manifest write could leave the manifest referencing missing files. The retry layer returns
-+    /// the last attempt's error, so an error that can follow a stored attempt (throttling, or a 403
-+    /// from a revoked key, a changed bucket policy or clock skew) never proves nothing was written.
-     pub(crate) fn may_have_persisted_manifest_update(&self) -> bool {
-         match self {
-             Error::UpdateManifest { .. }
-@@ -1459,11 +1461,9 @@ impl Error {
-                 ErrorKind::Unsupported
-                     | ErrorKind::ConfigInvalid
-                     | ErrorKind::NotFound
--                    | ErrorKind::PermissionDenied
-                     | ErrorKind::IsADirectory
-                     | ErrorKind::NotADirectory
-                     | ErrorKind::AlreadyExists
--                    | ErrorKind::RateLimited
-                     | ErrorKind::IsSameFile
-                     | ErrorKind::ConditionNotMatch
-                     | ErrorKind::RangeNotSatisfied
-@@ -1847,11 +1847,9 @@ mod tests {
-             ErrorKind::Unsupported,
-             ErrorKind::ConfigInvalid,
-             ErrorKind::NotFound,
--            ErrorKind::PermissionDenied,
-             ErrorKind::IsADirectory,
-             ErrorKind::NotADirectory,
-             ErrorKind::AlreadyExists,
--            ErrorKind::RateLimited,
-             ErrorKind::IsSameFile,
-             ErrorKind::ConditionNotMatch,
-             ErrorKind::RangeNotSatisfied,
-@@ -1864,9 +1862,18 @@ mod tests {
-             );
-         }
+@@ -32,6 +32,8 @@ use common_meta::heartbeat::handler::{
+ };
+ use common_meta::heartbeat::mailbox::{HeartbeatMailbox, MailboxRef};
+ use common_meta::heartbeat::utils::outgoing_message_to_mailbox_message;
++use common_meta::key::MetadataValue;
++use common_meta::key::datanode_epoch::{DatanodeEpochKey, DatanodeEpochValue};
+ use common_meta::kv_backend::KvBackendRef;
+ use common_stat::ResourceStatRef;
+ use common_telemetry::{debug, error, info, trace, warn};
+@@ -47,19 +49,39 @@ use tokio::time::Instant;
+ use self::handler::RegionHeartbeatResponseHandler;
+ use crate::alive_keeper::{CountdownTaskHandlerExtRef, RegionAliveKeeper};
+ use crate::config::DatanodeOptions;
+-use crate::error::{self, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result};
++use crate::error::{
++    self, GetMetadataSnafu, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result,
++};
+ use crate::event_listener::RegionServerEventReceiver;
+ use crate::metrics::{self, HEARTBEAT_RECV_COUNT, HEARTBEAT_SENT_COUNT};
+ use crate::region_server::RegionServer;
  
--        let error =
--            OpenDalSnafu {}.into_error(object_store::Error::new(ErrorKind::Unexpected, "test"));
--        assert!(error.may_have_persisted_manifest_update());
-+        // The last retry can fail with these kinds even though an earlier attempt was stored.
-+        for kind in [
-+            ErrorKind::Unexpected,
-+            ErrorKind::RateLimited,
-+            ErrorKind::PermissionDenied,
-+        ] {
-+            let error = OpenDalSnafu {}.into_error(object_store::Error::new(kind, "test"));
-+            assert!(
-+                error.may_have_persisted_manifest_update(),
-+                "error kind {kind:?} should not prove the manifest was not persisted"
-+            );
-+        }
+ pub(crate) mod handler;
+ pub(crate) mod task_tracker;
  
-         let region_id = RegionId::new(1, 1);
-         let error = RegionTruncatedSnafu { region_id }.build();
-```
-
----
-
-### Incident Patch 2: `6a340787` (2026-10-23)
-**Commit Message**: fix(pipeline): accept auto-transformed values in existing JSON columns (#9895)
-
-* fix(pipeline): accept auto-transformed values in existing JSON columns
-
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
-
-* test(pipeline): compare decoded JSON values in regression test
-
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: luofucong <[REDACTED_EMAIL]>
-
-**File**: `src/pipeline/src/etl/transform/transformer/greptime.rs` (modified, +89/-1)
-```diff
-@@ -503,6 +503,12 @@ fn resolve_schema(
-         let column_type = &mut schema_info.schema[index].column_schema.data_type;
-         match (column_type, value_type) {
-             (column_type, value_type) if column_type == value_type => Ok(()),
-+            // Auto-transformed arrays and objects use JSONB-encoded binary values.
-+            (ConcreteDataType::Json(json_type), ConcreteDataType::Binary(_))
-+                if !json_type.is_json2() =>
-+            {
-+                Ok(())
-+            }
-             (ConcreteDataType::Json(column_type), ConcreteDataType::Json(value_type))
-                 if column_type.is_json2() && value_type.is_json2() =>
-             {
-@@ -1064,7 +1070,89 @@ mod tests {
-     use table::test_util::MemTable;
- 
-     use super::*;
--    use crate::{PipelineDefinition, identity_pipeline};
-+    use crate::{Content, PipelineDefinition, identity_pipeline, parse, setup_pipeline};
++/// Returns the epoch of this process: its start time, or one more than the epoch the metasrv has
++/// recorded for the node when the record is not lower than the start time, as after a restart on
++/// a slower clock or after the clock stepped back. The metasrv fences an epoch lower than the
++/// recorded one.
++async fn node_epoch_above_record(
++    kv_backend: &KvBackendRef,
++    node_id: u64,
++    start_time_ms: u64,
++) -> Result<u64> {
++    let key = DatanodeEpochKey::new(node_id).to_bytes();
++    let Some(kv) = kv_backend.get(&key).await.context(GetMetadataSnafu)? else {
++        return Ok(start_time_ms);
++    };
++    let recorded = DatanodeEpochValue::try_from_raw_value(&kv.value).context(GetMetadataSnafu)?;
++    Ok(start_time_ms.max(recorded.node_epoch + 1))
++}
 +
-+    #[test]
-+    fn test_auto_transform_existing_json_column()
-+    -> std::result::Result<(), Box<dyn std::error::Error>> {
-+        let pipeline = parse(&Content::Yaml(
-+            r#"
-+version: 2
-+transform:
-+  - field: ts
-+    type: epoch, ms
-+    index: timestamp
-+"#,
-+        ))?;
-+        let (pipeline, mut schema_info, pipeline_definition, pipeline_params) =
-+            setup_pipeline!(pipeline);
-+        let pipeline_context =
-+            PipelineContext::new(&pipeline_definition, &pipeline_params, Channel::Unknown);
-+        schema_info.set_table(Some(MemTable::table(
-+            "events",
-+            RecordBatch::new_empty(Arc::new(Schema::new(vec![DatatypeColumnSchema::new(
-+                "payload",
-+                ConcreteDataType::Json(Default::default()),
-+                true,
-+            )]))),
-+        )));
-+        let inputs = [
-+            serde_json::Value::Null,
-+            serde_json::json!([2, 4, 6]),
-+            serde_json::json!({"active": true}),
-+            serde_json::json!({"a\"b": "\u{0001}"}),
-+            serde_json::json!([]),
-+            serde_json::json!({}),
-+            serde_json::Value::Null,
-+        ];
-+        let records = inputs
-+            .iter()
-+            .enumerate()
-+            .map(|(i, payload)| serde_json::json!({"ts": i, "payload": payload}))
-+            .collect::<Vec<_>>();
-+        let output = pipeline
-+            .exec_mut(
-+                serde_json::Value::Array(records).into(),
-+                &pipeline_context,
-+                &mut schema_info,
-+            )?
-+            .into_transformed()
-+            .ok_or("expected transformed rows")?;
-+        assert_eq!(output.len(), inputs.len());
-+        let index = schema_info.index["payload"];
-+        assert_eq!(
-+            schema_info.schema[index].column_schema.data_type,
-+            ConcreteDataType::Json(Default::default())
-+        );
-+        for ((row, _), expected) in output.iter().zip(&inputs) {
-+            if expected.is_null() {
-+                assert_eq!(
-+                    row.values.get(index).and_then(|v| v.value_data.as_ref()),
-+                    None
-+                );
-+            } else {
-+                let Some(ValueData::BinaryValue(value)) = &row.values[index].value_data else {
-+                    return Err("expected JSONB-encoded value".into());
-+                };
-+                assert_eq!(datatypes::types::jsonb_to_serde_json(value)?, *expected);
-+            }
+ /// The datanode heartbeat task which sending `[HeartbeatRequest]` to Metasrv periodically in background.
+ pub struct HeartbeatTask {
+     node_id: u64,
+     workload_types: Vec<DatanodeWorkloadType>,
+     node_epoch: u64,
++    start_time_ms: u64,
+     peer_addr: String,
+     running: Arc<AtomicBool>,
+     meta_client: MetaClientRef,
+@@ -87,6 +109,9 @@ impl HeartbeatTask {
+         plugins: Plugins,
+         resource_stat: ResourceStatRef,
+     ) -> Result<Self> {
++        let node_id = opts.node_id.unwrap_or(0);
++        let start_time_ms = common_time::util::current_time_millis() as u64;
++        let node_epoch = node_epoch_above_record(&kv_backend, node_id, start_time_ms).await?;
+         let countdown_task_handler_ext = plugins.get::<CountdownTaskHandlerExtRef>();
+         let region_alive_keeper = Arc::new(RegionAliveKeeper::new(
+             region_server.clone(),
+@@ -105,10 +130,10 @@ impl HeartbeatTask {
+         ]));
+ 
+         Ok(Self {
+-            node_id: opts.node_id.unwrap_or(0),
++            node_id,
+             workload_types: opts.workload_types.clone(),
+-            // We use datanode's start time millis as the node's epoch.
+-            node_epoch: common_time::util::current_time_millis() as u64,
++            node_epoch,
++            start_time_ms,
+             peer_addr: addrs::resolve_addr(&opts.grpc.bind_addr, Some(&opts.grpc.server_addr)),
+             running: Arc::new(AtomicBool::new(false)),
+             meta_client,
+@@ -227,6 +252,7 @@ impl HeartbeatTask {
+         }
+         let node_id = self.node_id;
+         let node_epoch = self.node_epoch;
++        let start_time_ms = self.start_time_ms;
+         let addr = &self.peer_addr;
+ 
+         let meta_client = self.meta_client.clone();
+@@ -301,7 +327,7 @@ impl HeartbeatTask {
+                 info: Some(NodeInfo {
+                     version: build_info.version.to_string(),
+                     git_commit: build_info.commit_short.to_string(),
+-                    start_time_ms: node_epoch,
++                    start_time_ms,
+                     total_cpu_millicores,
+                     total_memory_bytes,
+                     cpu_usage_millicores: 0,
+@@ -471,3 +497,66 @@ impl HeartbeatTask {
+         Ok(())
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use common_meta::cache_invalidator::DummyCacheInvalidator;
++    use common_meta::kv_backend::memory::MemoryKvBackend;
++    use common_meta::rpc::store::PutRequest;
++    use common_stat::ResourceStatImpl;
++    use meta_client::client::MetaClientBuilder;
++
++    use super::*;
++    use crate::tests::mock_region_server;
++
++    const NODE_ID: u64 = 7;
++
++    async fn kv_backend_with_record(node_epoch: Option<u64>) -> KvBackendRef {
++        let kv_backend: KvBackendRef = Arc::new(MemoryKvBackend::new());
++        if let Some(node_epoch) = node_epoch {
++            let key = DatanodeEpochKey::new(NODE_ID).to_bytes();
++            let value = DatanodeEpochValue { node_epoch }
++                .try_as_raw_value()
++                .unwrap();
++            let req = PutRequest::new().with_key(key).with_value(value);
++            kv_backend.put(req).await.unwr
+```
+
+**File**: `src/meta-srv/src/service/heartbeat.rs` (modified, +14/-0)
+```diff
+@@ -1311,6 +1311,20 @@ mod tests {
+             assert!(accept_node_epoch(&cached, 1, e2).await.unwrap());
+         }
+ 
++        #[tokio::test]
++        async fn test_epoch_above_a_record_ahead_of_the_clock_is_accepted() {
++            let group = new_group();
++            let ctx = TestEnv::new().ctx();
++            // The previous process of the node ran on a faster clock.
++            let recorded = current_time_millis() as u64 + 60_000;
++            record(&ctx, recorded).await;
++
++            let mut restarted = Stream::open(&group, &ctx).await;
++            let res = restarted.send(heartbeat(recorded + 1, "a2")).await;
++            assert!(res.region_lease.is_some());
++            assert_eq!(lease_addr(&ctx).await.as_deref(), Some("a2"));
 +        }
-+        let error = pipeline
-+            .exec_mut(
-+                serde_json::json!({"ts": 10, "payload": 7}).into(),
-+                &pipeline_context,
-+                &mut schema_info,
-+            )
-+            .err()
-+            .ok_or("expected a datatype mismatch")?;
-+        assert!(
-+            error
-+                .to_string()
-+                .contains("expected datatype: Json, actual datatype: Int64"),
-+            "{error:?}"
-+        );
-+        Ok(())
-+    }
- 
-     #[test]
-     fn test_column_metadata_caches_json_settings() -> Result<()> {
-```
-
----
-
-### Incident Patch 3: `00ab0901` (2026-10-23)
-**Commit Message**: ci: fix CI setup steps that fail on Ubuntu 26.04 runners (#9901)
-
-* ci: install protoc with taiki-e/install-action
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* ci: run multi-language SDK tests on Python 3.13
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* ci: drop the unused libfuzzer-14-dev package from fuzz builds
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-* ci: build fuzz targets with the bundled libFuzzer
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
-
-**File**: `.github/actions/build-windows-artifacts/action.yml` (modified, +3/-1)
-```diff
-@@ -22,7 +22,9 @@ inputs:
- runs:
-   using: composite
-   steps:
--    - uses: arduino/setup-protoc@v3
-+    - uses: taiki-e/install-action@v2
-+      with:
-+        tool: protoc@3.23.4
- 
-     - name: Install rust toolchain
-       uses: actions-rust-lang/setup-rust-toolchain@v1
-```
-
-**File**: `.github/workflows/apidoc.yml` (modified, +2/-2)
-```diff
-@@ -19,9 +19,9 @@ jobs:
-     - uses: actions/checkout@v4
-       with:
-         persist-credentials: false
--    - uses: arduino/setup-protoc@v3
-+    - uses: taiki-e/install-action@v2
-       with:
--        repo-token: ${{ secrets.GITHUB_TOKEN }}
-+        tool: protoc@3.23.4
-     - uses: actions-rust-lang/setup-rust-toolchain@v1
-     - run: cargo doc --workspace --no-deps --document-private-items
-     - run: |
-```
-
-**File**: `.github/workflows/checks.yml` (modified, +2/-2)
-```diff
-@@ -119,9 +119,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Rust Cache
-         uses: Swatinem/rust-cache@v2
-```
-
-**File**: `.github/workflows/integration.yml` (modified, +10/-12)
-```diff
-@@ -54,9 +54,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Build Binaries Cache
-         id: build-binaries-cache
-@@ -193,9 +193,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Rust Cache
-         uses: Swatinem/rust-cache@v2
-@@ -327,9 +327,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-           cache: false
-@@ -364,13 +364,11 @@ jobs:
-         env:
-           RUSTUP_TOOLCHAIN: ${{ env.FUZZ_RUST_TOOLCHAIN }}
-         run: |
--          sudo apt-get install -y libfuzzer-14-dev
-           cargo install cargo-fuzz --version "${CARGO_FUZZ_VERSION}" --locked
-       - name: Build fuzz target binaries
-         if: steps.fuzz-binaries.outputs.cache-hit != 'true'
-         shell: bash
-         env:
--          CUSTOM_LIBFUZZER_PATH: /usr/lib/llvm-14/lib/libFuzzer.a
-           RUSTUP_TOOLCHAIN: ${{ env.FUZZ_RUST_TOOLCHAIN }}
-           FUZZ_TARGETS: |
-             fuzz_create_database
-@@ -587,9 +585,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Build Profile-CI Cache
-         id: build-greptime-ci-cache
-@@ -705,9 +703,9 @@ jobs:
-         uses: ./.github/actions/setup-etcd-cluster
-       # Only the Kafka WAL helper needs the Rust toolchain.
-       - if: matrix.mode.kafkaWalHelper
--        uses: arduino/setup-protoc@v3
-+        uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - if: matrix.mode.kafkaWalHelper
-         uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-```
-
-**File**: `.github/workflows/nightly-ci.yml` (modified, +6/-6)
-```diff
-@@ -53,9 +53,9 @@ jobs:
-           fetch-depth: 0
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-       - name: Rust Cache
-         uses: Swatinem/rust-cache@v2
-@@ -82,9 +82,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: rui314/setup-mold@v1
-       - name: Install toolchain
-         uses: actions-rust-lang/setup-rust-toolchain@v1
-@@ -134,9 +134,9 @@ jobs:
-           fetch-depth: 0
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: KyleMayes/install-llvm-action@v1
-         with:
-           version: "14.0"
-```
-
-**File**: `.github/workflows/release.yml` (modified, +2/-2)
-```diff
-@@ -516,9 +516,9 @@ jobs:
-           fetch-depth: 0
-           persist-credentials: false
- 
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
- 
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-```
-
-**File**: `.github/workflows/run-multi-lang-tests.yml` (modified, +2/-2)
-```diff
-@@ -83,10 +83,10 @@ jobs:
-           java-version: '17'
-           cache: 'maven'
- 
--      - name: Setup Python 3.8
-+      - name: Setup Python 3.13
-         uses: actions/setup-python@v5
-         with:
--          python-version: '3.8'
-+          python-version: '3.13'
- 
-       - name: Setup uv
-         uses: astral-sh/setup-uv@v3
-```
-
-**File**: `.github/workflows/rust.yml` (modified, +14/-14)
-```diff
-@@ -40,9 +40,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-           components: rustfmt
-@@ -58,9 +58,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-         with:
-           components: clippy
-@@ -102,9 +102,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - name: Install riscv64 cross toolchain
-         run: sudo apt-get update && sudo apt-get install -y gcc-riscv64-linux-gnu g++-riscv64-linux-gnu
-       - uses: actions-rust-lang/setup-rust-toolchain@v1
-@@ -130,9 +130,9 @@ jobs:
-         with:
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: KyleMayes/install-llvm-action@v1
-         with:
-           version: "14.0"
-@@ -166,9 +166,9 @@ jobs:
-         with:
-           persist-credentials: false
-       - uses: ./.github/actions/setup-cyborg
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: KyleMayes/install-llvm-action@v1
-         with:
-           version: "14.0"
-@@ -210,9 +210,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: rui314/setup-mold@v1
-       - name: Install toolchain
-         uses: actions-rust-lang/setup-rust-toolchain@v1
-@@ -265,9 +265,9 @@ jobs:
-       - uses: actions/checkout@v4
-         with:
-           persist-credentials: false
--      - uses: arduino/setup-protoc@v3
-+      - uses: taiki-e/install-action@v2
-         with:
--          repo-token: ${{ secrets.GITHUB_TOKEN }}
-+          tool: protoc@3.23.4
-       - uses: rui314/setup-mold@v1
-       - name: Install toolchain
-         uses: actions-rust-lang/setup-rust-toolchain@v1
++
+         #[tokio::test]
+         async fn test_epoch_far_ahead_is_not_recorded() {
+             let kv_backend = MemoryKvBackend::new();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9937** (2026-10-24): refactor(promql): remove NodePath and own the runtime tree recursively (@discord9)
-- **PR #9919** (2026-10-23): fix: upload staging manifests in chunks (@WenyXu)
-- **PR #9915** (2026-10-23): fix: backport CI fix to the release branch (@shuiyisong)
-- **PR #9914** (2026-10-24): refactor(datatypes): name the PromQL series label set by what it is (@discord9)
-- **PR #9912** (2026-10-23): ci: bring the narthex branch's CI workflows up to main (@discord9)
-- **PR #9911** (2026-10-23): fix(mito2): require flat SST output for JSON2 (#9893) (@shuiyisong)
+- **PR #10061** (2026-10-31): docs: link the observability database definition from README (@killme2008)
+- **PR #10056** (2026-10-29): ci: authenticate ECR Public pulls in benchmark workflows (@WenyXu)
+- **PR #10054** (2026-10-29): chore(ci): slide the compatibility window to v1.3.0 (@discord9)
+- **PR #10053** (2026-10-29): ci: backport scoped heavy CI to narthex (@WenyXu)
+- **PR #10052** (closed): feat(promql): restore the ordered raw series merge (@discord9)
+- **PR #10051** (2026-10-29): chore(ci): update compatibility versions (@MichaelScofield)
 
 ---
 
@@ -2238,28 +1878,57 @@ Signed-off-by: Dennis Zhuang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied
+## X. datanode): pick a node epoch above the recorded one (#9984)
 
 **RULE**:
-When implementing operations in `src/mito2/src/engine/compaction_test.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/datanode/src/heartbeat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cb01d0d`: mito2): keep SSTs when a manifest save ends with RateLimited or PermissionDenied (#9898). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c40e86c6`: datanode): pick a node epoch above the recorded one (#9984). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/src/engine/compaction_test.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/datanode/src/heartbeat.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                object_store::layers::mock::ErrorKind::Unsupported,
+use common_meta::key::MetadataValue;
+use common_meta::key::datanode_epoch::{DatanodeEpochKey, DatanodeEpochValue};
+use crate::error::{
+    self, GetMetadataSnafu, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result,
+};
+/// Returns the epoch of this process: its start time, or one more than the epoch the metasrv has
+/// recorded for the node when the record is not lower than the start time, as after a restart on
+/// a slower clock or after the clock stepped back. The metasrv fences an epoch lower than the
+/// recorded one.
+async fn node_epoch_above_record(
+    kv_backend: &KvBackendRef,
+    node_id: u64,
+    start_time_ms: u64,
+) -> Result<u64> {
+    let key = DatanodeEpochKey::new(node_id).to_bytes();
+    let Some(kv) = kv_backend.get(&key).await.context(GetMetadataSnafu)? else {
+        return Ok(start_time_ms);
+    };
+    let recorded = DatanodeEpochValue::try_from_raw_value(&kv.value).context(GetMetadataSnafu)?;
+    Ok(start_time_ms.max(recorded.node_epoch + 1))
+}
+
+    start_time_ms: u64,
+        let node_id = opts.node_id.unwrap_or(0);
+        let start_time_ms = common_time::util::current_time_millis() as u64;
+        let node_epoch = node_epoch_above_record(&kv_backend, no
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                object_store::layers::mock::ErrorKind::PermissionDenied,
+use crate::error::{self, MetaClientInitSnafu, RegionEngineNotFoundSnafu, Result};
+            node_id: opts.node_id.unwrap_or(0),
+            // We use datanode's start time millis as the node's epoch.
+            node_epoch: common_time::util::current_time_millis() as u64,
+                    start_time_ms: node_epoch,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cb01d0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c40e86c6` are properly handled with clean fallback behavior.

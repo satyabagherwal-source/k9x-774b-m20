@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md`  
 > **Source**: github ([https://github.com/linkwarden/linkwarden](https://github.com/linkwarden/linkwarden))  
-> **Source Version**: `952ac454`  
+> **Source Version**: `eff7c6b7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T09:12:48.039Z  
+> **Timestamp**: 2026-10-28T01:29:08.443Z  
 > **Learning ID**: `learn-github-linkwarden-linkwarden`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkwarden-linkwarden-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkwarden/linkwarden](https://github.com/linkwarden/linkwarden))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T09:12:48.034Z  
+> **Harvest Timestamp**: 2026-10-28T01:29:08.224Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡️⚡️⚡️ Self-hosted collaborative bookmark manager to collect, read, annotate, and fully preserve what matters, all in one place.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 20147 stars
+- **Stars / Engagement**: 20244 stars
 
 ---
 
@@ -814,384 +814,421 @@ export default function usePermissions(collectionId: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4656f79b` (2026-09-09)
-**Commit Message**: fix(mobile): fix "waiting for connection" persisting
+### Incident Patch 1: `eff7c6b7` (2026-10-26)
+**Commit Message**: Merge pull request #1878 from linkwarden/hot-fix
 
-**File**: `apps/mobile/app/(tabs)/settings/index.tsx` (modified, +5/-3)
+Hot fix
+
+**File**: `AGENTS.md` (added, +137/-0)
 ```diff
-@@ -63,14 +63,16 @@ export default function SettingsScreen() {
-   const router = useRouter();
- 
-   const syncStatus = useOfflineSyncStore((s) => s.status);
-+  const syncOnline = useOfflineSyncStore((s) => s.online);
-   const syncProcessed = useOfflineSyncStore((s) => s.processed);
-   const syncTotal = useOfflineSyncStore((s) => s.total);
-   const bytesUsed = useOfflineSyncStore((s) => s.bytesUsed);
-   const syncPercent =
-     syncTotal > 0 ? Math.floor((syncProcessed / syncTotal) * 100) : null;
--  const syncStatusLabel =
--    syncStatus === "paused"
--      ? "Waiting for connection"
-+  const syncStatusLabel = !syncOnline
-+    ? "Waiting for connection"
-+    : syncStatus === "paused"
-+      ? "Retrying…"
-       : syncStatus !== "syncing"
-         ? "Up to date"
-         : syncPercent === null
+@@ -0,0 +1,137 @@
++# AGENTS.md
++
++Linkwarden is a self-hosted, collaborative bookmark manager that collects, reads, annotates and preserves webpages. This file is the orientation map for agents working in this repository: what the pieces are, how they talk to each other, which commands to run, and where the public-facing sites live.
++
++## Repository layout
++
++Yarn 4 workspaces monorepo (`apps/*` and `packages/*`). No Turborepo; orchestration is plain root-level scripts.
++
++### Apps
++
++| Path | Workspace | What it is |
++| --- | --- | --- |
++| `apps/web` | `@linkwarden/web` | Next.js app (Pages Router). Serves the UI and the whole REST API. |
++| `apps/worker` | `@linkwarden/worker` | Long-running Node/tsx process. Preservation, AI tagging, search indexing, RSS polling, data migrations. |
++| `apps/mobile` | `@linkwarden/mobile` | Expo / React Native app (expo-router, NativeWind) for iOS and Android. |
++| `apps/extension` | `@linkwarden/extension` | Vite + React browser extension (Chrome, Firefox, Safari). |
++
++### Packages
++
++Shared code, all plain TypeScript source with `main: index.ts` (no build step; consumers transpile them).
++
++| Path | Workspace | What it is |
++| --- | --- | --- |
++| `packages/prisma` | `@linkwarden/prisma` | `schema.prisma`, migrations, generated client, seed. The single source of truth for the data model. |
++| `packages/types` | `@linkwarden/types` | Shared TypeScript types (`global.ts` is the big one). |
++| `packages/lib` | `@linkwarden/lib` | Server and client helpers: Zod schemas (`schemaValidation.ts`), constants, SSRF guards (`ssrf.ts`, `safeFetch.ts`), Meilisearch client, mailer, RSS handling, format helpers. |
++| `packages/filesystem` | `@linkwarden/filesystem` | Storage abstraction. Writes to local disk or S3-compatible object storage depending on whether S3 env vars are set. |
++| `packages/router` | `@linkwarden/router` | TanStack Query hooks (`useLinks`, `useCollections`, `useTags`, ...). Shared by **web and mobile**, which is why it lives outside `apps/web`. |
++
++Dependency direction: `prisma` → `types` → `lib`/`filesystem` → `router` → apps. Nothing in `packages/` imports from `apps/`.
++
++## Architecture
++
++### Request path (web)
++
++1. `apps/web/pages/api/v1/**` (plus a small `v2/` for the new dashboard) are thin Next API route handlers. They authenticate via `verifyUser` / `getTokenFromRequest` (NextAuth session or API token), parse and coerce query params, and check demo mode.
++2. Business logic lives in `apps/web/lib/api/controllers/<resource>/`. Routes stay dumb; controllers return `{ status, response }`.
++3. Permissions for shared collections go through `apps/web/lib/api/getPermission.ts` and `getAccessibleCollectionIds.ts`. Any new link or collection query must respect collection membership, not just ownership.
++4. Client components never call `axios` directly; they use the hooks in `packages/router`, so web and mobile share cache keys, optimistic updates and invalidation rules.
++
++### Preservation path (worker)
++
++The web app only records intent. The worker does the heavy lifting.
++
++- `apps/worker/index.ts` is a supervisor that respawns `worker.ts` on exit.
++- `worker.ts` runs the migration worker once, then starts the loops: `linkProcessing`, `autoTagPreservedLinks`, `linkIndexing`, `rssPolling` (interval from `ARCHIVE_SCRIPT_INTERVAL`, default 10s).
++- `linkProcessing` claims a batch of unpreserved links (`lib/getLinkBatch.ts`, `getLinkBatchFairly.ts` spreads work across users), drives a headless Chromium through `lib/preservationScheme/*` to produce a screenshot, PDF, readability text, preview image and single-file HTML (Rust `monolith` binary), and optionally pushes to the Wayback Machine.
++- Artifacts are written through `@linkwarden/filesystem`, so they land on disk or in S3 without the callers caring.
++- AI tagging uses the Vercel AI SDK with pluggable providers (Ollama, OpenAI and compatible, Azure, Anthropic, OpenRouter, Perplexity), selected by env vars.
++- `linkIndexing` pushes link text into Meilisearch; full text search in the web app reads from there.
++
++### Infrastructure dependencies
++
++PostgreSQL (Prisma), Meilisearch (search), Chromium via Playwright plus the `monolith` binary (preservation), optional S3-compatible storage, optional SMTP, optional Stripe and Apple/Google IAP for the Cloud offering.
++
++## Commands
++
++Run everything from the repo root. Root scripts wrap `dotenv --` so the root `.env` is loaded for you; running a workspace script directly usually will not see those vars.
++
++**Setup**
++
++```bash
++yarn install            # also runs prisma generate via postinstall + patch-package
++yarn prisma:deploy      # apply migrations (use prisma:dev to create one)
++```
++
++**Develop**
++
++```bash
++yarn concurrently:dev   # web + worker together (the usual one)
++yarn web:dev            # web only, localhost:3000
++yarn worker:dev         # worker only, tsx watch
++yarn prisma:studio      # inspect the database
++```
++
++**Build and run production locally
 ```
 
-**File**: `apps/mobile/lib/offlineSync.ts` (modified, +39/-3)
+**File**: `Dockerfile` (modified, +1/-1)
 ```diff
-@@ -21,12 +21,14 @@ type SyncStatus = "idle" | "syncing" | "paused";
+@@ -96,4 +96,4 @@ HEALTHCHECK --interval=30s \
  
- type OfflineSyncState = {
-   status: SyncStatus;
-+  online: boolean;
-   processed: number;
-   total: number;
-   failed: number;
-   currentLinkId: number | null;
-   bytesUsed: number;
-   setStatus: (status: SyncStatus) => void;
-+  setOnline: (online: boolean) => void;
-   setProgress: (processed: number, total: number) => void;
-   incrementProcessed: () => void;
-   incrementFailed: () => void;
-@@ -38,12 +40,14 @@ type OfflineSyncState = {
+ EXPOSE 3000
  
- export const useOfflineSyncStore = create<OfflineSyncState>((set) => ({
-   status: "idle",
-+  online: true,
-   processed: 0,
-   total: 0,
-   failed: 0,
-   currentLinkId: null,
-   bytesUsed: 0,
-   setStatus: (status) => set({ status }),
-+  setOnline: (online) => set({ online }),
-   setProgress: (processed, total) =>
-     set((s) => ({ processed, total, failed: processed === 0 ? 0 : s.failed })),
-   incrementProcessed: () => set((s) => ({ processed: s.processed + 1 })),
-@@ -131,7 +135,7 @@ const isOnline = (state: {
-   isInternetReachable?: boolean | null;
- }) => state.isConnected === true && state.isInternetReachable !== false;
- 
--const connectionRetryMs = 30_000;
-+const connectionRetryMs = 60_000;
- 
- let connectionRetryTimeout: ReturnType<typeof setTimeout> | null = null;
- 
-@@ -513,6 +517,10 @@ export const startSync = async (
- 
-   if (runPromise && targetUnchanged) {
-     pendingRescan = true;
-+
-+    if (useOfflineSyncStore.getState().status === "paused")
-+      scheduleConnectionRetry();
-+
-     return runPromise;
-   }
- 
-@@ -527,6 +535,9 @@ export const startSync = async (
- 
-   const net = await NetInfo.fetch();
-   if (generation !== syncGeneration) return;
-+
-+  useOfflineSyncStore.getState().setOnline(isOnline(net));
-+
-   if (!isOnline(net)) {
-     pauseForConnection();
-     return;
-@@ -542,6 +553,7 @@ export const startSync = async (
-     const pausesAtStart = connectionPauses;
-     const processedRevisions = new Map<number, unknown>();
-     let previousLinkIds: Set<number> | null = null;
-+    let serverFailures = 0;
- 
-     try {
-       do {
-@@ -622,11 +634,32 @@ export const startSync = async (
-           );
- 
-           if (lostConnection) {
--            if (generation === syncGeneration) {
-+            if (generation !== syncGeneration) break;
-+
-+            const net = await NetInfo.fetch();
-+            if (generation !== syncGeneration) break;
-+
-+            store.setOnline(isOnline(net));
-+
-+            if (!isOnline(net)) {
-               cancelled = true;
-               pauseForConnection();
-+              break;
-             }
--            break;
-+
-+            console.warn(
-+              `[offlineSync] Could not fetch link ${fullLink.id}, skipping`
-+            );
-+            serverFailures += 1;
-+            store.incrementFailed();
-+            store.incrementProcessed();
-+
-+            if (waitingForConnection) {
-+              waitingForConnection = false;
-+              store.setStatus("syncing");
-+            }
-+
-+            continue;
-           }
- 
-           if (waitingForConnection) {
-@@ -646,6 +679,7 @@ export const startSync = async (
-       if (generation === syncGeneration && connectionPauses === pausesAtStart) {
-         currentStore.setStatus("idle");
-       }
-+      if (serverFailures > 0) scheduleConnectionRetry();
-     }
-   })();
- 
-@@ -686,6 +720,8 @@ export const subscribeToConnectivity = () => {
-   if (netUnsubscribe) return;
- 
-   netUnsubscribe = NetInfo.addEventListener((state) => {
-+    useOfflineSyncStore.getState().setOnline(isOnline(state));
-+
-     if (!activeAuth) return;
- 
-     if (!isOnline(state)) {
+-CMD ["sh", "-c", "export PATH=/data/node_modules/.bin:$PATH && prisma migrate deploy --schema=/data/packages/prisma/schema.prisma && exec concurrently -k -n web,worker \"cd /data/apps/web && exec next start\" \"cd /data/apps/worker && exec tsx worker.ts\""]
+\ No newline at end of file
++CMD ["sh", "-c", "export PATH=/data/node_modules/.bin:$PATH && prisma migrate deploy --schema=/data/packages/prisma/schema.prisma && exec concurrently -k -n web,worker \"cd /data/apps/web && exec next start\" \"cd /data/apps/worker && exec tsx worker.ts\""]
 ```
 
----
-
-### Incident Patch 2: `bd2a09f9` (2026-09-09)
-**Commit Message**: fix(mobile): fixes #1807
-
-**File**: `apps/mobile/app/_layout.tsx` (modified, +17/-13)
+**File**: `apps/web/components/LinkViews/LinkComponents/LinkIcon.tsx` (modified, +2/-2)
 ```diff
-@@ -6,7 +6,7 @@ import {
- } from "expo-router";
- import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
- import { queryPersister } from "@/lib/queryPersister";
--import { useState, useEffect } from "react";
-+import { useState, useEffect, useRef } from "react";
- import "../styles/global.css";
- import { SheetProvider } from "react-native-actions-sheet";
- import "@/components/ActionSheets/Sheets";
-@@ -44,6 +44,7 @@ export default Sentry.wrap(function RootLayout() {
- 
-   const { setAuth } = useAuthStore();
-   const rootNavState = useRootNavigationState();
-+  const redirectingToIncoming = useRef(false);
- 
-   useEffect(() => {
-     setAuth();
-@@ -54,13 +55,15 @@ export default Sentry.wrap(function RootLayout() {
-   useEffect(() => {
-     if (!rootNavState?.key || isLoading) return;
- 
--    if (hasShareIntent && shareIntent.webUrl) {
--      updateData({
--        shareIntent: {
--          hasShareIntent: true,
--          url: shareIntent.webUrl || "",
--        },
--      });
-+    if (hasShareIntent) {
-+      if (shareIntent.webUrl) {
-+        updateData({
-+          shareIntent: {
-+            hasShareIntent: true,
-+            url: shareIntent.webUrl,
-+          },
-+        });
-+      }
- 
-       resetShareIntent();
-     }
-@@ -71,11 +74,12 @@ export default Sentry.wrap(function RootLayout() {
-       pathname !== "/incoming";
- 
-     if (needsRewrite) {
--      router.replace("/incoming");
--    }
--    if (hasShareIntent) {
--      resetShareIntent();
--      router.replace("/incoming");
-+      if (!redirectingToIncoming.current) {
-+        redirectingToIncoming.current = true;
-+        router.replace("/incoming");
-+      }
-+    } else if (pathname === "/incoming") {
-+      redirectingToIncoming.current = false;
-     }
-   }, [
-     rootNavState?.key,
-```
-
-**File**: `apps/mobile/app/incoming.tsx` (modified, +53/-26)
-```diff
-@@ -17,6 +17,8 @@ import { SheetManager } from "react-native-actions-sheet";
- import { LinkIncludingShortenedCollectionAndTags } from "@linkwarden/types/global";
- import { SafeAreaView } from "react-native-safe-area-context";
- 
-+let pendingSubmission: { url: string; promise: Promise<any> } | null = null;
-+
- export default function IncomingScreen() {
-   const { auth } = useAuthStore();
-   const router = useRouter();
-@@ -27,33 +29,58 @@ export default function IncomingScreen() {
-   const [link, setLink] = useState<LinkIncludingShortenedCollectionAndTags>();
- 
-   useEffect(() => {
--    if (auth.status === "authenticated" && data.shareIntent.url)
--      addLink.mutate(
--        {
--          url: data.shareIntent.url,
-+    const url = data.shareIntent.url;
-+
-+    if (!url) {
-+      pendingSubmission = null;
-+      return;
-+    }
-+
-+    if (auth.status !== "authenticated") return;
-+
-+    if (pendingSubmission?.url !== url) {
-+      pendingSubmission = {
-+        url,
-+        promise: addLink.mutateAsync({
-+          url,
-           collection: { id: data.preferredCollection?.id },
--        },
--        {
--          onSuccess: (e) => {
--            setLink(e as unknown as LinkIncludingShortenedCollectionAndTags);
--            setShowSuccess(true);
--            setTimeout(() => {
--              updateData({
--                shareIntent: {
--                  hasShareIntent: false,
--                  url: "",
--                },
--              });
--              router.replace("/dashboard");
--            }, 1500);
--          },
--          onError: (error) => {
--            Alert.alert("Error", "There was an error adding the link.");
--            console.error("Error adding link:", error);
--          },
--        }
--      );
--  }, [auth, data.shareIntent.url]);
-+        }),
-+      };
-+    }
-+
-+    let ignore = false;
-+
-+    pendingSubmission.promise.then(
-+      (e) => {
-+        if (ignore) return;
-+
-+        setLink(e as unknown as LinkIncludingShortenedCollectionAndTags);
-+        setShowSuccess(true);
-+        setTimeout(() => {
-+          pendingSubmission = null;
-+          updateData({
-+            shareIntent: {
-+              hasShareIntent: false,
-+              url: "",
-+            },
-+          });
-+          router.replace("/dashboard");
-+        }, 1500);
-+      },
-+      (error) => {
-+        pendingSubmission = null;
-+
-+        if (ignore) return;
-+
-+        Alert.alert("Error", "There was an error adding the link.");
-+        console.error("Error adding link:", error);
-+      }
-+    );
-+
-+    return () => {
-+      ignore = true;
-+    };
-+  }, [auth.status, data.shareIntent.url]);
- 
-   if (auth.status === "unauthenticated") return <Redirect href="/" />;
- 
-```
-
----
-
-### Incident Patch 3: `6894f775` (2026-09-08)
-**Commit Message**: fix(web): improved performance for the collections api route
-
-**File**: `apps/web/lib/api/controllers/collections/getCollections.ts` (modified, +21/-4)
-```diff
-@@ -1,7 +1,7 @@
- import { prisma } from "@linkwarden/prisma";
- 
- export default async function getCollection(userId: number) {
--  const [user, collections] = await Promise.all([
-+  const [user, collectionsWithoutCount] = await Promise.all([
-     prisma.user.findUnique({
-       where: { id: userId },
-       select: { collectionOrder: true },
-@@ -14,9 +14,6 @@ export default async function getCollection(userId: number) {
-         ],
-       },
-       include: {
--        _count: {
--          select: { links: true },
--        },
-         parent: {
-           select: {
-             id: true,
-@@ -38,6 +35,26 @@ export default async function getCollection(userId: number) {
-     }),
-   ]);
- 
-+  const linkCounts =
-+    collectionsWithoutCount.length > 0
-+      ? await prisma.link.groupBy({
-+          by: ["collectionId"],
-+          where: {
-+            collectionId: { in: collectionsWithoutCount.map((c) => c.id) },
-+          },
-+          _count: { _all: true },
-+        })
-+      : [];
-+
-+  const linkCountByCollectionId = new Map(
-+    linkCounts.map((row) => [row.collectionId, row._count._all])
-+  );
-+
-+  const collections = collectionsWithoutCount.map((collection) => ({
-+    ...collection,
-+    _count: { links: linkCountByCollectionId.get(collection.id) ?? 0 },
-+  }));
-+
-   const orderIndex = new Map<number, number>(
-     (user?.collectionOrder ?? []).map((id, index) => [Number(id), index])
+@@ -19,9 +19,9 @@ function LinkIcon({
+   onClick?: Function;
+ }) {
+   let iconClasses: string = clsx(
+-    "rounded flex item-center justify-center shadow select-none z-10 w-12 h-12",
++    "rounded flex item-center justify-center select-none z-10 w-12 h-12",
+     !hideBackground &&
+-      "rounded-md backdrop-blur-xl bg-white/30 dark:bg-black/30 bg-opacity-50 p-1",
++      "rounded-md shadow backdrop-blur-xl bg-white/30 dark:bg-black/30 bg-opacity-50 p-1",
+     className
    );
+ 
+```
+
+**File**: `apps/web/pages/settings/account.tsx` (modified, +0/-1)
+```diff
+@@ -112,7 +112,6 @@ const Page: NextPageWithLayout = () => {
+         email: user.email,
+         locale: user.locale,
+         image: user.image,
+-        isPrivate: user.isPrivate,
+         password: password ? password : undefined,
+       },
+       {
+```
+
+**File**: `apps/worker/workers/linkIndexing.ts` (modified, +77/-16)
+```diff
+@@ -6,6 +6,41 @@ import { MEILI_INDEX_VERSION } from "@linkwarden/lib/constants";
+ 
+ const takeCount = Number(process.env.INDEX_TAKE_COUNT || "") || 50;
+ 
++// Meilisearch rejects request bodies over its payload size limit (~95 MiB by
++// default), which a batch holding a few links with very large `textContent`
++// can exceed. Send the documents in smaller requests instead.
++function chunkByPayloadSize<T>(items: T[]) {
++  const maxBytes = 80 * 1024 * 1024;
++  const chunks: T[][] = [];
++  const oversized: T[] = [];
++  let chunk: T[] = [];
++  let chunkBytes = 2; // the enclosing "[]"
++
++  for (const item of items) {
++    const itemBytes = Buffer.byteLength(JSON.stringify(item), "utf-8") + 1;
++
++    // A single item past the limit can't be split any further, so set it aside
++    // instead of building a request that's bound to be rejected.
++    if (2 + itemBytes > maxBytes) {
++      oversized.push(item);
++      continue;
++    }
++
++    if (chunk.length > 0 && chunkBytes + itemBytes > maxBytes) {
++      chunks.push(chunk);
++      chunk = [];
++      chunkBytes = 2;
++    }
++
++    chunk.push(item);
++    chunkBytes += itemBytes;
++  }
++
++  if (chunk.length > 0) chunks.push(chunk);
++
++  return { chunks, oversized };
++}
++
+ async function setupLinksIndexSchema() {
+   if (!meiliClient) return;
+ 
+@@ -142,21 +177,47 @@ export async function startIndexing(interval = 10) {
+       indexVersion: MEILI_INDEX_VERSION,
+     }));
+ 
+-    const task = await meiliClient.index("links").addDocuments(docs);
+-    await meiliClient
+-      .index("links")
+-      .waitForTask(task.taskUid, {
+-        timeOutMs: Number(process.env.MEILI_TIMEOUT) || 1000000,
+-      })
+-      .catch((err) => {
+-        console.error("\x1b[34m%s\x1b[0m", `Error indexing links:`, err);
+-      });
++    const { chunks, oversized } = chunkByPayloadSize(docs);
++    const indexedIds: number[] = [];
+ 
+-    const ids = links.map((l) => l.id);
+-    await prisma.link.updateMany({
+-      where: { id: { in: ids } },
+-      data: { indexVersion: MEILI_INDEX_VERSION },
+-    });
++    if (oversized.length > 0) {
++      console.error(
++        "\x1b[34m%s\x1b[0m",
++        `Skipping ${oversized.length} link${
++          oversized.length === 1 ? "" : "s"
++        } too large to index: ${oversized.map((doc) => doc.id).join(", ")}`
++      );
++
++      indexedIds.push(...oversized.map((doc) => doc.id));
++    }
++
++    try {
++      for (const chunk of chunks) {
++        const task = await meiliClient.index("links").addDocuments(chunk);
++        const result = await meiliClient
++          .index("links")
++          .waitForTask(task.taskUid, {
++            timeOutMs: Number(process.env.MEILI_TIMEOUT) || 1000000,
++          });
++
++        if (result.status !== "succeeded")
++          throw new Error(
++            `Indexing task ${task.taskUid} ${result.status}: ${
++              result.error?.message ?? "no error message"
++            }`
++          );
++
++        indexedIds.push(...chunk.map((doc) => doc.id));
++      }
++    } catch (err) {
++      console.error("\x1b[34m%s\x1b[0m", `Error indexing links:`, err);
++    }
++
++    if (indexedIds.length > 0)
++      await prisma.link.updateMany({
++        where: { id: { in: indexedIds } },
++        data: { indexVersion: MEILI_INDEX_VERSION },
++      });
+ 
+     const indexesLeft = await prisma.link.count({
+       where: {
+@@ -169,8 +230,8 @@ export async function startIndexing(interval = 10) {
+ 
+     console.log(
+       "\x1b[34m%s\x1b[0m",
+-      `Indexed ${links.length} link${
+-        links.length === 1 ? "" : "s"
++      `Indexed ${indexedIds.length} link${
++        indexedIds.length === 1 ? "" : "s"
+       }, ${indexesLeft} left.`
+     );
+ 
+```
+
+**File**: `packages/lib/schemaValidation.ts` (modified, +0/-1)
+```diff
+@@ -86,7 +86,6 @@ export const UpdateUserSchema = () => {
+     aiPredefinedTags: z.array(z.string().max(20).trim()).max(20).optional(),
+     aiTagExistingLinks: z.boolean().optional(),
+     locale: z.string().max(20).optional(),
+-    isPrivate: z.boolean().optional(),
+     preventDuplicateLinks: z.boolean().optional(),
+     collectionOrder: z.array(z.number()).optional(),
+     linksRouteTo: z.enum(LinksRouteTo).optional(),
+```
+
+**File**: `packages/prisma/migrations/20260910181143_remove_unused_fields/migration.sql` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++/*
++  Warnings:
++
++  - You are about to drop the column `isPrivate` on the `User` table. All the data in the column will be lost.
++  - You are about to drop the `WhitelistedUser` table. If the table is not empty, all the data it contains will be lost.
++
++*/
++-- DropForeignKey
++ALTER TABLE "WhitelistedUser" DROP CONSTRAINT "WhitelistedUser_userId_fkey";
++
++-- AlterTable
++ALTER TABLE "User" DROP COLUMN "isPrivate";
++
++-- DropTable
++DROP TABLE "WhitelistedUser";
+```
+
+**File**: `packages/prisma/schema.prisma` (modified, +0/-11)
+```diff
+@@ -47,7 +47,6 @@ model User {
+   highlights              Highlight[]
+   collectionsJoined       UsersAndCollections[]
+   collectionOrder         Int[]                 @default([])
+-  whitelistedUsers        WhitelistedUser[]
+   accessTokens            AccessToken[]
+   subscriptions           Subscription?
+   linksRouteTo            LinksRouteTo          @default(ORIGINAL)
+@@ -66,7 +65,6 @@ model User {
+   archiveAsPDF            Boolean               @default(true)
+   archiveAsReadable       Boolean               @default(true)
+   archiveAsWaybackMachine Boolean               @default(false)
+-  isPrivate               Boolean               @default(false)
+   referredBy              String?
+   dashboardSections       DashboardSection[]
+   lastPickedAt            DateTime?
+@@ -98,15 +96,6 @@ enum LinksRouteTo {
+   DETAILS
+ }
+ 
+-model WhitelistedUser {
+-  id        Int      @id @default(autoincrement())
+-  username  String   @default("")
+-  User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+-  userId    Int?
+-  createdAt DateTime @default(now())
+-  updatedAt DateTime @default(now()) @updatedAt
+-}
+-
+ model VerificationToken {
+   identifier String
+   token      String   @unique
+```
+
+---
+
+### Incident Patch 2: `db0dfc62` (2026-10-26)
+**Commit Message**: Merge pull request #1877 from linkwarden/fix/bump-node
+
+bump node
+
+**File**: `Dockerfile` (modified, +2/-2)
+```diff
+@@ -8,7 +8,7 @@ RUN set -eux && cargo install --locked monolith@${MONOLITH_VERSION}
+ # ==============================================================================
+ # Stage 2: App Builder (Where the heavy building happens)
+ # ==============================================================================
+-FROM node:22.23-bookworm-slim AS app-builder
++FROM node:22.23.4-bookworm-slim AS app-builder
+ 
+ ENV YARN_HTTP_TIMEOUT=10000000
+ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+@@ -47,7 +47,7 @@ RUN yarn workspaces focus --production linkwarden @linkwarden/web @linkwarden/wo
+ # ==============================================================================
+ # Stage 3: Final Runtime (This stage will be ~400MB total)
+ # ==============================================================================
+-FROM node:22.23-bookworm-slim AS main-app
++FROM node:22.23.4-bookworm-slim AS main-app
+ ENV NODE_ENV=production
+ ENV PRISMA_HIDE_UPDATE_MESSAGE=1
+ # Stable, copyable browser location shared by install and runtime
+```
+
+---
+
+### Incident Patch 3: `cd0e918f` (2026-10-02)
+**Commit Message**: bug fix
+
+**File**: `apps/worker/workers/linkIndexing.ts` (modified, +24/-3)
+```diff
+@@ -10,14 +10,23 @@ const takeCount = Number(process.env.INDEX_TAKE_COUNT || "") || 50;
+ // default), which a batch holding a few links with very large `textContent`
+ // can exceed. Send the documents in smaller requests instead.
+ function chunkByPayloadSize<T>(items: T[]) {
++  const maxBytes = 80 * 1024 * 1024;
+   const chunks: T[][] = [];
++  const oversized: T[] = [];
+   let chunk: T[] = [];
+   let chunkBytes = 2; // the enclosing "[]"
+ 
+   for (const item of items) {
+     const itemBytes = Buffer.byteLength(JSON.stringify(item), "utf-8") + 1;
+ 
+-    if (chunk.length > 0 && chunkBytes + itemBytes > 80 * 1024 * 1024) {
++    // A single item past the limit can't be split any further, so set it aside
++    // instead of building a request that's bound to be rejected.
++    if (2 + itemBytes > maxBytes) {
++      oversized.push(item);
++      continue;
++    }
++
++    if (chunk.length > 0 && chunkBytes + itemBytes > maxBytes) {
+       chunks.push(chunk);
+       chunk = [];
+       chunkBytes = 2;
+@@ -29,7 +38,7 @@ function chunkByPayloadSize<T>(items: T[]) {
+ 
+   if (chunk.length > 0) chunks.push(chunk);
+ 
+-  return chunks;
++  return { chunks, oversized };
+ }
+ 
+ async function setupLinksIndexSchema() {
+@@ -168,10 +177,22 @@ export async function startIndexing(interval = 10) {
+       indexVersion: MEILI_INDEX_VERSION,
+     }));
+ 
++    const { chunks, oversized } = chunkByPayloadSize(docs);
+     const indexedIds: number[] = [];
+ 
++    if (oversized.length > 0) {
++      console.error(
++        "\x1b[34m%s\x1b[0m",
++        `Skipping ${oversized.length} link${
++          oversized.length === 1 ? "" : "s"
++        } too large to index: ${oversized.map((doc) => doc.id).join(", ")}`
++      );
++
++      indexedIds.push(...oversized.map((doc) => doc.id));
++    }
++
+     try {
+-      for (const chunk of chunkByPayloadSize(docs)) {
++      for (const chunk of chunks) {
+         const task = await meiliClient.index("links").addDocuments(chunk);
+         const result = await meiliClient
+           .index("links")
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1878** (2026-10-26): Hot fix (@daniel31x13)
+- **PR #1877** (2026-10-26): bump node (@daniel31x13)
 - **PR #1862** (2026-10-11): Fix/ios27 darkmode bug (@daniel31x13)
 - **PR #1839** (closed): Significant changes to improve Browser Extension (@nicolaipre)
 - **PR #1836** (closed): Feat/editable publication date (@bvdbos)
 - **PR #1834** (2026-09-10): Dev (@daniel31x13)
-- **PR #1833** (2026-09-09): v2.16.3 (@daniel31x13)
-- **PR #1831** (closed): [Browser Extension] Add account-backed default collection setting (@MichaelvanLaar)
 
 ---
 
@@ -1211,34 +1248,51 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mobile): fix "waiting for connection" persisting
+## X. Merge pull request #1878 from linkwarden/hot-fix
 
 **RULE**:
-When implementing operations in `apps/mobile/app/(tabs)/settings/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkwarden/linkwarden. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkwarden/linkwarden. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4656f79b`: mobile): fix "waiting for connection" persisting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eff7c6b7`: Merge pull request #1878 from linkwarden/hot-fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/mobile/app/(tabs)/settings/index.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  const syncOnline = useOfflineSyncStore((s) => s.online);
-  const syncStatusLabel = !syncOnline
-    ? "Waiting for connection"
-    : syncStatus === "paused"
-      ? "Retrying…"
+# AGENTS.md
+
+Linkwarden is a self-hosted, collaborative bookmark manager that collects, reads, annotates and preserves webpages. This file is the orientation map for agents working in this repository: what the pieces are, how they talk to each other, which commands to run, and where the public-facing sites live.
+
+## Repository layout
+
+Yarn 4 workspaces monorepo (`apps/*` and `packages/*`). No Turborepo; orchestration is plain root-level scripts.
+
+### Apps
+
+| Path | Workspace | What it is |
+| --- | --- | --- |
+| `apps/web` | `@linkwarden/web` | Next.js app (Pages Router). Serves the UI and the whole REST API. |
+| `apps/worker` | `@linkwarden/worker` | Long-running Node/tsx process. Preservation, AI tagging, search indexing, RSS polling, data migrations. |
+| `apps/mobile` | `@linkwarden/mobile` | Expo / React Native app (expo-router, NativeWind) for iOS and Android. |
+| `apps/extension` | `@linkwarden/extension` | Vite + React browser extension (Chrome, Firefox, Safari). |
+
+### Packages
+
+Shared code, all plain TypeScript source with `main: index.ts` (no build step; consumers transpile them).
+
+| Path | Workspace | What it is |
+| --- | --- | --- |
+| `packages/prisma` | `@linkwarden/pri
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  const syncStatusLabel =
-    syncStatus === "paused"
-      ? "Waiting for connection"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4656f79b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eff7c6b7` are properly handled with clean fallback behavior.

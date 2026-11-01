@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source**: github ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
-> **Source Version**: `5fedd8fc`  
+> **Source Version**: `a87308b0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:50:24.954Z  
+> **Timestamp**: 2026-10-31T06:32:08.252Z  
 > **Learning ID**: `learn-github-authzed-spicedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/authzed-spicedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/authzed/spicedb](https://github.com/authzed/spicedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:50:24.600Z  
+> **Harvest Timestamp**: 2026-10-31T06:32:08.243Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Source, Google Zanzibar-inspired database for scalably storing and querying fine-grained authorization data
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 7167 stars
+- **Stars / Engagement**: 7180 stars
 
 ---
 
@@ -63,6 +63,314 @@ func NewTLog(t testing.TB) io.Writer {
 	t.Helper()
 	return &TLogger{TB: t}
 }
+
+```
+
+### Core Architecture Module: `internal/checkbaseline/engine.go`
+```
+package checkbaseline
+
+import (
+	"context"
+	"fmt"
+	"runtime"
+	"slices"
+	"time"
+
+	"github.com/authzed/spicedb/internal/caveats"
+	"github.com/authzed/spicedb/internal/dispatch"
+	dispatchgraph "github.com/authzed/spicedb/internal/dispatch/graph"
+	"github.com/authzed/spicedb/internal/graph/computed"
+	"github.com/authzed/spicedb/pkg/cache"
+	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
+	"github.com/authzed/spicedb/pkg/datalayer"
+	"github.com/authzed/spicedb/pkg/datastore"
+	v1 "github.com/authzed/spicedb/pkg/proto/dispatch/v1"
+	"github.com/authzed/spicedb/pkg/query"
+	"github.com/authzed/spicedb/pkg/schema/v2"
+	"github.com/authzed/spicedb/pkg/tuple"
+)
+
+type Engine interface {
+	Name() string
+	Preparation() Sample
+	Check(context.Context, Case) (Decision, error)
+	Close() error
+}
+
+var (
+	_ Engine = (*classicEngine)(nil)
+	_ Engine = (*plannerEngine)(nil)
+)
+
+type classicEngine struct {
+	prepared   Sample
+	dl         datalayer.DataLayer
+	revision   datastore.RevisionWithSchemaHash
+	dispatcher dispatch.Dispatcher
+	policy     Policy
+}
+
+func (e *classicEngine) Preparation() Sample { return e.prepared }
+func (*classicEngine) Name() string          { return "classic" }
+func (e *classicEngine) Close() error        { return e.dispatcher.Close() }
+func (e *classicEngine) Check(ctx context.Context, c Case) (Decision, error) {
+	q := c.Query
+	result, _, err := computed.ComputeCheck(datalayer.ContextWithDataLayer(ctx, e.dl), e.dispatcher, caveattypes.Default.TypeSet, computed.CheckParameters{
+		ResourceType: tuple.RelationReference{ObjectType: q.ResourceType, Relation: q.Permission}, Subject: tuple.ObjectAndRelation{ObjectType: q.SubjectType, ObjectID: q.SubjectID, Relation: q.SubjectRelation}, CaveatContext: c.Context, AtRevision: e.revision.Revision, MaximumDepth: c.ClassicDepth, SchemaHash: datalayer.SchemaHash(e.revision.SchemaHash), DebugOption: computed.NoDebugging,
+	}, q.ResourceID, e.policy.ClassicChunkSize)
+	if err != nil {
+		return Decision{Outcome: Error, ErrorClass: err.Error()}, err
+	}
+	d := Decision{Outcome: Deny}
+	switch result.Membership {
+	case v1.ResourceCheckResult_MEMBER:
+		d.Outcome = Allow
+	case v1.ResourceCheckResult_CAVEATED_MEMBER:
+		d.Outcome = Conditional
+		d.MissingContext = slices.Sorted(slices.Values(result.MissingExprFields))
+	}
+	return d, nil
+}
+
+type plannerEngine struct {
+	prepared Sample
+	dl       datalayer.DataLayer
+	revision datastore.RevisionWithSchemaHash
+	plans    map[string]query.Iterator
+}
+
+func (e *plannerEngine) Preparation() Sample { return e.prepared }
+func (*plannerEngine) Name() string          { return "qp" }
+func (*plannerEngine) Close() error          { return nil }
+func (e *plannerEngine) Check(ctx context.Context, c Case) (Decision, error) {
+	q := c.Query
+	reader := e.dl.SnapshotReader(e.revision.Revision, datalayer.SchemaHash(e.revision.SchemaHash))
+	runner := caveats.NewCaveatRunner(caveattypes.Default.TypeSet)
+	qctx := query.NewLocalContext(ctx, query.WithRevisionedReader(reader), query.WithCaveatRunner(runner), query.WithCaveatContext(c.Context), query.WithMaxRecursionDepth(c.QPDepth), query.WithCheckExecution(query.CheckExecutionOptions{TargetedRecursion: true, BaseFirstExclusion: true, StrictSubjectMatching: true, ExhaustiveIntersectionArrows: true, StopAfterDirectMatch: true, CoalesceDirectWildcards: true, UnfilteredSingleTypeReads: true, BroadSingleUsersetReads: true}))
+	it := e.plans[q.ResourceType+"#"+q.Permission]
+	path, err := qctx.Check(it, query.NewObject(q.ResourceType, q.ResourceID), query.ObjectAndRelation{ObjectType: q.SubjectType, ObjectID: q.SubjectID, Relation: q.SubjectRelation})
+	if err != nil {
+		return Decision{Outcome: Error, ErrorClass: err.Error()}, err
+	}
+	if path == nil {
+		return Decision{Outcome: Deny}, nil
+	}
+	if path.Caveat == nil {
+		return Decision{Outcome: Allow}, nil
+	}
+	sr, err := reader.ReadSchema(ctx)
+	if err != nil {
+		return Decision{}, err
+	}
+	res, err := runner.RunCaveatExpression(ctx, path.Caveat, c.Context, sr, caveats.RunCaveatExpressionNoDebugging)
+	if err != nil {
+		return Decision{}, err
+	}
+	if res.IsPartial() {
+		missing, err := res.MissingVarNames()
+		slices.Sort(missing)
+		return Decision{Outcome: Conditional, MissingContext: missing}, err
+	}
+	if res.Value() {
+		return Decision{Outcome: Allow}, nil
+	}
+	return Decision{Outcome: Deny}, nil
+}
+
+func PrepareEngines(ctx context.Context, dl datalayer.DataLayer, rev datastore.RevisionWithSchemaHash, s *schema.Schema, cases []Case, p Policy) ([]Engine, error) {
+	var before, after runtime.MemStats
+	runtime.ReadMemStats(&before)
+	start := time.Now()
+	params := dispatchgraph.DispatcherParameters{
+		ConcurrencyLimits:      dispatchgraph.SharedConcurrencyLimits(p.ClassicConcurrency),
+		DispatchChunkSize:      p.ClassicChunkSize,
+		TypeSet:                caveattypes.Default.TypeSet,
+		RelationshipChunkCache: cache.NoopCache[cache.StringKey, any](),
+	}
+	d, err := dispatchgraph.NewLocalOnlyDispatcher(params)
+	if err != nil {
+		return nil, err
+	}
+	classicNS := time.Since(start).Nanoseconds()
+	runtime.ReadMemStats(&after)
+	classicPrep := Sample{NSPerOp: float64(classicNS), BytesPerOp: float64(after.TotalAlloc - before.TotalAlloc), AllocsPerOp: float64(after.Mallocs - before.Mallocs), Iterations: 1}
+	runtime.ReadMemStats(&before)
+	start = time.Now()
+	qp := &plannerEngine{dl: dl, revision: rev, plans: map[string]query.Iterator{}}
+	for _, c := range cases {
+		key := c.Query.ResourceType + "#" + c.Query.Permission
+		if _, ok := qp.plans[key]; ok {
+			continue
+		}
+		outline, err := query.BuildOutlineFromSchema(s, c.Query.ResourceType, c.Query.Permission, query.WithSchemaExecutionOrder(), query.WithDeferredCaveats())
+		if err != nil {
+			_ = d.Close()
+			return nil, fmt.Errorf("%s: %w", key, err)
+		}
+		it, err := outline.Compile()
+		if err != nil {
+			_ = d.Close()
+			return nil, err
+		}
+		qp.plans[key] = it
+	}
+	qpNS := time.Since(start).Nanoseconds()
+	runtime.ReadMemStats(&after)
+	qp.prepared = Sample{NSPerOp: float64(qpNS), BytesPerOp: float64(after.TotalAlloc - before.TotalAlloc), AllocsPerOp: float64(after.Mallocs - before.Mallocs), Iterations: 1}
+	return []Engine{&classicEngine{dl: dl, revision: rev, dispatcher: d, policy: p, prepared: classicPrep}, qp}, nil
+}
+
+```
+
+### Core Architecture Module: `internal/checkbaseline/report/render.py`
+```
+#!/usr/bin/env python3
+"""Render local checkbaseline JSON as a portable, offline HTML report."""
+
+import argparse
+import json
+import math
+from pathlib import Path
+
+
+def summarize(values):
+    values = sorted(values)
+    if not values:
+        return None
+    if any(not math.isfinite(v) for v in values):
+        raise ValueError("non-finite measurement")
+
+    def q(f):
+        i = (len(values) - 1) * f
+        lo = int(i)
+        hi = min(lo + 1, len(values) - 1)
+        return values[lo] + (values[hi] - values[lo]) * (i - lo)
+
+    return dict(n=len(values), low=values[0], q1=q(0.25), median=q(0.5), q3=q(0.75), high=values[-1])
+
+
+def paired_ratio(classic, qp):
+    if len(classic) != len(qp):
+        raise ValueError("unpaired samples")
+    return summarize([b / a for a, b in zip(classic, qp, strict=True) if a > 0])
+
+
+def safe_json(data):
+    return (
+        json.dumps(data, separators=(",", ":"), allow_nan=False)
+        .replace("<", "\\u003c")
+        .replace(">", "\\u003e")
+        .replace("&", "\\u0026")
+    )
+
+
+def work_totals(work):
+    events = work.get("Events") or []
+    loads = [e for e in events if e["Operation"] in ("query", "reverse")]
+    return dict(
+        loads=len(loads),
+        rows=sum(e["Rows"] for e in loads),
+        payload=sum(e["Bytes"] for e in loads),
+        schema=sum(
+            e["Operation"] not in ("query", "reverse", "caveat-leaf", "caveat-expression", "schema-load")
+            for e in events
+        ),
+        caveats=sum(e["Operation"] == "caveat-leaf" for e in events),
+        batch=max([e["Batch"] for e in loads], default=0),
+    )
+
+
+def compact(artifact):
+    if artifact["Version"] != 1:
+        raise ValueError("unsupported artifact version")
+    rows = []
+    for result in artifact["Results"]:
+        engines = []
+        for e in result["Engines"]:
+            samples = e.get("Samples") or []
+            work = [work_totals(w) for w in e["Work"]]
+            metrics = {
+                key: summarize([w[key] for w in work])
+                for key in ("loads", "rows", "payload", "schema", "caveats", "batch")
+            }
+            metrics["schemaLoads"] = (
+                summarize([sum(e["Operation"] == "schema-load" for e in w.get("Events") or []) for w in e["Work"]])
+                if artifact["Provenance"].get("schema_load_instrumentation")
+                else None
+            )
+            metrics.update(
+                time=summarize([s["NSPerOp"] / 1000 for s in samples]),
+                allocations=summarize([s["AllocsPerOp"] for s in samples]),
+                memory=summarize([s["BytesPerOp"] for s in samples]),
+            )
+            prep = e.get("Preparation") or {}
+            metrics.update(
+                prepareTime=summarize([prep.get("NSPerOp", 0) / 1000]),
+                prepareMemory=summarize([prep.get("BytesPerOp", 0)]),
+            )
+            events = (e["Work"][0].get("Events") or []) if e["Work"] else []
+            engines.append(
+                dict(
+                    name=e["Name"],
+                    metrics=metrics,
+                    decision=e["Decision"],
+                    error=e.get("Error"),
+                    preparation=e.get("Preparation"),
+                    samples=samples,
+                    observations=e.get("Observations"),
+                    trace=[{k: v for k, v in event.items() if k != "Relationships"} for event in events[:60]],
+                    traceCount=len(events),
+                    work=work,
+                )
+            )
+        ratio = None
+        if result["Valid"] and result["Status"] == "relationship work matched":
+            ratio = paired_ratio(
+                [s["NSPerOp"] for s in engines[0]["samples"]], [s["NSPerOp"] for s in engines[1]["samples"]]
+            )
+        rows.append(
+            dict(
+                dataset=result["Dataset"],
+                case=result["Case"],
+                profile=result["Profile"],
+                valid=result["Valid"],
+                status=result["Status"],
+                differences=result.get("Differences") or [],
+                engines=engines,
+                ratio=ratio,
+            )
+        )
+    return dict(
+        created=artifact["Created"],
+        provenance=artifact["Provenance"],
+        policy=artifact["Policy"],
+        repetitions=artifact["Repetitions"],
+        samples=artifact["Samples"],
+        omissions=artifact.get("Omissions") or [],
+        rows=rows,
+    )
+
+
+def render(artifact):
+    return (
+        Path(__file__).with_name("template.html").read_text().replace("__REPORT_DATA__", safe_json(compact(artifact)))
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("input", type=Path)
+    parser.add_argument("output", type=Path)
+    args = parser.parse_args()
+    with args.input.open() as f:
+        artifact = json.load(f)
+    args.output.write_text(render(artifact))
+    print(f"Wrote {args.output}: {len(artifact['Results'])} comparisons")
+
+
+if __name__ == "__main__":
+    main()
 
 ```
 
@@ -772,130 +1080,19 @@ func inputMessagesForService[S any](
 
 ```
 
-### Core Architecture Module: `internal/services/v1/reflectionutil.go`
-```
-package v1
-
-import (
-	"context"
-
-	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
-	"github.com/authzed/spicedb/pkg/datalayer"
-	"github.com/authzed/spicedb/pkg/datastore"
-	"github.com/authzed/spicedb/pkg/diff"
-	"github.com/authzed/spicedb/pkg/middleware/consistency"
-	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
-	"github.com/authzed/spicedb/pkg/schemadsl/input"
-)
-
-func loadCurrentSchema(ctx context.Context) (*diff.DiffableSchema, datastore.Revision, datalayer.SchemaHash, error) {
-	dl := datalayer.MustFromContext(ctx)
-
-	atRevision, schemaHash, _, err := consistency.RevisionFromContext(ctx)
-	if err != nil {
-		return nil, nil, "", err
-	}
-
-	reader := dl.SnapshotReader(atRevision, schemaHash)
-
-	sr, err := reader.ReadSchema(ctx)
-	if err != nil {
-		return nil, atRevision, "", err
-	}
-
-	namespacesAndRevs, err := sr.ListAllTypeDefinitions(ctx)
-	if err != nil {
-		return nil, atRevision, "", err
-	}
-
-	caveatsAndRevs, err := sr.ListAllCaveatDefinitions(ctx)
-	if err != nil {
-		return nil, atRevision, "", err
-	}
-
-	namespaces := make([]*core.NamespaceDefinition, 0, len(namespacesAndRevs))
-	for _, namespaceAndRev := range namespacesAndRevs {
-		namespaces = append(namespaces, namespaceAndRev.Definition)
-	}
-
-	caveats := make([]*core.CaveatDefinition, 0, len(caveatsAndRevs))
-	for _, caveatAndRev := range caveatsAndRevs {
-		caveats = append(caveats, caveatAndRev.Definition)
-	}
-
-	return &diff.DiffableSchema{
-		ObjectDefinitions: namespaces,
-		CaveatDefinitions: caveats,
-	}, atRevision, schemaHash, nil
-}
-
-func schemaDiff(ctx context.Context, comparisonSchemaString string, caveatTypeSet *caveattypes.TypeSet) (*diff.SchemaDiff, *diff.DiffableSchema, *diff.DiffableSchema, error) {
-	existingSchema, _, _, err := loadCurrentSchema(ctx)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Compile the comparison schema.
-	compiled, err := compiler.Compile(compiler.InputSchema{
-		Source:       input.Source("schema"),
-		SchemaString: comparisonSchemaString,
-	}, compiler.AllowUnprefixedObjectType(), compiler.CaveatTypeSet(caveatTypeSet))
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	comparisonSchema := diff.NewDiffableSchemaFromCompiledSchema(compiled)
-
-	diff, err := diff.DiffSchemas(*existingSchema, comparisonSchema, caveatTypeSet)
-	if err != nil {
-		return nil, nil, nil, err
-	}
-
-	// Return the diff.
-	return diff, existingSchema, &comparisonSchema, nil
-}
-
-```
-
-### Core Architecture Module: `internal/services/v1/watchutil.go`
-```
-package v1
-
-import (
-	v1 "github.com/authzed/authzed-go/proto/authzed/api/v1"
-
-	"github.com/authzed/spicedb/pkg/datastore"
-)
-
-func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
-	res := datastore.WatchRelationships
-	for _, kind := range kinds {
-		switch kind {
-		case v1.WatchKind_WATCH_KIND_INCLUDE_RELATIONSHIP_UPDATES:
-			res |= datastore.WatchRelationships
-		case v1.WatchKind_WATCH_KIND_INCLUDE_SCHEMA_UPDATES:
-			res |= datastore.WatchSchema
-		case v1.WatchKind_WATCH_KIND_INCLUDE_CHECKPOINTS:
-			res |= datastore.WatchCheckpoints
-		}
-	}
-	return res
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3424** (2026-10-21): **chore: bump grpc_health_probe to v0.4.60 and the base images for CVE-2026-111943**
-  *Symptoms*: ## What  Bump `grpc_health_probe` to v0.4.60 and the `cgr.dev/chainguard/static` base image in both Dockerfiles to fix CVE-2026-111943 in `crypto/x509`. The development `Dockerfile` also builds SpiceDB with `golang:1.27.3-alpine`.  ## Why  The Trivy scan of the release image now fails on CVE-2026-111943 (HIGH) in two places:  | Component | Installed | Fixed in | |---|---|---| | `grpc_health_probe` (Go stdlib) | v0.4.59, built with Go 1.27.2 | v0.4.60, built with Go 1.27.3 | | `ca-certificates-bundle` in the static base image | 20260413-r1 | 20260909-r3 |  The `spicedb` binary itself isn't affected, because CI builds it with Go 1.26.10. The development `Dockerfile` built it with Go 1.27.1, which is.  ## How  - `Dockerfile.release`: static base digest `sha256:17367e4d…` and `grpc_health_probe` v0.4.60. - `Dockerfile`:   - builder `golang:1.27.3-alpine@sha256:f2c872bc…`;   - the same static base digest;   - `grpc-health-probe:v0.4.60`.  ### Testing  - `go version -m` on the v0.4.60 release binary reports `go1.27.3`. - The development image builds. The same Trivy command as CI (`aquasec/trivy:0.69.3`, `--severity CRITICAL,HIGH,MEDIUM --ignore-unfixed`) reports 0 vulnerabilities for the base image, `grpc_health_probe` and `spicedb`. - The new static base digest on its own also scans clean. 
+- **Issue #3444** (2026-10-30): **feat(query): add reusable planning signals**
+  *Symptoms*: Add a common foundation for query-planner optimizations to learn from previous requests. Each signal declares whether its observations apply to one datastore revision or can be reused across revisions, keeping recommendations tied to compatible data and schema versions.  Retained evidence has explicit memory limits, and estimates stay stable while a plan is being prepared. Schema changes can preserve compatible evidence, reduce its weight, or discard it. This establishes the foundation for subsequent signal-driven optimizations without changing permission results.  Validated with race detection, generated tests for revision isolation and snapshot stability, query and optimizer regression tests, and lint checks. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/authzed/spicedb/pull/3444?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) Report :x: Patch coverage is `90.66986%` with `78 lines` in your changes missing coverage. Please review. | [Files with missing lines](https://app.codecov.io/gh/authzed/spicedb/pull/3444?dropdown=coverage&src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed) | Patch % | Lines | |---|---|---| | [pkg/query/signals/owner.go](https://app.codecov.io/gh/authzed/spicedb/pull/3444?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=authzed#diff-cGtnL3F1ZXJ5L3NpZ25hbHMvb3duZXIuZ28=) | 85.64% | [35 Missing and 14 partials :warning: ](https://app.codecov.io/gh/authzed/spicedb/pull/3444?src=pr&el=tree&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_te
 
-- **Issue #3423** (2026-10-21): **fix(crdb): derive the gc window from the zone config of SpiceDB's relationships**
-  *Symptoms*: ## What  The CockroachDB driver now takes its GC window from the zone configuration of the relationship table, not the cluster-wide `RANGE default`.  ## Why  CockroachDB resolves `gc.ttlseconds` per object: table → database → `RANGE default`. The value resolved for the table is what CockroachDB actually garbage-collects and enforces on reads. SpiceDB only read `RANGE default`, so its window was wrong whenever the database or table had its own TTL:  - **Too narrow.** With `ALTER DATABASE spicedb CONFIGURE ZONE USING gc.ttlseconds = 86400` and the default 4h `RANGE default`, SpiceDB clamped its window to 4h. `CheckRevision` then rejected revisions 4–24h old as stale, even though CockroachDB still served them. - **Too wide.** With the database below a longer `RANGE default`, SpiceDB accepted revisions past the real TTL. Reads then failed with CockroachDB's GC threshold error instead of being rejected as stale.  ## How  - At startup, run `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`). CockroachDB resolves the precedence itself. - Use `min(--datastore-gc-window, resolved TTL)` as the window. - If the query fails, e.g. the table doesn't exist yet, warn and fall back to `RANGE default`, as before. - At startup, log the effective window and the zone that set it: info when the configured window applies, warn when it is lowered. - Accept single-digit `gc.ttlseconds` values in the parser.  Deployments without a database or table zone configurati
+- **Issue #3440** (2026-10-30): **fix(schema): preserve annotations on unchanged definitions during schema writes**
+  *Symptoms*: Fixes #3412  ## Description  Since v1.49.0, every schema write has stripped the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. The write path annotated only definitions with a semantic diff, but then wrote every compiled definition, so unchanged ones replaced their stored, annotated copies. This happens in both the legacy and single-store schema modes.  Without the annotations, permissions that alias a relation are dispatched as separate subproblems, and equivalent permissions stop sharing dispatch cache entries. Affected deployments see more dispatches, higher check latency and more datastore load, with no errors.  ## Changes  - Annotate every definition before writing the schema, not only changed ones. Both storage paths write from the same set of definitions, so this fixes legacy and single-store writes alike. It also repairs datastores that were already stripped: writing the schema again restores the annotations. - Size the BDD operation caches used to compute canonical cache keys to the expression being canonicalized, instead of rudd's 10,000-entry default per cache. Annotating every definition otherwise raised memory allocated per schema write by about 80%; with this change the increase is about 3–5%, and annotation itself is about 40% faster. The caches only memoize operations, so the computed keys are unchanged.  ## Testing  A new test writes a schema, then rewrites it, in all four schema modes, and checks that annotati
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -912,16 +1109,21 @@ func convertWatchKindToContent(kinds []v1.WatchKind) datastore.WatchContent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5fedd8fc` (2026-10-22)
-**Commit Message**: fix(schema): qualify wildcard cache keys by definition (#3421)
+### Incident Patch 1: `2eb05375` (2026-10-29)
+**Commit Message**: fix(schema): preserve annotations on unchanged definitions during schema writes
 
-* fix(schema): qualify wildcard cache keys by definition
+Schema writes passed every compiled definition to WriteSchema, but only
+annotated those with a semantic diff. Unchanged definitions were therefore
+written without their aliasing_relation and canonical_cache_key
+annotations, in both the legacy and unified schema storage paths.
 
-* docs: add changelog entry for wildcard validation fix
+Annotate every definition before writing, which also restores annotations
+on datastores already affected. Size the BDD operation caches used for
+canonical cache keys to the expression, rather than the 10,000-entry
+default, so annotating every definition does not add significant
+allocation.
 
----------
-
-Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
+Fixes #3412
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
@@ -929,597 +1131,878 @@ Co-authored-by: Tanner Stirrat <[REDACTED_EMAIL]>
  
  ## [Unreleased]
  ### Fixed
-+- Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
- - CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
- 
- ## [1.57.0] - 2026-10-20
++- Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
+ - LookupResources and Expand: the read connection pool can no longer deadlock because a request held one connection while waiting for another. LookupResources dispatched further lookups while its relationships query still held its connection, so on a schema of several levels every connection in the pool could end up held by a request waiting for another one. Since client cancellation does not reach the pool, the server stayed stuck until restarted. LookupResources now reads the relationships for each query in full before dispatching, with a single query when the request has no limit, and in pages when it does. Expand over an arrow now reads the schema before reading relationships, instead of once per relationship. With the single-store schema (`--experimental-schema-mode` set to `read-new-write-both` or `read-new-write-new`), caveat and namespace definitions are loaded before relationships are read, which also resolves the caveated LookupResources deadlock reported in the issue. The default legacy schema mode still loads definitions while relationships are being read, and is not fixed by this change. (https://github.com/authzed/spicedb/issues/3433)
+ - Dispatch: LookupResources cursors are now locked to the dispatcher that produced them when secondary dispatchers are configured. Previously a cursor returned by a secondary was never tagged, and LookupResources3 cursors were never checked at all, so every page raced the primary against the secondaries and a cursor produced by one could be sent to the other, failing the request with an invalid cursor error. A cursor without a secondary tag is now resumed by the primary only.
+ - Dispatch and telemetry: CA bundles read from disk via `--dispatch-upstream-ca-path` and the telemetry client's CA path are now re-read on every outbound TLS handshake, so a rotated certificate authority is picked up without a process restart. Previously the CA pool was set once at startup and stayed fixed for the life of the process, causing handshakes to fail with "certificate signed by unknown authority" after the old CA was retired. (https://github.com/authzed/spicedb/pull/3296)
 ```
 
-**File**: `pkg/schema/typesystem_test.go` (modified, +67/-0)
+**File**: `internal/namespace/canonicalization.go` (modified, +5/-1)
 ```diff
-@@ -12,6 +12,7 @@ import (
- 	"github.com/authzed/spicedb/pkg/datastore"
- 	ns "github.com/authzed/spicedb/pkg/namespace"
- 	core "github.com/authzed/spicedb/pkg/proto/core/v1"
-+	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
- )
- 
- func TestTypeSystemConcurrency(t *testing.T) {
-@@ -702,3 +703,69 @@ func TestPossibleTraitsForFilter(t *testing.T) {
- 		})
- 	}
- }
-+
-+// The same relation name in different definitions must have independent wildcard results.
-+func TestWildcardReferencesAcrossDefinitions(t *testing.T) {
-+	compiled, err := compiler.Compile(compiler.InputSchema{
-+		SchemaString: `
-+			definition user {}
-+			definition direct {
-+				relation member: user
-+			}
-+			definition public {
-+				relation member: user:*
-+			}
-+		`,
-+	}, compiler.AllowUnprefixedObjectType())
-+	require.NoError(t, err)
-+
-+	for _, order := range [][]string{{"direct", "public"}, {"public", "direct"}} {
-+		t.Run(fmt.Sprint(order), func(t *testing.T) {
-+			ts := NewTypeSystem(ResolverForSchema(compiled))
-+			for _, name := range order {
-+				def, err := ts.GetDefinition(t.Context(), name)
-+				require.NoError(t, err)
-+				ref, err := ts.referencesWildcardType(t.Context(), def, "member")
-+				require.NoError(t, err)
-+				if name == "direct" {
-+					require.Nil(t, ref)
-+				} else {
-+					require.NotNil(t, ref)
-+					require.Equal(t, "public", ref.ReferencingRelation.Namespace)
-+					require.Equal(t, "member", ref.ReferencingRelation.Relation)
-+					require.Equal(t, "user", ref.WildcardType.Namespace)
-+				}
-+			}
-+		})
-+	}
-+}
-+
-+func TestTransitiveWildcardValidationAfterUnrelatedDefinition(t *testing.T) {
-+	compiled, err := compiler.Compile(compiler.InputSchema{
-+		SchemaString: `
-+			definition ty0 {
-+				relation rel0: ty3#rel0
-+				relation rel1: ty2#rel1
-+			}
-+			definition ty1 {
-+				relation rel0: ty0
-+			}
-+			definition ty2 {
-+				relation rel1: ty1#rel0
-+			}
-+			definition ty3 {
-+				relation rel0: ty0:*
-+			}
-+		`,
-+	}, compiler.AllowUnprefixedObjectType())
-+	require.NoError(t, err)
-+
-+	ts := NewTypeSystem(ResolverForSchema(compiled))
-+	// Validating ty2 first caches a negative wildcard result for ty1#rel0.
-+	_, err = ts.GetValidatedDefinition(t.Context(), "ty2")
-+	require.NoError(t, err)
-+
-+	// That result must not hide the wildcard in ty3#rel0 when validating ty0.
-+	_, err = ts.GetValidatedDefinition(t.Context(), "ty0")
-+	require.ErrorContains(t, err, "wildcard relations cannot be transitively included")
-+}
-```
-
-**File**: `pkg/schema/typesystem_validation.go` (modified, +4/-2)
-```diff
-@@ -303,7 +303,9 @@ func (ts *TypeSystem) referencesWildcardTypeWithEncountered(ctx context.Context,
- 		ts.wildcardCheckCache = make(map[string]*WildcardTypeReference, 1)
+@@ -67,7 +67,11 @@ func computeCanonicalCacheKeys(typeDef *schema.ValidatedDefinition, aliasMap map
+ 		return map[string]string{}, nil
  	}
  
--	cached, isCached := ts.wildcardCheckCache[relationName]
-+	// Relation names are only unique within a definition.
-+	relString := tuple.JoinRelRef(def.nsDef.Name, relationName)
-+	cached, isCached := ts.wildcardCheckCache[relString]
- 	if isCached {
- 		return cached, nil
- 	}
-@@ -313,7 +315,7 @@ func (ts *TypeSystem) referencesWildcardTypeWithEncountered(ctx context.Context,
+-	bdd, err := rudd.New(varMap.Len())
++	// The default operation cache holds 10,000 entries per cache, far more than the small
++	// expressions of a single definition need, and is allocated anew for every definition
++	// annotated. Instead, size the caches to match the node table and grow alongside it.
++	// The caches only memoize operations, so their size does not affect the resulting keys.
++	bdd, err := rudd.New(varMap.Len(), rudd.Cachesize(2*varMap.Len()+2), rudd.Cacheratio(100))
+ 	if err != nil {
  		return nil, err
  	}
+```
+
+**File**: `internal/services/shared/schema.go` (modified, +12/-9)
+```diff
+@@ -192,17 +192,20 @@ func ApplySchemaChangesOverExisting(
+ 			return nil, err
+ 		}
  
--	ts.wildcardCheckCache[relationName] = computed
-+	ts.wildcardCheckCache[relString] = computed
- 	return computed, nil
- }
+-		if len(diff.Deltas()) > 0 {
+-			objectDefsWithChanges = append(objectDefsWithChanges, nsdef)
++		// Annotate every definition, not only changed ones: the non-additive path below
++		// writes all compiled definitions, so an unannotated copy of an unchanged
++		// definition would overwrite the stored, annotated one.
++		vts, ok := validated.validatedDefinitions[nsdef.Name]
++		if !ok {
++			return nil, spiceerrors.MustBugf("validated type system not found for namespace `%s`", nsdef.Name)
++		}
  
+-			vts, ok := validated.validatedDefinitions[nsdef.Name]
+-			if !ok {
+-				return nil, spiceerrors.MustBugf("validated type system not found for namespace `%s`", nsdef.Name)
+-			}
++		if err := namespace.AnnotateNamespace(vts); err != nil {
++			return nil, err
++		}
+ 
+-			if err := namespace.AnnotateNamespace(vts); err != nil {
+-				return nil, err
+-			}
++		if len(diff.Deltas()) > 0 {
++			objectDefsWithChanges = append(objectDefsWithChanges, nsdef)
+ 		}
+ 	}
+ 
+```
+
+**File**: `internal/services/shared/schema_annotations_test.go` (added, +163/-0)
+```diff
+@@ -0,0 +1,163 @@
++package shared
++
++import (
++	"context"
++	"strings"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/authzed/spicedb/internal/datastore/dsfortesting"
++	"github.com/authzed/spicedb/internal/datastore/memdb"
++	caveattypes "github.com/authzed/spicedb/pkg/caveats/types"
++	"github.com/authzed/spicedb/pkg/datalayer"
++	"github.com/authzed/spicedb/pkg/datastore"
++	"github.com/authzed/spicedb/pkg/schemadsl/compiler"
++	"github.com/authzed/spicedb/pkg/schemadsl/input"
++)
++
++const annotationsTestSchema = `
++definition user {}
++
++definition document {
++	relation viewer: user
++	permission view = viewer
++	permission read = viewer
++}`
++
++// TestApplySchemaChangesPreservesAnnotations ensures that rewriting a schema does not
++// strip the aliasing_relation and canonical_cache_key annotations from definitions
++// that are unchanged, and that a rewrite restores them if they are missing.
++// See https://github.com/authzed/spicedb/issues/3412
++func TestApplySchemaChangesPreservesAnnotations(t *testing.T) {
++	modes := []datalayer.SchemaMode{
++		datalayer.SchemaModeReadLegacyWriteLegacy,
++		datalayer.SchemaModeReadLegacyWriteBoth,
++		datalayer.SchemaModeReadNewWriteBoth,
++		datalayer.SchemaModeReadNewWriteNew,
++	}
++
++	tcs := []struct {
++		name               string
++		seedUnannotated    bool
++		secondSchema       string
++		expectedAliasing   int
++		expectedCanonicals int
++	}{
++		{
++			name:               "identical rewrite",
++			secondSchema:       annotationsTestSchema,
++			expectedAliasing:   2,
++			expectedCanonicals: 3,
++		},
++		{
++			name:               "rewrite adding another definition",
++			secondSchema:       annotationsTestSchema + "\n\ndefinition folder {\n\trelation owner: user\n}",
++			expectedAliasing:   2,
++			expectedCanonicals: 3,
++		},
++		{
++			name:               "identical rewrite repairs unannotated definitions",
++			seedUnannotated:    true,
++			secondSchema:       annotationsTestSchema,
++			expectedAliasing:   2,
++			expectedCanonicals: 3,
++		},
++	}
++
++	for _, mode := range modes {
++		for _, tc := range tcs {
++			t.Run(mode.String()+"/"+tc.name, func(t *testing.T) {
++				require := require.New(t)
++				rawDS, err := dsfortesting.NewMemDBDatastoreForTesting(t, 0, 0, memdb.DisableGC)
++				require.NoError(err)
++				dl := datalayer.NewDataLayer(rawDS, datalayer.WithSchemaMode(mode))
++
++				compile := func(schema string) *compiler.CompiledSchema {
++					compiled, err := compiler.Compile(compiler.InputSchema{
++						Source:       input.Source("schema"),
++						SchemaString: schema,
++					}, compiler.AllowUnprefixedObjectType())
++					require.NoError(err)
++					return compiled
++				}
++
++				readAnnotations := func() map[string]string {
++					annotations := map[string]string{}
++					_, err := dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
++						sr, err := rwt.ReadSchema(ctx)
++						require.NoError(err)
++						def, found, err := sr.LookupTypeDefByName(ctx, "document")
++						require.NoError(err)
++						require.True(found)
++						for _, rel := range def.Definition.Relation {
++							if rel.AliasingRelation != "" {
++								annotations[rel.Name+"#alias"] = rel.AliasingRelation
++							}
++							if rel.CanonicalCacheKey != "" {
++								annotations[rel.Name+"#key"] = rel.CanonicalCacheKey
++							}
++						}
++						return nil
++					})
++					require.NoError(err)
++					return annotations
++				}
++
++				countAnnotations := func(annotations map[string]string) (aliasing, canonicals int) {
++					for k := range annotations {
++						if strings.HasSuffix(k, "#alias") {
++							aliasing++
++						} else {
++							canonicals++
++						}
++					}
++					return aliasing, canonicals
++				}
++
++				// Seed the starting schema, either through the normal write path or, to
++				// simulate a datastore stripped by the bug, by writing unannotated definitions.
++				compiled := compile(annotationsTestSchema)
++				_, err = dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
++					if tc.seedUnannotated {
++						defs := make([]datastore.SchemaDefinition, 0, len(compiled.ObjectDefinitions))
++						for _, def := range compiled.ObjectDefinitions {
++							defs = append(defs, def)
++						}
++						_, err := rwt.WriteSchema(ctx, defs, annotationsTestSchema, caveattypes.Default.TypeSet)
++						return err
++					}
++
++					validated, err := ValidateSchemaChanges(ctx, compiled, caveattypes.Default.TypeSet, false, annotationsTestSchema)
++					require.NoError(err)
++					_, err = ApplySchemaChanges(ctx, rwt, caveattypes.Default.TypeSet, validated)
++					return err
++				})
++				require.NoError(err)
++
++				startingAnnotations := readAnnotations()
++				if tc.seedUnannotated {
++					require.Empty(startingAnnotations)
++				}
++
++				_, err = dl.ReadWriteTx(t.Context(), func(ctx context.Context, rwt datalayer.ReadWriteTransaction) error {
++					validated, err := ValidateSchemaChanges(ctx, compile(tc.secondSchema), caveattypes.Default.TypeS
 ```
 
 ---
 
-### Incident Patch 2: `048889c6` (2026-10-21)
-**Commit Message**: fix(crdb): derive the gc window from the zone config of SpiceDB's relationships (#3423)
+### Incident Patch 2: `a87308b0` (2026-10-30)
+**Commit Message**: docs(query): distinguish signal identity from canonical keys
 
-At startup the CockroachDB driver lowered --datastore-gc-window to the
-gc.ttlseconds of RANGE default. CockroachDB resolves gc.ttlseconds per
-object (partition, index, table, database, then RANGE default), and both
-garbage collection and strict GC enforcement apply the TTL resolved for
-the table. A database configured with
-
-    ALTER DATABASE spicedb CONFIGURE ZONE USING gc.ttlseconds = 86400;
-
-on a cluster whose RANGE default is CockroachDB's built-in 4h retains 24h
-of history, yet SpiceDB clamped its window to 4h and CheckRevision
-rejected revisions 4-24h old as stale. Conversely, a database configured
-below a longer RANGE default kept SpiceDB's window too wide, and reads
-past the real TTL failed with CockroachDB's GC threshold error instead
-of being rejected as stale.
-
-The driver now reads SHOW ZONE CONFIGURATION FROM TABLE for the
-relationship table, for which CockroachDB resolves table, database and
-RANGE default precedence, and uses that TTL capped at the configured
-window. If the zone configuration cannot be read, it falls back to the
-RANGE default value as before.
-
-The gc.ttlseconds par
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `pkg/query/signals/signal/execution.go` (modified, +2/-0)
 ```diff
-@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
- The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+@@ -38,6 +38,8 @@ const (
+ // ExecutionKey identifies an observed execution population independently of dispatch keys.
+ type ExecutionKey struct {
+ 	// Identity is the full structural identity of the observed subtree.
++	// It must include all descendants, unlike query.CanonicalKey, which omits
++	// children of caveat nodes.
+ 	Identity string
  
- ## [Unreleased]
-+### Fixed
-+- CockroachDB: the GC window is now derived from the zone configuration that applies to SpiceDB's relationship table instead of the cluster-wide `RANGE default`. SpiceDB reads `SHOW ZONE CONFIGURATION FROM TABLE relation_tuple` (or `relation_tuple_with_integrity`), for which CockroachDB resolves table, database and `RANGE default` precedence, and caps `--datastore-gc-window` at that TTL. Previously a database configured with `ALTER DATABASE ... CONFIGURE ZONE USING gc.ttlseconds = 86400` on a cluster with the default 4h `RANGE default` rejected revisions older than 4h as stale, and a database configured below a longer `RANGE default` kept a window wider than the data's real TTL, so reads past it failed with CockroachDB's GC threshold error instead of being rejected as stale. If the table's zone configuration cannot be read, the `RANGE default` value is used as before. A single-digit `gc.ttlseconds` is now also parsed correctly.
- 
- ## [1.57.0] - 2026-10-20
- ### Added
+ 	// Operation identifies the execution operation represented by evidence.
 ```
 
-**File**: `internal/datastore/crdb/crdb.go` (modified, +64/-17)
+---
+
+### Incident Patch 3: `8e3a1226` (2026-10-30)
+**Commit Message**: fix(query): harden signal storage bounds and lifecycle coverage
+
+**File**: `pkg/query/signals/README.md` (added, +74/-0)
 ```diff
-@@ -44,7 +44,7 @@ var ParseRevisionString = revisions.RevisionParser(revisions.HybridLogicalClock)
- var (
- 	psql = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
- 
--	gcTTLRegex = regexp.MustCompile(`gc\.ttlseconds\s*=\s*([1-9][0-9]+)`)
-+	gcTTLRegex = regexp.MustCompile(`gc\.ttlseconds\s*=\s*([0-9]+)`)
- 
- 	tracer = otel.Tracer("spicedb/internal/datastore/crdb")
- )
-@@ -59,6 +59,7 @@ const (
- 	queryTransactionNowPreV23 = querySelectNow
- 	queryTransactionNow       = "SHOW COMMIT TIMESTAMP"
- 	queryShowZoneConfig       = "SHOW ZONE CONFIGURATION FOR RANGE default;"
-+	queryShowTableZoneConfig  = "SHOW ZONE CONFIGURATION FROM TABLE %s;"
- 
- 	spicedbTransactionKey = "$spicedb_transaction_key"
- )
-@@ -158,19 +159,11 @@ func newCRDBDatastore(ctx context.Context, url string, options ...Option) (datas
- 		transactionNowQuery = queryTransactionNowPreV23
- 	}
- 
--	clusterTTLNanos, err := readClusterTTLNanos(initCtx, initPool)
-+	gcWindow, err := resolveGCWindow(initCtx, initPool, config.gcWindow, config.withIntegrity)
- 	if err != nil {
- 		return nil, fmt.Errorf("unable to read cluster gc window: %w", err)
- 	}
--
--	gcWindowNanos := config.gcWindow.Nanoseconds()
--	if clusterTTLNanos < gcWindowNanos {
--		log.Warn().
--			Int64("cockroach_cluster_gc_window_nanos", clusterTTLNanos).
--			Int64("spicedb_gc_window_nanos", gcWindowNanos).
--			Msg("configured CockroachDB cluster gc window is less than configured SpiceDB gc window, falling back to CRDB value. See " + sharederrors.CrdbGcWindowErrorLink)
--		config.gcWindow = time.Duration(clusterTTLNanos) * time.Nanosecond
--	}
-+	config.gcWindow = gcWindow
- 
- 	// If watch is enabled, ensure the relationship tables suppress row-level TTL
- 	// deletes from changefeeds, so that the Watch API does not emit deletions
-@@ -750,26 +743,80 @@ func (cds *crdbDatastore) readTransactionCommitRev(ctx context.Context, reader p
- 	return revisions.NewForHLC(hlcNow)
- }
- 
--func readClusterTTLNanos(ctx context.Context, conn pgxcommon.DBFuncQuerier) (int64, error) {
--	var target, configSQL string
-+type zoneGCTTL struct {
-+	target string
-+	ttl    time.Duration
-+}
+@@ -0,0 +1,74 @@
++# Planning signals
 +
-+func resolveGCWindow(ctx context.Context, conn pgxcommon.DBFuncQuerier, configured time.Duration, withIntegrity bool) (time.Duration, error) {
-+	relationTable := schema.TableTuple
-+	if withIntegrity {
-+		relationTable = schema.TableTupleWithIntegrity
-+	}
++Signals store observations that can inform query-planner choices. Each provider
++owns a named definition, typed population key, observation and estimate, and an
++accumulator. This package supplies registration, bounded storage and scoped reads;
++it does not change query execution or enable a particular optimization.
 +
-+	var effective time.Duration
-+	var rangeDefault zoneGCTTL
-+	dataZone, dataErr := readZoneGCTTL(ctx, conn, fmt.Sprintf(queryShowTableZoneConfig, relationTable))
-+	if dataErr == nil {
-+		effective = min(configured, dataZone.ttl)
-+	} else {
-+		var err error
-+		rangeDefault, err = readZoneGCTTL(ctx, conn, queryShowZoneConfig)
-+		if err != nil {
-+			return 0, err
-+		}
-+		log.Warn().Err(dataErr).Str("table", relationTable).Msg("unable to read the CockroachDB zone configuration of the relationship table, falling back to RANGE default")
-+		effective = min(configured, rangeDefault.ttl)
-+	}
++## Registration and scope
 +
-+	event, msg := log.Info(), "using configured SpiceDB gc window, covered by the CockroachDB gc window"
-+	if effective < configured {
-+		event, msg = log.Warn(), "configured CockroachDB cluster gc window is less than configured SpiceDB gc window, falling back to CRDB value. See "+sharederrors.CrdbGcWindowErrorLink
-+	}
-+	if dataErr == nil {
-+		event = event.
-+			Int64("cockroach_data_gc_window_nanos", dataZone.ttl.Nanoseconds()).
-+			Str("cockroach_data_zone_target", dataZone.target)
-+	} else {
-+		event = event.Int64("cockroach_cluster_gc_window_nanos", rangeDefault.ttl.Nanoseconds())
-+	}
-+	event.
-+		Int64("spicedb_gc_window_nanos", configured.Nanoseconds()).
-+		Int64("effective_gc_window_nanos", effective.Nanoseconds()).
-+		Msg(msg)
-+	return effective, nil
-+}
- 
-+func readZoneGCTTL(ctx context.Context, conn pgxcommon.DBFuncQuerier, query string) (zoneGCTTL, error) {
-+	var target, configSQL string
- 	if err := conn.QueryRowFunc(ctx, func(ctx context.Context, row pgx.Row) error {
- 		return row.Scan(&target, &configSQL)
--	}, queryShowZoneConfig); err != nil {
--		return 0, err
-+	}, query); err != nil {
-+		return zoneGCTTL{}, err
- 	}
- 
-+	ttl, err := parseGCTTL(configSQL)
-+	if err != nil {
-+		return zoneGCTTL{}, fmt.Errorf("zone config of %s: %w", target, err)
-+	}
-+	return zoneGCTTL{target: target, ttl: ttl}, nil
-+}
++Construct descriptors with `signal.NewSource` or `signal.NewDerived`, register
++all dependencies, and create one `Owner` for the datalayer using `NewOwner`.
++Registration rejects duplicate names, incompatible bindings and dependency cycles.
++Freeze a registry before sharing it concurrently. Provider callbacks must follow
++the accumulator contract: clones and returned values are independent snapshots.
 +
-+func parseGCTTL(configSQL string) (time.Duration, error) {
- 	groups := gcTTLRegex.FindStringSubmatch(configSQL)
--	if groups == nil || len(groups) != 2 {
-+	if len(groups) != 2 {
- 		return 0, errors.New("CRDB zone config unexpected format")
- 	}
- 
- 	gcSeconds, err := strconv.ParseInt(groups[1], 10, 64)
- 	if err != nil {
- 		return 0, err
- 	}
-+	if gcSeconds <= 0 {
-+		return 0, fmt.Errorf("CRDB zone config has invalid gc.ttlseconds %d", gcSeconds)
-+	}
- 
--	return gcSeconds * 1_000_000_000, nil
-+	return time.Duration(gcSeconds) * time.Second, nil
- }
- 
- func (cds *crdbDatastore) registerPrometheusCollectors(enablePrometheusStats bool) error {
++Bind the owner to a loaded stored schema and the request's selected datastore
++revision. A provider explicitly chooses `RevisionBound` or `CrossRevision`:
++
++- Revision-bound evidence stays at that exact revision, including a quantized
++  revision selected for checks. Neighboring revisions do not share that evidence.
++- Cross-revision evidence can be reused within the same schema. Its provider owns
++  aging and availability; storage does not infer how much the data changed.
++- On a schema change, only cross-revision providers with an explicit compatibility
++  callback can transfer evidence. `signal.Unchanged` compares their declared
++  dependencies against the schema diff. A transfer may retain, discount or reset
++  evidence. It preserves observation times but starts a distinct publication epoch.
++
++For example, checks of `document:report#view@user:alice` at revision R may record
++an observation under a population key for the `document#view` subtree. A second
++subject can contribute to the same population if the provider's key excludes the
++subject. A revision-bound lookup at R+1 is missing; a cross-revision provider may
++return historical evidence. Adding an unrelated schema definition can preserve
++that historical evidence, while changing a declared dependency resets it.
++
++Consumers use `signal.Observe(view, input, key, observation)` and
++`signal.Lookup(view, reference, key)`. Check `estimate.IsAvailable()` before using
++the value. Missing, expired and disabled evidence are distinct from a measured
++zero. `LookupFirst` tries compatible references in order and reports which one
++supplied the first available estimate; a lookup error stops that search.
++
++`view.ForPlan()` memoizes each population's first independent snapshot for one
++planning run. Further observations or store eviction cannot change that snapshot.
++Different populations are read independently, not as one transactional snapshot.
++
++## Ownership and bounds
++
++Defaults are 16 MiB total estimated resident storage, 256 KiB per entry, four
++schemas, 64 exact revisions per schema, and 64 weak owner handles per stored
++schema. Options can override these limits. Storage accounts for retained schemas,
++entry and key storage, dependency footprints, and accumulator-reported bytes.
++Providers must include all their retained state in `Size()`.
++
++Keys support scalar values, strings, and arrays or structs recursively containing
++those values. Struct fields must be exported. Pointers, interfaces, channels and
++other reference graphs are rejected, as are nonreflexive values such as NaN.
++Retained keys and footprint strings are copied so a substring cannot retain an
++unaccounted backing buffer. Footprint slices are copied before retention.
++
++Oversized or evicted evidence becomes unavailable; it does not affect permission
++semantics. The schema cache holds only bounded weak owner references. Owners and
++schemas do not leak learning state between independent datalayers. Legacy readers
++can use an isolated local view instead of a shared stored-schema attachment.
++
++Derived providers consume accepted source increments in dependency order, not
++cumulative snapshots. Source publication is serialized through derived delivery.
++They cannot be written directly through the public observation API.
++
++## Tests
++
++Package tests use synthetic providers and stored-schema fixtures to cover scope
++isolation, publication, snapshots, eviction, schema compatibility and concurrency.
++The shared `internal/querysignalstest` helpers provide a fake clock and schema
++builders for provider-specific tests. Numeric distribution helpers are tested in
++`signal` without depending on a built-in provider.
 ```
 
-**File**: `internal/datastore/crdb/crdb_test.go` (modified, +114/-0)
+**File**: `pkg/query/signals/key.go` (added, +144/-0)
 ```diff
-@@ -1027,3 +1027,117 @@ func TestVersionReading(t *testing.T) {
- 	require.Equal(expectedMinor, version.Minor)
- 	require.Equal(expectedPatch, version.Patch)
- }
-+
-+func TestEffectiveGCWindowFromZoneConfig(t *testing.T) {
-+	t.Parallel()
-+
-+	// Owns its container, so changing RANGE default cannot affect other tests.
-+	b := testdatastore.RunCRDBForTesting(t, crdbTestVersion())
-+
-+	const (
-+		dbZone24h    = "ALTER DATABASE %[1]s CONFIGURE ZONE USING gc.ttlseconds = 86400"
-+		dbZone4h     = "ALTER DATABASE %[1]s CONFIGURE ZONE USING gc.ttlseconds = 14400"
-+		tableZone24h = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 86400"
-+		tableZone6h  = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 21600"
-+		tableZone4h  = "ALTER TABLE %[1]s.relation_tuple CONFIGURE ZONE USING gc.ttlseconds = 14400"
-+	)
-+
-+	type zoneCase struct {
-+		name           string
-+		zoneStatements []string
-+		skipMigrations bool
-+		expectedWindow time.Duration
-+	}
-+
-+	groups := []struct {
-+		rangeDefaultSeconds int
-+		cases               []zoneCase
-+	}{
-+		{
-+			rangeDefaultSeconds: 14400,
-+			cases: []zoneCase{
-+				{name: "database 24h", zoneStatements: []string{dbZone24h}, expectedWindow: 24 * time.Hour},
-+				{name: "database 24h, table 6h", zoneStatements: []string{dbZone24h, tableZone6h}, expectedWindow: 6 * time.Hour},
-+				{name: "no zones", expectedWindow: 4 * time.Hour},
-+				{name: "database 4h, table 24h", zoneStatements: []string{dbZone4h, tableZone24h}, expectedWindow: 24 * time.Hour},
-+				{name: "table missing falls back to range default", zoneStatements: []string{dbZone24h}, skipMigrations: true, expectedWindow: 4 * time.Hour},
-+			},
-+		},
-+		{
-+			rangeDefaultSeconds: 86400,
-+			cases: []zoneCase{
-+				{name: "database 4h", zoneStatements: []string{dbZone4h}, expectedWindow: 4 * time.Hour},
-+				{name: "table 4h", zoneStatements: []string{tableZone4h}, expectedWindow: 4 * time.Hour},
-+				{name: "no zones", expectedWindow: 24 * time.Hour},
-+			},
-+		},
-+	}
-+
-+	applyZones := func(t *testing.T, uri string, statements []string) {
-+		ctx := t.Context()
-+		conn, err := pgx.Connect(ctx, uri)
-+		require.NoError(t, err)
-+		defer conn.Close(ctx)
-+
-+		var dbName string
-+		require.NoError(t, conn.QueryRow(ctx, "SELECT current_database()").Scan(&dbName))
-+		for _, stmt := range statements {
-+			_, err := conn.Exec(ctx, fmt.Sprintf(stmt, dbName))
-+			require.NoError(t, err)
-+		}
-+	}
-+
-+	newDatastore := func(t *testing.T, uri string) *crdbDatastore {
-+		ds, err := newCRDBDatastore(t.Context(), uri, GCWindow(24*time.Hour), WithAcquireTimeout(5*time.Second))
-+		require.NoError(t, err)
-+		t.Cleanup(func() {
-+			_ = ds.Close()
-+		})
-+		cds, ok := ds.(*crdbDatastore)
-+		require.True(t, ok)
-+		return cds
-+	}
-+
-+	// Groups run sequentially: RANGE default is cluster-wide.
-+	for _, group := range groups {
-+		t.Run(fmt.Sprintf("range default %ds", group.rangeDefaultSeconds), func(t *testing.T) {
-+			conn, err := pgx.Connect(t.Context(), b.NewDatabase(t))
-+			require.NoError(t, err)
-+			_, err = conn.Exec(t.Context(), fmt.Sprintf("ALTER RANGE default CONFIGURE ZONE USING gc.ttlseconds = %d", group.rangeDefaultSeconds))
-+			require.NoError(t, err)
-+			require.NoError(t, conn.Close(t.Context()))
-+
-+			for _, tc := range group.cases {
-+				t.Run(tc.name, func(t *testing.T) {
-+					var cds *crdbDatastore
-+					if tc.skipMigrations {
-+						uri := b.NewDatabase(t)
-+						applyZones(t, uri, tc.zoneStatements)
-+						cds = newDatastore(t, uri)
-+					} else {
-+						b.NewDatastore(t, func(_, uri string) datastore.Datastore {
-+							applyZones(t, uri, tc.zoneStatements)
-+							cds = newDatastore(t, uri)
-+							return cds
-+						})
-+					}
-+
-+					require.Equal(t, tc.expectedWindow, cds.gcWindow)
-+
-+					ctx := t.Context()
-+					justInside := revisions.NewHLCForTime(time.Now().Add(-tc.expectedWindow + 10*time.Minute))
-+					require.NoError(t, cds.CheckRevision(ctx, justInside))
-+					justOutside := revisions.NewHLCForTime(time.Now().Add(-tc.expectedWindow - 10*time.Minute))
-+					requireStale(t, cds.CheckRevision(ctx, justOutside))
-+				})
-+			}
-+		})
-+	}
-+}
-+
-+func requireStale(t *testing.T, err error) {
-+	t.Helper()
-+	var irErr datastore.InvalidRevisionError
-+	require.ErrorAs(t, err, &irErr)
-+	require.Equal(t, datastore.RevisionStale, irErr.Reason())
-+}
-```
-
-**File**: `internal/datastore/crdb/gcwindow_test.go` (added, +219/-0)
-```diff
-@@ -0,0 +1,219 @@
-+package crdb
+@@ -0,0 +1,144 @@
++package signals
 +
 +import (
-+	"context"
 +	"errors"
-+	"testing"
-+	"time"
++	"reflect"
++	"strings"
 +
-+	"github.com/jackc/pgx/v5"
-+	"github.com/jackc/pgx/v5/pgconn"
-+	"github.com/stretchr/testify/require"
++	"github.com/ccoveille/go-safecast/v2"
++
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
 +)
 +
-+func TestParseGCTTL(t *testing.T) {
-+	t.Parallel()
-+
-+	tcs := []struct {
-+		name      string
-+		configSQL string
-+		expected  time.Duration
-+		expectErr bool
-+	}{
-+		{
-+			name: "range default",
-+			configSQL: `ALTER RANGE default CONFIGURE ZONE USING
-+	range_min_bytes = 134217728,
-+	range_max_bytes = 536870912,
-+	gc.ttlseconds = 14400,
-+	num_replicas = 3,
-+	constraints = '[]',
-+	lease_preferences = '[]'`,
-+			expected: 4 * time.Hour,
-+		},
-+		{
-+			name: "multi-region regional by row table",
-+			configSQL: `ALTER TABLE relation_tuple CONFIGURE ZONE USING
-+	range_min_bytes = 134217728,
-+	range_max_bytes = 536870912,
-+	gc.ttlseconds = 86400,
-+	num_replicas = 5,
-+	num_voters = 3,
-+	constraints = '{+region=us-east1: 1, +region=us-west1: 1}',
-+	voter_constraints = '[+region=us-east1]',
-+	lease_preferences = '[[+region=us-east1]]'`,
-+			expected: 24 * time.Hour,
-+		},
-+		{
-+			name:      "single digit",
-+			configSQL: "ALTER TABLE u CONFIGURE ZONE USING gc.ttlseconds = 7",
-+			expected:  7 * time.Second,
-+		},
-+		{
-+			name:      "no spaces",
-+			configSQL: "ALTER DATABASE d CONFIGURE ZONE USING gc.ttlseconds=600",
-+			expected:  10 * time.Minute,
-+		},
-+		{
-+			name:      "zero",
-+			configSQL: "ALTER RANGE default CONFIGURE ZONE USING gc.ttlseconds = 0",
-+			expectErr: true,
-+		},
-+		{
-+			name:      "missing",
-+			configSQL: "ALTER RANGE default CONFIGURE ZONE USING num_replicas = 3",
-+			expectErr: true,
-+		},
-+	}
-+
-+	for _, tc := range tcs {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			ttl, err := parseGCTTL(tc.configSQL)
-+			if tc.expectErr {
-+				require.Error(t, err)
-+				return
++// Value-only keys make retention predictable: no mutable object graph can hide
++// behind a pointer or interface. Exported fields let the store own string data.
++func supportedKey(t reflect.Type) bool {
++	switch t.Kind() {
++	case reflect.Bool, reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
++		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr,
++		reflect.Float32, reflect.Float64, reflect.Complex64, reflect.Complex128, reflect.String:
++		return true
++	case reflect.Array:
++		return supportedKey(t.Elem())
++	case reflect.Struct:
++		for i := range t.NumField() {
++			f := t.Field(i)
++			if !f.IsExported() || !supportedKey(f.Type) {
++				return false
 +			}
-+			require.NoError(t, err)
-+			require.Equal(t, tc.expected, ttl)
-+		})
++		}
++
++		return true
++	default:
++		return false
 +	}
 +}
 +
-+type fakeZoneQuerier struct {
-+	zones   map[string]zoneResult
-+	queried []string
-+}
-+
-+type zoneResult struct {
-+	target    string
-+	configSQL string
-+	err       error
-+}
-+
-+func (f *fakeZoneQuerier) ExecFunc(context.Context, func(context.Context, pgconn.CommandTag, error) error, string, ...any) error {
-+	return errors.New("not implemented")
-+}
-+
-+func (f *fakeZoneQuerier) QueryFunc(context.Context, func(context.Context, pgx.Rows) error, string, ...any) error {
-+	return errors.New("not implemented")
-+}
-+
-+func (f *fakeZoneQuerier) QueryRowFunc(ctx context.Context, rowFunc func(context.Context, pgx.Row) error, sql string, _ ...any) error {
-+	f.queried = append(f.queried, sql)
-+	res, ok := f.zones[sql]
-+	if !ok {
-+		return &pgconn.PgError{Code: "42P01", Message: "relation does not exist"}
++func validateKey(key any, expected reflect.Type) error {
++	if reflect.TypeOf(key) != expected || !reflect.ValueOf(key).Comparable() {
++		return errors.New("invalid signal key type")
 +	}
-+	if res.err != nil {
-+		return res.err
++
++	// NaN, including a NaN inside an array or struct, cannot be found or deleted
++	// from a map. Reject it before lookup as well as before admission.
++	if !reflect.ValueOf(key).Equal(reflect.ValueOf(key)) {
++		return errors.New("nonreflexive signal key")
 +	}
-+	return rowFunc(ctx, fakeZoneRow(res))
-+}
 +
-+type fakeZoneRow zoneResult
-+
-+func (r fakeZoneRow) Scan(dest ...any) error {
-+	*dest[0].(*string) = r.target
-+	*dest[1].(*string) = r.configSQL
 +	return nil
 +}
 +
-+func TestResolveGCWindow(t *testing.T) {
-+	t.Parallel()
++func ownedKey(value reflect.Value) reflect.Value {
++	switch value.Kind() {
++	case reflect.String:
++		snapshot := reflect.New(value.Type()).Elem()
++		snapshot.SetString(strings.Clone(value.String()))
++		return snapshot
++	case reflect.Struct:
++		snapshot := reflect.New(value.Type()).Elem()
 +
-+	const (
-+		tableQuery          = "SHOW ZONE CONFIGURATION FROM TABLE relation_tuple;"
-+		integrityTableQuery = "SHOW ZONE CONFIGURATION FROM TABLE relation_tuple_with_integrity;"
-+		rangeQuery          = queryShowZoneConfig
-+	)
-+	zone := func(target string, seconds string) zoneResult {
-+		return zoneResult{target: target, configSQL: "ALTER ... CONFIGURE ZONE USING gc.ttlseconds = " + seconds}
++		for i := range value.NumField() {
++			snapshot.Field(i).Set(ownedKey(value.Field(i)))
++		}
++
++		return snapshot
++	case reflect.Array:
++		snapshot := reflect.New(value.Type()).Elem()
++
++		for i := range value.Len() {
++			snapshot.Index(i).Set(ownedKey(value.Index(i)))
++		}
++
++		return snapshot
++	default:
++		return value
++	}
++}
++
++// String headers and inline fields are in Type.Size; only backing bytes are extra.
++func keyStringBytes(value reflect.Value) int64 {
++	switch value.Kind() {
++	case reflect.String:
++		return int64(value.Len())
++	case reflect.Struct:
++		var size int64
++
++		for i := range value.NumField() {
++			size += keyStringBytes(value.Field(i))
++		}
++
++		return size
++	case reflect.Array:
++		var size int64
++
++		for i := range value.Len() {
++			size += keyStringBytes(value.Index(i))
++		}
++
++		return size
++	default:
++		return 0
++	}
++}
++
++func ownedFootprint(f signal.Footprint) signal.Footprint {
++	result := signal.Footprint{
++		Elements: make([]signal.Element, len(f.Elements)),
++		Caveats:  make([]string, len(f.Caveats)),
 +	}
 +
-+	tcs := []struct {
-+		name              string
-+		withIntegrity     bool
-+		zones             map[string]zoneResult
-+		expectedWindow    time.Duration
-+		expectedQueries   []string
-+		expectedErrString string
-+	}{
-+		{
-+			name:            "database zone above range default",
-+			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "86400"), rangeQuery: zone("RANGE default", "14400")},
-+			expectedWindow:  24 * time.Hour,
-+			expectedQueries: []string{tableQuery},
++	for i, e := range f.Elements {
++		result.Elements[i] = signal.Element{
++			Namespace: strings.Clone(e.Namespace),
++			Relation:  strings.Clone(e.Relation),
++		}
++	}
++
++	for i, name := range f.Caveats {
++		result.Caveats[i] = strings.Clone(name)
++	}
++
++	return result
++}
++
++func entryCost(key entryKey, state signal.State, footprint signal.Footprint) int64 {
++	// Include map/entry overhead, retained names, inline key storage, string
++	// backing bytes and the dependency slices as well as provider-owned state.
++	size := int64(256)
++	size += safecast.MustConvert[int64](len(key.schema))
++	size += safecast.MustConvert[int64](len(key.name))
++	size += safecast.MustConvert[int64](len(key.revision))
++	size += safecast.MustConvert[int64](reflect.TypeOf(key.key).Size()) + keyStringBytes(reflect.ValueOf(key.key))
++	size += safecast.MustConvert[int64](len(footprint.Elements)) * safecast.MustConvert[int64](reflect.TypeFor[signal.Element]().Size())
++	size += safecast.MustConvert[int64](len(footprint.Caveats)) * safecast.MustConvert[int64](reflect.TypeFor[string]().Size())
++
++	for _, e := range footprint.Elements {
++		size += safecast.MustConvert[int64](len(e.Namespace)) + safecast.MustConvert[int64](len(e.Relation))
++	}
++
++	for _, name := range footprint.Caveats {
++		size += safecast.MustConvert[int64](len(name))
++	}
++
++	return size + state.Size()
++}
+```
+
+**File**: `pkg/query/signals/owner.go` (modified, +19/-13)
+```diff
+@@ -4,12 +4,11 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"reflect"
++	"strings"
+ 	"sync"
+ 	"sync/atomic"
+ 	"weak"
+ 
+-	"github.com/ccoveille/go-safecast/v2"
+-
+ 	"github.com/authzed/spicedb/pkg/datastore"
+ 	core "github.com/authzed/spicedb/pkg/proto/core/v1"
+ 	"github.com/authzed/spicedb/pkg/query/signals/signal"
+@@ -23,13 +22,14 @@ type entryKey struct {
+ }
+ 
+ type entry struct {
+-	publicationMu sync.Mutex
+-	mu            sync.Mutex
+-	state         signal.State    // GUARDED_BY(mu)
+-	evidence      signal.Evidence // GUARDED_BY(publicationMu)
+-	footprint     signal.Footprint
+-	cost          int64
+-	used          uint64
++	publicationMu      sync.Mutex
++	publicationVersion uint64 // GUARDED_BY(publicationMu)
++	mu                 sync.Mutex
++	state              signal.State    // GUARDED_BY(mu)
++	evidence           signal.Evidence // GUARDED_BY(mu)
++	footprint          signal.Footprint
++	cost               int64
++	used               uint64
+ }
+ 
+ type schemaState struct {
+@@ -330,7 +330,7 @@ func (o *Owner) touch(k entryKey, create bool, d signal.Descriptor) *entry {
+ 		state = d.New()
+ 	}
+ 
+-	cost := 128 + safecast.MustConvert[int64](len(fmt.Sprint(k.key))) + state.Size()
++	cost := entryCost(k, state, signal.Footprint{})
+ 	o.mu.Lock()
+ 
+ 	if _, ok := o.schemas[k.schema]; !ok {
+@@ -391,6 +391,11 @@ func (o *Owner) touch(k entryKey, create bool, d signal.Descriptor) *entry {
+ 		return nil
+ 	}
+ 
++	// Copy string backing only when admitting a new population. Lookup hits do
++	// not allocate, and a short substring cannot retain an unaccounted buffer.
++	k.key = ownedKey(reflect.ValueOf(k.key)).Interface()
++	k.schema = strings.Clone(k.schema)
++	k.revision = strings.Clone(k.revision)
+ 	o.entries[k] = e
+ 	o.bytes += e.cost
+ 	o.trimLocked()
+@@ -466,14 +471,15 @@ func (o *Owner) write(scope signal.Scope, d signal.Descriptor, key, observation
+ 	}
+ 
+ 	e.evidence.PublishedAt = now
+-	e.evidence.ID.Version++
++	e.publicationVersion++
++	e.evidence.ID.Version = e.publicationVersion
+ 	update := signal.UpdateID{Epoch: e.evidence.ID.Epoch, Sequence: e.evidence.ID.Version}
+ 
+ 	if d.Footprint != nil {
+-		e.footprint = d.Footprint(key)
++		e.footprint = ownedFootprint(d.Footprint(key))
+ 	}
+ 
+-	cost := 128 + safecast.MustConvert[int64](len(fmt.Sprint(key))) + e.state.Size()
++	cost := entryCost(k, e.state, e.footprint)
+ 	e.mu.Unlock()
+ 	o.mu.Lock()
+ 	resident := o.entries[k] == e
+```
+
+**File**: `pkg/query/signals/property_test.go` (added, +60/-0)
+```diff
+@@ -0,0 +1,60 @@
++package signals_test
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/require"
++	"pgregory.net/rapid"
++
++	"github.com/authzed/spicedb/internal/datastore/revisions"
++	"github.com/authzed/spicedb/pkg/query/signals"
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
++)
++
++func TestRevisionEvictionPreservesPlanningSnapshots(t *testing.T) {
++	rapid.Check(t, func(rt *rapid.T) {
++		observations := rapid.SliceOfN(rapid.IntRange(-100, 100), 1, 20).Draw(rt, "observations")
++		revision := rapid.Uint64Range(1, 1000).Draw(rt, "revision")
++		key := rapid.StringMatching(`[a-z]{1,20}`).Draw(rt, "population")
++		r, err := signals.NewRegistry(definition("sum"))
++
++		require.NoError(rt, err)
++		o, err := signals.NewOwner(r, signals.Options{MaxRevisions: 1, MaxBytes: 4096})
++
++		require.NoError(rt, err)
++		a, err := o.Bind(stored("schema"), signal.Scope{
++			SchemaHash: "schema",
++			Revision:   revisions.NewForTransactionID(revision),
++		})
++
++		require.NoError(rt, err)
++		total := 0
++
++		for _, observation := range observations {
++			require.NoError(rt, signal.Observe(a, sumInput, key, observation))
++			total += observation
++		}
++
++		plan := a.ForPlan()
++		before, err := signal.Lookup(plan, sumRef, key)
++
++		require.NoError(rt, err)
++		require.Equal(rt, total, before.Value)
++		b, err := o.Bind(stored("schema"), signal.Scope{
++			SchemaHash: "schema",
++			Revision:   revisions.NewForTransactionID(revision + 1),
++		})
++
++		require.NoError(rt, err)
++		require.NoError(rt, signal.Observe(b, sumInput, key, 1))
++		after, err := signal.Lookup(plan, sumRef, key)
++
++		require.NoError(rt, err)
++		require.Equal(rt, before, after)
++		evicted, err := signal.Lookup(a, sumRef, key)
++
++		require.NoError(rt, err)
++		require.False(rt, evicted.IsAvailable())
++		require.LessOrEqual(rt, o.ResidentBytes(), int64(4096))
++	})
++}
+```
+
+**File**: `pkg/query/signals/registry.go` (modified, +5/-1)
+```diff
+@@ -40,10 +40,14 @@ func (r *Registry) Register(d signal.Descriptor) error {
+ 	}
+ 
+ 	if d.Name == "" || d.KeyType == nil || !d.KeyType.Comparable() ||
+-		d.ObservationType == nil || d.ValueType == nil || d.New == nil || d.Policy > signal.CrossRevision {
++		d.ObservationType == nil || d.ValueType == nil || (d.New == nil && d.Build == nil) || d.Policy > signal.CrossRevision {
+ 		return fmt.Errorf("invalid signal descriptor %q", d.Name)
+ 	}
+ 
++	if !supportedKey(d.KeyType) {
++		return fmt.Errorf("unsupported signal key type for %q", d.Name)
++	}
++
+ 	if _, ok := r.definitions[d.Name]; ok {
+ 		return fmt.Errorf("duplicate signal %q", d.Name)
+ 	}
+```
+
+**File**: `pkg/query/signals/safety_test.go` (added, +216/-0)
+```diff
+@@ -0,0 +1,216 @@
++package signals_test
++
++import (
++	"math"
++	"reflect"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/authzed/spicedb/internal/datastore/revisions"
++	"github.com/authzed/spicedb/internal/querysignalstest"
++	"github.com/authzed/spicedb/pkg/query/signals"
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
++)
++
++func TestNonreflexiveKeyIsRejected(t *testing.T) {
++	type key struct{ Value [1]float64 }
++
++	d := signal.NewSource[key, int, int]("sum", signal.SourceConfig[key, int, int]{
++		New: func() signal.Accumulator[int, int] { return &sum{} },
++	})
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{})
++	require.NoError(t, err)
++	v := view(t, o, "a", 1)
++	invalid := key{Value: [1]float64{math.NaN()}}
++
++	require.ErrorContains(t, signal.Observe(v, signal.Input[key, int]{Name: "sum"}, invalid, 1), "key")
++	_, err = signal.Lookup(v, signal.Reference[key, int]{Name: "sum"}, invalid)
++	require.ErrorContains(t, err, "key")
++	_, err = signal.Lookup(v.ForPlan(), signal.Reference[key, int]{Name: "sum"}, invalid)
++	require.ErrorContains(t, err, "key")
++}
++
++func TestRegistryRejectsReferenceKeys(t *testing.T) {
++	for _, keyType := range []reflect.Type{
++		reflect.TypeFor[*string](),
++		reflect.TypeFor[any](),
++		reflect.TypeFor[struct{ Value any }](),
++		reflect.TypeFor[[1]chan int](),
++	} {
++		t.Run(keyType.String(), func(t *testing.T) {
++			d := definition("sum")
++			d.KeyType = keyType
++			_, err := signals.NewRegistry(d)
++
++			require.ErrorContains(t, err, "key")
++		})
++	}
++}
++
++func TestSourceRequiresConstructor(t *testing.T) {
++	d := signal.NewSource[string, int, int]("sum", signal.SourceConfig[string, int, int]{})
++	_, err := signals.NewRegistry(d)
++
++	require.Error(t, err)
++}
++
++func TestSchemaTransferHasIndependentPublicationIdentity(t *testing.T) {
++	d := definition("sum")
++	d.Policy = signal.CrossRevision
++	d.Transfer = func(signal.SchemaChange, signal.Footprint) signal.TransferDecision {
++		return signal.TransferDecision{Action: signal.Retain}
++	}
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{})
++	require.NoError(t, err)
++	a := view(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(a, sumInput, "x", 1))
++	b := view(t, o, "b", 2)
++	require.NoError(t, signal.Observe(a, sumInput, "x", 2))
++	require.NoError(t, signal.Observe(b, sumInput, "x", 5))
++	av, err := signal.Lookup(a, sumRef, "x")
++	require.NoError(t, err)
++	bv, err := signal.Lookup(b, sumRef, "x")
++	require.NoError(t, err)
++	require.Equal(t, 3, av.Value)
++	require.Equal(t, 6, bv.Value)
++	require.NotEqual(t, av.Evidence.ID, bv.Evidence.ID)
++}
++
++func TestFootprintCountsTowardEntryBudget(t *testing.T) {
++	d := definition("sum")
++	d.Footprint = func(any) signal.Footprint {
++		return signal.Footprint{Caveats: []string{strings.Repeat("x", 4096)}}
++	}
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{MaxEntryBytes: 1024})
++	require.NoError(t, err)
++	v := view(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(v, sumInput, "x", 1))
++	e, err := signal.Lookup(v, sumRef, "x")
++
++	require.NoError(t, err)
++	require.False(t, e.IsAvailable())
++}
++
++func TestFootprintIsOwnedByEntry(t *testing.T) {
++	footprint := signal.Footprint{Elements: []signal.Element{{Namespace: "doc", Relation: "read"}}}
++	d := definition("sum")
++	d.Policy = signal.CrossRevision
++	d.Footprint = func(any) signal.Footprint { return footprint }
++	d.Transfer = func(_ signal.SchemaChange, f signal.Footprint) signal.TransferDecision {
++		require.Equal(t, "read", f.Elements[0].Relation)
++		return signal.TransferDecision{Action: signal.Retain}
++	}
++	r, err := signals.NewRegistry(d)
++	require.NoError(t, err)
++	o, err := signals.NewOwner(r, signals.Options{})
++	require.NoError(t, err)
++	a := view(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(a, sumInput, "x", 1))
++	footprint.Elements[0].Relation = "edited"
++	b := view(t, o, "b", 2)
++	e, err := signal.Lookup(b, sumRef, "x")
++
++	require.NoError(t, err)
++	require.Equal(t, 1, e.Value)
++}
++
++func TestBuildOnlySource(t *testing.T) {
++	d := signal.NewSource[string, int, int]("sum", signal.SourceConfig[string, int, int]{
++		Build: func(now func() time.Time) signal.Accumulator[int, int] {
++			require.Equal(t, time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC), now())
++			return &sum{}
 +		},
-+		{
-+			name:            "data zone above configured is capped",
-+			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "172800")},
-+			expectedWindow:  24 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "database zone below range default",
-+			zones:           map[string]zoneResult{tableQuery: zone("DATABASE spicedb", "14400"), rangeQuery: zone("RANGE default", "90000")},
-+			expectedWindow:  4 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "table override",
-+			zones:           map[string]zoneResult{tableQuery: zone("TABLE spicedb.public.relation_tuple", "21600")},
-+			expectedWindow:  6 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "inherits range default",
-+			zones:           map[string]zoneResult{tableQuery: zone("RANGE default", "14400")},
-+			expectedWindow:  4 * time.Hour,
-+			expectedQueries: []string{tableQuery},
-+		},
-+		{
-+			name:            "table missing falls back to range default",
-+			zones
++	})
++	clock := querysignalstest.NewClock()
++	o := querysignalstest.Owner(t, clock, d)
++	v := querysignalstest.View(t, o, "a", 1)
++
++	require.NoError(t, signal.Observe(v, sumInput, "x", 4))
++	e, err := signal.Lookup(v, sumRef, "x")
++
++	require.NoError(t, err)
++	require.Equal(t, 4, e.Value)
++}
++
++func TestDerivedSignalsReceiveIncrementsAcrossRevisions(t *testing.T) {
++	source := definition("sum")
++	derived := signal.NewDerived("history", sumInput, signal.SourceConfig[string, int, int]{
++		Policy: signal.CrossRevision,
++		New:    func() 
+```
+
+**File**: `pkg/query/signals/signal/definition.go` (modified, +5/-4)
+```diff
+@@ -143,10 +143,11 @@ func NewSource[K comparable, O, V any](name Name, c SourceConfig[K, O, V]) Descr
+ 		KeyType:         reflect.TypeFor[K](),
+ 		ObservationType: reflect.TypeFor[O](),
+ 		ValueType:       reflect.TypeFor[V](),
+-		New: func() State {
+-			return adapter[O, V]{c.New()}
+-		},
+-		Transfer: c.Transfer,
++		Transfer:        c.Transfer,
++	}
++
++	if c.New != nil {
++		d.New = func() State { return adapter[O, V]{c.New()} }
+ 	}
+ 
+ 	if c.Build != nil {
+```
+
+**File**: `pkg/query/signals/signal/distribution_test.go` (added, +62/-0)
+```diff
+@@ -0,0 +1,62 @@
++package signal_test
++
++import (
++	"math"
++	"testing"
++
++	"github.com/caio/go-tdigest/v4"
++	"github.com/stretchr/testify/require"
++
++	"github.com/authzed/spicedb/pkg/query/signals/signal"
++)
++
++func TestDistributionRetainsIndependentSnapshot(t *testing.T) {
++	digest, err := tdigest.New()
++
++	require.NoError(t, err)
++	require.NoError(t, digest.AddWeighted(10, 100))
++	require.NoError(t, digest.AddWeighted(20, 100))
++	snapshot := signal.DigestDistribution(digest, 10, 20)
++
++	require.NoError(t, digest.AddWeighted(1000, 10000))
++	require.InDelta(t, 10.0, snapshot.Quantile(0), 1e-9)
++	require.InDelta(t, 20.0, snapshot.Quantile(1), 1e-9)
++	require.InDelta(t, 15.0, snapshot.Quantile(0.5), 1)
++	require.Zero(t, snapshot.CDF(9))
++	require.InDelta(t, 1.0, snapshot.CDF(20), 1e-9)
++
++	for _, q := range []float64{-1, 2, math.NaN()} {
++		require.True(t, math.IsNaN(snapshot.Quantile(q)))
++	}
++}
++
++func TestWeightedMixtureOwnsParts(t *testing.T) {
++	low, err := tdigest.New()
++
++	require.NoError(t, err)
++	require.NoError(t, low.AddWeighted(1, 100))
++	high, err := tdigest.New()
++
++	require.NoError(t, err)
++	require.NoError(t, high.AddWeighted(9, 100))
++	parts := []signal.WeightedDistribution{
++		{Distribution: signal.DigestDistribution(low, 1, 1), Weight: 1},
++		{Distribution: signal.DigestDistribution(high, 9, 9), Weight: 3},
++	}
++	mixture := signal.Mixture(parts, 1, 9)
++	parts[0].Weight = 1000
++
++	require.InDelta(t, 0.25, mixture.CDF(5), 1e-9)
++	require.InDelta(t, 9.0, mixture.Quantile(0.5), 1e-6)
++}
++
++func TestExecutionFootprintRoundTrip(t *testing.T) {
++	footprint := signal.Footprint{
++		Elements: []signal.Element{{Namespace: "doc", Relation: "view"}},
++		Caveats:  []string{"allowed"},
++	}
++	key := signal.ExecutionKey{Dependencies: signal.EncodeFootprint(footprint)}
++
++	require.Equal(t, footprint, key.Footprint())
++	require.Empty(t, (signal.ExecutionKey{Dependencies: "invalid"}).Footprint())
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3424** (2026-10-21): chore: bump grpc_health_probe to v0.4.60 and the base images for CVE-2026-111943 (@vroldanbet)
-- **PR #3423** (2026-10-21): fix(crdb): derive the gc window from the zone config of SpiceDB's relationships (@vroldanbet)
-- **PR #3422** (2026-10-20): chore: roll changelog (@tstirrat15)
-- **PR #3421** (2026-10-22): fix(schema): qualify wildcard cache keys by definition (@josephschorr)
-- **PR #3415** (2026-10-20): fix: return a clear error when filtering relationships on a permission (@josephschorr)
-- **PR #3410** (closed): RHCLOUD-50295: Chore/security baseline (@akoserwal)
+- **PR #3444** (2026-10-30): feat(query): add reusable planning signals (@josephschorr)
+- **PR #3440** (2026-10-30): fix(schema): preserve annotations on unchanged definitions during schema writes (@josephschorr)
+- **PR #3437** (2026-10-28): chore: bump go-jose to v4.1.6 for CVE-2026-116587 (@vroldanbet)
+- **PR #3435** (2026-10-28): fix(dispatch): lock LookupResources cursors to the dispatcher that produced them (@vroldanbet)
+- **PR #3434** (2026-10-28): fix(graph): prevent read pool deadlocks from nested connection acquisition (@josephschorr)
+- **PR #3432** (2026-10-26): fix(cache): expire dispatch cache entries a fixed TTL after they are written (@josephschorr)
 
 ---
 
@@ -1539,13 +2022,13 @@ The gc.ttlseconds par
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. schema): qualify wildcard cache keys by definition (#3421)
+## X. schema): preserve annotations on unchanged definitions during schema writes
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in authzed/spicedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5fedd8fc`: schema): qualify wildcard cache keys by definition (#3421). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2eb05375`: schema): preserve annotations on unchanged definitions during schema writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1553,7 +2036,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Schema validation: schemas that transitively include wildcard subjects are now consistently rejected, even when unrelated definitions reuse the same relation names. (https://github.com/authzed/spicedb/pull/3421)
+- Schema: writing a schema no longer strips the `aliasing_relation` and `canonical_cache_key` annotations from definitions that did not change. Since v1.49.0, every schema write replaced unchanged definitions with unannotated copies, in both the legacy and single-store schema modes, so permissions that alias a relation were dispatched as separate subproblems and equivalent permissions stopped sharing dispatch cache entries, increasing dispatch count, latency and datastore load. All definitions are now annotated on write, and writing the schema again restores annotations already lost. Computing the annotations also allocates far less memory. (https://github.com/authzed/spicedb/issues/3412)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1563,4 +2046,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5fedd8fc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2eb05375` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `f8f6db89`  
+> **Source Version**: `d163ae74`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T11:39:14.714Z  
+> **Timestamp**: 2026-10-31T05:07:18.456Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T11:39:12.947Z  
+> **Harvest Timestamp**: 2026-10-31T05:07:17.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 20899 stars
+- **Stars / Engagement**: 20973 stars
 
 ---
 
@@ -541,6 +541,14 @@ loop:
 	return n
 }
 
+// Largest queue weight parseSize accepts on the wire.
+const maxQueueWeight = 999_999_999
+
+// Converts a queue weight total to the weight sent to a route or leaf.
+func queueWeight(n int64) int32 {
+	return int32(min(n, maxQueueWeight))
+}
+
 // parseInt64 expects decimal positive numbers. We
 // return -1 to signal error
 func parseInt64(d []byte) (n int64) {
@@ -795,10 +803,7 @@ func generateInfoJSON(info *Info) []byte {
 	return bytes.Join(pcs, []byte(" "))
 }
 
-// parallelTaskQueue starts a number of goroutines and returns a channel
-// which functions can be sent to for queued parallel execution. The
-// goroutines will stop running when the returned channel is closed and
-// all queued tasks have completed. The passed in mp limits concu
+// parallelTaskQueue starts a number of g
 ```
 
 ### Core Architecture Module: `conf/fuzz.go`
@@ -2721,172 +2726,230 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f8f6db89` (2026-10-20)
-**Commit Message**: [FIXED] Missing route pool index check for routes without pooling (#8782)
+### Incident Patch 1: `d163ae74` (2026-10-30)
+**Commit Message**: [FIXED] Wildcard char inside a token matched as a wildcard (#8765)
 
-`addRoute` checked `RoutePoolIdx` only for pooled routes. On the no-pool
-path the index from the remote's INFO was used as the slot in
-`s.routes[id]` without a range check. A server always sends index 0 on
-this path, so this PR improves robustness by simply rejecting any other
-value as a protocol violation, matching the existing check for solicited
-routes.
+Literal subjects, like `a*`, `*a` or `**`, would _sometimes_ be treated
+as containing a wildcard whereas they're not supposed to.
 
-**File**: `server/route.go` (modified, +3/-0)
+Supersedes https://github.com/nats-io/nats-server/pull/8761
+
+**File**: `server/stree/parts.go` (modified, +26/-5)
 ```diff
-@@ -2180,6 +2180,9 @@ func (s *Server) addRoute(c *client, didSolicit, sendDelayedInfo bool, gossipMod
- 			invProtoErr = fmt.Sprintf("Not possible to have a dedicated route for account %q between those servers", accName)
- 			// In this case, make sure this route does not attempt to reconnect
- 			c.setNoReconnect()
-+		} else if info.RoutePoolIdx != 0 {
-+			// Without pooling, the incoming's RoutePoolIdx should not be set.
-+			invProtoErr = fmt.Sprintf("Route pool index should not be set but is set to %v", info.RoutePoolIdx)
- 		} else {
- 			// We will accept, but treat this remote has "no pool"
- 			pool, noReconnectForOldServer = false, true
-```
-
-**File**: `server/routes_test.go` (modified, +46/-0)
-```diff
-@@ -1372,6 +1372,52 @@ func TestRouteCloseTLSConnection(t *testing.T) {
- 	ch <- true
- }
+@@ -17,6 +17,23 @@ import (
+ 	"strings"
+ )
  
-+func TestRouteNoPoolRejectsRoutePoolIdx(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		poolSize int
-+		info     string
-+	}{
-+		{"remote out of range", 0, `"route_pool_size":0,"route_pool_idx":3`},
-+		{"remote in range", 0, `"route_pool_size":0,"route_pool_idx":2`},
-+		{"remote negative", 0, `"route_pool_size":0,"route_pool_idx":-1`},
-+		{"local out of range", -1, `"route_pool_size":3,"route_pool_idx":3`},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			o := DefaultOptions()
-+			o.Cluster.Name = "A"
-+			o.Cluster.Host = "127.0.0.1"
-+			o.Cluster.Port = -1
-+			o.Cluster.PoolSize = test.poolSize
-+			s := RunServer(o)
-+			defer s.Shutdown()
++// Wildcard parts share these backing arrays and are recognized by identity.
++// A literal part trimmed down to "*" or ">" must not be mistaken for a wildcard.
++var (
++	pwcPart = []byte{pwc}
++	fwcPart = []byte{fwc}
++)
 +
-+			conn, err := net.DialTimeout("tcp", net.JoinHostPort(o.Cluster.Host, fmt.Sprintf("%d", o.Cluster.Port)), 2*time.Second)
-+			require_NoError(t, err)
-+			defer conn.Close()
-+
-+			_, err = conn.Write([]byte("CONNECT {\"name\":\"route\",\"verbose\":false,\"pedantic\":false,\"cluster\":\"A\"}\r\n"))
-+			require_NoError(t, err)
-+			_, err = conn.Write(fmt.Appendf(nil, "INFO {\"server_id\":\"route\",\"name\":\"route\",\"cluster\":\"A\",%s}\r\n", test.info))
-+			require_NoError(t, err)
-+
-+			// The route must be rejected as a protocol violation.
-+			require_NoError(t, conn.SetReadDeadline(time.Now().Add(2*time.Second)))
-+			br := bufio.NewReader(conn)
-+			for {
-+				line, err := br.ReadString('\n')
-+				require_NoError(t, err)
-+				if strings.HasPrefix(line, "-ERR") {
-+					require_Contains(t, line, "Route pool index should not be set")
-+					break
-+				}
-+			}
-+			require_True(t, s.Running())
-+			require_Equal(t, s.NumRoutes(), 0)
-+		})
-+	}
++// isPWCPart returns true if the part is a pwc placeholder from genParts.
++func isPWCPart(part []byte) bool {
++	return len(part) == 1 && &part[0] == &pwcPart[0]
 +}
 +
- func TestRouteClusterNameConflictBetweenStaticAndDynamic(t *testing.T) {
- 	o1 := DefaultOptions()
- 	o1.Cluster.Name = "AAAAAAAAAAAAAAAAAAAA" // make it alphabetically the "smallest"
-```
-
----
-
-### Incident Patch 2: `f29a6474` (2026-10-20)
-**Commit Message**: [FIXED] Missing route pool index check for routes without pooling
-
-Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
-
-**File**: `server/route.go` (modified, +3/-0)
-```diff
-@@ -2180,6 +2180,9 @@ func (s *Server) addRoute(c *client, didSolicit, sendDelayedInfo bool, gossipMod
- 			invProtoErr = fmt.Sprintf("Not possible to have a dedicated route for account %q between those servers", accName)
- 			// In this case, make sure this route does not attempt to reconnect
- 			c.setNoReconnect()
-+		} else if info.RoutePoolIdx != 0 {
-+			// Without pooling, the incoming's RoutePoolIdx should not be set.
-+			invProtoErr = fmt.Sprintf("Route pool index should not be set but is set to %v", info.RoutePoolIdx)
- 		} else {
- 			// We will accept, but treat this remote has "no pool"
- 			pool, noReconnectForOldServer = false, true
-```
-
-**File**: `server/routes_test.go` (modified, +46/-0)
-```diff
-@@ -1372,6 +1372,52 @@ func TestRouteCloseTLSConnection(t *testing.T) {
- 	ch <- true
- }
- 
-+func TestRouteNoPoolRejectsRoutePoolIdx(t *testing.T) {
-+	for _, test := range []struct {
-+		name     string
-+		poolSize int
-+		info     string
-+	}{
-+		{"remote out of range", 0, `"route_pool_size":0,"route_pool_idx":3`},
-+		{"remote in range", 0, `"route_pool_size":0,"route_pool_idx":2`},
-+		{"remote negative", 0, `"route_pool_size":0,"route_pool_idx":-1`},
-+		{"local out of range", -1, `"route_pool_size":3,"route_pool_idx":3`},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			o := DefaultOptions()
-+			o.Cluster.Name = "A"
-+			o.Cluster.Host = "127.0.0.1"
-+			o.Cluster.Port = -1
-+			o.Cluster.PoolSize = test.poolSize
-+			s := RunServer(o)
-+			defer s.Shutdown()
-+
-+			conn, err := net.DialTimeout("tcp", net.JoinHostPort(o.Cluster.Host, fmt.Sprintf("%d", o.Cluster.Port)), 2*time.Second)
-+			require_NoError(t, err)
-+			defer conn.Close()
-+
-+			_, err = conn.Write([]byte("CONNECT {\"name\":\"route\",\"verbose\":false,\"pedantic\":false,\"cluster\":\"A\"}\r\n"))
-+			require_NoError(t, err)
-+			_, err = conn.Write(fmt.Appendf(nil, "INFO {\"server_id\":\"route\",\"name\":\"route\",\"cluster\":\"A\",%s}\r\n", test.info))
-+			require_NoError(t, err)
-+
-+			// The route must be rejected as a protocol violation.
-+			require_NoError(t, conn.SetReadDeadline(time.Now().Add(2*time.Second)))
-+			br := bufio.NewReader(conn)
-+			for {
-+				line, err := br.ReadString('\n')
-+				require_NoError(t, err)
-+				if strings.HasPrefix(line, "-ERR") {
-+					require_Contains(t, line, "Route pool index should not be set")
-+					break
-+				}
-+			}
-+			require_True(t, s.Running())
-+			require_Equal(t, s.NumRoutes(), 0)
-+		})
-+	}
++// isFWCPart returns true if the part is a fwc placeholder from genParts.
++func isFWCPart(part []byte) bool {
++	return len(part) == 1 && &part[0] == &fwcPart[0]
 +}
 +
- func TestRouteClusterNameConflictBetweenStaticAndDynamic(t *testing.T) {
- 	o1 := DefaultOptions()
- 	o1.Cluster.Name = "AAAAAAAAAAAAAAAAAAAA" // make it alphabetically the "smallest"
+ // genParts will break a filter subject up into parts.
+ // We need to break this up into chunks based on wildcards, either pwc '*' or fwc '>'.
+ // We do not care about other tokens per se, just parts that are separated by wildcards with an optional end fwc.
+@@ -29,7 +46,7 @@ func genParts(filter []byte, parts [][]byte) [][]byte {
+ 				if i > start {
+ 					parts = append(parts, filter[start:i+1])
+ 				}
+-				parts = append(parts, filter[i+1:i+2])
++				parts = append(parts, pwcPart)
+ 				i++ // Skip pwc
+ 				if i+2 <= e {
+ 					i++ // Skip next tsep from next part too.
+@@ -39,7 +56,7 @@ func genParts(filter []byte, parts [][]byte) [][]byte {
+ 				if i > start {
+ 					parts = append(parts, filter[start:i+1])
+ 				}
+-				parts = append(parts, filter[i+1:i+2])
++				parts = append(parts, fwcPart)
+ 				i++ // Skip fwc
+ 				start = i + 1
+ 			}
+@@ -57,7 +74,11 @@ func genParts(filter []byte, parts [][]byte) [][]byte {
+ 				break
+ 			}
+ 			// We start with a pwc or fwc.
+-			parts = append(parts, filter[i:i+1])
++			if filter[i] == pwc {
++				parts = append(parts, pwcPart)
++			} else {
++				parts = append(parts, fwcPart)
++			}
+ 			if i+1 <= e {
+ 				i++ // Skip next tsep from next part too.
+ 			}
+@@ -92,7 +113,7 @@ func matchParts(parts [][]byte, frag string) ([][]byte, bool) {
+ 		lp := len(part)
+ 		// Check for pwc or fwc place holders.
+ 		if lp == 1 {
+-			if part[0] == pwc {
++			if isPWCPart(part) {
+ 				index := strings.IndexByte(frag[si:], tsep)
+ 				// We are trying to match pwc and did not find our tsep.
+ 				// Will need to move to next node from caller.
+@@ -104,7 +125,7 @@ func matchParts(parts [][]byte, frag string) ([][]byte, bool) {
+ 				}
+ 				si += index + 1
+ 				continue
+-			} else if part[0] == fwc {
++			} else if isFWCPart(part) {
+ 				// If we are here we should be good.
+ 				return nil, true
+ 			}
+```
+
+**File**: `server/stree/stree.go` (modified, +3/-3)
+```diff
+@@ -317,7 +317,7 @@ func (t *SubjectTree[T]) delete(np *node, subject []byte, si int) (*T, bool) {
+ func (t *SubjectTree[T]) match(n node, parts [][]byte, pre []byte, cb func(subject []byte, val *T) bool) bool {
+ 	// Capture if we are sitting on a terminal fwc.
+ 	var hasFWC bool
+-	if lp := len(parts); lp > 0 && len(parts[lp-1]) > 0 && parts[lp-1][0] == fwc {
++	if lp := len(parts); lp > 0 && isFWCPart(parts[lp-1]) {
+ 		hasFWC = true
+ 	}
+ 
+@@ -351,7 +351,7 @@ func (t *SubjectTree[T]) match(n node, parts [][]byte, pre []byte, cb func(subje
+ 			// We could have a leafnode with no suffix which would be a match.
+ 			// We could also have a terminal pwc. Check for those here.
+ 			var hasTermPWC bool
+-			if lp := len(parts); lp > 0 && len(parts[lp-1]) == 1 && parts[lp-1][0] == pwc {
++			if lp := len(parts); lp > 0 && isPWCPart(parts[lp-1]) {
+ 				// If we are sitting on a terminal pwc, put the pwc back and continue.
+ 				nparts = parts[len(parts)-1:]
+ 				hasTermPWC = true
+@@ -391,7 +391,7 @@ func (t *SubjectTree[T]) match(n node, parts [][]byte, pre []byte, cb func(subje
+ 		fp := nparts[0]
+ 		p := pivot(fp, 0)
+ 		// Check if we have a pwc/fwc part here. This will cause us to iterate.
+-		if len(fp) == 1 && (p == pwc || p == fwc) {
++		if isPWCPart(fp) || isFWCPart(fp) {
+ 			// We need to iterate over all children here for the current node
+ 			// to see if we match further down.
+ 			for _, cn := range n.children() {
+```
+
+**File**: `server/stree/stree_test.go` (modified, +34/-0)
+```diff
+@@ -682,6 +682,40 @@ func TestSubjectTreeMatchInvalidWildcard(t *testing.T) {
+ 	match(t, st, `'*.*'`, 0)
+ }
+ 
++func TestSubjectTreeMatchPartialWildcardIsLiteral(t *testing.T) {
++	// Shared "a" prefix splits nodes right before the '*' or '>' in the filters.
++	st := NewSubjectTree[int]()
++	st.Insert(b("KV.a"), 1)
++	st.Insert(b("KV.apple"), 2)
++	st.Insert(b("KV.avocado"), 3)
++	st.Insert(b("KV.banana"), 4)
++	match(t, st, "KV.a*", 0)
++	match(t, st, "KV.a>", 0)
++	match(t, st, "KV.ap*", 0)
++	match(t, st, "KV.*", 4)
++	match(t, st, "KV.>", 4)
++
++	// Subjects with a wildcard char inside a token are valid literals, and match exactly.
++	st.Insert(b("KV.a*"), 5)
++	st.Insert(b("KV.a*x"), 6)
++	st.Insert(b("KV.a>"), 7)
++	st.Insert(b("KV.a>x"), 8)
++	match(t, st, "KV.a*", 1)
++	match(t, st, "KV.a>", 1)
++	match(t, st, "KV.a*x", 1)
++	match(t, st, "*.a*", 1)
++	match(t, st, "KV.*", 8)
++	match(t, st, "KV.>", 8)
++
++	// A trimmed '*' can also reach a leaf directly.
++	st = NewSubjectTree[int]()
++	st.Insert(b("KV.apple"), 1)
++	st.Insert(b("KV.avocado"), 2)
++	st.Insert(b("KV.a*x"), 3)
++	match(t, st, "KV.a*", 0)
++	match(t, st, "KV.a*x", 1)
++}
++
+ func TestSubjectTreeRandomTrackEntries(t *testing.T) {
+ 	st := NewSubjectTree[int]()
+ 	smap := make(map[string]struct{}, 1000)
+```
+
+**File**: `server/sublist.go` (modified, +2/-3)
+```diff
+@@ -1386,8 +1386,7 @@ func tokensCanMatch(t1, t2 string) bool {
+ 	if len(t1) == 0 || len(t2) == 0 {
+ 		return false
+ 	}
+-	t1c, t2c := t1[0], t2[0]
+-	if t1c == pwc || t2c == pwc || t1c == fwc || t2c == fwc {
++	if t1 == pwcs || t2 == pwcs || t1 == fwcs || t2 == fwcs {
+ 		return true
+ 	}
+ 	return t1 == t2
+@@ -1543,7 +1542,7 @@ func isSubsetMatchTokenized(tokens, test []string) bool {
+ 			}
+ 			continue
+ 		}
+-		if t2[0] != pwc && strings.Compare(t1, t2) != 0 {
++		if t2 != pwcs && strings.Compare(t1, t2) != 0 {
+ 			return false
+ 		}
+ 	}
+```
+
+**File**: `server/sublist_test.go` (modified, +15/-0)
+```diff
+@@ -1228,6 +1228,14 @@ func TestIsSubsetMatch(t *testing.T) {
+ 		{"foo.>", "foo.bar", false},
+ 		{"foo..bar", "foo.*", false}, // Bad subject, we return false
+ 		{"foo.*", "foo..bar", false}, // Bad subject, we return false
++		// A wildcard char inside a token is a literal.
++		{"foo.bar", "foo.*bar", false},
++		{"foo.bar", "foo.**", false},
++		{"foo.*bar", "foo.*bar", true},
++		{"foo.*bar", "foo.*", true},
++		{"foo.*", "foo.*bar", false},
++		{"foo.bar", "foo.bar*", false},
++		{"foo.bar", "foo.>bar", false},
+ 	} {
+ 		t.Run("", func(t *testing.T) {
+ 			if res := subjectIsSubsetMatch(test.subject, test.test); res != test.result {
+@@ -1666,6 +1674,13 @@ func TestSublistSubjectCollide(t *testing.T) {
+ 	require_True(t, SubjectsCollide("foo.*", "foo.foo"))
+ 	require_True(t, SubjectsCollide("foo.*", "*.foo"))
+ 	require_True(t, SubjectsCollide("foo.bar.>", "*.bar.foo"))
++
++	// A wildcard char inside a token is a literal.
++	require_False(t, SubjectsCollide("foo.*bar.*", "foo.baz.*"))
++	require_False(t, SubjectsCollide("foo.>bar.*", "foo.baz.*"))
++	require_False(t, SubjectsCollide("foo.**.*", "foo.baz.*"))
++	require_True(t, SubjectsCollide("foo.*bar.*", "foo.*bar.*"))
++	require_True(t, SubjectsCollide("foo.*bar.*", "foo.*.baz"))
+ }
+ 
+ func TestSublistAddCacheHitRate(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8782** (2026-10-20): [FIXED] Missing route pool index check for routes without pooling (@MauriceVanVeen)
-- **PR #8768** (closed): [FIXED] Connz total not reflecting the applied filters (@AmariahAK)
-- **PR #8762** (2026-10-15): (2.15) [FIXED] Scale up from R1 and scale down stalling on learners (@MauriceVanVeen)
-- **PR #8761** (closed): Fix num pending for partial wildcard consumer filters (@aivarsk)
-- **PR #8760** (2026-10-15): Deflake TestJetStreamMsgHeaders (@sciascid)
-- **PR #8759** (2026-10-15): [FIXED] Config reload disconnects clients authorized by auth callout (@sciascid)
+- **PR #8813** (2026-10-29): Replace Match with MatchUntil  (@sciascid)
+- **PR #8812** (2026-10-29): Add `verify: optional` to TLS config (@neilalexander)
+- **PR #8811** (2026-10-29): [FIXED] Stale leafnode connection when hub sends many subs on connect (@MauriceVanVeen)
+- **PR #8808** (2026-10-28): [IMPROVED] Use MatchUntil in firstMatching to return early (@sciascid)
+- **PR #8807** (2026-10-28): [IMPROVED] Add LoadLastSeq to skip message loads for last subject sequence (@MauriceVanVeen)
+- **PR #8806** (2026-10-28): [IMPROVED] Skip psim walk on a miss in the second-to-last block (@MauriceVanVeen)
 
 ---
 
@@ -2906,30 +2969,57 @@ Signed-off-by: Maurice van Veen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Missing route pool index check for routes without pooling (#8782)
+## X. [FIXED] Wildcard char inside a token matched as a wildcard (#8765)
 
 **RULE**:
-When implementing operations in `server/route.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/stree/parts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f8f6db89`: [FIXED] Missing route pool index check for routes without pooling (#8782). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d163ae74`: [FIXED] Wildcard char inside a token matched as a wildcard (#8765). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/route.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/stree/parts.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		} else if info.RoutePoolIdx != 0 {
-			// Without pooling, the incoming's RoutePoolIdx should not be set.
-			invProtoErr = fmt.Sprintf("Route pool index should not be set but is set to %v", info.RoutePoolIdx)
+// Wildcard parts share these backing arrays and are recognized by identity.
+// A literal part trimmed down to "*" or ">" must not be mistaken for a wildcard.
+var (
+	pwcPart = []byte{pwc}
+	fwcPart = []byte{fwc}
+)
+
+// isPWCPart returns true if the part is a pwc placeholder from genParts.
+func isPWCPart(part []byte) bool {
+	return len(part) == 1 && &part[0] == &pwcPart[0]
+}
+
+// isFWCPart returns true if the part is a fwc placeholder from genParts.
+func isFWCPart(part []byte) bool {
+	return len(part) == 1 && &part[0] == &fwcPart[0]
+}
+
+				parts = append(parts, pwcPart)
+				parts = append(parts, fwcPart)
+			if filter[i] == pwc {
+				parts = append(parts, pwcPart)
+			} else {
+				parts = append(parts, fwcPart)
+			}
+			if isPWCPart(part) {
+			} else if isFWCPart(part) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+				parts = append(parts, filter[i+1:i+2])
+				parts = append(parts, filter[i+1:i+2])
+			parts = append(parts, filter[i:i+1])
+			if part[0] == pwc {
+			} else if part[0] == fwc {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f8f6db89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d163ae74` are properly handled with clean fallback behavior.

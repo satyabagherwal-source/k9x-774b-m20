@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source**: github ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
-> **Source Version**: `8538e7cf`  
+> **Source Version**: `7e2467b9`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:33:45.867Z  
+> **Timestamp**: 2026-10-30T15:08:20.509Z  
 > **Learning ID**: `learn-github-goodrain-rainbond`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:33:45.766Z  
+> **Harvest Timestamp**: 2026-10-30T15:08:20.019Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rainbond is an open-source container platform that requires no Kubernetes expertise. Its core capabilities are 100% open source.  It abstracts away infrastructure complexity and provides a unified way to deploy and manage business applications, AI-generated projects, open-source AI software, and large language model services. AI helps teams deploy 
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6280 stars
+- **Stars / Engagement**: 6287 stars
 
 ---
 
@@ -1237,44 +1237,483 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4f7d5f4` (2026-10-25)
-**Commit Message**: fix(release): save the chart index before searching it (#2724)
+### Incident Patch 1: `7e2467b9` (2026-10-30)
+**Commit Message**: chore: record v6.10.2-release in upgrade feed
 
-Signed-off-by: yangkaa <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/release-publish.yml` (modified, +6/-2)
+**File**: `hack/release/upgrade-versions.json` (modified, +16/-0)
 ```diff
-@@ -346,7 +346,9 @@ jobs:
-           CHART_REPO_PASSWORD: ${{ secrets.CHART_REPO_PASSWORD }}
-         run: |
-           set -euo pipefail
--          if curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"; then
-+          # 先落盘再 grep：`curl | grep -q` 在 grep 提前退出时 curl 会报错（23），pipefail 下会被误判为「不存在」。
-+          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
-+          if grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"; then
-             echo "rainbond-${CHART_VERSION}.tgz is already on ${CHART_REPO_URL}, skip (never overwrite)"
-             exit 0
-           fi
-@@ -421,7 +423,9 @@ jobs:
-         if: env.CHART_UPLOAD == 'true' && needs.prepare.outputs.chart_main_version == needs.prepare.outputs.chart_version
-         env:
-           CHART_VERSION: ${{ needs.prepare.outputs.chart_version }}
--        run: curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"
-+        run: |
-+          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
-+          grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"
+@@ -1,4 +1,20 @@
+ [
++  {
++    "version": "v6.10.2-release",
++    "detail": {
++      "update_time": "2026-10-30",
++      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release",
++      "tag_name": "v6.10.2-release",
++      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release."
++    },
++    "images": {
++      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.2-release",
++      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.2-release",
++      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.2-release",
++      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.2-release",
++      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.2-release"
++    }
++  },
+   {
+     "version": "v6.10.1-release",
+     "detail": {
+```
+
+---
+
+### Incident Patch 2: `b455a384` (2026-10-30)
+**Commit Message**: V6.10.2 dev (#2736)
+
+* fix: default blank source build types to git
+
+* fix: bound worker health checks and cancel MQ dequeues
+
+* feat: configure build pod resources from chaos environment
+
+---------
+
+Co-authored-by: 张启航 <[REDACTED_EMAIL]>
+
+**File**: `builder/exector/build_from_sourcecode_run.go` (modified, +5/-1)
+```diff
+@@ -107,8 +107,12 @@ type Commit struct {
+ func NewSouceCodeBuildItem(in []byte) *SourceCodeBuildItem {
+ 	eventID := gjson.GetBytes(in, "event_id").String()
+ 	logger := event.GetManager().GetLogger(eventID)
++	serverType := strings.TrimSpace(strings.Replace(gjson.GetBytes(in, "server_type").String(), " ", "", -1))
++	if serverType == "" {
++		serverType = "git"
++	}
+ 	csi := sources.CodeSourceInfo{
+-		ServerType:     strings.Replace(gjson.GetBytes(in, "server_type").String(), " ", "", -1),
++		ServerType:     serverType,
+ 		RepositoryURL:  gjson.GetBytes(in, "repo_url").String(),
+ 		Branch:         gjson.GetBytes(in, "branch").String(),
+ 		User:           gjson.GetBytes(in, "user").String(),
+```
+
+**File**: `builder/exector/source_server_type_test.go` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++package exector
++
++import (
++	"encoding/json"
++	"testing"
++
++	"github.com/goodrain/rainbond/event"
++)
++
++// capability_id: rainbond.builder.source-type-compatibility
++func TestNewSourceBuildServerType(t *testing.T) {
++	previousManager := event.GetManager()
++	event.NewTestManager(&testEventManager{})
++	t.Cleanup(func() { event.NewTestManager(previousManager) })
++
++	cases := []struct {
++		name    string
++		present bool
++		value   interface{}
++		want    string
++	}{
++		{name: "missing", want: "git"},
++		{name: "null", present: true, value: nil, want: "git"},
++		{name: "empty", present: true, value: "", want: "git"},
++		{name: "spaces", present: true, value: "   ", want: "git"},
++		{name: "whitespace", present: true, value: " \t\n ", want: "git"},
++		{name: "git", present: true, value: "git", want: "git"},
++		{name: "spaced git", present: true, value: " g it ", want: "git"},
++		{name: "svn", present: true, value: "svn", want: "svn"},
++		{name: "oss", present: true, value: "oss", want: "oss"},
++		{name: "pkg", present: true, value: "pkg", want: "pkg"},
++		{name: "other explicit type", present: true, value: "custom", want: "custom"},
++	}
++
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			payload := map[string]interface{}{
++				"event_id": "source-type-test",
++				"repo_url": "https://example.com/demo.git",
++				"lang":     "NodeJSStatic",
++				"envs":     "{}",
++			}
++			if tc.present {
++				payload["server_type"] = tc.value
++			}
++			input, err := json.Marshal(payload)
++			if err != nil {
++				t.Fatalf("marshal build task: %v", err)
++			}
++
++			item := NewSouceCodeBuildItem(input)
++			if got := item.CodeSouceInfo.ServerType; got != tc.want {
++				t.Fatalf("expected source type %q, got %q", tc.want, got)
++			}
++		})
++	}
++}
+```
+
+**File**: `builder/job/job.go` (modified, +5/-1)
+```diff
+@@ -158,12 +158,16 @@ func (c *controller) GetServiceJobs(serviceID string) ([]*corev1.Pod, error) {
+ func (c *controller) ExecJob(ctx context.Context, job *corev1.Pod, logger io.Writer, result *channels.RingChannel) error {
+ 	// one job, one job container channel
+ 	jobContainerCh := make(chan struct{}, 1)
+-	c.jobContainerStatus.Store(job.Name, jobContainerCh)
+ 	if j, _ := c.GetJob(job.Name); j != nil {
++		c.jobContainerStatus.Store(job.Name, jobContainerCh)
+ 		go c.getLogger(ctx, job.Name, logger, result, jobContainerCh)
+ 		c.subJobStatus.Store(job.Name, result)
+ 		return nil
+ 	}
++	if err := applyBuildPodResources(job); err != nil {
++		return fmt.Errorf("configure build pod resources: %w", err)
++	}
++	c.jobContainerStatus.Store(job.Name, jobContainerCh)
+ 	_, err := c.KubeClient.CoreV1().Pods(c.namespace).Create(ctx, job, metav1.CreateOptions{})
+ 	if err != nil {
+ 		return err
+```
+
+**File**: `builder/job/resources.go` (added, +51/-0)
+```diff
+@@ -0,0 +1,51 @@
++package job
++
++import (
++	"fmt"
++	"os"
++	"strings"
++
++	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/api/resource"
++)
++
++func applyBuildPodResources(pod *corev1.Pod) error {
++	resources := corev1.ResourceList{}
++	for _, setting := range []struct {
++		env  string
++		name corev1.ResourceName
++	}{
++		{env: "BUILD_POD_CPU", name: corev1.ResourceCPU},
++		{env: "BUILD_POD_MEMORY", name: corev1.ResourceMemory},
++	} {
++		value := strings.TrimSpace(os.Getenv(setting.env))
++		if value == "" {
++			continue
++		}
++		quantity, err := resource.ParseQuantity(value)
++		if err != nil || quantity.Sign() <= 0 {
++			return fmt.Errorf("%s must be a positive Kubernetes resource quantity", setting.env)
++		}
++		if setting.name == corev1.ResourceCPU && !quantity.RoundUp(resource.Milli) {
++			return fmt.Errorf("%s must use whole millicores (for example, 500m or 2)", setting.env)
++		}
++		resources[setting.name] = quantity
++	}
++	if len(resources) == 0 {
++		return nil
++	}
++	for i := range pod.Spec.Containers {
++		requirements := &pod.Spec.Containers[i].Resources
++		if requirements.Requests == nil {
++			requirements.Requests = corev1.ResourceList{}
++		}
++		if requirements.Limits == nil {
++			requirements.Limits = corev1.ResourceList{}
++		}
++		for name, quantity := range resources {
++			requirements.Requests[name] = quantity.DeepCopy()
++			requirements.Limits[name] = quantity.DeepCopy()
++		}
++	}
++	return nil
++}
+```
+
+**File**: `builder/job/resources_test.go` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++package job
++
++import (
++	"context"
++	"errors"
++	"reflect"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/eapache/channels"
++	corev1 "k8s.io/api/core/v1"
++	"k8s.io/apimachinery/pkg/api/resource"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/client-go/informers"
++	"k8s.io/client-go/kubernetes/fake"
++	k8stesting "k8s.io/client-go/testing"
++)
++
++// capability_id: rainbond.builder.build-pod-resources
++func TestApplyBuildPodResourcesFromEnv(t *testing.T) {
++	for _, tc := range []struct {
++		name     string
++		cpu      string
++		memory   string
++		existing bool
++	}{
++		{name: "unset"},
++		{name: "whitespace", cpu: " \t", memory: " "},
++		{name: "cpu cores", cpu: "2"},
++		{name: "cpu millicores", cpu: "500m"},
++		{name: "memory Gi", memory: "4Gi"},
++		{name: "memory Mi", memory: "512Mi"},
++		{name: "both", cpu: "2", memory: "4Gi"},
++		{name: "trim whitespace", cpu: " 250m ", memory: " 1Gi\t"},
++		{name: "preserve existing", existing: true},
++		{name: "override cpu only", cpu: "1500m", existing: true},
++		{name: "override memory only", memory: "2Gi", existing: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Setenv("BUILD_POD_CPU", tc.cpu)
++			t.Setenv("BUILD_POD_MEMORY", tc.memory)
++			pod := &corev1.Pod{Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "build"}, {Name: "another-build-container"}}}}
++			if tc.existing {
++				for i := range pod.Spec.Containers {
++					pod.Spec.Containers[i].Resources = corev1.ResourceRequirements{
++						Requests: corev1.ResourceList{corev1.ResourceCPU: resource.MustParse("100m"), corev1.ResourceMemory: resource.MustParse("128Mi")},
++						Limits:   corev1.ResourceList{corev1.ResourceCPU: resource.MustParse("1"), corev1.ResourceMemory: resource.MustParse("256Mi"), "example.com/gpu": resource.MustParse("1")},
++					}
++				}
++			}
++			want := pod.DeepCopy()
++			for i := range want.Spec.Containers {
++				for name, value := range map[corev1.ResourceName]string{corev1.ResourceCPU: tc.cpu, corev1.ResourceMemory: tc.memory} {
++					if strings.TrimSpace(value) == "" {
++						continue
++					}
++					r := &want.Spec.Containers[i].Resources
++					if r.Requests == nil {
++						r.Requests = corev1.ResourceList{}
++					}
++					if r.Limits == nil {
++						r.Limits = corev1.ResourceList{}
++					}
++					r.Requests[name] = resource.MustParse(strings.TrimSpace(value))
++					r.Limits[name] = resource.MustParse(strings.TrimSpace(value))
++				}
++			}
++			if err := applyBuildPodResources(pod); err != nil {
++				t.Fatal(err)
++			}
++			if !reflect.DeepEqual(pod, want) {
++				t.Fatalf("pod resources = %#v, want %#v", pod.Spec.Containers, want.Spec.Containers)
++			}
++		})
++	}
++}
++
++// capability_id: rainbond.builder.build-pod-resources
++func TestApplyBuildPodResourcesRejectsInvalidConfig(t *testing.T) {
++	for _, tc := range []struct {
++		name, cpu, memory, env string
++	}{
++		{name: "invalid cpu", cpu: "invalid", env: "BUILD_POD_CPU"},
++		{name: "zero cpu", cpu: "0", env: "BUILD_POD_CPU"},
++		{name: "negative cpu", cpu: "-1", env: "BUILD_POD_CPU"},
++		{name: "sub millicore cpu", cpu: "0.1m", env: "BUILD_POD_CPU"},
++		{name: "invalid memory", memory: "invalid", env: "BUILD_POD_MEMORY"},
++		{name: "zero memory", memory: "0Mi", env: "BUILD_POD_MEMORY"},
++		{name: "negative memory", memory: "-1Gi", env: "BUILD_POD_MEMORY"},
++		{name: "atomic validation", cpu: "2", memory: "invalid", env: "BUILD_POD_MEMORY"},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			t.Setenv("BUILD_POD_CPU", tc.cpu)
++			t.Setenv("BUILD_POD_MEMORY", tc.memory)
++			pod := &corev1.Pod{Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "build"}}}}
++			before := pod.DeepCopy()
++			err := applyBuildPodResources(pod)
++			if err == nil || !strings.Contains(err.Error(), tc.env) {
++				t.Fatalf("error = %v, want error naming %s", err, tc.env)
++			}
++			if !reflect.DeepEqual(pod, before) {
++				t.Fatal("invalid configuration partially mutated the pod")
++			}
++		})
++	}
++}
++
++// capability_id: rainbond.builder.build-pod-resources
++func TestExecJobAppliesResourcesBeforeCreate(t *testing.T) {
++	for _, invalid := range []bool{false, true} {
++		name := "configured"
++		if invalid {
++			name = "invalid"
++		}
++		t.Run(name, func(t *testing.T) {
++			t.Setenv("BUILD_POD_CPU", "2")
++			t.Setenv("BUILD_POD_MEMORY", "4Gi")
++			if invalid {
++				t.Setenv("BUILD_POD_MEMORY", "invalid")
++			}
++			client := fake.NewSimpleClientset()
++			factory := informers.NewSharedInformerFactory(client, 0)
++			c := &controller{KubeClient: client, namespace: "rbd-system", jobInformer: factory.Core().V1().Pods()}
++			pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "build", Namespace: c.namespace}, Spec: corev1.PodSpec{Containers: []corev1.Container{{Name: "build"}}}}
++			createErr := errors.New("creation intercepted")
++			var submitted *corev1.Pod
++			client.PrependReactor("create", "pods", func(action k8stesting.Action) (bool, runtime.Object, error) {
++				submitted = action.(k8stest
+```
+
+**File**: `docs/chaos-build-resources.md` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++# 构建 Pod 的 CPU 和内存配置
++
++在 `rbd-chaos` 的容器环境变量中配置以下两个可选参数：
++
++| 环境变量 | 示例 | 作用 |
++|---|---|---|
++| `BUILD_POD_CPU` | `2` 或 `500m` | 为新建构建容器设置相同的 CPU request 和 limit |
++| `BUILD_POD_MEMORY` | `4Gi` 或 `512Mi` | 为新建构建容器设置相同的内存 request 和 limit |
++
++例如，在管理 `rbd-chaos` 的工作负载或 Rainbond 组件配置中添加：
++
++```yaml
++env:
++  - name: BUILD_POD_CPU
++    value: "2"
++  - name: BUILD_POD_MEMORY
++    value: "4Gi"
++```
++
++更新全部 `rbd-chaos` 实例并重启使环境变量生效后，后续新建构建 Pod 中的普通容器将具有：
++
++```yaml
++resources:
++  requests:
++    cpu: "2"
++    memory: "4Gi"
++  limits:
++    cpu: "2"
++    memory: "4Gi"
++```
++
++配置覆盖统一构建控制器创建的源码、Dockerfile、CNB 和镜像打包等构建 Pod。它控制独立构建容器的资源，不改变 `rbd-chaos` 自身或业务运行容器的资源配置，也不修改已有构建 Pod。
++
++两个变量可以单独设置。未设置或仅含空白的项保留原有行为，其他资源项及 init container 保持原样。配置必须是正数，采用 Kubernetes 资源数量格式；CPU 精度不能小于 `1m`。值非法时，该构建返回包含变量名的配置错误，拒绝创建 Pod，不会静默退回到无限制运行。
++
++这里的数值仅为配置格式示例。应根据构建峰值、节点余量及并发量选择实际额度。request 与 limit 相同意味着调度时按完整额度申请资源；不足时构建 Pod 可能 Pending，超过内存上限时构建可能因 OOM 失败。
+```
+
+**File**: `mq/api/mq/mq.go` (modified, +5/-8)
+```diff
+@@ -19,13 +19,14 @@
+ package mq
  
-       - name: Notify done
-         env:
+ import (
+-	"github.com/goodrain/rainbond/config/configs"
+-	"github.com/goodrain/rainbond/config/configs/rbdcomponent"
+-	"github.com/goodrain/rainbond/mq/client"
+ 	"os"
+ 	"strings"
+ 	"sync"
+ 
++	"github.com/goodrain/rainbond/config/configs"
++	"github.com/goodrain/rainbond/config/configs/rbdcomponent"
++	"github.com/goodrain/rainbond/mq/client"
++
+ 	"golang.org/x/net/context"
+ 
+ 	"github.com/sirupsen/logrus"
+@@ -123,11 +124,7 @@ func (e *etcdQueue) Enqueue(ctx context.Context, topic, value string) error {
+ 
+ func (e *etcdQueue) Dequeue(ctx context.Context, topic string) (string, error) {
+ 	DequeueNumber++
+-	res, ok := e.client.Get(e.queueKey(topic))
+-	if !ok {
+-		return "", context.DeadlineExceeded
+-	}
+-	return res, nil
++	return e.client.Get(ctx, e.queueKey(topic))
+ }
+ 
+ func (e *etcdQueue) MessageQueueSize(topic string) int64 {
+```
+
+**File**: `mq/api/mq/store.go` (modified, +17/-11)
+```diff
+@@ -1,6 +1,7 @@
+ package mq
+ 
+ import (
++	"context"
+ 	"sync"
+ 	"time"
+ )
+@@ -31,16 +32,18 @@ func (kv *KeyValueStore) Put(key, value string) {
+ }
+ 
+ // Get 根据键获取第一个值并删除该键值对中的第一个值
+-func (kv *KeyValueStore) Get(key string) (string, bool) {
+-	deadline := time.Now().Add(5 * time.Second)
+-
++func (kv *KeyValueStore) Get(ctx context.Context, key string) (string, error) {
++	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
++	defer cancel()
++	ticker := time.NewTicker(100 * time.Millisecond)
++	defer ticker.Stop()
+ 	for {
+-		// 检查是否超时
+-		if time.Now().After(deadline) {
+-			return "", false
+-		}
+-
+ 		kv.mu.Lock()
++		// Recheck cancellation while holding the lock before removing a message.
++		if err := ctx.Err(); err != nil {
++			kv.mu.Unlock()
++			return "", err
++		}
+ 		values, ok := kv.data[key]
+ 		if ok && len(values) > 0 {
+ 			// 获取第一个值并从切片中删除
+@@ -51,12 +54,15 @@ func (kv *KeyValueStore) Get(key string) (string, bool) {
+ 				kv.data[key] = values[1:]
+ 			}
+ 			kv.mu.Unlock()
+-			return firstValue, true
++			return firstValue, nil
+ 		}
+ 		kv.mu.Unlock()
+ 
+-		// 短暂休眠后重试，避免忙等待
+-		time.Sleep(100 * time.Millisecond)
++		select {
++		case <-ctx.Done():
++			return "", ctx.Err()
++		case <-ticker.C:
++		}
+ 	}
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2725** (2026-10-25): ci(release): read E2E provenance from the job log as a fallback (@yangkaa)
-- **PR #2724** (2026-10-25): fix(release): save the chart index before searching it (@yangkaa)
-- **PR #2718** (2026-10-25): ci: automate releases with an E2E gate and two approvals (@yangkaa)
-- **PR #2717** (2026-10-12): fix: support service activation on sqlite (@ZhangSetSail)
-- **PR #2716** (2026-10-12): feat: v6.9.11 version (@ZhangSetSail)
-- **PR #2715** (2026-10-07): Feat/cleanup version images (@RainBondsongyg)
+- **PR #2736** (2026-10-30): V6.10.2 dev (@ZhangSetSail)
+- **PR #2735** (2026-10-29): V6.10.1 dev (@ZhangSetSail)
+- **PR #2734** (2026-10-29): ci(release): split the docs PR out of publish and publish roi after a release (@yangkaa)
+- **PR #2733** (2026-10-27): fix: preserve config group bindings before component creation (@ZhangSetSail)
+- **PR #2732** (2026-10-27): fix: isolate CNB source package build workspaces (@ZhangSetSail)
+- **PR #2731** (2026-10-27): fix: recognize colored CNB lifecycle phase logs (@ZhangSetSail)
 
 ---
 
@@ -1294,34 +1733,43 @@ Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. release): save the chart index before searching it (#2724)
+## X. record v6.10.2-release in upgrade feed
 
 **RULE**:
-When implementing operations in `.github/workflows/release-publish.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hack/release/upgrade-versions.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4f7d5f4`: release): save the chart index before searching it (#2724). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e2467b9`: record v6.10.2-release in upgrade feed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-publish.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/release/upgrade-versions.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          # 先落盘再 grep：`curl | grep -q` 在 grep 提前退出时 curl 会报错（23），pipefail 下会被误判为「不存在」。
-          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
-          if grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"; then
-        run: |
-          curl -fsSL "${CHART_REPO_URL}/index.yaml" -o "$RUNNER_TEMP/chart-index.yaml"
-          grep -q "charts/rainbond-${CHART_VERSION}.tgz" "$RUNNER_TEMP/chart-index.yaml"
+  {
+    "version": "v6.10.2-release",
+    "detail": {
+      "update_time": "2026-10-30",
+      "html_url": "https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release",
+      "tag_name": "v6.10.2-release",
+      "body": "For update details, reference: https://github.com/goodrain/rainbond/releases/tag/v6.10.2-release."
+    },
+    "images": {
+      "rbd-api": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-api:v6.10.2-release",
+      "rbd-app-ui": "registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:v6.10.2-release",
+      "rbd-chaos": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-chaos:v6.10.2-release",
+      "rbd-mq": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-mq:v6.10.2-release",
+      "rbd-worker": "registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-worker:v6.10.2-release"
+    }
+  },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-          if curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"; then
-        run: curl -fsSL "${CHART_REPO_URL}/index.yaml" | grep -q "charts/rainbond-${CHART_VERSION}.tgz"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4f7d5f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e2467b9` are properly handled with clean fallback behavior.

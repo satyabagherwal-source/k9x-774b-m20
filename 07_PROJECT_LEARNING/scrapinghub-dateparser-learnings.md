@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source**: github ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
-> **Source Version**: `4c4c5e52`  
+> **Source Version**: `b1a87f9f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:02:49.887Z  
+> **Timestamp**: 2026-10-30T18:18:36.778Z  
 > **Learning ID**: `learn-github-scrapinghub-dateparser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/scrapinghub-dateparser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/scrapinghub/dateparser](https://github.com/scrapinghub/dateparser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:02:49.489Z  
+> **Harvest Timestamp**: 2026-10-30T18:13:34.895Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -46,6 +46,7 @@ import os
 import threading
 import types
 import unicodedata
+import warnings
 from collections import OrderedDict
 from collections.abc import Callable, Mapping
 from datetime import datetime, tzinfo
@@ -68,10 +69,15 @@ def _get_localzone() -> tzinfo:
     try:
         return get_localzone()
     except ValueError as error:
-        raise RuntimeError(
+        warnings.warn(
             f"Could not determine the local timezone "
-            f"(TZ={os.environ.get('TZ')!r}): {error}"
-        ) from error
+            f"(TZ={os.environ.get('TZ')!r}): {error}. In a future version of "
+            f"dateparser, this will raise RuntimeError instead of failing to "
+            f"parse the date.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        raise
 
 
 def strip_braces(date_string: str) -> str:
@@ -311,6 +317,13 @@ _registry_lock = threading.Lock()
 
 
 def registry(cls: type[_T]) -> type[_T]:
+    warnings.warn(
+        "dateparser.utils.registry() is deprecated and will be removed in a "
+        "future version.",
+        FutureWarning,
+        stacklevel=2,
+    )
+
     def choose(creator: Callable[..., Any]) -> "staticmethod[..., Any]":
         def constructor(cls: Any, *args: Any, **kwargs: Any) -> Any:
             key = cls.get_key(*args, **kwargs)
@@ -340,23 +353,7 @@ def registry(cls: type[_T]) -> type[_T]:
     return cls
 
 
-def get_logger() -> logging.Logger:
-    setup_logging()
-    return logging.getLogger("dateparser")
-
-
-def setup_logging() -> None:
-    if len(logging.root.handlers):
-        return
-
-    config = {
-        "version": 1,
-        "disable_existing_loggers": True,
-        "formatters": {
-            "console": {
-                "format": "%(asctime)s %(levelname)s: [%(name)s] %(message)s",
-            },
-        },
+def get_logger() -> logging.Logger
 ```
 
 ### Core Architecture Module: `dateparser/utils/strptime.py`
@@ -534,6 +531,7 @@ def strptime(date_string: str, format: str) -> datetime:  # noqa: A002
 ### Core Architecture Module: `dateparser/utils/time_spans.py`
 ```
 import re
+import warnings
 from collections.abc import Mapping
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, Any
@@ -542,6 +540,33 @@ from dateutil.relativedelta import relativedelta
 
 if TYPE_CHECKING:
     from dateparser.conf import Settings
+
+
+def _get_week_start(date: datetime, start_of_week: str) -> datetime:
+    days_back = date.weekday()
+    if start_of_week != "monday":
+        days_back = (days_back + 1) % 7
+    return date - timedelta(days=days_back)
+
+
+def get_week_start(date: datetime, start_of_week: str = "monday") -> datetime:
+    warnings.warn(
+        "dateparser.utils.time_spans.get_week_start() is deprecated and will "
+        "be removed in a future version.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return _get_week_start(date, start_of_week)
+
+
+def get_week_end(date: datetime, start_of_week: str = "monday") -> datetime:
+    warnings.warn(
+        "dateparser.utils.time_spans.get_week_end() is deprecated and will "
+        "be removed in a future version.",
+        FutureWarning,
+        stacklevel=2,
+    )
+    return _get_week_start(date, start_of_week) + timedelta(days=6)
 
 
 def detect_time_span(text: str) -> dict[str, Any] | None:
@@ -619,18 +644,38 @@ def detect_time_span(text: str) -> dict[str, Any] | None:
 
 
 def generate_time_span(
-    span_info: Mapping[str, Any], base_date: datetime, settings: "Settings"
+    span_info: Mapping[str, Any],
+    base_date: datetime | None = None,
+    settings: "Settings | None" = None,
 ) -> tuple[datetime, datetime]:
     """Return the start and end dates of the span described by *span_info*."""
+    if base_date is None:
+        warnings.warn(
+            "Calling dateparser.utils.time_spans.generate_time_span() without "
+            "base_date is deprecated, and base_date will be required in a "
+            "future version.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        base_date = datetime.now()
+    if settings is None:
+        warnings.warn(
+            "Calling dateparser.utils.time_spans.generate_time_span() without "
+            "settings is deprecated, and settings will be required in a "
+            "future version.",
+            FutureWarning,
+            stacklevel=2,
+        )
+        start_of_week, days_in_month = "monday", 30
+    else:
+        start_of_week = getattr(settings, "DEFAULT_START_OF_WEEK", "monday")
+        days_in_month = getattr(settings, "DEFAULT_DAYS_IN_MONTH", 30)
     span_type = span_info["type"]
     number = span_info.get("number", 1)
     past = span_info["direction"] == "past"
 
     if span_type == "week":
-        days_back = base_date.weekday()
-        if settings.DEFAULT_START_OF_WEEK == "sunday":
-            days_back = (days_back + 1) % 7
-        week_start = base_date - timedelta(days=days_back)
+        week_start = _get_week_start(base_date, start_of_week)
         if past:
             return week_start - timedelta(days=7), week_start - timedelta(days=1)
         start_date = week_start + timedelta(days=7)
@@ -638,7 +683,7 @@ def generate_time_span(
 
     span: timedelta | relativedelta
     if span_type == "month":
-        span = timedelta(days=settings.DEFAULT_DAYS_IN_MONTH)
+        span = timedelta(days=days_in_month)
     elif span_type == "days":
         span = timedelta(days=number)
     elif span_type == "weeks":
@@ -778,7 +823,9 @@ def parse(
         `here <https://docs.python.org/2/library/datetime.html#strftime-and-strptime-behavior>`_.
         The parser applies formats one by one, taking into account the detected
         languages/locales. A UTC offset matched by ``%z`` is kept, while a time
-        zone name matched by ``%Z`` is ignored.
+        zone name matched by ``%Z`` is ignored. If no format matches, the other
+        parsers of the :ref:`PARSERS <settings>` setting are tried; set it to
+        ``['custom-formats']`` to use only these formats.
     :type date_formats: list
 
     :param languages:
@@ -850,7 +897,7 @@ class PartOfDay(str, Enum):
 
     See :attr:`DateData.part_of_day <dateparser.date.DateData.part_of_day>`.
 
-    .. versionadded:: VERSION
+    .. versionadded:: 1.5.0
     """
 
     EARLY_MORNING = "early_morning"
@@ -868,7 +915,7 @@ class PartsOfDay:
     """Time of the day to use for each :class:`PartOfDay`, for the
     ``PARTS_OF_DAY`` :ref:`setting <settings>`.
 
-    .. versionadded:: VERSION
+    .. versionadded:: 1.5.0
     """
 
     early_morning: time = time(3)
@@ -954,9 +1001,15 @@ from dateparser.parser import _parser
 
 
 class _CalendarParser(Protocol):
-    def parse(
+    def _parse_with_parts(
         self, datestring: str, settings: Settings
     ) -> tuple[datetime, str | None, tuple[str, ...]]: ...
+
+
+class _PartlessCalendarParser(Protocol):
+    def parse(
+        self, datestring: str, settings: Settings
+    ) -> tuple[datetime, str | None]: ...
 
 
 class CalendarBase:
@@ -967,14 +1020,20 @@ class CalendarBase:
     :type source: str
     """
 
-    parser: _CalendarParser = NotImplemented
+    parser: _CalendarParser | _PartlessCalendarParser = NotImplemented
 
     def __init__(self, source: str) -> None:
         self.source = source
 
     def get_date(self) -> DateData | None:
         try:
-            date_obj, period, parts = self.parser.parse(self.source, settings)
+            if hasattr(self.parser, "_parse_with_parts"):
+                date_obj, period, parts = self.parser._parse_with_parts(
+                    self.source, settings
+                )
+            else:
+                date_obj, period = self.parser.parse(self.source, settings)
+                parts = ()
             return DateData(date_obj=date_obj, period=period, parts=parts)
         except ValueError:
             return None
@@ -1096,9 +1155,22 @@ class non_gregorian_parser(_parser):
         settings: Settings,
         tz: tzinfo | None = None,
         date_order: str | None = None,
+    ) -> tuple[datetime, str | None]:
+        date_obj, period, _ = cls._parse_with_parts(
+            datestring, settings, tz, date_order
+        )
+        return date_obj, period
+
+    @classmethod
+    def _parse_with_parts(
+        cls,
+        datestring: str,
+        settings: Settings,
+        tz: tzinfo | None = None,
+        date_order: str | None = None,
     ) -> tuple[datetime, str | None, tuple[str, ...]]:
         datestring = cls.to_latin(datestring)
-        return super().parse(datestring, settings, tz, date_order)
+        return super()._parse_with_parts(datestring, settings, tz, date_order)
 
 ```
 
@@ -1163,7 +1235,7 @@ def _month_length(year: int, month: int) -> int:
 
 class _french_republican_parser:
     @classmethod
-    def parse(
+    def _parse_with_parts(
         cls, datestring: str, settings: "Settings"
     ) -> tuple[datetime, str | None, tuple[str, ...]]:
         normalized = "".join(
@@ -1227,13 +1299,14 @@ class HijriCalendar(CalendarBase):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1544** (2026-10-20): **Speed up parse() by ~35% by caching strptime format inspection and language order lookups**
-  *Symptoms*: No linked issue (related to the general slowness reports in #853 and #624).  `strptime()` re-derived, with four regex substitutions, whether each format has a year, a day of month and a day of year. Parsing one string calls it about 13 times, always with the same handful of formats. That inspection depends only on the format, so it now lives in a cached helper (`lru_cache(maxsize=256)`); the current year is still read on every call.  `LocaleDataLoader._load_data()` sorted the locales with `language_order.index()` as the key, which is quadratic over the 205 languages and ran on every `parse()` call without `languages`. It now looks positions up in a dict built once (`language_order` has no duplicates, so the order is identical).  Measured in-process, original vs patched alternating over 15 rounds (median ratio, IQR), Python 3.11, Apple M5:  | Workload | Before | After | Change | | --- | ---: | ---: | ---: | | `parse()` default settings, 10 mixed strings (en/es/de/fr, ISO, relative) | 12.80 ms | 8.24 ms | **−36%** (IQR 0.633–0.655) | | `parse(languages=['en'])`, 8 strings | 9.96 ms | 6.64 ms | **−25%** | | `search_dates()` on an English paragraph | 5.60 ms | 4.00 ms | **−28%** |  First-call cost (import and locale loading) is unchanged. Results are identical to the original on 1,896 calls (809 strings from the test suite × several settings and language sets with a fixed `RELATIVE_BASE`, plus `search_dates` and `date_formats` cases with `%j`, `%d %B` and `%f`), including tzinfo 
+- **Issue #1557** (2026-10-30): **Replace the VERSION placeholders with 1.5.0**
+  *Symptoms*: The `versionadded` directives of the APIs added in 1.5.0 still say `VERSION`, a placeholder that bump-my-version does not replace (its `[[tool.bumpversion.files]]` entries only cover `pyproject.toml`, `dateparser/__init__.py`, `HISTORY.rst` and `SECURITY.md`). Without this change the 1.5.0 documentation would read "New in version VERSION".  It sets the six placeholders to `1.5.0`:  - `PartOfDay` and `PartsOfDay` (`dateparser/_parts_of_day.py`) - `DateData.part_of_day` (`dateparser/date.py`) - the `add_period` argument of `search_dates()` (`dateparser/search/__init__.py`) - the `TIMEZONE_ABBREVIATIONS` and `PARTS_OF_DAY` settings (`docs/settings.rst`)  `git grep -w VERSION` finds no other placeholder, and #1553, #1554 and #1556 add none. The change is text-only inside docstrings and docs, so it does not conflict with those PRs or with the advisory fixes.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #1541** (2026-10-16): **Switch the spam PR check to scrapy/unattended-pr-guard 0.2.0**
-  *Symptoms*: - [x] I have read the [contributing guide](https://dateparser.readthedocs.io/en/latest/contributing.html) and [set up pre-commit](https://pre-commit.com/#quick-start). 
+- **Issue #1556** (2026-10-30): **Deprecate instead of remove**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/scrapinghub/dateparser/pull/1541?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 98.96%. Comparing base ([`fed9cf9`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/fed9cf94e9d8a1128b396f01ca66f4a303f03ee4?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)) to head ([`20c801c`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/20c801c17615c331d2b8f0f3f6a35a72900368f6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #1541   +/-   #
+  > ## [Codecov](https://app.codecov.io/gh/scrapinghub/dateparser/pull/1556?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.19%. Comparing base ([`533b0df`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/533b0df032f6028b70739b8a1c6fa1ac23f3f8b0?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)) to head ([`599afae`](https://app.codecov.io/gh/scrapinghub/dateparser/commit/599afae37d2acca88079760b2f6bfb8cecb264f1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=scrapinghub)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##           master    #1556      +
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**   `✅ 10` untouched benchmarks        ---  <sub>Comparing <code>AdrianAtZyte:deprecate-instead-of-remove</code> (599afae) with <code>master</code> (533b0df)</sub>  <a href="https://app.codspeed.io/scrapinghub/dateparser/branches/AdrianAtZyte%3Adeprecate-instead-of-remove?utm_source=github&utm_medium=comment-v2&utm_content=button">   <picture>     <source media="(prefers-color-scheme: dark)" srcset="https://codspeed.io/pr-report/open-in-codspeed-dark.svg">     <source media="(prefers-color-scheme: light)" srcset="https://codspeed.io/pr-report/open-in-codspeed-light.svg">     <img alt="Open in CodSpeed" src="https://codspeed.io/pr-report/open-in-codspeed-light.svg" width="169" height="32">   </picture> </a>  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1250,114 +1323,337 @@ class HijriCalendar(CalendarBase):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb27abda` (2026-10-20)
-**Commit Message**: Add regression test for bare two-digit UTC offsets (#1340)
+### Incident Patch 1: `b1a87f9f` (2026-10-30)
+**Commit Message**: Deprecate instead of remove (#1556)
 
-Master already parses offsets like +08 and -03 (#1475); this adds a test that pins the behaviour.
-
-**File**: `tests/test_short_utc_offsets.py` (added, +20/-0)
+**File**: `dateparser/calendars/__init__.py` (modified, +29/-4)
 ```diff
-@@ -0,0 +1,20 @@
-+from datetime import timedelta
+@@ -8,11 +8,17 @@
+ 
+ 
+ class _CalendarParser(Protocol):
+-    def parse(
++    def _parse_with_parts(
+         self, datestring: str, settings: Settings
+     ) -> tuple[datetime, str | None, tuple[str, ...]]: ...
+ 
+ 
++class _PartlessCalendarParser(Protocol):
++    def parse(
++        self, datestring: str, settings: Settings
++    ) -> tuple[datetime, str | None]: ...
 +
-+import pytest
 +
-+from dateparser.utils import get_timezone_from_tz_string
+ class CalendarBase:
+     """Base setup class for non-Gregorian calendar system.
+ 
+@@ -21,14 +27,20 @@ class CalendarBase:
+     :type source: str
+     """
+ 
+-    parser: _CalendarParser = NotImplemented
++    parser: _CalendarParser | _PartlessCalendarParser = NotImplemented
+ 
+     def __init__(self, source: str) -> None:
+         self.source = source
+ 
+     def get_date(self) -> DateData | None:
+         try:
+-            date_obj, period, parts = self.parser.parse(self.source, settings)
++            if hasattr(self.parser, "_parse_with_parts"):
++                date_obj, period, parts = self.parser._parse_with_parts(
++                    self.source, settings
++                )
++            else:
++                date_obj, period = self.parser.parse(self.source, settings)
++                parts = ()
+             return DateData(date_obj=date_obj, period=period, parts=parts)
+         except ValueError:
+             return None
+@@ -150,6 +162,19 @@ def parse(
+         settings: Settings,
+         tz: tzinfo | None = None,
+         date_order: str | None = None,
++    ) -> tuple[datetime, str | None]:
++        date_obj, period, _ = cls._parse_with_parts(
++            datestring, settings, tz, date_order
++        )
++        return date_obj, period
 +
++    @classmethod
++    def _parse_with_parts(
++        cls,
++        datestring: str,
++        settings: Settings,
++        tz: tzinfo | None = None,
++        date_order: str | None = None,
+     ) -> tuple[datetime, str | None, tuple[str, ...]]:
+         datestring = cls.to_latin(datestring)
+-        return super().parse(datestring, settings, tz, date_order)
++        return super()._parse_with_parts(datestring, settings, tz, date_order)
+```
+
+**File**: `dateparser/calendars/french_republican.py` (modified, +1/-1)
+```diff
+@@ -57,7 +57,7 @@ def _month_length(year: int, month: int) -> int:
+ 
+ class _french_republican_parser:
+     @classmethod
+-    def parse(
++    def _parse_with_parts(
+         cls, datestring: str, settings: "Settings"
+     ) -> tuple[datetime, str | None, tuple[str, ...]]:
+         normalized = "".join(
+```
+
+**File**: `dateparser/calendars/minguo.py` (modified, +2/-2)
+```diff
+@@ -37,14 +37,14 @@ def _get_date_obj(self, token: str, directive: str) -> Any:
+         return super()._get_date_obj(token, directive)
+ 
+     @classmethod
+-    def parse(
++    def _parse_with_parts(
+         cls,
+         datestring: str,
+         settings: Settings,
+         tz: tzinfo | None = None,
+         date_order: str | None = None,
+     ) -> tuple[datetime, str | None, tuple[str, ...]]:
+-        return super(non_gregorian_parser, cls).parse(
++        return super(non_gregorian_parser, cls)._parse_with_parts(
+             datestring, settings, tz, date_order or "YMD"
+         )
+ 
+```
+
+**File**: `dateparser/conf.py` (modified, +18/-0)
+```diff
+@@ -1,3 +1,5 @@
++import hashlib
++import warnings
+ from collections.abc import Callable, Iterable, Mapping
+ from datetime import datetime, timedelta
+ from functools import wraps
+@@ -83,6 +85,22 @@ def __init__(self, settings: Mapping[str, Any] | None = None) -> None:
+         else:
+             self._updateall(self._get_settings_from_pyfile().items())
+ 
++    @classmethod
++    def get_key(cls, settings: Mapping[str, Any] | None = None) -> str:
++        warnings.warn(
++            "dateparser.conf.Settings.get_key() is deprecated and will be "
++            "removed in a future version.",
++            FutureWarning,
++            stacklevel=2,
++        )
++        if not settings:
++            return "default"
 +
-+@pytest.mark.parametrize(
-+    ("tz_string", "expected_offset"),
-+    [
-+        ("+08", timedelta(hours=8)),
-+        ("-03", -timedelta(hours=3)),
-+    ],
-+)
-+def test_two_digit_utc_offsets_without_minutes_are_supported(
-+    tz_string, expected_offset
-+):
-+    tzinfo = get_timezone_from_tz_string(tz_string)
++        keys = sorted([f"{key}-{settings[key]}" for key in settings])
++        return hashlib.md5(
++            "".join(keys).encode("utf-8"), usedforsecurity=False
++        ).hexdigest()
 +
-+    assert tzinfo.utcoffset(None) == expected_offset
+     @classmethod
+     def _get_settings_from_pyfile(cls) -> dict[str, Any]:
+         if not cls._pyfile_data:
+```
+
+**File**: `dateparser/date.py` (modified, +1/-1)
+```diff
+@@ -608,7 +608,7 @@ def _try_parser(
+ 
+         for order in candidates:
+             try:
+-                date_obj, period, parts = date_parser.parse(
++                date_obj, period, parts = date_parser._parse_with_parts(
+                     translated,
+                     parse_method=parse_method,
+                     settings=self._settings,
+```
+
+**File**: `dateparser/date_parser.py` (modified, +23/-3)
+```diff
+@@ -8,11 +8,29 @@
+ 
+ 
+ class DateParser:
+-    @apply_settings
+     def parse(
+         self,
+         date_string: str,
+-        parse_method: Callable[..., tuple[datetime, str | None, tuple[str, ...]]],
++        parse_method: Callable[
++            ...,
++            tuple[datetime, str | None] | tuple[datetime, str | None, tuple[str, ...]],
++        ],
++        settings: Settings | dict[str, Any] | None = None,
++        date_order: str | None = None,
++    ) -> tuple[datetime, str | None]:
++        date_obj, period, _ = self._parse_with_parts(
++            date_string, parse_method, settings=settings, date_order=date_order
++        )
++        return date_obj, period
++
++    @apply_settings
++    def _parse_with_parts(
++        self,
++        date_string: str,
++        parse_method: Callable[
++            ...,
++            tuple[datetime, str | None] | tuple[datetime, str | None, tuple[str, ...]],
++        ],
+         settings: Settings | dict[str, Any] | None = None,
+         date_order: str | None = None,
+     ) -> tuple[datetime, str | None, tuple[str, ...]]:
+@@ -25,9 +43,11 @@ def parse(
+         date_string = strip_braces(date_string)
+         date_string, ptz = pop_tz_offset_from_string(date_string, settings=settings)
+ 
+-        date_obj, period, parts = parse_method(
++        result = parse_method(
+             date_string, settings=settings, tz=ptz, date_order=date_order
+         )
++        date_obj, period = result[:2]
++        parts = result[2] if len(result) == 3 else ()
+ 
+         _settings_tz = settings.TIMEZONE.lower()
+ 
+```
+
+**File**: `dateparser/freshness_date_parser.py` (modified, +8/-2)
+```diff
+@@ -58,7 +58,13 @@ def _parse_time(self, date_string: str, settings: "Settings") -> time | None:
+     def get_local_tz(self) -> tzinfo:
+         return _get_localzone()
+ 
+-    def parse(  # noqa: PLR0912, PLR0915
++    def parse(
++        self, date_string: str, settings: "Settings"
++    ) -> tuple[datetime | None, str | None]:
++        date, period, _ = self._parse_with_parts(date_string, settings)
++        return date, period
++
++    def _parse_with_parts(  # noqa: PLR0912, PLR0915
+         self, date_string: str, settings: "Settings"
+     ) -> tuple[datetime | None, str | None, tuple[str, ...]]:
+         date_string = strip_braces(date_string)
+@@ -248,7 +254,7 @@ def get_kwargs(
+     def get_date_data(self, date_string: str, settings: "Settings") -> "DateData":
+         from dateparser.date import DateData  # noqa: PLC0415
+ 
+-        date, period, parts = self.parse(date_string, settings)
++        date, period, parts = self._parse_with_parts(date_string, settings)
+         return DateData(date_obj=date, period=period, parts=parts)
+ 
+ 
+```
+
+**File**: `dateparser/parser.py` (modified, +2/-2)
+```diff
+@@ -145,7 +145,7 @@ def _parse_absolute(
+     tz: tzinfo | None = None,
+     date_order: str | None = None,
+ ) -> tuple[datetime, str | None, tuple[str, ...]]:
+-    return _parser.parse(datestring, settings, tz, date_order=date_order)
++    return _parser._parse_with_parts(datestring, settings, tz, date_order=date_order)
+ 
+ 
+ def _parse_nospaces(
+@@ -851,7 +851,7 @@ def _correct_for_month(self, dateobj: datetime) -> datetime:
+         )
+ 
+     @classmethod
+-    def parse(
++    def _parse_with_parts(
+         cls,
+         datestring: str,
+         settings: "Settings",
 ```
 
 ---
 
-### Incident Patch 2: `c6cfdff2` (2026-10-20)
-**Commit Message**: Fix negative subsecond timestamp parsing (#1387)
+### Incident Patch 2: `533b0df0` (2026-10-30)
+**Commit Message**: Replace the VERSION placeholders with 1.5.0 (#1557)
 
-**File**: `dateparser/date.py` (modified, +4/-2)
+**File**: `dateparser/_parts_of_day.py` (modified, +2/-2)
 ```diff
-@@ -255,9 +255,11 @@ def get_date_from_timestamp(
+@@ -10,7 +10,7 @@ class PartOfDay(str, Enum):
  
-         seconds = int(match.group(1))
-         millis = int(match.group(2) or 0)
--        micros = int(match.group(3) or 0)
-+        micros = millis * 1000 + int(match.group(3) or 0)
-+        if negative:
-+            seconds, micros = divmod(seconds * 1000000 - micros, 1000000)
-         date_obj = datetime.fromtimestamp(seconds, timezone).replace(
--            microsecond=millis * 1000 + micros, tzinfo=None
-+            microsecond=micros, tzinfo=None
-         )
-         return apply_timezone_from_settings(date_obj, settings)
-     return None
+     See :attr:`DateData.part_of_day <dateparser.date.DateData.part_of_day>`.
+ 
+-    .. versionadded:: VERSION
++    .. versionadded:: 1.5.0
+     """
+ 
+     EARLY_MORNING = "early_morning"
+@@ -28,7 +28,7 @@ class PartsOfDay:
+     """Time of the day to use for each :class:`PartOfDay`, for the
+     ``PARTS_OF_DAY`` :ref:`setting <settings>`.
+ 
+-    .. versionadded:: VERSION
++    .. versionadded:: 1.5.0
+     """
+ 
+     early_morning: time = time(3)
 ```
 
-**File**: `tests/test_date.py` (modified, +22/-0)
+**File**: `dateparser/date.py` (modified, +1/-1)
 ```diff
-@@ -1487,6 +1487,28 @@ def reset_tzstr(self) -> None:
-         # Restore the old timezone behavior
-         tzset()
+@@ -698,7 +698,7 @@ class DateData:
+     """:class:`~dateparser.PartOfDay` that the date string refers to, e.g.
+     :attr:`~dateparser.PartOfDay.NIGHT` for ``"tonight"``, or ``None``.
  
-+    @parameterized.expand(
-+        [
-+            ("-1570308760263", -1570308760263000),
-+            ("-1570308760999", -1570308760999000),
-+            ("-1570308760000", -1570308760000000),
-+            ("-1570308760263111", -1570308760263111),
-+            ("-1570308760000001", -1570308760000001),
-+            ("-1570308760999999", -1570308760999999),
-+            ("-1570308760000000", -1570308760000000),
-+        ]
-+    )
-+    def test_negative_subsecond_timestamp(
-+        self, timestamp: str, microseconds: int
-+    ) -> None:
-+        self.given_parser(
-+            settings={"PARSERS": ["negative-timestamp"], "TIMEZONE": "UTC"}
-+        )
-+        self.assertEqual(
-+            self.parser.get_date_data(timestamp)["date_obj"],
-+            datetime(1970, 1, 1) + timedelta(microseconds=microseconds),
-+        )
-+
-     def test_timestamp_in_milliseconds(self) -> None:
-         self.assertEqual(
-             date.get_date_from_timestamp("1570308760263", None),
+-    .. versionadded:: VERSION
++    .. versionadded:: 1.5.0
+ 
+     Its time comes from the ``PARTS_OF_DAY`` :ref:`setting <settings>`, unless
+     the date string also has a time, e.g. ``"tonight at 11pm"``. If it does
 ```
 
-**File**: `tests/test_date_parser.py` (modified, +3/-1)
+**File**: `dateparser/search/__init__.py` (modified, +1/-1)
 ```diff
-@@ -1141,7 +1141,9 @@ def test_parse_timestamp(self, date_string: str, expected: datetime) -> None:
-         [
-             param("-1484823450", expected=datetime(1922, 12, 13, 13, 2, 30)),
-             param("-1436745600000", expected=datetime(1924, 6, 22, 0, 0)),
--            param("-1015673450000001", expected=datetime(1937, 10, 25, 12, 29, 10, 1)),
-+            param(
-+                "-1015673450000001", expected=datetime(1937, 10, 25, 12, 29, 9, 999999)
-+            ),
-         ]
-     )
-     def test_parse_negative_timestamp(
+@@ -68,7 +68,7 @@ def search_dates(
+         detected language. ``time`` and ``part_of_day`` require the
+         ``RETURN_TIME_AS_PERIOD`` :ref:`setting <settings>`.
+ 
+-        .. versionadded:: VERSION
++        .. versionadded:: 1.5.0
+     :type add_period: bool
+ 
+     :return: Returns list of tuples containing:
+```
+
+**File**: `docs/settings.rst` (modified, +2/-2)
+```diff
+@@ -75,7 +75,7 @@ Time by default. Keys are case-sensitive and must be abbreviations that
+ dateparser supports, e.g. ``ChST``. ``TIMEZONE`` and ``TO_TIMEZONE`` keep the
+ default offsets.
+ 
+-.. versionadded:: VERSION
++.. versionadded:: 1.5.0
+ 
+ >>> from datetime import timedelta
+ >>> settings = {
+@@ -328,7 +328,7 @@ Defaults to ``False``.
+ to use for each part of the day, e.g. for ``tonight``. Defaults to
+ ``PartsOfDay()``.
+ 
+-.. versionadded:: VERSION
++.. versionadded:: 1.5.0
+ 
+     >>> from datetime import time
+     >>> from dateparser import PartsOfDay
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1544** (2026-10-20): Speed up parse() by ~35% by caching strptime format inspection and language order lookups (@deadstrobe5)
-- **PR #1541** (2026-10-16): Switch the spam PR check to scrapy/unattended-pr-guard 0.2.0 (@AdrianAtZyte)
-- **PR #1539** (2026-10-20): Parse "fortnight" and "century" in English relative dates (@yamilmaud)
-- **PR #1538** (closed): Keep the month of a time-only date that PREFER_DATES_FROM moves by a day (@darshjoshi)
-- **PR #1537** (closed): Read thousand-separated amounts in relative dates correctly (fixes #1367) (@simpleqt)
-- **PR #1536** (2026-10-19): Parse "midi" as noon in French (#459) (@serhii73)
+- **PR #1557** (2026-10-30): Replace the VERSION placeholders with 1.5.0 (@serhii73)
+- **PR #1556** (2026-10-30): Deprecate instead of remove (@AdrianAtZyte)
+- **PR #1555** (closed): stop rescanning the date string per redundant timezone token (@radhika1314)
+- **PR #1552** (2026-10-27): Limit the name readings tried for date_formats (@serhii73)
+- **PR #1550** (2026-10-26): Fix CI on the ubuntu-26.04 runner image (@AdrianAtZyte)
+- **PR #1549** (2026-10-27): Document how date_formats falls back to the other parsers (@serhii73)
 
 ---
 
@@ -1377,47 +1673,59 @@ Master already parses offsets like +08 and -03 (#1475); this adds a test that pi
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add regression test for bare two-digit UTC offsets (#1340)
+## X. Deprecate instead of remove (#1556)
 
 **RULE**:
-When implementing operations in `tests/test_short_utc_offsets.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dateparser/calendars/__init__.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in scrapinghub/dateparser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb27abda`: Add regression test for bare two-digit UTC offsets (#1340). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1a87f9f`: Deprecate instead of remove (#1556). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/test_short_utc_offsets.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `dateparser/calendars/__init__.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from datetime import timedelta
+    def _parse_with_parts(
+class _PartlessCalendarParser(Protocol):
+    def parse(
+        self, datestring: str, settings: Settings
+    ) -> tuple[datetime, str | None]: ...
 
-import pytest
 
-from dateparser.utils import get_timezone_from_tz_string
+    parser: _CalendarParser | _PartlessCalendarParser = NotImplemented
+            if hasattr(self.parser, "_parse_with_parts"):
+                date_obj, period, parts = self.parser._parse_with_parts(
+                    self.source, settings
+                )
+            else:
+                date_obj, period = self.parser.parse(self.source, settings)
+                parts = ()
+    ) -> tuple[datetime, str | None]:
+        date_obj, period, _ = cls._parse_with_parts(
+            datestring, settings, tz, date_order
+        )
+        return date_obj, period
 
-
-@pytest.mark.parametrize(
-    ("tz_string", "expected_offset"),
-    [
-        ("+08", timedelta(hours=8)),
-        ("-03", -timedelta(hours=3)),
-    ],
-)
-def test_two_digit_utc_offsets_without_minutes_are_supported(
-    tz_string, expected_offset
-):
-    tzinfo = get_timezone_from_tz_string(tz_string)
-
-    assert tzinfo.utcoffset(None) == expected_offset
+    @classmethod
+    def _parse_with_parts(
+        cls,
+        datestring: str,
+        settings: Settings,
+        tz: tzinfo | None = None,
+        date_order: str | None = None,
+        return super()._parse_with_parts(datestring, settings, tz, date_order)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    def parse(
+    parser: _CalendarParser = NotImplemented
+            date_obj, period, parts = self.parser.parse(self.source, settings)
+        return super().parse(datestring, settings, tz, date_order)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb27abda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1a87f9f` are properly handled with clean fallback behavior.

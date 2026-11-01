@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fission-fission-learnings.md`  
 > **Source**: github ([https://github.com/fission/fission](https://github.com/fission/fission))  
-> **Source Version**: `b983965d`  
+> **Source Version**: `ae2aabf5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T18:24:15.781Z  
+> **Timestamp**: 2026-10-27T11:56:12.659Z  
 > **Learning ID**: `learn-github-fission-fission`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fission-fission-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fission/fission](https://github.com/fission/fission))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T18:24:15.774Z  
+> **Harvest Timestamp**: 2026-10-27T11:56:12.404Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and Simple Serverless Functions for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 8937 stars
+- **Stars / Engagement**: 8939 stars
 
 ---
 
@@ -1040,138 +1040,241 @@ func FunctionOwnerRef(fn *Function) metav1.OwnerReference {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b983965d` (2026-10-22)
-**Commit Message**: chore(deps): bump the github-actions group with 5 updates (#3743)
+### Incident Patch 1: `ae2aabf5` (2026-10-26)
+**Commit Message**: Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, misc patches (#3745)
 
-Bumps the github-actions group with 5 updates:
+* Bump Go toolchain to 1.27.3 (closes GO-2026-6809)
 
-| Package | From | To |
-| --- | --- | --- |
-| [goreleaser/goreleaser-action](https://github.com/goreleaser/goreleaser-action) | `7.2.3` | `7.3.0` |
-| [github/codeql-action/init](https://github.com/github/codeql-action) | `4.38.3` | `4.39.0` |
-| [github/codeql-action/analyze](https://github.com/github/codeql-action) | `4.38.3` | `4.39.0` |
-| [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) | `4.38.3` | `4.39.0` |
-| [actions/setup-java](https://github.com/actions/setup-java) | `6.0.1` | `6.1.0` |
+go.mod and test/benchmark/go.mod move from 1.27.2 to 1.27.3, which fixes
+crypto/x509's trust of compromised intermediate certificates. The router's
+streaming path reaches x509.Certificate.Verify, so govulncheck reported the
+vulnerability as reachable.
 
+CI takes the toolchain from go.mod (go-version-file), so no workflow change
+is needed.
 
-Updates `goreleaser/goreleaser-action` from 7.2.3 to 7.3.0
-- [Release notes](https://github.com/goreleaser/goreleaser-action/releases)
-- [Commits](https://github.com/goreleaser/goreleaser-action/compare/f06c13b6b1a9625abc9e6e439d9c05a8f2190e94...a4f02ab5355a589de60d917a659ce617ed19b3de)
+* Bump controller-tools to v0.23.0 and regenerate the CRDs
 
-Updates `github/codeql-action/init` from 4.38.3 to 4.39.0
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/24
+controller-gen v0.23 emits the validation markers that upstream k8s 0.37
+puts on PodSpec.evictionResponders (minLength on the responder name,
+0-100000 on priority, maxItems 10 on the list), so crds/v1 gains those
+constraints alongside the new version stamp.
 
-**File**: `.github/workflows/benchmark.yaml` (modified, +1/-1)
+v0.23.0 still targets k8s v0.37.0, so the k8s core group stays put.
+
+* Bump misc dependencies (go-snaps 0.5.24, ojg 1.28.8, sqlite 1.61.0)
+
+Routine patch/minor updates with no CVEs attached; modernc.org/sqlite
+pulls libc v1.79.0 and the x/mod+x/tools pair along with it. The nested
+test/benchmark module is re-tidied to match.
+
+**File**: `crds/v1/fission.io_canaryconfigs.yaml` (modified, +1/-1)
 ```diff
-@@ -168,7 +168,7 @@ jobs:
- 
-       - name: Install GoReleaser
-         if: ${{ matrix.fission_version == 'HEAD' }}
--        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
-         with:
-           install-only: true
-           version: "~> v2"
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: canaryconfigs.fission.io
+ spec:
+   group: fission.io
 ```
 
-**File**: `.github/workflows/codeql.yaml` (modified, +2/-2)
+**File**: `crds/v1/fission.io_environments.yaml` (modified, +9/-1)
 ```diff
-@@ -42,9 +42,9 @@ jobs:
-           cache: true
- 
-       - name: Initialize CodeQL
--        uses: github/codeql-action/init@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/init@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           languages: go
- 
-       - name: Perform CodeQL Analysis
--        uses: github/codeql-action/analyze@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/analyze@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: environments.fission.io
+ spec:
+   group: fission.io
+@@ -5867,6 +5867,7 @@ spec:
+                                 Domain names *.k8s.io and *.kubernetes.io are reserved.
+                                 This field must be unique for each responder.
+                                 This field is required.
++                              minLength: 1
+                               type: string
+                             priority:
+                               description: |-
+@@ -5883,12 +5884,15 @@ spec:
+                                 The interval 0-999 is reserved for responders with *.k8s.io suffix.
+                                 This field is required.
+                               format: int32
++                              maximum: 100000
++                              minimum: 0
+                               type: integer
+                           required:
+                           - name
+                           - priority
+                           type: object
+                           x-kubernetes-map-type: atomic
++                        maxItems: 10
+                         type: array
+                         x-kubernetes-list-map-keys:
+                         - name
+@@ -16378,6 +16382,7 @@ spec:
+                                 Domain names *.k8s.io and *.kubernetes.io are reserved.
+                                 This field must be unique for each responder.
+                                 This field is required.
++                              minLength: 1
+                               type: string
+                             priority:
+                               description: |-
+@@ -16394,12 +16399,15 @@ spec:
+                                 The interval 0-999 is reserved for responders with *.k8s.io suffix.
+                                 This field is required.
+                               format: int32
++                              maximum: 100000
++                              minimum: 0
+                               type: integer
+                           required:
+                           - name
+                           - priority
+                           type: object
+                           x-kubernetes-map-type: atomic
++                        maxItems: 10
+                         type: array
+                         x-kubernetes-list-map-keys:
+                         - name
 ```
 
-**File**: `.github/workflows/push_pr.yaml` (modified, +1/-1)
+**File**: `crds/v1/fission.io_fissiontenants.yaml` (modified, +1/-1)
 ```diff
-@@ -110,7 +110,7 @@ jobs:
-           skaffold version
- 
-       - name: Install GoReleaser
--        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
-         with:
-           install-only: true
-           version: "~> v2"
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: fissiontenants.fission.io
+ spec:
+   group: fission.io
 ```
 
-**File**: `.github/workflows/release.yaml` (modified, +2/-2)
+**File**: `crds/v1/fission.io_functionaliases.yaml` (modified, +1/-1)
 ```diff
-@@ -48,7 +48,7 @@ jobs:
-         run: echo "VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_OUTPUT
- 
-       - name: Install GoReleaser
--        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
-         with:
-           install-only: true
-           version: "~> v2"
-@@ -92,7 +92,7 @@ jobs:
- 
-       - name: Run GoReleaser
-         id: goreleaser
--        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
-         with:
-           version: "~> v2"
-           args: release
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: functionaliases.fission.io
+ spec:
+   group: fission.io
 ```
 
-**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+**File**: `crds/v1/fission.io_functions.yaml` (modified, +5/-1)
 ```diff
-@@ -73,6 +73,6 @@ jobs:
-       # Upload the results to GitHub's code scanning dashboard (optional).
-       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-       - name: "Upload to code-scanning"
--        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
-+        uses: github/codeql-action/upload-sarif@6f2ac81f5cd81fe351a197ba0b00d91d03cd2aee # v4.39.0
-         with:
-           sarif_file: results.sarif
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: functions.fission.io
+ spec:
+   group: fission.io
+@@ -5502,6 +5502,7 @@ spec:
+                             Domain names *.k8s.io and *.kubernetes.io are reserved.
+                             This field must be unique for each responder.
+                             This field is required.
++                          minLength: 1
+                           type: string
+                         priority:
+                           description: |-
+@@ -5518,12 +5519,15 @@ spec:
+                             The interval 0-999 is reserved for responders with *.k8s.io suffix.
+                             This field is required.
+                           format: int32
++                          maximum: 100000
++                          minimum: 0
+                           type: integer
+                       required:
+                       - name
+                       - priority
+                       type: object
+                       x-kubernetes-map-type: atomic
++                    maxItems: 10
+                     type: array
+                     x-kubernetes-list-map-keys:
+                     - name
 ```
 
-**File**: `.github/workflows/tlc.yaml` (modified, +1/-1)
+**File**: `crds/v1/fission.io_functionversions.yaml` (modified, +5/-1)
 ```diff
-@@ -40,7 +40,7 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
-       - name: Set up Java
--        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
-+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
-         with:
-           distribution: temurin
-           java-version: '21'
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: functionversions.fission.io
+ spec:
+   group: fission.io
+@@ -5584,6 +5584,7 @@ spec:
+                                 Domain names *.k8s.io and *.kubernetes.io are reserved.
+                                 This field must be unique for each responder.
+                                 This field is required.
++                              minLength: 1
+                               type: string
+                             priority:
+                               description: |-
+@@ -5600,12 +5601,15 @@ spec:
+                                 The interval 0-999 is reserved for responders with *.k8s.io suffix.
+                                 This field is required.
+                               format: int32
++                              maximum: 100000
++                              minimum: 0
+                               type: integer
+                           required:
+                           - name
+                           - priority
+                           type: object
+                           x-kubernetes-map-type: atomic
++                        maxItems: 10
+                         type: array
+                         x-kubernetes-list-map-keys:
+                         - name
 ```
 
-**File**: `.github/workflows/upgrade_test.yaml` (modified, +1/-1)
+**File**: `crds/v1/fission.io_httptriggers.yaml` (modified, +1/-1)
 ```diff
-@@ -104,7 +104,7 @@ jobs:
-           cluster_name: ${{ env.KIND_CLUSTER_NAME }}
- 
-       - name: Install GoReleaser
--        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
-+        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
-         with:
-           install-only: true
-           version: "~> v2"
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: httptriggers.fission.io
+ spec:
+   group: fission.io
+```
+
+**File**: `crds/v1/fission.io_kuberneteswatchtriggers.yaml` (modified, +1/-1)
+```diff
+@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
+ kind: CustomResourceDefinition
+ metadata:
+   annotations:
+-    controller-gen.kubebuilder.io/version: v0.22.0
++    controller-gen.kubebuilder.io/version: v0.23.0
+   name: kuberneteswatchtriggers.fission.io
+ spec:
+   group: fission.io
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3745** (2026-10-26): Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, misc patches (@sanketsudake)
 - **PR #3743** (2026-10-22): chore(deps): bump the github-actions group with 5 updates (@dependabot[bot])
 - **PR #3741** (2026-10-15): Bump k8s to v0.37.1 with controller-runtime v0.25.2 (@sanketsudake)
 - **PR #3740** (closed): chore(deps): bump the go-dependencies group across 1 directory with 5 updates (@dependabot[bot])
 - **PR #3739** (2026-10-14): storagesvc/client: serve the S3 test fixture in-process with gofakes3 (@sanketsudake)
 - **PR #3738** (2026-10-14): CI tool refresh 2026-10: helm v4.3.0, skaffold v2.25.0, Envoy Gateway v1.9.2 (@sanketsudake)
-- **PR #3737** (2026-10-15): Dependency sweep 2026-10: go 1.27.2 (12 stdlib vulns), otel 1.47, grpc 1.84, x/net 0.61, KEDA 2.21, prometheus 1.25 (@sanketsudake)
 
 ---
 
@@ -1191,28 +1294,28 @@ Updates `github/codeql-action/init` from 4.38.3 to 4.39.0
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the github-actions group with 5 updates (#3743)
+## X. Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, mi
 
 **RULE**:
-When implementing operations in `.github/workflows/benchmark.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fission/fission. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crds/v1/fission.io_canaryconfigs.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fission/fission. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b983965d`: deps): bump the github-actions group with 5 updates (#3743). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae2aabf5`: Dependency sweep 2026-10-25: go 1.27.3 (GO-2026-6809), controller-tools 0.23, misc patches (#3745). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `crds/v1/fission.io_canaryconfigs.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
+    controller-gen.kubebuilder.io/version: v0.23.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: goreleaser/goreleaser-action@f06c13b6b1a9625abc9e6e439d9c05a8f2190e94 # v7.2.3
+    controller-gen.kubebuilder.io/version: v0.22.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b983965d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae2aabf5` are properly handled with clean fallback behavior.

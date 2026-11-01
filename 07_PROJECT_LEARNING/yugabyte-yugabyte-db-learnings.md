@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `545b420b`  
+> **Source Version**: `a138218b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T20:23:52.372Z  
+> **Timestamp**: 2026-10-31T18:15:38.121Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T20:23:52.367Z  
+> **Harvest Timestamp**: 2026-10-31T18:15:38.114Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10628 stars
+- **Stars / Engagement**: 10642 stars
 
 ---
 
@@ -2250,11 +2250,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #35783** (2026-10-24): **SIGSEGV (PC=0) on the first RPC when the container's CPU count is smaller than the host CPU ids: `ThreadSafeObjectPool` sizes per-CPU pools from `/proc/cpuinfo` but indexes them by `sched_getcpu()`**
-  *Symptoms*: **Environment:** YugabyteDB 2025.2.7.0-b107 (official tarball; 2024.2 LTS behaves the same), single node started with `yugabyted start --advertise_address=127.0.0.1 --base_dir=/var/lib/yugabyte --background=true`. Running inside an unprivileged Incus 7.5.1 container (`images:ubuntu/24.04`, cgroup v2) with lxcfs virtualising `/proc/cpuinfo`, on a 128-thread host, Ubuntu 24.04, kernel 7.2.11. The same build runs crash-free on the host itself and in VMs.  **What happens:** with a floating CPU limit (`limits.cpu=4`, so the container sees 4 processors in `/proc/cpuinfo`, `nproc` and `SC_NPROCESSORS_ONLN`, while its threads are scheduled on host CPUs 23, 80, 119, 122), yb-master and yb-admin die with SIGSEGV at address 0 on the first RPC, and `yugabyted start` fails. The crash is deterministic.  | CPU limit | CPUs visible | host CPU ids seen by `sched_getcpu()` | result | | --- | --- | --- | --- | | 4 (floating) | 4 | 23, 80, 119, 122 | SIGSEGV, PC=0 on the first RPC | | pinned 0-3 | 4 | 0-3 | no crash: 10 min of YSQL + YCQL load, about 1080 iterations | | pinned 4-7 | 4 | 4-7 | SIGSEGV, PC=0, same stack |  **Stack** (YugabyteDB's own signal handler):  ``` *** SIGSEGV (@0x0) received by PID ... ; stack trace: ***     @ yb::Trace::GetAndInitArena()     @ yb::Trace::NewEntry()     @ yb::Trace::MaybeGetNewTrace()     @ yb::Trace::MaybeGetNewTraceForParent()     @ yb::rpc::RpcCommand::RpcCommand()     @ yb::master::GetLeaderMasterRpc::SendRpc()     @ yb::client::YBClient::Data::DoSetMa
+- **Issue #36522** (2026-10-31): **[#36141] YSQL: Import 'Fix plpgsql's handling of "return simple_record_variable"' from upstream**
+  *Symptoms*: ## Summary  A PL/pgSQL function that returns a domain over a composite type fails when it returns a NULL record variable:  ```sql create type ct as (a int, b int); create domain cd as ct; create function f() returns cd as $$ declare v ct; begin return v; end $$ language plpgsql; select f(); ERROR:  cache lookup failed for type 0 CONTEXT:  PL/pgSQL function f() while casting return value to function's return type ```  The `RETURN <record variable>` fast path in `exec_stmt_return()` set `estate->rettype` only when the record was non-empty. A NULL result normally skips conversion, but for a domain return type `plpgsql_exec_function()` still casts it so that domain constraints are checked. That cast then looked up type 0.  Fixes #36141  ## Changes  - Import upstream PostgreSQL commit 2b93d382055b62e1493cfbb6c3b5547c1bb9ab82 ("Fix plpgsql's handling of \"return simple_record_variable\"", back-patched through 14 and included in 15.17). The `PLPGSQL_DTYPE_REC` case now uses `exec_eval_datum()`, as the `ROW` case already did, so it always fills in the return type. The `pl_exec.c` hunk is byte-identical to upstream. - Add a regression test to `yb.orig.plpgsql`, which runs in `TestPgRegressPlpgsql`. The upstream test was added to `plpgsql_domain`, but YB does not run that file and changing an upstream-owned test fails lint unless the pin moves. The YB test covers both the plain domain case, which now returns NULL, and a `NOT NULL` domain, which must still raise "domain ... does not all
 
-- **Issue #35766** (2026-10-24): **[#35199] YSQL: Fix PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 by lengthening the YSQL lease**
-  *Symptoms*: ## Summary  Under sanitizers, master leader failover after the SIGKILL can take about 20s because of 10 missed heartbeats and a possible split vote, which is longer than the base fixture's 10s `master_ysql_operation_lease_ttl_ms`. When the leases expire, the tservers kill their Postgres sessions, including the in-flight `CREATE INDEX` and the test's own connection. `PgIndexBackfillMultiMaster` now overrides `UpdateMiniClusterOptions` to set `--master_ysql_operation_lease_ttl_ms=40000`, so the leases outlast the failover.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --cxx-test pg_index_backfill-test --gtest-filter PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 -n 100 --stop-at-failure -- -p 6 ./yb_build.sh asan --clang21 --cxx-test pg_index_backfill-test --gtest-filter PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 -n 100 --stop-at-failure -- -p 6 Ran the above locally each with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-asan: 9/14 iterations failed locally; CSI 17/50 - clang21-tsan: 9/9 iterations failed locally; CSI 25/48 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
+- **Issue #36485** (2026-10-31): **[BACKPORT 2025.2][#36434] YSQL: Log how many waiters a response cache fill releases (#36438)**
+  *Symptoms*: ## Summary  Problem:  A catalog invalidation leaves every new connection wanting the same response cache entry. The first becomes the filler and the rest queue in waiters_, so connections that arrive one at a time are handed their catalog together when the fill lands, and build their caches at the same moment. Nothing reports how long that queue grows, so a node that runs out of memory shortly after an invalidation gives no evidence of how many backends were woken together.  The path has no logging at all today: RegisterWaiter does not say that a connection queued, and the loop that serves them does not say how many it served. A QA run of this exact failure with --vmodule=pg_response_cache=2,pg_sys_table_prefetcher=2 produced only the GC line, because nothing on the path of interest is instrumented.  Fix:  One VLOG(1) before the loop that serves the waiters, reporting the key group and catalog version the entry is keyed at, the fill duration, the number of waiters released, and the size of the response each of them takes. It is logged before the loop rather than after because a node short of memory dies inside it, and the point is to have the number from the run that failed.  The key group and the catalog version say which database refilled and at which version. Neither identifies one fill: the key group is the database oid, a paged prefetch caches every page under a key of its own, and a global catalog version bump moves every database to the same version at once. Both are p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2271,513 +2271,172 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `545b420b` (2026-10-25)
-**Commit Message**: [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)
+### Incident Patch 1: `5a6087c8` (2026-10-27)
+**Commit Message**: [#35616] CDC: Don't panic the walsender when the slot lock is already gone
 
-## Summary
+Summary:
+##### Code changes summary
 
-Aeon's BYOC bootstrap needs the cloud and region of the YBA it
-registers. v1 `GET /api/v1/customers/{c}/host_info` has neither as a
-field, and it is slow and sticky on failure:
+With `ysql_yb_enable_replication_slot_exclusive_lock`, `YbReleaseReplicationSlotLock` runs from walsender error cleanup. Release can fail because the session transaction is already aborted (`ERRCODE_YB_TXN_ABORTED`), or because that transaction expired and the lock is already gone (`ERRCODE_YB_TXN_LOCK_NOT_FOUND`). Raising that failure as ERROR jumps back into `WalSndErrorCleanup` while `yb_slot_locktag` is still set, so the same unlock is retried until the error stack overflows and the postmaster kills every backend on the node.
 
-- It runs ybops `current-host` for AWS, GCP and Azure one after another.
-On the wrong clouds each run waits out a metadata timeout.
-- It caches every result until restart. ybops reports an unreachable
-metadata service as a JSON string with exit code 0, so one transient
-failure stays cached.
-- GCP returns no zone or region.
+Those two statuses now warn and clear the lock tag. Any other release failure stays ERROR, so a transient timeout is still retried. The session transaction is still alive in that case and still holds the lock.
 
-This adds `GET /api/v2/customers/{cUUID}/host-cloud-info` (Customer tag,
-read permission on the customer, same as v1):
+##### Upgrade/Rollback safety
 
-```json
-{"cloud": "gcp", "region": "us-central1",
- "gcp": {"project": "...", "network": "...", "shared_vpc_project": "...", "zone": "us-central1-a", "region": "us-central1"}}
-```
+No proto, RPC, or on-disk format change. `ysql_yb_enable_replication_slot_exclusive_lock` stays off by default.
 
-Only the host cloud's object is set (`aws`, `gcp` or `azu`). `cloud` is
-absent when YBA isn't on one of the three. `region` and the cloud's
-object are absent when the cloud is known but its metadata service is
-unreachable.
+Forward: a tserver warns and clears the lock tag for those two statuses after it restarts on this build. Until that restart it still raises them as ERROR. During a rolling upgrade, a walsender st
 
-Changes:
-
-- `HostCloudDetector` reads DMI (`/sys/devices/virtual/dmi/id`) with the
-same rules a
-
-**File**: `managed/build.sbt` (modified, +2/-2)
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java` (modified, +94/-0)
 ```diff
-@@ -317,7 +317,7 @@ libraryDependencies ++= Seq(
-   // aarch64 binaries (same PG 14.5) so the embedded server starts natively there.
-   "io.zonky.test.postgres" % "embedded-postgres-binaries-darwin-arm64v8" % "14.5.0" % Test,
-   "org.springframework" % "spring-test" % "5.3.9" % Test,
--  "com.yugabyte" % "yba-client-v2" % "1.8.10" % Test,
-+  "com.yugabyte" % "yba-client-v2" % "1.8.11" % Test,
-   "io.fabric8" % "kubernetes-server-mock" % "6.14.0" % Test
- )
- 
-@@ -767,7 +767,7 @@ lazy val javaGenV2Client = project.in(file("client/java"))
-     openApiConfigFile := "client/java/openapi-java-config-v2.json",
-     openApiGlobalProperties += ("skipFormModel" -> "false"),
-     openApiTemplateDir := (baseDirectory.value / resDir / "openapi_templates/clients/v2").absolutePath,
--    version := "1.8.10",
-+    version := "1.8.11",
-     openApiHttpUserAgent := s"yba-java-client/${version.value}",
-     target := file("client/java/target/v2"),
-   )
-```
-
-**File**: `managed/client/java/v2/pom.xml` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
-     <artifactId>yba-client-v2</artifactId>
-     <packaging>jar</packaging>
-     <name>yba-client-v2</name>
--    <version>1.8.10</version>
-+    <version>1.8.11</version>
-     <url>https://github.com/openapitools/openapi-generator</url>
-     <description>Java V2 client for Yugabyte Anywhere</description>
-     <scm>
-```
-
-**File**: `managed/devops/opscli/ybops/cloud/gcp/utils.py` (modified, +11/-1)
-```diff
-@@ -151,6 +151,12 @@ def shared_vpc_project():
-     def network():
-         return GcpMetadata._query_endpoint("instance/network-interfaces/0/network")
- 
-+    @staticmethod
-+    def zone():
-+        # Of the form projects/PROJECT_NUMBER/zones/ZONE.
-+        zone = GcpMetadata._query_endpoint("instance/zone")
-+        return zone.split("/")[-1] if zone else None
-+
-     @staticmethod
-     def service_accounts():
-         return GcpMetadata._query_endpoint("instance/service-accounts/")
-@@ -589,12 +595,16 @@ def get_current_host_info():
-         network = GcpMetadata.network()
-         shared_vpc_project = GcpMetadata.shared_vpc_project()
-         project = GcpMetadata.project()
-+        zone = GcpMetadata.zone()
-         if network is None or project is None:
-             raise YBOpsRuntimeError("Unable to auto-discover GCP provider information")
-         return {
-             "network": network.split("/")[-1],
-             "shared_vpc_project": shared_vpc_project,
--            "project": project
-+            "project": project,
-+            "zone": zone,
-+            # A zone is its region plus a one-letter suffix, e.g. us-central1-a.
-+            "region": zone.rsplit("-", 1)[0] if zone else None
-         }
- 
-     def get_image(self, image, project=None):
-```
-
-**File**: `managed/src/main/java/api/v2/controllers/CustomerApiControllerImp.java` (modified, +6/-0)
-```diff
-@@ -6,6 +6,7 @@
- import api.v2.models.ApiTokenSpec;
- import api.v2.models.CustomerRegistration;
- import api.v2.models.CustomerRegistrationSpec;
-+import api.v2.models.HostCloudInfo;
- import api.v2.models.UserApiToken;
- import com.google.inject.Inject;
- import com.typesafe.config.Config;
-@@ -38,4 +39,9 @@ public UserApiToken generateApiToken(
-       Http.Request request, UUID cUUID, ApiTokenSpec apiTokenSpec) {
-     return customerHandler.generateApiToken(request, cUUID, apiTokenSpec);
-   }
-+
-+  @Override
-+  public HostCloudInfo getHostCloudInfo(Http.Request request, UUID cUUID) {
-+    return customerHandler.getHostCloudInfo();
-+  }
- }
-```
-
-**File**: `managed/src/main/java/api/v2/handlers/CustomerManagementHandler.java` (modified, +76/-1)
-```diff
-@@ -9,12 +9,21 @@
- import static play.mvc.Http.Status.UNAUTHORIZED;
- 
- import api.v2.models.ApiTokenSpec;
-+import api.v2.models.AwsHostInfo;
-+import api.v2.models.AzuHostInfo;
- import api.v2.models.CustomerRegistration;
- import api.v2.models.CustomerRegistrationSpec;
-+import api.v2.models.GcpHostInfo;
-+import api.v2.models.HostCloud;
-+import api.v2.models.HostCloudInfo;
- import api.v2.models.UserApiToken;
-+import com.fasterxml.jackson.databind.JsonNode;
- import com.google.inject.Inject;
- import com.google.inject.Provider;
- import com.google.inject.Singleton;
-+import com.yugabyte.yw.commissioner.Common.CloudType;
-+import com.yugabyte.yw.common.CloudQueryHelper;
-+import com.yugabyte.yw.common.HostCloudDetector;
- import com.yugabyte.yw.common.PlatformServiceException;
- import com.yugabyte.yw.common.user.UserService;
- import com.yugabyte.yw.controllers.RequestContext;
-@@ -24,6 +33,7 @@
- import com.yugabyte.yw.models.Users;
- import io.ebean.DB;
- import io.ebean.Transaction;
-+import java.util.Optional;
- import java.util.UUID;
- import org.apache.commons.validator.routines.EmailValidator;
- import play.mvc.Http;
-@@ -36,15 +46,21 @@ public class CustomerManagementHandler {
-   private final Provider<TokenAuthenticator> tokenAuthenticatorProvider;
-   private final CustomerRegistrationHandler customerRegistrationHandler;
-   private final UserService userService;
-+  private final HostCloudDetector hostCloudDetector;
-+  private final CloudQueryHelper cloudQueryHelper;
- 
-   @Inject
-   public CustomerManagementHandler(
-       Provider<TokenAuthenticator> tokenAuthenticatorProvider,
-       CustomerRegistrationHandler customerRegistrationHandler,
--      UserService userService) {
-+      UserService userService,
-+      HostCloudDetector hostCloudDetector,
-+      CloudQueryHelper cloudQueryHelper) {
-     this.tokenAuthenticatorProvider = tokenAuthenticatorProvider;
-     this.customerRegistrationHandler = customerRegistrationHandler;
-     this.userService = userService;
-+    this.hostCloudDetector = hostCloudDetector;
-+    this.cloudQueryHelper = cloudQueryHelper;
+@@ -6379,6 +6379,100 @@ public void testExclusiveReplicationSlotAcquireAcrossTservers() throws Exception
+     }
    }
  
-   public CustomerRegistration registerCustomer(
-@@ -134,4 +150,63 @@ public UserApiToken generateApiToken(Http.Request request, UUID cUUID, ApiTokenS
-         .apiToken(apiToken)
-         .apiTokenVersion(user.getApiTokenVersion());
-   }
++  @Test
++  public void testSecondConsumerAcquiresSlotAfterHeartbeatLoss() throws Exception {
++    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
++    tserverFlags.put("transaction_heartbeat_usec", Integer.toString(500000 * kMultiplier));
++    tserverFlags.put("transaction_max_missed_heartbeat_periods", "2");
++    tserverFlags.put("transaction_check_interval_usec", Integer.toString(200000 * kMultiplier));
++    restartClusterWithFlags(getMasterFlags(), tserverFlags);
 +
-+  public HostCloudInfo getHostCloudInfo() {
-+    HostCloudInfo info = new HostCloudInfo();
-+    Optional<CloudType> cloud = hostCloudDetector.getHostCloud();
-+    if (cloud.isEmpty()) {
-+      return info;
-+    }
-+    info.cloud(HostCloud.fromValue(cloud.get().name()));
-+    JsonNode hostInfo = cloudQueryHelper.getCurrentHostInfo(cloud.get());
-+    // Without metadata, e.g. when the metadata service is unreachable from a pod, the cloud is
-+    // still known from DMI.
-+    if (!hostInfo.isObject() || hostInfo.has("error")) {
-+      return info;
-+    }
-+    switch (cloud.get()) {
-+      case aws:
-+        info.aws(
-+            new AwsHostInfo()
-+                .instanceId(text(hostInfo, "instance-id"))
-+                .vpcId(text(hostInfo, "vpc-id"))
-+                .privateIp(text(hostInfo, "privateIp"))
-+                .region(text(hostInfo, "region")));
-+        return info.region(info.getAws().getRegion());
-+      case gcp:
-+        info.gcp(
-+            new GcpHostInfo()
-+                .project(text(hostInfo, "project"))
-+                .network(text(hostInfo, "network"))
-+                .sharedVpcProject(text(hostInfo, "shared_vpc_project"))
-+                .zone(text(hostInfo, "zone"))
-+                .region(text(hostInfo, "region")));
-+        return info.region(info.getGcp().getRegion());
-+      default:
-+        // The Azure instance metadata document, as returned by IMDS.
-+        JsonNode compute = hostInfo.path("compute");
-+        info.azu(
-+            new AzuHostInfo()
-+                .subscriptionId(text(compute, "subscriptionId"))
-+                .resourceGroup(text(compute, "resourceGroupName"))
-+                .vmId(text(compute, "vmId"))
-+                .privateIp(
-+                    text(
-+                        hostInfo
-+                            .path("network")
-+                            .path("interface")
-+                            .path(0)
-+                            .path("ipv4")
-+                            .path("ipAddress")
-+                            .path(0),
-+                        "privateIpAddress"))
-+                .region(text(compute, "location")));
-+        return info.region(info.getAzu().getRegion());
-+    }
-+  }
++    String slotName = "heartbeat_loss_slot";
 +
-+  private static String text(JsonNode node, String field) {
-+    JsonNode value = node.path(field);
-+    return value.isValueNode() && !value.isNull() ? value.asText() : null;
-+  }
- }
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/CloudMetadataEndpoints.java` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+// Copyright (c) YugabyteDB, Inc.
-+
-+package com.yugabyte.yw.common;
-+
-+/**
-+ * Cloud instance metadata service endpoints, as ybops also uses them (GcpMetadata in
-+ * devops/opscli/ybops/cloud/gcp/utils.py, get_and_append_imdsv2_token_header in
-+ * devops/opscli/ybops/cloud/aws/cloud.py). They are link-local, so must be reached without a proxy.
-+ */
-+public final class CloudMetadataEndpoints {
-+  // AWS, GCP and Azure all serve instance metadata on this address.
-+  public static final String METADATA_IP = "169.254.169.254";
-+  public static final String GCP_METADATA_HOST = "metadata.google.internal";
-+  public static final String GCP_METADATA_FLAVOR_HEADER = "Metadata-Flavor";
-+  public static final String GCP_METADATA_FLAVOR = "Google";
-+  public static final String GCP_INSTANCE_ID_PATH = "/computeMetadata/v1/instance/id";
-+  public static final String AWS_IMDSV2_TOKEN_PATH = "/latest/api/token";
-+  public static final String AWS_IMDSV2_TOKEN_TTL_HEADER = "X-aws-ec2-metadata-token-ttl-seconds";
-+  public static final String AWS_INSTANCE_ID_PATH = "/latest/meta-data/instance-id";
-+
-+  private CloudMetadataEndpoints() {}
-+}
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/CloudQueryHelper.java` (modified, +59/-4)
-```diff
-@@ -14,18 +14,22 @@
- 
- import com.fasterxml.jackson.databind.JsonNode;
- import com.fasterxml.jackson.databind.node.ArrayNode;
-+import com.google.common.annotations.VisibleForTesting;
- import com.google.common.collect.ImmutableList;
- import com.yugabyte.yw.commissioner.Common;
- import com.yugabyte.yw.models.Provider;
- import com.yugabyte.yw.models.Region;
- import com.yugabyte.yw.models.helpers.CloudInfoInterface;
- import com.yugabyte.yw.models.helpers.provider.GCPCloudInfo;
-+import java.time.Duration;
- import java.util.ArrayList;
- import java.util.List;
- import java.util.Map;
-+import java.util.Optional;
- import java.util.UUID;
- import java.util.concurrent.ConcurrentHashMap;
- import javax.annotation.Nullable;
-+import javax.inject.Inject;
- import javax.inject.Singleton;
- import org.apache.commons.lang3.StringUtils;
- import org.slf4j.Logger;
-@@ -42,17 +46,68 @@ public class CloudQueryHelper extends DevopsBase {
-   private static final String DEFAULT_IMAGE_KEY = "default_image";
-   public static final String ARCHITECTURE_KEY = "architecture";
- 
--  private Map<Common.CloudType, JsonNode> cachedHostInfos = new ConcurrentHashMap<>();
-+  // A failed lookup is retried after this long, e.g. once the metadata service is reachable again.
-+  // Failures are cached too: each attempt can take tens of seconds (ybops' IMDSv2 token timeout).
-+  @VisibleForTesting Duration hostInfoFailureTtl = Duration.ofMinutes(5);
-+
-+  private static class CachedHostInfo {
-+    private final JsonNode hostInfo;
-+    // System.nanoTime() after which the entry is stale; null for a successful lookup.
-+    private final Long expiresAtNanos;
-+
-+    private CachedHostInfo(JsonNode hostInfo, Long expiresAtNanos) {
-+      this.hostInfo = hostInfo;
-+      this.expiresAtNanos = expiresAtNanos;
++    try (Statement stmt = connection.createStatement()) {
++      stmt.execute("DROP TABLE IF EXISTS t_heartbeat_loss");
++      stmt.execute("CREATE TABLE t_heartbeat_loss(k int primary key, v text)");
 +    }
 +
-+    private boolean isFresh() {
-+      return expiresAtNanos == null || System.nanoTime() - expiresAtNanos < 0;
-+    }
-+  }
++    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
++    PGReplicationConnection replApi0 =
++        replConn0.unwrap(PGConnection.class).getReplicationAPI();
++    createSlot(replApi0, slotName, "test_decoding");
 +
-+  private final Map<Common.CloudType, CachedHostInfo> cachedHostInfos = new ConcurrentHashMap<>();
-+  private final Map<Common.CloudType, Object> hostInfoLocks = new ConcurrentHashMap<>();
++    PGReplicationStream stream0 = replApi0.replicationStream()
++        .logical()
++        .withSlotName(slotName)
++        .withStartPosition(LogSequenceNumber.valueOf(0L))
++        .start();
 +
-+  @Inject HostCloudDetector hostCloudDetector;
- 
-   @Override
-   protected String getCommandType() {
-     return YB_CLOUD_COMMAND_TYPE;
-   }
- 
-+  /**
-+   * Returns the host's metadata from the cloud's metadata service. On failure, returns what ybops
-+   * does: a JSON string if YBA doesn't run on that cloud or its metadata service is unreachable,
-+   * or an {@code {"error": ...}} object if ybops itself failed.
-+   */
-   public JsonNode getCurrentHostInfo(Common.CloudType cloudType) {
--    return cachedHostInfos.computeIfAbsent(
--        cloudType,
--        ct -> currentHostInfo(ct, ct == Common.CloudType.aws ? AWS_METADATA_TYPES : null));
-+    if (!hostCloudDetector.getHostCloud().equals(Optional.of(cloudType))) {
-+      // Running ybops would only wait out the metadata service timeouts to fail the same way.
-+      return Json.toJson(
-+          String.format(
-+              "Unable to auto-discover %s provider information",
-+              cloudType.name().toUpperCase()));
-+    }
-+    CachedHostInfo cached = cachedHostInfos.get(cloudType);
-+    if (cached != null && cached.isFresh()) {
-+      return cached.hostInfo;
-+    }
-+    // Concurrent callers wait for one ybops run instead of each starting one.
-+    synchronized (hostInfoLocks.computeIfAbsent(cloudType, ct -> new Object())) {
-+      cached = cachedHostInfos.get(cloudType);
-+      if (cached != null && cached.isFresh()) {
-+        return cached.hostInfo;
-+      }
-+      JsonNode hostInfo =
-+          currentHostInfo(
-+              cloudType, cloudType == Common.CloudType.aws ? AWS_METADATA_TYPES : null);
-+      boolean success = hostInfo.isObject() && !hostInfo.has("error");
-+      cachedHostInfos.put(
-+          cloudType,
-+          new CachedHostInfo(
-+              hostInfo, success ? null : System.nanoTime() + hostInfoFailureTtl.toNanos()));
-+      return hostInfo;
-+    }
-   }
- 
-   private JsonNode currentHostInfo(
-```
-
-**File**: `managed/src/main/java/com/yugabyte/yw/common/HostCloudDetector.java` (added, +157/-0)
-```diff
-@@ -0,0 +1,157 @@
-+// Copyright (c) YugabyteDB, Inc.
-+
-+package com.yugabyte.yw.common;
-+
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_IMDSV2_TOKEN_PATH;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_IMDSV2_TOKEN_TTL_HEADER;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.AWS_INSTANCE_ID_PATH;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_INSTANCE_ID_PATH;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_METADATA_FLAVOR;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.GCP_METADATA_FLAVOR_HEADER;
-+import static com.yugabyte.yw.common.CloudMetadataEndpoints.METADATA_IP;
-+
-+import com.google.common.annotations.VisibleForTesting;
-+import com.google.inject.Singleton;
-+import com.yugabyte.yw.commissioner.Common.CloudType;
-+import java.io.IOException;
-+import java.net.URI;
-+import java.net.http.HttpClient;
-+import java.net.http.HttpRequest;
-+import java.net.http.HttpResponse;
-+import java.nio.charset.StandardCharsets;
-+import java.nio.file.Files;
-+import java.nio.file.Path;
-+import java.nio.file.Paths;
-+import java.time.Duration;
-+import java.util.Optional;
-+import java.util.concurrent.CompletableFuture;
-+import java.util.function.Predicate;
-+import lombok.extern.slf4j.Slf4j;
-+
-+/**
-+ * Detects the public cloud that YBA runs on, so that only that cloud's metadata service is queried.
-+ * Reads DMI first, as Aeon's boot scripts do; if DMI is missing or unrecognized, probes the three
-+ * metadata services in parallel.
-+ */
-+@Singleton
-+@Slf4j
-+public class HostCloudDetector {
-+  private static final Path DMI_DIR = Paths.get("/sys/devices/virtual/dmi/id");
-+  private static final String METADATA_URL = "http://" + METADATA_IP;
-+  private static final String AZURE_CHASSIS_ASSET_TAG = "7783-7084-3265-9085-8269-3286-77";
-+  private static final Duration PROBE_TIMEOUT = Duration.ofSeconds(1);
-+  // An undetected host is probed again after this long, in case the metadata service was only
-+  // briefly unreachable. A detected cloud doesn't change.
-+  private static final Duration UNDETECTED_TTL = Duration.ofMinutes(5);
-+
-+  private final Path dmiDir;
-+  private final String metadataUrl;
-+  private final HttpClient httpClient;
-+
-+  private CloudType detected;
-+  private long undetectedUntilNanos;
-+  private boolean checked;
-+
-+  public HostCloudDetector() {
-+    this(DMI_DIR, METADATA_URL);
-+  }
-+
-+  @VisibleForTesting
-+  HostCloudDetector(Path dmiDir, String metadataUrl) {
-+    this.dmiDir = dmiDir;
-+    this.metadataUrl = metadataUrl;
-+    this.httpClient =
-+        HttpClient.newBuilder()
-+            // YBA's default ProxySelector sends hosts not in no_proxy through http_proxy.
-+            .proxy(HttpClient.Builder.NO_PROXY)
-+            .connectTimeout(PROBE_TIMEOUT)
-+            .followRedirects(HttpClient.Redirect.NEVER)
-+            .build();
-+  }
-+
-+  public synchronized Optional<CloudType> getHostCloud() {
-+    if (detected == null && (!checked || System.nanoTime() - undetectedUntilNanos > 0)) {
-+      detected = fromDmi().or(this::fromMetadataServices).orElse(null);
-+      checked = true;
-+      undetectedUntilNanos = System.nanoTime() + UNDETECTED_TTL.toNanos();
-+      log.info("YBA host cloud: {}", detected == null ? "none detected" : detected);
-+    }
-+    return Optional.ofNullable(detected);
-+  }
-+
-+  private Optional<CloudType> fromDmi() {
-+    String chassisAssetTag = readDmi("chassis_asset_tag");
-+    if ("Amazon EC2".equals(chassisAssetTag)) {
-+      return Optional.of(CloudType.aws);
-+    }
-+    if (AZURE_CHASSIS_ASSET_TAG.equals(chassisAssetTag)) {
-+      return Optional.of(CloudType.azu);
-+    }
-+    if ("Google Compute Engine".equals(readDmi("product_name"))) {
-+      return Optional.of(CloudType.gcp);
-+    }
-+    return Optional.empty();
-+  }
-+
-+  private String readDmi(String name) {
++    PGReplicationStream stream1 = null;
++    Connection replConn1 = null;
 +    try {
-+      return Files.readString(dmiDir.resolve(name), StandardCharsets.UTF_8).trim();
-+    } catch (IOException | SecurityException e) {
-+      return null;
++      // Heartbeats stop reaching the coordinator, so the transaction that holds the slot expires
++      // and its lock goes away. Same outcome as a partition between them.
++      for (HostAndPort tServer : miniCluster.getTabletServers().keySet()) {
++        assertTrue(miniCluster.getClient().setFlag(
++            tServer, "transaction_disable_heartbeat_in_tests", "true", true));
++      }
++
++      final int maxAttempts = 30;
++      final int sleepBetweenAttemptsMs = 2000 * kMultiplier;
++      for (int attempt = 1; attempt <= maxAttempts; attempt++) {
++        try {
++          replConn1 = getConnectionBuilder().withTServer(1).replicationConnect();
++          PGReplicationConnection replApi1 =
++              replConn1.unwrap(PGConnection.class).getReplicationAPI();
++          stream1 = replApi1.replicationStream()
++              .logical()
++              .withSlotName(slotName)
++              .withStartPosition(LogSequenceNumber.valueOf(0L))
++              .start();
++          LOG.info("Second consumer acquired slot on attempt {}", attempt);
++          break;
++        } catch (PSQLException e) {
++          if (replConn1 != null) {
++            replConn1.close();
++            replConn1 = null;
++          }
++          if (attempt == maxAttempts) {
++            throw e;
++          }
++          LOG.info("Attempt {} failed, retrying in {}ms: {}", attempt, sleepBetweenAttemptsMs,
++                   e.getMessage());
++          Thread.sleep(sleepBetweenAttemptsMs);
++        }
++      }
++      assertNotNull("Expected a second consumer to acquire the slot", stream1);
++
++      PGReplicationStream closingStream = stream0;
++      Connection closingConn = replConn0;
++      stream0 = null;
++      replConn0 = null;
++      closingStream.close();
++      closingConn.close();
++
++      try (Connection conn = getConnectionBuilder().withTServer(0).connect();
++           Statement stmt = conn.createStatement();
++           ResultSet res = stmt.executeQuery("SELECT 1")) {
++        assertTrue(res.next());
++        assertEquals(1, res.getInt(1));
++      }
++    } finally {
++      if (stream0 != null) {
++        stream0.close();
++      }
++      if (replConn0 != null) {
++        replConn0.close();
++      }
++      if (stream1 != null) {
++        stream1.close();
++      }
++      if (replConn1 != null) {
++        replConn1.close();
++      }
 +    }
 +  }
 +
-+  private Optional<CloudType> fromMetadataServices() {
-+    // GCP and Azure are recognized by their responses. AWS is checked last: the IMDSv1 paths are
-+    // also served by EC2-compatible clouds. The IMDSv1 path covers instances whose IMDSv2 token
-+    // response can't reach YBA, e.g. a container behind a hop limit of 1: it answers 200 if IMDSv1
-+    // is enabled, and 401 if IMDSv2 is required.
-+    CompletableFuture<Boolean> gcp =
-+        probe(
-+            get(GCP_INSTANCE_ID_PATH).header(GCP_METADATA_FLAVOR_HEADER, GCP_METADATA_FLAVOR),
-+            r ->
-+                r.statusCode() == 200
-+                    && r.headers()
-+                        .allValues(GCP_METADATA_FLAVOR_HEADER)
-+                        .contains(GCP_METADATA_FLAVOR));
-+    CompletableFuture<Boolean> azu =
-+        probe(
-+            get("/metadata/instance?api-version=2021-02-01").header("Metadata", "true"),
-+            r -> r.statusCode() == 200);
-+ 
+   @Test
+   public void testSlotLockReleasedOnTserverCrash() throws Exception {
+     restartClusterWithFlags(getMasterFlags(), getTServerFlagsWithExclusiveLock());
+```
+
+**File**: `src/postgres/src/backend/replication/slot.c` (modified, +21/-3)
+```diff
+@@ -262,12 +262,30 @@ YbTryAcquireReplicationSlotLock(const char *slot_name, bool wait)
+ 	return true;
+ }
+ 
+-/* YB: Release the slot advisory lock and clear the sentinel. */
++/*
++ * YB: Warn and clear yb_slot_locktag for ERRCODE_YB_TXN_ABORTED and
++ * ERRCODE_YB_TXN_LOCK_NOT_FOUND. Those mean the lock is already gone,
++ * and ERROR during walsender cleanup re-enters that cleanup until the
++ * error stack overflows. Any other status is still raised as ERROR.
++ */
+ static void
+ YbReleaseReplicationSlotLock(void)
+ {
+-	HandleYBStatus(YBCReleaseAdvisoryLock(GetYBAdvisoryLockId(yb_slot_locktag),
+-										  YB_ADVISORY_LOCK_EXCLUSIVE));
++	YbcStatus	status;
++	int			sqlerrcode;
++
++	status = YBCReleaseAdvisoryLock(GetYBAdvisoryLockId(yb_slot_locktag),
++									YB_ADVISORY_LOCK_EXCLUSIVE);
++	sqlerrcode = status ? YBCStatusPgsqlError(status) : 0;
++	if (sqlerrcode == ERRCODE_YB_TXN_ABORTED ||
++		sqlerrcode == ERRCODE_YB_TXN_LOCK_NOT_FOUND)
++	{
++		MemSet(&yb_slot_locktag, 0, sizeof(yb_slot_locktag));
++		HandleYBStatusAtErrorLevel(status, WARNING);
++		return;
++	}
++
++	HandleYBStatus(status);
+ 	MemSet(&yb_slot_locktag, 0, sizeof(yb_slot_locktag));
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #35766** (closed): [#35199] YSQL: Fix PgIndexBackfillMultiMaster.MasterFailoverAtEachIndexBuildPhase/0 by lengthening the YSQL lease (@csi-fix)
-- **PR #35751** (2026-10-24): [#32301] YSQL: Retry a YSQL migration that fails with a serialization failure (@myang2021)
-- **PR #35720** (2026-10-25): [PLAT-23030] YBA: Add v2 API for the host's cloud info (@artem-mindrov)
-- **PR #35711** (2026-10-23): [#35643] Docs: Document Connection Manager disconnecting sessions of a dropped role (@arpit-saxena)
-- **PR #35709** (2026-10-24): [PLAT-23213] YBA: Keep a failed task's rollback checkpoint when other tasks run on the broken universe (@vipul-yb)
-- **PR #35680** (2026-10-23): [BACKPORT 2026.1][#35550] DocDB: Count only the test table's peers in OrphanedTabletCleanupTest (#35558) (@hkimura)
+- **PR #36522** (closed): [#36141] YSQL: Import 'Fix plpgsql's handling of "return simple_record_variable"' from upstream (@ShryukGrandhi)
+- **PR #36485** (2026-10-31): [BACKPORT 2025.2][#36434] YSQL: Log how many waiters a response cache fill releases (#36438) (@myang2021)
+- **PR #36484** (2026-10-31): [BACKPORT 2026.1][#36434] YSQL: Log how many waiters a response cache fill releases (#36438) (@myang2021)
+- **PR #36479** (2026-10-31): [BACKPORT 2025.2][#36287] YSQL: Make PgCronTest.GracefulLeaderMove wait for a warm worker and a running query (#36357) (@iSignal)
+- **PR #36478** (2026-10-31): [BACKPORT 2026.1][#36287] YSQL: Make PgCronTest.GracefulLeaderMove wait for a warm worker and a running query (#36357) (@iSignal)
+- **PR #36471** (2026-10-31): [pg19] YSQL: Let yb_extension members create roles in extension scripts (@teyenc)
 
 ---
 
@@ -2797,30 +2456,54 @@ same rules a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720)
+## X. [#35616] CDC: Don't panic the walsender when the slot lock is already gone
 
 **RULE**:
-When implementing operations in `managed/build.sbt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `545b420b`: [PLAT-23030] YBA: Add v2 API for the host's cloud info (#35720). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a6087c8`: [#35616] CDC: Don't panic the walsender when the slot lock is already gone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/build.sbt`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `java/yb-pgsql/src/test/java/org/yb/pgsql/TestPgReplicationSlot.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-  "com.yugabyte" % "yba-client-v2" % "1.8.11" % Test,
-    version := "1.8.11",
+  @Test
+  public void testSecondConsumerAcquiresSlotAfterHeartbeatLoss() throws Exception {
+    Map<String, String> tserverFlags = getTServerFlagsWithExclusiveLock();
+    tserverFlags.put("transaction_heartbeat_usec", Integer.toString(500000 * kMultiplier));
+    tserverFlags.put("transaction_max_missed_heartbeat_periods", "2");
+    tserverFlags.put("transaction_check_interval_usec", Integer.toString(200000 * kMultiplier));
+    restartClusterWithFlags(getMasterFlags(), tserverFlags);
+
+    String slotName = "heartbeat_loss_slot";
+
+    try (Statement stmt = connection.createStatement()) {
+      stmt.execute("DROP TABLE IF EXISTS t_heartbeat_loss");
+      stmt.execute("CREATE TABLE t_heartbeat_loss(k int primary key, v text)");
+    }
+
+    Connection replConn0 = getConnectionBuilder().withTServer(0).replicationConnect();
+    PGReplicationConnection replApi0 =
+        replConn0.unwrap(PGConnection.class).getReplicationAPI();
+    createSlot(replApi0, slotName, "test_decoding");
+
+    PGReplicationStream stream0 = replApi0.replicationStream()
+        .logical()
+        .withSlotName(slotName)
+        .withStartPosition(LogSequenceNumber.valueOf(0L))
+        .start();
+
+    PGReplicationStrea
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Anti-pattern to NEVER write (induced failure mode):
-  "com.yugabyte" % "yba-client-v2" % "1.8.10" % Test,
-    version := "1.8.10",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `545b420b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a6087c8` are properly handled with clean fallback behavior.

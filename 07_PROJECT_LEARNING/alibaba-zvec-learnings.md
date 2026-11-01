@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source**: github ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
-> **Source Version**: `8d499692`  
+> **Source Version**: `4c5be75d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:28:57.617Z  
+> **Timestamp**: 2026-10-30T15:49:23.145Z  
 > **Learning ID**: `learn-github-alibaba-zvec`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/alibaba-zvec-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/alibaba/zvec](https://github.com/alibaba/zvec))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:28:57.164Z  
+> **Harvest Timestamp**: 2026-10-30T15:49:23.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A lightweight, lightning-fast, in-process vector database
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 16138 stars
+- **Stars / Engagement**: 16165 stars
 
 ---
 
@@ -828,195 +828,195 @@ namespace zvec {
 namespace core {
 
 //! General
-static const std::string GENERAL_CLUSTER_COUNT = "zvec.general.cluster.count";
-static const std::string GENERAL_THREAD_COUNT =
+inline const std::string GENERAL_CLUSTER_COUNT = "zvec.general.cluster.count";
+inline const std::string GENERAL_THREAD_COUNT =
     "zvec.general.cluster.thread_count";
 
 //! Optimize K-means
-static const std::string OPTKMEANS_CLUSTER_COUNT =
+inline const std::string OPTKMEANS_CLUSTER_COUNT =
     "zvec.optkmeans.cluster.count";
-static const std::string OPTKMEANS_CLUSTER_MAX_ITERATIONS =
+inline const std::string OPTKMEANS_CLUSTER_MAX_ITERATIONS =
     "zvec.optkmeans.cluster.max_iterations";
-static const std::string OPTKMEANS_CLUSTER_EPSILON =
+inline const std::string OPTKMEANS_CLUSTER_EPSILON =
     "zvec.optkmeans.cluster.epsilon";
-static const std::string OPTKMEANS_CLUSTER_SHARD_FACTOR =
+inline const std::string OPTKMEANS_CLUSTER_SHARD_FACTOR =
     "zvec.optkmeans.cluster.shard_factor";
-static const std::string OPTKMEANS_CLUSTER_PURGE_EMPTY =
+inline const std::string OPTKMEANS_CLUSTER_PURGE_EMPTY =
     "zvec.optkmeans.cluster.purge_empty";
-static const std::string OPTKMEANS_CLUSTER_MARKOV_CHAIN_LENGTH =
+inline const std::string OPTKMEANS_CLUSTER_MARKOV_CHAIN_LENGTH =
     "zvec.optkmeans.cluster.markov_chain_length";
-static const std::string OPTKMEANS_CLUSTER_ASSUMPTION_FREE =
+inline const std::string OPTKMEANS_CLUSTER_ASSUMPTION_FREE =
     "zvec.optkmeans.cluster.assumption_free";
 
 //! K-means
-static const std::string KMEANS_CLUSTER_COUNT = "zvec.kmeans.cluster.count";
-static const std::string KMEANS_CLUSTER_SHARD_FACTOR =
+inline const std::string KMEANS_CLUSTER_COUNT = "zvec.kmeans.cluster.count";
+inline const std::string KMEANS_CLUSTER_SHARD_FACTOR =
     "zvec.kmeans.cluster.shard_factor";
-static const std::string KMEANS_CLUSTER_EPSILON = "zvec.kmeans.cluster.epsilon";
-static const std::string KMEANS_CLUSTER_MAX_ITERATIONS =
+inline const std::string KMEANS_CLUSTER_EPSILON = "zvec.kmeans.cluster.epsilon";
+inline const std::string KMEANS_CLUSTER_MAX_ITERATIONS =
     "zvec.kmeans.cluster.max_iterations";
-static const std::string KMEANS_CLUSTER_PURGE_EMPTY =
+inline const std::string KMEANS_CLUSTER_PURGE_EMPTY =
     "zvec.kmeans.cluster.purge_empty";
-static const std::string KMEANS_CLUSTER_BATCH = "zvec.kmeans.cluster.batch";
-static const std::string KMEANS_CLUSTER_SEEKER_CLASS =
+inline const std::string KMEANS_CLUSTER_BATCH = "zvec.kmeans.cluster.batch";
+inline const std::string KMEANS_CLUSTER_SEEKER_CLASS =
     "zvec.kmeans.cluster.seeker_class";
-static const std::string KMEANS_CLUSTER_SEEKER_PARAMS =
+inline const std::string KMEANS_CLUSTER_SEEKER_PARAMS =
     "zvec.kmeans.cluster.seeker_params";
 
 //! Mini Batch K-means
-static const std::string MINIBATCHKMEANS_CLUSTER_COUNT =
+inline const std::string MINIBATCHKMEANS_CLUSTER_COUNT =
     "zvec.minibatchkmeans.cluster.count";
-static const std::string MINIBATCHKMEANS_CLUSTER_SHARD_FACTOR =
+inline const std::string MINIBATCHKMEANS_CLUSTER_SHARD_FACTOR =
     "zvec.minibatchkmeans.cluster.shard_factor";
-static const std::string MINIBATCHKMEANS_CLUSTER_EPSILON =
+inline const std::string MINIBATCHKMEANS_CLUSTER_EPSILON =
     "zvec.minibatchkmeans.cluster.epsilon";
-static const std::string MINIBATCHKMEANS_CLUSTER_MAX_ITERATIONS =
+inline const std::string MINIBATCHKMEANS_CLUSTER_MAX_ITERATIONS =
     "zvec.minibatchkmeans.cluster.max_iterations";
-static const std::string MINIBATCHKMEANS_CLUSTER_PURGE_EMPTY =
+inline const std::string MINIBATCHKMEANS_CLUSTER_PURGE_EMPTY =
     "zvec.minibatchkmeans.cluster.purge_empty";
-static const std::string MINIBATCHKMEANS_CLUSTER_TRY_COUNT =
+inline const std::string MINIBATCHKMEANS_CLUSTER_TRY_COUNT =
     "zvec.minibatchkmeans.cluster.try_count";
-static const std::string MINIBATCHKMEANS_CLUSTER_BATCH_COUNT =
+inline const std::string MINIBATCHKMEANS_CLUSTER_BATCH_COUNT =
     "zvec.minibatchkmeans.cluster.batch_count";
-static const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_CLASS =
+inline const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_CLASS =
     "zvec.minibatchkmeans.cluster.seeker_class";
-static const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_PARAMS =
+inline const std::string MINIBATCHKMEANS_CLUSTER_SEEKER_PARAMS =
     "zvec.minibatchkmeans.cluster.seeker_params";
 
 //! K-means++
-static const std::string KMEANSPP_CLUSTER_COUNT = "zvec.kmeanspp.cluster.count";
-static const std::string KMEANSPP_CLUSTER_SHARD_FACTOR =
+inline const std::string KMEANSPP_CLUSTER_COUNT = "zvec.kmeanspp.cluster.count";
+inline const std::string KMEANSPP_CLUSTER_SHARD_FACTOR =
     "zvec.kmeanspp.cluster.shard_factor";
-static const std::string KMEANSPP_CLUSTER_CLASS = "zvec.kmeanspp.cluster.class";
-static const std::string KMEANSPP_CLUSTER_PARAMS =
+inline const std::string KMEANSPP_CLUSTER_CLASS = "zvec.kmeanspp.cluster.class";
+inline const std::string KMEANSPP_CLUSTER_PARAMS =
     "zvec.kmeanspp.cluster.params";
 
 //! K-MC2
-static const std::string KMC2_CLUSTER_COUNT = "zvec.kmc2.cluster.count";
-static const std::string KMC2_CLUSTER_SHARD_FACTOR =
+inline const std::string KMC2_CLUSTER_COUNT = "zvec.kmc2.cluster.count";
+inline const std::string KMC2_CLUSTER_SHARD_FACTOR =
     "zvec.kmc2.cluster.shard_factor";
-static const std::string KMC2_CLUSTER_MARKOV_CHAIN_LENGTH =
+inline const std::string KMC2_CLUSTER_MARKOV_CHAIN_LENGTH =
     "zvec.kmc2.cluster.markov_chain_length";
-static const std::string KMC2_CLUSTER_ASSUMPTION_FREE =
+inline const std::string KMC2_CLUSTER_ASSUMPTION_FREE =
     "zvec.kmc2.cluster.assumption_free";
-static const std::string KMC2_CLUSTER_CLASS = "zvec.kmc2.cluster.class";
-static const std::string KMC2_CLUSTER_PARAMS = "zvec.kmc2.cluster.params";
+inline const std::string KMC2_CLUSTER_CLASS = "zvec.kmc2.cluster.class";
+inline const std::string KMC2_CLUSTER_PARAMS = "zvec.kmc2.cluster.params";
 
 //! Bisecting K-means
-static const std::string BIKMEANS_CLUSTER_COUNT = "zvec.bikmeans.cluster.count";
-static const std::string BIKMEANS_CLUSTER_INIT_COUNT =
+inline const std::string BIKMEANS_CLUSTER_COUNT = "zvec.bikmeans.cluster.count";
+inline const std::string BIKMEANS_CLUSTER_INIT_COUNT =
     "zvec.bikmeans.cluster.init_count";
-static const std::string BIKMEANS_CLUSTER_PURGE_EMPTY =
+inline const std::string BIKMEANS_CLUSTER_PURGE_EMPTY =
     "zvec.bikmeans.cluster.purge_empty";
-static const std::string BIKMEANS_CLUSTER_FIRST_CLASS =
+inline const std::string BIKMEANS_CLUSTER_FIRST_CLASS =
     "zvec.bikmeans.cluster.first_class";
-static const std::string BIKMEANS_CLUSTER_SECOND_CLASS =
+inline const std::string BIKMEANS_CLUSTER_SECOND_CLASS =
     "zvec.bikmeans.cluster.second_class";
-static const std::string BIKMEANS_CLUSTER_FIRST_PARAMS =
+inline const std::string BIKMEANS_CLUSTER_FIRST_PARAMS =
     "zvec.bikmeans.cluster.first_params";
-static const std::string BIKMEANS_CLUSTER_SECOND_PARAMS =
+inline const std::string BIKMEANS_CLUSTER_SECOND_PARAMS =
     "zvec.bikmeans.cluster.second_params";
 
 //! K-medoids
-static const std::string KMEDOIDS_CLUSTER_COUNT = "zvec.kmedoids.cluster.count";
-static const std::string KMEDOIDS_CLUSTER_SHARD_FACTOR =
+inline const std::string KMEDOIDS_CLUSTER_COUNT = "zvec.kmedoids.cluster.count";
+inline const std::string KMEDOIDS_CLUSTER_SHARD_FACTOR =
     "zvec.kmedoids.cluster.shard_factor";
-static const std::string KMEDOIDS_CLUSTER_EPSILON =
+inline const std::string KMEDOIDS_CLUSTER_EPSILON =
     "zvec.kmedoids.cluster.epsilon";
-static const std::string KMEDOIDS_CLUSTER_MAX_ITERATIONS =
+inline const std::string KMEDOIDS_CLUSTER_MAX_ITERATIONS =
     "zvec.kmedoids.cluster.max_iterations";
-static const std::string KMEDOIDS_CLUSTER_PURGE_EMPTY =
+inline const std::string KMEDOIDS_CLUSTER_PURGE_EMPTY =
     "zvec.kmedoids.cluster.purge_empty";
-static const std::string KMEDOIDS_CLUSTER_BENCH_RATIO =
+inline const std::string KMEDOIDS_CLUSTER_BENCH_RATIO =
     "zvec.kmedoids.cluster.bench_ratio";
-static const std::string KMEDOIDS_CLUSTER_ONLY_MEANS =
+inline const std::string KMEDOIDS_CLUSTER_ONLY_MEANS =
     "zvec.kmedoids.cluster.only_means";
-static const std::string KMEDOIDS_CLUSTER_WITHOUT_MEANS =
+inline const std::string KMEDOIDS_CLUSTER_WITHOUT_MEANS =
     "zvec.kmedoids.cluster.without_means";
-static const std::string KMEDOIDS_CLUSTER_SEEKER_CLASS =
+inline const std::string KMEDOIDS_CLUSTER_SEEKER_CLASS =
     "zvec.kmedoids.cluster.seeker_class";
-static const std::string KMEDOIDS_CLUSTER_SEEKER_PARAMS =
+inline const std::string KMEDOIDS_CLUSTER_SEEKER_PARAMS =
     "zvec.kmedoids.cluster.seeker_params";
 
 //! Stratified
-static const std::string STRATIFIED_CLUSTER_COUNT =
+inline const std::string STRATIFIED_CLUSTER_COUNT =
     "zvec.stratified.cluster.count";
-static const std::string STRATIFIED_CLUSTER_FIRST_CLASS =
+inline const std::string STRATIFIED_CLUSTER_FIRST_CLASS =
     "zvec.stratified.cluster.first_class";
-static const std::string STRATIFIED_CLUSTER_SECOND_CLASS =
+inline const std::string STRATIFIED_CLUSTER_SECOND_CLASS =
     "zvec.stratified.cluster.second_class";
-static const std::string STRATIFIED_CLUSTER_FIRST_COUNT =
+inline const std::string STRATIFIED_CLUSTER_FIRST_COUNT =
     "zvec.stratified.cluster.first_count";
-static const std::string STRATIFIED_CLUSTER_SECOND_COUNT =
+inline const std::string STRATIFIED_CLUSTER_SECOND_COUNT =
     "zvec.stratified.cluster.second_count";
-static const std::string STRATIFIED_CLUSTER_FIRST_PARAMS =
+inline const std::string STRATIFIED_CLUSTER_FIRST_PARAMS =
     "zvec.stratified.cluster.first_params";
-static const std::string STRATIFIED_CLUSTER_SECOND_PARAMS =
+inline const std::string STRATIFIED_CLUSTER_SECOND_PARAMS =
     "zvec.stratified.cluster.second_params";
-static const std::string STRATIFIED_CLUSTER_AUTO_TUNING =
+inline const std::string STRATIFIED_CLUSTER_AUTO_TUNING =
     "zvec.stratified.cluster.auto_tuning";
-static const std::string STRATIFIED_CLUSTER_SECOND_POOL_COUNT =
+inline const std::string STRATIFIED_CLUSTER_SECOND_POOL_COUNT =
     "zvec.stratified.cluster.second_pool_count";
 
 //! Gap Statistics
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MIN =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MIN =
     "zvec.gapstats.cluster_estimater.k_min";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MAX =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MAX =
     "zvec.gapstats.cluster_estimater.k_max";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MIN_STEP =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MIN_STEP =
     "zvec.gapstats.cluster_estimater.k_min_step";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MAX_STEP =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_K_MAX_STEP =
     "zvec.gapstats.cluster_estimater.k_max_step";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_TRY_COUNT =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_TRY_COUNT =
     "zvec.gapstats.cluster_estimater.try_count";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_SHARD_FACTOR =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_SHARD_FACTOR =
     "zvec.gapstats.cluster_estimater.shard_factor";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_ENABLE_MC2 =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_ENABLE_MC2 =
     "zvec.gapstats.cluster_estimater.enable_mc2";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_MARKOV_CHAIN_LENGTH =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_MARKOV_CHAIN_LENGTH =
     "zvec.gapstats.cluster_estimater.markov_chain_length";
-static const std::string GAPSTATS_CLUSTER_ESTIMATER_CLUSTER_CLASS =
+inline const std::string GAPSTATS_CLUSTER_ESTIMATER_CLUSTER_CLASS =
     "zvec.gapstats.cluster_estimater.cluster_class";
 
-static const std::string CLUSTER_TRAINER_SAMPLE_COUNT =
+inline const std::string CLUSTER_TRAINER_SAMPLE_COUNT =
     "zvec.cluster.trainer.sample_count";
-static const std::string CLUSTER_TRAINER_SAMPLE_RATIO =
+inline const std::string CLUSTER_TRAINER_SAMPLE_RATIO =
     "zvec.cluster.trainer.sample_ratio";
-static const std::string CLUSTER_TRAINER_THREAD_COUNT =
+inline const std::string CLUSTER_TRAINER_THREAD_COUNT =
     "zvec.cluster.trainer.thread_count";
-static const std::string CLUSTER_TRAINER_FILE_NAME =
+inline const std::string CLUSTER_TRAINER_FILE_NAME =
     "zvec.cluster.trainer.file_name";
-static const std::string CLUSTER_TRAINER_CLASS_NAME =
+inline const std::string CLUSTER_TRAINER_CLASS_NAME =
     "zvec.cluster.trainer.class_name";
 
-static const std::string STRATIFIED_TRAINER_SAMPLE_COUNT =
+inline const std::string STRATIFIED_TRAINER_SAMPLE_COUNT =
     "zvec.stratified.trainer.sample_count";
-static const std::string STRATIFIED_TRAINER_SAMPLE_RATIO =
+inline const std::string STRATIFIED_TRAINER_SAMPLE_RATIO =
     "zvec.stratified.trainer.sample_ratio";
-static const std::string STRATIFIED_TRAINER_THREAD_COUNT =
+inline const std::string STRATIFIED_TRAINER_THREAD_COUNT =
     "zvec.stratified.trainer.thread_count";
-static const std::string STRATIFIED_TRAINER_FILE_NAME =
+inline const std::string STRATIFIED_TRAINER_FILE_NAME =
     "zvec.stratified.trainer.file_name";
-static const std::string STRATIFIED_TRAINER_CLASS_NAME =
+inline const std::string STRATIFIED_TRAINER_CLASS_NAME =
     "zvec.stratified.trainer.class_name";
-static const std::string STRATIFIED_TRAINER_CLUSTER_COUNT =
+inline const std::string STRATIFIED_TRAINER_CLUSTER_COUNT =
     "zvec.stratified.trainer.cluster_count";
-static const std::string STRATIFIED_TRAINER_AUTOAUNE =
+inline const std::string STRATIFIED_TRAINER_AUTOAUNE =
     "zvec.stratified.trainer.autotune";
-static const std::string STRATIFIED_TRAINER_PARAMS_IN_LEVEL_PREFIX =
+inline const std::string STRATIFIED_TRAINER_PARAMS_IN_LEVEL_PREFIX =
     "zvec.stratified.trainer.cluster_params_in_level_";
 
-static const std::string MULTI_CHUNK_CLUSTER_COUNT =
+inline const std::string MULTI_CHUNK_CLUSTER_COUNT =
     "zvec.cluster.multi_chunk_cluster.count";
-static const std::string MULTI_CHUNK_CLUSTER_CHUNK_COUNT =
+inline const std::string MULTI_CHUNK_CLUSTER_CHUNK_COUNT =
     "zvec.cluster.multi_chunk_cluster.chunk_count";
-static const std::string MULTI_CHUNK_CLUSTER_THREAD_COUNT =
+inline const std::string MULTI_CHUNK_CLUSTER_THREAD_COUNT =
     "zvec.cluster.multi_chunk_cluster.thread_count";
-static const std::string MULTI_CHUNK_CLUSTER_EPSILON =
+inline const std::string MULTI_CHUNK_CLUSTER_EPSILON =
     "zvec.cluster.multi_chunk_cluster.epsilon";
-static const std::string MULTI_CHUNK_CLUSTER_MAX_ITERATIONS =
+inline const std::string MULTI_CHUNK_CLUSTER_MAX_ITERATIONS =
     "zvec.cluster.multi_chunk_cluster.max_iterations";
-static const std::string MULTI_CHUNK_CLUSTER_MARKOV_CHAIN_LENGTH =
+inline const std::string MULTI_CHUNK_CLUSTER_MARKOV_CHAIN_LENGTH =
     "zvec.cluster.multi_chunk_cluster.markov_chain_length";
 }  // namespace core
 }  // namespace zvec
@@ -1092,773 +1092,517 @@ class HolderCluster {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b531d17` (2026-10-21)
-**Commit Message**: fix(core): preserve index bytes on read-only close (#834)
+### Incident Patch 1: `4c5be75d` (2026-10-30)
+**Commit Message**: fix(io): prevent file descriptor inheritance across exec (#859)
 
-**File**: `src/core/algorithm/flat/flat_streamer.cc` (modified, +5/-2)
+**File**: `src/ailego/io/file.cc` (modified, +6/-0)
 ```diff
-@@ -212,11 +212,14 @@ template <size_t BATCH_SIZE>
- int FlatStreamer<BATCH_SIZE>::close() {
-   LOG_DEBUG("FlatStreamer close");
+@@ -34,6 +34,9 @@ namespace ailego {
+ #if !defined(_WIN64) && !defined(_WIN32)
  
--  entity_->flush_linear_meta();
-+  int ret = entity_->flush_linear_meta();
-+  if (ret != 0) {
-+    return ret;
-+  }
+ static inline int OpenSafely(const char *path, int flags) {
++  // Set close-on-exec atomically with open: a later fcntl can race with a
++  // concurrent process launch and leave the child holding collection locks.
++  flags |= O_CLOEXEC;
+   int fd = open(path, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+   while (fd == -1 && errno == EINTR) {
+     fd = open(path, flags, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+@@ -424,6 +427,8 @@ bool File::create(const char *path, size_t len, bool direct) {
+   ailego_false_if_false(Utf8PathOk(path, wpath));
  
-   stats_.clear();
- 
--  int ret = entity_->close();
-+  ret = entity_->close();
-   if (ailego_unlikely(ret != 0)) {
-     return ret;
+   // Try opening or creating the file
++  // Null security attributes make this handle and the direct-I/O reopen below
++  // non-inheritable, even when the child process enables handle inheritance.
+   HANDLE file_handle =
+       ::CreateFileW(wpath.c_str(), GENERIC_WRITE | GENERIC_READ,
+                     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+@@ -470,6 +475,7 @@ bool File::open(const char *path, bool rdonly, bool direct) {
+   if (direct) {
+     flags |= FILE_FLAG_NO_BUFFERING;
    }
++  // Null security attributes keep this handle non-inheritable.
+   HANDLE file_handle = ::CreateFileW(
+       wpath.c_str(), (rdonly ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE),
+       FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, nullptr,
 ```
 
-**File**: `src/core/algorithm/flat/flat_streamer_entity.cc` (modified, +9/-1)
+**File**: `tests/ailego/io/file_test.cc` (modified, +43/-0)
 ```diff
-@@ -228,12 +228,14 @@ int FlatStreamerEntity::close() {
-   meta_.header.linear_body_size = 0;
-   batch_query_preprocess_ = nullptr;
-   extra_values_size_ = 0;
-+  meta_dirty_ = false;
+@@ -17,9 +17,52 @@
+ #include <ailego/utility/memory_helper.h>
+ #include <gtest/gtest.h>
+ #include <zvec/ailego/io/file.h>
++#if defined(_WIN64) || defined(_WIN32)
++#include <Windows.h>
++#ifdef RemoveDirectory
++#undef RemoveDirectory
++#endif
++#else
++#include <fcntl.h>
++#endif
  
-   return 0;
- }
+ using namespace zvec::ailego;
  
- int FlatStreamerEntity::flush_linear_meta() {
--  if (!storage_) {
-+  std::lock_guard<std::mutex> lock(mutex_);
-+  if (!storage_ || !meta_dirty_) {
-     return 0;
-   }
- 
-@@ -250,6 +252,8 @@ int FlatStreamerEntity::flush_linear_meta() {
-     return IndexError_WriteData;
-   }
- 
-+  meta_dirty_ = false;
++namespace {
 +
-   return 0;
- }
- 
-@@ -308,6 +312,7 @@ int FlatStreamerEntity::add(uint64_t key, const void *vec, size_t size) {
-   // function (alloc_block / add_to_block may compete for the same memory).
-   head_block.reset(nullptr);
- 
-+  meta_dirty_ = true;
-   if (!this->is_valid_block(block)) {
-     int ret = this->alloc_block(block, &block);
-     if (ailego_unlikely(ret != 0)) {
-@@ -939,6 +944,7 @@ void FlatStreamerEntity::Iterator::read_next_block() {
- }
- 
- int FlatStreamerEntity::init_storage(IndexStorage::Pointer storage) {
-+  meta_dirty_ = true;
-   // Init Linear Meta Segment
-   meta_.create_time = ailego::Realtime::Seconds();
-   stats_.set_create_time(meta_.create_time);
-@@ -1154,6 +1160,7 @@ int FlatStreamerEntity::load_segment_keys_to_vector() {
- }
- 
- int FlatStreamerEntity::load_storage(IndexStorage::Pointer storage) {
-+  meta_dirty_ = false;
-   int ret = this->load_linear_meta(storage);
-   if (ailego_unlikely(ret != 0)) {
-     return ret;
-@@ -1424,6 +1431,7 @@ int FlatStreamerEntity::add_vector_with_id(const uint32_t id, const void *query,
-   }
- 
- 
-+  meta_dirty_ = true;
-   if (id >= vector_count()) {
-     IndexStorage::MemoryBlock head_block;
-     this->get_head_block(head_block);
++void ExpectNonInheritable(const File &file) {
++#if defined(_WIN64) || defined(_WIN32)
++  DWORD flags = 0;
++  ASSERT_TRUE(GetHandleInformation(file.native_handle(), &flags));
++  EXPECT_EQ(0u, flags & HANDLE_FLAG_INHERIT);
++#else
++  int flags = fcntl(file.native_handle(), F_GETFD);
++  ASSERT_NE(-1, flags);
++  EXPECT_NE(0, flags & FD_CLOEXEC);
++#endif
++}
++
++}  // namespace
++
++TEST(File, HandlesAreNotInherited) {
++  const char *path = "file_inheritance_test.dat";
++  for (bool direct : {false, true}) {
++    SCOPED_TRACE(direct);
++    File file;
++    ASSERT_TRUE(file.create(path, 4096, direct));
++    ExpectNonInheritable(file);
++    file.close();
++
++    for (bool read_only : {false, true}) {
++      SCOPED_TRACE(read_only);
++      ASSERT_TRUE(file.open(path, read_only, direct));
++      ExpectNonInheritable(file);
++      file.close();
++    }
++  }
++  EXPECT_TRUE(File::Delete(path));
++}
++
+ TEST(File, General) {
+   EXPECT_TRUE(File::IsDirectory("."));
+   EXPECT_TRUE(File::IsDirectory(".."));
 ```
 
-**File**: `src/core/algorithm/flat/flat_streamer_entity.h` (modified, +2/-0)
+---
+
+### Incident Patch 2: `804ab197` (2026-10-30)
+**Commit Message**: fix: enforce read-only storage and WAL recovery boundaries (#840)
+
+**File**: `python/tests/test_hnsw_contiguous_memory.py` (modified, +32/-76)
 ```diff
-@@ -502,6 +502,8 @@ class FlatStreamerEntity {
-   std::vector<uint32_t> withid_key_map_{};
-   std::vector<uint64_t> id_key_vector_{};
-   bool filter_same_key_{false};
-+  // Linear metadata only needs rewriting after creation or vector writes.
-+  bool meta_dirty_{false};
-   bool use_key_info_map_{true};
-   uint32_t vec_unit_size_{0};
-   uint32_t vec_cols_{0};
+@@ -11,21 +11,9 @@
+ # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+-"""
+-Tests for the ``use_contiguous_memory`` optimization on ``HnswIndexParam``.
+-
+-The HNSW streamer supports two allocation strategies for graph nodes:
++"""HNSW contiguous storage is used only for read-only mmap opens.
+ 
+-* ``use_contiguous_memory=False`` (default): each node allocates its own
+-  linked buffer. Lower peak memory usage, worse cache locality.
+-* ``use_contiguous_memory=True``: a single contiguous arena holds every
+-  node. Higher peak memory usage, better cache locality and search
+-  throughput.
+-
+-These tests exercise the Python surface end-to-end and make sure that
+-when a collection is created / reopened with ``use_contiguous_memory=True``
+-the underlying HNSW streamer entity is constructed correctly and serves
+-search traffic.
++Verify parameter persistence and query parity across writable/read-only opens.
+ """
+ 
+ from __future__ import annotations
+@@ -224,34 +212,17 @@ def rng() -> np.random.Generator:
+     return np.random.default_rng(seed=42)
+ 
+ 
+-# NOTE: the ``enable_mmap=False`` (BufferPool) variant is intentionally
+-# omitted from this fixture. Building a persisted HNSW index via
+-# ``optimize()`` / ``create_vector_index`` / ``drop_vector_index``
+-# currently requires mmap-backed storage, because the BufferPool backend
+-# has not implemented the ``create_new`` semantics yet and the guard in
+-# ``SegmentImpl::merge_vector_indexer`` rejects that combination. Once
+-# BufferPool gains write support, re-add ``False`` to ``params`` (and
+-# drop the guard in segment.cc) so these end-to-end tests cover both
+-# storage modes again.
++# Persisted HNSW builds require mmap until BufferPool supports create_new.
+ @pytest.fixture(params=[True], ids=["mmap_on"])
+ def collection_option(request) -> CollectionOption:
+     return CollectionOption(read_only=False, enable_mmap=request.param)
+ 
+ 
+-# Building a new persisted HNSW index currently requires mmap-backed storage
+-# because the BufferPool backend has not implemented `create_new` semantics
+-# yet. Collections opened with ``enable_mmap=False`` therefore cannot run
+-# optimize()/create_vector_index/drop_vector_index. Tests use this fixture
+-# to know which behaviour to assert, and once BufferPool gains write support
+-# the guard in segment.cc (and these branches) can be removed together.
+ @pytest.fixture
+ def build_index_supported(collection_option: CollectionOption) -> bool:
+     return bool(collection_option.enable_mmap)
+ 
+ 
+-# Error message fragments emitted by the NotSupported guard in
+-# SegmentImpl::merge_vector_indexer / drop_vector_index. If the C++ message
+-# changes, update these together.
+ _BUILD_NOT_SUPPORTED_FRAGMENTS = ("not yet supported", "enable_mmap=false")
+ 
+ 
+@@ -264,21 +235,13 @@ def test_create_with_contiguous_memory_and_query(
+         collection_option,
+         rng,
+     ):
+-        """With the flag on, the schema round-trips and search works end-to-end.
+-
+-        After ``optimize()`` the writing segment is compacted into a persisted
+-        segment backed by the configured HNSW entity. We assert both the
+-        user-observable behaviour (schema + search) and, via the debug hook,
+-        that the entity type actually honours ``use_contiguous_memory``.
+-        """
+         schema = _build_schema("hnsw_contig_create", use_contiguous_memory=True)
+ 
+         path = tmp_path_factory.mktemp("zvec") / "hnsw_contig_create"
+         coll = zvec.create_and_open(
+             path=str(path), schema=schema, option=collection_option
+         )
+         try:
+-            # Schema round-trips with the flag set.
+             vec_schema = coll.schema.vectors[0]
+             assert vec_schema.index_param.use_contiguous_memory is True
+ 
+@@ -288,27 +251,26 @@ def test_create_with_contiguous_memory_and_query(
+                 assert r.ok(), f"insert failed: code={r.code()}"
+             assert coll.stats.doc_count == NUM_DOCS
+ 
+-            # Build persisted HNSW index; this is where the contiguous entity
+-            # is actually instantiated.
+             coll.optimize()
+-            assert _debug_hnsw_storage_mode(coll) == "contiguous", (
+-                "use_contiguous_memory=True should produce a contiguous entity"
+-            )
++            assert _debug_hnsw_storage_mode(coll) == "mmap"
+ 
+-            # Pick an existing vector as the query; top-1 must be itself.
+             query_vec = docs[0].vector("dense")
+             ids = _assert_query_matches(coll, query_vec)
+             assert ids[0] == "0", f"expected self-recall, got top-1 id={ids[0]}"
++
++            coll.close()
++            coll = zvec.open(path=str(path), option=CollectionOption(read_only=True))
++            assert _debug_hnsw_storage_mode(coll) == "contiguous"
++            assert _assert_query_matches(coll, query_vec) == ids
+         finally:
+-            coll.destr
 ```
 
-**File**: `src/core/algorithm/hnsw/hnsw_chunk.cc` (modified, +4/-2)
+**File**: `python/tests/test_readonly_storage.py` (added, +250/-0)
 ```diff
-@@ -129,13 +129,15 @@ int ChunkBroker::open(IndexStorage::Pointer stg, uint32_t &chunk_size,
- }
+@@ -0,0 +1,250 @@
++# Copyright 2025-present the zvec project
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++"""Read-only opens preserve files, including after an unclean shutdown."""
++
++import contextlib
++import os
++import stat
++import subprocess
++import sys
++from pathlib import Path
++
++import pytest
++import zvec
++
++
++@pytest.fixture(scope="module", autouse=True)
++def initialize():
++    zvec.init(memory_limit_mb=512, query_threads=2, optimize_threads=2)
++
++
++def _schema(kind="flat"):
++    fields = [
++        zvec.FieldSchema(
++            "value", zvec.DataType.INT64, index_param=zvec.InvertIndexParam()
++        ),
++        zvec.FieldSchema(
++            "text", zvec.DataType.STRING, index_param=zvec.FtsIndexParam()
++        ),
++    ]
++    vectors = []
++    if kind != "scalar":
++        sparse = kind == "sparse"
++        param_type = zvec.FlatIndexParam if kind == "flat" else zvec.HnswIndexParam
++        param = param_type(
++            metric_type=zvec.MetricType.IP if sparse else zvec.MetricType.L2
++        )
++        vectors = [
++            zvec.VectorSchema(
++                "v",
++                zvec.DataType.SPARSE_VECTOR_FP32
++                if sparse
++                else zvec.DataType.VECTOR_FP32,
++                index_param=param,
++                **({} if sparse else {"dimension": 4}),
++            )
++        ]
++    return zvec.CollectionSchema(
++        name="readonly_storage", fields=fields, vectors=vectors
++    )
++
++
++def _doc(key, value, kind):
++    vectors = (
++        {}
++        if kind == "scalar"
++        else {"v": {value: 1.0} if kind == "sparse" else [float(value), 1.0, 0.0, 0.0]}
++    )
++    return zvec.Doc(
++        id=key, fields={"value": value, "text": "hello readonly"}, vectors=vectors
++    )
++
++
++def _snapshot(path):
++    return {
++        str(p.relative_to(path)): (
++            p.read_bytes(),
++            p.stat().st_ino,
++            p.stat().st_mtime_ns,
++        )
++        for p in path.rglob("*")
++        if p.is_file()
++    }
++
++
++def _crash_writer(path, enable_mmap, kind, operation):
++    # A fresh process using os._exit leaves a WAL without running destructors.
++    subprocess.run(
++        [sys.executable, __file__, str(path), str(int(enable_mmap)), kind, operation],
++        check=True,
++        timeout=60,
++    )
++
++
++def _assert_docs(collection, expected):
++    fetched = collection.fetch(["a", "b", "c"])
++    assert {key: doc.fields["value"] for key, doc in fetched.items()} == expected
++    assert collection.stats.doc_count == len(expected)
++    assert {doc.id for doc in collection.iter_docs()} == set(expected)
++
++
++@pytest.mark.parametrize("enable_mmap", [True, False])
++@pytest.mark.parametrize("kind", ["flat", "sparse", "scalar"])
++@pytest.mark.parametrize("operation", ["insert", "update", "upsert", "delete"])
++def test_pending_wal_requires_writable_recovery(tmp_path, enable_mmap, kind, operation):
++    path = tmp_path / "collection"
++    _crash_writer(path, enable_mmap, kind, operation)
++    before = _snapshot(path)
++    assert list(path.rglob("*.wal"))
++    for _ in range(2):
++        with pytest.raises(
++            (ValueError, RuntimeError), match="requires WAL recovery.*read_only=false"
++        ):
++            zvec.open(
++                str(path),
++                zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap),
++            )
++        assert _snapshot(path) == before
++
++    expected = {"a": 1, "b": 2}
++    if operation == "insert":
++        expected["c"] = 3
++    elif operation in ("update", "upsert"):
++        expected["a"] = 4
++    else:
++        del expected["a"]
++    writer = zvec.open(str(path), zvec.CollectionOption(enable_mmap=enable_mmap))
++    _assert_docs(writer, expected)
++    writer.close()
++    recovered = _snapshot(path)
++    reader = zvec.open(
++        str(path), zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap)
++    )
++    _assert_docs(reader, expected)
++    reader.close()
++    assert _snapshot(path) == recovered
++
++
++@pytest.mark.parametrize("enable_mmap", [True, False])
++def test_header_only_wal_can_be_opened_readonly(tmp_path, enable_mmap):
++    path = tmp_path / "collection"
++    _crash_writer(path, enable_mmap, "flat", "empty")
++    wal = next(path.rglob("*.wal"))
++    assert wal.stat().st_size == 64
++    before = _snapshot(path)
++    reader = zvec.open(
++        str(path), zvec.CollectionOption(read_only=True, enable_mmap=enable_mmap)
++    )
++    _assert_docs(reader, {"a": 1, "b": 2})
++    reader
+```
+
+**File**: `python/zvec/zvec.py` (modified, +3/-0)
+```diff
+@@ -219,6 +219,9 @@ def open(path: str, option: CollectionOption = CollectionOption()) -> Collection
  
- int ChunkBroker::close() {
--  flush(0UL);
-+  // A loaded, unmodified index must not acquire a new timestamp on close.
-+  // Storage can still be dirty for a newly created index with no vectors.
-+  int ret = stg_ && (dirty_ || stg_->is_dirty()) ? flush(0UL) : 0;
+     The collection must have been previously created with ``create_and_open``.
  
-   stg_.reset();
-   check_crc_ = false;
-   dirty_ = false;
- 
--  return 0;
-+  return ret;
- }
- 
- int ChunkBroker::flush(uint64_t checkpoint) {
++    Pending WAL recovery requires opening and closing the collection with
++    ``CollectionOption(read_only=False)`` before a read-only open.
++
+     Args:
+         path (str): Path or name of the existing collection.
+         option (CollectionOption, optional): Configuration options
 ```
 
 **File**: `src/core/algorithm/hnsw/hnsw_streamer.cc` (modified, +4/-1)
 ```diff
-@@ -589,7 +589,10 @@ int HnswStreamer::close() {
-   if (metric_) {
-     meta_.set_metric(metric_->name(), 0, metric_->params());
-   }
--  entity_->set_index_meta(meta_);
-+  if (entity_->dirty()) {
-+    int ret = entity_->set_index_meta(meta_);
-+    if (ret != 0) return ret;
+@@ -325,7 +325,10 @@ int HnswStreamer::open(IndexStorage::Pointer stg) {
+     default: {
+       if (use_external_vector_) {
+         entity_ = std::make_unique<HnswExternalStreamerEntity>(stats_);
+-      } else if (use_contiguous_memory_) {
++      } else if (use_contiguous_memory_ &&
++                 stg->name() == "MMapFileReadStorage") {
++        // Writable appends would leave cloned contexts using stale contiguous
++        // snapshots.
+         entity_ = std::make_unique<HnswContiguousStreamerEntity>(stats_);
+       } else {
+         entity_ = std::make_unique<HnswMmapStreamerEntity>(stats_);
+```
+
+**File**: `src/core/interface/index.cc` (modified, +13/-3)
+```diff
+@@ -503,6 +503,10 @@ int Index::init(const BaseIndexParam &param) {
+ 
+ 
+ int Index::open(const std::string &file_path, StorageOptions storage_options) {
++  if (storage_options.read_only && storage_options.create_new) {
++    LOG_ERROR("Cannot create storage for a read-only index");
++    return core::IndexError_Runtime;
 +  }
-   int ret = entity_->close();
-   if (ret != 0) {
-     return ret;
-```
-
-**File**: `src/core/algorithm/hnsw/hnsw_streamer_entity.h` (modified, +5/-0)
-```diff
-@@ -148,6 +148,11 @@ class HnswStreamerEntity : public HnswEntity {
-   //! return 0 on success, or errCode in failure
-   int close();
+   ailego::Params storage_params;
+   // storage_params.set("proxima.mmap_file.storage.memory_warmup", true);
+   // storage_params.set("proxima.mmap_file.storage.segment_meta_capacity",
+@@ -519,14 +523,16 @@ int Index::open(const std::string &file_path, StorageOptions storage_options) {
  
-+  //! Whether vectors have been modified since opening the entity.
-+  bool dirty() const {
-+    return broker_->dirty();
-+  }
-+
-   //! Set meta information from entity
-   int set_index_meta(const IndexMeta &meta) const {
-     return IndexHelper::SerializeToStorage(meta, broker_->storage().get());
-```
-
-**File**: `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_chunk.cc` (modified, +4/-2)
-```diff
-@@ -131,13 +131,15 @@ int HnswRabitqChunkBroker::open(IndexStorage::Pointer stg,
- }
- 
- int HnswRabitqChunkBroker::close() {
--  flush(0UL);
-+  // A loaded, unmodified index must not acquire a new timestamp on close.
-+  // Storage can still be dirty for a newly created index with no vectors.
-+  int ret = stg_ && (dirty_ || stg_->is_dirty()) ? flush(0UL) : 0;
- 
-   stg_.reset();
-   check_crc_ = false;
-   dirty_ = false;
- 
--  return 0;
-+  return ret;
- }
- 
- int HnswRabitqChunkBroker::flush(uint64_t checkpoint) {
-```
-
-**File**: `src/core/algorithm/hnsw_rabitq/hnsw_rabitq_streamer.cc` (modified, +4/-1)
-```diff
-@@ -419,7 +419,10 @@ int HnswRabitqStreamer::close() {
- 
-   stats_.clear();
-   meta_.set_metric(metric_->name(), 0, metric_->params());
--  entity_.set_index_meta(meta_);
-+  if (entity_.dirty()) {
-+    int ret = entity_.set_index_meta(meta_);
-+    if (ret != 0) return ret;
-+  }
-   int ret = entity_.close();
-   if (ret != 0) {
-     return ret;
-```
-
----
-
-### Incident Patch 2: `a8e6ae35` (2026-10-21)
-**Commit Message**: Enable RaBitQ on Linux/macOS/Android/iOS ARM64 and macOS x86_64 (#832)
-
-**File**: `.github/workflows/04-android-build.yml` (modified, +3/-2)
-```diff
-@@ -116,9 +116,10 @@ jobs:
-             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
- 
-           if [ "${{ matrix.abi }}" = "arm64-v8a" ]; then
--            echo "Building focused DiskAnn tests and public C++ examples for arm64-v8a..."
-+            echo "Building focused ARM64 index tests and public C++ examples..."
-             cmake --build "$BUILD_DIR" \
--              --target diskann_mobile_compat_test diskann_mobile_collection_test zvec_cpp_examples \
-+              --target diskann_mobile_compat_test diskann_mobile_collection_test \
-+                hnsw_rabitq_streamer_test ivf_rabitq_streamer_test zvec_cpp_examples \
-               --parallel
-             exit 0
-           fi
-```
-
-**File**: `.github/workflows/06-ios-build.yml` (modified, +5/-3)
-```diff
-@@ -80,18 +80,20 @@ jobs:
-             fi
-           done
- 
--      - name: Build required DiskAnn test targets
-+      - name: Build required ARM64 index test targets
-         run: |
-           NPROC=$(sysctl -n hw.ncpu)
-           BUILD_DIR=build_ios_${{ matrix.platform }}
-           cmake --build "$BUILD_DIR" \
-             --target diskann_mobile_compat_test diskann_mobile_collection_test \
-+              hnsw_rabitq_streamer_test ivf_rabitq_streamer_test \
-             --parallel "$NPROC"
- 
--          for test_name in diskann_mobile_compat_test diskann_mobile_collection_test; do
-+          for test_name in diskann_mobile_compat_test diskann_mobile_collection_test \
-+            hnsw_rabitq_streamer_test ivf_rabitq_streamer_test; do
-             test_app="$BUILD_DIR/bin/${test_name}.app"
-             if [ ! -d "$test_app" ]; then
--              echo "::error::Missing required iOS DiskAnn test app: $test_app"
-+              echo "::error::Missing required iOS index test app: $test_app"
-               exit 1
-             fi
-           done
-```
-
-**File**: `CMakeLists.txt` (modified, +28/-12)
-```diff
-@@ -145,14 +145,30 @@ message(STATUS "BUILD_C_BINDINGS:${BUILD_C_BINDINGS}")
- message(STATUS "BUILD_TOOLS:${BUILD_TOOLS}")
- message(STATUS "BUILD_CPP_EXAMPLES:${BUILD_CPP_EXAMPLES}")
- 
--# RaBitQ support (rabitqlib ships x86-64 AVX2/AVX-512 kernels with runtime dispatch):
--#   - Linux x86_64 with GCC/Clang
--#   - Windows x86_64 with MSVC (added upstream in v0.3.8)
--# Everything else (ARM, Android, iOS, 32-bit) falls back to the stub libraries.
-+# RaBitQ support:
-+#   - Linux x86_64 and ARM64 with GCC/Clang
-+#   - macOS x86_64 and ARM64 with AppleClang
-+#   - Windows x86_64 with MSVC
-+#   - Android ARM64 and iOS ARM64 with Clang
-+# ARM64 uses NEON; x86-64 uses runtime AVX2/AVX-512 dispatch.
-+# Other targets, including Android x86_64, iOS x86_64, Windows ARM64, and
-+# 32-bit platforms, use stub libraries.
-+set(RABITQ_TARGET_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}")
-+if(APPLE AND CMAKE_OSX_ARCHITECTURES)
-+  set(RABITQ_TARGET_PROCESSOR "${CMAKE_OSX_ARCHITECTURES}")
-+endif()
-+string(TOLOWER "${RABITQ_TARGET_PROCESSOR}" RABITQ_TARGET_PROCESSOR)
- set(RABITQ_SUPPORTED OFF)
--if(NOT ANDROID AND NOT IOS AND CMAKE_SIZEOF_VOID_P EQUAL 8
--   AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$"
--   AND (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR (WIN32 AND MSVC)))
-+if(CMAKE_SIZEOF_VOID_P EQUAL 8
-+   AND RABITQ_TARGET_PROCESSOR MATCHES "^(arm64|aarch64)$"
-+   AND (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR
-+        CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR
-+        (ANDROID AND ANDROID_ABI STREQUAL "arm64-v8a") OR IOS))
-+  set(RABITQ_SUPPORTED ON)
-+elseif(NOT ANDROID AND NOT IOS AND CMAKE_SIZEOF_VOID_P EQUAL 8
-+   AND RABITQ_TARGET_PROCESSOR MATCHES "^(x86_64|amd64)$"
-+   AND (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR
-+        CMAKE_SYSTEM_NAME STREQUAL "Darwin" OR (WIN32 AND MSVC)))
-   if(MSVC)
-     # /arch:AVX512 turns on the complete F/CD/VL/BW/DQ group. MSVC has no
-     # separate switch for VPOPCNTDQ, so the popcount backend is compiled with
-@@ -181,15 +197,15 @@ if(NOT ANDROID AND NOT IOS AND CMAKE_SIZEOF_VOID_P EQUAL 8
-   endforeach()
-   unset(_rabitq_probe)
- 
--  if(RABITQ_SUPPORTED)
--    add_definitions(-DRABITQ_SUPPORTED=1)
--  else()
--    add_definitions(-DRABITQ_SUPPORTED=0)
-+  if(NOT RABITQ_SUPPORTED)
-     message(STATUS "RaBitQ support disabled - compiler cannot build all runtime dispatch variants")
-   endif()
-+endif()
-+if(RABITQ_SUPPORTED)
-+  add_definitions(-DRABITQ_SUPPORTED=1)
- else()
-   add_definitions(-DRABITQ_SUPPORTED=0)
--  message(STATUS "RaBitQ support disabled - only supported on Linux x86_64 and Windows x86_64 (MSVC)")
-+  message(STATUS "RaBitQ support disabled - unsupported platform or compiler")
- endif()
- message(STATUS "RABITQ_SUPPORTED: ${RABITQ_SUPPORTED}")
- 
-```
-
-**File**: `src/core/algorithm/CMakeLists.txt` (modified, +5/-5)
-```diff
-@@ -56,10 +56,10 @@ if(RABITQ_SUPPORTED)
-   cc_directory(ivf_rabitq)
- else()
-   message(STATUS "NOT BUILD RABITQ")
--  # Empty stub library for unsupported platforms
-+  # Empty stub library when RaBitQ is disabled for this build
-   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/rabitq_stub.cc
--    "// Stub implementation for unsupported platforms\n"
--    "// RaBitQ only supports Linux x86_64 and Windows x86_64\n"
-+    "// Stub implementation for build compatibility\n"
-+    "// RaBitQ is disabled for this build\n"
-     "namespace zvec { namespace core { /* empty namespace for compatibility */ } }\n"
-   )
- 
-@@ -73,8 +73,8 @@ else()
-     )
- 
-   file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/ivf_rabitq_stub.cc
--    "// Stub implementation for unsupported platforms\n"
--    "// IVF RaBitQ only supports Linux x86_64 and Windows x86_64\n"
-+    "// Stub implementation for build compatibility\n"
-+    "// IVF RaBitQ is disabled for this build\n"
-     "namespace zvec { namespace core { /* empty namespace for compatibility */ } }\n"
-   )
- 
-```
-
-**File**: `src/core/algorithm/hnsw_rabitq/rabitq_params.h` (modified, +3/-2)
-```diff
-@@ -45,9 +45,10 @@ constexpr int kMinRabitqDimSize = 64;
- constexpr int kMaxRabitqDimSize = 4095;
- 
- // Reported wherever RaBitQ is compiled out. Keep in sync with RABITQ_SUPPORTED
--// in the top-level CMakeLists.txt; this is the only place naming the platforms.
-+// in the top-level CMakeLists.txt.
- constexpr char kRabitqUnsupportedPlatform[] =
--    "RaBitQ is not supported on this platform (Linux/Windows x86_64)";
-+    "RaBitQ is not supported on this platform (supported: Linux "
-+    "x86_64/ARM64, macOS x86_64/ARM64, Windows x86_64, Android/iOS ARM64)";
- 
- // Original vector dimension before converter (e.g., CosineNormalizeConverter)
- // modifies it. Used by IVF-RaBitQ to ignore extra dimensions from converter.
-```
-
-**File**: `src/db/index/common/schema.cc` (modified, +3/-2)
-```diff
-@@ -180,9 +180,10 @@ Status FieldSchema::validate() const {
-         const bool supports_rabitq_avx2 = flags.AVX2 && flags.FMA;
-         const bool supports_rabitq_avx512 =
-             flags.AVX512F && flags.AVX512BW && flags.AVX512DQ;
--        if (!supports_rabitq_avx2 && !supports_rabitq_avx512) {
-+        if (!supports_rabitq_avx2 && !supports_rabitq_avx512 && !flags.NEON) {
-           return Status::NotSupported(
--              "RabitQ requires AVX2/FMA or AVX512F/BW/DQ to be supported");
-+              "RabitQ requires AVX2/FMA, AVX512F/BW/DQ, or NEON to be "
-+              "supported");
-         }
+   switch (storage_options.type) {
+     case StorageOptions::StorageType::kMMAP: {
+-      storage_ = core::IndexFactory::CreateStorage("MMapFileStorage");
++      const char *storage_name =
++          storage_options.read_only ? "MMapFileReadStorage" : "MMapFileStorage";
++      storage_ = core::IndexFactory::CreateStorage(storage_name);
+       if (storage_ == nullptr) {
+-        LOG_ERROR("Failed to create MMapFileStorage");
++        LOG_ERROR("Failed to create %s", storage_name);
+         return core::IndexError_Runtime;
        }
+       int ret = storage_->init(storage_params);
+       if (ret != 0) {
+-        LOG_ERROR("Failed to init MMapFileStorage, path: %s, err: %s",
++        LOG_ERROR("Failed to init %s, path: %s, err: %s", storage_name,
+                   file_path.c_str(), core::IndexError::What(ret));
+         return ret;
+       }
+@@ -1415,6 +1421,10 @@ int Index::_sparse_search(const VectorData &vector_data,
  
-```
-
-**File**: `tests/core/algorithm/hnsw_rabitq/hnsw_rabitq_streamer_test.cc` (modified, +3/-2)
-```diff
-@@ -46,8 +46,9 @@ std::string HnswRabitqStreamerTest::dir_("hnswRabitqStreamerTest");
- shared_ptr<IndexMeta> HnswRabitqStreamerTest::index_meta_ptr_;
- 
- void HnswRabitqStreamerTest::SetUp() {
--  if (!rabitqlib::cpu::has_avx512_core() && !rabitqlib::cpu::has_avx2()) {
--    GTEST_SKIP() << "CPU does not support AVX2/FMA or AVX512F/BW/DQ";
-+  if (!rabitqlib::cpu::has_avx512_core() && !rabitqlib::cpu::has_avx2() &&
-+      !rabitqlib::cpu::has_neon()) {
-+    GTEST_SKIP() << "CPU does not support AVX2/FMA, AVX512F/BW/DQ, or NEON";
+ int Index::merge(const std::vector<Index::Pointer> &indexes,
+                  const IndexFilter &filter, const MergeOptions &options) {
++  if (!is_open_ || is_read_only_) {
++    LOG_ERROR("Cannot merge into an index that is closed or read-only");
++    return core::IndexError_Runtime;
++  }
+   if (indexes.empty()) {
+     return core::IndexError_Success;
    }
- 
-   index_meta_ptr_.reset(new (nothrow)
 ```
 
-**File**: `tests/db/CMakeLists.txt` (modified, +16/-13)
+**File**: `src/core/interface/indexes/diskann_index.cc` (modified, +6/-0)
 ```diff
-@@ -1,6 +1,20 @@
- include(${PROJECT_ROOT_DIR}/cmake/bazel.cmake)
- include(${PROJECT_ROOT_DIR}/cmake/option.cmake)
+@@ -137,6 +137,10 @@ int DiskAnnIndex::create_and_init_streamer(const BaseIndexParam &param) {
  
-+function(db_test_force_load_core TARGET)
-+  # Include core registries and keep their RTTI in the test executable.
-+  if(MSVC)
-+    target_link_options(${TARGET} PRIVATE
-+      "/WHOLEARCHIVE:$<TARGET_FILE:zvec_core>")
-+  elseif(APPLE)
-+    target_link_options(${TARGET} PRIVATE
-+      "-Wl,-force_load,$<TARGET_FILE:zvec_core>")
-+  else()
-+    target_link_options(${TARGET} PRIVATE
-+      "-Wl,--whole-archive,$<TARGET_FILE:zvec_core>,--no-whole-archive")
-+  endif()
-+endfunction()
-+
- cc_directory(common)
- cc_directories(crash_recovery)
- cc_directory(sqlengine)
-@@ -38,24 +52,13 @@ foreach(CC_SRCS ${ALL_TEST_SRCS})
-   cc_gmock(
-     NAME ${CC_TARGET} STRICT
-     DEFS DISKANN_STRESS_TESTS=${DISKANN_STRESS_TESTS}
--    LIBS zvec
--    core_knn_flat
--    core_knn_flat_sparse
--    core_knn_hnsw
--    core_knn_hnsw_rabitq
--    core_knn_ivf_rabitq
--    core_knn_hnsw_sparse
--    core_knn_ivf
--    core_knn_diskann
--    core_mix_reducer
--    core_metric
--    core_utility
--    core_quantizer
-+    LIBS zvec zvec_core
-     ${CMAKE_THREAD_LIBS_INIT}
-     ${CMAKE_DL_LIBS}
-     SRCS ${CC_SRCS} index/utils/utils.cc
-     INCS . .. ../../src
-     LDFLAGS ${APPLE_FRAMEWORK_LIBS}
-   )
-+  db_test_force_load_core(${CC_TARGET})
-   cc_test_suite(zvec ${CC_TARGET})
- endforeach()
-```
-
----
-
-### Incident Patch 3: `00d8e027` (2026-10-21)
-**Commit Message**: fix(platform): centralize cache-line sizing (#831)
-
-**File**: `python/zvec/model/param/__init__.pyi` (modified, +16/-8)
-```diff
-@@ -426,9 +426,11 @@ class HnswQueryParam(QueryParam):
-         prefetch_offset (int, optional): Graph prefetch offset (PO) used by the
-             HNSW fast path. ``0`` disables prefetching. Default is ``8``.
-             Values are clamped to ``256``.
--        prefetch_lines (int, optional): Number of 64B cache lines to prefetch
--            per neighbour vector (PL). ``0`` (default) uses the auto-derived
--            value ``ceil(vector_size/64)``. Values are clamped to ``256``.
-+        prefetch_lines (int, optional): Number of cache lines to prefetch per
-+            neighbour vector (PL). Cache-line size follows the build target:
-+            normally 128 bytes on Apple ARM64 and 64 bytes elsewhere.
-+            ``0`` (default) uses ``ceil(vector_size/cache_line_size)``.
-+            Values are clamped to ``256``.
- 
-     Examples:
-         >>> params = HnswQueryParam(ef=300)
-@@ -461,8 +463,10 @@ class HnswQueryParam(QueryParam):
-             extra_params (dict, optional): Additional search parameters. Supported keys:
-                 - ``prefetch_offset`` (int): Graph prefetch offset (PO).
-                   ``0`` disables prefetching. Default is ``8``.
--                - ``prefetch_lines`` (int): Number of 64B cache lines to prefetch
--                  per neighbour vector (PL). ``0`` (default) means auto-derive from vector size.
-+                - ``prefetch_lines`` (int): Number of cache lines to prefetch
-+                  per neighbour vector (PL), normally 128 bytes on Apple ARM64
-+                  and 64 bytes elsewhere. ``0`` (default) uses
-+                  ``ceil(vector_size/cache_line_size)``.
-         """
- 
-     def __repr__(self) -> str: ...
-@@ -909,8 +913,10 @@ class VamanaQueryParam(QueryParam):
-         prefetch_offset (int): Pool-phase vector-prefetch prefix size (PO).
-             The shared default 8 is resolved using a nominal 6 KiB budget
-             for this phase only; this is not a global prefetch limit.
--        prefetch_lines (int): Cache lines to prefetch per vector (PL). The
--            shared default value 0 makes Vamana use at most two lines.
-+        prefetch_lines (int): Cache lines to prefetch per vector (PL), normally
-+            128 bytes on Apple ARM64 and 64 bytes elsewhere. The shared default
-+            value 0 makes Vamana use at most two lines. The nominal 6 KiB
-+            prefix budget uses the build target's cache-line size.
- 
-     Examples:
-         >>> params = VamanaQueryParam(ef_search=200)
-@@ -944,7 +950,9 @@ class VamanaQueryParam(QueryParam):
-                   a nominal 6 KiB budget for this phase only. ``0`` disables this
-                   prefix, not local-descent, graph-row, or kernel prefetching.
-                 - ``prefetch_lines`` (int): Cache lines to prefetch per vector (PL).
--                  The default ``0`` makes Vamana use at most two lines.
-+                  Normally each line is 128 bytes on Apple ARM64 and 64 bytes
-+                  elsewhere. The default ``0`` makes Vamana use at most two
-+                  lines, counted at this size against the nominal 6 KiB budget.
-         """
- 
-     def __repr__(self) -> str: ...
-```
-
-**File**: `src/ailego/math/distance_utility.h` (modified, +3/-2)
-```diff
-@@ -21,7 +21,8 @@ namespace ailego {
- 
- /*! Four-bits Squared Difference Table
-  */
--static const AILEGO_ALIGNED(64) uint8_t Int4SquaredDiffTable[256] = {
-+static const AILEGO_ALIGNED(
-+    AILEGO_CACHE_LINE_SIZE) uint8_t Int4SquaredDiffTable[256] = {
-     0,  1,  4,   9,   16,  25,  36,  49,  64,  49,  36,  25,  16,  9,   4,  1,
-     1,  0,  1,   4,   9,   16,  25,  36,  81,  64,  49,  36,  25,  16,  9,  4,
-     4,  1,  0,   1,   4,   9,   16,  25,  100, 81,  64,  49,  36,  25,  16, 9,
-@@ -42,7 +43,7 @@ static const AILEGO_ALIGNED(64) uint8_t Int4SquaredDiffTable[256] = {
- 
- /*! Four-bits Integer Multiplication Table
-  */
--static const AILEGO_ALIGNED(64) int8_t Int4MulTable[256] = {
-+static const AILEGO_ALIGNED(AILEGO_CACHE_LINE_SIZE) int8_t Int4MulTable[256] = {
-     0, 0,  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-     0, 1,  2,   3,   4,   5,   6,   7,   -8,  -7,  -6,  -5,  -4,  -3,  -2,  -1,
-     0, 2,  4,   6,   8,   10,  12,  14,  -16, -14, -12, -10, -8,  -6,  -4,  -2,
-```
-
-**File**: `src/ailego/utility/memory_helper.h` (modified, +3/-2)
-```diff
-@@ -68,7 +68,7 @@ struct MemoryHelper {
-   //! `alignment`-aligned allocation is used, which avoids wasting a full huge
-   //! page on small buffers. Returns nullptr on failure.
-   //!
--  //! `alignment` must be a power of two.
-+  //! `alignment` must be a power of two; it defaults to the target cache line.
-   //!
-   //! `zero_fill` follows the same contract as AllocateHugePage: true guarantees
-   //! zeroed memory; false does not require zeroing but the implementation may
-@@ -78,7 +78,8 @@ struct MemoryHelper {
-   //! Blocks returned here MUST be released with FreeAligned, passing the same
-   //! `size`, because the chosen allocator (and therefore the matching free) is
-   //! derived from `size`.
--  static void *AllocateAligned(size_t size, size_t alignment = 64,
-+  static void *AllocateAligned(size_t size,
-+                               size_t alignment = AILEGO_CACHE_LINE_SIZE,
-                                bool zero_fill = true);
- 
-   //! Release a block previously returned by AllocateAligned.
-```
-
-**File**: `src/binding/python/model/param/python_param.cc` (modified, +12/-7)
-```diff
-@@ -1498,9 +1498,11 @@ Constructs an HnswQueryParam instance.
-         - ``prefetch_offset`` (int): Graph prefetch offset (PO).
-           ``0`` disables prefetching. Default is ``8``.
-           Values are clamped to ``256``.
--        - ``prefetch_lines`` (int): Number of 64B cache lines to prefetch
--          per neighbour vector (PL). ``0`` (default) uses the auto-derived
--          value ``ceil(vector_size/64)``. Values are clamped to ``256``.
-+        - ``prefetch_lines`` (int): Number of cache lines to prefetch per
-+          neighbour vector (PL). Cache-line size follows the build target:
-+          normally 128 bytes on Apple ARM64 and 64 bytes elsewhere.
-+          ``0`` (default) uses ``ceil(vector_size/cache_line_size)``.
-+          Values are clamped to ``256``.
- )pbdoc")
-       .def_property_readonly(
-           "ef", [](const HnswQueryParams &self) -> int { return self.ef(); },
-@@ -1903,10 +1905,13 @@ Constructs a VamanaQueryParam instance.
-           for this phase only. ``0`` disables this prefix, not local-descent,
-           graph-row, or distance-kernel prefetching.
-           Values are clamped to ``256``.
--        - ``prefetch_lines`` (int): Number of 64B cache lines to prefetch
--          per neighbour vector (PL). The shared default ``0`` makes Vamana use
--          at most two lines, further clamped to the stored vector size. Values
--          are clamped to ``256`` and to the stored vector size.
-+        - ``prefetch_lines`` (int): Number of cache lines to prefetch per
-+          neighbour vector (PL). Cache-line size follows the build target:
-+          normally 128 bytes on Apple ARM64 and 64 bytes elsewhere.
-+          The shared default ``0`` makes Vamana use at most two lines, further
-+          clamped to the stored vector size. The nominal 6 KiB prefix budget
-+          uses this cache-line size. Values are clamped to ``256`` and to the
-+          stored vector size.
- )pbdoc")
-       .def_property_readonly(
-           "ef_search",
-```
-
-**File**: `src/core/algorithm/flat/flat_streamer_entity.h` (modified, +3/-2)
-```diff
-@@ -487,7 +487,7 @@ class FlatStreamerEntity {
-   mutable std::mutex segments_mutex_{};
-   // Distance loops repeatedly read this metadata. Keep it off the cache line
-   // written by segment-cache locking in concurrent queries.
--  alignas(64) IndexMeta index_meta_{};
-+  alignas(AILEGO_CACHE_LINE_SIZE) IndexMeta index_meta_{};
-   IndexStorage::Pointer storage_{};
-   IndexMetric::MatrixDistance row_distance_{}, column_distance_{};
-   IndexMetric::MatrixBatchDistance batch_distance_{};
-@@ -577,7 +577,8 @@ class FlatContiguousStreamerEntity : public FlatStreamerEntity {
-   const void *get_vector_ptr_by_key(const ContiguousStorage &storage,
-                                     uint64_t key) const;
- 
--  static constexpr size_t kVectorAlignment = 64;
-+  // Padding is only for the rebuilt in-memory copy, not the index format.
-+  static constexpr size_t kVectorAlignment = AILEGO_CACHE_LINE_SIZE;
-   std::shared_ptr<const ContiguousStorage> contiguous_storage_{};
- };
- 
-```
-
-**File**: `src/core/algorithm/hnsw/hnsw_algorithm.cc` (modified, +7/-14)
-```diff
-@@ -262,10 +262,7 @@ void fast_search_neighbors(const EntityType &entity, HeapType &pool,
-       if (visit.visited(node)) continue;
-       visit.set_visited(node);
-       const void *vec_ptr = entity.get_vector_ptr(node);
--      const char *p = reinterpret_cast<const char *>(vec_ptr);
--      for (uint32_t cl = 0; cl < prefetch_lines; ++cl) {
--        ailego_prefetch(p + cl * 64);
--      }
-+      ailego_prefetch_lines(vec_ptr, prefetch_lines);
-       neighbor_ids[unvisited_count] = node;
-       neighbor_vecs[unvisited_count] = vec_ptr;
-       if (has_extra_values) {
-@@ -363,10 +360,7 @@ void fast_search_neighbors_buffer(const EntityType &entity, HeapType &pool,
-     }
-     const uint32_t po = std::min(prefetch_offset, unvisited_count);
-     for (uint32_t i = 0; i < po; ++i) {
--      const char *p = static_cast<const char *>(neighbor_vecs[i]);
--      for (uint32_t cl = 0; cl < prefetch_lines; ++cl) {
--        ailego_prefetch(p + cl * 64);
--      }
-+      ailego_prefetch_lines(neighbor_vecs[i], prefetch_lines);
-     }
- 
-     dc.batch_dist(neighbor_vecs.data(), unvisited_count, dists.data(),
-@@ -389,8 +383,9 @@ void dual_heap_search_neighbors(const EntityType &entity, level_t level,
-                                 TopkHeap &topk, HnswContext *ctx,
-                                 HnswDistCalculator &dc, FilterFn &&filter) {
-   const uint32_t prefetch_offset = ctx->po();
-+  const size_t vector_lines = ailego_cache_line_count(entity.vector_size());
-   const uint32_t prefetch_lines =
--      ctx->pl() > 0 ? ctx->pl() : (entity.vector_size() + 63) / 64;
-+      ctx->pl() > 0 ? std::min<size_t>(ctx->pl(), vector_lines) : vector_lines;
- 
-   uint32_t buf_capacity = entity.max_degree(level);
-   std::vector<node_id_t> neighbor_ids(buf_capacity);
-@@ -496,10 +491,7 @@ void dual_heap_search_neighbors(const EntityType &entity, level_t level,
- 
-     // do prefetch
-     for (uint32_t i = 0; i < std::min(prefetch_offset, size); ++i) {
--      const char *base = static_cast<const char *>(neighbor_vecs[i]);
--      for (uint32_t cl = 0; cl < prefetch_lines; ++cl) {
--        ailego_prefetch(base + cl * 64);
--      }
-+      ailego_prefetch_lines(neighbor_vecs[i], prefetch_lines);
-     }
- 
-     dc.batch_dist(neighbor_vecs.data(), size, dists.data(),
-@@ -556,8 +548,9 @@ template <typename EntityType>
- int HnswAlgorithm<EntityType>::dispatch_search_neighbors(
-     node_id_t entry_point, dist_t entry_dist, HnswContext *ctx) const {
-   const auto &entity = static_cast<const EntityType &>(ctx->get_entity());
-+  const size_t vector_lines = ailego_cache_line_count(entity.vector_size());
-   const uint32_t prefetch_lines =
--      ctx->pl() > 0 ? ctx->pl() : (entity.vector_size() + 63) / 64;
-+      ctx->pl() > 0 ? std::min<size_t>(ctx->pl(), vector_lines) : vector_lines;
-   const bool dispatched =
-       dispatch_visit_filter(ctx->visit_filter(), [&](auto visit) {
-         visit.clear();
-```
-
-**File**: `src/core/algorithm/vamana/vamana_algorithm.cc` (modified, +12/-17)
-```diff
-@@ -162,13 +162,13 @@ int VamanaAlgorithm<EntityType>::search(VamanaContext *ctx) const {
- // Prefetch all cache lines covering a packed contiguous graph row.
- ailego_force_inline void prefetch_graph_row(
-     const VamanaContiguousStreamerEntity &entity, node_id_t node) {
--  constexpr uintptr_t kCacheLineMask = ~uintptr_t{63};
-+  constexpr uintptr_t kCacheLineMask = ~uintptr_t{AILEGO_CACHE_LINE_SIZE - 1};
-   const char *data = entity.graph_prefetch_data(node);
-   if (ailego_unlikely(data == nullptr)) return;
-   const uintptr_t begin = reinterpret_cast<uintptr_t>(data) & kCacheLineMask;
-   const uintptr_t end =
-       reinterpret_cast<uintptr_t>(data) + entity.graph_prefetch_size();
--  const size_t lines = (end - begin + 63) / 64;
-+  const size_t lines = ailego_cache_line_count(end - begin);
-   ailego_prefetch_lines(reinterpret_cast<const void *>(begin), lines);
+ int DiskAnnIndex::open(const std::string &file_path,
+                        StorageOptions storage_options) {
++  if (storage_options.read_only && storage_options.create_new) {
++    LOG_ERROR("Cannot create storage for a read-only index");
++    return core::IndexError_Runtime;
++  }
+   ailego::Params storage_params;
+   file_path_ = file_path;
+   is_read_only_ = storage_options.read_only;
+@@ -200,6 +204,7 @@ int DiskAnnIndex::generate_holder() {
  }
  
-@@ -392,11 +392,10 @@ void dual_heap_greedy_search(const EntityType &entity, VamanaContext *ctx,
-                              VamanaDistCalculator &dc, node_id_t entry_point,
-                              FilterFn &&filter) {
-   const uint32_t prefetch_offset = ctx->po();
--  const uint32_t vector_body_lines =
--      static_cast<uint32_t>((entity.vector_data_size() + 63) / 64);
--  const uint32_t prefetch_lines = ctx->pl() > 0
--                                      ? std::min(ctx->pl(), vector_body_lines)
--                                      : vector_body_lines;
-+  const size_t vector_lines =
-+      ailego_cache_line_count(entity.vector_data_size());
-+  const uint32_t prefetch_lines =
-+      ctx->pl() > 0 ? std::min<size_t>(ctx->pl(), vector_lines) : vector_lines;
+ int DiskAnnIndex::add(const VectorData &vector, uint32_t doc_id) {
++  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
+   if (is_trained_ || build_stage_ != BuildStage::kCollecting) {
+     LOG_ERROR("this diskann index is trained or has a pending build");
+     return core::IndexError_Runtime;
+@@ -223,6 +228,7 @@ int DiskAnnIndex::add(const VectorData &vector, uint32_t doc_id) {
  
-   uint32_t buf_capacity = entity.max_degree();
-   std::vector<node_id_t> neighbor_ids(buf_capacity);
-@@ -474,11 +473,8 @@ void dual_heap_greedy_search(const EntityType &entity, VamanaContext *ctx,
-     if (ailego_unlikely(ret != 0)) break;
- 
-     for (uint32_t i = 0; i < std::min(prefetch_offset, unvisited_count); ++i) {
--      const char *base =
--          static_cast<const char *>(neighbor_vec_blocks[i].data());
--      for (uint32_t cl = 0; cl < prefetch_lines; ++cl) {
--        ailego_prefetch(base + cl * 64);
--      }
-+      const void *vector = neighbor_vec_blocks[i].data();
-+      ailego_prefetch_lines(vector, prefetch_lines);
-     }
- 
-     // Batch distance computation (reuse pre-allocated buffers).
-@@ -522,11 +518,10 @@ int VamanaAlgorithm<EntityType>::greedy_search(node_id_t entry_point,
-   const IndexFilter &index_filter =
-       static_cast<const IndexContext *>(ctx)->filter();
- 
--  const uint32_t vector_body_lines =
--      static_cast<uint32_t>((entity.vector_data_size() + 63) / 64);
--  const uint32_t prefetch_lines = ctx->pl() > 0
--                                      ? std::min(ctx->pl(), vector_body_lines)
--                                      : vector_body_lines;
-+  const size_t vector_lines =
-+      ailego_cache_line_count(entity.vector_data_size());
-+  const uint32_t prefetch_lines =
-+      ctx->pl() > 0 ? std::min<size_t>(ctx->pl(), vector_lines) : vector_lines;
- 
-   if (!use_pool || index_filter.is_valid()) {
-     // Fallback path used by add_node (use_pool=false) and filtered search.
+ int DiskAnnIndex::train() {
+   if (is_trained_) return 0;
++  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
+   if (build_stage_ == BuildStage::kCollecting) {
+     int ret = reset_builder();
+     if (ret != 0) return ret;
 ```
 
-**File**: `src/core/algorithm/vamana/vamana_context.cc` (modified, +2/-4)
+**File**: `src/core/interface/indexes/flat_index.cc` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,6 @@ namespace {
- // Vamana resolves the shared query defaults against the loaded graph layout.
- // Keep this policy local to Vamana rather than exposing algorithm-tuning
- // constants through the public interface.
--constexpr uint32_t kPrefetchCacheLineBytes = 64;
- constexpr uint32_t kPrefetchBudgetBytes = 6 * 1024;
- constexpr uint32_t kPrefetchTargetLines = 2;
- constexpr uint32_t kPrefetchMaxValue = 256;
-@@ -171,8 +170,7 @@ std::pair<uint32_t, uint32_t> VamanaContext::resolve_query_prefetch(
-   }
+@@ -33,7 +33,7 @@ int ReadPersistedFlatIndexMeta(const std::string &file_path,
+   const char *storage_name = nullptr;
+   switch (storage_options.type) {
+     case StorageOptions::StorageType::kMMAP:
+-      storage_name = "MMapFileStorage";
++      storage_name = "MMapFileReadStorage";
+       break;
+     case StorageOptions::StorageType::kBufferPool:
+       storage_name = "BufferStorage";
+```
+
+**File**: `src/core/interface/indexes/ivf_index.cc` (modified, +5/-0)
+```diff
+@@ -170,6 +170,10 @@ int IVFIndex::load_streamer() {
  
-   const uint32_t body_lines =
--      static_cast<uint32_t>((vector_data_size + kPrefetchCacheLineBytes - 1) /
--                            kPrefetchCacheLineBytes);
-+      static_cast<uint32_t>(ailego_cache_line_count(vector_data_size));
+ int IVFIndex::open(const std::string &file_path,
+                    StorageOptions storage_options) {
++  if (storage_options.read_only && storage_options.create_new) {
++    LOG_ERROR("Cannot create storage for a read-only index");
++    return core::IndexError_Runtime;
++  }
+   ailego::Params storage_params;
+   file_path_ = file_path;
+   is_read_only_ = storage_options.read_only;
+@@ -239,6 +243,7 @@ int IVFIndex::generate_holder() {
+ }
  
-   uint32_t resolved_lines;
-   if (requested_lines == kDefaultPrefetchLines) {
-@@ -184,7 +182,7 @@ std::pair<uint32_t, uint32_t> VamanaContext::resolve_query_prefetch(
-   uint32_t resolved_offset;
-   if (requested_offset == kDefaultPrefetchOffset) {
-     const uint64_t bytes_per_neighbor =
--        static_cast<uint64_t>(kPrefetchCacheLineBytes) * resolved_lines;
-+        static_cast<uint64_t>(AILEGO_CACHE_LINE_SIZE) * resolved_lines;
-     const uint32_t budget_offset = static_cast<uint32_t>(
-         std::max<uint64_t>(1, kPrefetchBudgetBytes / bytes_per_neighbor));
-     resolved_offset = std::min({budget_offset, max_degree, kPrefetchMaxValue});
+ int IVFIndex::add(const VectorData &vector, uint32_t doc_id) {
++  if (!is_open_ || is_read_only_) return core::IndexError_NoReady;
+   if (is_trained_ || build_stage_ != BuildStage::kCollecting) {
+     LOG_ERROR("this IVF index is trained or has a pending build");
+     return core::IndexError_Runtime;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #835** (2026-10-21): docs: clarify README platforms and Python example (@zhourrr)
-- **PR #834** (2026-10-21): fix(core): preserve index bytes on read-only close (@iaojnh)
-- **PR #832** (2026-10-21): Enable RaBitQ on Linux/macOS/Android/iOS ARM64 and macOS x86_64 (@egolearner)
-- **PR #831** (2026-10-21): fix(platform): centralize cache-line sizing (@luoxiaojian)
-- **PR #829** (2026-10-21): docs: update README highlights for v0.8.0 (@JalinWang)
-- **PR #825** (2026-10-20): perf(flat): isolate query metadata from segment cache locking (@egolearner)
+- **PR #859** (2026-10-30): fix(io): prevent file descriptor inheritance across exec (@egolearner)
+- **PR #856** (2026-10-29): feat(turbo): complete ARM NEON one-to-many distance kernels (@richyreachy)
+- **PR #853** (2026-10-30): perf(diskann): borrow mmap vectors during graph construction (@iaojnh)
+- **PR #851** (2026-10-28): fix(hnsw_rabitq): refine entry scores before level-0 search (@egolearner)
+- **PR #846** (2026-10-27): perf: deduplicate string parameter constants (@egolearner)
+- **PR #844** (2026-10-26): docs: simplify README badges and organize SDK installation tables (@JalinWang)
 
 ---
 
@@ -1878,33 +1622,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): preserve index bytes on read-only close (#834)
+## X. io): prevent file descriptor inheritance across exec (#859)
 
 **RULE**:
-When implementing operations in `src/core/algorithm/flat/flat_streamer.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/ailego/io/file.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in alibaba/zvec. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b531d17`: core): preserve index bytes on read-only close (#834). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4c5be75d`: io): prevent file descriptor inheritance across exec (#859). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/algorithm/flat/flat_streamer.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/ailego/io/file.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  int ret = entity_->flush_linear_meta();
-  if (ret != 0) {
-    return ret;
-  }
-  ret = entity_->close();
+  // Set close-on-exec atomically with open: a later fcntl can race with a
+  // concurrent process launch and leave the child holding collection locks.
+  flags |= O_CLOEXEC;
+  // Null security attributes make this handle and the direct-I/O reopen below
+  // non-inheritable, even when the child process enables handle inheritance.
+  // Null security attributes keep this handle non-inheritable.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-  entity_->flush_linear_meta();
-  int ret = entity_->close();
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b531d17` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4c5be75d` are properly handled with clean fallback behavior.

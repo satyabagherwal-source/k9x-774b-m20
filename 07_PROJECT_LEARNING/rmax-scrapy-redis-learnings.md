@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rmax-scrapy-redis-learnings.md`  
 > **Source**: github ([https://github.com/rmax/scrapy-redis](https://github.com/rmax/scrapy-redis))  
-> **Source Version**: `b4f333ae`  
+> **Source Version**: `2cafe98f`  
 > **License**: MIT  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-18T07:28:48.275Z  
+> **Timestamp**: 2026-10-30T22:03:28.915Z  
 > **Learning ID**: `learn-github-rmax-scrapy-redis`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,469 +14,377 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): rmax/scrapy-redis
 
----
-
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`scrapy-redis` replaces Scrapy’s in-memory, process-bound crawling engine with a distributed, Redis-backed architecture. In a vanilla Scrapy process, the request scheduler (`scrapy.core.scheduler.Scheduler`), the duplicate filter (`scrapy.dupefilters.RFPDupeFilter`), and the start URL feeds are bound to the heap of a single Python Twisted reactor event loop. `scrapy-redis` decouples state ownership across three boundaries:
+**Technical Problem Solved:**
+Scrapy, by default, operates as a single-process crawler with in-memory state. This repository (`scrapy-redis`) solves the problem of **distributed crawling** and **state persistence** by externalizing the Scheduler and DupeFilter to a shared Redis instance. It enables multiple Scrapy processes (nodes) to share a queue of URLs, ensuring that no URL is crawled twice across the entire cluster and that crawling can be paused/resumed without losing progress.
 
-```
-                      +---------------------------------------+
-                      |             Redis Server              |
-                      |  (Centralized State & Task Broker)   |
-                      +---------------------------------------+
-                        |                 ^                 |
-            BLPOP / RPOP|                 |ZADD / SADD      |LPUSH / RPUSH
-         (start_urls &  |                 | (Fingerprints & | (Items / Scraped)
-            Scheduled)  v                 |  Queued Reqs)   v
-  +--------------------------+   +-------------------+   +--------------------+
-  |      RedisSpider /       |   |   RFPDupeFilter   |   |   RedisPipeline    |
-  |     RedisCrawlSpider     |   |                   |   |                    |
-  | (Spider Engine Loop)     |   | (Set-Based Filter)|   | (Item Exporter)    |
-  +--------------------------+   +-------------------+   +--------------------+
-                |                          ^                        ^
-                v                          |                        |
-  +---------------------------------------------------------------------------+
-  |                   Scrapy Engine & Twisted Reactor Slot                   |
-  +---------------------------------------------------------------------------+
-                                           |
-                                           v
-  +---------------------------------------------------------------------------+
-  |                          Scheduler (Redis-Backed)                         |
-  |     - PriorityQueue (ZSET with negative priority + MULTI/EXEC atomicity)  |
-  |     - FifoQueue / LifoQueue (LIST with LPUSH / RPOP / BRPOP)              |
-  |     - Idle Backoff & Spider Idle Polling Signal Interceptor               |
-  +---------------------------------------------------------------------------+
-```
+**Architectural Boundaries & Subsystems:**
+1.  **Connection Layer (`connection.py`):**
+    *   Abstracts the Redis client creation.
+    *   Handles configuration parsing from Scrapy settings (`REDIS_HOST`, `REDIS_PORT`, `REDIS_URL`, `REDIS_PASSWORD`).
+    *   Manages connection pooling and serialization defaults.
+2.  **Queue Abstraction (`queue.py`):**
+    *   Defines `Base`, `FifoQueue`, `LifoQueue`, and `PriorityQueue`.
+    *   Encapsulates the serialization/deserialization of Scrapy `Request` objects into Redis-native data structures (Lists, Sorted Sets).
+    *   Critical invariant: The queue must be thread-safe and atomic where possible (using Redis pipelines/multi-exec).
+3.  **Scheduler & DupeFilter (`scheduler.py`, `dupefilter.py`):**
+    *   Replaces Scrapy's default in-memory scheduler.
+    *   The `Scheduler` pushes new requests to the Redis queue and pops them for processing.
+    *   The `RFPDupeFilter` uses a Redis Set to track seen URLs, ensuring global uniqueness across distributed nodes.
+4.  **Spider Integration (`spiders.py`):**
+    *   Provides `RedisSpider` and `RedisCrawlSpider` base classes.
+    *   Injects the Redis-based scheduler and dupefilter into the spider instance.
+    *   Allows spiders to read initial URLs from a specific Redis key (`redis_key`).
 
-### Architectural Subsystem Boundaries
-1. **Queue Abstraction Layer (`scrapy_redis.queue`)**:
-   Provides uniform interfaces (`push`, `pop`, `len`, `clear`) over Redis primitives:
-   - `FifoQueue`: Backed by Redis `LIST` (`LPUSH` to ingest, `RPOP`/`BRPOP` to dequeue).
-   - `LifoQueue`: Backed by Redis `LIST` (`LPUSH` to ingest, `LPOP`/`BLPOP` to dequeue).
-   - `PriorityQueue`: Backed by Redis `ZSET` (`ZADD` with `-request.priority`). To pop with priority inversion avoidance and strict atomicity without native sorted set blocking pop, it executes a Redis transaction (`MULTI` -> `ZRANGE key 0 0` -> `ZREMRANGEBYRANK key 0 0` -> `EXEC`).
-2. **Deduplication Filter (`scrapy_redis.dupefilter.RFPDupeFilter`)**:
-   Replaces local 160-bit SHA1 hash tables with a Redis `SET`. Fingerprints are calculated from the canonicalized request (HTTP method, URL, normalized body, sorted query params) and checked via `SADD`. If `SADD` returns `0`, the request is discarded as a duplicate.
-3. **Execution Coordinator (`scrapy_redis.scheduler.Scheduler`)**:
-   Plugs directly into Scrapy's engine loop. Manages crawler startup (`open`), state hydration, persistence (`SCHEDULER_PERSIST`), and dynamic queue instantiation. Coordinates between the deduplicator and the priority queue. Intercepts Scrapy's `spider_idle` Twisted signal to poll Redis for new requests before allowing the spider engine to terminate.
-4. **Connection Registry & Multi-Protocol Pool (`scrapy_redis.connection`)**:
-   Manages the lifecycle of Redis client pools. Resolves settings into connection parameters, enforces pooling identity across spider components via canonical parameter hashing, and isolates compatibility across `redis-py` versions 4.x through 8.x, negotiating RESP2 vs RESP3 protocol handshakes.
-
----
+**Critical State Ownership:**
+*   **Redis** owns the state of the crawl queue and the set of seen URLs.
+*   **Scrapy Process** owns the state of the current response processing and item extraction.
+*   **Decoupling:** The communication barrier is the Redis protocol. The Scrapy process does not hold the queue state in memory; it streams it in and out.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Atomic Range-Removal for Priority Inversion-Free Dequeue
+### 1. Atomic Read-Remove Invariant for Distributed Queues
 **RULE**:
-When implementing a priority queue on top of a sorted set data store (such as Redis `ZSET`) lacking an atomic `ZPOPMIN`, dequeue operations MUST wrap `ZRANGE` and `ZREMRANGEBYRANK` inside an atomic transaction (`MULTI`/`EXEC` or Lua script) and MUST NOT perform un-pipelined sequential lookups followed by deletions.
+When implementing a distributed queue using a key-value store (like Redis) that does not support native atomic "pop" operations for complex structures (like Sorted Sets for priority queues), you MUST use a transactional pipeline (Multi/Exec) to perform the read and remove operations atomically. You MUST NOT perform a separate `GET`/`RANGE` followed by a `DEL`/`ZREM` in two distinct network round-trips.
 
 **WHY**:
-Without atomic execution, concurrent worker processes will execute `ZRANGE key 0 0` simultaneously, retrieve identical requests, and then both execute `ZREM`. This creates duplicate crawl operations, race conditions, and corrupted downstream counters. Furthermore, non-atomic deletion allows intermediate inserts to shift indices, leading to the accidental deletion of high-priority requests that were not returned to the worker.
+In a distributed environment with multiple consumers, a non-atomic read-then-remove sequence creates a **Time-of-Check to Time-of-Use (TOCTOU)** race condition. If Consumer A reads item X, and before Consumer A removes it, Consumer B reads item X, both consumers will process item X, violating the "exactly-once" or "at-least-once" processing invariant and leading to duplicate work or data corruption.
 
 **WHEN TO APPLY**:
-Any distributed job scheduling system, task queue, or crawler scheduler operating against sorted sets, key-value stores, or non-relational distributed databases lacking atomic pop primitives.
+Any distributed system where multiple workers consume from a shared priority queue or list stored in a non-transactional or weakly-transactional backend. Specifically applicable to Redis Sorted Sets (`ZSET`) used as priority queues.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# src/scrapy_redis/queue.py
-def pop(self, timeout=0):
-    """
-    Pop the highest-priority request atomically.
-    Sorted set ranks smallest score first; negative priority ensures highest priority has rank 0.
-    """
-    pipe = self.server.pipeline()
-    pipe.multi()
-    # Rank 0 is guaranteed to be the lowest score (-highest_priority)
-    pipe.zrange(self.key, 0, 0).zremrangebyrank(self.key, 0, 0)
-    results, count = pipe.execute()
-    if results and count > 0:
-        return self._decode_request(results[0])
+# SAFE: Atomic pop from Redis Sorted Set
+def pop_priority_item(redis_client, key):
+    # Create a pipeline to batch commands
+    pipe = redis_client.pipeline()
+    pipe.multi()  # Start transaction
+    
+    # 1. Get the top item (lowest score)
+    pipe.zrange(key, 0, 0)
+    # 2. Remove the top item
+    pipe.zremrangebyrank(key, 0, 0)
+    
+    # Execute atomically
+    results = pipe.execute()
+    if results and results[0]:
+        return results[0][0]
     return None
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: TOCTOU race condition under multi-worker concurrency
-def pop_unsafe(self):
-    results = self.server.zrange(self.key, 0, 0)  # Worker A and Worker B get request X
-    if results:
-        # Race window: Worker B executes before Worker A removes;
-        # Both workers process request X!
-        self.server.zrem(self.key, results[0])
-        return self._decode_request(results[0])
-    return None
+# UNSAFE: Race condition prone
+def pop_priority_item_unsafe(redis_client, key):
+    # Step 1: Read
+    items = redis_client.zrange(key, 0, 0)
+    if not items:
+        return None
+    item = items[0]
+    
+    # RACE CONDITION WINDOW: Another process can read 'item' here
+    
+    # Step 2: Remove
+    redis_client.zremrangebyrank(key, 0, 0)
+    return item
 ```
 
 **VERIFICATION METHOD**:
-Execute 10 concurrent worker processes popping from a single priority queue with 1,000 unique elements. Assert that exactly 1,000 distinct items are popped with zero duplicate items processed and that the final queue length is 0:
-```python
-import pytest
-from concurrent.futures import ProcessPoolExecutor
+1.  **Concurrency Test**: Spawn 10 threads/processes that simultaneously call `pop_priority_item` on a queue with 5 items.
+2.  **Assertion**: Assert that exactly 5 items are returned in total across all processes, and no item is returned more than once.
+3.  **Lint**: Use a static analysis tool to flag any sequence of `zrange`/`lrange` followed by `zrem`/`lrem` without an intervening `pipeline()` or `multi()` call.
 
-def test_concurrent_priority_pop_invariant(redis_client, priority_queue):
-    for i in range(1000):
-        priority_queue.push(FakeRequest(priority=i, url=f"http://test.com/{i}"))
-    
-    with ProcessPoolExecutor(max_workers=10) as executor:
-        futures = [executor.submit(_drain_queue_worker, priority_queue.key) for _ in range(10)]
-        results = [item for f in futures for item in f.result()]
-
-    assert len(results) == 1000
-    assert len(set(results)) == 1000
-    assert redis_client.zcard(priority_queue.key) == 0
-```
-
----
-
-### 2. Upstream Protocol Negotiation and Key Canonicalization Guard
+### 2. Serializer Contract Enforcement at Initialization
 **RULE**:
-When wrapping external client libraries that undergo major protocol transition (e.g., RESP2 to RESP3 in `redis-py`), the wrapper configuration layer MUST normalize default/unspecified values to the *absence* of the key in client keyword arguments or pool connection keys, rather than assigning explicit `None` or hardcoding forward assumptions. Protocol specification settings MUST be verified against the installed driver’s runtime version before instantiation.
+Any component that accepts a pluggable serializer object MUST validate the presence of required interface methods (`loads`, `dumps`) at initialization time (fail-fast). You MUST NOT defer this check until the first serialization attempt.
 
 **WHY**:
-Passing `protocol=None` into connection pool factories or hash-based pool registries causes two distinct failure modes:
-1. `_make_pool_key` hashes `(url, {'protocol': None})` differently from `(url, {})`, defeating connection pool reuse across different crawler components (Scheduler, DupeFilter, Pipeline) and causing socket pool exhaustion.
-2. In transitional drivers (`redis-py` 5–8), passing an explicit parameter or defaulting to a protocol that issues unhandled commands (such as `CLIENT MAINT_NOTIFICATIONS` in RESP3 on Redis 8.0.2) breaks connection setup silently or pollutes the `total_error_replies` metric.
+Deferring validation leads to obscure runtime errors deep in the processing pipeline (e.g., during a crawl) rather than immediate configuration errors at startup. This makes debugging distributed systems significantly harder because the failure is decoupled from the configuration source. Fail-fast ensures that misconfigured nodes are detected before they join the cluster.
 
 **WHEN TO APPLY**:
-Python libraries configuring network clients (Redis, HTTP/2, gRPC, Database engines) where client libraries undergo semantic version shifts in protocol defaults.
+Any dependency injection pattern where an object is passed that must conform to a specific interface (e.g., serializers, loggers, storage backends).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# src/scrapy_redis/connection.py
-from importlib.metadata import version
-
-def _redis_major_version() -> int:
-    return int(version("redis").partition(".")[0])
-
-def _apply_protocol(settings, params: dict) -> None:
-    proto = settings.get("REDIS_PROTOCOL", defaults.REDIS_PROTOCOL)
-    if proto is None:
-        # Normalize None to absence to prevent registry fragmentation
-        # and allow installed redis-py driver defaults to govern safely.
-        if params.get("protocol") is None:
-            params.pop("protocol", None)
-        return
-
-    # Strict invariant enforcement: Booleans inherit from int in Python!
-    if isinstance(proto, bool) or not isinstance(proto, int) or proto not in (2, 3):
-        raise ValueError("REDIS_PROTOCOL must be an integer, either 2 or 3")
-    
-    if _redis_major_version() < 5:
-        raise ValueError("REDIS_PROTOCOL requires redis-py >= 5.0")
+class QueueBase:
+    def __init__(self, serializer=None):
+        if serializer is None:
+            serializer = DefaultSerializer()
         
-    params["protocol"] = proto
+        # Fail-fast validation
+        if not hasattr(serializer, "loads"):
+            raise TypeError(f"Serializer {serializer} does not implement 'loads'")
+        if not hasattr(serializer, "dumps"):
+            raise TypeError(f"Serializer {serializer} does not implement 'dumps'")
+        
+        self.serializer = serializer
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blind parameter assignment and lack of bool check
-def _apply_protocol_unsafe(settings, params):
-    # Fails if proto is True (since isinstance(True, int) is True in Python)
-    # Fails by polluting params with protocol=None, splitting shared connection pools
-    proto = settings.get("REDIS_PROTOCOL")
-    params["protocol"] = proto  # pool key becomes hash(..., protocol=None)
+class QueueBase:
+    def __init__(self, serializer=None):
+        self.serializer = serializer or DefaultSerializer()
+        # No validation here.
+        
+    def push(self, data):
+        # Error occurs here, far from the configuration source
+        return self.serializer.dumps(data) 
 ```
 
 **VERIFICATION METHOD**:
-Assert via automated unit test that default settings yield dictionaries completely devoid of `"protocol"` keys, and assert that boolean inputs (`True`, `False`) raise `ValueError`:
-```python
-def test_protocol_normalization_and_boolean_rejection(monkeypatch):
-    monkeypatch.setattr(connection, "_redis_major_version", lambda: 5)
-    
-    # 1. Absence check
-    settings_default = Settings()
-    params = connection._get_params_from_settings(settings_default)
-    assert "protocol" not in params
+1.  **Unit Test**: Instantiate the class with a mock object that lacks `dumps`.
+2.  **Assertion**: Assert that `TypeError` is raised immediately upon instantiation, not upon calling `push`.
 
-    # 2. Boolean safety check (isinstance(True, int) trap)
-    with pytest.raises(ValueError, match=r"integer.*2.*3"):
-        connection._apply_protocol(Settings({"REDIS_PROTOCOL": True}), {})
-```
-
----
-
-### 3. Spider Signal-Driven Idle State Polling with Deadline Gate
+### 3. Configuration Precedence & Falsy Value Handling
 **RULE**:
-When an event-driven framework (such as Scrapy/Twisted) emits an engine-level idle signal indicating that scheduled tasks are exhausted, distributed consumer components MUST NOT perform indefinite synchronous blocking calls on foreign network sockets within the reactor thread, nor immediately terminate. Instead, they MUST catch the idle signal, query the broker with a strict non-blocking check or deadline-gated interval, reschedule engine polling via framework-native deferred loops, and terminate ONLY when an idle timeout invariant has been continuously satisfied.
+When merging configuration sources (e.g., URL string vs. individual host/port/password keys), you MUST explicitly handle empty strings (`""`) as "unset" rather than "set to empty". You MUST NOT pass empty strings to underlying libraries that interpret them as valid credentials or hosts.
 
 **WHY**:
-Executing blocking calls (like `BRPOP key 0`) inside the main Twisted reactor thread freezes the entire networking event loop: timers fail to fire, HTTP download connections time out, DNS queries hang, and metrics reporting stalls. Conversely, terminating immediately upon queue starvation causes distributed worker churn when an upstream crawler or scheduler has a slight latency spike before feeding new work.
+Many libraries (like `redis-py`) treat an empty string password as a valid password (which will fail authentication) or an empty host as localhost. Explicitly filtering out falsy values ensures that optional settings do not inadvertently override defaults or cause connection failures.
 
 **WHEN TO APPLY**:
-Asynchronous crawler engines (Scrapy, asyncio, Twisted, Node.js worker pools) interfacing with external queuing backends (Redis, RabbitMQ, SQS, Kafka).
+Any configuration parsing logic where users can provide partial configurations.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# src/scrapy_redis/spiders.py
-from scrapy import signals
-from scrapy.exceptions import DontCloseSpider
-
-class RedisMixin:
-    def setup_redis(self, crawler=None):
-        if crawler is None:
-            self.crawler = getattr(self, 'crawler', None)
-        else:
-            self.crawler = crawler
+def get_redis_from_settings(settings):
+    host = settings.get("REDIS_HOST", "localhost")
+    port = settings.get("REDIS_PORT", 6379)
+    password = settings.get("REDIS_PASSWORD")
+    
+    # Explicitly filter out empty strings
+    if password == "":
+        password = None
         
-        # Intercept Scrapy's engine termination signal
-        self.crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
-
-    def spider_idle(self):
-        """Called when Scrapy has no active requests in memory."""
-        self.schedule_next_requests()
-        # Raise DontCloseSpider to tell Twisted engine to keep running
-        raise DontCloseSpider
-
-    def schedule_next_requests(self):
-        """Poll batch of requests without blocking the Twisted reactor."""
-        for req in self.next_requests():
-            self.crawler.engine.crawl(req, spider=self)
-
-    def next_requests(self):
-        # Non-blocking pop: uses lpop/spop or finite timeout, NEVER timeout=0 blocking
-        use_set = self.settings.getbool('REDIS_START_URLS_AS_SET')
-        fetch_one = self.server.spop if use_set else self.server.lpop
-        found = 0
-        while found < self.redis_batch_size:
-            data = fetch_one(self.redis_key)
-            if not data:
-                break
-            req = self.make_request_from_data(data)
-            if req:
-                yield req
-                found += 1
+    return redis.StrictRedis(
+        host=host,
+        port=port,
+        password=password, # None is safe, "" is dangerous
+        db=settings.get("REDIS_DB", 0)
+    )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Blocking the event loop in an idle signal handler
-def spider_idle_unsafe(self):
-    # This freezes the Twisted reactor indefinitely!
-    data = self.server.brpop(self.redis_key, timeout=0) 
-    req = self.make_request_from_data(data[1])
-    self.crawler.engine.crawl(req, spider=self)
+def get_redis_from_settings_unsafe(settings):
+    # If REDIS_PASSWORD is "", this passes "" to redis-py
+    # redis-py may attempt AUTH with empty string, causing error
+    return redis.StrictRedis(
+        host=settings.get("REDIS_HOST", "localhost"),
+        password=settings.get("REDIS_PASSWORD") # Dangerous if ""
+    )
 ```
 
 **VERIFICATION METHOD**:
-Simulate an empty Redis queue, trigger Scrapy's `spider_idle` signal, and assert that the reactor event loop continues cycling without blocking for >10ms, while verifying that `DontCloseSpider` is correctly raised until the shutdown conditions are met.
+1.  **Unit Test**: Set `REDIS_PASSWORD` to `""`.
+2.  **Assertion**: Assert that the resulting connection object has `password` set to `None` or that the connection does not attempt an `AUTH` command with an empty string.
 
----
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-## 3. Forensic Real Incidents & Production Patches
-
-### Incident 1: RESP3 Connection Setup Incompatibilities & Shared Pool Identity Fragmentation (BUG-RESP3-01)
-- **Context**: Redis client connection pooling subsystem (`src/scrapy_redis/connection.py`, `src/scrapy_redis/defaults.py`).
-- **What Was Expected**: Setting Redis connection options or leaving them at default should produce a single shared connection pool instance per crawler, and support both RESP2 and RESP3 protocols under modern `redis-py` (v5 through v8).
-- **What Actually Happened**: With `redis-py` 8 adopting RESP3 as default, connection handshakes began issuing unsupported notification commands (`CLIENT MAINT_NOTIFICATIONS`) against Redis 8.0.2 engines, which were silently rejected and triggered internal error counters. Furthermore, when callers set `protocol=None` or left it unconfigured, `_make_pool_key` treated explicit `None` as distinct from absent keys, fragmenting pool identity and spinning up duplicate connection pools per component.
-- **Evidence in Repo**: Commit `b4f333ae`, PR #321, PR #324. Modified: `src/scrapy_redis/connection.py`, `tests/test_connection.py`.
-- **Root Cause**: `_get_params_from_settings` copied default parameters containing explicit `None` keys into the pool dictionary. `_make_pool_key` canonicalizes dictionaries into sorted tuples. The tuple `(('protocol', None),)` differed from `()`, breaking cache lookups. In addition, `redis-py` version checks were missing, causing invalid parameter passing to older driver versions (<5.0).
+### Incident 1: Redundant `self` Reference in Spider Initialization (BUG-SELF-REF-01)
+- **Context**: `src/scrapy_redis/spiders.py`
+- **What Was Expected**: The `RedisSpider` class should correctly initialize the Redis connection and scheduler using the spider's settings.
+- **What Actually Happened**: `AttributeError: 'MySpider' object has no attribute 'settings'`.
+- **Evidence in Repo**: Issue #217. The bug was in the `__init__` method where `self.settings` was accessed incorrectly or `self` was passed redundantly in a way that broke the attribute lookup chain.
+- **Root Cause**: A typo or copy-paste error in the `__init__` method where `self` was referenced in a context where it was not bound or was shadowed. Specifically, lines 79, 82, 89 had redundant `self` usage that caused the attribute lookup to fail.
 - **Remediation Code Diff**:
 ```python
-# src/scrapy_redis/connection.py
-+def _redis_major_version() -> int:
-+    return int(version("redis").partition(".")[0])
-+
-+def _apply_protocol(settings, params) -> None:
-+    proto = settings.get("REDIS_PROTOCOL", defaults.REDIS_PROTOCOL)
-+    if proto is None:
-+        if params.get("protocol") is None:
-+            params.pop("protocol", None)
-+        return
-+
-+    if isinstance(proto, bool) or not isinstance(proto, int) or proto not in (2, 3):
-+        raise ValueError("REDIS_PROTOCOL must be an integer, either 2 or 3")
-+    if _redis_major_version() < 5:
-+        raise ValueError("REDIS_PROTOCOL requires redis-py >= 5.0")
-+    params["protocol"] = proto
-...
--    if params.get("protocol") is None:
--        params.pop("protocol", None)
-+    _apply_protocol(settings, params)
+# - Buggy code (Hypothetical reconstruction based on issue)
+def __init__(self, *args, **kwargs):
+    # ...
+    self.settings = self.settings # Redundant and potentially broken reference
+    # ...
+
+# + Fixed pattern
+def __init__(self, *args, **kwargs):
+    # ...
+    # Ensure settings are accessed from the parent class or passed correctly
+    super().__init__(*args, **kwargs)
+    # Access self.settings after super().__init__ if it's defined there
 ```
-- **Lesson**: Connection pool keys must represent the canonical mathematical identity of the connection parameters. Default/unset options must be strictly stripped prior to hashing/keying. Driver capabilities must be guarded by runtime major version probing.
+- **Lesson**: Always verify that `self` attributes are initialized before use, especially in `__init__` methods that call `super().__init__()`. Ensure that attribute assignments are not circular or redundant.
 
----
-
-### Incident 2: Dupefilter Class Instantiation Contract Breakage (BUG-DUPEFILTER-02)
-- **Context**: Scheduler and DupeFilter lifecycle initialization (`src/scrapy_redis/scheduler.py`).
-- **What Was Expected**: `Scheduler` should be capable of operating with any standard Scrapy `BaseDupeFilter` subclass, including custom user dupefilters or built-in Scrapy dupefilters that only provide `from_settings(settings)` rather than `from_spider(spider)`.
-- **What Actually Happened**: In `Scheduler.open(spider)`, the scheduler unconditionally called `load_object(self.dupefilter_cls).from_spider(spider)`. When a dupefilter implemented only `from_settings` (as permitted by Scrapy's specification for dupefilters), the crawler crashed during startup with an `AttributeError: type object 'CustomDupeFilter' has no attribute 'from_spider'`.
-- **Evidence in Repo**: Commit `50b8c6f0`, PR #294. Modified: `src/scrapy_redis/scheduler.py`.
-- **Root Cause**: Strict coupling to Scrapy-Redis’s internal `RFPDupeFilter` class method signature without polymorphically checking factory contracts supported by vanilla Scrapy (`from_settings` vs `from_spider`).
+### Incident 2: Incomplete JSON Data Handling in Spider (BUG-JSON-HALF-02)
+- **Context**: `src/scrapy_redis/spiders.py`
+- **What Was Expected**: The `make_request_from_data` function should correctly parse JSON data from Redis and construct a Scrapy `Request` object.
+- **What Actually Happened**: Crash at line 165. The function was only partially implemented, failing to handle the JSON deserialization or the construction of the request object.
+- **Evidence in Repo**: Issue #216. The code at lines 155-166 was incomplete.
+- **Root Cause**: The developer implemented the retrieval of data from Redis but failed to implement the conversion of that data into a Scrapy `Request` object. The function likely returned `None` or an incomplete object, causing a downstream crash.
 - **Remediation Code Diff**:
 ```python
-# src/scrapy_redis/scheduler.py
-@@ -37,6 +37,7 @@ def __init__(
-         flush_on_start=False,
-         queue_key=defaults.SCHEDULER_QUEUE_KEY,
-         queue_cls=defaults.SCHEDULER_QUEUE_CLASS,
-+        dupefilter=None,
-         dupefilter_key=defaults.SCHEDULER_DUPEFILTER_KEY,
-         dupefilter_cls=defaults.SCHEDULER_DUPEFILTER_CLASS,
-@@ -72,6 +75,7 @@ def __init__(
-         self.flush_on_start = flush_on_start
-         self.queue_key = queue_key
-         self.queue_cls = queue_cls
-+        self.df = dupefilter
-         self.dupefilter_cls = dupefilter_cls
-@@ -105,6 +109,10 @@ def from_settings(cls, settings):
-             if val:
-                 kwargs[name] = val
- 
-+        dupefilter_cls = load_object(kwargs["dupefilter_cls"])
-+        if not hasattr(dupefilter_cls, "from_spider"):
-+            kwargs["dupefilter"] = dupefilter_cls.from_settings(settings)
-+
-         # Support serializer as a path to a module.
-@@ -137,7 +145,8 @@ def open(self, spider):
-                 f"Failed to instantiate queue class '{self.queue_cls}': {e}"
-             )
- 
--        self.df = load_object(self.dupefilter_cls).from_spider(spider)
-+        if not self.df:
-+            self.df = load_object(self.dupefilter_cls).from_spider(spider)
+# - Buggy code (Incomplete)
+def make_request_from_data(self, data):
+    # ...
+    # Missing: json.loads(data)
+    # Missing: request_from_dict(obj, spider=self)
+    return None # Or incomplete object
+
+# + Fixed pattern
+def make_request_from_data(self, data):
+    try:
+        obj = json.loads(data)
+        return request_from_dict(obj, spider=self)
+    except (json.JSONDecodeError, KeyError) as e:
+        self.logger.error(f"Failed to parse request data: {e}")
+        return None
 ```
-- **Lesson**: Factory loaders in plugin architectures must inspect the object's contract hierarchy (e.g. `hasattr(cls, 'from_spider')`) and provide fallback instantiation pipelines before invoking framework-specific constructors.
+- **Lesson**: When implementing data transformation functions, ensure that all steps of the transformation (deserialization, validation, object construction) are completed. Use unit tests to verify that the output of the function is a valid instance of the expected type.
 
----
-
-### Incident 3: Python 3 Bytes vs Str Buffer Traps in Spider Ingestion (BUG-PY3STR-03)
-- **Context**: Start URL consumption and deserialization in `src/scrapy_redis/spiders.py`.
-- **What Was Expected**: Spiders reading message payloads from Redis keys (via `LPOP` or `SPOP`) should seamlessly parse raw URL strings, HTTP request descriptors, or serialized JSON payloads across both Python 2 and Python 3 runtimes.
-- **What Actually Happened**: In Python 3, `redis-py` returns raw `bytes` by default. `make_request_from_data` executed `if '://' in data:` directly against the Redis payload. Because `'://'` is a `str` literal, Python 3 raised `TypeError: 'str' does not support the buffer interface` or `TypeError: a bytes-like object is required, not 'str'`.
-- **Evidence in Repo**: Issues #70, #79; Commits `1774e4fe`, `8125d632`. Modified: `src/scrapy_redis/spiders.py`, `src/scrapy_redis/utils.py`.
-- **Root Cause**: Implicit assumption of Python 2's interchangeable `str`/`bytes` behavior. Binary data pulled from network sockets was evaluated against unicode strings without passing through a decoded canonicalization layer.
+### Incident 3: Redis Password Support Missing in Connection Settings (BUG-PASS-MISS-03)
+- **Context**: `src/scrapy_redis/connection.py`
+- **What Was Expected**: Users should be able to specify a Redis password via the `REDIS_PASSWORD` setting.
+- **What Actually Happened**: The `REDIS_PASSWORD` setting was ignored, causing connection failures for password-protected Redis instances.
+- **Evidence in Repo**: Commit `2cafe98f`. The `SETTINGS_PARAMS_MAP` did not include `REDIS_PASSWORD`, and `get_redis_from_settings` did not pass it to the Redis client.
+- **Root Cause**: The configuration mapping was incomplete. The developer added support for host, port, and db, but forgot to map the password parameter.
 - **Remediation Code Diff**:
 ```python
-# src/scrapy_redis/spiders.py & utils.py
-+# src/scrapy_redis/utils.py
-+def bytes_to_str(s, encoding='utf-8'):
-+    """Returns a str if a bytes object is given."""
-+    if six.PY3 and isinstance(s, bytes):
-+        return s.decode(encoding)
-+    return s
+# - Buggy code
+SETTINGS_PARAMS_MAP = {
+    "REDIS_HOST": "host",
+    "REDIS_PORT": "port",
+    "REDIS_DB": "db",
+    # Missing: "REDIS_PASSWORD": "password"
+}
 
-# src/scrapy_redis/spiders.py
- def make_request_from_data(self, data):
--    if '://' in data:
--        return Request(data, dont_filter=True)
-+    formatted_data = bytes_to_str(data, self.redis_encoding)
-+    if is_dict(formatted_data):
-+        parameter = json.loads(formatted_data)
-+    else:
-+        return FormRequest(formatted_data, dont_filter=True)
+# + Fixed pattern
+SETTINGS_PARAMS_MAP = {
+    "REDIS_HOST": "host",
+    "REDIS_PORT": "port",
+    "REDIS_DB": "db",
+    "REDIS_PASSWORD": "password", # Added
+    "REDIS_ENCODING": "encoding",
+}
 ```
-- **Lesson**: Distributed data pulled over socket interfaces must be normalized at the I/O boundary. Never leak wire-protocol byte semantics into higher-level string parsing logic.
+- **Lesson**: When adding new configuration options, ensure that they are mapped in all relevant places (settings map, function signatures, documentation). Use integration tests to verify that the configuration is actually used by the underlying library.
 
----
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### Incident 4: Logger Variable Shadowing and Log Output Suppression (BUG-LOGDUP-04)
-- **Context**: Duplication filter logging pipeline in `src/scrapy_redis/dupefilter.py`.
-- **What Was Expected**: When a duplicate URL is detected, the logger should output either a debug entry (if `DUPEFILTER_DEBUG` is true) or a single warning notification explaining that subsequent duplicates will be silenced, followed by quiet filtering.
-- **What Actually Happened**: The logger recorded the first duplicate request, but the notification string informing the operator that duplicate logging was disabled was immediately overwritten by variable re-assignment before emission.
-- **Evidence in Repo**: Issue #75. File: `src/scrapy_redis/dupefilter.py`.
-- **Root Cause**: Identical variable name (`msg`) was assigned twice in consecutive statements within the `elif self.logdupes:` block.
-- **Remediation Code Diff**:
-```python
-# src/scrapy_redis/dupefilter.py
-     elif self.logdupes:
-         msg = ("Filtered duplicate request %(request)s"
-                " - no more duplicates will be shown"
-                " (see DUPEFILTER_DEBUG to show all duplicates)")
--        msg = "Filtered duplicate request: %(request)s"
-         self.logger.debug(msg, {'request': request}, extra={'spider': spider})
-         self.logdupes = False
-```
-- **Lesson**: Variable shadowing and re-assignment within logging branches indicates dead code paths and breaks operator visibility. Linting rules (`flake8` / `pylint`) must reject unconditional immediate reassignments.
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Type Coercion Trap**: In `utils.py`, `bytes_to_str` checks `isinstance(s, bytes)`. If `s` is a `memoryview` or `bytearray`, this check fails. Always use `isinstance(s, (bytes, bytearray, memoryview))` for robust byte handling.
+    *   **Falsy Value Trap**: In `connection.py`, `if password == "": password = None`. This is critical because `redis-py` treats `""` as a valid password, leading to `AuthenticationError`. Never pass empty strings for optional credentials.
+    *   **Deep Immutability**: When serializing Scrapy `Request` objects, `request.to_dict()` returns a dictionary. If you modify this dictionary before passing it to `serializer.dumps()`, you may corrupt the serialized data. Always treat the output of `to_dict()` as immutable.
 
----
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Queue Pop Termination**: In `queue.py`, `pop` returns `None` if the queue is empty. The scheduler must handle `None` to avoid infinite loops. If `pop` returns `None`, the scheduler should yield control back to the event loop or sleep briefly.
+    *   **Recursion Depth**: Scrapy spiders can have recursive callbacks. Ensure that `parse` methods do not call themselves without a base case. Use `yield` to return control to the event loop.
 
-### Incident 5: Deprecated Serializer API Incompatibility with Scrapy 2.6+ (BUG-REQSER-05)
-- **Context**: Serializer serialization bridge in `src/scrapy_redis/queue.py`.
-- **What Was Expected**: Request objects enqueued into Redis priority or FIFO queues should serialize reliably across all Scrapy versions from 1.8 to 2.12+.
-- **What Actually Happened**: Scrapy deprecated and subsequently removed `scrapy.utils.reqser.request_to_dict`. Spiders running against modern Scrapy installations crashed with `ModuleNotFoundError: No module named 'scrapy.utils.reqser'` or raised deprecation warnings when calling the legacy function.
-- **Evidence in Repo**: Commit `8125d632`, PR #230; Commit `cade7d30`, PR #246. Modified: `src/scrapy_redis/queue.py`.
-- **Root Cause**: Direct reliance on private/deprecated Scrapy utility modules rather than invoking the canonical instance method `request.to_dict(spider=spider)` introduced on the `Request` object.
-- **Remediation Code Diff**:
-```python
-# src/scrapy_redis/queue.py
--from scrapy.utils.reqser import request_to_dict, request_from_dict
-+try:
-+    from scrapy.utils.request import request_from_dict
-+except ImportError:
-+    from scrapy.utils.reqser import request_to_dict, request_from_dict
+3.  **UI & UX Micro-Mechanics**:
+    *   *Not Applicable*: This is a backend library. However, if building a UI for monitoring the Redis queue, avoid polling Redis at high frequency. Use Redis Pub/Sub or long-polling with timeouts to prevent UI thrashing.
 
- def _encode_request(self, request):
-     """Encode a request object"""
--    obj = request_to_dict(request, self.spider)
-+    try:
-+        obj = request.to_dict(spider=self.spider)
-+    except AttributeError:
-+        obj = request_to_dict(request, self.spider)
-     return self.serializer.dumps(obj)
-```
-- **Lesson**: When bridging framework objects to persistent stores, prefer object-level serialization primitives (`obj.to_dict()`) over external utility functions, and wrap backward compatibility inside a duck-typing `try/except AttributeError` fallback.
+4.  **Backend Concurrency & Memory Safety**:
+    *   **TOCTOU Race Condition**: As detailed in Rule 1, `PriorityQueue.pop` uses `pipeline().multi()` to ensure atomicity. This prevents two workers from popping the same item.
+    *   **Connection Pool Starvation**: `redis-py` uses a connection pool. If connections are not released properly (e.g., due to exceptions), the pool can be exhausted. Always use `with` statements or ensure `close()` is called in a `finally` block.
+    *   **Memory Leaks**: The `RFPDupeFilter` uses a Redis Set to track seen URLs. If the set grows too large, it can consume significant memory. Implement a TTL or a cap on the set size if the crawl is long-running.
 
----
+5.  **Defect & Error Prevention ("Galti Pakadna")**:
+    *   **Null Dereferencing**: In `queue.py`, `if data:` checks if `data` is not `None` and not empty. This prevents `TypeError` when calling `self._decode_request(data)`.
+    *   **Off-by-One Boundary**: In `PriorityQueue.pop`, `zrange(key, 0, 0)` retrieves the first item. `zremrangebyrank(key, 0, 0)` removes the first item. The indices are consistent. If you change one, you must change the other.
+    *   **Error Swallowing**: In `utils.py`, `is_dict` catches `JSONDecodeError` and returns `False`. This is safe because it is used for type checking, not for data processing. However, in data processing, never swallow exceptions without logging.
 
-## 4. Microscopic Code-Level Invariants
+## 5. The 9 Deep Learning Dimensions
 
-### 1. Micro-Syntax & Token-Level Precision
-- **Boolean Inheritance Hazard (`bool` is an `int`)**:
-  In Python, `issubclass(bool, int)` is `True`. Any numerical guard such as `isinstance(val, int)` will evaluate to `True` when `val = True` or `val = False`.
-  ```python
-  # TRAP:
-  proto = True
-  if isinstance(proto, int) and proto in (2, 3):
-      # True == 1, so this fails the (2, 3) test, BUT if the set was (0, 1),
-      # True would pass as 1!
-      pass
+1.  **Architecture**:
+    *   **Subsystem Boundaries**: Clear separation between connection management, queue abstraction, and spider integration.
+    *   **Decoupling**: The queue is decoupled from the specific Redis implementation via the `server` parameter.
+    *   **Modular Layout**: Each queue type (FIFO, LIFO, Priority) is a separate class inheriting from `Base`.
+    *   **State Ownership**: Redis owns the queue state; Scrapy owns the processing state.
 
-  # MANDATORY INVARIANT:
-  if isinstance(proto, bool) or not isinstance(proto, int) or proto not in (2, 3):
-      raise ValueError("REDIS_PROTOCOL must be an integer, either 2 or 3")
-  ```
-- **Falsy Conversion Trap on Numerical Scores & Counts**:
-  When reading queue lengths or checking integer parameters, `0` is falsy.
-  ```python
-  # TRAP:
-  limit = kwargs.get("limit")
-  if not limit:  # Fails when limit is explicitly set to 0 (meaning infinite or no-op)
-      limit = float("inf")
+2.  **Core Abstractions**:
+    *   **Key Types**: `StrictRedis`, `Spider`, `Request`, `Serializer`.
+    *   **Traits/Interfaces**: `loads` and `dumps` methods for serializers.
+    *   **Domain Primitives**: `FifoQueue`, `LifoQueue`, `PriorityQueue`.
+    *   **Invariant Contracts**: The queue must be atomic for pop operations. The serializer must be reversible.
 
-  # MANDATORY INVARIANT:
-  limit = limit if limit is not None else float("inf")
-  ```
-- **Dictionary Key Mutation Leaks Across Component Instances**:
-  `defaults.REDIS_PARAMS` is a shared module-level dictionary. Using `dict.update()` directly on default structures mutates global state across spiders.
-  ```python
-  # MANDATORY INVARIANT:
-  params = defaults.REDIS_PARAMS.copy()  # Shallow copy baseline
-  params.update(settings.getdict("REDIS_PARAMS"))
-  ```
+3.  **Error Handling**:
+    *   **Fault Boundaries**: Errors in serialization are caught and logged. Errors in Redis connection are propagated to the scheduler.
+    *   **Error Trees**: `TypeError` for invalid serializers, `ConnectionError` for Redis failures, `JSONDecodeError` for invalid data.
+    *   **Retries**: Redis-py handles connection retries. The scheduler should implement retry logic for transient errors.
+    *   **Rollbacks**: Not applicable for queue operations, but for transactional pipelines, `multi()` ensures atomicity.
+    *   **Graceful Degradation**: If Redis is down, the scheduler should log the error and continue processing other tasks or shut down gracefully.
 
----
+4.  **Testing**:
+    *   **Property Testing**: Test that `push` followed by `pop` returns the same item.
+    *   **Mock Invariants**: Mock the Redis client to test queue logic without a real Redis instance.
+    *   **Integration Harnesses**: Use `docker-compose` to spin up a real Redis instance for integration tests.
+    *   **Regression Shields**: Test for specific bugs like the `self` reference issue and JSON handling issue.
 
-### 2. Infinite Loop & Recursion Guards
-- **Queue Starvation & Microtask Loop Yielding**:
-  In `RedisSpider.next_requests()`, consuming from Redis in a `while` loop without a break condition or count invariant freezes execution.
-  ```python
-  # src/scrapy_redis/spiders.py
-  found = 0
-  while found < self.redis_batch_size:
-      data = fetch_one(self.redis_key)
-      if not data:
-          # Termination Proof: Queue is empty, break out immediately
-          break
-      req = self.make_request_from_data(data)
-      if req:
-          yield req
-          found += 1
-      # Loop invariant: found increments strictly on valid requests; empty breaks.
-  ```
-- **Twisted Reactor Idle Spin Lock Prevention**:
-  If `spider_idle` fails to yield any new requests, raising `DontCloseSpider` continuously creates a 100% CPU busy-wait spin in Twisted's scheduler. The engine must incorporate exponential backoff or deadline gating (`idle_before_close`) to break the cycle:
-  ```python
-  # MANDATORY INVARIANT:
-  if self.idle_before_close > 0:
-      if self.idle_count * self.idle_interval >= self.idle_before_
+5.  **Security**:
+    *   **Threat Model**: Unauthorized access to Redis, data tampering, denial of service.
+    *   **Credential Boundaries**: Passwords are passed via settings, not hardcoded.
+    *   **Sanitization**: JSON data is validated before deserialization.
+    *   **Memory Safety**: Python's garbage collector handles memory. Redis handles its own memory.
+    *   **Least Privilege**: Redis user should have only the necessary permissions (e.g., `GET`, `SET`, `DEL`).
+
+6.  **Performance**:
+    *   **Latency Profiles**: Redis operations are O(1) for lists, O(log N) for sorted sets.
+    *   **Asymptotic Complexity**: `push` is O(1), `pop` is O(1) for lists, O(log N) for sorted sets.
+    *   **Caching**: Redis acts as a cache for the queue.
+    *   **Zero-Copy**: Not applicable, but serialization is optimized.
+    *   **Concurrency Bottlenecks**: Redis is single-threaded, but pipelining reduces round-trips.
+
+7.  **Deployment**:
+    *   **CI/CD Invariants**: Tests must pass in a Docker container with Redis.
+    *   **Container Constraints**: Redis must be available in the same network as the Scrapy processes.
+    *   **Reproducible Builds**: Use `requirements.txt` and `Dockerfile` for reproducible builds.
+    *   **Runtime Flags**: `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD` are runtime flags.
+
+8.  **Agent Patterns**:
+    *   **Tooling Interfaces**: The queue provides a simple `push`/`pop` interface.
+    *   **Prompt Chains**: Not applicable.
+    *   **Loop Guards**: The scheduler must handle empty queues to avoid infinite loops.
+    *   **Context Budget Optimization**: Minimize the size of serialized requests.
+
+9.  **Data Flow**:
+    *   **Mutation Lifecycles**: Requests are immutable once serialized.
+    *   **Streams**: The queue acts as a stream of requests.
+    *   **Serializers**: JSON or Pickle are used for serialization.
+    *   **Network Protocol Barriers**: Redis protocol is the barrier between Scrapy and Redis.
+
+## 6. The 8 Learning Extraction Artifacts
+
+1.  **Pattern**: Atomic pop using Redis pipelines.
+2.  **Rule**: Always use `pipeline().multi()` for read-then-remove operations.
+3.  **Architecture Principle**: Decouple state ownership from processing logic.
+4.  **Failure Mode**: TOCTOU race condition leading to duplicate processing.
+5.  **Reusable Skill**: Implementing a distributed queue with Redis.
+6.  **Decision**: Use Sorted Sets for priority queues instead of Lists.
+7.  **Anti-pattern**: Non-atomic read-then-remove operations.
+8.  **Verification Method**: Concurrency test with multiple workers.
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+1.  **Define the Queue Interface**:
+    *   Create a `Base` class with `push`, `pop`, `__len__`, and `clear` methods.
+    *   Ensure that `pop` returns `None` if the queue is empty.
+
+2.  **Implement Specific Queue Types**:
+    *   `FifoQueue`: Use Redis Lists (`LPUSH`, `RPOP`).
+    *   `LifoQueue`: Use Redis Lists (`LPUSH`, `LPOP`).
+    *   `PriorityQueue`: Use Redis Sorted Sets (`ZADD`, `ZRANGE`, `ZREM`).
+
+3.  **Ensure Atomicity**:
+    *   For `PriorityQueue.pop`, use `pipeline().multi()` to combine `ZRANGE` and `ZREM`.
+    *   Verify that the pipeline is executed atomically.
+
+4.  **Handle Serialization**:
+    *   Use a serializer that supports `loads` and `dumps`.
+    *   Validate the serializer at initialization time.
+
+5.  **Manage Configuration**:
+    *   Parse settings for `REDIS_HOST`, `REDIS_PORT`, `REDIS_PASSWORD`, `REDIS_DB`.
+    *   Handle empty strings for optional settings.
+
+6.  **Test for Concurrency**:
+    *   Write a test that spawns multiple workers and verifies that no item is processed more than once.
+    *   Use a real Redis instance for integration tests.
+
+7.  **Handle Errors**:
+    *   Catch and log exceptions in `push` and `pop`.
+    *   Ensure that the scheduler handles `None` returns from `pop`.
+
+8.  **Deploy**:
+    *   Use Docker to package the Scrapy processes and Redis.
+    *   Ensure that the Redis instance is accessible from all Scrapy processes.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `0770c5f3`  
+> **Source Version**: `a1920121`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:04:52.318Z  
+> **Timestamp**: 2026-10-31T05:29:32.317Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:04:51.888Z  
+> **Harvest Timestamp**: 2026-10-31T05:29:31.896Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11403 stars
+- **Stars / Engagement**: 11440 stars
 
 ---
 
@@ -1920,13 +1920,11 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14724** (2026-10-24): **feat: load kernel modules on demand via the modprobe usermode helper **
-  *Symptoms*: There are multiple ways kernel modules can be loaded:  * udevd loads based on hardware detected (works) * Talos machine config explicit module load (works) * kernel requests dynamic module dependencies (this PR, works with it) * userspace triggers module load (e.g. mounting a filesystem, creating a   new link type) - still blocked.  Since the kernel was built with `CONFIG_MODPROBE_PATH=""`, `request_module()` returns early and no module can be loaded on demand: a driver loading a helper module while probing a device (e.g. `earth-pt3` requesting `tc90522`), or DRBD loading its transport module, fails unless the modules are listed in the machine config and happen to be loaded in the right order.  Set the `kernel.modprobe` sysctl to `/sbin/modprobe` so the kernel invokes the static usermode helper (machined) with that argv[0], and handle the `modprobe` entrypoint. The helper verifies it was spawned by a kernel thread, looks the name up in modules.dep without resolving aliases, reads the module parameters from the machine config (`KernelModuleSpec`) via the read-only machined API, and loads the module itself: it runs as root in the initial namespaces, so there is no need for a mutation path into machined.  Modules requested by kernel code no longer need to be listed in the machine config, and the order of the listed modules doesn't matter. Aliases are never resolved: kernel code requests modules by name, while subsystem aliases (`fs-*`, `net-pf-*`, `crypto-*`, ...) are what users
+- **Issue #14800** (2026-10-30): **fix: skip EFI variable updates when efivarfs is read-only**
+  *Symptoms*: ## What? (description)  When efivarfs can not be made writable (the kernel refuses the read-write remount with `EINVAL`), the sd-boot installer now logs a warning and skips the EFI variable and boot entry update instead of failing the install/upgrade.  - `efivarfs.NewFilesystemReaderWriter(true)` returns a typed `efivarfs.ErrWriteNotSupported` when the remount fails with `EINVAL`. - `Config.setup()` moves the EFI variable work into `updateEFIVariables()`. If it returns `ErrWriteNotSupported`, `setup()` warns and still runs `ExtraInstallStep` (the overlay install step) and returns the install result. - The "repoint the default entry to the booted one" write during upgrade is skipped the same way.  ## Why? (reasoning)  Fixes #14799. On an ODROID-M1 with U-Boot built without `CONFIG_EFI_RT_VOLATILE_STORE`, `talosctl upgrade` copies the UKI and `systemd-boot` and then fails with `failed to create efivarfs reader/writer: invalid argument`. The board boots fine without the variables (U-Boot finds `\EFI\BOOT\BOOTAA64.EFI`, and systemd-boot picks the newest UKI by version when no default is set).  Not covered, and worth a maintainer decision: without variables there is no one-shot boot and no rollback to the previous entry on a failed boot.  ## Testing  - Compiled, `gofmt` clean, `go vet` and `go test` pass for `./internal/pkg/efivarfs/` and `./internal/app/machined/pkg/runtime/v1alpha1/bootloader/sdboot/` (golang:1.27 container). - Not run: `make conformance`, `make lint`, `make doc
 
-- **Issue #14723** (2026-10-23): **feat: add EDAC_10NM kernel module**
-  *Symptoms*: Fixes #14717  
-  **Post-Mortem & Fix Analysis**:
-  > /m
+- **Issue #14799** (2026-10-30): **Upgrade fails on U-Boot board when efivarfs is read-only: failed to create efivarfs reader/writer: invalid argument (ODROID-M1)**
+  *Symptoms*: ## Bug Report  ### What happened? What did you expect?  `talosctl upgrade` on an ODROID-M1 (U-Boot, sd-boot UKI) copies the new UKI and `systemd-boot` to the EFI partition and then fails at the last step, `updating EFI variables`, with `failed to create efivarfs reader/writer: invalid argument` (exit code 7). The node keeps booting the old UKI.  I expected the upgrade to either complete or skip the EFI variable step with a warning, since the board boots fine without those variables (it uses the `\EFI\BOOT\BOOTAA64.EFI` fallback path).  ### Steps to reproduce  1. ODROID-M1 (RK3568), mainline U-Boot 2026.07 (Armbian build) in SPI flash, Talos v1.14.5 installed on NVMe from an imager `metal` image with the `odroid-m1` overlay (`ghcr.io/siderolabs/sbc-rockchip:v0.2.1`). Single-node control plane. 2. Build an installer with the same overlay:    `imager metal --arch arm64 --output-kind installer --overlay-name=odroid-m1 --overlay-image=ghcr.io/siderolabs/sbc-rockchip:v0.2.1` 3. Serve it from a local registry reachable from the node and run:    `talosctl -n <node> upgrade --image 127.0.0.1:5000/m1/installer:v1.14.5-m1 --wait`  I ran this once with that U-Boot and got the failure below. I did not repeat it on other hardware.  ### Logs and diagnostics  Output of the upgrade command (the whole failure; the node stayed up and rebooted normally afterwards):  ``` 192.168.1.104: 2026/10/30 12:34:00 copying /usr/install/arm64/vmlinuz.efi to /boot/EFI/EFI/Linux/Talos-v1.14.5~1.efi 192.168.1.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1943,1141 +1941,698 @@ func ValidateMemoryManagerState(raw []byte, cfg MemoryManagerConfig, machine Mac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7e5e8729` (2026-10-22)
-**Commit Message**: fix: ignore netlink recoverable errors in watchers
+### Incident Patch 1: `a1920121` (2026-10-29)
+**Commit Message**: feat: support BGP MD5 authentication password
 
-We have a set of netlink watchers in Talos which don't actually need to
-decode the notification - on any change to the reported subsystem we
-wake up the controller to do processing.
+Add an `authPassword` field to `BGPInstanceConfig` neighbors and pass it to GoBGP as the peer `AuthPassword`, enabling TCP MD5 signature authentication (RFC 2385) of the BGP session.
 
-So replace what we had previously with raw netlink receivers - this
-drops the decoding part of the packets (which might have failures on the
-way we don't care about) with raw netlink sockets - we just care that
-the socket received something.
+GoBGP applies the key to both the outgoing connection and the listening sockets; for VRF-bound instances the peer transport is already bound to the VRF device, so the key is installed with the VRF ifindex and authentication works there as well. The kernel matches keys by peer address (scoped to the VRF, if any, but not to the link), so unnumbered neighbors sharing a link-local address on different links can only have a single key: validation warns when unnumbered neighbors use different passwords (or only some of them have one), and the neighbor resolver logs the exact conflict once the link-local addresses are known.
 
-Treat the error like `ENOBUFS` (buffer overflow) as a notification - we
-don't care how much we received, we just need to know we received
-something.
+The password is limited to 80 bytes (TCP_MD5SIG_MAXKEYLEN), redacted from the machine configuration, and only a digest of it is part of the peer key, so changing it replaces the peer without keeping the plaintext around. As the resolved `BGPInstanceConfigs` resource now carries the password, it is marked as sensitive and registered as redac
 
-Fixes #14678
-
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/watch/ethtool.go` (modified, +26/-25)
+**File**: `api/resource/definitions/network/network.proto` (modified, +1/-0)
 ```diff
-@@ -10,12 +10,13 @@ import (
- 	"sync"
- 
- 	"github.com/mdlayher/genetlink"
-+	"github.com/mdlayher/netlink"
- 	"golang.org/x/sys/unix"
- )
- 
- type ethtoolWatcher struct {
- 	wg   sync.WaitGroup
--	conn *genetlink.Conn
-+	conn *netlink.Conn
+@@ -75,6 +75,7 @@ message BGPNeighborConfigSpec {
+   BGPBFDConfigSpec bfd = 5;
+   uint32 local_asn = 6;
+   bool passive = 7;
++  string auth_password = 8;
  }
  
- // NewEthtool starts ethtool watch.
-@@ -24,48 +25,48 @@ func NewEthtool(trigger Trigger) (Watcher, error) {
- 
- 	var err error
- 
--	watcher.conn, err = genetlink.Dial(nil)
-+	// the raw netlink connection is used for receiving, as the messages are never decoded,
-+	// while the generic netlink wrapper is only used to resolve the multicast group
-+	watcher.conn, err = netlink.Dial(unix.NETLINK_GENERIC, nil)
- 	if err != nil {
- 		return nil, fmt.Errorf("error dialing ethtool watch socket: %w", err)
- 	}
- 
--	ethFamily, err := watcher.conn.GetFamily(unix.ETHTOOL_GENL_NAME)
-+	monitorID, err := ethtoolMonitorGroup(genetlink.NewConn(watcher.conn))
- 	if err != nil {
--		return nil, fmt.Errorf("error getting family information for ethtool: %w", err)
--	}
--
--	var monitorID uint32
--
--	for _, g := range ethFamily.Groups {
--		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
--			monitorID = g.ID
-+		watcher.conn.Close() //nolint:errcheck
- 
--			break
--		}
--	}
--
--	if monitorID == 0 {
--		return nil, errors.New("could not find monitor multicast group ID for ethtool")
-+		return nil, err
- 	}
- 
- 	if err = watcher.conn.JoinGroup(monitorID); err != nil {
-+		watcher.conn.Close() //nolint:errcheck
-+
- 		return nil, fmt.Errorf("error joing multicast group for ethtool: %w", err)
- 	}
- 
- 	watcher.wg.Go(func() {
--		for {
--			_, _, watchErr := watcher.conn.Receive()
--			if watchErr != nil {
--				return
--			}
--
--			trigger.QueueReconcile()
--		}
-+		watch(watcher.conn, trigger)
- 	})
- 
- 	return watcher, nil
- }
- 
-+func ethtoolMonitorGroup(conn *genetlink.Conn) (uint32, error) {
-+	ethFamily, err := conn.GetFamily(unix.ETHTOOL_GENL_NAME)
-+	if err != nil {
-+		return 0, fmt.Errorf("error getting family information for ethtool: %w", err)
-+	}
-+
-+	for _, g := range ethFamily.Groups {
-+		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
-+			return g.ID, nil
-+		}
-+	}
-+
-+	return 0, errors.New("could not find monitor multicast group ID for ethtool")
-+}
-+
- func (watcher *ethtoolWatcher) Done() {
- 	watcher.conn.Close() //nolint:errcheck
- 
+ // BGPPeerStatusSpec describes the status of a BGP peering session.
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/watch/rtnetlink.go` (modified, +7/-11)
+**File**: `hack/release.toml` (modified, +20/-0)
 ```diff
-@@ -8,13 +8,13 @@ import (
- 	"fmt"
- 	"sync"
- 
--	"github.com/jsimonetti/rtnetlink/v2"
- 	"github.com/mdlayher/netlink"
-+	"golang.org/x/sys/unix"
- )
- 
- type rtnetlinkWatcher struct {
- 	wg   sync.WaitGroup
--	conn *rtnetlink.Conn
-+	conn *netlink.Conn
- }
- 
- // NewRtNetlink starts rtnetlink watch over specified groups.
-@@ -23,7 +23,8 @@ func NewRtNetlink(trigger Trigger, groups uint32, netlinkGroups ...uint32) (Watc
- 
- 	var err error
- 
--	watcher.conn, err = rtnetlink.Dial(&netlink.Config{
-+	// the raw netlink connection is used, as the messages are never decoded
-+	watcher.conn, err = netlink.Dial(unix.NETLINK_ROUTE, &netlink.Config{
- 		Groups: groups,
- 	})
- 	if err != nil {
-@@ -32,19 +33,14 @@ func NewRtNetlink(trigger Trigger, groups uint32, netlinkGroups ...uint32) (Watc
- 
- 	for _, group := range netlinkGroups {
- 		if err := watcher.conn.JoinGroup(group); err != nil {
-+			watcher.conn.Close() //nolint:errcheck
+@@ -925,6 +925,26 @@ Kubeconfigs are redacted from the machine configuration the same way as other se
+ As kube-apiserver can't read files from the host, a `KubeAuthorizerConfig` with `webhook.connectionInfo.type: KubeConfigFile` is now rejected,
+ as well as `authentication-token-webhook-*` flags in `KubeAPIServerConfig` `extraArgs`.
+ The authorizer name should be a valid DNS-1123 subdomain, as required by kube-apiserver.
++"""
 +
- 			return nil, fmt.Errorf("error joining group %d: %w", group, err)
++    [notes.bgp_md5_auth]
++        title = "BGP MD5 Authentication"
++        description = """\
++`BGPInstanceConfig` neighbors now accept an `authPassword` to enable TCP MD5 signature authentication (RFC 2385) of the BGP session,
++including for VRF-bound BGP instances:
++
++```yaml
++apiVersion: v1alpha1
++kind: BGPInstanceConfig
++name: fabric
++localASN: 65001
++neighbors:
++  - address: 192.0.2.1
++    peerASN: 65000
++    authPassword: s3cr3t
++```
++
++The password is redacted from the machine configuration output. The `BGPInstanceConfigs` resource is now sensitive: the `os:admin` role reads it in full, while the other roles get it with the password replaced by `REDACTED`.
+ """
+ 
+ [make_deps]
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config.go` (modified, +7/-6)
+```diff
+@@ -278,12 +278,13 @@ func buildBGPInstanceConfigSpec(cfg talosconfig.NetworkBGPInstanceConfig) networ
+ 
+ 	for _, neighbor := range cfg.Neighbors() {
+ 		neighborSpec := network.BGPNeighborConfigSpec{
+-			Address:  neighbor.Address(),
+-			Link:     neighbor.Link(),
+-			PeerASN:  neighbor.PeerASN(),
+-			LocalASN: neighbor.LocalASN(),
+-			Passive:  neighbor.Passive(),
+-			HoldTime: neighbor.HoldTime(),
++			Address:      neighbor.Address(),
++			Link:         neighbor.Link(),
++			PeerASN:      neighbor.PeerASN(),
++			LocalASN:     neighbor.LocalASN(),
++			Passive:      neighbor.Passive(),
++			HoldTime:     neighbor.HoldTime(),
++			AuthPassword: neighbor.AuthPassword(),
  		}
+ 
+ 		if bfd := neighbor.BFD(); bfd != nil {
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/bgp_instance_config_test.go` (modified, +3/-0)
+```diff
+@@ -54,6 +54,7 @@ func newFabricConfig(holdTime time.Duration) *networkcfg.BGPInstanceConfigV1Alph
+ 			NeighborLocalASN:      65004,
+ 			NeighborPassive:       true,
+ 			NeighborHoldTime:      15 * time.Second,
++			NeighborAuthPassword:  "secret",
+ 		},
  	}
  
- 	watcher.wg.Go(func() {
--		for {
--			_, _, watchErr := watcher.conn.Receive()
--			if watchErr != nil {
--				return
--			}
--
--			trigger.QueueReconcile()
--		}
-+		watch(watcher.conn, trigger)
- 	})
+@@ -87,6 +88,8 @@ func (suite *BGPInstanceConfigSuite) TestRenderInlineBehaviorAndPreserveConfigur
+ 		assertions.True(spec.Neighbors[1].Passive)
+ 		assertions.Equal(15*time.Second, spec.Neighbors[1].HoldTime)
+ 		assertions.Nil(spec.Neighbors[1].BFD)
++		assertions.Empty(spec.Neighbors[0].AuthPassword)
++		assertions.Equal("secret", spec.Neighbors[1].AuthPassword)
+ 	}, rtestutils.WithNamespace(network.NamespaceName))
  
- 	return watcher, nil
+ 	updatedInstance := newFabricConfig(12 * time.Second)
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/watch/watch.go` (modified, +41/-0)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +6/-0)
 ```diff
-@@ -5,6 +5,14 @@
- // Package watch provides netlink watchers via multicast groups.
- package watch
- 
-+import (
-+	"errors"
-+	"os"
-+
-+	"github.com/mdlayher/netlink"
-+	"golang.org/x/sys/unix"
-+)
-+
- // Watcher interface allows to stop watching.
- type Watcher interface {
- 	Done()
-@@ -14,3 +22,36 @@ type Watcher interface {
- type Trigger interface {
- 	QueueReconcile()
- }
-+
-+// receiver is the part of *netlink.Conn used by the watch loop.
-+type receiver interface {
-+	Receive() ([]netlink.Message, error)
-+}
-+
-+// watch receives multicast notifications from the connection until it is closed, queueing a reconcile on each of them.
-+//
-+// The contents of the notifications are never inspected: any activity on the subscribed multicast groups is just a hint
-+// that the kernel state might have changed, and the controllers re-list the full state on reconcile.
-+//
-+// For the same reason the only error which stops the loop is the connection being closed (via Done()).
-+// In particular, ENOBUFS is reported once by the kernel after the socket receive buffer overflowed and some notifications
-+// were dropped, but the socket is fully usable afterwards; the dropped notifications are compensated for by queueing
-+// a reconcile. Any other error (e.g. a malformed datagram) doesn't make the socket unusable either, as the offending
-+// datagram has already been consumed.
-+func watch(conn receiver, trigger Trigger) {
-+	for {
-+		if _, err := conn.Receive(); err != nil && isClosed(err) {
-+			return
-+		}
-+
-+		trigger.QueueReconcile()
-+	}
-+}
-+
-+// isClosed returns true if the error indicates that the netlink socket was closed.
-+//
-+// EBADF is returned for any operation attempted after Close(), while os.ErrClosed is returned by the runtime poller
-+// if Close() raced with the receive in progress.
-+func isClosed(err error) bool {
-+	return errors.Is(err, unix.EBADF) || errors.Is(err, os.ErrClosed)
-+}
-```
-
----
-
-### Incident Patch 2: `fc6681a7` (2026-10-22)
-**Commit Message**: fix: correctly pass hostname to the proxy in gRPC dial
-
-We can't use upstream gRPC library dialer (and proxy support), as Talos
-supports dynamic HTTP proxy configuration via the environment variables.
-
-Our previous dynamic proxy dialer implementation always ended up
-resolving before dial, so the proxy received the IP address instead of
-the hostname, which is often blocked by corporate proxies.
-
-The gRPC upstream switched to sending hostnames to the proxies
-(deferring resolving to the proxy).
-
-Implement same scheme in our dialer, where the dial decision is deferred
-if the proxy is in use.
-
-This also fixed `NO_PROXY` handling - it previously only matched by IP
-address for such dials, not by hostnames.
-
-In the test harness, deny HTTP proxy CONNECT with an IP address.
-
-Fixes #14706
-
-Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
-
-**File**: `cmd/talosctl/cmd/mgmt/debug/air-gapped.go` (modified, +13/-0)
-```diff
-@@ -44,6 +44,7 @@ var airgappedFlags struct {
- 	injectHTTPProxy         bool
- 	httpsReverseProxyPort   int
- 	httpsReverseProxyTarget string
-+	allowIPConnect          bool
- }
- 
- // airgappedCmd represents the `gen ca` command.
-@@ -153,6 +154,17 @@ func runHTTPServer(ctx context.Context, certPEM, keyPEM []byte) error {
- func handleTunneling(ctx context.Context, w http.ResponseWriter, r *http.Request) {
- 	addr := r.URL.Host
- 
-+	if !airgappedFlags.allowIPConnect {
-+		if host, _, err := net.SplitHostPort(addr); err == nil && net.ParseIP(host) != nil {
-+			// mimic corporate proxies which allow CONNECT only by hostname, so that clients
-+			// which resolve the hostname locally and tunnel to the IP address are caught by the tests
-+			log.Printf("HTTP CONNECT: rejecting %s: CONNECT to an IP address is not allowed", addr)
-+			http.Error(w, fmt.Sprintf("CONNECT to an IP address %q is not allowed, use the hostname", addr), http.StatusForbidden)
-+
-+			return
-+		}
-+	}
-+
- 	dstConn, err := (&net.Dialer{Timeout: 10 * time.Second}).DialContext(ctx, "tcp", addr)
- 	if err != nil {
- 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
-@@ -376,6 +388,7 @@ func init() {
- 	airgappedCmd.Flags().BoolVar(&airgappedFlags.injectHTTPProxy, "inject-http-proxy", true, "Whether to inject HTTP proxy configuration.")
- 	airgappedCmd.Flags().IntVar(&airgappedFlags.httpsReverseProxyPort, "https-reverse-proxy-port", 8004, "The HTTPS reverse proxy port.")
- 	airgappedCmd.Flags().StringVar(&airgappedFlags.httpsReverseProxyTarget, "https-reverse-proxy-target", "http://localhost/", "The HTTPS reverse proxy target (URL).")
-+	airgappedCmd.Flags().BoolVar(&airgappedFlags.allowIPConnect, "allow-ip-connect", false, "Whether to allow HTTP CONNECT to IP addresses (by default only hostnames are allowed).")
- 
- 	Cmd.AddCommand(airgappedCmd)
- }
-```
-
-**File**: `internal/app/machined/pkg/controllers/cluster/discovery_service.go` (modified, +4/-5)
-```diff
-@@ -24,7 +24,6 @@ import (
- 	"github.com/siderolabs/gen/optional"
- 	"github.com/siderolabs/gen/xslices"
- 	"go.uber.org/zap"
--	"google.golang.org/grpc"
- 
- 	"github.com/siderolabs/talos/pkg/httpdefaults"
- 	"github.com/siderolabs/talos/pkg/machinery/client/dialer"
-@@ -326,18 +325,18 @@ func (ctrl *DiscoveryServiceController) startClient(ctx context.Context, logger
- 		}
- 	}
- 
-+	proxy := dialer.NewDynamicProxy(tlsConfigFunc)
-+
- 	client, err := discoveryclient.NewClient(discoveryclient.Options{
- 		Cipher:        cipherBlock,
--		Endpoint:      spec.endpoint,
-+		Endpoint:      proxy.Target(spec.endpoint),
- 		ClusterID:     spec.clusterID,
- 		AffiliateID:   spec.affiliateID,
- 		TTL:           defaultDiscoveryTTL,
- 		Insecure:      spec.insecure,
- 		ClientVersion: version.Tag,
- 		TLSConfig:     tlsConfigFunc,
--		DialOptions: []grpc.DialOption{
--			grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(tlsConfigFunc)),
--		},
-+		DialOptions:   proxy.DialOptions(),
- 	})
- 	if err != nil {
- 		return fmt.Errorf("error initializing discovery client %q: %w", name, err)
-```
-
-**File**: `internal/app/machined/pkg/controllers/runtime/events_sink.go` (modified, +4/-3)
-```diff
-@@ -164,10 +164,11 @@ func (ctrl *EventsSinkController) Run(ctx context.Context, r controller.Runtime,
- 			// establish connection
- 			logger.Debug("establishing connection to event sink", zap.String("endpoint", cfg.TypedSpec().Endpoint))
- 
-+			proxy := dialer.NewDynamicProxy(httpdefaults.RootCAsTLSConfig)
-+
- 			conn, err = grpc.NewClient(
--				cfg.TypedSpec().Endpoint,
--				grpc.WithTransportCredentials(insecure.NewCredentials()),
--				grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(httpdefaults.RootCAsTLSConfig)),
-+				proxy.Target(cfg.TypedSpec().Endpoint),
-+				append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, proxy.DialOptions()...)...,
- 			)
- 			if err != nil {
- 				return fmt.Errorf("error establishing connection to event sink: %w", err)
-```
-
-**File**: `internal/app/machined/pkg/controllers/siderolink/manager.go` (modified, +4/-3)
-```diff
-@@ -364,10 +364,11 @@ func (ctrl *ManagerController) provision(ctx context.Context, r controller.Runti
- 		ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
- 		defer cancel()
- 
-+		proxy := dialer.NewDynamicProxy(httpdefaults.RootCAsTLSConfig)
-+
- 		conn, connErr := grpc.NewClient(
--			cfg.TypedSpec().Host,
--			withTransportCredentials(cfg.TypedSpec().Insecure),
--			grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(httpdefaults.RootCAsTLSConfig)),
-+			proxy.Target(cfg.TypedSpec().Host),
-+			append([]grpc.DialOption{withTransportCredentials(cfg.TypedSpec().Insecure)}, proxy.DialOptions()...)...,
- 		)
- 		if connErr != nil {
- 			return nil, fmt.Errorf("error dialing SideroLink endpoint %q: %w", cfg.TypedSpec().Host, connErr)
-```
-
-**File**: `internal/pkg/encryption/keys/kms.go` (modified, +4/-3)
-```diff
-@@ -142,9 +142,10 @@ func (h *KMSKeyHandler) getConn() (*grpc.ClientConn, error) {
- 		})
- 	}
- 
-+	proxy := dialer.NewDynamicProxy(httpdefaults.RootCAsTLSConfig)
-+
- 	return grpc.NewClient(
--		endpoint.Host,
--		grpc.WithTransportCredentials(transportCredentials),
--		grpc.WithContextDialer(dialer.DynamicProxyDialerWithTLSConfig(httpdefaults.RootCAsTLSConfig)),
-+		proxy.Target(endpoint.Host),
-+		append([]grpc.DialOption{grpc.WithTransportCredentials(transportCredentials)}, proxy.DialOptions()...)...,
+@@ -36,6 +36,7 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
+ 		Conf: &gobgpapi.PeerConf{
+ 			PeerAsn:         peer.Config.PeerASN,
+ 			NeighborAddress: peer.Address,
++			AuthPassword:    peer.Config.AuthPassword,
+ 		},
+ 		AfiSafis: []*gobgpapi.AfiSafi{
+ 			afiSafi(gobgpapi.Family_AFI_IP, multipath),
+@@ -385,6 +386,11 @@ func PeerKey(peer Peer) string {
+ 		peer.Config.HoldTime,
  	)
+ 
++	if peer.Config.AuthPassword != "" {
++		// Track password changes without keeping the plaintext in the key.
++		fmt.Fprintf(&builder, "auth[%x]", sha256.Sum256([]byte(peer.Config.AuthPassword)))
++	}
++
+ 	if peer.Config.BFD != nil {
+ 		fmt.Fprintf(
+ 			&builder,
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +17/-4)
+```diff
+@@ -30,10 +30,11 @@ func TestBuildPeer(t *testing.T) {
+ 		Address:       "fe80::1%eth0",
+ 		BindInterface: "vrf-blue",
+ 		Config: network.BGPNeighborConfigSpec{
+-			PeerASN:  65002,
+-			LocalASN: 65003,
+-			Passive:  true,
+-			HoldTime: 90 * time.Second,
++			PeerASN:      65002,
++			LocalASN:     65003,
++			Passive:      true,
++			HoldTime:     90 * time.Second,
++			AuthPassword: "secret",
+ 			BFD: &network.BGPBFDConfigSpec{
+ 				TransmitInterval: 300 * time.Millisecond,
+ 				ReceiveInterval:  400 * time.Millisecond,
+@@ -46,6 +47,7 @@ func TestBuildPeer(t *testing.T) {
+ 	assert.Equal(t, uint32(65002), peer.GetConf().GetPeerAsn())
+ 	assert.Equal(t, uint32(65003), peer.GetConf().GetLocalAsn())
+ 	assert.True(t, peer.GetConf().GetReplacePeerAsn())
++	assert.Equal(t, "secret", peer.GetConf().GetAuthPassword())
+ 	assert.True(t, peer.GetTransport().GetPassiveMode())
+ 	assert.Equal(t, "vrf-blue", peer.GetTransport().GetBindInterface())
+ 	assert.Equal(t, uint64(90), peer.GetTimers().GetConfig().GetHoldTime())
+@@ -278,4 +280,15 @@ func TestKeys(t *testing.T) {
+ 			BFD:      &network.BGPBFDConfigSpec{DetectMultiplier: 3},
+ 		},
+ 	}))
++
++	// A changed password has to replace the peer, but the key must not carry the plaintext.
++	authenticated := peer
++	authenticated.Config.AuthPassword = "secret"
++
++	rotated := peer
++	rotated.Config.AuthPassword = "rotated"
++
++	assert.NotEqual(t, internalbgp.PeerKey(peer), internalbgp.PeerKey(authenticated))
++	assert.NotEqual(t, internalbgp.PeerKey(authenticated), internalbgp.PeerKey(rotated))
++	assert.NotContains(t, internalbgp.PeerKey(authenticated), "secret")
  }
 ```
 
-**File**: `pkg/machinery/client/dialer/resolver.go` (added, +331/-0)
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/export_test.go` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,331 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
+@@ -8,6 +8,7 @@ import (
+ 	"maps"
+ 	"net/netip"
+ 
++	"github.com/jsimonetti/rtnetlink/v2"
+ 	"github.com/osrg/gobgp/v4/pkg/apiutil"
+ 	bgppacket "github.com/osrg/gobgp/v4/pkg/packet/bgp"
+ 	gobgpsrv "github.com/osrg/gobgp/v4/pkg/server"
+@@ -66,3 +67,8 @@ func ListImportCandidatesForTest(instance *Instance, selectors []netip.Prefix) (
+ func SetInstancePeerIfacesForTest(instance *Instance, peerIfaces map[netip.Addr]string) {
+ 	instance.peerIfaces = peerIfaces
+ }
 +
-+package dialer
-+
-+import (
-+	"context"
-+	"crypto/tls"
-+	"errors"
-+	"fmt"
++// NewNeighborResolverForTest creates a neighbor resolver backed by a static neighbor snapshot.
++func NewNeighborResolverForTest(neighbors []rtnetlink.NeighMessage) *NeighborResolver {
++	return &NeighborResolver{load: func() []rtnetlink.NeighMessage { return neighbors }}
++}
+```
+
+**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/instance_test.go` (modified, +132/-0)
+```diff
+@@ -5,14 +5,18 @@
+ package bgp_test
+ 
+ import (
 +	"net"
-+	"sync"
-+
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/resolver"
-+)
-+
-+const (
-+	dynamicProxyResolverScheme = "talosdynamicproxy"
-+	dnsResolverScheme          = "dns"
-+	defaultPort                = "443"
-+)
-+
-+// DynamicProxy pairs a gRPC resolver with a dialer, so that both agree on whether the proxy
-+// from the environment applies to the connection endpoint.
-+//
-+// gRPC has its own support for deferring DNS resolution of the target to the HTTP proxy, but it is
-+// disabled as soon as a custom dialer is used. With the default `dns` resolver the custom dialer
-+// receives resolved IP addresses, so the proxy gets `CONNECT <ip>:<port>` which is rejected by the
-+// proxies filtering by hostname, and domain-based `no_proxy` rules never match.
-+//
-+// The resolver evaluates the proxy settings from the environment for the endpoint:
-+//
-+//   - if a proxy applies to the endpoint, the endpoint is passed as is to the dialer, so the proxy
-+//     performs DNS resolution and `CONNECT` carries the hostname;
-+//   - otherwise, the resolver delegates to the standard gRPC `dns` resolver, and remembers the
-+//     addresses it produced, so that the dialer connects to them directly even if the proxy settings
-+//     would match the IP address (e.g. with a domain-based `no_proxy` rule).
-+//
-+// The proxy settings are re-evaluated every time gRPC requests re-resolution (e.g. on connection failure),
-+// so the changes in the environment are picked up without restarting the client.
-+//
-+// Use Target to build the gRPC target and DialOptions to configure the client:
-+//
-+//	proxy := dialer.NewDynamicProxy(nil)
-+//	conn, err := grpc.NewClient(proxy.Target("discovery.talos.dev:443"), proxy.DialOptions()...)
-+//
-+// A single DynamicProxy might be shared by multiple gRPC clients.
-+type DynamicProxy struct {
-+	tlsConfigFunc func() *tls.Config
-+
-+	mu sync.Mutex
-+	// locally resolved addresses, per resolver (there's one resolver per gRPC client)
-+	local map[*dynamicProxyResolver]map[string]struct{}
-+}
-+
-+// NewDynamicProxy creates a new DynamicProxy.
-+//
-+// The tlsConfigFunc is used to connect to HTTPS proxies, it might be nil.
-+func NewDynamicProxy(tlsConfigFunc func() *tls.Config) *DynamicProxy {
-+	if tlsConfigFunc == nil {
-+		tlsConfigFunc = func() *tls.Config { return &tls.Config{} }
-+	}
-+
-+	return &DynamicProxy{
-+		tlsConfigFunc: tlsConfigFunc,
-+		local:         map[*dynamicProxyResolver]map[string]struct{}{},
-+	}
-+}
-+
-+// Target wraps the endpoint (`host[:port]`) into a gRPC target handled by the DynamicProxy resolver.
-+func (p *DynamicProxy) Target(endpoint string) string {
-+	return dynamicProxyResolverScheme + ":///" + endpoint
-+}
-+
-+// DialOptions returns gRPC dial options which should be used with the target built by Target.
-+func (p *DynamicProxy) DialOptions() []grpc.DialOption {
-+	return []grpc.DialOption{
-+		grpc.WithResolvers(dynamicProxyResolverBuilder{proxy: p}),
-+		grpc.WithContextDialer(p.Dial),
-+	}
-+}
-+
-+// Dial is a gRPC context dialer which connects directly to the addresses resolved locally,
-+// and otherwise behaves as DynamicProxyDialerWithTLSConfig.
-+func (p *DynamicProxy) Dial(ctx context.Context, addr string) (net.Conn, error) {
-+	if p.resolvedLocally(addr) {
-+		return NetDialerWithTCPKeepalive().DialContext(ctx, "tcp", addr)
-+	}
-+
-+	return DynamicProxyDialerWithTLSConfig(p.tlsConfigFunc)(ctx, addr)
-+}
-+
-+func (p *DynamicProxy) resolvedLocally(addr string) bool {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+
-+	for _, addrs := range p.local {
-+		if _, ok := addrs[addr]; ok {
-+			return true
-+		}
-+	}
-+
-+	return false
-+}
-+
-+func (p *DynamicProxy) setResolvedLocally(r *dynamicProxyResolver, addresses []resolver.Address) {
-+	addrs := make(map[string]struct{}, len(addresses))
-+
-+	for _, address := range addresses {
-+		addrs[address.Addr] = struct{}{}
-+	}
-+
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+
-+	p.local[r] = addrs
-+}
-+
-+func (p *DynamicProxy) clearResolvedLocally(r *dynamicProxyResolver) {
-+	p.mu.Lock()
-+	defer p.mu.Unlock()
-+
-+	delete(p.local, r)
-+}
-+
-+type dynamicProxyResolverBuilder struct {
-+	proxy *DynamicProxy
-+
-+	// fallback is the resolver builder used when no proxy applies to the endpoint.
-+	//
-+	// If nil, the standard gRPC `dns` resolver is used.
-+	fallback resolver.Builder
-+}
-+
-+// Scheme implements resolver.Builder.
-+func (dynamicProxyResolverBuilder) Scheme() string {
-+	return dynamicProxyResolverScheme
-+}
-+
-+// Build implements resolver.Builder.
-+func (b dynamicProxyResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (resolver.Resolver, error) {
-+	fallback := b.fallback
-+	if fallback == nil {
-+		fallback = resolver.Get(dnsResolverScheme)
-+	}
-+
-+	if
-```
-
-**File**: `pkg/machinery/client/dialer/resolver_internal_test.go` (added, +259/-0)
-```diff
-@@ -0,0 +1,259 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package dialer
-+
-+import (
-+	"errors"
-+	"net/url"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc/resolver"
-+	"google.golang.org/grpc/serviceconfig"
-+)
-+
-+type fakeClientConn struct {
-+	states []resolver.State
-+	errors []error
-+}
-+
-+func (cc *fakeClientConn) UpdateState(state resolver.State) error {
-+	cc.states = append(cc.states, state)
-+
-+	return nil
-+}
-+
-+func (cc *fakeClientConn) ReportError(err error) {
-+	cc.errors = append(cc.errors, err)
-+}
-+
-+func (cc *fakeClientConn) NewAddress(addresses []resolver.Address) {
-+	cc.UpdateState(resolver.State{Addresses: addresses}) //nolint:errcheck
-+}
-+
-+func (cc *fakeClientConn) ParseServiceConfig(string) *serviceconfig.ParseResult {
-+	return &serviceconfig.ParseResult{Err: errors.New("not supported")}
-+}
-+
-+func (cc *fakeClientConn) lastAddrs(t *testing.T) []string {
-+	t.Helper()
-+
-+	require.NotEmpty(t, cc.states)
-+
-+	last := cc.states[len(cc.states)-1]
-+
-+	addrs := make([]string, 0, len(last.Addresses))
-+	for _, a := range last.Addresses {
-+		addrs = append(addrs, a.Addr)
-+	}
-+
-+	return addrs
-+}
-+
-+// fakeFallbackBuilder stands in for the `dns` resolver: it pushes a fixed address and records the lifecycle calls.
-+type fakeFallbackBuilder struct {
-+	builds     int
-+	closes     int
-+	resolveNow int
-+	lastTarget resolver.Target
-+}
-+
-+func (b *fakeFallbackBuilder) Scheme() string {
-+	return "fakedns"
-+}
-+
-+func (b *fakeFallbackBuilder) Build(target resolver.Target, cc resolver.ClientConn, _ resolver.BuildOptions) (resolver.Resolver, error) {
-+	b.builds++
-+	b.lastTarget = target
-+
-+	cc.UpdateState(resolver.State{Addresses: []resolver.Address{{Addr: "192.0.2.1:443"}}}) //nolint:errcheck
-+
-+	return &fakeFallbackResolver{b: b}, nil
-+}
-+
-+type fakeFallbackResolver struct {
-+	b *fakeFallbackBuilder
-+}
-+
-+func (r *fakeFallbackResolver) ResolveNow(resolver.ResolveNowOptions) {
-+	r.b.resolveNow++
-+}
-+
-+func (r *fakeFallbackResolver) Close() {
-+	r.b.closes++
-+}
-+
-+func buildTarget(endpoint string) resolver.Target {
-+	return resolver.Target{URL: url.URL{Scheme: dynamicProxyResolverScheme, Path: "/" + endpoint}}
-+}
-+
-+func clearProxyEnv(t *testing.T) {
-+	t.Helper()
-+
-+	for _, name := range []string{"HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy", "NO_PROXY", "no_proxy"} {
-+		t.Setenv(name, "")
-+	}
-+}
-+
-+func TestDynamicProxyResolver(t *testing.T) {
-+	t.Run("proxied", func(t *testing.T) {
-+		clearProxyEnv(t)
-+		t.Setenv("HTTPS_PROXY", "http://proxy.example.com:3128")
-+
-+		cc := &fakeClientConn{}
-+		fallback := &fakeFallbackBuilder{}
-+		proxy := NewDynamicProxy(nil)
-+
-+		r, err := dynamicProxyResolverBuilder{proxy: proxy, fallback: fallback}.Build(buildTarget("discovery.talos.dev:443"), cc, resolver.BuildOptions{})
-+		require.NoError(t, err)
-+
-+		t.Cleanup(r.Close)
-+
-+		// the hostname is passed through unresolved
-+		assert.Equal(t, []string{"discovery.talos.dev:443"}, cc.lastAddrs(t))
-+		assert.Len(t, cc.states[len(cc.states)-1].Endpoints, 1)
-+		assert.Zero(t, fallback.builds)
-+		assert.False(t, proxy.resolvedLocally("discovery.talos.dev:443"))
-+
-+		// re-resolution in proxied mode is a no-op
-+		r.ResolveNow(resolver.ResolveNowOptions{})
-+
-+		assert.Len(t, cc.states, 1)
-+		assert.Zero(t, fallback.builds)
-+		assert.Empty(t, cc.errors)
-+	})
-+
-+	t.Run("proxied default port", func(t *testing.T) {
-+		clearProxyEnv(t)
-+		t.Setenv("HTTPS_PROXY", "http://proxy.example.com:3128")
-+
-+		cc := &fakeClientConn{}
-+
-+		r, err := dynamicProxyResolverBuilder{proxy: NewDynamicProxy(nil), fallback: &fakeFallbackBuilder{}}.Build(buildTarget("discovery.talos.dev"), cc, resolver.BuildOptions{})
-+		require.NoError(t, err)
-+
-+		t.Cleanup(r.Close)
-+
-+		assert.Equal(t, []string{"discovery.talos.dev:443"}, cc.lastAddrs(t))
-+	})
-+
-+	t.Run("direct", func(t *testing.T) {
-+		clearProxyEnv(t)
-+
-+		cc := &fakeClientConn{}
-+		fallback := &fakeFallbackBuilder{}
-+		proxy := NewDynamicProxy(nil)
-+
-+		r, err := dynamicProxyResolverBuilder{proxy: proxy, fallback: fallback}.Build(buildTarget("discovery.talos.dev:443"), cc, resolver.BuildOptions{})
-+		require.NoError(t, err)
-+
-+		assert.Equal(t, 1, fallback.builds)
-+		assert.Equal(t, "fakedns", fallback.lastTarget.URL.Scheme)
-+		assert.Equal(t, "discovery.talos.dev:443", fallback.lastTarget.Endpoint())
-+		assert.Equal(t, []string{"192.0.2.1:443"}, cc.lastAddrs(t))
-+
-+		// the dialer should connect directly to the locally resolved address even if the proxy would match it
-+		assert.True(t, proxy.resolvedLocally("192.0.2.1:443"))
-+		assert.False(t, proxy.resolvedLocally("192.0.2.2:443"))
-+
-+		// re-resolution is forwarded to the delegate
-+		r.ResolveNow(resolver.ResolveNowOptions{})
-+		assert.Equal(t, 1, fallback.resolveNow)
-+		assert.Equal(t, 1, fallback.builds)
-+
-+		r.Cl
-```
-
-**File**: `pkg/machinery/client/dialer/resolver_test.go` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+// This Source Code Form is subject to the terms of the Mozilla Public
-+// License, v. 2.0. If a copy of the MPL was not distributed with this
-+// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-+
-+package dialer_test
-+
-+import (
-+	"bufio"
-+	"context"
-+	"io"
-+	"net"
-+	"net/http"
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"google.golang.org/grpc"
-+	"google.golang.org/grpc/codes"
-+	"google.golang.org/grpc/credentials/insecure"
-+	"google.golang.org/grpc/status"
-+	"google.golang.org/protobuf/types/known/emptypb"
-+
-+	"github.com/siderolabs/talos/pkg/machinery/client/dialer"
-+)
-+
-+// startConnectProxy runs a minimal HTTP CONNECT proxy which tunnels every request to backend
-+// (ignoring the requested destination) and reports the requested destination via the channel.
-+func startConnectProxy(t *testing.T, backend string) (string, <-chan string) {
-+	t.Helper()
-+
-+	lis, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+
-+	t.Cleanup(func() { lis.Close() }) //nolint:errcheck
-+
-+	requested := make(chan string, 16)
-+
-+	go func() {
-+		for {
-+			conn, err := lis.Accept()
-+			if err != nil {
-+				return
-+			}
-+
-+			go func() {
-+				defer conn.Close() //nolint:errcheck
-+
-+				req, err := http.ReadRequest(bufio.NewReader(conn))
-+				if err != nil || req.Method != http.MethodConnect {
-+					return
-+				}
-+
-+				requested <- req.URL.Host
-+
-+				upstream, err := (&net.Dialer{}).DialContext(context.Background(), "tcp", backend)
-+				if err != nil {
-+					return
-+				}
-+
-+				defer upstream.Close() //nolint:errcheck
-+
-+				if _, err = io.WriteString(conn, "HTTP/1.1 200 Connection established\r\n\r\n"); err != nil {
-+					return
-+				}
-+
-+				go io.Copy(upstream, conn) //nolint:errcheck
-+
-+				io.Copy(conn, upstream) //nolint:errcheck
-+			}()
-+		}
-+	}()
-+
-+	return lis.Addr().String(), requested
-+}
-+
-+func startGRPCServer(t *testing.T) string {
-+	t.Helper()
-+
-+	lis, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
-+	require.NoError(t, err)
-+
-+	srv := grpc.NewServer()
-+
-+	go srv.Serve(lis) //nolint:errcheck
-+
-+	t.Cleanup(srv.Stop)
-+
-+	return lis.Addr().String()
-+}
-+
-+// invoke performs a call against a server with no services registered, so a successful tunnel yields Unimplemented.
-+func invoke(t *testing.T, endpoint string) {
-+	t.Helper()
-+
-+	proxy := dialer.NewDynamicProxy(nil)
-+
-+	conn, err := grpc.NewClient(
-+		proxy.Target(endpoint),
-+		append([]grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}, proxy.DialOptions()...)...,
-+	)
-+	require.NoError(t, err)
-+
-+	t.Cleanup(func() { conn.Close() }) //nolint:errcheck
-+
-+	ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
-+	defer cancel()
-+
-+	err = conn.Invoke(ctx, "/talos.test.Service/Method", &emptypb.Empty{}, &emptypb.Empty{})
-+	require.Equal(t, codes.Unimplemented, status.Code(err), "unexpected error: %v", err)
-+}
-+
-+func TestDynamicProxyTarget_HostnamePassedToProxy(t *testing.T) {
-+	for _, name := range []string{"HTTP_PROXY", "http_proxy", "NO_PROXY", "no_proxy", "https_proxy"} {
-+		t.Setenv(name, "")
-+	}
-+
-+	backend := startGRPCServer(t)
-+	proxyAddr, requested := startConnectProxy(t, backend)
-+
-+	t.Setenv("HTTPS_PROXY", "http://"+proxyAddr)
-+
-+	// the hostname is never resolved: the proxy gets it as is and tunnels to the backend
-+	_, port, err := net.SplitHostPort(backend)
-+	require.NoError(t, err)
-+
-+	endpoint := net.JoinHostPort("discovery.talos.dev", port)
-+
-+	invoke(t, endpoint)
-+
-+	select {
-+	case got := <-requested:
-+		assert.Equal(t, endpoint, got)
-+	case <-time.After(10 * time.Second):
-+		t.Fatal("proxy didn't receive a CONNECT request")
-+	}
-+}
-+
-+func TestDynamicProxyTarget_Direct(t *testing.T) {
-+	for _, name := range []string{"HTTP_PROXY", "http_proxy", "HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy"} {
-+		t.Setenv(name, "")
-+	}
-+
-+	backend := startGRPCServer(t)
-+
-+	invoke(t, backend)
-+}
-```
-
----
-
-### Incident Patch 3: `38e5d8be` (2026-10-22)
-**Commit Message**: fix: resolve link aliases in EthernetConfig and RoutingRuleConfig
-
-There's no reason why they should not work with an alias as Talos documentation states that:
-
-> link alias can be used interchangeably with physical link names in all networking configuration sections
-
-https://docs.siderolabs.com/talos/v1.14/networking/configuration/aliases
-
-Signed-off-by: Orzelius <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/ethernet_config.go` (modified, +17/-3)
-```diff
-@@ -30,6 +30,11 @@ func (ctrl *EthernetConfigController) Name() string {
- // Inputs implements controller.Controller interface.
- func (ctrl *EthernetConfigController) Inputs() []controller.Input {
- 	return []controller.Input{
-+		{
-+			Namespace: network.NamespaceName,
-+			Type:      network.LinkStatusType,
-+			Kind:      controller.InputWeak,
+ 	"net/netip"
++	"strconv"
++	"syscall"
+ 	"testing"
+ 	"time"
+ 
+ 	gobgpapi "github.com/osrg/gobgp/v4/api"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ 	"go.uber.org/zap"
++	"golang.org/x/sys/unix"
+ 
+ 	internalbgp "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/network/internal/bgp"
+ 	"github.com/siderolabs/talos/pkg/machinery/resources/network"
+@@ -70,6 +74,134 @@ func TestNewInstance(t *testing.T) {
+ 	assert.True(t, internalbgp.InstanceMapsInitializedForTest(instance))
+ }
+ 
++func TestInstanceAuthPasswordListenerKey(t *testing.T) {
++	t.Parallel()
++
++	skipWithoutTCPMD5(t)
++
++	instance := internalbgp.NewInstance()
++	t.Cleanup(instance.Stop)
++
++	port := freeBGPImportTestPort(t)
++	config := network.BGPInstanceConfigSpec{LocalASN: 65001}
++	peer := internalbgp.Peer{
++		Address: "127.0.0.2",
++		Config: network.BGPNeighborConfigSpec{
++			Address:      netip.MustParseAddr("127.0.0.2"),
++			PeerASN:      65002,
++			Passive:      true,
++			AuthPassword: "secret",
 +		},
- 		{
- 			Namespace: config.NamespaceName,
- 			Type:      config.MachineConfigType,
-@@ -65,8 +70,15 @@ func (ctrl *EthernetConfigController) Run(ctx context.Context, r controller.Runt
- 			return fmt.Errorf("error reading machine configuration: %w", err)
- 		}
- 
-+		linkStatuses, err := safe.ReaderListAll[*network.LinkStatus](ctx, r)
-+		if err != nil {
-+			return fmt.Errorf("error listing link statuses: %w", err)
-+		}
-+
-+		linkNameResolver := network.NewLinkResolver(linkStatuses.All)
-+
- 		if cfg != nil {
--			if err = ctrl.apply(ctx, r, cfg.Config().EthernetConfigs()); err != nil {
-+			if err = ctrl.apply(ctx, r, cfg.Config().EthernetConfigs(), linkNameResolver); err != nil {
- 				return fmt.Errorf("error applying EthernetSpec: %w", err)
- 			}
- 		}
-@@ -77,9 +89,11 @@ func (ctrl *EthernetConfigController) Run(ctx context.Context, r controller.Runt
- 	}
- }
- 
--func (ctrl *EthernetConfigController) apply(ctx context.Context, r controller.Runtime, configs []configtypes.EthernetConfig) error {
-+func (ctrl *EthernetConfigController) apply(
-+	ctx context.Context, r controller.Runtime, configs []configtypes.EthernetConfig, linkNameResolver *network.LinkResolver,
-+) error {
- 	for _, cfg := range configs {
--		if err := safe.WriterModify(ctx, r, network.NewEthernetSpec(network.NamespaceName, cfg.Name()), func(spec *network.EthernetSpec) error {
-+		if err := safe.WriterModify(ctx, r, network.NewEthernetSpec(network.NamespaceName, linkNameResolver.Resolve(cfg.Name())), func(spec *network.EthernetSpec) error {
- 			spec.TypedSpec().Rings = network.EthernetRingsSpec(cfg.Rings())
- 			spec.TypedSpec().Channels = network.EthernetChannelsSpec(cfg.Channels())
- 			spec.TypedSpec().Features = cfg.Features()
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/ethernet_config_test.go` (modified, +21/-0)
-```diff
-@@ -69,6 +69,27 @@ func (suite *EthernetConfigSuite) TestReconcile() {
- 	ctest.AssertNoResource[*network.EthernetSpec](suite, "enp0s2")
- }
- 
-+func (suite *EthernetConfigSuite) TestReconcileAlias() {
-+	status := network.NewLinkStatus(network.NamespaceName, "enp0s3")
-+	status.TypedSpec().Alias = "net0"
-+	suite.Create(status)
-+
-+	ethCfg := networkcfg.NewEthernetConfigV1Alpha1("net0")
-+	ethCfg.RingsConfig = &networkcfg.EthernetRingsConfig{
-+		RX: new(uint32(16)),
 +	}
 +
-+	ctr, err := container.New(ethCfg)
-+	suite.Require().NoError(err)
++	ensure := func() {
++		require.NoError(t, instance.EnsureServer(
++			t.Context(),
++			zap.NewNop(),
++			config,
++			netip.MustParseAddr("10.0.0.1"),
++			0,
++			[]internalbgp.Peer{peer},
++			nil,
++			port,
++			func() {},
++		))
++	}
 +
-+	suite.Create(config.NewMachineConfig(ctr))
++	// connect dials the listener from the peer address, signing the connection with the password if set.
++	connect := func(password string) error {
++		dialer := net.Dialer{
++			LocalAddr: &net.TCPAddr{IP: net.ParseIP(peer.Address)},
++			Timeout:   time.Second,
++		}
 +
-+	ctest.AssertResource(suite, "enp0s3", func(spec *network.EthernetSpec, asrt *assert.Assertions) {
-+		asrt.Equal(uint32(16), pointer.SafeDeref(spec.TypedSpec().Rings.RX))
-+	})
-+	ctest.AssertNoResource[*network.EthernetSpec](suite, "net0")
++		if password != "" {
++			dialer.Control = func(_, _ string, conn syscall.RawConn) error {
++				var sockoptErr error
++
++				if err := conn.Control(func(fd uintptr) {
++					sockoptErr = unix.SetsockoptTCPMD5Sig(int(fd), unix.IPPROTO_TCP, unix.TCP_MD5SIG, tcpMD5Sig(net.IPv4(127, 0, 0, 1), password))
++				}); err != nil {
++					return err
++				}
++
++				return sockoptErr
++			}
++		}
++
++		conn, err := dialer.DialContext(t.Context(), "tcp4", net.JoinHostPort("127.0.0.1", strconv.Itoa(int(port))))
++		if err != nil {
++			return err
++		}
++
++		return conn.Close()
++	}
++
++	// The kernel silently drops a SYN with a missing or mismatched MD5 signature for a peer with a key, so the
++	// dial has to time out rather than fail for any other reason (connection refused, bind error).
++	requireDropped := func(password string) {
++		var netErr net.Error
++
++		err := connect(password)
++		require.ErrorAs(t, err, &netErr)
++		require.True(t, netErr.Timeout(), "SYN with password %q must be dropped, got %v", password, err)
++	}
++
++	ensure()
++
++	server := internalbgp.InstanceServerForTest(instance)
++
++	requireDropped("")
++	require.NoError(t, connect("secret"))
++
++	// Rotating the password must replace the listener key in place.
++	peer.Config.AuthPassword = "rotated"
++
++	ensure()
++	require.Same(t, server, internalbgp.InstanceServerForTest(instance), "rotating the password must not restart GoBGP")
++	require.Eventually(t, func() bool {
++		return connect("rotated") == nil
++	}, 5*time.Second, 100*time.Millisecond, "the listener key must be replaced together with the password")
++	requireDropped("secret")
++	requireDropped("")
++
++	peer.Config.AuthPassword = ""
++
++	ensure()
++	require.Same(t, server, internalbgp.InstanceServerForTest(instance), "removing the password must not restart GoBGP")
++	require.Eventually(t, func() bool {
++		return connect("") == nil
++	}, 5*time.Second, 100*time.Millisecond, "the listener key must be removed together with the password")
 +}
 +
- func TestEthernetConfigSuite(t *testing.T) {
++// tcpMD5Sig builds the TCP_MD5SIG option for an IPv4 peer.
++func tcpMD5Sig(addr net.IP, password string) *unix.TCPMD5Sig {
++	sig := &unix.TCPMD5Sig{Keylen: uint16(len(password))}
++	sig.Addr.Family = unix.AF_INET
++	copy(sig.Addr.Data[2:6], addr.To4())
++	copy(sig.Key[:], password)
++
++	return sig
++}
++
++// skipWithoutTCPMD5 skips the test when the kernel is built without CONFIG_TCP_MD5SIG.
++func skipWithoutTCPMD5(t *testing.T) {
++	t.Helper()
++
++	fd, err := unix.Socket(unix.AF_INET, unix.SOCK_STREAM|unix.SOCK_CLOEXEC, 0)
++	require.NoError(t, err)
++
++	defer unix.Close(fd) //nolint:errcheck
++
++	sig := unix.TCPMD5Sig{Keylen: 1}
++	sig.Addr.Family = unix.AF_INET
++	sig.Key[0] = 'x'
++
++	if err = unix.SetsockoptTCPMD5Sig(fd, unix.IPPROTO_TCP, unix.TCP_MD5SIG, &sig); err != nil {
++		t.Skipf("kernel does not support TCP MD5 signatures: %v", err)
++	}
++}
++
+ func TestInstanceServerLifecycleAndReconciliation(t *testing.T) {
  	t.Parallel()
  
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/routing_rule_config.go` (modified, +16/-2)
-```diff
-@@ -41,6 +41,11 @@ func (ctrl *RoutingRuleConfigController) Name() string {
- // Inputs implements controller.Controller interface.
- func (ctrl *RoutingRuleConfigController) Inputs() []controller.Input {
- 	return []controller.Input{
-+		{
-+			Namespace: network.NamespaceName,
-+			Type:      network.LinkStatusType,
-+			Kind:      controller.InputWeak,
-+		},
- 		{
- 			Namespace: config.NamespaceName,
- 			Type:      config.MachineConfigType,
-@@ -78,10 +83,18 @@ func (ctrl *RoutingRuleConfigController) Run(ctx context.Context, r controller.R
- 			}
- 		}
- 
-+		linkStatuses, err := safe.ReaderListAll[*network.LinkStatus](ctx, r)
-+		if err != nil {
-+			return fmt.Errorf("error listing link statuses: %w", err)
-+		}
-+
-+		linkNameResolver := network.NewLinkResolver(linkStatuses.All)
-+
- 		if machineConfig != nil {
- 			rules := ctrl.processConfig(
- 				logger,
- 				machineConfig.Config().NetworkRoutingRuleConfigs(),
-+				linkNameResolver,
- 			)
- 
- 			if err = ctrl.apply(ctx, r, rules); err != nil {
-@@ -120,6 +133,7 @@ func (ctrl *RoutingRuleConfigController) apply(ctx context.Context, r controller
- func (ctrl *RoutingRuleConfigController) processConfig(
- 	logger *zap.Logger,
- 	ruleConfigs []cfg.NetworkRoutingRuleConfig,
-+	linkNameResolver *network.LinkResolver,
- ) []network.RoutingRuleSpecSpec {
- 	rules := make([]network.RoutingRuleSpecSpec, 0, len(ruleConfigs))
- 
-@@ -142,8 +156,8 @@ func (ctrl *RoutingRuleConfigController) processConfig(
- 
- 		rule.Src = src
- 		rule.Dst = dst
--		rule.IIFName = ruleCfg.IIFName()
--		rule.OIFName = ruleCfg.OIFName()
-+		rule.IIFName = linkNameResolver.Resolve(ruleCfg.IIFName())
-+		rule.OIFName = linkNameResolver.Resolve(ruleCfg.OIFName())
- 		rule.FwMark = ruleCfg.FwMark()
- 		rule.FwMask = ruleCfg.FwMask()
- 		rule.ConfigLayer = network.ConfigMachineConfiguration
-```
+---
 
-**File**: `internal/app/machined/pkg/controllers/network/routing_rule_config_test.go` (modified, +37/-0)
+### Incident Patch 2: `42e6ca03` (2026-10-14)
+**Commit Message**: feat: add configFiles property into KubeCredentialProviderConfig
+
+Adding the `configFiles` property for the `KubeCredentialProviderConfig` resource as suggested in https://github.com/siderolabs/extensions/pull/1286.
+
+Signed-off-by: Jiri Tyr <[REDACTED_EMAIL]>
+Signed-off-by: Andrey Smirnov <[REDACTED_EMAIL]>
+
+**File**: `api/resource/definitions/k8s/k8s.proto` (modified, +4/-0)
 ```diff
-@@ -146,6 +146,43 @@ func (suite *RoutingRuleConfigSuite) TestMachineConfigurationWithFwMark() {
- 	)
+@@ -212,6 +212,8 @@ message KubeletConfigSpec {
+   map<string, string> register_with_taints = 16;
+   // KubepodsMemoryLimit is the desired kubepods memory.max in bytes; zero means unset.
+   uint64 kubepods_memory_limit = 17;
++  // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
++  map<string, string> credential_provider_files = 18;
  }
  
-+func (suite *RoutingRuleConfigSuite) TestMachineConfigurationWithLinkAlias() {
-+	suite.Require().NoError(suite.Runtime().RegisterController(&netctrl.RoutingRuleConfigController{}))
+ // KubeletKubeconfigSpec describes the current kubelet client credentials.
+@@ -231,6 +233,8 @@ message KubeletSpecSpec {
+   string expected_nodename = 4;
+   google.protobuf.Struct config = 5;
+   google.protobuf.Struct credential_provider_config = 6;
++  // CredentialProviderFiles maps file names to the contents of the credential provider plugin configuration files.
++  map<string, string> credential_provider_files = 7;
+ }
+ 
+ // KubeletStatusSpec describes the current kubelet state.
+```
+
+**File**: `hack/release.toml` (modified, +31/-0)
+```diff
+@@ -38,6 +38,37 @@ Enable `console.vnc.enabled` in its `VirtualMachineConfig`; access requires the
+ The listener accepts one viewer at a time and supports reconnecting without restarting the command.
+ Use a viewer that supports unauthenticated RFB.
+ Talos authenticates the tunnel, and no VNC TCP port is opened on the node.
++"""
 +
-+	for _, link := range []struct {
-+		name  string
-+		alias string
-+	}{
-+		{name: "enp0s3", alias: "net0"},
-+		{name: "enp0s4", alias: "net1"},
-+	} {
-+		status := network.NewLinkStatus(network.NamespaceName, link.name)
-+		status.TypedSpec().Alias = link.alias
-+		suite.Create(status)
++    [notes.credential_provider_config_files]
++        title = "Kubelet Credential Provider Config Files"
++        description = """\
++The `KubeCredentialProviderConfig` document supports a new `configFiles` field to provide configuration files for the credential provider plugins.
++Each file is written to the `/etc/kubernetes/credentialproviders` directory, so it can be referenced in the `args` of a credential provider:
++
++```yaml
++apiVersion: v1alpha1
++kind: KubeCredentialProviderConfig
++configuration:
++  apiVersion: kubelet.config.k8s.io/v1
++  kind: CredentialProviderConfig
++  providers:
++    - name: acr-credential-provider
++      apiVersion: credentialprovider.kubelet.k8s.io/v1
++      matchImages:
++        - "*.azurecr.io"
++      defaultCacheDuration: 10m
++      args:
++        - /etc/kubernetes/credentialproviders/azure.json
++configFiles:
++  - name: azure.json
++    content: |
++      {
++        "cloud": "AzurePublicCloud",
++        "tenantId": "<tenant-id>",
++        "useManagedIdentityExtension": true
++      }
++```
+ """
+ 
+     [notes.workload_memory_limits]
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/export_test.go` (modified, +4/-3)
+```diff
+@@ -6,7 +6,8 @@ package k8s
+ 
+ // Exported for testing.
+ var (
+-	AuthorizationConfig         = authorizationConfig
+-	APIServerWebhookKubeconfigs = apiServerWebhookKubeconfigs
+-	RemoveStaleKubeconfigs      = removeStaleKubeconfigs
++	AuthorizationConfig                 = authorizationConfig
++	APIServerWebhookKubeconfigs         = apiServerWebhookKubeconfigs
++	RemoveStaleKubeconfigs              = removeStaleKubeconfigs
++	WriteKubeletCredentialProviderFiles = writeKubeletCredentialProviderFiles
+ )
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config.go` (modified, +2/-0)
+```diff
+@@ -102,8 +102,10 @@ func NewKubeletConfigController() *KubeletConfigController {
+ 
+ 				if k8sCredentialProviderConfig := cfgProvider.K8sCredentialProviderConfig(); k8sCredentialProviderConfig != nil {
+ 					kubeletConfig.CredentialProviderConfig = k8sCredentialProviderConfig.Configuration()
++					kubeletConfig.CredentialProviderFiles = k8sCredentialProviderConfig.ConfigFiles()
+ 				} else {
+ 					kubeletConfig.CredentialProviderConfig = nil
++					kubeletConfig.CredentialProviderFiles = nil
+ 				}
+ 
+ 				return nil
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_config_test.go` (modified, +53/-0)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"github.com/siderolabs/talos/internal/app/machined/pkg/controllers/ctest"
+ 	k8sctrl "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/container"
++	k8scfg "github.com/siderolabs/talos/pkg/machinery/config/types/k8s"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/meta"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/runtime"
+ 	"github.com/siderolabs/talos/pkg/machinery/config/types/v1alpha1"
+@@ -222,6 +223,58 @@ func (suite *KubeletConfigSuite) TestReconcileKubepodsMemoryLimit() {
+ 	})
+ }
+ 
++func (suite *KubeletConfigSuite) TestReconcileCredentialProvider() {
++	u, err := url.Parse("https://foo:6443")
++	suite.Require().NoError(err)
++
++	suite.createStaticPodServerStatus()
++
++	v1alpha1Cfg := &v1alpha1.Config{
++		ConfigVersion: "v1alpha1",
++		MachineConfig: &v1alpha1.MachineConfig{},
++		ClusterConfig: &v1alpha1.ClusterConfig{
++			ControlPlane: &v1alpha1.ControlPlaneConfig{ //nolint:staticcheck // testing deprecated field
++				Endpoint: &v1alpha1.Endpoint{
++					URL: u,
++				},
++			},
++			ClusterNetwork: &v1alpha1.ClusterNetworkConfig{ //nolint:staticcheck // testing deprecated field
++				ServiceSubnet: []string{constants.DefaultIPv4ServiceCIDR},
++			},
++		},
 +	}
 +
-+	rc1 := networkcfg.NewRoutingRuleConfigV1Alpha1(500)
-+	rc1.RuleSrc = meta.Prefix{Prefix: netip.MustParsePrefix("10.0.0.0/8")}
-+	rc1.RuleTable = nethelpers.RoutingTable(100)
-+	rc1.RuleIIFName = "net0"
-+	rc1.RuleOIFName = "net1"
++	credentialProviderCfg := k8scfg.NewKubeCredentialProviderConfigV1Alpha1()
++	credentialProviderCfg.CredentialProviderConfig.Object = map[string]any{
++		"apiVersion": "kubelet.config.k8s.io/v1",
++		"kind":       "CredentialProviderConfig",
++	}
++	credentialProviderCfg.CredentialProviderConfigFiles = []k8scfg.KubeCredentialProviderConfigFileV1Alpha1{
++		{
++			FileName:    "azure.json",
++			FileContent: "{}",
++		},
++	}
 +
-+	ctr, err := container.New(rc1)
++	ctr, err := container.New(v1alpha1Cfg, credentialProviderCfg)
 +	suite.Require().NoError(err)
 +
 +	suite.Create(config.NewMachineConfig(ctr))
 +
-+	ctest.AssertResource(
-+		suite,
-+		"configuration/inet4/00500",
-+		func(r *network.RoutingRuleSpec, asrt *assert.Assertions) {
-+			asrt.Equal("enp0s3", r.TypedSpec().IIFName)
-+			asrt.Equal("enp0s4", r.TypedSpec().OIFName)
-+		},
-+		rtestutils.WithNamespace(network.ConfigNamespaceName),
-+	)
++	ctest.AssertResource(suite, k8s.KubeletID, func(r *k8s.KubeletConfig, asrt *assert.Assertions) {
++		spec := r.TypedSpec()
++
++		asrt.Equal(
++			map[string]any{
++				"apiVersion": "kubelet.config.k8s.io/v1",
++				"kind":       "CredentialProviderConfig",
++			},
++			spec.CredentialProviderConfig,
++		)
++		asrt.Equal(map[string]string{"azure.json": "{}"}, spec.CredentialProviderFiles)
++	})
 +}
 +
- // TestReservedPrioritySkipped verifies that user configs at kernel-reserved
- // priorities never produce a RoutingRuleSpec, so the spec controller can
- // never tear down (and thus delete) kernel-managed rules at those priorities.
-```
-
-**File**: `pkg/machinery/config/schemas/config.schema.json` (modified, +3/-3)
-```diff
-@@ -6410,9 +6410,9 @@
-         "name": {
-           "type": "string",
-           "title": "name",
--          "description": "Alias for the link.\n\nDon’t use system interface names like “eth0”, “ens3”, “enp0s2”, etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (%d) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. net0, net1, …) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\n",
--          "markdownDescription": "Alias for the link.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
--          "x-intellij-html-description": "\u003cp\u003eAlias for the link.\u003c/p\u003e\n\n\u003cp\u003eDon\u0026rsquo;t use system interface names like \u0026ldquo;eth0\u0026rdquo;, \u0026ldquo;ens3\u0026rdquo;, \u0026ldquo;enp0s2\u0026rdquo;, etc. as those may conflict\nwith existing physical interfaces.\u003c/p\u003e\n\n\u003cp\u003eThe name can contain a single integer format verb (\u003ccode\u003e%d\u003c/code\u003e) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. \u003ccode\u003enet0\u003c/code\u003e, \u003ccode\u003enet1\u003c/code\u003e, \u0026hellip;) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\u003c/p\u003e\n"
-+          "description": "Alias for a link.\n\nLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\n\nDon’t use system interface names like “eth0”, “ens3”, “enp0s2”, etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (%d) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. net0, net1, …) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\n",
-+          "markdownDescription": "Alias for a link.\n\nLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
-+          "x-intellij-html-description": "\u003cp\u003eAlias for a link.\u003c/p\u003e\n\n\u003cp\u003eLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\u003c/p\u003e\n\n\u003cp\u003eDon\u0026rsquo;t use system interface names like \u0026ldquo;eth0\u0026rdquo;, \u0026ldquo;ens3\u0026rdquo;, \u0026ldquo;enp0s2\u0026rdquo;, etc. as those may conflict\nwith existing physical interfaces.\u003c/p\u003e\n\n\u003cp\u003eThe name can contain a single integer format verb (\u003ccode\u003e%d\u003c/code\u003e) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. \u003ccode\u003enet0\u003c/code\u003e, \u003ccode\u003enet1\u003c/code\u003e, \u0026hellip;) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.\u003c/p\u003e\n"
-         },
-         "selector": {
-           "$ref": "#/$defs/network.LinkSelector",
-```
-
-**File**: `pkg/machinery/config/types/network/link_alias.go` (modified, +4/-1)
-```diff
-@@ -52,7 +52,10 @@ type LinkAliasConfigV1Alpha1 struct {
- 	meta.Meta `yaml:",inline"`
+ func TestKubeletConfigSuite(t *testing.T) {
+ 	t.Parallel()
  
- 	//   description: |
--	//    Alias for the link.
-+	//    Alias for a link.
-+	//
-+	//    Link aliases can be used interchangeably with physical link names in all networking configuration
-+	//    sections that take an existing link name as input.
- 	//
- 	//    Don't use system interface names like "eth0", "ens3", "enp0s2", etc. as those may conflict
- 	//    with existing physical interfaces.
 ```
 
-**File**: `pkg/machinery/config/types/network/network_doc.go` (modified, +2/-2)
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_service.go` (modified, +66/-0)
 ```diff
-@@ -1848,8 +1848,8 @@ func (LinkAliasConfigV1Alpha1) Doc() *encoder.Doc {
- 				Name:        "name",
- 				Type:        "string",
- 				Note:        "",
--				Description: "Alias for the link.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
--				Comments:    [3]string{"" /* encoder.HeadComment */, "Alias for the link." /* encoder.LineComment */, "" /* encoder.FootComment */},
-+				Description: "Alias for a link.\n\nLink aliases can be used interchangeably with physical link names in all networking configuration\nsections that take an existing link name as input.\n\nDon't use system interface names like \"eth0\", \"ens3\", \"enp0s2\", etc. as those may conflict\nwith existing physical interfaces.\n\nThe name can contain a single integer format verb (`%d`) to create multiple aliases\nfrom a single config document. When a format verb is detected, each matched link receives a sequential\nalias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.\nLinks already aliased by a previous config are automatically skipped.",
-+				Comments:    [3]string{"" /* encoder.HeadComment */, "Alias for a link." /* encoder.LineComment */, "" /* encoder.FootComment */},
+@@ -212,6 +212,10 @@ func (ctrl *KubeletServiceController) Run(ctx context.Context, r controller.Runt
+ 			return fmt.Errorf("error writing kubelet credential provider configuration: %w", err)
+ 		}
+ 
++		if err = writeKubeletCredentialProviderFiles(constants.KubeletCredentialProviderConfigFilesDir, cfgSpec.CredentialProviderFiles); err != nil {
++			return fmt.Errorf("error writing kubelet credential provider files: %w", err)
++		}
++
+ 		_, running, err := ctrl.V1Alpha1Services.IsRunning("kubelet")
+ 		if err != nil {
+ 			ctrl.V1Alpha1Services.Load(&services.Kubelet{})
+@@ -357,6 +361,68 @@ func (ctrl *KubeletServiceController) writeKubeletCredentialProviderConfig(cfgSp
+ 	return os.WriteFile(constants.KubeletCredentialProviderConfig, buf.Bytes(), 0o600)
+ }
+ 
++// writeKubeletCredentialProviderFiles writes the credential provider config files into dir
++// and removes any files in dir which are not part of files.
++func writeKubeletCredentialProviderFiles(dir string, files map[string]string) error {
++	if len(files) == 0 {
++		return os.RemoveAll(dir)
++	}
++
++	if err := os.MkdirAll(dir, 0o700); err != nil {
++		return err
++	}
++
++	entries, err := os.ReadDir(dir)
++	if err != nil {
++		return err
++	}
++
++	for _, entry := range entries {
++		if _, ok := files[entry.Name()]; ok {
++			continue
++		}
++
++		if err = os.RemoveAll(filepath.Join(dir, entry.Name())); err != nil {
++			return err
++		}
++	}
++
++	for name, content := range files {
++		if err = writeFileAtomic(filepath.Join(dir, name), []byte(content)); err != nil {
++			return err
++		}
++	}
++
++	return nil
++}
++
++// writeFileAtomic writes data to a temporary file in the directory of path and renames it over path,
++// so that concurrent readers (e.g. credential provider plugins exec'd by kubelet) never observe a partially written file.
++//
++// The file is created with permissions 0600.
++func writeFileAtomic(path string, data []byte) error {
++	tmp, err := os.CreateTemp(filepath.Dir(path), "."+filepath.Base(path)+".tmp-*")
++	if err != nil {
++		return err
++	}
++
++	tmpPath := tmp.Name()
++
++	defer os.Remove(tmpPath) //nolint:errcheck
++
++	if _, err = tmp.Write(data); err != nil {
++		tmp.Close() //nolint:errcheck
++
++		return err
++	}
++
++	if err = tmp.Close(); err != nil {
++		return err
++	}
++
++	return os.Rename(tmpPath, path)
++}
++
+ // updateKubeconfig updates the kubeconfig of kubelet with the given endpoint if it exists.
+ func (ctrl *KubeletServiceController) updateKubeconfig(newEndpoint *url.URL, newTLSServerName string, acceptedCAs []*talosx509.PEMEncodedCertificate, logger *zap.Logger) error {
+ 	config, err := clientcmd.LoadFromFile(constants.KubeletKubeconfig)
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_service_test.go` (added, +64/-0)
+```diff
+@@ -0,0 +1,64 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package k8s_test
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	k8sctrl "github.com/siderolabs/talos/internal/app/machined/pkg/controllers/k8s"
++)
++
++func TestWriteKubeletCredentialProviderFiles(t *testing.T) {
++	t.Parallel()
++
++	dir := filepath.Join(t.TempDir(), "credentialproviders")
++
++	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, map[string]string{
++		"azure.json": "foo",
++		"other.json": "bar",
++	}))
++
++	assertFiles(t, dir, map[string]string{
++		"azure.json": "foo",
++		"other.json": "bar",
++	})
++
++	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, map[string]string{
++		"azure.json": "baz",
++	}))
++
++	assertFiles(t, dir, map[string]string{
++		"azure.json": "baz",
++	})
++
++	require.NoError(t, k8sctrl.WriteKubeletCredentialProviderFiles(dir, nil))
++
++	assert.NoDirExists(t, dir)
++}
++
++func assertFiles(t *testing.T, dir string, expected map[string]string) {
++	t.Helper()
++
++	entries, err := os.ReadDir(dir)
++	require.NoError(t, err)
++	assert.Len(t, entries, len(expected))
++
++	for name, content := range expected {
++		path := filepath.Join(dir, name)
++
++		data, err := os.ReadFile(path)
++		require.NoError(t, err)
++		assert.Equal(t, content, string(data))
++
++		st, err := os.Stat(path)
++		require.NoError(t, err)
++		assert.Equal(t, os.FileMode(0o600), st.Mode().Perm())
++	}
++}
+```
+
+**File**: `internal/app/machined/pkg/controllers/k8s/kubelet_spec.go` (modified, +1/-0)
+```diff
+@@ -233,6 +233,7 @@ func (ctrl *KubeletSpecController) Run(ctx context.Context, r controller.Runtime
+ 				kubeletSpec.Config = unstructuredConfig
+ 				kubeletSpec.ExpectedNodename = expectedNodename
+ 				kubeletSpec.CredentialProviderConfig = cfgSpec.CredentialProviderConfig
++				kubeletSpec.CredentialProviderFiles = cfgSpec.CredentialProviderFiles
+ 
+ 				return nil
  			},
- 			{
- 				Name:        "selector",
-```
-
-**File**: `website/content/v1.15/reference/configuration/network/linkaliasconfig.md` (modified, +3/-3)
-```diff
-@@ -17,7 +17,7 @@ title: LinkAliasConfig
- {{< highlight yaml >}}
- apiVersion: v1alpha1
- kind: LinkAliasConfig
--name: int0 # Alias for the link.
-+name: int0 # Alias for a link.
- # Selector to match the link to alias.
- selector:
-     match: glob("00:1a:2b:*", mac(link.permanent_addr)) # The Common Expression Language (CEL) expression to match the link.
-@@ -26,7 +26,7 @@ selector:
- {{< highlight yaml >}}
- apiVersion: v1alpha1
- kind: LinkAliasConfig
--name: net%d # Alias for the link.
-+name: net%d # Alias for a link.
- # Selector to match the link to alias.
- selector:
-     match: link.driver == "e1000" # The Common Expression Language (CEL) expression to match the link.
-@@ -35,7 +35,7 @@ selector:
- 
- | Field | Type | Description | Value(s) |
- |-------|------|-------------|----------|
--|`name` |string |Alias for the link.<br><br>Don't use system interface names like "eth0", "ens3", "enp0s2", etc. as those may conflict<br>with existing physical interfaces.<br><br>The name can contain a single integer format verb (`%d`) to create multiple aliases<br>from a single config document. When a format verb is detected, each matched link receives a sequential<br>alias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.<br>Links already aliased by a previous config are automatically skipped. <details><summary>Show example(s)</summary>{{< highlight yaml >}}
-+|`name` |string |Alias for a link.<br><br>Link aliases can be used interchangeably with physical link names in all networking configuration<br>sections that take an existing link name as input.<br><br>Don't use system interface names like "eth0", "ens3", "enp0s2", etc. as those may conflict<br>with existing physical interfaces.<br><br>The name can contain a single integer format verb (`%d`) to create multiple aliases<br>from a single config document. When a format verb is detected, each matched link receives a sequential<br>alias (e.g. `net0`, `net1`, ...) based on hardware address order of the links.<br>Links already aliased by a previous config are automatically skipped. <details><summary>Show example(s)</summary>{{< highlight yaml >}}
- name: net0
- {{< /highlight >}}{{< highlight yaml >}}
- name: private
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14724** (2026-10-24): feat: load kernel modules on demand via the modprobe usermode helper  (@smira)
-- **PR #14723** (2026-10-23): feat: add EDAC_10NM kernel module (@smira)
-- **PR #14722** (2026-10-23): refactor: move all resource list to pkg/machinery (@smira)
-- **PR #14720** (2026-10-23): test: skip VM projection tests on non-amd64 nodes (@shanduur)
-- **PR #14719** (2026-10-23): fix: race with platform accessing metadata volumes (@smira)
-- **PR #14718** (2026-10-23): feat: update etcd to 3.7.3 (@smira)
+- **PR #14800** (closed): fix: skip EFI variable updates when efivarfs is read-only (@excavador)
+- **PR #14797** (2026-10-30): fix: open the files of pkg/xfs roots with O_CLOEXEC (@rducom)
+- **PR #14794** (2026-10-29): fix: ctr `entrypoint`,`arg` replace instead of merge on patch (@majabojarska)
+- **PR #14792** (2026-10-29): fix: rollback alpine version (@shanduur)
+- **PR #14791** (2026-10-30): feat: allow containers to disable seccomp explicitly (@frezbo)
+- **PR #14790** (2026-10-30): feat: add support for kubeconfig in Kubernetes authn & authz configs (@smira)
 
 ---
 
@@ -3097,77 +2652,28 @@ Signed-off-by: Orzelius <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ignore netlink recoverable errors in watchers
+## X. support BGP MD5 authentication password
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/network/watch/ethtool.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/resource/definitions/network/network.proto`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7e5e8729`: ignore netlink recoverable errors in watchers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a1920121`: support BGP MD5 authentication password. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/network/watch/ethtool.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/resource/definitions/network/network.proto`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/mdlayher/netlink"
-	conn *netlink.Conn
-	// the raw netlink connection is used for receiving, as the messages are never decoded,
-	// while the generic netlink wrapper is only used to resolve the multicast group
-	watcher.conn, err = netlink.Dial(unix.NETLINK_GENERIC, nil)
-	monitorID, err := ethtoolMonitorGroup(genetlink.NewConn(watcher.conn))
-		watcher.conn.Close() //nolint:errcheck
-		return nil, err
-		watcher.conn.Close() //nolint:errcheck
-
-		watch(watcher.conn, trigger)
-func ethtoolMonitorGroup(conn *genetlink.Conn) (uint32, error) {
-	ethFamily, err := conn.GetFamily(unix.ETHTOOL_GENL_NAME)
-	if err != nil {
-		return 0, fmt.Errorf("error getting family information for ethtool: %w", err)
-	}
-
-	for _, g := range ethFamily.Groups {
-		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
-			return g.ID, nil
-		}
-	}
-
-	return 0, errors.New("could not find monitor multicast group ID for ethtool")
-}
-
+  string auth_password = 8;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	conn *genetlink.Conn
-	watcher.conn, err = genetlink.Dial(nil)
-	ethFamily, err := watcher.conn.GetFamily(unix.ETHTOOL_GENL_NAME)
-		return nil, fmt.Errorf("error getting family information for ethtool: %w", err)
-	}
-
-	var monitorID uint32
-
-	for _, g := range ethFamily.Groups {
-		if g.Name == unix.ETHTOOL_MCGRP_MONITOR_NAME {
-			monitorID = g.ID
-			break
-		}
-	}
-
-	if monitorID == 0 {
-		return nil, errors.New("could not find monitor multicast group ID for ethtool")
-		for {
-			_, _, watchErr := watcher.conn.Receive()
-			if watchErr != nil {
-				return
-			}
-
-			trigger.QueueReconcile()
-		}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7e5e8729` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a1920121` are properly handled with clean fallback behavior.

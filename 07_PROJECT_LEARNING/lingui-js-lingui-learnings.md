@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source**: github ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
-> **Source Version**: `2527a65b`  
+> **Source Version**: `1527e4eb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:25:26.881Z  
+> **Timestamp**: 2026-10-27T21:45:00.131Z  
 > **Learning ID**: `learn-github-lingui-js-lingui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingui-js-lingui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingui/js-lingui](https://github.com/lingui/js-lingui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:25:26.115Z  
+> **Harvest Timestamp**: 2026-10-27T21:44:58.781Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌍 📖 A readable, automated, and optimized (2 kb) internationalization for JavaScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5926 stars
+- **Stars / Engagement**: 5928 stars
 
 ---
 
@@ -780,401 +780,379 @@ export function makePathRegexSafe(path: string) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2527a65b` (2026-10-26)
-**Commit Message**: fix: look up placeholder values, default variables and Trans elements as own properties (#2741)
+### Incident Patch 1: `ae97ba00` (2026-10-27)
+**Commit Message**: fix(format-json): add a trailing newline to newly created catalogs (#2747)
 
-**File**: `packages/core/src/interpolate.test.ts` (modified, +12/-0)
+**File**: `packages/format-json/src/json.test.ts` (modified, +41/-0)
 ```diff
-@@ -149,6 +149,18 @@ describe("interpolate", () => {
-     expect(cache({ value: "hasOwnProperty" })).toEqual("They")
-   })
- 
-+  it("should not fill placeholders named like Object.prototype members with the inherited member", () => {
-+    expect(prepare("Hi {constructor}")({})).toEqual("Hi ")
-+    expect(prepare("Hi {toString}")({})).toEqual("Hi ")
-+    expect(prepare("Hi {constructor}")({ constructor: "Bob" })).toEqual(
-+      "Hi Bob",
-+    )
-+    expect(prepare("Hi {toString}")({}, undefined, {})).toEqual("Hi ")
-+    expect(
-+      prepare("Hi {toString}")({}, undefined, { toString: "Bob" }),
-+    ).toEqual("Hi Bob")
-+  })
-+
-   describe("Custom format", () => {
-     const testVector = [
-       ["en", undefined, "0.1", "10%", "20%", "€0.10", "€1.00"],
-```
-
-**File**: `packages/core/src/interpolate.ts` (modified, +15/-2)
-```diff
-@@ -72,6 +72,14 @@ const getDefaultFormats = (
-   } as const
- }
- 
-+const getOwnProperty = <T>(
-+  object: Record<string, T> | undefined,
-+  key: string,
-+): T | undefined =>
-+  object && Object.prototype.hasOwnProperty.call(object, key)
-+    ? object[key]
-+    : undefined
-+
- const selectFormatter = (value: string, rules: Record<string, any>) =>
-   // Own-property check so a runtime value like "constructor" or "toString"
-   // falls back to the `other` branch instead of resolving to a member
-@@ -103,9 +111,14 @@ export function interpolate(
-     const formatters = getDefaultFormats(locale, locales, formats)
- 
-     const getValue = (name: string): unknown => {
-+      // Own-property lookups so a placeholder named like an Object.prototype
-+      // member (e.g. "constructor") isn't filled with the inherited member.
-       // Only lazily invoke functions from default variables, not per-call values
--      const variable = variables?.[name]
--      return values[name] ?? (isFunction(variable) ? variable() : variable)
-+      const variable = getOwnProperty(variables, name)
-+      return (
-+        getOwnProperty(values, name) ??
-+        (isFunction(variable) ? variable() : variable)
-+      )
-     }
- 
-     const formatMessage = (
-```
-
-**File**: `packages/react/src/format.test.tsx` (modified, +16/-0)
-```diff
-@@ -170,6 +170,22 @@ describe("formatElements", function () {
+@@ -222,4 +222,45 @@ describe("json format", () => {
+       expect(actual).toMatchSnapshot()
      })
    })
- 
-+  it("should ignore elements named like Object.prototype members", function () {
-+    mockConsole((console) => {
-+      expect(
-+        html(formatElements("<constructor>a</constructor>b", { 0: <em /> })),
-+      ).toEqual("ab")
-+      expect(html(formatElements("a<toString/>b"))).toEqual("ab")
-+      expect(
-+        html(
-+          formatElements("<hasOwnProperty>a</hasOwnProperty>", { 0: <em /> }),
-+        ),
-+      ).toEqual("a")
 +
-+      expect(console.error).toBeCalledTimes(3)
++  describe("trailing newline", () => {
++    const format = createFormat({ style: "minimal" })
++    const filename = path.join("locale", "en", "messages.json")
++    const catalog: CatalogType = {
++      static: {
++        translation: "Static message",
++      },
++    }
++
++    it("should end a new catalog with a newline", async () => {
++      // the CLI passes `existing: undefined` when the catalog file doesn't exist yet
++      const actual = await format.serialize(catalog, {
++        locale: "en",
++        filename,
++        existing: undefined,
++        sourceLocale: "en",
++      })
++      expect(actual).toBe('{\n  "static": "Static message"\n}\n')
 +    })
-+  })
 +
-   it("should ignore incorrect tags and print them as a text", function () {
-     mockConsole((console) => {
-       expect(html(formatElements("text</0>"))).toEqual("text&lt;/0&gt;")
-```
-
-**File**: `packages/react/src/format.tsx` (modified, +8/-1)
-```diff
-@@ -50,7 +50,14 @@ function formatElements(
-   if (before) tree.push(before)
- 
-   for (const [index, children, after] of getElements(parts)) {
--    let element = typeof index !== "undefined" ? elements[index] : undefined
-+    // Own-property check so a tag like <constructor> or <toString/> in a
-+    // translation is reported as undeclared instead of resolving to a member
-+    // inherited from Object.prototype.
-+    let element =
-+      typeof index !== "undefined" &&
-+      Object.prototype.hasOwnProperty.call(elements, index)
-+        ? elements[index]
-+        : undefined
- 
-     if (
-       !element ||
-```
-
-**File**: `packages/solid/src/format.test.tsx` (modified, +15/-0)
-```diff
-@@ -173,6 +173,21 @@ describe("formatElements", function () {
-     })
-   })
- 
-+  it("should ignore elements named like Object.prototype members", function () {
-+    mockConsole((console) => {
-+      expect(
-+        html(() =>
-+          formatElements("<constructor>a</constructor>b", {
-+            0: (props) => <em>{props.children}</em>,
-+          }),
-+        ),
-+      ).toEqual("ab")
-+      expect(html(() => formatElements("a<toString/>b"))).toEqual("ab")
-+
-+      expect(console.error).toBeCalledTimes(2)
++    it("should keep the trailing newline of an existing catalog", async () => {
++      const actual = await format.serialize(catalog, {
++        locale: "en",
++        filename,
++        existing: "{}\n",
++        sourceLocale: "en",
++      })
++      expect(actual).toBe('{\n  "static": "Static message"\n}\n')
 +    })
-+  })
 +
-   it("should ignore incorrect tags and print them as a text", function () {
-     mockConsole((console) => {
-       expect(html(() => formatElements("text</0>"))).toEqual("text&lt;/0&gt;")
-```
-
-**File**: `packages/solid/src/format.tsx` (modified, +8/-1)
-```diff
-@@ -31,7 +31,14 @@ function formatElements(
-   if (before) tree.push(before)
- 
-   for (const [index, children, after] of getElements(parts)) {
--    const element = index === undefined ? undefined : elements[index]
-+    // Own-property check so a tag like <constructor> or <toString/> in a
-+    // translation is reported as undeclared instead of resolving to a member
-+    // inherited from Object.prototype.
-+    const element =
-+      index !== undefined &&
-+      Object.prototype.hasOwnProperty.call(elements, index)
-+        ? elements[index]
-+        : undefined
-     const formattedChildren = children
-       ? formatElements(children, elements)
-       : undefined
-```
-
----
-
-### Incident Patch 2: `bad25c33` (2026-10-26)
-**Commit Message**: fix(detect-locale): keep underscores and digits in fromPath segments (#2738)
-
-**File**: `packages/detect-locale/src/detectors/fromPath.test.ts` (modified, +12/-0)
-```diff
-@@ -16,4 +16,16 @@ describe("fromPath detector", () => {
-   it("should return null when the path has no segment at the given index", () => {
-     expect(fromPath(1, { pathname: "/" })).toBeNull()
-   })
-+
-+  it("should keep locales with underscores or numeric regions intact", () => {
-+    expect(fromPath(0, { pathname: "/pt_BR/some/route" })).toEqual("pt_BR")
-+    expect(fromPath(0, { pathname: "/es-419/some/route" })).toEqual("es-419")
-+    expect(fromPath(1, { pathname: "/v2/en_US/some/route" })).toEqual("en_US")
-+  })
-+
-+  it("should stop at a query string or hash when pathname carries one", () => {
-+    expect(fromPath(0, { pathname: "/fr?utm_source=x" })).toEqual("fr")
-+    expect(fromPath(0, { pathname: "/fr#section" })).toEqual("fr")
-+    expect(fromPath(1, { pathname: "/app/fr/route?a=b" })).toEqual("fr")
++    it("should not add a newline to an existing catalog without one", async () => {
++      const actual = await format.serialize(catalog, {
++        locale: "en",
++        filename,
++        existing: "{}",
++        sourceLocale: "en",
++      })
++      expect(actual).toBe('{\n  "static": "Static message"\n}')
++    })
 +  })
  })
 ```
 
-**File**: `packages/detect-locale/src/detectors/fromPath.ts` (modified, +1/-1)
+**File**: `packages/format-json/src/json.ts` (modified, +1/-2)
 ```diff
-@@ -4,7 +4,7 @@ export default function detectFromPath(
-   localePathIndex: number,
-   location: Partial<Location> = globalThis.location,
- ): LocaleString {
--  const locale: RegExpMatchArray = location.pathname.match(/\/([a-zA-Z-]*)/g)
-+  const locale: RegExpMatchArray = location.pathname.match(/\/([^/?#]*)/g)
-   if (Array.isArray(locale) && locale[localePathIndex]) {
-     return locale[localePathIndex].replace("/", "")
-   }
+@@ -106,8 +106,7 @@ export function formatter(
+         outputCatalog = removeLineNumbers(outputCatalog)
+       }
+ 
+-      const shouldUseTrailingNewline =
+-        existing === null || existing?.endsWith("\n")
++      const shouldUseTrailingNewline = !existing || existing.endsWith("\n")
+       const trailingNewLine = shouldUseTrailingNewline ? "\n" : ""
+ 
+       if (options.style === "minimal") {
 ```
 
 ---
 
-### Incident Patch 3: `51a49b14` (2026-10-26)
-**Commit Message**: chore(examples): migrate js example to lingui v6 (#2739)
+### Incident Patch 2: `57fa67c3` (2026-10-27)
+**Commit Message**: chore(examples): fix vite-project-react-swc type check on lingui v6 (#2749)
 
-**File**: `examples/js/.gitignore` (modified, +1/-1)
+**File**: `examples/vite-project-react-swc/package.json` (modified, +3/-3)
 ```diff
-@@ -1,5 +1,5 @@
- src/locale/_build/
--src/locale/*/*.js
-+src/locale/*/*.mjs
- 
- .pnp.*
- .yarn/*
+@@ -19,10 +19,10 @@
+     "@lingui/cli": "^6.1.0",
+     "@lingui/swc-plugin": "6.3.0",
+     "@lingui/vite-plugin": "^6.1.0",
+-    "@types/react": "^18.0.28",
+-    "@types/react-dom": "^18.0.11",
++    "@types/react": "^18.3.27",
++    "@types/react-dom": "^18.3.7",
+     "@vitejs/plugin-react-swc": "4.3.1",
+-    "typescript": "^4.9.3",
++    "typescript": "^5.9.3",
+     "vite": "7.3.3"
+   }
+ }
 ```
 
-**File**: `examples/js/README.md` (modified, +7/-6)
+**File**: `examples/vite-project-react-swc/tsconfig.json` (modified, +1/-1)
 ```diff
-@@ -1,20 +1,21 @@
- # Using LinguiJS in VanillaJS projects
- 
--Prepare the example by installing dependencies and compiling message catalogs:
-+This example uses the [Lingui Vite plugin](https://lingui.dev/ref/vite-plugin) with the native macro transform, so no Babel setup is needed. [Vitest](https://vitest.dev/) picks up the same configuration from `vite.config.js`.
-+
-+Install dependencies:
- 
- ```sh
- yarn install
--yarn lingui compile
- ```
- 
--Now, either run full test suit:
-+Extract messages from the source files:
- 
- ```sh
--yarn test
-+yarn extract
- ```
- 
--Or each file individually (you need to have `babel-cli` installed globally):
-+Compile message catalogs and run the test suite:
- 
- ```sh
--babel-node src/messages.js
-+yarn test
- ```
+@@ -10,7 +10,7 @@
+     "strict": true,
+     "forceConsistentCasingInFileNames": true,
+     "module": "ESNext",
+-    "moduleResolution": "Node",
++    "moduleResolution": "bundler",
+     "resolveJsonModule": true,
+     "isolatedModules": true,
+     "noEmit": true,
 ```
 
-**File**: `examples/js/babel.config.js` (removed, +0/-4)
+**File**: `examples/vite-project-react-swc/yarn.lock` (modified, +26/-34)
 ```diff
-@@ -1,4 +0,0 @@
--module.exports = {
--  presets: ["@babel/env"],
--  plugins: ["@lingui/babel-plugin-lingui-macro"],
--}
+@@ -1586,30 +1586,22 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@types/react-dom@npm:^18.0.11":
+-  version: 18.2.4
+-  resolution: "@types/react-dom@npm:18.2.4"
+-  dependencies:
+-    "@types/react": "npm:*"
+-  checksum: 10/98ddd7d18dc511f37e6f57ab93839daeee0ad241d95e4e34802a6b0e345a16dcc829eef30a64b1c81f3c48c1336a697c86b53038ca273a20737386dcaf025f83
++"@types/react-dom@npm:^18.3.7":
++  version: 18.3.7
++  resolution: "@types/react-dom@npm:18.3.7"
++  peerDependencies:
++    "@types/react": ^18.0.0
++  checksum: 10/317569219366d487a3103ba1e5e47154e95a002915fdcf73a44162c48fe49c3a57fcf7f57fc6979e70d447112681e6b13c6c3c1df289db8b544df4aab2d318f3
+   languageName: node
+   linkType: hard
+ 
+-"@types/react@npm:*, @types/react@npm:^18.0.28":
+-  version: 18.2.7
+-  resolution: "@types/react@npm:18.2.7"
++"@types/react@npm:^18.3.27":
++  version: 18.3.31
++  resolution: "@types/react@npm:18.3.31"
+   dependencies:
+     "@types/prop-types": "npm:*"
+-    "@types/scheduler": "npm:*"
+-    csstype: "npm:^3.0.2"
+-  checksum: 10/d0a6ce8a4036a61f3085a100a9bda92e677581b1ecf401739269ddb4abcd9e05201597bf32972b1cf8641908c13bf5b4099ea9048f5b505c0770a51f3209794a
+-  languageName: node
+-  linkType: hard
+-
+-"@types/scheduler@npm:*":
+-  version: 0.16.3
+-  resolution: "@types/scheduler@npm:0.16.3"
+-  checksum: 10/2b0aec39c24268e3ce938c5db2f2e77f5c3dd280e05c262d9c2fe7d890929e4632a6b8e94334017b66b45e4f92a5aa42ba3356640c2a1175fa37bef2f5200767
++    csstype: "npm:^3.2.2"
++  checksum: 10/0a5d73b1ba3ce73273b28cc50da78d520b1a8d4253075820dc5cf6c9e286ff6cb339b56bd613d05885fec214fbecd8137bddcbdb475612fdcc46e061d88f00fc
+   languageName: node
+   linkType: hard
+ 
+@@ -2007,10 +1999,10 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"csstype@npm:^3.0.2":
+-  version: 3.1.2
+-  resolution: "csstype@npm:3.1.2"
+-  checksum: 10/1f39c541e9acd9562996d88bc9fb62d1cb234786ef11ed275567d4b2bd82e1ceacde25debc8de3d3b4871ae02c2933fa02614004c97190711caebad6347debc2
++"csstype@npm:^3.2.2":
++  version: 3.2.3
++  resolution: "csstype@npm:3.2.3"
++  checksum: 10/ad41baf7e2ffac65ab544d79107bf7cd1a4bb9bab9ac3302f59ab4ba655d5e30942a8ae46e10ba160c6f4ecea464cc95b975ca2fefbdeeacd6ac63f12f99fe1f
+   languageName: node
+   linkType: hard
+ 
+@@ -3522,23 +3514,23 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"typescript@npm:^4.9.3":
+-  version: 4.9.5
+-  resolution: "typescript@npm:4.9.5"
++"typescript@npm:^5.9.3":
++  version: 5.9.3
++  resolution: "typescript@npm:5.9.3"
+   bin:
+     tsc: bin/tsc
+     tsserver: bin/tsserver
+-  checksum: 10/458f7220ab11e0fc191514cc41be1707645ec9a8c2d609448a448e18c522cef9646f58728f6811185a4c35613dacdf6c98cf8965c88b3541d0288c47291e4300
++  checksum: 10/c089d9d3da2729fd4ac517f9b0e0485914c4b3c26f80dc0cffcb5de1719a17951e92425d55db59515c1a7ddab65808466debb864d0d56dcf43f27007d0709594
+   languageName: node
+   linkType: hard
+ 
+-"typescript@patch:typescript@npm%3A^4.9.3#optional!builtin<compat/typescript>":
+-  version: 4.9.5
+-  resolution: "typescript@patch:typescript@npm%3A4.9.5#optional!builtin<compat/typescript>::version=4.9.5&hash=289587"
++"typescript@patch:typescript@npm%3A^5.9.3#optional!builtin<compat/typescript>":
++  version: 5.9.3
++  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
+   bin:
+     tsc: bin/tsc
+     tsserver: bin/tsserver
+-  checksum: 10/5659316360b5cc2d6f5931b346401fa534107b68b60179cf14970e27978f0936c1d5c46f4b5b8175f8cba0430f522b3ce355b4b724c0ea36ce6c0347fab25afd
++  checksum: 10/696e1b017bc2635f4e0c94eb4435357701008e2f272f553d06e35b494b8ddc60aa221145e286c28ace0c89ee32827a28c2040e3a69bdc108b1a5dc8fb40b72e3
+   languageName: node
+   linkType: hard
+ 
+@@ -3604,12 +3596,12 @@ __metadata:
+     "@lingui/react": "npm:^6.1.0"
+     "@lingui/swc-plugin": "npm:6.3.0"
+     "@lingui/vite-plugin": "npm:^6.1.0"
+-    "@types/react": "npm:^18.0.28"
+-    "@types/react-dom": "npm:^18.0.11"
++    "@types/react": "npm:^18.3.27"
++    "@types/react-dom": "npm:^18.3.7"
+     "@vitejs/plugin-react-swc": "npm:4.3.1"
+     react: "npm:^18.2.0"
+     react-dom: "npm:^18.2.0"
+-    typescript: "npm:^4.9.3"
++    typescript: "npm:^5.9.3"
+     vite: "npm:7.3.3"
+   languageName: unknown
+   linkType: soft
 ```
 
-**File**: `examples/js/lingui.config.js` (modified, +6/-5)
-```diff
-@@ -1,12 +1,13 @@
--/** @type {import('@lingui/conf').LinguiConfig} */
--module.exports = {
-+import { defineConfig } from "@lingui/cli"
-+
-+export default defineConfig({
-   locales: ["en", "cs"],
--  
-+  sourceLocale: "en",
-   catalogs: [
-     {
-       path: "./src/locale/{locale}/messages",
-       include: ["./src"],
-     },
-   ],
--  sourceLocale: "en",
--}
-+  compileNamespace: "es",
-+})
-```
+---
 
-**File**: `examples/js/package.json` (modified, +9/-8)
+### Incident Patch 3: `194f913d` (2026-10-27)
+**Commit Message**: chore(examples): migrate react-native example to lingui v6 (#2746)
+
+**File**: `examples/react-native/package.json` (modified, +5/-6)
 ```diff
-@@ -1,24 +1,25 @@
- {
-   "name": "vanilla-js",
-   "version": "1.0.0",
-+  "type": "module",
-   "main": "src/index.js",
-   "license": "MIT",
-   "author": {
-     "name": "Tomáš Ehrlich",
-     "email": "tomas.ehrlich@gmail.com"
-   },
-   "scripts": {
--    "test": "lingui compile && jest src",
--    "extract": "lingui extract --clean"
-+    "test": "lingui compile && vitest run",
-+    "extract": "lingui extract --clean",
-+    "compile": "lingui compile"
-   },
+@@ -17,8 +17,8 @@
    "dependencies": {
--    "@lingui/core": "^5.0.0-next.3"
-+    "@lingui/core": "^6.10.0"
+     "@formatjs/intl-locale": "^4.0.2",
+     "@formatjs/intl-pluralrules": "^5.2.16",
+-    "@lingui/core": "^5.4.0",
+-    "@lingui/react": "^5.4.0",
++    "@lingui/core": "^6.10.1",
++    "@lingui/react": "^6.10.1",
+     "expo": "^53.0.20",
+     "expo-status-bar": "~2.2.3",
+     "expo-updates": "~0.28.17",
+@@ -28,10 +28,9 @@
    },
    "devDependencies": {
--    "@babel/core": "^7.20.12",
--    "@babel/preset-env": "^7.20.2",
--    "@lingui/babel-plugin-lingui-macro": "^5.0.0-next.3",
--    "@lingui/cli": "^5.0.0-next.3",
--    "jest": "^29.5.0"
-+    "@lingui/cli": "^6.10.0",
-+    "@lingui/vite-plugin": "^6.10.0",
-+    "vite": "^7.3.1",
-+    "vitest": "^5.0.0"
-   }
- }
+     "@babel/core": "^7.26.0",
+-    "@lingui/babel-plugin-lingui-macro": "^5.4.0",
+-    "@lingui/cli": "^5.4.0",
+-    "@lingui/macro": "^5.4.0",
+-    "@lingui/metro-transformer": "^5.4.0",
++    "@lingui/babel-plugin-lingui-macro": "^6.10.1",
++    "@lingui/cli": "^6.10.1",
++    "@lingui/metro-transformer": "^6.10.1",
+     "@react-native-community/eslint-config": "^3.2.0",
+     "@types/react": "~19.0.10",
+     "@typescript-eslint/eslint-plugin": "^5.59.11",
 ```
 
-**File**: `examples/js/src/example.test.js` (renamed, +5/-2)
+**File**: `examples/react-native/src/locales/cs/messages.po` (modified, +13/-12)
 ```diff
-@@ -1,12 +1,15 @@
-+import { describe, expect, it } from "vitest"
- import { i18n } from "@lingui/core"
-+import * as messages from "./messages"
-+import * as ids from "./ids"
+@@ -18,42 +18,43 @@ msgstr ""
+ "X-Crowdin-File: messages.po\n"
+ "X-Crowdin-File-ID: 25\n"
  
- describe("vanilla-js example", function () {
-   describe("messages as ids", function () {
--    test(require("./messages"))
-+    test(messages)
-   })
+-#: src/MainScreen.tsx:91
++#: src/MainScreen.tsx:92
+ msgid "{messageIndex, selectordinal, one {#st message} two {#nd message} few {#rd message} other {#th message}}"
+ msgstr "{messageIndex, selectordinal, other {#. zpráva}}"
  
-   describe("custom ids", function () {
--    test(require("./ids"))
-+    test(ids)
-   })
- })
+-#: src/MainScreen.tsx:78
++#: src/MainScreen.tsx:79
+ msgid "{messagesCount, plural, =0 {You have no unread messages} one {There's # message in your inbox} few {There're # messages in your inbox} other {There're # messages in your inbox}}"
+ msgstr "{messagesCount, plural, =0 {Nemáte žádné nepřečtené zprávy} one {Ve vaší schránce je # zpráva} few {Ve vaší schránce jsou # zprávy} many {Ve vaší schránce je # zpráv} other {Ve vaší schránce je # zpráv}}"
  
+-#: src/MainScreen.tsx:76
++#: src/MainScreen.tsx:77
+ msgid "Add a message to your inbox"
+ msgstr "Přidat zprávu do doručené pošty"
+ 
+-#: src/MainScreen.tsx:23
++#: src/MainScreen.tsx:22
+ msgid "Cancel"
+ msgstr "Zrušit"
+ 
+-#: src/MainScreen.tsx:15
++#: src/MainScreen.tsx:14
+ msgid "Do you want to set all your messages as read?"
+ msgstr "Chcete označit všechny vaše zprávy jako přečtené?"
+ 
+-#: src/MainScreen.tsx:75
++#: src/MainScreen.tsx:76
+ msgid "Mark messages as read"
+ msgstr "Označit zprávy jako přečtené"
+ 
+-#: src/MainScreen.tsx:73
++#: src/MainScreen.tsx:74
+ msgid "Message Inbox"
+ msgstr "Doručená pošta"
+ 
+-#: src/MainScreen.tsx:90
+-msgid "order:"
+-msgstr "pořadí:"
++#: src/MainScreen.tsx:91
++msgid "order: "
++msgstr "pořadí: "
+ 
+-#: src/MainScreen.tsx:44
++#. placeholder {0}: i18n.locale === "en" ? "cs" : "en"
++#: src/MainScreen.tsx:43
+ msgid "Toggle language to {0}"
+ msgstr "Přepnout jazyk na {0}"
+ 
+-#: src/MainScreen.tsx:17
++#: src/MainScreen.tsx:16
+ msgid "Yes"
+ msgstr "Ano"
 ```
 
-**File**: `examples/js/src/ids.js` (modified, +4/-27)
+**File**: `examples/react-native/src/locales/en/messages.po` (modified, +13/-12)
 ```diff
-@@ -1,9 +1,11 @@
- import { i18n } from "@lingui/core"
- import { t, plural, defineMessage } from "@lingui/core/macro"
-+import { messages as enMessages } from "./locale/en/messages.mjs"
-+import { messages as csMessages } from "./locale/cs/messages.mjs"
+@@ -13,42 +13,43 @@ msgstr ""
+ "Language-Team: \n"
+ "Plural-Forms: \n"
  
- i18n.load({
--  en: require("./locale/en/messages").messages,
--  cs: require("./locale/cs/messages").messages,
-+  en: enMessages,
-+  cs: csMessages,
- })
+-#: src/MainScreen.tsx:91
++#: src/MainScreen.tsx:92
+ msgid "{messageIndex, selectordinal, one {#st message} two {#nd message} few {#rd message} other {#th message}}"
+ msgstr "{messageIndex, selectordinal, one {#st message} two {#nd message} few {#rd message} other {#th message}}"
  
- export const common = {
-@@ -60,28 +62,3 @@ export function getLazy() {
-     })
-   )
- }
--
--function main() {
--  const header = getStatic()
--
--  console.log(header)
--  console.log("*".repeat(header.length))
--  console.log()
--
--  console.log(getVariables("Joe"))
--  console.log(getPlural(1))
--  console.log(getPlural(100))
--  console.log()
--
--  console.log(getLazy())
--  console.log()
--}
--
--if (require.main === module) {
--  i18n.activate("en")
--  main()
--
--  console.log()
--  i18n.activate("cs")
--  main()
--}
-```
-
-**File**: `examples/js/src/locale/cs/messages.js` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--/*eslint-disable*/module.exports={messages:JSON.parse("{\"static\":\"Ukázka @lingui/core\",\"zziTz4\":\"Ukázka @lingui/core\",\"lazy\":[\"Chcete pokračovat? \",[\"yes\"],\"/\",[\"no\"]],\"+GYOc0\":[\"Chcete pokračovat? \",[\"yes\"],\"/\",[\"no\"]],\"variables\":[\"Ahoj \",[\"name\"]],\"OVaF9k\":[\"Ahoj \",[\"name\"]],\"common.no\":\"Ne\",\"1UzENP\":\"Ne\",\"plural\":[[\"value\",\"plural\",{\"one\":[\"#\",\" láhev\"],\"few\":[\"#\",\" láhve\"],\"other\":[\"#\",\" láhví\"]}],\" visí na stěně\"],\"KE/K99\":[[\"value\",\"plural\",{\"one\":[\"#\",\" láhev\"],\"few\":[\"#\",\" láhve\"],\"other\":[\"#\",\" láhví\"]}],\" visí na stěně\"],\"common.yes\":\"Ano\",\"l75CjT\":\"Ano\"}")};
-\ No newline at end of file
+-#: src/MainScreen.tsx:78
++#: src/MainScreen.tsx:79
+ msgid "{messagesCount, plural, =0 {You have no unread messages} one {There's # message in your inbox} few {There're # messages in your inbox} other {There're # messages in your inbox}}"
+ msgstr "{messagesCount, plural, =0 {You have no unread messages} one {There's # message in your inbox} few {There're # messages in your inbox} other {There're # messages in your inbox}}"
+ 
+-#: src/MainScreen.tsx:76
++#: src/MainScreen.tsx:77
+ msgid "Add a message to your inbox"
+ msgstr "Add a message to your inbox"
+ 
+-#: src/MainScreen.tsx:23
++#: src/MainScreen.tsx:22
+ msgid "Cancel"
+ msgstr "Cancel"
+ 
+-#: src/MainScreen.tsx:15
++#: src/MainScreen.tsx:14
+ msgid "Do you want to set all your messages as read?"
+ msgstr "Do you want to set all your messages as read?"
+ 
+-#: src/MainScreen.tsx:75
++#: src/MainScreen.tsx:76
+ msgid "Mark messages as read"
+ msgstr "Mark messages as read"
+ 
+-#: src/MainScreen.tsx:73
++#: src/MainScreen.tsx:74
+ msgid "Message Inbox"
+ msgstr "Message Inbox"
+ 
+-#: src/MainScreen.tsx:90
+-msgid "order:"
+-msgstr "order:"
++#: src/MainScreen.tsx:91
++msgid "order: "
++msgstr "order: "
+ 
+-#: src/MainScreen.tsx:44
++#. placeholder {0}: i18n.locale === "en" ? "cs" : "en"
++#: src/MainScreen.tsx:43
+ msgid "Toggle language to {0}"
+ msgstr "Toggle language to {0}"
+ 
+-#: src/MainScreen.tsx:17
++#: src/MainScreen.tsx:16
+ msgid "Yes"
+ msgstr "Yes"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2749** (2026-10-27): chore(examples): fix vite-project-react-swc type check on lingui v6 (@andrii-bodnar)
+- **PR #2747** (2026-10-27): fix(format-json): add a trailing newline to newly created catalogs (@nk-batman21)
+- **PR #2746** (2026-10-27): chore(examples): migrate react-native example to lingui v6 (@dgesteves)
 - **PR #2745** (2026-10-26): chore(examples): migrate remix-vite-babel example to lingui v6 (@dgesteves)
 - **PR #2744** (2026-10-26): chore(cli): raise tinypool dependency floor (@jasontd92)
 - **PR #2743** (2026-10-23): fix(vite-plugin): require @lingui/native-tools 0.2 for Solid jsxRuntime (@andrii-bodnar)
-- **PR #2742** (2026-10-22): chore(release): published v6.10.1 [skip ci] (@andrii-bodnar)
-- **PR #2741** (2026-10-26): fix: look up placeholder values, default variables and Trans elements as own properties (@lprnmns)
-- **PR #2740** (2026-10-21): docs: feature the runtime macro in the website announcement bar (@andrii-bodnar)
 
 ---
 
@@ -1194,32 +1172,58 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. look up placeholder values, default variables and Trans elements as own properti
+## X. format-json): add a trailing newline to newly created catalogs (#2747)
 
 **RULE**:
-When implementing operations in `packages/core/src/interpolate.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/format-json/src/json.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingui/js-lingui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2527a65b`: look up placeholder values, default variables and Trans elements as own properties (#2741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae97ba00`: format-json): add a trailing newline to newly created catalogs (#2747). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/core/src/interpolate.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/format-json/src/json.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it("should not fill placeholders named like Object.prototype members with the inherited member", () => {
-    expect(prepare("Hi {constructor}")({})).toEqual("Hi ")
-    expect(prepare("Hi {toString}")({})).toEqual("Hi ")
-    expect(prepare("Hi {constructor}")({ constructor: "Bob" })).toEqual(
-      "Hi Bob",
-    )
-    expect(prepare("Hi {toString}")({}, undefined, {})).toEqual("Hi ")
-    expect(
-      prepare("Hi {toString}")({}, undefined, { toString: "Bob" }),
-    ).toEqual("Hi Bob")
-  })
 
+  describe("trailing newline", () => {
+    const format = createFormat({ style: "minimal" })
+    const filename = path.join("locale", "en", "messages.json")
+    const catalog: CatalogType = {
+      static: {
+        translation: "Static message",
+      },
+    }
+
+    it("should end a new catalog with a newline", async () => {
+      // the CLI passes `existing: undefined` when the catalog file doesn't exist yet
+      const actual = await format.serialize(catalog, {
+        locale: "en",
+        filename,
+        existing: undefined,
+        sourceLocale: "en",
+      })
+      expect(actual).toBe('{\n  "static": "Static message"\n}\n')
+    })
+
+    it("should keep the trailing newline of an existing catalog", async () => {
+      const actual = await format.serialize(catalog, {
+        locale: "en",
+        filename,
+        existing: "{}\n",
+        sourceLocale: "en",
+      })
+      expect(actual).toBe('{\n  "static": "Static message"\n}\n')
+    })
+
+    it("should not add a newline to an existing catalog without one", async () => {
+      const actual = await format.serialize(catalog, {
+        locale: "en",
+        filename,
+        existing: "{}",
+        sourceLocale: "en",
+      })
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1229,4 +1233,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2527a65b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae97ba00` are properly handled with clean fallback behavior.

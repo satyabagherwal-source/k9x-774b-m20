@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source**: github ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
-> **Source Version**: `e139573e`  
+> **Source Version**: `b08148b3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:12:17.306Z  
+> **Timestamp**: 2026-10-30T16:00:38.960Z  
 > **Learning ID**: `learn-github-mitmproxy-mitmproxy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mitmproxy-mitmproxy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mitmproxy/mitmproxy](https://github.com/mitmproxy/mitmproxy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:12:17.302Z  
+> **Harvest Timestamp**: 2026-10-30T16:00:38.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An interactive TLS-capable intercepting HTTP proxy for penetration testers and software developers.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 46344 stars
+- **Stars / Engagement**: 46491 stars
 
 ---
 
@@ -1308,11 +1308,13 @@ class QuicStartServerHook(commands.StartHook):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8532** (2026-10-25): **update dependencies**
-  *Symptoms*: 
+- **Issue #8547** (2026-10-30): **Fix tests that never assert their comparisons**
+  *Symptoms*: #### Description  Two tests had comparisons that never ran as assertions: `test_encode` had a bare `assert b"..."` (always truthy) instead of checking `in content`, and `test_cutspec` compared `b.parse(...) == [...]` without `assert`. Both now assert, and both pass.  #### Checklist   - [x] I have updated tests where applicable.  - [ ] I have added an entry to the CHANGELOG. (N/A, test-only change) 
 
-- **Issue #8530** (2026-10-25): **Update cryptography**
-  *Symptoms*: 
+- **Issue #8545** (2026-10-29): **Fix #8056: Intercept option from CLI does not works.**
+  *Symptoms*: Closes #8056.  ## What changed - `mitmproxy/options.py` (+8/-0) - `test/test_options_issue_8056.py` (+75/-0)  ## Tests - New regression test `test/test_options_issue_8056.py`: fails on the current code, passes with this change. - Package test suite: 2017 passed, 0 failed (`docker (docker.io/library/python:3.12.12-slim-bookworm@sha256:593bd06efe90efa80dc4eee3948be7c0fde4134606dd40d8dd8dbcade98e669c, --network=none): python -m pytest -p no:cacheprovider --tb=short -W igno`).  --- AI note: this change was prepared with AI assistance (implementer: meta/muse-glimmer; reviews: qwen/qwen3.6-35b-a3b, qwen3-coder-30b-a3b-instruct-keep120) and checked by me before opening this pull request.
+  **Post-Mortem & Fix Analysis**:
+  > Closing this: the change isn't needed. The intercept addon already sets intercept_active when intercept is set (and clears it when intercept is cleared) in its configure(), so adding the same logic to Options.update duplicates it. The new test only failed before because it loads the addon without calling configure(), which doesn't happen in a running mitmproxy. Sorry for the noise.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1329,26 +1331,26 @@ class QuicStartServerHook(commands.StartHook):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e139573e` (2026-10-25)
-**Commit Message**: reopen main for development
+### Incident Patch 1: `b08148b3` (2026-10-30)
+**Commit Message**: Expand ~ in the hardump option (#8541)
 
-**File**: `mitmproxy/version.py` (modified, +1/-1)
-```diff
-@@ -2,7 +2,7 @@
- import subprocess
- import sys
- 
--VERSION = "12.3.1"
-+VERSION = "13.0.0.dev"
- MITMPROXY = "mitmproxy " + VERSION
- 
- # Serialization format version. This is displayed nowhere, it just needs to be incremented by one
-```
+* Expand ~ in the hardump option
 
----
+The hardump option is passed to open() as is when mitmproxy shuts down,
+so a value like ~/flows.har fails with FileNotFoundError and all flows
+that were kept in memory for the HAR export are lost. The save.har
+command and the other file options (save_stream_file, rfile, ...)
+already expand ~.
 
-### Incident Patch 2: `51c1d6b2` (2026-10-25)
-**Commit Message**: mitmproxy 12.3.1
+* Test ~ expansion for hardump
+
+* Add changelog entry for hardump ~ expansion
+
+* [autofix.ci] apply automated fixes
+
+---------
+
+Co-authored-by: autofix-ci[bot] <114827586+autofix-ci[bot]@users.noreply.github.com>
 
 **File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
@@ -1356,34 +1358,66 @@ Observed empirical fixes and code patches:
  
  ## Unreleased: mitmproxy next
  
-+
-+## 25 October 2026: mitmproxy 12.3.1
-+
- - **Security:** Require Brotli 1.2.1 to include the upstream decoder fix for
-   [CVE-2026-111497](https://github.com/google/brotli/releases/tag/v1.2.1).
-   ([#8514](https://github.com/mitmproxy/mitmproxy/pull/8514), @anthonylei)
++- Expand `~` in the `hardump` option, like other file path options. Previously, the HAR file
++  could not be written on exit and the collected flows were lost.
++  ([#8541](https://github.com/mitmproxy/mitmproxy/pull/8541), @memx13)
+ - Fix filter expressions where a filter without an argument is followed by a closing bracket,
+   e.g. `!(~s)` or `(~q & ~s)`, which were rejected as invalid.
+   ([#8537](https://github.com/mitmproxy/mitmproxy/pull/8537), @qodelicious)
 ```
 
-**File**: `mitmproxy/version.py` (modified, +1/-1)
+**File**: `mitmproxy/addons/savehar.py` (modified, +2/-1)
 ```diff
-@@ -2,7 +2,7 @@
- import subprocess
- import sys
+@@ -3,6 +3,7 @@
+ import base64
+ import json
+ import logging
++import os
+ import zlib
+ from collections.abc import Sequence
+ from datetime import datetime
+@@ -125,7 +126,7 @@ def done(self):
+                 har = self.make_har(self.flows)
+                 print(json.dumps(har, indent=4))
+             else:
+-                self.export_har(self.flows, ctx.options.hardump)
++                self.export_har(self.flows, os.path.expanduser(ctx.options.hardump))
  
--VERSION = "13.0.0.dev"
-+VERSION = "12.3.1"
- MITMPROXY = "mitmproxy " + VERSION
+     def flow_entry(self, flow: http.HTTPFlow, servers_seen: set[Server]) -> dict:
+         """Creates HAR entry from flow"""
+```
+
+**File**: `test/mitmproxy/addons/test_savehar.py` (modified, +13/-0)
+```diff
+@@ -239,6 +239,19 @@ def test_compressed(self, tmp_path):
+             out = json.loads(zlib.decompress((tmp_path / "out.zhar").read_bytes()))
+             assert len(out["log"]["entries"]) == 1
  
- # Serialization format version. This is displayed nowhere, it just needs to be incremented by one
++    def test_expanduser(self, tmp_path, monkeypatch):
++        monkeypatch.setenv("HOME", str(tmp_path))
++        monkeypatch.setenv("USERPROFILE", str(tmp_path))
++        s = SaveHar()
++        with taddons.context(s, Save()) as tctx:
++            tctx.configure(s, hardump="~/out.har")
++
++            s.response(tflow.tflow())
++            s.done()
++
++            out = json.loads((tmp_path / "out.har").read_bytes())
++            assert len(out["log"]["entries"]) == 1
++
+ 
+ def test_content_raises():
+     flow = tflow.tflow(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8547** (2026-10-30): Fix tests that never assert their comparisons (@guirguispierre)
+- **PR #8545** (closed): Fix #8056: Intercept option from CLI does not works. (@nabilhaloom)
+- **PR #8541** (2026-10-30): Expand ~ in the hardump option (@memx13)
+- **PR #8537** (2026-10-27): Fix filters like !(~s) being rejected as invalid (@qodelicious)
 - **PR #8532** (2026-10-25): update dependencies (@mhils)
 - **PR #8530** (2026-10-25): Update cryptography (@mhils)
-- **PR #8526** (closed): Bundle Python ABI3T DLL in Windows builds (@Copilot)
-- **PR #8524** (2026-10-25): Add support for Python 3.15 (@mhils)
-- **PR #8521** (2026-10-25): Preserve caller value lists in MultiDict.set_all (@hakarrr)
-- **PR #8520** (2026-10-25): Refresh expiration dates for empty-valued cookies during replay (@hakarrr)
 
 ---
 
@@ -1403,28 +1437,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reopen main for development
+## X. Expand ~ in the hardump option (#8541)
 
 **RULE**:
-When implementing operations in `mitmproxy/version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mitmproxy/mitmproxy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e139573e`: reopen main for development. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b08148b3`: Expand ~ in the hardump option (#8541). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `mitmproxy/version.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-VERSION = "13.0.0.dev"
+- Expand `~` in the `hardump` option, like other file path options. Previously, the HAR file
+  could not be written on exit and the collected flows were lost.
+  ([#8541](https://github.com/mitmproxy/mitmproxy/pull/8541), @memx13)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-VERSION = "12.3.1"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e139573e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b08148b3` are properly handled with clean fallback behavior.

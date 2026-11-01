@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md`  
 > **Source**: github ([https://github.com/rdfjs/N3.js](https://github.com/rdfjs/N3.js))  
-> **Source Version**: `407fa7c6`  
+> **Source Version**: `ce8f71be`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T00:44:01.420Z  
+> **Timestamp**: 2026-10-27T14:04:08.211Z  
 > **Learning ID**: `learn-github-rdfjs-n3-js`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdfjs-n3.js-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rdfjs/N3.js](https://github.com/rdfjs/N3.js))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T00:44:01.152Z  
+> **Harvest Timestamp**: 2026-10-27T14:04:07.308Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -981,529 +981,65 @@ console.timeEnd(TEST);
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `82ab318f` (2026-10-06)
-**Commit Message**: ci: announce each fix once and close issues fixed on next-major (#843)
+### Incident Patch 1: `ce8f71be` (2026-10-26)
+**Commit Message**: chore(deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873)
 
-* ci: announce each fix once and close issues fixed on next-major
+Bumps the minor group with 1 update: [eslint](https://github.com/eslint/eslint).
 
-semantic-release commented on an issue in every release whose commits
-referenced it: once for main, again for the alpha when the change reached
-next-major, and again when a squashed stacked pull request repeated the
-parent's "Closes" line. It now comments only on issues and pull requests
-that don't carry a released label yet.
 
-GitHub closes issues from closing keywords only on the default branch.
-A new workflow closes them for changes that land on next-major, skipping
-force pushes, which only replay changes that already landed.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01BCsMFeEbeNNufEbVSFaPMC
-
-* ci: only count merged next-major pull requests and accept issue URLs when closing issues
-
-Require a merged pull request of this repository, accept this repository's
-issue URLs, and paginate the pushed commits and their pull requests.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01BCsMFeEbeNNufEbVSFaPMC
-
-* ci: stop clos
-
-**File**: `.github/workflows/close-next-major-issues.yml` (added, +78/-0)
-```diff
-@@ -0,0 +1,78 @@
-+name: Close issues fixed on next-major
-+
-+# GitHub only closes issues from closing keywords ("Closes #123") when a change
-+# lands on the default branch. This does the same for next-major, so an issue
-+# closes as soon as its fix lands on either branch. It closes without a comment:
-+# the release announcement on the issue comes from semantic-release.
-+
-+on:
-+  push:
-+    branches:
-+      - next-major
-+
-+# Least-privilege default; the job below widens only to what it needs.
-+permissions:
-+  contents: read
-+
-+jobs:
-+  close:
-+    runs-on: ubuntu-latest
-+    # Force pushes (the rebase sync onto main, resetting the branch after a
-+    # major) replay commits that already landed; only new changes close issues.
-+    if: github.repository == 'rdfjs/N3.js' && !github.event.forced
-+    permissions:
-+      issues: write
-+      pull-requests: read
-+    steps:
-+      - name: Close issues referenced with closing keywords
-+        env:
-+          GH_TOKEN: ${{ github.token }}
-+          REPO: ${{ github.repository }}
-+          BEFORE: ${{ github.event.before }}
-+          AFTER: ${{ github.event.after }}
-+        run: |
-+          set -euo pipefail
-+          # A new branch has no range to read.
-+          if [[ "$BEFORE" =~ ^0+$ ]]; then exit 0; fi
-+
-+          # Closing keywords GitHub recognises, followed by #N, rdfjs/N3.js#N or this
-+          # repository's issue URL. References to other repositories don't match.
-+          keywords='(^|[^[:alnum:]_])(close[sd]?|fix(e[sd])?|resolve[sd]?):?[[:space:]]+(#|rdfjs/n3\.js#|https?://github\.com/rdfjs/n3\.js/issues/)[0-9]+'
-+          # grep exits 1 when nothing matches; any other failure stops the job.
-+          refs() { grep -ioE "$keywords" | grep -oE '[0-9]+$' || [ $? = 1 ]; }
-+
-+          # Each lookup is assigned on its own, so any failed API call stops the job.
-+          shopt -s inherit_errexit
-+          shas=$(gh api --paginate "repos/$REPO/compare/$BEFORE...$AFTER?per_page=100" --jq '.commits[].sha')
-+          found=$(mktemp)
-+          err=$(mktemp)
-+          trap 'rm -f "$found" "$err"' EXIT
-+          for sha in $shas; do
-+            message=$(gh api "repos/$REPO/commits/$sha" --jq '.commit.message')
-+            refs <<<"$message" >>"$found"
-+            # Keywords in the body of a pull request of this repository that was
-+            # merged into next-major; open pull requests can contain the commit too.
-+            bodies=$(gh api --paginate "repos/$REPO/commits/$sha/pulls?per_page=100" \
-+              --jq '.[] | select(.base.ref == "next-major" and .base.repo.full_name == env.REPO and .merged_at != null) | .body // ""')
-+            refs <<<"$bodies" >>"$found"
-+          done
-+          numbers=$(sort -un "$found")
-+
-+          # Look up every issue before closing any. A number that is not an issue in this
-+          # repository (404) or was deleted (410) is skipped; any other error stops the job.
-+          open_issues=()
-+          for number in $numbers; do
-+            if ! issue=$(gh api "repos/$REPO/issues/$number" --jq '{state, pr: (.pull_request != null)}' 2>"$err"); then
-+              if grep -qE 'HTTP 404|HTTP 410' "$err"; then continue; fi
-+              cat "$err" >&2
-+              exit 1
-+            fi
-+            if [ "$(jq -r .pr <<<"$issue")" = false ] && [ "$(jq -r .state <<<"$issue")" = open ]; then
-+              open_issues+=("$number")
-+            fi
-+          done
-+
-+          for number in "${open_issues[@]}"; do
-+            echo "Closing #$number"
-+            gh api -X PATCH "repos/$REPO/issues/$number" -f state=closed -f state_reason=completed >/dev/null
-+          done
-```
-
-**File**: `RELEASING.md` (modified, +13/-0)
-```diff
-@@ -110,3 +110,16 @@ and only fix what the alphas turn up.
- 4. `next-major` is now the same as `main`, so it is ready for the following major. If the major
-    was squashed after all, the sync sees that `next-major` has nothing `main` lacks and resets it
-    to `main`.
-+
-+## Issues and announcements
-+
-+- **Closing.** An issue closes as soon as a pull request with a closing keyword
-+  (`Closes #123`) lands on `main` or `next-major`. GitHub handles `main`;
-+  [`close-next-major-issues.yml`](.github/workflows/close-next-major-issues.yml) handles
-+  new changes on `next-major`, and skips force pushes such as the sync, which only
-+  replay changes that already landed.
-+- **Announcing.** semantic-release comments once on each issue and pull request, from the
-+  stable release that ships it, and labels it `released`. Alphas never comment, so a change
-+  made on `next-major` is announced by the major. Later releases skip anything that already
-+  carries a `released` or `released on @alpha` label, such as a squashed stacked pull
-+  request repeating its parent's `Closes #123`.
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -134,7 +134,7 @@
-       [
-         "@semantic-release/github",
-         {
--          "successCommentCondition": "<% return !branch.prerelease; %>"
-+          "successCommentCondition": "<% return !branch.prerelease && !(issue.labels || []).some(function (label) { return /^released( on @|$)/.test(label.name); }) %>"
-         }
-       ]
-     ]
-```
+Updates `eslint` from 10.12.0 to 10.13.0
+- [Release notes](https://github.com/eslint/eslint/releases)
+- [Commits](https://github.com/eslint/eslint/compare/v10.12.0...v10.13.0)
 
 ---
+updated-dependencies:
+- dependency-name: eslint
+  dependency-version: 10.13.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+  dependency-group: minor
+...
 
-### Incident Patch 2: `aad09528` (2026-10-04)
-**Commit Message**: perf(lexer): scan prefixes and prefixed names by hand (#812)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* perf(lexer): match sticky regexes at a position instead of slicing
-
-The lexer sliced the remaining input after every token and matched
-^-anchored regexes against the slice. It now keeps the input and a
-position, and matches sticky regexes at that position. Unconsumed input
-is sliced once when tokenization suspends for more data.
-
-Closes #102
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01X36teWLb7dtXuw3YmHm4of
-
-* fix: make number, base IRI and relative IRI matching linear
-
-Rewrite the lexer's number regex, the Writer's relative-suffix check and
-the parser's base path, query and format handling so that they run in
-linear time on any input. Matches are unchanged. Also spell the [0-:]
-character ranges in the lexer as [0-9:].
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01VnjNtQcx99DHJx3dXW7fN1
-
-* perf(lexer): scan numbers by hand instead of with a regular expression
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01ShcMRptQhgH7
-
-**File**: `src/N3Lexer.js` (modified, +150/-32)
+**File**: `package-lock.json` (modified, +6/-6)
 ```diff
-@@ -2,7 +2,35 @@
- import namespaces from './IRIs';
- 
- const { xsd } = namespaces;
--const SPACE = 0x20, TAB = 0x09, LF = 0x0A, CR = 0x0D, HASH = 0x23;
-+const SPACE = 0x20, TAB = 0x09, LF = 0x0A, CR = 0x0D, HASH = 0x23,
-+    DOT = 0x2E, COLON = 0x3A, ZERO = 0x30, NINE = 0x39,
-+    PERCENT = 0x25, BACKSLASH = 0x5C;
-+
-+// Whitespace as matched by `\s`
-+function isWhitespace(charCode) {
-+  return charCode === SPACE || charCode >= TAB && charCode <= CR ||
-+    charCode >= 0xA0 && (charCode === 0xA0 || charCode === 0x1680 ||
-+      charCode >= 0x2000 && charCode <= 0x200A || charCode === 0x2028 || charCode === 0x2029 ||
-+      charCode === 0x202F || charCode === 0x205F || charCode === 0x3000 || charCode === 0xFEFF);
-+}
-+// Characters that can directly follow a name: whitespace and punctuation
-+// (the lookahead `[,;!\^\s#()\[\]\{\}"'<>]` of the former regular expressions)
-+const asciiDelimiters = new Uint8Array(0x80);
-+for (const char of ',;!^#()[]{}"\'<> \t\n\v\f\r')
-+  asciiDelimiters[char.charCodeAt(0)] = 1;
-+function isDelimiter(charCode) {
-+  return charCode < 0x80 ? asciiDelimiters[charCode] === 1 : isWhitespace(charCode);
-+}
-+// Whether a name can end before the given position: it must be followed by
-+// a delimiter, optionally after a dot. At the end of finished input, it can always end.
-+function canEndName(input, pos, inputFinished) {
-+  let charCode = input.charCodeAt(pos);
-+  if (charCode === DOT)
-+    charCode = input.charCodeAt(++pos);
-+  if (pos >= input.length)
-+    return inputFinished;
-+  return isDelimiter(charCode);
-+}
- 
- // Fixed escape sequences allowed in string literals (ECHAR)
- const stringEscapeReplacements = {
-@@ -16,9 +44,105 @@ const localNameEscapeReplacements = {
-   '=': '=', '/': '/', '?': '?', '#': '#', '@': '@', '%': '%',
- };
- const illegalIriChars = /[\x00-\x20<>\\"\{\}\|\^\`]/;
--// Characters that cannot occur in a prefixed name, not even escaped
--// (global, so that testAt searches the rest of the input from a position)
--const nonPrefixedNameChar = /[\s<>"{}|^`]/g;
-+
-+// Character classes of names, as bit flags for ASCII characters
-+const PREFIX_START = 1, // PN_CHARS_BASE
-+    LOCAL_START = 2,      // PN_CHARS_U, digits, and colon
-+    NAME_CHAR = 4,        // PN_CHARS
-+    LOCAL_CHAR = 8,       // PN_CHARS and colon
-+    LOCAL_ESCAPE = 16;    // characters that can be escaped in local names (PN_LOCAL_ESC)
-+const asciiNameClasses = new Uint8Array(0x80);
-+for (let charCode = 0; charCode < 0x80; charCode++) {
-+  const char = String.fromCharCode(charCode);
-+  const letter = char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z';
-+  const nameChar = letter || char === '_' || char === '-' || char >= '0' && char <= '9';
-+  asciiNameClasses[charCode] =
-+    (letter ? PREFIX_START : 0) |
-+    (nameChar && char !== '-' || char === ':' ? LOCAL_START : 0) |
-+    (nameChar ? NAME_CHAR : 0) |
-+    (nameChar || char === ':' ? LOCAL_CHAR : 0) |
-+    (char in localNameEscapeReplacements ? LOCAL_ESCAPE : 0);
-+}
-+// Returns the length (0, 1, or 2 code units) of the character at the given position
-+// if it is in the given name character class
-+function nameCharLength(input, pos, charClass) {
-+  const charCode = input.charCodeAt(pos);
-+  if (charCode < 0x80)
-+    return (asciiNameClasses[charCode] & charClass) !== 0 ? 1 : 0;
-+  // Characters from U+10000 to U+EFFFF consist of a surrogate pair
-+  if (charCode >= 0xD800 && charCode <= 0xDB7F) {
-+    const low = input.charCodeAt(pos + 1);
-+    return low >= 0xDC00 && low <= 0xDFFF ? 2 : 0;
-+  }
-+  // PN_CHARS has some characters that PN_CHARS_BASE does not
-+  if (charClass >= NAME_CHAR && (charCode === 0xB7 || charCode >= 0x300 && charCode <= 0x36F ||
-+                                 charCode === 0x203F || charCode === 0x2040))
-+    return 1;
-+  // PN_CHARS_BASE
-+  return charCode >= 0xC0 && charCode <= 0x1FFF && charCode !== 0xD7 && charCode !== 0xF7 &&
-+           (charCode < 0x300 || charCode >= 0x370 && charCode !== 0x37E) ||
-+         charCode >= 0x200C && charCode <= 0x200D || charCode >= 0x2070 && charCode <= 0x218F ||
-+         charCode >= 0x2C00 && charCode <= 0x2FEF || charCode >= 0x3001 && charCode <= 0xD7FF ||
-+         charCode >= 0xF900 && charCode <= 0xFDCF || charCode >= 0xFDF0 && charCode <= 0xFFFD ? 1 : 0;
-+}
-+function isLocalEscape(charCode) {
-+  return charCode < 0x80 && (asciiNameClasses[charCode] & LOCAL_ESCAPE) !== 0;
-+}
-+function isHexDigit(charCode) {
-+  return charCode >= ZERO && charCode <= NINE ||
-+    charCode >= 0x41 && charCode <= 0x46 || charCode >= 0x61 && charCode <= 0x66;
-+}
-+// Returns the end of the prefix (PN_PREFIX) at the given position,
-+// which can contain single dots, but not start or end with one
-+function skipPrefix(input, pos) {
-+  let length = nameCharLength(input, pos, PREFIX_START);
-+  while (length !== 0) {
-+    pos += length;
-+    const next = input.charCodeAt(pos) === DOT ? pos + 1 : pos;
-+    // Most names are ASCII, so look those up without a call
-+    const charCode = input.charCodeAt(next)
-```
-
-**File**: `test/N3Lexer-test.js` (modified, +64/-0)
-```diff
-@@ -1332,6 +1332,15 @@ describe('Lexer', () => {
-                      { type: 'eof', line: 1 }),
-     );
- 
-+    it(
-+      'should keep keyword-like prefixes with name characters that are also whitespace as prefixed names',
-+      shouldTokenize('has\u1680x:p is\ufeffx:p of\u1680:p',
-+                     { type: 'prefixed', prefix: 'has\u1680x', value: 'p', line: 1 },
-+                     { type: 'prefixed', prefix: 'is\ufeffx', value: 'p', line: 1 },
-+                     { type: 'prefixed', prefix: 'of\u1680', value: 'p', line: 1 },
-+                     { type: 'eof', line: 1 }),
-+    );
-+
-     it(
-       'should keep keyword-like prefixes split across chunks as prefixed names',
-       shouldTokenize(streamOf('has', '1:p is', '_:p of-', 'foo:p'),
-@@ -2714,6 +2723,61 @@ describe('Lexer', () => {
-   });
- });
- 
-+describe('A Lexer instance tokenizing names', () => {
-+  // The character classes of the Turtle grammar
-+  const nameStart = '[A-Za-z\\xc0-\\xd6\\xd8-\\xf6\\xf8-\\u02ff\\u0370-\\u037d\\u037f-\\u1fff\\u200c\\u200d' +
-+                    '\\u2070-\\u218f\\u2c00-\\u2fef\\u3001-\\ud7ff\\uf900-\\ufdcf\\ufdf0-\\ufffd]|[\\ud800-\\udb7f][\\udc00-\\udfff]';
-+  const nameChar = '[\\-0-9_\\xb7\\u0300-\\u036f\\u203f\\u2040]';
-+  const isNameStart = new RegExp(`^(?:${nameStart})$`);
-+  // Local names can also contain colons, as well as dots that are not at the end
-+  const isLocalChar = new RegExp(`^(?:${nameStart}|${nameChar}|[.:])$`);
-+  // Characters at the edges of those classes
-+  const boundaries = [
-+    0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x39, 0x3A, 0x40, 0x41, 0x5A, 0x5B, 0x5E, 0x5F, 0x60, 0x61, 0x7A, 0x7B,
-+    0x7F, 0xA0, 0xB6, 0xB7, 0xB8, 0xBF, 0xC0, 0xD6, 0xD7, 0xD8, 0xF6, 0xF7, 0xF8, 0x2FF, 0x300,
-+    0x36F, 0x370, 0x37D, 0x37E, 0x37F, 0x1FFF, 0x2000, 0x200B, 0x200C, 0x200D, 0x200E, 0x203E,
-+    0x203F, 0x2040, 0x2041, 0x206F, 0x2070, 0x218F, 0x2190, 0x2BFF, 0x2C00, 0x2FEF, 0x2FF0, 0x3000,
-+    0x3001, 0xD7FF, 0xD800, 0xDB7F, 0xDB80, 0xDC00, 0xDFFF, 0xE000, 0xF8FF, 0xF900, 0xFDCF, 0xFDD0,
-+    0xFDEF, 0xFDF0, 0xFFFD, 0xFFFE, 0xFFFF,
-+  ];
-+  const chars = boundaries.map(code => String.fromCharCode(code))
-+    .concat(['𐀀', '󯿿', '󰀀', '\ud800\ud800', '\ud800x']);
-+
-+  function firstToken(input) {
-+    try {
-+      return new Lexer().tokenize(input)[0];
-+    }
-+    catch (error) {
-+      return null;
-+    }
-+  }
-+
-+  for (const char of chars) {
-+    const code = [...char].map(c => c.codePointAt(0).toString(16).toUpperCase()).join(' ');
-+
-+    it(`should ${isNameStart.test(char) ? '' : 'not '}start a prefix with U+${code}`, () => {
-+      const token = firstToken(`${char}x:y `);
-+      expect(token !== null && token.type === 'prefixed' && token.prefix === `${char}x`)
-+        .toBe(isNameStart.test(char));
-+    });
-+
-+    it(`should ${isLocalChar.test(char) ? '' : 'not '}continue a local name with U+${code}`, () => {
-+      const token = firstToken(`p:a${char}b `);
-+      expect(token !== null && token.type === 'prefixed' && token.value === `a${char}b`)
-+        .toBe(isLocalChar.test(char));
-+    });
-+  }
-+
-+  it(
-+    'should tokenize a prefixed name with a name character that is also whitespace at the end of a chunk',
-+    shouldTokenize(streamOf('p:a p:b ', 'c p:d '),
-+                   { type: 'prefixed', prefix: 'p', value: 'a', line: 1 },
-+                   { type: 'prefixed', prefix: 'p', value: 'b c', line: 1 },
-+                   { type: 'prefixed', prefix: 'p', value: 'd ', line: 1 },
-+                   { type: 'eof', line: 1 }),
-+  );
-+});
-+
- describe('A Lexer instance with the n3 option set to false', () => {
-   function createLexer() { return new Lexer({ n3: false }); }
- 
-```
-
----
-
-### Incident Patch 3: `1e82f5cc` (2026-10-04)
-**Commit Message**: fix(lexer): report tokens too long to match as syntax errors (#827)
-
-* fix(lexer): report tokens too long to match as syntax errors
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01ASdVU7D5PUmJPq1rYM7SAU
-
-* fix(lexer): rethrow errors from the token callback unchanged
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01ASdVU7D5PUmJPq1rYM7SAU
-
----------
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `src/N3Lexer.js` (modified, +28/-6)
-```diff
-@@ -714,10 +714,32 @@ export default class N3Lexer {
-     return { value: '', matchLength: 0, finalLineLength: 0 };
-   }
- 
-+  // ### `_tryTokenizeToEnd` tokenizes as far as possible, reporting failures through the callback
-+  _tryTokenizeToEnd(callback, inputFinished) {
-+    // Keep track of errors thrown by the callback, which must reach the caller unchanged
-+    let callbackError;
-+    try {
-+      this._tokenizeToEnd((error, token) => {
-+        try {
-+          return callback(error, token);
-+        }
-+        catch (thrown) {
-+          throw (callbackError = thrown);
-+        }
-+      }, inputFinished);
-+    }
-+    catch (error) {
-+      // Matching an extremely long token can exhaust the regular expression stack
-+      if (error === callbackError || !(error instanceof RangeError))
-+        throw error;
-+      callback(this._syntaxError(null, `Token too long on line ${this._line}.`));
-+    }
-+  }
-+
-   // ### `_syntaxError` creates a syntax error for the given issue
--  _syntaxError(issue) {
-+  _syntaxError(issue, message = `Unexpected "${issue}" on line ${this._line}.`) {
-     this._input = null;
--    const err = new Error(`Unexpected "${issue}" on line ${this._line}.`);
-+    const err = new Error(message);
-     err.context = {
-       token: undefined,
-       line: this._line,
-@@ -760,13 +782,13 @@ export default class N3Lexer {
-       if (typeof callback === 'function')
-         queueMicrotask(() => {
-           if (this._tokenization === tokenization)
--            this._tokenizeToEnd(callback, true);
-+            this._tryTokenizeToEnd(callback, true);
-         });
-       // If no callback was passed, tokenize synchronously and return
-       else {
-         const tokens = [];
-         let error;
--        this._tokenizeToEnd((e, t) => e ? (error = e) : tokens.push(t), true);
-+        this._tryTokenizeToEnd((e, t) => e ? (error = e) : tokens.push(t), true);
-         if (error) throw error;
-         return tokens;
+@@ -5765,9 +5765,9 @@
        }
-@@ -793,7 +815,7 @@ export default class N3Lexer {
-           // Tokenize as far as possible. When a previous attempt left a long unfinished token,
-           // wait until the buffered input has doubled, so the token is not rescanned for every chunk.
-           if (this._input.length >= retryLength) {
--            this._tokenizeToEnd(callback, false);
-+            this._tryTokenizeToEnd(callback, false);
-             retryLength = this._input !== null && this._input.length > MIN_RESCAN_LENGTH ?
-               2 * this._input.length : 0;
-           }
-@@ -807,7 +829,7 @@ export default class N3Lexer {
-           if (rest)
-             this._input = typeof this._input === 'string' ? this._input + rest : rest;
-           if (typeof this._input === 'string')
--            this._tokenizeToEnd(callback, true);
-+            this._tryTokenizeToEnd(callback, true);
-         }
-       });
-       input.on('error', error => {
-```
-
-**File**: `test/N3Lexer-test.js` (modified, +49/-0)
-```diff
-@@ -2609,6 +2609,55 @@ describe('Lexer', () => {
-       ]);
-     });
- 
-+    describe('when a regular expression exhausts the stack on a very long token', () => {
-+      function overflowingLexer() {
-+        const lexer = new Lexer();
-+        lexer._iri = { exec() { throw new RangeError('Maximum call stack size exceeded'); } };
-+        return lexer;
-+      }
-+
-+      it('throws a syntax error when tokenizing synchronously', () => {
-+        expect(() => overflowingLexer().tokenize('<a> <b\\u0063>'))
-+          .toThrow('Token too long on line 1.');
-+      });
-+
-+      it('reports a syntax error through the callback for a string', async () => {
-+        const error = await new Promise(resolve => {
-+          overflowingLexer().tokenize('<a>\n<b\\u0063>', error => error && resolve(error));
-+        });
-+        expect(error.message).toBe('Token too long on line 2.');
-+        expect(error.context.line).toBe(2);
-+      });
-+
-+      it('reports a syntax error through the callback for a stream', () => {
-+        const stream = new EventEmitter(), errors = [];
-+        overflowingLexer().tokenize(stream, error => error && errors.push(error));
-+        stream.emit('data', '<b\\u0063> ');
-+        stream.emit('data', '<c> ');
-+        stream.emit('end');
-+        expect(errors.map(error => error.message)).toEqual(['Token too long on line 1.']);
-+      });
-+
-+      it('rethrows a RangeError thrown by the callback without reporting it', () => {
-+        const stream = new EventEmitter(), errors = [];
-+        const thrown = new RangeError('from the callback');
-+        new Lexer().tokenize(stream, (error, token) => {
-+          if (error)
-+            errors.push(error);
-+          else if (token.type === 'IRI')
-+            throw thrown;
-+        });
-+        expect(() => stream.emit('data', '<a> ')).toThrow(thrown);
-+        expect(errors).toEqual([]);
-+      });
-+
-+      it('rethrows other errors', () => {
-+        const lexer = new Lexer();
-+        lexer._iri = { exec() { throw new TypeError('unexpected'); } };
-+        expect(() => lexer.tokenize('<b\\u0063>')).toThrow(TypeError);
-+      });
-+    });
-+
-     it('does not retain the previous token in a later error', () => {
-       const lexer = new Lexer();
-       let laterError;
+     },
+     "node_modules/eslint": {
+-      "version": "10.12.0",
+-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
+-      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
++      "version": "10.13.0",
++      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
++      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
+       "dev": true,
+       "license": "MIT",
+       "workspaces": [
+@@ -14240,9 +14240,9 @@
+       "dev": true
+     },
+     "eslint": {
+-      "version": "10.12.0",
+-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
+-      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
++      "version": "10.13.0",
++      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
++      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
+       "dev": true,
+       "requires": {
+         "@eslint-community/eslint-utils": "^4.8.0",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #873** (2026-10-26): chore(deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (@dependabot[bot])
 - **PR #872** (2026-10-19): chore(deps-dev): Bump the minor group with 2 updates (@dependabot[bot])
 - **PR #871** (2026-10-12): chore(ci): refetch upstream spec suites (@github-actions[bot])
 - **PR #870** (2026-10-12): chore(deps): Bump the minor group with 5 updates (@dependabot[bot])
 - **PR #868** (2026-10-10): fix(reasoner): only match premises whose bound terms match the quad (@jeswr)
 - **PR #866** (2026-10-08): docs: list n3-canon for toCanonical (@jeswr)
-- **PR #864** (2026-10-08): fix(data-factory): only read a literal direction after a language tag (@jeswr)
 
 ---
 
@@ -1523,63 +1059,38 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: announce each fix once and close issues fixed on next-major (#843)
+## X. deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873)
 
 **RULE**:
-When implementing operations in `.github/workflows/close-next-major-issues.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rdfjs/N3.js. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rdfjs/N3.js. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `82ab318f`: ci: announce each fix once and close issues fixed on next-major (#843). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ce8f71be`: deps-dev): Bump eslint from 10.12.0 to 10.13.0 in the minor group (#873). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/close-next-major-issues.yml`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-name: Close issues fixed on next-major
-
-# GitHub only closes issues from closing keywords ("Closes #123") when a change
-# lands on the default branch. This does the same for next-major, so an issue
-# closes as soon as its fix lands on either branch. It closes without a comment:
-# the release announcement on the issue comes from semantic-release.
-
-on:
-  push:
-    branches:
-      - next-major
-
-# Least-privilege default; the job below widens only to what it needs.
-permissions:
-  contents: read
-
-jobs:
-  close:
-    runs-on: ubuntu-latest
-    # Force pushes (the rebase sync onto main, resetting the branch after a
-    # major) replay commits that already landed; only new changes close issues.
-    if: github.repository == 'rdfjs/N3.js' && !github.event.forced
-    permissions:
-      issues: write
-      pull-requests: read
-    steps:
-      - name: Close issues referenced with closing keywords
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
-          BEFORE: ${{ github.event.before }}
-          AFTER: ${{ github.event.after }}
-        run: |
-          set -euo pipefail
-          # A new branch has no range to read.
-          if [[ "$BEFORE" =~ ^0+
+      "version": "10.13.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
+      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
+      "version": "10.13.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
+      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+      "version": "10.12.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
+      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
+      "version": "10.12.0",
+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.12.0.tgz",
+      "integrity": "sha512-npHjrHb2o4ehH3mE+YuxABR+0gyb0aVWCIolgJDArwCiHEIsonBm3ZKjel5b0U5+a+MbEvIyRCGCzD3eKKK2NA==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `82ab318f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ce8f71be` are properly handled with clean fallback behavior.

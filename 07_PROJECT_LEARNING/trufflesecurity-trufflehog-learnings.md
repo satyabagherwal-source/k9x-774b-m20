@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `2caa45cf`  
+> **Source Version**: `421026a6`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T21:10:29.236Z  
+> **Timestamp**: 2026-10-30T15:37:10.932Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T21:10:28.527Z  
+> **Harvest Timestamp**: 2026-10-30T15:37:10.195Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28712 stars
+- **Stars / Engagement**: 28779 stars
 
 ---
 
@@ -1140,204 +1140,232 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2caa45cf` (2026-10-26)
-**Commit Message**: add SecretParts to custom detectors (#5470)
+### Incident Patch 1: `421026a6` (2026-10-30)
+**Commit Message**: Recover from detector panics in the verification overlap worker (#5495)
 
-Populate Result.SecretParts when a secret is found by a customer regex detector.
+A detector panic in FromData during verification overlap killed the
+worker goroutine. Once every overlap worker had died, scanning stalled
+with no error.
 
-We do this by adding the SecretParts field to Results within custom detectors.
+The worker now recovers detector panics, logs them, counts the chunk as
+dropped, and keeps processing.
 
-**File**: `pkg/custom_detectors/CUSTOM_DETECTORS.md` (modified, +1/-0)
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `pkg/engine/engine.go` (modified, +110/-94)
 ```diff
-@@ -34,6 +34,7 @@ This guide will walk you through setting up a custom detector in TruffleHog to i
-    - **`name`**: A unique identifier for your custom detector.
-    - **`keywords`**: An array of strings that, when found, trigger the regex search. If multiple keywords are specified, the presence of any one of them will initiate the regex search.
-    - **`regex`**: Defines the patterns to identify potential secrets. You can specify one or more named regular expressions. For a detection to be successful, each named regex must find a match. Capture groups `()` within these regular expressions are used to extract specific portions of the matched text, enabling the detector to process and report on particular segments of the identified patterns.
-+     Each named regex is recorded as a separate part of the detected secret, labeled with the regex's name, with the first capture group as its value (or the entire match if there is no capture group). Renaming a regex changes that label for new results, so keep names stable once a detector is in use.
+@@ -45,6 +45,8 @@ var errOverlap = errors.New(
+ 		"You can override this behavior by using the --allow-verification-overlap flag",
+ )
  
-    - **`verify`**: An optional section to validate detected secrets. If you want to verify or unverify detected secrets, this section needs to be configured. If not configured, all detected secrets will be marked as unverified. Read [verification server examples](#verification-server-examples)
-      - **`successRanges`**: A list of HTTP status codes (or ranges) that indicate the secret is **live** (active). When the verification server responds with a matching status code, the secret is marked as verified. Each entry can be a single code (`"200"`) or an inclusive range (`"200-202"`). If omitted (along with `rotatedRanges`), only `200` is treated as verified (backward compatible).
-```
-
-**File**: `pkg/custom_detectors/custom_detectors.go` (modified, +3/-0)
-```diff
-@@ -282,6 +282,8 @@ func (c *CustomRegexWebhook) createResults(ctx context.Context, match map[string
- 		DetectorType: detector_typepb.DetectorType_CustomRegex,
- 		DetectorName: c.GetName(),
- 		ExtraData:    map[string]string{},
-+		// Each entry is named after a regex in the user's config.
-+		SecretParts: make(map[string]string, len(match)),
- 	}
++var errDetectorPanic = errors.New("detector panicked")
++
+ // Metrics for the scan engine for external consumption.
+ type Metrics struct {
+ 	BytesScanned           uint64
+@@ -1075,119 +1077,133 @@ func likelyDuplicate(ctx context.Context, val chunkSecretKey, dupes map[chunkSec
+ func (e *Engine) verificationOverlapWorker(ctx context.Context) {
+ 	var wgDetect sync.WaitGroup
  
- 	var raw string
-@@ -296,6 +298,7 @@ func (c *CustomRegexWebhook) createResults(ctx context.Context, match map[string
- 		}
- 		raw += secret
- 		secrets = append(secrets, secret)
-+		result.SecretParts[key] = secret
- 
- 		// We set the full regex match as the primary secret value.
- 		// Reasoning:
-```
-
-**File**: `pkg/custom_detectors/custom_detectors_test.go` (modified, +89/-6)
-```diff
-@@ -241,6 +241,7 @@ func TestDetector(t *testing.T) {
- 	assert.NoError(t, err)
- 	assert.Equal(t, 1, len(results))
- 	assert.Equal(t, results[0].Raw, []byte(`123456`))
-+	assert.Equal(t, map[string]string{"regex": "123456"}, results[0].SecretParts)
- }
- 
- func TestDetectorPrimarySecret(t *testing.T) {
-@@ -260,6 +261,10 @@ func TestDetectorPrimarySecret(t *testing.T) {
- 	assert.NoError(t, err)
- 	assert.Equal(t, 1, len(results))
- 	assert.Equal(t, "secret_YI7C90ACY1_yy", results[0].GetPrimarySecretValue())
-+	assert.Equal(t, map[string]string{
-+		"id":     "id_ALPHA10100_yy",
-+		"secret": "secret_YI7C90ACY1_yy",
-+	}, results[0].SecretParts)
- }
- 
- func TestDetectorPrimarySecretFullMatch(t *testing.T) {
-@@ -313,7 +318,75 @@ func TestDetectorPrimarySecretFullMatch(t *testing.T) {
- 			assert.Equal(t, tt.want, results[0].GetPrimarySecretValue())
- 		})
- 	}
+-	// Reuse the same map and slice to avoid allocations.
++	for chunk := range e.verificationOverlapChunksChan {
++		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
++	}
++
++	wgDetect.Wait()
 +}
 +
-+// TestDetectorSecretParts checks that each named regex becomes one entry in SecretParts.
-+func TestDetectorSecretParts(t *testing.T) {
-+	t.Parallel()
++func (e *Engine) processVerificationOverlapChunk(
++	ctx context.Context,
++	chunk verificationOverlapChunk,
++	wgDetect *sync.WaitGroup,
++) {
++	sourceTypeStr := chunk.chunk.SourceType.String()
 +
-+	t.Run("capture group", func(t *testing.T) {
-+		t.Parallel()
-+		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+			Name:     "test",
-+			Keywords: []string{"secret"},
-+			Regex:    map[string]string{"secret": `secret *= *"([^"\r\n]+)"`},
-+		})
-+		require.NoError(t, err)
-+
-+		results, err := detector.FromData(context.Background(), false, []byte(`secret="mysecret"`))
-+		require.NoError(t, err)
-+		require.Len(t, results, 1)
-+		assert.Equal(t, map[string]string{"secret": "mysecret"}, results[0].SecretParts)
-+		assert.Equal(t, `secret="mysecret"`, results[0].GetPrimarySecretValue())
++	defer chunk.verificationOverlapWgDoneFn()
++	defer common.RecoverWithHandler(ctx, func(error) {
++		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
 +	})
 +
-+	t.Run("no capture group", func(t *testing.T) {
-+		t.Parallel()
-+		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+			Name:     "test",
-+			Keywords: []string{"hog"},
-+			Regex:    map[string]string{"token": `hog_[A-Za-z0-9]{8}`},
-+		})
-+		require.NoError(t, err)
-+
-+		results, err := detector.FromData(context.Background(), false, []byte("prefix hog_abcd1234 suffix"))
-+		require.NoError(t, err)
-+		require.Len(t, results, 1)
-+		assert.Equal(t, map[string]string{"token": "hog_abcd1234"}, results[0].SecretParts)
-+		assert.Equal(t, []byte("hog_abcd1234"), results[0].Raw)
-+	})
+ 	const avgSecretsPerDetector = 8
+ 	detectorKeysWithResults := make(map[ahocorasick.DetectorKey]*ahocorasick.DetectorMatch, avgSecretsPerDetector)
+ 	chunkSecrets := make(map[chunkSecretKey]struct{}, avgSecretsPerDetector)
  
-+	t.Run("verified multi-part", func(t *testing.T) {
-+		t.Parallel()
-+		ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-+			w.WriteHeader(http.StatusOK)
-+		}))
-+		t.Cleanup(ts.Close)
+-	for chunk := range e.verificationOverlapChunksChan {
+-		sourceTypeStr := chunk.chunk.SourceType.String()
+-		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
+-		for _, detector := range chunk.detectors {
+-			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
+-			detectorNameStr := detector.Key.Type().String()
+-
+-			// DO NOT VERIFY at this stage of the pipeline.
+-			matchedBytes := detector.Matches()
+-			for _, match := range matchedBytes {
+-				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
+-				results, err := detector.FromData(ctx, false, match)
+-				cancel()
+-				if err != nil {
+-					ctx.Logger().Error(
+-						err, "error finding results in chunk during verification overlap",
+-						"detector", detectorNameStr,
+-					)
+-					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
++	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
++	for _, detector := range chunk.detectors {
++		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
++		detectorNameStr := detector.Key.Type().String()
 +
-+		detector, err := NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+			Name:     "test",
-+			Keywords: []string{"secret"},
-+			Regex: map[string]string{
-+				"id":     `id_([A-Z]{4})`,
-+				"secret": `secret_([A-Z]{4})`,
-+			},
-+			Verify: []*custom_detectorspb.VerifierConfig{{
-+				Endpoint: ts.URL,
-+				Unsafe:   true,
-+			}},
-+		})
-+		require.NoError(t, err)
++		// DO NOT VERIFY at this stage of the pipeline.
++		matchedBytes := detector.Matches()
++		for _, match := range matchedBytes {
++			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
++			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
++			cancel()
++			if err != nil {
++				if !errors.Is(err, errDetectorPanic) {
++					ctx.Logger().Error(err, "error finding results in chunk during verification overlap")
+ 				}
++				chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
++			}
+ 
+-				if len(results) == 0 {
+-					continue
+-				}
+-				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
+-					detectorKeysWithResults[detector.Key] = detector
+-				}
++			if len(results) == 0 {
++				continue
++			}
++			if _, ok := detectorKeysWithResults[detector.Key]; !ok {
++				detectorKeysWithResults[detector.Key] = detector
++			}
+ 
+-				// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
+-				// problem can theoretically occur for any scan, but we've only actually seen it in practice during
+-				// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
+-				// disable filtration for targeted scans, but if you're here because this problem surfaced for a
+-				// non-targeted scan then we'll have to solve it correctly.
+-				if chunk.chunk.SecretID == 0 {
+-					results = e.filterResults(ctx, "verification_overlap", detector, results)
++			// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
++			// problem can theoretically occur for any scan, but we've only actually seen it in practice during
++			// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
++			// disable filtration for targeted scans, but if you're here because this problem surfaced for a
++			// non-targeted scan then we'll have to solve it correctly.
++			if chunk.chunk.SecretID == 0 {
++				results = e.filterResults(ctx, "verification_overlap", detector, results)
++			}
 +
-+		results, err := detector.FromData(context.Background(), true, []byte("id_ABCD secret_WXYZ"))
-+		require.NoError(t, err)
-+		require.Len(t, results, 1)
-+		assert.True(t, results[0].Verified)
-+		assert.Equal(t, map[string]string{
-+			"id":     "ABCD",
-+			"secret": "WXYZ",
-+		}, results[0].SecretParts)
-+		assert.Equal(t, []byte("ABCDWXYZ"), results[0].Raw)
-+	})
++			for _, res := range results {
++				var val []byte
++				if res.RawV2 != nil {
++					val = res.RawV2
++				} else {
++					val = res.Raw
+ 				}
+ 
+-				for _, res := range results {
+-					var val []byte
+-					if res.RawV2 != nil {
+-						val = res.RawV2
+-					} else {
+-						val = res.Raw
+-					}
++				// Use levenstein distance to determine if the secret is likely the same.
++				// Ex
+```
+
+**File**: `pkg/engine/engine_test.go` (modified, +65/-0)
+```diff
+@@ -1852,6 +1852,14 @@ func (p passthroughDetector) Keywords() []string                 { return p.keyw
+ func (p passthroughDetector) Type() detector_typepb.DetectorType { return p.detectorType }
+ func (p passthroughDetector) Description() string                { return "fake detector for testing" }
+ 
++// panicDetector panics on every FromData call, so tests can check that the verification overlap worker keeps running
++// and still releases chunk wait groups.
++type panicDetector struct{ passthroughDetector }
++
++func (panicDetector) FromData(aCtx.Context, bool, []byte) ([]detectors.Result, error) {
++	panic("panicDetector always panics")
++}
++
+ // fixedVerdictDetector reports the same verdict whether or not verification was requested, so tests can confirm the
+ // engine passes verdicts through untouched while recording whether verification was attempted.
+ type fixedVerdictDetector struct {
+@@ -2218,6 +2226,63 @@ func TestEngine_VerificationOverlapWorker_DetectableChunkHasCorrectVerifyFlag(t
+ 	})
  }
  
- func TestDetectorValidations(t *testing.T) {
-@@ -351,6 +424,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStr0ngP@ssword!"),
-+					SecretParts:  map[string]string{"password": "MyStr0ngP@ssword!"},
- 				},
- 			},
- 		},
-@@ -398,6 +472,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStrongPassword!"),
-+					SecretParts:  map[string]string{"password": "MyStrongPassword!"},
- 				},
- 			},
- 		},
-@@ -445,6 +520,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStrongPassword!"),
-+					SecretParts:  map[string]string{"password": "MyStrongPassword!"},
- 				},
- 			},
- 		},
-@@ -492,6 +568,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStr@ngP@ssword!"),
-+					SecretParts:  map[string]string{"password": "MyStr@ngP@ssword!"},
- 				},
- 			},
- 		},
-@@ -540,6 +617,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("MyStrongP@ssword"),
-+					SecretParts:  map[string]string{"password": "MyStrongP@ssword"},
- 				},
- 			},
- 		},
-@@ -588,6 +666,7 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("mystrongp@ssword"),
-+					SecretParts:  map[string]string{"password": "mystrongp@ssword"},
- 				},
- 			},
- 		},
-@@ -624,6 +703,10 @@ func TestDetectorValidations(t *testing.T) {
- 					DetectorName: "test",
- 					Verified:     false,
- 					Raw:          []byte("c392c9837d69b44c764cbf260b-e618
++// TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic checks that a detector panicking in FromData neither kills
++// the verification overlap worker nor leaves the sender's wait group unreleased, and that the other detectors on the
++// same chunk are still forwarded for verification.
++func TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic(t *testing.T) {
++	ctx := context.Background()
++	data := []byte("keyword ;oahpow8heg;blaisd")
++
++	e := &Engine{
++		detectableChunksChan:          make(chan detectableChunk, 4),
++		results:                       make(chan detectors.ResultWithMetadata, 4),
++		retainFalsePositives:          true,
++		verificationOverlapChunksChan: make(chan verificationOverlapChunk, 2),
++	}
++
++	// Stand in for the detector workers: record what was forwarded and release the overlap worker's wgDetect so its
++	// final Wait returns.
++	forwarded := make(chan detector_typepb.DetectorType, 4)
++	go func() {
++		for c := range e.detectableChunksChan {
++			forwarded <- c.detector.Type()
++			c.wgDoneFn()
++		}
++		close(forwarded)
++	}()
++
++	// Queue two chunks so the test also shows the worker keeps going after the first panic.
++	ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{
++		panicDetector{passthroughDetector{detectorType: detector_typepb.DetectorType(-1), keywords: []string{"keyw"}}},
++		passthroughDetector{detectorType: detector_typepb.DetectorType(-2), keywords: []string{"keyword"}},
++	})
++	var chunksDone atomic.Int32
++	for range 2 {
++		matches := ahcore.FindDetectorMatches(data)
++		require.Len(t, matches, 2)
++		e.verificationOverlapChunksChan <- verificationOverlapChunk{
++			chunk:                       sources.Chunk{Data: data},
++			detectors:                   matches,
++			verificationOverlapWgDoneFn: func() { chunksDone.Add(1) },
++		}
++	}
++	close(e.verificationOverlapChunksChan)
++
++	e.verificationOverlapWorker(ctx)
++	close(e.detectableChunksChan)
++
++	var forwardedTypes []detector_typepb.DetectorType
++	for typ := range forwarded {
++		forwardedTypes = append(forwardedTypes, typ)
++	}
++
++	assert.EqualValues(t, 2, chunksDone.Load(), "every chunk must release its wait group")
++	assert.Equal(t,
++		[]detector_typepb.DetectorType{-2, -2}, forwardedTypes,
++		"the non-panicking detector should still be forwarded for both chunks",
++	)
++}
++
+ func TestEngine_IterativeDecoding(t *testing.T) {
+ 	t.Parallel()
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5495** (2026-10-30): [SCAN-317] Recover from detector panics in the verification overlap worker (@dipto-truffle)
+- **PR #5494** (2026-10-29): Clean up Docker source logging for per-source debug (@kashifkhan0771)
+- **PR #5489** (2026-10-29): Close Couchbase clusters after verification and honor the context (@unsmith)
+- **PR #5487** (closed): Ignore. Fat fingered  (@markcunninghamgit)
+- **PR #5481** (2026-10-27): Clean up S3 source logging for per-source debug (@kashifkhan0771)
 - **PR #5474** (2026-10-24): Fix 7z and rar panics in the archive handler and log recovered panic stacks (@dustin-decker)
-- **PR #5473** (2026-10-24): Keep GoReleaser temp files off the tmpfs /tmp in releases (@dustin-decker)
-- **PR #5472** (2026-10-24): security: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497) (@dustin-decker)
-- **PR #5471** (2026-10-24): Fix --include-wikis help typo and huggingface README description (@protonnegativo)
-- **PR #5470** (2026-10-26): [SCAN-180]: Populate SecretParts for custom detector results (@casey-tran)
-- **PR #5467** (2026-10-26): Skip GitHub comment errors when issues or PRs are off (@kashifkhan0771)
 
 ---
 
@@ -1357,28 +1385,87 @@ We do this by adding the SecretParts field to Results within custom detectors.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add SecretParts to custom detectors (#5470)
+## X. Recover from detector panics in the verification overlap worker (#5495)
 
 **RULE**:
-When implementing operations in `pkg/custom_detectors/CUSTOM_DETECTORS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2caa45cf`: add SecretParts to custom detectors (#5470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `421026a6`: Recover from detector panics in the verification overlap worker (#5495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/custom_detectors/CUSTOM_DETECTORS.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-     Each named regex is recorded as a separate part of the detected secret, labeled with the regex's name, with the first capture group as its value (or the entire match if there is no capture group). Renaming a regex changes that label for new results, so keep names stable once a detector is in use.
+var errDetectorPanic = errors.New("detector panicked")
+
+	for chunk := range e.verificationOverlapChunksChan {
+		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
+	}
+
+	wgDetect.Wait()
+}
+
+func (e *Engine) processVerificationOverlapChunk(
+	ctx context.Context,
+	chunk verificationOverlapChunk,
+	wgDetect *sync.WaitGroup,
+) {
+	sourceTypeStr := chunk.chunk.SourceType.String()
+
+	defer chunk.verificationOverlapWgDoneFn()
+	defer common.RecoverWithHandler(ctx, func(error) {
+		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
+	})
+
+	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
+	for _, detector := range chunk.detectors {
+		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
+		detectorNameStr := detector.Key.Type().String()
+
+		// DO NOT VERIFY at this stage of the pipeline.
+		matchedBytes := detector.Matches()
+		for _, match := range matchedBytes {
+			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
+			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
+			cancel()
+			if err != nil {
+				if !errors.Is(err, errDetectorPa
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	// Reuse the same map and slice to avoid allocations.
+	for chunk := range e.verificationOverlapChunksChan {
+		sourceTypeStr := chunk.chunk.SourceType.String()
+		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
+		for _, detector := range chunk.detectors {
+			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
+			detectorNameStr := detector.Key.Type().String()
+
+			// DO NOT VERIFY at this stage of the pipeline.
+			matchedBytes := detector.Matches()
+			for _, match := range matchedBytes {
+				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
+				results, err := detector.FromData(ctx, false, match)
+				cancel()
+				if err != nil {
+					ctx.Logger().Error(
+						err, "error finding results in chunk during verification overlap",
+						"detector", detectorNameStr,
+					)
+					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
+				if len(results) == 0 {
+					continue
+				}
+				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
+					detectorKeysWithResults[detector.Key] = detector
+				}
+				// If results filtration eliminates a rotated secret, then that rotation will never be reported. Thi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2caa45cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `421026a6` are properly handled with clean fallback behavior.

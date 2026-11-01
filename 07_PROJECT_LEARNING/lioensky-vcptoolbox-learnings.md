@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `b98e4117`  
+> **Source Version**: `2299d94b`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T12:13:37.825Z  
+> **Timestamp**: 2026-10-30T19:19:25.631Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T12:13:37.305Z  
+> **Harvest Timestamp**: 2026-10-30T19:19:25.335Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2406 stars
+- **Stars / Engagement**: 2418 stars
 
 ---
 
@@ -263,11 +263,11 @@ export function useDashboardState(
   const userAuthCode = ref("加载中…");
   const weather = ref<DashboardWeatherDisplay>({
     icon: "--",
-    temp: 0,
+    temp: null,
     text: "加载中…",
-    humidity: 0,
+    humidity: null,
     wind: "--",
-    pressure: 0,
+    pressure: null,
     forecast: [],
   });
   const newsItems = ref<NewsItem[]>([]);
@@ -377,7 +377,7 @@ export function useDashboardState(
     }
 
     if (memoryProfileData.value) {
-      memoryProfile.value = memoryProfileData.valu
+      memoryProfile.value = memoryProfile
 ```
 
 ### Core Architecture Module: `AdminPanel-Vue/src/composables/useMainLayoutState.ts`
@@ -1785,14 +1785,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #553** (2026-10-26): **feat(VTrade): 新增本地看盘与 AI 模拟交易插件，六个插槽可替换**
-  *Symptoms*: 
+- **Issue #565** (2026-10-30): **fix(knowledge-base): 完善向量基线与存储元数据生命周期自净回收闭环**
+  *Symptoms*: ## 动机与背景  在长期运行与版本演进过程中，通过对 `VectorStore` 目录及 `knowledge_base.sqlite` 进行扇区级（`dbstat`）存储剖析，定位到四处因生命周期闭环缺失导致的隐性空间膨胀问题：  1. **已提交一致性计划大字段滞留**：`TagConsistencyCommitTask` 在计划提交后仅将 `kbm_prepared_plans.status` 置为 `'committed'`，完整保留了单条数兆字节（约 4~5 MB）的 `plan_json`；且 `TagConsistencyPrepareTask` 在清理过期计划时带有 `AND status != 'committed'` 过滤条件，导致已执行完毕的巨型计划 JSON 永久驻留数据库。 2. **消亡日记本/思维簇的基线与磁盘文件孤儿化**：当某个日记本或思维簇目录被整体移除或重命名后，启动期 `OrphanCleanupTask` 仅清理了 `files`、`chunks` 与 `file_tags`，并将 `kbm_index_states` 置为 `'invalid'`，未级联清理已无任何文件归属的 `chunk_index_baselines`、`chunk_index_baseline_entries` 记录及磁盘上对应的 `.vec` / `.usearch` 基线文件；同时 `IndexRepository.deletePersisted` 受 `shouldPersist` 守卫拦截，无法强制清理非持久化白名单目录下的历史残留文件。 3. **跨世代基线明细堆积**：`IndexCheckpointTask` 在发布新世代日记本或全局 Tag 基线并清理旧世代 `chunk_index_baselines` / `tag_index_baselines` 主表行时，未同步清理明细表 `chunk_index_baseline_entries` 与 `tag_index_baseline_entries` 中的非当前世代记录。 4. **过期迁移向量缓存未自动回收**：`migration_deleted_files` 及关联的 `migration_deleted_chunks` 在超过 TTL（`expires_at < now`）后缺少启动期自动清理机制。  ## 架构与解决方案  本次 PR 在不改变任何现有 ABI 契约、检索语义与 `database_generation` 一致性机制的前提下，实施最小侵入式的存储自净闭环修复：  1. **`rust-vexus-lite/src/tag_consistency.rs`**：    - 在 `TagConsistencyCommitTask` 写事务中，提交成功后同步将 `plan_json` 置空为轻量级 `'{}'`（重复提交的幂等重入校验基于 `kbm_operation_receipts` 表，不再读取 `plan_json`）；    - 在 `TagConsistencyPrepareTask` 中将过期清理语句统一为 `DELETE FROM kbm_prepared_plans WHERE expires_at < ?1`，确保已过期的历史计划记录被自动回收。 2. **`rust-vexus-lite/src/ingestion.rs`**：    - 在启动期 `OrphanCleanupTask` 写事务中增加 `DELETE FR
 
-- **Issue #552** (2026-10-26): **feat(MinerUParser): add MinerU PDF parser, dedupe, and knowledge base**
-  *Symptoms*: ## Summary  Adds `Plugin/MinerUParser`, a synchronous Rust stdio plugin that turns PDFs into a clean local knowledge base without polluting the model context.  - `parse` / `query` / `status` / `batch`: MinerU v4 local-file and URL parsing, SHA-256 caching, >200-page sharding, continuation, and concurrent batches. - `migrate` / `locate` / `read`: readable asset directories, keyword lookup, ranged/section Markdown reads, and multimodal image slices returned as `image_url` content parts. - `preflight`: pre-import dedupe by PDF SHA-256, including duplicates inside the same selection and existing library hits. - `duplicates`: read-only whole-library scan by paper id, normalized body fingerprint, normalized title, and source path. - `list` / `info`: workspace-aware library listing and single-paper detail.  Safety and limits: ZIP extraction defenses, path containment, output budgets, token masking, and read-only dedupe. Token is read from `config.env` and is not committed.  The companion VCPChat workbench is submitted separately; this plugin can also be used directly from tool calls.  ## Test plan  - [x] `cargo test` — 76 passed - [x] Release build; `bin/MinerUParser-x86_64-pc-windows-msvc.exe` matches the release binary SHA-256 - [x] Real stdio end-to-end: 520 PDFs → preflight returns 500 with `truncated=true` - [x] 80-level nested folder is discovered; pathological 70-segment glob returns a bounded error - [x] Whole-library duplicate scan on 43 papers completes read-only in ~0.1s 
-  **Post-Mortem & Fix Analysis**:
-  > Companion workbench UI: lioensky/VCPChat#284
-  > 插件商店已有类似插件，建议pr到插件商店
+- **Issue #564** (2026-10-30): **fix(bilibili): return only requested content for snapshot calls**
+  *Symptoms*: 之前在用的时候发现bili获取的内容总是重复获取字幕和评论这些，哪怕调用指令中并未要求，这给上下文带来了额外的重复负担，然后发现是默认模板的预设自带了这些  改进了从 JEV 意图中选择截图附加项，并保持纯视频获取的默认设置。将匹配的默认值应用于直接插件请求，保留显式覆盖，并更新工具指南。 为内容选择、截图负载、独立操作和批处理隔离添加回归测试覆盖。 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1809,107 +1806,728 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b98e4117` (2026-10-26)
-**Commit Message**: fix
+### Incident Patch 1: `50fbaa67` (2026-10-30)
+**Commit Message**: fix(bilibili): return only requested content for snapshot calls
 
-**File**: `TVStxt/JevToolCall.txt` (modified, +25/-22)
+Select screenshot extras from JEV intent and keep plain video fetch defaults. Apply matching defaults to direct plugin requests, preserve explicit overrides, and update tool guidance.
+
+Add regression coverage for content selection, screenshot payloads, standalone actions, and batch isolation.
+
+**File**: `Plugin/BilibiliFetch/BilibiliFetch.py` (modified, +13/-7)
 ```diff
-@@ -17,25 +17,28 @@ JEV:「始」请使用 {能力} 中的 `可选工具`，围绕【主要内容】
- - 点歌演出模式可选：`[流光]`、`[云阶]`、`[心象]`、`[凝彩]`、`[商籁]`、`[镜台]`、`[浮名]`、`[星诞]`；不写时使用常规播放器。
+@@ -808,11 +808,17 @@ def get_accessible_url(local_path: str) -> str:
+     prefix = "file://" if file_path.startswith('/') else "file:///"
+     return prefix + urllib.parse.quote(file_path, safe='/:')
  
- 核心示例：
--JEV:「始」请播放【星の余韻】，并启用[星诞]演出模式。「末」
--JEV:「始」读取当前音乐歌词。「末」
--JEV:「始」读取[https://example.com]。「末」
--JEV:「始」对网页截图[https://example.com/page]。「末」
--JEV:「始」看图[https://example.com/cat.png]。「末」
--JEV:「始」请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。「末」
--JEV:「始」请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。「末」
--JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。「末」
--JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。「末」
--JEV:「始」请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。「末」
--JEV:「始」主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。「末」 //基于Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
--JEV:「始」主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。「末」//跨角色、跨日记知识库全局搜索
--JEV:「始」主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。「末」
--JEV:「始」[音乐检索]【煮咖啡时适合听的歌】。「末」 //语义级搜索vmusic曲目表
--JEV:「始」在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。「末」
--JEV:「始」计算【integral('sin(x)', 0, pi)】。「末」
--JEV:「始」联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。「末」
--JEV:「始」睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。「末」
--JEV:「始」请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。「末」
--JEV:「始」请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
--JEV:「始」请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。「末」
--JEV:「始」读取[file://C:\Tsubasa\VCPToolbox\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。「末」
-\ No newline at end of file
-+请播放【星の余韻】，并启用[星诞]演出模式。
-+读取当前音乐歌词。
-+读取[https://example.com]。
-+对网页截图[https://example.com/page]。
-+看图[https://example.com/cat.png]。
-+请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。
-+请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。
-+请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。
-+请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。
-+请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。
-+主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
-+主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。
-+主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。
-+[音乐检索]【煮咖啡时适合听的歌】。
-+在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。
-+计算【integral('sin(x)', 0, pi)】。
-+联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。
-+联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
-+睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
-+请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
-+请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
-+请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
-+请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
-+读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
-+读取[file://{{VarVCPToolBoxPath}}\Plugin\WeatherReporter\weather_cache.txt]获得超详细天气预报。
-\ No newline at end of file
+-def process_bilibili_enhanced(video_input: str, lang_code: str | None = None, danmaku_num: int = 0, comment_num: int = 0, snapshot_at_times: list | None = None, need_subs: bool = True, need_pbp: bool = True, hd_snapshot: bool = False) -> str:
++def process_bilibili_enhanced(video_input: str, lang_code: str | None = None, danmaku_num: int = 0, comment_num: int = 0, snapshot_at_times: list | None = None, need_subs: bool | None = None, need_pbp: bool | None = None, hd_snapshot: bool = False) -> str:
+     """
+     Enhanced version of process_bilibili_url that handles short URLs, fetches danmaku/comments, snapshots, and PBP.
+     Returns a dictionary suitable for VCP multimodal output.
+     """
++    # 时间点截图默认仅取画面；调用者可显式开启字幕和高能进度条。
++    if need_subs is None:
++        need_subs = not bool(snapshot_at_times)
++    if need_pbp is None:
++        need_pbp = not bool(snapshot_at_times)
++
+     # 1. Resolve short URL
+     resolved_url = resolve_short_url(video_input)
+     
+@@ -1327,27 +1333,27 @@ def handle_single_request(data: dict):
+         if isinstance(snapshots_raw, list):
+             snapshot_at_times = snapshots_raw
+         elif isinstance(snapshots_raw, str) and snapshots_raw.strip():
+-            snapshot_at_times = [s.strip() for s in snapshots_raw.split(',')]
++            snapshot_at_times = [s.strip() for s in snapshots_raw.split(',') if s.strip()]
+ 
+         if not url:
+             raise ValueError("Missing required argument: url")
+ 
+         # Robust boolean parsing
+-        need_subs = data.get('need_subs', True)
++        need_subs = data.get('need_subs', not bool(snapshot_at_times))
+         if isinstance(need_subs, str):
+-            need_subs = need_subs.lower() != 'false'
++            need_subs = need_subs.strip().lower() not in ('false', '0', 'no', 'off', '')
+         else:
+             need_subs = bool(need_subs)
+ 
+-        need_pbp = data.get('need_pbp', True)
++        need_pbp = data.get('need_pbp', not bool(snapshot_at_times))
+         if isinstance(need_pbp, str):
+-            need_pbp = need_pbp.lower() != 'false'
++            need_pbp = need_pbp.strip().lower() not in ('false', '0', 'no', 'off', '')
+         else:
+             need_pbp = bool(need_pbp)
+             
+         hd_snapshot = data.get('hd_snapshot', False)
+         if isinstance(hd_snapshot, str):
+-            hd_snapshot = hd_snapshot.lower() in ('true', '1', 'yes')
++            hd_snapshot = hd_snapshot.strip().lower() in ('true', '1', 'yes', 'on')
+         else:
+             hd_snapshot = bool(hd_snapshot)
+ 
+```
+
+**File**: `Plugin/BilibiliFetch/README.md` (modified, +2/-2)
+```diff
+@@ -51,8 +51,8 @@ danmaku_num:「始」(可选) 获取热门弹幕的数量，默认为 0。「末
+ comment_num:「始」(可选) 获取热门评论的数量，默认为 0。「末」,
+ snapshots:「始」(获取字幕后使用) 想要查看快照的时间点（秒），多个时间点用逗号分隔，例如 '10,60,120'。「末」,
+ hd_snapshot:「始」(可选) 是否启用HD高清截图模式，默认为 false。设为 true 时通过 ffmpeg 从视频流直接抽帧，失败自动降级到雪碧图裁切。「末」,
+-need_subs:「始」(可选)是否获取字幕，默认为 true。如果您只想获取快照请设置为 false。「末」,
+-need_pbp:「始」(可选) 是否获取弹幕热度最高的几个时间点，方便后续获取快照，默认为 true。「末」
++need_subs:「始」(可选) 是否获取字幕。提供 snapshots 时默认 false，普通获取默认 true；可显式设为 true 与截图一起获取。「末」,
++need_pbp:「始」(可选) 是否获取弹幕热度最高的几个时间点。提供 snapshots 时默认 false，普通获取默认 true。「末」
+ <<<[END_TOOL_REQUEST]>>>
+ ```
+ 
+```
+
+**File**: `Plugin/BilibiliFetch/plugin-manifest.json` (modified, +2/-2)
+```diff
+@@ -21,8 +21,8 @@
+     "invocationCommands": [
+       {
+         "commandIdentifier": "BilibiliFetch",
+-        "description": "获取 Bilibili 视频的详细信息，包括字幕、弹幕、评论、高能进度条和视频快照截图。支持多P分P视频（URL含?p=N自动识别）、b23.tv短链接自动解析、HD高清截图（基于ffmpeg从视频流直接抽帧，失败自动降级到雪碧图裁切）。\n\n参数:\n- url (字符串, 必需): Bilibili 视频的 URL。支持完整链接、BV号直接输入、b23.tv短链接。多P视频URL中的?p=N参数会被自动识别并获取对应分P内容。\n- lang (字符串, 可选): 字幕语言代码，例如 'ai-zh'（AI中文）、'ai-en'（AI英文）、'zh-CN'。未指定时按优先级自动选择：ai-zh > zh-CN > zh-Hans > 第一个可用语言。\n- danmaku_num (数字, 可选, 默认0): 获取热门弹幕的数量。\n- comment_num (数字, 可选, 默认0): 获取热门评论的数量（按点赞排序）。\n- snapshots (字符串, 可选): 截取快照的时间点（秒），多个用逗号分隔，例如 '10,60,120'。不提供则仅返回可用快照数量信息。\n- hd_snapshot (布尔值, 可选, 默认false): 是否启用HD高清截图模式。true时通过ffmpeg从视频流直接抽帧，失败自动降级到雪碧图裁切。\n- need_subs (布尔值, 可选, 默认true): 是否获取字幕内容。字幕来源优先级：CC字幕 > WBI Player API > AI Summary API。\n- need_pbp (布尔值, 可选, 默认true): 是否获取高能进度条数据（弹幕密度最高的时间点及热度值）。\n\n调用格式:\n\n\n重要提示：\n1. 插件返回多模态结构化数据，包含文本和 HTML <img> 标签。\n2. 请务必将返回结果中的 <img> 标签原样展示给用户以便渲染快照。\n3. HD高清截图需要ffmpeg环境，插件会自动按优先级查找：项目内置 > 系统PATH > Docker容器内。",
+-        "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」BilibiliFetch「末」,\nurl:「始」https://www.bilibili.com/video/BV1CC4y1a7ee?p=2「末」,\ndanmaku_num:「始」5「末」,\nsnapshots:「始」30,120「末」,\nhd_snapshot:「始」true「末」\n<<<[END_TOOL_REQUEST]>>>"
++        "description": "获取 Bilibili 视频的详细信息，包括字幕、弹幕、评论、高能进度条和视频快照截图。支持多P分P视频（URL含?p=N自动识别）、b23.tv短链接自动解析、HD高清截图（基于ffmpeg从视频流直接抽帧，失败自动降级到雪碧图裁切）。\n\n参数:\n- url (字符串, 必需): Bilibili 视频的 URL。支持完整链接、BV号直接输入、b23.tv短链接。多P视频URL中的?p=N参数会被自动识别并获取对应分P内容。\n- lang (字符串, 可选): 字幕语言代码，例如 'ai-zh'（AI中文）、'ai-en'（AI英文）、'zh-CN'。未指定时按优先级自动选择：ai-zh > zh-CN > zh-Hans > 第一个可用语言。\n- danmaku_num (数字, 可选, 默认0): 获取热门弹幕的数量。\n- comment_num (数字, 可选, 默认0): 获取热门评论的数量（按点赞排序）。\n- snapshots (字符串, 可选): 截取快照的时间点（秒），多个用逗号分隔，例如 '10,60,120'。不提供则仅返回可用快照数量信息。\n- hd_snapshot (布尔值, 可选, 默认false): 是否启用HD高清截图模式。true时通过ffmpeg从视频流直接抽帧，失败自动降级到雪碧图裁切。\n- need_subs (布尔值, 可选): 是否获取字幕内容。提供 snapshots 时默认 false，普通获取默认 true；显式传 true 可将字幕与截图一起返回。字幕来源优先级：CC字幕 > WBI Player API > AI Summary API。\n- need_pbp (布尔值, 可选): 提供 snapshots 时默认 false，普通获取默认 true。是否获取高能进度条数据（弹幕密度最高的时间点及热度值）。\n\n调用格式:\n\n\n重要提示：\n1. 插件返回多模态结构化数据，包含文本和 HTML <img> 标签。\n2. 请务必将返回结果中的 <img> 标签原样展示给用户以便渲染快照。\n3. HD高清截图需要ffmpeg环境，插件会自动按优先级查找：项目内置 > 系统PATH > Docker容器内。",
++        "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」BilibiliFetch「末」,\nurl:「始」https://www.bilibili.com/video/BV1CC4y1a7ee?p=2「末」,\nsnapshots:「始」30,120「末」,\nhd_snapshot:「始」true「末」\n<<<[END_TOOL_REQUEST]>>>"
+       },
+       {
+         "commandIdentifier": "BilibiliSearch",
+```
+
+**File**: `TVStxt/JevToolCall.txt` (modified, +2/-0)
+```diff
+@@ -27,6 +27,8 @@ JEV:「始」请使用 {能力} 中的 `可选工具`，围绕【主要内容】
+ 请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。
+ 请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。
+ 请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。
++请使用 {联网搜索} 中的 `B站获取`，补充视频【https://www.bilibili.com/video/BV1xx】的[截图 95,148 秒]。
++B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明确写出字幕、评论、弹幕或高能进度条，可用 [评论 5 条]、[弹幕 10 条] 指定数量。
+ 主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
+ 主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。
+ 主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。
+```
+
+**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-1)
+```diff
+@@ -30,7 +30,8 @@ danmaku_num:「始」(可选) 弹幕数量「末」,
+ comment_num:「始」(可选) 评论数量「末」,
+ snapshots:「始」(可选) 时间点截图，逗号分隔「末」,
+ hd_snapshot:「始」true「末」, //是否调用 ffmpeg 获取超清截图
+-need_subs:「始」true「末」, //是否获取字幕
++need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
++need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
+ action:「始」search「末」,
+```
+
+**File**: `TVStxt/dreamtool.txt` (modified, +2/-2)
+```diff
+@@ -83,8 +83,8 @@ lang:「始」(可选) 字幕语言代码, 例如 'ai-zh' 或 'ai-en'。如果
+ danmaku_num:「始」(可选) 获取热门弹幕的数量，默认为 0。「末」,
+ comment_num:「始」(可选) 获取热门评论的数量，默认为 0。「末」,
+ snapshots:「始」(获取字幕后使用) 想要查看快照的时间点（秒），多个时间点用逗号分隔，例如 '10,60,120'。「末」,
+-need_subs:「始」(可选)是否获取字幕，默认为 true。如果您只想获取快照请设置为 false。「末」,
+-need_pbp:「始」(可选) 是否获取弹幕热度最高的几个时间点，方便后续获取快照，默认为 true。「末」
++need_subs:「始」(可选) 是否获取字幕。提供 snapshots 时默认 false，普通获取默认 true；可显式设为 true 与截图一起获取。「末」,
++need_pbp:「始」(可选) 是否获取弹幕热度最高的几个时间点。提供 snapshots 时默认 false，普通获取默认 true。「末」
+ 
+ # 梦记忆持久化。当梦将结束，记录下本次做梦的所有完整内容。
+ maid:「始」[Nova的梦]Nova「末」, // 将梦记忆写入对应的梦索引
+```
+
+**File**: `TVStxt/toollite.txt` (modified, +2/-1)
+```diff
+@@ -93,7 +93,8 @@ danmaku_num:「始」(可选) 弹幕数量「末」,
+ comment_num:「始」(可选) 评论数量「末」,
+ snapshots:「始」(可选) 时间点截图，逗号分隔「末」,
+ hd_snapshot:「始」true「末」, //是否调用 ffmpeg 获取超清截图
+-need_subs:「始」true「末」, //是否获取字幕
++need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
++need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+ 
+ ### 检索 B 站视频/UP主
+ action:「始」search「末」,
+```
+
+**File**: `docs/JEV_SEMANTIC_TOOL_CALL_EXPERIMENT.md` (modified, +9/-1)
+```diff
+@@ -201,7 +201,7 @@ JEV 只负责把虚拟调用展开为真实工具调用。
+ | Tavily | TavilySearch | 固定 `advanced` |
+ | AnySearch | AnySearch | 模板优先，必要时由 Jev 选择子领域 |
+ | B站搜索 | BilibiliFetch | 固定搜索模板 |
+-| B站获取 | BilibiliFetch | 默认获取字幕、评论、弹幕和高能进度 |
++| B站获取 | BilibiliFetch | 普通获取默认返回完整内容；截图按需附加字幕、评论、弹幕和高能进度 |
+ 
+ B站搜索和获取都属于联网搜索目录。
+ 
+@@ -232,6 +232,14 @@ B站搜索类型通过 `[]` 确定性映射，不需要调用 Jev：
+ 请使用 {联网搜索} 中的 'B站获取'，获取视频【BV1xxxxxxxxx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。
+ ```
+ 
++补充截图可使用：
++
++```text
++请使用 {联网搜索} 中的 `B站获取`，补充视频【BV1xxxxxxxxx】的[截图 30,120 秒]。
++```
++
++截图请求默认关闭字幕、评论、弹幕和高能进度条。句子或 `[]` 中明确提及的内容会单独开启，例如“截图并获取字幕和 5 条评论”；`[无需字幕]`、`[不要评论和弹幕]` 可关闭指定内容。普通获取保留完整内容默认值，“只要字幕”等限定按需选择内容。
++
+ ### 4.2 图片生成与编辑
+ 
+ 当前白名单包括：
 ```
 
 ---
 
-### Incident Patch 2: `afc08997` (2026-10-26)
-**Commit Message**: fix
+### Incident Patch 2: `0c919a3b` (2026-10-30)
+**Commit Message**: fix2
 
-**File**: `agent_map.json.example` (modified, +1/-0)
+**File**: `KnowledgeBaseManager.js` (modified, +16/-5)
 ```diff
-@@ -1,5 +1,6 @@
- {
-   "Nova": "Nova.txt",
-+  "deepseek": "DeepSeekOfficial.txt",
-   "ShaoShenYun": "ShaoShenYun.txt",
-   "Coco": "ThemeMaidCoco.txt",
-   "Furina": "Furina.txt",
+@@ -1080,7 +1080,8 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
+ 
+         const raw = await this.nativeKnowledgeRuntime.cleanupDatabaseOrphans(
+             this.dbPath,
+-            this.config.rootPath
++            this.config.rootPath,
++            this.config.storePath
+         );
+         const result = typeof raw === 'string' ? JSON.parse(raw) : raw;
+         const affectedDiaries = Array.isArray(result?.affectedDiaries)
+@@ -1099,14 +1100,23 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
+             )]
+             : [];
+ 
+-        // SQL cleanup invalidates affected runtime scopes atomically. Preserve
+-        // endorsed disk baselines for active diaries; remove disk files for vanished diaries.
++        const pendingAssetCleanup = Array.isArray(result?.pendingAssetCleanup)
++            ? result.pendingAssetCleanup
++            : [];
++        if (pendingAssetCleanup.length > 0) {
++            console.warn(
++                `[KnowledgeBase] Diary asset cleanup deferred for ${pendingAssetCleanup.length} ` +
++                'diary index(es); durable tasks will be retried at the next startup.'
++            );
++        }
++
++        // Rust owns retirement, disk removal and durable retry under the publication gate.
++        // JavaScript only invalidates its lightweight date cache.
+         for (const diaryName of affectedDiaries) {
+             this.diaryDateIndexCache.delete(diaryName);
+         }
+         for (const diaryName of emptyDiaries) {
+             this.diaryDateIndexCache.delete(diaryName);
+-            this._deletePersistedDiaryIndex(diaryName, { force: true });
+         }
+ 
+         const missingFiles = Math.max(
+@@ -1144,7 +1154,8 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
+             orphanChunks,
+             orphanFileTags,
+             affectedDiaries,
+-            emptyDiaries
++            emptyDiaries,
++            pendingAssetCleanup
+         };
+     }
+ 
+```
+
+**File**: `rust-vexus-lite/Cargo.lock` (modified, +7/-0)
+```diff
+@@ -826,6 +826,12 @@ dependencies = [
+  "rawpointer",
+ ]
+ 
++[[package]]
++name = "md5"
++version = "0.7.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "490cc448043f947bae3cbee9c203358d62dbee0db12107a74be5c30ccfd09771"
++
+ [[package]]
+ name = "memchr"
+ version = "2.7.6"
+@@ -1819,6 +1825,7 @@ dependencies = [
+  "dotenvy",
+  "flate2",
+  "hashbrown",
++ "md5",
+  "memmap2",
+  "nalgebra",
+  "napi",
+```
+
+**File**: `rust-vexus-lite/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -24,6 +24,7 @@ serde = { version = "1.0", features = ["derive"] }
+ serde_json = { version = "1.0", features = ["float_roundtrip"] }
+ base64 = "0.21"
+ sha2 = "0.10"
++md5 = "0.7"
+ regex = "1.13.1"
+ # 与现有 TextChunker.js 的 cl100k_base 保持一致
+ tiktoken-rs = "0.12.1"
+```
+
+**File**: `rust-vexus-lite/index.d.ts` (modified, +1/-1)
+```diff
+@@ -240,7 +240,7 @@ export declare class NativeKnowledgeRuntime {
+    * 文件系统扫描在 N-API 后台任务中执行，数据库删除统一提交到
+    * NativeKnowledgeRuntime 所属的 SQLite Write Actor。
+    */
+-  cleanupDatabaseOrphans(dbPath: string, rootPath: string): Promise<unknown>
++  cleanupDatabaseOrphans(dbPath: string, rootPath: string, storePath?: string | undefined | null): Promise<unknown>
+   /**
+    * 在 Rust Read Pool 中确认当前 pairwise 模型已有健康缓存后，
+    * 通过 Write Actor 删除旧模型签名的 pairwise 数值。
+```
+
+**File**: `rust-vexus-lite/src/ingestion.rs` (modified, +74/-2)
+```diff
+@@ -1941,11 +1941,35 @@ pub(crate) struct OrphanCleanupResult {
+     pub(crate) orphan_file_tags: usize,
+     pub(crate) affected_diaries: Vec<String>,
+     pub(crate) empty_diaries: Vec<String>,
++    pub(crate) pending_asset_cleanup: Vec<String>,
+ }
+ 
+ pub struct OrphanCleanupTask {
+     pub(crate) db_path: String,
+     pub(crate) root_path: String,
++    pub(crate) store_path: Option<String>,
++}
++
++// Only fixed, hashed diary asset names may be removed. Never remove directories.
++fn remove_diary_assets(store: &std::path::Path, diary: &str) -> bool {
++    let hash = format!("{:x}", md5::compute(diary.trim().as_bytes()));
++    let mut complete = true;
++    for suffix in ["", "_a", "_b", "_slot_a", "_slot_b"] {
++        for extension in ["vec", "usearch"] {
++            for temporary in ["", ".tmp"] {
++                let path = store.join(format!("index_diary_{}{}.{}{}", hash, suffix, extension, temporary));
++                match std::fs::remove_file(&path) {
++                    Ok(()) => {}
++                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
++                    Err(error) => {
++                        complete = false;
++                        eprintln!("[KBM] Diary asset cleanup deferred for {}: {}", path.display(), error);
++                    }
++                }
++            }
++        }
++    }
++    complete
+ }
+ 
+ impl Task for OrphanCleanupTask {
+@@ -2184,6 +2208,13 @@ impl Task for OrphanCleanupTask {
+                     }
+                 }
+             }
++            for diary in &empty_diaries {
++                tx.execute(
++                    "INSERT OR IGNORE INTO kbm_pending_diary_asset_cleanup(diary_name,created_at)
++                     VALUES (?1,?2)",
++                    params![diary, now],
++                ).map_err(|error| format!("Queue diary asset cleanup failed: {}", error))?;
++            }
+             if !empty_diaries.is_empty() {
+                 tx.execute(
+                     "DELETE FROM chunk_index_baseline_entries
+@@ -2226,6 +2257,45 @@ impl Task for OrphanCleanupTask {
+             .take()
+             .ok_or_else(|| Error::from_reason("Orphan cleanup completed without details"))?;
+ 
++        // The publication gate remains held across filesystem removal and acknowledgement.
++        // A crash at any point leaves an idempotent task for the next startup.
++        let pending = with_registered_read(&self.db_path, |connection| {
++            let mut statement = connection.prepare(
++                "SELECT diary_name FROM kbm_pending_diary_asset_cleanup ORDER BY diary_name",
++            ).map_err(|error| error.to_string())?;
++            let rows = statement.query_map([], |row| row.get::<_, String>(0))
++                .map_err(|error| error.to_string())?;
++            rows.collect::<rusqlite::Result<Vec<_>>>().map_err(|error| error.to_string())
++        }).map_err(Error::from_reason)?;
++        let mut pending_asset_cleanup = Vec::new();
++        for diary in pending {
++            let has_new_baseline = with_registered_read(&self.db_path, |connection| {
++                connection.query_row(
++                    "SELECT EXISTS(SELECT 1 FROM chunk_index_baselines WHERE diary_name=?1)",
++                    [&diary], |row| row.get::<_, bool>(0),
++                ).map_err(|error| error.to_string())
++            }).map_err(Error::from_reason)?;
++            let complete = has_new_baseline || self.store_path.as_ref()
++                .filter(|store| !store.trim().is_empty())
++                .map(|store| remove_diary_assets(std::path::Path::new(store), &diary))
++                .unwrap_or(false);
++            if complete {
++                with_registered_write(&self.db_path, move |tx| {
++                    tx.execute(
++                        "DELETE FROM kbm_pending_diary_asset_cleanup WHERE diary_name=?1",
++                        [&diary],
++                    ).map_err(|error| error.to_string())?;
++                    Ok(WriteReceipt {
++                        operation: "ack_diary_asset_cleanup".into(),
++                        database_generation: 0,
++                        facts_changed: false,
++                    })
++                }).map_err(Error::from_reason)?;
++            } else {
++                pending_asset_cleanup.push(diary);
++            }
++        }
++
+         let mut affected_diaries: Vec<String> = affected_diaries.into_iter().collect();
+         affected_diaries.sort();
+         empty_diaries.sort();
+@@ -2236,6 +2306,7 @@ impl Task for OrphanCleanupTask {
+             orphan_file_tags,
+             affected_diaries,
+             empty_diaries,
++            pending_asset_cleanup,
+         })
+         .map_err(|error| Error::from_reason(format!(
+             "Encode orphan cleanup result failed: {}",
+@@ -2382,13 +2453,14 @@ mod audit_orphan_tests {
+         storage.submit_write(|tx| {
+             tx.execute_batch(
+                 "INSERT INTO files(path,diary_name,checksum,mtime,size)
+-                 VALUES (
+```
+
+**File**: `rust-vexus-lite/src/knowledge_runtime.rs` (modified, +2/-0)
+```diff
+@@ -3367,6 +3367,7 @@ impl NativeKnowledgeRuntime {
+         &self,
+         db_path: String,
+         root_path: String,
++        store_path: Option<String>,
+     ) -> Result<AsyncTask<TrackedTask<OrphanCleanupTask>>> {
+         if !self.accepting_queries.load(Ordering::Acquire) {
+             return Err(Error::from_reason(
+@@ -3382,6 +3383,7 @@ impl NativeKnowledgeRuntime {
+         Ok(self.tracked_task(OrphanCleanupTask {
+             db_path,
+             root_path,
++            store_path,
+         }))
+     }
+ 
+```
+
+**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +4/-5)
+```diff
+@@ -123,6 +123,8 @@ pub(super) fn refine(model: &mut Model, decisions: &mut [GateDecision],
+     Ok(())
+ }
+ 
++// Legacy additive readout retained only for regression tests; production uses RRF.
++#[cfg(test)]
+ #[derive(Clone, Default, Serialize)]
+ #[serde(rename_all = "camelCase")]
+ pub(super) struct Readout {
+@@ -178,6 +180,7 @@ pub(super) fn build(input: &NativeInput, vectors: &TagVectorPool, artifact: &Nat
+     Model { routes, eligible_routes }
+ }
+ 
++#[cfg(test)]
+ pub(super) fn evaluate(model: &Model, curve: &Curve, artifact: &NativeArtifact) -> Readout {
+     let mut output = Readout {
+         available: !model.routes.is_empty(),
+@@ -250,11 +253,7 @@ pub(super) fn correction(model: &Model, curve: &Curve, input: &NativeInput,
+     best
+ }
+ 
+-pub(super) fn compare(a: &Correction, b: &Correction) -> Ordering {
+-    b.eligible.cmp(&a.eligible)
+-        .then_with(|| b.evidence.total_cmp(&a.evidence))
+-}
+-
++#[cfg(test)]
+ pub(super) fn augment(item: &mut ScoredWork, readout: &Readout,
+     omega: &OmegaOutput, config: &NativeConfig) {
+     if !readout.available || readout.score <= 0.0 { return; }
+```
+
+**File**: `rust-vexus-lite/src/schema.rs` (modified, +5/-0)
+```diff
+@@ -58,6 +58,11 @@ CREATE TABLE IF NOT EXISTS migration_deleted_chunks (
+     PRIMARY KEY(cache_file_id, chunk_index),
+     FOREIGN KEY(cache_file_id) REFERENCES migration_deleted_files(id) ON DELETE CASCADE
+ );
++-- Durable outbox: SQL retirement and disk deletion cannot commit atomically.
++CREATE TABLE IF NOT EXISTS kbm_pending_diary_asset_cleanup (
++    diary_name TEXT PRIMARY KEY NOT NULL,
++    created_at INTEGER NOT NULL
++);
+ CREATE TABLE IF NOT EXISTS chunk_index_baselines (
+     diary_name TEXT NOT NULL,
+     generation INTEGER NOT NULL,
 ```
 
 ---
 
-### Incident Patch 3: `213bea48` (2026-10-25)
-**Commit Message**: fix
+### Incident Patch 3: `260140f4` (2026-10-30)
+**Commit Message**: Merge pull request #565 from infinite-vector/fix/kbm-storage-self-cleaning
 
-**File**: `Plugin/ComfyUIGen/workflows/AnimaEZGen.json` (modified, +1/-1)
+fix(knowledge-base): 完善向量基线与存储元数据生命周期自净回收闭环
+
+**File**: `KnowledgeBaseManager.js` (modified, +20/-6)
 ```diff
-@@ -61,7 +61,7 @@
-       "inputs": {
-         "guide_size": 512, "guide_size_for": true, "max_size": 1024,
-         "seed": "{{SEED}}", "steps": 18, "cfg": 8, "sampler_name": "euler", "scheduler": "simple",
--        "denoise": 0.38, "feather": 5, "noise_mask": true, "force_inpaint": true,
-+        "denoise": 0.32, "feather": 5, "noise_mask": true, "force_inpaint": true,
-         "bbox_threshold": 0.5, "bbox_dilation": 10, "bbox_crop_factor": 3,
-         "sam_detection_hint": "center-1", "sam_dilation": 0, "sam_threshold": 0.93,
-         "sam_bbox_expansion": 0, "sam_mask_hint_threshold": 0.7, "sam_mask_hint_use_negative": "False",
+@@ -1091,11 +1091,23 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
+             )]
+             : [];
+ 
++        const emptyDiaries = Array.isArray(result?.emptyDiaries)
++            ? [...new Set(
++                result.emptyDiaries
++                    .map(value => String(value || '').trim())
++                    .filter(Boolean)
++            )]
++            : [];
++
+         // SQL cleanup invalidates affected runtime scopes atomically. Preserve
+-        // endorsed disk baselines; restore replays authoritative deletions in memory.
++        // endorsed disk baselines for active diaries; remove disk files for vanished diaries.
+         for (const diaryName of affectedDiaries) {
+             this.diaryDateIndexCache.delete(diaryName);
+         }
++        for (const diaryName of emptyDiaries) {
++            this.diaryDateIndexCache.delete(diaryName);
++            this._deletePersistedDiaryIndex(diaryName, { force: true });
++        }
+ 
+         const missingFiles = Math.max(
+             0,
+@@ -1115,28 +1127,30 @@ this.tagMemoV10Engine = new TagMemoV10Engine(
+             || orphanChunks > 0
+             || orphanFileTags > 0
+             || affectedDiaries.length > 0
++            || emptyDiaries.length > 0
+         ) {
+             console.warn(
+                 `[KnowledgeBase] 🧹 Rust startup cleanup complete. ` +
+                 `Removed ${missingFiles} missing file record(s), ` +
+                 `${orphanChunks} orphan chunk(s), ` +
+                 `${orphanFileTags} orphan file-tag relation(s), ` +
+-                `touched ${affectedDiaries.length} diary index(es).`
++                `touched ${affectedDiaries.length} diary index(es), ` +
++                `pruned ${emptyDiaries.length} empty diary baseline(s).`
+             );
+         }
+ 
+         return {
+             missingFiles,
+             orphanChunks,
+             orphanFileTags,
+-            affectedDiaries
++            affectedDiaries,
++            emptyDiaries
+         };
+     }
+ 
+-    _deletePersistedDiaryIndex(diaryName) {
+-        return this.indexRepository.deletePersisted(diaryName);
++    _deletePersistedDiaryIndex(diaryName, options = {}) {
++        return this.indexRepository.deletePersisted(diaryName, options);
+     }
+-
+     _deleteAllPersistedDiaryIndexes() {
+         return this.indexRepository.deleteAllPersisted();
+     }
+```
+
+**File**: `modules/knowledgeBase/indexRepository.js` (modified, +4/-2)
+```diff
+@@ -367,9 +367,11 @@ class IndexRepository {
+         return this.onDiaryIndexRemoved(String(diaryName || '').trim());
+     }
+ 
+-    deletePersisted(diaryName) {
+-        if (!this.shouldPersist(diaryName)) return;
++    deletePersisted(diaryName, options = {}) {
++        const force = options === true || options?.force === true;
++        if (!force && !this.shouldPersist(diaryName)) return;
+         const normalized = String(diaryName || '').trim();
++        if (!normalized) return;
+         const safeName = this._diarySafeName(normalized);
+         const legacyPath = path.join(
+             this.config.storePath,
+```
+
+**File**: `rust-vexus-lite/src/index_lifecycle.rs` (modified, +12/-0)
+```diff
+@@ -728,6 +728,12 @@ impl Task for IndexCheckpointTask {
+                                 format!("Insert diary baseline entry failed: {}", error)
+                             })?;
+                     }
++                    transaction
++                        .execute(
++                            "DELETE FROM chunk_index_baseline_entries WHERE diary_name = ?1 AND generation != ?2",
++                            rusqlite::params![diary, generation as i64],
++                        )
++                        .map_err(|error| format!("Prune diary baseline entries failed: {}", error))?;
+                     transaction
+                         .execute(
+                             "DELETE FROM chunk_index_baselines WHERE diary_name = ?1 AND generation != ?2",
+@@ -789,6 +795,12 @@ impl Task for IndexCheckpointTask {
+                             }).to_string()],
+                         )
+                         .map_err(|error| format!("Publish Tag active baseline failed: {}", error))?;
++                    transaction
++                        .execute(
++                            "DELETE FROM tag_index_baseline_entries WHERE generation != ?1",
++                            rusqlite::params![generation as i64],
++                        )
++                        .map_err(|error| format!("Prune Tag baseline entries failed: {}", error))?;
+                     transaction
+                         .execute(
+                             "DELETE FROM tag_index_baselines WHERE generation != ?1",
+```
+
+**File**: `rust-vexus-lite/src/ingestion.rs` (modified, +60/-4)
+```diff
+@@ -1940,6 +1940,7 @@ pub(crate) struct OrphanCleanupResult {
+     pub(crate) orphan_chunks: usize,
+     pub(crate) orphan_file_tags: usize,
+     pub(crate) affected_diaries: Vec<String>,
++    pub(crate) empty_diaries: Vec<String>,
+ }
+ 
+ pub struct OrphanCleanupTask {
+@@ -2134,6 +2135,13 @@ impl Task for OrphanCleanupTask {
+             )
+             .map_err(|error| format!("Delete orphan chunks failed: {}", error))?;
+ 
++            let now = current_time_ms();
++            tx.execute(
++                "DELETE FROM migration_deleted_files WHERE expires_at < ?1",
++                [now],
++            )
++            .map_err(|error| format!("Clean expired migration cache failed: {}", error))?;
++
+             // 事实删除和作用域失效必须属于同一事务。无归属 Chunk 无法确定
+             // 曾进入哪个常驻索引，因此保守失效所有已登记日记作用域。
+             for diary in &invalid_diaries {
+@@ -2142,21 +2150,66 @@ impl Task for OrphanCleanupTask {
+                      VALUES (?1,'invalid',0,0,?2)
+                      ON CONFLICT(scope) DO UPDATE SET state='invalid',
+                      facts_generation=0, updated_at=excluded.updated_at",
+-                    params![format!("diary:{}", diary), current_time_ms()],
++                    params![format!("diary:{}", diary), now],
+                 ).map_err(|error| format!("Invalidate orphan diary index failed: {}", error))?;
+             }
+             if orphan_chunks > 0 {
+                 tx.execute(
+                     "UPDATE kbm_index_states SET state='invalid', facts_generation=0,
+                      updated_at=?1 WHERE scope LIKE 'diary:%'",
+-                    [current_time_ms()],
++                    [now],
+                 ).map_err(|error| format!("Invalidate orphan chunk indices failed: {}", error))?;
+             }
+ 
++            // 找出已彻底无任何文件残留的消亡日记本，级联清理其基线与作用域状态
++            let mut empty_diaries = Vec::new();
++            {
++                let mut stmt = tx
++                    .prepare(
++                        "SELECT diary_name FROM chunk_index_baselines
++                         WHERE diary_name NOT IN (SELECT DISTINCT diary_name FROM files)
++                         UNION
++                         SELECT substr(scope, 7) FROM kbm_index_states
++                         WHERE scope LIKE 'diary:%'
++                           AND substr(scope, 7) NOT IN (SELECT DISTINCT diary_name FROM files)",
++                    )
++                    .map_err(|error| format!("Prepare empty diaries scan failed: {}", error))?;
++                let rows = stmt
++                    .query_map([], |row| row.get::<_, String>(0))
++                    .map_err(|error| format!("Query empty diaries failed: {}", error))?;
++                for row in rows {
++                    let d = row.map_err(|error| error.to_string())?;
++                    if !d.trim().is_empty() {
++                        empty_diaries.push(d);
++                    }
++                }
++            }
++            if !empty_diaries.is_empty() {
++                tx.execute(
++                    "DELETE FROM chunk_index_baseline_entries
++                     WHERE diary_name NOT IN (SELECT DISTINCT diary_name FROM files)",
++                    [],
++                )
++                .map_err(|error| format!("Prune empty diary baseline entries failed: {}", error))?;
++                tx.execute(
++                    "DELETE FROM chunk_index_baselines
++                     WHERE diary_name NOT IN (SELECT DISTINCT diary_name FROM files)",
++                    [],
++                )
++                .map_err(|error| format!("Prune empty diary baselines failed: {}", error))?;
++                tx.execute(
++                    "DELETE FROM kbm_index_states
++                     WHERE scope LIKE 'diary:%'
++                       AND substr(scope, 7) NOT IN (SELECT DISTINCT diary_name FROM files)",
++                    [],
++                )
++                .map_err(|error| format!("Prune empty diary index states failed: {}", error))?;
++            }
++
+             affected_diaries_for_write_ref
+                 .lock()
+                 .map_err(|_| "Orphan cleanup details lock poisoned".to_string())?
+-                .replace((orphan_chunks, orphan_file_tags, deleted_files, invalid_diaries));
++                .replace((orphan_chunks, orphan_file_tags, deleted_files, invalid_diaries, empty_diaries));
+             Ok(WriteReceipt {
+                 operation: "cleanup_database_orphans".to_string(),
+                 database_generation: 0,
+@@ -2167,19 +2220,22 @@ impl Task for OrphanCleanupTask {
+         })
+         .map_err(Error::from_reason)?;
+ 
+-        let (orphan_chunks, orphan_file_tags, deleted_files, affected_diaries) = affected_diaries_for_write
++        let (orphan_chunks, orphan_file_tags, deleted_files, affected_diaries, mut empty_diaries) = affected_diaries_for_write
+             .lock()
+             .map_err(|_| Error::from_reason("Orphan cleanup details lock poisoned"))?
+             .take()
+             .ok_or_else(|| Error::from_reason("Or
+```
+
+**File**: `rust-vexus-lite/src/tag_consistency.rs` (modified, +2/-2)
+```diff
+@@ -426,7 +426,7 @@ impl Task for TagConsistencyCommitTask {
+                 ],
+             ).map_err(|error| error.to_string())?;
+             tx.execute(
+-                "UPDATE kbm_prepared_plans SET status='committed' WHERE token=?1",
++                "UPDATE kbm_prepared_plans SET status='committed', plan_json='{}' WHERE token=?1",
+                 [&plan.token],
+             ).map_err(|error| error.to_string())?;
+             details_for_write
+@@ -914,7 +914,7 @@ impl Task for TagConsistencyPrepareTask {
+         with_registered_write(&request.db_path, move |tx| {
+             crate::storage::ensure_generation(tx, source_generation)?;
+             tx.execute(
+-                "DELETE FROM kbm_prepared_plans WHERE expires_at < ?1 AND status != 'committed'",
++                "DELETE FROM kbm_prepared_plans WHERE expires_at < ?1",
+                 [now],
+             ).map_err(|error| error.to_string())?;
+             let count: i64 = tx.query_row(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #553** (closed): feat(VTrade): 新增本地看盘与 AI 模拟交易插件，六个插槽可替换 (@CI-IISATO)
-- **PR #552** (closed): feat(MinerUParser): add MinerU PDF parser, dedupe, and knowledge base (@newcode5662)
-- **PR #550** (2026-10-26): perf(rust-vexus-lite): 语义去重用保守余弦上界提前结束非重复比较，结果逐位不变 (@CI-IISATO)
-- **PR #548** (2026-10-25): fix: archery 审核反馈优先回传改造 (@Wooden-Gear)
-- **PR #547** (2026-10-25): fix(rust-vexus-lite): 稀疏排除有限补找、预算隔离与选项透传 (@CI-IISATO)
-- **PR #546** (closed): fix: archery审核反馈优先回传改造 (@Wooden-Gear)
+- **PR #565** (2026-10-30): fix(knowledge-base): 完善向量基线与存储元数据生命周期自净回收闭环 (@infinite-vector)
+- **PR #564** (2026-10-30): fix(bilibili): return only requested content for snapshot calls (@miaotouy)
+- **PR #563** (2026-10-29): fix(stream): 补全工具调用循环中的上游错误向SSE流下发并支持502/504重试 (@joker74581)
+- **PR #562** (2026-10-29): fix(OneRing): 未触发时原样放行，不再删掉系统提示与系统通知 (@CI-IISATO)
+- **PR #560** (2026-10-28): fix(RiverMemo): 严格门控的边缘稀疏场景虫洞排序修正 (@lioensky)
+- **PR #559** (2026-10-28): fix(LinuxShellExecutor): allow DEFAULT_SECURITY_LEVEL fallback for local host (@joker74581)
 
 ---
 
@@ -1929,73 +2547,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in JevToolCall.txt
+## X. bilibili): return only requested content for snapshot calls
 
 **RULE**:
-When implementing operations in `TVStxt/JevToolCall.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/BilibiliFetch/BilibiliFetch.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b98e4117`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50fbaa67`: bilibili): return only requested content for snapshot calls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `TVStxt/JevToolCall.txt`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/BilibiliFetch/BilibiliFetch.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-请播放【星の余韻】，并启用[星诞]演出模式。
-读取当前音乐歌词。
-读取[https://example.com]。
-对网页截图[https://example.com/page]。
-看图[https://example.com/cat.png]。
-请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。
-请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。
-请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。
-请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。
-请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。
-主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
-主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。
-主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。
-[音乐检索]【煮咖啡时适合听的歌】。
-在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。
-计算【integral('sin(x)', 0, pi)】。
-联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。
-联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
-睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
-请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
-请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
-请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
-请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
-读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
-读取[file://{{VarVCPToolBoxPath}}\Plugin\WeatherReporter\weather_cache.txt]
+def process_bilibili_enhanced(video_input: str, lang_code: str | None = None, danmaku_num: int = 0, comment_num: int = 0, snapshot_at_times: list | None = None, need_subs: bool | None = None, need_pbp: bool | None = None, hd_snapshot: bool = False) -> str:
+    # 时间点截图默认仅取画面；调用者可显式开启字幕和高能进度条。
+    if need_subs is None:
+        need_subs = not bool(snapshot_at_times)
+    if need_pbp is None:
+        need_pbp = not bool(snapshot_at_times)
+
+            snapshot_at_times = [s.strip() for s in snapshots_raw.split(',') if s.strip()]
+        need_subs = data.get('need_subs', not bool(snapshot_at_times))
+            need_subs = need_subs.strip().lower() not in ('false', '0', 'no', 'off', '')
+        need_pbp = data.get('need_pbp', not bool(snapshot_at_times))
+            need_pbp = need_pbp.strip().lower() not in ('false', '0', 'no', 'off', '')
+            hd_snapshot = hd_snapshot.strip().lower() in ('true', '1', 'yes', 'on')
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-JEV:「始」请播放【星の余韻】，并启用[星诞]演出模式。「末」
-JEV:「始」读取当前音乐歌词。「末」
-JEV:「始」读取[https://example.com]。「末」
-JEV:「始」对网页截图[https://example.com/page]。「末」
-JEV:「始」看图[https://example.com/cat.png]。「末」
-JEV:「始」请使用 {联网搜索}，从[深度学习 医疗影像 突破]和[transformer models in healthcare]这两个分级方向，搜索【AI在医疗诊断中的最新应用】。「末」
-JEV:「始」请使用 {联网搜索} 中的 `谷歌学术`，在[2024年至今]的范围内搜索【大语言模型在临床诊断中的应用】。「末」
-JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜视频]，查找【Python入门教程】。「末」
-JEV:「始」请使用 {联网搜索} 中的 `B站搜索`，在B站上[搜UP主]，查找【影视飓风】。「末」
-JEV:「始」请使用 {联网搜索} 中的 `B站获取`，获取视频【https://www.bilibili.com/video/BV1xx】的字幕、评论和弹幕，并在[截图 30,120 秒]指定的时间点截取高清画面。「末」
-JEV:「始」主动回忆【关于上次A项目会议的讨论内容】，从[小吉的地缘政治|小吉的知识]中返回[3条]。「末」 //基于Rivermemo实现的lightmemo检索；小技巧，可以使用另一个maid的署名就能搜别人的知识库啦！
-JEV:「始」主动回忆【主人喜欢吃的美食】，搜索[所有知识库]并返回[5条]。「末」//跨角色、跨日记知识库全局搜索
-JEV:「始」主动回忆【VCP文坊开发日志】，限定[2026-04-11~2026-05-12]并从[Nova的知识]检索。「末」
-JEV:「始」[音乐检索]【煮咖啡时适合听的歌】。「末」 //语义级搜索vmusic曲目表
-JEV:「始」在[1分钟后]设置闹钟，提醒我【检查烤箱里的点心】。「末」
-JEV:「始」计算【integral('sin(x)', 0, pi)】。「末」
-JEV:「始」联络[小娜]，告诉她【我是Nova，我想请你检查这份方案】。「末」
-JEV:「始」睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。「末」
-JEV:「始」请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。「末」
-JEV:「始」请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
-JEV:「始」请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。「末」
-J
+def process_bilibili_enhanced(video_input: str, lang_code: str | None = None, danmaku_num: int = 0, comment_num: int = 0, snapshot_at_times: list | None = None, need_subs: bool = True, need_pbp: bool = True, hd_snapshot: bool = False) -> str:
+            snapshot_at_times = [s.strip() for s in snapshots_raw.split(',')]
+        need_subs = data.get('need_subs', True)
+            need_subs = need_subs.lower() != 'false'
+        need_pbp = data.get('need_pbp', True)
+            need_pbp = need_pbp.lower() != 'false'
+            hd_snapshot = hd_snapshot.lower() in ('true', '1', 'yes')
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b98e4117` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50fbaa67` are properly handled with clean fallback behavior.

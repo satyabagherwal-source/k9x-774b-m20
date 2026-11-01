@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source**: github ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
-> **Source Version**: `ae13ea66`  
+> **Source Version**: `43a13889`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:17:18.530Z  
+> **Timestamp**: 2026-10-30T23:28:40.274Z  
 > **Learning ID**: `learn-github-storybookjs-storybook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:17:18.308Z  
+> **Harvest Timestamp**: 2026-10-30T23:28:38.205Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91350 stars
+- **Stars / Engagement**: 91412 stars
 
 ---
 
@@ -555,11 +555,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #36983** (2026-10-22): **WC: Disable control for cssstate**
-  *Symptoms*: Closes #  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  This Pr disable control for cssstate. It still appears in the control panel.  Feedback from  community member   <!-- Briefly describe what your PR does -->  ## Checklist for Contributors  ### Testing  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to communicate how to test your changes -->  #### The changes in this PR are covered in the following automated tests:  - [ ] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  #### Manual testing  --- > [!CAUTION] > This section is mandatory for all contributions. If you believe no manual test is necessary, please state so explicitly. Thanks!  <!-- Please include the steps that a human maintainer should follow, so they can verify that your changes work. For example:  1. Run a sandbox for template, e.g. `yarn task --task sandbox --start-from auto --template react-vite/default-ts` 2. Open St
+- **Issue #37099** (2026-10-30): **Builder-Webpack5: Match mocks against webpack's resolved resource**
+  *Symptoms*: Related to #33778 Alternative to #37047  ## What I did  With a single `sb.mock()` call in `preview.ts`, `WebpackMockPlugin` ran Node's `require.resolve` for every import in the module graph, twice, to learn whether the import pointed at a mocked file. Webpack resolves every one of those imports anyway and hands the result to `afterResolve`. This PR moves the match there and deletes the plugin's own resolver.  ``` before (next)                                     after (this PR)  import request ──▶ beforeResolve ─┐                import request                    require.resolve│ x6..12          │                    per request    │                 ▼                    ◀──────────────┘               webpack resolves                                                     │  createData.resource                    webpack resolves                 ▼                       │                           afterResolve: Map lookup                       ▼                             ├─ not mocked ──▶ continue                    afterResolve ─┐                  ├─ automock ────▶ unshift automock loader                    require.resolve│ again (no-op)   └─ __mocks__ ───▶ nmf.hooks.resolve(mock file)                    ◀──────────────┘ ```  The hot path is one `Map` lookup on the path webpack resolved:  ```ts factory.hooks.afterResolve.tapAsync(PLUGIN_NAME, (resolveData, callback) => {   const mock = this.findMock(resolveData.createData);   if (!mock) {     return
 
-- **Issue #36981** (2026-10-22): **Core: A portable story with layout 'document' renders to the <body>, as in the preview**
-  *Symptoms*: ## What I did  A story with `parameters.layout: 'document'` owns the document. The preview (`StoryRender`) renders it to the `<body>` the document has now, and after the render it sets the context's `canvasElement` to the `<body>` the render left, since such a render may replace the body (a framework that renders a whole page does). The `canvas` of `storybook/test` follows that change of `canvasElement`.  The portable path, `composeStory().run()` (`runStory` in `portable-stories.ts`), did not do this. It appended a `<div>` container to the body, rendered into that, and left `canvasElement` as it was. So under Storybook's Vitest addon, and in a test that runs a story, the `canvas` of a document story found nothing once the page had taken the container's place.  This PR makes the portable path do what the preview does:  - A module-level `ownsDocument(context)`. A portable story is always shown as the preview shows a story, never in a docs page, so only the parameter decides. - In `runStory`, a document story without a `canvasElement` renders to `globalThis.document.body` instead of a new container. - In the `renderToCanvas` wrapper, after the renderer's `renderToCanvas`, and not after an abort, `canvasElement` becomes `globalThis.document.body`, as in `StoryRender`.  The portable path does not call `markDocumentRoot` (the `#storybook-root` id on the body): that id is for the preview's own CSS and for addons.  The framework `@storybook/nextjs-vite-rsc` ([storybookjs/vitest-plugi
+- **Issue #37093** (2026-10-30): **React: Keep per-prop JSDoc tags in server docgen argTypes**
+  *Symptoms*: Closes #37080  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  With server-side docgen, JSDoc block tags on individual props (`@param`, `@returns`, `@deprecated`) no longer reach the args table. `extractPropItem` builds each prop's description with TypeScript's `getDocumentationComment`, which returns only the free text and drops every tag. The shared argTypes conversion (`extractArgTypes` → `parseJsDoc` → `applyJsDocResult`) finds tags by parsing them out of the description, so it never sees any and `table.jsDocTags` is never set. The react-docgen-typescript path passed the full comment, tags included, which is why the old baseline showed them.  This PR keeps each prop's tags on the component meta output and hands them back to the shared JSDoc parser when building argTypes.  `extractPropItem` now reads description and tags through the existing `extractComponentJsDocInfo` helper (already used for component-level JSDoc), and sets `jsDocTags` on the prop only when it has tags:  ```
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -576,1022 +576,719 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a2140a6c` (2026-10-20)
-**Commit Message**: feat(svelte): build story snippets on the docgen server
+### Incident Patch 1: `7719c15a` (2026-10-30)
+**Commit Message**: fix(builder-webpack5): resolve declared mocks through webpack's resolver
 
-With features.docgenServer, the Code panel shows snippets that the server
-builds from the story file, for .stories.svelte and plain CSF. It reads
-the args through the shared csf-tools resolver and prints them as written,
-like React does, and each snippet starts with a <script> block with the
-imports and story file declarations it needs.
+The mock map compared webpack's resolution of each import against Node's
+resolution of the declared mock, so a project with resolve.symlinks: false
+or a package whose exports differ between the two resolvers could miss.
+Declared mocks now resolve through compiler.resolverFactory once per
+preview change, keyed by the exact declared string, which MockCall carries
+as `specifier`. The raw-request fallback is gone.
 
-A story whose snippet fails gets a warning, and the other stories of the
-file keep theirs. In server mode, the runtime source decorator and the
-Svelte CSF code emitter are off.
+Path helpers come from pathe, and the test's logger mock moves to
+beforeEach.
 
-Co-authored-by: Valentin Palkovic <[REDACTED_EMAIL]>
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `code/renderers/svelte/src/docgen/story-docs-provider.ts` (modified, +2/-2)
+**File**: `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.test.ts` (modified, +83/-38)
 ```diff
-@@ -3,12 +3,12 @@ import { fileURLToPath } from 'node:url';
- import { createWorkerGatedStoryDocsProvider } from 'storybook/internal/core-server';
- 
- import { buildStoryDocsPayload } from './story-docs/build-story-docs.ts';
--import { SVELTE_STORY_FILE_TEST_REGEXP } from './story-file.ts';
-+import { SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP } from './story-file.ts';
- import { DOCGEN_WORKER_SPECIFIER } from './worker-specifier.ts';
- 
- export const experimental_storyDocsProvider = createWorkerGatedStoryDocsProvider({
-   label: 'Svelte',
-   docgenWorker: fileURLToPath(import.meta.resolve(DOCGEN_WORKER_SPECIFIER)),
--  storyFileTest: SVELTE_STORY_FILE_TEST_REGEXP,
-+  storyFileTest: SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP,
-   build: (input) => buildStoryDocsPayload(input),
- });
-```
-
-**File**: `code/renderers/svelte/src/docgen/story-docs/build-story-docs.ts` (modified, +217/-3)
-```diff
-@@ -1,8 +1,222 @@
--import type { StoryDocsPayload, StoryDocsProviderInput } from 'storybook/internal/types';
-+import { readFile } from 'node:fs/promises';
-+import { resolve } from 'node:path';
+@@ -1,13 +1,20 @@
+-import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+-
+-import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
++import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 +
-+import { getComponentIdFromEntry, getStoryImportPathFromEntry } from 'storybook/internal/common';
-+import { storyNameFromExport, toId } from 'storybook/internal/csf';
 +import {
-+  type ESTreeNode as Node,
-+  type ImportBinding,
-+  type ResolvedStoryArgs,
-+  collectImportBindings,
-+  createStoryArgsResolver,
-+  createStoryReferenceResolver,
-+  extractStoryJSDocInfo,
-+  jsDocTagsForNode,
-+  loadCsf,
-+  metaObject,
-+  propertyValue,
-+  returnedExpression,
-+  staticKey,
-+  textOf,
-+  unresolvedWarning,
-+  unwrapExpression,
-+} from 'storybook/internal/csf-tools';
-+import type { StoryDoc, StoryDocsPayload, StoryDocsProviderInput } from 'storybook/internal/types';
-+
-+import { printTemplate } from './print-template.ts';
-+import { buildSnippetImportBlock } from './snippet-imports.ts';
-+import { type StoryFile, readSvelteCsfFile } from './svelte-csf-file.ts';
-+
-+const openStoryReferences = createStoryReferenceResolver({ extensions: ['.svelte'] });
-+
-+const RENDER_WARNING = 'The render function is not reflected in this snippet.';
++  mkdirSync,
++  mkdtempSync,
++  readFileSync,
++  realpathSync,
++  rmSync,
++  symlinkSync,
++  writeFileSync,
++} from 'node:fs';
+ import { tmpdir } from 'node:os';
+-import { dirname, join } from 'node:path';
+ import { fileURLToPath } from 'node:url';
  
--// TODO: port addon-svelte-csf's snippet generation; `undefined` defers to the rest of the chain.
- export async function buildStoryDocsPayload(
--  _input: StoryDocsProviderInput
-+  input: StoryDocsProviderInput
- ): Promise<StoryDocsPayload | undefined> {
-+  const path = getStoryImportPathFromEntry(input.entry);
-+  if (!path) return undefined;
-+  const filename = resolve(path);
-+  const source = await readFile(filename, 'utf8');
-+  const svelte = filename.endsWith('.svelte');
-+  const file: StoryFile = svelte
-+    ? await readSvelteCsfFile(source, filename)
-+    : {
-+        csfSource: source,
-+        typescript: /\.[cm]?tsx?$/.test(filename),
-+        stories: new Map(),
-+        snippets: new Map(),
-+        moduleScript: source,
-+      };
-+  const csf = loadCsf(file.csfSource, {
-+    makeTitle: () => input.entry.title,
-+    fileName: svelte ? `${filename}.${file.typescript ? 'ts' : 'js'}` : filename,
-+  }).parse();
-+  const meta = metaObject(csf);
-+  const component = propertyValue(meta, 'component');
-+  const componentName =
-+    component && /^[A-Z][\w$]*(?:\.[\w$]+)*$/.test(textOf(component))
-+      ? textOf(component)
-+      : undefined;
-+  const importStatement = meta ? jsDocTagsForNode(meta, csf.editor).import?.[0] : undefined;
-+  const context: StoryContext = {
-+    file,
-+    bindings: collectImportBindings(csf.program),
-+    importOverride:
-+      componentName && importStatement
-+        ? { name: componentName, statement: importStatement }
-+        : undefined,
-+    componentName: svelte ? undefined : componentName,
-+  };
-+  const resolver = createStoryArgsResolver(csf, { filePath: filename, ...openStoryReferences() });
-+
-+  const stories: Record<string, StoryDoc> = {};
-+  for (const [exportName, story] of Object.entries(csf._stories)) {
-+    const id = svelte
-+      ? toId(csf.meta.id ?? csf.meta.title ?? input.entry.title, storyNameFromExport(exportName))
-+      : story.id;
-+    const doc: StoryDoc = {
-+      id,
-+      name: story.name ?? storyNameFromExport(exportName),
-+      ...extractStoryJSDocInfo(csf._storyStatements[exportName], csf.editor),
-+      ...(file.stories.get(exportName)?.description
-+        ? { description: file.stories.get(exportName)!.description }
-+        : {}),
-+    };
-+    try {
-+      stories[id] = { ...doc, ...storySnippet(exportName, resolver.resolve(exportName), context) };
-+    } catch (error) {
-+      const message = error instanceof Error ? error.message : String(error);
-+      stories[id] = { ...doc, warning: `No static snippet: ${message}` };
-+    }
-+  }
-+  return {
-+    id: getComponentIdFromEntry(input.entry),
-+    name: componentName ?? input.entry.title.split('/').at(-1)!,
-+    path,
-+    stories,
-+  };
-+}
-+
-+interface StoryContext {
-+  file: StoryFile;
-+  bindings: Map<string, ImportBinding>;
-+  importOverride?: { name: string; statement: string };
-+  // The meta component of a plain CSF file, which renders the args of a story without markup.
-+  componentName?: string;
-+}
-+
-+function storySnippet(
-+  exportName: string,
-+  resolved: ResolvedStoryArgs,
-+  { file, bindings, importOverride, componentName }: StoryContext
-+): Pick<StoryDoc, 'snippet' | 'warning'> {
-+  const story = file.stories.get(exportName);
-+  const template =
-+    story?.template ?? (componentName ? `<${componentName} {...args} />` : undefined);
-+  const renders =
-+    !story?.template &&
-+    (resolved.storyMembers.properties.render || resolved.metaMembers.properties.render);
-+  if (!template) return renders ? { warning: RENDER_WARNING } : {};
-+
-+  const snippets: Record<string, string> = {};
-+  for (const [key, node] of Object.entries(resolved.args)) {
-+    const snippet = snippetArg(key, node, file, bindings);
-+    if (snippet !== undefined) snippets[key] = snippet;
-+  }
-+
-```
-
-**File**: `code/renderers/svelte/src/docgen/story-docs/markup.ts` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+import { parse } from 'svelte/compiler';
-+
-+import type { ESTreeAST } from '../../svelte-csf/parser/ast.ts';
-+
-+// Parse story markup on its own. Svelte reads TypeScript in markup only when the source has a
-+// `<script lang="ts">`, so a TypeScript story file gets one in front, and `offset` maps positions
-+// back to the markup.
-+export function parseMarkup(code: string, typescript: boolean) {
-+  const prefix = typescript ? '<script lang="ts"></script>' : '';
-+  return { ast: parse(prefix + code, { modern: true }), offset: prefix.length };
-+}
-+
-+// The names a destructuring pattern declares.
-+export function patternNames(pattern: ESTreeAST.Node | null | undefined): string[] {
-+  switch (pattern?.type) {
-+    case 'Identifier':
-+      return [pattern.name];
-+    // `let:value={{ item }}` holds its pattern as an object or array expression.
-+    case 'ObjectPattern':
-+    case 'ObjectExpression':
-+      return pattern.properties.flatMap((property) =>
-+        patternNames(
-+          property.type === 'RestElement' || property.type === 'SpreadElement'
-+            ? property
-+            : property.value
-+        )
-+      );
-+    case 'ArrayPattern':
-+    case 'ArrayExpression':
-+      return pattern.elements.flatMap((element) => patternNames(element));
-+    case 'SpreadElement':
-+    case 'RestElement':
-+      return patternNames(pattern.argument);
-+    case 'AssignmentPattern':
-+      return patternNames(pattern.left);
-+    default:
-+      return [];
-+  }
-+}
-+
-+export type Span = { start: number; end: number };
-+export type Edit = Span & { value: string };
-+
-+export function span(node: object): Span {
-+  if (
-+    'start' in node &&
-+    typeof node.start === 'number' &&
-+    'end' in node &&
-+    typeof node.end === 'number'
-+  ) {
-+    return { start: node.start, end: node.end };
-+  }
-+  throw new TypeError('Svelte AST node has no source positions');
-+}
-+
-+export function applyEdits(code: string, edits: Edit[]): string {
-+  for (const edit of [...edits].sort((a, b) => b.start - a.start)) {
-+    code = code.slice(0, edit.start) + edit.value + code.slice(edit.end);
-+  }
-+  return code;
-+}
-+
-+// The file name that makes csf-tools parse a script in the story file's language.
-+export const scriptFile = (typescript: boolean) => (typescript ? 'script.ts' : 'script.js');
-```
-
-**File**: `code/renderers/svelte/src/docgen/story-docs/print-template.ts` (added, +385/-0)
-```diff
-@@ -0,0 +1,385 @@
-+import {
-+  type ESTree as E,
-+  type ESTreeNode as Node,
-+  SourceEditor,
-+  staticKey,
-+  textOf,
-+  unwrapExpression,
-+  walk as walkEstree,
-+} from 'storybook/internal/csf-tools';
-+import { walk } from 'zimmerframe';
-+
-+import type { SvelteAST } from '../../svelte-csf/parser/ast.ts';
-+import { type Edit, type Span, applyEdits, parseMarkup, scriptFile, span } from './markup.ts';
-+
-+// How a template snippet receives the args: `(args)`, `(props)` or `({ label, ...rest })`.
-+export interface TemplateParameter {
-+  // The name that holds the args, or the rest of them.
-+  name?: string;
-+  // Local name to arg name, for the args the parameter destructures.
-+  aliases: Record<string, string>;
-+}
-+
-+interface Reads {
-+  args: Record<string, Node>;
-+  name?: string;
-+  aliases: Record<string, string>;
-+  typescript: boolean;
-+  argsComplete: boolean;
-+}
-+
-+// Write a story's args into its markup: spread `{...args}` into attributes, and replace each
-+// `args.x` read with the source of the arg value.
-+export function printTemplate({
-+  code,
-+  args,
-+  typescript,
-+  parameter,
-+  snippets = {},
-+  argsComplete = false,
-+}: {
-+  code: string;
-+  args: Record<string, Node>;
-+  typescript: boolean;
-+  parameter?: TemplateParameter;
-+  // Whether `args` holds every arg the story sets, so a read of any other arg is `undefined`.
-+  argsComplete?: boolean;
-+  // `{#snippet}` children for the args that hold snippets, written into the component that
-+  // spreads the args.
-+  snippets?: Record<string, string>;
-+}): string {
-+  const { ast, offset } = parseMarkup(code, typescript);
-+  const destructured = new Set(Object.values(parameter?.aliases ?? {}));
-+  const name = parameter ? parameter.name : 'args';
-+  const reads: Reads = {
-+    args,
-+    name,
-+    aliases: parameter?.aliases ?? {},
-+    typescript,
-+    argsComplete,
-+  };
-+  const isArgsSpread = (attribute: SvelteAST.Component['attributes'][number]) =>
-+    attribute.type === 'SpreadAttribute' &&
-+    attribute.expression.type === 'Identifier' &&
-+    attribute.expression.name === name;
-+  const at = (node: object): Span => {
-+    const range = span(node);
-+    return { start: range.start - offset, end: range.end - offset };
-+  };
-+  const edits: Edit[] = [];
-+
-+  walk<SvelteAST.SvelteNode, null>(ast.fragment, null, {
-+    Attribute(node, { path, next }) {
-+      const element = path.at(-1);
-+      if (
-+        node.name in args &&
-+        element &&
-+        'attributes' in element &&
-+        element.attributes.some(
-+          (attribute: SvelteAST.Component['attributes'][number]) =>
-+            isArgsSpread(attribute) && attribute.start > node.start
-+        )
-+      ) {
-+        edits.push({ ...at(node), value: `${node.name}={${textOf(args[node.name])}}` });
-+        return;
-+      }
-+      next();
-+    },
-+    SpreadAttribute(node, { path, next }) {
-+      if (!isArgsSpread(node)) {
-+        next();
-+        return;
-+      }
-+      const element = path.at(-1);
-+      const content =
-+        element && 'fragment' in element
-+          ? (element.fragment as SvelteAST.Fragment).nodes.filter(
-+              (child) => !(child.type === 'Text' && !child.data.trim())
-+            )
-+          : [];
-+      const written = new Set([
-+        ...(element && 'attributes' in element
-+          ? element.attributes.flatMap((attribute: SvelteAST.Component['attributes'][number]) =>
-+              attribute.type === 'Attribute' || attribute.type === 'BindDirective'
-+                ? [attribute.name]
-+                : []
-+            )
-+          : []),
-+        // A snippet block inside a component sets the prop it names; other content sets `children`.
-+        ...content.map((child) =>
-+          child.type === 'SnippetBlock' ? child.expression.name : 'children'
-+        ),
-+      ]);
-+      const passed = (key: string) => !written.has(key) && !destructured.has(key);
-+      const props = Object.entries(args).flatMap(([key, value]) =>
-+        key in snippets || !passed(key) ? [] : printProp(key, value)
-+      );
-+      const spread = spreadEdit(code, at(node), props);
-+      edits.push(spread);
-+      const children = Object.entries(snippets).flatMap(([key, snippet]) =>
-+        passed(key) ? [snippet] : []
-+      );
-+      if (!children.length || element?.type !== 'Component') return;
-+      const { start, end } = at(element);
-+      if (code.slice(start, end).endsWith('/>')) {
-+        let from = end - 2;
-+        while (from > spread.end && /[ \t]/.test(code[from - 1])) from--;
-+        edits.push({
-+          start: from,
-+          end,
-+          value: `>\n${children.join('\n')}\n</${element.name}>`,
-+        });
-+      } else {
-+        const close = code.lastIndexOf('</', end - 1);
-+        edits.push({ start: close, end: close, value: `${children.join('\n')}\n` });
-+      }
-+    },
-+    ExpressionTag(node, { path }) {
-+      const range = at(node.expression);
-+      const expression = code.slice(range.start, range.end);
-+      cons
-```
-
-**File**: `code/renderers/svelte/src/docgen/story-docs/snippet-imports.ts` (added, +400/-0)
-```diff
-@@ -0,0 +1,400 @@
-+import {
-+  type ESTree as E,
-+  type ESTreeNode as Node,
-+  type ImportBinding,
-+  type ImportRef,
-+  SourceEditor,
-+  buildImportStatements,
-+  detachedTextOf,
-+  resolveComponentImport,
-+  textOf,
-+  walk as walkEstree,
-+} from 'storybook/internal/csf-tools';
-+import { walk } from 'zimmerframe';
-+
-+import type { SvelteAST } from '../../svelte-csf/parser/ast.ts';
-+import { parseMarkup, patternNames, scriptFile, span } from './markup.ts';
-+
-+export interface SnippetImportBlock {
-+  block?: string;
-+  // Names the block declares, by import or by a copied declaration.
-+  declared: string[];
-+  // Components the snippet renders that nothing in the story file declares.
-+  unresolved: string[];
-+  // Other names the snippet reads that nothing in the story file declares.
-+  unresolvedIdentifiers?: string[];
-+}
-+
-+// Names a snippet can read without declaring them: runes, and browser globals that the Node
-+// process building the snippet does not have.
-+const GLOBALS = new Set([
-+  '$state',
-+  '$derived',
-+  '$effect',
-+  '$props',
-+  '$bindable',
-+  '$inspect',
-+  '$host',
-+  'window',
-+  'document',
-+  'navigator',
-+  'location',
-+  'history',
-+  'localStorage',
-+  'sessionStorage',
-+  'alert',
-+  'confirm',
-+  'prompt',
-+  'requestAnimationFrame',
-+  'cancelAnimationFrame',
-+]);
-+
-+const SVELTE_NODE =
-+  /^(?:Root|Fragment|Text|Comment|ExpressionTag|HtmlTag|ConstTag|DebugTag|RenderTag|AttachTag|Attribute|SpreadAttribute|\w+Directive|Component|RegularElement|Svelte\w+|TitleElement|SlotElement|\w+Block)$/;
-+
-+// Build the `<script>` block a snippet needs to compile on its own: the imports of the components
-+// and values it uses, and the story file declarations it reads, with their dependencies.
-+// Names resolve the way Svelte scopes them: the instance script first, then the module script, then
-+// the story file's imports (`bindings`).
-+export function buildSnippetImportBlock(
-+  markup: string,
-+  {
-+    bindings,
-+    importOverride,
-+    instanceScript,
-+    moduleScript,
-+    imports = [],
-+    typescript = false,
-+  }: {
-+    bindings: Map<string, ImportBinding>;
-+    // The `@import` of the meta, which replaces the import of the meta component only.
-+    importOverride?: { name: string; statement: string };
-+    instanceScript?: string;
-+    moduleScript?: string;
-+    // Imports the printed arg values need.
-+    imports?: ImportRef[];
-+    typescript?: boolean;
-+  }
-+): SnippetImportBlock {
-+  const { components, names } = markupReferences(markup, typescript);
-+  const scripts = [instanceScript, moduleScript].map((code) =>
-+    code === undefined ? undefined : readScript(code, typescript)
-+  );
-+  const storyImports = new Set<string>();
-+  const unresolved = new Set<string>();
-+  const declaredNames = new Set<string>();
-+
-+  // A type that nothing in the story file declares comes from the TypeScript libraries.
-+  const visit = (name: string, level = 0, type = false): void => {
-+    const script = scripts[level];
-+    if (level < scripts.length) {
-+      const found = script?.declarations.get(name);
-+      if (!found) return visit(name, level + 1, type);
-+      declaredNames.add(name);
-+      if (found.kind === 'import' && level === 1) {
-+        storyImports.add(name);
-+        return;
-+      }
-+      if (script!.selected.has(found)) return;
-+      script!.selected.add(found);
-+      for (const dependency of found.dependencies.values) visit(dependency, level);
-+      for (const dependency of found.dependencies.types) visit(dependency, level, true);
-+      return;
-+    }
-+    if (bindings.has(name)) {
-+      storyImports.add(name);
-+      declaredNames.add(name);
-+    } else if (!type && !GLOBALS.has(name) && !(name in globalThis)) unresolved.add(name);
-+  };
-+  // `$count` reads the store `count`; runes start with `$` too, and are globals.
-+  for (const name of [...components, ...names.values]) {
-+    const base = name.split('.')[0];
-+    visit(base.startsWith('$') && !GLOBALS.has(base) ? base.slice(1) : base);
-+  }
-+  for (const name of names.types) visit(name, 0, true);
-+
-+  const importLines = buildImportStatements({
-+    refs: [
-+      ...[...storyImports].map((name) => {
-+        const ref = resolveComponentImport(name, bindings);
-+        return {
-+          ...ref,
-+          ...(name === importOverride?.name ? { importOverride: importOverride.statement } : {}),
-+        };
-+      }),
-+      ...imports,
-+    ],
-+  });
-+  const [instance, module] = scripts.map((script) => (script ? printSelected(script) : []));
-+  const copies = scripts.some((script) =>
-+    [...(script?.selected ?? [])].some((found) => found.kind === 'declaration')
-+  );
-+  const lang = typescript && (copies || needsTypeScript(markup)) ? ' lang="ts"' : '';
-+  const blocks =
-+    module.length && instance.length
-+      ? [scriptBlock(` module${lang}`, [importLines, module]), scriptBlock(lang, [instance])]
-+      : [scriptBlock(lang, [importLines, module, instance])];
-+
-+  const unresolvedComponents = [...compon
-```
-
-**File**: `code/renderers/svelte/src/docgen/story-docs/svelte-csf-file.ts` (added, +173/-0)
-```diff
-@@ -0,0 +1,173 @@
-+import { type ESTree, SourceEditor, generateUid } from 'storybook/internal/csf-tools';
-+
-+import { getSvelteAST } from '../../svelte-csf/parser/ast.ts';
-+import { getStoriesIdentifiers } from '../../svelte-csf/parser/analyse/story/attributes/identifiers.ts';
-+import { getStoryContentRawCode } from '../../svelte-csf/parser/analyse/story/content.ts';
-+import { getDefineMetaFirstArgumentObjectExpression } from '../../svelte-csf/parser/extract/svelte/define-meta.ts';
-+import { extractSvelteASTNodes } from '../../svelte-csf/parser/extract/svelte/nodes.ts';
-+import {
-+  findMetaRenderSnippetBlock,
-+  findStoryAttributeTemplateSnippetBlock,
-+} from '../../svelte-csf/parser/extract/svelte/snippet-block.ts';
-+import { extractStoryAttributesNodes } from '../../svelte-csf/parser/extract/svelte/story/attributes.ts';
-+import { extractStoryTemplateSnippetBlock } from '../../svelte-csf/parser/extract/svelte/story/template.ts';
-+import type { ESTreeAST, SvelteAST } from '../../svelte-csf/parser/ast.ts';
-+import { type Edit, applyEdits, scriptFile, span } from './markup.ts';
-+import type { TemplateParameter } from './print-template.ts';
-+
-+export interface StoryMarkup {
-+  template?: string;
-+  // How the template snippet receives the args, when the story has one.
-+  parameter?: TemplateParameter;
-+  description?: string;
-+}
-+
-+export interface StoryFile {
-+  // The story file as plain CSF, so the shared csf-tools can read its meta and args.
-+  csfSource: string;
-+  typescript: boolean;
-+  // Markup of each Svelte CSF story, by export name.
-+  stories: Map<string, StoryMarkup>;
-+  // Snippets declared at the top of a Svelte CSF file, which args can pass by name.
-+  snippets: Map<string, { parameters: string; body: string }>;
-+  moduleScript?: string;
-+  instanceScript?: string;
-+}
-+
-+// Read a `.stories.svelte` file as plain CSF: the module script with the meta as default export,
-+// and one story export with the `args` of each `<Story>`.
-+export async function readSvelteCsfFile(source: string, filename: string): Promise<StoryFile> {
-+  const ast = getSvelteAST({ code: source, filename });
-+  const typescript = isTypeScript(ast.module) || isTypeScript(ast.instance);
-+  const nodes = await extractSvelteASTNodes({ ast, filename });
-+  const module = span(ast.module!.content);
-+  const moduleScript = source.slice(module.start, module.end);
-+  const instanceScript = ast.instance
-+    ? source.slice(span(ast.instance.content).start, span(ast.instance.content).end)
-+    : undefined;
-+
-+  const declaration = span(nodes.defineMetaVariableDeclaration);
-+  const meta = span(getDefineMetaFirstArgumentObjectExpression({ nodes, filename }));
-+  const moduleEditor = new SourceEditor(moduleScript, scriptFile(typescript));
-+  const { scopes } = moduleEditor;
-+  let csfSource = applyEdits(moduleScript, [
-+    ...unexported(moduleEditor.program),
-+    {
-+      start: declaration.start - module.start,
-+      end: declaration.end - module.start,
-+      value: `export default ${source.slice(meta.start, meta.end)};`,
-+    },
-+  ]);
-+
-+  const stories = new Map<string, StoryMarkup>();
-+  const identifiers = getStoriesIdentifiers({ nodes, filename });
-+  for (const [index, story] of nodes.storyComponents.entries()) {
-+    const { exportName, name } = identifiers[index];
-+    const value = extractStoryAttributesNodes({ component: story.component, attributes: ['args'] })
-+      .args?.value;
-+    const chunk = Array.isArray(value) ? value[0] : value;
-+    const args =
-+      chunk && chunk !== true && chunk.type === 'ExpressionTag'
-+        ? source.slice(span(chunk.expression).start, span(chunk.expression).end)
-+        : '{}';
-+    const storyObject = `{ name: ${JSON.stringify(name)}, args: ${args} }`;
-+    // Svelte CSF exports a story under a name of its own, so the module script may declare it too.
-+    if (scopes.names.has(exportName)) {
-+      const local = generateUid(scopes, exportName);
-+      csfSource += `\nconst ${local} = ${storyObject};\nexport { ${local} as ${exportName} };`;
-+    } else {
-+      csfSource += `\nexport const ${exportName} = ${storyObject};`;
-+    }
-+    const template = getStoryContentRawCode({
-+      nodes: { component: story.component, svelte: nodes },
-+      originalCode: source,
-+      filename,
-+    });
-+    const parameter = templateParameter(story.component, nodes, filename);
-+    stories.set(exportName, {
-+      // Without a meta component, a story with no markup of its own renders nothing static.
-+      template: template.startsWith('<undefined ') ? undefined : template,
-+      ...(parameter ? { parameter } : {}),
-+      description: story.comment?.data.trim(),
-+    });
-+  }
-+
-+  const snippets = new Map<string, { parameters: string; body: string }>();
-+  for (const snippet of nodes.snippetBlocks) {
-+    const first = snippet.body.nodes[0];
-+    const last = snippet.body.nodes.at(-1);
-+    const parameters = snippet.parameters.map((parameter) =>
-+      source.slice(span(parameter).start, s
-```
-
-**File**: `code/renderers/svelte/src/entry-preview-docs.ts` (modified, +3/-1)
-```diff
-@@ -3,4 +3,6 @@ import type { DecoratorFunction } from 'storybook/internal/types';
- import { sourceDecorator } from './docs/sourceDecorator.ts';
- import type { SvelteRenderer } from './types.ts';
+ import { logger } from 'storybook/internal/node-logger';
  
--export const decorators: DecoratorFunction<SvelteRenderer>[] = [sourceDecorator];
-+export const decorators: DecoratorFunction<SvelteRenderer>[] = globalThis.FEATURES?.docgenServer
-+  ? []
-+  : [sourceDecorator];
-```
-
-**File**: `code/renderers/svelte/src/svelte-csf/runtime/emit-code.ts` (modified, +1/-0)
-```diff
-@@ -21,6 +21,7 @@ const channel: ReturnType<(typeof addons)['getChannel']> | undefined = addons.ge
-  * So that it can be shown in source code viewer
-  */
- export const emitCode = (params: Params) => {
-+  if (globalThis.FEATURES?.docgenServer) return;
-   const { storyContext } = params;
+-import { normalize } from 'pathe';
++import { basename, dirname, join, normalize } from 'pathe';
+ import webpack from 'webpack';
+ import type { Configuration, NormalModule, Stats, WebpackPluginInstance } from 'webpack';
  
-   if (skipSourceRender(storyContext)) {
-```
-
----
-
-### Incident Patch 2: `09adb2d8` (2026-10-22)
-**Commit Message**: Merge pull request #36983 from storybookjs/julien/wc-css-state-no-control
-
-WC: Disable control for cssstate
-
-**File**: `code/e2e-sandbox/framework-web-components.spec.ts` (modified, +1/-1)
-```diff
-@@ -54,13 +54,13 @@ const CONTROL_KINDS: { arg: string; kind: string; selector: string }[] = [
-   },
-   { arg: 'default-slot', kind: 'text', selector: 'textarea#control-default-slot' },
-   { arg: 'value-part', kind: 'text', selector: 'textarea#control-value-part' },
--  { arg: 'at-max-state', kind: 'text', selector: 'textarea#control-at-max-state' },
- ];
+@@ -18,6 +25,8 @@ vi.mock('storybook/internal/node-logger', { spy: true });
+ // The plugin extracts mocks with Node's resolver, which reads the real disk, so memfs cannot host
+ // this fixture.
+ let root: string;
++let project: string;
++let linkedProject: string;
  
- const NO_CONTROL_ROWS: { arg: string; reason: string; row: RegExp }[] = [
-   { arg: 'count-changed', reason: 'event', row: /^count-changed/ },
-   { arg: 'increment', reason: 'method', row: /^increment/ },
-   { arg: 'atMax', reason: 'readonly property', row: /^atMax/ },
-+  { arg: 'at-max-state', reason: 'css state', row: /^at-max\b/ },
- ];
- 
- const CONTROL_EDITS: {
-```
-
-**File**: `code/lib/docgen-harness/src/sandbox-baselines/__baselines__/lit-vite-default-ts/stories-renderers-web-components-lit-vite-default-ts-demo-wc-counter.json` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@
-       }
-     },
-     "at-max-state": {
-+      "control": false,
-       "description": "Set while the count has reached `max`",
-       "name": "at-max",
-       "table": {
-```
-
-**File**: `code/lib/docgen-harness/src/web-components/__testfixtures__/lit-basic-attributes/osa-v2-argtypes.snapshot` (modified, +1/-0)
-```diff
-@@ -81,6 +81,7 @@
-     },
-   },
-   "open-state": {
-+    "control": false,
-     "description": "Set while the panel is open.",
-     "name": "open",
-     "table": {
-```
-
-**File**: `code/lib/docgen-harness/src/web-components/__testfixtures__/lit-toolkit-shapes/osa-argtypes.snapshot` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@
-     },
-   },
-   "active-state": {
-+    "control": false,
-     "description": "Set while active.",
-     "name": "active",
-     "table": {
-```
-
-**File**: `code/lib/docgen-harness/src/web-components/__testfixtures__/vanilla-basic/osa-v2-argtypes.snapshot` (modified, +1/-0)
-```diff
-@@ -32,6 +32,7 @@
-     },
-   },
-   "disabled-state": {
-+    "control": false,
-     "description": "Set while the element is disabled.",
-     "name": "disabled",
-     "table": {
-```
-
-**File**: `code/renderers/web-components/src/docgen/component-docgen/arg-types/map-arg-types.test.ts` (modified, +1/-0)
-```diff
-@@ -904,6 +904,7 @@ describe('mapArgTypes', () => {
-           name: 'open',
-           description: 'Set while open.',
-           type: { name: 'string' },
-+          control: false,
-           table: {
-             category: 'css states',
-           },
-```
-
-**File**: `code/renderers/web-components/src/docgen/component-docgen/arg-types/map-arg-types.ts` (modified, +5/-1)
-```diff
-@@ -158,7 +158,11 @@ function namedEntry(
-   const name = item.name || DEFAULT_SLOT_NAME;
-   return [
-     toArgKey(category, name),
--    memberArgType(name, [item], NAMED_ENTRY_CATEGORIES[category], { type: { name: 'string' } }),
-+    memberArgType(name, [item], NAMED_ENTRY_CATEGORIES[category], {
-+      type: { name: 'string' },
-+      // The element sets its own states through ElementInternals, so the row documents the `:state()` hook.
-+      ...(category === 'cssStates' ? { control: false } : {}),
-+    }),
-   ];
- }
- 
-```
-
----
-
-### Incident Patch 3: `e5ae385d` (2026-10-21)
-**Commit Message**: fix(csf): keep the tags that an extended story inherits
-
-`Story.extend()` combined the tags of the parent with its own tags, so a
-removal such as `!autodocs` in the parent was used up before the meta
-tags were added, and the meta tag came back. Now `extend()` keeps the
-tags as written, and composing the story combines them once, after the
-meta tags.
-
-The CSF indexer read only the tags in the `.extend({...})` argument.
-Now it adds the tags of the parent chain, also through `const Alias =
-Story`, and the `play-fn` tag when a parent has a play function. A
-parent that is not exported and has tags that are not static gives no
-tags, so the file still indexes. The index and the runtime now agree.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `code/core/src/csf-tools/CsfFile.test.ts` (modified, +60/-0)
-```diff
-@@ -3012,6 +3012,66 @@ describe('CsfFile', () => {
-         `);
-       });
- 
-+      it('combines the tags of the parent stories of an extend call', () => {
-+        const { stories } = loadCsf(
-+          dedent`
-+            import { config } from '#.storybook/preview'
-+            const meta = config.meta({ component: 'foo' });
-+            const Base = meta.story({ tags: ['base'], play: async () => {} });
-+            export const A = Base.extend({ tags: ['a'] });
-+            export const B = A.extend({});
-+            export const C = A.extend({ tags: ['!base', 'c'] });
-+            export const D = meta.story({ tags: ['d'] });
-+          `,
-+          { makeTitle }
-+        ).parse();
-+
-+        expect(Object.fromEntries(stories.map(({ name, tags }) => [name, tags]))).toEqual({
-+          A: ['base', 'a', 'play-fn'],
-+          B: ['base', 'a', 'play-fn'],
-+          C: ['base', 'a', '!base', 'c', 'play-fn'],
-+          D: ['d'],
-+        });
-+      });
-+
-+      it('combines the tags of a parent story that the extend call reads through an alias', () => {
-+        const { stories } = loadCsf(
-+          dedent`
-+            import { config } from '#.storybook/preview'
-+            const meta = config.meta({ component: 'foo' });
-+            export const A = meta.story({ tags: ['a'], play: async () => {} });
-+            const Alias = A;
-+            export const B = Alias.extend({ tags: ['b'] });
-+          `,
-+          { makeTitle }
-+        ).parse();
-+
-+        expect(Object.fromEntries(stories.map(({ name, tags }) => [name, tags]))).toEqual({
-+          A: ['a', 'play-fn'],
-+          B: ['a', 'b', 'play-fn'],
-+        });
-+      });
-+
-+      it('indexes a story whose parent story is not exported and has tags it cannot read', () => {
-+        const { stories } = loadCsf(
-+          dedent`
-+            import { config } from '#.storybook/preview'
-+            import { sharedTags } from './tags';
-+            const meta = config.meta({ component: 'foo' });
-+            const Base = meta.story({ tags: sharedTags });
-+            const Spread = meta.story({ tags: [...sharedTags, 'spread'], play: async () => {} });
-+            export const A = Base.extend({ tags: ['a'] });
-+            export const B = Spread.extend({ tags: ['b'] });
-+          `,
-+          { makeTitle }
-+        ).parse();
-+
-+        expect(Object.fromEntries(stories.map(({ name, tags }) => [name, tags]))).toEqual({
-+          A: ['a'],
-+          B: ['b', 'play-fn'],
-+        });
-+      });
-+
-       it('story test - index snapshot', () => {
-         expect(
-           parse(
-```
-
-**File**: `code/core/src/csf-tools/CsfFile.ts` (modified, +68/-5)
-```diff
-@@ -141,6 +141,62 @@ function parseTags(prop: Node | null | undefined) {
-   }) as Tag[];
- }
- 
-+function resolveTags(tags: Node, program: E.Program) {
-+  return parseTags(tags.type === 'Identifier' ? findVarInitialization(tags.name, program) : tags);
-+}
-+
-+// The tags of a parent story. A parent that isn't exported isn't indexed on its own, so tags that
-+// aren't static don't fail the file: the story inherits none of them.
-+function inheritedTags(tags: Node, program: E.Program) {
-+  try {
-+    return resolveTags(tags, program);
-+  } catch {
-+    return [];
-+  }
-+}
-+
-+// The tags a `Story.extend()` call inherits from its chain of parent stories, and whether one of
-+// them has a play function. A `meta.story()` call inherits nothing.
-+function extendedStoryTags(
-+  call: CsfFactoryCall,
-+  program: E.Program,
-+  visited = new Set<string>()
-+): { tags: string[]; play: boolean } {
-+  if (call.callee.property.name !== 'extend') {
-+    return { tags: [], play: false };
-+  }
-+  // Follow `const Alias = Story` to the story
-+  let parentName = csfFactoryReceiver(call).name;
-+  let parent: Node | null = null;
-+  while (!visited.has(parentName)) {
-+    visited.add(parentName);
-+    const init = findVarInitialization(parentName, program);
-+    parent = init && unwrapExpression(init);
-+    if (parent?.type !== 'Identifier') {
-+      break;
-+    }
-+    parentName = parent.name;
-+  }
-+  if (!isCsfFactoryCall(parent)) {
-+    return { tags: [], play: false };
-+  }
-+  const inherited = extendedStoryTags(parent, program, visited);
-+  const config = parent.arguments[0] && unwrapExpression(parent.arguments[0]);
-+  const annotations = config?.type === 'ObjectExpression' ? config.properties : [];
-+  const tags = annotations.find(
-+    (property): property is E.ObjectProperty =>
-+      property.type === 'Property' && staticKey(property) === 'tags' && !property.method
-+  );
-+  return {
-+    tags: [...inherited.tags, ...(tags ? inheritedTags(tags.value, program) : [])],
-+    play:
-+      inherited.play ||
-+      annotations.some(
-+        (property) => property.type === 'Property' && staticKey(property) === 'play'
-+      ),
-+  };
-+}
-+
- function parseTestTags(optionsNode: Node | null | undefined, program: E.Program) {
-   if (!optionsNode) {
-     return [] as string[];
-@@ -373,6 +429,8 @@ export class CsfFile {
- 
-   _storyAnnotations: Record<string, Record<string, Node>> = {};
- 
-+  _storyFactoryCalls: Record<string, CsfFactoryCall> = {};
-+
-   _templates: Record<string, Node> = {};
- 
-   _namedExportsOrder?: string[];
-@@ -628,6 +686,7 @@ export class CsfFile {
-     this._metaFactoryCall = undefined;
-     this._metaNodeIsSynthetic = undefined;
-     this._storyAnnotations = {};
-+    this._storyFactoryCalls = {};
-     this._templates = {};
-     this._namedExportsOrder = undefined;
-     this.imports = [];
-@@ -872,6 +931,7 @@ export class CsfFile {
-         let storyIsFactory = false;
-         if (isCsfFactoryCall(storyNode)) {
-           storyIsFactory = true;
-+          this._storyFactoryCalls[exportName] = storyNode;
-           storyNode = storyNode.arguments[0] as Node | undefined;
-         }
- 
-@@ -985,6 +1045,7 @@ export class CsfFile {
-           const unwrappedDecl = unwrapExpression(decl);
-           if (this._metaIsFactory && isCsfFactoryCall(unwrappedDecl)) {
-             storyIsFactory = true;
-+            this._storyFactoryCalls[exportName] = unwrappedDecl;
-             storyNode = unwrappedDecl.arguments[0] as Node | undefined;
+ const files: Record<string, string> = {
+   'package.json': JSON.stringify({ name: 'fixture' }),
+@@ -68,7 +77,7 @@ const stubAutomockLoader: WebpackPluginInstance = {
+         (loaders) => {
+           for (const item of loaders) {
+             if (item.loader === automockLoader) {
+-              item.loader = join(root, 'automock-loader-stub.cjs');
++              item.loader = join(project, 'automock-loader-stub.cjs');
+             }
            }
-           // A story from another file is kept: its declaration isn't in this file
-@@ -1215,12 +1276,14 @@ export class CsfFile {
-         acc[key] = { ...story, id, parameters };
-         const storyAnnotations = this._storyAnnotations[key];
-         const { tags, play } = storyAnnotations;
--        if (tags) {
--          const node =
--            tags.type === 'Identifier' ? findVarInitialization(tags.name, this.program) : tags;
--          acc[key].tags = parseTags(node);
-+        const factoryCall = this._storyFactoryCalls[key];
-+        const inherited = factoryCall
-+          ? extendedStoryTags(factoryCall, this.program)
-+          : { tags: [], play: false };
-+        if (tags || inherited.tags.length > 0) {
-+          acc[key].tags = [...inherited.tags, ...(tags ? resolveTags(tags, this.program) : [])];
          }
--        if (play) {
-+        if (play || inherited.play) {
-           acc[key].tags = [...(acc[key].tags || []), Tag.PLAY_FN];
-         }
-         const stats = acc[key].__stats;
-```
-
-**File**: `code/core/src/csf/csf-factories.test.ts` (modified, +9/-0)
-```diff
-@@ -52,6 +52,15 @@ test('addon parameters are inferred', () => {
-   });
- });
+@@ -78,58 +87,84 @@ const stubAutomockLoader: WebpackPluginInstance = {
+ };
  
-+test('a story keeps the tags that the story it extends removes from the meta', () => {
-+  const taggedMeta = preview.meta({ tags: ['autodocs'], render: () => 'hello' });
-+  const Parent = taggedMeta.story({ tags: ['!autodocs'] });
-+  const Child = Parent.extend({ tags: ['child'] });
-+
-+  expect(Child.composed.tags).not.toContain('autodocs');
-+  expect(Child.composed.tags).toContain('child');
+ beforeAll(() => {
+-  vi.mocked(logger.info).mockImplementation(() => {});
+-  root = realpathSync(mkdtempSync(join(tmpdir(), 'webpack-mock-plugin-')));
++  root = normalize(realpathSync(mkdtempSync(join(tmpdir(), 'webpack-mock-plugin-'))));
++  project = join(root, 'project');
++  linkedProject = join(root, 'linked');
+   for (const [file, content] of Object.entries(files)) {
+-    mkdirSync(dirname(join(root, file)), { recursive: true });
+-    writeFileSync(join(root, file), content);
++    mkdirSync(dirname(join(project, file)), { recursive: true });
++    writeFileSync(join(project, file), content);
+   }
++  symlinkSync(project, linkedProject, 'junction');
 +});
 +
- describe('legacy preview annotation namespaces', () => {
-   test('keep factory addon types when mixed with factory addons', () => {
-     const mixedPreview = definePreview({
++beforeEach(() => {
++  vi.mocked(logger.info).mockImplementation(() => {});
+ });
+ 
+ afterAll(() => {
+   rmSync(root, { recursive: true, force: true });
+ });
+ 
+-async function compile(previewFile = '.storybook/preview.js') {
+-  const outputPath = join(root, 'dist', previewFile.replace(/\W/g, '-'));
+-  const config: Configuration = {
+-    mode: 'development',
+-    devtool: false,
+-    context: root,
+-    entry: './src/index.js',
+-    output: { path: outputPath, filename: 'bundle.js' },
+-    resolve: { extensions: ['.tsx', '.js'], alias: { '@': join(root, 'src') } },
+-    module: {
+-      rules: [
+-        { test: /\.(js|tsx)$/, exclude: /node_modules/, loader: join(root, 'project-loader.cjs') },
+-      ],
+-    },
+-    plugins: [
+-      new WebpackMockPlugin({ previewConfigPath: join(root, previewFile) }),
+-      stubAutomockLoader,
+-    ],
+-  };
++interface CompileOptions {
++  previewFile?: string;
++  context?: string;
++  config?: Partial<Configuration>;
++}
++
++async function compile({
++  previewFile = '.storybook/preview.js',
++  context = project,
++  config = {},
++}: CompileOptions = {}) {
++  const outputPath = join(root, 'dist', `${basename(context)}-${previewFile.replace(/\W/g, '-')}`);
+   const stats = await new Promise<Stats>((resolve, reject) =>
+-    webpack(config, (error, result) => (error || !result ? reject(error) : resolve(result)))
++    webpack(
++      {
++        mode: 'development',
++        devtool: false,
++        context,
++        entry: './src/index.js',
++        output: { path: outputPath, filename: 'bundle.js' },
++        module: {
++          rules: [
++            {
++              test: /\.(js|tsx)$/,
++              exclude: /node_modules/,
++              loader: join(project, 'project-loader.cjs'),
++            },
++          ],
++        },
++        plugins: [
++          new WebpackMockPlugin({ previewConfigPath: join(context, previewFile) }),
++          stubAutomockLoader,
++        ],
++        ...config,
++        resolve: {
++          extensions: ['.tsx', '.js'],
++          alias: { '@': join(context, 'src') },
++          ...config.resolve,
++        },
++      },
++      (error, result) => (error || !result ? reject(error) : resolve(result))
++    )
+   );
+   expect(stats.toString({ all: false, errors: true })).toBe('');
+-  const modules = [...stats.compilation.modules].filter(
+-    (module): module is NormalModule => 'resource' in module
+-  );
++  const modules = [...stats.compilation.modules];
+   return {
+     bundle: readFileSync(join(outputPath, 'bundle.js'), 'utf-8'),
++    modules,
+     moduleFor: (file: string) => {
+-      const module = modules.find(
+-        (candidate) => normalize(candidate.resource) === normalize(join(root, file))
+
 ```
 
-**File**: `code/core/src/csf/csf-factories.ts` (modified, +2/-2)
+**File**: `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.ts` (modified, +22/-18)
 ```diff
-@@ -1,5 +1,4 @@
- import type { AddonTypes, StoryContext } from 'storybook/internal/csf';
--import { combineTags } from 'storybook/internal/csf';
- import type {
-   Args,
-   ComponentAnnotations,
-@@ -368,7 +367,8 @@ function defineStory<
-             ...normalizeArrays(input.loaders ?? []),
-           ],
-           parameters: combineParameters(this.input.parameters, input.parameters),
--          tags: combineTags(...(this.input.tags ?? []), ...(input.tags ?? [])),
-+          // Composing the story combines the tags, after the tags of the meta
-+          tags: [...(this.input.tags ?? []), ...(input.tags ?? [])],
-         },
-         this.meta
+@@ -1,24 +1,20 @@
+-import { dirname, isAbsolute } from 'node:path';
+ import { fileURLToPath } from 'node:url';
+ 
+ import { extractMockCalls, findMockRedirect } from 'storybook/internal/mocking-utils';
+ import type { MockCall } from 'storybook/internal/mocking-utils';
+ import { logger } from 'storybook/internal/node-logger';
+ 
+-import { normalize } from 'pathe';
+-import type { Compiler, ResolveData } from 'webpack';
++import { dirname, normalize } from 'pathe';
++import type { Compiler, ResolveData, Resolver } from 'webpack';
+ 
+ export interface WebpackMockPluginOptions {
+   previewConfigPath: string;
+ }
+ 
+ const PLUGIN_NAME = 'storybook-mock-plugin';
+ 
+-const isBareSpecifier = (path: string) => !path.startsWith('.') && !isAbsolute(path);
+-
+ export class WebpackMockPlugin {
+   private mocksByPath = new Map<string, MockCall>();
+-  private mocksBySpecifier = new Map<string, MockCall>();
+   private lastPreviewMtime: number | undefined;
+   private readonly options: WebpackMockPluginOptions;
+ 
+@@ -34,7 +30,7 @@ export class WebpackMockPlugin {
+       import.meta.resolve('@storybook/builder-webpack5/loaders/webpack-automock-loader')
+     );
+ 
+-    const updateMocks = () => {
++    const updateMocks = async () => {
+       const previewMtime = this.getPreviewConfigMtime(compiler);
+       if (previewMtime !== undefined && previewMtime === this.lastPreviewMtime) {
+         return;
+@@ -45,19 +41,22 @@ export class WebpackMockPlugin {
+         compiler.context,
+         findMockRedirect
        );
+-      this.mocksByPath = new Map(mocks.map((mock) => [mock.absolutePath, mock]));
+-      this.mocksBySpecifier = new Map(
+-        mocks.filter((mock) => isBareSpecifier(mock.path)).map((mock) => [mock.path, mock])
++      // Mocks resolve through webpack's resolver so that aliases, symlink handling and package
++      // conditions match the resolution of the imports they are compared against.
++      const resolver = compiler.resolverFactory.get('normal', { dependencyType: 'esm' });
++      const paths = await Promise.all(
++        mocks.map((mock) => resolveWithWebpack(resolver, dirname(previewConfigPath), mock))
+       );
++      this.mocksByPath = new Map(mocks.map((mock, index) => [normalize(paths[index]), mock]));
+       this.lastPreviewMtime = previewMtime;
+ 
+       if (mocks.length > 0) {
+         logger.info(`Mock map updated with ${mocks.length} mocks.`);
+       }
+     };
+ 
+-    compiler.hooks.beforeRun.tap(PLUGIN_NAME, updateMocks);
+-    compiler.hooks.watchRun.tap(PLUGIN_NAME, updateMocks);
++    compiler.hooks.beforeRun.tapPromise(PLUGIN_NAME, updateMocks);
++    compiler.hooks.watchRun.tapPromise(PLUGIN_NAME, updateMocks);
+ 
+     compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (factory) => {
+       factory.hooks.afterResolve.tapAsync(PLUGIN_NAME, (resolveData, callback) => {
+@@ -91,16 +90,12 @@ export class WebpackMockPlugin {
+     });
+   }
+ 
+-  private findMock({ resourceResolveData, resource, rawRequest }: ResolveData['createData']) {
++  private findMock({ resourceResolveData, resource }: ResolveData['createData']) {
+     if (this.mocksByPath.size === 0) {
+       return undefined;
+     }
+     const path = resourceResolveData?.path;
+-    const resourcePath = normalize(typeof path === 'string' ? path : (resource ?? ''));
+-    return (
+-      this.mocksByPath.get(resourcePath) ??
+-      (rawRequest === undefined ? undefined : this.mocksBySpecifier.get(rawRequest))
+-    );
++    return this.mocksByPath.get(normalize(typeof path === 'string' ? path : (resource ?? '')));
+   }
+ 
+   private getPreviewConfigMtime(compiler: Compiler): number | undefined {
+@@ -113,3 +108,12 @@ export class WebpackMockPlugin {
+     }
+   }
+ }
++
++function resolveWithWebpack(resolver: Resolver, context: string, mock: MockCall) {
++  return new Promise<string>((resolve) => {
++    resolver.resolve({}, context, mock.specifier, {}, (error, _result, request) => {
++      const path = request?.path;
++      resolve(!error && typeof path === 'string' ? path : mock.absolutePath);
++    });
++  });
++}
+```
+
+**File**: `code/core/src/mocking-utils/extract.test.ts` (modified, +6/-0)
+```diff
+@@ -92,6 +92,7 @@ describe('extractMockCalls', () => {
+     expect(result).toEqual([
+       {
+         path: 'foo',
++        specifier: 'foo',
+         absolutePath: '/abs/path',
+         redirectPath: null,
+         spy: true,
+@@ -132,6 +133,7 @@ describe('extractMockCalls', () => {
+     expect(result).toEqual([
+       {
+         path: 'bar',
++        specifier: 'bar',
+         absolutePath: '/abs/path',
+         redirectPath: null,
+         spy: false,
+@@ -150,6 +152,7 @@ describe('extractMockCalls', () => {
+     expect(result).toEqual([
+       {
+         path: './bar/baz',
++        specifier: './bar/baz',
+         absolutePath: '/abs/path',
+         redirectPath: null,
+         spy: true,
+@@ -168,6 +171,7 @@ describe('extractMockCalls', () => {
+     expect(result).toEqual([
+       {
+         path: './bar/baz',
++        specifier: './bar/baz.js',
+         absolutePath: '/abs/path/bar/baz.js',
+         redirectPath: null,
+         spy: true,
+@@ -186,6 +190,7 @@ describe('extractMockCalls', () => {
+     expect(result).toEqual([
+       {
+         path: './bar/baz.utils',
++        specifier: './bar/baz.utils.ts',
+         absolutePath: '/abs/path/bar/baz.utils.ts',
+         redirectPath: null,
+         spy: true,
+@@ -204,6 +209,7 @@ describe('extractMockCalls', () => {
+     expect(result).toEqual([
+       {
+         path: './bar/baz.utils',
++        specifier: './bar/baz.utils',
+         absolutePath: '/abs/path/bar/baz.utils.ts',
+         redirectPath: null,
+         spy: true,
+```
+
+**File**: `code/core/src/mocking-utils/extract.ts` (modified, +4/-0)
+```diff
+@@ -20,7 +20,10 @@ export function isModuleDirectory(path: string) {
+ }
+ 
+ export type MockCall = {
++  /** The declared path, without its extension when that matches the resolved file. */
+   path: string;
++  /** The declared path exactly as written in the `sb.mock()` call. */
++  specifier: string;
+   absolutePath: string;
+   redirectPath: string | null;
+   spy: boolean;
+@@ -191,6 +194,7 @@ export function extractMockCalls(
+ 
+         mocks.push({
+           path: pathWithoutExtensionAndBasename,
++          specifier: path,
+           absolutePath,
+           redirectPath,
+           spy,
+```
+
+---
+
+### Incident Patch 2: `3b110a3e` (2026-10-30)
+**Commit Message**: fix(builder-webpack5): redirect manual package mocks before resolution
+
+A package the browser build cannot resolve, such as one whose exports map
+only has a node entry, failed in webpack before afterResolve could swap
+in its __mocks__ file. Bare-specifier redirects now also apply in
+beforeResolve by exact request, and such a mock no longer triggers the
+unresolvable warning.
+
+**File**: `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.test.ts` (modified, +26/-2)
+```diff
+@@ -36,6 +36,7 @@ const files: Record<string, string> = {
+     "sb.mock('../src/utils/format.js');",
+     "sb.mock('../src/components/Icon.tsx', { spy: true });",
+     "sb.mock('ext-pkg');",
++    "sb.mock('server-pkg');",
+   ].join('\n'),
+   '.storybook/preview-without-mocks.js': 'export default {};',
+   '.storybook/preview-with-unresolvable-mock.js': [
+@@ -48,8 +49,14 @@ const files: Record<string, string> = {
+     "import { format } from '@/utils/format';",
+     "import { Button } from './components/Button';",
+     "import { ext } from 'ext-pkg';",
++    "import { server } from 'server-pkg';",
+     "import { other } from './other.js';",
+-    'export default [api, format, Button, ext, other];',
++    'export default [api, format, Button, ext, server, other];',
++  ].join('\n'),
++  'src/index-without-server-pkg.js': [
++    "import { api } from './api.js';",
++    "import { ext } from 'ext-pkg';",
++    'export default [api, ext];',
+   ].join('\n'),
+   'src/api.js': "export const api = 'REAL_API';",
+   'src/data.json': '{}',
+@@ -64,6 +71,13 @@ const files: Record<string, string> = {
+   'node_modules/ext-pkg/package.json': JSON.stringify({ name: 'ext-pkg', main: 'index.js' }),
+   'node_modules/ext-pkg/index.js': "export const ext = 'REAL_EXT';",
+   '__mocks__/ext-pkg.js': "export const ext = 'MOCKED_EXT_' + 'NEEDS_PROJECT_LOADER';",
++  // Only Node's resolver can reach this package; webpack's browser conditions cannot.
++  'node_modules/server-pkg/package.json': JSON.stringify({
++    name: 'server-pkg',
++    exports: { '.': { node: './index.js' } },
++  }),
++  'node_modules/server-pkg/index.js': "export const server = 'REAL_SERVER';",
++  '__mocks__/server-pkg.js': "export const server = 'MOCKED_SERVER';",
+   'project-loader.cjs':
+     "module.exports = (source) => source.replace('NEEDS_PROJECT_LOADER', 'PROJECT_LOADER_RAN');",
+   'automock-loader-stub.cjs': [
+@@ -190,6 +204,12 @@ describe('WebpackMockPlugin', () => {
+     expect(build.sourceOf('__mocks__/ext-pkg.js')).toContain('MOCKED_EXT_');
+   });
+ 
++  it('replaces a package that webpack cannot resolve with its __mocks__ file', () => {
++    expect(build.bundle).toContain('MOCKED_SERVER');
++    expect(build.bundle).not.toContain('REAL_SERVER');
++    expect(logger.warn).not.toHaveBeenCalledWith(expect.stringContaining('server-pkg'));
++  });
++
+   it('leaves unmocked modules alone', () => {
+     expect(build.bundle).toContain('OTHER');
+     expect(build.sourceOf('src/other.js')).not.toContain('automocked');
+@@ -209,6 +229,7 @@ describe('WebpackMockPlugin', () => {
+   it('warns about a mock that webpack cannot resolve and keeps the others', async () => {
+     const { bundle } = await compile({
+       previewFile: '.storybook/preview-with-unresolvable-mock.js',
++      config: { entry: './src/index-without-server-pkg.js' },
+     });
+ 
+     expect(bundle).toContain('MOCKED_API_');
+@@ -218,7 +239,10 @@ describe('WebpackMockPlugin', () => {
+   });
+ 
+   it('changes nothing when the preview file has no mocks', async () => {
+-    const { bundle } = await compile({ previewFile: '.storybook/preview-without-mocks.js' });
++    const { bundle } = await compile({
++      previewFile: '.storybook/preview-without-mocks.js',
++      config: { entry: './src/index-without-server-pkg.js' },
++    });
+ 
+     expect(bundle).toContain('REAL_API');
+     expect(bundle).toContain('REAL_EXT');
+```
+
+**File**: `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.ts` (modified, +19/-2)
+```diff
+@@ -4,7 +4,7 @@ import { extractMockCalls, findMockRedirect } from 'storybook/internal/mocking-u
+ import type { MockCall } from 'storybook/internal/mocking-utils';
+ import { logger } from 'storybook/internal/node-logger';
+ 
+-import { dirname, normalize } from 'pathe';
++import { dirname, isAbsolute, normalize } from 'pathe';
+ import type { Compiler, ResolveData, Resolver } from 'webpack';
+ 
+ export interface WebpackMockPluginOptions {
+@@ -13,8 +13,11 @@ export interface WebpackMockPluginOptions {
+ 
+ const PLUGIN_NAME = 'storybook-mock-plugin';
+ 
++const isBareSpecifier = (specifier: string) => !specifier.startsWith('.') && !isAbsolute(specifier);
++
+ export class WebpackMockPlugin {
+   private mocksByPath = new Map<string, MockCall>();
++  private redirectsBySpecifier = new Map<string, string>();
+   private lastPreviewMtime: number | undefined;
+   private readonly options: WebpackMockPluginOptions;
+ 
+@@ -49,12 +52,16 @@ export class WebpackMockPlugin {
+         compiler.resolverFactory.get('normal', { dependencyType })
+       );
+       this.mocksByPath = new Map();
++      this.redirectsBySpecifier = new Map();
+       for (const mock of mocks) {
++        if (mock.redirectPath && isBareSpecifier(mock.specifier)) {
++          this.redirectsBySpecifier.set(mock.specifier, mock.redirectPath);
++        }
+         const paths = await Promise.all(
+           resolvers.map((resolver) => resolveWithWebpack(resolver, previewDir, mock.specifier))
+         );
+         const resolved = paths.filter((path): path is string => path !== undefined);
+-        if (resolved.length === 0) {
++        if (resolved.length === 0 && !this.redirectsBySpecifier.has(mock.specifier)) {
+           logger.warn(
+             `Could not resolve "${mock.specifier}" from ${previewDir}, so its sb.mock() call is ignored.`
+           );
+@@ -74,6 +81,16 @@ export class WebpackMockPlugin {
+     compiler.hooks.watchRun.tapPromise(PLUGIN_NAME, updateMocks);
+ 
+     compiler.hooks.normalModuleFactory.tap(PLUGIN_NAME, (factory) => {
++      // A package the browser build cannot resolve, such as one with a server-only `exports` map,
++      // still needs its manual mock, so a bare request is redirected before resolution.
++      factory.hooks.beforeResolve.tap(PLUGIN_NAME, (resolveData) => {
++        const redirectPath = this.redirectsBySpecifier.get(resolveData.request);
++        if (redirectPath) {
++          resolveData.request = redirectPath;
++          resolveData.context = dirname(redirectPath);
++        }
++      });
++
+       factory.hooks.afterResolve.tapAsync(PLUGIN_NAME, (resolveData, callback) => {
+         const mock = this.findMock(resolveData.createData);
+         if (!mock) {
+```
+
+---
+
+### Incident Patch 3: `4fdb9a3b` (2026-10-30)
+**Commit Message**: refactor(builder-webpack5): re-resolve automocks as inline loader requests
+
+Both a __mocks__ redirect and an automock now go through webpack's
+resolve hook again. The automock becomes an inline loader request, so it
+keeps its place between post and normal loaders instead of running after
+every loader, and the hand-built request string goes away.
+
+Declared mocks resolve once for esm and once for commonjs so dual
+packages are keyed by both entry files. A mock webpack cannot resolve is
+logged and skipped.
+
+**File**: `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.test.ts` (modified, +59/-67)
+```diff
+@@ -16,7 +16,7 @@ import { logger } from 'storybook/internal/node-logger';
+ 
+ import { basename, dirname, join, normalize } from 'pathe';
+ import webpack from 'webpack';
+-import type { Configuration, NormalModule, Stats, WebpackPluginInstance } from 'webpack';
++import type { Configuration, NormalModule, Stats } from 'webpack';
+ 
+ import { WebpackMockPlugin } from './webpack-mock-plugin.ts';
+ 
+@@ -38,6 +38,11 @@ const files: Record<string, string> = {
+     "sb.mock('ext-pkg');",
+   ].join('\n'),
+   '.storybook/preview-without-mocks.js': 'export default {};',
++  '.storybook/preview-with-unresolvable-mock.js': [
++    "import { sb } from 'storybook/test';",
++    "sb.mock('../src/api.js');",
++    "sb.mock('../src/data');",
++  ].join('\n'),
+   'src/index.js': [
+     "import { api } from './api.js';",
+     "import { format } from '@/utils/format';",
+@@ -47,10 +52,11 @@ const files: Record<string, string> = {
+     'export default [api, format, Button, ext, other];',
+   ].join('\n'),
+   'src/api.js': "export const api = 'REAL_API';",
++  'src/data.json': '{}',
+   'src/__mocks__/api.js':
+     "import { helper } from './helper.js'; export const api = 'MOCKED_API_' + helper;",
+   'src/__mocks__/helper.js': "export const helper = 'FROM_MOCKS_DIR';",
+-  'src/utils/format.js': "export const format = () => 'REAL_FORMAT';",
++  'src/utils/format.js': "export const format = () => 'REAL_FORMAT' + 'NEEDS_PROJECT_LOADER';",
+   'src/components/Button.tsx':
+     "import { Icon } from './Icon'; export const Button = () => 'BUTTON' + Icon();",
+   'src/components/Icon.tsx': "export const Icon = () => 'REAL_ICON';",
+@@ -60,31 +66,18 @@ const files: Record<string, string> = {
+   '__mocks__/ext-pkg.js': "export const ext = 'MOCKED_EXT_' + 'NEEDS_PROJECT_LOADER';",
+   'project-loader.cjs':
+     "module.exports = (source) => source.replace('NEEDS_PROJECT_LOADER', 'PROJECT_LOADER_RAN');",
+-  'automock-loader-stub.cjs':
+-    'module.exports = function (source) { return `${source}\\n// automocked with ${JSON.stringify(this.getOptions())}`; };',
++  'automock-loader-stub.cjs': [
++    'module.exports = function (source) {',
++    "  return `${source}\\n// automocked with ${JSON.stringify(this.getOptions())}, after project loader: ${source.includes('PROJECT_LOADER_RAN')}`;",
++    '};',
++  ].join('\n'),
+ };
+ 
+ // Vitest starts its workers with `--conditions code`, so the real automock loader would import
+ // core's TypeScript sources when webpack loads it natively. The stub records the options instead.
+ const automockLoader = fileURLToPath(
+   import.meta.resolve('@storybook/builder-webpack5/loaders/webpack-automock-loader')
+ );
+-const stubAutomockLoader: WebpackPluginInstance = {
+-  apply(compiler) {
+-    compiler.hooks.compilation.tap('stub-automock-loader', (compilation) => {
+-      webpack.NormalModule.getCompilationHooks(compilation).beforeLoaders.tap(
+-        'stub-automock-loader',
+-        (loaders) => {
+-          for (const item of loaders) {
+-            if (item.loader === automockLoader) {
+-              item.loader = join(project, 'automock-loader-stub.cjs');
+-            }
+-          }
+-        }
+-      );
+-    });
+-  },
+-};
+ 
+ beforeAll(() => {
+   root = normalize(realpathSync(mkdtempSync(join(tmpdir(), 'webpack-mock-plugin-'))));
+@@ -99,6 +92,7 @@ beforeAll(() => {
+ 
+ beforeEach(() => {
+   vi.mocked(logger.info).mockImplementation(() => {});
++  vi.mocked(logger.warn).mockImplementation(() => {});
+ });
+ 
+ afterAll(() => {
+@@ -134,10 +128,8 @@ async function compile({
+             },
+           ],
+         },
+-        plugins: [
+-          new WebpackMockPlugin({ previewConfigPath: join(context, previewFile) }),
+-          stubAutomockLoader,
+-        ],
++        resolveLoader: { alias: { [automockLoader]: join(project, 'automock-loader-stub.cjs') } },
++        plugins: [new WebpackMockPlugin({ previewConfigPath: join(context, previewFile) })],
+         ...config,
+         resolve: {
+           extensions: ['.tsx', '.js'],
+@@ -149,63 +141,58 @@ async function compile({
+     )
+   );
+   expect(stats.toString({ all: false, errors: true })).toBe('');
+-  const modules = [...stats.compilation.modules];
++  const modules = [...stats.compilation.modules].filter(
++    (module): module is NormalModule => 'resource' in module
++  );
+   return {
+     bundle: readFileSync(join(outputPath, 'bundle.js'), 'utf-8'),
+-    modules,
+-    moduleFor: (file: string) => {
+-      const module = modules
+-        .filter((candidate): candidate is NormalModule => 'resource' in candidate)
+-        .find((candidate) => normalize(candidate.resource) === join(context, file));
++    sourceOf: (file: string) => {
++      const module = modules.find(
++        (candidate) => normalize(candidate.resource) === join(context, file)
++      );
+       expect(module, `module ${file}`).toBeDefined();
+-      return module!;
++      return String(module!.originalSource()?.source());
+     },
+   };
+ }
+ 
+-const loaderNames = (module: NormalModule) =>
+-  module.loaders.map((item) => `${b
+```
+
+**File**: `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.ts` (modified, +32/-20)
+```diff
+@@ -36,18 +36,33 @@ export class WebpackMockPlugin {
+         return;
+       }
+       const { previewConfigPath } = this.options;
++      const previewDir = dirname(previewConfigPath);
+       const mocks = extractMockCalls(
+-        { previewConfigPath, configDir: dirname(previewConfigPath) },
++        { previewConfigPath, configDir: previewDir },
+         compiler.context,
+         findMockRedirect
+       );
+       // Mocks resolve through webpack's resolver so that aliases, symlink handling and package
+-      // conditions match the resolution of the imports they are compared against.
+-      const resolver = compiler.resolverFactory.get('normal', { dependencyType: 'esm' });
+-      const paths = await Promise.all(
+-        mocks.map((mock) => resolveWithWebpack(resolver, dirname(previewConfigPath), mock))
++      // conditions match the resolution of the imports they are compared against. A dual package
++      // can resolve to one file for `import` and another for `require`, so both are keyed.
++      const resolvers = ['esm', 'commonjs'].map((dependencyType) =>
++        compiler.resolverFactory.get('normal', { dependencyType })
+       );
+-      this.mocksByPath = new Map(mocks.map((mock, index) => [normalize(paths[index]), mock]));
++      this.mocksByPath = new Map();
++      for (const mock of mocks) {
++        const paths = await Promise.all(
++          resolvers.map((resolver) => resolveWithWebpack(resolver, previewDir, mock.specifier))
++        );
++        const resolved = paths.filter((path): path is string => path !== undefined);
++        if (resolved.length === 0) {
++          logger.warn(
++            `Could not resolve "${mock.specifier}" from ${previewDir}, so its sb.mock() call is ignored.`
++          );
++        }
++        for (const path of resolved) {
++          this.mocksByPath.set(normalize(path), mock);
++        }
++      }
+       this.lastPreviewMtime = previewMtime;
+ 
+       if (mocks.length > 0) {
+@@ -64,17 +79,14 @@ export class WebpackMockPlugin {
+         if (!mock) {
+           return callback();
+         }
+-        if (!mock.redirectPath) {
+-          const { createData } = resolveData;
+-          const loader = { loader: automockLoader, options: `spy=${mock.spy}` };
+-          // Index 0 runs last, so the automock sees the output of the configured loaders.
+-          createData.loaders!.unshift(loader);
+-          createData.request = `${loader.loader}?${loader.options}!${createData.request}`;
+-          return callback();
++        // Resolving the replacement through webpack again gives a `__mocks__` file its own loaders
++        // and context, and places the inline automock loader between the post and normal loaders.
++        if (mock.redirectPath) {
++          resolveData.request = mock.redirectPath;
++          resolveData.context = dirname(mock.redirectPath);
++        } else {
++          resolveData.request = `${automockLoader}?spy=${mock.spy}!${resolveData.createData.resource}`;
+         }
+-        // Resolving the mock file through webpack again gives it its own loaders and context.
+-        resolveData.request = mock.redirectPath;
+-        resolveData.context = dirname(mock.redirectPath);
+         factory.hooks.resolve.callAsync(resolveData, (error) => callback(error));
+       });
+     });
+@@ -109,11 +121,11 @@ export class WebpackMockPlugin {
+   }
+ }
+ 
+-function resolveWithWebpack(resolver: Resolver, context: string, mock: MockCall) {
+-  return new Promise<string>((resolve) => {
+-    resolver.resolve({}, context, mock.specifier, {}, (error, _result, request) => {
++function resolveWithWebpack(resolver: Resolver, context: string, specifier: string) {
++  return new Promise<string | undefined>((resolve) => {
++    resolver.resolve({}, context, specifier, {}, (error, _result, request) => {
+       const path = request?.path;
+-      resolve(!error && typeof path === 'string' ? path : mock.absolutePath);
++      resolve(!error && typeof path === 'string' ? path : undefined);
+     });
+   });
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #36983** (2026-10-22): WC: Disable control for cssstate (@huang-julien)
-- **PR #36981** (closed): Core: A portable story with layout 'document' renders to the <body>, as in the preview (@kasperpeulen)
-- **PR #36980** (closed): React: Render a story without act() where React 19 is a production build (@kasperpeulen)
-- **PR #36979** (2026-10-22): Build: Resolve workspace packages to source in unit tests (@valentinpalkovic)
-- **PR #36978** (2026-10-22): Core: A portable story with layout 'document' renders to the <body>, as in the preview (@kasperpeulen)
-- **PR #36977** (2026-10-22): React: Render a story without act() where React 19 is a production build (@kasperpeulen)
+- **PR #37099** (2026-10-30): Builder-Webpack5: Match mocks against webpack's resolved resource (@valentinpalkovic)
+- **PR #37095** (2026-10-30): Greptile: Add setup script for environment configuration (@valentinpalkovic)
+- **PR #37093** (closed): React: Keep per-prop JSDoc tags in server docgen argTypes (@jasleenkaur-qed42)
+- **PR #37089** (2026-10-30): Docs: Make the snippet-order fix test drive-agnostic (@obvious-autobuild[bot])
+- **PR #37088** (2026-10-30): CI: Remove the webpack pin from the angular-cli sandbox template (@obvious-autobuild[bot])
+- **PR #37087** (2026-10-30): Telemetry: Count story snippet outcomes in the build event (@JReinhold)
 
 ---
 
@@ -1611,30 +1308,94 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. svelte): build story snippets on the docgen server
+## X. builder-webpack5): resolve declared mocks through webpack's resolver
 
 **RULE**:
-When implementing operations in `code/renderers/svelte/src/docgen/story-docs-provider.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a2140a6c`: svelte): build story snippets on the docgen server. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7719c15a`: builder-webpack5): resolve declared mocks through webpack's resolver. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/renderers/svelte/src/docgen/story-docs-provider.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/builders/builder-webpack5/src/plugins/webpack-mock-plugin.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP } from './story-file.ts';
-  storyFileTest: SVELTE_DOCGEN_STORY_FILE_TEST_REGEXP,
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+import {
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'node:fs';
+import { basename, dirname, join, normalize } from 'pathe';
+let project: string;
+let linkedProject: string;
+              item.loader = join(project, 'automock-loader-stub.cjs');
+  root = normalize(realpathSync(mkdtempSync(join(tmpdir(), 'webpack-mock-plugin-'))));
+  project = join(root, 'project');
+  linkedProject = join(root, 'linked');
+    mkdirSync(dirname(join(project, file)), { recursive: true });
+    writeFileSync(join(project, file), content);
+  symlinkSync(project, linkedProject, 'junction');
+});
+
+beforeEach(() => {
+  vi.mocked(logger.info).mockImplementation(() => {});
+interface CompileOptions {
+  previewFile?: string;
+  context?: string;
+  config?: Partial<Configuration>;
+}
+
+async function compile({
+  previewFile = '.storybook/preview.js',
+  context = project,
+  config = {},
+}: CompileOptions = {}) {
+  const outputPath = join(root, 'dist', `${basename(context)}-${previewFile.replace(/\W/g, '-')}`);
+    webpack(
+      {
+        mode: 'development',
+        devto
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import { SVELTE_STORY_FILE_TEST_REGEXP } from './story-file.ts';
-  storyFileTest: SVELTE_STORY_FILE_TEST_REGEXP,
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
+
+import { mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { normalize } from 'pathe';
+              item.loader = join(root, 'automock-loader-stub.cjs');
+  vi.mocked(logger.info).mockImplementation(() => {});
+  root = realpathSync(mkdtempSync(join(tmpdir(), 'webpack-mock-plugin-')));
+    mkdirSync(dirname(join(root, file)), { recursive: true });
+    writeFileSync(join(root, file), content);
+async function compile(previewFile = '.storybook/preview.js') {
+  const outputPath = join(root, 'dist', previewFile.replace(/\W/g, '-'));
+  const config: Configuration = {
+    mode: 'development',
+    devtool: false,
+    context: root,
+    entry: './src/index.js',
+    output: { path: outputPath, filename: 'bundle.js' },
+    resolve: { extensions: ['.tsx', '.js'], alias: { '@': join(root, 'src') } },
+    module: {
+      rules: [
+        { test: /\.(js|tsx)$/, exclude: /node_modules/, loader: join(root, 'project-loader.cjs') },
+      ],
+    },
+    plugins: [
+      new WebpackMockPlugin({ previewConfigPath: join(root, previewFile) }),
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a2140a6c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7719c15a` are properly handled with clean fallback behavior.

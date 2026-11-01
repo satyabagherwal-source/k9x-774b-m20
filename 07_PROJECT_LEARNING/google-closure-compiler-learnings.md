@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source**: github ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
-> **Source Version**: `e912cdb1`  
+> **Source Version**: `7a8ed58c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:09:23.778Z  
+> **Timestamp**: 2026-10-30T18:25:29.718Z  
 > **Learning ID**: `learn-github-google-closure-compiler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-closure-compiler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/closure-compiler](https://github.com/google/closure-compiler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:09:22.072Z  
+> **Harvest Timestamp**: 2026-10-30T18:25:28.839Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A JavaScript checker and optimizer.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 7697 stars
+- **Stars / Engagement**: 7700 stars
 
 ---
 
@@ -2461,555 +2461,87 @@ $jscomp.arrayIterator = function(array) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `404b4687` (2026-10-22)
-**Commit Message**: Allow extending conformance requirements to append to the root rule's error message.
+### Incident Patch 1: `0b8f2acd` (2026-10-28)
+**Commit Message**: Fixed a crash when a property logical assignment (e.g. `o.p ??= v`) appears in the condition or header of a labeled loop.
 
-PiperOrigin-RevId: 1005063226
+PiperOrigin-RevId: 1009047978
 
-**File**: `src/com/google/javascript/jscomp/CheckConformance.java` (modified, +5/-0)
+**File**: `src/com/google/javascript/jscomp/RewriteLogicalAssignmentOperatorsHelper.java` (modified, +5/-0)
 ```diff
-@@ -296,6 +296,7 @@ private static boolean validateBehaviorSettingOfConfigs(
-   private static final ImmutableSet<String> EXTENDABLE_FIELDS =
-       ImmutableSet.of(
-           "config_file",
-+          "error_message",
-           "extends",
-           "only_apply_to",
-           "only_apply_to_regexp",
-@@ -521,6 +522,10 @@ private static void mergeExtendingRequirementIntoExtended(
-         .addAllAllowlistEntry(extendingRequirement.getAllowlistEntryList())
-         .addAllValue(extendingRequirement.getValueList())
-         .addAllConfigFile(extendingRequirement.getConfigFileList());
-+    if (extendingRequirement.hasErrorMessage() && extendedRequirement.hasErrorMessage()) {
-+      extendedRequirement.setErrorMessage(
-+          extendedRequirement.getErrorMessage() + " " + extendingRequirement.getErrorMessage());
-+    }
-   }
- 
-   /**
-```
-
-**File**: `src/com/google/javascript/jscomp/conformance/conformance.proto` (modified, +8/-7)
-```diff
-@@ -60,9 +60,10 @@ message ConformanceConfig {
- // A specification of code requirements
- // NEXT ID: 20
- message Requirement {
--  // Required: The message to report when a requirement is violated. This should
--  // reference a document describing the reasoning for the requirement
--  // and contacts.
-+  // Required on root rules: The message to report when a requirement is
-+  // violated. This should reference a document describing the reasoning for the
-+  // requirement and contacts. If specified on a rule that extends another rule,
-+  // it is appended to the extended rule's error_message separated by a space.
-   optional string error_message = 1;
- 
-   // Optional: A list of google3-relative path prefixes that are exempt from the
-@@ -240,10 +241,10 @@ message Requirement {
-   // through 'extends'. An example of ID is 'closure:innerHtml'.
-   optional string rule_id = 9;
- 
--  // Allows extending allowlists/whitelists of rules with the specified rule_id.
--  // If this field is specified then all fields except allowlist/whitelist,
--  // allowlist_regexp/whitelist_regexp, only_apply_to and only_apply_to_regexp
--  // are ignored.
-+  // Allows extending allowlists/whitelists and error_message of rules with the
-+  // specified rule_id. If this field is specified then all fields except
-+  // allowlist/whitelist, allowlist_regexp/whitelist_regexp, only_apply_to,
-+  // only_apply_to_regexp, and error_message are ignored.
-   optional string extends = 10;
- 
-   // Whether to report possible violations when type information is not exact.
-```
-
-**File**: `test/com/google/javascript/jscomp/CheckConformanceTest.java` (modified, +77/-0)
-```diff
-@@ -3056,6 +3056,67 @@ public void testSimpleExtends_withAllowlistRegexp() {
-         """);
-   }
- 
-+  @Test
-+  public void testSimpleExtends_withErrorMessage() {
-+    baseConfiguration =
-+        """
-+        requirement: {
-+          rule_id: "gws:goog.Promise.X"
-+          type: BANNED_NAME
-+          error_message: "Prefer using native Promise equivalents. See go/gws-js-conformance#goog-promise"
-+          value: "goog.Promise.all"
-+        }
-+        """;
-+    extendingConfiguration =
-+        """
-+        requirement: {
-+          extends: 'gws:goog.Promise.X'
-+          error_message: "Contact gws-team@ for questions."
-+        }
-+        """;
-+
-+    testWarning(
-+        """
-+        goog.Promise.all();
-+        """,
-+        CheckConformance.CONFORMANCE_VIOLATION,
-+        "Violation: Prefer using native Promise equivalents. See go/gws-js-conformance#goog-promise"
-+            + " Contact gws-team@ for questions.");
-+  }
-+
-+  @Test
-+  public void testSimpleExtends_missingRootErrorMessage_reportsInvalidRequirementSpec() {
-+    allowSourcelessWarnings();
-+    baseConfiguration =
-+        """
-+        requirement: {
-+          rule_id: "gws:goog.Promise.X"
-+          type: BANNED_NAME
-+          value: "goog.Promise.all"
-+        }
-+        """;
-+    extendingConfiguration =
-+        """
-+        requirement: {
-+          extends: 'gws:goog.Promise.X'
-+          error_message: "Contact gws-team@ for questions."
-+        }
-+        """;
-+
-+    testError(
-+        """
-+        goog.Promise.all();
-+        """,
-+        CheckConformance.INVALID_REQUIREMENT_SPEC,
-+        """
-+        Invalid requirement. Reason: missing message
-+        Requirement spec:
-+        type: BANNED_NAME
-+        value: "goog.Promise.all"
-+        rule_id: "gws:goog.Promise.X"
-+        """);
-+  }
-+
-   @Test
-   public void testRequirementHasBothRuleIdAndExtends_reportsInvalidRequirementSpec() {
-     allowSourcelessWarnings();
-@@ -3710,6 +3771,22 @@ public void testMergeRequirementsAllowlist() {
-     assertThat(requirement.getAllowlistEntryCount()).isEqualTo(2);
-   }
- 
-+  @Test
-+  public void testMergeRequirementsErrorMessage() {
-+    Compiler compiler = createCompiler();
-+    ConformanceConfig.Builder builder = ConformanceConfig.newBuilder();
-+    builder.addRequirementBuilder().setRuleId("a").setErrorMessage("Root message.");
-+    builder.addRequirementBuilder().setExtends("a").setErrorMessage("Project message.");
-+    CheckConformance checkConformance = new CheckConformance(compiler);
-+    List<Requirement> requirements =
-+        checkConformance.mergeRequirements(
-+            compiler,
-+            ImmutableList.of(builder.build()),
-+            /* isLibraryLevelConformanceReportingMode= */ false);
-+    assertThat(requirements).hasSize(1);
-+    assertThat(requirements.get(0).getErrorMessage()).isEqualTo("Root message. Project message.");
-+  }
-+
-   @Test
-   public void testMergeRequirementsWhitelist_findsDuplicates() {
-     Compiler compiler = createCompiler();
-```
-
----
-
-### Incident Patch 2: `bf3df97a` (2026-10-21)
-**Commit Message**: Fixed transpilation of this, arguments, new.target and super.prop inside arrow functions in an async function's parameter list
-
-PiperOrigin-RevId: 1004266374
-
-**File**: `src/com/google/javascript/jscomp/RewriteAsyncFunctions.java` (modified, +24/-13)
-```diff
-@@ -232,16 +232,28 @@ public LexicalContext getContextForNode(NodeTraversal t, Node n) {
-         // e.g. `() => something`
-         // function someFunc(callback = () => something) {}
-         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
--        return new FunctionContext(functionContext, n, uniqueId);
-+        return new FunctionContext(getAsyncContextForParameterList(), n, uniqueId);
-       } else {
-         return this;
-       }
+@@ -49,6 +49,11 @@ public void visitLogicalAssignmentOperator(NodeTraversal t, Node logicalAssignme
      }
  
-+    /**
-+     * Returns the async context that `this`, `arguments`, `new.target`, and `super` refer to in
-+     * this parameter list, or null if they should be left unchanged.
-+     *
-+     * <p>When the function owning this parameter list is itself the async context, the parameter
-+     * list stays on the outer function and is not moved into the generator body, so references here
-+     * (including inside nested arrow functions) must not be aliased.
-+     */
-+    private @Nullable FunctionContext getAsyncContextForParameterList() {
-+      FunctionContext asyncContext = functionContext.asyncThisAndArgumentsContext;
-+      return asyncContext == functionContext ? null : asyncContext;
+     Node enclosingStatement = NodeUtil.getEnclosingStatement(logicalAssignment);
++    // A LABEL must have exactly one statement child, so any temporaries must be declared before
++    // the outermost label of a labeled statement (e.g. `label: while (o.p ??= 1) {}`).
++    while (enclosingStatement.getParent().isLabel()) {
++      enclosingStatement = enclosingStatement.getParent();
 +    }
-+
-     @Override
-     public void visit(NodeTraversal t, Node n) {
--      if (functionContext.asyncThisAndArgumentsContext != null
--          && functionContext.asyncThisAndArgumentsContext != functionContext) {
-+      if (getAsyncContextForParameterList() != null) {
-         // e.g.
-         // async function outer(outerT = this) {
-         //   // `this` in outer parameter list must remain unchanged
-@@ -285,26 +297,25 @@ private final class FunctionContext extends LexicalContext {
-       }
-     }
  
--    FunctionContext(FunctionContext outer, Node contextRootNode, String uniqueId) {
-+    // outerAsyncContext is the async context that `this`, `arguments`, etc. refer to at the point
-+    // where this function is defined, or null if there is none.
-+    FunctionContext(
-+        @Nullable FunctionContext outerAsyncContext, Node contextRootNode, String uniqueId) {
-       super(contextRootNode, uniqueId);
-       checkState(contextRootNode.isFunction(), contextRootNode);
-       if (contextRootNode.isAsyncFunction()) {
-         if (contextRootNode.isArrowFunction()) {
--          // An async arrow function context points to outer.asyncThisAndArgumentsContext
-+          // An async arrow function context points to outerAsyncContext
-           // if non-null, otherwise to itself.
--          asyncThisAndArgumentsContext =
--              outer.asyncThisAndArgumentsContext == null
--                  ? this
--                  : outer.asyncThisAndArgumentsContext;
-+          asyncThisAndArgumentsContext = outerAsyncContext == null ? this : outerAsyncContext;
-         } else {
-           // An async non-arrow function context always points to itself
-           asyncThisAndArgumentsContext = this;
-         }
-       } else {
-         if (contextRootNode.isArrowFunction()) {
--          // A non-async arrow function context always points to
--          // outer.asyncThisAndArgumentsContext
--          asyncThisAndArgumentsContext = outer.asyncThisAndArgumentsContext;
-+          // A non-async arrow function context always points to outerAsyncContext
-+          asyncThisAndArgumentsContext = outerAsyncContext;
-         } else {
-           // A non-async, non-arrow function has no async context.
-           asyncThisAndArgumentsContext = null;
-@@ -318,7 +329,7 @@ public LexicalContext getContextForNode(NodeTraversal t, Node n) {
-         return this;
-       } else if (n.isFunction()) {
-         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
--        return new FunctionContext(this, n, uniqueId);
-+        return new FunctionContext(asyncThisAndArgumentsContext, n, uniqueId);
-       } else if (n.isParamList()) {
-         String uniqueId = compiler.getUniqueIdSupplier().getUniqueId(t.getInput());
-         return new ParameterListContext(this, n, uniqueId);
+     Node left = logicalAssignment.removeFirstChild();
+     Node right = logicalAssignment.getLastChild().detach();
 ```
 
-**File**: `test/com/google/javascript/jscomp/RewriteAsyncFunctionsTest.java` (modified, +84/-20)
+**File**: `test/com/google/javascript/jscomp/NormalizeTest.java` (modified, +27/-8)
 ```diff
-@@ -968,8 +968,6 @@ class A {
+@@ -17,9 +17,7 @@
+ package com.google.javascript.jscomp;
+ 
+ import static com.google.common.truth.Truth.assertThat;
+-import static org.junit.Assert.assertThrows;
+ 
+-import com.google.common.base.Throwables;
+ import com.google.common.collect.ImmutableMap;
+ import com.google.javascript.jscomp.CompilerOptions.ChunkOutputType;
+ import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
+@@ -1921,11 +1919,32 @@ class Foo {}
  
    @Test
-   public void testDefaultParamArrowUsingThisArgumentsNewTarget() {
--    // TODO(b/572972833): Default-param arrow functions rewrite this/arguments/new.target to
--    // out-of-scope body temporaries.
-     test(
-         """
-         async function f(a = () => this, b = () => arguments, c = () => new.target) {
-@@ -978,26 +976,22 @@ async function f(a = () => this, b = () => arguments, c = () => new.target) {
-         """,
-         """
-         function f(a = () => {
--          return ASYNC_THIS$1;
-+          return this;
-         }, b = () => {
--          return ASYNC_ARGUMENTS$1;
-+          return arguments;
-         }, c = () => {
--          return ASYNC_NEW_TARGET$1;
-+          return new.target;
-         }) {
--          const ASYNC_THIS$1 = this;
--          const ASYNC_ARGUMENTS$1 = arguments;
--          const ASYNC_NEW_TARGET$1 = new.target;
--          return (0,$jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
--            return a();
--          });
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(
-+              function* () {
-+                return a();
-+              });
-         }
-         """);
-   }
- 
-   @Test
-   public void testDefaultParamArrowUsingSuperProp() {
--    // TODO(b/572972833): Default-param arrow functions rewrite super.prop to out-of-scope body
--    // temporaries.
-     test(
-         """
-         class A {
-@@ -1019,16 +1013,86 @@ class A {
-         }
-         class B extends A {
-           m(a = () => {
--            return ASYNC_SUPER_GET$7$prop().call(ASYNC_THIS$3);
-+            return super.prop();
-           }) {
--            const ASYNC_THIS$3 = this;
--            const ASYNC_SUPER_GET$7$prop = () => {
--              return super.prop;
-+            return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(
-+                function* () {
-+                  return a();
-+                });
-+          }
-+        }
+   public void testLogicalAssignInLabeledLoop() {
+-    // TODO(b/571641723): Property logical assignment in labeled loop crashes AstValidator.
+-    RuntimeException e =
+-        assertThrows(RuntimeException.class, () -> testSame("label: while (o.p ??= 1) {}"));
+-    Throwable root = Throwables.getRootCause(e);
+-    assertThat(root).isInstanceOf(IllegalStateException.class);
+-    assertThat(root).hasMessageThat().contains("Expected 2 children, but was 3");
++    test(
++        "label: while (o.p ??= 1) {}",
++        """
++        let LA_TMP$0;
++        label: for (; (LA_TMP$0 = o).p ?? (LA_TMP$0.p = 1); ) {}
 +        """);
 +  }
 +
 +  @Test
-+  public void testDefaultParamAsyncArrowUsingThis() {
++  public void testLogicalAssignInNestedLabeledLoop() {
 +    test(
++        "a: b: do {} while (o[k] ||= 1)",
 +        """
-+        async function f(a = async () => this) {
-+          return a();
-+        }
-+        """,
-+        """
-+        function f(a = () => {
-+          const ASYNC_THIS$3 = this;
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            return ASYNC_THIS$3;
-+          });
-+        }) {
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            return a();
-+          });
-+        }
++        let LA_TMP$0;
++        let LA_TMP_INDEX$0;
++        a: b: do {} while ((LA_TMP$0 = o) [LA_TMP_INDEX$0 = k] || (LA_TMP$0[LA_TMP_INDEX$0] = 1))
 +        """);
 +  }
 +
 +  @Test
-+  public void testDefaultParamArrowInNestedAsyncArrowUsingThis() {
++  public void testLogicalAssignInLabeledForOfLoop() {
 +    test(
++        "label: for (const x of (o.p &&= [])) {}",
 +        """
-+        async function f() {
-+          const g = async (a = () => this) => a();
-+          return g();
-+        }
-+        """,
-+        """
-+        function f() {
-+          const ASYNC_THIS$1 = this;
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            const g = (a = () => {
-+              return ASYNC_THIS$1;
-+            }) => {
-+              return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+                return a();
-+              });
-             };
--            return (0,$jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
--              return a();
--            });
-+            return g();
-+          });
-+        }
++        let LA_TMP$0;
++        label: for (const x of (LA_TMP$0 = o).p && (LA_TMP$0.p = [])) {}
 +        """);
-+  }
-+
-+  @Test
-+  public void testDefaultParamArrowInNonAsyncFunctionInAsyncFunction() {
-+    test(
-+        """
-+        async function f() {
-+          function g(a = () => this) {
-+            return a();
-           }
-+          return g();
-+        }
-+        """,
-+        """
-+        function f() {
-+          return (0, $jscomp.asyncExecutePromiseGeneratorFunction)(function*() {
-+            function g(a = () => {
-+              return this;
-+            }) {
-+              return a();
-+            }
-+            return g();
-+          });
-         }
-         """);
-   }
-```
-
----
-
-### Incident Patch 3: `33b2e8ed` (2026-10-21)
-**Commit Message**: Fix inverted line number ternary in VerboseMessageFormatter.
-
-Fix inverted line number condition in `VerboseMessageFormatter` so line numbers
-are formatted when present.
-
-PiperOrigin-RevId: 1004027076
-
-**File**: `src/com/google/javascript/jscomp/VerboseMessageFormatter.java` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ private String format(JSError message) {
-         "%s at %s line %s %s",
-         description,
-         (Strings.isNullOrEmpty(sourceName) ? "(unknown source)" : sourceName),
--        ((lineNumber < 0) ? String.valueOf(lineNumber) : "(unknown line)"),
-+        ((lineNumber < 0) ? "(unknown line)" : String.valueOf(lineNumber)),
-         ((lineSource != null) ? ":\n\n" + lineSource : "."));
    }
  }
 ```
 
-**File**: `test/com/google/javascript/jscomp/VerboseMessageFormatterTest.java` (added, +157/-0)
-```diff
-@@ -0,0 +1,157 @@
-+/*
-+ * Copyright 2026 The Closure Compiler Authors.
-+ *
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package com.google.javascript.jscomp;
-+
-+import static com.google.common.truth.Truth.assertThat;
-+
-+import com.google.debugging.sourcemap.proto.Mapping.OriginalMapping;
-+import java.util.Objects;
-+import org.jspecify.annotations.Nullable;
-+import org.junit.Test;
-+import org.junit.runner.RunWith;
-+import org.junit.runners.JUnit4;
-+
-+@RunWith(JUnit4.class)
-+public final class VerboseMessageFormatterTest {
-+  private static final DiagnosticType FOO_TYPE =
-+      DiagnosticType.error("TEST_FOO", "error description here");
-+
-+  @Test
-+  public void testFormatError_validLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make("test.js", 10, 5, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("line 10");
-+    assertThat(formatted).doesNotContain("(unknown line)");
-+    assertThat(formatted).isEqualTo("ERROR: error description here at test.js line 10 .");
-+  }
-+
-+  @Test
-+  public void testFormatError_unknownLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make("test.js", -1, -1, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("line (unknown line)");
-+    assertThat(formatted).doesNotContain("-1");
-+    assertThat(formatted)
-+        .isEqualTo("ERROR: error description here at test.js line (unknown line) .");
-+  }
-+
-+  @Test
-+  public void testFormatError_unknownSourceName() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make(null, 10, 5, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("(unknown source)");
-+    assertThat(formatted).contains("line 10");
-+    assertThat(formatted).isEqualTo("ERROR: error description here at (unknown source) line 10 .");
-+  }
-+
-+  @Test
-+  public void testFormatError_unknownSourceAndLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    JSError error = JSError.make(null, -1, -1, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted).contains("(unknown source)");
-+    assertThat(formatted).contains("line (unknown line)");
-+    assertThat(formatted)
-+        .isEqualTo("ERROR: error description here at (unknown source) line (unknown line) .");
-+  }
-+
-+  @Test
-+  public void testFormatError_withSourceRegion() {
-+    SourceExcerptProvider provider =
-+        new SourceExcerptProvider() {
-+          @Override
-+          public @Nullable String getSourceLine(String sourceName, int lineNumber) {
-+            return null;
-+          }
-+
-+          @Override
-+          public @Nullable Region getSourceLines(String sourceName, int lineNumber, int length) {
-+            return null;
-+          }
-+
-+          @Override
-+          public @Nullable Region getSourceRegion(String sourceName, int lineNumber) {
-+            if (Objects.equals(sourceName, "test.js") && lineNumber == 10) {
-+              return new SimpleRegion(10, 10, "const x = 1;");
-+            }
-+            return null;
-+          }
-+
-+          @Override
-+          public @Nullable OriginalMapping getSourceMapping(
-+              String sourceName, int lineNumber, int columnNumber) {
-+            return null;
-+          }
-+        };
-+
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(provider);
-+    JSError error = JSError.make("test.js", 10, 0, FOO_TYPE);
-+
-+    String formatted = formatter.formatError(error);
-+
-+    assertThat(formatted)
-+        .isEqualTo("ERROR: error description here at test.js line 10 :\n\nconst x = 1;");
-+  }
-+
-+  @Test
-+  public void testFormatWarning_validLineNumber() {
-+    VerboseMessageFormatter formatter = new VerboseMessageFormatter(emptySourceProvider());
-+    DiagnosticType warningType = DiagnosticType.warning("TEST_WARN", "warning description here");
-+    JSError warning = JSError.make("test.js", 42, 0, warningType);
-+
-+    String formatted = formatter.formatWarning(warning);
-+
-+    assertThat(formatted).startsWith("WARNING: ");
-+    assertThat(formatted).contains("line 42");
-+    assertThat(formatted).isEqualTo("WARNING: warning d
-```
-
 #### Recent Merged Pull Requests:
-- **PR #4354** (2026-10-16): fix legacy octal string escape grouping for a leading 4-7 digit (@dxbjavid)
-- **PR #4353** (closed): Reset a coalesced let that is read before assignment in a loop (@kalayciburak)
-- **PR #4351** (2026-10-13): Handle private fields that are initialzied with an identifier (@bullfest)
-- **PR #4348** (closed): Do not escape the raw text of tagged template literals (@rodry957)
-- **PR #4347** (2026-09-28): Bump actions/setup-java from 6.0.0 to 6.0.1 (@dependabot[bot])
-- **PR #4342** (2026-09-14): Fix spelling of existence in Node javadoc (@tanvir-ux)
+- **PR #4367** (2026-10-29): fold bigint % with truncated remainder, not BigInteger.mod (@rajath201)
+- **PR #4365** (2026-10-26): Bump actions/upload-artifact from 7.0.1 to 7.0.2 (@dependabot[bot])
+- **PR #4364** (2026-10-26): Bump actions/download-artifact from 8.0.1 to 8.0.2 (@dependabot[bot])
+- **PR #4363** (2026-10-26): Bump actions/setup-node from 7.0.0 to 7.1.0 (@dependabot[bot])
+- **PR #4362** (2026-10-28): don't let a raw template backslash escape the printer's own escape (@rajath201)
+- **PR #4361** (2026-10-27): treat backslash before <ls> or <ps> as a line continuation (@dxbjavid)
 
 ---
 
@@ -3029,24 +2561,24 @@ PiperOrigin-RevId: 1004027076
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Allow extending conformance requirements to append to the root rule's error mess
+## X. Fixed a crash when a property logical assignment (e.g. `o.p ??= v`) appears in t
 
 **RULE**:
-When implementing operations in `src/com/google/javascript/jscomp/CheckConformance.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/com/google/javascript/jscomp/RewriteLogicalAssignmentOperatorsHelper.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `404b4687`: Allow extending conformance requirements to append to the root rule's error message.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0b8f2acd`: Fixed a crash when a property logical assignment (e.g. `o.p ??= v`) appears in the condition or header of a labeled loop.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/CheckConformance.java`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/com/google/javascript/jscomp/RewriteLogicalAssignmentOperatorsHelper.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-          "error_message",
-    if (extendingRequirement.hasErrorMessage() && extendedRequirement.hasErrorMessage()) {
-      extendedRequirement.setErrorMessage(
-          extendedRequirement.getErrorMessage() + " " + extendingRequirement.getErrorMessage());
+    // A LABEL must have exactly one statement child, so any temporaries must be declared before
+    // the outermost label of a labeled statement (e.g. `label: while (o.p ??= 1) {}`).
+    while (enclosingStatement.getParent().isLabel()) {
+      enclosingStatement = enclosingStatement.getParent();
     }
 ```
 
@@ -3057,4 +2589,4 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `404b4687` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0b8f2acd` are properly handled with clean fallback behavior.

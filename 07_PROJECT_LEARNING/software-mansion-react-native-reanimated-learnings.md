@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `1735e031`  
+> **Source Version**: `c8b40ef3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:05:00.374Z  
+> **Timestamp**: 2026-10-31T03:59:01.180Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:04:59.346Z  
+> **Harvest Timestamp**: 2026-10-31T03:59:00.743Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11031 stars
+- **Stars / Engagement**: 11039 stars
 
 ---
 
@@ -898,821 +898,549 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab0c162e` (2026-10-23)
-**Commit Message**: fix(SET): keep a shared container whose animation ends in the pull that creates it (#10886)
-
-## Summary
-
-On iOS, a shared element transition that finishes on its first frame
-crashes Debug builds. This happens with Reduce Motion, or with any
-animation that ends immediately.
-
-The transition then ends in the same pull that inserts its shared
-container, so the container was removed in the transaction that creates
-it. This trips the `Transaction deletes a view that it creates`
-assertion.
-
-Android does not reach this path by default. There the pull runs on the
-JS thread and the layout animations start later on the UI thread, so a
-transition cannot end inside the pull that creates its container.
-
-A container that the current transaction hasn't inserted yet is now
-removed in the next pull.
-
-## Test plan
-
-A new runtime test in `sharedTransition.test.tsx` runs a transition with
-`ReduceMotion.Always`. On iOS it fails on `main` and passes with this
-change. On Android it passes both on `main` and with this change.
-
-Manually, open a shared element transition with
-`SharedTransition.reduceMotion(ReduceMotion.Always)` and navigate to the
-target screen.
-
-**iOS — `SharedTransition.reduceMotion(Reduce
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransition.test.tsx` (modified, +23/-2)
-```diff
-@@ -1,5 +1,6 @@
- import { StyleSheet, Text, View } from 'react-native';
- import Animated, {
-+  ReduceMotion,
-   SharedTransition,
-   SharedTransitionBoundary,
- } from 'react-native-reanimated';
-@@ -20,12 +21,15 @@ import {
- } from '../../../ReJest/RuntimeTestsApi';
- import { ComparisonMode } from '../../../ReJest/types';
- 
--function createTransition(finished: boolean[]) {
-+function createTransition(
-+  finished: boolean[],
-+  transition = SharedTransition.duration(300)
-+) {
-   const recordEnd = (isFinished: boolean) => {
-     finished.push(isFinished);
-     notify('shared-transition-finished');
-   };
--  return SharedTransition.duration(300).withCallback((isFinished) => {
-+  return transition.withCallback((isFinished) => {
-     'worklet';
-     scheduleOnRN(recordEnd, isFinished);
-   });
-@@ -149,6 +153,23 @@ describe('Shared element transition between boundaries', () => {
-       await expectMountedAtLayout('source', 1);
-     }
-   );
-+
-+  test('runs a transition that ends on its first frame', async () => {
-+    const finished: boolean[] = [];
-+    const transition = createTransition(
-+      finished,
-+      SharedTransition.reduceMotion(ReduceMotion.Always)
-+    );
-+    await render(<Screens showTarget={false} transition={transition} />);
-+    await waitForFrames();
-+
-+    await render(<Screens showTarget transition={transition} />);
-+    await waitForNotification('shared-transition-finished');
-+    await waitForFrames();
-+
-+    expect(finished).toBe([true]);
-+    await expectMountedAtLayout('target', 1);
-+  });
- });
- 
- const styles = StyleSheet.create({
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +6/-0)
-```diff
-@@ -1159,6 +1159,12 @@ void LayoutAnimationsProxy::cleanupAnimations(
-         preservedTags.insert(tag);
-         continue;
-       }
-+      // A transaction must not delete a view that it creates.
-+      if (!element.run->inserted) {
-+        preservedTags.insert(tag);
-+        schedulePullOnNextFrame();
-+        continue;
-+      }
-       finishSharedTransition(sharedTag, element, transaction);
-     }
- 
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +3/-2)
-```diff
-@@ -46,6 +46,7 @@ struct SharedTransitionRun {
-   std::shared_ptr<LightNode> source;
-   std::shared_ptr<LightNode> target;
-   bool gestureDriven = false;
-+  bool inserted = false;
- };
- 
- // Asks to show a view that the shared tag hid. The request is stale when the
-@@ -104,7 +105,7 @@ struct TransactionMeta {
-   std::vector<PendingNodeAnimation> layout;
-   std::vector<PendingNodeAnimation> entering;
-   std::vector<PendingNodeAnimation> exiting;
--  std::vector<std::shared_ptr<LightNode>> containersToInsert;
-+  std::vector<SharedTag> containersToInsert;
-   std::vector<RestoreRequest> restoreRequests;
-   std::vector<std::shared_ptr<LightNode>> containersToRemove;
-   std::unordered_map<Tag, Tag> staleSnapshots;
-@@ -258,7 +259,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       const std::array<std::shared_ptr<LightNode>, 2> &nodes,
-       bool gestureDriven,
-       TransactionMeta &transaction) const;
--  std::shared_ptr<LightNode> createSharedContainer(const ShadowView &before, TransactionMeta &transaction) const;
-+  std::shared_ptr<LightNode> createSharedContainer(const ShadowView &before) const;
-   void finishSharedTransition(const SharedTag &sharedTag, SharedElement &element, TransactionMeta &transaction) const;
-   bool isSharedContainer(Tag tag) const;
-   std::optional<SharedTag> findSharedTag(const ShadowView &view) const;
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/SharedTransitions.cpp` (modified, +9/-8)
-```diff
-@@ -339,17 +339,16 @@ SharedTransitionRun &LayoutAnimationsProxy::startSharedTransitionRun(
-     }
-   }
-   if (!run) {
--    run = SharedTransitionRun{.container = createSharedContainer(before, transaction)};
-+    run = SharedTransitionRun{.container = createSharedContainer(before)};
-+    transaction.containersToInsert.push_back(sharedTag);
-   }
-   run->source = nodes[BEFORE];
-   run->target = nodes[AFTER];
-   run->gestureDriven = gestureDriven;
-   return *run;
- }
- 
--std::shared_ptr<LightNode> LayoutAnimationsProxy::createSharedContainer(
--    const ShadowView &before,
--    TransactionMeta &transaction) const {
-+std::shared_ptr<LightNode> LayoutAnimationsProxy::createSharedContainer(const ShadowView &before) const {
-   Tag containerTag = -1;
-   {
-     auto lock = std::unique_lock<std::mutex>(sharedTransitionManager_->mutex_);
-@@ -367,7 +366,6 @@ std::shared_ptr<LightNode> LayoutAnimationsProxy::createSharedContainer(
- #endif
-   node->parent = root;
-   root->children.push_back(node);
--  transaction.containersToInsert.push_back(node);
-   [[maybe_unused]] const auto [_, inserted] = lightNodes_.emplace(containerTag, node);
-   react_native_assert(inserted && "Shared container already exists");
-   return node;
-@@ -641,9 +639,12 @@ void LayoutAnimationsProxy::insertContainers(TransactionMeta &transaction, int &
-   ShadowViewMutationList currentMutations;
-   std::swap(currentMutations, filteredMutations);
-   filteredMutations.reserve(transaction.containersToInsert.size() * 2);
--  for (auto &node : transaction.containersToInsert) {
--    filteredMutations.push_back(ShadowViewMutation::CreateMutation(node->current));
--    filteredMutations.push_back(ShadowViewMutation::InsertMutation(surfaceId_, node->current, rootChildCount++));
-+  for (const auto &sharedTag : transaction.containersToInsert) {
-+    auto &run = *sharedElements_.at(sharedTag).run;
-+    run.inserted = true;
-+    filteredMutations.push_back(ShadowViewMutation::CreateMutation(run.container->current));
-+    filteredMutations.push_back(
-+        ShadowViewMutation::InsertMutation(surfaceId_, run.container->current, rootChildCount++));
-   }
-   filteredMutations.insert(filteredMutations.end(), currentMutations.begin(), currentMutations.end());
- }
-```
-
-**File**: `packages/react-native-reanimated/changelog/shared-transition-first-frame-end.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Fix a crash when a shared element transition ends on its first frame, for example with Reduce Motion.
-```
-
----
-
-### Incident Patch 2: `26651a4f` (2026-10-22)
-**Commit Message**: fix(LayoutAnimations): don't crash when a view hidden under LayoutAnimation is shown again (#10916)
-
-## Summary
-
-On iOS, React Native hides a subtree (`display: none`, react-freeze,
-`<Activity mode="hidden">`) by removing its host views from the mounted
-tree. Showing it again creates the same tags. When the hide runs under
-`LayoutAnimation` with a delete config, React Native's
-`LayoutAnimationKeyFrameManager` defers the Remove and Delete. If the
-subtree is shown again before that animation ends, the deferred Remove
-and Delete arrive in the same transaction as the Create of the same tag.
-
-`reconcileContradictedRemovals` only handled a Create of a node whose
-removal the proxy withholds. Here the node is still live, so
-`updateLightTree` started the view's Reanimated exiting animation and
-kept the node. The following Create then aborted on `LightNode already
-exists` in debug builds. In release builds, the proxy overwrote the node
-while the view stayed mounted.
-
-Now `reconcileContradictedRemovals` also handles a live node that the
-same transaction deletes and creates again. As for a withheld node, the
-view stays mounted: the Create becomes an Update of the mounted view and
-the Delete is
-
-**File**: `apps/common-app/runtime-tests/reanimated/suites.ts` (modified, +6/-0)
-```diff
-@@ -174,6 +174,12 @@ export const REANIMATED_TEST_SUITES: RuntimeTestSuite[] = [
-       require('./tests/layoutAnimations/recreatedViews.test');
-     },
-   },
-+  {
-+    testSuiteName: 'layout animations hidden under LayoutAnimation',
-+    importTest: () => {
-+      require('./tests/layoutAnimations/hiddenUnderLayoutAnimation.test');
-+    },
-+  },
-   {
-     testSuiteName: 'shared element transitions',
-     importTest: () => {
-```
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/hiddenUnderLayoutAnimation.test.tsx` (added, +115/-0)
-```diff
-@@ -0,0 +1,115 @@
-+import type { ComponentType, ReactNode } from 'react';
-+import React, { Activity } from 'react';
-+import { Freeze } from 'react-freeze';
-+import { LayoutAnimation, StyleSheet, View } from 'react-native';
-+import Animated, { FadeOut } from 'react-native-reanimated';
-+
-+import {
-+  describe,
-+  expect,
-+  expectEventually,
-+  getTestComponent,
-+  isViewMountedNatively,
-+  render,
-+  test,
-+  useTestRef,
-+  wait,
-+  waitForFrames,
-+} from '../../../ReJest/RuntimeTestsApi';
-+import { ComparisonMode } from '../../../ReJest/types';
-+
-+const EXIT_MS = 600;
-+// Long enough that the view is shown again while LayoutAnimation still defers its removal.
-+const DELETE_ANIMATION = LayoutAnimation.create(
-+  EXIT_MS * 3,
-+  'easeInEaseOut',
-+  'opacity'
-+);
-+
-+const styles = StyleSheet.create({
-+  box: { width: 100, height: 60, backgroundColor: '#2277dd' },
-+  hidden: { display: 'none' },
-+});
-+
-+function Box() {
-+  const ref = useTestRef('box');
-+  return (
-+    <Animated.View
-+      ref={ref}
-+      exiting={FadeOut.duration(EXIT_MS)}
-+      style={styles.box}
-+    />
-+  );
-+}
-+
-+interface Hiding {
-+  name: string;
-+  Container: ComponentType<{ hidden: boolean; children: ReactNode }>;
-+}
-+
-+const HIDING: Hiding[] = [
-+  {
-+    name: 'display: none',
-+    Container: ({ hidden, children }) => (
-+      <View collapsable={false} style={hidden && styles.hidden}>
-+        {children}
-+      </View>
-+    ),
-+  },
-+  {
-+    name: 'react-freeze',
-+    Container: ({ hidden, children }) => (
-+      <Freeze freeze={hidden}>{children}</Freeze>
-+    ),
-+  },
-+  {
-+    name: 'Activity',
-+    Container: ({ hidden, children }) => (
-+      <Activity mode={hidden ? 'hidden' : 'visible'}>{children}</Activity>
-+    ),
-+  },
-+];
-+
-+// React Native takes a hidden subtree out of the mounted tree on iOS, and on Android only with
-+// `useTraitHiddenOnAndroid`. With a delete config, LayoutAnimation defers that removal, and showing
-+// the subtree again before the animation ends flushes the Remove and Delete in the transaction that
-+// creates the same tags.
-+describe('Views hidden while React Native LayoutAnimation runs', () => {
-+  test.each(HIDING)(
-+    'shows a view hidden by ${name} again during LayoutAnimation and keeps its exiting animation',
-+    async ({ Container }) => {
-+      await render(
-+        <Container hidden={false}>
-+          <Box />
-+        </Container>
-+      );
-+      await waitForFrames();
-+      const tag = getTestComponent('box').getTag();
-+
-+      LayoutAnimation.configureNext(DELETE_ANIMATION);
-+      await render(
-+        <Container hidden={true}>
-+          <Box />
-+        </Container>
-+      );
-+      await wait(EXIT_MS / 3);
-+      await render(
-+        <Container hidden={false}>
-+          <Box />
-+        </Container>
-+      );
-+      await wait(EXIT_MS);
-+
-+      const component = getTestComponent('box');
-+      expect(component.getTag()).toBe(tag);
-+      await expectEventually(
-+        async () => (await component.getMountedViewProps())?.opacity
-+      ).toBe(1, ComparisonMode.FLOAT_DISTANCE);
-+
-+      await render(<Container hidden={false}>{null}</Container>);
-+      await waitForFrames(3);
-+      expect(await isViewMountedNatively(tag)).toBe(true);
-+      await expectEventually(() => isViewMountedNatively(tag)).toBe(false);
-+    }
-+  );
-+});
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +27/-13)
-```diff
-@@ -325,26 +325,33 @@ void LayoutAnimationsProxy::unmapLightNode(const std::shared_ptr<LightNode> &nod
-   }
- }
- 
--// React re-creating a tag whose removal is withheld contradicts that removal, so the withheld node is torn
--// down before updateLightTree registers the tag again. The tag keeps its mounted view: React's Create
--// becomes an Update of it, because Android mounts the Deletes of a transaction after its Creates.
-+// React re-creating a tag that the light tree still holds keeps its mounted view: the Create becomes an Update of it
-+// and the Delete is dropped, because Android mounts the Deletes of a transaction after its Creates. A live node
-+// is deleted in the same transaction, for example when React Native's LayoutAnimation flushes a Remove and Delete
-+// that it deferred.
- void LayoutAnimationsProxy::reconcileContradictedRemovals(
--    const ShadowViewMutationList &mutations,
-+    ShadowViewMutationList &mutations,
-     TransactionMeta &transaction,
-     [[maybe_unused]] const PropsParserContext &propsParserContext) const {
-   auto &filteredMutations = transaction.filteredMutations;
-   auto &recreatedTags = transaction.recreatedTags;
--  std::vector<std::shared_ptr<LightNode>> recreatedNodes;
-+  std::unordered_set<Tag> deletedTags;
-   for (const auto &mutation : mutations) {
-+    if (mutation.type == ShadowViewMutation::Type::Delete) {
-+      deletedTags.insert(mutation.oldChildShadowView.tag);
-+    }
-+  }
-+  std::vector<std::shared_ptr<LightNode>> withheldNodes;
-+  for (auto &mutation : mutations) {
-     if (mutation.type != ShadowViewMutation::Type::Create) {
-       continue;
-     }
--    const auto it = lightNodes_.find(mutation.newChildShadowView.tag);
--    if (it == lightNodes_.end() || it->second->state == LIVE) {
-+    const auto tag = mutation.newChildShadowView.tag;
-+    const auto it = lightNodes_.find(tag);
-+    if (it == lightNodes_.end() || (it->second->state == LIVE && !deletedTags.contains(tag))) {
-       continue;
-     }
-     const auto &node = it->second;
--    const auto tag = node->current.tag;
-     const auto parent = node->parent.lock();
-     react_native_assert(parent && "Parent node is nullptr");
-     recreatedTags.insert(tag);
-@@ -353,13 +360,20 @@ void LayoutAnimationsProxy::reconcileContradictedRemovals(
- #ifdef ANDROID
-     recreated = resetPropsMissingFrom(recreated, mounted, propsParserContext);
- #endif
--    filteredMutations.push_back(ShadowViewMutation::UpdateMutation(mounted, recreated, parent->current.tag));
--    recreatedNodes.push_back(node);
-+    auto update = ShadowViewMutation::UpdateMutation(mounted, recreated, parent->current.tag);
-+    if (node->state == LIVE) {
-+      mutation = std::move(update);
-+    } else {
-+      filteredMutations.push_back(std::move(update));
-+      withheldNodes.push_back(node);
-+    }
-   }
--  tearDown(collectRemovals(recreatedNodes), filteredMutations);
--  std::erase_if(filteredMutations, [&recreatedTags](const ShadowViewMutation &mutation) {
-+  tearDown(collectRemovals(withheldNodes), filteredMutations);
-+  const auto deletesRecreatedTag = [&recreatedTags](const ShadowViewMutation &mutation) {
-     return mutation.type == ShadowViewMutation::Delete && recreatedTags.contains(mutation.oldChildShadowView.tag);
--  });
-+  };
-+  std::erase_if(mutations, deletesRecreatedTag);
-+  std::erase_if(filteredMutations, deletesRecreatedTag);
- }
- 
- #ifdef ANDROID
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +1/-1)
-```diff
-@@ -190,7 +190,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-   void applySynchronousProps(const UpdatesBatch &updatesBatch, bool trackInLightTree) const override;
- 
-   void reconcileContradictedRemovals(
--      const ShadowViewMutationList &mutations,
-+      ShadowViewMutationList &mutations,
-       TransactionMeta &transaction,
-       const PropsParserContext &propsParserContext) const;
- #ifdef ANDROID
-```
-
-**File**: `packages/react-native-reanimated/changelog/layout-animation-recreated-live-view.fix.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+Fixed a crash when a view with an exiting animation is shown again while React Native's `LayoutAnimation` still animates its removal.
-```
-
----
-
-### Incident Patch 3: `055b701c` (2026-10-22)
-**Commit Message**: fix: keep props of hidden views when a different surface mounts (#10762)
+### Incident Patch 1: `1ae46345` (2026-10-29)
+**Commit Message**: fix(Reanimated): don't crash on Android when worklets run during the teardown of the React host (#10858)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @pawicao.
+> This pull request was authored by AI on behalf of @tomekzaw.
 
 ## Summary
 
-Requires #10958.
+Fixes an Android crash that happens when the React host is torn down (a
+reload, for example an `expo-updates` restart) while worklets still run
+on the UI thread:
 
-`handleNodeRemovals` checked each removable view against the root that
-was just mounted, so a mount of any other surface, for example LogBox,
-removed the registry entries of views that React hid but that stayed in
-their own surface tree. I moved the last mounted root of each surface
-out of `ViewStylesRepository` into a new `MountedRootsRegistry`, which
-the mount hook, the commit hook and `ViewStylesRepository` share.
-`handleNodeRemovals` now checks each view against the root of its own
-surface, and removes the view when it is not in that root or when its
-surface stops. I also registered running surfaces before their first
-mount report, so cleanup keeps their props until that report or a stop.
-A view of a surface that does not mount, for example a suspended one,
-now stays until that surface mounts again or stops.
+```
+JNI DETECTED ERROR IN APPLICATION: obj == null
+  _JNIEnv::CallLongMethod(_jobject*, _jmethodID*, ...)
+  reanimated::NativeProxy::getAnimationTimestamp()
+  ...
+  worklets::UIScheduler::triggerUI()
+  com.swmansion.worklets.AndroidUIScheduler.mUIThreadRunnable
+```
 
-## Test plan
+### The bug
 
-Runtime tests pass on Android.
+- `NativeProxy::invalidateCpp()` reset `javaPart_`, but the functions
+returned by `bindThis` captured a raw `this` and called JNI on
+`javaPart_` without checking it. Some of them are globals of the UI
+runtime (`_getAnimationTimestamp`, `_setGestureState`). Worklets owns
+that runtime, so they outlive the invalidation.
+- React Native invalidates TurboModules on a background thread, in the
+order in which they were first requested. When `ReanimatedModule` goes
+before `WorkletsModule`, the UI scheduler of Worklets is still active,
+and the first worklet that starts
 
-On Android debug, hide an animated view with `Suspense`, open the LogBox
-inspector, close it and show the view again. Before, the view showed its
-base s
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/misc/ViewStylesRepository.cpp` (modified, +10/-16)
+**File**: `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.cpp` (modified, +8/-6)
 ```diff
-@@ -9,8 +9,11 @@ namespace reanimated::css {
- 
- ViewStylesRepository::ViewStylesRepository(
-     const std::shared_ptr<StaticPropsRegistry> &staticPropsRegistry,
--    const std::shared_ptr<AnimatedPropsRegistry> &animatedPropsRegistry)
--    : staticPropsRegistry_(staticPropsRegistry), animatedPropsRegistry_(animatedPropsRegistry) {}
-+    const std::shared_ptr<AnimatedPropsRegistry> &animatedPropsRegistry,
-+    const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry)
-+    : staticPropsRegistry_(staticPropsRegistry),
-+      animatedPropsRegistry_(animatedPropsRegistry),
-+      mountedRootsRegistry_(mountedRootsRegistry) {}
- 
- jsi::Value ViewStylesRepository::getNodeProp(
-     const std::shared_ptr<const ShadowNode> &shadowNode,
-@@ -76,11 +79,10 @@ std::shared_ptr<const ShadowNode> ViewStylesRepository::getNewestNode(
-   // deadlock) that getNewestCloneOfShadowNode takes, falling back to the passed node.
-   // Mirrors RN's getShadowNodeInSubtree:
-   // https://github.com/facebook/react-native/blob/v0.86.0-rc.3/packages/react-native/ReactCommon/react/renderer/uimanager/UIManager.cpp#L339
--  const auto it = lastMountedRootBySurface_.find(shadowNode->getSurfaceId());
--  if (it == lastMountedRootBySurface_.end()) {
-+  const auto root = mountedRootsRegistry_->get(shadowNode->getSurfaceId());
-+  if (!root) {
-     return shadowNode;
-   }
--  const auto &root = it->second;
- 
-   if (ShadowNode::sameFamily(*root, *shadowNode)) {
-     return root;
-@@ -106,19 +108,11 @@ std::shared_ptr<const ShadowNode> ViewStylesRepository::getParentNode(
-     return parentNode;
-   }
- 
--  const auto it = lastMountedRootBySurface_.find(shadowNode->getSurfaceId());
--  if (it == lastMountedRootBySurface_.end()) {
-+  const auto root = mountedRootsRegistry_->get(shadowNode->getSurfaceId());
-+  if (!root) {
-     return nullptr;
-   }
--  return dom::getParentNode(it->second, *shadowNode);
--}
--
--void ViewStylesRepository::setLastMountedRoot(const RootShadowNode::Shared &rootShadowNode) {
--  lastMountedRootBySurface_[rootShadowNode->getSurfaceId()] = rootShadowNode;
--}
--
--void ViewStylesRepository::removeSurface(const SurfaceId surfaceId) {
--  lastMountedRootBySurface_.erase(surfaceId);
-+  return dom::getParentNode(root, *shadowNode);
+@@ -30,6 +30,12 @@ NativeProxy::NativeProxy(
+     const std::shared_ptr<WorkletRuntime> &uiRuntime,
+     const std::shared_ptr<UIScheduler> &uiScheduler)
+     : javaPart_(jni::make_global(jThis)),
++      strongThis_(
++          this,
++          [](NativeProxy *self) {
++            // The Java part can destroy `self` as soon as it is released, so move it out first.
++            const auto javaPart = std::move(self->javaPart_);
++          }),
+       rnRuntime_(rnRuntime),
+       uiRuntime_(uiRuntime),
+       reanimatedModuleProxy_(std::make_shared<ReanimatedModuleProxy>(
+@@ -180,11 +186,6 @@ void NativeProxy::registerEventHandler() {
  }
  
- folly::dynamic ViewStylesRepository::getStyleProp(const Tag tag, const PropertyPath &propertyPath) {
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/CSS/misc/ViewStylesRepository.h` (modified, +4/-8)
-```diff
-@@ -2,17 +2,16 @@
- 
- #include <reanimated/CSS/common/definitions.h>
- #include <reanimated/CSS/registries/StaticPropsRegistry.h>
-+#include <reanimated/Fabric/MountedRootsRegistry.h>
- #include <reanimated/Fabric/updates/AnimatedPropsRegistry.h>
- 
--#include <react/renderer/components/root/RootShadowNode.h>
- #include <react/renderer/components/view/ViewProps.h>
- #include <react/renderer/core/LayoutableShadowNode.h>
- #include <react/renderer/dom/DOM.h>
- #include <react/renderer/uimanager/UIManager.h>
- 
- #include <memory>
- #include <string>
--#include <unordered_map>
- 
- namespace reanimated::css {
- 
-@@ -23,7 +22,8 @@ class ViewStylesRepository {
-  public:
-   ViewStylesRepository(
-       const std::shared_ptr<StaticPropsRegistry> &staticPropsRegistry,
--      const std::shared_ptr<AnimatedPropsRegistry> &animatedPropsRegistry);
-+      const std::shared_ptr<AnimatedPropsRegistry> &animatedPropsRegistry,
-+      const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry);
- 
-   void setUIManager(const std::shared_ptr<UIManager> &uiManager) {
-     uiManager_ = uiManager;
-@@ -33,15 +33,11 @@ class ViewStylesRepository {
-   jsi::Value getParentNodeProp(const std::shared_ptr<const ShadowNode> &shadowNode, const std::string &propName);
-   folly::dynamic getStyleProp(Tag tag, const PropertyPath &propertyPath);
- 
--  void setLastMountedRoot(const RootShadowNode::Shared &rootShadowNode);
--  void removeSurface(SurfaceId surfaceId);
+ void NativeProxy::maybeFlushUIUpdatesQueue() {
+-  // Module might be already destroyed.
+-  if (!javaPart_) {
+-    return;
+-  }
 -
-  private:
-   std::shared_ptr<UIManager> uiManager_;
-   std::shared_ptr<StaticPropsRegistry> staticPropsRegistry_;
-   std::shared_ptr<AnimatedPropsRegistry> animatedPropsRegistry_;
--
--  std::unordered_map<SurfaceId, RootShadowNode::Shared> lastMountedRootBySurface_;
-+  std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
- 
-   std::shared_ptr<const ShadowNode> getNewestNode(const std::shared_ptr<const ShadowNode> &shadowNode) const;
-   std::shared_ptr<const ShadowNode> getParentNode(const std::shared_ptr<const ShadowNode> &shadowNode) const;
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/MountedRootsRegistry.cpp` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+#include <reanimated/Fabric/MountedRootsRegistry.h>
-+#include <reanimated/Fabric/updates/UpdatesRegistryManager.h>
-+
-+#include <react/debug/react_native_assert.h>
-+
-+namespace reanimated {
-+
-+void MountedRootsRegistry::registerSurface(const SurfaceId surfaceId) {
-+  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-+  rootsBySurface_.try_emplace(surfaceId, nullptr);
-+}
-+
-+void MountedRootsRegistry::set(const RootShadowNode::Shared &rootShadowNode) {
-+  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-+  rootsBySurface_[rootShadowNode->getSurfaceId()] = rootShadowNode;
-+}
-+
-+void MountedRootsRegistry::remove(const SurfaceId surfaceId) {
-+  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-+  rootsBySurface_.erase(surfaceId);
-+}
-+
-+RootShadowNode::Shared MountedRootsRegistry::get(const SurfaceId surfaceId) const {
-+  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-+  const auto it = rootsBySurface_.find(surfaceId);
-+  return it == rootsBySurface_.end() ? nullptr : it->second;
-+}
-+
-+bool MountedRootsRegistry::isMounted(const ShadowNodeFamily &shadowNodeFamily) const {
-+  react_native_assert(UpdatesRegistryManager::isLockedByCurrentThread());
-+  const auto it = rootsBySurface_.find(shadowNodeFamily.getSurfaceId());
-+  return it != rootsBySurface_.end() && (!it->second || !shadowNodeFamily.getAncestors(*it->second).empty());
-+}
-+
-+} // namespace reanimated
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/MountedRootsRegistry.h` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+#pragma once
-+
-+#include <react/renderer/components/root/RootShadowNode.h>
-+
-+#include <unordered_map>
-+
-+namespace reanimated {
-+
-+using namespace facebook::react;
-+
-+/// Tracks running surfaces and their last mounted roots.
-+class MountedRootsRegistry {
-+ public:
-+  void registerSurface(SurfaceId surfaceId);
-+  void set(const RootShadowNode::Shared &rootShadowNode);
-+  void remove(SurfaceId surfaceId);
-+  RootShadowNode::Shared get(SurfaceId surfaceId) const;
-+  bool isMounted(const ShadowNodeFamily &shadowNodeFamily) const;
-+
-+ private:
-+  std::unordered_map<SurfaceId, RootShadowNode::Shared> rootsBySurface_;
-+};
-+
-+} // namespace reanimated
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedCommitHook.cpp` (modified, +16/-9)
-```diff
-@@ -15,17 +15,20 @@ namespace reanimated {
- ReanimatedCommitHook::ReanimatedCommitHook(
-     const std::shared_ptr<UIManager> &uiManager,
-     const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
--    const std::shared_ptr<css::ViewStylesRepository> &viewStylesRepository,
-+    const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
-     const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
-     const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker)
-     : uiManager_(uiManager),
-       updatesRegistryManager_(updatesRegistryManager),
--      viewStylesRepository_(viewStylesRepository),
-+      mountedRootsRegistry_(mountedRootsRegistry),
-       layoutAnimationsProxyRegistry_(layoutAnimationsProxyRegistry),
-       synchronousWritesTracker_(synchronousWritesTracker) {
-   uiManager_->registerCommitHook(*this);
--  uiManager_->getShadowTreeRegistry().enumerate(
--      [this](const ShadowTree &shadowTree, bool & /*stop*/) { registerLayoutAnimations(shadowTree); });
-+  uiManager_->getShadowTreeRegistry().enumerate([this](const ShadowTree &shadowTree, bool & /*stop*/) {
-+    registerLayoutAnimations(shadowTree);
-+    auto lock = updatesRegistryManager_->lock();
-+    mountedRootsRegistry_->registerSurface(shadowTree.getSurfaceId());
-+  });
+   static const auto method = getJniMethod<void()>("maybeFlushUIUpdatesQueue");
+   method(javaPart_.get());
  }
- 
- ReanimatedCommitHook::~ReanimatedCommitHook() noexcept {
-@@ -55,12 +58,16 @@ RootShadowNode::Unshared ReanimatedCommitHook::shadowTreeWillCommit(
-     return newRootShadowNode;
-   }
- 
--  if (newRootShadowNode->getChildren().empty()) {
--    // A stopping surface commits an empty root; its mount is not reported on a paused Android host.
-+  {
-     auto lock = updatesRegistryManager_->lock();
--    viewStylesRepository_->removeSurface(shadowTree.getSurfaceId());
--    if (synchronousWritesTracker_) {
--      synchronousWritesTracker_->onSurfaceStop(shadowTree.getSurfaceId());
-+    if (newRootShadowNode->getChildren().empty()) {
-+      // A stopping surface commits an empty root; its mount is not reported on a paused Android host.
-+      mountedRootsRegistry_->remove(shadowTree.getSurfaceId());
-+      if (synchronousWritesTracker_) {
-+        synchronousWritesTracker_->onSurfaceStop(shadowTree.getSurfaceId());
-+      }
-+    } else {
-+      mountedRootsRegistry_->registerSurface(shadowTree.getSurfaceId());
-     }
-   }
- 
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedCommitHook.h` (modified, +3/-3)
-```diff
-@@ -1,7 +1,7 @@
- #pragma once
- 
--#include <reanimated/CSS/misc/ViewStylesRepository.h>
- #include <reanimated/Compat/ReactNativeVersionCompat.h>
-+#include <reanimated/Fabric/MountedRootsRegistry.h>
- #include <reanimated/Fabric/updates/SynchronousWritesTracker.h>
- #include <reanimated/Fabric/updates/UpdatesRegistryManager.h>
- #include <reanimated/LayoutAnimations/LayoutAnimationsProxyRegistry.h>
-@@ -20,7 +20,7 @@ class ReanimatedCommitHook : public UIManagerCommitHook {
-   ReanimatedCommitHook(
-       const std::shared_ptr<UIManager> &uiManager,
-       const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
--      const std::shared_ptr<css::ViewStylesRepository> &viewStylesRepository,
-+      const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
-       const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
-       const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker);
- 
-@@ -50,7 +50,7 @@ class ReanimatedCommitHook : public UIManagerCommitHook {
- 
-   std::shared_ptr<UIManager> uiManager_;
-   std::shared_ptr<UpdatesRegistryManager> updatesRegistryManager_;
--  std::shared_ptr<css::ViewStylesRepository> viewStylesRepository_;
-+  std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
-   std::shared_ptr<LayoutAnimationsProxyRegistry> layoutAnimationsProxyRegistry_;
-   std::shared_ptr<SynchronousWritesTracker> synchronousWritesTracker_;
- };
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedMountHook.cpp` (modified, +5/-6)
-```diff
-@@ -10,13 +10,13 @@ namespace reanimated {
- ReanimatedMountHook::ReanimatedMountHook(
-     const std::shared_ptr<UIManager> &uiManager,
-     const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
--    const std::shared_ptr<css::ViewStylesRepository> &viewStylesRepository,
-+    const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
-     const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
-     const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker,
-     const std::function<void()> &requestFlush)
-     : uiManager_(uiManager),
-       updatesRegistryManager_(updatesRegistryManager),
--      viewStylesRepository_(viewStylesRepository),
-+      mountedRootsRegistry_(mountedRootsRegistry),
-       layoutAnimationsProxyRegistry_(layoutAnimationsProxyRegistry),
-       synchronousWritesTracker_(synchronousWritesTracker),
-       requestFlush_(requestFlush) {
-@@ -47,14 +47,13 @@ void ReanimatedMountHook::shadowTreeDidMount(
- 
-   {
-     auto lock = updatesRegistryManager_->lock();
--    // Record the mounted tree for relative-length resolution.
--    viewStylesRepository_->setLastMountedRoot(rootShadowNode);
-+    mountedRootsRegistry_->set(rootShadowNode);
- 
-     // Always drain removable nodes, even on Reanimated's own commits. While CSS
-     // animations run every mount carries the mount trait, so returning early here
-     // would skip removals for the whole animation and leak unmounted nodes if the
-     // tree is torn down mid-animation.
--    updatesRegistryManager_->handleNodeRemovals(*rootShadowNode);
-+    updatesRegistryManager_->handleNodeRemovals();
- 
-     if (!isReanimatedMount) {
-       // When a commit from React Native has finished, we reset the skip commit
-@@ -76,7 +75,7 @@ void ReanimatedMountHook::shadowTreeDidUnmount(SurfaceId surfaceId, HighResTimeS
-   }
- 
-   auto lock = updatesRegistryManager_->lock();
--  viewStylesRepository_->removeSurface(surfaceId);
-+  mountedRootsRegistry_->remove(surfaceId);
+@@ -455,7 +456,8 @@ void NativeProxy::invalidateCpp() {
+   // the pointer and it will be too late after it
+   reanimatedModuleProxy_->cleanupSensors();
+   reanimatedModuleProxy_.reset();
+-  javaPart_ = nullptr;
++  // Releases `javaPart_`, but only after the calls in flight on other threads return.
++  strongThis_.reset();
  }
  
  } // namespace reanimated
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/Fabric/ReanimatedMountHook.h` (modified, +3/-3)
+**File**: `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.h` (modified, +23/-7)
 ```diff
-@@ -1,6 +1,6 @@
- #pragma once
+@@ -3,6 +3,7 @@
+ #include <ReactCommon/CallInvokerHolder.h>
+ #include <fbjni/fbjni.h>
+ #include <jsi/jsi.h>
++#include <react/debug/react_native_assert.h>
+ #include <react/fabric/JFabricUIManager.h>
+ #include <react/jni/WritableNativeMap.h>
+ #include <react/renderer/scheduler/Scheduler.h>
+@@ -20,7 +21,7 @@ namespace reanimated {
+ using namespace facebook;
+ using namespace facebook::jni;
  
--#include <reanimated/CSS/misc/ViewStylesRepository.h>
-+#include <reanimated/Fabric/MountedRootsRegistry.h>
- #include <reanimated/Fabric/ShadowTreeCloner.h>
- #include <reanimated/Fabric/updates/SynchronousWritesTracker.h>
- #include <reanimated/Fabric/updates/UpdatesRegistryManager.h>
-@@ -19,7 +19,7 @@ class ReanimatedMountHook : public UIManagerMountHook {
-   ReanimatedMountHook(
-       const std::shared_ptr<UIManager> &uiManager,
-       const std::shared_ptr<UpdatesRegistryManager> &updatesRegistryManager,
--      const std::shared_ptr<css::ViewStylesRepository> &viewStylesRepository,
-+      const std::shared_ptr<MountedRootsRegistry> &mountedRootsRegistry,
-       const std::shared_ptr<LayoutAnimationsProxyRegistry> &layoutAnimationsProxyRegistry,
-       const std::shared_ptr<SynchronousWritesTracker> &synchronousWritesTracker,
-       const std::function<void()> &requestFlush);
-@@ -32,7 +32,7 @@ class ReanimatedMountHook : public UIManagerMountHook {
+-class NativeProxy : public jni::HybridClass<NativeProxy>, std::enable_shared_from_this<NativeProxy> {
++class NativeProxy : public jni::HybridClass<NativeProxy>, public std::enable_shared_from_this<NativeProxy> {
+  public:
+   static auto constexpr kJavaDescriptor = "Lcom/swmansion/reanimated/NativeProxy;";
+   static jni::local_ref<jhybriddata> initHybrid(
+@@ -36,6 +37,13 @@ class NativeProxy : public jni::HybridClass<NativeProxy>, std::enable_shared_fro
   private:
-   const std::shared_ptr<UIManager> uiManager_;
-   const std::shared_ptr<UpdatesRegistryManager> updatesRegistryManager_;
--  const std::shared_ptr<css::ViewStylesRepository> viewStylesRepository_;
-+  const std::shared_ptr<MountedRootsRegistry> mountedRootsRegistry_;
-   const std::shared_ptr<LayoutAnimationsProxyRegistry> layoutAnimationsProxyRegistry_;
-   const std::shared_ptr<SynchronousWritesTracker> synchronousWritesTracker_;
-   const std::function<void()> requestFlush_;
+   friend HybridBase;
+   jni::global_ref<NativeProxy::javaobject> javaPart_;
++  /// The reference behind `weak_from_this()`. It does not own this object, the Java part does.
++  /// It guards `javaPart_` instead: `invalidateCpp()` drops it, and `javaPart_` is released once
++  /// the functions returned by `bindThis` that are running at that moment return. The UI runtime
++  /// keeps those functions, so they can be called during and after `invalidateCpp()`.
++  /// Declared after `javaPart_`, which its deleter releases, and before `reanimatedModuleProxy_`,
++  /// whose initializer calls `bindThis`.
++  std::shared_ptr<NativeProxy> strongThis_;
+   jsi::Runtime *rnRuntime_;
+   std::shared_ptr<worklets::WorkletRuntime> uiRuntime_;
+   std::shared_ptr<ReanimatedModuleProxy> reanimatedModuleProxy_;
+@@ -94,18 +102,26 @@ class NativeProxy : public jni::HybridClass<NativeProxy>, std::enable_shared_fro
+   std::shared_ptr<css::CSSPlatformTransitionBackend> makePlatformTransitionBackend();
+ 
+   /***
+-   * Wraps a method of `NativeProxy` in a function object capturing `this`
++   * Wraps a method of `NativeProxy` in a function object holding a weak
++   * reference to `this`
+    * @tparam TReturn return type of passed method
+    * @tparam TParams parameter types of passed method
+    * @param methodPtr pointer to method to be wrapped
+-   * @return a function object with the same signature as the method, calling
+-   * that method on `this`
++   * @return a function object with the same signature as the method. It calls
++   * that method on `this` while `javaPart_` is held, and returns a default
++   * value after `javaPart_` is released
+    */
+   template <class TReturn, class... TParams>
+   std::function<TReturn(TParams...)> bindThis(TReturn (NativeProxy::*methodPtr)(TParams...)) {
+-    // It's probably safe to pass `this` as reference here...
+-    return [this, methodPtr](TParams &&...args) {
+-      return (this->*methodPtr)(std::forward<TParams>(args)...);
++    auto weakThis = weak_from_this();
++    // Otherwise the function would never call the method.
++    react_native_assert(!weakThis.expired() && "`bindThis` called before `strongThis_` is initialized");
++    return [weakThis = std::move(weakThis), methodPtr](TParams &&...args) -> TReturn {
++      const auto strongThis = weakThis.lock();
++      if (!strongThis) {
++        return TReturn();
++      }
++      return (strongThis.get()->*methodPtr)(std::forward<TParams>(args)...);
+     };
+   }
+ 
+```
+
+**File**: `packages/react-native-reanimated/changelog/android-native-proxy-call-after-invalidate.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Fix an Android crash (`JNI DETECTED ERROR IN APPLICATION: obj == null` in `NativeProxy::getAnimationTimestamp`) when a worklet still runs on the UI thread while the React host is torn down, for example on an `expo-updates` restart.
+```
+
+---
+
+### Incident Patch 2: `4670996b` (2026-10-28)
+**Commit Message**: fix(Reanimated): don't throw when animating a component whose ref is an imperative handle (#11023)
+
+> [!NOTE]
+> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
+
+## Summary
+
+When Reanimated can't read the native view straight from an animated
+component's ref, it falls back to React's `findHostInstance_DEPRECATED`.
+Since #9589 that fallback receives the component's own ref. React
+resolves only class component instances there and throws for anything
+else. So wrapping a component whose ref is a `useImperativeHandle`
+handle, such as react-native-video's `<Video>`, in
+`Animated.createAnimatedComponent` threw "Argument appears to not be a
+ReactComponent" on mount.
+
+Now Reanimated passes the component's ref only when it is a class
+component instance. Otherwise it resolves the view through the animated
+component itself, the same path it already takes when a component has no
+ref. Refs forwarded to a class component keep the behavior from #9589.
+
+**iOS**
+
+<table>
+<tr><th>Before</th><th>After</th></tr>
+<tr>
+<td>
+
+
+https://github.com/user-attachments/assets/a9ec42c9-01f6-49db-9e34-df5ec06b787f
+
+</td>
+<td>
+
+
+https://github.com/user-attachments/assets/02ff36b6-c8bb-437c-9ef
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/props/hostReplacement.test.tsx` (modified, +25/-0)
+```diff
+@@ -129,12 +129,27 @@ function FreshHandleHost({
+   );
+ }
+ 
++// Exposes methods instead of a view, so the animated component has to find
++// the view itself.
++function ImperativeHandleHost({
++  ref,
++  hostKey: _hostKey,
++  innerRef,
++  ...viewProps
++}: HostProps & { ref?: React.Ref<{ ping: () => void }> }) {
++  useImperativeHandle(ref, () => ({ ping: () => undefined }));
++
++  return <View ref={innerRef} {...viewProps} />;
++}
++
+ const AnimatedAnimatableRefHost =
+   Animated.createAnimatedComponent(AnimatableRefHost);
+ const AnimatedForwardedRefHost =
+   Animated.createAnimatedComponent(ForwardedRefHost);
+ const AnimatedFreshHandleHost =
+   Animated.createAnimatedComponent(FreshHandleHost);
++const AnimatedImperativeHandleHost =
++  Animated.createAnimatedComponent(ImperativeHandleHost);
+ 
+ type HostComponent = React.ComponentType<AnimatedProps<HostProps>>;
+ 
+@@ -273,4 +288,14 @@ describe('Host replacement', () => {
+       await expectTransitionOnCurrentHost(AnimatedFreshHandleHost);
+     });
+   });
++
++  describe('the ref is an imperative handle', () => {
++    test('binds to the view the component renders', async () => {
++      await render(<Example Host={AnimatedImperativeHandleHost} />);
++      await waitForFrames();
++
++      await expectBindingsOnCurrentHost();
++      await expectTransitionOnCurrentHost(AnimatedImperativeHandleHost);
++    });
++  });
+ });
+```
+
+**File**: `packages/react-native-reanimated/__tests__/findHostInstance.test.ts` (modified, +41/-5)
+```diff
+@@ -1,4 +1,6 @@
+ /* eslint-disable eslint-core/camelcase */
++import { Component } from 'react';
++
+ import type { IAnimatedComponentInternalBase } from '../src/createAnimatedComponent/commonTypes';
+ import { findHostInstance } from '../src/platform-specific/findHostInstance';
+ 
+@@ -9,13 +11,20 @@ jest.mock('react-native/Libraries/Renderer/shims/ReactFabric', () => ({
+ const ReactFabric: { findHostInstance_DEPRECATED: jest.Mock } =
+   jest.requireMock('react-native/Libraries/Renderer/shims/ReactFabric');
+ 
++class ClassComponent extends Component {}
++
++class ScrollableClassComponent extends Component {
++  getNativeScrollRef = () => null;
++  getScrollableNode = () => 42;
++}
++
+ describe('findHostInstance', () => {
+   beforeEach(() => {
+     ReactFabric.findHostInstance_DEPRECATED.mockReset();
+   });
+ 
+   test('uses the resolved component ref when the fast path cannot handle it', () => {
+-    const componentRef = { __nativeTag: 42 };
++    const componentRef = new ClassComponent({});
+     const hostInstance = { host: true };
+     const animatedComponent = {
+       _componentRef: componentRef,
+@@ -77,10 +86,7 @@ describe('findHostInstance', () => {
+ 
+   test('falls back when getScrollableNode returns a view tag', () => {
+     const hostInstance = { host: true };
+-    const componentRef = {
+-      getNativeScrollRef: () => null,
+-      getScrollableNode: () => 42,
+-    };
++    const componentRef = new ScrollableClassComponent({});
+     const animatedComponent = {
+       _componentRef: componentRef,
+       _hasAnimatedRef: false,
+@@ -93,4 +99,34 @@ describe('findHostInstance', () => {
+       componentRef
+     );
+   });
++
++  test('falls back to the animated component for an imperative handle', () => {
++    const hostInstance = { host: true };
++    const animatedComponent = {
++      _componentRef: { seek: jest.fn(), pause: jest.fn() },
++      _hasAnimatedRef: false,
++    } as unknown as IAnimatedComponentInternalBase;
++
++    ReactFabric.findHostInstance_DEPRECATED.mockReturnValue(hostInstance);
++
++    expect(findHostInstance(animatedComponent)).toBe(hostInstance);
++    expect(ReactFabric.findHostInstance_DEPRECATED).toHaveBeenCalledWith(
++      animatedComponent
++    );
++  });
++
++  test('falls back to the animated component without a component ref', () => {
++    const hostInstance = { host: true };
++    const animatedComponent = {
++      _componentRef: null,
++      _hasAnimatedRef: false,
++    } as unknown as IAnimatedComponentInternalBase;
++
++    ReactFabric.findHostInstance_DEPRECATED.mockReturnValue(hostInstance);
++
++    expect(findHostInstance(animatedComponent)).toBe(hostInstance);
++    expect(ReactFabric.findHostInstance_DEPRECATED).toHaveBeenCalledWith(
++      animatedComponent
++    );
++  });
+ });
+```
+
+**File**: `packages/react-native-reanimated/changelog/imperative-handle-host-lookup.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Fix `createAnimatedComponent` throwing on mount for components whose ref is a `useImperativeHandle` handle.
+```
+
+**File**: `packages/react-native-reanimated/src/platform-specific/findHostInstance.native.ts` (modified, +10/-4)
+```diff
+@@ -1,6 +1,8 @@
+ /* eslint-disable eslint-core/camelcase */
+ 'use strict';
+ 
++import { Component } from 'react';
++
+ import type { InternalHostInstance } from '../commonTypes';
+ import type { IAnimatedComponentInternalBase } from '../createAnimatedComponent/commonTypes';
+ import type { HostInstance } from './types';
+@@ -92,9 +94,13 @@ export function findHostInstance(
+   resolveFindHostInstance_DEPRECATED();
+   /*
+     The Fabric implementation of `findHostInstance_DEPRECATED` requires a React ref as an argument
+-    rather than a native ref. Prefer the resolved component ref when available so components can
+-    forward their ref to the host view that should be animated. Components that expose an animatable
+-    ref via `getAnimatableRef` already have it resolved into `_componentRef`.
++    rather than a native ref, and it throws for anything that is not a class component instance,
++    such as a `useImperativeHandle` handle. Prefer the resolved component ref when it is a class
++    component so components can forward their ref to the host view that should be animated, and
++    use the animated component otherwise. Components that expose an animatable ref via
++    `getAnimatableRef` already have it resolved into `_componentRef`.
+   */
+-  return findHostInstance_DEPRECATED(componentRef ?? ref);
++  return findHostInstance_DEPRECATED(
++    componentRef instanceof Component ? componentRef : ref
++  );
+ }
+```
+
+---
+
+### Incident Patch 3: `cc8e5c5e` (2026-10-30)
+**Commit Message**: fix(Reanimated): run an animated ref's observers again only when its view changes (#10909)
+
+## Summary
+
+`useScrollOffset` unregisters its scroll handler and registers it again
+on every render of a component that passes the animated ref through an
+inline callback ref, such as `ref={(instance) => {
+animatedRef(instance); localRef.current = instance; }}`.
+
+React calls a callback ref again whenever the ref passed to an element
+changes, and `ScrollView` from `react-native` forwards each new `ref`
+prop as a new ref on its native view, so the animated ref is called with
+the same scroll view on every render. `useAnimatedRefBase` runs every
+observer's cleanup and then the observer again on each of these calls,
+and the observer `useScrollOffset` registers unregisters its handler and
+registers it again.
+
+Each observer now keeps the tag it last ran with, and the animated ref
+runs it again only when the view's tag changes. Moving the ref to
+another view still runs the cleanup and the observer for the new tag.
+
+## Test plan
+
+- `__tests__/hooks.useScrollOffset.test.tsx` re-renders a scroll view
+whose animated ref goes through an inline callback ref and expects the
+scroll handler to register once;
+
+**File**: `packages/react-native-reanimated/__tests__/hooks.useScrollOffset.test.tsx` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++import { render } from '@testing-library/react-native';
++import { ScrollView } from 'react-native';
++
++import { useAnimatedRef, useScrollOffset } from '../src';
++import { WorkletEventHandler } from '../src/WorkletEventHandler';
++
++jest.mock('../src/platformFunctions/findNodeHandle', () => {
++  const tags = new WeakMap<object, number>();
++  let nextTag = 1000;
++  return {
++    findNodeHandle: jest.fn((componentOrHandle: unknown) => {
++      if (typeof componentOrHandle !== 'object' || componentOrHandle === null) {
++        return componentOrHandle ?? null;
++      }
++      if (!tags.has(componentOrHandle)) {
++        tags.set(componentOrHandle, nextTag++);
++      }
++      return tags.get(componentOrHandle);
++    }),
++  };
++});
++
++describe('useScrollOffset', () => {
++  let registerForEvents: jest.SpyInstance;
++  let unregisterFromEvents: jest.SpyInstance;
++
++  beforeEach(() => {
++    registerForEvents = jest.spyOn(
++      WorkletEventHandler.prototype,
++      'registerForEvents'
++    );
++    unregisterFromEvents = jest.spyOn(
++      WorkletEventHandler.prototype,
++      'unregisterFromEvents'
++    );
++  });
++
++  afterEach(() => {
++    jest.restoreAllMocks();
++  });
++
++  test('keeps the scroll handler registered while an inline ref re-attaches the same scroll view', () => {
++    function TrackedScrollView() {
++      const animatedRef = useAnimatedRef<ScrollView>();
++      useScrollOffset(animatedRef);
++      return (
++        <ScrollView
++          ref={(instance) => {
++            animatedRef(instance);
++          }}
++        />
++      );
++    }
++
++    const { rerender } = render(<TrackedScrollView />);
++    rerender(<TrackedScrollView />);
++    rerender(<TrackedScrollView />);
++
++    expect(registerForEvents).toHaveBeenCalledTimes(1);
++    expect(unregisterFromEvents).not.toHaveBeenCalled();
++  });
++
++  test('moves the scroll handler to the scroll view the ref attaches to next', () => {
++    function TrackedScrollView({ scrollViewKey }: { scrollViewKey: string }) {
++      const animatedRef = useAnimatedRef<ScrollView>();
++      useScrollOffset(animatedRef);
++      return (
++        <ScrollView
++          key={scrollViewKey}
++          ref={(instance) => {
++            animatedRef(instance);
++          }}
++        />
++      );
++    }
++
++    const { rerender } = render(<TrackedScrollView scrollViewKey="first" />);
++    rerender(<TrackedScrollView scrollViewKey="second" />);
++    rerender(<TrackedScrollView scrollViewKey="second" />);
++
++    const [[firstTag], [secondTag]] = registerForEvents.mock.calls;
++    expect(registerForEvents).toHaveBeenCalledTimes(2);
++    expect(secondTag).not.toBe(firstTag);
++    expect(unregisterFromEvents.mock.calls).toEqual([[firstTag]]);
++  });
++});
+```
+
+**File**: `packages/react-native-reanimated/changelog/animated-ref-observers-same-view.fix.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Fix `useScrollOffset` unregistering and re-registering its scroll handler each time React re-attaches its animated ref to the same view, which an inline callback ref does on every render.
+```
+
+**File**: `packages/react-native-reanimated/src/hook/useAnimatedRefCommon.ts` (modified, +18/-6)
+```diff
+@@ -13,10 +13,15 @@ import type {
+   MaybeObserverCleanup,
+ } from './commonTypes';
+ 
++type ObserverRun = {
++  readonly tag: number | null;
++  readonly cleanup: MaybeObserverCleanup;
++};
++
+ export function useAnimatedRefBase<TRef extends InstanceOrElement>(
+   getWrapper: (ref: InternalHostInstance) => ShadowNodeWrapper
+ ): AnimatedRef<TRef> {
+-  const observers = useRef<Map<AnimatedRefObserver, MaybeObserverCleanup>>(
++  const observers = useRef<Map<AnimatedRefObserver, ObserverRun>>(
+     new Map()
+   ).current;
+   const wrapperRef = useRef<ShadowNodeWrapper | null>(null);
+@@ -34,13 +39,20 @@ export function useAnimatedRefBase<TRef extends InstanceOrElement>(
+ 
+         if (observers.size) {
+           const currentTag = fun?.getTag?.() ?? null;
+-          observers.forEach((cleanup, observer) => {
++          observers.forEach(({ tag, cleanup }, observer) => {
++            // React calls the ref again for the same view whenever the ref passed to it changes.
++            if (tag === currentTag) {
++              return;
++            }
+             // Perform the cleanup before calling the observer again.
+             // This ensures that all events that were set up in the observer
+             // are cleaned up before the observer sets up new events during
+             // the next call.
+             cleanup?.();
+-            observers.set(observer, observer(currentTag));
++            observers.set(observer, {
++              tag: currentTag,
++              cleanup: observer(currentTag),
++            });
+           });
+         }
+       }
+@@ -50,11 +62,11 @@ export function useAnimatedRefBase<TRef extends InstanceOrElement>(
+ 
+     fun.observe = (observer: AnimatedRefObserver) => {
+       // Call observer immediately to get the initial value
+-      const cleanup = observer(fun?.getTag?.() ?? null);
+-      observers.set(observer, cleanup);
++      const tag = fun?.getTag?.() ?? null;
++      observers.set(observer, { tag, cleanup: observer(tag) });
+ 
+       return () => {
+-        observers.get(observer)?.();
++        observers.get(observer)?.cleanup?.();
+         observers.delete(observer);
+       };
+     };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10989** (2026-10-23): test(Reanimated): run the browser sensor path of useAnimatedSensor in a Jest web test (@tjzel)
-- **PR #10983** (2026-10-23): chore(repo): remove MatiPl01 from CODEOWNERS (@tjzel)
-- **PR #10980** (2026-10-23): ci: fetch crash reports from the remote iOS simulator after a crash (@tjzel)
-- **PR #10979** (2026-10-23): test: wait up to 5 seconds for the UI runtime when reading test values (@tjzel)
-- **PR #10978** (2026-10-23): test(Worklets): keep the WeakRef target alive until the test dereferences it (@tjzel)
-- **PR #10971** (2026-10-22): fix(repo): install babel-preset-expo in the Argent Cloud Expo scaffold (@tjzel)
+- **PR #11099** (2026-10-30): fix(Reanimated): resolve web-only modules for __tests__ in the Jest resolver (@tomekzaw)
+- **PR #11098** (2026-10-30): docs(Reanimated): keep the Slider example's handle in place until the pointer returns (@bartlomiejbloniarz)
+- **PR #11080** (2026-10-30): chore(Reanimated): drop leftover cpplint NOLINT markers (@tshmieldev)
+- **PR #11071** (closed): refactor(Worklets): merge SerializableRemoteFunction constructors (@tjzel)
+- **PR #11067** (2026-10-29): test(Reanimated): stop recording before reading color frames in nonLayoutPropAndRender (@pawicao)
+- **PR #11066** (2026-10-29): docs(Worklets): fix the shadowed variable in the isWorkletFunction example (@tjzel)
 
 ---
 
@@ -1732,51 +1460,40 @@ base s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SET): keep a shared container whose animation ends in the pull that creates it (
+## X. Reanimated): don't crash on Android when worklets run during the teardown of the
 
 **RULE**:
-When implementing operations in `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransition.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab0c162e`: SET): keep a shared container whose animation ends in the pull that creates it (#10886). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1ae46345`: Reanimated): don't crash on Android when worklets run during the teardown of the React host (#10858). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransition.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-reanimated/android/src/main/cpp/reanimated/android/NativeProxy.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  ReduceMotion,
-function createTransition(
-  finished: boolean[],
-  transition = SharedTransition.duration(300)
-) {
-  return transition.withCallback((isFinished) => {
-
-  test('runs a transition that ends on its first frame', async () => {
-    const finished: boolean[] = [];
-    const transition = createTransition(
-      finished,
-      SharedTransition.reduceMotion(ReduceMotion.Always)
-    );
-    await render(<Screens showTarget={false} transition={transition} />);
-    await waitForFrames();
-
-    await render(<Screens showTarget transition={transition} />);
-    await waitForNotification('shared-transition-finished');
-    await waitForFrames();
-
-    expect(finished).toBe([true]);
-    await expectMountedAtLayout('target', 1);
-  });
+      strongThis_(
+          this,
+          [](NativeProxy *self) {
+            // The Java part can destroy `self` as soon as it is released, so move it out first.
+            const auto javaPart = std::move(self->javaPart_);
+          }),
+  // Releases `javaPart_`, but only after the calls in flight on other threads return.
+  strongThis_.reset();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-function createTransition(finished: boolean[]) {
-  return SharedTransition.duration(300).withCallback((isFinished) => {
+  // Module might be already destroyed.
+  if (!javaPart_) {
+    return;
+  }
+
+  javaPart_ = nullptr;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab0c162e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1ae46345` are properly handled with clean fallback behavior.

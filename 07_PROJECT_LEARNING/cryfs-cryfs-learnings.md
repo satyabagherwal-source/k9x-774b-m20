@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cryfs-cryfs-learnings.md`  
 > **Source**: github ([https://github.com/cryfs/cryfs](https://github.com/cryfs/cryfs))  
-> **Source Version**: `ad1f72d5`  
+> **Source Version**: `e2da97b1`  
 > **License**: LGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:29:32.574Z  
+> **Timestamp**: 2026-10-30T06:29:51.254Z  
 > **Learning ID**: `learn-github-cryfs-cryfs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cryfs-cryfs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cryfs/cryfs](https://github.com/cryfs/cryfs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:29:32.006Z  
+> **Harvest Timestamp**: 2026-10-30T06:29:51.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cryptographic filesystem for the cloud
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2321 stars
+- **Stars / Engagement**: 2328 stars
 
 ---
 
@@ -1228,11 +1228,11 @@ impl CliErrorKind {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #673** (2026-09-29): **Add TODOs for the rename follow-ups found while fixing #672**
-  *Symptoms*: Comments only, no behavior change. Six follow-ups came up while working on the cross-directory rename fix in #672. This makes sure each of them has a TODO in the code so it isn't forgotten.  ## New TODOs  Before writing each one, I checked the claim against the code.  - **`CryDir::remove_child_dir` can deadlock with a concurrent rename that overwrites the directory it removes.** The main TODO is in `remove_child_dir` (`dir.rs`); the two places where a rename deletes the overwritten node point to it.   - rmdir keeps the child directory loaded while it waits for the lock on the parent.   - The rename holds that lock while its `on_overwritten` callback calls `remove_by_id` on the child.   - `remove_by_id` waits until every handle to the child is dropped (see `request_immediate_drop` in `concurrent-store/src/store.rs`), including rmdir's.   - Through a Linux mount, the kernel doesn't run rmdir and rename in the same directory at the same time, so only concurrent callers in the same process can hit it. I found this by reading the code; I haven't reproduced it. - **`CryDevice::rename` doesn't update the parent directories' modification timestamps.** `CryDir::rename_child` and `CryDir::move_child_to` do, and POSIX says a rename marks both parents for update. Only the fuse-mt backend goes through `CryDevice::rename`. The TODO is at the top of `CryDevice::rename` (`device.rs`). - **fuse_mt 0.6.4 drops the `renameat2()` flags before it calls our fuse-mt backend.** Its `rename` takes `_
+- **Issue #677** (2026-10-30): **Look up a node's own directory entry by blob id instead of by name**
+  *Symptoms*: Stacked on #676 (it extends the adapter tests from there), so this PR's base is that branch. Review only the last commit.  ## Summary  `NodeInfo` remembered the name a node had when it was loaded, and `getattr` and `setattr` looked up the node's entry in its parent directory by that name. A rename changes the name, but nodes loaded before the rename stay in use: fuser keeps them in its inode list, and open files keep theirs. After a rename within one directory, such a node either didn't find its entry anymore (ENOENT), or, if a new node had taken the old name, read and changed **that other node's** entry.  Through a real mount of current `main`, `touch x; mv x y; touch x; chmod 600 y` changes the mode of the new `x` on disk and leaves `y` unchanged. The kernel's attribute cache hides this for up to a second. Since it applies permissions to the wrong file, please review this with that in mind.  The fix looks the entry up by blob id instead, which a rename doesn't change, and drops the name from `NodeInfo`. The access and modification timestamp updates already looked up the entry by blob id. `DirBlob::set_attr_of_entry_by_name` becomes `DirBlob::set_attr_of_entry`, and `update_modification_timestamp_by_name` goes away because nothing uses it anymore.  Renames across directories are still broken after this, because there the node also keeps the old parent directory. That's the next PR in the series.  ## Tests  - `tests/rename.rs` keeps a node, a directory and an open file loaded
 
-- **Issue #672** (2026-09-29): **Don't lose the source entry when a rename across directories is rejected**
-  *Symptoms*: ## What was wrong  A rename across two directories removed the entry from the source directory first, and only then asked the destination whether it accepts the overwrite. If the destination refused, the error was returned but the entry was never put back. Refusal happens when the target is a non-empty directory (ENOTEMPTY), or when a directory is renamed onto a non-directory or vice versa (EISDIR/ENOTDIR).  The result: the node disappeared from its parent directory, and its blob was orphaned, so its data became unreachable and its storage leaked.  Both rename implementations had this, and both had a TODO saying so: - `CryDir::move_child_to`, used by the fuser backend (the default) - the cross-directory branch of `CryDevice::rename`, used by the fuse-mt backend  ### Reproduced on a real mount  This is a throwaway `cryfs-cli` integration test that mounts a `CryDevice` (in-memory block store) through `RustfsFuserBackend::spawn_mount`, then:  ``` mkdir p1 p2 p1/d p2/d; echo > p1/d/f; echo > p2/d/g rename(p1/d, p2/d) ```  |  | `rename` result | `ls p1` | `ls p2/d` | |---|---|---|---| | `main` | `ENOTEMPTY` | `[]`, so `p1/d` is gone | `[g]` | | this PR | `ENOTEMPTY` | `[d]` | `[g]` |  The kernel rejects the EISDIR/ENOTDIR type mismatches itself before calling FUSE. It does not check whether the target directory is empty. So ENOTEMPTY is the case users hit, e.g. `mv p1/d p2/` when `p2/d` exists and isn't empty.  The C++ implementation doesn't have this bug. Its `CryNode::rename` ad
+- **Issue #676** (2026-10-30): **Don't panic when a rename within a directory overwrites a loaded node**
+  *Symptoms*: ## Summary  Through a mount, `touch a b; mv a b` panicked in `InodeList::move_inode` with "If parents are the same, we should never hit the case of orphaning an existing child", and `mv` failed with EIO even though the rename had already happened on disk. The kernel still has `b`'s inode, so the rename overwrites a node that is loaded in the inode list. Editors that save a file by writing a temporary file and renaming it over the original hit the same path.  The case is legitimate: the overwritten node stays loaded as an orphan until the kernel forgets it, like it already does for renames across directories. Its parent pointer still points to the same directory, so it still counts towards that directory's refcount (invariant E1), and the moved node stays in that directory too. So no refcounts change and the panic just goes away. Dropping the orphan later is already safe: `try_remove_child_by_handle` leaves the parent's edge alone when it leads to the node that replaced the orphan.  ## Tests  - New `crates/cryfs-filesystem/tests/fuser_adapter.rs` drives CryFS through `ObjectBasedFsAdapterLL`, the adapter the fuser backend uses, without mounting anything. Like the kernel, the adapter keeps inodes loaded between operations, which the existing e2e rename test doesn't do: it forgets its handles before renaming. Both new tests (file onto a loaded file, directory onto a loaded empty directory) panic without the fix. - cryfs-filesystem gets `cryfs-rustfs` with the `fuser` feature as 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1249,201 +1249,237 @@ impl CliErrorKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad1f72d5` (2026-09-29)
-**Commit Message**: Add TODOs for the rename follow-ups found while fixing #672 (#673)
+### Incident Patch 1: `f9c82def` (2026-10-30)
+**Commit Message**: Don't panic when a rename within a directory overwrites a loaded node (#676)
 
-Three issues came up while working on the cross-directory rename fix (#672)
-that didn't have a TODO yet:
+When a rename overwrote an existing node in the same directory and the kernel
+still had that node's inode, InodeList::move_inode panicked with "If parents are
+the same, we should never hit the case of orphaning an existing child", and the
+rename failed with EIO although it had already happened on disk. Through a
+mount, `touch a b; mv a b` hit this. Editors that save a file by writing a
+temporary file and renaming it over the original do the same thing.
 
-- CryDir::remove_child_dir can deadlock with a concurrent rename that
-  overwrites the directory it removes. rmdir keeps the child loaded while it
-  waits for the parent's lock. The rename holds that lock while it calls
-  remove_by_id on the child, which waits until every handle to the child is
-  dropped. Through a Linux mount, the kernel doesn't run the two at the same
-  time. The main TODO is in remove_child_dir, with pointers at both
-  remove_by_id call sites of the rename.
-- CryDevice::rename doesn't update the modification timestamps of the parent
-  directories, unlike CryDir::rename_child and CryDir::move_child_to.
-- fuse_mt 0.6.4 drops the renameat2() flags before it calls our fuse-mt
-  backend. So RENAME_NOREPLACE and RENAME_EXCHANGE become a plain,
-  overwriting rename there, instead of being rejected with EINVAL like the
-  fuser backend has done since #580.
+The case is legitimate: the overwritten node stays loaded as an orphan until the
+kernel forgets it, like it already does for renames across directories. Its
+parent pointer still points to the directory, so it still counts towards that
+directory's refcount, and the moved node stays in the same directory too, so no
+refcount changes.
 
-The other follow-ups from #672 already have TODOs:
-- keeping both directories locked for the whole move
-- undoing a move when set_parent fails
-- 
+The tests drive the file system through the fuser adapter, which keeps inodes
+loaded like the kernel does. cryfs-filesystem gets cryfs-rustfs with the fuser
+feature as a dev-dependency for that.
 
-**File**: `crates/cryfs-filesystem/src/filesystem/device.rs` (modified, +4/-0)
+
+Claude-Session: https://claude.ai/code/session_013tWxNy368caFZnjrbQUJgH
+
+Co-authored-by: Claude <[REDACTED_EMAIL]>
+
+**File**: `crates/cryfs-filesystem/Cargo.toml` (modified, +2/-0)
 ```diff
-@@ -313,6 +313,8 @@ where
-     }
+@@ -29,6 +29,8 @@ tokio = {workspace = true, features = ["sync"]}
+ [dev-dependencies]
+ byte-unit.workspace = true
+ cryfs-blobstore = {path = "../blobstore", features = ["testutils"]}
++# tests/fuser_adapter.rs drives the file system through the adapter the fuser backend uses
++cryfs-rustfs = {path = "../rustfs", features = ["fuser"]}
+ tokio = {workspace = true, features = ["rt-multi-thread", "macros", "time"]}
  
-     async fn rename(&self, source_path: &AbsolutePath, dest_path: &AbsolutePath) -> FsResult<()> {
-+        // TODO Unlike CryDir::rename_child and CryDir::move_child_to, this doesn't update the modification timestamps of the
-+        //      source and destination parent directories, although POSIX says a rename marks them for update.
-         if source_path.is_ancestor_of(dest_path) {
-             log::error!(
-                 "Tried to rename {source_path} into its descendant {dest_path}",
-@@ -348,6 +350,8 @@ where
-             )
-             .await?;
- 
-+            // TODO We hold the lock on the destination directory here, and remove_by_id waits until every handle to the
-+            //      overwritten blob is dropped. That can deadlock with a concurrent CryDir::remove_child_dir, see the TODO there.
-             match self
-                 .blobstore
-                 .remove_by_id(&overwritten_blobid)
+ [features]
 ```
 
-**File**: `crates/cryfs-filesystem/src/filesystem/dir.rs` (modified, +7/-0)
+**File**: `crates/cryfs-filesystem/tests/fuser_adapter.rs` (added, +181/-0)
 ```diff
-@@ -143,6 +143,8 @@ where
-         &self,
-         old_destination_blob_id: BlobId,
-     ) -> FsResult<()> {
-+        // TODO The caller holds the lock on the destination directory, and remove_by_id waits until every handle to the
-+        //      overwritten blob is dropped. That can deadlock with a concurrent remove_child_dir, see the TODO there.
-         let result = self
-             .blobstore
-             .remove_by_id(&old_destination_blob_id)
-@@ -604,6 +606,11 @@ where
-                     let ((), child_blob) = child_blob.async_drop_on_err(entries_check).await?;
- 
-                     // TODO We released the lock on self_blob above and are now re-locking it. There is a race condition here.
-+                    // TODO This can deadlock with a concurrent rename that overwrites this child. We keep child_blob loaded while we wait
-+                    //      for the lock on self_blob below, but the rename holds the lock on self_blob (its destination directory) while
-+                    //      its on_overwritten callback calls remove_by_id on the child, and remove_by_id waits until every handle to the
-+                    //      child is dropped, including ours. Through a Linux mount, the kernel doesn't run rmdir and rename in the same
-+                    //      directory at the same time, but concurrent callers in this process can hit it.
- 
-                     // First remove the entry, then flush that change, and only then remove the blob.
-                     // This is to make sure the file system doesn't end up in an invalid state
+@@ -0,0 +1,181 @@
++//! Tests that drive CryFS through rustfs's fuser adapter, [ObjectBasedFsAdapterLL], the way the kernel does,
++//! but without mounting anything. Like for a mount, the adapter keeps every inode it handed out loaded until
++//! it is forgotten, so nodes stay in use across operations.
++
++// The async state machines built here nest deeply enough that computing their layout
++// overflows rustc's default recursion limit of 128.
++#![recursion_limit = "512"]
++
++use std::time::Duration;
++
++use cryfs_blobstore::{BlobId, BlobStoreOnBlocks};
++use cryfs_blockstore::{InMemoryBlockStore, LockingBlockStore};
++use cryfs_filesystem::filesystem::CryDevice;
++use cryfs_rustfs::{
++    AtimeUpdateBehavior, FsError, Gid, InodeNumber, Mode, OpenInFlags, RequestInfo, Uid,
++    low_level_api::AsyncFilesystemLL,
++    object_based_api::{FUSE_ROOT_ID, ObjectBasedFsAdapterLL},
++};
++use cryfs_utils::{async_drop::AsyncDropGuard, path::PathComponent};
++
++type Adapter =
++    ObjectBasedFsAdapterLL<CryDevice<BlobStoreOnBlocks<LockingBlockStore<InMemoryBlockStore>>>>;
++
++fn req() -> RequestInfo {
++    RequestInfo {
++        unique: 0,
++        uid: Uid::from(1000),
++        gid: Gid::from(1000),
++        pid: 0,
++    }
++}
++
++fn name(name: &str) -> &PathComponent {
++    PathComponent::try_from_str(name).unwrap()
++}
++
++fn dir_mode() -> Mode {
++    Mode::default()
++        .add_dir_flag()
++        .add_user_read_flag()
++        .add_user_write_flag()
++        .add_user_exec_flag()
++}
++
++fn file_mode() -> Mode {
++    Mode::default()
++        .add_file_flag()
++        .add_user_read_flag()
++        .add_user_write_flag()
++}
++
++async fn make_adapter() -> AsyncDropGuard<Adapter> {
++    let blockstore = LockingBlockStore::new(InMemoryBlockStore::new());
++    let blobstore = BlobStoreOnBlocks::new(blockstore, 1024u32.into())
++        .await
++        .unwrap();
++    let device = CryDevice::create_new_filesystem(
++        blobstore,
++        BlobId::new_random(),
++        AtimeUpdateBehavior::Relatime,
++    )
++    .await
++    .unwrap();
++    let adapter = ObjectBasedFsAdapterLL::new(|_uid, _gid| device);
++    adapter.init(&req()).await.unwrap();
++    adapter
++}
++
++/// Runs `test` on a fresh file system. Fails instead of hanging if `test` blocks forever.
++async fn run(test: impl AsyncFnOnce(&Adapter)) {
++    let adapter = make_adapter().await;
++    {
++        let mut test = std::pin::pin!(test(&adapter));
++        if tokio::time::timeout(Duration::from_secs(60), &mut test)
++            .await
++            .is_err()
++        {
++            panic!("Test timed out");
++        }
++    }
++    adapter.async_drop().await.unwrap();
++}
++
++/// Creates a directory and returns its inode, which stays loaded like after a `mkdir` through a mount
++async fn mkdir(fs: &Adapter, parent: InodeNumber, dir_name: &str) -> InodeNumber {
++    fs.mkdir(&req(), parent, name(dir_name), dir_mode(), 0)
++        .await
++        .unwrap()
++        .ino
++        .handle
++}
++
++/// Creates a file and closes it again, and returns its inode, which stays loaded like after `touch` through a mount
++async fn touch(fs: &Adapter, parent: InodeNumber, file_name: &str) -> InodeNumber {
++    let reply = fs
++        .create(
++            &req(),
++            parent,
++            name(file_name),
++            file_mode(),
++            0,
++            OpenInFlags::ReadWrite,
++        )
++        .await
++        .unwrap();
++    fs.release(
++        &req(),
++        reply.ino.handle,
++        reply.fh,
++        OpenInFlags::ReadWrite,
++        None,
++        false,
++    )
++    .await
++    .unwrap();
++    reply.ino.handle
++}
++
++async fn lookup(fs: &Adapter, parent: InodeNumber, child_name: &str) -> Option<InodeNumber> {
++    match fs.lookup(&req(), parent, name(child_name)).await {
++        Ok(reply) => Some(reply.ino.handle),
++        Err(FsError::NodeDoesNotExist) => None,
++        Err(err) => panic!("Unexpected error: {err:?}"),
++    }
++}
++
++// Renames within one directory that overwrite a node the kernel still has loaded, e.g. an editor saving a
++// file by writing a temporary file and renaming it over the original. The overwritten node stays loaded
++// as an orphan until the kernel forgets it.
++
++#[tokio::test]
++async fn rename_within_dir_onto_loaded_file() {
++    run(async |fs| {
++        let source = touch(fs, FUSE_ROOT_ID, "source").await;
++        let target = touch(fs, FUSE_ROOT_ID, "target").await;
++
++        fs.rename(
++            &req(),
++            FUSE_ROOT_ID,
++            name("source"),
++            FUSE_ROOT_ID,
++            name("target"),
++            0,
++        )
++        .await
++        .unwrap();
++
++        // The kernel forgets the orphaned node once it doesn't need it anymore, and the moved node too
++        fs.forget(&req(), target, 1).await.unwrap();
++        fs.forget(&req(), source, 1).await.unwrap();
++        assert_eq!(None, lookup(fs, FUSE_ROOT_ID, "source").await);
++        assert!(lookup(fs, FUSE_ROOT_ID, "target").await.is_some());
++    })
++    .await
 ```
 
-**File**: `crates/rustfs/src/backend/fuse_mt/backend_adapter.rs` (modified, +4/-0)
+**File**: `crates/rustfs/src/object_based_api/utils/inode_list/mod.rs` (modified, +5/-4)
 ```diff
-@@ -336,6 +336,10 @@ where
-         )
-     }
- 
-+    // TODO fuse_mt 0.6.4 drops the renameat2() flags before it calls this (its `rename` takes `_flags: u32, // TODO`),
-+    //      so RENAME_NOREPLACE and RENAME_EXCHANGE arrive here as a plain rename that overwrites the target.
-+    //      The fuser backend rejects any flags with EINVAL instead, see `reject_unsupported_rename_flags` in
-+    //      object_based_api/low_level_adapter.rs. Do the same here once fuse_mt passes the flags on.
-     fn rename(
-         &self,
-         req: RequestInfo,
-```
-
----
-
-### Incident Patch 2: `dd357526` (2026-09-10)
-**Commit Message**: ci: run the beta toolchain on Linux only (#638)
-
-#637 added beta across every runner image, which put eight of its
-fourteen jobs on macOS. Those eight are the expensive half: a macOS
-debug job is around 80 minutes and a release job on the Intel runner
-around 300, against 50 to 110 for Linux, and the account has five
-concurrent macOS runners.
-
-They do not buy much. Beta is here to catch an upstream Rust regression
-a cycle before it reaches stable, and such a regression is almost never
-platform-specific -- the same argument #635 used when it cut the pull
-request macOS jobs down to stable. The six Linux beta jobs give that
-signal; the macOS ones repeat it at six times the cost.
-
-Excluding them takes main from 56 jobs to 48, and its macOS jobs from
-32 to 24. Nothing else changes: the pull request matrix never had beta,
-and every non-beta combination is untouched.
-
-The exclusions are per image, so a macOS image added later needs an
-entry there too or beta starts running on it. That is the same shape
-the pull request matrix already uses, and the wrong-by-default outcome
-is two extra jobs rather than silently lost coverage.
-
-
-Claude-Session: https://claude.ai/code/session_01Kjjwx5NLxkKfB8
-
-**File**: `.github/workflows/ci.yml` (modified, +9/-2)
-```diff
-@@ -75,11 +75,18 @@ jobs:
-         # supported version is almost never specific to a platform, and the
-         # Linux jobs still check all three on every pull request.
-         #
--        # Nothing is lost from main, which keeps every combination.
-+        # Main keeps every combination but one: beta does not run on the
-+        # macOS images. Beta is here to catch an upstream Rust regression a
-+        # cycle before it reaches stable, and such a regression is almost
-+        # never platform-specific -- the same reasoning that keeps the pull
-+        # request macOS jobs to stable. On four macOS images it cost eight
-+        # jobs for a signal the six Linux beta jobs already give. Adding a
-+        # macOS image means adding it to that exclude list too, or beta
-+        # starts running on it.
-         env:
-           EVENT: ${{ github.event_name }}
-         run: |
--          full='{"os":["macos-15","macos-15-intel","macos-26","macos-26-intel","ubuntu-22.04","ubuntu-24.04","ubuntu-26.04"],"command":["test"],"profile":["","--release"],"toolchain":["stable","beta","nightly","1.95"]}'
-+          full='{"os":["macos-15","macos-15-intel","macos-26","macos-26-intel","ubuntu-22.04","ubuntu-24.04","ubuntu-26.04"],"command":["test"],"profile":["","--release"],"toolchain":["stable","beta","nightly","1.95"],"exclude":[{"os":"macos-15","toolchain":"beta"},{"os":"macos-15-intel","toolchain":"beta"},{"os":"macos-26","toolchain":"beta"},{"os":"macos-26-intel","toolchain":"beta"}]}'
-           pr='{"os":["macos-15","ubuntu-22.04","ubuntu-24.04","ubuntu-26.04"],"command":["test"],"profile":["","--release"],"toolchain":["stable","nightly","1.95"],"exclude":[{"os":"macos-15","toolchain":"nightly"},{"os":"macos-15","toolchain":"1.95"}]}'
-           if [[ "$EVENT" == "pull_request" ]]; then
-             matrix="$pr"
-```
-
----
-
-### Incident Patch 3: `cb6ad31f` (2026-09-09)
-**Commit Message**: Revert "Use thin LTO for the release test builds in CI"
-
-This reverts commit ddbecfdc (#614). The release test builds in CI go
-back to the fat LTO that Cargo.toml asks for, so what CI tests is again
-exactly the configuration release binaries are built with.
-
-The numbers the change was based on were wrong. They came from builds in a
-renamed target directory, which the crabtime macro used by e2e-perf-tests
-refuses, so those builds had failed on the largest unit of a release build
-before finishing. Measured again in target/, complete builds, same machine
-and session, 4 cores, `cargo build --tests --release`:
-
-    fresh build                      fat 16m44s (50m36s CPU)   thin 15m12s (55m50s CPU)
-    rebuild after touching utils     fat 13m18s (40m32s CPU)   thin 12m23s (47m07s CPU)
-
-Thin LTO is 7 to 9% faster in wall time on 4 cores and uses 10 to 16% more
-CPU; the gain comes from parallelising the link, so on the 3-core macOS
-runners it is smaller still. That is not worth testing a configuration
-that differs from the shipped one.
-
-Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01FyVQXF6AvMQdyNVSdHNw9X
-
-**File**: `.github/workflows/ci.yml` (modified, +0/-10)
-```diff
-@@ -132,16 +132,6 @@ jobs:
-           cache-on-failure: true
-       - name: cargo ${{ matrix.command }}
-         shell: bash
--        env:
--          # Cargo.toml asks for fat LTO, and release binaries built anywhere
--          # else still get it. For the release test builds here, thin LTO
--          # keeps the optimisation level and the checks that differ between
--          # profiles (overflow, debug_assertions) while roughly halving the
--          # workspace's release build: rebuilding the workspace's test binaries
--          # after a change takes 8m18s with thin LTO and 17m19s with fat on a
--          # 4-core machine, and every release job pays that for each feature
--          # set.
--          CARGO_PROFILE_RELEASE_LTO: thin
-         # On GitHub-hosted macOS runners we have to skip the cryfs-rustfs
-         # tests that mount real FUSE sessions via fuser → macFUSE: the
-         # runner image won't approve macFUSE's kernel extension
+@@ -798,9 +798,10 @@ where
+         } else {
+             match move_result {
+                 MoveInodeSuccess::OrphanedExistingChildInNewParent => {
+-                    panic!(
+-                        "If parents are the same, we should never hit the case of orphaning an existing child."
+-                    )
++                    // The rename overwrote a node under the new name that is still loaded, e.g. because the kernel
++                    // still remembers its inode. That node is an orphan now, but its parent pointer still points to
++                    // this parent, so it still counts towards the parent's refcount for invariant E1. The moved node
++                    // stays in the same parent as well, so no refcounts change.
+                 }
+                 MoveInodeSuccess::AddedAsNewChildToNewParent => {
+                     // everything ok
+@@ -812,7 +813,7 @@ where
+         // * A, C, D, F: No change here
+         // * B1: No change here
+         // * B2: We assigned a new parent pointer to the node, but with B1+B2, we know that that parent is fully loaded.
+-        // * E1: If parent didn't change, we didn't change refcounts.
++        // * E1: If parent didn't change, we didn't change refcounts. That includes a node the rename orphaned, because it still points to the same parent.
+         //       If parent changed, we incremented new parent's refcount and decremented old parent's refcount.
+         // * E2: We used [Self::_decrement_refcount] to decrement old parent's refcount, which would drop the parent if its refcount went to zero.
+         Ok(())
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #677** (2026-10-30): Look up a node's own directory entry by blob id instead of by name (@smessmer)
+- **PR #676** (2026-10-30): Don't panic when a rename within a directory overwrites a loaded node (@smessmer)
 - **PR #673** (2026-09-29): Add TODOs for the rename follow-ups found while fixing #672 (@smessmer)
 - **PR #672** (2026-09-29): Don't lose the source entry when a rename across directories is rejected (@smessmer)
 - **PR #671** (2026-09-23): Shorten the 1.1.0 ChangeLog entries and link the PRs (@smessmer)
 - **PR #670** (2026-09-22): Stop the cache flush thread before destructing the cache (@smessmer)
-- **PR #669** (2026-09-23): Don't fail the CallAfterTimeout reset tests when a sleep overshoots (@smessmer)
-- **PR #668** (2026-09-18): Fix the flaky CacheTest_PushAndPop.AfterTimeout (@smessmer)
 
 ---
 
@@ -1463,24 +1499,22 @@ Claude-Session: https://claude.ai/code/session_01FyVQXF6AvMQdyNVSdHNw9X
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add TODOs for the rename follow-ups found while fixing #672 (#673)
+## X. Don't panic when a rename within a directory overwrites a loaded node (#676)
 
 **RULE**:
-When implementing operations in `crates/cryfs-filesystem/src/filesystem/device.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cryfs/cryfs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/cryfs-filesystem/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cryfs/cryfs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad1f72d5`: Add TODOs for the rename follow-ups found while fixing #672 (#673). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f9c82def`: Don't panic when a rename within a directory overwrites a loaded node (#676). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cryfs-filesystem/src/filesystem/device.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/cryfs-filesystem/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // TODO Unlike CryDir::rename_child and CryDir::move_child_to, this doesn't update the modification timestamps of the
-        //      source and destination parent directories, although POSIX says a rename marks them for update.
-            // TODO We hold the lock on the destination directory here, and remove_by_id waits until every handle to the
-            //      overwritten blob is dropped. That can deadlock with a concurrent CryDir::remove_child_dir, see the TODO there.
+# tests/fuser_adapter.rs drives the file system through the adapter the fuser backend uses
+cryfs-rustfs = {path = "../rustfs", features = ["fuser"]}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1490,4 +1524,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad1f72d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f9c82def` are properly handled with clean fallback behavior.

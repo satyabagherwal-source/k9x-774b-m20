@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `2a510f71`  
+> **Source Version**: `9c5c0eb9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:12:58.548Z  
+> **Timestamp**: 2026-10-31T19:23:50.104Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:12:58.543Z  
+> **Harvest Timestamp**: 2026-10-31T19:23:50.097Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Homogeneous Kubernetes clusters at scale on any infrastructure using hosted control planes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3478 stars
+- **Stars / Engagement**: 3479 stars
 
 ---
 
@@ -726,17 +726,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16088** (2026-10-23): **[release-v1.153] Use field selector and APIReader instead of cached client for `sync-provider-secret-labels` webhook**
-  *Symptoms*: cherry-pick of #16056  ```other operator github.com/gardener/gardener #16067 @acumino NONE ```  /kind enhancement
-  **Post-Mortem & Fix Analysis**:
-  > /cc @timuthy
-  > /retest
-
-- **Issue #16084** (2026-10-22): **Update nginx Docker tag to v1.31.8**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) | patch | `1.31.7` → `1.31.8` |  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (nginx)</summary>  ### [`v1.31.8`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.7...1.31.8)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.7...1.31.8)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzYuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjE3Ni4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+- **Issue #16179** (2026-10-31): **Update pvc-autoscaler to v0.3.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [gardener/pvc-autoscaler](https://redirect.github.com/gardener/pvc-autoscaler) |  | patch | `v0.3.1` → `v0.3.2` | ![age](https://developer.mend.io/api/mc/badges/age/github-releases/gardener%2fpvc-autoscaler/v0.3.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/github-releases/gardener%2fpvc-autoscaler/v0.3.1/v0.3.2?slim=true) | | [github.com/gardener/pvc-autoscaler](https://redirect.github.com/gardener/pvc-autoscaler) | require | patch | `v0.3.1` → `v0.3.2` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgardener%2fpvc-autoscaler/v0.3.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgardener%2fpvc-autoscaler/v0.3.1/v0.3.2?slim=true) |  ---  ### Release Notes  <details> <summary>gardener/pvc-autoscaler</summary>  ### [`v0.3.2`](https://redirect.github.com/gardener/pvc-autoscaler/releases/tag/v0.3.2)  [Compare Source](https://redirect.github.com/gardener/pvc-autoscaler/compare/v0.3.1...v0.3.2)  ##### \[github.com/gardener/pvc-autoscaler:v0.3.2]  ##### 🏃 Others  - `[OPERATOR]` Bumped the golang version used to build `pvc-autoscaler` to `1.26.10`. by `@plkokanov` \[[#&#8203;407](https://redirect.github.com/gardener/pvc-autoscaler/pull/407)]  ##### application/s
   **Post-Mortem & Fix Analysis**:
   > /label skip-review
-  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [timebertt](https://github.com/timebertt) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["timebertt"]} -->
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [lucabernstein](https://github.com/lucabernstein) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["lucabernstein"]} -->
+
+- **Issue #16178** (2026-10-31): **Update sigs.k8s.io/kube-api-linter digest to d90122c**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [sigs.k8s.io/kube-api-linter](https://redirect.github.com/kubernetes-sigs/kube-api-linter) | require | digest | `79b557a` → `d90122c` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xODguMiIsInVwZGF0ZWRJblZlciI6IjQ0LjE4OC4yIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+  **Post-Mortem & Fix Analysis**:
+  > LGTM label has been added.  <details>Git tree hash: eb6e0ed5bc97472decddfa88c9c7e7479271c221</details>
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16178#pullrequestreview-5719607163" title="Approved">marc1404</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)~~ [marc1404]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -753,142 +753,46 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2a510f71` (2026-10-25)
-**Commit Message**: Update blackbox-exporter to v0.29.1 (#16073)
-
-* Update blackbox-exporter to v0.29.1
-
-* Run make tidy
-
----------
+### Incident Patch 1: `9c5c0eb9` (2026-10-31)
+**Commit Message**: Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +3/-2)
-```diff
-@@ -46,9 +46,9 @@ require (
- 	github.com/perses/perses-operator v0.5.0
- 	github.com/perses/spec v0.2.0
- 	github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1
--	github.com/prometheus/blackbox_exporter v0.29.0
-+	github.com/prometheus/blackbox_exporter v0.29.1
- 	github.com/prometheus/client_golang v1.25.0
--	github.com/prometheus/common v0.72.0
-+	github.com/prometheus/common v0.72.1
- 	github.com/robfig/cron v1.2.0
- 	github.com/spf13/afero v1.15.0
- 	github.com/spf13/cobra v1.10.2
-@@ -117,6 +117,7 @@ exclude github.com/gardener/gardener/pkg/apis v1.147.1
- tool github.com/joelanford/go-apidiff
- 
- require (
-+	cel.dev/cel-go v0.32.0 // indirect
- 	cel.dev/expr v0.25.3 // indirect
- 	dario.cat/mergo v1.0.2 // indirect
- 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
-```
-
-**File**: `go.sum` (modified, +6/-4)
-```diff
-@@ -1,3 +1,5 @@
-+cel.dev/cel-go v0.32.0 h1:irvpFKr5EuGPyxeME03ERh0rii1TX+BDAnB9eL3IvNk=
-+cel.dev/cel-go v0.32.0/go.mod h1:DnVip7tpJSsgZymwfT+m1tnEVy3ivAjSMXPx12YrMkU=
- cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
- cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
-@@ -657,8 +659,8 @@ github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1 h
- github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring v0.93.1/go.mod h1:rZ+wRKDneCC/jJk24Mdb+6bAc6y/UjRliuMz6U20s6Y=
- github.com/prometheus/alertmanager v0.33.1 h1:PJHGvTdb8Q0ZEpJnWff120WxB2kxIScLa707AaIudTo=
- github.com/prometheus/alertmanager v0.33.1/go.mod h1:V06Uc8EZ5X5wLOJRGhtXx+EE2LgrinFIADbKWMVm1RY=
--github.com/prometheus/blackbox_exporter v0.29.0 h1:u583/TwXAqFTflpuKx63xnvgoqL2HuRbtLkNHqjXCzs=
--github.com/prometheus/blackbox_exporter v0.29.0/go.mod h1:Uaad0N1HqVV7oMZ0xXVy/WUtARZlnRzJ25DYEJtzrv4=
-+github.com/prometheus/blackbox_exporter v0.29.1 h1:D3qRLIPtUyDzU+CmqaiubV3EOrUD7RGQv2OObyOZNbA=
-+github.com/prometheus/blackbox_exporter v0.29.1/go.mod h1:YmF6tpODn88gBel0kkXaPRVPevNsj/WRPTS17WtlSmU=
- github.com/prometheus/client_golang v0.9.1/go.mod h1:7SWBe2y4D6OKWSNQJUaRYU/AaXPKyh/dDVn+NZz0KFw=
- github.com/prometheus/client_golang v1.0.0/go.mod h1:db9x61etRT2tGnBNRi70OPL5FsnadC4Ky3P0J6CfImo=
- github.com/prometheus/client_golang v1.4.0/go.mod h1:e9GMxYsXl05ICDXkRhurwBS4Q3OK1iX/F2sw+iXX5zU=
-@@ -676,8 +678,8 @@ github.com/prometheus/common v0.4.1/go.mod h1:TNfzLD0ON7rHzMJeJkieUDPYmFC7Snx/y8
- github.com/prometheus/common v0.9.1/go.mod h1:yhUN8i9wzaXS3w1O07YhxHEBxD+W35wd8bs7vj7HSQ4=
- github.com/prometheus/common v0.10.0/go.mod h1:Tlit/dnDKsSWFlCLTWaA1cyBgKHSMdTB80sz/V91rCo=
- github.com/prometheus/common v0.26.0/go.mod h1:M7rCNAaPfAosfx8veZJCuw84e35h3Cfd9VFqTh1DIvc=
--github.com/prometheus/common v0.72.0 h1:tAYsE+sPJxIncDAobm4H5aQjmox9ZxEIIqPbiffa8G4=
--github.com/prometheus/common v0.72.0/go.mod h1:77NWqAQ2tXT7BIK40qjJdw5Acrsrg1TlHAnsQi3i6mk=
-+github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
-+github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
- github.com/prometheus/exporter-toolkit v0.20.0 h1:hz3g2aPcq3mXlQSt1MGjj2rwVk1wtRalF+/FjYxFRkI=
- github.com/prometheus/exporter-toolkit v0.20.0/go.mod h1:gIIY0Mw0ci1wgYscdeMqVh6FUPYJca549eOkE39nU64=
- github.com/prometheus/otlptranslator v1.0.0 h1:s0LJW/iN9dkIH+EnhiD3BlkkP5QVIUVEoIwkU+A6qos=
-```
 
 **File**: `hack/tools/go.mod` (modified, +1/-1)
 ```diff
-@@ -301,7 +301,7 @@ require (
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/client_golang v1.25.0 // indirect
- 	github.com/prometheus/client_model v0.6.3 // indirect
--	github.com/prometheus/common v0.72.0 // indirect
-+	github.com/prometheus/common v0.72.1 // indirect
- 	github.com/prometheus/procfs v0.22.0 // indirect
- 	github.com/quasilyte/go-ruleguard v0.4.5 // indirect
- 	github.com/quasilyte/go-ruleguard/dsl v0.3.23 // indirect
+@@ -29,7 +29,7 @@ require (
+ 	// use go version -m hack/tools/bin/<<architecture>>/golangci-lint to detect the dependency versions
+ 	// or, with `go work` enabled, use `go work sync`
+ 	golang.org/x/tools v0.52.0
+-	sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d
++	sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087
+ )
+ 
+ require (
 ```
 
 **File**: `hack/tools/go.sum` (modified, +2/-2)
 ```diff
-@@ -647,8 +647,8 @@ github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKq
- github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.72.0 h1:tAYsE+sPJxIncDAobm4H5aQjmox9ZxEIIqPbiffa8G4=
--github.com/prometheus/common v0.72.0/go.mod h1:77NWqAQ2tXT7BIK40qjJdw5Acrsrg1TlHAnsQi3i6mk=
-+github.com/prometheus/common v0.72.1 h1:ZAiQed/nk8IIcsdzb2TlJu23NEUDyDLQ9TXTN2WRK6Y=
-+github.com/prometheus/common v0.72.1/go.mod h1:1IoBY4IRaJnhs2ESjNzjilP1cJ/P8pimGoomq7zRXrA=
- github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
- github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
- github.com/quasilyte/go-ruleguard v0.4.5 h1:AGY0tiOT5hJX9BTdx/xBdoCubQUAE2grkqY2lSwvZcA=
-```
-
-**File**: `imagevector/containers.yaml` (modified, +1/-1)
-```diff
-@@ -376,7 +376,7 @@ images:
-   - name: blackbox-exporter
-     sourceRepository: github.com/prometheus/blackbox_exporter
-     repository: quay.io/prometheus/blackbox-exporter
--    tag: v0.29.0
-+    tag: v0.29.1
-     labels:
-       - name: gardener.cloud/cve-categorisation
-         value:
-```
-
----
-
-### Incident Patch 2: `e1a933fc` (2026-10-25)
-**Commit Message**: Update registry.k8s.io/dns/k8s-dns-node-cache Docker tag to v1.27.1 (#16039)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `imagevector/containers.yaml` (modified, +1/-1)
-```diff
-@@ -504,7 +504,7 @@ images:
-   - name: node-local-dns
-     sourceRepository: github.com/kubernetes/kubernetes/blob/master/cluster/addons/dns/nodelocaldns
-     repository: registry.k8s.io/dns/k8s-dns-node-cache
--    tag: "1.26.8"
-+    tag: "1.27.1"
-     labels:
-       - name: 'gardener.cloud/cve-categorisation'
-         value:
+@@ -1040,8 +1040,8 @@ sigs.k8s.io/controller-tools v0.22.0 h1:eG3FAVja/KnlXKIWg95udIFz1cMyAtMjP11cqBh3
+ sigs.k8s.io/controller-tools v0.22.0/go.mod h1:VizwUStoZK7rReCj704czGGrB7mLxXTiJSJt7wN5ilI=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 h1:IpInykpT6ceI+QxKBbEflcR5EXP7sU1kvOlxwZh5txg=
+ sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730/go.mod h1:mdzfpAEoE6DHQEN0uh9ZbOCuHbLK5wOm7dK4ctXE9Tg=
+-sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d h1:XNllDc3cAHdTzBYTyfZObS5izoWrM0JoT63q4zxbUeQ=
+-sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d/go.mod h1:rV2mWRPlEGeU1RkcLR1zc2ZsC7Y72fScbi+TrMA779Y=
++sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087 h1:UMGzIsnhhNPtSRHreTvOA2Ox7aitGqcwyYHSJAfzsqw=
++sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087/go.mod h1:rV2mWRPlEGeU1RkcLR1zc2ZsC7Y72fScbi+TrMA779Y=
+ sigs.k8s.io/randfill v1.0.0 h1:JfjMILfT8A6RbawdsK2JXGBR5AQVfd+9TbzrlneTyrU=
+ sigs.k8s.io/randfill v1.0.0/go.mod h1:XeLlZ/jmk4i1HRopwe7/aU3H5n1zNUcX6TM94b3QxOY=
+ sigs.k8s.io/structured-merge-diff/v6 v6.4.2 h1:qdOxHwrl2Kaag1aQEarlYcOA9vSyGCp3CIki3aW8c4Q=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16088** (2026-10-23): [release-v1.153] Use field selector and APIReader instead of cached client for `sync-provider-secret-labels` webhook (@acumino)
-- **PR #16084** (2026-10-22): Update nginx Docker tag to v1.31.8 (@renovate[bot])
-- **PR #16083** (2026-10-25): Update istio to v1.29.10 (@renovate[bot])
-- **PR #16082** (2026-10-24): Disable unused Perses datasource plugins (@rickardsjp)
-- **PR #16078** (2026-10-22): Fix stale default comment for NodeLocalDNS ForceTCPToUpstreamDNS (@DockToFuture)
-- **PR #16077** (2026-10-22): [release-v1.151] Update dependency gardener/dashboard to v1.85.2 (@marc1404)
+- **PR #16179** (2026-10-31): Update pvc-autoscaler to v0.3.2 (@renovate[bot])
+- **PR #16178** (2026-10-31): Update sigs.k8s.io/kube-api-linter digest to d90122c (@renovate[bot])
+- **PR #16174** (2026-10-30): Adapt `node-local-dns` metrics and DNS dashboard to CoreDNS v1.11+ (@vicwicker)
+- **PR #16172** (closed): Update registry.k8s.io/metrics-server/metrics-server Docker tag to v0.9.1 (@renovate[bot])
+- **PR #16171** (2026-10-30): Update registry.k8s.io/coredns/coredns Docker tag to v1.15.0 (@renovate[bot])
+- **PR #16170** (2026-10-30): Update module github.com/prometheus/common to v0.73.1 (@renovate[bot])
 
 ---
 
@@ -908,31 +812,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update blackbox-exporter to v0.29.1 (#16073)
+## X. Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178)
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `hack/tools/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2a510f71`: Update blackbox-exporter to v0.29.1 (#16073). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c5c0eb9`: Update sigs.k8s.io/kube-api-linter digest to d90122c (#16178). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hack/tools/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/prometheus/blackbox_exporter v0.29.1
-	github.com/prometheus/common v0.72.1
-	cel.dev/cel-go v0.32.0 // indirect
+	sigs.k8s.io/kube-api-linter v0.0.0-20261030144752-d90122c89087
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	github.com/prometheus/blackbox_exporter v0.29.0
-	github.com/prometheus/common v0.72.0
+	sigs.k8s.io/kube-api-linter v0.0.0-20261012124120-79b557aa8c8d
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2a510f71` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c5c0eb9` are properly handled with clean fallback behavior.

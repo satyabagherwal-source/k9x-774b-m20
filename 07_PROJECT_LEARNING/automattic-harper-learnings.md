@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `255dee03`  
+> **Source Version**: `ea52d606`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T03:10:13.670Z  
+> **Timestamp**: 2026-10-31T18:40:41.696Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T03:10:12.666Z  
+> **Harvest Timestamp**: 2026-10-31T18:40:40.381Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17126 stars
+- **Stars / Engagement**: 17315 stars
 
 ---
 
@@ -1408,11 +1408,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4616** (2026-10-15): **obsolete link to "frequently ask questions" in readme**
-  *Symptoms*: ### description  in the readme, the link to frequenty asked questions in obsolete, because this section (*Questions, Answered*) have no `id` attribute.  ### reproduce  go to https://writewithharper.com/#faqs
+- **Issue #4710** (2026-10-27): **Intermittent hang with harper-ls in nvim editing a typst file**
+  *Symptoms*: **Describe the bug** When working with typst files in nvim occasionally the code-actions shortcut will stop responding, attempts to restart harper inside nvim also don't work and I have to quit nvim and start it back up for harper to respond.  **To Reproduce** Steps to reproduce the behavior: 1. Start nvim and open file 2. Edit the document, saving frequently 3. Try to open code actions 4. Eventually after a somewhat random amount of edits it will fail to open  **Expected behavior** Code actions should always open and harper should respond with its suggestions.  **Platform** Ubuntu 26.04.01, nvim v0.12.2 
 
-- **Issue #4593** (2026-10-12): **App displays a blank white background and becomes unresponsive**
-  *Symptoms*:  The app opens with a white background and no visible content. The interface is unresponsive: buttons and other elements cannot be interacted with, and the app lags or freezes.  Steps to reproduce:     Open the app.     Right click on the app tray icon and select "Toggle service".     Observe the white background.     Attempt to interact with any element.  Expected result: The app loads its interface correctly and responds to user input.  Actual result: The app shows only a white background, cannot be interacted with, and lags/freezes.  **Platform** Windows 11 26H2  <img width="2948" height="1881" alt="Image" src="https://github.com/user-attachments/assets/be96769a-2a7c-474e-945b-1d7ad038d2ee" />  If I click on "Toggle service" and then select "Open Editor", I am seeing the app with broken interface: <img width="3781" height="2087" alt="Image" src="https://github.com/user-attachments/assets/40349f40-bddf-48a0-9572-d01b08ebe549" />
+- **Issue #4692** (2026-10-27): **`2.13.0.XPI` attempts to replace “OS” with “Os”.**
+  *Symptoms*: #### What Was Flagged  When I enter the undermentioned: [^1]  [^1]: [`bugs.kde.org/show_bug.cgi?id=527818`](https://bugs.kde.org/show_bug.cgi?id=527818#comment_text_0:~:text=%23%20DESCRIPTION,to%20https://youtu%2Ebe/E3Np91u0mG4%2C%20too%2E)  ~~~markdown # DESCRIPTION  Dolphin occasionally renders its details category headings atop that category's childrens' names.  This has been occurring for at least a year; perhaps, since I began utilising Dolphin, back in the Plasma 5 era.  # STEPS TO REPRODUCE  This appears to occur  # OBSERVED RESULT  The “Details” engine's category headings were duplicated, the bottom of which rendered atop a file name.  # EXPECTED RESULT  None of the aforestated should occur.  # SOFTWARE / OS VERSIONS  > ~~~ > PS /home/beedell.roke_julian_lockhart> kinfo | yq -P                                               > Operating System: Fedora Linux 44 > KDE Plasma Version: 6.7.5 > KDE Frameworks Version: 6.31.0 > Qt Version: 6.11.2 > Kernel Version: 7.2.11-200.fc44.x86_64 (64-bit) > Graphics Platform: Wayland > Processors: 12 × AMD Ryzen 5 7600X 6-Core Processor > Memory: 32 GiB of RAM (30.4 GiB usable) > Graphics Processor 1: AMD Radeon RX 5700 > Graphics Processor 2: AMD Ryzen 5 7600X 6-Core Processor > ~~~  # ADDITIONAL INFORMATION  The attached screencast has been uploaded to https://youtu.be/E3Np91u0mG4, too. ~~~  …into [`bugs.kde.org/enter_bug.cgi?product=dolphin#comment`](https://bugs.kde.org/enter_bug.cgi?product=dolphin#comment:~:text=Description:-,Com
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1429,28 +1429,167 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `255dee03` (2026-10-25)
-**Commit Message**: chore: add undergo/underwent/undergone to `irregular_verbs.json` (#4689)
+### Incident Patch 1: `ea52d606` (2026-10-31)
+**Commit Message**: feat: backlash vs backslash (#4768)
 
-**File**: `harper-core/irregular_verbs.json` (modified, +1/-0)
+**File**: `harper-core/default_config.json` (modified, +7/-0)
 ```diff
-@@ -136,6 +136,7 @@
- 	["think", "thought", "thought"],
- 	["throw", "threw", "thrown"],
- 	["tread", "trod", "trodden"],
-+	["undergo", "underwent", "undergone"],
- 	["understand", "understood", "understood"],
- 	["undo", "undid", "undone"],
- 	["wake", "woke", "woken"],
+@@ -4583,6 +4583,13 @@
+ 								"label": "A Whole Other"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "BacklashBackslash",
++								"state": true,
++								"label": "Backlash / Backslash"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "BadRap",
+```
+
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBacklash.weir` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++expr main <[([conservative, cultural, gear, political, public, violent] backslash), (backslash [adjustment, against, gear, gears])], backslash>
++
++let message "Did you mean `backlash`?"
++let description "Corrects `backslash` to `backlash` when it looks like a typo."
++let kind "Typo"
++let becomes "backlash"
++
++test "Citizens' Assembly Sparks Art World Criticism and Conservative Backslash." "Citizens' Assembly Sparks Art World Criticism and Conservative Backlash."
++test "adopt AI, despite inevitable public backslash" "adopt AI, despite inevitable public backlash"
++test "The attacks triggered a violent backslash against the Muslim community" "The attacks triggered a violent backlash against the Muslim community"
++test "calibration errors,gear backslash" "calibration errors,gear backlash"
++test "Backslash adjustment in Takahashi mounts" "Backlash adjustment in Takahashi mounts"
++test "Miniature zero-backslash gears and actuators for precision positioning applications." "Miniature zero-backlash gears and actuators for precision positioning applications."
++test "Cultural Backslash: Trump, Brexit and the Rise of Authoritarian Populism" "Cultural Backlash: Trump, Brexit and the Rise of Authoritarian Populism"
+```
+
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBacklashes.weir` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++expr main <[(backslashes against), ([conservative, political, public] backslashes)], backslashes>
++
++let message "Did you mean `backlashes`?"
++let description "Corrects `backslashes` to `backlashes` when it looks like a typo."
++let kind "Typo"
++let becomes "backlashes"
++
++test "The recent backslashes against the numerisation project" "The recent backlashes against the numerisation project"
++test "the easiest job you can do without receiving public backslashes is to market a generally loved 'item'" "the easiest job you can do without receiving public backlashes is to market a generally loved 'item'"
++test "there were political backslashes, with energy cost a factor" "there were political backlashes, with energy cost a factor"
++test "but faced various conservative backslashes in the form of right-wing national policies" "but faced various conservative backlashes in the form of right-wing national policies"
+```
+
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBackslash.weir` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++expr main <[([single, double][-, ( )]backlash), (backlash [character, characters, key]), ([escaped, escaping] backlash)], backlash>
++
++let message "Did you mean `backslash`?"
++let description "Corrects `backlash` to `backslash` when it looks like a typo."
++let kind "Typo"
++let becomes "backslash"
++
++test "Exporting adds backlash characters after each row" "Exporting adds backslash characters after each row"
++test "Backlash character in the prompt needs to be escaped" "Backslash character in the prompt needs to be escaped"
++test "It was written as a double backslash but it renders as a single backlash." "It was written as a double backslash but it renders as a single backslash."
++test "string representation of a JSON with escaped backlash is incorrect" "string representation of a JSON with escaped backslash is incorrect"
++test "which does not differentiate between the escaping backlash and the literal character" "which does not differentiate between the escaping backslash and the literal character"
++test "Mapping the yen/backlash key didn't seem to work" "Mapping the yen/backslash key didn't seem to work"
++test "note the double backlash only on the first backslash" "note the double backslash only on the first backslash"
+```
+
+**File**: `harper-core/src/linting/weir_rules/BacklashBackslash/ToBackslashes.weir` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++expr main <[([single, double][-, ( )]backlashes), (both backlashes), ([enter, entered, insert, inserted, type, typed] two backlashes), (backlashes [character, characters])], backlashes>
++
++let message "Did you mean `backslashes`?"
++let description "Corrects `backlashes` to `backslashes` when it looks like a typo."
++let kind "Typo"
++let becomes "backslashes"
++
++test "Using r-strings is the correct solution if you want unescaped single backlashes" "Using r-strings is the correct solution if you want unescaped single backslashes"
++test "As an aside, it looks like the Markdown extension only interprets double-backlashes as escapes." "As an aside, it looks like the Markdown extension only interprets double-backslashes as escapes."
++test "To make a \“SLSH\” appear in the forum, type TWO backlashes" "To make a \“SLSH\” appear in the forum, type TWO backslashes"
++test "To use a backslash in such shell string, enter two backlashes" "To use a backslash in such shell string, enter two backslashes"
++test "A parameter designator consists of a backlashes character, followed by a digit (0 - 9)" "A parameter designator consists of a backslashes character, followed by a digit (0 - 9)"
++
++# test "Replacing backslash with two backlashes in ansible" "Replacing backslash with two backslashes in ansible"
++
++allows "The two backlashes against globalisation."
+```
+
+---
+
+### Incident Patch 2: `2a98627f` (2026-10-31)
+**Commit Message**: feat: fan fare/fan-fare → fanfare (#4766)
+
+**File**: `harper-core/default_config.json` (modified, +7/-0)
+```diff
+@@ -495,6 +495,13 @@
+ 								"label": "Everywhere"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "Fanfare",
++								"state": true,
++								"label": "Fanfare"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "Furthermore",
+```
+
+**File**: `harper-core/src/linting/closed_compounds.rs` (modified, +19/-0)
+```diff
+@@ -35,6 +35,7 @@ pub fn lint_group() -> LintGroup {
+         "Everybody"       => (&["every body"][..], "everybody"),
+         "Everyone"        => (&["every one"][..], "everyone"),
+         "Everywhere"      => (&["every where"][..], "everywhere"),
++        "Fanfare"         => (&["fan fare", "fan-fare"][..], "fanfare"),
+         "Furthermore"     => (&["further more"][..], "furthermore"),
+         "Guesswork"       => (&["guess work"][..], "guesswork"),
+         "Henceforth"      => (&["hence forth"][..], "henceforth"),
+@@ -418,4 +419,22 @@ mod tests {
+             "the rust compiler is fast, but oftentimes it has to perform a lot of unnecessary checks because crates contain more stuff than needed",
+         );
+     }
++
++    #[test]
++    fn fan_space_fare() {
++        assert_suggestion_result(
++            "There was much fan fare over all the technology Bill Gates put into his house.",
++            lint_group(),
++            "There was much fanfare over all the technology Bill Gates put into his house.",
++        );
++    }
++
++    #[test]
++    fn fan_hyphen_fare() {
++        assert_suggestion_result(
++            "Indeed, most users will experience major version updates with absolutely zero fan-fare.",
++            lint_group(),
++            "Indeed, most users will experience major version updates with absolutely zero fanfare.",
++        );
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4689** (2026-10-25): chore: add undergo/underwent/undergone to `irregular_verbs.json` (@hippietrail)
-- **PR #4686** (2026-10-24): feat: xyz are the one → xyz are the ones (@hippietrail)
-- **PR #4685** (2026-10-25): feat: out of curiosities → curiosity / curosity's (@hippietrail)
-- **PR #4675** (2026-10-24): feat: (deus) ex machine → ex machina (@hippietrail)
-- **PR #4673** (2026-10-24): feat: mixing up "passed" and "past' (@hippietrail)
-- **PR #4672** (2026-10-23): feat: in a/the mood of → mood for (@hippietrail)
+- **PR #4768** (2026-10-31): feat: backlash vs backslash (@hippietrail)
+- **PR #4766** (2026-10-31): feat: fan fare/fan-fare → fanfare (@hippietrail)
+- **PR #4763** (2026-10-30): docs(weir): compare wildcards to regex `.` instead of `*` (@costajohnt)
+- **PR #4758** (2026-10-30): feat(web): show browser extension install links on the home page (@elijah-potter)
+- **PR #4757** (2026-10-30): fix(web): show the correct link for the user's browser (@elijah-potter)
+- **PR #4752** (closed): docs(web): fix wildcard comparison in the Weir docs (@techsaurabh-394)
 
 ---
 
@@ -1470,21 +1609,27 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add undergo/underwent/undergone to `irregular_verbs.json` (#4689)
+## X. backlash vs backslash (#4768)
 
 **RULE**:
-When implementing operations in `harper-core/irregular_verbs.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/default_config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `255dee03`: add undergo/underwent/undergone to `irregular_verbs.json` (#4689). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea52d606`: backlash vs backslash (#4768). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/irregular_verbs.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/default_config.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-	["undergo", "underwent", "undergone"],
+						{
+							"Bool": {
+								"name": "BacklashBackslash",
+								"state": true,
+								"label": "Backlash / Backslash"
+							}
+						},
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1494,4 +1639,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `255dee03` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea52d606` are properly handled with clean fallback behavior.

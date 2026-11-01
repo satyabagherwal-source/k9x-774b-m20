@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source**: github ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
-> **Source Version**: `7d3fbffc`  
+> **Source Version**: `0d6c556e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T10:33:26.769Z  
+> **Timestamp**: 2026-10-29T02:07:18.596Z  
 > **Learning ID**: `learn-github-cachix-devenv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T10:33:08.674Z  
+> **Harvest Timestamp**: 2026-10-29T02:07:17.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7780 stars
+- **Stars / Engagement**: 7783 stars
 
 ---
 
@@ -1188,7 +1188,7 @@ impl CachixManager {
 use miette::{IntoDiagnostic, Result, WrapErr, bail};
 use pathdiff;
 use schemars::JsonSchema;
-use schematic::ConfigLoader;
+use schematic::ConfigLoader as SchematicLoader;
 use semver::{Version, VersionReq};
 use serde::{Deserialize, Serialize};
 use std::{
@@ -1465,7 +1465,7 @@ impl Clean {
     /// project should exit the current shell.
     const ALWAYS_KEEP: &'static [&'static str] = &["_DEVENV_HOOK_DIR"];
 
-    /// Return host environment variables filtered by the clean/kee
+    /// Return host environment variables filter
 ```
 
 ### Core Architecture Module: `devenv-core/src/dotenv.rs`
@@ -1679,11 +1679,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3316** (2026-10-28): **macOS: background process manager becomes unreachable after 3 days, because tmp_cleaner deletes its pid and config files in /tmp**
+  *Symptoms*: ### Describe the bug  When I have `devenv up` running for more than three days on macOS, the CLI loses track of the daemon. `devenv processes down`, `devenv processes restart <name>`, and the rest report:  ``` No process manager is running. Start processes first with `devenv up -d` ```  while every process is still running. `devenv up` then fails, because its ports, such as Postgres’, are still taken. The only way out is to find the `daemon-processes` PID and signal it by hand.   #### Cause  `.devenv/run` points to `/tmp/devenv-<hash>`. The manager writes `processes/native-manager.pid` and `processes/daemon-config.json` there once, at startup, and does not touch them again.  macOS runs `/usr/libexec/tmp_cleaner` nightly (launchd job `com.apple.tmp_cleaner`). It deletes every regular file under `/tmp` whose atime, mtime, and ctime are all older than 3 days:  ```sh find -dx . -fstype local -type f -atime +3 -mtime +3 -ctime +3 -delete ```  Sockets are not regular files, so `native.sock` survives. The pid file and the config do not. In our case the run directory was created on day 0 and both files were gone two weeks later, with the socket still present and the daemon still running.  The job is part of the system and cannot be configured or turned off. PostgreSQL works around the same cleaner by re-touching its socket lock files in `/tmp` every hour.  ### To reproduce  1. On macOS, `devenv up -d` in a project with processes. 2. Wait more than 3 days, or simulate it: `touch -t 20
+
 - **Issue #3292** (2026-10-19): **Terminal spacing gets offset after running task**
   *Symptoms*: **Describe the bug** <!-- A clear and concise description of what the bug is. --> I have a task that will often mess up the spacing of my terminal indefinitely after it is killed:  <img width="1112" height="152" alt="Image" src="https://github.com/user-attachments/assets/cb16d4ac-f295-4339-9a25-9300610cf7e3" />  <img width="1134" height="124" alt="Image" src="https://github.com/user-attachments/assets/4ef8c1dd-c235-4d4e-895a-fa3567485219" />  The only way I know to fix it once this happens is to start a new terminal session.  **To reproduce** <!-- Please provide a Short, Self Contained, Correct (Compilable), Example: https://sscce.org The best way is to create a gist with `devenv.nix`, `devenv.yaml`, and optionally `devenv.lock`.  Create gist here: https://gist.github.com/  Make sure to include full logs and what you expected to happen. -->  This is an abridged version of the devenv.nix I'm using: ``` { pkgs, lib, config, inputs, ... }:  {   tasks = {     "tests:cypress" = {       exec = ''         SPEC=$(printf '%s' "$DEVENV_TASK_INPUT" | jq -r '.spec')         FILE=$(find ./cypress/component -iname "*$SPEC*" | head)          npx cypress run --env fileConfig=staging --component --headed --no-exit --spec $FILE       '';     };      # Doesn't always happen automatically for some reason.     "utils:killCypress" = {       exec = ''         kill -9 $(lsof -t -c /^Cypress$/) &> /dev/null       '';        after = [         "tests:cypress"       ];     };   }; } ```  **Version** <!-
-
-- **Issue #3281** (2026-10-14): **`devenv shell` hangs forever when the file watcher can't be created (inotify `max_user_instances` exhausted)**
-  *Symptoms*: **Describe the bug**  When the user's inotify instance limit (`fs.inotify.max_user_instances`, default 128) is exhausted, `devenv shell` never spawns the shell. It hangs after the enterShell tasks complete; with the TUI it appears stuck at "Configuring shell". `devenv shell --no-reload` works.  This is related to #2987 / #2988, but it's a different failure mode that #2988 doesn't cover. #2988 handles *per-path* watch failures (`max_user_watches`), which watchexec reports as non-fatal runtime errors. Here the very first `inotify_init1` fails, so watchexec can't create the backend at all:  ``` inotify_init1(IN_NONBLOCK|IN_CLOEXEC) = -1 EMFILE (Too many open files) ```  watchexec 8.4.1 returns a `CriticalError` from `create_backend` (`sources/fs.rs`, the `self.create_backend(watcher, follow_symlinks)?` call when applying the initial config), so `fs::worker` exits without ever sending `fs_ready`. devenv logs the failure:  ``` • file watcher for devenv-reload stopped: fs: cannot initialise Native watcher. hot reload is no longer active. ```  But nothing wakes the code that is waiting for readiness. `fs_ready.changed()` only returns once the sender is dropped, and the `WatcherHandle` keeps `wx_config` alive. So devenv deadlocks. Backtrace of the hung process (devenv 2.4.0):  - `devenv-reload-owner` thread: parked in its current-thread runtime, handling `DevenvRequest::AddWatchPaths` → `add_watch_paths` → `WatcherHandle::watch_logical_many` → `watch_registrations`, awaiting `fs_read
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1700,53 +1700,232 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d3fbffc` (2026-10-26)
-**Commit Message**: chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)
+### Incident Patch 1: `0d6c556e` (2026-10-28)
+**Commit Message**: fix(processes): keep native manager PID file fresh (#3319)
 
-Bumps [docker/login-action](https://github.com/docker/login-action) from 4.6.0 to 4.7.0.
-- [Release notes](https://github.com/docker/login-action/releases)
-- [Commits](https://github.com/docker/login-action/compare/v4.6.0...v4.7.0)
+Refresh the native manager's existing PID file hourly so macOS temporary-file cleanup cannot make a running daemon unreachable. Preserve its contents and never recreate it after removal.
+
+Add simulated-time lifecycle regressions and select them explicitly in Linux and macOS CI. The lifecycle checks passed on aarch64-darwin and aarch64-linux.
+
+Fixes #3316.
+
+Prepared and reviewed with AI assistance.
+
+**File**: `.github/workflows/build.yml` (modified, +3/-3)
+```diff
+@@ -139,12 +139,12 @@ jobs:
+               -E 'test(command_guard_restores_terminal_after_killed_task)'
+ 
+       # devenv-tasks is outside Cargo's default workspace members. Run its
+-      # process scheduling regressions explicitly on Linux and macOS.
+-      - name: Check process scheduling and dependency errors
++      # process scheduling and manager lifecycle regressions on Linux and macOS.
++      - name: Check process scheduling, lifecycle, and dependency errors
+         run: |
+           ${{ steps.build-devenv.outputs.path }}/bin/devenv --system ${{ inputs.system }} shell -- \
+             cargo nextest run -p devenv-tasks -p devenv -j 2 --retries 0 \
+-              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites)'
++              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites) | test(api_server_refresh)'
+ 
+       # Exercise the actual terminal boundary on every platform: PTY resize,
+       # crossterm key decoding, rendering, and reactive process commands.
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@
+ 
+ ### Bug Fixes
+ 
++- Fixed `devenv processes` commands reporting that no process manager is running after `devenv up -d` had been running for more than three days on macOS, where the system `/tmp` cleaner deleted the manager's PID file ([#3316](https://github.com/cachix/devenv/issues/3316)).
+ - Fetched `--from` sources now load YAML configuration, local overrides, and YAML imports alongside their Nix modules. Source-local YAML imports are followed, and relative input overrides in the target's `devenv.local.yaml` resolve from the target directory.
+ - Locked inputs with complete source metadata now reuse sources from the Nix store or configured binary caches without contacting their original remote, so `devenv shell` works when that remote is unavailable ([#3244](https://github.com/cachix/devenv/pull/3244)).
+ - Fixed cold remote YAML imports failing to load fetched sources, and allowed root input follows to reference inputs declared by imported YAML.
+```
+
+**File**: `devenv-tasks/src/native_manager.rs` (modified, +115/-9)
+```diff
+@@ -498,6 +498,24 @@ impl NativeProcessManager {
+     }
+ }
+ 
++/// How often the running manager bumps its PID file's mtime. The runtime
++/// directory may live under `/tmp`, where macOS `tmp_cleaner` deletes files
++/// untouched for 3 days.
++const PID_FILE_REFRESH_INTERVAL: Duration = Duration::from_secs(60 * 60);
++
++fn touch_pid_file(pid_file: &Path) {
++    // Never create the file: it is written once the manager is ready.
++    let result = std::fs::OpenOptions::new()
++        .write(true)
++        .open(pid_file)
++        .and_then(|file| file.set_modified(std::time::SystemTime::now()));
++    if let Err(error) = result
++        && error.kind() != std::io::ErrorKind::NotFound
++    {
++        debug!(path = %pid_file.display(), %error, "failed to refresh manager pid file");
++    }
++}
++
+ /// Owns the native manager's published Unix socket and accept loop.
+ pub struct NativeApiServer {
+     manager: Arc<NativeProcessManager>,
+@@ -518,17 +536,23 @@ impl NativeApiServer {
+         info!(path = %socket_path.display(), "API server listening");
+ 
+         let accept_manager = Arc::clone(&manager);
++        let pid_file = manager.manager_pid_file();
+         let task = tokio::spawn(async move {
++            let mut refresh = tokio::time::interval(PID_FILE_REFRESH_INTERVAL);
++            refresh.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+             loop {
+-                match listener.accept().await {
+-                    Ok((stream, _)) => {
+-                        let manager = Arc::clone(&accept_manager);
+-                        tokio::spawn(NativeProcessManager::handle_api_client(stream, manager));
+-                    }
+-                    Err(error) => {
+-                        warn!(%error, "API accept error");
+-                        tokio::time::sleep(Duration::from_millis(100)).await;
+-                    }
++                tokio::select! {
++                    accepted = listener.accept() => match accepted {
++                        Ok((stream, _)) => {
++                            let manager = Arc::clone(&accept_manager);
++                            tokio::spawn(NativeProcessManager::handle_api_client(stream, manager));
++                        }
++                        Err(error) => {
++                            warn!(%error, "API accept error");
++                            tokio::time::sleep(Duration::from_millis(100)).await;
++                        }
++                    },
++                    _ = refresh.tick() => touch_pid_file(&pid_file),
+                 }
+             }
+         });
+@@ -786,6 +810,88 @@ mod tests {
+         ));
+     }
+ 
++    fn age_pid_file(pid_file: &Path) -> std::time::SystemTime {
++        let stale = std::time::UNIX_EPOCH + Duration::from_secs(1_577_836_800);
++        std::fs::File::options()
++            .write(true)
++            .open(pid_file)
++            .unwrap()
++            .set_modified(stale)
++            .unwrap();
++        stale
++    }
++
++    async fn wait_for_pid_file_refresh(pid_file: &Path, stale: std::time::SystemTime) {
++        tokio::time::timeout(Duration::from_secs(1), async {
++            while std::fs::metadata(pid_file).unwrap().modified().unwrap() == stale {
++                tokio::time::sleep(Duration::from_millis(1)).await;
++            }
++        })
++        .await
++        .expect("manager PID file was not refreshed");
++    }
++
++    #[tokio::test]
++    async fn api_server_refreshes_manager_pid_file_hourly() {
++        let temp_dir = tempfile::tempdir().unwrap();
++        let manager = test_manager(&temp_dir, Vec::new(), ManagerResidence::Daemon).await;
++        let pid_file = manager.manager_pid_file();
++        let contents = format!("{}\n", std::process::id());
++        std::fs::write(&pid_file, &contents).unwrap();
++        let stale = age_pid_file(&pid_file);
++        tokio::time::pause();
++
++        let _server = NativeApiServer::start(manager).unwrap();
++        wait_for_pid_file_refresh(&pid_file, stale).await;
++        assert_eq!(std::fs::read_to_string(&pid_file).unwrap(), contents);
++
++        age_pid_file(&pid_file);
++        tokio::time::advance(Duration::from_secs(60 * 60 - 1)).await;
++        assert_eq!(
++            std::fs::metadata(&pid_file).unwrap().modified().unwrap(),
++            stale
++        );
++        tokio::time::advance(Duration::from_secs(1)).await;
++        wait_for_pid_file_refresh(&pid_file, stale).await;
++        assert_eq!(std::fs::read_to_string(&pid_file).unwrap(), contents);
++    }
++
++    #[tokio::test]
++    async fn api_server_refresh_respects_pid_publication_and_shutdown() {
++        let temp_dir = tempfile::tempdir().unwrap();
++        let manager = test_manager(&temp_dir, Vec::new(), ManagerResidence::InProcess).await;
++        let pid_file = manager.manager_pid_file();
++        tokio::time::pause();
++
++        let server = NativeApiServer::start(manager).unwrap();
++        // The API server starts before its host publishes the PID file.
++        tokio::time::sleep(Dur
+```
+
+---
+
+### Incident Patch 2: `efd08480` (2026-10-28)
+**Commit Message**: chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in /docs (#3329)
+
+Bumps [postcss-selector-parser](https://github.com/postcss/postcss-selector-parser) from 6.1.4 to 6.1.5.
+- [Release notes](https://github.com/postcss/postcss-selector-parser/releases)
+- [Changelog](https://github.com/postcss/postcss-selector-parser/blob/6.1.5/CHANGELOG.md)
+- [Commits](https://github.com/postcss/postcss-selector-parser/compare/6.1.4...6.1.5)
 
 ---
 updated-dependencies:
-- dependency-name: docker/login-action
-  dependency-version: 4.7.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
+- dependency-name: postcss-selector-parser
+  dependency-version: 6.1.5
+  dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/containers.yml` (modified, +2/-2)
+**File**: `docs/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -43,7 +43,7 @@ jobs:
-         uses: docker/setup-buildx-action@v4
+@@ -6682,9 +6682,9 @@
+       }
+     },
+     "node_modules/postcss-selector-parser": {
+-      "version": "6.1.4",
+-      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.4.tgz",
+-      "integrity": "sha512-bIoJLOmjCO1S9XdY/DcnR5hJxvrDir1PbGChrzXG3vw0/FOliy/fA3dmdhQ441kah4gKv+TwckGzex6wNS5cnQ==",
++      "version": "6.1.5",
++      "resolved": "https://registry.npmjs.org/postcss-selector-parser/-/postcss-selector-parser-6.1.5.tgz",
++      "integrity": "sha512-TEHFzb5KRDKaOgJ4TYE+0jyJtFbjLvkdVOu0fZ2b6MTWzoqZd4Le+61aEppWkvTlYePgOX4ATL1wsAIPMLTw6Q==",
+       "license": "MIT",
+       "dependencies": {
+         "cssesc": "^3.0.0",
+```
+
+---
+
+### Incident Patch 3: `49a3dade` (2026-10-28)
+**Commit Message**: docs: remove SQLite build changelog entry (#3325)
+
+**File**: `CHANGELOG.md` (modified, +0/-1)
+```diff
+@@ -11,7 +11,6 @@
  
-       - name: Log in to the Container registry
--        uses: docker/login-action@v4.6.0
-+        uses: docker/login-action@v4.7.0
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ github.repository_owner }}
-@@ -170,7 +170,7 @@ jobs:
-           ref: ${{ env.REF }}
+ ### Bug Fixes
  
-       - name: Log in to the Container registry
--        uses: docker/login-action@v4.6.0
-+        uses: docker/login-action@v4.7.0
-         with:
-           registry: ${{ env.REGISTRY }}
-           username: ${{ github.repository_owner }}
+-- Fixed SQLite linking failures when building devenv from source.
+ - Fetched `--from` sources now load YAML configuration, local overrides, and YAML imports alongside their Nix modules. Source-local YAML imports are followed, and relative input overrides in the target's `devenv.local.yaml` resolve from the target directory.
+ - Locked inputs with complete source metadata now reuse sources from the Nix store or configured binary caches without contacting their original remote, so `devenv shell` works when that remote is unavailable ([#3244](https://github.com/cachix/devenv/pull/3244)).
+ - Fixed cold remote YAML imports failing to load fetched sources, and allowed root input follows to reference inputs declared by imported YAML.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3320** (2026-10-26): chore(deps): bump docker/login-action from 4.6.0 to 4.7.0 (@dependabot[bot])
-- **PR #3317** (2026-10-25): feat(tui): detach from an attached process manager with q (@ozenyunus35)
-- **PR #3315** (2026-10-25): fix: npm install lock (@tonyd33)
-- **PR #3313** (2026-10-22): fix(rust): preserve large linker response files through Nix wrappers (@domenkozar)
-- **PR #3312** (2026-10-22): fix(bootstrap): substitute locked inputs through native Nix fetcher (@domenkozar)
-- **PR #3311** (2026-10-22): feat: compose remote YAML and resolve updates together (@domenkozar)
+- **PR #3330** (2026-10-28): docs: publish changelog-merge blog post (@domenkozar)
+- **PR #3329** (2026-10-28): chore(deps): bump postcss-selector-parser from 6.1.4 to 6.1.5 in /docs (@dependabot[bot])
+- **PR #3328** (2026-10-28): chore(deps): bump certifi from 2026.1.4 to 2026.10.18 in /tests/python-uv-sync/directory (@dependabot[bot])
+- **PR #3327** (closed): fix(processes): keep native manager PID file fresh (@domenkozar)
+- **PR #3326** (2026-10-28): ci: allow IFD for native Darwin evaluation (@domenkozar)
+- **PR #3325** (2026-10-28): docs: remove SQLite build changelog entry (@domenkozar)
 
 ---
 
@@ -1766,30 +1945,32 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320)
+## X. processes): keep native manager PID file fresh (#3319)
 
 **RULE**:
-When implementing operations in `.github/workflows/containers.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d3fbffc`: deps): bump docker/login-action from 4.6.0 to 4.7.0 (#3320). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d6c556e`: processes): keep native manager PID file fresh (#3319). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/containers.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: docker/login-action@v4.7.0
-        uses: docker/login-action@v4.7.0
+      # process scheduling and manager lifecycle regressions on Linux and macOS.
+      - name: Check process scheduling, lifecycle, and dependency errors
+              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites) | test(api_server_refresh)'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: docker/login-action@v4.6.0
-        uses: docker/login-action@v4.6.0
+      # process scheduling regressions explicitly on Linux and macOS.
+      - name: Check process scheduling and dependency errors
+              -E 'test(concurrent_dynamic_starts_share_never_started_process_prerequisite) | test(concurrent_start_stop_keeps_explicitly_stopped_dependencies_off) | test(failed_prerequisite_is_visible_under_each_process_with_stopped_filter) | test(disabled_process_root_does_not_select_its_prerequisites) | test(disabled_process_needed_by_a_root_selects_its_prerequisites)'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d3fbffc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d6c556e` are properly handled with clean fallback behavior.

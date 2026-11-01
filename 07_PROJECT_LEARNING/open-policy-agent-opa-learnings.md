@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `83df76a5`  
+> **Source Version**: `786d6bf7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:58:25.299Z  
+> **Timestamp**: 2026-10-31T01:40:02.274Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:58:25.291Z  
+> **Harvest Timestamp**: 2026-10-31T01:40:01.925Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12404 stars
+- **Stars / Engagement**: 12417 stars
 
 ---
 
@@ -219,11 +219,15 @@ func LoadWasmResolversFromStore(ctx context.Context, store storage.Store, txn st
 }
 
 // LoadBundleFromDisk loads a previously persisted activated bundle from disk
+//
+// Deprecated: Use LoadBundleFromDiskForRegoVersion, which supports the legacy manifest placement of downloaded bundles.
 func LoadBundleFromDisk(path, name string, bvc *bundle.VerificationConfig) (*bundle.Bundle, error) {
-	return LoadBundleFromDiskForRegoVersion(ast.RegoV0, path, name, bvc)
+	return LoadBundleFromDiskForRegoVersion(ast.RegoV0, path, name, bvc, nil)
 }
 
-func LoadBundleFromDiskForRegoVersion(regoVersion ast.RegoVersion, path, name string, bvc *bundle.VerificationConfig) (*bundle.Bundle, error) {
+// LoadBundleFromDiskForRegoVersion loads a persisted bundle. A non-nil
+// legacyWarn accepts the legacy manifest placement of downloaded bundles.
+func LoadBundleFromDiskForRegoVersion(regoVersion ast.RegoVersion, path, name string, bvc *bundle.VerificationConfig, legacyWarn func(string, ...any)) (*bundle.Bundle, error) {
 	bundlePath := filepath.Join(path, name, "bundle.tar.gz")
 
 	_, err := os.Stat(bundlePath)
@@ -239,6 +243,9 @@ func LoadBundleFromDiskForRegoVersion(regoVersion ast.RegoVersion, path, name st
 
 		if bvc != nil {
 			r = r.WithBundleVerificationConfig(bvc)
+		}
+		if legacyWarn != nil {
+			r = r.WithLegacyManifestPlacement(legacyWarn)
 		}
 
 		b, err := r.Read()
@@ -427,6 +434,8 @@ import (
 	"encoding/json"
 	"math/big"
 	"slices"
+
+	"github.com/open-policy-agent/opa/v1/util"
 )
 
 func isStringInSlice(s []string, what string) bool {
@@ -530,20 +539,11 @@ func mustBeNumber(what any) *big.Rat {
 }
 
 func convertDocumentNode(val any) any {
-
 	if lval, ok := val.([]any); ok {
-
-		res := []any{}
-		for _, v := range lval {
-			res = append(res, convertDocumentNode(v))
-		}
-
-		return res
-
+		return util.Map(lval, convertDocumentNode)
 	}
 
 	if mval, ok := val.(map[any]any); ok {
-
 		res := map[string]any{}
 
 		for k, v := range mval {
@@ -551,7 +551,6 @@ func convertDocumentNode(val any) any {
 		}
 
 		return res
-
 	}
 
 	return val
@@ -638,7 +637,7 @@ func ProcessWatcherUpdateForRegoVersion(ctx context.Context, popts ast.ParserOpt
 					if err != nil {
 						return err
 					}
-					module, err := ast.ParseModuleWithOpts(id, string(bs), popts)
+					module, err := ast.ParseModuleWithOpts(id, util.ByteSliceToString(bs), popts)
 					if err != nil {
 						return err
 					}
@@ -968,502 +967,60 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83df76a5` (2026-10-26)
-**Commit Message**: Integrate v1.21.4 patch release (#9423)
+### Incident Patch 1: `2adddce5` (2026-10-30)
+**Commit Message**: rego: exclude wasm compile time from context timeout test (#9455)
 
-Signed-off-by: Johan Fylling <[REDACTED_EMAIL]>
+TestEvalWithContextTimeout timed PrepareForEval, which compiles the wasm
+module and can take seconds on a loaded race-detector runner, causing
+spurious 'expected cancellation' failures.
 
-**File**: `CHANGELOG.md` (modified, +6/-2)
-```diff
-@@ -55,10 +55,15 @@ Additionally, OPA will now correctly detect and sign all other files with the su
- 
- Authored by @philipaconrad
- 
-+## 1.21.4
-+
-+This release builds the OPA binary artifacts with the latest version of Go (v1.27.3).
-+
-+See: [https://groups.google.com/g/golang-announce/c/66pojueaQek](https://groups.google.com/g/golang-announce/c/66pojueaQek)
- 
- ## 1.21.3
- 
--### Security Fix: TODO-CVE-XXXX-XXXXX - Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
-+### Security Fix: Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
- 
- An attacker able to alter bundle bytes could supply arbitrary policy and data to an OPA that was [configured](https://www.openpolicyagent.org/docs/configuration#bundles) 
- to verify bundle signatures. This could happen if the attacker controls any of: 
-@@ -146,7 +151,6 @@ _Snapshot_ bundles must still be signed.
- 
- Reported by Brian Willows (@BrianWillows, Graith Internet, graith.co.uk), authored by @johanfylling.
- 
--
- ## 1.21.2
- 
- This release builds the OPA binary artifacts with the latest version of
-```
+example:
+https://github.com/open-policy-agent/opa/actions/runs/40734637067/job/122981036847?pr=9441
 
-**File**: `builtin_metadata.json` (modified, +206/-0)
-```diff
-@@ -430,6 +430,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the number without its sign.",
-@@ -605,6 +606,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -782,6 +784,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the intersection of two sets.",
-@@ -958,6 +961,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -1135,6 +1139,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Concatenates two arrays.",
-@@ -1183,6 +1188,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Non-recursively unpacks array items in arr into the flattened array. Other types are appended as-is.",
-@@ -1309,6 +1315,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the reverse of a given array.",
-@@ -1496,6 +1503,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns a slice of a given array. If `start` is greater or equal than `stop`, `slice` is `[]`.",
-@@ -1674,6 +1682,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "implementations": {},
-@@ -1846,6 +1855,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Deserializes the base64 encoded input string.",
-@@ -2023,6 +2033,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Serializes the input string into base64 encoding.",
-@@ -2179,6 +2190,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Verifies the input string is base64 encoded.",
-@@ -2356,6 +2368,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Deserializes the base64url encoded input string.",
-@@ -2533,6 +2546,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Serializes the input string into base64url encoding.",
-@@ -2687,6 +2701,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Serializes the input string into base64url encoding without padding.",
-@@ -2865,6 +2880,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise \"AND\" of two integers.",
-@@ -3042,6 +3058,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns a new integer with its bits shifted `s` bits to the left.",
-@@ -3214,6 +3231,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise negation (flip) of an integer.",
-@@ -3391,6 +3409,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise \"OR\" of two integers.",
-@@ -3568,6 +3587,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns a new integer with its bits shifted `s` bits to the right.",
-@@ -3745,6 +3765,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Returns the bitwise \"XOR\" (exclusive-or) of two integers.",
-@@ -3919,6 +3940,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4089,6 +4111,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4259,6 +4282,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4429,6 +4453,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4599,6 +4624,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4769,6 +4795,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "deprecated": true,
-@@ -4912,6 +4939,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.21.3",
-+      "v1.21.4",
-       "edge"
-     ],
-     "description": "Rounds the number _up_ to the nearest integer.",
-@@ -5094,6 +5122,7 @@
-       "v1.21.1",
-       "v1.21.2",
-       "v1.
-```
-
----
-
-### Incident Patch 2: `924ece96` (2026-10-26)
-**Commit Message**: server: create TLS file watcher before returning listeners (#9420)
-
-The watcher was created when its loop started, so a cert change made
-right after the server came up could be missed and never reloaded.
-Create it in Listeners() so it is registered before the server serves.
+---------
 
 Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
-**File**: `v1/server/certs.go` (modified, +20/-19)
+**File**: `v1/rego/rego_wasmtarget_test.go` (modified, +8/-5)
 ```diff
-@@ -146,27 +146,28 @@ func (s *Server) certLoopPolling(logger logging.Logger) Loop {
- 	}
- }
- 
--func (s *Server) certLoopNotify(logger logging.Logger) Loop {
--	return func() error {
+@@ -224,20 +224,23 @@ allow if {
+ 	} {
+ 		t.Run(tc.target+"/"+tc.note, func(t *testing.T) {
+ 			defer leaktest.Check(t)()
+-			before := time.Now()
+-			ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+-			defer cancel()
 -
--		var paths []string
-+// certLoopNotify returns a Loop that reloads the TLS config whenever the watched files change. The watcher is
-+// registered before returning, so changes made after that are not lost if the Loop starts late.
-+func (s *Server) certLoopNotify(logger logging.Logger) (Loop, error) {
-+	var paths []string
++			// Preparing the wasm target compiles the module, which can take
++			// seconds on a loaded runner. Keep it outside of the timeout and of
++			// the cancellation timing below, which are about evaluation only.
+ 			pq, err := New(
+ 				Query("data.p.allow"),
+ 				Module("p.rego", tc.policy),
+ 				Target(tc.target),
+ 				StrictBuiltinErrors(true), // ignored for wasm target (always non-strict)
+-			).PrepareForEval(ctx)
++			).PrepareForEval(t.Context())
+ 			if err != nil {
+ 				t.Fatal(err)
+ 			}
  
--		// if a cert file is set, then we want to watch the cert and key
--		if s.certFile != "" {
--			paths = append(paths, s.certFile, s.certKeyFile)
--		}
-+	// if a cert file is set, then we want to watch the cert and key
-+	if s.certFile != "" {
-+		paths = append(paths, s.certFile, s.certKeyFile)
-+	}
- 
--		// if a cert pool file is set, then we want to watch the cert pool. This might be set without the cert and key
--		// being set too.
--		if s.certPoolFile != "" {
--			paths = append(paths, s.certPoolFile)
--		}
-+	// if a cert pool file is set, then we want to watch the cert pool. This might be set without the cert and key
-+	// being set too.
-+	if s.certPoolFile != "" {
-+		paths = append(paths, s.certPoolFile)
-+	}
- 
--		watcher, err := pathwatcher.CreatePathWatcher(paths)
--		if err != nil {
--			return fmt.Errorf("failed to create tls path watcher: %w", err)
--		}
-+	watcher, err := pathwatcher.CreatePathWatcher(paths)
-+	if err != nil {
-+		return nil, fmt.Errorf("failed to create tls path watcher: %w", err)
-+	}
- 
-+	return func() error {
- 		for evt := range watcher.Events {
- 			removalMask := fsnotify.Remove | fsnotify.Rename
- 			mask := fsnotify.Create | fsnotify.Write | removalMask
-@@ -177,7 +178,7 @@ func (s *Server) certLoopNotify(logger logging.Logger) Loop {
- 			// retry logic here handles cases where the files are still being written to as events are triggered.
- 			retries := 0
- 			for {
--				err = s.reloadTLSConfig(s.manager.Logger())
-+				err := s.reloadTLSConfig(s.manager.Logger())
- 				if err == nil {
- 					logger.Info("TLS config reloaded")
- 					break
-@@ -194,7 +195,7 @@ func (s *Server) certLoopNotify(logger logging.Logger) Loop {
- 		}
- 
- 		return nil
--	}
-+	}, nil
- }
- 
- func hash(file string) ([]byte, error) {
-```
-
-**File**: `v1/server/certs_test.go` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+package server
++			before := time.Now()
++			ctx, cancel := context.WithTimeout(t.Context(), 500*time.Millisecond)
++			defer cancel()
 +
-+import (
-+	"crypto/ecdsa"
-+	"crypto/elliptic"
-+	"crypto/rand"
-+	"crypto/tls"
-+	"crypto/x509"
-+	"crypto/x509/pkix"
-+	"encoding/pem"
-+	"math"
-+	"math/big"
-+	"os"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/open-policy-agent/opa/v1/plugins"
-+	"github.com/open-policy-agent/opa/v1/storage/inmem"
-+	"github.com/open-policy-agent/opa/v1/util/test"
-+)
-+
-+func TestCertNotifyWatcherIsReadyWhenListenersReturn(t *testing.T) {
-+	t.Parallel()
-+
-+	dir := t.TempDir()
-+	poolPath := filepath.Join(dir, "ca.pem")
-+
-+	initialPEM, serverCert := newSelfSignedCert(t, "initial")
-+	if err := os.WriteFile(poolPath, initialPEM, 0o600); err != nil {
-+		t.Fatal(err)
-+	}
-+	initialPool := x509.NewCertPool()
-+	initialPool.AppendCertsFromPEM(initialPEM)
-+
-+	m, err := plugins.New([]byte{}, "test", inmem.New())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	server := New().
-+		WithAddresses([]string{"127.0.0.1:0"}).
-+		WithStore(inmem.New()).
-+		WithManager(m).
-+		WithCertificate(&serverCert).
-+		WithCertPool(initialPool).
-+		WithTLSConfig(&TLSConfig{CertPoolFile: poolPath})
-+
-+	if err := m.Start(t.Context()); err != nil {
-+		t.Fatal(err)
-+	}
-+	server, err = server.Init(t.Context())
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	loops, err := server.Listeners()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	// Replace the CA file before any loop runs. A change made once Listeners has returned must not be
-+	// missed, regardless of how long the loops take to get scheduled.
-+	updatedPEM, _ := newSelfSignedCert(t, "updated")
-+	updatedPath := filepath.Join(dir, "ca-updated.pem")
-+	if err := os.WriteFile(updatedPath, updatedPEM, 0o600); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.Rename(updatedPath, poolPath); err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	for _, loop := range loops {
-+		go func() { _ = loop() }()
-+	}
-+
-+	updatedPool := x509.NewCertPool()
-+	updatedPool.AppendCertsFromPEM(updatedPEM)
-+
-+	test.EventuallyOrFatal(t, 3*time.Second, func() bool {
-+		server.tlsConfigMtx.RLock()
-+		defer server.tlsConfigMtx.RUnlock()
-+
-+		return server.certPool.Equal(updatedPool)
-+	})
-+}
-+
-+func newSelfSignedCert(t *testing.T, commonName string) ([]byte, tls.Certificate) {
-+	t.Helper()
-+
-+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	serial, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	template := &x509.Certificate{
-+		BasicConstraintsValid: true,
-+		SerialNumber:          serial,
-+		Subject:               pkix.Name{CommonName: commonName},
-+		NotBefore:             time.Now(),
-+		NotAfter:              time.Now().Add(time.Hour),
-+		KeyUsage:              x509.KeyUsageCertSign | x509.KeyUsageDigitalSignature,
-+		ExtKeyUsage:           []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth},
-+		IsCA:                  true,
-+	}
-+
-+	der, err := x509.CreateCertificate(rand.Reader, template, template, key.Public(), key)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	return pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: der}), tls.Certificate{
-+		Certificate: [][]byte{der},
-+		PrivateKey:  key,
-+	}
-+}
-```
-
-**File**: `v1/server/server.go` (modified, +5/-2)
-```diff
-@@ -687,8 +687,11 @@ func (s *Server) getListener(addr string, h http.Handler, t httpListenerType) ([
- 		// otherwise use the fsnotify default behavior
- 		if s.certRefresh > 0 {
- 			loops = []Loop{loop, s.certLoopPolling(logger)}
--		} else if s.certFile != "" || s.certPoolFile != "" {
--			loops = []Loop{loop, s.certLoopNotify(logger)}
-+		} else if err == nil && (s.certFile != "" || s.certPoolFile != "") {
-+			var notify Loop
-+			if notify, err = s.certLoopNotify(logger); err == nil {
-+				loops = []Loop{loop, notify}
-+			}
- 		}
- 	default:
- 		err = fmt.Errorf("invalid url scheme %q", parsedURL.Scheme)
+ 			_, err = pq.Eval(ctx)
+ 			if testing.Verbose() {
+ 				t.Log(err)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9425** (2026-10-24): docs(ecosystem): update OPA MCP install options (@OrygnsCode)
-- **PR #9423** (2026-10-26): Integrate v1.21.4  patch release (@johanfylling)
-- **PR #9422** (2026-10-23): Release 1.21.4 (@johanfylling)
-- **PR #9421** (2026-10-23): build: bump go (1.27.2 -> 1.27.3) (@johanfylling)
-- **PR #9420** (2026-10-26): server: create TLS file watcher before returning listeners (@sspaink)
-- **PR #9418** (2026-10-22): bundle: avoid using filepath in FS directory loader (@anderseknert)
+- **PR #9460** (2026-10-30): ast: in lazyObj, check cache before digging up path (@srenatus)
+- **PR #9459** (2026-10-30): bundle: Root bundles at the `.manifest` folder (@philipaconrad)
+- **PR #9457** (2026-10-29): Prepare v1.23.0 development (@sspaink)
+- **PR #9456** (2026-10-29): Prepare v1.22.0 release (@sspaink)
+- **PR #9455** (2026-10-30): rego: exclude wasm compile time from context timeout test (@sspaink)
+- **PR #9452** (2026-10-29): ast: report reserved names used as import aliases (@sspaink)
 
 ---
 
@@ -1483,34 +1040,39 @@ Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Integrate v1.21.4 patch release (#9423)
+## X. rego: exclude wasm compile time from context timeout test (#9455)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `v1/rego/rego_wasmtarget_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83df76a5`: Integrate v1.21.4 patch release (#9423). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2adddce5`: rego: exclude wasm compile time from context timeout test (#9455). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/rego/rego_wasmtarget_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## 1.21.4
+			// Preparing the wasm target compiles the module, which can take
+			// seconds on a loaded runner. Keep it outside of the timeout and of
+			// the cancellation timing below, which are about evaluation only.
+			).PrepareForEval(t.Context())
+			before := time.Now()
+			ctx, cancel := context.WithTimeout(t.Context(), 500*time.Millisecond)
+			defer cancel()
 
-This release builds the OPA binary artifacts with the latest version of Go (v1.27.3).
-
-See: [https://groups.google.com/g/golang-announce/c/66pojueaQek](https://groups.google.com/g/golang-announce/c/66pojueaQek)
-### Security Fix: Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-### Security Fix: TODO-CVE-XXXX-XXXXX - Bundle signature verification could be side-stepped ([GHSA-g2pf-6v5v-qcc8](https://github.com/open-policy-agent/opa/security/advisories/GHSA-g2pf-6v5v-qcc8))
+			before := time.Now()
+			ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+			defer cancel()
 
+			).PrepareForEval(ctx)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83df76a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2adddce5` are properly handled with clean fallback behavior.

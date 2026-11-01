@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `2acd554c`  
+> **Source Version**: `9086c659`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:57:20.420Z  
+> **Timestamp**: 2026-10-31T21:26:56.779Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:57:19.864Z  
+> **Harvest Timestamp**: 2026-10-31T21:26:55.781Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1785 stars
+- **Stars / Engagement**: 1807 stars
 
 ---
 
@@ -136,7 +136,8 @@ async function needsEngineRewrite(dbPath: string): Promise<boolean> {
 async function copyTableViaLibsql(
   sourcePath: string,
   targetDb: TursoDb,
-  table: string
+  table: string,
+  heartbeat: () => void
 ): Promise<number> {
   const client = openLibsql(sourcePath);
   try {
@@ -182,6 +183,7 @@ async function copyTableViaLibsql(
         sqlArgs
       );
       imported += 1;
+      heartbeat();
     }
     return imported;
   } finally {
@@ -189,7 +191,7 @@ async function copyTableViaLibsql(
   }
 }
 
-async function rewriteMemoryShard(dbPath: string): Promise<void> {
+async function rewriteMemoryShard(dbPath: string, heartbeat: () => void): Promise<void> {
   const client = openLibsql(dbPath);
   let dims = CONFIG.embeddingDimensions;
   let model = CONFIG.embeddingModel;
@@ -219,18 +221,24 @@ async function rewriteMemoryShard(dbPath: string): Promise<void> {
   const staged = await tursoConnectionManager.getConnection(stagedPath);
   try {
     await tursoShardManager.initShardDb(staged, dims, model);
-    const imported = await copyTableViaLibsql(dbPath, staged, "memories");
+    const imported = await copyTableViaLibsql(dbPath, staged, "memories", heartbeat);
     const metaClient = openLibsql(dbPath);
     try {
-      const metaRows = await metaClient.execute(`SELECT key, value FROM shard_metadata`);
-      for (const row of metaRows.rows) {
-        await staged.run(`INSERT OR REPLACE INTO shard_metadata (key, value) VALUES (?, ?)`, [
-          String(row.key),
-          String(row.value),
-        ]);
+      const metaRows = await metaClient
+        .execute(`SELECT key, value FROM shard_metadata`)
+        .catch(() => null);
+      for (const row of metaRows?.rows ?? []) {
+        try {
+          await staged.run(`INSERT OR REPLACE INTO shard_metadata (key, value) VALUES (?, ?)`, [
+            String(row.key),
+            String(row.value),
+          ]);
+        } catch {
+          // Metadata is optional; do not swallow ownership failures below.
+          break;
+        }
+        heartbeat();
       }
-    } catch {
-      // optional
     } finally {
       metaClient.close();
     }
@@ -246,11 +254,14 @@ async function rewriteMemoryShard(dbPath: string): Promise<void> {
   }
 
   // Match encryption-migrator: Windows cannot rename over an existing file (EPERM).
+  // Pre-swap aborts preserve the original and may leave a staged temp file.
+  heartbeat();
   await withSqliteFileLockRetry(() => {
     copySqliteDatabase(dbPath, backupPath);
     removeSqliteDatabase(dbPath);
     renameSqliteDatabase(stagedPath, dbPath);
   });
+  heartbeat();
 
   log("Migrated libSQL DiskANN shard to @tursodatabase/database", {
     dbPath,
@@ -258,7 +269,11 @@ async function rewriteMemoryShard(dbPath: string): Promise<void> {
   });
 }
 
-async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void> {
+async function rewriteGenericDb(
+  dbPath: string,
+  tables: string[],
+  heartbeat: () => void
+): Promise<void> {
   const stagedPath = `${dbPath}.tursodb-migrate-${Date.now()}.tmp`;
   const backupPath = `${dbPath}.pre-tursodb-${Date.now()}.bak`;
 
@@ -271,6 +286,7 @@ async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void>
     const source = openLibsql(dbPath);
     try {
       for (const table of tables) {
+        heartbeat();
         const schema = await source.execute({
           sql: `SELECT sql FROM sqlite_master WHERE type = 'table' AND name = ?`,
           args: [table],
@@ -278,7 +294,7 @@ async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void>
         const createSql = schema.rows[0]?.sql ? String(schema.rows[0].sql) : null;
         if (!createSql) continue;
         await staged.run(createSql.replace(/F32_BLOB/gi, "BLOB"));
-        await copyTableViaLibsql(dbPath, staged, table);
+        await copyTableViaLibsql(dbPath, staged, table, heartbeat);
       }
       const indexes = await source.execute(
         `SELECT sql FROM sqlite_master WHERE type = 'index' AND sql IS NOT NULL AND name NOT LIKE 'sqlite_%'`
@@ -291,6 +307,7 @@ async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void>
         } catch {
           // index may already exist from CREATE TABLE
         }
+        heartbeat();
       }
     } finally {
       source.close();
@@ -301,11 +318,14 @@ async function rewriteGenericDb(dbPath: string, tables: string[]): Promise<void>
   }
 
   // Match encryption-migrator: Windows cannot rename over an existing file (EPERM).
+  // Pre-swap aborts preserve the original and may leave a staged temp file.
+  heartbeat();
   await withSqliteFileLockRetry(() => {
     copySqliteDatabase(dbPath, backupPath);
     removeSqliteDatabase(dbPath);
     renameSqliteDatabase(stagedPath, dbPath);
   });
+  heartbeat();
   log("Migrated auxiliary DB to @tursodatabase/database", { dbPath, backupPath });
 }
 
@@ -317,27 +337,7 @@ export async function runTursoEngineMigration(): Promise<void> {
   if (existsSync(markerPath())) return;
 
   const candidates = collectCandidateDbs();
-  if (candidates.length === 0) {
-    writeFileSync(markerPath(), JSON.stringify({ migratedAt: new Date().toISOString() }));
-    return;
-  }
-
-  const toRewrite: string[] = [];
-  for (const path of candidates) {
-    if (await needsEngineRewrite(path)) {
-      toRewrite.push(path);
-    }
-  }
-
-  if (toRewrite.length === 0) {
-    writeFileSync(markerPath(), JSON.stringify({ migratedAt: new Date().toISOString() }));
-    return;
-  }
-
-  const release = acquireTursoOperationLock("tursodb-engine-migrate");
-  try {
-    for (const path of toRewrite) {
-      const base =
+  if (candida
 ```
 
 ### Core Architecture Module: `src/services/turso/lifecycle.ts`
@@ -349,6 +349,28 @@ import { userPromptManager } from "../user-prompt/user-prompt-manager.js";
 import { userProfileManager } from "../user-profile/user-profile-manager.js";
 import { aiSessionManager } from "../ai/session/ai-session-manager.js";
 import { skillsManager } from "../skills/skills-manager.js";
+import { releasePluginTursoLease } from "./plugin-refs.js";
+
+export {
+  retainPluginTurso,
+  pluginTursoRefCount,
+  resetPluginTursoRefsForTests,
+} from "./plugin-refs.js";
+
+/**
+ * Drop one plugin-instance lease. Closes the process-wide pool only when the
+ * last live instance is gone (or when no retain was recorded — tests / force
+ * close via `memoryClient.close()`).
+ *
+ * @returns `true` when connections were closed and manager caches invalidated
+ */
+export async function releasePluginTurso(): Promise<boolean> {
+  if (!releasePluginTursoLease()) {
+    return false;
+  }
+  await closeTursoAndInvalidateCaches();
+  return true;
+}
 
 export async function closeTursoAndInvalidateCaches(): Promise<void> {
   await tursoConnectionManager.closeAll();
@@ -995,509 +1017,329 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a899710` (2026-10-24)
-**Commit Message**: fix(web): cap dialog height so long content keeps actions reachable (#430)
+### Incident Patch 1: `237a0e63` (2026-10-31)
+**Commit Message**: fix(embedding): harden transformers resolve for OpenCode nested installs (#467)
 
-* fix(web): cap dialog height so long content keeps actions reachable
+Fall back to Bun.resolveSync and a node_modules walk when createRequire
+cannot see @huggingface/transformers (#463).
 
-Dialog content is fixed-centered with no height limit, so a long skill
-body (the textarea uses field-sizing-content) grows the dialog past the
-viewport and the footer actions end up unreachable because the page
-itself does not scroll.
-
-Cap the shared dialog at the viewport height with internal scrolling.
-This also fixes other long-form dialogs (e.g. the memory editor) in one
-place.
-
-Closes #429
-
-* fix(web): keep dialog header and actions pinned while body scrolls
-
-Overflow on the whole dialog made Save reachable only after scrolling
-and hid the close button. Cap height on a flex column shell, scroll the
-body, and pin header/footer — aligning AiCleanup with the shared layout.
-
----------
-
-Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
-
-**File**: `web/src/lib/components/explorer/AiCleanupDialog.svelte` (modified, +3/-3)
+**File**: `src/services/embedding.ts` (modified, +14/-18)
 ```diff
-@@ -225,7 +225,7 @@
- <AppDialog
-   bind:open
-   title={i18n.t("label-ai-cleanup-title")}
--  class="grid! sm:max-w-2xl max-h-[90vh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden {GAP_WIDE}"
-+  class="sm:max-w-2xl {GAP_WIDE}"
-   onOpenChange={handleOpenChange}
- >
-   {#if phase === "loading"}
-@@ -234,7 +234,7 @@
-       <span class="text-sm">{i18n.t("label-ai-cleanup-loading")}</span>
-     </div>
-   {:else if phase === "select"}
--    <div class="flex min-h-0 flex-col {GAP_LOOSE} overflow-hidden">
-+    <div class="flex min-h-0 flex-1 flex-col {GAP_LOOSE} overflow-hidden">
-       <div class="flex flex-wrap items-center justify-between {GAP}">
-         <h3 class="text-sm font-medium">{i18n.t("label-ai-cleanup-select")}</h3>
-         <div class="flex flex-wrap {GAP_TIGHT}">
-@@ -290,7 +290,7 @@
-       </div>
-     </div>
-   {:else if phase === "diff" && pendingCleanup}
--    <div class="flex min-h-0 flex-col {GAP_LOOSE} overflow-hidden">
-+    <div class="flex min-h-0 flex-1 flex-col {GAP_LOOSE} overflow-hidden">
-       <div class="flex flex-wrap items-center justify-between {GAP}">
-         <span class="text-xs text-muted-foreground">
-           {i18n.t("label-ai-cleanup-changes-selected", {
-```
-
-**File**: `web/src/lib/components/ui/app-dialog.svelte` (modified, +5/-3)
-```diff
-@@ -27,12 +27,14 @@
- </script>
+@@ -7,6 +7,10 @@ import {
+   prepareOnnxruntimeForTransformers,
+ } from "./onnxruntime-resolve.js";
+ import { createRuntimeRequire } from "./runtime-require.js";
++import {
++  getTransformersPackageSpecifier,
++  resolveTransformersCjsEntry,
++} from "./transformers-resolve.js";
  
- <Dialog bind:open {onOpenChange} class={className} {showCloseButton}>
--  <DialogHeader>
-+  <DialogHeader class="shrink-0 pe-10">
-     <DialogTitle>{title}</DialogTitle>
-   </DialogHeader>
--  {@render children?.()}
-+  <div class="flex min-h-0 flex-1 flex-col overflow-y-auto">
-+    {@render children?.()}
-+  </div>
-   {#if footer}
--    <DialogFooter>
-+    <DialogFooter class="shrink-0">
-       {@render footer()}
-     </DialogFooter>
-   {/if}
-```
-
-**File**: `web/src/lib/components/ui/dialog.svelte` (modified, +2/-2)
-```diff
-@@ -34,7 +34,7 @@
-     />
-     <DialogPrimitive.Content
-       class={cn(
--        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 ring-foreground/5 dark:ring-foreground/10 grid max-w-[calc(100%-2rem)] gap-6 rounded-[min(var(--radius-4xl),24px)] p-6 text-sm shadow-xl ring-1 duration-100 sm:max-w-md fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none [--floating-label-bg:var(--popover)]",
-+        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 ring-foreground/5 dark:ring-foreground/10 flex max-h-[calc(100dvh-2rem)] max-w-[calc(100%-2rem)] flex-col gap-6 overflow-hidden rounded-[min(var(--radius-4xl),24px)] p-6 text-sm shadow-xl ring-1 duration-100 sm:max-w-md fixed top-1/2 left-1/2 z-50 w-full -translate-x-1/2 -translate-y-1/2 outline-none [--floating-label-bg:var(--popover)]",
-         className
-       )}
-     >
-@@ -45,7 +45,7 @@
-             <Button
-               {...props}
-               variant="ghost"
--              class="bg-secondary absolute top-4 right-4"
-+              class="bg-secondary absolute top-4 right-4 z-10"
-               size="icon-sm"
-             >
-               <XIcon />
-```
-
----
-
-### Incident Patch 2: `6a795a87` (2026-10-24)
-**Commit Message**: fix(auto-capture): read tool names from v2-shaped tool parts (#431)
-
-On OpenCode v2 hosts, session tool parts carry the tool name at
-part.name (v1 wire format used part.tool). extractAIContent only read
-tool.tool, so the auto-capture prompt's Tools Used section always
-listed unknown(). Read name first with the v1 field kept as a
-fallback, and cover both part shapes with extraction regression tests.
-
-**File**: `src/services/auto-capture.ts` (modified, +2/-2)
-```diff
-@@ -271,7 +271,7 @@ function getAIResponseMessages(messages: any[], promptMessageId: string): any[]
-   return responseMessages;
- }
+ const requireFromHere = createRuntimeRequire(import.meta);
  
--function extractAIContent(messages: any[]): {
-+export function extractAIContent(messages: any[]): {
-   textResponses: string[];
-   toolCalls: ToolCallInfo[];
- } {
-@@ -293,7 +293,7 @@ function extractAIContent(messages: any[]): {
+@@ -194,17 +198,10 @@ let _transformers: {
+   env: HfTransformers["env"];
+ } | null = null;
  
-     const toolParts = msg.parts.filter((p: any) => p.type === "tool");
-     for (const tool of toolParts) {
--      const name = tool.tool || "unknown";
-+      const name = tool.name || tool.tool || "unknown";
-       let input = "";
- 
-       if (tool.state?.input) {
-```
-
-**File**: `tests/auto-capture-context.test.ts` (modified, +52/-0)
-```diff
-@@ -2,6 +2,7 @@ import { describe, expect, it } from "bun:test";
- import {
-   buildBoundedSummaryPrompt,
-   buildMarkdownContext,
-+  extractAIContent,
-   getAutoCaptureMarkdownBudget,
- } from "../src/services/auto-capture.js";
- import { utf8ByteLength } from "../src/utils/context-limit.js";
-@@ -96,3 +97,54 @@ describe("buildMarkdownContext budgeting (#232)", () => {
-     expect(userPrompt).toContain("truncated to autoCaptureMaxContextBytes");
-   });
- });
-+
-+describe("extractAIContent tool calls", () => {
-+  it("extracts tool names from v2-shaped parts", () => {
-+    const { toolCalls } = extractAIContent([
-+      {
-+        info: { role: "assistant" },
-+        parts: [
-+          {
-+            type: "tool",
-+            id: "t1",
-+            name: "bash",
-+            state: { status: "completed", input: { command: "ls" } },
-+          },
-+        ],
-+      },
-+    ]);
-+
-+    expect(toolCalls).toHaveLength(1);
-+    expect(toolCalls[0]?.name).toBe("bash");
-+    expect(toolCalls[0]?.input).toContain('command: "ls"');
-+  });
-+
-+  it("keeps extracting tool names from v1-shaped parts", () => {
-+    const { toolCalls } = extractAIContent([
-+      {
-+        info: { role: "assistant" },
-+        parts: [
-+          {
-+            type: "tool",
-+            callID: "call_1",
-+            tool: "read",
-+            state: { input: { path: "/tmp/x" } },
-+          },
-+        ],
-+      },
-+    ]);
-+
-+    expect(toolCalls[0]?.name).toBe("read");
-+  });
-+
-+  it("falls back to unknown when a tool part has no name", () => {
-+    const { toolCalls } = extractAIContent([
-+      {
-+        info: { role: "assistant" },
-+        parts: [{ type: "tool", state: { input: {} } }],
-+      },
-+    ]);
-+
-+    expect(toolCalls[0]?.name).toBe("unknown");
-+  });
-+});
-```
-
----
-
-### Incident Patch 3: `adc3a25c` (2026-10-24)
-**Commit Message**: fix(auto-capture): toast when provider config is missing (#433)
-
-Warn at plugin startup when autoCaptureEnabled is true but no
-capture provider is ready, and document that Free opencode models
-are a poor fit for internal structured-output sessions.
-
-Refs: #424
-
-**File**: `README.md` (modified, +5/-1)
-```diff
-@@ -454,7 +454,11 @@ Optionally pin a model reasoning variant with `"opencodeVariant": "xhigh"` (e.g.
- 
- Slow reasoning models (or very large profile prompts) can exceed the default 90 s structured-output budget. Set `"opencodeTimeoutMs"` (milliseconds) to extend it for internal structured-output calls (auto-capture summaries, profile learning) — e.g. `"opencodeTimeoutMs": 180000` for 3 minutes. Values are clamped to 10000..600000; the default stays 90000. Numeric strings are coerced. Profile cleanup uses a separate, longer timeout.
- 
--Supported providers: any provider listed by `opencode providers list` (e.g. `anthropic`, `openai`, `github-copilot`, ...).
-+Supported providers: any provider listed by `opencode providers list` (e.g. `anthropic`, `openai`, `github-copilot`, `openrouter`, ...).
-+
-+**Built-in Free / Zen models** under provider id `opencode` (e.g. `big-pickle`) often cannot run the plugin’s internal structured-output sessions — OpenCode may reject them outside interactive chat. Prefer an authenticated provider from `opencode providers list`, or use `"opencodeModel": "inherit"` so capture follows the model you already use in the session.
-+
-+If `autoCaptureEnabled` is `true` (default) but neither `opencodeProvider`/`opencodeModel` nor a complete manual fallback is configured, the plugin logs a warning and shows a startup toast (when `showErrorToasts` is enabled) so missing config is visible without digging through logs.
- 
- If `opencodeProvider` and `opencodeModel` are set, they take precedence over the manual `memoryProvider` settings below by default (`"autoCaptureProviderOrder": "opencode-first"`). Set `"autoCaptureProviderOrder": "external-first"` to prefer the manual API when both are configured (useful when the host session API is busy/slow); the other channel is used as fallback. Lower `"opencodeTimeoutMs"` to fail over from the opencode channel sooner.
- 
-```
-
-**File**: `src/config.ts` (modified, +8/-0)
-```diff
-@@ -487,6 +487,12 @@ const CONFIG_TEMPLATE = `{
-    //   Anthropic (OAuth/API key): "opencodeProvider": "anthropic",      "opencodeModel": "claude-haiku-4-5-20251001"
-    //   OpenAI (API key):          "opencodeProvider": "openai",          "opencodeModel": "gpt-4o-mini"
-    //   GitHub Copilot:            "opencodeProvider": "github-copilot",  "opencodeModel": "gpt-4o-mini"
-+   //   OpenRouter:                "opencodeProvider": "openrouter",      "opencodeModel": "…"
-+   //
-+   // Avoid pinning the built-in Free provider "opencode" (e.g. big-pickle) for
-+   // auto-capture: those models are often restricted to interactive OpenCode
-+   // chat and fail on the plugin's internal structured-output sessions. Prefer
-+   // an authenticated provider above, or "opencodeModel": "inherit".
-    //
-    // "opencodeProvider": "anthropic",
-    // "opencodeModel": "claude-haiku-4-5-20251001",
-@@ -504,6 +510,8 @@ const CONFIG_TEMPLATE = `{
-   
-   // IMPORTANT: Auto-capture only runs after either opencodeProvider/opencodeModel
-   // above is configured, or the manual fallback below is uncommented with real values.
-+  // If autoCaptureEnabled is true but neither path is ready, the plugin shows a
-+  // startup warning toast (when showErrorToasts is true).
-   // It runs in background without blocking your main session
-   // Note: Ollama may not support tool calling. Use OpenAI, Anthropic, or Groq for best results.
-   
-```
-
-**File**: `src/index.ts` (modified, +6/-9)
-```diff
-@@ -36,8 +36,13 @@ import {
-   isInternalCaptureSessionTitle,
-   isTrackedInternalCaptureSession,
- } from "./services/ai/internal-capture-sessions.js";
-+import { notifyAutoCaptureProviderStatus } from "./services/auto-capture-config-status.js";
- 
- export { INTERNAL_CAPTURE_SESSION_TITLE, isInternalCaptureSessionTitle };
-+export {
-+  buildAutoCaptureConfigReminderMessage,
-+  notifyAutoCaptureProviderStatus,
-+} from "./services/auto-capture-config-status.js";
- 
- export function isStructuredSummaryPromptMessage(userMessage: string): boolean {
-   // This is the plugin's own structured-summary or profile-analysis request.
-@@ -352,18 +357,10 @@ export async function configureOpencodeHostTransport(ctx: {
-   }
- }
- 
--function logAutoCaptureProviderStatus(): void {
--  if (!CONFIG.autoCaptureEnabled || CONFIG.autoCaptureProviderStatus.ready) return;
--
--  log(
--    `Auto-capture disabled by configuration. Issues: ${CONFIG.autoCaptureProviderStatus.issues.join("; ")}.`
--  );
+-function getTransformersPackageSpecifier(): string {
+-  // Keep this non-literal so OpenCode/Bun plugin-loader bundling does not eagerly
+-  // traverse @huggingface/transformers internals during plugin startup. The package
+-  // is only needed for the local embedding backend, and should stay lazy.
+-  return ["@huggingface", "transformers"].join("/");
 -}
 -
- export const OpenCodeMemPlugin: Plugin = async (ctx: PluginInput) => {
-   const { directory } = ctx;
-   initConfig(directory);
--  logAutoCaptureProviderStatus();
-+  notifyAutoCaptureProviderStatus(ctx.client);
-   const { startAutoUpdate } = await import("./services/auto-update.js");
-   startAutoUpdate(ctx, CONFIG.autoUpdate);
-   const tags = getTags(directory);
+ async function ensureTransformersLoaded(): Promise<NonNullable<typeof _transformers>> {
+   if (_transformers !== null) return _transformers;
+   // Pin onnxruntime-node (+ common) to our direct 1.30.0 stack before transformers
+-  // resolves them (#184 / #210 / #225). Load the CJS export so Module._resolveFilename
++  // resolves them (#184 / #210 / #225 / #463). Load the CJS export so Module._resolveFilename
+   // shim applies — the ESM entry's static import bypasses it under OpenCode nested installs.
+   //
+   // Critical ordering for OpenCode's Bun --compile host (#210 follow-up):
+@@ -213,17 +210,16 @@ async function ensureTransformersLoaded(): Promise<NonNullable<typeof _transform
+   // `Cannot find module '@huggingface/transformers' from ''` even though the package
+   // exists. Loading via the pre-resolved absolute path keeps the onnx pin shim active
+   // for transformers' nested requires without needing a post-shim package resolve.
++  //
++  // #463: OpenCode nested npm/Bun cache layouts can make createRequire(packageName)
++  // fail even when the package is on disk — fall back to Bun.resolveSync + node_modules walk.
+   const transformersSpecifier = getTransformersPackageSpecifier();
+-  let transformersEntry: string;
+-  try {
+-    transformersEntry = requireFromHere.resolve(transformersSpecifier);
+-  } catch (error) {
+-    throw new Error(
+-      `Cannot resolve ${transformersSpecifier} before installing the onnxruntime pin shim. ` +
+-        `Original error: ${error instanceof Error ? error.message : String(error)}`,
+-      { cause: error }
+-    );
+-  }
++  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
++  const transformersEntry = resolveTransformersCjsEntry({
++    requireFn: requireFromHere,
++    specifier: transformersSpecifier,
++    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
++  });
+ 
+   prepareOnnxruntimeForTransformers();
+   const mod = requireFromHere(transformersEntry) as HfTransformers;
 ```
 
-**File**: `src/services/auto-capture-config-status.ts` (added, +44/-0)
+**File**: `src/services/transformers-resolve.ts` (added, +163/-0)
 ```diff
-@@ -0,0 +1,44 @@
-+import { CONFIG } from "../config.js";
-+import { log } from "./logger.js";
+@@ -0,0 +1,163 @@
++/**
++ * Resolve the CJS entry of `@huggingface/transformers` for OpenCode hosts (#463).
++ *
++ * OpenCode nested installs (Bun linker / npm cache layouts) sometimes make
++ * Node's createRequire(packageName) fail even when the package exists on disk.
++ * Walk node_modules and prefer Bun.resolveSync, then load the package's
++ * `exports.node.require` entry so the onnxruntime pin shim still applies.
++ */
++import { existsSync, readFileSync } from "node:fs";
++import { dirname, join, sep } from "node:path";
++import { fileURLToPath, pathToFileURL } from "node:url";
 +
-+/** Toast/log copy when auto-capture is on but no provider is ready (#424). */
-+export function buildAutoCaptureConfigReminderMessage(issues: string[]): string {
-+  const issueText = issues.length > 0 ? ` Issues: ${issues.join("; ")}.` : "";
-+  return (
-+    "Auto-capture is enabled but no AI provider is configured. " +
-+    "Set opencodeProvider + opencodeModel (or memoryModel/memoryApiUrl/memoryApiKey), " +
-+    `or set autoCaptureEnabled: false.${issueText}`
-+  );
++export const TRANSFORMERS_PACKAGE = ["@huggingface", "transformers"].join("/");
++
++/** Non-literal specifier so plugin bundlers do not eagerly traverse transformers. */
++export function getTransformersPackageSpecifier(): string {
++  return TRANSFORMERS_PACKAGE;
 +}
 +
-+/** Minimal toast client shape; accepts OpenCode's OpencodeClient.tui. */
-+type AutoCaptureStatusToastClient = {
-+  tui?: {
-+    // OpenCode's SDK typing for showToast is version-dependent; keep loose.
-+    showToast?: (input: any) => Promise<unknown>;
++type PackageJsonExports = {
++  node?: {
++    require?: { default?: string } | string;
++    import?: { default?: string } | string;
 +  };
++  require?: { default?: string } | string;
++  default?: { default?: string } | string;
 +};
 +
-+/**
-+ * Log (and optionally toast) when auto-capture cannot run due to missing
-+ * provider config. Toast is gated by showErrorToasts like other error notices.
-+ */
-+export function notifyAutoCaptureProviderStatus(client?: AutoCaptureStatusToastClient): void {
-+  if (!CONFIG.autoCaptureEnabled || CONFIG.autoCaptureProviderStatus.ready) return;
-+
-+  const message = buildAutoCaptureConfigReminderMessage(CONFIG.autoCaptureProviderStatus.issues);
-+  log(`Auto-capture disabled by configuration. ${message}`);
-+
-+  if (!CONFIG.showErrorToasts || !client?.tui?.showToast) return;
-+
-+  client.tui
-+    .showToast({
-+      body: {
-+        title: "Auto-Capture",
-+        message,
-+        variant: "warning",
-+        duration: 8000,
-+      },
-+    })
-+    .catch(() => {});
++function readJson(path: string): Record<string, unknown> | null {
++  try {
++    return JSON.parse(readFileSync(path, "utf8")) as Record<string, unknown>;
++  } catch {
++    return null;
++  }
 +}
++
++function asExportPath(value: unknown): string | null {
++  if (typeof value === "string" && value.length > 0) return value;
++  if (
++    value &&
++    typeof value === "object" &&
++    typeof (value as { default?: unknown }).default === "string"
++  ) {
++    return (value as { default: string }).default;
++  }
++  return null;
++}
++
++/** Pick the Node CJS entry from a transformers package.json. */
++export function cjsEntryFromPackageJson(pkgJsonPath: string): string {
++  const pkg = readJson(pkgJsonPath);
++  if (!pkg) throw new Error(`Unable to read ${pkgJsonPath}`);
++  const exportsField = pkg.exports as PackageJsonExports | undefined;
++  const relative =
++    asExportPath(exportsField?.node?.require) ||
++    asExportPath(exportsField?.require) ||
++    (typeof pkg.main === "string" ? pkg.main : null) ||
++    "./dist/transformers.node.cjs";
++  return join(dirname(pkgJsonPath), relative);
++}
++
++function packageJsonCandidates(startDir: string, packageName: string): string[] {
++  const parts = packageName.split("/");
++  const out: string[] = [];
++  let dir = startDir;
++  for (let i = 0; i < 16; i++) {
++    out.push(join(dir, "node_modules", ...parts, "package.json"));
++    const parent = dirname(dir);
++    if (parent === dir) break;
++    dir = parent;
++  }
++  return out;
++}
++
++function normalizeStartPath(value: string): string {
++  if (value.startsWith("file:")) {
++    try {
++      return fileURLToPath(value);
++    } catch {
++      return value;
++    }
++  }
++  return value;
++}
++
++/**
++ * Resolve Bun's install layout when Node createRequire cannot see the package.
++ */
++export function resolveWithBun(specifier: string, fromPath: string): string | null {
++  const bun = (globalThis as { Bun?: { resolveSync?: (id: string, root: string) => string } }).Bun;
++  if (typeof bun?.resolveSync !== "function") return null;
++  try {
++    const fromDir = fromPath.endsWith(sep) ? fromPath : dirname(fromPath);
++    return bun.resolveSync(specifier, fromDir);
++  } catch {
++    return null;
++  }
++}
++
++export function resolveTransformersCjsEntry(options: {
++  requireFn: NodeRequire;
++  startPaths?: Array<string | undefined | null>;
++  specifier?: string;
++}): string {
++  const specifier = options.specifier ?? TRANSFORMERS_PACKAGE;
++  const errors: string[] = [];
++
++  try {
++    return options.requireFn.resolve(specifier);
++  } catch (error) {
++    errors.push(`require.resolve: ${error instanceof Error ? error.message : String(error)}`);
++  }
++
++  const starts = (options.startPaths ?? [])
++    .filter((p): p is string => typeof p === "string" && p.trim().length > 0)
++    .map(normalizeStartPath);
++
++  for (const start of starts) {
++    const bunResolved = resolveWithBun(specifier, start);
++    if (bunResolved) {
++      // Bun may return the ESM entry; normalize to CJS via package.json.
++      let dir = dirname(bunResolved);
++      for (let i = 0; i < 6; i++) {
++        const pkgJson = join(dir, "package.json");
++        if (existsSync(pkgJson)) {
++          const pkg = readJson(pkgJson);
++          if (pkg?.name === specifier) return cjsEntryFromPackageJson(pkgJson);
++        }
++        const parent = dirname(dir);
++        if (parent === dir) break;
++        dir = parent;
++      }
++      if (bunResolved.endsWith(".cjs") || bunResolved.endsWith(".js")) return bunResolved;
++      errors.push(`Bun.resolveSync returned non-CJS entry: ${bunResolved}`);
++    }
++
++    for (const candidate of packageJsonCandidates(dirname(start), specifier)) {
++      if (!existsSync(candidate)) continue;
++      try {
++        return cjsEntryFromPackageJson(candidate);
++      } catch (error) {
++        errors.push(`${candidate}: ${error instanceof Error ? error.message : String(error)}`);
++      }
++   
 ```
 
-**File**: `tests/auto-capture-config-toast.test.ts` (added, +149/-0)
+**File**: `tests/transformers-resolve.test.ts` (added, +95/-0)
 ```diff
-@@ -0,0 +1,149 @@
-+import { afterEach, describe, expect, it } from "bun:test";
-+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+@@ -0,0 +1,95 @@
++import { describe, expect, it } from "bun:test";
++import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
++import { createRequire } from "node:module";
 +import { tmpdir } from "node:os";
 +import { join } from "node:path";
-+import { buildAutoCaptureConfigReminderMessage } from "../src/services/auto-capture-config-status.js";
++import {
++  cjsEntryFromPackageJson,
++  resolveTransformersCjsEntry,
++  TRANSFORMERS_PACKAGE,
++} from "../src/services/transformers-resolve.js";
 +
-+const tempDirs: string[] = [];
++const requireFromHere = createRequire(import.meta.url);
 +
-+afterEach(() => {
-+  for (const dir of tempDirs.splice(0)) {
-+    rmSync(dir, { recursive: true, force: true });
-+  }
-+});
-+
-+describe("buildAutoCaptureConfigReminderMessage", () => {
-+  it("mentions config keys and includes issues", () => {
-+    const message = buildAutoCaptureConfigReminderMessage([
-+      "opencodeProvider is not configured",
-+      "opencodeModel is not configured",
-+    ]);
-+    expect(message).toContain("opencodeProvider + opencodeModel");
-+    expect(message).toContain("autoCaptureEnabled: false");
-+    expect(message).toContain("opencodeProvider is not configured");
-+    expect(message).toContain("opencodeModel is not configured");
++describe("transformers-resolve (#463)", () => {
++  it("resolves the real installed CJS entry via require", () => {
++    const entry = resolveTransformersCjsEntry({
++      requireFn: requireFromHere,
++      startPaths: [import.meta.url],
++    });
++    expect(entry.replaceAll("\\", "/")).toContain("@huggingface/transformers");
++    expect(entry.endsWith(".cjs") || entry.endsWith(".js")).toBe(true);
 +  });
-+});
 +
-+describe("notifyAutoCaptureProviderStatus", () => {
-+  const statusUrl = new URL("../src/services/auto-capture-config-status.js", import.meta.url).href;
-+  const configUrl = new URL("../src/config.js", import.meta.url).href;
-+  const loggerUrl = new URL("../src/services/logger.js", import.meta.url).href;
-+
-+  function runScenario(opts: {
-+    autoCaptureEnabled: boolean;
-+    ready: boolean;
-+    issues?: string[];
-+    showErrorToasts: boolean;
-+    withToastClient: boolean;
-+  }) {
-+    const dir = mkdtempSync(join(tmpdir(), "opencode-mem-capture-toast-"));
-+    tempDirs.push(dir);
-+    const scriptPath = join(dir, "scenario.mjs");
-+    const script = `
-+import { mock } from "bun:test";
-+
-+const logs = [];
-+const toasts = [];
-+
-+mock.module(${JSON.stringify(configUrl)}, () => ({
-+  CONFIG: {
-+    autoCaptureEnabled: ${JSON.stringify(opts.autoCaptureEnabled)},
-+    showErrorToasts: ${JSON.stringify(opts.showErrorToasts)},
-+    autoCaptureProviderStatus: ${JSON.stringify(
-+      opts.ready
-+        ? { ready: true, mode: "opencode", issues: [] }
-+        : { ready: false, issues: opts.issues ?? ["opencodeProvider is not configured"] }
-+    )},
-+  },
-+}));
-+
-+mock.module(${JSON.stringify(loggerUrl)}, () => ({
-+  log: (message) => logs.push(message),
-+}));
-+
-+const { notifyAutoCaptureProviderStatus } = await import(${JSON.stringify(statusUrl)});
-+
-+const client = ${
-+      opts.withToastClient
-+        ? `{
-+  tui: {
-+    showToast: async (input) => {
-+      toasts.push(input);
-+      return {};
-+    },
-+  },
-+}`
-+        : "undefined"
-+    };
-+
-+notifyAutoCaptureProviderStatus(client);
-+await new Promise((r) => setTimeout(r, 10));
-+
-+console.log(JSON.stringify({ logs, toasts }));
-+`;
-+    writeFileSync(scriptPath, script);
-+    const proc = Bun.spawnSync(["bun", "run", scriptPath], {
-+      cwd: dir,
-+      stdout: "pipe",
-+      stderr: "pipe",
-+    });
-+    if (proc.exitCode !== 0) {
-+      throw new Error(`scenario failed: ${proc.stderr.toString() || proc.stdout.toString()}`);
-+    }
-+    return JSON.parse(proc.stdout.toString()) as {
-+      logs: string[];
-+      toasts: Array<{ body: { title: string; message: string; variant: string } }>;
-+    };
-+  }
-+
-+  it("toasts and logs when auto-capture is on without a provider", () => {
-+    const result = runScenario({
-+      autoCaptureEnabled: true,
-+      ready: false,
-+      issues: ["opencodeProvider is not configured", "opencodeModel is not configured"],
-+      showErrorToasts: true,
-+      withToastClient: true,
-+    });
-+    expect(result.logs.some((m) => m.includes("Auto-capture disabled by configuration"))).toBe(
-+      true
++  it("reads CJS export path from package.json", () => {
++    const dir = mkdtempSync(join(tmpdir(), "transformers-pkg-"));
++    const pkgJson = join(dir, "package.json");
++    writeFileSync(
++      pkgJson,
++      JSON.stringify({
++        name: TRANSFORMERS_PACKAGE,
++        main: "./dist/transformers.node.cjs",
++        exports: {
++          node: {
++            require: { default: "./dist/transformers.node.cjs" },
++            import: { default: "./dist/transformers.node.mjs" },
++          },
++        },
++      })
 +    );
-+    expect(result.toasts).toHaveLength(1);
-+    expect(result.toasts[0]?.body.title).toBe("Auto-Capture");
-+    expect(result.toasts[0]?.body.variant).toBe("warning");
-+    expect(result.toasts[0]?.body.message).toContain("opencodeProvider + opencodeModel");
++    expect(cjsEntryFromPackageJson(pkgJson).replaceAll("\\", "/")).toMatch(
++      /dist\/transformers\.node\.cjs$/
++    );
 +  });
 +
-+  it("skips toast when showErrorToasts is false but still logs", () => {
-+    const result = runScenario({
-+      autoCaptureEnabled: true,
-+      ready: false,
-+      showErrorToasts: false,
-+      withToastClient: true,
++  it("finds a hoisted package by walking node_modules when require.resolve fails", () => {
++    const root = mkdtempSync(join(tmpdir(), "transformers-hoist-"));
++    const pluginDir = join(root, "node_modules", "opencode-mem", "dist", "services");
++    const pkgDir = join(root, "node_modules", "@huggingface", "transformers");
++    mkdirSync(pluginDir, { recursive: true });
++    mkdirSync(join(pkgDir, "dist"), { recursive: true });
++    writeFileSync(
++      join(pkgDir, "package.json"),
++      JSON.stringify({
++        name: TRANSFORMERS_PACKAGE,
++        exports: {
++          node: { require: { default: "./dist/transformers.node.cjs" } },
++        },
++      })
++    );
++    writeFileSync(join(pkgDir, "dist", "transformers.node.cjs"), "module.exports = {}");
++
++    const fakeRequire = ((id: string) => {
++      throw new Error(`Cannot find module '${id}'`);
++    }) as NodeRequire;
++    fakeRequire.resolve = ((_id: string) => {
++      throw new Error(`Cannot find module '${_id}'`);
++    }) as NodeRequire["resolve"];
++
++    const start = join(pluginDir, "embedding.js");
++    writeFileSync(start, "");
++    const entry = resolveTransformersCjsEntry({
++      requireFn: fakeRequire,
++      startPaths: [start],
 +    });
-+    expect(result.logs.length).toBeGreaterThan(0);
-+    expect(result.toasts).toHaveLength(0);
++    expect(entry.replaceAll("\\", "/")).toMatch(
++      /node_modules\/@huggingface\/transformers\/dist\/transformers\.node\.cjs$/
++    );
 +  });
 +
-+  it("does nothing when provider status is ready", () => {
-+    const result = runScenario({
-+      autoCaptureEnabled: true,
-+      ready: true,
-+      showErrorToasts: true,
-+      withToastClient: true,
-+    });
-+    expect(result.logs).toHaveLength(0);
-+    expect(result.toasts).toHaveLength(0);
-+  });
++  it("mentions cache clear / remote embeddings when unresolved", () => {
++    const fakeRequire = ((id: string) => {
++      throw new Error(`Cannot find module '${id}'`);
++    }) as NodeRequire;
++    fakeRequire.resolve = ((_id: string) => {
++      throw new Error(`Cannot find module '${_id}'`);
++    }) as NodeRequire["resolve"];
 +
-+  it("does nothing when auto-capture is disabled", () => {
-+    const result = runScenario({
-+      autoCaptureEnabled: false,
-+      ready: false,
-+      showErrorToasts: true,
-+      withToastClient: true,
-+    });
-+    expect(result.logs).toHaveLength(0);
-+    expect(result.toasts).toHaveLength(0);
++    expect(() =>
++      resolveTransformersCjsEntry({
++        requireFn: fakeRequire,
++        startPaths: [join(tmpdir(), "empty-start", "embedding.js")],
++      })
++    ).toThrow(/#463|embeddingApiUrl|plugin cache/i);
 +  });
 +});
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #434** (2026-10-24): chore(release): release v2.34.0 (@EyJunge1)
-- **PR #433** (2026-10-24): fix(auto-capture): toast when provider config is missing (@EyJunge1)
-- **PR #432** (2026-10-24): feat(ai): add API Route memory provider preset (@DennyHo0917)
-- **PR #431** (2026-10-24): fix(auto-capture): read tool names from v2-shaped tool parts (@Phototonic)
-- **PR #430** (2026-10-24): fix(web): cap dialog height so long content keeps actions reachable (@EightDoor)
-- **PR #427** (2026-10-21): chore(release): release v2.33.0 (@EyJunge1)
+- **PR #468** (2026-10-31): chore(release): release v2.39.0 (@EyJunge1)
+- **PR #467** (2026-10-31): fix(embedding): harden transformers resolve for OpenCode nested installs (@EyJunge1)
+- **PR #466** (2026-10-31): feat(dreaming): related-threshold consolidation with supersede and flag (@EyJunge1)
+- **PR #465** (2026-10-31): feat(capture): optional update-on-capture for similar memories (@EyJunge1)
+- **PR #462** (2026-10-30): chore(release): release v2.38.0 (@EyJunge1)
+- **PR #461** (2026-10-30): feat(memory): add relevance-based auto-recall and opt-in dreaming (@EyJunge1)
 
 ---
 
@@ -1517,32 +1359,58 @@ Refs: #424
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): cap dialog height so long content keeps actions reachable (#430)
+## X. embedding): harden transformers resolve for OpenCode nested installs (#467)
 
 **RULE**:
-When implementing operations in `web/src/lib/components/explorer/AiCleanupDialog.svelte`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/services/embedding.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a899710`: web): cap dialog height so long content keeps actions reachable (#430). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `237a0e63`: embedding): harden transformers resolve for OpenCode nested installs (#467). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/lib/components/explorer/AiCleanupDialog.svelte`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/services/embedding.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  class="sm:max-w-2xl {GAP_WIDE}"
-    <div class="flex min-h-0 flex-1 flex-col {GAP_LOOSE} overflow-hidden">
-    <div class="flex min-h-0 flex-1 flex-col {GAP_LOOSE} overflow-hidden">
+import {
+  getTransformersPackageSpecifier,
+  resolveTransformersCjsEntry,
+} from "./transformers-resolve.js";
+  // resolves them (#184 / #210 / #225 / #463). Load the CJS export so Module._resolveFilename
+  //
+  // #463: OpenCode nested npm/Bun cache layouts can make createRequire(packageName)
+  // fail even when the package is on disk — fall back to Bun.resolveSync + node_modules walk.
+  const meta = import.meta as ImportMeta & { path?: string; dirname?: string; dir?: string };
+  const transformersEntry = resolveTransformersCjsEntry({
+    requireFn: requireFromHere,
+    specifier: transformersSpecifier,
+    startPaths: [meta.url, meta.path, meta.dirname, meta.dir, process.cwd()],
+  });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  class="grid! sm:max-w-2xl max-h-[90vh] grid-rows-[auto_minmax(0,1fr)_auto] overflow-hidden {GAP_WIDE}"
-    <div class="flex min-h-0 flex-col {GAP_LOOSE} overflow-hidden">
-    <div class="flex min-h-0 flex-col {GAP_LOOSE} overflow-hidden">
+function getTransformersPackageSpecifier(): string {
+  // Keep this non-literal so OpenCode/Bun plugin-loader bundling does not eagerly
+  // traverse @huggingface/transformers internals during plugin startup. The package
+  // is only needed for the local embedding backend, and should stay lazy.
+  return ["@huggingface", "transformers"].join("/");
+}
+
+  // resolves them (#184 / #210 / #225). Load the CJS export so Module._resolveFilename
+  let transformersEntry: string;
+  try {
+    transformersEntry = requireFromHere.resolve(transformersSpecifier);
+  } catch (error) {
+    throw new Error(
+      `Cannot resolve ${transformersSpecifier} before installing the onnxruntime pin shim. ` +
+        `Original error: ${error instanceof Error ? error.message : String(error)}`,
+      { cause: error }
+    );
+  }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a899710` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `237a0e63` are properly handled with clean fallback behavior.

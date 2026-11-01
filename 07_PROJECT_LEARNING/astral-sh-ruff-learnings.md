@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
-> **Source Version**: `e139fbd6`  
+> **Source Version**: `23a16fa0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:24:43.738Z  
+> **Timestamp**: 2026-10-31T16:20:20.024Z  
 > **Learning ID**: `learn-github-astral-sh-ruff`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/ruff](https://github.com/astral-sh/ruff))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:24:43.730Z  
+> **Harvest Timestamp**: 2026-10-31T16:20:18.853Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python linter and code formatter, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 50289 stars
+- **Stars / Engagement**: 50361 stars
 
 ---
 
@@ -1548,7 +1548,7 @@ impl Renderer for AzureRenderer<'_> {
     fn render(&self, f: &mut std::fmt::Formatter, diagnostics: &[Diagnostic]) -> std::fmt::Result {
         for diag in diagnostics {
             let severity = match diag.severity() {
-                Severity::Info | Severity::Warning => "warning",
+                Severity::Hint | Severity::Info | Severity::Warning => "warning",
                 Severity::Error | Severity::Fatal => "error",
             };
             write!(f, "##vso[task.logissue type={severity};")?;
@@ -1703,6 +1703,7 @@ impl Renderer for ConciseRenderer<'_> {
                 }
             } else {
                 let (severity, severity_style) = match diag.severity() {
+                    Severity::Hint => ("hint", stylesheet.info),
                     Severity::Info => ("info", stylesheet.info),
                     Severity::Warning => ("warning", stylesheet.warning),
                     Severity::Error => ("error", stylesheet.error),
@@ -2102,14 +2103,11 @@ impl<'a> Diff<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29691** (2026-10-24): **[ty] Bound tuple expansion in type displays**
-  *Symptoms*: ## Summary  With 18 assignments of the form `b = (a, a)`, `ty check --output-format concise` used to print 3 MiB for a single `call-non-callable` error. It now prints 1.7 KiB.  Each assignment reuses the previous tuple type twice, so spelling out the type in the error message doubles the number of `int`s at each step:  ```python def f(x: int):     a = (x, x)     b = (a, a)     b()  # Object of type `tuple[tuple[int, int], tuple[int, int]]` is not callable ```  We now share a budget of 256 elements across a tuple and its nested tuples. If a tuple's elements exceed the remaining budget, we display it as `tuple[...]`. Deep tuples still display in full when they fit. Inlay hints omit the text edit when the type contains an abbreviation, so editors won't insert `tuple[...]` as an annotation. 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- generated-comment typing-conformance --> <!-- report-run:40139169587:1 -->   ## [Typing conformance results](https://github.com/python/typing/blob/d06c5dd6bbae4a39eb7cb0210c5b2099aafd8032/conformance/)  ### No changes detected ✅  <details> <summary>Current numbers</summary>  <br> The percentage of diagnostics emitted that were expected errors held steady at <b>98.25%</b>. The percentage of expected errors that received a diagnostic held steady at <b>98.77%</b>. The number of fully passing files held steady at <b>136/146</b>.  </details>  ---  Results for [afffccc](https://github.com/astral-sh/ruff/commit/afffccc49633eb3095b421b0d073b2522ed693fd) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40139169587/attempts/1) 
-  > <!-- generated-comment memory --> <!-- report-run:40139169527:1 -->  ## Memory usage report  Memory usage unchanged ✅  ---  Results for [afffccc](https://github.com/astral-sh/ruff/commit/afffccc49633eb3095b421b0d073b2522ed693fd) · [Workflow run](https://github.com/astral-sh/ruff/actions/runs/40139169527/attempts/1) 
+- **Issue #29815** (2026-10-29): **[ty] Account for loop and nonlocal writes to captured variables**
+  *Symptoms*: ## Summary  A closure created on the first iteration can run after the loop variable has changed. On main, ty accepts this function. Python raises `TypeError` at the addition when `readers[0]()` runs.  ```python def run():     readers = []     for x in (1, None):         if x is not None:             readers.append(lambda: x + 1)     return readers[0]() ```  We include later iterations' assignments when the path that created the closure can reach another iteration. A path that exits with `break` or `return` keeps its narrowing. Closures that share the same loop binding history also share its inferred type.  A sibling function can change a captured value through `nonlocal`, even when that sibling is defined before the guard. We match writers to the cell they actually assign. A writer that assigns another integer still permits integer arithmetic. A writer that assigns `None` makes the read optional again.  This can add a warning when an API consumes a callback synchronously inside the loop. We also use the type of the assignment in the writer. If the writer takes an `int | None` parameter, a call that passes only `19` can still leave a later read typed as optional.  The comprehension follow-up is [#29813](https://github.com/astral-sh/ruff/pull/29813).  ## Verification  Of 103 reduced programs checked against main and CPython, this change diagnoses nine additional programs that raise `TypeError`. The other 94 produced identical diagnostics.  The [ecosystem run](https://github.co
 
-- **Issue #29649** (2026-10-24): **[ty] Avoid expanding declared bounds in captured ParamSpecs**
-  *Symptoms*: Passing overloaded generic functions to `Callable[P, object]` can cause the constraint solver to enumerate combinations of signatures specialized to their declared type-variable bounds. The captured signatures already retain those bounds, so this adds substantial work without new call-site evidence.  Track the replacement constraint's provenance and skip this specialization for locally bound variables in captured ParamSpec signatures when the replacement comes solely from a validity constraint. Evidence and mixed constraints still specialize local variables, and free variables retain normal substitution, including expansion of free ParamSpecs into overloads.  Preserving the generic parameters also lets a callback constrained to `(str, bytes)` receive either type when forwarded through a `ParamSpec`, instead of being restricted to its first constraint.  Fixes https://github.com/astral-sh/ty/issues/4796.  ## Test plan  Compared against `90bcf19c58b4` using the same Linux/aarch64 environment and optimized dev profile (Rust 1.99.0, opt-level 1, LTO off):  - The issue's NumPy reproducer, using NumPy 2.5.4 and Python 3.12 semantics, improved from an 11.03 s mean across three runs to 0.101 s across ten runs (about 110× faster). Every run completed without diagnostics. - The six-overload benchmark improved from 225 ms to 22.5 ms across ten Criterion samples (about 10× faster), with no diagnostics before or after.  ## Ecosystem report  Analyzed head `5c07a3b83f78d45ccf9994f0bfa681ee25
+- **Issue #29814** (2026-10-29): **[`flake8-simplify`] Report collapsible `elif` clauses after a multi-statement `if` branch (`SIM102`)**
+  *Symptoms*: ## Summary  Part of #29422.  SIM102 missed a nested `if` inside an `elif` whenever the first branch had more than one statement. In `nested_if_body`, when the last branch is an `elif` we pick that clause as the nested `if`, but the "only one statement" check still looked at the outer `if` body. So the length check was done on the wrong body.  The fix checks `nested_if.body().len()` instead, so an `elif` uses its own body. The plain `if` path behaves the same as before.  This only covers the SIM102 item from the issue. I didn't touch the other rules there.  ## Test Plan  I added two cases to `SIM102.py`: an `elif` that only contains a nested `if` after a multi-statement first branch (now flagged), and one where the `elif` has another statement next to the nested `if` (still not flagged). The example from the issue is now reported at 5:5. The snapshot also gets one extra context line on the previous last diagnostic, because the file doesn't end there anymore.  `cargo test -p ruff_linter` and clippy both pass.  I used Claude (via T3 Code) to help with this change, and I reviewed and tested it myself. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2126,252 +2124,426 @@ impl<'a> Diff<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e139fbd6` (2026-10-25)
-**Commit Message**: [ty] Reuse each generic context's inferable type variables (#29700)
+### Incident Patch 1: `23a16fa0` (2026-10-31)
+**Commit Message**: [ty] Avoid invalid keyword arguments when accepting inlay hints (#29806)
 
 ## Summary
 
-Checking 4,800 calls to a generic function with four parameters took 108
-→ 100 ms of CPU time. Each parameter uses the same set of type
-variables, but ty rebuilt that set for every argument. Ty now computes
-it once per generic context.
+ty now keeps an argument-name hint visible but omits its edit when the
+call already has that keyword argument or when the displayed name cannot
+be used as a Python identifier.
 
-Calls with plain `int` parameters were essentially unchanged. Checking
-all of
-[PyTorch](https://github.com/pytorch/pytorch/tree/ab92945cea42e47ae398aead69af0872d340ea0f)
-showed no consistent speedup.
+- Given `def f(x): ...`, the call `f(1, x=2)` compiles but raises
+`TypeError` at runtime. Accepting the `x=` hint used to produce `f(x=1,
+x=2)`, which prevents the whole module from compiling.
+- Python accepts the fullwidth parameter name in `def f(ｉｆ): ...`. ty
+displays its normalized spelling, `if=`, but inserting that spelling
+would produce the syntax error `f(if=1)`.
 
-**File**: `crates/ty_python_semantic/src/types/generics.rs` (modified, +4/-0)
+Stacked on [#29801](https://github.com/astral-sh/ruff/pull/29801).
+
+## Test plan
+
+An existing snapshot explicitly expected the edit `foo(y='hello', 1)` →
+`foo(y='hello', y=1)`. The old helper only required the edited source to
+parse if the original parsed. It skipped that check here because the
+original call already had a positional argument after a keyword
+argument. The edited call parses, but Python rejects the repeated
+keyword at compile time. [Previous
+snapshot](https://github.com/astral-sh/ruff/blob/efbefae896f7c9ced52be4696ffcb0ac4598b29c/crates/ty_i
+
+**File**: `crates/ty_ide/src/inlay_hints.rs` (modified, +131/-28)
 ```diff
-@@ -371,6 +371,7 @@ pub(super) fn walk_generic_context<'db, V: TypeVisitor<'db> + ?Sized>(
- // The Salsa heap is tracked separately.
- impl get_size2::GetSize for GenericContext<'_> {}
+@@ -9,6 +9,7 @@ use ruff_python_ast::{
+     AnyNodeRef, ArgOrKeyword, Arguments, Expr, ExprAttribute, ExprName, ExprUnaryOp, Parameters,
+     Stmt, StmtAssign, UnaryOp,
+ };
++use ruff_python_stdlib::identifiers::is_identifier;
+ use ruff_text_size::{Ranged, TextRange, TextSize};
+ use ty_module_resolver::file_to_module;
+ use ty_python_core::ProgramFile;
+@@ -604,7 +605,14 @@ impl<'a> SourceOrderVisitor<'a> for InlayHintVisitor<'a, '_> {
+                             // pass `x` twice.
+                             let is_last_positional =
+                                 positional_index + 1 == call.arguments.args.len();
+-                            let mode = if is_last_positional && !argument.is_starred_expr() {
++                            // For `def f(ｉｆ): ...`, `name` is already normalized to the
++                            // reserved word `if`. Inserting `if=` would be a syntax error.
++                            // Repeating an existing keyword, as in `f(x=1, x=2)`, would be too.
++                            let mode = if is_last_positional
++                                && !argument.is_starred_expr()
++                                && is_identifier(name)
++                                && call.arguments.find_keyword(name).is_none()
++                            {
+                                 ArgumentHintMode::Insertable
+                             } else {
+                                 ArgumentHintMode::DisplayOnly
+@@ -880,6 +888,7 @@ mod tests {
+     use insta::{assert_snapshot, internals::SettingsBindDropGuard};
+     use itertools::Itertools;
+     use ruff_db::{
++        Db as _,
+         diagnostic::{
+             Annotation, Diagnostic, DiagnosticId, DisplayDiagnosticConfig, LintName, Severity,
+             Span, SubDiagnostic, SubDiagnosticSeverity,
+@@ -888,14 +897,15 @@ mod tests {
+         source::source_text,
+     };
+     use ruff_diagnostics::{Edit, Fix};
+-    use ruff_python_ast::PySourceType;
+-    use ruff_python_parser::{parse_module, parse_unchecked_source};
+     use ruff_python_trivia::textwrap::dedent;
+     use ruff_text_size::TextSize;
  
-+#[salsa::tracked]
- impl<'db> GenericContext<'db> {
-     /// Creates a generic context from a list of PEP-695 type parameters.
-     pub(crate) fn from_type_params(
-@@ -539,6 +540,9 @@ impl<'db> GenericContext<'db> {
+-    use ruff_db::system::{DbWithWritableSystem, SystemPathBuf};
+-    use ty_project::ProjectMetadata;
++    use ruff_db::system::{
++        DbWithTestSystem, DbWithWritableSystem, SystemPathBuf, SystemVirtualPath,
++    };
+     use ty_project::metadata::options::{AnalysisOptions, Options};
++    use ty_project::{ProjectMetadata, SemanticDb as _};
++    use ty_python_core::semantic_index;
+     use ty_python_semantic::ReturnTypeInference;
+ 
+     /// For a given Python function definition and a call to that function,
+@@ -905,13 +915,13 @@ mod tests {
+     #[track_caller]
+     fn apply_inlay_hints(definition: &str, call: &str) -> String {
+         let mut source = format!("{definition}{call}");
+-        let test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
++        let mut test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
+         let hints = test.collect_hints(&InlayHintSettings::default());
+ 
+         let edits = hints.iter().flat_map(|hint| &hint.text_edits);
+         apply_edits(&mut source, edits);
+ 
+-        parse_module(&source).unwrap();
++        test.assert_syntax_error_counts_do_not_increase(&source);
+         source.strip_prefix(definition).unwrap().to_owned()
      }
  
-     /// Returns the typevars directly bound by this generic context.
-+    ///
-+    /// Argument inference reuses this set for each parameter of each candidate overload.
-+    #[salsa::tracked(returns(copy), heap_size=ruff_memory_usage::heap_size)]
-     pub(crate) fn inferable_typevars(self, db: &'db dyn Db) -> TypeVarSet<'db> {
-         TypeVarSet::from_typevars(db, self.variables(db))
-     }
+@@ -1347,14 +1357,61 @@ mod tests {
+             )
+         }
+ 
++        /// Assert that `source`, with the hint edits applied, has no more parse errors and no
++        /// more semantic syntax errors than the original file. Existing errors in incomplete
++        /// code may remain.
++        #[track_caller]
++        fn assert_syntax_error_counts_do_not_increase(&mut self, source: &str) {
++            #[track_caller]
++            fn assert_error_count_did_not_increase<T: fmt::Display>(
++                kind: &str,
++                original: &[T],
++                edited: &[T],
++                source: &str,
++            ) {
++                assert!(
++                    edited.len() <= original.len(),
++                    "Inlay hint edits increased the number of {kind} from {} to {}.
++{}
++Source with applied edits:
++{source}",
++                    original.len(),
++                    edited.len(),
++                    edited.iter().join("\n"),
++                );
++            }
++
++            let db = &mut self.db;
++            let path = SystemVirtualPath::new("assert-syntax://edited.py");
++            db.write_virtual_file(path, source);
++            let virtual_file = db.files().virtual_file(db, path);
++
++            let original = db.program_file(self.file);
++            let edited = db.program_file(virtual_file.file());
++            let parsed = |file: ProgramFile<'_>| parsed_module(db, file.python_file(db)).load(db);
++            assert_error_count_did_not_increase(
++                "parse errors",
++                parsed(original).errors(),
++                parsed(edited).errors(),
++                source,
++            );
++       
 ```
 
 ---
 
-### Incident Patch 2: `229cb6eb` (2026-10-25)
-**Commit Message**: [ty] Skip method signature inference for concrete decorator results (#29708)
+### Incident Patch 2: `017c77fc` (2026-10-31)
+**Commit Message**: [ty] Use # ok comments in mdtests (#29856)
 
-## Summary
+Use `# ok` as the marker for mdtest statements whose expectation is that
+no diagnostic is emitted. Update the guidance in `AGENTS.md` and replace
+existing `# no diagnostic` comments in Ruff and ty mdtests.
 
-Checking
-[`discord/state.py`](https://github.com/Rapptz/discord.py/blob/65232c38702be5844cf2ce865a4777eb1928b5d0/discord/state.py)
-opened 100 Python files instead of 112. To decide whether `Interaction`
-was abstract, we used to follow the return annotation on
-[`Interaction.command`](https://github.com/Rapptz/discord.py/blob/65232c38702be5844cf2ce865a4777eb1928b5d0/discord/interactions.py#L355)
-into `discord.ext.commands`.
-
-```python
-def cached_slot_property[Owner, Value](
-    name: str,
-) -> Callable[[Callable[[Owner], Value]], CachedSlotProperty[Owner, Value]]: ...
-
-class Interaction:
-    @cached_slot_property("_cs_command")
-    def command(self) -> Command[Any, ..., Any] | ContextMenu | None: ...
+**File**: `AGENTS.md` (modified, +2/-2)
+```diff
+@@ -123,9 +123,9 @@ Never edit snapshot files or inline snapshot bodies manually. Regenerate them by
+ 
+ - Code blocks for the same file within a section are concatenated into one file. For inline snapshots, keep each example's code block close to its `# snapshot` block. Ideally, any given code block only has one snapshot in it, but one codeblock containing several snapshots is also acceptable. Repeating a short, independent function definition, including one with the same name, is fine if it keeps the code triggering a snapshot close to the snapshot demonstrating the expected diagnostic on that code. Reuse shared setup when clearer, and check that repeated names do not affect other examples.
+ 
+-- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, it is often useful to add a `# no diagnostic` comment on or above the statement to clarify why the statement is there. These can be especially useful if the statement expected to produce 0 diagnostics follows, or is immediately followed by, one or more other statements that are all accompanied by `# error` assertions.
++- When a Python statement in an mdtest is included only or primarily to check that ty does not emit a diagnostic for it, it is often useful to add a `# ok` comment on or above the statement to clarify why the statement is there. These can be especially useful if the statement expected to produce 0 diagnostics follows, or is immediately followed by, one or more other statements that are all accompanied by `# error` assertions.
+ 
+-    Statements used as setup for later assertions do not need `# no diagnostic` comments. It is also not necessary to add such comments in cases where it would anyway be extremely obvious why the statement is included.
++    Statements used as setup for later assertions do not need `# ok` comments. It is also not necessary to add such comments in cases where it would anyway be extremely obvious why the statement is included.
+ 
+ - Prioritize document structure and readability over avoiding duplicated setup. Add a test to an existing section when its heading accurately describes the new scenario, adding or improving introductory prose as needed; otherwise, create a separate sibling section, even if that requires repeating a small fixture.
+ 
 ```
 
-The decorator always returns a `CachedSlotProperty`. The return
-annotation on `command` determines the type of the cached value, but it
-cannot make the descriptor abstract. We now skip the method’s signature
-when its sole decorator rules out an abstract method or property.
-
-Checking all of discord.py showed no measurable speedup.
-
-**File**: `crates/ty_python_semantic/resources/mdtest/abstract.md` (modified, +34/-0)
+**File**: `crates/ruff_linter/resources/mdtest/flake8-type-checking/typing-only-runtime-import.md` (modified, +2/-2)
 ```diff
-@@ -542,3 +542,37 @@ class Alias:
+@@ -74,9 +74,9 @@ Explicit lazy imports and imports made lazy by `__lazy_modules__` already defer
+ not need to move into a type-checking block.
  
- Alias()  # error: [call-non-callable]
+ ```py
+-lazy from pathlib import Path  # no diagnostic
++lazy from pathlib import Path  # ok
+ __lazy_modules__ = ["vendor"]
+-from vendor import Model  # no diagnostic
++from vendor import Model  # ok
+ 
+ def load(value: Path) -> Model: ...
  ```
-+
-+A decorator can also return an abstract method. Here the decorator replaces `Decorated.method` with
-+`Abstract.method`, so `Decorated` is abstract.
-+
-+```py
-+from abc import ABC
-+from collections.abc import Callable
-+from typing import TypeVar
-+
-+T = TypeVar("T")
-+
-+def replace_with(value: T) -> Callable[[object], T]:
-+    return lambda _: value
-+
-+class Decorated(ABC):
-+    @replace_with(Abstract.method)
-+    def method(self) -> None:
-+        pass
-+
-+Decorated()  # error: [call-non-callable]
-+```
-+
-+Python applies the inner decorator first. It returns a plain object, which the outer decorator
-+replaces with `Abstract.method`.
-+
-+```py
-+class Stacked(ABC):
-+    @replace_with(Abstract.method)
-+    @replace_with(object())
-+    def method(self) -> None:
-+        pass
-+
-+Stacked()  # error: [call-non-callable]
-+```
 ```
 
-**File**: `crates/ty_python_semantic/src/types/abstract_methods.rs` (modified, +2/-6)
+**File**: `crates/ruff_linter/resources/mdtest/pyflakes/unused-import.md` (modified, +2/-2)
 ```diff
-@@ -18,7 +18,7 @@ use crate::{
-         ClassBase, ClassLiteral, ClassType, LintDiagnosticGuard, Parameters, Signature, Type,
-         binding_type,
-         diagnostic::{AbstractMethodAnnotationPolicy, abstract_method_span},
--        function::{AbstractMethodKind, FunctionDecorators},
-+        function::AbstractMethodKind,
-         infer::{function_known_decorators, infer_definition_types},
-     },
- };
-@@ -389,11 +389,7 @@ fn might_be_explicitly_abstract<'db>(db: &'db dyn Db, definition: Definition<'db
-     if !function.has_decorators() {
-         return false;
-     }
--    let decorators = function_known_decorators(db, definition);
--    decorators
--        .known_decorators()
--        .contains(FunctionDecorators::ABSTRACT_METHOD)
--        || decorators.has_unknown_decorators()
-+    function_known_decorators(db, definition).may_produce_abstract_method()
- }
+@@ -13,8 +13,8 @@ For standard-library generic types such as `slice` and `frozendict`, Ruff visits
+ type expressions. Names in quoted annotations therefore mark their imports as used.
  
- #[derive(Debug, Clone, PartialEq, Eq, get_size2::GetSize, salsa::SalsaValue)]
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
+ 
+ DecimalSlice = slice["Decimal"]
+ FractionMap = frozendict[str, "Fraction"]
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer.rs` (modified, +7/-6)
+**File**: `crates/ruff_linter/resources/mdtest/pylint/magic-value-comparison.md` (modified, +6/-6)
 ```diff
-@@ -309,7 +309,7 @@ pub(crate) fn is_discarded_dict_key_assignment<'db>(
- #[salsa::tracked(
-     returns(ref),
-     cycle_initial=|_, _, _| FunctionDecoratorInference {
--        has_unknown_decorators: true,
-+        may_produce_abstract_method: true,
-         ..FunctionDecoratorInference::default()
-     },
-     heap_size=ruff_memory_usage::heap_size
-@@ -356,8 +356,9 @@ pub(crate) struct FunctionDecoratorInference<'db> {
-     called_functions: Box<[FunctionType<'db>]>,
-     legacy_aliases: Box<[Definition<'db>]>,
-     known_decorators: FunctionDecorators,
--    /// Whether any decorator is unrecognized, or decorator inference is incomplete.
--    has_unknown_decorators: bool,
-+    /// Whether a decorator could produce an explicitly abstract method, or decorator
-+    /// inference is incomplete.
-+    may_produce_abstract_method: bool,
-     context: InferContextResult,
- }
+@@ -77,20 +77,20 @@ extend-allow-magic-values = [3.5]
  
-@@ -387,12 +388,12 @@ impl<'db> FunctionDecoratorInference<'db> {
-         &self.legacy_aliases
-     }
+ ```py
+ x = 0
+-x == "allowed"  # no diagnostic
++x == "allowed"  # ok
+ x == "other"  # error: [magic-value-comparison]
+-x == -2.5  # no diagnostic
++x == -2.5  # ok
+ x == +2.5  # error: [magic-value-comparison]
+-x == +3.5  # no diagnostic
++x == +3.5  # ok
+ x == 1  # error: [magic-value-comparison]
+ ```
  
--    pub(super) fn known_decorators(&self) -> FunctionDecorators {
-+    fn known_decorators(&self) -> FunctionDecorators {
-         self.known_decorators
-     }
+ Large integers work too. Allowing `2147483648` doesn't also allow `2147483648.0`.
  
--    pub(super) fn has_unknown_decorators(&self) -> bool {
--        self.has_unknown_decorators
-+    pub(super) fn may_produce_abstract_method(&self) -> bool {
-+        self.may_produce_abstract_method
-     }
- 
-     fn context_result(&self) -> &InferContextResult {
+ ```py
+-x == 2147483648  # no diagnostic
+-x == -2147483648  # no diagnostic
+-x == +2147483648  # no diagnostic
++x == 2147483648  # ok
++x == -2147483648  # ok
++x == +2147483648  # ok
+ x == ~2147483648  # error: [magic-value-comparison]
+ x == 2147483649  # error: [magic-value-comparison]
+ x == -2147483649  # error: [magic-value-comparison]
 ```
 
-**File**: `crates/ty_python_semantic/src/types/infer/builder.rs` (modified, +24/-5)
+**File**: `crates/ruff_linter/resources/mdtest/pyupgrade/deprecated-import.md` (modified, +1/-1)
 ```diff
-@@ -12254,25 +12254,44 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-     }
+@@ -82,5 +82,5 @@ select = ["UP035"]
+ ```
  
-     pub(super) fn finish_function_decorator_inference(mut self) -> FunctionDecoratorInference<'db> {
-+        // Specializing a nominal return type can change a descriptor's type arguments, but it
-+        // cannot turn the descriptor into an abstract function, bound method, or property.
-+        fn returns_nominal_instance<'db>(db: &'db dyn Db, decorator: Type<'db>) -> bool {
-+            let Type::Callable(callable) = decorator else {
-+                return false;
-+            };
-+            if callable.kind(db) != CallableTypeKind::Regular {
-+                return false;
-+            }
-+            let [signature] = callable.signatures(db).overloads.as_slice() else {
-+                return false;
-+            };
-+            matches!(signature.return_ty, Type::NominalInstance(_))
-+        }
-+
-         self.infer_region();
+ ```py
+-from typing_extensions import TypeForm  # no diagnostic
++from typing_extensions import TypeForm  # ok
+ ```
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/pyupgrade/pep-695.md` (modified, +8/-8)
+```diff
+@@ -183,12 +183,12 @@ from typing import Generic, TypeAlias, TypeAliasType, TypeVarTuple
  
-         let mut known_decorators = FunctionDecorators::empty();
--        let mut has_unknown_decorators = true;
-+        let mut may_produce_abstract_method = true;
-         if let InferenceRegion::FunctionDecorators(definition) = self.region
-             && let DefinitionKind::Function(function) = definition.kind(self.db())
-         {
--            has_unknown_decorators = false;
--            for decorator in &function.node(self.module()).decorator_list {
-+            may_produce_abstract_method = false;
-+            let decorators = &function.node(self.module()).decorator_list;
-+            for decorator in decorators {
-                 let ty = self.expression_type(&decorator.expression);
-                 let flags = FunctionDecorators::from_decorator_type(self.db(), ty);
-                 known_decorators |= flags;
-                 if flags.is_empty()
-                     && !matches!(ty, Type::ClassLiteral(class)
-                         if class.known(self.db()) == Some(KnownClass::Property))
-+                    && !(decorators.len() == 1 && returns_nominal_instance(self.db(), ty))
-                 {
--                    has_unknown_decorators = true;
-+                    may_produce_abstract_method = true;
-                 }
-             }
-+            may_produce_abstract_method |=
-+                known_decorators.contains(FunctionDecorators::ABSTRACT_METHOD);
-         }
+ Ts = TypeVarTuple("Ts", bound=int)
  
-         let Self {
-@@ -12314,7 +12333,7 @@ impl<'db, 'ast> TypeInferenceBuilder<'db, 'ast> {
-                 .collect::<Vec<_>>()
-                 .into_boxed_slice(),
-             known_decorators,
--            has_unknown_decorators,
-+            may_produce_abstract_method,
-             context,
-         }
-     }
+-BoundedAlias: TypeAlias = tuple[*Ts]  # no diagnostic
+-BoundedAliasType = TypeAliasType("BoundedAliasType", tuple[*Ts], type_params=(Ts,))  # no diagnostic
++BoundedAlias: TypeAlias = tuple[*Ts]  # ok
++BoundedAliasType = TypeAliasType("BoundedAliasType", tuple[*Ts], type_params=(Ts,))  # ok
+ 
+-class Bounded(Generic[*Ts]): ...  # no diagnostic
++class Bounded(Generic[*Ts]): ...  # ok
+ 
+-def bounded(ts: tuple[*Ts]): ...  # no diagnostic
++def bounded(ts: tuple[*Ts]): ...  # ok
+ ```
+ 
+ ## Bounded `ParamSpec`
+@@ -209,12 +209,12 @@ from typing import Generic, ParamSpec, TypeAlias, TypeAliasType
+ 
+ P = ParamSpec("P", bound=int)
+ 
+-BoundedAlias: TypeAlias = Callable[P, int]  # no diagnostic
+-BoundedAliasType = TypeAliasType("BoundedAliasType", Callable[P, int], type_params=(P,))  # no diagnostic
++BoundedAlias: TypeAlias = Callable[P, int]  # ok
++BoundedAliasType = TypeAliasType("BoundedAliasType", Callable[P, int], type_params=(P,))  # ok
+ 
+-class Bounded(Generic[P]): ...  # no diagnostic
++class Bounded(Generic[P]): ...  # ok
+ 
+-def bounded(callback: Callable[P, int]): ...  # no diagnostic
++def bounded(callback: Callable[P, int]): ...  # ok
+ ```
+ 
+ ## Imported type variables
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/ruff/legacy-form-pytest-raises.md` (modified, +3/-3)
+```diff
+@@ -20,7 +20,7 @@ def func(a, b):
+ 
+ 
+ def test_error_nested_in_with():
+-    with pytest.raises(ValueError, "oops"):  # no diagnostic
++    with pytest.raises(ValueError, "oops"):  # ok
+         pytest.raises(ZeroDivisionError, func, 1, b=0)  # error: [legacy-form-pytest-raises]
+ ```
+ 
+@@ -31,7 +31,7 @@ import pytest
+ 
+ 
+ def test_ok_positional_args():
+-    with pytest.warns(UserWarning, "oops"):  # no diagnostic
++    with pytest.warns(UserWarning, "oops"):  # ok
+         pass
+ ```
+ 
+@@ -42,6 +42,6 @@ import pytest
+ 
+ 
+ def test_ok_positional_args():
+-    with pytest.deprecated_call("oops"):  # no diagnostic
++    with pytest.deprecated_call("oops"):  # ok
+         pass
+ ```
+```
+
+**File**: `crates/ruff_linter/resources/mdtest/typing.md` (modified, +15/-15)
+```diff
+@@ -16,8 +16,8 @@ Both `TypeForm[...]` and `TypeForm(...)` accept type expressions, so quoted type
+ their imports as used even outside an annotation.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
+ from typing import TypeForm
+ 
+ DecimalForm = TypeForm["Decimal"]
+@@ -29,8 +29,8 @@ form = TypeForm("Fraction")
+ Both forms also work with the backport, including when imported under an alias.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from pathlib import Path  # no diagnostic
++from decimal import Decimal  # ok
++from pathlib import Path  # ok
+ from typing_extensions import TypeForm as TF
+ 
+ DecimalForm = TF["Decimal"]
+@@ -43,9 +43,9 @@ Quoted types in `TypeIs` and `TypeGuard` subscriptions also mark their imports a
+ annotations. This includes the backports in `typing_extensions`.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
+-from pathlib import Path  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
++from pathlib import Path  # ok
+ from typing import TypeIs
+ import typing_extensions
+ 
+@@ -60,7 +60,7 @@ The `extra_items` argument to a `TypedDict` class is a type expression. Imports
+ this quoted argument are used.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ class Record(TypedDict, extra_items="Decimal"):
+@@ -73,7 +73,7 @@ The backported `TypedDict` also accepts quoted types in `extra_items`, including
+ an alias.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing_extensions import TypedDict as TD
+ 
+ class Record(TD, extra_items="Decimal"):
+@@ -85,7 +85,7 @@ class Record(TD, extra_items="Decimal"):
+ Subclasses can specify the type of extra items, including when their base is a generic `TypedDict`.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ class Base[T](TypedDict):
+@@ -101,7 +101,7 @@ A class can also inherit from a `TypedDict` defined with the functional syntax.
+ argument is still a type expression.
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ Base = TypedDict("Base", {})
+@@ -116,7 +116,7 @@ Stub files allow a base class to be defined later. Quoted extra item types still
+ when the base is a `TypedDict`.
+ 
+ ```pyi
+-from decimal import Decimal  # no diagnostic
++from decimal import Decimal  # ok
+ from typing import TypedDict
+ 
+ class Record(Base, extra_items="Decimal"): ...
+@@ -145,7 +145,7 @@ mark its import as used.
+ ```py
+ from decimal import Decimal  # error: [unused-import] "`decimal.Decimal` imported but unused"
+ from fractions import Fraction  # error: [unused-import] "`fractions.Fraction` imported but unused"
+-from pathlib import Path  # no diagnostic
++from pathlib import Path  # ok
+ from typing import TypedDict
+ 
+ Closed = TypedDict("Closed", {}, total="Decimal", closed="Fraction")
+@@ -164,8 +164,8 @@ lint.select = ["F401"]
+ ```
+ 
+ ```py
+-from decimal import Decimal  # no diagnostic
+-from fractions import Fraction  # no diagnostic
++from decimal import Decimal  # ok
++from fractions import Fraction  # ok
+ from pathlib import Path  # error: [unused-import] "`pathlib.Path` imported but unused"
+ from typing import TypedDict
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29716** (2026-10-25): [ty] Reuse class member lookups when checking overrides (@charliermarsh)
-- **PR #29713** (closed): [ty] Read annotated receiver attributes without checking their initializers (@charliermarsh)
-- **PR #29712** (closed): [ty] Reuse predicate results when narrowing bindings of one place (@charliermarsh)
-- **PR #29711** (closed): [ty] Skip guarded module calls when both paths continue (@charliermarsh)
-- **PR #29709** (2026-10-25): [ty] Check for instance storage without inferring method assignments (@charliermarsh)
-- **PR #29708** (2026-10-25): [ty] Skip method signature inference for concrete decorator results (@charliermarsh)
+- **PR #29858** (closed): [ty] Show dataclass field docstrings for keyword argument hover (@DSCmatter)
+- **PR #29856** (2026-10-31): [ty] Use # ok comments in mdtests (@carljm)
+- **PR #29855** (2026-10-30): Reduce formatter source-slice overhead (@MichaReiser)
+- **PR #29853** (2026-10-30): Format node fields directly when comment handling is unnecessary (@MichaReiser)
+- **PR #29852** (2026-10-30): Use a Bloom filter for formatter comment lookups (@MichaReiser)
+- **PR #29850** (closed): [ty] Reuse reachability paths across unreachable ranges (@charliermarsh)
 
 ---
 
@@ -2391,31 +2563,53 @@ Checking all of discord.py showed no measurable speedup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ty] Reuse each generic context's inferable type variables (#29700)
+## X. [ty] Avoid invalid keyword arguments when accepting inlay hints (#29806)
 
 **RULE**:
-When implementing operations in `crates/ty_python_semantic/src/types/generics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/ty_ide/src/inlay_hints.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/ruff. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e139fbd6`: [ty] Reuse each generic context's inferable type variables (#29700). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23a16fa0`: [ty] Avoid invalid keyword arguments when accepting inlay hints (#29806). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_python_semantic/src/types/generics.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ty_ide/src/inlay_hints.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[salsa::tracked]
-    ///
-    /// Argument inference reuses this set for each parameter of each candidate overload.
-    #[salsa::tracked(returns(copy), heap_size=ruff_memory_usage::heap_size)]
+use ruff_python_stdlib::identifiers::is_identifier;
+                            // For `def f(ｉｆ): ...`, `name` is already normalized to the
+                            // reserved word `if`. Inserting `if=` would be a syntax error.
+                            // Repeating an existing keyword, as in `f(x=1, x=2)`, would be too.
+                            let mode = if is_last_positional
+                                && !argument.is_starred_expr()
+                                && is_identifier(name)
+                                && call.arguments.find_keyword(name).is_none()
+                            {
+        Db as _,
+    use ruff_db::system::{
+        DbWithTestSystem, DbWithWritableSystem, SystemPathBuf, SystemVirtualPath,
+    };
+    use ty_project::{ProjectMetadata, SemanticDb as _};
+    use ty_python_core::semantic_index;
+        let mut test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
+        test.assert_syntax_error_counts_do_not_increase(&source);
+        /// Assert that `source`, with the hint edits applied, has no more parse errors and no
+        /// more semantic syntax errors than the original file. Existing errors in incomplete
+        /// co
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                            let mode = if is_last_positional && !argument.is_starred_expr() {
+    use ruff_python_ast::PySourceType;
+    use ruff_python_parser::{parse_module, parse_unchecked_source};
+    use ruff_db::system::{DbWithWritableSystem, SystemPathBuf};
+    use ty_project::ProjectMetadata;
+        let test = inlay_hint_test(&format!("{definition}<START>{call}<END>"));
+        parse_module(&source).unwrap();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e139fbd6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23a16fa0` are properly handled with clean fallback behavior.

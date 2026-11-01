@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `615ca692`  
+> **Source Version**: `834340ac`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:31:43.274Z  
+> **Timestamp**: 2026-10-31T13:47:17.702Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:31:42.735Z  
+> **Harvest Timestamp**: 2026-10-31T13:47:17.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4611 stars
+- **Stars / Engagement**: 4633 stars
 
 ---
 
@@ -1883,560 +1883,377 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8ed5415e` (2026-10-24)
-**Commit Message**: fix(vxrn): preserve client output during generation (#1028)
+### Incident Patch 1: `ec85f3ee` (2026-10-31)
+**Commit Message**: fix(deps): pin follow-redirects, joi and node-forge past their high advisories (#1078)
 
-* fix(vxrn): preserve client output during generation
+The stable release's security audit step fails on GHSA-mrwp-f3q8-3g9p (follow-redirects), GHSA-4528-x5fx-h6hg (joi) and the node-forge TLS/X.509 advisories; the root resolutions pin the vulnerable versions.
 
-Validation: focused build lifecycle integration failed before the fix with manifest ENOENT and passed after it using actual Vite builds and real files. Covers retained client manifest/assets, stale server replacement with emptyOutDir disabled, ESM/CJS, full/client-only cleanup, and mocked native cleanup/dispatch. Focused oxlint, oxfmt and git diff --check passed. No native bundle or full framework build.
+Validation: bun install; bun run audit exit 0
 
-* fix(one): retain generation route metadata
-
-Reuse retained buildInfo client chunk paths and cache key during generation, and replace owned generated page, loader, API and middleware output. Restore the direct native platform check for declaration narrowing.
-
-Validation: vxrn package declaration emit and lifecycle integration pass. Actual One/Vite mixed-route proof reproduced omitted SSR, lost shared-chunk mapping and cache-key drift on 7a2c68c544, then passed with unchanged client bytes, retained route metadata, refreshed loader data and stale output removal. Generated SSR with loader/middleware and API requests passed. Both changed packages built JS locally. One d
-
-**File**: `apps/onestack.dev/data/docs/one-build.mdx` (modified, +2/-0)
+**File**: `bun.lock` (modified, +6/-6)
 ```diff
-@@ -31,6 +31,8 @@ Ensure your `.env` file has a `ONE_SERVER_URL` set to your production URL, like:
- ONE_SERVER_URL=https://onestack.dev
- ```
- 
-+After a successful web build, `one build --step generate` reuses the existing client assets, Vite manifest, and `buildInfo.json` while rebuilding the server and generating pages. Keep these outputs together. Run a full build first, and run it again when client code or routes change.
-+
- We provide a production server based on Hono with `one serve` that handles loaders, SSR, and API routes for you. You can choose a deploy target for that server. This can be chosen via your Vite configuration:
- 
- ```tsx fileName=vite.config.ts
-```
-
-**File**: `bun.lock` (modified, +19/-14)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "lockfileVersion": 1,
-+  "lockfileVersion": 3,
-   "configVersion": 0,
-   "workspaces": {
-     "": {
-@@ -31,7 +31,7 @@
-         "ultra-runner": "^3.10.5",
-         "update-ts-references": "^3.4.0",
-         "vxrn": "workspace:*",
--        "zod": "3.25.67",
-+        "zod": "4.6.6",
-       },
-     },
-     "apps/one-tray": {
-@@ -921,7 +921,7 @@
-         "date-fns": "^3.6.0",
-         "ms": "^2.1.3",
-         "one": "workspace:*",
--        "zod": "3.25.67",
-+        "zod": "4.6.6",
-       },
-       "devDependencies": {
-         "@types/ms": "^0.7.34",
-@@ -1464,6 +1464,9 @@
-     "@babel/plugin-transform-modules-systemjs": "7.29.4",
-     "@callstack/liquid-glass": "^0.8.1",
-     "@cloudflare/vite-plugin": "1.41.0",
-+    "@expo/cli": {
-+      "zod": "4.6.6",
-+    },
-     "@isaacs/brace-expansion": "5.0.1",
-     "@react-navigation/bottom-tabs": "8.0.0-alpha.57",
-     "@react-navigation/core": "8.0.0-alpha.41",
-@@ -1535,7 +1538,7 @@
-     "tmp": "0.2.7",
-     "toml": "5.0.1",
-     "typescript": "7.0.2",
--    "undici": "7.29.1",
-+    "undici": "7.30.1",
-     "uuid": "11.1.1",
-     "vite": "8.3.4",
-     "ws": "8.21.0",
-@@ -3285,7 +3288,7 @@
- 
-     "blake3-wasm": ["blake3-wasm@2.1.5", "", {}, "sha512-F1+K8EbfOZE49dtoPtmxUQrpXaBIl3ICvasLh+nJta0xkz+9kF/7uet9fLnwKqhDrmj6g+6K3Tw9yQPUg2ka5g=="],
- 
--    "body-parser": ["body-parser@1.20.8", "", { "dependencies": { "bytes": "~3.1.2", "content-type": "~1.0.5", "debug": "2.6.9", "depd": "2.0.0", "destroy": "~1.2.0", "http-errors": "~2.0.1", "iconv-lite": "~0.4.24", "on-finished": "~2.4.1", "qs": "~6.16.0", "raw-body": "~2.5.3", "type-is": "~1.6.18", "unpipe": "~1.0.0" } }, "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA=="],
-+    "body-parser": ["body-parser@1.20.9", "", { "dependencies": { "bytes": "~3.1.2", "content-type": "~1.0.5", "debug": "2.6.9", "depd": "2.0.0", "destroy": "~1.2.0", "http-errors": "~2.0.1", "iconv-lite": "~0.4.24", "on-finished": "~2.4.1", "qs": "~6.16.0", "raw-body": "~2.5.3", "type-is": "~1.6.18", "unpipe": "~1.0.0" } }, "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw=="],
- 
-     "body-scroll-lock": ["body-scroll-lock@4.0.0-beta.0", "", {}, "sha512-a7tP5+0Mw3YlUJcGAKUqIBkYYGlYxk2fnCasq/FUph1hadxlTRjF+gAcZksxANnaMnALjxEddmSi/H3OR8ugcQ=="],
- 
-@@ -5291,7 +5294,7 @@
- 
-     "unbox-primitive": ["unbox-primitive@1.1.0", "", { "dependencies": { "call-bound": "^1.0.3", "has-bigints": "^1.0.2", "has-symbols": "^1.1.0", "which-boxed-primitive": "^1.1.1" } }, "sha512-nWJ91DjeOkej/TA8pXQ3myruKpKEYgqvpw9lz4OPHj/NWFNluYrjbz9j01CJ8yKQd2g4jFoOkINCTW2I5LEEyw=="],
- 
--    "undici": ["undici@7.29.1", "", {}, "sha512-RYONW2MeafgYlkVOKYKkA/Ag7BmXqgIWCa8t1m0JcxrQg9pI9lEqRhAOruOBCbAohOa/gkCF+iPi9hrgvTzu6Q=="],
-+    "undici": ["undici@7.30.1", "", {}, "sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg=="],
- 
-     "undici-types": ["undici-types@7.24.6", "", {}, "sha512-WRNW+sJgj5OBN4/0JpHFqtqzhpbnV0GuB+OozA9gCL7a993SmU+1JBZCzLNxYsbMfIeDL+lTsphD5jN5N+n0zg=="],
- 
-@@ -5481,7 +5484,7 @@
- 
-     "zip-stream": ["zip-stream@6.0.1", "", { "dependencies": { "archiver-utils": "^5.0.0", "compress-commons": "^6.0.2", "readable-stream": "^4.0.0" } }, "sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA=="],
- 
--    "zod": ["zod@3.25.67", "", {}, "sha512-idA2YXwpCdqUSKRCACDE6ItZD9TZzy3OZMtpfLoh6oPR47lipysRrJfjzMqFxQ3uJuUPyUeWe1r9vLH33xO/Qw=="],
-+    "zod": ["zod@4.6.6", "", {}, "sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA=="],
- 
-     "zustand": ["zustand@5.0.15", "", { "peerDependencies": { "@types/react": ">=18.0.0", "immer": ">=9.0.6", "react": ">=18.0.0", "use-sync-external-store": ">=1.2.0" }, "optionalPeers": ["@types/react", "immer", "react", "use-sync-external-store"] }, "sha512-MpSEjRiBkA9crSYeOUH32rJC7SVqAbm0Fqcqge/bUi2PPoLcBWKOsG+C8mevmpr8TwXHBVkChbbJiyvkE+i/3A=="],
- 
-@@ -5587,8 +5590,6 @@
- 
-     "@expo/cli/pretty-format": ["pretty-format@29.7.0", "", { "dependencies": { "@jest/schemas": "^29.6.3", "ansi-styles": "^5.0.0", "react-is": "^18.0.0" } }, "sha512-Pdlw/oPxN+aXdmM9R00JVC9WVFoCLTKJvDVLgmJ+qAffBMxsV85l/Lu7sNx4zSzPyoL2euImuEwHhOXdEgNFZQ=="],
- 
--    "@expo/cli/zod": ["zod@3.25.76", "", {}, "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ=="],
--
-     "@expo/devcert/debug": ["debug@3.2.7", "", { "dependencies": { "ms": "^2.1.1" } }, "sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ=="],
- 
-     "@expo/metro-config/hermes-parser": ["hermes-parser@0.36.1", "", { "dependencies": { "hermes-estree": "0.36.1" } }, "sha512-GApNk4zLHi2UWoWZZkx7LNCOSzLSc5lB55pZ/PhK7ycFeg7u5LcF88p/WbpIi1XUDtE0MpHE3uRR3u3KB7TjSQ=="],
-@@ -5667,7 +5668,7 @@
- 
-     "@react-native-community/cli-config/cosmiconfig": ["cosmiconfig@9.0.0", "", { "dependencies": { "env-paths": "^2.2.
-```
-
-**File**: `package.json` (modified, +3/-2)
-```diff
-@@ -85,7 +85,8 @@
-     "@xmldom/xmldom": "0.9.12",
+@@ -1546,19 +1546,19 @@
+     "fast-xml-builder": "1.1.7",
      "fast-xml-parser": "5.9.0",
-     "tar": "7.5.11",
--    "undici": "7.29.1",
-+    "undici": "7.30.1",
-+    "@expo/cli/zod": "4.6.6",
-     "esbuild": "0.28.1",
-     "vite": "8.3.4",
-     "rolldown": "1.2.13",
-@@ -184,7 +185,7 @@
-     "ultra-runner": "^3.10.5",
-     "update-ts-references": "^3.4.0",
-     "vxrn": "workspace:*",
--    "zod": "3.25.67",
-+    "zod": "4.6.6",
-     "@tamagui/cli": "3.1.3"
-   },
-   "upgradeSets": {
+     "fastify": "5.12.5",
+-    "follow-redirects": "1.16.1",
++    "follow-redirects": "1.16.2",
+     "form-data": "4.0.6",
+     "got": "11.8.5",
+     "hono": "4.13.11",
+     "image-size": "2.0.3",
+     "ip-address": "10.7.1",
+-    "joi": "17.13.8",
++    "joi": "17.13.9",
+     "js-yaml": "4.3.2",
+     "launch-editor": "2.14.2",
+     "lodash": "4.18.1",
+     "minimatch": "3.1.5",
+     "nanoid": "3.3.18",
+-    "node-forge": "1.4.0",
++    "node-forge": "1.4.2",
+     "picomatch": "^4.0.4",
+     "piscina": "4.9.4",
+     "postcss": "8.5.23",
+@@ -3831,7 +3831,7 @@
+ 
+     "flow-parser": ["flow-parser@0.336.0", "", { "dependencies": { "flow-estree": "0.336.0" } }, "sha512-O8QvQf/B3rBF+eagcc9/WMAjfJoaKckdgSd8PT/qvMIIe4ZjVKrSqV5SDnRFAKY0VrE8r5C4ADYgvYhmwkWADA=="],
+ 
+-    "follow-redirects": ["follow-redirects@1.16.1", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg=="],
++    "follow-redirects": ["follow-redirects@1.16.2", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow=="],
+ 
+     "fontverter": ["fontverter@2.0.0", "", { "dependencies": { "wawoff2": "^2.0.0", "woff2sfnt-sfnt2woff": "^1.0.0" } }, "sha512-DFVX5hvXuhi1Jven1tbpebYTCT9XYnvx6/Z+HFUPb7ZRMCW+pj2clU9VMhoTPgWKPhAs7JJDSk3CW1jNUvKCZQ=="],
+ 
+@@ -4159,7 +4159,7 @@
+ 
+     "jju": ["jju@1.4.0", "", {}, "sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA=="],
+ 
+-    "joi": ["joi@17.13.8", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw=="],
++    "joi": ["joi@17.13.9", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-llFCT2rVtfwgBCaIqxtjim+iHqrgss4ONiGSYiiGH9jnjWq90ppSRffqmqKvwpa8W+YfILyQV6XyGcegXX2T4g=="],
+ 
+     "js-tokens": ["js-tokens@4.0.0", "", {}, "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="],
+ 
+@@ -4511,7 +4511,7 @@
+ 
+     "node-fetch": ["node-fetch@2.7.0", "", { "dependencies": { "whatwg-url": "^5.0.0" }, "peerDependencies": { "encoding": "^0.1.0" }, "optionalPeers": ["encoding"] }, "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A=="],
+ 
+-    "node-forge": ["node-forge@1.4.0", "", {}, "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ=="],
++    "node-forge": ["node-forge@1.4.2", "", {}, "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ=="],
+ 
+     "node-int64": ["node-int64@0.4.0", "", {}, "sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw=="],
+ 
 ```
 
-**File**: `packages/one/src/cli/build.ts` (modified, +50/-3)
+**File**: `package.json` (modified, +3/-3)
 ```diff
-@@ -246,6 +246,17 @@ export async function build(args: {
-   // respect vite's build.outDir config, default to 'dist'
-   const outDir = viteLoadedConfig?.config?.build?.outDir ?? 'dist'
- 
-+  // buildInfo retains route-to-client chunks even for modules merged into shared chunks
-+  const previousBuildInfo: One.BuildInfo | undefined =
-+    args.platform === 'web' && args.step === 'generate'
-+      ? await FSExtra.readJSON(toAbsolute(`${outDir}/buildInfo.json`))
-+      : undefined
-+
-+  if (previousBuildInfo) {
-+    constants.setCacheKey(previousBuildInfo.constants.CACHE_KEY)
-+    process.env.ONE_CACHE_KEY = constants.CACHE_KEY
-+  }
-+
-   const manifest = getManifest({
-     routerRoot,
-     ignoredRouteFiles: oneOptions.router?.ignoredRouteFiles,
-@@ -286,6 +297,33 @@ export async function build(args: {
-   // picked to still be free after the bundle, which another process can take.
-   const { options } = vxrnOutput
- 
-+  if (previousBuildInfo) {
-+    const generatedFiles = new Set([
-+      ...Object.values(previousBuildInfo.routeMap),
-+      ...Object.keys(previousBuildInfo.preloads),
-+      ...Object.keys(previousBuildInfo.cssPreloads),
-+      ...Object.keys(previousBuildInfo.loaders),
-+    ])
-+    for (const loaderPath of Object.keys(previousBuildInfo.loaders)) {
-+      if (!loaderPath) continue
-+      generatedFiles.add(loaderPath.replace(/\.js$/, '.native.js'))
-+      generatedFiles.add(
-+        loaderPath.replace(
-+          constants.LOADER_JS_POSTFIX,
-+          constants.NATIVE_LOADER_JS_POSTFIX_UNCACHED
-+        )
-+      )
-+    }
-+    await Promise.all([
-+      ...['api', 'middlewares', 'static'].map((folder) =>
-+        FSExtra.remove(join(outDir, folder))
-+      ),
-+      ...[...generatedFiles]
-+        .filter(Boolean)
-+        .map((file) => FSExtra.remove(join(outDir, 'client', file))),
-+    ])
-+  }
-+
-   const { optimizeDeps } = getOptimizeDeps('build')
-   const { rolldownOptions: _rolldownOptions, ...optimizeDepsNoRolldown } = optimizeDeps
- 
-@@ -543,11 +581,11 @@ export async function build(args: {
-   // another route re-exports from stops being a dynamic entry and lands in a
-   // plain shared chunk, which has no facade and so gets no source-path key in
-   // the manifest either. the facade pass runs second so it wins where both hit.
--  const clientChunksBySource = new Map<string, { fileName: string; imports: string[] }>()
-+  const clientChunksBySource = new Map<string, { fileName: string }>()
-   if (vxrnOutput.clientOutput) {
-     for (const chunk of vxrnOutput.clientOutput) {
-       if (chunk.type !== 'chunk') continue
--      const info = { fileName: chunk.fileName, imports: chunk.imports || [] }
-+      const info = { fileName: chunk.fileName }
-       for (const moduleId of chunk.moduleIds ?? []) {
-         clientChunksBySource.set(moduleId, info)
-       }
-@@ -556,7 +594,16 @@ export async function build(args: {
-       if (chunk.type !== 'chunk' || !chunk.facadeModuleId) continue
-       clientChunksBySource.set(chunk.facadeModuleId, {
-         fileName: chunk.fileName,
--        imports: chunk.imports || [],
-+      })
-+    }
-+  } else if (previousBuildInfo) {
-+    for (const route of Object.values(previousBuildInfo.routeToBuildInfo)) {
-+      if (!route.clientJsPath) continue
-+      const modulePath = normalizePath(
-+        join(resolve(process.cwd(), options.root), routerRoot, route.routeFile.slice(2))
-+      )
-+      clientChunksBySource.set(modulePath, {
-+        fileName: normalizePath(relative(clientDir, route.clientJsPath)),
-       })
-     }
-   }
-```
-
-**File**: `packages/vxrn/src/exports/build.lifecycle.test.ts` (added, +151/-0)
-```diff
-@@ -0,0 +1,151 @@
-+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-+import { tmpdir } from 'node:os'
-+import { join } from 'node:path'
-+import { afterEach, expect, it, vi } from 'vitest'
-+
-+const { nativeBuild } = vi.hoisted(() => ({ nativeBuild: vi.fn() }))
-+
-+vi.mock('../config/getOptionsFilled', () => ({
-+  fillOptions: async (options: object) => ({ ...options, root: process.cwd() }),
-+}))
-+vi.mock('../utils/patches', () => ({ applyBuiltInPatches: async () => {} }))
-+vi.mock('../config/getOptimizeDeps', () => ({
-+  getOptimizeDeps: () => ({
-+    optimizeDeps: { include: [], exclude: [], needsInterop: [] },
-+  }),
-+}))
-+vi.mock('vite', async (importOriginal) => ({
-+  ...(await importOriginal<typeof import('vite')>()),
-+  loadConfigFromFile: async () => ({
-+    config: { build: { outDir: 'output', emptyOutDir: false } },
-+  }),
-+}))
-+vi.mock('../config/getBaseViteConfigWithPlugins', () => ({
-+  getBaseViteConfigWithPlugins: async () => ({
-+    root: process.cwd(),
-+    plugins: [
-+      {
-+        name: 'build-lifecycle-fixture',
-+        resolveId: (id: string) =>
-+          id === 'virtual:one-entry' ? '\0virtual:one-entry' : undefined,
-+        load: (id: string) =>
-+          id === '\0virtual:one-entry'
-+            ? 'export const render = () => "rendered"; globalThis.rendered = render()'
-+            : undefined,
-+      },
-+    ],
-+    build: { rolldownOptions: { output: { entryFileNames: '_virtual_one-entry.js' } } },
-+  }),
-+}))
-+vi.mock('../rn-commands/bundle/buildBundle', () => ({ buildBundle: nativeBuild }))
-+
-+import { build } from './build'
-+
-+const originalCwd = process.cwd()
-+const originalEnv = { ...process.env }
-+const originalPlugins = globalThis.__vxrnAddWebPluginsProd
-+let root: string | undefined
-+
-+afterEach(async () => {
-+  process.chdir(originalCwd)
-+  process.env = { ...originalEnv }
-+  globalThis.__vxrnAddWebPluginsProd = originalPlugins
-+  if (root) await rm(root, { recursive: true, force: true })
-+})
-+
-+it('reuses client output for generation while cleaning rebuilt output', async () => {
-+  root = await mkdtemp(join(tmpdir(), 'vxrn-build-lifecycle-'))
-+  process.chdir(root)
-+  process.env.NODE_ENV = 'production'
-+  process.env.ONE_SERVER_URL = 'https://example.com'
-+  globalThis.__vxrnAddWebPluginsProd = []
-+  const options = { skipEnv: true }
-+
-+  const full = await build(options, { platform: 'web' })
-+  expect(full?.clientOutput?.length).toBeGreaterThan(0)
-+  expect(full?.serverOutput?.length).toBeGreaterThan(0)
-+  const manifestPath = 'output/client/.vite/manifest.json'
-+  const manifest = await readFile(manifestPath, 'utf8')
-+  const clientFile = Object.values(JSON.parse(manifest))[0] as { file: string }
-+  const assetPath = join('output/client', clientFile.file)
-+  const asset = await readFile(assetPath)
-+  const serverEntry = await readFile(full!.serverEntry, 'utf8')
-+  await writeFile(full!.serverEntry, 'old server entry')
-+  await writeFile('output/server/stale.js', 'old server chunk')
-+  await writeFile('output/client/keep.txt', 'retained client output')
-+
-+  const generated = await build(options, { platform: 'web', step: 'generate' })
-+  expect(generated?.clientOutput).toBeUndefined()
-+  expect(generated?.serverOutput?.length).toBeGreaterThan(0)
-+  expect(generated?.clientManifest).toEqual(JSON.parse(manifest))
-+  expect(await readFile(generated!.serverEntry, 'utf8')).toBe(serverEntry)
-+  expect(await readFile(manifestPath, 'utf8')).toBe(manifest)
-+  expect(await readFile(assetPath)).toEqual(asset)
-+  expect(await readFile('output/client/keep.txt', 'utf8')).toBe('retained client output')
-+  await expect(readFile('output/server/stale.js')).rejects.toMatchObject({
-+    code: 'ENOENT',
-+  })
-+
-+  // generation also supports cjs servers and the default web platform
-+  const cjs = await build(
-+    { ...options, build: { server: { outputFormat: 'cjs' } } },
-+    { step: 'generate' }
-+  )
-+  expect(cjs?.serverEntry).toBe(
-+    join(process.cwd(), 'output/server/_virtual_one-entry.cjs')
-+  )
-+  expect(await readFile(cjs!.serverEntry, 'utf8')).toContain('exports.render')
-+  expect(cjs?.clientManifest).toEqual(JSON.parse(manifest))
-+  await expect(readFile('output/server/_virtual_one-entry.js')).rejects.toMatchObject({
-+    code: 'ENOENT',
-+  })
-+
-+  // full builds replace all previous output, including client and unrelated files
-+  await writeFile('output/stale.txt', 'old output')
-+  await build(options, { platform: 'web' })
-+  for (const path of ['output/stale.txt', 'output/client/keep.txt']) {
-+    await expect(readFile(path)).rejects.toMatchObject({ code: 'ENOENT' })
-+  }
-+
-+  // disabling the server still produces a fresh client without reading a manifest
-+  const client = await build(
-+    { ...options, build: { server: false } },
-+    { platform: 'web' }
-+  )
-+  expect(client?.clientOutput?.length).toBeGreaterThan(0)
-+  expect(client?.serverOutput).toBeUndefined()
-+  expect(client?.clientManifest).toBeUndefined()
-+  await expect(readFile('outp
-```
-
-**File**: `packages/vxrn/src/exports/build.ts` (modified, +6/-11)
-```diff
-@@ -19,8 +19,6 @@ import { getServerCJSSetting, getServerEntry } from '../utils/getServerEntry'
- import { applyBuiltInPatches } from '../utils/patches'
- import { loadEnv } from './loadEnv'
- 
--const { existsSync } = FSExtra
--
- const disableOptimizationConfig = {
-   optimizeDeps: {},
- 
-@@ -79,15 +77,12 @@ export const build = async (optionsIn: VXRNOptions, buildArgs: BuildArgs = {}) =
- 
-   const outDir = userViteConfig?.build?.outDir ?? 'dist'
- 
--  // clean
--  await Promise.all([
--    (async () => {
--      // lets always clean output folder for now to be sure were correct
--      if (existsSync(outDir)) {
--        await rm(outDir, { recursive: true, force: true })
--      }
--    })(),
--  ])
-+  const isNativeBuild = buildArgs.platform === 'ios' || buildArgs.platform === 'android'
-+
-+  // generation reuses client assets and their manifest, but rebuilds the server
-+  const cleanDir =
-+    buildArgs.step === 'generate' && !isNativeBuild ? `${outDir}/server` : outDir
-+  await rm(cleanDir, { recursive: true, force: true })
- 
-   if (buildArgs.platform === 'ios' || buildArgs.platform === 'android') {
-     const { buildBundle } = await import('../rn-commands/bundle/buildBundle')
-```
-
-**File**: `tests/test-build-unified/package.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-     "date-fns": "^3.6.0",
-     "ms": "^2.1.3",
-     "one": "workspace:*",
--    "zod": "3.25.67"
-+    "zod": "4.6.6"
-   },
-   "devDependencies": {
-     "@types/ms": "^0.7.34",
+@@ -108,7 +108,7 @@
+     "image-size": "2.0.3",
+     "minimatch": "3.1.5",
+     "brace-expansion": "5.0.12",
+-    "node-forge": "1.4.0",
++    "node-forge": "1.4.2",
+     "picomatch": "^4.0.4",
+     "piscina": "4.9.4",
+     "shell-quote": "1.11.0",
+@@ -140,13 +140,13 @@
+     "@typescript/typescript-win32-x64": "7.0.2",
+     "@cloudflare/vite-plugin": "1.41.0",
+     "ws": "8.21.0",
+-    "follow-redirects": "1.16.1",
++    "follow-redirects": "1.16.2",
+     "form-data": "4.0.6",
+     "qs": "6.15.2",
+     "ajv": "8.20.0",
+     "ip-address": "10.7.1",
+     "postcss": "8.5.23",
+-    "joi": "17.13.8",
++    "joi": "17.13.9",
+     "launch-editor": "2.14.2",
+     "uuid": "11.1.1",
+     "js-yaml": "4.3.2",
 ```
 
 ---
 
-### Incident Patch 2: `f8042e16` (2026-10-23)
-**Commit Message**: Fix plist patch registry context
+### Incident Patch 2: `5a76a11a` (2026-10-31)
+**Commit Message**: fix(utils): dev manifest carries native usage descriptions (#1077)
 
-Validation: reproduced original hunk failure with Bun 1.4.4 and an empty isolated cache. Repaired patch passed a frozen install of all 2002 workspace packages using copied manifests, the unchanged bun.lock, and a fresh private cache; lifecycle scripts disabled. Focused Bun and Node probes verified normal, BOM and leading whitespace XML, text/xml parser input, malformed-root rejection, and exact installed-source equivalence to the original parsing contract. git diff --check passed.
-Team-Machine-Session: r119395
+* fix(utils): the dev manifest carries the native usage descriptions the built app has
 
-**File**: `patches/plist@3.1.0.patch` (modified, +2/-4)
+expoClientFromNativeApp left imagePicker, photoLibrary and the other native fields out of ios.infoPlist, so a live preview with no Info.plist could not read NSPhotoLibraryUsageDescription and PhotoLibrary requests threw the manifest error. prebuild and the manifest now share iosUsageDescriptions.
+
+Validation: vitest run src/nativeAppManifest.test.ts in packages/utils (24 passed); prebuildWithoutExpo.test.ts not run (worktree lacks sharp)
+
+* chore(utils): regenerate committed types
+
+Validation: bun run build in packages/utils and packages/vxrn; only nativeAppManifest.d.ts changed
+
+**File**: `packages/utils/src/nativeAppManifest.test.ts` (modified, +15/-0)
 ```diff
-@@ -1,11 +1,9 @@
- diff --git a/lib/parse.js b/lib/parse.js
--index b4ff0f65b9fe9e43b381f46f6451f1c53f93c641..1bad3a8a4d268c1849e91300998bb7c8138547f5 100644
-+index b5e7496a28d0664933a14f4fcd89682c8a349d3f..97acf770b40a08b36f602c46e524498f8f906823 100644
- --- a/lib/parse.js
- +++ b/lib/parse.js
--@@ -63,7 +63,8 @@ function isEmptyNode(node) {
--  */
-+@@ -65,5 +65,6 @@
-  function parse (xml) {
--   // prevent the parser from logging non-fatal errors
- -  var doc = new DOMParser().parseFromString(xml);
- +  xml = xml.replace(/^\uFEFF/, '').trimStart();
- +  var doc = new DOMParser().parseFromString(xml, 'text/xml');
+@@ -355,6 +355,21 @@ describe('native.app manifest', () => {
+     ).toBe('dark')
+   })
+ 
++  // a preview has no Info.plist, so the manifest carries the purpose strings
++  // prebuild stamps for the native fields.
++  test('the dev manifest carries the usage descriptions the built app has', () => {
++    const client = expoClientFromNativeApp({
++      ...app,
++      imagePicker: { camera: 'Take photos.' },
++      photoLibrary: { readWrite: 'Pick photos.', addOnly: 'Save photos.' },
++    })
++    expect(client.ios?.infoPlist).toMatchObject({
++      NSCameraUsageDescription: 'Take photos.',
++      NSPhotoLibraryUsageDescription: 'Pick photos.',
++      NSPhotoLibraryAddUsageDescription: 'Save photos.',
++    })
++  })
++
+   test('the dev manifest carries both native launch background images', () => {
+     const client = expoClientFromNativeApp({
+       ...app,
 ```
 
----
-
-### Incident Patch 3: `615ca692` (2026-10-25)
-**Commit Message**: Stream local release builds and clean up cancellation (#1045)
-
-Validation: inert actual-code Turbo child/grandchild controls passed output-before-exit, success/failure, SIGINT/SIGTERM/SIGHUP cleanup, pipe EOF and unrelated-process survival; focused oxfmt, oxlint and git diff --check passed. No release or package build run.
-Team-Machine-Session: r128422
-
-**File**: `scripts/release-build.ts` (added, +73/-0)
+**File**: `packages/utils/src/nativeAppManifest.ts` (modified, +54/-1)
 ```diff
-@@ -0,0 +1,73 @@
-+import { spawn } from 'node:child_process'
-+import { constants } from 'node:os'
-+import { pipeline } from 'node:stream/promises'
-+
-+export class LocalBuildCancelled extends Error {
-+  constructor(readonly signal: NodeJS.Signals) {
-+    super(`Local package build cancelled by ${signal}`)
+@@ -767,6 +767,57 @@ export function validateNativeApp(
+   return manifest
+ }
+ 
++// the purpose strings the native fields stamp into the ios Info.plist, shared by
++// prebuild and the manifest so a built app and its dev preview state the same keys.
++export function iosUsageDescriptions(app: NativeAppManifest): Map<string, string> {
++  const usage = new Map<string, string>()
++  if (app.imagePicker?.camera !== undefined) {
++    usage.set('NSCameraUsageDescription', app.imagePicker.camera)
 +  }
-+
-+  get exitCode() {
-+    return 128 + constants.signals[this.signal]
++  if (app.imagePicker?.microphone !== undefined) {
++    usage.set('NSMicrophoneUsageDescription', app.imagePicker.microphone)
 +  }
++  if (app.photoLibrary !== undefined) {
++    if (app.photoLibrary.addOnly !== undefined) {
++      usage.set('NSPhotoLibraryAddUsageDescription', app.photoLibrary.addOnly)
++    }
++    if (app.photoLibrary.readWrite !== undefined) {
++      usage.set('NSPhotoLibraryUsageDescription', app.photoLibrary.readWrite)
++    }
++  }
++  if (app.contacts !== undefined) {
++    usage.set('NSContactsUsageDescription', app.contacts.usage)
++  }
++  if (app.calendar !== undefined) {
++    if (app.calendar.usage !== undefined) {
++      usage.set('NSCalendarsFullAccessUsageDescription', app.calendar.usage)
++    }
++    if (app.calendar.remindersUsage !== undefined) {
++      usage.set('NSRemindersFullAccessUsageDescription', app.calendar.remindersUsage)
++    }
++  }
++  if (app.location !== undefined) {
++    usage.set('NSLocationWhenInUseUsageDescription', app.location.whenInUse)
++    if (app.location.alwaysAndWhenInUse !== undefined) {
++      usage.set('NSLocationAlwaysAndWhenInUseUsageDescription', app.location.alwaysAndWhenInUse)
++    }
++  }
++  if (app.pedometer !== undefined) {
++    usage.set('NSMotionUsageDescription', app.pedometer.usage)
++  }
++  if (app.ios?.faceIdUsageDescription !== undefined) {
++    usage.set('NSFaceIDUsageDescription', app.ios.faceIdUsageDescription)
++  }
++  if (app.speech !== undefined) {
++    usage.set('NSSpeechRecognitionUsageDescription', app.speech.recognition)
++    usage.set('NSMicrophoneUsageDescription', app.speech.microphone)
++  }
++  if (app.audio?.microphone !== undefined) {
++    usage.set('NSMicrophoneUsageDescription', app.audio.microphone)
++  }
++  return usage
 +}
 +
-+export async function runLocalBuild(packageNames: string[]): Promise<void> {
-+  const child = spawn(
-+    'bun',
-+    ['x', 'turbo', 'run', 'build', ...packageNames.map((name) => `--filter=${name}`)],
-+    { detached: true, stdio: ['ignore', 'pipe', 'pipe'] }
-+  )
-+  const signals = ['SIGINT', 'SIGTERM', 'SIGHUP'] as const
-+  let cancellation: LocalBuildCancelled | undefined
-+  let stopped: Promise<void> | undefined
+ // the expo config shape the dev server's manifest carries (`extra.expoClient`)
+ // for an app that declares native.app and no expo: clients that read an app's
+ // name, scheme or splash from the manifest read a one app the same way.
+@@ -802,7 +853,9 @@ export function expoClientFromNativeApp(app: NativeAppManifest) {
+       associatedDomains: app.ios.associatedDomains,
+       usesAppleSignIn: app.ios.usesAppleSignIn,
+       googleServicesFile: app.ios.googleServicesFile,
+-      infoPlist: app.ios.infoPlist,
++      // a live preview has no Info.plist, so the purpose strings the built
++      // app carries ride in the manifest's infoPlist
++      infoPlist: { ...app.ios.infoPlist, ...Object.fromEntries(iosUsageDescriptions(app)) },
+       entitlements: app.ios.entitlements,
+     },
+     android: app.android && {
+```
+
+**File**: `packages/utils/types/nativeAppManifest.d.ts` (modified, +4/-1)
+```diff
+@@ -148,6 +148,7 @@ export interface NativeAppManifest {
+     };
+ }
+ export declare function validateNativeApp(manifest: NativeAppManifest, platform?: 'ios' | 'android' | string): NativeAppManifest;
++export declare function iosUsageDescriptions(app: NativeAppManifest): Map<string, string>;
+ export declare function expoClientFromNativeApp(app: NativeAppManifest): {
+     name: string;
+     slug: string;
+@@ -178,7 +179,9 @@ export declare function expoClientFromNativeApp(app: NativeAppManifest): {
+         associatedDomains: string[] | undefined;
+         usesAppleSignIn: boolean | undefined;
+         googleServicesFile: string | undefined;
+-        infoPlist: Record<string, PlistValue> | undefined;
++        infoPlist: {
++            [x: string]: PlistValue;
++        };
+         entitlements: Record<string, PlistValue> | undefined;
+     } | undefined;
+     android: {
+```
+
+**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.ts` (modified, +2/-48)
+```diff
+@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url'
+ import {
+   androidIconSuffix,
+   appIconPreviewResources,
++  iosUsageDescriptions,
+   validateNativeApp,
+   type NativeAppIcon,
+   type NativeAppManifest,
+@@ -2769,54 +2770,7 @@ ${schemes.map((scheme) => `            <data android:scheme="${scheme}" />`).joi
+     if (platform === 'ios' && relativePath.endsWith('/Info.plist')) {
+       // schemes, usesNonExemptEncryption, and fileSharing stamp above in one
+       // anchored block; only the usage descriptions stamp here.
+-      const usage = new Map<string, string>()
+-      if (app.imagePicker?.camera !== undefined) {
+-        usage.set('NSCameraUsageDescription', app.imagePicker.camera)
+-      }
+-      if (app.imagePicker?.microphone !== undefined) {
+-        usage.set('NSMicrophoneUsageDescription', app.imagePicker.microphone)
+-      }
+-      if (app.photoLibrary !== undefined) {
+-        if (app.photoLibrary.addOnly !== undefined) {
+-          usage.set('NSPhotoLibraryAddUsageDescription', app.photoLibrary.addOnly)
+-        }
+-        if (app.photoLibrary.readWrite !== undefined) {
+-          usage.set('NSPhotoLibraryUsageDescription', app.photoLibrary.readWrite)
+-        }
+-      }
+-      if (app.contacts !== undefined) {
+-        usage.set('NSContactsUsageDescription', app.contacts.usage)
+-      }
+-      if (app.calendar !== undefined) {
+-        if (app.calendar.usage !== undefined) {
+-          usage.set('NSCalendarsFullAccessUsageDescription', app.calendar.usage)
+-        }
+-        if (app.calendar.remindersUsage !== undefined) {
+-          usage.set('NSRemindersFullAccessUsageDescription', app.calendar.remindersUsage)
+-        }
+-      }
+-      if (app.location !== undefined) {
+-        usage.set('NSLocationWhenInUseUsageDescription', app.location.whenInUse)
+-        if (app.location.alwaysAndWhenInUse !== undefined) {
+-          usage.set(
+-            'NSLocationAlwaysAndWhenInUseUsageDescription',
+-            app.location.alwaysAndWhenInUse
+-          )
+-        }
+-      }
+-      if (app.pedometer !== undefined) {
+-        usage.set('NSMotionUsageDescription', app.pedometer.usage)
+-      }
+-      if (app.ios?.faceIdUsageDescription !== undefined) {
+-        usage.set('NSFaceIDUsageDescription', app.ios.faceIdUsageDescription)
+-      }
+-      if (app.speech !== undefined) {
+-        usage.set('NSSpeechRecognitionUsageDescription', app.speech.recognition)
+-        usage.set('NSMicrophoneUsageDescription', app.speech.microphone)
+-      }
+-      if (app.audio?.microphone !== undefined) {
+-        usage.set('NSMicrophoneUsageDescription', app.audio.microphone)
+-      }
++      const usage = iosUsageDescriptions(app)
+       const additions: [string, string][] = []
+       for (const [key, text] of usage) {
+         const existing = new RegExp(`(<key>${key}</key>\\s*<string>)[^<]*(</string>)`)
+```
+
+---
+
+### Incident Patch 3: `788e3d9d` (2026-10-29)
+**Commit Message**: perf(one): release unused native memory after dev dependency optimization (#1071)
+
+* perf(one): release native prebundle memory in the development CLI
+
+Initialize Rolldown with direct allocations and immediate purging before the CLI loads Vite. Restore the original environment before user config or child processes run, since Bun uses a separate allocator.
+
+Validation: paired Mac cold One RSS 3209 to 1990 MiB with the same generated output and optimizer completing; runtime environment restoration and Bun child startup passed. Native tracking measured 39 MiB live Rust allocations with 3.1 GiB RSS; forced native collection did not reduce it.
+
+* chore(one): include the development allocator initializer declaration
+
+Validation: bun release --into Contrast built all 16 selected tasks and installed 17 packages successfully; source and launcher format checks passed.
+
+* fix(one): initialize the native binding used by Vite
+
+Validation: installed-package cold dev probe maps one Rolldown native binding; MIMALLOC_VERBOSE reports purge_delay=0 and disallow_arena_alloc=1, with the original environment restored. bun release --into Contrast built and installed the changed source.
+
+**File**: `packages/one/run.mjs` (modified, +5/-1)
+```diff
+@@ -1,3 +1,7 @@
+ #!/usr/bin/env node
+ 
+-import './dist/esm/cli.mjs'
++if (process.argv[2] === 'dev') {
++  const { initializeDevAllocator } = await import('./dist/esm/cli-dev-memory.mjs')
++  await initializeDevAllocator()
++}
++await import('./dist/esm/cli.mjs')
+```
+
+**File**: `packages/one/src/cli-dev-memory.ts` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++import { createRequire } from 'node:module'
++import { pathToFileURL } from 'node:url'
 +
-+  const killGroup = (signal: NodeJS.Signals) => {
-+    if (!child.pid) return
-+    try {
-+      process.kill(-child.pid, signal)
-+    } catch (error) {
-+      if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error
-+    }
++// rolldown's allocator otherwise keeps large arenas resident after prebundling.
++// initialize its binding with direct allocations, then restore the environment
++// before user config and child commands run (bun has its own allocator).
++export async function initializeDevAllocator() {
++  const options = {
++    MIMALLOC_DISALLOW_ARENA_ALLOC: '1',
++    MIMALLOC_PURGE_DELAY: '0',
 +  }
-+  const cancel = (signal: NodeJS.Signals) => {
-+    if (cancellation) return
-+    cancellation = new LocalBuildCancelled(signal)
-+    killGroup(signal)
-+    // descendants may ignore cancellation or outlive the group leader.
-+    stopped = new Promise((resolve) => {
-+      setTimeout(() => {
-+        killGroup('SIGKILL')
-+        resolve()
-+      }, 1000)
-+    })
-+  }
-+  const handlers = signals.map((signal) => {
-+    const handler = () => cancel(signal)
-+    process.on(signal, handler)
-+    return [signal, handler] as const
-+  })
++  const previous = new Map(Object.keys(options).map((key) => [key, process.env[key]]))
++  for (const [key, value] of Object.entries(options)) process.env[key] ??= value
 +
 +  try {
-+    const closed = new Promise<void>((resolve, reject) => {
-+      child.once('error', reject)
-+      child.once('close', (code, signal) => {
-+        if (code === 0) resolve()
-+        else reject(new Error(`Local package build failed (${signal ?? code})`))
-+      })
-+    })
-+    // wait for both pipes even when the command fails or is cancelled.
-+    const results = await Promise.allSettled([
-+      closed,
-+      pipeline(child.stdout!, process.stdout, { end: false }),
-+      pipeline(child.stderr!, process.stderr, { end: false }),
-+    ])
-+    await stopped
-+    if (cancellation) throw cancellation
-+    for (const result of results) {
-+      if (result.status === 'rejected') throw result.reason
-+    }
++    const requireFromVite = createRequire(import.meta.resolve('vite'))
++    await import(pathToFileURL(requireFromVite.resolve('rolldown')).href)
 +  } finally {
-+    for (const [signal, handler] of handlers) process.removeListener(signal, handler)
++    for (const [key, value] of previous) {
++      if (value === undefined) delete process.env[key]
++      else process.env[key] = value
++    }
 +  }
 +}
 ```
 
-**File**: `scripts/release.ts` (modified, +3/-12)
+**File**: `packages/one/types/cli-dev-memory.d.ts` (added, +2/-0)
 ```diff
-@@ -7,6 +7,7 @@ import fs, { ensureDir, writeJson, writeJSON } from 'fs-extra'
- import pMap from 'p-map'
- import prompts from 'prompts'
- import { spawnify } from './spawnify'
-+import { LocalBuildCancelled, runLocalBuild } from './release-build'
- import {
-   ensureNpmAuthentication,
-   isExactVersionPublishedOnNpm,
-@@ -756,17 +757,7 @@ if (intoIdx !== -1) {
- 
-     try {
-       if (!skipBuild) {
--        await execFile(
--          'bun',
--          [
--            'x',
--            'turbo',
--            'run',
--            'build',
--            ...targetPackages.map(({ name }) => `--filter=${name}`),
--          ],
--          { maxBuffer: 50 * 1024 * 1024 }
--        )
-+        await runLocalBuild(targetPackages.map(({ name }) => name))
-       }
- 
-       let released = 0
-@@ -862,7 +853,7 @@ if (intoIdx !== -1) {
-     .then(() => process.exit(0))
-     .catch((err) => {
-       console.error(err)
--      process.exit(1)
-+      process.exit(err instanceof LocalBuildCancelled ? err.exitCode : 1)
-     })
- } else {
-   run()
+@@ -0,0 +1,2 @@
++export declare function initializeDevAllocator(): Promise<void>;
++//# sourceMappingURL=cli-dev-memory.d.ts.map
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1045** (2026-10-25): Stream local release builds and clean up cancellation (@natew)
-- **PR #1043** (2026-10-25): fix: wait for the simulator automation session in the Shortcuts warmup (@natew)
-- **PR #1041** (2026-10-24): Mac: add PopUpButton and a prominent push button (@natew)
-- **PR #1038** (2026-10-24): Serve image fixture sources from the dev server (@natew)
-- **PR #1037** (2026-10-24): Create main queue modules before the bundle evaluates on iOS (@natew)
-- **PR #1036** (2026-10-24): Preserve JSX type arguments in source inspector (@natew)
+- **PR #1081** (2026-10-31): fix(vxrn): map reanimated src deep imports to lib/module on web (@natew)
+- **PR #1079** (closed): fix(deps): raise follow-redirects, joi and node-forge past their advisories (@natew)
+- **PR #1078** (2026-10-31): fix(deps): pin follow-redirects, joi and node-forge past high advisories (@natew)
+- **PR #1077** (2026-10-31): fix(utils): dev manifest carries native usage descriptions (@natew)
+- **PR #1076** (2026-10-30): feat(ios): Tab navigationStack and DefaultToolbarItem for the Duo shell (minor) (@natew)
+- **PR #1075** (2026-10-30): chore(deps): upgrade Tamagui consumers to published 3.1.9 (@natew)
 
 ---
 
@@ -2456,29 +2273,38 @@ Team-Machine-Session: r128422
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vxrn): preserve client output during generation (#1028)
+## X. deps): pin follow-redirects, joi and node-forge past their high advisories (#107
 
 **RULE**:
-When implementing operations in `apps/onestack.dev/data/docs/one-build.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8ed5415e`: vxrn): preserve client output during generation (#1028). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec85f3ee`: deps): pin follow-redirects, joi and node-forge past their high advisories (#1078). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/data/docs/one-build.mdx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-After a successful web build, `one build --step generate` reuses the existing client assets, Vite manifest, and `buildInfo.json` while rebuilding the server and generating pages. Keep these outputs together. Run a full build first, and run it again when client code or routes change.
-
+    "follow-redirects": "1.16.2",
+    "joi": "17.13.9",
+    "node-forge": "1.4.2",
+    "follow-redirects": ["follow-redirects@1.16.2", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-/kVP2U8z596Ia0gwFrwyIeo74ta5aVmSeU1FfAUMAmcEP5EP7zydmag3SLiN64NaRKef3lxsq7i/g7ltJQDGow=="],
+    "joi": ["joi@17.13.9", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-llFCT2rVtfwgBCaIqxtjim+iHqrgss4ONiGSYiiGH9jnjWq90ppSRffqmqKvwpa8W+YfILyQV6XyGcegXX2T4g=="],
+    "node-forge": ["node-forge@1.4.2", "", {}, "sha512-rRtAR5XLJ8gCKd9du4qrKAsgCG1ObGP4gLeNJMa4vYSeq4bmBMOJk5IHkrviBV0q7uoAJlVd8HEQYQSVUb4FGQ=="],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "follow-redirects": "1.16.1",
+    "joi": "17.13.8",
+    "node-forge": "1.4.0",
+    "follow-redirects": ["follow-redirects@1.16.1", "", { "peerDependencies": { "debug": "*" }, "optionalPeers": ["debug"] }, "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg=="],
+    "joi": ["joi@17.13.8", "", { "dependencies": { "@hapi/hoek": "^9.3.0", "@hapi/topo": "^5.1.0", "@sideway/address": "^4.1.5", "@sideway/formula": "^3.0.1", "@sideway/pinpoint": "^2.0.0" } }, "sha512-iPKOGmiRw1jxf/JOPwxmCcUQAOdF359mdzYiP2DJ+TMX0YK2zjK3D+zYOaGjpumWxOFF/l2xVWjRVK5bGSLdEw=="],
+    "node-forge": ["node-forge@1.4.0", "", {}, "sha512-LarFH0+6VfriEhqMMcLX2F7SwSXeWwnEAJEsYm5QKWchiVYVvJyV9v7UDvUv+w5HO23ZpQTXDv/GxdDdMyOuoQ=="],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8ed5415e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec85f3ee` are properly handled with clean fallback behavior.

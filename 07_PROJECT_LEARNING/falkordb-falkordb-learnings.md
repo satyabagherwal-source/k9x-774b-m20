@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `4fc541b2`  
+> **Source Version**: `155a246f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:25:33.190Z  
+> **Timestamp**: 2026-10-31T00:34:18.890Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:15:31.279Z  
+> **Harvest Timestamp**: 2026-10-31T00:34:18.665Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10492 stars
+- **Stars / Engagement**: 10505 stars
 
 ---
 
@@ -2305,11 +2305,13 @@ def render(cmp: Comparison) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3478** (2026-10-23): **MATCH accepts a scalar already bound to a node variable**
-  *Symptoms*: **Affected versions:** FalkorDB 6.0.3 , 4.22.0 and 4.22.2   ## Summary  FalkorDB accepts a node pattern when the corresponding variable has already been bound to a non-node value. Instead of reporting a variable type conflict, the query returns the original scalar value.  The issue reproduces with integers, booleans, and strings, and has been observed on both the Rust and C engine implementations.  ## Steps to reproduce  Start a fresh FalkorDB 6.0.3 container:  ```bash docker run -d --name fk \   -p 127.0.0.1:6379:6379 \   falkordb/falkordb:6.0.3 ```  Run the following queries:  ```bash docker exec fk redis-cli GRAPH.QUERY scout \   "WITH 1 AS n MATCH (n) RETURN n"  docker exec fk redis-cli GRAPH.QUERY scout \   "WITH true AS n MATCH (n) RETURN n"  docker exec fk redis-cli GRAPH.QUERY scout \   "WITH 'x' AS n MATCH (n) RETURN n" ```  The same behavior reproduces on FalkorDB 4.22.0 and 4.22.2.  ## Actual behavior  The queries are accepted and return the previously bound scalar values:  | Query binding | Returned value | |---|---| | `WITH 1 AS n` | `1` | | `WITH true AS n` | `true` | | `WITH 'x' AS n` | `'x'` |  The `MATCH (n)` clause does not reject the incompatible binding. The variable retains its original scalar value rather than being validated as a node.  ## Expected behavior  The corresponding scenario, **"Fail when matching a node variable bound to a value"**, in `tests/tck/features/clauses/match/Match1.feature` specifies a compile-time `SyntaxError` with `VariableTypeC
+- **Issue #3556** (2026-10-28): **[Rust] Variables named _anon* are treated as anonymous, and * projections drop variables starting with _**
+  *Symptoms*: ### Summary  User variables whose names start with `_anon` are treated as anonymous, so they can't be referenced: a later use gets a new, unbound variable. Separately, `*` projections drop every variable whose name starts with `_`.  ### Reproduction (release build, `main` @ c652e505e)  Graph: `CREATE (:Person {name:'Alice', age: 40})-[:KNOWS]->(:Person {name:'Bob', age: 35})`  | query | C (`edge-c`) | Rust | |---|---|---| | `MATCH (_anon_x:Person) RETURN _anon_x.name` | `'Alice', 'Bob'` | `Variable _anon_x not found` | | `MATCH (_anonymous:Person) RETURN _anonymous.name` | `'Alice', 'Bob'` | `Variable _anonymous not found` | | `UNWIND [1,2] AS _anon_v RETURN _anon_v` | `1, 2` | **`null, null`** | | `MATCH (_x:Person) WITH * RETURN _x.name` | `'Alice', 'Bob'` | `'_x' not defined` | | `MATCH (_x:Person) RETURN *` | column `_x`, 2 rows | `RETURN * is not allowed when there are no variables in scope` |  ### Mechanism  The parser names unnamed nodes and relationships `_anon_N` ([cypher.rs:3027](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs#L3027), [3063](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs#L3063), [3140](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/parser/cypher.rs#L3140)), and later stages recognise an anonymous entity by that name prefix, not by a flag:  - `define_name_in_scope` never reuses a na
 
-- **Issue #3477** (2026-10-23): **duration equality treats distinct calendar components as equal**
-  *Symptoms*: ## Summary  FalkorDB 4.14.8 returns `true` when comparing two durations that differ in their day and seconds components. The openCypher TCK expects `false` for this case.  This reproduces a failure in Temporal7, Scenario [6], "Should compare durations for equality". The same query returns the expected result on Neo4j.  ## Environment  - FalkorDB: 4.14.8 - Docker image: `falkordb/falkordb:v4.14.8` - Image digest: `sha256:3ec1d09889d6c9711de120a02edcea3c8312d915a86e10e48a7d6d177b9dde1b` - Control: Neo4j 2026.08.1 Community - Reproduction: 3/3 runs on FalkorDB  ## Reproduction  Run the following query on a fresh or existing database. No graph data is required.  ```cypher RETURN duration({   years: 12, months: 5, days: 14,   hours: 16, minutes: 12, seconds: 70 }) = duration({   years: 12, months: 5, days: 13,   hours: 40, minutes: 13, seconds: 10 }) AS eq ```  ## Expected vs. Actual  | Engine | Result | |---|---| | openCypher TCK, Temporal7 Scenario [6] | `false` | | FalkorDB 4.14.8 | `true` | | Neo4j 2026.08.1 | `false` |  The operands have identical year and month components but differ in their day and seconds components. Their elapsed lengths coincide only if a day can be exchanged for 24 hours. The TCK expects these duration values to compare as unequal.  ## Additional Reproducer  The following query also returns different results on FalkorDB and Neo4j:  ```cypher RETURN duration({months: 5})      = duration({seconds: 13046400}) AS eq ```  | Engine | Result | |---|---| | Falk
+- **Issue #3554** (2026-10-28): **[Rust] A variable read only by a WITH's ORDER BY stays in scope after the WITH**
+  *Symptoms*: ### Summary  A `WITH`'s `ORDER BY` may read variables from before the projection. To allow that, the binder copies such a variable into the new scope, but it never removes the copy, so the variable stays visible to every later clause. Copies made for the `WITH`'s `WHERE`, `SKIP` and `LIMIT` are removed.  ### Reproduction (release build, `main` @ c652e505e)  Graph: `CREATE (:Person {name:'Alice', age: 40})-[:KNOWS]->(:Person {name:'Bob', age: 35})`  | query | C (`edge-c`) | Rust | |---|---|---| | `MATCH (n:Person) WITH n.name AS name ORDER BY n.age RETURN n.name, name` | `'n' not defined` | **`['Bob','Bob'], ['Alice','Alice']`** | | `MATCH (n:Person) WITH n.name AS name ORDER BY n.age RETURN *` | columns: `name` | **columns: `n`, `name`** | | `MATCH (n:Person) WITH n.name AS name WHERE n.age > 0 RETURN n.name, name` | `'n' not defined` | `'n' not defined` |  ### Mechanism  While a projection's `ORDER BY`/`WHERE`/`SKIP`/`LIMIT` is bound, `resolve_name` resolves a name the new scope lacks from the parent scope and inserts a copy into the new scope's env, recording it in `copy_from_parent` ([binder.rs:2234-2248](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/planner/binder.rs#L2234-L2248)).  `bind_projection` removes those copies again ([binder.rs:1257-1268](https://github.com/FalkorDB/FalkorDB/blob/c652e505e7be43f9948263fd64afc56e72253501/graph/src/planner/binder.rs#L1257-L1268)), but only keys missing from `env_keys_before_filter`, 
+  **Post-Mortem & Fix Analysis**:
+  > Duplicate of #3005.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2326,396 +2328,291 @@ def render(cmp: Comparison) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `06e6ca30` (2026-10-25)
-**Commit Message**: ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)
+### Incident Patch 1: `ee21013d` (2026-10-29)
+**Commit Message**: fix: map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032)
 
-* ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix
+On the compact (nodeLabels) path LAGraph reports the component /
+community representative as a compact index; map it through
+compact_to_id like the node itself, matching C and the unfiltered run.
 
-rust-pr.yml now builds its images through the reusable _ci-pipeline.yml,
-so the jobs preflight waits for are named
-"ci-pipeline / build-rc-image / build (...)". The wait step matched
-`startswith("build-rc-image")`, found nothing, read that as "not
-scheduled yet" and polled to its 15-minute timeout with the image
-already published, so no labelled PR got a benchmark.
+Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-Match `build-rc-image` as a path segment, so the lookup works whether or
-not the job is nested under a caller. It also picks up
-`build-rc-image / manifest`, the job that publishes the multi-arch tag.
-It does not match `build-rc-asan-image`.
+**File**: `graph/src/runtime/functions/algo_procedures.rs` (modified, +13/-2)
+```diff
+@@ -442,6 +442,17 @@ unsafe fn extract_vector_f64(v: crate::graph::graphblas::GrB_Vector) -> Vec<(u64
+     indices.into_iter().zip(values).collect()
+ }
+ 
++/// Map a node-valued LAGraph result (a component or community representative)
++/// from the compact index space back to the original node id. LAGraph reports
++/// these as vertex indices of the matrix it ran on, so on the `nodeLabels`
++/// path they are compact indices, like the vector's own indices.
++fn compact_to_original(
++    compact_to_id: Option<&[u64]>,
++    idx: i64,
++) -> i64 {
++    compact_to_id.map_or(idx, |m| m[idx as usize] as i64)
++}
++
+ /// Extract GrB_Vector entries as (index, i64) pairs.
+ unsafe fn extract_vector_i64(v: crate::graph::graphblas::GrB_Vector) -> Vec<(u64, i64)> {
+     use crate::graph::graphblas::{GrB_Index, GrB_Vector_extractTuples_INT64, GrB_Vector_nvals};
+@@ -920,7 +931,7 @@ fn register_wcc(funcs: &mut Functions) {
+                         continue;
+                     }
+                     node_ids.push(NodeId::from(orig_id));
+-                    component_ids.push(comp_id);
++                    component_ids.push(compact_to_original(compact_to_id.as_deref(), comp_id));
+                 }
+ 
+                 GrB_Vector_free(&raw mut component);
+@@ -1341,7 +1352,7 @@ fn register_cdlp(funcs: &mut Functions) {
+                         continue;
+                     }
+                     node_ids.push(NodeId::from(orig_id));
+-                    community_ids.push(community_id);
++                    community_ids.push(compact_to_original(compact_to_id.as_deref(), community_id));
+                 }
+ 
+                 GrB_Vector_free(&raw mut cdlp);
+```
 
-Fixes #3472
+**File**: `tests/flow/test_cdlp.py` (modified, +14/-0)
+```diff
+@@ -502,6 +502,20 @@ def test_label_propagation_relationship_filtering(self):
+         self.env.assertEqual(combined_community_count, 4)
+ 
+ 
++    def test_label_propagation_label_filter_reports_node_ids(self):
++        """With nodeLabels, communityId is the id of a node in the community
++        (as without a filter), not an index into the filtered node set"""
++
++        self.graph.query("""CREATE (:A {id:0}), (:B {id:1}), (:A {id:2}), (:A {id:3})""")
++        self.graph.query("MATCH (a {id:2}), (b {id:3}) CREATE (a)-[:R]->(b)")
++        self.graph.query("MATCH (a {id:0}), (b {id:1}) CREATE (a)-[:R]->(b)")
++
++        res = self.graph.query("""CALL algo.labelPropagation({nodeLabels: ['A']})
++                                  YIELD node, communityId
++                                  RETURN id(node), communityId
++                                  ORDER BY id(node)""").result_set
++        self.env.assertEqual(res, [[0, 0], [2, 2], [3, 3]])
++
+     def test_unknown_label_or_relationship_type(self):
+         """An unknown nodeLabels / relationshipTypes entry is an error (as in C)"""
+ 
+```
+
+**File**: `tests/flow/test_wcc.py` (modified, +14/-0)
+```diff
+@@ -385,3 +385,17 @@ def test_wcc_with_random_graph(self):
+ 
+             self.env.assertEqual(lbl_node_count, component_size)
+ 
++
++    def test_wcc_label_filter_reports_node_ids(self):
++        """With nodeLabels, componentId is the id of a node in the component
++        (as without a filter), not an index into the filtered node set"""
++
++        self.graph.query("""CREATE (:A {id:0}), (:B {id:1}), (:A {id:2}), (:A {id:3})""")
++        self.graph.query("MATCH (a {id:2}), (b {id:3}) CREATE (a)-[:R]->(b)")
++        self.graph.query("MATCH (a {id:0}), (b {id:1}) CREATE (a)-[:R]->(b)")
++
++        res = self.graph.query("""CALL algo.WCC({nodeLabels: ['A']})
++                                  YIELD node, componentId
++                                  RETURN id(node), componentId
++                                  ORDER BY id(node)""").result_set
++        self.env.assertEqual(res, [[0, 0], [2, 2], [3, 2]])
+```
+
+---
+
+### Incident Patch 2: `5497f6fc` (2026-10-29)
+**Commit Message**: fix: size HarmonicCentrality's source vector by the id bound (#3045)
+
+* fix: size HarmonicCentrality's source vector by the id bound (#3044)
+
+The unfiltered matrix spans node_count + deleted_nodes_count ids, but the
+source vector used node_count alone, so after a delete the highest ids
+were never sources. Other algo procedures already use the id bound.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+* refactor: use node_id_bound() for the node id bound in algo procedures
+
+Review on #3045: Graph::node_id_bound() is already node_count() +
+deleted_nodes_count(). Use it at the HarmonicCentrality site and at the
+six other places in algo_procedures.rs that spelled the sum out.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* ci(benchmark-cov): fix the jobs the wait used to hide
-
-With preflight no longer stuck, the jobs behind it ran for the first time
-in a while and three of them failed:
-
-- measure (pr), measure (base): `scalar iterables` ran
-  `[y IN 6 | y]`, which #2954 made a type error on purpose, so the
-  harness reported a failed query and exited 1. Keep the query to
-  UNWIND's scalar a
-
-**File**: `.github/workflows/benchmark-cov.yml` (modified, +21/-3)
-```diff
-@@ -158,9 +158,16 @@ jobs:
-                           | sort_by(.run_number) | last | .id // empty')
-             if [ -n "$RUN" ]; then
-               # `build-rc-image` calls a reusable workflow, so its jobs surface as
--              # "build-rc-image / build (...)" — match on the prefix.
-+              # "build-rc-image / build (...)" — and rust-pr.yml now reaches it
-+              # through `_ci-pipeline.yml`, which adds one more caller prefix:
-+              # "ci-pipeline / build-rc-image / build (...)". Match it as a path
-+              # segment, so the wait survives being nested one level deeper (or
-+              # less) again. A bare prefix match on the old name found nothing,
-+              # read that as "not scheduled yet", and polled to the timeout with
-+              # the image already published (#3472). The segment form does not
-+              # match `build-rc-asan-image`, a different image.
-               STATES=$(gh api "repos/$REPO/actions/runs/$RUN/jobs?per_page=100" --paginate \
--                         --jq '[.jobs[] | select(.name | startswith("build-rc-image"))
-+                         --jq '[.jobs[] | select(.name | test("(^|/ )build-rc-image / "))
-                                 | .conclusion // "pending"] | join(",")')
-               case "$STATES" in
-                 "")            echo "run $RUN has not scheduled build-rc-image yet" ;;
-@@ -430,9 +437,14 @@ jobs:
-     runs-on: ubuntu-latest
-     timeout-minutes: 90
-     steps:
-+      # Submodules: this job compiles the engine, and native-deps builds
-+      # GraphBLAS/LAGraph/RediSearch from deps/ whenever the toolchain image's
-+      # prebuilt archives do not match the current key — e.g. after a dep bump.
-+      # Without them it panics "deps/GraphBLAS is empty" before any query runs.
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
-+          submodules: recursive
- 
-       # coverage is the one job that cannot use the prebaked measurement image: it
-       # needs cargo and llvm-tools to build an instrumented module, which only the
-@@ -457,7 +469,13 @@ jobs:
-           # `rustup default stable`: the toolchain image ships rustup without a
-           # default, so a bare `cargo` fails with "could not choose a version of
-           # cargo to run".
--          docker run --rm -e CXX=clang++ -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
-+          #
-+          # No `-e CXX`: the image sets CC/CXX to its versioned LLVM
-+          # (clang-23 / clang++-23, build/Dockerfile) and ships no bare
-+          # `clang++`. Overriding it to `clang++` broke the first build that had
-+          # to compile a native dep from source: LAGraph's CMake could not find
-+          # the C++ compiler.
-+          docker run --rm -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
-             set -e
-             # /w/.bin, not /w: prepending the checkout root would put every
-             # root-level script ahead of /usr/bin for cargo and all its children.
-```
-
-**File**: `bench/src/falkorbench/coverage.py` (modified, +13/-1)
-```diff
-@@ -116,7 +116,19 @@ def _llvm_tool(name: str) -> Path:
-     path `./llvm-profdata` and failed with a confusing "No such file or
-     directory" — hence the explicit error below.
-     """
--    roots = [Path.home() / ".rustup/toolchains"]
-+    # The *active* toolchain's sysroot comes first: `~/.rustup/toolchains` holds
-+    # every installed toolchain, and globbing it picks whichever sorts first — an
-+    # old 1.85 there read a 1.99 build's profiles as "raw profile version
-+    # mismatch" and the whole coverage run failed after the query pass.
-+    roots = []
-+    try:
-+        sysroot = subprocess.run(
-+            ["rustc", "--print", "sysroot"], capture_output=True, text=True, check=True
-+        ).stdout.strip()
-+        roots.append(Path(sysroot) / "lib/rustlib")
-+    except (OSError, subprocess.CalledProcessError):
-+        pass
-+    roots.append(Path.home() / ".rustup/toolchains")
-     rustc = shutil.which("rustc")
-     if rustc:
-         # rustup shims resolve to ~/.rustup/toolchains/<tc>/bin/rustc, so the
-```
-
-**File**: `bench/src/falkorbench/queries.py` (modified, +1/-2)
-```diff
-@@ -503,7 +503,7 @@
-     Q("MSF nodes yield",     False, "CALL algo.MSF({relationshipTypes: ['SIMILAR'], weightAttribute: 'weight'}) YIELD nodes, edges RETURN size(nodes), size(edges)", 200),
-     Q("maxFlow KNOWS",       False, "MATCH (a:Person {id: 1}), (b:Person {id: 5}) CALL algo.maxFlow({sourceNodes: [a], targetNodes: [b], relationshipTypes: ['KNOWS'], capacityProperty: 'weight', defaultCapacity: 1.0}) YIELD maxFlow RETURN maxFlow", 200),
- 
--    # ---- round 10: comprehension-body (Row-context) eval, null/scalar
-+    # ---- round 10: comprehension-body (Row-context) eval, null
-     # iterables, chained-compare null arms, temporal component accessors,
-     # value ordering arms, CALL{}+UNION binder, pending-entity reads,
-     # label predicate, label-filtered algo matrices, lexer corners ----------
-@@ -518,7 +518,6 @@
-     Q("rel subscript",       False, "MATCH (a:Person {id: 1})-[r:KNOWS]->() RETURN r['weight'] LIMIT 5"),
-     Q("list null subscript", False, "RETURN [1, 2, 3][null]"),
-     Q("null iterable",       False, "RETURN [x IN null | x], all(x IN null WHERE x > 0), any(x IN null WHERE x > 0), none(x IN null WHERE x > 0), single(x IN null WHERE x > 0)"),
--    Q("scalar iterables",    False, "UNWIND 5 AS x RETURN x, [y IN 6 | y]"),
-     Q("single multi true",   False, "RETURN single(x IN [1, 2, 3] WHERE x > 1)"),
-     Q("unary minus null",    False, "MATCH (p:Person {id: 1}) RETURN -p.noSuchProp"),
-     Q("untyped shortestPath", False, "MATCH (a:Person {id: 1}), (b:Person {id: 5}) RETURN shortestPath((a)-[*..5]->(b))"),
-```
-
----
-
-### Incident Patch 2: `23397304` (2026-10-26)
-**Commit Message**: fix: slow log keeps its cached minimum fresh on an entry update (#3442) (#3456)
-
-SlowLog::add returned from the existing-entry branch without recomputing
-min_latency. Once the log was full, a query faster than every retained
-entry passed the admission check against the stale minimum and evicted a
-slower entry. The update arm now falls through to the shared recompute,
-as C's SlowLog_Add does via cleanup.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/slow_log.rs` (modified, +32/-42)
-```diff
-@@ -119,54 +119,44 @@ impl SlowLog {
- 
-         // Check for existing entry with same hash.
-         if let Some(existing) = inner.entries.iter_mut().find(|e| e.hash == hash) {
--            if latency_ms > existing.latency {
--                // Update latency, timestamp, and params.
--                existing.latency = latency_ms;
--                existing.timestamp = unix_now();
--                existing.params = if params_text.is_empty() {
--                    None
--                } else {
--                    Some(truncate(params_text))
--                };
-+            if latency_ms <= existing.latency {
-+                return;
-             }
--            return;
--        }
--
--        // Build truncated strings.
--        let truncated_query = truncate(query_text);
--        let truncated_params = if params_text.is_empty() {
--            None
--        } else {
--            Some(truncate(params_text))
--        };
--        let timestamp = unix_now();
--
--        if inner.entries.len() < MAX_ENTRIES {
--            inner.entries.push(SlowLogEntry {
--                cmd: cmd.to_owned(),
--                query: truncated_query,
--                params: truncated_params,
--                latency: latency_ms,
--                timestamp,
--                hash,
--            });
-+            // Update latency, timestamp, and params. This can raise the
-+            // minimum, so fall through to recompute it (#3442).
-+            existing.latency = latency_ms;
-+            existing.timestamp = unix_now();
-+            existing.params = if params_text.is_empty() {
-+                None
-+            } else {
-+                Some(truncate(params_text))
-+            };
-         } else {
--            // Replace the fastest (min-latency) entry.
--            let idx = inner
--                .entries
--                .iter()
--                .enumerate()
--                .min_by(|a, b| a.1.latency.total_cmp(&b.1.latency))
--                .map(|(i, _)| i)
--                .unwrap();
--            inner.entries[idx] = SlowLogEntry {
-+            let entry = SlowLogEntry {
-                 cmd: cmd.to_owned(),
--                query: truncated_query,
--                params: truncated_params,
-+                query: truncate(query_text),
-+                params: if params_text.is_empty() {
-+                    None
-+                } else {
-+                    Some(truncate(params_text))
-+                },
-                 latency: latency_ms,
--                timestamp,
-+                timestamp: unix_now(),
-                 hash,
-             };
-+            if inner.entries.len() < MAX_ENTRIES {
-+                inner.entries.push(entry);
-+            } else {
-+                // Replace the fastest (min-latency) entry.
-+                let idx = inner
-+                    .entries
-+                    .iter()
-+                    .enumerate()
-+                    .min_by(|a, b| a.1.latency.total_cmp(&b.1.latency))
-+                    .map(|(i, _)| i)
-+                    .unwrap();
-+                inner.entries[idx] = entry;
-+            }
-         }
- 
-         // Recompute min_latency.
-```
-
-**File**: `tests/flow/test_slowlog.py` (modified, +40/-0)
-```diff
-@@ -351,3 +351,43 @@ def test07_truncate_on_char_boundary(self):
-             logged = {e[2]: e[4] for e in entries}
-             self.env.assertContains(query[:STR_MAX_LEN - 1] + "...", logged)
-             self.env.assertEqual(logged[body], params[:STR_MAX_LEN - 1] + "...")
-+
-+    def test08_update_refreshes_min_latency(self):
-+        # Re-running a logged query slower updates its entry in place. That
-+        # update used to leave the log's cached minimum latency stale (#3442):
-+        # once the log was full, a query faster than every retained entry
-+        # passed the admission check against the stale minimum and evicted a
-+        # slower one. C recomputes the minimum on the update path too.
-+
-+        # make sure the graph key exists, so RESET works when run on its own
-+        self.graph.query("RETURN 1")
-+        self.redis_con.execute_command("GRAPH.SLOWLOG", GRAPH_ID, "RESET")
-+
-+        # Each tier is 4x the rows of the one below it, so the latency order
-+        # Q1 < Q11 < Q2..Q10 < Q1-again holds with a 4x margin.
-+        rows = 1_000_000
-+
-+        # Q1: the fastest entry, and so the log's cached minimum.
-+        q1 = "UNWIND range(0, $n) AS x WITH x WHERE x % 1 = 0 RETURN count(x)"
-+        self.graph.query(q1, {'n': rows})
-+
-+        # Q2..Q10 fill the log.
-+        for d in range(2, 11):
-+            self.graph.query(slow_query(rows * 16, d))
-+        self.env.assertEqual(len(self.graph.slowlog()), 10)
-+
-+        # Q1 again, now the slowest: its entry is updated in place, and the
-+        # true minimum moves up to the fastest of Q2..Q10.
-+        self.graph.query(q1, {'n': rows * 64})
-+
-+        # Q11 is slower than Q1 was but faster than every retained entry: it
-+        # must be rejected rather than evict one of Q2..Q10.
-+        q11 = slow_query(rows * 4, 1)
-+        self.graph.query(q11)
-+
-+        queries = [entry[2] for entry in self.graph.slowlog()]
-+        self.env.assertEqual(len(queries), 10)
-+        self.env.assertNotContains(q11, queries)
-+        self.env.assertContains(q1, queries)
-+        for d in range(2, 11):
-+            self.env.assertContains(slow_query(rows * 16, d), queries)
-```
-
----
-
-### Incident Patch 3: `773a333d` (2026-10-26)
-**Commit Message**: fix: date({week, dayOfWeek}) takes ISO 1..7 with 7 = Sunday (#2988)
-
-* fix: temporal constructors never panic on out-of-range components (#2930)
-
-Range-check week (1-53), quarter (1-4) and dayOfQuarter (1-92) with C's
-error message before any chrono arithmetic, convert year/month/day with
-try_from instead of truncating casts, add the week offset with
-checked_add_signed, and split the week string with split_at_checked so a
-multi-byte character errors instead of panicking.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-* fix: date({week, dayOfWeek}) takes ISO 1..7 with 7 = Sunday (#2936)
-
-The map form took 0..6 with 0 = Sunday while the string form, C and
-openCypher use 1..7. Accept 1..=7 and reject anything else with C's
-'Invalid value for dayOfWeek (valid values 1 - 7)'.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ---------
 
 Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
-**File**: `graph/src/runtime/functions/temporal.rs` (modified, +21/-6)
+**File**: `graph/src/runtime/functions/algo_procedures.rs` (modified, +12/-9)
 ```diff
-@@ -93,15 +93,12 @@ fn date_from_components(
+@@ -761,7 +761,7 @@ fn register_pagerank(funcs: &mut Functions) {
+                     let adj = g.build_adjacency_matrix(&rel_types);
+                     let raw_adj: GrB_Matrix = adj.inner();
+                     owned_adj = Some(adj);
+-                    let n = g.node_count() + g.deleted_nodes_count();
++                    let n = g.node_id_bound();
+                     GrB_Matrix_resize(raw_adj, n, n);
+                     (raw_adj, None)
+                 } else {
+@@ -871,7 +871,7 @@ fn register_wcc(funcs: &mut Functions) {
+                     let adj = g.build_symmetric_adjacency_matrix(&rel_types);
+                     let raw_adj: GrB_Matrix = adj.inner();
+                     owned_adj = Some(adj);
+-                    let n = g.node_count() + g.deleted_nodes_count();
++                    let n = g.node_id_bound();
+                     GrB_Matrix_resize(raw_adj, n, n);
+                     (raw_adj, None)
+                 } else {
+@@ -998,7 +998,7 @@ fn register_betweenness(funcs: &mut Functions) {
+                     let adj = g.build_adjacency_matrix(&rel_types);
+                     let raw_adj: GrB_Matrix = adj.inner();
+                     owned_adj = Some(adj);
+-                    let n = g.node_count() + g.deleted_nodes_count();
++                    let n = g.node_id_bound();
+                     GrB_Matrix_resize(raw_adj, n, n);
+                     (raw_adj, None)
+                 } else {
+@@ -1019,7 +1019,7 @@ fn register_betweenness(funcs: &mut Functions) {
  
-     if let Some(week) = week {
-         check_range("week", Some(week), 1, 53)?;
--        let dow_raw = day_of_week.unwrap_or(1);
--        if !(0..=6).contains(&dow_raw) {
--            return Err(format!("Invalid dayOfWeek: {dow_raw}, expected 0..6"));
--        }
--        let dow = dow_raw as u32;
-+        // ISO day of week, as in the string form and C: 1 = Monday .. 7 = Sunday
-+        check_range("dayOfWeek", day_of_week, 1, 7)?;
-+        let day_offset = day_of_week.unwrap_or(1) - 1;
-         let jan4 =
-             NaiveDate::from_ymd_opt(year, 1, 4).ok_or_else(|| format!("Invalid year: {year}"))?;
-         let weekday_of_jan4 = jan4.weekday().num_days_from_monday();
--        let day_offset = if dow == 0 { 6 } else { i64::from(dow) - 1 };
-         // week is in 1..=53, so the offset is at most 370 days
-         let days = (week - 1) * 7 + day_offset - i64::from(weekday_of_jan4);
-         return jan4
-@@ -955,6 +952,24 @@ mod tests {
-         }
-     }
+                 // Select source nodes for sampling (all from compact matrix)
+                 let n_nodes = compact_to_id.as_ref().map_or_else(
+-                    || (g.node_count() + g.deleted_nodes_count()) as usize,
++                    || g.node_id_bound() as usize,
+                     Vec::len,
+                 );
+                 let sources: Vec<u64> = if n_nodes == 0 {
+@@ -1293,7 +1293,7 @@ fn register_cdlp(funcs: &mut Functions) {
+                     let adj = g.build_symmetric_adjacency_matrix(&rel_types);
+                     let raw_adj: GrB_Matrix = adj.inner();
+                     owned_adj = Some(adj);
+-                    let n = g.node_count() + g.deleted_nodes_count();
++                    let n = g.node_id_bound();
+                     GrB_Matrix_resize(raw_adj, n, n);
+                     (raw_adj, None)
+                 } else {
+@@ -2812,7 +2812,7 @@ fn register_harmonic_centrality(funcs: &mut Functions) {
+                         adj.inner(),
+                         std::ptr::null_mut(),
+                     );
+-                    let n = g.node_count() + g.deleted_nodes_count();
++                    let n = g.node_id_bound();
+                     crate::graph::graphblas::GrB_Matrix_resize(raw_adj, n, n);
+                     (raw_adj, None)
+                 } else {
+@@ -2834,9 +2834,12 @@ fn register_harmonic_centrality(funcs: &mut Functions) {
  
-+    // dayOfWeek is ISO 1..=7 (7 = Sunday), like the string form and C.
-+    #[test]
-+    fn date_day_of_week_is_iso() {
-+        let sunday = date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", 7)])]).unwrap();
-+        assert_eq!(
-+            sunday,
-+            date_pure(&[Value::String(Arc::new("2021-W01-7".to_string()))]).unwrap()
-+        );
-+        let monday = date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", 1)])]).unwrap();
-+        assert_eq!(
-+            monday,
-+            date_pure(&[Value::String(Arc::new("2021-W01-1".to_string()))]).unwrap()
-+        );
-+        for dow in [0, 8, -1] {
-+            assert!(date_pure(&[map(&[("year", 2021), ("week", 1), ("dayOfWeek", dow)])]).is_err());
-+        }
-+    }
-+
-     #[test]
-     fn date_in_range_components_still_work() {
-         let d = |y: i32, m: u32, day: u32| {
+                 runtime.check_timeout()?;
+                 let mut nodes: GrB_Vector = null_mut();
+-                let node_vec_len = compact_to_id
+-                    .as_ref()
+-                    .map_or_else(|| g.node_count(), |m| m.len() as u64);
++                // Unfiltered, the matrix spans every id up to the highest
++                // (deleted ids included, as above), so the source vector must too.
++                let node_vec_len = compact_to_id.as_ref().map_or_else(
++                    || g.node_id_bound(),
++                    |m| m.len() as u64,
++                );
+                 GrB_Vector_new(&raw mut nodes, GrB_BOOL, node_vec_len);
+                 GrB_Vector_assign_BOOL(
+                     nodes,
 ```
 
-**File**: `tests/flow/test_temporal.py` (modified, +8/-0)
+**File**: `tests/flow/test_harmonic_centrality.py` (modified, +15/-0)
 ```diff
-@@ -193,6 +193,8 @@ def test_date_out_of_range_components(self):
-             ("RETURN date({year: 2021, quarter: 1, dayOfQuarter: 200})", "dayOfQuarter"),
-             ("RETURN date({year: 2020, quarter: 4294967297})", "quarter"),
-             ("RETURN date('2020W1é')", "week"),
-+            ("RETURN date({year: 2021, week: 1, dayOfWeek: 0})", "dayOfWeek"),
-+            ("RETURN date({year: 2021, week: 1, dayOfWeek: 8})", "dayOfWeek"),
-         ]
-         for q, msg in queries:
-             try:
-@@ -207,6 +209,12 @@ def test_date_out_of_range_components(self):
-         res = self.graph.query(q)
-         self.env.assertEqual(res.result_set[0], ['1984-12-31', '1984-12-31'])
+@@ -321,6 +321,21 @@ def test08_centrality_large_sparse(self):
+         self.env.assertEqual(scores[N - 1], 0.0)
  
-+        # dayOfWeek is ISO 1..7 with 7 = Sunday, like the string form
-+        q = """RETURN toString(date({year: 2021, week: 1, dayOfWeek: 7})),
-+                      toString(date('2021-W01-7'))"""
-+        res = self.graph.query(q)
-+        self.env.assertEqual(res.result_set[0], ['2021-01-10', '2021-01-10'])
+ 
++    def test09_centrality_with_deleted_node(self):
++        # chain 1 -> 2 -> 3 -> 4, node 0 deleted: the unfiltered run must
++        # still use every id up to the highest, so node 4 is scored and
++        # counted as reachable
++        self.graph.query("UNWIND range(0, 4) AS i CREATE (:A {id: i})")
++        self.graph.query("""MATCH (a:A), (b:A) WHERE b.id = a.id + 1 AND a.id > 0
++                            CREATE (a)-[:R]->(b)""")
++        self.graph.query("MATCH (n:A {id: 0}) DELETE n")
 +
-     def test_date_compare(self):
-         q = """WITH date({year: 1980, month: 12, day: 24}) AS x,
-                     date({year: 1984, month: 10, day: 11}) AS d
++        res = self.graph.query("""CALL algo.HarmonicCentrality()
++                                  YIELD node, reachable
++                                  RETURN node.id, reachable
++                                  ORDER BY node.id""").result_set
++        self.env.assertEqual(res, [[1, 4], [2, 3], [3, 2], [4, 1]])
++
+     def test_unknown_label_or_relationship_type(self):
+         """An unknown nodeLabels / relationshipTypes entry is an error (as in C)"""
+ 
+```
+
+---
+
+### Incident Patch 3: `e8ad0d33` (2026-10-29)
+**Commit Message**: fix: algo.SPpaths/SSpaths charge 1 for an edge lacking costProp, like C (#3121) (#3580)
+
+The single-cheapest-path route summed costProp with a default of 0 for an
+edge that lacks it; C charges 1. No costProp at all still reports 0.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `graph/src/runtime/functions/algo_procedures.rs` (modified, +5/-2)
+```diff
+@@ -2355,9 +2355,12 @@ fn dijkstra_single_path(
+     edges.reverse();
+ 
+     // `costProp` is not what the search optimises for, just an attribute the
+-    // caller asked to have reported: sum it over the winning path only.
++    // caller asked to have reported: sum it over the winning path only. Like
++    // C, an edge that lacks a configured `costProp` costs 1 (#3121), while no
++    // `costProp` at all reports 0.
++    let missing_cost = if config.cost_prop.is_some() { 1.0 } else { 0.0 };
+     let cost = edges.iter().fold(0.0, |acc, &(edge_id, _, _)| {
+-        acc + edge_numeric_attr(g, edge_id, config.cost_prop.as_ref(), 0.0)
++        acc + edge_numeric_attr(g, edge_id, config.cost_prop.as_ref(), missing_cost)
+     });
+ 
+     Ok(Some((edges, labels[&target].weight, cost)))
+```
+
+**File**: `tests/flow/test_path_algorithms.py` (modified, +20/-0)
+```diff
+@@ -1064,3 +1064,23 @@ def sp(extra):
+             YIELD path, pathCost
+             RETURN [n IN nodes(path) | n.id], pathCost""").result_set
+         self.env.assertEqual(result, [[[0, 1], 1]])
++
++    def test24_missing_cost_prop_costs_one(self):
++        # An edge that lacks the configured costProp costs 1, as in C (#3121),
++        # also on the single cheapest path (Dijkstra) route.
++        g = self.db.select_graph("missing_cost_prop")
++        g.query("""CREATE (:L {id:'A'})-[:E {weight:1, cost:2}]->(:L {id:'B'})
++                   -[:E2 {weight:1}]->(:L {id:'C'})""")
++
++        def sp(cfg):
++            return g.query(f"""
++                MATCH (s:L {{id:'A'}}), (t:L {{id:'C'}})
++                CALL algo.SPpaths({{sourceNode: s, targetNode: t, {cfg}}})
++                YIELD pathWeight, pathCost
++                RETURN pathWeight, pathCost""").result_set
++
++        self.env.assertEqual(sp("weightProp: 'weight', costProp: 'cost'"), [[2, 3]])
++        self.env.assertEqual(sp("costProp: 'cost'"), [[2, 3]])
++        self.env.assertEqual(sp("weightProp: 'weight', costProp: 'cost', pathCount: 0"), [[2, 3]])
++        # without a costProp the cost stays 0
++        self.env.assertEqual(sp("weightProp: 'weight'"), [[2, 0]])
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3488** (2026-10-25): chore(deps): bump the github-actions group across 1 directory with 5 updates (@dependabot[bot])
-- **PR #3474** (2026-10-22): fix(optional-traverse): guard NULL GraphBLAS vectors in CondTraverseReset (@swilly22)
-- **PR #3473** (2026-10-25): ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (@AviAvni)
-- **PR #3465** (2026-10-22): [6.0] Batch backport (56 commits) (@github-actions[bot])
-- **PR #3462** (2026-10-26): fix: GRAPH.RECORD no longer panics on deleted or uncommitted relationships (#3449) (@AviAvni)
-- **PR #3458** (2026-10-26): fix: LOAD CSV follows no redirects and fetches over https only (#3443) (@AviAvni)
+- **PR #3586** (2026-10-29): fix: algo.MSF sizes its id mapping by active nodes, not the highest node id (#3444) (@AviAvni)
+- **PR #3580** (2026-10-29): fix: algo.SPpaths charges 1 for an edge lacking costProp, like C (#3121) (@AviAvni)
+- **PR #3552** (2026-10-29): ci: a C release moves :latest only when GitHub marks it latest (@DvirDukhan)
+- **PR #3550** (2026-10-28): fix(index): hand the indexer lock over fairly between population batches (@DvirDukhan)
+- **PR #3549** (closed): fix(deps): pin parking_lot to 0.12.5; Dependabot skips 0.13 (@DvirDukhan)
+- **PR #3547** (2026-10-29): feat(index): native-only writes — no Range fields to RediSearch under the flag (@DvirDukhan)
 
 ---
 
@@ -2735,46 +2632,41 @@ Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473)
+## X. map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032)
 
 **RULE**:
-When implementing operations in `.github/workflows/benchmark-cov.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/runtime/functions/algo_procedures.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `06e6ca30`: ci(benchmark-cov): find build-rc-image under the ci-pipeline prefix (#3473). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ee21013d`: map WCC / labelPropagation ids back to node ids under nodeLabels (#3029) (#3032). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark-cov.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/runtime/functions/algo_procedures.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-              # "build-rc-image / build (...)" — and rust-pr.yml now reaches it
-              # through `_ci-pipeline.yml`, which adds one more caller prefix:
-              # "ci-pipeline / build-rc-image / build (...)". Match it as a path
-              # segment, so the wait survives being nested one level deeper (or
-              # less) again. A bare prefix match on the old name found nothing,
-              # read that as "not scheduled yet", and polled to the timeout with
-              # the image already published (#3472). The segment form does not
-              # match `build-rc-asan-image`, a different image.
-                         --jq '[.jobs[] | select(.name | test("(^|/ )build-rc-image / "))
-      # Submodules: this job compiles the engine, and native-deps builds
-      # GraphBLAS/LAGraph/RediSearch from deps/ whenever the toolchain image's
-      # prebuilt archives do not match the current key — e.g. after a dep bump.
-      # Without them it panics "deps/GraphBLAS is empty" before any query runs.
-          submodules: recursive
-          #
-          # No `-e CXX`: the image sets CC/CXX to its versioned LLVM
-          # (clang-23 / clang++-23, build/Dockerfile) and shi
+/// Map a node-valued LAGraph result (a component or community representative)
+/// from the compact index space back to the original node id. LAGraph reports
+/// these as vertex indices of the matrix it ran on, so on the `nodeLabels`
+/// path they are compact indices, like the vector's own indices.
+fn compact_to_original(
+    compact_to_id: Option<&[u64]>,
+    idx: i64,
+) -> i64 {
+    compact_to_id.map_or(idx, |m| m[idx as usize] as i64)
+}
+
+                    component_ids.push(compact_to_original(compact_to_id.as_deref(), comp_id));
+                    community_ids.push(compact_to_original(compact_to_id.as_deref(), community_id));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-              # "build-rc-image / build (...)" — match on the prefix.
-                         --jq '[.jobs[] | select(.name | startswith("build-rc-image"))
-          docker run --rm -e CXX=clang++ -v "$PWD:/w" -w /w "$TOOLCHAIN" bash -c '
+                    component_ids.push(comp_id);
+                    community_ids.push(community_id);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `06e6ca30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ee21013d` are properly handled with clean fallback behavior.

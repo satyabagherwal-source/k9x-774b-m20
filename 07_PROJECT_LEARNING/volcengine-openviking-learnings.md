@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source**: github ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
-> **Source Version**: `d6271e63`  
+> **Source Version**: `012e1f0c`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T09:54:01.019Z  
+> **Timestamp**: 2026-10-31T21:46:12.558Z  
 > **Learning ID**: `learn-github-volcengine-openviking`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T09:48:38.850Z  
+> **Harvest Timestamp**: 2026-10-31T21:46:12.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 40858 stars
+- **Stars / Engagement**: 41246 stars
 
 ---
 
@@ -1474,11 +1474,11 @@ class AsyncProgressTracker:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6681** (2026-10-30): **[Bug]: Studio 双 key 连接模型难以理解：字段提示与实际行为不一致，凭证失效时无任何报错**
+  *Symptoms*: ### Issue Origin  Observed or reproduced in a real environment  ### Bug Description  Studio 的连接页要求填两个凭证（"用户 API 密钥" 和 "Root 或管理员 API 密钥"），但每个字段下方的提示与实际行为不符，且多个状态静默失败。用户无法判断：  1. 两把 key 是否都必须填； 2. 每把 key 到底授权什么（root 还是租户管理员 key）； 3. 可选的账号/用户字段是否需要手填； 4. 数据请求会静默回退到管理 key； 5. 界面显示 `default/default` 的真实含义是"已保存的凭证失效"，而不是"开发模式"。  结果：对自部署 `auth_mode=api_key` 的环境，引导过程变成反复试错；凭证被吊销后没有任何错误提示。  环境：OSS 部署，`/health` 返回 `version: v0.5.2`、`auth_mode: api_key`；单账号、一个 admin 角色用户；官方 Docker 镜像（Python 3.13.17，Debian 13）。  ### Steps to Reproduce  1. 部署 OpenViking OSS（v0.5.2，`auth_mode=api_key`），创建一个账号和一个 admin 角色用户。 2. 打开 Studio 引导页 `/studio/config` 第 2 步"连接服务"。 3. 两栏都留空点"验证连接"——校验失败并提示"新服务需要 API Key，请填写后重试"，但"用户 API 密钥"下方的提示写的是"填写服务提供的 API Key。开源开发模式无需填写。" 4. 展开"开源高级连接配置（选填）"——"账号""用户"两个输入框都显示 `default`，输入用户 key 后它们不会变化。 5. 填入用户 API key 并点"验证连接"——身份被解析并显示为 `<账号> / <用户>`；两个输入框变成下拉框，按钮变为"进入 Studio"。 6. 在"设置 → 连接设置 → 编辑配置"里，把租户 admin 角色的用户 key 填入"管理 API Key（选填）"并保存——侧边栏"用户与权限"页出现且可用（本租户用户列表正常、可改角色），全程没有 root key。 7. 用户 key 留空、管理栏放该租户 admin 用户 key，打开 `/studio/filesystem` 与 `/studio/retrieval`——均正常；但直接用空 key 调数据接口返回 401。 8. 用 admin 接口轮换（regenerate）该用户 key，使浏览器里保存的 key 失效，再刷新 Studio——界面仍能进入，连接标识显示 `default/default`，没有任何错误提示或重新认证引导。  ### Expected Behavior  字段提示应准确描述授权模型：  - root key：服务端级管理（服务端配置、跨租户、建删账号）； - 租户管理员 key：仅本租户管理（用户、角色、用户组）； - 用户 key：数据面身份（文件系统、检索、会话、记忆）。  文案要求应与实际行为一致：  - 若用户 key 确为数据访问必需，应去掉静默回退；若回退是设计意图，应在提示中写明； - 账号/用户字段不应看起来像可自由填写却一直停在 `default`，可以在从 key 派生之前隐藏，或明确标注"验证后自动识别"； - 对 `auth
+
 - **Issue #6588** (2026-10-26): **[Bug]: # issue-v0.5.2-SDK漂移致镜像崩溃**
   *Symptoms*: ### Issue Origin  Inferred by an AI agent and not observed or reproduced  ### Bug Description  # issue-v0.5.2-SDK漂移致镜像崩溃  > 上游 issue 稿件（待提交）：v0.5.2 发布管道把不含 ​`git_diff_paths` 的 SDK 0.1.15 打进镜像，server 调用不存在的方法导致崩溃。已回滚 v0.5.1.1 自用，本文档为完整 issue 稿，证据全部实测。  **同类事故**：#5928（0cdce969）、2da84464（10-13）之后第三轮 SDK 漂移。  ---  # [Bug] v0.5.2 release pipeline ships SDK 0.1.15 without ​`git_diff_paths` — server calls a method the installed SDK does not have  ## Environment  - Image: official ​`openviking`​ v0.5.2 (built from the ​`v0.5.2`​ tag via ​`build-docker-image.yml`) - Installed inside the image (verified by starting a throwaway container and inspecting):    - `openviking == 0.5.2`   - `openviking-sdk == 0.1.15`   - `hasattr(AsyncHTTPClient, "git_diff_paths") == False`  ## Symptom  Server code shipped in v0.5.2 calls ​`git_diff_paths`​, but neither the SDK version locked in ​`uv.lock`​ (0.1.15) nor the latest PyPI release (0.1.16) contains that method. The v0.5.2 image therefore crashes whenever the affected code paths run (compile / memory snapshot diffing). We had to roll back to v0.5.1.1, where the server does not call ​`git_diff_paths` and is self-consistent with SDK 0.1.15.  ## Evidence chain (all verified locally, nothing inferred)  1. **v0.5.2 tag server source calls** ​**​`git_diff_paths`​**​ **:**     - `service/compile_targets.py:1096`​ — ​`await self._fs._async_agfs.run("git_diff_paths", ...)`    - `storage/viking_fs/_snapshot.py:808`​ — ​`await self._async_agfs.run("git_diff_
-
-- **Issue #6356** (2026-10-21): **[Bug]: Studio Markdown preview drops viking:// images and lacks internal image navigation**
-  *Symptoms*: ### Issue Origin  Inferred by an AI agent and not observed or reproduced  ### Bug Description  In the Markdown body preview, `rehype-sanitize` uses its default protocol allowlists, which do not include OpenViking's `viking` scheme. Explicit internal image `src` values and internal link `href` values are therefore stripped before the custom Markdown renderers can use them.  The existing `MarkdownImage` component already resolves resource-relative paths and downloads internal images through the authenticated content-download API, but it does not receive `onNavigate`. Consequently, bare internal images that do render cannot open the corresponding resource from the preview.  This is a code-level finding with local component-test coverage using mocked authenticated downloads. End-to-end acceptance against a live authenticated service has not been performed.  ### Steps to Reproduce  1. Place a readable JPEG at `viking://resources/demo/photo.jpg` and a Markdown document at `viking://resources/demo/article.md`. 2. Include the Markdown example below in the document. 3. Open the document body in Studio's resource preview. 4. Check the explicit internal image/link, then click or focus and press Enter on the relative image.  ```markdown ![Explicit internal image](viking://resources/demo/photo.jpg)  ![Relative internal image](./photo.jpg)  [Open image](viking://resources/demo/photo.jpg)  [![Linked image](./photo.jpg)](./target.md) ```  These are suggested live reproduction steps; live aut
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,706 +1495,302 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `009c483f` (2026-10-26)
-**Commit Message**: fix(deps): require SDK 0.1.17 for Compile APIs (#6596)
+### Incident Patch 1: `3dedecc0` (2026-10-31)
+**Commit Message**: fix(snapshot): restore single files using commit IDs (#6840)
 
-Use the published SDK that supports directory diffs and Compile write options.
-Refresh the lockfile, including the existing bot numpy requirement.
+Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 
-Co-authored-by: qin-ptr <[REDACTED_EMAIL]>
-Co-authored-by: qin-ctx <[REDACTED_EMAIL]>
-
-**File**: `pyproject.toml` (modified, +1/-1)
+**File**: `docs/en/api/11-snapshot.md` (modified, +8/-13)
 ```diff
-@@ -33,7 +33,7 @@ dependencies = [
-     "async-timeout>=5.0.1",
-     "orjson>=3.11.7",
-     "packaging>=24.0",
--    "openviking-sdk>=0.1.15",
-+    "openviking-sdk>=0.1.17",
-     "pydantic>=2.0.0",
-     "typing-extensions>=4.5.0",
-     "pyyaml>=6.0",
-```
-
-**File**: `uv.lock` (modified, +7/-4)
-```diff
-@@ -3608,6 +3608,8 @@ bot = [
-     { name = "lark-oapi" },
-     { name = "mcp" },
-     { name = "msgpack" },
-+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
-+    { name = "numpy", version = "2.4.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
-     { name = "opencode-ai" },
-     { name = "opensandbox" },
-     { name = "opensandbox-server" },
-@@ -3763,6 +3765,7 @@ requires-dist = [
-     { name = "msgpack", marker = "extra == 'bot'", specifier = ">=1.0.8" },
-     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.0.0" },
-     { name = "myst-parser", marker = "extra == 'doc'", specifier = ">=2.0.0" },
-+    { name = "numpy", marker = "extra == 'bot'", specifier = ">=1.26.0" },
-     { name = "openai", specifier = ">=1.0.0" },
-     { name = "opencode-ai", marker = "extra == 'bot'", specifier = ">=0.1.0a0" },
-     { name = "opensandbox", marker = "extra == 'bot'", specifier = ">=0.1.5" },
-@@ -3772,7 +3775,7 @@ requires-dist = [
-     { name = "opentelemetry-exporter-otlp-proto-http", specifier = ">=1.14" },
-     { name = "opentelemetry-instrumentation-asyncio", specifier = ">=0.61b0" },
-     { name = "opentelemetry-sdk", specifier = ">=1.14" },
--    { name = "openviking-sdk", specifier = ">=0.1.15" },
-+    { name = "openviking-sdk", specifier = ">=0.1.17" },
-     { name = "orjson", specifier = ">=3.11.7" },
-     { name = "packaging", specifier = ">=24.0" },
-     { name = "pandas", marker = "extra == 'benchmark'", specifier = ">=2.0.0" },
-@@ -3861,14 +3864,14 @@ dev = [{ name = "pytest", specifier = ">=9.0.2" }]
+@@ -588,13 +588,11 @@ With `dry_run=true`, only the planned diff is returned and nothing is written. D
  
- [[package]]
- name = "openviking-sdk"
--version = "0.1.15"
-+version = "0.1.17"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "httpx" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/ca/0d/4363876996c031976749c448ce449e3d5d1503c30745dba3127404664940/openviking_sdk-0.1.15.tar.gz", hash = "sha256:51586349329180d665ff9f33613aa2a33eff47d6f3e390f00077204ac139612d", size = 57632, upload-time = "2026-10-13T08:19:31.295Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/8b/f5/2f63ccc7543e14af9facf500db8774fbd03ef47c9f7d362882f27ccaf93f/openviking_sdk-0.1.17.tar.gz", hash = "sha256:9f365e02a780ad04e4573180924e5afbe71f84342956356afc1e6834b2291751", size = 58085, upload-time = "2026-10-26T03:26:29.718Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/26/c2/c95482ecfd3a77294f9396b57011c5b3d01aeda5f0493515413a13127f2e/openviking_sdk-0.1.15-py3-none-any.whl", hash = "sha256:0eeb296feb0c963b43a21fc4a59cab1a487960a7c647c684ca1562246be7bd57", size = 34783, upload-time = "2026-10-13T08:19:30.101Z" },
-+    { url = "https://files.pythonhosted.org/packages/42/7a/95698db99666c833fcd9fec0050f7d26f3202080003373a73a1e35bc439e/openviking_sdk-0.1.17-py3-none-any.whl", hash = "sha256:9bd2b4df917d8d807876b10acee3cc69d4ce7d292bb3b0ac44379a6ed959d205", size = 35006, upload-time = "2026-10-26T03:26:28.264Z" },
- ]
+ | Parameter | Type | Description |
+ |-----------|------|-------------|
+-| path | str | `viking://` URI of the Compile output file |
+-| restore_version | str | UUID `version_id` of the historical version supplying the restored content |
+-| current_version | str | UUID `version_id` of the current version observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
++| path | str | Compile output file URI, also used as the path in the historical snapshot |
++| restore_commit_id | str | Full commit ID supplying the content (40 lowercase hexadecimal characters) |
++| current_commit_id | str | Full ID of the last commit changing this file on `main`, as observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
  
- [[package]]
-```
-
----
-
-### Incident Patch 2: `d6271e63` (2026-10-26)
-**Commit Message**: fix(auth): reveal only the caller's own user API key in admin listings (#6610)
-
-* fix(auth): mask stored user API keys in admin listings
-
-* fix(auth): reveal only the caller's own user key in admin listings
-
-- non-ROOT list_users responses keep plaintext api_key solely for the
-  caller's own row, requiring strict match of listing account, row user
-  and the account/user segments embedded in the key; all other rows stay
-  masked key_prefix
-- apply the same rule to MCP list_users(include_credentials=true)
-- CLI list-users merges api_key/key_prefix into one api_key table column,
-  masks by default, and reveals plaintext via --reveal-api-keys
-- move FileStore from api_keys/legacy.py to account_stores/file.py and
-  require the three-segment key format; update memory doctor diagnostics
-- sync zh/en docs and tests
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: TRAE CLI <[REDACTED_EMAIL]>
-
-**File**: `crates/ov_cli/src/commands/admin.rs` (modified, +182/-28)
-```diff
-@@ -5,7 +5,7 @@ use crate::theme;
- use colored::Colorize;
- use serde_json::{Value, json};
+-Call `GET /api/v1/snapshot/versions?uri=<file URI>` to obtain `current_version` and the version history before submitting a restore:
+-
+-Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass IDs unchanged for restore and pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so an old restore request cannot match the recreated file.
++`GET /api/v1/snapshot/versions?uri=<file URI>` lists version history. Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass version IDs unchanged for pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so old version UUIDs cannot match the recreated file.
  
--const SECRET_PLACEHOLDER: &str = "********";
-+const SECRET_MASK_NOTICE: &str = "Note: API keys are masked by default. Pass --reveal-api-keys to reveal plaintext (ROOT sees every key; ADMIN/USER only its own).";
+ The response's `to` identifies the file's owning Compile target directory; use it with a version's `meta.operation_id` to query operation details. `total` counts all retained, queryable versions before applying `limit` or `before_version`; it is not the latest version number. Pass `next_before_version` unchanged as `before_version` to load older versions. Both this cursor and `current_version` contain UUID IDs; do not sort or derive display numbers from IDs or page positions.
  
- pub async fn create_account(
-     client: &HttpClient,
-@@ -104,13 +104,20 @@ pub async fn list_users(
-     name: Option<String>,
-     role: Option<String>,
-     page: u32,
-+    reveal_api_keys: bool,
-     output_format: OutputFormat,
-     compact: bool,
- ) -> Result<()> {
-     let response = client
-         .admin_list_users(account_id, limit, name, role, page)
-         .await?;
--    let response = list_users_response_for_output(response, output_format);
-+    let (mut response, masked) = list_users_response_for_output(response, reveal_api_keys);
-+    if matches!(output_format, OutputFormat::Table) {
-+        merge_key_prefix_into_api_key(&mut response);
-+    }
-+    if masked {
-+        eprintln!("{SECRET_MASK_NOTICE}");
-+    }
-     output_success(&response, output_format, compact);
-     Ok(())
- }
-@@ -348,37 +355,88 @@ fn contains_non_empty_user_key(value: &Value) -> bool {
-     }
- }
- 
--fn list_users_response_for_output(mut response: Value, output_format: OutputFormat) -> Value {
--    if matches!(output_format, OutputFormat::Table) {
--        redact_plaintext_api_keys(&mut response);
-+fn list_users_response_for_output(mut response: Value, reveal_api_keys: bool) -> (Value, bool) {
-+    if reveal_api_keys {
-+        return (response, false);
-+    }
-+    let masked = mask_plaintext_api_keys(&mut response);
-+    (response, masked)
-+}
-+
-+/// Collapse the server's `key_prefix`/`api_key` fields into a single `api_key`
-+/// table column; the JSON response shape is left untouched.
-+fn merge_key_prefix_into_api_key(value: &mut Value) {
-+    fn normalize_row(row: &mut Value) {
-+        let Some(object) = row.as_object_mut() else {
-+            return;
-+        };
-+        if !object.contains_key("api_key") {
-+            if let Some(prefix) = object.remove("key_prefix") {
-+                object.insert("api_key".to_string(), prefix);
-+            }
-+        } else {
-+            object.remove("key_prefix");
-+        }
-+    }
-+    match value {
-+        Value::Array(users) => users.iter_mut().for_each(normalize_row),
-+        Value::Object(object) => {
-+            if let Some(users) = object.get_mut("users").and_then(Value::as_array_mut) {
-+                users.iter_mut().for_each(normalize_row);
-+            }
-+        }
-+        _ => {}
-     }
--    response
- }
- 
--fn redact_plaintext_api_keys(value: &mut Value) {
-+fn mask_plaintext_api_keys(value: &mut Value) -> bool {
-     match value {
-         Value::Object(object) => {
-+            let mut masked = false;
-             for (key, child) in object {
--                if key == "api_key"
--                    && child
--                        .as_str()
--                        .is_some_and(|api_key| !api_key.trim().is_empty())
--                {
--                    *child = Value::String(SECRET_PLACEHOLDER.to_string());
--                } else {
--                    redact_plaintext_api_keys(child);
-+                if key == "api_key" {
-+                    if let Some(api_key) = child.as_str() {
-+                        if !api_key.trim().is_empty() {
-+                            *child = Value::String(mask_api_key(api_key));
-+                            masked = true;
-+                        }
-+                    }
-+                } else if mask_plaintext_api_keys(child) {
-+                    masked = true;
-                 }
-             }
-+            masked
-         }
-         Value::Array(items) => {
-+            let mut masked = false;
-             for item in items {
--                redact_plaintext_api_keys(item);
-+                if mask_plaintext_api_keys(item) {
-+                    masked = true;
-+                }
-             }
-+            masked
-         }
--        _ => {}
-+        _ => false,
-     }
- }
- 
-+/// Match `openviking/server/api_keys/new.py:mask_api_key` so CLI and API output look the same.
-+fn mask_api_key(api_key: &str) -> String {
-+    let parts: Vec<&str> = api_key.split('.').collect();
-+    if api_key.is_empty() || parts.len() != 3 {
-+        return "*".repeat(api_key.chars().count());
-+    }
-+
-+    let secret_chars: Vec<char> = parts[2].chars().collect();
-+    let visible_length = if secret_chars.len() > 4 { 4 } else { 0 };
-+    let hidden_length = secret_chars.len() - visible_length;
-+
-+    let mut masked = format!("{}.{}.", parts[0], parts[1]);
-+    masked.push_str(&"*".repeat(hidden_length));
-+    masked.push_str(&secret_chars[hidden_length..].iter().collect::<String>());
-+    masked
-+}
-+
- #[cfg(test)]
- mod tests {
-     use super::*;
-@@ -463,43 +521,139 @@ mod tests {
-     }
- 
-     #[test]
--    fn list_users_table_output_redacts_plaintext_api_keys() {
-+    fn mask_api_key_matches_server_format() {
-+        let cases = [
-+    
-```
-
-**File**: `crates/ov_cli/src/handlers.rs` (modified, +2/-0)
-```diff
-@@ -648,6 +648,7 @@ pub async fn handle_admin(cmd: AdminCommands, ctx: CliContext) -> Result<()> {
-             name,
-             role,
-             page,
-+            reveal_api_keys,
-         } => {
-             commands::admin::list_users(
-                 &client,
-@@ -656,6 +657,7 @@ pub async fn handle_admin(cmd: AdminCommands, ctx: CliContext) -> Result<()> {
-                 name,
-                 role,
-                 page,
-+                reveal_api_keys,
-                 ctx.output_format,
-                 ctx.compact,
-             )
-```
-
-**File**: `crates/ov_cli/src/main.rs` (modified, +3/-0)
-```diff
-@@ -2185,6 +2185,9 @@ enum AdminCommands {
-         /// 1-based page number (requires --limit)
-         #[arg(long, default_value = "1", value_name = "n")]
-         page: u32,
-+        /// Show plaintext API keys instead of masked values (ROOT sees all keys; ADMIN/USER only its own)
-+        #[arg(long)]
-+        reveal_api_keys: bool,
-     },
-     /// Create an empty account-scoped group
-     CreateGroup {
-```
-
-**File**: `docs/en/api/08-admin.md` (modified, +9/-3)
-```diff
-@@ -1593,7 +1593,7 @@ List active users in a workspace. Users with deletion in progress are omitted.
- 2. Call API Key Manager to get active users list (in creation order)
- 3. Apply optional filters (name, role)
- 4. Apply optional `limit`/`page` pagination
--5. Return users list (trusted mode omits user_key)
-+5. Return users list with role-based credential visibility (trusted mode omits credentials)
- 
- **Code Entry Points:**
- - `openviking/server/routers/admin.py:list_users` - HTTP route
-@@ -1611,14 +1611,18 @@ List active users in a workspace. Users with deletion in progress are omitted.
- | role | str | No | null | Filter by role |
- | query | str | No | null | HTTP-only, case-insensitive literal substring match on user IDs |
- | include_summary | bool | No | false | HTTP-only, return paginated users and account statistics in an object |
--| include_credentials | bool | No | true | HTTP-only. Set false to return `user_id`, `role`, and `api_key_available` without credentials or key prefixes. `api_key_available` is true only when the server can read the complete key for a server-side binding; hash-only credentials return false. The default preserves the existing mode-dependent response. |
-+| include_credentials | bool | No | true | HTTP-only. ROOT receives all available plaintext keys; ADMIN receives its own plaintext key and masked prefixes for other users. Set false to return `user_id`, `role`, and `api_key_available` without credentials or key prefixes. `api_key_available` is true only when the server can read the complete key for a server-side binding; hash-only credentials return false. |
- | limit | int | No | null | Page size (≥1). Omit to return all matches |
- | page | int | No | 1 | 1-based page number; only applies when `limit` is set |
- 
- **Notes:**
- - Results are returned in creation order
- - ADMIN can only list users in their own account
--- In `trusted` mode, `user_key` is omitted from the response
-+- ROOT receives every stored key as plaintext in `api_key`. A non-ROOT caller receives plaintext in `api_key` only for its own row; every other user (including other ADMIN users) is returned as a masked `key_prefix`. Self-matching is strict: the listing account, the row's user ID, and the account/user segments embedded in the three-segment key must all equal the caller's authenticated identity; otherwise the row is masked. Three-segment keys retain the first two segments and only the last four characters of the secret segment; every preceding secret character is replaced by `*`. Secrets of four characters or fewer are completely hidden. Keys that are not in the three-segment format are fully masked. Hash-only credentials retain their existing prefix.
-+- Masking is enforced by the server for HTTP and MCP `list_users(include_credentials=true)`, so it also applies to CLI/SDK JSON output. Clients must treat `key_prefix` as display-only and require a supplied key to switch identities.
-+- `ov admin list-users` additionally masks the plaintext `api_key` rows client-side by default, in both table and JSON output, and prints a notice on stderr. Pass `--reveal-api-keys` to emit plaintext: ROOT then shows every key, while an ADMIN/USER caller still sees only its own key (other rows are masked by the server). The flag affects CLI rendering only and does not change the server response. In table output the server's `api_key` (plaintext or client-masked) and `key_prefix` fields are merged into a single `api_key` column; JSON output keeps the server field names.
-+- This restriction applies to stored-key listing. Registration and key regeneration still return the newly issued key to ROOT or ADMIN; ordinary USER self-service key rotation is not yet available.
-+- In `trusted` mode, both `api_key` and `key_prefix` are omitted from the response
- - Users whose deletion has started are no longer returned
- 
- **Summary responses (HTTP):** Set `include_summary=true` to return an object in `result` with `users` (the current page), `total` (matching users), `account_total`, `manager_count` (admin/root), and `key_count` (users with a visible key or prefix). Account statistics ignore search/role filters and exclude deleting users; `key_count` is zero when key exposure is disabled. The default remains a user array for existing callers.
-@@ -1688,6 +1692,8 @@ fmt.Println(users)
- ov admin list-users acme
- # If using root_api_key (--sudo):
- ov --sudo admin list-users acme
-+# Show plaintext keys instead of masked values (ROOT: all keys; ADMIN/USER: own key only)
-+ov --sudo admin list-users acme --reveal-api-keys
- # Filter by wildcard name
- ov admin list-users acme --name '*ali*'
- # Paginated
-```
-
-**File**: `docs/en/guides/04-authentication.md` (modified, +2/-0)
-```diff
-@@ -52,6 +52,8 @@ openviking-server
- 
- User keys are generated by the Admin API. By default they use random secret material; Admin API callers may also provide a `seed` to derive a predictable key secret from `sha256(user_id + "\0" + seed)`. The server still verifies the resulting key against the stored key or key hash.
- 
-+User keys use the three-segment format `base64url(account).base64url(user).base64url(secret)`. Only this format is accepted; bare or otherwise malformed keys are rejected with `401 Invalid API key`.
-+
- ### Managing Accounts and Users
- 
- Use the root key to create accounts (workspaces) and users via the Admin API:
-```
-
-**File**: `docs/en/guides/06-mcp-integration.md` (modified, +3/-1)
-```diff
-@@ -215,7 +215,9 @@ not echo resolved secrets in chat. Tree and upsert return no stored values.
- 
- All account users may call `list_users` and `list_groups`; neither tool accepts a different account.
- The default output contains only user IDs and a matching total, or group IDs. Even administrators
--must explicitly set `include_credentials=true` to include available credentials. A USER requesting
-+must explicitly set `include_credentials=true` to include credential fields: ROOT receives
-+every available plaintext key in `api_key`; ADMIN receives its own plaintext key and masked
-+`key_prefix` values for every other user. A USER requesting
- credentials receives `PERMISSION_DENIED`, even when the query matches no users. Trusted auth mode
- forbids credential disclosure. Group membership remains available through the admin API.
- 
-```
-
-**File**: `docs/en/guides/08-encryption.md` (modified, +2/-2)
-```diff
-@@ -101,7 +101,7 @@ File encryption and API key hashing are independent controls:
- **By default, `encryption.api_key_hashing.enabled = false`**:
- - API keys are stored in plaintext within JSON files
- - If `encryption.enabled = true`, the entire file is protected by AES-GCM encryption
--- `ov admin list-users` can display the full API key
-+- `ov admin list-users` can display the full API key when run with `--reveal-api-keys`
- - If `encryption.enabled = true` and API key hashing stays disabled, the server writes an informational log line about this at startup
- 
- ### Enabling Argon2id Hashing
-@@ -122,7 +122,7 @@ Enable Argon2id one-way hashing to stop storing recoverable API key values:
- **Note**: When enabled:
- - API keys are stored using Argon2id one-way hashing
- - Plaintext keys cannot be recovered from hash values
--- `ov admin list-users` only shows `key_prefix` instead of the full API key
-+- `ov admin list-users` only shows `key_prefix` instead of the full API key (a caller's own row cannot be revealed either, since no plaintext is stored)
- - Plaintext keys are only visible when creating users or regenerating keys
- 
- ### Configuration Example
-```
-
-**File**: `docs/zh/api/08-admin.md` (modified, +9/-3)
-```diff
-@@ -1449,7 +1449,7 @@ ov admin register-user acme bob-private --role user \
- 2. 调用 API Key Manager 获取活跃用户列表（按创建顺序排列）
- 3. 应用可选的过滤条件（name、role）
- 4. 应用可选的 `limit`/`page` 分页
--5. 返回用户列表（trusted 模式下不包含 user_key）
-+5. 按调用者角色返回密钥信息（trusted 模式下不包含密钥信息）
- 
- **代码入口：**
- - `openviking/server/routers/admin.py:list_users` - HTTP 路由
-@@ -1467,14 +1467,18 @@ ov admin register-user acme bob-private --role user \
- | role | str | 否 | null | 按角色过滤 |
- | query | str | 否 | null | 仅 HTTP，按用户 ID 做不区分大小写的字面包含匹配 |
- | include_summary | bool | 否 | false | 仅 HTTP，以对象返回分页用户和账号统计 |
--| include_credentials | bool | 否 | true | 仅 HTTP。设为 false 时仅返回 `user_id`、`role` 和 `api_key_available`，不返回密钥或前缀；仅当服务端能读取完整 key 并用于服务端绑定时 `api_key_available` 才为 true，仅存哈希的凭据返回 false；默认保持现有按鉴权模式返回字段的行为。 |
-+| include_credentials | bool | 否 | true | 仅 HTTP。ROOT 可获取可用的明文密钥，ADMIN 仅获取打码后的前缀。设为 false 时仅返回 `user_id`、`role` 和 `api_key_available`，不返回密钥或前缀；仅当服务端能读取完整 key 并用于服务端绑定时 `api_key_available` 才为 true，仅存哈希的凭据返回 false。 |
- | limit | int | 否 | null | 每页数量（≥1）。省略则返回所有匹配项 |
- | page | int | 否 | 1 | 从 1 开始的页码；仅在设置了 `limit` 时生效 |
- 
- **说明：**
- - 结果按创建顺序返回
- - ADMIN 只能列出自己所属的 account 中的用户
--- 在 `trusted` 模式下，响应中不会包含 `user_key` 字段
-+- ROOT 可通过 `api_key` 获取全部已存储的明文密钥。非 ROOT 调用方只有自身那一行返回 `api_key` 明文，其他用户（包括其他 ADMIN）均返回打码后的 `key_prefix`。自身匹配是严格匹配：列表 account、行内 user ID 以及三段式 key 内嵌的 account/user 段必须全部等于调用方认证身份，否则该行仍打码。三段式密钥保留前两段和 secret 的最后 4 个字符，secret 中其余每个字符均替换为 `*`；secret 不超过 4 个字符时完全隐藏。非三段式密钥完全隐藏；仅存哈希的凭据沿用已有前缀。
-+- 打码在服务端执行，同时覆盖 HTTP 和 MCP 的 `list_users(include_credentials=true)`，因此 CLI/SDK 的 JSON 输出也受保护。客户端只能将 `key_prefix` 用于展示，切换身份时需要另行提供可用密钥。
-+- `ov admin list-users` 默认还会在 CLI 侧对明文 `api_key` 行使用相同格式打码，table 和 JSON 输出保持一致，并在 stderr 打印提示。传入 `--reveal-api-keys` 可输出明文：ROOT 会显示全部密钥，ADMIN/USER 调用方仍只能看到自身密钥（其他行由服务端打码）。该 flag 只影响 CLI 渲染，不改变服务端响应。table 输出会把服务端的 `api_key`（明文或 CLI 打码值）与 `key_prefix` 合并为同一个 `api_key` 列；JSON 输出保留服务端的字段名。
-+- 本限制针对已存储密钥的列表浏览。创建用户与重置密钥仍会向 ROOT 或 ADMIN 返回新密钥；普通 USER 尚无自助轮换接口。
-+- 在 `trusted` 模式下，响应中不会包含 `api_key` 或 `key_prefix` 字段
- - 用户删除开始后，不再出现在该列表中
- 
- **带统计的响应（HTTP）：** 设置 `include_summary=true` 后，`result` 返回对象：`users` 为当前页，`total` 为匹配人数，`account_total` 为账号总人数，`manager_count` 为 admin/root 人数，`key_count` 为具有可见密钥或前缀的用户数。账号统计不受搜索和角色过滤影响，并排除正在删除的用户；禁用密钥展示时 `key_count` 为零。默认仍返回用户数组，兼容现有调用。
-@@ -1544,6 +1548,8 @@ fmt.Println(users)
- ov admin list-users acme
- # 如果使用 root_api_key（--sudo）：
- ov --sudo admin list-users acme
-+# 输出明文密钥而不是打码值（仅 ROOT）
-+ov --sudo admin list-users acme --reveal-api-keys
- # 按通配符 name 过滤
- ov admin list-users acme --name '*ali*'
- # 分页
-```
-
----
-
-### Incident Patch 3: `c7239e81` (2026-10-26)
-**Commit Message**: fix(retrieve): opt-in rerank for context mode and decouple rerank.threshold (#6605)
-
-Context mode recalls through QUICK find()/find_skills, so a configured
-reranker never affected it (#6182). Add retrieval.apply_rerank_to_context
-(default false): one rerank call over the merged, deduplicated pool before
-quota allocation and budgeting, with wider recall, skill abstracts filled
-first, and fallback to vector scores.
-
-rerank.threshold now filters only scores the reranker produced; vector-only
-paths default to 0 unless the request sets score_threshold. Extract the
-rerank scoring into openviking/retrieve/rerank_scoring.py so the retriever
-and the context assembler share it.
-
-Fixes #6182
-
-**File**: `docs/en/api/06-retrieval.md` (modified, +14/-4)
-```diff
-@@ -9,10 +9,18 @@ OpenViking provides multiple retrieval methods, including simple vector similari
- | Intent Analysis | No | Requires session content and `retrieval.enable_intent=true` |
- | Session Context | No | Optional |
- | Query Expansion | No | When session content exists and intent analysis is enabled |
--| Reranking | No | Used for text queries when a reranker is configured |
-+| Reranking | Never | `mode="list"`: text queries when a reranker is configured. `mode="context"`: only when `retrieval.apply_rerank_to_context` is on |
- | Default Limit | 10 | 10 per planned query |
- | Use Case | Simple queries | Conversational search |
- 
-+Reranking applies per path:
-+
-+- `find()` never reranks; it always uses vector scores.
-+- `search(mode="list")` reranks text queries when a usable `rerank` config exists.
-+- `search(mode="context")` reranks only when the server sets `retrieval.apply_rerank_to_context=true` (default `false`) and a usable `rerank` config exists. It reranks once per assembly, over the merged candidate pool before quotas and the token budget apply, for text queries only, and falls back to vector scores if the rerank call fails.
-+
-+Score thresholds follow one rule: a request `score_threshold` overrides everything and filters whatever scores the path produces. Without it, `rerank.threshold` (default `0.1`) filters only scores the reranker produced; vector-only paths, including `find()` and a failed rerank fallback, default to `0`.
-+
- ## Retrieval Pipeline
- 
- The core retrieval pipeline is as follows:
-@@ -417,7 +425,7 @@ Semantic retrieval with optional session-aware query planning.
- 
- `search()` uses the same target resolution and explicit tag filtering rules as `find()`, including the peer collection filter selected by `X-OpenViking-Actor-Peer` or SDK `actor_peer_id`. When `image_url` is provided, `search()` uses direct image retrieval and skips session query planning. `keywords` requires a non-empty text query, does not support images, and requires a remote VikingDB backend with a full-text index.
- 
--Event time decay applies to results tagged `memory_type=events` in semantic `find()` and both `search(mode="list")` and `search(mode="context")`. Memory extraction writes this tag on user/peer event L2 records; retrieval identifies events by the tag rather than inferring the type from a URI or level. Untagged/non-event results, query-less filter-only `find()`, `recall`, `grep`, and `glob` are unaffected. During event recall, the vector engine multiplies the original vector score by `time_score`. List responses expose this recall-stage vector score as `origin_score` and the factor as `time_score`; `score` is the final retrieval score, which may come from model rerank. Context mode uses that final score while assembling its candidates. The CLI labels list-result scores as semantic, time, and final scores. Inside the protection period `time_score` is 1, so the original score is unchanged. Time distance follows the VikingDB exponential decay operator, using the absolute difference from the request time. Time is read from the existing indexed `updated_at` field; no reindex or timestamp rewrite is required. Local fusion preserves the original score for missing or invalid timestamps; cloud fusion uses the indexed date-time field and the backend operator. The curve is owned by the server; callers only provide the per-request protection period. No `ov.conf` or `ovcli.conf` change is required.
-+Event time decay applies to results tagged `memory_type=events` in semantic `find()` and both `search(mode="list")` and `search(mode="context")`. Memory extraction writes this tag on user/peer event L2 records; retrieval identifies events by the tag rather than inferring the type from a URI or level. Untagged/non-event results, query-less filter-only `find()`, `recall`, `grep`, and `glob` are unaffected. During event recall, the vector engine multiplies the original vector score by `time_score`. List responses expose this recall-stage vector score as `origin_score` and the factor as `time_score`; `score` is the final retrieval score, which may come from model rerank. Context mode assembles its candidates with vector scores, or with the model score when `retrieval.apply_rerank_to_context` is on. The CLI labels list-result scores as semantic, time, and final scores. Inside the protection period `time_score` is 1, so the original score is unchanged. Time distance follows the VikingDB exponential decay operator, using the absolute difference from the request time. Time is read from the existing indexed `updated_at` field; no reindex or timestamp rewrite is required. Local fusion preserves the original score for missing or invalid timestamps; cloud fusion uses the indexed date-time field and the backend operator. The curve is owned by the server; callers only provide the per-request protection period. No `ov.conf` or `ovcli.conf` change is required.
- 
- New and updated memories produced by memory extraction automatically rece
-```
-
-**File**: `docs/en/concepts/07-retrieval.md` (modified, +2/-2)
-```diff
-@@ -89,7 +89,7 @@ class TypedQuery:
- | THINKING with a usable rerank configuration | `2 × limit` | One pass over the recalled candidates, returning at most `limit` results |
- | THINKING without a usable rerank configuration | `limit` | Disabled |
- 
--`find()` uses QUICK. `search()` automatically selects THINKING when a reranker is configured, otherwise QUICK. This internal retrieval mode is separate from LLM reasoning parameters and session intent analysis. Queries generated by intent analysis continue to be retrieved and ranked separately, then aggregated as before.
-+`find()` uses QUICK. `search()` automatically selects THINKING when a reranker is configured, otherwise QUICK. This internal retrieval mode is separate from LLM reasoning parameters and session intent analysis. Queries generated by intent analysis continue to be retrieved and ranked separately, then aggregated as before. Context mode (`search(mode="context")`) recalls through `find()`, so it uses vector scores unless the server enables `retrieval.apply_rerank_to_context`; it then reranks its merged candidates once per request, against the original query and its session expansions, before quotas and the token budget apply.
- 
- Image queries skip text reranking and recall `limit` candidates. They default to L2 unless `level` is specified.
- 
-@@ -99,7 +99,7 @@ Rerank processes only the candidates from the completed global search; it never
- 
- - Candidate index records supply the `abstract` text for reranking.
- - Scores and ranking use rerank scores when available, otherwise vector scores; access frequency, update time, and parent-directory scores do not affect them.
--- Score thresholds apply after reranking, or to vector scores when reranking is disabled.
-+- Score thresholds apply after reranking. A request `score_threshold` filters any score; without one, `rerank.threshold` filters only model rerank scores; vector scores (reranking disabled or failed) only need to exceed `0`.
- - Failed requests or invalid rerank results retain the existing fallback to vector scores.
- - Directory priority queues, parent-to-child score propagation, and convergence rounds are removed.
- 
-```
-
-**File**: `docs/en/configuration/01-server.md` (modified, +5/-3)
-```diff
-@@ -246,7 +246,7 @@ discard source restrictions. Empty does not mean unknown or inapplicable.
- | `provider` | `vikingdb`, `cohere`, `openai`, `litellm`, `jev` / `null` | `null` | Rerank service; inferred from credentials when omitted |
- | `model` | string / `null` | `null` | OpenAI-compatible, LiteLLM, or Jev rerank model |
- | `mode` | `noul`, `choice`, or `null` | `noul` | Jev rerank mode; `null` also uses `noul` |
--| `threshold` | number | `0.1` | Minimum score considered relevant |
-+| `threshold` | number | `0.1` | Minimum rerank score considered relevant; filters only model rerank scores, never vector scores, and a request `score_threshold` overrides it |
- | `max_input_tokens` | integer; `0` or `>= 128` | `0` | Maximum estimated tokens per query-document pair; `0` disables truncation |
- | `log_payloads` | boolean | `false` | Log complete rerank request and response payloads; may expose query and document content |
- 
-@@ -259,7 +259,8 @@ Rerank has no separate `enabled` field. It becomes available when the required p
- ```json
- {
-   "retrieval": {
--    "enable_intent": true
-+    "enable_intent": true,
-+    "apply_rerank_to_context": false
-   }
- }
+@@ -604,17 +602,14 @@ curl -X POST "http://localhost:1933/api/v1/snapshot/restore" \
+   -H "X-API-Key: your-key" \
+   -d '{
+     "path": "viking://resources/wiki/entity/project.md",
+-    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
+-    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
++    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
++    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
+   }'
  ```
-@@ -269,8 +270,9 @@ Rerank has no separate `enabled` field. It becomes available when the required p
- | Field | Type / values | Default | Purpose |
- |---|---|---|---|
- | `enable_intent` | boolean | `true` | Run intent analysis/query planning when `session_id` is present |
-+| `apply_rerank_to_context` | boolean | `false` | Rerank `search(mode="context")` candidates with the configured `rerank` model |
  
--Search and Find requests default to `limit: 10`; override the limit on each API or SDK request. `retrieval.enable_intent` controls LLM query planning for session-aware Search, while result reranking is enabled only when `rerank` has a usable provider configuration.
-+Search and Find requests default to `limit: 10`; override the limit on each API or SDK request. `retrieval.enable_intent` controls LLM query planning for session-aware Search, while result reranking is enabled only when `rerank` has a usable provider configuration. Context mode recalls with Find's vector scores; with `retrieval.apply_rerank_to_context` and a usable `rerank`, it also reranks its merged candidates once against the original query and its expansions before quotas and the token budget apply, which adds one rerank call per request.
+-For example, when version 2 is current and version 1 has different content, restoring version 1 creates version 3 and preserves both earlier versions. The response contains a new UUID `version_id`, `version_number: 3`, and `meta.restored_from` equal to version 1's UUID. Identical content returns the current ID and number with `result: "noop"` and `meta.restored_from: null`, without creating a version or incrementing its number.
+-
+-The current version is checked before looking up the historical version and again under the write lock before changing content. A stale `current_version` returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"`, including after deletion and recreation; a missing historical version returns `404` when the current version matches.
+-
+-Only the specified file is restored; related Wiki pages and index content retain their current content. A running Compile on the target returns `409 CONFLICT` with `error.details.resource: "COMPILE_RUNNING"`. This mode does not provide a `dry_run` preview; directory restore preview options do not apply to single-file restore.
++For example, when version 2 is current and version 1 has different content, restoring version 1 creates version 3 and preserves both earlier versions. The response contains a new UUID `version_id`, `version_number: 3`, and `meta.restored_from` equal to the source commit ID. Identical content returns the current ID and number with `result: "noop"` and `meta.restored_from: null`, without creating a version or incrementing its number.
  
- ## Storage Settings
++The last commit changing the file is checked before reading the same path in the historical commit and again under the write lock. A stale `current_commit_id` returns `409 VERSION_CONFLICT`; a missing historical commit or path returns `404` when the current commit matches. Restore does not follow moves or renames.
+ ---
  
+ ## Ignore management
 ```
 
-**File**: `docs/en/guides/01-configuration.md` (modified, +3/-1)
+**File**: `docs/zh/api/11-snapshot.md` (modified, +8/-13)
 ```diff
-@@ -1202,7 +1202,7 @@ using Choice through MCP.
- | `timeout` | float | HTTP request timeout in seconds for HTTP rerank providers, including Jev. Default: `30.0` |
- | `max_input_tokens` | int | Maximum estimated raw-text tokens in each query-document pair sent to the reranker. Oversized inputs retain their beginning and end. `0` disables. Default: `0` |
- | `log_payloads` | bool | Log complete rerank request and response payloads. May expose query and document content. Default: `false` |
--| `threshold` | float | Score threshold between `0.0` and `1.0`; results below this are filtered out. Default: `0.1` |
-+| `threshold` | float | Rerank score threshold between `0.0` and `1.0`; reranked results below this are filtered out. It never filters vector scores (rerank not used, or failed), and a request `score_threshold` overrides it. Default: `0.1` |
- | `extra_headers` | object | Custom HTTP headers (for OpenAI-compatible providers, optional) |
+@@ -588,13 +588,11 @@ ov snapshot restore 3f2a1b9c viking://resources/my_project -m "restore to v1" -o
  
- **Supported providers:**
-@@ -1222,6 +1222,7 @@ Configuration for session intent analysis and context assembly timeouts.
- {
-   "retrieval": {
-     "enable_intent": true,
-+    "apply_rerank_to_context": false,
-     "recall_intent_timeout_s": 5.0,
-     "recall_rewrite_timeout_s": 30.0
-   }
-@@ -1231,6 +1232,7 @@ Configuration for session intent analysis and context assembly timeouts.
- | Parameter | Type | Description | Default |
- |-----------|------|-------------|---------|
- | `enable_intent` | bool | Run intent analysis and query planning when `search()` receives a `session_id`. | `true` |
-+| `apply_rerank_to_context` | bool | Rerank `mode="context"` candidates with the configured [`rerank`](#rerank) model, once per request against the original query and its expansions, before quotas and the token budget apply. Needs a usable `rerank` config; image queries keep vector scores. | `false` |
+ | 参数 | 类型 | 说明 |
+ |------|------|------|
+-| path | str | Compile 产物文件的 `viking://` URI |
+-| restore_version | str | 提供恢复内容的历史版本的 UUID `version_id` |
+-| current_version | str | 调用方观察到的当前版本的 UUID `version_id`；不匹配时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT` |
++| path | str | Compile 产物文件的 `viking://` URI，也是历史快照中的读取路径 |
++| restore_commit_id | str | 提供恢复内容的完整 commit ID（40 位小写十六进制） |
++| current_commit_id | str | 调用方观察到的该文件在 `main` 上最后一次变更的完整 commit ID；不匹配时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT` |
  
- Session intent analysis in ordinary `search()` and query expansion in `mode="context"` share `recall_intent_timeout_s`. Context digest rewriting uses a separate timeout:
+-先调用 `GET /api/v1/snapshot/versions?uri=<文件 URI>` 获取 `current_version` 和历史版本列表，再提交恢复请求：
+-
+-每条版本记录包含 `version_id`（完整 UUID4 十六进制字符串）和正整数 `version_number`。客户端在恢复和分页时原样传递 ID，使用 `version_number` 展示 `v1`、`v2` 等编号。版本列表按从新到旧的顺序返回。编号在文件的一轮生命周期内递增，跨分页和历史清理保持不变。新版本索引从 1 开始编号；文件删除重建后版本 ID 不复用，旧恢复请求无法匹配重建文件。
++`GET /api/v1/snapshot/versions?uri=<文件 URI>` 用于查询版本历史。每条版本记录包含 `version_id`（完整 UUID4 十六进制字符串）和正整数 `version_number`。客户端在分页时原样传递版本 ID，使用 `version_number` 展示 `v1`、`v2` 等编号。版本列表按从新到旧的顺序返回。编号在文件的一轮生命周期内递增，跨分页和历史清理保持不变。新版本索引从 1 开始编号；文件删除重建后版本 ID 不复用，旧版本 UUID 不会匹配重建文件。
  
-```
-
-**File**: `docs/zh/api/06-retrieval.md` (modified, +14/-4)
-```diff
-@@ -9,10 +9,18 @@ OpenViking 提供多种检索方法，包括简单的向量相似度搜索、关
- | 意图分析 | 否 | 有会话内容且 `retrieval.enable_intent=true` 时执行 |
- | 会话上下文 | 不使用 | 可选 |
- | 查询扩展 | 否 | 意图分析启用且有会话内容时执行 |
--| 重排序 | 不使用 | 配置了重排序模型时用于文本查询 |
-+| 重排序 | 从不使用 | `mode="list"`：配置了重排序模型时用于文本查询。`mode="context"`：仅在开启 `retrieval.apply_rerank_to_context` 时使用 |
- | 默认结果数 | 10 | 每条规划查询最多 10 条 |
- | 使用场景 | 简单查询 | 对话式搜索 |
+ 响应中的 `to` 是文件所属的 Compile 目标目录，可与版本记录的 `meta.operation_id` 一起用于查询操作详情。`total` 表示当前保留的可查询版本总数，不受 `limit`、`before_version` 影响，不等于最新版本编号。将 `next_before_version` 原样作为 `before_version` 传入可继续加载更旧版本。该游标和 `current_version` 都使用 UUID ID；不要根据 ID 或页面内位置排序或推算展示编号。
  
-+各路径的 Rerank 情况：
-+
-+- `find()` 从不执行 Rerank，始终使用向量分数。
-+- `search(mode="list")` 在配置了可用的 `rerank` 时对文本查询执行 Rerank。
-+- `search(mode="context")` 仅在服务端设置 `retrieval.apply_rerank_to_context=true`（默认 `false`）且 `rerank` 配置可用时执行 Rerank：每次组装在配额和 token 预算之前对合并后的候选统一重排一次，仅限文本查询，Rerank 调用失败时回退到向量分数。
-+
-+分数阈值遵循同一规则：请求中的 `score_threshold` 优先，过滤该路径产出的任何分数；未指定时，`rerank.threshold`（默认 `0.1`）只过滤 Reranker 产出的分数，仅用向量分数的路径（包括 `find()` 和 Rerank 失败后的回退）默认阈值为 `0`。
-+
- ## 检索流程
- 
- 检索的核心流程如下：
-@@ -417,7 +425,7 @@ ov find "红色海报风格" --image ./poster.png --uri "viking://resources/imag
- 
- `search()` 使用和 `find()` 相同的目标解析和显式标签过滤规则，包括由 `X-OpenViking-Actor-Peer` 或 SDK `actor_peer_id` 选择的 peer 集合过滤。提供 `image_url` 时，`search()` 会直接执行图片检索并跳过会话 query planning。`keywords` 要求非空文本 query，不支持图片，且需要远程 VikingDB 配置全文索引。
- 
--事件时间衰减作用于语义 `find()`、`search(mode="list")` 和 `search(mode="context")` 中带 `memory_type=events` 标签的结果。记忆提取流程将该标签写入 user / peer 事件的 L2 记录；检索按标签判断，不从 URI 或层级推断事件类型。无事件标签的结果、无 query 的纯过滤 `find()`、`recall`、`grep` 和 `glob` 不受影响。事件召回阶段由向量引擎将原向量分乘以 `time_score`；响应中的 `score` 是最终检索分数，开启模型 rerank 时使用模型分。context 模式按最终分组装候选。保护期内 `time_score` 为 1，原分不变；时间距离与 VikingDB 指数衰减算子一致，取时间戳与请求时间的绝对差。list 响应中的 event 结果额外返回 `origin_score` 和 `time_score`，CLI 分别展示为 semantic、time 和 final 分。时间取自已有索引的 `updated_at` 字段，无需重新索引或改写时间戳；本地计算遇到缺失或非法时间时保持原分；云端使用索引中的日期时间字段和后处理算子。衰减曲线由服务端内部维护，调用方只需按请求传入保护期，无需修改 `ov.conf` 或 `ovcli.conf`。
-+事件时间衰减作用于语义 `find()`、`search(mode="list")` 和 `search(mode="context")` 中带 `memory_type=events` 标签的结果。记忆提取流程将该标签写入 user / peer 事件的 L2 记录；检索按标签判断，不从 URI 或层级推断事件类型。无事件标签的结果、无 query 的纯过滤 `find()`、`recall`、`grep` 和 `glob` 不受影响。事件召回阶段由向量引擎将原向量分乘以 `time_score`；响应中的 `score` 是最终检索分数，开启模型 rerank 时使用模型分。context 模式默认按向量分组装候选，开启 `retrieval.apply_rerank_to_context` 后按模型分组装。保护期内 `time_score` 为 1，原分不变；时间距离与 VikingDB 指数衰减算子一致，取时间戳与请求时间的绝对差。list 响应中的 event 结果额外返回 `origin_score` 和 `time_score`，CLI 分别展示为 semantic、time 和 final 分。时间取自已有索引的 `updated_at` 字段，无需重新索引或改写时间戳；本地计算遇到缺失或非法时间时保持原分；云端使用索引中的日期时间字段和后处理算子。衰减曲线由服务端内部维护，调用方只需按请求传入保护期，无需修改 `ov.conf` 或 `ovcli.conf`。
- 
- 由记忆提取流程新生成或更新的记忆会自动写入 `memory_type=<类型>` 检索标签。启用衰减时，本地和云端均将按是否带 `memory_type=events` 标签拆成互斥且完整覆盖原范围的两路，再合并排序；两路均保留原 scope 的权限、目录和 level 限制，无需指定 peer id。存量数据不补标签，无标签记忆保持原分。直接内容刷新和普通标签更新保留已有类型，不从 URI 推断或重设类型。
- 
-@@ -659,7 +667,7 @@ Agent 插件每轮注入上下文时，过去需要按类型逐个检索、再
- 
- **处理流程**：
- 1. **L1 查询理解**：可选，结合 Session 最近消息做有界意图扩展（最多 3 条查询，超时熔断，失败回退原查询）
--2. **L0 检索**：按 `quotas` 分桶独立检索，或不设配额时全域检索一次
-+2. **L0 检索**：按 `quotas` 分桶独立检索，或不设配额时全域检索一次。命中使用与 `find()` 相同的向量分数；服务端开启 `retrieval.apply_rerank_to_context` 且 `rerank` 配置可用时，合并后的候选会在配额和预算之前用原始查询及其扩展查询统一重排一次（见下文）
- 3. **L2 组装**：token 预算内填充档位（全员先落到各自类别的默认档，再用剩余预算按分数序加深），超限退档不截断
- 4. **L3 重写**：可选，把组装结果压成带 URI 引用的 digest（超时熔断，失败仍返回未重写的 `rendered`；精确返回 `NO_RELEVANT_MEMORY` 时记为 `stats.rewrite="no_relevant"`，Coding Agent 客户端不会再回退注入 `rendered`）
- 
-@@ -673,6 +681,8 @@ Agent 插件每轮注入上下文时，过去需要按类型逐个检索、再
- 
- **L0 检索域**：`query`、`image_url`、`context_type`、`limit`、`score_threshold`、`filter`、`tags`、`since`/`until` 以及可选的 `events_time_decay_protection` 与 list 模式一致。`limit` 只约束 quota-free 检索；一旦 `purpose` 或显式 `quotas` 启用分桶检索，各分类配额之和就是候选上限。`target_uri` 在 context 模式下暂不支持（返回 400）；`level` 被忽略，档位由 `detail` 决定。
- 
-+**可选 Rerank**：开启 `retrieval.apply_rerank_to_context` 且 `rerank` 配置可用时，文本查询每个请求对合并、去重后的候选执行一次 Rerank，以原始 `query` 与各条扩展查询拼接后的文本打分，只由扩展查询召回的命中也按该扩展点明的主题评判。不设配额时为此召回 `2 × limit` 条候选；分桶检索每桶最多重排 `2 × quota` 条，候选不足的桶留出的名额让给其他桶。Skill 以其包摘要参与打分。参与重排的候选 `score` 变为 Rerank 分数，`other_peer_penalty` 仍在其上生效。`score_threshold` 随之改为过滤最终分数而非召回；未指定时，`rerank.threshold` 只过滤模型分数。模型未打分的候选（文本为空或 Rerank 调用失败）保留向量分数。图像查询不执行 Rerank。`stats.rerank` 报告 `used`、`candidates`（送入模型的数量）和 `capped`（被每桶上限排除的数量）
-+
- **L1 查询理解**
- 
- | 参数 | 类型 | 默认值 | 说明 |
-@@ -809,7 +819,7 @@ curl -X POST http://localhost:1933/api/v1/search/search \
- | `entries[].text` | string | 该档位的正文；`uri` 档为空 |
- | `rendered` | string | 扁平 XML 上下文块，可直接注入；重写返回 `no_relevant` 时为空 |
- | `digest` | string | 重写成功时的摘要；失败或压缩器判定无相关记忆时为空字符串 |
--| `stats` | object | 预算用量、档位分布、扩展与重写状态（`off`、`ok`、`no_relevant`、`failed` 或 `timeout`）、去重账本状态；某个检索域失败时附带 `retrieval_errors`，用于区分「检索坏了」和「确实没有相关记忆」 |
-+| `stats` | object | 预算用量、档位分布、扩展与重写状态（`off`、`ok`、`no_relevant`、`failed` 或 `timeout`）、去重账本状态；某个检索域失败时附带 `retrieval_errors`，用于区分「检索坏了」和「确实没有相关记忆」；请求应用了 context Rerank 时附带 `rerank` |
- 
- 当 `stats.rewrite` 为 `no_relevant` 时，响应仍保留 `entries` 供检查，但 `digest` 和
- `rendered` 都为空字符串。这样即使客户端尚未识别新状态，也不会回退注入原文。本轮
-```
-
-**File**: `docs/zh/concepts/07-retrieval.md` (modified, +2/-2)
-```diff
-@@ -89,7 +89,7 @@ class TypedQuery:
- | THINKING，且配置了可用的 Rerank | `2 × limit` | 对召回候选统一执行一次，返回最多 `limit` 条 |
- | THINKING，未配置可用的 Rerank | `limit` | 不执行 |
- 
--`find()` 使用 QUICK。`search()` 配置了可用的 Rerank 时自动使用 THINKING，否则使用 QUICK。这是内部检索模式，不是 LLM 的思考参数，也不控制会话意图分析。意图分析生成的多条查询仍分别检索和排序，再按现有方式汇总。
-+`find()` 使用 QUICK。`search()` 配置了可用的 Rerank 时自动使用 THINKING，否则使用 QUICK。这是内部检索模式，不是 LLM 的思考参数，也不控制会话意图分析。意图分析生成的多条查询仍分别检索和排序，再按现有方式汇总。Context 模式（`search(mode="context")`）通过 `find()` 召回，因此默认使用向量分数；服务端开启 `retrieval.apply_rerank_to_context` 后，会在配额和 token 预算之前，用原始查询及其会话扩展查询对合并后的候选每个请求统一重排一次。
- 
- 图像查询跳过文本 Rerank，候选数为 `limit`；未指定 `level` 时默认搜索 L2。
- 
-@@ -99,7 +99,7 @@ Rerank 只处理本次全局召回的候选，不会触发下一轮检索。例
- 
- - 使用候选索引记录的 `abstract` 字段作为 Rerank 文本。
- - 分数与排序使用 Rerank 分数，否则使用向量分数；访问频次、更新时间和父目录分数不参与加权。
--- 分数阈值在 Rerank 后应用；未启用 Rerank 时使用向量分数。
-+- 分数阈值在 Rerank 后应用。请求中的 `score_threshold` 过滤所有分数；未指定时，`rerank.threshold` 只过滤模型产出的 Rerank 分数，向量分数（未启用 Rerank 或 Rerank 失败时）不受其过滤。
- - Rerank 请求失败或返回无效结果时，保留已有的向量分数回退行为。
- - 不再使用目录优先队列、父子分数传播或多轮收敛判断。
- 
-```
-
-**File**: `docs/zh/configuration/01-server.md` (modified, +5/-3)
-```diff
-@@ -238,7 +238,7 @@ Compiler 会优先忠实提炼原文中的对象、操作、前提和场景，
- | `provider` | `vikingdb`、`cohere`、`openai`、`litellm`、`jev` / `null` | `null` | Rerank 服务类型；省略时根据凭证字段推断 |
- | `model` | string / `null` | `null` | OpenAI 兼容、LiteLLM 或 Jev Rerank 模型 |
- | `mode` | `noul`、`choice` 或 `null` | `noul` | Jev Rerank 模式；`null` 同样使用 `noul` |
--| `threshold` | number | `0.1` | 判定结果相关的最低分数 |
-+| `threshold` | number | `0.1` | 判定结果相关的最低 Rerank 分数；只过滤模型产出的 Rerank 分数，不过滤向量分数；请求中的 `score_threshold` 优先 |
- | `max_input_tokens` | integer；`0` 或 `>= 128` | `0` | 每个 query-document pair 的最大估算 token；`0` 表示不截断 |
- | `log_payloads` | boolean | `false` | 记录完整 rerank 请求和响应；日志可能包含 query 和文档内容 |
- 
-@@ -251,7 +251,8 @@ Rerank 没有单独的 `enabled` 字段；配置了对应 provider 所需的凭
- ```json
- {
-   "retrieval": {
--    "enable_intent": true
-+    "enable_intent": true,
-+    "apply_rerank_to_context": false
-   }
- }
+@@ -604,17 +602,14 @@ curl -X POST "http://localhost:1933/api/v1/snapshot/restore" \
+   -H "X-API-Key: your-key" \
+   -d '{
+     "path": "viking://resources/wiki/entity/project.md",
+-    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
+-    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
++    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
++    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
+   }'
  ```
-@@ -261,8 +262,9 @@ Rerank 没有单独的 `enabled` 字段；配置了对应 provider 所需的凭
- | 字段 | 类型 / 可选值 | 默认值 | 作用 |
- |---|---|---|---|
- | `enable_intent` | boolean | `true` | 有 `session_id` 时是否进行意图分析和查询规划 |
-+| `apply_rerank_to_context` | boolean | `false` | 是否用已配置的 `rerank` 模型重排 `search(mode="context")` 的候选 |
  
--Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 请求中覆盖。`retrieval.enable_intent` 控制带 Session 的 Search 是否执行 LLM 查询规划；只有配置了可用的 `rerank` provider 时才会执行结果重排。
-+Search 和 Find 请求的默认 `limit` 为 `10`，可以在每次 API 或 SDK 请求中覆盖。`retrieval.enable_intent` 控制带 Session 的 Search 是否执行 LLM 查询规划；只有配置了可用的 `rerank` provider 时才会执行结果重排。Context 模式使用 Find 的向量分数召回；开启 `retrieval.apply_rerank_to_context` 且 `rerank` 可用时，会在配额和 token 预算之前，用原始查询及其扩展查询对合并后的候选统一重排一次，每个请求多一次 Rerank 调用。
+-例如，当前为第 2 版且第 1 版内容不同时，恢复第 1 版会生成第 3 版，并保留前两版的历史。响应包含新的 UUID `version_id`、`version_number: 3`，`meta.restored_from` 为第 1 版的 UUID。内容相同时返回当前 ID 和编号，以及 `result: "noop"`、`meta.restored_from: null`，不新增版本，也不递增编号。
+-
+-恢复先检查当前版本，再查找历史版本，并在写入锁内、修改内容前再次检查当前版本。`current_version` 过期时返回 `409 CONFLICT`，`error.details.resource` 为 `VERSION_CONFLICT`，包括删除重建后的旧请求；当前版本匹配但历史版本不存在时返回 `404`。
+-
+-仅指定文件被恢复；相关 Wiki 页面和索引正文保持原内容。目标存在运行中的 Compile 时，返回 `409 CONFLICT`，`error.details.resource` 为 `COMPILE_RUNNING`。此模式不提供 `dry_run` 预演；目录恢复的预演参数不适用于单文件恢复。
++例如，当前为第 2 版且第 1 版内容不同时，恢复第 1 版会生成第 3 版，并保留前两版的历史。响应包含新的 UUID `version_id`、`version_number: 3`，`meta.restored_from` 为来源 commit ID。内容相同时返回当前 ID 和编号，以及 `result: "noop"`、`meta.restored_from: null`，不新增版本，也不递增编号。
  
- ## 存储配置
++恢复先校验该文件最新变更的 commit，再读取历史 commit 中的同一路径，并在写入锁内再次校验。`current_commit_id` 过期时返回 `409 VERSION_CONFLICT`；当前 commit 匹配但历史 commit 或路径不存在时返回 `404`。不自动追踪重命名或移动前的路径。
+ ---
+ 
+ ## ignore 管理
+```
+
+**File**: `openviking/server/routers/snapshot.py` (modified, +9/-9)
+```diff
+@@ -117,11 +117,11 @@ class RestoreRequest(BaseModel):
+     project_dir: Optional[str] = None
+     source_commit: Optional[str] = None
+     path: Optional[str] = None
+-    restore_version: Optional[str] = Field(
+-        None, description="Historical version UUID supplying the restored content"
++    restore_commit_id: Optional[str] = Field(
++        None, pattern=r"^[0-9a-f]{40}$", description="Full commit ID supplying content at path"
+     )
+-    current_version: Optional[str] = Field(
+-        None, description="Required current version UUID; mismatch returns a conflict"
++    current_commit_id: Optional[str] = Field(
++        None, pattern=r"^[0-9a-f]{40}$", description="Expected last commit changing path"
+     )
+     branch: str = "main"
+     dry_run: bool = False
+@@ -134,8 +134,8 @@ def _one_mode(self) -> "RestoreRequest":
+         if self.path is not None:
+             if self.project_dir is not None or self.source_commit is not None:
+                 raise ValueError("path cannot be combined with project_dir or source_commit")
+-            if not self.restore_version or not self.current_version:
+-                raise ValueError("path requires restore_version and current_version")
++            if not self.restore_commit_id or not self.current_commit_id:
++                raise ValueError("path requires restore_commit_id and current_commit_id")
+         elif not self.source_commit:
+             raise ValueError("source_commit is required")
+         return self
+@@ -161,14 +161,14 @@ async def restore(
+     request: RestoreRequest = Body(...),
+     _ctx: RequestContext = Depends(get_request_context),
+ ):
+-    """Forward-commit restore: rebuild project_dir from source_commit on top of HEAD."""
++    """Restore a directory or one file's historical content as a forward commit."""
+     service = get_service()
+     if request.path is not None:
+         path = validate_request_viking_uri(request.path, _ctx, field_name="path")
+         result = await service.compile.restore_file_version(
+             uri=path,
+-            restore_version=request.restore_version,
+-            current_version=request.current_version,
++            restore_commit_id=request.restore_commit_id,
++            current_commit_id=request.current_commit_id,
+             ctx=_ctx,
+         )
+         return Response(status="ok", result=result)
+```
+
+**File**: `openviking/service/compile_service.py` (modified, +4/-7)
+```diff
+@@ -838,12 +838,9 @@ async def file_versions(
+         )
+ 
+     async def restore_file_version(
+-        self, uri: str, restore_version: str, current_version: str, ctx: RequestContext
++        self, uri: str, restore_commit_id: str, current_commit_id: str, ctx: RequestContext
+     ) -> dict[str, Any]:
+-        """Restore a file version, retaining current metadata for memory files.
+-
+-        Return version metadata after refresh; mismatches or active Compile raise ConflictError.
+-        """
++        """Return restored version metadata; stale file commits or active Compile raise ConflictError."""
+ 
+         async def write(content: bytes, commit_content: Any) -> None:
+             # Use normal refresh while recording a restore version.
+@@ -863,8 +860,8 @@ async def write(content: bytes, commit_content: Any) -> None:
+ 
+         return await self._require_lifecycle().versions.restore(
+             uri=uri,
+-            restore_version=restore_version,
+-            current_version=current_version,
++            restore_commit_id=restore_commit_id,
++            current_commit_id=current_commit_id,
+             ctx=ctx,
+             write=write,
+         )
+```
+
+**File**: `openviking/service/compile_targets.py` (modified, +24/-23)
+```diff
+@@ -2690,25 +2690,30 @@ async def versions(
+     async def restore(
+         self,
+         uri: str,
+-        restore_version: str,
+-        current_version: str,
++        restore_commit_id: str,
++        current_commit_id: str,
+         ctx: RequestContext,
+         write: Callable[[bytes, Callable[..., Awaitable[Any]]], Awaitable[Any]],
+     ) -> Dict[str, Any]:
+-        """Restore by UUID; reject stale current_version under lock and return metadata or noop."""
++        """Restore URI from a commit; reject stale file commits under lock, returning metadata or noop."""
+         await self._fs._ensure_access(uri, ctx, action=AclAction.WRITE)
+         record = await self._managed(uri, ctx)
+-        index = await self.load(ctx.account_id, record["to"], uri) or {"versions": []}
+-        current = index["versions"][-1]["version_id"] if index["versions"] else None
+-        if current != current_version:
+-            raise ConflictError(
+-                f"Current version is {current}, not {current_version}",
+-                resource="VERSION_CONFLICT",
+-            )
+-        source = next((v for v in index["versions"] if v["version_id"] == restore_version), None)
+-        if source is None:
+-            raise NotFoundError(restore_version, "file version")
+-        content = await self._fs.show(source["snapshot_id"], path=source["snapshot_path"], ctx=ctx)
++
++        async def check_current_commit() -> None:
++            """Reject a stale file commit; unrelated paths do not cause conflicts."""
++            history = await self._fs.log(paths=[uri], limit=1, ctx=ctx)
++            current = history[0]["oid"] if history else None
++            if current != current_commit_id:
++                raise ConflictError(
++                    f"Current file commit is {current}, not {current_commit_id}",
++                    resource="VERSION_CONFLICT",
++                )
++
++        await check_current_commit()
++        try:
++            content = await self._fs.show(restore_commit_id, path=uri, ctx=ctx)
++        except AGFSNotFoundError as exc:
++            raise NotFoundError(f"{restore_commit_id}:{uri}", "snapshot file") from exc
+         result: Dict[str, Any] = {}
+ 
+         async def commit_restore(uris, *, lease_ref, write):
+@@ -2721,16 +2726,12 @@ async def commit_restore(uris, *, lease_ref, write):
+                     raise ConflictError("Compile is running", resource="COMPILE_RUNNING")
+                 index = await self.load(ctx.account_id, target_to, uri) or {"versions": []}
+                 current = index["versions"][-1]["version_id"] if index["versions"] else None
+-                if current != current_version:
+-                    raise ConflictError(
+-                        f"Current version is {current}, not {current_version}",
+-                        resource="VERSION_CONFLICT",
+-                    )
++                await check_current_commit()
+                 written = await self.record_write(
+                     uris, ctx, "restore", write=write, record_version=False
+                 )
+                 snapshot = await self._commit(
+-                    uris, f"restore {uri} to {restore_version}", ctx, lease_ref=lease_ref
++                    uris, f"restore {uri} to {restore_commit_id}", ctx, lease_ref=lease_ref
+                 )
+             if not snapshot or not await self._changed(ctx, target_to, uri, snapshot):
+                 result.update(
+@@ -2749,8 +2750,8 @@ async def commit_restore(uris, *, lease_ref, write):
+                     {
+                         "source": "restore",
+                         "actor": ctx.user.user_id,
+-                        "meta": {"restored_from": restore_version},
+-                        "provenance": dict(source.get("provenance") or {}),
++                        "meta": {"restored_from": restore_commit_id},
++                        "provenance": {"source_roots": [uri]},
+                     },
+                 )
+                 result.update(
+@@ -2771,7 +2772,7 @@ async def restore_content():
+             [uri],
+             ctx,
+             "restore",
+-            {"restore_version": restore_version, "current_version": current_version},
++            {"restore_commit_id": restore_commit_id, "current_commit_id": current_commit_id},
+             restore_content,
+         )
  
 ```
 
-**File**: `docs/zh/guides/01-configuration.md` (modified, +3/-1)
+**File**: `tests/server/test_compile_studio.py` (modified, +4/-4)
 ```diff
-@@ -1190,7 +1190,7 @@ Jev 适配器将 query 和候选文档作为共享的 System One `state`，支
- | `timeout` | float | HTTP Rerank provider（包括 Jev）的请求超时时间，单位为秒。默认：`30.0` |
- | `max_input_tokens` | int | 每个 query-document 对发送给 reranker 的最大估算原始文本 token 数；超长输入会保留开头和结尾。`0` 表示不截断。默认：`0` |
- | `log_payloads` | bool | 记录完整 rerank 请求和响应；日志可能包含 query 和文档内容。默认：`false` |
--| `threshold` | float | 分数阈值，范围为 `0.0` 到 `1.0`。低于此值的结果会被过滤。默认：`0.1` |
-+| `threshold` | float | Rerank 分数阈值，范围为 `0.0` 到 `1.0`。Rerank 后低于此值的结果会被过滤；它不过滤向量分数（未使用 Rerank 或 Rerank 失败时），请求中的 `score_threshold` 优先。默认：`0.1` |
- | `extra_headers` | object | 自定义 HTTP 请求头（OpenAI 兼容 provider 可用，可选） |
+@@ -617,7 +617,7 @@ async def submit(payload, key):
+     )
+     assert {"execution", "skill_snapshot"}.isdisjoint(cancelled_operation["meta"])
  
- **支持的提供方:**
-@@ -1210,6 +1210,7 @@ Jev 适配器将 query 和候选文档作为共享的 System One `state`，支
- {
-   "retrieval": {
-     "enable_intent": true,
-+    "apply_rerank_to_context": false,
-     "recall_intent_timeout_s": 5.0,
-     "recall_rewrite_timeout_s": 30.0
-   }
-@@ -1219,6 +1220,7 @@ Jev 适配器将 query 和候选文档作为共享的 System One `state`，支
- | 参数 | 类型 | 说明 | 默认值 |
- |------|------|------|--------|
- | `enable_intent` | bool | `search()` 收到 `session_id` 时是否执行意图分析和查询规划。 | `true` |
-+| `apply_rerank_to_context` | bool | 是否用已配置的 [`rerank`](#rerank) 模型重排 `mode="context"` 的候选：每个请求用原始查询及其扩展查询统一重排一次，在配额和 token 预算之前执行。需要可用的 `rerank` 配置；图像查询保持向量分数。 | `false` |
- 
- 普通 `search()` 的会话意图分析和 `mode="context"` 的查询扩展共用 `recall_intent_timeout_s`；上下文 digest 重写使用独立的超时配置：
- 
+-    # Binary version restore is guarded by the version the caller last observed.
++    # Binary restore is guarded by the last commit changing the file.
+     await service.fs.batch_write(
+         root_uri=target,
+         operations=[
+@@ -632,12 +632,12 @@ async def submit(payload, key):
+     assert versions["to"] == target
+     restore = {
+         "path": picture,
+-        "restore_version": versions["versions"][-1]["version_id"],
+-        "current_version": versions["current_version"],
++        "restore_commit_id": versions["versions"][-1]["snapshot_id"],
++        "current_commit_id": (await service.fs.log(ctx, paths=[picture], limit=1))[0]["oid"],
+     }
+     restored = await client.post("/api/v1/snapshot/restore", json=restore)
+     assert restored.status_code == 200, restored.text
+-    assert restored.json()["result"]["meta"]["restored_from"] == restore["restore_version"]
++    assert restored.json()["result"]["meta"]["restored_from"] == restore["restore_commit_id"]
+     await service.resources.wait_processed()
+     assert await service.fs.read_file_bytes(picture, ctx) == png
+     assert (await client.post("/api/v1/snapshot/restore", json=restore)).status_code == 409
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6610** (2026-10-26): fix(auth): reveal only the caller's own user API key in admin listings (@MaojiaSheng)
-- **PR #6609** (2026-10-26): feat: add DingTalk connector OAuth auth (@leeebai)
-- **PR #6607** (2026-10-26): fix(ragfs): backport multiwrite hotfixes to v0.5.0 (@baojun-zhang)
-- **PR #6606** (2026-10-26): fix(multiwrite): avoid glob cleanup during full import (@baojun-zhang)
-- **PR #6605** (2026-10-26): fix(retrieve): opt-in rerank for context mode and decouple rerank.threshold (@t0saki)
-- **PR #6604** (2026-10-26): fix(multiwrite): 取消删除 v1 元数据时 glob 操作，在 import account 阶段进行删除 && 增加迁移阶段执行进度日志 (@baojun-zhang)
+- **PR #6855** (2026-10-31): fix(vika): make bundled CLIs discoverable in agent shells (@krsish)
+- **PR #6849** (2026-10-31): feat(vika): run agents on the pi-durable runtime (@nexw)
+- **PR #6843** (2026-10-31): fix(vika): wake on mentions in Feishu document comments (@krsish)
+- **PR #6841** (2026-10-31): fix(vika): name the Feishu account a bot needs as phone-registered, not "personal" (@krsish)
+- **PR #6840** (2026-10-31): fix(snapshot): restore single files using commit IDs (@FuJiaJie123)
+- **PR #6839** (2026-10-31): fix(vika): say when a Feishu account cannot run bots instead of aborting setup (@krsish)
 
 ---
 
@@ -2214,28 +1810,42 @@ Fixes #6182
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): require SDK 0.1.17 for Compile APIs (#6596)
+## X. snapshot): restore single files using commit IDs (#6840)
 
 **RULE**:
-When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/api/11-snapshot.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `009c483f`: deps): require SDK 0.1.17 for Compile APIs (#6596). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3dedecc0`: snapshot): restore single files using commit IDs (#6840). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/api/11-snapshot.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    "openviking-sdk>=0.1.17",
+| path | str | Compile output file URI, also used as the path in the historical snapshot |
+| restore_commit_id | str | Full commit ID supplying the content (40 lowercase hexadecimal characters) |
+| current_commit_id | str | Full ID of the last commit changing this file on `main`, as observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
+`GET /api/v1/snapshot/versions?uri=<file URI>` lists version history. Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass version IDs unchanged for pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so old version UUIDs cannot match the recreated file.
+    "restore_commit_id": "0334d9abe4ac4f25a3e59d0b401bb01c12345678",
+    "current_commit_id": "54c71fb7bf134b71a9b7ed604c21f5b412345678"
+For example, when version 2 is current and version 1 has different content, restoring version 1 cr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-    "openviking-sdk>=0.1.15",
+| path | str | `viking://` URI of the Compile output file |
+| restore_version | str | UUID `version_id` of the historical version supplying the restored content |
+| current_version | str | UUID `version_id` of the current version observed by the caller; a mismatch returns `409 CONFLICT` with `error.details.resource: "VERSION_CONFLICT"` |
+Call `GET /api/v1/snapshot/versions?uri=<file URI>` to obtain `current_version` and the version history before submitting a restore:
+
+Each version has a `version_id` (a full UUID4 hex string) and a positive integer `version_number`. Clients pass IDs unchanged for restore and pagination; use `version_number` to display labels such as `v1` and `v2`. Versions are returned newest first. Numbers increase within a file's lifecycle and remain unchanged across pages and history cleanup. A new version index starts numbering at 1; version IDs are not reused after deletion and recreation, so an old restore request cannot match the recreated file.
+    "restore_version": "0334d9abe4ac4f25a3e59d0b401bb01c",
+    "current_version": "54c71fb7bf134b71a9b7ed604c21f5b4"
+For example, when version 2 is current and version 1 has different content, restoring version 1 cre
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `009c483f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3dedecc0` are properly handled with clean fallback behavior.

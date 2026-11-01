@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source**: github ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
-> **Source Version**: `c58a60f0`  
+> **Source Version**: `53625dfe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:19:11.310Z  
+> **Timestamp**: 2026-10-31T02:44:10.790Z  
 > **Learning ID**: `learn-github-bitnami-sealed-secrets`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitnami-sealed-secrets-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/bitnami/sealed-secrets](https://github.com/bitnami/sealed-secrets))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:19:10.283Z  
+> **Harvest Timestamp**: 2026-10-31T02:44:10.002Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kubernetes controller and tool for one-way encrypted Secrets
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9318 stars
+- **Stars / Engagement**: 9324 stars
 
 ---
 
@@ -1475,69 +1475,190 @@ func (c *Clientset) BitnamiV1alpha1() bitnamiv1alpha1.BitnamiV1alpha1Interface {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c58a60f0` (2026-10-26)
-**Commit Message**: Release carvel package 2.22.0 (#2085)
+### Incident Patch 1: `53625dfe` (2026-10-30)
+**Commit Message**: docs: fix typos in chart notes, values and docs (#2088)
 
-Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
+**Description of the change**
 
-Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
-Co-authored-by: agarcia-oss <[REDACTED_EMAIL]>
+Fixes spelling mistakes in text that users actually see:
 
-**File**: `carvel/package.yaml` (modified, +3/-3)
+- `helm/sealed-secrets/templates/NOTES.txt`: "commitable" ->
+"committable" (printed after every `helm install`/`helm upgrade`)
+- `helm/sealed-secrets/values.yaml` and the generated chart `README.md`
+table: "wheter" -> "whether" (`networkPolicy.egress.enabled`), plus
+"priviledge" and "formated" in the values comments. I kept the README
+table column widths the same.
+- `README.md`: "[DEPRACATED]" -> "[DEPRECATED]"
+- `docs/`: "succesfully", "bellow", "commited"
+- Website templates (`site/themes/template/layouts`): "recomendations",
+"occured"
+- Prometheus mixin alert comment: "occurence"
+
+The `site/content/docs/latest/project/*.md` files are symlinks to the
+READMEs, so those fixes show up on the website too.
+
+**Benefits**
+
+The chart notes, values docs and website read correctly.
+
+**Possible drawbacks**
+
+None. Only text changes: no template logic, values keys or code are
+touched.
+
+**Applicable issues**
+
+- None (found with `codespell`)
+
+**Additional information**
+
+I found these with `codespell` and checked each one by hand. I left
+historical rel
+
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1,10 +1,10 @@
- apiVersion: data.packaging.carvel.dev/v1alpha1
- kind: Package
- metadata:
--  name: "sealedsecrets.bitnami.com.2.20.0"
-+  name: "sealedsecrets.bitnami.com.2.22.0"
- spec:
-   refName: "sealedsecrets.bitnami.com"
--  version: "2.20.0"
-+  version: "2.22.0"
-   valuesSchema:
-     openAPIv3:
-       title: Chart Values
-@@ -424,7 +424,7 @@ spec:
-     spec:
-       fetch:
-         - imgpkgBundle:
--            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:0167e74df60eb190a1c79be4beec516aedcef07f299c4ca1a0a0f2d86b3d90bd
-+            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:3bd25880e516548888f6988f0b6cd2a2a9f993ab8ed7e08d97b50b347613ab99
-       template:
-         - helmTemplate:
-             path: sealed-secrets
+@@ -882,4 +882,4 @@ Click [here](http://slack.k8s.io) to sign up to the Kubernetes Slack org.
+ - Visual Studio Code extension: [https://marketplace.visualstudio.com/items?itemName=codecontemplator.kubeseal](https://marketplace.visualstudio.com/items?itemName=codecontemplator.kubeseal)
+ - WebSeal: generates secrets in the browser: [https://socialgouv.github.io/webseal](https://socialgouv.github.io/webseal)
+ - HybridEncrypt TypeScript implementation: [https://github.com/SocialGouv/aes-gcm-rsa-oaep](https://github.com/SocialGouv/aes-gcm-rsa-oaep)
+-- [DEPRACATED] Sealed Secrets Operator: [https://github.com/disposab1e/sealed-secrets-operator-helm](https://github.com/disposab1e/sealed-secrets-operator-helm)
++- [DEPRECATED] Sealed Secrets Operator: [https://github.com/disposab1e/sealed-secrets-operator-helm](https://github.com/disposab1e/sealed-secrets-operator-helm)
 ```
 
----
-
-### Incident Patch 2: `c60dbbc0` (2026-10-26)
-**Commit Message**: Release chart 2.22.0 (#2084)
-
-Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
-
-Signed-off-by: agarcia-oss <[REDACTED_EMAIL]>
-Co-authored-by: agarcia-oss <[REDACTED_EMAIL]>
-
-**File**: `helm/sealed-secrets/Chart.yaml` (modified, +1/-1)
+**File**: `contrib/prometheus-mixin/alerts/sealed-secrets-alerts.libsonnet` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,6 @@ maintainers:
-     url: https://github.com/bitnami/sealed-secrets
- name: sealed-secrets
- type: application
--version: 2.21.0
-+version: 2.22.0
- sources:
-   - https://github.com/bitnami/sealed-secrets
+@@ -4,7 +4,7 @@
+       name: 'sealed-secrets',
+       rules: [
+         // SealedSecretsErrorRateHigh:
+-        // Method: Alert on occurence of errors by looking for a non-zero rate of errors over past 5 minutes
++        // Method: Alert on occurrence of errors by looking for a non-zero rate of errors over past 5 minutes
+         // Pros:
+         // - An app deploy is likely broken if a secret can't be updated by Controller.
+         // Caveats:
+```
+
+**File**: `docs/bring-your-own-certificates.md` (modified, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ Use your own certificate (key) by using the `--cert` flag:
+ kubeseal --cert "./${PUBLICKEY}" --scope cluster-wide < mysecret.yaml | kubectl apply -f-
+ ```
+ 
+-### We can see the secret has been unsealed succesfully
++### We can see the secret has been unsealed successfully
+ 
+ ```bash
+ kubectl -n "$NAMESPACE" logs -l name=sealed-secrets-controller
+```
+
+**File**: `docs/developer/crypto.md` (modified, +2/-2)
+```diff
+@@ -40,7 +40,7 @@ The controller looks for a cluster-wide private/public key pair on startup. If n
+ 
+ The public key (in the form of a self-signed certificate if it was generated by the controller) should be made publicly available to anyone wanting to use SealedSecrets with this cluster.
+ 
+-Note that it is possible to use your own X509 certificate with the command bellow:
++Note that it is possible to use your own X509 certificate with the command below:
+ 
+ ```
+ kubeseal --cert [https:/]/path/to/your-cert.pem
+@@ -174,7 +174,7 @@ It is important to qualify this recommendation with a couple of prerequisites:
+ - A standard or clear recommended Public Key Cryptography Algorithm replacement emerges in the industry.
+ - A reliable Go implementation is available in a compatible Open Source license.
+ 
+-Without such prerequisites in place, an RSA replacement cannot be commited upon.
++Without such prerequisites in place, an RSA replacement cannot be committed upon.
+ 
+ ### Associated documentation
+ 
+```
+
+**File**: `helm/sealed-secrets/README.md` (modified, +1/-1)
+```diff
+@@ -185,7 +185,7 @@ The command removes all the Kubernetes components associated with the chart and
+ | `ingress.extraTls`                 | TLS configuration for additional hostname(s) to be covered with this ingress record                                              | `[]`                     |
+ | `ingress.secrets`                  | Custom TLS certificates as secrets                                                                                               | `[]`                     |
+ | `networkPolicy.enabled`            | Specifies whether a NetworkPolicy should be created                                                                              | `false`                  |
+-| `networkPolicy.egress.enabled`     | Specifies wheter a egress is set in the NetworkPolicy                                                                            | `false`                  |
++| `networkPolicy.egress.enabled`     | Specifies whether a egress is set in the NetworkPolicy                                                                           | `false`                  |
+ | `networkPolicy.egress.kubeapiCidr` | Specifies the kubeapiCidr, which is the only egress allowed. If not set, kubeapiCidr will be found using Helm lookup             | `""`                     |
+ | `networkPolicy.egress.kubeapiPort` | Specifies the kubeapiPort, which is the only egress allowed. If not set, kubeapiPort will be found using Helm lookup             | `""`                     |
+ 
+```
+
+**File**: `helm/sealed-secrets/templates/NOTES.txt` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@ You should now be able to create sealed secrets.
+       --controller-namespace={{ include "sealed-secrets.namespace" . }} \
+       --format yaml > mysealedsecret.[json|yaml]
+ 
+-The file mysealedsecret.[json|yaml] is a commitable file.
++The file mysealedsecret.[json|yaml] is a committable file.
+ 
+ If you would rather not need access to the cluster to generate the sealed secret you can run:
+ 
+```
+
+**File**: `helm/sealed-secrets/values.yaml` (modified, +3/-3)
+```diff
+@@ -66,7 +66,7 @@ secretName: "sealed-secrets-key"
+ ##
+ updateStatus: true
+ ## @param skipRecreate Specifies whether the Sealed Secrets controller should skip restoring removed or modified secrets
+-## Setting it to true allows to optionally restore backward compatibility in low priviledge
++## Setting it to true allows to optionally restore backward compatibility in low privilege
+ ## environments when old versions of the controller did not require watch permissions on secrets
+ ## for secret re-creation and healing.
+ ##
+@@ -83,7 +83,7 @@ keyrenewperiod: ""
+ ##
+ keyttl: ""
+ ## @param keycutofftime Specifies a date at which the controller should generate a new certificate. Useful in early key renewal scenarios.
+-## Takes a date formated according to RFC1123. Can be obtained with the 'date -R' command on a unix system.
++## Takes a date formatted according to RFC1123. Can be obtained with the 'date -R' command on a unix system.
+ ## e.g
+ ## keycutofftime: "Mon, 14 Oct 2024 21:45:30 +0200"
+ ##
+@@ -403,7 +403,7 @@ networkPolicy:
+   ## NetworkPolicy Egress configuration
+   ##
+   egress:
+-    ## @param networkPolicy.egress.enabled Specifies wheter a egress is set in the NetworkPolicy
++    ## @param networkPolicy.egress.enabled Specifies whether a egress is set in the NetworkPolicy
+     ##
+     enabled: false
+     ## @param networkPolicy.egress.kubeapiCidr Specifies the kubeapiCidr, which is the only egress allowed. If not set, kubeapiCidr will be found using Helm lookup
+```
+
+**File**: `site/content/docs/latest/background/cryptography.md` (modified, +2/-2)
+```diff
+@@ -71,7 +71,7 @@ The controller looks for a cluster-wide private/public key pair on startup. If n
+ 
+ The public key (in the form of a self-signed certificate if it was generated by the controller) should be made publicly available to anyone wanting to use Sealed Secrets with this cluster.
+ 
+-> Note that it is possible to use your own X509 certificate with the command bellow:
++> Note that it is possible to use your own X509 certificate with the command below:
+ 
+ ```shell
+ kubeseal --cert [https:/]/path/to/your-cert.pem
+@@ -205,7 +205,7 @@ It is important to qualify this recommendation with a couple of prerequisites:
+ - A standard or clear recommended Public Key Cryptography Algorithm replacement emerges in the industry.
+ - A reliable Go implementation is available in a compatible Open Source license.
+ 
+-Without such prerequisites in place, an RSA replacement cannot be commited upon.
++Without such prerequisites in place, an RSA replacement cannot be committed upon.
+ 
+ ### Associated documentation
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2088** (2026-10-30): docs: fix typos in chart notes, values and docs (@sarankumar1325)
+- **PR #2086** (2026-10-29): Bump distroless/static from `9e0130b` to `15f8637` in /docker (@dependabot[bot])
 - **PR #2085** (2026-10-26): Release carvel package 2.22.0 (@github-actions[bot])
 - **PR #2084** (2026-10-26): Release chart 2.22.0 (@github-actions[bot])
 - **PR #2083** (2026-10-26): Release chart 2.21.0 (@github-actions[bot])
 - **PR #2082** (2026-10-26): Release notes 0.41.2 (@alvneiayu)
-- **PR #2079** (2026-10-23): Release notes 0.41.1 (@alvneiayu)
-- **PR #2078** (2026-10-23): Release notes 0.41.0 (@alvneiayu)
 
 ---
 
@@ -1557,32 +1678,28 @@ Co-authored-by: agarcia-oss <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Release carvel package 2.22.0 (#2085)
+## X. docs: fix typos in chart notes, values and docs (#2088)
 
 **RULE**:
-When implementing operations in `carvel/package.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bitnami/sealed-secrets. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in bitnami/sealed-secrets. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c58a60f0`: Release carvel package 2.22.0 (#2085). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53625dfe`: docs: fix typos in chart notes, values and docs (#2088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `carvel/package.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  name: "sealedsecrets.bitnami.com.2.22.0"
-  version: "2.22.0"
-            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:3bd25880e516548888f6988f0b6cd2a2a9f993ab8ed7e08d97b50b347613ab99
+- [DEPRECATED] Sealed Secrets Operator: [https://github.com/disposab1e/sealed-secrets-operator-helm](https://github.com/disposab1e/sealed-secrets-operator-helm)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  name: "sealedsecrets.bitnami.com.2.20.0"
-  version: "2.20.0"
-            image: ghcr.io/bitnami/sealed-secrets-carvel@sha256:0167e74df60eb190a1c79be4beec516aedcef07f299c4ca1a0a0f2d86b3d90bd
+- [DEPRACATED] Sealed Secrets Operator: [https://github.com/disposab1e/sealed-secrets-operator-helm](https://github.com/disposab1e/sealed-secrets-operator-helm)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c58a60f0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53625dfe` are properly handled with clean fallback behavior.

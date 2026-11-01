@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source**: github ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
-> **Source Version**: `c894d977`  
+> **Source Version**: `4641beb5`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:21:20.153Z  
+> **Timestamp**: 2026-10-31T19:49:54.567Z  
 > **Learning ID**: `learn-github-mariadb-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mariadb-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MariaDB/server](https://github.com/MariaDB/server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:21:19.952Z  
+> **Harvest Timestamp**: 2026-10-31T19:49:53.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 8445 stars
+- **Stars / Engagement**: 8497 stars
 
 ---
 
@@ -1175,6 +1175,12 @@ _rl_savestring (s)
   Instrumentation helpers for statements.
 */
 
+/**
+  @defgroup Statement_instrumentation Statement Instrumentation
+  @ingroup Instrumentation_interface
+  @{
+*/
+
 #include "mysql/psi/psi.h"
 
 class Diagnostics_area;
@@ -1187,12 +1193,6 @@ typedef const struct charset_info_st CHARSET_INFO;
 #ifndef PSI_DIGEST_CALL
 #define PSI_DIGEST_CALL(M) PSI_DYNAMIC_CALL(M)
 #endif
-
-/**
-  @defgroup Statement_instrumentation Statement Instrumentation
-  @ingroup Instrumentation_interface
-  @{
-*/
 
 /**
   @def mysql_statement_register(P1, P2, P3)
@@ -1414,6 +1414,14 @@ inline_mysql_end_statement(struct PSI_statement_locker *locker,
   @file
   This service provides functions that allow plugins to support
   the KILL statement.
+*/
+
+/**
+  @defgroup plugin_api_service_kill_statement KILL Statement Service
+  @ingroup plugin_api_services
+
+  This service provides functions that allow plugins to support
+  the KILL statement.
 
   In MySQL support for the KILL statement is cooperative. The KILL
   statement only sets a "killed" flag. This function returns the value
@@ -1421,12 +1429,7 @@ inline_mysql_end_statement(struct PSI_statement_locker *locker,
   time-consuming loops, and gracefully abort the operation if it is
   non-zero.
 
-  thd_killed(thd)
-  @return 0 - no KILL statement was issued, continue normally
-  @return 1 - there was a KILL statement, abort the execution.
-
-  thd_kill_level(thd)
-  @return thd_kill_levels_enum values
+  @{
 */
 
 #ifdef __cplusplus
@@ -1443,9 +1446,22 @@ extern struct kill_statement_service_st {
   enum thd_kill_levels (*thd_kill_level_func)(const MYSQL_THD);
 } *thd_kill_statement_service;
 
-/* backward compatibility helper */
+/**
+  Backward compatibility helper
+
+  @param THD thread handle
+  @retval 0 No KILL statement was issued, continue normally
+  @retval 1 There was a KILL statement, abort the execution.
+*/
 #define thd_killed(THD)   (thd_kill_level(THD) == THD_ABORT_ASAP)
 
+
+/**
+  Check if a KILL statement was issued for the given thread.
+
+  @param THD thread handle
+  @return @ref thd_kill_levels values
+*/
 #ifdef MYSQL_DYNAMIC_PLUGIN
 
 #define thd_kill_level(THD) \
@@ -1460,6 +1476,8 @@ enum thd_kill_levels thd_kill_level(const MYSQL_THD);
 #ifdef __cplusplus
 }
 #endif
+
+/** @} */
 
 #endif
 
@@ -1595,13 +1613,13 @@ C_MODE_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5973** (2026-10-24): **DuckDB: read VARCHAR values without a per-cell cast (P-Core Change #1)**
-  *Symptoms*: `store_duckdb_field_in_mysql_format()` got the text of a result cell with `Value::GetValue<string>()`. In DuckDB that is `ToString()`, which runs `DefaultCastAs(VARCHAR)` for every cell, also when the value already is a VARCHAR. SET, ENUM and (var)char columns arrive as VARCHAR, so every cell of such a column paid for a cast that returns the same string.  This adds `value_as_string()`, which returns the string of a VARCHAR value by reference and converts any other type as before. It is used for the (var)char, ENUM, SET and DECIMAL branches. The date and time branches and the BLOB branches are unchanged. The text stored in the field is the same, so there is no change in results. Only `storage/duckdb/convertor/duckdb_select.cc` changes (+22/-3).  Measured on a debug build of current 11.4, 50000 rows, median of 15 runs after subtracting the connection cost, two runs each (ms):  | select | before | after | |---|---|---| | varchar column | 202 / 210 | 150 / 153 | | SET column | 239 / 241 | 178 / 184 | | ENUM column | 223 / 225 | 170 / 177 | | `select *` | 651 / 665 | 504 / 505 | | int / bigint column | 70 / 71 | 70 / 71 | | `select *` on the same rows in InnoDB (control) | 310 / 311 | 317 |  These are debug build numbers on a laptop, so they show the relative gain and not release build speed.  Checks: - a `group_concat` md5 over id, varchar, SET and ENUM of all 50000 rows is equal between the DuckDB table and an InnoDB copy - `duckdb.create_table_column`, `duckdb.feature_duckdb_da
+- **Issue #6044** (2026-10-31): **MDEV-40533 fixup: GCC -Og -Wmaybe-uninitialized**
+  *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > Closing: rebased on 11.4 with #5970 and measured; returning the string by reference gives no measurable gain over #5970's copy (debug build, 50k rows, strings up to 1000 chars).
+  > > This PR targets `main`, but the [MDEV-40533](https://jira.mariadb.org/browse/MDEV-40533) bug report says it affects earlier versions.  Yes, it should have been MDEV-40553.
 
-- **Issue #5970** (2026-10-24): **MDEV-41208: SIGABRT in duckdb::DuckDBAssertInternal**
-  *Symptoms*: stringify non-VARCHAR DuckDB values for MariaDB string fields  Mixed COALESCE is VARCHAR in MariaDB and INTEGER in DuckDB, so GetValueUnsafe<string>() asserted PhysicalType::VARCHAR. Convert with ToString() unless DuckDB actually stored a string.  https://jira.mariadb.org/browse/MDEV-41208
+- **Issue #6032** (2026-10-29): **MDEV-39968 sys_vars.session_track_system_variables_basic fail - Plugi…**
+  *Symptoms*: …n is busy (cursor/ps-protocol)  The MDEV-38179 part of the test installs ha_example, connects foo with example_int_var in session_track_system_variables, then does disconnect foo and uninstall soname 'ha_example.so'.  On connect, the sysvars tracker parses the list with find_sys_var(), which locks the example plugin into thd->lex->plugins. Under ps-protocol and cursor-protocol foo runs only prepared statements, so these locks are not released by end of statement and stay until plugin_thdvar_cleanup() at disconnect. Since disconnect does not wait for the server thread to finish, uninstall may find the plugin still referenced and gives "Plugin is busy and will be uninstalled on shutdown".  MDEV-39968 was closed as a duplicate of MDEV-39207, but the MDEV-39207 test fix covered only the 10.11 ha_example part: it moved it to session_track_system_variables_example.test with ps-protocol and cursor-protocol disabled around uninstall. The MDEV-38179 part added in 11.8 stayed in session_track_system_variables_basic.test without any workaround, so it still fails.  The fix waits until foo sessions are gone before uninstall.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1618,136 +1636,29 @@ C_MODE_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cdcb266` (2026-10-01)
-**Commit Message**: MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery
+### Incident Patch 1: `4641beb5` (2026-10-30)
+**Commit Message**: MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized
 
-Do not use the fast path when the query has a subquery. Evaluating
-that predicate while get_all_tables() uses a temporary MEM_ROOT
-freed the subquery JOIN before outer JOIN cleanup.
-
-**File**: `mysql-test/main/mdev_31342.result` (modified, +64/-0)
+**File**: `sql/opt_context_store_replay.cc` (modified, +1/-1)
 ```diff
-@@ -919,3 +919,67 @@ information_schema.TABLES.TABLE_NAME	user	user	4	4	0	0	4.0000	NULL	ENUM('user')
- # MDEV-41204: client cursor protocol uses fallback
- # (also covered by running this test with --cursor-protocol)
- #
-+#
-+# MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
-+#
-+CREATE DATABASE mdev41240;
-+CREATE TABLE mdev41240.t1(a INT);
-+EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+EXPLAIN
-+{
-+  "query_block": {
-+    "select_id": 1,
-+    "cost": 0.01423506,
-+    "nested_loop": [
-+      {
-+        "table": {
-+          "table_name": "TABLES",
-+          "access_type": "ALL",
-+          "key": "TABLE_SCHEMA,TABLE_NAME",
-+          "loops": 1,
-+          "cost": 0.01423506,
-+          "attached_condition": "information_schema.`TABLES`.TABLE_SCHEMA = 'mdev41240' and information_schema.`TABLES`.`TABLE_NAME` = 't1' and <in_optimizer>(information_schema.`TABLES`.`TABLE_NAME`,<exists>(subquery#2))",
-+          "skip_open_table": true,
-+          "scanned_databases": 0
-+        }
-+      }
-+    ],
-+    "subqueries": [
-+      {
-+        "query_block": {
-+          "union_result": {
-+            "table_name": "<union2,3>",
-+            "access_type": "ALL",
-+            "query_specifications": [
-+              {
-+                "query_block": {
-+                  "select_id": 2,
-+                  "table": {
-+                    "message": "No tables used"
-+                  }
-+                }
-+              },
-+              {
-+                "query_block": {
-+                  "select_id": 3,
-+                  "operation": "UNION",
-+                  "table": {
-+                    "message": "No tables used"
-+                  }
-+                }
-+              }
-+            ]
-+          }
-+        }
-+      }
-+    ]
-+  }
-+}
-+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+TABLE_NAME
-+t1
-+DROP DATABASE mdev41240;
-```
-
-**File**: `mysql-test/main/mdev_31342.test` (modified, +14/-0)
-```diff
-@@ -396,3 +396,17 @@ WHERE TABLE_SCHEMA='mysql' AND TABLE_NAME='user' PROCEDURE ANALYSE();
- --echo # MDEV-41204: client cursor protocol uses fallback
- --echo # (also covered by running this test with --cursor-protocol)
- --echo #
-+
-+--echo #
-+--echo # MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
-+--echo #
-+CREATE DATABASE mdev41240;
-+CREATE TABLE mdev41240.t1(a INT);
-+--replace_regex /`tables`/`TABLES`/ /"tables"/"TABLES"/
-+EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-+WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-+  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-+DROP DATABASE mdev41240;
-```
-
-**File**: `sql/sql_show.cc` (modified, +11/-0)
-```diff
-@@ -4272,6 +4272,17 @@ static bool is_simple_is_query(THD *thd)
-     DBUG_PRINT("info", ("SQL_BUFFER_RESULT, using fallback path"));
-     return false;
-   }
-+  /*
-+    A subquery in WHERE is evaluated from schema_table_store_record()
-+    while get_all_tables() may be using a temporary MEM_ROOT. Freeing
-+    that root leaves the subquery JOIN dangling.
-+  */
-+  if (sel->first_inner_unit() ||
-+      (sel->where && sel->where->with_subquery()))
-+  {
-+    DBUG_PRINT("info", ("subquery in I_S query, using fallback path"));
-+    return false;
-+  }
-   /*
-     Only allow no LIMIT, or LIMIT 1 exactly. Any other explicit LIMIT n
-     is rejected until a general LIMIT implementation is validated.
+@@ -869,7 +869,7 @@ bool Optimizer_context_recorder::dump_sql_script(THD* thd, String &sql_script)
+   {
+     String ddl;
+     StringBuffer<256> full_tbl_name;
+-    LEX_CSTRING *tbl_name_key;
++    LEX_CSTRING *tbl_name_key= nullptr;
+     append_table_or_view_name(tbl, &full_tbl_name);
+ 
+     /*
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5973** (closed): DuckDB: read VARCHAR values without a per-cell cast (P-Core Change #1) (@GoldenEmperor1177)
-- **PR #5970** (2026-10-24): MDEV-41208: SIGABRT in duckdb::DuckDBAssertInternal (@itzanway)
-- **PR #5967** (closed): MDEV-41684: Embedded: prepared TIME parameter reports column length 16 instead of 23 (@Omar-Abdo1)
-- **PR #5962** (2026-10-23): Fix a UBSAN runtime error on MacOSX. (@gkodinov)
-- **PR #5961** (2026-10-23): MDEV-41566 Allow ROW_NUMBER as unquoted column name (@sanja-byelkin)
-- **PR #5959** (closed): MDEV-41566 Allow ROW_NUMBER as unquoted column name (@sanja-byelkin)
+- **PR #6044** (2026-10-31): MDEV-40533 fixup: GCC -Og -Wmaybe-uninitialized (@bsrikanth-mariadb)
+- **PR #6032** (2026-10-29): MDEV-39968 sys_vars.session_track_system_variables_basic fail - Plugi… (@midenok)
+- **PR #6029** (2026-10-29): Lower galera version gate to 26.4.28 for MDEV-38920 tests (@janlindstrom)
+- **PR #6026** (closed): MDEV-41852 Windows fails to build with updated WolfSSL (@grooverdan)
+- **PR #6024** (closed): MariaDB-10.4.39 (@seulement55)
+- **PR #6021** (2026-10-29): MDEV-41738 MEMORY BTREE: DELETE by key prefix skips rows (@sanja-byelkin)
 
 ---
 
@@ -1767,65 +1678,28 @@ freed the subquery JOIN before outer JOIN cleanup.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery
+## X. MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized
 
 **RULE**:
-When implementing operations in `mysql-test/main/mdev_31342.result`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sql/opt_context_store_replay.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MariaDB/server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cdcb266`: MDEV-41240 I_S.TABLES crash with TABLE_NAME and a subquery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4641beb5`: MDEV-40553 fixup: GCC -Og -Wmaybe-uninitialized. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `mysql-test/main/mdev_31342.result`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `sql/opt_context_store_replay.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#
-# MDEV-41240: exact TABLE_NAME lookup plus a materialised subquery
-#
-CREATE DATABASE mdev41240;
-CREATE TABLE mdev41240.t1(a INT);
-EXPLAIN FORMAT=JSON SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_SCHEMA='mdev41240' AND TABLE_NAME='t1'
-  AND TABLE_NAME IN (SELECT 't1' UNION SELECT 'x');
-EXPLAIN
-{
-  "query_block": {
-    "select_id": 1,
-    "cost": 0.01423506,
-    "nested_loop": [
-      {
-        "table": {
-          "table_name": "TABLES",
-          "access_type": "ALL",
-          "key": "TABLE_SCHEMA,TABLE_NAME",
-          "loops": 1,
-          "cost": 0.01423506,
-          "attached_condition": "information_schema.`TABLES`.TABLE_SCHEMA = 'mdev41240' and information_schema.`TABLES`.`TABLE_NAME` = 't1' and <in_optimizer>(information_schema.`TABLES`.`TABLE_NAME`,<exists>(subquery#2))",
-          "skip_open_table": true,
-          "scanned_databases": 0
-        }
-      }
-    ],
-    "subqueries": [
-      {
-        "query_block": {
-          "union_result": {
-            "table_name": "<union2,3>",
-            "access_type": "ALL",
-            "query_specifications": [
-              {
-                "query_block": {
-                  "select_id": 2,
-                  "t
+    LEX_CSTRING *tbl_name_key= nullptr;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    LEX_CSTRING *tbl_name_key;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cdcb266` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4641beb5` are properly handled with clean fallback behavior.

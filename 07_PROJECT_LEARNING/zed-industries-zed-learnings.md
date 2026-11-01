@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source**: github ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
-> **Source Version**: `08cbb88a`  
+> **Source Version**: `ba63a022`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:37:17.226Z  
+> **Timestamp**: 2026-10-31T15:56:41.305Z  
 > **Learning ID**: `learn-github-zed-industries-zed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zed-industries-zed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zed-industries/zed](https://github.com/zed-industries/zed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:37:15.974Z  
+> **Harvest Timestamp**: 2026-10-31T15:56:41.005Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Code at the speed of thought – Zed is a high-performance, multiplayer code editor from the creators of Atom and Tree-sitter.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 92184 stars
+- **Stars / Engagement**: 92455 stars
 
 ---
 
@@ -2334,505 +2334,59 @@ fn score_against_expected_patch(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `876c1b0c` (2026-10-25)
-**Commit Message**: Fix removal of unloaded project groups (#66127)
+### Incident Patch 1: `ba63a022` (2026-10-31)
+**Commit Message**: recent_projects: Show remote picker scrollbar (#63909)
 
-## Summary
+Make overflowing remote lists discoverable and size the scrollbar
+accurately from the first layout, matching the Recent Projects picker.
 
-- Remove project group rows even when no retained workspace backs them.
-- Add a regression test for removing an unloaded project group.
+Closes #63856.
 
-## Testing
+## Self-Review Checklist:
 
-- `cargo test -p workspace
-test_remove_unloaded_project_group_removes_its_row --lib`
-- `cargo fmt --check`
-
-## Self-review
-
-- [x] I've reviewed my diff for quality, security, reliability, and
-performance.
-- [x] UI changes follow the
-[checklist](https://zed.dev/docs/development/ui-checklist).
-- [x] Tests cover the new or changed behavior.
-
-Release Notes:
-
-- Fixed project entries reappearing in Recent Projects after removal.
-
-**File**: `crates/workspace/src/multi_workspace.rs` (modified, +12/-3)
-```diff
-@@ -962,10 +962,19 @@ impl MultiWorkspace {
-         }
- 
-         let workspaces = self.workspaces_for_project_group(group_key, cx);
-+        if workspaces.is_empty() {
-+            let previous_group_count = self.project_groups.len();
-+            self.project_groups.retain(|group| group.key != *group_key);
-+            if self.project_groups.len() != previous_group_count {
-+                cx.emit(MultiWorkspaceEvent::ProjectGroupsChanged);
-+                self.serialize(cx);
-+                cx.notify();
-+                return Task::ready(Ok(true));
-+            }
-+            return Task::ready(Ok(false));
-+        }
- 
--        let task = self.remove(workspaces, RemovalIntent::CloseProject, window, cx);
--
--        task
-+        self.remove(workspaces, RemovalIntent::CloseProject, window, cx)
-     }
- 
-     /// Returns the nearest retained workspace outside the project group at
-```
-
-**File**: `crates/workspace/src/multi_workspace_tests.rs` (modified, +32/-0)
-```diff
-@@ -1026,6 +1026,38 @@ async fn test_close_workspace_opens_unloaded_local_neighbor(cx: &mut TestAppCont
-     });
- }
- 
-+#[gpui::test]
-+async fn test_remove_unloaded_project_group_removes_its_row(cx: &mut TestAppContext) {
-+    init_test(cx);
-+    let fs = FakeFs::new(cx.executor());
-+    fs.insert_tree("/project-a", json!({})).await;
-+
-+    let project_a = Project::test(fs, ["/project-a".as_ref()], cx).await;
-+    let key_a = project_a.read_with(cx, |project, cx| project.project_group_key(cx));
-+    let key_b = ProjectGroupKey::new(None, PathList::new(&[PathBuf::from("/project-b")]));
-+    let (multi_workspace, cx) = setup_multi_workspace(&[project_a], cx);
-+
-+    multi_workspace.update(cx, |multi_workspace, _cx| {
-+        multi_workspace.test_add_project_group(ProjectGroup {
-+            key: key_b.clone(),
-+            workspaces: Vec::new(),
-+            expanded: true,
-+        });
-+    });
-+
-+    let removed = multi_workspace
-+        .update_in(cx, |multi_workspace, window, cx| {
-+            multi_workspace.remove_project_group(&key_b, window, cx)
-+        })
-+        .await
-+        .expect("removing an unloaded project group should succeed");
-+
-+    assert!(removed, "the unloaded project group row should be removed");
-+    multi_workspace.read_with(cx, |multi_workspace, _cx| {
-+        assert_eq!(multi_workspace.project_group_keys(), vec![key_a]);
-+    });
-+}
-+
- #[gpui::test]
- async fn test_remove_project_group_opens_unloaded_local_neighbor(cx: &mut TestAppContext) {
-     init_test(cx);
-```
+- [x] I've reviewed my own diff for quality, security, and reliability
+- [ ] Unsafe blocks (if any) have justifying comments
+- [ ] The content adheres to Zed's UI standards
+([UX/UI](https://github.com/zed-industries/zed/blob/main/CONTRIBUTING.md#uiux-checklist)
+and
+[icon](https://github.com/zed-industries/zed/blob/main/crates/icons/README.md)
+guidelines)
+- [ ] Tests cover the new/changed behavior
+- [x] Performance impact has been considered and is acceptable (the
+impact on [large remote
+lists](https://github.com/zed-industries/zed/blob/84d9a73c1957a8181c8ae017e703d1d56a18426a/crates/gpui/src/elements/list.rs#L196-L201)
+was not tested)
 
 ---
 
-### Incident Patch 2: `78f5a535` (2026-10-25)
-**Commit Message**: agent_ui: Keep inline review on the root thread when subagents appear (#66093)
-
-Every thread view made its thread the inline review target when it was
-built (`AgentDiff::set_active_thread` in
-`ConversationView::new_thread_view`). A subagent's view is built when
-the subagent is spawned or announced, not when it's opened. So as soon
-as a native or ACP subagent started, inline review in the editor
-switched to that subagent's action log and showed only its edits. The
-parent's earlier edits disappeared from review.
-
-A subagent's action log is linked to its parent's, and every edit it
-records is also recorded there. So only root thread views set the review
-target now, and the root's log covers the whole conversation.
-
-`test_subagent_views_keep_the_root_thread_under_review` registers a
-subagent and then navigates to its view. Review stays on the root thread
-both times. The test fails without the change, and uses a new test-only
-`AgentDiff::reviewed_thread`. `cargo nextest run -p agent_ui -p agent -p
-sidebar` (1526 tests), `./script/clippy` and `cargo fmt` pass locally.
-
 Release Notes:
 
-- Fixed inline review switching to a subagent's edits when the subagent
-started.
+- Fixed a missing scrollbar in the Open Remote picker, making additional
+remote servers easier to discover
 
-**File**: `crates/agent_ui/src/agent_diff.rs` (modified, +13/-0)
+**File**: `crates/recent_projects/src/remote_servers.rs` (modified, +4/-1)
 ```diff
-@@ -1309,6 +1309,19 @@ impl AgentDiff {
-         });
-     }
- 
-+    #[cfg(test)]
-+    pub(crate) fn reviewed_thread(
-+        workspace: &WeakEntity<Workspace>,
-+        cx: &mut App,
-+    ) -> Option<Entity<AcpThread>> {
-+        Self::global(cx)
-+            .read(cx)
-+            .workspace_threads
-+            .get(workspace)?
-+            .thread
-+            .upgrade()
-+    }
-+
-     fn register_active_thread_impl(
-         &mut self,
-         workspace: &WeakEntity<Workspace>,
-```
-
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +50/-1)
-```diff
-@@ -1624,7 +1624,11 @@ impl ConversationView {
-             list_state.scroll_to_end();
-         }
- 
--        AgentDiff::set_active_thread(&self.workspace, thread.clone(), window, cx);
-+        // A subagent's edits are also recorded in its parent's action log, so reviewing the
-+        // root thread covers the whole conversation.
-+        if thread.read(cx).parent_session_id().is_none() {
-+            AgentDiff::set_active_thread(&self.workspace, thread.clone(), window, cx);
-+        }
- 
-         let connection = thread.read(cx).connection().clone();
-         let session_id = thread.read(cx).session_id().clone();
-@@ -6796,6 +6800,51 @@ pub(crate) mod tests {
-         });
-     }
- 
-+    #[gpui::test]
-+    async fn test_subagent_views_keep_the_root_thread_under_review(cx: &mut TestAppContext) {
-+        init_test(cx);
-+        let connection = StubAgentConnection::new();
-+        let (conversation_view, cx) =
-+            setup_conversation_view(StubAgentServer::new(connection.clone()), cx).await;
-+        let root =
-+            active_thread(&conversation_view, cx).read_with(cx, |view, _| view.thread.clone());
-+        let root_session_id = root.read_with(cx, |thread, _| thread.session_id().clone());
-+        let workspace = conversation_view.read_with(cx, |view, _| view.workspace.clone());
-+        let reviewed_thread = |cx: &mut VisualTestContext| {
-+            cx.update(|_, cx| AgentDiff::reviewed_thread(&workspace, cx))
-+        };
-+        assert_eq!(reviewed_thread(cx).as_ref(), Some(&root));
-+
-+        let child = conversation_view.update(cx, |view, cx| {
-+            create_test_acp_thread(
-+                Some(root_session_id),
-+                "child",
-+                Rc::new(connection.clone()),
-+                view.project.clone(),
-+                cx,
-+            )
-+        });
-+        root.update(cx, |root, cx| root.register_subagent(child.clone(), cx));
-+        cx.run_until_parked();
-+        assert!(
-+            conversation_view.read_with(cx, |view, _| view
-+                .thread_view(&acp_v2::SessionId::new("child"))
-+                .is_some()),
-+            "the subagent got its view"
-+        );
-+        assert_eq!(reviewed_thread(cx).as_ref(), Some(&root));
-+
-+        conversation_view.update_in(cx, |view, window, cx| {
-+            view.navigate_to_thread(acp_v2::SessionId::new("child"), window, cx)
-+        });
-+        cx.run_until_parked();
-+        assert_eq!(
-+            reviewed_thread(cx).as_ref(),
-+            Some(&root),
-+            "opening a subagent keeps the conversation's edits under review"
-+        );
-+    }
-+
-     #[gpui::test]
-     async fn test_subagent_card_state_follows_the_spawn_tool_call(cx: &mut TestAppContext) {
-         use super::subagent_card::{SubagentCardState, SubagentEntries, SubagentStatus};
-```
-
----
-
-### Incident Patch 3: `c8995a08` (2026-10-25)
-**Commit Message**: agent_ui: Don't load tool-call-referenced sessions where the subagents RFD applies (#66095)
-
-A tool call carrying Zed's private `_meta.subagent_session_info` makes
-the conversation `load_session` the referenced session. That's how Zed
-restores native subagents. Some external agents send the same key,
-according to #65120, so that path stays for them.
-
-Where the ACP subagents RFD applies, though, subagents are discovered
-only through their parent's announcements, and loading one is forbidden.
-Loading a referenced child before its announcement would also make the
-connection reject the announcement, because the connection already
-routes that session.
-
-- `AgentConnection::announces_subagents` says whether the RFD applies:
-always on v2, on v1 when Zed advertised `subagents` (behind `acp-beta`),
-and never for the native agent.
-- `ConversationView::load_subagent_session` does nothing where it
-applies.
-
-Without `acp-beta` nothing changes, because no connection announces
-subagents.
-
-`test_referenced_subagents_load_only_without_the_subagents_rfd` checks
-both cases with a stub connection that supports loading, and fails
-without the guard. Existing v1 and v2 tests now assert each connection's
-a
-
-**File**: `crates/acp_thread/src/connection.rs` (modified, +17/-0)
-```diff
-@@ -135,6 +135,12 @@ pub trait AgentConnection {
-         false
-     }
- 
-+    /// Whether subagents follow the ACP subagents RFD on this connection: they are discovered
-+    /// only through their parent's announcements, and must never be loaded or resumed.
-+    fn announces_subagents(&self) -> bool {
-+        false
-+    }
-+
-     /// Whether conversation teardown should invoke `close_session`.
-     /// The default preserves existing UI cleanup; backend-owned release hooks are separate.
-     /// Autonomous backends can opt out without disabling explicit close support.
-@@ -988,6 +994,7 @@ mod test_support {
-         supports_retry: bool,
-         supports_load_session: bool,
-         supports_close_session: bool,
-+        announces_subagents: bool,
-         close_sessions_on_release: bool,
-         supports_session_additional_directories: bool,
-         supports_set_title: bool,
-@@ -1037,6 +1044,7 @@ mod test_support {
-                 supports_retry: false,
-                 supports_load_session: false,
-                 supports_close_session: false,
-+                announces_subagents: false,
-                 close_sessions_on_release: true,
-                 supports_session_additional_directories: false,
-                 supports_set_title: true,
-@@ -1175,6 +1183,11 @@ mod test_support {
-             self
-         }
- 
-+        pub fn with_announced_subagents(mut self, announces_subagents: bool) -> Self {
-+            self.announces_subagents = announces_subagents;
-+            self
-+        }
-+
-         pub fn with_close_sessions_on_release(mut self, close_sessions_on_release: bool) -> Self {
-             self.close_sessions_on_release = close_sessions_on_release;
-             self
-@@ -1331,6 +1344,10 @@ mod test_support {
-             self.supports_close_session
-         }
- 
-+        fn announces_subagents(&self) -> bool {
-+            self.announces_subagents
-+        }
-+
-         fn should_close_sessions_on_release(&self) -> bool {
-             self.supports_close_session && self.close_sessions_on_release
-         }
-```
-
-**File**: `crates/agent_servers/src/acp/v1.rs` (modified, +23/-1)
-```diff
-@@ -79,6 +79,8 @@ pub struct AcpConnection {
-     auth_methods: Vec<acp_v2::AuthMethod>,
-     agent_server_store: WeakEntity<AgentServerStore>,
-     agent_capabilities: acp::AgentCapabilities,
-+    /// Whether Zed advertised the subagents RFD, so the agent reports subagents with it.
-+    accepts_subagent_updates: bool,
-     request_elicitations: Entity<ElicitationStore>,
-     defaults: AcpConnectionDefaults,
-     _child: Option<transport::OwnedChild>,
-@@ -561,13 +563,14 @@ impl AcpConnection {
-         let request_elicitations = cx.new(|_| ElicitationStore::default());
-         let client_capabilities = client_capabilities_for_agent(&agent_id);
- 
-+        let accepts_subagent_updates = client_capabilities.subagents.is_some();
-         let dispatch_context = ClientContext {
-             sessions: sessions.clone(),
-             session_list: client_session_list.clone(),
-             request_elicitations: request_elicitations.clone(),
-             active_request_scopes: None,
-             pending_session_updates: None,
--            accepts_subagent_updates: client_capabilities.subagents.is_some(),
-+            accepts_subagent_updates,
-         };
-         let (mut runtime, shutdown) = runtime::ClientRuntime::new(dispatch_context, cx);
-         let dispatch_tx = runtime.sender();
-@@ -718,6 +721,7 @@ impl AcpConnection {
-             sessions,
-             pending_sessions: RefCell::new(HashMap::default()),
-             agent_capabilities: response.agent_capabilities,
-+            accepts_subagent_updates,
-             request_elicitations,
-             defaults,
-             session_list,
-@@ -742,6 +746,7 @@ impl AcpConnection {
-         connection: ConnectionTo<Agent>,
-         sessions: Rc<RefCell<HashMap<acp_v2::SessionId, AcpSession>>>,
-         agent_capabilities: acp::AgentCapabilities,
-+        accepts_subagent_updates: bool,
-         request_elicitations: Entity<ElicitationStore>,
-         agent_server_store: WeakEntity<AgentServerStore>,
-         io_task: Task<()>,
-@@ -763,6 +768,7 @@ impl AcpConnection {
-             auth_methods: vec![],
-             agent_server_store,
-             agent_capabilities,
-+            accepts_subagent_updates,
-             request_elicitations,
-             defaults,
-             _child: None,
-@@ -1461,6 +1467,10 @@ impl AgentConnection for AcpConnection {
-         self.agent_capabilities.load_session
-     }
- 
-+    fn announces_subagents(&self) -> bool {
-+        self.accepts_subagent_updates
-+    }
-+
-     fn supports_resume_session(&self) -> bool {
-         self.agent_capabilities
-             .session_capabilities
-@@ -2273,6 +2283,7 @@ pub mod test_support {
-                 client_conn,
-                 sessions,
-                 agent_capabilities,
-+                false,
-                 request_elicitations,
-                 agent_server_store,
-                 client_io_task,
-@@ -6969,6 +6980,7 @@ mod tests {
-                 client_conn,
-                 sessions,
-                 acp::AgentCapabilities::default(),
-+                false,
-                 request_elicitations,
-                 WeakEntity::new_invalid(),
-                 client_io_task,
-@@ -7594,6 +7606,7 @@ exit 7
-                 client_conn,
-                 sessions,
-                 agent_capabilities,
-+                accepts_subagent_updates,
-                 request_elicitations,
-                 agent_server_store,
-                 client_io_task,
-@@ -8935,6 +8948,11 @@ exit 7
-             _keep_agent_alive,
-         ) = connect_fake_agent(None, cx).await;
- 
-+        assert!(
-+            !connection.announces_subagents(),
-+            "a v1 connection that did not advertise subagents does not follow the RFD"
-+        );
-+
-         // Queue up some history updates that the fake agent will stream to
-         // the client during the `load_session` call, before responding.
-         *load_session_updates
-@@ -9015,6 +9033,10 @@ exit 7
+@@ -1501,7 +1501,10 @@ impl RemoteServerProjects {
+                 true,
                  cx,
-             )
-             .await;
-+        assert!(
-+            connection.announces_subagents(),
-+            "a v1 connection that advertised subagents follows the RFD"
-+        );
-         *load_session_updates
-             .lock()
-             .expect("load_session_updates mutex poisoned") = vec![
-```
-
-**File**: `crates/agent_servers/src/acp/v2.rs` (modified, +6/-0)
-```diff
-@@ -1452,6 +1452,11 @@ impl AgentConnection for AcpV2Connection {
-         self.initialize_response.capabilities.session.is_some()
-     }
- 
-+    fn announces_subagents(&self) -> bool {
-+        // Subagents are part of v2's baseline session model.
-+        true
-+    }
-+
-     fn close_session(
-         self: Rc<Self>,
-         session_id: &acp::SessionId,
-@@ -2679,6 +2684,7 @@ mod tests {
-         use agent_client_protocol::schema::MaybeUndefined;
- 
-         let harness = SessionHarness::new(session_capabilities(), vec![], vec![], cx).await;
-+        assert!(harness.client.announces_subagents());
-         let parent = harness.thread(cx).await;
-         harness.send_update(
-             "session",
-```
-
-**File**: `crates/agent_ui/src/conversation_view.rs` (modified, +29/-0)
-```diff
-@@ -2587,6 +2587,8 @@ impl ConversationView {
-     /// Restores a child session that a tool call references but its parent does not
-     /// own, such as a native subagent from a thread loaded from the database. Children
-     /// the parent already owns are never loaded: ACP forbids loading subagent sessions.
-+    /// Neither is any session where the subagents RFD applies, since a child referenced
-+    /// there may still be announced, and loading it first would reject the announcement.
-     fn load_subagent_session(
-         &mut self,
-         subagent_id: acp_v2::SessionId,
-@@ -2598,6 +2600,7 @@ impl ConversationView {
-         };
-         if connected.threads.contains_key(&subagent_id)
-             || !connected.connection.supports_load_session()
-+            || connected.connection.announces_subagents()
-         {
-             return;
-         }
-@@ -6896,6 +6899,32 @@ pub(crate) mod tests {
-         }
-     }
- 
-+    #[gpui::test]
-+    async fn test_referenced_subagents_load_only_without_the_subagents_rfd(
-+        cx: &mut TestAppContext,
-+    ) {
-+        init_test(cx);
-+        for announces_subagents in [false, true] {
-+            let connection = StubAgentConnection::new()
-+                .with_supports_load_session(true)
-+                .with_announced_subagents(announces_subagents);
-+            let (conversation_view, cx) =
-+                setup_conversation_view(StubAgentServer::new(connection), cx).await;
-+            let root_session_id = active_thread(&conversation_view, cx)
-+                .read_with(cx, |view, _| view.session_id.clone());
-+            let referenced = acp_v2::SessionId::new("referenced");
-+            conversation_view.update(cx, |view, cx| {
-+                view.load_subagent_session(referenced.clone(), root_session_id, cx);
-+            });
-+            cx.run_until_parked();
-+            assert_eq!(
-+                conversation_view.read_with(cx, |view, _| view.thread_view(&referenced).is_some()),
-+                !announces_subagents,
-+                "a session a tool call references is loaded only where the RFD does not apply"
-+            );
-+        }
-+    }
-+
-     #[gpui::test]
-     async fn test_concurrent_subagent_loads_create_one_thread_view(cx: &mut TestAppContext) {
-         init_test(cx);
+             );
+-            Picker::list(delegate, window, cx).embedded()
++            Picker::list(delegate, window, cx)
++                .list_measure_all()
++                .show_scrollbar(true)
++                .embedded()
+         });
+         let mut read_ssh_config = RemoteSettings::get_global(cx).read_ssh_config;
+         let ssh_config_updates = if read_ssh_config {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #66132** (2026-10-25): git_ui: Fix git graph lagging when toggling commit details panel (@RemcoSmitsDev)
-- **PR #66127** (2026-10-25): Fix removal of unloaded project groups (@EcutAtom336)
-- **PR #66126** (closed): Fix scrolling across pinned tabs (@EcutAtom336)
-- **PR #66121** (closed): extension_api: Expose file scan and file type settings to extensions (@AJenbo)
-- **PR #66113** (2026-10-25): Fix pwsh-related issues with local and remote env variables detection (#66097) (cherry-pick to stable) (@zed-zippy[bot])
-- **PR #66112** (2026-10-25): Fix pwsh-related issues with local and remote env variables detection (#66097) (cherry-pick to preview) (@zed-zippy[bot])
+- **PR #66351** (closed): Make external-agent model catalog app-wide and preload on startup (@riso-tech)
+- **PR #66337** (closed): settings_ui: Add external agent models to profile Default Model picker (@riso-tech)
+- **PR #66326** (closed): project + agent_ui: Add external-agent model catalog (@riso-tech)
+- **PR #66321** (closed): settings_ui: Add Agent Profiles page (@riso-tech)
+- **PR #66317** (2026-10-30): gpui: Time animations with the executor clock (@Anthony-Eid)
+- **PR #66311** (closed): docx_viewer: Add DOCX document viewer (@lm2000)
 
 ---
 
@@ -2852,41 +2406,31 @@ a
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. removal of unloaded project groups (#66127)
+## X. recent_projects: Show remote picker scrollbar (#63909)
 
 **RULE**:
-When implementing operations in `crates/workspace/src/multi_workspace.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/recent_projects/src/remote_servers.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `876c1b0c`: removal of unloaded project groups (#66127). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ba63a022`: recent_projects: Show remote picker scrollbar (#63909). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/workspace/src/multi_workspace.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/recent_projects/src/remote_servers.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if workspaces.is_empty() {
-            let previous_group_count = self.project_groups.len();
-            self.project_groups.retain(|group| group.key != *group_key);
-            if self.project_groups.len() != previous_group_count {
-                cx.emit(MultiWorkspaceEvent::ProjectGroupsChanged);
-                self.serialize(cx);
-                cx.notify();
-                return Task::ready(Ok(true));
-            }
-            return Task::ready(Ok(false));
-        }
-        self.remove(workspaces, RemovalIntent::CloseProject, window, cx)
+            Picker::list(delegate, window, cx)
+                .list_measure_all()
+                .show_scrollbar(true)
+                .embedded()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let task = self.remove(workspaces, RemovalIntent::CloseProject, window, cx);
-
-        task
+            Picker::list(delegate, window, cx).embedded()
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `876c1b0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ba63a022` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source**: github ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
-> **Source Version**: `6082ae0f`  
+> **Source Version**: `4b3aa942`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:38:04.317Z  
+> **Timestamp**: 2026-10-28T02:13:16.187Z  
 > **Learning ID**: `learn-github-msasikanth-twine`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/msasikanth-twine-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/msasikanth/twine](https://github.com/msasikanth/twine))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:38:04.082Z  
+> **Harvest Timestamp**: 2026-10-28T02:13:15.866Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Twine: A multiplatform RSS reader built using Kotlin and Compose
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2435 stars
+- **Stars / Engagement**: 2436 stars
 
 ---
 
@@ -673,593 +673,154 @@ object PermissionRequestBridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33fab980` (2026-10-25)
-**Commit Message**: Improve UI performance and layout efficiency
+### Incident Patch 1: `4b3aa942` (2026-10-27)
+**Commit Message**: Improve rendering of Vox Media review scorecards in the reader
 
-- Optimize relative time formatting by providing a cached `DateTimeFormat` through a new `LocalRelativeDateFormatter` composition local.
-- Improve `FeaturedPostItem` title height balancing using a custom `Modifier.layout` to avoid unnecessary recompositions caused by measuring text lines.
-- Reduce layout overhead by replacing `.background()` with `.drawBehind()` in list items and using `drawWithCache` for complex UI elements like `PostActionBar` and the pinned sources bar.
-- Optimize source selection logic in the navigation drawer and group screens by using ID sets for O(1) lookups.
-- Hoist `contentPadding` and configuration lookups out of `PostListItem` to improve list scrolling performance.
-- Implement `ActionTooltip` to conditionally provide tooltips only on desktop platforms, reducing state overhead on mobile.
-- Replace `onGloballyPositioned` with more efficient alternatives like `onPlaced` or `onSizeChanged` for layout tracking.
-- Update `HomeScreen` to use `computedStateOf` for scroll-to-top visibility logic and remove unnecessary `derivedStateOf` usages elsewhere.
+- Merge score digits with their labels (e.g., "Verge Score: 8") to prevent them from appearing as isolated numbers.
+- Remove duplicate text elements, such as prices, that are included twice for different responsive CSS breakpoints.
+- Wrap sibling retailer links in paragraph tags to ensure they remain on separate lines when converted to markdown.
+- Unwrap nested `div` elements within the scorecard to prevent product information from being stripped as boilerplate by Readability.
 
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt` (modified, +2/-2)
+**File**: `shared/src/commonMain/composeResources/files/reader/main.es5.js` (modified, +115/-0)
 ```diff
-@@ -51,7 +51,7 @@ import androidx.compose.ui.draw.dropShadow
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.input.key.onKeyEvent
- import androidx.compose.ui.input.pointer.pointerHoverIcon
--import androidx.compose.ui.layout.onGloballyPositioned
-+import androidx.compose.ui.layout.onPlaced
- import androidx.compose.ui.layout.positionInParent
- import androidx.compose.ui.platform.LocalDensity
- import androidx.compose.ui.platform.LocalWindowInfo
-@@ -568,7 +568,7 @@ fun App(
-             VerticalDragHandle(
-               modifier =
-                 Modifier.pointerHoverIcon(horizontalResizePointerIcon)
--                  .onGloballyPositioned { coordinates ->
-+                  .onPlaced { coordinates ->
-                     val center = coordinates.positionInParent().x + coordinates.size.width / 2f
-                     dividerCenterPx.floatValue = center
-                     if (isDragged) {
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/FeedGroupItem.kt` (modified, +2/-2)
-```diff
-@@ -20,7 +20,6 @@ package dev.sasikanth.rss.reader.feeds.ui
- import androidx.compose.animation.animateColorAsState
- import androidx.compose.foundation.ExperimentalFoundationApi
- import androidx.compose.foundation.LocalIndication
--import androidx.compose.foundation.background
- import androidx.compose.foundation.combinedClickable
- import androidx.compose.foundation.interaction.MutableInteractionSource
- import androidx.compose.foundation.layout.Box
-@@ -44,6 +43,7 @@ import androidx.compose.runtime.setValue
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.clip
-+import androidx.compose.ui.draw.drawBehind
- import androidx.compose.ui.geometry.Offset
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-@@ -101,7 +101,7 @@ internal fun FeedGroupItem(
-       Modifier.fillMaxWidth()
-         .then(modifier)
-         .clip(MaterialTheme.shapes.large)
--        .background(backgroundColor)
-+        .drawBehind { drawRect(backgroundColor) }
-         .combinedClickable(
-           interactionSource = interactionSource ?: remember { MutableInteractionSource() },
-           indication = LocalIndication.current,
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/FeedListItem.kt` (modified, +2/-2)
-```diff
-@@ -19,7 +19,6 @@ package dev.sasikanth.rss.reader.feeds.ui
- import androidx.compose.animation.animateColorAsState
- import androidx.compose.foundation.ExperimentalFoundationApi
- import androidx.compose.foundation.LocalIndication
--import androidx.compose.foundation.background
- import androidx.compose.foundation.combinedClickable
- import androidx.compose.foundation.interaction.MutableInteractionSource
- import androidx.compose.foundation.layout.Box
-@@ -43,6 +42,7 @@ import androidx.compose.runtime.setValue
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.clip
-+import androidx.compose.ui.draw.drawBehind
- import androidx.compose.ui.geometry.Offset
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-@@ -103,7 +103,7 @@ internal fun FeedListItem(
-       Modifier.fillMaxWidth()
-         .then(modifier)
-         .clip(RoundedCornerShape(16.dp))
--        .background(backgroundColor)
-+        .drawBehind { drawRect(backgroundColor) }
-         .combinedClickable(
-           interactionSource = interactionSource ?: remember { MutableInteractionSource() },
-           indication = LocalIndication.current,
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/common/SourcesAll.kt` (modified, +3/-3)
-```diff
-@@ -93,7 +93,7 @@ internal fun LazyListScope.allSources(
-   numberOfFeedGroups: Int,
-   sources: LazyPagingItems<SourceListItem>,
-   hideFeedsWithoutUnreadPosts: Boolean,
--  selectedSources: Set<Source>,
-+  selectedSourceIds: Set<String>,
-   activeSource: Source?,
-   canShowUnreadPostsCount: Boolean,
-   isInMultiSelectMode: Boolean,
-@@ -147,7 +147,7 @@ internal fun LazyListScope.allSources(
-                 isInMultiSelectMode = isInMultiSelectMode,
-                 selected =
-                   if (isInMultiSelectMode) {
--                    selectedSources.any { it.id == source.id }
-+                    selectedSourceIds.contains(source.id)
-                   } else {
-                     activeSource?.id == source.id
-                   },
-@@ -225,7 +225,7 @@ internal fun LazyListScope.allSources(
-                 isInMultiSelectMode = isInMultiSelectMode,
-                 isFeedSelected =
-                   if (isInMultiSelectMode) {
--                    selectedSources.any { it.id == source.id }
-+                    selectedSourceIds.contains(source.id)
-                   } else {
-                     activeSource?.id == source.id
-                   },
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/common/SourcesSearchResults.kt` (modified, +2/-2)
-```diff
-@@ -45,7 +45,7 @@ import twine.shared.generated.resources.markAllAsRead
- 
- internal fun LazyListScope.sourcesSearchResults(
-   searchResults: LazyPagingItems<Feed>,
--  selectedSources: Set<Source>,
-+  selectedSourceIds: Set<String>,
-   activeSource: Source?,
-   canShowUnreadPostsCount: Boolean,
-   isInMultiSelectMode: Boolean,
-@@ -75,7 +75,7 @@ internal fun LazyListScope.sourcesSearchResults(
-         isInMultiSelectMode = isInMultiSelectMode,
-         isFeedSelected =
-           if (isInMultiSelectMode) {
--            selectedSources.any { it.id == feed.id }
-+            selectedSourceIds.contains(feed.id)
-           } else {
-             activeSource?.id == feed.id
-           },
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/feeds/ui/pinned/PinnedSourcesBottomBar.kt` (modified, +32/-29)
-```diff
-@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.clip
- import androidx.compose.ui.draw.drawBehind
-+import androidx.compose.ui.draw.drawWithCache
- import androidx.compose.ui.draw.drawWithContent
- import androidx.compose.ui.draw.shadow
- import androidx.compose.ui.geometry.Offset
-@@ -50,7 +51,7 @@ import androidx.compose.ui.graphics.drawOutline
- import androidx.compose.ui.graphics.drawscope.Stroke
- import androidx.compose.ui.graphics.graphicsLayer
- import androidx.compose.ui.hapticfeedback.HapticFeedbackType
--import androidx.compose.ui.layout.onGloballyPositioned
-+import androidx.compose.ui.layout.onSizeChanged
- import androidx.compose.ui.platform.LocalHapticFeedback
- import androidx.compose.ui.text.style.TextAlign
- import androidx.compose.ui.unit.dp
-@@ -141,8 +142,8 @@ internal fun PinnedSourcesBottomBar(
- 
-   Row(
-     modifier =
--      Modifier.onGloballyPositioned { coordinates ->
--          val height = coordinates.size.height.toFloat()
-+      Modifier.onSizeChanged { size ->
-+          val height = size.height.toFloat()
-           if (scrollBehavior != null && scrollBehavior.state.heightOffsetLimit != -height) {
-             scrollBehavior.state.heightOffsetLimit = -height
-           }
-@@ -174,33 +175,35 @@ internal fun PinnedSourcesBottomBar(
-     LazyRow(
-       state = lazyListState,
-       modifier =
--        Modifier.weight(1f).fillMaxHeight().drawWithContent {
--          drawContent()
--
-+        Modifier.weight(1f).fillMaxHeight().drawWithCache {
-           val fadeWidth = BOTTOM_BAR_FADE_WIDTH.toPx()
--          if (startFade > 0f) {
--            drawRect(
--              brush =
--                Brush.horizontalGradient(
--                  colorStops = fadeStops(colorScheme.bottomSheet, startFade, reversed = false),
--                  startX = 0f,
--                  endX = fadeWidth,
--                ),
--              size = size.copy(width = fadeWidth),
-+          val fadeSize = size.copy(width = fadeWidth)
-+          val startBrush =
-+            Brush.horizontalGradient(
-+              colorStops = fadeStops(colorScheme.bottomSheet, reversed = false),
-+              startX = 0f,
-+              endX = fadeWidth,
-             )
--          }
--
--          if (endFade > 0f) {
--            drawRect(
--              brush =
--                Brush.horizontalGradient(
--                  colorStops = fadeStops(colorScheme.bottomSheet, endFade, reversed = true),
--                  startX = size.width - fadeWidth,
--                  endX = size.width,
--                ),
--              topLeft = Offset(size.width - fadeWidth, 0f),
--              size = size.copy(width = fadeWidth),
-+          val endBrush =
-+            Brush.horizontalGradient(
-+              colorStops = fadeStops(colorScheme.bottomSheet, reversed = true),
-+              startX = size.width - fadeWidth,
-+              endX = size.width,
-             )
-+          val endTopLeft = Offset(size.width - fadeWidth, 0f)
-+
-+          onDrawWithContent {
-+            drawContent()
-+
-+            val start = startFade
-+            if (start > 0f) {
-+              drawRect(brush = startBrush, size = fadeSize, alpha = start)
-+            }
-+
-+            val end = endFade
-+            if (end > 0f) {
-+              drawRect(brush = endBrush, topLeft = endTopLeft, size = fadeSize, alpha = end)
-+            }
-           }
-         },
-       verticalAlignment = Alignment.CenterVertically,
-@@ -299,11 +302,11 @@ private fun SourceItem(
- 
- private val BOTTOM_BAR_FADE_WIDTH = 40.dp
- 
--private fun fadeStops(color: Color, progress: Float, reversed: Boolean): Array<Pair<Float, Color>> {
-+private fun fadeStops(color: Color, reversed: Boolean): Array<Pair<Float, Color>> {
-   val alphas = floatArrayOf(1f, 0.94f, 0.78f, 0.5f, 0.22f, 0.06f, 0f)
-   return Array(alphas.size) { index ->
-     val position = index / (alphas.size - 1).toFloat()
-     val alpha = if (reversed) alphas[alphas.size - 1 - index] else alphas[index]
--    position to color.copy(alpha = alpha * progress)
-+    position to color.copy(alpha = alpha)
+@@ -142,6 +142,120 @@ function transformShredditElements(doc) {
    }
  }
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/group/ui/GroupScreen.kt` (modified, +4/-1)
-```diff
-@@ -198,6 +198,9 @@ private fun GroupContent(
-     },
-     containerColor = AppTheme.colorScheme.backdrop,
-   ) { innerPadding ->
-+    val selectedSourceIds =
-+      remember(state.selectedSources) { state.selectedSources.mapTo(mutableSetOf()) { it.id } }
-+
-     LazyColumn(
-       modifier = Modifier.restrictContentWidth(),
-       contentPadding =
-@@ -221,7 +224,7 @@ private fun GroupContent(
-             feed = feed,
-             canShowUnreadPostsCount = false,
-             isInMultiSelectMode = state.isInMultiSelectMode,
--            isFeedSelected = state.selectedSources.any { it.id == feed.id },
-+            isFeedSelected = selectedSourceIds.contains(feed.id),
-             onFeedClick = { dispatch(GroupEvent.OnFeedClicked(feed)) },
-             onFeedSelected = { dispatch(GroupEvent.OnFeedClicked(feed)) },
-             dropdownMenuContent = { onDismiss ->
-```
-
-**File**: `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/home/ui/FeaturedPostItem.kt` (modified, +27/-6)
-```diff
-@@ -39,15 +39,18 @@ import androidx.compose.ui.Modifier
- import androidx.compose.ui.draw.clip
- import androidx.compose.ui.graphics.BlendMode
- import androidx.compose.ui.graphics.graphicsLayer
-+import androidx.compose.ui.layout.layout
- import androidx.compose.ui.platform.LocalDensity
- import androidx.compose.ui.text.style.TextOverflow
-+import androidx.compose.ui.unit.Constraints
- import androidx.compose.ui.unit.dp
- import androidx.window.core.layout.WindowSizeClass
- import dev.sasikanth.rss.reader.core.model.local.ResolvedPost
- import dev.sasikanth.rss.reader.ui.AppTheme
- import dev.sasikanth.rss.reader.utils.Constants
- import dev.sasikanth.rss.reader.utils.LocalWindowSizeClass
- import dev.sasikanth.rss.reader.utils.formatRelativeTime
-+import kotlin.math.roundToInt
- 
- private val featuredItemPadding: PaddingValues
-   @Composable
-@@ -61,6 +64,16 @@ private val featuredItemPadding: PaddingValues
-     }
-   }
  
 +/**
-+ * The title reserves three lines worth of height so every page of the pager is the same height. The
-+ * line count is only known once the title is laid out, so it is kept off the snapshot system and
-+ * read back in the filler's own measure pass; writing it to state would make the Layout phase
-+ * invalidate a Composition read and compose every page twice.
++ * Vox Media's Duet scorecard (the review box on The Verge and its sister
++ * sites) is a CSS grid of bare divs: the score sits in an element of its own,
++ * apart from the "Verge Score" label that explains it; the price is emitted
++ * twice, once for the narrow layout and once for the wide one, with whichever
++ * one doesn't apply hidden by CSS; and the retailer links are inline
++ * siblings. Flattened to markdown as-is, that reads as a stray number, a
++ * doubled price and a single run of concatenated links, so rebuild the box out
++ * of plain blocks before extraction. The grid itself can't survive - markdown
++ * has no two-column layout to put "The Good" and "The Bad" side by side - so
++ * the columns are left to stack as the lists they already are.
 + */
-+private class TitleFiller {
-+  var heightPx = 0f
++function transformScorecards(doc) {
++  var cards = doc.querySelectorAll(".duet--article--scorecard");
++  for (var i = 0; i < cards.length; i++) {
++    mergeScorecardScore(cards[i]);
++    removeScorecardResponsiveDuplicates(cards[i]);
++    splitScorecardLinkRows(doc, cards[i]);
++    unwrapScorecardWrappers(cards[i]);
++  }
 +}
 +
- @Composable
- internal fun FeaturedPostItem(
-   item: ResolvedPost,
-@@ -89,7 +102,7 @@ internal fun FeaturedPostItem(
-     val density = LocalDensity.current
-     val titleTextStyle = MaterialTheme.typography.headlineMedium
-     val titleMaxLines = 3
--    var dynamicTitlePadding by remember(item.link) { mutableStateOf(0.dp) }
-+    val titleFiller = remember(item.link) { TitleFiller() }
- 
-     featuredImage()
- 
-@@ -113,10 +126,12 @@ internal fun FeaturedPostItem(
-       overflow = TextOverflow.Ellipsis,
-       onTextLayout = { textLayoutResult ->
-         val numberOfLines = textLayoutResult.lineCount
--        if (numberOfLines < titleMaxLines) {
--          val lineHeight = with(density) { titleTextStyle.lineHeight.toDp() }
--          dynamicTitlePadding = lineHeight * (titleMaxLines - numberOfLines)
--        }
-+        titleFiller.heightPx =
-+          if (numberOfLines < titleMaxLines) {
-+            with(density) { titleTextStyle.lineHeight.toPx() } * (titleMaxLines - numberOfLines)
-+          } else {
-+            0f
-+          }
-       },
-     )
- 
-@@ -131,7 +146,13 @@ internal fun FeaturedPostItem(
-       overflow = TextOverflow.Ellipsis,
-     )
- 
--    Spacer(Modifier.requiredHeight(dynamicTitlePadding))
-+    Spacer(
-+      Modifier.layout { measurable, _ ->
-+        val height = titleFiller.heightPx.roundToInt()
-+        val placeable = measurable.measure(Constraints.fixed(width = 0, height = height))
-+        layout(0, height) { placeable.place(0, 0) }
-+      }
-+    )
- 
-     Spacer(modifier = Modifier.requiredHeight(4.dp))
- 
-```
-
----
-
-### Incident Patch 2: `a8d218c9` (2026-10-24)
-**Commit Message**: Update dependencies and fix build errors
-
-**File**: `androidApp/build.gradle.kts` (modified, +6/-1)
-```diff
-@@ -42,7 +42,12 @@ plugins {
- }
- 
- android {
--  compileSdk = libs.versions.android.sdk.compile.get().toInt()
-+  compileSdk {
-+    version =
-+      release(libs.versions.android.sdk.compile.get().toInt()) {
-+        minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
-+      }
++function scorecardLeafText(element) {
++  if (element.children.length > 0) return "";
++  return element.textContent.replace(/\s+/g, " ").trim();
++}
++
++/**
++ * Joins the bare score to the label that follows it, so the number arrives as
++ * "Verge Score: 8" rather than as a line holding nothing but a digit.
++ */
++function mergeScorecardScore(card) {
++  var elements = Array.prototype.slice.call(card.querySelectorAll("*"));
++  for (var i = 0; i < elements.length; i++) {
++    var score = elements[i];
++    if (!/^\d{1,3}(\.\d+)?$/.test(scorecardLeafText(score))) continue;
++
++    var label = score.nextElementSibling;
++    if (!label || !/score/i.test(scorecardLeafText(label))) continue;
++
++    label.textContent = scorecardLeafText(label) + ": " + scorecardLeafText(score);
++    score.remove();
++    return;
 +  }
-   namespace = "dev.sasikanth.rss.reader"
- 
-   defaultConfig {
-```
-
-**File**: `core/base/build.gradle.kts` (modified, +6/-1)
-```diff
-@@ -33,7 +33,12 @@ kotlin {
-     namespace = "dev.sasikanth.rss.reader.core.base"
- 
-     minSdk = libs.versions.android.sdk.min.get().toInt()
--    compileSdk = libs.versions.android.sdk.compile.get().toInt()
-+    compileSdk {
-+      version =
-+        release(libs.versions.android.sdk.compile.get().toInt()) {
-+          minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
-+        }
++}
++
++/**
++ * Drops the layout's hidden twin of a text leaf. Scoped to plain text outside
++ * lists, headings and links, so a price repeated for a second breakpoint goes
++ * while a retailer link that happens to carry the same price stays.
++ */
++function removeScorecardResponsiveDuplicates(card) {
++  var elements = Array.prototype.slice.call(card.querySelectorAll("*"));
++  var seen = {};
++
++  for (var i = 0; i < elements.length; i++) {
++    var element = elements[i];
++    if (!element.parentNode) continue;
++    if (element.closest("ul, ol, a, h1, h2, h3, h4, h5, h6")) continue;
++
++    var text = scorecardLeafText(element);
++    if (!text) continue;
++
++    if (seen[text]) {
++      element.remove();
++    } else {
++      seen[text] = true;
 +    }
- 
-     androidResources { enable = true }
- 
-```
-
-**File**: `core/data/build.gradle.kts` (modified, +6/-1)
-```diff
-@@ -37,7 +37,12 @@ kotlin {
-     namespace = "dev.sasikanth.rss.reader.data"
- 
-     minSdk = libs.versions.android.sdk.min.get().toInt()
--    compileSdk = libs.versions.android.sdk.compile.get().toInt()
-+    compileSdk {
-+      version =
-+        release(libs.versions.android.sdk.compile.get().toInt()) {
-+          minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
-+        }
++  }
++}
++
++/**
++ * Puts each retailer link in a block of its own. Left as inline siblings they
++ * convert to one unbroken line of "[$180 at Amazon](...)[$180 at Google](...)".
++ */
++function splitScorecardLinkRows(doc, card) {
++  var rows = Array.prototype.slice.call(card.querySelectorAll("*"));
++  for (var i = 0; i < rows.length; i++) {
++    var row = rows[i];
++    var links = [];
++    for (var j = 0; j < row.children.length; j++) {
++      if (row.children[j].tagName === "A") links.push(row.children[j]);
 +    }
- 
-     withHostTestBuilder {}.configure {}
-     withDeviceTest { instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
-```
-
-**File**: `core/data/src/commonMain/sqldelight/dev/sasikanth/rss/reader/data/database/Feed.sq` (modified, +1/-0)
-```diff
-@@ -86,6 +86,7 @@ SELECT
- FROM feed f
- LEFT JOIN post p ON f.id = p.sourceId AND p.postDate > :postsAfter AND p.createdAt < :postsUpperBound
- WHERE f.id = :id AND f.isDeleted = 0
-+GROUP BY f.id
- ORDER BY pinnedAt DESC, f.createdAt DESC LIMIT 1;
- 
- updateFeedName:
-```
-
-**File**: `core/network/build.gradle.kts` (modified, +6/-1)
-```diff
-@@ -36,7 +36,12 @@ kotlin {
-     namespace = "dev.sasikanth.rss.reader.core.network"
- 
-     minSdk = libs.versions.android.sdk.min.get().toInt()
--    compileSdk = libs.versions.android.sdk.compile.get().toInt()
-+    compileSdk {
-+      version =
-+        release(libs.versions.android.sdk.compile.get().toInt()) {
-+          minorApiLevel = libs.versions.android.sdk.minor.get().toInt()
-+        }
++
++    if (links.length < 2 || links.length !== row.children.length) continue;
++    if (row.textContent.replace(/\s+/g, "") === "") continue;
++
++    for (var k = 0; k < links.length; k++) {
++      var paragraph = doc.createElement("p");
++      row.insertBefore(paragraph, links[k]);
++      paragraph.appendChild(links[k]);
 +    }
++  }
++}
++
++/**
++ * Lifts the card's contents out of its grid wrappers. The product name and
++ * price sit in a wrapper of their own that holds little besides a link, which
++ * Readability drops as boilerplate along with everything inside it; as direct
++ * children of the card they are scored with the rest of the review instead.
++ */
++function unwrapScorecardWrappers(card) {
++  var wrappers = Array.prototype.slice.call(card.querySelectorAll("div"));
++  for (var i = wrappers.length - 1; i >= 0; i--) {
++    var wrapper = wrappers[i];
++    if (!wrapper.parentNode) continue;
++
++    while (wrapper.firstChild) {
++      wrapper.parentNode.insertBefore(wrapper.firstChild, wrapper);
++    }
++    wrapper.remove();
++  }
++}
++
+ /**
+  * Specifically targets Reddit pages (both modern Shreddit and legacy UI) to extract
+  * the main post content, effectively isolating it from sidebars, comments, and
+@@ -771,6 +885,7 @@ function parseReaderContent(link, bannerImage, html) {
+         processNoScriptImages(doc);
+         preserveTableAlignment(doc);
+         transformShredditElements(doc);
++        transformScorecards(doc);
+         removeFirstImageTagByUrl(doc, bannerImage);
  
-     withHostTestBuilder {}.configure {}
-     withDeviceTest { instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
-```
-
-**File**: `core/network/src/commonMain/kotlin/dev/sasikanth/rss/reader/core/network/di/NetworkComponent.kt` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ fun <T : HttpClientEngineConfig> httpClient(
-       logger =
-         object : Logger {
-           override fun log(message: String) {
--            KermitLogger.i("HttpClient") {
-+            KermitLogger.i(tag = "HttpClient") {
-               """
-               |---
-               |$message
-```
-
-**File**: `core/network/src/commonMain/kotlin/dev/sasikanth/rss/reader/core/network/utils/ByteReadChannelExt.kt` (modified, +2/-2)
-```diff
-@@ -18,7 +18,7 @@
- package dev.sasikanth.rss.reader.core.network.utils
- 
- import io.ktor.utils.io.ByteReadChannel
--import io.ktor.utils.io.readRemaining
-+import io.ktor.utils.io.readBuffer
- import korlibs.io.lang.Charset
- import korlibs.io.lang.Charsets
- import kotlinx.io.readByteArray
-@@ -29,7 +29,7 @@ internal suspend fun ByteReadChannel.toCharIterator(
-   charset: Charset,
-   platformPageSize: Long,
- ): CharIterator {
--  val bytes = readRemaining().readByteArray()
-+  val bytes = readBuffer().readByteArray()
- 
-   val firstChunkSize = minOf(bytes.size, platformPageSize.toInt())
-   val encodingContent = buildString { Charsets.UTF8.decode(this, bytes, 0, firstChunkSize) }
-```
-
-**File**: `gradle/libs.versions.toml` (modified, +31/-30)
-```diff
-@@ -1,65 +1,66 @@
- [versions]
--kotlin = "2.4.10"
--android_gradle_plugin = "9.3.2"
--compose = "1.12.0"
--compose-material3 = "1.12.0-alpha03"
--compose_material3_adaptive = "1.3.0-beta02"
-+kotlin = "2.4.21"
-+android_gradle_plugin = "9.4.1"
-+compose = "1.13.0-beta01"
-+compose-material3 = "1.13.0-beta01"
-+compose_material3_adaptive = "1.4.0-alpha01"
- 
- android_sdk_compile = "37"
-+android_sdk_minor = "1"
- android_sdk_target = "37"
- android_sdk_min = "26"
- 
--sqldelight = "2.3.2"
--ktor = "3.5.2"
-+sqldelight = "2.4.1"
-+ktor = "3.6.0"
- kotlinx_coroutines = "1.11.0"
- kotlinx_date_time = "0.8.0"
--kotlinx_immutable_collections = "0.5.1"
--kotlinx_serialization_json = "1.11.0"
-+kotlinx_immutable_collections = "0.5.2"
-+kotlinx_serialization_json = "1.12.0"
- kotlinx_io = "0.9.1"
- androidx_activity = "1.13.0"
- androidx_appcompat = "1.8.0"
--androidx_core = "1.19.0"
--androidx_collection = "1.6.0"
-+androidx_core = "1.19.1"
-+androidx_collection = "1.7.0"
- androidx_test_runner = "1.7.0"
- androidx_test_rules = "1.7.0"
--androidx_work = "2.11.2"
--androidx_datastore = "1.2.1"
-+androidx_work = "2.12.0"
-+androidx_datastore = "1.3.0"
- androidx_browser = "1.10.0"
--androidx_annotation = "1.10.0"
-+androidx_annotation = "1.11.0"
- androidx_graphics_shapes = "1.1.0"
--coil = "3.6.0"
--spotless = "8.10.0"
-+coil = "3.6.3"
-+spotless = "8.10.4"
- ktfmt = "0.61"
- kotlininject = "0.9.0"
- ksp = "2.3.10"
- ksoup = "0.2.6"
- sqliteAndroid = "3.49.0"
- desugarJdk = "2.1.5"
- atomicfu = "0.33.0"
--paging = "3.5.1"
-+paging = "3.5.3"
- stately = "2.1.0"
--xmlutil = "1.0.2"
-+xmlutil = "1.0.2.1"
- ktxml = "1.0.0"
- uuid = "0.8.4"
- bugsnag-plugin = "8.2.0"
--bugsnag = "6.27.0"
-+bugsnag = "6.28.0"
- google-play-review = "2.0.2"
--crashkios-bugsnag = "0.9.0"
--kermit = "2.1.0"
-+crashkios-bugsnag = "0.10.1"
-+kermit = "2.2.0"
- reorderable = "3.1.0"
- korlibs = "6.0.0"
--filekit = "0.15.0"
-+filekit = "0.16.0"
- leakcanary = "2.14"
--markdown = "0.44.0"
--revenuecat = "3.5.1"
--landscapist = "2.11.0"
-+markdown = "0.46.0"
-+revenuecat = "3.14.0"
-+landscapist = "2.13.2"
- viewmodel = "2.11.0"
--multiplatform-nav3-ui = "1.1.1"
--navigationevent-compose = "1.1.2"
--glance = "1.2.0-rc01"
-+multiplatform-nav3-ui = "1.1.2"
-+navigationevent-compose = "1.2.0"
-+glance = "1.2.0"
- material-kolor = "5.0.1"
--htmlunit = "5.4.0"
--androidx_media3 = "1.11.0"
-+htmlunit = "5.6.0"
-+androidx_media3 = "1.11.1"
- vlcj = "4.12.1"
- 
- [libraries]
+         var junkElements = doc.querySelectorAll(JUNK_SELECTORS);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1970** (2026-10-27): [300.114.*] Pre-release merge (@tramline-github[bot])
+- **PR #1969** (2026-10-27): [300.113.*] Pre-release merge (@tramline-github[bot])
+- **PR #1968** (2026-10-26): [300.112.*] Pre-release merge (@tramline-github[bot])
+- **PR #1967** (2026-10-26): [300.111.*] Pre-release merge (@tramline-github[bot])
 - **PR #1966** (2026-10-25): [300.110.*] Pre-release merge (@tramline-github[bot])
 - **PR #1965** (2026-10-25): [300.109.*] Pre-release merge (@tramline-github[bot])
-- **PR #1964** (2026-10-24): [300.108.*] Pre-release merge (@tramline-github[bot])
-- **PR #1962** (2026-10-24): [300.107.*] Pre-release merge (@tramline-github[bot])
-- **PR #1948** (closed): Show full featured images without crop or empty space (@camilopaezz)
-- **PR #1945** (2026-09-09): [300.106.*] Pre-release merge (@tramline-github[bot])
 
 ---
 
@@ -1279,30 +840,52 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Improve UI performance and layout efficiency
+## X. Improve rendering of Vox Media review scorecards in the reader
 
 **RULE**:
-When implementing operations in `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `shared/src/commonMain/composeResources/files/reader/main.es5.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in msasikanth/twine. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33fab980`: Improve UI performance and layout efficiency. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4b3aa942`: Improve rendering of Vox Media review scorecards in the reader. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/kotlin/dev/sasikanth/rss/reader/app/App.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `shared/src/commonMain/composeResources/files/reader/main.es5.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import androidx.compose.ui.layout.onPlaced
-                  .onPlaced { coordinates ->
+/**
+ * Vox Media's Duet scorecard (the review box on The Verge and its sister
+ * sites) is a CSS grid of bare divs: the score sits in an element of its own,
+ * apart from the "Verge Score" label that explains it; the price is emitted
+ * twice, once for the narrow layout and once for the wide one, with whichever
+ * one doesn't apply hidden by CSS; and the retailer links are inline
+ * siblings. Flattened to markdown as-is, that reads as a stray number, a
+ * doubled price and a single run of concatenated links, so rebuild the box out
+ * of plain blocks before extraction. The grid itself can't survive - markdown
+ * has no two-column layout to put "The Good" and "The Bad" side by side - so
+ * the columns are left to stack as the lists they already are.
+ */
+function transformScorecards(doc) {
+  var cards = doc.querySelectorAll(".duet--article--scorecard");
+  for (var i = 0; i < cards.length; i++) {
+    mergeScorecardScore(cards[i]);
+    removeScorecardResponsiveDuplicates(cards[i]);
+    splitScorecardLinkRows(doc, cards[i]);
+    unwrapScorecardWrappers(cards[i]);
+  }
+}
+
+function scorecardLeafText(element) {
+  if (element.children.length > 0) return "";
+  return element.textContent.replac
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-import androidx.compose.ui.layout.onGloballyPositioned
-                  .onGloballyPositioned { coordinates ->
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33fab980` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4b3aa942` are properly handled with clean fallback behavior.

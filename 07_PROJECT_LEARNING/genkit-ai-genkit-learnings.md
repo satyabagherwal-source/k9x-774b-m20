@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `3d67720d`  
+> **Source Version**: `1eb9489f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:46:15.773Z  
+> **Timestamp**: 2026-10-31T20:23:17.253Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:46:15.767Z  
+> **Harvest Timestamp**: 2026-10-31T20:23:17.246Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6547 stars
+- **Stars / Engagement**: 6561 stars
 
 ---
 
@@ -228,9 +228,22 @@ export async function initGenkitFile(runtime: Runtime) {
  * limitations under the License.
  */
 
-import { BaseRuntimeManager } from '@genkit-ai/tools-common/manager';
+import {
+  BaseRuntimeManager,
+  GenkitToolsError,
+} from '@genkit-ai/tools-common/manager';
 import { z } from 'zod';
 import { startDevProcessManager, startManager } from '../utils/manager-utils';
+
+export function formatMcpError(err: unknown): string {
+  if (err instanceof GenkitToolsError) {
+    return err.formatError();
+  }
+  if (err instanceof Error) {
+    return err.message;
+  }
+  return typeof err === 'string' ? err : (JSON.stringify(err) ?? String(err));
+}
 
 export interface McpToolOptions {
   projectRoot: string;
@@ -1986,11 +1999,11 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #6867** (2026-10-27): **fix(cli): search_genkit_docs crashes on localized description objects and list_genkit_docs exceeds host runtime token limits**
+  *Symptoms*: ## Description  1. **`search_genkit_docs` (MCP) and `genkit docs:search` (CLI) crash on every query:**    In `docs-bundle-experimental.json`, 28 `app-frameworks/*.md` entries (7 framework pages across `js`, `go`, `dart`, and `python`) store `doc.description` as a localized language-keyed object rather than a string:    ```json    {      "default": "Build an Angular app powered by Genkit, with streaming structured output and tool calling.",      "js": "Add Genkit to an Angular app with SSR server routes, streaming structured output and tool calling in one project.",      "go": "Connect an Angular UI to your Genkit Go backend and stream the recipe into your UI incrementally.",      "dart": "Connect an Angular UI to your Genkit Dart backend and stream the recipe into your UI incrementally.",      "python": "Connect an Angular UI to your Genkit Python backend and stream the recipe into your UI incrementally."    }    ```    Because `searchDocs()` in [`genkit-tools/cli/src/utils/docs.ts`](https://github.com/firebase/genkit/blob/main/genkit-tools/cli/src/utils/docs.ts) unconditionally calls `(doc.description || '').toLowerCase()` across every document in the target language, every call to `search_genkit_docs` or `genkit docs:search` throws `TypeError: (doc.description || "").toLowerCase is not a function`. Additionally, `list_genkit_docs` and `genkit docs:list` render `Description: [object Object]` for those 28 pages.  2. **`list_genkit_docs` returns a ~135 KB payload that exceeds 
+
 - **Issue #6864** (2026-10-22): **fix(cli): add MCP server instructions and descriptive tool metadata for deferred tool search**
   *Symptoms*: ## Description  Coding agents that defer MCP tool schemas behind dynamic tool search (such as Claude Code's `ToolSearch`) list connected MCP tools **by name only** in the initial context (`<available-deferred-tools>`) and omit individual tool `description`s and `inputSchema`s until the model explicitly queries `ToolSearch`.  In recent evaluations of `genkit mcp` under Claude Code, Sonnet discovered the Genkit MCP server in only 2 of 4 attempts and Haiku in only 6 of 75 attempts.  ### Root Cause  1. **Missing server-level `instructions` (and `description`) in [`genkit-tools/cli/src/mcp/server.ts`](https://github.com/firebase/genkit/blob/main/genkit-tools/cli/src/mcp/server.ts):**    ```ts    const server = new McpServer({      name: 'Genkit MCP',      version: '0.0.2',    });    ```    When `ToolSearch` defers individual tool schemas, the **only** text from an MCP server that Claude Code injects upfront into the system prompt (`# MCP Server Instructions`) is the `instructions` field returned in the `initialize` result (`new McpServer(serverInfo, { instructions })`). Because `server.ts` omits `instructions` (and `description` on `serverInfo`), agents see only bare tool names with zero upfront context on what the Genkit MCP server provides or when to search for its tools. 2. **Generic descriptions on `run_flow` and `get_trace`:**    - [`genkit-tools/cli/src/mcp/flows.ts`](https://github.com/firebase/genkit/blob/main/genkit-tools/cli/src/mcp/flows.ts): `run_flow` uses `descriptio
-
-- **Issue #6798** (2026-10-20): **[JS] @genkit-ai/anthropic: empty reasoning part with signature throws "Unsupported genkit part fields"**
-  *Symptoms*: **Describe the bug** Claude can return a `thinking` block with an empty `thinking` string and a valid `signature`. @genkit-ai/anthropic converts it to:  `{ "reasoning": "", "metadata": { "thoughtSignature": "CAQS..." } }`  Any later request that includes this message in its history throws before the API is called. In a persisted chat/agent session, every later turn then fails, because the part stays in history.  ``` Error: Unsupported genkit part fields encountered for current message role: {"reasoning":"","metadata":{"thoughtSignature":"CAQS..."}}.     at BetaRunner.toAnthropicMessageContent (@genkit-ai/anthropic/src/runner/beta.ts:280:11)     at Array.map (<anonymous>)     at BetaRunner.toAnthropicMessages (@genkit-ai/anthropic/src/runner/base.ts:398:35)     at BetaRunner.toAnthropicStreamingRequestBody (@genkit-ai/anthropic/src/runner/beta.ts:367:39)     at BetaRunner.run (@genkit-ai/anthropic/src/runner/base.ts:480:25)     at @genkit-ai/anthropic/src/models.ts:181:27     at @genkit-ai/ai/src/model.ts:172:12 ```  The cause is the truthiness check in `toAnthropicMessageContent`, in both runner/beta.ts and runner/stable.ts:  ```ts if (part.reasoning) {   const signature = this.getThinkingSignature(part);   ...   return { type: 'thinking', thinking: part.reasoning, signature }; } ``` "" is falsy. The part has no text, media, toolRequest or toolResponse either, so it reaches the final throw.  **To Reproduce** ```ts import { genkit } from 'genkit'; import { anthropic } from '@g
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2007,77 +2020,668 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d67720d` (2026-10-23)
-**Commit Message**: fix(genkit-tools): restrict packed files to lib/ in common and telemetry-server (#6886)
+### Incident Patch 1: `1eb9489f` (2026-10-31)
+**Commit Message**: chore(py): enforce linked TODOs with Ruff (#6949)
 
-**File**: `genkit-tools/common/.npmignore` (modified, +6/-1)
+**File**: `.github/workflows/todo-lint.yml` (removed, +0/-83)
 ```diff
-@@ -1,5 +1,10 @@
- node_modules
-+/*.tgz
-+/.genkit
-+/src
-+/tests
- jest.config.ts
- tsconfig.cjs.json
- tsconfig.esm.json
--tsconfig.json
-\ No newline at end of file
-+tsconfig.types.json
-+tsconfig.json
+@@ -1,83 +0,0 @@
+-# Copyright 2026 Google LLC
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-# SPDX-License-Identifier: Apache-2.0
+-
+-name: TODO Lint
+-
+-on:
+-  pull_request:
+-    branches: [main, next]
+-  push:
+-    branches: [main, next]
+-
+-jobs:
+-  todo-lint:
+-    name: Check TODO Format
+-    runs-on: ubuntu-latest
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v4
+-
+-      - name: Check for plain TODOs without issue links
+-        run: |
+-          #!/usr/bin/env bash
+-          set -euo pipefail
+-
+-          echo "Checking for TODO comments without issue links..."
+-          echo "=============================================="
+-
+-          # Find all TODOs without proper issue references
+-          # Proper formats:
+-          #   # TODO(https://github.com/genkit-ai/genkit/issues/1234): Description
+-          #   # TODO(#1234): Description
+-          # Invalid format:
+-          #   # TODO: Description
+-          
+-          # First, find all TODOs
+-          ALL_TODOS=$(grep -rn '#[[:space:]]*TODO' \
+-            --include="*.py" \
+-            --exclude-dir=".venv" \
+-            --exclude-dir=".tox" \
+-            --exclude-dir="node_modules" \
+-            --exclude-dir=".mypy_cache" \
+-            --exclude-dir="__pycache__" \
+-            --exclude-dir="dist" \
+-            --exclude-dir="build" \
+-            py/ 2>/dev/null || true)
+-
+-          # Filter out valid TODOs (those with issue references)
+-          # Valid: TODO(#NNN) or TODO(https://...)
+-          BAD_TODOS=$(echo "$ALL_TODOS" | grep -v 'TODO(#[0-9]\+)' | grep -v 'TODO(https://' || true)
+-
+-          if [ -n "$BAD_TODOS" ]; then
+-            echo "❌ Found TODO comments without issue links:"
+-            echo ""
+-            echo "$BAD_TODOS"
+-            echo ""
+-            echo "=============================================="
+-            echo "TODOs must include a GitHub issue reference for tracking."
+-            echo ""
+-            echo "Correct formats:"
+-            echo "  # TODO(#1234): Description"
+-            echo "  # TODO(https://github.com/genkit-ai/genkit/issues/1234): Description"
+-            echo ""
+-            echo "Wrong format:"
+-            echo "  # TODO: Description"
+-            echo ""
+-            echo "Please create GitHub issues for each TODO and update the format."
+-            exit 1
+-          fi
+-
+-          echo "✅ All TODOs have proper issue links!"
 ```
 
-**File**: `genkit-tools/common/package.json` (modified, +3/-0)
+**File**: `py/pyproject.toml` (modified, +1/-0)
 ```diff
-@@ -70,6 +70,9 @@
-   },
-   "author": "genkit",
-   "license": "Apache-2.0",
-+  "files": [
-+    "lib/"
-+  ],
-   "types": "./lib/types/src/types/index.d.ts",
-   "exports": {
-     ".": {
+@@ -236,6 +236,7 @@ select = [
+   "S",     # flake8-bandit (security)
+   "ASYNC", # flake8-async (async best practices)
+   "T20",   # flake8-print (no print statements)
++  "TD",    # flake8-todos (TODO comment formatting and issue links)
+   "TID251", # banned-api (see flake8-tidy-imports.banned-api below)
+ ]
+ 
 ```
 
-**File**: `genkit-tools/telemetry-server/.npmignore` (modified, +6/-1)
+---
+
+### Incident Patch 2: `3121f326` (2026-10-31)
+**Commit Message**: feat(py)!: Interrupt is a BaseException so tool catch-alls can't skip approval (#6763)
+
+**File**: `py/packages/genkit-fastapi/tests/fastapi_test.py` (modified, +29/-3)
 ```diff
-@@ -1,4 +1,9 @@
- node_modules
-+/*.tgz
-+/.genkit
-+/src
-+/tests
- tsconfig.cjs.json
- tsconfig.esm.json
--tsconfig.json
-\ No newline at end of file
-+tsconfig.types.json
-+tsconfig.json
+@@ -28,7 +28,7 @@
+ from pydantic import BaseModel, field_validator
+ from starlette.exceptions import HTTPException as StarletteHTTPException
+ 
+-from genkit import FlowContext, Genkit, GenkitError, PublicError
++from genkit import FlowContext, Genkit, GenkitError, Interrupt, PublicError
+ from genkit.plugin_api import provider_error
+ from genkit.web import RequestData
+ 
+@@ -386,6 +386,32 @@ async def boom(_: str) -> None:
+     assert 'stack' not in error
+ 
+ 
++def test_fastapi_flow_raising_interrupt_returns_500_and_sse_internal_error() -> None:
++    """A flow raising Interrupt (a BaseException) still gets the Genkit 500 body and SSE error frame.
++
++    The action boundary turns it into GenkitError INTERNAL, so the adapter's
++    `except Exception` sees it; without that the run is a bare 500 and the
++    stream a 200 with no error event.
++    """
++    ai = Genkit()
++
++    @ai.flow()
++    async def refund(order_id: str) -> str:
++        raise Interrupt({'reason': 'needs approval', 'order_id': order_id})
++
++    app = FastAPI()
++    app.include_router(serve_flow(refund, base_path='/refund'))
++    client = TestClient(app, raise_server_exceptions=False)
++
++    response = client.post('/refund', json={'data': 'A-17'})
++    assert response.status_code == 500
++    assert response.json() == {'message': 'Internal Error', 'status': 'INTERNAL'}
++
++    response = client.post('/refund', json={'data': 'A-17'}, headers={'Accept': 'text/event-stream'})
++    assert sse_error_event(response.text) == {'message': 'Internal Error', 'status': 'INTERNAL'}
++    assert 'A-17' not in response.text
++
++
+ def test_fastapi_context_provider_sees_method_lowercase_headers_and_input() -> None:
+     """FastAPI context_provider sees method, lowercase headers, and input."""
+     ai = Genkit()
+@@ -731,7 +757,7 @@ async def chat(_: str) -> str:
+     app = FastAPI()
+ 
+     @app.post('/chat', response_model=None)
+-    @genkit_fastapi_handler(ai)
++    @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
+     def chat_route():
+         return chat
+ 
+@@ -747,7 +773,7 @@ def test_fastapi_handler_wrapper_returning_non_action_returns_json_internal_erro
+     app = FastAPI()
+ 
+     @app.post('/chat', response_model=None)
+-    @genkit_fastapi_handler(ai)
++    @genkit_fastapi_handler(ai)  # pyright: ignore[reportArgumentType]
+     async def chat_route():
+         return 'not an action'
+ 
 ```
 
-**File**: `genkit-tools/telemetry-server/package.json` (modified, +3/-0)
+**File**: `py/packages/genkit-middleware/src/genkit_middleware/_filesystem.py` (modified, +0/-3)
 ```diff
-@@ -24,6 +24,9 @@
-   },
-   "author": "genkit",
-   "license": "Apache-2.0",
-+  "files": [
-+    "lib/"
-+  ],
-   "dependencies": {
-     "@genkit-ai/tools-common": "workspace:*",
-     "@asteasolutions/zod-to-openapi": "^7.0.0",
+@@ -41,7 +41,6 @@
+ from pydantic import AliasChoices, BaseModel as PydanticBaseModel, Field
+ 
+ from genkit import (
+-    Interrupt,
+     Message,
+     ModelResponse,
+     ModelResponseChunk,
+@@ -370,8 +369,6 @@ async def wrap_tool(
+ 
+         try:
+             return await next_fn(params, ctx)
+-        except Interrupt:
+-            raise
+         except Exception as exc:
+             error_msg = f'Tool "{params.tool.name}" failed: {exc}'
+             self._enqueue_parts([Part.from_text(error_msg)])
+```
+
+**File**: `py/packages/genkit-middleware/tests/filesystem_test.py` (modified, +25/-0)
+```diff
+@@ -22,6 +22,10 @@
+ import pytest
+ from genkit_middleware import Filesystem
+ 
++from genkit import Interrupt, MultipartToolResponse, Part
++from genkit.middleware import MiddlewareContext, ToolHookParams
++from genkit.model import ToolRequest
++
+ # ---------------------------------------------------------------------------
+ # Construction / validation
+ # ---------------------------------------------------------------------------
+@@ -190,3 +194,24 @@ async def test_tools_have_nonempty_descriptions(ctx) -> None:
+         fs = Filesystem(root_dir=tmpdir, allow_write_access=True)
+         for t in fs.tools(ctx):
+             assert t.description, f'{t.name} has empty description'
++
++
++@pytest.mark.asyncio
++async def test_wrap_tool_lets_interrupt_through_without_queueing_an_error(ctx) -> None:
++    """A filesystem tool that pauses still pauses; the error catch-all can't turn it into a message."""
++    with tempfile.TemporaryDirectory() as tmpdir:
++        fs = Filesystem(root_dir=tmpdir, allow_write_access=True)
++        write_file = next(t for t in fs.tools(ctx) if t.name == 'write_file')
++        params = ToolHookParams(
++            tool_request_part=Part(tool_request=ToolRequest(name='write_file', input={'path': 'menu.md'})),
++            tool=write_file.action(),
++        )
++
++        async def needs_approval(_params: ToolHookParams, _ctx: MiddlewareContext) -> MultipartToolResponse:
++            raise Interrupt({'reason': 'confirm overwrite', 'path': 'menu.md'})
++
++        with pytest.raises(Interrupt) as raised:
++            await fs.wrap_tool(params, ctx, needs_approval)
++
++        assert raised.value.metadata == {'reason': 'confirm overwrite', 'path': 'menu.md'}
++        assert fs._message_queue == []  # noqa: SLF001
+```
+
+**File**: `py/packages/genkit/src/genkit/_ai/_agents/_runtime.py` (modified, +38/-6)
+```diff
+@@ -44,7 +44,16 @@
+ from genkit._ai._json_patch import diff_json
+ from genkit._core._action import ActionRunContext, get_current_context
+ from genkit._core._channel import CloseableQueue, QueueShutDown
+-from genkit._core._error import GenkitError, GenkitRuntimeError, PublicError, RuntimeErrorReason, StatusName
++from genkit._core._error import (
++    GenkitError,
++    GenkitRuntimeError,
++    Interrupt,
++    PublicError,
++    RuntimeErrorReason,
++    StatusName,
++    TaskGroupError,
++    interrupt_escape_error,
++)
+ from genkit._core._logger import get_logger
+ from genkit._core._model import (
+     AgentInit,
+@@ -163,7 +172,15 @@ async def run(
+             try:
+ 
+                 async def body(span: SpanContext, turn_input: AgentInput = inp, ctx: TurnContext = turn_ctx) -> object:
+-                    turn_result = await fn(turn_input, ctx)
++                    try:
++                        turn_result = await fn(turn_input, ctx)
++                    except (Interrupt, TaskGroupError) as exc:
++                        # No generate loop here to pause. Convert inside the
++                        # span so runTurn-N records the failure.
++                        failure = interrupt_escape_error(exc)
++                        if failure is None:
++                            raise
++                        raise failure from exc
+                     finish_reason = turn_result.finish_reason if turn_result else None
+                     self.last_turn_finish_reason = finish_reason
+                     self.last_turn_error = None
+@@ -191,9 +208,18 @@ async def body(span: SpanContext, turn_input: AgentInput = inp, ctx: TurnContext
+                 self.last_good_state_version = self.session.version
+                 self.last_good_finish_reason = self.last_turn_finish_reason
+                 self.turn_index += 1
+-            except Exception as exc:
++            except (Exception, Interrupt, TaskGroupError) as exc:
++                # body converts the turn's own Interrupt; this covers one
++                # raised from a hook outside it.
++                failure = interrupt_escape_error(exc)
++                if failure is not None:
++                    turn_error: Exception = failure
++                elif isinstance(exc, Exception):
++                    turn_error = exc
++                else:
++                    raise
+                 self.last_turn_finish_reason = AgentFinishReason.FAILED
+-                self.last_turn_error = to_error_details(exc)
++                self.last_turn_error = to_error_details(turn_error)
+ 
+                 if self.on_end_turn is not None:
+                     await self.on_end_turn(AgentFinishReason.FAILED)
+@@ -878,8 +904,14 @@ async def run_agent_loop() -> None:
+                     coro=fn(self.session_runner, action_ctx),
+                 )
+                 result_holder.append(result)
+-            except Exception as e:  # noqa: BLE001
+-                err_holder.append(e)
++            except (Exception, Interrupt, TaskGroupError) as e:  # noqa: BLE001
++                failure = interrupt_escape_error(e)
++                if failure is not None:
++                    err_holder.append(failure)
++                elif isinstance(e, Exception):
++                    err_holder.append(e)
++                else:
++                    raise
+             finally:
+                 # Synchronously close self.turn_inputs to signal turn completion,
+                 # letting SessionRunner stop waiting for more inputs.
+```
+
+**File**: `py/packages/genkit/src/genkit/_ai/_generate.py` (modified, +24/-17)
+```diff
+@@ -53,6 +53,7 @@
+     normalize_pending_content,
+     parts_to_wire,
+     restart_interrupt_error,
++    run_restarted_tool,
+     run_tool_after_restart,
+     run_tool_request,
+ )
+@@ -112,6 +113,13 @@
+ 
+ DEFAULT_MAX_TURNS = 50
+ 
++# Interrupt is a BaseException so a tool's `except Exception` can't swallow it.
++# The engine still catches it wherever a raise becomes a result.
++TOOL_RAISES = (Exception, Interrupt)
++# What a hook or model can raise that becomes a FAILED turn (#6255). A
++# foreign CancelledError is re-raised by raise_if_foreign_cancel.
++TURN_FAILURES = (Exception, Interrupt, asyncio.CancelledError)
++
+ logger = get_logger(__name__)
+ 
+ T = TypeVar('T')
+@@ -1415,7 +1423,7 @@ def remember_response(result: object) -> None:
+             ),
+             name=resolved.model.name,
+         )
+-    except (Exception, asyncio.CancelledError) as exc:
++    except TURN_FAILURES as exc:
+         raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+         # A hook can raise before the model ever built a request. Build it here
+         # so the caller still gets back what they asked for; the cost is only
+@@ -1503,7 +1511,7 @@ async def generate_turn(
+             mw_pipeline=mw_pipeline,
+             current_turn=current_turn,
+         )
+-    except (Exception, asyncio.CancelledError) as exc:
++    except TURN_FAILURES as exc:
+         raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+         return box_from_exc(
+             response=call.earned(),
+@@ -1785,7 +1793,7 @@ async def run_tools_or_stop(
+             mw_pipeline=mw_pipeline,
+             tools=resolved.tools,
+         )
+-    except (Exception, asyncio.CancelledError) as exc:
++    except TURN_FAILURES as exc:
+         raise_if_foreign_cancel(exc=exc, abort_signal=ctx.abort_signal)
+         return box_from_exc(
+             response=response,
+@@ -2174,7 +2182,7 @@ async def next_fn(p: ToolHookParams, c: MiddlewareContext) -> MultipartToolRespo
+             else:
+                 multipart = as_multipart_tool_response(await next_fn(params, ctx), tool_name=trp.tool_request.name)
+             return (multipart, None)
+-        except Exception as e:
++        except TOOL_RAISES as e:
+             # Interrupts (raised by the tool body or by middleware) become a
+             # tool-request Part with interrupt metadata.  Any tracing span is the
+             # middleware's responsibility (e.g. ToolApproval wraps its raise in
+@@ -2239,7 +2247,7 @@ def to_pending_response(request: Part, response: Part) -> Part:
+     )
+ 
+ 
+-def interrupt_from_exc(exc: Exception) -> Interrupt | None:
++def interrupt_from_exc(exc: BaseException) -> Interrupt | None:
+     """If ``exc`` is an Interrupt, or was raised from one, return it.
+ 
+     A tool that pauses again on restart is still an interrupt the caller
+@@ -2545,7 +2553,7 @@ async def resolve_resumed_tool(
+                 restart_trp=restart_trp,
+                 mw_pipeline=mw_pipeline,
+             )
+-        except Exception as e:
++        except TOOL_RAISES as e:
+             intr = interrupt_from_exc(e)
+             if intr is not None:
+                 return (interrupt_request_part(tool_req_root, intr), None)
+@@ -2605,7 +2613,9 @@ async def run_restart(
+     )
+ 
+     async def next_fn(p: ToolHookParams, ctx: MiddlewareContext) -> MultipartToolResponse:
+-        executed = await run_tool_after_restart(tool=p.tool, restart_trp=p.tool_request_part, ctx=ctx)
++        # A second Interrupt stays raw through the chain so a middleware
++        # `except Exception` can't swallow it; converted below.
++        executed = await run_restarted_tool(tool=p.tool, restart_trp=p.tool_request_part, ctx=ctx)
+         if executed.tool_response is None:
+             raise GenkitError(status='INTERNAL', message='Expected a tool response part')
+         raw_content = executed.tool_response.content or []
+@@ -2625,18 +2635,15 @@ async def next_fn(p: ToolHookParams, ctx: MiddlewareContext) -> MultipartToolRes
+             ),
+             tool_name=tool_req.name,
+         )
+-    except Exception as e:
++    except TOOL_RAISES as e:
+         intr = interrupt_from_exc(e)
+         if intr is not None:
+-            # run_tool_after_restart already logged when the tool body interrupted.
+-            # wrap_tool can raise Interrupt itself; that's the only interrupt path.
+-            if not isinstance(e, GenkitError):
+-                logger.debug(
+-                    'restarted tool triggered an interrupt',
+-                    tool=tool_req.name,
+-                )
+-            # wrap_tool paused again. generate turns this into the same
+-            # INTERRUPTED they already know how to answer.
++            # The tool body or wrap_tool paused again. generate turns this
++            # into the same INTERRUPTED they already know how to answer.
++            logger.debug(
++                'restarted tool triggered an interrupt',
++                tool=tool_req.name,
++            )
+             raise restart_interrupt_error(intr) 
+```
+
+**File**: `py/packages/genkit/src/genkit/_ai/_tools.py` (modified, +19/-5)
+```diff
+@@ -364,18 +364,32 @@ async def run_tool_after_restart(
+     Sets the same context variables as the tool wrapper so ToolContext reflects
+     a resumed run. A tool cannot raise another interrupt while it is being restarted.
+     """
+-    tool_req = restart_trp.tool_request
+-    if tool_req is None:
+-        raise ValueError('run_tool_after_restart needs a tool request part')
+     try:
+-        raw = await run_tool_request(tool=tool, tool_request_part=restart_trp, ctx=ctx)
++        return await run_restarted_tool(tool=tool, restart_trp=restart_trp, ctx=ctx)
+     except Interrupt as e:
+         logger.debug(
+             'restarted tool triggered an interrupt',
+-            tool=tool_req.name,
++            tool=restart_trp.tool_request.name if restart_trp.tool_request else tool.name,
+         )
+         raise restart_interrupt_error(e) from e
+ 
++
++async def run_restarted_tool(
++    *,
++    tool: Action,
++    restart_trp: Part,
++    ctx: MiddlewareContext | None = None,
++) -> Part:
++    """Like ``run_tool_after_restart``, but a second Interrupt propagates as is.
++
++    run_restart calls this inside the wrap_tool chain. Converting the Interrupt
++    there would hand middleware an Exception its catch-all could swallow,
++    skipping the approval the restart is asking for.
++    """
++    tool_req = restart_trp.tool_request
++    if tool_req is None:
++        raise ValueError('run_tool_after_restart needs a tool request part')
++    raw = await run_tool_request(tool=tool, tool_request_part=restart_trp, ctx=ctx)
+     envelope = as_multipart_tool_response(raw, tool_name=tool_req.name)
+     return Part(
+         tool_response=ToolResponse(
+```
+
+**File**: `py/packages/genkit/src/genkit/_core/_action.py` (modified, +33/-1)
+```diff
+@@ -46,7 +46,15 @@
+ 
+ from genkit._core._channel import CloseableQueue, mirror_result, start_stream
+ from genkit._core._compat import StrEnum
+-from genkit._core._error import GenkitError, Interrupt, RuntimeErrorReason, mark_request_error
++from genkit._core._error import (
++    GenkitError,
++    Interrupt,
++    RuntimeErrorReason,
++    TaskGroupError,
++    interrupt_escape_error,
++    interrupt_outside_tool_error,
++    mark_request_error,
++)
+ from genkit._core._model import (
+     EmbedRequest,
+     ModelRequest,
+@@ -804,6 +812,11 @@ def create_action_key(kind: ActionKind | str, name: str) -> str:
+ # server calling a nested action wrong, not the HTTP caller's request.
+ _inside_action: ContextVar[bool] = ContextVar('inside_action', default=False)
+ 
++# True while a tool body runs, including actions it calls. An Interrupt from a
++# flow the tool calls has to reach generate's tool loop as an Interrupt, so only
++# an action with no tool above it turns one into an error.
++_inside_tool: ContextVar[bool] = ContextVar('inside_tool', default=False)
++
+ 
+ def _request_error(error: GenkitError) -> GenkitError:
+     """Mark an input/init failure as the caller's request only on the outermost action."""
+@@ -1401,6 +1414,7 @@ async def body(span: SpanContext) -> OutputT:
+             if on_trace_start:
+                 await on_trace_start(trace_id, span_id)
+ 
++            tool_token = _inside_tool.set(True) if self._kind == ActionKind.TOOL else None
+             try:
+                 if execute is not None:
+                     output = await execute()
+@@ -1409,7 +1423,25 @@ async def body(span: SpanContext) -> OutputT:
+             except Interrupt as e:
+                 if e.metadata:
+                     span.set_metadata({'interrupt': e.metadata})
++                # Only generate's tool loop turns an Interrupt into a pause.
++                # With no tool above, it is a BaseException that `except
++                # Exception` handlers (web adapters, agent transports) would
++                # miss, so it becomes an error. Under a tool (a flow the tool
++                # calls) it stays raw, so the tool's own catch-all can't
++                # swallow the approval.
++                if self._kind != ActionKind.TOOL and not _inside_tool.get():
++                    raise interrupt_outside_tool_error(e) from e
+                 raise
++            except TaskGroupError as e:
++                # asyncio.TaskGroup / anyio wrap a child's Interrupt in a
++                # BaseExceptionGroup, which every `except Exception` misses.
++                failure = interrupt_escape_error(e)
++                if failure is None:
++                    raise
++                raise failure from e
++            finally:
++                if tool_token is not None:
++                    _inside_tool.reset(tool_token)
+             if self._strict_io:
+                 output = self._validate_output(output)
+             latency_ms = (time.perf_counter() - start_time) * 1000
+```
+
+**File**: `py/packages/genkit/src/genkit/_core/_error.py` (modified, +79/-5)
+```diff
+@@ -16,6 +16,8 @@
+ 
+ """Error classes and utilities for the Genkit framework."""
+ 
++import builtins
++import importlib
+ import math
+ import reprlib
+ import time
+@@ -349,15 +351,24 @@ class ErrorResponseMetadata(TypedDict, total=False):
+     headers: dict[str, str]
+ 
+ 
+-class Interrupt(Exception):  # noqa: N818 - public Genkit name; not renamed *Error for style
+-    """Pause a tool or generate so the caller can approve, reply, or restart.
++class Interrupt(BaseException):
++    """Pause a tool so the caller can approve, reply, or restart.
+ 
+     Raise ``Interrupt(metadata)`` from a tool or from tool middleware.
+-    Tracing treats this as control flow, not a failed span.
++    It is a control-flow signal like ``asyncio.CancelledError``, so it
++    subclasses ``BaseException``: an ``except Exception`` in tool code can't
++    swallow it and skip the approval. Catch ``Interrupt`` by name if a tool
++    needs to clean up, then re-raise. Raised anywhere else (a flow, an
++    agent turn body), the action fails with ``GenkitError`` INTERNAL.
++    Tracing treats it as control flow, not a failed span.
+     """
+ 
+     def __init__(self, metadata: dict[str, Any] | None = None) -> None:
+-        super().__init__()
++        # Metadata goes in args so str(interrupt) and tracebacks show it.
++        if metadata is None:
++            super().__init__()
++        else:
++            super().__init__(metadata)
+         self.metadata: dict[str, Any] = {} if metadata is None else metadata
+ 
+ 
+@@ -604,6 +615,69 @@ def provider_error(
+     return mark_provider_error(error=result)
+ 
+ 
++def interrupt_outside_tool_error(interrupt: Interrupt) -> GenkitError:
++    """The error an Interrupt becomes when it escapes something that isn't a tool.
++
++    Only generate's tool loop can turn an Interrupt into a pause. Anywhere
++    else it would escape ``except Exception`` handlers as a bare
++    BaseException, so the action boundary and the agent turn loop report it
++    as a failed run instead. ``cause`` keeps the metadata for debugging.
++    """
++    error = GenkitError(status='INTERNAL', message='Interrupt raised outside a tool', cause=interrupt)
++    error.__cause__ = interrupt
++    return error
++
++
++class _NoTaskGroupError(BaseException):
++    """Never raised; stands in when no task-group exception type exists."""
++
++
++def _task_group_error() -> type[BaseException]:
++    builtin = getattr(builtins, 'BaseExceptionGroup', None)  # 3.11+
++    if builtin is not None:
++        return builtin
++    # 3.10 has no asyncio.TaskGroup; anyio task groups raise the
++    # `exceptiongroup` backport, which anyio installs there.
++    try:
++        backport = importlib.import_module('exceptiongroup')
++    except ImportError:
++        return _NoTaskGroupError
++    return backport.BaseExceptionGroup
++
++
++# What asyncio.TaskGroup / anyio raise when a child task raises a
++# BaseException. An Interrupt in a child task arrives wrapped in one of these.
++TaskGroupError: type[BaseException] = _task_group_error()
++
++
++def _group_has_interrupt(exc: BaseException) -> bool:
++    if isinstance(exc, Interrupt):
++        return True
++    children = getattr(exc, 'exceptions', None) if isinstance(exc, TaskGroupError) else None
++    return any(_group_has_interrupt(child) for child in children or ())
++
++
++def interrupt_escape_error(exc: BaseException) -> GenkitError | None:
++    """The failure for an Interrupt that reached a boundary that can't pause on it.
++
++    Returns None when ``exc`` carries no Interrupt, so the caller re-raises it
++    as is. An Interrupt inside a task group can't pause generate: the group may
++    also hold other failures, and there's no single interrupt to answer. It
++    fails the run, as it did when Interrupt was an Exception.
++    """
++    if isinstance(exc, Interrupt):
++        return interrupt_outside_tool_error(exc)
++    if isinstance(exc, TaskGroupError) and _group_has_interrupt(exc):
++        error = GenkitError(
++            status='INTERNAL',
++            message='Interrupt raised inside a task group',
++            cause=exc,
++        )
++        error.__cause__ = exc
++        return error
++    return None
++
++
+ class PublicError(GenkitError):
+     """Error class for issues to be returned to users.
+ 
+@@ -799,7 +873,7 @@ def get_error_stack(error: object) -> str | None:
+     Returns:
+         The stack trace string if available, None otherwise.
+     """
+-    if isinstance(error, Exception):
++    if isinstance(error, BaseException):
+         # Stack traces are valuable for debugging; consider making this configurable
+         # to enable them in development/staging and suppress in production.
+         # For now, return an empty string to keep Dev UI clean as per requirements.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6886** (2026-10-23): fix(genkit-tools): restrict packed files to lib/ in common and telemetry-server (@MichaelDoyle)
-- **PR #6875** (closed): feat(js/plugins/express): add serveAgent to the beta entry point (@cabljac)
-- **PR #6872** (2026-10-22): feat(google-genai): Deep Research on vertexAI (@ifielker)
-- **PR #6870** (2026-10-22): chore(js): remove outdated .guides directories (@MichaelDoyle)
-- **PR #6866** (2026-10-22): fix(genkit-tools/cli): add MCP server instructions and descriptive tool metadata (@ssbushi)
-- **PR #6859** (2026-10-21): feat(js/plugins/google-genai): vertexAI model updates, TTS, Omni... (@ifielker)
+- **PR #6963** (2026-10-30): fix(js/plugins/google-genai): JSON output, usage and store on Interactions (@ifielker)
+- **PR #6962** (2026-10-29): docs(py): clarify dynamic model resolution in genkit and genkit-google-genai docstrings (@MichaelDoyle)
+- **PR #6960** (2026-10-30): ci(py): run deptry on genkit-mcp (@hilariie)
+- **PR #6959** (2026-10-30): feat(py/plugins/mcp): accept disabled in mcpServers entries (@hilariie)
+- **PR #6955** (closed): chore(deps): bump @hono/node-server from 1.19.11 to 2.1.3 in /js (@dependabot[bot])
+- **PR #6950** (2026-10-29): ci(global): cancel superseded PR workflow runs (@FOWEPJF255)
 
 ---
 
@@ -2091,39 +2695,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. genkit-tools): restrict packed files to lib/ in common and telemetry-server (#68
-
-**RULE**:
-When implementing operations in `genkit-tools/common/.npmignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `3d67720d`: genkit-tools): restrict packed files to lib/ in common and telemetry-server (#6886). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/common/.npmignore`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-/*.tgz
-/.genkit
-/src
-/tests
-tsconfig.types.json
-tsconfig.json
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-tsconfig.json
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d67720d` are properly handled with clean fallback behavior.

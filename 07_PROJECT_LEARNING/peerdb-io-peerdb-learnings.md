@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `b80c75cb`  
+> **Source Version**: `c78633d8`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:39:26.038Z  
+> **Timestamp**: 2026-10-30T18:07:07.838Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:39:26.030Z  
+> **Harvest Timestamp**: 2026-10-30T18:07:06.831Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3310 stars
+- **Stars / Engagement**: 3312 stars
 
 ---
 
@@ -190,6 +190,7 @@ func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDC
 			v.DestinationTableIdentifier, v.Exclude, v.StructuredIngestionConfig,
 		)
 		mapping.MongoConfiguration = v.MongoConfig
+		mapping.Columns = v.Columns
 		tblNameMapping[v.SourceTableIdentifier] = mapping
 	}
 
@@ -292,6 +293,7 @@ func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDC
 			RecordStream:                recordBatchPull,
 			Env:                         config.Env,
 			InternalVersion:             config.Version,
+			Flags:                       config.Flags,
 		})
 		if err != nil {
 			pullSpan.RecordError(err)
@@ -307,8 +309,7 @@ func pullAndSyncCore[TPull connectors.CDCPullConnectorCore, TSync connectors.CDC
 		// wait for the pull goroutine to finish
 		if err := errGroup.Wait(); err != nil {
 			// don't log flow error for "replState changed" and "slot is already active"
-			_, isDesync := errors.AsType[*exceptions.ReplStateDesyncError](err)
-			if !(isDesync || shared.IsSQLStateError(err, pgerrcode.
+			_, isDesync := errors.AsType[*exceptions.ReplState
 ```
 
 ### Core Architecture Module: `flow/cmd/snapshot_worker.go`
@@ -1860,111 +1861,221 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b80c75cb` (2026-10-25)
-**Commit Message**: refactor(clickhouse): reuse table mapping and column setting lookups (#4971)
+### Incident Patch 1: `dc196b24` (2026-10-29)
+**Commit Message**: fix(mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985)
 
-Follow-up to #4963.
+This PR removes `NO_BACKSLASH_ESCAPES` from the MySQL connector's
+session sql_mode.
 
-- Add `findTableMappingByDestination` and use it in normalize table
-creation and the normalize query generator.
-- Use `findColumnSetting` for the array JSON destination type lookup in
-initial load.
+MySQL parses stored expressions again with the session's mode, and their
+canonical form escapes quotes as `\'`. In our session, a generated
+column with a quote therefore failed every query on its table with
+`ERROR 1064 (42000)`.
 
-No behavior change.
+With this PR, backslash is is an escape character again and generated
+column with escape syntax is now supported. And it's safe to uses
+`mysql.Escape`.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+Testing: add e2e test and repro-ed failure. 
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Fixes:  DBI-1282
 
-**File**: `flow/connectors/clickhouse/normalize.go` (modified, +3/-7)
+**File**: `flow/connectors/mysql/mysql.go` (modified, +1/-7)
 ```diff
-@@ -96,13 +96,9 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
- 	var engine string
- 	tmEngine := protos.TableEngine_CH_ENGINE_REPLACING_MERGE_TREE
+@@ -275,7 +275,7 @@ func (c *MySqlConnector) connect(ctx context.Context) (*client.Conn, error) {
  
--	var tableMapping *protos.TableMapping
--	for _, tm := range config.TableMappings {
--		if tm.DestinationTableIdentifier == tableIdentifier {
--			tmEngine = tm.Engine
--			tableMapping = tm
--			break
--		}
-+	tableMapping := findTableMappingByDestination(config.TableMappings, tableIdentifier)
-+	if tableMapping != nil {
-+		tmEngine = tableMapping.Engine
+ func (c *MySqlConnector) setSessionSettings() error {
+ 	conn := c.conn.Load()
+-	if _, err := conn.Execute("SET sql_mode = 'ANSI,NO_BACKSLASH_ESCAPES'"); err != nil {
++	if _, err := conn.Execute("SET sql_mode = 'ANSI'"); err != nil {
+ 		return fmt.Errorf("failed to set sql_mode to ANSI: %w", err)
  	}
  
- 	isDeletedColumn := defaultIsDeletedColName
+@@ -318,12 +318,6 @@ func (c *MySqlConnector) setSessionSettings() error {
+ 	return nil
+ }
+ 
+-func escapeWithNoBackslashEscapes(s string) string {
+-	// mysql.Escape must NOT be used because MySQL connector session has sql_mode set
+-	// to NO_BACKSLASH_ESCAPES (see setSessionSettings). Only quotes needs to be escaped.
+-	return strings.ReplaceAll(s, "'", "''")
+-}
+-
+ // withRetries return an iterable over connections,
+ // consumer should break out of loop on success or error,
+ // to retry for mysql.ErrBadConn
 ```
 
-**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +1/-7)
+**File**: `flow/connectors/mysql/qrep.go` (modified, +2/-2)
 ```diff
-@@ -118,13 +118,7 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
+@@ -370,8 +370,8 @@ func (c *MySqlConnector) PullQRepRecords(
+ 			rangeStart = "'" + x.TimestampRange.Start.AsTime().Format("2006-01-02 15:04:05.999999") + "'"
+ 			rangeEnd = "'" + x.TimestampRange.End.AsTime().Format("2006-01-02 15:04:05.999999") + "'"
+ 		case *protos.PartitionRange_StringRange:
+-			rangeStart = "'" + escapeWithNoBackslashEscapes(x.StringRange.Start) + "'"
+-			rangeEnd = "'" + escapeWithNoBackslashEscapes(x.StringRange.End) + "'"
++			rangeStart = "'" + mysql.Escape(x.StringRange.Start) + "'"
++			rangeEnd = "'" + mysql.Escape(x.StringRange.End) + "'"
+ 			if config.Query != "" {
+ 				// custom query is only possible for standalone QRepFlowWorkflow;
+ 				// this is a legacy feature and string partitioning is not supported
+```
+
+**File**: `flow/connectors/mysql/qrep_partition.go` (modified, +3/-3)
+```diff
+@@ -306,7 +306,7 @@ func (c *MySqlConnector) fetchNextRealKey(
+ ) (string, bool, error) {
+ 	query := fmt.Sprintf(
+ 		"SELECT %[1]s FROM %[2]s WHERE %[1]s >= '%[3]s' AND %[1]s > '%[4]s' AND %[1]s < '%[5]s' ORDER BY %[1]s LIMIT 1",
+-		quotedCol, tableName, escapeWithNoBackslashEscapes(midpoint), escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
++		quotedCol, tableName, mysql.Escape(midpoint), mysql.Escape(start), mysql.Escape(end))
+ 	return c.fetchRealKey(ctx, query)
+ }
  
- 	schema := t.tableNameSchemaMapping[t.TableName]
+@@ -319,7 +319,7 @@ func (c *MySqlConnector) fetchPrevRealKey(
+ ) (string, bool, error) {
+ 	query := fmt.Sprintf(
+ 		"SELECT %[1]s FROM %[2]s WHERE %[1]s < '%[3]s' AND %[1]s > '%[4]s' AND %[1]s < '%[5]s' ORDER BY %[1]s DESC LIMIT 1",
+-		quotedCol, tableName, escapeWithNoBackslashEscapes(midpoint), escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
++		quotedCol, tableName, mysql.Escape(midpoint), mysql.Escape(start), mysql.Escape(end))
+ 	return c.fetchRealKey(ctx, query)
+ }
  
--	var tableMapping *protos.TableMapping
--	for _, tm := range t.tableMappings {
--		if tm.DestinationTableIdentifier == t.TableName {
--			tableMapping = tm
--			break
--		}
+@@ -356,7 +356,7 @@ func (c *MySqlConnector) estimateRowsInRange(
+ ) (uint64, error) {
+ 	query := fmt.Sprintf(
+ 		"EXPLAIN FORMAT=TRADITIONAL SELECT 1 FROM %[1]s WHERE %[2]s >= '%[3]s' AND %[2]s < '%[4]s'",
+-		tableName, quotedCol, escapeWithNoBackslashEscapes(start), escapeWithNoBackslashEscapes(end))
++		tableName, quotedCol, mysql.Escape(start), mysql.Escape(end))
+ 	rs, err := c.Execute(ctx, query)
+ 	if err != nil {
+ 		return 0, err
+```
+
+**File**: `flow/connectors/mysql/qrep_partition_test.go` (modified, +0/-19)
+```diff
+@@ -238,25 +238,6 @@ func TestBase95RoundTrip(t *testing.T) {
+ 	}
+ }
+ 
+-func TestEscapeStringValue(t *testing.T) {
+-	cases := []struct {
+-		name     string
+-		in       string
+-		expected string
+-	}{
+-		{"plain", "key_0042", "key_0042"},
+-		{"backslash untouched", `Z:\tmp`, `Z:\tmp`},
+-		{"quotes doubled", `x' OR '1'='1`, `x'' OR ''1''=''1`},
+-		{"midpoint-synthesized quotes", "'''", "''''''"},
+-		{"control bytes raw", "a\x00b\nc\td", "a\x00b\nc\td"},
 -	}
-+	tableMapping := findTableMappingByDestination(t.tableMappings, t.TableName)
- 
- 	var escapedSourceSchemaSelectorFragment string
- 	if t.sourceSchemaAsDestinationColumn {
+-	for _, tc := range cases {
+-		t.Run(tc.name, func(t *testing.T) {
+-			assert.Equal(t, tc.expected, escapeWithNoBackslashEscapes(tc.in))
+-		})
+-	}
+-}
+-
+ func TestStringPartitionHeapPopsLargest(t *testing.T) {
+ 	h := &stringPartitionHeap{}
+ 	heap.Init(h)
 ```
 
-**File**: `flow/connectors/clickhouse/table_function.go` (modified, +4/-6)
+**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +6/-0)
 ```diff
-@@ -119,12 +119,10 @@ func arrayJSONFieldExpressionConverter(
- 	if field.Type != types.QValueKindArrayJSON && field.Type != types.QValueKindArrayJSONB {
- 		return sourceFieldIdentifier, nil
- 	}
--	for _, column := range config.config.GetColumns() {
--		if column.SourceName == field.Name && strings.HasPrefix(column.DestinationType, "Array(") {
--			// a null array is staged as a null string, the empty array once parsed
--			return fmt.Sprintf("JSONExtract(ifNull(%s, ''), %s)",
--				sourceFieldIdentifier, peerdb_clickhouse.QuoteLiteral(column.DestinationType)), nil
--		}
-+	if dstType := findColumnSetting(field.Name, config.config.GetColumns()).GetDestinationType(); strings.HasPrefix(dstType, "Array(") {
-+		// a null array is staged as a null string, the empty array once parsed
-+		return fmt.Sprintf("JSONExtract(ifNull(%s, ''), %s)",
-+			sourceFieldIdentifier, peerdb_clickhouse.QuoteLiteral(dstType)), nil
- 	}
- 	return sourceFieldIdentifier, nil
- }
-```
-
-**File**: `flow/connectors/clickhouse/type_conversion.go` (modified, +10/-0)
-```diff
-@@ -102,6 +102,16 @@ func findTypeConversions(schema types.QRecordSchema, columns []*protos.ColumnSet
- 	return typeConversions
- }
- 
-+// findTableMappingByDestination returns the table mapping for the given destination table, or nil if there is none
-+func findTableMappingByDestination(tableMappings []*protos.TableMapping, dstTableName string) *protos.TableMapping {
-+	for _, tableMapping := range tableMappings {
-+		if tableMapping.DestinationTableIdentifier == dstTableName {
-+			return tableMapping
+@@ -221,6 +221,12 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
+ 	jsonColumns := []string{"json"}
+ 	createStmt := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON);`, srcFullName)
+ 	insertStmt := func(v string) string { return fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, v) }
++	if _, isMySQL := s.source.(*MySqlSource); isMySQL {
++		// test values are standard SQL literals, but MySQL reads backslash as an escape character
++		insertStmt = func(v string) string {
++			return fmt.Sprintf(`INSERT INTO %s (json) VALUES (%s)`, srcFullName, strings.ReplaceAll(v, `\`, `\\`))
 +		}
 +	}
-+	return nil
+ 	if _, isPostgres := s.source.(*PostgresSource); isPostgres {
+ 		jsonColumns = []string{"json", "jsonb"}
+ 		createStmt = fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s (id SERIAL PRIMARY KEY, json JSON, jsonb JSONB);`, srcFullName)
+```
+
+**File**: `flow/e2e/mysql_clickhouse/mysql_test.go` (modified, +47/-5)
+```diff
+@@ -3082,10 +3082,52 @@ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Arbitrary_Parallel
+ 	e2e.RequireEnvCanceled(s.T(), env)
+ }
+ 
+-// Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot guards against
+-// silent endpoint data loss when a watermark value contains a backslash, which
+-// the session sql_mode (NO_BACKSLASH_ESCAPES) treats as literal but mysql.Escape
+-// would wrongly escape it (\ -> \\), potentially sorting below the real max value
++// Test_MySQL_Generated_Column_Escapes_Parallel_Snapshot snapshots a generated column containing a quote.
++func (s MySQLClickHouseSuite) Test_MySQL_Generated_Column_Escapes_Parallel_Snapshot() {
++	if _, ok := s.Source().(*e2e.MySqlSource); !ok {
++		s.T().Skip("only applies to mysql")
++	}
++
++	srcTable := "test_gcol_escapes"
++	srcFullName := e2e.AttachSchema(s, srcTable)
++	dstTable := "test_gcol_escapes_dst"
++
++	require.NoError(s.T(), s.Source().Exec(s.T().Context(), fmt.Sprintf(
++		`CREATE TABLE %s (id INT PRIMARY KEY, name VARCHAR(100) NOT NULL,
++			name_quote VARCHAR(200) AS (concat(lower(name), '\'s')))`,
++		srcFullName)))
++	// hex literals keep the inserted values independent of escaping
++	names := []string{`O'Brien`, `C:\tmp\x`, `plain`, `a\'b`}
++	values := make([]string, len(names))
++	for i, name := range names {
++		values[i] = fmt.Sprintf("(%d, X'%s')", i+1, hex.EncodeToString([]byte(name)))
++	}
++	require.NoError(s.T(), s.Source().Exec(s.T().Context(),
++		fmt.Sprintf("INSERT INTO %s (id, name) VALUES %s", srcFullName, strings.Join(values, ","))))
++
++	connectionGen := e2e.FlowConnectionGenerationConfig{
++		FlowJobName:   e2e.AddSuffix(s, "gcol_escapes"),
++		TableMappings: e2e.TableMappings(s, srcTable, dstTable),
++		Destination:   s.Peer().Name,
++	}
++	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
++	flowConnConfig.DoInitialSnapshot = true
++	// more than one partition so the min/max partitioning query runs against the table
++	flowConnConfig.SnapshotNumPartitionsOverride = 2
++
++	tc := e2e.NewTemporalClient(s.T())
++	env := e2e.ExecutePeerflow(s.T(), tc, flowConnConfig)
++	e2e.SetupCDCFlowStatusQuery(s.T(), env, flowConnConfig)
++
++	e2e.EnvWaitForEqualTablesWithNames(env, s, "waiting on initial", srcTable, dstTable, "id,name,name_quote")
++
++	env.Cancel(s.T().Context())
++	e2e.RequireEnvCanceled(s.T(), env)
 +}
 +
- // findColumnSetting returns the column setting for the given source column, or nil if there is none
- func findColumnSetting(sourceColumnName string, columns []*protos.ColumnSetting) *protos.ColumnSetting {
- 	for _, column := range columns {
++// Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot checks that a max key containing a backslash
++// is not dropped. If the boundary literal is escaped for the wrong sql_mode, `key_99\max` is read back as
++// `key_99\\max`, which sorts below the real max, so the last partition silently misses that row.
+ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Special_Chars_Parallel_Snapshot() {
+ 	if _, ok := s.Source().(*e2e.MySqlSource); !ok {
+ 		s.T().Skip("only applies to mysql")
+@@ -3105,7 +3147,7 @@ func (s MySQLClickHouseSuite) Test_MySQL_String_Partition_Key_Special_Chars_Para
+ 	for i := range numRows - 1 {
+ 		keys[i] = fmt.Sprintf("key_%02d", i)
+ 	}
+-	// wrongly escaped, `key_99\\max` sorts before `key_99\max` under binary collation:
++	// a raw string, so this is one literal backslash (0x5C); under binary collation the wrongly escaped form sorts first:
+ 	// key_99\max bytes:  6B 65 79 5F 39 39 5C 6D 61 78
+ 	// key_99\\max bytes: 6B 65 79 5F 39 39 5C 5C 6D 61 78
+ 	keys[numRows-1] = `key_99\max`
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4973** (2026-10-24): security: pin UI Node image to fixed 24.22.1 (CVE-2026-111497 / Node2Shell) (@motsc)
-- **PR #4971** (2026-10-25): refactor(clickhouse): reuse table mapping and column setting lookups (@dtunikov)
-- **PR #4968** (2026-10-23): fix(query-cdc): only catch up when the poll window was capped (@dtunikov)
-- **PR #4966** (2026-10-23): fix(postgres): keep the JSON form of a json/jsonb column default on ADD COLUMN (@gheorghepucea)
-- **PR #4965** (2026-10-23): fix(clickhouse): honour per-column destination types in the snapshot JSON cast (@gheorghepucea)
-- **PR #4963** (2026-10-23): fix(clickhouse): honor column destination_name in initial load (@dtunikov)
+- **PR #4995** (closed): perf(clickhouse): load multiple staged batches per raw table insert (@dtunikov)
+- **PR #4994** (2026-10-30): log topology attribute to differentiate replica set vs. sharded cluster (@jgao54)
+- **PR #4993** (2026-10-30): remove mongodb server-side commit lag metrics (@jgao54)
+- **PR #4988** (closed): perf(avro): replace hamba/avro with twmb/avro (@pfcoperez)
+- **PR #4985** (2026-10-29): fix(mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (@jgao54)
+- **PR #4984** (2026-10-28): fix(deps): update gomod dependencies (@renovate[bot])
 
 ---
 
@@ -1984,36 +2095,34 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clickhouse): reuse table mapping and column setting lookups (#4971)
+## X. mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985)
 
 **RULE**:
-When implementing operations in `flow/connectors/clickhouse/normalize.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/mysql/mysql.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b80c75cb`: clickhouse): reuse table mapping and column setting lookups (#4971). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc196b24`: mysql): drop NO_BACKSLASH_ESCAPES from session sql_mode (#4985). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/clickhouse/normalize.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mysql/mysql.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	tableMapping := findTableMappingByDestination(config.TableMappings, tableIdentifier)
-	if tableMapping != nil {
-		tmEngine = tableMapping.Engine
+	if _, err := conn.Execute("SET sql_mode = 'ANSI'"); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	var tableMapping *protos.TableMapping
-	for _, tm := range config.TableMappings {
-		if tm.DestinationTableIdentifier == tableIdentifier {
-			tmEngine = tm.Engine
-			tableMapping = tm
-			break
-		}
+	if _, err := conn.Execute("SET sql_mode = 'ANSI,NO_BACKSLASH_ESCAPES'"); err != nil {
+func escapeWithNoBackslashEscapes(s string) string {
+	// mysql.Escape must NOT be used because MySQL connector session has sql_mode set
+	// to NO_BACKSLASH_ESCAPES (see setSessionSettings). Only quotes needs to be escaped.
+	return strings.ReplaceAll(s, "'", "''")
+}
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b80c75cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc196b24` are properly handled with clean fallback behavior.

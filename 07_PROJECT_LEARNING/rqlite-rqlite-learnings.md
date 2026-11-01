@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source**: github ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
-> **Source Version**: `b84d5f97`  
+> **Source Version**: `8b10e2d9`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:06:18.852Z  
+> **Timestamp**: 2026-10-30T04:34:56.508Z  
 > **Learning ID**: `learn-github-rqlite-rqlite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:06:17.757Z  
+> **Harvest Timestamp**: 2026-10-30T04:34:55.397Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17862 stars
+- **Stars / Engagement**: 17883 stars
 
 ---
 
@@ -2066,13 +2066,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2984** (2026-10-22): **POST /leader: JSON error bodies and 404 for unknown target node**
-  *Symptoms*: ## Summary - The stepdown error paths in `POST /leader` now return a JSON `{"error": "..."}` body, matching `GET /leader`. The handler had already set a JSON Content-Type, so the previous plain-text bodies were mislabelled. - A stepdown naming a node ID that is not in the cluster now returns 404 Not Found instead of 500. `store.ErrNodeNotFound` is exposed via the `proxy` package and the handler's sentinel checks use `errors.Is`. - Forwarded stepdowns also get the 404: the cluster client rebuilds the leader's error from its message, which dropped the sentinel, so `Proxy.Stepdown` now matches the message and restores `ErrNodeNotFound`.  Each commit is one logical change. `remove`, `demote` and `promote` have the same forwarding gap and are left for a follow-up.  ## Test plan - [x] New `http` tests: JSON error body on forwarded failure, 404 for unknown node when local node is leader, 404 for unknown node when the request is forwarded. - [x] New `proxy` test: forwarded stepdown error message is mapped back to `ErrNodeNotFound`. - [x] `go vet ./...`, `gofmt -l .`, and `go test` for `http`, `proxy` and `store` pass.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
-  **Post-Mortem & Fix Analysis**:
-  > https://github.com/rqlite/rqlite/issues/2974
+- **Issue #2992** (2026-10-28): **Upgrade dependencies via `go get`**
+  *Symptoms*: 
 
-- **Issue #2982** (2026-10-22): **Guard backup stream handler directly against a nil request**
-  *Symptoms*: With no backup request in the command, the handler set an error on a shared response and relied on a later check of that error string to return before dereferencing the nil request. Before v10.6.4 that check did not exist and the handler panicked, taking the node down.  The nil check and the exit are now one block, and the request is only used after it. The success path writes its response through the shared helper instead of marshaling by hand. 
+- **Issue #2991** (2026-10-27): **JSON error response bodies for remove node**
+  *Symptoms*: ## Summary Applies the JSON error body change from #2984 and #2989 to `DELETE /remove`.  - The handler now sets a JSON Content-Type and returns a JSON `{"error": "..."}` body on failure instead of plain text. - Unlike the other node-management endpoints, there is deliberately no 404 for an unknown node. Raft treats removal of a node not in the cluster as a no-op and the endpoint has always returned 200 for it, so clients and the shutdown self-removal path depend on that. A comment on the handler records this.  Each commit is one logical change.  ## Test plan - [x] New `http` tests: success, store error, and forward error for `DELETE /remove`, decoding the JSON body. The handler previously had no error-path tests, so a `removeFn` hook was added to the HTTP mock store. - [x] `go vet ./...`, `gofmt -l .`, and `go test ./http` pass.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2089,26 +2087,30 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b84d5f97` (2026-10-24)
-**Commit Message**: Update CHANGELOG.md
+### Incident Patch 1: `8b10e2d9` (2026-10-29)
+**Commit Message**: Update README.md
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `README.md` (modified, +2/-1)
 ```diff
-@@ -1,4 +1,4 @@
--## v10.6.5 (unreleased)
-+## v10.6.5 (October 24th 2026)
- ### Implementation changes and bug fixes
- - [PR #2982](https://github.com/rqlite/rqlite/pull/2982): Guard the inter-node backup stream handler directly against a missing backup request.
- - [PR #2984](https://github.com/rqlite/rqlite/pull/2984): `POST /leader` returns a JSON error body, and 404 when the target node is not in the cluster.
+@@ -17,7 +17,8 @@
+ Use rqlite to reliably store your most important data, ensuring it's always available to your applications -- think [etcd](https://etcd.io/), but with relational modeling available. Whether you're deploying **resilient services in the cloud** or **reliable applications at the edge**, rqlite provides a robust solution for critical data.
+ 
+ <a href="https://rqlite.io"><strong>Website</strong></a> ·
+-<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a>
++<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a> ·
++<a href="https://www.rqlite.io/support"><strong>Support</strong></a>
+ 
+ ## Quick Start
+ [_Check out the full Quick Start guide_](https://rqlite.io/docs/quick-start/)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2984** (2026-10-22): POST /leader: JSON error bodies and 404 for unknown target node (@otoolep)
-- **PR #2982** (2026-10-22): Guard backup stream handler directly against a nil request (@otoolep)
-- **PR #2981** (2026-10-22): Cluster closes connections on authorization failure (@otoolep)
-- **PR #2980** (2026-10-22): Do not stream backup after rejecting unauthorized request (@otoolep)
-- **PR #2977** (2026-10-21): Return JSON error body from GET /leader when there is no leader (@otoolep)
-- **PR #2976** (2026-10-20): Prevent ATTACH on the query connection (@otoolep)
+- **PR #2992** (2026-10-28): Upgrade dependencies via `go get` (@otoolep)
+- **PR #2991** (2026-10-27): JSON error response bodies for remove node (@otoolep)
+- **PR #2990** (2026-10-27): Test that CDC events survive a Raft snapshot restore (@otoolep)
+- **PR #2989** (2026-10-27): JSON error response bodies for promote and demote (@otoolep)
+- **PR #2988** (2026-10-27): Reject local auto-backup filenames reserved for internal use (@otoolep)
+- **PR #2987** (2026-10-27): Keep backup file if metadata rename fails (@otoolep)
 
 ---
 
@@ -2128,28 +2130,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update CHANGELOG.md
+## X. Update README.md
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b84d5f97`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b10e2d9`: Update README.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-## v10.6.5 (October 24th 2026)
+<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a> ·
+<a href="https://www.rqlite.io/support"><strong>Support</strong></a>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-## v10.6.5 (unreleased)
+<a href="https://www.rqlite.io/join-slack"><strong>Slack</strong></a>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b84d5f97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b10e2d9` are properly handled with clean fallback behavior.

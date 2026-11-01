@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source**: github ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
-> **Source Version**: `d155cd08`  
+> **Source Version**: `68d01235`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T03:20:23.610Z  
+> **Timestamp**: 2026-10-31T09:29:35.778Z  
 > **Learning ID**: `learn-github-zseven-w-openpencil`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zseven-w-openpencil-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ZSeven-W/openpencil](https://github.com/ZSeven-W/openpencil))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T03:20:23.601Z  
+> **Harvest Timestamp**: 2026-10-31T09:29:34.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's first open-source AI-native vector design tool and the first to feature concurrent Agent Teams. Design-as-Code. Turn prompts into UI directly on the live canvas. A modern alternative to Pencil.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6243 stars
+- **Stars / Engagement**: 6991 stars
 
 ---
 
@@ -305,6 +305,8 @@ pub enum AgentProvider {
     GrokBuild,
     /// DeepSeek Harness (`dsh`) — one-shot subprocess CLI, no ACP.
     DeepSeekHarness,
+    /// Kimi Code CLI (`kimi`) — tool-free generation subprocess.
+    Kimi,
 }
 
 impl AgentProvider {
@@ -312,7 +314,7 @@ impl AgentProvider {
     /// persisted `connected` flags are indexed positionally, so the
     /// DeepSeek Harness slot was appended at the tail and positioned in
     /// the card list via [`AgentProvider::DISPLAY`].
-    pub const ALL: [AgentProvider; 7] = [
+    pub const ALL: [AgentProvider; 8] = [
         AgentProvider::ClaudeCode,
         AgentProvider::CodexCli,
         AgentProvider::OpenCode,
@@ -320,15 +322,17 @@ impl AgentProvider {
         AgentProvider::Antigravity,
         AgentProvider::GrokBuild,
         AgentProvider::DeepSeekHarness,
+        AgentProvider::Kimi,
     ];
 
     /// Card order on the Agents tab — a permutation of `ALL`, NOT the
     /// persistence order. DeepSeek Harness renders after Codex, before
     /// OpenCode (above the generic ACP block).
-    pub const DISPLAY: [AgentProvider; 7] = [
+    pub const DISPLAY: [AgentProvider; 8] = [
         AgentProvider::ClaudeCode,
         AgentProvider::CodexCli,
         AgentProvider::DeepSeekHarness,
+        AgentProvider::Kimi,
         AgentProvider::OpenCode,
         AgentProvider::GithubCopilot,
         AgentProvider::Antigravity,
@@ -353,6 +357,7 @@ impl AgentProvider {
             AgentProvider::Antigravity => "Antigravity",
             AgentProvider::GrokBuild => "Grok Build",
             AgentProvider::DeepSeekHarness => "DeepSeek Harness",
+            AgentProvider::Kimi => "Kimi Code",
         }
     }
     /// i18n key for the provider's subtitle. Paint code resolves
@@ -369,6 +374,7 @@ impl AgentProvider {
             AgentProvider::Antigravity => "settings.provider.antigravity",
             AgentProvider::GrokBuild => "settings.provider.grokBuild",
             AgentProvider::DeepSeekHarness => "settings.provider.deepSeekHarness",
+            AgentProvider::Kimi => "settings.provider.kimi",
         }
     }
 }
@@ -617,6 +623,7 @@ pub struct AgentLoopConfig {
     pub system_prompt: String,
     pub history: Vec<(ChatHistoryRole, String)>,
     pub user_prompt: String,
+    pub attachments: Vec<op_ai::chat_provider::ChatAttachment>,
     pub max_output_tokens: u32,
     pub tools: Vec<ChatToolDef>,
     pub executor: Arc<dyn ChatToolExecutor>,
@@ -792,10 +799,7 @@ fn contract_nudge_text(committed: &[String], still_empty: &[String]) -> String {
     let (subject, pronoun) = if still_empty.len() == 1 {
         ("is", "it")
     } else {
-        ("are", "them")
-    };
-    format!(
-        "{commit_clause}{} {subje
+        ("are
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop/anthropic.rs`
@@ -899,7 +903,18 @@ pub(super) async fn run_anthropic_agent_loop_inner(
     for (role, text) in &cfg.history {
         messages.push(json!({ "role": role.as_str(), "content": text }));
     }
-    messages.push(json!({ "role": "user", "content": cfg.user_prompt }));
+    crate::chat_attachments::validate_model(&cfg.model, &cfg.attachments)
+        .map_err(BuiltinHttpError::Attachments)?;
+    let content = crate::chat_attachments::user_content(
+        op_editor_core::BuiltinAgentKind::Anthropic,
+        &cfg.user_prompt,
+        &cfg.attachments,
+    )
+    .map_err(BuiltinHttpError::Attachments)?;
+    messages.push(json!({ "role": "user", "content": content }));
+    // User reference images remain authoritative throughout retries/tool turns.
+    // Only generated observations after this prefix may be superseded.
+    let reference_prefix_len = messages.len();
 
     // Tier 2 — under-budget per-screen fill-round budget (see
     // `FILL_BUDGET_MAX_ROUNDS_PER_SCREEN`'s doc comment for the "budget
@@ -987,17 +1002,7 @@ pub(super) async fn run_anthropic_agent_loop_inner(
         // this wire — the empty-canvas postmortem: the OpenAI-compat loop
         // applied this control and the Anthropic loop did not, so a
         // reasoning model on its Anthropic-compatible endpoint burned the
-        // whole turn budget on thinking and never emitted `batch_design`
-        // (see `apply_reasoning_wire_control_anthropic`'s doc).
-        crate::chat_builtin_http::apply_reasoning_wire_control_anthropic(
-            &mut body,
-            &cfg.model,
-            cfg.disable_thinking,
-        );
-        let client = crate::provider_dial::client_for(cfg.dial_policy, &cfg.url).await?;
-        let (max_retries, min_gap) = crate::chat_builtin_http::default_backoff_knobs();
-        let resp = crate::chat_builtin_http::send_with_backoff(
-        
+        // whole turn bu
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop/openai.rs`
@@ -1064,7 +1069,18 @@ pub(super) async fn run_openai_agent_loop_inner(
     for (role, text) in &cfg.history {
         messages.push(json!({ "role": role.as_str(), "content": text }));
     }
-    messages.push(json!({ "role": "user", "content": cfg.user_prompt }));
+    crate::chat_attachments::validate_model(&cfg.model, &cfg.attachments)
+        .map_err(BuiltinHttpError::Attachments)?;
+    let content = crate::chat_attachments::user_content(
+        op_editor_core::BuiltinAgentKind::OpenAiCompat,
+        &cfg.user_prompt,
+        &cfg.attachments,
+    )
+    .map_err(BuiltinHttpError::Attachments)?;
+    messages.push(json!({ "role": "user", "content": content }));
+    // User reference images remain authoritative throughout retries/tool turns.
+    // Only generated observations after this prefix may be superseded.
+    let reference_prefix_len = messages.len();
 
     // Tier 2 — under-budget per-screen fill-round budget, and Tier 2b —
     // post-exhaustion salvage budget — see the Anthropic loop above
@@ -1148,6 +1164,7 @@ pub(super) async fn run_openai_agent_loop_inner(
             &cfg.model,
             cfg.disable_thinking,
         );
+        crate::backoff::apply_openrouter_reasoning(&mut body, &cfg.url, cfg.disable_thinking);
         // Through the shared throttle/backoff: this tool-loop path used
         // to post raw, so a provider rate limit killed the design run with
         // no retries and a raw JSON error (measured: glm-5.2, 429
@@ -1202,18 +1219,7 @@ pub(super) async fn run_openai_agent_loop_inner(
             // one dedicated fill round for any committed screen that's
             // still eligible — NOT gated by remaining turn budget (only by
             // the per-screen cap above).
-            let report = check_unfilled(&cfg.executor, cfg.finalize_on_exit).await;
-            let eligible = eligible_for_fill_round(&report.unfilled, &fill_attempts);
-            if !eligible.is_empty() {
-                spend_fill_round(&mut fill_attempts, &eligible);
-                messages.push(json!({ "role": "assistant", "content": stop_content() }));
-                messages.push(
-                    json!({ "role": "user", "content": contract_nudge_text(&report.committed, &eligible) }),
-                );
-                continue; // Does not count against `turn`.
-            }
-            // No screen left to chase — try one dedicated corrective round
-            // for any unre
+            let report = check_unfilled(&cfg.executor, cfg.finalize_on_
 ```
 
 ### Core Architecture Module: `crates/op-chat-agent/src/chat_agent_loop_blockers.rs`
@@ -1821,654 +1827,70 @@ pub struct Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `243c27f5` (2026-09-15)
-**Commit Message**: fix(agent): route every Studio task family to the design pipeline
+### Incident Patch 1: `68d01235` (2026-10-28)
+**Commit Message**: fix(install): fall back to the newest release when no stable release exists
 
-The intent classifier's keyword list grew up around app and web briefs,
-so the 演示文稿 / 图文卡片 / 截图教程 / 信息图 / 活动海报 wrappers matched
-nothing and five of the seven task families answered as plain chat: a
-five-page deck brief produced one empty starter frame and a collapsed
-thinking block. Add the deliverable nouns and the 做一份/一套/一张/一篇
-verb forms, and pin every wrapper with a test so a new family cannot
-slip through the same gap.
+`resolve_version` asks `/releases/latest`, which GitHub answers with 404 while every published tag
+is still a pre-release — the case for the whole pre-1.0 line. The documented default install command
+therefore failed with "could not resolve the latest release tag from GitHub" even though a usable
+release existed, and the error only mentioned the `OP_PRERELEASE` opt-in.
 
-Three unrelated reds fixed alongside, each measured:
+When the stable lookup yields nothing and `OP_PRERELEASE` was not requested, read `/releases` and
+use the newest tag, printing a note that it is a pre-release and how to pin a version with
+`OP_VERSION`. With a stable release present the path is unchanged; `OP_PRERELEASE=1` and
+`OP_VERSION` keep their behaviour; when no release exists at all the existing error is unchanged.
 
-- The image-provider menu's expected height was a literal 176, which the
-  Atlas Cloud provider (#227) invalidated the moment it took the list
-  from four entries to five. Derive it from the list's length.
-- The pointer-clock tests fold the PROCESS-GLOBAL agent indicator
-  registry through `next_animation_deadline_ms`, so a concurrent test
-  registering a reveal made an idle engine report a deadline it did not
-  own: green single-threaded, three failures in parallel. Hold the
-  registry's own test guard, the way the desktop indicator tests do.
-- A rejected provider response now optionally goes to a local file named
-  by OPENPENCIL_DEBUG_HTTP_E
+Both lookups now share `release_tag()`, so the JSON parsing is in one place.
 
-**File**: `crates/op-chat-agent/src/backoff.rs` (modified, +59/-0)
+**File**: `scripts/install-op.sh` (modified, +17/-2)
 ```diff
-@@ -121,6 +121,50 @@ pub fn default_backoff_knobs() -> (u32, Duration) {
-     (BUILTIN_HTTP_MAX_RETRIES, builtin_http_min_gap())
+@@ -49,6 +49,10 @@ detect_label() {
+   printf '%s-%s' "$os" "$arch"
  }
  
-+/// Append a rejected response's status and body to the file named by
-+/// `OPENPENCIL_DEBUG_HTTP_ERROR_BODY`, when it is set.
-+///
-+/// Off by default and never wired into chat, SSE, or stdout: a provider
-+/// error body is untrusted and can echo the request's own headers, so it
-+/// stays out of every channel the user or a browser can read. With the
-+/// env var set it goes to that one file and nowhere else, which is what
-+/// turns "http 400 Bad Request" from a dead end into a diagnosis
-+/// (measured 2026-09-13: a modify turn died on a 400 whose reason was
-+/// unreachable from inside the app).
-+async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest::Response) {
-+    let Ok(path) = std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY") else {
-+        return;
-+    };
-+    if path.is_empty() {
-+        return;
-+    }
-+    let body = resp.text().await.unwrap_or_default();
-+    let line = format!(
-+        "[{}] {label} http {} {}\n{}\n",
-+        chrono_like_stamp(),
-+        status.as_u16(),
-+        status.canonical_reason().unwrap_or(""),
-+        body.chars().take(4_000).collect::<String>()
-+    );
-+    use std::io::Write as _;
-+    if let Ok(mut file) = std::fs::OpenOptions::new()
-+        .create(true)
-+        .append(true)
-+        .open(&path)
-+    {
-+        let _ = file.write_all(line.as_bytes());
-+    }
++release_tag() {
++  curl -fsSL "$1" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/'
 +}
 +
-+/// Seconds since the UNIX epoch — enough to line a dump up against the
-+/// app log without pulling a date crate into this leaf.
-+fn chrono_like_stamp() -> u64 {
-+    std::time::SystemTime::now()
-+        .duration_since(std::time::UNIX_EPOCH)
-+        .map(|d| d.as_secs())
-+        .unwrap_or(0)
-+}
-+
- pub async fn send_with_backoff(
-     label: &str,
-     url: &str,
-@@ -164,6 +208,10 @@ pub async fn send_with_backoff(
-                 // Provider error bodies are untrusted and can echo request
-                 // headers. Never relay them into chat/SSE where credentials
-                 // could be reflected back into logs or browser responses.
-+                // They ARE the only way to tell WHY a provider rejected a
-+                // request, so an explicit opt-in writes them to a local file
-+                // the developer named — never to the transcript.
-+                dump_error_body(label, status, resp).await;
-                 return Err(BuiltinHttpError::HttpStatus {
-                     label: label.to_string(),
-                     status,
-@@ -292,3 +340,14 @@ pub fn apply_reasoning_wire_control_anthropic(
-         obj.insert("thinking".into(), serde_json::json!({ "type": "disabled" }));
-     }
- }
-+
-+#[cfg(test)]
-+mod http_error_dump_tests {
-+    #[test]
-+    fn the_dump_is_off_unless_the_env_var_names_a_file() {
-+        unsafe {
-+            std::env::remove_var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY");
-+        }
-+        assert!(std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY").is_err());
-+    }
-+}
-```
-
-**File**: `crates/op-editor-ui/src/widgets/agent_settings_images.rs` (modified, +7/-2)
-```diff
-@@ -268,11 +268,16 @@ mod touch_tests {
-         let closed_row = profile_row_rect_for_ui(content, &closed, 0, true);
-         let open_row = profile_row_rect_for_ui(content, &open, 0, true);
+ resolve_version() {
+   if [ -n "${OP_VERSION:-}" ]; then
+     printf '%s' "$OP_VERSION"
+@@ -59,13 +63,24 @@ resolve_version() {
+     return
+   fi
  
--        assert_eq!(open_row.size.y - closed_row.size.y, 176.0);
-+        // One 44 px row per entry of `ImageGenProvider::ALL`. The Atlas
-+        // Cloud provider took the list from four to five, so the
-+        // expanded profile grew 176 → 220; the constant here is the
-+        // list's length, not a free number.
-+        const EXPANDED_H: f32 = 44.0 * ImageGenProvider::ALL.len() as f32;
-+        assert_eq!(open_row.size.y - closed_row.size.y, EXPANDED_H);
-         assert_eq!(
-             content_height_for_ui(&open, content.size.x, true)
-                 - content_height_for_ui(&closed, content.size.x, true),
--            176.0
-+            EXPANDED_H
-         );
-         let api = profile_input_rect_for_ui(open_row, &open, 0, ImageGenField::ApiKey, true);
-         for (option_index, expected) in ImageGenProvider::ALL.iter().enumerate() {
-```
-
-**File**: `crates/op-engine-ffi/src/editor_pointer_clock_tests.rs` (modified, +21/-0)
-```diff
-@@ -183,6 +183,13 @@ fn app_state_string(engine: &mut OpEngine, key: &str) -> Option<String> {
- /// times (fresh host clock is 0).
- #[test]
- fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
-     // The preview no longer pins a blanket `now + 33` wake: an idle session
-@@ -252,6 +259,13 @@ fn dedicated_time_stamped_pointer_entries_swipe_without_an_intervening_frame() {
- /// `onSwipe` runs exactly once.
- #[test]
- fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
- 
-@@ -315,6 +329,13 @@ fn out_of_order_dedicated_events_keep_global_clocks_and_swipe_uses_factual_delta
- /// (monotonically) and never move them backward.
- #[test]
- fn cancel_and_early_returns_advance_global_clocks_monotonically() {
-+    // `next_animation_deadline_ms` folds the PROCESS-GLOBAL agent
-+    // indicator registry, so a concurrent test that registers a reveal
-+    // makes this idle engine report a deadline it does not own. Hold the
-+    // registry's own test guard for the whole body, the way the desktop
-+    // indicator tests do.
-+    let _indicators = op_editor_core::agent_indicators::test_guard();
-+    op_editor_core::agent_indicators::clear();
-     let mut engine = swipe_engine();
-     let pointer = &mut engine as *mut OpEngine;
- 
-```
-
-**File**: `crates/op-orchestrator/src/intent.rs` (modified, +42/-0)
-```diff
-@@ -73,6 +73,29 @@ const DESIGN_KEYWORDS: &[&str] = &[
-     "网页",
-     "小程序",
-     "后台",
-+    // 中文动词 —— 量词形式。Studio 首页的七类任务包装语都用"做一份/
-+    // 一套/一张/一篇"起头，而旧表只有"做一个/做个"，于是演示文稿、图文
-+    // 卡片、截图教程、信息图、活动海报五类全部落到 chat。
-+    "做一份",
-+    "做一套",
-+    "做一张",
-+    "做一篇",
-+    "做份",
-+    "做套",
-+    "做张",
-+    // 中文设计名词 —— 交付物形态。与上面的页面类名词同理：在设计工具
-+    // 语境里这些词几乎总是"造一个 X"。
-+    "演示文稿",
-+    "幻灯片",
-+    "ppt",
-+    "slides",
-+    "图文卡片",
-+    "卡片",
-+    "海报",
-+    "信息图",
-+    "长图",
-+    "截图教程",
-+    "排版",
- ];
- 
- /// 把用户消息分类为 [`Intent::Design`] 或 [`Intent::Chat`]。
-@@ -114,6 +137,25 @@ mod tests {
-         }
-     }
- 
-+    /// Every Studio Home task wrapper must classify as Design. The
-+    /// deliverable is already chosen by the task card, so a wrapper that
-+    /// reads as chat silently answers the user in prose instead of
-+    /// drawing (measured 2026-09-13 on 演示文稿).
-+    #[test]
-+    fn every_studio_home_task_wrapper_classifies_as_design() {
-+        for p in [
-+            "请设计一套可编辑的高保真手机 App 界面（mobile app，375×812）。",
-+            "请设计一个完整的纵向滚动网站页面（landing page，1440 宽）。",
-+            "请做一份 5 页的 PPT 演示文稿（slides，16:9）。封面、正文与结束页风格统一。",
-+            "请做一套图文卡片（card，竖版 3:4，多页轮播）。保持统一排版与视觉系统。",
-+            "请做一篇截图教程图文（card，竖版，截图配上步骤说明）。",
-+            "请做一张数据对比信息图长图（card，竖版图文长图）。",
-+            "请做一套活动海报（card，主海报竖版 + 社交方图）。",
-+        ] {
-+            assert_eq!(classify_intent(p), Intent::Design, "{p}");
-+        }
-+    }
-+
-     #[test]
-     fn questions_classify_as_chat() {
-         for p in [
-```
-
----
-
-### Incident Patch 2: `49100c2c` (2026-09-16)
-**Commit Message**: fix(i18n): carry the catalog size into the exporter, and split the settings tests
-
-Two reds the first CI run that actually executed on this branch caught,
-both from a constant living in more than one place.
-
-The runtime catalog exporter keeps its own EXPECTED_KEY_COUNT beside the
-Rust-side assertion in `catalog_integrity_tests`. The Studio entry
-surface bumped the Rust one to 1852 and left the exporter at 1717, so
-the WASM bundle job failed on "English catalog has 1852 keys; expected
-1717". Bump it and point each at the other, and have the exporter's own
-test read the constant instead of repeating the number a third time.
-
-The collab security-boundary check enforces the repository's 800-line
-cap over `op-editor-host-core/src`, where `settings_io_tests.rs` arrived
-from upstream at 807 lines. Split the payload round-trips into a sibling
-at the same seam the file already uses for its other two test modules.
-
-Claude-Session: https://claude.ai/code/session_01LBqzBogViQjjA8AqRjLsoD
-
-**File**: `crates/op-editor-host-core/src/settings_io_payload_tests.rs` (added, +544/-0)
-```diff
-@@ -0,0 +1,544 @@
-+//! Settings payload round-trips: the MCP CLI toggle arrays across their
-+//! historical lengths, and the fields a payload may and may not carry.
-+//!
-+//! Sibling of `settings_io_tests.rs`, split out at the 800-line cap the
-+//! collab security-boundary check enforces over this crate.
-+
-+use super::*;
-+
-+#[test]
-+fn eleven_cli_mcp_payload_keeps_its_toggles_and_leaves_zcode_off() {
-+    let payload: SettingsPayload = serde_json::from_str(
-+        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true,false,true,false]}"#,
-+    )
-+    .unwrap();
-+    let mut dst = EditorState::new();
-+    dst.editor_ui.agent_settings.mcp_cli_enabled = [true; 13];
-+
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.mcp_cli_enabled,
-+        [true, false, true, false, true, false, true, true, false, true, false, false, false]
-+    );
-+}
-+
-+#[test]
-+fn eight_cli_mcp_payload_drops_gemini_without_shifting_later_clis() {
-+    let payload: SettingsPayload = serde_json::from_str(
-+        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true]}"#,
-+    )
-+    .unwrap();
-+    let mut dst = EditorState::new();
-+
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.mcp_cli_enabled,
-+        [true, false, false, true, false, true, true, false, false, false, false, false, false]
-+    );
-+}
-+
-+#[test]
-+fn seven_provider_connected_payload_is_the_current_layout_and_round_trips() {
-+    // The current layout has seven slots (DeepSeek Harness appended at
-+    // the tail). A 7-entry file must round-trip VERBATIM — treating it
-+    // as the legacy Gemini-era layout would silently shift every saved
-+    // connection on every load.
-+    let payload: SettingsPayload = serde_json::from_str(
-+        r#"{"version":1,"connected":[true,false,true,false,true,true,false]}"#,
-+    )
-+    .unwrap();
-+    let mut dst = EditorState::new();
-+
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.connected,
-+        [true, false, true, false, true, true, false]
-+    );
-+}
-+
-+#[test]
-+fn six_provider_connected_payload_keeps_flags_and_leaves_dsh_off() {
-+    // Files written since the Gemini retirement have six slots; the
-+    // appended DeepSeek Harness slot starts disconnected.
-+    let payload: SettingsPayload =
-+        serde_json::from_str(r#"{"version":1,"connected":[true,false,true,false,true,true]}"#)
-+            .unwrap();
-+    let mut dst = EditorState::new();
-+
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.connected,
-+        [true, false, true, false, true, true, false]
-+    );
-+}
-+
-+#[test]
-+fn five_provider_connected_payload_drops_retired_gemini() {
-+    let payload: SettingsPayload =
-+        serde_json::from_str(r#"{"version":1,"connected":[true,false,false,false,true]}"#).unwrap();
-+    let mut dst = EditorState::new();
-+    dst.editor_ui.agent_settings.connected = [false, false, false, false, true, true, true];
-+    apply_payload(&mut dst, payload);
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.connected,
-+        [true, false, false, false, false, false, false]
-+    );
-+}
-+
-+#[test]
-+fn legacy_settings_without_connected_field_default_to_disconnected() {
-+    // A settings.json written before the `connected` field
-+    // existed must still load — the missing field defaults to
-+    // all-disconnected rather than failing the parse.
-+    let legacy = r#"{"version":1,"theme":"dark","locale":"en-US"}"#;
-+    let payload: SettingsPayload = serde_json::from_str(legacy).unwrap();
-+    let mut dst = EditorState::new();
-+    apply_payload(&mut dst, payload);
-+    assert_eq!(dst.editor_ui.agent_settings.connected, [false; 7]);
-+}
-+
-+#[test]
-+fn builtin_agents_round_trip_through_payload() {
-+    let mut src = EditorState::new();
-+    src.editor_ui.agent_settings.add_builtin_agent_config(
-+        "MiniMax",
-+        "sk-test",
-+        "MiniMax-M2.7",
-+        BuiltinAgentKind::Anthropic,
-+        "https://api.minimaxi.com/anthropic",
-+    );
-+
-+    let json = serde_json::to_string(&to_payload(&src)).unwrap();
-+    let payload: SettingsPayload = serde_json::from_str(&json).unwrap();
-+    let mut dst = EditorState::new();
-+    apply_payload(&mut dst, payload);
-+
-+    assert_eq!(dst.editor_ui.agent_settings.builtin_agents.len(), 1);
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].display_name,
-+        "MiniMax"
-+    );
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].api_key,
-+        "sk-test"
-+    );
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].preset,
-+        BuiltinAgentPresetKey::MiniMax
-+    );
-+    assert_eq!(
-+        dst.editor_ui.agent_settings.builtin_agents[0].models,
-+        ["MiniMax-M2.7"]
-+    );
-+}
-+
-+#[test]
-+fn builtin_agent_multiple_models_round_trip_with_legacy_first_mirror() {
-+    let mut src = Edi
-```
-
-**File**: `crates/op-editor-host-core/src/settings_io_tests.rs` (modified, +2/-536)
-```diff
-@@ -269,539 +269,5 @@ fn seven_cli_mcp_payload_keeps_its_toggles_and_leaves_the_new_clis_off() {
-     );
- }
- 
--#[test]
--fn eleven_cli_mcp_payload_keeps_its_toggles_and_leaves_zcode_off() {
--    let payload: SettingsPayload = serde_json::from_str(
--        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true,false,true,false]}"#,
--    )
--    .unwrap();
--    let mut dst = EditorState::new();
--    dst.editor_ui.agent_settings.mcp_cli_enabled = [true; 13];
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.mcp_cli_enabled,
--        [true, false, true, false, true, false, true, true, false, true, false, false, false]
--    );
--}
--
--#[test]
--fn eight_cli_mcp_payload_drops_gemini_without_shifting_later_clis() {
--    let payload: SettingsPayload = serde_json::from_str(
--        r#"{"version":1,"mcp_cli_enabled":[true,false,true,false,true,false,true,true]}"#,
--    )
--    .unwrap();
--    let mut dst = EditorState::new();
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.mcp_cli_enabled,
--        [true, false, false, true, false, true, true, false, false, false, false, false, false]
--    );
--}
--
--#[test]
--fn seven_provider_connected_payload_is_the_current_layout_and_round_trips() {
--    // The current layout has seven slots (DeepSeek Harness appended at
--    // the tail). A 7-entry file must round-trip VERBATIM — treating it
--    // as the legacy Gemini-era layout would silently shift every saved
--    // connection on every load.
--    let payload: SettingsPayload = serde_json::from_str(
--        r#"{"version":1,"connected":[true,false,true,false,true,true,false]}"#,
--    )
--    .unwrap();
--    let mut dst = EditorState::new();
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.connected,
--        [true, false, true, false, true, true, false]
--    );
--}
--
--#[test]
--fn six_provider_connected_payload_keeps_flags_and_leaves_dsh_off() {
--    // Files written since the Gemini retirement have six slots; the
--    // appended DeepSeek Harness slot starts disconnected.
--    let payload: SettingsPayload =
--        serde_json::from_str(r#"{"version":1,"connected":[true,false,true,false,true,true]}"#)
--            .unwrap();
--    let mut dst = EditorState::new();
--
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(
--        dst.editor_ui.agent_settings.connected,
--        [true, false, true, false, true, true, false]
--    );
--}
--
--#[test]
--fn five_provider_connected_payload_drops_retired_gemini() {
--    let payload: SettingsPayload =
--        serde_json::from_str(r#"{"version":1,"connected":[true,false,false,false,true]}"#).unwrap();
--    let mut dst = EditorState::new();
--    dst.editor_ui.agent_settings.connected = [false, false, false, false, true, true, true];
--    apply_payload(&mut dst, payload);
--    assert_eq!(
--        dst.editor_ui.agent_settings.connected,
--        [true, false, false, false, false, false, false]
--    );
--}
--
--#[test]
--fn legacy_settings_without_connected_field_default_to_disconnected() {
--    // A settings.json written before the `connected` field
--    // existed must still load — the missing field defaults to
--    // all-disconnected rather than failing the parse.
--    let legacy = r#"{"version":1,"theme":"dark","locale":"en-US"}"#;
--    let payload: SettingsPayload = serde_json::from_str(legacy).unwrap();
--    let mut dst = EditorState::new();
--    apply_payload(&mut dst, payload);
--    assert_eq!(dst.editor_ui.agent_settings.connected, [false; 7]);
--}
--
--#[test]
--fn builtin_agents_round_trip_through_payload() {
--    let mut src = EditorState::new();
--    src.editor_ui.agent_settings.add_builtin_agent_config(
--        "MiniMax",
--        "sk-test",
--        "MiniMax-M2.7",
--        BuiltinAgentKind::Anthropic,
--        "https://api.minimaxi.com/anthropic",
--    );
--
--    let json = serde_json::to_string(&to_payload(&src)).unwrap();
--    let payload: SettingsPayload = serde_json::from_str(&json).unwrap();
--    let mut dst = EditorState::new();
--    apply_payload(&mut dst, payload);
--
--    assert_eq!(dst.editor_ui.agent_settings.builtin_agents.len(), 1);
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].display_name,
--        "MiniMax"
--    );
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].api_key,
--        "sk-test"
--    );
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].preset,
--        BuiltinAgentPresetKey::MiniMax
--    );
--    assert_eq!(
--        dst.editor_ui.agent_settings.builtin_agents[0].models,
--        ["MiniMax-M2.7"]
--    );
--}
--
--#[test]
--fn builtin_agent_multiple_models_round_trip_with_legacy_first_mirror() {
--    let mut src = EditorState::new();
--    src.editor_ui.agent_settings.add_builtin_agent_configs(
--        "Private",
--        "sk-test",
--        ["model-a", "model-b", "model-c"],
--        BuiltinAgentKind::OpenAiCompat,
--        "ht
-```
-
-**File**: `tools/export-i18n-catalogs.py` (modified, +6/-1)
-```diff
-@@ -14,7 +14,12 @@
- REPO_ROOT = Path(__file__).resolve().parents[1]
- I18N_DIR = REPO_ROOT / "crates" / "op-i18n" / "src" / "i18n"
- LOCALE_FILE = I18N_DIR.parent / "locale.rs"
--EXPECTED_KEY_COUNT = 1717
-+# Mirrors the Rust-side assertion in
-+# `crates/op-i18n/src/i18n/catalog_integrity_tests.rs` ("update the
-+# intentional catalog size"). The two live apart, so adding keys means
-+# bumping BOTH — the Studio entry surface bumped the Rust one and left
-+# this at 1717, which only the WASM bundle job noticed.
-+EXPECTED_KEY_COUNT = 1852
- TABLE_SUFFIXES = ("", "_git", "_panel", "_collab")
- 
- # Module stem, Locale variant, and the exact value returned by Locale::code().
-```
-
-**File**: `tools/test_export_i18n_catalogs.py` (modified, +1/-1)
-```diff
-@@ -110,7 +110,7 @@ def test_check_mode_does_not_write(self) -> None:
-             self.assertEqual(result.returncode, 0, result.stderr)
-             self.assertEqual(list(root.iterdir()), [])
-             self.assertIn("15 locales", result.stdout)
--            self.assertIn("1717 keys", result.stdout)
-+            self.assertIn(f"{self.exporter.EXPECTED_KEY_COUNT} keys", result.stdout)
- 
-     def test_export_writes_exact_lazy_locale_set_deterministically(self) -> None:
-         with tempfile.TemporaryDirectory() as temporary:
-```
-
----
-
-### Incident Patch 3: `6f0f176b` (2026-09-14)
-**Commit Message**: fix(ai): keep the radius context cut on a char boundary (#241)
-
-px_values capped each number's context at 48 bytes. That is a boundary only for Latin script; a CJK or Hangul radius sentence puts three bytes on most characters, so the cut landed mid-character and tail[..end] panicked. floor_char_boundary is a no-op on ASCII, where every index is already a boundary.
-
-**File**: `crates/op-ai-skills/src/style_guide/token_table.rs` (modified, +5/-4)
-```diff
-@@ -512,10 +512,11 @@ fn px_values(line: &str) -> Vec<(i64, String)> {
-         // Up to the next clause break — that is where this number's
-         // description ends and the next one's begins.
-         let tail = &line[index..];
--        let end = tail
--            .find([',', ';', '.', ')', '(', '—'])
--            .unwrap_or(tail.len())
--            .min(48);
-+        let end = tail.floor_char_boundary(
-+            tail.find([',', ';', '.', ')', '(', '—'])
-+                .unwrap_or(tail.len())
-+                .min(48),
-+        );
-         out.push((value, tail[..end].to_string()));
-     }
-     out
-```
-
-**File**: `crates/op-ai-skills/src/style_guide/token_table_tests.rs` (modified, +26/-0)
-```diff
-@@ -220,3 +220,29 @@ fn the_palette_floor_reports_colours_with_their_own_role_text() {
-     assert_eq!(prose.len(), 2);
-     assert_eq!(prose[0].color, "#101014");
- }
-+
-+/// A radius sentence whose description is not written in Latin script. The
-+/// per-number context is cut at 48 bytes, and a guide's prose is arbitrary
-+/// author text — most CJK and Hangul characters are three bytes each, so that
-+/// cut lands mid-character on ordinary input.
-+#[test]
-+fn a_radius_line_written_in_another_script_is_read_and_classified() {
-+    for line in [
-+        "Corner radius: 12px  卡片与面板容器的外框圆角，用于所有卡片与弹层",
-+        "Corner radius: 12px卡片与面板容器的外框圆角，用于所有卡片与弹层",
-+        "Corner radius: 12px 카드와 패널 컨테이너의 바깥 테두리 라운드에 사용",
-+    ] {
-+        let content = format!("# G\n\n## Shape\n\n{line}\n");
-+        let values = extract_style_guide_values(&content);
-+        // Nothing in these says which role the radius is for, so nothing is
-+        // invented — but the scan has to reach that answer, not panic on
-+        // the way.
-+        assert_eq!(values.radius, StyleRadius::default(), "line: {line}");
-+    }
-+
-+    // The same sentence with an English role cue still classifies.
-+    let mixed = extract_style_guide_values(
-+        "# G\n\n## Shape\n\nCorner radius: 24px card 카드와 패널 컨테이너의 바깥 테두리\n",
-+    );
-+    assert_eq!(mixed.radius.card, Some(24));
-+}
+-  local api tag
++  local api tag prerelease=0
+   if [ "${OP_PRERELEASE:-}" = "1" ] || [ "${OP_PRERELEASE:-}" = "true" ]; then
+     api="https://api.github.com/repos/${OWNER}/${REPO}/releases"
++    prerelease=1
+   else
+     api="https://api.github.com/repos/${OWNER}/${REPO}/releases/latest"
+   fi
+-  tag="$(curl -fsSL "$api" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/')"
++  tag="$(release_tag "$api")"
++  if [ -z "$tag" ] && [ "$prerelease" -eq 0 ]; then
++    # /releases/latest is a 404 while every published tag is still a pre-release, which is the
++    # case for the whole pre-1.0 line. Fall back to the newest release instead of failing the
++    # documented default install command; OP_VERSION still pins an exact tag.
++    tag="$(release_tag "https://api.github.com/repos/${OWNER}/${REPO}/releases")"
++    if [ -n "$tag" ]; then
++      echo "note: no stable release is published yet; installing the newest pre-release ${tag#v}" >&2
++      echo "      set OP_VERSION=X.Y.Z to pin a version" >&2
++    fi
++  fi
+   if [ -z "$tag" ]; then
+     echo "error: could not resolve the latest release tag from GitHub" >&2
+     echo "       set OP_VERSION explicitly, e.g. OP_VERSION=X.Y.Z $0" >&2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #264** (2026-10-29): fix(install): fall back to the newest release when no stable release exists (@PerryLink)
+- **PR #262** (2026-10-27): chore(nix): update release manifest to v0.8.5 (@Kayshen-X)
 - **PR #252** (2026-10-08): fix(web): isolate managed editor config and repair native CI (@finiking)
+- **PR #251** (closed): feat(mcp): show agent cursor presence for client canvas writes (@gnoviawan)
 - **PR #248** (closed): feat(agent): add packaged browser snapshot capture tool (@caniko)
-- **PR #243** (2026-09-14): fix(design-lint): guard the transparent-alpha test against a non-ascii fill (@kevin9327)
-- **PR #242** (2026-09-14): fix(cli): decode a percent-encoded resource name before the disk lookup (@kevin9327)
-- **PR #241** (2026-09-14): fix(ai): keep the radius context cut on a char boundary (@kevin9327)
-- **PR #240** (2026-09-14): fix(html): stop a non-ascii css prelude from panicking the import (@kevin9327)
+- **PR #244** (closed): docs: sync README.zh.md with README.md (@PerryLink)
 
 ---
 
@@ -2488,54 +1910,45 @@ px_values capped each number's context at 48 bytes. That is a boundary only for 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. agent): route every Studio task family to the design pipeline
+## X. install): fall back to the newest release when no stable release exists
 
 **RULE**:
-When implementing operations in `crates/op-chat-agent/src/backoff.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/install-op.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `243c27f5`: agent): route every Studio task family to the design pipeline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68d01235`: install): fall back to the newest release when no stable release exists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-chat-agent/src/backoff.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/install-op.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Append a rejected response's status and body to the file named by
-/// `OPENPENCIL_DEBUG_HTTP_ERROR_BODY`, when it is set.
-///
-/// Off by default and never wired into chat, SSE, or stdout: a provider
-/// error body is untrusted and can echo the request's own headers, so it
-/// stays out of every channel the user or a browser can read. With the
-/// env var set it goes to that one file and nowhere else, which is what
-/// turns "http 400 Bad Request" from a dead end into a diagnosis
-/// (measured 2026-09-13: a modify turn died on a 400 whose reason was
-/// unreachable from inside the app).
-async fn dump_error_body(label: &str, status: reqwest::StatusCode, resp: reqwest::Response) {
-    let Ok(path) = std::env::var("OPENPENCIL_DEBUG_HTTP_ERROR_BODY") else {
-        return;
-    };
-    if path.is_empty() {
-        return;
-    }
-    let body = resp.text().await.unwrap_or_default();
-    let line = format!(
-        "[{}] {label} http {} {}\n{}\n",
-        chrono_like_stamp(),
-        status.as_u16(),
-        status.canonical_reason().unwrap_or(""),
-        body.chars().take(4_000).collect::<String>()
-    );
-    use std::io::Write as _;
-    if let Ok(mut file) = std::fs::OpenOptions::new(
+release_tag() {
+  curl -fsSL "$1" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/'
+}
+
+  local api tag prerelease=0
+    prerelease=1
+  tag="$(release_tag "$api")"
+  if [ -z "$tag" ] && [ "$prerelease" -eq 0 ]; then
+    # /releases/latest is a 404 while every published tag is still a pre-release, which is the
+    # case for the whole pre-1.0 line. Fall back to the newest release instead of failing the
+    # documented default install command; OP_VERSION still pins an exact tag.
+    tag="$(release_tag "https://api.github.com/repos/${OWNER}/${REPO}/releases")"
+    if [ -n "$tag" ]; then
+      echo "note: no stable release is published yet; installing the newest pre-release ${tag#v}" >&2
+      echo "      set OP_VERSION=X.Y.Z to pin a version" >&2
+    fi
+  fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  local api tag
+  tag="$(curl -fsSL "$api" | grep -o '"tag_name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -n1 | sed 's/.*"\(v\{0,1\}[^"]*\)"$/\1/')"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `243c27f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68d01235` are properly handled with clean fallback behavior.

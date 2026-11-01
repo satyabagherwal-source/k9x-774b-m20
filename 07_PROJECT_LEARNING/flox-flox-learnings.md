@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `0e1822c8`  
+> **Source Version**: `da039c11`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:56:43.379Z  
+> **Timestamp**: 2026-10-31T01:39:57.035Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:56:42.740Z  
+> **Harvest Timestamp**: 2026-10-31T01:39:56.517Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4183 stars
+- **Stars / Engagement**: 4188 stars
 
 ---
 
@@ -1424,11 +1424,11 @@ impl ActivateEnvironmentRef {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4779** (2026-10-29): **hook.on-deactivate runs even when hook.on-activate failed**
+  *Symptoms*: **Describe the bug:**  When `hook.on-activate` exits non-zero, `flox activate` prints `Running hook.on-activate failed` and doesn't run the command. The executive still runs `hook.on-deactivate` for that start when it cleans up.  The manifest docs describe the two hooks as bookends, and the executive's comments say the same: "its hook only runs if hook.on-activate completed" ([executive/mod.rs L772-778](https://github.com/flox/flox/blob/ed7d29681df6134a9070bf6674f04d6ee2716898/cli/flox-activations/src/cli/executive/mod.rs#L772-L778)). `run_hook_script` skips a start only when it can't read the start's env trace ([on_deactivate.rs L101-106](https://github.com/flox/flox/blob/ed7d29681df6134a9070bf6674f04d6ee2716898/cli/flox-activations/src/on_deactivate.rs#L101-L106)), and a start whose `hook.on-activate` failed still has one, so the hook runs.  This matters for pairs like `createdb myapp || exit 1` and `dropdb myapp`: when `createdb` fails because the database already exists, the teardown drops the existing database.  **Steps to reproduce:**  ```bash mkdir failhook && cd failhook flox init cat > manifest.toml <<'EOF' schema-version = "1.18.0"  [hook] on-activate = '''   echo "on-activate: create database" >> "$FLOX_ENV_PROJECT/hooks.log"   exit 1 ''' on-deactivate = '''   echo "on-deactivate: drop database" >> "$FLOX_ENV_PROJECT/hooks.log" ''' EOF flox edit -f manifest.toml  flox activate -- echo "command ran" sleep 1 cat hooks.log ```  Result:  ``` ✘ ERROR: Running hook.on-ac
+
 - **Issue #4777** (2026-10-08): **Concurrent activations of one environment fail intermittently: two executives, one deletes the other's state**
   *Symptoms*: **Describe the bug:**  When activations of one environment start and exit close together, `flox activate` sometimes fails. On an environment with an empty manifest I've seen four different errors:  ``` ✘ ERROR: failed to acquire lockfile: failed to open lockfile: No such file or directory (os error 2) ✘ ERROR: Running hook.on-activate failed ✘ ERROR: $XDG_CACHE_HOME/flox/run/activations/01175d93-lockrace/wj1ksyr8xhgmdlv3a45rgg0kn8c720g4-environment-dev.1791347582234/envtrace.log is empty ✘ ERROR: Executive 106 terminated unexpectedly with status: Exited(Pid(106), 1) ```  The second one appears although the environment has no hooks. The last one leaves state.json behind with `"ready": {"Starting": ...}`, a dead attached PID and a dead `executive_pid`.  All of them trace back to the state.json lock. When the last attachment goes away, `cleanup_all` renames the activation state directory, `state.lock` included, to `<dir>.cleanup.<pid>` while it holds the lock, then drops it ([executive/mod.rs L766-770](https://github.com/flox/flox/blob/ed7d29681df6134a9070bf6674f04d6ee2716898/cli/flox-activations/src/cli/executive/mod.rs#L766-L770)). `acquire_activations_json_lock` ([activations.rs L194-208](https://github.com/flox/flox/blob/ed7d29681df6134a9070bf6674f04d6ee2716898/cli/flox-core/src/activations.rs#L194-L208)) doesn't account for that:  1. If the rename lands between the `exists()` / `create_dir` check and `LockFile::open`, `open` fails with ENOENT. 2. A process that opened `stat
-
-- **Issue #4741** (2026-09-29): **flox build rejects namespaced catalog packages in runtime-packages with misleading package-group error**
-  *Symptoms*: ## Describe the bug  When a namespaced catalog package is listed in `build.<name>.runtime-packages`, `flox build` fails even though the lockfile correctly assigns the package to the `toplevel` group.  ## Steps to reproduce  Given an available catalog package `example-owner/example-tool` (placeholder names), use:  ```toml schema-version = "1.17.0"  [install] example-tool.pkg-path = "example-owner/example-tool"  [build.example] version = "0.0.1" runtime-packages = ["example-tool"] command = """   mkdir -p "$out"   touch "$out/hello" """ ```  Run `flox build`.  ### Actual behavior  The environment build fails with:  ```text ❌ ERROR: package 'example-tool' is not in 'toplevel' pkg-group ```  The corresponding lockfile entry has these fields:  ```json {   "install_id": "example-tool",   "attr_path": "example-tool",   "group": "toplevel" } ```  ### Expected behavior  The build should resolve the runtime dependency by its install ID and recognize that it belongs to `toplevel`.  ## Suspected cause  In `buildenv/builder.pl`, runtime-package validation compares the lockfile's `attr_path` directly with the manifest's `pkg-path`:  ```perl grep { $_->{"attr_path"} eq $install->{$name}{"pkg-path"} } @toplevelPackages ```  For namespaced catalog packages, these values differ: `example-tool` versus `example-owner/example-tool`. The failed comparison produces a misleading group-membership error. Subsequent runtime-package filtering also uses attribute paths.  This logic was confirmed in the i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1445,1191 +1445,1149 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a206749` (2026-10-23)
-**Commit Message**: fix(auto-activate): keep the prompt hook out of forked subshells (#4813)
+### Incident Patch 1: `da039c11` (2026-10-30)
+**Commit Message**: fix(cli): Drop the unused webpki-roots CA store (#4855)
 
 ## Proposed Changes
 
-Fixes DEV-415.
+Removes `webpki-roots` from `Cargo.lock`. Version 1.0.3 still trusts
+eMudhra, so SBOMs and dependency scanners flag the CLI after INC-35,
+even though the store is never used. Bumping it would silence this scan
+but keep a dead CA store for the next root incident to flag.
 
-In zsh and tcsh, the auto-activation prompt hook also ran when a
-*forked* subshell changed directory: `( cd .. )`, a command
-substitution, or zsh's own `cd` completion, which runs `$(cd
-${PREFIX%/*} >&/dev/null && print $PWD)` whenever you tab-complete a `cd
-../…` path.
+`oauth2`'s default `rustls-tls` feature was the only thing enabling it,
+so `oauth2` now uses `default-features = false` with `reqwest`. reqwest
+already used native-tls, so TLS behavior doesn't change.
 
-A fork inherits `_FLOX_INVOCATION_TYPES`, and `$$` there still expands
-to the parent's PID. So the deactivation script the hook evaluated in
-the fork ended with `flox-activations detach --pid $$` and detached the
-**parent** shell, while the environment restore died with the fork. The
-parent still believed it was attached:
+The `cacert-distrust` check is renamed to `ca-roots`, and it now fails
+if `webpki-roots` returns at any version. Rust bundled roots are a fixed
+list, so they can't pick up the distrust list or `SSL_CERT_FILE`.
 
-- **Another shell attached to the activation:** the parent's next real
-`cd` out of the project failed with `✘ ERROR: PID <pid> is not attached
-to the activation`.
-- **No other shell attached:** the detach removed the last PID, so the
-executive tore the activation down (services, `hook.on-deactivate`)
-under a shell that was still using it. Nothing was printed.
-- **Mirror image:** a fork that changed *into* an allowed project ran a
-full activation and attached the parent's PID until that s
+Tested `flox auth login` on macOS.
 
-**File**: `AGENTS.md` (modified, +18/-0)
+Resolves CLI-275.
+
+## Release Notes
+
+N/A
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
-@@ -219,6 +219,24 @@ eval "`flox activate`"   # correct
- eval `flox activate`     # WRONG — output is word-split and brace-expanded
- ```
+@@ -417,7 +417,7 @@ jobs:
+           export AWS_SESSION_TOKEN
+           export NIX_SUBSTITUTER_KEY
  
-+## Shell hooks and forked subshells
-+
-+**Shell code that Flox registers to run on a directory change MUST do nothing
-+in a forked subshell.** zsh's `chpwd_functions` and tcsh's `cwdcmd` alias also
-+run when a fork of the shell changes directory, and `$$` there still expands
-+to the parent's PID:
-+
-+```zsh
-+x=$(cd .. && pwd)   # the hook must not act here
-+( cd .. )           # nor here
-+```
-+
-+A hook that acts in the fork detaches the parent shell from an activation it is
-+still using. zsh's own `cd` completion runs a command substitution like the one
-+above, so no unusual setup is needed to hit it. Never treat `$$` as proof that
-+the interactive shell itself is running the code; guard new hooks the way
-+`zsh_hook` and `tcsh_hook` do in `cli/flox-activations/src/hook.rs`.
-+
- ## Metrics / telemetry
- 
- All new CLI telemetry goes through the v2 events pipeline
+-          for package in 'checks.${{ matrix.system }}.cacert-distrust' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
++          for package in 'checks.${{ matrix.system }}.ca-roots' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
+             echo "::group::Building $package"
+             ./.github/scripts/remote-execute-nix-build.sh "$package" "$NIX_SUBSTITUTER"
+             echo "::endgroup::"
 ```
 
-**File**: `cli/flox-activations/src/gen_rc/tcsh.rs` (modified, +4/-4)
+**File**: `Cargo.lock` (modified, +1/-88)
 ```diff
-@@ -434,8 +434,8 @@ mod tests {
-             unset verbose;
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             setenv _FLOX_PROMPT_HOOK_VERSION 1:true;
--            alias precmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`/flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
--            alias cwdcmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`/flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
-+            alias precmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`exec /flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
-+            alias cwdcmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`exec /flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
-         "#]].assert_eq(&output);
-     }
+@@ -2083,10 +2083,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "wasi 0.13.3+wasi-0.2.2",
+- "wasm-bindgen",
+  "windows-targets 0.52.6",
+ ]
  
-@@ -479,8 +479,8 @@ mod tests {
-             unset verbose;
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             setenv _FLOX_PROMPT_HOOK_VERSION 1:true;
--            alias precmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`/flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
--            alias cwdcmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`/flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
-+            alias precmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`exec /flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
-+            alias cwdcmd 'if ( ! $?_FLOX_INVOCATION_TYPES ) set _FLOX_INVOCATION_TYPES=""; setenv _FLOX_INVOCATION_TYPES_WIRE $_FLOX_INVOCATION_TYPES:q; eval "`exec /flox hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`"; unsetenv _FLOX_INVOCATION_TYPES_WIRE; if ( $?_flox_exit ) exit';
-         "#]].assert_eq(&output);
-     }
+@@ -2409,7 +2407,6 @@ dependencies = [
+  "tokio",
+  "tokio-rustls",
+  "tower-service",
+- "webpki-roots 0.26.11",
+ ]
  
+ [[package]]
+@@ -3041,12 +3038,6 @@ dependencies = [
+  "logos-codegen",
+ ]
+ 
+-[[package]]
+-name = "lru-slab"
+-version = "0.1.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
+-
+ [[package]]
+ name = "matchers"
+ version = "0.2.0"
+@@ -3943,61 +3934,6 @@ version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
+ 
+-[[package]]
+-name = "quinn"
+-version = "0.11.9"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b9e20a958963c291dc322d98411f541009df2ced7b5a4f2bd52337638cfccf20"
+-dependencies = [
+- "bytes",
+- "cfg_aliases",
+- "pin-project-lite",
+- "quinn-proto",
+- "quinn-udp",
+- "rustc-hash 2.1.1",
+- "rustls",
+- "socket2 0.6.1",
+- "thiserror 2.0.18",
+- "tokio",
+- "tracing",
+- "web-time",
+-]
+-
+-[[package]]
+-name = "quinn-proto"
+-version = "0.11.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4fcb935c5bec503c2f0e306bdd3e58bb9029dcb14fa8d9ac76e3a5256ac0763e"
+-dependencies = [
+- "bytes",
+- "getrandom 0.3.1",
+- "lru-slab",
+- "rand 0.9.5",
+- "ring",
+- "rustc-hash 2.1.1",
+- "rustls",
+- "rustls-pki-types",
+- "slab",
+- "thiserror 2.0.18",
+- "tinyvec",
+- "tracing",
+- "web-time",
+-]
+-
+-[[package]]
+-name = "quinn-udp"
+-version = "0.5.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd"
+-dependencies = [
+- "cfg_aliases",
+- "libc",
+- "once_cell",
+- "socket2 0.6.1",
+- "tracing",
+- "windows-sys 0.60.2",
+-]
+-
+ [[package]]
+ name = "quote"
+ version = "1.0.40"
+@@ -4209,16 +4145,13 @@ dependencies = [
+  "native-tls",
+  "percent-encoding",
+  "pin-project-lite",
+- "quinn",
+- "rustls",
+  "rustls-pki-types",
+  "serde",
+  "serde_json",
+  "serde_urlencoded",
+  "sync_wrapper",
+  "tokio",
+  "tokio-native-tls",
+- "tokio-rustls",
+  "tokio-util",
+  "tower",
+  "tower-http",
+@@ -4228,7 +4161,6 @@ dependencies = [
+  "wasm-bindgen-futures",
+  "wasm-streams",
+  "web-sys",
+- "webpki-roots 1.0.3",
+ ]
+ 
+ [[package]]
+@@ -4439,7 +4371,6 @@ version = "1.15.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2f4925028c7eb5d1fcdaf196971378ed9d2c1c4efc7dc5d011256f76c99c0a96"
+ dependencies = [
+- "web-time",
+  "zeroize",
+ ]
+ 
+@@ -6238,24 +6169,6 @@ dependencies = [
+  "rustls-pki-types",
+ ]
+ 
+-[[package]]
+-name = "webpki-roots"
+-version = "0.26.11"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
+-dependencies = [
+- "webpki-roots 1.0.3",
+-]
+-
+-[[package]]
+-name = "webpki-roots"
+-version = "1.0.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "32b130c0d2d49f8b6889abc456e795e82525204f27c42cf767cf0d7734e089b8"
+-dependencies = [
+- "rustls-pki-types",
+-]
+-
+ [[package]]
+ name = "winapi"
+ version = "0.3.9"
+@@ -6278,7 +6191,7 @@ version = "0.1.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
+ dependencies = [
+- "windows-sys 0.59.0",
++ "windows-sys 0.48.0",
+ ]
+ 
+ [[package]]
 ```
 
-**File**: `cli/flox-activations/src/gen_rc/zsh.rs` (modified, +2/-0)
+**File**: `Cargo.toml` (modified, +3/-1)
 ```diff
-@@ -410,6 +410,7 @@ mod tests {
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             export _FLOX_PROMPT_HOOK_VERSION=1:true;
-             _flox_hook() {
-+              if (( ZSH_SUBSHELL )); then return; fi;
-               local _flox_vars;
-               _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
-@@ -455,6 +456,7 @@ mod tests {
-             /nix/store/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX-coreutils-9.10/bin/rm /path/to/rc/file;
-             export _FLOX_PROMPT_HOOK_VERSION=1:true;
-             _flox_hook() {
-+              if (( ZSH_SUBSHELL )); then return; fi;
-               local _flox_vars;
-               _flox_vars="$("/flox" hook-env --shell zsh --shell-pid $$ --invocation-types "${_FLOX_INVOCATION_TYPES:-}")";
-               trap -- '' SIGINT;
+@@ -82,7 +82,9 @@ zbus-secret-service-keyring-store = { version = "1", default-features = false, f
+ log = { version = "0.4.29", features = ["kv"] }
+ nef-lock-catalog = { path = "cli/nef-lock-catalog" }
+ nix = { version = "0.31", features = ["signal", "process", "user", "fs"] }
+-oauth2 = "5.0"
++# The default `rustls-tls` feature bundles a webpki CA store that reqwest never
++# uses, because native-tls takes precedence.
++oauth2 = { version = "5.0", default-features = false, features = ["reqwest"] }
+ path-dedot = "3.1.1"
+ pollster = "0.4.0"
+ progenitor-client = "0.11.2"
 ```
 
-**File**: `cli/flox-activations/src/hook.rs` (modified, +23/-1)
+**File**: `checks/ca-roots.nix` (renamed, +19/-2)
 ```diff
-@@ -20,6 +20,18 @@
- //! map, and that is how `hook-env` knows not to emit a
- //! `flox-activations detach` for layers this shell never attached to.
- //!
-+//! That only covers a subshell that is a separate process. A forked subshell
-+//! (`( cd .. )`, a command substitution, zsh's own `cd` completion) inherits
-+//! the map, and `$$` there still expands to the parent's PID. zsh's chpwd
-+//! functions and tcsh's `cwdcmd` alias run in such a fork when it changes
-+//! directory, so a hook that acted there would detach the parent shell from
-+//! an activation it is still using, or attach it to one it never entered,
-+//! while the environment changes die with the fork. Both hooks therefore do
-+//! nothing in a fork: zsh checks `ZSH_SUBSHELL`, and tcsh, which has no such
-+//! variable, has `hook-env` compare its parent PID with `--shell-pid`. bash
-+//! only runs the hook from `PROMPT_COMMAND`, which a fork never evaluates,
-+//! and fish has no forked subshells.
-+//!
- //! Each hook also exports [`PROMPT_HOOK_VERSION_ENV`] =
- //! `<version>:true` at registration time (top level, so it is set before the
- //! first prompt); subshell activations export `<version>:false` instead (see
-@@ -58,12 +70,16 @@ pub fn bash_hook(flox_bin: &str) -> String {
- 
- // Unlike bash, zsh restores $? before calling each precmd function
- // independently, so we don't need to save/restore it ourselves.
-+//
-+// The `ZSH_SUBSHELL` check keeps the hook out of forked subshells (see the
-+// module docs).
- pub fn zsh_hook(flox_bin: &str) -> String {
-     let marker = prompt_hook_marker_value(true);
-     formatdoc!(
-         r#"
-         export {PROMPT_HOOK_VERSION_ENV}={marker};
-         _flox_hook() {{
-+          if (( ZSH_SUBSHELL )); then return; fi;
-           local _flox_vars;
-           _flox_vars="$("{flox_bin}" hook-env --shell zsh --shell-pid $$ --invocation-types "${{{FLOX_INVOCATION_TYPES_VAR}:-}}")";
-           trap -- '' SIGINT;
-@@ -170,14 +186,20 @@ pub fn fish_hook(flox_bin: &str) -> String {
- // `emit_deactivate_script` in the `flox` crate) and the alias body checks the
- // flag after the eval completes — after the `unsetenv`, so the wire variable
- // dies with the hook run even when the shell exits.
-+//
-+// tcsh has nothing like `ZSH_SUBSHELL` to keep the hook out of forked
-+// subshells (see the module docs), so `hook-env` detects the fork instead:
-+// `exec` makes the shell evaluating the alias its parent process, and
-+// `--skip-in-forked-subshell` has it print nothing when that parent is not
-+// `$$`.
- pub fn tcsh_hook(flox_bin: &str) -> String {
-     // A tcsh alias body must be a single line, so assemble the statements here
-     // and join them with "; " rather than writing one long string literal.
-     let hook = [
-         format!(r#"if ( ! $?{FLOX_INVOCATION_TYPES_VAR} ) set {FLOX_INVOCATION_TYPES_VAR}="""#),
-         format!("setenv {FLOX_INVOCATION_TYPES_WIRE_VAR} ${FLOX_INVOCATION_TYPES_VAR}:q"),
-         format!(
--            r#"eval "`{flox_bin} hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env`""#
-+            r#"eval "`exec {flox_bin} hook-env --shell tcsh --shell-pid $$ --invocation-types-from-env --skip-in-forked-subshell`""#
-         ),
-         format!("unsetenv {FLOX_INVOCATION_TYPES_WIRE_VAR}"),
-         "if ( $?_flox_exit ) exit".to_string(),
+@@ -1,4 +1,4 @@
+-# Checks the CA bundle that flox's binaries compile in:
++# Checks the CA roots that flox's binaries trust:
+ #
+ # - Every package that sets `NIXPKGS_CACERT_BUNDLE_CRT`, and the installers'
+ #   `pkgsFor.cacert`, use the same bundle, because the CLI compares the bundle
+@@ -8,6 +8,11 @@
+ #   depend on it are still substituted.
+ # - The bundle doesn't trust the distrusted roots for TLS servers, but does
+ #   trust a control root, so the check can't pass by matching nothing.
++# - No crate compiles in its own roots. The system's roots are likely newer
++#   and more trustworthy. A list compiled into the binary, at any version,
++#   also can't pick up the distrust list above or a user's `SSL_CERT_FILE`.
++#   So `Cargo.lock`, which is what dependency scanners read, must not contain
++#   `webpki-roots`.
+ {
+   lib,
+   runCommand,
+@@ -41,6 +46,10 @@ let
+     crate2nix-flox-core = crate2nix-builds.crateEnvs.flox-core.NIXPKGS_CACERT_BUNDLE_CRT;
+     installers = flox.passthru.pkgsFor.cacert.outPath + "/etc/ssl/certs/ca-bundle.crt";
+   };
++
++  bundledRoots =
++    lib.filter (package: package.name == "webpki-roots")
++      (lib.importTOML ../Cargo.lock).package;
+ in
+ assert lib.assertMsg (lib.length (lib.unique (lib.attrValues bundles)) == 1) ''
+   flox's packages compile in different CA bundles:
+@@ -49,7 +58,15 @@ assert lib.assertMsg (cacert.outPath == stockCacert.outPath) ''
+   The package set's cacert is not the stock nixpkgs one, so every package that depends on it is rebuilt:
+     package set: ${cacert.outPath}
+     nixpkgs:     ${stockCacert.outPath}'';
+-runCommand "cacert-distrust"
++assert lib.assertMsg (bundledRoots == [ ]) ''
++  Cargo.lock contains webpki-roots ${
++    lib.concatMapStringsSep ", " (package: package.version) bundledRoots
++  }, which compiles in a fixed snapshot of CA roots.
++  Rust bundled roots aren't allowed, because the system's roots are likely newer and more trustworthy.
++  A list compiled into the binary, at any version, also can't pick up the distrust list or a user's `SSL_CERT_FILE`.
++  Use system roots instead: enable `rustls-tls-native-roots`, or disable the feature that enabled webpki-roots.
++  To find that feature, run 'cargo tree -i webpki-roots --target all -e features'.'';
++runCommand "ca-roots"
+   {
+     nativeBuildInputs = [ openssl ];
+     bundle = bundles.flox-cli;
 ```
 
-**File**: `cli/flox/src/commands/hook_env.rs` (modified, +22/-0)
+**File**: `flake.nix` (modified, +1/-1)
 ```diff
-@@ -27,6 +27,7 @@ use flox_core::hook_actions::{
- use flox_rust_sdk::flox::Flox;
- use flox_rust_sdk::models::environment::find_all_dot_flox;
- use indoc::formatdoc;
-+use nix::unistd::getppid;
- use shell_gen::{GenerateShell, SetVar, Shell, ShellWithPath, UnsetVar};
- use tracing::debug;
- 
-@@ -70,10 +71,31 @@ pub struct HookEnv {
-     /// its hook exports the short-lived variable around this call.
-     #[bpaf(long("invocation-types-from-env"), switch)]
-     invocation_types_from_env: bool,
-+
-+    /// Do nothing when a forked subshell is evaluating the hook.
-+    ///
-+    /// A fork of the interactive shell (`( cd .. )`, a command substitution)
-+    /// still expands `$$` to the interactive shell's PID, so `--shell-pid`
-+    /// alone can't tell the two apart. A hook that passes this flag `exec`s
-+    /// `hook-env`, which makes the shell evaluating the hook this process's
-+    /// parent: a parent other than `--shell-pid` is a fork. Used by tcsh; the
-+    /// zsh hook checks `ZSH_SUBSHELL` itself.
-+    #[bpaf(long("skip-in-forked-subshell"), switch)]
-+    skip_in_forked_subshell: bool,
- }
- 
- impl HookEnv {
-     pub async fn handle(self, config: Config, flox: Flox) -> Result<()> {
-+        // Checked before anything else: even reading this shell's pending
-+        // prompt-hook actions would consume them on the fork's behalf.
-+        if self.skip_in_forked_subshell && getppid().as_raw() != self.shell_pid {
-+            debug!(
-+                shell_pid = self.shell_pid,
-+                "hook is running in a forked subshell, doing nothing"
-+            );
-+            return Ok(());
-+        }
-+
-         let mut writer = BufWriter::new(stdout());
- 
-         // Read the shell's exported prompt-hook version once and thread it
+@@ -257,7 +257,7 @@
+           inherit pkgs nixpkgs;
+           module = import ./modules/nixos pkgsContext;
+         };
+-        cacert-distrust = pkgs.callPackage ./checks/cacert-distrust.nix {
++        ca-roots = pkgs.callPackage ./checks/ca-roots.nix {
+           stockCacert = nixpkgs.legacyPackages.${system}.cacert;
+         };
+       }) pkgsContext;
 ```
 
-**File**: `cli/tests/hook.bats` (modified, +63/-0)
+**File**: `pkgs/crate2nix/Cargo.nix` (modified, +13/-355)
 ```diff
-@@ -536,6 +536,69 @@ EXPIRED_FLOXHUB_TOKEN="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJodHRwczovL2Zsb3gu
-   assert_output --partial "back:auto2"
- }
+@@ -5295,6 +5295,8 @@ rec {
+           {
+             name = "oauth2";
+             packageId = "oauth2";
++            usesDefaultFeatures = false;
++            features = [ "reqwest" ];
+           }
+           {
+             name = "path-dedot";
+@@ -7182,13 +7184,6 @@ rec {
+             name = "cfg-if";
+             packageId = "cfg-if";
+           }
+-          {
+-            name = "js-sys";
+-            packageId = "js-sys";
+-            optional = true;
+-            usesDefaultFeatures = false;
+-            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)) && (builtins.elem "atomics" targetFeatures));
+-          }
+           {
+             name = "libc";
+             packageId = "libc";
+@@ -7243,13 +7238,6 @@ rec {
+             usesDefaultFeatures = false;
+             target = { target, features }: (("wasm32" == target."arch" or null) && ("wasi" == target."os" or null) && ("p2" == target."env" or null));
+           }
+-          {
+-            name = "wasm-bindgen";
+-            packageId = "wasm-bindgen";
+-            optional = true;
+-            usesDefaultFeatures = false;
+-            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)));
+-          }
+           {
+             name = "windows-targets";
+             packageId = "windows-targets 0.52.6";
+@@ -7260,7 +7248,7 @@ rec {
+           "rustc-dep-of-std" = [ "dep:compiler_builtins" "dep:core" ];
+           "wasm_js" = [ "dep:wasm-bindgen" "dep:js-sys" ];
+         };
+-        resolvedDefaultFeatures = [ "std" "wasm_js" ];
++        resolvedDefaultFeatures = [ "std" ];
+       };
+       "getrandom 0.4.2" = rec {
+         crateName = "getrandom";
+@@ -8343,11 +8331,6 @@ rec {
+             name = "tower-service";
+             packageId = "tower-service";
+           }
+-          {
+-            name = "webpki-roots";
+-            packageId = "webpki-roots 0.26.11";
+-            optional = true;
+-          }
+         ];
+         devDependencies = [
+           {
+@@ -8384,7 +8367,7 @@ rec {
+           "webpki-roots" = [ "dep:webpki-roots" ];
+           "webpki-tokio" = [ "webpki-roots" ];
+         };
+-        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" "webpki-roots" "webpki-tokio" ];
++        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" ];
+       };
+       "hyper-tls" = rec {
+         crateName = "hyper-tls";
+@@ -10291,17 +10274,6 @@ rec {
+           "forbid_unsafe" = [ "logos-codegen/forbid_unsafe" ];
+         };
+       };
+-      "lru-slab" = rec {
+-        crateName = "lru-slab";
+-        version = "0.1.2";
+-        edition = "2021";
+-        sha256 = "0m2139k466qj3bnpk66bwivgcx3z88qkxvlzk70vd65jq373jaqi";
+-        libName = "lru_slab";
+-        authors = [
+-          "Benjamin Saunders <ben.e.saunders@gmail.com>"
+-        ];
+-
+-      };
+       "matchers" = rec {
+         crateName = "matchers";
+         version = "0.2.0";
+@@ -11484,7 +11456,7 @@ rec {
+           "rustls-tls" = [ "reqwest/rustls-tls" ];
+           "ureq" = [ "dep:ureq" ];
+         };
+-        resolvedDefaultFeatures = [ "default" "reqwest" "rustls-tls" ];
++        resolvedDefaultFeatures = [ "reqwest" ];
+       };
+       "objc2-core-foundation" = rec {
+         crateName = "objc2-core-foundation";
+@@ -13154,253 +13126,6 @@ rec {
+         ];
  
-+# ---------------------------------------------------------------------------- #
-+# Forked subshells: zsh's chpwd functions and tcsh's cwdcmd alias also run when
-+# a fork of the shell changes directory, and `$$` there is still the parent's
-+# PID. The hook must do nothing in the fork, or it detaches the parent shell
-+# from an activation it is still using (DEV-415)
-+# ---------------------------------------------------------------------------- #
-+
-+# Each test auto-activates PROJECT2_DIR by cd'ing into it, leaves it from a
-+# `( ... )` subshell and from a command substitution, and then checks that the
-+# shell's own PID is still attached before it leaves for real.
-+
-+# bats test_tags=hook:forked-subshell:zsh
-+@test "zsh: cd in a forked subshell does not detach the parent's activation" {
-+  project_setup
-+  project2_setup
-+  # Auto-activation is opt-in; allow the target before entering it.
-+  "$FLOX_BIN" activate allow -d "$PROJECT2_DIR"
-+  STATE_JSON="$("$FLOX_BIN" activation-state -d "$PROJECT2_DIR")/state.json"
-+
-+  run --separate-stderr zsh -c "
-+    export FLOX_SHELL=\$(which zsh)
-+    eval \"\$($FLOX_BIN activate -d $PROJECT_DIR)\"
-+    cd $PROJECT2_DIR
-+    ( cd $BATS_TEST_TMPDIR )
-+    : \$(cd $BATS_TEST_TMPDIR)
-+    jq -e --arg pid \$\$ '.attached_pids | has(\$pid)' $STATE_JSON > /dev/null && echo attached
-+    echo \"during:\$TEST_VAR2\"
-+    cd $BATS_TEST_TMPDIR
-+    echo \"after:\${TEST_VAR2:-unset}\"
-+  "
-+  assert_success
-+  assert_output --partial "attached"
-+  assert_output --partial "during:auto2"
-+  assert_output --partial "after:unset"
-+  refute_regex "$stderr" "is not attached to the activation"
-+}
-+
-+# bats test_tags=hook:forked-subshell:tcsh
-+@test "tcsh: cd in a forked subshell does not detach the parent's activation" {
-+  project_setup
-+  project2_setup
-+  # Auto-activation is opt-in; allow the target before entering it.
-+  "$FLOX_BIN" activate allow -d "$PROJECT2_DIR"
-+  STATE_JSON="$("$FLOX_BIN" activation-state -d "$PROJECT2_DIR")/state.json"
-+
-+  run --separate-stderr tcsh -c "
-+    eval \"\`$FLOX_BIN activate -d $PROJECT_DIR\`\"
-+    cd $PROJECT2_DIR
-+    ( cd $BATS_TEST_TMPDIR )
-+    set unused = \`cd $BATS_TEST_TMPDIR\`
-+    jq -e --arg pid \$\$ '.attached_pids | has(\$pid)' $STATE_JSON > /dev/null && echo attached
-+    echo \"during:\$TEST_VAR2\"
-+    cd $BATS_TEST_TMPDIR
-+    if ( \$?TEST_VAR2 ) echo 'after:set'
-+    if ( ! \$?TEST_VAR2 ) echo 'after:unset'
-+  "
-+  assert_success
-+  assert_output --partial "attached"
-+  assert_output --partial "during:auto2"
-+  assert_output --partial "after:unset"
-+  refute_regex "$stderr" "is not attached to the activation"
-+}
-+
- # ---------------------------------------------------------------------------- #
- # Stacked auto-activation: nested projects activate outermost-first and the
- # whole stack unwinds in a single hook run on leaving
+       };
+-      "quinn" = rec {
+-        crateName = "quinn";
+-        version = "0.11.9";
+-        edition = "2021";
+-        sha256 = "086gzj666dr3slmlynkvxlndy28hahgl361d6bf93hk3i6ahmqmr";
+-        dependencies = [
+-          {
+-            name = "bytes";
+-            packageId = "bytes";
+-          }
+-          {
+-            name = "pin-project-lite";
+-            packageId = "pin-project-lite";
+-          }
+-          {
+-            name = "quinn-proto";
+-            packageId = "quinn-proto";
+-            rename = "proto";
+-            usesDefaultFeatures = false;
+-          }
+-          {
+-            name = "quinn-udp";
+-            packageId = "quinn-udp";
+-            rename = "udp";
+-            usesDefaultFeatures = false;
+-            features = [ "tracing" ];
+-          }
+-          {
+-            name = "rustc-hash";
+-            packageId = "rustc-hash 2.1.1";
+-          }
+-          {
+-            name = "rustls";
+-            packageId = "rustls";
+-            optional = true;
+-            usesDefaultFeatures = false;
+-            features = [ "std" ];
+-          }
+-          {
+-            name = "socket2";
+-            packageId = "socket2 0.6.1";
+-            target = { target, features }: (!((builtins.elem "wasm" target."family") && ("unknown" == target."os" or null)));
+-          }
+-          {
+-            name = "thiserror";
+-            packageId = "thiserror 2.0.18";
+-          }
+-          {
+-            
 ```
 
 ---
 
-### Incident Patch 2: `808fedb4` (2026-10-23)
-**Commit Message**: fix(containerize): honour cuda-detection and bake real /etc/passwd + /etc/group (#4772)
+### Incident Patch 2: `f2fc5f48` (2026-10-30)
+**Commit Message**: fix(cli): Drop the unused webpki-roots CA store
 
-## Proposed Changes
+`Cargo.lock` carries `webpki-roots` 1.0.3, which still trusts eMudhra, so
+SBOMs and dependency scanners flag the CLI after INC-35 even though the
+store is never used. Bumping to 1.0.10+ would silence this one scan but
+keep a dead CA store for the next root incident to flag, so remove it.
 
-Two independent defects in `flox containerize`, both originating in
-`mkContainer/mkContainer.nix`.
+The only thing enabling it is `oauth2`'s default `rustls-tls` feature. In
+this inverted tree from before the fix, trimmed to the relevant paths, each
+line is enabled by the lines nested under it:
 
-**1. `[options] cuda-detection` was ignored, and its default inverted.**
-`mkContainer.nix` hardcoded `flox_env_cuda_detection = "0"` into the
-activation
-context baked into every image. `activate.rs` treats only `Some(false)`
-as
-opt-out, so the constant ignored the manifest setting and turned CUDA
-detection
-**off by default** in every containerized environment. The gate in
-`0800_cuda.sh` then returns silently, `LD_FLOXLIB_FILES_PATH` is never
-populated, and Nix-built binaries cannot find the `libcuda.so.1` that
-the NVIDIA
-Container Toolkit injected correctly. No warning is emitted; a GPU
-workload just
-runs on CPU.
+    $ cargo tree -i webpki-roots@1.0.3 --target all -e features
+    webpki-roots v1.0.3
+    └── webpki-roots feature "default"
+        ├── reqwest v0.12.28
+        │   └── oauth2 v5.0.0
+        │       ├── oauth2 feature "default"
+        │       │   └── flox v0.0.0
+        │       │       └── flox feature "default" (command-line)
+        │       ├── oauth2 feature "reqwest"
+        │       │   ├── oauth2 feature "default" (*)
+        │       │   └── oauth2 feature "rustls-tls"
+        │       │       └── oauth2 feature "default" (*)
+        │       └── oauth2 feature "rustls-tls" (*)
+        │   ├── reqwest feature "__rustls"
+        │   │   └── reqwest f
 
-The value is now plumbed from the manifest, mirroring the `activate`
-path.
-
-**2. `/etc/passwd` and `/etc/group` were two-hop absolute symlinks.**
-Via `dockerTools.fakeNss`, images carried:
-
-/etc/passwd -> /nix/store/<h>-fake-nss/etc/passwd ->
-/nix/store/<h>-passwd/etc/passwd
-
-containerd reads both out of the container rootfs for *every* container:
-CRI
-defaults `user
-
-**File**: `cli/flox-rust-sdk/src/providers/container_builder.rs` (modified, +9/-0)
+**File**: `Cargo.lock` (modified, +1/-88)
 ```diff
-@@ -95,6 +95,7 @@ impl From<ContainerizeConfig> for OCIConfig {
- pub struct MkContainerNix {
-     store_path: BuiltStorePath,
-     activation_mode: ActivateMode,
-+    cuda_detection: bool,
-     container_config: Option<OCIConfig>,
- }
+@@ -2083,10 +2083,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "43a49c392881ce6d5c3b8cb70f98717b7c07aabbdff06687b9030dbfbe2725f8"
+ dependencies = [
+  "cfg-if",
+- "js-sys",
+  "libc",
+  "wasi 0.13.3+wasi-0.2.2",
+- "wasm-bindgen",
+  "windows-targets 0.52.6",
+ ]
  
-@@ -117,6 +118,7 @@ impl MkContainerNix {
-     /// Create a new [MkContainerNix] instance that will build a container
-     /// from the given [BuiltStorePath].
-     /// Generally, this should be the output of a [crate::providers::buildenv::BuildEnv::build].
-+    /// `cuda_detection` is the resolved manifest option, including its default.
-     ///
-     /// Note: this constructor is only available on Linux.
-     /// On macOS, use a macOS-specific implementation of [ContainerBuilder].
-@@ -127,11 +129,13 @@ impl MkContainerNix {
-     pub fn new(
-         store_path: BuiltStorePath,
-         activation_mode: ActivateMode,
-+        cuda_detection: bool,
-         container_config: Option<OCIConfig>,
-     ) -> Self {
-         Self {
-             store_path,
-             activation_mode,
-+            cuda_detection,
-             container_config,
-         }
-     }
-@@ -172,6 +176,11 @@ impl ContainerBuilder for MkContainerNix {
-             "activationMode",
-             &self.activation_mode.to_string(),
-         ]);
-+        command.args([
-+            "--arg",
-+            "cudaDetection",
-+            if self.cuda_detection { "true" } else { "false" },
-+        ]);
-         command.args([
-             "--argstr",
-             "interpreterPath",
-```
-
-**File**: `cli/flox/doc/flox-containerize.md` (modified, +12/-0)
-```diff
-@@ -42,6 +42,18 @@ Running the container non-interactively with `docker run <container id>`
- allows you to run a command within the container without launching a subshell,
- similar to `flox activate --`.
+@@ -2409,7 +2407,6 @@ dependencies = [
+  "tokio",
+  "tokio-rustls",
+  "tower-service",
+- "webpki-roots 0.26.11",
+ ]
  
-+## GPU access
-+
-+Container activation honors `[options] cuda-detection` in the environment
-+manifest, including options inherited from composed environments.
-+Detection is enabled by default; set `cuda-detection = false` to disable it.
-+This applies in both `dev` and `run` mode.
-+
-+The container runtime must expose the GPU devices and host driver libraries
-+inside the container, for example with the NVIDIA Container Toolkit.
-+CUDA detection discovers those libraries; it does not install a host driver
-+or grant access to GPU devices.
-+
- # OPTIONS
+ [[package]]
+@@ -3041,12 +3038,6 @@ dependencies = [
+  "logos-codegen",
+ ]
  
- `-f`, `--file`
-```
-
-**File**: `cli/flox/src/commands/containerize/mod.rs` (modified, +6/-2)
-```diff
-@@ -120,8 +120,12 @@ impl Containerize {
-                 });
-             // this method is only executed on linux
-             #[cfg_attr(not(target_os = "linux"), allow(deprecated))]
--            let builder =
--                MkContainerNix::new(built_environment.for_mode(&mode), mode, container_config);
-+            let builder = MkContainerNix::new(
-+                built_environment.for_mode(&mode),
-+                mode,
-+                manifest.options.cuda_detection.unwrap_or(true),
-+                container_config,
-+            );
+-[[package]]
+-name = "lru-slab"
+-version = "0.1.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "112b39cec0b298b6c1999fee3e31427f74f676e4cb9879ed1a121b43661a4154"
+-
+ [[package]]
+ name = "matchers"
+ version = "0.2.0"
+@@ -3943,61 +3934,6 @@ version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a1d01941d82fa2ab50be1e79e6714289dd7cde78eba4c074bc5a4374f650dfe0"
  
-             builder.create_container_source(&flox, env_name.as_ref(), output_tag)?
-         } else {
-```
-
-**File**: `cli/tests/container/test_verify_image.py` (added, +210/-0)
-```diff
-@@ -0,0 +1,210 @@
-+#!/usr/bin/env python3
-+"""Adversarial fixtures for the image verifier; no Flox or Nix needed."""
-+
-+import copy
-+import io
-+import json
-+import tarfile
-+import tempfile
-+import unittest
-+from pathlib import Path
-+
-+from verify_image import InvalidImage, verify_image
-+
-+CONTEXT = "nix/store/test-context/activations-context"
-+ENVIRONMENT = "/nix/store/test-environment"
-+PASSWD = ("root:x:0:0:root user:/var/empty:/bin/sh\n"
-+          "nobody:x:65534:65534:nobody:/var/empty:/bin/sh\n").encode()
-+GROUP = b"root:x:0:\nnobody:x:65534:\n"
-+
-+
-+def regular(data, mode=0o444):
-+    return (tarfile.REGTYPE, data, mode, 0, 0)
-+
-+
-+def directory(mode=0o755, uid=0, gid=0):
-+    return (tarfile.DIRTYPE, b"", mode, uid, gid)
-+
-+
-+def link(target, kind=tarfile.SYMTYPE):
-+    return (kind, target, 0o777, 0, 0)
-+
-+
-+def tar_bytes(entries):
-+    buffer = io.BytesIO()
-+    with tarfile.open(fileobj=buffer, mode="w") as archive:
-+        for name, (kind, data, mode, uid, gid) in entries.items():
-+            member = tarfile.TarInfo(name)
-+            member.type, member.mode, member.uid, member.gid = kind, mode, uid, gid
-+            if kind == tarfile.REGTYPE:
-+                member.size = len(data)
-+                archive.addfile(member, io.BytesIO(data))
-+            else:
-+                if kind in (tarfile.SYMTYPE, tarfile.LNKTYPE):
-+                    member.linkname = data
-+                archive.addfile(member)
-+    return buffer.getvalue()
-+
-+
-+class ImageVerifierTests(unittest.TestCase):
-+    def setUp(self):
-+        self.temporary = tempfile.TemporaryDirectory()
-+        self.addCleanup(self.temporary.cleanup)
-+        self.path = Path(self.temporary.name) / "image.tar"
-+        self.context = {
-+            "mode": "dev",
-+            "flox_activate_store_path": ENVIRONMENT,
-+            "attach_ctx": {"flox_env_cuda_detection": "1"},
-+        }
-+        self.config = {"config": {
-+            "Entrypoint": [ENVIRONMENT + "/libexec/flox-activations", "activate",
-+                           "--activate-data", "/" + CONTEXT],
-+        }}
-+        self.files = {
-+            "etc": directory(),
-+            "etc/passwd": regular(PASSWD),
-+            "etc/group": regular(GROUP),
-+            "tmp": directory(0o1777),
-+            "run": directory(0o1770),
-+            "run/flox": directory(0o1770),
-+            CONTEXT: regular(json.dumps(self.context).encode()),
-+        }
-+
-+    def write_image(self, *upper_layers, reverse_tar_order=False):
-+        layers = [self.files, *upper_layers]
-+        names = [f"layer-{i}/layer.tar" for i in range(len(layers))]
-+        entries = {
-+            "manifest.json": regular(json.dumps([{"Config": "config.json", "Layers": names}]).encode()),
-+            "config.json": regular(json.dumps(self.config).encode()),
-+        }
-+        physical = list(zip(names, layers))
-+        if reverse_tar_order:
-+            physical.reverse()
-+        entries.update((name, regular(tar_bytes(files))) for name, files in physical)
-+        self.path.write_bytes(tar_bytes(entries))
-+
-+    def verify(self, **kwargs):
-+        verify_image(self.path, **({"cuda": "1", "mode": "dev"} | kwargs))
-+
-+    def test_valid_cuda_and_mode_combinations(self):
-+        for cuda in ("0", "1"):
-+            for mode in ("dev", "run"):
-+                with self.subTest(cuda=cuda, mode=mode):
-+                    context = copy.deepcopy(self.context)
-+                    context["mode"] = mode
-+                    context["attach_ctx"]["flox_env_cuda_detection"] = cuda
-+                    self.files[CONTEXT] = regular(json.dumps(context).encode())
-+                    self.write_image()
-+                    self.verify(cuda=cuda, mode=mode)
-+
-+    def test_rejects_hardcoded_disabled_gate(self):
-+        self.context["attach_ctx"]["flox_env_cuda_detection"] = "0"
-+        self.files[CONTEXT] = regular(json.dumps(self.context).encode())
-+        self.write_image()
-+        with self.assertRaisesRegex(InvalidImage, "CUDA gate"):
-+            self.verify()
-+
-+    def test_rejects_wrong_activation_mode(self):
-+        self.write_image()
-+        with self.assertRaisesRegex(InvalidImage, "Activation mode"):
-+            self.verify(mode="run")
-+
-+    def test_rejects_account_links_independently(self):
-+        original = self.files.copy()
-+        for name in ("etc/passwd", "etc/group"):
-+            for kind in (tarfile.SYMTYPE, tarfile.LNKTYPE):
-+                for target in ("/nix/store/fake-nss/" + name, "../nix/store/fake-nss/" + name):
-+                    with self.subTest(name=name, kind=kind, target=target):
-+                        self.files = original.copy()
-+                        self.files[name] = link(target, kind)
-+                        self.files["nix/store/fake-nss/" + name] = link("/nix/store/accounts/" + name)
-+                        self.files["nix/store/accounts/" + name] = original[name]
-+                        self.write_image()
-+                        with self.a
-```
-
-**File**: `cli/tests/container/verify_image.py` (added, +180/-0)
-```diff
-@@ -0,0 +1,180 @@
-+#!/usr/bin/env python3
-+"""Check containerize's activation data and account files from image bytes only.
-+
-+This reads the Docker archive emitted by streamLayeredImage. It never extracts
-+an image or follows a link into the build machine's /nix/store. Only the handful
-+of files under test are retained while layer payloads are streamed once.
-+"""
-+
-+import argparse
-+import json
-+import posixpath
-+import sys
-+import tarfile
-+from dataclasses import dataclass
-+from pathlib import Path
-+
-+
-+class InvalidImage(ValueError):
-+    """The archive does not satisfy the containerize image contract."""
-+
-+
-+def require(condition, message):
-+    if not condition:
-+        raise InvalidImage(message)
-+
-+
-+def image_path(name):
-+    require(isinstance(name, str) and bool(name), f"Invalid image path: {name!r}")
-+    require(".." not in name.split("/"), f"Parent traversal in image path: {name!r}")
-+    return posixpath.normpath(name).lstrip("/").removeprefix("./")
-+
-+
-+def payload(archive, member):
-+    require(member.isreg(), f"{member.name}: expected a regular file")
-+    require(member.size <= 1024 * 1024, f"{member.name}: unexpectedly large test payload")
-+    with archive.extractfile(member) as source:
-+        return source.read()
-+
-+
-+@dataclass
-+class Entry:
-+    header: tarfile.TarInfo
-+    data: bytes | None
-+
-+
-+def selected_rootfs(archive, layers, wanted):
-+    """Fold selected paths and their ancestors in manifest order, not tar order."""
-+    watched = set(wanted)
-+    for name in wanted:
-+        parent = posixpath.dirname(name)
-+        while parent:
-+            watched.add(parent)
-+            parent = posixpath.dirname(parent)
-+    entries = {}
-+
-+    def remove_tree(name, children_only=False):
-+        for existing in list(entries):
-+            if (not children_only and existing == name) or existing.startswith(name + "/"):
-+                del entries[existing]
-+
-+    for layer_name in layers:
-+        layer_member = archive.getmember(layer_name)
-+        require(layer_member.isreg(), f"{layer_name}: expected a regular layer tar")
-+        added, removed = {}, []
-+        with archive.extractfile(layer_member) as source:
-+            with tarfile.open(fileobj=source, mode="r|*") as layer:
-+                for member in layer:
-+                    name = image_path(member.name)
-+                    parent, basename = posixpath.split(name)
-+                    if basename == ".wh..wh..opq":
-+                        removed.append((parent, True))
-+                    elif basename.startswith(".wh."):
-+                        removed.append((posixpath.join(parent, basename[4:]), False))
-+                    elif name in watched:
-+                        data = payload(layer, member) if name in wanted and member.isreg() else None
-+                        added[name] = Entry(member, data)
-+        # Whiteouts remove lower-layer entries, never entries from their own layer.
-+        for name, children_only in removed:
-+            if not name:
-+                entries.clear()
-+            else:
-+                remove_tree(name, children_only)
-+        for name in sorted(added, key=lambda value: value.count("/")):
-+            if not added[name].header.isdir():
-+                remove_tree(name, children_only=True)
-+            entries[name] = added[name]
-+    return entries
-+
-+
-+def checked_entry(entries, name, directory=False):
-+    require(name in entries, f"Image is missing {name}")
-+    parent = posixpath.dirname(name)
-+    while parent:
-+        if parent in entries:
-+            require(entries[parent].header.isdir(), f"{parent}: expected a real directory")
-+        parent = posixpath.dirname(parent)
-+    entry = entries[name]
-+    require(entry.header.isdir() if directory else entry.header.isreg(),
-+            f"{name}: expected a {'directory' if directory else 'regular file'}, "
-+            f"got tar type {entry.header.type!r} (link {entry.header.linkname!r})")
-+    return entry
-+
-+
-+def verify_image(path, *, cuda, mode, user="", passwd_lines=(), group_lines=(),
-+                 uid=0, gid=0, working_dir=None):
-+    with tarfile.open(path, mode="r:*") as image:
-+        manifest = json.loads(payload(image, image.getmember("manifest.json")))
-+        require(isinstance(manifest, list) and len(manifest) == 1,
-+                "Expected a single-image Docker archive")
-+        config = json.loads(payload(image, image.getmember(manifest[0]["Config"])))
-+        config = config["config"]
-+        require(config.get("User", "") == user,
-+                f"User: expected {user!r}, got {config.get('User', '')!r}")
-+        entrypoint = config["Entrypoint"]
-+        require(isinstance(entrypoint, list) and len(entrypoint) == 4
-+                and entrypoint[1:3] == ["activate", "--activate-data"],
-+                f"Unexpected activation entrypoint: {entrypoint!r}")
-+        context_path = image_path(entrypoint[3])
-+        wanted = {context_path, "etc/passwd", "etc/group", "tmp", "run", "
-```
-
-**File**: `cli/tests/containerize-image.bats` (added, +115/-0)
-```diff
-@@ -0,0 +1,115 @@
-+#! /usr/bin/env bats
-+# -*- mode: bats; -*-
-+# Inspect emitted image bytes without a GPU, root, or a container runtime.
-+# macOS still needs the existing runtime-backed containerize.bats suite.
-+
-+load test_support.bash
-+
-+# bats file_tags=containerize
-+
-+setup() {
-+  common_test_setup
-+  if [[ "$(uname -s)" != Linux ]]; then
-+    skip "Native image assembly requires Linux"
-+  fi
-+  setup_isolated_flox
-+  export _FLOX_USE_CATALOG_MOCK="$GENERATED_DATA/empty.yaml"
-+  export PROJECT_DIR="${BATS_TEST_TMPDIR?}/project"
-+  mkdir -p "$PROJECT_DIR"
-+  "$FLOX_BIN" init -d "$PROJECT_DIR"
-+}
-+
-+# Replace the init template so that the absent case really has no CUDA option.
-+set_image_manifest() {
-+  local setting="$1"
-+  local user="${2:-}"
-+  local working_dir="${3:-}"
-+  {
-+    with_latest_schema ""
-+    printf '\n[options]\n'
-+    if [[ "$setting" != absent ]]; then
-+      printf 'cuda-detection = %s\n' "$setting"
-+    fi
-+    if [[ -n "$user" ]]; then
-+      printf '\n[containerize.config]\nuser = "%s"\n' "$user"
-+      if [[ -n "$working_dir" ]]; then
-+        printf 'working-dir = "%s"\n' "$working_dir"
-+      fi
-+    fi
-+  } > "$BATS_TEST_TMPDIR/manifest.toml"
-+  "$FLOX_BIN" edit -d "$PROJECT_DIR" -f "$BATS_TEST_TMPDIR/manifest.toml"
-+}
-+
-+assert_image_modes() {
-+  local cuda="$1"
-+  shift
-+  local mode image
-+  for mode in dev run; do
-+    image="$BATS_TEST_TMPDIR/image-$mode.tar"
-+    run "$FLOX_BIN" containerize -d "$PROJECT_DIR" --mode "$mode" --file "$image"
-+    assert_success
-+    run python3 "$TESTS_DIR/container/verify_image.py" "$image" --mode "$mode" --cuda "$cuda" "$@"
-+    assert_success
-+    rm "$image"
-+  done
-+}
-+
-+@test "container image verifier rejects regressed archive payloads" {
-+  run python3 "$TESTS_DIR/container/test_verify_image.py"
-+  assert_success
-+}
-+
-+@test "containerize enables CUDA detection when the manifest option is absent" {
-+  set_image_manifest absent
-+  assert_image_modes 1
-+}
-+
-+@test "containerize honors explicit CUDA detection true" {
-+  set_image_manifest true
-+  assert_image_modes 1
-+}
-+
-+@test "containerize honors explicit CUDA detection false" {
-+  set_image_manifest false
-+  assert_image_modes 0
-+}
-+
-+@test "containerize preserves named user and group records and writable directories" {
-+  set_image_manifest absent foo:bar /workspace
-+  assert_image_modes 1 --user foo:bar --uid 10000 --gid 10000 --working-dir /workspace \
-+    --passwd-line 'foo:x:10000:10000:created by Flox:/var/empty:/bin/sh' \
-+    --group-line 'bar:x:10000:'
-+}
-+
-+@test "containerize preserves numeric user and group records and writable directories" {
-+  set_image_manifest false 1234:5678 /workspace
-+  assert_image_modes 0 --user 1234:5678 --uid 1234 --gid 5678 --working-dir /workspace \
-+    --passwd-line 'flox:x:1234:5678:created by Flox:/var/empty:/bin/sh' \
-+    --group-line 'flox:x:5678:'
-+}
-+
-+@test "containerize preserves an explicit root account without duplicate records" {
-+  set_image_manifest true root:root
-+  assert_image_modes 1 --user root:root
-+}
-+
-+@test "containerize uses the composed CUDA option and the top-level override" {
-+  local included="$BATS_TEST_TMPDIR/included"
-+  mkdir -p "$included"
-+  "$FLOX_BIN" init -d "$included"
-+  {
-+    with_latest_schema ""
-+    printf '\n[options]\ncuda-detection = false\n'
-+  } > "$BATS_TEST_TMPDIR/included.toml"
-+  "$FLOX_BIN" edit -d "$included" -f "$BATS_TEST_TMPDIR/included.toml"
-+  {
-+    with_latest_schema ""
-+    printf '\n[include]\nenvironments = [{ dir = "%s" }]\n' "$included"
-+  } > "$BATS_TEST_TMPDIR/composed.toml"
-+  "$FLOX_BIN" edit -d "$PROJECT_DIR" -f "$BATS_TEST_TMPDIR/composed.toml"
-+  assert_image_modes 0
-+
-+  printf '\n[options]\ncuda-detection = true\n' >> "$BATS_TEST_TMPDIR/composed.toml"
-+  "$FLOX_BIN" edit -d "$PROJECT_DIR" -f "$BATS_TEST_TMPDIR/composed.toml"
-+  assert_image_modes 1
-+}
-```
-
-**File**: `mkContainer/mkContainer.nix` (modified, +10/-1)
-```diff
-@@ -8,6 +8,8 @@
-   interpreterPath,
-   # what mode it should be activation with
-   activationMode,
-+  # Discover host-provided CUDA drivers unless the manifest opts out.
-+  cudaDetection ? true,
-   # the system to build for
-   system,
-   containerSystem,
-@@ -129,7 +131,7 @@ let
-       interpreter_path = "${interpreterPath}";
-       flox_prompt_environments = "floxenv";
-       set_prompt = true;
--      flox_env_cuda_detection = "0";
-+      flox_env_cuda_detection = if cudaDetection then "1" else "0";
-       flox_active_environments = "[]";
-     };
-     project_ctx = null;
-@@ -177,6 +179,13 @@ let
-         mkdir -m 1777 tmp
-         mkdir -m 1770 run
-         mkdir -p -m 1770 run/flox
-+
-+        # Container runtimes read these files before entering the container.
-+        # Absolute store symlinks can escape their rootfs-scoped lookup. Copy
-+        # the generated records, replacing links rather than writing through
-+        # them into the store. nsswitch.conf is only read inside the container.
-+        cp --remove-destination --dereference --preserve=mode \
-+          ${fakeNss}/etc/passwd ${fakeNss}/etc/group etc/
-       '';
+-[[package]]
+-name = "quinn"
+-version = "0.11.9"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b9e20a958963c291dc322d98411f541009df2ced7b5a4f2bd52337638cfccf20"
+-dependencies = [
+- "bytes",
+- "cfg_aliases",
+- "pin-project-lite",
+- "quinn-proto",
+- "quinn-udp",
+- "rustc-hash 2.1.1",
+- "rustls",
+- "socket2 0.6.1",
+- "thiserror 2.0.18",
+- "tokio",
+- "tracing",
+- "web-time",
+-]
+-
+-[[package]]
+-name = "quinn-proto"
+-version = "0.11.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4fcb935c5bec503c2f0e306bdd3e58bb9029dcb14fa8d9ac76e3a5256ac0763e"
+-dependencies = [
+- "bytes",
+- "getrandom 0.3.1",
+- "lru-slab",
+- "rand 0.9.5",
+- "ring",
+- "rustc-hash 2.1.1",
+- "rustls",
+- "rustls-pki-types",
+- "slab",
+- "thiserror 2.0.18",
+- "tinyvec",
+- "tracing",
+- "web-time",
+-]
+-
+-[[package]]
+-name = "quinn-udp"
+-version = "0.5.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd"
+-dependencies = [
+- "cfg_aliases",
+- "libc",
+- "once_cell",
+- "socket2 0.6.1",
+- "tracing",
+- "windows-sys 0.60.2",
+-]
+-
+ [[package]]
+ name = "quote"
+ version = "1.0.40"
+@@ -4209,16 +4145,13 @@ dependencies = [
+  "native-tls",
+  "percent-encoding",
+  "pin-project-lite",
+- "quinn",
+- "rustls",
+  "rustls-pki-types",
+  "serde",
+  "serde_json",
+  "serde_urlencoded",
+  "sync_wrapper",
+  "tokio",
+  "tokio-native-tls",
+- "tokio-rustls",
+  "tokio-util",
+  "tower",
+  "tower-http",
+@@ -4228,7 +4161,6 @@ dependencies = [
+  "wasm-bindgen-futures",
+  "wasm-streams",
+  "web-sys",
+- "webpki-roots 1.0.3",
+ ]
  
-       # symlinkJoin fails when drv contains a symlinked bin directory, so wrap in an additional buildEnv.
+ [[package]]
+@@ -4439,7 +4371,6 @@ version = "1.15.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "2f4925028c7eb5d1fcdaf196971378ed9d2c1c4efc7dc5d011256f76c99c0a96"
+ dependencies = [
+- "web-time",
+  "zeroize",
+ ]
+ 
+@@ -6238,24 +6169,6 @@ dependencies = [
+  "rustls-pki-types",
+ ]
+ 
+-[[package]]
+-name = "webpki-roots"
+-version = "0.26.11"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
+-dependencies = [
+- "webpki-roots 1.0.3",
+-]
+-
+-[[package]]
+-name = "webpki-roots"
+-version = "1.0.3"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "32b130c0d2d49f8b6889abc456e795e82525204f27c42cf767cf0d7734e089b8"
+-dependencies = [
+- "rustls-pki-types",
+-]
+-
+ [[package]]
+ name = "winapi"
+ version = "0.3.9"
+@@ -6278,7 +6191,7 @@ version = "0.1.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
+ dependencies = [
+- "windows-sys 0.59.0",
++ "windows-sys 0.48.0",
+ ]
+ 
+ [[package]]
 ```
 
-**File**: `pkgs/flox-cli-tests/default.nix` (modified, +2/-0)
+**File**: `Cargo.toml` (modified, +3/-1)
 ```diff
-@@ -37,6 +37,7 @@
-   parallel,
-   podman,
-   procps,
-+  python3,
-   pstree,
-   unixtools,
-   util-linux,
-@@ -86,6 +87,7 @@ let
-     yq
-     process-compose
-     procps
-+    python3
-     (podman.override (prev: {
-       extraPackages = [ "/run/wrappers" ];
-     }))
+@@ -82,7 +82,9 @@ zbus-secret-service-keyring-store = { version = "1", default-features = false, f
+ log = { version = "0.4.29", features = ["kv"] }
+ nef-lock-catalog = { path = "cli/nef-lock-catalog" }
+ nix = { version = "0.31", features = ["signal", "process", "user", "fs"] }
+-oauth2 = "5.0"
++# The default `rustls-tls` feature bundles a webpki CA store that reqwest never
++# uses, because native-tls takes precedence.
++oauth2 = { version = "5.0", default-features = false, features = ["reqwest"] }
+ path-dedot = "3.1.1"
+ pollster = "0.4.0"
+ progenitor-client = "0.11.2"
+```
+
+**File**: `checks/ca-roots.nix` (modified, +17/-0)
+```diff
+@@ -8,6 +8,11 @@
+ #   depend on it are still substituted.
+ # - The bundle doesn't trust the distrusted roots for TLS servers, but does
+ #   trust a control root, so the check can't pass by matching nothing.
++# - No crate compiles in its own roots. The system's roots are likely newer
++#   and more trustworthy. A list compiled into the binary, at any version,
++#   also can't pick up the distrust list above or a user's `SSL_CERT_FILE`.
++#   So `Cargo.lock`, which is what dependency scanners read, must not contain
++#   `webpki-roots`.
+ {
+   lib,
+   runCommand,
+@@ -41,6 +46,10 @@ let
+     crate2nix-flox-core = crate2nix-builds.crateEnvs.flox-core.NIXPKGS_CACERT_BUNDLE_CRT;
+     installers = flox.passthru.pkgsFor.cacert.outPath + "/etc/ssl/certs/ca-bundle.crt";
+   };
++
++  bundledRoots =
++    lib.filter (package: package.name == "webpki-roots")
++      (lib.importTOML ../Cargo.lock).package;
+ in
+ assert lib.assertMsg (lib.length (lib.unique (lib.attrValues bundles)) == 1) ''
+   flox's packages compile in different CA bundles:
+@@ -49,6 +58,14 @@ assert lib.assertMsg (cacert.outPath == stockCacert.outPath) ''
+   The package set's cacert is not the stock nixpkgs one, so every package that depends on it is rebuilt:
+     package set: ${cacert.outPath}
+     nixpkgs:     ${stockCacert.outPath}'';
++assert lib.assertMsg (bundledRoots == [ ]) ''
++  Cargo.lock contains webpki-roots ${
++    lib.concatMapStringsSep ", " (package: package.version) bundledRoots
++  }, which compiles in a fixed snapshot of CA roots.
++  Rust bundled roots aren't allowed, because the system's roots are likely newer and more trustworthy.
++  A list compiled into the binary, at any version, also can't pick up the distrust list or a user's `SSL_CERT_FILE`.
++  Use system roots instead: enable `rustls-tls-native-roots`, or disable the feature that enabled webpki-roots.
++  To find that feature, run 'cargo tree -i webpki-roots --target all -e features'.'';
+ runCommand "ca-roots"
+   {
+     nativeBuildInputs = [ openssl ];
+```
+
+**File**: `pkgs/crate2nix/Cargo.nix` (modified, +13/-355)
+```diff
+@@ -5295,6 +5295,8 @@ rec {
+           {
+             name = "oauth2";
+             packageId = "oauth2";
++            usesDefaultFeatures = false;
++            features = [ "reqwest" ];
+           }
+           {
+             name = "path-dedot";
+@@ -7182,13 +7184,6 @@ rec {
+             name = "cfg-if";
+             packageId = "cfg-if";
+           }
+-          {
+-            name = "js-sys";
+-            packageId = "js-sys";
+-            optional = true;
+-            usesDefaultFeatures = false;
+-            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)) && (builtins.elem "atomics" targetFeatures));
+-          }
+           {
+             name = "libc";
+             packageId = "libc";
+@@ -7243,13 +7238,6 @@ rec {
+             usesDefaultFeatures = false;
+             target = { target, features }: (("wasm32" == target."arch" or null) && ("wasi" == target."os" or null) && ("p2" == target."env" or null));
+           }
+-          {
+-            name = "wasm-bindgen";
+-            packageId = "wasm-bindgen";
+-            optional = true;
+-            usesDefaultFeatures = false;
+-            target = { target, features }: (("wasm32" == target."arch" or null) && (("unknown" == target."os" or null) || ("none" == target."os" or null)));
+-          }
+           {
+             name = "windows-targets";
+             packageId = "windows-targets 0.52.6";
+@@ -7260,7 +7248,7 @@ rec {
+           "rustc-dep-of-std" = [ "dep:compiler_builtins" "dep:core" ];
+           "wasm_js" = [ "dep:wasm-bindgen" "dep:js-sys" ];
+         };
+-        resolvedDefaultFeatures = [ "std" "wasm_js" ];
++        resolvedDefaultFeatures = [ "std" ];
+       };
+       "getrandom 0.4.2" = rec {
+         crateName = "getrandom";
+@@ -8343,11 +8331,6 @@ rec {
+             name = "tower-service";
+             packageId = "tower-service";
+           }
+-          {
+-            name = "webpki-roots";
+-            packageId = "webpki-roots 0.26.11";
+-            optional = true;
+-          }
+         ];
+         devDependencies = [
+           {
+@@ -8384,7 +8367,7 @@ rec {
+           "webpki-roots" = [ "dep:webpki-roots" ];
+           "webpki-tokio" = [ "webpki-roots" ];
+         };
+-        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" "webpki-roots" "webpki-tokio" ];
++        resolvedDefaultFeatures = [ "http1" "http2" "log" "logging" "native-tokio" "ring" "rustls-native-certs" "tls12" ];
+       };
+       "hyper-tls" = rec {
+         crateName = "hyper-tls";
+@@ -10291,17 +10274,6 @@ rec {
+           "forbid_unsafe" = [ "logos-codegen/forbid_unsafe" ];
+         };
+       };
+-      "lru-slab" = rec {
+-        crateName = "lru-slab";
+-        version = "0.1.2";
+-        edition = "2021";
+-        sha256 = "0m2139k466qj3bnpk66bwivgcx3z88qkxvlzk70vd65jq373jaqi";
+-        libName = "lru_slab";
+-        authors = [
+-          "Benjamin Saunders <ben.e.saunders@gmail.com>"
+-        ];
+-
+-      };
+       "matchers" = rec {
+         crateName = "matchers";
+         version = "0.2.0";
+@@ -11484,7 +11456,7 @@ rec {
+           "rustls-tls" = [ "reqwest/rustls-tls" ];
+           "ureq" = [ "dep:ureq" ];
+         };
+-        resolvedDefaultFeatures = [ "default" "reqwest" "rustls-tls" ];
++        resolvedDefaultFeatures = [ "reqwest" ];
+       };
+       "objc2-core-foundation" = rec {
+         crateName = "objc2-core-foundation";
+@@ -13154,253 +13126,6 @@ rec {
+         ];
+ 
+       };
+-      "quinn" = rec {
+-        crateName = "quinn";
+-        version = "0.11.9";
+-        edition = "2021";
+-        sha256 = "086gzj666dr3slmlynkvxlndy28hahgl361d6bf93hk3i6ahmqmr";
+-        dependencies = [
+-          {
+-            name = "bytes";
+-            packageId = "bytes";
+-          }
+-          {
+-            name = "pin-project-lite";
+-            packageId = "pin-project-lite";
+-          }
+-          {
+-            name = "quinn-proto";
+-            packageId = "quinn-proto";
+-            rename = "proto";
+-            usesDefaultFeatures = false;
+-          }
+-          {
+-            name = "quinn-udp";
+-            packageId = "quinn-udp";
+-            rename = "udp";
+-            usesDefaultFeatures = false;
+-            features = [ "tracing" ];
+-          }
+-          {
+-            name = "rustc-hash";
+-            packageId = "rustc-hash 2.1.1";
+-          }
+-          {
+-            name = "rustls";
+-            packageId = "rustls";
+-            optional = true;
+-            usesDefaultFeatures = false;
+-            features = [ "std" ];
+-          }
+-          {
+-            name = "socket2";
+-            packageId = "socket2 0.6.1";
+-            target = { target, features }: (!((builtins.elem "wasm" target."family") && ("unknown" == target."os" or null)));
+-          }
+-          {
+-            name = "thiserror";
+-            packageId = "thiserror 2.0.18";
+-          }
+-          {
+-            
 ```
 
 ---
 
-### Incident Patch 3: `7fe14cb9` (2026-10-23)
-**Commit Message**: feat(publish): Confirm a source lineage change before building (#4823)
+### Incident Patch 3: `cf7f326d` (2026-10-29)
+**Commit Message**: feat(build): carry the realm nixpkgs host through the flox-nixpkgs proxy (#4459)
 
-`flox publish` asked to replace a package's registered source only after
-building and uploading, when the final publish returned 409. With
-FloxHub reporting the registration from check-build (flox/floxhub#2765),
-the preflight asks first.
+Base catalog source builds discarded the host in the catalog's
+`locked_url` and fetched the revision from public GitHub. A revision
+available only on another host therefore failed to build.
 
-- Interactive: a reported lineage change prompts with the registered and
-requested sources (default no) before the build. Accepting binds the
-publish to that registration through `expected_registered_source`.
-- Non-interactive: the publish stops before building, with the existing
-`--allow-lineage-change` hint.
-- Re-registered during the build: the server refuses the bound publish
-and the CLI stops without retrying. Running it again confirms against
-the new registration.
-- Unchanged: `--allow-lineage-change` remains an unbound override that
-skips the preflight. The existing post-build confirmation from a 409
-still covers publishes that had no override, such as when the check
-failed or the server predates the report.
+Carry the locked URL's host, owner, and revision through the
+`flox-nixpkgs` proxy. Non-public hosts use shallow Git over HTTPS,
+allowing Git transport authentication. Public GitHub keeps its existing
+host-less proxy reference, tarball fetcher, and cache keys. Proxy cache
+entries include the host when specified.
 
-`Publisher::publish` takes a `LineageOverride` (`Refuse`, `Unbound`,
-`Expected`) in place of the boolean. The `catalog-api-v1` schema changes
-are a scoped, additiv
+The existing `flox`/`NixOS` owner restriction remains in place. This
+change covers the base-catalog source URL path; it does not change
+publish-time build-tool selection.
 
-**File**: `cli/flox-rust-sdk/src/providers/publish.rs` (modified, +203/-65)
+## Validation
+
+- Builds: `just build-cli` and `nix build --no-link .#flox-nix-plugins`
+passed against Nix 2.31.6.
+- Tests: both C++ plugin tests, all 67 Rust build-environment tests, and
+all three `flox-nixpkgs.bats` integration tests passed.
+- A local Git fixture verified non-public host transport, shallow
+locking, wrapped evaluation, host-specific proxy cache entries, and
+branch resolution.
+- All PR lint hooks passed: Clippy with warni
+
+**File**: `cli/flox-rust-sdk/src/providers/buildenv.rs` (modified, +102/-23)
 ```diff
-@@ -22,6 +22,7 @@ use floxhub_client::{
-     PublishReceipt,
-     PublishResponse,
-     PublishWarning,
-+    RegisteredSource,
-     SourceLineageChange,
-     UserBuildPublish,
-     UserDerivationInfo,
-@@ -129,6 +130,30 @@ pub enum PublishError {
-     InvalidDeepOverrideName(String),
+@@ -27,6 +27,7 @@ use rsevents_extra::Semaphore;
+ use serde::{Deserialize, Serialize};
+ use thiserror::Error;
+ use tracing::{Span, debug, info_span, instrument, trace, warn};
++use url::Url;
+ 
+ use super::nix::nix_base_command;
+ use super::nix_auth::{AuthError, AuthProvider};
+@@ -42,12 +43,6 @@ static BUILDENV_NIX: LazyLock<PathBuf> = LazyLock::new(|| {
+         .into()
+ });
+ 
+-/// Prefix of locked_url of catalog packages that are from the nixpkgs base-catalog.
+-/// This url was meant to serve as a flake reference to the Flox hosted mirror of nixpkgs,
+-/// but is both ill formatted and does not provide the necessary overrides
+-/// to allow evaluating packages without common evaluation checks, such as unfree and broken.
+-const NIXPKGS_CATALOG_URL_PREFIX: &str = "https://github.com/flox/nixpkgs?rev=";
+-
+ /// Returns `true` if `path` is accessible on the local filesystem.
+ ///
+ /// Uses `metadata()` rather than `Path::exists()` so callers can distinguish
+@@ -57,11 +52,54 @@ fn path_is_present(path: &str) -> bool {
+     std::fs::metadata(path).is_ok()
  }
  
-+/// Whether a publish may replace the package's registered source.
-+#[derive(Debug, Clone, PartialEq)]
-+pub enum LineageOverride {
-+    /// Refuse a change to the registered source.
-+    Refuse,
-+    /// Replace whichever source is registered.
-+    Unbound,
-+    /// Replace the registered source only while it is still this one.
-+    Expected(RegisteredSource),
-+}
+-/// The base flake reference invoking the `flox-nixpkgs` fetcher.
+-/// This is a bridge to the Flox hosted mirror of nixpkgs flake,
+-/// which enables building packages without common evaluation checks,
+-/// such as unfree and broken.
+-const FLOX_NIXPKGS_PROXY_FLAKE_REF_BASE: &str = "flox-nixpkgs:v0/flox";
++/// Scheme and rules-version of the `flox-nixpkgs` proxy fetcher. The proxy wraps
++/// the realm's nixpkgs base catalog so evaluation checks (allowUnfree,
++/// allowBroken) are controlled by manifest options rather than Nix's built-in
++/// guards.
++const FLOX_NIXPKGS_SCHEME: &str = "flox-nixpkgs:v0";
 +
-+impl LineageOverride {
-+    fn apply(&self, build_info: &mut UserBuildPublish) {
-+        (
-+            build_info.allow_lineage_change,
-+            build_info.expected_registered_source,
-+        ) = match self {
-+            LineageOverride::Refuse => (false, None),
-+            LineageOverride::Unbound => (true, None),
-+            LineageOverride::Expected(source) => (true, Some(source.clone())),
-+        };
++/// Build the `flox-nixpkgs` proxy flake ref for a base catalog package's
++/// fully-qualified `locked_url`
++/// (`https://<host>/<owner>/nixpkgs?rev=<rev>`, as mastered by the realm's
++/// catalog server).
++///
++/// The realm host is carried through as the proxy's `?host=` attribute so the
++/// fetch targets the nixpkgs the catalog server actually mastered (e.g. an
++/// on-premise fork) rather than defaulting to github.com. Only the host, owner,
++/// and rev are needed — the proxy always wraps `<owner>/nixpkgs`.
++fn flox_nixpkgs_flake_ref(locked_url: &str, attr_path: &str) -> Result<String, BuildEnvError> {
++    let malformed = |detail: &str| {
++        BuildEnvError::LockfileContents(format!(
++            "Locked package '{attr_path}' is a base catalog package, but its locked url '{locked_url}' {detail}."
++        ))
++    };
++
++    let url =
++        Url::parse(locked_url).map_err(|err| malformed(&format!("is not a valid URL: {err}")))?;
++    let host = url.host_str().ok_or_else(|| malformed("has no host"))?;
++    // The owner is passed through verbatim. The flox-nixpkgs proxy still
++    // constrains it to `flox`/`NixOS`; relaxing that allowlist to arbitrary
++    // realm orgs is out of scope for this effort (tracked with SL-007).
++    let owner = url
++        .path_segments()
++        .and_then(|mut segments| segments.find(|segment| !segment.is_empty()))
++        .ok_or_else(|| malformed("has no owner path segment"))?;
++    let rev = url
++        .query_pairs()
++        .find(|(key, _)| key == "rev")
++        .map(|(_, value)| value.into_owned())
++        .ok_or_else(|| malformed("has no 'rev' query parameter"))?;
++
++    // Omit `?host=` for github.com so a public ref stays byte-identical to the
++    // pre-host form (`flox-nixpkgs:v0/<owner>/<rev>`). The proxy treats absent
++    // and `github.com` hosts identically, but the fetcher cache keys on the
++    // `host` attr — so adding `?host=github.com` would miss every existing
++    // cache entry and needlessly re-fetch public nixpkgs after an upgrade.
++    if host == "github.com" {
++        return Ok(format!("{FLOX_NIXPKGS_SCHEME}/{owner}/{rev}"));
 +    }
++    Ok(format!("{FLOX_NIXPKGS_SCHEME}/{owner}/{rev}?host={host}"))
 +}
+ 
+ /// Name to use in error messages when a package can't be downloaded from
+ /// `cache.nixos.org` as a fallback for other locations.
+@@ -336,18 +374,12 @@ pub fn build_catalog_pkg_from_source(
+     broken: Option<bool>,
+     gc_root_prefix: Option<&Path>,
+ ) -> Result<(), BuildEnvError> {
+-    // Transform the locked URL: strip the nixpkgs GitHub prefix and replace
+-    // it with the flox-nixpkgs fetcher reference so that evaluation checks
+-    // (allowUnfree, allowBroken) are controlled by manifest options rather
+-    // than Nix's built-in guards.
+-    let flake_ref = if let Some(rev) = locked_url.strip_prefix(NIXPKGS_CATALOG_URL_PREFIX) {
+-        format!("{FLOX_NIXPKGS_PROXY_FLAKE_REF_BASE}/{rev}")
+-    } else {
+-        return Err(BuildEnvError::LockfileContents(format!(
+-            "Locked package '{}' is a base catalog package, but the locked url '{}' does not start with the expected prefix '{}'",
+-            attr_path, locked_url, NIXPKGS_CATALOG_URL_PREFIX
+-        )));
+-    };
++    // Route the base catalog package through the flox-nixpkgs proxy fetcher so
++    // e
+```
+
+**File**: `nix-plugins/src/fetchers/wrapped-nixpkgs-input.cc` (modified, +58/-12)
+```diff
+@@ -145,18 +145,38 @@ createWrappedFlakeDir( nix::EvalState &      state,
+ 
+ 
+ /**
+- * @brief Helper used to convert a `flox-nixpkgs` attribute set representation,
+- *        to a `github` attribute set representation.
++ * @brief Convert a `flox-nixpkgs` attribute set to the underlying fetcher's
++ *        attribute set — `github` for github.com, `git` for any other host.
++ *
++ * github.com keeps the fast GitHub tarball fetcher. A non-github.com host
++ * (an on-premise GitHub Enterprise realm) is fetched over `git+https` instead:
++ * the GitHub REST tarball API authenticates only with access tokens, whereas
++ * git-over-https negotiates Kerberos/SPNEGO — which is how an enterprise host
++ * behind Kerberos is reached. This also matches the CLI's resolve prefetch,
++ * which already fetches the same rev over git, so it reuses Nix's git cache.
+  */
+ static nix::fetchers::Attrs
+-floxNixpkgsAttrsToGithubAttrs( const nix::fetchers::Attrs & attrs )
++floxNixpkgsAttrsToFetcherAttrs( const nix::fetchers::Attrs & attrs )
+ {
++  auto owner = nix::fetchers::getStrAttr( attrs, "owner" );
++  auto host  = nix::fetchers::maybeGetStrAttr( attrs, "host" );
 +
- /// Publish outcome that lets the command show warnings before polling.
- #[derive(Debug, Clone, PartialEq, Default)]
- pub struct PublishOutcome {
-@@ -161,8 +186,10 @@ pub trait Publisher {
-     /// process environment; this trait does not read the environment
-     /// itself.
-     ///
--    /// `allow_lineage_change` explicitly authorizes a source change. Otherwise,
--    /// `confirm_lineage_change` is called only after a lineage refusal, before
-+    /// `lineage_override` authorizes a source change, unconditionally or
-+    /// only while the registration is the one the user confirmed. With
-+    /// [`LineageOverride::Refuse`], `confirm_lineage_change` is called only
-+    /// after a lineage refusal, before
-     /// retrying the metadata submission once. Returning `Ok(false)` preserves the
-     /// refusal when confirmation is unavailable. Returning
-     /// `Err(PublishError::LineageChangeDeclined)` signals an explicit decline
-@@ -178,7 +205,7 @@ pub trait Publisher {
-         key_file: Option<PathBuf>,
-         metadata_only: bool,
-         factory_build_token: Option<&str>,
--        allow_lineage_change: bool,
-+        lineage_override: LineageOverride,
-         confirm_lineage_change: impl AsyncFnOnce(&SourceLineageChange) -> Result<bool, PublishError>,
-     ) -> Result<PublishOutcome, PublishError>;
-     async fn wait_for_publish_completion(
-@@ -196,17 +223,19 @@ async fn publish_build_with_confirmation(
-     catalog_name: &str,
-     package_name: &str,
-     mut build_info: UserBuildPublish,
-+    lineage_override: LineageOverride,
-     confirm: impl AsyncFnOnce(&SourceLineageChange) -> Result<bool, PublishError>,
- ) -> Result<PublishReceipt, PublishError> {
-+    lineage_override.apply(&mut build_info);
-     tracing::debug!(?build_info, "Publishing build in catalog...");
-     let result = client
-         .publish_build(catalog_name, package_name, &build_info)
-         .await;
-     if let Err(FloxhubClientError::SourceLineageChange(change)) = &result
--        && !build_info.allow_lineage_change
-+        && lineage_override == LineageOverride::Refuse
-         && confirm(change).await?
+   nix::fetchers::Attrs _attrs;
+-  _attrs["type"] = "github";
+-  _attrs["repo"] = "nixpkgs";
+ 
+-  /* Inherit owner field (could be NixOS or flox) */
+-  _attrs["owner"] = nix::fetchers::getStrAttr( attrs, "owner" );
++  if ( host.has_value() && ( *host != "github.com" ) )
++    {
++      /* Enterprise host: fetch over git so the transport can do Kerberos. */
++      _attrs["type"]    = "git";
++      _attrs["url"]     = "https://" + *host + "/" + owner + "/nixpkgs";
++      _attrs["shallow"] = nix::Explicit<bool> { true };
++    }
++  else
++    {
++      /* Public github.com: keep the faster GitHub tarball fetcher. */
++      _attrs["type"]  = "github";
++      _attrs["repo"]  = "nixpkgs";
++      _attrs["owner"] = owner;
++    }
+ 
+   /* Inherit `rev' and `ref' fields */
+   if ( auto rev = nix::fetchers::maybeGetStrAttr( attrs, "rev" ) )
+@@ -181,7 +201,7 @@ floxNixpkgsAttrsToGithubAttrs( const nix::fetchers::Attrs & attrs )
+ /**
+  * @brief Helper used to convert a `github` attribute set representation,
+  *        to a `flox-nixpkgs` attribute set representation.
+- * @note This is the inverse of `floxNixpkgsAttrsToGithubAttrs`.
++ * @note Inverse of the github branch of `floxNixpkgsAttrsToFetcherAttrs`.
+  * @param attrs The attribute set representation of an (assumed) `github` input.
+  * @return The attribute set representation of a `flox-nixpkgs` input.
+  * @throws nix::Error If the input type is not `github`.
+@@ -225,6 +245,12 @@ githubAttrsToFloxNixpkgsAttrs( const nix::fetchers::Attrs & attrs )
+   /* Inherit `owner' field */
+   _attrs["owner"] = owner;
+ 
++  /* Inherit an enterprise `host' if present (github.com when absent). */
++  if ( auto host = nix::fetchers::maybeGetStrAttr( attrs, "host" ) )
++    {
++      _attrs["host"] = *host;
++    }
++
+   /* Inherit `rev' and `ref' fields */
+   if ( auto rev = nix::fetchers::maybeGetStrAttr( attrs, "rev" ) )
      {
--        build_info.allow_lineage_change = true;
-+        LineageOverride::Unbound.apply(&mut build_info);
-         tracing::debug!("Retrying build publish with confirmed lineage change...");
-         return client
-             .publish_build(catalog_name, package_name, &build_info)
-@@ -705,7 +734,7 @@ where
-         key_file: Option<PathBuf>,
-         metadata_only: bool,
-         factory_build_token: Option<&str>,
--        allow_lineage_change: bool,
-+        lineage_override: LineageOverride,
-         confirm_lineage_change: impl AsyncFnOnce(&SourceLineageChange) -> Result<bool, PublishError>,
-     ) -> Result<PublishOutcome, PublishError> {
-         // Step 2 hit /publish
-@@ -782,7 +811,7 @@ where
-                 .rel_expression_build_base_dir
-                 .to_string_lossy()
-                 .into_owned(),
--            allow_lineage_change,
-+            allow_lineage_change: false,
-             expected_registered_source: None,
-             factory_build_token: factory_build_token.map(str::to_string),
-             // Always sent, mirroring `locked_inputs` above: an empty list
-@@ -804,6 +833,7 @@ where
-             catalog_name,
-             self.package_metadata.package.name().as_ref(),
-             build_info,
-+            lineage_override,
-             confirm_lineage_change,
-         )
-         .await?;
-@@ -1583,18 +1613,26 @@ pub mod tests {
-     const LINEAGE_CHANGE_DETAIL: &str = "test/hello is registered to github.com/org/original (ref main); this publish is from github.com/org/moved (ref release). Retry with allow_lineage_change=true to replace the registered source.";
-     const INPUT_LINEAGE_WARNING: &str = "dependency moved to a newer source lineage";
- 
-+    /// What the test observed during one publish through `publish_build_with
-```
-
-**File**: `cli/flox/doc/flox-publish.md` (modified, +18/-20)
-```diff
-@@ -88,6 +88,19 @@ Finally, the package is uploaded to the default Catalog, which is named after
- your user, but you may specify the catalog to publish to via the `--catalog`
- option.
- 
-+## Source registration
-+
-+Each package is registered to the source repository and ref it is published
-+from.
-+Before building, `flox publish` checks whether this publish would change that
-+registration.
-+If it would, an interactive publish shows the registered and requested sources
-+and asks for confirmation, which defaults to no.
-+A non-interactive publish stops instead.
-+If the registration changes again while the package builds, the publish stops.
-+Run it again to confirm the new source.
-+To replace the registration without asking, use `--allow-lineage-change`.
-+
- ## After publishing
- 
- After the package is published, it will be available to the `flox install`,
-@@ -147,26 +160,11 @@ Note that this is a paid feature available with Flox for Teams.
-     'flox config'.
- 
- `--allow-lineage-change`
--:   Explicitly authorize replacing the package's registered source repository
--    or ref. Use it only when that replacement is intentional.
--    Without this option, a refused source change requires interactive
--    confirmation showing the registered and requested sources. Confirmation
--    defaults to no. In a non-interactive environment, a refused source change
--    fails without prompting. For an intentional replacement, repeat the
--    original command with `--allow-lineage-change` added. Leave this option
--    unset for routine CI publishing.
--
--    This option bypasses the check for an already-published build, even when
--    the registered source has not changed. Publishing can therefore repeat
--    build and upload preparation.
--
--    Without this option, changing only the ref at an already-published commit
--    with the same build inputs can report "already published" without prompting
--    or updating the registered ref. Moving back to a previously published
--    repository and revision can also report "already published" without
--    prompting or updating the registration. Both cases affect interactive and
--    non-interactive publishing. Use `--allow-lineage-change` only when the
--    replacement is intentional.
-+:   Replace the package's registered source without asking.
-+    The publish replaces whichever source is registered when it completes.
-+    It also skips the already-published check, so the publish may repeat build
-+    and upload preparation.
-+    Use it only for an intentional replacement, not for routine CI publishing.
- 
- `--stability <stability>`
- :   Perform a Nix expression build using a base package set of the given
-```
-
-**File**: `cli/flox/src/commands/publish.rs` (modified, +204/-74)
-```diff
-@@ -17,6 +17,7 @@ use flox_rust_sdk::providers::build::{
- };
- use flox_rust_sdk::providers::nix_auth::NixAuth;
- use flox_rust_sdk::providers::publish::{
-+    LineageOverride,
-     PublishError,
-     PublishOutcome,
-     PublishProvider,
-@@ -32,6 +33,7 @@ use floxhub_client::{
-     CheckBuildResponse,
-     FloxhubClientError,
-     PackageSystem,
-+    RegisteredSource,
-     SourceLineageChange,
- };
- use indoc::formatdoc;
-@@ -92,10 +94,14 @@ async fn finish_accepted_publish(
-     Ok(())
- }
- 
--async fn confirm_lineage_change(change: &SourceLineageChange) -> Result<bool, PublishError> {
--    if !Dialog::can_prompt() {
--        return Ok(false);
--    }
-+/// Format a source for the lineage prompt as its URL and bare branch name.
-+fn display_source(url: &str, ref_: Option<&str>) -> String {
-+    let ref_ = ref_.map(|ref_| ref_.strip_prefix("refs/heads/").unwrap_or(ref_));
-+    format!("{url} (ref {})", ref_.unwrap_or("unset"))
-+}
-+
-+/// Ask to replace the registered source; declining cancels the publish.
-+async fn prompt_lineage_change(registered: &str, requested: &str) -> Result<(), PublishError> {
-     message::warning(formatdoc! {
-         "Package source repository or ref has changed.
-         Registered source: {registered}
-@@ -107,8 +113,6 @@ async fn confirm_lineage_change(change: &SourceLineageChange) -> Result<bool, Pu
- 
-         Continue only if the requested repository and ref are the intended source for
-         this package going forward.",
--        registered = change.registered,
--        requested = change.requested,
-     });
-     let confirmed = Dialog {
-         message: "Change the registered source and publish?",
-@@ -128,9 +132,25 @@ async fn confirm_lineage_change(change: &SourceLineageChange) -> Result<bool, Pu
-     if !confirmed {
-         return Err(PublishError::LineageChangeDeclined);
+@@ -260,7 +286,7 @@ WrappedNixpkgsInputScheme::inputFromAttrs(
+     {
+       if ( ( name != "owner" ) && ( name != "type" ) && ( name != "ref" )
+            && ( name != "rev" ) && ( name != "narHash" )
+-           && ( name != "version" ) )
++           && ( name != "version" ) && ( name != "host" ) )
+         {
+           throw nix::Error( "unsupported flox-nixpkgs input attribute '%s'",
+                             name );
+@@ -384,6 +410,13 @@ WrappedNixpkgsInputScheme::inputFromURL(
+         path[1] );
      }
-+    Ok(())
-+}
-+
-+async fn confirm_lineage_change(change: &SourceLineageChange) -> Result<bool, PublishError> {
-+    if !Dialog::can_prompt() {
-+        return Ok(false);
+ 
++  /* Optional enterprise `host' (e.g. `?host=github.company.com'); defaults to
++   * github.com in the github fetcher when absent. */
++  if ( auto it = url.query.find( "host" ); it != url.query.end() )
++    {
++      input.attrs.insert_or_assign( "host", it->second );
 +    }
-+    prompt_lineage_change(&change.registered, &change.requested).await?;
-     Ok(true)
- }
- 
-+/// A declined confirmation is a deliberate cancel, not a failure.
-+fn publish_failure(err: PublishError) -> anyhow::Error {
-+    match err {
-+        err @ PublishError::LineageChangeDeclined => err.into(),
-+        err => anyhow!("Failed to publish package: {}", display_chain(&err)),
-+    }
-+}
 +
- /// Carries the Factory's per-build token into the build pod. Read by
- /// [`factory_build_token_from_env`] and forwarded, unread, on the two
- /// catalog-server calls `flox publish` makes.
-@@ -158,39 +178,72 @@ fn factory_build_token_from_env() -> Option<String> {
-     token
+   return input;
  }
  
--/// Outcome of the dedup pre-check against the catalog.
-+/// What the check-build preflight reports about this publish.
- #[derive(Debug)]
--enum DedupOutcome {
--    /// The server confirmed this exact build (by closure identity) was already
--    /// published. The caller should display provenance and skip the upload.
-+enum Preflight {
-+    /// Publishing would replace this registered source.
-+    LineageChanged(RegisteredSource),
-+    /// The server confirmed this exact build (by closure identity) was
-+    /// already published. The caller should display provenance and skip the
-+    /// upload.
-     AlreadyPublished(CheckBuildResponse),
-     /// The build is new; proceed with the publish.
-     New,
--    /// The check request itself failed (network error, server error, etc.).
--    /// A failed check must never block a publish — it is a best-effort
--    /// optimisation only.
--    CheckFailed(FloxhubClientError),
- }
- 
--/// Map the raw check-build result to a [`DedupOutcome`].
--///
--/// An `Err` result (network failure, server error, etc.) maps to
--/// `CheckFailed` rather than propagating: the dedup pre-check must never
--/// prevent a legitimate publish.
--fn dedup_outcome(result: Result<CheckBuildResponse, FloxhubClientError>) -> DedupOutcome {
--    match result {
--        Ok(resp) if resp.already_published => DedupOutcome::AlreadyPublished(resp),
--        Ok(_) => DedupOutcome::New,
--        Err(e) => DedupOutcome::CheckFailed(e),
-+/// Classify a check-build response. A lineage change wins over a
-+/// duplicate: replacing the registration still needs a publish.
-+fn preflight(response: CheckBuildResponse) -> Preflight {
-+    match response {
-+        CheckBuildResponse {
-+            lineage_changed: true,
-+            registered_source: Some(registered),
-+            ..
-+        } => Preflight::LineageChanged(registered),
-+        response if response.already_published => Preflight::AlreadyPublished(response),
-+        _ => Preflight::New,
+@@ -425,6 +458,12 @@ WrappedNixpkgsInputScheme::toURL( const nix::fetchers::Input & input ) const
+       throw nix::Error( "missing 'rev' or 'ref' attribute in input" );
      }
+ 
++  /* Round-trip an enterprise `host' as a query attribute. */
++  if ( auto host = nix::fetchers::maybeGetStrAttr( input.attrs, "host" ) )
++    {
++      url.query.insert_or_assign( "host", *host );
++    }
++
+   return url;
  }
  
--/// Run the dedup check and report whether the publish should stop because
--/// this exact build was already published, printing its provenance when so.
--/// A failed check warns and lets the publish continue.
--async fn dedup_short_circuit(client: &impl CatalogClientTrait, query: CheckBuildQuery<'_>) -> bool {
--    mat
+@@ -487,7 +526,7 @@ WrappedNixpkgsInputScheme::clone( const nix::fetchers::Input & input,
+ {
+   auto githubInput = nix::fetchers::Input::fromAttrs(
+     *input.settings,
+-    floxNixpkgsAttrsToGithubAttrs( input.attrs ) );
++    floxNixpkgsAttrsToFetcherAttrs( input.attrs ) );
+   githubInput.clone( destDir );
+ }
+ 
+@@ -521,7 +560,7 @@ WrappedNixpkgsInputScheme::getAccessor(
+       /* Use existing GitHub fetcher in `nix' to lookup `rev'. */
+       auto githubInput = nix::fetchers::Input::fromAttrs(
+         *input.settings,
+-        floxNixpkgsAttrsToGithubAttrs( input.attrs ) );
++        floxNixpkgsAttrsToFetcherAttrs( input.attrs ) );
+       rev = githubInput.getAccessor( store ).second.getRev();
+     }
+   /* Now that we have a `rev'
 ```
 
-**File**: `cli/floxhub-client/src/types.rs` (modified, +1/-0)
+**File**: `nix-plugins/tests/flox-nixpkgs.cc` (modified, +23/-0)
 ```diff
-@@ -109,6 +109,7 @@ pub use api_types::{
-     PackageDerivation as UserDerivationInfo,
-     PublishInfoResponseCatalog as PublishResponse,
-     PublishWarning,
-+    RegisteredSource,
-     StoreInfo,
-     StoreInfoRequest,
-     StoreInfoResponse,
+@@ -63,6 +63,28 @@ test_inputFromAttrs( nix::ref<nix::EvalState> & state )
+ }
+ 
+ 
++/* -------------------------------------------------------------------------- */
++
++/**
++ * @brief Test an enterprise `host' round-trips through parse and serialize, so
++ *        a realm's on-premise nixpkgs host is carried through the proxy.
++ */
++bool
++test_URLRoundtripWithHost( nix::ref<nix::EvalState> & state )
++{
++  WrappedNixpkgsInputScheme inputScheme;
++  auto url = "flox-nixpkgs:v0/flox/" + nixpkgsRev + "?host=github.company.com";
++  auto input = inputScheme.inputFromURL( state->fetchSettings,
++                                         nix::parseURL( url ),
++                                         true );
++  EXPECT( input.has_value() );
++  EXPECT_EQ( nix::fetchers::getStrAttr( input->attrs, "host" ),
++             "github.company.com" );
++  EXPECT_EQ( inputScheme.toURL( *input ).to_string(), url );
++  return true;
++}
++
++
+ /* -------------------------------------------------------------------------- */
+ 
+ bool
+@@ -129,6 +151,7 @@ main()
+                                               nix::evalSettings );
+ 
+   RUN_TEST( URLRoundtrip, state );
++  RUN_TEST( URLRoundtripWithHost, state );
+   RUN_TEST( inputFromAttrs, state );
+   RUN_TEST( lockedFromUrl, state );
+   RUN_TEST( lockedRepresentation, state );
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4835** (2026-10-24): chore(nix): add the CI R2 cache as a flake substituter (@devusb)
-- **PR #4832** (2026-10-21): fix(containerize): install flox's own CA bundle at /etc/ssl/certs (@imkarrer)
-- **PR #4831** (closed): fix(security): scope the cacert distrust to the bundle flox ships (@imkarrer)
-- **PR #4830** (2026-10-23): chore: Release 1.19.1 (@stephenyeargin)
-- **PR #4829** (closed): fix(interpreter): undo the certificate default of envrc files rendered before 1.19.1 (@limeytexan)
-- **PR #4828** (2026-10-21): fix(activate): ignore certificate defaults in envrc rendered by 1.19.0 and earlier (@tanjadev)
+- **PR #4855** (2026-10-30): fix(cli): Drop the unused webpki-roots CA store (@dcarley)
+- **PR #4854** (2026-10-29): fix(nix): substitute CI builds from cache.floxsdlc.com (@devusb)
+- **PR #4853** (2026-10-29): chore: community CI (@mkenigs)
+- **PR #4851** (2026-10-28): chore: Release 1.19.3 (@mkenigs)
+- **PR #4843** (2026-10-26): fix(nix): skip AWS SDK unit tests on Intel macOS (@mkenigs)
+- **PR #4842** (2026-10-27): docs(readme): point AI agent links at flox-skills (@imkarrer)
 
 ---
 
@@ -2649,45 +2607,28 @@ are a scoped, additiv
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. auto-activate): keep the prompt hook out of forked subshells (#4813)
+## X. cli): Drop the unused webpki-roots CA store (#4855)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a206749`: auto-activate): keep the prompt hook out of forked subshells (#4813). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da039c11`: cli): Drop the unused webpki-roots CA store (#4855). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Shell hooks and forked subshells
-
-**Shell code that Flox registers to run on a directory change MUST do nothing
-in a forked subshell.** zsh's `chpwd_functions` and tcsh's `cwdcmd` alias also
-run when a fork of the shell changes directory, and `$$` there still expands
-to the parent's PID:
-
-```zsh
-x=$(cd .. && pwd)   # the hook must not act here
-( cd .. )           # nor here
-```
-
-A hook that acts in the fork detaches the parent shell from an activation it is
-still using. zsh's own `cd` completion runs a command substitution like the one
-above, so no unusual setup is needed to hit it. Never treat `$$` as proof that
-the interactive shell itself is running the code; guard new hooks the way
-`zsh_hook` and `tcsh_hook` do in `cli/flox-activations/src/hook.rs`.
-
+          for package in 'checks.${{ matrix.system }}.ca-roots' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+          for package in 'checks.${{ matrix.system }}.cacert-distrust' 'packages.${{ matrix.system }}.flox-nix-plugins' 'packages.${{ matrix.system }}.flox-cli' 'packages.${{ matrix.system }}.flox' 'packages.${{ matrix.system }}.flox-cli-tests'; do
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a206749` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da039c11` are properly handled with clean fallback behavior.

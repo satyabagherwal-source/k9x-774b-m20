@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/boardgameio-boardgame.io-learnings.md`  
 > **Source**: github ([https://github.com/boardgameio/boardgame.io](https://github.com/boardgameio/boardgame.io))  
-> **Source Version**: `5e9a2c94`  
+> **Source Version**: `47adef2b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:26:50.736Z  
+> **Timestamp**: 2026-10-27T14:33:18.324Z  
 > **Learning ID**: `learn-github-boardgameio-boardgame-io`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/boardgameio-boardgame.io-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/boardgameio/boardgame.io](https://github.com/boardgameio/boardgame.io))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:26:50.553Z  
+> **Harvest Timestamp**: 2026-10-27T14:33:17.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: State Management and Multiplayer Networking for Turn-Based Games
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12467 stars
+- **Stars / Engagement**: 12477 stars
 
 ---
 
@@ -512,237 +512,162 @@ export const INVALID_MOVE = 'INVALID_MOVE';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d3f3fc4` (2026-08-02)
-**Commit Message**: build(integration): stop test:integration modifying tracked files (#1315)
+### Incident Patch 1: `47adef2b` (2026-10-26)
+**Commit Message**: fix(server): validate numPlayers when creating a match (#1336)
 
-* build(integration): keep the integration install out of the root workspace
+`createMatch` accepted any `numPlayers` value. Only a missing or
+non-number value fell back to 2, so a negative count created a match
+with no seats, and a very large count could run the server out of
+memory. `/create` checked `minPlayers` and `maxPlayers` only when the
+game set them, and `/playAgain` and the auto-create in `Master.onSync`
+did not check them at all.
 
-`pnpm add` of the local tarball walks up to the repo root, registers
-integration/ as a workspace importer and writes the tarball into the root
-pnpm-lock.yaml — a change that must never be committed but sits in the
-working tree after every run. `pnpm install` alone does not do this; only
-the tarball add does. --ignore-workspace pins both commands to the scaffold,
-which is what they meant all along: it has its own gitignored lockfile.
+`createMatch` now rejects a value that is not an integer, is below 1 or
+`minPlayers`, or is above `maxPlayers`. A game that sets no
+`maxPlayers` gets a limit of 100. The error is returned as a
+`setupDataError`, so all three paths reject it.
 
-* build(integration): restore the scaffold manifest after installing the tarball
-
-`pnpm add` always saves to the manifest and pnpm 10 has no --no-save, so
-every run left `boardgame.io: file:boardgame.io-<version>.tgz` in
-integration/package.json — a tracked file, and a line that pins a version
-that only exists on the machine that built it.
-
-Snapshotting and writing the manifest back straight after the install means
-a failing check further down cannot leave it dirty either. The checks
-resolve the package through node_modules, which is already populated by
-then.
-
----------
-
-Co-authored-by: Rupesh Pandey 
-
-**File**: `scripts/integration.js` (modified, +15/-2)
+**File**: `docs/documentation/api/Game.md` (modified, +3/-2)
 ```diff
-@@ -24,11 +24,24 @@ shell.rm('-rf', 'node_modules');
- // the CLI flag wins. This sealed scaffold uses pinned deps, so the cooldown
- // adds no protection here. Also sidesteps pnpm 10.16's ERR_PNPM_MISSING_TIME
- // on packages whose abbreviated registry metadata lacks the time field.
--shell.exec('pnpm install --config.minimum-release-age=0');
-+// --ignore-workspace stops pnpm walking up to the repo root. Without it,
-+// `pnpm add` of a local tarball registers integration/ as an importer of the
-+// root workspace and writes the tarball into the root pnpm-lock.yaml.
-+shell.exec('pnpm install --ignore-workspace --config.minimum-release-age=0');
- // `./` prefix is required so pnpm treats the filename as a local tarball
- // rather than a registry package name (npm install <name>.tgz is forgiving;
- // pnpm add is not).
--shell.exec(`pnpm add --config.minimum-release-age=0 ./${packed}`);
-+//
-+// pnpm add always saves to the manifest and has no --no-save, so snapshot it
-+// and put it back. The tarball name carries the version and must never be
-+// committed. Restoring here rather than at the end means a failing check
-+// below cannot leave the file dirty either; the checks resolve the package
-+// through node_modules, which is already populated.
-+const manifest = shell.cat('package.json').toString();
-+shell.exec(
-+  `pnpm add --ignore-workspace --config.minimum-release-age=0 ./${packed}`,
-+);
-+shell.ShellString(manifest).to('package.json');
+@@ -121,8 +121,9 @@
+     ...
+   },
  
- shell.set('-e');
+-  // The minimum and maximum number of players supported
+-  // (This is only enforced when using the Lobby server component.)
++  // The minimum and maximum number of players supported.
++  // Enforced when a multiplayer match is created. If maxPlayers
++  // is not set, a match can have at most 100 players.
+   minPlayers: 1,
+   maxPlayers: 4,
  
 ```
 
----
-
-### Incident Patch 2: `b0ebe466` (2026-07-26)
-**Commit Message**: fix(deps): patch transitive brace-expansion DoS alerts (#1288)
-
-Dependabot's security update fails on this repo because it only considers
-the `latest` dist-tag (5.0.8) and cannot bridge 1.x -> 5.x in place. The
-maintainers backported the fix to both maintenance lines, so range-scoped
-overrides patch it without a major jump.
-
-Only minimatch consumes brace-expansion here, and each line needs its own
-major: minimatch@3 -> 1.x, minimatch@8/9 -> 2.x, minimatch@10 -> 5.x.
-A blanket override to 5.x would break the first three.
-
-- brace-expansion 1.1.15 -> 1.1.16 (GHSA-3jxr-9vmj-r5cp, high)
-- brace-expansion 2.1.1 -> 2.1.2 (GHSA-3jxr-9vmj-r5cp, high)
-
-Overrides go in pnpm-workspace.yaml, where this repo keeps its pnpm
-settings since #1273.
-
-**File**: `pnpm-lock.yaml` (modified, +11/-9)
+**File**: `src/master/master.test.ts` (modified, +16/-0)
 ```diff
-@@ -13,6 +13,8 @@ overrides:
-   jest-runner: 30.4.1
-   jest-runtime: 30.4.1
-   jest-resolve-dependencies: 30.4.1
-+  brace-expansion@<1.1.16: '>=1.1.16 <2'
-+  brace-expansion@>=2.0.0 <2.1.2: '>=2.1.2 <3'
- 
- importers:
- 
-@@ -2000,11 +2002,11 @@ packages:
-     resolution: {integrity: sha512-eB4uT9RGzg2odpER62bBwSLvUeGC+WbRjjyyFhGsKnc8wp/m0+hQsMUvUe3H2V0D5vw0nBdO1hCJoZo5mKeuIQ==}
-     engines: {node: '>=8'}
- 
--  brace-expansion@1.1.15:
--    resolution: {integrity: sha512-EwOCDEex4quD37XhqM3omwtMoJjr//isUZz1JopUNWms+4Z2ViyM/k1YIRePpoVNnQhENnxtFjLaxNHrT7xIUg==}
-+  brace-expansion@1.1.16:
-+    resolution: {integrity: sha512-IDw48K2/2kRkg9LdJxurvq3lV3aBgq0REY89duEqFRthjlPdXHKMj7EnQOXVckxzgisinf3nHfrcE2FufFLXMw==}
- 
--  brace-expansion@2.1.1:
--    resolution: {integrity: sha512-WR1cURNjuvBLMZBMbqM0UoE+WAfdUcEV1ccD8PVBVOI+Z3ND4+SZbN8RsfT2bMuG1qwz5RFvPukSZm5fF2D5eA==}
-+  brace-expansion@2.1.2:
-+    resolution: {integrity: sha512-w5JZcKgdhDOgOwm8H+KgbosopHMuGcl6qbulwjtz3SM7I7P3yW1eAjzMPLrIE+NQ9vjgANKHWeMHnrT0OXW1oA==}
- 
-   brace-expansion@5.0.7:
-     resolution: {integrity: sha512-7oFy703dxfY3/NLxC1fh2SUCQ0H9rmAY+5EpDVfXjUTTs+HEwR2nYaqLv+GWcTsumwxPfiz6CzCNkwXwBUwqCA==}
-@@ -7143,12 +7145,12 @@ snapshots:
-       type-fest: 0.8.1
-       widest-line: 3.1.0
- 
--  brace-expansion@1.1.15:
-+  brace-expansion@1.1.16:
-     dependencies:
-       balanced-match: 1.0.2
-       concat-map: 0.0.1
- 
--  brace-expansion@2.1.1:
-+  brace-expansion@2.1.2:
-     dependencies:
-       balanced-match: 1.0.2
- 
-@@ -9227,15 +9229,15 @@ snapshots:
- 
-   minimatch@3.1.5:
-     dependencies:
--      brace-expansion: 1.1.15
-+      brace-expansion: 1.1.16
- 
-   minimatch@8.0.7:
-     dependencies:
--      brace-expansion: 2.1.1
-+      brace-expansion: 2.1.2
- 
-   minimatch@9.0.9:
-     dependencies:
--      brace-expansion: 2.1.1
-+      brace-expansion: 2.1.2
- 
-   minimist@1.2.8: {}
- 
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +2/-0)
-```diff
-@@ -9,3 +9,5 @@ overrides:
-   jest-runner: 30.4.1
-   jest-runtime: 30.4.1
-   jest-resolve-dependencies: 30.4.1
-+  brace-expansion@<1.1.16: '>=1.1.16 <2'
-+  brace-expansion@>=2.0.0 <2.1.2: '>=2.1.2 <3'
-```
-
----
-
-### Incident Patch 3: `66011f3a` (2026-08-02)
-**Commit Message**: build(integration): bump vite and vitest, and put the directory in Dependabot's scope (#1311)
-
-* build(integration): bump vite to 8 and vitest to 4
-
-Closes four Dependabot alerts against the integration scaffold: the vitest
-UI arbitrary file read/execute (critical), the vite `server.fs.deny` bypass
-on Windows, the optimized-deps `.map` path traversal, and the launch-editor
-NTLMv2 hash disclosure.
-
-@vitejs/plugin-react comes along because v6 is the first release that peers
-with vite 8. Going straight to current rather than to the minimum patched
-versions keeps Dependabot from opening a stack of major-version PRs the
-moment this directory comes into scope.
-
-* ci(dependabot): scan the integration scaffold too
-
-integration/package.json was outside every update entry, so its
-dependencies drifted five majors behind and four security alerts sat there
-with no PR to fix them. It keeps its own group so its updates stay separate
-from the library's.
-
----------
-
-Co-authored-by: Rupesh Pandey <[REDACTED_EMAIL]>
-
-**File**: `.github/dependabot.yml` (modified, +14/-0)
-```diff
-@@ -13,6 +13,20 @@ updates:
-           - minor
-           - patch
- 
-+  # The integration scaffold has its own manifest and no lockfile, so the
-+  # root entry above never sees it.
-+  - package-ecosystem: npm
-+    directory: /integration
-+    schedule:
-+      interval: weekly
-+    cooldown:
-+      default-days: 7
-+    groups:
-+      integration-minor-patch:
-+        update-types:
-+          - minor
-+          - patch
+@@ -172,6 +172,22 @@ describe('sync', () => {
+     expect(send).not.toHaveBeenCalled();
+     expect(db.fetch(matchID, { state: true })).toEqual({ state: undefined });
+   });
 +
-   - package-ecosystem: github-actions
-     directory: /
-     schedule:
++  test.each([2.5, 101])(
++    'should not create match for numPlayers %p',
++    async (numPlayers) => {
++      const db = new InMemory();
++      const master = new Master(game, db, TransportAPI(send));
++
++      const res = await master.onSync('matchID', null, undefined, numPlayers);
++
++      expect(res).toEqual({ error: expect.any(String) });
++      expect(send).not.toHaveBeenCalled();
++      expect(db.fetch('matchID', { state: true })).toEqual({
++        state: undefined,
++      });
++    },
++  );
+ });
+ 
+ describe('update', () => {
 ```
 
-**File**: `integration/package.json` (modified, +3/-3)
+**File**: `src/server/api.test.ts` (modified, +35/-0)
 ```diff
-@@ -9,11 +9,11 @@
-   },
-   "devDependencies": {
-     "@testing-library/react": "^16.0.1",
--    "@vitejs/plugin-react": "^4.3.4",
-+    "@vitejs/plugin-react": "^6.0.5",
-     "jsdom": "^25.0.1",
-     "typescript": "^5.9.3",
--    "vite": "^5.4.10",
--    "vitest": "^2.1.4"
-+    "vite": "^8.2.0",
-+    "vitest": "^4.1.10"
-   },
-   "scripts": {
-     "start": "vite",
+@@ -262,6 +262,26 @@ describe('.configureRouter', () => {
+ 
+           expect(response.status).toEqual(400);
+         });
++
++        test('negative numPlayers fails', async () => {
++          response = await apiCall(app)
++            .post('/games/foo/create')
++            .send({ numPlayers: -1 });
++
++          expect(response.status).toEqual(400);
++        });
++
++        test('caps numPlayers at 100 if the game sets no maxPlayers', async () => {
++          response = await apiCall(app)
++            .post('/games/foo/create')
++            .send({ numPlayers: 101 });
++          expect(response.status).toEqual(400);
++
++          response = await apiCall(app)
++            .post('/games/foo/create')
++            .send({ numPlayers: 100 });
++          expect(response.status).toEqual(200);
++        });
+       });
+ 
+       describe('for an unknown game name', () => {
+@@ -1796,6 +1816,21 @@ describe('.configureRouter', () => {
+         .send('credentials=foo');
+       expect(response.status).toEqual(403);
+     });
++
++    test.each([-1, 2, 5])(
++      'when numPlayers %p is out of range throws error 400',
++      async (numPlayers) => {
++        games = [
++          ProcessGameConfig({ name: 'foo', minPlayers: 3, maxPlayers: 4 }),
++        ];
++        const app = createApiServer({ db, auth, games });
++        response = await apiCall(app)
++          .post('/games/foo/1/playAgain')
++          .send({ playerID: '0', credentials: 'SECRET1', numPlayers });
++        expect(response.status).toEqual(400);
++        expect(db.mocks.createMatch).not.toHaveBeenCalled();
++      },
++    );
+   });
+ 
+   describe('requesting room list', () => {
+```
+
+**File**: `src/server/util.ts` (modified, +16/-2)
+```diff
+@@ -32,10 +32,15 @@ export const createMetadata = ({
+   return metadata;
+ };
+ 
++/**
++ * The most players a match can have when the game does not set `maxPlayers`.
++ */
++const DEFAULT_MAX_PLAYERS = 100;
++
+ /**
+  * Creates initial state and metadata for a new match.
+- * If the provided `setupData` doesn’t pass the game’s validation,
+- * an error object is returned instead.
++ * If `numPlayers` is out of range or the provided `setupData` doesn’t pass
++ * the game’s validation, an error object is returned instead.
+  */
+ export const createMatch = ({
+   game,
+@@ -52,6 +57,15 @@ export const createMatch = ({
+   | { setupDataError: string } => {
+   if (!numPlayers || typeof numPlayers !== 'number') numPlayers = 2;
+ 
++  if (
++    !Number.isInteger(numPlayers) ||
++    numPlayers < 1 ||
++    (game.minPlayers && numPlayers < game.minPlayers) ||
++    numPlayers > (game.maxPlayers || DEFAULT_MAX_PLAYERS)
++  ) {
++    return { setupDataError: 'Invalid numPlayers' };
++  }
++
+   const setupDataError =
+     game.validateSetupData && game.validateSetupData(setupData, numPlayers);
+   if (setupDataError !== undefined) return { setupDataError };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1336** (2026-10-26): fix(server): validate numPlayers when creating a match (@cpruijsen)
 - **PR #1325** (2026-08-10): Migrate ESLint to flat config so ESLint 9 can land (@devill)
 - **PR #1323** (2026-08-03): chore(ci): group every Dependabot update into one weekly pull request (@devill)
 - **PR #1322** (2026-08-02): chore(deps-dev): bump eslint-config-prettier from 9.1.2 to 10.1.8 (@dependabot[bot])
 - **PR #1321** (2026-08-02): chore(deps-dev): bump eslint-plugin-jest from 28.14.0 to 29.16.0 (@dependabot[bot])
 - **PR #1320** (2026-08-02): chore(deps-dev): bump @types/node from 25.9.4 to 26.1.1 (@dependabot[bot])
-- **PR #1319** (2026-08-02): chore(deps-dev): bump the npm-minor-patch group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -762,43 +687,31 @@ Co-authored-by: Rupesh Pandey <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(integration): stop test:integration modifying tracked files (#1315)
+## X. server): validate numPlayers when creating a match (#1336)
 
 **RULE**:
-When implementing operations in `scripts/integration.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in boardgameio/boardgame.io. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/documentation/api/Game.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in boardgameio/boardgame.io. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d3f3fc4`: build(integration): stop test:integration modifying tracked files (#1315). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47adef2b`: server): validate numPlayers when creating a match (#1336). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/integration.js`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/documentation/api/Game.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// --ignore-workspace stops pnpm walking up to the repo root. Without it,
-// `pnpm add` of a local tarball registers integration/ as an importer of the
-// root workspace and writes the tarball into the root pnpm-lock.yaml.
-shell.exec('pnpm install --ignore-workspace --config.minimum-release-age=0');
-//
-// pnpm add always saves to the manifest and has no --no-save, so snapshot it
-// and put it back. The tarball name carries the version and must never be
-// committed. Restoring here rather than at the end means a failing check
-// below cannot leave the file dirty either; the checks resolve the package
-// through node_modules, which is already populated.
-const manifest = shell.cat('package.json').toString();
-shell.exec(
-  `pnpm add --ignore-workspace --config.minimum-release-age=0 ./${packed}`,
-);
-shell.ShellString(manifest).to('package.json');
+  // The minimum and maximum number of players supported.
+  // Enforced when a multiplayer match is created. If maxPlayers
+  // is not set, a match can have at most 100 players.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-shell.exec('pnpm install --config.minimum-release-age=0');
-shell.exec(`pnpm add --config.minimum-release-age=0 ./${packed}`);
+  // The minimum and maximum number of players supported
+  // (This is only enforced when using the Lobby server component.)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d3f3fc4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47adef2b` are properly handled with clean fallback behavior.

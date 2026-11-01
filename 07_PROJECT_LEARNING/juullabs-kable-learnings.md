@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source**: github ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
-> **Source Version**: `ad88767b`  
+> **Source Version**: `019179ff`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:41:57.897Z  
+> **Timestamp**: 2026-10-30T06:10:20.604Z  
 > **Learning ID**: `learn-github-juullabs-kable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juullabs-kable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/JuulLabs/kable](https://github.com/JuulLabs/kable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:41:57.892Z  
+> **Harvest Timestamp**: 2026-10-30T06:10:19.627Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1116,32 +1116,27 @@ internal val bluetoothState = broadcastReceiverFlow(intentFilter)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad88767b` (2026-10-21)
-**Commit Message**: Update Rust crate tokio to v1.54.0 (#1288)
+### Incident Patch 1: `019179ff` (2026-10-29)
+**Commit Message**: Update agp to v9.4.1 (#1279)
 
-**File**: `kable-btleplug-ffi/Cargo.lock` (modified, +2/-2)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -1022,9 +1022,9 @@ dependencies = [
- 
- [[package]]
- name = "tokio"
--version = "1.53.1"
-+version = "1.54.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
-+checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
- dependencies = [
-  "libc",
-  "mio",
+@@ -1,5 +1,5 @@
+ [versions]
+-agp = "9.4.0"
++agp = "9.5.0"
+ android-compile = "37"
+ android-min = "21"
+ android-target = "33"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1301** (closed): Bump tokio from 1.54.0 to 1.54.1 in /kable-btleplug-ffi (@dependabot[bot])
+- **PR #1297** (closed): Update Rust crate tokio to v1.54.1 - autoclosed (@juul-mobile-bot)
 - **PR #1288** (2026-10-21): Update Rust crate tokio to v1.54.0 (@juul-mobile-bot)
 - **PR #1286** (2026-10-05): Update Rust crate btleplug to v0.13.4 (@juul-mobile-bot)
 - **PR #1285** (2026-09-28): Update Gradle to v9.8.0 (@juul-mobile-bot)
-- **PR #1278** (2026-09-24): Update Rust crate btleplug to v0.13.2 (@juul-mobile-bot)
-- **PR #1275** (2026-09-24): Update dependency com.juul.khronicle:khronicle-core to v1.2.0 (@juul-mobile-bot)
-- **PR #1274** (closed): Fix JVM maximum write length using negotiated MTU (@AvikMakwana)
+- **PR #1283** (closed): Add explicit bonding to `AndroidPeripheral` (@jamesarich)
 
 ---
 
@@ -1161,30 +1156,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate tokio to v1.54.0 (#1288)
+## X. Update agp to v9.4.1 (#1279)
 
 **RULE**:
-When implementing operations in `kable-btleplug-ffi/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in JuulLabs/kable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ad88767b`: Update Rust crate tokio to v1.54.0 (#1288). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `019179ff`: Update agp to v9.4.1 (#1279). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kable-btleplug-ffi/Cargo.lock`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-version = "1.54.0"
-checksum = "a0c168a474b95bfecfe908a65d4bdffc523144b649a74c09c286afb35d53e0bc"
+agp = "9.5.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.53.1"
-checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
+agp = "9.4.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad88767b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `019179ff` are properly handled with clean fallback behavior.

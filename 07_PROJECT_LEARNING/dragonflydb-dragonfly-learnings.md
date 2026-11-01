@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `68f60e27`  
+> **Source Version**: `1d2c21aa`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:13:56.700Z  
+> **Timestamp**: 2026-10-31T03:59:08.457Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:13:55.798Z  
+> **Harvest Timestamp**: 2026-10-31T03:59:07.614Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31818 stars
+- **Stars / Engagement**: 31835 stars
 
 ---
 
@@ -2321,65 +2321,765 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68f60e27` (2026-10-25)
-**Commit Message**: chore(deps): bump setuptools from 84.0.0 to 84.1.0 (#8676)
+### Incident Patch 1: `1d2c21aa` (2026-10-30)
+**Commit Message**: feat: cancel save op if loading starts (#8505)
 
-Bumps [setuptools](https://github.com/pypa/setuptools) from 84.0.0 to 84.1.0.
-- [Release notes](https://github.com/pypa/setuptools/releases)
-- [Changelog](https://github.com/pypa/setuptools/blob/main/NEWS.rst)
-- [Commits](https://github.com/pypa/setuptools/compare/v84.0.0...v84.1.0)
+* feat: cancel save op if loading starts
+
+**File**: `.github/actions/lint-test-chart/action.yml` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@ runs:
+         with:
+           version: "v3.21.0"
+ 
+-      - uses: actions/setup-python@v5
++      - uses: actions/setup-python@v7
+         with:
+           python-version: "3.12"
+           check-latest: true
+```
+
+**File**: `helio` (modified, +1/-1)
+```diff
+@@ -1 +1 @@
+-Subproject commit 961a34da652ef91ec5ced9c43b70af24473d5478
++Subproject commit 0007fdb8a94bd3bf2a9f92a1fa8e5c647a1eb151
+```
+
+**File**: `src/server/detail/save_stages_controller.cc` (modified, +41/-15)
+```diff
+@@ -59,6 +59,18 @@ void ExtendDfsFilenameWithShard(int shard, string_view extension, fs::path* file
+   SetExtension(absl::Dec(shard, absl::kZeroPad4), extension, filename);
+ }
+ 
++// Closing a cloud file publishes it, so abort the upload if the save failed or Close() fails.
++error_code CloseCloudFile(io::WriteFile* file, ExecutionState* cntx) {
++  error_code ec = cntx->IsRunning() ? file->Close() : make_error_code(errc::operation_canceled);
++  if (ec) {
++    // Abort can yield, so stop other snapshots before starting cleanup.
++    cntx->ReportError(ec);
++    error_code abort_ec = file->Abort();
++    LOG_IF(WARNING, abort_ec) << "Failed to abort snapshot upload: " << abort_ec.message();
++  }
++  return ec;
++}
++
+ }  // namespace
+ 
+ GenericError ValidateFilename(const fs::path& filename, bool new_version) {
+@@ -119,11 +131,16 @@ GenericError RdbSnapshot::Start(SaveMode save_mode, const std::string& path,
+   saver_.reset(
+       new RdbSaver(io_sink_.get(), save_mode, align_writes, snapshot_id, DflyVersion::CURRENT_VER));
+ 
+-  return saver_->SaveHeader(std::move(glob_data));
++  auto ec = saver_->SaveHeader(std::move(glob_data));
++  if (ec) {
++    cntx_->ReportError(ec);
++    Close();  // Aborts the cloud upload because the save has failed.
++  }
++  return ec;
+ }
+ 
+ error_code RdbSnapshot::SaveBody() {
+-  return saver_->SaveBody(cntx_);
++  return saver_->SaveBody(*cntx_);
+ }
+ 
+ error_code RdbSnapshot::WaitSnapshotInShard(EngineShard* shard) {
+@@ -152,18 +169,19 @@ error_code RdbSnapshot::Close() {
+ #endif
+ 
+   error_code ec;
++  auto* file = static_cast<io::WriteFile*>(io_sink_.get());
+ 
+   // S3 implementation is stack hungry. We use a fiber to close the file to
+   // avoid wasting stack space.
+   auto fb = ProactorBase::me()->LaunchFiber(
+       fb2::Launch::post, boost::context::fixedsize_stack{40 * 1024}, "write_file_close",
+-      [&] { ec = static_cast<io::WriteFile*>(io_sink_.get())->Close(); });
++      [&] { ec = snapshot_storage_->IsCloud() ? CloseCloudFile(file, cntx_) : file->Close(); });
+   fb.Join();
+   return ec;
+ }
+ 
+ void RdbSnapshot::StartInShard(EngineShard* shard) {
+-  saver_->StartSnapshotInShard(false, &cntx_, shard);
++  saver_->StartSnapshotInShard(false, cntx_, shard);
+   started_shards_.fetch_add(1, memory_order_relaxed);
+ }
+ 
+@@ -182,13 +200,13 @@ SaveStagesController::~SaveStagesController() {
+ 
+ std::optional<SaveInfo> SaveStagesController::Init() {
+   if (auto err = BuildFullPath(); err) {
+-    shared_err_ = err;
++    cntx_.ReportError(err);
+     return GetSaveInfo();
+   }
+ 
+   snapshots_.resize(use_dfs_format_ ? shard_set->size() + 1 : 1);
+   for (auto& [snapshot, _] : snapshots_)
+-    snapshot = make_unique<RdbSnapshot>(fq_threadpool_, snapshot_storage_.get());
++    snapshot = make_unique<RdbSnapshot>(snapshot_storage_.get(), &cntx_);
+ 
+   return {};
+ }
+@@ -200,6 +218,11 @@ void SaveStagesController::Start() {
+     SaveRdb();
+ }
+ 
++void SaveStagesController::Cancel() {
++  cntx_.ReportError(make_error_code(errc::operation_canceled),
++                    "Snapshot saving cancelled because server is loading");
++}
++
+ void SaveStagesController::WaitAllSnapshots() {
+   if (use_dfs_format_) {
+     shard_set->RunBlockingInParallel([&](EngineShard* shard) { WaitSnapshotInShard(shard); });
+@@ -213,7 +236,7 @@ SaveInfo SaveStagesController::Finalize() {
+   RunStage(&SaveStagesController::CloseCb);
+ 
+   if (auto err = FinalizeFileMovement(); err) {
+-    shared_err_ = err;
++    cntx_.ReportError(err);
+   }
+ 
+   return GetSaveInfo();
+@@ -303,7 +326,7 @@ void SaveStagesController::SaveDfsSingle(EngineShard* shard, const std::string&
+   auto glob_data = RdbSaver::GetGlobalData(service_, is_summary);
+ 
+   if (auto err = snapshot->Start(mode, filename, glob_data, snapshot_id); err) {
+-    shared_err_ = err;
++    cntx_.ReportError(err);
+     snapshot.reset();
+     return;
+   }
+@@ -326,6 +349,7 @@ void SaveStagesController::SaveRdb() {
+   if (auto err =
+           snapshot->Start(SaveMode::RDB, filename, RdbSaver::GetGlobalData(service_, true), "");
+       err) {
++    cntx_.ReportError(err);
+     snapshot.reset();
+     return;
+   }
+@@ -346,8 +370,8 @@ SaveInfo SaveStagesController::GetSaveInfo() {
+   info.save_time = start_time_;
+   info.duration_sec = GetCurrentSaveDuration();
+ 
+-  if (shared_err_) {
+-    info.error = *shared_err_;
++  if (auto err = cntx_.GetError(); err) {
++    info.error = err;
+     return info;
+   }
+ 
+@@ -376,8 +400,7 @@ GenericError SaveStagesController::FinalizeFileMovement() {
+     return {};
+   DVLOG(1) << "FinalizeFileMovement start";
+ 
+-  // If the shared_err is set, the snapshot saving failed
+-  bool has_error = bool(shared_err_);
++  bool has_error = bool(cntx_.GetError());
+ 
+   std::error_code ec;
+   for (const auto& [_, filename] : snapshots_) {
+@@ -428,20 +451,23 @@ GenericError SaveStagesController::BuildFullPath() {
+ void SaveStagesController::SaveBody(unsigned index) {
+   CHECK(!use_dfs_format_ || index == shard_set->size());  // used in rdb and df summary file
+   if (auto
+```
+
+**File**: `src/server/detail/save_stages_controller.h` (modified, +7/-5)
+```diff
+@@ -33,16 +33,15 @@ struct SaveStagesInputs {
+   std::string_view basename_;
+   Transaction* trans_;
+   Service* service_;
+-  util::fb2::FiberQueueThreadPool* fq_threadpool_;
+   std::shared_ptr<SnapshotStorage> snapshot_storage_;
+   // true if the command that triggered this flow is bgsave. false otherwise.
+   bool is_bg_save_;
+ };
+ 
+ class RdbSnapshot {
+  public:
+-  RdbSnapshot(util::fb2::FiberQueueThreadPool* fq_tp, SnapshotStorage* snapshot_storage)
+-      : snapshot_storage_{snapshot_storage} {
++  RdbSnapshot(SnapshotStorage* snapshot_storage, ExecutionState* cntx)
++      : snapshot_storage_{snapshot_storage}, cntx_{cntx} {
+   }
+ 
+   GenericError Start(SaveMode save_mode, const string& path, const RdbSaver::GlobalData& glob_data,
+@@ -76,7 +75,7 @@ class RdbSnapshot {
+   unique_ptr<RdbSaver> saver_;
+   RdbTypeFreqMap freq_map_;
+ 
+-  ExecutionState cntx_{};
++  ExecutionState* cntx_;
+ };
+ 
+ struct SaveStagesController : public SaveStagesInputs {
+@@ -88,6 +87,9 @@ struct SaveStagesController : public SaveStagesInputs {
+   std::optional<SaveInfo> Init();
+   void Start();
+ 
++  // Stops serialization even if initialization is still in progress. Thread safe.
++  void Cancel();
++
+   ~SaveStagesController();
+ 
+   // Safe to call and no locks required
+@@ -134,7 +136,7 @@ struct SaveStagesController : public SaveStagesInputs {
+   time_t start_time_;
+   std::filesystem::path full_path_;
+ 
+-  AggregateGenericError shared_err_;
++  ExecutionState cntx_;
+   std::vector<std::pair<std::unique_ptr<RdbSnapshot>, std::filesystem::path>> snapshots_;
+ 
+   absl::flat_hash_map<string_view, size_t> rdb_name_map_;
+```
+
+**File**: `src/server/execution_state.h` (modified, +0/-3)
+```diff
+@@ -75,9 +75,6 @@ class GenericError {
+   std::string details_;
+ };
+ 
+-// Thread safe utility to store the first non null generic error.
+-using AggregateGenericError = AggregateValue<GenericError>;
+-
+ // ExecutionState is a thread-safe utility for managing error reporting and cancellation for complex
+ // tasks. There are 3 states: RUN, CANCELLED, ERROR RUN and CANCELLED are just a state without any
+ // actions When report an error, only the first is stored, the next ones will be ignored. Then a
+```
+
+**File**: `src/server/main_service.cc` (modified, +6/-0)
+```diff
+@@ -2971,6 +2971,12 @@ GlobalState Service::SwitchState(GlobalState from, GlobalState to) {
+       DCHECK(db.IsLoadRefCountZero());
+     }
+   });
++  if (to == GlobalState::LOADING) {
++    // Cancel before client traversal can yield and let an overlapping save publish its files.
++    server_family_.CancelSave();
++    // Unblocking waits for in-flight connection migrations, so it can't run in Await() above.
++    server_family_.UnblockAllClients();
++  }
+   return prev;
+ }
+ 
+```
+
+**File**: `src/server/rdb_test.cc` (modified, +153/-0)
+```diff
+@@ -26,6 +26,8 @@ extern "C" {
+ #include "facade/facade_test.h"  // needed to find operator== for RespExpr.
+ #include "io/file.h"
+ #include "io/file_util.h"
++#include "server/detail/save_stages_controller.h"
++#include "server/detail/snapshot_storage.h"
+ #include "server/engine_shard_set.h"
+ #include "server/error.h"
+ #include "server/journal/serializer.h"
+@@ -609,6 +611,157 @@ TEST_F(RdbTest, SaveFlush) {
+   EXPECT_EQ(500000, k_v.second);
+ }
+ 
++class SnapshotLoadingTest : public RdbTest, public WithParamInterface<pair<bool, bool>> {};
++
++TEST_P(SnapshotLoadingTest, CancelSave) {
++  const auto [use_dfs_format, bg_save] = GetParam();
++  const string_view format = use_dfs_format ? "DF" : "RDB";
++  absl::FlagSaver flags;
++  SetTestFlag("background_snapshotting", "true");
++
++  // Cancellation must preserve the previous successful snapshot and its metadata.
++  ASSERT_EQ(Run({"SET", "original", "value"}), "OK");
++  ASSERT_EQ(Run({"SAVE", format}), "OK");
++  const auto previous_save = service_->server_family().GetLastSaveInfo();
++  Run({"DEBUG", "POPULATE", "50000", "key", "256"});
++
++  const string basename = StrCat(absl::GetFlag(FLAGS_dbfilename), "_cancelled");
++  RespExpr save_response;
++  auto save_fb = pp_->at(1)->LaunchFiber([&] {
++    save_response = Run({bg_save ? "BGSAVE" : "SAVE", format, basename});
++  });
++
++  EXPECT_TRUE(WaitUntilCondition([&] { return service_->server_family().TEST_IsSaving(); },
++                                 chrono::seconds(10)));
++  EXPECT_EQ(service_->SwitchState(GlobalState::ACTIVE, GlobalState::LOADING), GlobalState::ACTIVE);
++  EXPECT_THAT(Run({"SAVE", format}), ErrArg("LOADING Dragonfly is loading the dataset in memory"));
++  // Returning to ACTIVE must not revive a save that was cancelled by the transition.
++  EXPECT_EQ(service_->SwitchState(GlobalState::LOADING, GlobalState::ACTIVE), GlobalState::LOADING);
++  save_fb.Join();
++
++  EXPECT_TRUE(WaitUntilCondition(
++      [&] { return bool(service_->server_family().GetLastSaveInfo().last_error); },
++      chrono::seconds(10)));
++  const auto save_info = service_->server_family().GetLastSaveInfo();
++  EXPECT_EQ(static_cast<error_code>(save_info.last_error),
++            make_error_code(errc::operation_canceled));
++  EXPECT_EQ(save_info.save_time, previous_save.save_time);
++  EXPECT_EQ(save_info.file_name, previous_save.file_name);
++  EXPECT_EQ(save_info.freq_map, previous_save.freq_map);
++  EXPECT_FALSE(service_->server_family().TEST_IsSaving());
++  if (bg_save) {
++    EXPECT_EQ(save_response, "OK");
++    EXPECT_FALSE(save_info.bgsave_in_progress);
++    EXPECT_FALSE(save_info.last_bgsave_status);
++  } else {
++    EXPECT_THAT(save_response, ArgType(RespExpr::ERROR));
++    EXPECT_THAT(save_response.GetString(), HasSubstr("Snapshot saving cancelled"));
++  }
++
++  auto files = io::StatFiles(StrCat(basename, "*"));
++  ASSERT_TRUE(files);
++  EXPECT_TRUE(files->empty());
++  EXPECT_TRUE(filesystem::exists(previous_save.file_name));
++  // A subsequent save must be able to use the cancelled save's name.
++  EXPECT_EQ(Run({"SAVE", format, basename}), "OK");
++}
++
++INSTANTIATE_TEST_SUITE_P(SaveModes, SnapshotLoadingTest,
++                         Values(pair{false, false}, pair{false, true}, pair{true, false},
++                                pair{true, true}));
++
++namespace {
++
++// Cloud storage that counts the uploads it opened, published with Close() and aborted.
++class TestCloudStorage : public detail::FileSnapshotStorage {
++ public:
++  enum Failure { kNone, kCancel, kOpenSummary, kWrite, kClose };
++
++  explicit TestCloudStorage(Failure failure) : FileSnapshotStorage(nullptr), failure_(failure) {
++  }
++
++  io::Result<pair<io::Sink*, uint8_t>, GenericError> OpenWriteFile(const string& path) override {
++    if (failure_ == kOpenSummary && path.find("summary") != string::npos)
++      return nonstd::make_unexpected(GenericError(make_error_code(errc::io_error)));
++    ++opened;
++    return pair<io::Sink*, uint8_t>{new File(this), detail::FileType::CLOUD};
++  }
++
++  bool IsCloud() const override {
++    return true;
++  }
++
++  atomic_uint opened = 0, published = 0, aborted = 0;
++
++ private:
++  class File : public io::WriteFile {
++   public:
++    explicit File(TestCloudStorage* storage) : WriteFile(""), storage_(storage) {
++    }
++
++    io::Result<size_t> WriteSome(const iovec* v, uint32_t len) override {
++      if (storage_->failure_ == kWrite)
++        return nonstd::make_unexpected(make_error_code(errc::io_error));
++      size_t written = 0;
++      for (uint32_t i = 0; i < len; ++i)
++        written += v[i].iov_len;
++      return written;
++    }
++
++    error_code Close() override {
++      if (storage_->failure_ == kClose)
++        return make_error_code(errc::io_error);
++      ++storage_->published;
++      return {};
++    }
++
++    error_code Abort() override {
++      ++storage_->aborted;
++      return {};
++    }
++
++   private:
++    TestCloudStorage* storage_;
++  };
++
++  Failure failure_;
++};
++
++}  // namespace
++
++// A failed or cancelled clou
+```
+
+**File**: `src/server/server_family.cc` (modified, +24/-11)
+```diff
+@@ -2095,21 +2095,30 @@ GenericError ServerFamily::DoSave(bool ignore_state) {
+                 ignore_state);
+ }
+ 
++void ServerFamily::CancelSave() {
++  // Holding save_mu_ keeps cancellation from interleaving with Finalize() closing the files.
++  util::fb2::LockGuard lk(save_mu_);
++  if (save_controller_)
++    save_controller_->Cancel();
++}
++
+ GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_opts,
+                                                Transaction* trans, DoSaveCheckAndStartOpts opts) {
+   // TODO(#8410): with --aof, a save to the base's name overwrites the base.
+   auto [ignore_state, bg_save] = opts;
+-  auto state = ServerState::tlocal()->gstate();
+-
+-  // In some cases we want to create a snapshot even if server is not active, f.e in takeover
+-  if (!ignore_state && (state != GlobalState::ACTIVE && state != GlobalState::SHUTTING_DOWN)) {
+-    return GenericError{make_error_code(errc::operation_in_progress),
+-                        StrCat(GlobalStateName(state), " - can not save database")};
+-  }
+ 
+   std::shared_ptr<SaveStagesController> controller;
+   {
+     util::fb2::LockGuard lk(save_mu_);
++    // Check under save_mu_, so a concurrent switch to LOADING either rejects this save here or
++    // cancels it in CancelSave().
++    auto state = ServerState::tlocal()->gstate();
++
++    // In some cases we want to create a snapshot even if server is not active, f.e in takeover
++    if (!ignore_state && (state != GlobalState::ACTIVE && state != GlobalState::SHUTTING_DOWN)) {
++      return GenericError{make_error_code(errc::operation_in_progress),
++                          StrCat(GlobalStateName(state), " - can not save database")};
++    }
+     if (save_controller_) {
+       return GenericError{make_error_code(errc::operation_in_progress),
+                           "SAVING - can not save database"};
+@@ -2127,7 +2136,7 @@ GenericError ServerFamily::DoSaveCheckAndStart(const SaveCmdOptions& save_cmd_op
+ 
+     controller = make_shared<SaveStagesController>(detail::SaveStagesInputs{
+         save_cmd_opts.new_version, save_cmd_opts.cloud_uri, save_cmd_opts.basename, trans,
+-        &service_, fq_threadpool_.get(), snapshot_storage, opts.bg_save});
++        &service_, snapshot_storage, opts.bg_save});
+     save_controller_ = controller;
+   }
+ 
+@@ -2287,6 +2296,12 @@ void ServerFamily::CancelBlockingOnThread(std::function<OpStatus(ArgSlice)> stat
+   }
+ }
+ 
++void ServerFamily::UnblockAllClients() {
++  shard_set->pool()->AwaitFiberOnAll([this](util::ProactorBase*) {
++    CancelBlockingOnThread([](ArgSlice) { return OpStatus::UNBLOCKED; });
++  });
++}
++
+ string GetPassword() {
+   string flag = GetFlag(FLAGS_requirepass);
+   if (!flag.empty()) {
+@@ -3808,9 +3823,7 @@ void ServerFamily::ReplicaOfInternal(facade::ParsedArgs args, CommandContext* cm
+   replica_ = new_replica;
+   SetMasterFlagOnAllThreads(false);
+   // Blocked writers would otherwise consume elements applied from the replication stream.
+-  shard_set->pool()->AwaitFiberOnAll([this](util::ProactorBase*) {
+-    CancelBlockingOnThread([](ArgSlice) { return OpStatus::UNBLOCKED; });
+-  });
++  UnblockAllClients();
+ 
+   if (on_error == ActionOnConnectionFail::kReturnOnError) {
+     replica_->StartMainReplicationFiber(last_master_data);
+```
 
 ---
-updated-dependencies:
-- dependency-name: setuptools
-  dependency-version: 84.1.0
-  dependency-type: indirect
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `df32b01a` (2026-10-30)
+**Commit Message**: refactor: improve GetSlotInfo performance (#8715)
 
-**File**: `uv.lock` (modified, +5/-4)
+* refactor: improve GetSlotInfo performance
+
+**File**: `src/server/cluster/cluster_family.cc` (modified, +60/-46)
 ```diff
-@@ -1,5 +1,5 @@
- version = 1
--revision = 3
-+revision = 5
- requires-python = ">=3.10"
- resolution-markers = [
-     "python_full_version >= '3.14'",
-@@ -754,6 +754,7 @@ wheels = [
- name = "dragonfly-tests"
- version = "0.0.0"
- source = { virtual = "." }
-+default-groups = ["test"]
+@@ -8,6 +8,7 @@
+ #include <absl/strings/ascii.h>
+ #include <absl/strings/str_cat.h>
  
- [package.dev-dependencies]
- test = [
-@@ -2372,11 +2373,11 @@ wheels = [
++#include <algorithm>
+ #include <memory>
+ #include <mutex>
+ #include <string>
+@@ -651,17 +652,20 @@ void ClusterFamily::DflyClusterGetSlotInfo(CmdArgParser parser, CommandContext*
  
- [[package]]
- name = "setuptools"
--version = "84.0.0"
-+version = "84.1.0"
- source = { registry = "https://pypi.org/simple" }
--sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/73/eb/7e5f628ee2eb168fecbf8026de7856b2543d6d609cc85f086b9a91ac93d6/setuptools-84.1.0.tar.gz", hash = "sha256:23657205b63d4d31395ab917815247f694aafad28cd21316bf5fd45a51048ea0", size = 1171783, upload-time = "2026-10-19T20:11:43.489Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
-+    { url = "https://files.pythonhosted.org/packages/18/02/b4bbb90f8f29e334898ff45c6d9b1fffaa6f378017052b3023a06262b5f7/setuptools-84.1.0-py3-none-any.whl", hash = "sha256:5231689c6ac8156cd155cfb98c3fd6fb252c3e7e9bd3d78b64d3c55f132624c9", size = 819380, upload-time = "2026-10-19T20:11:41.684Z" },
- ]
+   RETURN_ON_PARSE_ERROR(parser, cmd_cntx);
  
- [[package]]
+-  vector<std::pair<SlotId, SlotStats>> slots_stats;
++  // Keep the requested ranges unexpanded, so memory does not grow with the reply size.
++  vector<SlotRange> ranges;
++  size_t total_slots = 0;
+   while (parser.HasNext()) {
+     auto arg = parser.Next<std::string_view>();
++    uint32_t start_slot, end_slot;
++
+     // Check if argument contains a dash for range notation (e.g., "1-100")
+     size_t dash_pos = arg.find('-');
+     if (dash_pos != std::string_view::npos && dash_pos > 0) {
+       // Parse as range: start-end
+       std::string_view start_str = arg.substr(0, dash_pos);
+       std::string_view end_str = arg.substr(dash_pos + 1);
+ 
+-      uint32_t start_slot, end_slot;
+       if (!absl::SimpleAtoi(start_str, &start_slot) || !absl::SimpleAtoi(end_str, &end_slot)) {
+         return cmd_cntx->SendError("Invalid slot range format");
+       }
+@@ -674,65 +678,75 @@ void ClusterFamily::DflyClusterGetSlotInfo(CmdArgParser parser, CommandContext*
+       if (start_slot > end_slot) {
+         std::swap(start_slot, end_slot);
+       }
+-
+-      for (uint32_t sid = start_slot; sid <= end_slot; ++sid) {
+-        slots_stats.emplace_back(sid, SlotStats{});
+-      }
+     } else {
+       // Parse as single slot id
+-      uint32_t sid;
+-      if (!absl::SimpleAtoi(arg, &sid)) {
++      if (!absl::SimpleAtoi(arg, &start_slot)) {
+         return cmd_cntx->SendError(kInvalidIntErr);
+       }
+-      if (sid > kMaxSlotNum) {
++      if (start_slot > kMaxSlotNum) {
+         return cmd_cntx->SendError("Invalid slot id");
+       }
+-      slots_stats.emplace_back(sid, SlotStats{});
++      end_slot = start_slot;
+     }
++    ranges.push_back({SlotId(start_slot), SlotId(end_slot)});
++    total_slots += end_slot - start_slot + 1;
+   }
+ 
+-  if (slots_stats.empty()) {
++  if (ranges.empty()) {
+     return cmd_cntx->SendError(kSyntaxErr);
+   }
+ 
+-  fb2::Mutex mu;
+-
+-  auto cb = [&](auto*) ABSL_LOCKS_EXCLUDED(mu) {
+-    EngineShard* shard = EngineShard::tlocal();
+-    if (shard == nullptr)
+-      return;
++  // Collect in rounds of up to all slots, which bounds memory however many slots are requested.
++  // Waking up a shard thread costs more than reading its stats, so every round visits each shard
++  // once. The shards add their stats one after another, which needs no locking.
++  const size_t round_size = std::min<size_t>(total_slots, kMaxSlotNum + 1);
++  vector<SlotId> round_slots(round_size);
++  vector<SlotStats> round_stats;
++
++  // Reply strings are literals, so they remain valid while waiting for the shards.
++  SinkReplyBuilder::ReplyScope scope(rb);
++  rb->StartArray(total_slots);
++
++  auto range = ranges.begin();
++  SlotId next_slot = range->start;
++  while (range != ranges.end()) {
++    size_t count = 0;
++    for (; count < round_size && range != ranges.end(); ++count) {
++      round_slots[count] = next_slot;
++      if (next_slot++ == range->end && ++range != ranges.end())
++        next_slot = range->start;
++    }
+ 
+-    util::fb2::LockGuard lk(mu);
+-    for (auto& [slot, data] : slots_stats) {
+-      data += namespaces->GetDefaultNamespace().GetDbSlice(shard->shard_id()).GetSlotStats(slot);
++    round_stats.assign(count, SlotStats{});
++    for (ShardId sid = 0; sid < shard_set->size(); ++sid) {
++      shard_set->pool()->at(sid)->AwaitBrief([&] {
++        const auto& db_slice = namespaces->GetDefaultNamespace().GetDbSlice(sid);
++        db_slice.AddSlotStats({round_slots.data(), count}, absl::MakeSpan(round_stats));
++      });
+     }
+-  };
+ 
+-  shard_set->pool()->AwaitFiberOnAll(std::move(cb));
+-
+-  rb->StartArray(slots_stats.size());
+-
+-  for (const auto& slot_data : slots_stats) {
+-    rb->StartArray(slot_data.second.tiered_bytes > 0 ? 11 : 9);
+-    rb->SendLong(slot_data.first);
+-    rb->SendBulkString("key_count");
+-    rb->SendLong(slot_data.second.key_count);
+-    rb->SendBulkString("total_reads");
+-    rb->SendLong(slot_data.second.total_reads);
+-    rb->SendBulkString("total_writes");
+-    rb->SendLong(slot_data.second.total_writes);
+-
+-    // Account for both the values and the table space of the entries.
+-    // Each entry is comprised from CompactObj for key and CompactObj for value.
+-    // Sometimes the values are very small and table space becomes significant.
+-    rb->SendBulkString("memory_bytes");
+-    rb->SendLong(slot_data.second.memory_bytes +
+-                 slot_data.second.key_count * sizeof(CompactObj) * 2);
+-
+-    // Disk bytes held by the slot's offloaded entries; reported only when non-zero.
+-    if (slot_data.second.tiered_bytes > 0) {
+-      rb->SendBulkString("tiered_bytes");
+-      rb->SendLong(slot_data.second.tiered_bytes);
++    for (size_t i = 0; i < count; ++i) {
++      const Slot
+```
+
+**File**: `src/server/cluster/cluster_family_test.cc` (modified, +55/-26)
+```diff
+@@ -8,6 +8,7 @@
+ #include <gtest/gtest-matchers.h>
+ 
+ #include <atomic>
++#include <iterator>
+ #include <string>
+ #include <string_view>
+ 
+@@ -531,23 +532,35 @@ TEST_F(ClusterFamilyTest, ClusterGetSlotInfo) {
+ }
+ 
+ TEST_F(ClusterFamilyTest, GetSlotStatsAcrossDatabases) {
+-  shard_set->Await(0, [] {
+-    auto& ns = namespaces->GetDefaultNamespace();
+-    auto& db_slice = ns.GetCurrentDbSlice();
+-    uint64_t memory_bytes = 0;
+-
+-    for (DbIndex db_index : {0, 2}) {
+-      db_slice.ActivateDb(db_index);
+-      DbContext cntx{&ns, db_index, GetCurrentTimeMs()};
+-      PrimeValue value;
+-      value.SetString(string(1'000, '#'));
+-      memory_bytes += value.MallocUsed();
+-      ASSERT_TRUE(db_slice.AddOrUpdate(cntx, "key", std::move(value), 0).ok());
+-      ASSERT_TRUE(IsValid(db_slice.FindReadOnly(cntx, "key")));
+-    }
++  ConfigSingleNodeCluster(GetMyId());
++  uint64_t memory_bytes = 0;
++  for (ShardId sid = 0; sid < shard_set->size(); ++sid) {
++    memory_bytes += shard_set->Await(sid, [] {
++      auto& ns = namespaces->GetDefaultNamespace();
++      auto& db_slice = ns.GetCurrentDbSlice();
++      uint64_t memory_bytes = 0;
++
++      for (DbIndex db_index : {0, 2}) {
++        db_slice.ActivateDb(db_index);
++        DbContext cntx{&ns, db_index, GetCurrentTimeMs()};
++        PrimeValue value;
++        value.SetString(string(1'000, '#'));
++        memory_bytes += value.MallocUsed();
++        EXPECT_TRUE(db_slice.AddOrUpdate(cntx, "key", std::move(value), 0).ok());
++        EXPECT_TRUE(IsValid(db_slice.FindReadOnly(cntx, "key")));
++      }
+ 
+-    EXPECT_THAT(db_slice.GetSlotStats(KeySlot("key")), FieldsAre(2, 2, 2, memory_bytes, 0));
+-  });
++      EXPECT_THAT(db_slice.GetSlotStats(KeySlot("key")), FieldsAre(2, 2, 2, memory_bytes, 0));
++      return memory_bytes;
++    });
++  }
++
++  const uint64_t key_count = 2 * shard_set->size();
++  EXPECT_THAT(RunPrivileged({"dflycluster", "getslotinfo", "slots", absl::StrCat(KeySlot("key"))}),
++              RespElementsAre(RespElementsAre(
++                  IntArg(KeySlot("key")), "key_count", IntArg(key_count), "total_reads",
++                  IntArg(key_count), "total_writes", IntArg(key_count), "memory_bytes",
++                  IntArg(memory_bytes + key_count * sizeof(CompactObj) * 2))));
+ }
+ 
+ TEST_F(ClusterFamilyTest, ClusterGetSlotInfoRanges) {
+@@ -642,18 +655,34 @@ TEST_F(ClusterFamilyTest, FragmentedSlotsReplyIsBatched) {
+ TEST_F(ClusterFamilyTest, ClusterSlotsPopulate) {
+   ConfigSingleNodeCluster(GetMyId());
+ 
+-  Run({"debug", "populate", "10000", "key", "4", "SLOTS", "0", "1000"});
++  constexpr int64_t kKeys = 10'000;
++  Run({"debug", "populate", absl::StrCat(kKeys), "key", "4", "SLOTS", "0", "1000"});
+ 
+-  for (int i = 0; i <= 1'000; ++i) {
+-    EXPECT_THAT(RunPrivileged({"dflycluster", "getslotinfo", "slots", absl::StrCat(i)}),
+-                RespElementsAre(RespArray(
+-                    ElementsAre(IntArg(i), "key_count", Not(IntArg(0)), _, _, _, _, _, _))));
++  auto writes = [this] { return GetMetrics().facade_stats.reply_stats.io_write_calls; };
++  const uint64_t writes_before = writes();
++
++  // Collected in two rounds; the second one is partial and spans several ranges.
++  auto result = RunPrivileged({"dflycluster", "getslotinfo", "slots", "0-16383", "16383", "2-0"});
++
++  // Flushing the reply per slot would take more than 16K writes.
++  EXPECT_LT(writes() - writes_before, 1000u);
++
++  // Every slot sums the stats of all shards, in request order and with duplicates.
++  constexpr SlotId kTail[] = {16383, 0, 1, 2};
++  ASSERT_THAT(result, ArrLen(kMaxSlotNum + 1 + std::size(kTail)));
++  const auto& reply = result.GetVec();
++  auto key_count = [&](size_t i) { return *reply[i].GetVec()[2].GetInt(); };
++  int64_t total_keys = 0;
++  for (SlotId slot = 0; slot <= kMaxSlotNum; ++slot) {
++    ASSERT_THAT(reply[slot], RespElementsAre(IntArg(slot), "key_count", _, _, _, _, _, _, _));
++    EXPECT_EQ(key_count(slot) > 0, slot <= 1000) << slot;
++    total_keys += key_count(slot);
+   }
+-
+-  for (int i = 1'001; i <= 16'383; ++i) {
+-    EXPECT_THAT(RunPrivileged({"dflycluster", "getslotinfo", "slots", absl::StrCat(i)}),
+-                RespElementsAre(
+-                    RespArray(ElementsAre(IntArg(i), "key_count", IntArg(0), _, _, _, _, _, _))));
++  EXPECT_EQ(total_keys, kKeys);
++  for (size_t i = 0; i < std::size(kTail); ++i) {
++    EXPECT_THAT(reply[kMaxSlotNum + 1 + i],
++                RespElementsAre(IntArg(kTail[i]), "key_count", IntArg(key_count(kTail[i])), _, _, _,
++                                _, _, _));
+   }
+ }
+ 
+```
+
+**File**: `src/server/db_slice.cc` (modified, +10/-3)
+```diff
+@@ -549,12 +549,19 @@ auto DbSlice::GetStats() const -> Stats {
+ 
+ SlotStats DbSlice::GetSlotStats(SlotId sid) const {
+   SlotStats stats;
++  AddSlotStats({&sid, 1}, {&stats, 1});
++  return stats;
++}
++
++void DbSlice::AddSlotStats(absl::Span<const SlotId> slots, absl::Span<SlotStats> dest) const {
++  DCHECK_EQ(slots.size(), dest.size());
+   for (const auto& db : db_arr_) {
+     // slots_stats is null outside real cluster mode.
+-    if (db && db->slots_stats)
+-      stats += db->slots_stats[sid];
++    if (db && db->slots_stats) {
++      for (size_t i = 0; i < slots.size(); ++i)
++        dest[i] += db->slots_stats[slots[i]];
++    }
+   }
+-  return stats;
+ }
+ 
+ DbSlice::AutoUpdater::AutoUpdater() {
+```
+
+**File**: `src/server/db_slice.h` (modified, +5/-0)
+```diff
+@@ -290,6 +290,11 @@ class DbSlice {
+   // Returns slot statistics summed across all active databases.
+   SlotStats GetSlotStats(SlotId sid) const;
+ 
++  // Adds the statistics of each slot in `slots`, summed across all active databases, to the
++  // respective entry of `dest`. Cheaper than calling GetSlotStats per slot, which repeats the call
++  // and the walk over the databases for every slot.
++  void AddSlotStats(absl::Span<const SlotId> slots, absl::Span<SlotStats> dest) const;
++
+   void UpdateMemoryParams(int64_t budget, size_t bytes_per_object) {
+     memory_budget_ = budget;
+     bytes_per_object_ = bytes_per_object;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8676** (2026-10-25): chore(deps): bump setuptools from 84.0.0 to 84.1.0 (@dependabot[bot])
-- **PR #8675** (2026-10-24): fix(search): build sort_indices.cc against libc++. (macOS fix) (@vyavdoshenko)
-- **PR #8665** (2026-10-23): fix: wait command preempts in atomic section (@kostasrim)
-- **PR #8664** (2026-10-23): fix(search): order SORTBY ties by key and rank missing values last (@vyavdoshenko)
-- **PR #8662** (closed): refactor(engine_shard): replay deferred polls without the continuation filter (@romange)
-- **PR #8659** (2026-10-23): fix(server): hide CONFIG SET values and ACL SETUSER tokens in logs and errors (@vyavdoshenko)
+- **PR #8718** (2026-10-30): feat: add throttling to slot flushes after migration (#8641) (@BorysTheDev)
+- **PR #8717** (closed): fix: SlotMigrationStreamer::Cancel() waits for Run finish (#8473) (@BorysTheDev)
+- **PR #8716** (2026-10-30): test: disable tiered_storage_test (@BorysTheDev)
+- **PR #8715** (2026-10-30): refactor: improve GetSlotInfo performance (@BorysTheDev)
+- **PR #8712** (2026-10-28): fix(server): reply to TIME with bulk strings (@vyavdoshenko)
+- **PR #8702** (2026-10-28): chore(search): Propagate error if index dropped during search (@abhijat)
 
 ---
 
@@ -2399,35 +3099,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump setuptools from 84.0.0 to 84.1.0 (#8676)
+## X. cancel save op if loading starts (#8505)
 
 **RULE**:
-When implementing operations in `uv.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/lint-test-chart/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68f60e27`: deps): bump setuptools from 84.0.0 to 84.1.0 (#8676). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d2c21aa`: cancel save op if loading starts (#8505). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `uv.lock`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/lint-test-chart/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-revision = 5
-default-groups = ["test"]
-version = "84.1.0"
-sdist = { url = "https://files.pythonhosted.org/packages/73/eb/7e5f628ee2eb168fecbf8026de7856b2543d6d609cc85f086b9a91ac93d6/setuptools-84.1.0.tar.gz", hash = "sha256:23657205b63d4d31395ab917815247f694aafad28cd21316bf5fd45a51048ea0", size = 1171783, upload-time = "2026-10-19T20:11:43.489Z" }
-    { url = "https://files.pythonhosted.org/packages/18/02/b4bbb90f8f29e334898ff45c6d9b1fffaa6f378017052b3023a06262b5f7/setuptools-84.1.0-py3-none-any.whl", hash = "sha256:5231689c6ac8156cd155cfb98c3fd6fb252c3e7e9bd3d78b64d3c55f132624c9", size = 819380, upload-time = "2026-10-19T20:11:41.684Z" },
+      - uses: actions/setup-python@v7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-revision = 3
-version = "84.0.0"
-sdist = { url = "https://files.pythonhosted.org/packages/6d/44/f5da03a8ef95d369145c5bb53050e7877c9f3d312e128605fd9504829143/setuptools-84.0.0.tar.gz", hash = "sha256:f4695c21257f0d9b537ec2692c941d02ee143b7cc1276941349a546573b2ef73", size = 1168449, upload-time = "2026-08-08T18:27:58.365Z" }
-    { url = "https://files.pythonhosted.org/packages/95/9c/c510029fc6ef33a6275cd2c5d3cecd6613dfd6aa401d57c54f1c18852ccf/setuptools-84.0.0-py3-none-any.whl", hash = "sha256:51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670", size = 818216, upload-time = "2026-08-08T18:27:56.719Z" },
+      - uses: actions/setup-python@v5
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68f60e27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d2c21aa` are properly handled with clean fallback behavior.

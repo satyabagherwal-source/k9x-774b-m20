@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source**: github ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
-> **Source Version**: `25308324`  
+> **Source Version**: `fef259d7`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:15:20.525Z  
+> **Timestamp**: 2026-10-31T13:00:09.845Z  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:15:19.237Z  
+> **Harvest Timestamp**: 2026-10-31T13:00:09.840Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2048 stars
+- **Stars / Engagement**: 2056 stars
 
 ---
 
@@ -2911,11 +2911,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1628** (2026-10-21): **cli: memory migrate still stops at migration 008 on a pre-v8.7 database**
-  *Symptoms*: ## What happens  #1626 fixed #1622 for the service: `SqliteVecMemoryStorage.initialize()` now creates the `metadata` table before it runs the schema migrations. The `memory migrate` command does not go through `initialize()`, so on a sqlite-vec database from before v8.7.0 it still fails the same way: migration 008 stops with `no such table: metadata`, and nothing after it applies.  ## Why  `memory migrate` (`cli/main.py:411`) opens the file with a plain `sqlite3.connect(db_path)` (`:429`) and calls `MigrationRunner.run_pending(conn)` directly (`:431`). `run_pending()` (`storage/migration_runner.py:211`) creates its own registry table (`_ensure_registry_table`, `:37`) but not `metadata`, where it keeps `schema_version`. Credit to @Clannad47, who pointed this out in the #1626 description.  ## Suggested fix  Create `metadata` inside `MigrationRunner` itself, next to `_ensure_registry_table()` and with the same definition the storage uses (`CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)`). Then every caller of `run_pending()` is covered, the CLI and `initialize()` alike, and the separate guard from #1626 becomes redundant but harmless. Keep the `--dry-run` path read-only: with `dry_run=True` nothing may be created.  ## For whoever picks this up  - The test goes in `tests/storage/`, next to `test_1622_legacy_metadata_table.py`, whose pre-v8.7 database setup you can reuse. Drive it through the real code path: build that database under `temp_db_path`
+- **Issue #1723** (2026-10-31): **[Bug]: harvest provider chain sends max_tokens and temperature to gpt-5.x**
+  *Symptoms*: Found while testing LLM provider integrations in agent frameworks: an automated tool flags candidates and each one is reproduced before it is reported. Reproduced on c187ec5.  ### Bug Description With `HARVEST_LLM_PROVIDERS` pointing at OpenAI and a gpt-5.x model, every call from the provider chain is refused, because the request always carries `max_tokens` and `temperature`. #797 fixed exactly this for the quality scorer, where gpt-5.4-mini answered `Unsupported parameter: 'max_tokens' is not supported with this model. Use 'max_completion_tokens' instead.` The harvest rewriter and classifier build their own payload and did not get that branch.  Harvest rewrite, `memory_distill`, search summaries and the LLM NLI backend all share this chain. For harvest, the whole batch comes back as `None` and nothing is stored. A non dry-run `memory_harvest` still adds the session to the tracker, so those candidates stay skipped until `force_reharvest`.  ### Steps to Reproduce 1. Use the configuration below. 2. Run a rewrite. The endpoint here is a fake that returns the error body from #797 when `max_tokens` is present:  ```python def endpoint(request):     body = json.loads(request.content)     if "max_tokens" in body:         return httpx.Response(400, json={"error": {             "message": "Unsupported parameter: 'max_tokens' is not supported with this model. "                        "Use 'max_completion_tokens' instead.",             "type": "invalid_request_error", "param": "max_token
 
-- **Issue #1622** (2026-10-21): **storage: a pre-v8.7 sqlite-vec database never finishes its schema upgrade, so search returns nothing**
-  *Symptoms*: ## What happens  A sqlite-vec database created before v8.7.0, and not opened by any version since, does not upgrade when a current release opens it. The service starts and `count` is right, but semantic search and tag search fail:  ``` Schema migration warning: Migration 008_add_graph_table failed: no such table: metadata Failed to retrieve memories: no such column: m.embedding_pending Failed to search by tags: no such column: embedding_pending ```  The data is intact, but every search comes back empty, and the only sign in the log is a warning.  ## Why  `SqliteVecMemoryStorage.initialize()` in `storage/mixins/migrations.py` has two paths. For a new database, `_apply_pragmas_and_create_tables` creates the `metadata` table (`:395`) before the schema migrations run (`:515`). For an existing database, the branch starting at `:119` calls `_run_schema_migrations` (`:333`) without creating it. `MigrationRunner` keeps `schema_version` in `metadata`, so on a database that predates the table, the first pending migration fails, the runner stops, and everything after it (017 adds `embedding_pending`) never applies.  The table has been created since v8.7.0 (66152de5, 2025-10-26), so this hits only databases from before that, and only when they skip every version in between. In practice that means installs left untouched for a year, and anyone migrating off ChromaDB with v7.6.0 (tag `chromadb-legacy-final`, see #1621).  ## Reproduced  1. Install v7.6.0 from the tag in a throwaway venv, cr
+- **Issue #1708** (2026-10-29): **Milvus: purge_deleted() leaves graph edges of purged memories behind**
+  *Symptoms*: Follow-up to #1703 / #1706.  #1706 made all six Milvus delete paths remove the graph edges of the memories they delete, through `MilvusMemoryStorage._delete_graph_edges()`. `purge_deleted()` was left out on purpose, as noted in the PR: it hard-deletes tombstoned rows by id and leaves their rows in `<collection>_graph` behind, the same leak #1703 fixed for the other paths.  On Milvus this is a narrow case. `delete()` is a hard delete, so a tombstone only exists when something set `metadata.deleted_at` explicitly via `update_memory_metadata()` (see the docstrings of `is_deleted()` and `purge_deleted()` in `storage/milvus.py`). When such a row is purged, its edges survive, including `has_entity`, so `find_memories_by_entity()` can still return the purged hash.  Fix: after the successful `delete` call in `purge_deleted()`, call `await self._delete_graph_edges(to_purge)`. Best-effort, same contract as the other paths.  Test: extend `tests/storage/test_milvus_delete_graph_edges.py`: store a memory with entity linking on, set `deleted_at` in its metadata with a `created_at` older than the threshold, run `purge_deleted()`, and assert no edge touches the hash. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2932,1386 +2932,969 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb7c041e` (2026-10-26)
-**Commit Message**: fix(oauth): confine per-store grants to calls that stay in the store (#1690)
+### Incident Patch 1: `5ffe3614` (2026-10-30)
+**Commit Message**: fix(sync): bound the delta-sync event log by compacting update_metadata chains (#1721)
 
-* fix(oauth): confine per-store grants to calls that stay in the store
+* fix(sync): bound the delta-sync event log by compacting update_metadata chains
 
-A read:<store>/write:<store> grant authorized every MCP tool call that
-named the store, but only some tools confine themselves to it.
-memory_quality, memory_cleanup, memory_resolve, memory_consolidate and the
-mistake-note tools ignore store, so write:projectA plus store="projectA"
-reached every partition. memory_search with include_beliefs or fallback
-read across partitions as well. On cloudflare, milvus and remote_http,
-get_by_hash ignores store, so GET /api/memories/{hash} returned another
-store's memory to a read:projectA token.
+The sync_events log is append-only and never compacted. Periodic local
+recomputes (quality/utility) append an update_metadata event per memory
+several times a day; on a 3-week-old production DB that was 1.36M events,
+97% idempotent update_metadata (~53 per memory, ~half the DB file).
 
-MemoryServer.store_grant_target now decides which store a per-store
-grant may authorize: only for the eight tools whose handlers confine,
-without the two cross-store arguments, and only on a backend whose
-get_by_hash honours store. The SDK dispatch gate and the /mcp shim both
-use it. On REST, require_store_scope refuses a grant that holds only
-through operation:<store> on a backend that cannot confine. Global
-grants are unchanged. Storage-layer enforcement remains #1683.
+compact_update_metadata collapses, per content_hash, the update_metadata
+chain into one consolidated event carrying the LWW-resolved state. It
+reuses the apply resolver (_load_live_events + _resolve_md_fields) instead
+of re-implementing LWW, so the compacted log re-materializes identically.
 
-The scope check in mcp_endpoint mo
+Convergence-preserving:
+- only update_metadata is compacted; create/delete untouched (recreation anchor)
+- nothing above MIN(last_seq_pushed) across peers is touched; cursors left alone
+- per live incarnation (never merges across a create-after-delete boundary)
+- consolidated event carries the winning event's HLC pair (not per-column max),
+  reuses a seq within the collapsed range, deterministic event_id (idempotent)
+- single SAVEPOINT, fail-close
 
-**File**: `changelog.d/1690.fixed.md` (added, +13/-0)
+**File**: `changelog.d/1721.fixed.md` (added, +14/-0)
 ```diff
-@@ -0,0 +1,13 @@
-+- **Per-store scopes no longer reach outside their store (#1690).** A `read:<store>` /
-+  `write:<store>` grant authorized any MCP tool call that named the store, including tools
-+  that ignore `store` (`memory_quality`, `memory_cleanup`, `memory_resolve`,
-+  `memory_consolidate`, the mistake-note tools) and `memory_search` with `include_beliefs` or
-+  `fallback`, which read every partition. A per-store grant now covers only the tools that
-+  confine themselves to the store (`memory_store`, `memory_store_session`, `memory_search`,
-+  `memory_list`, `memory_delete`, `memory_update`) and only without those two arguments;
-+  everything else needs the global scope, including `memory_explore` and `memory_detail`,
-+  whose entity names come from a graph that has no store partition. The SDK
-+  transports and the `/mcp` shim share one rule. Store-restricted credentials are also
-+  refused, over MCP and REST, on backends whose `get_by_hash` ignores `store` (cloudflare,
-+  milvus, remote_http), where `GET /api/memories/{hash}` returned another store's memory.
-+  They work on sqlite_vec and hybrid until the storage layer enforces `store` (#1683).
+@@ -0,0 +1,14 @@
++- **Delta-sync: the `sync_events` log grew without bound from `update_metadata` churn (#1721, filhocf).**
++  The event log is append-only and never compacted, so periodic local recomputes
++  (quality/utility) that rewrite metadata appended an `update_metadata` event per memory
++  several times a day — on a 3-week-old database, 1.36M events, 97% of them idempotent
++  `update_metadata`. A new `compact_update_metadata` job collapses the chain per
++  `content_hash` into one consolidated event carrying the LWW-resolved state (reusing the
++  apply resolver, not re-implementing it). It is convergence-preserving: compaction is
++  all-or-nothing per live incarnation — a hash is only collapsed when its whole live
++  `update_metadata` chain sits at or below the safe watermark `MIN(last_seq_pushed)` across
++  peers, so a field whose winning edit is still above the watermark can never be defeated by
++  a collapsed field carrying an inflated clock. The consolidated event keeps the winning
++  event's HLC pair and a deterministic id that includes the payload hash (so peers that
++  compact divergent chains never reuse an identity). The delete is chunked and the whole
++  batch is fail-closed under a single SAVEPOINT.
 ```
 
-**File**: `src/mcp_memory_service/server_impl.py` (modified, +37/-4)
+**File**: `src/mcp_memory_service/storage/sync/compaction.py` (added, +355/-0)
 ```diff
-@@ -1613,6 +1613,40 @@ def _rate_limit_error(
-             isError=True,
-         )
- 
-+    # Tools whose handlers keep reads and writes inside the claimed ``store``
-+    # on a backend whose get_by_hash honours it. A per-store grant
-+    # (read:<s>/write:<s>) authorizes only these: every other tool acts on all
-+    # partitions, so naming a store there must not unlock it. memory_explore
-+    # and memory_detail are left out: the entity graph is not partitioned, so
-+    # their entity names and related entities span every store (#1683).
-+    STORE_CONFINED_TOOLS = frozenset({
-+        "memory_store", "memory_store_session", "memory_search", "memory_list",
-+        "memory_delete", "memory_update",
-+    })
-+    # memory_search arguments that read outside the claimed store: beliefs are
-+    # not partitioned, and the exact/tag fallback queries ignore ``store``.
-+    CROSS_STORE_ARGUMENTS = ("include_beliefs", "fallback")
+@@ -0,0 +1,355 @@
++"""
++Delta-sync sync_events LOG COMPACTION (Gate G4 implementation).
 +
-+    async def store_grant_target(self, name: Optional[str], arguments: Optional[dict] = None) -> Optional[str]:
-+        """Return the store a per-store grant may authorize this call for.
++Collapses the idempotent op='update_metadata' chain per content_hash into a single
++consolidated event that carries the LWW-resolved state, giving the sync_events log a bound
++without breaking cross-peer convergence.
 +
-+        ``None`` means only the global grant will do: the call names no store
-+        (or ``all``), the tool ignores ``store``, the call reaches across
-+        partitions, or the backend's get_by_hash ignores ``store`` and so cannot
-+        prove confinement (storage-layer enforcement is #1683). The SDK dispatch
-+        gate and the /mcp shim both ask this, so the transports cannot disagree.
-+        """
-+        arguments = arguments or {}
-+        store = arguments.get("store")
-+        if store in (None, "all") or name not in self.STORE_CONFINED_TOOLS:
-+            return None
-+        if any(arguments.get(key) for key in self.CROSS_STORE_ARGUMENTS):
-+            return None
-+        storage = await self._ensure_storage_initialized()
-+        if not getattr(storage, "get_by_hash_is_store_scoped", False):
-+            return None
-+        return store
++Design (reuses, never reinvents — G1):
++  - Field-level LWW is NOT re-implemented here: the winning fields are read back through the
++    SAME resolver the apply path uses (``_load_live_events`` + ``_resolve_md_fields`` elect the
++    live incarnation and the per-field winners via ``_winner_key``). The consolidated event is
++    built so that re-resolving the (now shorter) log yields a byte-identical verdict (T1/T5/T7).
++  - The consolidated event carries the WINNING update_metadata event's HLC PAIR (the single
++    smallest ``_winner_key``), never MAX-per-column, so bootstrap._read_snapshot elects the same
++    (hlc_physical, hlc_logical) pair and _seed_last_hlc_on_first_boot cannot regress (T2).
++  - Only op='update_metadata' rows are ever removed; op='create'/op='delete' are untouched (T3).
++  - Watermark frontier: no event with seq > MIN(last_seq_pushed) across push_cursor may be
++    removed/rewritten. When ``watermark`` is None it is computed as that MIN; when there is NO
++    push_cursor row at all, no peer depends on the log tail, so the frontier is MAX(seq) (the
++    whole live chain is collapsible). sync_cursor and push_cursor are never touched (T4).
++  - The consolidated event_id is DETERMINISTIC (content_hash + winning HLC pair), so a second
++    run recognises the already-consolidated chain and is a no-op (T6a/T6b).
++  - Fail-closed: all removals + the insert run inside ONE SAVEPOINT; any error rolls the whole
++    thing back, leaving the log byte-identical (T6c).
 +
-     async def tool_requires_write(self, name: Optional[str], arguments: Optional[dict] = None) -> bool:
-         """Return True if calling this tool requires the 'write' scope.
- 
-@@ -1738,16 +1772,15 @@ async def call_tool(
-         scope_str = self._caller_scope_str()
-         if scope_str is not None:
-             operation = "write" if await self.tool_requires_write(name, arguments) else "read"
--            store_arg = (arguments or {}).get("store")
--            target = None if store_arg in (None, "all") else store_arg
-+            target = await self.store_grant_target(name, arguments)
-             if not self._scope_grants(scope_str, operation, target):
-                 logger.warning(
-                     "Refused %s tool for a scope lacking the store grant: %s",
-                     operation, _sanitize_log_value(name),
-                 )
-+                required = "'%s' (global)" % operation if target is None else "'%s:%s'" % (operation, target)
-                 raise PermissionError(
--                    "insufficient_scope: tool '%s' requires '%s%s' access"
--                    % (name, operation, "" if target is None else ":" + target)
-+                    "insufficient_scope: tool '%s' requires %s access" % (name, required)
-                 )
- 
-         # Resolve handler from routing table
-```
-
-**File**: `src/mcp_memory_service/web/api/mcp.py` (modified, +33/-32)
-```diff
-@@ -47,6 +47,36 @@ async def _requires_write(server, tool_name: Optional[str], arguments: Optional[
-     """
-     return await server.tool_requires_write(tool_name, arguments)
- 
-+
-+async def _scope_refusal(server, user, request_id, tool_name: str, arguments: dict) -> Optional[JSONResponse]:
-+    """Return the 403 for a tool call the caller's scope does not cover, else None.
-+
-+    Mutating tools require 'write', read-only tools require 'read'
-+    (GHSA-2r68-g678-7qr3). A global 'read'/'write' grants every store.
-+    'read:<store>'/'write:<store>' grants exactly that store, and only where
-+    MemoryServer.store_grant_target says the call stays inside it (the same rule
-+    the SDK transports apply); anything else, including a call with no `store`,
-+    requires the global operation scope.
-+    """
-+    operation = "write" if await _requires_write(server, tool_name, arguments) else "read"
-+    target = await server.store_grant_target(tool_name, arguments)
-+    if user.has_store_scope(operation, target):
-+        return None
-+    required = (
-+        f"'{operation}' (global)" if target is None
-+        else f"'{operation}' or '{operation}:{target}'"
-+    )
-+    response = MCPResponse(
-+        id=request_id,
-+        error={
-+            "code": -32003,
-+            "message": f"Insufficient scope: tool requires {required} access",
-+            "data": {"required_scope": operation, "tool": tool_name, "store": arguments.get("store")},
-+        },
-+    )
-+    return JSONResponse(content=response.model_dump(exclude_none=True), status_code=403)
-+
-+
- router = APIRouter(prefix="/mcp", tags=["mcp"])
- 
- 
-@@ -235,38 +265,9 @@ async def mcp_endpoint(
-                 )
-                 return JSONResponse(content=response.model_dump(exclude_none=True))
- 
--            # Scope enforcement, per tool call. Mutating tools require 'write',
--            # read-only tools require 'read' (GHSA-2r68-g678-7qr3). When the
--            # call names a `store`, the check is per-store: a global
--            # 'read'/'write' grants every store, else 'read:<store>'/
--            # 'write:<store>' grants exactly that store ('all' -> global). A
--            # call with no `store` targets the implicit default and requires
--            # the global operation scope.
--            operation = "write" if await _requires_write(server, tool_name, arguments) else "read"
--            store_arg = arguments.get("store")
--            if store_arg is not None:
--                resolved_store = None if store_arg == "all" else store_arg
--                authorized = user.has_store_scope(operation, resolved_store)
--                required = (
--                    f"'{operation}' (global)" if resolved_store is None
--                    else f"'{operation}' or '{operation}:{store_arg}'"
--                )
--            else:
--                authorized = user.has_scope(operation)
--                required = f"'{operation}'"
--            if not authorized:
--                response = MCPResponse(
--                    id=request.id,
--                    error={
--                        "code": -32003,
--                        "message": f"Insufficient scope: tool requires {required} access",
--                        "data": {"required_scope": operation, "tool": tool_name, "store": store_arg},
--                    },
--                )
--                return JSONResponse(
--                    content=response.model_dump(exclude_none=True),
--                    status_code=403,
--                )
-+            refusal = await _scope_refusal(server, user, request.id, tool_name, arguments)
-+            if refusal is not None:
-+                return refusal
- 
-             # Resolve the rate-limit identity from the transport BEFORE the
-             # arguments rewrite below: the shim copies X-Agent-ID into
-```
-
-**File**: `src/mcp_memory_service/web/oauth/middleware.py` (modified, +34/-1)
-```diff
-@@ -109,7 +109,27 @@ def has_store_scope(self, operation: str, store: Optional[str]) -> bool:
-         return f"{operation}:{store}" in scopes
- 
-     def require_store_scope(self, operation: str, store: Optional[str]) -> None:
--        """Raise 403 if ``operation`` on ``store`` is not permitted."""
-+        """Raise 403 if ``operation`` on ``store`` is not permitted.
-+
-+        A grant that holds only through ``operation:<store>`` additionally needs
-+        a backend that confines hash lookups to the store. cloudflare, milvus
-+        and remote_http accept ``store`` on get_by_hash and ignore it, so there
-+        a store-restricted credential would read or delete another partition's
-+        memory by hash; it is refused until the storage layer enforces
-+        ``store`` (#1683). Global grants are unaffected.
-+        """
-+        if self.has_store_scope(operation, store) and not self.has_scope(operation):
-+            if not _storage_confines_store():
-+                raise HTTPException(
-+                    status_code=status.HTTP_403_FORBIDDEN,
-+                    detail={
-+                        "error": "insufficient_scope",
-+                        "error_description": (
-+                            "Store-restricted credentials are not supported on this "
-+                            f"storage backend; use a global '{operation}' scope"
-+                        ),
-+                    }
-+                )
-         if not self.has_store_scope(operation, store):
-             if store is None:
-                 needed = f"'{operation}' (global, for cross-store access)"
-@@ -124,6 +144,19 @@ def require_store_scope(self, operation: str, store: Optional[str]) -> None:
-             )
- 
- 
-+def _storage_confines_store() -> bool:
-+    """Whether the active backend's get_by_hash honours ``store``.
-+
-+    Fails closed: no initialized storage counts as not confining.
-+    """
-+    from ..dependencies import get_storage  # inline import: keeps the storage stack out of OAuth module import
-+    try:
-+        storage = get_storage()
-+    except HTTPException:
-+        return False
-+    return bool(getattr(storage, "get_by_hash_is_store_scoped", False))
-+
-+
- def scope_within_ceiling(requested: Optional[str], ceiling: Optional[str]) -> bool:
-     """Return True if every token in ``requested`` is permitted by ``ceiling``.
- 
-```
-
-**File**: `tests/unit/test_store_grant_gate.py` (added, +110/-0)
-```diff
-@@ -0,0 +1,110 @@
-+"""Per-store grants on the native MCP transports (SSE, Streamable HTTP).
-+
-+The SDK dispatch gate must apply the same rule as the /mcp shim: a
-+read:<store>/write:<store> grant authorizes a call only when the tool confines
-+itself to that store, the call does not reach across partitions, and the
-+backend can prove confinement. Everything else needs the global grant.
++SPEC: spec-sync-eventlog-compaction.md.
 +"""
 +
-+from types import SimpleNamespace
-+from unittest.mock import AsyncMock
++import hashlib
++import json
++import logging
++import os
++import time
++from typing import Dict, List, Optional, Tuple
 +
-+import pytest
-+from mcp import types
-+from mcp.server.lowlevel.server import request_ctx
-+from mcp.shared.context import RequestContext
++from ..base import MemoryStorage
++from ..mixins.base import _sanitize_log_value
++from .apply import (
++    _sqlite,
++    _sync_lock,
++    _load_live_events,
++    _ev_winner_key,
++    _metadata_items,
++    _top_level_fields,
++)
 +
-+# Via the package: the direct server_impl import races the package __init__.
-+from mcp_memory_service.server import MemoryServer
++logger = logging.getLogger(__name__)
 +
-+
-+@pytest.fixture
-+def server(monkeypatch):
-+    srv = MemoryServer()
-+    srv.remote_transport = True
-+    srv.storage = AsyncMock()
-+    srv.storage.get_by_hash_is_store_scoped = True
-+    monkeypatch.setattr(srv, "_ensure_storage_initialized", AsyncMock(return_value=srv.storage))
-+    srv.handled = []
-+
-+    async def handler(_server, arguments):
-+        srv.handled.append(arguments)
-+        return [types.TextContent(type="text", text="handled")]
-+
-+    monkeypatch.setattr("mcp_memory_service.tools.routing.resolve_handler", lambda name: handler)
-+    return srv
++# The op of the consolidated event. The protection of free-form vs structured keys is NOT
++# done here — it comes from reusing apply._top_level_fields / apply._metadata_items, which
++# already classify the payload fields. This constant only names the op string.
++_CONSOLIDATED_OP = "update_metadata"
 +
 +
-+async def _call(server, name, arguments, scope):
-+    ctx = RequestContext(
-+        request_id=1, meta=None, session=None, lifespan_context=None,
-+        request=SimpleNamespace(scope={"mcp_auth_scope": scope}, headers={}, client=None),
-+    )
-+    token = request_ctx.set(ctx)
-+    try:
-+        handler = server.server.request_handlers[types.CallToolRequest]
-+        req = types.CallToolRequest(
-+            method="tools/call",
-+            params=types.CallToolRequestParams(name=name, arguments=arguments),
-+        )
-+        return (await handler(req)).root
-+    finally:
-+        request_ctx.reset(token)
++def _compaction_agent_id() -> str:
++    """Stable agent id for consolidated events. A dedicated, single-token id (no slash) keeps
++    the row a valid, filterable event and makes the consolidated event visibly synthetic without
++    impersonating a real author."""
++    return "compaction"
 +
 +
-+@pytest.mark.asyncio
-+async def test_store_grant_cannot_reach_a_tool_that_ignores_store(server):
-+    result = await _call(server, "memory_quality",
-+                         {"action": "rate", "content_hash": "h", "rating": "-1", "store": "projectA"},
-+                         "read:projectA write:projectA")
-+    assert result.isError
-+    assert server.handled == []
++def _deterministic_consolidated_event_id(content_hash: str, hlc_physical: int, hlc_logical: int,
++                                         updates: Dict) -> str:
++    """Stable id for the consolidated update_metadata event (T6b).
++
++    Keyed on (content_hash, winning HLC pair, op, AND a canonical hash of the consolidated
++    `updates`). Same inputs → same id, so a second run on an unchanged chain produces the
++    identical identity and is recognised as already-consolidated. Including the payload hash
++    (Greptile P1#2) ensures two peers that compact DIVERGENT chains sharing the same winning
++    HLC pair mint DIFFERENT ids — otherwise identical ids with different payloads would be
++    rejected by apply_remote_event as an altered replay, silently dropping the event and
++    stalling the pull. Mirrors bootstrap._deterministic_event_id's shape ('prefix-' + sha256[:32]).
++    """
++    payload_digest = hashlib.sha256(
++        json.dumps(updates, sort_keys=True, separators=(",", ":")).encode("utf-8")
++    ).hexdigest()[:16]
++    raw = f"compact:{_CONSOLIDATED_OP}:{content_hash}:{hlc_physical}:{hlc_logical}:{payload_digest}".encode("utf-8")
++    return "cmp-" + hashlib.sha256(raw).hexdigest()[:32]
 +
 +
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("flag", ["include_beliefs", "fallback"])
-+async def test_store_grant_cannot_search_across_partitions(server, flag):
-+    result = await _call(server, "memory_search", {"query": "x", "store": "projectA", flag: True},
-+                         "read:projectA")
-+    assert result.isError
-+    assert server.handled == []
++def _frontier(s, watermark: Optional[int]) -> int:
++    """Compute the compaction frontier (max seq that may be collapsed).
++
++    - explicit watermark → use it verbatim (caller caps how far compaction may reach);
++    - watermark is None  → MIN(last_seq_pushed) across push_cursor; if there is NO push_cursor
++      row, no peer depends on the log tail, so the frontier is MAX(seq) (collapse everything).
++    """
++    if watermark is not None:
++        return int(watermark)
++    row = s.conn.execute("SELECT COUNT(*), MIN(last_seq_pushed) FROM push_cursor").fetchone()
++    has_peers = row is not None and row[0] and row[0] > 0
++    if has_peers and row[1] is not None:
++        return int(row[1])
++    max_row = s.conn.execute("SELECT COALESCE(MAX(seq), 0) FROM sync_events").fetchone()
++    return int(max_row[0]) if max_row and max_row[0] is not None else 0
 +
 +
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("tool, arguments", [
-+    ("memory_explore", {"query": "x", "store": "projectA"}),
-+    ("memory_detail", {"entity_id": "e", "store": "projectA"}),
-+])
-+async def test_store_grant_cannot_read_the_unpartitioned_graph(server, tool, arguments):
-+    """Entity names and related entities come from a graph with no store, so
-+    a per-store grant would see other stores' entities."""
-+    result = await _call(server, tool, arguments, "read:projectA")
-+    assert result.isError
-+    assert server.handled == []
++def _live_hashes_with_update_metadata(s) -> List[str]:
 +
-+
-+@pytest.mark.asyncio
-+async def test_store_grant_refused_on_a_backend_that_cannot_confine(server):
-+    server.storage.get_by_hash_is_store_scoped = False
-+    result = await _call(server, "memory_delete", {"content_hash": "h", "store": "projectA"},
-+                         "read:projectA write:projectA")
-+    assert result.isError
-+    assert server.handled == []
-+
-+
-+@pytest.mark.asyncio
-+async def test_store_grant_still_works_for_a_confined_tool(server):
-+    result = await _call(server, "memory_delete", {"content_hash": "h", "store": "projectA"},
-+                         "read:projectA write:projectA")
-+    assert not result.isError
-+    assert server.handled == [{"content_hash": "h", "store": "projectA"}]
-+
-+
-+@pytest.mark.asyncio
-+async def test_global_grant_is_unchanged(server):
-+    server.storage.get_by_hash_is_store_scoped = False
-+    result = await _call(server, "memory_quality",
-+                         {"action": "rate", "content_hash": "h", "rating": "-1", "store": "projectA"},
-+                         "read write")
-+    assert not result.isError
-+    assert len(server.handled) == 1
 ```
 
-**File**: `tests/web/api/test_store_grant_confinement.py` (added, +186/-0)
+**File**: `tests/sync/test_sync_event_log_compaction.py` (added, +692/-0)
 ```diff
-@@ -0,0 +1,186 @@
+@@ -0,0 +1,692 @@
 +"""
-+A per-store grant (read:<store> / write:<store>) authorizes only calls that
-+really stay inside that store.
++RED tests (Gate G3 / TDD) for the sync_events LOG COMPACTION job — the fix for the
++unbounded sync_events growth where ~97% of rows are idempotent op='update_metadata'
++recomputes.
 +
-+#1682 introduced per-store scopes and gated every request on the store the
-+caller *claims*. Three holes were left behind it:
++Target under test (DOES NOT EXIST YET — collection fails with ImportError, valid RED):
 +
-+- tools that ignore ``store`` (memory_quality, memory_cleanup, memory_resolve,
-+  ...) accepted a claimed store and then acted on every partition;
-+- memory_search's ``include_beliefs`` and ``fallback`` read across partitions
-+  even when the main search is store-scoped;
-+- on backends whose ``get_by_hash`` ignores ``store`` (cloudflare, milvus,
-+  remote_http), hash-addressed REST routes returned another store's memory.
++    from mcp_memory_service.storage.sync.compaction import compact_update_metadata
++    result = compact_update_metadata(storage, watermark=None)
++    # -> {"events_removed": int, "bytes_reclaimed": int | None}
 +
-+These drive the real /mcp shim and the real REST routes against sqlite-vec,
-+with the authenticated user replaced by one holding exactly the given scope.
++API / NAME DECISIONS (documented for G4, see subagent_response too):
++  - Module: mcp_memory_service/storage/sync/compaction.py (sibling of apply.py/bootstrap.py,
++    matches the package convention: resolver/apply/bootstrap/orchestrator/protocol).
++  - Public fn: compact_update_metadata(storage, watermark=None) -> dict. Name kept from the
++    task; it is precise (it compacts ONLY the update_metadata chains, never create/delete).
++  - watermark semantics (T4): optional int. When None the function MUST compute a safe
++    internal watermark = MIN(last_seq_pushed) across push_cursor (and never exceed the
++    live-event frontier). An explicit watermark lets the caller cap how far compaction may
++    touch. NO event with seq > watermark may be removed or rewritten.
++  - Return keys: events_removed (int, count of sync_events rows deleted) and bytes_reclaimed
++    (int | None; None allowed when the backend cannot cheaply measure, e.g. no VACUUM).
++
++WHY EACH TEST IS RED TODAY: compaction.py does not exist, so the module import at the top
++fails at COLLECTION time → every test in the file errors (ImportError). That is a legitimate
++RED for a not-yet-written function. Each test ALSO specifies real post-compaction BEHAVIOR
++(not just "import works") so it stays meaningful and turns GREEN only when G4 implements the
++contract — and would turn RED again on a regression.
++
++Reuses the REAL resolution (never re-implements LWW in the test):
++  - apply._load_live_events + apply._resolve_md_fields  (field-level LWW winners)
++  - apply._materialize_update_metadata                  (materialized row state)
++  - bootstrap._read_snapshot                            (HLC pair election per hash)
++  - store._recreate_of_for / recreate_of SELECT op='delete'  (delete dominance)
 +"""
 +
 +import os
++import json
 +import tempfile
++import time
 +
 +import pytest
 +import pytest_asyncio
-+from fastapi.testclient import TestClient
 +
 +from mcp_memory_service.models.memory import Memory
 +from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage
 +from mcp_memory_service.utils.hashing import generate_content_hash
-+from mcp_memory_service.web.dependencies import set_storage
++from mcp_memory_service.storage.sync.apply import (
++    apply_remote_event,
++    advance_sync_cursor,
++    _load_live_events,
++    _resolve_md_fields,
++    _materialize_update_metadata,
++    _sqlite,
++)
++from mcp_memory_service.storage.sync.bootstrap import _read_snapshot
++
++# The module under test — DOES NOT EXIST YET. This import fails at collection → RED.
++from mcp_memory_service.storage.sync.compaction import compact_update_metadata
 +
 +
-+@pytest.fixture
-+def temp_db():
-+    with tempfile.TemporaryDirectory() as tmpdir:
-+        yield os.path.join(tmpdir, "test.db")
-+
++# ─────────────────────────────── fixtures / helpers ───────────────────────────────
 +
 +@pytest_asyncio.fixture
-+async def storage(temp_db, monkeypatch):
++async def store(monkeypatch):
++    monkeypatch.setenv("MCP_AGENT_ID", "beta")
++    monkeypatch.setenv("MCP_SYNC_EVENTLOG", "true")
 +    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
-+    s = SqliteVecMemoryStorage(temp_db)
++    with tempfile.TemporaryDirectory() as tmp:
++        s = SqliteVecMemoryStorage(os.path.join(tmp, "c.db"))
++        await s.initialize()
++        yield s
++        await s.close()
++
++
++async def _mk_store(name="x.db"):
++    d = tempfile.mkdtemp()
++    s = SqliteVecMemoryStorage(os.path.join(d, name))
 +    await s.initialize()
-+    yield s
-+    await s.close()
++    return s
 +
 +
-+@pytest_asyncio.fixture
-+async def other_store_hash(storage):
-+    """A memory that lives in projectB, which a projectA credential must not reach."""
-+    content = "belongs to projectB only"
-+    memory = Memory(content=content, content_hash=generate_content_hash(content), tags=["b"])
-+    ok, _ = await storage.store(memory, store="projectB")
-+    assert ok
-+    return memory.content_hash
++def _create_event(content_hash, *, content, tags=None, store="default",
++                  created_at=1000.0, updated_at=1000.0, agent="alpha", event_id="c1",
++                  hlc_physical=10, hlc_logical=0, memory_type="note", metadata=None):
++    return {
++        "agent_id": agent, "event_id": event_id, "op": "create",
++        "content_hash": content_hash, "hlc_physical": hlc_physical, "hlc_logical": hlc_logical,
++        "embedding_model": None, "embedding_dim": None,
++        "payload": {
++            "content_hash": content_hash, "content": content, "memory_type": memory_type,
++            "tags": tags or [], "created_at": created_at, "updated_at": updated_at,
++            "metadata": metadata or {}, "store": store,
++        },
++    }
 +
 +
-+@pytest.fixture
-+def make_client(storage, monkeypatch):
-+    from mcp_memory_service.web.app import app
-+    from mcp_memory_service.web.oauth import middleware
-+    from mcp_memory_service.web.api import mcp
-+
-+    monkeypatch.setattr(middleware, "API_KEY", None)
-+    monkeypatch.setattr(middleware, "OAUTH_ENABLED", False)
-+    monkeypatch.setattr(middleware, "ALLOW_ANONYMOUS_ACCESS", True)
-+    from mcp_memory_service.web import dependencies
-+    # Restored on teardown, so this storage cannot answer later tests' lookups.
-+    monkeypatch.setattr(dependencies, "_storage", None)
-+    set_storage(storage)
-+    monkeypatch.setattr(mcp, "_memory_server", None)
-+
-+    def _make(scope):
-+        async def mock_user():
-+            return middleware.AuthenticationResult(
-+                authenticated=True, client_id="c", scope=scope, auth_method="test",
-+            )
-+
-+        app.dependency_overrides[middleware.get_current_user] = mock_user
-+        app.dependency_overrides[middleware.require_read_access] = mock_user
-+        return TestClient(app)
-+
-+    yield _make
-+    app.dependency_overrides.clear()
++def _update_metadata_event(content_hash, *, updates, event_id, agent="alpha",
++                           hlc_physical, hlc_logical=0, updated_at=2000.0):
++    return {
++        "agent_id": agent, "event_id": event_id, "op": "update_metadata",
++        "content_hash": content_hash, "hlc_physical": hlc_physical, "hlc_logical": hlc_logical,
++        "embedding_model": None, "embedding_dim": None,
++        "payload": {"content_hash": content_hash, "updates": updates, "updated_at": updated_at},
++    }
 +
 +
-+def _ignore_store_like_cloudflare(storage, monkeypatch):
-+    """Make the sqlite backend behave like cloudflare/milvus/remote_http:
-+    get_by_hash accepts ``store`` and ignores it, and says so."""
-+    original = storage.get_by_hash
-+
-+    async def get_by_hash(content_hash, store=None):
-+        return await original(content_hash)
-+
-+    monkeypatch.setattr(storage, "get_by_hash", get_by_hash)
-+    monkeypatch.setattr(storage, "get_by_hash_is_store_scoped", False)
-+
-+
-+def _call(client, name, arguments):
-+    return client.post("/mcp", json={
-+        "jsonrpc": "2.0", "id": 1, "method": "tools/call",
-+        "params": {"name": name, "arguments": arguments},
-+    })
-+
-+
-+def _refused(response):
-+    return response.status_code == 403 and response.json()["error"]["code"] == -32003
-+
-+
-+# --------------------------------------------------------------------------
-+# /mcp shim: tool allowlist and cross-store arguments
-+# --------------------------------------------------------------------------
-+
-+@pytest.mark.integration
-+def test_store_grant_cannot_reach_a_tool_that_ignores_store(make_client, other_store_hash):
-+    """memory_quality has no store parameter: claiming one must not unlock it."""
-+    client = make_client("read:projectA write:projectA")
-+    response = _call(client, "memory_quality", {
-+        "action": "rate", "content_hash": other_store_hash, "rating": "-1", "store": "projectA",
-+    })
-+    assert _refused(response)
-+
-+
-+@pytest.mark.integration
-+@pytest.mark.parametrize("flag", ["include_beliefs", "fallback"])
-+def test_store_grant_cannot_search_across_partitions(make_client, flag):
-+    client = make_client("read:projectA")
-+    response = _call(client, "memory_search", {"query": "x", "store": "projectA", flag: True})
-+    assert _refused(response)
-+
-+
-+@pytest.mark.integration
-+def test_store_grant_still_searches_its_own_store
-```
-
-**File**: `tests/web/test_anonymous_scope.py` (modified, +9/-0)
-```diff
-@@ -29,6 +29,15 @@
- from mcp_memory_service.web.oauth.middleware import AuthenticationResult
- 
- 
-+@pytest.fixture(autouse=True)
-+def _confining_backend(monkeypatch):
-+    """The commons store only works on a backend that confines get_by_hash to a
-+    store; the refusal elsewhere is covered in
-+    tests/web/api/test_store_grant_confinement.py."""
-+    from mcp_memory_service.web.oauth import middleware
-+    monkeypatch.setattr(middleware, "_storage_confines_store", lambda: True)
-+
-+
- # --------------------------------------------------------------------------
- # config resolution: unset -> full default, set-empty -> nothing, value kept
- # --------------------------------------------------------------------------
-```
-
-**File**: `tests/web/test_oauth_store_scopes.py` (modified, +9/-0)
-```diff
-@@ -30,6 +30,15 @@
- )
- 
- 
-+@pytest.fixture(autouse=True)
-+def _confining_backend(monkeypatch):
-+    """These test the scope grammar, so the backend counts as one that confines
-+    get_by_hash to a store. The refusal on a backend that cannot is covered in
-+    tests/web/api/test_store_grant_confinement.py."""
-+    from mcp_memory_service.web.oauth import middleware
-+    monkeypatch.setattr(middleware, "_storage_confines_store", lambda: True)
-+
-+
- def _auth(scope):
-     return AuthenticationResult(authenticated=True, client_id="c", scope=scope, auth_method="oauth")
- 
++def _delete_event(content_hash, *
 ```
 
 ---
 
-### Incident Patch 2: `e15728d6` (2026-10-26)
-**Commit Message**: fix(web): save the dashboard's Quality tab settings (#1671) (#1676)
+### Incident Patch 2: `0071ab2a` (2026-10-31)
+**Commit Message**: feat(rerank): per-stage timing of memory_search rerank under include_debug, and honor MCP_QUALITY_LOCAL_DEVICE (#1669) (#1701)
 
-* fix(web): save the dashboard's Quality tab settings (#1671)
+* feat(rerank): per-stage timing of memory_search rerank under include_debug (#1669)
 
-The provider dropdown and the boost toggle on the Quality tab were never
-read, the toggle rendered checked although boosting is off by default,
-and the Current Provider box was hardcoded.
+With rerank=true and include_debug=true, result["debug"]["rerank_timing"]
+now carries the wall-clock of each stage of the call: search (and pool
+size), filters, scorer resolve (cold or warm, with the to_thread hop),
+scoring (with the hop and one entry per ONNX inference chunk: items,
+padded length, tokenize and run time) and the rerank stage total. The
+debug block prints it; the handler logs one debug line per call.
 
-Add an admin-only POST /api/config/quality that writes
-MCP_QUALITY_AI_PROVIDER and MCP_QUALITY_BOOST_ENABLED to .env and
-restarts the server, and wire the tab to it: it now loads both values
-from /api/config/env and has a Save & Restart button.
+Without include_debug nothing is measured and the response is unchanged;
+scores and ordering are the same with or without timing. The tail of
+handle_memory_search moved to _finish_memory_search so the handler can
+time the stages before it (behaviour unchanged, complexity budget held).
 
-Values are checked against the choices ENV_CATEGORIES already lists. A
-provider whose key is missing is refused before anything is written,
-since QualityConfig.validate() would stop the restarted server from
-starting. The saved values also go into os.environ: load_dotenv copied
-the old .env values there, and the restarted process inherits them.
+* fix(rerank): honor MCP_QUALITY_LOCAL_DEVICE for the search reranker (#1669)
 
-* fix(web): address review on the Quality tab save (#1671)
+The rerank path resolved its scorer with device='auto' no matter what,
+while the quality evaluator already passes MCP_QUALITY_LOCAL_DEVICE. On
+Apple Silicon 'auto' selects the CoreML provider, which 
 
-Keep the tab's controls and Save disabled until /config/env has answered,
-so a slow or failed load can no longer write the HTML defaults over the
-configured values; a failed load says so and reopening the tab retries.
-
-Read t
-
-**File**: `changelog.d/1671.fixed.md` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+- **The dashboard's Quality tab now saves its settings (#1671).**
-+  The AI provider dropdown and the quality-boost toggle were never read by anything, the
-+  toggle rendered checked although the boost is off by default, and the "Current Provider"
-+  box was hardcoded. A new admin-only `POST /api/config/quality` writes
-+  `MCP_QUALITY_AI_PROVIDER` and `MCP_QUALITY_BOOST_ENABLED` to `.env` and restarts the
-+  server; the tab loads both from `/api/config/env` and gets a "Save & Restart" button.
-+  Values are checked against the choices the Environment tab already lists, and a provider
-+  whose API key is missing (groq, gemini) is refused up front, because
-+  `QualityConfig.validate()` would otherwise stop the server from coming back. Saved values
-+  also apply after the restart when the old value had already been loaded from `.env`.
-```
-
-**File**: `src/mcp_memory_service/web/api/configuration.py` (modified, +113/-3)
-```diff
-@@ -16,7 +16,8 @@
- Configuration API endpoint for exposing .env parameters.
- 
- Provides read-only access to environment configuration with sensitive value masking,
--plus write access for Cloudflare credentials with connection validation.
-+plus write access for Cloudflare credentials with connection validation and for the
-+quality settings shown in the dashboard's Quality tab.
- """
- 
- import os
-@@ -512,8 +513,8 @@ async def get_env_configuration(user = Depends(require_read_access)):
-             choices = param_def[2] if len(param_def) > 2 else None
-             sensitive = param_def[3] if len(param_def) > 3 else False
- 
--            # Get current value (environment > .env)
--            value = os.getenv(key) or env_vars.get(key)
-+            # Get current value (environment > .env, even when empty, as at startup)
-+            value = os.environ[key] if key in os.environ else env_vars.get(key)
- 
-             # Determine source
-             source = "default"
-@@ -642,6 +643,9 @@ def _write_credential_to_env(env_path: Path, key: str, value: str) -> None:
-             new_lines.append(line)
- 
-     if not found:
-+        # A file that ends without a newline would otherwise get the key glued to its last line
-+        if new_lines and not new_lines[-1].endswith("\n"):
-+            new_lines[-1] += "\n"
-         new_lines.append(f"{key}={value}\n")
- 
-     with open(env_path, 'w', encoding='utf-8') as f:
-@@ -799,3 +803,109 @@ def _sanitize(v: str) -> str:
-         message="Credentials saved. Server restarting...",
-         restart_scheduled=True,
-     )
-+
-+
-+# ---------------------------------------------------------------------------
-+# Quality settings
-+# ---------------------------------------------------------------------------
-+
-+# Keys the Quality tab may write. Each one is also listed in the "quality"
-+# category of ENV_CATEGORIES, which supplies its type and allowed choices.
-+QUALITY_WRITABLE_KEYS = ("MCP_QUALITY_AI_PROVIDER", "MCP_QUALITY_BOOST_ENABLED")
-+
-+# Variables a provider needs before QualityConfig.validate() lets the server start.
-+QUALITY_PROVIDER_REQUIREMENTS = {
-+    "groq": ("GROQ_API_KEY",),
-+    "gemini": ("GEMINI_API_KEY",),
-+}
-+
-+
-+class SaveQualitySettingsRequest(BaseModel):
-+    settings: dict[str, str]
-+
-+
-+def _normalize_quality_value(key: str, raw: str) -> str:
-+    """Strip control characters and check the value against the key's type and choices."""
-+    param_type, choices = next(
-+        (param_type, choices)
-+        for param_key, param_type, choices, _ in ENV_CATEGORIES["quality"]["params"]
-+        if param_key == key
-+    )
-+    value = re.sub(r"[\x00-\x1f\x7f]", "", raw).strip()
-+
-+    if param_type == "boolean":
-+        value = value.lower()
-+        if value not in ("true", "false"):
-+            raise HTTPException(status_code=400, detail=f"{key} must be true or false")
-+    elif param_type == "choice":
-+        value = value.lower()
-+        if value not in choices:
-+            raise HTTPException(
-+                status_code=400,
-+                detail=f"{key} must be one of: {', '.join(choices)}"
-+            )
-+    return value
-+
-+
-+def _check_quality_provider_requirements(provider: Optional[str], env_path: Path) -> None:
-+    """Refuse a provider whose required variables are not set."""
-+    env_vars = _read_env_file_dict(env_path)
-+    # Same precedence as load_dotenv(override=False) at startup: a variable present in
-+    # the process environment wins over .env even when it is empty.
-+    missing = [
-+        key for key in QUALITY_PROVIDER_REQUIREMENTS.get(provider, ())
-+        if not (os.environ[key] if key in os.environ else env_vars.get(key))
-+    ]
-+    if missing:
-+        raise HTTPException(
-+            status_code=400,
-+            detail=f"The {provider} provider needs {', '.join(missing)} to be set first"
-+        )
-+
-+
-+@router.post("/quality", response_model=SaveCredentialsResponse)
-+async def save_quality_settings(
-+    request: SaveQualitySettingsRequest,
-+    background_tasks: BackgroundTasks,
-+    user=Depends(require_admin_access)
-+):
-+    """
-+    Persist the Quality tab settings to .env and schedule a server restart.
-+    Only keys in QUALITY_WRITABLE_KEYS are accepted. Requires admin access.
-+    """
-+    if not request.settings:
-+        raise HTTPException(status_code=400, detail="No settings to save")
-+
-+    unknown = sorted(set(request.settings) - set(QUALITY_WRITABLE_KEYS))
-+    if unknown:
-+        raise HTTPException(status_code=400, detail=f"Unsupported setting: {', '.join(unknown)}")
-+
-+    values = {key: _normalize_quality_value(key, raw) for key, raw in request.settings.items()}
-+
-+    env_path = _find_env_path()
-+    _check_quality_provider_requirements(values.get("MCP_QUALITY_AI_PROVIDER"), env_path)
-+
-+    try:
-+        for key, value in values.items():
-+            _write_credential_to_env(env_path, key, value)
-+    except Exception as e:
-+        logger.error("Failed to write quality settings to .env: %s", _sanitize_log_va
-```
-
-**File**: `src/mcp_memory_service/web/static/app.js` (modified, +101/-0)
-```diff
-@@ -4630,6 +4630,11 @@ class MemoryDashboard {
-             this.loadCredentials();
-         }
- 
-+        // Load the configured quality settings when switching to quality tab
-+        if (tabName === 'quality') {
-+            this.loadQualitySettings();
-+        }
-+
-         // Load server status + auto-check for updates when switching to server tab
-         // (runs once per modal open to avoid repeated git fetches)
-         if (tabName === 'server') {
-@@ -4734,6 +4739,11 @@ class MemoryDashboard {
-         if (saveBtn) {
-             saveBtn.addEventListener('click', () => this.saveCloudflareCredentials());
-         }
-+
-+        // Quality tab Save & Restart button
-+        document.getElementById('qualitySaveBtn')?.addEventListener('click', () => {
-+            this.saveQualitySettings();
-+        });
-     }
- 
-     /**
-@@ -4829,6 +4839,97 @@ class MemoryDashboard {
-         el.style.display = 'block';
-     }
- 
-+    /**
-+     * Load the configured quality provider and boost flag into the Quality tab.
-+     * Values come from GET /api/config/env, so the tab shows what the server runs with.
-+     */
-+    async loadQualitySettings() {
-+        const resultEl = document.getElementById('qualitySaveResult');
-+        if (resultEl) resultEl.style.display = 'none';
-+
-+        // Nothing can be edited or saved until the configured values are in,
-+        // otherwise Save would write the HTML defaults over them
-+        const providerSelect = document.getElementById('quality-provider');
-+        const boostCheckbox = document.getElementById('quality-boost-enabled');
-+        const saveBtn = document.getElementById('qualitySaveBtn');
-+        [providerSelect, boostCheckbox, saveBtn].forEach(el => { if (el) el.disabled = true; });
-+
-+        try {
-+            const config = await this.apiCall('/config/env');
-+            const params = Object.fromEntries(
-+                config.categories.flatMap(category => category.parameters).map(param => [param.key, param])
-+            );
-+            const provider = params.MCP_QUALITY_AI_PROVIDER;
-+            const boost = params.MCP_QUALITY_BOOST_ENABLED;
-+
-+            const providerValue = (provider?.value || 'local').toLowerCase();
-+            const option = Array.from(providerSelect?.options || []).find(opt => opt.value === providerValue);
-+            if (providerSelect) {
-+                // A provider the dropdown does not offer (e.g. openai-compatible) is left as it is on save
-+                providerSelect.disabled = !option;
-+                providerSelect.value = providerValue;
-+            }
-+
-+            // Same spellings as safe_get_bool_env(); unset means off, the server default
-+            if (boostCheckbox) {
-+                boostCheckbox.checked = ['true', '1', 'yes', 'on', 'enabled']
-+                    .includes((boost?.value || '').toLowerCase().trim());
-+                boostCheckbox.disabled = false;
-+            }
-+            if (saveBtn) saveBtn.disabled = false;
-+
-+            const info = document.getElementById('current-provider-info');
-+            if (info) info.textContent = option ? option.textContent : providerValue;
-+        } catch (e) {
-+            console.warn('Failed to load quality settings:', e);
-+            this._showQualityResult('error', this.t(
-+                'settings.quality.loadFailed',
-+                '✗ Could not load the current settings: {error}. Reopen this tab to retry.',
-+                { error: e.message }
-+            ));
-+        }
-+    }
-+
-+    /**
-+     * POST /api/config/quality — persist the Quality tab and restart.
-+     */
-+    async saveQualitySettings() {
-+        const saveBtn = document.getElementById('qualitySaveBtn');
-+        const providerSelect = document.getElementById('quality-provider');
-+        const settings = {
-+            MCP_QUALITY_BOOST_ENABLED: document.getElementById('quality-boost-enabled')?.checked ? 'true' : 'false',
-+        };
-+        if (providerSelect && !providerSelect.disabled) {
-+            settings.MCP_QUALITY_AI_PROVIDER = providerSelect.value || 'local';
-+        }
-+
-+        saveBtn.disabled = true;
-+        saveBtn.textContent = this.t('settings.quality.saving', 'Saving…');
-+
-+        try {
-+            await this.apiCall('/config/quality', 'POST', { settings });
-+            this.closeModal(document.getElementById('settingsModal'));
-+            this.showRestartOverlay();
-+        } catch (e) {
-+            this._showQualityResult('error', this.t(
-+                'settings.quality.saveFailed',
-+                '✗ Save failed: {error}',
-+                { error: e.message }
-+            ));
-+        } finally {
-+            saveBtn.disabled = false;
-+            saveBtn.textContent = this.t('settings.quality.save', 'Save & Restart');
-+        }
-+    }
-+
-+    _showQualityResult(type, message) {
-+        const el = document.getElementById('qualitySaveResult');
-+        if (!el) return;
-+        el.className = `cred-test-result cred-test-${type}`;
-+        el
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/de.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "Ordnet Suchergebnisse neu, um hochwertige Speicher zu priorisieren",
-   "settings.quality.boost.label": "Qualitätsverbesserte Suche Aktivieren",
-   "settings.quality.current.label": "Aktueller Anbieter:",
-+  "settings.quality.loadFailed": "✗ Aktuelle Einstellungen konnten nicht geladen werden: {error}. Tab erneut öffnen, um es noch einmal zu versuchen.",
-   "settings.quality.provider.auto": "Automatisch (Alle Verfügbaren)",
-   "settings.quality.provider.gemini": "Gemini API",
-   "settings.quality.provider.groq": "Groq API",
-   "settings.quality.provider.help": "Lokales SLM bietet kostenlose, datenschutzwahrende Qualitätsbewertung",
-   "settings.quality.provider.label": "KI-Anbieter",
-   "settings.quality.provider.local": "Lokales SLM (Datenschutzmodus)",
-   "settings.quality.provider.none": "Nur Implizit (Ohne KI)",
-+  "settings.quality.save": "Speichern & Neustarten",
-+  "settings.quality.saveFailed": "✗ Speichern fehlgeschlagen: {error}",
-+  "settings.quality.saveHint": "Wird in .env gespeichert. Der Server startet neu, um die Änderung zu übernehmen.",
-+  "settings.quality.saving": "Speichern…",
-   "stats.tags": "Tags",
-   "stats.thisWeek": "Diese Woche",
-   "stats.total": "Erinnerungen gesamt",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/en.json` (modified, +6/-1)
-```diff
-@@ -414,5 +414,10 @@
-   "settings.quality.provider.help": "Local SLM provides zero-cost, privacy-preserving quality scoring",
-   "settings.quality.boost.label": "Enable Quality-Boosted Search",
-   "settings.quality.boost.help": "Rerank search results to prioritize high-quality memories",
--  "settings.quality.current.label": "Current Provider:"
-+  "settings.quality.current.label": "Current Provider:",
-+  "settings.quality.save": "Save & Restart",
-+  "settings.quality.saving": "Saving…",
-+  "settings.quality.saveFailed": "✗ Save failed: {error}",
-+  "settings.quality.loadFailed": "✗ Could not load the current settings: {error}. Reopen this tab to retry.",
-+  "settings.quality.saveHint": "Saved to .env. The server restarts to apply the change."
- }
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/es.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "Reordena los resultados de búsqueda para priorizar memorias de alta calidad",
-   "settings.quality.boost.label": "Habilitar Búsqueda con Mejora de Calidad",
-   "settings.quality.current.label": "Proveedor Actual:",
-+  "settings.quality.loadFailed": "✗ No se pudo cargar la configuración actual: {error}. Vuelve a abrir esta pestaña para reintentarlo.",
-   "settings.quality.provider.auto": "Automático (Todos Disponibles)",
-   "settings.quality.provider.gemini": "API Gemini",
-   "settings.quality.provider.groq": "API Groq",
-   "settings.quality.provider.help": "El SLM local proporciona puntuación de calidad sin costo y preservando la privacidad",
-   "settings.quality.provider.label": "Proveedor de IA",
-   "settings.quality.provider.local": "SLM Local (Modo Privacidad)",
-   "settings.quality.provider.none": "Solo Implícito (Sin IA)",
-+  "settings.quality.save": "Guardar y reiniciar",
-+  "settings.quality.saveFailed": "✗ Error al guardar: {error}",
-+  "settings.quality.saveHint": "Se guarda en .env. El servidor se reinicia para aplicar el cambio.",
-+  "settings.quality.saving": "Guardando…",
-   "stats.tags": "Etiquetas",
-   "stats.thisWeek": "Esta Semana",
-   "stats.total": "Total de Memorias",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/fr.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "Reclasse les résultats de recherche pour prioriser les mémoires de haute qualité",
-   "settings.quality.boost.label": "Activer la Recherche Améliorée par Qualité",
-   "settings.quality.current.label": "Fournisseur Actuel :",
-+  "settings.quality.loadFailed": "✗ Impossible de charger les paramètres actuels : {error}. Rouvrez cet onglet pour réessayer.",
-   "settings.quality.provider.auto": "Automatique (Tous Disponibles)",
-   "settings.quality.provider.gemini": "API Gemini",
-   "settings.quality.provider.groq": "API Groq",
-   "settings.quality.provider.help": "Le SLM local offre une notation de qualité sans coût et préservant la confidentialité",
-   "settings.quality.provider.label": "Fournisseur IA",
-   "settings.quality.provider.local": "SLM Local (Mode Confidentialité)",
-   "settings.quality.provider.none": "Implicite Uniquement (Sans IA)",
-+  "settings.quality.save": "Enregistrer et redémarrer",
-+  "settings.quality.saveFailed": "✗ Échec de l'enregistrement : {error}",
-+  "settings.quality.saveHint": "Enregistré dans .env. Le serveur redémarre pour appliquer la modification.",
-+  "settings.quality.saving": "Enregistrement…",
-   "stats.tags": "Tags",
-   "stats.thisWeek": "Cette Semaine",
-   "stats.total": "Total des Mémoires",
-```
-
-**File**: `src/mcp_memory_service/web/static/i18n/ja.json` (modified, +5/-0)
-```diff
-@@ -326,13 +326,18 @@
-   "settings.quality.boost.help": "検索結果を再ランク付けして高品質メモリを優先表示",
-   "settings.quality.boost.label": "品質ブースト検索を有効化",
-   "settings.quality.current.label": "現在のプロバイダー:",
-+  "settings.quality.loadFailed": "✗ 現在の設定を読み込めませんでした: {error}。このタブを開き直して再試行してください。",
-   "settings.quality.provider.auto": "自動 (利用可能なすべて)",
-   "settings.quality.provider.gemini": "Gemini API",
-   "settings.quality.provider.groq": "Groq API",
-   "settings.quality.provider.help": "ローカルSLMはゼロコストでプライバシーを保護した品質スコアリングを提供",
-   "settings.quality.provider.label": "AIプロバイダー",
-   "settings.quality.provider.local": "ローカルSLM (プライバシーモード)",
-   "settings.quality.provider.none": "暗黙のみ (AIなし)",
-+  "settings.quality.save": "保存して再起動",
-+  "settings.quality.saveFailed": "✗ 保存に失敗しました: {error}",
-+  "settings.quality.saveHint": ".env に保存されます。変更を反映するためにサーバーが再起動します。",
-+  "settings.quality.saving": "保存中…",
-   "stats.tags": "タグ",
-   "stats.thisWeek": "今週",
-   "stats.total": "総メモリー数",
-```
-
----
-
-### Incident Patch 3: `c36145f5` (2026-10-25)
-**Commit Message**: fix(ingestion): clear the five document loaders of unsanitised log calls (#1146) (#1677)
-
-* fix(ingestion): clear the five document loaders of unsanitised log calls (#1146)
-
-semtools_loader.py, json_loader.py, csv_loader.py, text_loader.py and
-pdf_loader.py logged the caller-provided file path, the parser's error text,
-the semtools stderr and the semtools binary location through f-strings.
-Those go through _sanitize_log_value; the character count and the PDF
-backend name become lazy %-style. The five modules join GUARDED_MODULES,
-file_path joins EXTERNAL_NAMES, and a caplog test per loader forges the
-path and the subprocess error without touching the disk.
-
-* changelog: fragment for #1677
-
-* test(ingestion): build the expected log path from str(forged_path), not a hardcoded '/'
-
-On Windows Path renders the separator as a backslash, so the five tests
-compared the escaped log line against 'docs/report...' and failed even
-when the escaping was right (Greptile P2 on #1677).
-
----------
-
-Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/1677.fixed.md` (added, +6/-0)
+**File**: `changelog.d/1701.added.md` (added, +6/-0)
 ```diff
 @@ -0,0 +1,6 @@
-+- **Document loaders logged caller-provided paths and parser errors unsanitised (#1146, #1677, massimiliano1991).**
-+  `ingestion/semtools_loader.py`, `json_loader.py`, `csv_loader.py`, `text_loader.py` and
-+  `pdf_loader.py` put the path of the file being ingested, the parser's error text and the
-+  `semtools` stderr into the log through f-strings, so a newline in any of them forged a log
-+  line. They go through `_sanitize_log_value` now; the five modules are in the guard's
-+  `GUARDED_MODULES` list and a test per loader fails if the newline comes back.
++- **Per-stage timing of the `memory_search` rerank path (#1669, #1701, massimiliano1991).**
++  With `rerank=true` and `include_debug=true`, `debug.rerank_timing` carries the wall-clock of
++  each stage of the call — search and pool size, filters, scorer resolve (cold or warm, with the
++  `to_thread` hop), scoring with one line per ONNX inference chunk (items, padded length,
++  tokenize and run time) — and the debug block prints it. Without `include_debug` nothing is
++  measured and the response is unchanged.
 ```
 
-**File**: `src/mcp_memory_service/ingestion/csv_loader.py` (modified, +4/-3)
+**File**: `changelog.d/1701.fixed.md` (added, +14/-0)
 ```diff
-@@ -25,6 +25,7 @@
- 
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
- 
- logger = logging.getLogger(__name__)
- 
-@@ -105,7 +106,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         max_rows_per_chunk = kwargs.get('max_rows_per_chunk', 50)
-         include_row_numbers = kwargs.get('include_row_numbers', True)
- 
--        logger.info(f"Extracting chunks from CSV file: {file_path}")
-+        logger.info("Extracting chunks from CSV file: %s", _sanitize_log_value(file_path))
- 
-         try:
-             # Read CSV data
-@@ -114,7 +115,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-             )
- 
-             if not rows:
--                logger.warning(f"CSV file {file_path} appears to be empty")
-+                logger.warning("CSV file %s appears to be empty", _sanitize_log_value(file_path))
-                 return
- 
-             # Prepare headers
-@@ -152,7 +153,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                 )
- 
-         except Exception as e:
--            logger.error(f"Error extracting from CSV file {file_path}: {type(e).__name__} - {str(e)}")
-+            logger.error("Error extracting from CSV file %s: %s - %s", _sanitize_log_value(file_path), _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract CSV content: {str(e)}") from e
- 
-     async def _read_csv_file(
+@@ -0,0 +1,14 @@
++- **The search reranker ignored `MCP_QUALITY_LOCAL_DEVICE` (#1669, #1701, massimiliano1991).**
++  It resolved its scorer with `device='auto'` regardless of the setting the quality evaluator
++  already passes to the same loader; on Apple Silicon `auto` selects the CoreML provider, which
++  runs the int8 cross-encoder an order of magnitude slower than the CPU provider. The setting
++  now reaches the reranker; the default (`auto`) is unchanged.
++- **Under `max_response_chars`, the debug block could displace every result; a zero-hit search printed none (#1701, massimiliano1991).**
++  With `include_debug=true` the diagnostics now ride after the results as the optional section
++  of a limited response, so the limiter drops them before it drops a memory; and a search with
++  no matches prints its debug block (filter counts and the search/filter timing) too, and
++  keeps it under the limit whether or not a summarization warning precedes it. The non-empty
++  limited path without a summarization warning budgeted only the memories and appended the
++  header, the truncation notice and the optional section uncounted; every positive
++  `max_response_chars` now goes through the bounded formatter, so a limited non-summary search
++  carries the bounded formatter's truncation notice (result counts, no character counts).
 ```
 
-**File**: `src/mcp_memory_service/ingestion/json_loader.py` (modified, +4/-3)
-```diff
-@@ -24,6 +24,7 @@
- 
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
- 
- logger = logging.getLogger(__name__)
- 
-@@ -100,7 +101,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         include_types = kwargs.get('include_types', False)
-         array_handling = kwargs.get('array_handling', 'expand')
- 
--        logger.info(f"Extracting chunks from JSON file: {file_path}")
-+        logger.info("Extracting chunks from JSON file: %s", _sanitize_log_value(file_path))
- 
-         try:
-             # Read and parse JSON
-@@ -140,10 +141,10 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                 )
- 
-         except json.JSONDecodeError as e:
--            logger.error(f"Invalid JSON in file {file_path}: {str(e)}")
-+            logger.error("Invalid JSON in file %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Invalid JSON format: {str(e)}") from e
-         except Exception as e:
--            logger.error(f"Error extracting from JSON file {file_path}: {type(e).__name__} - {str(e)}")
-+            logger.error("Error extracting from JSON file %s: %s - %s", _sanitize_log_value(file_path), _sanitize_log_value(type(e).__name__), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract JSON content: {str(e)}") from e
- 
-     async def _read_json_file(self, file_path: Path) -> tuple:
-```
-
-**File**: `src/mcp_memory_service/ingestion/pdf_loader.py` (modified, +3/-2)
+**File**: `src/mcp_memory_service/quality/onnx_ranker.py` (modified, +40/-7)
 ```diff
 @@ -9,6 +9,7 @@
+ import logging
+ import os
+ import threading
++import time
+ from pathlib import Path
+ from typing import List, Optional, Tuple
+ import numpy as np
+@@ -448,6 +449,19 @@ def score_quality(self, query: str, memory_content: str) -> float:
+             logger.error("Error scoring quality with %s: %s", self.model_name, _sanitize_log_value(str(e)))
+             return 0.5  # Return neutral score on error
  
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
++    @staticmethod
++    def _record_chunk_timing(timing, input_ids, t_start: float, t_tokenized: float) -> None:
++        """Append one chunk's split (tokenize vs. ``session.run``) when asked (#1669)."""
++        if timing is None:
++            return
++        t_done = time.perf_counter()
++        timing.append({
++            "items": int(input_ids.shape[0]),
++            "max_len": int(input_ids.shape[1]),
++            "tokenize_ms": round((t_tokenized - t_start) * 1000, 1),
++            "run_ms": round((t_done - t_tokenized) * 1000, 1),
++        })
++
+     def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
+         """Filter the feed to the inputs the loaded graph declares.
  
- logger = logging.getLogger(__name__)
+@@ -476,7 +490,8 @@ def _accepted_ort_inputs(self, ort_inputs: dict) -> dict:
+     MIN_GPU_BATCH_SIZE = int(os.environ.get("MCP_QUALITY_MIN_GPU_BATCH", "16"))
  
-@@ -103,7 +104,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         extract_tables = kwargs.get('extract_tables', False)
-         page_range = kwargs.get('page_range', None)
- 
--        logger.info(f"Extracting chunks from PDF: {file_path} using {self.backend}")
-+        logger.info("Extracting chunks from PDF: %s using %s", _sanitize_log_value(file_path), self.backend)
- 
-         try:
-             if self.backend == 'pdfplumber':
-@@ -118,7 +119,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                     yield chunk
- 
-         except Exception as e:
--            logger.error(f"Error extracting from PDF {file_path}: {str(e)}")
-+            logger.error("Error extracting from PDF %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract PDF content: {str(e)}") from e
- 
-     async def _extract_with_pdfplumber(
-```
-
-**File**: `src/mcp_memory_service/ingestion/semtools_loader.py` (modified, +9/-8)
-```diff
-@@ -28,6 +28,7 @@
- 
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
- 
- logger = logging.getLogger(__name__)
- 
-@@ -80,7 +81,7 @@ def _check_semtools_availability(self) -> bool:
+     def score_quality_batch(
+-        self, pairs: List[Tuple[str, str]], max_batch_size: int = 32
++        self, pairs: List[Tuple[str, str]], max_batch_size: int = 32,
++        timing: Optional[List[dict]] = None,
+     ) -> List[float]:
          """
-         semtools_path = shutil.which('semtools')
-         if semtools_path:
--            logger.info(f"Semtools found at: {semtools_path}")
-+            logger.info("Semtools found at: %s", _sanitize_log_value(semtools_path))
-             return True
+         Score multiple (query, memory_content) pairs in batched inference calls.
+@@ -489,6 +504,12 @@ def score_quality_batch(
+         Args:
+             pairs: List of (query, memory_content) tuples
+             max_batch_size: Maximum items per ONNX inference call
++            timing: Optional list; when given, one dict per inference chunk is
++                appended with ``items``, ``max_len`` (padded sequence length),
++                ``tokenize_ms`` and ``run_ms`` (issue #1669). Scores are not
++                affected. A chunk that fell back to sequential scoring leaves no
++                entry, so the sum of ``run_ms`` under the caller's total is the
++                sign of that fallback.
+ 
+         Returns:
+             List of quality scores between 0.0 and 1.0
+@@ -512,7 +533,7 @@ def score_quality_batch(
+         for chunk_start in range(0, len(pairs), max_batch_size):
+             chunk = pairs[chunk_start:chunk_start + max_batch_size]
+             try:
+-                chunk_scores = self._score_batch_chunk(chunk)
++                chunk_scores = self._score_batch_chunk(chunk, timing)
+                 all_scores.extend(chunk_scores)
+             except Exception as e:
+                 logger.warning(
+@@ -523,20 +544,25 @@ def score_quality_batch(
+ 
+         return all_scores
+ 
+-    def _score_batch_chunk(self, pairs: List[Tuple[str, str]]) -> List[float]:
++    def _score_batch_chunk(
++        self, pairs: List[Tuple[str, str]], timing: Optional[List[dict]] = None
++    ) -> List[float]:
+         """Score a single chunk of pairs in one ONNX inference call."""
+         if self.model_config['type'] == 'classifier':
+-            return self._score_classifier_batch(pairs)
++            return self._score_classifier_batch(pairs, timing)
+         elif self.model_config['type'] == 'cross-encoder':
+-            return self._score_cross_encoder_batch(pairs)
++            return self._score_cross_encoder_batch(pairs, timing)
          else:
-             logger.debug(
-@@ -128,7 +129,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                 "Semtools is not available. Install with: npm i -g @llamaindex/semtools"
+             raise ValueError(f"Unsupported model type: {self.model_config['type']}")
+ 
+-    def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
++    def _score_classifier_batch(
++        self, pairs: List[Tuple[str, str]], timing: Optional[List[dict]] = None
++    ) -> List[float]:
+         """Batch score for classifier models (DeBERTa). Uses memory_content only."""
+         texts = [content for _, content in pairs]
+         texts = [t if t else " " for t in texts]  # Avoid empty strings
+ 
++        t_start = time.perf_counter()
+         if self._use_fast_tokenizer:
+             encoded_list = self._tokenizer.encode_batch(texts)
+             max_len = max(len(enc.ids) for enc in encoded_list)
+@@ -557,7 +583,9 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
+             attention_mask = inputs["attention_mask"].astype(np.int64)
+ 
+         ort_inputs = {"input_ids": input_ids, "attention_mask": attention_mask}
++        t_tokenized = time.perf_counter()
+         outputs = self._model.run(None, self._accepted_ort_inputs(ort_inputs))
++        self._record_chunk_timing(timing, input_ids, t_start, t_tokenized)
+         logits = outputs[0]  # Shape: (batch_size, num_classes)
+ 
+         # Vectorized softmax + weighted score
+@@ -569,8 +597,11 @@ def _score_classifier_batch(self, pairs: List[Tuple[str, str]]) -> List[float]:
+         scores = probs @ class_values
+         return np.clip(scores, 0.0, 1.0).tolist()
+ 
+-    def 
+```
+
+**File**: `src/mcp_memory_service/quality/search_rerank.py` (modified, +89/-13)
+```diff
+@@ -32,6 +32,7 @@
+ """
+ 
+ import asyncio
++import time
+ import logging
+ import os
+ import threading
+@@ -51,6 +52,7 @@
+ DEFAULT_RERANK_CANDIDATES = 40
+ 
+ _TRUTHY = frozenset(('true', '1', 'yes', 'on', 'enabled'))
++_DEVICES = ('auto', 'cpu', 'cuda', 'mps', 'directml')
+ 
+ 
+ @dataclass(frozen=True)
+@@ -60,10 +62,12 @@ class SearchRerankConfig:
+     enabled: bool = False
+     candidates: int = DEFAULT_RERANK_CANDIDATES
+     model: str = DEFAULT_RERANK_MODEL
++    device: str = 'auto'
+ 
+     @classmethod
+     def from_env(cls) -> 'SearchRerankConfig':
+-        """Read the three flags. Junk falls back to defaults, never raises."""
++        """Read the three flags and the shared quality device. Junk falls back
++        to defaults, never raises."""
+         raw_candidates = (os.getenv('MCP_RERANK_CANDIDATES') or '').strip()
+         candidates = DEFAULT_RERANK_CANDIDATES
+         if raw_candidates:
+@@ -75,10 +79,21 @@ def from_env(cls) -> 'SearchRerankConfig':
+                     _sanitize_log_value(raw_candidates),
+                     DEFAULT_RERANK_CANDIDATES,
+                 )
++        # Same knob as the quality evaluator (MCP_QUALITY_LOCAL_DEVICE): the
++        # reranker went through the loader with device='auto' regardless, so on
++        # Apple Silicon it always took the CoreML provider (issue #1669).
++        device = (os.getenv('MCP_QUALITY_LOCAL_DEVICE') or '').strip().lower() or 'auto'
++        if device not in _DEVICES:
++            logger.warning(
++                'Invalid MCP_QUALITY_LOCAL_DEVICE=%s for the reranker. Using auto',
++                _sanitize_log_value(device),
++            )
++            device = 'auto'
+         return cls(
+             enabled=(os.getenv('MCP_RERANK_ENABLED') or '').strip().lower() in _TRUTHY,
+             candidates=candidates,
+             model=(os.getenv('MCP_RERANK_MODEL') or '').strip() or DEFAULT_RERANK_MODEL,
++            device=device,
+         )
+ 
+ 
+@@ -113,7 +128,7 @@ def resolve_fetch_limit(arguments: dict, base_limit: int, config: Optional[Searc
+ 
+ def _build_scorer(config: SearchRerankConfig) -> Any:
+     """Resolve through the existing loader -- the single ONNX path."""
+-    model = get_onnx_ranker_model(model_name=config.model)
++    model = get_onnx_ranker_model(model_name=config.model, device=config.device)
+     if model is None:
+         raise RuntimeError(
+             f"ONNX ranker '{config.model}' could not be resolved through the existing loader"
+@@ -147,48 +162,103 @@ def _log_failure_once(error: Exception) -> None:
+ 
+ def _resolve_scorer(config: SearchRerankConfig) -> Optional[Any]:
+     """Build once; a load failure latches for the process lifetime so callers
+-    neither pay for a re-download nor re-log (EARS 4).
++    neither pay for a re-download nor re-log (EARS 4)."""
++    return _resolve_scorer_built(config)[0]
++
++
++def _resolve_scorer_built(config: SearchRerankConfig) -> tuple:
++    """``_resolve_scorer`` plus whether THIS call built the scorer, decided
++    inside the lock: of several searches arriving during the first load only
++    the one that ran ``_build_scorer`` reports ``True`` (issue #1669 timing).
+ 
+     The once-log runs OUTSIDE ``_scorer_lock``: ``threading.Lock`` is not
+     reentrant, so logging inside the critical section deadlocked every
+     first-failure caller.
+     """
+     global _scorer
++    built = False
+     if _load_failed.is_set():
+-        return None
++        return None, built
+     if _scorer is None:
+         failure: Optional[Exception] = None
+         with _scorer_lock:
+             if _scorer is None:
++                built = True
+                 try:
+                     _scorer = _build_scorer(config)
+                 except Exception as error:
+                     _load_failed.set()
+                     failure = error
+         if failure is not None:
+             _log_failure_once(failure)
+-            return None
+-    return _scorer
++            return None, built
++    return _scorer, built
++
++
++def _on_worker(fn, *args, **kwargs):
++    """Run ``fn`` on the worker and return (started_at, finished_at, result),
++    both clocks taken on the worker itself so the caller can tell the time
++    inside ``fn`` from the time spent waiting for the executor or the loop."""
++    started = time.perf_counter()
++    result = fn(*args, **kwargs)
++    return started, time.perf_counter(), result
++
++
++async def _timed_hop(record: Optional[dict], key: str, fn, *args, **kwargs):
++    """``asyncio.to_thread`` with, when ``record`` is given, ``<key>_ms`` (time
++    inside ``fn``, measured on the worker) and ``<key>_hop_ms`` (everything
++    else: the executor's queueing delay plus the wait for the event loop to
++    resume after ``fn`` returned) written to it. ``kwargs`` go to ``fn``
++    untouched (it may take a ``timing`` of its own)."""
++    if record is None:
++        return await asyncio.to_thread(fn, *args, **kwargs)
++    scheduled = time.perf_counter()
++    started, finished, result = await asyncio.to_thread(_on_w
+```
+
+**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +121/-41)
+```diff
+@@ -1440,6 +1440,41 @@ def _format_memory_search_debug(result: dict) -> str:
+                 f"\n  Time range: {time_filter.get('start_timestamp')} - "
+                 f"{time_filter.get('end_timestamp')}"
              )
- 
--        logger.info(f"Extracting chunks from {file_path} using semtools")
-+        logger.info("Extracting chunks from %s using semtools", _sanitize_log_value(file_path))
- 
-         try:
-             # Parse document to markdown using semtools
-@@ -157,7 +158,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                 chunk_index += 1
- 
-         except Exception as e:
--            logger.error(f"Error processing {file_path} with semtools: {e}")
-+            logger.error("Error processing %s with semtools: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Failed to parse document: {str(e)}") from e
- 
-     async def _parse_with_semtools(self, file_path: Path) -> str:
-@@ -198,24 +199,24 @@ async def _parse_with_semtools(self, file_path: Path) -> str:
- 
-             if process.returncode != 0:
-                 error_msg = stderr.decode('utf-8', errors='replace')
--                logger.error(f"Semtools parsing failed: {error_msg}")
-+                logger.error("Semtools parsing failed: %s", _sanitize_log_value(error_msg))
-                 raise RuntimeError(f"Semtools returned error: {error_msg}")
- 
-             # Parse markdown output
-             markdown_content = stdout.decode('utf-8', errors='replace')
- 
-             if not markdown_content.strip():
--                logger.warning(f"Semtools returned empty content for {file_path}")
-+                logger.warning("Semtools returned empty content for %s", _sanitize_log_value(file_path))
-                 raise RuntimeError("Semtools returned empty content")
- 
--            logger.debug(f"Successfully parsed {file_path}, extracted {len(markdown_content)} characters")
-+            logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))
-             return markdown_content
- 
-         except asyncio.TimeoutError:
--            logger.error(f"Semtools parsing timed out for {file_path}")
-+            logger.error("Semtools parsing timed out for %s", _sanitize_log_value(file_path))
-             raise RuntimeError("Document parsing timed out after 5 minutes")
-         except Exception as e:
--            logger.error(f"Error running semtools: {e}")
-+            logger.error("Error running semtools: %s", _sanitize_log_value(e))
-             raise
++    text += _format_rerank_timing(debug.get("rerank_timing"))
++    return text
++
++
++def _format_rerank_timing(timing) -> str:
++    """One block per stage of the rerank path (issue #1669); empty when the
++    stage did not run under include_debug."""
++    if not timing:
++        return ""
++    text = "\n  Rerank timing (ms):"
++    if "search_ms" in timing:
++        text += f"\n    search: {timing['search_ms']} (pool {timing.get('pool')})"
++        text += f"\n    filters: {timing['filters_ms']}"
++    if "resolve_ms" in timing:
++        text += (
++            f"\n    scorer resolve: {timing['resolve_ms']}"
++            f" ({'cold' if timing.get('scorer_cold') else 'warm'},"
++            f" hop {timing.get('resolve_hop_ms')})"
++        )
++    if "score_ms" in timing:
++        text += (
++            f"\n    score: {timing['score_ms']} (hop {timing.get('score_hop_ms')},"
++            f" {timing.get('candidates')} candidates)"
++        )
++        for chunk in timing.get("chunks") or ():
++            text += (
++                f"\n      chunk of {chunk.get('items')} x {chunk.get('max_len')} tokens:"
++                f" tokenize {chunk.get('tokenize_ms')}, run {chunk.get('run_ms')}"
++            )
++    if "rerank_ms" in timing:
++        text += f"\n    rerank stage total: {timing['rerank_ms']}"
++        # The fallback note means the scorer was asked and the baseline order
++        # was kept; an empty pool never asked it, so it says nothing.
++        if "candidates" in timing and not timing.get("applied", True):
++            text += " (fell back to the unreranked order)"
+     return text
  
  
+@@ -1464,11 +1499,7 @@ async def _format_truncated_memory_search(
+     fallback_used: bool, max_response_chars: int, summary_warning: str,
+ ) -> types.TextContent:
+     """Format search results through the configured response-length limiter."""
+-    from ..utils.response_limiter import (
+-        format_bounded_response,
+-        format_truncated_response,
+-        truncate_memories,
+-    )
++    from ..utils.response_limiter import format_bounded_response
+ 
+     memory_dicts = [
+         {
+@@ -1480,20 +1511,25 @@ async def _format_truncated_memory_search(
+         }
+         for memory in memories
+     ]
++    # Under a limit the diagnostics asked for with include_debug ride after
++    # the results as the optional section, never in the required header: the
++    # limiter drops an optional section before it drops a memory (Greptile
++    # on #1701: in the header a long debug block could leave only the header).
+     header = _build_memory_search_header(result, total, fallback_used) + "\n\n"
+-    beliefs_section = await _format_beliefs_section(arguments, storage)
+-    if summary_warning:
+-        response_text = format_bounded_response(
+-            memory_dicts,
+-            max_response_chars,
+-            header=summary_warning + header,
+-            footer=beliefs_section,
+-        )
+-        return types.TextContent(type="text", text=response_text)
+-
+-    truncated, meta = truncate_memories(memory_dicts, max_response_chars)
+-    response_text = (
+-        header + format_truncated_response(truncated, meta) + beliefs_section
++    optional_section = (
++        _format_memory_search_debug(result)
++        + await _format_beliefs_section(arguments, storage)
++    )
++    # Every positive limit goes through the bounded formatter, with or
++    # without a summarization warning in front: the no-warning branch used to
++    # budget only the memories and append the header, the truncation notice
++    # and the optional section uncounted (doobidoo and ducanhnguyen223 on
++    # #1701), so a response could exceed the limit by the whole debug block.
++    response_text = format_bounded_response(
++        memory_dicts,
++        max_response_chars,
++        header=summary_warning + header,
++        footer=optional_section,
+     )
+     return types.TextContent(type="text", text=response_text)
+ 
+@@ -1508,17 +1544,25 @@ async def _format_empty_memory_search(
+     response = "No memories found"
+     if result.get("query"):
+         response += f" for query: '{result['query']}'"
+-    beliefs_section = await _format_beliefs_section(arguments, storage)
+-    if summary_warning and max_response_chars > 0:
++    # A zero-hit search still carries the diagnostics the caller asked for
++    # (filter counts, and the search/filter timing of #1669): a slow empty
++    # search is the one that needs them (Greptile on #1701).
++    optional_section = (
++        _format_memory_search_debug(result)
++        + await _format_beliefs_section(arguments, storage)
++    )
++    # Every positive limit goes through the limiter, with or without a
++    # summarization warning in front (doobidoo and ducanhnguyen223 on #1701).
++    if max_response_chars > 0:
+  
 ```
 
-**File**: `src/mcp_memory_service/ingestion/text_loader.py` (modified, +3/-2)
+**File**: `tests/quality/test_search_rerank_flag.py` (modified, +1/-1)
 ```diff
-@@ -25,6 +25,7 @@
+@@ -159,7 +159,7 @@ async def test_reranker_model_env_is_passed_to_the_loader(monkeypatch):
+     monkeypatch.setenv('MCP_RERANK_MODEL', 'ms-marco-MiniLM-L-6-v2')
+     with patch(LOADER, return_value=stub) as loader:
+         await rerank_candidates('q', _memories(2), _enabled_config())
+-    loader.assert_called_once_with(model_name='ms-marco-MiniLM-L-6-v2')
++    loader.assert_called_once_with(model_name='ms-marco-MiniLM-L-6-v2', device='auto')
  
- from .base import DocumentLoader, DocumentChunk
- from .chunker import TextChunker, ChunkingStrategy
-+from ..compat import _sanitize_log_value
  
- logger = logging.getLogger(__name__)
- 
-@@ -103,7 +104,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-         preserve_structure = kwargs.get('preserve_structure', True)
-         extract_links = kwargs.get('extract_links', False)
-         
--        logger.info(f"Extracting chunks from text file: {file_path}")
-+        logger.info("Extracting chunks from text file: %s", _sanitize_log_value(file_path))
-         
-         try:
-             # Read file content
-@@ -125,7 +126,7 @@ async def extract_chunks(self, file_path: Path, **kwargs) -> AsyncGenerator[Docu
-                     yield chunk
-                     
-         except Exception as e:
--            logger.error(f"Error extracting from text file {file_path}: {str(e)}")
-+            logger.error("Error extracting from text file %s: %s", _sanitize_log_value(file_path), _sanitize_log_value(e))
-             raise ValueError(f"Failed to extract text content: {str(e)}") from e
-     
-     async def _read_file_content(self, file_path: Path, encoding: Optional[str]) -> tuple:
+ # --- EARS 4: fail-open -------------------------------------------------------
 ```
 
-**File**: `tests/unit/test_ingestion_loaders_logging.py` (added, +166/-0)
+**File**: `tests/quality/test_search_rerank_timing.py` (added, +583/-0)
 ```diff
-@@ -0,0 +1,166 @@
-+"""
-+Log-injection tests for the ingestion/ document loaders (#1146).
+@@ -0,0 +1,583 @@
++"""Per-stage timing of the rerank path (issue #1669).
 +
-+Each loader logs the path of the document it is asked to read when it starts
-+and again, with the parser's error text, when it fails; the semtools loader
-+also logs where the ``semtools`` binary was found and what it wrote to stderr.
-+A newline in any of those must not reach the log as a line break.
-+
-+Nothing is written to disk and ``semtools`` is not run: ``validate_file`` and
-+the per-loader read step are stubbed, and the subprocess is a fake whose
-+``communicate`` returns a forged stderr.
++Contract:
++- Timing rides on ``include_debug``: with it, ``result["debug"]["rerank_timing"]``
++  carries one wall-clock entry per stage; without it the response is unchanged
++  (no ``debug`` key is added, the scorer is called exactly as before).
++- ``scorer_cold`` is True on the call that built the scorer and False after.
++- The ranker records one entry per ONNX inference call (``items``, ``max_len``,
++  ``tokenize_ms``, ``run_ms``), so a pool of 40 under the default
++  ``max_batch_size`` shows as two chunks of 32 and 8.
++- The handler adds ``search_ms``/``pool``/``filters_ms``/``rerank_ms`` and the
++  debug block prints them.
++- Scores and ordering are the same with or without timing.
 +"""
 +
 +import asyncio
 +import logging
-+import shutil
-+from pathlib import Path
++import threading
++import time
++from unittest.mock import AsyncMock, MagicMock, patch
 +
++import numpy as np
 +import pytest
 +
-+from mcp_memory_service.ingestion import pdf_loader as pdf_module
-+from mcp_memory_service.ingestion.csv_loader import CSVLoader
-+from mcp_memory_service.ingestion.json_loader import JSONLoader
-+from mcp_memory_service.ingestion.pdf_loader import PDFLoader
-+from mcp_memory_service.ingestion.semtools_loader import SemtoolsLoader
-+from mcp_memory_service.ingestion.text_loader import TextLoader
++from mcp_memory_service.quality import search_rerank
++from mcp_memory_service.quality.onnx_ranker import ONNXRankerModel
++from mcp_memory_service.quality.search_rerank import (
++    SearchRerankConfig,
++    apply_search_rerank,
++    rerank_candidates,
++    reset_scorer_for_tests,
++)
++from mcp_memory_service.server.handlers import memory as memory_handlers
 +
-+FORGED = "FORGED ingestion verified"
-+LOGGERS = "mcp_memory_service.ingestion"
-+
-+
-+def _messages(caplog):
-+    return [record.getMessage() for record in caplog.records]
-+
-+
-+def _assert_clean(caplog, *expected):
-+    messages = _messages(caplog)
-+    for text in expected:
-+        assert any(text in m for m in messages), (text, messages)
-+    assert not any(f"\n{FORGED}" in m for m in messages), messages
++LOADER = 'mcp_memory_service.quality.search_rerank.get_onnx_ranker_model'
++ENV_VARS = ('MCP_RERANK_ENABLED', 'MCP_RERANK_CANDIDATES', 'MCP_RERANK_MODEL')
++STAGE_KEYS = {
++    'candidates', 'scorer_cold', 'resolve_hop_ms', 'resolve_ms',
++    'score_hop_ms', 'score_ms', 'chunks', 'applied',
++}
 +
 +
-+async def _no_validation(_file_path):
-+    return None
++@pytest.fixture(autouse=True)
++def _clean_state(monkeypatch):
++    for var in ENV_VARS:
++        monkeypatch.delenv(var, raising=False)
++    reset_scorer_for_tests()
++    yield
++    reset_scorer_for_tests()
 +
 +
-+async def _failing_read(*_args, **_kwargs):
-+    raise ValueError(f"parser said\n{FORGED}")
++class _StubModel:
++    """Scorer double that records how it was called, timing included."""
++
++    def __init__(self, scores, error=None):
++        self._scores = scores
++        self._error = error
++        self.calls = []
++
++    def score_quality_batch(self, pairs, max_batch_size=32, timing=None):
++        self.calls.append((list(pairs), timing))
++        if self._error is not None:
++            raise self._error
++        if timing is not None:
++            timing.append({'items': len(pairs), 'max_len': 7,
++                           'tokenize_ms': 0.1, 'run_ms': 0.2})
++        return list(self._scores)
 +
 +
-+async def _drain(loader, file_path):
-+    with pytest.raises(ValueError):
-+        async for _chunk in loader.extract_chunks(file_path):
-+            pass
++def _memories(n):
++    return [{'content': f'memory-{i}', 'content_hash': f'hash-{i}'} for i in range(n)]
 +
 +
-+@pytest.fixture
-+def forged_path():
-+    return Path("docs", f"report\n{FORGED}.ext")
++def _config():
++    return SearchRerankConfig(enabled=True, candidates=40, model='Xenova/bge-reranker-base')
 +
 +
-+def _shown(path):
-+    """The path as the sanitised log line shows it: the OS separator, the newline escaped."""
-+    return str(path).replace("\n", "\\n")
-+
-+
-+@pytest.mark.asyncio
-+async def test_json_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    loader = JSONLoader()
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_read_json_file", _failing_read)
-+
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
-+
-+    _assert_clean(
-+        caplog,
-+        f"Extracting chunks from JSON file: {_shown(forged_path)}",
-+        f"Error extracting from JSON file {_shown(forged_path)}: ValueError - parser said\\n{FORGED}",
-+    )
++# --- timing rides on include_debug ------------------------------------------
 +
 +
 +@pytest.mark.asyncio
-+async def test_csv_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    loader = CSVLoader()
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_read_csv_file", _failing_read)
-+
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
-+
-+    _assert_clean(
-+        caplog,
-+        f"Extracting chunks from CSV file: {_shown(forged_path)}",
-+        f"Error extracting from CSV file {_shown(forged_path)}: ValueError - parser said\\n{FORGED}",
-+    )
-+
-+
-+@pytest.mark.asyncio
-+async def test_text_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    loader = TextLoader()
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_read_file_content", _failing_read)
-+
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
-+
-+    _assert_clean(
-+        caplog,
-+        f"Extracting chunks from text file: {_shown(forged_path)}",
-+        f"Error extracting from text file {_shown(forged_path)}: parser said\\n{FORGED}",
-+    )
++async def test_timing_attached_only_under_include_debug(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(40)])
++    memories = _memories(40)
++    with patch(LOADER, return_value=stub):
++        result = {'memories': memories, 'total': 40}
++        out, total = await apply_search_rerank(
++            {'rerank': True, 'limit': 10, 'include_debug': True}, 'q', memories, 40, result
++        )
++    assert total == 10 and len(out) == 10
++    timing = result['debug']['rerank_timing']
++    assert STAGE_KEYS <= set(timing)
++    assert timing['candidates'] == 40
++    assert timing['applied'] is True
++    assert timing['chunks'] == [{'items': 40, 'max_len': 7, 'tokenize_ms': 0.1, 'run_ms': 0.2}]
++    for key in ('resolve_hop_ms', 'resolve_ms', 'score_hop_ms', 'score_ms'):
++        assert isinstance(timing[key], float) and timing[key] >= 0.0
++    # The scorer received the chunk list it was asked to fill.
++    assert stub.calls[0][1] is timing['chunks']
 +
 +
 +@pytest.mark.asyncio
-+async def test_pdf_loader_logs_do_not_carry_newlines(monkeypatch, caplog, forged_path):
-+    # Pin the backend so the test does not depend on which PDF library is installed.
-+    monkeypatch.setattr(pdf_module, "HAS_PDFPLUMBER", True)
-+    loader = PDFLoader()
-+
-+    async def _failing_pages(*_args, **_kwargs):
-+        raise ValueError(f"parser said\n{FORGED}")
-+        yield  # pragma: no cover - makes this an async generator
-+
-+    monkeypatch.setattr(loader, "validate_file", _no_validation)
-+    monkeypatch.setattr(loader, "_extract_with_pdfplumber", _failing_pages)
-+
-+    with caplog.at_level(logging.INFO, logger=LOGGERS):
-+        await _drain(loader, forged_path)
-+
-+    _assert_clean(
-+        caplog,
-+        f"Extracting chunks from PDF: {_shown(forged_path)} using pdfplumber",
-+        f"Error extracting from PDF {_shown(forged_path)}: parser said\\n{FORGED}",
-+    )
-+
-+
-+class _FailingProcess:
-+    returncode = 1
-+
-+    async def communicate(self):
-+        return b"", f"semtools said\n{FORGED}".encode()
++async def test_without_include_debug_nothing_is_measured(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    stub = _StubModel(scores=[0.9 - 0.01 * i for i in range(5)])
++    memories = _memories(5)
++    result = {'memories': memories, 'total': 5}
++    with patch(LOADER, return_value=stub):
++        await apply_search_rerank({'rerank': True, 'limit': 3}, 'q', memories, 5, result)
++    assert 'debug' not in result
++    assert stub.calls == [([('q', f'memory-{i}') for i in range(5)], None)]
 +
 +
 +@pytest.mark.asyncio
-+async def test_semtools_loader_logs_do_not_carry_newlines(monkeypatch, ca
++async def test_existing_debug_block_is_extended_not_replaced(monkeypatch):
++    monkeypatch.setenv('MCP_RERANK_ENABLED', 'true')
++    stub = _StubModel(scores=[0.6 + 0.1 * i for i in range(3)])
++    memories = _memories(3)
++    result = {'memories': memories, 'total': 3, 'debug': {'raw_total': 3}}
++    with patch(LOADER, return_value=stub):
++        await apply_search_rerank(
++            {'rerank': True, 'limit': 3, 'include_debug': True}, 'q', memories, 3, result
++        )
++    assert result['debug']['raw_total'] == 3
++    assert result['debug']['rerank_timing']['candidates'] == 3
++
++
++@pytest.mark.asyncio
++async def test_order_i
 ```
 
-**File**: `tests/unit/test_log_injection_guard.py` (modified, +26/-0)
+---
+
+### Incident Patch 3: `fef259d7` (2026-10-31)
+**Commit Message**: fix(harvest): support GPT-5 completion parameters (#1725)
+
+* fix: use GPT-5 compatible harvest completion parameters
+
+* docs: add changelog entry for harvest GPT-5 fix
+
+* test: cover legacy harvest completion parameters
+
+* docs: fix changelog fragment format
+
+---------
+
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/1723.fixed.md` (added, +1/-0)
 ```diff
-@@ -84,6 +84,11 @@
-     "mcp_memory_service/config/search.py",
-     "mcp_memory_service/config/quality.py",
-     "mcp_memory_service/config/backup.py",
-+    "mcp_memory_service/ingestion/semtools_loader.py",
-+    "mcp_memory_service/ingestion/json_loader.py",
-+    "mcp_memory_service/ingestion/csv_loader.py",
-+    "mcp_memory_service/ingestion/text_loader.py",
-+    "mcp_memory_service/ingestion/pdf_loader.py",
- ]
+@@ -0,0 +1 @@
++- Fix harvest OpenAI-compatible requests for GPT-5 models by using max_completion_tokens.
+```
+
+**File**: `src/mcp_memory_service/harvest/classifier.py` (modified, +2/-3)
+```diff
+@@ -15,7 +15,7 @@
  
- # The levels check 6.5 looks at, verbatim.
-@@ -178,6 +183,11 @@
-     "MCP_HYBRID_FUSION_METHOD",
-     "MCP_QUALITY_AI_PROVIDER",
-     "BACKUP_INTERVAL",
-+    # The document a caller asks the ingestion/ loaders to read: every loader
-+    # logs it when it starts and when the parser fails. No guarded module logs
-+    # the name bare in a %-style call, so listing it decides for nobody else.
-+    # `error_msg` above already covers the stderr of the semtools subprocess.
-+    "file_path",
- })
+ from ..compat import _sanitize_log_value
+ from .models import HarvestCandidate
+-from .rewriter import load_llm_providers, is_usable_provider
++from .rewriter import build_openai_compatible_payload, load_llm_providers, is_usable_provider
  
- # Fields of an outside object that cannot carry injectable text. An HTTP status
-@@ -584,3 +594,19 @@ def test_lazy_scan_flags_config_environment_strings():
-         assert _lazy_findings(bare)
-         assert not _lazy_findings(wrapped)
-     assert not _lazy_findings('logger.info("Backup configuration: retention=%s days", BACKUP_RETENTION)\n')
+ logger = logging.getLogger(__name__)
+ 
+@@ -241,8 +241,7 @@ def _call_openai_compatible(
+                 f"{base_url}/chat/completions",
+                 headers=headers,
+                 # stream is explicit: fm serve streams SSE when it is absent (#1666)
+-                json={"model": model, "stream": False, "messages": messages,
+-                      "temperature": temperature, "max_tokens": max_tokens},
++                json=build_openai_compatible_payload(model, messages, max_tokens, temperature),
+             )
+             if resp.status_code == 429:
+                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
+```
+
+**File**: `src/mcp_memory_service/harvest/rewriter.py` (modified, +14/-7)
+```diff
+@@ -15,6 +15,17 @@
+ 
+ VALID_TYPES = {"decision", "bug", "convention", "learning", "context"}
+ 
 +
++def build_openai_compatible_payload(model: str, messages: list, max_tokens: int, temperature: float) -> dict:
++    """Build a chat-completions payload compatible with GPT-5 reasoning models."""
++    payload = {"model": model, "stream": False, "messages": messages}
++    if model.startswith("gpt-5"):
++        payload["max_completion_tokens"] = max_tokens + 800
++    else:
++        payload["temperature"] = temperature
++        payload["max_tokens"] = max_tokens
++    return payload
 +
-+@pytest.mark.unit
-+def test_lazy_scan_flags_ingestion_file_path():
-+    """The path the ingestion/ loaders are handed, logged at start and on failure.
+ # Models sometimes echo the literal placeholder word "TYPE" or "<type>" from the prompt
+ # instead of substituting the real type, e.g. "TYPE: convention — <text>" or "<type>: text".
+ # This strips that leaked wrapper and recovers the real type + content.
+@@ -517,13 +528,9 @@ async def _call_openai_compatible(self, base_url: str, model: str, api_key: str,
+             resp = await client.post(
+                 f"{base_url}/chat/completions",
+                 headers=headers,
+-                json={
+-                    "model": model,
+-                    "stream": False,  # fm serve streams SSE when this is absent (#1666)
+-                    "messages": [{"role": "user", "content": prompt}],
+-                    "temperature": 0.3,
+-                    "max_tokens": 200,
+-                },
++                json=build_openai_compatible_payload(
++                    model, [{"role": "user", "content": prompt}], 200, 0.3
++                ),
+             )
+             if resp.status_code == 429:
+                 raise Exception(f"Rate limit exceeded: {resp.text[:100]}")
+```
+
+**File**: `tests/harvest/test_classifier.py` (modified, +19/-0)
+```diff
+@@ -375,3 +375,22 @@ def test_payload_disables_streaming_explicitly(self):
+ 
+         payload = client.__enter__.return_value.post.call_args.kwargs["json"]
+         assert payload["stream"] is False
++        assert payload["max_tokens"] == 50
++        assert payload["temperature"] == 0.0
++        assert "max_completion_tokens" not in payload
 +
-+    Every guarded logger call in the five loaders already wraps it, so the module
-+    scans stay green whether or not the name is listed. This is the sample that
-+    fails if `file_path` is dropped from EXTERNAL_NAMES; the character count and
-+    the PDF backend name logged next to it stay unlisted on purpose.
-+    """
-+    bare = 'logger.info("Extracting chunks from JSON file: %s", file_path)\n'
-+    wrapped = 'logger.info("Extracting chunks from JSON file: %s", _sanitize_log_value(file_path))\n'
-+    assert _lazy_findings(bare)
-+    assert not _lazy_findings(wrapped)
-+    assert not _lazy_findings('logger.debug("Successfully parsed %s, extracted %d characters", _sanitize_log_value(file_path), len(markdown_content))\n')
++    def test_gpt5_uses_completion_tokens_without_temperature(self):
++        resp = MagicMock(status_code=200)
++        resp.json.return_value = {"choices": [{"message": {"content": "{}"}}]}
++        client = MagicMock()
++        client.__enter__.return_value.post.return_value = resp
++
++        with patch("httpx.Client", return_value=client):
++            _classifier_without_groq_key()._call_openai_compatible(
++                "http://127.0.0.1:1976/v1", "gpt-5.4-mini", "", "prompt", "system msg", 200, 0.3
++            )
++
++        payload = client.__enter__.return_value.post.call_args.kwargs["json"]
++        assert payload["max_completion_tokens"] == 1000
++        assert "max_tokens" not in payload
++        assert "temperature" not in payload
+```
+
+**File**: `tests/harvest/test_rewriter.py` (modified, +25/-0)
+```diff
+@@ -357,3 +357,28 @@ async def post(self, *args, **kwargs):
+             "http://127.0.0.1:1976/v1", "system", "", "prompt", 5.0
+         )
+         assert captured["stream"] is False
++        assert captured["max_tokens"] == 200
++        assert captured["temperature"] == 0.3
++        assert "max_completion_tokens" not in captured
++
++    @pytest.mark.asyncio
++    async def test_gpt5_uses_completion_tokens_without_temperature(self, monkeypatch):
++        captured = {}
++
++        class _FakeAsyncClient:
++            def __init__(self, timeout): pass
++            async def __aenter__(self): return self
++            async def __aexit__(self, *exc): return False
++            async def post(self, *args, **kwargs):
++                captured.update(kwargs["json"])
++                resp = MagicMock(status_code=200)
++                resp.json.return_value = {"choices": [{"message": {"content": "ok"}}]}
++                return resp
++
++        monkeypatch.setattr(httpx, "AsyncClient", _FakeAsyncClient)
++        await HarvestRewriter()._call_openai_compatible(
++            "http://127.0.0.1:1976/v1", "gpt-5.4-mini", "", "prompt", 5.0
++        )
++        assert captured["max_completion_tokens"] == 1000
++        assert "max_tokens" not in captured
++        assert "temperature" not in captured
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1691** (2026-10-26): chore(release): v12.4.0 (@doobidoo)
-- **PR #1690** (2026-10-26): fix(oauth): confine per-store grants to calls that stay in the store (@doobidoo)
-- **PR #1689** (2026-10-26): chore(deps): bump pypdf from 6.21.1 to 6.21.2 (@dependabot[bot])
-- **PR #1688** (2026-10-26): chore(deps-dev): bump the npm_and_yarn group across 2 directories with 1 update (@dependabot[bot])
-- **PR #1687** (2026-10-26): ci: count .github/CODEOWNERS as a docs-only change (@doobidoo)
-- **PR #1686** (2026-10-26): chore(codeowners): restore henry201605 on the Milvus graph backend (@doobidoo)
+- **PR #1725** (2026-10-31): fix(harvest): support GPT-5 completion parameters (@mikemikimike)
+- **PR #1721** (2026-10-30): fix(sync): bound the delta-sync event log by compacting update_metadata chains (@filhocf)
+- **PR #1720** (2026-10-30): test(multi-store): assert the isolated memory is absent, not that search is empty (@timkjr)
+- **PR #1719** (2026-10-30): fix(quality): log the async scorer's first-use start at DEBUG, not WARNING (@timkjr)
+- **PR #1718** (2026-10-30): fix(storage): stop loading the Milvus backend on every import (@timkjr)
+- **PR #1717** (2026-10-29): fix(oauth): omit empty members from the client registration response (#1707) (@djimenezm2)
 
 ---
 
@@ -4331,33 +3914,34 @@ Co-authored-by: massimiliano1991 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. oauth): confine per-store grants to calls that stay in the store (#1690)
+## X. sync): bound the delta-sync event log by compacting update_metadata chains (#172
 
 **RULE**:
-When implementing operations in `changelog.d/1690.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/1721.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb7c041e`: oauth): confine per-store grants to calls that stay in the store (#1690). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5ffe3614`: sync): bound the delta-sync event log by compacting update_metadata chains (#1721). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1690.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/1721.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Per-store scopes no longer reach outside their store (#1690).** A `read:<store>` /
-  `write:<store>` grant authorized any MCP tool call that named the store, including tools
-  that ignore `store` (`memory_quality`, `memory_cleanup`, `memory_resolve`,
-  `memory_consolidate`, the mistake-note tools) and `memory_search` with `include_beliefs` or
-  `fallback`, which read every partition. A per-store grant now covers only the tools that
-  confine themselves to the store (`memory_store`, `memory_store_session`, `memory_search`,
-  `memory_list`, `memory_delete`, `memory_update`) and only without those two arguments;
-  everything else needs the global scope, including `memory_explore` and `memory_detail`,
-  whose entity names come from a graph that has no store partition. The SDK
-  transports and the `/mcp` shim share one rule. Store-restricted credentials are also
-  refused, over MCP and REST, on backends whose `get_by_hash` ignores `store` (cloudflare,
-  milvus, remote_http), where `GET /api/memories/{hash}` returned another store's memory.
-  They work on sqlite_vec and hybrid until the storage layer enforces `store` (#1683).
+- **Delta-sync: the `sync_events` log grew without bound from `update_metadata` churn (#1721, filhocf).**
+  The event log is append-only and never compacted, so periodic local recomputes
+  (quality/utility) that rewrite metadata appended an `update_metadata` event per memory
+  several times a day — on a 3-week-old database, 1.36M events, 97% of them idempotent
+  `update_metadata`. A new `compact_update_metadata` job collapses the chain per
+  `content_hash` into one consolidated event carrying the LWW-resolved state (reusing the
+  apply resolver, not re-implementing it). It is convergence-preserving: compaction is
+  all-or-nothing per live incarnation — a hash is only collapsed when its whole live
+  `update_metadata` chain sits at or below the safe watermark `MIN(last_seq_pushed)` across
+  peers, so a field whose winning edit is still above the watermark can never be defeated by
+  a collapsed field carrying an inflated clock. The consolidated event keeps the winning
+  event's HLC pair and a deterministic id that includes the payload hash (so peers that
+  compact divergent chains never reuse an identity). The delete is chunked and the whole
+  batch is fail-closed under a single SAVEP
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -4367,4 +3951,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb7c041e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5ffe3614` are properly handled with clean fallback behavior.

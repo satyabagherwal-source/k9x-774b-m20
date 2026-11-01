@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `e05c7bdf`  
+> **Source Version**: `41e69122`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T02:01:55.316Z  
+> **Timestamp**: 2026-10-31T17:50:10.378Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T02:01:54.252Z  
+> **Harvest Timestamp**: 2026-10-31T17:50:10.371Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 84542 stars
+- **Stars / Engagement**: 85134 stars
 
 ---
 
@@ -1722,17 +1722,14 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4833** (2026-10-30): **fix(ls): hold a bare listing to what ls prints, not to the long listing rtk asks for**
+  *Symptoms*: ## Summary  - `rtk ls` without `-l` printed a size after every file (`kubectl  57.9M`), which plain `ls` never prints: bare `rtk ls` cost more than `ls` itself (341 → 531 bytes in this repo's root). - The never-worse guard could not catch it: the runner compares against the child's stdout, and the child is the `ls -l` rtk injects (2067 bytes), not the `ls` the user typed (341 bytes). - Every listing, with or without `-l`, is now held through the shared `never_worse` to the output of `ls` run with the user's own arguments. A listing without `-l` prints names only. The same baseline replaces the two places the filter printed the long listing verbatim: an unparsable listing (`-T`/`-D` dates, `-@`/`-e` attribute lines) and a failed run (`ls src missing` printed 742 bytes of long listing for the 108 bytes `ls` printed). - When `ls` rejects the command line outright (non-zero exit, nothing on stdout, e.g. GNU `--all` on macOS) while rtk's own listing succeeds, there is no listing to hold to: rtk lists as master does, instead of printing nothing with exit 0.  Cost: one extra `ls` process per call. `rtk ls -la` 8.9 → 12.3 ms mean (+2.4 ms CPU) on macOS with hyperfine; bare `rtk ls` +≈2.6 ms CPU.  ### Before / after (bytes, rtk repo root, macOS)  | command | `ls` | master | this PR | |---|---|---|---| | `ls` | 341 | 531 | 341 | | `ls -a` | 466 | 634 | 466 | | `ls src` | 103 | 137 | 103 | | `ls -t` | 341 | 531 | 341 | | `ls -F` | 354 | 494 | 354 | | `ls src missing` (exit 1) | 108 | 74
+
 - **Issue #4782** (2026-10-25): **rtk hook rewrites rg/grep output and silently changes identifiers**
   *Symptoms*: When the Claude Code hook rewrites `rg`/`grep`/`git grep` (and `sed -n` reads) through rtk, the digest edits the content of matched source lines, not just their volume. Seen in practice: `revision` came back as `ren`, `description` as `n`. Nothing in the output marks the change, so an agent reading the digest draws wrong conclusions about the code; the only workaround is `rtk proxy <cmd>`.  **Expected:** search output is either passed through or only collapsed (lines dropped/counted), never rewritten inside a line. Suggest search commands (rg, grep, git grep, ag) be exempt from the hook rewrite by default, or that any in-line abbreviation be opt-in and visibly marked.  **Local workaround in use:** a wrapper around `rtk hook claude` that passes rg/grep/git grep through untouched; git and other commands still rewrite.  Environment: rtk 1.0.1, macOS (Darwin 25.6), Claude Code PreToolUse hook.  Possibly related: #4207, #1436, #4618. 
   **Post-Mortem & Fix Analysis**:
   > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 🔍 Automated Triage  | | | |---|---| | 🐛 **Category** | `bug` | | 🟠 **Priority** | `high` | | 🎯 **Confidence** | 88% |  ### Summary  rtk's search-command rewrite (rg/grep/git grep/sed -n) corrupts matched content, silently altering identifiers mid-line rather than just collapsing volume  <details> <summary>📁 Relevant files</summary>  - `src/hook/claude.rs` - `src/rewrite/grep.rs` - `src/filter/grep.rs`  </details>  ### Suggested Actions  1. Reproduce with the exact `rg`/`grep` pattern that turned 'revision' into 'ren' and isolate the abbreviation logic 1. Check #4695 — the hook-coverage doc mismatch may explain why this rewrite path isn't flagged as risky 1. Evaluate exempting rg/grep/git grep/ag from in-line rewriting by default per the issue's suggestion 1. Cross-check #4207, #1436, #4618 for shared root cause in the digest/abbrevi
   > Closing — this was our error, not rtk. The commands were `rg -rn …`; in ripgrep `-r` is `--replace <text>`, so `-rn` rewrites every match to `n` (and `-rln` to `ln`). Reproduced with rtk bypassed (`rtk proxy rg -rn description f.txt` → `n here`). Sorry for the noise.
-
-- **Issue #4750** (2026-10-23): **rtk gain warns 'No hook installed' when RTK runs through the Pi extension (rtk init -g --agent pi)**
-  *Symptoms*: ## Summary  `rtk gain` warns `No hook installed — run rtk init -g for automatic token savings` when RTK runs in Pi through the extension that `rtk init -g --agent pi` writes. The advice is wrong for Pi users. `rtk init -g` (with no agent) sets up the Claude Code hook, which a Pi user does not need.  ## Environment  - rtk 1.0.1 (Homebrew, macOS) - Pi 1.3.0 with `~/.pi/agent/extensions/rtk.ts`, generated by `rtk init -g --agent pi` from the same rtk binary ("RTK Pi extension — rewrites bash commands to use rtk …") - No Claude Code `PreToolUse` hook for rtk in `~/.claude/settings.json`  ## Steps  1. `rtk init -g --agent pi`, then start Pi. Bash commands are rewritten: outputs come back in rtk's compact form, and `rtk gain` counts them (13,251 commands, 25.4% saved here). 2. Run `rtk gain`.  ## Actual  ```text [warn] No hook installed — run `rtk init -g` for automatic token savings ```  ## Expected  `rtk gain` also counts the Pi extension (and the other agent integrations that `rtk init --agent <name>` writes) as an installed hook. It warns only when no integration is installed, and then names the command for the agent in use, for example `rtk init -g --agent pi`. 
-  **Post-Mortem & Fix Analysis**:
-  > Thanks for the clear report. This is the same problem tracked in #913: the hook check behind `rtk gain` only looks at Claude Code's settings.json, so every non-Claude integration (OpenCode, Cursor, Gemini, Antigravity, and Pi here) gets the warning. I'm closing this in favour of #913, which has the history for the other agents. Please add anything Pi-specific there, including your point that the warning should name the agent's own `rtk init -g --agent <name>` command. 
-  > > <img src="https://raw.githubusercontent.com/wshm-dev/wshm/main/assets/wizard-icon.png" width="48" height="48"> **wshm** · Automated triage by AI  ## 🔍 Automated Triage  | | | |---|---| | 🐛 **Category** | `bug` | | 🟡 **Priority** | `medium` | | 🎯 **Confidence** | 86% |  ### Summary  rtk gain's hook-installed check doesn't recognize the Pi extension (or other agent-specific integrations), so it wrongly warns 'No hook installed' and suggests the wrong command.  > This looks like a **simple fix** that could be auto-resolved. Repo maintainers can use `/wshm fix` to attempt it.  <details> <summary>📁 Relevant files</summary>  - `src/commands/gain.rs` - `src/hooks/detect.rs`  </details>  ### Suggested Actions  1. Extend rtk gain's hook-detection logic to recognize ~/.pi/agent/extensions/rtk.ts as an installed integration 1. Cross-check with #4756 — same root cause (hook detection misses non-Claude agent integrations like Copilot/Codex/Droid/… 1. Make the warning name the correct `rtk in
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1749,311 +1746,652 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e05c7bdf` (2026-10-25)
-**Commit Message**: Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines
+### Incident Patch 1: `ffd9cbe8` (2026-10-31)
+**Commit Message**: fix(ruff): keep a leading `--` verbatim and read help/version first
 
-fix(pytest): keep the E lines of error and failure blocks
+A `--` that no subcommand precedes is ruff's usage error (`ruff -- check`),
+so the router forwards it unchanged, as develop's ruff_double_dash_test
+expects. A help or version flag before any subcommand or check option is
+answered by ruff itself (`ruff -qh check`, `ruff --version --no-cache`), so
+the scan returns the top-level route there instead of after the loop.
 
-**File**: `src/cmds/python/pytest_cmd.rs` (modified, +884/-36)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/cmds/python/ruff_cmd.rs` (modified, +86/-34)
 ```diff
-@@ -1,5 +1,6 @@
- //! Filters pytest output to show only failures and the summary line.
+@@ -1,7 +1,7 @@
+ //! Filters Ruff linter and formatter output.
  
-+use crate::core::arg_tokenizer::{Dialect, TokenKind, ValueSpec, tokenize_grammar};
+ use crate::core::arg_tokenizer::{
+-    Dialect, Token, TokenKind, ValueSpec, before_dashdash, tokenize_grammar,
++    Dialect, Token, TokenKind, ValueSpec, before_dashdash, dashdash_index, tokenize_grammar,
+ };
+ use crate::core::args_utils;
  use crate::core::config;
- use crate::core::runner;
- use crate::core::shell::display_args;
-@@ -11,6 +12,8 @@ use std::sync::LazyLock;
- 
- const MAX_XFAIL: usize = CAP_WARNINGS;
- const MAX_PYTEST_FAILURES: usize = CAP_WARNINGS;
-+const MAX_TRACEBACK_LINES: usize = 3;
-+const MAX_ERROR_LINES: usize = 4;
- static PYTEST_SUMMARY_RE: LazyLock<Regex> = LazyLock::new(|| {
-     Regex::new(
-         r"^(?:=+\s*)?\d+ [^,\r\n=]+?(?:, \d+ [^,\r\n=]+?)* in \d+(?:\.\d+)?(?:s| seconds)(?: \((?:\d+ days?, )?\d+:\d{2}:\d{2}\))?(?:\s*=+)?$",
-@@ -35,32 +38,14 @@ pub fn run(args: &[String], verbose: u8) -> Result<i32> {
-         c
-     };
- 
--    let has_tb_flag = args.iter().any(|a| a.starts_with("--tb"));
--    let has_quiet_flag = args.iter().any(|a| a == "-q" || a == "--quiet");
--    // Only treat a short `-r…` as pytest's report flag (not `--randomly-seed` etc.)
--    let has_report_flag = args
--        .iter()
--        .any(|a| a.starts_with("-r") && !a.starts_with("--"));
--
--    if !has_tb_flag {
--        cmd.arg("--tb=short");
--    }
--    if !has_quiet_flag {
--        cmd.arg("-q");
--    }
--    // Surface xfailed/xpassed (and their reasons) in the short summary section
--    // so the compact output can report expected failures and — crucially —
--    // unexpected passes (XPASS), which signal a behavior change.
--    if !has_report_flag {
--        cmd.arg("-rxX");
--    }
--
-+    let injected = injected_args(args);
-+    cmd.args(&injected);
-     for arg in args {
-         cmd.arg(arg);
+@@ -159,15 +159,26 @@ fn route_ruff_args(args: &[String]) -> RuffRoute {
+             }
+             return RuffRoute::Check { explicit_at: None };
+         }
++        // ruff answers a help or version flag as soon as it reads one, before
++        // a subcommand or a check option (`ruff -qh check`, `ruff -Vn`).
++        if requests_top_level(*token) {
++            return RuffRoute::TopLevel;
++        }
+         // A check-only option's value looks like a free positional to the
+         // tokenizer. Treat the whole invocation as the implicit-check form:
+-        // nothing is removed and no later word is the subcommand. The `--`
+-        // boundary is not an option: the scan never reads past it.
+-        if token.kind != TokenKind::DashDash && !ruff_is_global_token(*token) {
++        // nothing is removed and no later word is the subcommand.
++        if !ruff_is_global_token(*token) {
+             return RuffRoute::Check { explicit_at: None };
+         }
      }
- 
-     if verbose > 0 {
--        eprintln!("Running: pytest --tb=short -q {}", args.join(" "));
-+        eprintln!("Running: pytest {} {}", injected.join(" "), args.join(" "));
-     }
- 
-     runner::run_filtered_with_exit(
-@@ -82,6 +67,48 @@ pub fn run(args: &[String], verbose: u8) -> Result<i32> {
-     )
+-    top_level_request(&tokens)
++    // Only global options come before this `--`. ruff answers `ruff -- check`
++    // with its usage error, and rtk forwards the call unchanged rather than
++    // linting a file named `check`.
++    if dashdash_index(&tokens).is_some() {
++        return RuffRoute::TopLevel;
++    }
++    // Every other flags-only call (for example `--statistics`) is an implicit check.
++    RuffRoute::Check { explicit_at: None }
  }
  
-+fn injected_args(args: &[String]) -> Vec<&'static str> {
-+    let tokens = tokenize_grammar(
-+        args,
-+        &|kind, name| match (kind, name) {
-+            (TokenKind::Long, "tb")
-+            | (TokenKind::Short, "k" | "m" | "p" | "c" | "o" | "W" | "r") => {
-+                Some(ValueSpec::value())
-+            }
-+            _ => None,
-+        },
-+        Dialect::Posix,
-+    );
-+    let tb = tokens
-+        .iter()
-+        .filter(|t| t.kind == TokenKind::Long && t.text == "tb")
-+        .filter_map(|t| t.value(&tokens))
-+        .next_back();
-+    let has_flag = |short: &str, long: &str| {
-+        tokens.iter().any(|t| {
-+            (t.kind == TokenKind::Short && t.text == short)
-+                || (t.kind == TokenKind::Long && t.text == long)
-+        })
-+    };
-+    let has_quiet_flag = has_flag("q", "quiet");
-+    let has_report_flag = has_flag("r", "report-chars");
-+
-+    let mut injected = Vec::new();
-+    if tb.is_none() {
-+        injected.push("--tb=short");
-+    }
-+    if !has_quiet_flag {
-+        injected.push("-q");
-+    }
-+    // Surface xfailed/xpassed (and their reasons) in the short summary section
-+    // so the compact output can report expected failures and — crucially —
-+    // unexpected passes (XPASS), which signal a behavior change.
-+    if !has_report_flag {
-+        injected.push(if tb == Some("no") { "-rfExX" } else { "-rxX" });
-+    }
-+    injected
+ /// Whether `token` is one of ruff's own global options (`ruff --help`, 0.17).
+@@ -186,11 +197,13 @@ fn ruff_is_global_token(token: Token<'_>) -> bool {
+ /// (`ruff --help`, 0.17: `--config` and `--color`).
+ const RUFF_GLOBAL_VALUE_OPTIONS: &[&str] = &["config", "color"];
+ 
+-/// Ruff's global flags, as long names without the leading dashes.
+-const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent", "help", "version"];
++/// Ruff's global flags, as long names without the leading dashes. Help and
++/// version are global too, but the scan answers them first
++/// (`requests_top_level`).
++const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent"];
+ 
+ /// The one-letter spellings of [`RUFF_GLOBAL_FLAGS`].
+-const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s", "h", "V"];
++const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s"];
+ 
+ fn ruff_takes_value(kind: TokenKind, name: &str) -> Option<ValueSpec> {
+     (kind == TokenKind::Long && RUFF_GLOBAL_VALUE_OPTIONS.contains(&name)).then(ValueSpec::value)
+@@ -204,25 +217,18 @@ enum RuffRoute {
+     Check { explicit_at: Option<usize> },
+     /// An explicit non-check subcommand at `at`; forwarded verbatim.
+     Subcommand { at: usize },
+-    /// No subcommand and no path: a top-level request such as `--version`.
++    /// Forwarded verbatim with its whole stdout: a help or version flag read
++    /// before any subcommand, path or check-only option, or a `--` that only
++    /// global options precede.
+     TopLevel,
+ }
+ 
+-/// Flag-only invocations stay top-level for `--version`/`--help`; every other
+-/// flags-only call (for example `--statistics`) is an implicit check. Read the
+-/// tokens, not the raw args, so a cluster such as `-qh` is a help request.
+-fn top_level_request(tokens: &[Token<'_>]) -> RuffRoute {
+-    let requests_top_level = before_dashdash(tokens).iter().any(|token| {
+-        matches!(
+-            (token.kind, token.text),
+-            (TokenKind::Long, "help" | "version") | (TokenKind::Short, "h" | "V")
+-        )
+-    });
+-    if requests_top_level {
+-        RuffRoute::TopLevel
+-    } else {
+-        RuffRoute::Check { explicit_at: None }
+-    }
++/// Whether `token` is ruff's `--help`/`--version`, in a cluster (`-qh`) or not.
++fn requests_top_level(token: Token<'_>) -> bool {
++    matches!(
++        (token.kind, token.text),
++        (TokenKind::Long, "help" | "version") | (TokenKind::Short, "h" | "V")
++    )
+ }
+ 
+ /// The complete argument vector rtk passes to ruff.
+@@ -966,10 +972,6 @@ Would reformat: tests/test_utils.py
+                 "clean.py",
+             ],
+         );
+-        assert_plan(
+-            &["--", "clean.py"],
+-            &["check", "--output-format=json", "--", "clean.py"],
+-        );
+     }
+ 
+     /// A check-only option before the first free positional makes the call
+@@ -1029,23 +1031,73 @@ Would reformat: tests/test_utils.py
+         );
+     }
+ 
++    #[test]
++    fn ruff_global_flags_keep_an_explicit_check() {
++        for flag in [
++            "--isolated",
++            "--verbose",
++            "--quiet",
++            "--silent",
++            "-v",
++            "-q",
++            "-s",
++        ] {
++            assert_plan(
++                &[fl
+```
+
+---
+
+### Incident Patch 2: `9b60314a` (2026-10-31)
+**Commit Message**: Merge pull request #4680 from Ehsan-hash/fix/settings-read-fail-closed
+
+fix(hooks): preserve host checks when settings cannot be loaded
+
+**File**: `src/hooks/permissions.rs` (modified, +61/-26)
+```diff
+@@ -496,16 +496,36 @@ fn get_settings_paths_from(
+     paths
+ }
+ 
+-fn read_json(path: &std::path::Path) -> Option<Value> {
+-    let content = std::fs::read_to_string(path).ok()?;
++enum JsonRead {
++    Missing,
++    Parsed(Value),
++    Error,
 +}
 +
- const PYTEST_NO_TESTS: &str = "Pytest: No tests collected";
- const PYTEST_EXIT_NO_TESTS: i32 = 5;
++fn read_json(path: &std::path::Path) -> JsonRead {
++    let content = match std::fs::read_to_string(path) {
++        Ok(content) => content,
++        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return JsonRead::Missing,
++        Err(e) => {
++            eprintln!(
++                "[rtk] warning: failed to read permissions from {}: {}",
++                path.display(),
++                e
++            );
++            return JsonRead::Error;
++        }
++    };
++    if content.trim().is_empty() {
++        return JsonRead::Missing;
++    }
+     match crate::core::utils::from_json_str::<Value>(&content) {
+-        Ok(v) => Some(v),
++        Ok(v) => JsonRead::Parsed(v),
+         Err(_) => {
+             eprintln!(
+                 "[rtk] warning: failed to parse permissions from {}",
+                 path.display()
+             );
+-            None
++            JsonRead::Error
+         }
+     }
+ }
+@@ -532,19 +552,25 @@ fn append_wrapped_rules(rules_value: Option<&Value>, prefixes: &[&str], target:
+ // Global config only. RTK auto-allows only the globally-trusted subset; anything
+ // else defers to the host, which applies its own project config and folder-trust.
+ // This keeps RTK's allow set a subset of the host's — never more permissive.
+-fn global_config(dir: &str, file: &str) -> Option<Value> {
+-    read_json(&user_dirs::home()?.join(dir).join(file))
++fn global_config(dir: &str, file: &str) -> JsonRead {
++    let Some(home) = user_dirs::home() else {
++        return JsonRead::Missing;
++    };
++    read_json(&home.join(dir).join(file))
+ }
  
-@@ -111,6 +138,10 @@ pub(crate) fn filter_pytest_output(output: &str) -> String {
-             && (trimmed.contains("FAILURES") || trimmed.contains("ERRORS"))
-         {
-             state = ParseState::Failures;
-+            if !current_failure.is_empty() {
-+                failures.push(current_failure.join("\n"));
-+                current_failure.clear();
+ fn load_cursor_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
+     let mut deny = Vec::new();
+     let mut allow = Vec::new();
+-    if let Some(perms) = global_config(CURSOR_DIR, "cli-config.json")
+-        .as_ref()
+-        .and_then(|j| j.get("permissions"))
+-    {
+-        append_wrapped_rules(perms.get("deny"), &["Shell("], &mut deny);
+-        append_wrapped_rules(perms.get("allow"), &["Shell("], &mut allow);
++    match global_config(CURSOR_DIR, "cli-config.json") {
++        JsonRead::Error => deny.push("*".to_string()),
++        JsonRead::Parsed(json) => {
++            if let Some(perms) = json.get("permissions") {
++                append_wrapped_rules(perms.get("deny"), &["Shell("], &mut deny);
++                append_wrapped_rules(perms.get("allow"), &["Shell("], &mut allow);
 +            }
-             continue;
-         } else if trimmed.starts_with("===") && trimmed.contains("short test summary") {
-             state = ParseState::Summary;
-@@ -143,15 +174,23 @@ pub(crate) fn filter_pytest_output(output: &str) -> String {
-             }
-             ParseState::Failures => {
-                 // Collect failure details
--                if trimmed.starts_with("___") {
-+                if trimmed.starts_with("===")
-+                    && trimmed.trim_matches('=').trim() == "warnings summary"
-+                {
-+                    if !current_failure.is_empty() {
-+                        failures.push(current_failure.join("\n"));
-+                        current_failure.clear();
-+                    }
-+                    state = ParseState::TestProgress;
-+                } else if is_block_header(trimmed) {
-                     // New failure section
-                     if !current_failure.is_empty() {
-                         failures.push(current_failure.join("\n"));
-                         current_failure.clear();
-                     }
-                     current_failure.push(trimm
++        }
++        JsonRead::Missing => {}
+     }
+     (deny, Vec::new(), allow)
+ }
+@@ -555,21 +581,27 @@ fn load_cursor_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
+ // untrusted → global, which is safe: never more permissive than the host).
+ fn gemini_settings() -> Option<Value> {
+     let global = global_config(GEMINI_DIR, SETTINGS_JSON);
++    let global_value = match &global {
++        JsonRead::Parsed(value) => Some(value),
++        JsonRead::Missing | JsonRead::Error => None,
++    };
+     let trusted = user_env::var("GEMINI_CLI_TRUST_WORKSPACE").as_deref() == Some("true")
+-        || !global
+-            .as_ref()
++        || !global_value
+             .and_then(|j| {
+                 j.pointer("/security/folderTrust/enabled")
+                     .and_then(Value::as_bool)
+             })
+             .unwrap_or(false);
+     if trusted
+         && let Some(root) = find_project_root()
+-        && let Some(v) = read_json(&root.join(GEMINI_DIR).join(SETTINGS_JSON))
++        && let JsonRead::Parsed(v) = read_json(&root.join(GEMINI_DIR).join(SETTINGS_JSON))
+     {
+         return Some(v);
+     }
+-    global
++    match global {
++        JsonRead::Parsed(value) => Some(value),
++        JsonRead::Missing | JsonRead::Error => None,
++    }
+ }
+ 
+ fn load_gemini_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
+@@ -586,7 +618,7 @@ fn load_gemini_rules() -> (Vec<String>, Vec<String>, Vec<String>) {
+ // All four Droid settings scopes: user (honoring $FACTORY_HOME_OVERRIDE) and
+ // project `.factory/`, each with settings.json + settings.local.json
+ // (docs.factory.ai/cli/configuration/settings). Missing files are skipped.
+-fn droid_settings_scopes() -> Vec<Value> {
++fn droid_settings_scopes() -> (Vec<Value>, bool) {
+     let mut dirs_to_read = Vec::new();
+     if let Some(home) = user_dirs::env_path(DROID_HOME_ENV)
+         .filter(|value| !value.is_empty())
+@@ -600,14 +632,17 @@ fn droid_settings_scopes() -> Vec<Value> {
+     }
+ 
+     let mut scopes = Vec::new();
++    let mut failed = false;
+     for dir in dirs_to_read {
+         for file in [DROID_SETTINGS_FILE, SETTINGS_LOCAL_JSON] {
+-            if let Some(v) = read_json(&dir.join(file)) {
+-                scopes.push(v);
++            match read_json(&dir.join(file)) {
++                JsonRead::Parsed(value) => scopes.push(value),
++                JsonRead::M
 ```
 
-**File**: `tests/fixtures/pytest_captured_dict_diff_raw.txt` (added, +16/-0)
+**File**: `tests/hook_config_io_test.rs` (modified, +219/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+F                                                                        [100%]
-+=================================== FAILURES ===================================
-+___________________________________ test_td ____________________________________
-+test_td.py:7: in test_td
-+    assert {"a": 1, "b": 2} == {"a": 1, "b": 3}
-+E   AssertionError: assert {'a': 1, 'b': 2} == {'a': 1, 'b': 3}
-+E     
-+E     Omitting 1 identical items, use -vv to show
-+E     Differing items:
-+E     {'b': 2} != {'b': 3}
-+E     Use -v to get more diff
-+----------------------------- Captured stdout call -----------------------------
-+E out line
-+----------------------------- Captured stderr call -----------------------------
-+E err line
-+1 failed in 0.01s
-```
-
-**File**: `tests/fixtures/pytest_captured_e_line_raw.txt` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+F                                                                        [100%]
-+=================================== FAILURES ===================================
-+__________________________________ test_noisy __________________________________
-+test_cap.py:3: in test_noisy
-+    assert 1 == 2, "Captured total mismatch"
-+E   AssertionError: Captured total mismatch
-+E   assert 1 == 2
-+----------------------------- Captured stdout call -----------------------------
-+E bad thing happened in stdout
-+1 failed in 0.01s
-```
-
-**File**: `tests/fixtures/pytest_captured_underscore_lines_raw.txt` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+FF                                                                       [100%]
-+=================================== FAILURES ===================================
-+_________________________________ test_dunder __________________________________
-+test_du5.py:7: in test_dunder
-+    assert {'a': 1} == {'a': 2}, 'dunder fail'
-+E   AssertionError: dunder fail
-+E   assert {'a': 1} == {'a': 2}
-+E     
-+E     Differing items:
-+E     {'a': 1} != {'a': 2}
-+E     Use -v to get more diff
-+----------------------------- Captured stdout call -----------------------------
-+__init__
-+__main__ _
-+_cache_
-+_ warming cache_
-+  done _
-+__________________________________ test_after __________________________________
-+test_du5.py:11: in test_after
-+    assert 0, 'after dunder'
-+E   AssertionError: after dunder
-+E   assert 0
-+2 failed in 0.01s
-```
-
-**File**: `tests/fixtures/pytest_collection_import_error_raw.txt` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
+@@ -1,11 +1,115 @@
+ //! Regression coverage for the shared hook configuration I/O.
++use serde_json::Value;
+ use std::fs;
+ use std::io::Write;
++use std::path::PathBuf;
+ use std::process::Stdio;
+ use tempfile::TempDir;
+ 
+ mod common;
+ 
++struct HookSandbox {
++    _root: TempDir,
++    home: PathBuf,
++    project: PathBuf,
++    factory_home: PathBuf,
++}
 +
-+==================================== ERRORS ====================================
-+_________________________ ERROR collecting test_imp.py _________________________
-+ImportError while importing test module '/home/user/project/test_imp.py'.
-+Hint: make sure your test modules/packages have valid Python names.
-+Traceback:
-+/usr/lib/python3.13/importlib/__init__.py:88: in import_module
-+    return _bootstrap._gcd_import(name[level:], package, level)
-+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+test_imp.py:1: in <module>
-+    import nonexistent_module_xyz
-+E   ModuleNotFoundError: No module named 'nonexistent_module_xyz'
-+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-+1 error in 0.04s
-```
-
-**File**: `tests/fixtures/pytest_collection_syntax_error_raw.txt` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
++impl HookSandbox {
++    fn new() -> Self {
++        let root = TempDir::new().expect("tempdir");
++        let home = root.path().join("home");
++        let project = root.path().join("project");
++        let factory_home = root.path().join("factory-home");
++        fs::create_dir_all(home.join(".cursor")).expect("cursor dir");
++        // The project-root walk is deliberately bounded inside this sandbox.
++        fs::create_dir_all(project.join(".claude")).expect("claude dir");
++        fs::create_dir_all(factory_home.join(".factory")).expect("factory home");
++        fs::create_dir_all(project.join(".factory")).expect("factory project");
++        Self {
++            _root: root,
++            home,
++            project,
++            factory_home,
++        }
++    }
 +
-+==================================== ERRORS ====================================
-+_________________________ ERROR collecting test_syn.py _________________________
-+.venv/lib/python3.13/site-packages/_pytest/python.py:508: in importtestmodule
-+    mod = import_path(
-+.venv/lib/python3.13/site-packages/_pytest/pathlib.py:596: in import_path
-+    importlib.import_module(module_name)
-+/usr/lib/python3.13/importlib/__init__.py:88: in import_module
-+    return _bootstrap._gcd_import(name[level:], package, level)
-+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+<frozen importlib._bootstrap>:1395: in _gcd_import
-+    ???
-+<frozen importlib._bootstrap>:1360: in _find_and_load
-+    ???
-+<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked
-+    ???
-+<frozen importlib._bootstrap>:935: in _load_unlocked
-+    ???
-+.venv/lib/python3.13/site-packages/_pytest/assertion/rewrite.py:179: in exec_module
-+    source_stat, co = _rewrite_test(fn, self.config)
-+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+.venv/lib/python3.13/site-packages/_pytest/assertion/rewrite.py:348: in _rewrite_test
-+    tree = ast.parse(source, filename=strfn)
-+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+/usr/lib/python3.13/ast.py:50: in parse
-+    return compile(source, filename, mode, flags,
-+E     File "/home/user/project/test_syn.py", line 1
-+E       def test_x(:
-+E                  ^
-+E   SyntaxError: invalid syntax
-+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
-+1 error in 0.08s
-```
-
-**File**: `tests/fixtures/pytest_config_warning_raw.txt` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+F                                                                        [100%]
-+=================================== FAILURES ===================================
-+___________________________________ test_bad ___________________________________
-+test_w.py:6: in test_bad
-+    assert helper({"k": 1}) == 2
-+E   AssertionError: assert 1 == 2
-+E    +  where 1 = helper({'k': 1})
-+=============================== warnings summary ===============================
-+.venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1464
-+  .venv/lib/python3.13/site-packages/_pytest/config/__init__.py:1464: PytestConfigWarning: Unknown config option: foo
-+  
-+    self._warn_or_fail_if_strict(f"Unknown config option: {key}\n")
++    fn run(&self, hook: &str, payload: Value) -> Value {
++        let mut child = common::rtk_command()
++            .args(["hook", hook])
++            .current_dir(&self.project)
++            .env("HOME", &self.home)
++            .env("FACTORY_HOME_OVERRIDE", &self.factory_home)
++            .env("CLAUDE_CONFIG_DIR", self.home.join("claude"))
++            .env("XDG_CONFIG_HOME", self.home.join(".config"))
++            .env("RTK_DB_PATH", self.project.join("rtk.db"))
++            .stdin(Stdio::piped())
++            .stdout(Stdio::piped())
++            .stderr(Stdio::piped())
++            .spawn()
++            .expect("spawn hook");
++        child
++            .stdin
++            .take()
++            .expect("hook stdin")
++            .write_all(payload.to_string().as_bytes())
++            .expect("write hook payload");
++        let output = child.wait_with_output().expect("wait hook");
++        assert!(
++            output.status.success(),
++            "hook exited {:?}: {}",
++            output.status.code(),
++            String::from_utf8_lossy(&output.stderr)
++        );
++        let stdout = String::from_utf8_lossy(&output.stdout);
++        if stdout.trim().is_empty() {
++            // Droid's deny/step-aside protocol is an empty stdout response.
++            return Value::Null;
++        }
++        serde_json::from_str(stdout.trim()).unwrap_or_else(|error| {
++            panic!(
++                "hook emitted invalid JSON ({error}): stdout={stdout:?}, stderr={:?}",
++                String::from_utf8_lossy(&output.stderr)
++            )
++        })
++    }
 +
-+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-+1 failed, 1 warning in 0.01s
++    #[cfg(unix)]
++    fn cursor(&self, command: &str) -> Value {
++        self.run(
++            "cursor",
++            serde_json::json!({
++                "tool_name": "Bash",
++                "tool_input": {"command": command}
++            }),
++        )
++    }
++
++    fn droid(&self, command: &str) -> Value {
++        self.run(
++            "droid",
++            serde_json::json!({
++                "tool_name": "Execute",
++                "tool_input": {"command": command}
++            }),
++        )
++    }
++
++    #[cfg(unix)]
++    fn cursor_settings(&self) -> PathBuf {
++        self.home.join(".cursor/cli-config.json")
++    }
++
++    fn droid_settings(&self, scope: &str, file: &str) -> PathBuf {
++        let root = match scope {
++            "user" => self.factory_home.join(".factory"),
++            "project" => self.project.join(".factory"),
++            _ => panic!("unknown Droid scope: {scope}"),
++        };
++        root.join(file)
++    }
++}
++
+ #[test]
+ fn copilot_cli_rewrite_preserves_vscode_tool_input() {
+     let temp = TempDir::new().unwrap();
+@@ -107,3 +211,118 @@ fn codex_status_handles_global_and_local_empty_bom_and_invalid_files() {
+     assert_eq!(fs::read_to_string(&global_path).unwrap(), "{broken");
+     assert_eq!(fs::read_to_string(&local_path).unwrap(), "{broken");
+ }
++
++#[test]
++// Cursor's settings live under the home directory, and dirs::home_dir uses the
++// Windows Known Folder API, so HOME cannot point the hook at this sandbox there.
++#[cfg(unix)]
++fn cursor_settings_keep_missing_and_empty_behavior_but_step_aside_on_failures() {
++    let sandbox = HookSandbox::new();
++
++    let missing = sandbox.cursor("git status");
++    assert_eq!(missing["permission"], "ask");
++    assert_eq!(missing["updated_input"]["command"], "rtk git status");
++
++    let settings = sandbox.cursor_settings();
++    fs::write(&settings, "  \n").expect("write empty Cursor settings");
++    let empty = sandbox.cursor("git status");
++    assert_eq!(empty["permission"], "ask");
++    assert_eq!(empty["updated_input"]["command"], "rtk git status");
++
++    fs::write(
++        &settings,
++        r#"{"permissions":{"deny":["Shell(git push *)"],"allow":["Shell(git status)"]}}"#,
++    )
++    .expect("write valid Cursor settings");
++    let valid = sandb
 ```
 
-**File**: `tests/fixtures/pytest_conftest_setup_error_raw.txt` (added, +12/-0)
+---
+
+### Incident Patch 3: `6b75e82d` (2026-10-31)
+**Commit Message**: Merge pull request #4152 from KuSh/fix/4117-followup-filtered-log-cap
+
+fix(git): announce the cap on the filtered `git log` path
+
+**File**: `src/cmds/git/git_cmd.rs` (modified, +1368/-100)
 ```diff
-@@ -0,0 +1,12 @@
-+E                                                                        [100%]
-+==================================== ERRORS ====================================
-+________________________ ERROR at setup of test_uses_db ________________________
-+conftest.py:7: in db
-+    return connect()
-+           ^^^^^^^^^
-+mylib/db.py:2: in connect
-+    raise ConnectionError("db down\nretry in 5s\nhost: db.internal")
-+E   ConnectionError: db down
-+E   retry in 5s
-+E   host: db.internal
-+1 error in 0.01s
+@@ -12,6 +12,7 @@ use crate::core::stream::{
+ use crate::core::tracking;
+ use crate::core::truncate::{CAP_LIST, CAP_WARNINGS};
+ use crate::core::user_dirs;
++use crate::core::user_env;
+ use crate::core::utils::{exit_code_from_status, join_with_overflow, resolved_command, strip_ansi};
+ use anyhow::{Context, Result};
+ use std::ffi::OsString;
+@@ -1526,7 +1527,41 @@ const REFUSAL_EXIT_CODE: i32 = 128;
+ /// The two lengths `%H` can print, one per object format git has.
+ const SHA1_NAME_LEN: usize = 40;
+ const SHA256_NAME_LEN: usize = 64;
++/// Closes every commit in the format RTK asks for when the user named none, which is what
++/// lets the filtered path find commit boundaries in what git printed.
++const LOG_ENTRY_MARKER: &str = "---END---";
++/// Opens every commit of that format when RTK asks for one commit past its limit, in git's
++/// spelling: the control character, the commit's `%m` mark, its full object name and a space.
++/// What git prints after a commit's marker (a directory summary, a stat line) and what a file
++/// or a message holds can start with the control character too, but not with the whole of
++/// this, so it is what tells a commit from the rest. It is stripped before anything is
++/// rendered, printed or tracked.
++const LOG_ENTRY_START_SPEC: &str = "%x01%m%H ";
++const LOG_ENTRY_START: char = '\u{1}';
++/// What `%m` prints for a commit of a walk without `--boundary`: `<` and `>` for the two sides
++/// of a symmetric difference (`>` when there is one side only), `=` for a commit whose patch
++/// the other side has too and `^` for one outside the range.
++const OPENING_MARKS: [char; 4] = ['<', '>', '=', '^'];
+ const DEFAULT_LOG_LIMIT_ARG: &str = "-10";
++/// The limit the filtered path allows a user-chosen format, which is counted in lines: a
++/// compact shape fits many more commits in the same reading budget.
++const COMPACT_LOG_LIMIT: usize = 50;
++/// The width a log line is cut to when RTK set the limit.
++const LOG_LINE_WIDTH: usize = 80;
++
++/// True when `exit_code` says git refused the command rather than ran it, which owes the user
++/// nothing beyond git's own error. A negative code is a git that crashed: Windows reports the
++/// NTSTATUS of the crash (-1073741819 for an access violation) as the exit code.
++fn refused_by_git(exit_code: i32) -> bool {
++    !(0..REFUSAL_EXIT_CODE).contains(&exit_code)
++}
++
++/// The one wording for a cap RTK applied, so both paths say the same thing and name the same
++/// escape. `unit` is what the cap took: commits, or the lines of a user format whose commits
++/// RTK cannot tell apart.
++fn cap_notice(limit: usize, unit: &str) -> String {
++    format!("[rtk] capped at {limit} {unit}; pass -n <count> for more")
++}
+ 
+ /// `git log <args>` for the raw passthrough, carrying RTK's default limit unless the user named
+ /// one. [`run_passthrough`] streams straight to the terminal, so the limit has to be in the args
+@@ -1829,6 +1864,535 @@ fn bounds_the_walk(tokens: &[Token<'_>]) -> bool {
+     })
+ }
+ 
++/// True when `--output=<file>` sends the walk to a file instead of to RTK, which leaves RTK
++/// with nothing to read it out of.
++fn redirects_output(tokens: &[Token<'_>]) -> bool {
++    tokens
++        .iter()
++        .any(|t| t.kind == TokenKind::Long && t.text == "output")
++}
++
++/// True when the filtered path can ask git for one commit past its limit and drop it again,
++/// which answers whether the cap cut without walking the history twice.
++///
++/// Five shapes cannot. `--output=<file>` puts the walk in the user's file, where the extra
++/// commit would stay. `--reverse` flips the order *after* the limit has chosen the commits,
++/// so the extra one arrives first and dropping the overflow would drop HEAD. `--boundary`
++/// appends the commits just outside what the limit chose, which depend on the limit: asked
++/// for one more, git names other boundary commits, and the walk shown is no longer the one
++/// the user's limit gives. `--log-size` prints the size of each message as git rendered
++/// it, which counts the opening that is stripped afterwards. And a run that prints text of
++/// its own ahead of a commit's format output, see [`prints_ahead_of_a_commit`]: that text sits
++/// between the last commit shown and the opening of the extra one, so it would stay in the
++/// walk the user is shown.
++fn fetches_one_past_the_limit(
++    global_args: &[String],
++    env: impl Fn(&str) -> Option<String>,
++    tokens: &[Token<'_>],
++) -> bool {
++    !redirects_output(tokens)
++        && !prints_ahead_of_a_commit(global_args, env, tokens)
++        && !tokens.iter().any(|t| {
++            t.kind == TokenKind::Long && matches!(t.text, "reverse" | "boundary" | "log-size")
++        })
++}
++
++/// True when the arguments or the environment make git print text ahead of a commit's format
++/// output: the verdict on its signature (`--show-signature`, or `log.showSignature` given
++/// with `-c` or in the environment) and the bar of `--show-linear-break`. Git writes it between
++///
+```
+
+**File**: `src/cmds/system/pipe_cmd.rs` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ fn git_status_wrapper(input: &str) -> String {
+ }
+ 
+ fn git_log_wrapper(input: &str) -> String {
+-    crate::cmds::git::git_cmd::filter_log_output(input, 50, false, false)
++    crate::cmds::git::git_cmd::filter_log_output(input, 50, false)
+ }
+ 
+ fn git_diff_wrapper(input: &str) -> String {
+```
+
+**File**: `tests/git_log_cap_notice_test.rs` (modified, +2087/-12)
+```diff
+@@ -1,13 +1,15 @@
+-//! `rtk git log` in its raw-shape path injects RTK's default limit, so the walk it prints is
+-//! bounded by RTK rather than by what the user asked for. This pins the one guarantee that
+-//! makes that acceptable: the cap is never applied in silence.
++//! Both of `rtk git log`'s paths bound the walk by RTK's own limit rather than by what the
++//! user asked for. This pins the one guarantee that makes that acceptable: the cap is never
++//! applied in silence, and never announced when it took nothing.
+ //!
+-//! An integration test rather than a unit one because the failure it guards lives in the
+-//! interaction between the user's own output format and RTK's ability to see what it printed:
+-//! `--oneline` leaves no commit header to count, `log.decorate` and `--graph` disfigure the
+-//! one that exists, `-z` separates records with a NUL instead of a newline, and
+-//! `--line-prefix` puts its own text in front of them. Every one of those once silenced the
+-//! notice.
++//! An integration test rather than a unit one because every failure it guards lives in the
++//! gap between what RTK printed and what git actually walked, which only a real repository
++//! shows. On the raw-shape path that gap is the output's shape: `--oneline` leaves no commit
++//! header to count, `log.decorate` and `--graph` disfigure the one that exists, `-z` runs the
++//! walk onto a single line, `--line-prefix` puts something in front of it. On the filtered
++//! path it is the unit the cap is counted in -- commits where RTK chose the format, lines
++//! where the user did -- along with what git prints after a commit that is not another one
++//! and the `--no-merges` RTK adds to the command and must therefore also ask about.
+ //!
+ //! The shapes that narrow a walk by what its commits changed get their own tests, because
+ //! those take a different probe: `--skip` is applied before a diff-based filter, so the cap
+@@ -60,16 +62,45 @@ struct Repo {
+ }
+ 
+ fn repo_with(commits: usize) -> Repo {
++    repo_with_subjects(commits, |i| format!("commit {i}"))
++}
++
++/// A history whose commit `i` has the subject `subject(i)`.
++fn repo_with_subjects(commits: usize, subject: impl Fn(usize) -> String) -> Repo {
++    repo_with_messages(commits, |i| vec![subject(i)])
++}
++
++/// A history whose commit `i` carries the message paragraphs `message(i)`, the subject first.
++fn repo_with_messages(commits: usize, message: impl Fn(usize) -> Vec<String>) -> Repo {
++    repo_committing(commits, |_| vec!["f.txt".to_string()], message)
++}
++
++/// A history whose commit `i` writes the files `files(i)` and carries the message paragraphs
++/// `message(i)`, one `-m` each.
++fn repo_committing(
++    commits: usize,
++    files: impl Fn(usize) -> Vec<String>,
++    message: impl Fn(usize) -> Vec<String>,
++) -> Repo {
+     let dir = tempfile::tempdir().expect("tempdir");
+     let path = dir.path().join("repo");
+     let home = dir.path().join("home");
+     std::fs::create_dir_all(&path).expect("mkdir repo");
+     std::fs::create_dir_all(&home).expect("mkdir home");
+     git_ok(&path, &home, &["init", "-q", "-b", "main"]);
+     for i in 0..commits {
+-        std::fs::write(path.join("f.txt"), format!("content {i}\n")).expect("write");
+-        git_ok(&path, &home, &["add", "f.txt"]);
+-        git_ok(&path, &home, &["commit", "-qm", &format!("commit {i}")]);
++        for file in files(i) {
++            let target = path.join(&file);
++            std::fs::create_dir_all(target.parent().expect("parent")).expect("mkdir");
++            std::fs::write(target, format!("content {i}\n")).expect("write");
++        }
++        git_ok(&path, &home, &["add", "-A"]);
++        let paragraphs = message(i);
++        let mut args = vec!["commit", "-q"];
++        for paragraph in &paragraphs {
++            args.extend(["-m", paragraph.as_str()]);
++        }
++        git_ok(&path, &home, &args);
+     }
+     Repo {
+         _dir: dir,
+@@ -308,6 +339,17 @@ fn a_sha256_repo_announces_the_cap() {
+     let out = rtk_log(&path, &home, &["-p"]);
+     let stderr = String::from_utf8_lossy(&out.stderr);
+     assert!(stderr.contains(NOTICE), "sha256 repo: {stderr:?}");
++
++    // The filtered path reads the object name out of its own format, whatever length it has.
++    for (range, owed) in [("HEAD~10..HEAD", false), ("HEAD~11..HEAD", true)] {
++        let out = rtk_log(&path, &home, &[range]);
++        assert!(out.status.success(), "rtk git log {range} failed");
++        let stdout = String::from_utf8_lossy(&out.stdout);
++        assert_eq!(filtered_entries(&stdout), 10, "{range}: {stdout:?}");
++        assert!(!stdout.contains('\u{1}'), "{range}: {stdout:?}");
++        let stderr = String::from_utf8_lossy(&out.stderr);
++        assert_eq!(stderr.contains(NOTICE), owed, "{range}: {stderr:?}");
++    }
+ }
+ 
+ #[test]
+@@ -993,3 +1035,2036 @@ fn a_reversed_diff_selected_walk_is_still_measured_by_what_it_selects() {
+         );
+     }
+ }
++
++/// Entries in RTK's own log format: one header line per com
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4852** (2026-10-30): docs(root): add backlink to pro (@aeppling)
+- **PR #4833** (2026-10-30): fix(ls): hold a bare listing to what ls prints, not to the long listing rtk asks for (@aeppling)
 - **PR #4795** (2026-10-25): chore(master): release 1.1.0 (@rtk-release-bot[bot])
-- **PR #4727** (2026-10-23): fix(ruff): restore a leading -- before routing (@Yathiskumar)
-- **PR #4723** (closed): feat(filters): add Vercel CLI deployment and output filter (@rpatty-dev)
-- **PR #4714** (2026-10-25): fix(pytest): keep the E lines of error and failure blocks (@aeppling)
-- **PR #4670** (closed): fix(aws): handle --query output in sts get-caller-identity formatter (@TechWizard9999)
-- **PR #4668** (closed): fix(aws): handle --query output for sts get-caller-identity (@TechWizard9999)
+- **PR #4740** (2026-10-30): fix(init): install the OpenCode plugin independently of agent setup (@TechWizard9999)
+- **PR #4739** (closed): fix(core): quote child arguments containing backslashes on Windows (fixes #4737) (@TechWizard9999)
+- **PR #4738** (2026-10-31): fix(hook): honour opt-outs inside a quoted script behind uv run (@ShryukGrandhi)
 
 ---
 
@@ -2073,81 +2411,69 @@ fix(pytest): keep the E lines of error and failure blocks
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines
+## X. ruff): keep a leading `--` verbatim and read help/version first
 
 **RULE**:
-When implementing operations in `src/cmds/python/pytest_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmds/python/ruff_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e05c7bdf`: Merge pull request #4714 from rtk-ai/fix/pytest-collection-error-lines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ffd9cbe8`: ruff): keep a leading `--` verbatim and read help/version first. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/python/pytest_cmd.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/python/ruff_cmd.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::core::arg_tokenizer::{Dialect, TokenKind, ValueSpec, tokenize_grammar};
-const MAX_TRACEBACK_LINES: usize = 3;
-const MAX_ERROR_LINES: usize = 4;
-    let injected = injected_args(args);
-    cmd.args(&injected);
-        eprintln!("Running: pytest {} {}", injected.join(" "), args.join(" "));
-fn injected_args(args: &[String]) -> Vec<&'static str> {
-    let tokens = tokenize_grammar(
-        args,
-        &|kind, name| match (kind, name) {
-            (TokenKind::Long, "tb")
-            | (TokenKind::Short, "k" | "m" | "p" | "c" | "o" | "W" | "r") => {
-                Some(ValueSpec::value())
-            }
-            _ => None,
-        },
-        Dialect::Posix,
-    );
-    let tb = tokens
-        .iter()
-        .filter(|t| t.kind == TokenKind::Long && t.text == "tb")
-        .filter_map(|t| t.value(&tokens))
-        .next_back();
-    let has_flag = |short: &str, long: &str| {
-        tokens.iter().any(|t| {
-            (t.kind == TokenKind::Short && t.text == short)
-                || (t.kind == TokenKind::Long && t.text == long)
-        })
-    };
-    let has_quiet_flag = has_flag("q", "quiet");
-    let has_report_flag = has_flag("r", "report-chars");
-
-    let mut injected =
+    Dialect, Token, TokenKind, ValueSpec, before_dashdash, dashdash_index, tokenize_grammar,
+        // ruff answers a help or version flag as soon as it reads one, before
+        // a subcommand or a check option (`ruff -qh check`, `ruff -Vn`).
+        if requests_top_level(*token) {
+            return RuffRoute::TopLevel;
+        }
+        // nothing is removed and no later word is the subcommand.
+        if !ruff_is_global_token(*token) {
+    // Only global options come before this `--`. ruff answers `ruff -- check`
+    // with its usage error, and rtk forwards the call unchanged rather than
+    // linting a file named `check`.
+    if dashdash_index(&tokens).is_some() {
+        return RuffRoute::TopLevel;
+    }
+    // Every other flags-only call (for example `--statistics`) is an implicit check.
+    RuffRoute::Check { explicit_at: None }
+/// Ruff's global flags, as long names without the leading dashes. Help and
+/// version are global too, but the scan answers them first
+/// (`requests_top_level`).
+const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent"];
+const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s"];
+    /// Forwarded verbatim with its whole st
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let has_tb_flag = args.iter().any(|a| a.starts_with("--tb"));
-    let has_quiet_flag = args.iter().any(|a| a == "-q" || a == "--quiet");
-    // Only treat a short `-r…` as pytest's report flag (not `--randomly-seed` etc.)
-    let has_report_flag = args
-        .iter()
-        .any(|a| a.starts_with("-r") && !a.starts_with("--"));
-
-    if !has_tb_flag {
-        cmd.arg("--tb=short");
-    }
-    if !has_quiet_flag {
-        cmd.arg("-q");
-    }
-    // Surface xfailed/xpassed (and their reasons) in the short summary section
-    // so the compact output can report expected failures and — crucially —
-    // unexpected passes (XPASS), which signal a behavior change.
-    if !has_report_flag {
-        cmd.arg("-rxX");
-    }
-
-        eprintln!("Running: pytest --tb=short -q {}", args.join(" "));
-                if trimmed.starts_with("___") {
+    Dialect, Token, TokenKind, ValueSpec, before_dashdash, tokenize_grammar,
+        // nothing is removed and no later word is the subcommand. The `--`
+        // boundary is not an option: the scan never reads past it.
+        if token.kind != TokenKind::DashDash && !ruff_is_global_token(*token) {
+    top_level_request(&tokens)
+/// Ruff's global flags, as long names without the leading dashes.
+const RUFF_GLOBAL_FLAGS: &[&str] = &["isolated", "verbose", "quiet", "silent", "help", "version"];
+const RUFF_GLOBAL_SHORT_FLAGS: &[&str] = &["v", "q", "s", "h", "V"];
+    /// No subcommand and no path: a top-level request such as `--version`.
+/// Flag-only invocations stay top-level for `--version`/`--help`; every other
+/// flags-only call (for example `--statistics`) is an implicit check. Read the
+/// tokens, not the raw args, so a cluster such as `-qh` is a help request.
+fn top_level_request(tokens: &[Token<'_>]) -> RuffRoute {
+    let requests_top_level = before_dashdash(tokens).iter().any(|token| {
+        matches!(
+            (token.kind, token.text),
+            (TokenKind::Long, "help" | "version") | (TokenKind::Short, "h" | "V")
+        )
+    });
+    if requests_top_level {
+      
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e05c7bdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ffd9cbe8` are properly handled with clean fallback behavior.

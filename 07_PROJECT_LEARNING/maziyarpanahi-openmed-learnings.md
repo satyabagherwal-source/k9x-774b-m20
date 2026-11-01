@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source**: github ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
-> **Source Version**: `00e9efd7`  
+> **Source Version**: `4a3b5899`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:51:41.455Z  
+> **Timestamp**: 2026-10-31T23:22:27.389Z  
 > **Learning ID**: `learn-github-maziyarpanahi-openmed`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/maziyarpanahi/openmed](https://github.com/maziyarpanahi/openmed))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:51:41.250Z  
+> **Harvest Timestamp**: 2026-10-31T23:22:26.835Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Local-first healthcare AI: clinical NER and HIPAA PII de-identification on hardware you control. 2,200+ medical models, 35 model-backed PII languages, and Python, MLX, Android and browser runtimes. Apache-2.0 SDK.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5711 stars
+- **Stars / Engagement**: 5744 stars
 
 ---
 
@@ -2304,11 +2304,11 @@ def _check_element(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4223** (2026-10-17): **fix: read JSONL records without splitting Unicode inside strings (#4205)**
-  *Symptoms*: # Pull Request  ## Description JSONL/NDJSON loading follows physical file lines, preserving literal Unicode separators inside JSON strings. Blank lines, physical error-line numbering and `object_pairs_hook` behavior are retained. Results remain materialized.  [Exact v3.2 scope approval](https://github.com/maziyarpanahi/openmed/issues/4205#issuecomment-6223771963). Implementation review and passing CI remain required before merge.  Existing candidate commits are retained unchanged; current master was merged without rewriting fork history. All upstream and correction changelog entries are preserved.  ## Type of Change - [x] Bug fix - [x] Test addition/improvement  ## Changes Made - Retain the independent correction and synthetic, offline regression coverage. - Merge current master `8f3c05b2ff388eceb2c1a46bf80be710e540650d`, including the separately merged dependency repair #4221. - Preserve behavior outside the approved correction and all changelog entries.  ## Testing - [x] Reproduced on current unpatched master: 9 intended failures, 5 passing controls, 0 skips, 0 errors. - [x] Focused regression: 14 passed, 0 skipped. - [x] Neighboring suites and no-raw-text logging guard: 62 passed, 0 skipped. - [x] Full native suite on `7535ddcb8a9b1f322d3963d0e02274f930303f25`: **29,620 passed, 184 skipped, 0 failures, 0 errors**. - [x] Current independent native baseline: 29,606 passed, 184 skipped, zero failures/errors. - [x] Required dependency audit passed using committed `mcp==1.30.0`
+- **Issue #4373** (2026-10-31): **Require patched ASN.1 decoding in the cloud extra**
+  *Symptoms*: ## Description  The v3.2 candidate's vulnerability gate blocks on four HIGH pyasn1 decoder advisories in the optional cloud closure. Require `pyasn1>=0.6.5` in the cloud extra and uv constraints, and update only that package's locked version and artifact hashes. The [upstream release](https://github.com/pyasn1/pyasn1/releases/tag/v0.6.5) fixes CVE-2026-119194 through CVE-2026-119197.  ## Type of Change  - [x] Bug fix - [x] Documentation update  ## Changes Made  - Add the patched minimum to the published cloud extra. - Retain the existing lockfile format and every unrelated package record, platform marker and pin. - Document the change in the v3.2 changelog and release notes. Core dependencies, scanner policy and allowlists are unchanged.  ## Testing  - [x] CI's uv 0.13.6 accepts `uv lock --check --offline` without drift; a frozen cloud install of the final lock succeeds. - [x] Existing scanner/pip-audit policy, cloud storage, dependency report and core-import tests: 110 passed and 20 passing subtests. - [x] Networking-blocked smoke check: cloud imports, ASN.1 DER round trip, synthetic service-account signing and JWT verification pass with pyasn1 0.6.5 / pyasn1-modules 0.4.2 / google-auth 2.55.1. - [x] Canonical formatting, lint, format check, scoped pre-commit and strict complete docs staging pass. - [x] Wheel/sdist build and Twine checks pass; wheel metadata scopes the new floor to `extra == cloud`. - [x] Full final candidate suite after the license follow-ups: 24,224 passed
 
-- **Issue #4218** (2026-10-17): **fix: honor continue_on_error for file decoding failures (#4201)**
-  *Symptoms*: # Pull Request  ## Description Both batch file readers now convert decoding failures into failed items when `continue_on_error=True`, allowing later valid files to run. Strict mode still propagates the exception. Decoder error reports and logs omit native input details.  [Exact v3.2 scope approval](https://github.com/maziyarpanahi/openmed/issues/4201#issuecomment-6223770306). Implementation review and passing CI remain required before merge.  Existing candidate commits are retained unchanged; current master was merged without rewriting fork history. All upstream and correction changelog entries are preserved.  ## Timing regression follow-up The old-head [macOS/Python 3.12 job](https://github.com/maziyarpanahi/openmed/actions/runs/38963981573/job/117186386429) failed the existing 500 MB SHA-256 timing assertion at 2.079 seconds against its two-second limit. That failure remains part of the record. The hashing implementation and test are byte-identical between current master and this candidate. Six unchanged-test controls (three on each source) ran on Linux/Python 3.12 with coverage; all passed. Those controls do not substitute for hosted macOS validation. Inspect the new-head matrix before clearing this concern; no test limit, skip, or hashing change was introduced.  ## Type of Change - [x] Bug fix - [x] Test addition/improvement  ## Changes Made - Retain the independent correction and synthetic, offline regression coverage. - Merge current master `8f3c05b2ff388eceb2c1a46bf80b
+- **Issue #4372** (2026-10-31): **Update the cloud ASN.1 dependency before v3.2 release**
+  *Symptoms*: The final v3.2 candidate vulnerability scan blocks on four HIGH advisories in `pyasn1 0.6.4`, reachable in the optional `cloud` dependency set through `gcsfs -> google-auth -> pyasn1-modules`.  Evidence: [candidate scan](https://github.com/maziyarpanahi/openmed/actions/runs/41225035698/job/124607303226), head `64526054878477acda2141167c822f416c28e038`. Findings: CVE-2026-119194, CVE-2026-119195, CVE-2026-119196 and CVE-2026-119197. The [upstream 0.6.5 release](https://github.com/pyasn1/pyasn1/releases/tag/v0.6.5) addresses all four decoder CPU-exhaustion issues.  For v3.2, require `pyasn1>=0.6.5` in the cloud extra and resolution constraints, update only the affected lock entry, verify a frozen cloud install and offline authentication/ASN.1 imports, then pass the unchanged vulnerability gate. Core dependencies, suppression policy and scanner assertions should remain unchanged. Integrate through a focused PR into `prepare/v3.2.0` / #4369.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2325,515 +2325,1229 @@ def _check_element(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00e9efd7` (2026-10-23)
-**Commit Message**: fix: require patched GitPython for the docs profile
+### Incident Patch 1: `d5236b9c` (2026-10-30)
+**Commit Message**: Qualify fixed-option decision backends offline
 
-The vulnerability scan now blocks GitPython 3.1.62 for the HIGH
-CVE-2026-114145, fixed in 3.2.1. Raise the docs extra floor and the
-lock constraint, and cover it in the published-floor regression table.
-The strict Pages build passes with GitPython 3.2.1.
+Closes #4258
 
-**File**: `CHANGELOG.md` (modified, +3/-2)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -381,8 +381,9 @@ clinical efficacy. Package publication remains a separate release action.
- ### Security
+@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- - Require patched OpenTelemetry API 1.45.1 in the optional `dev`, `otel` and
--  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
--  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
-+  `service` profiles and GitPython 3.2.1 in the `docs` profile, and lock
-+  patched virtualenv 21.14.13, Brotli 1.2.1 and graphql-core 3.2.12. A
-+  lock-only packaging override lifts Prefect 3.7's
-   `packaging<26.3` cap so the lock keeps Airflow on patched 3.3.2; the base
-   SDK's dependency set is unchanged.
- - Refresh the service image's exact Debian forky pins for ca-certificates,
+ ### Added
+ 
++- Add offline decision-backend qualification with development-only threshold fitting, held-out evaluation, value-free reports and explicit calibration profile output.
++
+ - Generate structured multilingual synthetic dialogue with grapheme-safe spans, Journey fact evidence and explicit adjudication truth (#2846).
+ 
+ - Validate synthetic releases against disclosure, lineage, licenses, withdrawals, benchmark contamination and subgroup utility evidence (#3214).
 ```
 
-**File**: `pyproject.toml` (modified, +2/-1)
+**File**: `docs/api/fixed-option-decisions.md` (modified, +109/-0)
 ```diff
-@@ -501,7 +501,7 @@ docs = [
-   "mkdocs-minify-plugin>=0.8.0",
-   "mkdocs-static-i18n>=1.3,<2",
-   "pymdown-extensions>=11.0.1,<12",
--  "gitpython>=3.1.60,<4",
-+  "gitpython>=3.2.1,<4",
-   "mkdocstrings[python]",
-   "griffe",
- ]
-@@ -542,6 +542,7 @@ constraint-dependencies = [
-   "brotli>=1.2.1",
-   "graphql-core>=3.2.12",
-   "opentelemetry-api>=1.45.1",
-+  "gitpython>=3.2.1",
-   "betterproto==2.0.0b6; python_version >= '3.11'",
-   "pyjwt>=2.14.0",
- ]
+@@ -395,6 +395,115 @@ It is declared read-only, non-destructive, idempotent, and closed-world. The
+ tool registry is generated from the same schema used by Python and REST, and
+ cross-surface drift tests compare complete synthetic results.
+ 
++## Qualify a backend offline
++
++Set abstention thresholds per decision on your own labelled cases before a
++backend is used in a workflow. `openmed decision-qualify` fits thresholds on a
++development file, freezes them, and reports how they hold on a separate
++evaluation file. It makes no network calls and loads nothing that is not
++already installed.
++
++```bash
++openmed decision-qualify \
++  --backend-factory my_site.decisions:build_backend \
++  --development /private/decisions/development.jsonl \
++  --evaluation /private/decisions/evaluation.jsonl \
++  --calibration-id site.triage \
++  --profile-output /private/decisions/profiles.json \
++  --json
++```
++
++Select exactly one backend. `--backend deterministic` uses the
++dependency-free lexical backend. `--backend-factory module:function` imports a
++trusted, already installed function that takes no arguments and returns a
++`DecisionBackend`, such as an `EncoderDecisionBackend` around a local model.
++The factory is called once per run. The command never registers the backend
++or its profiles as a default, and the bundled calibration profile is
++unchanged.
++
++Each line of both files is one labelled case (this one is synthetic):
++
++```json
++{"id": "case-001", "mode": "fixed_choice", "input_text": "Synthetic review priority is clearly urgent.", "options": ["urgent", "routine"], "expected_choices": ["urgent"]}
++```
++
++`mode` is `fixed_choice`, `boolean_choice`, `ordered_preference` or
++`multi_label`. Single-choice modes take exactly one expected choice; for
++`ordered_preference` it is the option expected first. `scalar_score` is not
++supported because the 1.0.0 calibration evaluator scores option choices. `id`
++is optional and opaque. Malformed lines, unknown fields, duplicate IDs and
++requests outside the limits below fail with a controlled error code and no
++input values.
++
++Thresholds are chosen per mode from the development file only:
++
++- each development case is scored once, and the candidates are the observed
++  development confidences, margins and option scores;
++- the command keeps the candidate that covers the most development cases while
++  selective accuracy stays at or above `--accuracy-floor` (default 0.9); ties
++  prefer higher accuracy, then stricter thresholds;
++- `fixed_choice`, `boolean_choice` and `ordered_preference` fit
++  `minimum_confidence` and `minimum_margin`; `multi_label` fits
++  `multi_label_threshold`. Fields that do not apply to a mode are set to 1.0,
++  so a profile reused for another mode abstains;
++- evaluation cases are scored only after the thresholds are fixed and never
++  change them.
++
++For each mode the report gives development and evaluation accuracy on covered
++cases, coverage, abstention rate, expected calibration error (from
++`evaluate_decision_calibration`) and result-state counts. Per option it gives
++development and evaluation support and evaluation recall, keyed by the
++`sha256:` digest of the option after NFKC normalization, case folding and
++whitespace collapsing. Inputs appear only as the SHA-256 digest of each file's
++bytes and a record count. The report holds no input text, option values,
++record IDs or file paths.
++
++`qualified` is true only when both files contain the same modes, no case
++(same mode, normalized text and options) or ID appears in both files, every
++declared option has at least `--min-examples-per-option` evaluation examples
++(default 20), the backend returned no errors, and evaluation accuracy and
++coverage meet `--accuracy-floor` and `--coverage-floor` (default 0.5). Data
++problems give `status: insufficient`; unmet floors or backend errors give
++`not_qualified`. The exit status is 0 only for `qualified`.
++
++Profiles appear in the report's `profiles` field, and in `--profile-output`
++(a new file with mode 0600 that is never overwritten), only when the run
++qualifies. One profile is emitted per mode and named
++`<calibration-id>.<mode>`. Its `in_domain_digest` pins the development file
++and its `out_of_domain_digest` pins the evaluation file. Calibration IDs in
++the `openmed` namespace are reserved for bundled profiles. Pass the profiles
++to `decide` explicitly:
++
++```python
++import json
++
++from openmed.structured import DecisionCalibrationProfile, DecisionRequest, decide
++
++with open("/private/decisions/profiles.json", encoding="utf-8") as handle:
++    profiles = {
++        key: DecisionCalibrationProfile(**value)
++        for key, value in json.load(handle).items()
++    }
++
++result = decide(
++    DecisionRequest(
++        mode="fixed_choice",
++        input_text="Synthetic review priority is clearly urgent.",
++        options=("urgent", "routine"),
++        calibration_id="site.triage.fixed_choice",
++    ),
++    backend=backend,
++    calibration_profiles
 ```
 
-**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +1/-0)
+**File**: `openmed/cli/decision_qualification.py` (added, +174/-0)
 ```diff
-@@ -407,6 +407,7 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
-         ("banks", "2.5.0", "2.5.1", ("agents", "llamaindex")),
-         ("datasets", "5.0.0", "5.0.1", ("awq", "gptq")),
-         ("fsspec", "2026.4.0", "2026.6.0", ("dev", "cloud", "journey")),
-+        ("gitpython", "3.1.62", "3.2.1", ("docs",)),
-         ("h2", "4.3.0", "4.4.1", ("beam", "prefect")),
-         ("langgraph-sdk", "0.4.3", "0.4.4", ("agents", "langgraph")),
-         ("mcp", "1.29.1", "1.30.0", ("dev", "mcp")),
-```
-
-**File**: `uv.lock` (modified, +5/-4)
-```diff
-@@ -680,6 +680,7 @@ constraints = [
-     { name = "certifi", specifier = ">=2026.10.19" },
-     { name = "datasets", specifier = ">=5.0.1" },
-     { name = "fsspec", specifier = ">=2026.6.0" },
-+    { name = "gitpython", specifier = ">=3.2.1" },
-     { name = "graphql-core", specifier = ">=3.2.12" },
-     { name = "h2", specifier = ">=4.4.1" },
-     { name = "jinja2", specifier = ">=3.1.6" },
-@@ -5895,14 +5896,14 @@ wheels = [
- 
- [[package]]
- name = "gitpython"
--version = "3.1.62"
-+version = "3.2.1"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "gitdb" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/e0/db/3ca813cbacb23ab6fe46ff38a9b5ef8e73e970c8051f2ce903aacafe0446/gitpython-3.1.62.tar.gz", hash = "sha256:1791de66309bc0c7cfca40bf8d2e3de7ca091cbf94e6051be1ad0722c61062af", size = 231728, upload-time = "2026-09-07T02:57:21.155Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/c0/ff/fee293f1ec3e1b64db6eb270e00964f29c086d769201474cedb8d1608930/gitpython-3.2.1.tar.gz", hash = "sha256:0f1229ec5c057bdabdeeda8bda4f17bda679ab33dbccc00f24e6a480553c8613", size = 241688, upload-time = "2026-10-14T12:20:20.589Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/d6/0b/29d7965215f8ef830a7ca1f42997fe13e5693d85e9edb18f938d063ef5f2/gitpython-3.1.62-py3-none-any.whl", hash = "sha256:7002251225e10e29d2e1f49e6532613fe5d5d9f0b6f1f02997a52b38fe56899e", size = 222753, upload-time = "2026-09-07T02:57:19.762Z" },
-+    { url = "https://files.pythonhosted.org/packages/6b/50/2a923c4dc02522ff9567f07c67ed1deca6d5fa9474f4708168b8088dfa37/gitpython-3.2.1-py3-none-any.whl", hash = "sha256:d66b0832aa8755c1a84892937282df0befb16c97e5a64aeebd68be9c5e323f53", size = 231548, upload-time = "2026-10-14T12:20:18.844Z" },
- ]
- 
- [[package]]
-@@ -12172,7 +12173,7 @@ requires-dist = [
-     { name = "fsspec", marker = "extra == 'triton'", specifier = ">=2026.6.0" },
-     { name = "fsspec", marker = "extra == 'zh-hanlp'", specifier = ">=2026.6.0" },
-     { name = "gcsfs", marker = "extra == 'cloud'", specifier = ">=2025.9.0" },
--    { name = "gitpython", marker = "extra == 'docs'", specifier = ">=3.1.60,<4" },
-+    { name = "gitpython", marker = "extra == 'docs'", specifier = ">=3.2.1,<4" },
-     { name = "gliner", extras = ["tokenizers"], marker = "extra == 'gliner'", specifier = ">=0.2.0" },
-     { name = "griffe", marker = "extra == 'docs'" },
-     { name = "grpcio", marker = "extra == 'dev'", specifier = ">=1.64" },
-```
-
----
-
-### Incident Patch 2: `09596618` (2026-10-23)
-**Commit Message**: fix: patch audited dependencies and container pins for v3.1
-
-The CI security gate failed on fixable virtualenv advisories, and newer
-advisories now cover Brotli, graphql-core and the OpenTelemetry API.
-Raise the lock constraints to the patched releases and raise the
-OpenTelemetry API floor in the dev, otel and service extras.
-
-Patched virtualenv needs packaging 26.3, which Prefect 3.7 excludes.
-Newer Prefect needs FastAPI releases that Airflow 3.3 excludes, so the
-resolver would otherwise drop Airflow to an advisory-laden 3.2.2. A
-lock-only packaging override keeps Airflow on patched 3.3.2.
-
-Debian forky retired the pinned ca-certificates, liblzma5 and tzdata
-versions, which broke the service image build used by Image SBOM and
-the load-test SLO job.
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -380,6 +380,13 @@ clinical efficacy. Package publication remains a separate release action.
- 
- ### Security
- 
-+- Require patched OpenTelemetry API 1.45.1 in the optional `dev`, `otel` and
-+  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
-+  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
-+  `packaging<26.3` cap so the lock keeps Airflow on patched 3.3.2; the base
-+  SDK's dependency set is unchanged.
-+- Refresh the service image's exact Debian forky pins for ca-certificates,
-+  liblzma5 and tzdata after the archive retired the previous versions.
- - Renew the maintainer-reviewed exception for unpatched NLTK
-   `CVE-2026-81726` in the universal lockfile through 2026-11-03. NLTK remains
-   optional and absent from the core closure and service image. The exception
-```
-
-**File**: `Dockerfile` (modified, +3/-3)
-```diff
-@@ -13,11 +13,11 @@ WORKDIR /app
- # release. Runtime libraries stay exact and come from one Debian suite.
- RUN apt-get update \
-     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
--        "ca-certificates=20260816" \
-+        "ca-certificates=20260816+nmu1" \
-         "libbz2-1.0=1.0.8-6+b2" \
-         "libffi8=3.8.0-2" \
-         "libgdbm6t64=1.26-1+b2" \
--        "liblzma5=5.8.3-1" \
-+        "liblzma5=5.8.4-1" \
-         "libncursesw6=6.6+20260608-2" \
-         "libreadline8t64=8.3-4" \
-         "libsqlite3-0=3.53.4-2" \
-@@ -27,7 +27,7 @@ RUN apt-get update \
-         "openssl=3.6.5-1" \
-         "openssl-provider-legacy=3.6.5-1" \
-         "readline-common=8.3-4" \
--        "tzdata=2026c-1" \
-+        "tzdata=2026e-1" \
-         "zlib1g=1:1.3.dfsg+really1.3.2-3" \
-     && rm -rf /var/lib/apt/lists/*
- 
-```
-
-**File**: `deploy/docker/Dockerfile` (modified, +3/-3)
-```diff
-@@ -19,11 +19,11 @@ WORKDIR /app
- # release. Runtime libraries stay exact and come from one Debian suite.
- RUN apt-get update \
-     && DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
--        "ca-certificates=20260816" \
-+        "ca-certificates=20260816+nmu1" \
-         "libbz2-1.0=1.0.8-6+b2" \
-         "libffi8=3.8.0-2" \
-         "libgdbm6t64=1.26-1+b2" \
--        "liblzma5=5.8.3-1" \
-+        "liblzma5=5.8.4-1" \
-         "libncursesw6=6.6+20260608-2" \
-         "libreadline8t64=8.3-4" \
-         "libsqlite3-0=3.53.4-2" \
-@@ -33,7 +33,7 @@ RUN apt-get update \
-         "openssl=3.6.5-1" \
-         "openssl-provider-legacy=3.6.5-1" \
-         "readline-common=8.3-4" \
--        "tzdata=2026c-1" \
-+        "tzdata=2026e-1" \
-         "zlib1g=1:1.3.dfsg+really1.3.2-3" \
-     && rm -rf /var/lib/apt/lists/*
- 
-```
-
-**File**: `pyproject.toml` (modified, +10/-4)
-```diff
-@@ -70,7 +70,7 @@ dev = [
-   "fastapi>=0.110",
-   "httpx>=0.27",
-   "dask[dataframe]>=2024.8",
--  "opentelemetry-api>=1.26,<2",
-+  "opentelemetry-api>=1.45.1,<2",
-   "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
-   "opentelemetry-sdk>=1.26,<2",
-   "pandas>=2.0",
-@@ -391,7 +391,7 @@ hf = [
- # Core pipeline observability. The SDK enables caller-owned in-process
- # providers and test exporters; no network exporter is included or configured.
- otel = [
--  "opentelemetry-api>=1.26,<2",
-+  "opentelemetry-api>=1.45.1,<2",
-   "opentelemetry-sdk>=1.26,<2",
- ]
- 
-@@ -400,7 +400,7 @@ service = [
-   "fastapi>=0.110",
-   "grpcio>=1.64",
-   "httpx>=0.27",
--  "opentelemetry-api>=1.26,<2",
-+  "opentelemetry-api>=1.45.1,<2",
-   "opentelemetry-exporter-otlp-proto-http>=1.26,<2",
-   "opentelemetry-sdk>=1.26,<2",
-   "protobuf>=5.26,<7",
-@@ -538,7 +538,10 @@ constraint-dependencies = [
-   "torch>=2.13.0",
-   "tornado>=6.5.9",
-   "urllib3>=2.8.0",
--  "virtualenv>=21.7.13",
-+  "virtualenv>=21.14.9",
-+  "brotli>=1.2.1",
-+  "graphql-core>=3.2.12",
-+  "opentelemetry-api>=1.45.1",
-   "betterproto==2.0.0b6; python_version >= '3.11'",
-   "pyjwt>=2.14.0",
- ]
-@@ -549,6 +552,9 @@ override-dependencies = [
-   "httplib2>=0.32",
-   # Beam also caps Pillow below the patched release on Python 3.11+.
-   "Pillow>=13.0.0; python_version >= '3.11'",
-+  # Prefect 3.7 caps packaging below the release patched virtualenv needs, and
-+  # newer Prefect requires FastAPI releases that Airflow 3.3 excludes.
-+  "packaging>=26.3,<27",
- ]
- conflicts = [
-   [
-```
-
-**File**: `tests/unit/core/test_pipeline_telemetry.py` (modified, +1/-1)
-```diff
-@@ -297,7 +297,7 @@ def test_otel_extra_contains_no_network_exporter() -> None:
-         dependencies = tomllib.load(handle)["project"]["optional-dependencies"]
- 
-     assert dependencies["otel"] == [
--        "opentelemetry-api>=1.26,<2",
-+        "opentelemetry-api>=1.45.1,<2",
-         "opentelemetry-sdk>=1.26,<2",
-     ]
-     assert all("exporter" not in dependency for dependency in dependencies["otel"])
-```
-
-**File**: `tests/unit/security/test_pip_audit_gate.py` (modified, +26/-0)
-```diff
-@@ -418,6 +418,7 @@ def test_awq_torch_floor_keeps_the_existing_linux_only_boundary() -> None:
-             ("agents", "awq", "beam", "cloud", "gptq", "llamaindex", "operator"),
-         ),
-         ("oauthlib", "3.3.1", "4.0.0", ("cloud", "prefect")),
-+        ("opentelemetry-api", "1.43.0", "1.45.1", ("dev", "otel", "service")),
-         ("pymongo", "4.18.1", "4.18.2", ("beam",)),
-         ("tinytag", "2.2.1", "2.3.0", ("agents", "llamaindex")),
-     ],
-@@ -512,6 +513,31 @@ def test_certificate_bundle_lock_uses_patched_release() -> None:
-     assert "2026.10.19" in floor.specifier
- 
- 
-+@pytest.mark.parametrize(
-+    ("package", "unsafe", "fixed"),
-+    [
-+        ("brotli", "1.2.0", "1.2.1"),
-+        ("graphql-core", "3.2.11", "3.2.12"),
-+        ("virtualenv", "21.14.5", "21.14.9"),
-+    ],
-+)
-+def test_transitive_dependency_lock_uses_patched_release(
-+    package: str, unsafe: str, fixed: str
+@@ -0,0 +1,174 @@
++"""Supported offline qualification command for local decision backends."""
++
++import argparse
++import importlib
++import json
++import os
++from pathlib import Path
++
++from ._output import CliError, add_json_flag, emit
++
++
++def add_decision_qualification_command(
++    subparsers: argparse._SubParsersAction,
 +) -> None:
-+    project, lock = _model_dependency_metadata()
-+    resolved = [item for item in lock["package"] if item["name"] == package]
-+    assert resolved
-+    assert all(Version(item["version"]) >= Version(fixed) for item in resolved)
-+    floor = next(
-+        requirement
-+        for value in project["tool"]["uv"]["constraint-dependencies"]
-+        for requirement in [Requirement(value)]
-+        if requirement.name == package
++    """Register the local decision-backend qualification command."""
++    parser = subparsers.add_parser(
++        "decision-qualify",
++        help="Qualify a local fixed-option decision backend on caller data.",
 +    )
-+    assert unsafe not in floor.specifier
-+    assert fixed in floor.specifier
++    source = parser.add_mutually_exclusive_group(required=True)
++    source.add_argument(
++        "--backend",
++        choices=("deterministic",),
++        help="Built-in dependency-free lexical backend.",
++    )
++    source.add_argument(
++        "--backend-factory",
++        help="Trusted installed module:function returning a local decision backend.",
++    )
++    parser.add_argument(
++        "--development",
++        required=True,
++        type=Path,
++        help="Development JSONL used only to fit thresholds.",
++    )
++    parser.add_argument(
++        "--evaluation",
++        required=True,
++        type=Path,
++        help="Held-out evaluation JSONL; never used to fit thresholds.",
++    )
++    parser.add_argument(
++        "--calibration-id",
++        required=True,
++        help="Controlled profile prefix; each mode becomes <prefix>.<mode>.",
++    )
++    parser.add_argument(
++        "--calibration-version",
++        default="1.0.0",
++        help="Semantic version recorded in emitted profiles.",
++    )
++    parser.add_argument(
++        "--min-examples-per-option",
++        type=int,
++        default=20,
++        help="Evaluation examples required for every option before a profile.",
++    )
++    parser.add_argument(
++        "--accuracy-floor",
++        type=float,
++        default=0.9,
++        help="Selective accuracy required on development and evaluation.",
++    )
++    parser.add_argument(
++        "--coverage-floor",
++        type=float,
++        default=0.5,
++        help="Evaluation coverage required at the frozen thresholds.",
++    )
++    parser.add_argument(
++        "--profile-output",
++        type=Path,
++        help="New file for the emitted profiles; written only when qualified.",
++    )
++    add_json_flag(parser)
++    parser.set_defaults(handler=handle_decision_qualification)
 +
 +
- def test_awq_dataset_floor_retains_linux_only_installation() -> None:
-     project, _ = _model_dependency_metadata()
-     floor = next(
++def handle_decision_qualification(args: argparse.Namespace) -> int:
++    """Emit only the value-free report; never echo inputs or backend errors."""
++    from openmed.eval.decision_qualification import (
++        DecisionQualificationError,
++        DecisionQualificationPolicy,
++        qualify_decision_backend,
++    )
++
++    code = None
++    written = False
++    try:
++        output = args.profile_output
++        if output is not None and os.path.lexists(output):
++            raise DecisionQualificationError("profile_output_exists")
++        report = qualify_decision_backend(
++            _backend(args, DecisionQualificationError),
++            development=args.development,
++            evaluation=args.evaluation,
++            calibration_id=args.calibration_id,
++            calibration_version=args.calibration_version,
++            policy=DecisionQualificationPolicy(
++                min_examples_per_option=args.min_examples_per_option,
++                accuracy_floor=args.accuracy_floor,
++                coverage_floor=args.coverage_floor,
++            ),
++        )
++        if report.qualified and output is not None:
++            profiles = report.to_dict()["profiles"]
++            try:
++                _write_new(
++                    output, json.dumps(profiles, indent=2, sort_keys=True) + "\n"
++                )
++            except OSError:
++                raise DecisionQualificationError("profile_output_unavailable") from None
++            written = True
++    except DecisionQualificationError as error:
++        code = error.code
++    except Exception:
++        code = "qualification_unavailable"
++    if code is not None:
++        raise CliError(
++            f"Decision qualification failed: {code}.",
++            code="decision_qualification_failed",
++        )
++    payload = report.to_dict()
++    notice = ""
++    if output is not None:
++        notice = " Profile written." if written else " Profile withheld."
++    emit(
++        args,
++        payload,
++        human=(
++            f"Decision qualification: {payload['status']}; "
++            f"human review required.{notice}"
++        ),
++    )
++    return 0 if payload["qualified"] else 1
++
++
++def _backend(args: argparse.Namespace, error: type[Exception]):
++    from openmed.structured.decision import (
++        DecisionBackend,
++        DecisionBackendIdentity,
++        DeterministicDecisionBackend,
++    )
++
++    if args.backend_factory is None:
++        # A fresh instance; the module-level default is never touched.
++        return DeterministicDecisionBackend()
++    parts = args.backend_factory.
 ```
 
-**File**: `uv.lock` (modified, +176/-102)
+**File**: `openmed/cli/main.py` (modified, +3/-0)
 ```diff
-@@ -676,28 +676,32 @@ constraints = [
-     { name = "aiohttp", specifier = ">=3.14.4" },
-     { name = "banks", specifier = ">=2.5.1" },
-     { name = "betterproto", marker = "python_full_version >= '3.11'", specifier = "==2.0.0b6" },
-+    { name = "brotli", specifier = ">=1.2.1" },
-     { name = "certifi", specifier = ">=2026.10.19" },
-     { name = "datasets", specifier = ">=5.0.1" },
-     { name = "fsspec", specifier = ">=2026.6.0" },
-+    { name = "graphql-core", specifier = ">=3.2.12" },
-     { name = "h2", specifier = ">=4.4.1" },
-     { name = "jinja2", specifier = ">=3.1.6" },
-     { name = "langgraph-sdk", specifier = ">=0.4.4" },
-     { name = "mako", specifier = ">=1.4.2" },
-     { name = "mcp", specifier = ">=1.30,<2" },
-     { name = "multidict", specifier = ">=6.9.1" },
-     { name = "oauthlib", specifier = ">=4.0.0" },
-+    { name = "opentelemetry-api", specifier = ">=1.45.1" },
-     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=13.0.0" },
-     { name = "pyjwt", specifier = ">=2.14.0" },
-     { name = "pymongo", specifier = ">=4.18.2" },
-     { name = "tinytag", specifier = ">=2.3.0" },
-     { name = "torch", specifier = ">=2.13.0" },
-     { name = "tornado", specifier = ">=6.5.9" },
-     { name = "urllib3", specifier = ">=2.8.0" },
--    { name = "virtualenv", specifier = ">=21.7.13" },
-+    { name = "virtualenv", specifier = ">=21.14.9" },
- ]
- overrides = [
-     { name = "cryptography", specifier = ">=50,<51" },
-     { name = "httplib2", specifier = ">=0.32" },
-+    { name = "packaging", specifier = ">=26.3,<27" },
-     { name = "pillow", marker = "python_full_version >= '3.11'", specifier = ">=13.0.0" },
- ]
+@@ -612,6 +612,9 @@ def build_parser() -> argparse.ArgumentParser:
+     from .nli_qualification import add_nli_qualification_command
  
-@@ -1113,20 +1117,20 @@ wheels = [
+     add_nli_qualification_command(subparsers)
++    from .decision_qualification import add_decision_qualification_command
++
++    add_decision_qualification_command(subparsers)
+     from .clinical_review import add_clinical_review_commands
  
- [[package]]
- name = "apache-airflow"
--version = "3.3.1"
-+version = "3.3.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "apache-airflow-core" },
-     { name = "apache-airflow-task-sdk" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/05/f4/025fc6e41878ae075bfd50136542071abaac5ead6a967b53a878b4efbca8/apache_airflow-3.3.1.tar.gz", hash = "sha256:a62ee9c46b7b8c919a46a88ee9346e0b36bc4ff10d6f9ac7cde5a6165da52164", size = 31054, upload-time = "2026-08-12T08:10:24.808Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/e9/9e/148e8d9211c57689af9a8aafa228ff4d9b23bf23c203e973cd2fed9f1353/apache_airflow-3.3.2.tar.gz", hash = "sha256:cdbe0dcd47ff2e9ab267fcc050bc6e4fa6e40fb86bf3671e05d9672206da59bb", size = 31774, upload-time = "2026-09-17T08:39:00.645Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/46/a5/018810c3fe96f9d57377a7d5ca303c51231fe367bf16c34402fb1eb91e55/apache_airflow-3.3.1-py3-none-any.whl", hash = "sha256:0c047c0a0415b100d2966b35d0f0c191013dc996e7645023178c770296ce8602", size = 13048, upload-time = "2026-08-12T08:10:18.204Z" },
-+    { url = "https://files.pythonhosted.org/packages/72/0f/835c3e3d7a09ce377a1ebc475718f404a2f6c976cb2662f84c6fcb7aaa96/apache_airflow-3.3.2-py3-none-any.whl", hash = "sha256:c1fd40a00cfc50e7ef8d0aa07a1418b059f22db03ad25c2793bb030b176dc085", size = 13331, upload-time = "2026-09-17T08:38:26.148Z" },
- ]
- 
- [[package]]
- name = "apache-airflow-core"
--version = "3.3.1"
-+version = "3.3.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "a2wsgi" },
-@@ -1195,9 +1199,9 @@ dependencies = [
-     { name = "uuid6" },
-     { name = "uvicorn" },
- ]
--sdist = { url = "https://files.pythonhosted.org/packages/37/42/d1d5f2e6172398ed4b5864a3f262eddd89008f8445678934c94eabdcee9d/apache_airflow_core-3.3.1.tar.gz", hash = "sha256:0c4ae4f3aea72dc2087b615305ea97ff0247b266bf6fa6661877ce1e1d9a951b", size = 7373613, upload-time = "2026-08-12T08:10:26.454Z" }
-+sdist = { url = "https://files.pythonhosted.org/packages/45/47/bcf1e5ebc134c6a39f06fe00534a8981ea195e7191ea2d60dabb7af0428e/apache_airflow_core-3.3.2.tar.gz", hash = "sha256:53f38e7749a2689a1d67c6e661284ecddaa687c1f7f3cae2d76b2eca7758210f", size = 7442317, upload-time = "2026-09-17T08:39:34.987Z" }
- wheels = [
--    { url = "https://files.pythonhosted.org/packages/2f/e4/910a68502da13948877c91d6b605ea5f0988962792b0b3191025eb8d4423/apache_airflow_core-3.3.1-py3-none-any.whl", hash = "sha256:28c6aa88bdd47a4401436f1bfefbc979236de16fa4962d408218c67b8f9a00b8", size = 6875541, upload-time = "2026-08-12T08:10:22.343Z" },
-+    { url = "https://files.pythonhosted.org/packages/54/b9/1ee2db2eeda6411ce2611e7ce800f57a4b9d22920f5c4ccaed908f7664a1/apache_airflow_core-3.3.2-py3-none-any.whl", hash = "sha256:99258922bccec15be4700ff89f3c942b8acd93407e263c287ce863e671bb3c50", size = 6921273, upload-time = "2026-09-17T08:38:58.61Z" },
- ]
- 
- [[package]]
-@@ -1271,7 +1275,7 @@ wheels = [
- 
- [[package]]
- name = "apache-airflow-task-sdk"
--version = "1.3.1"
-+version = "1.3.2"
- source = { registry = "https://pypi.org/simple" }
- dependencies = [
-     { name = "apache-airflow-core" },
-@@ -1301,9 +1305,9 @@ dependencies = [
-     { name = "tenacity" },
-     { name = "typing-extensio
+     add_clinical_review_commands(subparsers)
+```
+
+**File**: `openmed/eval/decision_qualification.py` (added, +806/-0)
+```diff
+@@ -0,0 +1,806 @@
++"""Offline qualification of caller-selected fixed-option decision backends.
++
++Thresholds are fit per decision mode on a caller-supplied development split
++only, then frozen before a separate evaluation split is scored. Reports hold
++counts, metrics, controlled reason codes and SHA-256 digests; they never hold
++input text, option values, record identifiers or file paths. A qualified report
++attests only to the supplied files and policy. It is not clinical validation,
++and emitted calibration profiles are never registered as defaults.
++"""
++
++from __future__ import annotations
++
++import bisect
++import hashlib
++import json
++import re
++import time
++import unicodedata
++from collections import Counter
++from collections.abc import Mapping, Sequence
++from dataclasses import asdict, dataclass, field
++from pathlib import Path
++from typing import Any, Final
++
++from openmed.structured.decision import (
++    DECISION_SCHEMA_VERSION,
++    DecisionBackend,
++    DecisionBackendIdentity,
++    DecisionCalibrationExample,
++    DecisionCalibrationProfile,
++    DecisionConflictError,
++    DecisionError,
++    DecisionMode,
++    DecisionRequest,
++    DecisionResult,
++    DecisionState,
++    DecisionUnsupportedError,
++    decide,
++    evaluate_decision_calibration,
++)
++
++DECISION_QUALIFICATION_SCHEMA_VERSION: Final = "1.0.0"
++DECISION_QUALIFICATION_METHOD: Final = "development_max_coverage"
++QUALIFIABLE_DECISION_MODES: Final = (
++    DecisionMode.FIXED_CHOICE,
++    DecisionMode.BOOLEAN_CHOICE,
++    DecisionMode.ORDERED_PREFERENCE,
++    DecisionMode.MULTI_LABEL,
++)
++MAX_SPLIT_BYTES: Final = 64 * 1024 * 1024
++MAX_SPLIT_RECORDS: Final = 50_000
++_MAX_CANDIDATES: Final = 256
++_REQUIRED_FIELDS: Final = frozenset(
++    {"mode", "input_text", "options", "expected_choices"}
++)
++_RECORD_FIELDS: Final = _REQUIRED_FIELDS | {"id"}
++# Leave room for the longest ``.<mode>`` suffix inside the 128-character limit.
++_CALIBRATION_ID_RE = re.compile(r"^[a-z][a-z0-9_.:/-]{0,107}$")
++_VERSION_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
++_DATA_REASON_MARKERS: Final = (
++    "split_overlap",
++    "_missing_",
++    "_insufficient_option_support_",
++)
++
++
++class DecisionQualificationError(DecisionError):
++    """Value-free qualification failure carrying a controlled reason code."""
++
++    def __init__(self, code: str) -> None:
++        super().__init__(code)
++        self.code = code
++
++
++@dataclass(frozen=True)
++class DecisionQualificationPolicy:
++    """Caller-selected support and operating floors, not clinical norms.
++
++    Attributes:
++        min_examples_per_option: Minimum evaluation examples whose expected
++            choices include each declared option, counted per decision mode.
++            Below it, no profile is emitted.
++        accuracy_floor: Minimum selective accuracy on covered examples. The
++            development split selects thresholds against it and the
++            evaluation split must meet it at the frozen thresholds.
++        coverage_floor: Minimum evaluation coverage at the frozen thresholds.
++    """
++
++    min_examples_per_option: int = 20
++    accuracy_floor: float = 0.9
++    coverage_floor: float = 0.5
++
++    def __post_init__(self) -> None:
++        if (
++            type(self.min_examples_per_option) is not int
++            or self.min_examples_per_option < 1
++        ):
++            raise DecisionQualificationError("invalid_policy")
++        for value in (self.accuracy_floor, self.coverage_floor):
++            if type(value) not in (float, int) or not 0 <= value <= 1:
++                raise DecisionQualificationError("invalid_policy")
++
++
++@dataclass(frozen=True, slots=True)
++class DecisionQualificationReport:
++    """Immutable value-free report; profiles are present only when qualified."""
++
++    _payload: str = field(repr=False)
++
++    @property
++    def digest(self) -> str:
++        """Return the SHA-256 digest bound to the whole report payload."""
++        return "sha256:" + hashlib.sha256(self._payload.encode("utf-8")).hexdigest()
++
++    @property
++    def status(self) -> str:
++        """Return ``qualified``, ``insufficient`` or ``not_qualified``."""
++        return str(json.loads(self._payload)["status"])
++
++    @property
++    def qualified(self) -> bool:
++        """Return whether every policy check passed on the supplied data."""
++        return bool(json.loads(self._payload)["qualified"])
++
++    def profiles(self) -> dict[str, DecisionCalibrationProfile]:
++        """Return emitted profiles keyed by calibration ID for ``decide``.
++
++        Returns:
++            One profile per qualified mode, or an empty mapping when the report
++            did not qualify.
++        """
++        return {
++            key: DecisionCalibrationProfile(**value)
++            for key, value in json.loads(self._payload)["profiles"].items()
++        }
++
++    def to_dict(self) -> dict[str, Any]:
++        """Return a defensive copy including the report digest."""
++        return {**json.loads(se
+```
+
+**File**: `tests/fixtures/structured/decision_qualification/development.jsonl` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++{"id": "synthetic-dev-01", "mode": "fixed_choice", "input_text": "Synthetic review priority is clearly urgent.", "options": ["urgent", "routine"], "expected_choices": ["urgent"]}
++{"id": "synthetic-dev-02", "mode": "fixed_choice", "input_text": "Synthetic triage queue is clearly urgent.", "options": ["urgent", "routine"], "expected_choices": ["urgent"]}
++{"id": "synthetic-dev-03", "mode": "fixed_choice", "input_text": "Synthetic review priority is clearly routine.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-dev-04", "mode": "fixed_choice", "input_text": "Synthetic triage queue is clearly routine.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-dev-05", "mode": "fixed_choice", "input_text": "Synthetic review priority is likely urgent.", "options": ["urgent", "routine"], "expected_choices": ["urgent"]}
++{"id": "synthetic-dev-06", "mode": "fixed_choice", "input_text": "Synthetic review priority is likely routine.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-dev-07", "mode": "fixed_choice", "input_text": "Synthetic queue lists urgent and routine items.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-dev-08", "mode": "fixed_choice", "input_text": "Synthetic queue lists routine and urgent items.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-dev-09", "mode": "fixed_choice", "input_text": "Synthetic evidence remains unclear.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-dev-10", "mode": "fixed_choice", "input_text": "Synthetic queue status is unclear.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-dev-11", "mode": "boolean_choice", "input_text": "Synthetic eligibility flag is clearly yes.", "options": ["yes", "no"], "expected_choices": ["yes"]}
++{"id": "synthetic-dev-12", "mode": "boolean_choice", "input_text": "Synthetic consent field is clearly yes.", "options": ["yes", "no"], "expected_choices": ["yes"]}
++{"id": "synthetic-dev-13", "mode": "boolean_choice", "input_text": "Synthetic eligibility flag is clearly no.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-dev-14", "mode": "boolean_choice", "input_text": "Synthetic consent field is clearly no.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-dev-15", "mode": "boolean_choice", "input_text": "Synthetic eligibility flag is likely yes.", "options": ["yes", "no"], "expected_choices": ["yes"]}
++{"id": "synthetic-dev-16", "mode": "boolean_choice", "input_text": "Synthetic consent field is likely no.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-dev-17", "mode": "boolean_choice", "input_text": "Synthetic form shows yes and no marks.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-dev-18", "mode": "boolean_choice", "input_text": "Synthetic form answer is blank.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-dev-19", "mode": "multi_label", "input_text": "Synthetic intake clearly lists fever and cough.", "options": ["fever", "cough", "rash"], "expected_choices": ["fever", "cough"]}
++{"id": "synthetic-dev-20", "mode": "multi_label", "input_text": "Synthetic intake clearly lists rash.", "options": ["fever", "cough", "rash"], "expected_choices": ["rash"]}
++{"id": "synthetic-dev-21", "mode": "multi_label", "input_text": "Synthetic intake clearly lists cough.", "options": ["fever", "cough", "rash"], "expected_choices": ["cough"]}
++{"id": "synthetic-dev-22", "mode": "multi_label", "input_text": "Synthetic intake clearly lists fever and rash.", "options": ["fever", "cough", "rash"], "expected_choices": ["fever", "rash"]}
++{"id": "synthetic-dev-23", "mode": "multi_label", "input_text": "Synthetic intake likely lists fever.", "options": ["fever", "cough", "rash"], "expected_choices": ["fever"]}
++{"id": "synthetic-dev-24", "mode": "multi_label", "input_text": "Synthetic intake likely lists cough and rash.", "options": ["fever", "cough", "rash"], "expected_choices": ["cough", "rash"]}
++{"id": "synthetic-dev-25", "mode": "multi_label", "input_text": "Synthetic intake mentions no listed finding.", "options": ["fever", "cough", "rash"], "expected_choices": ["rash"]}
++{"id": "synthetic-dev-26", "mode": "multi_label", "input_text": "Synthetic intake lists fever only.", "options": ["fever", "cough", "rash"], "expected_choices": ["fever"]}
+```
+
+**File**: `tests/fixtures/structured/decision_qualification/evaluation.jsonl` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++{"id": "synthetic-eval-01", "mode": "fixed_choice", "input_text": "Synthetic admission priority is clearly urgent.", "options": ["urgent", "routine"], "expected_choices": ["urgent"]}
++{"id": "synthetic-eval-02", "mode": "fixed_choice", "input_text": "Synthetic admission priority is clearly routine.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-eval-03", "mode": "fixed_choice", "input_text": "Synthetic referral priority is clearly urgent.", "options": ["urgent", "routine"], "expected_choices": ["urgent"]}
++{"id": "synthetic-eval-04", "mode": "fixed_choice", "input_text": "Synthetic referral priority is likely routine.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-eval-05", "mode": "fixed_choice", "input_text": "Synthetic referral priority is likely urgent.", "options": ["urgent", "routine"], "expected_choices": ["urgent"]}
++{"id": "synthetic-eval-06", "mode": "fixed_choice", "input_text": "Synthetic referral priority is clearly routine.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-eval-07", "mode": "fixed_choice", "input_text": "Synthetic referral lists urgent and routine tasks.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-eval-08", "mode": "fixed_choice", "input_text": "Synthetic referral priority is unstated.", "options": ["urgent", "routine"], "expected_choices": ["routine"]}
++{"id": "synthetic-eval-09", "mode": "boolean_choice", "input_text": "Synthetic enrollment flag is clearly yes.", "options": ["yes", "no"], "expected_choices": ["yes"]}
++{"id": "synthetic-eval-10", "mode": "boolean_choice", "input_text": "Synthetic enrollment flag is clearly no.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-eval-11", "mode": "boolean_choice", "input_text": "Synthetic screening flag is likely yes.", "options": ["yes", "no"], "expected_choices": ["yes"]}
++{"id": "synthetic-eval-12", "mode": "boolean_choice", "input_text": "Synthetic screening flag is clearly no.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-eval-13", "mode": "boolean_choice", "input_text": "Synthetic screening answer is missing.", "options": ["yes", "no"], "expected_choices": ["no"]}
++{"id": "synthetic-eval-14", "mode": "boolean_choice", "input_text": "Synthetic enrollment form shows yes and no marks.", "options": ["yes", "no"], "expected_choices": ["yes"]}
++{"id": "synthetic-eval-15", "mode": "multi_label", "input_text": "Synthetic triage clearly lists fever.", "options": ["fever", "cough", "rash"], "expected_choices": ["fever"]}
++{"id": "synthetic-eval-16", "mode": "multi_label", "input_text": "Synthetic triage clearly lists cough and rash.", "options": ["fever", "cough", "rash"], "expected_choices": ["cough", "rash"]}
++{"id": "synthetic-eval-17", "mode": "multi_label", "input_text": "Synthetic triage likely lists fever and cough.", "options": ["fever", "cough", "rash"], "expected_choices": ["fever", "cough"]}
++{"id": "synthetic-eval-18", "mode": "multi_label", "input_text": "Synthetic triage clearly lists rash.", "options": ["fever", "cough", "rash"], "expected_choices": ["rash"]}
++{"id": "synthetic-eval-19", "mode": "multi_label", "input_text": "Synthetic triage lists cough only.", "options": ["fever", "cough", "rash"], "expected_choices": ["cough"]}
++{"id": "synthetic-eval-20", "mode": "multi_label", "input_text": "Synthetic triage mentions no listed finding.", "options": ["fever", "cough", "rash"], "expected_choices": ["fever"]}
+```
+
+**File**: `tests/integration/test_decision_qualification.py` (added, +241/-0)
+```diff
+@@ -0,0 +1,241 @@
++"""Offline command/library composition for decision-backend qualification."""
++
++import json
++import os
++import stat
++
++import pytest
++
++from openmed.cli.decision_qualification import handle_decision_qualification
++from openmed.cli.main import build_parser, main
++from openmed.eval.decision_qualification import (
++    DecisionQualificationPolicy,
++    qualify_decision_backend,
++)
++from openmed.structured import decision as decision_module
++from openmed.structured.decision import (
++    DecisionCalibrationProfile,
++    DecisionRequest,
++    DecisionState,
++    DeterministicDecisionBackend,
++    decide,
++)
++from tests.unit.eval import test_decision_qualification as fixtures
++
++pytestmark = pytest.mark.integration
++
++ENCODER = "tests.unit.eval.test_decision_qualification:synthetic_encoder_backend"
++SPY = "tests.unit.eval.test_decision_qualification:spy_encoder_backend"
++
++
++def command(
++    *extra, development=None, evaluation=None, backend=("--backend", "deterministic")
++):
++    return [
++        "decision-qualify",
++        *backend,
++        "--development",
++        str(development or fixtures.DEVELOPMENT),
++        "--evaluation",
++        str(evaluation or fixtures.EVALUATION),
++        "--calibration-id",
++        "site.triage",
++        *extra,
++        "--json",
++    ]
++
++
++def test_command_and_library_emit_identical_deterministic_report(capsys):
++    args = build_parser().parse_args(command("--min-examples-per-option", "2"))
++
++    assert handle_decision_qualification(args) == 0
++    envelope = json.loads(capsys.readouterr().out)
++    expected = qualify_decision_backend(
++        DeterministicDecisionBackend(),
++        development=fixtures.DEVELOPMENT,
++        evaluation=fixtures.EVALUATION,
++        calibration_id="site.triage",
++        policy=DecisionQualificationPolicy(min_examples_per_option=2),
++    ).to_dict()
++    assert envelope["command"] == "decision-qualify"
++    assert envelope["data"] == expected
++    assert envelope["data"]["status"] == "qualified"
++
++
++def test_factory_encoder_writes_private_profile_usable_by_decide(tmp_path, capsys):
++    output = tmp_path / "profiles.json"
++
++    status = main(
++        command(
++            "--min-examples-per-option",
++            "2",
++            "--profile-output",
++            str(output),
++            backend=("--backend-factory", ENCODER),
++        )
++    )
++
++    assert status == 0
++    data = json.loads(capsys.readouterr().out)["data"]
++    assert data["backend"]["kind"] == "encoder"
++    if os.name != "nt":
++        assert stat.S_IMODE(output.stat().st_mode) == 0o600
++    written = json.loads(output.read_text("utf-8"))
++    assert written == data["profiles"]
++    profiles = {
++        key: DecisionCalibrationProfile(**value) for key, value in written.items()
++    }
++    result = decide(
++        DecisionRequest(
++            mode="fixed_choice",
++            input_text="Synthetic review priority is clearly urgent.",
++            options=("urgent", "routine"),
++            calibration_id="site.triage.fixed_choice",
++        ),
++        backend=fixtures.synthetic_encoder_backend(),
++        calibration_profiles=profiles,
++    )
++    assert result.state is DecisionState.SUCCESS
++    assert result.choice == "urgent"
++
++
++def test_default_support_minimum_withholds_profile(tmp_path, capsys):
++    output = tmp_path / "profiles.json"
++
++    status = main(command("--profile-output", str(output)))
++
++    assert status == 1
++    data = json.loads(capsys.readouterr().out)["data"]
++    assert data["status"] == "insufficient"
++    assert data["policy"]["min_examples_per_option"] == 20
++    assert data["profiles"] == {}
++    assert not output.exists()
++
++
++def test_human_output_states_review_and_withheld_profile(tmp_path, capsys):
++    output = tmp_path / "profiles.json"
++    arguments = command("--profile-output", str(output))
++    arguments.remove("--json")
++
++    assert main(arguments) == 1
++    captured = capsys.readouterr()
++    assert captured.out.strip() == (
++        "Decision qualification: insufficient; human review required. Profile withheld."
++    )
++
++
++def test_evaluation_is_scored_only_after_fit_through_the_command(capsys):
++    fixtures.SCORED.clear()
++    dev_inputs = {
++        fixtures.text_digest(row["input_text"])
++        for row in fixtures.records(fixtures.DEVELOPMENT)
++    }
++    eval_inputs = {
++        fixtures.text_digest(row["input_text"])
++        for row in fixtures.records(fixtures.EVALUATION)
++    }
++
++    assert (
++        main(
++            command(
++                "--min-examples-per-option", "2", backend=("--backend-factory", SPY)
++            )
++        )
++        == 0
++    )
++    capsys.readouterr()
++
++    assert set(fixtures.SCORED[: len(dev_inputs)]) == dev_inputs
++    assert set(fixtures.SCORED[len(dev_inputs) :]) == eval_inputs
++    fixtures.SCORED.clear()
++
++
++def test_command_never_registers_the_selected_backend_as_default(capsys):
++    default_backend = decision_module.DETERMINISTIC_DEC
 ```
 
 ---
 
-### Incident Patch 3: `387640bf` (2026-10-23)
-**Commit Message**: fix: fail closed on unserializable redacted email headers
+### Incident Patch 2: `dd39d386` (2026-10-30)
+**Commit Message**: Require glyph coverage for burned-in synthetic renders
 
-Format-parser fuzzing found that a header containing a vertical tab
-parses, but newer CPython patch releases refuse to serialize it with
-HeaderWriteError. That escaped redact_email as an unhandled error.
+Closes #3868
 
-Wrap MIME serialization so it raises UnsupportedDocumentError, as other
-unsupported inputs do. The stdlib error embeds raw header bytes, so it
-is not chained onto the rejection.
-
-**File**: `CHANGELOG.md` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -431,6 +431,9 @@ clinical efficacy. Package publication remains a separate release action.
+@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ### Fixed
+ ### Breaking Changes
  
-+- Reject emails whose redacted headers cannot be serialized as clean MIME
-+  with `UnsupportedDocumentError` instead of an unhandled stdlib error. The
-+  rejection omits the stdlib error, which embeds raw header bytes.
- - Handle decoding failures through both batch readers' per-file error paths,
-   continue later files in permissive mode, and retain strict propagation
-   without including decoder details in error reports (#4201).
++- Burned-in synthetic rendering now requires covering fonts and complex-script shaping; missing default fonts require explicit `font_fallback=True` (#3868).
++  Dataset-recipe callers can opt into checked image fallback through
++  `builtin_recipe_generators(font_fallback=True)`; the policy is provenance-bound.
++
+ - Require Python 3.11 or newer for the v3.2 development line so dependency
+   security fixes can be installed. Upgrade Python 3.10 environments before
+   updating OpenMed; published v3.1.0 remains available for the older interpreter.
 ```
 
-**File**: `openmed/multimodal/email.py` (modified, +13/-3)
+**File**: `docs/brand/system/publication.yml` (modified, +1/-0)
 ```diff
-@@ -21,7 +21,7 @@
- from difflib import SequenceMatcher
- from email import encoders
- from email import policy as email_policy
--from email.errors import HeaderParseError
-+from email.errors import HeaderParseError, MessageError
- from email.header import decode_header
- from email.message import Message
- from email.parser import BytesParser
-@@ -441,7 +441,7 @@ def redact_email(
-     body_redactions = _redact_body_parts(message, processor, cid_map=cid_map)
-     _sanitize_mime_metadata(message)
- 
--    email_bytes = message.as_bytes(policy=email_policy.SMTP)
-+    email_bytes = _serialize_message(message)
-     resolved_output = _write_email_output(output_path, email_bytes)
-     redacted_message = _parse_eml(email_bytes)
-     document = _document_from_message(
-@@ -501,6 +501,16 @@ def _parse_eml(payload: bytes) -> Message:
-     return BytesParser(policy=email_policy.default).parsebytes(payload)
- 
- 
-+def _serialize_message(message: Message) -> bytes:
-+    try:
-+        return message.as_bytes(policy=email_policy.SMTP)
-+    except MessageError:
-+        # The stdlib error embeds raw header bytes, so do not chain it.
-+        raise UnsupportedDocumentError(
-+            "This email has headers that cannot be serialized as clean MIME."
-+        ) from None
-+
-+
- def _raw_header_values(message: Message, header_name: str) -> tuple[Any, ...]:
-     """Return header values without invoking strict structured-header parsing."""
- 
-@@ -930,7 +940,7 @@ def _attachment_payload(part: Message) -> bytes | None:
-     if part.get_content_type().lower() == "message/rfc822":
-         nested = part.get_payload()
-         if isinstance(nested, list) and nested and isinstance(nested[0], Message):
--            return nested[0].as_bytes(policy=email_policy.SMTP)
-+            return _serialize_message(nested[0])
-     return None
- 
- 
+@@ -432,6 +432,7 @@ classification:
+     - training/synthetic/omop-cohorts.md
+     - training/synthetic/rare-case-stressors.md
+     - training/synthetic/intake-conversations.md
++    - training/synthetic/burned-in-font-coverage.md
+     - reference/preference-schema.md
+     - multimodal/bmp-header-preflight.md
+     - multimodal/gif-header-preflight.md
 ```
 
-**File**: `tests/unit/multimodal/test_email.py` (modified, +25/-0)
+**File**: `docs/training/synthetic/burned-in-font-coverage.md` (added, +115/-0)
 ```diff
-@@ -7,6 +7,7 @@
- import sys
- import zipfile
- from email import policy as email_policy
-+from email.errors import MessageError
- from email.message import EmailMessage
- from email.parser import BytesParser
- from io import BytesIO
-@@ -467,6 +468,30 @@ def test_unsupported_attachment_fails_closed_without_echoing_filename():
-     assert "Alice Patient" not in str(excinfo.value)
+@@ -0,0 +1,115 @@
++# Burned-in font coverage and shaping
++
++`BurnedInGenerator` draws synthetic names, dates, and MRNs into image pixels
++and returns pixel boxes as OCR truth. A box is only truthful if the font can
++draw every character and, for complex scripts, if the text is shaped. The
++generator therefore checks each span before drawing it and fails closed with a
++typed, value-free error instead of rendering missing-glyph boxes or unjoined
++letters.
++
++## What is checked
++
++For every rendered span (`PERSON`, `DATE`, `ID_NUM`):
++
++1. **Glyph coverage.** Each code point must map to a real glyph in the
++   character map (`cmap`) of the exact font bytes used to draw it. Controls
++   and default-ignorable formatting characters such as ZWJ and ZWNJ are
++   exempt. The reader follows FreeType's choice of Unicode subtable and treats
++   glyph 0 (`.notdef`) and glyph ids beyond `maxp.numGlyphs` as missing.
++2. **Complex layout.** Spans containing a script in `COMPLEX_LAYOUT_SCRIPTS`
++   (Arabic, Hebrew, Syriac, Thaana, N'Ko, the Indic scripts, Thai, Lao, Khmer,
++   Myanmar, Tibetan, Mongolian, and Ethiopic) or an unrecognised script need a
++   font whose layout engine shapes text. Pillow shapes, reorders right-to-left
++   runs, and positions marks only with its Raqm engine, which needs HarfBuzz
++   and FriBiDi at runtime. Check with
++   `PIL.features.check_feature("raqm")`; without Raqm these spans are refused.
++
++Latin, Greek, Cyrillic, Armenian, Georgian, Han, kana, and Hangul spans need
++coverage only.
++
++## Supplying fonts
++
++OpenMed does not bundle fonts. Pass font files you are licensed to use as
++`BurnedInFont` entries with an SPDX license identifier from
++`PERMISSIVE_FONT_LICENSES` (the permissive SPDX allowlist plus `OFL-1.1` and
++its RFN variants, `Bitstream-Vera`, and `CC0-1.0`). Other identifiers raise
++`BurnedInFontError` with reason `font_license_not_permissive`.
++
++```python
++from openmed.training.synthetic.burned_in import BurnedInFont, BurnedInGenerator
++
++latin = BurnedInFont("/fonts/NotoSans-Regular.ttf", license="OFL-1.1")
++thai = BurnedInFont("/fonts/NotoSansThai-Regular.ttf", license="OFL-1.1")
++
++generator = BurnedInGenerator(
++    seed=3,
++    font_names=(latin,),            # pool for dates, MRNs, and other scripts
++    script_fonts={"Thai": thai},    # used for spans that contain Thai
++)
++example = generator.generate("th")
++```
++
++Each span's font is chosen in this order: an exact per-call `font_names`
++control, then the first `script_fonts` entry matching a script in the span
++(keys come from `FONT_SCRIPTS`), then the constructor's `font_names` pool.
++Plain font names and paths are still accepted in `font_names`; they are
++recorded with license `NOASSERTION`, and the default DejaVu names with their
++declared `Bitstream-Vera` license. Use `BurnedInFont(..., index=n)` to select
++a face inside a `.ttc` collection.
++
++## Missing fonts and opt-in fallback
++
++A font that cannot be loaded raises `BurnedInFontUnavailableError`. It is
++never replaced silently. With `font_fallback=True`, a missing default DejaVu
++font is replaced by another installed default or, as a last resort, by
++Pillow's embedded Aileron Regular (`PillowDefault`, `CC0-1.0`). The
++replacement is still coverage-checked, so it can render basic Latin text but
++refuses scripts it cannot draw. The `generate_burned_in_example` helper
++accepts the same `script_fonts` and `font_fallback` arguments.
++The English dataset-recipe adapter keeps fallback disabled by default; Python
++callers can request `builtin_recipe_generators(font_fallback=True)`, with the
++choice bound into its provenance. See [dataset recipes](dataset-recipes.md).
++
++## Provenance in metadata
++
++Each `BurnedInTextBox.metadata` records `font_sha256` (SHA-256 of the font
++file bytes that were rendered), `font_license`, `font_fallback`,
++`layout_engine` (`raqm`, `basic`, or `bitmap`), and the span's `scripts`.
++`font_name` is the file name only, never the directory. The example metadata
++adds `font_fallback_allowed`, `font_fallback_used`, and `fonts`, one
++provenance record per distinct font in first-use order. The same seed, font
++digest, and Pillow build produce byte-identical images.
++
++## Errors
++
++All errors subclass `BurnedInFontError`, itself a `ValueError`. Messages and
++attributes carry only a reason code, script name, canonical label, counts,
++font digest, or an opaque `font_ref`; never span text, code points, or paths.
++
++| Error | `reason` | Raised when |
++| --- | --- | --- |
++| `BurnedInFontUnavailableError` | `font_unavailable`, `fallback_font_unavailable` | A font cannot be loaded and no usable fallback was requested. |
++| `BurnedInGlyphCoverageError` | `glyph_coverage_missing` | The selected font lacks glyphs for a span; `script`, `font_sha256`, and `missing_count` identify the gap. |
++| `BurnedInShapingUnavailableError` | `complex_layout_unavailable` | A complex-script span would be drawn without a shaping layout engine. |
++| `BurnedInFontError` | `font
+```
+
+**File**: `docs/training/synthetic/dataset-recipes.md` (modified, +20/-2)
+```diff
+@@ -2,7 +2,9 @@
+ 
+ `openmed synthetic build recipe.json new-output-directory --json` runs an actual
+ bounded offline recipe. Built-in adapters reuse existing social-history and
+-burned-in-image generators; images require the optional Pillow dependency. No
++burned-in-image generators; images require the optional Pillow dependency. The
++default DejaVu fonts must also be available unless fallback is explicitly
++requested through the Python adapter factory below. No
+ models, private datasets, generator services or publication are downloaded or
+ invoked. CLI output contains only digests/counts/completion status.
+ 
+@@ -45,10 +47,26 @@ Path("recipe.json").write_text(json.dumps(recipe))
+ openmed synthetic build recipe.json synthetic-demo-output --json
+ ```
+ 
+-The output reports `complete: true`, two records and three generated artifacts.
++With the required fonts installed, the output reports `complete: true`, two
++records and three generated artifacts.
+ The directory contains social-history JSONL, one PNG, its label JSON, derivation
+ metadata and a completion marker. Choose a new destination for each run.
+ 
++For portable English examples, Python callers may explicitly opt into checked
++fallback without changing the CLI or generator defaults:
++
++```python
++from openmed.training.synthetic.dataset_recipe import (
++    builtin_recipe_generators, run_dataset_recipe,
++)
++
++registry = builtin_recipe_generators(font_fallback=True)
++result = run_dataset_recipe(recipe, "synthetic-python-output", registry=registry)
++```
++
++The burned-in adapter provenance binds this option. It still refuses missing
++glyphs or required shaping; fallback does not make unsupported scripts valid.
++
+ The runner rejects unavailable generators, wrong versions, missing dependencies,
+ cycles and output-limit violations. It reserves a new destination, writes into an
+ owned sibling stage, validates every generator and runs local validation/capsule
+```
+
+**File**: `mkdocs.yml` (modified, +1/-0)
+```diff
+@@ -373,6 +373,7 @@ nav:
+       - Synthetic OMOP Cohorts: training/synthetic/omop-cohorts.md
+       - Rare-case Privacy Stressors: training/synthetic/rare-case-stressors.md
+       - Synthetic Intake Conversations: training/synthetic/intake-conversations.md
++      - Burned-in Font Coverage: training/synthetic/burned-in-font-coverage.md
+       - Preference Pair Schema: reference/preference-schema.md
+       - BMP Header Preflight: multimodal/bmp-header-preflight.md
+       - GIF Header Preflight: multimodal/gif-header-preflight.md
+```
+
+**File**: `openmed/training/synthetic/burned_in.py` (modified, +959/-34)
+```diff
+@@ -4,15 +4,40 @@
+ module, :mod:`openmed.training.synthetic`, or the core :mod:`openmed` package
+ therefore remains safe for installations that do not include the
+ ``multimodal`` extra.
++
++Every rendered span is checked against the character map of the exact font
++bytes used to draw it, and spans in scripts that need complex text layout
++(joining, reordering, conjuncts, or mark positioning) also require a
++shaping-capable layout engine. Failures raise :class:`BurnedInFontError`
++subclasses whose messages carry only reason codes, script names, canonical
++labels, counts, and font digests. A missing font is never replaced unless the
++caller opts in with ``font_fallback=True``, and every example records the
++SHA-256 digest and declared license of each font it used.
+ """
+ 
+ from __future__ import annotations
+ 
++import bisect
+ import hashlib
+ import importlib
++import io
++import os
+ import random
++import struct
++import unicodedata
+ from dataclasses import dataclass, field
+-from typing import TYPE_CHECKING, Any, Final, Mapping, Sequence
++from typing import (
++    TYPE_CHECKING,
++    Any,
++    Callable,
++    ClassVar,
++    Container,
++    Final,
++    Iterable,
++    Iterator,
++    Mapping,
++    Sequence,
++)
+ 
+ from faker import Faker
+ 
+@@ -22,6 +47,7 @@
+ from openmed.training.synthetic.provider_versions import surrogate_provider_stamp
+ 
+ from .locale_phi import LocalePhiGenerator, SyntheticPhiSpan
++from .spdx_identifier import PERMISSIVE_SPDX_IDENTIFIERS
+ 
+ if TYPE_CHECKING:
+     from PIL.Image import Image as PillowImage
+@@ -38,13 +64,404 @@
+ )
+ BACKGROUND_MODES: Final[tuple[str, ...]] = ("solid", "gradient", "phantom")
+ 
++#: Declared license of the default DejaVu font names (Bitstream Vera terms;
++#: DejaVu changes are public domain). It labels the name, not a verified file.
++DEFAULT_FONT_LICENSE: Final = "Bitstream-Vera"
++#: Name and declared license of Pillow's embedded Aileron Regular font, the
++#: last resort when ``font_fallback=True`` and no default font is installed.
++PILLOW_DEFAULT_FONT_NAME: Final = "PillowDefault"
++PILLOW_DEFAULT_FONT_LICENSE: Final = "CC0-1.0"
++#: SPDX "no assertion" value recorded for plain font names without a license.
++UNDECLARED_FONT_LICENSE: Final = "NOASSERTION"
++#: Licenses accepted for :class:`BurnedInFont`. Rendering text with a font
++#: does not redistribute it, so the permissive font licenses are allowed in
++#: addition to the committed permissive SPDX allowlist.
++PERMISSIVE_FONT_LICENSES: Final[frozenset[str]] = PERMISSIVE_SPDX_IDENTIFIERS | {
++    "Bitstream-Vera",
++    "CC0-1.0",
++    "OFL-1.1",
++    "OFL-1.1-RFN",
++    "OFL-1.1-no-RFN",
++}
++
++_COMMON_SCRIPT: Final = "Common"
++_INHERITED_SCRIPT: Final = "Inherited"
++_UNKNOWN_SCRIPT: Final = "Unknown"
++
++# Block-level approximation of the Unicode Script property for the scripts
++# the locale PHI generator and common clinical documents use. Sorted, with no
++# overlaps. Letters and marks outside these ranges resolve to ``Unknown``,
++# which is treated as needing complex layout so the check fails closed.
++_SCRIPT_RANGES: Final[tuple[tuple[int, int, str], ...]] = (
++    (0x0041, 0x005A, "Latin"),
++    (0x0061, 0x007A, "Latin"),
++    (0x00AA, 0x00AA, "Latin"),
++    (0x00BA, 0x00BA, "Latin"),
++    (0x00C0, 0x00D6, "Latin"),
++    (0x00D8, 0x00F6, "Latin"),
++    (0x00F8, 0x02AF, "Latin"),
++    (0x0300, 0x036F, _INHERITED_SCRIPT),
++    (0x0370, 0x03FF, "Greek"),
++    (0x0400, 0x052F, "Cyrillic"),
++    (0x0530, 0x058F, "Armenian"),
++    (0x0590, 0x05FF, "Hebrew"),
++    (0x0600, 0x06FF, "Arabic"),
++    (0x0700, 0x074F, "Syriac"),
++    (0x0750, 0x077F, "Arabic"),
++    (0x0780, 0x07BF, "Thaana"),
++    (0x07C0, 0x07FF, "Nko"),
++    (0x0860, 0x086F, "Syriac"),
++    (0x0870, 0x08FF, "Arabic"),
++    (0x0900, 0x097F, "Devanagari"),
++    (0x0980, 0x09FF, "Bengali"),
++    (0x0A00, 0x0A7F, "Gurmukhi"),
++    (0x0A80, 0x0AFF, "Gujarati"),
++    (0x0B00, 0x0B7F, "Oriya"),
++    (0x0B80, 0x0BFF, "Tamil"),
++    (0x0C00, 0x0C7F, "Telugu"),
++    (0x0C80, 0x0CFF, "Kannada"),
++    (0x0D00, 0x0D7F, "Malayalam"),
++    (0x0D80, 0x0DFF, "Sinhala"),
++    (0x0E00, 0x0E7F, "Thai"),
++    (0x0E80, 0x0EFF, "Lao"),
++    (0x0F00, 0x0FFF, "Tibetan"),
++    (0x1000, 0x109F, "Myanmar"),
++    (0x10A0, 0x10FF, "Georgian"),
++    (0x1100, 0x11FF, "Hangul"),
++    (0x1200, 0x139F, "Ethiopic"),
++    (0x1780, 0x17FF, "Khmer"),
++    (0x1800, 0x18AF, "Mongolian"),
++    (0x19E0, 0x19FF, "Khmer"),
++    (0x1AB0, 0x1AFF, _INHERITED_SCRIPT),
++    (0x1C80, 0x1C8F, "Cyrillic"),
++    (0x1C90, 0x1CBF, "Georgian"),
++    (0x1D00, 0x1D7F, "Latin"),
++    (0x1DC0, 0x1DFF, _INHERITED_SCRIPT),
++    (0x1E00, 0x1EFF, "Latin"),
++    (0x1F00, 0x1FFF, "Greek"),
++    (0x200C, 0x200D, _INHERITED_SCRIPT),
++    (0x20D0, 0x20FF, _INHERITED_SCRIPT),
++    (0x2C60, 0x2C7F, "Latin"),
++    (0x2D00, 0x2D2F, "Georgian"),
++    (0x2D80, 0x2DDF, "Ethiopic"),
++    (0x2DE0, 0x2DFF, "Cyrillic"),
++    (0x2E80, 0x2FDF, "Han"),
++    (0x3005, 0x3005, "Han"),
++    (0x3007, 0x3007, "Han"),
++    (0x3021, 0x3029, "Han"),
++    (
+```
+
+**File**: `openmed/training/synthetic/dataset_recipe.py` (modified, +18/-5)
+```diff
+@@ -359,8 +359,20 @@ def run_dataset_recipe(
+         raise ValueError("synthetic recipe generation or validation failed") from None
  
  
-+def test_unserializable_redacted_headers_fail_closed_without_header_text(
-+    monkeypatch,
+-def builtin_recipe_generators() -> dict[str, RecipeGenerator]:
+-    """Return existing local social-history and burned-in-image generator adapters."""
++def builtin_recipe_generators(
++    *, font_fallback: bool = False
++) -> dict[str, RecipeGenerator]:
++    """Return local social-history and burned-in-image generator adapters.
++
++    Args:
++        font_fallback: Explicitly allow checked fallback fonts for the English
++            image adapter. The default preserves strict font availability.
++
++    Returns:
++        Adapters whose provenance binds the image fallback policy.
++    """
++    if not isinstance(font_fallback, bool):
++        raise ValueError("font_fallback must be a boolean")
+ 
+     def social(seed, count, dependencies):
+         from openmed.training.synthetic.social_history import (
+@@ -378,9 +390,9 @@ def images(seed, count, dependencies):
+             raise ValueError("burned-in recipe count exceeds bounded rendering limit")
+         artifacts = {}
+         for index in range(count):
+-            example = BurnedInGenerator(seed=seed + index).generate(
+-                "en", background="solid"
+-            )
++            example = BurnedInGenerator(
++                seed=seed + index, font_fallback=font_fallback
++            ).generate("en", background="solid")
+             buffer = io.BytesIO()
+             example.image.save(buffer, format="PNG")
+             item = example.to_training_item()
+@@ -413,6 +425,7 @@ def validated(result):
+                 {
+                     "adapter_source_digest": adapter_digest,
+                     "generator_source_digest": generator_digest,
++                    **({"font_fallback": font_fallback} if code == "burned_in" else {}),
+                 }
+             )
+         ).hexdigest()
+```
+
+**File**: `tests/integration/test_synthetic_burned_in_fonts.py` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++"""Offline sweep: burned-in renders draw only covered, shaped PHI or fail closed."""
++
++from __future__ import annotations
++
++import os
++
++import pytest
++
++from openmed.training.synthetic import SUPPORTED_LOCALE_PHI_LANGUAGES
++from openmed.training.synthetic.burned_in import (
++    COMPLEX_LAYOUT_SCRIPTS,
++    DEFAULT_FONT_NAMES,
++    BurnedInFontError,
++    BurnedInGenerator,
++    read_font_character_map,
++)
++
++ImageFont = pytest.importorskip("PIL.ImageFont")
++
++pytestmark = [
++    pytest.mark.integration,
++    pytest.mark.filterwarnings("ignore:OpenMed. language:UserWarning"),
++]
++
++_SEEDS = (0, 1, 2)
++
++
++class _EveryCodePoint:
++    def __contains__(self, code_point: object) -> bool:
++        return True
++
++
++@pytest.fixture
++def platform_independent_fonts(monkeypatch):
++    """Hide the DejaVu defaults so every platform uses Pillow's embedded font."""
++
++    real_truetype = ImageFont.truetype
++
++    def truetype_without_defaults(font, *args, **kwargs):
++        if isinstance(font, (str, os.PathLike)) and (
++            os.path.basename(os.fspath(font)) in DEFAULT_FONT_NAMES
++        ):
++            raise OSError("cannot open resource")
++        return real_truetype(font, *args, **kwargs)
++
++    monkeypatch.setattr(ImageFont, "truetype", truetype_without_defaults)
++
++
++def _span_texts(language: str, seed: int) -> list[str]:
++    # Render with permissive providers only to learn the synthetic values that
++    # a refused render must never echo.
++    example = BurnedInGenerator(
++        seed=seed,
++        font_fallback=True,
++        character_map_provider=lambda data, index: _EveryCodePoint(),
++        layout_capability_provider=lambda font: True,
++    ).generate(language)
++    return [span.text for span in example.gold_spans]
++
++
++@pytest.mark.parametrize("language", SUPPORTED_LOCALE_PHI_LANGUAGES)
++def test_every_locale_renders_covered_shaped_text_or_fails_closed(
++    platform_independent_fonts, language
 +):
-+    payload = (
-+        b"From: Synthetic Clinic <clinic@example.test>\n"
-+        b"MIME-Version: 1.0\x0bContent-Type: text/plain\n"
-+        b"\n"
-+        b"Synthetic body PATIENT-001.\n"
-+    )
++    coverage = read_font_character_map(ImageFont.load_default(size=12).font_bytes)
 +
-+    def reject_headers(_message, *args, **kwargs):
-+        raise MessageError(f"folded header contains newline: {payload!r}")
++    for seed in _SEEDS:
++        try:
++            example = BurnedInGenerator(seed=seed, font_fallback=True).generate(
++                language
++            )
++        except BurnedInFontError as error:
++            message = str(error)
++            assert message.isascii()
++            assert error.font_sha256 is not None
++            for text in _span_texts(language, seed):
++                assert text not in message
++            with pytest.raises(type(error)) as repeated:
++                BurnedInGenerator(seed=seed, font_fallback=True).generate(language)
++            assert str(repeated.value) == message
++            continue
 +
-+    monkeypatch.setattr(EmailMessage, "as_bytes", reject_headers)
++        repeat = BurnedInGenerator(seed=seed, font_fallback=True).generate(language)
++        assert repeat.image.tobytes() == example.image.tobytes()
++        assert repeat.metadata == example.metadata
++        for box in example.gold_boxes:
++            assert all(ord(char) in coverage for char in box.text)
++            assert box.metadata["font_fallback"] is True
++            complex_scripts = set(box.metadata["scripts"]) & COMPLEX_LAYOUT_SCRIPTS
++            assert not complex_scripts or box.metadata["layout_engine"] == "raqm"
+```
+
+---
+
+### Incident Patch 3: `757513d9` (2026-10-30)
+**Commit Message**: Align synthetic guides with locale and date capabilities
+
+**File**: `docs/training/synthetic/burned-in.md` (modified, +1/-1)
+```diff
+@@ -95,7 +95,7 @@ assert a.text == b.text and a.gold_boxes == b.gold_boxes
+ - Text is drawn horizontally with simple backgrounds. Real scans have noise,
+   skew, compression, and layouts these images do not model.
+ - Values come from the locale PHI generator and Faker, so the
+-  [Gregorian-ASCII-date and Faker-version caveats](locale-phi.md#known-limits)
++  [default-date and Faker-version caveats](locale-phi.md#known-limits)
+   apply here too. Rendered pixels can differ slightly between Pillow or font
+   versions even when the seed is unchanged.
+ - The images are augmentation data, not clinical ground truth.
+```
+
+**File**: `docs/training/synthetic/locale-phi.md` (modified, +24/-10)
+```diff
+@@ -24,8 +24,8 @@ for example in examples:
+ The first example is an English (`en_US`) note; its `PERSON`,
+ `DATE_OF_BIRTH`, `ID_NUM`, `PHONE`, `STREET_ADDRESS`, and `DATE` spans each
+ satisfy `text[start:end] == span.text`. `generate_locale_phi_examples` takes
+-keyword-only `languages` and `seed`; with no `languages` it covers every
+-supported language.
++keyword-only `languages`, `seed` and optional `date_profiles`; with no
++`languages` it retains the default model-backed language set.
+ 
+ For a stateful generator that yields one example per call, use the class:
+ 
+@@ -34,9 +34,16 @@ from openmed.training.synthetic import LocalePhiGenerator
+ 
+ generator = LocalePhiGenerator(seed=7)
+ english = generator.generate("en")
+-everything = generator.generate_all()   # one example per supported language
++everything = generator.generate_all()   # the default model-backed set
+ ```
+ 
++The six explicit augmentation-only routes (`ha`, `ig`, `yo`, `rw`, `tl`,
++`ne`) are also available through `generate(code)` or an explicit `languages`
++list. Use `generator.generate_all(include_augmentation_only=True)` to append
++them to the default set. Their examples record `bundled_model: False` and
++`language_route`; synthetic generation does not add bundled models or
++graduate language support.
 +
-+    with pytest.raises(UnsupportedDocumentError) as excinfo:
-+        redact_email(payload, models=lambda text, **_: text)
-+
-+    assert "cannot be serialized" in str(excinfo.value)
-+    assert "PATIENT-001" not in str(excinfo.value)
-+    assert excinfo.value.__cause__ is None
-+    assert excinfo.value.__suppress_context__ is True
-+
-+
- def test_named_memory_stream_dispatches_eml_without_multimodal_extra(monkeypatch):
-     monkeypatch.setattr(
-         base,
+ ## Training items
+ 
+ `LocalePhiExample.to_training_item()` returns a plain dictionary ready for a
+@@ -60,9 +67,10 @@ rules were applied.
+ 
+ - `LOCALE_PHI_LABELS` lists the six labels: `PERSON`, `DATE_OF_BIRTH`,
+   `ID_NUM`, `PHONE`, `STREET_ADDRESS`, `DATE`.
+-- `SUPPORTED_LOCALE_PHI_LANGUAGES` lists the language codes the generator
+-  accepts. Any other code raises `ValueError` and the message lists the
+-  supported codes.
++- `SUPPORTED_LOCALE_PHI_LANGUAGES` lists the default model-backed template
++  set. `AUGMENTATION_ONLY_LOCALE_PHI_LANGUAGES` in
++  `openmed.training.synthetic.locale_phi` lists the six explicit extra routes.
++  Codes outside both sets raise `ValueError` with the available code lists.
+ 
+ ```python
+ from openmed.training.synthetic import LocalePhiGenerator
+@@ -90,14 +98,20 @@ not reproducible. `metadata["seed"]` records which of the two was used.
+ 
+ ## Known limits
+ 
+-- **Dates are Gregorian and ASCII.** Dates of birth and follow-up dates are
+-  rendered as ISO `YYYY-MM-DD` digits in every language, including languages
+-  that normally use other numerals or calendars. A model trained only on this
+-  data has not seen locale-native date writing.
++- **Default dates are Gregorian and ASCII.** Without `date_profiles=`, dates
++  of birth and follow-up dates stay ISO `YYYY-MM-DD` in every language. Opt-in
++  native-digit and native-calendar profiles are documented in the
++  [language guide](../../languages.md). Profiles carry value-free calendar,
++  numeral and detection-gap metadata; generating them does not establish
++  detector coverage or clinical validity. For example,
++  `LocalePhiGenerator(seed=7, date_profiles={"fa": "fa_solar_hijri_month_name"})`
++  opts Persian examples into that profile while other languages keep defaults.
+ - **Faker-dependent values.** Names, phone numbers, and street addresses come
+   from Faker locale providers, so they depend on the installed Faker version
+   and on how complete that provider is for the language. Identifiers use the
+   repository's checksum validators where one exists.
++  `metadata["surrogate_providers"]` records the provider stamp for later drift
++  checks; reproducibility assumes the same providers and date profiles.
+ - **Approximated Faker fields.** Some language packs use a neighboring Faker
+   backend for fields such as phones or generic addresses and emit a
+   `UserWarning`. Script-specific providers can still generate native names
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4284** (closed): feat: bridge text decision requests to a loopback System One server (#4257) (@maziyarpanahi)
-- **PR #4275** (closed): feat: export privacy-safe native reviewer packets (#2864) (@maziyarpanahi)
-- **PR #4251** (closed): Add a local MedDecider NLI runtime (@AleksanderObuchowski)
-- **PR #4237** (2026-10-21): fix: stabilize Windows release checks and update vulnerable dependencies (@maziyarpanahi)
-- **PR #4236** (2026-10-20): release: prepare OpenMed v3.1.0 (@maziyarpanahi)
-- **PR #4223** (2026-10-17): fix: read JSONL records without splitting Unicode inside strings (#4205) (@Bembaby)
+- **PR #4373** (2026-10-31): Require patched ASN.1 decoding in the cloud extra (@maziyarpanahi)
+- **PR #4371** (2026-10-31): Preserve CJK date formats during date shifting (@maziyarpanahi)
+- **PR #4370** (2026-10-31): Fix source-span alignment in escaped HTML output (@maziyarpanahi)
+- **PR #4363** (2026-10-30): Qualify language support with explicit abstention and graduation gates (@maziyarpanahi)
+- **PR #4362** (2026-10-30): Curate native review packets and adjudicated labels (@maziyarpanahi)
+- **PR #4361** (2026-10-30): Preserve clinical labels through morphology and translation (@maziyarpanahi)
 
 ---
 
@@ -2853,13 +3567,13 @@ is not chained onto the rejection.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. require patched GitPython for the docs profile
+## X. Qualify fixed-option decision backends offline
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in maziyarpanahi/openmed. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00e9efd7`: require patched GitPython for the docs profile. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5236b9c`: Qualify fixed-option decision backends offline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2867,17 +3581,15 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  `service` profiles and GitPython 3.2.1 in the `docs` profile, and lock
-  patched virtualenv 21.14.13, Brotli 1.2.1 and graphql-core 3.2.12. A
-  lock-only packaging override lifts Prefect 3.7's
+- Add offline decision-backend qualification with development-only threshold fitting, held-out evaluation, value-free reports and explicit calibration profile output.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-  `service` profiles, and lock patched virtualenv 21.14.13, Brotli 1.2.1 and
-  graphql-core 3.2.12. A lock-only packaging override lifts Prefect 3.7's
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00e9efd7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5236b9c` are properly handled with clean fallback behavior.

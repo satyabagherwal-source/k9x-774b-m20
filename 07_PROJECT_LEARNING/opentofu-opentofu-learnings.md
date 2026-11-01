@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `aa0f14f5`  
+> **Source Version**: `6356fbe3`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T17:52:06.563Z  
+> **Timestamp**: 2026-10-31T02:00:30.076Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T17:51:59.618Z  
+> **Harvest Timestamp**: 2026-10-31T02:00:30.070Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 30633 stars
+- **Stars / Engagement**: 30681 stars
 
 ---
 
@@ -105,7 +105,7 @@ type IntermediateStatePersistInfo struct {
 
 var _ tofu.Hook = (*StateHook)(nil)
 
-func (h *StateHook) PostStateUpdate(mutate func(*states.SyncState)) (tofu.HookAction, error) {
+func (h *StateHook) PostStateUpdate(mutate func(*states.State)) (tofu.HookAction, error) {
 	h.Lock()
 	defer h.Unlock()
 
@@ -122,7 +122,7 @@ func (h *StateHook) PostStateUpdate(mutate func(*states.SyncState)) (tofu.HookAc
 			if state == nil {
 				state = states.NewState()
 			}
-			mutate(state.SyncWrapper())
+			mutate(state)
 			return state
 		})
 		if err != nil {
@@ -1398,11 +1398,11 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4732** (2026-10-19): **Plan files created when using symbol libraries are missing symbols**
-  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell 1.13.1 ```  ### OpenTofu Configuration Files  main.tf ```hcl language {   experiments = [symbol_libraries] }  symbols "example" {   source = "./symbols" }  variable "message" {   type    = symbols::example::message()   default = "hello" }  output "message" {   value = var.message } ```  symbols/main.sym.hcl ```hcl language {   edition = experimental2026 }  typedef "message" {   type = string } ```  ### Debug Output  https://gist.github.com/dre-x1f/9bb5f108e16f25e5b5a5b5a9306de024  ### Expected Behavior  Plan should be usable.  ### Actual Behavior  Plan is not usable.  ### Steps to Reproduce  1. `tofu init` 2. `tofu plan -out=plan.tfplan` 3. `tofu show -json -plan=plan.tfplan`  ``` │ Error: 2 problems: │  │ - Experimental features are active: Experimental features are subject to breaking changes or total removal in later versions, based on feedback. We recommend against using experimental features in production. │  │ The following experiments are enabled: symbol_libraries │ - Missing type: Type message not defined in symbol library example ```  5. `tofu apply plan.tfplan` ``` │ Error: Missing type │  │   on main.tf line 10, in variable "message": │   10:   type    = symbols::example::message() │  │ Type message 
+- **Issue #4780** (2026-10-29): **Encryption key refernce panic**
+  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.2 on linux_amd64 ```  ### OpenTofu Configuration Files  ```hcl terraform {   encryption {     method "aes_gcm" "m" { keys = [6, 6, 6] }     state { method = method.aes_gcm.m }   } } ```   ### Debug Output  https://gist.github.com/denis256/b7467bc4ba40deceb76875dacc93f0fa  ### Expected Behavior  Proper error message  ### Actual Behavior  ``` !!!!!!!!!!!!!!!!!!!!!!!!!!! OPENTOFU CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!  OpenTofu crashed! This is always indicative of a bug within OpenTofu. Please report the crash with OpenTofu[1] so that we can fix this.  When reporting bugs, please include your OpenTofu version, the stack trace shown below, and any additional information which may help replicate the issue.  [1]: https://github.com/opentofu/opentofu/issues  !!!!!!!!!!!!!!!!!!!!!!!!!!! OPENTOFU CRASH !!!!!!!!!!!!!!!!!!!!!!!!!!!!  not a string goroutine 1 [running]: runtime/debug.Stack() 	runtime/debug/stack.go:26 +0x5e github.com/opentofu/opentofu/internal/logging.panicHandler({0x68c6b38, 0x3b274f0}, {0x0, 0x0, 0x0}, {0x0, 0x0}, 0x0) 	github.com/opentofu/opentofu/internal/logging/panic.go:113 +0x173 github.com/opentofu/opentofu/internal/logging.PanicHandler() 	github.com/opentofu/opentofu/internal/logging/
 
-- **Issue #4658** (2026-10-14): **Shell completion no longer suggests positional arguments since v1.13.0 (e.g. `tofu workspace select <TAB>` lists no workspaces)**
-  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.1 on linux_amd64 ```  ### OpenTofu Configuration Files  No configuration is needed; it reproduces in an empty directory (where the only workspace is `default`). It also reproduces in a directory with a local backend and several workspaces.   ### Debug Output  With `TF_LOG=trace`, the completion request logs only the startup lines and exits. There are no config-loading or `Meta.Backend` log lines, which suggests the workspace predictor is never invoked:  ``` [INFO]  OpenTofu version: 1.13.1 [INFO]  CLI args: []string{".../tofu", "tofu", "", "select"} [DEBUG] File doesn't exist, but doesn't need to. Ignoring. ```  Gist Link: https://gist.github.com/luisotaviodesimone/2e5724f95f10aa472963f0bd7fcc49c6   ### Expected Behavior  `tofu workspace select <TAB>` (and `tofu workspace delete <TAB>`) should suggest the existing workspace names, as it did up to v1.12.x.  ### Actual Behavior  No suggestions are returned. Subcommand names still complete (`tofu workspace <TAB>` lists `list select new delete show`); only positional argument predictions are missing.   ### Steps to Reproduce  The completion protocol can be exercised directly, without a shell:  ```shell cd "$(mktemp -d)" L="tofu workspace select " COM
+- **Issue #4766** (2026-10-27): **The `tofu -v` flag is no longer available in v1.13.0**
+  *Symptoms*: ### Community note  > [!TIP] > 👋 Hi there, OpenTofu community! The OpenTofu team prioritizes issues based on upvotes. Please make sure to upvote this issue and describe how it affects you in detail in the comments to show your support.   ### OpenTofu Version  ```shell OpenTofu v1.13.0 on linux_arm64 ```  ### OpenTofu Configuration Files  N/A   ### Debug Output  I can provide the debug log if necessary, but the issue is easy to reproduce.  ### Expected Behavior  In OpenTofu v1.12, you can check the version using `tofu -v`.  ``` $ docker run -it --rm ghcr.io/opentofu/opentofu:1.12.9-minimal -v OpenTofu v1.12.9 on linux_arm64 ```  ### Actual Behavior  Starting with v1.13.0, the `-v` flag is no longer available.  ``` $ docker run -it --rm ghcr.io/opentofu/opentofu:1.13.0-minimal -v ╷ │ Error: Failed to parse command-line options │ │ flag provided but not defined: -v ╵ Usage: tofu [global options] <subcommand> [args]    The available commands for execution are listed below. The primary workflow   commands are given first, followed by less common or more advanced commands.  Main commands:   init      Prepare your working directory for other commands   validate  Check whether the configuration is valid   plan      Show changes required by the current configuration   apply     Create or update infrastructure   destroy   Destroy previously-created infrastructure  All other commands:   console       Try OpenTofu expressions at an interactive command prompt   fmt           Reformat you
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1419,82 +1419,296 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa0f14f5` (2026-10-15)
-**Commit Message**: plugin: Test ProviderMeta is sent as msgpack null
+### Incident Patch 1: `6356fbe3` (2026-10-30)
+**Commit Message**: Allow overriding non-computed fields in tests (#4777)
 
-Signed-off-by: Lucas Grigolon Varela <[REDACTED_EMAIL]>
+Signed-off-by: Alex McGrath <[REDACTED_EMAIL]>
 
-**File**: `internal/plugin/grpc_provider_test.go` (modified, +24/-0)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1480,3 +1480,27 @@ func TestGRPCProvider_CallFunction(t *testing.T) {
- 		t.Fatalf("%v", resp.Result)
+@@ -19,6 +19,7 @@ ENHANCEMENTS:
+ - `mock_provider` now supports the `source` argument that can get a file or directory with specific provider overrides ([#4532](https://github.com/opentofu/opentofu/pull/4532))
+ - Module outputs now support specifying their type. ([#4645](https://github.com/opentofu/opentofu/pull/4645))
+ - The `tofu` cli will now read `*.tfrc` file to load its configuration from system standard directories. ([#4624](https://github.com/opentofu/opentofu/pull/4624))
++- `override_data`/`override_resource` blocks may override non-computed fields in tofu test. ([#4777](https://github.com/opentofu/opentofu/pull/4777))
+ 
+ BUG FIXES:
+ 
+```
+
+**File**: `internal/command/test_test.go` (modified, +4/-0)
+```diff
+@@ -1638,6 +1638,10 @@ func TestTest_InstanceOverride(t *testing.T) {
+ 			expected: "3 passed, 0 failed.",
+ 			code:     0,
+ 		},
++		"config_override": {
++			expected: "1 passed, 0 failed.",
++			code:     0,
++		},
  	}
- }
+ 
+ 	providerSource, close := newMockProviderSource(t, map[string][]string{
+```
+
+**File**: `internal/command/testdata/test/override_instance_config_override/main.tf` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++data "test_data_source" "conf" {
++  id = "id"
++}
 +
-+func TestGRPCProvider_ProviderMetaNull(t *testing.T) {
-+	client := mockProviderClient(t)
-+	p := newGRPCProvider(client)
-+
-+	client.EXPECT().ReadDataSource(
-+		gomock.Any(),
-+		gomock.Any(),
-+	).DoAndReturn(func(_ context.Context, req *proto.ReadDataSource_Request, _ ...grpc.CallOption) (*proto.ReadDataSource_Response, error) {
-+		if req.ProviderMeta == nil || !bytes.Equal(req.ProviderMeta.Msgpack, []byte{0xc0}) {
-+			t.Errorf("wrong ProviderMeta: %#v", req.ProviderMeta)
-+		}
-+		return &proto.ReadDataSource_Response{State: &proto.DynamicValue{Msgpack: []byte("\x81\xa4attr\xa3bar")}}, nil
-+	})
-+
-+	resp := p.ReadDataSource(t.Context(), providers.ReadDataSourceRequest{
-+		TypeName: "data",
-+		Config: cty.ObjectVal(map[string]cty.Value{
-+			"attr": cty.StringVal("foo"),
-+		}),
-+	})
-+
-+	checkDiags(t, resp.Diagnostics)
++output "out_data" {
++  value = "data ${data.test_data_source.conf.id} ${data.test_data_source.conf.value}"
 +}
 ```
 
-**File**: `internal/plugin6/grpc_provider_test.go` (modified, +24/-0)
+**File**: `internal/command/testdata/test/override_instance_config_override/main.tftest.hcl` (added, +16/-0)
 ```diff
-@@ -1482,3 +1482,27 @@ func TestGRPCProvider_CallFunction(t *testing.T) {
- 		t.Fatalf("%v", resp.Result)
- 	}
- }
-+
-+func TestGRPCProvider_ProviderMetaNull(t *testing.T) {
-+	client := mockProviderClient(t)
-+	p := newGRPCProvider(client)
-+
-+	client.EXPECT().ReadDataSource(
-+		gomock.Any(),
-+		gomock.Any(),
-+	).DoAndReturn(func(_ context.Context, req *proto.ReadDataSource_Request, _ ...grpc.CallOption) (*proto.ReadDataSource_Response, error) {
-+		if req.ProviderMeta == nil || !bytes.Equal(req.ProviderMeta.Msgpack, []byte{0xc0}) {
-+			t.Errorf("wrong ProviderMeta: %#v", req.ProviderMeta)
-+		}
-+		return &proto.ReadDataSource_Response{State: &proto.DynamicValue{Msgpack: []byte("\x81\xa4attr\xa3bar")}}, nil
-+	})
-+
-+	resp := p.ReadDataSource(t.Context(), providers.ReadDataSourceRequest{
-+		TypeName: "data",
-+		Config: cty.ObjectVal(map[string]cty.Value{
-+			"attr": cty.StringVal("foo"),
-+		}),
-+	})
-+
-+	checkDiags(t, resp.Diagnostics)
+@@ -0,0 +1,16 @@
++override_data {
++  target = data.test_data_source.conf
++  values = {
++    id    = "overridden_id"
++	value = "overridden_content"
++  }
 +}
++
++run "argument_in_values_is_accepted" {
++  command = plan
++
++  assert {
++    condition     = output.out_data == "data id overridden_content"
++    error_message = "expected data id overridden_content"
++  }
++}
+```
+
+**File**: `internal/configs/hcl2shim/mock_value_composer.go` (modified, +4/-19)
+```diff
+@@ -83,19 +83,19 @@ composeMockValueForAttributes generates a new mocked value based on the given sc
+ For write-only attributes, it always returns null value based on the attribute's schema.
+ For all other attribute configurations, the generated value follows the truth table below:
+ Required  Optional  Computed  Has config  Has Override  Result
+-t         f         f         t           t             Error - Not Allowed to override config
++t         f         f         t           t             Config - allowed to have the override specified but the config is used if specifie
+ t         f         f         t           f             Config
+ t         f         f         f           t             Error - Required field in config not provided
+ t         f         f         f           f             Error - Required field in config not provided
+-f         t         f         t           t             Error - Not Allowed to override config
++f         t         f         t           t             Config - allowed to have the override specified but the config is used if specified
+ f         t         f         t           f             Config
+ f         t         f         f           t             Override Value
+ f         t         f         f           f             NullVal of the attribute type
+-f         t         t         t           t             Error - Not Allowed to override config
++f         t         t         t           t             Config - allowed to have the override specified but the config is used if specified
+ f         t         t         t           f             Config
+ f         t         t         f           t             Override
+ f         t         t         f           f             GenVal
+-f         f         t         t           t             Error - Not Allowed to override config
++f         f         t         t           t             Error - Config not allowed here
+ f         f         t         t           f             Error - Config not allowed here
+ f         f         t         f           t             Override
+ f         f         t         f           f             GenVal
+@@ -128,21 +128,6 @@ func (mvc MockValueComposer) composeMockValueForAttributes(attrs map[string]*con
+ 
+ 		// Validation of overridden values
+ 		if hasOverride {
+-			if hasConfig {
+-				diags = diags.Append(tfdiags.WholeContainingBody(
+-					tfdiags.Error,
+-					fmt.Sprintf("Invalid mock/override field `%v`", k),
+-					"The field is ignored since overriding configuration values is not allowed.",
+-				))
+-			}
+-			if !attr.Computed {
+-				diags = diags.Append(tfdiags.WholeContainingBody(
+-					tfdiags.Error,
+-					fmt.Sprintf("Non-computed field `%v` is not allowed to be overridden", k),
+-					"Overriding non-computed fields is not allowed, so this field cannot be processed.",
+-				))
+-			}
+-
+ 			var err error
+ 			ovConvert, err = convert.Convert(overrideValue, attr.ImpliedType())
+ 			if err != nil {
+```
+
+**File**: `internal/configs/hcl2shim/mock_value_composer_test.go` (modified, +4/-1)
+```diff
+@@ -752,7 +752,10 @@ func TestComposeMockValueBySchema(t *testing.T) {
+ 			defaults: map[string]cty.Value{
+ 				"config-field": cty.StringVal("str"),
+ 			},
+-			wantError: true,
++			wantVal: cty.ObjectVal(map[string]cty.Value{
++				"config-field": cty.StringVal("iAmFromConfig"),
++			}),
++			wantError: false,
+ 		},
+ 		"override-of-write-only-without-config": {
+ 			schema: &configschema.Block{
+```
+
+**File**: `website/docs/cli/commands/test/index.mdx` (modified, +2/-2)
+```diff
+@@ -566,7 +566,7 @@ These blocks consist of the following elements:
+ | Name     | Type         | Description                                                                                                            |
+ |:--------:|:------------:|------------------------------------------------------------------------------------------------------------------------|
+ | target   | reference    | Required. Address of the target resource or data source to be overridden.                                              |
+-| values   | object       | Custom values for computed attributes and blocks to be used instead of automatically generated.                        |
++| values   | object       | Custom values for attributes and blocks to be used instead of automatically generated or configured values.            |
+ 
+ You can use `override_resource` or `override_data` blocks for the whole test file or inside a single `run` block. The latter takes precedence if both specified for the same `target`.
+ 
+@@ -622,7 +622,7 @@ When generating these values, OpenTofu cannot follow custom provider logic, so i
+ :::tip Note
+ 
+ You can set custom values to use instead of automatically generated ones via respective mock or override fields.
+-Keep in mind, it's only possible for computed attributes and configuration values cannot be changed.
++Keep in mind, it's possible for both computed/non-computed attributes to be changed, however configuration values cannot.
+ 
+ :::
+ 
+```
+
+---
+
+### Incident Patch 2: `80bb49e3` (2026-10-27)
+**Commit Message**: Don't re-decode during drifted resources
+
+Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
+
+**File**: `internal/engine/planning/plan_context.go` (modified, +3/-27)
+```diff
+@@ -16,7 +16,6 @@ import (
+ 	"github.com/opentofu/opentofu/internal/plans"
+ 	"github.com/opentofu/opentofu/internal/states"
+ 	"github.com/opentofu/opentofu/internal/tfdiags"
+-	"github.com/zclconf/go-cty/cty"
+ )
+ 
+ // planContext is our shared state for the various parts of a single call
+@@ -142,7 +141,7 @@ type planContextResult struct {
+ func (p *planContext) managedResourceChangesBetweenUpgradeAndRefresh(ctx context.Context, objects *resourceInstanceObjects) ([]*plans.ResourceInstanceChangeSrc, tfdiags.Diagnostics) {
+ 	var diags tfdiags.Diagnostics
+ 
+-	/*TODO potential optimization, compare with skipping the decodes below
++	/*TODO potential optimization, maybe not needed since we no-longet do decodes below
+ 	if newState.ManagedResourcesEqual(oldState) && moves.Changes.Len() == 0 {
+ 		// Nothing to do, because we only detect and report drift for managed
+ 		// resource instances.
+@@ -194,7 +193,6 @@ func (p *planContext) managedResourceChangesBetweenUpgradeAndRefresh(ctx context
+ 			// We don't report drift in case of resource type change
+ 			continue
+ 		}
+-		newIS := obj.RefreshedState
+ 
+ 		schema, _ := p.providers.ResourceTypeSchema(
+ 			ctx,
+@@ -210,31 +208,9 @@ func (p *planContext) managedResourceChangesBetweenUpgradeAndRefresh(ctx context
+ 			))
+ 			continue
+ 		}
+-		ty := schema.Block.ImpliedType()
+ 
+-		// TODO revisit this decode as it's extra work that's not nessesary
+-		oldVal, err := oldIS.Value.Decode(ty)
+-		if err != nil {
+-			diags = diags.Append(tfdiags.Sourceless(
+-				tfdiags.Warning,
+-				"Failed to decode resource from state",
+-				fmt.Sprintf("Error decoding %q from prior state: %s", addr.String(), err),
+-			))
+-			continue
+-		}
+-
+-		newVal := cty.NullVal(ty)
+-		if newIS != nil {
+-			newVal, err = newIS.Value.Decode(ty)
+-			if err != nil {
+-				diags = diags.Append(tfdiags.Sourceless(
+-					tfdiags.Warning,
+-					"Failed to decode resource from state",
+-					fmt.Sprintf("Error decoding %q from prior state: %s", addr.String(), err),
+-				))
+-				continue
+-			}
+-		}
++		oldVal := obj.UpgradedValue
++		newVal := obj.RefreshedValue
+ 
+ 		if oldVal.RawEquals(newVal) && addr.Equal(prevRunAddr) {
+ 			// No drift if the two values are semantically equivalent
+```
+
+**File**: `internal/engine/planning/plan_managed.go` (modified, +5/-0)
+```diff
+@@ -212,6 +212,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		// TODO Identity passthrough
+ 		prevState = &resources.ManagedResourceStateWithIdentity{ValueWithPrivate: *prevValue}
+ 		ret.UpgradedState = prevStateFull
++		ret.UpgradedValue = prevValue.Value
+ 
+ 		if prevStateInfo.isImplicit() {
+ 			// due to a quirk in how moves are handled,
+@@ -254,6 +255,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		}
+ 		if prevState != nil {
+ 			ret.PlaceholderValue = prevState.Value
++			ret.UpgradedValue = prevState.Value
+ 
+ 			if isGeneratingConfiguration {
+ 				// Pretend the configuration always was the imported value.
+@@ -319,6 +321,7 @@ func (p *planGlue) planDesiredManagedResourceInstance(
+ 		if prevState != nil {
+ 			// Improve what we know about the potential value
+ 			ret.PlaceholderValue = prevState.Value
++			ret.RefreshedValue = prevState.Value
+ 
+ 			if isGeneratingConfiguration {
+ 				// Pretend the configuration always was the refreshed value.
+@@ -662,6 +665,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 	// TODO Identity passthrough
+ 	prevState := &resources.ManagedResourceStateWithIdentity{ValueWithPrivate: *prevValue}
+ 	ret.PlaceholderValue = prevState.Value
++	ret.UpgradedValue = prevState.Value
+ 
+ 	// Include destroy provisioner dependencies
+ 	for _, p := range meta.PostCreateProvisioners {
+@@ -690,6 +694,7 @@ func (p *planGlue) planUnwantedManagedResourceInstanceObject(
+ 			return ret, diags
+ 		}
+ 		ret.PlaceholderValue = prevState.Value
++		ret.RefreshedValue = prevState.Value
+ 	}
+ 
+ 	if prevState.Value.IsNull() {
+```
+
+**File**: `internal/engine/planning/plan_resource_instance.go` (modified, +2/-0)
+```diff
+@@ -48,9 +48,11 @@ type resourceInstanceObject struct {
+ 	// UpgradedState is the previous state value after processing
+ 	// Upgrades and Moves.
+ 	UpgradedState *states.ResourceInstanceObjectFullSrc
++	UpgradedValue cty.Value
+ 	// UpgradedState is the upgraded state value after processing
+ 	// Refreshes. Will be nil if the object no-longer exists.
+ 	RefreshedState *states.ResourceInstanceObjectFullSrc
++	RefreshedValue cty.Value
+ 
+ 	// PlannedChange is the change that the planning engine has decided for
+ 	// this resource instance object.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4763** (closed): backend/kubernetes: ignore Forbidden error on listing workspaces (@leierx)
-- **PR #4758** (2026-10-23): Add support for provider functions in tofu console (@cam72cam)
-- **PR #4753** (2026-10-21): Prepare v1.13.2 release (@yottta)
-- **PR #4752** (2026-10-21): Prepare v1.12.9 release (@yottta)
-- **PR #4751** (2026-10-21): [Govulncheck][GO-2026-6809][v1.12] Upgrade go version to include filtering of the compromised intermediate certificates (@yottta)
-- **PR #4750** (2026-10-21): [Govulncheck][GO-2026-6809][v1.13] Upgrade go version to include filtering of the compromised intermediate certificates (@yottta)
+- **PR #4794** (2026-10-29): Prepare 1.13.5 release (@lbordowitz)
+- **PR #4793** (2026-10-29): [v1.12] Update cosign (@lbordowitz)
+- **PR #4792** (2026-10-29): [v1.13] Update cosign (@lbordowitz)
+- **PR #4791** (2026-10-29): Update cosign (@lbordowitz)
+- **PR #4789** (2026-10-29): Prepare 1.13.4 release (@lbordowitz)
+- **PR #4788** (closed): 1.13.4 release pr (@lbordowitz)
 
 ---
 
@@ -1514,44 +1728,21 @@ Signed-off-by: Lucas Grigolon Varela <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugin: Test ProviderMeta is sent as msgpack null
+## X. Allow overriding non-computed fields in tests (#4777)
 
 **RULE**:
-When implementing operations in `internal/plugin/grpc_provider_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa0f14f5`: plugin: Test ProviderMeta is sent as msgpack null. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6356fbe3`: Allow overriding non-computed fields in tests (#4777). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/plugin/grpc_provider_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-func TestGRPCProvider_ProviderMetaNull(t *testing.T) {
-	client := mockProviderClient(t)
-	p := newGRPCProvider(client)
-
-	client.EXPECT().ReadDataSource(
-		gomock.Any(),
-		gomock.Any(),
-	).DoAndReturn(func(_ context.Context, req *proto.ReadDataSource_Request, _ ...grpc.CallOption) (*proto.ReadDataSource_Response, error) {
-		if req.ProviderMeta == nil || !bytes.Equal(req.ProviderMeta.Msgpack, []byte{0xc0}) {
-			t.Errorf("wrong ProviderMeta: %#v", req.ProviderMeta)
-		}
-		return &proto.ReadDataSource_Response{State: &proto.DynamicValue{Msgpack: []byte("\x81\xa4attr\xa3bar")}}, nil
-	})
-
-	resp := p.ReadDataSource(t.Context(), providers.ReadDataSourceRequest{
-		TypeName: "data",
-		Config: cty.ObjectVal(map[string]cty.Value{
-			"attr": cty.StringVal("foo"),
-		}),
-	})
-
-	checkDiags(t, resp.Diagnostics)
-}
+- `override_data`/`override_resource` blocks may override non-computed fields in tofu test. ([#4777](https://github.com/opentofu/opentofu/pull/4777))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1561,4 +1752,4 @@ func TestGRPCProvider_ProviderMetaNull(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa0f14f5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6356fbe3` are properly handled with clean fallback behavior.

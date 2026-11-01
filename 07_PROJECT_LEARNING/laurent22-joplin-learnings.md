@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source**: github ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
-> **Source Version**: `280954e5`  
+> **Source Version**: `2e131019`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:30:11.673Z  
+> **Timestamp**: 2026-10-30T23:51:39.622Z  
 > **Learning ID**: `learn-github-laurent22-joplin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:30:11.668Z  
+> **Harvest Timestamp**: 2026-10-30T23:51:39.613Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 56839 stars
+- **Stars / Engagement**: 56950 stars
 
 ---
 
@@ -930,11 +930,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16923** (2026-10-22): **Desktop: Fixes #16916: Prevent HTML escape of special characters in inline KaTeX math equation**
-  *Symptoms*: Fixes #16916  ### Summary  In the Rich Text editor (TinyMCE), selecting text that contained special characters like `>`, `<`, or `&` and clicking the "Insert math equation" button caused KaTeX parse errors (e.g. `Expected 'EOF', got '&' at position 2: x&gt;1`).  This happened because `editor.selection.getContent()` defaults to returning HTML, which escaped `>` to `&gt;` and `<` to `&lt;` before wrapping it into `$${katex}$`.  **Fix:** Passed `{ format: 'text' }` to `editor.selection.getContent({ format: 'text' })` so TinyMCE retrieves the unescaped plain text selection.  ---  ### Manual Test Plan  1. **Greater than (`>`):** Typed `x>1`, highlighted it, and clicked the math equation button. Verified it inserted `$x>1$` and rendered the formula cleanly without any KaTeX parse error. 2. **Less than (`<`):** Typed `a<b`, highlighted it, and clicked the math equation button. Verified it inserted `$a<b$` and rendered correctly. 3. **Compound / Special symbols:** Tested with `x >= 1 & y <= 2`. Verified characters remain literal without HTML entity conversion (`&amp;`, `&gt;`). 4. **Standard equations:** Tested with standard expressions (e.g. `E=mc^2`). Verified it wraps as `$E=mc^2$` as usual. 5. **Empty selection & toolbar behavior:** Clicked the button with nothing selected. Verified it creates empty math delimiters `$$` with the cursor positioned between them. Also verified toggling between Rich Text and Markdown view preserves the equations.  Automated checks: - `yarn tsc` passe
+- **Issue #16977** (2026-10-30): **Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor**
+  *Symptoms*: # Summary Fixes #16976: In the Markdown editor (CodeMirror 6), spellcheck underlines for misspelled words did not appear upon opening or switching to a note until a space character was typed. While editing, actions such as backspacing or modifying words destroyed existing spelling markers and caused all squiggly underlines to disappear without re-appearing until a space was typed.  ### Root Cause Chromium/Electron's Blink layout engine only schedules spellcheck passes when native keyboard input events contain word delimiters (e.g. spaces, punctuation, enter). In CodeMirror 6, document text is injected programmatically upon note switching, and editing actions like backspacing are intercepted by CodeMirror (`preventDefault()`) which mutates and replaces DOM text nodes. When text nodes are replaced without a native word-boundary input event, Chromium destroys previous spelling markers and skips running its spellcheck pipeline. Consequently, red squiggly underlines never appear on note switch or disappear entirely on backspace until a space character is typed.  ### Solution 1. **`spellCheckRefreshExtension`**:    - Implemented a lightweight `ViewPlugin` registered in the CodeMirror 6 extensions pipeline.    - Schedules a 100ms quick refresh on initial editor creation, note switch (`setNoteIdEffect`), or editor focus gain (`focusChanged && hasFocus`).    - Schedules a 500ms debounced refresh on document edits (`docChanged`). If the user continues typing, the timer resets, ensuring
 
-- **Issue #16921** (2026-10-22): **Desktop: Fixes #15883: Keep toast notifications in their destination window**
-  *Symptoms*:  ## Problem  With multiple Joplin windows open, the same toast appears in every window. This duplicates deletion confirmations and plugin notifications. Addresses #15883.  ## Solution  Capture the active window when a toast is created and display it only there. Keep existing toasts in their original window when focus changes, and discard them when that window closes. Preserve existing background behavior, dismissal timing, actions, severity, ordering, and repeated identical messages.  ## Test Plan  - Six focused unit tests pass, covering routing, focus changes, window closure, repeated messages, dismissal timing, the shared shim path, and interactive content. - The routing regression fails with the unchanged upstream implementation and passes with the fix. - TypeScript compilation, non-rewriting lint, and the desktop build pass. - A 40-second desktop demonstration records deletion and window switching. - Two-window plugin-toast Electron coverage is added; its GUI execution has not yet been run locally.  ## Demonstration  [40-second desktop demonstration](https://github.com/khantnandeesh/joplin/blob/761ed512d5406f10fa5c2e4707a67b97f78c8f29/toast-window-fix.mp4). 
+- **Issue #16958** (2026-10-30): **flatpak configuration forces creation of a backup directory separate from the user-configured directory**
+  *Symptoms*: ### Operating system  Linux  ### Joplin version  3.7.21  ### Desktop version info  3.7.21, Linux Fedora 44, flatpak version.  ### Current behaviour  The flatpak configuration forces creation of a backup directory separate from the user-configured directory.  ``` [Context] shared=ipc;network; sockets=cups;fallback-x11;pulseaudio;wayland; devices=dri; filesystems=~/.config/joplin-desktop:create;~/JoplinBackup:create;  [Session Bus Policy] org.kde.StatusNotifierWatcher=talk org.freedesktop.Notifications=talk com.canonical.AppMenu.Registrar=talk org.a11y.Bus=talk  [System Bus Policy] org.freedesktop.Avahi=talk ``` Because the flatpak configuration is creating this, there is no configuration toggle or setting within Joplin that prevents it. Disabling the backup plugin entirely does not work.  `flatpak override --user --nofilesystem=~/JoplinBackup net.cozic.joplin_desktop` is the workaround for this, but it would be better if the flatpak did not force a directory at all.  ### Expected behaviour  The application respects the user-configured backup folder and does not create an arbitrary directory.  ### Logs  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -951,205 +951,213 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `94ddfda2` (2026-10-22)
-**Commit Message**: Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements with many children (#16902)
+### Incident Patch 1: `f5823d1b` (2026-10-28)
+**Commit Message**: Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/app-cli/tests/HtmlToMd.ts` (modified, +10/-0)
+**File**: `packages/app-desktop/package.json` (modified, +1/-1)
 ```diff
-@@ -130,6 +130,16 @@ describe('HtmlToMd', () => {
- 		expect(collapsedResult).toContain('\n\n');
- 	});
- 
-+	// Covers how newlines are carried between children when joining them, which was rewritten to fix
-+	// https://github.com/laurent22/joplin/issues/16895
-+	it.each([
-+		['<ul><li>a</li><li></li><li>b</li></ul>', '- a\n\n- b'],
-+		['<span><p>a</p></span>b', 'a\n\nb'],
-+		['<pre><code><span>line 1</span>\n\n\n<span>line 2</span></code></pre>', '```\nline 1\n\n\nline 2\n```'],
-+	])('should join the Markdown of child elements: %j', (html, expected) => {
-+		expect(new HtmlToMd().parse(html)).toBe(expected);
-+	});
-+
- 	it.each([
- 		['inline code ending with a space at the end of a heading', '<h2><code>npm</code> install&nbsp;<code>a&nbsp;</code></h2>', 'a\u00A0'],
- 		['a heading that only contains inline code with a space', '<h2><code>&nbsp;</code></h2>', '\u00A0'],
+@@ -185,7 +185,7 @@
+     "color": "3.2.1",
+     "compare-versions": "6.1.1",
+     "debounce": "1.2.1",
+-    "electron": "42.3.0",
++    "electron": "42.11.18",
+     "electron-builder": "26.15.6",
+     "electron-updater": "6.6.8",
+     "electron-window-state": "5.0.3",
 ```
 
-**File**: `packages/turndown/src/turndown.js` (modified, +20/-3)
+**File**: `yarn.lock` (modified, +13/-32)
 ```diff
-@@ -196,7 +196,11 @@ TurndownService.prototype = {
- function process (parentNode, escapeContent = 'auto') {
-   if (this.options.disableEscapeContent) escapeContent = false;
+@@ -9934,6 +9934,13 @@ __metadata:
+   languageName: node
+   linkType: hard
  
--  let output = '';
-+  // Same result as calling join() per child, but join() re-copies the whole output each time, which is quadratic for
-+  // elements with many children: https://github.com/laurent22/joplin/issues/16895
-+  const isCode = parentNode.isCode === true;
-+  const parts = [];
-+  let trailingNewlines = 0;
-   let previousNode = null;
++"@electron-internal/extract-zip@npm:^1.0.1":
++  version: 1.0.5
++  resolution: "@electron-internal/extract-zip@npm:1.0.5"
++  checksum: 10/f67a2ae62ab78df306e5ec38e917fed8faf87053cf13aa5d29784ed7da6d7b96b358b3559be1b6fa98d75636593dfed23ad89a8aafff5ffac01c3c88abdd0291
++  languageName: node
++  linkType: hard
++
+ "@electron/asar@npm:3.4.1, @electron/asar@npm:^3.3.1":
+   version: 3.4.1
+   resolution: "@electron/asar@npm:3.4.1"
+@@ -12523,7 +12530,7 @@ __metadata:
+     color: "npm:3.2.1"
+     compare-versions: "npm:6.1.1"
+     debounce: "npm:1.2.1"
+-    electron: "npm:42.3.0"
++    electron: "npm:42.11.18"
+     electron-builder: "npm:26.15.6"
+     electron-updater: "npm:6.6.8"
+     electron-window-state: "npm:5.0.3"
+@@ -19708,15 +19715,6 @@ __metadata:
+   languageName: node
+   linkType: hard
  
-   for (let node of parentNode.childNodes) {
-@@ -217,11 +221,24 @@ function process (parentNode, escapeContent = 'auto') {
-       replacement = replacementForNode.call(this, node, previousNode);
-     }
+-"@types/yauzl@npm:^2.9.1":
+-  version: 2.10.0
+-  resolution: "@types/yauzl@npm:2.10.0"
+-  dependencies:
+-    "@types/node": "npm:*"
+-  checksum: 10/55d27ae5d346ea260e40121675c24e112ef0247649073848e5d4e03182713ae4ec8142b98f61a1c6cbe7d3b72fa99bbadb65d8b01873e5e605cdc30f1ff70ef2
+-  languageName: node
+-  linkType: hard
+-
+ "@types/yoga-layout@npm:1.9.2":
+   version: 1.9.2
+   resolution: "@types/yoga-layout@npm:1.9.2"
+@@ -29592,17 +29590,17 @@ __metadata:
+   languageName: node
+   linkType: hard
  
--    output = join(output, replacement, parentNode.isCode);
-+    if (isCode) {
-+      parts.push(replacement);
-+    } else {
-+      const content = trimLeadingNewlines(replacement);
-+      const separator = '\n\n'.substring(0, Math.max(trailingNewlines, replacement.length - content.length));
-+      if (content) {
-+        const trimmedContent = trimTrailingNewlines(content);
-+        parts.push(separator, trimmedContent);
-+        trailingNewlines = content.length - trimmedContent.length;
-+      } else {
-+        trailingNewlines = separator.length;
-+      }
-+    }
-     previousNode = node;
-   }
+-"electron@npm:42.3.0":
+-  version: 42.3.0
+-  resolution: "electron@npm:42.3.0"
++"electron@npm:42.11.18":
++  version: 42.11.18
++  resolution: "electron@npm:42.11.18"
+   dependencies:
++    "@electron-internal/extract-zip": "npm:^1.0.1"
+     "@electron/get": "npm:^5.0.0"
+     "@types/node": "npm:^24.9.0"
+-    extract-zip: "npm:^2.0.1"
+   bin:
+     electron: cli.js
+     install-electron: install.js
+-  checksum: 10/969c82badc2cb9e573f82a7e87ca208f15bcee862b77a3d45d19e2f239ca8dcc6130442e20608daa54529847adbf06c0cb628f57c4e0cff3abd6b867b7f1e42a
++  checksum: 10/2cda7a3eff1f9fc91c7d6c332eb9a675624a3b152cbbb999d952dbaf1834dabe74d2765ea9785e510044c33aa45dfe25ad84694a1054b8020af87ab440d509ef
+   languageName: node
+   linkType: hard
  
--  return output;
-+  if (!isCode) parts.push('\n'.repeat(trailingNewlines));
-+  return parts.join('');
- }
+@@ -32036,23 +32034,6 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- /**
+-"extract-zip@npm:^2.0.1":
+-  version: 2.0.1
+-  resolution: "extract-zip@npm:2.0.1"
+-  dependencies:
+-    "@types/yauzl": "npm:^2.9.1"
+-    debug: "npm:^4.1.1"
+-    get-stream: "npm:^5.1.0"
+-    yauzl: "npm:^2.10.0"
+-  dependenciesMeta:
+-    "@types/yauzl":
+-      optional: true
+-  bin:
+-    extract-zip: cli.js
+-  checksum: 10/8cbda9debdd6d6980819cc69734d874ddd71051c9fe5bde1ef307ebcedfe949ba57b004894b585f758b7c9eeeea0e3d87f2dda89b7d25320459c2c9643ebb635
+-  languageName: node
+-  linkType: hard
+-
+ "extsprintf@npm:1.3.0":
+   version: 1.3.0
+   resolution: "extsprintf@npm:1.3.0"
 ```
 
 ---
 
-### Incident Patch 2: `30a017b8` (2026-10-22)
-**Commit Message**: fix(deps): update dependency tar to v7.5.22 (#16922)
+### Incident Patch 2: `2e131019` (2026-10-30)
+**Commit Message**: fix(deps): update dependency js-yaml to v4.3.1 (#16973)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 **File**: `packages/lib/package.json` (modified, +1/-1)
 ```diff
-@@ -101,7 +101,7 @@
-     "sqlite3": "5.1.6",
-     "string-padding": "1.0.2",
-     "string-to-stream": "3.0.1",
--    "tar": "7.5.21",
-+    "tar": "7.5.22",
-     "tcp-port-used": "1.0.3",
-     "uglifycss": "0.0.29",
-     "undici": "8.10.0",
+@@ -78,7 +78,7 @@
+     "html-minifier": "4.0.0",
+     "image-data-uri": "2.0.1",
+     "immer": "9.0.21",
+-    "js-yaml": "4.3.0",
++    "js-yaml": "4.3.1",
+     "markdown-it": "13.0.2",
+     "md5": "2.3.0",
+     "md5-file": "5.0.0",
 ```
 
-**File**: `yarn.lock` (modified, +5/-18)
+**File**: `packages/tools/package.json` (modified, +1/-1)
 ```diff
-@@ -12982,7 +12982,7 @@ __metadata:
-     sqlite3: "npm:5.1.6"
-     string-padding: "npm:1.0.2"
-     string-to-stream: "npm:3.0.1"
--    tar: "npm:7.5.21"
-+    tar: "npm:7.5.22"
-     tcp-port-used: "npm:1.0.3"
-     tesseract.js: "npm:7.0.0"
-     typescript: "npm:5.9.3"
-@@ -56508,16 +56508,16 @@ __metadata:
+@@ -59,7 +59,7 @@
+     "gulp": "4.0.2",
+     "html-entities": "1.4.0",
+     "jest": "29.7.0",
+-    "js-yaml": "4.3.0",
++    "js-yaml": "4.3.1",
+     "rss": "1.2.2",
+     "sass": "1.101.7",
+     "sqlite3": "5.1.6",
+```
+
+**File**: `yarn.lock` (modified, +6/-6)
+```diff
+@@ -12958,7 +12958,7 @@ __metadata:
+     immer: "npm:9.0.21"
+     jest: "npm:29.7.0"
+     jest-expect-message: "npm:1.1.3"
+-    js-yaml: "npm:4.3.0"
++    js-yaml: "npm:4.3.1"
+     jsdom: "npm:26.1.0"
+     markdown-it: "npm:13.0.2"
+     md5: "npm:2.3.0"
+@@ -13234,7 +13234,7 @@ __metadata:
+     gulp: "npm:4.0.2"
+     html-entities: "npm:1.4.0"
+     jest: "npm:29.7.0"
+-    js-yaml: "npm:4.3.0"
++    js-yaml: "npm:4.3.1"
+     license-checker-rseidelsohn: "npm:4.4.2"
+     markdown-it: "npm:13.0.2"
+     md5-file: "npm:5.0.0"
+@@ -39266,14 +39266,14 @@ __metadata:
    languageName: node
    linkType: hard
  
--"tar@npm:7.5.21":
--  version: 7.5.21
--  resolution: "tar@npm:7.5.21"
-+"tar@npm:7.5.22, tar@npm:^7.5.21":
-+  version: 7.5.22
-+  resolution: "tar@npm:7.5.22"
+-"js-yaml@npm:4.3.0":
+-  version: 4.3.0
+-  resolution: "js-yaml@npm:4.3.0"
++"js-yaml@npm:4.3.1":
++  version: 4.3.1
++  resolution: "js-yaml@npm:4.3.1"
    dependencies:
-     "@isaacs/fs-minipass": "npm:^4.0.0"
-     chownr: "npm:^3.0.0"
-     minipass: "npm:^7.1.2"
-     minizlib: "npm:^3.1.0"
-     yallist: "npm:^5.0.0"
--  checksum: 10/a1b7dcee15e4f7dbef7f07c3cf0fe946248efabd1cb029b54c698d817dfc2876c75bcaa164a12dd21191e385759ce3e37fea562cf4aabaa00984ef9ed3c48d17
-+  checksum: 10/129606384b3c895f422aaca48bf316357be6dc7aa35c1066c3f06c28acfff0be5b356e1b0a0be7c53a7a8945534ac06cec6d8e296d170d8a09c8bff67b29300e
+     argparse: "npm:^2.0.1"
+   bin:
+     js-yaml: bin/js-yaml.js
+-  checksum: 10/2bcec3a8118d7f744badeb04e14366578d234a736f353d41fe35d2305e4ce2409a8e041d277f07cd6bbc8aaa12128d650a68ce43247072519bede20962d2126f
++  checksum: 10/2ce71b5d632abbd77da80447bf860e8a0264e54bffe94840984887d58b023761495b523727547904517a6107a1ef189854b361e0fc44995ee13a84f222d7bd42
    languageName: node
    linkType: hard
  
-@@ -56550,19 +56550,6 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"tar@npm:^7.5.21":
--  version: 7.5.22
--  resolution: "tar@npm:7.5.22"
--  dependencies:
--    "@isaacs/fs-minipass": "npm:^4.0.0"
--    chownr: "npm:^3.0.0"
--    minipass: "npm:^7.1.2"
--    minizlib: "npm:^3.1.0"
--    yallist: "npm:^5.0.0"
--  checksum: 10/129606384b3c895f422aaca48bf316357be6dc7aa35c1066c3f06c28acfff0be5b356e1b0a0be7c53a7a8945534ac06cec6d8e296d170d8a09c8bff67b29300e
--  languageName: node
--  linkType: hard
--
- "tar@npm:^7.5.4":
-   version: 7.5.19
-   resolution: "tar@npm:7.5.19"
 ```
 
 ---
 
-### Incident Patch 3: `5c2601a2` (2026-10-20)
-**Commit Message**: fix(deps): update dependency node-cron to v4.5.0 (#16904)
+### Incident Patch 3: `85cdb8ad` (2026-10-28)
+**Commit Message**: Clipper: Fixes #16887: Keep the Confirm button reachable with a larger browser font size (#16929)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `packages/server/package.json` (modified, +1/-1)
+**File**: `packages/app-clipper/popup/src/App.css` (modified, +3/-1)
 ```diff
-@@ -44,7 +44,7 @@
-     "ldapts": "8.1.8",
-     "markdown-it": "13.0.2",
-     "mustache": "4.2.0",
--    "node-cron": "4.4.1",
-+    "node-cron": "4.5.0",
-     "nodemailer": "6.10.1",
-     "nodemon": "3.1.14",
-     "otplib": "12.0.1",
-```
-
-**File**: `yarn.lock` (modified, +5/-5)
-```diff
-@@ -13175,7 +13175,7 @@ __metadata:
-     ldapts: "npm:8.1.8"
-     markdown-it: "npm:13.0.2"
-     mustache: "npm:4.2.0"
--    node-cron: "npm:4.4.1"
-+    node-cron: "npm:4.5.0"
-     node-mocks-http: "npm:1.17.2"
-     nodemailer: "npm:6.10.1"
-     nodemon: "npm:3.1.14"
-@@ -44717,10 +44717,10 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -2,7 +2,9 @@ body {
+ 	margin: 0;
+ 	padding: 0;
+ 	font-family: sans-serif;
+-	line-height: 2em;
++	/* What 2em gave at the default 16px. A fixed value, so a larger browser font size doesn't
++	   make every row taller and push the Confirm button out of the popup (#16887) */
++	line-height: 32px;
+ }
  
--"node-cron@npm:4.4.1":
--  version: 4.4.1
--  resolution: "node-cron@npm:4.4.1"
--  checksum: 10/7c5b50e26757343eb9beb1bd3331bbf1e392ab1c031ff55ea4e65092e4be70eba7a550a4b0ff35f4ba0de3106bc550c673e045d392011cf50e7f8a1912b886ef
-+"node-cron@npm:4.5.0":
-+  version: 4.5.0
-+  resolution: "node-cron@npm:4.5.0"
-+  checksum: 10/3ee23107eb584448fe829fd6567902ee10a5da29777dd2425e9fbd85c5642bc57b22d742745d4a7d1534c7e6bfc288764887c608fa5d48f750e2e84c66ad5358
-   languageName: node
-   linkType: hard
- 
+ .App {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16923** (closed): Desktop: Fixes #16916: Prevent HTML escape of special characters in inline KaTeX math equation (@sumitahmed)
-- **PR #16922** (2026-10-22): fix(deps): update dependency tar to v7.5.22 (@renovate[bot])
-- **PR #16921** (closed): Desktop: Fixes #15883: Keep toast notifications in their destination window (@khantnandeesh)
-- **PR #16920** (closed): Windows: Fixes #16919: Build only the runner's own architecture in Windows CI (@Harishmcw)
-- **PR #16915** (2026-10-22): chore(deps): update dependency sass to v1.101.7 (@renovate[bot])
-- **PR #16913** (2026-10-22): chore(deps): update dependency @axe-core/playwright to v4.12.1 (@renovate[bot])
+- **PR #16977** (closed): Desktop: Fixes #16976: Refresh spellcheck underlines on note load and document edit in Markdown editor (@Ayush-AM)
+- **PR #16974** (closed): Server: Resolves #16975: Listen on a Unix socket when APP_SOCKET is set (@cyberb)
+- **PR #16973** (2026-10-30): fix(deps): update dependency js-yaml to v4.3.1 (@renovate[bot])
+- **PR #16964** (2026-10-28): Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (@personalizedrefrigerator)
+- **PR #16963** (closed): Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (@personalizedrefrigerator)
+- **PR #16955** (2026-10-27): chore(deps): update actions/github-script action to v9 (@renovate[bot])
 
 ---
 
@@ -1169,37 +1177,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements w
+## X. Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964)
 
 **RULE**:
-When implementing operations in `packages/app-cli/tests/HtmlToMd.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/app-desktop/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `94ddfda2`: Desktop, Mobile, Cli: Fixes #16895: Fix quadratic conversion time for elements with many children (#16902). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5823d1b`: Desktop: Fixes #16939: Security: Upgrade to Electron 42.11.18 (#16964). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-cli/tests/HtmlToMd.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/app-desktop/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	// Covers how newlines are carried between children when joining them, which was rewritten to fix
-	// https://github.com/laurent22/joplin/issues/16895
-	it.each([
-		['<ul><li>a</li><li></li><li>b</li></ul>', '- a\n\n- b'],
-		['<span><p>a</p></span>b', 'a\n\nb'],
-		['<pre><code><span>line 1</span>\n\n\n<span>line 2</span></code></pre>', '```\nline 1\n\n\nline 2\n```'],
-	])('should join the Markdown of child elements: %j', (html, expected) => {
-		expect(new HtmlToMd().parse(html)).toBe(expected);
-	});
-
+    "electron": "42.11.18",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    "electron": "42.3.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `94ddfda2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5823d1b` are properly handled with clean fallback behavior.

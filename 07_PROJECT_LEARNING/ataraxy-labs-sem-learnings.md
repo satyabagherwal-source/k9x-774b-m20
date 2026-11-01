@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source**: github ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
-> **Source Version**: `f7fa398c`  
+> **Source Version**: `fee69d96`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:48:37.742Z  
+> **Timestamp**: 2026-10-30T13:46:20.798Z  
 > **Learning ID**: `learn-github-ataraxy-labs-sem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:48:35.854Z  
+> **Harvest Timestamp**: 2026-10-30T13:46:18.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Semantic version control => entity-level diffs, blame, and impact analysis on top of git. 28 languages via tree-sitter. Built for coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 3422 stars
+- **Stars / Engagement**: 3431 stars
 
 ---
 
@@ -1820,13 +1820,15 @@ fn main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #530** (2026-10-24): **docs: record MCP query contract fixes**
-  *Symptoms*: Add the missing Unreleased entry for #529. Documentation only.
+- **Issue #539** (2026-10-30): **release: Sem 0.29.0**
+  *Symptoms*: Bumps every crate, the npm package and the MCP registry entry to 0.29.0.  Minor bump because what sem extracts changed (#538): new entity kinds in C, C++, C#, Rust, Java, Kotlin and Elixir, C++ headers in `.h` files read as C++, and recovered definitions in regions tree-sitter cannot parse.
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #hLtm8gfokaGm2XmuSg6PfFAOtJ/gZtYN3gwXO5g41cw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9BZlVGOGpURmpndG9rZVREa3V5b2FZNnVRZVNZIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1kb2NzLXF1ZXJ5LWNvbnRyYWN0LWNoYW5nZWxvZy1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJQRU5ESU5HIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6IiJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzAifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs545837s-projects/sem-docs"><sup><img src="https://vercel.
+  > [vc]: #YoFltfDbDPLuou47DvAQVyQORfVl+RstseHSqw9G9CQ=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy83Y0pXZ0hMMmZRY2pYQmJSSkV1R0FUYlVzQmMxIiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1yZWxlYXNlLTAyOTAtcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJsaXZlRmVlZGJhY2siOnsicmVzb2x2ZWQiOjAsInVucmVzb2x2ZWQiOjAsInRvdGFsIjowLCJsaW5rIjoic2VtLWRvY3MtZ2l0LXJlbGVhc2UtMDI5MC1yczU0NTgzN3MtcHJvamVjdHMudmVyY2VsLmFwcCJ9fV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzkifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/rs54583
 
-- **Issue #529** (2026-10-24): **fix(mcp): support scoped context and structured caller batches**
-  *Symptoms*: ## Summary - Resolve context queries within the requested directory without leaking sibling scope. - Accept batched caller queries, preserving ambiguity handling. - Return a valid JSON array with per-query errors for JSON batches. - Include the simple capability-aware policy used in the recent benchmark campaign.  ## Validation All 110 sem-mcp library tests passed in Modal. Earlier scoped-context and batching implementation plus the policy passed seven official benchmark runs (two each ADK/DSPy/Restic and one Ant Design). The JSON envelope fix has unit coverage but has not had a new session-speed benchmark. No universal speedup claimed.
+- **Issue #538** (2026-10-30): **fix(core): extract definitions sem used to miss across 7 languages**
+  *Symptoms*: Entity extraction now finds definitions it used to miss, measured head to head against Entire's graph (entire-graph v0.6.0) on 14 real repositories.  ## Changes - `.h` headers written in C++ (templates, namespaces, access sections, `std::`) are parsed as C++ - Members of C++ template classes; C++ `using` aliases - C function-pointer typedefs get their name (parenthesized declarators) - Rust trait method signatures; Java annotation members - C# operators, conversion operators, delegates, events, indexers - Kotlin companion objects (named `Companion`) and members of `object :` expressions in function bodies (locals stay suppressed) - Elixir `@type`/`@typep`/`@opaque` specs - For C, C++ and Kotlin files tree-sitter cannot fully parse (macros, Kotlin Multiplatform `internal actual constructor(`), unambiguous definition headers in the unparsed regions are recovered and marked `recovered = parse_error`. Files that parse cleanly are untouched.  ## Recall (share of real definitions found) Ground truth is each language's own parser for Python, Go, TypeScript, JavaScript and Rust, and Universal Ctags elsewhere. Every tool is scored on the same files with the same exclusions (lambdas, anonymous types, macro calls, import aliases, doc-string examples).  | Language | Repo | sem before | **sem now** | Entire | |---|---|---|---|---| | Python | flask / requests | 100% | **100%** | 98.2% / 98.3% | | Go | gin | 100% | **100%** | 98.2% | | TypeScript | zod | 98.2% | **100%** | 100% | | JavaScri
+  **Post-Mortem & Fix Analysis**:
+  > [vc]: #SrAyiDBubbpdvaHPfHJ2YvsX2l9XI+IBpHx4kz6JYsw=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJzZW0tZG9jcyIsInByb2plY3RJZCI6InByal9MT1JiN29SSjBTbUZGUnlGUEw1eE1ha3FVcjRrIiwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6InNlbS1kb2NzLWdpdC1maXgtZXh0cmFjdGlvbi1yZWNhbGwtcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JzNTQ1ODM3cy1wcm9qZWN0cy9zZW0tZG9jcy9Ec0JMRjRMM1g2dml2YktDNGVZd3E0dWJER2k2IiwicHJldmlld1VybCI6InNlbS1kb2NzLWdpdC1maXgtZXh0cmFjdGlvbi1yZWNhbGwtcnM1NDU4MzdzLXByb2plY3RzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQifV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPUF0YXJheHktTGFicyZyZXBvPXNlbSZwcj01MzgifQ== The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="ht
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1843,669 +1845,675 @@ fn main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6caf881d` (2026-10-22)
-**Commit Message**: perf: parallelize the rest of the cold index build's serial stretches (#528)
+### Incident Patch 1: `3e2e7851` (2026-10-30)
+**Commit Message**: fix(core): extract definitions sem used to miss across 7 languages (#538)
 
-Follow-up to #524, which merged with the first commit of this work. This
-draft holds the remaining fixes for the serial stretches of a cold index
-build. The final before and after table against main is being
-re-measured and will replace the numbers below.
-
-## What was slow
-
-Profiling cold `sem graph` builds on Modal (8 vCPU) showed that the
-build scales about linearly now, but long single-threaded stretches
-dominate its wall time on big repos. These were the serial pieces left
-after #524 on the Linux kernel (2.35M entities):
-
-| phase | ms |
-|---|---|
-| index image build (`build_image`) | 6,400 |
-| first-pass lookup tables (`owned`) | 4,700 |
-| corpus table fingerprints | 2,000 |
-| facts store save plus corpus populate | 2,600 |
-| freeing the entity list after the build | about 1,400 |
+Entity extraction now finds definitions it used to miss, measured head
+to head against Entire's graph (entire-graph v0.6.0) on 14 real
+repositories.
 
 ## Changes
+- `.h` headers written in C++ (templates, namespaces, access sections,
+`std::`) are parsed as C++
+- Members of C++ template classes; C++ `using` aliases
+- C function-pointer typedefs get their name (parenthesized declarators)
+- Rust trait method signatures; Java annotation members
+- C# operators, conversion operators, delegates, events, indexers
+- Kotlin companion objects (named `Companion`) and members of `object :`
+expressions in function bodies (locals stay suppressed)
+- Elixir `@type`/`@typep`/`@opaque` specs
+- For C, C++ and Kotlin files tree-sitter cannot fully parse (macros,
+Kotlin Multiplatform `internal actual constructor(`), unambiguous
+definition headers in the unparsed regions are recovered and marked
+`recovered = parse_error`. Files that parse cleanly are untouched.
 
-1. **Fingerprints hashed in parallel.** `fingerprint_corpus_tables`
-computes the value hashes in parallel and writes them in the tables' own
-iteration order. The map and the XOR guard come out the same as before.
-The table is sized up front.
-2. **Index sections side by side.** The refs and trigram sections run
-b
+## Recall (share of real definitions found)
+Ground truth is each language's own parser for Python, Go, TypeScript,
+JavaScript and Rust, and Universal Ctags elsewhere. Every 
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -15,7 +15,7 @@ All notable changes to sem are documented in this file.
- ### Changed
+@@ -4,6 +4,10 @@ All notable changes to sem are documented in this file.
  
- - Cold graph builds move reusable lookup tables instead of cloning them and sort independent lookup buckets in parallel. Sequential builds retain the same behavior without requiring Rayon.
--
-+- **Cold index builds on large repos are about a fifth faster.** A first `sem graph` on the Linux kernel (2.35M entities) went from 49.5 s to 38.6 s, and on kubernetes (545k entities) from 12.5 s to 10.0 s, on an 8 vCPU machine, with peak memory within 2%. The build had long single-threaded stretches. Along with the lookup-table change above, corpus fingerprints are hashed in parallel, independent index sections and lookup tables are built side by side, and large frees and the two facts saves no longer hold up the command. The graph and the index file are byte-identical to before.
- - **`sem_find` with mode `callers` gives the CLI's answer.** It says when the static graph cannot prove the caller set is complete, lists possible callers, and merges dispatch groups, where it used to print `callers: none` either way. Its JSON is now the shape `sem callers --json` prints (`entity`, `related`, `complete`, `incomplete_because`).
+ ## [Unreleased]
  
- ### Fixed
++### Fixed
++
++- **Entity extraction finds definitions it used to miss.** C++ headers saved as `.h` are read as C++; members of C++ template classes, `using` aliases, C function-pointer typedefs, Rust trait method signatures, Java annotation members, C# operators, delegates, events and indexers, Kotlin companion objects and members of `object :` expressions, and Elixir `@type` specs are now entities. When C, C++ or Kotlin code cannot be parsed (macros the grammar cannot expand, Kotlin Multiplatform constructors), clear definition headers in the unparsed region are recovered and marked `recovered = parse_error`. Measured against each language's own parser or Universal Ctags on 14 real repositories, recall is now 99–100% in every language except C++ (92%), up from 56% for C++, 71% for Kotlin and 92% for C#.
++
+ ## [0.28.3] - 2026-10-29
+ 
+ ### Performance
 ```
 
-**File**: `crates/sem-cli/src/commands/graph.rs` (modified, +34/-9)
+**File**: `crates/sem-core/src/parser/plugins/code/entity_extractor.rs` (modified, +374/-2)
 ```diff
-@@ -90,6 +90,7 @@ pub fn graph_command(opts: GraphOptions) {
-         );
+@@ -34,11 +34,260 @@ pub fn extract_entities(
+         attach_go_package_metadata(tree.root_node(), source_code.as_bytes(), &mut entities);
      }
-     timings.finish();
-+    drop_in_background(graph);
+ 
++    recover_definitions_in_parse_errors(tree.root_node(), file_path, config, &mut entities, source_code);
++
+     disambiguate_colliding_entity_ids(&mut entities);
+ 
+     entities
  }
  
- /// Format a count with thousands separators (1234 -> "1,234"), uv-style.
-@@ -419,14 +420,25 @@ fn build_graph_with_facts_store(
-     // Best-effort: a save failure (permissions, disk full, read-only cache
-     // dir) must never fail the build this function exists to produce. The
-     // store is a pure speed optimization — the next process just stays cold.
--    let __facts_save_t0 = std::time::Instant::now();
--    let _ = store.save(root, &exported);
--    crate::build_cache::cache_profile_mark("facts_store_save", __facts_save_t0);
--    let __facts_corpus_t0 = std::time::Instant::now();
--    if let Some(corpus) = &corpus {
--        let _ = corpus.populate_delta(local_hashes.as_ref(), &exported, registry);
--    }
--    crate::build_cache::cache_profile_mark("facts_corpus_populate_delta", __facts_corpus_t0);
-+    //
-+    // The per-repo store and the machine-global corpus are separate
-+    // directories written from the same read-only snapshot, so the two saves
-+    // run side by side rather than one after the other.
-+    std::thread::scope(|scope| {
-+        scope.spawn(|| {
-+            let __facts_corpus_t0 = std::time::Instant::now();
-+            if let Some(corpus) = &corpus {
-+                let _ = corpus.populate_delta(local_hashes.as_ref(), &exported, registry);
-+            }
-+            crate::build_cache::cache_profile_mark(
-+                "facts_corpus_populate_delta",
-+                __facts_corpus_t0,
-+            );
++/// When tree-sitter cannot parse part of a C, C++ or Kotlin file, the
++/// definitions in that part come back inside ERROR nodes and are never seen:
++/// C/C++ macros the grammar cannot expand (`XXH_RESTRICT`, `FMT_API`) and
++/// Kotlin Multiplatform's `internal actual constructor(` on its own line are
++/// the usual causes. This pass reads the lines of each ERROR region and
++/// recovers the definition headers that are unambiguous on their own, so that
++/// code is not invisible to the graph. Files that parse cleanly are untouched,
++/// a definition already extracted is never added twice, and every recovered
++/// entity is marked `recovered = parse_error` in its metadata.
++fn recover_definitions_in_parse_errors(
++    root: Node,
++    file_path: &str,
++    config: &LanguageConfig,
++    entities: &mut Vec<SemanticEntity>,
++    source: &str,
++) {
++    if !matches!(config.id, "c" | "cpp" | "kotlin") || !root.has_error() {
++        return;
++    }
++    let mut error_rows: Vec<(usize, usize)> = Vec::new();
++    let mut stack = vec![root];
++    while let Some(node) = stack.pop() {
++        if node.is_error() {
++            error_rows.push((node.start_position().row, node.end_position().row));
++            continue;
++        }
++        if node.has_error() {
++            let mut cursor = node.walk();
++            stack.extend(node.children(&mut cursor));
++        }
++    }
++    if error_rows.is_empty() {
++        return;
++    }
++    let lines: Vec<&str> = source.lines().collect();
++    let mut rows: Vec<usize> = error_rows
++        .iter()
++        .flat_map(|&(a, b)| a..=b.min(lines.len().saturating_sub(1)))
++        .collect();
++    rows.sort_unstable();
++    rows.dedup();
++
++    let line_starts: Vec<usize> = std::iter::once(0)
++        .chain(source.match_indices('\n').map(|(i, _)| i + 1))
++        .collect();
++    let mut recovered: Vec<SemanticEntity> = Vec::new();
++    for row in rows {
++        let line = lines[row];
++        let header = if config.id == "kotlin" {
++            kotlin_definition_header(line)
++        } else {
++            c_family_definition_header(&lines, row)
++        };
++        let Some((entity_type, name, opens_body)) = header else {
++            continue;
++        };
++        let start_line = row + 1;
++        let already = entities.iter().chain(recovered.iter()).any(|e| {
++            e.name.rsplit("::").next() == Some(name.as_str())
++                && e.start_line + 3 >= start_line
++                && e.start_line <= start_line + 1
 +        });
-+        let __facts_save_t0 = std::time::Instant::now();
-+        let _ = store.save(root, &exported);
-+        crate::build_cache::cache_profile_mark("facts_store_save", __facts_save_t0);
-+    });
-     facts_rss_mark("after_populate_delta");
-     session.into_parts()
- }
-@@ -876,7 +888,7 @@ pub fn get_or_build_graph_topology_with_timings(
-     } else {
-         CacheMissSavePolicy::IndexOnly
-     };
--    let (graph, _entities) = get_or_build_graph_with_cache_policy(
-+    let (graph, entities) = get_or_build_graph_with_cache_policy(
-         root,
-         file_paths,
-         registry,
-@@ -885,9 +897,22 @@ pub fn get_or_build_graph_topology_with_timings(
-         source_scope,
-         timings,
-     );
-+    drop_in_background(entities);
-     graph
- }
- 
-+/// Free a large build product on a detached thread. Dropping millions of
-+/// entities (every one owning several strings) takes seconds on a giant repo,
-+/// and nothing waits on the memory coming back; a short-lived CLI process
-+/// simply exits around the thread.
-+fn drop_in_background<T: Send + 'static>(value: T) {
-+    // If the thread cannot be spawned the closure, and the value with it, is
-+    // dropped right here, exactly as before.
-+    let _ = std::thread::Builder::new()
-+        .name("sem-drop".into())
-+        .spawn(move || drop(value));
++        if already {
++            continue;
++        }
++        let end_row = if opens_body {
++            matching_brace_row(&lines, row).unwrap_or(row)
++        } else {
++            row
++        };
++        let start_byte = line_starts[row];
++        let end_byte = line_starts
++            .get(end_row + 1)
++            .copied()
++            .unwrap_or(source.len());
++        let content = source[start_byte..end_byte].to_string();
++        let parent = entities
++            .iter()
++            .filter(|e| {
++                e.start_line < start_line
++                    && e.end_line >= end_row + 1
++                    && matches!(
++                        e.entity_type.as_str(),
++                        "class" | "struct" | "namespace" | "object" | "interface"
++                            | "companion_object" | "union" | "template" | "module"
++                    )
++            })
++            .min_by_key(|e| e.end_line - e.start_line)
++            .map(|e| e.id.clone());
++        let mut metadata = BTreeMap::new();
++        metadata.insert("recovered".to_string(), "parse_error".to_string());
++        recovered.push(SemanticEntity {
++            id: build_entity_id(file_path, entity_type, &name, parent.as_deref()),
++            file_path: file_path.to_string(),
++            entity_type: entity_type.to_string(),
++            name,
++            parent_id: parent,
++            content_hash: content_hash(&content),
++            structural_hash: None,
++            kappa: None,
++            content,
++            start_line,
++            end_line: end_row + 1,
++            start_byte: Some(start_byte),
++            end_byte: Some(end_byte),
++            metadata: Some(metadata),
++        });
++    }
++    entities.extend(recovered);
 +}
 +
- pub fn get_or_build_graph_topology_with_topology_save_on_miss_with_timings(
-     root: &Path,
-     file_paths: &[String],
++/// `fun name(`, `class Name`, `interface Name`, `object Name` or
++/// `companion object` on one Kotlin line, after any modifiers.
++fn kotlin_definition_header(line: &str) -> Option<(&'static str, String, bool)> {
++    use std::sync::LazyLock;
++    static RE: LazyLock<regex::Regex> = LazyLock::new(|| {
++        regex::Regex::new(
++            r"^\s*(?:@\w+(?:\([^)]*\))?\s+)*(?:(?:pu
 ```
 
-**File**: `crates/sem-core/src/index/writer.rs` (modified, +149/-111)
+**File**: `crates/sem-core/src/parser/plugins/code/languages.rs` (modified, +36/-3)
 ```diff
-@@ -325,120 +325,158 @@ pub(crate) fn build_image(
-         .collect();
-     image_mark("file_and_entity_index", __fileidx_t0);
- 
--    let __entbytes_t0 = std::time::Instant::now();
--    let mut entity_bytes = Vec::with_capacity(entities.len() * ENTITY_REC_LEN);
--    for entity in &entities {
--        let id_text = if ids_elided {
--            id_tail_of(&entity.id, &entity.file_path).unwrap_or(&entity.id)
--        } else {
--            entity.id.as_str()
--        };
--        let kind = kinds.intern(&entity.entity_type, &mut arena);
--        let parent = entity
--            .parent_id
--            .as_deref()
--            .and_then(|id| entity_index.get(id).copied())
--            .unwrap_or(NONE_U32);
--        let flags = match test_entity_ids {
--            Some(ids) if ids.contains(entity.id.as_str()) => format::entity::FLAG_IS_TEST,
--            _ => 0,
--        };
--        let (start_byte, end_byte) = entity_byte_spans
--            .and_then(|spans| spans.get(entity.id.as_str()))
--            .copied()
--            .unwrap_or((NONE_U32, NONE_U32));
--        format::entity::write(
--            &mut entity_bytes,
--            arena.push_short(id_text),
--            arena.push_interned(&entity.name),
--            kind,
--            flags,
--            file_index[entity.file_path.as_str()],
--            entity.start_line as u32,
--            entity.end_line as u32,
--            parent,
--            start_byte,
--            end_byte,
--        );
--    }
--
--    // NAMES: entity indices sorted by name bytes, so a name query is an
--    // equal_range rather than a scan. The tie-break on
--    // index keeps the table a deterministic function of the graph, which is
--    // what the consistency oracle's byte-equality property needs.
--    image_mark("entities_section", __entbytes_t0);
--    let __names_t0 = std::time::Instant::now();
--    let mut name_order: Vec<u32> = (0..entities.len() as u32).collect();
--    maybe_par_sort_unstable_by!(name_order, |a: &u32, b: &u32| {
--        entities[*a as usize]
--            .name
--            .cmp(&entities[*b as usize].name)
--            .then(a.cmp(b))
--    });
--    let mut name_bytes = Vec::with_capacity(name_order.len() * NAME_REC_LEN);
--    for index in &name_order {
--        name_bytes.extend_from_slice(&index.to_le_bytes());
--    }
-+    // ENTITIES/NAMES/FILES/KINDS share the string arena, so they are built in
-+    // order on one task; REFS and TRIGRAM read only the sorted entities and
-+    // the file list, so they run beside that chain instead of after it. Each
-+    // section is a pure function of its inputs, so the image is byte-identical
-+    // to the serial build (the image sha256 gate witnesses this).
-+    let refs_typed = entities.len() <= format::refs::MAX_ENTITIES;
-+    let sections = || {
-+        let __entbytes_t0 = std::time::Instant::now();
-+        // The per-entity hash lookups (parent index, test flag, byte span,
-+        // file index) touch no shared state, so they are resolved in parallel
-+        // first; only the arena pushes, which assign string offsets in entity
-+        // order, stay serial.
-+        let resolved: Vec<(u32, u16, (u32, u32), u32)> = maybe_par_iter!(entities)
-+            .map(|entity| {
-+                let parent = entity
-+                    .parent_id
-+                    .as_deref()
-+                    .and_then(|id| entity_index.get(id).copied())
-+                    .unwrap_or(NONE_U32);
-+                let flags = match test_entity_ids {
-+                    Some(ids) if ids.contains(entity.id.as_str()) => format::entity::FLAG_IS_TEST,
-+                    _ => 0,
-+                };
-+                let span = entity_byte_spans
-+                    .and_then(|spans| spans.get(entity.id.as_str()))
-+                    .copied()
-+                    .unwrap_or((NONE_U32, NONE_U32));
-+                (parent, flags, span, file_index[entity.file_path.as_str()])
-+            })
-+            .collect();
-+        let mut entity_bytes = Vec::with_capacity(entities.len() * ENTITY_REC_LEN);
-+        for (entity, &(parent, flags, (start_byte, end_byte), file)) in
-+            entities.iter().zip(&resolved)
-+        {
-+            let id_text = if ids_elided {
-+                id_tail_of(&entity.id, &entity.file_path).unwrap_or(&entity.id)
-+            } else {
-+                entity.id.as_str()
-+            };
-+            let kind = kinds.intern(&entity.entity_type, &mut arena);
-+            format::entity::write(
-+                &mut entity_bytes,
-+                arena.push_short(id_text),
-+                arena.push_interned(&entity.name),
-+                kind,
-+                flags,
-+                file,
-+                entity.start_line as u32,
-+                entity.end_line as u32,
-+                parent,
-+                start_byte,
-+                end_byte,
-+            );
-+        }
-+        drop(resolved);
+@@ -447,6 +447,20 @@ const JS_TS_SCOPE_BOUNDARIES: &[&str] = &[
+ /// Inside C function bodies, suppress `declaration` nodes so that block-local
+ /// variables are not extracted as nested entities. Inner type declarations are
+ /// still reached by traversal after the wrapper is skipped.
++/// Kotlin function bodies are walked so members of `object : Base { ... }`
++/// expressions are found, but the function's own local `val`/`var`
++/// declarations are locals, not entities.
++const KOTLIN_SUPPRESSED_NESTED: &[SuppressedNestedEntity] = &[
++    SuppressedNestedEntity {
++        parent_entity_node_type: "function_declaration",
++        child_entity_node_type: "property_declaration",
++    },
++    SuppressedNestedEntity {
++        parent_entity_node_type: "secondary_constructor",
++        child_entity_node_type: "property_declaration",
++    },
++];
 +
-+        // NAMES: entity indices sorted by name bytes, so a name query is an
-+        // equal_ran
+ const C_SUPPRESSED_NESTED: &[SuppressedNestedEntity] = &[SuppressedNestedEntity {
+     parent_entity_node_type: "function_definition",
+     child_entity_node_type: "declaration",
+@@ -659,6 +673,7 @@ static RUST_CONFIG: LanguageConfig = LanguageConfig {
+     extensions: &[".rs"],
+     entity_node_types: &[
+         "function_item",
++        "function_signature_item",
+         "struct_item",
+         "enum_item",
+         "impl_item",
+@@ -690,12 +705,14 @@ static JAVA_CONFIG: LanguageConfig = LanguageConfig {
+         "field_declaration",
+         "constructor_declaration",
+         "annotation_type_declaration",
++        "annotation_type_element_declaration",
+     ],
+     container_node_types: &[
+         "class_body",
+         "interface_body",
+         "enum_body",
+         "record_body",
++        "annotation_type_body",
+         "block",
+     ],
+     call_entity_identifiers: &[],
+@@ -738,6 +755,7 @@ static CPP_CONFIG: LanguageConfig = LanguageConfig {
+         "template_declaration",
+         "declaration",
+         "type_definition",
++        "alias_declaration",
+     ],
+     container_node_types: &[
+         "field_declaration_list",
+@@ -780,8 +798,23 @@ static CSHARP_CONFIG: LanguageConfig = LanguageConfig {
+         "property_declaration",
+         "constructor_declaration",
+         "field_declaration",
++        "operator_declaration",
++        "conversion_operator_declaration",
++        "delegate_declaration",
++        "destructor_declaration",
++        "indexer_declaration",
++        "event_declaration",
++        "event_field_declaration",
++    ],
++    container_node_types: &[
++        "declaration_list",
++        "record_body",
++        "block",
++        "preproc_if",
++        "preproc_elif",
++        "preproc_else",
++        "preproc_region",
+     ],
+-    container_node_types: &["declaration_list", "record_body", "block"],
+     call_entity_identifiers: &[],
+     suppressed_nested_entities: &[],
+     scope_boundary_types: &[],
+@@ -935,9 +968,9 @@ static KOTLIN_CONFIG: LanguageConfig = LanguageConfig {
+         "secondary_constructor",
+         "type_alias",
+     ],
+-    container_node_types: &["class_body", "enum_class_body"],
++    container_node_types: &["class_body", "enum_class_body", "function_body"],
+     call_entity_identifiers: &[],
+-    suppressed_nested_entities: &[],
++    suppressed_nested_entities: KOTLIN_SUPPRESSED_NESTED,
+     scope_boundary_types: &[],
+     get_language: get_kotlin,
+     scope_resolve: Some(&KOTLIN_SCOPE_CONFIG),
 ```
 
-**File**: `crates/sem-core/src/parser/graph.rs` (modified, +78/-41)
+**File**: `crates/sem-core/src/parser/plugins/code/mod.rs` (modified, +31/-0)
 ```diff
-@@ -2365,7 +2365,16 @@ impl EntityGraph {
-         resolve_profile::add_pass1_wall_ns(__pass1_wall_t0.elapsed());
+@@ -49,11 +49,42 @@ pub fn language_config_for_content(
+         })
+         .unwrap_or_default();
  
-         let __assemble_t0 = std::time::Instant::now();
--        let mut all_entities: Vec<SemanticEntity> = Vec::new();
-+        // Sized up front: growing by doubling re-copied every entity already
-+        // gathered, which on a 2M-entity corpus is a lot of memmove on
-+        // the serial spine. Reused entities (warm builds) are not counted, so
-+        // this is a lower bound and the vector still grows when it must.
-+        let mut all_entities: Vec<SemanticEntity> = Vec::with_capacity(
-+            per_file
-+                .iter()
-+                .map(|product| product.entities.as_ref().map_or(0, Vec::len))
-+                .sum(),
-+        );
-         let mut parsed_files: Vec<(String, String, tree_sitter::Tree)> = Vec::new();
-         let mut fresh_precomputed: HashMap<String, scope_resolve::PrecomputedFileFacts> =
-             HashMap::default();
-@@ -2771,50 +2780,78 @@ impl EntityGraph {
-             ));
-             symbol_table_plain = symbol_table_owned;
-         } else {
--            // Unchanged from before: whole rebuild, single pass over
--            // all_entities for symbol_table/entity_map/entity_ranges, a
--            // second pass (needs entity_map complete) for class/owner
--            // members.
--            let mut symbol_table_owned: SymbolTable =
--                HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
--            let mut owned_entity_map: EntityInfoMap =
--                HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
--            let mut owned_entity_ranges: EntityRanges = HashMap::default();
--            for entity in &all_entities {
--                // No eager `entry(key.clone)`: `entry`
--                // demands an owned key up front, so the old spelling allocated
--                // `name`/`file_path` Strings that were immediately dropped on
--                // every hit — `file_path` once per entity in the file. Same
--                // get_mut/insert idiom `child_line_ranges` above already uses.
--                let interned_id = EntityId::from(entity.id.as_str());
--                match symbol_table_owned.get_mut(entity.name.as_str()) {
--                    Some(bucket) => bucket.push(interned_id.clone()),
--                    None => {
--                        symbol_table_owned.insert(entity.name.clone(), vec![interned_id.clone()]);
-+            // Whole rebuild: one pass each over all_entities for
-+            // symbol_table/entity_map/entity_ranges, then a second pass
-+            // (needs entity_map complete) for class/owner members. The three
-+            // first-pass tables are independent, so they are built on three
-+            // tasks from ids interned once up front. Each table still sees
-+            // entities in `all_entities` order, so bucket order and
-+            // last-insert-wins on a colliding id are exactly what one serial
-+            // pass produced.
-+            let interned_ids: Vec<EntityId> = maybe_par_iter!(all_entities)
-+                .map(|entity| EntityId::from(entity.id.as_str()))
-+                .collect();
-+            let build_symbol_table = || {
-+                let mut table: SymbolTable =
-+                    HashMap::with_capacity_and_hasher(all_entities.len(), Default::default());
-+                for (entity, interned_id) in all_entities.iter().zip(&interned_ids) {
-+                    // No eager `entry(key.clone)`: `entry`
-+                    // demands an owned key up front, so the old spelling allocated
-+                    // `name`/`file_path` Strings that were immediately dropped on
-+                    // every hit — `file_path` once per entity in the file. Same
-+                    // get_mut/insert idiom `child_line_ranges` above already uses.
-+                    match table.get_mut(entity.name.as_str()) {
-+                        Some(bucket) => bucket.push(interned_id.clone()),
-+                        None => {
-+                            table.insert(entity.name.clone(), vec![interned_id.clone()]);
-+                        }
-                     }
-                 }
--                owned_entity_map.insert(
--                    interned_id.clone(),
--                    EntityInfo {
--                        id: interned_id.clone(),
--                        name: entity.name.clone(),
--                        entity_type: entity.entity_type.clone(),
--                        file_path: entity.file_path.clone(),
--                        parent_id: entity.parent_id.as_ref().map(Into::into),
--                        start_line: entity.start_line,
--                        end_line: entity.end_line,
--                    },
--                );
--                match owned_entity_ranges.get_mut(entity.file_path.as_str()) {
--                    Some(bucket) => bucket.push((entity.start_line, entity.end_line, interned_id)),
--     
-```
-
-**File**: `crates/sem-core/src/parser/incremental.rs` (modified, +6/-0)
-```diff
-@@ -352,6 +352,12 @@ impl Serialize for TableFingerprints {
- }
- 
- impl TableFingerprints {
-+    /// Make room for `additional` more keys, so a whole-corpus pass does not
-+    /// rehash the table over and over as it grows.
-+    pub(crate) fn reserve(&mut self, additional: usize) {
-+        self.entries.reserve(additional);
++    // `.h` is shared by C and C++. A header written in C++ (templates,
++    // namespaces, access sections) parsed with the C grammar loses most of
++    // its classes and functions, so it is read as C++ instead.
++    if ext == ".h" && looks_like_cpp_header(content) {
++        if let Some(cpp) = get_language_config(".hpp") {
++            return Some(cpp);
++        }
 +    }
 +
-     #[inline]
-     pub(crate) fn put(&mut self, key: u64, value: u64) {
-         self.entries.insert(key, value);
+     get_language_config(&ext).or_else(|| {
+         detect_ext_from_content(content).and_then(|shebang_ext| get_language_config(&shebang_ext))
+     })
+ }
+ 
++/// True when a `.h` file uses constructs only C++ has. Each check is a
++/// line-start keyword or `std::`, none of which is valid C, so a plain C
++/// header (including one with an `extern "C"` guard) stays C.
++pub(crate) fn looks_like_cpp_header(content: &str) -> bool {
++    let mut end = content.len().min(256 * 1024);
++    while !content.is_char_boundary(end) {
++        end -= 1;
++    }
++    let head = &content[..end];
++    head.lines().any(|line| {
++        let t = line.trim_start();
++        t.starts_with("template<")
++            || t.starts_with("template <")
++            || (t.starts_with("namespace ") && !t.ends_with(';'))
++            || t.starts_with("public:")
++            || t.starts_with("private:")
++            || t.starts_with("protected:")
++            || t.starts_with("using namespace ")
++            || t.contains("std::")
++    })
++}
++
+ /// Parse `content` with the thread-local parser for `config`, from scratch.
+ pub fn parse_tree(
+     config: &'static languages::LanguageConfig,
 ```
 
-**File**: `crates/sem-core/src/parser/scope_resolve.rs` (modified, +45/-21)
+**File**: `crates/sem-core/tests/extraction_recall.rs` (added, +87/-0)
 ```diff
-@@ -3452,6 +3452,13 @@ pub(crate) fn fingerprint_corpus_tables(
-     entity_map: &EntityInfoMap,
-     fp: &mut TableFingerprints,
- ) -> u64 {
-+    fp.reserve(
-+        lookups.symbol_table.len()
-+            + lookups.class_members.len()
-+            + lookups.owner_members.len()
-+            + entity_map.len()
-+            + 1,
+@@ -0,0 +1,87 @@
++//! Definitions that used to be missed, checked against each language's own
++//! parser or Universal Ctags on real repositories.
++
++use sem_core::parser::plugins::create_default_registry;
++
++fn names(path: &str, src: &str) -> Vec<String> {
++    create_default_registry()
++        .extract_entities(path, src)
++        .into_iter()
++        .map(|e| e.name)
++        .collect()
++}
++
++fn has(path: &str, src: &str, want: &[&str]) {
++    let got = names(path, src);
++    for w in want {
++        assert!(got.iter().any(|n| n == w), "{path}: missing {w}, got {got:?}");
++    }
++}
++
++#[test]
++fn cpp_headers_and_template_members() {
++    // A `.h` header written in C++ is read as C++; members of a template
++    // class are found.
++    has(
++        "fmt.h",
++        "namespace fmt {\ntemplate <typename T> class buffer {\n public:\n  void flush() {}\n};\nusing bigit = unsigned;\n}\n",
++        &["buffer", "flush", "bigit"],
 +    );
-     let mut sink = FingerprintSink::new(fp, 0);
-     // `register_rust_module_import` (the module-alias `use` form) scans
-     // every `(name, target file)` pair below looking for ones whose file
-@@ -3461,36 +3468,53 @@ pub(crate) fn fingerprint_corpus_tables(
-     // already visits them for the per-key `SymbolTable`/`EntityMap`
-     // fingerprints, so the guard costs one extra `u64` XOR per pair, not a
-     // second corpus scan.
-+    //
-+    // The value hashes are computed in parallel and then written in the
-+    // tables' own iteration order, so the map (and the guard, an XOR fold)
-+    // comes out exactly as a serial pass would leave it. On a 2.3M-entity
-+    // corpus this pass was several seconds on the build's serial spine.
-     let mut wildcard_import_guard: u64 = 0;
--    for (name, ids) in lookups.symbol_table.iter() {
--        let mut h = ValueHasher::new();
--        for id in ids {
--            h.s(id);
--            if let Some(info) = entity_map.get(id) {
--                wildcard_import_guard ^= {
--                    let mut wh = ValueHasher::new();
--                    wh.s(name).s(&info.file_path);
--                    wh.finish()
--                };
-+    let symbol_rows: Vec<(&String, u64, u64)> = maybe_par_iter!(lookups.symbol_table)
-+        .map(|(name, ids)| {
-+            let mut h = ValueHasher::new();
-+            let mut guard: u64 = 0;
-+            for id in ids {
-+                h.s(id);
-+                if let Some(info) = entity_map.get(id) {
-+                    guard ^= {
-+                        let mut wh = ValueHasher::new();
-+                        wh.s(name).s(&info.file_path);
-+                        wh.finish()
-+                    };
-+                }
-             }
--        }
--        sink.one(Table::SymbolTable, name, h.finish());
-+            (name, h.finish(), guard)
-+        })
-+        .collect();
-+    for (name, value, guard) in symbol_rows {
-+        wildcard_import_guard ^= guard;
-+        sink.one(Table::SymbolTable, name, value);
-     }
-     for (owner, members) in &lookups.class_members {
-         sink.one(Table::ClassMembers, owner, hash_member_list(members));
-     }
-     for (owner, members) in &lookups.owner_members {
-         sink.one(Table::OwnerMembers, owner, hash_member_list(members));
-     }
--    for (id, info) in entity_map {
--        let mut h = ValueHasher::new();
--        h.s(&info.name)
--            .s(&info.entity_type)
--            .s(&info.file_path)
--            .s(info.parent_id.as_deref().unwrap_or("\u{0}"))
--            .u(info.start_line)
--            .u(info.end_line);
--        sink.one(Table::EntityMap, id, h.finish());
-+    let entity_rows: Vec<(&EntityId, u64)> = maybe_par_iter!(entity_map)
-+        .map(|(id, info)| {
-+            let mut h = ValueHasher::new();
-+            h.s(&info.name)
-+                .s(&info.entity_type)
-+                .s(&info.file_path)
-+                .s(info.parent_id.as_deref().unwrap_or("\u{0}"))
-+                .u(info.start_line)
-+                .u(info.end_line);
-+            (id, h.finish())
-+        })
-+        .collect();
-+    for (id, value) in entity_rows {
-+        sink.one(Table::EntityMap, id, value);
-     }
-     sink.whole(Table::GuardRustModuleAlias, wildcard_import_guard);
-     wildcard_import_guard
++}
++
++#[test]
++fn c_function_pointer_typedef() {
++    has("m.h", "typedef int (*Handler)(void *ctx);\n", &["Handler"]);
++}
++
++#[test]
++fn rust_trait_method_signatures() {
++    has("lib.rs", "trait Flag {\n    fn name(&self) -> &str;\n}\n", &["Flag", "name"]);
++}
++
++#[test]
++fn java_annotation_members() {
++    has(
++        "Intercept.java",
++        "public @interface Intercept {\n  Class<?> postDeserialize();\n}\n",
++        &["postDeserialize"],
++    );
++}
++
++#[test]
++fn csharp_operators() {
++    has(
++        "JToken.cs",
++        "class JToken {\n  public static explicit operator decimal(JToken v) { return 0; }\n  public static JToken operator +(JToken a, JToken b) { return a; }\n}\n",
++        &["operator decimal", "operator +"],
++    );
++}
++
++#[test]
++fn kotlin_companions_and_object_expressions() {
++    has(
++        "Buf.kt",
++        "class Buf {\n  companion object {\n    fun of(): Buf = Buf()\n  }\n  fun source() {\n    val s = object : Source {\n      override fun close() {}\n    }\n  }\n}\n",
++        &["Companion", "of", "close"],
++    );
++}
++
++#[test]
++fn kotlin_multiplatform_constructor_is_recovered() {
++    // `internal actual constructor(` on its own line is not parsed by the
++    // grammar; the definitions in the class are recovered.
++    has(
++        "ByteString.kt",
++        "actual open class ByteString\ninternal actual constructor(\n  internal actual val data: ByteArray,\n) : Comparable<ByteString> {\n  actual open fun hex(): String = commonHex()\n  actual companion object {\n    actual fun of(vararg data: Byte): ByteString = TODO()\n  }\n}\n",
++        &["ByteString", "hex"],
++    );
++}
++
++#[test]
++fn elixir_typespecs() {
++    has(
++        "endpoint.ex",
++        "defmodule Phoenix.Endpoint do\n  @type topic :: String.t()\n  @typep event(a) :: a\nend\n",
++        &["topic", "event"],
++    );
++}
 ```
 
 ---
 
-### Incident Patch 2: `1ab4f898` (2026-10-22)
-**Commit Message**: perf: shorten the serial spine of cold index builds (#524)
+### Incident Patch 2: `bd244542` (2026-10-29)
+**Commit Message**: fix: honor gitignore in source snapshots without Git metadata (#536)
 
-Draft: numbers and the equivalence check are still being collected and
-will be added here.
+Source snapshots and container mounts without `.git` currently ignore
+`.gitignore` during code discovery. An ignored, unreadable database
+directory can consequently abort `graph`, `find`, or `impact`. Enable
+ignore rules without requiring Git metadata in CLI and MCP walkers,
+preserving nested rules and negations.
 
-## What is slow
+Permission errors now explain that `postgres/` excludes the directory
+itself, whereas `postgres/**` requires entering it, and point to
+`.semignore` as an existing exclusion mechanism. Unignored traversal
+errors remain fatal to avoid silently returning incomplete results.
 
-I profiled cold `sem graph` builds on Modal (8 vCPU) with phase timers
-and stack sampling. Today's baseline is about 63 s for the Linux kernel
-(2.35M entities) and 13 s for kubernetes (545k). The old 589 s figure is
-stale. Per-entity cost now grows roughly linearly, so the problem is no
-longer a quadratic. Most of the remaining wall time on large repos is
-spent in single-threaded stretches of the build. On kubernetes, about
-three quarters of the stack samples had only one busy thread.
+Addresses #535. The exact reporter configuration is not yet confirmed: a
+`postgres/` rule already works inside a Git checkout. This PR does not
+claim that a child-only ignore pattern excludes its parent directory.
 
-The largest serial pieces on Linux:
-
-| phase | ms |
-|---|---|
-| entity lookup tables (`owned`), including six whole-corpus clones |
-7,650 |
-| index image build (`build_image`) | 11,180 |
-| corpus table fingerprints | 3,400 |
-
-## Changes
-
-1. **Drop the whole-corpus lookup clones.** A non-retain session build
-(any repo over 20k files) cloned the symbol table, entity map, class and
-owner members, entity ranges and child ranges into its carry. Nothing
-mutates them after that point, so they are now moved into the carry once
-resolution is d
+Validation:
+- Reproduced the snapshot failure with an unreadable directory using the
+installed Sem binary.
+- Added CLI/MCP discovery tests for snapshots, nested rules, negations,
+and scoped reads.
+- Added CLI regressions for graph/find/impact and permission-error
+remediation.
+- `git diff --check` passed.
+- Modal: CLI discove
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -14,6 +14,8 @@ All notable changes to sem are documented in this file.
- 
- ### Changed
- 
-+- Cold graph builds move reusable lookup tables instead of cloning them and sort independent lookup buckets in parallel. Sequential builds retain the same behavior without requiring Rayon.
-+
- - **`sem_find` with mode `callers` gives the CLI's answer.** It says when the static graph cannot prove the caller set is complete, lists possible callers, and merges dispatch groups, where it used to print `callers: none` either way. Its JSON is now the shape `sem callers --json` prints (`entity`, `related`, `complete`, `incomplete_because`).
+@@ -10,6 +10,8 @@ All notable changes to sem are documented in this file.
  
  ### Fixed
+ 
++- Code discovery honors .gitignore in source snapshots without Git metadata; permission errors explain how to exclude an unreadable directory without returning an incomplete graph (#535).
++
+ - Crate publishing checks accepted uploads separately from sparse-index availability, waits before publishing dependents, and resumes from the immutable release tag without re-uploading accepted versions.
+ 
+ 
 ```
 
-**File**: `crates/sem-core/src/index/grep.rs` (modified, +6/-0)
+**File**: `crates/sem-cli/src/commands/files.rs` (modified, +36/-0)
 ```diff
-@@ -115,10 +115,16 @@ pub fn search(
-     // Trigram candidate derivation and the membership sweep touch disjoint
-     // sections (NAMES-adjacent TRIGRAM postings vs. FILES/DIRS), so they run
-     // concurrently — same discipline `commands::query::index_answer` uses.
-+    #[cfg(feature = "parallel")]
-     let ((candidates, origin), complete) = rayon::join(
-         || candidate_files(idx, pattern, opts.case_insensitive),
-         || complete_check(idx, root, walk_subtree),
-     );
-+    #[cfg(not(feature = "parallel"))]
-+    let ((candidates, origin), complete) = (
-+        candidate_files(idx, pattern, opts.case_insensitive),
-+        complete_check(idx, root, walk_subtree),
-+    );
+@@ -39,6 +39,8 @@ fn find_files_in_path(
+     builder
+         .hidden(true)
+         .git_ignore(true)
++        // Source snapshots and container mounts may not include .git.
++        .require_git(false)
+         .git_global(true)
+         .git_exclude(true);
  
-     // Unlike `commands::query`'s entity verbs, grep has no cheaper
-     // authoritative fallback to bail to on an inconclusive sweep — `verify`
-```
-
-**File**: `crates/sem-core/src/parser/graph.rs` (modified, +69/-23)
-```diff
-@@ -263,7 +263,11 @@ const PARSED_FILE_REUSE_BYTE_LIMIT: u64 = 24 * 1024 * 1024;
- pub fn source_bytes(root: &Path, file_paths: &[String]) -> u64 {
-     file_paths
-         .iter()
--        .map(|f| std::fs::metadata(root.join(f)).map(|m| m.len()).unwrap_or(0))
-+        .map(|f| {
-+            std::fs::metadata(root.join(f))
-+                .map(|m| m.len())
-+                .unwrap_or(0)
-+        })
-         .sum()
- }
- 
-@@ -796,6 +800,11 @@ pub type EntityAdjacencyMap = HashMap<EntityId, Vec<EntityId>>;
- pub type SymbolTable = HashMap<String, Vec<EntityId>>;
- 
- fn sort_symbol_table_targets_by_source(symbol_table: &mut SymbolTable, entity_map: &EntityInfoMap) {
-+    #[cfg(feature = "parallel")]
-+    symbol_table
-+        .par_iter_mut()
-+        .for_each(|(_, target_ids)| sort_one_symbol_table_bucket(target_ids, entity_map));
-+    #[cfg(not(feature = "parallel"))]
-     for target_ids in symbol_table.values_mut() {
-         sort_one_symbol_table_bucket(target_ids, entity_map);
-     }
-@@ -916,10 +925,15 @@ fn sort_members_bucket_by_source(members: &mut Vec<MemberTarget>, entity_map: &E
- /// neither was a *stated*, enforced invariant — see
- /// "Resolver tie-break contract" section for the measured effect of making
- /// it one.
--fn sort_all_member_buckets_by_source<K>(
-+fn sort_all_member_buckets_by_source<K: Eq + std::hash::Hash + Sync>(
-     buckets: &mut HashMap<K, Vec<MemberTarget>>,
-     entity_map: &EntityInfoMap,
- ) {
-+    #[cfg(feature = "parallel")]
-+    buckets
-+        .par_iter_mut()
-+        .for_each(|(_, members)| sort_members_bucket_by_source(members, entity_map));
-+    #[cfg(not(feature = "parallel"))]
-     for members in buckets.values_mut() {
-         sort_members_bucket_by_source(members, entity_map);
-     }
-@@ -940,6 +954,11 @@ fn sort_all_member_buckets_by_source<K>(
- /// this sorted order wins) instead of an unstated by-product of whichever
- /// order entities happened to be discovered in.
- fn sort_all_entity_ranges_by_source(ranges_by_file: &mut EntityRanges) {
-+    #[cfg(feature = "parallel")]
-+    ranges_by_file
-+        .par_iter_mut()
-+        .for_each(|(_, ranges)| ranges.sort_unstable());
-+    #[cfg(not(feature = "parallel"))]
-     for ranges in ranges_by_file.values_mut() {
-         ranges.sort_unstable();
-     }
-@@ -2635,6 +2654,10 @@ impl EntityGraph {
-         // corpus — see `maintain_entity_lookups_incremental`'s doc comment.
-         let use_incremental_lookups =
-             inc.is_some() && !retain_parsed_files && *carry_entity_lookups_primed;
-+        // Whether the tables built below end up in the carry after this build:
-+        // always on the incremental path, and on a non-retain session build's
-+        // whole rebuild, which primes the carry for the next one.
-+        let reclaim_lookups = inc.is_some() && !retain_parsed_files;
- 
-         // Pass A (borrowed half): lookups that borrow `&str` out of
-         // `all_entities` and so must be rebuilt every build regardless of
-@@ -2821,7 +2844,14 @@ impl EntityGraph {
-                     }
-                 }
+@@ -74,6 +76,15 @@ fn find_files_in_path(
+                     scan_path.display(),
+                     e
+                 );
++                if e.io_error()
++                    .is_some_and(|err| err.kind() == std::io::ErrorKind::PermissionDenied)
++                {
++                    eprintln!(
++                        "hint: exclude the unreadable directory itself in .gitignore or .semignore \
++                         (for example, postgres/ rather than postgres/**). \
++                         sem stops instead of returning an incomplete graph."
++                    );
++                }
+                 std::process::exit(1);
              }
--            sort_symbol_table_targets_by_source(&mut symbol_table_owned, &owned_entity_map);
-+            // The four bucket sorts below and the child-range index are
-+            // independent of each other (each writes one table and reads only
-+            // `owned_entity_map`/`all_entities`), so they run side by side
-+            // instead of one after another on the build's serial spine.
-+            // Every bucket is sorted by a total order (or stably, from the
-+            // same push order), so the result does not depend on scheduling.
-+            let sort_symbols =
-+                || sort_symbol_table_targets_by_source(&mut symbol_table_owned, &owned_entity_map);
-             // same canonical (file_path, start_line, end_line, id)
-             // tie-break as `symbol_table`, made explicit here instead of
-             // relying on `all_entities` already being in file-path order
-@@ -2831,25 +2861,38 @@ impl EntityGraph {
-             // build's `maintain_entity_lookups_incremental` (which re-sorts
-             // only the buckets it touches) starts from an already-canonical
-             // baseline.
--            sort_all_member_buckets_by_source(&mut owned_class_members, &owned_entity_map);
--            sort_all_member_buckets_by_source(&mut owned_owner_members, &owned_entity_map);
--            sort_all_entity_ranges_by_source(&mut owned_entity_ranges);
-+            let sort_members = || {
-+                sort_all_member_buckets_by_source(&mut owned_class_members, &owned_entity_map);
-+                sort_all_member_buckets_by_source(&mut owned_owner_members, &owned_entity_map);
-+                sort_all_entity_ranges_by_source(&mut owned_entity_ranges);
-+            };
-+            let child_ranges = || {
-+                let __lookup_child_ranges_t0 = std::time::Instant::now();
-+                let ranges = build_child_ranges_by_parent(&all_entities);
-+                resolve_p
+         };
+@@ -171,6 +182,31 @@ mod tests {
+         path
+     }
+ 
++    #[test]
++    fn scan_honors_nested_gitignore_without_git_metadata() {
++        let root = temp_dir();
++        fs::create_dir_all(root.join("postgres")).unwrap();
++        fs::create_dir_all(root.join("src")).unwrap();
++        fs::write(root.join(".gitignore"), "postgres/\n").unwrap();
++        fs::write(root.join("postgres/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/.gitignore"), "*.py\n!keep.py\n").unwrap();
++        fs::write(root.join("src/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/keep.py"), "def keep(): pass\n").unwrap();
++        let registry = create_default_registry();
++        for no_default_excludes in [false, true] {
++            assert_eq!(
++                find_supported_files_in_path(&root, &root, &registry, &[], no_default_excludes),
++                vec!["src/keep.py"]
++            );
++        }
++        assert_eq!(find_search_files(&root), vec!["src/keep.py"]);
++        assert_eq!(
++            find_supported_files_in_path(&root, &root.join("src"), &registry, &[], false),
++            vec!["src/keep.py"]
++        );
++        fs::remove_dir_all(root).unwrap();
++    }
++
+     #[test]
+     fn scan_skips_binary_files_and_default_excludes() {
+         let root = temp_dir();
 ```
 
----
-
-### Incident Patch 3: `7e4ca027` (2026-10-22)
-**Commit Message**: fix(deps): bump webpki-roots to 1.0.10 (#526)
-
-Fixes #525.
-
-Bumps webpki-roots from 1.0.7 to 1.0.10 in Cargo.lock to pick up the
-fixed root store.
-
-webpki-roots 0.26.11 is still in the tree because ureq 2 depends on it,
-but that version is a semver shim that re-exports webpki-roots 1.x, so
-after this change every TLS client in sem uses the 1.0.10 roots.
-Dropping the shim entirely needs a move to ureq 3, which can come
-separately.
-
-Checked with `cargo tree -i webpki-roots@1.0.10` and a release build of
-sem-cli.
-
-Thanks @0323pin for the report.
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-**File**: `crates/Cargo.lock` (modified, +3/-3)
+**File**: `crates/sem-cli/tests/ignored_permissions.rs` (added, +86/-0)
 ```diff
-@@ -3673,14 +3673,14 @@ version = "0.26.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
- dependencies = [
-- "webpki-roots 1.0.7",
-+ "webpki-roots 1.0.10",
- ]
+@@ -0,0 +1,86 @@
++//! Ignored container data must not stop source discovery (#535).
++#![cfg(unix)]
++
++use std::{fs, os::unix::fs::PermissionsExt, path::Path, process::Command};
++
++struct LockedDir(std::path::PathBuf);
++impl Drop for LockedDir {
++    fn drop(&mut self) {
++        let _ = fs::set_permissions(&self.0, fs::Permissions::from_mode(0o700));
++    }
++}
++
++fn run(root: &Path, args: &[&str]) -> std::process::Output {
++    Command::new(env!("CARGO_BIN_EXE_sem"))
++        .current_dir(root)
++        .env("DO_NOT_TRACK", "1")
++        .env("SEM_LOCAL", "1")
++        .env("XDG_CACHE_HOME", root.join("cache"))
++        .args(args)
++        .output()
++        .unwrap()
++}
++
++#[test]
++fn ignored_unreadable_directory_does_not_break_discovery() {
++    for with_git in [false, true] {
++        let tmp = tempfile::tempdir().unwrap();
++        let root = tmp.path();
++        if with_git {
++            assert!(Command::new("git")
++                .args(["init", "-q"])
++                .current_dir(root)
++                .status()
++                .unwrap()
++                .success());
++        }
++        fs::write(root.join(".gitignore"), "postgres/\ncache/\n").unwrap();
++        fs::write(
++            root.join("app.py"),
++            "def target_fn():\n    return 1\n\ndef caller():\n    return target_fn()\n",
++        )
++        .unwrap();
++        let locked = LockedDir(root.join("postgres"));
++        fs::create_dir(&locked.0).unwrap();
++        fs::write(locked.0.join("ignored.py"), "def ignored(): pass\n").unwrap();
++        fs::set_permissions(&locked.0, fs::Permissions::from_mode(0)).unwrap();
++        for args in [
++            vec!["graph", "--no-cache", "--json"],
++            vec!["find", "target_fn", "--json"],
++            vec!["impact", "target_fn", "--no-cache", "--json"],
++        ] {
++            let out = run(root, &args);
++            assert!(
++                out.status.success(),
++                "{args:?}: {}",
++                String::from_utf8_lossy(&out.stderr)
++            );
++            let body = String::from_utf8_lossy(&out.stdout);
++            assert!(body.contains("target_fn"), "{args:?}: {body}");
++            assert!(!body.contains("ignored.py"), "{args:?}: {body}");
++        }
++    }
++}
++
++#[test]
++fn unignored_permission_error_explains_directory_exclusion() {
++    let tmp = tempfile::tempdir().unwrap();
++    let root = tmp.path();
++    fs::write(root.join(".gitignore"), "postgres/**\n").unwrap();
++    let locked = LockedDir(root.join("postgres"));
++    fs::create_dir(&locked.0).unwrap();
++    fs::set_permissions(&locked.0, fs::Permissions::from_mode(0)).unwrap();
++    if fs::read_dir(&locked.0).is_ok() {
++        // Root can bypass mode bits; run this test as an unprivileged user.
++        return;
++    }
++    let out = run(root, &["graph", "--no-cache"]);
++    assert!(!out.status.success());
++    let err = String::from_utf8_lossy(&out.stderr);
++    assert!(
++        err.contains(".semignore") && err.contains("postgres/ rather than postgres/**"),
++        "{err}"
++    );
++    fs::write(root.join(".semignore"), "postgres/\n").unwrap();
++    assert!(run(root, &["graph", "--no-cache"]).status.success());
++}
+```
+
+**File**: `crates/sem-mcp/src/server.rs` (modified, +36/-0)
+```diff
+@@ -468,6 +468,8 @@ impl SemServer {
+         builder
+             .hidden(true)
+             .git_ignore(true)
++            // Source snapshots and container mounts may not include .git.
++            .require_git(false)
+             .git_global(true)
+             .git_exclude(true);
+         let semignore = root.join(".semignore");
+@@ -515,6 +517,8 @@ impl SemServer {
+         builder
+             .hidden(!include_hidden)
+             .git_ignore(true)
++            // Source snapshots and container mounts may not include .git.
++            .require_git(false)
+             .git_global(true)
+             .git_exclude(true);
+         let semignore = prefix_root.join(".semignore");
+@@ -4139,6 +4143,38 @@ mod tests {
+         assert_eq!(mcp_log_labels(&repo, "original", "a.py"), expected);
+     }
  
- [[package]]
- name = "webpki-roots"
--version = "1.0.7"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "52f5ee44c96cf55f1b349600768e3ece3a8f26010c05265ab73f945bb1a2eb9d"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
++    #[test]
++    fn discovery_honors_gitignore_without_git_metadata() {
++        let temp = tempfile::tempdir().unwrap();
++        let root = temp.path();
++        fs::create_dir_all(root.join("postgres")).unwrap();
++        fs::create_dir_all(root.join("src")).unwrap();
++        fs::write(root.join(".gitignore"), "postgres/\n").unwrap();
++        fs::write(root.join("postgres/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/.gitignore"), "*.py\n!keep.py\n").unwrap();
++        fs::write(root.join("src/hidden.py"), "def hidden(): pass\n").unwrap();
++        fs::write(root.join("src/keep.py"), "def keep(): pass\n").unwrap();
++        let registry = sem_core::parser::plugins::create_default_registry();
++        for no_default_excludes in [false, true] {
++            assert_eq!(
++                SemServer::find_supported_files_with_options(root, &registry, no_default_excludes)
++                    .unwrap(),
++                vec!["src/keep.py"]
++            );
++            assert_eq!(
++                SemServer::walk_dir_files_with_options(
++                    &root.join("src"),
++                    root,
++                    &registry,
++                    no_default_excludes,
++                    false
++                )
++                .unwrap(),
++                vec!["src/keep.py"]
++            );
++        }
++    }
++
+     #[test]
+     fn find_supported_files_skips_binary_and_default_excludes() {
+         let root = temp_dir();
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #530** (2026-10-24): docs: record MCP query contract fixes (@rs545837)
-- **PR #529** (2026-10-24): fix(mcp): support scoped context and structured caller batches (@rs545837)
-- **PR #528** (2026-10-22): perf: parallelize the rest of the cold index build's serial stretches (@rs545837)
-- **PR #527** (2026-10-22): fix: preserve entity lookup and source receipt completeness (@rs545837)
-- **PR #526** (2026-10-22): fix(deps): bump webpki-roots to 1.0.10 (@rs545837)
-- **PR #524** (2026-10-22): perf: shorten the serial spine of cold index builds (@rs545837)
+- **PR #539** (2026-10-30): release: Sem 0.29.0 (@rs545837)
+- **PR #538** (2026-10-30): fix(core): extract definitions sem used to miss across 7 languages (@rs545837)
+- **PR #537** (2026-10-29): release: Sem 0.28.3 (@rs545837)
+- **PR #536** (2026-10-29): fix: honor gitignore in source snapshots without Git metadata (@rs545837)
+- **PR #534** (2026-10-28): perf(mcp): reuse repeated caller lookups within a batch (@rs545837)
+- **PR #533** (2026-10-26): fix(release): resume accepted uploads after registry indexing stalls (@rs545837)
 
 ---
 
@@ -2525,13 +2533,13 @@ Thanks @0323pin for the report.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parallelize the rest of the cold index build's serial stretches (#528)
+## X. core): extract definitions sem used to miss across 7 languages (#538)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ataraxy-Labs/sem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6caf881d`: parallelize the rest of the cold index build's serial stretches (#528). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e2e7851`: core): extract definitions sem used to miss across 7 languages (#538). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2539,7 +2547,10 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Cold index builds on large repos are about a fifth faster.** A first `sem graph` on the Linux kernel (2.35M entities) went from 49.5 s to 38.6 s, and on kubernetes (545k entities) from 12.5 s to 10.0 s, on an 8 vCPU machine, with peak memory within 2%. The build had long single-threaded stretches. Along with the lookup-table change above, corpus fingerprints are hashed in parallel, independent index sections and lookup tables are built side by side, and large frees and the two facts saves no longer hold up the command. The graph and the index file are byte-identical to before.
+### Fixed
+
+- **Entity extraction finds definitions it used to miss.** C++ headers saved as `.h` are read as C++; members of C++ template classes, `using` aliases, C function-pointer typedefs, Rust trait method signatures, Java annotation members, C# operators, delegates, events and indexers, Kotlin companion objects and members of `object :` expressions, and Elixir `@type` specs are now entities. When C, C++ or Kotlin code cannot be parsed (macros the grammar cannot expand, Kotlin Multiplatform constructors), clear definition headers in the unparsed region are recovered and marked `recovered = parse_error`. Measured against each language's own parser or Universal Ctags on 14 real repositories, recall is now 99–100% in every language except C++ (92%), up from 56% for C++, 71% for Kotlin and 92% for C#.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2549,4 +2560,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6caf881d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e2e7851` are properly handled with clean fallback behavior.

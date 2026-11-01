@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
 > **Source**: github ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
-> **Source Version**: `7726f835`  
+> **Source Version**: `1147f535`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T10:45:03.906Z  
+> **Timestamp**: 2026-10-30T19:12:25.531Z  
 > **Learning ID**: `learn-github-rollup-rollup`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rollup-rollup-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rollup/rollup](https://github.com/rollup/rollup))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T10:45:02.620Z  
+> **Harvest Timestamp**: 2026-10-30T19:12:24.520Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -303,14 +303,14 @@ impl AstConverter<'_> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6599** (2026-10-23): **[v5.0] Update dependency chokidar to v6**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [chokidar](https://redirect.github.com/paulmillr/chokidar) | [`^3.6.0` → `^6.0.0`](https://renovatebot.com/diffs/npm/chokidar/3.6.0/6.0.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/chokidar/6.0.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/chokidar/3.6.0/6.0.0?slim=true) |  ---  ### Release Notes  <details> <summary>paulmillr/chokidar (chokidar)</summary>  ### [`v6.0.0`](https://redirect.github.com/paulmillr/chokidar/blob/HEAD/CHANGELOG.md#600-2026-10-19)  [Compare Source](https://redirect.github.com/paulmillr/chokidar/compare/5.0.0...6.0.0)  ##### High-level changes  - Rewrote the watcher around a single observation pipeline. Backend callbacks are treated as invalidations and confirmed with `lstat`, `stat`, or `readdir` before any event is emitted, so the final state after a burst of changes matches the filesystem. - Added native recursive watching through `fs.watch({ recursive: true })`. The default `auto` backend uses it on macOS and Windows and per-directory watching elsewhere. - Shared native handles across watchers and opened them per directory only: files no longer own handles. This fixes `EBADF` errors when watching many files on macOS ([#&#8203;1385](https://redirect.github.com/paulmillr/chokidar/issues/1385), [#&#820
+- **Issue #6616** (2026-10-30): **Update estree dependency**
+  *Symptoms*: <!--   ⚡️ katchow! We ❤️ Pull Requests!    If you remove or skip this template, you'll make the 🐼 sad and the mighty god   of GitHub will appear and pile-drive the close button from a great height   while making animal noises.    Pull Request Requirements:   * Please include tests to illustrate the problem this PR resolves.   * Please lint your changes by running `npm run lint` before creating a PR.   * Please update the documentation in `/docs` where necessary    Please place an x (no spaces - [x]) in all [ ] that apply.   Remove the ones that do not apply as long as there remains one checkbox   in each section. -->  This PR contains:  - [x] other  Are tests included?  - [x] no  Breaking Changes?  - [x] no  List any relevant issue numbers:  <!-- If this PR resolves any issues, list them as  -  resolves #1234  where 1234 is the issue number. This will help us with house-keeping as Github will automatically add a note to those issues stating that a potential fix exists. Once the PR is merged, Github will automatically close those issues.  Starting each line with a dash "-" will cause GitHub to display the issue title inline.  If an issue is only solved partially or is relevant in some other way, just list the number without "resolves". -->  ### Description Include the update, which was not yet part of regular dependency updates, as people were asking about it.
 
-- **Issue #6598** (2026-10-23): **Lock file maintenance**
-  *Symptoms*: This PR contains the following updates:  | Update | Change | |---|---| | lockFileMaintenance | All locks refreshed |  🔧 This Pull Request updates lock files to use the latest dependency versions.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - Between 06:00 PM and 11:59 PM, only on Thursday (`* 18-23 * * 4`)   - Between 12:00 AM and 05:59 AM, only on Friday (`* 0-5 * * 5`) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/rollup/rollup). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xNzYuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjE3Ni4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbXX0=--> 
+- **Issue #6615** (2026-10-30): **Lock file maintenance**
+  *Symptoms*: This PR contains the following updates:  | Update | Change | |---|---| | lockFileMaintenance | All locks refreshed |  🔧 This Pull Request updates lock files to use the latest dependency versions.  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - Between 06:00 PM and 11:59 PM, only on Thursday (`* 18-23 * * 4`)   - Between 12:00 AM and 05:59 AM, only on Friday (`* 0-5 * * 5`) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  👻 **Immortal**: This PR will be recreated if closed unmerged. Get [config help](https://redirect.github.com/renovatebot/renovate/discussions) if that's undesired.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/rollup/rollup). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4xODguMiIsInVwZGF0ZWRJblZlciI6IjQ0LjE4OC4yIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #BffonO3SpxCrdMa2l/5q9bFetf7i2EitaRUJzzSLFjI=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyb2xsdXAiLCJwcm9qZWN0SWQiOiJwcmpfbzE4REJ2WDhnTTE1YTJzcWVkbmQ4N1VVc3JncyIsInYwIjpmYWxzZSwibGl2ZUZlZWRiYWNrIjp7InJlc29sdmVkIjowLCJ1bnJlc29sdmVkIjowLCJ0b3RhbCI6MCwibGluayI6InJvbGx1cC1naXQtcmVub3ZhdGUtbG9jay1maWxlLW1haW50ZW5hbmNlLXJvbGx1cC1qcy52ZXJjZWwuYXBwIn0sImluc3BlY3RvclVybCI6Imh0dHBzOi8vdmVyY2VsLmNvbS9yb2xsdXAtanMvcm9sbHVwL0FTNWNnZXU4WGlIc2lETVFYYXJ1SmgyUE15aEQiLCJwcmV2aWV3VXJsIjoicm9sbHVwLWdpdC1yZW5vdmF0ZS1sb2NrLWZpbGUtbWFpbnRlbmFuY2Utcm9sbHVwLWpzLnZlcmNlbC5hcHAiLCJuZXh0Q29tbWl0U3RhdHVzIjoiREVQTE9ZRUQiLCJyb290RGlyZWN0b3J5IjpudWxsfV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPXJvbGx1cCZyZXBvPXJvbGx1cCZwcj02NTk4In0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------
-  > ### Thank you for your contribution! ❤️  You can try out this pull request locally by installing Rollup via  ```bash npm install rollup/rollup#renovate/lock-file-maintenance ```  Notice: To build the native dependencies, you need [Rustup](https://www.rust-lang.org/tools/install) installed; the required nightly toolchain is then picked up automatically from `rust-toolchain.toml`.  Or load it into the REPL: https://rollup-ljqbishne-rollup-js.vercel.app/repl/?pr=6598  _The REPL artefacts are built from commit `872b879f6ef26503d60fc35f8c58bef5227e8449`._
+  > [vc]: #hKiyWM1ueyleYJmvGuaFT/FYKSGuxdisCRWWSIswC38=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJyb2xsdXAiLCJwcm9qZWN0SWQiOiJwcmpfbzE4REJ2WDhnTTE1YTJzcWVkbmQ4N1VVc3JncyIsInYwIjpmYWxzZSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3JvbGx1cC1qcy9yb2xsdXAvOEZUQnZVR1FkMTNxNE5qbTJmTTdKWXpzZXJvNCIsInByZXZpZXdVcmwiOiJyb2xsdXAtZ2l0LXJlbm92YXRlLWxvY2stZmlsZS1tYWludGVuYW5jZS1yb2xsdXAtanMudmVyY2VsLmFwcCIsIm5leHRDb21taXRTdGF0dXMiOiJERVBMT1lFRCIsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJyb2xsdXAtZ2l0LXJlbm92YXRlLWxvY2stZmlsZS1tYWludGVuYW5jZS1yb2xsdXAtanMudmVyY2VsLmFwcCJ9LCJyb290RGlyZWN0b3J5IjpudWxsfV0sInJlcXVlc3RSZXZpZXdVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vdmVyY2VsLWFnZW50L3JlcXVlc3QtcmV2aWV3P293bmVyPXJvbGx1cCZyZXBvPXJvbGx1cCZwcj02NjE1In0= The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------
+  > ### Thank you for your contribution! ❤️  You can try out this pull request locally by installing Rollup via  ```bash npm install rollup/rollup#renovate/lock-file-maintenance ```  Notice: To build the native dependencies, you need [Rustup](https://www.rust-lang.org/tools/install) installed; the required nightly toolchain is then picked up automatically from `rust-toolchain.toml`.  Or load it into the REPL: https://rollup-4x0ovnotm-rollup-js.vercel.app/repl/?pr=6615  _The REPL artefacts are built from commit `d8c7a7273fdb20133dce43e55239446c1ba8ce39`._
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -327,714 +327,583 @@ impl AstConverter<'_> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77a6b2bc` (2026-10-17)
-**Commit Message**: fix: include sourcemap comments in chunk hashes (#6509)
+### Incident Patch 1: `ad4ded9a` (2026-10-28)
+**Commit Message**: Preserve rendering errors when renderError fails (#6602)
 
-* Include sourcemap comments in chunk hashes
+* Preserve rendering errors when renderError fails
 
-(cherry picked from commit 00695d5e425162a77e65a5d0d32a23376ef57c2c)
-
-* Normalize sourcemap placeholders before hashing
-
-Normalize raw map JSON and file names before URL or base64 encoding can hide chunk placeholders. Preserve sourcemap hash dependencies and add regression coverage for map options and unrelated entries.
-
-Generated-by: OpenAI Codex
-
-* Clarify sourcemap inputs used for chunk hashes
-
-* Rehash colliding sourcemap filenames
-
-* Cover inline sourcemap file name hashing with tests
-
-Pin the behavior of the inline branch in the sourcemap hash
-computation: the sourcemapFileName exposed for inline sourcemaps is
-derived from the normalized sourcemap content, and identical inline
-maps share one name because no file is emitted, so names are neither
-reserved nor de-duplicated.
+* Include plugin names in compound errors
 
 ---------
 
-Co-authored-by: xuping.wang <[REDACTED_EMAIL]>
-Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
-Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
-
-**File**: `src/utils/renderChunks.ts` (modified, +153/-62)
-```diff
-@@ -59,21 +59,24 @@ export async function renderChunks(
- 		initialHashesByPlaceholder,
- 		nonHashedChunksWithPlaceholders,
- 		placeholders,
--		renderedChunksByPlaceholder
-+		renderedChunksByPlaceholder,
-+		usedFileNames
- 	} = await transformChunksAndGenerateContentHashes(
- 		renderedChunks,
- 		chunkGraph,
- 		outputOptions,
- 		pluginDriver,
- 		getHash,
--		log
-+		log,
-+		bundle
- 	);
- 	const hashesByPlaceholder = generateFinalHashes(
- 		renderedChunksByPlaceholder,
- 		hashDependenciesByPlaceholder,
- 		initialHashesByPlaceholder,
- 		placeholders,
- 		bundle,
-+		usedFileNames,
- 		getHash
- 	);
- 	addChunksToBundle(
-@@ -205,7 +208,8 @@ async function transformChunksAndGenerateContentHashes(
- 	outputOptions: NormalizedOutputOptions,
- 	pluginDriver: PluginDriver,
- 	getHash: GetHash,
--	log: LogHandler
-+	log: LogHandler,
-+	bundle: OutputBundleWithPlaceholders
- ) {
- 	const nonHashedChunksWithPlaceholders: RenderedChunkWithPlaceholders[] = [];
- 	const renderedChunksByPlaceholder = new Map<string, RenderedChunkWithPlaceholders>();
-@@ -217,7 +221,7 @@ async function transformChunksAndGenerateContentHashes(
- 	} of renderedChunks) {
- 		if (hashPlaceholder) placeholders.add(hashPlaceholder);
- 	}
--	await Promise.all(
-+	const transformedChunks = await Promise.all(
- 		renderedChunks.map(
- 			async ({
- 				chunk,
-@@ -240,62 +244,150 @@ async function transformChunksAndGenerateContentHashes(
- 						log
- 					))
- 				};
--				const { code, map } = transformedChunk;
--
--				if (hashPlaceholder) {
--					// To create a reproducible content-only hash, all placeholders are
--					// replaced with the same value before hashing
--					const { containedPlaceholders, transformedCode } =
--						replacePlaceholdersWithDefaultAndGetContainedPlaceholders(code, placeholders);
--					let contentToHash = transformedCode;
--					const hashAugmentation = pluginDriver.hookReduceValueSync(
--						'augmentChunkHash',
--						'',
--						[chunk.getRenderedChunkInfo()],
--						(augmentation, pluginHash) => {
--							if (pluginHash) {
--								augmentation += pluginHash;
--							}
--							return augmentation;
--						}
--					);
--					if (hashAugmentation) {
--						contentToHash += hashAugmentation;
--					}
--					renderedChunksByPlaceholder.set(hashPlaceholder, transformedChunk);
--					hashDependenciesByPlaceholder.set(hashPlaceholder, {
--						containedPlaceholders,
--						contentHash: getHash(contentToHash)
--					});
--				} else {
--					nonHashedChunksWithPlaceholders.push(transformedChunk);
--				}
--
--				const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
--				if (map && sourcemapHashPlaceholder) {
--					initialHashesByPlaceholder.set(
--						preliminarySourcemapFileName.hashPlaceholder,
--						getHash(map.toString()).slice(0, preliminarySourcemapFileName.hashPlaceholder.length)
--					);
--				}
-+				const hashAugmentation = hashPlaceholder
-+					? pluginDriver.hookReduceValueSync(
-+							'augmentChunkHash',
-+							'',
-+							[chunk.getRenderedChunkInfo()],
-+							(augmentation, pluginHash) => augmentation + (pluginHash || '')
-+						)
-+					: '';
-+				return {
-+					hashAugmentation,
-+					hashPlaceholder,
-+					preliminarySourcemapFileName,
-+					transformedChunk
-+				};
- 			}
- 		)
- 	);
-+	const usedFileNames = new Set(bundle[lowercaseBundleKeys]);
-+	for (const {
-+		transformedChunk,
-+		hashPlaceholder,
-+		preliminarySourcemapFileName,
-+		hashAugmentation
-+	} of transformedChunks) {
-+		const { map } = transformedChunk;
-+		const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
-+		if (map && sourcemapHashPlaceholder) {
-+			const { transformedCode: normalizedSourcemap } =
-+				replacePlaceholdersWithDefaultAndGetContainedPlaceholders(map.toString(), placeholders);
-+			initialHashesByPlaceholder.set(
-+				sourcemapHashPlaceholder,
-+				outputOptions.sourcemap === 'inline'
-+					? getHash(normalizedSourcemap).slice(0, sourcemapHashPlaceholder.length)
-+					: getUniqueHash(
-+							normalizedSourcemap,
-+							preliminarySourcemapFileName.fileName,
-+							sourcemapHashPlaceholder,
-+							usedFileNames,
-+							getHash
-+						)
-+			);
-+		}
-+
-+		if (hashPlaceholder) {
-+			renderedChunksByPlaceholder.set(hashPlaceholder, transformedChunk);
-+			hashDependenciesByPlaceholder.set(
-+				hashPlaceholder,
-+				getChunkHash(
-+					transformedChunk,
-+					outputOptions,
-+					getHash,
-+					placeholders,
-+					initialHashesByPlaceholder,
-+					hashAugmentation
-+				)
-+			);
-+		} else {
-+			nonHashedChunksWithPlaceholders.push(transformedChunk);
-+		}
-+	}
- 	return {
- 		hashDependenciesByPlaceholder,
- 		initialHashesByPlaceholder,
- 		nonHashedChunksWithPlaceholders,
- 		placeholders,
--		renderedChunksByPlaceholder
-+		renderedChunksByPlaceholder,
-+		usedFileNames
- 	};
- }
- 
-+function getChunkHash(
-+	{ code, map, fileName, sourcemapFileName }: RenderedChunkWithPlaceholders,
-+	outputOptions: NormalizedOutputOptions,
-+	getHash: GetHash,
-+	placeholders: Set<string>,
-+	initialHashesByPlaceholder: Map<string, string>,
-+	hashAugmentat
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/dynamic-C6tZdZAc_Y2J-Bx2VuOb-.js.map` (renamed, +1/-1)
-```diff
-@@ -1 +1 @@
--{"version":3,"file":"dynamic-hashed-DAVPlGJs.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC;;"}
-\ No newline at end of file
-+{"version":3,"file":"dynamic-hashed-Bx2VuOb-.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC;;"}
-\ No newline at end of file
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/dynamic-hashed-Bx2VuOb-.js` (renamed, +1/-1)
-```diff
-@@ -3,4 +3,4 @@ define((function () { 'use strict';
- 	console.log('dynamic-hashed');
- 
- }));
--//# sourceMappingURL=dynamic-D2UuTzPRzkA4-DAVPlGJs.js.map
-+//# sourceMappingURL=dynamic-C6tZdZAc_Y2J-Bx2VuOb-.js.map
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/dynamic.js.map` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--{"version":3,"file":"dynamic-CBK0ZRhv.js","sources":["../../dynamic.js"],"sourcesContent":["console.log('dynamic');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,SAAS,CAAC;;"}
-\ No newline at end of file
-+{"version":3,"file":"dynamic-6Pt_L0T6.js","sources":["../../dynamic.js"],"sourcesContent":["console.log('dynamic');\n"],"names":[],"mappings":";;CAAA,OAAO,CAAC,GAAG,CAAC,SAAS,CAAC;;"}
-\ No newline at end of file
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/amd/main.js` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- define(['require'], (function (require) { 'use strict';
- 
--	new Promise(function (resolve, reject) { require(['./dynamic-CBK0ZRhv'], resolve, reject); });
--	new Promise(function (resolve, reject) { require(['./dynamic-hashed-DAVPlGJs'], resolve, reject); });
-+	new Promise(function (resolve, reject) { require(['./dynamic-6Pt_L0T6'], resolve, reject); });
-+	new Promise(function (resolve, reject) { require(['./dynamic-hashed-Bx2VuOb-'], resolve, reject); });
- 
- }));
- //# sourceMappingURL=main.js.map
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/cjs/dynamic-C33_xDR5Jfrm-_yTWX9Li.js.map` (renamed, +1/-1)
-```diff
-@@ -1 +1 @@
--{"version":3,"file":"dynamic-hashed-BgHsqIXR.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;AAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC"}
-\ No newline at end of file
-+{"version":3,"file":"dynamic-hashed-_yTWX9Li.js","sources":["../../dynamic-hashed.js"],"sourcesContent":["console.log('dynamic-hashed');\n"],"names":[],"mappings":";;AAAA,OAAO,CAAC,GAAG,CAAC,gBAAgB,CAAC"}
-\ No newline at end of file
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/cjs/dynamic-hashed-BgHsqIXR.js` (removed, +0/-4)
-```diff
-@@ -1,4 +0,0 @@
--'use strict';
--
--console.log('dynamic-hashed');
--//# sourceMappingURL=dynamic-CcenT4iVwjBe-BgHsqIXR.js.map
-```
-
-**File**: `test/chunking-form/samples/sourcemap-file-names-function/_expected/cjs/dynamic-hashed-_yTWX9Li.js` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+'use strict';
-+
-+console.log('dynamic-hashed');
-+//# sourceMappingURL=dynamic-C33_xDR5Jfrm-_yTWX9Li.js.map
-```
-
----
-
-### Incident Patch 2: `97611099` (2026-10-14)
-**Commit Message**: Report creation of missing watch files sharing a directory on Linux (#6575)
-
-* Report creation of missing watch files sharing a directory on Linux
-
-When several watched files in the same directory do not exist yet, the
-bundled chokidar keyed its per-directory readdir throttle by directory
-alone, so only the first missing file's read went through and creations
-of the others were silently dropped on inotify. Key the throttle per
-missing file instead, via a build-time replacement of the bundled
-chokidar code.
-
-The regression test only fails on inotify platforms; macOS uses fsevents
-and is unaffected, so the Ubuntu CI run is what guards it.
-
-* Use chokidar 5's throttle key and make watch test order-independent
-
-The per-target key must not collide with the key used for plain
-directory reads, so we use the same composite key that fixes this
-upstream in chokidar 5. The regression test now requires the creation
-of all watched files to be reported instead of relying on which
-missing file happens to win the shared directory throttle.
-
-* Resolve audit.
-
-* Stabilize watch tests against watcher start-up noise
-
-Following #6573, replace the event-sequence assertions of the
-initially-missing-watch
-
-**File**: `audit-resolve.json` (modified, +5/-0)
-```diff
-@@ -64,6 +64,11 @@
-       "decision": "ignore",
-       "madeAt": 1791345901688,
-       "expiresAt": 1795000000000
-+    },
-+    "1241206|@mermaid-js/mermaid-cli>katex": {
-+      "decision": "ignore",
-+      "madeAt": 1791963061700,
-+      "expiresAt": 1795000000000
-     }
-   },
-   "rules": {},
-```
-
-**File**: `build-plugins/chokidar-readdir-throttle-replacement.ts` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+import type { RollupReplaceOptions } from '@rollup/plugin-replace';
-+import { readFile } from 'node:fs/promises';
-+import { exit } from 'node:process';
-+
-+const NODEFS_HANDLER = 'node_modules/chokidar/lib/nodefs-handler.js';
-+// chokidar uses a shared per-directory throttle for reading the directory, so
-+// when several watched files in the same directory do not exist yet, all but
-+// one directory read are silently discarded and file creations are never
-+// reported, see https://github.com/rollup/rollup/issues/6574. Keying the
-+// throttle by watched file gives each missing file its own directory read. The
-+// key matches the one used by chokidar >= 5, where this is fixed upstream.
-+const SHARED_DIRECTORY_READ_THROTTLE = "this.fsw._throttle('readdir', directory, 1000)";
-+const PER_TARGET_DIRECTORY_READ_THROTTLE =
-+	"this.fsw._throttle('readdir', target ? `${directory}:${target}` : directory, 1000)";
-+
-+let fileContent: string;
-+
-+try {
-+	fileContent = await readFile(NODEFS_HANDLER, 'utf8');
-+} catch {
-+	console.error(`Could not find "${NODEFS_HANDLER}".`);
-+	exit(1);
-+}
-+
-+const occurrences = fileContent.split(SHARED_DIRECTORY_READ_THROTTLE).length - 1;
-+if (occurrences !== 1) {
-+	console.error(
-+		`Expected exactly one occurrence of the shared directory-read throttle in "${NODEFS_HANDLER}" but found ${occurrences}.`
-+	);
-+	exit(1);
-+}
-+
-+export const chokidarReaddirThrottleReplacement: RollupReplaceOptions = {
-+	delimiters: ['', ''],
-+	include: NODEFS_HANDLER,
-+	preventAssignment: true, // defaults to true in next major version of plugin
-+	values: {
-+		[SHARED_DIRECTORY_READ_THROTTLE]: PER_TARGET_DIRECTORY_READ_THROTTLE
-+	}
-+};
-```
-
-**File**: `package-lock.json` (modified, +21/-4)
-```diff
-@@ -12068,9 +12068,9 @@
-       }
-     },
-     "node_modules/mermaid": {
--      "version": "12.1.0",
--      "resolved": "https://registry.npmjs.org/mermaid/-/mermaid-12.1.0.tgz",
--      "integrity": "sha512-wlVCp+8eTupfCeeFvoZNNiTuHrvag0P2jz/ILgb/f/6jkVokUefOcujefi8qUe/j2asHiSePncVsz/xzzA80LQ==",
-+      "version": "12.2.0",
-+      "resolved": "https://registry.npmjs.org/mermaid/-/mermaid-12.2.0.tgz",
-+      "integrity": "sha512-w7nr/SFrLO7BaVTs3dQTvYSV6nYSBj0Yy9DjBhsIJtAcHqRzXSq4Pg32ujHZ/AdWsAMNEvvhbm5dt9E2tOiHzw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -12090,7 +12090,7 @@
-         "dompurify": "^3.4.12",
-         "elkjs": "^0.9.3",
-         "es-toolkit": "^1.45.1",
--        "katex": "^0.16.47",
-+        "katex": "^0.18.0",
-         "khroma": "^2.1.0",
-         "marked": "^16.3.0",
-         "roughjs": "^4.6.6",
-@@ -12102,6 +12102,23 @@
-         "node": ">=22.12.0"
-       }
-     },
-+    "node_modules/mermaid/node_modules/katex": {
-+      "version": "0.18.10",
-+      "resolved": "https://registry.npmjs.org/katex/-/katex-0.18.10.tgz",
-+      "integrity": "sha512-/B6p9eY9DX7aHBfpkHdpirDTZ5QH9xTwL9y837PWuzuv41O5jFdqNQwVQEQsimY0/iVNkwBY4+4hMfhQ7d4Dbw==",
-+      "dev": true,
-+      "funding": [
-+        "https://opencollective.com/katex",
-+        "https://github.com/sponsors/katex"
-+      ],
-+      "license": "MIT",
-+      "dependencies": {
-+        "commander": "^15.0.0"
-+      },
-+      "bin": {
-+        "katex": "cli.js"
-+      }
-+    },
-     "node_modules/mermaid/node_modules/marked": {
-       "version": "16.4.2",
-       "resolved": "https://registry.npmjs.org/marked/-/marked-16.4.2.tgz",
-```
-
-**File**: `rollup.config.ts` (modified, +2/-0)
-```diff
-@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
- import type { Plugin, RollupOptions, WarningHandlerWithDefault } from 'rollup';
- import addCliEntry from './build-plugins/add-cli-entry';
- import { moduleAliases } from './build-plugins/aliases';
-+import { chokidarReaddirThrottleReplacement } from './build-plugins/chokidar-readdir-throttle-replacement';
- import cleanBeforeWrite from './build-plugins/clean-before-write';
- import { copyBrowserTypes, copyNodeTypes } from './build-plugins/copy-types';
- import emitModulePackageFile from './build-plugins/emit-module-package-file';
-@@ -40,6 +41,7 @@ const treeshake = {
- 
- const nodePlugins: readonly Plugin[] = [
- 	replace(fsEventsReplacement),
-+	replace(chokidarReaddirThrottleReplacement),
- 	alias(moduleAliases),
- 	nodeResolve({ preferBuiltins: true }),
- 	json(),
-```
-
-**File**: `test/watch/index.js` (modified, +110/-32)
-```diff
-@@ -3580,20 +3580,7 @@ describe('rollup.watch', function () {
- 					}
- 				}
- 			});
--			const waitForWatcherEvent = eventCode =>
--				new Promise((resolve, reject) => {
--					const listener = event => {
--						if (event.code === eventCode) {
--							resolve(event);
--						} else if (event.code === 'ERROR') {
--							reject(event.error);
--						} else {
--							watcher.once('event', listener);
--						}
--					};
--					watcher.once('event', listener);
--				});
--			await withTimeout(waitForWatcherEvent('END'), 10_000, () => {
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
- 				throw new Error('The initial build did not finish.');
- 			});
- 			assert.strictEqual(run(BUNDLE_FILE), 42);
-@@ -3610,7 +3597,7 @@ describe('rollup.watch', function () {
- 				await Promise.all([...missingWatchChangeIds].map(file => writeFile(file, 'changed')));
- 				await Promise.race([allWatchChangesAnnounced, wait(300)]);
- 			}
--			await withTimeout(waitForWatcherEvent('END'), 10_000, () => {
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
- 				throw new Error('The rebuild after the changes did not finish.');
- 			});
- 			assert.strictEqual(run(BUNDLE_FILE), 42);
-@@ -3788,6 +3775,7 @@ describe('rollup.watch', function () {
- 		});
- 
- 		it('respects initially missing added watched files', async () => {
-+			const watchedId = path.join(INPUT_DIR, 'dep');
- 			await copy(path.join(SAMPLES_DIR, 'basic'), INPUT_DIR);
- 			watcher = rollup.watch({
- 				input: ENTRY_FILE,
-@@ -3798,28 +3786,94 @@ describe('rollup.watch', function () {
- 				},
- 				plugins: {
- 					transform() {
--						this.addWatchFile(path.join(INPUT_DIR, 'dep'));
--						return `export default ${existsSync(path.join(INPUT_DIR, 'dep'))}`;
-+						this.addWatchFile(watchedId);
-+						return `export default ${existsSync(watchedId)}`;
- 					}
- 				}
- 			});
--			return sequence(watcher, [
--				'START',
--				'BUNDLE_START',
--				'BUNDLE_END',
--				'END',
--				() => {
--					assert.strictEqual(run(BUNDLE_FILE), false);
--					atomicWriteFileSync(path.join(INPUT_DIR, 'dep'), '');
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
-+				throw new Error('The initial build did not finish.');
-+			});
-+			assert.strictEqual(run(BUNDLE_FILE), false);
-+			const retryDeadline = Date.now() + 5000;
-+			// File watchers may drop changes that happen before they are fully
-+			// initialized, and watcher start-up can trigger spurious additional
-+			// rebuilds, hence the file is created again until a rebuild picks
-+			// up its existence.
-+			while (readBundleResult() !== true) {
-+				if (Date.now() > retryDeadline) {
-+					throw new Error('The creation of the watched file did not trigger a rebuild.');
-+				}
-+				atomicWriteFileSync(watchedId, '');
-+				await wait(300);
-+			}
-+		});
-+
-+		it('reports the creation of initially missing watched files when several of them are in the same directory', async () => {
-+			const extensionlessWatchId = path.join(INPUT_DIR, 'dep');
-+			const watchedId = path.join(INPUT_DIR, 'dep.js');
-+			let writtenBundleCount = 0;
-+			let isCreationReported = false;
-+			const { promise: creationReported, resolve: resolveCreationReported } = createDeferred();
-+			await copy(path.join(SAMPLES_DIR, 'basic'), INPUT_DIR);
-+			watcher = rollup.watch({
-+				input: ENTRY_FILE,
-+				output: {
-+					file: BUNDLE_FILE,
-+					format: 'cjs',
-+					exports: 'auto'
- 				},
--				'START',
--				'BUNDLE_START',
--				'BUNDLE_END',
--				'END',
--				() => {
--					assert.strictEqual(run(BUNDLE_FILE), true);
-+				plugins: {
-+					buildStart() {
-+						// The extension-less resolution candidate is registered one
-+						// build before the file that is actually created so that
-+						// its directory listener reliably wins chokidar's shared
-+						// directory throttle. Like theme/theme.js in
-+						// https://github.com/rollup/rollup/issues/6574, it is never
-+						// created itself.
-+						this.addWatchFile(extensionlessWatchId);
-+						if (writtenBundleCount > 0) {
-+							this.addWatchFile(watchedId);
-+						}
-+					},
-+					writeBundle() {
-+						writtenBundleCount++;
-+					},
-+					watchChange(id) {
-+						// When the initial creation is dropped by the file watcher,
-+						// rewrites are reported as updates, so any event proves
-+						// that the missing file is watched.
-+						if (id === watchedId) {
-+							isCreationReported = true;
-+							resolveCreationReported();
-+						}
-+					}
- 				}
--			]);
-+			});
-+			await withTimeout(waitForWatcherEvent(watcher, 'END'), 10_000, () => {
-+				throw new Error('The initial build did not finish.');
-+			});
-+			const registrationDeadline = Date.now() + 5000;
-+			while (writtenBundleCount < 2) {
-+				if (Date.now() > registrationDeadline) {
-+					throw new Error('The rebuild to register the second watched file did not start.');
-+				}
-+				atomicWriteFileSync(ENTRY_FILE, 'export default 43;');
-+				await wait(300);
-+			}
-+			const retryDeadline = Date.now() + 5000;
-+			// File watcher
-```
-
----
-
-### Incident Patch 3: `3a9f4af7` (2026-10-19)
-**Commit Message**: Fix transform diagnostics at position zero (#6587)
-
 Co-authored-by: shuaiyafei <[REDACTED_EMAIL]>
 
-**File**: `src/utils/transform.ts` (modified, +2/-2)
+**File**: `docs/plugin-development/index.md` (modified, +2/-0)
 ```diff
-@@ -100,7 +100,7 @@ export default async function transform(
- 		(handler: LoggingFunctionWithPosition): LoggingFunctionWithPosition =>
- 		(log, pos) => {
- 			log = normalizeLog(log);
--			if (pos) augmentCodeLocation(log, pos, currentSource, id);
-+			if (pos != null) augmentCodeLocation(log, pos, currentSource, id);
- 			log.id = id;
- 			log.hook = 'transform';
- 			handler(log);
-@@ -140,7 +140,7 @@ export default async function transform(
- 						pos?: number | { column: number; line: number }
- 					): never {
- 						if (typeof error_ === 'string') error_ = { message: error_ };
--						if (pos) augmentCodeLocation(error_, pos, currentSource, id);
-+						if (pos != null) augmentCodeLocation(error_, pos, currentSource, id);
- 						error_.id = id;
- 						error_.hook = 'transform';
- 						return pluginContext.error(error_);
+@@ -1247,6 +1247,8 @@ Note that when this hook rewrites dynamic imports in non-ES formats, no interop
+ 
+ Called when Rollup encounters an error during `bundle.generate()` or `bundle.write()`. The error is passed to this hook. To get notified when generation completes successfully, use the `generateBundle` hook.
+ 
++If a `renderError` hook itself fails, Rollup reports both the original rendering error and the hook failure together. The combined error retains the original error's code and plugin metadata.
++
+ ### renderStart
+ 
+ |  |  |
 ```
 
-**File**: `test/function/samples/logging/transform-log-at-position-zero/_config.js` (added, +36/-0)
+**File**: `src/Bundle.ts` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,36 @@
-+const path = require('node:path');
-+const ID_MAIN = path.join(__dirname, 'main.js');
-+
-+module.exports = defineTest({
-+	description: 'includes source locations for transform logs at position zero',
-+	options: {
-+		logLevel: 'debug',
-+		plugins: [
-+			{
-+				name: 'test',
-+				transform() {
-+					this.warn('warn-message', 0);
-+					this.info('info-message', 0);
-+					this.debug('debug-message', 0);
-+				}
+@@ -22,6 +22,7 @@ import {
+ 	logCannotAssignModuleToChunk,
+ 	logChunkInvalid,
+ 	logCircularChunk,
++	logErrorInHook,
+ 	logFileNameOutsideOutputDirectory,
+ 	logInvalidOption
+ } from './utils/logs';
+@@ -86,7 +87,11 @@ export default class Bundle {
+ 				this.inputOptions.onLog
+ 			);
+ 		} catch (error_: any) {
+-			await this.pluginDriver.hookParallel('renderError', [error_]);
++			try {
++				await this.pluginDriver.hookParallel('renderError', [error_]);
++			} catch (hookError: any) {
++				error(logErrorInHook(error_, hookError, 'renderError'));
 +			}
-+		]
-+	},
-+	logs: ['warn', 'info', 'debug'].map(level => ({
-+		code: level === 'warn' ? 'PLUGIN_WARNING' : 'PLUGIN_LOG',
-+		frame: `
-+			1: assert.ok(true);
-+			   ^`,
-+		hook: 'transform',
-+		id: ID_MAIN,
-+		level,
-+		loc: {
-+			column: 0,
-+			file: ID_MAIN,
-+			line: 1
-+		},
-+		message: `[plugin test] main.js (1:0): ${level}-message`,
-+		plugin: 'test',
-+		pos: 0
-+	}))
-+});
+ 			throw error_;
+ 		}
+ 
 ```
 
-**File**: `test/function/samples/logging/transform-log-at-position-zero/main.js` (added, +1/-0)
+**File**: `src/rollup/rollup.ts` (modified, +2/-5)
 ```diff
-@@ -0,0 +1 @@
-+assert.ok(true);
+@@ -11,6 +11,7 @@ import {
+ 	getRollupError,
+ 	logAlreadyClosed,
+ 	logCannotEmitFromOptionsHook,
++	logErrorInHook,
+ 	logMissingFileOrDirOption,
+ 	logPluginError
+ } from '../utils/logs';
+@@ -83,11 +84,7 @@ export async function rollupInternal(
+ 			try {
+ 				await graph.pluginDriver.hookParallel('buildEnd', [error_]);
+ 			} catch (buildEndError: any) {
+-				// Create a compound error object to include both errors, based on the original error
+-				const compoundError = getRollupError({
+-					...error_,
+-					message: `There was an error during the build:\n  ${error_.message}\nAdditionally, handling the error in the 'buildEnd' hook caused the following error:\n  ${buildEndError.message}`
+-				});
++				const compoundError = getRollupError(logErrorInHook(error_, buildEndError, 'buildEnd'));
+ 				await graph.pluginDriver.hookParallel('closeBundle', [compoundError]).catch(() => {});
+ 				throw compoundError;
+ 			}
 ```
 
-**File**: `test/function/samples/plugin-error-transform-pos-zero/_config.js` (added, +40/-0)
+**File**: `src/utils/logs.ts` (modified, +14/-0)
 ```diff
-@@ -0,0 +1,40 @@
-+const path = require('node:path');
-+const ID_MAIN = path.join(__dirname, 'main.js');
+@@ -48,6 +48,20 @@ export function getRollupError(base: RollupLog): Error & RollupLog {
+ 	return errorInstance;
+ }
+ 
++export function logErrorInHook(
++	originalError: RollupLog,
++	hookError: RollupLog,
++	hookName: 'buildEnd' | 'renderError'
++): RollupLog {
++	augmentLogMessage(originalError);
++	augmentLogMessage(hookError);
++	const phase = hookName === 'buildEnd' ? 'the build' : 'rendering';
++	return {
++		...originalError,
++		message: `There was an error during ${phase}:\n  ${originalError.message}\nAdditionally, handling the error in the '${hookName}' hook caused the following error:\n  ${hookError.message}`
++	};
++}
++
+ export function augmentCodeLocation(
+ 	properties: RollupLog,
+ 	pos: number | { column: number; line: number },
+```
+
+**File**: `test/function/samples/render-error-hook/asynchronous/_config.js` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++const assert = require('node:assert/strict');
++const { setImmediate } = require('node:timers/promises');
 +
 +module.exports = defineTest({
-+	description: 'includes the current source location for transform errors at position zero',
++	description: 'preserves a renderChunk error when renderError rejects asynchronously',
 +	options: {
 +		plugins: [
 +			{
-+				name: 'prepend',
-+				transform(code) {
-+					return `const prepended = true;\n${code}`;
++				name: 'primary',
++				renderChunk() {
++					this.error({ code: 'PRIMARY_FAILURE', message: 'chunk rendering failed' });
 +				}
 +			},
 +			{
-+				name: 'test',
-+				transform() {
-+					this.error(new Error('error at start'), 0);
++				name: 'cleanup',
++				async renderError(error) {
++					assert.equal(error.message, '[plugin primary] chunk rendering failed');
++					assert.equal(error.hook, 'renderChunk');
++					await setImmediate();
++					this.error('async cleanup failed');
 +				}
 +			}
 +		]
 +	},
-+	error: {
++	generateError: {
 +		code: 'PLUGIN_ERROR',
-+		frame: `
-+			1: const prepended = true;
-+			   ^
-+			2: export const value = 1;`,
-+		hook: 'transform',
-+		id: ID_MAIN,
-+		loc: {
-+			column: 0,
-+			file: ID_MAIN,
-+			line: 1
-+		},
-+		message: 'error at start',
-+		plugin: 'test',
-+		pos: 0,
-+		watchFiles: [ID_MAIN]
++		hook: 'renderChunk',
++		message:
++			"There was an error during rendering:\n  [plugin primary] chunk rendering failed\nAdditionally, handling the error in the 'renderError' hook caused the following error:\n  [plugin cleanup] async cleanup failed",
++		plugin: 'primary',
++		pluginCode: 'PRIMARY_FAILURE'
 +	}
 +});
 ```
 
-**File**: `test/function/samples/plugin-error-transform-pos-zero/main.js` (added, +1/-0)
+**File**: `test/function/samples/render-error-hook/asynchronous/main.js` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+export const value = 1;
++export const value = 42;
+```
+
+**File**: `test/function/samples/render-error-hook/plain-errors/_config.js` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++module.exports = defineTest({
++	description: 'names both plugins in the combined error when they throw plain errors',
++	options: {
++		plugins: [
++			{
++				name: 'primary',
++				renderChunk() {
++					throw new Error('rendering failed');
++				}
++			},
++			{
++				name: 'cleanup',
++				renderError() {
++					throw new Error('cleanup failed');
++				}
++			}
++		]
++	},
++	generateError: {
++		code: 'PLUGIN_ERROR',
++		hook: 'renderChunk',
++		message:
++			"There was an error during rendering:\n  [plugin primary] rendering failed\nAdditionally, handling the error in the 'renderError' hook caused the following error:\n  [plugin cleanup] cleanup failed",
++		plugin: 'primary'
++	}
++});
+```
+
+**File**: `test/function/samples/render-error-hook/plain-errors/main.js` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++export const value = 42;
+```
+
+---
+
+### Incident Patch 2: `ad39ddc2` (2026-10-29)
+**Commit Message**: Add android-x64 native build (#6603)
+
+* Add android-x64 native build
+
+Allows using the native build on x86_64 Android, e.g. Termux on Chromebooks.
+napi-rs only sets up the NDK compiler and linker for arm and aarch64 Android
+targets, so the CI build points cc and cargo at the x86_64 NDK clang itself.
+
+* Test native package lookup on x64 Android
+
+---------
+
+Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/build-and-tests.yml` (modified, +9/-0)
+```diff
+@@ -147,6 +147,15 @@ jobs:
+             cross: napi
+             # There are compile issues when using the cache with Android
+             cache-cargo: false
++          - host: ubuntu-latest
++            target: x86_64-linux-android
++            # napi-rs only configures the NDK compiler and linker for arm and aarch64 Android
++            setup: |
++              ndk_bin="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin"
++              echo "CC_x86_64_linux_android=$ndk_bin/x86_64-linux-android24-clang" >> "$GITHUB_ENV"
++              echo "CXX_x86_64_linux_android=$ndk_bin/x86_64-linux-android24-clang++" >> "$GITHUB_ENV"
++              echo "CARGO_TARGET_X86_64_LINUX_ANDROID_LINKER=$ndk_bin/x86_64-linux-android24-clang" >> "$GITHUB_ENV"
++            cache-cargo: false
+           - host: ubuntu-latest
+             target: riscv64gc-unknown-linux-gnu
+             setup: |
+```
+
+**File**: `native.js` (modified, +2/-1)
+```diff
+@@ -56,7 +56,8 @@ const isMusl = () => {
+ const bindingsByPlatformAndArch = {
+ 	android: {
+ 		arm: { base: 'android-arm-eabi' },
+-		arm64: { base: 'android-arm64' }
++		arm64: { base: 'android-arm64' },
++		x64: { base: 'android-x64' }
+ 	},
+ 	darwin: {
+ 		arm64: { base: 'darwin-arm64' },
+```
+
+**File**: `npm/android-x64/README.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++# `@rollup/rollup-android-x64`
++
++This is the **x86_64-linux-android** binary for `rollup`
+```
+
+**File**: `npm/android-x64/package.json` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++{
++  "name": "@rollup/rollup-android-x64",
++  "version": "0.0.0",
++  "os": [
++    "android"
++  ],
++  "cpu": [
++    "x64"
++  ],
++  "files": [
++    "rollup.android-x64.node"
++  ],
++  "description": "Native bindings for Rollup",
++  "author": "Lukas Taegert-Atkinson",
++  "homepage": "https://rollupjs.org/",
++  "license": "MIT",
++  "repository": {
++    "type": "git",
++    "url": "git+https://github.com/rollup/rollup.git"
++  },
++  "main": "./rollup.android-x64.node"
++}
+```
+
+**File**: `package.json` (modified, +1/-0)
+```diff
+@@ -30,6 +30,7 @@
+       "powerpc64le-unknown-linux-musl",
+       "s390x-unknown-linux-gnu",
+       "x86_64-apple-darwin",
++      "x86_64-linux-android",
+       "x86_64-pc-windows-gnu",
+       "x86_64-pc-windows-msvc",
+       "x86_64-unknown-freebsd",
+```
+
+**File**: `test/misc/misc.js` (modified, +15/-0)
+```diff
+@@ -509,6 +509,21 @@ console.log(x);
+ 		);
+ 	});
+ 
++	it('loads the android-x64 native package on x64 Android', () => {
++		const error = Object.assign(new Error('Cannot find module @rollup/rollup-android-x64'), {
++			code: 'MODULE_NOT_FOUND'
++		});
++
++		assert.throws(
++			() => loadNativeWithError('android', error),
++			receivedError => {
++				assert.strictEqual(receivedError.cause, error);
++				assert.match(receivedError.message, /^Cannot find module @rollup\/rollup-android-x64\./);
++				return true;
++			}
++		);
++	});
++
+ 	it('keeps the Visual C++ Redistributable guidance for missing Windows DLLs', () => {
+ 		const error = Object.assign(new Error('The specified module could not be found.'), {
+ 			code: 'ERR_DLOPEN_FAILED'
+```
+
+---
+
+### Incident Patch 3: `6a498dab` (2026-10-28)
+**Commit Message**: Treat null sources in plugin sourcemaps as unmapped (#6600)
+
+* Treat null sources in plugin sourcemaps as unmapped
+
+* Allow null sources in the sourcemap types
+
+Plugins may return maps with null sources, so the public types allow
+them now. getCombinedSourcemap traces such a map even without previous
+transforms, so that the map it returns only has named sources.
+
+* Compare the traced source path independently of drive letter case
+
+source-map lowercases the Windows drive letter of absolute sources.
+
+* Pass a missing sourcesContent entry through as before
+
+---------
+
+Co-authored-by: Wleeaf <[REDACTED_EMAIL]>
+Co-authored-by: Lukas Taegert-Atkinson <[REDACTED_EMAIL]>
+
+**File**: `src/rollup/types.d.ts` (modified, +4/-4)
+```diff
+@@ -69,8 +69,8 @@ export interface ExistingDecodedSourceMap {
+ 	readonly mappings: SourceMapSegment[][];
+ 	names: string[];
+ 	sourceRoot?: string | undefined;
+-	sources: string[];
+-	sourcesContent?: string[] | undefined;
++	sources: (string | null)[];
++	sourcesContent?: (string | null)[] | undefined;
+ 	version: number;
+ 	x_google_ignoreList?: number[] | undefined;
+ }
+@@ -80,8 +80,8 @@ export interface ExistingRawSourceMap {
+ 	mappings: string;
+ 	names: string[];
+ 	sourceRoot?: string | undefined;
+-	sources: string[];
+-	sourcesContent?: string[] | undefined;
++	sources: (string | null)[];
++	sourcesContent?: (string | null)[] | undefined;
+ 	version: number;
+ 	x_google_ignoreList?: number[] | undefined;
+ }
+```
+
+**File**: `src/utils/collapseSourcemaps.ts` (modified, +21/-9)
+```diff
+@@ -12,11 +12,11 @@ import { error, logConflictingSourcemapSources, logSourcemapBroken } from './log
+ import { basename, dirname, relative, resolve } from './path';
+ 
+ class Source {
+-	readonly content: string;
++	readonly content: string | null;
+ 	readonly filename: string;
+ 	isOriginal = true;
+ 
+-	constructor(filename: string, content: string) {
++	constructor(filename: string, content: string | null) {
+ 		this.filename = filename;
+ 		this.content = content;
+ 	}
+@@ -36,11 +36,11 @@ interface SourceMapSegmentObject {
+ class Link {
+ 	readonly mappings: readonly SourceMapSegment[][];
+ 	readonly names: readonly string[];
+-	readonly sources: (Source | Link)[];
++	readonly sources: (Source | Link | null)[];
+ 
+ 	constructor(
+ 		map: { mappings: readonly SourceMapSegment[][]; names: readonly string[] },
+-		sources: (Source | Link)[]
++		sources: (Source | Link | null)[]
+ 	) {
+ 		this.sources = sources;
+ 		this.names = map.names;
+@@ -50,7 +50,7 @@ class Link {
+ 	traceMappings() {
+ 		const sources: string[] = [];
+ 		const sourceIndexMap = new Map<string, number>();
+-		const sourcesContent: string[] = [];
++		const sourcesContent: (string | null)[] = [];
+ 		const names: string[] = [];
+ 		const nameIndexMap = new Map<string, number>();
+ 
+@@ -189,8 +189,11 @@ function getCollapsedSourcemap(
+ 		const directory = dirname(id) || '.';
+ 		const sourceRoot = originalSourcemap.sourceRoot || '.';
+ 
+-		const baseSources = sources.map(
+-			(source, index) => new Source(resolve(directory, sourceRoot, source), sourcesContent[index])
++		// A source whose name is not known is null, and mappings to it are treated as unmapped
++		const baseSources = sources.map((source, index) =>
++			source == null
++				? null
++				: new Source(resolve(directory, sourceRoot, source), sourcesContent[index])
+ 		);
+ 		source = new Link(originalSourcemap, baseSources);
+ 	} else {
+@@ -249,8 +252,11 @@ export function collapseSourcemap(
+ 	originalSourcemap: ExistingDecodedSourceMap | null,
+ 	sourcemapChain: readonly DecodedSourceMapOrMissing[],
+ 	log: LogHandler
+-): ExistingDecodedSourceMap | null {
+-	if (sourcemapChain.length === 0) {
++): (ExistingDecodedSourceMap & { sources: string[] }) | null {
++	if (
++		sourcemapChain.length === 0 &&
++		(!originalSourcemap || hasOnlyNamedSources(originalSourcemap))
++	) {
+ 		return originalSourcemap;
+ 	}
+ 
+@@ -264,3 +270,9 @@ export function collapseSourcemap(
+ 	const map = source.traceMappings();
+ 	return decodedSourcemap({ version: 3, ...map });
+ }
++
++function hasOnlyNamedSources(
++	map: ExistingDecodedSourceMap
++): map is ExistingDecodedSourceMap & { sources: string[] } {
++	return map.sources.every(source => source != null);
++}
+```
+
+**File**: `src/utils/decodedSourcemap.ts` (modified, +1/-0)
+```diff
+@@ -57,6 +57,7 @@ export function resetSourcemapCache(
+ }
+ 
+ export function decodedSourcemap(map: null | undefined): null;
++export function decodedSourcemap<T extends ExistingDecodedSourceMap>(map: T): T;
+ export function decodedSourcemap(map: Exclude<Input, null | undefined>): ExistingDecodedSourceMap;
+ export function decodedSourcemap(map: Input): ExistingDecodedSourceMap | null;
+ export function decodedSourcemap(map: Input): ExistingDecodedSourceMap | null {
+```
+
+**File**: `test/sourcemaps/samples/null-sources-combined-sourcemap/_config.js` (added, +44/-0)
+```diff
+@@ -0,0 +1,44 @@
++const assert = require('node:assert');
++const { readFileSync } = require('node:fs');
++const path = require('node:path');
++const { SourceMapConsumer } = require('source-map');
++const getLocation = require('../../getLocation');
++
++module.exports = defineTest({
++	description: 'leaves sources without a name out of the combined sourcemap',
++	options: {
++		plugins: [
++			{
++				name: 'test-plugin',
++				load(id) {
++					return {
++						code: readFileSync(id, 'utf8'),
++						map: {
++							version: 3,
++							names: [],
++							sources: [null, 'original.js'],
++							sourcesContent: [null, 'console.log(2);'],
++							mappings: 'AAAA;ACAA'
++						}
++					};
++				},
++				async transform(code) {
++					const combinedMap = this.getCombinedSourcemap();
++					assert.deepStrictEqual(combinedMap.sources, [path.join(__dirname, 'original.js')]);
++					const smc = await new SourceMapConsumer(combinedMap);
++
++					const unknownLoc = smc.originalPositionFor(getLocation(code, code.indexOf('log(1)')));
++					assert.strictEqual(unknownLoc.source, null);
++
++					const originalLoc = smc.originalPositionFor(getLocation(code, code.indexOf('log(2)')));
++					assert.strictEqual(path.relative(__dirname, originalLoc.source), 'original.js');
++					assert.strictEqual(originalLoc.line, 1);
++					return null;
++				}
++			}
++		]
++	},
++	test(code, map) {
++		assert.deepStrictEqual(map.sources, ['../original.js']);
++	}
++});
+```
+
+**File**: `test/sourcemaps/samples/null-sources-combined-sourcemap/main.js` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++console.log(1);
++console.log(2);
+```
+
+**File**: `test/sourcemaps/samples/null-sources/_config.js` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++const assert = require('node:assert');
++const { readFileSync } = require('node:fs');
++const { SourceMapConsumer } = require('source-map');
++const getLocation = require('../../getLocation');
++
++module.exports = defineTest({
++	description: 'treats mappings to a null source as unmapped',
++	options: {
++		plugins: [
++			{
++				name: 'test-plugin',
++				load(id) {
++					return {
++						code: readFileSync(id, 'utf8'),
++						map: {
++							version: 3,
++							names: [],
++							// The first line maps to a source whose name is not known
++							sources: [null, 'original.js'],
++							sourcesContent: [null, 'console.log(2);'],
++							mappings: 'AAAA;ACAA'
++						}
++					};
++				}
++			}
++		]
++	},
++	async test(code, map) {
++		assert.deepStrictEqual(map.sources, ['../original.js']);
++		const smc = await new SourceMapConsumer(map);
++
++		const unknownLoc = smc.originalPositionFor(getLocation(code, code.indexOf('log(1)')));
++		assert.strictEqual(unknownLoc.source, null);
++
++		const originalLoc = smc.originalPositionFor(getLocation(code, code.indexOf('log(2)')));
++		assert.strictEqual(originalLoc.source, '../original.js');
++		assert.strictEqual(originalLoc.line, 1);
++	}
++});
+```
+
+**File**: `test/sourcemaps/samples/null-sources/main.js` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++console.log(1);
++console.log(2);
+```
+
+**File**: `test/typescript/index.ts` (modified, +10/-0)
+```diff
+@@ -129,3 +129,13 @@ const _amdOutputOptions: rollup.OutputOptions['amd'][] = [
+ 		basePath: ''
+ 	}
+ ];
++
++const _nullSourcesPlugin: rollup.Plugin = {
++	load() {
++		return {
++			code: '',
++			map: { mappings: 'AAAA', names: [], sources: [null], sourcesContent: [null], version: 3 }
++		};
++	},
++	name: 'test'
++};
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6599** (2026-10-23): [v5.0] Update dependency chokidar to v6 (@renovate[bot])
-- **PR #6598** (2026-10-23): Lock file maintenance (@renovate[bot])
-- **PR #6597** (2026-10-23): [v5.0] Update dependency pretty-ms to v10 (@renovate[bot])
-- **PR #6596** (2026-10-22): Update minor/patch updates (@renovate[bot])
-- **PR #6595** (2026-10-23): Update dtolnay/rust-toolchain digest to b725eda (@renovate[bot])
-- **PR #6594** (2026-10-21): Improve review instructions and resolve audit (@lukastaegert)
+- **PR #6616** (2026-10-30): Update estree dependency (@lukastaegert)
+- **PR #6615** (2026-10-30): Lock file maintenance (@renovate[bot])
+- **PR #6612** (2026-10-30): Lock file maintenance (@renovate[bot])
+- **PR #6611** (2026-10-29): Lock file maintenance (@renovate[bot])
+- **PR #6610** (2026-10-29): Lock file maintenance (@renovate[bot])
+- **PR #6609** (closed): Update dependency pretty-ms to v10 (@renovate[bot])
 
 ---
 
@@ -1054,101 +923,29 @@ Co-authored-by: shuaiyafei <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. include sourcemap comments in chunk hashes (#6509)
+## X. Preserve rendering errors when renderError fails (#6602)
 
 **RULE**:
-When implementing operations in `src/utils/renderChunks.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/plugin-development/index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rollup/rollup. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77a6b2bc`: include sourcemap comments in chunk hashes (#6509). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ad4ded9a`: Preserve rendering errors when renderError fails (#6602). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/utils/renderChunks.ts`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/plugin-development/index.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-		renderedChunksByPlaceholder,
-		usedFileNames
-		log,
-		bundle
-		usedFileNames,
-	log: LogHandler,
-	bundle: OutputBundleWithPlaceholders
-	const transformedChunks = await Promise.all(
-				const hashAugmentation = hashPlaceholder
-					? pluginDriver.hookReduceValueSync(
-							'augmentChunkHash',
-							'',
-							[chunk.getRenderedChunkInfo()],
-							(augmentation, pluginHash) => augmentation + (pluginHash || '')
-						)
-					: '';
-				return {
-					hashAugmentation,
-					hashPlaceholder,
-					preliminarySourcemapFileName,
-					transformedChunk
-				};
-	const usedFileNames = new Set(bundle[lowercaseBundleKeys]);
-	for (const {
-		transformedChunk,
-		hashPlaceholder,
-		preliminarySourcemapFileName,
-		hashAugmentation
-	} of transformedChunks) {
-		const { map } = transformedChunk;
-		const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
-		if (map && sourcemapHashPlaceholder) {
-			const { transformedCode: normalizedSourcemap } =
-				replacePlaceholdersWithDefaultAndGetContainedPlaceholders(map.toString(), placeholders);
-			initialHashesByPlaceholder.set(
-				sourcemapHashPlaceholder,
-				outputOptions.sourcemap === 'inline'
-					? getHash(normalizedSourcemap).slice
+If a `renderError` hook itself fails, Rollup reports both the original rendering error and the hook failure together. The combined error retains the original error's code and plugin metadata.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-		renderedChunksByPlaceholder
-		log
-	log: LogHandler
-	await Promise.all(
-				const { code, map } = transformedChunk;
-
-				if (hashPlaceholder) {
-					// To create a reproducible content-only hash, all placeholders are
-					// replaced with the same value before hashing
-					const { containedPlaceholders, transformedCode } =
-						replacePlaceholdersWithDefaultAndGetContainedPlaceholders(code, placeholders);
-					let contentToHash = transformedCode;
-					const hashAugmentation = pluginDriver.hookReduceValueSync(
-						'augmentChunkHash',
-						'',
-						[chunk.getRenderedChunkInfo()],
-						(augmentation, pluginHash) => {
-							if (pluginHash) {
-								augmentation += pluginHash;
-							}
-							return augmentation;
-						}
-					);
-					if (hashAugmentation) {
-						contentToHash += hashAugmentation;
-					}
-					renderedChunksByPlaceholder.set(hashPlaceholder, transformedChunk);
-					hashDependenciesByPlaceholder.set(hashPlaceholder, {
-						containedPlaceholders,
-						contentHash: getHash(contentToHash)
-					});
-				} else {
-					nonHashedChunksWithPlaceholders.push(transformedChunk);
-				}
-
-				const sourcemapHashPlaceholder = preliminarySourcemapFileName?.hashPlaceholder;
-				
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77a6b2bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ad4ded9a` are properly handled with clean fallback behavior.

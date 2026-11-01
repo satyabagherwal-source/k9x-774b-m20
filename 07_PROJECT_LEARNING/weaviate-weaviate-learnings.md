@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source**: github ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
-> **Source Version**: `1baf1620`  
+> **Source Version**: `5ef8d0c3`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T06:52:15.413Z  
+> **Timestamp**: 2026-10-31T06:45:28.509Z  
 > **Learning ID**: `learn-github-weaviate-weaviate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T06:52:15.405Z  
+> **Harvest Timestamp**: 2026-10-31T06:45:28.502Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16890 stars
+- **Stars / Engagement**: 16933 stars
 
 ---
 
@@ -735,7 +735,9 @@ import (
 	"github.com/weaviate/weaviate/entities/models"
 	"github.com/weaviate/weaviate/entities/modelsext"
 	entschema "github.com/weaviate/weaviate/entities/schema"
+	"github.com/weaviate/weaviate/usecases/namespaces"
 	"github.com/weaviate/weaviate/usecases/schema"
+	"github.com/weaviate/weaviate/usecases/schema/namespacing"
 	"github.com/weaviate/weaviate/usecases/sharding"
 )
 
@@ -916,9 +918,7 @@ func (e *dropVectorIndexEnqueuer) EnqueueDropVectorIndexWithTasks(ctx context.Co
 	}
 	shardOwnership = withoutCleanedShards(shardOwnership, cleaned)
 	shardOwnership, deferredShards := capShardOwnership(shardOwnership, maxShardsPerDropRound)
-	if deferredShards > 0 {
-		e.logInfo(collection, fmt.Sprintf(
-			"drop-vector enqueue: round capped at %d shards, %d deferr
+	if deferre
 ```
 
 ### Core Architecture Module: `adapters/handlers/rest/operations/replication/get_collection_sharding_state.go`
@@ -1711,11 +1711,11 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12935** (2026-09-07): **HNSW: panic in packedconn.decodeInto — ACORN search reads a neighbor's connections without its lock**
-  *Symptoms*: ## Summary  `hnsw/search.go:425` (the ACORN filter branch) iterates a **neighbor** vertex's connections while holding only the *candidate* vertex's mutex. `packedconn.Connections` has no internal lock, so a concurrent writer holding the neighbor's mutex tears the read and the decode indexes past the end of the connection data.  The panic is recovered by the errgroup wrapper, so the node survives and the query fails.  Observed on 2026-09-04 on a WCS dev cluster:  ``` Recovered from panic: shard: NjlDaweeJExh, collection: SimClass, vectorIndex: vectors_alt_vector, panic: runtime error: index out of range [0] with length 0 ```  ``` github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.decodeInto(...) 	entities/vectorindex/hnsw/packedconn/connections.go:242 github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.decodeValues(...) 	entities/vectorindex/hnsw/packedconn/connections.go:276 github.com/weaviate/weaviate/entities/vectorindex/hnsw/packedconn.(*Connections).ElementIterator(...) 	entities/vectorindex/hnsw/packedconn/connections.go:637 github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw.(*hnsw).searchLayerByVectorWithDistancerWithStrategy.func3(...) 	adapters/repos/db/vector/hnsw/search.go:425 github.com/weaviate/weaviate/adapters/repos/db/vector/hnsw.(*hnsw).knnSearchByVector(...) 	adapters/repos/db/vector/hnsw/search.go:1008 github.com/weaviate/weaviate/adapters/repos/db.(*Shard).ObjectVectorSearch.func2() 	adapters/repos/db/shard_read.go:774 
+- **Issue #13618** (2026-10-28): **gRPC health check rejected when OPERATIONAL_MODE=ReadOnly, so clients fail to connect**
+  *Symptoms*: ### How to reproduce this bug?  1. Start Weaviate 1.39.12 with `OPERATIONAL_MODE: ReadOnly` 2. Connect with the Python client 4.23.1 using defaults (`skip_init_checks=False`):    `weaviate.connect_to_custom(http_host="localhost", http_port=8080, grpc_host="localhost", grpc_port=50051, ...)` 3. The connection fails during the gRPC health check.  ### What is the expected behavior?  The client connects. Health checks (`/grpc.health.v1.Health/*`) should skip the operational mode check and work in all modes (ReadWrite, ReadOnly, WriteOnly, ScaleOut). ReadOnly should block writes only.  ### What is the actual behavior?  The gRPC health check is rejected as a write operation:  ``` StatusCode.UNAVAILABLE read-only mode is enabled temporally at the config level: write operations are not allowed during this time ```  The Python client then raises `WeaviateGRPCUnavailableError`. The only workaround is `skip_init_checks=True`.  ### Supporting information  Root cause:  - `usecases/config/operational_mode.go:69-77`: only `Search`, `Aggregate` and `TenantsGet` count as reads. `IsGRPCWrite` is `!IsGRPCRead`, so every other method, including ones that aren't on the list, counts as a write. - `adapters/handlers/grpc/server.go:302-305`: in `ReadOnly` and `ScaleOut`, any "write" method is rejected with `codes.Unavailable`. - `adapters/handlers/grpc/server.go:142`: the standard `grpc_health_v1` service is registered. It's not on the read list, so its calls are treated as writes and blocked.  `Wri
 
-- **Issue #12749** (2026-08-24): **gRPC batch stream: recv goroutine leaks on unbuffered errCh/reqCh send when the stream ends via context cancellation**
-  *Symptoms*: ## Summary  The gRPC batch-stream handler leaks one goroutine every time a stream ends through context cancellation. The `recv` helper's child goroutine blocks forever on an unbuffered channel send that no one will ever read. Observed on a 1.39.0 production cluster; the code is unchanged on `main`.  ## Evidence  5-node cluster, v1.39.0, batch-stream ingest whose client streams ended abnormally (the client aborted stream starts after its 60 s timeout). `debug/pprof/goroutine` on the three nodes that had been up longest showed 16, 9, and 10 goroutines parked in:  ``` 16 @ 0x48ee4e 0x41ba3c 0x41b637 0x2e20bb1 0xb2e753 0x496f21 #	github.com/weaviate/weaviate/adapters/handlers/grpc/v1/batch.(*StreamHandler).recv.func1+0xd0  adapters/handlers/grpc/v1/batch/stream.go:387 #	github.com/weaviate/weaviate/entities/errors.GoWrapper.func1+0x52                              entities/errors/go_wrapper.go:35 ```  No `Handle`/`sender`/`receiver` goroutines existed at the same time — these are orphans of streams that ended long before. Each leak correlates with a `"context cancelled, closing stream"` log line. Nodes that restarted recently had none; counts only grow.  ## Root cause  [`stream.go#L372-L394` (v1.39.0)](https://github.com/weaviate/weaviate/blob/v1.39.0/adapters/handlers/grpc/v1/batch/stream.go#L372-L394):  ```go func (h *StreamHandler) recv(stream pb.Weaviate_BatchStreamServer) (chan *pb.BatchStreamRequest, chan error) { 	reqCh := make(chan *pb.BatchStreamRequest) 	errCh := make(ch
+- **Issue #13605** (2026-10-28): **len(array)==0 omits missing array properties when length index is enabled**
+  *Symptoms*: ### How to reproduce this bug?  Run [reproduce.py](https://github.com/user-attachments/files/33944592/reproduce.py).   Triggered by MR testing. - **MR:** An absent array and an explicit empty array both have length zero - **Input:** length index enabled; rows with [alpha], [], [beta,gamma], and missing tags; len(tags)==0  ### What is the expected behavior?  Both [] and missing rows.  ### What is the actual behavior?  Only explicit [] row.  ### Supporting information  _No response_  ### Server Version  1.40.2  ### Weaviate Setup  Single Node  ### Nodes count  _No response_  ### Code of Conduct  - [x] I have read and agree to the Weaviate's [Contributor Guide](https://docs.weaviate.io/contributor-guide) and [Code of Conduct](https://weaviate.io/service/code-of-conduct)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1732,828 +1732,29 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9cd62c1f` (2026-10-15)
-**Commit Message**: Test that unflushed writes of a suspended namespace survive a crash
+### Incident Patch 1: `2c595a64` (2026-10-30)
+**Commit Message**: fix(test): match testShardWithSettings signature after v1.39 merge
 
-**File**: `adapters/repos/db/backup_integration_test.go` (modified, +6/-4)
+**File**: `adapters/repos/db/shard_vector_search_missing_object_integration_test.go` (modified, +1/-1)
 ```diff
-@@ -44,6 +44,7 @@ import (
- 	backupUC "github.com/weaviate/weaviate/usecases/backup"
- 	"github.com/weaviate/weaviate/usecases/cluster"
- 	"github.com/weaviate/weaviate/usecases/memwatch"
-+	"github.com/weaviate/weaviate/usecases/namespaces"
- 	"github.com/weaviate/weaviate/usecases/sharding"
- )
- 
-@@ -287,13 +288,14 @@ func setupTestDB(t *testing.T, rootDir string, classes ...*models.Class) *DB {
- // setupTestDBWithConfig builds a single-node DB on a single shard. override, when
- // non-nil, adjusts the Config before the DB is created.
- func setupTestDBWithConfig(t *testing.T, rootDir string, override func(*Config), classes ...*models.Class) *DB {
--	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, classes...)
-+	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, nil, classes...)
- }
- 
- // setupTestDBWithShardState builds a single-node DB that holds the given shards.
--// override, when non-nil, adjusts the Config before the DB is created.
-+// override, when non-nil, adjusts the Config before the DB is created. exister
-+// answers the namespace of a <ns>:<Class> name, and may be nil without one.
- func setupTestDBWithShardState(t *testing.T, rootDir string, shardState *sharding.State,
--	override func(*Config), classes ...*models.Class,
-+	override func(*Config), exister namespaces.Exister, classes ...*models.Class,
- ) *DB {
- 	logger, _ := test.NewNullLogger()
- 
-@@ -335,7 +337,7 @@ func setupTestDBWithShardState(t *testing.T, rootDir string, shardState *shardin
- 		override(&cfg)
- 	}
- 	db, err := New(logger, "node1", cfg, &FakeRemoteClient{}, mockNodeSelector, &FakeRemoteNodeClient{}, &FakeReplicationClient{}, nil, memwatch.NewDummyMonitor(),
--		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, nil)
-+		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, exister)
- 	require.Nil(t, err)
- 	db.SetSchemaGetter(schemaGetter)
- 	require.Nil(t, db.WaitForStartup(testCtx()))
-```
-
-**File**: `adapters/repos/db/batch_delete_limit_integration_test.go` (modified, +2/-2)
-```diff
-@@ -502,7 +502,7 @@ func newBatchDeleteRepoAt(t *testing.T, rootDir string, class *models.Class,
- 
- 	return setupTestDBWithShardState(t, rootDir, shardState, func(cfg *Config) {
- 		cfg.QueryMaximumResults = queryMaximumResults
--	}, class)
-+	}, nil, class)
- }
- 
- // TestBatchDeleteObjects_DeadDocIDDoesNotBurnASlot pins that a doc id with no object row costs a read, not a limit slot.
-@@ -848,7 +848,7 @@ func TestObjectsTTLSweepResolvesPastDeadDocIDs(t *testing.T) {
- 			newTTLRepo := func() *DB {
- 				return setupTestDBWithShardState(t, rootDir, shardState, func(cfg *Config) {
- 					cfg.ObjectsTTLBatchSize = configRuntime.NewDynamicValue(sweepBatch)
--				}, class)
-+				}, nil, class)
- 			}
- 
- 			repo := newTTLRepo()
-```
-
-**File**: `adapters/repos/db/index_objects_ttl_integration_test.go` (modified, +1/-1)
-```diff
-@@ -147,7 +147,7 @@ func setupTTLRepo(t *testing.T, batchSize int, shardState *sharding.State, class
- 
- 	repo := setupTestDBWithShardState(t, t.TempDir(), shardState, func(cfg *Config) {
- 		cfg.ObjectsTTLBatchSize = configRuntime.NewDynamicValue(batchSize)
--	}, class)
-+	}, nil, class)
- 	t.Cleanup(func() { require.NoError(t, repo.Shutdown(context.Background())) })
- 
- 	insertTTLObjects(t, repo, tenant, expiredCount, aliveCount)
-```
-
-**File**: `adapters/repos/db/namespace_suspend_crash_integration_test.go` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+//go:build integrationTest
-+
-+package db
-+
-+import (
-+	"context"
-+	"path/filepath"
-+	"sync/atomic"
-+	"testing"
-+
-+	"github.com/go-openapi/strfmt"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/cluster/proto/api"
-+	"github.com/weaviate/weaviate/entities/additional"
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/usecases/namespaces"
-+)
-+
-+// A node that crashes while a suspended namespace's shards hold unflushed writes
-+// boots without registering those shards. Their write-ahead logs stay on disk
-+// until a resume opens the shards and replays them.
-+func TestSuspendedNamespace_UnflushedWriteSurvivesACrash(t *testing.T) {
-+	const className = "alpha:Product"
-+	ctx := testCtx()
-+	id := strfmt.UUID("6f3e9a4c-1b2d-4c5e-8f70-9a1b2c3d4e5f")
-+	// Both DBs read one sharding state, whose shard name is random.
-+	shardState := singleShardState()
-+
-+	liveDir := t.TempDir()
-+	live := setupTestDBWithShardState(t, liveDir, shardState, nil,
-+		existerWithState(t, api.NamespaceStateActive), makeTestClass(className))
-+	t.Cleanup(func() { require.NoError(t, live.Shutdown(context.Background())) })
-+	require.NoError(t, live.PutObject(ctx, &models.Object{
-+		Class: className, ID: id, Properties: map[string]any{"stringProp": "kept"},
-+	}, nil, nil, nil, nil, 0))
-+
-+	// PutObject writes the WAL to its file before it returns, and the memtable
-+	// flushes only after MemtablesFlushDirtyAfter, so a copy is what a kill leaves.
-+	crashDir := t.TempDir()
-+	copyDirTree(t, liveDir, crashDir)
-+	wals, err := filepath.Glob(filepath.Join(crashDir, "*", "*", "lsm", "objects", "*.wal"))
-+	require.NoError(t, err)
-+	require.NotEmpty(t, wals, "the write must still be unflushed when the node crashes")
-+
-+	var state atomic.Value
-+	state.Store(api.NamespaceStateSuspended)
-+	exister := namespaces.NewMockExister(t)
-+	exister.EXPECT().GetNamespace("alpha").RunAndReturn(func(string) (api.Namespace, bool) {
-+		return api.Namespace{Name: "alpha", State: state.Load().(api.NamespaceState)}, true
-+	}).Maybe()
-+	booted := setupTestDBWithShardState(t, crashDir, shardState, nil, exister, makeTestClass(className))
-+	t.Cleanup(func() { require.NoError(t, booted.Shutdown(context.Background())) })
-+	idx := booted.GetIndex(schema.ClassName(className))
-+	require.NotNil(t, idx)
-+	assert.Empty(t, registeredShards(t, idx), "a suspended namespace's shard must not open at boot")
-+
-+	state.Store(api.NamespaceStateResuming)
-+	require.NoError(t, booted.ReopenShard(ctx, className, shardState.AllPhysicalShards()[0]))
-+	state.Store(api.NamespaceStateActive)
-+
-+	obj, err := booted.Object(ctx, className, id, nil, additional.Properties{}, nil, "")
-+	require.NoError(t, err)
-+	require.NotNil(t, obj, "the resume must replay the WAL the crash left")
-+	assert.Equal(t, "kept", obj.Schema.(map[string]any)["stringProp"])
-+}
-```
-
-**File**: `test/acceptance/namespace/suspend_shards_test.go` (modified, +3/-3)
-```diff
-@@ -375,9 +375,9 @@ func TestNamespaces_SuspendedNamespaceLoadsNoShardsAfterRestart(t *testing.T) {
- 		require.NoError(t, sharedCompose.EnsureRunning(ctx, restartNodeIndex))
- 	})
- 
--	// The kill can happen during the sweep's unload, because the listing empties
--	// before the flush ends. That leaves what a kill during a tenant
--	// deactivation leaves, since both end in shutdownOrRestoreShard.
-+	// The kill meets shards the sweep released or is still flushing, as a kill
-+	// during a tenant deactivation can. adapters/repos/db's
-+	// TestSuspendedNamespace_UnflushedWriteSurvivesACrash crashes before the sweep.
- 	t.Run("after a crash the suspended namespace loads no shards", func(t *testing.T) {
- 		zero := time.Duration(0)
- 		require.NoError(t, sharedCompose.StopNode(ctx, restartNodeIndex, &zero))
-```
-
----
-
-### Incident Patch 2: `94dda712` (2026-10-14)
-**Commit Message**: Merge pull request #13530 from weaviate/fix-migrate-properties-settings-change
-
-fix(schema): reject module setting changes for modules with migrate properties
-
-**File**: `cluster/schema/manager.go` (modified, +3/-0)
-```diff
-@@ -549,6 +549,9 @@ func (s *SchemaManager) UpdateClass(cmd *command.ApplyRequest, nodeID string, sc
- 		meta.Class.VectorIndexConfig = u.VectorIndexConfig
- 		meta.Class.InvertedIndexConfig = u.InvertedIndexConfig
- 		meta.Class.VectorConfig = u.VectorConfig
-+		if u.ModuleConfig != nil {
-+			meta.Class.ModuleConfig = u.ModuleConfig
-+		}
- 		meta.Class.ReplicationConfig = u.ReplicationConfig
- 		meta.Class.MultiTenancyConfig = u.MultiTenancyConfig
- 		meta.Class.ObjectTTLConfig = u.ObjectTTLConfig
-```
-
-**File**: `cluster/schema/update_class_module_settings_test.go` (modified, +13/-0)
-```diff
-@@ -165,3 +165,16 @@ func TestSchemaManager_UpdateClass_MutableSettings(t *testing.T) {
- 		})
- 	}
- }
-+
-+func TestSchemaManager_UpdateClass_WithoutModuleConfigKeepsStoredModuleConfig(t *testing.T) {
-+	sm := newSchemaManagerWithModules(t)
-+	stored := classShapes[1].build(moduleSettings("a", "m"))
-+	stored.ModuleConfig = map[string]any{"generative-fake": map[string]any{"model": "g"}}
-+	require.NoError(t, sm.AddClass(addClassRequest(t, stored), "node1", true, false))
-+
-+	update := classShapes[1].build(moduleSettings("a", "m"))
-+	update.Description = "new description"
-+	require.NoError(t, sm.UpdateClass(updateClassRequest(t, update, 2), "node1", true, false))
-+	require.Equal(t, map[string]any{"generative-fake": map[string]any{"model": "g"}},
-+		sm.NewSchemaReader().ReadOnlyClass(className).ModuleConfig)
-+}
-```
-
-**File**: `usecases/modules/migrate_vectorizer_settings_test.go` (added, +133/-0)
-```diff
-@@ -0,0 +1,133 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package modules
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/modulecapabilities"
-+	"github.com/weaviate/weaviate/entities/moduletools"
-+	"github.com/weaviate/weaviate/entities/schema"
-+	"github.com/weaviate/weaviate/usecases/config"
-+)
-+
-+type migratingText2VecModule struct {
-+	dummyText2VecModuleNoCapabilities
-+}
-+
-+func (migratingText2VecModule) MigrateProperties() []modulecapabilities.MigrateProperty {
-+	return []modulecapabilities.MigrateProperty{{Name: "baseURL"}, {Name: "dimensions"}}
-+}
-+
-+func (migratingText2VecModule) ClassConfigDefaults() map[string]any {
-+	return map[string]any{"baseURL": "https://a", "dimensions": 512, "vectorizeClassName": true}
-+}
-+
-+func (migratingText2VecModule) PropertyConfigDefaults(*schema.DataType) map[string]any { return nil }
-+
-+func (migratingText2VecModule) ValidateClass(context.Context, *models.Class, moduletools.ClassConfig) error {
-+	return nil
-+}
-+
-+// defaultsText2VecModule has class config defaults but no migrate properties.
-+type defaultsText2VecModule struct {
-+	dummyText2VecModuleNoCapabilities
-+}
-+
-+func (defaultsText2VecModule) ClassConfigDefaults() map[string]any {
-+	return map[string]any{"baseURL": "https://a"}
-+}
-+
-+func (defaultsText2VecModule) PropertyConfigDefaults(*schema.DataType) map[string]any { return nil }
-+
-+func (defaultsText2VecModule) ValidateClass(context.Context, *models.Class, moduletools.ClassConfig) error {
-+	return nil
-+}
-+
-+func TestMigrateVectorizerSettings(t *testing.T) {
-+	const (
-+		migrating = "text2vec-migrating"
-+		defaults  = "text2vec-defaults"
-+	)
-+	logger, _ := test.NewNullLogger()
-+	p := NewProvider(logger, config.Config{})
-+	p.Register(migratingText2VecModule{newDummyText2VecModule(migrating, nil)})
-+	p.Register(defaultsText2VecModule{newDummyText2VecModule(defaults, nil)})
-+
-+	tests := []struct {
-+		name         string
-+		module       string
-+		stored       map[string]any
-+		update       map[string]any
-+		wantMigrated bool
-+		wantEqual    bool
-+	}{
-+		{
-+			name:         "added setting missing from the stored settings, set to a value other than the default",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small"},
-+			update:       map[string]any{"model": "small", "baseURL": "https://custom"},
-+			wantMigrated: true,
-+		},
-+		{
-+			name:         "added setting decoded as a float, default declared as an int",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small"},
-+			update:       map[string]any{"model": "small", "dimensions": float64(512)},
-+			wantMigrated: true,
-+			wantEqual:    true,
-+		},
-+		{
-+			name:         "added setting stored as an empty string",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small", "baseURL": ""},
-+			update:       map[string]any{"model": "small", "baseURL": "https://a"},
-+			wantMigrated: true,
-+			wantEqual:    true,
-+		},
-+		{
-+			name:         "defaulted setting outside the migrate properties missing from the stored settings",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small"},
-+			update:       map[string]any{"model": "small", "vectorizeClassName": true},
-+			wantMigrated: true,
-+			wantEqual:    true,
-+		},
-+		{
-+			name:         "stored custom value, update sets the default",
-+			module:       migrating,
-+			stored:       map[string]any{"model": "small", "baseURL": "https://custom"},
-+			update:       map[string]any{"model": "small", "baseURL": "https://a"},
-+			wantMigrated: true,
-+		},
-+		{
-+			name:   "module without migrate properties, setting missing from the stored settings, update sets the default",
-+			module: defaults,
-+			stored: map[string]any{"model": "small"},
-+			update: map[string]any{"model": "small", "baseURL": "https://a"},
-+		},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			stored := map[string]any{tt.module: tt.stored}
-+			update := map[string]any{tt.module: tt.update}
-+
-+			assert.Equal(t, tt.wantMigrated, p.MigrateVectorizerSettings(stored, update))
-+			assert.Equal(t, tt.wantEqual, assert.ObjectsAreEqual(stored, update), "stored: %v, update: %v", stored, update)
-+		})
-+	}
-+}
-```
-
-**File**: `usecases/modules/modules.go` (modified, +47/-7)
-```diff
-@@ -12,9 +12,10 @@
- package modules
- 
- import (
-+	"bytes"
- 	"context"
-+	"encoding/json"
- 	"fmt"
--	"maps"
- 	"regexp"
- 	"slices"
- 	"sync"
-@@ -1169,6 +1170,7 @@ func (p *Provider) settingsConfig(moduleName string, settings map[string]any) mo
- // MigrateVectorizerSettings compares and migrates module settings if module settings
- // changed, an example would be renaming of baseUrl property setting to baseURL
- // in that case we need to migrate baseURL value to new property name.
-+// Both configs are changed in place, so a stored config must be passed as a copy.
- func (p *Provider) MigrateVectorizerSettings(oldVectorizerConfig, newVectorizerConfig any) bool {
- 	migratedSettings := false
- 	oldVectorizerCfg, oldVectorizerCfgOk := oldVectorizerConfig.(map[string]any)
-@@ -1177,19 +1179,57 @@ func (p *Provider) MigrateVectorizerSettings(oldVectorizerConfig, newVectorizerC
- 		for modName, modSettings := range newVectorizerCfg {
- 			migratedNewVectorizer := p.migrateVectorizerSettings(modName, modSettings)
- 			migratedOldVectorizer := p.migrateVectorizerSettings(modName, oldVectorizerCfg[modName])
--			if settings, ok := modSettings.(map[string]any); ok {
--				if oldSettings, ok := oldVectorizerCfg[modName].(map[string]any); ok {
--					maps.Copy(oldSettings, settings)
--				}
--			}
--			if migratedNewVectorizer || migratedOldVectorizer {
-+			copiedDefaults := p.copyOnlyMigratedSettings(modName, oldVectorizerCfg[modName], modSettings)
-+			if migratedNewVectorizer || migratedOldVectorizer || copiedDefaults {
- 				migratedSettings = true
- 			}
- 		}
- 	}
- 	return migratedSettings
- }
- 
-+// copyOnlyMigratedSettings copies settings the old settings lack, or hold as an empty string, from the new settings
-+// when the new value is the module's default, which is what the module used while the setting was missing. It only
-+// applies to modules that declare migrate properties. Every other setting is left as is so that a changed value
-+// still fails the comparison that follows the migration. It reports whether it copied a setting.
-+func (p *Provider) copyOnlyMigratedSettings(modName string, oldModuleSettings, newModuleSettings any) bool {
-+	mod := p.GetByName(modName)
-+	if mod == nil {
-+		return false
-+	}
-+	if _, ok := mod.(modulecapabilities.MigrateProperties); !ok {
-+		return false
-+	}
-+	configurator, ok := mod.(modulecapabilities.ClassConfigurator)
-+	if !ok {
-+		return false
-+	}
-+	oldSettings, oldOk := oldModuleSettings.(map[string]any)
-+	newSettings, newOk := newModuleSettings.(map[string]any)
-+	if !oldOk || !newOk {
-+		return false
-+	}
-+	copied := false
-+	for name, defaultValue := range configurator.ClassConfigDefaults() {
-+		newValue, ok := newSettings[name]
-+		if !ok {
-+			continue
-+		}
-+		if oldValue, ok := oldSettings[name]; ok && oldValue != "" {
-+			continue
-+		}
-+		// Compared by JSON form, so that numbers decoded as float64 or json.Number equal the int a module declares.
-+		newJSON, newErr := json.Marshal(newValue)
-+		defaultJSON, defaultErr := json.Marshal(defaultValue)
-+		if newErr != nil || defaultErr != nil || !bytes.Equal(newJSON, defaultJSON) {
-+			continue
-+		}
-+		oldSettings[name] = newValue
-+		copied = true
-+	}
-+	return copied
-+}
-+
- func (p *Provider) migrateVectorizerSettings(modName string, moduleSettings any) bool {
- 	if mod := p.GetByName(modName); mod != nil {
- 		if migrate, ok := mod.(modulecapabilities.MigrateProperties); ok {
-```
-
-**File**: `usecases/schema/class.go` (modified, +4/-2)
-```diff
-@@ -1757,9 +1757,11 @@ func validateImmutableFields(initial, updated *models.Class, modulesProvider mod
- 			// There might be module settings that need to be migrated to new names, for example
- 			// if baseUrl property setting was renamed to baseURL then we need to adjust module settings
- 			// and migrate baseUrl to baseURL
--			if modulesProvider.MigrateVectorizerSettings(initial.VectorConfig[k].Vectorizer, v.Vectorizer) {
-+			// initial shares its maps with the stored schema, so the migration runs on a copy.
-+			initialVectorizer := structToMap(initial.VectorConfig[k].Vectorizer)
-+			if modulesProvider.MigrateVectorizerSettings(initialVectorizer, v.Vectorizer) {
- 				// Module settings have been migrated, let's recheck vectorizer settings
--				if deepEqualVectorizerSettings(initial.VectorConfig[k].Vectorizer, v.Vectorizer) {
-+				if deepEqualVectorizerSettings(initialVectorizer, v.Vectorizer) {
- 					continue
- 				}
- 			}
-```
-
-**File**: `usecases/schema/migrate_vectorizer_settings_test.go` (added, +105/-0)
-```diff
-@@ -0,0 +1,105 @@
-+//                           _       _
-+// __      _____  __ ___   ___  __ _| |_ ___
-+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
-+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
-+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
-+//
-+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
-+//
-+//  CONTACT: hello@weaviate.io
-+//
-+
-+package schema
-+
-+import (
-+	"testing"
-+
-+	"github.com/sirupsen/logrus/hooks/test"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/weaviate/weaviate/entities/models"
-+	"github.com/weaviate/weaviate/entities/vectorindex/hnsw"
-+	text2vecopenai "github.com/weaviate/weaviate/modules/text2vec-openai"
-+	"github.com/weaviate/weaviate/usecases/config"
-+	"github.com/weaviate/weaviate/usecases/fakes"
-+	"github.com/weaviate/weaviate/usecases/modules"
-+	shardingcfg "github.com/weaviate/weaviate/usecases/sharding/config"
-+)
-+
-+// text2vec-openai declares baseURL as a migrate property, so baseURL may be missing from the stored settings,
-+// but every other difference must still be rejected.
-+func TestParseClassUpdate_ModuleWithMigrateProperties(t *testing.T) {
-+	const openai = "text2vec-openai"
-+	logger, _ := test.NewNullLogger()
-+	provider := modules.NewProvider(logger, config.Config{})
-+	provider.Register(text2vecopenai.New())
-+	p := NewParser(fakes.NewFakeClusterState(), dummyParseVectorConfig, fakeValidator{}, provider, nil, nil)
-+	shardingConfig := shardingcfg.Config{
-+		DesiredCount: 1, VirtualPerPhysical: 128, ActualCount: 1, DesiredVirtualCount: 128, Key: "_id", Strategy: "hash", Function: "murmur3",
-+	}
-+	stored := func() map[string]any {
-+		return map[string]any{"model": "text-embedding-3-small", "baseURL": "https://api.openai.com", "vectorizeClassName": true}
-+	}
-+	withoutBaseURL := func(settings map[string]any) map[string]any {
-+		delete(settings, "baseURL")
-+		return settings
-+	}
-+	// A named vector created on v1.24 is stored with only the settings the client sent.
-+	createdOnV124 := func() map[string]any {
-+		return map[string]any{"properties": []any{"text"}, "vectorizeClassName": false, "vectorizePropertyName": false}
-+	}
-+	with := func(settings map[string]any, key string, value any) map[string]any {
-+		settings[key] = value
-+		return settings
-+	}
-+	classLevel := func(settings map[string]any) *models.Class {
-+		return &models.Class{
-+			Class: "Doc", Vectorizer: openai, VectorIndexType: hnswT, VectorIndexConfig: hnsw.NewDefaultUserConfig(),
-+			ModuleConfig: map[string]any{openai: settings},
-+		}
-+	}
-+	namedVector := func(settings map[string]any) *models.Class {
-+		return &models.Class{
-+			Class: "Doc",
-+			VectorConfig: map[string]models.VectorConfig{"text": {
-+				VectorIndexType: hnswT, VectorIndexConfig: hnsw.NewDefaultUserConfig(),
-+				Vectorizer: map[string]any{openai: settings},
-+			}},
-+		}
-+	}
-+
-+	tests := []struct {
-+		name            string
-+		stored, updated map[string]any
-+		wantErr         bool
-+	}{
-+		{
-+			name: "model and baseURL missing from the stored settings, update fills the defaults", stored: createdOnV124(),
-+			updated: with(with(createdOnV124(), "model", "text-embedding-3-small"), "baseURL", "https://api.openai.com"),
-+		},
-+		{
-+			name: "changed model, baseURL missing from the stored settings", stored: withoutBaseURL(stored()),
-+			updated: with(stored(), "model", "text-embedding-3-large"), wantErr: true,
-+		},
-+	}
-+	for _, build := range []struct {
-+		name  string
-+		class func(map[string]any) *models.Class
-+	}{{"class level", classLevel}, {"named vector", namedVector}} {
-+		for _, tt := range tests {
-+			t.Run(build.name+"/"+tt.name, func(t *testing.T) {
-+				storedClass := build.class(tt.stored)
-+				storedClass.ShardingConfig = shardingConfig
-+				storedBefore := structToMap(storedClass)
-+
-+				_, err := p.ParseClassUpdate(storedClass, build.class(tt.updated))
-+				if tt.wantErr {
-+					require.Error(t, err)
-+				} else {
-+					require.NoError(t, err)
-+				}
-+				require.Equal(t, storedBefore, structToMap(storedClass), "the stored class must not be changed")
-+			})
-+		}
-+	}
-+}
-```
-
-**File**: `usecases/schema/mutable_settings_test.go` (modified, +2/-2)
-```diff
-@@ -50,8 +50,8 @@ func (mutableModules) MutableSettings(module string, current, updated map[string
- 	return reflect.DeepEqual(current, updated)
- }
- 
--// MigrateVectorizerSettings copies the new settings over the stored ones like modules.Provider does, and reports a
--// migration when a module whose name contains "migrating" is present.
-+// MigrateVectorizerSettings copies all new settings over the stored ones, and reports a migration when a module
-+// whose name contains "migrating" is present.
- func (mutableModules) MigrateVectorizerSettings(initial, updated any) bool {
- 	initialConfig, _ := initial.(map[string]any)
- 	updatedConfig, _ := updated.(map[string]any)
-```
-
-**File**: `usecases/schema/parser.go` (modified, +15/-16)
-```diff
-@@ -14,6 +14,7 @@ package schema
- import (
- 	"encoding/json"
- 	"fmt"
-+	"maps"
- 	"reflect"
- 	"slices"
- 	"sort"
-@@ -517,47 +518,45 @@ func (p *Parser) validateModuleConfigsParityAndImmutables(initial, updated *mode
- 		// There might be module settings that need to be migrated to new names, for example
- 		// if baseUrl property setting was renamed to baseURL then we need to adjust module settings
- 		// and migrate baseUrl to baseURL
--		if p.modules.MigrateVectorizerSettings(initialModConf, updatedModConf) {
-+		// initialModConf is the stored schema's map, so the migration runs on a copy.
-+		migratedInitialModConf := structToMap(initialModConf)
-+		if p.modules.MigrateVectorizerSettings(migratedInitialModConf, updatedModConf) {
- 			// Module settings have been migrated, let's recheck vectorizer settings
--			if deepEqualVectorizerSettings(initialModConf[module], updatedModConf[module]) {
-+			if deepEqualVectorizerSettings(migratedInitialModConf[module], updatedModConf[module]) {
- 				continue
- 			}
- 		}
- 
- 		return fmt.Errorf("can only update generative and reranker module configs, or settings the module allows to change. Got: %v for class: %s", module, updated.Class)
- 	}
- 
--	if initial.ModuleConfig == nil {
--		initial.ModuleConfig = updatedModConf
-+	if initialModConf == nil {
-+		updated.ModuleConfig = updatedModConf
- 		return nil
- 	}
- 
--	if _, ok := initial.ModuleConfig.(map[string]any); !ok {
--		initial.ModuleConfig = updatedModConf
--		return nil
--	}
-+	// initialModConf is the stored schema's map and the caller may still reject the update, so merge into a copy.
-+	mergedModConf := maps.Clone(initialModConf)
- 	if hasGenerativeUpdate {
- 		// clear out old generative module
--		for module := range initialModConf {
-+		for module := range mergedModConf {
- 			if p.modules.IsGenerative(module) {
--				delete(initialModConf, module)
-+				delete(mergedModConf, module)
- 			}
- 		}
- 	}
- 
- 	if hasRerankerUpdate {
- 		// clear out old reranker module
--		for module := range initialModConf {
-+		for module := range mergedModConf {
- 			if p.modules.IsReranker(module) {
--				delete(initialModConf, module)
-+				delete(mergedModConf, module)
- 			}
- 		}
- 	}
- 
--	for module := range updatedModConf {
--		initialModConf[module] = updatedModConf[module]
--	}
--	updated.ModuleConfig = initialModConf
-+	maps.Copy(mergedModConf, updatedModConf)
-+	updated.ModuleConfig = mergedModConf
- 	return nil
- }
- 
-```
-
----
-
-### Incident Patch 3: `f5788cff` (2026-10-15)
-**Commit Message**: Revert "shard: a config update the index accepted is written to its mapping record"
-
-This reverts commit 78cc22636f92e3afe3ae888636c3c96ab6541ed4.
-
-**File**: `adapters/repos/db/shard.go` (modified, +2/-29)
-```diff
-@@ -535,34 +535,10 @@ func (s *Shard) UpdateVectorIndexConfig(ctx context.Context, updated schemaConfi
- 	// collection that dropped its last vector carries an inert legacy config in
- 	// the schema, but its shards were built without a legacy index and there is
- 	// nothing to reconfigure.
--	found, err := s.WithVectorIndex("", func(index VectorIndex) error {
-+	_, err := s.WithVectorIndex("", func(index VectorIndex) error {
- 		return index.UpdateUserConfig(updated, noopCallback)
- 	})
--	if err != nil || !found {
--		return err
--	}
--	return s.recordAdoptedVectorIndexConfig("", updated)
--}
--
--// recordAdoptedVectorIndexConfig writes the config the index of targetVector
--// just accepted into its mapping record, so the record never says a config
--// the index is not running with. A vector without a record, a skipped one,
--// has nothing to record. This is the bridge that keeps the records correct
--// while the schema still pushes config into loaded shards directly; it goes
--// when that push does.
--func (s *Shard) recordAdoptedVectorIndexConfig(targetVector string, cfg schemaConfig.VectorIndexConfig) error {
--	rec, ok, err := s.mapping.Get(targetVector)
--	if err != nil {
--		return err
--	}
--	if !ok {
--		return nil
--	}
--	rec, changed := rec.adopted(cfg)
--	if !changed {
--		return nil
--	}
--	return s.mapping.Put(targetVector, rec)
-+	return err
- }
- 
- func (s *Shard) UpdateVectorIndexConfigs(ctx context.Context, updated map[string]schemaConfig.VectorIndexConfig) error {
-@@ -590,9 +566,6 @@ func (s *Shard) UpdateVectorIndexConfigs(ctx context.Context, updated map[string
- 			if err != nil {
- 				break
- 			}
--			if err = s.recordAdoptedVectorIndexConfig(targetVector, targetCfg); err != nil {
--				break
--			}
- 		} else {
- 			// dont lazy load segments on config update
- 			if err = s.initTargetVector(ctx, targetVector, targetCfg, false); err != nil {
-```
-
-**File**: `adapters/repos/db/shard_update_vector_config_test.go` (removed, +0/-89)
-```diff
-@@ -1,89 +0,0 @@
--//                           _       _
--// __      _____  __ ___   ___  __ _| |_ ___
--// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
--//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
--//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
--//
--//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
--//
--//  CONTACT: hello@weaviate.io
--//
--
--package db
--
--import (
--	"context"
--	"testing"
--
--	"github.com/stretchr/testify/assert"
--	"github.com/stretchr/testify/require"
--
--	"github.com/weaviate/weaviate/entities/models"
--	schemaConfig "github.com/weaviate/weaviate/entities/schema/config"
--	enthnsw "github.com/weaviate/weaviate/entities/vectorindex/hnsw"
--)
--
--// A config update that the index accepted is written to the vector's mapping
--// record, so the record says what the index runs with. One the index refused
--// leaves the record as it was.
--func TestUpdateVectorIndexConfigs_RecordsTheAdoptedConfig(t *testing.T) {
--	ctx := context.Background()
--	legacy := enthnsw.NewDefaultUserConfig()
--	foo := enthnsw.NewDefaultUserConfig()
--	foo.RQ.Enabled = true
--	foo.RQ.Bits = 8
--	class := &models.Class{Class: "AdoptedConfig", VectorConfig: map[string]models.VectorConfig{
--		"foo": {VectorIndexType: foo.IndexType(), VectorIndexConfig: foo},
--	}}
--	shardLike, _ := testShardWithSettings(t, ctx, class, legacy, false, false, func(i *Index) {
--		i.vectorIndexUserConfigs = map[string]schemaConfig.VectorIndexConfig{"foo": foo}
--	})
--	shard := underlyingShard(t, shardLike)
--
--	// the first load recorded the config each index was built with
--	assert.Equal(t, recorded(shard, "foo", "vectors_foo", "ready"), mustRecord(t, shard, "foo"))
--	assert.Equal(t, recorded(shard, "", "main", "ready"), mustRecord(t, shard, ""))
--
--	// a named vector's update, accepted: the record follows
--	updated := foo
--	updated.EF = 200
--	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": updated}))
--	rec := mustRecord(t, shard, "foo")
--	assert.Equal(t, updated, rec.Config)
--	assert.Equal(t, "vectors_foo", rec.QueueID)
--	assert.Equal(t, "ready", rec.State)
--
--	// the legacy vector's update, accepted: the record follows
--	legacyUpdated := legacy
--	legacyUpdated.EF = 300
--	require.NoError(t, shard.UpdateVectorIndexConfig(ctx, legacyUpdated))
--	assert.Equal(t, legacyUpdated, mustRecord(t, shard, "").Config)
--
--	// refused by the index: nothing is recorded
--	refused := updated
--	refused.RQ.Bits = 1
--	err := shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": refused})
--	require.ErrorContains(t, err, "rq bits is immutable")
--	assert.Equal(t, updated, mustRecord(t, shard, "foo").Config, "a refused config is not the index's config")
--
--	// the same config again writes nothing new
--	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{"foo": updated}))
--	assert.Equal(t, updated, mustRecord(t, shard, "foo").Config)
--
--	// a skipped vector added by an update owns no record to write to
--	require.NoError(t, shard.UpdateVectorIndexConfigs(ctx, map[string]schemaConfig.VectorIndexConfig{
--		"skipped": enthnsw.UserConfig{Skip: true},
--	}))
--	_, ok, err := shard.mapping.Get("skipped")
--	require.NoError(t, err)
--	assert.False(t, ok)
--}
--
--// mustRecord is name's mapping record, which must exist.
--func mustRecord(t *testing.T, shard *Shard, name string) vectorIndexRecord {
--	t.Helper()
--	rec, ok, err := shard.mapping.Get(name)
--	require.NoError(t, err)
--	require.True(t, ok, "no record for %q", name)
--	return rec
--}
+@@ -62,7 +62,7 @@ func TestObjectVectorSearch_MissingObjectKeepsDistancesAligned(t *testing.T) {
+ 			ctx := context.Background()
+ 			className := fmt.Sprintf("MissingObjRank%d", tc.missingRank)
+ 			shard, index := testShardWithSettings(t, ctx, &models.Class{Class: className},
+-				enthnsw.NewDefaultUserConfig(), false, false, false)
++				enthnsw.NewDefaultUserConfig(), false, false)
+ 			defer func() {
+ 				require.NoError(t, index.drop())
+ 			}()
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13556** (2026-10-16): Retry user creation on any 422 in the Python namespace test setup (@dirkkul)
-- **PR #13555** (2026-10-16): perf(lsmkv): compare keys once per tree level and drop a flatten allocation (@aliszka)
-- **PR #13554** (2026-10-16): perf(inverted): build batched Contains keys once per filter value (@aliszka)
-- **PR #13552** (2026-10-16): perf(lsmkv): stop timing segment reads whose duration is never recorded (@aliszka)
-- **PR #13551** (2026-10-16): perf(lsmkv): compare NotFound and Deleted directly before errors.Is (@aliszka)
-- **PR #13549** (2026-10-16): Keep the vector_index_tombstones gauge equal to the tombstone count (@dirkkul)
+- **PR #13689** (2026-10-30): dtm: cap the ack error a node writes for many failing units or groups (@etiennedi)
+- **PR #13685** (2026-10-30): fix(reindex): limit the stale-state sweep to a task's tenants (@etiennedi)
+- **PR #13684** (2026-10-30): reindex: log the group's unit count instead of every unit ID (@etiennedi)
+- **PR #13683** (2026-10-30): Bound the task-list call in the backup reindex gate (@etiennedi)
+- **PR #13681** (2026-10-30): backup: tell operators how to get past a reindex refusal (@etiennedi)
+- **PR #13680** (2026-10-30): Reindex: report a frozen tenant in ?tenants= as frozen, not missing (@etiennedi)
 
 ---
 
@@ -2573,36 +1774,28 @@ This reverts commit 78cc22636f92e3afe3ae888636c3c96ab6541ed4.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Test that unflushed writes of a suspended namespace survive a crash
+## X. test): match testShardWithSettings signature after v1.39 merge
 
 **RULE**:
-When implementing operations in `adapters/repos/db/backup_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/repos/db/shard_vector_search_missing_object_integration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9cd62c1f`: Test that unflushed writes of a suspended namespace survive a crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c595a64`: test): match testShardWithSettings signature after v1.39 merge. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/backup_integration_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/repos/db/shard_vector_search_missing_object_integration_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/weaviate/weaviate/usecases/namespaces"
-	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, nil, classes...)
-// override, when non-nil, adjusts the Config before the DB is created. exister
-// answers the namespace of a <ns>:<Class> name, and may be nil without one.
-	override func(*Config), exister namespaces.Exister, classes ...*models.Class,
-		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, exister)
+				enthnsw.NewDefaultUserConfig(), false, false)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	return setupTestDBWithShardState(t, rootDir, singleShardState(), override, classes...)
-// override, when non-nil, adjusts the Config before the DB is created.
-	override func(*Config), classes ...*models.Class,
-		mockNodeSelector, mockSchemaReader, mockReplicationFSMReader, nil)
+				enthnsw.NewDefaultUserConfig(), false, false, false)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9cd62c1f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c595a64` are properly handled with clean fallback behavior.

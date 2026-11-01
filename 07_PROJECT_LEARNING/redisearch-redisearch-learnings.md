@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source**: github ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
-> **Source Version**: `f25c7ebb`  
+> **Source Version**: `4be31bd5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:00:48.141Z  
+> **Timestamp**: 2026-10-31T20:32:05.516Z  
 > **Learning ID**: `learn-github-redisearch-redisearch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/redisearch-redisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RediSearch/RediSearch](https://github.com/RediSearch/RediSearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:00:48.135Z  
+> **Harvest Timestamp**: 2026-10-31T20:32:05.508Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A query and indexing engine for Redis, providing secondary indexing, full-text search, vector similarity search and aggregations.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 6243 stars
+- **Stars / Engagement**: 6247 stars
 
 ---
 
@@ -1605,11 +1605,11 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11881** (2026-10-14): **[BUG] Documents are silently not indexed when they have no indexable field value but do have a `SORTABLE` value**
-  *Symptoms*: **Describe the bug** A document is silently skipped by the indexer when both of the following hold:  1. it has no value for any indexable field, and 2. it has a value for at least one `SORTABLE` field.  **To Reproduce** One schema with three fields — an indexable one, a sortable `NOINDEX` one, and a plain `NOINDEX` one — and one document exercising each:  FT.CREATE idx ON HASH PREFIX 1 doc: SCHEMA     indexed          TAG INDEXMISSING     sortable_noindex TAG SORTABLE UNF NOINDEX     plain_noindex    TAG NOINDEX  HSET doc:1 indexed          red HSET doc:2 sortable_noindex x HSET doc:3 plain_noindex    p  **Expected behavior** FT.INFO idx num_docs               => 2      <-- expected 3 hash_indexing_failures => 0      <-- nothing reported  FT.SEARCH idx "*" NOCONTENT 1) 2 2) doc:1 3) doc:3                         <-- doc:2 is missing  FT.SEARCH idx "ismissing(@ indexed)" NOCONTENT DIALECT 2 1) 1 2) doc:3                         <-- doc:2 also has no `indexed` value   **Environment (please complete the following information):** on `master` @ `3635ada5fed6aec58eba05c606ff3bc641b41c08` or earlier version like 8.9.90 8.11.80   **Additional context** Root cause   both `doc:2` and `doc:3`,  flag `ACTX_F_OTHERINDEXED` and  `ACTX_F_TEXTINDEXED`  is true     int empty = (RSSortingVector_Length(&aCtx->sv) == 0) && !hasTextFields && !hasOtherFields;   if (empty) {     aCtx->stateFlags |= ACTX_F_EMPTY;   } but `doc:2` with ACTX_F_EMPTY false while `doc:3` true.   if (ACTX_IS_INDEXED(aCtx)
+- **Issue #11970** (2026-10-26): **[BUG] Duplicate FT.AGGREGATE cursor rows after deletes while index backfill is active**
+  *Symptoms*: ## Describe the bug  A raw redis-py diagnostic observed duplicate physical row IDs across FT.AGGREGATE / FT.CURSOR READ pages immediately after bulk deletes while FT.INFO still reported indexing=1. This reproducer does not use Go, ADBC or Arrow. Please investigate whether this is a defect or an expected limitation during initial backfill, and document a supported readiness/mitigation contract.  ## Environment  - Redis OSS 8.6.2; Search module version 80600 (8.6.0), local Docker standalone. - Client: macOS 26.7.1 arm64, redis-py; diagnostic runs RESP2 and RESP3 separately. - search-max-aggregate-results: 2147483648. - Observations were captured on October 21, 2026. This report uses preserved evidence; it is not a new reproduction against latest master. CPU model was not recorded.  ## To reproduce  1. On a disposable Redis with Search, create a HASH index with sortable NUMERIC __rowid, adv and width fields. 2. Insert row IDs 1..100000, then delete every ID not divisible by 10. No further application writes are made during reads. 3. Query `@__rowid:[1 100000]` with `LOAD 4 @__key @__rowid @width @adv`, `TIMEOUT 0`, `WITHCURSOR COUNT 10000`, `DIALECT 2`. Finish every cursor with `FT.CURSOR READ ... COUNT 10000`. 4. Compare the complete row multiset with IDs 10,20,...,100000. Repeat, and compare with a separate run that first waits for num_docs=10000 and indexing=0.  Preserved executable reproducer (creates/drops only a generated test prefix/index): https://github.com/alberttwong/
 
-- **Issue #11274** (2026-09-01): **[BUG] FT.SEARCH intermittently does not fail with given timeout when `search-on-timeout` set to `fail`**
-  *Symptoms*: ❗**IMPORTANT**  ❗ The issue caught by the **Jedis** nightly tests CI against **Redis** `unstable` image, please see the additional context below.  **Describe the bug**  With `search-on-timeout fail` and `search-workers > 0`, a query that exceeds its `TIMEOUT` usually returns a **successful, complete result set** instead of `SEARCH_TIMEOUT Timeout limit was reached`. The timeout is exceeded on every execution — the identical query under `search-on-timeout return` reports the timeout warning on every run — yet under `fail` the error is only returned sporadically. The outcome looks like a race between the background worker completing the query and the blocked-client timeout callback; when the worker wins, the deadline is ignored.  Regression on `master`, introduced between the 2026-08-26 and 2026-08-27 nightly builds. #10961 (merged 2026-08-27 11:11 UTC) is the only commit in that window touching timeout handling and rewrote exactly this path (`QueryRequestTimeout`, FAIL enforcement for background execution).  **To Reproduce**  Pure `redis-cli`, no client library:  1. `docker run -d --rm --name repro -e TLS_ENABLED=false redislabs/client-libs-test:unstable-33278213642-debian` (Redis unstable + RediSearch `master` as of 2026-08-29, `search-workers 16` preconfigured; server on port 3000) 2. ```sh    docker exec repro sh -c '      redis-cli -p 3000 ft.create idx SCHEMA title TEXT n NUMERIC SORTABLE      for i in $(seq 0 9999); do echo "hset doc:$i title \"hello world $i\" n $i"; do
+- **Issue #11935** (2026-10-29): **[BUG] Follow-up to #10547: INKEYS cost moved from the worker to the main thread**
+  *Symptoms*: **Describe the bug** This is a follow-up to https://github.com/RediSearch/RediSearch/issues/10547 which we filed in July  Since `f3efd437f`, `INKEYS` key names are resolved to docIds on the **main thread at query admission**, in `applyGlobalFilters`  Before that change, memory mode resolved `INKEYS` on the **worker thread inside the spec read lock**, through the in-index `DocIdMap` trie  We have now profiled a current build. **The trie lookup is genuinely gone** — no `TrieMap_Find` anywhere in the worker profile, and the memory the trie used to hold is no longer allocated. That part worked.  But the move raise two new problems for `INKEYS`: 1. **Throughput** (measured, our actual problem) — the per-key cost is now paid    on the single main thread and cannot be parallelized across workers. Under    load this is ~30% of one core on our instance. The main thread has become the bottleneck    and  the worker pool cannot be driven any higher. 2. **A behavioral change** (found while reading the code, not measured) —    resolution now happens outside the spec read lock. Previously an `INKEYS` key    always resolved to a live docId and the document was returned in *some*    version; now a key updated between admission and execution can return    neither the old nor the new version.  **To Reproduce** Same shape as #10547, on a different instance:  - `FT.SEARCH` with `INKEYS` on essentially every query (99.5% of command CPU). -   Some queries pass several hundred keys to INKEYS. - Memo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1626,137 +1626,582 @@ void Priority_Queue_Free(PriorityQueue *pq) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f25c7ebb` (2026-10-25)
-**Commit Message**: [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (#11990)
+### Incident Patch 1: `4be31bd5` (2026-10-31)
+**Commit Message**: MOD-17673: Move parent and child scanner orchestration to Rust (#11236)
 
-* [MOD-20157] Skip the field-expiration bit lookup for blocks without a bitset
+* fork_gc: migrate the tags scanner to Rust
 
-#10169 made every inverted-index record read look up its entry's bit in the
-block's expiration bitset. The lookup was an out-of-line call that read the
-bitset's ThinVec header even for blocks that never had a field-level TTL,
-which is every block of an index without HEXPIRE. Numeric range queries pay
-it on every decoded and seeked record.
+* Move parent and child scanner orchestration to Rust
 
-Gate the lookup on a pointer-only check that the bitset has an allocation,
-and force-inline it into the reader.
+* Preserve fork GC post-heartbeat completion marker
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+---------
 
-* [MOD-20157] Track entry ordinals only in blocks with an expiration bitset
+Co-authored-by: jonathan keinan <[REDACTED_EMAIL]>
 
-The reader kept a per-entry ordinal for every decoded and seeked record so it
-could look up the entry's field-expiration bit. In blocks without a bitset that
-bookkeeping is pure overhead.
-
-Enter such blocks with the ordinal marked unknown and skip the bookkeeping
-there. A block gains its first bit only through an append, past every existing
-entry, while the reader is suspended; the first read that finds a bitset with an
-unknown ordinal recoun
-
-**File**: `src/redisearch_rs/inverted_index/src/index/core.rs` (modified, +1/-0)
+**File**: `src/fork_gc/fork_gc.c` (modified, +0/-43)
 ```diff
-@@ -126,6 +126,7 @@ impl IndexBlock {
-     }
+@@ -42,49 +42,6 @@
+ // Number of attempts to wait for the child to exit gracefully before trying to terminate it
+ #define GC_WAIT_ATTEMPTS 4
  
-     /// Whether the entry at `ordinal` belongs to a document with a field-level expiration.
-+    #[inline(always)]
-     pub(crate) fn expiration_bit(&self, ordinal: u16) -> bool {
-         self.expiration_bits.contains(ordinal)
-     }
+-static void FGC_childScanIndexes(ForkGC *gc, IndexSpec *spec) {
+-  RedisSearchCtx sctx = SEARCH_CTX_STATIC(gc->ctx, spec);
+-  const char* indexName = IndexSpec_FormatName(spec, RSGlobalConfig.hideUserDataFromLog);
+-  RedisModule_Log(sctx.redisCtx, "debug", "ForkGC in index %s - child scanning indexes start", indexName);
+-  FGC_childCollectTerms(gc, &sctx);
+-  FGC_childCollectNumeric(gc, &sctx);
+-  FGC_childCollectTags(gc, &sctx);
+-  FGC_childCollectMissingDocs(gc, &sctx);
+-  FGC_childCollectExistingDocs(gc, &sctx);
+-  RedisModule_SendChildHeartbeat(1.0); // final heartbeat
+-  RedisModule_Log(sctx.redisCtx, "debug", "ForkGC in index %s - child scanning indexes end", indexName);
+-  // Let the parent wait for the terminal terminator, so we manage to send the heartbeat before exiting
+-  FGC_sendTerminator(gc);
+-}
+-
+-FGCError FGC_parentHandleFromChild(ForkGC *gc) {
+-  FGCError status = FGC_COLLECTED;
+-  RedisModule_Log(gc->ctx, "debug", "ForkGC - parent start applying changes");
+-
+-#define COLLECT_FROM_CHILD(e)               \
+-  while ((status = (e)) == FGC_COLLECTED) { \
+-  }                                         \
+-  if (status != FGC_DONE) {                 \
+-    return status;                          \
+-  }
+-
+-  COLLECT_FROM_CHILD(FGC_parentHandleTerms(gc));
+-  COLLECT_FROM_CHILD(FGC_parentHandleNumeric(gc));
+-  COLLECT_FROM_CHILD(FGC_parentHandleTags(gc));
+-  COLLECT_FROM_CHILD(FGC_parentHandleMissingDocs(gc));
+-  COLLECT_FROM_CHILD(FGC_parentHandleExistingDocs(gc));
+-
+-  // Wait for the final terminator from the child, so it can finish post-processing chores before we kill it
+-  size_t terminator_check;
+-  int rc = FGC_recvFixed(gc, &terminator_check, sizeof(terminator_check)); // final status from child
+-  if (rc != REDISMODULE_OK || terminator_check != NO_MORE_DATA) {
+-    return FGC_CHILD_ERROR;
+-  }
+-  RedisModule_Log(gc->ctx, "debug", "ForkGC - parent ends applying changes");
+-
+-  return status;
+-}
+-
+ // GIL must be held before calling this function
+ static inline bool isOutOfMemory(RedisModuleCtx *ctx) {
+   // Check if we are a slave/replica
 ```
 
-**File**: `src/redisearch_rs/inverted_index/src/index/expiration_bits.rs` (modified, +1/-0)
+**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/existing_docs.rs` (removed, +0/-73)
 ```diff
-@@ -41,6 +41,7 @@ impl ExpirationBits {
-     }
- 
-     /// Whether `ordinal` is in the set.
-+    #[inline(always)]
-     pub(crate) fn contains(&self, ordinal: u16) -> bool {
-         self.0
-             .as_slice()
+@@ -1,73 +0,0 @@
+-/*
+- * Copyright (c) 2006-Present, Redis Ltd.
+- * All rights reserved.
+- *
+- * Licensed under your choice of the Redis Source Available License 2.0
+- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+- * GNU Affero General Public License v3 (AGPLv3).
+-*/
+-
+-use fork_gc::{
+-    ForkGC,
+-    existing_docs::{collect_existing_docs, handle_existing_docs},
+-    io_result_ext::IoResultExt,
+-};
+-use index_spec::IndexSpecReadGuard;
+-
+-use crate::{FGCError, util::into_fgc_error};
+-
+-/// Collect GC delta data for the spec's `existingDocs` inverted index and
+-/// send it to the parent process over the pipe.
+-///
+-/// If the spec has no existing-docs index, or the scan produces no delta,
+-/// only the terminator is sent.  Otherwise an empty header followed by the
+-/// serialised GC delta is sent before the terminator.
+-///
+-/// Any write failure, such as a closed fd or a broken pipe, terminates the
+-/// child process via `RedisModule_ExitFromChild`.
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
+-/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
+-/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_childCollectExistingDocs(
+-    gc: *mut ffi::ForkGC,
+-    sctx: *mut ffi::RedisSearchCtx,
+-) {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-    // SAFETY: caller guarantees (2).
+-    let spec_ptr = unsafe { (*sctx).spec };
+-    // SAFETY: caller guarantees (3).
+-    let spec = unsafe { &*spec_ptr };
+-
+-    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
+-    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
+-    // then forks and the child has only one thread with exclusive access to the index spec.
+-    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
+-
+-    collect_existing_docs(&mut fgc.writer(), &guard).unwrap_or_exit();
+-}
+-
+-/// Receive and apply the GC delta for the spec's `existingDocs` inverted index.
+-///
+-/// Reads one protocol frame from the pipe. Returns [`FGCError::Done`] when
+-/// the child sent no data (index absent or nothing to collect),
+-/// [`FGCError::Collected`] after successfully applying a delta, or an
+-/// error variant on pipe or spec failure.
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_parentHandleExistingDocs(gc: *mut ffi::ForkGC) -> FGCError {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-
+-    into_fgc_error(handle_existing_docs(fgc), "existing docs")
+-}
 ```
 
-**File**: `src/redisearch_rs/inverted_index/src/tests/expiration_bit.rs` (modified, +65/-0)
+**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/lib.rs` (modified, +1/-5)
 ```diff
-@@ -239,3 +239,68 @@ fn expiration_bit_survives_gc() {
-     }
-     assert!(!reader.next_record(&mut result).unwrap());
- }
+@@ -26,11 +26,7 @@ use nul_terminated_bytes::NulTerminatedBytes;
+ use tracing::Level;
+ use tracing_log_error::log_error;
+ 
+-mod existing_docs;
+-mod missing_docs;
+-mod numeric;
+-mod tags;
+-mod terms;
++mod orchestration;
+ mod util;
+ 
+ /// Status code returned by Fork GC parent-side pipe-receive operations.
+```
+
+**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/missing_docs.rs` (removed, +0/-76)
+```diff
+@@ -1,76 +0,0 @@
+-/*
+- * Copyright (c) 2006-Present, Redis Ltd.
+- * All rights reserved.
+- *
+- * Licensed under your choice of the Redis Source Available License 2.0
+- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+- * GNU Affero General Public License v3 (AGPLv3).
+-*/
+-
+-use fork_gc::{
+-    ForkGC,
+-    io_result_ext::IoResultExt,
+-    missing_docs::{collect_missing_docs, handle_missing_docs},
+-};
+-use index_spec::IndexSpecReadGuard;
+-
+-use crate::{FGCError, util::into_fgc_error};
+-
+-/// Collect GC delta data for every entry in the spec's `missing.indexes` and
+-/// send it to the parent process over the pipe.
+-///
+-/// Iterates the `missing.indexes`, and for each entry with a non-null
+-/// `InvertedIndex` calls `scan_gc` which sends the field name header
+-/// followed by the serialised GC delta. Sends a terminator once all
+-/// entries are processed.
+-///
+-/// Any write failure, such as a closed fd or a broken pipe, terminates the
+-/// child process via `RedisModule_ExitFromChild`.
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
+-/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
+-/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_childCollectMissingDocs(
+-    gc: *mut ffi::ForkGC,
+-    sctx: *mut ffi::RedisSearchCtx,
+-) {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-    // SAFETY: caller guarantees (2).
+-    let spec_ptr = unsafe { (*sctx).spec };
+-    // SAFETY: caller guarantees (3).
+-    let spec = unsafe { &*spec_ptr };
+-
+-    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
+-    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
+-    // then forks and the child has only one thread with exclusive access to the index spec.
+-    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
+-
+-    collect_missing_docs(&mut fgc.writer(), &guard).unwrap_or_exit();
+-}
+-
+-/// Receive and apply the GC delta for one field in the spec's `missing.indexes`.
+-///
+-/// Reads one protocol frame from the pipe. Returns [`FGCError::Collected`] after
+-/// successfully applying a delta, [`FGCError::Done`] when the child sent a
+-/// terminator (all fields processed), or an error variant on pipe or spec failure.
+-///
+-/// Called in a loop (via `COLLECT_FROM_CHILD`) until it returns something other
+-/// than [`FGCError::Collected`].
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_parentHandleMissingDocs(gc: *mut ffi::ForkGC) -> FGCError {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-
+-    into_fgc_error(handle_missing_docs(fgc), "missing docs")
+-}
+```
+
+**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/numeric.rs` (removed, +0/-76)
+```diff
+@@ -1,76 +0,0 @@
+-/*
+- * Copyright (c) 2006-Present, Redis Ltd.
+- * All rights reserved.
+- *
+- * Licensed under your choice of the Redis Source Available License 2.0
+- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+- * GNU Affero General Public License v3 (AGPLv3).
+-*/
+-
+-use fork_gc::{
+-    ForkGC,
+-    io_result_ext::IoResultExt,
+-    numeric::{collect_numeric, handle_numeric},
+-};
+-use index_spec::IndexSpecReadGuard;
+-
+-use crate::{FGCError, util::into_fgc_error};
+-
+-/// Collect GC delta data for every numeric and geo field in the spec and send
+-/// it to the parent process over the pipe.
+-///
+-/// For each NUMERIC or GEO field whose tree has been initialised, sends the
+-/// field name and unique ID as a header, followed by one entry per tree node
+-/// with GC work, then a per-field terminator. A final terminator is sent once
+-/// all fields have been processed.
+-///
+-/// Any write failure, such as a closed fd or a broken pipe, terminates the
+-/// child process via `RedisModule_ExitFromChild`.
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
+-/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
+-/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_childCollectNumeric(
+-    gc: *mut ffi::ForkGC,
+-    sctx: *mut ffi::RedisSearchCtx,
+-) {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-    // SAFETY: caller guarantees (2).
+-    let spec_ptr = unsafe { (*sctx).spec };
+-    // SAFETY: caller guarantees (3).
+-    let spec = unsafe { &*spec_ptr };
+-
+-    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
+-    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
+-    // then forks and the child has only one thread with exclusive access to the index spec.
+-    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
+-
+-    collect_numeric(&mut fgc.writer(), &guard).unwrap_or_exit();
+-}
+-
+-/// Receive and apply the GC deltas for one numeric or geo field.
+-///
+-/// Reads a field header from the pipe followed by that field's per-node
+-/// deltas, applying each to the field's numeric tree under the write lock and
+-/// updating statistics. Returns [`FGCError::Done`] when the child sent the
+-/// global terminator instead of a field header (all fields processed),
+-/// [`FGCError::Collected`] after a field's deltas were applied, or an error
+-/// variant on pipe, spec, or tree-lookup failure.
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_parentHandleNumeric(gc: *mut ffi::ForkGC) -> FGCError {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-
+-    into_fgc_error(handle_numeric(fgc), "numeric")
+-}
+```
+
+**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/orchestration.rs` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++/*
++ * Copyright (c) 2006-Present, Redis Ltd.
++ * All rights reserved.
++ *
++ * Licensed under your choice of the Redis Source Available License 2.0
++ * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
++ * GNU Affero General Public License v3 (AGPLv3).
++*/
 +
-+/// Numeric record for `doc_id` with the given field-expiration bit.
-+fn numeric(doc_id: DocId, has_exp: bool) -> RSIndexResult<'static> {
-+    RSIndexResult::build_numeric(1.5)
-+        .doc_id(doc_id)
-+        .has_field_expiration(has_exp)
-+        .build()
++//! C ABI entrypoints for the Fork GC child and parent orchestration.
++
++use fork_gc::{
++    ForkGC, HandleError, HandleOutcome,
++    orchestration::{collect_scanners, handle_scanners},
++};
++use index_spec::IndexSpecReadGuard;
++use tracing::Level;
++use tracing_log_error::log_error;
++
++use crate::FGCError;
++
++/// Scan every Fork GC index kind and send its deltas to the parent process.
++///
++/// # Safety
++///
++/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
++///    alive for the duration of this call.
++/// 2. `spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
++/// 3. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
++#[unsafe(no_mangle)]
++pub unsafe extern "C" fn FGC_childScanIndexes(gc: *mut ffi::ForkGC, spec: *mut ffi::IndexSpec) {
++    // SAFETY: caller guarantees (1).
++    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
++    // SAFETY: caller guarantees (2).
++    let spec = unsafe { &*spec };
++    // SAFETY: caller guarantees (3). We don't actually hold a read lock, but when the Fork GC code
++    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
++    // then forks and the child has only one thread with exclusive access to the index spec.
++    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
++
++    collect_scanners(fgc, &guard);
 +}
 +
-+/// Seeking within and across blocks reports each entry's bit whether or not its block has a
-+/// bitset, including blocks entered without one.
-+#[test]
-+fn numeric_seek_reports_expiration_bit_across_blocks() {
-+    let mut ii = InvertedIndex::<Numeric>::new(IndexFlags_Index_StoreNumeric);
-+    // Six blocks' worth of docs, small enough for miri. Every third doc in the upper half has a
-+    // TTL, so the lower three blocks have no bitset and the upper three do.
-+    let per_block = DocId::from(<Numeric as crate::Encoder>::RECOMMENDED_BLOCK_ENTRIES);
-+    let last = 6 * per_block;
-+    let has_exp = |doc_id: DocId| doc_id > last / 2 && doc_id.is_multiple_of(3);
-+    for doc_id in 1..=last {
-+        ii.add_record(&numeric(doc_id, has_exp(doc_id))).unwrap();
-+    }
-+    assert_eq!(ii.number_of_blocks(), 6);
-+    for (i, block) in ii.blocks.iter().enumerate() {
-+        assert_eq!(
-+            block.expiration_bits.mem_usage() > 0,
-+            i >= 3,
-+            "bitset presence of block {i}"
-+        );
-+    }
++/// Consume every Fork GC scanner stream and apply its deltas in the parent.
++///
++/// # Safety
++///
++/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
++///    alive for the duration of this call.
++#[unsafe(no_mangle)]
++pub unsafe extern "C" fn FGC_parentHandleFromChild(gc: *mut ffi::ForkGC) -> FGCError {
++    // SAFETY: caller guarantees (1).
++    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
 +
-+    // Seeks within a block and into the next one, then the entry after each. The last doc is
-+    // included so the end of the index is checked too.
-+    let mut reader = ii.reader();
-+    let mut result = numeric(0, false);
-+    for target in (1..=last).step_by(7).chain([last]) {
-+        assert!(reader.seek_record(target, &mut result).unwrap());
-+        assert_eq!(
-+            (result.doc_id, result.has_field_expiration),
-+            (target, has_exp(target)),
-+            "seek({target})"
-+        );
-+        if target < last {
-+            assert!(reader.next_record(&mut result).unwrap());
-+            assert_eq!(
-+                (result.doc_id, result.has_field_expiration),
-+                (target + 1, has_exp(target + 1)),
-+                "next after {target}"
-+            );
-+        } else {
-+            assert!(!reader.next_record(&mut result).unwrap(), "end of index");
++    match handle_scanners(fgc) {
++        Ok(HandleOutcome::Collected) => FGCError::Collected,
++        Ok(HandleOutcome::Done) => FGCError::Done,
++        Err((scanner, error @ HandleError::Codec { .. })) => {
++            log_error!(error, level: Level::WARN, "ForkGC: {scanner}: codec error");
++            FGCError::ChildError
++        }
++        Err((scanner, error @ HandleError::SpecDeleted)) => {
++            log_error!(error, level: Level::WARN, "ForkGC: {scanner}: index spec deleted");
++            FGCError::SpecDeleted
++        }
++        Err((scanner, error @ HandleError::ApplyError(_))) => {
++            log_error!(error, level: Level::WARN, "ForkGC: {scanner}: apply error");
++            FGCError::ParentError
 +        }
 +    }
-+
-+    // Seeks that skip several blocks at once, through the binary search over block bounds.
-+    let mut reader = ii.reader();
-+    for target in [1, 4 * per_block + per_block / 2, last - 1] {
-+        assert!(reader.seek_record(target, &mut result).unwrap());
-+        assert_eq!(
-+            (result.doc_id, result.has_field_expiration),
-+            (target, has_exp(target)),
-+            "multi-block seek({target})"
-+        );
-+    }
 +}
+```
+
+**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/tags.rs` (removed, +0/-82)
+```diff
+@@ -1,82 +0,0 @@
+-/*
+- * Copyright (c) 2006-Present, Redis Ltd.
+- * All rights reserved.
+- *
+- * Licensed under your choice of the Redis Source Available License 2.0
+- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+- * GNU Affero General Public License v3 (AGPLv3).
+-*/
+-
+-use fork_gc::{
+-    ForkGC,
+-    io_result_ext::IoResultExt,
+-    tags::{collect_tags, handle_tags},
+-};
+-use index_spec::IndexSpecReadGuard;
+-
+-use crate::{FGCError, util::into_fgc_error};
+-
+-/// Collect GC delta data for every tag of every TAG field in the spec and send
+-/// it to the parent process over the pipe.
+-///
+-/// Walks each TAG field's tag index and, for every tag whose posting list has
+-/// GC work, sends the field name, the tag index's unique id, the tag, and the
+-/// serialised GC delta. Tags that produce no delta, and fields whose postings
+-/// live on disk, are skipped. A terminator is sent once every field has been
+-/// walked.
+-///
+-/// Any write failure, such as a closed fd or a broken pipe, terminates the
+-/// child process via `RedisModule_ExitFromChild`.
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
+-/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
+-/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_childCollectTags(
+-    gc: *mut ffi::ForkGC,
+-    sctx: *mut ffi::RedisSearchCtx,
+-) {
+-    debug_assert!(!gc.is_null());
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-    debug_assert!(!sctx.is_null());
+-    // SAFETY: caller guarantees (2).
+-    let spec_ptr = unsafe { (*sctx).spec };
+-    debug_assert!(!spec_ptr.is_null());
+-    // SAFETY: caller guarantees (3).
+-    let spec = unsafe { &*spec_ptr };
+-
+-    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
+-    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
+-    // then forks and the child has only one thread with exclusive access to the index spec.
+-    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
+-
+-    collect_tags(&mut fgc.writer(), &guard).unwrap_or_exit();
+-}
+-
+-/// Receive and apply the GC delta for one tag value.
+-///
+-/// Reads one message from the pipe. Returns [`FGCError::Collected`] after
+-/// successfully applying a delta, [`FGCError::Done`] when the child sent the
+-/// terminator (all tags processed), or an error variant on pipe, spec, or
+-/// tag-index lookup failure.
+-///
+-/// Called in a loop (via `COLLECT_FROM_CHILD`) until it returns something other
+-/// than [`FGCError::Collected`].
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_parentHandleTags(gc: *mut ffi::ForkGC) -> FGCError {
+-    debug_assert!(!gc.is_null());
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-
+-    into_fgc_error(handle_tags(fgc), "tags")
+-}
+```
+
+**File**: `src/redisearch_rs/c_entrypoint/fork_gc_ffi/src/terms.rs` (removed, +0/-77)
+```diff
+@@ -1,77 +0,0 @@
+-/*
+- * Copyright (c) 2006-Present, Redis Ltd.
+- * All rights reserved.
+- *
+- * Licensed under your choice of the Redis Source Available License 2.0
+- * (RSALv2); or (b) the Server Side Public License v1 (SSPLv1); or (c) the
+- * GNU Affero General Public License v3 (AGPLv3).
+-*/
+-
+-use fork_gc::{
+-    ForkGC,
+-    io_result_ext::IoResultExt,
+-    terms::{collect_terms, handle_terms},
+-};
+-use index_spec::IndexSpecReadGuard;
+-
+-use crate::{FGCError, util::into_fgc_error};
+-
+-/// Collect GC delta data for every term in the spec's terms trie and send it
+-/// to the parent process over the pipe.
+-///
+-/// Walks the terms trie, and for each term with a non-null `InvertedIndex`
+-/// attempts a GC scan. When a scan produces a delta the term header (its raw
+-/// bytes) followed by the serialised GC delta is sent. Terms that produce no
+-/// delta or fail the scan are skipped. A terminator is sent once every term
+-/// has been processed.
+-///
+-/// Any write failure, such as a closed fd or a broken pipe, terminates the
+-/// child process via `RedisModule_ExitFromChild`.
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-/// 2. `sctx` must point to a valid [`ffi::RedisSearchCtx`].
+-/// 3. `sctx.spec` must be a non-null pointer to a valid [`ffi::IndexSpec`].
+-/// 4. This function should only be called when it has exclusive access to the [`ffi::IndexSpec`].
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_childCollectTerms(
+-    gc: *mut ffi::ForkGC,
+-    sctx: *mut ffi::RedisSearchCtx,
+-) {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-    // SAFETY: caller guarantees (2).
+-    let spec_ptr = unsafe { (*sctx).spec };
+-    // SAFETY: caller guarantees (3).
+-    let spec = unsafe { &*spec_ptr };
+-
+-    // SAFETY: caller guarantees (4). We don't actually hold a read lock, but when the Fork GC code
+-    // runs it holds the Redis GIL (so no other thread would be touching any shared Redis state),
+-    // then forks and the child has only one thread with exclusive access to the index spec.
+-    let guard = unsafe { IndexSpecReadGuard::from_locked(spec) };
+-
+-    collect_terms(&mut fgc.writer(), &guard).unwrap_or_exit();
+-}
+-
+-/// Receive and apply the GC delta for one term in the spec's terms trie.
+-///
+-/// Reads one protocol frame from the pipe. Returns [`FGCError::Collected`] after
+-/// successfully applying a delta, [`FGCError::Done`] when the child sent a
+-/// terminator (all terms processed), or an error variant on pipe or spec failure.
+-///
+-/// Called in a loop (via `COLLECT_FROM_CHILD`) until it returns something other
+-/// than [`FGCError::Collected`].
+-///
+-/// # Safety
+-///
+-/// 1. `gc` must point to a valid [`ffi::ForkGC`], with no other reference to it
+-///    alive for the duration of this call.
+-#[unsafe(no_mangle)]
+-pub unsafe extern "C" fn FGC_parentHandleTerms(gc: *mut ffi::ForkGC) -> FGCError {
+-    // SAFETY: caller guarantees (1).
+-    let fgc = unsafe { ForkGC::from_ptr_mut(gc) };
+-
+-    into_fgc_error(handle_terms(fgc), "terms")
+-}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11994** (2026-10-25): [8.12] [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (@oshadmi)
-- **PR #11991** (closed): [MOD-19658] Add slot membership enumeration to the disk API (@kei-nan)
-- **PR #11990** (2026-10-25): [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (@oshadmi)
-- **PR #11976** (closed): Bound the fork GC child wait by wall clock instead of attempt count (@evazca)
-- **PR #11975** (2026-10-22): [8.6-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
-- **PR #11974** (2026-10-22): [8.8-rse] [MOD-20014] clear docIDmetadata on restore commands on disk (@redisearch-backport-pull-request[bot])
+- **PR #12093** (2026-10-30): Thread GC: batch delta applies and start early on update bursts (@GuyAv46)
+- **PR #12087** (2026-10-30): [8.12] [MOD-19999] Avoid document key map memory until first INKEYS use (@redisearch-backport-pull-request[bot])
+- **PR #12076** (2026-10-29): [8.12] [MOD-19999] Fix queued INKEYS updates with worker-side key lookup (@redisearch-backport-pull-request[bot])
+- **PR #12062** (2026-10-29): Refactor FT.CREATE option parsing into a reusable function (@Itzikvaknin)
+- **PR #12050** (closed): GEO EXP #4 ffi (@JonasKruckenberg)
+- **PR #12049** (closed):  GEO EXP #5 port  (@JonasKruckenberg)
 
 ---
 
@@ -1770,34 +2215,3 @@ unknown ordinal recoun
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader 
-
-**RULE**:
-When implementing operations in `src/redisearch_rs/inverted_index/src/index/core.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RediSearch/RediSearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `f25c7ebb`: [MOD-20157] Inline the field-expiration bit lookup in the inverted-index reader (#11990). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/redisearch_rs/inverted_index/src/index/core.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-    #[inline(always)]
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f25c7ebb` are properly handled with clean fallback behavior.

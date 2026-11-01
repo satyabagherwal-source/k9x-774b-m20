@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source**: github ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
-> **Source Version**: `9dc4f03b`  
+> **Source Version**: `b2854791`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T03:03:41.026Z  
+> **Timestamp**: 2026-10-31T18:28:59.826Z  
 > **Learning ID**: `learn-github-iii-hq-iii`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T03:03:39.860Z  
+> **Harvest Timestamp**: 2026-10-31T18:28:58.699Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Effortlessly compose, extend, and observe every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18862 stars
+- **Stars / Engagement**: 18876 stars
 
 ---
 
@@ -1463,6 +1463,432 @@ impl StateStore {
     pub fn loa
 ```
 
+### Core Architecture Module: `crates/iii-init/src/worker_env.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0;
+// you may not use this file except in compliance with the Elastic License 2.0.
+// This software is patent protected. We welcome discussions - reach out at team@iii.dev
+// See LICENSE and PATENTS files for details.
+
+//! Loads the worker environment the host sends over the `iii.env`
+//! virtio-console port (see `iii_supervisor::env_channel`).
+//!
+//! The frame carries the worker's variables and the worker command
+//! (`III_WORKER_CMD`). The rest of iii-init's plumbing (`III_BLOCK_ROOT_*`,
+//! `III_WORKER_WORKDIR`, ...) still arrives on the kernel command line. The
+//! frame is exported into PID 1's environment, and the worker, supervisor
+//! restarts and `iii worker exec` sessions inherit it from there.
+
+use std::fs::OpenOptions;
+use std::io::{self, Read};
+use std::os::fd::{AsRawFd, RawFd};
+use std::os::unix::fs::OpenOptionsExt;
+use std::path::{Path, PathBuf};
+use std::time::{Duration, Instant};
+
+use iii_supervisor::env_channel::{ENV_PORT_ENV, decode_payload, frame_len};
+
+use crate::InitError;
+
+/// How long to wait for the port to appear and for the host's frame. The
+/// host writes the frame as soon as the VM starts, so hitting this means
+/// the host side is broken.
+const TIMEOUT: Duration = Duration::from_secs(30);
+
+/// Pause between retries while the port is missing or reads as EOF.
+const RETRY: Duration = Duration::from_millis(25);
+
+/// Reads the env frame when the host announced one via `III_ENV_PORT` and
+/// exports it. No-op when the variable is absent (older hosts).
+///
+/// Fails closed: a worker started without the environment and command it
+/// was given would fail later, and much less clearly, than a boot error
+/// naming the port.
+///
+/// Needs `/sys` and `/dev` (mounted by `mount::mount_filesystems`), and must
+/// run while iii-init is still single-threaded (before
+/// `supervisor::exec_worker` spawns its helper threads), because it mutates
+/// the process environment. `main::run` calls it right after
+/// `mount_filesystems`, so the worker env is visible to every later boot
+/// step, as it was when the env rode the kernel command line.
+pub fn load_worker_env() -> Result<(), InitError> {
+    let port_name = match std::env::var(ENV_PORT_ENV) {
+        Ok(name) => name,
+        Err(_) => return Ok(()),
+    };
+    let started = Instant::now();
+    let deadline = started + TIMEOUT;
+
+    let port_path = wait_for_port(&port_name, deadline).ok_or_else(|| {
+        InitError::WorkerEnv(format!(
+            "{ENV_PORT_ENV}={port_name} but no such port appeared in /sys/class/virtio-ports \
+             within {}s",
+            TIMEOUT.as_secs()
+        ))
+    })?;
+
+    let pairs = read_env_frame(&port_path, started, deadline)
+        .map_err(|e| InitError::WorkerEnv(format!("reading {}: {e}", port_path.display())))?;
+
+    // SAFETY: iii-init is single-threaded at this point. `main::run` calls
+    // this before `exec_worker`, which is where the shell-dispatcher and
+    // source-sync threads are spawned, so nothing can read the environment
+    // concurrently. `decode_payload` has already rejected the inputs that
+    // make `set_var` panic (empty name, '=' in the name, NUL).
+    unsafe {
+        for (key, value) in &pairs {
+            std::env::set_var(key, value);
+        }
+        // Plumbing, not worker configuration.
+        std::env::remove_var(ENV_PORT_ENV);
+    }
+    Ok(())
+}
+
+/// Port add/name events are asynchronous virtio control traffic, handled by
+/// a kernel workqueue; a slow host can still be announcing the port when
+/// iii-init gets here.
+fn wait_for_port(name: &str, deadline: Instant) -> Option<PathBuf> {
+    loop {
+        if let Some(path) = iii_supervisor::control::find_virtio_port_by_name(name) {
+            return Some(path);
+        }
+        if Instant::now() >= deadline {
+            return None;
+        }
+        std::thread::sleep(RETRY);
+    }
+}
+
+fn read_env_frame(
+    port_path: &Path,
+    started: Instant,
+    deadline: Instant,
+) -> io::Result<Vec<(String, String)>> {
+    let mut port = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .custom_flags(libc::O_NONBLOCK)
+        .open(port_path)?;
+    read_frame_patient(&mut port, started, deadline)
+}
+
+/// Reads one frame from a non-blocking reader, tolerating the transient EOF
+/// a virtio-console port reports before its host backend is connected, and
+/// giving up at `deadline`. `started` is when the whole load began (port
+/// lookup included), for the timeout message.
+fn read_frame_patient<R: Read + AsRawFd>(
+    port: &mut R,
+    started: Instant,
+    deadline: Instant,
+) -> io::Result<Vec<(String, String)>> {
+    let mut header = [0u8; 4];
+    read_exact_patient(port, &mut header, started, deadline)?;
+    let mut payload = vec![0u8; frame_len(header)?];
+    read_exact_patient(port, &mut payload, started, deadline)?;
+    decode_payload(&payload)
+}
+
+fn read_exact_patient<R: Read + AsRawFd>(
+    port: &mut R,
+    buf: &mut [u8],
+    started: Instant,
+    deadline: Instant,
+) -> io::Result<()> {
+    let mut filled = 0;
+    while filled < buf.len() {
+        let remaining = deadline.saturating_duration_since(Instant::now());
+        if remaining.is_zero() {
+            return Err(io::Error::new(
+                io::ErrorKind::TimedOut,
+                format!(
+                    "no complete env frame from the host after {:.1}s ({filled} of {} bytes)",
+                    started.elapsed().as_secs_f32(),
+                    buf.len()
+                ),
+            ));
+        }
+        match port.read(&mut buf[filled..]) {
+            Ok(n) if n > 0 => filled += n,
+            // Host backend not connected yet: the port reads as EOF.
+            Ok(_) => std::thread::sleep(RETRY),
+            Err(e) if e.kind() == io::ErrorKind::Interrupted => {}
+            Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
+                wait_readable(port.as_raw_fd(), remaining)?
+            }
+            Err(e) => return Err(e),
+        }
+    }
+    Ok(())
+}
+
+fn wait_readable(fd: RawFd, remaining: Duration) -> io::Result<()> {
+    let mut pollfd = libc::pollfd {
+        fd,
+        events: libc::POLLIN,
+        revents: 0,
+    };
+    // Short slices so the deadline is re-checked even if poll keeps
+    // reporting a hangup without data.
+    let slice_ms = remaining.as_millis().clamp(1, 100) as libc::c_int;
+    // SAFETY: one valid pollfd on the stack, count 1.
+    let rc = unsafe { libc::poll(&mut pollfd, 1, slice_ms) };
+    if rc < 0 {
+        let err = io::Error::last_os_error();
+        if err.kind() != io::ErrorKind::Interrupted {
+            return Err(err);
+        }
+    }
+    if rc > 0 && pollfd.revents & libc::POLLHUP != 0 && pollfd.revents & libc::POLLIN == 0 {
+        std::thread::sleep(RETRY);
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use iii_supervisor::env_channel::encode_frame;
+    use std::collections::VecDeque;
+    use std::io::Write;
+    use std::os::unix::net::UnixStream;
+
+    fn env() -> Vec<(String, String)> {
+        vec![
+            ("GREETING".to_string(), "Ol\u{e1} \u{1f496}".to_string()),
+            ("PEM".to_string(), "a\nb".to_string()),
+            (
+                "III_WORKER_CMD".to_string(),
+                "exec bash /opt/iii/dev-run.sh".to_string(),
+            ),
+        ]
+    }
+
+    fn read_within<R: Read + AsRawFd>(port: &mut R, ms: u64) -> io::Result<Vec<(String, String)>> {
+        let now = Instant::now();
+        read_frame_patient(port, now, now + Duration::from_millis(ms))
+    }
+
+    /// Scripted reads: `Ok(0)` entries model the transient EOF of a port
+    /// whose host backend is not connected yet.
+    struct Scripted(VecDeque<io::Result<Vec<u8>>>);
+
+    impl Read for Scripted {
+        fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
+            match self.0.pop_front() {
+                None => Ok(0),
+                Some(Err(e)) => Err(e),
+                Some(Ok(mut chunk)) => {
+                    let n = chunk.len().min(buf.len());
+                    buf[..n].copy_from_slice(&chunk[..n]);
+                    if n < chunk.len() {
+                        self.0.push_front(Ok(chunk.split_off(n)));
+                    }
+                    Ok(n)
+                }
+            }
+        }
+    }
+
+    impl AsRawFd for Scripted {
+        fn as_raw_fd(&self) -> RawFd {
+            -1 // poll ignores negative fds
+        }
+    }
+
+    #[test]
+    fn frame_split_across_reads_on_a_nonblocking_socket() {
+        let (mut host, mut guest) = UnixStream::pair().unwrap();
+        guest.set_nonblocking(true).unwrap();
+        let frame = encode_frame(&env()).unwrap();
+        let writer = std::thread::spawn(move || {
+            for chunk in [&frame[..2], &frame[2..7], &frame[7..]] {
+                host.write_all(chunk).unwrap();
+                std::thread::sleep(Duration::from_millis(20));
+            }
+            host
+        });
+        assert_eq!(read_within(&mut guest, 5_000).unwrap(), env());
+        drop(writer.join().unwrap());
+    }
+
+    #[test]
+    fn frame_larger_than_the_socket_buffer_arrives_whole() {
+        let (mut host, mut guest) = UnixStream::pair().unwrap();
+        guest.set_nonblocking(true).unwrap();
+        // Over a Linux socketpair's ~180 KiB, so the writer really blocks;
+        // each variable stays under the 128 KiB execve limit.
+        let big: Vec<(String, String)> = (0..3)
+            .map(|i| (format!("BIG{i}"), "x".repeat(100 * 1024)))
+            .collect();
+        let frame = encode_frame(&big).unwrap();
+        let writer = std::thread::spawn(move || host.write_all(&frame).map(|_| host));
+        assert_eq!(read_within(&mut guest, 5_000).unwrap(), big);
+        drop(writer.join().unwrap().unwrap());
+    }
+
+    #[test]
+    fn transient_eof_before_the_host_connects_is_retried() {
+        let frame = encode_frame(&env()).unwrap();
+        let mut port = Scripted(VecDeque
+```
+
+### Core Architecture Module: `crates/iii-sandbox-contract/src/worker.rs`
+```
+// Copyright Motia LLC and/or licensed to Motia LLC under one or more
+// contributor license agreements. Licensed under the Elastic License 2.0.
+
+//! Request and response types of the `<adapter>::worker::*` operations. Only Compose calls
+//! them, to run a worker's VM container through the adapter.
+
+use crate::channel::StreamChannelRef;
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+
+/// Where the worker's code comes from.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(tag = "kind", rename_all = "snake_case")]
+pub enum WorkerSource {
+    Bundle {
+        /// Manifest name, not the container key.
+        package: String,
+        /// The bundle in Compose's package cache.
+        host_path: String,
+    },
+    /// Local sources always sync into the VM.
+    Local {
+        host_path: String,
+        run_override: Option<String>,
+    },
+}
+
+/// Idempotent image and base-layer pull; long-running.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerPrepareRequest {
+    /// Per-project token.
+    pub auth: String,
+    pub source: WorkerSource,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerPrepareResponse {}
+
+/// Boots the VM. The adapter reads resources from the worker's manifest.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStartRequest {
+    /// Per-project token.
+    pub auth: String,
+    /// Hash of the compose state dir and container key; the same key gets the same persistent upper.
+    pub state_key: String,
+    /// Container key; becomes `III_WORKER_NAME`.
+    pub worker_name: String,
+    pub source: WorkerSource,
+    /// Complete guest env. Never on the `__vm-boot` argv: the adapter writes it
+    /// to `__vm-boot`'s stdin, which sends it to the guest init over the
+    /// `iii.env` virtio-console port, not the kernel cmdline (only a build
+    /// without an embedded init still uses the cmdline).
+    pub env: BTreeMap<String, String>,
+    /// The engine's URL as seen from the host.
+    pub engine_url: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStartResponse {
+    /// Opaque; stable per `state_key`.
+    pub vm_id: String,
+    /// Increments on every boot of this `vm_id`.
+    pub instance: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStatusRequest {
+    pub auth: String,
+    pub vm_id: String,
+    pub instance: u64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum State {
+    Preparing,
+    Running,
+    Exited,
+    Stopped,
+    Unknown,
+}
+
+/// Reply of `worker::status` and `worker::stop`.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStatus {
+    pub vm_id: String,
+    pub instance: u64,
+    pub state: State,
+    pub exit_code: Option<i32>,
+    /// The signal that ended the VM, if one did.
+    pub signal: Option<i32>,
+    pub started_at_ms: u64,
+    pub ended_at_ms: Option<u64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerLogsRequest {
+    pub auth: String,
+    pub vm_id: String,
+    /// `LogRecord.cursor` of the last record the caller has; reading resumes right after it.
+    /// Opaque to Compose. A cursor past the end of the log (after a rotation) reads from the start.
+    pub cursor: Option<u64>,
+    /// Keep the channel open while the instance runs.
+    pub follow: bool,
+    /// Writer end of a channel Compose created; one `LogRecord` JSON per text frame.
+    pub channel: StreamChannelRef,
+}
+
+/// Returned once the log pump starts; the records travel over the channel.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerLogsResponse {}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "snake_case")]
+pub enum LogStream {
+    Stdout,
+    Stderr,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct LogRecord {
+    pub stream: LogStream,
+    pub line: String,
+    pub ts_ms: u64,
+    /// Resume point: pass it as `WorkerLogsRequest.cursor` to continue after this record.
+    pub cursor: u64,
+}
+
+/// Idempotent; `grace_ms: 0` kills. Replies with the final `WorkerStatus`.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerStopRequest {
+    pub auth: String,
+    pub vm_id: String,
+    /// Names the boot to stop, so a stale stop cannot hit a newer one.
+    pub instance: u64,
+    pub grace_ms: u64,
+}
+
+/// Refused while the VM is running.
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerDestroyRequest {
+    pub auth: String,
+    pub state_key: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct WorkerDestroyResponse {
+    pub destroyed: bool,
+}
+
+```
+
 ### Core Architecture Module: `crates/iii-worker/examples/dump_worker_env.rs`
 ```
 //! Quick demo: dumps the env hashmap that `iii worker start <name>`
@@ -1810,581 +2236,17 @@ pub enum Commands {
     Ge
 ```
 
-### Core Architecture Module: `crates/iii-worker/src/cli/binary_download.rs`
-```
-// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-// contributor license agreements. Licensed under the Elastic License 2.0;
-// you may not use this file except in compliance with the Elastic License 2.0.
-// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-// See LICENSE and PATENTS files for details.
-
-//! Binary worker download, checksum verification, and installation.
-
-use super::registry::validate_worker_name;
-use sha2::{Digest, Sha256};
-use std::io::Read as _;
-use std::path::PathBuf;
-use std::sync::{
-    LazyLock,
-    atomic::{AtomicU64, Ordering},
-};
-
-/// Maximum allowed download size: 512 MB.
-const MAX_DOWNLOAD_BYTES: u64 = 512 * 1024 * 1024;
-const MAX_REDIRECTS: usize = 10;
-static TEMP_COUNTER: AtomicU64 = AtomicU64::new(0);
-
-static NO_REDIRECT_HTTP_CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| {
-    reqwest::Client::builder()
-        .timeout(std::time::Duration::from_secs(120))
-        .redirect(reqwest::redirect::Policy::none())
-        .build()
-        .expect("Failed to create no-redirect HTTP client")
-});
-
-/// Returns the directory where binary workers are installed: `~/.iii/workers/`.
-pub fn binary_workers_dir() -> PathBuf {
-    dirs::home_dir()
-        .unwrap_or_else(|| PathBuf::from("."))
-        .join(".iii")
-        .join("workers")
-}
-
-/// Returns the path where a named binary worker is installed: `~/.iii/workers/{name}`.
-pub fn binary_worker_path(name: &str) -> PathBuf {
-    binary_workers_dir().join(name)
-}
-
-/// Returns the compile-time target triple for the current platform.
-pub fn current_target() -> &'static str {
-    #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
-    return "aarch64-apple-darwin";
-
-    #[cfg(all(target_os = "macos", target_arch = "x86_64"))]
-    return "x86_64-apple-darwin";
-
-    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
-    return "x86_64-unknown-linux-gnu";
-
-    #[cfg(all(target_os = "linux", target_arch = "aarch64"))]
-    return "aarch64-unknown-linux-gnu";
-
-    #[cfg(all(target_os = "windows", target_arch = "x86_64"))]
-    return "x86_64-pc-windows-msvc";
-
-    #[cfg(all(target_os = "windows", target_arch = "aarch64"))]
-    return "aarch64-pc-windows-msvc";
-
-    #[cfg(not(any(
-        all(target_os = "macos", target_arch = "aarch64"),
-        all(target_os = "macos", target_arch = "x86_64"),
-        all(target_os = "linux", target_arch = "x86_64"),
-        all(target_os = "linux", target_arch = "aarch64"),
-        all(target_os = "windows", target_arch = "x86_64"),
-        all(target_os = "windows", target_arch = "aarch64"),
-    )))]
-    return "unknown";
-}
-
-/// Returns the platform-appropriate archive extension.
-pub fn archive_extension(target: &str) -> &'static str {
-    if target.contains("windows") {
-        "zip"
-    } else {
-        "tar.gz"
-    }
-}
-
-/// Extracts a named binary from a tar.gz archive.
-///
-/// Looks for an entry whose filename matches `binary_name` (ignoring directory prefixes).
-pub fn extract_binary_from_targz(
-    binary_name: &str,
-    archive_bytes: &[u8],
-) -> Result<Vec<u8>, String> {
-    let decoder = flate2::read::GzDecoder::new(archive_bytes);
-    let mut archive = tar::Archive::new(decoder);
-
-    for entry in archive
-        .entries()
-        .map_err(|e| format!("Failed to read tar archive: {}", e))?
-    {
-        let mut entry = entry.map_err(|e| format!("Failed to read tar entry: {}", e))?;
-        let path = entry
-            .path()
-            .map_err(|e| format!("Failed to read entry path: {}", e))?;
-
-        let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
-        if file_name == binary_name {
-            let mut buf = Vec::new();
-            entry
-                .read_to_end(&mut buf)
-                .map_err(|e| format!("Failed to read binary from archive: {}", e))?;
-            return Ok(buf);
-        }
-    }
-
-    Err(format!("Binary '{}' not found in archive", binary_name))
-}
-
-/// Verifies SHA256 checksum of `data` against the provided checksum content.
-///
-/// The checksum content may be in the format `"<hex>  <filename>"` (as produced by
-/// `sha256sum`) or simply `"<hex>"`. Returns `Ok(())` on success, or an error
-/// string describing the mismatch.
-pub fn verify_sha256(data: &[u8], checksum_content: &str) -> Result<(), String> {
-    let trimmed = checksum_content.trim();
-    if trimmed.is_empty() {
-        return Err("Checksum file is empty".to_string());
-    }
-
-    // Extract the hex portion — the first whitespace-separated token.
-    let expected_hex = trimmed
-        .split_whitespace()
-        .next()
-        .ok_or_else(|| "Checksum file has no content".to_string())?;
-
-    let mut hasher = Sha256::new();
-    hasher.update(data);
-    let actual_hex = format!("{:x}", hasher.finalize());
-
-    if actual_hex == expected_hex {
-        Ok(())
-    } else {
-        Err(format!(
-            "SHA256 mismatch: expected {}, got {}",
-            expected_hex, actual_hex
-        ))
-    }
-}
-
-pub fn validate_locked_artifact_url(url: &str) -> Result<(), String> {
-    let parsed =
-        reqwest::Url::parse(url).map_err(|e| format!("invalid artifact URL `{url}`: {e}"))?;
-    let host = parsed
-        .host_str()
-        .ok_or_else(|| format!("artifact URL `{url}` has no host"))?;
-
-    #[cfg(debug_assertions)]
-    if matches!(parsed.scheme(), "http" | "https") && is_loopback_host(host) {
-        return Ok(());
-    }
-
-    if parsed.scheme() != "https" {
-        return Err(format!(
-            "artifact URL `{url}` is not trusted: locked worker artifacts must use HTTPS registry URLs"
-        ));
-    }
-
-    if is_private_or_loopback_host(host) {
-        return Err(format!(
-            "artifact URL `{url}` is not trusted: private and loopback hosts are not allowed in iii.lock"
-        ));
-    }
-
-    Ok(())
-}
-
-#[cfg(debug_assertions)]
-fn is_loopback_host(host: &str) -> bool {
-    host == "localhost"
-        || host
-            .parse::<std::net::IpAddr>()
-            .map(|ip| ip.is_loopback())
-            .unwrap_or(false)
-}
-
-fn is_private_or_loopback_host(host: &str) -> bool {
-    let Ok(ip) = host.parse::<std::net::IpAddr>() else {
-        return false;
-    };
-    match ip {
-        std::net::IpAddr::V4(ip) => {
-            ip.is_loopback()
-                || ip.is_private()
-                || ip.is_link_local()
-                || ip.is_broadcast()
-                || ip.is_documentation()
-                || ip.octets()[0] == 0
-        }
-        std::net::IpAddr::V6(ip) => {
-            ip.is_loopback()
-                || ip.is_unspecified()
-                || ip.segments()[0] & 0xfe00 == 0xfc00
-                || ip.segments()[0] & 0xffc0 == 0xfe80
-        }
-    }
-}
-
-async fn download_archive_bytes(
-    url: &str,
-    validate_final_url: Option<&(dyn Fn(&str) -> Result<(), String> + Send + Sync)>,
-) -> Result<Vec<u8>, String> {
-    let resp = match validate_final_url {
-        Some(validator) => download_archive_bytes_with_validated_redirects(url, validator).await?,
-        None => super::registry::HTTP_CLIENT
-            .get(url)
-            .send()
-            .await
-            .map_err(|e| format!("Failed to download binary: {}", e))?,
-    };
-
-    if !resp.status().is_success() {
-        return Err(format!(
-            "Binary download failed with HTTP {}",
-            resp.status()
-        ));
-    }
-
-    if let Some(content_length) = resp.content_length()
-        && content_length > MAX_DOWNLOAD_BYTES
-    {
-        return Err(format!(
-            "Binary download too large ({:.1} MB, max {:.1} MB)",
-            content_length as f64 / 1_048_576.0,
-            MAX_DOWNLOAD_BYTES as f64 / 1_048_576.0,
-        ));
-    }
-
-    let binary_data = resp
-        .bytes()
-        .await
-        .map_err(|e| format!("Failed to read binary data: {}", e))?;
-
-    if binary_data.len() as u64 > MAX_DOWNLOAD_BYTES {
-        return Err(format!(
-            "Downloaded data exceeds maximum size ({:.1} MB)",
-            binary_data.len() as f64 / 1_048_576.0,
-        ));
-    }
-
-    Ok(binary_data.to_vec())
-}
-
-async fn download_archive_bytes_with_validated_redirects(
-    url: &str,
-    validator: &(dyn Fn(&str) -> Result<(), String> + Send + Sync),
-) -> Result<reqwest::Response, String> {
-    let mut current_url =
-        reqwest::Url::parse(url).map_err(|e| format!("invalid artifact URL `{url}`: {e}"))?;
-
-    for redirects_followed in 0..=MAX_REDIRECTS {
-        let resp = NO_REDIRECT_HTTP_CLIENT
-            .get(current_url.clone())
-            .send()
-            .await
-            .map_err(|e| format!("Failed to download binary: {}", e))?;
-
-        if !resp.status().is_redirection() {
-            return Ok(resp);
-        }
-
-        if redirects_followed == MAX_REDIRECTS {
-            return Err(format!(
-                "Binary download exceeded {MAX_REDIRECTS} redirects"
-            ));
-        }
-
-        let location = resp
-            .headers()
-            .get(reqwest::header::LOCATION)
-            .ok_or_else(|| {
-                format!(
-                    "Binary download redirect from `{}` did not include a Location header",
-                    current_url
-                )
-            })?
-            .to_str()
-            .map_err(|e| format!("Binary download redirect has invalid Location header: {e}"))?;
-        let next_url = current_url.join(location).map_err(|e| {
-            format!(
-                "Binary download redirect from `{}` has invalid Location `{}`: {}",
-                current_url, location, e
-            )
-        })?;
-
-        validator(next_url.as_str()).map_err(|e| {
-            format!("artifact download for `{url}` was redirected to an untrusted URL: {e}")
-        })?;
-        current_url = next_url;
-    }
-
-    unreachable!("redirect loop always returns or errors");
-}
-
-pub async fn download_locked_binary_archive(
-    worker_name: &str,
-    target: &str,
-    binary_info: &super::registry::BinaryInfo,
-) -> Result<Vec<u8>, String> {
-    validate_worker_name(worker_name)?;
-    validate_locked_artifac
-```
-
-### Core Architecture Module: `crates/iii-worker/src/cli/builtin_defaults.rs`
-```
-// Copyright Motia LLC and/or licensed to Motia LLC under one or more
-// contributor license agreements. Licensed under the Elastic License 2.0;
-// you may not use this file except in compliance with the Elastic License 2.0.
-// This software is patent protected. We welcome discussions - reach out at team@iii.dev
-// See LICENSE and PATENTS files for details.
-
-/// Configurable engine workers for which this support binary still carries a
-/// default YAML config.
-pub const BUILTIN_NAMES: [&str; 2] = ["iii-stream", "iii-sandbox"];
-
-/// Internal builtin workers that are always present and never user-configured.
-/// Defaults live in Rust (`ObservabilityWorkerConfig::default`, etc.), not in
-/// a `config:` block written into `config.yaml`.
-pub const MANDATORY_BUILTIN_NAMES: [&str; 6] = [
-    "configuration",
-    "iii-worker-manager",
-    "iii-telemetry",
-    "iii-engine-functions",
-    "iii-http-functions",
-    "iii-observability",
-];
-
-/// Returns true if the name is any engine builtin (configurable, optional, or mandatory).
-pub fn is_any_builtin(name: &str) -> bool {
-    BUILTIN_NAMES.contains(&name) || MANDATORY_BUILTIN_NAMES.contains(&name)
-}
-
-/// Version used for built-in worker metadata when the caller did not request
-/// an explicit registry version.
-pub const ENGINE_BUILTIN_VERSION: &str = env!("CARGO_PKG_VERSION");
-
-/// Resolve the version to use for builtin worker telemetry and display.
-pub fn resolve_builtin_version(requested: Option<&str>) -> &str {
-    requested
-        .filter(|version| !version.is_empty())
-        .unwrap_or(ENGINE_BUILTIN_VERSION)
-}
-
-const STREAM_MANIFEST: &str = include_str!("../../../../engine/src/workers/stream/iii.worker.yaml");
-
-fn manifest_for_builtin(name: &str) -> Option<&'static str> {
-    match name {
-        "iii-stream" => Some(STREAM_MANIFEST),
-        _ => None,
-    }
-}
-
-fn extract_manifest_config_yaml(manifest: &str) -> Option<String> {
-    let manifest: serde_yaml::Value = serde_yaml::from_str(manifest).ok()?;
-    let config_key = serde_yaml::Value::String("config".into());
-    let config = manifest.as_mapping()?.get(&config_key)?;
-    let yaml = serde_yaml::to_string(config).ok()?;
-    let yaml = yaml.strip_prefix("---\n").unwrap_or(&yaml).trim_end();
-
-    if yaml.is_empty() || yaml == "null" {
-        None
-    } else {
-        Some(yaml.to_string())
-    }
-}
-
-// Flat SandboxConfig shape — parsed directly by the daemon's config
-// loader. Renders in config.yaml as a clean `config:` block without a
-// redundant `sandbox:` key nested under an entry already named
-// `iii-sandbox`.
-//
-// `image_allowlist` ships with `python` and `node` because those cover
-// ~95% of AI-agent use cases. `bash` and `alpine` are still catalog
-// presets (see sandbox_daemon/catalog.rs::PRESETS) — users opt in by
-// adding them to this list. An empty allowlist means nothing boots.
-const SANDBOX_DEFAULT: &str = "\
-auto_install: true
-image_allowlist:
-  - python
-  - node
-default_idle_timeout_secs: 300
-max_concurrent_sandboxes: 32
-default_cpus: 1
-default_memory_mb: 512
-";
-
-/// Return the default YAML configuration for a builtin worker, or `None` if the
-/// name is not a recognised builtin.
-pub fn get_builtin_default(name: &str) -> Option<String> {
-    if name == "iii-sandbox" {
-        return Some(SANDBOX_DEFAULT.to_string());
-    }
-
-    manifest_for_builtin(name).and_then(extract_manifest_config_yaml)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use serde_yaml::Value;
-
-    #[test]
-    fn all_builtins_return_some() {
-        for name in &BUILTIN_NAMES {
-            assert!(
-                get_builtin_default(name).is_some(),
-                "expected Some for builtin '{name}'"
-            );
-        }
-    }
-
-    #[test]
-    fn unknown_name_returns_none() {
-        assert!(get_builtin_default("iii-unknown").is_none());
-        assert!(get_builtin_default("").is_none());
-        assert!(get_builtin_default("http").is_none());
-    }
-
-    #[test]
-    fn all_defaults_are_valid_yaml() {
-        for name in &BUILTIN_NAMES {
-            let yaml = get_builtin_default(name).unwrap();
-            let result: Result<Value, _> = serde_yaml::from_str(&yaml);
-            assert!(
-                result.is_ok(),
-                "invalid YAML for '{name}': {:?}",
-                result.err()
-            );
-        }
-    }
-
-    #[test]
-    fn resolve_builtin_version_uses_engine_version_by_default() {
-        assert_eq!(resolve_builtin_version(None), ENGINE_BUILTIN_VERSION);
-        assert_eq!(resolve_builtin_version(Some("")), ENGINE_BUILTIN_VERSION);
-    }
-
-    #[test]
-    fn resolve_builtin_version_accepts_explicit_versions() {
-        assert_eq!(resolve_builtin_version(Some("0.10.0")), "0.10.0");
-        assert_eq!(
-            resolve_builtin_version(Some("0.11.4-next.2")),
-            "0.11.4-next.2"
-        );
-        assert_eq!(
-            resolve_builtin_version(Some("custom-channel")),
-            "custom-channel"
-        );
-    }
-
-    #[test]
-    fn observability_is_mandatory_without_yaml_default() {
-        // Defaults live in ObservabilityWorkerConfig::default(); the
-        // iii.worker.yaml no longer carries a config: block, so
-        // get_builtin_default must not invent one for config.yaml.
-        assert!(MANDATORY_BUILTIN_NAMES.contains(&"iii-observability"));
-        assert!(!BUILTIN_NAMES.contains(&"iii-observability"));
-        assert!(get_builtin_default("iii-observability").is_none());
-        assert!(is_any_builtin("iii-observability"));
-    }
-
-    #[test]
-    fn stream_default_uses_kv_adapter() {
-        let yaml = get_builtin_default("iii-stream").unwrap();
-        let val: Value = serde_yaml::from_str(&yaml).unwrap();
-        let map = val.as_mapping().unwrap();
-
-        assert_eq!(
-            map[&Value::String("port".into())],
-            Value::Number(3112.into())
-        );
-
-        let adapter = map[&Value::String("adapter".into())]
-            .as_mapping()
-            .expect("adapter should be a mapping");
-        assert_eq!(
-            adapter[&Value::String("name".into())],
-            Value::String("kv".into())
-        );
-
-        let config = adapter[&Value::String("config".into())]
-            .as_mapping()
-            .expect("config should be a mapping");
-        assert_eq!(
-            config[&Value::String("store_method".into())],
-            Value::String("file_based".into())
-        );
-    }
-
-    #[test]
-    fn sandbox_default_allowlist_is_python_and_node_only() {
-        // The "just works" defaults ship with python + node only. bash
-        // and alpine are still catalog presets but opt-in — users who
-        // want them edit config.yaml by hand. Pinning the exact contents
-        // here makes any future change to the default a conscious PR,
-        // not a silent addition that changes the security surface.
-        let yaml = get_builtin_default("iii-sandbox").unwrap();
-        let val: Value = serde_yaml::from_str(&yaml).unwrap();
-        let allowlist: Vec<&str> = val
-            .as_mapping()
-            .and_then(|m| m.get(&Value::String("image_allowlist".into())))
-            .and_then(|v| v.as_sequence())
-            .expect("image_allowlist must be a top-level sequence")
-            .iter()
-            .map(|v| v.as_str().unwrap())
-            .collect();
-        assert_eq!(
-            allowlist,
-            vec!["python", "node"],
-            "sandbox default allowlist changed — confirm this is intentional \
-             and update engine/config.yaml + docs/api-reference/sandbox.mdx"
-        );
-    }
-
-    #[test]
-    fn sandbox_default_has_no_wrapping_sandbox_key() {
-        // Guard against regressions to the wrapped shape. The flat shape
-        // is what renders cleanly under `config:` in config.yaml; adding
-        // a wrapping `sandbox:` key back would produce
-        // `iii-sandbox.config.sandbox.image_allowlist` — double-nested
-        // and ugly.
-        let yaml = get_builtin_default("iii-sandbox").unwrap();
-        let val: Value = serde_yaml::from_str(&yaml).unwrap();
-        assert!(
-            val.as_mapping()
-                .map(|m| !m.contains_key(&Value::String("sandbox".into())))
-                .unwrap_or(false),
-            "iii-sandbox default must use flat shape (no wrapping `sandbox:` key)"
-        );
-    }
-
-    #[test]
-    fn builtin_names_matches_function() {
-        for name in &BUILTIN_NAMES {
-            assert!(
-                get_builtin_default(name).is_some(),
-                "BUILTIN_NAMES contains '{name}' but get_builtin_default returns None"
-            );
-        }
-
-        let known: std::collections::HashSet<&str> = BUILTIN_NAMES.iter().copied().collect();
-        for extra in &["iii-unknown", "iii-foo", "redis", ""] {
-            assert!(
-                !known.contains(extra),
-                "unexpected name '{extra}' found in BUILTIN_NAMES"
-            );
-            assert!(
-                get_builtin_default(extra).is_none(),
-                "get_builtin_default should return None for '{extra}'"
-            );
-        }
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2237** (2026-10-27): **Trigger registry: teardown racing a re-home or an in-flight activation leaves bindings firing untracked or resurrects them**
+  *Symptoms*: ## Summary  Found while reviewing #2198 (the fix for #2178). There are four races in `engine/src/trigger.rs`. Each one ends with a binding that keeps firing when it shouldn't: either a provider keeps running it with no registry entry left to tear it down, or it gets published live after an explicit unregister or an owner disconnect.  **All four reproduce on `main` (merge base `3ccf2251f`) and on #2198 (`2e872b7cd`).** They are pre-existing and not caused by #2198. That PR removes the accidental serialization the shard guards provided, which only made some interleavings less likely. Repro tests are at the bottom.  ## Cases  ### 1. `unregister_worker` tears bindings down on a stale provider (one-line fix)  `unregister_worker` snapshots the worker's bindings. For each one it calls `remove_if(worker_id matches)`, but then sends `unregister_trigger` to the provider from `trigger.provider_key()` of the **snapshot**, not of the entry actually removed ([code](https://github.com/iii-hq/iii/blob/2e872b7cd01252ac3e7e86d0dafdbe85f20430b7/engine/src/trigger.rs#L544-L566)). Suppose a home provider re-homes some of those bindings (`default` → `shop`) while the loop is awaiting a provider call. The loop then removes the re-homed entries from the registry but tells the fallback to let go. `shop` keeps running them, and nothing can unregister them anymore.  ``` registry still tracks []; `shop` still runs N untracked bindings: [...] ```  N was 52, 31 and 4 in different runs; it depends on DashM
+
 - **Issue #1884** (2026-07-16): **Generated docker-compose .env not forwarded to engine; ${RABBITMQ_USER} unset at runtime**
   *Symptoms*: ## Summary  The generated `docker-compose.yml` does not forward the generated `.env` into the engine container, so `${VAR}` placeholders in `config.yaml` (for example the RabbitMQ credentials) are unset at runtime and the engine fails to boot once a user switches a worker to a remote adapter.  Tested on Linux with engine `0.19.4`.  ## Reproduction  1. `iii project init --docker` (generates `.env` with `RABBITMQ_USER=iii` / `RABBITMQ_PASS=...`). 2. Uncomment the `rabbitmq` service in `docker-compose.yml` and switch `iii-queue` to the `rabbitmq` adapter with `amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672` in `config.yaml`. 3. `docker compose up`.  ## Actual  ``` Environment variable 'RABBITMQ_USER' not set ```  ## Expected  The credentials the generator wrote to `.env` should be available to the engine's `${VAR}` expansion.  ## Root cause  - The generator writes `.env` with the RabbitMQ creds: `engine/src/cli/project/mod.rs:390-402`. - `${VAR}` in `config.yaml` is expanded by the **engine process**, so the variable must be in the **container's** environment. - Docker Compose only uses `.env` to substitute the compose file itself; it does **not** inject those variables into the container unless the service declares `env_file:` (or an explicit `environment:` list). The generated `iii` service declares neither (templates in `iii-hq/templates`; mirrored at `engine/tests/fixtures/templates/docker/docker-compose.yml`).  ## Proposed fix  Add `env_file: .env` to the generated 
-
-- **Issue #1883** (2026-07-06): **docker compose up crash-loops on Linux: configuration worker can't create ./data (permission denied)**
-  *Symptoms*: ## Summary  `iii project init --docker && docker compose up` crash-loops on a **Linux host** because the `configuration` worker cannot create its data directory. The generated `docker-compose.yml` mounts no writable data volume, and the published image runs as a non-root user (`65532`) with no writable `./data`.  Tested on Linux with engine `0.19.4`. (Often not reproducible on macOS Docker Desktop, whose file-sharing layer ignores UID ownership.)  ## Reproduction  ```bash iii project init --docker docker compose up ```  ## Actual  The engine exits on boot:  ``` failed to create configuration directory './data/configuration': Permission denied ```  …and restarts in a loop.  ## Expected  A fresh `init --docker` + `up` should boot and persist state with no manual edits.  ## Root cause  1. The `configuration` worker's `fs` adapter defaults to `./data/configuration`:     `engine/src/workers/configuration/adapters/fs.rs:38`    ```rust    pub(crate) const DEFAULT_DIRECTORY: &str = "./data/configuration";    ```    With `WORKDIR /app` (set by the generated Dockerfile), this resolves to `/app/data/configuration`.  2. `/app` is owned by root and the image runs as UID `65532` (base: `gcr.io/distroless/cc-debian12:nonroot`, `engine/Dockerfile`). The non-root user cannot create `/app/data`.  3. The generated compose mounts only `./config.yaml:ro` — there is **no writable data volume** (templates live in `iii-hq/templates`; mirrored at `engine/tests/fixtures/templates/docker/docker-compose
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2401,27 +2263,96 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9dc4f03b` (2026-10-25)
-**Commit Message**: docs: add @iziang to contributors.md
+### Incident Patch 1: `b2854791` (2026-10-30)
+**Commit Message**: fix(sdk-node): stop the OTel socket from logging after shutdown resolves (#2438)
 
-@iziang agrees to license contributions to iii under Apache 2.0.
+Co-authored-by: iii harness (claude-opus-5-5) <[REDACTED_EMAIL]>
 
-**File**: `contributors.md` (modified, +1/-0)
+**File**: `sdk/packages/node/helpers/src/observability/telemetry-system/connection.test.ts` (modified, +26/-0)
 ```diff
-@@ -23,3 +23,4 @@ The following users make all of their contributions to iii under the Apache 2 li
- - @1aifanatic
- - @WanderLandWalker
- - @bsodmike
-+- @iziang
+@@ -51,3 +51,29 @@ describe('SharedEngineConnection handshake headers', () => {
+     await connection.shutdown()
+   })
+ })
++
++describe('SharedEngineConnection shutdown', () => {
++  it('stays silent when the socket closes after shutdown() resolved', async () => {
++    const connection = new SharedEngineConnection('ws://engine.test/otel')
++    const [socket] = sockets
++    const log = vi.spyOn(console, 'log').mockImplementation(() => {})
++    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
++
++    try {
++      await connection.shutdown()
++      expect(socket.close).toHaveBeenCalledOnce()
++      log.mockClear()
++
++      // ws emits these once the close handshake (or an aborted connect) settles
++      socket.emit('error', new Error('WebSocket was closed before the connection was established'))
++      socket.emit('close')
++
++      expect(log).not.toHaveBeenCalled()
++      expect(error).not.toHaveBeenCalled()
++      expect(connection.getState()).toBe('disconnected')
++    } finally {
++      log.mockRestore()
++      error.mockRestore()
++    }
++  })
++})
+```
+
+**File**: `sdk/packages/node/helpers/src/observability/telemetry-system/connection.ts` (modified, +12/-0)
+```diff
+@@ -15,6 +15,7 @@ export class SharedEngineConnection {
+   private wsUrl: string
+   private connecting = false
+   private shuttingDown = false
++  private closed = false
+   private pendingMessages: Array<{ frame: Buffer; callback?: (err?: Error) => void }> = []
+   private reconnectAttempt = 0
+   private reconnectTimeout: NodeJS.Timeout | null = null
+@@ -75,6 +76,11 @@ export class SharedEngineConnection {
+       })
+ 
+       this.ws.on('close', () => {
++        // shutdown() already closed this socket and reported it
++        if (this.closed) {
++          return
++        }
++
+         this.connecting = false
+         this.ws = null
+ 
+@@ -254,6 +260,10 @@ export class SharedEngineConnection {
+   async shutdown(): Promise<void> {
+     // Set shutdown flag to prevent reconnection attempts
+     this.shuttingDown = true
++    // The close handshake completes after shutdown() has returned: silence the
++    // socket's 'close' listener so nothing logs once the caller has moved on
++    // (a test runner tearing its worker down, a process exiting)
++    this.closed = true
+ 
+     if (this.reconnectTimeout) {
+       clearTimeout(this.reconnectTimeout)
+@@ -263,6 +273,8 @@ export class SharedEngineConnection {
+     if (this.ws) {
+       this.ws.close()
+       this.ws = null
++      this.connecting = false
++      console.log('[OTel] Connection closed during shutdown')
+     }
+ 
+     // Notify pending message callbacks that they won't be delivered
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2392** (closed): chore(deps): bump the cargo-minor-and-patch group across 1 directory with 31 updates (@dependabot[bot])
-- **PR #2391** (2026-10-23): fix(deps): update Tokio to address RUSTSEC-2026-0386 (@guibeira)
-- **PR #2386** (2026-10-23): test(rust): give the oversized result_wire case a 30s budget (@guibeira)
-- **PR #2385** (2026-10-23): fix(python): require websockets>=14.0 (@guibeira)
-- **PR #2383** (2026-10-23): docs(changelog): complete 0.25.0 release notes (@guibeira)
-- **PR #2382** (closed): chore(deps): bump the npm-minor-and-patch group across 1 directory with 36 updates (@dependabot[bot])
+- **PR #2438** (2026-10-30): fix(sdk-node): stop the OTel socket from logging after shutdown resolves (@guibeira)
+- **PR #2436** (2026-10-30): ci(install-sh): run the macOS integration job on macos-15 (MOT-5599) (@andersonleal)
+- **PR #2435** (2026-10-30): feat(website): haunted iii logo in the header and footer for Halloween (@arihantcodes)
+- **PR #2429** (2026-10-28): test(go-sdk): fix synchronization race in telemetry reconnect test (@guibeira)
+- **PR #2427** (2026-10-28): feat(website): Contributors section on the landing page (@arihantcodes)
+- **PR #2426** (closed): feat(website): Contributors section on the landing page (@arihantcodes)
 
 ---
 
@@ -2441,21 +2372,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add @iziang to contributors.md
+## X. sdk-node): stop the OTel socket from logging after shutdown resolves (#2438)
 
 **RULE**:
-When implementing operations in `contributors.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/packages/node/helpers/src/observability/telemetry-system/connection.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9dc4f03b`: docs: add @iziang to contributors.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b2854791`: sdk-node): stop the OTel socket from logging after shutdown resolves (#2438). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `contributors.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/packages/node/helpers/src/observability/telemetry-system/connection.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- @iziang
+
+describe('SharedEngineConnection shutdown', () => {
+  it('stays silent when the socket closes after shutdown() resolved', async () => {
+    const connection = new SharedEngineConnection('ws://engine.test/otel')
+    const [socket] = sockets
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {})
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      await connection.shutdown()
+      expect(socket.close).toHaveBeenCalledOnce()
+      log.mockClear()
+
+      // ws emits these once the close handshake (or an aborted connect) settles
+      socket.emit('error', new Error('WebSocket was closed before the connection was established'))
+      socket.emit('close')
+
+      expect(log).not.toHaveBeenCalled()
+      expect(error).not.toHaveBeenCalled()
+      expect(connection.getState()).toBe('disconnected')
+    } finally {
+      log.mockRestore()
+      error.mockRestore()
+    }
+  })
+})
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2465,4 +2421,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9dc4f03b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b2854791` are properly handled with clean fallback behavior.

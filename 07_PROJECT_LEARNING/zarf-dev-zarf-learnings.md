@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `2904d9e1`  
+> **Source Version**: `8ae29a1f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:56:52.029Z  
+> **Timestamp**: 2026-10-31T12:15:49.391Z  
 > **Learning ID**: `learn-github-zarf-dev-zarf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:56:51.601Z  
+> **Harvest Timestamp**: 2026-10-31T12:15:49.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2072 stars
+- **Stars / Engagement**: 2079 stars
 
 ---
 
@@ -1459,11 +1459,11 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5527** (2026-10-23): **feat!: stop duplicating package data in package secret**
-  *Symptoms*: ## Description  Originally we had v1alpha1 packages publish their data both to `Data` and `PackageData` however we didn't anticipate users with very large package secrets (mostly from annotation data) running into problems saving their package secrets. This essentially reverts that change, while keeping v1beta1 double publishing both versions as it will have annotation size limits  ## Related Issue  Fixes #5516   ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+- **Issue #5566** (2026-10-29): **fix: initialize cluster state before recording init status**
+  *Symptoms*: ## Description  This fixes a bug in Zarf that has gone unnoticed for a while because state failures are a debug log.   Now that there are error log users will get the following error on their first init.   ```bash 2026-10-29 17:42:27 ERR unable to record package deployment component=zarf-seed-registry error=failed to record package deployment in secret 'zarf-package-init': namespaces "zarf" not found ```  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
 
-- **Issue #5516** (2026-10-23): **Remove duplicate package data in package state secret**
-  *Symptoms*: In #5250, we deprecated the original package `data` field to to simplify reading deployment Secrets outside of Go, however some users have reported that they are running into size limits since they have enormous annotations (will be limited in v1beta1 see #5515).  Seeing that this is causing a real problem, I'd be in favor of losing the same benefit of an easier state transition. Keep `data` for v1alpha1 and `PackageData` is only for v1beta1 onward, avoiding duplicate `v1alpha1` data. Remove the original field when v1alpha1 support is deleted. 
+- **Issue #5565** (2026-10-29): **fix: component publish values schema**
+  *Symptoms*: ## Description  This fixes an issue when publishing remote components https://github.com/zarf-dev/zarf/actions/runs/40935974924.   It also fixes another issue where importing the same remote component twice corrupted base paths since they shared mutable fields.  Also it stops publishing the k3s-common component, which doesn't make a ton of sense to consume. Users should consume the k3s amd64 or arm64 variants.   ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1480,242 +1480,61 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2904d9e1` (2026-10-23)
-**Commit Message**: feat!: stop duplicating package data in package secret (#5527)
+### Incident Patch 1: `8ae29a1f` (2026-10-30)
+**Commit Message**: chore(deps): bump fast-uri from 3.1.8 to 3.1.9 in /site (#5536)
 
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `src/pkg/cluster/zarf_test.go` (modified, +18/-7)
+**File**: `site/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -28,16 +28,15 @@ func TestGetDeployedPackageWarnsOnUnrecognizedAPIVersion(t *testing.T) {
- 	t.Parallel()
- 
- 	const futureVersion = "zarf.dev/v9"
--	knownDefinition, err := json.Marshal(v1alpha1.ZarfPackage{
-+	legacy := v1alpha1.ZarfPackage{
- 		APIVersion: v1alpha1.APIVersion,
- 		Metadata:   v1alpha1.ZarfMetadata{Name: "future-package"},
--	})
--	require.NoError(t, err)
-+	}
- 	deployed := state.DeployedPackage{
- 		Name: "future-package",
-+		Data: legacy,
- 		PackageData: map[string]json.RawMessage{
--			v1alpha1.APIVersion: knownDefinition,
--			futureVersion:       json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
-+			futureVersion: json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
- 		},
- 	}
- 	secretData, err := json.Marshal(deployed)
-@@ -55,7 +54,7 @@ func TestGetDeployedPackageWarnsOnUnrecognizedAPIVersion(t *testing.T) {
- 	ctx := logger.WithContext(t.Context(), slog.New(slog.NewJSONHandler(&logs, nil)))
- 	known := deployed
- 	known.Name = "known-package"
--	known.PackageData = map[string]json.RawMessage{v1alpha1.APIVersion: knownDefinition}
-+	known.PackageData = nil
- 	knownData, err := json.Marshal(known)
- 	require.NoError(t, err)
- 	knownSecret := secret.DeepCopy()
-@@ -99,8 +98,20 @@ func TestRecordPackageDefinitionDeployment(t *testing.T) {
- 	recordedDefinition, err := recorded.Definition()
- 	require.NoError(t, err)
- 	require.Equal(t, convert.PackageToV1alpha1(definition), convert.PackageToV1alpha1(recordedDefinition))
--	require.Contains(t, recorded.PackageData, v1alpha1.APIVersion)
-+	require.NotContains(t, recorded.PackageData, v1alpha1.APIVersion)
- 	require.Contains(t, recorded.PackageData, v1beta1.APIVersion)
-+	require.Equal(t, convert.PackageToV1alpha1(definition), recorded.Data)
-+
-+	secret, err := c.Clientset.CoreV1().Secrets(state.ZarfNamespaceName).Get(ctx, recorded.GetSecretName(), metav1.GetOptions{})
-+	require.NoError(t, err)
-+	var serialized struct {
-+		Data        v1alpha1.ZarfPackage       `json:"data"`
-+		PackageData map[string]json.RawMessage `json:"packageData"`
-+	}
-+	require.NoError(t, json.Unmarshal(secret.Data["data"], &serialized))
-+	require.Equal(t, convert.PackageToV1alpha1(definition), serialized.Data)
-+	require.Len(t, serialized.PackageData, 1)
-+	require.Contains(t, serialized.PackageData, v1beta1.APIVersion)
- 
- 	loaded, err := c.GetDeployedPackage(ctx, "beta-package")
- 	require.NoError(t, err)
+@@ -4580,9 +4580,9 @@
+       }
+     },
+     "node_modules/fast-uri": {
+-      "version": "3.1.8",
+-      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
+-      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
++      "version": "3.1.9",
++      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
++      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
+       "funding": [
+         {
+           "type": "github",
 ```
 
-**File**: `src/pkg/state/state.go` (modified, +11/-20)
-```diff
-@@ -822,9 +822,10 @@ const (
- type DeployedPackage struct {
- 	Name   string `json:"name"`
- 	Digest string `json:"digest"`
--	// Deprecated: use PackageData or Definition() instead. This field is kept so older clients can read package deployment state.
--	Data                v1alpha1.ZarfPackage       `json:"data"`
--	PackageData         map[string]json.RawMessage `json:"packageData"`
-+	// Data contains the v1alpha1 definition
-+	Data v1alpha1.ZarfPackage `json:"data"`
-+	// PackageData contains the v1beta1 definition and future definitions
-+	PackageData         map[string]json.RawMessage `json:"packageData,omitempty"`
- 	CLIVersion          string                     `json:"cliVersion"`
- 	Generation          int                        `json:"generation"`
- 	DeployedComponents  []DeployedComponent        `json:"deployedComponents"`
-@@ -866,16 +867,8 @@ func NewDeployedPackage(definition api.Package, digest, cliVersion string, compo
- // Data always contains the v1alpha1 form to allow older Zarf clients to read the
- // deployed package secret.
- func (d *DeployedPackage) SetPackageDefinition(definition api.Package) error {
--	alpha := convert.PackageToV1alpha1(definition)
--	alphaData, err := json.Marshal(alpha)
--	if err != nil {
--		return fmt.Errorf("marshal %s package data: %w", v1alpha1.APIVersion, err)
--	}
--
--	d.Data = alpha
--	d.PackageData = map[string]json.RawMessage{
--		v1alpha1.APIVersion: alphaData,
--	}
-+	d.Data = convert.PackageToV1alpha1(definition)
-+	d.PackageData = nil
- 
- 	switch definition.GetAPIVersion() {
- 	case "", v1alpha1.APIVersion:
-@@ -885,21 +878,16 @@ func (d *DeployedPackage) SetPackageDefinition(definition api.Package) error {
- 		if err != nil {
- 			return fmt.Errorf("marshal %s package data: %w", v1beta1.APIVersion, err)
- 		}
--		d.PackageData[v1beta1.APIVersion] = betaData
-+		d.PackageData = map[string]json.RawMessage{v1beta1.APIVersion: betaData}
- 		return nil
- 	default:
- 		return fmt.Errorf("unsupported package API version %q", definition.APIVersion)
- 	}
- }
- 
- // Definition returns the latest package definition this Zarf version
--// understands. Deployed package secrets written before PackageData was added
--// fall back to their legacy v1alpha1 Data field.
-+// understands, falling back to the v1alpha1 Data field.
- func (d DeployedPackage) Definition() (api.Package, error) {
--	if len(d.PackageData) == 0 {
--		return convert.PackageFromV1alpha1(d.Data), nil
--	}
--
- 	if data, found := d.PackageData[v1beta1.APIVersion]; found {
- 		var pkg v1beta1.Package
- 		if err := json.Unmarshal(data, &pkg); err != nil {
-@@ -914,6 +902,9 @@ func (d DeployedPackage) Definition() (api.Package, error) {
- 		}
- 		return convert.PackageFromV1alpha1(pkg), nil
- 	}
-+	if len(d.PackageData) == 0 || d.Data.Metadata.Name != "" {
-+		return convert.PackageFromV1alpha1(d.Data), nil
-+	}
- 
- 	return api.Package{}, fmt.Errorf("deployed package has no supported package data")
- }
-```
+---
 
-**File**: `src/pkg/state/state_test.go` (modified, +71/-1)
+### Incident Patch 2: `fa5c77ab` (2026-10-30)
+**Commit Message**: chore(deps): bump zod from 4.6.2 to 4.6.7 in /site (#5537)
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `site/package-lock.json` (modified, +3/-3)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"testing"
- 
- 	"github.com/stretchr/testify/require"
-+	"github.com/zarf-dev/zarf/src/api"
- 	"github.com/zarf-dev/zarf/src/api/convert"
- 	"github.com/zarf-dev/zarf/src/api/v1alpha1"
- 	"github.com/zarf-dev/zarf/src/api/v1beta1"
-@@ -54,7 +55,7 @@ func TestDeployedPackagePackageDefinition(t *testing.T) {
- 	require.Equal(t, PackageConnectivityConnected, deployed.PackageConnectivity)
- 	require.Equal(t, "override", deployed.NamespaceOverride)
- 	require.Equal(t, convert.PackageToV1alpha1(definition), deployed.Data)
--	require.Contains(t, deployed.PackageData, v1alpha1.APIVersion)
-+	require.NotContains(t, deployed.PackageData, v1alpha1.APIVersion)
- 	require.Contains(t, deployed.PackageData, v1beta1.APIVersion)
- 
- 	actual, err := deployed.Definition()
-@@ -75,6 +76,75 @@ func TestDeployedPackagePackageDefinition_legacyData(t *testing.T) {
- 	require.True(t, alpha.AllowsNamespaceOverride())
- }
- 
-+func TestDeployedPackagePackageDefinition_v1alpha1Serialization(t *testing.T) {
-+	t.Parallel()
-+
-+	for _, version := range []string{"", v1alpha1.APIVersion} {
-+		t.Run(version, func(t *testing.T) {
-+			t.Parallel()
-+
-+			definition := convert.PackageFromV1alpha1(v1alpha1.ZarfPackage{
-+				APIVersion: version,
-+				Kind:       v1alpha1.ZarfPackageConfig,
-+				Metadata:   v1alpha1.ZarfMetadata{Name: "alpha-package"},
-+			})
-+			deployed, err := NewDeployedPackage(definition, "", "", nil, 1)
-+			require.NoError(t, err)
-+			serialized, err := json.Marshal(deployed)
-+			require.NoError(t, err)
-+			var fields map[string]json.RawMessage
-+			require.NoError(t, json.Unmarshal(serialized, &fields))
-+			require.NotContains(t, fields, "packageData")
-+			var legacy v1alpha1.ZarfPackage
-+			require.NoError(t, json.Unmarshal(fields["data"], &legacy))
-+			require.Equal(t, convert.PackageToV1alpha1(definition), legacy)
-+
-+			var loaded DeployedPackage
-+			require.NoError(t, json.Unmarshal(serialized, &loaded))
-+			actual, err := loaded.Definition()
-+			require.NoError(t, err)
-+			require.Equal(t, definition, actual)
-+		})
-+	}
-+}
-+
-+func TestDeployedPackageSetPackageDefinition_replacesStoredVersions(t *testing.T) {
-+	t.Parallel()
-+
-+	deployed, err := NewDeployedPackage(api.Package{
-+		APIVersion: v1beta1.APIVersion,
-+		Metadata:   api.PackageMetadata{Name: "package"},
-+	}, "", "", nil, 1)
-+	require.NoError(t, err)
-+	alpha := convert.PackageFromV1alpha1(v1alpha1.ZarfPackage{
-+		APIVersion: v1alpha1.APIVersion,
-+		Kind:       v1alpha1.ZarfPackageConfig,
-+		Metadata:   v1alpha1.ZarfMetadata{Name: "package", Version: "2.0.0"},
-+	})
-+	require.NoError(t, deployed.SetPackageDefinition(alpha))
-+	actual, err := deployed.Definition()
-+	require.NoError(t, err)
-+	require.Equal(t, alpha, actual)
-+	serialized, err := json.Marshal(deployed)
-+	require.NoError(t, err)
-+	var fields map[string]json.RawMessage
-+	require.NoError(t, json.Unmarshal(serialized, &fields))
-+	require.NotContains(t, fields, "packageData")
-+}
-+
-+func TestDeployedPackagePackageDefinition_unknownVersionFallsBackToData(t *testing.T) {
-+	t.Parallel()
-+
-+	legacy := v1alpha1.ZarfPackage{Metadata: v1alpha1.ZarfMetadata{Name: "future-package"}}
-+	deployed := DeployedPackage{
-+		Data:        legacy,
-+		PackageData: map[string]json.RawMessage{"zarf.dev/v9": []byte(`{}`)},
-+	}
-+	definition, err := deployed.Definition()
-+	require.NoError(t, err)
-+	require.Equal(t, convert.PackageFromV1alpha1(legacy), definition)
-+}
-+
- func TestDeployedPackagePackageDefinition_noSupportedData(t *testing.T) {
- 	t.Parallel()
- 
+@@ -10283,9 +10283,9 @@
+       }
+     },
+     "node_modules/zod": {
+-      "version": "4.6.2",
+-      "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.2.tgz",
+-      "integrity": "sha512-lh5RCAGFa1Cm2hjtNwLQhSs/AsqdWnTQaBER9fEwN/88pSh7KOtJavtBx/0VlkN/uFd61SwYmljLMDAsHlvzBQ==",
++      "version": "4.6.7",
++      "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
++      "integrity": "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==",
+       "license": "MIT",
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5527** (2026-10-23): feat!: stop duplicating package data in package secret (@AustinAbro321)
-- **PR #5513** (2026-10-22): test: cover localhost NodePorts with nftables in kind (@aditya-rai-5)
-- **PR #5509** (2026-10-21): chore: update go version to 1.26.10 (@brandtkeller)
-- **PR #5508** (2026-10-21): docs: remove outdated note from package-signing doc (@jonnyborbs)
-- **PR #5504** (2026-10-21): feat!: remove defense unicorn shortcuts from oci package refs (@AustinAbro321)
-- **PR #5502** (2026-10-21): feat(oci): support custom credential providers (@s-urbaniak)
+- **PR #5566** (2026-10-29): fix: initialize cluster state before recording init status (@AustinAbro321)
+- **PR #5565** (2026-10-29): fix: component publish values schema (@AustinAbro321)
+- **PR #5561** (2026-10-30): feat!: delete artifact server (@AustinAbro321)
+- **PR #5558** (2026-10-29): feat!: explit opt in to kustomize plugins on read only dev commands (@AustinAbro321)
+- **PR #5555** (2026-10-29): chore(deps): bump github.com/go-jose/go-jose/v4 from 4.1.4 to 4.1.6 (@dependabot[bot])
+- **PR #5551** (2026-10-29): feat: release v1beta1 (@AustinAbro321)
 
 ---
 
@@ -1735,51 +1554,32 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. feat!: stop duplicating package data in package secret (#5527)
+## X. deps): bump fast-uri from 3.1.8 to 3.1.9 in /site (#5536)
 
 **RULE**:
-When implementing operations in `src/pkg/cluster/zarf_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `site/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2904d9e1`: feat!: stop duplicating package data in package secret (#5527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8ae29a1f`: deps): bump fast-uri from 3.1.8 to 3.1.9 in /site (#5536). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/cluster/zarf_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `site/package-lock.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	legacy := v1alpha1.ZarfPackage{
-	}
-		Data: legacy,
-			futureVersion: json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
-	known.PackageData = nil
-	require.NotContains(t, recorded.PackageData, v1alpha1.APIVersion)
-	require.Equal(t, convert.PackageToV1alpha1(definition), recorded.Data)
-
-	secret, err := c.Clientset.CoreV1().Secrets(state.ZarfNamespaceName).Get(ctx, recorded.GetSecretName(), metav1.GetOptions{})
-	require.NoError(t, err)
-	var serialized struct {
-		Data        v1alpha1.ZarfPackage       `json:"data"`
-		PackageData map[string]json.RawMessage `json:"packageData"`
-	}
-	require.NoError(t, json.Unmarshal(secret.Data["data"], &serialized))
-	require.Equal(t, convert.PackageToV1alpha1(definition), serialized.Data)
-	require.Len(t, serialized.PackageData, 1)
-	require.Contains(t, serialized.PackageData, v1beta1.APIVersion)
+      "version": "3.1.9",
+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.9.tgz",
+      "integrity": "sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	knownDefinition, err := json.Marshal(v1alpha1.ZarfPackage{
-	})
-	require.NoError(t, err)
-			v1alpha1.APIVersion: knownDefinition,
-			futureVersion:       json.RawMessage(`{"apiVersion":"zarf.dev/v9"}`),
-	known.PackageData = map[string]json.RawMessage{v1alpha1.APIVersion: knownDefinition}
-	require.Contains(t, recorded.PackageData, v1alpha1.APIVersion)
+      "version": "3.1.8",
+      "resolved": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.8.tgz",
+      "integrity": "sha512-GZMtZUTNRpOVIECoXwLNZS5xUGE+mVNbTB8h/7Rwh2TFWcBQiPzTgyZi05BF9UMZKkLJv8XBRJTlU7zg8+ZfMg==",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2904d9e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8ae29a1f` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source**: github ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
-> **Source Version**: `f2d8b806`  
+> **Source Version**: `500709f1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T12:20:03.348Z  
+> **Timestamp**: 2026-10-31T20:59:36.385Z  
 > **Learning ID**: `learn-github-fallow-rs-fallow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T12:20:01.781Z  
+> **Harvest Timestamp**: 2026-10-31T20:59:35.915Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots, duplication, architecture boundaries, circular dependencies, design-system drift, and unused code, from one graph. CLI, GitHub Action, LSP, MCP, and VS Code. Rust, MIT licensed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5250 stars
+- **Stars / Engagement**: 5285 stars
 
 ---
 
@@ -344,11 +344,27 @@ export const installChildHooks = ({ active, beforeEach, afterEach, report }) => 
 ### Core Architecture Module: `crates/api/src/mutation/companion/runtime/overlay-hook.mjs`
 ```
 // Generated from tools/mutation-runner/src/runtime/overlay-hook.mjs. Do not edit.
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { registerHooks } from "node:module";
 import { fileURLToPath } from "node:url";
 
 import { realPath } from "./child.mjs";
+
+const SCRIPT_FORMATS = new Set(["module", "commonjs", "module-typescript", "commonjs-typescript"]);
+const digest = (bytes) => createHash("sha256").update(bytes).digest("hex");
+
+const indexSources = (overlay) => {
+  const index = new Map();
+  for (const [path, entry] of overlay) {
+    const bytes = readFileSync(path);
+    const key = digest(bytes);
+    const matches = index.get(key) ?? [];
+    matches.push({ bytes, entry });
+    index.set(key, matches);
+  }
+  return index;
+};
 
 /**
  * Serves the instrumented file of each overlay entry in place of its source
@@ -358,15 +374,29 @@ import { realPath } from "./child.mjs";
  * the format of the original file, so Node strips the types of a TypeScript
  * file as it does without the overlay.
  */
-export const registerOverlayHook = (overlay, onLoad = () => {}) => {
-  const overlayEntry = (url) => {
+export const registerOverlayHook = (overlay, onLoad, onIncomplete) => {
+  let sources;
+  const overlayEntry = (url, result) => {
     if (!url.startsWith("file:")) return undefined;
-    return overlay.get(realPath(fileURLToPath(url)));
+    const path = realPath(fileURLToPath(url));
+    const direct = overlay.get(path);
+    if (direct !== undefined) return direct;
+    if (!SCRIPT_FORMATS.has(result.format) || result.source == null) return undefined;
+    sources ??= indexSources(overlay);
+    const bytes = ArrayBuffer.isView(result.source)
+      ? Buffer.from(result.source.buffer, result.source.byteOffset, result.source.byteLength)
+      : Buffer.from(result.source);
+    const matches = (sources.get(digest(bytes)) ?? []).filter((match) => match.bytes.equals(bytes));
+    if (matches.length > 1) {
+      const candidates = matches.map(({ entry }) => entry.source).join(", ");
+      onIncomplete(`Ambiguous copied-source execution at ${path}: matches ${candidates}`);
+    }
+    return matches.length === 1 ? matches[0].entry : undefined;
   };
   registerHooks({
     load(url, context, nextLoad) {
       const result = nextLoad(url, context);
-      const entry = overlayEntry(url);
+      const entry = overlayEntry(url, result);
       if (entry === undefined) return result;
       onLoad(entry);
       return { ...result, source: readFileSync(entry.target, "utf8"), shortCircuit: true };
@@ -839,7 +869,327 @@ fn routing_block_step(ctx: &Ctx, harness: Harness, block: &AgentsBlockReport) ->
 
 ```
 
-### Core Architecture Module: `crates/cli/src/cli_hooks.rs`
+### Core Architecture Module: `crates/cli/src/cli_hooks/hook_runtime.rs`
+```
+//! JSON bridge for generated agent hooks. Shell routing and report writes stay
+//! in the gate; this module only decodes its external JSON boundaries.
+
+use std::io::{Read, Write};
+use std::process::ExitCode;
+
+use serde::Deserialize;
+use serde_json::Value;
+
+pub const PROTOCOL: &str = "fallow-gate-json-v1";
+const MAX_PAYLOAD_BYTES: u64 = 1024 * 1024;
+const MAX_REPORT_BYTES: u64 = 64 * 1024 * 1024;
+
+#[derive(Clone, Copy, clap::ValueEnum)]
+pub enum Operation {
+    Probe,
+    Input,
+    Report,
+    Findings,
+}
+
+#[derive(Default, Deserialize)]
+struct ToolInput {
+    command: Option<String>,
+}
+
+#[derive(Deserialize)]
+struct Payload {
+    cwd: Option<String>,
+    tool_input: Option<ToolInput>,
+}
+
+pub fn run(operation: Operation) -> ExitCode {
+    let result = process(
+        operation,
+        &mut std::io::stdin().lock(),
+        &mut std::io::stdout().lock(),
+    );
+    match result {
+        Ok(()) => ExitCode::SUCCESS,
+        Err(error) => {
+            let _ = writeln!(std::io::stderr().lock(), "fallow-gate: {error}");
+            ExitCode::from(2)
+        }
+    }
+}
+
+fn process(
+    operation: Operation,
+    input: &mut impl Read,
+    output: &mut impl Write,
+) -> Result<(), String> {
+    if matches!(operation, Operation::Probe) {
+        return writeln!(output, "{PROTOCOL}").map_err(|error| error.to_string());
+    }
+    let limit = if matches!(operation, Operation::Input) {
+        MAX_PAYLOAD_BYTES
+    } else {
+        MAX_REPORT_BYTES
+    };
+    let bytes = bounded_input(input, limit)?;
+    if matches!(operation, Operation::Input) {
+        let payload: Payload = serde_json::from_slice(&bytes)
+            .map_err(|error| format!("invalid hook payload: {error}"))?;
+        let command = payload
+            .tool_input
+            .unwrap_or_default()
+            .command
+            .unwrap_or_default();
+        return write_fields(
+            output,
+            &[&command, payload.cwd.as_deref().unwrap_or_default()],
+        );
+    }
+    let report: Value =
+        serde_json::from_slice(&bytes).map_err(|error| format!("invalid audit report: {error}"))?;
+    if matches!(operation, Operation::Report) {
+        return report_fields(&report, output);
+    }
+    for finding in blocking_findings(&report) {
+        writeln!(output, "{}", format_finding(&finding)).map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
+fn bounded_input(input: &mut impl Read, limit: u64) -> Result<Vec<u8>, String> {
+    let mut bytes = Vec::new();
+    input
+        .take(limit + 1)
+        .read_to_end(&mut bytes)
+        .map_err(|error| error.to_string())?;
+    if bytes.len() as u64 > limit {
+        return Err(format!("JSON input exceeds the {limit}-byte limit"));
+    }
+    Ok(bytes)
+}
+
+fn write_fields(output: &mut impl Write, fields: &[&str]) -> Result<(), String> {
+    if fields.iter().any(|field| field.contains('\0')) {
+        return Err("hook JSON strings cannot contain NUL".to_string());
+    }
+    for field in fields {
+        output
+            .write_all(field.as_bytes())
+            .map_err(|error| error.to_string())?;
+        output.write_all(&[0]).map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
+
+fn report_fields(report: &Value, output: &mut impl Write) -> Result<(), String> {
+    let error = report
+        .get("error")
+        .and_then(Value::as_bool)
+        .unwrap_or(false);
+    let verdict = report
+        .get("verdict")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    if !matches!(verdict, "pass" | "warn" | "fail") && !error {
+        return Err("audit report has neither a verdict nor an error".to_string());
+    }
+    let message = report
+        .get("message")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    write_fields(
+        output,
+        &[
+            verdict,
+            if error { "true" } else { "false" },
+            &clean(message),
+        ],
+    )
+}
+
+struct Finding<'a> {
+    keys: Vec<&'a str>,
+    value: &'a Value,
+}
+
+fn is_finding(value: &Value) -> bool {
+    value.get("actions").is_some_and(Value::is_array)
+        && [
+            "introduced",
+            "path",
+            "from_path",
+            "file",
+            "files",
+            "instances",
+            "locations",
+            "imported_from",
+            "hops",
+            "package_roots",
+        ]
+        .iter()
+        .any(|key| value.get(key).is_some())
+}
+
+fn collect_findings<'a>(value: &'a Value, keys: &mut Vec<&'a str>, found: &mut Vec<Finding<'a>>) {
+    if is_finding(value) {
+        found.push(Finding {
+            keys: keys.clone(),
+            value,
+        });
+    }
+    match value {
+        Value::Object(object) => {
+            for (key, child) in object {
+                keys.push(key);
+                collect_findings(child, keys, found);
+                keys.pop();
+            }
+        }
+        Value::Array(array) => {
+            for child in array {
+                collect_findings(child, keys, found);
+            }
+        }
+        _ => {}
+    }
+}
+
+fn is_warning(finding: &Finding<'_>) -> bool {
+    matches!(
+        first(finding.value, &["/effective_severity", "/severity"]).and_then(Value::as_str),
+        Some("warn" | "off")
+    )
+}
+
+fn blocking_findings(report: &Value) -> Vec<Finding<'_>> {
+    let mut all = Vec::new();
+    if let Some(object) = report.as_object() {
+        for (key, value) in object {
+            collect_findings(value, &mut vec![key.as_str()], &mut all);
+        }
+    }
+    let introduced = all
+        .iter()
+        .any(|finding| finding.value.get("introduced") == Some(&Value::Bool(true)));
+    if introduced {
+        all.retain(|finding| finding.value.get("introduced") == Some(&Value::Bool(true)));
+        if all.iter().any(|finding| !is_warning(finding)) {
+            all.retain(|finding| !is_warning(finding));
+        }
+        return all;
+    }
+    if report.pointer("/attribution/gate").and_then(Value::as_str) == Some("all") {
+        all.retain(|finding| !is_warning(finding));
+        return all;
+    }
+    Vec::new()
+}
+
+fn first<'a>(value: &'a Value, pointers: &[&str]) -> Option<&'a Value> {
+    pointers
+        .iter()
+        .filter_map(|pointer| value.pointer(pointer))
+        .find(|field| !field.is_null() && **field != Value::Bool(false))
+}
+
+fn text(value: &Value) -> String {
+    value
+        .as_str()
+        .map_or_else(|| value.to_string(), str::to_string)
+}
+
+fn clean(value: &str) -> String {
+    let mut result = String::new();
+    let mut in_control_run = false;
+    for character in value.chars() {
+        let control = character.is_control() || matches!(character, '\u{2028}' | '\u{2029}');
+        if control {
+            if !in_control_run {
+                result.push(' ');
+            }
+        } else {
+            result.push(character);
+        }
+        in_control_run = control;
+    }
+    result
+}
+
+fn format_finding(finding: &Finding<'_>) -> String {
+    let value = finding.value;
+    let identity = first(value, &["/code", "/rule"])
+        .map(text)
+        .or_else(|| {
+            value
+                .get("finding_id")
+                .and_then(Value::as_str)
+                .and_then(|id| id.split(':').nth(1))
+                .map(str::to_string)
+        })
+        .unwrap_or_else(|| {
+            let last = finding.keys.last().copied().unwrap_or("?");
+            if matches!(last, "findings" | "clone_groups") {
+                finding.keys.first().copied().unwrap_or("?")
+            } else {
+                last
+            }
+            .to_string()
+        });
+    let location = first(
+        value,
+        &[
+            "/path",
+            "/from_path",
+            "/file",
+            "/files/0",
+            "/instances/0/file",
+            "/locations/0/path",
+            "/imported_from/0/path",
+            "/hops/0/file",
+            "/package_roots/0",
+        ],
+    )
+    .map_or_else(|| "?".to_string(), text);
+    let line = first(
+        value,
+        &[
+            "/line",
+            "/instances/0/start_line",
+            "/locations/0/line",
+            "/imported_from/0/line",
+            "/hops/0/line",
+        ],
+    )
+    .map(|line| format!(":{}", clean(&text(line))))
+    .unwrap_or_default();
+    let detail = first(
+        value,
+        &[
+            "/export_name",
+            "/package_name",
+            "/member_name",
+            "/entry_name",
+            "/name",
+            "/specifier",
+            "/import_specifier",
+            "/url",
+            "/value",
+            "/message",
+        ],
+    )
+    .map(text)
+    .unwrap_or_default();
+    let detail = if detail.is_empty() {
+        String::new()
+    } else {
+        format!(" {}", clean(&detail))
+    };
+    format!("{} {}{line}{detail}", clean(&identity), clean(&location))
+}
+
+```
+
+### Core Architecture Module: `crates/cli/src/cli_hooks/mod.rs`
 ```
 use std::path::Path;
 use std::process::ExitCode;
@@ -847,6 +1197,8 @@ use std::process::ExitCode;
 use crate::error::emit_error;
 use crate::init;
 use crate::setup_hooks;
+
+mod hook_runtime;
 
 #[derive(clap::ValueEnum, Clone, Copy, Debug, PartialEq, Eq)]
 pub enum HooksTargetArg {
@@ -858,6 +1210,13 @@ pub enum HooksTargetArg {
 
 #[derive(clap::Subcommand)]
 pub enum HooksCli {
+    /// Internal JSON bridge used by generated agent gates.
+    #[command(hide = true)]
+    GateRuntime {
+        #[arg(value_enum)]
+        operation: hook_runtime::Operation,
+    },
+
     /// Show installed hook state for Git, Claude, and Codex surfaces.
     Status,
 
@@ -931,6 +1290,7 @@ pub fn run_hooks_command(
     json_style: crate::json_style::JsonStyle,
 ) -> ExitCode {
     match subcommand {
+        HooksCli::GateRuntime { operation } => hook_runtime::run(operation),
         HooksCli::Status => setup_hooks::run_hooks_status(root, output, json_style),
         install @ HooksCli::Install { .. } => run_hooks_install(root, install, output),
         uninstall @ HooksCli::Uninstall { .. } => run_hooks_uninstall(root, &uninstall, output),
@@ -1059,219 +1419,19 @@ pub use fallow_types::path_util::{
 
 ```
 
-### Core Architecture Module: `crates/cli/src/setup_hooks.rs`
-```
-//! `fallow setup-hooks`: generate or remove the Claude Code and Codex
-//! PreToolUse gate files for this repo. For Codex it also maintains a routing
-//! block in `AGENTS.md`.
-//!
-//! Both harnesses run the same gate script. Claude Code reads the handler from
-//! `.claude/settings.json`, and Codex reads it from `.codex/hooks.json`.
-//!
-//! The gate intercepts the agent's Bash tool when the command is `git commit`
-//! or `git push`, runs `fallow audit --format json --quiet --explain`, and
-//! blocks only on `verdict: "fail"`. The audit JSON is written to stderr so
-//! the agent can read `_meta.docs` links and `actions`, fix the findings,
-//! and retry.
-//!
-//! `fallow setup-hooks` itself is deprecated (removed in the next major);
-//! the engine stays because `fallow hooks install --target agent` and
-//! `fallow agent install` run through it. For the *git pre-commit* hook
-//! scaffolder, see `fallow hooks install --target git`. The two targets write
-//! to different surfaces: Git hooks write into `.git/hooks/` or `.husky/`, and
-//! agent hooks write into `.claude/` / `AGENTS.md`.
-
-use std::io::{ErrorKind, Write};
-use std::path::{Path, PathBuf};
-use std::process::ExitCode;
-
-use serde::Serialize;
-
-/// Agent target for generated hook artifacts.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, clap::ValueEnum)]
-pub enum HookAgentArg {
-    /// Claude Code: project-level `.claude/settings.json` + hook script.
-    Claude,
-    /// Codex: `.codex/hooks.json` PreToolUse gate + hook script, plus a
-    /// routing block in `AGENTS.md`.
-    Codex,
-}
-
-/// CLI options for `fallow setup-hooks`.
-pub struct SetupHooksOptions<'a> {
-    pub root: &'a Path,
-    pub agent: Option<HookAgentArg>,
-    pub dry_run: bool,
-    pub force: bool,
-    pub user: bool,
-    /// Home directory for `--user` targets; `None` reads `$HOME`.
-    pub home: Option<&'a Path>,
-    pub gitignore_claude: bool,
-    pub uninstall: bool,
-}
-
-impl SetupHooksOptions<'_> {
-    /// Base directory for harness files: the home directory under `--user`,
-    /// otherwise the project root.
-    fn scope_base(&self) -> Result<PathBuf, String> {
-        if !self.user {
-            return Ok(self.root.to_path_buf());
-        }
-        // A unit test that falls back to `$HOME` writes into the real home
-        // directory of the developer.
-        #[cfg(test)]
-        assert!(
-            self.home.is_some(),
-            "user scope in a unit test: pass an explicit home"
-        );
-        self.home
-            .map(Path::to_path_buf)
-            .or_else(home_dir)
-            .ok_or_else(|| {
-                "Cannot resolve user home directory; unset --user or set $HOME.".to_string()
-            })
-    }
-}
-
-/// Template content of `.claude/hooks/fallow-gate.sh`. Contains the
-/// `@@FALLOW_INSTALLER_VERSION@@` placeholder; use [`rendered_gate_script`] to
-/// obtain the install-ready bytes.
-pub const FALLOW_GATE_SCRIPT: &str = include_str!("setup_hooks/fallow-gate.sh");
-
-/// Marker substituted at install time by [`rendered_gate_script`]. Follows the
-/// autotools `@@NAME@@` convention: grep-friendly, bash-safe, unambiguously
-/// "already rendered" when read in an installed script.
-const INSTALLER_VERSION_PLACEHOLDER: &str = "@@FALLOW_INSTALLER_VERSION@@";
-
-/// Render the gate script with install-time substitutions applied. Stamps the
-/// fallow version that invoked `setup-hooks` into a header comment for
-/// forensics; the enforced `FALLOW_GATE_MIN_VERSION` default stays hand-bumped
-/// by maintainers when a correctness-affecting filtering fix lands, and is
-/// intentionally NOT substituted here.
-#[must_use]
-pub fn rendered_gate_script() -> String {
-    FALLOW_GATE_SCRIPT.replace(INSTALLER_VERSION_PLACEHOLDER, env!("CARGO_PKG_VERSION"))
-}
-
-/// Static content of `.claude/settings.json` when no prior file exists.
-pub const CLAUDE_SETTINGS_DEFAULT: &str = include_str!("setup_hooks/settings.json");
-
-/// Managed-block start marker for the AGENTS.md routing block.
-pub const AGENTS_BLOCK_START: &str = "<!-- fallow:setup-hooks:start -->";
-/// Managed-block end marker for the AGENTS.md routing block.
-pub const AGENTS_BLOCK_END: &str = "<!-- fallow:setup-hooks:end -->";
-
-/// Prose body of the managed block that `fallow setup-hooks` maintains in
-/// `AGENTS.md`. The block routes agents to fallow; the PreToolUse hooks do
-/// the enforcement. The `start` and `end` markers bracket the full body (this
-/// prose plus the task-to-command matrix appended by `agents_block_body`) so
-/// re-runs replace it in place rather than appending duplicates.
-pub const AGENTS_BLOCK_BODY: &str = "## Fallow checks
-
-Use fallow for code-quality, cleanup, and setup tasks in this repository. Fallow checks the changed code before each `git commit` and `git push`. In Claude Code and Codex, a PreToolUse hook from `fallow agent install` runs this check and blocks the command when the verdict is `fail`. Other agents run the check themselves: `fallow audit --format json --quiet --explain --gate-marker agent`. If the verdict is `fail`, fix the reported findings before you try again. A JSON runtime error such as `{ \"error\": true, ... }` does not block.
-
-Audit defaults to `gate=new-only`: only findings introduced by the current changeset affect the verdict. Inherited findings on touched files are reported under `attribution` and annotated with `introduced: false`, but do not block the commit. Set `[audit] gate = \"all\"` in `fallow.toml` to gate every finding in changed files.
-
-For non-skill agents, treat the task map below as the local onboarding source: run the listed fallow command before destructive edits, before commits, and before pull request handoff.
-";
-
-/// Full managed-block body: the gate prose plus the agent task-to-command
-/// matrix, rendered from the single `crate::task_matrix::TASK_MATRIX` slice so
-/// it stays in sync with the `init --agents` template, the schema manifest,
-/// and the generated SKILL.md section. The matrix refreshes on every reinstall
-/// because `upsert_managed_block` replaces the whole block wholesale.
-fn agents_block_body() -> String {
-    format!(
-        "{AGENTS_BLOCK_BODY}\n## Fallow task map\n\n{}",
-        crate::task_matrix::render_task_matrix_markdown()
-    )
-}
-
-/// Marker embedded in generated hook scripts so uninstall (and upgrades)
-/// can recognize a previously-generated file and remove it without `--force`.
-const HOOK_SCRIPT_MARKER: &str = "# Generated by fallow setup-hooks.";
-/// The gate script and `fallow audit` resolve paths from the cwd, and a Claude
-/// session can work in a package directory below the install root. The handler
-/// walks up to the nearest directory that holds the gate script and runs it
-/// there. The walk stops at the first `.git` entry, so a nested worktree does
-/// not reach the gate of the checkout around it. When no script is found, the
-/// handler runs the script under `$CLAUDE_PROJECT_DIR` from the cwd, which was
-/// the only behavior before.
-const PROJECT_FALLOW_HANDLER_COMMAND: &str = "d=\"$(pwd)\"; until [ -f \"$d/.claude/hooks/fallow-gate.sh\" ] || [ -e \"$d/.git\" ] || [ \"$d\" = / ]; do d=\"$(dirname \"$d\")\"; done; if [ -f \"$d/.claude/hooks/fallow-gate.sh\" ]; then cd \"$d\" && exec ./.claude/hooks/fallow-gate.sh; fi; exec \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/fallow-gate.sh";
-const USER_FALLOW_HANDLER_COMMAND: &str = "\"$HOME\"/.claude/hooks/fallow-gate.sh";
-const FALLOW_GATE_POSIX_SUFFIX: &str = "/.claude/hooks/fallow-gate.sh";
-const FALLOW_GATE_WINDOWS_SUFFIX: &str = "\\.claude\\hooks\\fallow-gate.sh";
-const CLAUDE_HOOK_MATCHER: &str = "Bash";
-
-/// Codex runs hook commands from the session cwd and sets no project-dir
-/// variable. The project handler walks up to the nearest directory that holds
-/// the gate script, which is the install root: the gate script and `fallow
-/// audit` both resolve paths from the cwd. The install root is not always the
-/// git root (`--root packages/app`), and Codex does not block on exit 127, so
-/// a handler that cannot find the script would let every commit through. The
-/// walk stops at the first `.git` entry, the same as the Claude handler.
-const CODEX_PROJECT_HANDLER_COMMAND: &str = "d=\"$(pwd)\"; until [ -f \"$d/.codex/hooks/fallow-gate.sh\" ] || [ -e \"$d/.git\" ] || [ \"$d\" = / ]; do d=\"$(dirname \"$d\")\"; done; if [ -f \"$d/.codex/hooks/fallow-gate.sh\" ]; then cd \"$d\" && exec ./.codex/hooks/fallow-gate.sh; fi; exit 0";
-/// The user-scope script lives in `$HOME`, so there is no marker to walk up
-/// to. `--show-cdup` prints the relative path up to the git root (empty at the
-/// root, and empty outside a git repository, where the handler stays in the cwd).
-const CODEX_USER_HANDLER_COMMAND: &str =
-    "cd \"./$(git rev-parse --show-cdup 2>/dev/null)\" && \"$HOME\"/.codex/hooks/fallow-gate.sh";
-const CODEX_GATE_POSIX_SUFFIX: &str = "/.codex/hooks/fallow-gate.sh";
-const CODEX_GATE_WINDOWS_SUFFIX: &str = "\\.codex\\hooks\\fallow-gate.sh";
-/// Codex matchers are regular expressions; anchor so only the Bash tool runs
-/// the gate.
-const CODEX_HOOK_MATCHER: &str = "^Bash$";
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Mode {
-    Install,
-    Uninstall,
-}
-
-impl Mode {
-    pub const fn as_str(self) -> &'static str {
-        match self {
-            Self::Install => "install",
-            Self::Uninstall => "uninstall",
-        }
-    }
-}
-
-/// Entry point for the `fallow setup-hooks` subcommand.
-pub fn run_setup_hooks(opts: &SetupHooksOptions<'_>) -> ExitCode {
-    run_setup_hooks_with_label(opts, "fallow setup-hooks")
-}
-
-/// Entry point used by the `fallow hooks ... --target agent` namespace while
-/// reusing the same installation engine and summary renderer.
-pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &str) -> ExitCode {
-    let mode = if opts.uninstall {
-        Mode::Uninstall
-    } else {
-        Mode::Install
-    };
-
-    let plan = match Plan::resolve(opts, mode) {
-        Ok(plan) => plan,
-        Err(msg)
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3840** (2026-10-23): **Class inside ::view-transition-*(...) reported as unused export in SCSS Modules**
-  *Symptoms*: ### What happened?  fallow reports classes used in view transitions as unused in SCSS modules.  ### Reproduction  1. Create an SCSS modules file with a view transition class 2. Import the SCSS modules file in a JS file and use it  ```scss //app.module.scss .foo {   view-transition-name: demo; }  ::view-transition-new(.demo) {   animation-duration: 200ms; } ```  ```js // app.js import css from './app.module.scss'  console.log(css.foo); ```  fallow reports `.demo` as unused but it's actually used.  ``` ● Unused exports (1)   app.module.scss     :5 demo ```  ### Expected behavior  fallow should not report it as unused export  ### Fallow version  3.35.0  ### Operating system  Windows  ### Configuration  ```toml  ```
+- **Issue #3998** (2026-10-29): **Can't use tsrs**
+  *Symptoms*: ### What happened?  ``` Fallow 3.37.0 (latest; upstream main too) can't switch to tsrs here. Its tsrs backend is experimental (FALLOW_TYPE_AWARE_BACKEND=tsrs), and both the sidecar and the Rust binary require exactly tsrs 0.18.0-ts7.1.0-dev.20260929. That version ships no Windows binary (@tsrs/win32-x64 starts at 0.20.0). Our 0.20.1 is rejected: 'unsupported type-aware backend version 0.20.1-ts7.1.0-beta; expected 0.18.0…', and Fallow falls back to syntactic analysis with 114 false findings. What should T-094 do? ``` I installed tsrs to typecheck my project, and decided to also switch fallow to the same backend, then i got the error above why is fallow so restrictive? Why can't I use the same tsrs I installed to typecheck my project?  ### Reproduction  install latest tsrs 0.20.1  ### Expected behavior  I should be able to reuse my existing tsrs installation that i already use to typecheck the project  ### Fallow version  3.37.0  ### Operating system  Windows  ### Configuration  ```toml  ```
   **Post-Mortem & Fix Analysis**:
-  > Fixed in v3.36.0 (`npm install fallow@3.36.0`). The class scan now skips the argument of `::view-transition-new(.demo)` and the other `::view-transition-*()` pseudo-elements, so `demo` is no longer reported as an unused export.  Thanks for reporting this together with #3839. 
+  > This is in v3.38.0: `npm install fallow@3.38.0`.  The experimental tsrs backend now accepts any tsrs from `0.18.0` up to but not including `1.0.0`, so your tsrs 0.20.1 works with `FALLOW_TYPE_AWARE_BACKEND=tsrs`. The default backend accepts any TypeScript 7 release. `fallow type-aware status` shows the version that fallow resolved. Guarded fixes still need `typescript@7.0.2`.  Thanks for raising this, @Smrtnyk. 
 
-- **Issue #3839** (2026-10-23): **Function/mixin call reported as unused export in SCSS Modules**
-  *Symptoms*: ### What happened?  fallow reports namespaced function calls like `math.div()` / `utils.bar()` and mixin calls like `@include utils.baz()` as unused exports in `*.module.scss` files.  ### Reproduction  1. Create an SCSS file with a function / mixin 2. Create an SCSS module file that imports and uses them 3. import the SCSS module file and use it in your app   ```scss // utils.scss @function bar() {   @return red; }  @mixin baz {   border: 1px solid red; } ```  ```scss // app.module.scsss @use './utils'; @use 'sass:math';  .foo {   height: math.div(100px, 10);   background: utils.bar();    @include utils.baz(); } ```  ```js // app.js import css from './app.module.scss'  console.log(css.foo); ```  fallow reports the function / mixin calls as unused:  ``` ● Unused exports (3)   app.module.scss (3)     :6 div     :7 bar     :9 baz ```  ### Expected behavior  fallow shouldn't recognize them as CSS classes and not report them as unused.  ### Fallow version  3.35.0  ### Operating system  Windows  ### Configuration  ```toml  ```
-  **Post-Mortem & Fix Analysis**:
-  > Released in v3.36.0 (`npm install fallow@3.36.0`).  In SCSS Modules, a namespaced call such as `math.div(100px, 10)` or `utils.bar()`, and a namespaced mixin such as `@include utils.baz`, no longer give a false `unused-export`. In `.module.sass` files the `+utils.baz` shorthand is skipped too. A compound selector such as `button.primary` still exports `primary`.  Thanks for the report. 
+- **Issue #3950** (2026-10-29): **mutation: temporary copies bypass the Node child-process overlay**
+  *Symptoms*: A selected `node:test` case can run an unchanged temporary copy of a planned source file and produce a false survivor. The child inherits `NODE_OPTIONS`; the preload works when the child executes the original path.  Reproduced on main `ef1617dd4924c86829bef25deafeabef3743cb7f` (3.36.0), Node 22.23.3.  `src/cli.mjs`:  ```js export const value = () => { return 1; }; if (import.meta.main) {   console.log(value()); } ```  `test/runner.test.mjs`:  ```js import assert from "node:assert/strict"; import { spawnSync } from "node:child_process"; import { copyFileSync, mkdtempSync, rmSync } from "node:fs"; import { tmpdir } from "node:os"; import { join } from "node:path"; import { test } from "node:test"; import { fileURLToPath } from "node:url"; import { value } from "../src/cli.mjs";  test("the library and CLI return the same value", (t) => {   assert.equal(value(), 1);   const directory = mkdtempSync(join(tmpdir(), "copied-cli-repro-"));   t.after(() => rmSync(directory, { recursive: true, force: true }));   const original = fileURLToPath(new URL("../src/cli.mjs", import.meta.url));   const copied = join(directory, "cli.mjs");   copyFileSync(original, copied);   const child = spawnSync(process.execPath, [copied], {     encoding: "utf8", env: process.env, timeout: 10000,   });   assert.equal(child.status, 0, child.stderr);   assert.equal(child.stdout, "1\n"); }); ```  Configure `entry: ["src/cli.mjs", "test/*.test.mjs"]`, `mutation.runner: "node-test"`, and `test: "node --test test/*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1288,601 +1448,682 @@ pub fn run_setup_hooks_with_label(opts: &SetupHooksOptions<'_>, command_label: &
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `658cdad3` (2026-10-25)
-**Commit Message**: fix(cli): name the unenforced failing gates of a bare machine run (#3875)
+### Incident Patch 1: `93d80b0e` (2026-10-31)
+**Commit Message**: fix(cloud): time limit on keychain calls and locked credentials file changes (#4042)
 
-* fix(cli): name the unenforced failing gates of a bare machine run
+Fixes #4003, Fixes #4004
 
-Bare fallow in a machine format exits 0 on findings, while fallow
-dead-code exits 1 on the same findings. The run gave no sign of this.
-Now a bare machine run that exits 0 with a failing findings gate prints
-one stderr line, also under --quiet. The line names each gate, the
---format value and --fail-on-issues. The exit code and stdout do not
-change.
+**File**: `changelog.d/fix-cloud-credentials-hardening.md` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++### Fixed
++
++- **`fallow inspect --cloud` no longer waits for a locked keychain.** The
++  keychain read (`security` on macOS, `secret-tool` on Linux) now has a time
++  limit of 1 second. At the limit, Fallow stops the tool, reads the
++  credentials file, and reports `no_key` when no key is stored. In
++  `fallow cloud login` and `fallow cloud logout`, each keychain call has a
++  limit of 60 seconds, so a person can answer an unlock prompt.
++  (Closes [#4003](https://github.com/fallow-rs/fallow/issues/4003))
++- **`fallow cloud login` and `logout` no longer lose keys in the credentials
++  file.** A change to the file now holds an advisory lock on
++  `credentials.lock` in the same directory, so two logins at the same time
++  for two API URLs keep both keys. When the file does not parse, the command
++  stops with a message that names the file and does not change the file.
++  (Closes [#4004](https://github.com/fallow-rs/fallow/issues/4004))
+```
 
-Closes #3826
+**File**: `crates/cli/src/coverage/credentials.rs` (modified, +286/-85)
+```diff
+@@ -17,10 +17,20 @@
+ //! `FALLOW_CREDENTIAL_STORE=file` turns the keychain off for one process, and
+ //! `FALLOW_CREDENTIAL_STORE=none` turns both stores off, for example on a
+ //! shared CI runner or in a test.
++//!
++//! A locked keychain can show an unlock prompt and block the keychain tool.
++//! So each keychain call has a time limit: a short one for a read, and a
++//! longer one in `fallow cloud login` and `logout`, where a person can answer
++//! the prompt. At the limit, the tool is stopped and the call fails.
++//!
++//! A change to the credentials file holds an advisory lock on
++//! `credentials.lock` in the same directory, so two logins at the same time
++//! keep both keys. A change never replaces a file that does not parse.
+ 
+-use std::io::Write as _;
++use std::io::{Read as _, Write as _};
+ use std::path::{Path, PathBuf};
+-use std::process::{Command, Stdio};
++use std::process::{Command, Output, Stdio};
++use std::time::{Duration, Instant};
+ 
+ use serde::{Deserialize, Serialize};
+ 
+@@ -34,6 +44,16 @@ pub const API_KEY_ENV: &str = "FALLOW_API_KEY";
+ const KEYCHAIN_LABEL: &str = "Fallow Cloud API key";
+ /// Format version of the credentials file.
+ const CREDENTIALS_VERSION: u32 = 1;
++/// Name of the lock file next to the credentials file.
++const LOCK_FILE_NAME: &str = "credentials.lock";
++/// Time limit of a keychain read in a command that a person does not watch,
++/// for example an editor hook that runs `fallow inspect --cloud`.
++const KEYCHAIN_READ_LIMIT: Duration = Duration::from_secs(1);
++/// Time limit of each keychain call in `fallow cloud login` and `logout`.
++/// It is longer, because a person can answer an unlock prompt there.
++const KEYCHAIN_INTERACTIVE_LIMIT: Duration = Duration::from_secs(60);
++/// Interval between two checks for the exit of a keychain tool.
++const KEYCHAIN_POLL_INTERVAL: Duration = Duration::from_millis(10);
+ 
+ /// Where a resolved key came from.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+@@ -140,7 +160,8 @@ pub fn stored_api_key(base_url: &str) -> Option<ResolvedKey> {
+     if store_mode() == StoreMode::None {
+         return None;
+     }
+-    if let Some(key) = keychain().and_then(|keychain| keychain.read(base_url)) {
++    if let Some(key) = keychain().and_then(|keychain| keychain.read(base_url, KEYCHAIN_READ_LIMIT))
++    {
+         return Some(ResolvedKey {
+             key,
+             source: KeySource::Keychain,
+@@ -169,7 +190,7 @@ pub fn store_api_key(base_url: &str, key: &str) -> Result<KeySource, String> {
+         return Err(format!("{CREDENTIAL_STORE_ENV}=none turns key storage off"));
+     }
+     if let Some(keychain) = keychain()
+-        && keychain.write(base_url, key)
++        && keychain.write(base_url, key, KEYCHAIN_INTERACTIVE_LIMIT)
+     {
+         // A stale file entry must not outlive a newer keychain entry.
+         if let Some(path) = credentials_path() {
+@@ -196,7 +217,8 @@ pub struct Removed {
+ ///
+ /// Returns a message when the credentials file cannot be rewritten.
+ pub fn remove_api_key(base_url: &str) -> Result<Removed, String> {
+-    let keychain = keychain().is_some_and(|keychain| keychain.delete(base_url));
++    let keychain =
++        keychain().is_some_and(|keychain| keychain.delete(base_url, KEYCHAIN_INTERACTIVE_LIMIT));
+     let file = match credentials_path() {
+         Some(path) => remove_from_file(&path, base_url)?,
+         None => false,
+@@ -223,15 +245,55 @@ struct CredentialsFile {
+     keys: std::collections::BTreeMap<String, String>,
+ }
+ 
++/// Read the file for a key lookup. A file that is missing or does not parse
++/// has no keys.
+ fn read_credentials(path: &Path) -> CredentialsFile {
+-    std::fs::read_to_string(path)
+-        .ok()
+-        .and_then(|text| serde_json::from_str(&text).ok())
+-        .unwrap_or_default()
++    read_credentials_for_change(path).unwrap_or_default()
++}
++
++/// Read the file before a change. A missing or empty file has no keys. A file
++/// that does not parse is an error, so that a change cannot drop the keys of
++/// other API URLs.
++fn read_credentials_for_change(path: &Path) -> Result<CredentialsFile, String> {
++    let text = match std::fs::read_to_string(path) {
++        Ok(text) => text,
++        Err(err) if err.kind() == std::io::ErrorKind::NotFound => {
++            return Ok(CredentialsFile::default());
++        }
++        Err(err) => return Err(format!("failed to read {}: {err}", path.display())),
++    };
++    if text.trim().is_empty() {
++        return Ok(CredentialsFile::default());
++    }
++    serde_json::from_str(&text).map_err(|err| {
++        format!(
++            "{} does not parse as a credentials file ({err}). Fallow did not change it. \
++             Repair or remove the file, then try again",
++            path.display()
++        )
++    })
++}
++
++/// Take an exclusive advisory lock on the lock file next to `path`. The lock
++/// stays until the returned file is dropped. Every process that changes the
++/// credentials file takes it, so two changes cannot overlap.
++fn lock_crede
+```
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+**File**: `crates/cli/tests/integration/inspect_cloud_tests.rs` (modified, +97/-0)
+```diff
+@@ -127,6 +127,17 @@ struct Env<'a> {
+ }
+ 
+ fn run(args: &[&str], root: &Path, env: &Env<'_>) -> CommandOutput {
++    run_with(args, root, env, |_| {})
++}
++
++/// [`run`] with a last change to the command, for example to give it a
++/// keychain.
++fn run_with(
++    args: &[&str],
++    root: &Path,
++    env: &Env<'_>,
++    customize: impl FnOnce(&mut Command),
++) -> CommandOutput {
+     let mut command = Command::new(fallow_bin());
+     command
+         .args(args)
+@@ -150,6 +161,7 @@ fn run(args: &[&str], root: &Path, env: &Env<'_>) -> CommandOutput {
+         Some(key) => command.env("FALLOW_API_KEY", key),
+         None => command.env_remove("FALLOW_API_KEY"),
+     };
++    customize(&mut command);
+     let output = command.output().expect("run fallow");
+     CommandOutput {
+         stdout: String::from_utf8_lossy(&output.stdout).into_owned(),
+@@ -281,6 +293,91 @@ fn inspect_cloud_without_a_key_reports_no_key_and_succeeds() {
+     assert!(cloud["functions"].as_array().unwrap().is_empty());
+ }
+ 
++/// Give the command a keychain: a fake `secret-tool` that never answers, as a
++/// locked keychain does while it shows an unlock prompt. Linux only, because
++/// on macOS the keychain tool has a fixed path.
++#[cfg(target_os = "linux")]
++fn hanging_keychain(tools: &Path) -> impl FnOnce(&mut Command) {
++    use std::os::unix::fs::PermissionsExt as _;
++    let tool = tools.join("secret-tool");
++    std::fs::write(&tool, "#!/bin/sh\nexec sleep 60\n").unwrap();
++    std::fs::set_permissions(&tool, std::fs::Permissions::from_mode(0o755)).unwrap();
++    let path = std::env::join_paths(
++        std::iter::once(tools.to_path_buf())
++            .chain(std::env::split_paths(&std::env::var_os("PATH").unwrap())),
++    )
++    .unwrap();
++    move |command: &mut Command| {
++        command
++            .env_remove("FALLOW_CREDENTIAL_STORE")
++            .env("DBUS_SESSION_BUS_ADDRESS", "unix:path=/nonexistent")
++            .env("PATH", path);
++    }
++}
++
++/// The keychain read has a time limit of about one second. The bound here is
++/// far below the 60 s of the fake tool and leaves room for a slow CI runner.
++#[cfg(target_os = "linux")]
++const HUNG_KEYCHAIN_BOUND: std::time::Duration = std::time::Duration::from_secs(20);
++
++#[cfg(target_os = "linux")]
++#[test]
++fn inspect_cloud_with_a_hanging_keychain_reports_no_key_within_the_limit() {
++    let (dir, home) = project();
++    let tools = tempdir().unwrap();
++    let start = std::time::Instant::now();
++    let output = run_with(
++        INSPECT_JSON,
++        dir.path(),
++        &Env {
++            api_url: Some("http://127.0.0.1:9"),
++            api_key: None,
++            home: home.path(),
++        },
++        hanging_keychain(tools.path()),
++    );
++    let elapsed = start.elapsed();
++    assert!(elapsed < HUNG_KEYCHAIN_BOUND, "took {elapsed:?}");
++    assert_eq!(output.code, 0, "stderr={}", output.stderr);
++    assert_eq!(parse_json(&output)["evidence"]["cloud"]["status"], "no_key");
++}
++
++#[cfg(target_os = "linux")]
++#[test]
++fn inspect_cloud_with_a_hanging_keychain_uses_the_credentials_file() {
++    let (dir, home) = project();
++    let tools = tempdir().unwrap();
++    let (endpoint, captured, handle) = serve(vec![(200, file_context_body())]);
++    let config = home.path().join(".config").join("fallow");
++    std::fs::create_dir_all(&config).unwrap();
++    std::fs::write(
++        config.join("credentials"),
++        format!(r#"{{"version":1,"keys":{{"{endpoint}":"fallow_read_k1_fromfile"}}}}"#),
++    )
++    .unwrap();
++    let start = std::time::Instant::now();
++    let output = run_with(
++        INSPECT_JSON,
++        dir.path(),
++        &Env {
++            api_url: Some(&endpoint),
++            api_key: None,
++            home: home.path(),
++        },
++        hanging_keychain(tools.path()),
++    );
++    handle.join().expect("server joins");
++    let elapsed = start.elapsed();
++    assert!(elapsed < HUNG_KEYCHAIN_BOUND, "took {elapsed:?}");
++    assert_eq!(output.code, 0, "stderr={}", output.stderr);
++    assert_eq!(parse_json(&output)["evidence"]["cloud"]["status"], "ok");
++    let request = captured.lock().unwrap()[0].to_ascii_lowercase();
++    assert!(
++        request.contains("authorization: bearer fallow_read_k1_fromfile"),
++        "the key of the credentials file is sent: {request}"
++    );
++}
++
+ #[test]
+ fn inspect_cloud_maps_the_tier_gate_to_plan_required() {
+     let (dir, home) = project();
+```
 
-* docs: say what exit 0 means for a bare machine run
+---
 
-The schema exit codes, the skill, AGENTS.md and the npm README said that
-exit 0 means no error-severity findings. Bare fallow in a machine format
-exits 0 on findings unless --fail-on-issues is set, so an agent that
-followed the contract read a failing run as clean. Define 0 as no
-enforced gate failed, say that 1 means findings and not a tool failure,
-and tell agents how to gate.
+### Incident Patch 2: `0b961143` (2026-10-31)
+**Commit Message**: fix(nextjs): credit generateStaticParams in metadata routes (#4038)
 
-Refs #3826
+* fix(nextjs): credit generateStaticParams in metadata routes
+
+Next.js calls generateStaticParams from a metadata route under a
+dynamic segment, such as app/blog/[slug]/opengraph-image.tsx, to
+prerender it. The shared metadata route export list credited the route
+segment config exports but not generateStaticParams, so dead-code
+reported it as unused in opengraph-image, twitter-image, icon,
+apple-icon, sitemap, manifest and robots.
+
+Add generateStaticParams to the shared list. dynamicParams and
+unrelated helper exports stay reportable.
+
+Signed-off-by: Vladimir Pirotskiy <[REDACTED_EMAIL]>
+
+* docs(nextjs): correct robots and manifest wording for generateStaticParams
+
+Next.js matches robots and manifest only at the app root, so these routes never sit under a dynamic segment. The changelog fragment and the code comment now say that the export is credited on every metadata route, and name only the routes that can be dynamic.
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ---------
 
+Signed-off-by: Vladimir Pirotskiy <[REDACTED_EMAIL]>
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+Co-authored-by: Bart Waardenb
 
-**File**: `.agents/skills/fallow/SKILL.md` (modified, +2/-2)
+**File**: `changelog.d/fix-nextjs-metadata-route-generate-static-params.md` (added, +3/-0)
 ```diff
-@@ -42,7 +42,7 @@ cargo install fallow-cli   # build from source
- 
- ## Agent Rules
- 1. **Always use `--format json --quiet`** for machine-readable output and parse stdout as JSON. Compact JSON is the default; never depend on whitespace or add `--pretty` in agent pipelines. Keep stderr separate so diagnostics remain visible; never merge it into the JSON stream with `2>&1`.
--2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-+2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
- 3. **Use `--explain`** to include a `_meta` object in JSON output with metric definitions, ranges, and interpretation hints. In human format, `--explain` prints a `Description:` line under each section header.
- 4. **Use the root `kind` field** to identify typed JSON envelopes (`dead-code`, `dead-code-grouped`, `architecture`, `architecture-grouped`, `health`, `dupes`, `combined`, `audit`, etc.).
- 5. **Use issue type filters** (`--unused-exports`, `--unused-files`, etc.) to limit output scope
-@@ -375,7 +375,7 @@ fallow hooks install --target git   # pre-commit gate; --branch <ref> sets the f
- 
- ## Exit Codes
- 
--Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
-+Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
- 
- When `--format json` is active and exit code is 2, errors are emitted as JSON on stdout:
- ```json
-```
-
-**File**: `.agents/skills/fallow/references/gotchas.md` (modified, +2/-0)
-```diff
-@@ -181,6 +181,8 @@ Error-severity findings can trigger exit code 1. Default severity varies by rule
- 
- Exit code 1 always means that an enforced gate failed. A load warning or a workspace diagnostic (for example `node-modules-missing` or a tsconfig `extends` that does not resolve) never changes the exit code. The only exceptions are `source-parse-degraded` and `source-nesting-too-deep` with `--fail-on-parse-error`. To find the gate, read `gate_outcomes` in the JSON output and look for an entry with `status: "fail"` and `enforced: true`. Under `--quiet` and in every machine format, fallow also prints one stderr line that names the failed gates, for example `[X] Exit code 1: gate health-findings (3 at or above error) failed.` On `health`, the `complexity-*` rules default to `error`, so each complexity finding fails the run. Set them to `warn` or pass `--report-only` to report without a failure.
- 
-+Bare `fallow` in a machine format (`json`, `sarif`, `codeclimate`, the GitHub formats, and the comment and review formats) exits 0 on findings. `fallow dead-code --format json` exits 1 on the same findings. The bare machine run reports only, because the GitHub Action and the GitLab template read its JSON output and not its exit code. Its `gate_outcomes` entries then have `status: "fail"` and `enforced: false`, and stderr has one line, also under `--quiet`, for example `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` To gate on a bare machine run, pass `--fail-on-issues` or `--ci`.
+@@ -0,0 +1,3 @@
++### Fixed
 +
- ---
- 
- ## `--fail-on-issues` Promotes Warn to Error
++- **`fallow dead-code` no longer reports `generateStaticParams` in a Next.js metadata route as an unused export.** Next.js calls it to prerender an `opengraph-image`, `twitter-image`, `icon`, `apple-icon` or `sitemap` route under a dynamic segment, such as `app/blog/[slug]/opengraph-image.tsx`. It is now credited on every metadata route, together with the route segment config exports (`dynamic`, `revalidate`, `fetchCache`, `runtime`, `preferredRegion`, `maxDuration`). `dynamicParams` and unrelated helper exports stay reportable.
 ```
 
-**File**: `.claude/skills/fallow/SKILL.md` (modified, +2/-2)
+**File**: `crates/core/src/plugins/nextjs.rs` (modified, +7/-0)
 ```diff
-@@ -43,7 +43,7 @@ cargo install fallow-cli   # build from source
+@@ -86,10 +86,16 @@ const INSTRUMENTATION_EXPORTS: &[&str] = &["register", "onRequestError"];
+ const INSTRUMENTATION_CLIENT_EXPORTS: &[&str] = &["onRouterTransitionStart"];
+ const MDX_COMPONENT_EXPORTS: &[&str] = &["useMDXComponents"];
  
- ## Agent Rules
- 1. **Always use `--format json --quiet`** for machine-readable output and parse stdout as JSON. Compact JSON is the default; never depend on whitespace or add `--pretty` in agent pipelines. Keep stderr separate so diagnostics remain visible; never merge it into the JSON stream with `2>&1`.
--2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-+2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
- 3. **Use `--explain`** to include a `_meta` object in JSON output with metric definitions, ranges, and interpretation hints. In human format, `--explain` prints a `Description:` line under each section header.
- 4. **Use the root `kind` field** to identify typed JSON envelopes (`dead-code`, `dead-code-grouped`, `architecture`, `architecture-grouped`, `health`, `dupes`, `combined`, `audit`, etc.).
- 5. **Use issue type filters** (`--unused-exports`, `--unused-files`, etc.) to limit output scope
-@@ -376,7 +376,7 @@ fallow hooks install --target git   # pre-commit gate; --branch <ref> sets the f
- 
- ## Exit Codes
- 
--Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
-+Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
- 
- When `--format json` is active and exit code is 2, errors are emitted as JSON on stdout:
- ```json
++// Exports Next.js re-exports from every metadata route into the generated route
++// handler. `generateStaticParams` prerenders a route under a dynamic segment,
++// such as `app/blog/[slug]/opengraph-image.tsx`. Next.js matches `robots` and
++// `manifest` only at the app root, so there the export has no effect, but
++// crediting it is still safe. The rest is route segment config.
+ macro_rules! metadata_route_exports {
+     ($($export:literal),* $(,)?) => {
+         &[
+             $($export,)*
++            "generateStaticParams",
+             "dynamic",
+             "revalidate",
+             "fetchCache",
+@@ -579,6 +585,7 @@ mod tests {
+                 "runtime",
+                 "preferredRegion",
+                 "maxDuration",
++                "generateStaticParams",
+             ] {
+                 assert!(
+                     used.contains(&config_export),
 ```
 
-**File**: `.claude/skills/fallow/references/gotchas.md` (modified, +2/-0)
+**File**: `crates/core/tests/integration_test/frameworks.rs` (modified, +51/-0)
 ```diff
-@@ -181,6 +181,8 @@ Error-severity findings can trigger exit code 1. Default severity varies by rule
- 
- Exit code 1 always means that an enforced gate failed. A load warning or a workspace diagnostic (for example `node-modules-missing` or a tsconfig `extends` that does not resolve) never changes the exit code. The only exceptions are `source-parse-degraded` and `source-nesting-too-deep` with `--fail-on-parse-error`. To find the gate, read `gate_outcomes` in the JSON output and look for an entry with `status: "fail"` and `enforced: true`. Under `--quiet` and in every machine format, fallow also prints one stderr line that names the failed gates, for example `[X] Exit code 1: gate health-findings (3 at or above error) failed.` On `health`, the `complexity-*` rules default to `error`, so each complexity finding fails the run. Set them to `warn` or pass `--report-only` to report without a failure.
- 
-+Bare `fallow` in a machine format (`json`, `sarif`, `codeclimate`, the GitHub formats, and the comment and review formats) exits 0 on findings. `fallow dead-code --format json` exits 1 on the same findings. The bare machine run reports only, because the GitHub Action and the GitLab template read its JSON output and not its exit code. Its `gate_outcomes` entries then have `status: "fail"` and `enforced: false`, and stderr has one line, also under `--quiet`, for example `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` To gate on a bare machine run, pass `--fail-on-issues` or `--ci`.
-+
- ---
- 
- ## `--fail-on-issues` Promotes Warn to Error
-```
-
-**File**: `AGENTS.md` (modified, +4/-2)
-```diff
-@@ -76,8 +76,10 @@ ownership and high-value paths. Important invariants:
- - Resolve current flags and commands from `fallow --help` and
-   `fallow <command> --help`, not from copied flag catalogues.
- 
--Exit codes are `0` for success without error-severity findings, `1` for
--error-severity findings, and `2` for invalid input or execution errors. Some
-+Exit codes are `0` when no enforced gate failed, `1` when an enforced gate
-+failed (findings, not a tool failure), and `2` for invalid input or execution
-+errors. Bare `fallow` in a machine format exits 0 on findings unless you pass
-+`--fail-on-issues`. To gate, pass that flag or read `gate_outcomes`. Some
- runtime workflows define additional documented exit codes.
- 
- ## Validation
-```
-
-**File**: `changelog.d/fix-bare-machine-exit-note.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+### Changed
-+
-+- **A bare machine run that exits 0 on a failing gate now says so on stderr.** Bare `fallow` in `--format json`, `sarif`, `codeclimate`, the GitHub formats and the comment and review formats exits 0 on findings, while `fallow dead-code --format json` exits 1 on the same findings. Before, nothing showed why. Now such a run prints one stderr line, also under `--quiet`, that names each failing findings gate and the flag that enforces it: `[W] Exit code 0: gate error-severity-findings (2 at or above error) failed, but bare fallow does not enforce it in --format json. To exit 1 on it, pass --fail-on-issues.` The exit code and stdout do not change. Thanks [@Smrtnyk](https://github.com/Smrtnyk) for the report. (Closes [#3826](https://github.com/fallow-rs/fallow/issues/3826))
-+
-+- **The exit-code contract no longer says that exit 0 means a clean run.** `fallow schema` (`exit_codes`), the fallow skill, `AGENTS.md` and the npm README said that 0 means no error-severity findings. For bare `fallow` in a machine format, that was false. They now say that 0 means no enforced gate failed, that 1 means findings and not a tool failure, and that a bare machine run gates on findings only with `--fail-on-issues`. To see a failing gate that did not set the exit code, read `gate_outcomes`.
-```
-
-**File**: `crates/cli/src/combined/output.rs` (modified, +34/-1)
-```diff
-@@ -878,10 +878,13 @@ pub(super) fn print_combined_exit_reason(
-     health_result: Option<&HealthResult>,
-     code: u8,
- ) {
-+    let machine = combined_machine_format(opts.output);
-     if code == 0 {
-+        if machine && !opts.fail_on_issues {
-+            print_unenforced_gates_line(opts, check_result, dupes_result, health_result);
-+        }
-         return;
+@@ -173,6 +173,57 @@ fn nextjs_special_file_exports_are_not_flagged() {
      }
--    let machine = combined_machine_format(opts.output);
-     let mut gates = combined_gate_outcomes(
-         check_result,
-         dupes_result,
-@@ -905,6 +908,36 @@ pub(super) fn print_combined_exit_reason(
-     });
  }
  
-+/// Print the line that names the failing findings gates a bare machine run
-+/// exits 0 on. Printed also under `--quiet`, like the exit-reason line: an
-+/// agent that runs `--format json --quiet` is the reader who sees only the
-+/// exit code.
-+fn print_unenforced_gates_line(
-+    opts: &CombinedOptions<'_>,
-+    check_result: Option<&CheckResult>,
-+    dupes_result: Option<&DupesResult>,
-+    health_result: Option<&HealthResult>,
-+) {
-+    let gates = combined_gate_outcomes(
-+        check_result,
-+        dupes_result,
-+        health_result,
-+        CombinedGateFlags {
-+            fail_on_stale_baseline: opts.fail_on_stale_baseline,
-+            fail_on_issues: false,
-+        },
-+    );
-+    if let Some(line) = crate::report::gate_outcome_text::unenforced_gates_line(
-+        gates.as_ref(),
-+        opts.output.flag_label(),
-+    ) {
-+        eprintln!(
-+            "{}",
-+            crate::report::human_status_line(crate::report::HumanStatus::Warning, line)
-+        );
-+    }
-+}
++/// Next.js re-exports every named export of a metadata image route into the
++/// generated route handler, so a `generateStaticParams` next to the image
++/// default export is read by the framework when the route sits under a dynamic
++/// segment. Only the unrelated helper stays reportable.
++#[test]
++fn nextjs_metadata_image_route_generate_static_params_is_not_flagged() {
++    let root = fixture_path("nextjs-project");
++    let config = create_config(root.clone());
++    let results = fallow_core::analyze(&config).expect("analysis should succeed");
 +
- /// The section prints of the human path fail the run on the findings rules
- /// and on the duplication threshold also without `--fail-on-issues`. The
- /// envelope of the machine path keeps `enforced: false` for them, so the
-```
-
-**File**: `crates/cli/src/report/gate_outcome_text.rs` (modified, +87/-0)
-```diff
-@@ -328,6 +328,45 @@ pub fn exit_reason_line(
-     Some(line)
- }
- 
-+/// The stderr line of a bare machine run that exits 0 although a findings gate
-+/// failed, or `None` when no such gate failed.
-+///
-+/// Without `--fail-on-issues`, bare `fallow` in a machine format publishes the
-+/// findings gates with `enforced: false` and exits 0, while `fallow dead-code`
-+/// exits 1 on the same findings. Without this line, the exit code looks like a
-+/// pass (#3826). `format` is the `--format` spelling, so the line names the
-+/// run the way the user typed it.
-+pub fn unenforced_gates_line(
-+    gates: Option<&fallow_output::GateOutcomes>,
-+    format: &str,
-+) -> Option<String> {
-+    let envelope = serde_json::json!({ "gate_outcomes": gates? });
-+    let failed: Vec<GateLine> = read_gate_outcomes(&envelope)
-+        .into_iter()
-+        .filter(|gate| {
-+            gate.status == "fail"
-+                && !gate.enforced
-+                && crate::gates::FAIL_ON_ISSUES_GATES
-+                    .iter()
-+                    .any(|name| name.as_str() == gate.name)
++    let unused_exports: Vec<(String, String)> = results
++        .unused_exports
++        .iter()
++        .map(|e| {
++            (
++                e.export
++                    .path
++                    .strip_prefix(&root)
++                    .unwrap_or(&e.export.path)
++                    .to_string_lossy()
++                    .replace('\\', "/"),
++                e.export.export_name.clone(),
++            )
 +        })
 +        .collect();
-+    if failed.is_empty() {
-+        return None;
++
++    for file in [
++        "src/app/blog/[slug]/opengraph-image.tsx",
++        "src/app/blog/[slug]/twitter-image.tsx",
++        "src/app/blog/[slug]/icon.tsx",
++        "src/app/blog/[slug]/apple-icon.tsx",
++    ] {
++        for export in ["default", "size", "contentType", "generateStaticParams"] {
++            assert!(
++                !unused_exports
++                    .iter()
++                    .any(|(unused_file, unused_export)| unused_file == file
++                        && unused_export == export),
++                "{file}:{export} should be treated as framework-used, found: {unused_exports:?}"
++            );
++        }
++        assert!(
++            unused_exports
++                .iter()
++                .any(|(unused_file, unused_export)| unused_file == file
++                    && unused_export == "unusedImageHelper"),
++            "{file}:unusedImageHelper should still be reported, found: {unused_exports:?}"
++        );
 +    }
-+    let refs: Vec<&GateLine> = failed.iter().collect();
-+    let (noun, pronoun) = if refs.len() == 1 {
-+        ("gate", "it")
-+    } else {
-+        ("gates", "them")
-+    };
-+    Some(format!(
-+        "Exit code 0: {noun} {} failed, but bare fallow does not enforce {pronoun} in \
-+         --format {format}. To exit 1 on {pronoun}, pass --fail-on-issues.",
-+        join(&refs)
-+    ))
 +}
 +
- /// The hint for a findings gate under `--fail-on-issues` or `--ci`. A rule
- /// set to `warn` does not help there, because the flag promotes it to `error`.
- const FAIL_ON_ISSUES_HINT: &str = "Under --fail-on-issues (also set by --ci), a rule set to \
-@@ -940,4 +979,52 @@ mod tests {
-             exit_reason_line(Some(&only_regression), 1, false, &[GateName::Regression]).is_none()
-         );
-     }
+ #[test]
+ fn nextjs_config_referenced_dependencies_are_not_flagged_unused() {
+     let root = fixture_path("nextjs-config-deps");
+```
+
+**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/apple-icon.tsx` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++export const size = { width: 32, height: 32 };
++export const contentType = "image/png";
 +
-+    #[test]
-+    fn the_unenforced_line_names_only_failing_findings_gates_that_are_not_enforced() {
-+        use fallow_output::{GateName, GateOutcome, GateStatus};
-+        let gates = typed_gates(&[
-+            (
-+                GateName::ErrorSeverityFindings,
-+                crate::gates::error_severity_outcome(2, false),
-+            ),
-+            (
-+                GateName::HealthFindings,
-+                crate::gates::health_findings_outcome(0, false),
-+            ),
-+            (
-+                GateName::StaleBaseline,
-+                GateOutcome::measured(GateStatus::Fail, false, 1.0, 0.0),
-+            ),
-+        ]);
-+        assert_eq!(
-+            unenforced_gates_line(Some(&gates), "sarif").as_deref(),
-+            Some(
-+                "Exit code 0: gate error-severity-findings (2 at or above error) failed, but \
-+                 bare fallow does not enforce it in --format sarif. To exit 1 on it, pass \
-+                 --fail-on-issues."
-+            )
-+        );
++export function generateStaticParams() {
++  return [{ slug: "a" }];
++}
 +
-+        let both = typed_gates(&[
-+            (
-+                GateName::ErrorSeverityFindings,
-+                crate::gates::error_severity_outcome(2, false),
-+            ),
-+            (
-+                GateName::HealthFindings,
-+                crate::gates::health_findings_outcome(3, false),
-+            ),
-+        ]);
-+        let line = unenforced_gates_line(Some(&both), "json").expect("two gates failed");
-+        assert!(line.contains("gates error-severity-findings"), "{line}");
-+        assert!(line.contains("enforce them"), "{line}");
++export const unusedImageHelper = "unused";
 +
-+        let enforced = typed_gates(&[(
-+            GateName::ErrorSeverityFindings,
-+            crate::gates::error_severity_outcome(2, true),
-+        )]);
-+        assert!(unenforced_gates_line(Some(&enforced), "json").is_none());
-+        assert!(unenforced_gates_line(None, "json").is_none());
-+    }
- }
++export default function Icon() {
++  return new Response("icon");
++}
+```
+
+**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/icon.tsx` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++export const size = { width: 32, height: 32 };
++export const contentType = "image/png";
++
++export function generateStaticParams() {
++  return [{ slug: "a" }];
++}
++
++export const unusedImageHelper = "unused";
++
++export default function Icon() {
++  return new Response("icon");
++}
+```
+
+**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/opengraph-image.tsx` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++export const alt = "Blog post";
++export const size = { width: 1200, height: 630 };
++export const contentType = "image/png";
++
++export function generateStaticParams() {
++  return [{ slug: "a" }];
++}
++
++export const unusedImageHelper = "unused";
++
++export default function Image() {
++  return new Response("image");
++}
+```
+
+**File**: `tests/fixtures/nextjs-project/src/app/blog/[slug]/twitter-image.tsx` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++export const alt = "Blog post";
++export const size = { width: 1200, height: 630 };
++export const contentType = "image/png";
++
++export function generateStaticParams() {
++  return [{ slug: "a" }];
++}
++
++export const unusedImageHelper = "unused";
++
++export default function Image() {
++  return new Response("image");
++}
 ```
 
 ---
 
-### Incident Patch 2: `316fe600` (2026-10-26)
-**Commit Message**: fix(deps): patch publisher and test dependency vulnerabilities (#3881)
+### Incident Patch 3: `8082fffe` (2026-10-31)
+**Commit Message**: fix(ship): stop the PR wait when a fork run waits for approval (#4052)
+
+GitHub does not start the workflows of some pull requests from a fork until a maintainer approves them. Such a run is complete with the conclusion action_required and registers no checks. ship-wait-checks --pr skipped completed runs, so it reported all checks passed on the few workflows that ran, while CI never started.
+
+A run that waits for approval is now an approval check. The wait stops at once with exit code 5 and lists each run with its link. A failed check still wins. The ship skill says to read the code before the approval and to approve again after each push of the fork.
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-**File**: `.github/dependabot.yml` (modified, +24/-0)
+**File**: `.agents/skills/ship/SKILL.md` (modified, +8/-0)
 ```diff
-@@ -71,6 +71,30 @@ updates:
-       - dependency-name: mocha
-         update-types: ["version-update:semver-major"]
+@@ -191,6 +191,14 @@ Use these scripts for each pull request, one at a time:
+    conflicts with its base. The script then stops with exit code 3.
+    Update the branch, push, and wait again.
  
-+  - package-ecosystem: npm
-+    directory: /.github/publishers/marketplace
-+    schedule:
-+      interval: weekly
-+    cooldown:
-+      default-days: 7
-+    open-pull-requests-limit: 5
++   GitHub does not start the workflows of some pull requests from a fork
++   until a maintainer approves them. Pinned auto-merge then never merges,
++   and the few checks that ran can look complete. The script stops with
++   exit code 5 and lists each run. Read all of the code of the pull request
++   first, because the approved runs execute it. Then approve each listed
++   run with `gh api -X POST repos/<owner>/<repo>/actions/runs/<run id>/approve`,
++   and wait again. Each new push of the fork needs a new approval.
 +
-+  - package-ecosystem: npm
-+    directory: /.github/publishers/open-vsx
-+    schedule:
-+      interval: weekly
-+    cooldown:
-+      default-days: 7
-+    open-pull-requests-limit: 5
-+
-+  - package-ecosystem: npm
-+    directory: /tools/mutation-runner
-+    schedule:
-+      interval: weekly
-+    cooldown:
-+      default-days: 7
-+    open-pull-requests-limit: 5
-+
-   - package-ecosystem: npm
-     directory: /npm/fallow
-     schedule:
+    The script compares each failed check with the same check name on the
+    newest completed run of `main`. A check that also fails on `main` gets
+    the line `FAIL (also on main <sha>)`. When all failed checks also fail
 ```
 
-**File**: `.github/publishers/marketplace/package-lock.json` (modified, +7/-7)
+**File**: `.claude/skills/ship/SKILL.md` (modified, +8/-0)
 ```diff
-@@ -169,22 +169,22 @@
-       }
-     },
-     "node_modules/@azure/msal-node": {
--      "version": "6.0.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-6.0.1.tgz",
--      "integrity": "sha512-ixSO1Y/kCVRthRs+hSx/5qkwaunX1/RAePhlMN0wIpIQ4WEZ6AREGGnGd1AP0qspHVsAwzWQKGubpjh50JyJIQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-7.1.1.tgz",
-+      "integrity": "sha512-zHXTJB38XVrsNaXrPBCMqEUjeyQysFfgmKtUHRDsEKTRjNIPckJ/w6fE5wBXrmJXBim1D3C7O7LOag0msPTrgw==",
-       "license": "MIT",
-       "dependencies": {
--        "@azure/msal-common": "16.14.1",
-+        "@azure/msal-common": "16.14.3",
-         "jsonwebtoken": "^9.0.0"
-       },
-       "engines": {
-         "node": ">=20"
-       }
-     },
-     "node_modules/@azure/msal-node/node_modules/@azure/msal-common": {
--      "version": "16.14.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.1.tgz",
--      "integrity": "sha512-Or6xhPNyi4zHW25158yxBoyxuCqNSPa5YBVqfF1J5Ks4MJWBo/USXdp05DQIPu1Zli00YZu6t0+h6KvHJealxQ==",
-+      "version": "16.14.3",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.3.tgz",
-+      "integrity": "sha512-tz3GvMrR9V/plb2lDdW8qaO8CPpfZevdExBKjltzzbAtyhK0eB2UIvji1aU+gkyHj3fxQ2ie+LNHyMXdmo8wOg==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=0.8.0"
+@@ -192,6 +192,14 @@ Use these scripts for each pull request, one at a time:
+    conflicts with its base. The script then stops with exit code 3.
+    Update the branch, push, and wait again.
+ 
++   GitHub does not start the workflows of some pull requests from a fork
++   until a maintainer approves them. Pinned auto-merge then never merges,
++   and the few checks that ran can look complete. The script stops with
++   exit code 5 and lists each run. Read all of the code of the pull request
++   first, because the approved runs execute it. Then approve each listed
++   run with `gh api -X POST repos/<owner>/<repo>/actions/runs/<run id>/approve`,
++   and wait again. Each new push of the fork needs a new approval.
++
+    The script compares each failed check with the same check name on the
+    newest completed run of `main`. A check that also fails on `main` gets
+    the line `FAIL (also on main <sha>)`. When all failed checks also fail
 ```
 
-**File**: `.github/publishers/marketplace/package.json` (modified, +3/-0)
+**File**: `scripts/ship-wait-checks.mjs` (modified, +45/-5)
 ```diff
-@@ -7,5 +7,8 @@
-   },
-   "dependencies": {
-     "@vscode/vsce": "4.0.0"
-+  },
-+  "overrides": {
-+    "@azure/msal-node": "7.1.1"
+@@ -14,6 +14,10 @@
+ // commit of origin/main when that commit contains the given commit. With
+ // --pr, a failed check that also fails on main gets its own exit code, so a
+ // ship step can wait for the fix on main instead of a fix on the branch.
++// GitHub does not start the workflows of a pull request from a fork until a
++// maintainer approves them. Such a run is complete with the conclusion
++// action_required and has no checks, so with --pr the wait stops at once
++// instead of a pass on the checks of the other workflows.
+ 
+ import { spawnSync } from "node:child_process";
+ import { resolve } from "node:path";
+@@ -72,6 +76,9 @@ const SETTLE_MS = 10 * MINUTE;
+ // right after a push the only check can be a skip, before ci.yml registers
+ // its jobs.
+ const PASS_BUCKET = "pass";
++// A pull-request workflow run that waits for maintainer approval.
++const APPROVAL_BUCKET = "approval";
++const APPROVAL_CONCLUSION = "action_required";
+ // GitHub creates all push runs of a commit together, and a new run is pending.
+ // So a complete set of runs contains all push runs. The short settle time catches a
+ // run that a completed run starts, for example through workflow_run.
+@@ -139,6 +146,10 @@ With --pr, path filters can start fewer checks than --min-checks. When the
+ checks stay complete and unchanged for ${SETTLE_MS / MINUTE} minutes, the wait ends below the
+ count.
+ 
++With --pr, the wait stops when a workflow run waits for maintainer approval,
++which GitHub requires for some pull requests from a fork. No wait ends this
++state: read the code of the pull request, approve the runs, and wait again.
++
+ With --pr, a set of checks without a passed check is not complete. Some
+ workflows skip at once on each pull request, before the CI workflow starts
+ its jobs. Such a set never passes. When it stays unchanged for ${SETTLE_MS / MINUTE} minutes,
+@@ -154,7 +165,7 @@ cancelled, or when --follow-main reaches the maximum count of moves, 2 for
+ invalid input, failed reads for the full --error-window, a timeout, a failed read
+ of ${FOLLOW_REF}, or an ${FOLLOW_REF} that does not contain the given commit,
+ 3 when the pull request conflicts with its base branch, 4 when each failed
+-check also fails on ${FOLLOW_BRANCH}.
++check also fails on ${FOLLOW_BRANCH}, 5 when a workflow run waits for maintainer approval.
+ 
+ With --pr, the script compares each failed check with the newest completed
+ run of the same check name on the newest ${MAIN_COMMIT_LIMIT} commits of ${FOLLOW_BRANCH}. A check that
+@@ -212,6 +223,9 @@ const countedStatus = (checks, unchangedMs, { requirePass, stableMs }) => {
+  * `unchangedMs` is the time since the check set last changed.
+  */
+ const completedStatus = (checks, unchangedMs, options) => {
++  if (hasBucket(checks, APPROVAL_BUCKET)) {
++    return hasFailure(checks) ? "fail" : "approval";
++  }
+   if (hasBucket(checks, "pending")) {
+     return null;
    }
- }
+@@ -240,8 +254,11 @@ const completedStatus = (checks, unchangedMs, options) => {
+  * can only end `settled` through `settleMs`. With `stableMs`, a complete set
+  * passes only after it stays unchanged for that time. A failed check fails
+  * the wait at once.
++ * A check in the `approval` bucket ends the wait at once with the status
++ * `approval`, because only a maintainer can start that run. A failed check
++ * still wins.
+  * Returns `{ status, checks }` where `status` is `pass`, `settled`, `fail`,
+- * `conflict`, `timeout` or `error`. After a failed read of the checks, the
++ * `approval`, `conflict`, `timeout` or `error`. After a failed read of the checks, the
+  * delay to the next read doubles from `intervalMs` up to `READ_RETRY_MAX_MS`.
+  * The status is `error` (with `readErrors` and `errorMs`) when the planned
+  * delays of the failed reads reach `errorWindowMs`, or when the deadline
+@@ -873,7 +890,7 @@ const readPrWorkflows = ({ head, repo }) => {
+     "--limit",
+     String(RUN_LIST_LIMIT),
+     "--json",
+-    "databaseId,workflowDatabaseId,workflowName,status,url,headSha,event",
++    "databaseId,workflowDatabaseId,workflowName,status,conclusion,url,headSha,event",
+   ];
+   if (repo !== null) args.push("--repo", repo);
+   const read = parseGhApi(spawnSync("gh", args, { encoding: "utf8" }));
+@@ -921,11 +938,23 @@ const requiredWorkflowSelector = ({ checks, registered, readRun, head }) => {
+   };
+ };
+ 
+-/** Keep unregistered jobs pending without adding completed passes to the check count. */
++/**
++ * Keep unregistered jobs pending without adding completed passes to the check
++ * count. A run that waits for approval registers no checks, so it counts in
++ * every mode.
++ */
+ const pendingWorkflowChecks = (runs, { names, ...context }) => {
+   const selectRequired = requiredWorkflowSelector(context);
+   const checks = [];
+   for (const run of runs) {
++    if (run.status === "completed" && run.conclusion === APPROVAL_CONCLUSION) {
++      checks.push({
++        name: `${run.workflowName} workflow (${run.databaseId})`,
++        bucket: APPROVAL_BUCKET,
++        lin
 ```
 
-**File**: `.github/publishers/open-vsx/package-lock.json` (modified, +17/-58)
+**File**: `scripts/ship-wait-checks.test.mjs` (modified, +45/-0)
 ```diff
-@@ -8,7 +8,7 @@
-       "name": "fallow-open-vsx-publisher",
-       "version": "1.0.0",
-       "dependencies": {
--        "ovsx": "1.2.0"
-+        "ovsx": "1.3.0"
-       },
-       "engines": {
-         "node": ">=22"
-@@ -169,22 +169,22 @@
-       }
-     },
-     "node_modules/@azure/msal-node": {
--      "version": "6.0.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-6.0.1.tgz",
--      "integrity": "sha512-ixSO1Y/kCVRthRs+hSx/5qkwaunX1/RAePhlMN0wIpIQ4WEZ6AREGGnGd1AP0qspHVsAwzWQKGubpjh50JyJIQ==",
-+      "version": "7.1.1",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-node/-/msal-node-7.1.1.tgz",
-+      "integrity": "sha512-zHXTJB38XVrsNaXrPBCMqEUjeyQysFfgmKtUHRDsEKTRjNIPckJ/w6fE5wBXrmJXBim1D3C7O7LOag0msPTrgw==",
-       "license": "MIT",
-       "dependencies": {
--        "@azure/msal-common": "16.14.1",
-+        "@azure/msal-common": "16.14.3",
-         "jsonwebtoken": "^9.0.0"
-       },
-       "engines": {
-         "node": ">=20"
-       }
-     },
-     "node_modules/@azure/msal-node/node_modules/@azure/msal-common": {
--      "version": "16.14.1",
--      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.1.tgz",
--      "integrity": "sha512-Or6xhPNyi4zHW25158yxBoyxuCqNSPa5YBVqfF1J5Ks4MJWBo/USXdp05DQIPu1Zli00YZu6t0+h6KvHJealxQ==",
-+      "version": "16.14.3",
-+      "resolved": "https://registry.npmjs.org/@azure/msal-common/-/msal-common-16.14.3.tgz",
-+      "integrity": "sha512-tz3GvMrR9V/plb2lDdW8qaO8CPpfZevdExBKjltzzbAtyhK0eB2UIvji1aU+gkyHj3fxQ2ie+LNHyMXdmo8wOg==",
-       "license": "MIT",
-       "engines": {
-         "node": ">=0.8.0"
-@@ -1452,12 +1452,12 @@
-       "license": "MIT"
-     },
-     "node_modules/commander": {
--      "version": "6.2.1",
--      "resolved": "https://registry.npmjs.org/commander/-/commander-6.2.1.tgz",
--      "integrity": "sha512-U7VdrJFnJgo4xjrHpTzu0yrHPGImdsmD95ZlgYSEajAn2JKzDhDTPG9kBTefmObL2w/ngeZnilk+OV9CG3d7UA==",
-+      "version": "14.0.3",
-+      "resolved": "https://registry.npmjs.org/commander/-/commander-14.0.3.tgz",
-+      "integrity": "sha512-H+y0Jo/T1RZ9qPP4Eh1pkcQcLRglraJaSLoyOtHxu6AapkjWVCy2Sit1QQ4x3Dng8qDlSsZEet7g5Pq06MvTgw==",
-       "license": "MIT",
-       "engines": {
--        "node": ">= 6"
-+        "node": ">=20"
-       }
-     },
-     "node_modules/cross-keychain": {
-@@ -1674,26 +1674,6 @@
-         }
-       }
-     },
--    "node_modules/follow-redirects": {
--      "version": "1.16.1",
--      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.16.1.tgz",
--      "integrity": "sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==",
--      "funding": [
--        {
--          "type": "individual",
--          "url": "https://github.com/sponsors/RubenVerborgh"
--        }
--      ],
--      "license": "MIT",
--      "engines": {
--        "node": ">=4.0"
--      },
--      "peerDependenciesMeta": {
--        "debug": {
--          "optional": true
--        }
--      }
--    },
-     "node_modules/function-bind": {
-       "version": "1.1.2",
-       "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
-@@ -2011,15 +1991,6 @@
-         "safe-buffer": "^5.0.1"
-       }
-     },
--    "node_modules/leven": {
--      "version": "3.1.0",
--      "resolved": "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz",
--      "integrity": "sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==",
--      "license": "MIT",
--      "engines": {
--        "node": ">=6"
--      }
--    },
-     "node_modules/lodash.includes": {
-       "version": "4.3.0",
-       "resolved": "https://registry.npmjs.org/lodash.includes/-/lodash.includes-4.3.0.tgz",
-@@ -2189,20 +2160,17 @@
-       }
-     },
-     "node_modules/ovsx": {
--      "version": "1.2.0",
--      "resolved": "https://registry.npmjs.org/ovsx/-/ovsx-1.2.0.tgz",
--      "integrity": "sha512-12mauBqsLehlJ0cRiroQz4uKYVjblVS5OobgSJ278CdCtkDfRQD+SI3NQ00GNalDqzp5PDN11yx84miFUojeMw==",
-+      "version": "1.3.0",
-+      "resolved": "https://registry.npmjs.org/ovsx/-/ovsx-1.3.0.tgz",
-+      "integrity": "sha512-U5B1YCo+6knEipsEF9O+iO+uwK+vTm8qNQyvc5zzE/2P6Zfzjhw4Xj4UJ7WZ1aU/kVGI70FuUWxv/GVXK5JmXw==",
-       "license": "EPL-2.0",
-       "dependencies": {
-         "@inquirer/prompts": "^7.10.1",
--        "@vscode/vsce": "^3.7.1",
--        "commander": "^6.2.1",
-+        "@vscode/vsce": "^4.0.0",
-+        "commander": "^14.0.3",
-         "cross-keychain": "^1.1.0",
--        "follow-redirects": "^1.16.0",
-         "is-ci": "^2.0.0",
--        "leven": "^3.1.0",
-         "semver": "^7.6.0",
--        "tmp": "^0.2.3",
-         "yauzl-promise": "^4.0.0"
-       },
-       "bin": {
-@@ -2529,15 +2497,6 @@
-         "url": "https://github.com/sponsors/SuperchupuDev"
-       }
-     },
--    "node_modules/tmp": {
--      "version": "0.2.7",
--      "resolved": "https://registry.npmjs.org/tmp/-/tmp-0.2.7.tgz",
--      "integrity": "sha512-e0votIpp4Uo2AJYSzVHV6xCcawuiez3DzqDAbrTc3YxBkplN6e+dM13Z
-```
-
-**File**: `.github/publishers/open-vsx/package.json` (modified, +3/-2)
-```diff
-@@ -6,9 +6,10 @@
-     "node": ">=22"
-   },
-   "dependencies": {
--    "ovsx": "1.2.0"
-+    "ovsx": "1.3.0"
-   },
-   "overrides": {
--    "@vscode/vsce": "4.0.0"
-+    "@vscode/vsce": "4.0.0",
-+    "@azure/msal-node": "7.1.1"
+@@ -377,6 +377,33 @@ test("a pull request that conflicts with its base stops the wait with exit code
+   assert.match(lines[0], /no pull_request workflows/u);
+ });
+ 
++test("a workflow run that waits for maintainer approval stops the wait with exit code 5", async () => {
++  const approval = check("CI workflow (300)", "approval");
++  const script = scripted([
++    { ok: true, checks: [check("Commitlint", "pass"), check("lint", "pending"), approval] },
++  ]);
++
++  const result = await wait(script, { minChecks: 3 });
++  const lines = [];
++  const code = reportChecks(result, { label: "PR 7", minChecks: 3 }, (line) => lines.push(line));
++
++  assert.equal(result.status, "approval");
++  assert.equal(script.reads(), 1);
++  assert.equal(code, 5);
++  assert.match(lines[0], /^PR 7: 1 workflow run waits for maintainer approval/u);
++  assert.match(lines[1], /APPROVAL: CI workflow \(300\) https:\/\/example\.invalid\//u);
++});
++
++test("a failed check wins over a run that waits for approval", async () => {
++  const script = scripted([
++    { ok: true, checks: [check("lint", "fail"), check("CI workflow (300)", "approval")] },
++  ]);
++
++  const result = await wait(script);
++
++  assert.equal(result.status, "fail");
++});
++
+ test("an unknown or mergeable state keeps the wait going", async () => {
+   const script = scripted([
+     { ok: true, checks: [] },
+@@ -743,6 +770,24 @@ test("the CLI waits for a queued PR workflow before its checks exist", fakeGhOpt
    }
- }
-```
-
-**File**: `.vex/openvex.json` (modified, +0/-13)
-```diff
-@@ -5,19 +5,6 @@
-   "timestamp": "2026-10-19T00:00:00Z",
-   "version": 1,
-   "statements": [
--    {
--      "vulnerability": {
--        "name": "GHSA-73rr-hh4g-fpgx"
--      },
--      "products": [
--        {
--          "@id": "pkg:github/fallow-rs/fallow"
--        }
--      ],
--      "status": "not_affected",
--      "justification": "vulnerable_code_not_in_execute_path",
--      "impact_statement": "Development dependency, not in the bundled extension; the parent package range blocks the patched version. Source: editors/vscode/osv-scanner.toml"
--    },
-     {
-       "vulnerability": {
-         "name": "RUSTSEC-2024-0436"
-```
-
-**File**: `changelog.d/fix-security-dependency-updates.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Security
-+
-+- **Update vulnerable development and publication dependencies.** Patch the VS Code tools, extension publishers and mutation-runner tests. Add Dependabot coverage for the isolated publishers and mutation runner.
-```
-
-**File**: `docs/development/dependency-updates.md` (modified, +13/-0)
-```diff
-@@ -58,6 +58,19 @@ These causes made a person act on a Dependabot pull request in the past:
- - `github/codeql-action` sub-actions on different versions. The
-   `codeql-action` group in `.github/dependabot.yml` prevents this.
+ });
  
-+## Security overrides
++test("the CLI stops when a fork PR workflow waits for approval", fakeGhOptions, () => {
++  for (const cliArgs of [[], ["--required"]]) {
++    const result = runWithFakeGh(
++      {
++        selected: [check("CI", "pass")],
++        rollups: [{ statusCheckRollup: [checkRun("Commitlint", "COMPLETED", "SUCCESS")] }],
++        prRuns: [[prWorkflow({ status: "completed", conclusion: "action_required" })]],
++      },
++      cliArgs,
++    );
 +
-+The isolated Marketplace and Open VSX publishers override `@azure/msal-node`
-+to the patched major because Azure Identity still requests the vulnerable
-+major. The extension applies the same override in `pnpm-workspace.yaml`.
-+Remove these overrides when Azure Identity's supported range includes the
-+patched release, and rerun the publisher authentication and extension suites.
++    assert.equal(result.status, 5, result.stdout + result.stderr);
++    assert.match(result.stdout, /waits for maintainer approval/u);
++    assert.match(result.stdout, new RegExp(`${RUN_URL}/300`, "u"));
++    assert.equal(rollupReads(result.calls).length, 1);
++  }
++});
 +
-+The extension also overrides Mocha's `diff` and `serialize-javascript`
-+dependencies. Keep Mocha compatible with the VS Code engine floor. Remove an
-+override when Mocha requests a patched version, then run the extension's
-+integration suites in the oldest supported host.
-+
- ## Setup
- 
- | Setting | Scope | Use |
+ test("a PR with no check rollup waits for its queued workflow", fakeGhOptions, () => {
+   const result = runWithFakeGh({
+     selected: [],
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3902** (2026-10-26): chore(deps): bump CodSpeedHQ/action from 5.4.2 to 5.5.0 (@dependabot[bot])
-- **PR #3896** (2026-10-26): chore(deps-dev): bump vitest from 5.0.4 to 5.0.5 in /viz-frontend (@dependabot[bot])
-- **PR #3892** (2026-10-26): chore(deps): bump knip from 6.41.0 to 6.42.0 in /benchmarks (@dependabot[bot])
-- **PR #3890** (2026-10-26): chore(deps-dev): bump @commitlint/cli from 21.2.3 to 21.2.4 (@dependabot[bot])
-- **PR #3889** (2026-10-26): chore(deps-dev): bump @commitlint/config-conventional from 21.2.3 to 21.2.4 (@dependabot[bot])
-- **PR #3881** (2026-10-26): fix(deps): patch publisher and test dependency vulnerabilities (@BartWaardenburg)
+- **PR #4055** (2026-10-31): fix(mutation): skip a PATH file that cannot run (@BartWaardenburg)
+- **PR #4054** (2026-10-31): ci: run the fallow-graph Miri tests as three parallel shards (@BartWaardenburg)
+- **PR #4053** (2026-10-31): fix(mutation): look up a bare --runtime name on PATH (@BartWaardenburg)
+- **PR #4052** (2026-10-31): fix(ship): stop the PR wait when a fork run waits for approval (@BartWaardenburg)
+- **PR #4051** (2026-10-31): feat(mcp): add cloud section and compact text to inspect_target (@BartWaardenburg)
+- **PR #4050** (2026-10-31): fix(mutation): keep the test error of a failed dry-run test (@BartWaardenburg)
 
 ---
 
@@ -1902,30 +2143,42 @@ Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): name the unenforced failing gates of a bare machine run (#3875)
+## X. cloud): time limit on keychain calls and locked credentials file changes (#4042)
 
 **RULE**:
-When implementing operations in `.agents/skills/fallow/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-cloud-credentials-hardening.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `658cdad3`: cli): name the unenforced failing gates of a bare machine run (#3875). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93d80b0e`: cloud): time limit on keychain calls and locked credentials file changes (#4042). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.agents/skills/fallow/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-cloud-credentials-hardening.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-Codes 0 and 1 are successful analysis outcomes. 0 means no enforced gate failed, and 1 means an enforced gate failed: findings, not a tool failure. Bare `fallow` in a machine format exits 0 on findings unless you pass `--fail-on-issues`. To gate, pass `--fail-on-issues`, run `fallow dead-code` or `fallow audit`, or read `gate_outcomes`: `status: "fail"` with `enforced: false` is a failing gate that did not set the exit code. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures in
+### Fixed
+
+- **`fallow inspect --cloud` no longer waits for a locked keychain.** The
+  keychain read (`security` on macOS, `secret-tool` on Linux) now has a time
+  limit of 1 second. At the limit, Fallow stops the tool, reads the
+  credentials file, and reports `no_key` when no key is stored. In
+  `fallow cloud login` and `fallow cloud logout`, each keychain call has a
+  limit of 60 seconds, so a person can answer an unlock prompt.
+  (Closes [#4003](https://github.com/fallow-rs/fallow/issues/4003))
+- **`fallow cloud login` and `logout` no longer lose keys in the credentials
+  file.** A change to the file now holds an advisory lock on
+  `credentials.lock` in the same directory, so two logins at the same time
+  for two API URLs keep both keys. When the file does not parse, the command
+  stops with a message that names the file and does not change the file.
+  (Closes [#4004](https://github.com/fallow-rs/fallow/issues/4004))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-2. **Preserve and interpret the exit status.** Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Treat every other code according to `fallow schema.exit_codes`. Do not force a successful status, because that hides validation, license, setup, network, and security-gate outcomes.
-Codes 0 and 1 are successful analysis outcomes: 0 is clean and 1 means findings. Read `fallow schema.exit_codes` for validation, resource, runtime, network, security-gate, and upload failures instead of maintaining another copied table.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `658cdad3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93d80b0e` are properly handled with clean fallback behavior.

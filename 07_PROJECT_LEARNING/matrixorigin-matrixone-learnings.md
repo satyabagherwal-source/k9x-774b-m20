@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `e033d4a5`  
+> **Source Version**: `ae40f12a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T12:57:01.191Z  
+> **Timestamp**: 2026-10-31T12:46:59.382Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T12:56:47.837Z  
+> **Harvest Timestamp**: 2026-10-31T12:46:59.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2058 stars
+- **Stars / Engagement**: 2062 stars
 
 ---
 
@@ -526,6 +526,295 @@ class ConnectionHooksDemo:
          
 ```
 
+### Core Architecture Module: `clients/python/matrixone/_analytics_workers.py`
+```
+# Copyright 2026 Matrix Origin
+# Licensed under the Apache License, Version 2.0.
+"""Per-client bounded blocking work, independent of an asyncio loop's lifetime."""
+
+import asyncio
+import os
+import threading
+import uuid
+from collections import deque
+from concurrent.futures import Future, ThreadPoolExecutor
+from functools import partial
+from contextvars import copy_context
+
+
+async def _wait(future):
+    wrapped = asyncio.wrap_future(future)
+    try:
+        return await asyncio.shield(wrapped)
+    except asyncio.CancelledError:
+        # Completion/accounting belongs to the concurrent future, even if the
+        # awaiting loop is gone. Consume an eventual asyncio-side exception.
+        wrapped.add_done_callback(lambda done: None if done.cancelled() else done.exception())
+        raise
+
+
+class _Executor:
+    """Retire a failed generation before another job can enter its queue."""
+
+    def __init__(self, capacity, prefix, on_failure=None):
+        self._executor = ThreadPoolExecutor(max_workers=capacity, thread_name_prefix=prefix)
+        self._lock = threading.Lock()
+        self._failure = None
+        self._on_failure = on_failure
+
+    @property
+    def failed(self):
+        with self._lock:
+            return self._failure is not None
+
+    def submit(self, function, *args, _register=None, **kwargs):
+        decision = threading.Event()
+        accepted = False
+        rejection = None
+
+        def execute():
+            decision.wait()
+            if accepted:
+                return function(*args, **kwargs)
+            raise RuntimeError('Analytics submission was rejected') from rejection
+
+        with self._lock:
+            if self._failure is not None:
+                raise RuntimeError(
+                    'Analytics worker generation failed; reconnect or retry cleanup explicitly'
+                ) from self._failure
+            try:
+                future = self._executor.submit(execute)
+                if _register is not None:
+                    _register(future)
+                accepted = True
+            except BaseException as error:
+                # CPython may enqueue before thread creation raises. That
+                # wrapper must never perform unrecorded work later.
+                rejection = self._failure = error
+                try:
+                    self._executor.shutdown(wait=False)
+                except BaseException as cleanup_error:
+                    error.cleanup_error = cleanup_error
+                if self._on_failure is not None:
+                    self._on_failure()
+                raise
+            finally:
+                decision.set()
+        return future
+
+
+class _Admission:
+    def __init__(self, capacity, executor=None):
+        self._available = capacity
+        self._executor = executor
+        self._waiters = deque()
+        self._lock = threading.Lock()
+        self._closed = False
+
+    async def acquire(self):
+        future = Future()
+        with self._lock:
+            if self._closed:
+                raise RuntimeError('Analytics admission is closed')
+            if self._available:
+                self._available -= 1
+                future.set_result(_Lease(self))
+            else:
+                self._waiters.append(future)
+        try:
+            return await _wait(future)
+        except BaseException:
+            if future.cancel():
+                with self._lock:
+                    try:
+                        self._waiters.remove(future)
+                    except ValueError:
+                        pass
+            else:
+                # A grant may be marked running without having a result yet.
+                # Never block this event loop waiting for its producer thread.
+                def return_grant(done):
+                    if not done.cancelled() and done.exception() is None:
+                        done.result().release()
+
+                future.add_done_callback(return_grant)
+            raise
+
+    def release(self):
+        granted = None
+        with self._lock:
+            while self._waiters:
+                future = self._waiters.popleft()
+                if future.set_running_or_notify_cancel():
+                    granted = future
+                    break
+            if granted is None:
+                self._available += 1
+        if granted is not None:
+            # Completion callbacks may return a canceled caller's grant and
+            # therefore reacquire this admission lock.
+            granted.set_result(_Lease(self))
+
+    def set_open(self, value):
+        rejected = []
+        with self._lock:
+            self._closed = not value
+            if not value:
+                while self._waiters:
+                    future = self._waiters.popleft()
+                    if future.set_running_or_notify_cancel():
+                        rejected.append(future)
+        for future in rejected:
+            future.set_exception(RuntimeError('Analytics admission is closed'))
+
+
+class _Lease:
+    """A canceled await does not release a still-running worker's admission."""
+
+    def __init__(self, admission):
+        self._admission = admission
+        self._lock = threading.Lock()
+        self._future = None
+        self._closed = False
+
+    def submit(self, function, *args, _on_submitted=None, **kwargs):
+        with self._lock:
+            if self._closed or self._future is not None:
+                raise RuntimeError('Worker lease is closed or already running')
+            context = copy_context()
+
+            def registered(future):
+                future.add_done_callback(self._completed)
+                self._future = future
+                if _on_submitted is not None:
+                    _on_submitted(future)
+
+            return self._admission._executor.submit(
+                context.run, partial(function, *args, **kwargs), _register=registered
+            )
+
+    async def run(self, function, *args, **kwargs):
+        return await _wait(self.submit(function, *args, **kwargs))
+
+    def _completed(self, future):
+        with self._lock:
+            if self._future is not future:
+                return
+            self._future = None
+            release = self._closed
+        if release:
+            self._admission.release()
+
+    def release(self):
+        with self._lock:
+            if self._closed:
+                return
+            self._closed = True
+            release = self._future is None
+        if release:
+            self._admission.release()
+
+
+class AnalyticsWorkers:
+    """Two CPU/I/O jobs and two staged uploads, plus one independent unlink lane.
+
+    Keep this owner across reconnects. A blocked foreign reader or filesystem
+    operation cannot be forcibly interrupted; it stays charged until completion.
+    """
+
+    def __init__(self):
+        self.workers = _Admission(2)
+        self._executor = self._cpu_executor()
+        self.workers._executor = self._executor
+        self._unlink_executor = _Executor(1, 'mo-unlink')
+        self._staging = _Admission(2)
+        self._lock = threading.Lock()
+        self._uploads = {}
+        self._unlink_queue = deque()
+        self._unlink_active = None
+
+    def _cpu_executor(self):
+        return _Executor(2, 'mo-analytics', lambda: self.workers.set_open(False))
+
+    def set_open(self, value):
+        if value and self._executor.failed:
+            self._executor = self._cpu_executor()
+            self.workers._executor = self._executor
+        self.workers.set_open(value)
+        self._staging.set_open(value)
+        if not value:
+            with self._lock:
+                uploads = tuple(self._uploads.values())
+            for upload in uploads:
+                upload.cancelled.set()
+
+    async def run(self, function, *args, **kwargs):
+        cancelled = threading.Event()
+        lease = await self.workers.acquire()
+        try:
+            return await lease.run(function, *args, cancelled=cancelled, **kwargs)
+        except BaseException:
+            cancelled.set()
+            raise
+        finally:
+            lease.release()
+
+    async def upload(self):
+        permit = await self._staging.acquire()
+        upload = StagingOperation(self, permit)
+        with self._lock:
+            self._uploads[upload.id] = upload
+        return upload
+
+    def pending(self):
+        with self._lock:
+            uploads = tuple(self._uploads.values())
+        return tuple(upload.status() for upload in uploads)
+
+    async def retry_cleanup(self, operation_id):
+        with self._lock:
+            upload = self._uploads[operation_id]
+            if self._unlink_executor.failed:
+                self._unlink_executor = _Executor(1, 'mo-unlink')
+        with upload._lock:
+            if upload._cleanup_error is None:
+                raise RuntimeError('Operation does not have a failed cleanup')
+            upload._cleanup_error = None
+            upload._cleanup = Future()
+            completion = upload._cleanup
+            upload._cleanup_queued = False
+        upload.finish()
+        await _wait(completion)
+
+    def _enqueue_unlink(self, upload):
+        with self._lock:
+            self._unlink_queue.append(upload)
+        self._dispatch_unlink()
+
+    def _dispatch_unlink(self):
+        with self._lock:
+            if self._unlink_active is not None or not self._unlink_queue:
+                return
+            upload = self._unlink_queue.popleft()
+            self._unlink_active = upload
+        # Submit just one item. The bounded staging owners retain queued work;
+        # ThreadPoolExecutor's unbounded queue is never used as admission.
+        with upload._lock:
+            completion = upload._cleanup
+        try:
+            future = self._unlink_executor.submit(upload._unlink)
+        except BaseException as error:
+            future = Future()
+            future.set_exception(error)
+        future.add_done_callback(partial(self._unlinked, upload, completion))
+
+    def _unlinked(self, upload, completion, future):
+        try:
+            error = future.exception()
+    
+```
+
 ### Core Architecture Module: `clients/python/matrixone/_utils.py`
 ```
 """Shared internal utilities for MatrixOne SDK modules."""
@@ -541,7 +830,7 @@ except ImportError:
     SQLALCHEMY_AVAILABLE = False
 
 
-def get_table_name(table: Union[str, Type]) -> str:
+def get_table_name(table: Union[str, Type], *, quoted=False) -> str:
     """Extract table name from string or ORM model.
 
     Supports:
@@ -549,19 +838,28 @@ def get_table_name(table: Union[str, Type]) -> str:
     - "db.table_name"
     - ORM model's resolved table name and schema for db.table
     """
+    from ._sql_literals import sql_identifier, sql_object_name
+
     if isinstance(table, str):
-        return table
+        return sql_object_name(table, qualified=True) if quoted else table
     if SQLALCHEMY_AVAILABLE:
         mapped_table = getattr(table, '__table__', None)
         if isinstance(mapped_table, Table):
+            if quoted:
+                name = sql_identifier(mapped_table.name)
+                return sql_identifier(mapped_table.schema) + '.' + name if mapped_table.schema else name
             return mapped_table.fullname
     if SQLALCHEMY_AVAILABLE and hasattr(table, '__tablename__'):
         name = table.__tablename__
         if hasattr(table, '__table_args__'):
             args = table.__table_args__
             if isinstance(args, dict) and 'schema' in args:
-                return f"{args['schema']}.{name}"
-        return name
+                return (
+                    sql_identifier(args['schema']) + '.' + sql_identifier(name)
+                    if quoted
+                    else f"{args['schema']}.{name}"
+                )
+        return sql_identifier(name) if quoted else name
     raise ValueError(f"Invalid table parameter: {table}. Expected string or ORM model.")
 
 
@@ -692,6 +990,33 @@ def discard_unrestored_connection(conn):
         finally:
             conn.invalidate()
 
+
+def result_returns_rows(result):
+    """CursorResult declares its shape; ORM row results expose keys/fetchall."""
+    declared = getattr(result, 'returns_rows', None)
+    if declared is not None:
+        return bool(declared)
+    return callable(getattr(result, 'keys', None)) and callable(getattr(result, 'fetchall', None))
+
+
+def rows_from_result(result):
+    """Read a manager-owned result from buffered Client or SQLAlchemy Session."""
+    if result is None:
+        return []
+    rows = getattr(result, 'rows', None)
+    return rows if rows is not None else result.fetchall()
+
+
+def stage_file_uri(name, filename):
+    """Encode a logical Stage identifier while preserving legacy filename syntax."""
+    import re
+    from urllib.parse import quote
+    from ._sql_literals import sql_identifier
+
+    sql_identifier(name)  # Shared identifier bounds/NUL validation.
+    root = 'stage://' + name if re.fullmatch(r'[A-Za-z0-9_.-]+', name) else 'stage:///' + quote(name, safe='')
+    return root + '/' + filename
+
 ```
 
 ### Core Architecture Module: `clients/python/matrixone/connection_hooks.py`
@@ -715,11 +1040,24 @@ Connection hooks for MatrixOne clients
 """
 
 from enum import Enum
+from contextvars import ContextVar
+import inspect
+import threading
 from typing import Callable, List, Optional, Union
 
 from sqlalchemy import event, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine
+
+_initializing_clients = ContextVar('matrixone_initializing_clients', default=())
+_settings_registration = threading.Lock()
+
+
+def assert_not_in_hook(client):
+    if any(owner is client for owner in _initializing_clients.get()):
+        raise RuntimeError(
+            'on_connect cannot reenter the same client pool; use ConnectionAction for session initialization'
+        )
 
 
 class ConnectionAction(Enum):
@@ -735,7 +1073,9 @@ class ConnectionAction(Enum):
 class ConnectionHook:
     """Connection hook that executes actions after successful connection"""
 
-    def __init__(self, actions: Optional[List[Union[ConnectionAction, str]]] = None, custom_hook: Optional[Callable] = None):
+    def __init__(
+        self, actions: Optional[List[Union[ConnectionAction, str]]] = None, custom_hook: Optional[Callable] = None
+    ):
         """
         Initialize connection hook
 
@@ -754,62 +1094,73 @@ class ConnectionHook:
             ConnectionAction.ENABLE_ALL: self._enable_all_with_connection,
         }
         self._client_ref = None  # Will be set when hook is attached to a client
-        self._executed_connections = set()  # Track which connections have executed the hook
+        self._async_engine = False
+        self._settings = {}
+        self._settings_revision = 0
+        self._settings_lock = threading.Lock()
+        self._settings_publication_lock = threading.Lock()
+        self._settings_token = object()
 
     def set_client(self, client):
         """Set the client reference for this hook"""
         self._client_ref = client
 
-    def attach_to_engine(self, engine: Union[Engine, AsyncEngine]):
-        """Attach this hook to a SQLAlchemy engine to listen for connection events"""
-        if isinstance(engine, AsyncEngine):
-            # For async engines, listen to both connect and before_cursor_execute events
-            event.listen(engine.sync_engine, "connect", self._on_connect_sync)
-            event.listen(engine.sync_engine, "before_cursor_execute", self._on_before_cursor_execute)
-            if hasattr(self._client_ref, 'logger'):
-                self._client_ref.logger.debug("Attached connection hook to async engine")
-        else:
-            # For sync engines, listen to both connect and before_cursor_execute events
-            event.listen(engine, "connect", self._on_connect_sync)
-            event.listen(engine, "before_cursor_execute", self._on_before_cursor_execute)
-            if hasattr(self._client_ref, 'logger'):
-                self._client_ref.logger.debug("Attached connection hook to sync engine")
+    def attach_to_engine(self, engine):
+        """Initialize once per physical generation, including already-open adoption."""
+        self._async_engine = isinstance(engine, AsyncEngine)
+        target = engine.sync_engine if self._async_engine else engine
+        event.listen(target, 'checkout', self._on_checkout)
+
+    def _on_checkout(self, dbapi_connection, connection_record, connection_proxy):
+        assert_not_in_hook(self._client_ref)
+        # Checkout owns cleanup even on cancellation in SQLAlchemy 1.4 and 2.0.
+        # Existing engine connections may predate hook attachment. Record.info
+        # is cleared by SQLAlchemy when a physical connection is replaced.
+        self._on_connect_sync(dbapi_connection, connection_record)
+        self._apply_settings(dbapi_connection, connection_record)
+
+    def _apply_settings(self, connection, record):
+        if not self._settings:
+            return
+        with self._settings_lock:
+            revision, settings = self._settings_revision, self._settings
+        if record.info.get(self._settings_token) == revision:
+            return
+        cursor = connection.cursor()
+        try:
+            for name, value in settings.items():
+                cursor.execute('SET ' + name + ' = %s', (value,))
+        finally:
+            cursor.close()
+        record.info[self._settings_token] = revision
 
     def _on_connect_sync(self, dbapi_connection, connection_record):
-        """SQLAlchemy event handler for new connections (sync)"""
-        if self._client_ref:
-            # Get connection ID to track which connections have executed the hook
-            conn_id = id(dbapi_connection)
-            if conn_id not in self._executed_connections:
-                try:
-                    # Log that the hook is being executed
-                    if hasattr(self._client_ref, 'logger'):
-                        self._client_ref.logger.debug(f"Executing connection hook on new connection {conn_id}")
-                    # Pass the connection to avoid creating new connections
-                    self.execute_sync_with_connection(self._client_ref, dbapi_connection)
-                    self._executed_connections.add(conn_id)
-                except Exception as e:
-                    # Log error but don't fail the connection
-                    if hasattr(self._client_ref, 'logger'):
-                        self._client_ref.logger.warning(f"Connection hook execution failed: {e}")
+        client = self._client_ref
+        if client is None or connection_record.info.get(self):
+            return
+        assert_not_in_hook(client)
+        connection_record.info[self] = True
+        token = _initializing_clients.set(_initializing_clients.get() + (client,))
+        try:
+            for action in self.actions:
+                action = ConnectionAction(action) if isinstance(action, str) else action
+                self._action_handlers[action](client, dbapi_connection)
+            if self.custom_hook is not None:
+                result = self.custom_hook(client)
+                if inspect.isawaitable(result):
+                    if not self._async_engine:
+                        if inspect.iscoroutine(result):
+                            result.close()
+                        raise TypeError('An asynchronous on_connect callback requires AsyncClient')
+                    # The adapter's checkout event runs inside SQLAlchemy's
+                    # greenlet, so this suspends admission until completion.
+                    from sqlalchemy.util.concurrency import await_only
 
-    def _on_before_cursor_execute(self, conn, cursor, statement, parameters, context, executemany):
-        """SQLAlchemy event handler for before cursor execute"""
-        if self._client_ref:
-            # Get connection ID to track which connections have executed the hook
-            conn_id = id(conn.connection)
-            if conn_id not in self._executed_connections:
-                try:
-                    # Log that the hook is being executed
-                    if hasattr(self._client_ref, 'logger'):
-                        self._client_ref.logger.debug(f"Executing connection hook on connection {conn_id}")
-                    # Use the connection to avoid creating new connections
-                    self.execute_sync_with_connection(self._client_ref, conn.connection)
-                    self._executed_connections.add(conn_id)
-                except Exception as e:
-                    # Log error but don't fail the query
-                    if hasattr(self._client_ref, 'logger'):
-                        self._client_ref.logger.warning(f"Connection hook execution failed: {e}")
+                    await_only(result)
+        except Exception as error:
+            client.logger.warning(f'Connection hook execution failed: {error}')
+        finally:
+            _initializing_clients.reset(token)
 
     async def execute_async(self, client) -> None:
         """Execute hook actions asynchronously (for immediate execution)"""
@@ -864,14 +1215,10 @@ class ConnectionHook:
                         await self.custom_hook(client)
                     else:
                         # Try to call it as sync
-                        try:
-                            result = self.custom_hook(client)
-                            # If it returns a coroutine, await it
-                            if hasattr(result, '__await__'):
-                                await result
-                        except TypeError as e:
-                            if "object NoneType can't be used in 'await' expression" in str(e):
-                                client.logger.warning("Custom hook appears to be async but was called synchronously")
+                        result = self.custom_hook(client)
+                        # If it returns a coroutine, await it
+                        if hasattr(result, '__await__'):
+                            await result
 
         except Exception as e:
             client.logger.warning(f"Connection hook execution failed: {e}")
@@ -887,7 +1234,11 @@ class ConnectionHook:
                 if action in self._action_handlers:
                     # For async, we still use the sync methods since they work with direct connection
                     self._action_handlers[action](client, dbapi_connection)
-                els
+                else:
+                    client.logger.warning(f"Unknown connection action: {action}")
+
+            # Execute custom hook if provided
+
 ```
 
 ### Core Architecture Module: `clients/python/matrixone/index_utils.py`
@@ -910,133 +1261,96 @@ class ConnectionHook:
 Index utilities - Shared logic for secondary index operations
 """
 
-from typing import List, Tuple
+
+def read_index_metadata(connection, table_name, database=None):
+    """Resolve the tenant/database and index keys on the counting connection."""
+    from sqlalchemy import text
+    from ._sql_literals import identifier_parts
+
+    parts = identifier_parts(table_name, qualified=True)
+    if len(parts) == 2:
+        if database is not None and database != parts[0]:
+            raise ValueError('Explicit database conflicts with qualified table name')
+        database = parts[0]
+    elif database is None:
+        result = connection.exec_driver_sql('SELECT DATABASE()')
+        try:
+            database = result.scalar()
+        finally:
+            result.close()
+    if not database:
+        raise ValueError('Index verification requires a database')
+    result = connection.execute(
+        text("""
+        SELECT i.id, i.name, i.index_table_name, i.type, i.column_name,
+               i.ordinal_position, i.algo, i.algo_table_type
+        FROM mo_catalog.mo_indexes i JOIN mo_catalog.mo_tables t ON i.table_id=t.rel_id
+        WHERE t.account_id=CURRENT_ACCOUNT_ID()
+          AND (t.reldatabase=:database OR (@@lower_case_table_names<>0 AND LOWER(t.reldatabase)=LOWER(:database)))
+          AND (t.relname=:table OR (@@lower_case_table_names<>0 AND LOWER(t.relname)=LOWER(:table)))
+          AND i.type IN ('MULTIPLE','UNIQUE')
+        ORDER BY i.id, i.ordinal_position
+    """),
+        {'database': database, 'table': parts[-1]},
+    )
+    try:
+        return database, parts[-1], result.fetchall()
+    finally:
+        result.close()
 
 
-def build_get_index_tables_sql(table_name: str, database: str = None) -> Tuple[str, Tuple]:
-    """
-    Build SQL to get all secondary index table names for a given table.
+def index_count_report(connection, table_name):
+    """Count UNIQUE entries against non-NULL keys, within one read transaction."""
+    from ._sql_literals import sql_identifier
 
-    This includes both MULTIPLE (regular secondary indexes) and UNIQUE indexes.
-
-    Args:
-        table_name: Name of the table
-        database: Name of the database (optional, but recommended to avoid cross-database conflicts)
-
-    Returns:
-        Tuple of (sql, params)
-    """
-    if database:
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND reldatabase = ? AND type IN ('MULTIPLE', 'UNIQUE')
-        """
-        return sql, (table_name, database)
-    else:
-        # Fallback to old behavior if database is not provided
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND type IN ('MULTIPLE', 'UNIQUE')
-        """
-        return sql, (table_name,)
-
-
-def build_get_index_table_by_name_sql(table_name: str, index_name: str, database: str = None) -> Tuple[str, Tuple]:
-    """
-    Build SQL to get the physical table name of a secondary index by its index name.
-
-    Args:
-        table_name: Name of the table
-        index_name: Name of the secondary index
-        database: Name of the database (optional, but recommended to avoid cross-database conflicts)
-
-    Returns:
-        Tuple of (sql, params)
-    """
-    if database:
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND name = ? AND reldatabase = ?
-        """
-        return sql, (table_name, index_name, database)
-    else:
-        # Fallback to old behavior if database is not provided
-        sql = """
-            SELECT DISTINCT index_table_name
-            FROM mo_catalog.mo_indexes
-            JOIN mo_catalog.mo_tables ON mo_indexes.table_id = mo_tables.rel_id
-            WHERE relname = ? AND name = ?
-        """
-        return sql, (table_name, index_name)
+    database, table, metadata = read_index_metadata(connection, table_name)
+    quote = lambda name: sql_identifier(name, force=True)
+    target = quote(database) + '.' + quote(table)
+    groups = {}
+    for identity, name, physical, kind, column, ordinal, algorithm, family in metadata:
+        if not physical or str(algorithm or '').lower() not in ('', 'btree') or family:
+            raise ValueError('Count verification supports ordinary and UNIQUE B-tree indexes only')
+        key = (identity, name, physical, kind)
+        groups.setdefault(key, []).append((ordinal, column))
+    aggregates = ['COUNT(*) AS main_count']
+    expectations = []
+    actuals = []
+    for (_, name, physical, kind), columns in groups.items():
+        if kind == 'UNIQUE':
+            if [position for position, _ in columns] != list(range(1, len(columns) + 1)):
+                raise ValueError('Incomplete UNIQUE index key metadata')
+            predicate = ' AND '.join(quote(column) + ' IS NOT NULL' for _, column in columns)
+            expected_position = len(aggregates)
+            aggregates.append('COUNT(CASE WHEN ' + predicate + ' THEN 1 END) AS expected_' + str(expected_position))
+        else:
+            expected_position = 0
+        expectations.append((name, physical, expected_position))
+        actuals.append('(SELECT COUNT(*) FROM ' + quote(database) + '.' + quote(physical) + ')')
+    sql = 'SELECT counts.*' + (', ' + ', '.join(actuals) if actuals else '')
+    sql += ' FROM (SELECT ' + ', '.join(aggregates) + ' FROM ' + target + ') AS counts'
+    result = connection.exec_driver_sql(sql, execution_options={'no_parameters': True})
+    try:
+        row = result.fetchone()
+    finally:
+        result.close()
+    details = [
+        {'name': name, 'table': physical, 'expected': row[expected], 'actual': row[len(aggregates) + index]}
+        for index, (name, physical, expected) in enumerate(expectations)
+    ]
+    return row[0], details
 
 
-def build_verify_counts_sql(table_name: str, index_tables: List[str]) -> str:
-    """
-    Build SQL to verify counts of main table and all index tables in a single query.
-
-    Args:
-        table_name: Name of the main table
-        index_tables: List of index table names
-
-    Returns:
-        SQL string
-    """
-    if not index_tables:
-        return f"SELECT COUNT(*) FROM `{table_name}`"
-
-    select_parts = [f"(SELECT COUNT(*) FROM `{table_name}`) as main_count"]
-    for idx, index_table in enumerate(index_tables):
-        select_parts.append(f"(SELECT COUNT(*) FROM `{index_table}`) as idx{idx}_count")
-
-    return "SELECT " + ", ".join(select_parts)
-
-
-def process_verify_result(table_name: str, index_tables: List[str], row: Tuple) -> int:
-    """
-    Process the verification result and raise exception if counts don't match.
-
-    Args:
-        table_name: Name of the main table
-        index_tables: List of index table names
-        row: Result row from the verification SQL
-
-    Returns:
-        Row count if verification succeeds
-
-    Raises:
-        ValueError: If any index table has a different count
-    """
-    main_count = row[0]
-
-    if not index_tables:
-        return main_count
-
-    index_counts = {}
-    mismatch = []
-
-    for idx, index_table in enumerate(index_tables):
-        index_count = row[idx + 1]
-        index_counts[index_table] = index_count
-        if index_count != main_count:
-            mismatch.append(index_table)
-
-    # If there's a mismatch, raise an exception with details
-    if mismatch:
-        error_details = [f"Main table '{table_name}': {main_count} rows"]
-        for index_table, count in index_counts.items():
-            status = "✗ MISMATCH" if index_table in mismatch else "✓"
-            error_details.append(f"{status} Index '{index_table}': {count} rows")
-
-        error_msg = "Index count verification failed!\n" + "\n".join(error_details)
-        raise ValueError(error_msg)
-
-    return main_count
+def verify_count_report(report):
+    count, details = report
+    mismatches = [item for item in details if item['actual'] != item['expected']]
+    if mismatches:
+        raise ValueError(
+            'Index count verification failed!\n'
+            + '\n'.join(
+                '%s: %s entries, expected %s' % (item['name'], item['actual'], item['expected']) for item in mismatches
+            )
+        )
+    return count
 
 ```
 
@@ -2011,270 +2325,17 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ```
 
-### Core Architecture Module: `optools/tpch_compare/worker_stream.go`
-```
-// Copyright 2026 Matrix Origin
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package main
-
-import (
-	"context"
-	"database/sql"
-	"errors"
-	"fmt"
-	"io"
-	"math/rand/v2"
-	"os"
-	"path/filepath"
-	"slices"
-	"strings"
-	"sync"
-	"time"
-)
-
-type workerControl struct{ gate, events *os.File }
-
-func (c *workerControl) close() { _ = c.gate.Close(); _ = c.events.Close() }
-func (c *workerControl) barrier(event string) error {
-	if c == nil {
-		return nil
-	}
-	if _, err := fmt.Fprintln(c.events, event); err != nil {
-		return err
-	}
-	var b [1]byte
-	_, err := io.ReadFull(c.gate, b[:])
-	if err != nil {
-		return err
-	}
-	if b[0] != 'g' {
-		return errors.New("invalid controller gate")
-	}
-	return nil
-}
-
-func (c *workerControl) step(start bool, stream, query int, deadline int64) error {
-	if c == nil {
-		return nil
-	}
-	state := "end"
-	if start {
-		state = "start"
-	}
-	_, err := fmt.Fprintf(c.events, "%s %d %d %d\n", state, stream, query, deadline)
-	return err
-}
-
-type waveClock struct {
-	mu          sync.Mutex
-	first, last time.Time
-}
-
-func (w *waveClock) start(t time.Time) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-	if w.first.IsZero() || t.Before(w.first) {
-		w.first = t
-	}
-}
-func (w *waveClock) finish(t time.Time) {
-	w.mu.Lock()
-	defer w.mu.Unlock()
-	if t.After(w.last) {
-		w.last = t
-	}
-}
-func (w *waveClock) elapsed() int64 {
-	if w.first.IsZero() || w.last.IsZero() {
-		return 0
-	}
-	return w.last.Sub(w.first).Nanoseconds()
-}
-
-func queryPermutation(queries []int, stream int, seed uint64) []int {
-	out := slices.Clone(queries)
-	if stream > 0 {
-		rng := rand.New(rand.NewPCG(seed, uint64(stream)))
-		rng.Shuffle(len(out), func(i, j int) { out[i], out[j] = out[j], out[i] })
-	}
-	return out
-}
-
-func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerRequest, d Dataset, control *workerControl, evidence *runtimeEvidence) (out []QueryReceipt, waveNS int64, retErr error) {
-	seen := map[int]bool{}
-	for _, n := range r.Queries {
-		if n < 1 || n > 22 || seen[n] {
-			return nil, 0, errors.New("invalid or duplicate query selection")
-		}
-		seen[n] = true
-	}
-	conns := []*sql.Conn{first}
-	for i := 1; i < r.Clients; i++ {
-		conn, err := configureConn(ctx, db, r.Engine)
-		if err != nil {
-			return nil, 0, err
-		}
-		defer func() { retErr = errors.Join(retErr, conn.Close()) }()
-		conns = append(conns, conn)
-	}
-	if r.Warmup {
-		warmQueries := allQueries()
-		if r.WarmupSelected {
-			warmQueries = r.Queries
-		}
-		for _, n := range warmQueries {
-			q := d.Queries[n-1].rendered(fmt.Sprintf("warm_%d_%d", os.Getpid(), n))
-			path := filepath.Join(r.OutputRoot, fmt.Sprintf("warm-q%02d.rows", n))
-			deadline := r.QueryDeadlineNS
-			if value := r.DeadlinesNS[n]; value > 0 {
-				deadline = value
-			}
-			qctx, cancel := context.WithTimeoutCause(ctx, time.Duration(deadline), errors.New("warmup deadline"))
-			if err := control.step(true, 0, n, deadline); err != nil {
-				cancel()
-				return nil, 0, err
-			}
-			_, err := executeUnit(qctx, first, q, path, captureDisk)
-			cancel()
-			err = errors.Join(err, control.step(false, 0, n, 0))
-			if err != nil {
-				return nil, 0, fmt.Errorf("warmup: %w", err)
-			}
-			if err := os.Remove(path); err != nil {
-				return nil, 0, err
-			}
-		}
-	}
-	if err := configureNativeProfile(ctx, first, r); err != nil {
-		return nil, 0, err
-	}
-	finishProfile, err := workerProfileStart(r)
-	if err != nil {
-		return nil, 0, err
-	}
-	defer func() { retErr = errors.Join(retErr, finishProfile()) }()
-	if r.Profile != nil && (r.Profile.Kind == "alloc" || r.Profile.Kind == "wait") {
-		if err := goProfileSnapshot(r.OutputRoot, "before", r.Profile.Kind); err != nil {
-			return nil, 0, err
-		}
-	}
-	if evidence != nil {
-		evidence.before = runtimeSnapshot()
-	}
-	if err := control.barrier("ready"); err != nil {
-		return nil, 0, err
-	}
-	streamsCtx, cancel := context.WithCancelCause(ctx)
-	defer cancel(nil)
-	type streamResult struct {
-		stream  int
-		queries []QueryReceipt
-		err     error
-	}
-	results := make(chan streamResult, r.Clients)
-	start := make(chan struct{})
-	clock := &waveClock{}
-	for stream, conn := range conns {
-		go func() {
-			result := streamResult{stream: stream}
-			defer func() { results <- result }()
-			<-start
-			for rep := 0; rep < r.Repetitions; rep++ {
-				for _, n := range queryPermutation(r.Queries, stream, r.Seed) {
-					q := d.Queries[n-1].rendered(fmt.Sprintf("%d_%d_%d_%d", os.Getpid(), stream, rep, n))
-					var native *nativeProfile
-					if r.Profile != nil && r.Profile.Kind == "operator" {
-						native = &nativeProfile{engine: r.Engine.Name, root: r.OutputRoot, prefix: fmt.Sprintf("native-q%02d-s%d-r%d", n, stream, rep), selectIndex: q.ResultStatement, plainSelect: q.Statements[q.ResultStatement]}
-						if r.Engine.Name == "mo" {
-							q.Statements[q.ResultStatement] = "EXPLAIN ANALYZE " + q.Statements[q.ResultStatement]
-							q.Columns = []Column{{Kind: "text"}}
-						}
-					}
-					if r.Unlimited && q.Limit > 0 {
-						q.Statements[q.ResultStatement] = strings.TrimSuffix(q.Statements[q.ResultStatement], fmt.Sprintf(" LIMIT %d", q.Limit))
-						q.Limit = 0
-					}
-					deadline := r.QueryDeadlineNS
-					if limit := r.DeadlinesNS[n]; limit > 0 {
-						deadline = limit
-					}
-					qctx, qcancel := context.WithTimeoutCause(streamsCtx, time.Duration(deadline), fmt.Errorf("query Q%d deadline", n))
-					if err := control.step(true, stream, n, deadline); err != nil {
-						qcancel()
-						result.err = err
-						cancel(err)
-						return
-					}
-					cap, err := executeUnitClock(qctx, conn, q, filepath.Join(r.OutputRoot, fmt.Sprintf("q%02d-s%02d-%04d.rows", n, stream, rep)), captureDisk, clock, native)
-					qcancel()
-					err = errors.Join(err, control.step(false, stream, n, 0))
-					receipt := QueryReceipt{Query: n, Repetition: rep, Stream: stream, Capture: cap}
-					if err == nil && r.Reference {
-						err = qualifyReference(r.DatasetRoot, d, q, r.OutputRoot, cap)
-						receipt.Reference = "pass"
-						if err != nil {
-							receipt.Reference = "failed"
-						}
-					}
-					if err != nil {
-						receipt.Error = err.Error()
-					}
-					result.queries = append(result.queries, receipt)
-					if err != nil {
-						result.err = err
-						cancel(err)
-						return
-					}
-				}
-			}
-		}()
-	}
-	close(start)
-	ordered := make([]streamResult, r.Clients)
-	for range r.Clients {
-		res := <-results
-		ordered[res.stream] = res
-		retErr = errors.Join(retErr, res.err)
-	}
-	waveNS = clock.elapsed()
-	for _, res := range ordered {
-		out = append(out, res.queries...)
-	}
-	if evidence != nil {
-		evidence.after = runtimeSnapshot()
-	}
-	retErr = errors.Join(retErr, control.barrier("done"))
-	if r.Profile != nil && (r.Profile.Kind == "alloc" || r.Profile.Kind == "wait") {
-		retErr = errors.Join(retErr, goProfileSnapshot(r.OutputRoot, "after", r.Profile.Kind))
-	}
-	return out, waveNS, retErr
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31287** (2026-10-26): **docs(skills): shutdown-only upgrade contract for agent reviews**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [ ] Improvement - [x] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  issue #31286  ## What this PR does / why we need it:  MatrixOne now upgrades by full-cluster shutdown only: old and new binaries never serve one cluster together. The agent skills still required mixed-version/rolling-upgrade coverage, so Codex-driven reviews kept asking for a new `MORPCVersion` and per-feature capability gates on every PR. That produced recurring `MORPCLatestVersion` merge collisions and dead compatibility code.  Changes (`.agents/skills`, mirrored in `.claude/skills`):  - **New `mo-dev/references/upgrade-compatibility.md`**, the single source of truth:   - in-cluster RPC has no mixed-version obligations: no per-feature `MORPCVersion`, `AllCNsSupportProtocol`/capability gate, or old-peer fallback;   - when to bump `MORPCVersion`: only for an incompatible RPC framing/handshake change, or a deliberate return to mixed-version operation;   - what must stay compatible: persisted state, upgrade steps, backup/restore and external protocols. - **`mo-dev/SKILL.md`**: adds a resource-map entry pointing to the reference. - **`mo-dev/references/feature-design-review.md`**: the design triggers, compatibility section and request-changes rule no longer require mixed-version, downgrade or rollback stories. - **`mo-self-review/SKILL.md`**:   - a new blocker-calibration rule says "an older CN can
+- **Issue #31947** (2026-10-31): **fix(frontend): allow the MySQL wait_timeout range**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #31510  ## What this PR does / why we need it:  `wait_timeout` is documented as an integer-seconds variable with a range up to one year, but the frontend admission bound rejected every configured/SET value above 86400 (one day), so `SET GLOBAL/SESSION wait_timeout = 86401` failed with the default-range error even though MySQL accepts it.  - Admission range raised to `1..31536000` seconds (one year); values are validated once by a shared `validateTimeoutLimits` consumed by both SESSION and GLOBAL before write/persistence. - Default stays `86400`; the server-configured min/max bounds remain a hard policy, and the interactive-handshake wait_timeout rule is unchanged. - The real idle consumer now applies the full int64 seconds value into `time.Duration` without overflow, so a long GLOBAL value actually reaches the connection idle deadline (verified for live GLOBAL change and new logins). - The stale 86401 error rows in the system_variables golden are updated for the lifted bound.  Verification (build on a fresh linear rebase of upstream main, CGO + in-tree thirdparties):  - New focused frontend tests plus existing timeout/variable guards: 18/18 PASS (includes the 5 new `TestWaitTimeout*` admission, DEFAULT forward-control, rejection, idle-consumer and live GLOBAL/new-login tests). - Distribute
 
-- **Issue #31286** (2026-10-26): **[Tech Request]: Agent skills: shutdown-only upgrade contract, stop per-feature MORPCVersion gates**
-  *Symptoms*: ### Is there an existing issue for the same tech request?  - [x] I have checked the existing issues.  ### Does this tech request not affect user experience?  - [x] This tech request doesn't affect user experience.  ### What would you like to be added ?  Update the in-repo agent skills (`.agents/skills`, mirrored in `.claude/skills`: `mo-dev`, `mo-self-review`) to state MatrixOne's upgrade contract: **shutdown upgrade only**, no rolling upgrade.  - In-cluster RPC never mixes binary versions, so reviews must not request a per-feature `MORPCVersion` bump, an `AllCNsSupportProtocol`/capability gate, or an old-peer fallback, and must not block a change for lacking one. - `MORPCVersion` becomes a protocol generation, like the NFS major version. It is bumped only for an incompatible RPC framing/handshake change, or if mixed-version operation is deliberately reintroduced. - These compatibility obligations stay hard requirements:   - a new binary reads everything an older one persisted (catalog, storage, WAL, persisted views and plans, index files, config);   - upgrade steps are idempotent and restart-safe;   - an older backup restores on a newer binary;   - external protocols keep their rules: the MySQL client and cross-cluster publication/subscription and CDC.  ### Why is this needed ?  The project has moved to shutdown-only upgrades. The current skills still require mixed-version/rolling-upgrade coverage, so Codex-driven reviews keep asking for a new `MORPCVersion` and per-feature 
+- **Issue #31946** (2026-10-31): **fix(colexec): release block-info batch when pipeline sinker close fails (#31626)**
+  *Symptoms*: ## Summary  Fixes the memory leak described in #31626. `CNS3Writer.Close` previously returned immediately if `sinker.Close()` failed, leaving `blockInfoBat` allocated in the process mpool. The updated method preserves the sinker error but always releases the block-info batch and clears references.  由LW授权的ChatGPT  Business智能体提交。  ## Changes  - `pkg/sql/colexec/s3util.go`: retain the underlying Close error while performing unconditional block-info cleanup. - `pkg/sql/colexec/loom_test_cns3_close_blockinfo_leak_test.go`: add the complete real-worker regression test supplied in #31626, including failure-injected pipeline flush and healthy close control. - Scope: 2 files, approximately +183/-4 lines; no changes to gates, schema, protocol or output format.  ## Testing and evidence  - Source verified against upstream `main`; feature branch created from the current upstream main commit and is exactly two commits ahead. - **Isolated extracted-method Go behavior harness, not the repository package:** original Close failed `TestCNS3WriterCloseCleansOnSinkFailure` while success control passed. The revised Close passed both tests (`GO111MODULE=off go test -count=1 -v .`). - The regression attached in #31626 documents the *actual package* failure on upstream original main and provides detailed mpool accounting. The complete test is now committed here, but **the actual `go test ./pkg/sql/colexec -run TestLoomCNS3WriterCloseReleasesBlockInfoBat`, cgo/native build, and CI have not been run by
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2291,1282 +2352,850 @@ func runQueryStreams(ctx context.Context, db *sql.DB, first *sql.Conn, r WorkerR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `83c1e235` (2026-10-26)
-**Commit Message**: fix(view): preserve restore semantics and extend S5 conformance (#30953)
+### Incident Patch 1: `ae40f12a` (2026-10-31)
+**Commit Message**: Fix daemon claim races and reduce redundant race-test work (#31942)
+
+## What type of PR is this?
+
+- [x] BUG
+- [x] Improvement
+- [x] Test and CI
+- [x] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Refs #29249
+
+## What this PR does / why we need it:
+
+Scope: the owner explicitly requested one PR for the related UT-racing
+fixes and meaningful test optimizations (rather than separate small
+PRs). #29249 is referenced as the ongoing quality tracker; this combined
+scope follows that task-specific request.
+
+The combined scope is an owner-approved exception to #29249's usual
+focused daily-cleanup PR rule. The independent test-only changes have
+these retained coverage boundaries:
+
+| Test optimization | Retained contracts |
+| --- | --- |
+| DIV | Full first-pass CTAS/view matrix, NULL and warning/error cases,
+integer boundaries and ODKU; a representative second pass with
+`NO_UNSIGNED_SUBTRACTION`, database recreation and teardown checks. |
+| Planner witnesses | All precisions 0–30 retain ALTER, candidate
+searches and exact-result checks; representative precisions retain
+cross-zone searches and the more expensive proofs. |
+| Snapshot/publication | Quoted database and publication names shar
+
+**File**: `pkg/cnservice/server_task_test.go` (modified, +4/-0)
+```diff
+@@ -385,6 +385,10 @@ func (ts *testTS) UpdateDaemonTaskError(context.Context, task.DaemonTask, bool)
+ 	panic("unexpected UpdateDaemonTaskError")
+ }
+ 
++func (ts *testTS) RequestDaemonTaskStatus(context.Context, task.DaemonTask, task.TaskStatus) (int, error) {
++	panic("unexpected RequestDaemonTaskStatus")
++}
++
+ func (ts *testTS) UpdateDaemonTaskStatus(
+ 	ctx context.Context,
+ 	taskID uint64,
+```
+
+**File**: `pkg/embed/cdc_control_status_test.go` (added, +286/-0)
+```diff
+@@ -0,0 +1,286 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//	http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++package embed
++
++import (
++	"bytes"
++	"context"
++	"fmt"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/google/uuid"
++	"github.com/matrixorigin/matrixone/pkg/catalog"
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
++	"github.com/matrixorigin/matrixone/pkg/common/runtime"
++	"github.com/matrixorigin/matrixone/pkg/lockservice"
++	"github.com/matrixorigin/matrixone/pkg/logservice"
++	logservicepb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
++	"github.com/matrixorigin/matrixone/pkg/pb/task"
++	"github.com/matrixorigin/matrixone/pkg/pb/txn"
++	"github.com/matrixorigin/matrixone/pkg/queryservice"
++	"github.com/matrixorigin/matrixone/pkg/taskservice"
++	"github.com/matrixorigin/matrixone/pkg/util/executor"
++	"github.com/stretchr/testify/require"
++)
++
++type cdcControlResult struct {
++	n   int
++	err error
++}
++
++func testCDCControlConcurrentClaims(t *testing.T, c Cluster) {
++	cn0, err := c.GetCNService(0)
++	require.NoError(t, err)
++	cn1, err := c.GetCNService(1)
++	require.NoError(t, err)
++	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
++	defer cancel()
++	hakeeper, err := logservice.NewCNHAKeeperClient(ctx, cn0.GetServiceConfig().CN.UUID, cn0.GetServiceConfig().HAKeeperClient)
++	require.NoError(t, err)
++	t.Cleanup(func() { require.NoError(t, hakeeper.Close()) })
++	state, err := hakeeper.GetClusterState(ctx)
++	require.NoError(t, err)
++	// The regular task-service address resolver can select either CN. Pin this
++	// test's storage to CN0 so the competing transaction is definitely on CN1.
++	holder := taskservice.NewTaskServiceHolder(runtime.ServiceRuntime(cn0.ServiceID()), func(context.Context, bool) (string, error) {
++		return fmt.Sprintf("127.0.0.1:%d", cn0.GetServiceConfig().CN.Frontend.Port), nil
++	})
++	t.Cleanup(func() { require.NoError(t, holder.Close()) })
++	require.NoError(t, holder.Create(logservicepb.CreateTaskService{
++		User: state.TaskTableUser, TaskDatabase: "mo_task",
++	}))
++	svc, ok := holder.Get()
++	require.True(t, ok)
++	store := svc.GetStorage()
++	exec0 := cn0.RawService().(cnservice.Service).GetSQLExecutor()
++	exec1 := cn1.RawService().(cnservice.Service).GetSQLExecutor()
++	localLS := lockservice.GetLockServiceByServiceID(cn0.ServiceID())
++	require.NotNil(t, localLS)
++	ls := lockservice.GetLockServiceByServiceID(cn1.ServiceID())
++	require.NotNil(t, ls)
++	for _, kind := range []string{"owner_change", "heartbeat"} {
++		if !t.Run(kind, func(t *testing.T) {
++			ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
++			defer cancel()
++			cdcID := uuid.NewString()
++			t.Cleanup(func() {
++				clean, done := context.WithTimeout(context.Background(), 10*time.Second)
++				defer done()
++				result, e := exec0.Exec(clean, fmt.Sprintf("delete from mo_catalog.mo_cdc_task where account_id=0 and task_id='%s'", cdcID), executor.Options{}.WithAccountID(catalog.System_Account))
++				if e == nil {
++					result.Close()
++				}
++				require.NoError(t, e)
++			})
++			setup := fmt.Sprintf("insert into mo_catalog.mo_cdc_task (account_id,task_id,task_name,source_uri,sink_uri,tables,state) values (0,'%s','probe-%s','source','sink','db.table','running')", cdcID, cdcID)
++			result, e := exec0.Exec(ctx, setup, executor.Options{}.WithAccountID(catalog.System_Account).WithWaitCommittedLogApplied())
++			require.NoError(t, e)
++			result.Close()
++			dt := task.DaemonTask{Metadata: task.TaskMetadata{ID: cdcID}, TaskStatus: task.TaskStatus_Running, CreateAt: time.Now(), UpdateAt: time.Now(), Details: &task.Details{AccountID: 0, Account: "sys", Details: &task.Details_CreateCdc{CreateCdc: &task.CreateCdcDetails{TaskId: cdcID, TaskName: "probe-" + cdcID, Accounts: []*task.Account{{Id: 0, Name: "sys"}}}}}}
++			var id uint64
++			t.Cleanup(func() {
++				clean, done := context.WithTimeout(context.Background(), 10*time.Second)
++				defer done()
++				if id != 0 {
++					_, e := store.DeleteDaemonTask(clean, taskservice.WithTaskIDCond(taskservice.EQ, id))
++					require.NoError(t, e)
++				} else {
++					query := fmt.Sprintf("delete from mo_task.sys_daemon_task where account_id=0 and task_metadata_executor=%d and task_metadata_id='%s'", task.TaskCode_TestOnly, cdcID)
++					result, e := exec0.Exec(clean, query, executor.Options{}.WithAccountID(catalog.System_Account))
++					if e == nil {
++						result.Close()
++					}
++					require.NoError(t, e)
++				}
++			})
++			n, e := store.AddDaemonTask(ctx, dt)
++			require.NoError(t, e)
++
+```
+
+**File**: `pkg/embed/cdc_target_generation_verification_test.go` (modified, +9/-2)
+```diff
+@@ -47,8 +47,15 @@ func TestCDCTargetGenerationContractsOnMO(t *testing.T) {
+ }
+ 
+ func TestCDCSourceGenerationGuardAcrossCN(t *testing.T) {
+-	runCDCGenerationContracts(t, 2, "TestCDCTenantCatalogGuardBlocksOtherCNDrop", testCDCTenantCatalogGuardBlocksOtherCNDrop,
+-		"TestCDCFirstAckHoldsSourceGenerationAcrossCN", testCDCFirstAckHoldsSourceGenerationAcrossCN)
++	runCDCGenerationContract(t, 2, func(cluster Cluster) {
++		if !t.Run("TestCDCTenantCatalogGuardBlocksOtherCNDrop", func(t *testing.T) { testCDCTenantCatalogGuardBlocksOtherCNDrop(t, cluster) }) {
++			return
++		}
++		if !t.Run("TestCDCControlConcurrentClaims", func(t *testing.T) { testCDCControlConcurrentClaims(t, cluster) }) {
++			return
++		}
++		t.Run("TestCDCFirstAckHoldsSourceGenerationAcrossCN", func(t *testing.T) { testCDCFirstAckHoldsSourceGenerationAcrossCN(t, cluster) })
++	})
+ }
+ 
+ func runCDCGenerationContracts(t *testing.T, cnCount int, passiveName string, passive func(*testing.T, Cluster), activeName string, active func(*testing.T, Cluster)) {
+```
+
+**File**: `pkg/embed/daemon_claim_test.go` (modified, +115/-1)
+```diff
+@@ -16,6 +16,8 @@ package embed
+ 
+ import (
+ 	"context"
++	"fmt"
++	"strings"
+ 	"testing"
+ 	"time"
+ 
+@@ -62,6 +64,62 @@ func TestDaemonClaimSQLRoundTrip(t *testing.T) {
+ 		claim = rows[0]
+ 		require.Equal(t, t.Name(), claim.Metadata.ID)
+ 		cond = taskservice.WithTaskIDCond(taskservice.EQ, claim.ID)
++		t.Run("account condition", func(t *testing.T) {
++			matching, err := storage.QueryDaemonTask(ctx, cond, taskservice.WithAccount(taskservice.EQ, "sys"))
++			require.NoError(t, err)
++			require.Len(t, matching, 1)
++			other, err := storage.QueryDaemonTask(ctx, cond, taskservice.WithAccount(taskservice.EQ, "other"))
++			require.NoError(t, err)
++			require.Empty(t, other)
++		})
++		t.Run("account value is matched literally", func(t *testing.T) {
++			unique := time.Now().UnixNano()
++			account := fmt.Sprintf("tenant'quoted-%d", unique)
++			other := task.DaemonTask{
++				Metadata: task.TaskMetadata{ID: fmt.Sprintf("account-probe-%d", unique)}, TaskStatus: task.TaskStatus_Paused,
++				CreateAt: time.Now(), UpdateAt: time.Now(),
++				Details: &task.Details{AccountID: 17, Account: account},
++			}
++			byAccount := taskservice.WithAccount(taskservice.EQ, other.Details.Account)
++			var ownedID uint64
++			t.Cleanup(func() {
++				cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
++				defer cleanupCancel()
++				conditions := []taskservice.Condition{byAccount, taskservice.WithAccountID(taskservice.EQ, 17), taskservice.WithTaskExecutorCond(taskservice.EQ, task.TaskCode_TestOnly)}
++				if ownedID != 0 {
++					conditions = append(conditions, taskservice.WithTaskIDCond(taskservice.EQ, ownedID))
++				}
++				_, cleanupErr := storage.DeleteDaemonTask(cleanupCtx, conditions...)
++				require.NoError(t, cleanupErr)
++			})
++			n, err := storage.AddDaemonTask(ctx, other)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			matching, err := storage.QueryDaemonTask(ctx, byAccount, taskservice.WithAccountID(taskservice.EQ, 17), taskservice.WithLastRun(time.Time{}))
++			require.NoError(t, err)
++			require.Len(t, matching, 1)
++			ownedID = matching[0].ID
++			require.Equal(t, other.Metadata.ID, matching[0].Metadata.ID)
++			otherRows, err := storage.QueryDaemonTask(ctx, byAccount, taskservice.WithAccountID(taskservice.EQ, 18))
++			require.NoError(t, err)
++			require.Empty(t, otherRows)
++		})
++		t.Run("unassigned null claim", func(t *testing.T) {
++			require.Empty(t, claim.TaskRunner)
++			require.True(t, claim.LastRun.IsZero())
++			n, err := storage.RequestDaemonTaskStatus(ctx, claim, task.TaskStatus_PauseRequested)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			current, err := storage.QueryDaemonTask(ctx, cond)
++			require.NoError(t, err)
++			require.Len(t, current, 1)
++			n, err = storage.UpdateDaemonTask(ctx, current, cond, taskservice.WithLastRun(time.Time{}), taskservice.WithTaskRunnerCond(taskservice.EQ, ""))
++			require.NoError(t, err)
++			require.Equal(t, 1, n, "NULL claim must match initial admission")
++			n, err = storage.RequestDaemonTaskStatus(ctx, current[0], task.TaskStatus_Paused)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++		})
+ 		claim.TaskRunner = "claim-test-cn"
+ 		claim.LastRun = time.Date(2026, 8, 1, 12, 0, 0, 123456000, time.UTC)
+ 		claim.LastHeartbeat = claim.LastRun.Truncate(time.Second)
+@@ -80,6 +138,39 @@ func TestDaemonClaimSQLRoundTrip(t *testing.T) {
+ 				require.Equal(t, 1, n)
+ 			}
+ 		})
++		t.Run("status request preserves renewed heartbeat", func(t *testing.T) {
++			observed := rows[0]
++			renewed := observed
++			renewed.LastHeartbeat = time.Now().UTC().Truncate(time.Second)
++			n, err := storage.HeartbeatDaemonTask(ctx, []task.DaemonTask{renewed})
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			for _, stale := range []task.DaemonTask{
++				func() task.DaemonTask { v := observed; v.AccountID++; return v }(),
++				func() task.DaemonTask { v := observed; v.TaskStatus = task.TaskStatus_Running; return v }(),
++				func() task.DaemonTask { v := observed; v.TaskRunner = "other-cn"; return v }(),
++				func() task.DaemonTask { v := observed; v.TaskRunner = strings.ToUpper(v.TaskRunner); return v }(),
++				func() task.DaemonTask { v := observed; v.LastRun = v.LastRun.Add(time.Microsecond); return v }(),
++			} {
++				n, err = storage.RequestDaemonTaskStatus(ctx, stale, task.TaskStatus_PauseRequested)
++				require.NoError(t, err)
++				require.Zero(t, n)
++			}
++			n, err = storage.RequestDaemonTaskStatus(ctx, observed, task.TaskStatus_PauseRequested)
++			require.NoError(t, err)
++			require.Equal(t, 1, n)
++			current, err := storage.QueryDaemonTask(ctx, cond)
++			require.NoError(t, err)
++			require.Len(t, current, 1)
++			require.True(t, renewed.LastHeartbeat.Equal(current[0].LastHeartbeat))
++			require.Equal(t, task.TaskStatus_PauseRequested, current[0].TaskStatus)
++			n, err = storage.RequestDaemonTaskStatus(ctx, current[0], current[0].TaskStatus)
++			require.NoError(t, err)
++			require.Equal(t, 1, n, "same-status CAS must report a matched row")
++			n, e
+```
+
+**File**: `pkg/embed/snapshot_publication_replay_test.go` (modified, +1/-3)
+```diff
+@@ -54,9 +54,7 @@ func TestSnapshotDatabasePublicationReplayBoundaries(t *testing.T) {
+ 			{name: "quoted_comment", comment: "owner's copy"},
+ 			{name: "backslash_comment", comment: `owner's C:\new\table\`},
+ 			{name: "external_fk", comment: "live publication", externalFK: true},
+-			{name: "quoted_publication", publication: "review-pub"},
+-			{name: "quoted_database", database: "review-db"},
+-			{name: "quoted_table", table: "review-items", explicitTables: true},
++			{name: "quoted_database_and_publication", database: "review-db", publication: "review-pub"},
+ 			{name: "quoted_identifiers", database: "review-db", publication: "review-pub", table: "review-items", explicitTables: true},
+ 			{name: "empty_accounts", comment: "owner's empty authorization", emptyAccounts: true},
+ 			{name: "empty_quoted_tables", database: "review-empty-db", publication: "review-empty-pub", table: "review-items", explicitTables: true, emptyAccounts: true},
+```
+
+**File**: `pkg/frontend/cdc_dao.go` (modified, +2/-2)
+```diff
+@@ -75,7 +75,7 @@ func NewCDCDao(
+ 
+ func (t *CDCDao) MustGetTaskService() taskservice.TaskService {
+ 	if t.ts == nil && t.ses != nil {
+-		t.ts = getPu(t.ses.GetService()).TaskService
++		t.ts = getPu(t.ses.GetService()).GetTaskService()
+ 	}
+ 	if t.ts == nil {
+ 		panic("taskService is nil")
+@@ -125,7 +125,7 @@ func (t *CDCDao) CreateTask(
+ 
+ 	// Get TaskService - handle nil case gracefully instead of panicking
+ 	if t.ts == nil && t.ses != nil {
+-		t.ts = getPu(t.ses.GetService()).TaskService
++		t.ts = getPu(t.ses.GetService()).GetTaskService()
+ 	}
+ 	if t.ts == nil {
+ 		return moerr.NewInternalError(ctx, "TaskService is not available. CDC task creation requires TaskService to be initialized.")
+```
+
+**File**: `pkg/frontend/cdc_exector.go` (modified, +8/-3)
+```diff
+@@ -1848,9 +1848,14 @@ func (exec *CDCTaskExecutor) Pause() error {
+ 			return moerr.NewInternalErrorNoCtx("CDC pause timed out waiting for table detector callbacks")
+ 		}
+ 
+-		// Synchronously wait for all readers to stop before proceeding
+-		// This ensures no goroutine leaks and clean pause state
+-		exec.stopAllReaders()
++		// Do not publish Paused while a reader can still produce work. The
++		// completion owner survives a timeout and the next pause can retry.
++		if stopped, _ := exec.stopAllReaders(); !stopped {
++			if wasRunning {
++				v2.CdcTaskTotalGauge.WithLabelValues("running").Dec()
++			}
++			return moerr.NewInternalErrorNoCtx("pause timed out waiting for readers to stop")
++		}
+ 
+ 		// Note: task was marked as paused earlier (before ClosePause) to maximize blocking window
+ 		// This may cause some watermark updates during stopAllReaders to be blocked,
+```
+
+**File**: `pkg/frontend/cdc_handle.go` (modified, +1/-1)
+```diff
+@@ -260,7 +260,7 @@ func doUpdateCDCTask(
+ 		)
+ 	}
+ 
+-	ts := getPu(service).TaskService
++	ts := getPu(service).GetTaskService()
+ 	if ts == nil {
+ 		if isCDCRestart(targetTaskStatus) {
+ 			eventCDCRestartTaskServiceUnavailable.WarnLazy(func() []zap.Field {
+```
+
+---
+
+### Incident Patch 2: `dd762803` (2026-10-31)
+**Commit Message**: Revert long-scan reader cache admission change (#31943)
 
 ## What type of PR is this?
 
 - [ ] API-change
 - [x] BUG
 - [ ] Improvement
-- [x] Documentation
+- [ ] Documentation
 - [ ] Feature
-- [x] Test and CI
+- [ ] Test and CI
 - [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #29440, under #29433.
+Fixes #31868
 
 ## What this PR does / why we need it:
 
-**Partial S5 delivery; keep this PR Draft and #29440 open. Full S5
-acceptance is not complete, and S8 rollout remains NO-GO.**
+Revert #31767's reader cache-admission change following the reported
+25.7% TPCH 1T slowdown. Restore the previous per-reader cache-write
+cutoff and its ordinary, delegated and sharded constructor callers,
+preserving later unrelated changes.
 
-### Changes
+Keep immediate test cleanup and the independent FIFO working-set
+control. The persisted-reader regression checks the threshold transition
+and explicit cache-write suppression using two reads of one small block.
 
-- Preserve restored View security, creation context, unknown JSON
-fields, legacy absence/null distinctions, and the greater
-original/rebuilt protocol requirement. Admin replay must not silently
-turn INVOKER into DEFINER or qualify an unfrozen legacy star.
-- Bind the saved creation database and identifier policy before
-generating physical columns/dependencies, including all three restore
-dependency-sort owners. A View's containing database is not necessarily
-its creation database.
-- Let the clone owner remap only its explicit source-to-target creation
-database; preserve external dependencies and saved SQL parser policy.
-- Extend explicit S3/S4 conformance across INPLACE/COPY/recreation, RC
-statement advancement, histor
+Validation: affected owning-package UT and race, ordinary/sharded reader
+consumer tests in both modes, formatting, go vet, pinned molint and
+incremental golangci-lint.
 
-**File**: `docs/design/CLAUDE_20261023-view-s5-conformance.md` (added, +178/-0)
+The reported 1T workload was not rerun locally. This rollback restores
+the prior admission tradeoff and may relinquish the warm-cache gains of
+#31767; it does not establish the precise mechanism of the reported
+slowdown.
+
+**File**: `pkg/fileservice/fifocache/fifo_test.go` (modified, +1/-2)
 ```diff
-@@ -0,0 +1,178 @@
-+# 普通 View 元数据 S5：合同、恢复修复与验收证据
-+
-+所属：[#29440](https://github.com/matrixorigin/matrixone/issues/29440)，父任务 [#29433](https://github.com/matrixorigin/matrixone/issues/29433)，Draft PR [#30953](https://github.com/matrixorigin/matrixone/pull/30953)。
-+
-+**完整 S5 尚未验收，S8 rollout 为 NO-GO。** 默认 S3/S4 激活仍关闭。独立可做的协议、授权、历史、恢复与多 CN 验证不能笼统归为“等待激活”；另一方面，真实 L/A/B 切换不能由 mock、同 binary 多 CN 或 integration 接线代替。
-+
-+## 1. 基线与批准边界
-+
-+当前合并基线为 `mo/main@be663676872edf6d42695bba41757af0a3251758`，本地 merge `78618cf66941e95eb67879a2e7c47f967fb85b06`。首次部分交付 `22b48b77dffaaeeb9f773f47e561ae1d3d0a1728` 只有测试/文档；**续作已经包含生产恢复修复，不再适用“无生产改动”或“覆盖率门禁不适用”的描述。**
-+
-+批准依据：
-+
-+- [S1 设计及精确审批](CLAUDE_20260922-view-metadata-on-demand.md#s1-批准与-e1-勘误)。
-+- [S2 v2.1](CLAUDE_20261005-view-s2-scope-revision.md)：不恢复已撤销的全链路 128 MiB 逐对象证明。
-+- [S3](CLAUDE_20261018-view-s3-consumers.md)、[S4](CLAUDE_20261019-view-metadata-s4-consumers.md)、[S4 对账](CLAUDE_2026-10-20-view-metadata-s4-reconciliation.md)。
-+- [既有生命周期验证范围](CLAUDE_VIEW_METADATA_LIFECYCLE_CONFORMANCE_29007.md)。
-+- [独立 RC 生命周期升级约束](20260929-rc-lifecycle-protocol.md)：停服、drain、成员替换和旧进程禁入要求不能被 View 测试豁免。
-+
-+默认排除 partition、stored procedure、UDF 功能及 warning 文案/数量兼容。没有 S8 部署、refresh 退役、S9 catalog 清理或新激活状态机。既有协议/授权检查不能为了通过测试而降低。
-+
-+## 2. 判定规则
-+
-+同一身份、合法 catalog/statement snapshot、workspace、创建环境和授权域产生相同 schema；并非任何历史查询都必须得到“最新 schema”。
-+
-+- 验证类型、宽度、顺序、default 和 nullability 的语义。View 的 default `7` 与 CTAS 按现有规则生成的 `0` 可以不同。
-+- 固定旧 statement 与已物化 cursor 保持旧代；新 statement、重绑及 retry 使用其合法的新代。FETCH 不重新推导。
-+- 根 View ID/version 不变不能证明传递来源未变；COPY、同名重建、内层 View 变化仍须失效。
-+- RC snapshot 推进属于真实 statement owner；旧请求必须拒绝跨 stamp 复用。
-+- 根授权与查找每次执行；失败不能回退 warm memo 的成功。固定合法 snapshot 下，memo 命中无需重新读每个传递叶子。
-+- 描述只读，不执行 View 数据、不刷新目录、不接管父事务。`mo_catalog.mo_columns` 仍是 D03 物理/MVCC 表面，不是唯一派生 schema oracle。
-+- 历史 schema 的解析与当前访问资格是两件事；caller authorizer 不能只检查角色而忽略 publication 当前资格。
-+
-+## 3. 发现的恢复缺陷及最小修复
-+
-+### 3.1 不能用恢复管理员的会话重造定义属性
-+
-+真实跨账户恢复反例：reader 只有 View grant，没有 underlying table grant；源 View 为 INVOKER，管理员恢复后却按当前会话的 DEFINER 重建，从拒绝变为允许。原失败保留于 `remaining-account-restore.*`。
-+
-+`WithRestoredViewDefinition` 仅绑定恢复 owner 的目标库、View 名和原始 replay SQL。CREATE 的既有 admission、语法、授权及持久协议检查照常执行。新生成目标 SQL/definition/dependencies，保留原 security、check option、SQL mode、大小写环境与未知 JSON 字段；required protocol 取原始/新生成的较大值。
-+
-+原始 replay SQL 在 star 展开前保留：不能把旧 `*` 伪造成创建时已冻结的投影；缺失、null、空 legacy payload 的环境也不能被恢复会话补成“已知”。
-+
-+### 3.2 创建数据库不等于 View 所在数据库
-+
-+反例：`USE creation_env; CREATE VIEW app.v AS SELECT id FROM origin`。`creation_env.origin` 为 bigint，`app.origin` 为 int。只修补最终 JSON 不足够：恢复时首次生成的物理列和依赖也必须在正确环境绑定。
-+
-+- 通用恢复在目标账户中复用 `viewRegenerationContext`，在列/依赖生成前使用原始创建数据库和标识符策略。
-+- snapshot、PITR、timestamp restore 的三个依赖排序 owner 同样使用该环境。临时 compiler context 在成功、错误时均恢复；只操作既有 isolated binder。
-+- 后台 parser 仅在精确 replay SQL 匹配时使用保存的大小写策略；不改 session/global 变量，不污染内层目录查询。
-+- **clone 是独立的映射 owner，但会间接调用 restoreViews。** `rewriteCloneViewInfos` 按明确的 source→target 映射重写匹配的创建数据库，外部创建数据库不变；SQL 重写使用保存的 SQL mode/大小写策略。不能把所有非空 DefaultDatabase 都改为 View 所在库，也不能完全忽略 clone 映射。
-+
-+真实失败分别保留于 `acceptance-native.*`（创建域错绑）和 `delivery-native.*`（clone 错指原库，期望宽度 20，得到 80）。修复加入同名 decoy、跨库 nested View、原账户后续变化不污染目标等反例。BVT 使用两个不同值的最小数据行验证真实读取域及 metadata，不只比较空结果。
-+
-+## 4. 默认关闭的验证接线
-+
-+普通构建的两个 frontend hook 返回常量 false，没有 registry、配置或 SQL 开关。`integration` 构建也默认关闭；仅 `_test.go` 能为测试拥有的 CN/数据库注册 route，background session 不选中。
-+
-+- 通用 SELECT/PREPARE 经过原统计、prepare normalization 与最终授权 owner，再显式使用 S3。
-+- 参数化 EXECUTE/compile-retry 另走 `buildPreparedBoundQuery`，不能只接通用入口就声称每个执行代使用 S3。该 owner 也有默认关闭的验证 hook。
-+- S3 的 admission、root authorization、依赖收集、取消、代号检查和 cleanup 保留一个公共内部壳；integration 的 prepared bridge 调用既有参数域 binder，不复制其类型/优化语义。
-+- private binding process 只在绑定期间借用当前参数向量，并复制其类型/二进制来源属性；返回前撤销借用，不能释放父载荷。S3 请求在返回 plan 前关闭，不进入 cursor 或 reusable-plan 生命周期。
-+- S4 的直接执行 fixture 持有请求直到 Compile/Run、结果读取和释放完成，再关闭请求；父事务/执行代仍存活。
-+
-+这只是可执行候选的局部验证入口，不是 durable capability、tenant activation 或生产 authorizer 的完整实现。
-+
-+## 5. 合同与证据入口
-+
-+源码入口存在不等于当前修订已经跑完；终态单独列于第 7 节。
-+
-+| 合同 | 入口与独立 oracle | 边界 |
-+| --- | --- | --- |
-+| INPLACE/COPY/同名重建、frozen star | `testNativeViewMetadataDDLTransitions`；真实物理 ID、根 View ID、20/40/60 宽度、default、固定 snapshot | 不靠 SQL 拼写猜 DDL 算法，不强迫旧 snapshot 读新 schema |
-+| S3/S4 各表面 | 同一父事务中的 SELECT/CTAS typed plan、DESC/SHOW/FULL、I_S 实际执行；memo-on/off | CTAS 该组证明的是规划，不冒充其真实执行 |
-+| RC 语句推进 | 真实 SQLExecutor statement owner 更新 snapshot；旧请求 `ErrViewSchemaChanged`，新请求正确 | 不是伪造 parent stamp 的 mock |
-+| 授权链 | `view_metadata_security_conformance_test.go`；DEFINER/INVOKER、基表 grant/revoke/recovery、不可见根、真实最终授权 owner | 测试 authorizer 不是全部生产 SHOW/安全策略 |
-+| publication 变化 | 当前 membership withdrawal/restoration、drop/recreate、同名 remap、历史资格拒绝、来源 ID 变化 | 当前资格与历史解析分别处理；完整历史 remap/table-list/生产权限组合尚不能声称全部闭合 |
-+| clone/PITR/snapshot/account restore | `view_metadata_recovery_conformance_test.go`；target independence、table/database PITR、database snapshot、跨账户 security/创建域/nested View | PITR 用实际数据库时钟跨边界，不用固定 sleep；全版本恢复矩阵仍有缺口 |
-+| 真实 wire/cursor | `v
-```
-
-**File**: `pkg/frontend/back_exec.go` (modified, +11/-1)
-```diff
-@@ -213,7 +213,11 @@ func (back *backExec) exec(ctx context.Context, sql string, sqlMode string, useS
- 
- 	var statements []tree.Statement
- 	if useSQLMode {
--		statements, err = parsers.ParseWithSQLMode(ctx, dialect.MYSQL, sql, v.(int64), sqlMode)
-+		lowerCase, modeErr := plan2.RestoredViewLowerCaseTableNames(ctx, sql, v.(int64))
-+		if modeErr != nil {
-+			return modeErr
-+		}
-+		statements, err = parsers.ParseWithSQLMode(ctx, dialect.MYSQL, sql, lowerCase, sqlMode)
- 	} else {
- 		statements, err = mysql.Parse(ctx, sql, v.(int64))
+@@ -989,8 +989,7 @@ func TestPostEvictPanicDoesNotBlockDone(t *testing.T) {
  	}
-@@ -946,6 +950,12 @@ var GetComputationWrapperInBack = func(execCtx *ExecCtx, db string, input *UserI
- 			lowerCaseTableNames = 0
- 		}
- 		if input.useParserSQLMode {
-+			// This parse produces the executed AST; preliminary classification
-+			// in back.exec is not sufficient to preserve restored identifiers.
-+			lowerCaseTableNames, err = plan2.RestoredViewLowerCaseTableNames(execCtx.reqCtx, input.getSql(), lowerCaseTableNames)
-+			if err != nil {
-+				return nil, err
-+			}
- 			stmts, err = parsers.ParseWithSQLMode(
- 				execCtx.reqCtx,
- 				dialect.MYSQL,
-```
-
-**File**: `pkg/frontend/clone.go` (modified, +48/-7)
-```diff
-@@ -16,6 +16,7 @@ package frontend
- 
- import (
- 	"context"
-+	"encoding/json"
- 	"fmt"
- 	"sort"
- 	"strconv"
-@@ -1575,34 +1576,73 @@ func rewriteCloneViewInfos(
- 		} else if dbName == srcDBName {
- 			key = genKey(dstDBName, tblName)
- 		}
--		createSQL, err := rewriteCloneCreateSQL(
--			info.createSql,
--			srcDBName,
--			dstDBName,
--			lowerCaseTableNames,
--		)
-+		mode, err := viewParserSQLModeForRestore(info.viewDef)
-+		if err != nil {
-+			return nil, nil, err
-+		}
-+		ctx := plan.WithRestoredViewDefinition(context.Background(), info.dbName, info.tblName, info.viewDef, info.createSql)
-+		lower, err := plan.RestoredViewLowerCaseTableNames(ctx, info.createSql, lowerCaseTableNames)
-+		if err != nil {
-+			return nil, nil, err
-+		}
-+		createSQL, err := rewriteCloneCreateSQLWithMode(info.createSql, srcDBName, dstDBName, lower, mode)
- 		if err != nil {
- 			return nil, nil, err
- 		}
- 
- 		clonedInfo := *info
- 		clonedInfo.dbName = dstDBName
- 		clonedInfo.createSql = createSQL
-+		clonedInfo.viewDef, err = rebindCloneViewCreationDatabase(info.viewDef, srcDBName, dstDBName, lower)
-+		if err != nil {
-+			return nil, nil, err
-+		}
- 		rewrittenViewMap[key] = &clonedInfo
- 	}
- 
- 	return rewrittenViewMap, rewrittenViews, nil
  }
  
-+// Only the clone owner knows the logical database remapping. A creation database
-+// outside that mapping is an external dependency, not the View's target database.
-+func rebindCloneViewCreationDatabase(definition, source, target string, lowerCaseTableNames int64) (string, error) {
-+	if definition == "" || source == "" || source == target {
-+		return definition, nil
-+	}
-+	var fields map[string]json.RawMessage
-+	if err := json.Unmarshal([]byte(definition), &fields); err != nil {
-+		return "", err
-+	}
-+	value, present := fields["DefaultDatabase"]
-+	if !present {
-+		return definition, nil
-+	}
-+	var database string
-+	if err := json.Unmarshal(value, &database); err != nil {
-+		return "", err
-+	}
-+	if tree.NewCStr(database, lowerCaseTableNames).Compare() != tree.NewCStr(source, lowerCaseTableNames).Compare() {
-+		return definition, nil
-+	}
-+	fields["DefaultDatabase"], _ = json.Marshal(target)
-+	encoded, err := json.Marshal(fields)
-+	return string(encoded), err
-+}
-+
- func rewriteCloneCreateSQL(sql, srcDBName, dstDBName string, lowerCaseTableNames int64) (string, error) {
-+	return rewriteCloneCreateSQLWithMode(sql, srcDBName, dstDBName, lowerCaseTableNames, "")
-+}
-+
-+func rewriteCloneCreateSQLWithMode(sql, srcDBName, dstDBName string, lowerCaseTableNames int64, sqlMode string) (string, error) {
- 	if srcDBName == "" || srcDBName == dstDBName {
- 		return sql, nil
- 	}
- 
--	stmt, err := parsers.ParseOne(context.Background(), dialect.MYSQL, sql, lowerCaseTableNames)
-+	stmt, err := parsers.ParseOneWithSQLMode(context.Background(), dialect.MYSQL, sql, lowerCaseTableNames, sqlMode)
- 	if err != nil {
- 		return "", err
- 	}
-+	defer stmt.Free()
- 	createView, ok := stmt.(*tree.CreateView)
- 	if !ok {
- 		return "", moerr.NewInternalErrorNoCtxf("clone view SQL is %T, expected *tree.CreateView", stmt)
-@@ -1629,6 +1669,7 @@ func rewriteCloneCreateSQL(sql, srcDBName, dstDBName string, lowerCaseTableNames
- 			if parseErr != nil {
- 				return "", parseErr
- 			}
-+			defer localStmt.Free()
- 			localCreateView, localOK := localStmt.(*tree.CreateView)
- 			if !localOK {
- 				return "", moerr.NewInternalErrorNoCtxf(
+-// Long scans should compete through the cache policy instead of preventing
+-// every admission after a fixed reader position.
++// Admitted scan entries must not displace a frequently reused working set.
+ func TestCacheScanRetainsReusedWorkingSet(t *testing.T) {
+ 	ctx := t.Context()
+ 	cache := New[int, int](fscache.ConstCapacity(10), ShardInt[int], nil, nil, nil)
 ```
 
-**File**: `pkg/frontend/mysql_cmd_executor.go` (modified, +24/-18)
+**File**: `pkg/vm/engine/disttae/cluster_by_real_logtail_test.go` (modified, +1/-1)
 ```diff
-@@ -4256,26 +4256,32 @@ func buildPlanWithPrepareMode(
- 			return ret, err
- 		}
+@@ -792,7 +792,7 @@ func readClusterTaeRange(
+ 	reader, err := readutil.NewReader(
+ 		qryCtx, mp, pool, fs, tableDef,
+ 		timestamp.Timestamp{PhysicalTime: time.Now().UnixNano()},
+-		expr, ls, engine.FilterHint{})
++		expr, ls, 0, engine.FilterHint{})
+ 	require.NoError(t, err)
  
--		// Default handling of various statements
--		switch stmt := stmt.(type) {
--		case *tree.Select, *tree.ParenSelect, *tree.ValuesStatement,
--			*tree.Update, *tree.Delete, *tree.Insert, *tree.MultiInsert,
--			*tree.ShowDatabases, *tree.ShowTables, *tree.ShowSequences, *tree.ShowColumns, *tree.ShowColumnNumber,
--			*tree.ShowTableNumber, *tree.ShowCreateDatabase, *tree.ShowCreateTable, *tree.ShowIndex,
--			*tree.ExplainStmt, *tree.ExplainAnalyze, *tree.ExplainPhyPlan:
--			opt := plan2.NewBaseOptimizer(ctx)
--			optimized, err := opt.Optimize(stmt, isPrepareStmt)
--			if err != nil {
--				return nil, err
--			}
-+		// The integration-only route exercises the same PREPARE/rebuild owner.
-+		// Ordinary builds inline a constant false and have no activation switch.
-+		var validationSelected bool
-+		ret, validationSelected, err = buildViewSchemaValidationPlan(reqCtx, ses, ctx, stmt, isPrepareStmt)
-+		if !validationSelected {
-+			// Default handling of various statements
-+			switch stmt := stmt.(type) {
-+			case *tree.Select, *tree.ParenSelect, *tree.ValuesStatement,
-+				*tree.Update, *tree.Delete, *tree.Insert, *tree.MultiInsert,
-+				*tree.ShowDatabases, *tree.ShowTables, *tree.ShowSequences, *tree.ShowColumns, *tree.ShowColumnNumber,
-+				*tree.ShowTableNumber, *tree.ShowCreateDatabase, *tree.ShowCreateTable, *tree.ShowIndex,
-+				*tree.ExplainStmt, *tree.ExplainAnalyze, *tree.ExplainPhyPlan:
-+				opt := plan2.NewBaseOptimizer(ctx)
-+				optimized, err := opt.Optimize(stmt, isPrepareStmt)
-+				if err != nil {
-+					return nil, err
-+				}
- 
--			ret = &plan2.Plan{
--				Plan: &plan2.Plan_Query{
--					Query: optimized,
--				},
-+				ret = &plan2.Plan{
-+					Plan: &plan2.Plan_Query{
-+						Query: optimized,
-+					},
-+				}
-+			default:
-+				ret, err = plan2.BuildPlan(ctx, stmt, isPrepareStmt)
- 			}
--		default:
--			ret, err = plan2.BuildPlan(ctx, stmt, isPrepareStmt)
- 		}
- 
- 		if ret != nil {
+ 	attrs := []string{"tenant_id", "device_id", "metric_id", "event_ts", "value"}
 ```
 
-**File**: `pkg/frontend/pitr.go` (modified, +2/-2)
+**File**: `pkg/vm/engine/disttae/cluster_replay_test.go` (modified, +1/-1)
 ```diff
-@@ -1955,14 +1955,14 @@ func restoreViewsWithPitr(
+@@ -328,7 +328,7 @@ func readClusterReplay(
+ 	reader, err := readutil.NewReader(
+ 		qryCtx, mp, pool, nil, tableDef,
+ 		timestamp.Timestamp{PhysicalTime: time.Now().UnixNano()},
+-		expr, ls, engine.FilterHint{},
++		expr, ls, 0, engine.FilterHint{},
+ 	)
+ 	require.NoError(t, err)
  
- 		compCtx.SetDatabase(viewEntry.dbName)
- 		// build create sql to find dependent views
--		_, err = plan.BuildPlan(compCtx, stmts[0], false)
-+		_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
- 		freeStatements(stmts)
+```
+
+**File**: `pkg/vm/engine/disttae/engine.go` (modified, +1/-0)
+```diff
+@@ -1327,6 +1327,7 @@ func (e *Engine) BuildBlockReaders(
+ 			ts,
+ 			expr,
+ 			ds,
++			readutil.GetThresholdForReader(newNum),
+ 			readerHint,
+ 		)
  		if err != nil {
- 			stmts, err = parseViewCreateSQLForRestore(ctx, viewEntry, 0)
- 			if err != nil {
- 				return err
+```
+
+**File**: `pkg/vm/engine/disttae/local_disttae_datasource_test.go` (modified, +1/-1)
+```diff
+@@ -440,7 +440,7 @@ func TestIvfWorkspaceReaderPreservesPhysicalPK(t *testing.T) {
  			}
--			_, err = plan.BuildPlan(compCtx, stmts[0], false)
-+			_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
- 			freeStatements(stmts)
- 			if err != nil {
- 				// The dependency sort plans every view BEFORE the restore loop, so the
+ 			// NewReader consumes source and the membership filter on all paths.
+ 			r, err := readutil.NewReader(ctx, mp, pool, nil, tableDef,
+-				types.MaxTs().ToTimestamp(), expr, source, hint)
++				types.MaxTs().ToTimestamp(), expr, source, 0, hint)
+ 			require.NoError(t, err)
+ 			defer r.Close()
+ 			end, err := r.Read(ctx, cols, nil, mp, out)
 ```
 
-**File**: `pkg/frontend/prepared_execution.go` (modified, +5/-1)
+**File**: `pkg/vm/engine/disttae/txn_table.go` (modified, +1/-0)
 ```diff
-@@ -169,7 +169,11 @@ func buildPreparedBoundQuery(ctx context.Context, ses FeSession, compiler plan2.
- 	var bound *plan2.PreparedExecutionPlan
- 	_, err := buildPlanWithStats(planning, ses, compiler, func() (*plan2.Plan, error) {
- 		var buildErr error
--		bound, buildErr = plan2.BuildPreparedExecutionPlan(compiler, stmt, bindings, values)
-+		var selected bool
-+		bound, selected, buildErr = buildViewSchemaValidationPreparedPlan(planning, ses, compiler, stmt, bindings, values)
-+		if !selected {
-+			bound, buildErr = plan2.BuildPreparedExecutionPlan(compiler, stmt, bindings, values)
-+		}
- 		if buildErr != nil {
- 			return nil, buildErr
- 		}
-```
-
-**File**: `pkg/frontend/snapshot.go` (modified, +17/-2)
-```diff
-@@ -2142,15 +2142,15 @@ func sortedViewInfos(
- 
- 		viewCtx.SetDatabase(viewEntry.dbName)
- 		// build create sql to find dependent views
--		_, err = plan.BuildPlan(compCtx, stmts[0], false)
-+		_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
- 		freeStatements(stmts)
+@@ -2774,6 +2774,7 @@ func (tbl *txnTable) BuildReaders(
+ 			tbl.db.op.SnapshotTS(),
+ 			expr,
+ 			ds,
++			readutil.GetThresholdForReader(newNum),
+ 			hint,
+ 		)
  		if err != nil {
- 			getLogger(ses.GetService()).Debug(fmt.Sprintf("try to build view %v failed, try to build it again", viewEntry.tblName))
- 			stmts, err = parseViewCreateSQLForRestore(ctx, viewEntry, 0)
- 			if err != nil {
- 				return nil, err
- 			}
--			_, err = plan.BuildPlan(compCtx, stmts[0], false)
-+			_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
- 			freeStatements(stmts)
- 			if err != nil {
- 				// The dependency sort plans every view BEFORE the restore loop, so the
-@@ -3005,9 +3005,23 @@ func parseViewCreateSQLForRestore(ctx context.Context, tblInfo *tableInfo, lower
- 		return nil, err
- 	}
- 
-+	ctx = plan.WithRestoredViewDefinition(ctx, tblInfo.dbName, tblInfo.tblName, tblInfo.viewDef, tblInfo.createSql)
-+	lowerCaseTableNames, err = plan.RestoredViewLowerCaseTableNames(ctx, tblInfo.createSql, lowerCaseTableNames)
-+	if err != nil {
-+		return nil, err
-+	}
- 	return parsers.ParseWithSQLMode(ctx, dialect.MYSQL, tblInfo.createSql, lowerCaseTableNames, parserSQLMode)
- }
- 
-+// The three restore dependency sorts own isolated mutable compiler contexts.
-+// Their dependency discovery must use the same creation environment as replay.
-+func buildViewCreatePlanForRestore(compCtx plan.CompilerContext, tblInfo *tableInfo, stmt tree.Statement) (*pbplan.Plan, error) {
-+	original := compCtx.GetContext()
-+	compCtx.SetContext(plan.WithRestoredViewDefinition(original, tblInfo.dbName, tblInfo.tblName, tblInfo.viewDef, tblInfo.createSql))
-+	defer compCtx.SetContext(original)
-+	return plan.BuildPlan(compCtx, stmt, false)
-+}
-+
- func executeViewCreateSQLForRestore(ctx context.Context, bh BackgroundExec, tblInfo *tableInfo) error {
- 	ctx, err := restoreDDLContext(ctx, tblInfo.dbName, tblInfo.tblName)
- 	if err != nil {
-@@ -3020,6 +3034,7 @@ func executeViewCreateSQLForRestore(ctx context.Context, bh BackgroundExec, tblI
- 	if err != nil {
- 		return err
- 	}
-+	ctx = plan.WithRestoredViewDefinition(ctx, tblInfo.dbName, tblInfo.tblName, tblInfo.viewDef, tblInfo.createSql)
- 	return bh.ExecWithSQLMode(ctx, tblInfo.createSql, parserSQLMode)
- }
- 
 ```
 
-**File**: `pkg/frontend/snapshot_restore_with_ts.go` (modified, +2/-2)
+**File**: `pkg/vm/engine/disttae/txn_table_delegate.go` (modified, +1/-0)
 ```diff
-@@ -783,15 +783,15 @@ func restoreViewsFromTS(
- 
- 		compCtx.SetDatabase(viewEntry.dbName)
- 		// build create sql to find dependent views
--		_, err = plan.BuildPlan(compCtx, stmts[0], false)
-+		_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
- 		freeStatements(stmts)
- 		if err != nil {
- 			getLogger(ses.GetService()).Info(fmt.Sprintf("try to build view %v failed, try to build it again", viewEntry.tblName))
- 			stmts, err = parseViewCreateSQLForRestore(ctx, viewEntry, 0)
+@@ -706,6 +706,7 @@ func (tbl *txnTableDelegate) BuildShardingReaders(
+ 				tbl.origin.db.op.SnapshotTS(),
+ 				expr,
+ 				ds,
++				readutil.GetThresholdForReader(newNum),
+ 				engine.FilterHint{},
+ 			)
  			if err != nil {
- 				return err
- 			}
--			_, err = plan.BuildPlan(compCtx, stmts[0], false)
-+			_, err = buildViewCreatePlanForRestore(compCtx, viewEntry, stmts[0])
- 			freeStatements(stmts)
- 			if err != nil {
- 				if markUnservableViewInSort(ses, fmt.Sprintf("%d:%d", restoreAccount, snapshotTs), viewEntry, &g, key, err) {
+```
+
+**File**: `pkg/vm/engine/disttae/txn_table_sharding_handle.go` (modified, +1/-0)
+```diff
+@@ -325,6 +325,7 @@ func HandleShardingReadBuildReader(
+ 		tbl.db.op.SnapshotTS(),
+ 		param.ReaderBuildParam.Expr,
+ 		ds,
++		readutil.GetThresholdForReader(1),
+ 		engine.FilterHint{},
+ 	)
+ 	if err != nil {
 ```
 
 ---
 
-### Incident Patch 2: `3de2ee56` (2026-10-26)
-**Commit Message**: fix(sql): enforce DECIMAL width for integer assignments (#30367) (#30639)
+### Incident Patch 3: `630d74c8` (2026-10-31)
+**Commit Message**: fix(frontend): allow the MySQL wait_timeout range (#31947)
 
-Signed/unsigned integer, hexnum and bit sources converted to `DECIMAL` skipped the declared width check, while string and decimal sources enforced it via `ParseDecimal64/128`. In strict SQL mode, `INSERT INTO t VALUES (1, 2)` into `DECIMAL(2,2)` persisted `2.00` (max `0.99`), and the same gap let `ALTER TABLE ... ALGORITHM=COPY` keep out-of-range rows when narrowing an INT column to `DECIMAL`.
+## What type of PR is this?
 
-Two layers had the gap:
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
 
-1. **Runtime casts** (`pkg/sql/plan/function/func_cast.go`): `signedToDecimal64/128/256` and `unsignedToDecimal64/128/256` scaled integers into the target decimal without a width check and silently dropped `Scale` errors (raised by 64/128-bit scale overflow). Unsigned magnitudes beyond `MaxInt64` additionally wrapped negative inside `Decimal64`, escaping every bound.
-2. **VALUES literal fast path** (`pkg/sql/util/eval_expr_util.go`): `SetInsertValueDecimal64/128` applied `Scale()` directly to integer literals at plan time; string literals in the same code path already went through precision-aware parsing.
+## Which issue(s) this PR fixes:
 
-Fix: enforce `-10^width < value < 10^width` for every integer-family source in both laye
+Fixes #31510
 
-**File**: `optools/ut_embedded_schedule_test.go` (modified, +12/-6)
+## What this PR does / why we need it:
+
+`wait_timeout` is documented as an integer-seconds variable with a range
+up to one year, but the frontend admission bound rejected every
+configured/SET value above 86400 (one day), so `SET GLOBAL/SESSION
+wait_timeout = 86401` failed with the default-range error even though
+MySQL accepts it.
+
+- Admission range raised to `1..31536000` seconds (one year); values are
+validated once by a shared `validateTimeoutLimits` consumed by both
+SESSION and GLOBAL before write/persistence.
+- Default stays `86400`; the server-configured min/max bounds remain a
+hard policy, and the interactive-handshake wait_timeout rule is
+unchanged.
+- The real idle consumer now applies the full int64 seconds value into
+`time.Duration` without overflow, so a long GLOBAL value actually
+reaches the connection idle deadline (verified for live GLOBAL change
+and new logins).
+- The stale 86401 error rows in the system_variables 
+
+**File**: `pkg/config/configuration.go` (modified, +3/-2)
 ```diff
-@@ -20,6 +20,7 @@ import (
- 	"os/exec"
- 	"strings"
- 	"testing"
-+	"time"
- )
+@@ -131,8 +131,9 @@ var (
  
- const embeddedSetup = `source ./run_ut.sh UT
-@@ -329,6 +330,7 @@ func TestEmbeddedPrebuiltAdmission(t *testing.T) {
- 		{"serial", "1", "success"},
- 		{"pool", "2", "success"},
- 		{"heavy-failure", "2", "heavy-failure"},
-+		{"slow-prebuild", "1", "slow-prebuild"},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
- 			script := embeddedSetup + `
-@@ -347,25 +349,27 @@ artifact_dir=$CLUSTER_PREBUILD_DIR
- (
-  trap release_children EXIT
-  trap 'exit 143' TERM INT
-+ # The harness deadline bounds the fixture, including prebuild and metadata
-+ # discovery. FIFO reads assert event ordering, not preparation latency.
-  for heavy in embed bootstrap; do
--  read -r -t 5 leaf pid <&8 || exit 100
-+  read -r leaf pid <&8 || exit 100
-   [[ "$leaf" == "$heavy" ]] || exit 101
-   kill -0 "$pid" || exit 102
-   printf 'release\n' >&10
-  done
-  if [[ "$UT_EMBEDDED_PACKAGE_PARALLEL" == 2 ]]; then
--  read -r -t 5 first first_pid <&8 || exit 103
--  read -r -t 5 second second_pid <&8 || exit 104
-+  read -r first first_pid <&8 || exit 103
-+  read -r second second_pid <&8 || exit 104
-   [[ "$first $second" == 'arrowload dml' || "$first $second" == 'dml arrowload' ]] || exit 105
-   [[ "$first_pid" != "$second_pid" ]] || exit 106
-   kill -0 "$first_pid" && kill -0 "$second_pid" || exit 107
-   printf 'release\nrelease\n' >&11
--  read -r -t 5 leaf pid <&8 || exit 108
-+  read -r leaf pid <&8 || exit 108
-   [[ "$leaf" == sqlintegration ]] || exit 109
-   printf 'release\n' >&10
-  else
-   for next in arrowload sqlintegration dml; do
--   read -r -t 5 leaf pid <&8 || exit 110
-+   read -r leaf pid <&8 || exit 110
-    [[ "$leaf" == "$next" ]] || exit 111
-    if [[ "$leaf" == sqlintegration ]]; then printf 'release\n' >&10; else printf 'release\n' >&11; fi
-   done
-@@ -409,6 +413,8 @@ fi
- if [[ "$1" == test ]]; then
-  package=${!#}; leaf=${package##*/}
-  [[ " $* " == *' -c '* ]] || exit 120
-+ # Exceed the old per-event timeout before execution can publish any event.
-+ if [[ "$MODE" == slow-prebuild && "$leaf" == bootstrap ]]; then sleep 6; fi
-  while [[ "$1" != -o ]]; do shift; done
-  output=$2
-  printf '%s\n' "$output" > "$CASE_DIR/binary-$leaf"
-@@ -433,7 +439,7 @@ if [[ "$1" == tool && "$2" == test2json ]]; then
- fi
- exit 125
- `
--			out, err := scheduleHarnessWithMock(t, script, mock,
-+			out, err := scheduleHarnessWithMockTimeout(t, 30*time.Second, script, mock, nil,
- 				"MODE="+tc.mode, "UT_EMBEDDED_PACKAGE_PARALLEL="+tc.parallel)
- 			if err != nil {
- 				t.Fatalf("prebuilt entry admission %s: %v\n%s", tc.name, err, out)
+ 	// defaultWaitTimeoutMin default: 1 second
+ 	defaultWaitTimeoutMin int64 = 1
+-	// defaultWaitTimeoutMax default: 24 hours (in seconds)
+-	defaultWaitTimeoutMax int64 = 24 * 60 * 60
++	// defaultWaitTimeoutMax default: 1 year (31536000 seconds), matching the
++	// MySQL documented non-Windows wait_timeout ceiling.
++	defaultWaitTimeoutMax int64 = 365 * 24 * 60 * 60
+ 
+ 	// defaultInteractiveTimeoutMin default: 1 second
+ 	defaultInteractiveTimeoutMin int64 = 1
 ```
 
-**File**: `optools/ut_schedule_test.go` (modified, +6/-1)
+**File**: `pkg/frontend/variables.go` (modified, +1/-1)
 ```diff
-@@ -86,6 +86,11 @@ const scheduleFixturePID = `function fixture_self_pid() {
- `
- 
- func scheduleHarnessWithMockTransform(t *testing.T, script, mock string, transform func(string) string, variables ...string) ([]byte, error) {
-+	t.Helper()
-+	return scheduleHarnessWithMockTimeout(t, 15*time.Second, script, mock, transform, variables...)
-+}
-+
-+func scheduleHarnessWithMockTimeout(t *testing.T, timeout time.Duration, script, mock string, transform func(string) string, variables ...string) ([]byte, error) {
- 	t.Helper()
- 	script = scheduleFixturePID + script
- 	mock = strings.Replace(mock, "#!/bin/bash\n", "#!/bin/bash\n"+scheduleFixturePID, 1)
-@@ -118,7 +123,7 @@ func scheduleHarnessWithMockTransform(t *testing.T, script, mock string, transfo
- 	if err := os.WriteFile(filepath.Join(dir, "go"), []byte(mock), 0755); err != nil {
- 		t.Fatal(err)
- 	}
--	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
- 	defer cancel()
- 	cmd := exec.CommandContext(ctx, "bash", "-c", script)
- 	cmd.Dir = dir
+@@ -1586,7 +1586,7 @@ var gSysVarsDefs = map[string]SystemVariable{
+ 		Scope:             ScopeBoth,
+ 		Dynamic:           true,
+ 		SetVarHintApplies: false,
+-		Type:              InitSystemVariableIntType("wait_timeout", 1, 2147483, false),
++		Type:              InitSystemVariableIntType("wait_timeout", 1, 31536000, false),
+ 		Default:           int64(86400),
+ 	},
+ 	warningCountSystemVariable: {
 ```
 
-**File**: `pkg/cdc/reader_v2_txn_manager_test.go` (modified, +60/-36)
+**File**: `pkg/frontend/wait_timeout_range_test.go` (added, +275/-0)
 ```diff
-@@ -1010,45 +1010,39 @@ func TestTransactionManager_EnsureCleanup_WatermarkMismatch_Concurrent(t *testin
- 	require.False(t, tm.tracker.NeedsRollback(), "tracker should be clean after EnsureCleanup")
- }
- 
--// slowRecordingSinker injects small delays to simulate slow downstream without causing deadlocks.
--type slowRecordingSinker struct {
-+// blockingRollbackSinker holds the first rollback until the test explicitly
-+// releases it, simulating a slow downstream without scheduler-dependent sleeps.
-+type blockingRollbackSinker struct {
- 	*recordingSinker
--	delay time.Duration
-+	rollbackEntered chan struct{}
-+	releaseRollback <-chan struct{}
-+	once            sync.Once
- }
- 
--func newSlowRecordingSinker(delay time.Duration) *slowRecordingSinker {
--	return &slowRecordingSinker{
--		recordingSinker: newRecordingSinker(),
--		delay:           delay,
--	}
--}
--
--func (s *slowRecordingSinker) SendBegin() {
--	time.Sleep(s.delay)
--	s.record("begin")
--}
--
--func (s *slowRecordingSinker) SendCommit() {
--	time.Sleep(s.delay)
--	s.record("commit")
--}
--
--func (s *slowRecordingSinker) SendRollback() {
--	time.Sleep(s.delay)
--	s.record("rollback")
--}
--
--func (s *slowRecordingSinker) SendDummy() {
--	time.Sleep(s.delay / 2)
--	s.record("dummy")
-+func (s *blockingRollbackSinker) SendRollback() {
-+	s.once.Do(func() {
-+		close(s.rollbackEntered)
-+		<-s.releaseRollback
-+	})
-+	s.recordingSinker.SendRollback()
- }
- 
- // TestTransactionManager_SlowSinker_NoDeadlock ensures that even with a slow sinker,
- // concurrent begins do not deadlock; at worst, they serialize and take slightly longer.
- func TestTransactionManager_SlowSinker_NoDeadlock(t *testing.T) {
- 	t.Parallel()
--	ctx := context.Background()
--	sinker := newSlowRecordingSinker(5 * time.Millisecond)
-+	// This deadline is only a deadlock watchdog, not a throughput assertion.
-+	ctx, cancel := context.WithTimeout(t.Context(), 30*time.Second)
-+	defer cancel()
-+	releaseRollback := make(chan struct{})
-+	var releaseOnce sync.Once
-+	release := func() { releaseOnce.Do(func() { close(releaseRollback) }) }
-+	t.Cleanup(release)
-+	sinker := &blockingRollbackSinker{
-+		recordingSinker: newRecordingSinker(),
-+		rollbackEntered: make(chan struct{}),
-+		releaseRollback: releaseRollback,
-+	}
- 	updater := newMockWatermarkUpdater()
- 	tm := NewTransactionManager(sinker, updater, 1, "task1", "db1", "table1")
- 
-@@ -1064,27 +1058,57 @@ func TestTransactionManager_SlowSinker_NoDeadlock(t *testing.T) {
- 	wg.Add(numGoroutines)
- 
- 	done := make(chan struct{})
--	start := time.Now()
-+	start := make(chan struct{})
-+	errCh := make(chan error, numGoroutines)
- 
- 	for i := 0; i < numGoroutines; i++ {
- 		go func() {
- 			defer wg.Done()
-+			<-start
- 			// Repeatedly attempt begin on a new range; should not deadlock
--			_ = tm.BeginTransaction(ctx, toTs1, toTs2)
-+			errCh <- tm.BeginTransaction(ctx, toTs1, toTs2)
- 		}()
- 	}
-+	close(start)
- 
- 	go func() {
- 		wg.Wait()
- 		close(done)
- 	}()
- 
-+	select {
-+	case <-sinker.rollbackEntered:
-+	case <-ctx.Done():
-+		t.Fatal("concurrent begin did not reach rollback; possible recursive-lock deadlock")
-+	}
-+	// The slow rollback must retain the manager lock. No caller may finish
-+	// or emit another transaction operation until the downstream is released.
-+	if tm.mu.TryLock() {
-+		tm.mu.Unlock()
-+		t.Fatal("transaction manager lock was released during rollback")
-+	}
-+	require.Equal(t, []string{"clear"}, sinker.opsSnapshot())
-+	select {
-+	case err := <-errCh:
-+		t.Fatalf("begin completed before rollback was released: %v", err)
-+	default:
-+	}
-+	release()
-+
- 	select {
- 	case <-done:
--		// Completed; assert time bound is reasonable (no deadlock)
--		elapsed := time.Since(start)
--		require.Less(t, elapsed, 500*time.Millisecond, "should not take too long; no deadlock expected")
--	case <-time.After(2 * time.Second):
-+	case <-ctx.Done():
- 		t.Fatal("timeout indicates potential deadlock with slow sinker")
- 	}
-+	for range numGoroutines {
-+		require.NoError(t, <-errCh)
-+	}
-+	expected := make([]string, 0, 4*numGoroutines)
-+	for range numGoroutines {
-+		expected = append(expected, "clear", "rollback", "dummy", "begin")
-+	}
-+	require.Equal(t, expected, sinker.opsSnapshot(), "each begin must serialize rollback and its next begin")
-+	require.Equal(t, toTs1, tm.tracker.GetFromTs())
-+	require.Equal(t, toTs2, tm.tracker.GetToTs())
-+	require.True(t, tm.tracker.NeedsRollback(), "the final begin remains active")
- }
-```
-
-**File**: `pkg/embed/catalog_decimal_context_test.go` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
+@@ -0,0 +1,275 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
-+// http://www.apache.org/licenses/LICENSE-2.0
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
 +// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package embed
++package frontend
 +
 +import (
 +	"context"
-+	"fmt"
 +	"testing"
 +	"time"
 +
 +	"github.com/stretchr/testify/require"
++
++	"github.com/matrixorigin/matrixone/pkg/config"
 +)
 +
-+func TestCatalogDecimalMigrationUsesCurrentStatementContext(t *testing.T) {
-+	// Share the canonical SQL fixture; starting a separate two-CN fixture
-+	// prevents later single-CN catalog regressions from obtaining admission.
-+	RunSingleCNBaseClusterTests(t, func(c Cluster) {
-+		db := openIcebergTestDB(t, c)
-+		defer db.Close()
-+		ctx, cancel := context.WithTimeout(t.Context(), time.Minute)
-+		defer cancel()
-+		conn, err := db.Conn(ctx)
-+		require.NoError(t, err)
-+		defer conn.Close()
-+		exec := func(query string) {
-+			t.Helper()
-+			_, err := conn.ExecContext(ctx, query)
-+			require.NoError(t, err, query)
-+		}
-+		exec("create database catalog_decimal_context")
-+		defer func() {
-+			_, err := conn.ExecContext(t.Context(), "drop database catalog_decimal_context")
-+			require.NoError(t, err)
-+		}()
-+		for i := range 3 {
-+			var one int
-+			require.NoError(t, conn.QueryRowContext(ctx, "select 1").Scan(&one))
-+			require.Equal(t, 1, one)
-+			table := fmt.Sprintf("catalog_decimal_context.t%d", i)
-+			exec(fmt.Sprintf("create table %s(id int auto_increment primary key, i bigint, tm time(0), constraint ck_%d check(i>tm))", table, i))
-+			exec("insert into " + table + "(i,tm) values(1000000000000000000,'00:00:00')")
-+			var value int64
-+			require.NoError(t, conn.QueryRowContext(ctx, "select i from "+table).Scan(&value))
-+			require.Equal(t, int64(1000000000000000000), value)
-+		}
-+		for _, value := range []string{"999999999999999999", "1000000000000000000", "-1000000000000000000", "9223372036854775807", "-9223372036854775808"} {
-+			for _, reverse := range []bool{false, true} {
-+				left, right := "cast("+value+" as signed)", "1.0"
-+				if reverse {
-+					left, right = right, left
-+				}
-+				query := "select " + left + " * " + right
-+				var got string
-+				require.NoError(t, conn.QueryRowContext(ctx, query).Scan(&got), query)
-+				require.Equal(t, value+".0", got, query)
-+			}
-+		}
-+	})
++// newDefaultLimitsTestServerWithRoutine mirrors newTestServerWithRoutine, but
++// keeps the real production limits filled by FrontendParameters.SetDefaultValues
++// instead of the 1..100 test overrides. Default wait_timeout ceiling changes are
++// only observable this way.
++func newDefaultLimitsTestServerWithRoutine(t *testing.T, cap uint32) (*MOServer, *Conn, *Session, *MysqlProtocolImpl) {
++	t.Helper()
++
++	ctx := context.Background()
++	sv := &config.FrontendParameters{}
++	sv.SetDefaultValues()
++	sv.KillRountinesInterval = 0
++
++	pu := config.NewParameterUnit(sv, nil, nil, nil)
++	setSessionAlloc("", NewLeakCheckAllocator())
++	setPu("", pu)
++
++	rm, err := NewRoutineManager(ctx, "")
++	require.NoError(t, err)
++
++	server := &MOServer{rm: rm}
++	tConn := &testConn{}
++	ioses, err := NewIOSession(tConn, pu, "")
++	require.NoError(t, err)
++
++	proto := NewMysqlClientProtocol("", 0, ioses, 1024, sv)
++	proto.SetCapability(cap)
++
++	ses := NewSession(ctx, "", proto, nil)
++	proto.ses = ses
++	ses.SetTenantInfo(getDefaultAccount())
++	initTestSessionSysVars(ses)
++
++	rt := &Routine{}
++	rt.protocol.Store(&holder[MysqlRrWr]{value: proto})
++	rt.ses = ses
++
++	rm.setRoutine(ioses, 0, rt)
++
++	return server, ioses, ses, proto
 +}
++
++// newInheritedSession builds a fresh session whose global snapshot comes from the
++// current one, mirroring how production sessions inherit the live global values
++// at connection time (not the boot-time defaults).
++func newInheritedSession(t *testing.T, ses *Session, pu *config.ParameterUnit) *Session {
++	t.Helper()
++
++	ctx := context.Background()
++	tConn := &testConn{}
++	ioses, err := NewIOSession(tConn, pu, "")
++	require.NoError(t, err)
++
++	proto := NewMysqlClientProtocol("", 0, ioses, 1024, pu.SV)
++	fresh := NewSession(ctx, "", proto, nil)
++	proto.ses = fresh
++	fresh.SetTenantInfo(getDefaultAccount())
++	initTestSessionSysVars(fresh)
++	fresh.gSysVars = ses.gSysVars
++	fresh.sesSysVars = ses.gSysVars.Clone()
++	return fresh
++}
++
++// MySQL documents wait_timeout as 1..31536000 on non-Windows servers. With nothing
++// configured, the default policy admission gate and the system-variable type must
++// both accept that range on both setter scopes, while the default value stays
++// 86400.
++func TestWaitTimeoutDefaultSessionRange(t *testing.T) {
++	server, rs, ses, _ := newDefaultLimitsTestServerWithRoutine(t, 0)
++	ctx := context.Background()
++
++	// Default value is unchanged.
++	val, err := ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(86400), val)
++
++	for _, v := range []int64{86401, 1209600, 31536000} {
++		require.NoError(t, ses.SetSessionSysVar(ctx, "wait_timeout", v))
++		val, err = ses.GetSessionSysVar("wait_timeout")
++		require.NoError(t, err)
++		require.Equal(t, v, val, "wait_timeout=%d must be accepted by the session setter", v)
++
++		// The idle-deadline consumer receives the full duration without overflow.
++		server.applyIdleTimeout(rs)
++		require.Equal(t, time.Duration(v)*time.Second, rs.timeout,
++			"wait_timeout=%d must reach Conn.SetTimeout untruncated", v)
++	}
++
++	// Over the documented ceiling, malformed values and negatives are rejected
++	// and leave the previous value intact.
++	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(31536001)))
++	val, err = ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(31536000), val)
++
++	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(-1)))
++	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", "not-a-number"))
++	val, err = ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(31536000), val)
++
++	// The session stays usable after rejected assignments.
++	require.NoError(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(86401)))
++	val, err = ses.GetSessionSysVar("wait_timeout")
++	require.NoError(t, err)
++	require.Equal(t, int64(86401), val)
++}
++
++func TestWaitTimeoutDefaultGlobalRange(t *testing.T) {
++	_, _, ses, _ := newDefaultLimitsTestServerWithRoutine(t, 0)
++	ctx := context.Background()
++	pu := getPu("")
++
++	stubGlobalSysVarPersistence(t,
++		sysVarSet{"wait_timeout", int64(86401)},
++		sysVarSet{"wait_timeout", int64(1209600)},
++		sysVarS
 ```
 
-**File**: `pkg/embed/check_constraint_namespace_test.go` (modified, +4/-2)
+**File**: `test/distributed/cases/system_variable/system_variables.result` (modified, +1/-2)
 ```diff
-@@ -427,7 +427,9 @@ func TestCheckConstraintNamespace(t *testing.T) {
- 			var originalSnapshot, finalSnapshot timestamp.Timestamp
- 			var grants []lock.Result
- 			var grantsMu sync.Mutex
--			const statement = "create table si_after_snapshot(x int, constraint si_after_snapshot_ck check(x>0))"
-+			// Namespace admission, not hidden auto-increment maintenance, is
-+			// under test. Keep both empty tables free of allocator side effects.
-+			const statement = "create table si_after_snapshot(x int primary key, constraint si_after_snapshot_ck check(x>0))"
- 			err = svc.GetSQLExecutor().ExecTxn(defines.AttachAccountId(ctx, 0), func(tx executor.TxnExecutor) error {
- 				op := tx.Txn()
- 				id := append([]byte(nil), op.Txn().ID...)
-@@ -441,7 +443,7 @@ func TestCheckConstraintNamespace(t *testing.T) {
- 					previousBefore(txnID, tableID)
- 					if tableID == catalog.MO_TABLES_ID && bytes.Equal(txnID, id) {
- 						inject.Do(func() {
--							_, injectedErr = other.ExecContext(ctx, "create table "+database+".si_unrelated(x int)")
-+							_, injectedErr = other.ExecContext(ctx, "create table "+database+".si_unrelated(x int primary key)")
- 						})
- 					}
- 				})
+@@ -148,10 +148,9 @@ show variables like 'wait_timeout';
+ ➤ Variable_name[12,0,0]  ¦  Value[12,0,0]  𝄀
+ wait_timeout  ¦  86400
+ set wait_timeout = 86401;
+-invalid input: wait_timeout must be <= 86400
+ show variables like 'wait_timeout';
+ ➤ Variable_name[12,0,0]  ¦  Value[12,0,0]  𝄀
+-wait_timeout  ¦  86400
++wait_timeout  ¦  86401
+ set wait_timeout = 10;
+ drop table if exists t;
+ create table t(
 ```
 
-**File**: `pkg/embed/load_inline_format_test.go` (modified, +3/-1)
+**File**: `test/distributed/cases/system_variable/wait_timeout_range.result` (added, +58/-0)
 ```diff
-@@ -38,7 +38,9 @@ func TestLoadInlineFormatOverMySQLProtocol(t *testing.T) {
- 				_, err := db.ExecContext(ctx, "create database "+database)
- 				require.NoError(t, err)
- 				defer func() {
--					cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
-+					// DROP is cleanup, not a five-second DDL latency assertion.
-+					// Keep it bounded and independent of the workload's context.
-+					cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), time.Minute)
- 					defer cleanupCancel()
- 					_, err := db.ExecContext(cleanupCtx, "drop database "+database)
- 					require.NoError(t, err)
+@@ -0,0 +1,58 @@
++set @sav_wt_global = @@global.wait_timeout;
++set @sav_wt_session = @@wait_timeout;
++set wait_timeout = 86401;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++86401
++set wait_timeout = 1209600;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set wait_timeout = 31536000;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++set wait_timeout = 31536001;
++internal error: convert to the system variable int type failed
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++set wait_timeout = -1;
++internal error: convert to the system variable int type failed
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++set wait_timeout = 'abc';
++internal error: convert to the system variable int type failed
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++31536000
++select 1;
++➤ 1[-5,64,0]  𝄀
++1
++set wait_timeout = 1209600;
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set global wait_timeout = 1209600;
++select @@global.wait_timeout;
++➤ @@global.wait_timeout[-1,16383,0]  𝄀
++1209600
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set global wait_timeout = default;
++select @@global.wait_timeout;
++➤ @@global.wait_timeout[-1,16383,0]  𝄀
++86400
++select @@wait_timeout;
++➤ @@wait_timeout[-1,16383,0]  𝄀
++1209600
++set global wait_timeout = @sav_wt_global;
++select @sav_wt_global = @@global.wait_timeout;
++➤ @sav_wt_global = @@global.wait_timeout[-6,8,0]  𝄀
++1
++set wait_timeout = @sav_wt_session;
++select @@wait_timeout = @sav_wt_session;
++➤ @@wait_timeout = @sav_wt_session[-6,8,0]  𝄀
++1
 ```
 
-**File**: `pkg/embed/prepared_time_arithmetic_test.go` (modified, +37/-43)
+**File**: `test/distributed/cases/system_variable/wait_timeout_range.sql` (added, +28/-0)
 ```diff
-@@ -17,13 +17,12 @@ package embed
- import (
- 	"context"
- 	"database/sql"
--	"errors"
- 	"fmt"
- 	"strings"
- 	"testing"
- 	"time"
- 
--	"github.com/go-sql-driver/mysql"
-+	_ "github.com/go-sql-driver/mysql"
- 	"github.com/stretchr/testify/require"
- )
- 
-@@ -121,11 +120,11 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
- 			require.NoError(t, err, statement)
- 			assertPreparedTimeResult(t, rows, want, wantNull, 38, scale)
- 		}
--		queryDecimal64Text := func(statement, want string) {
-+		queryIntegerTimeText := func(statement, want string, precision int64) {
- 			t.Helper()
- 			rows, err := conn.QueryContext(ctx, statement)
- 			require.NoError(t, err, statement)
--			assertPreparedTimeResult(t, rows, want, false, 18, 0)
-+			assertPreparedTimeResult(t, rows, want, false, precision, 0)
- 		}
- 		for _, temporal := range []struct {
- 			literal, want string
-@@ -152,34 +151,26 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
- 							return conn.QueryContext(ctx, "execute fallback_time_abs using @fallback_time_abs_value")
- 						}
- 					}
--					// Query may expose an execution error immediately or through Rows.Err.
--					queryError := func(query func() (*sql.Rows, error)) error {
--						rows, err := query()
--						if err != nil {
--							return err
--						}
--						defer rows.Close()
--						require.False(t, rows.Next(), "overflow must not produce a row")
--						return rows.Err()
--					}
- 					for _, value := range []any{int64(10), nil, int64(10), int64(9223372036854775807), int64(10)} {
- 						if value == int64(9223372036854775807) {
--							wantErr := queryError(func() (*sql.Rows, error) {
--								return conn.QueryContext(ctx,
--									strings.ReplaceAll(expression, "?", "cast(9223372036854775807 as signed)"))
--							})
--							gotErr := queryError(func() (*sql.Rows, error) { return query(value) })
--							var wantMySQL, gotMySQL *mysql.MySQLError
--							require.True(t, errors.As(wantErr, &wantMySQL), "%v", wantErr)
--							require.True(t, errors.As(gotErr, &gotMySQL), "%v", gotErr)
--							require.Equal(t, wantMySQL.Number, gotMySQL.Number)
-+							want := "9223372036854775808"
-+							if temporal.scale == 6 {
-+								want = "9223372036854806212.123456"
-+							}
-+							rows, err := conn.QueryContext(ctx,
-+								strings.ReplaceAll(expression, "?", "cast(9223372036854775807 as signed)"))
-+							require.NoError(t, err)
-+							assertPreparedTimeResult(t, rows, want, false, 38, temporal.scale)
-+							rows, err = query(value)
-+							require.NoError(t, err)
-+							assertPreparedTimeResult(t, rows, want, false, 38, temporal.scale)
- 							continue
- 						}
- 						func() {
- 							rows, err := query(value)
- 							require.NoError(t, err)
- 							if value != nil {
--								assertPreparedTimeResult(t, rows, temporal.want, false, 18, temporal.scale)
-+								assertPreparedTimeResult(t, rows, temporal.want, false, 38, temporal.scale)
- 								return
- 							}
- 							defer rows.Close()
-@@ -291,7 +282,11 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
- 			statementName := "issue28963_time_sql_" + tc.name
- 			exec("prepare " + statementName + " from 'select cast(''00:00:01'' as time(0)) " + tc.op + " ? as result'")
- 			exec("set @issue28963_time_value = cast(10 as signed)")
--			queryDecimal64Text("execute "+statementName+" using @issue28963_time_value", tc.want)
-+			precision := int64(38)
-+			if tc.op == "%" {
-+				precision = 19
-+			}
-+			queryIntegerTimeText("execute "+statementName+" using @issue28963_time_value", tc.want, precision)
- 			exec("deallocate prepare " + statementName)
- 		}
- 
-@@ -365,13 +360,17 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
- 			{name: "mod", op: "%", want: "1"},
- 		} {
- 			t.Run("binary/"+tc.name, func(t *testing.T) {
-+				precision := int64(38)
-+				if tc.op == "%" {
-+					precision = 19
-+				}
- 				statement := "select cast('00:00:01' as time(0)) " + tc.op + " ? as result"
- 				stmt, err := conn.PrepareContext(ctx, statement)
- 				require.NoError(t, err)
- 				defer stmt.Close()
- 				rows, err := stmt.QueryContext(ctx, int64(10))
- 				require.NoError(t, err)
--				assertPreparedTimeResult(t, rows, tc.want, false, 18, 0)
-+				assertPreparedTimeResult(t, rows, tc.want, false, precision, 0)
- 			})
- 		}
- 
-@@ -383,20 +382,11 @@ func TestPreparedTimeArithmeticOverMySQLProtocol(t *testing.T) {
- 
- 			rows, err := stmt.QueryContext(ctx, int64(10))
- 			require.NoError(t, err)
--			assertPreparedTimeResult(t, rows, "30415.123456", false, 18, 6)
-+			assertPreparedTimeResult(t, rows, "30415.123456", false, 38, 6)
- 
- 			rows, err = stmt.QueryContext(ctx, int64(9223372036854775807))
--			if err == nil {
--				defer rows.Close()
--				if rows.Next() {
--					var value any
--					err = rows.Scan(&value)
--				}
--				if err == nil {
--					err = rows.Err()
--				}
--			}
--			require.Error(t, err)
-+			require.NoError(t, err)
-+			assertPreparedTimeResult(t, rows, "9223372036854806212.123456", false, 38, 6)
- 		})
- 
- 		for _, tc := range []struct {
-@@ 
-```
-
-**File**: `pkg/frontend/compiler_context.go` (modified, +1/-1)
-```diff
-@@ -629,7 +629,7 @@ func (tcc *TxnCompilerContext) recoverLegacyTinyText(
- 	}); err != nil {
- 		return err
- 	}
--	return plan2.MigrateLegacyHexTableDef(tcc.GetProcess(), tableDef)
-+	return plan2.MigrateLegacyCatalogTableDef(ctx, tcc.GetProcess(), tableDef)
- }
- 
- func (tcc *TxnCompilerContext) ensureDatabaseIsNotEmpty(dbName string, checkSub bool, snapshot *plan2.Snapshot) (string, *plan.SubscriptionMeta, error) {
-```
-
----
-
-### Incident Patch 3: `5fe08a33` (2026-10-26)
-**Commit Message**: fix(ci): preserve SCA compatibility and explain full-scan fallback (#31142)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [x] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [x] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Related to #29562.
-
-## What this PR does / why we need it:
-
-Recent [SCA job
-121193349037](https://github.com/matrixorigin/matrixone/actions/runs/40201453562/job/121193349037)
-silently ran a full graph because Node was missing from the shell PATH,
-despite an existing incremental selector. Its frozen PR inputs would
-have selected 34 of 507 packages.
-
-- Preserve compatibility with deployed CI: when Node is absent,
-explicitly report the reason, validate the complete graph and run both
-analyzers over `./...`. Node-present CI retains incremental selection;
-selector failures stay fatal. Local invocations still run the complete
-graph.
-- Explain conservative fallback decisions and report selected/total
-package counts on stderr, keeping stdout exclusively package arguments.
-- Reuse existing immutable-input selection, package ownership and
-reverse-import graph. Preserve full-scan overrides, discovery failures,
-analyzer failures and both
-
-**File**: `.github/ci/README.md` (modified, +12/-2)
-```diff
-@@ -36,10 +36,20 @@ Changes to analyzer versions/rules require reviewing this package-local contract
- ## Full checks and rollout
- 
- - `make static-check` remains the complete local/release gate.
--- `make static-check-analysis` remains full outside GitHub Actions or without Node.
-+- `make static-check-analysis` remains full outside GitHub Actions. CI without
-+  Node on PATH also runs complete graph validation and both analyzers, with an
-+  explicit fallback reason. This supports older CI during rollout.
-+- The SCA job can expose its existing runner-provided Node 24 runtime on PATH
-+  without downloading another SDK, enabling incremental analysis. Once Node is
-+  available, selector errors remain fatal.
-+- Selection and conservative fallback reasons are printed on stderr; stdout
-+  from the selector contains only package arguments.
- - `SCA_FULL=1 make static-check-analysis` forces complete PR analysis.
- - `make static-check-golangci` still populates the complete trusted analysis cache.
--- Existing license selection and the final required-check gate remain unchanged.
-+- License exemptions require the frozen checkout and PR head/base to match
-+  before and after file pagination, plus the validated configuration/tool recipe.
-+  Unavailable or changed inputs retain complete checks. The final required-check
-+  gate remains unchanged.
- 
- The first optimization keeps complete complementary BVT groups. General SQL
- selection is deliberately deferred: existing logging verifiers consume other
-```
-
-**File**: `.github/ci/change-scope.cjs` (modified, +9/-8)
-```diff
-@@ -124,45 +124,46 @@ function verifyResults(scope, needs) {
- 
- // Shared by the analyzer and BVT consumers, after checkout. No API pagination,
- // mutable branch comparison, or remembered plan can change the tested revision.
--function immutableChanges({ cwd = process.cwd(), env = process.env, git } = {}) {
-+function immutableChanges({ cwd = process.cwd(), env = process.env, git, report = () => {} } = {}) {
-+  const full = reason => { report(reason); return null; };
-   const fs = require('node:fs');
-   const { execFileSync } = require('node:child_process');
-   git ||= args => execFileSync('git', args, {
-     cwd, encoding: 'utf8', timeout: 30000, maxBuffer: 8 * 1024 * 1024,
-     stdio: ['ignore', 'pipe', 'pipe'],
-   });
-   if (env.GITHUB_ACTIONS !== 'true' || !env.GITHUB_EVENT_PATH ||
--      !['pull_request', 'pull_request_target'].includes(env.GITHUB_EVENT_NAME)) return null;
-+      !['pull_request', 'pull_request_target'].includes(env.GITHUB_EVENT_NAME)) return full('immutable PR event unavailable');
-   try {
-     const pr = JSON.parse(fs.readFileSync(env.GITHUB_EVENT_PATH, 'utf8')).pull_request;
-     const base = pr?.base?.sha;
-     const head = pr?.head?.sha;
-     if (![base, head].every(sha => /^[0-9a-f]{40}$/.test(sha || '')) ||
--        git(['rev-parse', 'HEAD']).trim() !== head) return null;
-+        git(['rev-parse', 'HEAD']).trim() !== head) return full('invalid PR revision or checkout head mismatch');
-     // Local edits cannot use a committed-input exemption. Include untracked
-     // inputs too; ignored native outputs and runner reports are not source.
--    if (git(['status', '--porcelain', '--untracked-files=all', '--ignore-submodules=none']).trim()) return null;
-+    if (git(['status', '--porcelain', '--untracked-files=all', '--ignore-submodules=none']).trim()) return full('checkout contains uncommitted inputs');
-     try {
-       git(['cat-file', '-e', `${base}^{commit}`]);
-     } catch {
-       // Fetch the immutable object only. Do not move a checkout or local ref.
--      if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(env.GITHUB_REPOSITORY || '')) return null;
-+      if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(env.GITHUB_REPOSITORY || '')) return full('base unavailable and repository identity invalid');
-       git(['fetch', '--no-tags', '--depth=1',
-         `https://github.com/${env.GITHUB_REPOSITORY}.git`, base]);
-     }
-     // Tree comparison also works when a shallow checkout lacks ancestry. Both
-     // sides of a rename are roots; do not hide removals behind rename matching.
-     const raw = git(['diff', '--no-ext-diff', '--no-renames', '--ignore-submodules=none', '--name-status', '-z', base, head]);
-     const fields = raw.split('\0');
--    if (fields.pop() !== '' || fields.length === 0 || fields.length % 2) return null;
-+    if (fields.pop() !== '' || fields.length === 0 || fields.length % 2) return full('empty or malformed immutable diff');
-     const files = [];
-     for (let i = 0; i < fields.length; i += 2) {
--      if (!['A', 'M', 'D', 'T'].includes(fields[i]) || !validPath(fields[i + 1])) return null;
-+      if (!['A', 'M', 'D', 'T'].includes(fields[i]) || !validPath(fields[i + 1])) return full('unsupported immutable diff entry');
-       files.push({ status: fields[i], filename: fields[i + 1] });
-     }
-     return files;
-   } catch {
--    return null;
-+    return full('immutable event, Git status, base fetch or diff unavailable');
-   }
- }
- 
-```
-
-**File**: `.github/ci/static-analysis.cjs` (modified, +21/-12)
-```diff
-@@ -60,34 +60,37 @@ function inventory(text) {
-   return records;
- }
- 
--function goChanges(files) {
--  if (!files?.length) return null;
-+function goChanges(files, report = () => {}) {
-+  if (!files?.length) { report('no verified changed inputs'); return null; }
-   const changed = [];
-   for (const file of files) {
--    if (file.status === 'T') return null;
-+    if (file.status === 'T') { report(`file type changed: ${JSON.stringify(file.filename.slice(0, 200))}`); return null; }
-     if (/^pkg\/.*\.go$/.test(file.filename) &&
-         !/(^|\/)(testdata|fixtures)\//i.test(file.filename)) {
-       changed.push(file.filename);
-     } else if (!['docs', 'bvt'].includes(category(file.filename))) {
-+      report(`input requires full analysis: ${JSON.stringify(file.filename.slice(0, 200))}`);
-       return null;
-     }
-   }
-   // No Go change means the cheap policy check still runs, but these analyzers
-   // have no changed inputs. Keep a nonempty full scan rather than inventing a
-   // separate successful-empty mode in this first increment.
-+  if (!changed.length) report('no changed Go inputs');
-   return changed.length ? changed : null;
- }
- 
--function selectPackages(files, records, root) {
--  const changed = goChanges(files);
-+function selectPackages(files, records, root, report = () => {}) {
-+  const full = reason => { report(reason); return ['./...']; };
-+  const changed = goChanges(files, report);
-   if (!changed || !records.length) return ['./...'];
-   const owners = new Map();
-   const variants = new Map();
-   const reverse = new Map();
-   for (const record of records) {
-     const relative = path.relative(root, record.dir);
-     if (!relative || relative.startsWith('..') || path.isAbsolute(relative) ||
--        !/^[\w./-]+$/.test(relative)) return ['./...'];
-+        !/^[\w./-]+$/.test(relative)) return full('package owner is outside the supported source layout');
-     const owner = `./${relative}`;
-     owners.set(relative, owner);
-     variants.set(record.id, owner);
-@@ -100,7 +103,7 @@ function selectPackages(files, records, root) {
-       if (!dependency) {
-         // A main-module test variant missing from discovery is not a known
-         // external dependency. Do not guess how its package ID maps.
--        if (imported.includes(' [')) return ['./...'];
-+        if (imported.includes(' [')) return full('test variant is missing from the verified graph');
-         continue;
-       }
-       if (!reverse.has(dependency)) reverse.set(dependency, new Set());
-@@ -111,7 +114,7 @@ function selectPackages(files, records, root) {
-   const production = [];
-   for (const file of changed) {
-     const owner = owners.get(path.posix.dirname(file));
--    if (!owner) return ['./...']; // includes an entirely removed package
-+    if (!owner) return full('changed package is missing from the verified graph');
-     selected.add(owner);
-     if (!file.endsWith('_test.go')) production.push(owner);
-   }
-@@ -125,7 +128,8 @@ function selectPackages(files, records, root) {
-       }
-     }
-   }
--  return selected.size && selected.size < owners.size / 2 ? [...selected].sort() : ['./...'];
-+  return selected.size && selected.size < owners.size / 2 ? [...selected].sort() :
-+    full(`affected closure reaches full-scan threshold (${selected.size}/${owners.size} packages)`);
- }
- 
- function plan({ cwd = process.cwd(), env = process.env, run = execFileSync } = {}) {
-@@ -136,7 +140,9 @@ function plan({ cwd = process.cwd(), env = process.env, run = execFileSync } = {
-     env: { ...env, GOWORK: 'off' }, stdio: ['ignore', 'pipe', 'inherit'],
-   });
-   const records = inventory(text);
--  let files = env.SCA_FULL === '1' ? null : immutableChanges({ cwd, env });
-+  const report = reason => console.error(`SCA full-scan reason: ${reason}`);
-+  let files = env.SCA_FULL === '1' ? null : immutableChanges({ cwd, env, report });
-+  if (env.SCA_FULL === '1') report('SCA_FULL=1');
-   if (files) {
-     // Git status omits ignored files, but Go still compiles an ignored .go
-     // file inside a package. Require every real source input to be committed
-@@ -152,14 +158,17 @@ function plan({ cwd = process.cwd(), env = process.env, run = execFileSync } = {
-       }));
-       if (records.some(p => p.sources.some(source =>
-         !tracked.has(path.relative(cwd, path.resolve(p.dir, source)).split(path.sep).join('/'))))) {
-+        report('Go graph contains untracked, generated or nonregular source inputs');
-         files = null;
-       }
-     } catch {
-+      report('tracked source inventory unavailable');
-       files = null;
-     }
-   }
--  const selected = selectPackages(files, records, cwd);
--  console.error(`SCA selection: ${selected[0] === './...' ? 'full graph' : `${selected.length} packages`}`);
-+  const selected = selectPackages(files, records, cwd, report);
-+  const total = new Set(records.map(p => p.dir)).size;
-+  console.error(`SCA selection: ${selected[0] === './...' ? 'full graph' : `${selected.length}/${total} packages`}`);
-   return selecte
-```
-
-**File**: `.github/ci/static-analysis.test.cjs` (modified, +35/-3)
-```diff
-@@ -28,13 +28,15 @@ const records = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map(name => ({
- }));
- records[1].imports = [records[0].id];
- records.push({ id: `${records[2].id}_test [${records[2].id}.test]`, dir: records[2].dir,
--  imports: [records[0].id] });
-+  imports: [records[1].id] });
- const file = (filename, status = 'M') => ({ filename, status });
- 
- test('complete package selection follows production and test imports, not test reverse imports', () => {
-   assert.deepEqual(selectPackages([file('pkg/a/a.go')], records, root), ['./pkg/a', './pkg/b', './pkg/c']);
-   assert.deepEqual(selectPackages([file('pkg/a/a_test.go')], records, root), ['./pkg/a']);
--  assert.deepEqual(selectPackages([file('pkg/a/a.go', 'D'), file('pkg/d/a.go', 'A')], records, root), ['./...']);
-+  const reasons = [];
-+  assert.deepEqual(selectPackages([file('pkg/a/a.go', 'D'), file('pkg/d/a.go', 'A')], records, root, reason => reasons.push(reason)), ['./...']);
-+  assert.match(reasons.join('\n'), /threshold \(4\/8 packages\)/);
-   assert.deepEqual(selectPackages([file('pkg/a/a.go', 'D')], records, root), ['./pkg/a', './pkg/b', './pkg/c']);
- });
- 
-@@ -90,7 +92,9 @@ test('immutable tree comparison handles shallow bases, moves, dirt and unavailab
-       return git(args);
-     } }), null);
-   }
--  assert.equal(immutableChanges({ env, git: args => args[0] === 'status' ? ' M pkg/a/a.go' : git(args) }), null);
-+  const reasons = [];
-+  assert.equal(immutableChanges({ env, git: args => args[0] === 'status' ? ' M pkg/a/a.go' : git(args), report: reason => reasons.push(reason) }), null);
-+  assert.deepEqual(reasons, ['checkout contains uncommitted inputs']);
-   assert.equal(immutableChanges({ env, git: args => args[0] === 'rev-parse' ? base : git(args) }), null);
-   assert.equal(immutableChanges({ env: { ...env, GITHUB_EVENT_NAME: 'push' }, git }), null);
- });
-@@ -144,24 +148,52 @@ test('real Make consumer shares selection, keeps full override, and propagates a
-   const first = run();
-   assert.equal(first.result.status, 0, first.result.stderr + first.result.stdout);
-   assert.equal(first.commands.length, 2);
-+  assert.match(first.result.stderr, /SCA selection: 3\/8 packages/);
-   for (const command of first.commands) assert.ok(command.endsWith('./pkg/a ./pkg/b ./pkg/c'), command);
-   assert.ok(first.commands[1].includes('--concurrency 1'));
-   const ignored = path.join(repo, 'pkg/h/ignored.go');
-   fs.writeFileSync(ignored, 'package h\nvar GeneratedInput = 1\n');
-   const generated = run();
-   fs.unlinkSync(ignored);
-   assert.equal(generated.result.status, 0, generated.result.stderr);
-+  assert.match(generated.result.stderr, /untracked, generated or nonregular source inputs/);
-   assert.ok(generated.commands.every(command => command.endsWith('./...')),
-     'Go consumes ignored inputs too; Git status alone cannot exempt their packages');
-   const full = run({ SCA_FULL: '1' });
-   assert.equal(full.result.status, 0, full.result.stderr);
-+  assert.match(full.result.stderr, /SCA_FULL=1/);
-   assert.ok(full.commands.every(command => command.endsWith('./...')));
-   const vetFailure = run({ FAIL_VET: '7' });
-   assert.notEqual(vetFailure.result.status, 0);
-   assert.equal(vetFailure.commands.length, 1);
-   assert.notEqual(run({ FAIL_LINT: '9' }).result.status, 0);
-+  const noNode = path.join(dir, 'without-node');
-+  fs.mkdirSync(noNode);
-+  for (const command of ['make', 'grep', 'git', 'which']) {
-+    const executable = execFileSync('which', [command], { encoding: 'utf8' }).trim();
-+    fs.symlinkSync(executable, path.join(noNode, command));
-+  }
-+  for (const command of Object.keys(tools)) fs.symlinkSync(path.join(bin, command), path.join(noNode, command));
-+  const missingNode = run({ PATH: noNode });
-+  assert.equal(missingNode.result.status, 0, missingNode.result.stderr);
-+  assert.match(missingNode.result.stderr, /full graph \(Node unavailable on PATH in CI\)/);
-+  assert.equal(missingNode.commands.length, 2);
-+  assert.ok(missingNode.commands.every(command => command.endsWith('./...')));
-+  const missingNodeVetFailure = run({ PATH: noNode, FAIL_VET: '7' });
-+  assert.notEqual(missingNodeVetFailure.result.status, 0);
-+  assert.equal(missingNodeVetFailure.commands.length, 1);
-+  const missingNodeLintFailure = run({ PATH: noNode, FAIL_LINT: '9' });
-+  assert.notEqual(missingNodeLintFailure.result.status, 0);
-+  assert.equal(missingNodeLintFailure.commands.length, 2);
-+  const local = run({ PATH: noNode, GITHUB_ACTIONS: 'false' });
-+  assert.equal(local.result.status, 0, local.result.stderr);
-+  assert.match(local.result.stderr, /full graph \(local invocation\)/);
-+  assert.ok(local.commands.every(command => command.endsWith('./...')));
-   fs.writeFileSync(path.join(repo, 'pkg/a/a.go'), 'not a Go package\n');
-   const invalid = run();
-   assert.notEqual(invalid.result.status, 0);
-   assert.equal(invalid.commands.length, 0);
-+  const missingNodeInvalid = run({ PATH: noNode });
-+  assert.notEqual(missingNodeInvalid.result.status, 0);
-+  assert.
-```
-
-**File**: `Makefile` (modified, +6/-1)
-```diff
-@@ -1572,13 +1572,18 @@ static-check: config err-check
- 	$(STATIC_CHECK_GOLANGCI)
- 
- # PR CI selects complete affected packages using the verified Go test/import
--# graph. Local use (including hosts without Node) retains the full checks.
-+# graph. Local use and CI hosts without Node retain the full checks.
- # Both analyzers consume the same package list and their failures stay fatal.
- static-check-analysis: err-check
- 	@set -e; packages='./...'; \
- 	if [ "$${GITHUB_ACTIONS:-}" = true ] && command -v node >/dev/null 2>&1; then \
- 		packages=$$($(CGO_OPTS) node .github/ci/static-analysis.cjs); \
- 	else \
-+		if [ "$${GITHUB_ACTIONS:-}" = true ]; then \
-+			echo "SCA selection: full graph (Node unavailable on PATH in CI)" >&2; \
-+		else \
-+			echo "SCA selection: full graph (local invocation)" >&2; \
-+		fi; \
- 		$(MAKE) --no-print-directory config; \
- 	fi; \
- 	$(MAKE) --no-print-directory static-check-selected STATIC_CHECK_PACKAGES="$$packages"
+@@ -0,0 +1,28 @@
++-- issue 31510: wait_timeout accepts the MySQL documented non-Windows range (1..31536000)
++set @sav_wt_global = @@global.wait_timeout;
++set @sav_wt_session = @@wait_timeout;
++set wait_timeout = 86401;
++select @@wait_timeout;
++set wait_timeout = 1209600;
++select @@wait_timeout;
++set wait_timeout = 31536000;
++select @@wait_timeout;
++set wait_timeout = 31536001;
++select @@wait_timeout;
++set wait_timeout = -1;
++select @@wait_timeout;
++set wait_timeout = 'abc';
++select @@wait_timeout;
++select 1;
++set wait_timeout = 1209600;
++select @@wait_timeout;
++set global wait_timeout = 1209600;
++select @@global.wait_timeout;
++select @@wait_timeout;
++set global wait_timeout = default;
++select @@global.wait_timeout;
++select @@wait_timeout;
++set global wait_timeout = @sav_wt_global;
++select @sav_wt_global = @@global.wait_timeout;
++set wait_timeout = @sav_wt_session;
++select @@wait_timeout = @sav_wt_session;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31287** (2026-10-26): docs(skills): shutdown-only upgrade contract for agent reviews (@cpegeric)
-- **PR #31257** (2026-10-26): perf(sql): reduce exact integer IN and NOT IN evaluation cost (@XuPeng-SH)
-- **PR #31256** (2026-10-26): docs: propose scoped case-insensitive database defaults design (@ck89119)
-- **PR #31250** (2026-10-26): fix(plan): preserve DISTINCT statistics and reuse aggregate partitions (@XuPeng-SH)
-- **PR #31237** (2026-10-26): fix(iscp): preserve fresh init jobs and shorten embedded test waits (@XuPeng-SH)
-- **PR #31196** (2026-10-26): fix(python-sdk): preserve DML ordering and row limits (@MatrixAdventurer)
+- **PR #31947** (2026-10-31): fix(frontend): allow the MySQL wait_timeout range (@aptend)
+- **PR #31946** (closed): fix(colexec): release block-info batch when pipeline sinker close fails (#31626) (@MatrixAdventurer)
+- **PR #31943** (2026-10-31): Revert long-scan reader cache admission change (@XuPeng-SH)
+- **PR #31942** (2026-10-31): Fix daemon claim races and reduce redundant race-test work (@XuPeng-SH)
+- **PR #31941** (2026-10-31): feat(sql): add ewmMean/ewmVar/ewmStd/ewmCov/ewmCorr window functions (@gouhongshen)
+- **PR #31939** (2026-10-30): fix(tae): propagate forced flush queue admission errors (@XuPeng-SH)
 
 ---
 
@@ -3586,39 +3215,24 @@ analyzer failures and both
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. view): preserve restore semantics and extend S5 conformance (#30953)
+## X. daemon claim races and reduce redundant race-test work (#31942)
 
 **RULE**:
-When implementing operations in `docs/design/CLAUDE_20261023-view-s5-conformance.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/cnservice/server_task_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `83c1e235`: view): preserve restore semantics and extend S5 conformance (#30953). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae40f12a`: daemon claim races and reduce redundant race-test work (#31942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/CLAUDE_20261023-view-s5-conformance.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cnservice/server_task_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# 普通 View 元数据 S5：合同、恢复修复与验收证据
+func (ts *testTS) RequestDaemonTaskStatus(context.Context, task.DaemonTask, task.TaskStatus) (int, error) {
+	panic("unexpected RequestDaemonTaskStatus")
+}
 
-所属：[#29440](https://github.com/matrixorigin/matrixone/issues/29440)，父任务 [#29433](https://github.com/matrixorigin/matrixone/issues/29433)，Draft PR [#30953](https://github.com/matrixorigin/matrixone/pull/30953)。
-
-**完整 S5 尚未验收，S8 rollout 为 NO-GO。** 默认 S3/S4 激活仍关闭。独立可做的协议、授权、历史、恢复与多 CN 验证不能笼统归为“等待激活”；另一方面，真实 L/A/B 切换不能由 mock、同 binary 多 CN 或 integration 接线代替。
-
-## 1. 基线与批准边界
-
-当前合并基线为 `mo/main@be663676872edf6d42695bba41757af0a3251758`，本地 merge `78618cf66941e95eb67879a2e7c47f967fb85b06`。首次部分交付 `22b48b77dffaaeeb9f773f47e561ae1d3d0a1728` 只有测试/文档；**续作已经包含生产恢复修复，不再适用“无生产改动”或“覆盖率门禁不适用”的描述。**
-
-批准依据：
-
-- [S1 设计及精确审批](CLAUDE_20260922-view-metadata-on-demand.md#s1-批准与-e1-勘误)。
-- [S2 v2.1](CLAUDE_20261005-view-s2-scope-revision.md)：不恢复已撤销的全链路 128 MiB 逐对象证明。
-- [S3](CLAUDE_20261018-view-s3-consumers.md)、[S4](CLAUDE_20261019-view-metadata-s4-consumers.md)、[S4 对账](CLAUDE_2026-10-20-view-metadata-s4-reconciliation.md)。
-- [既有生命周期验证范围](CLAUDE_VIEW_METADATA_LIFECYCLE_CONFORMANCE_29007.md)。
-- [独立 RC 生命周期升级约束](20260929-rc-lifecycle-protocol.md)：停服、drain、成员替换和旧进程禁入要求不能被 View 测试豁免。
-
-默认排除 partition、stored procedure、UDF 功能及 warning 文案/数量兼容。没有 S8 部署、refresh 退役、S9 catalog 清理或新激活状态机。既有协议
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3628,4 +3242,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `83c1e235` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae40f12a` are properly handled with clean fallback behavior.

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-pablodaws`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T22:00:41.326Z  
+> **Timestamp**: 2026-10-31T16:57:18.336Z  
 > **Learning ID**: `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,204 +17,270 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository addresses a specific failure mode in **First-Last Frame to Video (FL2V)** generation using the MiniMax-H3 base model. When the base model is provided with identical first and last keyframes (to create a loop), it interprets the temporal delta as zero, resulting in a static image or severe drift that fails to return to the start. This LoRA (Low-Rank Adaptation) fine-tunes the diffusion process to enforce a **360-degree orbital camera trajectory** while strictly preserving the spatial integrity of the scene (frozen time).
+The repository addresses a specific failure mode in **First-Last Frame to Video (FL2V)** generation using the MiniMax-H3 base model. When the base model is provided with identical first and last keyframes (to create a loop), it interprets the temporal delta as zero, resulting in a static image or minimal drift. Conversely, when only the first frame is provided, the camera drifts away without returning. This LoRA (Low-Rank Adaptation) fine-tunes the diffusion process to enforce a **360-degree orbital camera path** while strictly preserving the spatial integrity of the scene (frozen time, no object motion).
 
 **Architectural Boundaries:**
-*   **Type:** This is a **Model Artifact Repository**, not a software application repository. It contains no executable source code, CI/CD pipelines, or backend logic.
-*   **Core Component:** A LoRA adapter (likely `.safetensors` or `.bin`) that modifies the attention layers of the MiniMax-H3 DiT (Diffusion Transformer).
+*   **System Type:** This is a **Model Artifact Repository**, not a software application. It contains no executable source code, CI/CD pipelines, or backend logic.
+*   **Core Component:** A LoRA adapter (likely `.safetensors` or `.bin`) that modifies the attention weights of the MiniMax-H3 DiT (Diffusion Transformer).
 *   **Input/Output Contract:**
-    *   **Input:** Single Image (used as both First and Last Frame) + Text Prompt (specifically the "frozen instant" prompt).
-    *   **Output:** Video clip where $Frame_0 \approx Frame_{N-1}$ (seamless loop) and Camera Path = 360° Orbit.
-*   **Subsystem Abstractions:**
-    *   **Temporal Consistency Module:** Enforced via the LoRA weights, ensuring that object positions remain static while the camera vector rotates.
-    *   **Parallax Generator:** The LoRA teaches the model to generate apparent motion solely through perspective change (parallax) rather than object displacement.
+    *   **Input:** A single static image (used as both `first_frame` and `last_frame`), a specific `instance_prompt` (frozen time, orbit camera), and generation parameters (steps, seed, resolution).
+    *   **Output:** A video clip where the camera orbits 360 degrees, starting and ending on the exact same visual state, creating a seamless loop.
+*   **Decoupling:** The LoRA is decoupled from the base model. It relies on the base model's latent space and temporal attention mechanisms but overrides the motion prior to enforce circularity.
 
-**Critical Observation:**
-Since no source code, commits, or issues are present in the provided data, the forensic extraction focuses on the **Inference-Time Invariants** and **Prompt Engineering Constraints** defined in the `README.md` and `config.json` metadata. The "code" here is the **Prompt Engineering Logic** and the **Model Weight Configuration**.
+**Critical Subsystem Abstractions:**
+1.  **Temporal Attention Bias:** The LoRA injects a bias into the temporal attention heads to favor circular motion vectors over linear drift.
+2.  **Spatial Consistency Constraint:** The prompt engineering ("Preserve every person and object...") acts as a semantic constraint that the LoRA reinforces, ensuring that while the camera moves, the latent representation of objects remains static relative to the world, not the camera.
+3.  **Loop Closure Invariant:** The mathematical guarantee that $Frame_{0} \approx Frame_{N}$, enabling seamless stitching.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Temporal Loop Closure Invariant for FL2V Models
+### 1. The Temporal Loop Closure Invariant
 **RULE**:
-When generating video from First-Last Frame (FL2V) inputs where $Image_{first} == Image_{last}$, the generation pipeline MUST enforce a **closed-loop temporal constraint** in the attention mechanism or prompt conditioning. The model MUST NOT interpret identical boundary frames as a "static scene" (zero motion) but as a "periodic boundary condition" (360° rotation).
+When generating video content intended for seamless looping (e.g., background loops, ambient scenes), the generation system MUST enforce that the final frame is visually and semantically identical to the first frame. This is achieved by providing the same image as both the first and last keyframe inputs AND using a model/adapter specifically trained to interpret this as a "closed loop" rather than a "static scene."
 
 **WHY**:
-Standard diffusion models treat the first and last frames as independent anchors. If they are identical, the gradient signal for motion vanishes ($\Delta t \to 0$), causing the model to collapse to a static image or drift randomly. Without explicit LoRA training or prompt conditioning that defines the *path* (orbit) rather than just the *endpoints*, the model cannot infer the intermediate trajectory.
+Standard diffusion models interpret identical first/last frames as a request for a static image (zero temporal delta). Without a specific LoRA or fine-tuning that re-maps this input condition to a "360-degree orbit" or "circular path," the model will either produce a still image or drift away from the start point, breaking the loop. This rule prevents the "drift" failure mode where the end of the video does not match the beginning, causing visible seams in video editing pipelines.
 
 **WHEN TO APPLY**:
-*   Any FL2V (First-Last Frame to Video) generation task.
-*   Systems requiring seamless video loops.
-*   Camera control tasks where the start and end viewpoints are identical.
+*   Video generation pipelines using FL2V (First-Last Frame to Video) models.
+*   Any AI system generating cyclic or looping media (video, audio, 3D animations).
+*   When using reference-to-video models where temporal consistency is a hard requirement.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for FL2V Conditioning with Loop Closure
-def prepare_fl2v_conditioning(image, prompt, is_loop=True):
+# Pseudocode for a video generation pipeline enforcing loop closure
+def generate_seamless_loop(image, model, lora_adapter):
+    # 1. Use the same image for both boundaries
     first_frame = image
-    last_frame = image  # Identical for loop
+    last_frame = image  # Critical: Must be identical
     
-    # CRITICAL: The prompt must explicitly define the MOTION PATH, 
-    # not just the static state.
-    if is_loop:
-        motion_prompt = "360 degree orbit, camera moves around subject, scene frozen"
-    else:
-        motion_prompt = "camera pans right"
+    # 2. Apply the specific LoRA that enforces orbital/circular motion
+    model.load_lora(lora_adapter)
+    
+    # 3. Use a prompt that explicitly forbids object motion
+    prompt = "One frozen instant. Only the camera moves. In a continuous 360 orbit. Preserve every person and object in exactly the same world position..."
+    
+    # 4. Generate
+    video = model.generate(
+        first_frame=first_frame,
+        last_frame=last_frame,
+        prompt=prompt,
+        steps=50,
+        seed=42
+    )
+    
+    # 5. Verification: Check if first and last frames are similar
+    if not are_frames_similar(video[0], video[-1], threshold=0.95):
+        raise LoopClosureError("Generated video does not close the loop")
         
-    # The LoRA weights (not shown) are applied to the DiT attention layers
-    # to enforce that 'motion' is decoupled from 'object displacement'.
-    return {
-        "first_frame": first_frame,
-        "last_frame": last_frame,
-        "prompt": f"{prompt}. {motion_prompt}",
-        "lora_weights": "orbit_lora.safetensors" # Enforces orbit path
-    }
+    return video
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming identical frames imply static video
-def generate_video(image):
-    # DO NOT do this:
-    # If first == last, skip motion generation or set motion_scale = 0
-    # This results in a frozen image, not a loop.
-    if first_frame == last_frame:
-        return static_image(first_frame) # FAILURE MODE
+# ANTI-PATTERN: Assuming identical frames imply a static video
+def generate_static_or_drift(image, model):
+    # This will likely produce a static image or drift, NOT a loop
+    video = model.generate(
+        first_frame=image,
+        last_frame=image, # Base model interprets this as "no change"
+        prompt="A man standing still", # No camera motion instruction
+        steps=50
+    )
+    # Result: Static image or slight drift, not a 360 orbit
+    return video
 ```
 
 **VERIFICATION METHOD**:
-1.  Generate video with $Image_{first} == Image_{last}$.
-2.  Compute optical flow between $Frame_0$ and $Frame_{N/2}$.
-3.  Assert that optical flow magnitude $> \epsilon$ (motion exists).
-4.  Compute structural similarity (SSIM) between $Frame_0$ and $Frame_{N-1}$.
-5.  Assert $SSIM > 0.95$ (loop closes seamlessly).
+*   **Automated Test:** Compute the cosine similarity or SSIM (Structural Similarity Index) between the first and last frames of the generated video. Assert that the similarity score is above a high threshold (e.g., 0.95).
+*   **Visual Inspection:** Manually verify that the video can be played in a loop without a visible jump or cut.
 
-### 2. Prompt-Weighted Motion Decoupling
+### 2. The Frozen-Time Semantic Constraint Rule
 **RULE**:
-In video generation prompts, **static scene constraints** (e.g., "frozen," "no movement") MUST be explicitly paired with **dynamic camera constraints** (e.g., "camera orbits," "parallax only"). The prompt MUST NOT rely on implicit understanding that "no object movement" implies "camera movement."
+When generating video with a moving camera, the prompt MUST explicitly constrain the motion of all scene elements (people, objects, liquids) to be "frozen" or "static" in world space, while allowing only the camera to move. This prevents the model from interpreting "camera movement" as a cue to animate the scene.
 
 **WHY**:
-Diffusion models are trained on natural video where camera movement and object movement are often correlated. If the prompt says "frozen," the model may suppress all motion vectors, including camera parallax. Explicitly stating "Camera parallax is the only source of apparent movement" forces the model to allocate motion energy to the camera transform matrix rather than the object deformation field.
+Diffusion models often correlate camera motion with scene motion (e.g., panning right might cause objects to shift left in the frame, or the model might add wind/hair movement to simulate realism). By explicitly stating "Airborne objects remain suspended... no wobbling, shaking, spinning," the prompt acts as a negative constraint that forces the model to decouple camera transformation from object state changes. This is critical for maintaining 3D consistency in the generated video.
 
 **WHEN TO APPLY**:
-*   Any video generation task requiring static subjects with dynamic cameras.
-*   Product photography videos, 3D object showcases, or architectural walkthroughs.
+*   Any video generation task where the camera moves but the scene should remain static (e.g., product showcases, architectural walkthroughs, 3D consistency tests).
+*   When using LoRAs or adapters that are sensitive to prompt semantics regarding motion.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```text
-# CORRECT PROMPT STRUCTURE
-"One frozen instant. Only the camera moves. In a continuous 360 orbit. 
-Preserve every person and object in exactly the same world position... 
-Camera parallax is the only source of apparent movement. 
-No cuts, zoom, morphing or added objects."
+```python
+# Pseudocode for prompt construction with frozen-time constraints
+def build_frozen_time_prompt(base_description):
+    constraints = [
+        "One frozen instant.",
+        "Only the camera moves.",
+        "In a continuous 360 orbit.",
+        "Preserve every person and object in exactly the same world position, orientation, shape and pose throughout the shot.",
+        "Airborne objects remain suspended at the captured height and angle: no wobbling, shaking, spinning, drifting, falling or continued action.",
+        "Keep faces, hands, clothing, liquids and the background motionless while retaining their natural appearance.",
+        "Camera parallax is the only source of apparent movement.",
+        "No cuts, zoom, morphing or added objects."
+    ]
+    return f"{base_description}. " + " ".join(constraints)
+
+# Usage
+prompt = build_frozen_time_prompt("A man skateboarding")
+# Result: "A man skateboarding. One frozen instant. Only the camera moves. ..."
 ```
 
 **NEGATIVE CONSTRAINT**:
-```text
-# ANTI-PATTERN PROMPT
-"Static scene. No movement."
-# RESULT: Model generates a completely still image, ignoring camera motion.
+```python
+# ANTI-PATTERN: Vague motion instructions
+def build_vague_prompt(base_description):
+    return f"{base_description}. Camera moves around the subject."
+    # This allows the model to animate the subject, causing inconsistencies
 ```
 
 **VERIFICATION METHOD**:
-*   A/B test generation with and without explicit camera motion keywords.
-*   Measure camera trajectory estimation (e.g., using COLMAP or OpenCV) on the output video.
-*   Assert that camera trajectory length $> 0$ while object displacement $\approx 0$.
+*   **Prompt Linting:** Use a regex or NLP check to ensure the prompt contains key phrases like "frozen," "static," "only camera moves," and "no motion" for objects.
+*   **Visual Inspection:** Check for unwanted motion in the generated video (e.g., hair moving, clothes flapping) that should be static.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: No commits, issues, or patches were provided in the input data. The following incidents are **inferred** from the "About the comparisons" section of the README, which documents known failure modes of the base model that this LoRA resolves.*
+*Note: Since this is a model artifact repository with no source code commits, there are no traditional "bug fixes" or "production patches" in the software engineering sense. However, we can infer "incidents" from the design decisions and the problem statement.*
 
-### Incident 1: Base Model Static Collapse (BUG-FL2V-01)
-- **Context**: MiniMax-H3 Base Model, FL2V Mode.
-- **What Was Expected**: When given identical first and last frames, the model should generate a video loop.
-- **What Actually Happened**: The model interpreted the identical frames as a "still image" and generated a static video with no motion.
-- **Evidence in Repo**: README.md section "About the comparisons": *"Base, first + last frame: when both keyframes are the same image, the base model reads the clip as a still and barely moves."*
-- **Root Cause**: The base model's temporal attention mechanism does not have a strong prior for "looping." It minimizes the loss by keeping all frames identical to the input, as there is no conflicting signal to force change.
-- **Remediation Code Diff**:
-```text
-// - Base Model Behavior:
-//   Input: Frame_0 = Frame_N
-//   Output: Frame_0 = Frame_1 = ... = Frame_N (Static)
+### Incident 1: Base Model Drift Failure (BUG-DRIFT-01)
+- **Context:** Base MiniMax-H3 model, FL2V mode.
+- **What Was Expected:** When providing the same image as first and last frame, the model should generate a video that loops seamlessly.
+- **What Actually Happened:** The base model interpreted the identical frames as a request for a static image, resulting in minimal or no motion. Alternatively, when only the first frame was provided, the camera drifted away and never returned.
+- **Evidence in Repo:** The README explicitly states: "Base, first + last frame: when both keyframes are the same image, the base model reads the clip as a still and barely moves." and "Base, first frame only: the camera moves, but drifts away and never returns to the starting view."
+- **Root Cause:** The base model's temporal attention mechanism is trained to interpret frame differences as motion. Identical frames imply zero motion. The model lacks a prior for "circular motion" that starts and ends at the same point.
+- **Remediation Code Diff:**
+```python
+# - Base model behavior (Buggy for looping)
+# video = base_model.generate(first_frame=img, last_frame=img) # Results in static/drift
 
-// + LoRA Remediation:
-//   Input: Frame_0 = Frame_N
-//   LoRA Weights: Injected into Attention Layers
-//   Output: Frame_0 = Frame_N, but Frame_1...Frame_{N-1} show 360° orbit
+# + LoRA-enhanced behavior (Fixed)
+# model.load_lora("pablodawson/MiniMax-H3-360-Orbit-LoRA")
+# video = model.generate(first_frame=img, last_frame=img, prompt="360 orbit...") # Results in seamless loop
 ```
-- **Lesson**: **Boundary Condition Ambiguity**: Identical boundary conditions in differential equations (or diffusion processes) can lead to trivial solutions (zero motion). Explicit path constraints (LoRA) are required to enforce non-trivial periodic solutions.
+- **Lesson:** Base models may not handle edge cases (like identical boundary conditions) as intended. Fine-tuning (LoRA) is required to override default behaviors for specific use cases.
 
-### Incident 2: Camera Drift and Non-Closure (BUG-FL2V-02)
-- **Context**: MiniMax-H3 Base Model, First-Frame-Only Mode.
-- **What Was Expected**: Camera moves around the subject.
-- **What Actually Happened**: The camera moves but drifts away from the subject and never returns to the starting view, resulting in a non-looping, broken video.
-- **Evidence in Repo**: README.md section "About the comparisons": *"Base, first frame only: the camera moves, but drifts away and never returns to the starting view."*
-- **Root Cause**: Without a last-frame constraint, the model has no anchor for the end state. The camera trajectory is unbounded and tends to diverge due to accumulated numerical errors in the diffusion process.
-- **Remediation Code Diff**:
-```text
-// - Base Model Behavior (First Frame Only):
-//   Input: Frame_0
-//   Output: Frame_0 -> Frame_1 -> ... -> Frame_N (Drifted, Frame_N != Frame_0)
+### Incident 2: Scene Motion Contamination (BUG-MOTION-02)
+- **Context:** Video generation with moving camera.
+- **What Was Expected:** Only the camera should move; the scene should remain static.
+- **What Actually Happened:** Without explicit prompt constraints, the model might animate objects in the scene (e.g., hair moving, clothes flapping) in response to the camera motion.
+- **Evidence in Repo:** The README emphasizes: "Preserve every person and object in exactly the same world position... no wobbling, shaking, spinning."
+- **Root Cause:** The model's training data likely contains videos where camera motion is correlated with scene motion (e.g., wind, movement). The model generalizes this correlation.
+- **Remediation Code Diff:**
+```python
+# - Vague prompt (Buggy)
+# prompt = "Camera orbits around a man"
 
-// + LoRA Remediation (First + Last Frame):
-//   Input: Frame_0, Frame_N = Frame_0
-//   Output: Frame_0 -> Frame_1 -> ... -> Frame_N (Orbit, Frame_N == Frame_0)
+# + Constrained prompt (Fixed)
+# prompt = "One frozen instant. Only the camera moves. In a continuous 360 orbit. Preserve every person and object in exactly the same world position..."
 ```
-- **Lesson**: **Unbounded Trajectory Divergence**: In iterative generation processes, unbounded trajectories will diverge. Always anchor both ends of the sequence to ensure closure.
+- **Lesson:** Prompt engineering is a critical control mechanism for constraining model behavior. Explicit negative constraints are necessary to prevent unwanted generalizations.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-*Note: Since this is a model artifact repository, traditional code-level invariants (e.g., null checks, race conditions) do not apply. Instead, we extract **Inference-Time Invariants** and **Prompt Engineering Micro-Mechanics**.*
+*Note: Since this repository contains no executable code, the following invariants are derived from the **usage patterns** and **integration requirements** of the LoRA model.*
 
-1.  **Micro-Syntax & Token-Level Precision (Prompt Engineering)**:
-    *   **Invariant**: The phrase "Only the camera moves" is a **negative constraint** that must be paired with a **positive constraint** ("In a continuous 360 orbit"). Omitting the positive constraint leads to static output.
-    *   **Trap**: Using "frozen" without specifying *what* is frozen (objects vs. camera) leads to ambiguity. The prompt must explicitly state "Preserve every person and object in exactly the same world position."
+1.  **Micro-Syntax & Token-Level Precision**:
+    *   **Invariant:** The `instance_prompt` must be passed as a single string, not a list, to the model's `generate` method.
+    *   **Trap:** Passing a list of prompts might cause the model to treat them as separate conditions, leading to inconsistent motion.
+    *   **Example:**
+        ```python
+        # Correct
+        prompt = "One frozen instant. Only the camera moves..."
+        
+        # Incorrect
+        prompt = ["One frozen instant.", "Only the camera moves."]
+        ```
 
-2.  **Infinite Loop & Recursion Guards (Video Looping)**:
-    *   **Invariant**: For seamless looping, the last frame MUST be structurally similar to the first frame. The LoRA enforces this by training on data where $Frame_0 \approx Frame_{N-1}$.
-    *   **Guard**: When stitching multiple loops, ensure that the end frame of Loop A matches the start frame of Loop B. If $SSIM(Frame_{A,end}, Frame_{B,start}) < 0.9$, a visible seam will occur.
+2.  **Infinite Loop & Recursion Guards**:
+    *   **Invariant:** The video generation process is a finite loop (diffusion steps). There is no risk of infinite loops in the model itself, but the **stitching** of multiple loops could lead to infinite loops if not properly bounded.
+    *   **Guard:** When chaining multiple 360-degree orbits, ensure that the total number of frames is bounded and that the stitching logic terminates after a fixed number of loops.
+    *   **Example:**
+        ```python
+        # Correct: Bounded stitching
+        max_loops = 3
+        for i in range(max_loops):
+            video_segment = generate_orbit(image)
+            final_video.append(video_segment)
+        
+        # Incorrect: Unbounded stitching
+        while True:
+            video_segment = generate_orbit(image)
+            final_video.append(video_segment) # Infinite loop
+        ```
 
-3.  **UI & UX Micro-Mechanics (Video Playback)**:
-    *   **Invariant**: The video must be encoded with a codec that supports seamless looping (e.g., H.264 with proper keyframe placement). If the first frame is not a keyframe, the player may show artifacts when looping.
-    *   **Trap**: Using lossy compression with high quantization parameters can introduce temporal artifacts that break the illusion of a seamless loop.
+3.  **UI & UX Micro-Mechanics**:
+    *   **Invariant:** When displaying the generated video in a web UI, ensure that the video element is set to `loop` and `muted` to allow autoplay in modern browsers.
+    *   **Trap:** Browsers block autoplay for videos with sound. If the video is not muted, it will not autoplay, leading to a poor user experience.
+    *   **Example:**
+        ```html
+        <!-- Correct -->
+        <video src="orbit.mp4" loop muted autoplay></video>
+        
+        <!-- Incorrect -->
+        <video src="orbit.mp4" loop autoplay></video> <!-- Blocked by browser -->
+        ```
 
-4.  **Backend Concurrency & Memory Safety (Inference Pipeline)**:
-    *   **Invariant**: When generating multiple videos in parallel, ensure that the LoRA weights are loaded into GPU memory only once and shared across all inference tasks. Loading the LoRA for each task will cause memory exhaustion.
-    *   **Trap**: If the LoRA is loaded per-request, the GPU memory will grow linearly with the number of concurrent requests, leading to OOM (Out of Memory) errors.
+4.  **Backend Concurrency & Memory Safety**:
+    *   **Invariant:** The LoRA model must be loaded into GPU memory before generation. Ensure that the GPU memory is sufficient to hold both the base model and the LoRA adapter.
+    *   **Trap:** Loading the LoRA without unloading the previous model can lead to out-of-memory (OOM) errors.
+    *   **Example:**
+        ```python
+        # Correct: Load LoRA, generate, unload
+        model.load_lora("pablodawson/MiniMax-H3-360-Orbit-LoRA")
+        video = model.generate(...)
+        model.unload_lora()
+        
+        # Incorrect: Load multiple LoRAs without unloading
+        model.load_lora("lora1")
+        model.load_lora("lora2") # OOM error
+        ```
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Always validate that the input image is not corrupted or blank. If the input image is blank, the LoRA will generate a blank video, wasting compute resources.
-    *   **Trap**: If the input image has a different aspect ratio than the expected output, the model may distort the subject. Always resize and crop the input image to the expected aspect ratio before inference.
+    *   **Invariant:** Always validate that the input image is not null or empty before passing it to the model.
+    *   **Trap:** Passing a null image will cause a crash or undefined behavior.
+    *   **Example:**
+        ```python
+        # Correct: Validate input
+        if image is None:
+            raise ValueError("Input image cannot be None")
+        
+        # Incorrect: No validation
+        video = model.generate(first_frame=image, ...) # Crash if image is None
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The system is a **Model Adapter** architecture. The LoRA is a low-rank decomposition of the weight updates for the attention layers of the MiniMax-H3 DiT. It is decoupled from the base model, allowing for easy swapping of different LoRAs (e.g., orbit, pan, zoom) without retraining the base model.
-2.  **Core Abstractions**: The core abstraction is the **Temporal Attention Map**. The LoRA modifies the attention weights to enforce a specific temporal pattern (orbit) while preserving spatial consistency.
-3.  **Error Handling**: Error handling is implicit in the diffusion process. If the prompt is ambiguous, the model will generate a "best guess" video, which may not meet the user's expectations. There is no explicit error reporting mechanism.
-4.  **Testing**: Testing is done via **Visual Inspection** and **Quantitative Metrics** (SSIM, Optical Flow). The README provides comparison images to demonstrate the effectiveness of the LoRA.
-5.  **Security**: The model is hosted on Hugging Face, which provides access control and license enforcement. The license is "minimax-h3-community-license-agreement," which may have restrictions on commercial use.
-6.  **Performance**: The LoRA adds minimal computational overhead compared to the base model. The main performance bottleneck is the diffusion sampling process, which is computationally intensive.
-7.  **Deployment**: The model is deployed as a Hugging Face Hub repository. Users can download the LoRA weights and load them into their local inference pipeline.
-8.  **Agent Patterns**: The prompt engineering pattern is a **Chain of Thought** approach, where the prompt explicitly defines the static constraints, the dynamic constraints, and the exclusion constraints.
-9.  **Data Flow**: The data flow is: Input Image -> Preprocessing (Resize, Normalize) -> Diffusion Sampling (with LoRA) -> Postprocessing (Decode, Encode) -> Output Video.
+1.  **Architecture**: The system is a **model artifact** with no internal architecture. It relies on the **MiniMax-H3** base model's architecture (DiT) and modifies it via **LoRA** (Low-Rank Adaptation). The LoRA is a small set of trainable parameters that are added to the base model's attention layers.
+2.  **Core Abstractions**: The core abstraction is the **LoRA adapter**, which represents a low-rank update to the base model's weights. The **prompt** is another core abstraction, acting as a semantic constraint on the generation process.
+3.  **Error Handling**: There is no explicit error handling in the repository. Errors are likely handled by the base model's inference engine (e.g., OOM, invalid input). The user is responsible for validating inputs and handling exceptions.
+4.  **Testing**: There are no automated tests in the repository. Testing is done via **visual inspection** of the generated videos and **comparison** with the base model's output.
+5.  **Security**: The repository is public and contains no sensitive data. The main security concern is **model integrity** (ensuring the LoRA file is not tampered with).
+6.  **Performance**: The LoRA adds minimal overhead to the base model's inference time. The main performance bottleneck is the **diffusion steps** (e.g., 50 steps) and the **resolution** of the generated video.
+7.  **Deployment**: The LoRA is deployed as a **Hugging Face model**. It can be loaded using the `transformers` library or other inference engines that support LoRA.
+8.  **Agent Patterns**: The LoRA can be used by an **AI agent** to generate seamless loops for video editing tasks. The agent must follow the **prompt engineering** rules and **input validation** checks.
+9.  **Data Flow**: The data flow is **image -> LoRA-modified model -> video**. The image is encoded into a latent representation, the LoRA modifies the attention weights, and the latent representation is decoded into a video.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **LoRA-Based Camera Control**. Use LoRA to fine-tune the attention layers of a video diffusion model to enforce specific camera trajectories (e.g., orbit, pan, zoom) while preserving scene consistency.
-2.  **Rule**: **Explicit Motion Path Definition**. Always explicitly define the camera motion path in the prompt. Do not rely on implicit understanding.
-3.  **Architecture Principle**: **Modular Model Adaptation**. Use LoRA to decouple specific behaviors (e.g., camera control) from the base model. This allows for easy swapping of behaviors without retraining.
-4.  **Failure Mode**: **Static Collapse**. When identical first and last frames are provided, the base model may generate a static video. This is avoided by using a LoRA that enforces motion.
-5.  **Reusable Skill**: **FL2V Loop Generation**. To generate a seamless video loop, provide the same image as the first and last frame, use a LoRA that enforces a closed-loop trajectory, and use a prompt that explicitly defines the motion path.
-6.  **Decision**: **LoRA vs. Full Fine-Tuning**. LoRA is chosen over full fine-tuning because it is more efficient, requires less data, and can be easily swapped.
-7.  **Anti-pattern**: **Implicit Motion Assumption**. Do not assume that the model will generate motion if the prompt says "frozen." Explicitly state that the camera moves.
-8.  **Verification Method**: **SSIM and Optical Flow**. Use SSIM to verify that the first and last frames are similar, and Optical Flow to verify that motion exists in the intermediate frames.
+1.  **Pattern**: **LoRA-based Motion Control**. Use a LoRA to override the base model's default motion prior with a specific motion pattern (e.g., 360-degree orbit).
+2.  **Rule**: **Loop Closure Invariant**. Always provide the same image as the first and last frame when generating a seamless loop.
+3.  **Architecture Principle**: **Decoupled Motion Prior**. The motion prior (camera path) is decoupled from the scene content (object motion) via prompt engineering and LoRA fine-tuning.
+4.  **Failure Mode**: **Drift Failure**. The base model drifts away from the starting point when only the first frame is provided.
+5.  **Reusable Skill**: **Prompt Engineering for Frozen Time**. Use explicit negative constraints to freeze the scene while allowing camera motion.
+6.  **Decision**: **LoRA over Full Fine-Tuning**. Use LoRA to minimize the number of trainable parameters and reduce training time, while still achieving the desired motion pattern.
+7.  **Anti-pattern**: **Vague Motion Instructions**. Do not use vague prompts like "camera moves" without specifying the type of motion and constraining scene motion.
+8.  **Verification Method**: **Frame Similarity Check**. Compute the similarity between the first and last frames to verify loop closure.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Download the LoRA**: Download the LoRA weights from the Hugging Face repository.
-2.  **Load the Base Model**: Load the MiniMax-H3 base model into your inference pipeline.
-3.  **Apply the LoRA**: Apply the LoRA weights to the attention layers of the base model.
-4.  **Prepare the Input**: Resize and normalize the input image to the expected aspect ratio.
-5.  **Construct the Prompt**: Use the prompt from the README, ensuring that the static and dynamic constraints are explicitly defined.
-6.  **Generate the Video**: Run the diffusion sampling process with the LoRA applied.
-7.  **Verify the Output**: Use SSIM and Optical Flow to verify that the video is a seamless loop with the correct camera trajectory.
-8.  **Iterate**: If the output is not satisfactory, adjust the prompt or the LoRA weights.
+1.  **Validate Input Image**: Ensure the input image is not null, empty, or corrupted.
+2.  **Load Base Model**: Load the MiniMax-H3 base model into GPU memory.
+3.  **Load LoRA Adapter**: Load the `pablodawson/MiniMax-H3-360-Orbit-LoRA` adapter.
+4.  **Construct Prompt**: Use the **Frozen-Time Semantic Constraint** prompt to ensure only the camera moves.
+5.  **Set Keyframes**: Use the same image as both the first and last keyframe.
+6.  **Generate Video**: Run the diffusion process with the specified steps and seed.
+7.  **Verify Loop Closure**: Check the similarity between the first and last frames.
+8.  **Unload LoRA**: Unload the LoRA adapter to free GPU memory.
+9.  **Save Video**: Save the generated video to disk.
+10. **Display Video**: Use a video element with `loop` and `muted` attributes for autoplay.

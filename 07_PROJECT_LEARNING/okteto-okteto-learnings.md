@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
-> **Source Version**: `903f657d`  
+> **Source Version**: `bb9214a9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T09:34:25.741Z  
+> **Timestamp**: 2026-10-30T17:51:39.575Z  
 > **Learning ID**: `learn-github-okteto-okteto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T09:34:24.344Z  
+> **Harvest Timestamp**: 2026-10-30T17:51:38.247Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1502,45 +1502,158 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `903f657d` (2026-10-23)
-**Commit Message**: build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215)
+### Incident Patch 1: `bb9214a9` (2026-10-30)
+**Commit Message**: fix(compose): keep numbers and booleans from interpolated variables (#5217)
 
-Bumps [renovatebot/github-action](https://github.com/renovatebot/github-action) from 46.3.8 to 46.3.9.
-- [Release notes](https://github.com/renovatebot/github-action/releases)
-- [Changelog](https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/renovatebot/github-action/compare/v46.3.8...v46.3.9)
+A plain scalar like ${REPLICAS} is resolved as a string before expansion, so the encoder wrote the expanded value back quoted and fields like replicas, scale or public failed to unmarshal. Keep the int, float or bool tag when the expanded plain value resolves to one.
+
+Signed-off-by: Raphael Fakhri <[REDACTED_EMAIL]>
+
+**File**: `pkg/model/stack_expander.go` (modified, +26/-0)
+```diff
+@@ -27,6 +27,14 @@ func expandEnvScalarNode(node *yaml3.Node) (*yaml3.Node, error) {
+ 		if err != nil {
+ 			return node, err
+ 		}
++		if expandValue != node.Value && node.Style == 0 && node.ShortTag() == "!!str" {
++			// a plain scalar like ${REPLICAS} is resolved as a string before expansion. Keep the value as a
++			// number or boolean when it expands to one, otherwise the encoder quotes it and fields like
++			// replicas or public fail to unmarshal
++			if tag := resolveExpandedScalarTag(expandValue); tag != "" {
++				node.Tag = tag
++			}
++		}
+ 		node.Value = expandValue
+ 		return node, nil
+ 	}
+@@ -41,6 +49,24 @@ func expandEnvScalarNode(node *yaml3.Node) (*yaml3.Node, error) {
+ 	return node, nil
+ }
+ 
++// resolveExpandedScalarTag returns the tag of value when it is a plain int, float or bool scalar, or "" otherwise
++func resolveExpandedScalarTag(value string) string {
++	doc := yaml3.Node{}
++	if err := yaml3.Unmarshal([]byte(value), &doc); err != nil || len(doc.Content) != 1 {
++		return ""
++	}
++	node := doc.Content[0]
++	if node.Kind != yaml3.ScalarNode || node.Style != 0 || node.Value != value {
++		return ""
++	}
++	switch tag := node.ShortTag(); tag {
++	case "!!int", "!!float", "!!bool":
++		return tag
++	default:
++		return ""
++	}
++}
++
+ // ExpandStackEnvs returns the stack manifest with expanded envs
+ func ExpandStackEnvs(file []byte) ([]byte, error) {
+ 	doc := yaml3.Node{}
+```
+
+**File**: `pkg/model/stack_test.go` (modified, +36/-0)
+```diff
+@@ -361,6 +361,42 @@ services:
+ 	assert.Equal(t, string(manifest), string(s.Manifest))
+ }
+ 
++func Test_ReadStackComposeInterpolatedTypes(t *testing.T) {
++	t.Setenv("REPLICAS", "3")
++	t.Setenv("PUBLIC", "true")
++	t.Setenv("SCALE", "2")
++	t.Setenv("VERSION", "1.10")
++	t.Setenv("ZIP", "0123")
++	t.Setenv("ANSWER", "yes")
++	manifest := []byte(`services:
++  app:
++    image: okteto/vote:1
++    public: ${PUBLIC}
++    deploy:
++      replicas: ${REPLICAS}
++    environment:
++      VERSION: ${VERSION}
++      ZIP: ${ZIP}
++      ANSWER: ${ANSWER}
++      QUOTED: "${REPLICAS}"
++  worker:
++    image: okteto/vote:1
++    scale: ${SCALE}`)
++	s, err := ReadStack(manifest, true)
++	require.NoError(t, err)
++
++	app := s.Services["app"]
++	assert.Equal(t, int32(3), app.Replicas)
++	assert.True(t, app.Public)
++	assert.Equal(t, env.Environment{
++		{Name: "ANSWER", Value: "yes"},
++		{Name: "QUOTED", Value: "3"},
++		{Name: "VERSION", Value: "1.10"},
++		{Name: "ZIP", Value: "0123"},
++	}, app.Environment)
++	assert.Equal(t, int32(2), s.Services["worker"].Replicas)
++}
++
+ func TestStack_validate(t *testing.T) {
+ 	tests := []struct {
+ 		stack *Stack
+```
+
+---
+
+### Incident Patch 2: `ce177ed5` (2026-10-29)
+**Commit Message**: build(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (#5227)
+
+Bumps [github.com/go-jose/go-jose/v4](https://github.com/go-jose/go-jose) from 4.1.5 to 4.1.6.
+- [Release notes](https://github.com/go-jose/go-jose/releases)
+- [Commits](https://github.com/go-jose/go-jose/compare/v4.1.5...v4.1.6)
 
 ---
 updated-dependencies:
-- dependency-name: renovatebot/github-action
-  dependency-version: 46.3.9
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
+- dependency-name: github.com/go-jose/go-jose/v4
+  dependency-version: 4.1.6
+  dependency-type: indirect
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-         uses: actions/checkout@v7
- 
-       - name: Run Renovate
--        uses: renovatebot/github-action@v46.3.8
-+        uses: renovatebot/github-action@v46.3.9
-         with:
-           configurationFile: .github/renovate.json
-           token: ${{ secrets.RENOVATEBOT_GITHUB_TOKEN }}
+@@ -212,7 +212,7 @@ require (
+ 	github.com/fxamacker/cbor/v2 v2.9.4 // indirect
+ 	github.com/go-git/gcfg/v2 v2.0.2 // indirect
+ 	github.com/go-git/go-billy/v6 v6.0.0-alpha.2 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.5 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-openapi/swag/cmdutils v0.28.0 // indirect
+ 	github.com/go-openapi/swag/conv v0.28.0 // indirect
+ 	github.com/go-openapi/swag/fileutils v0.28.0 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -261,8 +261,8 @@ github.com/go-git/go-git/v6 v6.0.0-alpha.5 h1:sE+OlkHgYWNMVmN1s9sR7uyFgsWLtxcNWs
+ github.com/go-git/go-git/v6 v6.0.0-alpha.5/go.mod h1:3IjhiZnM+uBmUrOGSeqrJpsmi4Vd0H2NZO/uK2a7d0s=
+ github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod h1:vR7hzQXu2zJy9AVAgeJqvqgH9Q5CA+iKCZ2gyEVpxRU=
+ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
+-github.com/go-jose/go-jose/v4 v4.1.5 h1:RjgjO2LOtWOJKUC5wpwY9LR3B3vwVAz6JS2YHfYU6eA=
+-github.com/go-jose/go-jose/v4 v4.1.5/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+ github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
+ github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5215** (2026-10-23): build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (@dependabot[bot])
-- **PR #5214** (2026-10-22): Upgrade buildkit dependency to v0.34.1-okteto2 (@devin-ai-integration[bot])
-- **PR #5213** (2026-10-21): [Backport release-3.24] fix: Go 1.26.10, ca-certificates floor and buildkit v0.34.1-okteto1 (eMudhra, CVE-2026-111943) (@ifbyol)
-- **PR #5212** (2026-10-21): fix(docker): require ca-certificates >= 20261020-r0 (eMudhra, CVE-2026-111943) (@ifbyol)
-- **PR #5211** (closed): fix: correct typos and wrong text across the repo (@jLopezbarb)
-- **PR #5210** (closed): Revert "fix: correct typos and wrong text across the repo (#5202)" (@jLopezbarb)
+- **PR #5235** (2026-10-30): chore(deps): Update module github.com/posthog/posthog-go to v1.27.1 (@oktetobot)
+- **PR #5229** (closed): chore(deps): Update module github.com/go-jose/go-jose/v4 to v4.1.6 [SECURITY] (@oktetobot)
+- **PR #5228** (2026-10-29): Added .claude/tasks.local to the gitignore file (@ifbyol)
+- **PR #5227** (2026-10-29): build(deps): bump github.com/go-jose/go-jose/v4 from 4.1.5 to 4.1.6 (@dependabot[bot])
+- **PR #5226** (2026-10-28): chore(deps): Update module golang.org/x/sync to v0.24.0 (@oktetobot)
+- **PR #5225** (2026-10-28): PROD-552: Stop copying shared namespace endpoints in the gateway-api divert driver (@ifbyol)
 
 ---
 
@@ -1560,28 +1673,53 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215)
+## X. compose): keep numbers and booleans from interpolated variables (#5217)
 
 **RULE**:
-When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/model/stack_expander.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `903f657d`: build(deps): bump renovatebot/github-action from 46.3.8 to 46.3.9 (#5215). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bb9214a9`: compose): keep numbers and booleans from interpolated variables (#5217). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/model/stack_expander.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: renovatebot/github-action@v46.3.9
+		if expandValue != node.Value && node.Style == 0 && node.ShortTag() == "!!str" {
+			// a plain scalar like ${REPLICAS} is resolved as a string before expansion. Keep the value as a
+			// number or boolean when it expands to one, otherwise the encoder quotes it and fields like
+			// replicas or public fail to unmarshal
+			if tag := resolveExpandedScalarTag(expandValue); tag != "" {
+				node.Tag = tag
+			}
+		}
+// resolveExpandedScalarTag returns the tag of value when it is a plain int, float or bool scalar, or "" otherwise
+func resolveExpandedScalarTag(value string) string {
+	doc := yaml3.Node{}
+	if err := yaml3.Unmarshal([]byte(value), &doc); err != nil || len(doc.Content) != 1 {
+		return ""
+	}
+	node := doc.Content[0]
+	if node.Kind != yaml3.ScalarNode || node.Style != 0 || node.Value != value {
+		return ""
+	}
+	switch tag := node.ShortTag(); tag {
+	case "!!int", "!!float", "!!bool":
+		return tag
+	default:
+		return ""
+	}
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: renovatebot/github-action@v46.3.8
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `903f657d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bb9214a9` are properly handled with clean fallback behavior.

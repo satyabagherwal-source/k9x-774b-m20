@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
-> **Source Version**: `a83496bf`  
+> **Source Version**: `b19e2331`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:45:03.536Z  
+> **Timestamp**: 2026-10-28T13:56:54.235Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-gesture-handler`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-gesture-handler-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-gesture-handler](https://github.com/software-mansion/react-native-gesture-handler))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:45:03.293Z  
+> **Harvest Timestamp**: 2026-10-28T13:56:54.227Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Declarative API exposing platform native touch and gesture system to React Native.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6794 stars
+- **Stars / Engagement**: 6793 stars
 
 ---
 
@@ -591,7 +591,7 @@ open class GestureHandler {
     trackedPointersIDsCount--
   }
 
-  private fun isTrackingPointer(pointerId: Int) = trackedPointerIDs[pointerId] != -1
+  fun isTrackingPointer(pointerId: Int) = trackedPointerIDs[pointerId] != -1
 
   private fun needAdapt(event: MotionEvent): Boolean {
     if (event.pointerCount != trackedPointersIDsCount) {
@@ -640,7 +640,8 @@ open class GestureHandler {
     }
     initPointerProps(trackedPointersIDsCount)
     var count = 0
-    val deltaX = event.rawX - event.
+    val deltaX = event.rawX - event.x
+    va
 ```
 
 ### Core Architecture Module: `packages/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/core/GestureHandlerInteractionController.kt`
@@ -716,6 +717,7 @@ class GestureHandlerOrchestrator(
     private set
   private var handlingChangeSemaphore = 0
   private var finishedHandlersCleanupScheduled = false
+  private var interceptedViewsCancelScheduled = false
   private var activationIndex = 0
 
   /**
@@ -734,6 +736,11 @@ class GestureHandlerOrchestrator(
       cancelAll()
     }
     deliverEventToGestureHandlers(event)
+    if (interceptedViewsCancelScheduled) {
+      interceptedViewsCancelScheduled = false
+      cancelTouchesInInterceptedViews(event)
+    }
+    releasePointerDownPoints(event)
     isHandlingTouch = false
     if (finishedHandlersCleanupScheduled && handlingChangeSemaphore == 0) {
       cleanupFinishedHandlers()
@@ -900,14 +907,7 @@ class GestureHandlerOrchestrator(
       activationIndex = this@GestureHandlerOrchestrator.activationIndex++
     }
 
-    for (otherHandler in gestureHandlers.asReversed()) {
-      if (shouldHandlerBeCancelledBy(otherHandler, handler)) {
-        otherHandler.cancel()
-      }
-    }
-
-    // Clear all awaiting handlers waiting for the current handler to fail
-    for (otherHandler in awaitingHandlers.
+    for (otherHandler in gestureHandlers.asReversed(
 ```
 
 ### Core Architecture Module: `packages/react-native-gesture-handler/android/src/main/java/com/swmansion/gesturehandler/core/GestureHandlerRegistry.kt`
@@ -1388,324 +1388,307 @@ class LongPressGestureHandler(context: Context) : GestureHandler() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a83496bf` (2026-10-22)
-**Commit Message**: Keep Reanimated deep imports out of web bundles (#4620)
+### Incident Patch 1: `b19e2331` (2026-10-28)
+**Commit Message**: [iOS] Report zero Pan velocity when the pointer rested before release (#4642)
 
 ## Description
 
-#4554 gates `Wrap.getAnimatableRef()` on whether Reanimated re-resolves
-the animatable ref on update. The check deep-imports
-`react-native-reanimated/src/createAnimatedComponent/AnimatedComponent`
-and looks for `_refreshComponentRef` on its prototype. It lives in
-`reanimatedWrapper.ts`, which every platform loads.
+Follow-up to the web fix for #4636, same rule on iOS and macOS.
 
-Reanimated has no `exports` map. Its `react-native` field points at
-`src/`, but `main` and `module` point at `lib/module`. Bundlers that
-ignore the `react-native` field (Vite, webpack) therefore resolve the
-package root to `lib/module` and the deep import to `src/`, which is a
-second copy of Reanimated. In Vite dev the optimizer leaves the `.tsx`
-deep import as a raw import, and
-`src/platform-specific/workletsVersion.ts` default-imports a CommonJS
-script, so the module graph fails and the app never mounts. In
-production the bundle contains every Reanimated module twice. Metro,
-including Expo web, keeps `react-native` first and is unaffected.
+The Pan handler reports UIKit's `velocityInView:` in every event,
+including the end event. That estimate freezes at the last touch move,
+so a drag that stops, holds still, and then lifts reports the velocity
+of the drag in `onEnd`, and a `withDecay` started from it flings a
+pointer that had come to rest. Android reports 0 in that case, since its
+`VelocityTracker` treats a pointer as stopped after 40 ms without a
+sample.
 
-The check moves to `GestureDetector/refreshesAnimatableRef.ts`, imported
-only by the native `Wrap.tsx`. `Wrap.web.tsx` already uses the plain
-`Wrap`, so web bu
+`RNBetterPanGestureRecognizer` now stamps the time of every move and, on
+release, records whether more than 40 ms passed since the last move. The
+check runs before the superclass handles the release, because that is
+where the gesture ends and the action is dispatched. The event payload
+reads the velocity through `reportedVelocityInView:`, which returns zero
+in the ended state after such a rest and UIKit's estimate otherwise.
+Update events, activation criteria and failure paths are unchanged, and
+so is a release within 40 ms of the last move.
 
-**File**: `packages/react-native-gesture-handler/src/__tests__/legacyWrapRef.test.tsx` (modified, +2/-2)
+## Test plan
+
+Tested on "Velocity Test" example
+
+- iPhone 17 simul
+
+**File**: `packages/react-native-gesture-handler/apple/Handlers/RNPanHandler.m` (modified, +36/-8)
 ```diff
-@@ -2,8 +2,8 @@ import { cleanup, render } from '@testing-library/react-native';
- import React from 'react';
- import { findNodeHandle, View } from 'react-native';
+@@ -37,11 +37,18 @@ @interface RNBetterPanGestureRecognizer : UIPanGestureRecognizer
+ #endif
  
-+import * as refreshesAnimatableRef from '../handlers/gestures/GestureDetector/refreshesAnimatableRef';
- import { Wrap } from '../handlers/gestures/GestureDetector/Wrap';
--import * as reanimatedWrapper from '../handlers/gestures/reanimatedWrapper';
- import { Gesture, GestureDetector, GestureHandlerRootView } from '../index';
- import RNGestureHandlerModule from '../RNGestureHandlerModule';
+ - (id)initWithGestureHandler:(RNGestureHandler *)gestureHandler;
++- (CGPoint)reportedVelocityInView:(RNGHUIView *)view;
  
-@@ -139,7 +139,7 @@ describe('Legacy GestureDetector ref forwarding', () => {
+ @end
  
-     beforeEach(() => {
-       refreshSpy = jest.spyOn(
--        reanimatedWrapper,
-+        refreshesAnimatableRef,
-         'reanimatedRefreshesAnimatableRef'
-       );
-     });
-```
-
-**File**: `packages/react-native-gesture-handler/src/handlers/gestures/GestureDetector/Wrap.tsx` (modified, +2/-4)
-```diff
-@@ -8,10 +8,8 @@ import {
-   resolveHostInstance,
- } from '../../../hostInstance';
- import { tagMessage } from '../../../utils';
--import {
--  Reanimated,
--  reanimatedRefreshesAnimatableRef,
--} from '../reanimatedWrapper';
-+import { Reanimated } from '../reanimatedWrapper';
-+import { reanimatedRefreshesAnimatableRef } from './refreshesAnimatableRef';
- 
- export class Wrap extends React.Component<{
-   onGestureHandlerEvent?: unknown;
-```
-
-**File**: `packages/react-native-gesture-handler/src/handlers/gestures/GestureDetector/refreshesAnimatableRef.ts` (added, +26/-0)
-```diff
-@@ -0,0 +1,26 @@
-+// Reanimated resolves `getAnimatableRef()` once, when its ref to the wrapped
-+// component attaches. Only versions that re-resolve it on update (their
-+// `AnimatedComponent` has `_refreshComponentRef`) can be handed a child's host
-+// instance that may change, as the legacy `Wrap` does. The class is not
-+// exported, so probe it by subpath, as the v3 detector does for
-+// `NativeEventsManager`.
-+//
-+// Only the native `Wrap` imports this module. The subpath resolves to a second
-+// copy of Reanimated under bundlers that ignore its `react-native` field
-+// (Vite, webpack), so it must stay out of web bundles.
-+let refreshesAnimatableRef = false;
-+try {
-+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-+  const AnimatedComponent =
-+    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
-+    require('react-native-reanimated/src/createAnimatedComponent/AnimatedComponent').default;
-+  refreshesAnimatableRef =
-+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-+    typeof AnimatedComponent?.prototype?._refreshComponentRef === 'function';
-+} catch {
-+  // Reanimated is missing or older; keep handing Reanimated the Wrap itself.
-+}
++// A pointer that sent no move for this long is treated as stopped, like in
++// Android's VelocityTracker and the web tracker.
++static const NSTimeInterval pointerStoppedInterval = 0.04;
 +
-+export function reanimatedRefreshesAnimatableRef() {
-+  return refreshesAnimatableRef;
-+}
-```
-
-**File**: `packages/react-native-gesture-handler/src/handlers/gestures/reanimatedWrapper.ts` (modified, +0/-23)
-```diff
-@@ -132,27 +132,4 @@ if (Reanimated !== undefined && !Reanimated.setGestureState) {
-   };
+ @implementation RNBetterPanGestureRecognizer {
+   __weak RNGestureHandler *_gestureHandler;
++  NSTimeInterval _lastMoveTimestamp;
++  BOOL _restedBeforeRelease;
+ #if TARGET_OS_OSX
+   BOOL _blockAutomaticActivation;
+ #else
+@@ -135,6 +142,11 @@ - (void)interactionsBegan:(NSSet *)touches withEvent:(UIEvent *)event
+     [_gestureHandler reset];
+   }
+ 
++  if (self.state == UIGestureRecognizerStatePossible) {
++    _lastMoveTimestamp = event.timestamp;
++    _restedBeforeRelease = NO;
++  }
++
+ #if !TARGET_OS_TV && !TARGET_OS_OSX
+   if (_hasCustomActivationCriteria) {
+     // We use "minimumNumberOfTouches" property to prevent pan handler from recognizing
+@@ -169,6 +181,7 @@ - (void)interactionsBegan:(NSSet *)touches withEvent:(UIEvent *)event
+ 
+ - (void)interactionsMoved:(NSSet *)touches withEvent:(UIEvent *)event
+ {
++  _lastMoveTimestamp = event.timestamp;
+   [_gestureHandler.pointerTracker touchesMoved:touches withEvent:event];
+ 
+   if (self.state == UIGestureRecognizerStatePossible && [self shouldFailUnderCustomCriteria]) {
+@@ -212,6 +225,13 @@ - (void)interactionsMoved:(NSSet *)touches withEvent:(UIEvent *)event
+ #endif
  }
  
--// Reanimated resolves `getAnimatableRef()` once, when its ref to the wrapped
--// component attaches. Only versions that re-resolve it on update (their
--// `AnimatedComponent` has `_refreshComponentRef`) can be handed a child's host
--// instance that may change, as the legacy `Wrap` does. The class is not
--// exported, so probe it by subpath, as the v3 detector does for
--// `NativeEventsManager`.
--let refreshesAnimatableRef = false;
--try {
--  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
--  const AnimatedComponent =
--    // eslint-disable-next-line @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
--    require('react-native-reanimated/src/createAnimatedComponent/AnimatedComponent').default;
--  refreshesAnimatableRef =
--    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
--    typeof AnimatedComponent?.prototype?._refreshComponentRef === 'function';
--} catch {
--  // Reanimated is missing or older; keep handing Reanimated the Wrap itself.
--}
--
--export function reanimatedRefreshesAnimatableRef() {
--  return refreshesAnimatableRef;
--}
--
- export { Reanimated, Worklets };
++// Velocity for the event payload: zero on release when the pointer rested
++// before lifting, the recognizer's estimate otherwise.
++- (CGPoint)reportedVelocityInView:(RNGHUIView *)view
++{
++  return self.state == UIGestureRecognizerStateEnded && _restedBeforeRelease ? CGPointZero : [self velocityInView:view];
++}
++
+ - (void)interactionsEnded:(NSSet *)touches withEvent:(UIEvent *)event
+ {
+   [_gestureHandler.pointerTracker touchesEnded:touches withEvent:event];
+@@ -264,6 +284,8 @@ - (void)mouseDragged:(NSEvent *)event
+ 
+ - (void)mouseUp:(NSEvent *)event
+ {
++  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
++
+   [super mouseUp:event];
+   [self interactionsEnded:[NSSet setWithObject:event] withEvent:event];
+ }
+@@ -286,6 +308,8 @@ - (void)touchesMoved:(NSSet<RNGHUITouch *> *)touches withEvent:(UIEvent *)event
+ 
+ - (void)touchesEnded:(NSSet<RNGHUITouch *> *)touches withEvent:(UIEvent *)event
+ {
++  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
++
+   [super touchesEnded:touches withEvent:event];
+   [self interactionsEnded:touches withEvent:event];
+ }
+@@ -306,6 +330,7 @@ - (void)reset
+ #if TARGET_OS_OSX
+   _blockAutomaticActivation = NO;
+ #endif
++  _restedBeforeRelease = NO;
+   [super reset];
+   [_gestureHandler reset];
+ 
+@@ -486,13 +511,16 @@ - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+ #if TARGET_OS_OSX
+ - (RNGestureHandlerEventExtraData *)eventExtraData:(NSPanGestureRecognizer *)recognizer
+ {
+-  return [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
+-                           withAbsolutePosition:[recognizer locationInView:recognizer.view.window.contentView]
+-                                withTranslation:[recognizer translationInView:recognizer.view.window.contentView]
+-                                   withVelocity:[recognizer velocityInView:recognizer.view.window.contentView]
+-                            withNumberOfTouches:1
+-                                withPointerType:RNGestureHandlerMouse
+-                                 withStylusData:nil];
++  RNBetterPanGestureRecognizer *panRecognizer = (RNBetterPanGestureRecognizer *)recognizer;
++
++  return
++      [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
++                        withAbsolutePosition:[recognizer locationInView:recognizer.view.window.contentView]
++                             withTranslation:[recognizer translationInView:recognizer.view.window.contentView]
++                                withVelocity:[panRecognizer reportedVelocityInView:recognizer.view.window.contentView]
++                         withNumberOfTouches:1
++                             withPointerType:RNGestureHandlerMouse
++                              withStylusData:nil];
+ }
+ #else
+ - (RNGestureHandlerEventExtraData *)eventExtraData:(UIPanGestureRecognizer *)recognizer
+@@ -503,7 +531,7 @@ - (RNGestureHandlerEventExtraData *)eventExtraData:(UIPanGestureRecognizer *)rec
+                     forPan:[recognizer locationInView:self.coordinateView]
+       withAbsolutePosition:[recognizer locationInView:recognizer.view.window]
+            withTranslation:[recognizer translationInView:recognizer.view.window]
+-              withVelocity:[recognizer velocityInView:recognizer.view.window]
++              withVelocity:[panRecognizer reportedVelocityInView:recognizer.view.windo
 ```
 
 ---
 
-### Incident Patch 2: `2202d7b1` (2026-10-22)
-**Commit Message**: [Web] Handle moves that leave or re-enter the view as out-of-bounds moves (#4610)
-
-The fix now lives in `GestureHandler`: `onPointerLeave` and
-`onPointerEnter` mark the event as a move and pass it to
-`onPointerOutOfBounds`, so every handler applies these moves. The
-Pan-specific overrides are removed. The description below explains the
-original Pan symptoms, which this change still fixes.
+### Incident Patch 2: `613be1c7` (2026-10-28)
+**Commit Message**: [Web] Report zero Pan velocity when the pointer rested before release (#4641)
 
 ## Description
 
-On web, `PointerEventManager` dispatches the `pointermove` that takes a
-tracked pointer out of the view as `onPointerLeave`, and the one that
-brings it back as `onPointerEnter`. `PanGestureHandler` did not override
-either, so for those moves it never updated the tracker, the last
-coordinates or the velocity, and never checked whether to activate. As a
-result:
+On web, `PanGestureHandler.onPointerUp` ends the gesture without looking
+at the release event, so `onEnd` carries the velocity computed by the
+last `pointermove`, however long ago that was. A drag that stops, holds
+still, and then releases reports the velocity of the drag, and a
+`withDecay` started from it flings a pointer that had come to rest.
+Android reports 0 in that case: its `VelocityTracker` treats a pointer
+as stopped after 40 ms without a sample, [matching
+Flutter](https://github.com/flutter/flutter/blob/66b3ad90177ccbd2963836a5556076b370622fe4/packages/flutter/lib/src/gestures/velocity_tracker.dart#L142).
 
-- `onUpdate` does not fire for the move that leaves or re-enters the
-view.
-- If the pointer is released right after, `onEnd` reports the last
-in-bounds position instead of the release position.
-- A Pan in `BEGAN` whose activating move lands outside the view does not
-activate on that move.
+The web `VelocityTracker` already uses the same 40 ms threshold to split
+the sample history during a drag. The constant is now exported as
+`POINTER_STOPPED_MILLISECONDS`, `PointerTracker.track` stamps the time
+of each pointer's last sample, and `PointerTracker.getVelocityAt`
+returns zero when the queried time is past that threshold. `onPointerUp`
+reads the velocity at the release time before ending. A release within
+40 ms of the last move is unchanged.
 
-This PR makes `PanGestureHandler` handle the leave and enter moves like
-any other move: it tracks the pointer, updates the coordinates and
+Feeding the release eve
 
-**File**: `packages/react-native-gesture-handler/src/web/handlers/GestureHandler.ts` (modified, +4/-2)
+**File**: `packages/react-native-gesture-handler/src/web/handlers/PanGestureHandler.ts` (modified, +6/-0)
 ```diff
-@@ -376,10 +376,12 @@ export default abstract class GestureHandler implements IGestureHandler {
-       return;
-     }
+@@ -261,6 +261,12 @@ export default class PanGestureHandler extends GestureHandler {
+   protected override onPointerUp(event: AdaptedEvent): void {
+     this.stylusData = event.stylusData;
  
--    this.tryToSendTouchEvent(event);
-+    event.eventType = EventTypes.MOVE;
-+    this.onPointerOutOfBounds(event);
-   }
-   protected onPointerEnter(event: AdaptedEvent): void {
--    this.tryToSendTouchEvent(event);
-+    event.eventType = EventTypes.MOVE;
-+    this.onPointerMove(event);
-   }
-   protected onPointerCancel(_event: AdaptedEvent): void {
-     // No need to send a cancel touch event explicitly here. `cancel` will
++    // A pointer that rested before lifting reports zero velocity instead of
++    // the velocity of its last move.
++    const velocity = this.tracker.getVelocityAt(event.pointerId, event.time);
++    this.velocityX = velocity?.x ?? 0;
++    this.velocityY = velocity?.y ?? 0;
++
+     super.onPointerUp(event);
+     if (this.state === State.ACTIVE) {
+       const lastCoords = this.tracker.getAbsoluteCoordsAverage();
 ```
 
-**File**: `packages/react-native-gesture-handler/src/web/handlers/__tests__/PanGestureHandler.test.ts` (modified, +111/-0)
+**File**: `packages/react-native-gesture-handler/src/web/handlers/__tests__/PanGestureHandler.test.ts` (modified, +42/-0)
 ```diff
-@@ -21,6 +21,26 @@ class TestPanGestureHandler extends PanGestureHandler {
-     return this.transformNativeEvent();
-   }
- 
-+  public pointerDown(event: AdaptedEvent): void {
-+    this.onPointerDown(event);
-+  }
-+
-+  public pointerMove(event: AdaptedEvent): void {
-+    this.onPointerMove(event);
-+  }
-+
-+  public pointerLeave(event: AdaptedEvent): void {
-+    this.onPointerLeave(event);
-+  }
-+
-+  public pointerEnter(event: AdaptedEvent): void {
-+    this.onPointerEnter(event);
-+  }
-+
-+  public pointerUp(event: AdaptedEvent): void {
-+    this.onPointerUp(event);
-+  }
-+
-   protected override onWheel(event: AdaptedEvent): void {
-     this.wheelEvents.push(event);
-     super.onWheel(event);
-@@ -42,6 +62,19 @@ function wheelEvent(): AdaptedEvent {
-   };
- }
- 
-+function pointerEvent(eventType: EventTypes, y: number): AdaptedEvent {
-+  return {
-+    x: 20,
-+    y,
-+    offsetX: 20,
-+    offsetY: y,
-+    pointerId: 0,
-+    eventType,
-+    pointerType: PointerType.MOUSE,
-+    time: 0,
-+  };
-+}
-+
- function createHandler(eventManagers: EventManager<unknown>[] = []) {
-   const delegate = {
-     init: jest.fn(),
-@@ -307,3 +340,81 @@ describe('PanGestureHandler trackpad coordinates', () => {
-     ).toMatchObject({ x: 75, y: 50, absoluteX: 65, absoluteY: 110 });
+@@ -418,3 +418,45 @@ describe('PanGestureHandler pointer leaving and entering the view', () => {
+     expect(handler.state).toBe(State.CANCELLED);
    });
  });
 +
-+describe('PanGestureHandler pointer leaving and entering the view', () => {
-+  // The view is 40x40, the pointer goes down at its center.
-+  function startPan(config: Record<string, unknown> = {}) {
-+    const handler = createHandler();
-+    const updates: { state: State; translationY: unknown }[] = [];
-+
-+    handler.sendEvent = jest.fn((newState: State) => {
-+      updates.push({
-+        state: newState,
-+        translationY: handler.nativeEvent().translationY,
-+      });
-+    });
-+
-+    handler.setGestureConfig({ enabled: true, minDist: 0, ...config });
-+    handler.pointerDown(pointerEvent(EventTypes.DOWN, 20));
-+
-+    return { handler, updates };
++describe('PanGestureHandler velocity at release', () => {
++  function timedEvent(eventType: EventTypes, y: number, time: number) {
++    return { ...pointerEvent(eventType, y), time };
 +  }
 +
-+  test('the move that leaves the view updates the position', () => {
-+    const { handler, updates } = startPan();
++  // Four moves 8ms apart, 10px each: 1250px/s downwards.
++  function dragThenRelease(releaseTime: number) {
++    const handler = createHandler();
 +
-+    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
++    handler.setGestureConfig({ enabled: true, minDist: 0 });
++    handler.pointerDown(timedEvent(EventTypes.DOWN, 20, 0));
++    for (let move = 1; move <= 4; move++) {
++      handler.pointerMove(
++        timedEvent(EventTypes.MOVE, 20 + 10 * move, 8 * move)
++      );
++    }
 +    expect(handler.state).toBe(State.ACTIVE);
 +
-+    updates.length = 0;
-+    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
++    handler.pointerUp(timedEvent(EventTypes.UP, 60, releaseTime));
++    expect(handler.state).toBe(State.END);
 +
-+    expect(updates).toEqual([{ state: State.ACTIVE, translationY: 300 }]);
++    return handler.nativeEvent();
++  }
 +
-+    handler.pointerUp(pointerEvent(EventTypes.UP, 320));
-+
-+    expect(updates[updates.length - 1]).toEqual({
-+      state: State.END,
-+      translationY: 300,
-+    });
++  test('a pointer released at its last move keeps the velocity of the drag', () => {
++    expect(dragThenRelease(32).velocityY).toBeCloseTo(1250, -2);
 +  });
 +
-+  test('the move that enters the view updates the position', () => {
-+    const { handler, updates } = startPan();
-+
-+    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
-+    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
-+
-+    updates.length = 0;
-+    handler.pointerEnter(pointerEvent(EventTypes.ENTER, 30));
-+
-+    expect(updates).toEqual([{ state: State.ACTIVE, translationY: 10 }]);
-+
-+    handler.pointerUp(pointerEvent(EventTypes.UP, 30));
-+
-+    expect(updates[updates.length - 1]).toEqual({
-+      state: State.END,
-+      translationY: 10,
-+    });
++  test('a pointer that rested before release reports zero velocity', () => {
++    expect(dragThenRelease(532).velocityY).toBe(0);
 +  });
 +
-+  test('the move that leaves the view can activate the gesture', () => {
-+    const { handler } = startPan({ minDist: 10 });
-+
-+    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
-+    expect(handler.state).toBe(State.BEGAN);
-+
-+    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
-+
-+    expect(handler.state).toBe(State.ACTIVE);
++  // The last move is at 32ms, the pointer counts as stopped after 40ms.
++  test('a pointer released at the stopped threshold keeps its velocity', () => {
++    expect(dragThenRelease(72).velocityY).toBeCloseTo(1250, -2);
 +  });
 +
-+  test('the gesture is still cancelled when the pointer leaves the view with shouldCancelWhenOutside', () => {
-+    const { handler } = startPan({ shouldCancelWhenOutside: true });
-+
-+    handler.pointerMove(pointerEvent(EventTypes.MOVE, 25));
-+    handler.pointerLeave(pointerEvent(EventTypes.LEAVE, 320));
-+
-+    expect(handler.state).toBe(State.CANCELLED);
++  test('a pointer released past the stopped threshold reports zero velocity', () => {
++    expect(dragThenRelease(73).velocityY).toBe(0);
 +  });
 +});
 ```
 
+**File**: `packages/react-native-gesture-handler/src/web/tools/PointerTracker.ts` (modified, +9/-2)
+```diff
+@@ -4,7 +4,6 @@ import VelocityTracker from './VelocityTracker';
+ export interface TrackerElement {
+   abosoluteCoords: Point;
+   relativeCoords: Point;
+-  timestamp: number;
+   velocityX: number;
+   velocityY: number;
+ }
+@@ -43,7 +42,6 @@ export default class PointerTracker {
+     const newElement: TrackerElement = {
+       abosoluteCoords: { x: event.x, y: event.y },
+       relativeCoords: { x: event.offsetX, y: event.offsetY },
+-      timestamp: event.time,
+       velocityX: 0,
+       velocityY: 0,
+     };
+@@ -122,6 +120,15 @@ export default class PointerTracker {
+       : null;
+   }
+ 
++  public getVelocityAt(pointerId: number, time: number) {
++    if (!this.trackedPointers.has(pointerId)) {
++      return null;
++    }
++
++    const [x, y] = this.velocityTracker.velocityAt(time);
++    return { x, y };
++  }
++
+   public getLastAbsoluteCoords(pointerId?: number) {
+     return this.trackedPointers.get(pointerId ?? this.lastMovedPointerId)
+       ?.abosoluteCoords;
+```
+
+**File**: `packages/react-native-gesture-handler/src/web/tools/VelocityTracker.ts` (modified, +11/-0)
+```diff
+@@ -92,6 +92,17 @@ export default class VelocityTracker {
+     return [0, 0];
+   }
+ 
++  // Velocity at `time`: zero once no sample arrived within the stopped
++  // window, the current estimate otherwise.
++  public velocityAt(time: number): [number, number] {
++    const newest = this.samples.get(this.samples.size - 1);
++
++    return !newest ||
++      time - newest.time > this.assumePointerMoveStoppedMilliseconds
++      ? [0, 0]
++      : this.velocity;
++  }
++
+   public reset(): void {
+     this.samples.clear();
+   }
+```
+
 #### Recent Merged Pull Requests:
-- **PR #4624** (2026-10-22): [Web] Start hover on the first pointer move when pointerenter was missed (@collectioneur)
-- **PR #4620** (2026-10-22): Keep Reanimated deep imports out of web bundles (@m-bert)
-- **PR #4618** (2026-10-21): Undo a cancelled `ReanimatedSwipeable` pan (@chocky335)
-- **PR #4615** (2026-10-20): [Jest] Mock `installUIRuntimeBindings` in `jestSetup.js` (@m-bert)
-- **PR #4612** (2026-10-19): Bump to `expo` sdk 58 (@m-bert)
-- **PR #4610** (2026-10-22): [Web] Handle moves that leave or re-enter the view as out-of-bounds moves (@RaphaelFakhri)
+- **PR #4650** (2026-10-28): Remove `disableReanimated` prop from components (@m-bert)
+- **PR #4648** (2026-10-26): Bump body-parser from 1.20.6 to 1.20.9 in /packages/docs-gesture-handler (@dependabot[bot])
+- **PR #4647** (2026-10-26): Bump body-parser from 1.20.8 to 1.20.9 (@dependabot[bot])
+- **PR #4646** (2026-10-26): Bump postcss-selector-parser from 6.1.4 to 6.1.5 in /packages/docs-gesture-handler (@dependabot[bot])
+- **PR #4645** (2026-10-26): Bump fast-uri from 3.1.8 to 3.1.9 in /packages/docs-gesture-handler (@dependabot[bot])
+- **PR #4644** (2026-10-27): Stop the Pressable long press timer on touch up (@m-bert)
 
 ---
 
@@ -1725,30 +1708,64 @@ any other move: it tracks the pointer, updates the coordinates and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep Reanimated deep imports out of web bundles (#4620)
+## X. [iOS] Report zero Pan velocity when the pointer rested before release (#4642)
 
 **RULE**:
-When implementing operations in `packages/react-native-gesture-handler/src/__tests__/legacyWrapRef.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-gesture-handler/apple/Handlers/RNPanHandler.m`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-gesture-handler. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a83496bf`: Keep Reanimated deep imports out of web bundles (#4620). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b19e2331`: [iOS] Report zero Pan velocity when the pointer rested before release (#4642). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/src/__tests__/legacyWrapRef.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-gesture-handler/apple/Handlers/RNPanHandler.m`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import * as refreshesAnimatableRef from '../handlers/gestures/GestureDetector/refreshesAnimatableRef';
-        refreshesAnimatableRef,
+- (CGPoint)reportedVelocityInView:(RNGHUIView *)view;
+// A pointer that sent no move for this long is treated as stopped, like in
+// Android's VelocityTracker and the web tracker.
+static const NSTimeInterval pointerStoppedInterval = 0.04;
+
+  NSTimeInterval _lastMoveTimestamp;
+  BOOL _restedBeforeRelease;
+  if (self.state == UIGestureRecognizerStatePossible) {
+    _lastMoveTimestamp = event.timestamp;
+    _restedBeforeRelease = NO;
+  }
+
+  _lastMoveTimestamp = event.timestamp;
+// Velocity for the event payload: zero on release when the pointer rested
+// before lifting, the recognizer's estimate otherwise.
+- (CGPoint)reportedVelocityInView:(RNGHUIView *)view
+{
+  return self.state == UIGestureRecognizerStateEnded && _restedBeforeRelease ? CGPointZero : [self velocityInView:view];
+}
+
+  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
+
+  _restedBeforeRelease = event.timestamp - _lastMoveTimestamp > pointerStoppedInterval;
+
+  _restedBeforeRelease = NO;
+  RNBetterPanGestureRecognizer *panRecognizer = (RNBetterPanGestureRecognizer *)recognizer;
+
+  return
+      [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import * as reanimatedWrapper from '../handlers/gestures/reanimatedWrapper';
-        reanimatedWrapper,
+  return [RNGestureHandlerEventExtraData forPan:[recognizer locationInView:self.coordinateView]
+                           withAbsolutePosition:[recognizer locationInView:recognizer.view.window.contentView]
+                                withTranslation:[recognizer translationInView:recognizer.view.window.contentView]
+                                   withVelocity:[recognizer velocityInView:recognizer.view.window.contentView]
+                            withNumberOfTouches:1
+                                withPointerType:RNGestureHandlerMouse
+                                 withStylusData:nil];
+              withVelocity:[recognizer velocityInView:recognizer.view.window]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a83496bf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b19e2331` are properly handled with clean fallback behavior.

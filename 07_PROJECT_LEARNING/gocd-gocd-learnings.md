@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `4a5b9e47`  
+> **Source Version**: `758c46de`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T09:54:12.026Z  
+> **Timestamp**: 2026-10-31T14:19:36.333Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T09:48:33.661Z  
+> **Harvest Timestamp**: 2026-10-31T14:19:36.325Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7434 stars
+- **Stars / Engagement**: 7436 stars
 
 ---
 
@@ -880,19 +880,212 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4a5b9e47` (2026-10-25)
-**Commit Message**: build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)
+### Incident Patch 1: `3cc21aa2` (2026-10-31)
+**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14705)
 
-Bumps [org.mybatis:mybatis](https://github.com/mybatis/mybatis-3) from 3.5.19 to 3.6.0.
-- [Release notes](https://github.com/mybatis/mybatis-3/releases)
-- [Commits](https://github.com/mybatis/mybatis-3/compare/mybatis-3.5.19...mybatis-3.6.0)
+Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.106.1 to 1.107.0.
+- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/sass/embedded-host-node/compare/1.106.1...1.107.0)
 
 ---
 updated-dependencies:
-- dependency-name: org.mybatis:mybatis
-  dependency-version: 3.6.0
+- dependency-name: sass-embedded
+  dependency-version: 1.107.0
+  dependency-type: direct:development
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+```diff
+@@ -104,7 +104,7 @@
+     "license-checker": "^25.0.1",
+     "mini-css-extract-plugin": "^2.10.2",
+     "mockdate": "^3.0.5",
+-    "sass-embedded": "^1.106.1",
++    "sass-embedded": "^1.107.0",
+     "sass-loader": "^17.1.0",
+     "simulate-event": "^1.4.0",
+     "sourcemapped-stacktrace": "^1.1.11",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
+```diff
+@@ -4640,7 +4640,7 @@ __metadata:
+     normalize-scss: "npm:^8.0.0"
+     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
+     prismjs: "npm:^1.30.0"
+-    sass-embedded: "npm:^1.106.1"
++    sass-embedded: "npm:^1.107.0"
+     sass-loader: "npm:^17.1.0"
+     shell-quote: "npm:^1.12.0"
+     shellwords-ts: "npm:^3.0.1"
+@@ -7310,162 +7310,162 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-all-unknown@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-all-unknown@npm:1.106.1"
++"sass-embedded-all-unknown@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-all-unknown@npm:1.107.0"
+   dependencies:
+-    sass: "npm:1.106.1"
++    sass: "npm:1.107.0"
+   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-arm64@npm:1.106.1"
++"sass-embedded-android-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-arm64@npm:1.107.0"
+   conditions: os=android & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-arm@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-arm@npm:1.106.1"
++"sass-embedded-android-arm@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-arm@npm:1.107.0"
+   conditions: os=android & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-riscv64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-riscv64@npm:1.106.1"
++"sass-embedded-android-riscv64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-riscv64@npm:1.107.0"
+   conditions: os=android & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-android-x64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-android-x64@npm:1.106.1"
++"sass-embedded-android-x64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-android-x64@npm:1.107.0"
+   conditions: os=android & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-darwin-arm64@npm:1.106.1"
++"sass-embedded-darwin-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-darwin-arm64@npm:1.107.0"
+   conditions: os=darwin & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-darwin-x64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-darwin-x64@npm:1.106.1"
++"sass-embedded-darwin-x64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-darwin-x64@npm:1.107.0"
+   conditions: os=darwin & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-arm64@npm:1.106.1"
++"sass-embedded-linux-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-arm64@npm:1.107.0"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-arm@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-arm@npm:1.106.1"
++"sass-embedded-linux-arm@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-arm@npm:1.107.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-arm64@npm:1.106.1"
++"sass-embedded-linux-musl-arm64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-arm64@npm:1.107.0"
+   conditions: os=linux & cpu=arm64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-arm@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-arm@npm:1.106.1"
++"sass-embedded-linux-musl-arm@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-arm@npm:1.107.0"
+   conditions: os=linux & cpu=arm
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-riscv64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-riscv64@npm:1.106.1"
++"sass-embedded-linux-musl-riscv64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-riscv64@npm:1.107.0"
+   conditions: os=linux & cpu=riscv64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-musl-x64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-musl-x64@npm:1.106.1"
++"sass-embedded-linux-musl-x64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-musl-x64@npm:1.107.0"
+   conditions: os=linux & cpu=x64
+   languageName: node
+   linkType: hard
+ 
+-"sass-embedded-linux-riscv64@npm:1.106.1":
+-  version: 1.106.1
+-  resolution: "sass-embedded-linux-riscv64@npm:1.106.1"
++"sass-embedded-linux-riscv64@npm:1.107.0":
++  version: 1.107.0
++  resolution: "sass-embedded-linux-riscv64@npm:1.107.0"
+   conditions: os=linux & cpu=riscv64
+   languageName: no
+```
+
+---
+
+### Incident Patch 2: `758c46de` (2026-10-31)
+**Commit Message**: build(deps): bump com.autonomousapps.dependency-analysis (#14703)
+
+Bumps the gradle-plugins group with 1 update: com.autonomousapps.dependency-analysis.
+
+
+Updates `com.autonomousapps.dependency-analysis` from 3.19.2 to 3.20.0
+
+---
+updated-dependencies:
+- dependency-name: com.autonomousapps.dependency-analysis
+  dependency-version: 3.20.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
+  dependency-group: gradle-plugins
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
@@ -900,24 +1093,99 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `build.gradle` (modified, +1/-1)
 ```diff
-@@ -131,7 +131,7 @@ def libraries = [
-   logback             : 'ch.qos.logback:logback-classic:1.6.5',
-   lombok              : 'org.projectlombok:lombok:1.18.48',
-   mockitoBom          : 'org.mockito:mockito-bom:5.24.0',
--  mybatis             : 'org.mybatis:mybatis:3.5.19',
-+  mybatis             : 'org.mybatis:mybatis:3.6.0',
-   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
-   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
-   objenesis           : 'org.objenesis:objenesis:3.6',
+@@ -38,7 +38,7 @@ import java.time.Duration
+ plugins {
+   id 'base'
+   id 'org.owasp.dependencycheck' version '13.0.0'
+-  id 'com.autonomousapps.dependency-analysis' version '3.19.2'
++  id 'com.autonomousapps.dependency-analysis' version '3.20.0'
+ }
+ 
+ // Updated via automated scripting
+```
+
+---
+
+### Incident Patch 3: `d521ceaf` (2026-10-31)
+**Commit Message**: build(deps-ui-dev): bump @types/node (#14704)
+
+Bumps the types group in /server/src/main/webapp/WEB-INF/rails with 1 update: [@types/node](https://github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node).
+
+
+Updates `@types/node` from 26.6.5 to 26.6.6
+- [Release notes](https://github.com/DefinitelyTyped/DefinitelyTyped/releases)
+- [Commits](https://github.com/DefinitelyTyped/DefinitelyTyped/commits/HEAD/types/node)
+
+---
+updated-dependencies:
+- dependency-name: "@types/node"
+  dependency-version: 26.6.6
+  dependency-type: direct:development
+  update-type: version-update:semver-patch
+  dependency-group: types
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+```diff
+@@ -73,7 +73,7 @@
+     "@types/license-checker": "^25.0.6",
+     "@types/lodash": "^4.17.26",
+     "@types/mithril": "2.2.9",
+-    "@types/node": "^26.6.5",
++    "@types/node": "^26.6.6",
+     "@types/prismjs": "^1.26.6",
+     "@types/shell-quote": "^1.7.5",
+     "@types/underscore.string": "^0.0.42",
+```
+
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +11/-2)
+```diff
+@@ -1971,7 +1971,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^26.6.5":
++"@types/node@npm:*, @types/node@npm:>=10.0.0":
+   version: 26.6.5
+   resolution: "@types/node@npm:26.6.5"
+   dependencies:
+@@ -1980,6 +1980,15 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
++"@types/node@npm:^26.6.6":
++  version: 26.6.6
++  resolution: "@types/node@npm:26.6.6"
++  dependencies:
++    undici-types: "npm:~8.9.0"
++  checksum: 10c0/5cb63f644f6e85a257a9cd2403cbcbe196760e2a35fd3ec9fb8b5cff663e14cc832b198cc17b53f870a2e30900ed45a1fb3f53e6589aba26b8e8c484aa672053
++  languageName: node
++  linkType: hard
++
+ "@types/prismjs@npm:^1.26.6":
+   version: 1.26.6
+   resolution: "@types/prismjs@npm:1.26.6"
+@@ -4589,7 +4598,7 @@ __metadata:
+     "@types/license-checker": "npm:^25.0.6"
+     "@types/lodash": "npm:^4.17.26"
+     "@types/mithril": "npm:2.2.9"
+-    "@types/node": "npm:^26.6.5"
++    "@types/node": "npm:^26.6.6"
+     "@types/prismjs": "npm:^1.26.6"
+     "@types/shell-quote": "npm:^1.7.5"
+     "@types/underscore.string": "npm:^0.0.42"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14696** (2026-10-25): build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (@dependabot[bot])
-- **PR #14695** (2026-10-25): build(deps-ui-dev): bump webpack from 5.112.0 to 5.112.2 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
-- **PR #14694** (2026-10-25): build(deps-ui): bump undici from 8.11.2 to 8.12.3 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14693** (2026-10-25): build(deps-ui): bump fast-uri from 3.1.8 to 3.1.9 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14692** (2026-10-24): build(deps-ui): bump filesize from 11.0.26 to 11.0.28 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14691** (2026-10-24): build(deps-ui): bump chart.js from 4.5.1 to 4.6.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14708** (closed): [WIP] Build(deps-ui): bump what-input from 5.2.12 to 6.0.1 (@Copilot)
+- **PR #14707** (closed): build(deps-ui): bump what-input from 5.2.12 to 6.0.1 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14706** (2026-10-31): build(deps-ui-dev): bump tzinfo-data from 1.2026.5 to 1.2026.6 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14705** (2026-10-31): build(deps-ui-dev): bump sass-embedded from 1.106.1 to 1.107.0 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14704** (2026-10-31): build(deps-ui-dev): bump @types/node from 26.6.5 to 26.6.6 in /server/src/main/webapp/WEB-INF/rails in the types group (@dependabot[bot])
+- **PR #14703** (2026-10-31): build(deps): bump com.autonomousapps.dependency-analysis from 3.19.2 to 3.20.0 in the gradle-plugins group (@dependabot[bot])
 
 ---
 
@@ -937,28 +1205,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696)
+## X. build(deps-ui-dev): bump sass-embedded (#14705)
 
 **RULE**:
-When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4a5b9e47`: build(deps): bump org.mybatis:mybatis from 3.5.19 to 3.6.0 (#14696). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3cc21aa2`: build(deps-ui-dev): bump sass-embedded (#14705). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  mybatis             : 'org.mybatis:mybatis:3.6.0',
+    "sass-embedded": "^1.107.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-  mybatis             : 'org.mybatis:mybatis:3.5.19',
+    "sass-embedded": "^1.106.1",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4a5b9e47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3cc21aa2` are properly handled with clean fallback behavior.

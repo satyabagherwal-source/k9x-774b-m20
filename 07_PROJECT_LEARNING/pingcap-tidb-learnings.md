@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `0073665a`  
+> **Source Version**: `49ad4202`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T04:12:34.844Z  
+> **Timestamp**: 2026-10-31T04:22:23.628Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T04:12:33.789Z  
+> **Harvest Timestamp**: 2026-10-31T04:22:22.806Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40674 stars
+- **Stars / Engagement**: 40691 stars
 
 ---
 
@@ -1919,11 +1919,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #72285** (2026-10-24): **expression: use the binary collation for an implicit cast to a binary string**
-  *Symptoms*: ### What problem does this PR solve?  Issue Number: close #69191  Problem Summary:  `BINARY(expr)` and other casts to a binary string that are not built with an explicit charset get their collation info from the connection (`ctx.GetCharsetInfo()`), while their return type says `binary`. TiDB evaluates with the return type, but `scalarFuncToPBExpr` sends `CharsetAndCollation()` to the coprocessor. So `MIN(BINARY(...))`, which max/min elimination turns into a TopN pushed to TiKV, is sorted by the connection collation in TiKV and by the binary collation in TiDB. With `utf8mb4_general_ci` or `utf8mb4_0900_ai_ci` as the connection collation the query returns a wrong minimum.  ### What changed and how does it work?  A cast to a string type whose charset is `binary` now always uses the binary collation, explicit charset or not.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [x] Integration test - [x] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  The new cases in `collation_misc` fail without the fix in the new collation mode and pass in both modes with it. The issue's queries return `323032302D31312D3234` for both forms on a nightly TiKV playground with the patched TiDB (before: `5D` for the single table query). The whole integration test suite, `go test ./pkg/expression/...`, `./pkg/planner/core/...` an
+- **Issue #72542** (2026-10-30): **build: resolve Bazel Go deps through GOPROXY (#69844)**
+  *Symptoms*: ### What problem does this PR solve?  Issue Number: ref #69513  Cherry-pick #69844 (the release-8.5 backport of master #69503) to **release-8.5-20260715-v8.5.7**. This CB branched immediately before #69844 and still uses the retired Go-module mirror URL flow.  This is the standalone prerequisite for #72522; it does not include the Go 1.27 Bazel-tooling or ABI changes.  ### What changed?  - Generate Go dependency repositories using module `sum` and `version`, resolved through the configured `GOPROXY`, instead of static mirror URLs and archive SHA/strip-prefix metadata. - Remove the old ZIP mirroring/upload implementation and unused skylark parser dependency. Keep legacy CLI flags as deprecated no-ops and retain the release-branch generation behavior. - Update the preparation/mirror Makefile targets to use the migrated generator. - Resolve the automated cherry-pick's committed kvproto conflict in `DEPS.bzl`. Keep cosmos's existing **v0.0.0-20261026041219-2c5f843b9827** and its verified module sum **h1:36snzl9cRshFt/A9/mzbYPk5C9Y+iZlNQIUCvR5SUb4=**, not the older June version from the historical source PR.  - Align the Bazel Go SDK from **1.25.10 to 1.25.14**, matching the existing root module and pinned kvproto minimum. With `GOTOOLCHAIN=local`, GOPROXY fetching enforces this requirement; the old ZIP extraction path had hidden the mismatch.  No Go directive, dependency-version or Go 1.27 upgrade is introduced. The initial conflict repair changes only the kvproto declaration; th
 
-- **Issue #72257** (2026-10-25): **Cascades planner fails with error 1815 when the same CTE is referenced more than once**
-  *Symptoms*: ## Bug Report  ### 1. Minimal reproduce step (Required)  No tables or data are required. Run the following statements with default session settings apart from explicitly enabling Cascades:  ```sql SET tidb_enable_cascades_planner = ON;  WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT * FROM c; ```  The issue reproduces using the native `mysql` client, independently of the test harness.  ### 2. What did you expect to see? (Required)  The query should execute successfully and return one row:  ```text a 1 ```  ### 3. What did you see instead (Required)  ```text ERROR 1815 (HY000): Internal : Can't find a proper physical plan for this query ```  Disabling Cascades makes the same query succeed:  ```sql SET tidb_enable_cascades_planner = OFF;  WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT * FROM c; -- Returns one row: 1. ```  The following controls succeed with Cascades enabled:  ```sql SET tidb_enable_cascades_planner = ON;  -- UNION without a CTE. SELECT 1 AS a UNION SELECT 1 AS a;  -- A single reference to the CTE. WITH c AS (SELECT 1 AS a) SELECT * FROM c;  -- UNION with only one reference to the CTE. WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION SELECT 2;  -- Two separately defined CTEs, each referenced once. WITH c1 AS (SELECT 1 AS a), c2 AS (SELECT 1 AS a) SELECT * FROM c1 UNION SELECT * FROM c2; ```  However, referencing the same CTE twice also produces error 1815 with UNION ALL and a self-join:  ```sql WITH c AS (SELECT 1 AS a) SELECT * FROM c UNION ALL S
+- **Issue #72540** (2026-10-30): **mvservice, domain: integrate automatic materialized view maintenance**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  The merged MVService scheduling engine needs production SQL/metadata adapters and startup wiring to run automatic materialized view maintenance. This PR connects refresh and log purge to the running TiDB service, the existing concurrency/backpressure variables and runtime monitoring.  ### What changed and how does it work?  - Implement infosync membership discovery, instance deduplication, InfoSchema lookup and schedule loading, plus restricted SQL for automatic fast refresh and log purge. Apply global maintenance settings to borrowed system sessions and restore them on success and failure. - Persist manual-cancellation backoff through the existing metadata transactions, and filter MV-related DDL events for reload notifications. - Register the service and DDL consumer during Domain initialization, start the service during normal bootstrap, and manage the scheduler and cross-TiDB DDL notification loops through the Domain lifecycle. - Bind the four existing task concurrency/b
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1940,347 +1940,444 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b1731737` (2026-10-22)
-**Commit Message**: *: make the graceful shutdown drain timeout configurable (#71796)
+### Incident Patch 1: `49ad4202` (2026-10-30)
+**Commit Message**: planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078)
 
-ref pingcap/tidb#48158, close pingcap/tidb#50143, ref pingcap/tidb#71795
+ref pingcap/tidb#71999
 
-**File**: `cmd/tidb-server/main.go` (modified, +2/-5)
+**File**: `pkg/planner/cardinality/row_count_column.go` (modified, +32/-0)
 ```diff
-@@ -1324,14 +1324,11 @@ func closeDDLOwnerMgrDomainAndStorage(storage kv.Storage, dom *domain.Domain) {
- 	}
+@@ -256,6 +256,19 @@ func betweenRowCountOnColumn(sctx planctx.PlanContext, c *statistics.Column, l,
+ 	return histBetweenCnt
  }
  
--// The amount of time we wait for the ongoing txt to finished.
--// We should better provider a dynamic way to set this value.
--var gracefulCloseConnectionsTimeout = 15 * time.Second
--
- func cleanup(svr *server.Server, storage kv.Storage, dom *domain.Domain) {
- 	dom.StopAutoAnalyze()
- 
--	drainClientWait := gracefulCloseConnectionsTimeout
-+	// The amount of time we wait for the ongoing statements and transactions to finish.
-+	drainClientWait := time.Duration(config.GetGlobalConfig().GracefulCloseConnectionsTimeout) * time.Second
- 	if deploymode.IsStarter() && svr.GetForceShutdown() {
- 		drainClientWait = 0
- 	}
-```
-
-**File**: `pkg/config/config.go` (modified, +7/-0)
-```diff
-@@ -255,6 +255,9 @@ type Config struct {
- 	IndexLimit                 int                     `toml:"index-limit" json:"index-limit"`
- 	TableColumnCountLimit      uint32                  `toml:"table-column-count-limit" json:"table-column-count-limit"`
- 	GracefulWaitBeforeShutdown int                     `toml:"graceful-wait-before-shutdown" json:"graceful-wait-before-shutdown"`
-+	// GracefulCloseConnectionsTimeout is the number of seconds the server waits during shutdown for running
-+	// statements and open transactions to finish before it kills the remaining connections.
-+	GracefulCloseConnectionsTimeout int `toml:"graceful-close-connections-timeout" json:"graceful-close-connections-timeout"`
- 	// AlterPrimaryKey is used to control alter primary key feature.
- 	AlterPrimaryKey bool `toml:"alter-primary-key" json:"alter-primary-key"`
- 	// TreatOldVersionUTF8AsUTF8MB4 is use to treat old version table/column UTF8 charset as UTF8MB4. This is for compatibility.
-@@ -1327,6 +1330,7 @@ var defaultConf = Config{
- 	TiDBEnableExitCheck:                  false,
- 	InMemSlowQueryTopNNum:                30,
- 	InMemSlowQueryRecentNum:              500,
-+	GracefulCloseConnectionsTimeout:      15,
- 	CSE: CSE{
- 		ColumnarStoreType:      "tiflash",
- 		ColumnarCollectTimeout: 5 * time.Second,
-@@ -1798,6 +1802,9 @@ func (c *Config) Valid() error {
- 	if c.IndexLimit < DefIndexLimit || c.IndexLimit > DefMaxOfIndexLimit {
- 		return fmt.Errorf("index-limit should be [%d, %d]", DefIndexLimit, DefMaxOfIndexLimit)
- 	}
-+	if c.GracefulCloseConnectionsTimeout < 0 {
-+		return fmt.Errorf("graceful-close-connections-timeout should not be negative")
++// allColumnsHaveStats returns true if the first n columns of idxCols all have valid column statistics.
++func allColumnsHaveStats(sctx planctx.PlanContext, coll *statistics.HistColl, idxCols []*expression.Column, n int) bool {
++	if n > len(idxCols) {
++		return false
 +	}
- 	if c.Log.File.MaxSize > MaxLogFileSize {
- 		return fmt.Errorf("invalid max log file size=%v which is larger than max=%v", c.Log.File.MaxSize, MaxLogFileSize)
++	for _, col := range idxCols[:n] {
++		if statistics.ColumnStatsIsInvalid(coll.GetCol(col.UniqueID), sctx, coll, col.UniqueID) {
++			return false
++		}
++	}
++	return true
++}
++
+ // getPseudoRowCountWithPartialStats calculates the row count if there are no statistics on the index, but there are column stats available.
+ func getPseudoRowCountWithPartialStats(sctx planctx.PlanContext, coll *statistics.HistColl, indexRanges []*ranger.Range,
+ 	tableRowCount float64, idxCols []*expression.Column) (totalCount float64, maxCount float64, err error) {
+@@ -284,7 +297,26 @@ func getPseudoRowCountWithPartialStats(sctx planctx.PlanContext, coll *statistic
+ 	)
+ 	totalCount = float64(0)
+ 	maxCount = float64(0)
++	colsIDs := make([]int64, len(idxCols))
++	for i, col := range idxCols {
++		colsIDs[i] = col.UniqueID
++	}
+ 	for _, indexRange := range indexRanges {
++		// Prefer exponential backoff when every column of the range has statistics. Assuming independence by
++		// multiplying the single column selectivities can badly underestimate an index whose columns each have
++		// a low NDV. If any column lacks statistics (e.g. a virtual column), exponential backoff would skip it
++		// entirely, so fall back to the pseudo estimation for that column below.
++		if len(indexRange.LowVal) > 1 && allColumnsHaveStats(sctx, coll, idxCols, len(indexRange.LowVal)) {
++			sel, _, maxSel, ok, err := expBackoffEstimationByColIDs(sctx, coll, colsIDs, 0, len(idxCols), false, indexRange, idxCols)
++			if err != nil {
++				return 0, 0, errors.Trace(err)
++			}
++			if ok {
++				totalCount += sel * tableRowCount
++				maxCount += maxSel * tableRowCount
++				continue
++			}
++		}
+ 		selectivity := float64(1.0)
+ 		corrSelectivity := float64(1.0)
+ 		for i := range indexRange.LowVal {
+```
+
+**File**: `pkg/planner/cardinality/row_count_index.go` (modified, +13/-6)
+```diff
+@@ -451,14 +451,22 @@ func equalRowCountOnIndex(sctx planctx.PlanContext, idx *statistics.Index, b []b
+ 
+ // expBackoffEstimation estimate the multi-col cases following the Exponential Backoff. See comment below for details.
+ func expBackoffEstimation(sctx planctx.PlanContext, idx *statistics.Index, coll *statistics.HistColl, indexRange *ranger.Range, idxCols []*expression.Column) (sel float64, minSel float64, maxSel float64, success bool, err error) {
++	idxHasStats := idx.Histogram.Len() > 0 || idx.TopN.Num() > 0
++	return expBackoffEstimationByColIDs(sctx, coll, coll.Idx2ColUniqueIDs[idx.Histogram.ID], idx.NDV, len(idx.Info.Columns), idxHasStats, indexRange, idxCols)
++}
++
++// expBackoffEstimationByColIDs is the core of expBackoffEstimation. It does not require index statistics:
++// colsIDs are the unique IDs of the index columns, idxNDV is the index NDV (0 if unknown), numIdxCols is the
++// number of index columns, and idxHasStats indicates whether the index itself has a histogram or TopN.
++func expBackoffEstimationByColIDs(sctx planctx.PlanContext, coll *statistics.HistColl, colsIDs []int64, idxNDV int64, numIdxCols int, idxHasStats bool,
++	indexRange *ranger.Range, idxCols []*expression.Column) (sel float64, minSel float64, maxSel float64, success bool, err error) {
+ 	tmpRan := []*ranger.Range{
+ 		{
+ 			LowVal:    make([]types.Datum, 1),
+ 			HighVal:   make([]types.Datum, 1),
+ 			Collators: make([]collate.Collator, 1),
+ 		},
  	}
+-	colsIDs := coll.Idx2ColUniqueIDs[idx.Histogram.ID]
+ 	singleColumnEstResults := make([]float64, 0, len(indexRange.LowVal))
+ 	minSel, maxSel = 1.0, 1.0
+ 	// The following codes uses Exponential Backoff to reduce the impact of independent assumption. It works like:
+@@ -523,8 +531,7 @@ func expBackoffEstimation(sctx planctx.PlanContext, idx *statistics.Index, coll
+ 			// statistics. See https://github.com/pingcap/tidb/issues/69134.
+ 			// Any other column lacking statistics keeps the existing behavior:
+ 			// skip it and estimate from the remaining columns.
+-			if i < len(idxCols) && idxCols[i] != nil && idxCols[i].VirtualExpr != nil &&
+-				(idx.Histogram.Len() > 0 || idx.TopN.Num() > 0) {
++			if i < len(idxCols) && idxCols[i] != nil && idxCols[i].VirtualExpr != nil && idxHasStats {
+ 				return 0, 0, 0, false, nil
+ 			}
+ 			continue
+@@ -548,13 +555,13 @@ func expBackoffEstimation(sctx planctx.PlanContext, idx *statistics.Index, coll
+ 	// is less than the number of index columns - use 90% of the bound to differentiate a subset from full index match.
+ 	// If there is an individual column selectivity that goes below this bound, use that selectivity only.
+ 	histNDV := coll.RealtimeCount
+-	if idx.NDV > 0 {
+-		histNDV = idx.NDV
++	if idxNDV > 0 {
++		histNDV = idxNDV
+ 	}
+ 	idxLowBound := 1 / float64(min(histNDV, coll.RealtimeCount))
+ 	minBound := idxLowBound
+ 	// Adjust idxLowBound upwards if we have not used all index columns.
+-	if l < len(idx.Info.Columns) {
++	if l < numIdxCols {
+ 		idxLowBound /= 0.9
+ 	}
+ 	// maxSel is the "best" selectivity from all maximum of single column selectivities.
 ```
 
-**File**: `pkg/config/config.toml.example` (modified, +4/-0)
+**File**: `pkg/planner/cardinality/selectivity_test.go` (modified, +107/-2)
 ```diff
-@@ -49,6 +49,10 @@ compatible-kill-query = false
- # The health check will fail immediately but the server will not start shutting down until the time has elapsed.
- graceful-wait-before-shutdown = 0
- 
-+# During shutdown, wait up to N seconds for running statements and open transactions to finish before killing
-+# the remaining connections. Connections that are idle between statements are closed without waiting.
-+graceful-close-connections-timeout = 15
-+
- # treat-old-version-utf8-as-utf8mb4 use for upgrade compatibility. Set to true will treat old version table/column UTF8 charset as UTF8MB4.
- treat-old-version-utf8-as-utf8mb4 = true
- 
-```
-
-**File**: `pkg/config/config.toml.nextgen.example` (modified, +4/-0)
-```diff
-@@ -60,6 +60,10 @@ compatible-kill-query = false
- # The health check will fail immediately but the server will not start shutting down until the time has elapsed.
- graceful-wait-before-shutdown = 0
- 
-+# During shutdown, wait up to N seconds for running statements and open transactions to finish before killing
-+# the remaining connections. Connections that are idle between statements are closed without waiting.
-+graceful-close-connections-timeout = 15
-+
- # treat-old-version-utf8-as-utf8mb4 use for upgrade compatibility. Set to true will treat old version table/column UTF8 charset as UTF8MB4.
- treat-old-version-utf8-as-utf8mb4 = true
- 
-```
-
-**File**: `pkg/config/config_test.go` (modified, +10/-1)
-```diff
-@@ -1130,7 +1130,14 @@ ingest-kv-bytes = 3
- 			require.ErrorContains(t, conf.Valid(), "ru-v2.ddl-weights.ingest-kv-bytes")
- 		}
- 	})
--	conf := new(Config)
-+	require.Equal(t, 15, NewConfig().GracefulCloseConnectionsTimeout)
-+	conf := NewConfig()
-+	conf.GracefulCloseConnectionsTimeout = 0
-+	require.NoError(t, conf.Valid())
-+	conf.GracefulCloseConnectionsTimeout = -1
-+	require.ErrorContains(t, conf.Valid(), "graceful-close-connections-timeout")
-+
-+	conf = new(Config)
- 	conf.TempStoragePath = tempStorageDirName
- 	conf.Performance.TxnTotalSizeLimit = 1000
- 	conf.TiKVClient.CommitTimeout = "10s"
-@@ -1194,6 +1201,7 @@ repair-mode = true
- max-index-length = 3080
- index-limit = 70
- table-column-count-limit = 4000
-+graceful-close-connections-timeout = 120
- skip-register-to-dashboard = true
- deprecate-integer-display-length = true
- enable-enum-length-limit = false
-@@ -1282,6 +1290,7 @@ max_connections = 200
- 	require.Equal(t, 3080, conf.MaxIndexLength)
- 	require.Equal(t, 70, conf.IndexLimit)
- 	require.Equal(t, uint32(4000), conf.TableColumnCountLimit)
-+	require.Equal(t, 120, conf.GracefulCloseConnectionsTimeout)
- 	require.True(t, conf.SkipRegisterToDashboard)
- 	require.Equal(t, 3, len(conf.Labels))
- 	require.Equal(t, "bar", conf.Labels["foo"])
-```
-
-**File**: `pkg/executor/simple.go` (modified, +5/-3)
-```diff
-@@ -3614,10 +3614,12 @@ func asyncDelayShutdown(p *os.Process, delay time.Duration) {
- 	// Sending SIGKILL should not be needed as SIGTERM should cause a graceful shutdown after
- 	// n seconds as configured by the GracefulWaitBeforeShutdown. This is here in case that doesn't
- 	// work for some reason.
--	graceTime := config.GetGlobalConfig().GracefulWaitBeforeShutdown
-+	cfg := config.GetGlobalConfig()
-+	graceTime := cfg.GracefulWaitBeforeShutdown
- 
--	// The shutdown is supposed to start at graceTime and is allowed to take up to 10s.
--	time.Sleep(time.Second * time.Duration(graceTime+10))
-+	// The shutdown is supposed to start at graceTime, drain clients for up to GracefulCloseConnectionsTimeout,
-+	// and is allowed to take up to 10s more for the rest of the cleanup.
-+	time.Sleep(time.Second * time.Duration(graceTime+cfg.GracefulCloseConnectionsTimeout+10))
- 	logutil.BgLogger().Info("Killing process as grace period is over", zap.Int("pid", p.Pid), zap.Int("graceTime", graceTime))
- 	err = p.Kill()
- 	if err != nil {
-```
-
----
-
-### Incident Patch 2: `0073665a` (2026-10-24)
-**Commit Message**: txn: update client-go to fix repeated lock resolution (#72232)
-
-close pingcap/tidb#72231
-
-**File**: `DEPS.bzl` (modified, +2/-2)
-```diff
-@@ -4527,8 +4527,8 @@ def go_deps():
-         build_tags = ["nextgen", "intest"],
-         build_file_proto_mode = "disable_global",
-         importpath = "github.com/tikv/client-go/v2",
--        sum = "h1:R/KBFo6TCJompFfg1AZ0udz9z8AuyRCYE0Aalrc1Zl8=",
--        version = "v2.0.8-0.20260928031501-8edb23f6c7ee",
-+        sum = "h1:4HxKZfJqBoV7aPdLPcWRXImDqKCoZtZm0m0smNGgcGo=",
-+        version = "v2.0.8-0.20261023145611-a0d0bf6b591f",
-     )
-     go_repository(
-         name = "com_github_tikv_pd_client",
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -121,7 +121,7 @@ require (
- 	github.com/stretchr/testify v1.11.1
- 	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.3.142
- 	github.com/tiancaiamao/appdash v0.0.0-20181126055449-889f96f722a2
--	github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee
-+	github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f
- 	github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149
- 	github.com/timakin/bodyclose v0.0.0-20241222091800-1db5c5ca4d67
- 	github.com/twmb/murmur3 v1.1.6
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -2368,8 +2368,8 @@ github.com/tidwall/pretty v1.2.1 h1:qjsOFOWWQl+N3RsoF5/ssm1pHmJJwhjlSbZ51I6wMl4=
- github.com/tidwall/pretty v1.2.1/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
- github.com/tidwall/sjson v1.2.5 h1:kLy8mja+1c9jlljvWTlSazM7cKDRfJuR/bOJhcY5NcY=
- github.com/tidwall/sjson v1.2.5/go.mod h1:Fvgq9kS/6ociJEDnK0Fk1cpYF4FIW6ZF7LAe+6jwd28=
--github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee h1:R/KBFo6TCJompFfg1AZ0udz9z8AuyRCYE0Aalrc1Zl8=
--github.com/tikv/client-go/v2 v2.0.8-0.20260928031501-8edb23f6c7ee/go.mod h1:U0rq982i6UbAH1LUfc4t2BxZoAWvwW1JkEhGp+yEf3w=
-+github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f h1:4HxKZfJqBoV7aPdLPcWRXImDqKCoZtZm0m0smNGgcGo=
-+github.com/tikv/client-go/v2 v2.0.8-0.20261023145611-a0d0bf6b591f/go.mod h1:6RHGg6yqa8Wc0cPeyvX7GL4wS6Alz9xZO9Kiopfkkyg=
- github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149 h1:q5NgKsvuOdEHspG/pZEpKhWlPLrIfmO8P/lDFjTEdok=
- github.com/tikv/pd/client v0.0.0-20260805103528-afa43111d149/go.mod h1:sfdha4LXeUkSs2Z7N5jLzDEtm0GE7x+Glm2pW3UgEpA=
- github.com/timakin/bodyclose v0.0.0-20241222091800-1db5c5ca4d67 h1:9LPGD+jzxMlnk5r6+hJnar67cgpDIz/iyD+rfl5r2Vk=
-```
-
-**File**: `tests/realtikvtest/txntest/BUILD.bazel` (modified, +1/-0)
-```diff
-@@ -48,6 +48,7 @@ go_test(
-         "@com_github_tikv_client_go_v2//tikv",
-         "@com_github_tikv_client_go_v2//tikvrpc",
-         "@com_github_tikv_client_go_v2//tikvrpc/interceptor",
-+        "@com_github_tikv_client_go_v2//txnkv/txnlock",
-         "@io_opencensus_go//stats/view",
-     ],
- )
-```
-
-**File**: `tests/realtikvtest/txntest/txn_test.go` (modified, +207/-0)
-```diff
-@@ -25,18 +25,24 @@ import (
- 
- 	"github.com/pingcap/errors"
- 	"github.com/pingcap/failpoint"
-+	"github.com/pingcap/kvproto/pkg/kvrpcpb"
- 	"github.com/pingcap/tidb/pkg/config"
- 	"github.com/pingcap/tidb/pkg/config/kerneltype"
- 	"github.com/pingcap/tidb/pkg/errno"
- 	"github.com/pingcap/tidb/pkg/expression"
- 	"github.com/pingcap/tidb/pkg/kv"
- 	"github.com/pingcap/tidb/pkg/session"
-+	"github.com/pingcap/tidb/pkg/tablecodec"
- 	"github.com/pingcap/tidb/pkg/testkit"
-+	"github.com/pingcap/tidb/pkg/testkit/external"
- 	"github.com/pingcap/tidb/pkg/testkit/testfailpoint"
- 	"github.com/pingcap/tidb/pkg/util/sqlexec"
- 	"github.com/pingcap/tidb/tests/realtikvtest"
- 	"github.com/stretchr/testify/require"
-+	"github.com/tikv/client-go/v2/oracle"
-+	"github.com/tikv/client-go/v2/tikv"
- 	"github.com/tikv/client-go/v2/tikvrpc"
-+	"github.com/tikv/client-go/v2/txnkv/txnlock"
- )
- 
- func TestInTxnPSProtoPointGet(t *testing.T) {
-@@ -242,6 +248,207 @@ func TestDuplicateErrorMessage(t *testing.T) {
- 	tk.MustContainErrMsg("update t3 set c = c + 1 where v = 1", "Duplicate entry '1' for key 't3.i1'")
+@@ -783,6 +783,10 @@ func TestNewIndexWithoutStats(t *testing.T) {
+ 	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b > 5 and c > 5").CheckContain("idxab(a, b)")
+ 	// New index idxab should NOT win because idxca has the same number of equals and has statistics
+ 	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b > 5 and c = 5").CheckContain("idxca(c, a)")
++	// The missing-statistics rules do not depend on tidb_opt_prefer_range_scan.
++	testKit.MustExec("set @@tidb_opt_prefer_range_scan=0")
++	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b = 5").CheckContain("idxab(a, b)")
++	testKit.MustQuery("explain format='brief' select * from t where a = 5 and b > 5 and c = 5").CheckContain("idxca(c, a)")
  }
  
-+type observeInsertLockClient struct {
-+	tikv.Client
-+	onResponse func(*tikvrpc.Request, *tikvrpc.Response, error) (*tikvrpc.Response, error)
+ func TestIssue57948(t *testing.T) {
+@@ -797,12 +801,37 @@ func TestIssue57948(t *testing.T) {
+ 	testKit.MustExec("set @@global.tidb_enable_auto_analyze='OFF'")
+ 	testKit.MustExec("insert into t values (1, 1, 1)")
+ 	testKit.MustExec("insert into t select mod(a,250), mod(a,10), mod(a,100) from (with recursive x as (select 1 as a union all select a + 1 AS a from x where a < 500) select a from x) as subquery")
+-	testKit.MustExec("analyze table t")
++	// Leave column b without statistics, so the new index has no statistics to estimate from.
++	testKit.MustExec("analyze table t columns a, c")
+ 	testKit.MustExec("create index idxb on t(b)")
+-	// Create index after ANALYZE. SkyLine pruning should ensure that idxb is chosen because it has statistics
++	// Create index after ANALYZE. SkyLine pruning should ensure that idxb is chosen even though it is missing statistics
+ 	testKit.MustQuery("explain format='brief' select * from t where b = 5").CheckContain("idxb(b)")
+ }
+ 
++func TestMissingStatsIndexUsesColumnStats(t *testing.T) {
++	// An index without statistics, whose access columns all have column statistics, is compared on its
++	// estimates instead of by the missing-statistics heuristics. It should behave as if it was analyzed.
++	store, _ := testkit.CreateMockStoreAndDomain(t)
++	testKit := testkit.NewTestKit(t, store)
++	testKit.MustExec("use test")
++	testKit.MustExec("drop table if exists t")
++	testKit.MustExec("create table t(a int, b int, c int, d int)")
++	testKit.MustExec("set @@tidb_analyze_version=2")
++	testKit.MustExec("set @@global.tidb_enable_auto_analyze='OFF'")
++	// a, b and c are fully correlated with 2 distinct values each. d is unique.
++	testKit.MustExec("insert into t select mod(a,2), mod(a,2), mod(a,2), a from (with recursive x as (select 1 as a union all select a + 1 AS a from x where a < 1000) select a from x) as subquery")
++	testKit.MustExec("analyze table t")
++	testKit.MustExec("create index idx_abc on t(a, b, c)")
++	testKit.MustExec("create index idx_d on t(d)")
++	for _, preferRange := range []string{"0", "1"} {
++		testKit.MustExec("set @@tidb_opt_prefer_range_scan=" + preferRange)
++		// Half of the table matches. The extra equal predicates of idx_abc must not prune the full table scan.
++		testKit.MustQuery("explain format='brief' select * from t where a = 1 and b = 1 and c = 1").CheckContain("TableFullScan")
++		// A selective index is still chosen.
++		testKit.MustQuery("explain format='brief' select * from t where d = 5").CheckContain("idx_d(d)")
++	}
 +}
 +
-+func (c *observeInsertLockClient) SendRequest(ctx context.Context, addr string, req *tikvrpc.Request, timeout time.Duration) (*tikvrpc.Response, error) {
-+	resp, err := c.Client.SendRequest(ctx, addr, req, timeout)
-+	return c.onResponse(req, resp, err)
-+}
-+
-+// TestInsertOnDuplicateKeyUpdateResolvesRepeatedLocks verifies that an INSERT
-+// encountering repeated locks from unique-index checks resolves them and preserves committed rows.
-+// See https://github.com/pingcap/tidb/issues/72231.
-+func TestInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t *testing.T) {
-+	testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t, false)
-+}
-+
-+// TestInsertOnDuplicateKeyUpdateRollsBackRepeatedLocks verifies that an INSERT
-+// encountering expired repeated locks rolls them back and writes the expected rows.
-+// See https://github.com/pingcap/tidb/issues/72231.
-+func TestInsertOnDuplicateKeyUpdateRollsBackRepeatedLocks(t *testing.T) {
-+	testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t, true)
-+}
-+
-+func testInsertOnDuplicateKeyUpdateResolvesRepeatedLocks(t *testing.T, rollback bool) {
-+	store := realtikvtest.CreateMockStoreAndSetup(t)
+ func TestVirtualColumnIndexEstimation(t *testing.T) {
+ 	// A composite index whose last column is a virtual generated column. Virtual
+ 	// columns have no column statistics, so the exponential backoff estimation
+@@ -957,6 +986,82 @@ func TestNewIndexWithColumnStats(t *testing.T) {
+ 	require.NotEqual(t, rowCnt1, rowCnt2)
+ }
+ 
++func TestNewIndexWithLowNDVColumnStats(t *testing.T) {
++	// An index without statistics, whose columns each have a low NDV, is estimated from column statistics.
++	// The columns are fully correlated, so assuming independence would underestimate badly. Exponential
++	// backoff must be used instead.
++	store, _ := testkit.CreateMockStoreAndDomain(t)
++	testKit := testkit.NewTestKit(t, store)
++	testKit.MustExec("use test")
++	testKit.MustExec("drop table if exists t")
++	testKit.MustExec("create table t(a int, b int, c int)")
++	testKit.MustExec("set @@tidb_analyze_version=2")
++	testKit.MustExec("set @@global.tidb_enable_auto_analyze='OFF'")
++	testKit.MustExec("insert into t select mod(a,10), mod(a,10), mod(a,10) from (with recursive x as (select 1 as a union all select a + 1 AS a from x where a < 1000) select a from x) as subquery")
++	testKit.MustExec("analyze table t")
++	testKit.MustExec("create index idx_abc on t(a, b, c)")
++	rows := testKit.MustQuery("explain format='brief' select * from t use index(idx_abc) where a = 1 and b = 1 and c = 1").Rows()
++	var estRows float64
++	for _, row := range rows {
++		if strings.Contains(row[0].(string), "IndexRangeScan") {
++			var err error
++			estRows, err = strconv.ParseFloat(row[1].(string), 64)
++			require.NoError(t, err)
++		}
++	}
++	// Actual row count is 100. Independence would estimate 1000 * 0.1^3 = 1, while exponen
+```
+
+**File**: `pkg/planner/core/casetest/index/BUILD.bazel` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ go_test(
+     ],
+     data = glob(["testdata/**"]),
+     flaky = True,
+-    shard_count = 14,
++    shard_count = 15,
+     deps = [
+         "//pkg/domain",
+         "//pkg/domain/infosync",
+```
+
+**File**: `pkg/planner/core/casetest/index/index_test.go` (modified, +25/-0)
+```diff
+@@ -600,6 +600,31 @@ func TestIndexPruneWithSharedClusteredPrefix(t *testing.T) {
+ 	})
+ }
+ 
++func TestSkylinePruningWithMissingIndexStats(t *testing.T) {
++	store := testkit.CreateMockStore(t)
 +	tk := testkit.NewTestKit(t, store)
 +	tk.MustExec("use test")
-+	tk.MustExec("create table insert_duplicate_locks (id int primary key, u int unique, v int)")
-+	tk.MustExec("set tidb_enable_async_commit = OFF")
-+	tk.MustExec("set tidb_enable_1pc = OFF")
-+	t.Log("TiDB version:", tk.MustQuery("select tidb_version()").Rows())
-+
-+	// Leave prewrite locks for the next INSERT to resolve, either committed or expired.
-+	var startTS uint64
-+	func() {
-+		var enabledFailpoints []string
-+		defer func() {
-+			for i := len(enabledFailpoints) - 1; i >= 0; i-- {
-+				if err := failpoint.Disable(enabledFailpoints[i]); err != nil {
-+					t.Errorf("failed to disable failpoint %s: %v", enabledFailpoints[i], err)
-+				}
-+			}
-+		}()
-+		enableFailpoint := func(name, expression string) {
-+			require.NoError(t, failpoint.Enable(name, expression))
-+			enabledFailpoints = append(enabledFailpoints, name)
++	tk.MustExec("set tidb_opt_prefer_range_scan = on")
++	tk.MustExec(`create table t (
++		id int not null, a int not null, b int not null, c int not null,
++		payload varchar(100), key idx_id(id))`)
++	var values strings.Builder
++	for i := 1; i <= 1000; i++ {
++		if i > 1 {
++			values.WriteString(",")
 +		}
-+
-+		enableFailpoint("tikvclient/twoPCRequestBatchSizeLimit", "return")
-+		if rollback {
-+			enableFailpoint("tikvclient/beforeCommit", `return("fail")`)
-+			enableFailpoint("tikvclient/commitFailedSkipCleanup", "return")
-+			enableFailpoint("tikvclient/twoPCShortLockTTL", "return")
-+			enableFailpoint("tikvclient/doNotKeepAlive", "return")
-+		} else {
-+			enableFailpoint("tikvclient/beforeCommitSecondaries", `return("skip")`)
-+		}
-+		tk.MustExec("begin optimistic")
-+		tk.MustExec("insert into insert_duplicate_locks values (1, 1, 10), (2, 2, 20), (3, 3, 30)")
-+		txn, err := tk.Session().Txn(false)
-+		require.NoError(t, err)
-+		startTS = txn.StartTS()
-+		if rollback {
-+			tk.MustContainErrMsg("commit", "injected failure before commit")
-+		} else {
-+			tk.MustExec("commit")
-+		}
-+		tk.Session().GetCommitWaitGroup().Wait()
-+	}()
-+
-+	tikvStore := store.(tikv.Storage)
-+	tableID := external.GetTableByName(t, tk, "test", "insert_duplicate_locks").Meta().ID
-+	tableStart := tablecodec.EncodeTablePrefix(tableID)
-+	tableEnd := tableStart.PrefixNext()
-+	scanLocks := func() (int, error) {
-+		resolver := tikv.NewRegionLockResolver("insert-duplicate-locks", tikvStore)
-+		bo := tikv.NewBackoffer(context.Background(), 5000)
-+		count := 0
-+		for key := []byte(tableStart); ; {
-+			locks, loc, err := resolver.ScanLocksInOneRegion(bo, key, tableEnd, startTS, 16)
-+			if err != nil {
-+				return 0, err
-+			}
-+			count += len(locks)
-+			if len(loc.EndKey) == 0 || bytes.Compare(loc.EndKey, tableEnd) >= 0 {
-+				return count, nil
-+			}
-+			key = loc.EndKey
-+		}
++		fmt.Fprintf(&values, "(%d, 1, 1, 1, 'payload')", i)
 +	}
-+	lockCount, err := scanLocks()
-+	require.NoError(t, err)
-+	if rollback {
-+		require.Equal(t, 6, lockCount, "the primary and all five secondaries must remain 
++	tk.MustExec("insert into t values " + values.String())
++	tk.MustExec("analyze table t")
++	tk.MustExec("alter table t add index idx_abc(a, b, c)")
++	// Only idx_id has statistics, and it is much more selective than idx_abc.
++	tk.MustQuery("show stats_histograms where db_name = 'test' and table_name = 't' and is_index = 1").CheckAt([]int{3}, testkit.Rows("idx_id"))
++	const query = "select * from t where id = 1 and a = 1 and b = 1 and c = 1"
++	tk.MustQuery("explain format = 'brief' " + query).CheckContain("index:idx_id(id)")
++	tk.MustQuery(query).Check(testkit.Rows("1 1 1 1 payload"))
++}
++
+ func TestForceIndexLimit(t *testing.T) {
+ 	testkit.RunTestUnderCascades(t, func(t *testing.T, tk *testkit.TestKit, cascades, caller string) {
+ 		tk.MustExec(`use test`)
+```
+
+**File**: `pkg/planner/core/find_best_task.go` (modified, +44/-28)
+```diff
+@@ -863,7 +863,7 @@ func (c *candidatePath) getCountAfterAccess4SkylinePruning() (float64, bool) {
+ // compareCandidates is the core of skyline pruning, which is used to decide which candidate path is better.
+ // The first return value is 1 if lhs is better, -1 if rhs is better, 0 if they are equivalent or not comparable.
+ // The 2nd return value indicates whether the "better path" is missing statistics or not.
+-func compareCandidates(sctx base.PlanContext, statsTbl *statistics.Table, prop *property.PhysicalProperty, lhs, rhs *candidatePath, preferRange bool) (int, bool) {
++func compareCandidates(sctx base.PlanContext, statsTbl *statistics.Table, prop *property.PhysicalProperty, lhs, rhs *candidatePath) (int, bool) {
+ 	// Due to #50125, full scan on MVIndex has been disabled, so MVIndex path might lead to 'can't find a proper plan' error at the end.
+ 	// Avoid MVIndex path to exclude all other paths and leading to 'can't find a proper plan' error, see #49438 for an example.
+ 	if isMVIndexPath(lhs.path) || isMVIndexPath(rhs.path) {
+@@ -916,11 +916,13 @@ func compareCandidates(sctx base.PlanContext, statsTbl *statistics.Table, prop *
+ 		(lhs.eqOrInCount > 0 || rhs.eqOrInCount > 0) { // At least one index has equal/IN predicates
+ 		lhsFullMatch := isFullIndexMatch(lhs)
+ 		rhsFullMatch := isFullIndexMatch(rhs)
+-		pseudoResult = comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch, eqOrInResult, lhs.eqOrInCount, rhs.eqOrInCount, preferRange)
+-		if pseudoResult > 0 && totalSum >= 0 {
++		pseudoResult = comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch, eqOrInResult, lhs.eqOrInCount, rhs.eqOrInCount)
++		// Predicate counts alone cannot justify pruning an index on different columns.
++		// The winner must also strictly dominate the other path's access conditions.
++		if pseudoResult > 0 && comparable1 && accessResult > 0 && totalSum >= 0 {
+ 			return pseudoResult, lhsPseudo
+ 		}
+-		if pseudoResult < 0 && totalSum <= 0 {
++		if pseudoResult < 0 && comparable1 && accessResult < 0 && totalSum <= 0 {
+ 			return pseudoResult, rhsPseudo
+ 		}
+ 	}
+@@ -985,24 +987,40 @@ func isCandidatesPseudo(lhs, rhs *candidatePath, statsTbl *statistics.Table) (lh
+ 	lhsPseudo, rhsPseudo = statsTbl.HistColl.Pseudo, statsTbl.HistColl.Pseudo
+ 	if len(lhs.path.PartialIndexPaths) == 0 && len(rhs.path.PartialIndexPaths) == 0 {
+ 		if !lhs.path.IsTablePath() && lhs.path.Index != nil {
+-			if statsTbl.ColAndIdxExistenceMap.HasAnalyzed(lhs.path.Index.ID, true) {
+-				lhsPseudo = false // We have statistics for the lhs index
+-			} else {
+-				lhsPseudo = true
+-			}
++			lhsPseudo = !hasStatsForEstimation(lhs, statsTbl)
+ 		}
+ 		if !rhs.path.IsTablePath() && rhs.path.Index != nil {
+-			if statsTbl.ColAndIdxExistenceMap.HasAnalyzed(rhs.path.Index.ID, true) {
+-				rhsPseudo = false // We have statistics on the rhs index
+-			} else {
+-				rhsPseudo = true
+-			}
++			rhsPseudo = !hasStatsForEstimation(rhs, statsTbl)
+ 		}
+ 	}
+ 	return lhsPseudo, rhsPseudo
+ }
+ 
+-func comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch bool, eqOrInResult, lhsEqOrInCount, rhsEqOrInCount int, preferRange bool) int {
++// hasStatsForEstimation returns true if the index of the candidate has statistics, or if every column
++// referenced by its access conditions has statistics. In the latter case, the row count of the index
++// is estimated from the column statistics (using exponential backoff for multiple columns), so the
++// candidate can be compared on its estimates rather than on the missing-statistics heuristics.
++func hasStatsForEstimation(c *candidatePath, statsTbl *statistics.Table) bool {
++	if statsTbl.ColAndIdxExistenceMap.HasAnalyzed(c.path.Index.ID, true) {
++		return true
++	}
++	if len(c.accessCondsColMap) == 0 {
++		return false
++	}
++	found := 0
++	for _, col := range c.path.IdxCols {
++		if _, ok := c.accessCondsColMap[col.UniqueID]; !ok {
++			continue
++		}
++		if !statsTbl.ColAndIdxExistenceMap.HasAnalyzed(col.ID, false) {
++			return false
++		}
++		found++
++	}
++	return found == len(c.accessCondsColMap)
++}
++
++func comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch bool, eqOrInResult, lhsEqOrInCount, rhsEqOrInCount int) int {
+ 	// TO-DO: Consider a separate set of rules for global indexes.
+ 	// If one index has statistics and the other does not, choose the index with statistics if it
+ 	// has the same or higher number of equal/IN predicates.
+@@ -1012,18 +1030,16 @@ func comparePseudo(lhsPseudo, rhsPseudo, lhsFullMatch, rhsFullMatch bool, eqOrIn
+ 	if !rhsPseudo && rhsEqOrInCount > 0 && eqOrInResult <= 0 {
+ 		return -1 // right wins
+ 	}
+-	if preferRange {
+-		// keep an index without statistics if that index has more equal/IN predicates, AND:
+-		// 1) there are at least 2 equal/INs
+-		// 2) OR - it's a full index match for all index predicates
+-		if lhsPseudo && eqOrInResult > 0 &&
+-			(lhsEqOrInCount > 1 || lhsFullMatch) {
+-			return 1 // left wins
+-		}
+-		if rhsPseudo && eqOrInResult < 0 &&
+-			(rhsEqOrInCount > 1 || rhsFullMatch) {
+-		
+```
+
+**File**: `pkg/planner/core/find_best_task_test.go` (modified, +35/-6)
+```diff
+@@ -36,6 +36,7 @@ func TestFindBestTaskSuite(t *testing.T) {
+ 	t.Run("TestHintCannotFitProperty", testHintCannotFitProperty)
+ 	t.Run("RangeCountComparison", testRangeCountComparison)
+ 	t.Run("RangeCountSkyline", testRangeCountSkyline)
++	t.Run("MissingStatsIndexVsFullScan", testMissingStatsIndexVsFullScan)
+ }
+ 
+ func testRangeCountComparison(t *testing.T) {
+@@ -100,25 +101,26 @@ func testRangeCountSkyline(t *testing.T) {
+ 			want      int
+ 		}{{0, 1}, {1001, 1}, {1000, 0}} {
+ 			ctx.GetSessionVars().RangeMaxCount = tc.threshold
+-			result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs, true)
++			result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs)
+ 			require.Equal(t, tc.want, result, "pseudo=%v threshold=%d", pseudo, tc.threshold)
+-			result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs, true)
++			result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs)
+ 			require.Equal(t, -tc.want, result, "reversed: pseudo=%v threshold=%d", pseudo, tc.threshold)
+ 		}
+ 	}
+ 
+-	// A missing-statistics index must not retain its extra equality/IN preference above the threshold.
++	// Missing statistics and equality/IN counts cannot break the tie between
++	// incomparable access conditions, regardless of the range-count threshold.
+ 	stats := &statistics.Table{ColAndIdxExistenceMap: statistics.NewColAndIndexExistenceMapWithoutSize()}
+ 	stats.ColAndIdxExistenceMap.InsertIndex(2, true)
+ 	lhs, rhs := newCandidate(1, 3, 1001, 10), newCandidate(2, 2, 1, 10)
+ 	for _, tc := range []struct {
+ 		threshold int64
+ 		want      int
+-	}{{0, 1}, {1001, 1}, {1000, -1}} {
++	}{{0, 0}, {1001, 0}, {1000, 0}} {
+ 		ctx.GetSessionVars().RangeMaxCount = tc.threshold
+-		result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs, true)
++		result, _ := compareCandidates(ctx.GetPlanCtx(), stats, prop, lhs, rhs)
+ 		require.Equal(t, tc.want, result)
+-		result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs, true)
++		result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, rhs, lhs)
+ 		require.Equal(t, -tc.want, result)
+ 	}
+ }
+@@ -260,3 +262,30 @@ func testHintCannotFitProperty(t *testing.T) {
+ 	require.True(t, ok)
+ 	require.Equal(t, 1, mockPhysicalPlan.planType)
+ }
++
++func testMissingStatsIndexVsFullScan(t *testing.T) {
++	ctx := coretestsdk.MockContext()
++	defer domain.GetDomain(ctx).StatsHandle().Close()
++	prop := property.NewPhysicalProperty(property.RootTaskType, nil, false, 0, false)
++	// The table has statistics, but index 1 does not.
++	stats := &statistics.Table{ColAndIdxExistenceMap: statistics.NewColAndIndexExistenceMapWithoutSize()}
++	idx := &candidatePath{
++		path:              &util.AccessPath{Index: &model.IndexInfo{ID: 1}, Ranges: make(ranger.Ranges, 1), CountAfterAccess: 10},
++		accessCondsColMap: map[int64]int{1: -1, 2: -1},
++		eqOrInCount:       2,
++	}
++	tbl := &candidatePath{
++		path:              &util.AccessPath{IsIntHandlePath: true, Ranges: ranger.FullIntRange(false), IsSingleScan: true, CountAfterAccess: 1000},
++		accessCondsColMap: map[int64]int{},
++	}
++	// The missing-statistics index with 2 equal predicates wins over a full table scan,
++	// independent of tidb_opt_prefer_range_scan.
++	for _, preferRange := range []bool{false, true} {
++		ctx.GetSessionVars().SetAllowPreferRangeScan(preferRange)
++		result, missingStats := compareCandidates(ctx.GetPlanCtx(), stats, prop, idx, tbl)
++		require.Equal(t, 1, result, "preferRange=%v", preferRange)
++		require.True(t, missingStats)
++		result, _ = compareCandidates(ctx.GetPlanCtx(), stats, prop, tbl, idx)
++		require.Equal(t, -1, result, "reversed: preferRange=%v", preferRange)
++	}
++}
+```
+
+**File**: `pkg/planner/core/index_join_path.go` (modified, +1/-2)
+```diff
+@@ -303,9 +303,8 @@ func indexJoinPathCompare(ds *logicalop.DataSource, best, current *indexJoinPath
+ 
+ 	// reuse Skyline pruning to compare the index join paths.
+ 	prop := &property.PhysicalProperty{ExpectedCnt: math.MaxFloat64} // default property without any requirement
+-	preferRange := ds.SCtx().GetSessionVars().GetAllowPreferRangeScan()
+ 
+-	cmpResult, _ := compareCandidates(ds.SCtx(), ds.StatisticTable, prop, current.candidate, best.candidate, preferRange)
++	cmpResult, _ := compareCandidates(ds.SCtx(), ds.StatisticTable, prop, current.candidate, best.candidate)
+ 	if cmpResult == 1 {
+ 		return true
+ 	} else if cmpResult == -1 {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #72285** (closed): expression: use the binary collation for an implicit cast to a binary string (@lohmag)
-- **PR #72249** (2026-10-25): txn: update client-go to fix repeated lock resolution (#72232) (@ti-chi-bot)
-- **PR #72248** (2026-10-25): txn: update client-go to fix repeated lock resolution (#72232) (@ti-chi-bot)
-- **PR #72232** (2026-10-24): txn: update client-go to fix repeated lock resolution (@lcwangchao)
-- **PR #72225** (closed): server: skip small packets and pool BestSpeed zlib writers in the compressed protocol (@nmass-betpawa)
-- **PR #72212** (2026-10-23): lightning: surface checkpoint resume failures in compression test (@D3Hunter)
+- **PR #72542** (2026-10-30): build: resolve Bazel Go deps through GOPROXY (#69844) (@ti-chi-bot)
+- **PR #72540** (2026-10-30): mvservice, domain: integrate automatic materialized view maintenance (@windtalker)
+- **PR #72535** (2026-10-30): ddl, executor: add materialized view maintenance error codes (@windtalker)
+- **PR #72527** (2026-10-30): errno: reserve materialized view error codes (@windtalker)
+- **PR #72522** (2026-10-30): build: prepare Bazel tooling for Go 1.27 (#72082) (#72406) (@ti-chi-bot)
+- **PR #72507** (2026-10-29): crossks, executor: give runtime sessions an auto-ID client and an MPP server ID (@joechenrh)
 
 ---
 
@@ -2300,33 +2397,52 @@ close pingcap/tidb#72231
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. *: make the graceful shutdown drain timeout configurable (#71796)
+## X. planner: estimate missing-stats indexes with exponential backoff and drop prefer
 
 **RULE**:
-When implementing operations in `cmd/tidb-server/main.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/planner/cardinality/row_count_column.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b1731737`: *: make the graceful shutdown drain timeout configurable (#71796). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `49ad4202`: planner: estimate missing-stats indexes with exponential backoff and drop prefer-range gate (#72078). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/tidb-server/main.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/planner/cardinality/row_count_column.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The amount of time we wait for the ongoing statements and transactions to finish.
-	drainClientWait := time.Duration(config.GetGlobalConfig().GracefulCloseConnectionsTimeout) * time.Second
+// allColumnsHaveStats returns true if the first n columns of idxCols all have valid column statistics.
+func allColumnsHaveStats(sctx planctx.PlanContext, coll *statistics.HistColl, idxCols []*expression.Column, n int) bool {
+	if n > len(idxCols) {
+		return false
+	}
+	for _, col := range idxCols[:n] {
+		if statistics.ColumnStatsIsInvalid(coll.GetCol(col.UniqueID), sctx, coll, col.UniqueID) {
+			return false
+		}
+	}
+	return true
+}
+
+	colsIDs := make([]int64, len(idxCols))
+	for i, col := range idxCols {
+		colsIDs[i] = col.UniqueID
+	}
+		// Prefer exponential backoff when every column of the range has statistics. Assuming independence by
+		// multiplying the single column selectivities can badly underestimate an index whose columns each have
+		// a low NDV. If any column lacks statistics (e.g. a virtual column), exponential backoff would skip it
+		// entirely, so fall back to the pseudo estimation for that column below.
+		if len(indexRange.LowVal) > 1 && allColumnsHaveStats(sctx, coll, idxCols, len(indexRange.LowVal)) {
+			sel, _, maxSel, ok, err := expBackoffEstimationByColIDs(sctx, coll, colsIDs, 0, len(idxCols), false, indexRange, idxCols)
+			if err != nil {
+				return 0, 0, errors.Tra
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// The amount of time we wait for the ongoing txt to finished.
-// We should better provider a dynamic way to set this value.
-var gracefulCloseConnectionsTimeout = 15 * time.Second
-
-	drainClientWait := gracefulCloseConnectionsTimeout
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b1731737` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `49ad4202` are properly handled with clean fallback behavior.

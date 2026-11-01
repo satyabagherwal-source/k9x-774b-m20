@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source**: github ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
-> **Source Version**: `1bedc5de`  
+> **Source Version**: `1709a9ce`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:38:16.481Z  
+> **Timestamp**: 2026-10-31T18:01:38.936Z  
 > **Learning ID**: `learn-github-meshtastic-meshtastic-android`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshtastic/Meshtastic-Android](https://github.com/meshtastic/Meshtastic-Android))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:38:16.207Z  
+> **Harvest Timestamp**: 2026-10-31T18:01:38.715Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Android application for Meshtastic
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1884 stars
+- **Stars / Engagement**: 1901 stars
 
 ---
 
@@ -1311,11 +1311,11 @@ class AndroidBluetoothRepository(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7756** (2026-10-24): **[Bug]: Coverage overlay floor ignores the receiver sensitivity, so the outer edge is wrong**
-  *Symptoms*: ### Steps to reproduce the bug  1. Connect to a radio on the LongFast preset and open the Site Planner from the map (the receiver sensitivity is prefilled as -139 dBm). 2. Run an estimate. 3. Optionally, set the receiver sensitivity to -120 dBm and run it again.  ### Actual behavior  The lowest band always starts at -130 dBm, whatever the receiver sensitivity is. With LongFast, everything between -139 and -130 dBm, where a node can still hear the site, is left off the map, so the outer edge of coverage is drawn too small. With a sensitivity of -120 dBm, areas between -130 and -120 dBm are drawn as coverage even though a node there could not hear the site.  ### Expected behavior  The outermost band starts at the receiver sensitivity, as the comment on `toGeoJson` says: the outer edge means "a node here can hear this site at all."  ### Additional information  The style uses fixed `minDbm` / `maxDbm` defaults of -130 / -80 that the form never changes: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/SitePlannerEstimate.kt#L87-L92 https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/map/src/commonMain/kotlin/org/meshtastic/feature/map/component/SitePlannerParams.kt#L46-L47  The sensitivity is prefilled from the preset: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/fea
+- **Issue #7819** (2026-10-30): **[Bug]: While firmware can handle traces with 8 hops, APP doesn't show SNRs**
+  *Symptoms*: ### Contact Details  domusonline  ### Checklist  - [x] I am able to reproduce the bug with the latest version.  - [x] I have updated to the latest *Alpha* firmware, and am able to reproduce the bug. Many issues are fixed quickly in alpha before the general beta release.  - [x] I made sure that there are no existing **OPEN or CLOSED issues** which I could contribute my information to.  - [x] I have taken the time to fill in all the required details. I understand that the bug report will be dismissed otherwise.  - [x] This issue contains only one bug.  - [x] I have read and understood the **Contribution Guidelines**.  - [x] I agree to follow this project's Code of Conduct  - [x] I actually read this list, and should be taken seriously.   ### Affected app version  2.8.3  ### Affected Android version  Android 16  ### Affected phone model  Samsung A34  ### Affected node model  Heltec WSL V3  ### Affected node firmware version  2.8.1  ### Steps to reproduce the bug  I've noticed that if a traceroute has 8 hops, although the packet contains the data (SNRs) the application shows the hops, but shows "? dB" for the SNRs  ### Actual behavior  I can show the screenshot on the APP:  <img width="303" height="662" alt="Image" src="https://github.com/user-attachments/assets/13666625-c958-44ab-bd22-bc76e341d021" />  and because the return path used MQTT we can see the packet in the local "Malla" system: https://malha.meshtastic.pt/packet/6414948  Because the packet will eventually disappear f
 
-- **Issue #7755** (2026-10-24): **[Bug]: Coverage estimates don't credit the Mapterhorn terrain they are built from**
-  *Symptoms*: ### Steps to reproduce the bug  1. With hillshade and contours off (or no offline terrain downloaded), open the map. 2. Run a Site Planner coverage estimate and let the overlay load. 3. Look at the map's attribution and the Site Planner form.  ### Actual behavior  The overlay is computed from Mapterhorn terrain (built from CC-BY sources), but nothing on the map or in the form credits it. The Mapterhorn credit only shows while the offline hillshade or contour layer is drawing.  ### Expected behavior  Whenever a coverage overlay is shown, the map credits Mapterhorn the same way it does for hillshade, or the Site Planner form says where the terrain comes from.  ### Additional information  The credit is gated on the offline terrain layers: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/androidApp/src/google/kotlin/org/meshtastic/app/map/MapView.kt#L1031-L1045 https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/layers/TerrainLayers.kt#L102-L103  The estimate's terrain source: https://github.com/meshtastic/Meshtastic-Android/blob/48cd68879c88abf193b8f6ad75ca71f58a566dd4/feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/MapterhornTiles.kt#L70-L71  Suggested fix: add `MapterhornEndpoints.ATTRIBUTION` to the attribution list whenever a coverage layer is visible (Google flavor), set `attributionHtm
+- **Issue #7778** (2026-10-27): **[Bug]: Weather radar is drawn in 1 km squares when zoomed in**
+  *Symptoms*: ### Steps to reproduce the bug  1. Open the map, turn on the Weather Radar overlay somewhere in the lower 48 with rain on it. 2. Zoom in past about zoom 8.  ### Actual behavior  Rain is drawn as a grid of squares about 1 km across, with stepped edges.  ### Expected behavior  Showers read as rounded shapes with clean edges, keeping NOAA's color scale.  ### Additional information  The radar's data is a grid of roughly 1 km cells (0.01° of longitude). The overlay asks NCEP's WMS for every tile at 256 by 256, and once a tile pixel is finer than a cell the server scales the cells up by copying them, so the squares come from the server: https://github.com/meshtastic/Meshtastic-Android/blob/d0a924d67cb1ab3f532a9e50bc3131e0c81538be/feature/map/src/commonMain/kotlin/org/meshtastic/feature/map/tiles/MapTileCatalogue.kt#L146-L162  The colors are a continuous scale (about a hundred shades), not bands, so contouring them the way the coverage bands were cleaned up in #7767 would change the look. What worked on iOS:  - When a tile pixel is finer than a cell, ask the server for one pixel per cell instead (cells across = tile width in Mercator meters / 1113.2; cells down uses a cell height of 1113.2 / cos(latitude)), with the bounding box padded by one cell on every side so neighboring tiles meet without a seam. - Premultiply, blur by about half a cell (Gaussian, sigma 0.5 cells), scale up to the tile with a cubic B-spline, then crop the padding off. - Draw the edge where the rain is half the
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1332,232 +1332,46 @@ class AndroidBluetoothRepository(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10297408` (2026-10-22)
-**Commit Message**: chore(deps): update bouncycastle [security] (#7733)
+### Incident Patch 1: `b39f80ac` (2026-10-31)
+**Commit Message**: fix(admin): accept admin responses only for requests the app sent (#7847)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImpl.kt` (modified, +10/-1)
 ```diff
-@@ -99,7 +99,7 @@ google-services-gradle = "4.5.0"
- markdown = "0.7.18"
- markdownRenderer = "0.46.0"
- okio = "3.18.2"
--bouncycastle = "1.80"
-+bouncycastle = "1.85"
- uri-kmp = "0.0.21"
- spotless = "8.10.4"
- sceneview = "4.62.0"
-```
-
----
-
-### Incident Patch 2: `bb78b38b` (2026-10-24)
-**Commit Message**: fix(coverage): Site Planner estimate placement, floor, offline terrain, threads and credit (#7758)
-
-Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
-
-**File**: `.skills/compose-ui/strings-index.txt` (modified, +1/-0)
-```diff
-@@ -1914,6 +1914,7 @@ site_planner_section_receiver
- site_planner_section_simulation
- site_planner_section_transmitter
- site_planner_subtitle
-+site_planner_terrain_credit
- site_planner_tx_power_watts
- site_planner_use_current_location
- site_planner_use_map_center
-```
-
-**File**: `androidApp/src/fdroid/kotlin/org/meshtastic/app/map/component/SitePlannerSlot.kt` (modified, +11/-1)
-```diff
-@@ -17,16 +17,20 @@
- package org.meshtastic.app.map.component
+@@ -19,6 +19,7 @@ package org.meshtastic.core.data.manager
+ import co.touchlab.kermit.Logger
+ import org.koin.core.annotation.Single
+ import org.meshtastic.core.repository.AdminPacketHandler
++import org.meshtastic.core.repository.AdminRequestRegistry
+ import org.meshtastic.core.repository.MeshConfigFlowManager
+ import org.meshtastic.core.repository.MeshConfigHandler
+ import org.meshtastic.core.repository.NodeManager
+@@ -37,12 +38,20 @@ class AdminPacketHandlerImpl(
+     private val configHandler: Lazy<MeshConfigHandler>,
+     private val configFlowManager: Lazy<MeshConfigFlowManager>,
+     private val sessionManager: SessionManager,
++    private val adminRequestRegistry: AdminRequestRegistry,
+ ) : AdminPacketHandler {
  
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.LaunchedEffect
- import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.remember
- import androidx.lifecycle.compose.collectAsStateWithLifecycle
- import org.koin.compose.viewmodel.koinViewModel
- import org.maplibre.spatialk.geojson.Position
- import org.meshtastic.app.map.MapViewModel
-+import org.meshtastic.feature.coverage.RegionTerrain
- import org.meshtastic.feature.coverage.rememberCoverageEstimate
- import org.meshtastic.feature.map.SharedMapViewModel
- import org.meshtastic.feature.map.component.SitePlannerHost
- import org.meshtastic.feature.map.component.toSitePlannerParams
- import org.meshtastic.feature.map.maplibre.SitePlannerSession
-+import org.meshtastic.feature.map.maplibre.terrain.OfflineTerrainRepository
- 
- /**
-  * Runs the Site Planner for the F-Droid map. The estimate becomes a GeoJSON map layer and the map moves to the
-@@ -48,9 +52,15 @@ fun SitePlannerSlot(session: SitePlannerSession) {
-     // A deep link names the node to plan for; a toolbar launch plans for whatever we are connected to.
-     val subject = session.nodeNum?.let { num -> nodes.firstOrNull { it.num == num } } ?: ourNode
- 
-+    val terrain = OfflineTerrainRepository.default
-+    LaunchedEffect(terrain) { terrain.refresh() }
-+    val terrainRegion by terrain.region.collectAsStateWithLifecycle()
-+    val offlineTerrain =
-+        remember(terrainRegion) { listOfNotNull(terrainRegion?.let { RegionTerrain(terrain.tileStore, it.bounds) }) }
-+
-     SitePlannerHost(
-         initialParams = subject.toSitePlannerParams(channelSet),
--        estimate = rememberCoverageEstimate(),
-+        estimate = rememberCoverageEstimate(offlineTerrain),
-         onDismiss = session.onDismiss,
-         onImport = { name, geoJson, latitude, longitude ->
-             mapViewModel.addGeoJsonLayer(name, geoJson)
-```
-
-**File**: `androidApp/src/google/kotlin/org/meshtastic/app/map/MapView.kt` (modified, +19/-3)
-```diff
-@@ -193,6 +193,7 @@ import org.meshtastic.core.ui.util.formatAgo
- import org.meshtastic.core.ui.util.formatPositionTime
- import org.meshtastic.core.ui.util.rememberLocationPermissionState
- import org.meshtastic.core.ui.util.showToast
-+import org.meshtastic.feature.coverage.RegionTerrain
- import org.meshtastic.feature.coverage.rememberCoverageEstimate
- import org.meshtastic.feature.map.BaseMapViewModel.MapFilterState
- import org.meshtastic.feature.map.MapBounds
-@@ -225,6 +226,7 @@ import org.meshtastic.feature.map.layers.MapLayerItem
- import org.meshtastic.feature.map.layers.opacityOf
- import org.meshtastic.feature.map.layers.toPickedMapFile
- import org.meshtastic.feature.map.mergeStationaryRuns
-+import org.meshtastic.feature.map.terrain.GeoBounds
- import org.meshtastic.feature.map.terrain.MapterhornEndpoints
- import org.meshtastic.feature.map.tiles.mapAttributionText
- import org.meshtastic.feature.map.tracerouteNodeSelection
-@@ -1027,12 +1029,14 @@ fun MapView(
-         // alone: an on-disk-only attribution is invisible to anyone who never opens the offline-region manager
-         // sheet, which is exactly the gap this mirrors from the sibling iOS app's own terrain layer. The offline
-         // terrain layer's own credit (Mapterhorn) is folded in the same way, whenever hillshade or contours are
--        // actually rendering.
-+        // actually rendering, or a coverage estimate built from that terrain is shown.
-         val attributionCoveringRegion =
-             cameraPositionState.projection?.visibleRegion?.latLngBounds?.let { mapViewModel.offlineRegionCovering(it) }
-         val offlineRegionActive = offlineOverlayEnabled && attributionCoveringRegion != null
--        val terrainActive =
-+        val terrainDrawn =
-             attributionCoveringRegion?.hasTerrain == true && (terrainHillshadeEnabled || terrainContoursEnabled)
-+        val coverageShown = mapLayers.any { it.layerType == LayerType.COVERAGE && it.isVisible }
-+        val terrainActive = terrainDrawn || coverageShown
-         val attributionText =
-             remember(currentRasterBasemap, enabledOverlayIds, offlineRegionActive, terrainActive) {
-                 val baseAttribution =
-@@ -1234,9 +1238,21 @@ fun MapView(
-         // Route launches retain the selected node; manual map launches continue following our connected node.
-         val onUseNodeLocation: (() -> Pair<Double, Double>)? =
-             launch.nodeLocation(ourNodeInfo)?.let { location -> { location } }
-+        val offlineRegions by mapViewModel.offlineRegions.collectAsStateWithLifecycle()
-+        val offlineTerrain =
-+            remember(offlineRegions) {
-+                offlineRegions
-+                    .filter { it.hasTerrain }
-+                    .map { region ->
-+                        RegionTerrain(
-+                            store = mapViewModel.terrainStoreForRegion(region.id),
-+                            bounds = GeoBounds(region.southLat, region.westLon, region.northLat, region.eastLon),
-+                        )
-+                    }
-+            }
-         SitePlannerHost(
-             initialParams = launch.initialParams,
--            estimate = rememberCoverageEstimate(),
-+            estimate = rememberCoverageEstimate(offlineTerrain),
-             onDismiss = { sitePlannerLaunch = null },
-             onImport = { name, geoJson, latitude, longitude ->
-                 mapViewModel.addGeoJsonLayer(name, geoJson)
-```
-
-**File**: `core/resources/src/commonMain/composeResources/values/strings.xml` (modified, +1/-0)
-```diff
-@@ -1980,6 +1980,7 @@
-     <string name="site_planner_section_simulation">Simulation Options</string>
-     <string name="site_planner_section_transmitter">Site / Transmitter</string>
-     <string name="site_planner_subtitle">Estimate RF coverage for a transmitter</string>
-+    <string name="site_planner_terrain_credit">Terrain data © Mapterhorn</string>
-     <string name="site_planner_tx_power_watts">TX power (W)</string>
-     <string name="site_planner_use_current_location">Use current location</string>
-     <string name="site_planner_use_map_center">Use map center</string>
-```
-
-**File**: `desktopApp/src/main/kotlin/org/meshtastic/desktop/map/DesktopSitePlannerSlot.kt` (modified, +11/-1)
-```diff
-@@ -17,17 +17,21 @@
- package org.meshtastic.desktop.map
- 
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.LaunchedEffect
- import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.remember
- import androidx.lifecycle.compose.collectAsStateWithLifecycle
- import org.koin.compose.koinInject
- import org.koin.compose.viewmodel.koinViewModel
- import org.maplibre.spatialk.geojson.Position
-+import org.meshtastic.feature.coverage.RegionTerrain
- import org.meshtastic.feature.coverage.rememberCoverageEstimate
- import org.meshtastic.feature.map.SharedMapViewModel
- import org.meshtastic.feature.map.component.SitePlannerHost
- import org.meshtastic.feature.map.component.toSitePlannerParams
- import org.meshtastic.feature.map.layers.MapLayersManager
- import org.meshtastic.feature.map.maplibre.SitePlannerSession
-+import org.meshtastic.feature.map.maplibre.terrain.OfflineTerrainRepository
- 
- /** Runs the Site Planner for the desktop map; the estimate becomes a GeoJSON map layer and the map moves to it. */
- @Composable
-@@ -42,9 +46,15 @@ fun DesktopSitePlannerSlot(session: SitePlannerSession) {
-     // A deep link names the node to plan for; a toolbar launch plans for whatever we are connected to.
-     val subject = session.nodeNum?.let { num -> nodes.firstOrNull { it.num == num } } ?: ourNode
- 
-+    val terrain = OfflineTerrainRepository.default
-+    LaunchedEffect(terrain) { terrain.refresh() }
-+    val terrainRegion by terrain.region.collectAsStateWithLifecycle()
-+    val offlineTerrain =
-+        remember(terrainRegion) { listOfNotNull(terrainRegion?.let { RegionTerrain(terrain.tileStore, it.bounds) }) }
-+
-     SitePlannerHost(
-         initialParams = subject.toSitePlannerParams(channelSet),
--        estimate = rememberCoverageEstimate(),
-+        estimate = rememberCoverageEstimate(offlineTerrain),
-         onDismiss = session.onDismiss,
-         onImport = { name, geoJson, latitude, longitude ->
-             layersManager.addGeoJsonLayer(name, geoJson)
-```
-
-**File**: `feature/coverage/build.gradle.kts` (modified, +7/-3)
-```diff
-@@ -34,17 +34,21 @@ kotlin {
-             implementation(libs.kp1812)
-             implementation(libs.kotlinx.coroutines.core)
-             implementation(projects.feature.map)
--            implementation(projects.feature.mapTerrain)
-+            // api: the estimate's public signatures take a TerrainTileStore.
-+            api(projects.feature.mapTerrain)
-             implementation(projects.core.common)
--            implementation(projects.core.di)
-             implementation(libs.okio)
-             implementation(libs.ktor.client.core)
-         }
- 
-         jvmMain.dependencies { implementation(libs.ktor.client.java) }
-         androidMain.dependencies { implementation(libs.ktor.client.okhttp) }
- 
--        commonTest.dependencies { implementation(libs.kotlinx.coroutines.test) }
-+        commonTest.dependencies {
-+            implementation(libs.kotlinx.coroutines.test)
-+            implementation(libs.ktor.client.mock)
-+            implementation(libs.okio.fakefilesystem)
+     override fun handleAdminMessage(packet: MeshPacket, myNodeNum: Int, session: RadioSessionContext) {
+-        val payload = packet.decoded?.payload ?: return
++        val data = packet.decoded ?: return
++        val payload = data.payload
+         val u = AdminMessage.ADAPTER.decode(payload)
+         Logger.d { "Admin message from=${packet.from} fields=${u.summarize()}" }
++        // The firmware forwards every decoded ADMIN_APP packet addressed to it, so a response is authoritative
++        // only when it answers a request we sent.
++        if (!adminRequestRegistry.consume(data.request_id)) {
++            Logger.w { "Ignoring admin message from=${packet.from} with no outstanding request id=${data.request_id}" }
++            return
 +        }
-         jvmTest.dependencies { implementation(libs.kotlinx.coroutines.test) }
-     }
- }
+         // Firmware embeds the session_passkey in every admin response. A missing (default-empty)
+         // field must not reset stored state, so only record refreshes when bytes arrived.
+         val incomingPasskey = u.session_passkey
 ```
 
-**File**: `feature/coverage/src/androidMain/kotlin/org/meshtastic/feature/coverage/CoverageCompute.android.kt` (added, +19/-0)
+**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminRequestRegistryImpl.kt` (added, +51/-0)
 ```diff
-@@ -0,0 +1,19 @@
+@@ -0,0 +1,51 @@
 +/*
 + * Copyright (c) 2026 Meshtastic LLC
 + *
@@ -1574,75 +1388,217 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 + * You should have received a copy of the GNU General Public License
 + * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 + */
-+package org.meshtastic.feature.coverage
++package org.meshtastic.core.data.manager
 +
-+internal actual fun processorCount(): Int = Runtime.getRuntime().availableProcessors()
-```
-
-**File**: `feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/CoverageCompute.kt` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+/*
-+ * Copyright (c) 2026 Meshtastic LLC
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation, either version 3 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
-+ */
-+package org.meshtastic.feature.coverage
++import kotlinx.atomicfu.atomic
++import kotlinx.atomicfu.update
++import org.koin.core.annotation.Single
++import org.meshtastic.core.repository.AdminRequestRegistry
 +
-+import kotlinx.coroutines.CoroutineDispatcher
-+import kotlinx.coroutines.Dispatchers
++@Single
++class AdminRequestRegistryImpl : AdminRequestRegistry {
++    // Oldest first. Bounded so a request the radio never answers cannot grow the set forever.
++    private val outstanding = atomic<List<Int>>(emptyList())
 +
-+/**
-+ * Where a coverage estimate's CPU work runs: [Dispatchers.Default] with one worker held back. The mesh service shares
-+ * Default, and a sweep queues hundreds of radials, so an unlimited one would leave incoming radio data waiting on it.
-+ */
-+@Suppress("InjectDispatcher") // the sweep and tile decode are built outside DI
-+internal val coverageComputeDispatcher: CoroutineDispatcher by lazy {
-+    Dispatchers.Default.limitedParallelism(maxOf(1, processorCount() - 1))
++    override fun register(requestId: Int) {
++        if (requestId == 0) return
++        outstanding.update { ids -> (ids - requestId + requestId).takeLast(MAX_OUTSTANDING) }
++    }
++
++    override fun consume(requestId: Int): Boolean {
++        if (requestId == 0) return false
++        var found = false
++        outstanding.update { ids ->
++            found = requestId in ids
++            if (found) ids - requestId else ids
++        }
++        return found
++    }
++
++    override fun clearAll() {
++        outstanding.value = emptyList()
++    }
++
++    private companion object {
++        const val MAX_OUTSTANDING = 128
++    }
 +}
-+
-+/** CPU cores available to the process; common code has no API for it. */
-+internal expect fun processorCount(): Int
 ```
 
----
-
-### Incident Patch 3: `1bedc5de` (2026-10-24)
-**Commit Message**: fix(coverage): Mapterhorn credit on MapLibre and antimeridian regions (#7759)
-
-**File**: `feature/coverage/src/commonMain/kotlin/org/meshtastic/feature/coverage/RegionTerrain.kt` (modified, +9/-2)
+**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/CommandSenderImpl.kt` (modified, +3/-0)
 ```diff
-@@ -36,5 +36,12 @@ internal fun TileIndex.bounds(): GeoBounds {
-     )
- }
+@@ -33,6 +33,7 @@ import org.meshtastic.core.model.Position
+ import org.meshtastic.core.model.TelemetryType
+ import org.meshtastic.core.model.util.TimeConstants
+ import org.meshtastic.core.model.util.isWithinSizeLimit
++import org.meshtastic.core.repository.AdminRequestRegistry
+ import org.meshtastic.core.repository.AwaitedSendResult
+ import org.meshtastic.core.repository.CommandSender
+ import org.meshtastic.core.repository.LocalNodeUnavailableException
+@@ -77,6 +78,7 @@ class CommandSenderImpl(
+     private val tracerouteHandler: TracerouteHandler,
+     private val neighborInfoHandler: NeighborInfoHandler,
+     private val sessionManager: SessionManager,
++    private val adminRequestRegistry: AdminRequestRegistry,
+     private val scope: ServiceScope,
+ ) : CommandSender {
+     private val currentPacketId = atomic(Random(nowMillis).nextLong().absoluteValue)
+@@ -629,6 +631,7 @@ class CommandSenderImpl(
+                 }
+                 .build(),
+         )
++            .also { adminRequestRegistry.register(it.id) }
  
--internal fun GeoBounds.intersects(other: GeoBounds): Boolean =
--    west < other.east && other.west < east && south < other.north && other.south < north
-+/** Whether the two overlap. A box whose west is east of its east crosses the antimeridian. */
-+internal fun GeoBounds.intersects(other: GeoBounds): Boolean = south < other.north &&
-+    other.south < north &&
-+    longitudeSpans().any { (w, e) -> other.longitudeSpans().any { (ow, oe) -> w < oe && ow < e } }
-+
-+private fun GeoBounds.longitudeSpans(): List<Pair<Double, Double>> =
-+    if (west <= east) listOf(west to east) else listOf(west to MAX_LONGITUDE, -MAX_LONGITUDE to east)
-+
-+private const val MAX_LONGITUDE = 180.0
+     companion object {
+         private const val PACKET_ID_MASK = 0xffffffffL
 ```
 
-**File**: `feature/coverage/src/commonTest/kotlin/org/meshtastic/feature/coverage/RegionTerrainTest.kt` (added, +44/-0)
+**File**: `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/MeshConnectionManagerImpl.kt` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,44 @@
+@@ -41,6 +41,7 @@ import org.meshtastic.core.model.ConnectionState
+ import org.meshtastic.core.model.DeviceType
+ import org.meshtastic.core.model.InterfaceId
+ import org.meshtastic.core.model.TelemetryType
++import org.meshtastic.core.repository.AdminRequestRegistry
+ import org.meshtastic.core.repository.AppWidgetUpdater
+ import org.meshtastic.core.repository.CommandSender
+ import org.meshtastic.core.repository.DataPair
+@@ -93,6 +94,7 @@ class MeshConnectionManagerImpl(
+     private val radioConfigRepository: RadioConfigRepository,
+     private val commandSender: CommandSender,
+     private val sessionManager: SessionManager,
++    private val adminRequestRegistry: AdminRequestRegistry,
+     private val nodeManager: NodeManager,
+     private val analytics: PlatformAnalytics,
+     private val packetRepository: PacketRepository,
+@@ -510,6 +512,7 @@ class MeshConnectionManagerImpl(
+         postHandshakeRequestsJob = null
+         packetHandler.stopPacketQueue()
+         sessionManager.clearAll() // Prevent stale per-node passkeys on reconnect.
++        adminRequestRegistry.clearAll()
+         locationManager.stop()
+         mqttManager.stop()
+     }
+```
+
+**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImplTest.kt` (modified, +67/-1)
+```diff
+@@ -20,6 +20,7 @@ import dev.mokkery.MockMode
+ import dev.mokkery.matcher.any
+ import dev.mokkery.mock
+ import dev.mokkery.verify
++import dev.mokkery.verify.VerifyMode
+ import okio.ByteString
+ import okio.ByteString.Companion.toByteString
+ import org.meshtastic.core.repository.MeshConfigFlowManager
+@@ -45,6 +46,7 @@ class AdminPacketHandlerImplTest {
+     private val configHandler = mock<MeshConfigHandler>(MockMode.autofill)
+     private val configFlowManager = mock<MeshConfigFlowManager>(MockMode.autofill)
+     private val sessionManager = mock<SessionManager>(MockMode.autofill)
++    private val adminRequestRegistry = AdminRequestRegistryImpl()
+ 
+     private lateinit var handler: AdminPacketHandlerImpl
+ 
+@@ -59,10 +61,13 @@ class AdminPacketHandlerImplTest {
+                 configHandler = lazy { configHandler },
+                 configFlowManager = lazy { configFlowManager },
+                 sessionManager = sessionManager,
++                adminRequestRegistry = adminRequestRegistry,
+             )
+     }
+ 
+-    private fun makePacket(from: Int, adminMessage: AdminMessage): MeshPacket {
++    /** Builds a response to a request this app sent unless [requestId] names one it did not. */
++    private fun makePacket(from: Int, adminMessage: AdminMessage, requestId: Int = SENT_REQUEST_ID): MeshPacket {
++        if (requestId == SENT_REQUEST_ID) adminRequestRegistry.register(requestId)
+         val payload = adminMessage.encode().toByteString()
+         return MeshPacket.Builder()
+             .also { wb ->
+@@ -72,6 +77,7 @@ class AdminPacketHandlerImplTest {
+                         .also { wb ->
+                             wb.portnum = PortNum.ADMIN_APP
+                             wb.payload = payload
++                            wb.request_id = requestId
+                         }
+                         .build()
+             }
+@@ -80,6 +86,61 @@ class AdminPacketHandlerImplTest {
+ 
+     private fun handle(packet: MeshPacket) = handler.handleAdminMessage(packet, myNodeNum, session)
+ 
++    // ---------- Request correlation ----------
++
++    @Test
++    fun `config response claiming own node without an outstanding request is ignored`() {
++        val config = Config.Builder().also { wb -> wb.security = Config.SecurityConfig.Builder().build() }.build()
++        val adminMsg =
++            AdminMessage.Builder()
++                .also { wb ->
++                    wb.get_config_response = config
++                    wb.session_passkey = ByteString.of(9, 9, 9, 9)
++                }
++                .build()
++        val packet = makePacket(myNodeNum, adminMsg, requestId = UNSOLICITED_REQUEST_ID)
++
++        handle(packet)
++
++        verify(VerifyMode.not) { configHandler.handleDeviceConfig(any(), any()) }
++        verify(VerifyMode.not) { sessionManager.recordSession(any(), any()) }
++    }
++
++    @Test
++    fun `channel response claiming own node without an outstanding request is ignored`() {
++        val channel = Channel.Builder().also { wb -> wb.index = 0 }.build()
++        val adminMsg = AdminMessage.Builder().also { wb -> wb.get_channel_response = channel }.build()
++        val packet = makePacket(myNodeNum, adminMsg, requestId = UNSOLICITED_REQUEST_ID)
++
++        handle(packet)
++
++        verify(VerifyMode.not) { configHandler.handleChannel(any(), any()) }
++    }
++
++    @Test
++    fun `metadata from a remote node without an outstanding request is ignored`() {
++        val metadata = DeviceMetadata.Builder().also { wb -> wb.firmware_version = "9.9.9" }.build()
++        val adminMsg = AdminMessage.Builder().also { wb -> wb.get_device_metadata_response = metadata }.build()
++        val packet = makePacket(99999, adminMsg, requestId = UNSOLICITED_REQUEST_ID)
++
++        handle(packet)
++
++        verify(VerifyMode.not) { nodeManager.insertMetadata(any(), any(), any()) }
++    }
++
++    @Test
++    fun `a request id answers once`() {
++        val config = Config.Builder().also { wb -> wb.device = Config.DeviceConfig.Builder().build() }.build()
++        val adminMsg = AdminMessage.Builder().also { wb -> wb.get_config_response = config }.build()
++
++        val packet = makePacket(myNodeNum, adminMsg)
++
++        handle(packet)
++        handle(packet)
++
++        verify(VerifyMode.exactly(1)) { configHandler.handleDeviceConfig(config, session) }
++    }
++
+     // ---------- Session passkey ----------
+ 
+     @Test
+@@ -290,4 +351,9 @@ class AdminPacketHandlerImplTest {
+         verify { sessionManager.recordSession(myNodeNum, passkey) }
+         verify { configHandler.handleDeviceConfig(config, session) }
+     }
++
++    private companion object {
++        const val SENT_REQUEST_ID = 4242
++        const val UNSOLICITED_REQUEST_ID = 777
++    }
+ }
+```
+
+**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/AdminRequestRegistryImplTest.kt` (added, +66/-0)
+```diff
+@@ -0,0 +1,66 @@
 +/*
 + * Copyright (c) 2026 Meshtastic LLC
 + *
@@ -1659,239 +1615,221 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 + * You should have received a copy of the GNU General Public License
 + * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 + */
-+package org.meshtastic.feature.coverage
++package org.meshtastic.core.data.manager
 +
-+import org.meshtastic.feature.map.terrain.GeoBounds
 +import kotlin.test.Test
 +import kotlin.test.assertFalse
 +import kotlin.test.assertTrue
 +
-+class RegionTerrainTest {
++class AdminRequestRegistryImplTest {
 +
-+    // Fiji, west 177 to east -178: across the antimeridian.
-+    private val acrossTheAntimeridian = GeoBounds(south = -19.0, west = 177.0, north = -16.0, east = -178.0)
++    private val registry = AdminRequestRegistryImpl()
 +
 +    @Test
-+    fun aWrappedRegionMeetsGroundOnBothSidesOfTheLine() {
-+        assertTrue(acrossTheAntimeridian.intersects(GeoBounds(-18.0, 178.0, -17.0, 179.0)))
-+        assertTrue(acrossTheAntimeridian.intersects(GeoBounds(-18.0, -179.5, -17.0, -179.0)))
++    fun `a registered id is consumed once`() {
++        registry.register(42)
++
++        assertTrue(registry.consume(42))
++        assertFalse(registry.consume(42))
 +    }
 +
 +    @Test
-+    fun aWrappedRegionMissesGroundBetweenItsEnds() {
-+        assertFalse(acrossTheAntimeridian.intersects(GeoBounds(-18.0, 0.0, -17.0, 1.0)))
++    fun `an unknown id is not consumed`() {
++        assertFalse(registry.consume(7))
 +    }
 +
 +    @Test
-+    fun boxesThatOnlyTouchDoNotIntersect() {
-+        assertFalse(GeoBounds(0.0, 0.0, 1.0, 1.0).intersects(GeoBounds(0.0, 1.0, 1.0, 2.0)))
++    fun `id zero is never outstanding`() {
++        registry.register(0)
++
++        assertFalse(registry.consume(0))
++    }
++
++    @Test
++    fun `clearAll forgets every outstanding id`() {
++        registry.register(1)
++        registry.register(2)
++
++        registry.clearAll()
++
++        assertFalse(registry.consume(1))
++        assertFalse(registry.consume(2))
++    }
++
++    @Test
++    fun `the oldest id is dropped past the bound`() {
++        (1..129).forEach(registry::register)
++
++        assertFalse(registry.consume(1))
++        assertTrue(registry.consume(2))
++        assertTrue(registry.consume(129))
 +    }
 +}
 ```
 
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/MapLibreMapViewProvider.kt` (modified, +3/-1)
+**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/CommandSenderImplTest.kt` (modified, +29/-0)
 ```diff
-@@ -147,6 +147,7 @@ class MapLibreMapViewProvider(
-         val location = rememberLocationControls()
-         val waypoints = rememberWaypointEditing()
-         val screen = rememberMapScreenState(waypointId = waypointId, sitePlannerNodeNum = sitePlannerNodeNum)
-+        val layers = customLayers()
+@@ -73,6 +73,7 @@ class CommandSenderImplTest {
+     private val tracerouteHandler = mock<TracerouteHandler>(MockMode.autofill)
+     private val neighborInfoHandler = mock<NeighborInfoHandler>(MockMode.autofill)
+     private val sessionManager = mock<SessionManager>(MockMode.autofill)
++    private val adminRequestRegistry = AdminRequestRegistryImpl()
  
-         val mapState =
-             rememberMapScreenMapState(
-@@ -155,7 +156,7 @@ class MapLibreMapViewProvider(
-                 screen = screen,
-                 waypoints = waypoints,
-                 location = location,
--                customLayers = customLayers(),
-+                customLayers = layers,
-                 navigateToNodeDetails = navigateToNodeDetails,
-             )
+     private lateinit var commandSender: CommandSenderImpl
  
-@@ -170,6 +171,7 @@ class MapLibreMapViewProvider(
-                 mapState = mapState,
-                 modifier = Modifier.fillMaxSize(),
-                 basemap = basemaps.current,
-+                extraCredits = layers.mapNotNull { it.attributionHtml },
-                 onMapLongClick = waypoints.onLongPress,
-                 onMapClick = waypoints.onMapTap,
+@@ -92,6 +93,7 @@ class CommandSenderImplTest {
+                 tracerouteHandler = tracerouteHandler,
+                 neighborInfoHandler = neighborInfoHandler,
+                 sessionManager = sessionManager,
++                adminRequestRegistry = adminRequestRegistry,
+                 scope = TestScope().asServiceScope(),
              )
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/MeshMap.kt` (modified, +6/-2)
-```diff
-@@ -73,7 +73,7 @@ import org.meshtastic.feature.map.BaseMapViewModel
- import org.meshtastic.feature.map.MapNodePolicy
- import org.meshtastic.feature.map.component.MapEngineUnavailable
- import org.meshtastic.feature.map.component.MeshMapFitPadding
--import org.meshtastic.feature.map.maplibre.component.MeshMapOrnaments
-+import org.meshtastic.feature.map.maplibre.component.meshMapOrnaments
- import org.meshtastic.feature.map.maplibre.geojson.ClusterMember
- import org.meshtastic.feature.map.maplibre.geojson.rememberFeatureSource
- import org.meshtastic.feature.map.maplibre.layers.CustomLayer
-@@ -222,6 +222,8 @@ fun MeshMap(
-     mapState: MapState,
-     modifier: Modifier = Modifier,
-     basemap: Basemap = Basemaps.default,
-+    /** HTML credits for drawn data no style source carries; see [meshMapOrnaments]. */
-+    extraCredits: List<String> = emptyList(),
-     /** Called with the pressed position on a long press, which is how a new waypoint gets placed. */
-     onMapLongClick: (Position) -> Unit = {},
-     /** Called with the tapped position. Used to collect the two corners of a waypoint's geofence bounding box. */
-@@ -240,6 +242,8 @@ fun MeshMap(
+     }
+@@ -141,6 +143,7 @@ class CommandSenderImplTest {
+                 tracerouteHandler = tracerouteHandler,
+                 neighborInfoHandler = neighborInfoHandler,
+                 sessionManager = sessionManager,
++                adminRequestRegistry = adminRequestRegistry,
+                 scope = TestScope().asServiceScope(),
+             )
+         assertEquals(0, commandSender.resolveNodeNum(NodeAddress.Local))
+@@ -242,6 +245,31 @@ class CommandSenderImplTest {
+         assertNotEquals(0, packets.single().id)
      }
  
-     val zoomRange = basemap.zoomRange()
-+    val credits = extraCredits.distinct()
-+    val ornaments = remember(credits) { meshMapOrnaments(credits) }
-     MaplibreMap(
-         modifier = modifier,
-         state = mapState,
-@@ -267,7 +271,7 @@ fun MeshMap(
-                 }
-             }
-         },
--        overlay = { include(MeshMapOrnaments) },
-+        overlay = { include(ornaments) },
-     )
- }
- 
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/NodeTrackMap.kt` (modified, +1/-1)
-```diff
-@@ -173,7 +173,7 @@ fun MapLibreNodeTrackMap(
-                 ?.let { selected -> positions.firstOrNull { it.time == selected } },
-             displayUnits = displayUnits,
-             // Clear of the wordmark and attribution button along the bottom edge, which every map shows.
--            // See MeshMapOrnaments.
-+            // See meshMapOrnaments.
-             modifier =
-             Modifier.align(Alignment.BottomStart)
-                 .padding(start = CARD_INSET.dp, end = CARD_INSET.dp, bottom = ORNAMENT_CLEARANCE.dp),
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/SecondaryMaps.kt` (modified, +1/-1)
-```diff
-@@ -449,7 +449,7 @@ internal const val CARD_INSET = 8
- /**
-  * Height to leave for the map's wordmark and attribution button, which every map shows.
-  *
-- * See [org.meshtastic.feature.map.maplibre.component.MeshMapOrnaments].
-+ * See [org.meshtastic.feature.map.maplibre.component.meshMapOrnaments].
-  */
- internal const val ORNAMENT_CLEARANCE = 40
- private const val CARD_PADDING = 8
-```
-
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/component/MapOrnaments.kt` (modified, +25/-10)
-```diff
-@@ -69,8 +69,11 @@ import org.maplibre.compose.overlay.MapOverlay as MaplibreOverlay
-  *
-  * Scale-bar units are left to the library, which picks them by region — the same locale-driven approach the rest of the
-  * app takes through `localeUnitsProvider`.
-+ *
-+ * [extraCredits] are HTML credits for data no style source carries, such as the terrain under a coverage estimate,
-+ * which is drawn from a GeoJSON source that has no attribution field. They join the style's own, deduplicated.
-  */
--internal val MeshMapOrnaments: MaplibreOverlay = MaplibreOverlay {
-+internal fun meshMapOrnaments(extraCredits: List<String>): MaplibreOverlay = MaplibreOverlay {
-     val mapState = checkNotNull(LocalMapState.current)
-     val viewportInsets = LocalViewportInsets.current
- 
-@@ -89,18 +92,24 @@ internal val MeshMapOrnaments: MaplibreOverlay = MaplibreOverlay {
-             zoom = { mapState.cameraPosition.zoom },
-             modifier = Modifier.align(Alignment.TopStart),
-         )
-+        if (extraCredits.isNotEmpty()) {
-+            // Ours rather than the library's button, which draws nothing when the style itself credits nobody, as a
-+            // custom raster basemap may not.
-+            MaplibreLogo(Modifier.align(Alignment.BottomStart))
-+            CreditButton(Modifier.align(Alignment.BottomEnd), extraCredits = extraCredits, startExpanded = true)
++    @Test
++    fun sendAdmin_registersTheSentPacketIdAsOutstanding() = runTest {
++        val packets = mutableListOf<MeshPacket>()
++        everySuspend { packetHandler.sendToRadio(capture(packets)) } returns true
++
++        commandSender.sendAdmin(DEST_NODE, requestId = 0, wantResponse = true) {
++            AdminMessage.Builder().also { wb -> wb.get_owner_request = true }.build()
 +        }
-     }
- 
-     // The logo and the attribution button, in the places `MapOverlay.Default` puts them.
--    include(MaplibreOverlay.AttributionOnly)
-+    if (extraCredits.isEmpty()) include(MaplibreOverlay.AttributionOnly)
- }
- 
- /**
-  * `MapOverlay.Default` with the credit collapsed, for a map too small to host the credit without it overflowing: the
-  * scale bar, the wordmark and the button all stay, and the button is what reveals the text.
-  *
-- * Composed rather than reached for because the library cannot be asked for it — [CollapsedAttributionButton] says why —
-- * and the insets are spelled out because its `DefaultControls` is internal to it.
-+ * Composed rather than reached for because the library cannot be asked for it — [CreditButton] says why — and the
-+ * insets are spelled out because its `DefaultControls` is internal to it.
-  */
- internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
-     val mapState = checkNotNull(LocalMapState.current)
-@@ -119,7 +128,7 @@ internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
-             modifier = Modifier.align(Alignment.TopStart),
-         )
-         MaplibreLogo(Modifier.align(Alignment.BottomStart))
--        CollapsedAttributionButton(Modifier.align(Alignment.BottomEnd))
-+        CreditButton(Modifier.align(Alignment.BottomEnd))
-     }
- }
- 
-@@ -130,22 +139,28 @@ internal val CollapsedAttributionOrnaments: MaplibreOverlay = MaplibreOverlay {
- private const val CREDIT_WIDTH_FRACTION = 0.55f
- 
- /**
-- * The library's attribution button, starting collapsed.
-+ * The library's attribution button, with the expanded state and the credit list held here.
-  *
-  * `ExpandingAttributionButton` holds its own `expanded` flag, initialised to `true` and not settable from outside, so
-  * `collapsedStyle` only styles the branch it is already in and the credit still opens. Holding the flag here is what
-- * makes it start shut; everything else — icon, label, links — still comes from the library.
-+ * lets it start shut; everything else — icon, label, links — still comes from the library. It also returns before
-+ * drawing anything when the style credits nobody, which would drop [extraCredits] with it.
-  */
- @Composable
--private fun CollapsedAttributionButton(modifier: Modifier = Modifier) {
-+private fun CreditButton(
-+    modifier: Modifier = Modifier,
-+    extraCredits: List<String> = emptyList(),
-+    startExpanded: Boolean = false,
-+) {
-     val mapState = checkNotNull(LocalMapState.current)
-     val mapStyle = mapState.style
-     // Derived, not remembered: a basemap arrives as a style URL, so its sources are still empty on the first
-     // composition and a remembered list would never re-read. As in the library's own button.
--    val attributions by remember(mapStyle) { derivedStateOf { mapStyle.attributions() } }
-+    val attributions by
-+        remember(mapStyle, extraCredits) { derivedStateOf { (mapStyle.attributions() + extraCredits).distinct() } }
-     if (attributions.isEmpty()) return
- 
--    var expanded by remember(mapStyle) { mutableStateOf(false) }
-+    var expanded by remember(mapStyle) { mutableStateOf(startExpanded) }
- 
-     // As the library's button: a gesture closes the credit, so it does not sit over a short map after a pan. Narrowed
-     // to gestures, or the programmatic moves our own zoom controls make would fold it away mid-animation.
++
++        assertTrue(adminRequestRegistry.consume(packets.single().id))
++        assertFalse(adminRequestRegistry.consume(packets.single().id))
++    }
++
++    @Test
++    fun sendAdminImmediate_registersTheSentPacketIdAsOutstanding() {
++        val packets = mutableListOf<ToRadio>()
++        every { packetHandler.sendToRadio(capture(packets)) } returns Unit
++
++        commandSender.sendAdminImmediate(DEST_NODE) {
++            AdminMessage.Builder().also { wb -> wb.get_owner_request = true }.build()
++        }
++
++        assertTrue(adminRequestRegistry.consume(requireNotNull(packets.single().packet).id))
++    }
++
+     @Test
+     fun sendAdminSurfacesQueueRejection() = runTest {
+         everySuspend { packetHandler.sendToRadio(any<MeshPacket>()) } returns false
+@@ -642,6 +670,7 @@ class CommandSenderImplTest {
+                 tracerouteHandler = tracerouteHandler,
+                 neighborInfoHandler = neighborInfoHandler,
+                 sessionManager = sessionManager,
++                adminRequestRegistry = adminRequestRegistry,
+                 scope = testScope.asServiceScope(),
+             )
+         testScope.testScheduler.advanceUntilIdle()
 ```
 
-**File**: `feature/map-maplibre/src/commonMain/kotlin/org/meshtastic/feature/map/maplibre/component/ZoomControls.kt` (modified, +1/-1)
+**File**: `core/data/src/commonTest/kotlin/org/meshtastic/core/data/manager/MeshConnectionManagerImplTest.kt` (modified, +5/-0)
 ```diff
-@@ -51,7 +51,7 @@ private const val ZOOM_BOTTOM_INSET = 56
-  * somewhere else.
-  *
-  * Lifted clear of the wordmark and attribution button along the bottom edge, which every map shows. See
-- * [MeshMapOrnaments] for why the main map carries the credit outright and the small maps behind the button.
-+ * [meshMapOrnaments] for why the main map carries the credit outright and the small maps behind the button.
-  */
- @Composable
- internal fun BoxScope.MapZoom(mapState: MapState, basemap: Basemap) {
+@@ -43,6 +43,7 @@ import org.meshtastic.core.model.ConnectionState
+ import org.meshtastic.core.model.DataPacket
+ import org.meshtastic.core.model.Node
+ import org.meshtastic.core.model.TelemetryType
++import org.meshtastic.core.repository.AdminRequestRegistry
+ import org.meshtastic.core.repository.AppWidgetUpdater
+ import org.meshtastic.core.repository.CommandSender
+ import org.meshtastic.core.repository.ConnectionStateHolder
+@@ -93,6 +94,7 @@ class MeshConnectionManagerImplTest {
+     private lateinit var radioConfigRepository: RadioConfigRepository
+     private lateinit var commandSender: CommandSender
+     private lateinit var sessionManager: SessionManager
++    private lateinit var adminRequestRegistry: AdminRequestRegistry
+     private lateinit var nodeManager: NodeManager
+     private lateinit var analytics: PlatformAnalytics
+     private lateinit var packetRepository: PacketRepository
+@@ -125,6 +127,7 @@ class MeshConnectionManagerImplTest {
+         radioConfigRepository = mock(MockMode.autofill)
+         commandSender = mock(MockMode.autofill)
+         sessionManager = mock(MockMode.autofill)
++        adminRequestRegistry = mock(MockMode.autofill)
+         nodeManager = mock(MockMode.autofill)
+         analytics = mock(MockMode.autofill)
+         packetRepository = mock(MockMode.autofill)
+@@ -170,6 +173,7 @@ class MeshConnectionManagerImplTest {
+         radioConfigRepository,
+         commandSender,
+         sessionManager,
++        adminRequestRegistry,
+         nodeManager,
+         analytics,
+         packetRepository,
+@@ -282,6 +286,7 @@ class MeshConnectionManagerImplTest {
+         verify { packetHandler.stopPacketQueue() }
+         verify { locationManager.stop() }
+         verify { mqttManager.stop() }
++        verify { adminRequestRegistry.clearAll() }
+         assertEquals(true, lockdownCoordinator.disconnectCalled)
+     }
+ 
+```
+
+---
+
+### Incident Patch 2: `3a5c892d` (2026-10-31)
+**Commit Message**: fix(usb): add remaining firmware USB IDs to device filter (#7841)
+
+**File**: `androidApp/src/main/res/xml/device_filter.xml` (modified, +9/-0)
+```diff
+@@ -102,5 +102,14 @@
+     <usb-device
+         vendor-id="9114"
+         product-id="33035" /> <!-- 0x239A / 0x810B: Seeed XIAO nRF52840 Kit -->
++    <usb-device
++        vendor-id="9114"
++        product-id="179" /> <!-- 0x239A / 0x00B3: Adafruit (Pro Micro nRF52840, Meshlink) -->
++    <usb-device
++        vendor-id="9114"
++        product-id="51966" /> <!-- 0x239A / 0xCAFE: Adafruit (muzi BASE) -->
++    <usb-device
++        vendor-id="12346"
++        product-id="4097" /> <!-- 0x303A / 0x1001: Espressif ESP32-S3 USB-Serial/JTAG -->
+     <usb-device vendor-id="11914" /> <!-- 0x2E8A / ……: Raspberry Pi -->
+ </resources>
+```
+
+---
+
+### Incident Patch 3: `3ea178e5` (2026-10-30)
+**Commit Message**: fix(usb): add Seeed XIAO nRF52840 Kit (239a:810b) to device filter (#7838)
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `androidApp/src/main/res/xml/device_filter.xml` (modified, +3/-0)
+```diff
+@@ -99,5 +99,8 @@
+     <usb-device
+         vendor-id="9114"
+         product-id="17413" /> <!-- 0x239A / 0x4405: Adafruit (T-Echo) -->
++    <usb-device
++        vendor-id="9114"
++        product-id="33035" /> <!-- 0x239A / 0x810B: Seeed XIAO nRF52840 Kit -->
+     <usb-device vendor-id="11914" /> <!-- 0x2E8A / ……: Raspberry Pi -->
+ </resources>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7759** (2026-10-24): fix(coverage): Mapterhorn credit on MapLibre and antimeridian regions (@jamesarich)
-- **PR #7758** (2026-10-24): fix(coverage): Site Planner estimate placement, floor, offline terrain, threads and credit (@jamesarich)
-- **PR #7757** (closed): fix: center coverage bands on computed grid samples (@mvanhorn)
-- **PR #7751** (2026-10-24): chore(deps): update org.meshtastic:kp1812 to v0.2.0 (@renovate[bot])
-- **PR #7750** (2026-10-23): chore(claude): route the commit and push hooks through gradle-queue (@jamesarich)
-- **PR #7749** (2026-10-23): fix: surface routing NAKs on remote admin and node requests (@jamesarich)
+- **PR #7852** (2026-10-31): docs: update CHANGELOG.md (@jamesarich)
+- **PR #7851** (2026-10-31): docs: update CHANGELOG.md (@jamesarich)
+- **PR #7850** (2026-10-31): chore(deps): update ruby/setup-ruby action to v1.336.0 (@renovate[bot])
+- **PR #7849** (2026-10-31): chore(renovate): rebase only when conflicted (@jamesarich)
+- **PR #7848** (2026-10-31): chore(deps): update org.meshtastic:takpacket-sdk to v0.10.0 (@renovate[bot])
+- **PR #7847** (2026-10-31): fix(admin): accept admin responses only for requests the app sent (@jamesarich)
 
 ---
 
@@ -1911,28 +1849,37 @@ Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update bouncycastle [security] (#7733)
+## X. admin): accept admin responses only for requests the app sent (#7847)
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImpl.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshtastic/Meshtastic-Android. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10297408`: deps): update bouncycastle [security] (#7733). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b39f80ac`: admin): accept admin responses only for requests the app sent (#7847). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/data/src/commonMain/kotlin/org/meshtastic/core/data/manager/AdminPacketHandlerImpl.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-bouncycastle = "1.85"
+import org.meshtastic.core.repository.AdminRequestRegistry
+    private val adminRequestRegistry: AdminRequestRegistry,
+        val data = packet.decoded ?: return
+        val payload = data.payload
+        // The firmware forwards every decoded ADMIN_APP packet addressed to it, so a response is authoritative
+        // only when it answers a request we sent.
+        if (!adminRequestRegistry.consume(data.request_id)) {
+            Logger.w { "Ignoring admin message from=${packet.from} with no outstanding request id=${data.request_id}" }
+            return
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-bouncycastle = "1.80"
+        val payload = packet.decoded?.payload ?: return
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10297408` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b39f80ac` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `045aada9`  
+> **Source Version**: `c7abfced`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:15:43.074Z  
+> **Timestamp**: 2026-10-31T11:53:42.646Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:15:43.066Z  
+> **Harvest Timestamp**: 2026-10-31T11:53:42.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `xerj-org/xerj`
-- **Description**: Local-first search engine and MCP server for AI agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
+- **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 15711 stars
+- **Stars / Engagement**: 17836 stars
 
 ---
 
@@ -1868,6 +1868,7 @@ pub mod microbatch;
 pub mod neural;
 #[cfg(feature = "onnx-experimental")]
 pub mod onnx;
+pub mod semantic_lexical;
 
 pub use chunker::{Chunk, TextChunker};
 pub use embed::{EmbeddingProxy, EmbeddingProxyConfig};
@@ -1884,11 +1885,11 @@ pub use xerj_common::Result;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2438** (2026-10-26): **Indexing ~5x slower since rc.78: background merges use zstd level 19**
-  *Symptoms*: ## Summary  Bulk indexing under the memory governor has been about 5x slower since **v1.0.0-rc.78**. The README and BENCHMARK_VS_ES.md claims (faster and smaller than Elasticsearch/Lucene) were measured before rc.78.  Cause: ec712826 / PR #1042 ("ZBS4 stored-section slim ... merge-path zstd chooser"). Every **background** merge now tries a zstd level 19 + long-distance matching (window 2^24) candidate on each stored JSON column and keeps the smaller one (`engine/crates/xerj-storage/src/stored_codec.rs:272` `RAW_LONG_LEVEL = 19`; called from `engine/crates/xerj-engine/src/index.rs:14250` via `encode_stored_v2_merge_at_level`).  zstd 19 runs at about 2 MB/s per thread, so the stored part of a merge batch went from **2.4-3.3 s to 94-107 s**. RSS sits at or above the parent breaker's 95% watermark while the merge runs. The breaker latches and `_bulk` gets 429s until the merge finishes. The loader stalls for 60-100 s at a time, and in one run it dropped 34,398 docs after its retry budget ran out.  The codec comment says "merges are background work, so the extra encode pass is not on any back-pressure-critical path". With the memory governor, that is not true.  Two side findings from the same runs: - The `xerj-drain-free` helper thread was skipped with "memory is at the governor watermark". The thread that frees memory was refused because memory was high. - `_forcemerge?max_num_segments=1` stopped at 2 segments. At a 2 GiB cap the per-batch byte cap is 32 MiB. Once every segment is
+- **Issue #2754** (2026-10-30): **[bug]: Corpus Hub: loicngr/Kobo recorded with an MIT grant the author never gave**
+  *Symptoms*: ### XERJ version  N/A - Corpus Hub registry (corpus-hub branch, commit e4fd50a, #2526), not the engine  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  N/A  ### Steps to reproduce  ```shell 1. Open tools/xerj-code/hub/candidates/authors/loicngr--kobo.json on the corpus-hub branch (added in e4fd50a, #2526). 2. Open the loicngr/Kobo line in tools/xerj-code/hub/candidates/authors/CONTRIBUTORS-2.jsonl. 3. Both carry: "author_grant": { "terms": "MIT", ..., "receipt": "bff64177cf4d" } ```  ### Expected behavior  I am the author of loicngr/Kobo. My reply to the Corpus Hub outreach email (receipt bff64177cf4d, 2026-10-27T18:07Z) allowed inclusion under GPL-3.0 only and explicitly refused MIT or any other licence. It also asked that the latest state of the repository be indexed, not a single commit.  The record should carry no author_grant, and Kobo should be pinned to the latest state of the repository, or removed from the hub entirely (including the CONTRIBUTORS files).  ### Actual behavior  The record carries an MIT author_grant I never gave, and Kobo is pinned to the single commit c2c8d4a with "to": "selected commit".  If the outreach pipeline turns any "yes" into an MIT grant, other authors who replied "GPL only" or "under the repository's licence" may be affected too.  ### Is this an Elasticsearch wire-compatibility divergence?  Unknown / not sure  ### Elasticsearch reference (if a compat divergence)  _No response_  ### Relevant
 
-- **Issue #2428** (2026-10-26): **[URGENT] autoindex client aborts on thread spawn EAGAIN (os error 11) after 73 min, losing the run**
-  *Symptoms*: **Benchmark setup (Oct 25, 2026):** xerj v1.0.0-rc.99 (x86_64-unknown-linux-musl release binary), 15 GB RAM Linux box, one `xerj autoindex` run over a ~5 GB folder of real data (146,199 files: Rust and Go dependency sources, the xerj repo, JSONL audit data, CVE JSON and mbox, ADS-B flight-trace JSON). Command: `xerj autoindex /workspace/bench/src --prefix b5 --state-dir state2 --max-index-size 25GB --approve proceed --workers 4 --no-graph`  ## Summary The rc.99 run-4 autoindex client (`--workers 4 --no-graph`) aborted after ~1h13m with `Resource temporarily unavailable (os error 11)` when it tried to start a new thread. That's EAGAIN from thread creation under memory or thread pressure. The whole run was lost: 8.6 GB of state and 748 MB indexed, unfinished.  ## Asks - Every client-side thread spawn (scan, fetch, prepare, bulk senders, progress) goes through the fallible spawn path that rc.100 already uses for the scan and fetch pools. On failure, run the work inline or back off and retry, never abort. - Keep the thread count bounded for the whole run; check for per-dataset or per-index thread or runtime creation that grows with the ~450 datasets. - Make resume work after such an abort, without `--fresh`.  Severity: critical (part of #1122). 
+- **Issue #2654** (2026-10-29): **[bug]: constant_score inside a bool should loses its score after a flush**
+  *Symptoms*: Written by an AI coding agent (Claude Code), run by @jelbirt, who has reviewed this change.  ### XERJ version  xerj v1.0.0-rc.100 (code unchanged on `main` 2c1609d18)  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Ubuntu 24.04.3 x86_64 (WSL2)  ### Steps to reproduce  ```shell xerj --insecure --port 9390 -d ./data & U=http://localhost:9390; J='content-type: application/json' curl -s -XPUT "$U/cs" -H "$J" -d '{"mappings":{"properties":{"t":{"type":"text"}}}}' curl -s -XPUT "$U/cs/_doc/1?refresh=true" -H "$J" -d '{"t":"alpha beta"}' curl -s -XPUT "$U/cs/_doc/2?refresh=true" -H "$J" -d '{"t":"alpha"}' Q='{"query":{"bool":{"must":[{"match":{"t":"alpha"}}],"should":[{"constant_score":{"filter":{"match":{"t":"beta"}},"boost":1000}}]}}}' curl -s "$U/cs/_search?filter_path=hits.hits._id,hits.hits._score" -H "$J" -d "$Q" curl -s -XPOST "$U/cs/_flush" curl -s "$U/cs/_search?filter_path=hits.hits._id,hits.hits._score" -H "$J" -d "$Q" ```  ### Expected behavior  Before and after the flush, doc 1 scores its `must` score plus 1000 and doc 2 its `must` score (the bare `must` gives 0.16044301 and 0.2111092). A `constant_score` scores every match exactly `boost`, and `bool` adds matching `should` scores.  ### Actual behavior  ``` before flush: {"hits":{"hits":[{"_id":"1","_score":1001.6932},{"_id":"2","_score":1.6931472}]}} after flush:  {"hits":{"hits":[{"_id":"1","_score":0.7704125},{"_id":"2","_score":0.2111092}]}} ```  After the flush th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1905,1026 +1906,639 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `12e36e31` (2026-10-26)
-**Commit Message**: fix(engine): background merges skip the zstd-19 stored encode (ingest ~5x regression since rc.78) (#2441)
+### Incident Patch 1: `6236eccb` (2026-10-31)
+**Commit Message**: fix(aggs): bound hdr number_of_significant_value_digits; one request hung a search thread (#2651)
 
-* fix(engine): background merges skip the level-19 stored encode; drain-free starts at the watermark; force-merge converges past the batch cap
+`percentiles` / `percentile_ranks` with `hdr` size their histogram as the
+next power of two at or above `2 * 10^digits`:
 
-Since rc.78 (ec712826, #1042) every background merge ran a zstd-19 + LDM
-candidate on each stored JSON column. That made the stored encode ~35x
-slower (2.4-3.3 s -> 94-107 s per merge batch on a 1M-doc corpus) and held
-RSS at the breaker watermark for the whole merge, so ingest got 429s.
+    let target = 2u64 * 10u64.pow(hdr_digits);
+    let mut p = 1u64;
+    while p < target { p <<= 1; }
 
-- Background merges encode stored columns at the operator's level only.
-  An explicit _forcemerge (or XERJ_MERGE_MAX_EFFORT=true) keeps level 19.
-- xerj-drain-free frees memory, so it now ignores the watermark spawn gate.
-- A force-merge whose segments each exceed half the batch cap merges the
-  two smallest instead of stopping short of max_num_segments.
+Nothing bounded `digits`. Release builds have overflow checks off, so from
+digits = 19 the product wraps. When the wrapped `target` is above 2^63
+(digits 20, 26, 29-31, 39, ... and any u64 that truncates to one of them
+through `as u32`), `p` shifts past 2^63 to 0 and the loop never ends. A
+single request
 
-* style: rustfmt
+  POST /idx/_search
+  {"size":0,"aggs":{"p":{"percentiles":{"field":"n",
+     "hdr":{"number_of_significant_value_digits":20}}}}}
 
-* docs(changelog): ingest regression fix (#2438)
+pins a search thread at 100% CPU forever. Repeated, it exhausts the
+search/blocking pool. The API validator routed `percentiles` to the
+tdigest checks only, and the columnar fast path bails to this code
+whenever `hdr` is present, so the loop is reached before any document is
+read. The same loop is duplicated in `hdr_percentiles_values`
+(xerj-api).
 
-* test(storage): force-merge level-19 test uses a JSON fallback column (cardinality above the dict cap)
+ES accepts 0..=5 significant digits and returns 400
+"[numberOfSignificantValueDigits] 
 
----------
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +17/-0)
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +91/-2)
 ```diff
-@@ -121,6 +121,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   queries on stray digits. Re-index to drop them from existing indices.
-   (#2423)
- 
-+- **Indexing is fast again under a memory cap** (issue
-+  [#2438](https://github.com/xerj-org/xerj/issues/2438), part of
-+  [#2423](https://github.com/xerj-org/xerj/issues/2423)). Since rc.78 every
-+  background merge also tried a very slow, very small compression (zstd level
-+  19) on the stored documents. That made each merge ~35x slower in that step,
-+  kept memory at the limit for the whole merge, and made `_bulk` answer 429
-+  until it ended, so indexing was about 5x slower and a loader could give up
-+  and drop documents. Background merges now use the normal compression level.
-+  An explicit `_forcemerge` still uses the slow, small one, so the force-merged
-+  size is unchanged; set `XERJ_MERGE_MAX_EFFORT=true` to use it for every
-+  merge. No data format change.
-+- **The helper thread that frees memory now starts when memory is high.**
-+  `xerj-drain-free` was refused with "memory is at the governor watermark",
-+  which is exactly when it is needed.
-+- **`_forcemerge?max_num_segments=1` now reaches one segment** when every
-+  segment is larger than half the per-merge size cap (it used to stop at two).
-+
- - Server startup now reports the resolved data directory, its configuration
-   source and whether this launch created it. New-directory guidance points
-   operators back to their previous `--data-dir` or `--config` when they expected
-```
-
-**File**: `engine/crates/xerj-common/src/thread_spawn.rs` (modified, +16/-0)
-```diff
-@@ -325,6 +325,22 @@ where
-     try_spawn_with(&StdSpawn, true, name, f)
- }
- 
-+/// Spawn a helper whose only job is to *free* memory (e.g. the memtable's
-+/// `xerj-drain-free`, which drops drained generations off the publish path).
-+///
-+/// Ignores the watermark gate on purpose: the gate closes exactly when RSS
-+/// is at the governor watermark, which is exactly when a memory-relief
-+/// helper should run. Gating it meant the drain's frees ran inline on the
-+/// publish thread under pressure (logged as "best-effort helper thread was
-+/// not started"). A real OS failure is still an `Err` with the job handed
-+/// back, and the caller drops it inline.
-+pub fn try_spawn_memory_relief<F>(name: &str, f: F) -> Result<SpawnedThread, SpawnFailure<F>>
-+where
-+    F: FnOnce() + Send + 'static,
-+{
-+    try_spawn_with(&StdSpawn, true, name, f)
-+}
-+
- /// [`try_spawn`] with an explicit stack size.
- ///
- /// Used by the in-process shard call, whose handler does not fit on the
-```
-
-**File**: `engine/crates/xerj-common/tests/memory_relief_spawn_at_watermark.rs` (added, +33/-0)
-```diff
-@@ -0,0 +1,33 @@
-+//! A memory-relief helper (`xerj-drain-free`) must start when the governor
-+//! watermark gate is closed — that is when it is needed. Its own test binary
-+//! because the spawn gate is process-global (first install wins).
-+
-+use std::sync::mpsc;
-+use std::time::Duration;
-+
-+use xerj_common::thread_spawn::{
-+    install_spawn_gate, spawn_allowed, try_spawn, try_spawn_memory_relief,
-+};
-+
-+fn at_watermark() -> bool {
-+    false
-+}
-+
-+#[test]
-+fn drain_free_helper_starts_at_the_watermark() {
-+    assert!(install_spawn_gate(at_watermark));
-+    assert!(!spawn_allowed(), "gate simulates RSS at the watermark");
-+
-+    // An ordinary best-effort helper is refused at the watermark...
-+    assert!(try_spawn("xerj-best-effort", || {}).is_err());
-+
-+    // ...but the memory-relief helper starts and runs its job.
-+    let (tx, rx) = mpsc::channel();
-+    let handle = try_spawn_memory_relief("xerj-drain-free", move || {
-+        tx.send(()).unwrap();
-+    })
-+    .unwrap_or_else(|f| panic!("relief spawn refused at the watermark: {}", f.error));
-+    rx.recv_timeout(Duration::from_secs(10))
-+        .expect("relief job ran");
-+    handle.join().unwrap();
-+}
-```
-
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +148/-23)
-```diff
-@@ -105,6 +105,128 @@ async fn await_publication_barrier<T>(rx: tokio::sync::oneshot::Receiver<T>, wha
+@@ -8088,6 +8088,29 @@ fn find_invalid_agg_params(aggs: Option<&Value>) -> Option<String> {
+             _ => None,
+         }
      }
- }
- 
-+/// Forcemerge batch selection over segments sorted smallest first: chunks
-+/// of at most `chunk_len` segments whose input stays under `cap` bytes
-+/// (`0` = no cap, #948). Returns index lists into `sizes`.
-+///
-+/// Convergence: when every segment is already larger than half the cap,
-+/// no chunk can hold two, and the old selection returned nothing — an
-+/// explicit `max_num_segments=1` stopped at 2+ segments (seen on a 2 GiB
-+/// cap: two 16-27 MB segments vs a 32 MiB batch cap). In that case the two
-+/// smallest segments are merged anyway: one minimal batch is the least an
-+/// explicit force-merge must do to make progress, and the caller loops
-+/// passes until it reaches its target.
-+pub(crate) fn forcemerge_chunks(sizes: &[u64], chunk_len: usize, cap: u64) -> Vec<Vec<usize>> {
-+    let chunk_len = chunk_len.max(2);
-+    let mut chunks: Vec<Vec<usize>> = Vec::new();
-+    let mut batch: Vec<usize> = Vec::new();
-+    let mut batch_bytes = 0u64;
-+    for (i, &size) in sizes.iter().enumerate() {
-+        if !batch.is_empty()
-+            && (batch.len() >= chunk_len || (cap > 0 && batch_bytes.saturating_add(size) > cap))
-+        {
-+            chunks.push(std::mem::take(&mut batch));
-+            batch_bytes = 0;
++    /// `hdr` options shared by `percentiles` and `percentile_ranks`. ES
++    /// accepts 0..=5 significant digits; anything else is a 400. The engine
++    /// sizes its histogram as `2 * 10^digits` rounded up to a power of two,
++    /// so an unchecked value such as 20 overflowed that `u64` and spun the
++    /// rounding loop forever on the search thread.
++    fn check_hdr(name: &str, params: &Value) -> Option<String> {
++        let digits = params
++            .get("hdr")?
++            .get("number_of_significant_value_digits")?;
++        if digits.as_u64().is_some_and(|d| d <= 5) {
++            return None;
 +        }
-+        batch_bytes = batch_bytes.saturating_add(size);
-+        batch.push(i);
-+    }
-+    if !batch.is_empty() {
-+        chunks.push(batch);
-+    }
-+    chunks.retain(|c| c.len() >= 2);
-+    if chunks.is_empty() && sizes.len() >= 2 {
-+        chunks.push(vec![0, 1]);
-+    }
-+    chunks
-+}
-+
-+#[cfg(test)]
-+mod forcemerge_chunks_tests {
-+    use super::forcemerge_chunks;
-+    const MIB: u64 = 1024 * 1024;
-+
-+    #[test]
-+    fn segments_over_the_cap_still_converge_to_one() {
-+        // The corpus200 case: two segments, each over half a 32 MiB cap.
-+        assert_eq!(
-+            forcemerge_chunks(&[16 * MIB, 27 * MIB], 16, 32 * MIB),
-+            vec![vec![0, 1]]
-+        );
-+        // Three oversized segments: merge the two smallest this pass.
-+        assert_eq!(
-+            forcemerge_chunks(&[40 * MIB, 50 * MIB, 60 * MIB], 16, 32 * MIB),
-+            vec![vec![0, 1]]
-+        );
-+    }
-+
-+    #[test]
-+    fn cap_and_count_still_split_batches() {
-+        let sizes = [MIB; 5];
-+        assert_eq!(
-+            forcemerge_chunks(&sizes, 2, 0),
-+            vec![vec![0, 1], vec![2, 3]]
-+        );
-+        assert_eq!(
-+            forcemerge_chunks(&[10 * MIB, 10 * MIB, 10 * MIB, 10 * MIB], 16, 25 * MIB),
-+            vec![vec![0, 1], vec![2, 3]]
-+        );
-+    }
-+
-+    #[test]
-+    fn one_segment_is_nothing_to_do() {
-+        assert!(forcemerge_chunks(&[MIB], 16, 32 * MIB).is_empty());
-+        assert!(forcemerge_chunks(&[], 16, 32 * MIB).is_empty());
-+    }
-+}
-+
-+/// Whether a merge runs the level-19 long-effort stored encode
-+/// (`encode_stored_v2_forcemerge_at_level`).
-+///
-+/// An explicit `_forcemerge` always does: the operator asked for the
-+/// smallest index. A background (tiered) merge does only when the
-+/// operator opts in with `XERJ_MERGE_MAX_EFFORT=true|1|yes|on`. Since
-+/// rc.78 every background merge ran it, which made the stored encode ~35x
-+/// slower and held the breaker latched (429 to ingest) for the whole merge.
-+pub(crate) fn merge_uses_long_effort_stored_encode(
-+    explicit_forcemerge: bool,
-+    opt_in: Option<&str>,
-+) -> bool {
-+    if explicit_forcemerge {
-+        return true;
-+    }
-+    matches!(
-+        opt_in.map(|v| v.trim().to_ascii_lowercase()).as_deref(),
-+        Some("1" | "true" | "yes" | "on")
-+    )
-+}
-+
-+#[cfg(test)]
-+mod merge_long_effort_tests {
-+    use super::merge_uses_long_effort_stored_encode as uses;
-+
-+    #[test]
-+    fn background_merge_uses_fast_encode_by_default() {
-+        assert!(!uses(false, None));
-+        assert!(!uses(false, Some("")));
-+        assert!(!uses(false, Some("false")));
-+        assert!(!uses(false, Some("0")));
-+    }
-+
-+    #[test]
-+    fn forcemerge_always_uses_long_effort_encode() {
-+        assert!(uses(true, None));
-+        assert!(uses(true, Some("false")));
-+    }
-+
-+    #[test]
-+    fn background_long_effort_is_opt_in() {
-+        for v in ["1", "true", "TRUE", " yes ", "on"] {
-+            assert!(uses(false, Some(v)), "{v}");
++        if digits.is_null() {
++            return Some(
++                "[hdr] number_of_significant_value_digits doesn't support values of type: \
++                 VALUE_NULL"
++                    .to_string(),
++            );
 +        }
++        Some(format!(
++            "[numberOfSignificantValueDigits] must be between 0 and 5: [{name}]"
++        ))
 +    }
-+}
-+
- #[cfg(test)]
- mod collection_publication_fail_closed_tests {
-     use super::*;
-@@ -13620,24 +13742,10 @@ impl Index {
-                 let sizes: Vec<u64> = segs.iter().map(|s| s.size_bytes).collect();
-                 let ids: Vec<SegmentId> = segs.into_iter().map(|s| s.id.clone()).collect();
-                 let chunk_len = (mc.max_merge_count as usize).max(2);
--                let mut chunks: Vec<Vec<SegmentId>> = Vec::new();
--                let mut batch: Vec<SegmentId> = Vec::new();
--                let mut batch_bytes = 0u64;
--                for (id, size) in ids.into_iter().zip(sizes) {
--                    i
-```
-
-**File**: `engine/crates/xerj-engine/src/memtable.rs` (modified, +7/-4)
-```diff
-@@ -2825,9 +2825,10 @@ impl FrozenClaim {
-                 removed_bytes,
-             )
-         });
--        // Free the dead generations off the publish critical path.  If
--        // the thread cannot be created — the governor watermark is already
--        // engaged, `pthread_create` fails, or (the #1122 failure) the new
-+        // Free the dead generations off the publish critical path. The
-+        // spawn ignores the watermark gate: at the watermark is exactly when
-+        // this memory-relief helper must run. If the thread cannot be
-+        // created — `pthread_create` fails, or (the #1122 failure) the new
-         // thread's stack cannot be reserved — the Arcs drop inline: same
-         // correctness, we only lose the async-free optimisation. The spawn
-         // itself must not panic: std panics *inside* the child when its
-@@ -2838,7 +2839,9 @@ impl FrozenClaim {
-         // flush storm under pressure does not emit a line per generation.
-         static DRAIN_FREE_DEGRADED: AtomicBool = AtomicBool::new(false);
-         if let Err(failure) =
--            xerj_common::thread_spawn::try_spawn("xerj-drain-free", move || drop(dead))
-+            xerj_common::thread_spawn::try_spawn_memory_relief("xerj-drain-free", move || {
-+                drop(dead)
-+            })
-         {
-             xerj_common::thread_spawn::warn_best_effort_degraded(
-                 &DRAIN_FREE_DEGRADED,
-```
-
-**File**: `engine/crates/xerj-storage/src/stored_codec.rs` (modified, +121/-20)
-```diff
-@@ -70,7 +70,8 @@
- //! * form `0` — the payload is a zstd frame written at the encode-time level
- //!   (the only form ZBS2 segments can carry);
- //! * form `1` — `[0x01][level: u8][window_log: u8][zstd frame]`, written by
--//!   the merge-path effort chooser (see [`RAW_LONG_LEVEL`]): level 19 +
-+//!   the merge-path effort chooser (see [`RAW_LONG_LEVEL`]): level 19 on an
-+//!   explicit `_forcemerge` (background merges do not run it), plus
- //!   long-distance matching + an explicit window, which finds repeats tens
- //!   of MB apart that a default window cannot.  `level`/`window_log` are
- //!   informational — the zstd frame is self-describing.
-@@ -269,6 +270,17 @@ impl ColCodec {
- /// column; the chooser keeps whichever candidate is smaller, so a column
- /// that level 3 already answers (e.g. short ids) is stored exactly as
- /// before.
-+///
-+/// Level 19 is reserved for an explicit `_forcemerge`
-+/// ([`encode_stored_v2_forcemerge_at_level`]) or an operator opt-in.
-+/// Background merges skip this candidate: zstd 19 encodes at ~2 MB/s per
-+/// thread, and on a 1M-doc / 200 MB corpus at a 2 GiB cap the stored
-+/// encode was 98% of every background merge (`XERJ_PROF merge-batch`:
-+/// stored_us 94-107 s vs 2.4-3.3 s before this chooser existed, rc.77).
-+/// While a merge runs its working set keeps RSS above the governor
-+/// watermark, so the parent breaker answered 429 to ingest for the whole
-+/// merge: bulk throughput fell from ~41k docs/s (rc.77) to ~5-14k docs/s
-+/// (rc.78-rc.99).
- const RAW_LONG_LEVEL: i32 = 19;
- const RAW_LONG_WINDOW_LOG_MAX: u32 = 24;
- 
-@@ -294,23 +306,32 @@ pub fn encode_stored_v2(stored_docs_json: &[u8]) -> Vec<u8> {
- /// operator changes `compression.level` interleave with no migration and no
- /// format flag.
- pub fn encode_stored_v2_at_level(stored_docs_json: &[u8], level: i32) -> Vec<u8> {
--    encode_stored_v2_at_level_inner(stored_docs_json, level, false)
-+    encode_stored_v2_at_level_inner(stored_docs_json, level, None)
- }
- 
--/// Merge-path variant of [`encode_stored_v2_at_level`]: in addition to the
--/// operator's level, each JSON fallback column is also compressed at
--/// [`RAW_LONG_LEVEL`] with long-distance matching, and the smaller payload is
--/// kept (the same measured-chooser rule the `.dv` ZNV2 codec uses).  Merges
--/// are background work, so the extra encode pass is not on any
--/// back-pressure-critical path; flush never calls this.
-+/// Background-merge entry. Encodes exactly like [`encode_stored_v2_at_level`]
-+/// at the operator's level: **no** long-effort candidate. Background merges
-+/// are on the back-pressure path — their working set holds RSS at the
-+/// breaker watermark while they run, so their encode speed is ingest
-+/// throughput (see [`RAW_LONG_LEVEL`]). Use
-+/// [`encode_stored_v2_forcemerge_at_level`] for the max-effort encode.
- pub fn encode_stored_v2_merge_at_level(stored_docs_json: &[u8], level: i32) -> Vec<u8> {
--    encode_stored_v2_at_level_inner(stored_docs_json, level, true)
-+    encode_stored_v2_at_level_inner(stored_docs_json, level, None)
-+}
-+
-+/// Explicit-`_forcemerge` (or operator opt-in) variant: in addition to the
-+/// operator's level, each JSON fallback column is also compressed at
-+/// [`RAW_LONG_LEVEL`] (19) with long-distance matching, and the smaller
-+/// payload is kept (the same measured-chooser rule the `.dv` ZNV2 codec
-+/// uses). A force-merge is an operator request for the smallest index.
-+pub fn encode_stored_v2_forcemerge_at_level(stored_docs_json: &[u8], level: i32) -> Vec<u8> {
-+    encode_stored_v2_at_level_inner(stored_docs_json, level, Some(RAW_LONG_LEVEL))
- }
- 
- fn encode_stored_v2_at_level_inner(
-     stored_docs_json: &[u8],
-     level: i32,
--    long_effort_chooser: bool,
-+    long_effort_level: Option<i32>,
- ) -> Vec<u8> {
-     // Parse the JSON array of documents.  Failure → v1 fallback.
-     let docs: Vec<serde_json::Value> = match serde_json::from_slice(stored_docs_json) {
-@@ -381,7 +402,7 @@ fn encode_stored_v2_at_level_inner(
-             &columns,
-             Some(stored_docs_json),
-             level,
--            long_effort_chooser,
-+            long_effort_level,
-         ),
-         present_nulls,
-     )
-@@ -545,7 +566,7 @@ fn encode_stored_v2_from_values_inner(
-             &columns,
-             stored_docs_json,
-             STORED_ZSTD_LEVEL,
--            false,
-+            None,
-         ),
-         present_nulls,
-     )
-@@ -559,15 +580,16 @@ fn encode_stored_v2_from_values_inner(
- /// fast path on large segments where the columnar form always wins and
- /// serialising a multi-MB JSON array per flush is measurable CPU).
- ///
--/// `long_effort_chooser` adds a second, higher-effort zstd candidate for
--/// each JSON fallback column (see [`RAW_LONG_LEVEL`]) — merge only.
-+/// `long_effort_level` adds a second, higher-effort zstd candidate (LDM +
-+/// explicit window) at that level for each JSON fallback column (see
-+/// [`RAW_LONG_LEVEL`]) — force-merge only.
- fn encode_v2_columns(
-    
-```
-
----
-
-### Incident Patch 2: `6cdb32e2` (2026-10-26)
-**Commit Message**: autoindex: bound phase-A memory and cap long dataset names (part of #1122) (#2417)
-
-* autoindex: bound phase-A memory and cap long dataset names (part of #1122)
-
-- Phase A scanned every file and collected all FileScans/sketches (one set of
-  FieldAccs per file) before clustering; on a 146k-file tree that is GBs of
-  client RSS. Scan in file-ordered chunks and fold sketches into a new
-  incremental dataset::Clusterer; clustering is order-dependent, so feeding in
-  file order keeps the plan identical. Tests use a 3-file chunk so every
-  multi-file phase-A test crosses chunk boundaries.
-- The run kept every cluster (all FieldAccs) alive until end-of-run key
-  correlation. Keep only correlate::KeyStats (n, distinct, overflow, int range,
-  raw values for fields with >=10 distinct) and look datasets up by slug, which
-  also fixes the clusters/datasets zip misaligning after a refused dataset.
-- Slugs longer than 128 chars are truncated with a stable 8-hex hash suffix so
-  index names never exceed the server's 255-byte limit.
-
-* autoindex: keep is_candidate's doc comment on is_candidate (clippy doc_lazy_continuation)
-
----------
-
-Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +12/-0)
-```diff
-@@ -79,6 +79,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- `xerj autoindex` no longer runs out of memory while planning a large folder.
-+  It used to keep the sampled values of every file in memory at once before
-+  grouping them into datasets, and kept them all until the end of the run;
-+  on a 5 GB folder of about 146,000 files that was several GB on the client
-+  before anything was indexed. Files are now grouped as they are read, and only
-+  what the end-of-run key correlation needs is kept. The datasets and index
-+  names it plans are unchanged (part of #1122).
-+- `xerj autoindex` no longer fails a run because a dataset name built from a
-+  long path (for example a Go module path) is over the 255-character index name
-+  limit. Names longer than 128 characters are shortened and end in a short
-+  hash, so they stay the same on every run and never clash (part of #1122).
-+
- - Server startup now reports the resolved data directory, its configuration
-   source and whether this launch created it. New-directory guidance points
-   operators back to their previous `--data-dir` or `--config` when they expected
-```
-
-**File**: `engine/crates/xerj-autoindex/src/correlate.rs` (modified, +189/-1)
-```diff
-@@ -7,7 +7,7 @@
- use crate::esclient::Es;
- use anyhow::Result;
- use serde_json::{json, Value};
--use std::collections::HashSet;
-+use std::collections::{HashMap, HashSet};
- 
- pub struct Candidate {
-     pub slug: String,
-@@ -70,6 +70,90 @@ impl KeyCorr {
-     }
- }
- 
-+/// What end-of-run key correlation needs from one sampled field, kept in
-+/// place of the field's full phase-A accumulator.
-+#[derive(Debug, Clone, PartialEq)]
-+pub struct KeyFieldStats {
-+    pub n: u64,
-+    pub distinct: usize,
-+    pub overflow: bool,
-+    pub int_range: Option<(i64, i64)>,
-+    pub values: HashSet<String>,
-+}
-+
-+/// dataset slug → field name → stats.
-+pub type KeyStats = HashMap<String, HashMap<String, KeyFieldStats>>;
-+
-+/// Fewest distinct sampled values [`is_candidate`] accepts for any type.
-+const MIN_CANDIDATE_DISTINCT: usize = 10;
-+
-+/// Keep only the correlation inputs of every cluster's fields, so the phase-A
-+/// accumulators (byte histograms, length/token samples, hashed distinct sets)
-+/// can be dropped once the plan is built instead of living to the end of the
-+/// run. Fields with too few distinct values to ever be a candidate are left
-+/// out; the type-dependent checks run at the end against the final specs.
-+pub fn key_stats(clusters: &[crate::dataset::Cluster]) -> KeyStats {
-+    let mut out = KeyStats::new();
-+    for c in clusters {
-+        let fields: HashMap<String, KeyFieldStats> = c
-+            .fields
-+            .iter()
-+            .filter(|(_, acc)| acc.distinct.len() >= MIN_CANDIDATE_DISTINCT)
-+            .map(|(name, acc)| {
-+                (
-+                    name.clone(),
-+                    KeyFieldStats {
-+                        n: acc.n,
-+                        distinct: acc.distinct.len(),
-+                        overflow: acc.distinct_overflow,
-+                        int_range: (acc.long_ok > 0).then_some((acc.int_min, acc.int_max)),
-+                        values: acc.raw_values.clone(),
-+                    },
-+                )
-+            })
-+            .collect();
-+        if !fields.is_empty() {
-+            out.insert(c.slug.clone(), fields);
-+        }
-+    }
-+    out
-+}
-+
-+/// Key-overlap candidates among `datasets`' fields, from stats captured by
-+/// [`key_stats`]. Looked up by slug, so datasets refused after planning
-+/// simply drop out.
-+pub fn candidates(stats: &KeyStats, datasets: &[crate::state::PlanDataset]) -> Vec<Candidate> {
-+    let mut cands = Vec::new();
-+    for d in datasets {
-+        let Some(fields) = stats.get(&d.slug) else {
-+            continue;
-+        };
-+        for spec in &d.specs {
-+            let Some(st) = fields.get(&spec.name) else {
-+                continue;
-+            };
-+            if is_candidate(
-+                &spec.es_type,
-+                spec.semantic.as_deref(),
-+                st.distinct,
-+                st.n,
-+                st.overflow,
-+                st.int_range,
-+            ) {
-+                cands.push(Candidate {
-+                    slug: d.slug.clone(),
-+                    index: d.index.clone(),
-+                    field: spec.name.clone(),
-+                    kind: spec.es_type.clone(),
-+                    values: st.values.clone(),
-+                    sampled_n: st.n,
-+                });
-+            }
-+        }
-+    }
-+    cands
-+}
-+
- /// Key-like candidate filter. Deviations from the design draft (recorded):
- /// - keyword fields qualify at cardinality ≥ 20 regardless of distinct/n
- ///   ratio (join keys like user ids have LOW sample ratios in big datasets);
-@@ -351,6 +435,110 @@ pub fn time_alignment(series: &[TimeSeries]) -> Vec<Value> {
- mod tests {
-     use super::*;
- 
-+    fn spec(name: &str, es_type: &str) -> crate::infer::FieldSpec {
-+        crate::infer::FieldSpec {
-+            name: name.into(),
-+            es_type: es_type.into(),
-+            date_enc: None,
-+            semantic: None,
-+            cardinality_est: 0,
-+            cardinality_overflow: false,
-+            null_ratio: 0.0,
-+            avg_len: 0.0,
-+            coverage: 1.0,
-+            examples: vec![],
-+            notes: vec![],
-+            date_min: None,
-+            date_max: None,
-+            date_evidence: vec![],
-+            num_min: None,
-+            num_max: None,
-+        }
-+    }
-+
-+    fn plan_dataset(slug: &str, specs: Vec<crate::infer::FieldSpec>) -> crate::state::PlanDataset {
-+        crate::state::PlanDataset {
-+            slug: slug.into(),
-+            index: format!("ax-{slug}"),
-+            family: "jsonl".into(),
-+            group: None,
-+            specs,
-+            time_field: None,
-+            semantic_field: None,
-+            text_analyzer: None,
-+            scope: None,
-+            sampled_records: 1,
-+            file_count: 1,
-+        }
-+    }
-+
-+    fn cluster(
-+        slug: &str,
-+        field: &str,
-+        values: impl Iterator<Item = String>,
-+    ) -> crate::dataset::Cluster {
-+        let mut acc = crate::infer::FieldAcc::default();
-+     
-```
-
-**File**: `engine/crates/xerj-autoindex/src/dataset.rs` (modified, +237/-99)
-```diff
-@@ -135,31 +135,61 @@ pub(crate) fn demotable_family(f: Family) -> bool {
- /// Cluster sketches into datasets. `rels` and `scopes` are indexed by
- /// `Sketch::file_idx`: `rels` are root-relative paths (slug naming), `scopes`
- /// the repository scope of each file ("" = root) — see `module` docs.
-+///
-+/// Equivalent to feeding every sketch, in order, to a [`Clusterer`] and
-+/// calling [`Clusterer::finish`].
- pub fn cluster(sketches: Vec<Sketch>, rels: &[String], scopes: &[String]) -> Vec<Cluster> {
--    // scope → docs cluster (BTreeMap: deterministic scope order).
--    let mut docs: BTreeMap<String, Cluster> = BTreeMap::new();
--    let mut data: Vec<Cluster> = Vec::new();
--    fn docs_cluster<'a>(docs: &'a mut BTreeMap<String, Cluster>, scope: &str) -> &'a mut Cluster {
--        docs.entry(scope.to_string()).or_insert_with(|| Cluster {
--            family: Family::Code,
--            group: None,
--            members: Vec::new(),
--            fields: HashMap::new(),
--            key_fields: HashSet::new(),
--            records: 0,
--            population: 0,
--            slug: String::new(),
--            scope: scope.to_string(),
--            is_docs: true,
--            demoted: Vec::new(),
--        })
--    }
--
-+    let mut clusterer = Clusterer::default();
-     for sk in sketches {
-         let scope = scopes[sk.file_idx].as_str();
-+        clusterer.push(sk, scope);
-+    }
-+    clusterer.finish(rels)
-+}
-+
-+fn docs_cluster<'a>(docs: &'a mut BTreeMap<String, Cluster>, scope: &str) -> &'a mut Cluster {
-+    docs.entry(scope.to_string()).or_insert_with(|| Cluster {
-+        family: Family::Code,
-+        group: None,
-+        members: Vec::new(),
-+        fields: HashMap::new(),
-+        key_fields: HashSet::new(),
-+        records: 0,
-+        population: 0,
-+        slug: String::new(),
-+        scope: scope.to_string(),
-+        is_docs: true,
-+        demoted: Vec::new(),
-+    })
-+}
-+
-+/// Incremental form of [`cluster`]: sketches are folded into their dataset as
-+/// they arrive, so a caller never has to hold every file's sketch at once.
-+///
-+/// A sketch carries one [`FieldAcc`] per sampled field (a 1 KiB byte histogram,
-+/// up to 512 length samples and up to [`crate::infer::RAW_CAP`] raw values
-+/// each). Phase A used to collect every file's sketches before clustering:
-+/// tens of KiB per file, and 4.4 GB of client RSS on a 146k-file folder before
-+/// a single document was sent. Folding them as they are produced bounds that
-+/// to the clusters themselves. Sketches must be pushed in file order for the
-+/// result to match [`cluster`] exactly (clustering is greedy and
-+/// order-dependent).
-+#[derive(Default)]
-+pub struct Clusterer {
-+    // scope → docs cluster (BTreeMap: deterministic scope order).
-+    docs: BTreeMap<String, Cluster>,
-+    data: Vec<Cluster>,
-+}
-+
-+impl Clusterer {
-+    /// Fold one sketch into its dataset. `scope` is the repository scope of
-+    /// `sk.file_idx`.
-+    pub fn push(&mut self, sk: Sketch, scope: &str) {
-+        let docs = &mut self.docs;
-+        let data = &mut self.data;
-         // Documents: no data-derived names, no sub-file group.
-         if sk.key_fields.is_empty() && sk.group.is_none() {
--            let c = docs_cluster(&mut docs, scope);
-+            let c = docs_cluster(docs, scope);
-             c.members.push(sk.file_idx);
-             c.records += sk.records;
-             c.population += sk.population;
-@@ -171,7 +201,7 @@ pub fn cluster(sketches: Vec<Sketch>, rels: &[String], scopes: &[String]) -> Vec
+     /// Every descendant definition below `def`, as `(type, name)`.
+     fn descendants<'a>(def: &'a Value, out: &mut Vec<(&'a str, &'a str)>) {
+         for (name, child) in sub_aggs(def).into_iter().flatten() {
+@@ -8178,11 +8201,33 @@ fn find_invalid_agg_params(aggs: Option<&Value>) -> Option<String> {
                      }
                  }
              }
--            continue;
-+            return;
-         }
-         // Data: schema clustering within (scope, family, group).
-         let names: HashSet<&str> = sk.key_fields.iter().map(|s| s.as_str()).collect();
-@@ -219,92 +249,96 @@ pub fn cluster(sketches: Vec<Sketch>, rels: &[String], scopes: &[String]) -> Vec
+-            "percentiles" => return check_tdigest(params),
++            "percentiles" => {
++                if let Some(e) = check_tdigest(params) {
++                    return Some(e);
++                }
++                if let Some(e) = check_hdr(name, params) {
++                    return Some(e);
++                }
++                match params.get("percents") {
++                    Some(Value::Null) => {
++                        return Some(format!("[percents] must not be null: [{name}]"))
++                    }
++                    Some(Value::Array(a)) if a.is_empty() => {
++                        return Some(format!("[percents] must not be empty: [{name}]"))
++                    }
++                    Some(Value::Array(a)) if !a.iter().all(Value::is_number) => {
++                        return Some(format!("[percents] must be numbers: [{name}]"))
++                    }
++                    _ => {}
++                }
++            }
+             "percentile_ranks" => {
+                 if let Some(e) = check_tdigest(params) {
+                     return Some(e);
+                 }
++                if let Some(e) = check_hdr(name, params) {
++                    return Some(e);
++                }
+                 match params.get("values") {
+                     None | Some(Value::Null) => {
+                         return Some(format!("[values] must not be null: [{name}]"))
+@@ -8331,6 +8376,47 @@ mod agg_param_validation_tests {
          }
      }
  
--    // Demote small config clusters — one record each, or a short multi-doc
--    // YAML/JSON/XML file — to their scope's document dataset. Their sampled
--    // fields are dropped — the caller re-samples the demoted files through
--    // the document renderer, which is also what indexes them.
--    //
--    // A file that also produced a grouped dataset (a second top-level JSON
--    // array) must not be folded: folding marks the whole file `as_document`
--    // and phase B then drops the grouped rows.
--    let grouped_files: HashSet<usize> = data
--        .iter()
--        .filter(|c| c.group.is_some())
--        .flat_map(|c| c.members.iter().copied())
--        .collect();
--    let mut kept: Vec<Cluster> = Vec::with_capacity(data.len());
--    let mut capped: BTreeMap<String, Vec<Cluster>> = BTreeMap::new();
--    for c in data {
--        let shares_grouped_sibling = c.members.iter().any(|m| grouped_files.contains(m));
--        if small_structured_config(&c) && !shares_grouped_sibling {
--            let d = docs_cluster(&mut docs, &c.scope);
--            d.members.ext
++    /// FAIL-BEFORE: none of these were refused. `hdr` digits of 20 (or any
++    /// value whose `2 * 10^digits` wraps `u64` past 2^63) also hung the search
++    /// thread in the engine's histogram sizing loop instead of erroring.
++    #[test]
++    fn percentiles_hdr_and_percents_are_validated() {
++        for digits in [
++            json!(-1),
++            json!(6),
++            json!(10),
++            json!(20),
++            json!(4294967316u64),
++        ] {
++            for kind in ["percentiles", "percentile_ranks"] {
++                let aggs = json!({"p": {kind: {"field": "f", "values": [1],
++                    "hdr": {"number_of_significant_value_digits": digits}}}});
++                assert_eq!(
++                    check(aggs.clone()).as_deref(),
++                    Some("[numberOfSignificantValueDigits] must be between 0 and 5: [p]"),
++                    "{aggs}"
++                );
++            }
++        }
++        let null_digits = json!({"p": {"percentiles": {"field": "f",
++            "hdr": {"number_of_significant_value_digits": null}}}});
++        assert!(check(null_digits).is_some_and(|e| e.contains("VALUE_NULL")));
++        for (percents, reason) in [
++            (json!([]), "[percents] must not be empty: [p]"),
++            (json!(null), "[percents] must not be null: [p]"),
++            (json!(["foo"]), "[percents] must be numbers: [p]"),
++        ] {
++            let aggs = json!({"p": {"percentiles": {"field": "f", "hdr": {},
++                                                    "percents": percents}}});
++            assert_eq!(check(aggs.clone()).as_deref(), Some(reason), "{aggs}");
++        }
++        for digits in 0..=5 {
++            let aggs = json!({"p": {"percentiles": {"field": "f", "percents": [50],
++                "hdr": {"number_of_significant_value_digits": digits}}}});
++            assert_eq!(check(aggs.clone()), None, "{aggs}");
++        }
++    }
++
+     #[test]
+     fn invalid_parameters_are_refused_with_es_messages() {
+         let cases = [
+@@ -92
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +96/-93)
+**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +24/-1)
 ```diff
-@@ -5247,18 +5247,17 @@ struct PhaseA {
- /// `--progress json` stays a single parseable stream (#241).
- fn report_pdf_spool_fallbacks(
-     files: &[walk::FileEntry],
--    scans: &[FileScan],
-+    fallbacks: &[(usize, Vec<extract::pdf::SpoolFallback>)],
-     ctx: &PhaseAContext<'_>,
- ) {
-     let pdf_spool_budget = ctx.budget;
-     let pr = ctx.progress;
--    let reasons: Vec<(&str, &extract::pdf::SpoolFallback)> = scans
-+    let reasons: Vec<(&str, &extract::pdf::SpoolFallback)> = fallbacks
-         .iter()
--        .enumerate()
--        .flat_map(|(index, scan)| {
--            scan.pdf_spool_fallbacks
-+        .flat_map(|(index, per_file)| {
-+            per_file
-                 .iter()
--                .map(move |fallback| (files[index].rel.as_str(), fallback))
-+                .map(move |fallback| (files[*index].rel.as_str(), fallback))
-         })
-         .collect();
-     for (path, fallback) in &reasons {
-@@ -5296,6 +5295,13 @@ fn report_pdf_spool_fallbacks(
-     }
- }
+@@ -8146,7 +8146,12 @@ fn run_percentiles(params: &Value, docs: &[Value]) -> Value {
+         .get("hdr")
+         .and_then(|v| v.get("number_of_significant_value_digits"))
+         .and_then(Value::as_u64)
+-        .unwrap_or(3) as u32;
++        .unwrap_or(3)
++        // ES bounds this to 0..=5. Past 18 `10^digits` overflows `u64` (it
++        // wraps in release) and the power-of-two loop below never ends, so
++        // clamp here too: agg definitions also reach the engine without the
++        // HTTP validator (MCP, msearch, async search, watchers).
++        .min(5) as u32;
+     // subBucketCount = 2^ceil(log2(2 * 10^digits)). For digits=3 that's 2048.
+     let sub_bucket_count: u64 = {
+         let target = 2u64 * 10u64.pow(hdr_digits);
+@@ -14322,6 +14327,24 @@ mod tests {
+     use super::*;
+     use serde_json::json;
  
-+/// Files phase A scans before folding their sketches into clusters. Large
-+/// enough that the scan pool stays busy across a chunk, small enough that the
-+/// sketches held at once stay bounded whatever the folder's file count.
-+// Tests use a tiny chunk so every multi-file phase-A test crosses chunk
-+// boundaries.
-+const PHASE_A_CHUNK_FILES: usize = if cfg!(test) { 3 } else { 2048 };
++    /// FAIL-BEFORE: `2 * 10^20` wraps `u64` to a value above 2^63, so the
++    /// power-of-two rounding loop shifted `p` to 0 and spun forever. Run on a
++    /// side thread so a regression fails on the timeout instead of hanging.
++    #[test]
++    fn hdr_out_of_range_digits_terminate() {
++        let (tx, rx) = std::sync::mpsc::channel();
++        std::thread::spawn(move || {
++            let docs = vec![json!({ "n": 1 }), json!({ "n": 51 }), json!({ "n": 151 })];
++            let params = json!({"field": "n", "percents": [50],
++                                "hdr": {"number_of_significant_value_digits": 20}});
++            let _ = tx.send(run_percentiles(&params, &docs));
++        });
++        let out = rx
++            .recv_timeout(std::time::Duration::from_secs(10))
++            .expect("run_percentiles must return for out-of-range hdr digits");
++        assert!(out.get("values").is_some(), "{out}");
++    }
 +
- /// Sniff + sample every file, cluster into datasets, and assemble the plan.
- /// Pure planning: reads the tree, never the server — which is what makes the
- /// #173/#196 grouping behaviour testable end-to-end without a cluster.
-@@ -5320,77 +5326,95 @@ fn build_phase_a(
-     // Patterns were validated (loudly) at run start; a failure here would be
-     // a programming error, not user input.
-     let stub_matcher = StubMatcher::compile(&cfg.stub_globs).expect("validated at startup");
--    let scans: Vec<FileScan> = crate::pool::install(|| {
--        files
--            .par_iter()
--            .zip(digests.par_iter())
--            .map(|(f, digest)| {
--                let _in_flight = pr.file(&f.rel, f.size);
--                scan_file(
--                    &f.path,
--                    f.size,
--                    digest,
--                    ctx,
--                    cfg.sample,
--                    cfg.max_file_bytes,
--                    stub_matcher.matches(&f.rel),
--                )
--            })
--            .collect()
--    });
--
--    report_pdf_spool_fallbacks(files, &scans, ctx);
--    note_worker_address_space_cap(pr);
--
-     let rels: Vec<String> = files.iter().map(|f| f.rel.clone()).collect();
-     let scopes = compute_scopes(root, &rels);
-     // (family, gzip) per file, from the scan's sniff — reused for assignments
-     // and demoted-file re-sampling instead of re-sniffing every file.
--    let file_meta: Vec<Option<(Family, bool)>> = scans
--        .iter()
--        .map(|sc| sc.sniffed.as_ref().map(|s| (s.family, s.gzip)))
--        .collect();
--    let mut sketches = Vec::new();
-+    let mut file_meta: Vec<Option<(Family, bool)>> = Vec::with_capacity(files.len());
-     let mut junk_files = Vec::new();
-     let mut pdf_spools: Vec<Option<extract::pdf::ExtractionSpool>> =
-         (0..files.len()).map(|_| None).collect();
--    for (i, mut sc) in scans.into_iter().enumerate() {
--        let family = sc
--            .sniffed
--            .as_ref()
--            .map(|s| s.family)
--            .unwrap_or(Family::Binary);
--        // A file that phase A junks is never indexed, so its artifact is
--        // refunded here rather than held to the phase A→B boundary.
--        pdf_spools[i] =
--            take_pdf_spool_if_indexable(&mut sc.pdf_spool, sc.junk.is_some(), pdf_spool_budget);
--        if let Some((status, reason)) = sc.junk {
--            junk_files.push(JunkFile {
--                file_key: keys[i].clone(),
--                rel: files[i].rel.clone(),
--                format: format_str(sc.sniffed.as_ref()),
--                status,
--                reason,
--                bytes: files[i].size,
--            });
--            continue;
--        }
--        for gs in sc.sketches {
--            sketches.push(dataset::Sketch {
--                file_idx: i,
--                group: gs.group,
--                family,
--                fields: gs.fields,
--                key_fields: gs.key_fields,
--                records: gs.records,
--                population: gs.population,
--            });
-+    let mut pdf_fallbacks: Vec<(usize, Vec<extract::pdf::SpoolFallback>)> = Vec::new();
-+    // Scan in file-ordered chunks and fold each chunk's sketches into the
-+    // clusters before the next chunk is scanned. Collecting every file's scan
-+    // first held one set of field accumulators per file for the whole folder
-+    // at once: 4.4 GB of client RSS on a 146k-file tree before anything was
-+    // indexed (part of #1122). Folding in file order keeps the clustering
-+    // identical to the collect-all version (see `dataset::Clusterer`).
-+  
+     #[test]
+     fn multivalued_numeric_metric_aggs_use_all_values() {
+         // ES aggregates over EVERY value of a multi-valued field; the old path
 ```
 
 ---
 
-### Incident Patch 3: `b3d0865d` (2026-10-26)
-**Commit Message**: fix(autoindex): bounded, reused replay workers and retryable thread spawn (#2428) (#2437)
+### Incident Patch 2: `f0409d2f` (2026-10-31)
+**Commit Message**: fix(engine): run at most one background cold stored warm per index (refs #2427) (#2715)
+
+* fix(engine): run at most one background cold stored warm per index
+
+Refs #2427.
+
+Motivation: on the 1 GB gate (seed 2421, cap 3072 MB) the node's anon
+RSS peaked well above the cap during the search phase. The peak is not
+index open (version map + HNSW reload is ~1.0 GB anon) but the first
+cold full-text queries.
+
+Root cause: hydrating FTS hits on a cold segment calls
+schedule_cold_stored_warm, which spawned one spawn_blocking task per cold
+segment, all concurrently (54 on pg-docs). Each runs stored_slices_for:
+a whole stored-section decode plus brace_walk_offsets. The only gate was
+memory_breaker_engaged() at schedule time, so one query started dozens of
+whole-section decodes at once; most results were then refused at publish
+by the SegmentHydrationBudget and dropped.
+
+Evidence (variant.py, fresh node on the gate's data, RssAnon every 20 ms):
+match title "opentelemetry" size 5: anon +3.4 GB; the query returns at
+1.67 s, anon peaks at 4.75 GB at 2.5 s and falls back to 1.4 GB at 4.1 s.
+
+Fix: an AtomicBool lets one warm run per index; a schedule while one is
+running is skipped (counted in cold
+
+**File**: `CHANGELOG.md` (modified, +7/-0)
+```diff
+@@ -126,6 +126,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   200-580 MB of warmed stored slices between 40 breaker engages. Queries
+   still hydrate a segment on first read. (Refs #2427)
+ 
++- A cold full-text query no longer starts one background whole-section
++  stored decode per cold segment at once (refs #2427). On the 1 GB gate's
++  `pg-docs` (54 cold segments) one 5-hit query drove anon RSS from ~1.0 to
++  ~4.7 GB after it had returned, with most decodes refused by the hydration
++  budget at publish and thrown away. One background warm per index now runs
++  at a time and the others are skipped. Query answers are unchanged.
++
+ - `simple_query_string` with `"fields": ["*"]` is answered from the inverted
+   index instead of a stored-document scan of every segment (refs #2427). The
+   bare `*` pattern lowered to a literal `"*"` field that has no index
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +157/-5)
+```diff
+@@ -2431,6 +2431,108 @@ mod flush_publication_recovery_tests {
+         drop(engine);
+     }
+ 
++    /// #2427: a cold query over a many-segment index must not start one
++    /// whole-section stored decode per segment at once. Before the fix every
++    /// cold segment the query hydrated from its winning rows spawned its own
++    /// background warm, all concurrently (54 on the 1 GB gate's pg-docs:
++    /// anon RSS ~1.0 -> ~4.7 GB after the query returned, cap 3 GiB). Now one
++    /// warm per index runs at a time and the rest are skipped, so one query
++    /// warms at most one segment; the answer is unchanged.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
++    async fn cold_query_runs_at_most_one_stored_warm_2427() {
++        let dir = tempfile::tempdir().unwrap();
++        let engine = crate::Engine::new(topk_projection_config(dir.path())).unwrap();
++        engine
++            .create_index("warm-bound", topk_projection_schema())
++            .unwrap();
++        let idx = engine.get_index("warm-bound").unwrap();
++        idx.abort_background_tasks();
++        let blob = "0.125 33.9 -118.4 ".repeat(50);
++        for batch in 0..6u64 {
++            for i in 0..400u64 {
++                let n = batch * 400 + i;
++                // Later segments score higher, so every segment holds
++                // candidates for the page and is hydrated from its rows.
++                let body = if n % 7 == 0 {
++                    format!("{}report {n}", "needle ".repeat(batch as usize + 1))
++                } else {
++                    format!("hay stack {n}")
++                };
++                idx.index_document(
++                    Some(format!("doc-{n}")),
++                    json!({"title": format!("title {n}"), "body": body, "blob": blob}),
++                )
++                .await
++                .unwrap();
++            }
++            idx.flush().await.unwrap();
++        }
++        drop(idx);
++        drop(engine);
++
++        let engine = crate::Engine::new(topk_projection_config(dir.path())).unwrap();
++        let idx = engine.get_index("warm-bound").unwrap();
++        idx.abort_background_tasks();
++        let segs: Vec<String> = {
++            let snapshot = idx.store.snapshot();
++            snapshot.segments.iter().map(|s| s.id.to_string()).collect()
++        };
++        assert!(
++            segs.len() >= 4,
++            "precondition: many segments, got {}",
++            segs.len()
++        );
++        let warmed = |idx: &Index| {
++            segs.iter()
++                .filter(|id| {
++                    idx.stored_slices_cache.contains_key(id.as_str())
++                        || idx.decoded_stored_cache.contains_key(id.as_str())
++                })
++                .count()
++        };
++        assert_eq!(warmed(&idx), 0, "precondition: stored caches cold");
++
++        let request = xerj_query::parse_request(&json!({
++            "query": {"match": {"body": "needle"}},
++            "size": 5,
++            "_source": ["title"]
++        }))
++        .unwrap();
++        let cold = idx.search(&request).await.unwrap();
++        assert_eq!(cold.hits.len(), 5);
++        let hydrated = idx.cold_row_hydrations.load(Ordering::Relaxed);
++        assert!(
++            hydrated >= 3,
++            "precondition: the query hydrates several cold segments, got {hydrated}"
++        );
++        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
++        while !idx.cold_stored_warms.is_empty() {
++            assert!(std::time::Instant::now() < deadline, "warm never settled");
++            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
++        }
++        // Let any (pre-fix) straggler publish before counting.
++        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
++        // The bound is on warms running at once. A warm that finishes while
++        // the query is still hydrating lets the next cold segment start
++        // one, so the total warmed can exceed one on a fast runner (CI saw
++        // 2 of 6); the number in flight never does.
++        let peak = idx.cold_stored_warm_peak.load(Ordering::Acquire);
++        assert!(
++            peak <= 1,
++            "one cold query ran {peak} stored warms at once over {} segments",
++            segs.len()
++        );
++
++        // The warm answer equals the cold answer.
++        let warm = idx.search(&request).await.unwrap();
++        let ids = |r: &xerj_query::executor::SearchResult| {
++            r.hits.iter().map(|h| h.id.clone()).collect::<Vec<_>>()
++        };
++        assert_eq!(ids(&cold), ids(&warm));
++        drop(idx);
++        drop(engine);
++    }
++
+     /// #2422/#2423: on a cold segment (after a restart, or evicted under the
+     /// cache budget) a top-k query that names its `_source` fields must read
+     /// only the winning rows and only the needed columns. Before the fix the
+@@ -10858,8 +10960,17 @@ pub struct Index {
+     self_ref: std::sync::OnceLock<std::sync:
+```
+
+---
+
+### Incident Patch 3: `e5675dec` (2026-10-31)
+**Commit Message**: fix(engine): flush one shard at a time when draining for memory pressure (#2753)
+
+Motivation: in the #2427 A/B at a 1,536 MB cap, one breaker drain took
+RSS from 1,460 MB to 2,323 MB in about a second (node log 19:10:25Z,
+off arm). The drain that is meant to release memory was the largest
+single RSS spike of the run.
+
+Root cause: Engine::pressure_drain and release_rebuildable_memory call
+Index::flush, which since M5.15 spawns one task per non-empty memtable
+shard and runs them in parallel (about four building at once under the
+finalize gate). Each shard's segment build holds its parsed documents,
+columns, postings and stored blocks, none of which is charged to the
+memtable budget, so the working set of a parallel drain is several
+times the charged memtable bytes it frees.
+
+Fix: Index::flush becomes flush_with(FlushFanout::Parallel); a new
+Index::flush_one_shard_at_a_time (FlushFanout::Serial) awaits each
+shard task before starting the next, folding the results through the
+same fold_shard_flush. The two memory-release paths use the serial
+variant; ordinary flushes (refresh, interval, explicit _flush) keep the
+parallel fan-out.
+
+Evidence: serial_pressure_flush_tests::a_pressure_drain
 
 **File**: `CHANGELOG.md` (modified, +8/-0)
 ```diff
-@@ -79,6 +79,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -68,6 +68,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+   longer take a node from below the watermark into the parent breaker band and
+   turn ingest into HTTP 429s. The relief for a search node resting between the
+   merge-pool ceiling and the watermark is kept (#2427).
++- **A memory-pressure drain no longer spikes RSS past the cap while it
++  flushes** (#2427). The breaker drain and the cache-release path
++  flushed each index with every non-empty memtable shard building its
++  segment at once, and that working set (parsed documents, columns,
++  postings, stored blocks) is not charged to the memtable budget. On a
++  1,536 MB-capped node one drain took RSS from 1,460 MB to 2,323 MB in
++  about a second. Memory-release flushes now build one shard at a time;
++  ordinary flushes still run in parallel.
  
- ### Fixed
- 
-+- `xerj autoindex` no longer aborts a long run with `Resource temporarily
-+  unavailable (os error 11)` when the machine refuses to start a thread. The
-+  sync replay used to start a new thread for every operation (hundreds of
-+  thousands on a large folder); it now starts at most the window width of
-+  workers once per replay and reuses them. Starting a replay worker or an
-+  indexing worker now retries with a short backoff when thread creation is
-+  refused, and the replay finishes on the calling thread if no worker can be
-+  started, so a refusal is no longer fatal (#2428).
- - `xerj autoindex` no longer runs out of memory while planning a large folder.
-   It used to keep the sampled values of every file in memory at once before
-   grouping them into datasets, and kept them all until the end of the run;
+ - The per-index document version map is smaller and now visible in the
+   ingest memory trace. Its keys are `Box<str>` instead of `String`, which
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +11/-1)
+**File**: `engine/crates/xerj-engine/src/engine.rs` (modified, +79/-2)
 ```diff
-@@ -11368,10 +11368,20 @@ fn run_index_report_inner(
-     // an error: workers that did start share the queue, the pipe stops
-     // counting the ones that never did, and if none started this thread
-     // works the queue itself. The failed closure is dropped unrun.
-+    // #2428: a refused spawn is retried with backoff first; a transient
-+    // `EAGAIN` must not cost the run a worker, let alone the run.
-     xerj_common::thread_spawn::scope(|scope| {
-         let mut started = 0usize;
-         for _ in 0..worker_count {
--            match scope.spawn("autoindex-worker", worker) {
-+            match crate::sync_executor::spawn_scoped_with_backoff(
-+                scope,
-+                &xerj_common::thread_spawn::StdSpawn,
-+                xerj_common::thread_spawn::spawn_allowed,
-+                "autoindex-worker",
-+                crate::sync_executor::WORKER_SPAWN_ATTEMPTS,
-+                crate::sync_executor::WORKER_SPAWN_BACKOFF,
-+                worker,
-+            ) {
-                 Ok(_) => started += 1,
-                 Err(error) => {
-                     pr.note(&format!(
+@@ -4566,8 +4566,11 @@ impl Engine {
+         if release_caches {
+             return self.release_rebuildable_memory(&loaded).await;
+         }
++        // One shard at a time (#2427): the flush working set is uncharged,
++        // and building every shard at once is what pushed RSS past the cap
++        // in the middle of the drain meant to bring it down.
+         for idx in &loaded {
+-            if idx.memtable_bytes() > 0 && idx.flush().await.is_err() {
++            if idx.memtable_bytes() > 0 && idx.flush_one_shard_at_a_time().await.is_err() {
+                 tracing::warn!("memory pressure drain: flush failed");
+             }
+         }
+@@ -4641,7 +4644,9 @@ impl Engine {
+     /// released.
+     pub async fn release_rebuildable_memory(&self, indices: &[Arc<Index>]) -> usize {
+         for idx in indices {
+-            if idx.memtable_bytes() > 0 && idx.flush().await.is_err() {
++            // Serial for the same reason as `pressure_drain` (#2427): a
++            // release must not spike RSS on its way down.
++            if idx.memtable_bytes() > 0 && idx.flush_one_shard_at_a_time().await.is_err() {
+                 tracing::warn!("memory release: flush failed, releasing caches anyway");
+             }
+             idx.release_memory();
+@@ -6616,3 +6621,75 @@ mod pressure_drain_tests {
+         );
+     }
+ }
++
++#[cfg(test)]
++mod serial_pressure_flush_tests {
++    use super::Engine;
++    use crate::index::FlushShardProbe;
++    use serde_json::json;
++    use tempfile::TempDir;
++    use xerj_common::config::Config;
++    use xerj_common::types::{FieldConfig, FieldType, Schema};
++
++    async fn seed(engine: &Engine, name: &str, n: usize) {
++        let mut schema = Schema::empty();
++        schema
++            .fields
++            .push(FieldConfig::new("body", FieldType::Text));
++        engine.create_index(name, schema).expect("create");
++        let idx = engine.get_index(name).expect("get");
++        for i in 0..n {
++            idx.index_document(
++                Some(format!("d{i}")),
++                json!({ "body": format!("document number {i}") }),
++            )
++            .await
++            .expect("index");
++        }
++    }
++
++    async fn count_all(engine: &Engine, name: &str) -> u64 {
++        let idx = engine.get_index(name).expect("get index");
++        let req = xerj_query::parse_request(
++            &json!({ "query": { "match_all": {} }, "size": 0, "from": 0 }),
++        )
++        .expect("parse_request");
++        idx.search(&req).await.expect("search").total.value
++    }
++
++    /// #2427: a breaker drain builds one shard segment at a time. The flush
++    /// working set (parsed docs, columns, postings, stored blocks) is not
++    /// charged to the memtable budget, and a drain that built every shard at
++    /// once took RSS from 1,460 MB to 2,323 MB on a 1,536 MB-capped node.
++    /// The control index shows the ordinary flush still fans out, so the
++    /// probe does see concurrency when there is some. FAIL-BEFORE:
++    /// `pressure_drain` called `Index::flush`, which runs every non-empty
++    /// shard at once (peak > 1 here).
++    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++    async fn a_pressure_drain_flushes_one_shard_at_a_time() {
++        let dir = TempDir::new().unwrap();
++        let mut config = Config::default();
++        config.server.data_dir = dir.path().to_str().unwrap().to_string();
++        let engine = Engine::new(config).expect("engine::new");
++
++        seed(&engine, "serial-drain-control", 400).await;
++        let control = engine.get_index("serial-drain-control").unwrap();
++        control.flush().await.expect("flush");
++        assert!(
++            FlushShardProbe::peak("serial-drain-control") > 1,
++            "the ordinary flush runs shards concurrently"
++        );
++
++        seed(&engine, "serial-drain", 400).await;
++        let idx = engine.get_index("serial-drain").unwrap();
++        assert!(idx.memtable_bytes() > 0);
++        engine.pressure_drain(false).await;
++        assert_eq!(idx.memtable_bytes(), 0, "the drain published the memtable");
++        assert_eq!(
++            FlushShardProbe::peak("serial-drain"),
++            1,
++            "a pressure drain must build one shard at a time"
++        );
++        assert_eq!(count_all(&engine, "serial-drain").await, 400);
++    }
++}
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/sync_executor.rs` (modified, +315/-17)
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +102/-12)
 ```diff
-@@ -344,6 +344,83 @@ pub(crate) fn replay_windowed<T: Sync>(
-     hooks: &mut dyn ReplayHooks<T>,
-     apply: &(dyn Fn(&T) -> Result<()> + Sync),
- ) -> Result<()> {
-+    replay_windowed_with(
-+        &xerj_common::thread_spawn::StdSpawn,
-+        xerj_common::thread_spawn::spawn_allowed,
-+        items,
-+        width,
-+        hooks,
-+        apply,
-+    )
+@@ -28693,6 +28693,25 @@ impl Index {
+ 
+     /// Flush the memtable to a new segment on disk, then build the FTS index.
+     pub async fn flush(self: &Arc<Self>) -> Result<()> {
++        self.flush_with(FlushFanout::Parallel).await
++    }
++
++    /// [`Self::flush`] with one shard building at a time (#2427).
++    ///
++    /// A shard flush parses the drained documents, builds columns, postings
++    /// and the stored blocks, and none of that working set is charged to the
++    /// memtable budget. The parallel flush builds every non-empty shard at
++    /// once (bounded only by the finalize gate), so a breaker drain on a
++    /// 1,536 MB-capped node took RSS from 1,460 MB to 2,323 MB in about a
++    /// second while four shards built together. A memory-release caller
++    /// wants the peak bounded more than it wants the drain short: each
++    /// shard's segment publishes and its working set is freed before the
++    /// next shard starts.
++    pub async fn flush_one_shard_at_a_time(self: &Arc<Self>) -> Result<()> {
++        self.flush_with(FlushFanout::Serial).await
++    }
++
++    async fn flush_with(self: &Arc<Self>, fanout: FlushFanout) -> Result<()> {
+         // #873: this flush is about to take whatever the memtable holds, so
+         // every idle-probe observation about it is stale from here on. Clear
+         // the pair at the ONE coordinator every flush path runs through
+@@ -28756,6 +28775,7 @@ impl Index {
+         // coordinator is not aborted (#1015).
+         let coordinator = tokio::spawn(async move {
+             let mut shard_futures = Vec::with_capacity(n_shards);
++            let mut result: Result<()> = Ok(());
+             for shard_idx in 0..n_shards {
+                 // #1226 — do not fan a finalize out for an EMPTY shard.
+                 //
+@@ -28789,7 +28809,9 @@ impl Index {
+                 let shard_index_name = coordinator_name.clone();
+                 #[cfg(test)]
+                 let test_hook = flush_test_hook.clone();
+-                shard_futures.push(tokio::spawn(async move {
++                let shard_task = tokio::spawn(async move {
++                    #[cfg(test)]
++                    let _in_flight = FlushShardProbe::enter(&shard_index_name).await;
+                     let permit = match wait_for_flush_permit(
+                         &shard_index_name,
+                         "the flush semaphore",
+@@ -28831,19 +28853,14 @@ impl Index {
+                         let _ = guard.take();
+                     }
+                     result
+-                }));
++                });
++                match fanout {
++                    FlushFanout::Parallel => shard_futures.push(shard_task),
++                    FlushFanout::Serial => fold_shard_flush(&mut result, shard_task.await),
++                }
+             }
+-            let mut result: Result<()> = Ok(());
+             for fut in shard_futures {
+-                match fut.await {
+-                    Ok(Ok(())) => {}
+-                    Ok(Err(e)) => result = Err(e),
+-                    Err(error) => {
+-                        result = Err(EngineError::Common(xerj_common::XerjError::internal(
+-                            format!("flush shard task failed: {error}"),
+-                        )));
+-                    }
+-                }
++                fold_shard_flush(&mut result, fut.await);
+             }
+             // Publication completion must invalidate results even when the
+             // request that initiated the flush was cancelled. The coordinator
+@@ -36686,6 +36703,79 @@ tokio::task_local! {
+     static FLUSH_PUBLISHER_TEST_HOOK: FlushPublisherTestHook;
+ }
+ 
++/// How [`Index::flush_with`] runs its shard flushes.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++enum FlushFanout {
++    /// Every non-empty shard at once (M5.15): the shortest flush.
++    Parallel,
++    /// One shard after another: the smallest uncharged working set (#2427).
++    Serial,
 +}
 +
-+/// How many times a refused worker spawn is retried before the run
-+/// continues with the workers it already has (#2428).
-+pub(crate) const WORKER_SPAWN_ATTEMPTS: u32 = 3;
-+/// First pause after a refused worker spawn; doubled on each retry.
-+pub(crate) const WORKER_SPAWN_BACKOFF: std::time::Duration = std::time::Duration::from_millis(50);
-+
-+/// Start `f` on a scoped helper thread, retrying a refused spawn (`EAGAIN`
-+/// from `pthread_create`, or the spawn gate saying no) up to `attempts`
-+/// times with a doubling `backoff` (#2428). A refused spawn is a transient
-+/// thread or memory limit, not a reason to lose the run: `Err` after the
-+/// last attempt means `f` never ran and the caller carries on with the
-+/// threads it has, or does the work itself.
-+pub(crate) fn spawn_scoped_with_backoff<'scope, 'env, S, G, F>(
-+    scope: &xerj_common::thread_spawn::Scope<'scope, 'env>,
-+    spawner: &S,
-+    gate: G,
-+    name: &str,
-+    attempts: u32,
-+    backoff: std::time::Duration,
-+    f: F,
-+) -> std::io::Result<()>
-+where
-+    S: xerj_common::thread_spawn::Spawn + ?Sized,
-+    G: Fn() -> bool,
-+    F: FnOnce() + Send + Copy + 'scope,
-+{
-+    let attempts = attempts.max(1);
-+    let mut delay = backoff;
-+    let mut attempt = 1;
-+    loop {
-+        match scope.spawn_with(spawner, gate(), name, f) {
-+            Ok(()) => return Ok(()),
-+            Err(error) if attempt >= attempts => return Err(error),
-+            Err(_) => {
-+                std::thread::sleep(delay);
-+                delay = delay.saturating_mul(2);
-+                attempt += 1;
-+            }
++/// Keep the last shard error, as the parallel join always has.
++fn fold_shard_flush(
++    result: &mut Result<()>,
++    joined: std::result::Result<Result<()>, tokio::task::JoinError>,
++) {
++    match joined {
++        Ok(Ok(())) => {}
++        Ok(Err(e)) => *result = Err(e),
++        Err(error) => {
++            *result = Err(EngineError::Common(xerj_common::XerjError::internal(
++                format!("flush shard task failed: {error}"),
++            )));
 +        }
 +    }
 +}
 +
-+/// [`replay_windowed`] with an explicit spawner and spawn gate, so the
-+/// spawn-failure paths are testable without exhausting a real machine.
-+///
-+/// #2428: the window used to start one thread per *operation*. A corpus
-+/// replay is hundreds of thousands of operations, so a long run made
-+/// hundreds of thousands of `pthread_create` calls, and under memory or
-+/// thread pressure one of them eventually got `EAGAIN`. Now at most
-+/// `width` workers are started once per replay and reused for every item.
-+/// A refused worker spawn is retried with backoff; if it is still refused
-+/// the replay continues on the workers that did start, and if none did,
-+/// every item is applied on the calling thread. Ordering and failure
-+/// semantics are unchanged.
-+pub(crate) fn replay_windowed_with<T, S, G>(
-+    spawner: &S,
-+    gate: G,
-+    items: &[T],
-+    width: usize,
-+    hooks: &mut dyn ReplayHooks<T>,
-+    apply: &(dyn Fn(&T) -> Result<()> + Sync),
-+) -> Result<()>
-+where
-+    T: Sync,
-+    S: xerj_common::thread_spawn::Spawn + ?Sized,
-+    G: Fn() -> bool,
-+{
-     if items.is_empty() {
-         return Ok(());
-     }
-@@ -355,19 +432,68 @@ pub(crate) fn replay_windowed<T: Sync>(
-         }
-         return Ok(());
-     }
--    /// One dispatched operation: on its own thread, or — when that thread
--    /// could not be started (#1122) — already applied inline.
--    enum Dispatched<'scope> {
--        Thread(xerj_common::thread_spawn::ScopedJoinHandle<'scope, Result<()>>),
-+    /// One dispatched operation: queued to a worker, or — when no worker
-+    /// could be started (#1122, #2428) — already applied inline.
-+    enum Dispatched {
-+        Worker(std::sync::mpsc::Receiver<Result<()>>),
-         Inline(Result<()>),
-     }
-+    type Job<'a, T> = (&'a T, std::sync::mpsc::Sender<Result<()>>);
-+    let (job_tx, job_rx) = std::sync::mpsc::channel::<Job<'_, T>>();
-+    let job_rx = std::sync::Mutex::new(job_rx);
-+    let job_rx = &job_rx;
-+    // A worker takes queued items until the sender is dropped. A panic in
-+    // `apply` (unwind builds) becomes that item's error and the worker
-+    // keeps serving the queue.
-+    let worker = move || loop {
-+        let job = {
-+            let rx = job_rx
-+                .lock()
-+                .unwrap_or_else(|poisoned| poisoned.into_inner());
-+            rx.recv()
-+        };
-+        let Ok((item, reply)) = job else { break };
-+        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| apply(item)))
-+            .unwrap_or_else(|panic| {
-+                Err(anyhow::anyhow!(
-+                    "replay apply panicked: {}",
-+                    panic_message(panic)
-+                ))
-+            });
-+        // The scheduler may have stopped listening after a `begin` error.
-+        let _ = reply.send(outcome);
-+    };
-     // #1122: `Builder::spawn_scoped` can abort the process after returning
-     // `Ok`, when the child cannot map its alternate signal stack. This
--    // scope uses `pthread_
++/// Test-only count of shard-flush tasks in flight per index, with the peak.
++#[cfg(test)]
++static FLUSH_SHARD_PROBE: std::sync::LazyLock<
++    dashmap::DashMap<
++        String,
++        (
++            Arc<std::sync::atomic::AtomicUsize>,
++            Arc<std::sync::atomic::AtomicUsize>,
++        ),
++    >,
++> = std::sync::LazyLock::new(dashmap::DashMap::new);
++
++#[cfg(test)]
++pub(crate) struct FlushShardProbe(Arc<std::sync::atomic::AtomicUsize>);
++
++#[cfg(test)]
++impl FlushShardProbe {
++    /// Count this shard task in, then yield so sibling tasks of a parallel
++   
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2454** (2026-10-26): Cold FTS top-k: walk on identities, hydrate only the page's winners (@xerj-org)
-- **PR #2452** (2026-10-26): fix(memory): bound merge/FST buffers under the governor and add breaker release hysteresis (#2427) (@xerj-org)
-- **PR #2445** (2026-10-26): chore: sign CLA for PensiveFei (@PensiveFei)
-- **PR #2444** (2026-10-26): docs: add an agent field report for the DeepSeek Harness MCP registration (@PensiveFei)
-- **PR #2443** (2026-10-26): Cut cold first-query search latency (#2422) (@xerj-org)
-- **PR #2441** (2026-10-26): fix(engine): background merges skip the zstd-19 stored encode (ingest ~5x regression since rc.78) (@xerj-org)
+- **PR #2798** (2026-10-31): hub: author-approved contribution candidates (8953 repos) (@xerj-org)
+- **PR #2797** (2026-10-31): CLA: add xobotyi to .contributors (@xobotyi)
+- **PR #2795** (2026-10-31): docs: sign contributor license agreement (@mammaddrik)
+- **PR #2792** (2026-10-31): hub: author-approved contribution candidates (8923 repos) (@xerj-org)
+- **PR #2790** (2026-10-31): docs(feedback): report code size-boundary experience (@Jarvis636431)
+- **PR #2789** (2026-10-31): fix(autoindex): report exact code size-limit skips (@Jarvis636431)
 
 ---
 
@@ -2944,44 +2558,56 @@ Co-authored-by: Cursor Agent <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. engine): background merges skip the zstd-19 stored encode (ingest ~5x regression
+## X. aggs): bound hdr number_of_significant_value_digits; one request hung a search t
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `engine/crates/xerj-api/src/es_compat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `12e36e31`: engine): background merges skip the zstd-19 stored encode (ingest ~5x regression since rc.78) (#2441). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6236eccb`: aggs): bound hdr number_of_significant_value_digits; one request hung a search thread (#2651). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-api/src/es_compat.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Indexing is fast again under a memory cap** (issue
-  [#2438](https://github.com/xerj-org/xerj/issues/2438), part of
-  [#2423](https://github.com/xerj-org/xerj/issues/2423)). Since rc.78 every
-  background merge also tried a very slow, very small compression (zstd level
-  19) on the stored documents. That made each merge ~35x slower in that step,
-  kept memory at the limit for the whole merge, and made `_bulk` answer 429
-  until it ended, so indexing was about 5x slower and a loader could give up
-  and drop documents. Background merges now use the normal compression level.
-  An explicit `_forcemerge` still uses the slow, small one, so the force-merged
-  size is unchanged; set `XERJ_MERGE_MAX_EFFORT=true` to use it for every
-  merge. No data format change.
-- **The helper thread that frees memory now starts when memory is high.**
-  `xerj-drain-free` was refused with "memory is at the governor watermark",
-  which is exactly when it is needed.
-- **`_forcemerge?max_num_segments=1` now reaches one segment** when every
-  segment is larger than half the per-merge size cap (it used to stop at two).
-
+    /// `hdr` options shared by `percentiles` and `percentile_ranks`. ES
+    /// accepts 0..=5 significant digits; anything else is a 400. The engine
+    /// sizes its histogram as `2 * 10^digits` rounded up to a power of two,
+    /// so an unchecked value such as 20 overflowed that `u64` and spun the
+    /// rounding loop forever on the search thread.
+    fn check_hdr(name: &str, params: &Value) -> Option<String> {
+        let digits = params
+            .get("hdr")?
+            .get("number_of_significant_value_digits")?;
+        if digits.as_u64().is_some_and(|d| d <= 5) {
+            return None;
+        }
+        if digits.is_null() {
+            return Some(
+                "[hdr] number_of_significant_value_digits doesn't support values of type: \
+                 VALUE_NULL"
+                    .to_string(),
+            );
+        }
+        Some(format!(
+            "[numberOfSignificantValueDigits] must be between 0 and 5: [{name}]"
+        ))
+    }
+            "percentiles" => {
+                if let Some(e) = check_tdigest(params) {
+                    return Some(e);
+                }
+                if let Some(e) = check_hdr(name, params) {
+                    return
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            "percentiles" => return check_tdigest(params),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `12e36e31` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6236eccb` are properly handled with clean fallback behavior.

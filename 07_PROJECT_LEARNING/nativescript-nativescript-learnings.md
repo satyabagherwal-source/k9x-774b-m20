@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source**: github ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
-> **Source Version**: `6bb01eab`  
+> **Source Version**: `49c79f42`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:30:53.805Z  
+> **Timestamp**: 2026-10-31T15:49:44.751Z  
 > **Learning ID**: `learn-github-nativescript-nativescript`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:30:53.122Z  
+> **Harvest Timestamp**: 2026-10-31T15:49:44.743Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25682 stars
+- **Stars / Engagement**: 25689 stars
 
 ---
 
@@ -947,825 +947,812 @@ export function getTimeInFrameBase(): number;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67bf7ee0` (2026-10-24)
-**Commit Message**: fix(core): make background: none clear the background color (#11536)
-
-* fix(core): make background: none clear the background color
-
-`background: none` left background-color unset, so a native control such
-as a button kept its own background. The shorthand parser did not accept
-the `none` keyword at all, so the declaration failed to expand and none of
-the background longhands changed.
-
-The background parser now reads `none` as the image component, and the
-`background` shorthand maps it to no image and, unless the declaration
-also gives a color, to a transparent background-color, the initial value
-CSS resets it to. Shorthands that only give an image, repeat or position
-still leave background-color unset, so views keep their native default
-background behind an image.
-
-* chore(core): drop comments
-
-**File**: `apps/automated/src/ui/styling/style-properties-tests.ts` (modified, +4/-0)
-```diff
-@@ -39,6 +39,10 @@ export function test_setting_backgroundImage_property_from_CSS_is_applied_to_Sty
- 	test_property_from_CSS_is_applied_to_style('backgroundImage', 'background-image', "url('~/pages/test2.png')");
- }
- 
-+export function test_setting_background_none_from_CSS_makes_backgroundColor_transparent() {
-+	test_property_from_CSS_is_applied_to_style('backgroundColor', 'background', new Color('transparent'), 'none');
-+}
-+
- export function test_setting_borderWidth_property_from_CSS_is_applied_to_Style() {
- 	test_property_from_CSS_is_applied_to_style('borderWidth', 'border-width', 5, '5', true);
- }
-```
-
-**File**: `packages/core/css/parser.spec.ts` (modified, +3/-0)
-```diff
-@@ -122,6 +122,9 @@ describe('css', () => {
- 						size: { x: { value: 100, unit: 'px' }, y: { value: 100, unit: 'px' } },
- 					},
- 				});
-+				test(parseBackground, 'none', { start: 0, end: 4, value: { image: 'none' } });
-+				test(parseBackground, ' #00ff00 none no-repeat ', { start: 0, end: 24, value: { color: new Color('#00ff00'), image: 'none', repeat: 'no-repeat' } });
-+				test(parseBackground, 'nonesuch', null);
- 				test(parseBackground, '  linear-gradient(to right top) ', {
- 					start: 0,
- 					end: 32,
-```
-
-**File**: `packages/core/css/parser.ts` (modified, +5/-0)
-```diff
-@@ -601,6 +601,11 @@ export function parseBackground(text: string, start = 0): Parsed<Background> {
- 			end = url.end;
- 			continue;
- 		}
-+		if (keyword && keyword.value.toLowerCase() === 'none') {
-+			value.image = 'none';
-+			end = keyword.end;
-+			continue;
-+		}
- 		const gradient = parseLinearGradient(text, end);
- 		if (gradient) {
- 			value.image = gradient.value;
-```
-
-**File**: `packages/core/ui/styling/style-properties.spec.ts` (modified, +45/-0)
-```diff
-@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest';
- 
- import { Label } from '../label';
- import { Color } from '../../color';
-+import { StackLayout } from '../layouts/stack-layout';
-+import { StyleScope } from './style-scope';
- 
- describe('border-color shorthand', () => {
- 	it('applies a function color with nested arguments to all sides', () => {
-@@ -61,3 +63,46 @@ describe('corner-shape', () => {
- 		expect(() => (label.style.cornerShape = 'bevel' as any)).toThrow();
- 	});
- });
-+
-+describe('background shorthand', () => {
-+	it('none makes the background transparent and removes the image', () => {
-+		const label = new Label();
-+		label.style.backgroundColor = new Color('red');
-+		label.style.backgroundImage = 'res://logo';
-+
-+		label.style.background = 'none' as any;
-+
-+		expect(label.style.backgroundColor).toEqual(new Color('transparent'));
-+		expect(label.style.backgroundImage).toBeUndefined();
-+	});
-+
-+	it('none applies from CSS', () => {
-+		const scope = new StyleScope();
-+		scope.css = 'Label { background-color: red; } .reset { background: none; }';
-+		const root: any = new StackLayout();
-+		root._styleScope = scope;
-+		const label: any = new Label();
-+		label.className = 'reset';
-+		root.addChild(label);
-+		label._styleScope = scope;
-+		label._cssState.onLoaded();
-+
-+		expect(label.style.backgroundColor).toEqual(new Color('transparent'));
-+	});
-+
-+	it('none keeps a color given with it', () => {
-+		const label = new Label();
-+		label.style.background = 'none #00ff00' as any;
-+
-+		expect(label.style.backgroundColor).toEqual(new Color('#00ff00'));
-+		expect(label.style.backgroundImage).toBeUndefined();
-+	});
-+
-+	it('an image without a color still leaves the color unset', () => {
-+		const label = new Label();
-+		label.style.background = 'url(res://logo) no-repeat' as any;
-+
-+		expect(label.style.backgroundColor).toBeUndefined();
-+		expect(label.style.backgroundImage).toBe('res://logo');
-+	});
-+});
-```
-
-**File**: `packages/core/ui/styling/style-properties.ts` (modified, +6/-0)
-```diff
-@@ -132,17 +132,23 @@ function parseBorderColorPositioning(value: string): ShorthandPositioning {
- 	return positioningFromParts(splitOnTopLevelSpacesAndCommas(value.trim()), value);
- }
- 
-+const TRANSPARENT = new Color('transparent');
-+
- function convertToBackgrounds(value: string): [CssProperty<any, any> | CssAnimationProperty<any, any>, any][] {
- 	if (typeof value === 'string') {
- 		const backgrounds = parseBackground(value).value;
- 		let backgroundColor = unsetValue;
- 		if (backgrounds.color) {
- 			backgroundColor = backgrounds.color instanceof Color ? backgrounds.color : new Color(backgrounds.color);
-+		} else if (backgrounds.image === 'none') {
-+			backgroundColor = TRANSPARENT;
- 		}
- 
- 		let backgroundImage: string | LinearGradient;
- 		if (typeof backgrounds.image === 'object' && backgrounds.image) {
- 			backgroundImage = LinearGradient.parse(backgrounds.image);
-+		} else if (backgrounds.image === 'none') {
-+			backgroundImage = unsetValue;
- 		} else {
- 			backgroundImage = backgrounds.image || unsetValue;
- 		}
-```
-
----
-
-### Incident Patch 2: `26f5032e` (2026-10-24)
-**Commit Message**: fix(core): appearance APIs before app start, replaceable Android handlers, explicit systemAppearanceChanged() (#11537)
-
-* fix(android): read app traits before the app has started
-
-Application.systemAppearance(), orientation() and layoutDirection() threw
-on Android until Application.run() had initialized the module, because
-they read the configuration from Application.android.context, which is
-only set then. Code that reads the appearance while it loads, such as a
-theme module imported by the app's entry, could not use them.
-
-They now read the configuration from the native application when the
-context is not set yet. The app's code runs from the native application's
-onCreate, so it exists by then.
-
-* fix(android): let setDarkModeHandler and bar color setters replace values
-
-Utils.android.setDarkModeHandler() kept the first handler it was given
-and ignored later ones, and setStatusBarColor() and
-setNavigationBarColor() never changed a color at all: they assigned with
-`??=` onto settings that always start with default colors. All three also
-stored the settings under the current activity rather than the one passed
-in, so refreshEdgeToEdge() on that activity lost them.
-
-The setters now 
-
-**File**: `packages/core/application/application-common.ts` (modified, +4/-2)
-```diff
-@@ -1030,7 +1030,9 @@ export class ApplicationCommon {
- 			return;
- 		}
- 		this._systemAppearance = value;
--		this.systemAppearanceChanged(this.getRootView(), value);
-+		if (this.autoSystemAppearanceChanged) {
-+			this.systemAppearanceChanged(this.getRootView(), value);
-+		}
- 		this.notify(<SystemAppearanceChangedEventData>{
- 			eventName: this.systemAppearanceChangedEvent,
- 			android: this.android,
-@@ -1060,7 +1062,7 @@ export class ApplicationCommon {
- 	 * @param newSystemAppearance the new appearance change
- 	 */
- 	systemAppearanceChanged(rootView: View, newSystemAppearance: 'dark' | 'light'): void {
--		if (!rootView || !this.autoSystemAppearanceChanged) {
-+		if (!rootView) {
- 			return;
- 		}
- 
-```
-
-**File**: `packages/core/application/application.android.ts` (modified, +7/-9)
-```diff
-@@ -850,9 +850,11 @@ export class AndroidApplication extends ApplicationCommon implements IAndroidApp
- 	}
- 
- 	getSystemAppearance(): 'light' | 'dark' {
--		const resources = this.context.getResources();
--		const configuration = resources.getConfiguration();
--		return this.getSystemAppearanceValue(configuration);
-+		return this.getSystemAppearanceValue(this.getConfiguration());
-+	}
-+
-+	private getConfiguration(): android.content.res.Configuration {
-+		return (this.context ?? this.getNativeApplication()).getResources().getConfiguration();
- 	}
- 
- 	// https://developer.android.com/guide/topics/ui/look-and-feel/darktheme#configuration_changes
-@@ -869,9 +871,7 @@ export class AndroidApplication extends ApplicationCommon implements IAndroidApp
- 	}
- 
- 	getLayoutDirection(): CoreTypes.LayoutDirectionType {
--		const resources = this.context.getResources();
--		const configuration = resources.getConfiguration();
--		return this.getLayoutDirectionValue(configuration);
-+		return this.getLayoutDirectionValue(this.getConfiguration());
- 	}
- 
- 	private getLayoutDirectionValue(configuration: android.content.res.Configuration): CoreTypes.LayoutDirectionType {
-@@ -886,9 +886,7 @@ export class AndroidApplication extends ApplicationCommon implements IAndroidApp
- 	}
- 
- 	getOrientation() {
--		const resources = this.context.getResources();
--		const configuration = <android.content.res.Configuration>resources.getConfiguration();
--		return this.getOrientationValue(configuration);
-+		return this.getOrientationValue(this.getConfiguration());
- 	}
- 
- 	private getOrientationValue(configuration: android.content.res.Configuration): 'portrait' | 'landscape' | 'unknown' {
-```
-
-**File**: `packages/core/application/system-appearance.spec.ts` (added, +139/-0)
-```diff
-@@ -0,0 +1,139 @@
-+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-+
-+vi.hoisted(() => {
-+	(globalThis as any).NativeScriptGlobals.addEventWiring = () => {};
-+});
-+
-+import { CoreTypes } from '../core-types';
-+import { Observable } from '../data/observable';
-+import type { View } from '../ui/core/view';
-+import { ApplicationCommon } from './application-common';
-+import { AndroidApplication } from './application.android';
-+import { setNativeApp } from './helpers-common';
-+
-+function installApplicationEventBus(): Observable {
-+	const events = new Observable();
-+	const bus = (global.NativeScriptGlobals as any).events;
-+
-+	bus.on = events.on.bind(events);
-+	bus.once = events.once.bind(events);
-+	bus.off = events.off.bind(events);
-+	bus.notify = events.notify.bind(events);
-+	bus.hasListeners = events.hasListeners.bind(events);
-+
-+	return events;
-+}
-+
-+function createRootView() {
-+	return {
-+		cssClasses: new Set<string>(),
-+		_onCssStateChange: vi.fn(),
-+		_getRootModalViews: () => [],
-+	};
-+}
-+
-+class TestApplication extends ApplicationCommon {
-+	rootView = createRootView();
-+
-+	getRootView(): View {
-+		return this.rootView as unknown as View;
-+	}
-+
-+	getOrientation(): 'portrait' | 'landscape' | 'unknown' {
-+		return 'portrait';
-+	}
-+
-+	getSystemAppearance(): 'dark' | 'light' | null {
-+		return 'light';
-+	}
-+
-+	getLayoutDirection(): CoreTypes.LayoutDirectionType | null {
-+		return CoreTypes.LayoutDirection.ltr;
-+	}
-+
-+	changeSystemAppearance(value: 'dark' | 'light') {
-+		this.setSystemAppearance(value);
-+	}
-+}
-+
-+describe('system appearance', () => {
-+	let app: TestApplication;
-+
-+	beforeEach(() => {
-+		installApplicationEventBus();
-+		app = new TestApplication();
-+	});
-+
-+	afterEach(() => {
-+		app.setAutoSystemAppearanceChanged(true);
-+		installApplicationEventBus();
-+	});
-+
-+	it('applies the appearance an app sets while automatic changes are off', () => {
-+		app.setAutoSystemAppearanceChanged(false);
-+
-+		app.systemAppearanceChanged(app.getRootView(), 'dark');
-+
-+		expect(app.rootView.cssClasses.has('ns-dark')).toBe(true);
-+		expect(app.rootView._onCssStateChange).toHaveBeenCalled();
-+	});
-+
-+	it('leaves the classes alone when the system changes while automatic changes are off', () => {
-+		const changes: string[] = [];
-+		app.on(app.systemAppearanceChangedEvent, (args: any) => changes.push(args.newValue));
-+		app.setAutoSystemAppearanceChanged(false);
-+
-+		app.changeSystemAppearance('dark');
-+
-+		expect(app.rootView.cssClasses.has('ns-dark')).toBe(false);
-+		expect(changes).toEqual(['dark']);
-+	});
-+
-+	it('applies system changes while automatic changes are on', () => {
-+		app.changeSystemAppearance('dark');
-+
-+		expect(app.rootView.cssClasses.has('ns-dark')).toBe(true);
-+	});
-+});
-+
-+describe('Android application traits before the app has started', () => {
-+	const UI_MODE_NIGHT_YES = 0x20;
-+	let globals: Record<string, any>;
-+
-+	beforeEach(() => {
-+		installApplicationEventBus();
-+		globals = { android: (global as any).android };
-+		(global as any).android = {
-+			...globals.android,
-+			content: {
-+				...globals.android?.content,
-+				res: {
-+					Configuration: {
-+						UI_MODE_NIGHT_MASK: 0x30,
-+						UI_MODE_NIGHT_UNDEFINED: 0x00,
-+						UI_MODE_NIGHT_NO: 0x10,
-+						UI_MODE_NIGHT_YES,
-+						ORIENTATION_PORTRAIT: 1,
-+						ORIENTATION_LANDSCAPE: 2,
-+					},
-+				},
-+			},
-+		};
-+		const configuration = { uiMode: 0x01 | UI_MODE_NIGHT_YES, orientation: 2 };
-+		setNativeApp({ getResources: () => ({ getConfiguration: () => configuration }) } as any);
-+	});
-+
-+	afterEach(() => {
-+		(global as any).android = globals.android;
-+		setNativeApp(undefined);
-+		installApplicationEventBus();
-+	});
-+
-+	it('reads them from the native application', () => {
-+		const app = new AndroidApplication();
-+
-+		expect(app.context).toBeUndefined();
-+		expect(app.systemAppearance()).toBe('dark');
-+		expect(app.orientation()).toBe('landscape');
-+	});
-+});
-```
-
-**File**: `packages/core/utils/edge-to-edge.android.spec.ts` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-+
-+import { Color } from '../color';
-+import { setDarkModeHandler, setNavigationBarColor, setStatusBarColor, refreshEdgeToEdge } from './native-helper-for-android';
-+
-+describe('Android edge-to-edge setters', () => {
-+	let globals: Record<string, any>;
-+	let enableEdgeToEdge: ReturnType<typeof vi.fn>;
-+
-+	class HandleDarkMode {
-+		constructor(readonly implementation: { onHandle(bar: number, resources: any): boolean }) {}
-+	}
-+
-+	beforeEach(() => {
-+		globals = { android: (global as any).android, org: (global as any).org, java: (global as any).java };
-+		enableEdgeToEdge = vi.fn();
-+		(global as any).android = { ...globals.android, view: { ...globals.android?.view, Window: class Window {} } };
-+		(global as any).org = { nativescript: { widgets: { Utils: { enableEdgeToEdge, HandleDarkMode } } } };
-+		(global as any).java = { lang: { Integer: { valueOf: (value: number) => value } } };
-+	});
-+
-+	afterEach(() => {
-+		Object.assign(global, globals);
-+	});
-+
-+	function lastHandler(): (bar: number) => boolean {
-+		const args = enableEdgeToEdge.mock.calls.at(-1);
-+		const handler = args.at(-1);
-+		return handler instanceof HandleDarkMode ? (bar) => handler.implementation.onHandle(bar, null) : null;
-+	}
-+
-+	function lastColors(): number[] {
-+		return enableEdgeToEdge.mock.calls.at(-1).slice(1, 5);
-+	}
-+
-+	it('uses the latest dark mode handler', () => {
-+		const activity = {} as any;
-+
-+		setDarkModeHandler({ activity, handler: () => false });
-+		setDarkModeHandler({ activity, handler: () => true });
-+		expect(lastHandler()(0)).toBe(true);
-+
-+		refreshEdgeToEdge(activity);
-+		expect(lastHandler()(0)).toBe(true);
-+	});
-+
-+	it('keeps the settings of the activity it was given', () => {
-+		const activity = {} as any;
-+
-+		setStatusBarColor({ activity, lightColor: new Color('#ff0000') });
-+		setNavigationBarColor({ activity, darkColor: new Color('#0000ff') });
-+		refreshEdgeToEdge(activity);
-+
-+		const [statusBarLight, , , navigationBarDark] = lastColors();
-+		expect(statusBarLight).toBe(new Color('#ff0000').android);
-+		expect(navigationBarDark).toBe(new Color('#0000ff').android);
-+	});
-+
-+	it('replaces colors set before and keeps the ones not given', () => {
-+		const activity = {} as any;
-+
-+		setStatusBarColor({ activity, lightColor: new Color('#ff0000'), darkColor: new Color('#00ff00') });
-+		setStatusBarColor({ activity, lightColor: new Color('#0000ff') });
-+
-+		const [statusBarLight, statusBarDark] = lastColors();
-+		expect(statusBarLight).toBe(new Color('#0000ff').android);
-+		expect(statusBarDark).toBe(new Color('#00ff00').android);
-+	});
-+});
-```
-
-**File**: `packages/core/utils/native-helper-for-android.ts` (modified, +8/-8)
-```diff
-@@ -344,9 +344,9 @@ export function setStatusBarColor(options?: { activity?: androidx.appcompat.app.
- 			statusBarLight: DefaultStatusBarLight,
- 			statusBarDark: DefaultStatusBarDark,
- 		};
--		existingColors.statusBarLight ??= statusBarLightColor;
--		existingColors.statusBarDark ??= statusBarDarkColor;
--		systemColors.set(getCurrentActivity(), existingColors);
-+		existingColors.statusBarLight = statusBarLightColor ?? existingColors.statusBarLight;
-+		existingColors.statusBarDark = statusBarDarkColor ?? existingColors.statusBarDark;
-+		systemColors.set(activity, existingColors);
- 
- 		setEnableEdgeToEdge(activity, existingColors);
- 	}
-@@ -363,9 +363,9 @@ export function setNavigationBarColor(options?: { activity?: androidx.appcompat.
- 			statusBarLight: DefaultStatusBarLight,
- 			statusBarDark: DefaultStatusBarDark,
- 		};
--		existingColors.navigationBarLight ??= navigationBarLightColor;
--		existingColors.navigationBarDark ??= navigationBarDarkColor;
--		systemColors.set(getCurrentActivity(), existingColors);
-+		existingColors.navigationBarLight = navigationBarLightColor ?? existingColors.navigationBarLight;
-+		existingColors.navigationBarDark = navigationBarDarkColor ?? existingColors.navigationBarDark;
-+		systemColors.set(activity, existingColors);
- 
- 		setEnableEdgeToEdge(activity, existingColors);
- 	}
-@@ -382,9 +382,9 @@ export function setDarkModeHandler(options?: { activity?: androidx.appcompat.app
- 			statusBarDark: DefaultStatusBarDark,
- 		};
- 
--		existingColors.handler ??= darkModeHandler;
-+		existingColors.handler = darkModeHandler;
- 
--		systemColors.set(getCurrentActivity(), existingColors);
-+		systemColors.set(activity, existingColors);
- 
- 		setEnableEdgeToEdge(activity, existingColors);
- 	}
-```
-
----
-
-### Incident Patch 3: `2f1ce03b` (2026-10-23)
-**Commit Message**: fix(core): restore the css value when a local style value is reset (#11520)
+### Incident Patch 1: `10448387` (2026-10-29)
+**Commit Message**: fix(core): css var() fallbacks, order-independent custom properties, and no crash on unresolvable ones (#11527)
 
 [skip ci]
 
-**File**: `apps/automated/src/ui/styling/value-source-tests.ts` (modified, +1/-2)
+**File**: `apps/automated/src/ui/styling/style-tests.ts` (modified, +2/-2)
 ```diff
-@@ -1,5 +1,4 @@
- import * as helper from '../../ui-helper';
--import * as TKUnit from '../../tk-unit';
- import { Color, Button, StackLayout, unsetValue } from '@nativescript/core';
+@@ -1996,7 +1996,7 @@ export function test_css_variable_fallback() {
+ 		},
+ 		{
+ 			className: 'undefined-css-variable-with-multiple-fallbacks',
+-			expectedColor: limeColor,
++			expectedColor: undefined,
+ 		},
+ 		{
+ 			className: 'undefined-css-variable-with-missing-fallback-value',
+@@ -2037,7 +2037,7 @@ export function test_css_variable_fallback() {
  
- export var test_value_Inherited_after_unset = function () {
-@@ -51,5 +50,5 @@ export function test_value_Local_stronger_than_Css() {
- 	btn.style.color = new Color('#0000FF');
- 	helper.assertViewColor(btn, '#0000FF');
- 	btn.style.color = unsetValue;
--	TKUnit.assertEqual(btn.style.color, undefined, 'style.color should be undefined when set locally.');
-+	helper.assertViewColor(btn, '#FF0000');
- }
+     .undefined-css-variable-with-multiple-fallbacks {
+         --my-fallback-var: lime;
+-        color: var(--undefined-var, var(--my-fallback-var), yellow); /* resolved as color: lime; */
++        color: var(--undefined-var, var(--my-fallback-var), yellow); /* resolved as color: unset; */
+     }
+ 
+     .undefined-css-variable-with-missing-fallback-value {
 ```
 
-**File**: `packages/core/ui/core/properties/css-property-local-reset.spec.ts` (added, +211/-0)
+**File**: `packages/core/ui/core/properties/css-variable-expression.spec.ts` (added, +55/-0)
 ```diff
-@@ -0,0 +1,211 @@
+@@ -0,0 +1,55 @@
 +import { describe, it, expect } from 'vitest';
 +
-+import { CssProperty, unsetValue } from '.';
-+import { View } from '../view';
-+import { Label } from '../../label';
-+import { StackLayout } from '../../layouts/stack-layout';
-+import { Style } from '../../styling/style';
-+import { StyleScope } from '../../styling/style-scope';
-+import { marginTopProperty } from '../../styling/style-properties';
-+import { PropertyChangeData } from '../../../data/observable';
++import { _evaluateCssVariableExpression } from '.';
 +
-+const NATIVE_DEFAULT = 'native-default';
-+
-+class NativeView extends View {
-+	public nativeWrites: unknown[] = [];
-+
-+	public createNativeView() {
-+		return {};
-+	}
++function evaluate(value: string, variables: Record<string, string> = {}) {
++	const view = { style: { getCssVariable: (name: string) => (name in variables ? variables[name] : null) } };
++	return _evaluateCssVariableExpression(view as any, 'color', value);
 +}
 +
-+const nativeTestProperty = new CssProperty<Style, string>({
-+	name: 'nativeTest',
-+	cssName: 'native-test',
-+	defaultValue: 'default',
-+});
-+nativeTestProperty.register(Style);
-+
-+NativeView.prototype[nativeTestProperty.getDefault] = () => NATIVE_DEFAULT;
-+NativeView.prototype[nativeTestProperty.setNative] = function (this: NativeView, value: unknown) {
-+	this.nativeWrites.push(value);
-+};
-+
-+function loaded<T extends View>(css: string, view: T, parent: View = new StackLayout()): T {
-+	const scope = new StyleScope();
-+	scope.css = css;
-+
-+	(<any>parent)._styleScope = scope;
-+	(<any>parent)._cssState.onLoaded();
-+
-+	parent._addView(view);
-+	(<any>view)._styleScope = scope;
-+	(<any>view)._cssState.onLoaded();
-+
-+	return view;
-+}
-+
-+/** Lets the setters reach the native view without creating one. */
-+function withNativeUpdates<T extends View>(view: T): T {
-+	(<any>view)._suspendNativeUpdatesCount = 0;
-+
-+	return view;
-+}
-+
-+describe('CssProperty local reset', () => {
-+	it.each([
-+		['unsetValue', unsetValue],
-+		["'unset'", 'unset'],
-+		["'initial'", 'initial'],
-+		["''", ''],
-+	])('restores the css value when reset with %s', (_name, reset) => {
-+		const view = loaded('label { margin-top: 4; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = <any>reset;
-+
-+		expect(view.style.marginTop).toBe(4);
++describe('_evaluateCssVariableExpression', () => {
++	it('substitutes defined variables and falls back for undefined ones', () => {
++		expect(evaluate('var(--a)', { '--a': 'blue' })).toBe('blue');
++		expect(evaluate('var(--a, red)', { '--a': 'blue' })).toBe('blue');
++		expect(evaluate('var(--missing, red)')).toBe('red');
++		expect(evaluate('var(--missing)')).toBe('unset');
 +	});
 +
-+	it('restores the css value when reset through the view', () => {
-+		const view = loaded('label { margin-top: 4; }', new Label());
-+
-+		view.marginTop = 20;
-+		view.marginTop = <any>unsetValue;
-+
-+		expect(view.marginTop).toBe(4);
++	it('resolves nested fallbacks', () => {
++		expect(evaluate('var(--missing, var(--b))', { '--b': 'lime' })).toBe('lime');
++		expect(evaluate('var(--missing, var(--missing-too, yellow))')).toBe('yellow');
++		expect(evaluate('var(--missing, var(--missing-too))')).toBe('unset');
 +	});
 +
-+	it('restores a css value written through a shorthand', () => {
-+		const view = loaded('label { margin: 4; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(4);
++	it('keeps parentheses inside the fallback', () => {
++		expect(evaluate('var(--missing, rgb(0, 0, 255))')).toBe('rgb(0, 0, 255)');
++		expect(evaluate('linear-gradient(var(--missing, rgb(255, 0, 0) 0%, rgb(0, 0, 255) 100%))')).toBe('linear-gradient(rgb(255, 0, 0) 0%, rgb(0, 0, 255) 100%)');
 +	});
 +
-+	it('restores an evaluated css variable', () => {
-+		const view = loaded('label { --gap: 4; margin-top: var(--gap); }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(4);
++	it('keeps every comma-separated part of the fallback', () => {
++		expect(evaluate('var(--missing, red 0%, blue 100%)')).toBe('red 0%, blue 100%');
 +	});
 +
-+	it('restores a css value the local value shadowed before css ran', () => {
-+		const view = new Label();
-+		view.style.marginTop = 20;
-+		loaded('label { margin-top: 4; }', view);
-+		expect(view.style.marginTop).toBe(20);
-+
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(4);
++	it('uses the fallback for a variable set to initial', () => {
++		expect(evaluate('var(--a, red)', { '--a': 'initial' })).toBe('red');
++		expect(evaluate('var(--a)', { '--a': 'initial' })).toBe('unset');
 +	});
 +
-+	it('falls back to the default when no css rule sets the property', () => {
-+		const view = loaded('label { color: red; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+
-+		expect(view.style.marginTop).toBe(marginTopProperty.defaultValue);
++	it('resolves a gradient built from variables with fallbacks', () => {
++		const variables = {
++			'--via-stops': 'initial',
++			'--position': 'to right in oklab',
++			'--from': 'rgb(98, 96, 255)',
++			'--from-position': '0%',
++			'--to': 'rgb(246, 51, 154)',
++			'--to-position': '100%',
++		};
++		expect(evaluate('linear-gradient(var(--via-stops, var(--position), var(--from) var(--from-position), var(--to) var(--to-position)))', variables)).toBe(
++			'linear-gradient(to right in oklab, rgb(98, 96, 255) 0%, rgb(246, 51, 154) 100%)',
++		);
 +	});
 +
-+	it('lets the css own the property again', () => {
-+		const view = loaded('label { margin-top: 4; } .wide { margin-top: 8; }', new Label());
-+
-+		view.style.marginTop = 20;
-+		view.style.marginTop = unsetValue;
-+		view.className = 'wide';
-+		(<any>view)._cssState.onChange();
-+		(<any>view)._cssState.onLoaded();
-+
-+		expect(view.style.marginTop).toBe(8);
-+	});
-+
-+	it('notifies the css value as a script change', () => {
-+		const view = loaded('label { margin-top: 4; }', new Label());
-+		view.style.marginTop = 20;
-+
-+		const events: PropertyChangeData[] = [];
-+		view.style.on('marginTopChange', (data: PropertyChangeData) => events.push(data));
-+
-+		view.style.marginTop = unsetValue;
-+
-+		expect(events.map((e) => [e.value, e.oldValue, e.origin])).toEqual([[4, 20, 'script']]);
-+	});
-+
-+	it('writes the css value to the native view', () => {
-+		const view = withNativeUpdates(loaded('* { native-test: from-css; }', new NativeView()));
-+
-+		view.style['nativeTest'] = 'local';
-+		view.style['nativeTest'] = unsetValue;
-+
-+		expect(view.nativeWrites).toEqual(['local', 'from-css']);
-+		expect(view.style['nativeTest']).toBe('from-css');
-+	});
-+
-+	it('restores the native default when no css rule sets the property', () => {
-+		const view = withNativeUpdates(loaded('* { color: red; }', new NativeView()));
-+
-+		view.style['nativeTest'] = 'local';
-+		view.style['nativeTest'] = unsetValue;
-+
-+		expect(view.nativeWrites).toEqual(['local', NATIVE_DEFAULT]);
-+		expect(view.style['nativeTest']).toBe('default');
++	it('leaves values without variables alone', () => {
++		expect(evaluate('rgb(0, 0, 0)')).toBe('rgb(0, 0, 0)');
 +	});
 +});
-+
-+describe('InheritedCssProperty local reset', () => {
-+	it('restores the css value', () => {
-+		const view = loaded('label { co
 ```
 
-**File**: `packages/core/ui/core/properties/index.ts` (modified, +37/-6)
+**File**: `packages/core/ui/core/properties/index.ts` (modified, +24/-9)
 ```diff
-@@ -41,8 +41,8 @@ const cssValueSourceKeys: Record<string, symbol> = Object.create(null);
- /**
-  * Whether the style still carries what the cascade last wrote for the property.
-  * A `CssProperty` keeps one value: a local value both suppresses the css write and
-- * takes the slot, so clearing it leaves the property at its default with the css
-- * value gone. The cascade has to write it again rather than skip it as unchanged.
-+ * takes the slot, so the style can stop carrying what the cascade recorded. The
-+ * cascade has to write it again rather than skip it as unchanged.
-  */
- export function _isCssValueStillApplied(style: unknown, cssLocalName: string, value: unknown): boolean {
- 	const sourceKey = cssValueSourceKeys[cssLocalName];
-@@ -55,6 +55,16 @@ export function _isCssValueStillApplied(style: unknown, cssLocalName: string, va
- 	return style[sourceKey] === (isResetValue(value) ? undefined : ValueSource.Css);
+@@ -229,20 +229,21 @@ export function _evaluateCssVariableExpression(view: ViewBase, cssName: string,
+ 			continue;
+ 		}
+ 
+-		const endIdx = output.indexOf(')', idx);
++		const endIdx = findClosingParenthesis(output, idx + 3);
+ 		if (endIdx === -1) {
+ 			continue;
+ 		}
+ 
+-		const matched = output
+-			.substring(idx + 4, endIdx)
+-			.split(',')
+-			.map((v) => v.trim())
+-			.filter((v) => !!v);
+-		const cssVariableName = matched.shift();
++		const body = output.substring(idx + 4, endIdx);
++		const commaIdx = body.indexOf(',');
++		const cssVariableName = (commaIdx === -1 ? body : body.substring(0, commaIdx)).trim();
++		const fallback = commaIdx === -1 ? '' : body.substring(commaIdx + 1).trim();
+ 		let cssVariableValue = view.style.getCssVariable(cssVariableName);
+-		if (cssVariableValue === null && matched.length) {
+-			cssVariableValue = _evaluateCssVariableExpression(view, cssName, matched.join(', ')).split(',')[0];
++		if (typeof cssVariableValue === 'string' && cssVariableValue.trim() === 'initial') {
++			cssVariableValue = null;
++		}
++		if (cssVariableValue === null && fallback) {
++			cssVariableValue = _evaluateCssVariableExpression(view, cssName, fallback);
+ 		}
+ 
+ 		if (!cssVariableValue) {
+@@ -255,6 +256,20 @@ export function _evaluateCssVariableExpression(view: ViewBase, cssName: string,
+ 	return output;
  }
  
-+/**
-+ * What a released local value falls back to: the value the cascade last resolved for
-+ * the property, or `undefined` when it resolved none.
-+ */
-+function cascadedCssValue(view: ViewBase, cssLocalName: string): unknown {
-+	const value = view._cssState?._getAppliedPropertyValue(cssLocalName);
-+
-+	return value === '' || isResetValue(value) ? undefined : value;
-+}
-+
- function print(map) {
- 	const symbols = Object.getOwnPropertySymbols(map);
- 	for (const symbol of symbols) {
-@@ -780,14 +790,24 @@ export class CssProperty<T extends Style, U> {
- 
- 			this._localValueVersion++;
- 
--			const reset = isResetValue(newValue) || newValue === '';
-+			let reset = isResetValue(newValue) || newValue === '';
-+			let valueSource = ValueSource.Local;
- 			let value: U;
- 
-+			if (reset) {
-+				const cssValue = cascadedCssValue(view, property.cssLocalName);
-+				if (cssValue !== undefined) {
-+					newValue = <U | string>cssValue;
-+					valueSource = ValueSource.Css;
-+					reset = false;
-+				}
-+			}
-+
- 			if (reset) {
- 				value = defaultValue;
- 				delete this[sourceKey];
- 			} else {
--				this[sourceKey] = ValueSource.Local;
-+				this[sourceKey] = valueSource;
- 				value = valueConverter && typeof newValue === 'string' ? (overrideConverter ? valueConverter.call(this, newValue) : valueConverter(newValue)) : <U>newValue;
- 			}
- 
-@@ -1210,6 +1230,7 @@ export class InheritedCssProperty<T extends Style, U> extends CssProperty<T, U>
- 		const getDefault = this.getDefault;
- 		const setNative = this.setNative;
- 		const defaultValueKey = this.defaultValueKey;
-+		const cssLocalName = this.cssLocalName;
- 		const eventName = propertyName + 'Change';
- 		const defaultValue: U = options.defaultValue;
- 
-@@ -1253,7 +1274,17 @@ export class InheritedCssProperty<T extends Style, U> extends CssProperty<T, U>
- 					this._localValueVersion++;
- 				}
- 
--				const reset = isResetValue(boxedValue) || boxedValue === '';
-+				let reset = isResetValue(boxedValue) || boxedValue === '';
-+				let newValueSource = valueSource;
-+				if (reset && isLocalWrite) {
-+					const cssValue = cascadedCssValue(view, cssLocalName);
-+					if (cssValue !== undefined) {
-+						boxedValue = cssValue;
-+						newValueSource = ValueSource.Css;
-+						reset = false;
-+					}
-+				}
-+
- 				const currentValueSource: number = this[sourceKey] || ValueSource.Default;
- 
- 				if (reset) {
-@@ -1286,7 +1317,7 @@ export class InheritedCssProperty<T extends Style, U> extends CssProperty<T, U>
- 						unsetNativeValue = true;
- 					}
- 				} else {
--					this[sourceKey] = valueSource;
-+					this[sourceKey] = newValueSource;
- 					if (valueConverter && typeof boxedValue === 'string') {
- 						value = overrideConverter ? valueConverter.call(this, boxedValue) : valueConverter(boxedValue);
- 					} else {
-```
-
-**File**: `packages/core/ui/styling/style-scope.ts` (modified, +8/-0)
-```diff
-@@ -736,6 +736,14 @@ export class CssState {
- 		return this.viewRef.get()._styleScope.getSelectorsVersion() === this._appliedSelectorsVersion;
- 	}
- 
-+	/**
-+	 * The value the cascade last resolved for a longhand, `undefined` if it resolved none.
-+	 * Recorded even while a local value suppresses the write.
-+	 */
-+	public _getAppliedPropertyValue(property: string): unknown {
-+		return this._appliedPropertyValues[property];
++function findClosingParenthesis(value: string, openIdx: number): number {
++	let depth = 0;
++	for (let i = openIdx; i < value.length; i++) {
++		const ch = value[i];
++		if (ch === '(') {
++			depth++;
++		} else if (ch === ')' && --depth === 0) {
++			return i;
++		}
 +	}
 +
- 	public onLoaded(): void {
- 		if (this._matchInvalid) {
- 			this.updateMatch();
++	return -1;
++}
++
+ export function _evaluateCssCalcExpression(value: string) {
+ 	if (typeof value !== 'string') {
+ 		return value;
+```
+
+**File**: `packages/core/ui/styling/style-scope.spec.ts` (modified, +73/-0)
+```diff
+@@ -43,6 +43,14 @@ function styled(css: string, className?: string): { view: any; scope: StyleScope
+ 	return { view, scope };
+ }
+ 
++function styledWithParent(css: string, parentClassName: string): { view: any; parent: any; scope: StyleScope } {
++	const { view, scope } = styled(css);
++	const parent = view.parent;
++	parent.className = parentClassName;
++
++	return { view, parent, scope };
++}
++
+ describe('CssState.setPropertyValues', () => {
+ 	it('applies matched declarations', () => {
+ 		const { view } = styled('label { color: red; }');
+@@ -112,6 +120,71 @@ describe('CssState.setPropertyValues', () => {
+ 		expect(view.style.color.toString()).toBe('#FF0000');
+ 	});
+ 
++	it('resolves custom properties that refer to ones declared after them', () => {
++		const { view } = styled('label { --a: var(--b, blue); --b: var(--c); --c: red; color: var(--a); }');
++		view._cssState.onLoaded();
++
++		expect(view.style.color.toString()).toBe('#FF0000');
++	});
++
++	it('resolves a chain of custom properties that each refer to a later one', () => {
++		const { view } = styled('label { --a: var(--b); --b: var(--c); --c: var(--d); --d: red; color: var(--a); }');
++		view._cssState.onLoaded();
++
++		expect(view.style.color.toString()).toBe('#FF0000');
++		expect(view.style.getCssVariable('--a')).toBe('red');
++	});
++
++	it('treats custom properties in a cycle as undefined, so var() falls back', () => {
++		const { view } = styled('label { --a: var(--b); --b: var(--a); color: var(--a, blue); }');
++		view._cssState.onLoaded();
++
++		expect(view.style.color.toString()).toBe('#0000FF');
++		expect(view.style.getCssVariable('--a')).toBeNull();
++	});
++
++	it('does not inherit a custom property this view declared with an unresolvable value', () => {
++		const { view, parent } = styledWithParent('.p { --a: green; } label { --a: var(--missing); color: var(--a, blue); }', 'p');
++		parent._cssState.onLoaded();
++		view._cssState.onLoaded();
++
++		expect(view.style.color.toString()).toBe('#0000FF');
++	});
++
++	it('evaluates properties after the custom properties they use, whatever the order', () => {
++		const { view } = styled('.a { color: var(--brand); } .b { --brand: var(--base); --base: red; }', 'a b');
++		view._cssState.onLoaded();
++
++		expect(view.style.color.toString()).toBe('#FF0000');
++	});
++
++	it('prefers a later-defined variable over the fallback that referenced it', () => {
++		const css = `
++			.l { --via-stops: initial; }
++			.from { --from: red; --stops: var(--via-stops, var(--from)); }
++			.via { --via: lime; --via-stops: var(--from), var(--via); --stops: var(--via-stops); }
++			.to { --stops: var(--via-stops, var(--from)); color: var(--stops); }
++		`;
++		const { view } = styled(css, 'l from via to');
++		view._cssState.onLoaded();
++
++		expect(view.style.getCssVariable('--stops')).toBe('red, lime');
++	});
++
++	it('unsets a property whose new value is invalid instead of keeping the previous one', () => {
++		const css = `
++			.valid { --fallback: lime; color: var(--missing, var(--fallback)); }
++			.invalid { --fallback: lime; color: var(--missing, var(--fallback), yellow); }
++		`;
++		const { view } = styled(css, 'valid');
++		view._cssState.onLoaded();
++		expect(view.style.color.toString()).toBe('#00FF00');
++
++		view.className = 'invalid';
++		view._cssState.onLoaded();
++		expect(view.style.color).toBeUndefined();
++	});
++
+ 	it('does not re-apply an unchanged css expression', () => {
+ 		const { view } = styled('label { --brand: red; color: var(--brand); }');
+ 		view._cssState.onLoaded();
+```
+
+**File**: `packages/core/ui/styling/style-scope.ts` (modified, +73/-5)
+```diff
+@@ -117,6 +117,61 @@ function evaluateCssExpressions(view: ViewBase, property: string, value: string)
+ 	return value;
+ }
+ 
++function evaluateCssVariable(view: ViewBase, name: string, value: string): string | null {
++	const evaluated = evaluateCssExpressions(view, name, value);
++
++	return evaluated === unsetValue ? null : evaluated;
++}
++
++function settleCssVariables(view: ViewBase, cssExpsProperties: Record<string, string>) {
++	let names: string[];
++	for (const property in cssExpsProperties) {
++		if (isCssVariable(property)) {
++			if (!names) {
++				names = [];
++			}
++			names.push(property);
++			view.style.setScopedCssVariable(property, evaluateCssVariable(view, property, cssExpsProperties[property]));
++		}
++	}
++	if (!names || names.length < 2 || !hasForwardCssVariableReference(names, cssExpsProperties)) {
++		return;
++	}
++
++	for (let pass = 1; pass < names.length; pass++) {
++		let changed = false;
++		for (const name of names) {
++			const value = evaluateCssVariable(view, name, cssExpsProperties[name]);
++			if (value !== view.style.getCssVariable(name)) {
++				view.style.setScopedCssVariable(name, value);
++				changed = true;
++			}
++		}
++		if (!changed) {
++			return;
++		}
++	}
++}
++
++function hasForwardCssVariableReference(names: string[], values: Record<string, string>): boolean {
++	for (let i = 0; i < names.length; i++) {
++		const value = values[names[i]];
++		for (let j = i + 1; j < names.length; j++) {
++			const ref = `var(${names[j]}`;
++			let at = value.indexOf(ref);
++			while (at !== -1) {
++				const next = value[at + ref.length];
++				if (next === ')' || next === ',' || next === ' ' || next === undefined) {
++					return true;
++				}
++				at = value.indexOf(ref, at + 1);
++			}
++		}
++	}
++
++	return false;
++}
++
+ /**
+  * Only marks the merged list dirty - it is rebuilt on next read, since frameworks
+  * register stylesheets one call at a time.
+@@ -934,21 +989,23 @@ export class CssState {
+ 			valuesToApply[property] = value;
+ 		}
+ 		//we need to parse CSS vars first before evaluating css expressions
++		if (cssExpsProperties) {
++			settleCssVariables(view, cssExpsProperties);
++		}
+ 		for (const property in cssExpsProperties) {
+ 			const hadOldValue = property in oldProperties;
+ 			const oldValue = hadOldValue ? oldProperties[property] : undefined;
+ 			if (hadOldValue) {
+ 				delete oldProperties[property];
+ 			}
+ 
+-			const value = evaluateCssExpressions(view, property, cssExpsProperties[property]);
+-
+ 			if (isCssVariable(property)) {
+-				view.style.setScopedCssVariable(property, value);
+ 				delete newPropertyValues[property];
+ 				continue;
+ 			}
+ 
++			const value = evaluateCssExpressions(view, property, cssExpsProperties[property]);
++
+ 			if (value === unsetValue) {
+ 				delete newPropertyValues[property];
+ 			} else {
+@@ -1017,15 +1074,26 @@ export class CssState {
+ 		// Set new values to the style
+ 		for (const property in valuesToApply) {
+ 			const value = valuesToApply[property];
++			const inStyle = property in view.style;
++			const camelCasedProperty = inStyle ? undefined : property.replace(kebabCasePattern, kebabCaseReplacementFunc);
+ 			try {
+-				if (property in view.style) {
++				if (inStyle) {
+ 					view.style[`css:${property}`] = value;
+ 				} else {
+-					const camelCasedProperty = property.replace(kebabCasePattern, kebabCaseReplacementFunc);
+ 					view[camelCasedProperty] = value;
+ 				}
+ 			} catch (e) {
+ 				Trace.write(`Failed to apply property [${property}] with value [${value}] to ${view}. ${e.stack}`, Trace.categories.Error, Trace.messageType.error);
++				delete newPropertyValues[property];
++				try {
++					if (inStyle) {
++						view.style[`css:${property}`] = unsetValue;
++					} else {
++						view[camelCasedProperty] = unsetValue;
++					}
++				} catch (e) {
++					Trace.write(`Failed to unset property [${property}] on ${view}. ${e.stack}`, Trace.categories.Error, Trace.messageType.error);
++				}
+ 			}
+ 		}
+ 
+```
+
+---
+
+### Incident Patch 2: `005970f2` (2026-10-29)
+**Commit Message**: feat(core): CSS Color 4 and 5 color functions (#11532)
+
+Color reads `oklch()`, `oklab()`, `lab()`, `lch()`, `hwb()`,
+`color()` and relative colors (`oklch(from var(--x) calc(l * .9) c h)`)
+with @csstools/css-color-parser, which core already uses for
+`color-mix()`. Tailwind v4 and Bootstrap 6 define their whole palettes in
+oklch, which threw "Invalid color".
+
+The modern `rgb()`/`hsl()` syntax the fast path misread now goes the
+same way: a `/` alpha given as a percentage (`rgb(0 0 0 / 15%)` came
+out opaque), rgb percentages, and `none`. The legacy syntax keeps the
+fast path.
+
+The value parser behind `background` and gradients recognises the new
+functions too, and nested ones such as `color-mix(in srgb, rgb(0 0 0), red)`.
+`Color.isValid()` accepts them.
+
+**File**: `packages/core/color/color-common.ts` (modified, +10/-4)
+```diff
+@@ -1,7 +1,7 @@
+ import type { IColor } from './color-types';
+ import * as types from '../utils/types';
+ import * as knownColors from './known-colors';
+-import { HEX_REGEX, argbFromColorMix, argbFromHslOrHsla, argbFromHsvOrHsva, argbFromRgbOrRgba, hslToRgb, hsvToRgb, isCssColorMixExpression, isHslOrHsla, isHsvOrHsva, isRgbOrRgba, rgbToHsl, rgbToHsv, argbFromString } from './color-utils';
++import { HEX_REGEX, argbFromColorMix, argbFromCssColor, argbFromHslOrHsla, argbFromHsvOrHsva, argbFromRgbOrRgba, hslToRgb, hsvToRgb, isCssColorFunction, isCssColorMixExpression, isHslOrHsla, isHsvOrHsva, isModernRgbOrHsl, isRgbOrRgba, rgbToHsl, rgbToHsv, argbFromString } from './color-utils';
+ 
+ export class ColorBase implements IColor {
+ 	private _argb: number;
+@@ -15,9 +15,9 @@ export class ColorBase implements IColor {
+ 			const arg = args[0];
+ 			if (types.isString(arg)) {
+ 				const lowered = arg.toLowerCase();
+-				if (isRgbOrRgba(lowered)) {
++				if (isRgbOrRgba(lowered) && !isModernRgbOrHsl(lowered)) {
+ 					this._argb = argbFromRgbOrRgba(lowered);
+-				} else if (isHslOrHsla(lowered)) {
++				} else if (isHslOrHsla(lowered) && !isModernRgbOrHsl(lowered)) {
+ 					this._argb = argbFromHslOrHsla(lowered);
+ 				} else if (isHsvOrHsva(lowered)) {
+ 					this._argb = argbFromHsvOrHsva(lowered);
+@@ -37,6 +37,12 @@ export class ColorBase implements IColor {
+ 					// strange that it would not be. And if it is not a thrown error seems best
+ 					// The parameter is a "#RRGGBBAA" formatted string
+ 					this._argb = this._argbFromString(arg);
++				} else if (isCssColorFunction(lowered) || isRgbOrRgba(lowered) || isHslOrHsla(lowered)) {
++					const argb = argbFromCssColor(lowered);
++					if (argb === null) {
++						throw new Error('Invalid color: ' + arg);
++					}
++					this._argb = argb >>> 0;
+ 				} else {
+ 					throw new Error('Invalid color: ' + arg);
+ 				}
+@@ -147,7 +153,7 @@ export class ColorBase implements IColor {
+ 			return true;
+ 		}
+ 
+-		return HEX_REGEX.test(value) || isRgbOrRgba(lowered) || isHslOrHsla(lowered);
++		return HEX_REGEX.test(value) || isRgbOrRgba(lowered) || isHslOrHsla(lowered) || isCssColorFunction(lowered) || isCssColorMixExpression(lowered);
+ 	}
+ 	public static fromHSL(a, h, s, l) {
+ 		return new ColorBase(a, h, s, l, 'hsl');
+```
+
+**File**: `packages/core/color/color-utils.ts` (modified, +14/-0)
+```diff
+@@ -5,10 +5,24 @@ import { tokenize } from '@csstools/css-tokenizer';
+ 
+ export const HEX_REGEX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)|(^#[0-9A-F]{8}$)|(^#[0-9A-F]{4}$)/i;
+ 
++const CSS_COLOR_FUNCTION_REGEX = /^(?:oklch|oklab|lab|lch|hwb|color)\(/;
++
+ export function isCssColorMixExpression(value: string) {
+ 	return value.includes('color-mix(');
+ }
+ 
++export function isCssColorFunction(value: string) {
++	return CSS_COLOR_FUNCTION_REGEX.test(value);
++}
++
++export function isModernRgbOrHsl(value: string) {
++	return value.includes('/') || value.includes('none') || value.includes('from ') || (value.startsWith('rgb') && value.includes('%'));
++}
++
++export function argbFromCssColor(value: string): number | null {
++	return argbFromColorMix(value);
++}
++
+ export function argbFromColorMix(value: string): number | null {
+ 	const astComponentValue = parseComponentValue(tokenize({ css: value }));
+ 	const colorData = color(astComponentValue);
+```
+
+**File**: `packages/core/color/color.spec.ts` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++import { describe, it, expect } from 'vitest';
++
++import { Color } from '.';
++
++const rgba = (value: string) => new Color(value).toRgbString();
++
++describe('Color', () => {
++	it('parses CSS Color 4 color spaces', () => {
++		expect(rgba('oklch(0.6 0.2 250)')).toBe('rgba(0, 131, 224, 1.00)');
++		expect(rgba('oklch(70% 0.1 30deg / .5)')).toBe('rgba(213, 134, 121, 0.50)');
++		expect(rgba('OKLCH(0.6 0.2 250)')).toBe('rgba(0, 131, 224, 1.00)');
++		expect(rgba('oklab(0.628 0.225 0.126)')).toBe('rgba(255, 0, 0, 1.00)');
++		expect(rgba('lab(50 40 59.5)')).toBe('rgba(191, 87, 0, 1.00)');
++		expect(rgba('lch(50 72 56)')).toBe('rgba(191, 87, 0, 1.00)');
++		expect(rgba('hwb(0 0% 0%)')).toBe('rgba(255, 0, 0, 1.00)');
++		expect(rgba('color(srgb 1 0 0)')).toBe('rgba(255, 0, 0, 1.00)');
++	});
++
++	it('parses relative colors', () => {
++		expect(rgba('oklch(from #ff0000 calc(l * 0.9) c h)')).toBe('rgba(222, 0, 0, 1.00)');
++		expect(rgba('rgb(from red r g b / 50%)')).toBe('rgba(255, 0, 0, 0.50)');
++	});
++
++	it('parses the modern rgb() and hsl() syntax', () => {
++		expect(rgba('rgb(0 0 0 / 15%)')).toBe('rgba(0, 0, 0, 0.15)');
++		expect(rgba('rgb(100% 0% 0%)')).toBe('rgba(255, 0, 0, 1.00)');
++		expect(rgba('rgb(255 0 0 / none)')).toBe('rgba(255, 0, 0, 0.00)');
++		expect(rgba('hsl(0 100% 50% / 50%)')).toBe('rgba(255, 0, 0, 0.50)');
++	});
++
++	it('keeps the legacy syntax on the fast path', () => {
++		expect(rgba('rgb(255, 8, 128)')).toBe('rgba(255, 8, 128, 1.00)');
++		expect(rgba('rgba(255, 8, 128, 0.5)')).toBe('rgba(255, 8, 128, 0.50)');
++		expect(rgba('rgb(255 8 128)')).toBe('rgba(255, 8, 128, 1.00)');
++		expect(rgba('hsl(330.9, 100%, 51.6%)')).toBe('rgba(255, 8, 128, 1.00)');
++	});
++
++	it('rejects what is not a color', () => {
++		expect(() => new Color('oklch(nope)')).toThrow('Invalid color');
++		expect(() => new Color('colorful(1 2 3)')).toThrow('Invalid color');
++		expect(() => new Color('light-dark(red, blue)')).toThrow('Invalid color');
++	});
++
++	it('reports the new functions as valid', () => {
++		expect(Color.isValid('oklch(0.6 0.2 250)')).toBe(true);
++		expect(Color.isValid('color-mix(in srgb, red, blue)')).toBe(true);
++		expect(Color.isValid('nope(1)')).toBe(false);
++	});
++});
+```
+
+**File**: `packages/core/css/parser.spec.ts` (modified, +4/-0)
+```diff
+@@ -50,6 +50,10 @@ describe('css', () => {
+ 				test(parseColor, '  rgba(255, 8, 128, 0.5) ', { start: 0, end: 24, value: new Color(0x80ff0880) });
+ 				test(parseColor, '  hsl(330.9, 100%, 51.6%) ', { start: 0, end: 25, value: new Color(0xffff0880) });
+ 				test(parseColor, '  hsla(330.9, 100%, 51.6%, 0.5) ', { start: 0, end: 31, value: new Color(0x80ff0880) });
++				test(parseColor, '  rgb(0 0 0 / 15%) ', { start: 0, end: 18, value: new Color(0x26000000) });
++				test(parseColor, '  oklch(0.6 0.2 250) ', { start: 0, end: 20, value: new Color(0xff0083e0) });
++				test(parseColor, '  color-mix(in srgb, rgb(255 0 0), blue) ', { start: 0, end: 40, value: new Color('color-mix(in srgb, rgb(255 0 0), blue)') });
++				test(parseColor, '  oklch(0.6 0.2 250 ', 0, null);
+ 				test(parseColor, '#FF0000 url(lucky.gif)', 8, null);
+ 				test(parseColor, 'url(lucky.gif) #FF0000 repeat', 15, { start: 15, end: 23, value: new Color(0xffff0000) });
+ 			});
+```
+
+**File**: `packages/core/css/parser.ts` (modified, +16/-3)
+```diff
+@@ -79,16 +79,29 @@ export function parseHexColor(text: string, start = 0): Parsed<Color> {
+ 	return { start, end, value: new Color('#' + result[1]) };
+ }
+ 
+-const cssColorRegEx = /\s*((?:rgb|rgba|hsl|hsla|hsv|hsva)\([^\(\)]*\))/gy;
++const cssColorRegEx = /\s*(rgba?|hsla?|hsva?|oklch|oklab|lab|lch|hwb|color-mix|color)\(/gy;
+ export function parseCssColor(text: string, start = 0): Parsed<Color> {
+ 	cssColorRegEx.lastIndex = start;
+ 	const result = cssColorRegEx.exec(text);
+ 	if (!result) {
+ 		return null;
+ 	}
+-	const end = cssColorRegEx.lastIndex;
++
++	let end = cssColorRegEx.lastIndex;
++	for (let depth = 1; depth > 0; end++) {
++		if (end >= text.length) {
++			return null;
++		}
++		const char = text[end];
++		if (char === '(') {
++			depth++;
++		} else if (char === ')') {
++			depth--;
++		}
++	}
++
+ 	try {
+-		return { start, end, value: new Color(result[1]) };
++		return { start, end, value: new Color(text.substring(cssColorRegEx.lastIndex - result[1].length - 1, end)) };
+ 	} catch {
+ 		return null;
+ 	}
+```
+
+---
+
+### Incident Patch 3: `0ac04893` (2026-10-29)
+**Commit Message**: fix(core): keyframes without a 0% or 100% keyframe animate from and to the view's own values (#11528)
+
+Core played the first keyframe as a jump and held the last one, so
+keyframes that leave out an end did not animate as in CSS:
+`to { transform: rotate(360deg) }` jumped to 360deg on every iteration
+and a spinner never turned, and keyframes that stop at 50% never came
+back.
+
+A missing 0% or 100% keyframe is now added when the animation is built,
+and filled with the view's own values for the animated properties when
+it plays. An auto width or height, which cannot be animated from, is
+left out.
+
+[skip ci]
+
+**File**: `packages/core/ui/animation/keyframe-animation.spec.ts` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++import { describe, it, expect } from 'vitest';
++
++import { KeyframeAnimation, KeyframeAnimationInfo, KeyframeInfo } from './keyframe-animation';
++import { Label } from '../label';
++
++function info(keyframes: Array<Partial<KeyframeInfo>>, options: Partial<KeyframeAnimationInfo> = {}): KeyframeAnimationInfo {
++	return Object.assign(new KeyframeAnimationInfo(), { duration: 1000, keyframes }, options);
++}
++
++describe('KeyframeAnimation.keyframeAnimationFromInfo', () => {
++	it('keeps keyframes that already start at 0% and end at 100%', () => {
++		const animation = KeyframeAnimation.keyframeAnimationFromInfo(
++			info([
++				{ duration: 0, declarations: [{ property: 'opacity', value: 0 }] },
++				{ duration: 1, declarations: [{ property: 'opacity', value: 1 }] },
++			]),
++		);
++
++		expect(animation.animations.length).toBe(2);
++		expect(animation.animations.map((a) => a.opacity)).toEqual([0, 1]);
++	});
++
++	it('starts from the view’s own values when there is no 0% keyframe', () => {
++		const animation = KeyframeAnimation.keyframeAnimationFromInfo(info([{ duration: 1, declarations: [{ property: 'rotate', value: { x: 0, y: 0, z: 360 } }] }]));
++		const view = new Label();
++		view.rotate = 45;
++
++		(animation as any)._fillImplicitKeyframes(view);
++
++		expect(animation.animations.length).toBe(2);
++		expect(animation.animations[0].rotate).toEqual({ x: 0, y: 0, z: 45 });
++		expect(animation.animations[1].rotate).toEqual({ x: 0, y: 0, z: 360 });
++		expect(animation.animations[1].duration).toBe(1000);
++	});
++
++	it('ends at the view’s own values when there is no 100% keyframe', () => {
++		const animation = KeyframeAnimation.keyframeAnimationFromInfo(
++			info([
++				{ duration: 0, declarations: [{ property: 'opacity', value: 0 }] },
++				{ duration: 0.5, declarations: [{ property: 'opacity', value: 0.5 }] },
++			]),
++		);
++		const view = new Label();
++		view.opacity = 0.8;
++
++		(animation as any)._fillImplicitKeyframes(view);
++
++		expect(animation.animations.map((a) => a.opacity)).toEqual([0, 0.5, 0.8]);
++		expect(animation.animations.map((a) => a.duration)).toEqual([0.01, 500, 500]);
++	});
++
++	it('fills only the properties the keyframes animate', () => {
++		const animation = KeyframeAnimation.keyframeAnimationFromInfo(info([{ duration: 0.5, declarations: [{ property: 'opacity', value: 0 }] }]));
++
++		(animation as any)._fillImplicitKeyframes(new Label());
++
++		expect(animation.animations.length).toBe(3);
++		for (const keyframe of animation.animations) {
++			expect('rotate' in keyframe).toBe(false);
++			expect('opacity' in keyframe).toBe(true);
++		}
++		expect(animation.animations[0].opacity).toBe(1);
++		expect(animation.animations[2].opacity).toBe(1);
++	});
++
++	it('does not animate from an auto size', () => {
++		const animation = KeyframeAnimation.keyframeAnimationFromInfo(info([{ duration: 1, declarations: [{ property: 'width', value: 100 }] }]));
++
++		(animation as any)._fillImplicitKeyframes(new Label());
++
++		expect('width' in animation.animations[0]).toBe(false);
++		expect(animation.animations[1].width).toBe(100);
++	});
++
++	it('does not change the info it was built from', () => {
++		const animationInfo = info([{ duration: 1, declarations: [{ property: 'opacity', value: 0 }] }]);
++
++		KeyframeAnimation.keyframeAnimationFromInfo(animationInfo);
++
++		expect(animationInfo.keyframes.length).toBe(1);
++	});
++});
+```
+
+**File**: `packages/core/ui/animation/keyframe-animation.ts` (modified, +77/-3)
+```diff
+@@ -59,6 +59,28 @@ interface Keyframe {
+ 	forceLayer?: boolean;
+ }
+ 
++const KEYFRAME_PROPERTIES = ['backgroundColor', 'scale', 'translate', 'rotate', 'opacity', 'width', 'height'];
++
++function getKeyframeValue(view: View, property: string): any {
++	switch (property) {
++		case 'backgroundColor':
++			return view.backgroundColor instanceof Color ? view.backgroundColor : new Color(0, 0, 0, 0);
++		case 'scale':
++			return { x: view.scaleX ?? 1, y: view.scaleY ?? 1 };
++		case 'translate':
++			return { x: view.translateX ?? 0, y: view.translateY ?? 0 };
++		case 'rotate':
++			return { x: view.rotateX ?? 0, y: view.rotateY ?? 0, z: view.rotate ?? 0 };
++		case 'opacity':
++			return view.opacity ?? 1;
++		case 'width':
++		case 'height': {
++			const value = view[property];
++			return value == null || value === 'auto' ? undefined : value;
++		}
++	}
++}
++
+ export class KeyframeAnimation {
+ 	public animations: Array<Keyframe>;
+ 	public delay = 0;
+@@ -69,26 +91,47 @@ export class KeyframeAnimation {
+ 	private _isForwards: boolean;
+ 	private _nativeAnimations: Array<Animation>;
+ 	private _target: View;
++	private _implicitKeyframes: Array<Keyframe>;
+ 
+ 	public static keyframeAnimationFromInfo(info: KeyframeAnimationInfo): KeyframeAnimation {
+ 		if (!info?.keyframes?.length) {
+ 			Trace.write(`No keyframes found for animation '${info.name}'.`, Trace.categories.Animation, Trace.messageType.warn);
+ 			return null;
+ 		}
+ 
+-		const length = info.keyframes.length;
++		const keyframes = info.keyframes.slice();
++		const implicitInfos = new Array<KeyframeInfo>();
++		if (keyframes[0].duration > 0) {
++			const from = { duration: 0, declarations: [] };
++			implicitInfos.push(from);
++			keyframes.unshift(from);
++		}
++		if (keyframes[keyframes.length - 1].duration < 1) {
++			const to = { duration: 1, declarations: [] };
++			implicitInfos.push(to);
++			keyframes.push(to);
++		}
++
++		const length = keyframes.length;
+ 		const animations = new Array<Keyframe>();
++		const implicitKeyframes = new Array<Keyframe>();
+ 		let startDuration = 0;
+ 
+ 		if (info.isReverse) {
+ 			for (let index = length - 1; index >= 0; index--) {
+-				const keyframe = info.keyframes[index];
++				const keyframe = keyframes[index];
+ 				startDuration = KeyframeAnimation.parseKeyframe(info, keyframe, animations, startDuration);
++				if (implicitInfos.includes(keyframe)) {
++					implicitKeyframes.push(animations[animations.length - 1]);
++				}
+ 			}
+ 		} else {
+ 			for (let index = 0; index < length; index++) {
+-				const keyframe = info.keyframes[index];
++				const keyframe = keyframes[index];
+ 				startDuration = KeyframeAnimation.parseKeyframe(info, keyframe, animations, startDuration);
++				if (implicitInfos.includes(keyframe)) {
++					implicitKeyframes.push(animations[animations.length - 1]);
++				}
+ 			}
+ 			for (let index = length - 1; index > 0; index--) {
+ 				const a1 = animations[index];
+@@ -107,6 +150,9 @@ export class KeyframeAnimation {
+ 		animation.iterations = info.iterations;
+ 		animation.animations = animations;
+ 		animation._isForwards = info.isForwards;
++		if (implicitKeyframes.length) {
++			animation._implicitKeyframes = implicitKeyframes;
++		}
+ 
+ 		return animation;
+ 	}
+@@ -174,6 +220,7 @@ export class KeyframeAnimation {
+ 		this._isPlaying = true;
+ 		this._nativeAnimations = new Array<Animation>();
+ 		this._target = view;
++		this._fillImplicitKeyframes(view);
+ 
+ 		if (this.delay !== 0) {
+ 			setTimeout(() => this.animate(view, 0, this.iterations), this.delay);
+@@ -260,6 +307,33 @@ export class KeyframeAnimation {
+ 		}
+ 	}
+ 
++	private _fillImplicitKeyframes(view: View) {
++		const implicitKeyframes = this._implicitKeyframes;
++		if (!implicitKeyframes) {
++			return;
++		}
++
++		const animated = new Set<string>();
++		for (const animation of this.animations) {
++			for (const property of KEYFRAME_PROPERTIES) {
++				if (property in animation && !implicitKeyframes.includes(animation)) {
++					animated.add(property);
++				}
++			}
++		}
++
++		for (const keyframe of implicitKeyframes) {
++			for (const property of animated) {
++				const value = getKeyframeValue(view, property);
++				if (value === undefined) {
++					delete keyframe[property];
++				} else {
++					keyframe[property] = value;
++				}
++			}
++		}
++	}
++
+ 	public _resolveAnimationFinishedPromise() {
+ 		this._nativeAnimations = new Array<Animation>();
+ 		this._isPlaying = false;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11567** (2026-10-22): fix(vite): recognize aliased default exports in link checks (@aleclarson)
-- **PR #11565** (2026-10-22): fix(vite): preserve package imports during vendor bundling (@aleclarson)
-- **PR #11562** (2026-10-21): fix(ios): measure padded LiquidGlass content inside its padding (@aleclarson)
-- **PR #11560** (2026-10-21): fix(vite): keep source-only dependencies out of the HMR vendor bundle regardless of spec (@aleclarson)
-- **PR #11559** (2026-10-21): fix(vite): resolve nested node_modules requests for install-linked dependencies (@aleclarson)
-- **PR #11555** (2026-10-21): fix(vite): preserve Vue plugin imports and canonical runtime bridge (@rafaelaugustos)
+- **PR #11593** (2026-10-29): fix(core): unresolved var() unsets the whole value and invalid color-mix() no longer renders white (@edusperoni)
+- **PR #11585** (2026-10-28): docs: fix stale unit-test anchors and API reference build command (@ZainnQureshii)
+- **PR #11583** (2026-10-28): chore(skills): add issue-sweep skill (@NathanWalker)
+- **PR #11582** (2026-10-28): fix(android): create prompt and login inputs from the dialog context (@NathanWalker)
+- **PR #11581** (2026-10-28): fix(windows): break import cycle between view and animation modules (@aleclarson)
+- **PR #11579** (2026-10-28): fix(ios): skip Switch color updates without a native view (@NathanWalker)
 
 ---
 
@@ -1785,31 +1772,30 @@ The setters now
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): make background: none clear the background color (#11536)
+## X. core): css var() fallbacks, order-independent custom properties, and no crash on
 
 **RULE**:
-When implementing operations in `apps/automated/src/ui/styling/style-properties-tests.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/automated/src/ui/styling/style-tests.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67bf7ee0`: core): make background: none clear the background color (#11536). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10448387`: core): css var() fallbacks, order-independent custom properties, and no crash on unresolvable ones (#11527). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/styling/style-properties-tests.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/styling/style-tests.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-export function test_setting_background_none_from_CSS_makes_backgroundColor_transparent() {
-	test_property_from_CSS_is_applied_to_style('backgroundColor', 'background', new Color('transparent'), 'none');
-}
-
+			expectedColor: undefined,
+        color: var(--undefined-var, var(--my-fallback-var), yellow); /* resolved as color: unset; */
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			expectedColor: limeColor,
+        color: var(--undefined-var, var(--my-fallback-var), yellow); /* resolved as color: lime; */
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67bf7ee0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10448387` are properly handled with clean fallback behavior.

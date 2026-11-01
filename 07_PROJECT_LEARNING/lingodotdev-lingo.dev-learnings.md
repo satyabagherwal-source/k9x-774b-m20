@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source**: github ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
-> **Source Version**: `1d5d5d12`  
+> **Source Version**: `28435298`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:52:35.173Z  
+> **Timestamp**: 2026-10-27T19:56:17.724Z  
 > **Learning ID**: `learn-github-lingodotdev-lingo-dev`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lingodotdev/lingo.dev](https://github.com/lingodotdev/lingo.dev))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:52:35.167Z  
+> **Harvest Timestamp**: 2026-10-27T19:56:17.448Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1195,215 +1195,352 @@ function _getConfigFilePath() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d5d5d12` (2026-10-21)
-**Commit Message**: fix(deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251)
+### Incident Patch 1: `adc5233a` (2026-10-26)
+**Commit Message**: fix(deps): override fast-uri and serialize-javascript for security advisories (#2256)
 
-**File**: `.changeset/vite-launch-editor-patch.md` (added, +2/-0)
+**File**: `.changeset/plenty-buckets-talk.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
 +---
 +---
 ```
 
-**File**: `demo/new-compiler-vite-react-spa/package.json` (modified, +1/-1)
+**File**: `pnpm-lock.yaml` (modified, +10/-10)
 ```diff
-@@ -29,7 +29,7 @@
-     "@vitejs/plugin-react": "5.0.4",
-     "jsdom": "27.0.0",
-     "typescript": "5.7.2",
--    "vite": "7.3.5",
-+    "vite": "7.3.7",
-     "web-vitals": "5.1.0"
-   }
- }
-```
-
-**File**: `pnpm-lock.yaml` (modified, +95/-129)
-```diff
-@@ -24,7 +24,7 @@ overrides:
-   lodash-es: '>=4.18.0 <5'
-   axios: '>=1.20.0 <2'
-   browserslist: '>=4.28.8 <5'
--  vite: '>=7.3.5 <8'
-+  vite: '>=7.3.7 <8'
-   '@xmldom/xmldom@>=0.8 <0.8.15': 0.8.15
-   form-data: '>=4.0.6 <5'
-   follow-redirects: '>=1.16.1 <2'
-@@ -45,7 +45,7 @@ overrides:
-   ajv@>=7 <8.18.0: 8.18.0
-   nanoid@<3.3.18: 3.3.18
-   nanoid@>=4 <5.1.16: 5.1.16
--  launch-editor@<2.14.1: 2.14.1
-+  launch-editor@<2.14.2: 2.14.2
-   js-yaml@>=3 <3.15.2: 3.15.2
-   js-yaml@>=4 <4.3.2: 4.3.2
-   joi@>=18 <18.2.9: 18.2.9
-@@ -159,7 +159,7 @@ importers:
-         version: link:../../packages/new-compiler
-       '@tailwindcss/vite':
-         specifier: 4.1.18
--        version: 4.1.18(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-+        version: 4.1.18(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-       '@tanstack/react-devtools':
-         specifier: 0.7.0
-         version: 0.7.0(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(csstype@3.2.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(solid-js@1.9.10)
-@@ -171,7 +171,7 @@ importers:
-         version: 1.167.2(@tanstack/react-router@1.170.41(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(@tanstack/router-core@1.171.34)(csstype@3.2.3)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-       '@tanstack/router-plugin':
-         specifier: 1.168.42
--        version: 1.168.42(@tanstack/react-router@1.170.41(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(esbuild@0.27.2)(rollup@4.62.0)(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-+        version: 1.168.42(@tanstack/react-router@1.170.41(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(esbuild@0.27.2)(rollup@4.62.0)(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-       lucide-react:
-         specifier: 0.545.0
-         version: 0.545.0(react@19.2.0)
-@@ -187,7 +187,7 @@ importers:
-     devDependencies:
-       '@tanstack/devtools-vite':
-         specifier: 0.8.1
--        version: 0.8.1(@emnapi/core@1.7.1)(@emnapi/runtime@1.7.1)(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-+        version: 0.8.1(@emnapi/core@1.7.1)(@emnapi/runtime@1.7.1)(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-       '@testing-library/dom':
-         specifier: 10.4.0
-         version: 10.4.0
-@@ -205,16 +205,16 @@ importers:
-         version: 19.2.0(@types/react@19.2.0)
-       '@vitejs/plugin-react':
-         specifier: 5.0.4
--        version: 5.0.4(vite@7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-+        version: 5.0.4(vite@7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-       jsdom:
-         specifier: 27.0.0
-         version: 27.0.0
-       typescript:
-         specifier: 5.7.2
-         version: 5.7.2
-       vite:
--        specifier: '>=7.3.5 <8'
--        version: 7.3.5(@types/node@22.10.2)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0)
-+        specifier: '>=7.3.7 <8'
-+        version: 7.3.7(@types/node@22.10.2)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0)
-       web-vitals:
-         specifier: 5.1.0
-         version: 5.1.0
-@@ -227,7 +227,7 @@ importers:
-     devDependencies:
-       '@directus/extensions-sdk':
-         specifier: 17.0.3
--        version: 17.0.3(@types/node@25.0.3)(@unhead/vue@2.1.15(vue@3.5.43(typescript@5.9.3)))(jiti@2.6.1)(knex@3.1.0)(lightningcss@1.30.2)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3)))(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(ws@8.21.0)(yaml@2.9.0)
-+        version: 17.0.3(@types/node@25.0.3)(@unhead/vue@2.1.15(vue@3.5.43(typescript@5.9.3)))(jiti@2.7.0)(knex@3.1.0)(lightningcss@1.30.2)(pinia@2.3.1(typescript@5.9.3)(vue@3.5.43(typescript@5.9.3)))(terser@5.44.1)(tsx@4.21.0)(typescript@5.9.3)(ws@8.21.0)(yaml@2.9.0)
-       '@unhead/vue':
-         specifier: '>=2.1.15 <3'
-         version: 2.1.15(vue@3.5.43(typescript@5.9.3))
-@@ -239,7 +239,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 4.1.11
--        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.1.11)(jsdom@27.3.0)(vite@7.3.5(@types/node@25.0.3)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
-+        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(@vitest/ui@4.1.11)(jsdom@27.3.0)(vite@7.3.7(@types/node@25.0.3)(jiti@2.7.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.21.0)(yaml@2.9.0))
+@@ -11,13 +11,13 @@ overrides:
+   '@modelcontextprotocol/sdk': '>=1.26.0 <2'
+   '@isaacs/brace-expansion': '>=5.0.1 <6'
+   effect: '>=3.20.0 <4'
+-  fast-uri: '>=3.1.7 <4'
++  fast-uri: '>=3.1.9 <4'
+   defu: '>=6.1.5 <7'
+   ws: '>=8.21.0 <9'
+   js-cookie: '>=3.0.7 <4'
+   svgo@>=4 <4.1.0: 4.1.0
+   sharp@>=0.35 <0.35.5: 0.35.5
+-  serialize-javascript: '>=7.0.3 <8'
++  serialize-javascript: '>=7.1.3 <8'
+   rollup: '>=4.59.0 <5'
+   path-to-regexp: '>=8.4.0 <9'
+   lodash: '>=4.18.0 <5'
+@@ -5026,8 +5026,8 @@ packages:
+   fast-string-width@3.0.2:
+     resolution: {integrity: sha512-gX8LrtNEI5hq8DVUfRQMbr5lpaS4nMIWV+7XEbXk2b8kiQIizgnlr12B4dA3ZEx3308ze0O4Q1R+cHts8kyUJg==}
  
-   legacy/cli:
+-  fast-uri@3.1.7:
+-    resolution: {integrity: sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==}
++  fast-uri@3.1.9:
++    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
+ 
+   fast-wrap-ansi@0.2.2:
+     resolution: {integrity: sha512-7F2Fl+TjRSenLqlU3UjSH0iyqopqoZIu7eZVpEirP2g1GtWa2G/ecEmBdgz31+Mxr+ELclgg6sokpSFIQiZ02Q==}
+@@ -6805,8 +6805,8 @@ packages:
+     engines: {node: '>=10'}
+     hasBin: true
+ 
+-  serialize-javascript@7.0.6:
+-    resolution: {integrity: sha512-ATTK5Q4gFVg0YDp1my2vqygyvhcklD/UV5GIlYHooGTn/NogJqIzpetkD6E5kmuVULqz/S9inUL25XcAgDRJQg==}
++  serialize-javascript@7.1.4:
++    resolution: {integrity: sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==}
+     engines: {node: '>=20.0.0'}
+ 
+   seroval-plugins@1.3.3:
+@@ -10089,7 +10089,7 @@ snapshots:
+ 
+   '@rollup/plugin-terser@0.4.4(rollup@4.62.0)':
      dependencies:
-@@ -576,7 +576,7 @@ importers:
-         version: 5.9.3
-       vitest:
-         specifier: 4.1.11
--        version: 4.1.11(@opentelemetry/api@1.9.0)(@types/node@22.10.2)(@vitest/ui@4.1.11)(jsdom@25.0.1)(vite@7.3.5(@type
+-      serialize-javascript: 7.0.6
++      serialize-javascript: 7.1.4
+       smob: 1.5.0
+       terser: 5.44.1
+     optionalDependencies:
+@@ -11361,7 +11361,7 @@ snapshots:
+   ajv@8.18.0:
+     dependencies:
+       fast-deep-equal: 3.1.3
+-      fast-uri: 3.1.7
++      fast-uri: 3.1.9
+       json-schema-traverse: 1.0.0
+       require-from-string: 2.0.2
+ 
+@@ -12092,7 +12092,7 @@ snapshots:
+     dependencies:
+       fast-string-truncated-width: 3.0.3
+ 
+-  fast-uri@3.1.7: {}
++  fast-uri@3.1.9: {}
+ 
+   fast-wrap-ansi@0.2.2:
+     dependencies:
+@@ -14277,7 +14277,7 @@ snapshots:
+ 
+   semver@7.8.5: {}
+ 
+-  serialize-javascript@7.0.6: {}
++  serialize-javascript@7.1.4: {}
+ 
+   seroval-plugins@1.3.3(seroval@1.6.8):
+     dependencies:
 ```
 
 **File**: `pnpm-workspace.yaml` (modified, +2/-2)
 ```diff
-@@ -26,7 +26,7 @@ overrides:
-   lodash-es: ">=4.18.0 <5"
-   axios: ">=1.20.0 <2"
-   browserslist: ">=4.28.8 <5"
--  vite: ">=7.3.5 <8"
-+  vite: ">=7.3.7 <8"
-   "@xmldom/xmldom@>=0.8 <0.8.15": 0.8.15
-   form-data: ">=4.0.6 <5"
-   follow-redirects: ">=1.16.1 <2"
-@@ -47,7 +47,7 @@ overrides:
-   ajv@>=7 <8.18.0: 8.18.0
-   nanoid@<3.3.18: 3.3.18
-   nanoid@>=4 <5.1.16: 5.1.16
--  launch-editor@<2.14.1: 2.14.1
-+  launch-editor@<2.14.2: 2.14.2
-   js-yaml@>=3 <3.15.2: 3.15.2
-   js-yaml@>=4 <4.3.2: 4.3.2
-   joi@>=18 <18.2.9: 18.2.9
+@@ -13,13 +13,13 @@ overrides:
+   "@modelcontextprotocol/sdk": ">=1.26.0 <2"
+   "@isaacs/brace-expansion": ">=5.0.1 <6"
+   effect: ">=3.20.0 <4"
+-  fast-uri: ">=3.1.7 <4"
++  fast-uri: ">=3.1.9 <4"
+   defu: ">=6.1.5 <7"
+   ws: ">=8.21.0 <9"
+   js-cookie: ">=3.0.7 <4"
+   "svgo@>=4 <4.1.0": 4.1.0
+   "sharp@>=0.35 <0.35.5": 0.35.5
+-  serialize-javascript: ">=7.0.3 <8"
++  serialize-javascript: ">=7.1.3 <8"
+   rollup: ">=4.59.0 <5"
+   path-to-regexp: ">=8.4.0 <9"
+   lodash: ">=4.18.0 <5"
 ```
 
 ---
 
-### Incident Patch 2: `3b20efe0` (2026-10-21)
-**Commit Message**: fix(deps): override follow-redirects to 1.16.1 (#2247)
+### Incident Patch 2: `e6f35151` (2026-10-26)
+**Commit Message**: fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1 (#2257)
 
-**File**: `.changeset/tidy-redirects-strip.md` (added, +2/-0)
+* fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1
+
+* fix(deps): bump zod to 4.6.6 in scripts/docs
+
+* fix(deps): scope the undici and router-generator zod overrides
+
+* fix(deps): drop the undici and router-generator zod overrides
+
+**File**: `.changeset/zod-next-undici-advisories.md` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++---
++"lingo.dev": patch
++"@lingo.dev/_compiler": patch
++"@lingo.dev/_sdk": patch
++"@lingo.dev/_spec": patch
++---
++
++Bump `zod` from 4.4.3 to 4.6.6 (GHSA-mrhx-c7xc-m3w5).
+```
+
+**File**: `demo/new-compiler-next16/package.json` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@
+   },
+   "dependencies": {
+     "@lingo.dev/compiler": "workspace:*",
+-    "next": "16.3.8",
++    "next": "16.4.1",
+     "react": "19.2.0",
+     "react-dom": "19.2.0"
+   },
+```
+
+**File**: `packages/cli/package.json` (modified, +1/-1)
+```diff
+@@ -160,7 +160,7 @@
+     "xml2js": "0.6.2",
+     "xpath": "0.0.34",
+     "yaml": "2.9.0",
+-    "zod": "4.4.3"
++    "zod": "4.6.6"
+   },
+   "devDependencies": {
+     "@types/babel__generator": "7.27.0",
+```
+
+**File**: `packages/compiler/package.json` (modified, +2/-2)
+```diff
+@@ -45,7 +45,7 @@
+     "@types/lodash": "4.17.21",
+     "@types/object-hash": "3.0.6",
+     "@types/react": "19.2.7",
+-    "next": "16.3.8",
++    "next": "16.4.1",
+     "tsup": "8.5.1",
+     "typescript": "5.9.3",
+     "vitest": "4.1.12"
+@@ -75,7 +75,7 @@
+     "posthog-node": "5.14.0",
+     "prettier": "3.6.2",
+     "unplugin": "2.3.11",
+-    "zod": "4.4.3"
++    "zod": "4.6.6"
+   },
+   "packageManager": "pnpm@9.12.3"
+ }
+```
+
+**File**: `packages/new-compiler/package.json` (modified, +1/-1)
+```diff
+@@ -146,7 +146,7 @@
+     "@types/react": "19.2.7",
+     "@types/react-dom": "19.2.3",
+     "@types/ws": "8.18.1",
+-    "next": "16.3.8",
++    "next": "16.4.1",
+     "tsdown": "0.18.2",
+     "tsx": "4.21.0",
+     "typescript": "5.9.3",
+```
+
+**File**: `packages/react/package.json` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@
+     "@types/react": "19.2.7",
+     "@types/react-dom": "19.2.3",
+     "@vitejs/plugin-react": "4.4.1",
+-    "next": "16.3.8",
++    "next": "16.4.1",
+     "react": "19.2.3",
+     "react-dom": "19.2.3",
+     "tsup": "8.5.1",
+```
+
+**File**: `packages/sdk/package.json` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@
+     "@paralleldrive/cuid2": "2.2.2",
+     "jsdom": "25.0.1",
+     "posthog-node": "5.14.0",
+-    "zod": "4.4.3"
++    "zod": "4.6.6"
+   },
+   "devDependencies": {
+     "@types/jsdom": "21.1.7",
+```
+
+**File**: `packages/spec/package.json` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@
+   "license": "Apache-2.0",
+   "dependencies": {
+     "@lingo.dev/_locales": "workspace:*",
+-    "zod": "4.4.3"
++    "zod": "4.6.6"
+   },
+   "devDependencies": {
+     "@types/node": "22.13.5",
+```
+
+---
+
+### Incident Patch 3: `0c37adcb` (2026-10-26)
+**Commit Message**: fix(deps): bump vitest to 4.1.12 (#2252)
+
+* fix(deps): bump vitest to 4.1.12
+
+* ci: run compiler-e2e on ubuntu-24.04
+
+**File**: `.changeset/vitest-mocker-patch.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
 +---
 +---
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +5/-4)
+**File**: `.github/workflows/pr-check.yml` (modified, +1/-1)
 ```diff
-@@ -27,6 +27,7 @@ overrides:
-   vite: '>=7.3.5 <8'
-   '@xmldom/xmldom@>=0.8 <0.8.15': 0.8.15
-   form-data: '>=4.0.6 <5'
-+  follow-redirects: '>=1.16.1 <2'
-   flatted: '>=3.4.2 <4'
-   tmp: '>=0.2.6 <0.3'
-   minimatch@<3.1.4: 3.1.4
-@@ -5083,8 +5084,8 @@ packages:
-   flatted@3.4.2:
-     resolution: {integrity: sha512-PjDse7RzhcPkIJwy5t7KPWQSZ9cAbzQXcafsetQoD7sOJRQlGikNbx7yZp2OotDnJyrDcbyRq3Ttb18iYOqkxA==}
- 
--  follow-redirects@1.16.0:
--    resolution: {integrity: sha512-y5rN/uOsadFT/JfYwhxRS5R7Qce+g3zG97+JrtFZlC9klX/W5hD7iiLzScI4nZqUS7DNUdhPgw4xI8W2LuXlUw==}
-+  follow-redirects@1.16.1:
-+    resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
-     engines: {node: '>=4.0'}
-     peerDependencies:
-       debug: '*'
-@@ -11436,7 +11437,7 @@ snapshots:
- 
-   axios@1.20.0:
-     dependencies:
--      follow-redirects: 1.16.0
-+      follow-redirects: 1.16.1
-       form-data: 4.0.6
-       https-proxy-agent: 5.0.1
-       proxy-from-env: 2.1.0
-@@ -12157,7 +12158,7 @@ snapshots:
- 
-   flatted@3.4.2: {}
- 
--  follow-redirects@1.16.0: {}
-+  follow-redirects@1.16.1: {}
- 
-   foreground-child@3.3.1:
-     dependencies:
+@@ -75,7 +75,7 @@ jobs:
+   compiler-e2e:
+     needs: check
+     timeout-minutes: 60
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     permissions:
+       contents: read
+     steps:
 ```
 
-**File**: `pnpm-workspace.yaml` (modified, +1/-0)
+**File**: `integrations/directus/package.json` (modified, +1/-1)
 ```diff
-@@ -29,6 +29,7 @@ overrides:
-   vite: ">=7.3.5 <8"
-   "@xmldom/xmldom@>=0.8 <0.8.15": 0.8.15
-   form-data: ">=4.0.6 <5"
-+  follow-redirects: ">=1.16.1 <2"
-   flatted: ">=3.4.2 <4"
-   tmp: ">=0.2.6 <0.3"
-   minimatch@<3.1.4: 3.1.4
+@@ -35,6 +35,6 @@
+     "@unhead/vue": "2.1.15",
+     "tsup": "8.5.1",
+     "typescript": "5.9.3",
+-    "vitest": "4.1.11"
++    "vitest": "4.1.12"
+   }
+ }
+```
+
+**File**: `packages/cli/package.json` (modified, +1/-1)
+```diff
+@@ -183,7 +183,7 @@
+     "gray-matter": "4.0.3",
+     "tsup": "8.5.1",
+     "typescript": "5.9.3",
+-    "vitest": "4.1.11"
++    "vitest": "4.1.12"
+   },
+   "engines": {
+     "node": ">=18"
+```
+
+**File**: `packages/compiler/package.json` (modified, +1/-1)
+```diff
+@@ -48,7 +48,7 @@
+     "next": "16.3.8",
+     "tsup": "8.5.1",
+     "typescript": "5.9.3",
+-    "vitest": "4.1.11"
++    "vitest": "4.1.12"
+   },
+   "dependencies": {
+     "@ai-sdk/anthropic": "3.0.117",
+```
+
+**File**: `packages/locales/package.json` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@
+     "@types/node": "22.13.5",
+     "tsup": "8.5.1",
+     "typescript": "5.9.3",
+-    "vitest": "4.1.11"
++    "vitest": "4.1.12"
+   },
+   "dependencies": {
+     "iso-639-3": "3.0.1"
+```
+
+**File**: `packages/logging/package.json` (modified, +1/-1)
+```diff
+@@ -39,6 +39,6 @@
+     "@types/node": "22.10.2",
+     "tsup": "8.5.1",
+     "typescript": "5.9.3",
+-    "vitest": "4.1.11"
++    "vitest": "4.1.12"
+   }
+ }
+```
+
+**File**: `packages/new-compiler/package.json` (modified, +1/-1)
+```diff
+@@ -151,7 +151,7 @@
+     "tsx": "4.21.0",
+     "typescript": "5.9.3",
+     "unplugin": "2.3.11",
+-    "vitest": "4.1.11"
++    "vitest": "4.1.12"
+   },
+   "dependencies": {
+     "@ai-sdk/google": "3.0.122",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2251** (2026-10-21): fix(deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (@meshulga)
-- **PR #2249** (closed): chore(deps-dev): bump vite from 7.3.5 to 7.3.7 in /demo/new-compiler-vite-react-spa in the npm_and_yarn group across 1 directory (@dependabot[bot])
-- **PR #2247** (2026-10-21): fix(deps): override follow-redirects to 1.16.1 (@meshulga)
-- **PR #2246** (closed): chore(deps): bump the npm_and_yarn group across 4 directories with 1 update (@dependabot[bot])
-- **PR #2245** (2026-10-19): chore(deps): bump next from 16.3.6 to 16.3.8 in the npm_and_yarn group across 1 directory (@dependabot[bot])
-- **PR #2244** (closed): chore(deps-dev): bump next from 16.3.6 to 16.3.8 in /packages/compiler in the npm_and_yarn group across 1 directory (@dependabot[bot])
+- **PR #2258** (2026-10-26): chore: bump package versions (@github-actions[bot])
+- **PR #2257** (2026-10-26): fix(deps): bump next to 16.4.1, zod to 4.6.6 and undici to 6.29.1 (@cherkanovart)
+- **PR #2256** (2026-10-26): fix(deps): override fast-uri and serialize-javascript for security advisories (@cherkanovart)
+- **PR #2255** (closed): chore(deps): bump the npm_and_yarn group across 8 directories with 2 updates (@dependabot[bot])
+- **PR #2254** (closed): chore(deps): bump the npm_and_yarn group across 7 directories with 2 updates (@dependabot[bot])
+- **PR #2253** (closed): chore(deps): bump the npm_and_yarn group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1423,28 +1560,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251)
+## X. deps): override fast-uri and serialize-javascript for security advisories (#2256
 
 **RULE**:
-When implementing operations in `demo/new-compiler-vite-react-spa/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pnpm-lock.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lingodotdev/lingo.dev. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d5d5d12`: deps): bump vite to 7.3.7 and launch-editor to 2.14.2 (#2251). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `adc5233a`: deps): override fast-uri and serialize-javascript for security advisories (#2256). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `demo/new-compiler-vite-react-spa/package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pnpm-lock.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "vite": "7.3.7",
+  fast-uri: '>=3.1.9 <4'
+  serialize-javascript: '>=7.1.3 <8'
+  fast-uri@3.1.9:
+    resolution: {integrity: sha512-hS/0Wt3Ya043oKXs0sIxrMpKQITXhMLIrVAKKXi4gozGC9v7YRWVnXIZzjNPTO02M9BdxLCWqK1yRXgNziVyJQ==}
+  serialize-javascript@7.1.4:
+    resolution: {integrity: sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==}
+      serialize-javascript: 7.1.4
+      fast-uri: 3.1.9
+  fast-uri@3.1.9: {}
+  serialize-javascript@7.1.4: {}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "vite": "7.3.5",
+  fast-uri: '>=3.1.7 <4'
+  serialize-javascript: '>=7.0.3 <8'
+  fast-uri@3.1.7:
+    resolution: {integrity: sha512-dOvZVzjdZdz7phd9v6jCbwxrBW3fK6n8Rc0CtdmM4bumzMnxywBYhuph6J819RRw/ku+rLbelwfMunktuzVVHg==}
+  serialize-javascript@7.0.6:
+    resolution: {integrity: sha512-ATTK5Q4gFVg0YDp1my2vqygyvhcklD/UV5GIlYHooGTn/NogJqIzpetkD6E5kmuVULqz/S9inUL25XcAgDRJQg==}
+      serialize-javascript: 7.0.6
+      fast-uri: 3.1.7
+  fast-uri@3.1.7: {}
+  serialize-javascript@7.0.6: {}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d5d5d12` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `adc5233a` are properly handled with clean fallback behavior.

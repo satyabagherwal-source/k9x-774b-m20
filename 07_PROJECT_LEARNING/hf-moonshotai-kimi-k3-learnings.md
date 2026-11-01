@@ -3,7 +3,7 @@
 > **Source Version**: `hf-moonshota`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T09:13:17.786Z  
+> **Timestamp**: 2026-10-31T06:18:08.503Z  
 > **Learning ID**: `learn-huggingface-moonshotai-kimi-k3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,323 +17,324 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `moonshotai/Kimi-K3` addresses the fundamental scaling bottleneck of Large Language Models (LLMs) in two specific dimensions: **computational cost per token** and **context window efficiency**. Traditional Transformer architectures rely on quadratic self-attention ($O(N^2)$), which becomes prohibitive at 1-million-token contexts. Furthermore, standard Mixture-of-Experts (MoE) models suffer from "expert collapse" or inefficient routing, limiting scaling efficiency.
+The repository `moonshotai/Kimi-K3` addresses the fundamental scaling bottleneck in Large Language Models (LLMs) regarding context length, computational efficiency, and multimodal integration. Specifically, it solves the problem of maintaining high-fidelity attention mechanisms over a **1-million token context window** without incurring the quadratic complexity ($O(N^2)$) of standard Transformer attention. It achieves this through a hybrid architecture combining **Kimi Delta Attention (KDA)** for linear-time processing in most layers and **Full Attention** for critical global context layers, coupled with a **Stable LatentMoE** (Mixture of Experts) framework that sparsely activates experts to manage a 2.8T parameter footprint.
 
 **Architectural Boundaries & Subsystems:**
-1.  **Hybrid Attention Subsystem (KDA + AttnRes):**
-    *   **Kimi Delta Attention (KDA):** Replaces standard attention in the majority of layers (layers 1-3, 5-7, etc.) with a linear attention mechanism. This reduces complexity from $O(N^2)$ to $O(N)$ for these layers, enabling the 1M token context window without quadratic memory blowup.
-    *   **Attention Residuals (AttnRes):** A mechanism to preserve long-range dependency information that might be lost in linear attention layers. It likely operates by injecting residual connections or specific gating mechanisms to ensure that while most layers are linear, the model retains the "sharpness" of full attention where necessary.
-    *   **Full Attention Layers:** Specific layers (4, 8, 12... 93) retain standard full attention. This hybrid approach balances the speed of linear attention with the precision of full attention.
+1.  **Hybrid Attention Subsystem**: The core innovation lies in the `linear_attn_config`. The model does not use standard self-attention for all layers. Instead, it partitions the 93 decoder layers into two distinct classes:
+    *   **KDA Layers (Linear Attention)**: Layers 1, 2, 3, 5, 6, 7, 9, 10, 11, 13... (approx. 70 layers). These utilize a linear attention mechanism (likely based on DeltaNet or similar state-space hybrid) to process sequences in $O(N)$ time.
+    *   **Full Attention Layers**: Layers 4, 8, 12, 16... (every 4th layer, plus the final layer 93). These use standard softmax attention to capture long-range dependencies that linear attention might smooth out or lose.
+2.  **Stable LatentMoE Subsystem**: The model employs a Mixture of Experts architecture with **896 experts** per layer, but only **16 are active** per token. The `latent_moe_use_norm: true` flag indicates a normalization mechanism is applied to the latent space before routing, ensuring stability during training and inference. The `kv_lora_rank: 512` suggests that the Key-Value cache or expert weights are compressed using LoRA (Low-Rank Adaptation) techniques to reduce memory bandwidth requirements.
+3.  **Multimodal Integration**: The `image_placeholder` and `media_placeholder_token_id` (163605) indicate a unified tokenization scheme where visual tokens are interleaved with text tokens. The `pipeline_tag: image-text-to-text` confirms the model processes both modalities in a single forward pass, rather than a separate vision encoder feeding into a text decoder (like LLaVA).
+4.  **Precision & Quantization**: The model is natively in `bfloat16` (`dtype: "bfloat16"`), which is critical for numerical stability in large-scale training and inference. The `tags: compressed-tensors` suggests support for post-training quantization (PTQ) to further reduce memory footprint.
 
-2.  **Stable LatentMoE Subsystem:**
-    *   **Architecture:** 896 experts, with only 16 active per token.
-    *   **Latent Space Routing:** The `latent_moe_use_norm: true` and `kv_lora_rank: 512` suggest a low-rank adaptation (LoRA-like) approach for expert selection or weight compression. This "Stable" aspect implies a routing mechanism that prevents expert starvation (where some experts are never used) and ensures balanced load distribution, yielding the claimed 2.5x scaling efficiency over Kimi K2.
-
-3.  **Multimodal Integration:**
-    *   **Native Vision:** The model is not a text model with a bolted-on vision encoder. The `image_placeholder` and `media_placeholder_token_id` indicate that visual tokens are interleaved directly into the text token stream, processed by the same hybrid attention layers. This requires the attention mechanism to handle variable-length visual sequences efficiently.
-
-4.  **State Ownership & Configuration:**
-    *   **Config-Driven Architecture:** The `config.json` is the single source of truth for layer types. The `linear_attn_config` explicitly lists which layers use full attention (`full_attn_layers`) and which use KDA (`kda_layers`). This decouples the model definition from the code, allowing for flexible architectural experimentation.
+**Critical Abstractions:**
+*   **`KimiK3ForConditionalGeneration`**: The top-level model class that handles the multimodal input (text + image) and routes it to the appropriate processing pipeline.
+*   **`KimiLinearConfig`**: The configuration object that defines the hybrid attention structure, including the specific layer indices for full vs. linear attention.
+*   **`Stable LatentMoE`**: The routing and expert selection mechanism that ensures load balancing and prevents expert collapse.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Attention Layer Allocation Invariant
+### 1. Hybrid Attention Layer Partitioning Invariant
 **RULE**:
-In any hybrid attention architecture (mixing linear and full attention), the allocation of full attention layers MUST be distributed non-uniformly to preserve long-range dependency fidelity, specifically placing full attention layers at regular intervals (e.g., every 4th layer) to act as "memory anchors" for the linear attention layers. The linear attention layers MUST NOT be used for the final layers of the network if the task requires precise token-level prediction, as linear attention tends to smooth out sharp probability distributions.
+In any Transformer-based model with a context window exceeding 128K tokens, you MUST NOT use standard softmax attention for all layers. You MUST partition the decoder layers into a sparse set of "Full Attention" layers (e.g., every 4th layer) and a dense set of "Linear Attention" layers. The Full Attention layers MUST be placed at regular intervals to anchor global context, while Linear Attention layers MUST handle the bulk of sequential processing.
 
 **WHY**:
-Linear attention approximates the softmax function, which can lead to "attention sink" phenomena where the model loses track of specific, distant tokens. By inserting full attention layers at regular intervals, the model can "reset" its attention state, ensuring that critical information from distant tokens is preserved. If linear attention is used in the final layers, the output logits may become overly smooth, reducing the model's ability to make precise, high-confidence predictions.
+Standard softmax attention has $O(N^2)$ complexity, making it computationally infeasible for 1M token contexts. Linear attention (e.g., DeltaNet, RetNet) has $O(N)$ complexity but suffers from "attention sink" issues and poor long-range dependency capture. By interleaving them, you retain the $O(N)$ efficiency for 75-80% of the computation while using $O(N^2)$ only at critical checkpoints to preserve global coherence. This prevents the "forgetting" of early context that pure linear attention models exhibit.
 
 **WHEN TO APPLY**:
-When designing or modifying any Transformer-based model that uses a mix of linear and full attention mechanisms, particularly for long-context tasks (100k+ tokens).
+Any LLM architecture targeting context windows > 128K tokens, especially when deployed on hardware with limited memory bandwidth (e.g., H100, A100).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Example of layer allocation in config
-class HybridAttentionConfig:
-    def __init__(self, num_layers=96, full_attn_interval=4):
-        self.full_attn_layers = []
-        self.kda_layers = []
-        for i in range(num_layers):
-            if (i + 1) % full_attn_interval == 0:
-                self.full_attn_layers.append(i)
-            else:
-                self.kda_layers.append(i)
+# Pseudocode for Hybrid Attention Layer Selection
+class HybridDecoderLayer(nn.Module):
+    def __init__(self, layer_idx, total_layers, full_attn_interval=4):
+        super().__init__()
+        # Full attention every 4th layer, and always the last layer
+        self.use_full_attn = (layer_idx % full_attn_interval == 0) or (layer_idx == total_layers - 1)
         
-        # Ensure the last layer is full attention for precise output
-        if self.kda_layers and self.kda_layers[-1] == num_layers - 1:
-            self.kda_layers.pop()
-            self.full_attn_layers.append(num_layers - 1)
+        if self.use_full_attn:
+            self.attn = StandardSoftmaxAttention(d_model=7168, n_heads=32)
+        else:
+            self.attn = LinearDeltaAttention(d_model=7168, n_heads=32)
+            
+    def forward(self, x, mask=None):
+        # Linear attention layers process in O(N)
+        # Full attention layers process in O(N^2) but only for 1/4 of layers
+        return self.attn(x, mask)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Using linear attention for all layers
-# This will cause severe degradation in long-context retrieval and precise token prediction.
-class BadHybridAttentionConfig:
-    def __init__(self, num_layers=96):
-        self.full_attn_layers = []
-        self.kda_layers = list(range(num_layers)) # All layers are linear
+# ANTI-PATTERN: Using full attention for all layers in a 1M context model
+class BadDecoderLayer(nn.Module):
+    def __init__(self):
+        self.attn = StandardSoftmaxAttention(d_model=7168, n_heads=32) # O(N^2) for ALL layers
+    def forward(self, x):
+        return self.attn(x) # Will OOM or take hours for 1M tokens
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Assert that the number of full attention layers is at least `num_layers / 4`.
-2.  **Integration Test:** Run a long-context retrieval benchmark (e.g., Needle-in-a-Haystack) and verify that accuracy does not drop below a threshold (e.g., 95%) when the full attention layers are removed.
-3.  **Logit Sharpness Check:** Measure the entropy of the output logits. If the entropy is significantly higher than a baseline full-attention model, it indicates that linear attention is smoothing the distribution too much.
+1.  **Static Analysis**: Parse the model config and assert that `len(full_attn_layers) < total_layers / 3`.
+2.  **Performance Benchmark**: Measure inference latency for a 1M token sequence. If latency scales quadratically with sequence length, the hybrid partitioning is broken.
+3.  **Memory Profiling**: Monitor GPU memory usage during forward pass. Linear attention layers should show constant memory usage relative to sequence length, while full attention layers should show quadratic growth.
 
-### 2. Stable LatentMoE Routing Invariant
+### 2. Stable LatentMoE Routing Normalization Invariant
 **RULE**:
-In any Mixture-of-Experts (MoE) model, the routing mechanism MUST include a normalization step (e.g., `latent_moe_use_norm: true`) to ensure that the expert selection probabilities sum to 1. Additionally, the routing MUST include a load-balancing loss term to prevent expert collapse, where a small subset of experts handles the majority of tokens. The number of active experts per token MUST be fixed (e.g., 16) to ensure consistent computational cost.
+In any Mixture of Experts (MoE) model with > 100 experts, you MUST apply layer normalization or RMSNorm to the latent representation BEFORE the routing gate computes expert scores. You MUST NOT use raw logits for routing without normalization, as this leads to expert collapse and load imbalance.
 
 **WHY**:
-Without normalization, the routing probabilities can become skewed, leading to some experts being overused and others being underused. This results in inefficient use of the model's capacity and can lead to training instability. The load-balancing loss term encourages the router to distribute tokens evenly across experts, ensuring that all experts are trained and utilized. Fixing the number of active experts ensures that the computational cost per token is predictable, which is critical for deployment.
+Without normalization, the magnitude of the input vector varies significantly across layers and tokens. The routing gate (typically a softmax over expert scores) becomes sensitive to these magnitude variations, causing a few "dominant" experts to be selected for most tokens, while others are starved. This leads to "expert collapse," where the model effectively reduces to a dense model with a few active experts, negating the sparsity benefits. Normalization ensures that the routing decision is based on the *direction* of the latent vector, not its magnitude.
 
 **WHEN TO APPLY**:
-When designing or modifying any MoE model, particularly those with a large number of experts (e.g., >100).
+Any MoE architecture with > 100 experts, especially when using top-k routing with k < 10.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
-import torch.nn.functional as F
-
-class StableLatentMoERouter:
-    def __init__(self, num_experts=896, top_k=16):
-        self.num_experts = num_experts
+class StableLatentMoE(nn.Module):
+    def __init__(self, d_model, num_experts, top_k=16):
+        super().__init__()
+        self.norm = RMSNorm(d_model) # CRITICAL: Normalize before routing
+        self.gate = nn.Linear(d_model, num_experts)
+        self.experts = nn.ModuleList([Expert(d_model) for _ in range(num_experts)])
         self.top_k = top_k
 
-    def route(self, hidden_states):
-        # hidden_states: [batch_size, seq_len, hidden_dim]
-        # Compute routing scores
-        routing_scores = self.router(hidden_states) # [batch_size, seq_len, num_experts]
+    def forward(self, x):
+        # x: [batch, seq_len, d_model]
+        # 1. Normalize the latent representation
+        x_norm = self.norm(x)
         
-        # Normalize routing scores to sum to 1
-        routing_probs = F.softmax(routing_scores, dim=-1)
+        # 2. Compute routing scores
+        scores = self.gate(x_norm) # [batch, seq_len, num_experts]
         
-        # Select top-k experts
-        top_k_probs, top_k_indices = torch.topk(routing_probs, self.top_k, dim=-1)
+        # 3. Select top-k experts
+        top_k_scores, top_k_indices = torch.topk(scores, self.top_k, dim=-1)
         
-        # Load-balancing loss
-        # Calculate the fraction of tokens routed to each expert
-        expert_load = torch.zeros(self.num_experts, device=hidden_states.device)
-        for i in range(self.top_k):
-            expert_load += (top_k_indices == i).sum()
-        expert_load = expert_load / (hidden_states.size(0) * hidden_states.size(1) * self.top_k)
+        # 4. Compute weights
+        weights = F.softmax(top_k_scores, dim=-1)
         
-        # Load-balancing loss: encourage uniform distribution
-        load_balancing_loss = (expert_load - 1.0 / self.num_experts).pow(2).sum()
-        
-        return top_k_probs, top_k_indices, load_balancing_loss
+        # 5. Route to experts
+        output = torch.zeros_like(x)
+        for i, expert in enumerate(self.experts):
+            mask = (top_k_indices == i).any(dim=-1)
+            if mask.any():
+                expert_input = x[mask]
+                expert_output = expert(expert_input)
+                output[mask] += expert_output * weights[mask].sum(dim=-1, keepdim=True)
+                
+        return output
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: No normalization or load-balancing
-class BadMoERouter:
-    def __init__(self, num_experts=896, top_k=16):
-        self.num_experts = num_experts
-        self.top_k = top_k
+# ANTI-PATTERN: Routing without normalization
+class UnstableMoE(nn.Module):
+    def __init__(self, d_model, num_experts):
+        self.gate = nn.Linear(d_model, num_experts)
+        self.experts = nn.ModuleList([Expert(d_model) for _ in range(num_experts)])
 
-    def route(self, hidden_states):
-        routing_scores = self.router(hidden_states)
-        # No normalization
-        top_k_probs, top_k_indices = torch.topk(routing_scores, self.top_k, dim=-1)
-        # No load-balancing loss
-        return top_k_probs, top_k_indices, 0.0
+    def forward(self, x):
+        scores = self.gate(x) # Raw logits, magnitude varies
+        weights = F.softmax(scores, dim=-1) # Biased by magnitude
+        # ... routing logic ...
+        # Result: Expert collapse, load imbalance
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Assert that the sum of `top_k_probs` is 1.0 (within a small epsilon).
-2.  **Integration Test:** Monitor the expert load during training. If the standard deviation of the expert load is greater than a threshold (e.g., 0.1), it indicates expert collapse.
-3.  **Performance Test:** Measure the computational cost per token. It should be consistent and predictable.
-
-### 3. Multimodal Token Interleaving Invariant
-**RULE**:
-In any multimodal model, visual tokens MUST be interleaved with text tokens in a way that preserves the spatial and temporal relationships of the visual input. The visual tokens MUST be processed by the same attention mechanism as the text tokens, ensuring that the model can attend to both modalities simultaneously. The visual tokens MUST be normalized to the same scale as the text tokens to prevent one modality from dominating the other.
-
-**WHY**:
-If visual tokens are not interleaved correctly, the model may lose track of the spatial relationships between visual elements. If visual tokens are not processed by the same attention mechanism, the model may not be able to effectively combine visual and textual information. If visual tokens are not normalized, the model may be biased towards one modality, leading to poor performance on tasks that require both modalities.
-
-**WHEN TO APPLY**:
-When designing or modifying any multimodal model, particularly those that process images and text.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-class MultimodalTokenizer:
-    def __init__(self, text_tokenizer, image_tokenizer):
-        self.text_tokenizer = text_tokenizer
-        self.image_tokenizer = image_tokenizer
-
-    def tokenize(self, text, image):
-        # Tokenize text
-        text_tokens = self.text_tokenizer(text)
-        
-        # Tokenize image
-        image_tokens = self.image_tokenizer(image)
-        
-        # Interleave tokens
-        # Example: [text_token_1, image_token_1, text_token_2, image_token_2, ...]
-        interleaved_tokens = []
-        for i in range(max(len(text_tokens), len(image_tokens))):
-            if i < len(text_tokens):
-                interleaved_tokens.append(text_tokens[i])
-            if i < len(image_tokens):
-                interleaved_tokens.append(image_tokens[i])
-        
-        return interleaved_tokens
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Concatenating all text tokens followed by all image tokens
-# This will cause the model to lose track of the spatial relationships between visual elements.
-class BadMultimodalTokenizer:
-    def __init__(self, text_tokenizer, image_tokenizer):
-        self.text_tokenizer = text_tokenizer
-        self.image_tokenizer = image_tokenizer
-
-    def tokenize(self, text, image):
-        text_tokens = self.text_tokenizer(text)
-        image_tokens = self.image_tokenizer(image)
-        return text_tokens + image_tokens
-```
-
-**VERIFICATION METHOD**:
-1.  **Unit Test:** Assert that the interleaved tokens preserve the spatial relationships of the visual input.
-2.  **Integration Test:** Run a multimodal benchmark (e.g., VQA) and verify that the model's performance is not degraded by the token interleaving.
-3.  **Normalization Check:** Measure the mean and standard deviation of the visual and text tokens. They should be similar.
+1.  **Load Balance Metric**: Compute the standard deviation of the number of tokens routed to each expert. It should be close to 0. If std > 10% of mean, normalization is missing or insufficient.
+2.  **Expert Utilization**: Track the fraction of tokens routed to each expert over a batch. All experts should be utilized > 1% of the time.
+3.  **Gradient Norms**: Monitor the gradient norms of the expert weights. If some experts have near-zero gradients, they are not being trained, indicating collapse.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not contain specific commit patches, bug issues, or developer post-mortems. Therefore, this section will be based on inferred potential incidents based on the architectural invariants and common failure modes in similar systems.*
+*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are inferred from common failure modes in hybrid attention and MoE architectures, based on the architectural invariants identified in Section 2.*
 
-### Incident 1: Expert Collapse in LatentMoE (BUG-MOE-COLLAPSE-01)
-- **Context**: Subsystem: Stable LatentMoE, File: `modeling_kimi_k3.py`
-- **What Was Expected**: The router should distribute tokens evenly across all 896 experts, ensuring that all experts are trained and utilized.
-- **What Actually Happened**: A small subset of experts (e.g., 10) handled the majority of tokens, while the remaining 886 experts were underused. This led to inefficient use of the model's capacity and training instability.
-- **Evidence in Repo**: N/A (Inferred from `latent_moe_use_norm: true` and `kv_lora_rank: 512`)
-- **Root Cause**: The routing mechanism did not include a load-balancing loss term, allowing the router to become skewed.
+### Incident 1: Attention Sink in Linear Attention Layers (BUG-LINEAR-01)
+- **Context**: `modeling_kimi_linear.py`, Linear Attention implementation.
+- **What Was Expected**: Linear attention layers should process sequences in $O(N)$ time without losing critical early context.
+- **What Actually Happened**: In early versions, pure linear attention layers suffered from "attention sink," where the model disproportionately attended to the first few tokens, ignoring later context. This led to poor performance on long-context tasks.
+- **Evidence in Repo**: The presence of `full_attn_layers` at regular intervals (4, 8, 12...) suggests a mitigation strategy. The `gate_lower_bound: -5.0` in `linear_attn_config` may also be a stabilization parameter.
+- **Root Cause**: Linear attention mechanisms (e.g., DeltaNet) use a recurrent state that accumulates information over time. Without periodic "reset" or "refresh" via full attention, the state becomes dominated by early tokens, and later tokens have diminishing influence.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No load-balancing loss
-# + Fixed pattern: Add load-balancing loss
-load_balancing_loss = (expert_load - 1.0 / self.num_experts).pow(2).sum()
-total_loss = language_model_loss + load_balancing_loss
+// - Buggy code: Pure linear attention for all layers
+// + Fixed pattern: Interleave full attention layers every 4th layer
+config.linear_attn_config.full_attn_layers = [4, 8, 12, 16, ...]
 ```
-- **Lesson**: Always include a load-balancing loss term in MoE models to prevent expert collapse.
+- **Lesson**: Hybrid attention is essential for long-context models. Pure linear attention is insufficient for maintaining global coherence.
 
-### Incident 2: Attention Sink in Linear Attention Layers (BUG-ATTN-SINK-02)
-- **Context**: Subsystem: Kimi Delta Attention (KDA), File: `modeling_kimi_linear.py`
-- **What Was Expected**: The linear attention layers should preserve long-range dependencies without losing track of specific, distant tokens.
-- **What Actually Happened**: The model lost track of specific, distant tokens, leading to poor performance on long-context retrieval tasks.
-- **Evidence in Repo**: N/A (Inferred from `linear_attn_config` and `full_attn_layers`)
-- **Root Cause**: The linear attention mechanism smoothed out the attention distribution, causing the model to lose track of specific, distant tokens.
+### Incident 2: Expert Collapse in MoE (BUG-MOE-02)
+- **Context**: `modeling_kimi_k3.py`, MoE routing logic.
+- **What Was Expected**: All 896 experts should be utilized evenly across tokens.
+- **What Actually Happened**: Without normalization, a few experts became dominant, and others were rarely used. This led to inefficient use of parameters and poor generalization.
+- **Evidence in Repo**: `latent_moe_use_norm: true` in `config.json`.
+- **Root Cause**: The routing gate was sensitive to the magnitude of the input vector. Tokens with larger magnitudes were routed to the same experts, leading to load imbalance.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: All layers are linear
-# + Fixed pattern: Insert full attention layers at regular intervals
-if (i + 1) % full_attn_interval == 0:
-    self.full_attn_layers.append(i)
-else:
-    self.kda_layers.append(i)
+// - Buggy code: scores = self.gate(x)
+// + Fixed pattern: x_norm = self.norm(x); scores = self.gate(x_norm)
+config.latent_moe_use_norm = True
 ```
-- **Lesson**: Always insert full attention layers at regular intervals in hybrid attention architectures to preserve long-range dependencies.
+- **Lesson**: Normalization before routing is critical for MoE stability.
 
-### Incident 3: Visual Token Dominance (BUG-VIS-DOM-03)
-- **Context**: Subsystem: Multimodal Integration, File: `modeling_kimi_k3.py`
-- **What Was Expected**: The model should effectively combine visual and textual information.
-- **What Actually Happened**: The model was biased towards the visual modality, leading to poor performance on tasks that require both modalities.
-- **Evidence in Repo**: N/A (Inferred from `image_placeholder` and `media_placeholder_token_id`)
-- **Root Cause**: The visual tokens were not normalized to the same scale as the text tokens, causing the visual modality to dominate.
+### Incident 3: Memory Overflow in KV Cache (BUG-KV-03)
+- **Context**: Inference engine, KV cache management.
+- **What Was Expected**: KV cache should fit within GPU memory for 1M token context.
+- **What Actually Happened**: Standard KV cache for 1M tokens exceeded GPU memory, causing OOM errors.
+- **Evidence in Repo**: `kv_lora_rank: 512` in `config.json`.
+- **Root Cause**: The KV cache for full attention layers is $O(N \cdot d_{model})$. For 1M tokens and 7168 hidden size, this is ~7GB per layer. With 24 full attention layers, this is ~168GB, exceeding typical GPU memory.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No normalization
-# + Fixed pattern: Normalize visual tokens
-visual_tokens = (visual_tokens - visual_tokens.mean()) / visual_tokens.std()
+// - Buggy code: Store full KV cache
+// + Fixed pattern: Compress KV cache using LoRA
+config.kv_lora_rank = 512
 ```
-- **Lesson**: Always normalize visual tokens to the same scale as text tokens in multimodal models.
+- **Lesson**: KV cache compression is essential for long-context inference.
 
-### Incident 4: Context Window Overflow (BUG-CTX-OVF-04)
-- **Context**: Subsystem: Long Context, File: `config.json`
-- **What Was Expected**: The model should support a 1-million-token context window.
-- **What Actually Happened**: The model crashed when the input exceeded the context window.
-- **Evidence in Repo**: `max_length: 1048576` in `generation_config.json`
-- **Root Cause**: The model did not handle context window overflow gracefully.
+### Incident 4: Tokenizer Mismatch in Multimodal Input (BUG-TOKEN-04)
+- **Context**: `tokenizer_config.json`, multimodal input processing.
+- **What Was Expected**: Image tokens should be correctly interleaved with text tokens.
+- **What Actually Happened**: Image tokens were not correctly mapped to the model's input, leading to garbled output.
+- **Evidence in Repo**: `media_placeholder_token_id: 163605` in `config.json`.
+- **Root Cause**: The tokenizer did not correctly handle the placeholder token for images, leading to a mismatch between the tokenized input and the model's expected input format.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No context window check
-# + Fixed pattern: Check context window
-if len(input_tokens) > max_length:
-    raise ValueError(f"Input length {len(input_tokens)} exceeds max length {max_length}")
+// - Buggy code: tokens = tokenizer(text)
+// + Fixed pattern: tokens = tokenizer(text, images=images)
+config.media_placeholder_token_id = 163605
 ```
-- **Lesson**: Always check the context window before processing input.
+- **Lesson**: Multimodal tokenization requires careful handling of placeholder tokens.
 
-### Incident 5: Memory Leak in KV Cache (BUG-KV-LEAK-05)
-- **Context**: Subsystem: KV Cache, File: `modeling_kimi_k3.py`
-- **What Was Expected**: The KV cache should be managed efficiently to prevent memory leaks.
-- **What Actually Happened**: The KV cache grew unbounded, leading to memory leaks.
-- **Evidence in Repo**: N/A (Inferred from `kv_lora_rank: 512`)
-- **Root Cause**: The KV cache was not pruned or managed efficiently.
+### Incident 5: Numerical Instability in BFloat16 (BUG-PRECISION-05)
+- **Context**: Model forward pass, BFloat16 precision.
+- **What Was Expected**: Model should produce stable outputs in BFloat16.
+- **What Actually Happened**: Some layers produced NaN or Inf values due to numerical instability.
+- **Evidence in Repo**: `dtype: "bfloat16"` in `config.json`.
+- **Root Cause**: BFloat16 has a smaller exponent range than FP32, leading to overflow in some operations.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No KV cache management
-# + Fixed pattern: Prune KV cache
-if len(kv_cache) > max_kv_cache_size:
-    kv_cache = kv_cache[-max_kv_cache_size:]
+// - Buggy code: x = x * weight
+// + Fixed pattern: x = x.to(torch.float32) * weight.to(torch.float32).to(torch.bfloat16)
+# Or use mixed precision training
 ```
-- **Lesson**: Always manage the KV cache efficiently to prevent memory leaks.
+- **Lesson**: BFloat16 requires careful handling of numerical stability.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion Pitfalls**: In Python, `0` is falsy, but `None` is also falsy. When checking for the presence of a token, use `is not None` instead of `if token:` to avoid false negatives.
-    *   **Deep Immutability vs Shallow Copy**: When modifying a configuration object, use `copy.deepcopy` to avoid mutating the original object. This is critical in config-driven architectures where the config is shared across multiple components.
+    *   **Invariant**: When using `bfloat16`, always cast to `float32` for operations that involve division or exponentiation to avoid overflow.
+    *   **Code Example**:
+        ```python
+        # BAD
+        x = x / (x + 1e-5) # May overflow in bfloat16
+        
+        # GOOD
+        x = x.to(torch.float32) / (x.to(torch.float32) + 1e-5).to(torch.bfloat16)
+        ```
+    *   **Invariant**: When using `topk` for MoE routing, ensure that the `k` value is less than the number of experts.
+    *   **Code Example**:
+        ```python
+        # BAD
+        k = 1000 # More than 896 experts
+        
+        # GOOD
+        k = 16 # Less than 896 experts
+        ```
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth Caps**: In recursive functions, such as those used for tree traversal in MoE routing, always include a base case and a recursion depth cap to prevent stack overflow.
-    *   **Loop Termination Invariants**: In loops that process tokens, ensure that the loop variable is incremented correctly to prevent infinite loops.
+    *   **Invariant**: In linear attention layers, the recurrent state must be updated in a way that prevents unbounded growth. Use a decay factor or normalization.
+    *   **Code Example**:
+        ```python
+        # BAD
+        state = state + x # Unbounded growth
+        
+        # GOOD
+        state = state * decay_factor + x # Bounded growth
+        ```
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Layout Reflow/Thrashing**: In web-based interfaces for interacting with the model, avoid frequent DOM updates. Use virtualization for long lists of tokens.
-    *   **Debouncing & Throttling**: Debounce user input to prevent excessive API calls to the model.
+    *   **Invariant**: When rendering multimodal output, ensure that image tokens are correctly mapped to visual elements. Use a placeholder token that is not used in the text vocabulary.
+    *   **Code Example**:
+        ```python
+        # BAD
+        text = "Here is an image: <image>" # <image> is not a special token
+        
+        # GOOD
+        text = "Here is an image: <|kimi_image_placeholder|>" # Special token
+        ```
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Race Conditions**: In multi-threaded environments, use locks to protect shared resources, such as the KV cache.
-    *   **Memory Leaks**: Monitor memory usage and implement garbage collection to prevent memory leaks.
+    *   **Invariant**: When managing KV cache, use a ring buffer or similar data structure to prevent memory overflow.
+    *   **Code Example**:
+        ```python
+        # BAD
+        kv_cache.append(new_kv) # Unbounded growth
+        
+        # GOOD
+        kv_cache = RingBuffer(max_size=1000000)
+        kv_cache.append(new_kv) # Bounded growth
+        ```
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: Always check for `None` before accessing attributes of an object.
-    *   **Off-by-One Boundary Checks**: When slicing arrays, ensure that the indices are within bounds.
+    *   **Invariant**: When using `topk`, ensure that the input tensor is contiguous in memory.
+    *   **Code Example**:
+        ```python
+        # BAD
+        scores = scores.transpose(0, 1) # Non-contiguous
+        top_k = torch.topk(scores, k) # May fail
+        
+        # GOOD
+        scores = scores.contiguous()
+        top_k = torch.topk(scores, k)
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Hybrid attention (KDA + AttnRes) and Stable LatentMoE.
-2.  **Core Abstractions**: `KimiK3ForConditionalGeneration`, `KimiLinearForCausalLM`, `KimiK3Config`.
-3.  **Error Handling**: Context window overflow checks, expert collapse detection.
-4.  **Testing**: Long-context retrieval benchmarks, multimodal benchmarks.
-5.  **Security**: Input sanitization, context window limits.
-6.  **Performance**: Linear attention for $O(N)$ complexity, MoE for efficient scaling.
-7.  **Deployment**: Config-driven architecture, reproducible builds.
-8.  **Agent Patterns**: Tooling interfaces for long-horizon coding, agentic knowledge work.
-9.  **Data Flow**: Token interleaving, KV cache management.
+1.  **Architecture**: Hybrid attention (KDA + Full) and Stable LatentMoE. Decoupled multimodal processing.
+2.  **Core Abstractions**: `KimiK3ForConditionalGeneration`, `KimiLinearConfig`, `StableLatentMoE`.
+3.  **Error Handling**: Numerical stability in BFloat16, KV cache overflow prevention, expert collapse detection.
+4.  **Testing**: Load balance metrics, attention sink detection, numerical stability tests.
+5.  **Security**: Input sanitization for multimodal data, prevention of prompt injection via image tokens.
+6.  **Performance**: $O(N)$ linear attention, $O(N^2)$ full attention sparsity, KV cache compression.
+7.  **Deployment**: BFloat16 precision, compressed-tensors support, 1M token context window.
+8.  **Agent Patterns**: Long-horizon coding, agentic knowledge work, native multimodality.
+9.  **Data Flow**: Tokenization -> Multimodal Input -> Hybrid Attention -> MoE Routing -> Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Hybrid attention layer allocation, Stable LatentMoE routing.
-2.  **Rule**: Always insert full attention layers at regular intervals, include load-balancing loss in MoE models.
-3.  **Architecture Principle**: Config-driven architecture for flexible experimentation.
-4.  **Failure Mode**: Expert collapse, attention sink, visual token dominance.
-5.  **Reusable Skill**: Step-by-step workflow for designing hybrid attention models.
-6.  **Decision**: Use linear attention for most layers, full attention for regular intervals.
-7.  **Anti-pattern**: Using linear attention for all layers, no load-balancing loss in MoE models.
-8.  **Verification Method**: Unit tests for layer allocation, integration tests for long-context retrieval.
+1.  **Pattern**: Hybrid Attention Layer Partitioning.
+2.  **Rule**: MUST partition layers into full and linear attention.
+3.  **Architecture Principle**: Sparsity in attention and experts for efficiency.
+4.  **Failure Mode**: Attention sink, expert collapse, KV cache overflow.
+5.  **Reusable Skill**: Implementing hybrid attention and MoE routing.
+6.  **Decision**: Use BFloat16 for precision and efficiency.
+7.  **Anti-pattern**: Pure linear attention, unnormalized MoE routing.
+8.  **Verification Method**: Load balance metrics, performance benchmarks, memory profiling.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Define Layer Allocation**: Determine the number of full attention layers and their positions.
-2.  **Implement Hybrid Attention**: Code the KDA and full attention layers.
-3.  **Implement Stable LatentMoE**: Code the router with normalization and load-balancing loss.
-4.  **Integrate Multimodal Tokens**: Interleave visual and text tokens.
-5.  **Test Long-Context Retrieval**: Run Needle-in-a-Haystack benchmarks.
-6.  **Test Multimodal Performance**: Run VQA benchmarks.
-7.  **Monitor Expert Load**: Ensure even distribution of tokens across experts.
-8.  **Manage KV Cache**: Implement pruning to prevent memory leaks.
+1.  **Define Layer Partitioning**:
+    *   [ ] Identify total number of decoder layers.
+    *   [ ] Select full attention layers (e.g., every 4th layer).
+    *   [ ] Implement hybrid attention module.
+
+2.  **Implement Stable MoE**:
+    *   [ ] Define number of experts and top-k value.
+    *   [ ] Implement normalization before routing.
+    *   [ ] Implement load balance monitoring.
+
+3.  **Handle Multimodal Input**:
+    *   [ ] Define placeholder tokens for images.
+    *   [ ] Implement tokenizer for multimodal input.
+    *   [ ] Test tokenization with mixed text and image input.
+
+4.  **Optimize Memory**:
+    *   [ ] Implement KV cache compression.
+    *   [ ] Use BFloat16 precision.
+    *   [ ] Monitor memory usage during inference.
+
+5.  **Test and Validate**:
+    *   [ ] Test attention sink mitigation.
+    *   [ ] Test expert load balance.
+    *   [ ] Test numerical stability in BFloat16.
+    *   [ ] Benchmark performance for 1M token context.

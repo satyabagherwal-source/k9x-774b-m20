@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
-> **Source Version**: `6020bc9c`  
+> **Source Version**: `85162c24`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:08:14.451Z  
+> **Timestamp**: 2026-10-31T15:36:32.271Z  
 > **Learning ID**: `learn-github-tw93-mole`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-mole-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Mole](https://github.com/tw93/Mole))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:08:13.282Z  
+> **Harvest Timestamp**: 2026-10-31T15:36:32.265Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🐹 Keep your Mac and PC clean, light, and running like new. Fast open-source CLI, plus native Mac and Windows apps.
 - **Primary Language / Ecosystem**: Shell
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 72809 stars
+- **Stars / Engagement**: 73431 stars
 
 ---
 
@@ -1993,11 +1993,11 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1814** (2026-10-23): **[BUG] Incorrect "critical system path" preventing purging**
-  *Symptoms*: ## Before submitting  - [x] I updated and reproduced the problem, or this report explains why I cannot update.  ## Describe the bug  I edited ~/.config/mole/purge_paths to add a directory outside my home directory: `/System/Volumes/Data/src`. That directory is also `/src` on my machine through /etc/synthetic.conf:  src     System/Volumes/Data/src  When I run `mo purge --yes`, it finds many directories to clean, but none of them succeed: ``` Cleaning /System/Volumes/Data/src/python/cpython/Lib/re/__pycache__...◎ Skipped /System/Volumes/Data/src/python/cpython/Lib/re/__pycache__ (final removal check failed; re-run mo purge to review it again) ``` I own these directories. `rm -rf /System/Volumes/Data/src/python/cpython/Lib/re/__pycache__` succeeds.  The debug log shows: `ERROR: Path validation failed: critical system path:`.  These are not critical system paths. Does mole think that because of the entry in /etc/synthetic.conf?  ## Environment  Paste the output of `mo --version` from the version used to reproduce the problem:  ```text % mo --version  Mole version 1.62.0 macOS: 26.7.1 Architecture: arm64 Kernel: 25.6.0 SIP: Enabled Disk Free: 189.29GB Install: Homebrew Shell: /bin/zsh ```
+- **Issue #1878** (2026-10-29): **[Mac App Bug] In**
+  *Symptoms*: ### Mole Mac app version  1.18.0 (343)  ### macOS version  27.2.0  ### Mac model  MacBookPro18,1 (Apple M1 Pro)  ### Affected area  Optimize  ### What happened?  After optimizing, in Spotlight the switch „Show Related Content“ is turned on, I keep it always turned off.  ### Steps to reproduce  1. Open Mole 2. Go to "Optimize" 3. Klick in Optimize  4. Mole is working and finishing  5. When I open System Settings on MacOS in the Menu in the upper left corner of MacOS, the switch „Show Related Content“ is turned on, although it is always set to off.  ### Expected behavior  <img width="1480" height="2014" alt="Image" src="https://github.com/user-attachments/assets/be4dd83e-706b-47eb-82fd-b12ffc275245" />  ### Screenshots or safe logs  <img width="1480" height="2014" alt="Image" src="https://github.com/user-attachments/assets/0b1c4ecc-58f6-4d9b-8a7f-670ddd041463" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
-- **Issue #1813** (2026-10-24): **[Mac App Bug] Not showing MacOS App Store updates that are present.**
-  *Symptoms*: ### Mole Mac app version  1.18.0 (340)  ### macOS version  27.2.0  ### Mac model  Mac16,5 (Apple M4 Max)  ### Affected area  Download / update  ### What happened?  Not showing MacOS Appt Store updates that are present.  ### Steps to reproduce  Apps tab- refresh, no population of updates from app store.  ### Expected behavior  I expected the apps needing update to show.  ### Screenshots or safe logs  <img width="1728" height="1117" alt="Image" src="https://github.com/user-attachments/assets/e5c43317-2421-4cc1-a6e6-46f9c43ab797" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
+- **Issue #1877** (2026-10-28): **[Mac App Bug]**
+  *Symptoms*: ### Mole Mac app version  v1.18.0  ### macOS version  macOS 27.0.1  ### Mac model  MacBook Pro M2  ### Affected area  Clean  ### What happened?  在 **清理** 页面（Clean）中央出现了一个大面积的亮粉色方块，覆盖了原本应该显示的图标和文案区域，导致页面内容严重错乱。方块旁边还能看到一个小小的圆形图标，页面文字"山雨涤尘垢，潮退万象新"也被粉色方块遮挡了一部分。  **切换到其他 Tab（如「软件」）再切回「清理」页面后，粉色方块消失，页面恢复正常显示。**  这种现象看起来像是图片/纹理首次加载失败、SwiftUI/AppKit Canvas 未正确绘制、或是 Metal/Shader 层在首次渲染时的占位异常（品红色 placeholder）。   ### Steps to reproduce  1. 打开 Mole，进入 **清理** 页面。 2. 观察页面中央是否出现大面积亮粉色方块，覆盖图标和文案。 3. 切换到 **软件**（或其他）Tab。 4. 再切回 **清理** 页面 —— 粉色方块消失，显示正常。  ### Expected behavior  清理页面首次进入时应直接正确渲染出图标，不应出现任何颜色异常的占位方块。  ### Screenshots or safe logs  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/ab239a2f-3fa8-4ed8-a1b7-a566c034eb37" />  <img width="1100" height="772" alt="Image" src="https://github.com/user-attachments/assets/e3ad38a6-c627-4558-bd92-3a9cfc72b071" />  ### Before submitting  - [x] I updated to the latest stable Mole Mac app, reopened it, and reproduced this problem (or this report explains why I cannot update). - [x] I did not include license keys, order numbers, or private data.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2014,1040 +2014,515 @@ func jsonFileEntriesFromFileEntries(files []fileEntry) []jsonFileEntry {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52c5a7fa` (2026-10-25)
-**Commit Message**: fix(clean): protect active caches and measure reclaimable blocks
+### Incident Patch 1: `21d44166` (2026-10-31)
+**Commit Message**: fix(clean): clean the yarn berry global cache instead of ~/.yarn/cache
 
-Keep live app caches and incomplete project recovery evidence out of automatic cleanup. Resolve Apple Git shims without opening an installer and use one conservative block estimate across cleanup paths.
+The "Yarn cache" row cleaned ~/.yarn/cache/*, which Yarn never writes:
+Berry keeps .yarn/cache inside each project and its shared global cache
+in ~/.yarn/berry/cache, and Classic on macOS uses ~/Library/Caches/Yarn,
+which the next row already cleans. So the row was always empty and the
+Berry global cache was never offered.
 
-**File**: `.claude/rules/core.md` (modified, +2/-1)
+The row now cleans ~/.yarn/berry/cache/* as "Yarn Berry cache", same
+tier and plain safe_clean as before. The whitelist catalog row follows
+it ("Yarn Berry package cache"), and ~/.yarn/cache joins the list of
+rows no cleanup consults, so a protected entry still keeps the cache
+the cleaner deletes. A saved ~/.yarn/cache line keeps working as a
+custom pattern. Mole Mac made the same change.
+
+Verified: the new "clean_dev_npm cleans the Yarn Berry global cache,
+not the unused ~/.yarn/cache" case and the two updated
+manage_whitelist.bats cases were red on the old code and are green;
+manage_whitelist.bats 51/51 ok; scripts/check.sh --no-format passes.
+clean_dev_caches.bats has five owner-root failures that fail the same
+way on untouched origin/main. Revert: git revert this commit.
+
+**File**: `lib/clean/dev.sh` (modified, +4/-1)
 ```diff
-@@ -21,11 +21,12 @@ paths:
- - Both find/delete helpers preserve signal statuses in the clean cancellation marker, including scan, sizing, preview and privileged preflight failures; a prior cancellation stops them before further work. Read-only scan or sizing timeouts stay local and never set that marker. A signal from `validate_path_for_deletion` must stop the privileged scan loop and discard its accumulated removal batch, not become an ordinary refusal via `if ! ...; then continue`; a validator timeout still skips only its target. Locked by the `preserves scan signals`, `preserves dry-run sizing signals`, `read-only timeouts remain local`, `preserves preview validation signals`, `stops before work after sticky cancellation`, `stops accumulated batches on validation signals` and `validation timeout skips only its target` cases in `tests/core_safe_functions.bats`.
- - Trash batches may share stable invoking-user values, never destination ownership/mode or live source evidence. Keep operation and deletion logs synchronous; existing writable logs can skip repeated setup, but a missing log must be recreated. Shared nested-path filtering is literal and must keep parent coverage across prefix siblings; Gradle target normalization belongs only to clean.
- - Direct Trash moves, privileged staging moves, staging permission/ownership handoff and final user moves each use `run_with_timeout` with the existing disk-operation timeout. This bounds each command, not the whole uninstall phase. Keep identity/ownership checks immediately before the source move, preserve a staged payload on timeout and stop later candidates without losing the completed-path ledger. Never re-enter a privileged payload operation after the stage is handed to the user. Regression tests must reach the real mover with bounded fixture executables; a batch mock that adds its own timeout proves only status propagation. Locked by the `real direct Trash sink` cases in `tests/uninstall_timeout.bats` and `real privileged Trash sink` cases in `tests/file_ops_mole_delete.bats`.
--- **A cleanup total counts readable bytes, and only a timeout makes it a lower bound.** `du` exits 1 when it cannot list a folder, after printing everything it could read; a folder Mole cannot list it cannot remove either, so cleanup sizing passes `readable` to `get_path_size_kb` and takes that total. Uninstall keeps the strict default (#1404). Before this, six unavailable simulators holding 7.73GB were counted as 0 and the run printed `At least`, which read as a timeout that never happened. `mole_item_size_continues` marks the total partial only for a real timeout, a timeout names its path in the debug log, and the partial total prints as `3.27GB+`, the same form as the Build artifacts hint. Locked by `cleanup sizing counts the readable bytes of a folder with an unlistable child`, `only a sizing timeout marks the cleanup total as a lower bound` and `a sizing timeout names the item in the debug log` in `tests/file_ops_size.bats`.
-+- **A cleanup total counts readable bytes, and only a timeout makes it a lower bound.** A folder Mole cannot list it cannot remove either, so cleanup sizing retains readable-file totals. `get_path_size_kb` still provides the `readable` mode for callers using `du`; uninstall keeps its strict default (#1404). Clean's `get_cleanup_path_size_kb` and its bulk path share `_cleanup_path_sizes_kb`: allocated file blocks, internal hardlinks counted once only when every link is inside that candidate, and uncompressed APFS private bytes where supported. Symlinks are not followed, directory metadata is excluded, compressed or unsupported private-size probes use allocated bytes, and timed-out bulk results are discarded. Separate candidates deliberately do not claim external hardlink blocks even when both are selected. Sparse files and fully shared clones must not report their logical lengths as freed; real fixtures in `tests/file_ops_size.bats` lock these cases. Before this, six unavailable simulators holding 7.73GB were counted as 0 and the run printed `At least`, which read as a timeout that never happened. `mole_item_size_continues` marks the total partial only for a real timeout, a timeout names its path in the debug log, and the partial total prints as `3.27GB+`, the same form as the Build artifacts hint. Locked by `cleanup sizing counts the readable bytes of a folder with an unlistable child`, `only a sizing timeout marks the cleanup total as a lower bound` and `a sizing timeout names the item in the debug log` in `tests/file_ops_size.bats`.
- - **Do not add a shell-side directory size cache.** APFS does not propagate mtime up the tree, so a parent directory's mtime is unchanged when a descendant grows or shrinks and the cache hands the user a stale reclaimable number. Measure every time; `get_path_size_kb` is already timeout-bounded. The uninstall preview side of this rule is in `.claude/rules/uninstall.md`.
- - `start_section` / `end_section` / `note_activity` have 
+@@ -717,7 +717,10 @@ clean_dev_npm() {
+     note_activity
+     safe_clean ~/.tnpm/_cacache/* "tnpm cache directory"
+     safe_clean ~/.tnpm/_logs/* "tnpm logs"
+-    safe_clean ~/.yarn/cache/* "Yarn cache"
++    # Yarn Berry keeps .yarn/cache inside each project and its shared global
++    # cache in ~/.yarn/berry/cache; ~/.yarn/cache is never written. Yarn
++    # Classic on macOS uses ~/Library/Caches/Yarn.
++    safe_clean ~/.yarn/berry/cache/* "Yarn Berry cache"
+     safe_clean ~/Library/Caches/Yarn/* "Yarn v1 cache"
+ }
+ # Resolve a cache root to its physical location and prove that it remains a
 ```
 
-**File**: `.claude/rules/purge-installer.md` (modified, +2/-0)
+**File**: `lib/manage/whitelist.sh` (modified, +1/-1)
 ```diff
-@@ -19,6 +19,8 @@ paths:
- - Purge discovery skips dot-directory containers by design. Add each supported container, such as `~/.codex/worktrees`, explicitly to `MOLE_PURGE_DEFAULT_SEARCH_PATHS`; do not broaden discovery to all dot directories. The scan layer already handles hidden descendants once their parent container is known, while project roots deeper than the existing two-level probe remain intentionally out of scope.
- - **A purge target is never a container.** `is_project_container` rejects any basename in `MOLE_PURGE_TARGETS`, not a separately maintained list of package directories, so a stray `~/node_modules`, `vendor/`, or `Pods/` is never scanned as a set of project roots whose internal `dist/` and `build/` reach the delete list. A directory that legitimately shares an artifact name stays reachable by listing it in `~/.config/mole/purge_paths`, which bypasses discovery; do not add a flag for it. This one probe is the whole surface: the other three scan-root entry points in `lib/clean/project.sh` are the maintainer default list, the user config file, and the consumer of discovery. Locked by the two `#1459` tests in `tests/purge.bats`; the story is in `.claude/skills/bugs/references/deletion-evidence-and-final-sink.md` section 13.
- - **Purge candidate protection.** Purge candidates with deployment keypair files, nested Git repositories, or Git-tracked content are protected at discovery and immediately before deletion.
-+  - `node_modules` also requires a readable project manifest, lockfile, and matching npm/pnpm/Yarn install record. Package files newer than that record remain protected, excluding the disposable top-level `.cache` directory. Running project cwd/arguments and incomplete process visibility preserve the candidate even after explicit recent selection. Keep the existing seven-day age threshold; install provenance is a separate condition. Locked by the `purge node_modules` and `purge node project process` tests.
-+  - Never invoke Apple's `/usr/bin/git` shim to discover whether CLT is installed. Resolve the selected developer directory read-only and use its real Git executable; absent tools leave the content verdict unknown without opening an installation prompt. A non-shim Git selected through PATH keeps its existing behavior.
-   - Use physical Git ancestry, a full-path `:(top,literal,icase)` pathspec from `mole_git_path_spec` (literal so glob characters match nothing else, case-blind because the default volume is case-insensitive and the index may keep another spelling of a renamed folder), inherited pathspec switches unset, and disabled fsmonitor hooks.
-   - The content walk runs on the tree-walk budget (`MOLE_TIMEOUT_HINT_SCAN_SEC`), and a probe that times out or fails is status 2, not evidence: the candidate is kept, discovery passes it through, the review step prints `Could not inspect X; kept` and marks the run incomplete, and the sink still refuses it. Signals remain cancellation statuses through Git/find probes, protection predicates, workers, review, and the final sink; never collapse them into status 2 or a normal protected result. Never fold that state into a silent drop.
-   - Discovery runs these probes in a pool of at most four per scan unit and publishes them in input order only after every probe finished; a missing result counts as unverified, and a scan cancelled during its last probes makes the filter return 130 with nothing written. `scan_purge_targets` writes the verified sidecar only when its caller names one as a third argument, and that caller removes it. The review before the menu reuses discovery's clean verdict from the same run and walks again only candidates without one; the recheck before removal and the final sink guard always probe afresh.
+@@ -138,7 +138,7 @@ pip Python package cache|$HOME/Library/Caches/pip/*|package_manager
+ uv Python package cache|$HOME/.cache/uv/*|package_manager
+ tealdeer tldr pages cache|$HOME/Library/Caches/tealdeer/tldr-pages|package_manager
+ Homebrew downloaded packages|$HOME/Library/Caches/Homebrew/*|package_manager
+-Yarn package manager cache|$HOME/.yarn/cache/*|package_manager
++Yarn Berry package cache|$HOME/.yarn/berry/cache/*|package_manager
+ Yarn v1 package cache|$HOME/Library/Caches/Yarn/*|package_manager
+ pnpm package store|$HOME/Library/pnpm/store/*|package_manager
+ Bun package cache|$HOME/.bun/install/cache/*|package_manager
 ```
 
-**File**: `bin/clean.sh` (modified, +63/-44)
+**File**: `tests/clean_dev_caches.bats` (modified, +25/-0)
 ```diff
-@@ -745,28 +745,62 @@ normalize_paths_for_cleanup() {
-     return 0
+@@ -682,6 +682,31 @@ EOF
+     [[ "$output" == *"npm prebuilds|$HOME/.npm/_prebuilds/*"* ]]
  }
  
-+# Measure reclaimable file blocks, not logical lengths. Each root is independent:
-+# links outside that root and shared clone blocks stay out of its estimate.
-+# This is measurement only; the normal deletion guards still own eligibility.
-+_cleanup_path_sizes_kb() {
-+    # shellcheck disable=SC2016 # The single-quoted program contains Perl variables.
-+    run_with_timeout "$MOLE_TIMEOUT_DISK_VERIFY_SEC" /usr/bin/perl -e '
-+        use strict;
-+        use warnings;
-+        use File::Find;
-+        use Fcntl qw(:mode);
-+        sub private_bytes {
-+            my ($path, $allocated) = @_;
-+            # Darwin getattrlist: common FLAGS followed by extended PRIVATESIZE.
-+            # FSOPT_NOFOLLOW | FSOPT_ATTR_CMN_EXTENDED. Unsupported filesystems
-+            # retain allocated bytes; compressed resource forks do too.
-+            my $attrs = pack("SSLLLLL", 5, 0, 0x80040000, 0, 0, 0, 8);
-+            my $reply = "\0" x 36;
-+            my $name = "$path\0";
-+            return $allocated if syscall(220, $name, $attrs, $reply, 36, 0x21) != 0;
-+            my ($length, $common, $volume, $dir, $file, $extended, $flags, $private) = unpack("L7Q", $reply);
-+            return $allocated if $length < 36 || !($common & 0x40000) || !($extended & 8) || ($flags & 0x20);
-+            return $private < $allocated ? $private : $allocated;
-+        }
-+        for my $root (@ARGV) {
-+            my @root_stat = lstat($root);
-+            if (!@root_stat || S_ISLNK($root_stat[2])) { print "0\n" or die $!; next; }
-+            my %links;
-+            my $bytes = 0;
-+            my $visit = sub {
-+                my $path = $_;
-+                my @s = lstat($path);
-+                return unless @s;
-+                if ($s[0] != $root_stat[0]) { $File::Find::prune = 1; return; }
-+                return unless S_ISREG($s[2]);
-+                my $allocated = $s[12] * 512;
-+                my $size = private_bytes($path, $allocated);
-+                if ($s[3] > 1) {
-+                    my $key = "$s[0]:$s[1]";
-+                    $links{$key} ||= [0, $s[3], $size];
-+                    $links{$key}[0]++;
-+                } else { $bytes += $size; }
-+            };
-+            if (S_ISDIR($root_stat[2])) {
-+                find({wanted => $visit, no_chdir => 1, follow => 0}, $root);
-+            } else { local $_ = $root; $visit->(); }
-+            for my $link (values %links) {
-+                $bytes += $link->[2] if $link->[0] == $link->[1];
-+            }
-+            print(int(($bytes + 1023) / 1024), "\n") or die $!;
-+        }
-+    ' -- "$@" 2> /dev/null
++# Yarn Berry writes .yarn/cache inside each project and its global cache in
++# ~/.yarn/berry/cache; ~/.yarn/cache was a row that never held anything.
++@test "clean_dev_npm cleans the Yarn Berry global cache, not the unused ~/.yarn/cache" {
++    run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
++set -euo pipefail
++source "$PROJECT_ROOT/lib/core/common.sh"
++source "$PROJECT_ROOT/lib/clean/dev.sh"
++start_section_spinner() { :; }
++stop_section_spinner() { :; }
++clean_tool_cache() { :; }
++clean_pnpm_stores() { :; }
++clean_corepack_cache() { :; }
++clean_bun_cache() { :; }
++safe_clean() { echo "$2|$1"; }
++note_activity() { :; }
++npm() { return 1; }
++clean_dev_npm
++EOF
++
++    [ "$status" -eq 0 ] || { echo "$output"; return 1; }
++    [[ "$output" == *"Yarn Berry cache|$HOME/.yarn/berry/cache/*"* ]] || { echo "$output"; return 1; }
++    [[ "$output" == *"Yarn v1 cache|$HOME/Library/Caches/Yarn/*"* ]] || { echo "$output"; return 1; }
++    [[ "$output" != *"|$HOME/.yarn/cache/"* ]]
 +}
 +
- # shellcheck disable=SC2329
- get_cleanup_path_size_kb() {
--    local path="$1"
--
--    # A plain file or a symlink is a single stat. Directories and the
--    # stat-unavailable case fall back to get_path_size_kb. For a regular file
--    # with a zero/invalid stat we also fall back; a symlink reports 0 directly.
--    if [[ -L "$path" || -f "$path" ]] && command -v stat > /dev/null 2>&1; then
--        local bytes
--        bytes=$("$STAT_BSD" -f%z "$path" 2> /dev/null || echo "0")
--        if [[ "$bytes" =~ ^[0-9]+$ && "$bytes" -gt 0 ]]; then
--            echo $(((bytes + 1023) / 1024))
--            return 0
--        fi
--        if [[ -L "$path" ]]; then
--            echo 0
--            return 0
--        fi
--    fi
--
--    # Cleanup totals count what can be freed: readable bytes (see get_path_size_kb).
--    get_path_size_kb "$path" "" readable
-+    _cleanup_path_sizes_kb "$1"
- }
- 
- # Classification helper for cleanup risk levels
-@@ -1007,7 +1041,7 @@ _safe_clean_impl() {
-             [[ -d "${existing_paths[i]}" ]] && ((dir_count++))
-         done
- 
--        # Heuristic: mostly files -> bulk stat is faster than per-file subshells.
-+        # Mostly files share one measurement process instead of per-file subshells.
-         if [[ $dir_count -lt 5 && ${#existing_paths[@]} -gt 20 ]]; then
-             if [[ -t 1 && "$show_spinner" == "false" ]]; then
-                 start_section_spinner "Scanning items..."
-@@ -1018,8 +1052,7 @@ _safe_clean_impl() {
-             local _bytes
-             local bulk_stat_file="$temp_dir/bulk_stat"
-             local bulk_stat_rc=0
--            run_with_timeout "$MOLE_TIMEOUT_DISK_VERIFY_SEC" \
--                "$STAT_BSD" -f%z "${existing_paths[@]}" < /dev/null \
-+            _cleanup_path_sizes_kb "${existing_paths[@]}" < /dev/null \
-                 > "$bulk_stat_file" 2> /dev/null || bulk_stat_rc=$?
-             if [[ $bulk_stat_rc -ge 128 ]]; then
-                 cleanup_interrupt_rc=$bulk_stat_rc
-@@ -1028,9 +1061,15 @@ _safe_clean_impl() {
-                 # must not cancel the delete set. Sizes are already 0 here.
-                 MOLE_CLEAN_SIZING_TIMEOUTS=$((${MOLE_CLEAN_SIZING_TIMEOUTS:-0} + 1))
-             fi
-+            if [[ $bulk_stat_rc -ne 0 ]] || ! awk -v expected="${#existing_paths[@]}" '
-+                !/^[0-9]+$/ { invalid = 1 }
-+       
+ @test "clean_dev_jvm never enters daemon cleanup while Gradle is running" {
+     run env HOME="$HOME" PROJECT_ROOT="$PROJECT_ROOT" /bin/bash --noprofile --norc << 'EOF'
+ set -euo pipefail
 ```
 
-**File**: `lib/clean/app_caches.sh` (modified, +47/-34)
+**File**: `tests/manage_whitelist.bats` (modified, +5/-5)
 ```diff
-@@ -432,37 +432,50 @@ clean_editor_obsolete_extensions() {
-         done < <(_mole_obsolete_extension_keys "$obsolete_file")
-     done
- }
-+# CodeBuddyExtension is shared by the CodeBuddy editors and WorkBuddy.
-+# A closed editor alone does not establish that these caches are idle.
-+_codebuddy_shared_cache_running() {
-+    mole_pgrep_any -x 'CodeBuddy|CodeBuddy CN|WorkBuddy' \
-+        -f '/(CodeBuddy( CN)?|WorkBuddy)[.]app/'
-+}
-+
- # Code editors.
- clean_code_editors() {
--    safe_clean ~/Library/Application\ Support/Code/logs/* "VS Code logs"
--    safe_clean ~/Library/Application\ Support/Code/Cache/* "VS Code cache"
--    safe_clean ~/Library/Application\ Support/Code/CachedExtensionVSIXs/* "VS Code extension cache"
--    safe_clean ~/Library/Application\ Support/Cursor/CachedExtensionVSIXs/* "Cursor extension cache"
--    safe_clean ~/Library/Application\ Support/Code/CachedData/* "VS Code data cache"
--    safe_clean ~/Library/Application\ Support/Code/WebStorage/*/CacheStorage/* "VS Code webview cache"
-+    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/logs/* "VS Code logs"
-+    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/Cache/* "VS Code cache"
-+    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/CachedExtensionVSIXs/* "VS Code extension cache"
-+    mole_safe_clean_app_cache "Cursor" ~/Library/Application\ Support/Cursor/CachedExtensionVSIXs/* "Cursor extension cache"
-+    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/CachedData/* "VS Code data cache"
-+    mole_safe_clean_app_cache "Visual Studio Code" ~/Library/Application\ Support/Code/WebStorage/*/CacheStorage/* "VS Code webview cache"
-     safe_clean ~/Library/Caches/com.sublimetext.*/* "Sublime Text cache"
-     safe_clean ~/Library/Caches/Zed/* "Zed cache"
-     # Zed npm caches: node/cache (system-node scratch) and node/node-v*/cache
-     # (per-version managed runtime, see #88); keep editor state under db/ untouched.
--    safe_clean ~/Library/Application\ Support/Zed/node/cache/* "Zed npm cache"
--    safe_clean ~/Library/Application\ Support/Zed/node/node-v*/cache/* "Zed npm cache"
-+    mole_safe_clean_app_cache "Zed" ~/Library/Application\ Support/Zed/node/cache/* "Zed npm cache"
-+    mole_safe_clean_app_cache "Zed" ~/Library/Application\ Support/Zed/node/node-v*/cache/* "Zed npm cache"
-     safe_clean ~/Library/Logs/Zed/* "Zed logs"
-     clean_editor_obsolete_extensions
--    # CodeBuddy Extension (VS Code fork, Electron)
-+    # Shared desktop extension caches have more than one possible owner.
-     if [[ -d ~/Library/Application\ Support/CodeBuddyExtension ]]; then
--        safe_clean ~/Library/Application\ Support/CodeBuddyExtension/Cache/* "CodeBuddy Extension cache"
--        safe_clean ~/Library/Application\ Support/CodeBuddyExtension/logs/* "CodeBuddy Extension logs"
-+        local codebuddy_rc=0
-+        _dev_safe_clean_process_guarded _codebuddy_shared_cache_running "CodeBuddy" "CodeBuddy Extension cache" \
-+            ~/Library/Application\ Support/CodeBuddyExtension/Cache/* "CodeBuddy Extension cache" || codebuddy_rc=$?
-+        [[ $codebuddy_rc -le 1 ]] || return "$codebuddy_rc"
-+        codebuddy_rc=0
-+        _dev_safe_clean_process_guarded _codebuddy_shared_cache_running "CodeBuddy" "CodeBuddy Extension logs" \
-+            ~/Library/Application\ Support/CodeBuddyExtension/logs/* "CodeBuddy Extension logs" || codebuddy_rc=$?
-+        [[ $codebuddy_rc -le 1 ]] || return "$codebuddy_rc"
-     fi
-     # CodeBuddy CN (VS Code fork, Electron)
-     if [[ -d ~/Library/Application\ Support/CodeBuddy\ CN ]]; then
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/Cache/* "CodeBuddy CN cache"
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/CachedData/* "CodeBuddy CN cached data"
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/CachedExtensionVSIXs/* "CodeBuddy CN extension cache"
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/Code\ Cache/* "CodeBuddy CN code cache"
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/GPUCache/* "CodeBuddy CN GPU cache"
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/DawnGraphiteCache/* "CodeBuddy CN Dawn cache"
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/DawnWebGPUCache/* "CodeBuddy CN WebGPU cache"
--        safe_clean ~/Library/Application\ Support/CodeBuddy\ CN/logs/* "CodeBuddy CN logs"
-+        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/Cache/* "CodeBuddy CN cache"
-+        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/CachedData/* "CodeBuddy CN cached data"
-+        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Application\ Support/CodeBuddy\ CN/CachedExtensionVSIXs/* "CodeBuddy CN extension cache"
-+        mole_safe_clean_app_cache "CodeBuddy CN" ~/Library/Applic
-```
-
-**File**: `lib/clean/dev.sh` (modified, +24/-77)
-```diff
-@@ -1767,59 +1767,6 @@ _xctest_devices_delete_guard_allows() {
-     mole_clean_process_guard _xctest_devices_activity_state "Xcode, XCTest, or Simulator started"
+@@ -849,11 +849,11 @@ EOF
+     local test_home="$HOME/rows-delete-paths"
+     rm -rf "$test_home"
+     mkdir -p "$test_home/Library/Caches/pip/http" \
+-        "$test_home/.yarn/cache" "$test_home/Library/Caches/Yarn/v6" \
++        "$test_home/.yarn/berry/cache" "$test_home/Library/Caches/Yarn/v6" \
+         "$test_home/.gem/specs" "$test_home/.gem/ruby/3.2.0/cache" \
+         "$test_home/.local/share/containers/storage/tmp"
+     touch "$test_home/Library/Caches/pip/http/a" \
+-        "$test_home/.yarn/cache/a.zip" "$test_home/Library/Caches/Yarn/v6/a" \
++        "$test_home/.yarn/berry/cache/a.zip" "$test_home/Library/Caches/Yarn/v6/a" \
+         "$test_home/.gem/specs/a" "$test_home/.gem/ruby/3.2.0/cache/a.gem" \
+         "$test_home/.local/share/containers/storage/tmp/a"
+ 
+@@ -916,7 +916,7 @@ pattern_for_row() {
+ 
+ rows=(
+     "pip Python package cache|pip cache"
+-    "Yarn package manager cache|Yarn cache"
++    "Yarn Berry package cache|Yarn Berry cache"
+     "Yarn v1 package cache|Yarn v1 cache"
+     "RubyGems package cache|gem package cache"
+     "RubyGems spec cache|gem spec cache"
+@@ -976,7 +976,7 @@ EOF
+     local dead
+     # shellcheck disable=SC2016  # Literal $HOME spellings, as the inventory prints them.
+     for dead in \
+-        '$HOME/.cache/pip/' '$HOME/.cache/yarn/' '$HOME/.gem/cache/' \
++        '$HOME/.cache/pip/' '$HOME/.cache/yarn/' '$HOME/.yarn/cache/' '$HOME/.gem/cache/' \
+         '$HOME/.local/share/containers/cache/' \
+         '$HOME/.rustup/toolchains/' '$HOME/.ccache/' '$HOME/.cache/sccache/' \
+         '$HOME/.cache/flutter/' '$HOME/.cache/selenium/' '$HOME/.ollama/'; do
+@@ -987,7 +987,7 @@ EOF
+     # shellcheck disable=SC2016  # Literal $HOME spelling, as the inventory prints it.
+     [[ "$output" == *'|$HOME/Library/Caches/pip/*|'* ]] || return 1
+     # shellcheck disable=SC2016  # Literal $HOME spelling, as the inventory prints it.
+-    [[ "$output" == *'|$HOME/.yarn/cache/*|'* ]] || return 1
++    [[ "$output" == *'|$HOME/.yarn/berry/cache/*|'* ]] || return 1
  }
  
--_dev_process_delete_guard_allows() {
--    # safe_clean_guarded passes the leaf currently at its deletion boundary.
--    # Keep it in dynamic scope so compound probes such as the Cargo root guard
--    # can bind that exact object without changing ordinary process probes.
--    local _MOLE_DEV_GUARDED_PATH="${1:-}"
--    mole_clean_process_guard \
--        "$_MOLE_DEV_PROCESS_GUARD_PROBE" \
--        "$_MOLE_DEV_PROCESS_GUARD_FAMILY started" \
--        "${_MOLE_DEV_PROCESS_GUARD_UNKNOWN_REASON:-process state unknown}"
--}
--
--_dev_report_process_guard_stop() {
--    local display_name="$1"
--    local family="$2"
--    local reason="$3"
--
--    if [[ "$reason" == "process state unknown" || "$reason" == "process or cache path state unknown" ]]; then
--        echo -e "  ${GRAY}${ICON_WARNING}${NC} ${display_name} · stopped (${reason})"
--        note_activity
--    else
--        mole_defer_cleanup_family "$family"
--    fi
--}
--
--# Bind a tri-state process probe to safe_clean's post-size boundary. The local
--# guard state is intentionally dynamic so Bash 3.2 callbacks can read it.
--_dev_safe_clean_process_guarded() {
--    local probe="$1"
--    local family="$2"
--    local display_name="$3"
--    shift 3
--    local _MOLE_DEV_PROCESS_GUARD_PROBE="$probe"
--    local _MOLE_DEV_PROCESS_GUARD_FAMILY="$family"
--    local _MOLE_CLEAN_GUARD_REASON="${family} started"
--
--    if ! declare -f safe_clean_guarded > /dev/null 2>&1; then
--        if ! _dev_process_delete_guard_allows; then
--            _dev_report_process_guard_stop "$display_name" "$family" "$_MOLE_CLEAN_GUARD_REASON"
--            return 1
--        fi
--        safe_clean "$@"
--        return $?
--    fi
--
--    local guarded_rc=0
--    safe_clean_guarded _dev_process_delete_guard_allows "$@" || guarded_rc=$?
--    if [[ $guarded_rc -eq 75 ]]; then
--        _dev_report_process_guard_stop "$display_name" "$family" "$_MOLE_CLEAN_GUARD_REASON"
--        return 1
--    fi
--    return "$guarded_rc"
--}
--
- _dev_clean_service_worker_process_guarded() {
-     local probe="$1"
-     local family="$2"
-@@ -5809,43 +5756,43 @@ clean_dev_misc() {
-     safe_clean ~/Library/Caches/KSCrash/* "KSCrash reports"
-     safe_clean ~/Library/Caches/com.crashlytics.data/* "Crashlytics data"
-     if [[ -d ~/Library/Application\ Support/Antigravity ]]; then
--        safe_clean ~/Library/Application\ Support/Antigravity/Cache/* "Antigravity cache"
--        safe_clean ~/Library/Application\ Support/Antigravity/Code\ Cache/* "Antigravity code cache"
--        safe_clean ~/Library/Application\ Support/Antigravity/GPUCache/* "Antigravity GPU cache"
--        safe_clean ~/Library/Application\ Support/Antigravity/DawnGraphiteCache/* "Antigravity Dawn cache"
--        safe_clean ~/Library/Application\ Support/Antigravity/DawnWebGPUCache/* "Antigravity WebGPU cache"
-+        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/Cache/* "Antigravity cache"
-+        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/Code\ Cache/* "Antigravity code cache"
-+        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/GPUCache/* "Antigravity GPU cache"
-+        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/DawnGraphiteCache/* "Antigravity Dawn cache"
-+        mole_safe_clean_app_cache "Antigravity" ~/Library/Application\ Support/Antigravity/DawnWebGPUCache/* "Antigravity WebGPU cache"
-     fi
-     # Antigravity browser profile caches (~/.gemini)
-     clean_antigravity_caches
-     # agent-browser's superseded Chrome for Testing builds (#1748)
-     clean_agent_browser_old_chrome
-     # Filo (Electron)
-     if [[ -d ~/Library/Application\ Support/Filo ]]; then
--        safe_clean ~/Library/Application\ Support/Filo/production/Cache/* "Filo cache"
--        safe_clean ~/Library/Application\ Support/Filo/production/Code\ Cache/* "Filo code cache"
--        safe_clean ~/Library/Application\ Support/Filo/production/GPUCache/* "Filo GPU cache"
--        safe_clean ~/Library/Application\ Support/Filo/production/DawnGraphiteCache/* "Filo Dawn cache"
--        safe_clean ~/Library/Application\ Support/Filo/production/DawnWebGPUCache/* "Filo WebGPU cache"
-+        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/Cache/* "Filo cache"
-+        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/Code\ Cache/* "Filo code cache"
-+        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/GPUCache/* "Filo GPU cache"
-+        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/DawnGraphiteCache/* "Filo Dawn cache"
-+        mole_safe_clean_app_cache "Filo" ~/Library/Application\ Support/Filo/production/DawnWebGPUCache/* "Filo WebGPU cache"
-    
-```
-
-**File**: `lib/clean/project.sh` (modified, +64/-0)
-```diff
-@@ -531,6 +531,60 @@ purge_artifact_has_authored_content() {
- # unfinished content probe rather than evidence.
- PURGE_PROTECTION_UNVERIFIED=false
- 
-+# Returns the same tri-state as process probes. A project may be active with
-+# no open file inside node_modules, for example a shell or dev server in cwd.
-+purge_node_project_running() {
-+    local project="$1" deadline="${2:-}" probe_timeout evidence rc=0 line saw_cwd=false
-+    [[ "$project" == /* && ! "$project" =~ [[:cntrl:]] ]] || return 2
-+    probe_timeout=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_HINT_SCAN_SEC" "$deadline") || return 2
-+    evidence=$(run_with_timeout "$probe_timeout" /usr/sbin/lsof -nP -a -u "$(id -u)" -d cwd -Fn 2>&1) || rc=$?
-+    [[ $rc -le 128 ]] || return "$rc"
-+    [[ $rc -eq 0 && -n "$evidence" ]] || return 2
-+    while IFS= read -r line; do
-+        case "$line" in
-+            "n$project" | "n$project/"*) return 0 ;;
-+            n/*) saw_cwd=true ;;
-+            p[0-9]* | fcwd) ;;
-+            *) return 2 ;; # A warning or unavailable cwd makes visibility incomplete.
-+        esac
-+    done <<< "$evidence"
-+    [[ "$saw_cwd" == true ]] || return 2
-+    probe_timeout=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_HINT_SCAN_SEC" "$deadline") || return 2
-+    rc=0
-+    run_with_timeout "$probe_timeout" pgrep -f "$(_mole_regex_escape "$project")(/|[[:space:]]|$)" > /dev/null 2>&1 || rc=$?
-+    [[ $rc -le 128 ]] || return "$rc"
-+    [[ $rc -le 1 ]] || return 2
-+    return "$rc"
-+}
-+
-+# Lockfiles make reinstall possible; the package-manager record separates
-+# installed files from later local edits. An incomplete probe is not proof.
-+# This is independent of the existing seven-day activity/selection policy.
-+purge_node_modules_is_protected() {
-+    local path="$1" deadline="${2:-}" project marker="" pair lock record
-+    local evidence probe_timeout rc=0
-+    path=$(cd "$path" 2> /dev/null && /bin/pwd -P) || return 2
-+    project="${path%/*}"
-+    [[ -f "$project/package.json" && -r "$project/package.json" && ! -L "$project/package.json" ]] || return 0
-+    for pair in 'package-lock.json:.package-lock.json' 'npm-shrinkwrap.json:.package-lock.json' 'pnpm-lock.yaml:.modules.yaml' 'yarn.lock:.yarn-integrity' 'yarn.lock:.yarn-state.yml'; do
-+        lock="${pair%%:*}"
-+        record="${pair#*:}"
-+        if [[ -f "$project/$lock" && -r "$project/$lock" && ! -L "$project/$lock" &&
-+            -f "$path/$record" && -r "$path/$record" && ! -L "$path/$record" ]]; then
-+            marker="$path/$record"
-+            break
-+        fi
-+    done
-+    [[ -n "$marker" ]] || return 0
-+    probe_timeout=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_HINT_SCAN_SEC" "$deadline") || return 2
-+    evidence=$(run_with_timeout "$probe_timeout" /usr/bin/find "$path" \
-+        -type d -path "$path/.cache" -prune -o -type f -newer "$marker" -print -quit 2> /dev/null) || rc=$?
-+    [[ $rc -le 128 ]] || return "$rc"
-+    [[ $rc -eq 0 ]] || return 2
-+    [[ -z "$evidence" ]] || return 0
-+    purge_node_project_running "$project" "$deadline"
-+}
-+
- is_protected_purge_artifact() {
-     local path="${1%/}"
-     local deadline="${2:-}"
-@@ -547,6 +601,16 @@ is_protected_purge_artifact() {
-     [[ $authored_rc -ne 0 ]] || return 0
- 
-     case "$base" in
-+        node_modules)
-+            local node_rc=0
-+            purge_node_modules_is_protected "$path" "$deadline" || node_rc=$?
-+            [[ $node_rc -le 128 ]] || return "$node_rc"
-+            if [[ $node_rc -eq 2 ]]; then
-+                PURGE_PROTECTION_UNVERIFIED=true
-+                return 0
-+            fi
-+            return "$node_rc"
-+            ;;
-         bin)
-             # Only allow purging bin/ when we can detect .NET context.
-             if is_dotnet_bin_dir "$path"; then
-```
-
-**File**: `lib/clean/purge_shared.sh` (modified, +17/-1)
-```diff
-@@ -197,11 +197,27 @@ mole_git_ls_files() {
-     shift 3
-     local probe_timeout=""
-     probe_timeout=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_HINT_SCAN_SEC" "$deadline") || return 124
-+    local git_bin developer_dir probe_rc=0
-+    git_bin=$(command -v git) || return 2
-+    if [[ "$git_bin" == /usr/bin/git || "$git_bin" -ef /usr/bin/git ]]; then
-+        # The Apple shim opens the CLT installer when tools are absent. Resolve
-+        # the real binary without invoking either git or xcrun first.
-+        developer_dir="${DEVELOPER_DIR:-}"
-+        if [[ -z "$developer_dir" ]]; then
-+            developer_dir=$(run_with_timeout "$probe_timeout" /usr/bin/xcode-select -p 2> /dev/null) || probe_rc=$?
-+            [[ $probe_rc -le 128 ]] || return "$probe_rc"
-+            [[ $probe_rc -eq 0 ]] || return 2
-+        fi
-+        [[ "$developer_dir" != *.app ]] || developer_dir="$developer_dir/Contents/Developer"
-+        git_bin="$developer_dir/usr/bin/git"
-+        [[ "$developer_dir" == /* && -x "$git_bin" && ! -L "$git_bin" ]] || return 2
-+        probe_timeout=$(_mole_timeout_with_deadline "$MOLE_TIMEOUT_HINT_SCAN_SEC" "$deadline") || return 124
-+    fi
-     run_with_timeout "$probe_timeout" \
-         env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_COMMON_DIR \
-         -u GIT_LITERAL_PATHSPECS -u GIT_GLOB_PATHSPECS -u GIT_NOGLOB_PATHSPECS -u GIT_ICASE_PATHSPECS \
-         GIT_OPTIONAL_LOCKS=0 \
--        git -c core.fsmonitor=false --git-dir="$repo/.git" --work-tree="$repo" -C "$dir" ls-files "$@" 2> /dev/null
-+        "$git_bin" -c core.fsmonitor=false --git-dir="$repo/.git" --work-tree="$repo" -C "$dir" ls-files "$@" 2> /dev/null
- }
- 
- # The pathspec for a physical path inside repository $1, set in
-```
-
-**File**: `lib/core/base.sh` (modified, +72/-0)
-```diff
-@@ -1737,6 +1737,78 @@ mole_clean_process_guard() {
-     return 1
- }
- 
-+# Named Electron caches do not carry a reverse-DNS owner in their path.
-+# Callers supply the exact app name, not an executable such as Electron that
-+# unrelated apps share. Escape it before both process-name and bundle probes.
-+_mole_named_app_cache_running() {
-+    mole_pgrep_any -x "$_MOLE_NAMED_APP_CACHE_PATTERN" \
-+        -f "/${_MOLE_NAMED_APP_CACHE_PATTERN}[.]app/"
-+}
-+
-+_dev_process_delete_guard_allows() {
-+    # safe_clean_guarded passes the leaf currently at its deletion boundary.
-+    # Keep it in dynamic scope so compound probes such as the Cargo root guard
-+    # can bind that exact object without changing ordinary process probes.
-+    local _MOLE_DEV_GUARDED_PATH="${1:-}"
-+    mole_clean_process_guard \
-+        "$_MOLE_DEV_PROCESS_GUARD_PROBE" \
-+        "$_MOLE_DEV_PROCESS_GUARD_FAMILY started" \
-+        "${_MOLE_DEV_PROCESS_GUARD_UNKNOWN_REASON:-process state unknown}"
-+}
-+
-+_dev_report_process_guard_stop() {
-+    local display_name="$1"
-+    local family="$2"
-+    local reason="$3"
-+
-+    if [[ "$reason" == "process state unknown" || "$reason" == "process or cache path state unknown" ]]; then
-+        echo -e "  ${GRAY}${ICON_WARNING}${NC} ${display_name} · stopped (${reason})"
-+        note_activity
-+    else
-+        mole_defer_cleanup_family "$family"
-+    fi
-+}
-+
-+# Bind a tri-state process probe to safe_clean's post-size boundary. The local
-+# guard state is intentionally dynamic so Bash 3.2 callbacks can read it.
-+_dev_safe_clean_process_guarded() {
-+    local probe="$1"
-+    local family="$2"
-+    local display_name="$3"
-+    shift 3
-+    local _MOLE_DEV_PROCESS_GUARD_PROBE="$probe"
-+    local _MOLE_DEV_PROCESS_GUARD_FAMILY="$family"
-+    local _MOLE_CLEAN_GUARD_REASON="${family} started"
-+
-+    if ! declare -f safe_clean_guarded > /dev/null 2>&1; then
-+        if ! _dev_process_delete_guard_allows; then
-+            _dev_report_process_guard_stop "$display_name" "$family" "$_MOLE_CLEAN_GUARD_REASON"
-+            return 1
-+        fi
-+        safe_clean "$@"
-+        return $?
-+    fi
-+
-+    local guarded_rc=0
-+    safe_clean_guarded _dev_process_delete_guard_allows "$@" || guarded_rc=$?
-+    if [[ $guarded_rc -eq 75 ]]; then
-+        _dev_report_process_guard_stop "$display_name" "$family" "$_MOLE_CLEAN_GUARD_REASON"
-+        return 1
-+    fi
-+    return "$guarded_rc"
-+}
-+
-+mole_safe_clean_app_cache() {
-+    local owner="$1"
-+    shift
-+    local _MOLE_NAMED_APP_CACHE_PATTERN
-+    _MOLE_NAMED_APP_CACHE_PATTERN=$(_mole_regex_escape "$owner")
-+    local rc=0
-+    _dev_safe_clean_process_guarded _mole_named_app_cache_running "$owner" "${*: -1}" "$@" || rc=$?
-+    [[ $rc -gt 1 ]] || return 0
-+    return "$rc"
-+}
-+
- # Report a guard refusal. An unknown process state is the user's problem to see
- # now (it means Mole could not tell, not that it found something running), so it
- # prints against the item. A known-running app is ordinary and goes to the
+ # The Toolbox cleaner only strips whitelist patterns that start at its own apps
 ```
 
 ---
 
-### Incident Patch 2: `530cc2b7` (2026-10-24)
-**Commit Message**: fix(slim): skip files an outer seal hashes and apps gatekeeper rejects
+### Incident Patch 2: `3b0f94df` (2026-10-30)
+**Commit Message**: fix(clean): never treat the llama.cpp model store as a cache
 
-ScreenFlow failed every run: its QuickLook plugin is signed, so its
-executable was planned as a bundle main executable, but ScreenFlow's own
-seal lists that file by hash2 and thinning it broke the app's signature.
-Stash seals its dashboard app and system extension the same way. A file
-any enclosing seal hashes as a plain file now stays untouched.
+llama.cpp downloads -hf model weights, multi-GB GGUF files, into its
+default LLAMA_CACHE at ~/Library/Caches/llama.cpp, which the generic
+~/Library/Caches sweep reached, so mo clean deleted downloaded models.
+The folder joins SAFETY_WHITELIST_PATTERNS, which stays merged in even
+when the user saved a custom whitelist. Mole Mac blocks the same folder.
+The custom-whitelist test that now also covers it was renamed, so the
+I-13 incident row follows the new name.
 
-Unnotarized originals (Mole, Yado, Hina dev builds) were offered, copied
-and refused after the fact. The scan now asks Gatekeeper about every
-candidate at once and leaves out only explicit rejections; a timeout or
-other error keeps the app listed for the copy check to decide.
+Verified: the renamed clean_user_core.bats case fails without the pattern
+and passes now; audit_incidents.py, check.sh --no-format and the full
+test.sh suite pass.
+Rollback: git revert this commit.
 
-**File**: `.claude/rules/slim.md` (modified, +3/-2)
+**File**: `docs/incidents.md` (modified, +1/-1)
 ```diff
-@@ -10,7 +10,8 @@ paths:
- 
- ## Scope
- 
--- Only apps in `/Applications` and `~/Applications` or one plain folder below them such as `Utilities` (#1811, maintainer 2026-10-23), never a folder that is itself a bundle or a symlink and never deeper; apps owned by the invoking user with every file inside owned by them, in a writable folder, signed with a Developer ID (`Authority=Developer ID Application`, a 10-character Team ID). App Store (`_MASReceipt`), `com.apple.*`, ad-hoc and unsigned apps, `should_protect_from_uninstall` and official-uninstaller vendors, apps set to "Open using Rosetta" (`LSArchitecturesForX86_64` in the LaunchServices plist) and symlinks are out.
-+- Only apps in `/Applications` and `~/Applications` or one plain folder below them such as `Utilities` (#1811, maintainer 2026-10-23), never a folder that is itself a bundle or a symlink and never deeper; apps owned by the invoking user with every file inside owned by them, in a writable folder, signed with a Developer ID (`Authority=Developer ID Application`, a 10-character Team ID). App Store (`_MASReceipt`), `com.apple.*`, ad-hoc and unsigned apps, originals Gatekeeper already rejects, `should_protect_from_uninstall` and official-uninstaller vendors, apps set to "Open using Rosetta" (`LSArchitecturesForX86_64` in the LaunchServices plist) and symlinks are out.
-+- Gatekeeper is asked about every candidate original during the scan, all at once (about a second in total, against 0.2 to 1.4 s each in sequence), with a 20 s budget. Only an explicit rejection (`spctl` exit 3) leaves the app out, since its copy can never pass; a timeout or any other error is unknown and keeps the app listed for the copy check to decide. On 2026-10-24 unnotarized builds of Mole, Yado and Hina were offered, copied and then refused one by one. Locked by `slim leaves out apps Gatekeeper already rejects but keeps unknown answers` in `tests/slim.bats`.
- - No sudo, no helper, no new privilege. Root-owned apps stay out rather than prompting.
- - Running apps are listed (Stash and other menu bar apps are always running and would otherwise vanish without a reason) and refused when slimming starts and again right before the swap. The confirmation tags them `[Running]` so they can be quit before Enter instead of being discovered after the run.
- - Output follows `mo uninstall`: `◎ name , size` rows, a numbered `✓`/`◎` line per app when several are selected, and a summary that lists slimmed apps three per line and groups unchanged apps by reason (six running apps are one line plus one next action). Locked by `slim summary lists slimmed apps and groups kept apps by reason` in `tests/slim.bats`.
-@@ -19,7 +20,7 @@ paths:
- 
- ## What may be thinned
- 
--A Mach-O is thinned only when it is its bundle's main executable (`Contents/MacOS/<CFBundleExecutable>`, or `Versions/<v>/<CFBundleExecutable>` of a framework) or a `files2` entry of the nearest `_CodeSignature/CodeResources` sealed by `cdhash`. Everything sealed by plain `hash2` is left alone, and the file scan never enters `Resources` or `_CodeSignature`. Signatures are per slice, so the arm64 slice keeps its cdhash and nothing is ever re-signed.
-+A Mach-O is thinned only when it is its bundle's main executable (`Contents/MacOS/<CFBundleExecutable>`, or `Versions/<v>/<CFBundleExecutable>` of a framework) or a `files2` entry of the nearest `_CodeSignature/CodeResources` sealed by `cdhash`. Everything sealed by plain `hash2` is left alone, and the file scan never enters `Resources` or `_CodeSignature`. Either way, a file that any enclosing seal up to the app lists by plain hash stays too: ScreenFlow signs its QuickLook plugin, yet ScreenFlow's own seal lists `ScreenFlow.qlgenerator/Contents/MacOS/ScreenFlow` by `hash2`, so thinning the plugin's main executable failed the copy's deep strict verify; Stash seals `Stash Dashboard.app` and its system extension executable the same way. `slim_sealed_keys` therefore prints every `files2` key tagged `c` (cdhash) or `h` (anything else). Locked by `slim never thins an executable an enclosing seal lists as a plain file`. Signatures are per slice, so the arm64 slice keeps its cdhash and nothing is ever re-signed.
- 
- Counterexample that set this rule: thinning every universal file outside `Resources` broke Claude's (Electron) seal, because `Electron Framework.framework/Versions/A/Libraries/libffmpeg.dylib` and `libvk_swiftshader.dylib` are sealed by hash. App Store appex and Squirrel's ShipIt behave the same.
- 
+@@ -47,7 +47,7 @@ when it was confirmed by reading the history, otherwise `unknown`.
+ | I-10 | 2026-10-27 | Dry-run find scans sized and recorded each candidate twice and returned 1 when no preview ledger was set up (#1865) | 70eed1b0 | a703eddc | review | `safe_find_delete dry run records each target once without removal fallthrough (#1865)`, `safe_sudo_find_delete dry run records targets once and tracks count (#1865)` |
+ | I-11 | 2026-10-27 | `mo clean` removed installed npx packages while running commands still needed their resources and modules (#1870) | unknown | f954e2fd | unit | `clean_dev_npm preserves installed npx packages in default and custom caches (#1870)` |
+ | I-12 | 2026-10-30 | `mo purge --debug` kept every node_modules as "Could not inspect" and exited 1, because `run_with_timeout`'s debug notice landed in the captured lsof output; found by the V1.66.0 release e2e | unknown | e4686b6e | unit | `run_with_timeout keeps its debug notice out of captured command output`, `purge node project process check reads an idle project as idle under --debug` |
+-| I-13 | 2026-10-26 | Cleaning Kitty's graphics-protocol cache broke image transfers in a running terminal session (#1856) | unknown | e7b15113 | review | `a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache and pnpm dlx` |
++| I-13 | 2026-10-26 | Cleaning Kitty's graphics-protocol cache broke image transfers in a running terminal session (#1856) | unknown | e7b15113 | review | `a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache, pnpm dlx and llama.cpp models` |
+ | I-14 | 2026-10-26 | Users whose network needed the macOS system proxy did not receive background update notices because curl connected directly | unknown | 2748db02 | field | `background update lookup waits longer and follows the system proxy while foreground lookups do not` |
+ | I-15 | 2026-10-26 | Old flat Analyze cache files remained for users who no longer ran Analyze, and a large accumulated directory froze tools that listed it | unknown | a152d651 | review | `legacy analyzer cache sweep removes only flat analyzer files from ~/.cache/mole`, `legacy analyzer cache sweep skips dry runs and a symlinked cache root`, `clean starts the legacy analyzer cache sweep in the background` |
+ | I-16 | 2026-10-30 | Simulator cleanup could treat failed optional metadata reads as an absent key and suppress cancellation, allowing a device leaf to be removed after an incomplete probe | 437227e1 | f8950db2 | unit | `simulator device metadata timeouts retain the device and signals stop later devices` |
 ```
 
-**File**: `bin/slim.sh` (modified, +60/-20)
+**File**: `lib/core/base.sh` (modified, +4/-0)
 ```diff
-@@ -35,6 +35,8 @@ trap 'trap - EXIT; cleanup; exit 130' INT TERM
- readonly SLIM_EXIT_UNSUPPORTED=4
- # Signature and Gatekeeper checks read every file of a large app.
- readonly SLIM_VERIFY_TIMEOUT_SEC=180
-+# Assessing an original during the scan; a slower answer counts as unknown.
-+readonly SLIM_SCAN_GATEKEEPER_TIMEOUT_SEC=20
- SLIM_WORK_DIR=""
+@@ -221,6 +221,10 @@ declare -a SAFETY_WHITELIST_PATTERNS=(
+     "$HOME/Library/Caches/pypoetry/virtualenvs*"
+     "$HOME/Library/Caches/org.R-project.R/R/renv/*"
+     "$HOME/Library/Caches/pnpm/dlx*"
++    # llama.cpp downloads `-hf` model weights (multi-GB GGUF files) into its
++    # default LLAMA_CACHE here; they are user-chosen models, not a cache that
++    # rebuilds on its own. Mole Mac blocks the same folder (2026-10-29).
++    "$HOME/Library/Caches/llama.cpp"
+ )
  
- # Scan results, one index per app.
-@@ -185,10 +187,11 @@ slim_skip_reason() {
-     return 0
- }
- 
--# Print the files2 keys that CodeResources seals by cdhash (nested code with
--# its own signature). Keys sealed by hash2 are plain files: thinning one
--# breaks the bundle seal. Parses the XML form; plutil -p is not parseable.
--slim_cdhash_sealed_keys() {
-+# Print "<c|h>\t<key>" for every files2 key in CodeResources: c when it is
-+# sealed by cdhash (nested code with its own signature), h otherwise. A key
-+# sealed by hash2 is a plain file: thinning one breaks the bundle seal.
-+# Parses the XML form; plutil -p is not parseable.
-+slim_sealed_keys() {
-     local code_resources="$1"
-     plutil -convert xml1 -o - "$code_resources" 2> /dev/null | awk '
-         function decode(s) {
-@@ -205,10 +208,10 @@ slim_cdhash_sealed_keys() {
-             next
-         }
-         !in_files2 { next }
--        line == "<dict/>" { next }
-+        line == "<dict/>" { if (depth == 1) print "h\t" decode(key); next }
-         line == "<dict>" { depth++; if (depth == 2) { sealed = 0 }; next }
-         line == "</dict>" {
--            if (depth == 2 && sealed) print decode(key)
-+            if (depth == 2) print (sealed ? "c" : "h") "\t" decode(key)
-             depth--
-             if (depth == 0) exit
-             next
-@@ -331,6 +334,22 @@ slim_is_thin_arm() {
-     [[ "$(od -An -v -tu1 -N 8 "$1" 2> /dev/null | tr -s ' \n' ' ')" == " 207 250 237 254 12 0 0 1 " ]]
- }
- 
-+# Set keys_file to the cached slim_sealed_keys output for a sealing root;
-+# roots and root_keys belong to the calling slim_plan_app.
-+slim_seal_keys_file() {
-+    local root="$1" i
-+    for ((i = 0; i < ${#roots[@]}; i++)); do
-+        if [[ "${roots[i]}" == "$root" ]]; then
-+            keys_file="${root_keys[i]}"
-+            return 0
-+        fi
-+    done
-+    keys_file=$(create_temp_file) || return 1
-+    slim_sealed_keys "$root/_CodeSignature/CodeResources" > "$keys_file" || true
-+    roots+=("$root")
-+    root_keys+=("$keys_file")
-+}
-+
- # Write "<path relative to the app>\t<intel bytes>" for every file that can
- # be thinned without breaking a seal; print the total.
- slim_plan_app() {
-@@ -342,23 +361,21 @@ slim_plan_app() {
-     while IFS= read -r file; do
-         local root
-         root=$(slim_sealing_root "$file" "$app") || continue
--        local allowed=false
-+        local allowed=false keys_file
-         if slim_is_main_executable "$file" "$root"; then
-             allowed=true
-         else
--            local keys_file="" i
--            for ((i = 0; i < ${#roots[@]}; i++)); do
--                [[ "${roots[i]}" == "$root" ]] && keys_file="${root_keys[i]}"
--            done
--            if [[ -z "$keys_file" ]]; then
--                keys_file=$(create_temp_file) || return 1
--                slim_cdhash_sealed_keys "$root/_CodeSignature/CodeResources" > "$keys_file" || true
--                roots+=("$root")
--                root_keys+=("$keys_file")
--            fi
--            local rel="${file#"$root"/}"
--            grep -Fxq -- "$rel" "$keys_file" && allowed=true
-+            slim_seal_keys_file "$root" || return 1
-+            grep -Fxq -- "c"$'\t'"${file#"$root"/}" "$keys_file" && allowed=true
-         fi
-+        # An enclosing bundle may seal the same file by plain hash: ScreenFlow
-+        # signs its QuickLook plugin but its own seal lists the plugin's
-+        # executable as a file, so thinning that executable broke the app.
-+        local outer="$root"
-+        while [[ "$allowed" == true ]] && outer=$(slim_sealing_root "$outer" "$app"); do
-+            slim_seal_keys_file "$outer" || return 1
-+            grep -Fxq -- "h"$'\t'"${file#"$outer"/}" "$keys_file" && allowed=false
-+        done
-         [[ "$allowed" == true ]] || {
-             debug_log "slim: keeping $file (sealed as a plain file)"
-             continue
-@@ -427,6 +444,29 @@ collect_slim_candidates() {
- 
-     [[ ${#unsorted[@]} -gt 0 ]] || return 1
- 
-+    # An original Gatekeeper already rejects (an unnotarized build) can never
-+    # yield a copy that passes, so it is left out rather than offered and
-+    # failed after a full copy. All candidates are assessed at once, about a
-+    # second in total; only an explicit rejection (3) removes one.
-+    local -a pids=() accepted=()
-+    local entry i gk
-+    for entry in "${unsorted[@]}"; do
-+        app="${entry#*$'\t'}"
-+        run_with_timeout "$SLIM_SCAN_GATEKEEPER_TIMEOUT_SEC" spctl --assess --type execute "${app%%$'\t'*}" > /dev/null 2>&1 < /dev/null &
-+        pids+=("$!")
-+    done
-+    for ((i = 0; i < ${#unsorted[@]}; i++)); do
-+        gk=0
-+        wait "${pids[i]}" || gk=$?
-+   
+ # Resolve the cache root used by GitHub CLI without following filesystem
 ```
 
-**File**: `tests/slim.bats` (modified, +55/-4)
+**File**: `tests/clean_user_core.bats` (modified, +6/-1)
 ```diff
-@@ -144,6 +144,7 @@ slim_env() {
- 		"$BATS_TEST_TMPDIR/elsewhere/Linked.app"
- 	ln -s "$BATS_TEST_TMPDIR/elsewhere" "$APPS_ROOT/LinkedFolder"
- 
-+	mole_test_fake_command spctl 'exit 0'
- 	run slim_env /bin/bash -c '
- 		source "$1"
- 		slim_skip_reason() { :; }
-@@ -158,6 +159,55 @@ slim_env() {
- 	[ "$output" = "$APPS_ROOT/Outer.app"$'\n'"$APPS_ROOT/Top.app"$'\n'"$APPS_ROOT/Utilities/Util.app" ]
+@@ -711,7 +711,7 @@ EOF
+     done
  }
  
-+@test "slim leaves out apps Gatekeeper already rejects but keeps unknown answers" {
-+	mkdir -p "$APPS_ROOT/Notarized.app" "$APPS_ROOT/Unnotarized.app" "$APPS_ROOT/Offline.app"
-+	mole_test_fake_command spctl 'case "$*" in *Unnotarized.app) exit 3 ;; *Offline.app) exit 1 ;; esac; exit 0'
-+
-+	run slim_env /bin/bash -c '
-+		source "$1"
-+		slim_skip_reason() { :; }
-+		slim_signing_team() { echo ABCDE12345; }
-+		slim_plan_app() { echo 1; }
-+		mole_deletion_identity() { echo id; }
-+		collect_slim_candidates || exit 8
-+		printf "%s\n" "${SLIM_APP_PATHS[@]}" | sort
-+	' bash "$PROJECT_ROOT/bin/slim.sh"
-+
-+	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+	[ "$output" = "$APPS_ROOT/Notarized.app"$'\n'"$APPS_ROOT/Offline.app" ]
-+}
-+
-+@test "slim never thins an executable an enclosing seal lists as a plain file" {
-+	[[ "$SLIM_HAVE_FAT_TOOLCHAIN" == "1" ]] || skip "needs clang and a developer directory"
-+	local app="$APPS_ROOT/Outer.app"
-+	local plugin="$app/Contents/Library/QuickLook/Plug.qlgenerator/Contents"
-+	mkdir -p "$app/Contents/MacOS" "$app/Contents/_CodeSignature" "$plugin/MacOS" "$plugin/_CodeSignature"
-+	cp "$FIXTURE_BIN_DIR/fat-exe" "$app/Contents/MacOS/Outer"
-+	cp "$FIXTURE_BIN_DIR/fat-exe" "$plugin/MacOS/Plug"
-+	plutil -create xml1 "$app/Contents/Info.plist"
-+	plutil -insert CFBundleExecutable -string Outer "$app/Contents/Info.plist"
-+	plutil -create xml1 "$plugin/Info.plist"
-+	plutil -insert CFBundleExecutable -string Plug "$plugin/Info.plist"
-+	printf 'plugin seal' > "$plugin/_CodeSignature/CodeResources"
-+	printf 'outer seal' > "$app/Contents/_CodeSignature/CodeResources"
-+
-+	# ScreenFlow's shape: the plugin is signed, yet the app seals its
-+	# executable by hash2, so thinning it breaks the app's own seal.
-+	run slim_env /bin/bash -c '
-+		source "$1"
-+		app="$3"
-+		slim_sealed_keys() {
-+			[[ "$1" == "$app/Contents/_CodeSignature/CodeResources" ]] || return 0
-+			printf "h\tLibrary/QuickLook/Plug.qlgenerator/Contents/MacOS/Plug\n"
-+		}
-+		slim_plan_app "$app" "$2" > /dev/null
-+		cut -f1 "$2"
-+	' bash "$PROJECT_ROOT/bin/slim.sh" "$BATS_TEST_TMPDIR/plan" "$app"
-+
-+	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+	[ "$output" = "Contents/MacOS/Outer" ]
-+}
-+
- @test "slim.sh rejects unknown options" {
- 	run "$PROJECT_ROOT/bin/slim.sh" --unknown-option
+-@test "a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache and pnpm dlx" {
++@test "a custom whitelist still protects system caches, Kitty, Poetry virtualenvs, the renv cache, pnpm dlx and llama.cpp models" {
+     # clean_user_essentials sweeps every child of ~/Library/Caches, and
+     # load_mole_whitelist replaces DEFAULT_WHITELIST_PATTERNS wholesale once a
+     # user saves one entry of their own. Anything that breaks macOS search,
+@@ -726,6 +726,7 @@ EOF
+         "$test_home/Library/Caches/pypoetry/virtualenvs/proj-abc123" \
+         "$test_home/Library/Caches/org.R-project.R/R/renv/cache/v5/pkg" \
+         "$test_home/Library/Caches/pnpm/dlx/abc123" \
++        "$test_home/Library/Caches/llama.cpp" \
+         "$test_home/Library/Caches/com.example.unprotected"
+     printf '%s\n' "$test_home/.cache/keep-my-own-thing/*" > "$test_home/.config/mole/whitelist"
  
-@@ -250,7 +300,7 @@ slim_env() {
- 	[[ "$(file -b "$app/Contents/MacOS/Fixture")" == "Mach-O 64-bit executable arm64" ]]
+@@ -745,6 +746,8 @@ for probe in \
+     "$HOME/Library/Caches/org.R-project.R" \
+     "$HOME/Library/Caches/pnpm/dlx/abc123" \
+     "$HOME/Library/Caches/pnpm" \
++    "$HOME/Library/Caches/llama.cpp" \
++    "$HOME/Library/Caches/llama.cpp/model-Q4_K_M.gguf" \
+     "$HOME/Library/Caches/com.example.unprotected"; do
+     if is_path_whitelisted "$probe"; then
+         printf 'PROTECTED=%s\n' "${probe#"$HOME"/}"
+@@ -777,6 +780,8 @@ EOF
+     [[ "$output" == *"PROTECTED=Library/Caches/org.R-project.R"$'\n'* ]] || return 1
+     [[ "$output" == *"PROTECTED=Library/Caches/pnpm/dlx/abc123"* ]] || return 1
+     [[ "$output" == *"PROTECTED=Library/Caches/pnpm"$'\n'* ]] || return 1
++    [[ "$output" == *"PROTECTED=Library/Caches/llama.cpp"$'\n'* ]] || return 1
++    [[ "$output" == *"PROTECTED=Library/Caches/llama.cpp/model-Q4_K_M.gguf"* ]] || return 1
+     [[ "$output" == *"CUSTOM_KEPT"* ]] || return 1
+     rm -rf "$test_home"
  }
- 
--@test "slim_cdhash_sealed_keys lists only files2 entries sealed by cdhash" {
-+@test "slim_sealed_keys marks which files2 entries are sealed by cdhash" {
- 	local plist="$BATS_TEST_TMPDIR/CodeResources"
- 	cat > "$plist" << 'PLIST'
- <?xml version="1.0" encoding="UTF-8"?>
-@@ -299,11 +349,11 @@ PLIST
- 	run /bin/bash -c '
- 		export MOLE_TEST_MODE=1
- 		source "$1"
--		slim_cdhash_sealed_keys "$2"
-+		slim_sealed_keys "$2"
- 	' bash "$PROJECT_ROOT/bin/slim.sh" "$plist"
- 
- 	[ "$status" -eq 0 ]
--	[ "$output" = $'Frameworks/Nested.framework\nHelpers/R&D tool' ]
-+	[ "$output" = $'c\tFrameworks/Nested.framework\nc\tHelpers/R&D tool\nh\tLibraries/libffmpeg.dylib\nh\tResources/empty' ]
- }
- 
- @test "slim_skip_reason keeps App Store, Apple, Rosetta and symlinked apps out" {
-@@ -401,7 +451,8 @@ PLIST
- 	local app before
- 	app=$(make_fixture_app)
- 	before=$(stat -f '%i' "$app/Contents/MacOS/Fixture")
--	mole_test_fake_command spctl 'exit 3'
-+	# The original passes the scan; only the slimmed copy is rejected.
-+	mole_test_fake_command spctl 'case "$*" in *"/apps/Fixture.app") exit 0 ;; esac; exit 3'
- 
- 	run slim_env MOLE_SLIM_TEST_HOST_ARM64=1 /bin/bash -c '
- 		source "$1"
 ```
 
 ---
 
-### Incident Patch 3: `c1630fa3` (2026-10-24)
-**Commit Message**: fix(slim): align output with uninstall and flag running apps up front
+### Incident Patch 3: `1bc5f1d5` (2026-10-31)
+**Commit Message**: feat(clean): quieter rows, visible waits and a clearer result
 
-The run ended with one "Kept X.app (reason)" line per app, so six running
-apps took six lines and the slimmed apps were never named. The confirmation
-now tags running apps so they can be quit before Enter, each app gets a
-numbered result line like uninstall, and the summary lists slimmed apps
-three per line and groups unchanged apps by reason with one next action.
+Three problems in `mo clean` output: rows asking the user to run a
+command themselves were unclear, some waits had no loading, and the
+result did not show how much was done.
 
-**File**: `.claude/rules/slim.md` (modified, +2/-1)
+- Review rows (DerivedData, archives, simulators, pnpm store, AI
+  worktrees, Docker, Time Machine, Rust and NDK versions) go through
+  mole_review_row: label linked to its folder, size, one fact Mole works
+  out itself ("8 builds, May to Aug", "4 simulators", "v10 and v11
+  stores", "1.95.0 and nightly besides stable"). No command to copy.
+- DerivedData already cleaned under Developer tools is not listed again
+  under Large files.
+- Scanning, DerivedData filtering and Trash measuring show a spinner;
+  first output of a dry run goes from 2.31s to 0.22s.
+- A 0B row is hidden only when its sizing completed; WeChat and Feishu
+  containers print one row per kind; plurals read "1 item".
+- The whitelist line no longer lists every pattern. Summary is
+  "Removed: X · N items" (dry run "Potential space"), plus the list or
+  free space.
+- Glyphs: dry-run rows use a circle, info uses the gear, follow-up
+  arrows in slim and uninstall use the review glyph, tou
+
+**File**: `.claude/rules/clean.md` (modified, +2/-0)
 ```diff
-@@ -12,7 +12,8 @@ paths:
+@@ -36,6 +36,8 @@ Developer and toolchain caches in `lib/clean/dev.sh` also follow `.claude/rules/
  
- - Only apps in `/Applications` and `~/Applications` or one plain folder below them such as `Utilities` (#1811, maintainer 2026-10-23), never a folder that is itself a bundle or a symlink and never deeper; apps owned by the invoking user with every file inside owned by them, in a writable folder, signed with a Developer ID (`Authority=Developer ID Application`, a 10-character Team ID). App Store (`_MASReceipt`), `com.apple.*`, ad-hoc and unsigned apps, `should_protect_from_uninstall` and official-uninstaller vendors, apps set to "Open using Rosetta" (`LSArchitecturesForX86_64` in the LaunchServices plist) and symlinks are out.
- - No sudo, no helper, no new privilege. Root-owned apps stay out rather than prompting.
--- Running apps are listed (Stash and other menu bar apps are always running and would otherwise vanish without a reason) and refused when slimming starts and again right before the swap.
-+- Running apps are listed (Stash and other menu bar apps are always running and would otherwise vanish without a reason) and refused when slimming starts and again right before the swap. The confirmation tags them `[Running]` so they can be quit before Enter instead of being discovered after the run.
-+- Output follows `mo uninstall`: `◎ name , size` rows, a numbered `✓`/`◎` line per app when several are selected, and a summary that lists slimmed apps three per line and groups unchanged apps by reason (six running apps are one line plus one next action). Locked by `slim summary lists slimmed apps and groups kept apps by reason` in `tests/slim.bats`.
- - Without a terminal, or with `--dry-run`, it only lists. Nothing is preselected; no `--yes`, no flags beyond `--dry-run` and `--debug`. A failed confirmation read cancels rather than becoming Enter, locked by `slim confirmation requires a successful Enter read` in `tests/slim.bats`.
- - Interactive and read-only lists share a compact name column bounded by terminal width, reserving space for the selection marker and reclaimable size. Pass full, terminal-safe names separately to the shared selector so truncation never changes search or name order. Locked by the `slim rows fit`, `slim searches the full name` and `slim name sorting` cases in `tests/slim.bats`.
- 
+ - `bin/clean.sh` owns clean command orchestration, section output, and safe cleanup execution. Run `MOLE_TEST_NO_AUTH=1 bats tests/clean_core.bats tests/clean_apps.bats tests/cli.bats tests/clean_summary_cancel.bats tests/clean_developer_state.bats`.
+ - Section output follows one fixed rhythm: title, then loading state, then content, then one trailing blank line, for every section. When touching any step of it, re-run the command and read the whole rendered output (column alignment, block spacing, icon consistency) instead of patching the one step that was reported.
++- **Rows report what Mole did, once.** A `safe_clean` row that measured 0B still removes and counts its items but prints nothing, unless a sizing timeout made the 0B unknown; roots that share a label clean in one call so per-profile caches read as one row; Large files skips the DerivedData row once developer tools covered every project (`_MOLE_DERIVED_DATA_COVERED`); counts go through `mole_count_label` (`1 item`). The summary box holds two lines: `Removed: X · N items` plus the free-space line, or `Potential space: X · N items` plus the file list. Locked by `safe_clean removes a 0B target without printing a row for it` (`tests/clean_core.bats`), `clean_wechat_container_caches cleans every web profile in one row per cache kind` and `large files leaves out DerivedData that developer tools already covered`.
++- **Review rows go through `mole_review_row`: `⊙ label · value · fact`.** On a terminal the label is an OSC 8 link to the path, so the row carries no path or command field; plain output keeps the path last. The fact is worked out read-only and bounded (`_large_dir_fact`: simulator count, archive builds and month range, pnpm store versions, project count; version folders besides the default for Rust and NDK) and is dropped, never guessed, when its probe fails. Do not add a command for the user to run where Mole can state the fact itself; two of three suggested commands freed nothing on the maintainer's Mac (2026-10-31). Locked by `large files links each review label to its full path` and `large files names what the simulator and pnpm rows hold` in `tests/clean_user_core.bats`.
+ - `_safe_clean_impl` skips targets that do not currently exist before expensive policy probes, then filters protected, whitelisted, and compiled-model targets before consulting the dry-run guard or registering previews. Every surviving target is revalidated at its action boundary, so preview and real cleanup keep the same eligible set. A delete guard that refuses only the path it was handed names it in `_MOLE_SAFE_CLEAN_SKIP_PATH`, which skips that target and continues the batch; any other nonzero guard status stops with 75 and a timeout or signal cancels. `safe_clean_guarded skips only the path its guard names and keeps going` in `tests/clean_core.bats` locks it.
+ - `normalize_paths_for_cleanup` collapses a Gradle DSL path only in the `<version>/groovy-dsl|kotlin-dsl/<hash>` layout, because the `*` in its case glob spans slashes and a deeper directory that merely contains `groovy-dsl` would otherwise widen to its parent.
+ - **A `declare -f` probe into `bin/` is a shared shim, never a per-file copy.** Asking whether `safe_clean_guarded` or `defer_cleanup_family` exists is asking whether `bin/clean.sh` is loaded: always in production, never in a standalone Bats case. Use `mole_defer_cleanup_family`, or call `safe_clean_guarded` directly and let the test supply it. The audited fallback cap may decrease after consolidation but needs an explicit reason to increase. Do not hoist `_safe_clean_impl` into `lib/core/`; many tests intentionally replace `safe_clean`, and bypassing that seam turns assertions into real deletion attempts under their fixture `HOME`.
 ```
 
-**File**: `bin/slim.sh` (modified, +86/-33)
+**File**: `README.md` (modified, +5/-5)
 ```diff
-@@ -48,7 +48,9 @@ SLIM_APP_PLANS=()
- total_slimmed=0
- total_freed_bytes=0
- total_failed=0
--SLIM_FAILURES=()
-+SLIM_DONE_NAMES=()
-+SLIM_FAILED_NAMES=()
-+SLIM_FAILED_REASONS=()
+@@ -189,7 +189,7 @@ Clean Your Mac
  
- show_slim_help() {
-     echo "Usage: mo slim [OPTIONS]"
-@@ -177,7 +179,7 @@ slim_skip_reason() {
-         return
-     }
-     if [[ "$check_running" == true ]] && slim_app_is_running "$app"; then
--        echo "running, quit it and retry"
-+        echo "still running"
-         return
-     fi
-     return 0
-@@ -473,7 +475,9 @@ print_slim_list() {
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
  
- record_slim_failure() {
-     local app="$1" reason="$2"
--    SLIM_FAILURES+=("${app##*/} ($reason)")
-+    local name="${app##*/}"
-+    SLIM_FAILED_NAMES+=("${name%.app}")
-+    SLIM_FAILED_REASONS+=("$reason")
-     total_failed=$((total_failed + 1))
-     log_operation "$MOLE_CURRENT_COMMAND" "SKIPPED" "$app" "$reason"
- }
-@@ -612,7 +616,7 @@ slim_one_app() {
-     # The app may have started while the copy was checked.
-     if slim_app_is_running "$app"; then
-         slim_discard_stage "$stage"
--        record_slim_failure "$app" "running, quit it and retry"
-+        record_slim_failure "$app" "still running"
-         return 0
-     fi
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
  
-@@ -642,6 +646,7 @@ slim_one_app() {
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
  
-     slim_discard_stage "$stage"
-     total_slimmed=$((total_slimmed + 1))
-+    SLIM_DONE_NAMES+=("${SLIM_APP_NAMES[index]}")
-     total_freed_bytes=$((total_freed_bytes + bytes))
-     log_operation "$MOLE_CURRENT_COMMAND" "REBUILT" "$app" "removed Intel code, $(bytes_to_human "$bytes")"
-     return 0
-@@ -675,58 +680,92 @@ select_slim_apps() {
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
  
- confirm_slim_selection() {
-     local -a indices=("$@")
--    local idx total=0
--    echo -e "${PURPLE_BOLD}Apps to slim:${NC}"
-+    local idx total=0 running=false tag
-+    echo -e "\n${PURPLE_BOLD}Apps to slim:${NC}"
-     for idx in "${indices[@]}"; do
--        printf '  %s%s%s %s %s, %s%s\n' "$GREEN" "$ICON_SUCCESS" "$NC" \
--            "$(mole_terminal_safe_text "${SLIM_APP_NAMES[idx]}")" "$GRAY" "$(bytes_to_human "${SLIM_APP_BYTES[idx]}")" "$NC"
-+        tag=""
-+        if slim_app_is_running "${SLIM_APP_PATHS[idx]}"; then
-+            tag=" ${YELLOW}[Running]${NC}"
-+            running=true
-+        fi
-+        printf '%b%s%b\n' "${BLUE}${ICON_CONFIRM}${NC} " "$(mole_terminal_safe_text "${SLIM_APP_NAMES[idx]}")" \
-+            " ${GRAY}, $(bytes_to_human "${SLIM_APP_BYTES[idx]}")${NC}${tag}"
-         total=$((total + SLIM_APP_BYTES[idx]))
-     done
-     echo ""
-     echo -e "${GRAY}Originals move to the Trash. App updates bring the Intel code back.${NC}"
--    echo -ne "${PURPLE}${ICON_ARROW}${NC} Slim ${#indices[@]} apps, $(bytes_to_human "$total")  ${GREEN}Enter${NC} confirm, ${GRAY}ESC${NC} cancel: "
-+    [[ "$running" == false ]] || echo -e "${GRAY}Running apps are skipped, quit them before you confirm.${NC}"
-+    local app_text="apps"
-+    [[ ${#indices[@]} -gt 1 ]] || app_text="app"
-+    echo -ne "${PURPLE}${ICON_ARROW}${NC} Slim ${#indices[@]} ${app_text}, $(bytes_to_human "$total")  ${GREEN}Enter${NC} confirm, ${GRAY}ESC${NC} cancel: "
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
  
-     local confirm
-     if ! IFS= read -r -s -n1 confirm; then
-         printf '\n'
-         return 1
-     fi
-+    printf '\n'
-     case "$confirm" in
--        "" | $'\n' | $'\r')
--            printf '\r\033[K\n'
--            return 0
--            ;;
-+        "" | $'\n' | $'\r') return 0 ;;
-     esac
-     printf '\n'
-     return 1
- }
- 
-+# Mirrors the uninstall summary: slimmed apps three per line, then the apps
-+# left unchanged grouped by reason so six running apps read as one line.
- show_slim_summary() {
--    local heading="Apps slimmed"
-     local -a details=()
--    if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
--        heading="Dry run complete - no changes made"
--    elif [[ $total_failed -gt 0 ]]; then
--        heading="Slimming incomplete"
--    fi
-+    local i name
- 
-     if [[ $total_slimmed -gt 0 ]]; then
--        if [[ "${MOLE_DRY_RUN:-0}" == "1" ]]; then
--            details+=("Would slim ${GREEN}$total_slimmed${NC} apps, free ${GREEN}$(bytes_to_human "$total_freed_bytes")${NC}")
--        else
--            details+=("Slimmed ${GREEN}$total_slimmed${NC} apps, freed ${GREEN}$(bytes_to_human "$total_freed_bytes")${NC} once the Trash is emptied")
--        fi
--    else
--        details+=("No apps were slimmed")
-+        local app_text="apps"
-+        [[ $total_slimmed -gt 1 ]] || app_text="app"
-+        local line="Slimmed ${total_slimmed} ${app_text}, freed ${GREEN}$(bytes_to_human "$total_freed_bytes")${NC}: "
-+        for ((i = 0; i < ${#SLIM_DONE_NAMES[@]}; i++)); do
-+            if ((i > 0 && i % 3 == 0)); then
-+                details+=("$line")
-+                line=""
-+            elif ((i > 0)); then
-+                line+=", "
-+            fi
-+            name=$(mole_terminal_safe_text "${SLIM_DONE_NAMES[i]}")
-+            line+="${GREEN}${name//\\/\\\\}${NC}"
-+        done
-+        details+=("$line")
-     fi
- 
--    local failure
--    for failure in "${SLIM_FAILURES[@]+"${SLIM_FAILURES[@]}"}"; do
--        failure=$(mole_ter
+ ======================================================================
+ Optimization Complete
 ```
 
-**File**: `tests/slim.bats` (modified, +31/-9)
+**File**: `README_CN.md` (modified, +5/-5)
 ```diff
-@@ -409,12 +409,12 @@ PLIST
- 		slim_preflight || exit 9
- 		collect_slim_candidates || exit 8
- 		slim_one_app 0 || exit 7
--		echo "slimmed=$total_slimmed failed=${SLIM_FAILURES[*]}"
-+		echo "slimmed=$total_slimmed failed=${SLIM_FAILED_NAMES[*]} (${SLIM_FAILED_REASONS[*]})"
- 		ls "$SLIM_WORK_DIR"
- 	' bash "$PROJECT_ROOT/bin/slim.sh"
+@@ -189,7 +189,7 @@ Clean Your Mac
  
- 	[ "$status" -eq 0 ]
--	[[ "$output" == *"slimmed=0 failed=Fixture.app (Gatekeeper check failed)"* ]] || return 1
-+	[[ "$output" == *"slimmed=0 failed=Fixture (Gatekeeper check failed)"* ]] || return 1
- 	[[ "$output" != *"app."* ]] || return 1
- 	[[ "$(stat -f '%i' "$app/Contents/MacOS/Fixture")" == "$before" ]] || return 1
- 	[[ "$(lipo -archs "$app/Contents/MacOS/Fixture")" == *x86_64* ]] || return 1
-@@ -472,12 +472,12 @@ exec /usr/bin/codesign \"\$@\""
- 		slim_preflight || exit 9
- 		collect_slim_candidates || exit 8
- 		slim_one_app 0 || exit 7
--		echo "slimmed=$total_slimmed failed=${SLIM_FAILURES[*]}"
-+		echo "slimmed=$total_slimmed failed=${SLIM_FAILED_NAMES[*]} (${SLIM_FAILED_REASONS[*]})"
- 		ls "$SLIM_WORK_DIR"
- 	' bash "$PROJECT_ROOT/bin/slim.sh"
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
  
- 	[ "$status" -eq 0 ]
--	[[ "$output" == *"slimmed=0 failed=Fixture.app (code signature already invalid)"* ]] || return 1
-+	[[ "$output" == *"slimmed=0 failed=Fixture (code signature already invalid)"* ]] || return 1
- 	[[ "$output" != *"app."* ]] || return 1
- 	[[ "$(lipo -archs "$app/Contents/MacOS/Fixture")" == *x86_64* ]] || return 1
- 	[ -z "$(ls -A "$TRASH_DIR")" ]
-@@ -573,12 +573,12 @@ exec /usr/bin/codesign \"\$@\""
- 		collect_slim_candidates || exit 8
- 		echo "listed=${#SLIM_APP_PATHS[@]}"
- 		slim_one_app 0 || exit 7
--		echo "failed=${SLIM_FAILURES[*]}"
-+		echo "failed=${SLIM_FAILED_NAMES[*]} (${SLIM_FAILED_REASONS[*]})"
- 	' bash "$PROJECT_ROOT/bin/slim.sh"
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
  
- 	[ "$status" -eq 0 ]
- 	[[ "$output" == *"listed=1"* ]] || return 1
--	[[ "$output" == *"failed=Fixture.app (running, quit it and retry)"* ]] || return 1
-+	[[ "$output" == *"failed=Fixture (still running)"* ]] || return 1
- 	[[ "$(lipo -archs "$app/Contents/MacOS/Fixture")" == *x86_64* ]] || return 1
- 	[ -z "$(ls -A "$TRASH_DIR")" ]
- }
-@@ -599,28 +599,50 @@ exec /usr/bin/codesign \"\$@\""
- 		slim_app_is_running() { [[ -e "$started_marker" ]]; }
- 		slim_verify_copy() { touch "$started_marker"; }
- 		slim_one_app 0 || exit 7
--		echo "failed=${SLIM_FAILURES[*]}"
-+		echo "failed=${SLIM_FAILED_NAMES[*]} (${SLIM_FAILED_REASONS[*]})"
- 	' bash "$PROJECT_ROOT/bin/slim.sh" "$BATS_TEST_TMPDIR/started"
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
  
- 	[ "$status" -eq 0 ]
--	[[ "$output" == *"failed=Fixture.app (running, quit it and retry)"* ]] || return 1
-+	[[ "$output" == *"failed=Fixture (still running)"* ]] || return 1
- 	[[ "$(lipo -archs "$app/Contents/MacOS/Fixture")" == *x86_64* ]] || return 1
- 	[ -z "$(ls -A "$TRASH_DIR")" ]
- }
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
  
- @test "slim confirmation requires a successful Enter read" {
- 	run slim_env /bin/bash -c '
- 		source "$1"
-+		SLIM_APP_PATHS=("$2/Fixture.app")
- 		SLIM_APP_NAMES=(Fixture)
- 		SLIM_APP_BYTES=(1024)
- 		if confirm_slim_selection 0 </dev/null; then echo EOF_CONFIRMED; fi
- 		if confirm_slim_selection 0 < <(printf "\n"); then echo ENTER_CONFIRMED; fi
--	' bash "$PROJECT_ROOT/bin/slim.sh"
-+	' bash "$PROJECT_ROOT/bin/slim.sh" "$BATS_TEST_TMPDIR"
- 	[ "$status" -eq 0 ]
- 	[[ "$output" != *EOF_CONFIRMED* ]] || return 1
- 	[[ "$output" == *ENTER_CONFIRMED* ]]
- }
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
  
-+@test "slim summary lists slimmed apps and groups kept apps by reason" {
-+	run slim_env /bin/bash -c '
-+		source "$1"
-+		SLIM_DONE_NAMES=(Claude Sketch NetNewsWire MiaoYan)
-+		total_slimmed=4
-+		total_freed_bytes=1048576
-+		SLIM_FAILED_NAMES=(Stash ScreenFlow Kaku)
-+		SLIM_FAILED_REASONS=("still running" "code signature check failed" "still running")
-+		total_failed=3
-+		show_slim_summary | sed $'"'"'s/\033\\[[0-9;]*m//g'"'"'
-+	' bash "$PROJECT_ROOT/bin/slim.sh"
-+	[ "$status" -eq 0 ] || { echo "$output"; return 1; }
-+	[[ "$output" == *"Slim incomplete"* ]] || return 1
-+	[[ "$output" == *"Slimmed 4 apps, freed 1.0MB: Claude, Sketch, NetNewsWire"* ]] || return 1
-+	[[ "$output" == *$'\nMiaoYan\n'* ]] || return 1
-+	[[ "$output" == *"Still running: Stash, Kaku"* ]] || return 1
-+	[[ "$output" == *"Code signature check failed: ScreenFlow"* ]] || return 1
-+	[[ "$output" != *".app"* ]] || return 1
-+	[ "$(grep -c "Still running" <<< "$output")" -eq 1 ]
-+}
-+
- @test "slim slice output never follows a pre-existing suffix symlink" {
- 	[[ "$SLIM_HAVE_FAT_TOOLCHAIN" == "1" ]] || skip "needs clang and a developer directory"
- 	local file="$BATS_TEST_TMPDIR/thin-me" outside="$BATS_TEST_TMPDIR/outside"
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_DE.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_FR.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_JA.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_KR.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
+```
+
+**File**: `README_RU.md` (modified, +5/-5)
+```diff
+@@ -189,7 +189,7 @@ Clean Your Mac
+ 
+ ======================================================================
+ Cleanup complete
+-Tracked cleanup: 4.5GB | Items cleaned: 97 | Categories: 4
++Removed: 4.5GB · 97 items
+ Free space: 223.5GB (+4.5GB)
+ ======================================================================
+ ```
+@@ -241,17 +241,17 @@ PERFORMANCE DIAGNOSIS
+   ✓ No sustained high-CPU bottleneck detected
+ 
+ ➤ Finder Cache Refresh
+-  → QuickLook thumbnails refreshed
+-  → Icon services cache rebuilt
++  ✓ QuickLook thumbnails refreshed
++  ✓ Icon services cache rebuilt
+ 
+ ➤ Network Cache Refresh
+-  → DNS cache refreshed
++  ✓ DNS cache refreshed
+ 
+ ➤ Database Optimization
+   ◎ Close these apps before database optimization: Safari
+ 
+ ➤ Disk Health
+-  → Disk verify skipped
++  ✓ Disk verify skipped
+ 
+ ======================================================================
+ Optimization Complete
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1842** (2026-10-24): fix(optimize): accept -n as alias for --dry-run (@viniciusdsandrade)
-- **PR #1840** (2026-10-24): fix(touchid): cancel when menu confirmation input closes (@viniciusdsandrade)
-- **PR #1838** (2026-10-24): fix(completion): cancel when confirmation input closes (@viniciusdsandrade)
-- **PR #1835** (2026-10-24): fix(clean): detect missing Full Disk Access by reading protected paths (@jkimdev)
-- **PR #1833** (2026-10-24): fix(status): show the routed interface's IP in the network card (@lilu007-github)
-- **PR #1830** (closed): test(perf): check get_file_size's fork count structurally, not by timing (@noah-qin)
+- **PR #1890** (2026-10-30): feat(clean): add BrowserOS cache cleanup support (@thecoldblooded)
+- **PR #1889** (2026-10-30): fix(clean): show verbose Docker usage hint (@r266-tech)
+- **PR #1887** (closed): fix(whitelist): include Bun package cache in cache catalog (@viniciusdsandrade)
+- **PR #1881** (closed): perf(clean): measure Large files rows while the sections before it run (@sebastianbreguel)
+- **PR #1880** (2026-10-29): perf(clean): start the project cache scan before the first section (@sebastianbreguel)
+- **PR #1879** (2026-10-29): perf(clean): stop waiting on a held uv cache lock (@sebastianbreguel)
 
 ---
 
@@ -3067,28 +2542,31 @@ three per line and groups unchanged apps by reason with one next action.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clean): protect active caches and measure reclaimable blocks
+## X. clean): clean the yarn berry global cache instead of ~/.yarn/cache
 
 **RULE**:
-When implementing operations in `.claude/rules/core.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/clean/dev.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Mole. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52c5a7fa`: clean): protect active caches and measure reclaimable blocks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `21d44166`: clean): clean the yarn berry global cache instead of ~/.yarn/cache. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/core.md`.
+Subsystems managing Shell data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/clean/dev.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```shell
 // Verified production-grade fix pattern:
-- **A cleanup total counts readable bytes, and only a timeout makes it a lower bound.** A folder Mole cannot list it cannot remove either, so cleanup sizing retains readable-file totals. `get_path_size_kb` still provides the `readable` mode for callers using `du`; uninstall keeps its strict default (#1404). Clean's `get_cleanup_path_size_kb` and its bulk path share `_cleanup_path_sizes_kb`: allocated file blocks, internal hardlinks counted once only when every link is inside that candidate, and uncompressed APFS private bytes where supported. Symlinks are not followed, directory metadata is excluded, compressed or unsupported private-size probes use allocated bytes, and timed-out bulk results are discarded. Separate candidates deliberately do not claim external hardlink blocks even when both are selected. Sparse files and fully shared clones must not report their logical lengths as freed; real fixtures in `tests/file_ops_size.bats` lock these cases. Before this, six unavailable simulators holding 7.73GB were counted as 0 and the run printed `At least`, which read as a timeout that never happened. `mole_item_size_continues` marks the total partial only for a real timeout, a timeout 
+    # Yarn Berry keeps .yarn/cache inside each project and its shared global
+    # cache in ~/.yarn/berry/cache; ~/.yarn/cache is never written. Yarn
+    # Classic on macOS uses ~/Library/Caches/Yarn.
+    safe_clean ~/.yarn/berry/cache/* "Yarn Berry cache"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```shell
 // Anti-pattern to NEVER write (induced failure mode):
-- **A cleanup total counts readable bytes, and only a timeout makes it a lower bound.** `du` exits 1 when it cannot list a folder, after printing everything it could read; a folder Mole cannot list it cannot remove either, so cleanup sizing passes `readable` to `get_path_size_kb` and takes that total. Uninstall keeps the strict default (#1404). Before this, six unavailable simulators holding 7.73GB were counted as 0 and the run printed `At least`, which read as a timeout that never happened. `mole_item_size_continues` marks the total partial only for a real timeout, a timeout names its path in the debug log, and the partial total prints as `3.27GB+`, the same form as the Build artifacts hint. Locked by `cleanup sizing counts the readable bytes of a folder with an unlistable child`, `only a sizing timeout marks the cleanup total as a lower bound` and `a sizing timeout names the item in the debug log` in `tests/file_ops_size.bats`.
+    safe_clean ~/.yarn/cache/* "Yarn cache"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52c5a7fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `21d44166` are properly handled with clean fallback behavior.

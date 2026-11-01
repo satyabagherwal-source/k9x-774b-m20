@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source**: github ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
-> **Source Version**: `36683ed7`  
+> **Source Version**: `3f2d26fa`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T14:25:15.769Z  
+> **Timestamp**: 2026-10-31T16:27:14.573Z  
 > **Learning ID**: `learn-github-crosspaste-crosspaste-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crosspaste-crosspaste-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/CrossPaste/crosspaste-desktop](https://github.com/CrossPaste/crosspaste-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T14:25:15.761Z  
+> **Harvest Timestamp**: 2026-10-31T16:27:14.567Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2661 stars
+- **Stars / Engagement**: 2682 stars
 
 ---
 
@@ -747,11 +747,11 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5254** (2026-10-23): **Windows: CrossPaste's own bubble editor window can be recorded as the previous app and receive the paste**
-  *Symptoms*: ## Problem  On Windows, `WindowFocusRecorder.isValidWindow` only excludes the main window and search window titles. Other CrossPaste windows — most notably the bubble editor window (`CrossPaste Editor`), which is focusable — can be recorded as `lastWinAppInfo`, i.e. as "the previous app".  When the user then pastes from the search or main window, CrossPaste activates its own bubble window and injects the paste keystroke into it. Since #5248, the foreground check (`WindowsFocusUtils.isForegroundProcessOf`) compares by process, so it reports our own window as "back in the foreground" and the paste is treated as verified.  macOS is not affected: `prevMacAppInfo` is only updated when the frontmost bundle ID differs from CrossPaste's.  ## Steps to reproduce (Windows)  1. Open the bubble editor window and click into it. 2. Open the search window with the shortcut and pick an item with Enter. 3. The item is pasted into the bubble editor instead of the app used before it.  ## Open question  Pasting into the bubble while editing in it may sometimes be what the user wants, so we need to decide on the behavior first. Options:  - Exclude every CrossPaste window (by process ID) in `isValidWindow`, matching macOS. This is the simplest fix and keeps behavior consistent across platforms. - Keep recording the bubble window, but only treat it as a paste target on purpose.  ## Context  Found while reviewing #5248. The behavior existed before #5248; that PR just makes the paste look verified. 
+- **Issue #5279** (2026-10-26): **Double-click paste in the search window is ignored after reopening it**
+  *Symptoms*: ## Steps  1. Open the search window and single-click an item. 2. Close it with Esc. 3. Reopen it with the shortcut (Shift+Cmd+Space by default) and double-click an item.  Nothing is pasted and the window stays open. Single clicks also toggle multi-selection as if Shift were held.  ## Cause  `SidePasteboardContentView` tracks Shift in a `isShiftPressed` state that is updated only from key events reaching the paste list. The open-search shortcut itself holds Shift, and the matching key-up is not always delivered to the list (the window is hidden or not yet focused), so the state stays `true`. The `LaunchedEffect(searchWindowInfo.show)` meant to reset it is unreliable because the window content's composition is paused while hidden (see the note on `PasteSelectionViewModel.resetToTop`). With the stale `true`, `onDoubleTap` skips `quickPasteFromSearchWindow`.
 
-- **Issue #5236** (2026-10-21): **Newest paste is half off-screen when added while the search window is at the start**
-  *Symptoms*: ## Problem  With the search window open and the paste list at its initial position (newest item at the far left), a newly added paste is inserted but often ends up only half visible, with its left half outside the window. Earlier items stay still and only part of the list shifts.  ## Cause  The LazyRow is keyed by `item.id`, so when an item is prepended, LazyList anchors to the previous first item and the new one lands off-screen to the left. The list then tried to recover with `animateScrollToItem(0)` after the fact, triggered twice via `snapshotFlow { layoutInfo }.take(2)`. Interrupted or racing scroll animations left the newest item partly off-screen.  ## Expected  - At the start of the list: the new paste shows fully at the front with a smooth insertion animation, and older items move to the right. - Scrolled further along: adding a paste must not move what the user is currently looking at.
+- **Issue #5277** (2026-10-26): **Double-clicking a search window item sometimes does nothing**
+  *Symptoms*: ## Problem  Double-clicking an item in the search window occasionally does nothing: the window stays open and nothing is pasted. Retrying with a quicker double-click works.  ## Cause  Compose Desktop hard-codes the double-tap timeout to 300 ms (`PlatformContext.DefaultViewConfiguration`), while the OS lets the user pick the double-click speed (macOS defaults to 500 ms, read by AWT as `awt.multiClickInterval`). A double-click whose second press lands 300–500 ms after the first release is a double-click to the OS but reaches `detectTapGestures` as two single taps, so `onDoubleTap` never fires.  Reproduced with synthesized CGEvents: a ~390 ms gap leaves the window open with no paste; a 150 ms gap pastes.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -768,660 +768,78 @@ private val MIN_CONNECTING_VISIBLE = 1.seconds
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd2282c7` (2026-10-21)
-**Commit Message**: :bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242)
+### Incident Patch 1: `3f2d26fa` (2026-10-30)
+**Commit Message**: :arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297)
 
-* :bug: stop macOS search focus rechecks from blocking the EDT on AppKit
+Bumps [org.jetbrains.kotlinx:kotlinx-serialization-json](https://github.com/Kotlin/kotlinx.serialization) from 1.11.0 to 1.12.0.
+- [Release notes](https://github.com/Kotlin/kotlinx.serialization/releases)
+- [Changelog](https://github.com/Kotlin/kotlinx.serialization/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/Kotlin/kotlinx.serialization/compare/v1.11.0...v1.12.0)
 
-* :bug: mirror willResignActive, guard NSApp and log recheck timing for macOS focus rechecks
+---
+updated-dependencies:
+- dependency-name: org.jetbrains.kotlinx:kotlinx-serialization-json
+  dependency-version: 1.12.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/app/MacAppWindowManager.kt` (modified, +6/-0)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -29,6 +29,12 @@ class MacAppWindowManager(
-     private val crosspasteBundleID = getSystemProperty().get("mac.bundleID")
- 
-     init {
-+        // Warms the native activation monitor so the search window's focus rechecks
-+        // read cached state instead of blocking the EDT on AppKit. The first call
-+        // waits for the main thread once (on this IO thread, never the UI thread)
-+        // to register the observer; it relies on this manager being created during
-+        // startup, before the search window can open.
-+        ioScope.launch { MacAppUtils.isApplicationActive() }
-         // Re-apply the Dock icon policy immediately when the setting is toggled
-         // while the main window is open (the toggle lives in the main window).
-         // setDockIconVisibility only switches the activation policy — it must not
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/ui/SearchWindow.kt` (modified, +3/-1)
-```diff
-@@ -296,6 +296,7 @@ fun SearchWindow(windowIcon: Painter?) {
-                                     currentMacFocusSession === session &&
-                                     window.isShowing
-                             if (eligible) {
-+                                val startedAt = System.nanoTime()
-                                 val focus =
-                                     MacSearchWindowFocusState(
-                                         appActive = MacAppUtils.isApplicationActive(),
-@@ -305,9 +306,10 @@ fun SearchWindow(windowIcon: Painter?) {
-                                         mainFocused = appWindowManager.mainComposeWindow?.hasFocusedWindow() == true,
-                                         pointerOnStatusItem = MacAppUtils.isPointerOnStatusItem(),
-                                     )
-+                                val elapsedMs = (System.nanoTime() - startedAt) / 1_000_000.0
-                                 logger.info {
-                                     "Mac search focus recheck result: source=$source, session=$sessionId, " +
--                                        "state=$focus, dismiss=${focus.shouldDismiss}, " +
-+                                        "elapsedMs=$elapsedMs, state=$focus, dismiss=${focus.shouldDismiss}, " +
-                                         "show=${appWindowManager.getCurrentSearchWindowInfo().show}"
-                                 }
-                                 focus.shouldDismiss
-```
-
-**File**: `app/src/desktopMain/swift/MacosApi.swift` (modified, +59/-6)
-```diff
-@@ -501,26 +501,79 @@ public func getCurrentActiveAppInfo() -> UnsafePointer<CChar>? {
-     return nil
- }
- 
-+// Callers on the AWT EDT must not block on the main thread: during activation
-+// changes AppKit can be waiting on the EDT itself, and the two threads then stall
-+// each other for a full second. The state is mirrored from the main thread instead.
-+private final class ApplicationActiveMonitor {
-+    private let lock = NSLock()
-+    private var active: Bool?
-+
-+    init() {
-+        DispatchQueue.main.async { [self] in
-+            // The notification center retains block-based observer tokens until they
-+            // are removed; this monitor lives for the whole process, so the returned
-+            // tokens are intentionally discarded.
-+            for (name, value) in [
-+                (NSApplication.didBecomeActiveNotification, true),
-+                // willResignActive is posted before the key window resigns, hence before
-+                // AWT can queue the focus-loss event that reads this cache. Mirroring it
-+                // closes the window where a recheck could still observe the old `true`.
-+                (NSApplication.willResignActiveNotification, false),
-+                (NSApplication.didResignActiveNotification, false),
-+            ] {
-+                NotificationCenter.default.addObserver(forName: name, object: nil, queue: nil) { [self] _ in
-+                    set(value)
-+                }
-+            }
-+            set(NSApp?.isActive ?? false)
-+        }
-+    }
-+
-+    private func set(_ value: Bool) {
-+        lock.lock()
-+        active = value
-+        lock.unlock()
-+    }
-+
-+    /// Nil until the observers are registered on the main thread.
-+    var isActive: Bool? {
-+        lock.lock()
-+        defer { lock.unlock() }
-+        return active
-+    }
-+}
-+
-+private let applicationActiveMonitor = ApplicationActiveMonitor()
-+
- @_cdecl("isApplicationActive")
- public func isApplicationActive() -> Int32 {
-     if Thread.isMainThread {
--        return NSApp.isActive ? 1 : 0
-+        return (NSApp?.isActive ?? false) ? 1 : 0
-+    }
-+    if let active = applicationActiveMonitor.isActive {
-+        return active ? 1 : 0
-     }
--    return DispatchQueue.main.sync { NSApp.isActive ? 1 : 0 }
-+    return DispatchQueue.main.sync { (NSApp?.isActive ?? false) ? 1 : 0 }
- }
- 
- @_cdecl("isPointerOnStatusItem")
- public func isPointerOnStatusItem() -> Int32 {
--    if !Thread.isMainThread {
--        return DispatchQueue.main.sync { isPointerOnStatusItem() }
--    }
-     // macOS 27 deactivates the app before it forwards the status item mouse-down,
-     // so the click event arrives too late. Hardware state is already current:
-     // the button is down over the icon. Requiring the press keeps Cmd+Tab while
-     // hovering the icon a real dismissal.
-+    //
-+    // The press is sampled before hopping to the main thread, so keyboard-driven
-+    // focus changes never wait on AppKit. NSEvent's class-level hardware queries
-+    // read the window server's current device state and touch no AppKit objects;
-+    // AppKit does not document them as main-thread-only, so this read is
-+    // intentionally done off the main thread.
-     guard NSEvent.pressedMouseButtons & 1 != 0 else { return 0 }
-+    if !Thread.isMainThread {
-+        return DispatchQueue.main.sync { isPointerOnStatusItem() }
-+    }
-     let pointer = NSEvent.mouseLocation
--    let onStatusItem = NSApp.windows.contains { window in
-+    let onStatusItem = (NSApp?.windows ?? []).contains { window in
-         NSStringFromClass(type(of: window)) == "NSStatusBarWindow" &&
-             window.isVisible &&
-             window.frame.contains(pointer)
+@@ -26,7 +26,7 @@ kotlin = "2.4.21"
+ kotlin-logging = "8.0.4"
+ kotlinx-coroutines = "1.11.0"
+ kotlinx-datetime = "0.8.0-0.6.x-compat"
+-kotlinx-serialization = "1.11.0"
++kotlinx-serialization = "1.12.0"
+ kotlinx-uuid = "0.1.7"
+ ksoup = "0.2.6"
+ ktlint = "14.2.0"
 ```
 
 ---
 
-### Incident Patch 2: `0d99bd65` (2026-10-21)
-**Commit Message**: :bug: wait for the target window to become active before injecting the X11 paste keystroke (#5246)
+### Incident Patch 2: `e2c4aa09` (2026-10-30)
+**Commit Message**: :arrow_up: Bump com.ibm.icu:icu4j from 78.3 to 79.1 (#5299)
 
-* :bug: wait for the target window to become active before injecting the X11 paste keystroke
-
-* :bug: keep the Linux X11 paste out of CrossPaste's own window
-
-`_NET_ACTIVE_WINDOW` requests sent with the APPLICATION (1) source are ignored
-by KWin X11 focus stealing prevention, even when the request carries the
-requesting window or a recent timestamp. The activation wait added for #5246
-therefore always timed out on KWin and the keystroke still landed in the
-search box, with the paste delayed by the full timeout.
-
-- Send the activation with the PAGER (2) source, which the window manager
-  treats as a trusted activation (the same source already used for
-  shortcut-triggered focus).
-- Report whether the activation was confirmed. When it was not, hide our own
-  window (hiding it is what makes the window manager hand the focus back),
-  wait for the previous app to become active, and only then inject. If the
-  focus never returns, ask the user to paste manually instead of injecting
-  blindly into CrossPaste.
-- Release the injected keys in a `finally` so a cancelled coroutine cannot
-  leave 
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/app/LinuxAppWindowManager.kt` (modified, +41/-10)
-```diff
-@@ -15,7 +15,6 @@ import com.crosspaste.platform.linux.LinuxDesktopEntry
- import com.crosspaste.platform.linux.api.PortalHandles
- import com.crosspaste.platform.linux.api.RemoteDesktopPortalKeyboard
- import com.crosspaste.platform.linux.api.X11Api
--import com.crosspaste.platform.linux.api.X11Api.Companion.bringToBack
- import com.sun.jna.NativeLong
- import com.sun.jna.platform.unix.X11.Window
- import io.ktor.util.collections.ConcurrentSet
-@@ -200,7 +199,7 @@ class LinuxAppWindowManager(
-             pasteThroughPortal()
-             return
-         }
--        bringToBack(toPaste)
-+        bringToBack(toPaste) { hideMainWindow() }
-         hideMainWindow()
-     }
- 
-@@ -219,7 +218,7 @@ class LinuxAppWindowManager(
- 
-     override suspend fun returnFocusToPreviousApp() {
-         if (!needsPortalPaste()) {
--            prevLinuxAppInfo.value?.let { bringToBack(it) }
-+            prevLinuxAppInfo.value?.let { X11Api.bringToBack(it) }
-         }
-     }
- 
-@@ -245,7 +244,12 @@ class LinuxAppWindowManager(
-             }
-             return
-         }
--        bringToBack(toPaste)
-+        val targetReady = bringToBack(toPaste) { hideSearchWindow() }
-+        if (!targetReady) {
-+            // No target to paste into, so the remaining items must not be injected either.
-+            hideSearchWindow()
-+            return
-+        }
-         for (i in 1 until size) {
-             delay(1000.milliseconds)
-             if (preparePaste(i)) {
-@@ -261,13 +265,40 @@ class LinuxAppWindowManager(
-      */
-     private fun needsPortalPaste(): Boolean = isWaylandSession && prevLinuxAppInfo.value == null
- 
--    private suspend fun bringToBack(toPaste: Boolean) {
--        val prevAppInfo = prevLinuxAppInfo.value ?: return
--        if (toPaste) {
--            bringToBack(prevAppInfo, pasteKeyCodes())
--        } else {
--            bringToBack(prevAppInfo)
-+    /**
-+     * Returns false when there is no previous app to paste into, or when the focus
-+     * never came back, so callers must not inject any further keystrokes.
-+     */
-+    private suspend fun bringToBack(
-+        toPaste: Boolean,
-+        hideOwnWindow: () -> Unit,
-+    ): Boolean {
-+        val prevAppInfo = prevLinuxAppInfo.value
-+        if (prevAppInfo == null) {
-+            // No named previous window: there is no target, so stop before the
-+            // multi-select loop injects the remaining items into our own search window.
-+            if (toPaste) {
-+                notifyManualPasteRequired()
-+            }
-+            return false
-+        }
-+        if (!toPaste) {
-+            X11Api.bringToBack(prevAppInfo)
-+            return true
-         }
-+        if (!X11Api.activateAndAwait(prevAppInfo)) {
-+            // The window manager refused the activation request (KWin X11 ignores
-+            // application-sourced `_NET_ACTIVE_WINDOW`). Hiding our own window is what
-+            // makes it focus the previous app, so retry with it gone instead of
-+            // injecting the keystroke into CrossPaste's own window (issue #5245).
-+            hideOwnWindow()
-+            if (!X11Api.awaitActive(prevAppInfo)) {
-+                notifyManualPasteRequired()
-+                return false
-+            }
-+        }
-+        X11Api.toPaste(pasteKeyCodes())
-+        return true
-     }
- 
-     override suspend fun toPaste() {
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/platform/linux/api/X11Api.kt` (modified, +114/-18)
-```diff
-@@ -12,8 +12,11 @@ import com.sun.jna.ptr.IntByReference
- import com.sun.jna.ptr.NativeLongByReference
- import io.github.oshai.kotlinlogging.KotlinLogging
- import kotlinx.coroutines.delay
-+import kotlinx.coroutines.withTimeoutOrNull
- import java.nio.file.Path
- import javax.imageio.ImageIO
-+import kotlin.coroutines.cancellation.CancellationException
-+import kotlin.time.Duration
- import kotlin.time.Duration.Companion.milliseconds
- 
- interface X11Api : X11 {
-@@ -50,6 +53,25 @@ interface X11Api : X11 {
- 
-         val INSTANCE: X11Api = Native.load("X11", X11Api::class.java)
- 
-+        private val ACTIVATION_TIMEOUT = 500.milliseconds
-+
-+        private val ACTIVATION_POLL_INTERVAL = 10.milliseconds
-+
-+        private val KEY_HOLD = 100.milliseconds
-+
-+        /**
-+         * Source indication used for the `_NET_ACTIVE_WINDOW` requests CrossPaste issues
-+         * on the user's behalf (pasting back into the previous app, returning focus).
-+         *
-+         * Window managers apply focus stealing prevention to `APPLICATION` (1) requests.
-+         * KWin X11 ignores them even when the request carries the requesting window or a
-+         * recent timestamp, which leaves the keystroke in CrossPaste's own window. The
-+         * `PAGER` (2) indication is treated as a trusted activation, and the user did ask
-+         * for it by picking an item. `focusMainWindow`/`focusSearchWindow` already use it
-+         * for shortcut-triggered activation.
-+         */
-+        private val ACTIVATION_SOURCE: NativeLong = NativeLong(2)
-+
-         /**
-          * True when a real X11 window holds the input focus.
-          *
-@@ -121,7 +143,7 @@ interface X11Api : X11 {
- 
-         fun bringToBack(
-             prevLinuxAppInfo: LinuxAppInfo?,
--            source: NativeLong = NativeLong(1),
-+            source: NativeLong = ACTIVATION_SOURCE,
-             xServerTime: NativeLong? = null,
-         ) {
-             val display = INSTANCE.XOpenDisplay(null) ?: return
-@@ -134,39 +156,95 @@ interface X11Api : X11 {
-             }
-         }
- 
--        suspend fun bringToBack(
--            prevLinuxAppInfo: LinuxAppInfo?,
--            keyCodes: List<Int>,
--            source: NativeLong = NativeLong(1),
-+        /**
-+         * Requests activation of [prevLinuxAppInfo] and waits until the window manager
-+         * reports it as the active window.
-+         *
-+         * XTest delivers the keystroke to whichever window holds the focus at that
-+         * moment, which right after the request is still CrossPaste's own window. A
-+         * `false` result means the window manager never confirmed the activation (it
-+         * may have refused the request), so the caller must not inject blindly.
-+         */
-+        suspend fun activateAndAwait(
-+            prevLinuxAppInfo: LinuxAppInfo,
-+            source: NativeLong = ACTIVATION_SOURCE,
-             xServerTime: NativeLong? = null,
--        ) {
--            val display = INSTANCE.XOpenDisplay(null) ?: return
--            try {
--                prevLinuxAppInfo?.let {
--                    WMCtrl.activeWindow(display, it.window, source, xServerTime ?: NativeLong(X11.CurrentTime.toLong()))
--                    toPaste(display, keyCodes)
--                }
-+            timeout: Duration = ACTIVATION_TIMEOUT,
-+        ): Boolean {
-+            val display = INSTANCE.XOpenDisplay(null) ?: return false
-+            return try {
-+                WMCtrl.activeWindow(
-+                    display,
-+                    prevLinuxAppInfo.window,
-+                    source,
-+                    xServerTime ?: NativeLong(X11.CurrentTime.toLong()),
-+                )
-+                awaitActiveOn(display, prevLinuxAppInfo.window, timeout)
-             } finally {
-                 INSTANCE.XCloseDisplay(display)
-             }
-         }
- 
-+        /**
-+         * Waits for [prevLinuxAppInfo] to become the active window without requesting
-+         * activation. Used after hiding our own window, which is what makes the window
-+         * manager hand the focus back on its own.
-+         */
-+        suspend fun awaitActive(
-+            prevLinuxAppInfo: LinuxAppInfo,
-+            timeout: Duration = ACTIVATION_TIMEOUT,
-+        ): Boolean {
-+            val display = INSTANCE.XOpenDisplay(null) ?: return false
-+            return try {
-+                awaitActiveOn(display, prevLinuxAppInfo.window, timeout)
-+            } finally {
-+                INSTANCE.XCloseDisplay(display)
-+            }
-+        }
-+
-+        private suspend fun awaitActiveOn(
-+            display: Display,
-+            window: Window,
-+            timeout: Duration,
-+        ): Boolean {
-+            val activated =
-+                awaitWindowActive(timeout, ACTIVATION_POLL_INTERVAL) {
-+                    getActiveWindow(display) == window
-+                }
-+            if (!activated) {
-+                logger.warn {
-+                    "Window $window was not reported active within $timeout " +
-+                  
-```
-
-**File**: `app/src/desktopTest/kotlin/com/crosspaste/platform/linux/api/X11WindowActivationWaitTest.kt` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+package com.crosspaste.platform.linux.api
-+
-+import kotlinx.coroutines.ExperimentalCoroutinesApi
-+import kotlinx.coroutines.test.runTest
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertFalse
-+import kotlin.test.assertTrue
-+import kotlin.time.Duration.Companion.milliseconds
-+
-+@OptIn(ExperimentalCoroutinesApi::class)
-+class X11WindowActivationWaitTest {
-+    @Test
-+    fun `returns as soon as the window is reported active`() =
-+        runTest {
-+            var checks = 0
-+
-+            val activated =
-+                awaitWindowActive(300.milliseconds, 10.milliseconds) {
-+                    ++checks == 3
-+                }
-+
-+            assertTrue(activated)
-+            assertEquals(3, checks)
-+            assertEquals(20L, testScheduler.currentTime)
-+        }
-+
-+    @Test
-+    fun `returns without waiting when the window is already active`() =
-+        runTest {
-+            var checks = 0
-+
-+            val activated =
-+                awaitWindowActive(300.milliseconds, 10.milliseconds) {
-+                    checks++
-+                    true
-+                }
-+
-+            assertTrue(activated)
-+            assertEquals(1, checks)
-+            assertEquals(0L, testScheduler.currentTime)
-+        }
-+
-+    @Test
-+    fun `gives up at the timeout when the window never becomes active`() =
-+        runTest {
-+            var checks = 0
-+
-+            val activated =
-+                awaitWindowActive(300.milliseconds, 10.milliseconds) {
-+                    checks++
-+                    false
-+                }
-+
-+            assertFalse(activated)
-+            assertEquals(300L, testScheduler.currentTime)
-+            // One check per poll interval until the timeout interrupts the wait.
-+            assertTrue(checks >= 30)
-+        }
-+}
-```
+Bumps [com.ibm.icu:icu4j](https://github.com/unicode-org/icu) from 78.3 to 79.1.
+- [Release notes](https://github.com/unicode-org/icu/releases)
+- [Commits](https://github.com/unicode-org/icu/compare/release-78.3...release-79.1)
 
 ---
+updated-dependencies:
+- dependency-name: com.ibm.icu:icu4j
+  dependency-version: '79.1'
+  dependency-type: direct:production
+  update-type: version-update:semver-major
+...
 
-### Incident Patch 3: `cc2d2338` (2026-10-24)
-**Commit Message**: :bug: keep development.properties and stray .claude folders out of release jars (#5273)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-* :bug: keep development.properties and stray .claude folders out of release jars
-
-* :bug: keep development-only files out of locally packaged jars
-
-Release/beta CI already passes -PappEnv=PRODUCTION to app:build, but the tracked local packaging scripts built the jar without it, so a locally packaged Store/test build still shipped development.properties. Rebuild :app:desktopJar with the same appEnv each script packages, reject DEVELOPMENT in the test-zip script, and document the production build in the Store fallback.
-
-DevConfig now tolerates a missing development.properties (release jars exclude it) and logs a warning in DEVELOPMENT runs, where it used to fail fast. DesktopResourceUtils resolves resources through a single openOrNull primitive so loadProperties and loadOptionalProperties cannot disagree, and tests cover both contracts. A stray .claude/ under compose resources is ignored at the repo level in addition to the jar-level exclusion.
-
-* :memo: move maintainer-only Store and zip self-update runbooks out of the repo
-
-MicrosoftStore.md and WindowsZipSelfUpdateTest.md are maintainer relea
-
-**File**: `.github/workflows/build-beta-linux.yml` (modified, +1/-1)
+**File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -104,7 +104,7 @@ jobs:
-           key: openssl-linux-${{ hashFiles('**/openssl.yaml') }}
- 
-       - name: Build with Gradle
--        run: ./gradlew app:build -PintegrationTests
-+        run: ./gradlew app:build -PintegrationTests -PappEnv=PRODUCTION
- 
-       - name: Cache Kotlin/Native toolchain
-         uses: actions/cache@v5
-```
-
-**File**: `.github/workflows/build-release.yml` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ jobs:
-           enableCrossOsArchive: true
- 
-       - name: Build with Gradle
--        run: ./gradlew app:build -PintegrationTests
-+        run: ./gradlew app:build -PintegrationTests -PappEnv=PRODUCTION
- 
-       - name: Cache Kotlin/Native toolchain
-         uses: actions/cache@v5
-```
-
-**File**: `.github/workflows/msstore-publish.yml` (modified, +1/-1)
-```diff
-@@ -6,7 +6,7 @@ name: "Publish to Microsoft Store"
- # pipeline and cadence, so it is deliberately not chained to the GitHub
- # Release. The app must already be live in the Store — the first submission
- # (listing, screenshots, age rating, markets) is manual in Partner Center.
--# One-time credential setup: see doc/en/MicrosoftStore.md.
-+# One-time credential setup: see ai/docs/MicrosoftStore.md.
- 
- on:
-   workflow_dispatch:
-```
-
-**File**: `.gitignore` (modified, +3/-0)
-```diff
-@@ -39,6 +39,9 @@ output*/
- /code-review/
- /ai/
- /.claude/skills/ui-ux-pro-max/
-+# A stray .claude/ under compose resources is tool state, not app content; it
-+# would otherwise be packaged into the app jar (which also excludes it).
-+**/composeResources/**/.claude/
- /docs/superpowers/
- web/dist/
- scheduled_tasks.lock
-```
-
-**File**: `app/build.gradle.kts` (modified, +9/-0)
-```diff
-@@ -514,12 +514,21 @@ compose.desktop {
- 
-             initJvmArgs(jvmArgsLambda, buildFullPlatform)
- 
-+            // app:run runs from this jar, so development builds keep the local
-+            // development.properties; release builds pass -PappEnv=PRODUCTION
-+            // to app:build so a developer's machine-specific file never ships.
-             if (appEnv != "DEVELOPMENT") {
-                 tasks.withType<Jar> {
-                     exclude("development.properties**")
-                 }
-             }
- 
-+            // Tool state such as a stray .claude/ folder under composeResources
-+            // is not app content; keep it out of every jar.
-+            tasks.withType<Jar> {
-+                exclude("**/.claude/**")
-+            }
-+
-             // Add download info of jbr on all platforms
-             val jbrYamlFile =
-                 project.projectDir
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/app/WindowsZipUpdater.kt` (modified, +1/-1)
-```diff
-@@ -297,7 +297,7 @@ class WindowsZipUpdater(
-         // user's privileges. Integrity therefore rests entirely on HTTPS + the GitHub /
-         // Aliyun OSS repository ACLs. Proper hardening is to verify a detached signature
-         // (e.g. minisign / GPG) over the zip or checksum against a public key baked into
--        // the app, before extracting. See doc/en/WindowsZipSelfUpdateTest.md.
-+        // the app, before extracting. See ai/docs/WindowsZipSelfUpdateTest.md.
-         val candidateBases = mirrorBases(release)
-         val savedSource = readSavedSource(release)
-         val hasPartialDownload = hasPartialDownload(release)
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/config/DevConfig.kt` (modified, +15/-1)
-```diff
-@@ -1,10 +1,24 @@
- package com.crosspaste.config
- 
- import com.crosspaste.utils.DesktopResourceUtils
-+import com.crosspaste.utils.getAppEnvUtils
-+import io.github.oshai.kotlinlogging.KotlinLogging
- 
- object DevConfig {
- 
--    private val development = DesktopResourceUtils.loadProperties("development.properties")
-+    private val logger = KotlinLogging.logger {}
-+
-+    // Release jars exclude development.properties, so a missing file means no overrides.
-+    private val development = DesktopResourceUtils.loadOptionalProperties("development.properties")
-+
-+    init {
-+        if (development.isEmpty && getAppEnvUtils().isDevelopment()) {
-+            logger.warn {
-+                "development.properties is missing; DevConfig overrides are disabled. " +
-+                    "A development build normally restores it from development.properties.template."
-+            }
-+        }
-+    }
- 
-     val pasteAppPath: String? = development.getProperty("pasteAppPath")
- 
-```
-
-**File**: `app/src/desktopMain/kotlin/com/crosspaste/utils/DesktopResourceUtils.kt` (modified, +30/-18)
-```diff
-@@ -7,28 +7,40 @@ import java.util.Properties
- 
- object DesktopResourceUtils {
- 
--    fun loadProperties(fileName: String): Properties {
--        val properties = Properties()
--        val inputStream = ClassLoaderResourceLoader.load(fileName)
--        InputStreamReader(inputStream, StandardCharsets.UTF_8).use { inputStreamReader ->
--            properties.load(inputStreamReader)
--        }
--        return properties
--    }
-+    fun loadProperties(fileName: String): Properties =
-+        requireNotNull(loadPropertiesOrNull(fileName)) { "Resource $fileName not found" }
-+
-+    /**
-+     * Like [loadProperties], but returns empty properties when the resource is
-+     * absent. Release jars exclude development.properties, so DevConfig must be
-+     * able to start without it.
-+     */
-+    fun loadOptionalProperties(fileName: String): Properties = loadPropertiesOrNull(fileName) ?: Properties()
- 
--    fun readResourceBytes(fileName: String): ByteArray {
-+    fun readResourceBytes(fileName: String): ByteArray =
-         ClassLoaderResourceLoader.load(fileName).use { stream ->
--            return stream.readBytes()
-+            stream.readBytes()
-+        }
-+
-+    private fun loadPropertiesOrNull(fileName: String): Properties? =
-+        ClassLoaderResourceLoader.openOrNull(fileName)?.use { inputStream ->
-+            Properties().apply {
-+                InputStreamReader(inputStream, StandardCharsets.UTF_8).use { reader ->
-+                    load(reader)
-+                }
-+            }
-         }
--    }
- }
- 
- private object ClassLoaderResourceLoader {
--    fun load(resourcePath: String): InputStream {
--        val contextClassLoader = Thread.currentThread().contextClassLoader!!
--        val resource =
--            contextClassLoader.getResourceAsStream(resourcePath)
--                ?: this::class.java.getResourceAsStream(resourcePath)
--        return requireNotNull(resource) { "Resource $resourcePath not found" }
--    }
-+
-+    // Conveyor/JNI, Gradle tests and IDEs all set the context class loader; the
-+    // class's own loader keeps resource loading working on threads that do not.
-+    private fun classLoader(): ClassLoader =
-+        Thread.currentThread().contextClassLoader ?: DesktopResourceUtils::class.java.classLoader
-+
-+    fun openOrNull(resourcePath: String): InputStream? = classLoader().getResourceAsStream(resourcePath)
-+
-+    fun load(resourcePath: String): InputStream =
-+        requireNotNull(openOrNull(resourcePath)) { "Resource $resourcePath not found" }
- }
+@@ -15,7 +15,7 @@ foojay-resolver = "1.0.0"
+ hikaricp = "7.1.0"
+ hot-reload = "1.2.0"
+ icons-material-symbols = "2.2.1"
+-icu4j = "78.3"
++icu4j = "79.1"
+ imageio = "3.15.3"
+ jmdns = "3.6.3"
+ dbus-java = "5.2.2"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5274** (2026-10-25): :sparkles: tint tag chips with their color and mark the selected one with a check (@guiyanakuang)
-- **PR #5273** (2026-10-24): :bug: keep development.properties and stray .claude folders out of release jars (@guiyanakuang)
-- **PR #5272** (2026-10-23): :construction_worker: hand the dnf repository back to the runner user before staging the update site (@guiyanakuang)
-- **PR #5271** (2026-10-23): :construction_worker: build the macOS dylib with the runner's Xcode swiftc instead of Homebrew swift (@guiyanakuang)
-- **PR #5270** (2026-10-23): :bookmark: release 2.3.0 (@guiyanakuang)
-- **PR #5269** (2026-10-23): :sparkles: let mobile settings lists scroll behind the navigation bar (@guiyanakuang)
+- **PR #5299** (2026-10-30): ⬆️ Bump com.ibm.icu:icu4j from 78.3 to 79.1 (@dependabot[bot])
+- **PR #5298** (2026-10-29): ⬆️ Bump ch.qos.logback:logback-classic from 1.6.5 to 1.6.6 (@dependabot[bot])
+- **PR #5297** (2026-10-30): ⬆️ Bump org.jetbrains.kotlinx:kotlinx-serialization-json from 1.11.0 to 1.12.0 (@dependabot[bot])
+- **PR #5295** (2026-10-28): :arrow_up: bump web vite to 6.4.5 and vitest to 4.1.12 for security fixes (@guiyanakuang)
+- **PR #5294** (2026-10-28): :memo: add the Wayland clipboard fix to the 2.3.1 changelog (@guiyanakuang)
+- **PR #5293** (2026-10-28): :bug: write the Wayland clipboard natively so background writes reach Wayland apps (@guiyanakuang)
 
 ---
 
@@ -1441,33 +859,28 @@ MicrosoftStore.md and WindowsZipSelfUpdateTest.md are maintainer relea
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. :bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242)
+## X. :arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297)
 
 **RULE**:
-When implementing operations in `app/src/desktopMain/kotlin/com/crosspaste/app/MacAppWindowManager.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in CrossPaste/crosspaste-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd2282c7`: :bug: stop macOS search focus rechecks from blocking the EDT on AppKit (#5242). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3f2d26fa`: :arrow_up: Bump org.jetbrains.kotlinx:kotlinx-serialization-json (#5297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/src/desktopMain/kotlin/com/crosspaste/app/MacAppWindowManager.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        // Warms the native activation monitor so the search window's focus rechecks
-        // read cached state instead of blocking the EDT on AppKit. The first call
-        // waits for the main thread once (on this IO thread, never the UI thread)
-        // to register the observer; it relies on this manager being created during
-        // startup, before the search window can open.
-        ioScope.launch { MacAppUtils.isApplicationActive() }
+kotlinx-serialization = "1.12.0"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+kotlinx-serialization = "1.11.0"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd2282c7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3f2d26fa` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `f9bfdd48`  
+> **Source Version**: `31fed7a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:59:52.714Z  
+> **Timestamp**: 2026-10-31T12:29:45.769Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:59:52.711Z  
+> **Harvest Timestamp**: 2026-10-31T12:29:45.617Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2056 stars
+- **Stars / Engagement**: 2072 stars
 
 ---
 
@@ -743,155 +743,300 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9292caba` (2026-10-23)
-**Commit Message**: fix(tcp): refresh endpoint after address changes (#1392)
+### Incident Patch 1: `f068d4c7` (2026-10-30)
+**Commit Message**: fix(utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (#1397)
 
-Changing networkProfile.address can leave controlPlaneEndpoint at the
-previous address when the Service itself does not change. Compare the
-declared endpoint in the Service status check, preserving the existing
-result when the address is unavailable.
+GetRESTClientConfig always overrode the kubeconfig server with the
+in-cluster Service DNS address (<name>.<namespace>.svc:<port>). On
+platforms where the in-cluster Service path is unreachable for the
+management components, the soot manager and the kubeadm phases can
+never reach the TenantControlPlane API server, leaving the kubeadm
+bootstrap RBAC unfinished.
 
-Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
+When the kamaji.clastix.io/kubeconfig-secret-key annotation is set,
+use the server address of the selected kubeconfig (e.g. the
+LoadBalancer endpoint) as the client Host instead. The behavior is
+unchanged when the annotation is not set.
 
-**File**: `internal/resources/k8s_service_resource.go` (modified, +5/-2)
+**File**: `internal/utilities/tenant_client.go` (modified, +8/-1)
 ```diff
-@@ -33,10 +33,13 @@ func (r *KubernetesServiceResource) GetHistogram() prometheus.Histogram {
- 	return serviceCollector
- }
+@@ -63,8 +63,15 @@ func GetRESTClientConfig(ctx context.Context, client client.Client, tenantContro
+ 		return nil, fmt.Errorf("kubeconfig is missing cluster or user entries")
+ 	}
  
--func (r *KubernetesServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-+func (r *KubernetesServiceResource) ShouldStatusBeUpdated(ctx context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-+	address, err := tenantControlPlane.DeclaredControlPlaneAddress(ctx, r.Client)
++	host := fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port)
++	if v, ok := tenantControlPlane.GetAnnotations()[kamajiv1alpha1.KubeconfigSecretKeyAnnotation]; ok && v != "" {
++		if server := kubeconfig.Clusters[0].Cluster.Server; server != "" {
++			host = server
++		}
++	}
 +
- 	return tenantControlPlane.Status.Kubernetes.Service.Name != r.resource.GetName() ||
- 		tenantControlPlane.Status.Kubernetes.Service.Namespace != r.resource.GetNamespace() ||
--		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port
-+		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port ||
-+		err == nil && tenantControlPlane.Status.ControlPlaneEndpoint != net.JoinHostPort(address, strconv.FormatInt(int64(tenantControlPlane.Spec.NetworkProfile.Port), 10))
- }
- 
- func (r *KubernetesServiceResource) ShouldCleanup(*kamajiv1alpha1.TenantControlPlane) bool {
+ 	config := &restclient.Config{
+-		Host: fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port),
++		Host: host,
+ 		TLSClientConfig: restclient.TLSClientConfig{
+ 			CAData:   kubeconfig.Clusters[0].Cluster.CertificateAuthorityData,
+ 			CertData: kubeconfig.AuthInfos[0].AuthInfo.ClientCertificateData,
 ```
 
-**File**: `internal/resources/k8s_service_resource_test.go` (modified, +32/-0)
+**File**: `internal/utilities/tenant_client_test.go` (modified, +185/-0)
 ```diff
-@@ -433,3 +433,35 @@ var _ = Describe("KubernetesServiceResource ExternalIPs", func() {
- 		Expect(reconcile().Spec.ExternalIPs).To(Equal([]string{"203.0.113.10"}))
- 	})
- })
+@@ -5,6 +5,8 @@ package utilities
+ 
+ import (
+ 	"context"
++	"encoding/base64"
++	"fmt"
+ 	"testing"
+ 
+ 	corev1 "k8s.io/api/core/v1"
+@@ -16,6 +18,67 @@ import (
+ 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
+ )
+ 
++const testKubeconfigSecretName = "admin-kubeconfig"
 +
-+var _ = Describe("KubernetesServiceResource control plane endpoint", func() {
-+	DescribeTable("refreshes status after an address change", func(serviceType kamajiv1alpha1.ServiceType, address, endpoint string, expected bool) {
-+		ctx := context.Background()
-+		tcp := &kamajiv1alpha1.TenantControlPlane{
-+			ObjectMeta: metav1.ObjectMeta{Name: "test-tcp", Namespace: "default"},
-+			Spec: kamajiv1alpha1.TenantControlPlaneSpec{
-+				ControlPlane: kamajiv1alpha1.ControlPlane{
-+					Service: kamajiv1alpha1.ServiceSpec{ServiceType: serviceType},
-+				},
-+				NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{Address: address, Port: 6443},
++func testScheme(t *testing.T) *runtime.Scheme {
++	t.Helper()
++
++	scheme := runtime.NewScheme()
++	if err := corev1.AddToScheme(scheme); err != nil {
++		t.Fatalf("failed adding corev1 scheme: %v", err)
++	}
++
++	return scheme
++}
++
++func testKubeconfigYAML(server string) []byte {
++	return []byte(fmt.Sprintf(`apiVersion: v1
++kind: Config
++clusters:
++- cluster:
++    server: %q
++    certificate-authority-data: %s
++  name: tenant
++contexts:
++- context:
++    cluster: tenant
++    user: kubernetes-super-admin
++  name: kubernetes-super-admin@tenant
++current-context: kubernetes-super-admin@tenant
++users:
++- name: kubernetes-super-admin
++  user:
++    client-certificate-data: %s
++    client-key-data: %s
++`,
++		server,
++		base64.StdEncoding.EncodeToString([]byte("fake-ca")),
++		base64.StdEncoding.EncodeToString([]byte("fake-certificate")),
++		base64.StdEncoding.EncodeToString([]byte("fake-key")),
++	))
++}
++
++func testTenantControlPlane(t *testing.T, secret *corev1.Secret, annotations map[string]string) *kamajiv1alpha1.TenantControlPlane {
++	t.Helper()
++
++	port := int32(6443)
++	tcp := &kamajiv1alpha1.TenantControlPlane{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:        "tcp",
++			Namespace:   "default",
++			Annotations: annotations,
++		},
++		Spec: kamajiv1alpha1.TenantControlPlaneSpec{
++			NetworkProfile: kamajiv1alpha1.NetworkProfileSpec{
++				Port: port,
 +			},
-+		}
-+		resource := &resources.KubernetesServiceResource{
-+			Client: fake.NewClientBuilder().WithScheme(runtimeScheme).Build(),
-+		}
-+		Expect(resource.Define(ctx, tcp)).To(Succeed())
-+		_, err := resource.CreateOrUpdate(ctx, tcp)
-+		Expect(err).NotTo(HaveOccurred())
-+		tcp.Status.Kubernetes.Service.Name = tcp.Name
-+		tcp.Status.Kubernetes.Service.Namespace = tcp.Namespace
-+		tcp.Status.Kubernetes.Service.Port = tcp.Spec.NetworkProfile.Port
-+		tcp.Status.ControlPlaneEndpoint = endpoint
++		},
++	}
++	tcp.Status.KubeConfig.Admin.SecretName = secret.Name
 +
-+		Expect(resource.ShouldStatusBeUpdated(ctx, tcp)).To(Equal(expected))
-+	},
-+		Entry("changed ClusterIP address", kamajiv1alpha1.ServiceTypeClusterIP, "203.0.113.20", "203.0.113.10:6443", true),
-+		Entry("changed NodePort address", kamajiv1alpha1.ServiceTypeNodePort, "203.0.113.20", "203.0.113.10:6443", true),
-+		Entry("unchanged address and port", kamajiv1alpha1.ServiceTypeClusterIP, "203.0.113.10", "203.0.113.10:6443", false),
-+		Entry("LoadBalancer without ingress", kamajiv1alpha1.ServiceTypeLoadBalancer, "", "", false),
-+	)
-+})
++	return tcp
++}
++
+ func TestGetRESTClientConfigEmptyKubeconfig(t *testing.T) {
+ 	t.Parallel()
+ 
+@@ -42,3 +105,125 @@ func TestGetRESTClientConfigEmptyKubeconfig(t *testing.T) {
+ 		t.Fatal("expected an error for a kubeconfig without cluster or user entries, got nil")
+ 	}
+ }
++
++func TestGetRESTClientConfigServiceHostWithoutAnnotation(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++
++	config, err := GetRESTClientConfig(context.Background(), c, testTenantControlPlane(t, secret, nil))
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	if expected := "https://tcp.default.svc:6443"; config.Host != expected {
++		t.Errorf("expected Host %q, got %q", expected, config.Host)
++	}
++}
++
++func TestGetRESTClientConfigKubeconfigServerWithAnnotation(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++
++	tcp := testTenantControlPlane(t, secret, map[string]string{
++		kamajiv1alpha1.KubeconfigSecretKeyAnnotation: kubeadmconstants.SuperAdminKubeConfigFileName,
++	})
++
++	config, err := GetRESTClientConfig(context.Background(), c, tcp)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	if expected := "https://100.64.0.22:6443"; config.Host != expected {
++		t.Errorf("expected Host %q, got %q", expected, config.Host)
++	}
++}
++
++func TestGetRESTClientConfigKubeconfigServerWithCustomKeyAnnotation(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML("https://100.64.0.22:6443"),
++			kubeadmconstants.AdminKubeConfigFileName:      testKubeconfigYAML("https://100.64.0.23:6443"),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Build()
++
++	tcp := testTenantControlPlane(t, secret, map[string]string{
++		kamajiv1alpha1.KubeconfigSecretKeyAnnotation: kubeadmconstants.AdminKubeConfigFileName,
++	})
++
++	config, err := GetRESTClientConfig(context.Background(), c, tcp)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	if expected := "https://100.64.0.23:6443"; config.Host != expected {
++		t.Errorf("expected Host %q, got %q", expected, config.Host)
++	}
++}
++
++func TestGetRESTClientConfigServiceHostWhenKubeconfigServerIsEmpty(t *testing.T) {
++	t.Parallel()
++
++	secret := &corev1.Secret{
++		ObjectMeta: metav1.ObjectMeta{Name: testKubeconfigSecretName, Namespace: "default"},
++		Data: map[string][]byte{
++			kubeadmconstants.SuperAdminKubeConfigFileName: testKubeconfigYAML(""),
++		},
++	}
++
++	c := fake.NewClientBuilder().WithScheme(testScheme(t)).WithObjects(secret).Bui
 ```
 
 ---
 
-### Incident Patch 2: `f9bfdd48` (2026-10-23)
-**Commit Message**: fix(datastore): keep MySQL TLS config off the global driver registry (#1390)
+### Incident Patch 2: `31fed7a6` (2026-10-30)
+**Commit Message**: docs: fix kamaji-etcd.deploy key and dead links (#1402)
 
-**File**: `internal/datastore/mysql.go` (modified, +6/-11)
+The chart README told users to pass `--set etcd.deploy=false` to use
+an external etcd, but the bundled subchart is gated on
+`kamaji-etcd.deploy` (Chart.yaml condition), so the documented flag
+still deployed the kamaji-etcd StatefulSet. Use the real key, as the
+alternative-datastore guide already does.
+
+Also point the multi-tenant etcd link at clastix/kamaji-etcd instead
+of the private kamaji-internal repo (404), and the ServiceMonitor link
+in the benchmark page at prometheus-operator's current getting
+started guide.
+
+Signed-off-by: sarankumar1325 <[REDACTED_EMAIL]>
+
+**File**: `charts/kamaji/README.md` (modified, +3/-3)
 ```diff
-@@ -250,23 +250,18 @@ func NewMySQLConnection(config ConnectionConfig) (Connection, error) {
- 		return nil, err
- 	}
+@@ -24,8 +24,8 @@ Kubernetes: `>=1.21.0-0`
+ |------------|------|---------|
+ | https://clastix.github.io/charts | kamaji-etcd | >=0.15.0 |
  
--	tlsKey := "mysql"
--
--	if config.TLSConfig != nil {
--		if err = mysql.RegisterTLSConfig(tlsKey, config.TLSConfig); err != nil {
--			return nil, err
--		}
--		mysqlConfig.TLSConfig = tlsKey
--	}
--
-+	// Not mysql.RegisterTLSConfig: that registry is process-global, so a shared key lets
-+	// concurrent reconciles of different DataStores swap each other's CA and client key.
-+	mysqlConfig.TLS = config.TLSConfig
- 	mysqlConfig.DBName = config.DBName
--	parsedDSN := mysqlConfig.FormatDSN()
+-[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-internal/blob/master/deploy/getting-started-with-kamaji.md#setup-internal-multi-tenant-etcd) cluster.
+-This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `etcd.deploy=false`.
++[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-etcd) cluster.
++This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `kamaji-etcd.deploy=false`.
  
--	db, err := sql.Open("mysql", parsedDSN)
-+	connector, err := mysql.NewConnector(mysqlConfig)
- 	if err != nil {
- 		return nil, err
- 	}
+ > For production use an externally managed `etcd` is highly recommended, the `etcd` addon offered by this Chart is not considered production-grade.
  
-+	db := sql.OpenDB(connector)
-+
- 	return &MySQLConnection{db: db, config: mysqlConfig, connector: config.Endpoints[0]}, nil
- }
+@@ -65,7 +65,7 @@ The values in your overrides file `myvalues.yaml` will override their counterpar
+ 
+ If you only need to make minor customizations, you can specify them on the command line by using the `--set` option. For example:
+ 
+-        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set etcd.deploy=false
++        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set kamaji-etcd.deploy=false
+ 
+ Here the values you can override:
  
 ```
 
-**File**: `internal/datastore/mysql_test.go` (added, +28/-0)
+**File**: `charts/kamaji/README.md.gotmpl` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,28 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
-+
-+package datastore
-+
-+import (
-+	"crypto/tls"
-+	"testing"
-+
-+	"github.com/go-sql-driver/mysql"
-+)
-+
-+func TestMySQLConnectionDoesNotRegisterGlobalTLSConfig(t *testing.T) {
-+	conn, err := NewMySQLConnection(ConnectionConfig{
-+		User:      "root",
-+		Endpoints: []ConnectionEndpoint{{Host: "127.0.0.1", Port: 3306}},
-+		DBName:    "kine",
-+		TLSConfig: &tls.Config{ServerName: "datastore-a", MinVersion: tls.VersionTLS12},
-+	})
-+	if err != nil {
-+		t.Fatalf("NewMySQLConnection() error = %v", err)
-+	}
-+	t.Cleanup(func() { _ = conn.Close() })
-+
-+	if _, err := mysql.ParseDSN("root@tcp(127.0.0.1:3306)/kine?tls=mysql"); err == nil {
-+		t.Fatal(`TLS config is registered under the process-global key "mysql", want it kept on the connection`)
-+	}
-+}
+@@ -11,8 +11,8 @@
+ 
+ {{ template "chart.requirementsSection" . }}
+ 
+-[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-internal/blob/master/deploy/getting-started-with-kamaji.md#setup-internal-multi-tenant-etcd) cluster.
+-This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `etcd.deploy=false`.
++[Kamaji](https://github.com/clastix/kamaji) requires a [multi-tenant `etcd`](https://github.com/clastix/kamaji-etcd) cluster.
++This Helm Chart starting from v0.1.1 provides the installation of an internal `etcd` in order to streamline the local test. If you'd like to use an externally managed etcd instance, you can specify the overrides and by setting the value `kamaji-etcd.deploy=false`.
+ 
+ > For production use an externally managed `etcd` is highly recommended, the `etcd` addon offered by this Chart is not considered production-grade.
+ 
+@@ -54,7 +54,7 @@ The values in your overrides file `myvalues.yaml` will override their counterpar
+ 
+ If you only need to make minor customizations, you can specify them on the command line by using the `--set` option. For example:
+ 
+-        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set etcd.deploy=false
++        helm upgrade kamaji --install --namespace kamaji-system --create-namespace clastix/kamaji --set kamaji-etcd.deploy=false
+ 
+ Here the values you can override:
+ 
+```
+
+**File**: `docs/content/reference/benchmark.md` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ With that said, a main manager is responsible to reconcile the admin resources (
+ These Tenant Control Plane managers, named in the code base as soot managers, in turn, start and run controllers to ensure the desired state of the underlying add-ons, and required resources such as kubeadm ones.
+ 
+ With that said, monitoring the Kamaji stack is essential to understand any anomaly in memory consumption, or CPU usage.
+-The provided Helm Chart is offering a [`ServiceMonitor`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/user-guides/getting-started.md) that can be used to extract all the required metrics of the Kamaji operator.
++The provided Helm Chart is offering a [`ServiceMonitor`](https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/developer/getting-started.md#using-servicemonitors) that can be used to extract all the required metrics of the Kamaji operator.
+ 
+ # Running 100 Tenant Control Planes using a single DataStore
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1392** (2026-10-23): fix(tcp): refresh endpoint after address changes (@spicysharkco)
-- **PR #1390** (2026-10-23): fix(datastore): keep MySQL TLS config off the global driver registry (@somaz94)
-- **PR #1389** (2026-10-23): fix(tcp): clear removed DataStore overrides (@spicysharkco)
-- **PR #1387** (2026-10-22): fix(e2e): wait for freeze webhook enforcement before asserting writes (@Sphinxgaia)
-- **PR #1386** (2026-10-22): feat: headless control plane service support (@Sphinxgaia)
-- **PR #1383** (2026-10-21): fix(cmd): bind the zap logger flags on the root command (@spicysharkco)
+- **PR #1402** (2026-10-30): docs: fix kamaji-etcd.deploy key and dead links (@sarankumar1325)
+- **PR #1401** (2026-10-30): feat(deps): bump k8s.io/kubernetes from 1.37.1 to 1.37.2 in the k8s group (@dependabot[bot])
+- **PR #1399** (closed): fix(kubeadm): use advertiseAddress for kubeadm's LocalAPIEndpoint (@Kellen275)
+- **PR #1397** (2026-10-30): fix(utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (@alistarle)
+- **PR #1395** (2026-10-30): feat(deps): bump github.com/nats-io/nats.go from 1.54.0 to 1.55.0 (@dependabot[bot])
+- **PR #1394** (2026-10-30): feat(deps): bump the etcd group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -911,33 +1056,35 @@ Signed-off-by: spicysharkco <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tcp): refresh endpoint after address changes (#1392)
+## X. utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set
 
 **RULE**:
-When implementing operations in `internal/resources/k8s_service_resource.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/utilities/tenant_client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9292caba`: tcp): refresh endpoint after address changes (#1392). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f068d4c7`: utilities): honor kubeconfig server when kubeconfig-secret-key annotation is set (#1397). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/resources/k8s_service_resource.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/utilities/tenant_client.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (r *KubernetesServiceResource) ShouldStatusBeUpdated(ctx context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-	address, err := tenantControlPlane.DeclaredControlPlaneAddress(ctx, r.Client)
+	host := fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port)
+	if v, ok := tenantControlPlane.GetAnnotations()[kamajiv1alpha1.KubeconfigSecretKeyAnnotation]; ok && v != "" {
+		if server := kubeconfig.Clusters[0].Cluster.Server; server != "" {
+			host = server
+		}
+	}
 
-		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port ||
-		err == nil && tenantControlPlane.Status.ControlPlaneEndpoint != net.JoinHostPort(address, strconv.FormatInt(int64(tenantControlPlane.Spec.NetworkProfile.Port), 10))
+		Host: host,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func (r *KubernetesServiceResource) ShouldStatusBeUpdated(_ context.Context, tenantControlPlane *kamajiv1alpha1.TenantControlPlane) bool {
-		tenantControlPlane.Status.Kubernetes.Service.Port != r.resource.Spec.Ports[0].Port
+		Host: fmt.Sprintf("https://%s.%s.svc:%d", tenantControlPlane.GetName(), tenantControlPlane.GetNamespace(), tenantControlPlane.Spec.NetworkProfile.Port),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9292caba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f068d4c7` are properly handled with clean fallback behavior.

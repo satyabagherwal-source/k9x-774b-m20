@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `a3c14189`  
+> **Source Version**: `52529f0c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:07:24.007Z  
+> **Timestamp**: 2026-10-31T20:53:23.461Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:07:23.999Z  
+> **Harvest Timestamp**: 2026-10-31T20:53:23.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50595 stars
+- **Stars / Engagement**: 50694 stars
 
 ---
 
@@ -1338,545 +1338,641 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `081ec820` (2026-10-25)
-**Commit Message**: Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split
+### Incident Patch 1: `52529f0c` (2026-10-31)
+**Commit Message**: Merge pull request #127678 from ClickHouse/fix/materialized-postgresql-consumer-backoff-on-exception
 
-Make the `parallel` case of `05238_workload_memory_spilling_distinct` independent of block scheduling
+Back off the `MaterializedPostgreSQL` consumer after an exception
 
-**File**: `tests/queries/0_stateless/05238_workload_memory_spilling_distinct.sh` (modified, +4/-2)
+**File**: `src/Storages/PostgreSQL/PostgreSQLReplicationHandler.cpp` (modified, +5/-0)
 ```diff
-@@ -65,9 +65,11 @@ FROM (SELECT DISTINCT [number % 1048576] AS k FROM numbers(4194304))
- # Preliminary sets may be released too; final deduplication must still remove every duplicate.
- # A parallel final `DISTINCT` splits the keys into smaller per-stream sets that may fit the budget, so it is
- # disabled to keep spilling the single final set.
-+# The first half of the input holds each key once, so however the blocks are split between the 4 streams, one of
-+# them sees at least a quarter of the keys, and its preliminary set exceeds `min_bytes_to_spill`.
- run_query parallel "
--SELECT count() = 1048576, sum(k) = 549755289600
--FROM (SELECT DISTINCT number % 1048576 AS k FROM numbers_mt(8388608))
-+SELECT count() = 4194304, sum(k) = 8796090925056
-+FROM (SELECT DISTINCT number % 4194304 AS k FROM numbers_mt(8388608))
- SETTINGS max_threads = 4, allow_parallel_distinct = 0
- "
+@@ -825,6 +825,11 @@ void PostgreSQLReplicationHandler::consumerFunc()
+     catch (...)
+     {
+         tryLogCurrentException(log);
++        /// Back off after a failure (for example, when `syncTables` cannot flush a buffered table), the
++        /// same way `consume` does for the errors it handles itself. Rescheduling immediately would retry
++        /// the failing operation in a tight loop and could starve `deactivate` of this task, which is
++        /// called by `DETACH TABLE`, `ATTACH TABLE` and shutdown, for an unbounded time.
++        schedule_now = false;
+     }
  
+     if (stop_synchronization)
+```
+
+**File**: `tests/integration/test_postgresql_replica_database_engine/test_3.py` (modified, +23/-10)
+```diff
+@@ -2366,6 +2366,10 @@ def test_detach_table_with_pending_buffer(started_cluster):
+     # throw on every insert: `syncTables()` then fails to flush the buffered row, so the table stays
+     # in `tables_to_sync` and the consumer retries. `DETACH` removes its storage while that stale
+     # entry remains - the exact precondition for the crash.
++    #
++    # The consumer must also back off between these failed retries instead of rescheduling itself
++    # immediately: retrying in a tight loop kept re-acquiring the task's mutex and could starve
++    # `DETACH TABLE` (which deactivates the task) for minutes.
+     cursor = pg_manager.get_db_cursor()
+     cursor.execute("DROP TABLE IF EXISTS test_detach_stuck")
+     cursor.execute("DROP TABLE IF EXISTS test_detach_healthy")
+@@ -2379,8 +2383,8 @@ def test_detach_table_with_pending_buffer(started_cluster):
+         port=started_cluster.postgres_port,
+         settings=[
+             "materialized_postgresql_tables_list = 'test_detach_stuck,test_detach_healthy'",
+-            "materialized_postgresql_backoff_min_ms = 100",
+-            "materialized_postgresql_backoff_max_ms = 100",
++            "materialized_postgresql_backoff_min_ms = 1000",
++            "materialized_postgresql_backoff_max_ms = 1000",
+         ],
+     )
+     # The initial snapshot must synchronize for both tables.
+@@ -2392,19 +2396,28 @@ def test_detach_table_with_pending_buffer(started_cluster):
+     )
+ 
+     # A materialized view that always throws on insert. It is created without POPULATE, so it only
+-    # affects rows replicated from now on (not the already-synchronized snapshot row).
+-    instance.query("DROP VIEW IF EXISTS poison_mv")
++    # affects rows replicated from now on (not the already-synchronized snapshot row). Its name is
++    # unique, so that the log lines below cannot match the lines of an earlier run of this test.
++    poison_mv = f"poison_mv_{uuid.uuid4().hex}"
+     instance.query(
+-        "CREATE MATERIALIZED VIEW poison_mv ENGINE = MergeTree ORDER BY tuple() AS "
++        f"CREATE MATERIALIZED VIEW {poison_mv} ENGINE = MergeTree ORDER BY tuple() AS "
+         "SELECT throwIf(value >= 0, 'poison') AS x FROM test_database.test_detach_stuck"
+     )
+ 
+     # This row cannot be flushed: the MV throws inside syncTables(), so test_detach_stuck stays queued
+-    # in tables_to_sync and the consumer keeps retrying it. Wait for the actual push failure (a real
+-    # progress signal that the sync was attempted and failed) - not the substring "poison" alone, which
+-    # would also match the logged text of the CREATE MATERIALIZED VIEW query above and fire prematurely.
++    # in tables_to_sync and the consumer keeps retrying it. Wait for several actual push failures (a
++    # real progress signal that the sync was attempted and failed) - not the substring "poison" alone,
++    # which would also match the logged text of the CREATE MATERIALIZED VIEW query above.
++    start_time = time.time()
+     cursor.execute("INSERT INTO test_detach_stuck VALUES (2, 2)")
+-    instance.wait_for_log_line("while pushing to view default.poison_mv", timeout=60)
++    instance.wait_for_log_line(
++        f"while pushing to view default.{poison_mv}", timeout=60, repetitions=6
++    )
++    # With a fixed backoff of 1000 ms, six log lines (at most two per failed attempt) take at least
++    # two backoff intervals. Without the backoff the consumer retried back-to-back, producing these
++    # lines in a small fraction of a second.
++    elapsed = time.time() - start_time
++    assert elapsed >= 1.5, f"failed synchronization was retried without a backoff: {elapsed:.3f} s"
+ 
+     # Before the fix this crashed the server (SIGSEGV in MaterializedPostgreSQLConsumer::syncTables()),
+     # because DETACH removed the storage while the table was still queued in tables_to_sync.
+@@ -2425,7 +2438,7 @@ def test_detach_table_with_pending_buffer(started_cluster):
+     # a crashed `clickhouse-server`.
+     assert "1" == instance.query("SELECT 1").strip()
+ 
+-    instance.query("DROP VIEW IF EXISTS poison_mv")
++    instance.query(f"DROP VIEW IF EXISTS {poison_mv}")
+     pg_manager.drop_materialized_db()
+     cursor.execute("DROP TABLE IF EXISTS test_detach_stuck")
+     cursor.execute("DROP TABLE IF EXISTS test_detach_healthy")
 ```
 
 ---
 
-### Incident Patch 2: `ae6fcab7` (2026-10-25)
-**Commit Message**: Merge pull request #116083 from ClickHouse/clickbench-small-memory
+### Incident Patch 2: `f81af4a0` (2026-10-31)
+**Commit Message**: Merge pull request #127876 from groeneai/fix-relabel-aggregate-state-replicated-column
 
-Fit the insert pipeline and merges into a small server's memory
+Fix a crash when relabelling the state version of a lazily replicated `AggregateFunction` column
 
-**File**: `src/Formats/FormatFactory.cpp` (modified, +7/-1)
+**File**: `src/DataTypes/DataTypeAggregateFunction.cpp` (modified, +5/-0)
 ```diff
-@@ -295,8 +295,14 @@ FormatSettings getFormatSettings(const ContextPtr & context, const Settings & se
-         size_t budget = static_cast<size_t>(static_cast<double>(memory_limit) * 0.9);
-         format_settings.parquet.memory_high_watermark = std::min<size_t>(
-             format_settings.parquet.memory_high_watermark, budget / 8);
-+        /// The reader does not hold one block of `prefer_block_bytes` but a whole pipeline of them:
-+        /// prefetched, decoded and ready-to-deliver row subgroups across the row groups it reads in
-+        /// parallel, and downstream (for an `INSERT`) the blocks the squashing stage has accumulated
-+        /// so far. Measured on a 105-column table, the default 16 MiB preferred block size costs about
-+        /// 290 MiB of live reader memory, so the cap has to be a much smaller fraction of the budget
-+        /// than the block size alone suggests.
-         format_settings.parquet.prefer_block_bytes = std::min<size_t>(
--            format_settings.parquet.prefer_block_bytes, budget / 64);
-+            format_settings.parquet.prefer_block_bytes, budget / 256);
-     }
-     format_settings.pretty.charset = settings[Setting::output_format_pretty_grid_charset].toString() == "ASCII" ? FormatSettings::Pretty::Charset::ASCII : FormatSettings::Pretty::Charset::UTF8;
-     format_settings.pretty.color = settings[Setting::output_format_pretty_color].valueOr(2);
-```
-
-**File**: `src/Interpreters/InsertDependenciesBuilder.cpp` (modified, +14/-17)
-```diff
-@@ -1,7 +1,7 @@
- #include <Interpreters/InsertDependenciesBuilder.h>
- #include <Interpreters/InterpreterInsertQuery.h>
-+#include <Interpreters/capInsertBlockSizeBytesToMemoryLimit.h>
+@@ -3,6 +3,7 @@
  
--#include <Common/MemoryTracker.h>
- #include <Access/Common/AccessType.h>
- #include <Access/Common/AccessFlags.h>
- #include <Processors/ForkProcessor.h>
-@@ -150,16 +150,6 @@ namespace ErrorCodes
- 
- namespace
- {
--/// Cap `min_insert_block_size_bytes` by a fraction of the server-wide memory hard limit so
--/// squashing does not accumulate more data than the host can hold. Shared between direct
--/// INSERT and materialized-view pipelines so the cap is applied symmetrically.
--size_t capMinBlockSizeBytesForMemoryLimit(size_t value)
--{
--    if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--        return std::min<size_t>(value, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
--    return value;
--}
--
- /// True when `target` is an Enum that contains `source` with the same in-memory width, i.e. `source`
- /// is a narrower Enum whose members are a subset of `target`. This mirrors the compatibility that
- /// StorageInMemoryMetadata::check allows but that is not type equality.
-@@ -552,7 +542,8 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-         StorageID view_id_, StoragePtr view_storage_, StorageMetadataPtr view_metadata_,
-         StorageID inner_id_, StoragePtr inner_storage_, StorageMetadataPtr inner_metadata_,
-         ContextPtr context_,
--        bool async_insert_)
-+        bool async_insert_,
-+        size_t num_squashing_pipelines_)
-         : ExceptionKeepingTransform(input_header, output_header)
-         , select_query(select_query_)
-         , source_id(source_id_)
-@@ -566,6 +557,7 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-         , inner_storage(inner_storage_)
-         , context(context_)
-         , async_insert(async_insert_)
-+        , num_squashing_pipelines(num_squashing_pipelines_)
-     {
-     }
- 
-@@ -611,6 +603,8 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-     StoragePtr inner_storage;
-     ContextPtr context;
-     bool async_insert = false;
-+    /// See `InsertDependenciesBuilder::getNumSquashesSharingViewsBudget`.
-+    size_t num_squashing_pipelines = 1;
- 
-     struct State
-     {
-@@ -730,7 +724,7 @@ class ExecutingInnerQueryFromViewTransform final : public ExceptionKeepingTransf
-         pipeline.addTransform(std::make_shared<SquashingTransform>(
-             pipeline.getSharedHeader(),
-             settings[Setting::min_insert_block_size_rows],
--            capMinBlockSizeBytesForMemoryLimit(settings[Setting::min_insert_block_size_bytes]),
-+            capInsertBlockSizeBytesToMemoryLimit(settings[Setting::min_insert_block_size_bytes], num_squashing_pipelines),
-             settings[Setting::max_insert_block_size],
-             settings[Setting::max_insert_block_size_bytes],
-             squash_with_strict_limits)
-@@ -1025,14 +1019,15 @@ bool InsertDependenciesBuilder::forwardedInsertHidesDependentViewForwardingToSep
- InsertDependenciesBuilder::InsertDependenciesBuilder(
-     StoragePtr table, ASTPtr query, SharedHeader insert_header,
-     bool async_insert_, bool skip_destination_table_, size_t max_insert_threads,
--    ContextPtr context)
-+    ContextPtr context, size_t num_concurrent_copies_)
-     : init_table_id(table->getStorageID())
-     , init_storage(table)
-     , init_query(query)
-     , init_header(std::move(insert_header))
-     , init_context(context)
-     , async_insert(async_insert_)
-     , skip_destination_table(skip_destination_table_)
-+    , num_concurrent_copies(std::max<size_t>(1, num_concurrent_copies_))
-     , views_error_registry(std::make_shared<ViewErrorsRegistry>())
-     , logger(getLogger("InsertDependenciesBuilder"))
- {
-@@ -1231,7 +1226,7 @@ VectorWithMemoryTracking<Chain> InsertDependenciesBuilder::createChainWithDepend
-                     std::make_shared<PlanSquashingTransform>(
-                         output_header,
-                         table_prefers_large_blocks ? settings[Setting::min_insert_block_size_rows] : settings[Setting::max_block_size],
--                        table_prefers_large_blocks ? capMinBlockSizeBytesForMemoryLimit(settings[Setting::min_insert_block_size_bytes]) : 0ULL,
-+                        table_prefers_large_blocks ? capInsertBlockSizeBytesToMemoryLimit(settings[Setting::min_insert_block_size_bytes], getNumSquashesSharingViewsBudget()) : 0ULL,
-                         settings[Setting::max_insert_block_size],
-                         settings[Setting::max_insert_block_size_bytes],
-                         squash_with_strict_limits));
-@@ -1715,7 +1710,8 @@ Chain InsertDependenciesBuilder::createSelect(StorageIDMaybeEmpty view_id) const
-             view_id, storages.at(view_id), metadata_snapshots.at(view_id),
-             inner_table_id, inner_storage, metadata_snapshots.at(inner_tabl
-```
-
-**File**: `src/Interpreters/InsertDependenciesBuilder.h` (modified, +32/-1)
-```diff
-@@ -10,6 +10,7 @@
- 
- #include <Common/Logger.h>
- 
-+#include <algorithm>
- #include <exception>
- #include <memory>
- #include <unordered_map>
-@@ -124,6 +125,30 @@ class InsertDependenciesBuilder : public std::enable_shared_from_this<InsertDepe
-         return sink_stream_size;
-     }
- 
-+    /// The squashing stages of this insert that hold blocks at the same time share the memory budget of
-+    /// `capInsertBlockSizeBytesToMemoryLimit`. The budget is split in two halves when there are dependent
-+    /// materialized views (otherwise the root takes all of it):
-+    ///   - the head squash of the root (the target table or the inner table of the target view) takes
-+    ///     one half. It is the squash that decides how large the source blocks are, and every dependent
-+    ///     view processes every such block, so it is not split further by the number of views: that
-+    ///     would multiply the per-block work of the views;
-+    ///   - the squashes of the dependent views share the other half: for every view, the squash of the
-+    ///     view query result inside `ExecutingInnerQueryFromViewTransform`, one per sink stream, since
-+    ///     every sink chain runs its own copy of the view query, and the sink squash shared between the
-+    ///     sink streams when `materialized_views_squash_parallel_inserts` is in effect.
-+    /// Both are multiplied by `num_concurrent_copies`, the number of copies of this whole insert that
-+    /// run at the same time (the nested `INSERT` of every branch of a forwarding storage like `Alias`).
-+    size_t getNumSquashesSharingRootBudget() const
-+    {
-+        return (getNumDependentViews() ? 2 : 1) * num_concurrent_copies;
-+    }
-+
-+    size_t getNumSquashesSharingViewsBudget() const
-+    {
-+        const size_t squashes_per_view = sink_stream_size + (squash_parallel_inserts ? 1 : 0);
-+        return 2 * std::max<size_t>(1, getNumDependentViews() * squashes_per_view) * num_concurrent_copies;
-+    }
-+
-     /// Whether a synchronous insert into `storage` would actually deduplicate blocks, i.e. some sink
-     /// consults the deduplication block ids. For MergeTree-family engines this mirrors how
-     /// `MergeTreeSink` / `ReplicatedMergeTreeSink` compute their own `deduplicate` flag (an enabled
-@@ -221,11 +246,15 @@ class InsertDependenciesBuilder : public std::enable_shared_from_this<InsertDepe
-         bool async_insert_,
-         bool skip_destination_table_,
-         size_t max_insert_threads,
--        ContextPtr context);
-+        ContextPtr context,
-+        size_t num_concurrent_copies_ = 1);
- 
- private:
-     bool isView(StorageIDMaybeEmpty id) const;
- 
-+    /// `dependent_views` has an entry for the root and one for every materialized view.
-+    size_t getNumDependentViews() const { return dependent_views.empty() ? 0 : dependent_views.size() - 1; }
-+
-     std::pair<ContextPtr, ContextPtr> createSelectInsertContext(const DependencyPath & path);
-     bool observePath(const DependencyPath & path);
-     String debugTree() const;
-@@ -253,6 +282,8 @@ class InsertDependenciesBuilder : public std::enable_shared_from_this<InsertDepe
-     bool async_insert = false;
-     bool skip_destination_table = false;
-     size_t sink_stream_size = 1;
-+    /// See `getNumSquashesSharingRootBudget`.
-+    size_t num_concurrent_copies = 1;
- 
-     /// When the insertion is made into a materialized view, the root_view is the view itself and dependent_views contains its inner table.
-     /// When the insertion is made into a regular table (it is init_table_id), the root_view is {} / StorageID::createEmpty() and dependent_views contains init_table_id.
-```
-
-**File**: `src/Interpreters/InterpreterInsertQuery.cpp` (modified, +9/-10)
-```diff
-@@ -1,5 +1,6 @@
- #include <Interpreters/InterpreterFactory.h>
- #include <Interpreters/InterpreterInsertQuery.h>
-+#include <Interpreters/capInsertBlockSizeBytesToMemoryLimit.h>
+ #include <Columns/ColumnAggregateFunction.h>
+ #include <Columns/ColumnConst.h>
++#include <Columns/ColumnReplicated.h>
+ #include <Columns/ColumnSparse.h>
  #include <Core/ProtocolDefines.h>
- #include <Interpreters/ClientInfo.h>
- #include <Storages/StorageInput.h>
-@@ -543,7 +544,7 @@ QueryPipeline InterpreterInsertQuery::addInsertToSelectPipeline(
-     auto insert_dependencies = InsertDependenciesBuilder::create(
-         table, query_ptr, std::make_shared<const Block>(std::move(query_sample_block)),
-         async_insert, /*skip_destination_table*/ no_destination, max_insert_threads,
--        context);
-+        context, num_concurrent_copies);
-     returning_insert_views_serial = query.returning && insert_dependencies->getViewProcessingNumThreads() == 1;
  
-     const auto & settings = context->getSettingsRef();
-@@ -647,8 +648,7 @@ QueryPipeline InterpreterInsertQuery::addInsertToSelectPipeline(
-             {
-                 size_t min_block_size_bytes = table->prefersLargeBlocks() ? context->getSettingsRef()[Setting::min_insert_block_size_bytes] : 0ULL;
-                 /// On low-memory systems, cap squashing block size to avoid accumulating too much data.
--                if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--                    min_block_size_bytes = std::min<size_t>(min_block_size_bytes, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
-+                min_block_size_bytes = capInsertBlockSizeBytesToMemoryLimit(min_block_size_bytes, insert_dependencies->getNumSquashesSharingRootBudget());
-                 return std::make_shared<PlanSquashingTransform>(
-                     in_header,
-                     table->prefersLargeBlocks() ? settings[Setting::min_insert_block_size_rows] : settings[Setting::max_block_size],
-@@ -744,10 +744,8 @@ void InterpreterInsertQuery::applyTrivialInsertSelectOptimization(ASTInsertQuery
-                 new_settings[Setting::max_block_size] = settings[Setting::min_insert_block_size_rows];
-             if (settings[Setting::min_insert_block_size_bytes])
-             {
--                size_t block_size_bytes = settings[Setting::min_insert_block_size_bytes];
-                 /// On low-memory systems, cap the input format block size.
--                if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--                    block_size_bytes = std::min<size_t>(block_size_bytes, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
-+                size_t block_size_bytes = capInsertBlockSizeBytesToMemoryLimit(settings[Setting::min_insert_block_size_bytes], /*num_simultaneous_squashes=*/ 1);
-                 new_settings[Setting::preferred_block_size_bytes] = block_size_bytes;
-             }
-         }
-@@ -1109,7 +1107,8 @@ QueryPipeline InterpreterInsertQuery::buildInsertPipeline(ASTInsertQuery & query
-         async_insert,
-         /*skip_destination_table*/ no_destination,
-         insert_threads,
--        context);
-+        context,
-+        num_concurrent_copies);
-     returning_insert_views_serial = query.returning && insert_dependencies->getViewProcessingNumThreads() == 1;
+@@ -583,6 +584,10 @@ ColumnPtr relabelAggregateStateVersions(const ColumnPtr & column, const DataType
+     if (const auto * const_column = typeid_cast<const ColumnConst *>(column.get()))
+         return ColumnConst::create(relabelAggregateStateVersions(const_column->getDataColumnPtr(), type), column->size());
  
-     QueryPipeline pipeline
-@@ -1207,10 +1206,10 @@ QueryPipeline InterpreterInsertQuery::buildPushPipelineFromDependencies(
-     if (should_squash)
-     {
-         bool table_prefers_large_blocks = table->prefersLargeBlocks();
--        size_t min_block_size_bytes = table_prefers_large_blocks ? settings[Setting::min_insert_block_size_bytes] : 0ULL;
-         /// On low-memory systems, cap squashing block size to avoid accumulating too much data.
--        if (auto memory_limit = total_memory_tracker.getHardLimit(); memory_limit > 0)
--            min_block_size_bytes = std::min<size_t>(min_block_size_bytes, static_cast<size_t>(static_cast<double>(memory_limit) * 0.9) / 8);
-+        size_t min_block_size_bytes = capInsertBlockSizeBytesToMemoryLimit(
-+            table_prefers_large_blocks ? settings[Setting::min_insert_block_size_bytes] : 0ULL,
-+            insert_dependencies->getNumSquashesSharingRootBudget());
-         add_head_transform(std::make_shared<PlanSquashingTransform>(
-             insert_header,
-             table_prefers_large_blocks ? settings[Setting::min_insert_block_size_rows] : settings[Setting::max_block_size],
++    if (const auto * replicated_column = typeid_cast<const ColumnReplicated *>(column.get()))
++        return ColumnReplicated::create(
++            relabelAggregateStateVersions(replicated_column->getNestedColumn(), type), replicated_column->getIndexesColumn());
++
+     auto relabelled_column = type->createColumn();
+     relabelled_column->insertRangeFrom(*recursiveRemoveSparse(column), 0, column->size());
+     return relabelled_column;
 ```
 
-**File**: `src/Interpreters/InterpreterInsertQuery.h` (modified, +16/-0)
+**File**: `tests/queries/0_stateless/05452_aggregate_state_version_relabel_replicated_column.reference` (added, +3/-0)
 ```diff
-@@ -1,6 +1,8 @@
- #pragma once
- 
- #include <QueryPipeline/BlockIO.h>
-+
-+#include <algorithm>
- #include <IO/ReadBuffer.h>
- #include <Interpreters/IInterpreter.h>
- #include <Interpreters/ClusterProxy/executeQuery.h>
-@@ -66,6 +68,19 @@ class InterpreterInsertQuery : public IInterpreter, WithMutableContext
-     /// Never set this for a user-visible target table.
-     void setSkipTargetInsertAccessCheck(bool skip) { skip_target_insert_access_check = skip; }
- 
-+    /// This `INSERT` is one of `copies` copies that run at the same time, e.g. the nested `INSERT` that every
-+    /// branch of the fan-out of a forwarding storage (`Alias`) runs. Keep it single-stream: with the fan-out
-+    /// already in place, letting every copy fan out again would multiply the number of real sink branches
-+    /// (part writers, squashing and compression buffers) up to `max_insert_threads^2`. The squashing stages
-+    /// of the copies share the memory budget, see `InsertDependenciesBuilder::getNumSquashesSharingRootBudget`.
-+    /// Unlike setting `max_insert_threads` to one in the context, this leaves the setting to the forwarding
-+    /// storages that the nested `INSERT` reaches in turn, so every hop counts the copies of the outermost fan-out.
-+    void setOneOfConcurrentCopies(size_t copies)
-+    {
-+        num_concurrent_copies = std::max<size_t>(1, copies);
-+        max_insert_threads = 1;
-+    }
-+
-     /// The pipeline is built only to be printed by `EXPLAIN PIPELINE` and is not executed.
-     void setExplainOnly(bool value) { explain_only = value; }
- 
-@@ -124,6 +139,7 @@ class InterpreterInsertQuery : public IInterpreter, WithMutableContext
- 
-     size_t max_threads = 0;
-     size_t max_insert_threads = 0;
-+    size_t num_concurrent_copies = 1;
- 
-     /// For INSERT ... RETURNING: the processor with the copy of the data written into the table.
-     ProcessorPtr returning_output;
+@@ -0,0 +1,3 @@
++1000	3	[1000,1000,1000]
++1000	3	[1000,1000,1000]
++1000	3	[1000,1000,1000]
 ```
 
-**File**: `src/Interpreters/capInsertBlockSizeBytesToMemoryLimit.cpp` (added, +46/-0)
+**File**: `tests/queries/0_stateless/05452_aggregate_state_version_relabel_replicated_column.sql` (added, +26/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+#include <Interpreters/capInsertBlockSizeBytesToMemoryLimit.h>
+@@ -0,0 +1,26 @@
++-- A versioned aggregate state column that arrives lazily replicated from a shard (here after `ARRAY JOIN`)
++-- is relabelled to the version of the header without losing its replicated rows. `groupArray` passes the
++-- states through an arena, which reads them back with the version of the header.
++DROP TABLE IF EXISTS uniq_legacy;
++CREATE TABLE uniq_legacy (state AggregateFunction(0, uniq, UInt64)) ENGINE = MergeTree ORDER BY tuple();
++INSERT INTO uniq_legacy SELECT uniqState(number) FROM numbers(1000);
 +
-+#include <Common/MemoryTracker.h>
++SELECT uniqMerge(state), count(), arrayMap(x -> finalizeAggregation(x), groupArray(state))
++FROM (SELECT state FROM remote('127.0.0.2', currentDatabase(), uniq_legacy) ARRAY JOIN [1, 2, 3] AS x)
++SETTINGS prefer_localhost_replica = 0, enable_lazy_columns_replication = 1;
 +
-+#include <algorithm>
++DROP TABLE uniq_legacy;
 +
-+namespace DB
-+{
++DROP TABLE IF EXISTS uniq_legacy_nested;
++CREATE TABLE uniq_legacy_nested (s Array(AggregateFunction(0, uniq, UInt64)), t Tuple(AggregateFunction(0, uniq, UInt64), UInt8)) ENGINE = MergeTree ORDER BY tuple();
++INSERT INTO uniq_legacy_nested SELECT [uniqState(number)], tuple(uniqState(number), 1) FROM numbers(1000);
 +
-+/// `min_insert_block_size_bytes` is not the amount of memory an `INSERT` needs, it is the size of one
-+/// block; the pipeline holds several of those at once. The squashing transform accumulates the next
-+/// block while the previous one is being concatenated, and the concatenated block is still alive in
-+/// the sink (where the writer additionally holds a permuted copy of one column at a time). Blocks are
-+/// also measured by their logical byte size while the columns behind them are `PODArray`s whose
-+/// capacity is rounded up, so a "256 MiB" block costs noticeably more than 256 MiB of memory.
-+/// Measured end to end, `INSERT ... SELECT` into a `MergeTree` table peaks at around five times
-+/// `min_insert_block_size_bytes` per insert stream.
-+///
-+/// Cap the threshold so those copies stay a bounded share of the server's memory limit. On a server
-+/// with several GiB of RAM or more this leaves the setting untouched; on a small one it is the
-+/// difference between the insert completing and failing with `MEMORY_LIMIT_EXCEEDED`.
-+///
-+/// One operation can run several squashing pipelines at once: an `INSERT` squashes for the target
-+/// table and again for every dependent materialized view (the view query result in every sink stream,
-+/// and possibly once more before the view's sink), and a merge or a mutation squashes once
-+/// for the projection input and once per rebuilt projection. Each of them holds its own copies, so
-+/// the share is split between `num_simultaneous_squashes` of them.
-+size_t capInsertBlockSizeBytesToMemoryLimit(size_t min_block_size_bytes, size_t num_simultaneous_squashes)
-+{
-+    const Int64 memory_limit = total_memory_tracker.getHardLimit();
-+    if (memory_limit <= 0)
-+        return min_block_size_bytes;
++SELECT uniqMerge(arrayJoin(s)), count(), arrayMap(x -> finalizeAggregation(x), groupArray(arrayJoin(s)))
++FROM (SELECT s FROM remote('127.0.0.2', currentDatabase(), uniq_legacy_nested) ARRAY JOIN [1, 2, 3] AS x)
++SETTINGS prefer_localhost_replica = 0, enable_lazy_columns_replication = 1;
 +
-+    /// Use 90% of the hard limit as the budget, leaving headroom for spikes and overhead, and allow the
-+    /// insert's blocks to take at most 40% of that budget - the rest is for the source (a format parser
-+    /// or another table's read pipeline), background merges and the server itself.
-+    static constexpr double budget_of_the_limit = 0.9;
-+    static constexpr double share_for_insert_blocks = 0.4;
-+    static constexpr double copies_held_by_the_pipeline = 5;
++SELECT uniqMerge(t.1), count(), arrayMap(x -> finalizeAggregation(x), groupArray(t.1))
++FROM (SELECT t FROM remote('127.0.0.2', currentDatabase(), uniq_legacy_nested) ARRAY JOIN [1, 2, 3] AS x)
++SETTINGS prefer_localhost_replica = 0, enable_lazy_columns_replication = 1;
 +
-+    const double budget = static_cast<double>(memory_limit) * budget_of_the_limit;
-+    const double copies = copies_held_by_the_pipeline * static_cast<double>(std::max<size_t>(1, num_simultaneous_squashes));
-+    return std::min(min_block_size_bytes, static_cast<size_t>(budget * share_for_insert_blocks / copies));
-+}
-+
-+}
-```
-
-**File**: `src/Interpreters/capInsertBlockSizeBytesToMemoryLimit.h` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+#pragma once
-+
-+#include <cstddef>
-+
-+namespace DB
-+{
-+
-+/// Caps `min_insert_block_size_bytes` (or a value playing its role) so that the several block-sized
-+/// copies a writing pipeline holds at once stay a bounded share of the server's memory limit. Shared
-+/// between the direct `INSERT` pipeline, the dependent materialized-view pipelines and the projection
-+/// squashes of merges and mutations, so the cap is applied symmetrically. `num_simultaneous_squashes` is
-+/// the number of such squashing pipelines the caller's operation keeps alive at once; they share the
-+/// budget. See the definition for the memory model behind it.
-+size_t capInsertBlockSizeBytesToMemoryLimit(size_t min_block_size_bytes, size_t num_simultaneous_squashes);
-+
-+}
-```
-
-**File**: `src/Storages/MergeTree/Compaction/MergePredicates/DistributedMergePredicate.h` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@ class DistributedMergePredicate : public IMergePredicate
-         return {};
-     }
- 
--    PartsRange getPatchesToApplyOnMerge(const PartsRange & range) const override
-+    PartsRange getPatchesToApplyOnMerge(PartsRangeView range) const override
-     {
-         if (range.empty())
-             return {};
++DROP TABLE uniq_legacy_nested;
 ```
 
 ---
 
-### Incident Patch 3: `55f660b0` (2026-10-25)
-**Commit Message**: Merge pull request #126531 from ClickHouse/fix-array-reduce-in-ranges-bounds
+### Incident Patch 3: `20cc310e` (2026-10-31)
+**Commit Message**: Merge pull request #123674 from groeneai/fix-fuzzer-dictionaries-123660
 
-Fix wrong results of `arrayReduceInRanges` for ranges that do not fit in the array
+Make the codec, binary type and WASM fuzzer dictionaries loadable by libFuzzer
 
-**File**: `src/Functions/array/arrayReduceInRanges.cpp` (modified, +25/-14)
+**File**: `CMakeLists.txt` (modified, +5/-2)
 ```diff
-@@ -276,27 +276,36 @@ ColumnPtr FunctionArrayReduceInRanges::executeImpl(
-                 Int64 index = indices_col.getInt(j);
-                 UInt64 length = lengths_col.getUInt(j);
+@@ -943,11 +943,14 @@ if (FUZZER)
+         OUTPUT_VARIABLE FUZZER_SOURCE_DICT_OUTPUT
+         ERROR_VARIABLE FUZZER_SOURCE_DICT_OUTPUT)
+     string (STRIP "${FUZZER_SOURCE_DICT_OUTPUT}" FUZZER_SOURCE_DICT_OUTPUT)
+-    # Fail loudly: a missing dictionary makes a consumer's `cp tests/fuzz/*.dict`
+-    # abort on an unmatched glob far from here.
++    # Fail here: consumers copy tests/fuzz/*.dict, a glob the committed
++    # per-target dictionaries satisfy even when all.dict is missing.
+     if (NOT FUZZER_SOURCE_DICT_RESULT EQUAL 0)
+         message (FATAL_ERROR "Failed to generate tests/fuzz/all.dict: ${FUZZER_SOURCE_DICT_OUTPUT}")
+     endif()
++    if (NOT EXISTS "${CMAKE_SOURCE_DIR}/tests/fuzz/all.dict")
++        message (FATAL_ERROR "tests/fuzz/all.dict is missing after generation")
++    endif()
+     message (STATUS "${FUZZER_SOURCE_DICT_OUTPUT}")
  
--                /// Keep the same as in arraySlice
-+                /// Keep the same as in arraySlice: the range is clipped to the array.
-+                /// The bounds are compared with the remaining size instead of being added to the user-controlled
-+                /// `index` and `length`, which could wrap around.
-+                const size_t size = end - begin;
+     # Bundle fuzzers target
+```
+
+**File**: `ci/defs/defs.py` (modified, +1/-1)
+```diff
+@@ -888,7 +888,7 @@ class ArtifactConfigs:
+         path=[
+             f"{TEMP_DIR}/build/programs/*_fuzzer",
+             f"{TEMP_DIR}/build/programs/*_fuzzer.options",
+-            f"{TEMP_DIR}/build/programs/all.dict",
++            f"{TEMP_DIR}/build/programs/*.dict",
+         ],
+     )
+     fuzzers_corpus = Artifact.Config(
+```
+
+**File**: `src/DataTypes/fuzzers/decode_data_type_fuzzer.cpp` (modified, +1/-1)
+```diff
+@@ -69,7 +69,7 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t * data, size_t size)
+         ///
+         /// The fuzzer can be run as follows:
+         ///   ../../../build_asan_fuzz/src/DataTypes/fuzzers/decode_data_type_fuzzer corpus \
+-        ///       -dict=../../../tests/fuzz/dictionaries/binary_types.dict -jobs=8
++        ///       -dict=../../../tests/fuzz/binary_types.dict -jobs=8
  
-                 if (index > 0)
-                 {
--                    local_begin = index - 1;
--                    if (local_begin + length < end - begin)
--                        local_end = local_begin + length;
--                    else
--                        local_end = end - begin;
-+                    const UInt64 offset = static_cast<UInt64>(index) - 1;
-+                    if (offset < size)
-+                    {
-+                        local_begin = offset;
-+                        local_end = local_begin + std::min<UInt64>(length, size - local_begin);
-+                    }
-                 }
-                 else if (index < 0)
-                 {
--                    if (end - begin + index > 0)
--                        local_begin = end - begin + index;
--                    else
--                        local_begin = 0;
+         if (size < 1)
+             return 0;
+```
+
+**File**: `tests/fuzz/binary_types.dict` (added, +138/-0)
+```diff
+@@ -0,0 +1,138 @@
++# BinaryTypeIndex values from DataTypesBinaryEncoding.h
++# Each entry is a single-byte type index for the binary type encoding format.
++
++# Scalar types
++# Nothing
++"\x00"
++# UInt8
++"\x01"
++# UInt16
++"\x02"
++# UInt32
++"\x03"
++# UInt64
++"\x04"
++# UInt128
++"\x05"
++# UInt256
++"\x06"
++# Int8
++"\x07"
++# Int16
++"\x08"
++# Int32
++"\x09"
++# Int64
++"\x0A"
++# Int128
++"\x0B"
++# Int256
++"\x0C"
++# Float32
++"\x0D"
++# Float64
++"\x0E"
++# Date
++"\x0F"
++# Date32
++"\x10"
++# DateTime (no timezone)
++"\x11"
++# DateTime (with timezone)
++"\x12"
++# DateTime64(P)
++"\x13"
++# DateTime64(P, timezone)
++"\x14"
++# String
++"\x15"
++# FixedString(N)
++"\x16"
++# Enum8
++"\x17"
++# Enum16
++"\x18"
++# Decimal32(P, S)
++"\x19"
++# Decimal64(P, S)
++"\x1A"
++# Decimal128(P, S)
++"\x1B"
++# Decimal256(P, S)
++"\x1C"
++# UUID
++"\x1D"
++# Array(T)
++"\x1E"
++# Tuple (unnamed)
++"\x1F"
++# Tuple (named)
++"\x20"
++# Set
++"\x21"
++# Interval
++"\x22"
++# Nullable(T)
++"\x23"
++# Function
++"\x24"
++# AggregateFunction
++"\x25"
++# LowCardinality(T)
++"\x26"
++# Map(K, V)
++"\x27"
++# IPv4
++"\x28"
++# IPv6
++"\x29"
++# Variant
++"\x2A"
++# Dynamic
++"\x2B"
++# Custom type
++"\x2C"
++# Bool
++"\x2D"
++# SimpleAggregateFunction
++"\x2E"
++# Nested
++"\x2F"
++# JSON
++"\x30"
++# BFloat16
++"\x31"
++# Time
++"\x32"
++# Time64(P)
++"\x34"
++# QBit(T, N)
++"\x36"
++# QBit(T, N, stride)
++"\x37"
++
++# VarUInt encodings for small counts (1-byte encoding for values 0-127)
++# count = 0
++"\x00"
++# count = 1
++"\x01"
++# count = 2
++"\x02"
++# count = 3
++"\x03"
++# count = 8
++"\x08"
++# count = 16
++"\x10"
++# count = 127
++"\x7F"
++
++# Interval kind bytes
++# Second
++"\x03"
++# Minute
++"\x04"
++# Hour
++"\x05"
++# Day
++"\x06"
+```
+
+**File**: `tests/fuzz/build.sh` (modified, +0/-1)
+```diff
+@@ -9,7 +9,6 @@
+ # generating a second one.
+ cp $SRC/tests/fuzz/*.dict $OUT/
+ cp $SRC/tests/fuzz/*.options $OUT/
+-cp $SRC/tests/fuzz/dictionaries/*.dict $OUT/
+ 
+ # prepare corpus dirs
+ mkdir -p $BIN/tests/fuzz/lexer_fuzzer.in/
+```
+
+**File**: `tests/fuzz/compression.dict` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++# Compression codec method bytes and common header patterns.
++# Values from CompressionInfo.h CompressionMethodByte enum.
++
++# CompressionMethodByte values (keep in sync with the enum).
++# NONE
++"\x02"
++# LZ4
++"\x82"
++# ZSTD
++"\x90"
++# Multiple (attacker-controlled codec chain)
++"\x91"
++# Delta
++"\x92"
++# T64
++"\x93"
++# DoubleDelta
++"\x94"
++# Gorilla
++"\x95"
++# AES_128_GCM_SIV
++"\x96"
++# AES_256_GCM_SIV
++"\x97"
++# FPC
++"\x98"
++# GCD
++"\x9A"
++# ALP
++"\x9C"
++# SZ3
++"\x9D"
++# Quantized
++"\x9E"
++# ZXC
++"\x9F"
++# 0x99 (DeflateQpl) and 0x9B (ZSTD_QPL) were removed from the enum and are
++# rejected by `CompressionCodecFactory::get` before any codec code runs, so they
++# are deliberately not listed here.
++
++# Common data_bytes_size values for Delta/GCD/Gorilla (1, 2, 4, 8)
++# 1-byte elements
++"\x01"
++# 2-byte elements
++"\x02"
++# 4-byte elements
++"\x04"
++# 8-byte elements
++"\x08"
++
++# Gorilla/T64 compressed block header patterns
++# data_bytes_size=1, bytes_to_skip=0
++"\x01\x00"
++# data_bytes_size=2, bytes_to_skip=0
++"\x02\x00"
++# data_bytes_size=4, bytes_to_skip=0
++"\x04\x00"
++# data_bytes_size=8, bytes_to_skip=0
++"\x08\x00"
++
++# T64 cookie byte: top bit = Variant (0=Byte, 1=Bit), lower 7 bits = TypeIndex
++# Byte variant, Int8
++"\x01"
++# Byte variant, Int16
++"\x02"
++# Byte variant, Int32
++"\x03"
++# Byte variant, Int64
++"\x04"
++# Byte variant, UInt8
++"\x05"
++# Byte variant, UInt16
++"\x06"
++# Byte variant, UInt32
++"\x07"
++# Bit variant, Int8
++"\x81"
++# Bit variant, Int64
++"\x84"
++
++# FPC header (2 bytes): [0]=float_width, [1]=compression_level
++# float32, level 12 (default)
++"\x04\x0C"
++# float64, level 12 (default)
++"\x08\x0C"
++# float32, level 1
++"\x04\x01"
++# float64, level 28 (max)
++"\x08\x1C"
++
++# Multiple codec chain patterns: [0]=chain_length, [1..N]=codec bytes
++# 1 codec: LZ4
++"\x01\x82"
++# 1 codec: Delta
++"\x01\x92"
++# 2 codecs: Delta + LZ4
++"\x02\x92\x82"
++# 2 codecs: T64 + LZ4
++"\x02\x93\x82"
++# 2 codecs: Gorilla + LZ4
++"\x02\x95\x82"
++# 3 codecs: Delta + DoubleDelta + LZ4
++"\x03\x92\x94\x82"
++
++# Compressed block header magic (9 bytes: checksum(8) + method(1))
++# zero checksum prefix
++"\x00\x00\x00\x00\x00\x00\x00\x00"
+```
+
+**File**: `tests/fuzz/dictionaries/binary_types.dict` (removed, +0/-73)
+```diff
+@@ -1,73 +0,0 @@
+-# BinaryTypeIndex values from DataTypesBinaryEncoding.h
+-# Each entry is a single-byte type index for the binary type encoding format.
 -
--                    if (local_begin + length < end - begin)
--                        local_end = local_begin + length;
-+                    /// Written this way to not overflow for the minimum `Int64`.
-+                    const UInt64 offset_from_end = static_cast<UInt64>(-(index + 1)) + 1;
-+                    if (offset_from_end <= size)
-+                    {
-+                        local_begin = size - offset_from_end;
-+                        local_end = local_begin + std::min<UInt64>(length, size - local_begin);
-+                    }
-                     else
--                        local_end = end - begin;
-+                    {
-+                        /// The range starts before the array: skip the part of it that is before the start.
-+                        const UInt64 before_start = offset_from_end - size;
-+                        if (length > before_start)
-+                            local_end = std::min<UInt64>(length - before_start, size);
-+                    }
-                 }
-             }
- 
-@@ -473,6 +482,8 @@ REGISTER_FUNCTION(ArrayReduceInRanges)
-     FunctionDocumentation::Description description = R"(
- Applies an aggregate function to array elements in the given ranges and returns an array containing the result corresponding to each range.
- The function will return the same result as multiple `arrayReduce(agg_func, arraySlice(arr1, index, length), ...)`.
-+The only difference is that the length is unsigned: a length greater than the maximum `Int64` value selects the rest of the array,
-+while `arraySlice` interprets such a value as a negative length.
- )";
-     FunctionDocumentation::Syntax syntax = "arrayReduceInRanges(agg_f, ranges, arr1[, arr2, ... ,arrN])";
-     FunctionDocumentation::Arguments arguments = {
+-# Scalar types
+-"\x00"  # Nothing
+-"\x01"  # UInt8
+-"\x02"  # UInt16
+-"\x03"  # UInt32
+-"\x04"  # UInt64
+-"\x05"  # UInt128
+-"\x06"  # UInt256
+-"\x07"  # Int8
+-"\x08"  # Int16
+-"\x09"  # Int32
+-"\x0A"  # Int64
+-"\x0B"  # Int128
+-"\x0C"  # Int256
+-"\x0D"  # Float32
+-"\x0E"  # Float64
+-"\x0F"  # Date
+-"\x10"  # Date32
+-"\x11"  # DateTime (no timezone)
+-"\x12"  # DateTime (with timezone)
+-"\x13"  # DateTime64(P)
+-"\x14"  # DateTime64(P, timezone)
+-"\x15"  # String
+-"\x16"  # FixedString(N)
+-"\x17"  # Enum8
+-"\x18"  # Enum16
+-"\x19"  # Decimal32(P, S)
+-"\x1A"  # Decimal64(P, S)
+-"\x1B"  # Decimal128(P, S)
+-"\x1C"  # Decimal256(P, S)
+-"\x1D"  # UUID
+-"\x1E"  # Array(T)
+-"\x1F"  # Tuple (unnamed)
+-"\x20"  # Tuple (named)
+-"\x21"  # Set
+-"\x22"  # Interval
+-"\x23"  # Nullable(T)
+-"\x24"  # Function
+-"\x25"  # AggregateFunction
+-"\x26"  # LowCardinality(T)
+-"\x27"  # Map(K, V)
+-"\x28"  # IPv4
+-"\x29"  # IPv6
+-"\x2A"  # Variant
+-"\x2B"  # Dynamic
+-"\x2C"  # Custom type
+-"\x2D"  # Bool
+-"\x2E"  # SimpleAggregateFunction
+-"\x2F"  # Nested
+-"\x30"  # JSON
+-"\x31"  # BFloat16
+-"\x32"  # Time
+-"\x34"  # Time64(P)
+-"\x36"  # QBit(T, N)
+-"\x37"  # QBit(T, N, stride)
+-
+-# VarUInt encodings for small counts (1-byte encoding for values 0-127)
+-"\x00"  # count = 0
+-"\x01"  # count = 1
+-"\x02"  # count = 2
+-"\x03"  # count = 3
+-"\x08"  # count = 8
+-"\x10"  # count = 16
+-"\x7F"  # count = 127
+-
+-# Interval kind bytes
+-"\x03"  # Second
+-"\x04"  # Minute
+-"\x05"  # Hour
+-"\x06"  # Day
 ```
 
-**File**: `tests/queries/0_stateless/01096_array_reduce_in_ranges.reference` (modified, +1/-1)
+**File**: `tests/fuzz/dictionaries/compression.dict` (removed, +0/-63)
 ```diff
-@@ -1,5 +1,5 @@
- [['a','b','c'],['b','c','d'],['c','d','e']]
--[0,0,0,0,0,0,0,100,300,0,200,400,0,300,700,0,500,400,0,600,700,0,900,400]
-+[0,0,0,0,0,0,0,100,300,0,200,400,0,300,700,0,500,400,100,600,700,0,900,400]
- 1
- 1
- 1
-```
-
-**File**: `tests/queries/0_stateless/05407_array_reduce_in_ranges_bounds.reference` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+0
-+[0,1,6,3]
-+[0,10]
-+[6]
-+[5,6]
-+[397]
-+[0,0]
-```
-
-**File**: `tests/queries/0_stateless/05407_array_reduce_in_ranges_bounds.sql` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+-- `arrayReduceInRanges` returns the same as `arrayReduce` over `arraySlice` for every range with a length that fits in `Int64`.
-+-- The arrays longer than 64 elements also use the pre-aggregated path.
-+SELECT count()
-+FROM
-+(
-+    SELECT
-+        range(n) AS arr,
-+        arrayJoin(range(-260, 260, 7)) AS i,
-+        arrayJoin([0, 1, 2, 5, 63, 64, 65, 100, 300, 9223372036854775807]) AS l,
-+        arrayReduceInRanges('sum', [(i, l)], arr)[1] AS res,
-+        arrayReduce('sum', arraySlice(arr, i, l)) AS expected
-+    FROM (SELECT arrayJoin([0, 1, 3, 64, 200]) AS n)
-+)
-+WHERE res != expected;
-+
-+-- A range that starts before the array is clipped, as in `arraySlice`.
-+SELECT arrayReduceInRanges('sum', [(-5, 2), (-5, 3), (-5, 10), (-3, 2)], [1, 2, 3]);
-+SELECT arrayReduceInRanges('sum', [(-210, 1), (-210, 15)], range(200));
-+SELECT arrayReduceInRanges('sum', [(-9223372036854775808, 18446744073709551615)], [1, 2, 3]);
-+
-+-- A huge length does not wrap around and selects the rest of the array.
-+-- Unlike `arraySlice`, which interprets a length greater than the maximum `Int64` value as a negative length.
-+SELECT arrayReduceInRanges('sum', [(2, 18446744073709551615), (1, 9223372036854775808)], [1, 2, 3]);
-+SELECT arrayReduceInRanges('sum', [(-2, 18446744073709551615)], range(200));
-+
-+-- A range that starts after the array is empty.
-+SELECT arrayReduceInRanges('sum', [(4, 1), (9223372036854775807, 18446744073709551615)], [1, 2, 3]);
+@@ -1,63 +0,0 @@
+-# Compression codec method bytes and common header patterns.
+-# Values from CompressionInfo.h CompressionMethodByte enum.
+-
+-# CompressionMethodByte values (keep in sync with the enum).
+-"\x02"  # NONE
+-"\x82"  # LZ4
+-"\x90"  # ZSTD
+-"\x91"  # Multiple (attacker-controlled codec chain)
+-"\x92"  # Delta
+-"\x93"  # T64
+-"\x94"  # DoubleDelta
+-"\x95"  # Gorilla
+-"\x96"  # AES_128_GCM_SIV
+-"\x97"  # AES_256_GCM_SIV
+-"\x98"  # FPC
+-"\x9A"  # GCD
+-"\x9C"  # ALP
+-"\x9D"  # SZ3
+-"\x9E"  # Quantized
+-"\x9F"  # ZXC
+-# 0x99 (DeflateQpl) and 0x9B (ZSTD_QPL) were removed from the enum and are
+-# rejected by `CompressionCodecFactory::get` before any codec code runs, so they
+-# are deliberately not listed here.
+-
+-# Common data_bytes_size values for Delta/GCD/Gorilla (1, 2, 4, 8)
+-"\x01"  # 1-byte elements
+-"\x02"  # 2-byte elements
+-"\x04"  # 4-byte elements
+-"\x08"  # 8-byte elements
+-
+-# Gorilla/T64 compressed block header patterns
+-"\x01\x00"  # data_bytes_size=1, bytes_to_skip=0
+-"\x02\x00"  # data_bytes_size=2, bytes_to_skip=0
+-"\x04\x00"  # data_bytes_size=4, bytes_to_skip=0
+-"\x08\x00"  # data_bytes_size=8, bytes_to_skip=0
+-
+-# T64 cookie byte: top bit = Variant (0=Byte, 1=Bit), lower 7 bits = TypeIndex
+-"\x01"  # Byte variant, Int8
+-"\x02"  # Byte variant, Int16
+-"\x03"  # Byte variant, Int32
+-"\x04"  # Byte variant, Int64
+-"\x05"  # Byte variant, UInt8
+-"\x06"  # Byte variant, UInt16
+-"\x07"  # Byte variant, UInt32
+-"\x81"  # Bit variant, Int8
+-"\x84"  # Bit variant, Int64
+-
+-# FPC header (2 bytes): [0]=float_width, [1]=compression_level
+-"\x04\x0C"  # float32, level 12 (default)
+-"\x08\x0C"  # float64, level 12 (default)
+-"\x04\x01"  # float32, level 1
+-"\x08\x1C"  # float64, level 28 (max)
+-
+-# Multiple codec chain patterns: [0]=chain_length, [1..N]=codec bytes
+-"\x01\x82"  # 1 codec: LZ4
+-"\x01\x92"  # 1 codec: Delta
+-"\x02\x92\x82"  # 2 codecs: Delta + LZ4
+-"\x02\x93\x82"  # 2 codecs: T64 + LZ4
+-"\x02\x95\x82"  # 2 codecs: Gorilla + LZ4
+-"\x03\x92\x94\x82"  # 3 codecs: Delta + DoubleDelta + LZ4
+-
+-# Compressed block header magic (9 bytes: checksum(8) + method(1))
+-"\x00\x00\x00\x00\x00\x00\x00\x00"  # zero checksum prefix
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #127778** (2026-10-25): Backport #127419 to 26.10: Bump `brotli` from v1.2.0 to v1.2.1 (@robot-clickhouse-ci-2)
-- **PR #127773** (2026-10-25): Fix a race in SQLancer++ feedback statistics that fails the FUZZING oracle (@groeneai)
-- **PR #127771** (2026-10-25): Backport #127453 to 26.10: Respect input_format_null_as_default for nulls in non-nullable Arrow fields (@robot-clickhouse-ci-1)
-- **PR #127770** (2026-10-25): Backport #127453 to 26.9: Respect input_format_null_as_default for nulls in non-nullable Arrow fields (@robot-clickhouse-ci-1)
-- **PR #127769** (2026-10-25): Backport #127453 to 26.8: Respect input_format_null_as_default for nulls in non-nullable Arrow fields (@robot-clickhouse-ci-1)
-- **PR #127768** (2026-10-25): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
+- **PR #128382** (2026-10-31): Backport #127876 to 26.10: Fix a crash when relabelling the state version of a lazily replicated `AggregateFunction` column (@robot-clickhouse)
+- **PR #128380** (2026-10-31): Backport #128048 to 26.10: Restore JSONExtract DateTime parsing under old compatibility (@robot-ch-test-poll3)
+- **PR #128367** (2026-10-31): Read the input of the `Variant` and `Dynamic` serialization fuzzers as untrusted `Native` data (@groeneai)
+- **PR #128366** (2026-10-31): Read `LowCardinality` dictionary keys in batches instead of allocating for the key count read from the stream (@groeneai)
+- **PR #128363** (2026-10-31): Reject truncated sparse values in native protocol input with `INCORRECT_DATA` (@groeneai)
+- **PR #128361** (2026-10-31): [26.10] Record the #122484 settings changes under 26.10 (@george-larionov)
 
 ---
 
@@ -1896,32 +1992,32 @@ Fix wrong results of `arrayReduceInRanges` for ranges that do not fit in the arr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split
+## X. Merge pull request #127678 from ClickHouse/fix/materialized-postgresql-consumer-
 
 **RULE**:
-When implementing operations in `tests/queries/0_stateless/05238_workload_memory_spilling_distinct.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Storages/PostgreSQL/PostgreSQLReplicationHandler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `081ec820`: Merge pull request #127691 from groeneai/fix-05238-parallel-distinct-block-split. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52529f0c`: Merge pull request #127678 from ClickHouse/fix/materialized-postgresql-consumer-backoff-on-exception. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/queries/0_stateless/05238_workload_memory_spilling_distinct.sh`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/PostgreSQL/PostgreSQLReplicationHandler.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# The first half of the input holds each key once, so however the blocks are split between the 4 streams, one of
-# them sees at least a quarter of the keys, and its preliminary set exceeds `min_bytes_to_spill`.
-SELECT count() = 4194304, sum(k) = 8796090925056
-FROM (SELECT DISTINCT number % 4194304 AS k FROM numbers_mt(8388608))
+        /// Back off after a failure (for example, when `syncTables` cannot flush a buffered table), the
+        /// same way `consume` does for the errors it handles itself. Rescheduling immediately would retry
+        /// the failing operation in a tight loop and could starve `deactivate` of this task, which is
+        /// called by `DETACH TABLE`, `ATTACH TABLE` and shutdown, for an unbounded time.
+        schedule_now = false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-SELECT count() = 1048576, sum(k) = 549755289600
-FROM (SELECT DISTINCT number % 1048576 AS k FROM numbers_mt(8388608))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `081ec820` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52529f0c` are properly handled with clean fallback behavior.

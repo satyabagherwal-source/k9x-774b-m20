@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source**: github ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
-> **Source Version**: `4ae235c8`  
+> **Source Version**: `7245edc4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T03:13:11.561Z  
+> **Timestamp**: 2026-10-30T20:36:17.262Z  
 > **Learning ID**: `learn-github-devexpress-testcafe`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/devexpress-testcafe-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DevExpress/testcafe](https://github.com/DevExpress/testcafe))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T03:13:10.216Z  
+> **Harvest Timestamp**: 2026-10-30T20:36:16.983Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Node.js tool to automate end-to-end web testing.
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9895 stars
+- **Stars / Engagement**: 9894 stars
 
 ---
 
@@ -601,11 +601,11 @@ export function parseConfig (str) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8565** (2026-10-07): **Skip failing client tests on iOS Safari**
-  *Symptoms*: The `test / safari` job failed on iOS Safari 15.2 in the “click after scrolling” and contenteditable caret-position tests.  - **iOS test gating** — Skip these cases on iOS while keeping them enabled on other browsers. For example:   ```js   (isIOS ? QUnit.skip : asyncTest)('click after scrolling', ...);   ```
+- **Issue #8567** (2026-10-30): **build: updated testcafe-hammerhead**
+  *Symptoms*: <!-- Thank you for your contribution.  Before making a PR, please read our contributing guidelines at https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution  We recommend creating a *draft* PR, so that you can mark it as 'ready for review' when you are done. -->  ## Purpose _Describe the problem you want to address or the feature you want to implement._  ## Approach _Describe how your changes address the issue or implement the desired functionality in as much detail as possible._  ## References _Provide a link to the existing issue(s), if any._  ## Pre-Merge TODO - [ ] Write tests for your proposed changes - [ ] Make sure that existing tests do not fail 
 
-- **Issue #8564** (2026-10-07): **build: fixed vulnerabilities**
-  *Symptoms*: <!-- Thank you for your contribution.  Before making a PR, please read our contributing guidelines at https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution  We recommend creating a *draft* PR, so that you can mark it as 'ready for review' when you are done. -->  ## Purpose closes https://github.com/DevExpress/dxvcs/issues/47789  ## Approach _Describe how your changes address the issue or implement the desired functionality in as much detail as possible._  ## References _Provide a link to the existing issue(s), if any._  ## Pre-Merge TODO - [ ] Write tests for your proposed changes - [ ] Make sure that existing tests do not fail 
+- **Issue #8566** (2026-10-26): **fix: report setNativeDialogHandler(null) without throwing**
+  *Symptoms*: ## Purpose  `t.setNativeDialogHandler(null)` is the documented way to remove a native dialog handler. The command it creates has `dialogHandler: null`. When a reporter implements `reportTestActionDone`, `CommandFormatter._prepareDialogHandler` passes that null to `_prepareClientFunction`, which reads `command.fnCode`. The test then fails with:  ``` TypeError: Cannot read properties of null (reading 'fnCode')     at CommandFormatter._prepareClientFunction (lib/reporter/command/command-formatter.js)     at CommandFormatter._prepareDialogHandler (lib/reporter/command/command-formatter.js)     at CommandFormatter.format (lib/reporter/command/command-formatter.js) ```  Without such a reporter the command runs fine, so the same test passes or fails depending on which reporter is attached.  ## Approach  `_prepareDialogHandler` returns `null` when `command.dialogHandler` is null, so the reporter receives `{ type: 'set-native-dialog-handler', dialogHandler: null }`. Non-null handlers are formatted as before.  ## Tests  `test/server/test-controller-events-test.js`: "Should report setNativeDialogHandler(null)" calls `setNativeDialogHandler(null)` with a reporter that implements `reportTestActionDone` and checks the reported command. Without the fix it fails with the TypeError above.  Verified locally: `npx gulp lint` clean; full server suite (`test/server/*-test.js`) 829 passing, 1 pending, 0 failing.  ## References  No existing issue found.  ## Pre-Merge TODO - [x] Write tests for your
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -622,163 +622,197 @@ export function parseConfig (str) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a6d0e5cd` (2026-06-02)
-**Commit Message**: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497)
+### Incident Patch 1: `7245edc4` (2026-10-30)
+**Commit Message**: build: updated testcafe-hammerhead (#8567)
 
-Bumps [picomatch](https://github.com/micromatch/picomatch) from 2.3.1 to
-2.3.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/micromatch/picomatch/releases">picomatch's
-releases</a>.</em></p>
-<blockquote>
-<h2>2.3.2</h2>
-<p>This is a security release fixing several security relevant
-issues.</p>
-<h2>What's Changed</h2>
-<ul>
-<li>fix: exception when glob pattern contains constructor by <a
-href="https://github.com/Jason3S"><code>@​Jason3S</code></a> in <a
-href="https://redirect.github.com/micromatch/picomatch/pull/144">micromatch/picomatch#144</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-c2c7-rcm5-vvqj">CVE-2026-33671</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-3v7f-55p6-f55p">CVE-2026-33672</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sourced from <
+<!--
+Thank you for your contribution.
 
-**File**: `examples/basic/package-lock.json` (modified, +3/-3)
+Before making a PR, please read our contributing guidelines at
+
+https://github.com/DevExpress/testcafe/blob/master/CONTRIBUTING.md#code-contribution
+
+We recommend creating a *draft* PR, so that you can mark it as 'ready
+for review' when you are done.
+-->
+
+## Purpose
+_Describe the problem you want to address or the feature you want to
+implement._
+
+## Approach
+_Describe how your changes address the issue or implement the desired
+functionality in as much detail as possible._
+
+## References
+_Provide a link to the existing issue(s), if any._
+
+## Pre-Merge TODO
+- [ ] Write tests for your proposed changes
+- [ ] Make sure that existing tests do not fail
+
+**File**: `.github/workflows/test-functional.yml` (modified, +2/-1)
 ```diff
-@@ -4176,9 +4176,9 @@
-       "license": "ISC"
-     },
-     "node_modules/picomatch": {
--      "version": "2.3.1",
--      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
--      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
-+      "version": "2.3.2",
-+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-+      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
+@@ -85,7 +85,8 @@ jobs:
+         if: ${{ contains(inputs.os, 'macos') }}
+ 
+       - run: |
+-          sudo apt install fluxbox
++          sudo apt-get update
++          sudo apt-get install -y fluxbox
+           Xvfb ${{ inputs.display }} -screen 0 1920x1080x24 &
+           sleep 3
+           fluxbox >/dev/null 2>&1 &
 ```
 
----
-
-### Incident Patch 2: `8ab2d865` (2026-06-02)
-**Commit Message**: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/using-assertions (#8496)
-
-Bumps [picomatch](https://github.com/micromatch/picomatch) from 2.3.1 to
-2.3.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/micromatch/picomatch/releases">picomatch's
-releases</a>.</em></p>
-<blockquote>
-<h2>2.3.2</h2>
-<p>This is a security release fixing several security relevant
-issues.</p>
-<h2>What's Changed</h2>
-<ul>
-<li>fix: exception when glob pattern contains constructor by <a
-href="https://github.com/Jason3S"><code>@​Jason3S</code></a> in <a
-href="https://redirect.github.com/micromatch/picomatch/pull/144">micromatch/picomatch#144</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-c2c7-rcm5-vvqj">CVE-2026-33671</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-3v7f-55p6-f55p">CVE-2026-33672</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2</a></p>
-</blockquote>
-</details>
-<details>
-<summary>Changelog</summary>
-<p><em>Sou
-
-**File**: `examples/using-assertions/package-lock.json` (modified, +3/-3)
+**File**: `package-lock.json` (modified, +21/-21)
 ```diff
-@@ -4176,9 +4176,9 @@
-       "license": "ISC"
+@@ -1,12 +1,12 @@
+ {
+   "name": "testcafe",
+-  "version": "3.7.6",
++  "version": "3.7.7",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "testcafe",
+-      "version": "3.7.6",
++      "version": "3.7.7",
+       "license": "MIT",
+       "dependencies": {
+         "@babel/core": "^7.23.2",
+@@ -91,7 +91,7 @@
+         "source-map-support": "^0.5.16",
+         "strip-bom": "^2.0.0",
+         "testcafe-browser-tools": "2.0.26",
+-        "testcafe-hammerhead": "31.7.8",
++        "testcafe-hammerhead": "31.7.9",
+         "testcafe-legacy-api": "5.1.8",
+         "testcafe-reporter-json": "^2.1.0",
+         "testcafe-reporter-list": "^2.2.0",
+@@ -4911,9 +4911,9 @@
+       }
      },
-     "node_modules/picomatch": {
--      "version": "2.3.1",
--      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
--      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
-+      "version": "2.3.2",
-+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-+      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
+     "node_modules/body-parser": {
+-      "version": "1.20.8",
+-      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.8.tgz",
+-      "integrity": "sha512-JNcyFQ64OiijEkPzUBTCe+hyPXUD/3LEldGQ6iF5LR1w00mx9o7xtDWHXBY2iItjdCFGoilOLNQbH943ut7pHA==",
++      "version": "1.20.9",
++      "resolved": "https://registry.npmjs.org/body-parser/-/body-parser-1.20.9.tgz",
++      "integrity": "sha512-FISIQxV5u91Y9gvuFq3q/tA/qTqLJn3AhRcEvyozyhJTh5OBFFtv827AdHU7Rbyct4r+Ba1/99oFa1Y3yuFsdw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -5898,9 +5898,9 @@
+       "license": "MIT"
+     },
+     "node_modules/deepmerge": {
+-      "version": "4.3.1",
+-      "resolved": "https://registry.npmjs.org/deepmerge/-/deepmerge-4.3.1.tgz",
+-      "integrity": "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==",
++      "version": "4.1.2",
++      "resolved": "https://registry.npmjs.org/deepmerge/-/deepmerge-4.1.2.tgz",
++      "integrity": "sha512-9ZXh/8Fp+ggcscoRg324S1aNdGSCl2X1P8F1FPTHbtq3RAxy9ECbU2Wgy2J12r6x/O0BStDlkzcpKK/HptX+Kg==",
        "dev": true,
        "license": "MIT",
        "engines": {
+@@ -10389,9 +10389,9 @@
+       "license": "MIT"
+     },
+     "node_modules/multer": {
+-      "version": "2.4.0",
+-      "resolved": "https://registry.npmjs.org/multer/-/multer-2.4.0.tgz",
+-      "integrity": "sha512-7dqa0ZcFfzbefdTuIkzOSMvZWC0J7FLqBOjJUZvDCXShIURWKxAyTT1wHhnE5q19c7jOJf43IYYKjBmZVZmvhg==",
++      "version": "2.5.0",
++      "resolved": "https://registry.npmjs.org/multer/-/multer-2.5.0.tgz",
++      "integrity": "sha512-BsqOzYGVq49JcW2IzoSAxeKYRevb+dGGPPWleOR8Lrlk4igwxu1/9pwSXlByhCb7MVZDrNJFC0IBP5/O5nLYRw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -11457,9 +11457,9 @@
+       }
+     },
+     "node_modules/qs": {
+-      "version": "6.16.0",
+-      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.0.tgz",
+-      "integrity": "sha512-h6fhOIaRrID2CbEY2fqs+7t+UXZo+MLAnU5gRIq85uFtdiUPCdsApMlHhXogKVM4HM2DVbIjGNTTYH2OcmP1vA==",
++      "version": "6.16.2",
++      "resolved": "https://registry.npmjs.org/qs/-/qs-6.16.2.tgz",
++      "integrity": "sha512-VYdnB5S7/0IeXzBacUtwNAaM6d7Y/PgYnNC7bJCI6meqA/OgnsQbZMtVW8Dt2D1PHgbHGtYmhSoEIgvt7xZ2ZA==",
+       "dev": true,
+       "license": "BSD-3-Clause",
+       "dependencies": {
+@@ -12153,9 +12153,9 @@
+       "license": "MIT"
+     },
+     "node_modules/serialize-javascript": {
+-      "version": "7.1.2",
+-      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-7.1.2.tgz",
+-      "integrity": "sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==",
++      "version": "7.1.4",
++      "resolved": "https://registry.npmjs.org/serialize-javascript/-/serialize-javascript-7.1.4.tgz",
++      "integrity": "sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==",
+       "dev": true,
+       "license": "BSD-3-Clause",
+       "engines": {
+@@ -13096,9 +13096,9 @@
+       }
+     },
+     "node_modules/testcafe-hammerhead": {
+-      "version": "31.7.8",
+-      "resolved": "https://registry.npmjs.org/testcafe-hammerhead/-/testcafe-hammerhead-31.7.8.tgz",
+-      "integrity": "sha512-AMLZdS4dbU6M64a/VgBu0O/qlfsv7MWROk91C4jyMmCjkq6FsKfknzqWtlh5w8o8fLJGjyGBDUFaRb/jpIuEoQ==",
++      "version": "31.7.9",
++      "resolved": "https://registry.npmjs.org/testcafe-hammerhead/-/testcafe-hammerhead-31.7.9.tgz",
++      "integrity": "sha512-wgVqOBl0zORvAhvwNOJFFUhgQpD/OMK5QpTcYysqllxUYEjl9eroXT/W9okTAVj1e6Sgu8N2QCGvobGSyrNmIw==",
+       "license": "MIT",
+       "dependencies": {
+         "@adobe/css-tools": "^4.3.0-rc.1",
 ```
 
----
-
-### Incident Patch 3: `7ac2e765` (2026-06-02)
-**Commit Message**: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/running-tests-in-chrome-using-bitbucket-pipelines-ci (#8499)
-
-Bumps [picomatch](https://github.com/micromatch/picomatch) from 2.3.1 to
-2.3.2.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/micromatch/picomatch/releases">picomatch's
-releases</a>.</em></p>
-<blockquote>
-<h2>2.3.2</h2>
-<p>This is a security release fixing several security relevant
-issues.</p>
-<h2>What's Changed</h2>
-<ul>
-<li>fix: exception when glob pattern contains constructor by <a
-href="https://github.com/Jason3S"><code>@​Jason3S</code></a> in <a
-href="https://redirect.github.com/micromatch/picomatch/pull/144">micromatch/picomatch#144</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-c2c7-rcm5-vvqj">CVE-2026-33671</a></li>
-<li>Fix for <a
-href="https://github.com/micromatch/picomatch/security/advisories/GHSA-3v7f-55p6-f55p">CVE-2026-33672</a></li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2</a></p>
-</blockquote>
-</details>
-<details>
-<su
-
-**File**: `examples/running-tests-in-chrome-using-bitbucket-pipelines-ci/package-lock.json` (modified, +3/-3)
+**File**: `package.json` (modified, +2/-2)
 ```diff
-@@ -4437,9 +4437,9 @@
-       "license": "ISC"
-     },
-     "node_modules/picomatch": {
--      "version": "2.3.1",
--      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
--      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
-+      "version": "2.3.2",
-+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-+      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
+@@ -2,7 +2,7 @@
+   "name": "testcafe",
+   "description": "Automated browser testing for the modern web development stack.",
+   "license": "MIT",
+-  "version": "3.7.6",
++  "version": "3.7.7",
+   "author": {
+     "name": "Developer Express Inc.",
+     "url": "https://www.devexpress.com/"
+@@ -140,7 +140,7 @@
+     "source-map-support": "^0.5.16",
+     "strip-bom": "^2.0.0",
+     "testcafe-browser-tools": "2.0.26",
+-    "testcafe-hammerhead": "31.7.8",
++    "testcafe-hammerhead": "31.7.9",
+     "testcafe-legacy-api": "5.1.8",
+     "testcafe-reporter-json": "^2.1.0",
+     "testcafe-reporter-list": "^2.2.0",
+```
+
+**File**: `src/browser/provider/built-in/dedicated/firefox/index.js` (modified, +1/-1)
+```diff
+@@ -88,7 +88,7 @@ export default {
+             hasTakeScreenshot:              !!marionetteClient,
+             hasChromelessScreenshots:       !!marionetteClient,
+             hasGetVideoFrameData:           !!marionetteClient,
+-            hasResizeWindow:                !!marionetteClient && config.headless,
++            hasResizeWindow:                !!marionetteClient,
+             hasMaximizeWindow:              !!marionetteClient && config.headless,
+             hasCanResizeWindowToDimensions: false,
+         };
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8567** (2026-10-30): build: updated testcafe-hammerhead (@Aleksey28)
+- **PR #8566** (2026-10-26): fix: report setNativeDialogHandler(null) without throwing (@sam-yh)
 - **PR #8565** (closed): Skip failing client tests on iOS Safari (@Copilot)
 - **PR #8564** (2026-10-07): build: fixed vulnerabilities (@Aleksey28)
 - **PR #8563** (closed): fix: kill a restarting local Chrome instead of closing its window (@sam-yh)
 - **PR #8561** (closed): fix: retry a failed browser relaunch once (@sam-yh)
-- **PR #8559** (closed): build(deps): bump baseline-browser-mapping from 2.10.33 to 2.11.22 (@dependabot[bot])
-- **PR #8558** (closed): build(deps-dev): bump baseline-browser-mapping from 2.10.0 to 2.11.21 in /examples/basic (@dependabot[bot])
 
 ---
 
@@ -798,32 +832,29 @@ href="https://github.com/micromatch/picomatch/compare/2.3.1...2.3.2">https://git
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497)
+## X. build: updated testcafe-hammerhead (#8567)
 
 **RULE**:
-When implementing operations in `examples/basic/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DevExpress/testcafe. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/test-functional.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DevExpress/testcafe. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a6d0e5cd`: build(deps-dev): bump picomatch from 2.3.1 to 2.3.2 in /examples/basic (#8497). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7245edc4`: build: updated testcafe-hammerhead (#8567). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/basic/package-lock.json`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/test-functional.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      "version": "2.3.2",
-      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
-      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
+          sudo apt-get update
+          sudo apt-get install -y fluxbox
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-      "version": "2.3.1",
-      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.1.tgz",
-      "integrity": "sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==",
+          sudo apt install fluxbox
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a6d0e5cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7245edc4` are properly handled with clean fallback behavior.

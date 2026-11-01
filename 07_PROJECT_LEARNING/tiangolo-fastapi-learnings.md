@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source**: github ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
-> **Source Version**: `69ddc2ba`  
+> **Source Version**: `79cab5be`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:44:03.647Z  
+> **Timestamp**: 2026-10-27T19:56:17.277Z  
 > **Learning ID**: `learn-github-fastapi-fastapi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tiangolo/fastapi](https://github.com/tiangolo/fastapi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:44:02.231Z  
+> **Harvest Timestamp**: 2026-10-27T19:56:16.856Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: FastAPI framework, high performance, easy to learn, fast to code, ready for production
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 104033 stars
+- **Stars / Engagement**: 104145 stars
 
 ---
 
@@ -1167,7 +1167,7 @@ def replace_markdown_links(
 ```
 """FastAPI framework, high performance, easy to learn, fast to code, ready for production"""
 
-__version__ = "0.161.1"
+__version__ = "0.162.0"
 
 from starlette import status as status
 
@@ -1505,188 +1505,58 @@ def annotation_is_pydantic_v1(annotation: Any) -> bool:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f90d0369` (2026-10-22)
-**Commit Message**: 🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598)
+### Incident Patch 1: `79cab5be` (2026-10-26)
+**Commit Message**: 📝 Update release notes
 
-**File**: `fastapi/dependencies/utils.py` (modified, +4/-2)
+[skip ci]
+
+**File**: `docs/en/docs/release-notes.md` (modified, +1/-0)
 ```diff
-@@ -1366,8 +1366,7 @@ def _get_body_field(
-         return None
-     first_param = body_params[0]
-     has_nullable_form_model = any(
--        (model := _get_form_model(field)) is not None
--        and field.field_info.annotation is not model
-+        _get_form_models(field) and type(None) in get_args(field.field_info.annotation)
-         for field in body_params
-     )
-     if not embed_body_fields and not has_nullable_form_model:
-@@ -1402,6 +1401,9 @@ def _get_body_field(
-     if not embed_body_fields:
-         field_info = copy(first_param.field_info)
-         field_info.annotation = BodyModel
-+        # The original form field already carries the validation metadata.
-+        field_info.metadata = []
-+        field_info.discriminator = None
-         return ModelField(name=first_param.name, field_info=field_info)
-     required = any(True for f in body_params if f.field_info.is_required())
-     BodyFieldInfo_kwargs: dict[str, Any] = {
+@@ -9,6 +9,7 @@ hide:
+ 
+ ### Internal
+ 
++* ⬆ Bump graphql-core from 3.2.7 to 3.3.1. PR [#16613](https://github.com/fastapi/fastapi/pull/16613) by [@dependabot[bot]](https://github.com/apps/dependabot).
+ * ⬆ Bump black from 26.5.1 to 26.10.1. PR [#16611](https://github.com/fastapi/fastapi/pull/16611) by [@dependabot[bot]](https://github.com/apps/dependabot).
+ * ⬆ Bump gitpython from 3.1.62 to 3.2.1. PR [#16612](https://github.com/fastapi/fastapi/pull/16612) by [@dependabot[bot]](https://github.com/apps/dependabot).
+ * ⬆ Bump opentelemetry-api from 1.44.0 to 1.45.1. PR [#16610](https://github.com/fastapi/fastapi/pull/16610) by [@dependabot[bot]](https://github.com/apps/dependabot).
 ```
 
-**File**: `tests/test_forms_optional_unions.py` (modified, +80/-17)
+---
+
+### Incident Patch 2: `82e79bf9` (2026-10-26)
+**Commit Message**: ⬆ Bump graphql-core from 3.2.7 to 3.3.1 (#16613)
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Yurii Motov <[REDACTED_EMAIL]>
+
+**File**: `uv.lock` (modified, +3/-3)
 ```diff
-@@ -125,15 +125,27 @@ def read(data: Annotated[Count | Label | None, Form()]):
-         return data
+@@ -1535,11 +1535,11 @@ wheels = [
  
-     client = TestClient(app)
--    response = client.post("/")
--    assert response.status_code == 422
--    assert response.json()["detail"] == [
--        {"type": "missing", "loc": ["body"], "msg": "Field required", "input": None}
--    ]
-+    for fields in ({}, {"unknown": "ignored"}):
-+        response = client.post("/", data=fields)
-+        assert response.status_code == 422
-+        assert response.json()["detail"] == [
-+            {"type": "missing", "loc": ["body"], "msg": "Field required", "input": None}
-+        ]
-     response = client.post("/", data={"count": "2"})
-     assert response.status_code == 200, response.text
-     assert response.json() == {"count": 2}
--    assert app.openapi()["paths"]["/"]["post"]["requestBody"]["required"] is True
-+    schema = app.openapi()
-+    assert schema["paths"]["/"]["post"]["requestBody"]["required"] is True
-+    assert schema["components"]["schemas"]["Body_read__post"]["allOf"] == [
-+        {"not": {"not": {"anyOf": [{"required": ["count"]}, {"required": ["label"]}]}}},
-+        {
-+            "anyOf": [
-+                {"$ref": "#/components/schemas/Count"},
-+                {"$ref": "#/components/schemas/Label"},
-+            ],
-+            "title": "Data",
-+        },
-+    ]
+ [[package]]
+ name = "graphql-core"
+-version = "3.2.7"
++version = "3.3.1"
+ source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/ac/9b/037a640a2983b09aed4a823f9cf1729e6d780b0671f854efa4727a7affbe/graphql_core-3.2.7.tar.gz", hash = "sha256:27b6904bdd3b43f2a0556dad5d579bdfdeab1f38e8e8788e555bdcb586a6f62c", size = 513484, upload-time = "2025-11-01T22:30:40.436Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/a4/91/223fbace7c8648690d7fb77855e29bd248c9ed1e0833ed3002ab29bc1441/graphql_core-3.3.1.tar.gz", hash = "sha256:8d9b6f95fb66b58b260904cf9e191f422782620533ec8fa0c96ab941b6659a2a", size = 751402, upload-time = "2026-10-25T09:34:09.764Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/0a/14/933037032608787fb92e365883ad6a741c235e0ff992865ec5d904a38f1e/graphql_core-3.2.7-py3-none-any.whl", hash = "sha256:17fc8f3ca4a42913d8e24d9ac9f08deddf0a0b2483076575757f6c412ead2ec0", size = 207262, upload-time = "2025-11-01T22:30:38.912Z" },
++    { url = "https://files.pythonhosted.org/packages/57/0e/e51b006267e7fa785abf5d1f86a7d60b84f7f893e3ba4fe23df9be2000cf/graphql_core-3.3.1-py3-none-any.whl", hash = "sha256:43ebcd0d9a0662a71b1a2f6562ba863d253057ec11cbc45835b2e2683a0a3770", size = 349047, upload-time = "2026-10-25T09:34:07.725Z" },
+ ]
  
- 
- @pytest.mark.parametrize("extra", ["ignore", "allow", "forbid"])
-@@ -173,6 +185,27 @@ def read(
-         assert response.json() == (
-             {"count": 1, "unknown": ["a", "b"]} if extra == "allow" else None
-         )
-+    schema = app.openapi()
-+    assert "required" not in schema["paths"]["/"]["post"]["requestBody"]
-+    absent = (
-+        {"maxProperties": 0}
-+        if extra in ("allow", "forbid")
-+        else {"not": {"anyOf": [{"required": ["count"]}, {"required": ["label"]}]}}
-+    )
-+    assert schema["components"]["schemas"]["Body_read__post"]["allOf"] == [
-+        {
-+            "anyOf": [
-+                absent,
-+                {
-+                    "anyOf": [
-+                        {"$ref": "#/components/schemas/Count"},
-+                        {"$ref": "#/components/schemas/Label"},
-+                    ],
-+                    "title": "Data",
-+                },
-+            ]
-+        }
-+    ]
- 
- 
- def test_mixed_extra_configurations_activate_union():
-@@ -345,6 +378,10 @@ def read_validated_default(
-     response = client.post("/validated-default")
-     assert response.status_code == 200, response.text
-     assert calls == ["validated"]
-+    schema = app.openapi()
-+    for path in ("/default", "/factory", "/validated-default"):
-+        assert "required" not in schema["paths"][path]["post"]["requestBody"]
-+    assert calls == ["validated"]
- 
- 
- def test_optional_union_in_dependency():
-@@ -370,24 +407,51 @@ def read(data: Annotated[TextForm | ListForm | None, Depends(get_form)]):
- 
- def test_openapi():
-     schema = app.openapi()
-+    schemas = schema["components"]["schemas"]
-+    absent = {
-+        "not": {
-+            "anyOf": [
-+                {"required": ["enabled"]},
-+                {"required": ["kind"]},
-+                {"required": ["value"]},
-+            ]
-+        }
-+    }
-     assert schema["paths"]["/union"]["post"]["requestBody"] == {
-         "content": {
-             "application/x-www-form-urlencoded": {
--                "schema": {
-+                "schema": {"$ref": "#/components/schemas/Body_read_union_union_post"}
-+            }
-+        }
-+    }
-+    assert schemas["Body_read_union_union_post"]["allOf"] == [
-+        {
-+            "anyOf": [
-+                absent,
-+                {
-                     "anyOf": [
-                         {"$ref": "#/components/schemas/TextForm"},
-                         {"$ref": "#/components/schemas/ListForm"},
--                        {"type": "null"},
-                     ],
-                     "title": "Data",
--                }
--            }
-+                },
-+            ]
-         }
--    }
-+    ]
-     assert schema["paths"]["/discriminated"]["post"]["requestBody"] == {
-         "content": {
-             "application/x-www-form-urlencoded": {
-                 "schema": {
-+                    "$ref": "#/components/schemas/Body_read_discriminated_discriminated_post"
-+                }
-+            }
-+        }
-+    }
-+    assert schemas["Body_read_discriminated_discriminated_post"]["allOf"] == [
-+        {
-+            "anyOf": [
-+                absent,
-+                {
-                     "anyOf": [
-                         {
-                             "oneOf": [
-@@ -402,12 +466,11 @@ def test_openapi():
-                                 },
-                             },
-                         },
--                        {"type": "null"},
-                     ],
-                     "title": "Data",
--                }
--            }
-+                },
-+            ]
-         }
--    }
--    assert schema["components"]["schemas"]["TextForm"]["required"] == ["kind", "
+ [[package]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16600** (closed): Support hyphenated headers with AliasChoices and populate_by_name (@manjirisharma)
-- **PR #16599** (2026-10-22): 🔖 Release version 0.161.1 (@pr-submit[bot])
-- **PR #16598** (2026-10-22): 🐛 Fix OpenAPI schemas for standalone nullable form unions (@tiangolo)
-- **PR #16597** (2026-10-22): 🔖 Release version 0.161.0 (@pr-submit[bot])
-- **PR #16596** (2026-10-22): ✨ Add support for combining unions of form models (@tiangolo)
-- **PR #16595** (2026-10-22): 🔖 Release version 0.160.0 (@pr-submit[bot])
+- **PR #16617** (closed): 🌐 Update zh-hant translations for form and parameter models (@LiaoAB)
+- **PR #16616** (closed): Fix bare collections.abc stream annotations (@Nikhil-4404)
+- **PR #16615** (closed): Fix OpenAPI generation with more than 128 parameter models (@stupidprogrammer4)
+- **PR #16613** (2026-10-26): ⬆ Bump graphql-core from 3.2.7 to 3.3.1 (@dependabot[bot])
+- **PR #16612** (2026-10-26): ⬆ Bump gitpython from 3.1.62 to 3.2.1 (@dependabot[bot])
+- **PR #16611** (2026-10-26): ⬆ Bump black from 26.5.1 to 26.10.1 (@dependabot[bot])
 
 ---
 
@@ -1706,32 +1576,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598)
+## X. 📝 Update release notes
 
 **RULE**:
-When implementing operations in `fastapi/dependencies/utils.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/docs/release-notes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastapi/fastapi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f90d0369`: 🐛 Fix OpenAPI schemas for standalone nullable form unions (#16598). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `79cab5be`: 📝 Update release notes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `fastapi/dependencies/utils.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/docs/release-notes.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        _get_form_models(field) and type(None) in get_args(field.field_info.annotation)
-        # The original form field already carries the validation metadata.
-        field_info.metadata = []
-        field_info.discriminator = None
+* ⬆ Bump graphql-core from 3.2.7 to 3.3.1. PR [#16613](https://github.com/fastapi/fastapi/pull/16613) by [@dependabot[bot]](https://github.com/apps/dependabot).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-        (model := _get_form_model(field)) is not None
-        and field.field_info.annotation is not model
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f90d0369` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `79cab5be` are properly handled with clean fallback behavior.

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ukisai-sw`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:26:52.586Z  
+> **Timestamp**: 2026-10-31T11:32:51.636Z  
 > **Learning ID**: `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:26:50.982Z  
+> **Harvest Timestamp**: 2026-10-31T11:32:50.946Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1477827 downloads | 429 likes
+- **Stars / Engagement**: 1581235 downloads | 467 likes
 
 ---
 

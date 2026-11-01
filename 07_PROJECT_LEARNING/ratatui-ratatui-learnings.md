@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `490c9a7e`  
+> **Source Version**: `21bf834c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:57:08.552Z  
+> **Timestamp**: 2026-10-31T22:03:49.138Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:57:08.236Z  
+> **Harvest Timestamp**: 2026-10-31T22:03:48.157Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23082 stars
+- **Stars / Engagement**: 23138 stars
 
 ---
 
@@ -940,14 +940,14 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2856** (2026-10-24): **docs(release): fix demo2 recording commands**
-  *Symptoms*: ## What Fix the demo2 recording commands in `RELEASE.md`.  ## Why `demo2` is a workspace package, and its VHS tape is under `examples/vhs/`.  ## Implementation Use `cargo build -p demo2` and `vhs examples/vhs/demo2.tape`.  AI assistance: ChatGPT helped prepare this documentation change. The commands were checked against the workspace manifest and current tape path.
-
-- **Issue #2853** (2026-10-23): **feat(buffer): add per-cell hyperlinks behind a cell-extensions feature**
-  *Symptoms*: ## Summary  This adds per-cell OSC 8 hyperlinks behind a new `cell-extensions` feature, which is off by default. A cell can now carry a hyperlink, and the backends emit it when they draw.  ```rust buf.set_string(0, 0, "ratatui.rs", Style::new().underlined()); buf.set_hyperlink(Rect::new(0, 0, 10, 1), Some(&Hyperlink::new("https://ratatui.rs"))); ```  Today the usual workaround is to put the escape sequence into a cell's symbol. That throws off width calculation and diffing, and it breaks when a link wraps or is only partly redrawn. With this change the link sits beside the symbol, so `Cell::symbol` stays a plain grapheme.  ## What's included  - **ratatui-core:**   - `Hyperlink` (`Hyperlink::new(uri).with_id(id)`) and a `CellExt` extension slot on `Cell`.   - `Cell::set_hyperlink`, `Buffer::set_hyperlink(area, Option<&Hyperlink>)`, `set_span_with_hyperlink` and `set_line_with_hyperlink`.   - Writing a new symbol into a cell clears its link. - **Backends:**   - crossterm, termion and termina write OSC 8. A link opens when it changes from one cell to the next and is closed at the end of each draw, so links that wrap across rows or are partly redrawn still come out as one link.   - termwiz maps the link to its native hyperlink support.   - `TestBackend` records the links. - **Example:** the `hyperlink` example now uses cell hyperlinks instead of embedding escape codes. - **Tests and benchmarks:**   - A `Cell` size assertion.   - Benchmarks for buffer diff and crossterm draw outpu
+- **Issue #2881** (2026-10-31): **docs(text): explain storing styled text**
+  *Symptoms*: ## Why  "How do I keep styled text in my app state without a lifetime parameter?" comes up regularly, for example in [#649] and [#1486], and in discussion [#652]. There is no single place in the docs that answers it.  [#649]: https://github.com/ratatui/ratatui/issues/649 [#1486]: https://github.com/ratatui/ratatui/issues/1486 [#652]: https://github.com/ratatui/ratatui/discussions/652  ## What  Adds two linkable sections to the `ratatui_core::text` module docs:  - **Storing styled text**: `Span<'static>`, `Line<'static>` and `Text<'static>` own their strings   and can be stored without a lifetime. `String`/`format!` input gives `'static` directly, and   `into_owned()` converts borrowed text. - **Rendering stored text**: render by reference (`&Text` implements `Widget`), and build widgets   each frame from a reference, e.g. `Paragraph::new(&app.log)`, which borrows the content instead   of cloning the strings.  The `Paragraph` docs get a short pointer to the section. `Paragraph::new` already shows passing a reference (added in #2878), so this doesn't repeat that example. 
   **Post-Mortem & Fix Analysis**:
-  > Closing this in favor of discussing the design in an issue first, per CONTRIBUTING.md. If the approach is agreed, I'll follow up with a series of smaller PRs (each under 500 lines). The full branch stays at WeirdBrains/ratatui:multi-char-cells for reference.
-  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2853?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :x: Patch coverage is `97.97571%` with `15 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 93.1%. Comparing base ([`0297560`](https://app.codecov.io/gh/ratatui/ratatui/commit/0297560d8d77871c0281a39182e4e650856e2ffd?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`0357ae6`](https://app.codecov.io/gh/ratatui/ratatui/commit/0357ae641d9706a99eec2abc712c531970c49b9b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 8 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/ratatui/ratatui/pull/2853?dropdown=coverage&src=pr&el=tree
+  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2881?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 93.1%. Comparing base ([`3e059b8`](https://app.codecov.io/gh/ratatui/ratatui/commit/3e059b8c335569bcd6997bde26e9df8fcf2ab6f1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`61ee309`](https://app.codecov.io/gh/ratatui/ratatui/commit/61ee3090c58a75fc77cac6ccfc3538ec7f86515d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)).  <details><summary>Additional details and impacted files</summary>    ```diff @@          Coverage Diff          @@ ##            main   #2881   +/-   ## ====================================
+  > nice
+
+- **Issue #2880** (2026-10-31): **perf(text): reuse owned String in Line::raw and Text::raw**
+  *Symptoms*: `Line::from(String)` and `Text::from(String)` (and `Text::raw` with an owned string) now reuse the `String`'s buffer when it holds a single line, instead of allocating a new one and copying into it. Owned multi-line `Text` also stops copying each line twice.  ## Why  `Line::from(format!(..))` is a common pattern in render loops, and it paid for an allocation and a copy of a `String` it already owned. `cow_to_spans` and `Text::raw` split owned input with `str::lines` and copied every piece with `to_string`/`to_owned`, even when the only piece was the whole string. `Text::raw` then passed each copy to `Line::from(String)`, which copied it again.  ## What  - A private `into_single_line` helper takes an owned `String` and returns it as the one line, if   `str::lines` would yield exactly one line:   - no `\n`: returned as-is   - a single trailing `\n` or `\r\n`: truncated in place   - any other `\n`: returned in `Err` so the caller falls back to splitting - `cow_to_spans` (behind `Line::from(String)`) and `Text::raw` use it before falling back. - Behaviour is unchanged, including the empty-string cases: an empty owned string still gives a line   with no spans, and `Text::raw` still gives one empty line. A lone trailing `\r` is kept, as   `str::lines` keeps it.  ## Tests  - `Line::from(String)` and `Text::raw`/`Text::from(String)` are compared with their `&str`   counterparts across nine cases: empty, one line, trailing `\n`, trailing `\r\n`, trailing lone   `\r`, a bare `\n`, a ba
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -964,247 +964,557 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d6ced53` (2026-10-24)
-**Commit Message**: build(deps): require patched lru 0.18.2 (#2825)
+### Incident Patch 1: `0ce9cff0` (2026-10-31)
+**Commit Message**: docs(buffer): clarify rendering and bounds (#2814)
 
-Raise the workspace `lru` requirement from `0.18` to `0.18.2` so
-downstream resolution through `ratatui-core` cannot select 0.18.0 or
-0.18.1, which are affected by
-[RUSTSEC-2026-0253](https://rustsec.org/advisories/RUSTSEC-2026-0253.html).
-This retains the widest compatible range with a patched minimum. The
-lockfile already selects 0.18.5 and stays unchanged.
+Explains which buffer operations return None, panic, or do nothing and recommends text widgets for rendering.
 
-The advisory concerns panic safety in `LruCache::pop()`: a stored key's
-destructor must panic, unwinding must be caught, and the cache must
-subsequently be used to reach the reported memory-safety failure. This
-is dependency-floor maintenance, not a claim of demonstrated
-exploitability in Ratatui.
+---------
 
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ instability = "0.3.7"
- itertools = { version = "0.15", default-features = false, features = ["use_alloc"] }
- kasuari = { version = "0.4.9", default-features = false }
- line-clipping = "0.3.8"
--lru = "0.18"
-+lru = "0.18.2"
- octocrab = "0.54"
- palette = { version = "0.7.7", default-features = false, features = ["libm"] }
- portable-atomic-util = { version = "0.2.4", default-features = false }
-```
-
----
-
-### Incident Patch 2: `b5224b27` (2026-10-24)
-**Commit Message**: fix(table): clip rendering to buffer bounds (#2851)
-
-Table can panic or render out of bounds when drawing into an area
-extending outside the buffer. Clip Table to the buffer before drawing
-blocks and items, and return when the intersection is empty.
-
-Add direct rendering tests for empty/disjoint areas and partial overlap
-with an offset buffer for Table.
-
-Completes the buffer bounds clipping pass across widgets from
-#2817-#2821, #2841, and #2850.
-
-Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
 Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
 
-**File**: `ratatui-widgets/src/table.rs` (modified, +46/-0)
+**File**: `ratatui-core/src/buffer/buffer.rs` (modified, +417/-19)
 ```diff
-@@ -774,6 +774,11 @@ impl StatefulWidget for &Table<'_> {
-     type State = TableState;
- 
-     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
-+        let area = area.intersection(buf.area);
-+        if area.is_empty() {
-+            return;
-+        }
-+
-         buf.set_style(area, self.style);
-         self.block.as_ref().render(area, buf);
-         let table_area = self.block.inner_if_some(area);
-@@ -3044,4 +3049,45 @@ mod tests {
-             assert_eq!(buf, Buffer::with_lines(expected));
+@@ -17,12 +17,23 @@ use crate::text::{Line, Span};
+ /// a grapheme, a foreground color and a background color. This grid will then be used to output
+ /// the appropriate escape sequences and characters to draw the UI as the user has defined it.
+ ///
+-/// # Examples:
++/// For text rendering, prefer rendering [`Span`], [`Line`], or [`Text`](crate::text::Text) as
++/// widgets. These text widgets restrict rendering to the intersection of the requested area and
++/// the buffer's area. For unstyled text in an area known to be inside the buffer, a [`&str`](str)
++/// or [`String`](alloc::string::String) can also be rendered directly. Their widget implementations
++/// currently delegate to [`set_stringn`](Self::set_stringn) and retain its bounds behavior.
++/// The coordinate-based text setters retain historical behavior for compatibility. For individual
++/// cells, use [`cell`](Self::cell) and [`cell_mut`](Self::cell_mut) when a position might be
++/// outside the buffer, or indexing when the position is known to be inside it.
++///
++/// # Examples
+ ///
+ /// ```
+ /// use ratatui_core::buffer::{Buffer, Cell};
+ /// use ratatui_core::layout::{Position, Rect};
+ /// use ratatui_core::style::{Color, Style};
++/// use ratatui_core::text::Span;
++/// use ratatui_core::widgets::Widget;
+ ///
+ /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+ /// let mut buf = Buffer::empty(Rect {
+@@ -59,6 +70,10 @@ use crate::text::{Line, Span};
+ /// assert_eq!(cell.symbol(), "r");
+ /// assert_eq!(cell.fg, Color::Red);
+ /// assert_eq!(cell.bg, Color::White);
++///
++/// // Preferred for general text rendering: express the position and width as an area.
++/// let span = Span::styled("string", Style::default().fg(Color::Red).bg(Color::White));
++/// span.render(Rect::new(3, 0, 7, 1), &mut buf);
+ /// # Ok(())
+ /// # }
+ /// ```
+@@ -124,7 +139,26 @@ impl Buffer {
+     ///
+     /// # Panics
+     ///
+-    /// Panics if the index is out of bounds.
++    /// Panics if the position is outside the buffer's area.
++    ///
++    /// # Examples
++    ///
++    /// Compare this method with [`Buffer::cell`], which also handles positions outside the buffer
++    /// without panicking:
++    ///
++    /// ```
++    /// use ratatui_core::buffer::Buffer;
++    /// use ratatui_core::layout::Rect;
++    ///
++    /// let buffer = Buffer::empty(Rect::new(0, 0, 57, 1));
++    /// # #[allow(deprecated)]
++    /// let cell = buffer.get(1, 0);
++    /// assert_eq!(cell.symbol(), " ");
++    ///
++    /// // Preferred: return an Option when the position might be outside the buffer.
++    /// assert_eq!(buffer.cell((1, 0)).map(|cell| cell.symbol()), Some(" "));
++    /// assert_eq!(buffer.cell((1, 1)).map(|cell| cell.symbol()), None);
++    /// ```
+     #[track_caller]
+     #[deprecated = "use `Buffer[(x, y)]` instead. To avoid panicking, use `Buffer::cell((x, y))`. Both methods take `impl Into<Position>`."]
+     #[must_use]
+@@ -145,6 +179,28 @@ impl Buffer {
+     /// # Panics
+     ///
+     /// Panics if the position is outside the `Buffer`'s area.
++    ///
++    /// # Examples
++    ///
++    /// Compare this method with [`Buffer::cell_mut`], which also handles positions outside the
++    /// buffer without panicking:
++    ///
++    /// ```
++    /// use ratatui_core::buffer::Buffer;
++    /// use ratatui_core::layout::Rect;
++    ///
++    /// let mut buffer = Buffer::empty(Rect::new(0, 0, 57, 1));
++    /// # #[allow(deprecated)]
++    /// let cell = buffer.get_mut(1, 0);
++    /// cell.set_symbol("A");
++    ///
++    /// // Preferred: handle a missing cell without panicking.
++    /// if let Some(cell) = buffer.cell_mut((1, 0)) {
++    ///     cell.set_symbol("B");
++    /// }
++    /// assert_eq!(buffer[(1, 0)].symbol(), "B");
++    /// assert_eq!(buffer.cell_mut((1, 1)), None);
++    /// ```
+     #[track_caller]
+     #[deprecated = "use `Buffer[(x, y)]` instead. To avoid panicking, use `Buffer::cell_mut((x, y))`. Both methods take `impl Into<Position>`."]
+     #[must_use]
+@@ -231,9 +287,21 @@ impl Buffer {
+     /// assert_eq!(buffer.index_of(200, 100), 0);
+     /// ```
+     ///
++    /// Prefer [`Buffer::cell`] when accessing a cell, avoiding an intermediate index and returning
++    /// `None` for positions outside the buffer:
++    ///
++    /// ```
++    /// use ratatui_core::buffer::Buffer;
++    /// use ratatui_core::layout::Rect;
++    ///
++    /// let buffer = Buffer::empty(Rect::new(200, 100, 10, 10));
++    /// assert!(buffer.cell((200, 100)).is_some());
++    /// assert_eq!(buffer.cell((0, 0)), None);
++    /// ```
++    ///
+     /// # Panics
+     ///
+-    /// Panics when given an coordinate that is outside of this Buffer's area.
++    /// Panics when given a coordinate that is outside the buffer's area.
+     ///
+     /// ```should_panic
+     /// use ratatui_core::buffer::Buffer;
+@@ -292,19 +360,22 @@ impl Buffer {
+     /// assert_eq!(buffer.pos_of(14), (204, 101));
+     /// ```
+     ///
+-    /// # Panics
+-    ///
+-    /// Panics when given an index that is outside the Buffer's content.
++    /// Prefe
+```
+
+**File**: `ratatui-core/src/text/line.rs` (modified, +14/-4)
+```diff
+@@ -1331,10 +1331,20 @@ mod tests {
          }
-     }
-+
-+    #[rstest]
-+    fn render_table_outside_buffer_is_noop(
-+        #[values(
-+            Rect::new(0, 10, 10, 8),
-+            Rect::new(40, 10, 10, 8),
-+            Rect::new(10, 0, 30, 10),
-+            Rect::new(10, 18, 30, 8),
-+            Rect::new(10, 10, 0, 8),
-+            Rect::new(10, 10, 30, 0)
-+        )]
-+        area: Rect,
-+    ) {
-+        let buffer_area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
-+        let expected = buf.clone();
-+        Widget::render(
-+            Table::new(
-+                [Row::new(["one", "two"])],
-+                [Constraint::Length(5), Constraint::Length(5)],
-+            ),
-+            area,
-+            &mut buf,
-+        );
-+        assert_eq!(buf, expected, "rendering into {area:?}");
-+    }
-+
-+    #[test]
-+    fn render_table_clips_to_offset_buffer() {
-+        let area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::empty(area);
-+        let mut expected = Buffer::empty(area);
-+        let widget = Table::new(
-+            [Row::new(["one", "two"])],
-+            [Constraint::Length(5), Constraint::Length(5)],
-+        );
-+        Widget::render(&widget, Rect::new(9, 9, 40, 10), &mut buf);
-+        Widget::render(&widget, area, &mut expected);
-+        assert_eq!(buf, expected);
-+        assert_ne!(buf, Buffer::empty(area));
-+    }
- }
+ 
+         #[rstest]
+-        fn render_out_of_bounds(hello_world: Line<'static>, mut small_buf: Buffer) {
+-            let out_of_bounds = Rect::new(20, 20, 10, 1);
+-            hello_world.render(out_of_bounds, &mut small_buf);
+-            assert_eq!(small_buf, Buffer::empty(small_buf.area));
++        #[case::right(Rect::new(0, 0, 15, 1), Rect::new(20, 0, 10, 1))]
++        #[case::bottom(Rect::new(0, 0, 15, 1), Rect::new(0, 20, 10, 1))]
++        #[case::both(Rect::new(0, 0, 15, 1), Rect::new(20, 20, 10, 1))]
++        #[case::single_row(Rect::new(0, 0, 57, 1), Rect::new(1, 1, 10, 1))]
++        #[case::zero_width_buffer(Rect::new(10, 10, 0, 1), Rect::new(10, 10, 10, 1))]
++        #[case::zero_height_buffer(Rect::new(10, 10, 10, 0), Rect::new(10, 10, 10, 1))]
++        #[case::empty_buffer(Rect::ZERO, Rect::new(0, 0, 10, 1))]
++        #[case::zero_width_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 0, 1))]
++        #[case::zero_height_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 10, 0))]
++        fn render_out_of_bounds(#[case] buffer_area: Rect, #[case] render_area: Rect) {
++            let mut buf = Buffer::empty(buffer_area);
++            let expected = buf.clone();
++            Line::raw("Hello, world!").render(render_area, &mut buf);
++            assert_eq!(buf, expected);
+         }
+ 
+         #[test]
+```
+
+**File**: `ratatui-core/src/text/span.rs` (modified, +14/-7)
+```diff
+@@ -723,13 +723,20 @@ mod tests {
+         }
+ 
+         #[rstest]
+-        #[case::x(20, 0)]
+-        #[case::y(0, 20)]
+-        #[case::both(20, 20)]
+-        fn render_out_of_bounds(mut small_buf: Buffer, #[case] x: u16, #[case] y: u16) {
+-            let out_of_bounds = Rect::new(x, y, 10, 1);
+-            Span::raw("Hello, World!").render(out_of_bounds, &mut small_buf);
+-            assert_eq!(small_buf, Buffer::empty(small_buf.area));
++        #[case::right(Rect::new(0, 0, 15, 1), Rect::new(20, 0, 10, 1))]
++        #[case::bottom(Rect::new(0, 0, 15, 1), Rect::new(0, 20, 10, 1))]
++        #[case::both(Rect::new(0, 0, 15, 1), Rect::new(20, 20, 10, 1))]
++        #[case::single_row(Rect::new(0, 0, 57, 1), Rect::new(1, 1, 10, 1))]
++        #[case::zero_width_buffer(Rect::new(10, 10, 0, 1), Rect::new(10, 10, 10, 1))]
++        #[case::zero_height_buffer(Rect::new(10, 10, 10, 0), Rect::new(10, 10, 10, 1))]
++        #[case::empty_buffer(Rect::ZERO, Rect::new(0, 0, 10, 1))]
++        #[case::zero_width_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 0, 1))]
++        #[case::zero_height_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 10, 0))]
++        fn render_out_of_bounds(#[case] buffer_area: Rect, #[case] render_area: Rect) {
++            let mut buf = Buffer::empty(buffer_area);
++            let expected = buf.clone();
++            Span::raw("Hello, world!").render(render_area, &mut buf);
++            assert_eq!(buf, expected);
+         }
+ 
+         /// When the content of the span is longer than the area passed to render, the content
+```
+
+**File**: `ratatui-core/src/text/text.rs` (modified, +14/-4)
+```diff
+@@ -1285,10 +1285,20 @@ mod tests {
+         }
+ 
+         #[rstest]
+-        fn render_out_of_bounds(mut small_buf: Buffer) {
+-            let out_of_bounds_area = Rect::new(20, 20, 10, 1);
+-            Text::from("Hello, world!").render(out_of_bounds_area, &mut small_buf);
+-            assert_eq!(small_buf, Buffer::empty(small_buf.area));
++        #[case::right(Rect::new(0, 0, 15, 1), Rect::new(20, 0, 10, 1))]
++        #[case::bottom(Rect::new(0, 0, 15, 1), Rect::new(0, 20, 10, 1))]
++        #[case::both(Rect::new(0, 0, 15, 1), Rect::new(20, 20, 10, 1))]
++        #[case::single_row(Rect::new(0, 0, 57, 1), Rect::new(1, 1, 10, 1))]
++        #[case::zero_width_buffer(Rect::new(10, 10, 0, 1), Rect::new(10, 10, 10, 1))]
++        #[case::zero_height_buffer(Rect::new(10, 10, 10, 0), Rect::new(10, 10, 10, 1))]
++        #[case::empty_buffer(Rect::ZERO, Rect::new(0, 0, 10, 1))]
++        #[case::zero_width_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 0, 1))]
++        #[case::zero_height_area(Rect::new(0, 0, 15, 1), Rect::new(0, 0, 10, 0))]
++        fn render_out_of_bounds(#[case] buffer_area: Rect, #[case] render_area: Rect) {
++            let mut buf = Buffer::empty(buffer_area);
++            let expected = buf.clone();
++            Text::raw("Hello, world!").render(render_area, &mut buf);
++            assert_eq!(buf, expected);
+         }
+ 
+         #[test]
 ```
 
 ---
 
-### Incident Patch 3: `6fbb0199` (2026-10-24)
-**Commit Message**: fix(list): clip rendering to buffer bounds (#2841)
+### Incident Patch 2: `7cf10be7` (2026-10-31)
+**Commit Message**: fix(buffer): repaint cells uncovered by an overwritten wide glyph (#2804)
 
-`List` and `RatatuiLogo` can panic when rendering into an area extending
-outside the buffer. Clip both widgets to the buffer before styling or
-drawing their blocks and inner contents, and return when the
-intersection is empty.
+When a wide glyph is replaced by a narrow cell, the terminal clears the
+columns the glyph covered. BufferDiff can then skip a column if the previous
+buffer still holds unchanged content that was hidden behind the glyph.
 
-Add direct rendering tests for empty/disjoint areas and partial overlap
-with an offset buffer for both widgets.
+Treat those covered cells as empty during diffing so they are repainted. Keep
+the covered range monotonic to handle cells with an explicit width greater
+than two columns.
 
-Completes the buffer bounds clipping pass across widgets from #2817,
-#2818, #2819, #2820, and #2821.
+---------
 
-Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
+Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
 
-**File**: `ratatui-widgets/src/list/rendering.rs` (modified, +40/-0)
+**File**: `ratatui-core/src/buffer/diff.rs` (modified, +42/-2)
 ```diff
-@@ -31,6 +31,11 @@ impl StatefulWidget for &List<'_> {
-     type State = ListState;
+@@ -19,6 +19,9 @@ pub struct BufferDiff<'prev, 'next> {
+     pos: usize,
+     /// Tracks trailing cells and a leading cell that may be deferred until after they are cleared.
+     trailing: Option<TrailingState>,
++    /// End of the previous cells that sat under a wide glyph which has since been overwritten.
++    /// The terminal shows blanks there, whatever the previous buffer holds.
++    covered: usize,
+ }
  
-     fn render(self, area: Rect, buf: &mut Buffer, state: &mut Self::State) {
-+        let area = area.intersection(buf.area);
-+        if area.is_empty() {
-+            return;
-+        }
-+
-         buf.set_style(area, self.style);
-         self.block.as_ref().render(area, buf);
-         let list_area = self.block.inner_if_some(area);
-@@ -1269,4 +1274,39 @@ mod tests {
-         StatefulWidget::render(list, single_line_buf.area, &mut single_line_buf, &mut state);
-         assert_eq!(single_line_buf, Buffer::with_lines([expected]));
+ /// Tracks pending trailing-cell yields for a wide character update.
+@@ -70,6 +73,7 @@ impl<'prev, 'next> BufferDiff<'prev, 'next> {
+             area,
+             pos: 0,
+             trailing: None,
++            covered: 0,
+         }
+     }
+ 
+@@ -128,7 +132,11 @@ impl<'next> Iterator for BufferDiff<'_, 'next> {
+             self.pos += 1;
+ 
+             let current = &self.next[i];
+-            let previous = &self.prev[i];
++            let previous = if i < self.covered {
++                &Cell::EMPTY
++            } else {
++                &self.prev[i]
++            };
+ 
+             match current.diff_option {
+                 CellDiffOption::Skip => {}
+@@ -201,6 +209,7 @@ impl<'next> Iterator for BufferDiff<'_, 'next> {
+                         });
+                     } else {
+                         // single-width character, no position adjustment needed
++                        self.covered = self.covered.max(i + previous_width).min(len);
+                     }
+ 
+                     let (x, y) = self.pos_of(i);
+@@ -761,11 +770,12 @@ mod terminal_model {
+     use alloc::string::{String, ToString};
+     use alloc::vec;
+     use alloc::vec::Vec;
++    use core::num::NonZeroU16;
+ 
+     use rstest::rstest;
+ 
+     use super::*;
+-    use crate::buffer::Buffer;
++    use crate::buffer::{Buffer, CellDiffOption};
+     use crate::style::Style;
+ 
+     /// What is visibly occupying one terminal column.
+@@ -975,4 +985,34 @@ mod terminal_model {
+         assert_no_artifacts_for_both_widths("a❤️b漢c😀d", "int value8;;", 12);
+         assert_no_artifacts_for_both_widths("a❤️b漢c😀d", "漢a❤️b😀c", 12);
      }
 +
++    /// A widget that writes cells directly can leave old content in a cell after a wide glyph,
++    /// but such cells won't actually be displayed.  If the wide glyph is later replaced with a
++    /// single-column glyph, these trailing glyphs must be redrawn.
 +    #[rstest]
-+    fn render_list_outside_buffer_is_noop(
-+        #[values(
-+            Rect::new(0, 10, 10, 8),
-+            Rect::new(40, 10, 10, 8),
-+            Rect::new(10, 0, 30, 10),
-+            Rect::new(10, 18, 30, 8),
-+            Rect::new(10, 10, 0, 8),
-+            Rect::new(10, 10, 30, 0)
-+        )]
-+        area: Rect,
-+    ) {
-+        let buffer_area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
-+        let expected = buf.clone();
-+        let widget = List::new(["item 1", "item 2"]);
-+        let mut state = ListState::default();
-+        StatefulWidget::render(&widget, area, &mut buf, &mut state);
-+        assert_eq!(buf, expected, "rendering into {area:?}");
++    #[case::keycap("1️⃣")]
++    #[case::fullwidth("＋")]
++    fn stale_cell_after_wide_glyph_is_repainted(#[case] glyph: &str) {
++        let next = row(4, "────");
++        let mut prev = next.clone();
++        prev.content[1].set_symbol(glyph);
++
++        for vs16_width in VS16_WIDTHS {
++            assert_no_artifacts(vs16_width, &prev, &next);
++        }
 +    }
 +
++    /// A covered range must remain covered when the old cell uses an explicit width > 2.
 +    #[test]
-+    fn render_list_clips_to_offset_buffer() {
-+        let area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::empty(area);
-+        let mut expected = Buffer::empty(area);
-+        let widget = List::new(["item 1", "item 2"]);
-+        let mut state1 = ListState::default();
-+        let mut state2 = ListState::default();
-+        StatefulWidget::render(&widget, Rect::new(9, 9, 40, 10), &mut buf, &mut state1);
-+        StatefulWidget::render(&widget, area, &mut expected, &mut state2);
-+        assert_eq!(buf, expected);
-+        assert_ne!(buf, Buffer::empty(area));
++    fn stale_cells_after_forced_width_are_repainted() {
++        let next = row(4, "abcd");
++        let mut prev = next.clone();
++        prev.content[0]
++            .set_symbol("image")
++            .set_diff_option(CellDiffOption::ForcedWidth(NonZeroU16::new(4).unwrap()));
++
++        for vs16_width in VS16_WIDTHS {
++            assert_no_artifacts(vs16_width, &prev, &next);
++        }
 +    }
  }
 ```
 
-**File**: `ratatui-widgets/src/logo.rs` (modified, +35/-0)
+**File**: `ratatui-widgets/src/paragraph.rs` (modified, +14/-0)
 ```diff
-@@ -143,6 +143,11 @@ impl RatatuiLogo {
+@@ -498,6 +498,7 @@ impl Styled for Paragraph<'_> {
+ #[cfg(test)]
+ mod tests {
+     use alloc::vec;
++    use alloc::vec::Vec;
  
- impl Widget for RatatuiLogo {
-     fn render(self, area: Rect, buf: &mut Buffer) {
-+        let area = area.intersection(buf.area);
-+        if area.is_empty() {
-+            return;
-+        }
-+
-         let logo = self.size.as_str();
-         Text::raw(logo).render(area, buf);
+     use ratatui_core::buffer::{Buffer, CellWidth};
+     use ratatui_core::layout::{Alignment, Rect};
+@@ -1034,6 +1035,19 @@ mod tests {
+         );
      }
-@@ -257,4 +262,34 @@ mod tests {
-         // This should not panic, even if the buffer has zero size.
-         logo.render(buffer.area, &mut buffer);
-     }
-+
-+    #[rstest]
-+    fn render_logo_outside_buffer_is_noop(
-+        #[values(
-+            Rect::new(0, 10, 10, 8),
-+            Rect::new(40, 10, 10, 8),
-+            Rect::new(10, 0, 30, 10),
-+            Rect::new(10, 18, 30, 8),
-+            Rect::new(10, 10, 0, 8),
-+            Rect::new(10, 10, 30, 0)
-+        )]
-+        area: Rect,
-+    ) {
-+        let buffer_area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::filled(buffer_area, ratatui_core::buffer::Cell::new("x"));
-+        let expected = buf.clone();
-+        RatatuiLogo::tiny().render(area, &mut buf);
-+        assert_eq!(buf, expected, "rendering into {area:?}");
-+    }
-+
+ 
 +    #[test]
-+    fn render_logo_clips_to_offset_buffer() {
-+        let area = Rect::new(10, 10, 30, 8);
-+        let mut buf = Buffer::empty(area);
-+        let mut expected = Buffer::empty(area);
-+        RatatuiLogo::tiny().render(Rect::new(9, 9, 40, 10), &mut buf);
-+        RatatuiLogo::tiny().render(area, &mut expected);
-+        assert_eq!(buf, expected);
-+        assert_ne!(buf, Buffer::empty(area));
++    fn repaints_cell_after_wide_grapheme() {
++        let next = Buffer::with_lines(["────"]);
++        let mut prev = next.clone();
++        Paragraph::new("1️⃣").render(Rect::new(1, 0, 2, 1), &mut prev);
++
++        assert_eq!(prev[(1, 0)].symbol(), "1️⃣");
++
++        let diff = prev.diff(&next);
++        let cols: Vec<_> = diff.iter().map(|(x, _, _)| *x).collect();
++        assert_eq!(cols, [1, 2]);
 +    }
++
+     #[test]
+     fn can_be_stylized() {
+         assert_eq!(
+```
+
+---
+
+### Incident Patch 3: `dacaaa39` (2026-10-31)
+**Commit Message**: test(bench): benchmark rendering stored owned text (#2877)
+
+Adds a `stored_text` criterion group that measures rendering owned,
+multi-span text kept in app state. This gives a baseline for a follow-up
+PR that adds `From<&'b Text<'a>> for Text<'b>`, so
+`Paragraph::new(&text)` can borrow stored text instead of cloning it
+every frame.
+
+## Why
+
+Apps often keep long, owned `Text<'static>` in their state (log viewers,
+text built by a scripting layer, widget property maps). Because
+`Paragraph` takes ownership of its text, they clone it on every frame.
+See [#2027](https://github.com/ratatui/ratatui/discussions/2027) (Use
+Cow more liberally) and
+[#2280](https://github.com/ratatui/ratatui/discussions/2280)
+(Borrow-Clone `{Span, Line, Text}`).
+
+The existing benches don't cover this. `paragraph` builds from one
+`&str` with a borrowed span per line, and `text` clones in criterion's
+setup, outside the timed part. Here the clone is inside the timed
+closure, because it is the cost being measured.
+
+## What
+
+- Input: owned `Text<'static>` where every span is its own `String` with
+a varied style. Sizes are {100, 10,000} lines × {5, 50} spans per line,
+rendered to a 200×50 area (10k cells) with `Wrap 
+
+**File**: `ratatui/benches/main.rs` (modified, +2/-0)
+```diff
+@@ -10,6 +10,7 @@ pub mod main {
+     pub mod paragraph;
+     pub mod rect;
+     pub mod sparkline;
++    pub mod stored_text;
+     pub mod table;
+     pub mod text;
  }
+@@ -25,6 +26,7 @@ criterion::criterion_main!(
+     paragraph::benches,
+     rect::benches,
+     sparkline::benches,
++    stored_text::benches,
+     table::benches,
+     text::benches,
+     constraints::benches,
+```
+
+**File**: `ratatui/benches/main/stored_text.rs` (added, +174/-0)
+```diff
+@@ -0,0 +1,174 @@
++use std::hint::black_box;
++
++use criterion::{Bencher, BenchmarkId, Criterion, criterion_group};
++use ratatui::buffer::Buffer;
++use ratatui::layout::Rect;
++use ratatui::style::{Color, Modifier, Style};
++use ratatui::text::{Line, Span, Text};
++use ratatui::widgets::{Paragraph, Widget, Wrap};
++
++const WIDTH: u16 = 200;
++const HEIGHT: u16 = 50;
++const AREA: Rect = Rect::new(0, 0, WIDTH, HEIGHT);
++const WRAP: Wrap = Wrap { trim: false };
++
++/// Every span is a fixed width word plus a trailing space (e.g. `"w00042-07 "`), so the number of
++/// rows each line wraps to is known up front.
++const SPAN_WIDTH: usize = 10;
++
++/// Benchmark for rendering owned text that is stored in application state.
++///
++/// Applications often keep a long, multi-span `Text<'static>` (log viewers, text built by a
++/// scripting layer, widget property maps) and render it every frame. Because `Paragraph` takes
++/// ownership of its text, the stored text has to be cloned on each frame. The clone is part of the
++/// per-frame cost, so unlike the `paragraph` and `text` benchmarks, it is measured inside the timed
++/// closure here.
++fn stored_text(c: &mut Criterion) {
++    let mut group = c.benchmark_group("stored_text");
++    for (line_count, span_count) in [(100, 5), (100, 50), (10_000, 5), (10_000, 50)] {
++        let input = StoredText::new(line_count, span_count);
++        let id = format!("{line_count}x{span_count}");
++
++        // Criterion runs at least one iteration per sample, so slow cases take
++        // `sample_size * iteration time` regardless of the target measurement time.
++        group.sample_size(match line_count * span_count {
++            0..1_000 => 100,
++            1_000..10_000 => 50,
++            _ => 20,
++        });
++
++        let clone_id = BenchmarkId::new("clone", &id);
++        group.bench_with_input(clone_id, &input, clone);
++        let clone_render_id = BenchmarkId::new("clone_render", &id);
++        group.bench_with_input(clone_render_id, &input, clone_render);
++        let clone_render_end_id = BenchmarkId::new("clone_render_end", &id);
++        group.bench_with_input(clone_render_end_id, &input, clone_render_end);
++        let slice_render_id = BenchmarkId::new("slice_render", &id);
++        group.bench_with_input(slice_render_id, &input, slice_render);
++    }
++    group.finish();
++}
++
++/// The cost of cloning the stored text by itself.
++fn clone(bencher: &mut Bencher, input: &StoredText) {
++    bencher.iter(|| black_box(&input.text).clone());
++}
++
++/// Clone the stored text into a paragraph and render it.
++fn clone_render(bencher: &mut Bencher, input: &StoredText) {
++    let mut buffer = Buffer::empty(AREA);
++    bencher.iter(|| {
++        Paragraph::new(input.text.clone())
++            .wrap(WRAP)
++            .render(AREA, &mut buffer);
++    });
++}
++
++/// Clone the stored text into a paragraph and render it scrolled to the end, like a log viewer
++/// following its output.
++fn clone_render_end(bencher: &mut Bencher, input: &StoredText) {
++    let mut buffer = Buffer::empty(AREA);
++    bencher.iter(|| {
++        Paragraph::new(input.text.clone())
++            .wrap(WRAP)
++            .scroll((input.scroll_end, 0))
++            .render(AREA, &mut buffer);
++    });
++}
++
++/// Reference: clone and render only the lines that are visible when scrolled to the end.
++fn slice_render(bencher: &mut Bencher, input: &StoredText) {
++    let mut buffer = Buffer::empty(AREA);
++    bencher.iter(|| {
++        Paragraph::new(Text::from(input.text.lines[input.visible_start..].to_vec()))
++            .wrap(WRAP)
++            .scroll((input.visible_scroll, 0))
++            .render(AREA, &mut buffer);
++    });
++}
++
++/// Owned text as an application would store it, along with the scroll offsets that show its last
++/// screen.
++struct StoredText {
++    text: Text<'static>,
++    /// The scroll offset that shows the last screen of `text`.
++    scroll_end: u16,
++    /// The first line that can be visible when scrolled to the end. Every line takes up at least
++    /// one row, so only the last `HEIGHT` lines can be visible.
++    visible_start: usize,
++    /// The scroll offset that shows the last screen of the lines from `visible_start`.
++    visible_scroll: u16,
++}
++
++impl StoredText {
++    fn new(line_count: usize, span_count: usize) -> Self {
++        let text = owned_text(line_count, span_count);
++        let rows_per_line = (span_count * SPAN_WIDTH).div_ceil(usize::from(WIDTH));
++        let visible_start = line_count.saturating_sub(usize::from(HEIGHT));
++        let input = Self {
++            scroll_end: end_offset(line_count * rows_per_line),
++            visible_start,
++            visible_scroll: end_offset((line_count - visible_start) * rows_per_line),
++            text,
++        };
++        assert_same_output(
++            &Paragraph::new(input.text.clone())
++                .wrap(WRAP)
++                .scroll((input.scroll_end, 0)),
++            &Paragraph::new(Text::from(input.text.lines[visible_s
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2856** (2026-10-24): docs(release): fix demo2 recording commands (@fallintoplace)
-- **PR #2853** (closed): feat(buffer): add per-cell hyperlinks behind a cell-extensions feature (@m3talsmith)
-- **PR #2851** (2026-10-24): fix(table): clip rendering to buffer bounds (@ronitgupta138)
-- **PR #2850** (2026-10-21): fix(buffer): guard set_stringn against out-of-area coordinates (#2810) (@ronitgupta138)
-- **PR #2849** (2026-10-20): chore(ci): restrict release workflow to main (@orhun)
-- **PR #2847** (2026-10-19): build(deps): bump zizmorcore/zizmor-action from 0.6.4 to 0.7.1 (@dependabot[bot])
+- **PR #2881** (2026-10-31): docs(text): explain storing styled text (@joshka)
+- **PR #2880** (2026-10-31): perf(text): reuse owned String in Line::raw and Text::raw (@joshka)
+- **PR #2879** (2026-10-31): feat(text): add into_owned for Span, Line and Text (@joshka)
+- **PR #2878** (2026-10-31): feat(text): convert borrowed Text, Line and Span references (@joshka)
+- **PR #2877** (2026-10-31): test(bench): benchmark rendering stored owned text (@joshka)
+- **PR #2875** (2026-10-31): docs: link prelude re-exports to their canonical paths (@joshka)
 
 ---
 
@@ -1224,28 +1534,53 @@ Signed-off-by: Ronit Gupta <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): require patched lru 0.18.2 (#2825)
+## X. docs(buffer): clarify rendering and bounds (#2814)
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ratatui-core/src/buffer/buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d6ced53`: build(deps): require patched lru 0.18.2 (#2825). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ce9cff0`: docs(buffer): clarify rendering and bounds (#2814). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-core/src/buffer/buffer.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-lru = "0.18.2"
+/// For text rendering, prefer rendering [`Span`], [`Line`], or [`Text`](crate::text::Text) as
+/// widgets. These text widgets restrict rendering to the intersection of the requested area and
+/// the buffer's area. For unstyled text in an area known to be inside the buffer, a [`&str`](str)
+/// or [`String`](alloc::string::String) can also be rendered directly. Their widget implementations
+/// currently delegate to [`set_stringn`](Self::set_stringn) and retain its bounds behavior.
+/// The coordinate-based text setters retain historical behavior for compatibility. For individual
+/// cells, use [`cell`](Self::cell) and [`cell_mut`](Self::cell_mut) when a position might be
+/// outside the buffer, or indexing when the position is known to be inside it.
+///
+/// # Examples
+/// use ratatui_core::text::Span;
+/// use ratatui_core::widgets::Widget;
+///
+/// // Preferred for general text rendering: express the position and width as an area.
+/// let span = Span::styled("string", Style::default().fg(Color::Red).bg(Color::White));
+/// span.render(Rect::new(3, 0, 7, 1), &mut buf);
+    /// Panics if the position is outside the buffer's area.
+    ///
+    /// # Examples
+    ///
+    /// Compare this me
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-lru = "0.18"
+/// # Examples:
+    /// Panics if the index is out of bounds.
+    /// Panics when given an coordinate that is outside of this Buffer's area.
+    /// # Panics
+    ///
+    /// Panics when given an index that is outside the Buffer's content.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d6ced53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ce9cff0` are properly handled with clean fallback behavior.

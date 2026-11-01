@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md`  
 > **Source**: github ([https://github.com/valeriansaliou/sonic](https://github.com/valeriansaliou/sonic))  
-> **Source Version**: `b635a181`  
+> **Source Version**: `f16560b6`  
 > **License**: MPL-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:08:14.342Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-31T08:28:10.079Z  
 > **Learning ID**: `learn-github-valeriansaliou-sonic`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,1645 +12,481 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): valeriansaliou/sonic
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/valeriansaliou-sonic-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/valeriansaliou/sonic](https://github.com/valeriansaliou/sonic))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:08:13.804Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): valeriansaliou/sonic
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `valeriansaliou/sonic`
-- **Description**: 🦔 Fast, lightweight & schema-less search backend. An alternative to Elasticsearch that runs on a few MBs of RAM.
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 21367 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+### Exact Problem Sonic Solves
+Sonic is a schema-less, cloud-native search and auto-complete indexing daemon written in Rust. It functions strictly as an **identifier index** rather than a heavy document store (such as Elasticsearch or OpenSearch). Sonic indexes tuples of `(collection, bucket, object_id, terms)` and responds to queries with compact ID vectors within microsecond latency profiles ($\mu\text{s}$ range), maintaining a lightweight resident memory footprint (~30MB RAM) on minimal compute (1-vCPU).
+
+### Architectural Boundaries & Subsystem Decoupling
+The architecture is partitioned into three foundational crates within a Cargo workspace (`edition = "2024"`, `resolver = "3"`):
+
+```
++---------------------------------------------------------------------------------------+
+|                                    sonic-server                                       |
+|  TCP Listeners (Port 1491) <---> Channel Dispatcher <---> Worker Thread Pool / Tasks  |
+|  (Search, Ingest, Control)                                                            |
++------------------------------------------+--------------------------------------------+
+                                           |
+                                           v
++---------------------------------------------------------------------------------------+
+|                                     sonic-core                                        |
+|  +---------------------------------------------------------------------------------+  |
+|  |                                  Executor                                       |  |
+|  |  +-------------------------------------+   +---------------------------------+  |  |
+|  |  |           FstStorePool              |   |          KvStorePool            |  |  |
+|  |  |   Radix Tree / Finite State Trans.  |   |   Embedded RocksDB Engine       |  |  |
+|  |  |   - Lexicon word graphs             |   |   - OID <-> IID mapping         |  |  |
+|  |  |   - Fast prefix / typo suggestions  |   |   - IID -> Inverted Term Lists  |  |  |
+|  |  |   - Lock: RWLock graph access       |   |   - Lock: Hierarchical DB Lock  |  |  |
+|  |  +-------------------------------------+   +---------------------------------+  |  |
+|  |  +---------------------------------------------------------------------------+  |  |
+|  |  | DynamicConfigStore (Lock-free Read / Read-heavy HashMap with NoopU32Hash) |  |  |
+|  |  +---------------------------------------------------------------------------+  |  |
+|  +---------------------------------------------------------------------------------+  |
++---------------------------------------------------------------------------------------+
+                                           ^
+                                           |
++------------------------------------------+--------------------------------------------+
+|                                    sonic-client                                       |
+|  Multiplexer <---> SonicChannel<Mode> (Transport Layer: SonicStream / Mock / Log)    |
+|  Synchronous Blocking / Asynchronous Tokio Wrappers                                   |
++---------------------------------------------------------------------------------------+
+```
+
+1. **`sonic-server`**: Network boundary and protocol parser. Implements line-delimited plain-text ASCII/UTF-8 commands (`START <mode>`, `QUERY`, `SUGGEST`, `PUSH`, `POP`, `FLUSHB`, `FLUSHC`, `TRIGGER`). It isolates client socket operations into dedicated channel threads or worker loops.
+2. **`sonic-core`**: The stateful engine. It couples two distinct database primitives per collection:
+   - **FST (Finite State Transducer) Pool**: In-memory and memory-mapped graphs representing the full lexicon for prefix searches and typo-tolerant Levenshtein automations.
+   - **KV (RocksDB) Pool**: Key-Value LSM storage managing dense mappings between external string keys (`StoreObjectOid`), internal surrogate numeric identifiers (`StoreObjectIid`), and serialized inverted posting lists.
+3. **`sonic-client`**: Client driver library exposing both non-blocking low-level primitives, high-level synchronous blocking APIs (`SonicChannelIngestBlocking`, `SonicChannelSearchBlocking`), and asynchronous Tokio runtimes (`SonicChannelSearchAsync`).
+
+### Core Subsystem Abstractions & State Invariants
+- **Identifier Separation Invariant (`OID` vs `IID`)**: Sonic never stores actual document payloads in its KV tier. It maps external string OIDs (`StoreObjectOid`) to dense integer IIDs (`StoreObjectIid`). The inverted index maps `IID -> Vec<Term>` and `Term -> Vec<IID>`.
+- **Two-Tier Synchronization Hierarchy**: Read/write concurrency is structured hierarchically. The global store pool enforces broad collection lifecycle guards (`kv_pool.lock_read_access()`, `fst_pool.lock_write_access()`), whereas individual collection instances maintain localized internal read-write locks (`kv_store.lock.read()` and `kv_store.lock.write()`).
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md, Dockerfile.
-- Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `client/examples/search_concurrent_async.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-mod common;
-
-use std::net::Ipv6Addr;
-
-use sonic_client::SonicMultiplexer;
-use sonic_client::control::SonicChannelControlAsync;
-use sonic_client::ingest::SonicChannelIngestBlocking;
-use sonic_client::options::Lang;
-use sonic_client::search::SonicChannelSearchAsync;
-
-use crate::common::data::WIKIPEDIA_PARAGRAPHS_SEARCH_ENGINE;
-use crate::common::*;
-
-const COLLECTION: &str = "collection";
-const BUCKET: &str = "bucket";
-
-async fn task(conn: &SonicChannelSearchAsync, queries: &[&str]) -> std::io::Result<()> {
-    for &query in queries.into_iter() {
-        conn.query_with_options(COLLECTION, BUCKET, query, &[&Lang("eng")])
-            .await?;
-        conn.suggest(COLLECTION, BUCKET, query).await?;
-    }
-
-    Ok(())
-}
-
-#[tokio::main(flavor = "current_thread")]
-async fn main() -> Result<(), std::io::Error> {
-    let start = std::time::Instant::now();
-
-    eprintln!("\n=== Create multiplexer ===");
-    let mut multiplexer = timed!({ SonicMultiplexer::new()? });
-
-    timed!({
-        eprintln!("\n=== Setup ===");
-        let ingest = SonicChannelIngestBlocking::connect(
-            (Ipv6Addr::LOCALHOST, 1491),
-            "SecretPassword",
-            &mut multiplexer,
-        )?;
-
-        for (i, p) in WIKIPEDIA_PARAGRAPHS_SEARCH_ENGINE.into_iter().enumerate() {
-            ingest.push_with_options(
-                COLLECTION,
-                BUCKET,
-                format!("object:{i}"),
-                p,
-                &[&Lang("eng")],
-            )?;
-        }
-
-        let control = SonicChannelControlAsync::connect(
-            (Ipv6Addr::LOCALHOST, 1491),
-            "SecretPassword",
-            &mut multiplexer,
-        )?;
-
-        control.trigger_consolidate().await?;
-    });
-
-    let mut search = timed!({
-        eprintln!("\n=== START search ===");
-        let search = SonicChannelSearchAsync::connect(
-            (Ipv6Addr::LOCALHOST, 1491),
-            "SecretPassword",
-            &mut multiplexer,
-        )?;
-        eprintln!("Version: {}", search.server_info().version);
-        eprintln!("Channel: {:?}", search.channel_info());
-        search
-    });
-
-    #[rustfmt::skip]
-    let task1 = task(
-        &search,
-        &["search", "engine", "probabili"],
-    );
-    #[rustfmt::skip]
-    let task2 = task(
-        &search,
-        &["database", "relevance", "index"],
-    );
-    #[rustfmt::skip]
-    let task3 = task(
-        &search,
-        &["criteria", "information", "similar"],
-    );
-
-    let (res1, res2, res3) = tokio::join!(task1, task2, task3);
-    res1?;
-    res2?;
-    res3?;
-
-    timed!({
-        eprintln!("\n=== Quit search ===");
-        search.quit().await?;
-    });
-
-    eprintln!("\nTotal execution time: {:.3?}", start.elapsed());
-
-    eprintln!("\n=== Drop all ===");
-
-    Ok(())
-}
-
-```
-
-### Core Architecture Module: `client/src/util.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-pub(crate) mod errors {
-    pub fn io_error_invalid_data<E: Into<Box<dyn std::error::Error + Send + Sync>>>(
-        error: E,
-    ) -> std::io::Error {
-        std::io::Error::new(std::io::ErrorKind::InvalidData, error)
-    }
-}
-
-/// Builds a command String efficiently.
-#[cfg_attr(feature = "raw-api", macro_export)]
-macro_rules! make_command {
-    ($command:literal) => {{
-        $crate::Command::from($command)
-    }};
-
-    ($format:literal $(, $arg:ident)* $(; text: $text:ident)? $(; options: $options:ident)?) => {{
-        use std::fmt::Write as _;
-
-        $(let $arg: &str = $arg.as_ref();)*
-        $(let $text: &str = $text.as_ref();)?
-
-        // NOTE: Since we can’t know if the argument will be quoted or not,
-        //   this macro is a bit too generic and might waste a few bytes of
-        //   capacity. Using `$format.len()` is a shortcut that’s good enough
-        //   to account for spaces, quotes, etc. A single argument formatted
-        //   as `{}` will reserve `len + 2`, although it will be printed as
-        //   `len + 1` (preceding space). Same goes for `{:?}`, which will
-        //   reserve 1 extraneous byte. It’s good enough. Options reserve 16
-        //   bytes, as they should rarely be larger than this.
-        let mut message: String = String::with_capacity(
-            $format.len()
-                $(+ $arg.len())*
-                // NOTE: `*2` to account for escaping.
-                $(+ ($text.len() * 2))?
-                $(+ ($options.len() * 16))?
-        );
-
-        // SAFETY: `$arg`s are string slices, formatting cannot fail.
-        write!(&mut message, $format$(, $arg)*).unwrap();
-
-        #[allow(unused_mut, unused_assignments)]
-        let (mut prefix_len, mut suffix_start) = (message.len(), message.len());
-
-        $(
-            message.push(' ');
-            message.push('"');
-            prefix_len = message.len();
-
-            message.push_str($crate::util::escape_str($text).as_str());
-
-            suffix_start = message.len();
-            message.push('"');
-        )?
-
-        $(for option in $options {
-            write!(&mut message, " {option}").map_err(std::io::Error::other)?;
-        })?
-
-        let suffix_len = message.len() - suffix_start;
-
-        $crate::Command::new(message.into_boxed_str(), prefix_len, suffix_len)
-    }};
-}
-pub(crate) use make_command;
-
-/// Escapes special characters in strings.
-pub(crate) fn escape_str(str: &str) -> String {
-    // NOTE: Already allocate twice the space needed to avoid a re-allocation
-    //   as soon as one character has to be escaped.
-    let mut res = String::with_capacity(str.len() * 2);
-
-    for c in str.chars() {
-        match c {
-            '"' => res.push_str("\\\""),
-            '\r' => res.push_str("\\r"),
-            '\n' => res.push_str("\\n"),
-            '\\' => res.push_str("\\\\"),
-            _ => res.push(c),
-        }
-    }
-
-    res
-}
-
-macro_rules! impl_channel_structs {
-    ($mode:ident($mode_lowercase:literal): $low_level_ty:ident / $blocking_ty:ident / $async_ty:ident) => {
-        type LowLevelChannel = $low_level_ty;
-
-        #[doc = concat!("A synchronous but non-blocking way to interact with a Sonic Channel in ", stringify!($mode), " mode.")]
-        #[doc = concat!("\n\nShared logic for [`", stringify!($blocking_ty), "`] and [`", stringify!($async_ty),"`], which you should use instead.")]
-        #[repr(transparent)]
-        pub struct $low_level_ty {
-            inner: SonicChannel<self::Mode>,
-        }
-
-        impl $low_level_ty {
-            #[doc(alias = "new")]
-            pub fn connect(
-                addr: impl Into<std::net::SocketAddr>,
-                pass: impl AsRef<str>,
-                multiplexer: &$crate::SonicMultiplexer,
-            ) -> std::io::Result<Self> {
-                SonicChannel::<self::Mode>::connect::<crate::transport::SonicStream>(addr, pass, multiplexer)
-                    .map(|inner| Self { inner })
-            }
-
-            /// Same as [`connect`][Self::connect] but allows choosing a
-            /// different transport layer.
-            ///
-            /// This is useful in tests for example, to debug what’s going on
-            /// by wrapping the TCP stream in a logging layer.
-            pub fn connect_custom<T: crate::transport::Transport + 'static>(
-                addr: impl Into<std::net::SocketAddr>,
-                pass: impl AsRef<str>,
-                multiplexer: &$crate::SonicMultiplexer,
-            ) -> std::io::Result<Self> {
-                SonicChannel::<self::Mode>::connect::<T>(addr, pass, multiplexer)
-                    .map(|inner| Self { inner })
-            }
-
-            pub fn server_info(&self) -> &crate::events::ServerInfo {
-                &self.inner.server_info
-            }
-
-            pub fn channel_info(&self) -> &crate::events::ChannelInfo {
-                &self.inner.channel_info
-            }
-
-            #[inline]
-            pub fn recv_timeout(&self) -> std::time::Duration {
-                *self.inner.recv_timeout.read().unwrap()
-            }
-
-            #[inline]
-            pub fn set_recv_timeout(&self, timeout: std::time::Duration) {
-                *self.inner.recv_timeout.write().unwrap() = timeout
-            }
-
-            fn quit_blocking_(&mut self) -> std::io::Result<()> {
-                self.quit()?
-                    .recv_timeout(self.recv_timeout())
-                    .map_err(|error| std::io::Error::new(std::io::ErrorKind::BrokenPipe, error))?
-            }
-        }
-
-        impl Drop for $low_level_ty {
-            #[inline]
-            fn drop(&mut self) {
-                if !self.inner.is_closed() {
-                    $crate::logging::log_trace!(concat!("[Drop] Quitting ", stringify!($low_level_ty)));
-                    self.quit_blocking_().unwrap_or_else(|error| crate::logging::log_error!("{error:?}"));
-                }
-            }
-        }
-
-        #[cfg(feature = "sync")]
-        type BlockingChannel = $blocking_ty;
-
-        #[doc = concat!("A blocking way to interact with a Sonic Channel in ", stringify!($mode), " mode.")]
-        #[doc = concat!("\n\nWhen in an asynchronous context (e.g. using `tokio`), use [`", stringify!($async_ty), "`] instead.")]
-        #[cfg(feature = "sync")]
-        #[repr(transparent)]
-        pub struct $blocking_ty {
-            inner: $low_level_ty,
-        }
-
-        #[cfg(feature = "sync")]
-        impl $blocking_ty {
-            #[doc(alias = "new")]
-            pub fn connect(
-                addr: impl Into<std::net::SocketAddr>,
-                pass: impl AsRef<str>,
-                multiplexer: &$crate::SonicMultiplexer,
-            ) -> std::io::Result<Self> {
-                $low_level_ty::connect(addr, pass, multiplexer).map(|inner| Self { inner })
-            }
-
-            /// Same as [`connect`][Self::connect] but allows choosing a
-            /// different transport layer.
-            ///
-            /// This is useful in tests for example, to debug what’s going on
-            /// by wrapping the TCP stream in a logging layer.
-            pub fn connect_custom<T: crate::transport::Transport + 'static>(
-                addr: impl Into<std::net::SocketAddr>,
-                pass: impl AsRef<str>,
-                multiplexer: &$crate::SonicMultiplexer,
-            ) -> std::io::Result<Self> {
-                $low_level_ty::connect_custom::<T>(addr, pass, multiplexer).map(|inner| Self { inner })
-            }
-
-            pub fn server_info(&self) -> &crate::events::ServerInfo {
-                self.inner.server_info()
-            }
-
-            pub fn channel_info(&self) -> &crate::events::ChannelInfo {
-                self.inner.channel_info()
-            }
-
-            #[inline]
-            pub fn recv_timeout(&self) -> std::time::Duration {
-                self.inner.recv_timeout()
-            }
-
-            #[inline]
-            pub fn set_recv_timeout(&self, timeout: std::time::Duration) {
-                self.inner.set_recv_timeout(timeout)
-            }
-        }
-
-        #[cfg(feature = "async")]
-        type AsyncChannel = $async_ty;
-
-        #[doc = concat!("An asynchronous way to interact with a Sonic Channel in ", stringify!($mode), " mode.")]
-        #[doc = concat!("\n\nIf you can’t be in an asynchronous context, use [`", stringify!($blocking_ty), "`] instead.")]
-        #[cfg(feature = "async")]
-        #[repr(transparent)]
-        pub struct $async_ty {
-            inner: $low_level_ty,
-        }
-
-        #[cfg(feature = "async")]
-        impl $async_ty {
-            #[doc(alias = "new")]
-            pub fn connect(
-                addr: impl Into<std::net::SocketAddr>,
-                pass: impl AsRef<str>,
-                multiplexer: &$crate::SonicMultiplexer,
-            ) -> std::io::Result<Self> {
-                $low_level_ty::connect(addr, pass, multiplexer).map(|inner| Self { inner })
-            }
-
-            /// Same as [`connect`][Self::connect] but allows choosing a
-            /// different transport layer.
-            ///
-            /// This is useful in tests for example, to debug what’s going on
-            /// by wrapping the TCP stream in a logging layer.
-            pub fn connect_custom<T: crate::transport::Transport + 'static>(
-                addr: impl Into<std::net::SocketAddr>,
-                pass: impl AsRef<str>,
-                multiplexer: &$crate::SonicMultiplexer,
-            ) -> std::io::Result<Self> {
-                $low_level_ty::connect_custom::<T>(addr, pass, multiplexer).map(|inner| Self { inner })
-            }
-
-            pub fn server_info(&self) -> &crate::events::ServerInfo {
-                self.inner.server_info()
-            }
-
-            pub fn channel_info(&self) -> &crate::events::ChannelInfo {
-                self.inner.channel_info()
-            }
-
-            #[inline]
-            pub fn recv
-```
-
-### Core Architecture Module: `core/src/config.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2019, Valerian Saliou <valerian@valeriansaliou.name>
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-//! Sonic library configuration.
-//!
-//! It does not include server nor channel configuration, which are specific
-//! to the `sonic-server` binary.
-
-use std::collections::HashSet;
-use std::path::PathBuf;
-use std::sync::Arc;
-
-use serde::Deserialize;
-
-use crate::util::serde::env_var;
-
-#[derive(Debug, Deserialize)]
-pub struct Config {
-    pub normalization: NormalizationConfig,
-
-    pub tokenization: TokenizationConfig,
-
-    pub stopwords: StopwordsConfig,
-
-    pub search: SearchConfig,
-
-    pub store: StoreConfig,
-}
-
-impl Config {
-    pub fn validate(&self) {
-        // Check 'write_buffer' for KV
-        if self.store.kv.database.write_buffer_size == Some(0) {
-            panic!("write_buffer for kv must not be zero");
-        }
-
-        // Check 'flush_after' for KV
-        if self.store.kv.database.flush_after >= self.store.kv.pool.inactive_after {
-            panic!("flush_after for kv must be strictly lower than inactive_after");
-        }
-
-        // Check 'consolidate_after' for FST
-        if self.store.fst.graph.consolidate_after >= self.store.fst.pool.inactive_after {
-            panic!("consolidate_after for fst must be strictly lower than inactive_after");
-        }
-    }
-}
-
-/// Configuration group for normalization options (Unicode normalization,
-/// stemming, lemmatization…).
-#[derive(Debug, Deserialize, Clone, Copy)]
-pub struct NormalizationConfig {
-    #[serde(with = "crate::util::serde::none_string_as_none")]
-    pub unicode_normalization: Option<UnicodeNormalization>,
-
-    pub diacritic_folding_enabled: bool,
-
-    #[cfg(feature = "stemming")]
-    pub stemming_enabled: bool,
-}
-
-#[derive(Deserialize, Debug, Clone, Copy)]
-#[serde(rename_all = "snake_case")]
-pub enum UnicodeNormalization {
-    /// Unicode Normalization Form C.
-    Nfc,
-    /// Unicode Normalization Form KC.
-    Nfkc,
-}
-
-/// Configuration group for tokenization options.
-#[derive(Debug, Deserialize, Clone, Copy)]
-pub struct TokenizationConfig {
-    pub detect_special_patterns: bool,
-
-    #[serde(alias = "split_special_patterns")]
-    pub compat_split_special_patterns: bool,
-}
-
-#[derive(Debug, Deserialize, Clone, Default)]
-pub struct StopwordsConfig {
-    #[serde(deserialize_with = "to_stopwords")]
-    pub allow: HashSet<String>,
-
-    #[serde(deserialize_with = "to_stopwords")]
-    pub deny: HashSet<String>,
-}
-
-fn to_stopwords<'de, D>(deserializer: D) -> Result<HashSet<String>, D::Error>
-where
-    D: serde::de::Deserializer<'de>,
-{
-    use unicode_normalization::UnicodeNormalization as _;
-
-    let vec: Vec<Box<str>> = Deserialize::deserialize(deserializer)?;
-    let stopwords_iter = vec.into_iter().map(|s| s.nfkd().to_string());
-    Ok(HashSet::from_iter(stopwords_iter))
-}
-
-#[derive(Debug, Deserialize)]
-pub struct SearchConfig {
-    pub query_limit_default: u16,
-
-    pub query_limit_maximum: u16,
-
-    pub query_alternates_try: usize,
-
-    pub query_minimum_term_idf_default: f32,
-
-    pub query_minimum_term_idf_minimum_object_count: u64,
-
-    pub suggest_limit_default: u16,
-
-    pub suggest_limit_maximum: u16,
-
-    pub list_limit_default: u16,
-
-    pub list_limit_maximum: u16,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct StoreConfig {
-    pub kv: Arc<KvStoreConfig>,
-
-    pub fst: Arc<FstStoreConfig>,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct KvStoreConfig {
-    #[serde(deserialize_with = "env_var::path_buf")]
-    pub path: PathBuf,
-
-    pub retain_word_objects: usize,
-
-    pub pool: KvStorePoolConfig,
-
-    pub database: KvStoreDatabaseConfig,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct KvStorePoolConfig {
-    pub inactive_after: u64,
-}
-
-#[derive(Debug, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct KvStoreDatabaseConfig {
-    pub flush_after: u64,
-
-    pub write_ahead_log: bool,
-
-    /// Whether or not to compress.
-    ///
-    /// Will get overriden if [`compression_type`](Self::compression_type) is
-    /// also specified.
-    #[serde(default)]
-    pub compress: Option<bool>,
-
-    #[serde(default)]
-    pub parallelism: Option<i32>,
-
-    #[serde(default)]
-    #[serde(alias = "max_files")]
-    pub max_open_files: Option<i32>,
-
-    // TODO(major): Make this MB, as in Kvrocks.
-    /// WARN: In KB!
-    #[serde(default = "default_write_buffer_size")]
-    #[serde(alias = "write_buffer")]
-    pub write_buffer_size: Option<usize>,
-
-    #[serde(default)]
-    pub max_write_buffer_number: Option<i32>,
-
-    #[serde(default)]
-    pub min_write_buffer_number: Option<i32>,
-
-    #[serde(default)]
-    pub min_write_buffer_number_to_merge: Option<i32>,
-
-    #[serde(default)]
-    pub block_cache_size: Option<u32>,
-
-    #[serde(default)]
-    pub cache_index_and_filter_blocks: Option<bool>,
-
-    #[serde(default)]
-    #[serde(alias = "compression")]
-    #[serde(deserialize_with = "to_rocksdb_compression_type_opt")]
-    pub compression_type: Option<rocksdb::DBCompressionType>,
-
-    #[serde(default)]
-    #[serde(alias = "wal_compression")]
-    #[serde(deserialize_with = "to_rocksdb_compression_type_opt")]
-    pub wal_compression_type: Option<rocksdb::DBCompressionType>,
-
-    #[serde(default)]
-    pub wal_ttl_seconds: Option<u64>,
-
-    #[serde(default)]
-    pub wal_size_limit_mb: Option<u64>,
-
-    #[serde(default)]
-    pub wal_bytes_per_sync: Option<u64>,
-
-    #[serde(default)]
-    #[serde(deserialize_with = "to_rocksdb_recovery_mode_opt")]
-    pub wal_recovery_mode: Option<rocksdb::DBRecoveryMode>,
-
-    #[serde(default)]
-    pub compression_level: Option<i32>,
-
-    #[serde(default)]
-    #[serde(alias = "compression_start_level")]
-    pub min_level_to_compress: Option<std::ffi::c_int>,
-
-    #[serde(default)]
-    #[serde(alias = "level0_file_num_compaction_trigger")]
-    pub level_zero_file_num_compaction_trigger: Option<i32>,
-
-    #[serde(default)]
-    #[serde(alias = "level0_slowdown_writes_trigger")]
-    pub level_zero_slowdown_writes_trigger: Option<i32>,
-
-    #[serde(default)]
-    #[serde(alias = "level0_stop_writes_trigger")]
-    pub level_zero_stop_writes_trigger: Option<i32>,
-
-    #[serde(default)]
-    pub max_bytes_for_level_base: Option<u64>,
-
-    #[serde(default)]
-    pub max_bytes_for_level_multiplier: Option<f64>,
-
-    #[serde(default)]
-    pub target_file_size_base: Option<u64>,
-
-    #[serde(default)]
-    pub max_background_jobs: Option<i32>,
-
-    #[serde(default)]
-    #[serde(alias = "max_compactions")]
-    pub max_subcompactions: Option<u32>,
-
-    #[serde(default)]
-    pub max_flushes: Option<i32>,
-
-    #[serde(default)]
-    pub stats_dump_period_sec: Option<u32>,
-}
-
-fn default_write_buffer_size() -> Option<usize> {
-    Some(16384)
-}
-
-fn parse_rocksdb_compression_type<E: serde::de::Error>(
-    str: &str,
-) -> Result<rocksdb::DBCompressionType, E> {
-    // NOTE: Some values are not available because not compiled in rocksdb
-    //   (feature flag is off).
-    match str.to_ascii_lowercase().as_str() {
-        "none" => Ok(rocksdb::DBCompressionType::None),
-        // "snappy" => Ok(rocksdb::DBCompressionType::Snappy),
-        // "zlib" => Ok(rocksdb::DBCompressionType::Zlib),
-        // "bz2" => Ok(rocksdb::DBCompressionType::Bz2),
-        // "lz4" => Ok(rocksdb::DBCompressionType::Lz4),
-        // "lz4hc" => Ok(rocksdb::DBCompressionType::Lz4hc),
-        "zstd" => Ok(rocksdb::DBCompressionType::Zstd),
-        _ => Err(serde::de::Error::unknown_variant(
-            str,
-            &[
-                "none",
-                // "snappy",
-                // "zlib",
-                // "bz2",
-                // "lz4",
-                // "lz4hc",
-                "zstd",
-            ],
-        )),
-    }
-}
-
-fn to_rocksdb_compression_type_opt<'de, D>(
-    deserializer: D,
-) -> Result<Option<rocksdb::DBCompressionType>, D::Error>
-where
-    D: serde::de::Deserializer<'de>,
-{
-    let str: Option<String> = Deserialize::deserialize(deserializer)?;
-    str.map(|s| parse_rocksdb_compression_type(&s)).transpose()
-}
-
-fn parse_rocksdb_recovery_mode<E: serde::de::Error>(
-    str: &str,
-) -> Result<rocksdb::DBRecoveryMode, E> {
-    match str.to_ascii_lowercase().as_str() {
-        "tolerate_corrupted_tail_records" | "TolerateCorruptedTailRecords" => {
-            Ok(rocksdb::DBRecoveryMode::TolerateCorruptedTailRecords)
-        }
-        "absolute_consistency" | "AbsoluteConsistency" => {
-            Ok(rocksdb::DBRecoveryMode::AbsoluteConsistency)
-        }
-        "point_in_time" | "PointInTime" => Ok(rocksdb::DBRecoveryMode::PointInTime),
-        "skip_any_corrupted_record" | "SkipAnyCorruptedRecord" => {
-            Ok(rocksdb::DBRecoveryMode::SkipAnyCorruptedRecord)
-        }
-        _ => Err(serde::de::Error::unknown_variant(
-            str,
-            &[
-                "tolerate_corrupted_tail_records",
-                "absolute_consistency",
-                "point_in_time",
-                "skip_any_corrupted_record",
-            ],
-        )),
-    }
-}
-
-fn to_rocksdb_recovery_mode_opt<'de, D>(
-    deserializer: D,
-) -> Result<Option<rocksdb::DBRecoveryMode>, D::Error>
-where
-    D: serde::de::Deserializer<'de>,
-{
-    let str: Option<String> = Deserialize::deserialize(deserializer)?;
-    str.map(|s| parse_rocksdb_recovery_mode(&s)).transpose()
-}
-
-#[derive(Debug, Deserialize)]
-pub struct FstStoreConfig {
-    #[serde(deserialize_with = "env_var::path_buf")]
-    pub path: PathBuf,
-
-    pub pool: FstStorePoolConfig,
-
-    pub graph: FstStoreGraphConfig,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct FstStorePoolConfig {
-    pub inactive_after: u64,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct FstStoreGraphConfig {
-    pub consolidate_after: u64,
-
-    pub max_size: usize,
-
-    pub max_words: usize,
-}
-
-#[cfg(test)]
-pub(crate) mod tests {
-    pub(crate) fn defaults_toml() -> &'static str {
-        r#"
-        [channel]
-        inet = "[::1]:1491"
-        tcp_timeout = 300
-
-        [normalization]
-        unicode_normalization = 
-```
-
-### Core Architecture Module: `core/src/executor/count.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2019, Valerian Saliou <valerian@valeriansaliou.name>
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-use crate::store::{StoreItemPart, StoreObjectOid};
-
-impl super::Executor {
-    /// Count terms in object (from KV store).
-    pub fn counto(
-        &self,
-        collection: StoreItemPart,
-        bucket: StoreItemPart,
-        oid: StoreObjectOid,
-    ) -> Result<u32, ()> {
-        // Important: acquire database access read lock, and reference it in context. This \
-        //   prevents the database from being erased while using it in this block.
-        let _kv_read_guard = self.kv_pool.lock_read_access();
-
-        if let Ok(kv_store) = self.kv_pool.acquire(false, collection, None, |_| {}) {
-            let Some(kv_store) = kv_store else {
-                tracing::debug!(
-                    "collection store does not exist, consider {bucket:?} from {collection:?} empty"
-                );
-                return Ok(0);
-            };
-
-            // Important: acquire bucket store read lock
-            executor_kv_lock_read!(kv_store);
-
-            let kv_action = kv_store.access_read_only(bucket);
-
-            // Try to resolve existing OID to IID
-            kv_action
-                .get_oid_to_iid(oid)
-                .unwrap_or(None)
-                .map(|iid| {
-                    // List terms for IID
-                    if let Some(terms) = kv_action.get_iid_to_terms(iid).unwrap_or(None) {
-                        terms.len() as u32
-                    } else {
-                        0
-                    }
-                })
-                .ok_or(())
-                .or(Ok(0))
-        } else {
-            Err(())
-        }
-    }
-
-    /// Count objects in bucket (from KV store).
-    pub fn countb(&self, collection: StoreItemPart, bucket: StoreItemPart) -> Result<u32, ()> {
-        let kv_store = self.kv_pool.acquire(false, collection, None, |_| {})?;
-
-        let Some(kv_store) = kv_store else {
-            tracing::debug!(
-                "collection store does not exist, consider {bucket:?} from {collection:?} empty"
-            );
-            return Ok(0);
-        };
-
-        let kv_action = kv_store.access_read_only(bucket);
-
-        let count = kv_action
-            .get_object_count()
-            .map_err(|error| tracing::warn!("{error:?}"))?;
-
-        Ok(count)
-    }
-
-    /// Count buckets in collection (from FST filesystem).
-    pub fn countc(&self, collection: StoreItemPart) -> Result<u32, ()> {
-        self.fst_pool
-            .count_collection_buckets(collection)
-            .map(|count| count as u32)
-    }
-}
-
-// MARK: - Deprecated
-
-impl super::Executor {
-    /// Count terms in (collection, bucket) from FST.
-    pub fn legacy_countb(
-        &self,
-        collection: StoreItemPart,
-        bucket: StoreItemPart,
-    ) -> Result<u32, ()> {
-        // Important: acquire graph access read lock, and reference it in context. This \
-        //   prevents the graph from being erased while using it in this block.
-        let _fst_read_guard = self.fst_pool.lock_read_access();
-
-        if let Ok(fst_store) = self.fst_pool.acquire(collection, bucket) {
-            Ok(fst_store.count_words() as u32)
-        } else {
-            Err(())
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `core/src/executor/flushb.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2019, Valerian Saliou <valerian@valeriansaliou.name>
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-use crate::store::StoreItemPart;
-
-impl super::Executor {
-    pub fn flushb(&self, collection: StoreItemPart, bucket: StoreItemPart) -> Result<u32, ()> {
-        // Important: acquire database access read lock, and reference it in context. This \
-        //   prevents the database from being erased while using it in this block.
-        // Notice: acquire FST lock in write mode, as we will erase it.
-        let _kv_read_guard = self.kv_pool.lock_read_access();
-        let _fst_write_guard = self.fst_pool.lock_write_access();
-
-        if let Ok(kv_store) = self.kv_pool.acquire(false, collection, None, |_| {}) {
-            let Some(kv_store) = kv_store else {
-                tracing::debug!(
-                    "collection store does not exist, consider {bucket:?} from {collection:?} already erased"
-                );
-                return Ok(0);
-            };
-
-            // Important: acquire bucket store write lock
-            executor_kv_lock_write!(kv_store);
-
-            // Store exists, proceed erasure.
-            tracing::debug!("collection store exists, erasing: {bucket} from {collection}");
-
-            let kv_action = kv_store.access_read_write(bucket);
-
-            // Notice: we cannot use the provided KV bucket erasure helper there, as \
-            //   erasing a bucket requires a database lock, which would incur a dead-lock, \
-            //   thus we need to perform the erasure from there.
-            if let Ok(erase_count) = kv_action.batch_erase_bucket() {
-                if self.fst_pool.erase(collection, Some(bucket)).is_ok() {
-                    tracing::debug!("done with bucket erasure");
-
-                    return Ok(erase_count);
-                }
-            }
-        }
-
-        Err(())
-    }
-}
-
-```
-
-### Core Architecture Module: `core/src/executor/flushc.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2019, Valerian Saliou <valerian@valeriansaliou.name>
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-use crate::store::StoreItemPart;
-
-impl super::Executor {
-    pub fn flushc(&self, collection: StoreItemPart) -> Result<u32, ()> {
-        // Important: do not acquire the store from there, as otherwise it will remain open \
-        //   even if dropped in the inner function, as this caller would still own a reference to \
-        //   it.
-        // Acquire KV + FST locks in write mode, as we will erase them, we need to prevent any \
-        //   other consumer to use them.
-        let _kv_write_guard = self.kv_pool.lock_write_access();
-        let _fst_write_guard = self.fst_pool.lock_write_access();
-
-        match (
-            self.kv_pool.erase(collection, None),
-            self.fst_pool.erase(collection, None),
-        ) {
-            (Ok(erase_count), Ok(_)) => Ok(erase_count),
-            _ => Err(()),
-        }
-    }
-}
-
-```
-
-### Core Architecture Module: `core/src/executor/flusho.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2019, Valerian Saliou <valerian@valeriansaliou.name>
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-use rocksdb::WriteBatch;
-
-use crate::store::{StoreItemPart, StoreObjectOid};
-
-impl super::Executor {
-    pub fn flusho(
-        &self,
-        collection: StoreItemPart,
-        bucket: StoreItemPart,
-        oid: StoreObjectOid,
-    ) -> Result<u32, ()> {
-        // Important: acquire database access read lock, and reference it in context. This \
-        //   prevents the database from being erased while using it in this block.
-        let _kv_read_guard = self.kv_pool.lock_read_access();
-
-        if let Ok(kv_store) = self.kv_pool.acquire(false, collection, None, |_| {}) {
-            let Some(kv_store) = kv_store else {
-                tracing::debug!(
-                    "collection store does not exist, consider {bucket:?} from {collection:?} empty"
-                );
-                return Ok(0);
-            };
-
-            // Important: acquire bucket store write lock
-            executor_kv_lock_write!(kv_store);
-
-            let kv_action = kv_store.access_read_write(bucket);
-
-            // Try to resolve existing OID to IID (if it does not exist, there is nothing to \
-            //   be flushed)
-            if let Ok(iid_value) = kv_action.get_oid_to_iid(oid) {
-                let mut count_flushed = 0;
-
-                if let Some(iid) = iid_value {
-                    // Resolve terms associated to IID
-                    let iid_terms = {
-                        if let Ok(iid_terms_value) = kv_action.get_iid_to_terms(iid) {
-                            iid_terms_value.unwrap_or_default()
-                        } else {
-                            tracing::error!("failed getting flusho executor iid-to-terms");
-
-                            Vec::new()
-                        }
-                    };
-
-                    let mut batch = WriteBatch::default();
-
-                    // Flush bucket (batch operation, as it is shared w/ other executors)
-                    let batch_count =
-                        kv_action.batch_flush_bucket(&mut batch, iid, oid, &iid_terms);
-
-                    if kv_action.write(batch).is_ok() {
-                        count_flushed += batch_count;
-                    } else {
-                        tracing::error!("failed executing batch-flush-bucket in flusho executor");
-                    }
-                }
-
-                return Ok(count_flushed);
-            } else {
-                tracing::error!("failed getting flusho executor oid-to-iid");
-            }
-        }
-
-        Err(())
-    }
-}
-
-```
-
-### Core Architecture Module: `core/src/executor/list.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2022, Troy Kohler <troy.kohler@zalando.de>
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-use super::types::{QuerySearchLimit, QuerySearchOffset};
-use crate::store::StoreItemPart;
-
-impl super::Executor {
-    pub fn list(
-        &self,
-        collection: StoreItemPart,
-        bucket: StoreItemPart,
-        limit: QuerySearchLimit,
-        offset: QuerySearchOffset,
-    ) -> Result<Vec<String>, ()> {
-        // Important: acquire graph access read lock, and reference it in context. This \
-        //   prevents the graph from being erased while using it in this block.
-        let _fst_read_guard = self.fst_pool.lock_read_access();
-
-        if let Ok(fst_store) = self.fst_pool.acquire(collection, bucket) {
-            tracing::debug!("running list");
-
-            return fst_store.list_words(limit as usize, offset as usize);
-        }
-
-        Err(())
-    }
-}
-
-```
-
-### Core Architecture Module: `core/src/executor/macros.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2019, Valerian Saliou <valerian@valeriansaliou.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-macro_rules! executor_ensure_op {
-    ($operation:expr) => {
-        match $operation {
-            Ok(_) => {}
-            Err(err) => tracing::error!("executor operation failed: {:?}", err),
-        }
-    };
-}
-
-macro_rules! executor_kv_lock_read {
-    ($store:ident) => {
-        let kv_store_reference = $store.clone();
-
-        let _kv_store_lock = kv_store_reference.lock.read().unwrap();
-    };
-}
-
-macro_rules! executor_kv_lock_write {
-    ($store:ident) => {
-        let kv_store_reference = $store.clone();
-
-        let _kv_store_lock = kv_store_reference.lock.write().unwrap();
-    };
-}
-
-```
-
-### Core Architecture Module: `core/src/executor/mod.rs`
-```
-// Sonic
-//
-// Fast, lightweight and schema-less search backend
-// Copyright: 2019, Valerian Saliou <valerian@valeriansaliou.name>
-// Copyright: 2026, Rémi Bardon <remi@remibardon.name>
-// License: Mozilla Public License v2.0 (MPL v2.0)
-
-use std::collections::HashMap;
-use std::sync::{Arc, RwLock, RwLockReadGuard};
-
-use crate::store::kv::KvStoreId;
-use crate::store::{StoreItemPart, StoreObjectIid};
-use crate::util::hash::NoopU32HasherBuilder;
-
-#[macro_use]
-mod macros;
-mod types;
-
-mod count;
-mod flushb;
-mod flushc;
-mod flusho;
-mod list;
-mod pop;
-mod push;
-mod search;
-mod suggest;
-
-pub use types::*;
-
-pub struct Executor {
-    pub app_conf: Arc<crate::Config>,
-    pub kv_pool: crate::store::kv::KvStorePool,
-    pub fst_pool: crate::store::fst::FstStorePool,
-    pub dynamic_conf_store: Arc<DynamicConfigStore>,
-
-    /// When using `NEW` with `PUSH`, a new IID is automatically created.
-    /// However, if the input data is larger than the allowed buffer size Sonic
-    /// would end up indexing the same document across multiple IIDs
-    /// (see [issue #405 “Experimental flag `NEW` is incompatible with content > `buffer_size`”](https://github.com/valeriansaliou/sonic/issues/405)).
-    ///
-    /// To fix it, we keep track of the last “assumed new” OID and its IID so
-    /// we can reuse it on subsequent `PUSH … NEW` requests.
-    // NOTE: We can’t use `StoreObjectOid` as it’d not owned.
-    last_assumed_new_oid: RwLock<Option<(String, StoreObjectIid)>>,
-}
-
-impl Executor {
-    pub fn new(
-        app_conf: Arc<crate::Config>,
-        kv_pool: crate::store::kv::KvStorePool,
-        fst_pool: crate::store::fst::FstStorePool,
-        dynamic_conf_store: Arc<DynamicConfigStore>,
-    ) -> Self {
-        Self {
-            app_conf,
-            kv_pool,
-            fst_pool,
-            dynamic_conf_store,
-            last_assumed_new_oid: RwLock::new(None),
-        }
-    }
-}
-
-impl std::fmt::Debug for Executor {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        // NOTE: Deconstructing to future-proof this function.
-        let Self {
-            kv_pool,
-            fst_pool,
-            dynamic_conf_store,
-            last_assumed_new_oid,
-            // NOTE: We don’t care about the app configuration,
-            //   we can see it elsewhere if needed.
-            app_conf: _app_conf,
-        } = self;
-
-        f.debug_struct("Executor")
-            .field("kv_pool", kv_pool)
-            .field("fst_pool", fst_pool)
-            .field("dynamic_conf_store", dynamic_conf_store)
-            .field("last_assumed_new_oid", last_assumed_new_oid)
-            .finish_non_exhaustive()
-    }
-}
-
-/// A wrapper over a `RwLock<HashMap>` that doesn’t leak private types.
-#[derive(Default)]
-pub struct DynamicConfigStore(RwLock<HashMap<u32, DynamicConfig, NoopU32HasherBuilder>>);
-
-impl DynamicConfigStore {
-    pub fn insert(&self, collection: StoreItemPart, config: DynamicConfig) {
-        (self.0.write().unwrap()).insert(collection.into_compact(), config);
-    }
-
-    pub fn get(&self, collection: StoreItemPart) -> Option<DynamicConfig> {
-        (self.0.read().unwrap())
-            .get(&collection.into_compact())
-            .copied()
-    }
-
-    pub fn read<'a>(&'a self) -> DynamicConfigStoreReadGuard<'a> {
-        DynamicConfigStoreReadGuard(self.0.read().unwrap())
-    }
-}
-
-impl std::fmt::Debug for DynamicConfigStore {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        use crate::util::fmt::AsPrettyRwLock;
-
-        f.debug_tuple("DynamicConfStore")
-            .field(&AsPrettyRwLock(&self.0))
-            .finish()
-    }
-}
-
-pub struct DynamicConfigStoreReadGuard<'a>(
-    RwLockReadGuard<'a, HashMap<u32, DynamicConfig, NoopU32HasherBuilder>>,
-);
-
-impl<'a> DynamicConfigStoreReadGuard<'a> {
-    pub fn iter(&self) -> impl Iterator<Item = (&u32, &DynamicConfig)> {
-        self.0.iter()
-    }
-
-    pub fn get(&self, key: &u32) -> Option<&DynamicConfig> {
-        self.0.get(key)
-    }
-}
-
-#[derive(Debug, Default, Clone, Copy)]
-pub struct DynamicConfig {
-    pub sonic: DynamicConfigSonic,
-    pub rocksdb: DynamicConfigRocksDb,
-}
-
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub struct DynamicConfigSonic {
-    pub disable_janitor_tasks: Option<bool>,
-    pub disable_fst_consolidate_task: Option<bool>,
-    pub disable_kv_flush_task: Option<bool>,
-}
-
-#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
-pub struct DynamicConfigRocksDb {
-    pub disable_auto_compactions: Option<bool>,
-    pub unordered_write: Option<bool>,
-    pub memtable: Option<RocksDbMemtable>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum RocksDbMemtable {
-    Default,
-    Vector,
-}
-
-impl Executor {
-    pub fn set_dynamic_conf(
-        &self,
-        collection: StoreItemPart,
-        new_conf: DynamicConfig,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        let kv_store_id = KvStoreId::from_part(collection);
-
-        tracing::debug!(
-            ?new_conf.rocksdb,
-            "Re-opening KV store connection for {kv_store_id:?} with new dynamic configuration overrides…"
-        );
-
-        let mut kv_pool_write_guard = self.kv_pool.write().unwrap();
-
-        self.kv_pool
-            .close(kv_store_id, Some(&mut kv_pool_write_guard));
-
-        self.kv_pool
-            .acquire(
-                true,
-                collection,
-                Some(&mut kv_pool_write_guard),
-                |options| {
-                    let DynamicConfigRocksDb {
-                        disable_auto_compactions,
-                        unordered_write,
-                        memtable,
-                    } = &new_conf.rocksdb;
-
-                    if let Some(disable_auto_compactions) = disable_auto_compactions {
-                        options.set_disable_auto_compactions(*disable_auto_compactions);
-                    }
-
-                    if let Some(unordered_write) = unordered_write {
-                        options.set_unordered_write(*unordered_write);
-                    }
-
-                    match memtable {
-                        Some(RocksDbMemtable::Vector) => {
-                            // Use the vector-based memtable instead of the default skiplist.
-                            options.set_memtable_factory(rocksdb::MemtableFactory::Vector);
-
-                            // Vector memtables don't support concurrent inserts, so this must be false.
-                            options.set_allow_concurrent_memtable_write(false);
-                        }
-                        None | Some(RocksDbMemtable::Default) => {}
-                    }
-                },
-            )
-            .map_err(|()| std::io::Error::other("Error re-opening connection"))?;
-
-        drop(kv_pool_write_guard);
-
-        tracing::info!(
-            ?new_conf.rocksdb,
-            "KV store connection for {collection:?} successfully re-opened"
-        );
-
-        self.dynamic_conf_store.insert(collection, new_conf);
-
-        Ok(())
-    }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #433** (2026-10-10): **Compaction can silently fail**
-  *Symptoms*: `compact_range` returns `()`, which means it cannot bubble up errors.  We have to call `wait_for_compact` to check for successful compaction.  The fix is trivial, I’ll push it to `master` in addition to `v2`.  ---  I noticed this because after compaction I still had hundreds of small L0 files in a benchmark, and RocksDB LOG revealed a “Too many open files” error that Sonic didn’t see.
-  **Post-Mortem & Fix Analysis**:
-  > This issue only makes sense with the experimental `TRIGGER compact` command, so I won’t backport the fix to `master`. Automatic RocksDB compaction would not be subject to this, as the scale is far lower.  Closing as completed in branch `v2`.
-
-- **Issue #429** (2026-10-19): **client: Do not strip chunks on mutlipart `PUSH`**
-  *Symptoms*: Just a reminder for myself. It’s only meaningful in experimental builds, you can ignore.
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `b635a181` (2026-10-21)
-**Commit Message**: fix(security): Update dependencies
-
-Fixes advisories RUSTSEC-2026-0382 and RUSTSEC-2026-0381.
-
-**File**: `Cargo.lock` (modified, +11/-23)
-```diff
-@@ -545,9 +545,9 @@ dependencies = [
- 
- [[package]]
- name = "crc32fast"
--version = "1.5.2"
-+version = "1.5.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
-+checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
- dependencies = [
-  "cfg-if",
- ]
-@@ -1093,7 +1093,7 @@ dependencies = [
-  "serde",
-  "serde_json",
-  "thiserror 2.0.21",
-- "ureq 3.4.2",
-+ "ureq 3.5.0",
-  "windows-sys 0.61.2",
- ]
- 
-@@ -2206,9 +2206,9 @@ dependencies = [
- 
- [[package]]
- name = "rustls-webpki"
--version = "0.103.15"
-+version = "0.103.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-+checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
- dependencies = [
-  "ring",
-  "rustls-pki-types",
-@@ -2357,17 +2357,6 @@ version = "1.1.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "199905e6153d6405f9728fe44daace35f8f837bbf830bb6e85fbd5828709a886"
- 
--[[package]]
--name = "socks"
--version = "0.3.4"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f0c3dbbd9ae980613c6dd8e28a9407b50509d3803b57624d5dfe8315218cd58b"
--dependencies = [
-- "byteorder",
-- "libc",
-- "winapi",
--]
--
- [[package]]
- name = "sonic-core"
- version = "0.4.2"
-@@ -2802,9 +2791,9 @@ dependencies = [
- 
- [[package]]
- name = "ureq"
--version = "3.4.2"
-+version = "3.5.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
-+checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
- dependencies = [
-  "base64 0.23.1",
-  "cookie_store",
-@@ -2815,10 +2804,9 @@ dependencies = [
-  "rustls-pki-types",
-  "serde",
-  "serde_json",
-- "socks",
-  "ureq-proto",
-  "utf8-zero",
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.10",
- ]
- 
- [[package]]
-@@ -2983,14 +2971,14 @@ version = "0.26.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
- dependencies = [
-- "webpki-roots 1.0.9",
-+ "webpki-roots 1.0.10",
- ]
- 
- [[package]]
- name = "webpki-roots"
--version = "1.0.9"
-+version = "1.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
-+checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
- dependencies = [
-  "rustls-pki-types",
- ]
-```
-
-**File**: `deny.toml` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ allow-build-scripts = [
-     "bindgen@0.72.1",
-     "bzip2-sys@0.1.13+1.0.8",
-     "clang-sys@1.9.1",
--    "crc32fast@1.5.2",
-+    "crc32fast@1.5.3",
-     "crossbeam-utils@0.8.23",
-     "crunchy@0.2.4",
-     "flatbuffers@25.12.19",
-```
-
----
-
-### Incident Patch 2: `06e05182` (2026-10-21)
-**Commit Message**: feat(security): Ensure Zed doesn’t run unvalidated build scripts
-
-**File**: `.zed/settings.json` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@
-       "initialization_options": {
-         "cargo": {
-           "features": ["experimental-api"],
-+          "extraArgs": ["--locked"],
-+          // "autoreload": false,
-         },
-       },
-     },
-```
-
----
-
-### Incident Patch 3: `b10f3aa0` (2026-10-21)
-**Commit Message**: fix(core): Fix ranking of loose matches
-
-**File**: `core/src/executor/search.rs` (modified, +2/-2)
-```diff
-@@ -590,9 +590,9 @@ fn update_score(
-             // SAFETY: We always initialize vecs with `term_count` entries.
-             let entry_score = unsafe { occupied_entry.get_mut().get_unchecked_mut(term_idx) };
- 
--            let new_score = entry_score.map_or(score, |entry_score| score.min(entry_score));
-+            let new_score = entry_score.map_or(score, |entry_score| score.max(entry_score));
- 
--            tracing::trace!(entry_score, new_score, "Updating to min score");
-+            tracing::trace!(entry_score, new_score, "Updating to max score");
-             *entry_score = Some(new_score);
- 
-             false
-```
-
-**File**: `core/tests/loose_matching.rs` (modified, +26/-0)
-```diff
-@@ -239,3 +239,29 @@ fn test_no_fuzzy_matching_for_ids() {
-         assert_eq!(response, ["chat:0"], "({messages:?}, {query:?})");
-     }
- }
-+
-+/// Ensures ranking of loose matches is correct.
-+#[test]
-+fn test_loose_matches_ranking() {
-+    init_logging();
-+    let executor = make_test_executor(|app_conf| {
-+        // Disable stemming to make results more predictable.
-+        app_conf.normalization.stemming_enabled = false;
-+    });
-+    assert!(executor.fst_pool.fst_action_config.prefix_matching_enabled);
-+
-+    exec!(
-+        executor -> PUSH "articles" "default" "article:1"
-+        "examplar"
-+    );
-+    exec!(
-+        executor -> PUSH "articles" "default" "article:2"
-+        "examplary"
-+    );
-+    exec!(executor -> TRIGGER consolidate);
-+
-+    {
-+        let response = exec!(executor -> QUERY "articles" "default" "exampla");
-+        assert_eq!(response, ["article:1", "article:2"]);
-+    }
-+}
-```
-
-#### Recent Merged Pull Requests:
-- **PR #428** (2026-10-01): feat: Add snippet retrieval capabilities to `QUERY` (@RemiBardon)
-- **PR #427** (2026-10-01): feat(core): Store original text on `PUSH` (@RemiBardon)
-- **PR #426** (2026-09-29): Add experimental `PUSH` flags (@RemiBardon)
-- **PR #425** (2026-09-29): Remove packaged stopwords (@RemiBardon)
-- **PR #424** (2026-09-25): fix(core): use byte offsets in CJK tokenizer (@Theryston)
-- **PR #421** (2026-09-24): Improve FST store performance (@RemiBardon)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. security): Update dependencies
-
+### 1. Ephemeral I/O Result Containment & Panic Prohibition
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in valeriansaliou/sonic. All inputs crossing module boundaries must be explicitly verified before state persistence.
+Network servers and daemon connection threads MUST NEVER invoke panic-inducing unwraps (`.unwrap()`, `.expect()`) or unhandled `panic!()` arms on socket I/O operations (such as writes, flushes, or reads). Socket I/O errors (`BrokenPipe`, `ConnectionReset`, `TimedOut`, `UnexpectedEof`) MUST be treated as routine stream terminations, triggering an orderly disconnection state machine (`Close`), releasing tracking counters, and returning cleanly.
 
 **WHY**:
-Prevents defects observed in production commit `b635a181`: security): Update dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Clients frequently abort connections, close TCP sockets prematurely upon receiving partial payloads, or time out during slow processing loops. Calling `.expect("write failed")` on a network handle converts standard external network turbulence into internal unhandled thread panics. This bypasses telemetry updates, leaves metrics in corrupted states (e.g., mismatched `CLIENTS_CONNECTED` counters), spews noise into `stderr`, and risks worker thread exhaustion.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+In all TCP/UDP/Unix socket listeners, channel handlers, protocol decoders, and stream response serializers across any language (Rust, Go, C++, Zig).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
-// Verified production-grade fix pattern:
-version = "1.5.3"
-checksum = "0ba106e844045ddc02c20768ac4b0b7cb45f2cc2ecbd833ac9f5dacb183c2055"
- "ureq 3.5.0",
-version = "0.103.16"
-checksum = "4443b1b6d39d7c663139942cc4558262562d2c84123bb6282ef177009ca8b281"
-version = "3.5.0"
-checksum = "cde93ff05758a36a851a398a772b0b79a82fbe3c186a46f2696baaeaf84c966b"
- "webpki-roots 1.0.10",
- "webpki-roots 1.0.10",
-version = "1.0.10"
-checksum = "1c1c8e20c8a38fc7d65abfe74eb7280e4aa667e8eec8bc84996d2874810748d9"
+// In channel message dispatch loop:
+match write!(stream, "{}{}", response_args.0, LINE_FEED) {
+    Ok(()) => {
+        tracing::trace!("wrote response: {}", response_args.0);
+    }
+    Err(err) => {
+        // Treat BrokenPipe, ConnectionReset, and TimedOut as normal client disconnects
+        tracing::debug!("client disconnected before response write completed: {err}");
+        // Transition internal channel state to terminal Close
+        result = ChannelMessageResult::Close;
+        break;
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "1.5.2"
-checksum = "01a7799fd6b852db0e61728dde9a204c423b44d689dbd432522543614b490e78"
- "ureq 3.4.2",
-version = "0.103.15"
-checksum = "f3c3cf1d8b1e7d4927e2d154c3fcb02979afb9939629c62cd9048d4f07b60ac2"
-[[package]]
-name = "socks"
-version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0c3dbbd9ae980613c6dd8e28a9407b50509d3803b57624d5dfe8315218cd58b"
-dependencies = [
- "byteorder",
- "libc",
- "winapi",
-]
-
-version = "3.4.2"
-checksum = "9a7ac20be9b7726e0bbdbf974c059676d9acb1cd414961f570a4e8231cacd7fc"
- "socks",
- "webpki-roots 1.0.9",
- "webpki-roots 1.0.9",
-version = "1.0.9"
-checksum = "7dcd9d09a39985f5344844e66b0c530a33843579125f23e21e9f0f220850f22a"
+// ANTI-PATTERN: Panicking on socket write
+write!(stream, "{}{}", response_args.0, LINE_FEED)
+    .expect("write failed"); // NEVER DO THIS: Kills channel thread if client terminates TCP socket
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b635a181` are properly handled with clean fallback behavior.
+Run an integration test where a client opens a socket, sends an ingest/search command, and immediately issues `TCP RST` / closes the stream without reading. Verify via assertions that:
+1. The server process emits no panic logs to stderr.
+2. The active thread pool count remains steady.
+3. Connected client gauges decrement to zero.
+
+---
+
+### 2. Lock-Inversion Avoidance in Granular Storage Cascades
+**RULE**:
+When an operation requires mutating multiple tiers of a persistent storage system (e.g., dropping both primary storage and derived index graphs), acquisition of structural pool guards MUST precede instance-level handles. Under NO circumstances may an inner action re-acquire an already held parent lock or call a helper that requests an identical read/write lock.
+
+**WHY**:
+Invoking convenience methods (e.g., `batch_erase_bucket()` calling an internal bucket erasure helper that attempts `kv_store.lock.write()`) from an execution context that already owns `kv_store.lock.write()` guarantees immediate self-deadlock. Similarly, retaining an acquired reference across an erasure boundary prevents underlying file descriptors and memory-mapped pointers from being dropped, resulting in `EBUSY` or leaked handles.
+
+**WHEN TO APPLY**:
+Multi-engine or tiered storage engines (e.g., RocksDB + FST, SQLite + Vector Cache, LMDB + Memtable) managing layered collections, buckets, or namespaces.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified hierarchical locking sequence:
+// 1. Acquire global storage read guards to freeze topology modifications
+let _kv_read_guard = self.kv_pool.lock_read_access();
+let _fst_write_guard = self.fst_pool.lock_write_access();
+
+if let Ok(Some(kv_store)) = self.kv_pool.acquire(false, collection, None, |_| {}) {
+    // 2. Explicitly acquire store-level lock inside caller scope
+    let kv_store_ref = kv_store.clone();
+    let _kv_store_lock = kv_store_ref.lock.write().unwrap();
+
+    // 3. Perform atomic batch modifications without delegating to helper functions 
+    //    that attempt to re-acquire _kv_store_lock
+    let kv_action = kv_store.access_read_write(bucket);
+    let erase_count = kv_action.batch_erase_bucket()?;
+    
+    // 4. Cascade to secondary index pool
+    self.fst_pool.erase(collection, Some(bucket))?;
+    return Ok(erase_count);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Calling helper method that internally requests kv_store.lock.write()
+let _kv_store_lock = kv_store.lock.write().unwrap();
+// helper_erase_bucket internally invokes: kv_store.lock.write().unwrap() -> DEADLOCK
+let erase_count = kv_store.helper_erase_bucket(bucket)?; 
+```
+
+**VERIFICATION METHOD**:
+Automated stress test asserting that concurrent `FLUSHB` (flush bucket) and `FLUSHC` (flush collection) executions under continuous parallel writes complete within bounded timeouts (e.g., 500ms) without triggering deadlock thread stalls.
+
+---
+
+### 3. Chunked Stream Document Boundary Cohesion
+**RULE**:
+When high-throughput ingest protocols allow document fragmentation or streaming ingestion chunked by network buffer limits (`BUFFER_SIZE`), internal surrogate ID generators MUST enforce sticky session continuity across chunk boundaries using stateful deduplication buffers (`last_assumed_new_oid`).
+
+**WHY**:
+If an ingestion protocol offers an optimization like `PUSH ... NEW` (which generates a new internal `IID` for newly inserted records), documents larger than the client/server network buffer will arrive across multiple consecutive chunks. Without sticky tracking, each sub-chunk of the single logical document receives a completely separate `IID`. This fragments inverted term indices, corrupts TF-IDF/BM25 relevance statistics, and breaks document deletion workflows.
+
+**WHEN TO APPLY**:
+Stream ingestion protocols, line-delimited socket APIs, or bulk-insert interfaces handling variable-length text records that exceed transport MTU or application buffer frames.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// In Executor ingestion state:
+pub struct Executor {
+    // ...
+    last_assumed_new_oid: RwLock<Option<(String, StoreObjectIid)>>,
+}
+
+// In push handler:
+let mut last_assumed = self.last_assumed_new_oid.write().unwrap();
+let iid = match *last_assumed {
+    Some((ref last_oid, existing_iid)) if last_oid == requested_oid => {
+        // Reuse surrogate IID: document is continuing over chunk boundary
+        existing_iid
+    }
+    _ => {
+        let new_iid = self.allocate_new_iid(collection, bucket, requested_oid)?;
+        *last_assumed = Some((requested_oid.to_string(), new_iid));
+        new_iid
+    }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Unconditionally allocating a fresh surrogate ID on every NEW packet
+if is_new_flag_set {
+    let iid = self.allocate_new_iid(); // Broken: Large document split over 2 buffers gets 2 distinct IIDs!
+}
+```
+
+**VERIFICATION METHOD**:
+Construct an ingest test payload sized at `3 * BUFFER_SIZE` containing repeated keywords. Ingest via `PUSH ... NEW`. Query the count of total unique objects (`COUNTB`). Assert strictly that `COUNTB == 1` and that a query for the keywords returns exactly one document identifier.
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: Socket Write Panic on Premature Client Disconnection (BUG-SONIC-01)
+- **Context**: `server/src/channel/handle.rs` and `server/src/channel/message.rs`
+- **What Was Expected**: When a connected client terminates early, resets the connection (`ECONNRESET`), or times out, the server should gracefully close the channel, log at debug level, update command-count metrics, and clean up thread resources.
+- **What Actually Happened**: The channel write routines utilized `.expect("write failed")` across response banners, startup acknowledgments (`STARTED`), and response lines. When a client closed its socket immediately after issuing a query (or timed out), the write failed with `BrokenPipe`, `ConnectionReset`, or `TimedOut`. The `.expect()` panicked the channel worker thread, logging stack traces to stderr and bypassing statistics updates.
+- **Evidence in Repo**: Commit `50139cfe`, PR #440, Issue #438.
+- **Root Cause**: Developer assumption that local network socket writes on open descriptors would never fail synchronously, neglecting premature socket shutdown by external clients.
+- **Remediation Code Diff**:
+```diff
+--- a/server/src/channel/handle.rs
++++ b/server/src/channel/handle.rs
+@@ -77,7 +77,11 @@ impl ChannelHandle {
+         self.configure_stream(&stream, false);
+ 
+         // Send connected banner
+-        write!(stream, "{}{}", CONNECTED_BANNER, LINE_FEED).expect("write failed");
++        if let Err(err) = write!(stream, "{}{}", CONNECTED_BANNER, LINE_FEED) {
++            tracing::debug!("failed writing connected banner: {err}");
++            return;
++        }
+ 
+         // Increment connected clients count
+         *CLIENTS_CONNECTED.write().unwrap() += 1;
+@@ -101,23 +105,26 @@ impl ChannelHandle {
+                 self.configure_stream(&stream, true);
+ 
+                 // Send started acknowledgement (with environment variables)
+-                write!(
++                if let Err(err) = write!(
+                     stream,
+                     "STARTED {} protocol({}) buffer({}){}",
+                     mode.to_str(),
+                     PROTOCOL_REVISION,
+                     BUFFER_SIZE,
+                     LINE_FEED
+-                )
+-                .expect("write failed");
++                ) {
++                    tracing::debug!("failed writing started acknowledgement: {err}");
++                    return;
++                }
+ 
+                 self.handle_stream(mode, stream)
+                     .unwrap_or_else(|err| tracing::error!("closing channel thread: {err:?}"));
+             }
+             Err(err) => match write!(stream, "ENDED {}{}", err.to_str(), LINE_FEED) {
+                 Ok(()) => {}
+                 Err(err) if err.kind() == ErrorKind::BrokenPipe => {}
+-                Err(err) => panic!("write failed: {err:?}"),
++                Err(err) => tracing::debug!("failed writing ended response: {err}"),
+             },
+         }
+     }
+--- a/server/src/channel/message.rs
++++ b/server/src/channel/message.rs
+@@ -97,16 +97,27 @@ pub trait ChannelMessageMode {
+                 if let Some(ref values) = response_args.1 {
+                     let values_string = values.join(" ");
+ 
+-                    write!(stream, "{} {}{}", response_args.0, values_string, LINE_FEED)
+-                        .expect("write failed");
++                    if let Err(err) =
++                        write!(stream, "{} {}{}", response_args.0, values_string, LINE_FEED)
++                    {
++                        tracing::debug!("failed writing response: {err}");
++                        result = ChannelMessageResult::Close;
++                        break;
++                    }
+```
+- **Lesson**: I/O errors across network sockets are nominal state transitions, not fatal invariant violations; use result matching to update disconnection states cleanly.
+
+---
+
+### Incident 2: Silent RocksDB Compaction Failure & File Descriptor Exhaustion (BUG-SONIC-02)
+- **Context**: `core/src/executor/mod.rs` & storage compaction triggers
+- **What Was Expected**: Issuing manual compaction (`TRIGGER compact`) must ensure LSM level-0 SST files are compacted into deeper levels and propagate any underlying I/O errors or operating system capacity limits back to the orchestrator.
+- **What Actually Happened**: The low-level RocksDB call `compact_range` returned `()`. SST compaction silently failed in the background due to hitting the system `RLIMIT_NOFILE` ("Too many open files"), leaving hundreds of uncompacted L0 files accumulating on disk, degrading read performance without alerting the application.
+- **Evidence in Repo**: Issue #433.
+- **Root Cause**: Failure to invoke synchronization and error-inspection routines after asynchronous C-FFI compaction triggers; compaction was assumed to succeed synchronously.
+- **Remediation Code Diff**:
+```rust
+// Architectural fix in storage engine:
+// Instead of fire-and-forget:
+// rocksdb.compact_range(None::<&[u8]>, None::<&[u8]>);
+// Must synchronize and inspect status:
+let mut compact_opts = rocksdb::CompactOptions::default();
+compact_opts.set_exclusive_manual_compaction(true);
+db.compact_range_opt(None::<&[u8]>, None::<&[u8]>, &compact_opts);
+if let Err(err) = db.wait_for_compact(&rocksdb::WaitForCompactOptions::default()) {
+    tracing::error!("Compaction failed: {err:?}");
+    return Err(err.into());
+}
+```
+- **Lesson**: Asynchronous storage operations with void return signatures must be paired with explicit completion synchronization (`wait_for_compact`) before verifying state transitions.
+
+---
+
+### Incident 3: Fragmented OID-to-IID Desynchronization Across Chunked Buffer Ingestion (BUG-SONIC-03)
+- **Context**: `core/src/executor/mod.rs` & `core/src/executor/push.rs`
+- **What Was Expected**: Ingesting large document streams spanning multiple network buffers via `PUSH ... NEW` should associate all parsed tokens with a single assigned internal identifier (`StoreObjectIid`).
+- **What Actually Happened**: Sonic indexed the same physical document across multiple distinct `IID` allocations when the content length exceeded `BUFFER_SIZE` (default 20,000 bytes). Subsequent updates and search scoring were split across orphaned surrogate IDs.
+- **Evidence in Repo**: `core/src/executor/mod.rs` lines 34-45, Issue #405.
+- **Root Cause**: Absence of continuity state in the ingest executor across consecutive commands; the `NEW` instruction unconditionally minted a new `StoreObjectIid`.
+- **Remediation Code Diff**:
+```rust
+// Added in Executor:
+pub struct Executor {
+    // ...
+    last_assumed_new_oid: RwLock<Option<(String, StoreObjectIid)>>,
+}
+
+// Continuity validation on PUSH execution:
+let iid = {
+    let mut last_assumed = self.last_assumed_new_oid.write().unwrap();
+    if let Some((ref last_oid, existing_iid)) = *last_assumed {
+        if last_oid == oid_str {
+            existing_iid
+        } else {
+            let fresh = self.allocate_iid(collection, bucket, oid)?;
+            *last_assumed = Some((oid_str.to_string(), fresh));
+            fresh
+        }
+    } else {
+        let fresh = self.allocate_iid(collection, bucket, oid)?;
+        *last_assumed = Some((oid_str.to_string(), fresh));
+        fresh
+    }
+};
+```
+- **Lesson**: Stateful protocol flags that span chunked transport payloads must maintain a bounded sliding window of identity caches.
+
+---
+
+### Incident 4: Self-Deadlock on Nested Bucket Erasure Lock Acquisition (BUG-SONIC-04)
+- **Context**: `core/src/executor/flushb.rs`
+- **What Was Expected**: Erasing an individual bucket from a collection should wipe its keys from RocksDB and drop its FST graph without blocking concurrent access to other buckets.
+- **What Actually Happened**: The executor attempted to acquire the bucket's write lock, and then called a helper method on `kv_store` which internally re-attempted to lock the same `RwLock`, deadlocking the worker thread permanently.
+- **Evidence in Repo**: `core/src/executor/flushb.rs` lines 28–34:
+  `// Notice: we cannot use the provided KV bucket erasure helper there, as erasing a bucket requires a database lock, which would incur a dead-lock...`
+- **Root Cause**: Recursive re-entrancy into a non-reentrant standard library `std::sync::RwLock`.
+- **Remediation Code Diff**:
+```rust
+// Refactored in flushb.rs:
+// Bypass the re-locking helper entirely and construct atomic batch writes directly:
+let kv_action = kv_store.access_read_write(bucket);
+if let Ok(erase_count) = kv_action.batch_erase_bucket() {
+    if self.fst_pool.erase(collection, Some(bucket)).is_ok() {
+        tracing::debug!("done with bucket erasure");
+        return Ok(erase_count);
+    }
+}
+```
+- **Lesson**: Avoid internal convenience methods that wrap locks if callers already hold parent locks; decompose operations into lock-free execution paths taking pre-acquired guards.
+
+---
+
+### Incident 5: Resource Stale Handle Leak on Collection Dropping (BUG-SONIC-05)
+- **Context**: `core/src/executor/flushc.rs`
+- **What Was Expected**: Calling `FLUSHC` must purge an entire collection, closing RocksDB column families/databases and unmapping memory-mapped FST files.
+- **What Actually Happened**: When `flushc` acquired store references prior to invoking pool erasure, the local thread held open atomic reference counters (`Arc<Store>`). This prevented `drop()` from running, blocking operating system unlinking of backing directory structures.
+- **Evidence in Repo**: `core/src/executor/flushc.rs` lines 12–16:
+  `// Important: do not acquire the store from there, as otherwise it will remain open even if dropped in the inner function...`
+- **Root Cause**: Scope leakage of `Arc` references in the caller frame holding file locks during deletion routines.
+- **Remediation Code Diff**:
+```rust
+// Enforce strict acquisition prohibition in flushc.rs:
+pub fn flushc(&self, collection: StoreItemPart) -> Result<u32, ()> {
+    // DO NOT ACQUIRE STORE HANDLE HERE.
+    // Acquire KV + FST locks exclusively in write mode:
+    let _kv_write_guard = self.kv_pool.lock_write_access();
+    let _fst_write_guard = self.fst_pool.lock_write_access();
+
+    // Delegate directly to pool-level erasure which owns the solitary master handle:
+    match (
+        self.kv_pool.erase(collection, None),
+        self.fst_pool.erase(collection, None),
+    ) {
+        (Ok(erase_count), Ok(_)) => Ok(erase_count),
+        _ => Err(()),
+    }
+}
+```
+- **Lesson**: Destruction handlers must isolate and release all smart pointers (`Arc`/`Rc`) before triggering disk unlinking.
+
+---
+
+### Incident 6: Supply Chain Vulnerability Remediation & Security Pinning (BUG-SONIC-06)
+- **Context**: `Cargo.lock`, `client/Cargo.toml`, and `deny.toml`
+- **What Was Expected**: Automated dependency auditing (`cargo-deny`) should reject unvetted crates with security advisories.
+- **What Actually Happened**: Four upstream vulnerabilities were detected in core dependencies: `RUSTSEC-2026-0386`, `RUSTSEC-2026-0391`, `RUSTSEC-2026-0398`, and `RUSTSEC-2026-0403` impacting `arrow-*`, `encoding_rs`, `icu_*`, and `zstd-safe`.
+- **Evidence in Repo**: Commit `a0dcf0fa`.
+- **Root Cause**: Bit rot in transient dependencies pulling vulnerable C-FFI wrappers and parsing crates.
+- **Remediation Code Diff**:
+```diff
+--- a/deny.toml
++++ b/deny.toml
+@@ -80,8 +80,8 @@ allow-build-scripts = [
+-    "wasm-bindgen-shared@0.2.129",
+-    "wasm-bindgen@0.2.129",
++    "wasm-bindgen-shared@0.2.130",
++    "wasm-bindgen@0.2.130",
+-    "zstd-safe@7.3.0",
++    "zstd-safe@8.2.0",
+```
+- **Lesson**: Strict CI enforcement with `deny.toml` allow-build-scripts guarantees that no unreviewed native build scripts or vulnerable C bindings compile into the search binary.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Preallocated Exact String Capacity**: String command generation macros (`make_command!`) MUST avoid run-time buffer reallocations by computing total byte capacities at compile time:
+  ```rust
+  let mut message: String = String::with_capacity(
+      $format.len()
+          $(+ $arg.len())*
+          $(+ ($text.len() * 2))? // Accounts for worst-case character escaping
+          $(+ ($options.len() * 16))? // Accounts for space + standard option flag
+  );
+  ```
+- **String Escaping Invariant**: In `escape_str(str: &str)`, never mutate strings in place without initial capacity reservation. Characters `'"'`, `'\\'`, `'\r'`, `'\n'` expand from 1 byte to 2 bytes (`\"`, `\\`, `\r`, `\n`). The string buffer MUST be initialized with `str.len() * 2` to eliminate intermediate heap reallocations:
+  ```rust
+  let mut res = String::with_capacity(str.len() * 2);
+  for c in str.chars() {
+      match c {
+          '"' => res.push_str("\\\""),
+          '\r' => res.push_str("\\r"),
+          '\n' => res.push_str("\\n"),
+          '\\' => res.push_str("\\\\"),
+          _ => res.push(c),
+      }
+  }
+  ```
+- **Zero Configuration Invariant**: In `core/src/config.rs`, values with structural dependencies MUST be checked for non-zero:
+  ```rust
+  if self.store.kv.database.write_buffer_size == Some(0) {
+      panic!("write_buffer for kv must not be zero");
+  }
+  // Structural ordering invariant:
+  if self.store.kv.database.flush_after >= self.store.kv.pool.inactive_after {
+      panic!("flush_after for kv must be strictly lower than inactive_after");
+  }
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **Finite State Transducer Traversal**: When traversing lexical graphs for auto-completion or Levenshtein typo distance (`query_alternates_try`), search algorithms MUST impose a strict upper bound via depth caps and bounded iterators:
+  ```rust
+  // Enforce traversal limit invariants:
+  let limit = limit.min(self.app_conf.search.suggest_limit_maximum as usize);
+  ```
+- **Microtask & Yield Bounds**: Background janitor threads cycling through collections for inactivity consolidation MUST sleep or yield after each sweep:
+  ```rust
+  // Compaction and flush janitor termination proof:
+  loop {
+      std::thread::park_timeout(std::time::Duration::from_secs(janitor_interval));
+      if terminate_flag.load(Ordering::Relaxed) {
+          break; // Clean invariant termination
+      }
+      self.sweep_inactive_stores();
+  }
+  ```
+
+### 3. UI & UX Micro-Mechanics (Client Protocol Mechanics)
+- **Synchronous Drop Cleanup**: When a high-level client channel struct (`SonicChannelIngestBlocking`, `SonicChannelSearchBlocking`) falls out of scope, its `Drop` implementation MUST transmit an orderly protocol exit (`QUIT`) with a bounded timeout rather than leaving the socket to hang:
+  ```rust
+  impl Drop for $low_level_ty {
+      #[inline]
+      fn drop(&mut self) {
+          if !self.inner.is_closed() {
+              $crate::logging::log_trace!(concat!("[Drop] Quitting ", stringify!($low_level_ty)));
+              self.quit_blocking_().unwrap_or_else(|error| crate::logging::log_error!("{error:?}"));
+          }
+      }
+  }
+  ```
+  The quit command MUST be constrained by `recv_timeout` to prevent process shutdown lockups if the server is unreachable.
+
+### 4. Backend Concurrency & Memory Safety
+- **No-Op U32 Hash Optimization**: For numeric collection IDs (which are already securely hashed or mapped to compact 32-bit representations), standard cryptographic hashing overhead (`SipHash`) is bypassed in favor of an identity hasher:
+  ```rust
+  pub struct DynamicConfigStore(RwLock<HashMap<u32, DynamicConfig, NoopU32HasherBuilder>>);
+  ```
+  This eliminates hashing latency on the critical query-path lock lookup.
+- **TOCTOU Race Condition Guards**: In `count.rs`, before reading

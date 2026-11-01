@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mui-base-ui-learnings.md`  
 > **Source**: github ([https://github.com/mui/base-ui](https://github.com/mui/base-ui))  
-> **Source Version**: `e3d288fe`  
+> **Source Version**: `cc9075a4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:05:20.906Z  
+> **Timestamp**: 2026-10-27T21:18:34.104Z  
 > **Learning ID**: `learn-github-mui-base-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mui-base-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mui/base-ui](https://github.com/mui/base-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:05:19.533Z  
+> **Harvest Timestamp**: 2026-10-27T21:18:27.966Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Unstyled UI components for building accessible web apps and design systems. From the creators of Radix, Floating UI, and Material UI.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11241 stars
+- **Stars / Engagement**: 11248 stars
 
 ---
 
@@ -281,7 +281,7 @@ export const ComboboxInternalDismissButton = React.forwardRef<HTMLSpanElement>(
     const mergedRef = useMergedRefs(forwardedRef, buttonRef);
 
     function handleDismiss(event: DismissEvent) {
-      store.context.setOpen(
+      store.setOpen(
         false,
         createChangeEventDetails(REASONS.closePress, event.nativeEvent, event.currentTarget),
       );
@@ -343,7 +343,7 @@ export function handleInputPress(
   store.context.inputRef.current?.focus();
 
   if (store.state.openOnInputClick) {
-    store.context.setOpen(true, createChangeEventDetails(REASONS.inputPress, event.nativeEvent));
+    store.setOpen(true, createChangeEventDetails(REASONS.inputPress, event.nativeEvent));
   }
 }
 
@@ -355,14 +355,14 @@ export function handleInputPress(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6106** (2026-10-26): **Exclude docs from the published @base-ui/react package (~3.6 MB)**
-  *Symptoms*: ### Summary `@base-ui/react@1.9.0` (current latest) publishes its `docs/` directory (about 3.9 MB, mostly `docs/react`) in its npm tarball. Every consumer downloads and installs it, but nothing executes it at runtime.  ### Evidence Tarball file listing: https://www.jsdelivr.com/package/npm/@base-ui/react?version=1.9.0  ### Suggested fix Exclude `docs/` from the published files (`files` field or `.npmignore`) and check the result with `npm pack --dry-run`.
-  **Post-Mortem & Fix Analysis**:
-  > We're doing this on purpose so that coding agents have easy access to the docs describing the installed library version.
-  > that makes sense. thanks for the feedback.
+- **Issue #6116** (2026-10-27): **[select] Ignore a mouseup that already happened before the trigger listens**
+  *Symptoms*: <!-- Thanks so much for your PR, your contribution is appreciated! ❤️ -->  - [x] I have followed (at least) the [PR section of the contributing guide](https://github.com/mui/base-ui/blob/HEAD/CONTRIBUTING.md#sending-a-pull-request).  Fixes #6042.  A fast click can release the mouse before the deferred `mouseup` listener is armed. That `{ once: true }` listener then stays registered, and the next `mouseup` outside the trigger closes the select with `cancel-open`.  The trigger still waits one task before listening, so a Firefox `mouseup` fired during `mousedown` does not close the popup. If that opening press has already ended, the close listener is not added.  ## Test plan  - [x] `SelectTrigger.test.tsx`: a same-turn release stays open after a later outside `mouseup`. The existing held-press cases still pass. - [x] Docs Select demo in Chromium: a same-task click stays open after a later `mouseup` outside the trigger. A press held past the delay still closes when released off the trigger.   Made with [Cursor](https://cursor.com)
 
-- **Issue #6102** (2026-10-25): **[autocomplete] List can't be scrolled by touch on iOS; the page scrolls instead**
-  *Symptoms*: ## Bug report  ### Current behavior  On iOS, an Autocomplete list that overflows can't be scrolled by touch. Dragging inside the list scrolls the page behind it instead. For an anchored popup the page scroll also dismisses the popup. Rendered inline in a modal Dialog, like a command palette, the list stays put and the page under the dialog moves. If the drag starts on an item, it can fire as a tap and select the item.  ### Expected behavior  Dragging inside the list scrolls the list, as Dialog's inside-scroll demo does on the same device.  ### Reproducible example  1. On iOS Safari, open the Virtualized demo: https://base-ui.com/react/components/autocomplete#virtualized 2. Tap the input so the list opens. 3. Drag up inside the list.  The page scrolls and the popup closes; the list doesn't move.  Same result in the COSS UI command palette, which is Autocomplete inline in a Dialog: https://coss.com/ui/docs/components/command  For comparison, the Dialog "Inside scroll dialog" demo (https://base-ui.com/react/components/dialog#inside-scroll-dialog) scrolls correctly on the same device.  ### Base UI version  v1.9.0  ### Which browser are you using?  Safari, iOS 27.0 (iPhone 18 Pro simulator, Xcode 27.1). Also seen on a physical iPhone in Chrome for iOS (WebKit).  ### Which OS are you using?  iOS 27.0  ### Additional context  Measured in our own command palette (COSS command: Autocomplete with `inline` and `open` in a modal Dialog, list wrapped in a ScrollArea):  - The list viewport
+- **Issue #6114** (2026-10-27): **[select] Fix a React 18 flake in a closing test**
+  *Symptoms*: The "Browser tests (React 18)" job on master has been failing since #6014 on `Select.Root › closing before the popup attaches › finishes closing when a layout effect closes it right after a press opens it`.  Under React 18, `onOpenChangeComplete(false)` runs one render before the listbox drops `data-ending-style`, and the attribute is gone right after. The test checked the attribute synchronously after the callback, so it sometimes caught that intermediate render. It now flushes pending updates before the check. The check still fails if the list is left closing.  - [x] I have followed (at least) the [PR section of the contributing guide](https://github.com/mui/base-ui/blob/HEAD/CONTRIBUTING.md#sending-a-pull-request). 
+  **Post-Mortem & Fix Analysis**:
+  >  - [base-ui-tanstack-start](https://pkg.pr.new/template/c52cb080-81cc-47f7-9525-7c8b25159638) - [vite-css-base-ui-example](https://pkg.pr.new/template/29be16a9-8d8e-4105-bdc8-402327df4ba2)     ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/react@6114   ```       ```   pnpm add https://pkg.pr.new/mui/base-ui/@base-ui/utils@6114   ```     _commit: <a href="https://github.com/mui/base-ui/runs/122233497139"><code>0cbd027</code></a>_ 
+  > <!-- ci-report-comment -->  ## Bundle size  | Bundle | Parsed size | Gzip size | |:----------|----------:|----------:| | @base-ui/react |  0B<sup>(0.00%)</sup> |  0B<sup>(0.00%)</sup> |    [Details of bundle changes](https://code-infra-dashboard.onrender.com/size-comparison/mui/base-ui/diff?sha=0cbd027339a63e63afdb6847bd31cbd20fe0e223&base=5ef3dbd53063aae31e6b383672196736ec0e9213&prNumber=6114&baseRef=master)  ## Performance  No regressions in 36 benchmarks · ran 4m 27s · [details](https://code-infra-dashboard.onrender.com/benchmark-run/mui/base-ui?sha=0cbd027339a63e63afdb6847bd31cbd20fe0e223&prNumber=6114)  <hr>  Check out the [code infra dashboard](https://code-infra-dashboard.onrender.com/repository/mui/base-ui/prs/6114) for more information about this PR.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -379,283 +379,29 @@ export function handleInputPress(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc3bd5fb` (2026-10-26)
-**Commit Message**: Bump @vitest/ui to 5.0.5 [SECURITY] (#6096)
+### Incident Patch 1: `cc9075a4` (2026-10-27)
+**Commit Message**: [select] Fix a React 18 flake in a closing test (#6114)
 
-Co-authored-by: code-infra-renovate[bot] <290386390+code-infra-renovate[bot]@users.noreply.github.com>
-
-**File**: `package.json` (modified, +1/-1)
+**File**: `packages/react/src/select/root/SelectRoot.test.tsx` (modified, +2/-0)
 ```diff
-@@ -87,7 +87,7 @@
-     "@vitejs/plugin-react": "6.1.2",
-     "@vitest/browser-playwright": "5.0.4",
-     "@vitest/coverage-istanbul": "5.0.4",
--    "@vitest/ui": "5.0.4",
-+    "@vitest/ui": "5.0.5",
-     "concurrently": "10.0.6",
-     "cross-env": "10.1.0",
-     "docs": "workspace:^",
-```
-
-**File**: `pnpm-lock.yaml` (modified, +49/-18)
-```diff
-@@ -220,7 +220,7 @@ importers:
-         version: 0.1.1-canary.2
-       '@mui/internal-test-utils':
-         specifier: 2.1.1-canary.3
--        version: 2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.4)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-+        version: 2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.5)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-       '@netlify/types':
-         specifier: 3.2.0
-         version: 3.2.0
-@@ -255,8 +255,8 @@ importers:
-         specifier: 5.0.4
-         version: 5.0.4(vitest@5.0.4)
-       '@vitest/ui':
--        specifier: 5.0.4
--        version: 5.0.4(vitest@5.0.4)
-+        specifier: 5.0.5
-+        version: 5.0.5(vitest@5.0.4)
-       concurrently:
-         specifier: 10.0.6
-         version: 10.0.6
-@@ -331,7 +331,7 @@ importers:
-         version: 8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
-       vitest:
-         specifier: 5.0.4
--        version: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@7.2.0))(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-+        version: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.5)(jsdom@27.4.0(supports-color@7.2.0))(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
- 
-   docs:
-     dependencies:
-@@ -4603,6 +4603,9 @@ packages:
-   '@vitest/pretty-format@5.0.4':
-     resolution: {integrity: sha512-kh/bp0oLr6w18kt4MFn5/zS+Hpc5k3bsf6S2m2Qksj7sKHrnc7Tu90UVYyiXnRvkYruN6kSCHQ3RR+SBE6FinA==}
- 
-+  '@vitest/pretty-format@5.0.5':
-+    resolution: {integrity: sha512-24sSdIlMA9DVPXnYiB9siwU0bTd887Y9jX3+vabztCSsvHwo7ipvJ/a2L3Rljw8+2rK1f5fCj3h5U9I/Jsqgbw==}
-+
-   '@vitest/spy@5.0.4':
-     resolution: {integrity: sha512-MZKk/gSkm2q+ICobMxCpH1mA+cCAWm8WV7UhxlqGjq/sJ3AGc1BqFOs5CRVXxH78wQtme9q/NAAgBquj4AcyMw==}
- 
-@@ -4611,9 +4614,17 @@ packages:
-     peerDependencies:
-       vitest: 5.0.4
- 
-+  '@vitest/ui@5.0.5':
-+    resolution: {integrity: sha512-dCoGUOdgmCaSB2g+WQ/spPCBkytAWdNUkFSXY4z+eYp2d8JEOY8v0uDRaJTG9qf/kTlTVZ4CuYMYMz/f1HS/qQ==}
-+    peerDependencies:
-+      vitest: 5.0.5
-+
-   '@vitest/utils@5.0.4':
-     resolution: {integrity: sha512-hgpnyMuMqCz2PARmk3v62FxUr8jHIkY13ygvUeh8s+dmQxfnvkB/sgtoZFzG4lMitnEdnrg/lCvDbtVzuAsGWQ==}
- 
-+  '@vitest/utils@5.0.5':
-+    resolution: {integrity: sha512-/rBu7gzLDQI/SC79Tn98b5DwOgaHU/Gt4I9OVeP3YofzNaYtbImRCOJQmT1S6vOJg9gEIlWC+r3QxKkjuSa1nQ==}
-+
-   '@webassemblyjs/ast@1.14.1':
-     resolution: {integrity: sha512-nuBEDgQfm1ccRp/8bCQrx1frohyufl4JlbMMZ4P1wpeOfDhF6FQkxZJ1b/e+PLwr6X1Nhw6OLme5usuBWYBvuQ==}
- 
-@@ -11528,7 +11539,7 @@ snapshots:
- 
-   '@mui/internal-netlify-cache@0.1.1-canary.2': {}
- 
--  '@mui/internal-test-utils@2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.4)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
-+  '@mui/internal-test-utils@2.1.1-canary.3(@playwright/test@1.64.0)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(@vitest/utils@5.0.5)(chai@6.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
-     dependencies:
-       '@babel/runtime': 8.0.7
-       '@playwright/test': 1.64.0
-@@ -11545,7 +11556,7 @@ snapshots:
-       prop-types: 15.8.1
-       react: 19.3.0
-       react-dom: 19.3.0(react@19.3.0)
--      vitest-fail-on-console: 0.10.1(@vitest/utils@5.0.4)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-+      vitest-fail-on-console: 0.10.1(@vitest/utils@5.0.5)(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-     transitivePeerDependencies:
-       - '@types/react'
-       - '@types/react-dom'
-@@ -13197,7 +13208,7 @@ snapshots:
-       picocolors: 1.1.1
-       redent: 3.0.0
-     optionalDependencies:
--      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@7.2.0))(vite@8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-+      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +2/-0)
-```diff
-@@ -69,6 +69,8 @@ minimumReleaseAgeExclude:
-   - next@16.4.1
-   # Renovate security update: vite@8.3.3
-   - vite@8.3.3
-+  # Renovate security update: @vitest/ui@5.0.5
-+  - '@vitest/ui@5.0.5'
- # Drop exemptions from minimumReleaseAgeExclude once the lockfile stops resolving them,
- # so the security-update entries Renovate adds do not accumulate.
- minimumReleaseAgeExcludePrune: true
-```
-
----
-
-### Incident Patch 2: `8014975d` (2026-10-26)
-**Commit Message**: Bump vite to 8.3.3 [SECURITY] (#6097)
-
-Co-authored-by: code-infra-renovate[bot] <290386390+code-infra-renovate[bot]@users.noreply.github.com>
-
-**File**: `pnpm-lock.yaml` (modified, +26/-26)
-```diff
-@@ -743,7 +743,7 @@ importers:
-     devDependencies:
-       '@mui/internal-benchmark':
-         specifier: 0.1.1-canary.8
--        version: 0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-+        version: 0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-       '@playwright/test':
-         specifier: 1.64.0
-         version: 1.64.0
-@@ -754,8 +754,8 @@ importers:
-         specifier: 19.3.0
-         version: 19.3.0(@types/react@19.3.0)
-       vite:
--        specifier: 8.3.1
--        version: 8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
-+        specifier: 8.3.3
-+        version: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
- 
-   test/bundle-size:
-     dependencies:
-@@ -9215,8 +9215,8 @@ packages:
-   vfile@6.0.3:
-     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
- 
--  vite@8.3.1:
--    resolution: {integrity: sha512-/bvH9E9tmCXRGp2uXY3WbOldqpTwFkbha/8ANaEQ6VkxhH60KyqLwgZq6lG2y+4uT55x9+9eUHMpQ7uGnOCKjA==}
-+  vite@8.3.3:
-+    resolution: {integrity: sha512-cTAldKPImjg6c+gk48U19POPn3GCBzZwpdsN8ZMEEcbpes+6/wvfqUd0C2y3qYY4wsj8PwgFwrZ/1jBPVttMSg==}
-     engines: {node: ^20.19.0 || >=22.12.0}
-     hasBin: true
-     peerDependencies:
-@@ -11294,13 +11294,13 @@ snapshots:
-       '@babel/core': 8.0.7
-       resolve: 1.22.13
- 
--  '@mui/internal-benchmark@0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
-+  '@mui/internal-benchmark@0.1.1-canary.8(@playwright/test@1.64.0)(@vitest/browser-playwright@5.0.4)(babel-plugin-react-compiler@1.0.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)':
-     dependencies:
-       '@babel/runtime': 8.0.7
-       '@playwright/test': 1.64.0
-       '@pnpm/find-workspace-dir': 1000.1.5
--      '@vitejs/plugin-react': 6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
--      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-+      '@vitejs/plugin-react': 6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-+      '@vitest/browser-playwright': 5.0.4(playwright@1.64.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4)
-       chalk: 6.0.1
-       env-ci: 11.2.0
-       es-toolkit: 1.52.0
-@@ -11309,12 +11309,12 @@ snapshots:
-       react: 19.3.0
-       react-dom: 19.3.0(react@19.3.0)
-       sirv: 3.0.2
--      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@10.2.2))(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-+      vitest: 5.0.4(@types/node@22.20.5)(@vitest/browser-playwright@5.0.4)(@vitest/coverage-istanbul@5.0.4)(@vitest/ui@5.0.4)(jsdom@27.4.0(supports-color@10.2.2))(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-       yaml: 2.9.1
-       yargs: 18.2.0
-       zod: 4.6.7
-     optionalDependencies:
--      vite: 8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
-+      vite: 8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
-     transitivePeerDependencies:
-       - '@rolldown/plugin-babel'
-       - babel-plugin-react-compiler
-@@ -13606,10 +13606,10 @@ snapshots:
-   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
-     optional: true
- 
--  '@vitejs/plugin-react@6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
-+  '@vitejs/plugin-react@6.1.2(babel-plugin-react-compiler@1.0.0)(vite@8.3.3(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))':
-     dependencies:
-       '@rolldown/pluginutils': 1.0.1
--      vite: 8.3.1(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml
-```
-
-**File**: `pnpm-workspace.yaml` (modified, +2/-0)
-```diff
-@@ -67,6 +67,8 @@ minimumReleaseAgeExclude:
-   - '@base-ui/*'
-   - '@mui/internal-*'
-   - next@16.4.1
-+  # Renovate security update: vite@8.3.3
-+  - vite@8.3.3
- # Drop exemptions from minimumReleaseAgeExclude once the lockfile stops resolving them,
- # so the security-update entries Renovate adds do not accumulate.
- minimumReleaseAgeExcludePrune: true
-```
-
-**File**: `test/benchmark/package.json` (modified, +1/-1)
-```diff
-@@ -17,6 +17,6 @@
-     "@playwright/test": "1.64.0",
-     "@types/react": "19.3.0",
-     "@types/react-dom": "19.3.0",
--    "vite": "8.3.1"
-+    "vite": "8.3.3"
-   }
- }
-```
-
----
-
-### Incident Patch 3: `5e1f2e63` (2026-10-26)
-**Commit Message**: [context menu] Fix `actionsRef` type (#5902)
-
-Co-authored-by: Michał Dudak <[REDACTED_EMAIL]>
-
-**File**: `docs/src/app/(docs)/react/components/context-menu/types.md` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ Doesn't render its own HTML element.
- | open                 | `boolean`                                                                                             | -            | Whether the menu is currently open.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
- | onOpenChange         | `((open: boolean, eventDetails: ContextMenu.Root.ChangeEventDetails) => void)`                        | -            | Event handler called when the menu is opened or closed.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
- | highlightItemOnHover | `boolean`                                                                                             | `true`       | Whether moving the pointer over items should highlight them.&#xA;Disabling this prop allows CSS `:hover` to be differentiated from the `:focus` (`data-highlighted`) state.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
--| actionsRef           | `React.RefObject<MenuRoot.Actions \| null>`                                                           | -            | A ref to imperative actions. `unmount`: Ends the closing phase of the menu after an externally controlled closing animation finishes.&#xA;Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the menu completes closing on its own.&#xA;Whether it leaves the DOM is decided by `keepMounted` on the portal.`close`: Closes the menu imperatively when called.                                                                                                                                                                                                                                                       |
-+| actionsRef           | `React.RefObject<ContextMenu.Root.Actions \| null>`                                                   | -            | A ref to imperative actions. `unmount`: Ends the closing phase of the menu after an externally controlled closing animation finishes.&#xA;Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the menu completes closing on its own.&#xA;Whether it leaves the DOM is decided by `keepMounted` on the portal.`close`: Closes the menu imperatively when called.                                                                                                                                                                                                                                                       |
- | loopFocus            | `boolean`                                                                                             | `true`       | Whether to loop keyboard focus back to the first item&#xA;when the end of the list is reached while using the arrow keys.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
- | onItemHighlighted    | `((highlightedItem: HTMLElement \| undefined, eventDetails: MenuRoot.HighlightEventDetails) => void)` | -            | Callback fired when an item is highlighted or unhighlighted.&#xA;Receives the highlighted item element (or `undefined` if no item is highlighted) and details&#xA;containing the reason for the change, the event, and the item's text label.&#xA;The 
-```
-
-**File**: `packages/react/src/context-menu/root/ContextMenuRoot.tsx` (modified, +9/-0)
-```diff
-@@ -67,6 +67,7 @@ export interface ContextMenuRootProps extends Omit<
-   | 'closeDelay'
-   | 'closeParentOnEsc'
-   | 'onOpenChange'
-+  | 'actionsRef'
-   // Context Menu opens from a pointer position rather than a registered trigger, so the
-   // render-function form of `children` (which receives the active trigger's payload) is not applicable.
-   | 'children'
-@@ -76,6 +77,14 @@ export interface ContextMenuRootProps extends Omit<
-    */
-   onOpenChange?:
-     ((open: boolean, eventDetails: ContextMenuRoot.ChangeEventDetails) => void) | undefined;
-+  /**
-+   * A ref to imperative actions.
-+   * - `unmount`: Ends the closing phase of the menu after an externally controlled closing animation finishes.
-+   * Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the menu completes closing on its own.
-+   * Whether it leaves the DOM is decided by `keepMounted` on the portal.
-+   * - `close`: Closes the menu imperatively when called.
-+   */
-+  actionsRef?: React.RefObject<ContextMenuRoot.Actions | null> | undefined;
-   /**
-    * @ignore
-    * @deprecated This prop has no effect on Context Menu.
+@@ -108,6 +108,8 @@ describe('<Select.Root />', () => {
+       await waitFor(() => {
+         expect(onOpenChangeComplete).toHaveBeenLastCalledWith(false);
+       });
++      // React 18 commits the end of the transition after the callback runs.
++      await flushMicrotasks();
+       // The press mounts the list while closed so its items can register; it isn't left closing.
+       expect(screen.getByRole('listbox', { hidden: true })).not.toHaveAttribute(
+         'data-ending-style',
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6116** (closed): [select] Ignore a mouseup that already happened before the trigger listens (@rohits2501)
+- **PR #6114** (2026-10-27): [select] Fix a React 18 flake in a closing test (@michaldudak)
 - **PR #6097** (2026-10-26): Bump vite to 8.3.3 [SECURITY] (@code-infra-renovate[bot])
 - **PR #6096** (2026-10-26): Bump @vitest/ui to 5.0.5 [SECURITY] (@code-infra-renovate[bot])
 - **PR #6092** (closed): [scroll area] Measure every mounting Scroll Area before writing to any (@Janpot)
 - **PR #6091** (2026-10-23): [website] Simplify resolved mp4 paths  (@andy-hook)
-- **PR #6089** (2026-10-23): [code-infra] Update Node.js and Next.js for security fixes (@jjenzz)
-- **PR #6087** (2026-10-26): Bump vale-cli/vale to 3.25.1 (@code-infra-renovate[bot])
 
 ---
 
@@ -675,28 +421,29 @@ Co-authored-by: Michał Dudak <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump @vitest/ui to 5.0.5 [SECURITY] (#6096)
+## X. [select] Fix a React 18 flake in a closing test (#6114)
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mui/base-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react/src/select/root/SelectRoot.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mui/base-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc3bd5fb`: Bump @vitest/ui to 5.0.5 [SECURITY] (#6096). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc9075a4`: [select] Fix a React 18 flake in a closing test (#6114). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react/src/select/root/SelectRoot.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@vitest/ui": "5.0.5",
+      // React 18 commits the end of the transition after the callback runs.
+      await flushMicrotasks();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    "@vitest/ui": "5.0.4",
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc3bd5fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc9075a4` are properly handled with clean fallback behavior.

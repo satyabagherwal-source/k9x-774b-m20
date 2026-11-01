@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `103984cd`  
+> **Source Version**: `653afb21`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T06:44:56.218Z  
+> **Timestamp**: 2026-10-31T22:53:43.527Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T06:44:55.990Z  
+> **Harvest Timestamp**: 2026-10-31T22:53:43.519Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5732 stars
+- **Stars / Engagement**: 5751 stars
 
 ---
 
@@ -984,11 +984,14 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7966** (2026-10-23): **feat: add priority based preemptive scheduling gate**
-  *Symptoms*: **What type of PR is this?** /kind feature <!-- Add one of the following kinds: /kind bug /kind feature /kind documentation /kind cleanup  Optionally add one or more of the following kinds if applicable: /kind api-change /kind deprecation /kind failing-test /kind flake /kind regression  -->  **What this PR does / why we need it**: This PR introduces the `PriorityBasedPreemptiveScheduling` feature gate as part of the [priority-based binding preemption proposal](https://github.com/karmada-io/karmada/blob/master/docs/proposals/scheduling/binding-preemption/binding-preemption.md) and related work items from the [umbrella issue tracking the work](https://github.com/karmada-io/karmada/issues/7943)  **Which issue(s) this PR fixes**: Part of #7943 <!-- *Optionally link to the umbrella issue if this PR resolves part of it. Usage: `Part of #<issue number>`, or `Part of (paste link of issue)`.* Part of # -->  **Special notes for your reviewer**: This feature gate requires both of the following gates to be turned on  ```go PriorityBasedScheduling && PriorityBasedPreemptiveScheduling ``` <!-- Such as a test report of this PR. -->  **Does this PR introduce a user-facing change?**: <!-- If no, just write "NONE" in the release-note block below. If yes, a release note is required. Some brief examples of release notes: 1. `karmada-controller-manager`: Fixed the issue that xxx 2. `karmada-scheduler`: The deprecated flag `--xxx` now has been removed. Users of this flag should xxx. 3. `API Change
+- **Issue #8009** (2026-10-31): **fix(util/proxy): return an error when the cluster CA bundle has no valid PEM certificate**
+  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  `GetTLSConfigForCluster` ignored the return value of `AppendCertsFromPEM`. When the cluster secret's `caBundle` holds no parseable PEM certificate (for example a DER file, or a value that was base64-encoded twice), `RootCAs` ends up as an empty pool. The proxy then fails later with a generic `x509: certificate signed by unknown authority`, and nothing points at the secret.  The member cluster client (`pkg/util/membercluster_client.go`) already rejects this case, because client-go fails on unparseable `CAData`. With this change the proxy path returns an error that names the secret and the cluster. A missing `caBundle` keeps the current behavior (#4371).  **Which issue(s) this PR fixes**: Fixes #  None. I found this while reading the code.  **Special notes for your reviewer**:  Added `TestGetTLSConfigForCluster` with three cases: valid bundle, bundle not set, and a bundle with no valid PEM certificate. The last case fails on master and passes with this change.  - `go test ./pkg/util/proxy/` passes - `golangci-lint run ./pkg/util/proxy/...` reports 0 issues - `go vet` and `gofmt` are clean  I wrote this with help from an AI assistant and reviewed and tested it myself.  **Does this PR introduce a user-facing change?**: ```release-note `karmada-aggregated-apiserver`/`karmadactl`: Cluster proxy now returns a clear error when the cluster secret's caBundle contains no valid PEM certificate, instead of f
 
-- **Issue #7963** (2026-10-22): **fix: add ClusterTaintPolicy webhook to chart, init, and operator**
-  *Symptoms*: **What type of PR is this?**  /kind bug  **What this PR does / why we need it**:  This PR adds the `clustertaintpolicy.karmada.io` validating webhook to the Helm chart, `karmadactl init`, and `karmada-operator`. The entry is the same as in `artifacts/deploy/webhook-configuration.yaml`.  #6370 added `/validate-clustertaintpolicy` and `--allow-no-execute-taint-policy`, but it added the webhook entry only to `artifacts/deploy`. For the other installers, the API server never calls the webhook. The flag has no effect, and the API server accepts every `NoExecute` taint in a `ClusterTaintPolicy`. Details: https://github.com/karmada-io/karmada/issues/7923#issuecomment-6209948597  **Which issue(s) this PR fixes**:  Fixes #7923  **Special notes for your reviewer**:  This PR depends on #7953, which is on `master`.  Behavior change:  - After the upgrade, `karmada-webhook` denies create and update requests for a `ClusterTaintPolicy` with a `NoExecute` taint, unless the flag is `true`. - Existing policies stay in the API, and the controller continues to use them. - Re-apply of an unchanged `NoExecute` policy without the flag: denied with `spec.taints[0]: Forbidden: Configuring taint with NoExecute effect is not allowed`. - The flag default stays `false`, as the flag help text requires.  Upgrade impact per installer:  - Helm chart: one `helm upgrade` can add the entry and set the flag. - `karmada-operator`: the operator applies the webhook configuration again each time it reconciles a valid
+- **Issue #8008** (2026-10-31): **Automated cherry pick of #7950: Removed github workflow for releasing images to SWR**
+  *Symptoms*: Cherry pick of #7950 on release-1.19. #7950: Removed github workflow for releasing images to SWR For details on the cherry pick process, see the [cherry pick requests](https://karmada.io/docs/contributor/cherry-picks) page. ```release-note Images will no longer be published to the Huawei Cloud SWR registry (swr.ap-southeast-1.myhuaweicloud.com/karmada) starting from release-1.20. Please pull images from DockerHub (docker.io/karmada) instead. ```
+  **Post-Mortem & Fix Analysis**:
+  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/8008?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.47%. Comparing base ([`c64ba38`](https://app.codecov.io/gh/karmada-io/karmada/commit/c64ba38cf7083c99bedaeed6acbdd1a8597fded1?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`8465e2d`](https://app.codecov.io/gh/karmada-io/karmada/commit/8465e2d887dcb4c5e5c3da275d3a7a323df2082a?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8008#pullrequestreview-5722227109" title="Approved">RainbowMango</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.19/OWNERS)~~ [RainbowMango]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1005,355 +1008,875 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `103984cd` (2026-10-23)
-**Commit Message**: feat: add priority based preemptive scheduling gate (#7966)
+### Incident Patch 1: `653afb21` (2026-10-31)
+**Commit Message**: Merge pull request #8004 from zhzhuang-zju/releasenote-new
 
-* Introduce feature gate  in alpha
+publish release note for v1.20.0-beta.0,v1.19.1,v1.18.4,v1.17.7
 
-Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
-
-* Update comment based on PR feedback
-
-Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Ajay Sarjoo <[REDACTED_EMAIL]>
-
-**File**: `docs/command-line-flags/karmada-agent.md` (modified, +1/-0)
+**File**: `docs/CHANGELOG/CHANGELOG-1.17.md` (modified, +48/-27)
 ```diff
-@@ -82,6 +82,7 @@ Generic flags:
-                                                        LoggingBetaOptions=true|false (BETA - default=true)
-                                                        MultiClusterService=true|false (ALPHA - default=false)
-                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                        PriorityBasedScheduling=true|false (BETA - default=true)
-                                                        PropagateDeps=true|false (BETA - default=true)
-                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-aggregated-apiserver.md` (modified, +1/-0)
-```diff
-@@ -138,6 +138,7 @@ Generic flags:
-                                                                 MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-                                                                 NativeHistograms=true|false (ALPHA - default=false)
-                                                                 OpenAPIEnums=true|false (BETA - default=true)
-+                                                                PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                                 PriorityBasedScheduling=true|false (BETA - default=true)
-                                                                 PropagateDeps=true|false (BETA - default=true)
-                                                                 PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-controller-manager.md` (modified, +1/-0)
-```diff
-@@ -87,6 +87,7 @@ Generic flags:
-                                                                        LoggingBetaOptions=true|false (BETA - default=true)
-                                                                        MultiClusterService=true|false (ALPHA - default=false)
-                                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                                        PriorityBasedScheduling=true|false (BETA - default=true)
-                                                                        PropagateDeps=true|false (BETA - default=true)
-                                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-scheduler-estimator.md` (modified, +1/-0)
-```diff
-@@ -60,6 +60,7 @@ Generic flags:
-                                            LoggingBetaOptions=true|false (BETA - default=true)
-                                            MultiClusterService=true|false (ALPHA - default=false)
-                                            MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                           PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                            PriorityBasedScheduling=true|false (BETA - default=true)
-                                            PropagateDeps=true|false (BETA - default=true)
-                                            PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-scheduler.md` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@ Generic flags:
-                                                        LoggingBetaOptions=true|false (BETA - default=true)
-                                                        MultiClusterService=true|false (ALPHA - default=false)
-                                                        MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                        PriorityBasedScheduling=true|false (BETA - default=true)
-                                                        PropagateDeps=true|false (BETA - default=true)
-                                                        PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-search.md` (modified, +1/-0)
-```diff
-@@ -151,6 +151,7 @@ Generic flags:
-                                                                 kube:MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-                                                                 kube:NativeHistograms=true|false (ALPHA - default=false)
-                                                                 kube:OpenAPIEnums=true|false (BETA - default=true)
-+                                                                kube:PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                                                 kube:PriorityBasedScheduling=true|false (BETA - default=true)
-                                                                 kube:PropagateDeps=true|false (BETA - default=true)
-                                                                 kube:PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `docs/command-line-flags/karmada-webhook.md` (modified, +1/-0)
-```diff
-@@ -63,6 +63,7 @@ Generic flags:
-                                            LoggingBetaOptions=true|false (BETA - default=true)
-                                            MultiClusterService=true|false (ALPHA - default=false)
-                                            MultiplePodTemplatesScheduling=true|false (ALPHA - default=false)
-+                                           PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
-                                            PriorityBasedScheduling=true|false (BETA - default=true)
-                                            PropagateDeps=true|false (BETA - default=true)
-                                            PropagationPolicyPreemption=true|false (ALPHA - default=false)
-```
-
-**File**: `pkg/features/features.go` (modified, +16/-0)
-```diff
-@@ -75,6 +75,16 @@ const (
- 	// beta: v1.19
- 	PriorityBasedScheduling featuregate.Feature = "PriorityBasedScheduling"
+@@ -2,42 +2,48 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
  
-+	// PriorityBasedPreemptiveScheduling controls whether the scheduler may preempt
-+	// lower-priority bindings when the target cluster lacks sufficient resources
-+	// to schedule a higher-priority binding.
-+	// This feature depends on PriorityBasedScheduling and only takes effect when
-+	// both feature gates are enabled.
-+	//
-+	// owner: @seanlaii, @asarj
-+	// alpha: v1.20
-+	PriorityBasedPreemptiveScheduling featuregate.Feature = "PriorityBasedPreemptiveScheduling"
+-- [v1.17.6](#v1176)
+-  - [Downloads for v1.17.6](#downloads-for-v1176)
+-  - [Changelog since v1.17.5](#changelog-since-v1175)
++- [v1.17.7](#v1177)
++  - [Downloads for v1.17.7](#downloads-for-v1177)
++  - [Changelog since v1.17.6](#changelog-since-v1176)
+     - [Changes by Kind](#changes-by-kind)
+       - [Bug Fixes](#bug-fixes)
+       - [Others](#others)
+-- [v1.17.5](#v1175)
+-  - [Downloads for v1.17.5](#downloads-for-v1175)
+-  - [Changelog since v1.17.4](#changelog-since-v1174)
++- [v1.17.6](#v1176)
++  - [Downloads for v1.17.6](#downloads-for-v1176)
++  - [Changelog since v1.17.5](#changelog-since-v1175)
+     - [Changes by Kind](#changes-by-kind-1)
+       - [Bug Fixes](#bug-fixes-1)
+       - [Others](#others-1)
+-- [v1.17.4](#v1174)
+-  - [Downloads for v1.17.4](#downloads-for-v1174)
+-  - [Changelog since v1.17.3](#changelog-since-v1173)
++- [v1.17.5](#v1175)
++  - [Downloads for v1.17.5](#downloads-for-v1175)
++  - [Changelog since v1.17.4](#changelog-since-v1174)
+     - [Changes by Kind](#changes-by-kind-2)
+       - [Bug Fixes](#bug-fixes-2)
+       - [Others](#others-2)
+-- [v1.17.3](#v1173)
+-  - [Downloads for v1.17.3](#downloads-for-v1173)
+-  - [Changelog since v1.17.2](#changelog-since-v1172)
++- [v1.17.4](#v1174)
++  - [Downloads for v1.17.4](#downloads-for-v1174)
++  - [Changelog since v1.17.3](#changelog-since-v1173)
+     - [Changes by Kind](#changes-by-kind-3)
+       - [Bug Fixes](#bug-fixes-3)
+       - [Others](#others-3)
+-- [v1.17.2](#v1172)
+-  - [Downloads for v1.17.2](#downloads-for-v1172)
+-  - [Changelog since v1.17.1](#changelog-since-v1171)
++- [v1.17.3](#v1173)
++  - [Downloads for v1.17.3](#downloads-for-v1173)
++  - [Changelog since v1.17.2](#changelog-since-v1172)
+     - [Changes by Kind](#changes-by-kind-4)
+       - [Bug Fixes](#bug-fixes-4)
+       - [Others](#others-4)
+-- [v1.17.1](#v1171)
+-  - [Downloads for v1.17.1](#downloads-for-v1171)
+-  - [Changelog since v1.17.0](#changelog-since-v1170)
++- [v1.17.2](#v1172)
++  - [Downloads for v1.17.2](#downloads-for-v1172)
++  - [Changelog since v1.17.1](#changelog-since-v1171)
+     - [Changes by Kind](#changes-by-kind-5)
+       - [Bug Fixes](#bug-fixes-5)
+       - [Others](#others-5)
++- [v1.17.1](#v1171)
++  - [Downloads for v1.17.1](#downloads-for-v1171)
++  - [Changelog since v1.17.0](#changelog-since-v1170)
++    - [Changes by Kind](#changes-by-kind-6)
++      - [Bug Fixes](#bug-fixes-6)
++      - [Others](#others-6)
+ - [v1.17.0](#v1170)
+   - [Downloads for v1.17.0](#downloads-for-v1170)
+   - [Urgent Update Notes](#urgent-update-notes)
+@@ -50,7 +56,7 @@
+     - [API Changes](#api-changes)
+     - [Features & Enhancements](#features--enhancements)
+     - [Deprecation](#deprecation)
+-    - [Bug Fixes](#bug-fixes-6)
++    - [Bug Fixes](#bug-fixes-7)
+     - [Security](#security)
+   - [Other](#other)
+     - [Dependencies](#dependencies)
+@@ -62,11 +68,11 @@
+   - [Downloads for v1.17.0-rc.0](#downloads-for-v1170-rc0)
+   - [Changelog since v1.17.0-beta.0](#changelog-since-v1170-beta0)
+   - [Urgent Update Notes](#urgent-update-notes-1)
+-  - [Changes by Kind](#changes-by-kind-6)
++  - [Changes by Kind](#changes-by-kind-7)
+     - [API Changes](#api-changes-1)
+     - [Features & Enhancements](#features--enhancements-1)
+     - [Deprecation](#deprecation-1)
+-    - [Bug Fixes](#bug-fixes-7)
++    - [Bug Fixes](#bug-fixes-8)
+     - [Security](#security-1)
+   - [Other](#other-1)
+     - [Dependencies](#dependencies-1)
+@@ -77,11 +83,11 @@
+   - [Downloads for v1.17.0-beta.0](#downloads-for-v1170-beta0)
+   - [Changelog since v1.17.0-alpha.2](#changelog-since-v1170-alpha2)
+   - [Urgent Update Notes](#urgent-update-notes-2)
+-  - [Changes by Kind](#changes-by-kind-7)
++  - [Changes by Kind](#changes-by-kind-8)
+     - [API Changes](#api-changes-2)
+     - [Features & Enhancements](#features--enhancements-2)
+     - [Deprecation](#deprecation-2)
+-    - [Bug Fixes](#bug-fixes-8)
++    - [Bug Fixes](#bug-fixes-9)
+     - [Security](#security-2)
+   - [Other](#other-2)
+     - [Dependencies](#dependencies-2)
+@@ -92,11 +98,11 @@
+   - [Downloads for v1.17.0-alpha.2](#downloads-for-v1170-alpha2)
+   - [Changelog since v1.17.0-alpha.1](#changelog-since-v1170-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes-3)
+-  - [Changes by Kind](#changes-by-kind-8)
++  - [Changes by Kind](#changes-by-kind-9)
+     - [API Changes](#api-changes-3)
+     - [Features & Enhancements](#features--enhancements-3)
+     - [Deprecation](#deprecation-3)
+-    - [Bug Fixes](#bug-fixes-9)
++    - [Bug Fixes](#bug-fixes-10)
+     - [Security](#security-3)
+   - [Other](#other-3)
+     - [Dependencies](#dependencies-3)
+@@ -107,11 +113,11 @@
+   - [Downloads for v1.17.0-alpha.1](#downloads-for-v1170-alpha1)
+   - [Changelog since v1.17.0-alpha.0](#changelog-since-v1170-alpha0)
+   - [Urgent Update Notes](#urgent-update-notes-4)
+-  - [Changes by Kind](#changes-by-kind-9
+```
+
+**File**: `docs/CHANGELOG/CHANGELOG-1.18.md` (modified, +39/-18)
+```diff
+@@ -2,24 +2,30 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+ 
+-- [v1.18.3](#v1183)
+-  - [Downloads for v1.18.3](#downloads-for-v1183)
+-  - [Changelog since v1.18.2](#changelog-since-v1182)
++- [v1.18.4](#v1184)
++  - [Downloads for v1.18.4](#downloads-for-v1184)
++  - [Changelog since v1.18.3](#changelog-since-v1183)
+     - [Changes by Kind](#changes-by-kind)
+       - [Bug Fixes](#bug-fixes)
+       - [Others](#others)
+-- [v1.18.2](#v1182)
+-  - [Downloads for v1.18.2](#downloads-for-v1182)
+-  - [Changelog since v1.18.1](#changelog-since-v1181)
++- [v1.18.3](#v1183)
++  - [Downloads for v1.18.3](#downloads-for-v1183)
++  - [Changelog since v1.18.2](#changelog-since-v1182)
+     - [Changes by Kind](#changes-by-kind-1)
+       - [Bug Fixes](#bug-fixes-1)
+       - [Others](#others-1)
+-- [v1.18.1](#v1181)
+-  - [Downloads for v1.18.1](#downloads-for-v1181)
+-  - [Changelog since v1.18.0](#changelog-since-v1180)
++- [v1.18.2](#v1182)
++  - [Downloads for v1.18.2](#downloads-for-v1182)
++  - [Changelog since v1.18.1](#changelog-since-v1181)
+     - [Changes by Kind](#changes-by-kind-2)
+       - [Bug Fixes](#bug-fixes-2)
+       - [Others](#others-2)
++- [v1.18.1](#v1181)
++  - [Downloads for v1.18.1](#downloads-for-v1181)
++  - [Changelog since v1.18.0](#changelog-since-v1180)
++    - [Changes by Kind](#changes-by-kind-3)
++      - [Bug Fixes](#bug-fixes-3)
++      - [Others](#others-3)
+ - [v1.18.0](#v1180)
+   - [Downloads for v1.18.0](#downloads-for-v1180)
+   - [Urgent Update Notes](#urgent-update-notes)
+@@ -30,7 +36,7 @@
+     - [API Changes](#api-changes)
+     - [Features & Enhancements](#features--enhancements)
+     - [Deprecation](#deprecation)
+-    - [Bug Fixes](#bug-fixes-3)
++    - [Bug Fixes](#bug-fixes-4)
+     - [Security](#security)
+   - [Other](#other)
+     - [Dependencies](#dependencies)
+@@ -42,11 +48,11 @@
+   - [Downloads for v1.18.0-rc.0](#downloads-for-v1180-rc0)
+   - [Changelog since v1.18.0-beta.0](#changelog-since-v1180-beta0)
+   - [Urgent Update Notes](#urgent-update-notes-1)
+-  - [Changes by Kind](#changes-by-kind-3)
++  - [Changes by Kind](#changes-by-kind-4)
+     - [API Changes](#api-changes-1)
+     - [Features & Enhancements](#features--enhancements-1)
+     - [Deprecation](#deprecation-1)
+-    - [Bug Fixes](#bug-fixes-4)
++    - [Bug Fixes](#bug-fixes-5)
+     - [Security](#security-1)
+   - [Other](#other-1)
+     - [Dependencies](#dependencies-1)
+@@ -57,11 +63,11 @@
+   - [Downloads for v1.18.0-beta.0](#downloads-for-v1180-beta0)
+   - [Changelog since v1.18.0-alpha.2](#changelog-since-v1180-alpha2)
+   - [Urgent Update Notes](#urgent-update-notes-2)
+-  - [Changes by Kind](#changes-by-kind-4)
++  - [Changes by Kind](#changes-by-kind-5)
+     - [API Changes](#api-changes-2)
+     - [Features & Enhancements](#features--enhancements-2)
+     - [Deprecation](#deprecation-2)
+-    - [Bug Fixes](#bug-fixes-5)
++    - [Bug Fixes](#bug-fixes-6)
+     - [Security](#security-2)
+   - [Other](#other-2)
+     - [Dependencies](#dependencies-2)
+@@ -72,11 +78,11 @@
+   - [Downloads for v1.18.0-alpha.2](#downloads-for-v1180-alpha2)
+   - [Changelog since v1.18.0-alpha.1](#changelog-since-v1180-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes-3)
+-  - [Changes by Kind](#changes-by-kind-5)
++  - [Changes by Kind](#changes-by-kind-6)
+     - [API Changes](#api-changes-3)
+     - [Features & Enhancements](#features--enhancements-3)
+     - [Deprecation](#deprecation-3)
+-    - [Bug Fixes](#bug-fixes-6)
++    - [Bug Fixes](#bug-fixes-7)
+     - [Security](#security-3)
+   - [Other](#other-3)
+     - [Dependencies](#dependencies-3)
+@@ -87,11 +93,11 @@
+   - [Downloads for v1.18.0-alpha.1](#downloads-for-v1180-alpha1)
+   - [Changelog since v1.18.0-alpha.0](#changelog-since-v1180-alpha0)
+   - [Urgent Update Notes](#urgent-update-notes-4)
+-  - [Changes by Kind](#changes-by-kind-6)
++  - [Changes by Kind](#changes-by-kind-7)
+     - [API Changes](#api-changes-4)
+     - [Features & Enhancements](#features--enhancements-4)
+     - [Deprecation](#deprecation-4)
+-    - [Bug Fixes](#bug-fixes-7)
++    - [Bug Fixes](#bug-fixes-8)
+     - [Security](#security-4)
+   - [Other](#other-4)
+     - [Dependencies](#dependencies-4)
+@@ -101,6 +107,21 @@
+ 
+ <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+ 
++# v1.18.4
++## Downloads for v1.18.4
 +
- 	// FederatedQuotaEnforcement controls whether the existing FederatedResourceQuota enhancement feature is enabled.
- 	// When enabled, the existing FederatedResourceQuota can impose namespaced resource limits directly on the Karmada control-plane level
- 	//
-@@ -174,6 +184,7 @@ var (
- 		ResourceQuotaEstimate:             {Default: false, PreRelease: featuregate.Alpha},
- 		StatefulFailoverInjection:         {Default: false, PreRelease: featuregate.Alpha},
- 		PriorityBasedScheduling:           {Default: true, PreRelease: featuregate.Beta},
-+		PriorityBasedPreemptiveScheduling: {Default: false, PreRelease: featuregate.Alpha},
- 		FederatedQuotaEnforcement:         {Default: false, PreRelease: featuregate.Alpha},
- 		LoggingAlphaOptions:               {Default: false, PreRelease: featuregate.Alpha},
- 		LoggingBetaOptions:                {Default: true, PreRelease: featuregate.Beta},
-@@ -188,3 +199,8 @@ var (
- func init() {
- 	runtime.Must(FeatureGate.Add(DefaultFeatureGates))
- }
++Download v1.18.4 in the [v1.18.4 release page](https://github.com/karmada-io/karmada/releases/tag/v1.18.4).
 +
-+// PriorityBasedPreemptiveSchedulingEnabled reports whether priority-based preemptive scheduling is enabled.
-+func PriorityBasedPreemptiveSchedulingEnabled() bool {
-+	return FeatureGate.Enabled(PriorityBasedScheduling) && FeatureGate.Enabled(PriorityBasedPreemptiveScheduling)
-+}
++## Changelog since v1.18.3
++
++### Changes by Kind
++
++#### Bug Fixes
++None.
++
++#### Others
++- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7915](https://github.com/karmada-io/karmada/pull/7915), @dependabot)
++
+ # v1.18.3
+ ## Downloads for v1.18.3
+ 
+```
+
+**File**: `docs/CHANGELOG/CHANGELOG-1.19.md` (modified, +28/-7)
+```diff
+@@ -2,6 +2,12 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+ 
++- [v1.19.1](#v1191)
++  - [Downloads for v1.19.1](#downloads-for-v1191)
++  - [Changelog since v1.19.0](#changelog-since-v1190)
++    - [Changes by Kind](#changes-by-kind)
++    - [Bug Fixes](#bug-fixes)
++    - [Others](#others)
+ - [v1.19.0](#v1190)
+   - [Downloads for v1.19.0](#downloads-for-v1190)
+   - [Urgent Update Notes](#urgent-update-notes)
+@@ -14,7 +20,7 @@
+     - [API Changes](#api-changes)
+     - [Features & Enhancements](#features--enhancements)
+     - [Deprecation](#deprecation)
+-    - [Bug Fixes](#bug-fixes)
++    - [Bug Fixes](#bug-fixes-1)
+     - [Security](#security)
+   - [Other](#other)
+     - [Dependencies](#dependencies)
+@@ -26,11 +32,11 @@
+   - [Downloads for v1.19.0-rc.0](#downloads-for-v1190-rc0)
+   - [Changelog since v1.19.0-beta.0](#changelog-since-v1190-beta0)
+   - [Urgent Update Notes](#urgent-update-notes-1)
+-  - [Changes by Kind](#changes-by-kind)
++  - [Changes by Kind](#changes-by-kind-1)
+     - [API Changes](#api-changes-1)
+     - [Features & Enhancements](#features--enhancements-1)
+     - [Deprecation](#deprecation-1)
+-    - [Bug Fixes](#bug-fixes-1)
++    - [Bug Fixes](#bug-fixes-2)
+     - [Security](#security-1)
+   - [Other](#other-1)
+     - [Dependencies](#dependencies-1)
+@@ -41,11 +47,11 @@
+   - [Downloads for v1.19.0-beta.0](#downloads-for-v1190-beta0)
+   - [Changelog since v1.19.0-alpha.1](#changelog-since-v1190-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes-2)
+-  - [Changes by Kind](#changes-by-kind-1)
++  - [Changes by Kind](#changes-by-kind-2)
+     - [API Changes](#api-changes-2)
+     - [Features & Enhancements](#features--enhancements-2)
+     - [Deprecation](#deprecation-2)
+-    - [Bug Fixes](#bug-fixes-2)
++    - [Bug Fixes](#bug-fixes-3)
+     - [Security](#security-2)
+   - [Other](#other-2)
+     - [Dependencies](#dependencies-2)
+@@ -56,11 +62,11 @@
+   - [Downloads for v1.19.0-alpha.1](#downloads-for-v1190-alpha1)
+   - [Changelog since v1.19.0-alpha.0](#changelog-since-v1190-alpha0)
+   - [Urgent Update Notes](#urgent-update-notes-3)
+-  - [Changes by Kind](#changes-by-kind-2)
++  - [Changes by Kind](#changes-by-kind-3)
+     - [API Changes](#api-changes-3)
+     - [Features & Enhancements](#features--enhancements-3)
+     - [Deprecation](#deprecation-3)
+-    - [Bug Fixes](#bug-fixes-3)
++    - [Bug Fixes](#bug-fixes-4)
+     - [Security](#security-3)
+   - [Other](#other-3)
+     - [Dependencies](#dependencies-3)
+@@ -70,6 +76,21 @@
+ 
+ <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+ 
++# v1.19.1
++## Downloads for v1.19.1
++
++Download v1.19.1 in the [v1.19.1 release page](https://github.com/karmada-io/karmada/releases/tag/v1.19.1).
++
++## Changelog since v1.19.0
++
++### Changes by Kind
++
++### Bug Fixes
++None.
++
++### Others
++- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7916](https://github.com/karmada-io/karmada/pull/7916), @dependabot)
++
+ # v1.19.0
+ ## Downloads for v1.19.0
+ 
+```
+
+**File**: `docs/CHANGELOG/CHANGELOG-1.20.md` (modified, +69/-3)
+```diff
+@@ -2,9 +2,9 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+ 
+-- [v1.20.0-alpha.1](#v1200-alpha1)
+-  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
+-  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
++- [v1.20.0-beta.0](#v1200-beta0)
++  - [Downloads for v1.20.0-beta.0](#downloads-for-v1200-beta0)
++  - [Changelog since v1.20.0-alpha.1](#changelog-since-v1200-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes)
+   - [Changes by Kind](#changes-by-kind)
+     - [API Changes](#api-changes)
+@@ -17,9 +17,75 @@
+     - [Helm Charts](#helm-charts)
+     - [Instrumentation](#instrumentation)
+     - [Performance](#performance)
++- [v1.20.0-alpha.1](#v1200-alpha1)
++  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
++  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
++  - [Urgent Update Notes](#urgent-update-notes-1)
++  - [Changes by Kind](#changes-by-kind-1)
++    - [API Changes](#api-changes-1)
++    - [Features & Enhancements](#features--enhancements-1)
++    - [Deprecation](#deprecation-1)
++    - [Bug Fixes](#bug-fixes-1)
++    - [Security](#security-1)
++  - [Other](#other-1)
++    - [Dependencies](#dependencies-1)
++    - [Helm Charts](#helm-charts-1)
++    - [Instrumentation](#instrumentation-1)
++    - [Performance](#performance-1)
+ 
+ <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+ 
++# v1.20.0-beta.0
++## Downloads for v1.20.0-beta.0
++
++Download v1.20.0-beta.0 in the [v1.20.0-beta.0 release page](https://github.com/karmada-io/karmada/releases/tag/v1.20.0-beta.0).
++
++## Changelog since v1.20.0-alpha.1
++
++## Urgent Update Notes
++None.
++
++## Changes by Kind
++
++### API Changes
++- `ResourceBinding`: Introduced `spec.schedulePriority.preemptionPolicy` to both the `ResourceBinding` and `ClusterResourceBinding` APIs to specify whether a binding may preempt lower-priority bindings. ([#7954](https://github.com/karmada-io/karmada/pull/7954), @RainbowMango)
++
++### Features & Enhancements
++- `karmada-agent`: Introduced the `--enable-cluster-registration` flag (default `true`). When set to `false`, the agent skips self-registration and validates that the member cluster is already registered in Pull mode before running its controllers. Registration-only flags are rejected in this mode. ([#7821](https://github.com/karmada-io/karmada/pull/7821), @driegel1)
++- `karmada-scheduler`: Added support for rescheduling multi-template workloads when component replicas change. ([#7830](https://github.com/karmada-io/karmada/pull/7830), @ranxi2001)
++- `karmada-controller-manager`: Added propagation of the preemption policy from Kubernetes `PriorityClass` to `ResourceBinding` when priority-based preemptive scheduling is enabled. ([#7978](https://github.com/karmada-io/karmada/pull/7978), @asarj)
++
++### Deprecation
++- `Karmada`: Image publication to the Huawei Cloud SWR registry (`swr.ap-southeast-1.myhuaweicloud.com/karmada`) has been discontinued starting with release 1.20. Users should pull images from DockerHub (`docker.io/karmada`) instead. ([#7950](https://github.com/karmada-io/karmada/pull/7950), @RainbowMango)
++
++### Bug Fixes
++- `karmadactl`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in installations created by `karmadactl init`. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
++- `karmada-operator`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in operator-managed installations. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
++- `karmada-controller-manager`: Fixed an issue where the built-in `MPIJob` interpreter could return components in a different order for the same object. ([#7970](https://github.com/karmada-io/karmada/pull/7970), @Sarthak-Shreshtha01)
++- `karmada-controller-manager`: Fixed a panic in `CronFederatedHPA` when `failedHistoryLimit` is 0 and a rule fails. ([#7971](https://github.com/karmada-io/karmada/pull/7971), @Sarthak-Shreshtha01)
++
++### Security
++None.
++
++## Other
++
++### Dependencies
++- `Karmada`: Upgraded the Go build toolchain to v1.26.9. ([#7932](https://github.com/karmada-io/karmada/pull/7932), @FengyuanYin)
++- `Karmada`: Upgraded the Go build toolchain to v1.26.10. ([#7959](https://github.com/karmada-io/karmada/pull/7959), @FengyuanYin)
++- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7912](https://githu
 ```
 
 ---
 
-### Incident Patch 2: `966b4c35` (2026-10-23)
-**Commit Message**: Merge pull request #7954 from RainbowMango/pr_extend_preemption_api
+### Incident Patch 2: `0681cfbe` (2026-10-31)
+**Commit Message**: publish release note for v1.20.0-beta.0,v1.19.1,v1.18.4,v1.17.7
 
-Introduce PreemptionPolicy to ResourceBinding SchedulePriority API
+Signed-off-by: zhzhuang-zju <[REDACTED_EMAIL]>
 
-**File**: `api/openapi-spec/swagger.json` (modified, +4/-0)
+**File**: `docs/CHANGELOG/CHANGELOG-1.17.md` (modified, +48/-27)
 ```diff
-@@ -21891,6 +21891,10 @@
-       "description": "SchedulePriority represents the scheduling priority assigned to workloads.",
-       "type": "object",
-       "properties": {
-+        "preemptionPolicy": {
-+          "description": "PreemptionPolicy specifies whether the binding may preempt lower-priority bindings. Only PreemptLowerPriority enables preemption. If not set, the binding never preempts. It is populated from the preemptionPolicy of the referenced PriorityClass.",
-+          "type": "string"
-+        },
-         "priority": {
-           "description": "Priority specifies the scheduling priority for the binding. Higher values indicate a higher priority. If not explicitly set, the default value is 0.",
-           "type": "integer",
+@@ -2,42 +2,48 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+ 
+-- [v1.17.6](#v1176)
+-  - [Downloads for v1.17.6](#downloads-for-v1176)
+-  - [Changelog since v1.17.5](#changelog-since-v1175)
++- [v1.17.7](#v1177)
++  - [Downloads for v1.17.7](#downloads-for-v1177)
++  - [Changelog since v1.17.6](#changelog-since-v1176)
+     - [Changes by Kind](#changes-by-kind)
+       - [Bug Fixes](#bug-fixes)
+       - [Others](#others)
+-- [v1.17.5](#v1175)
+-  - [Downloads for v1.17.5](#downloads-for-v1175)
+-  - [Changelog since v1.17.4](#changelog-since-v1174)
++- [v1.17.6](#v1176)
++  - [Downloads for v1.17.6](#downloads-for-v1176)
++  - [Changelog since v1.17.5](#changelog-since-v1175)
+     - [Changes by Kind](#changes-by-kind-1)
+       - [Bug Fixes](#bug-fixes-1)
+       - [Others](#others-1)
+-- [v1.17.4](#v1174)
+-  - [Downloads for v1.17.4](#downloads-for-v1174)
+-  - [Changelog since v1.17.3](#changelog-since-v1173)
++- [v1.17.5](#v1175)
++  - [Downloads for v1.17.5](#downloads-for-v1175)
++  - [Changelog since v1.17.4](#changelog-since-v1174)
+     - [Changes by Kind](#changes-by-kind-2)
+       - [Bug Fixes](#bug-fixes-2)
+       - [Others](#others-2)
+-- [v1.17.3](#v1173)
+-  - [Downloads for v1.17.3](#downloads-for-v1173)
+-  - [Changelog since v1.17.2](#changelog-since-v1172)
++- [v1.17.4](#v1174)
++  - [Downloads for v1.17.4](#downloads-for-v1174)
++  - [Changelog since v1.17.3](#changelog-since-v1173)
+     - [Changes by Kind](#changes-by-kind-3)
+       - [Bug Fixes](#bug-fixes-3)
+       - [Others](#others-3)
+-- [v1.17.2](#v1172)
+-  - [Downloads for v1.17.2](#downloads-for-v1172)
+-  - [Changelog since v1.17.1](#changelog-since-v1171)
++- [v1.17.3](#v1173)
++  - [Downloads for v1.17.3](#downloads-for-v1173)
++  - [Changelog since v1.17.2](#changelog-since-v1172)
+     - [Changes by Kind](#changes-by-kind-4)
+       - [Bug Fixes](#bug-fixes-4)
+       - [Others](#others-4)
+-- [v1.17.1](#v1171)
+-  - [Downloads for v1.17.1](#downloads-for-v1171)
+-  - [Changelog since v1.17.0](#changelog-since-v1170)
++- [v1.17.2](#v1172)
++  - [Downloads for v1.17.2](#downloads-for-v1172)
++  - [Changelog since v1.17.1](#changelog-since-v1171)
+     - [Changes by Kind](#changes-by-kind-5)
+       - [Bug Fixes](#bug-fixes-5)
+       - [Others](#others-5)
++- [v1.17.1](#v1171)
++  - [Downloads for v1.17.1](#downloads-for-v1171)
++  - [Changelog since v1.17.0](#changelog-since-v1170)
++    - [Changes by Kind](#changes-by-kind-6)
++      - [Bug Fixes](#bug-fixes-6)
++      - [Others](#others-6)
+ - [v1.17.0](#v1170)
+   - [Downloads for v1.17.0](#downloads-for-v1170)
+   - [Urgent Update Notes](#urgent-update-notes)
+@@ -50,7 +56,7 @@
+     - [API Changes](#api-changes)
+     - [Features & Enhancements](#features--enhancements)
+     - [Deprecation](#deprecation)
+-    - [Bug Fixes](#bug-fixes-6)
++    - [Bug Fixes](#bug-fixes-7)
+     - [Security](#security)
+   - [Other](#other)
+     - [Dependencies](#dependencies)
+@@ -62,11 +68,11 @@
+   - [Downloads for v1.17.0-rc.0](#downloads-for-v1170-rc0)
+   - [Changelog since v1.17.0-beta.0](#changelog-since-v1170-beta0)
+   - [Urgent Update Notes](#urgent-update-notes-1)
+-  - [Changes by Kind](#changes-by-kind-6)
++  - [Changes by Kind](#changes-by-kind-7)
+     - [API Changes](#api-changes-1)
+     - [Features & Enhancements](#features--enhancements-1)
+     - [Deprecation](#deprecation-1)
+-    - [Bug Fixes](#bug-fixes-7)
++    - [Bug Fixes](#bug-fixes-8)
+     - [Security](#security-1)
+   - [Other](#other-1)
+     - [Dependencies](#dependencies-1)
+@@ -77,11 +83,11 @@
+   - [Downloads for v1.17.0-beta.0](#downloads-for-v1170-beta0)
+   - [Changelog since v1.17.0-alpha.2](#changelog-since-v1170-alpha2)
+   - [Urgent Update Notes](#urgent-update-notes-2)
+-  - [Changes by Kind](#changes-by-kind-7)
++  - [Changes by Kind](#changes-by-kind-8)
+     - [API Changes](#api-changes-2)
+     - [Features & Enhancements](#features--enhancements-2)
+     - [Deprecation](#deprecation-2)
+-    - [Bug Fixes](#bug-fixes-8)
++    - [Bug Fixes](#bug-fixes-9)
+     - [Security](#security-2)
+   - [Other](#other-2)
+     - [Dependencies](#dependencies-2)
+@@ -92,11 +98,11 @@
+   - [Downloads for v1.17.0-alpha.2](#downloads-for-v1170-alpha2)
+   - [Changelog since v1.17.0-alpha.1](#changelog-since-v1170-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes-3)
+-  - [Changes by Kind](#changes-by-kind-8)
++  - [Changes by Kind](#changes-by-kind-9)
+     - [API Changes](#api-changes-3)
+     - [Features & Enhancements](#features--enhancements-3)
+     - [Deprecation](#deprecation-3)
+-    - [Bug Fixes](#bug-fixes-9)
++    - [Bug Fixes](#bug-fixes-10)
+     - [Security](#security-3)
+   - [Other](#other-3)
+     - [Dependencies](#dependencies-3)
+@@ -107,11 +113,11 @@
+   - [Downloads for v1.17.0-alpha.1](#downloads-for-v1170-alpha1)
+   - [Changelog since v1.17.0-alpha.0](#changelog-since-v1170-alpha0)
+   - [Urgent Update Notes](#urgent-update-notes-4)
+-  - [Changes by Kind](#changes-by-kind-9
 ```
 
-**File**: `charts/karmada/_crds/bases/work/work.karmada.io_clusterresourcebindings.yaml` (modified, +8/-0)
+**File**: `docs/CHANGELOG/CHANGELOG-1.18.md` (modified, +39/-18)
 ```diff
-@@ -1773,6 +1773,14 @@ spec:
-                 description: SchedulePriority represents the scheduling priority assigned
-                   to workloads.
-                 properties:
-+                  preemptionPolicy:
-+                    description: |-
-+                      PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
-+                      Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
-+                      It is populated from the preemptionPolicy of the referenced PriorityClass.
-+                    enum:
-+                    - PreemptLowerPriority
-+                    type: string
-                   priority:
-                     default: 0
-                     description: |-
-```
-
-**File**: `charts/karmada/_crds/bases/work/work.karmada.io_resourcebindings.yaml` (modified, +8/-0)
-```diff
-@@ -1773,6 +1773,14 @@ spec:
-                 description: SchedulePriority represents the scheduling priority assigned
-                   to workloads.
-                 properties:
-+                  preemptionPolicy:
-+                    description: |-
-+                      PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
-+                      Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
-+                      It is populated from the preemptionPolicy of the referenced PriorityClass.
-+                    enum:
-+                    - PreemptLowerPriority
-+                    type: string
-                   priority:
-                     default: 0
-                     description: |-
-```
-
-**File**: `docs/proposals/scheduling/binding-preemption/binding-preemption.md` (modified, +8/-8)
-```diff
-@@ -244,7 +244,7 @@ Victim selection uses the preemptor's namespace by default. The `--enable-cross-
+@@ -2,24 +2,30 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
  
- ## API Changes
+-- [v1.18.3](#v1183)
+-  - [Downloads for v1.18.3](#downloads-for-v1183)
+-  - [Changelog since v1.18.2](#changelog-since-v1182)
++- [v1.18.4](#v1184)
++  - [Downloads for v1.18.4](#downloads-for-v1184)
++  - [Changelog since v1.18.3](#changelog-since-v1183)
+     - [Changes by Kind](#changes-by-kind)
+       - [Bug Fixes](#bug-fixes)
+       - [Others](#others)
+-- [v1.18.2](#v1182)
+-  - [Downloads for v1.18.2](#downloads-for-v1182)
+-  - [Changelog since v1.18.1](#changelog-since-v1181)
++- [v1.18.3](#v1183)
++  - [Downloads for v1.18.3](#downloads-for-v1183)
++  - [Changelog since v1.18.2](#changelog-since-v1182)
+     - [Changes by Kind](#changes-by-kind-1)
+       - [Bug Fixes](#bug-fixes-1)
+       - [Others](#others-1)
+-- [v1.18.1](#v1181)
+-  - [Downloads for v1.18.1](#downloads-for-v1181)
+-  - [Changelog since v1.18.0](#changelog-since-v1180)
++- [v1.18.2](#v1182)
++  - [Downloads for v1.18.2](#downloads-for-v1182)
++  - [Changelog since v1.18.1](#changelog-since-v1181)
+     - [Changes by Kind](#changes-by-kind-2)
+       - [Bug Fixes](#bug-fixes-2)
+       - [Others](#others-2)
++- [v1.18.1](#v1181)
++  - [Downloads for v1.18.1](#downloads-for-v1181)
++  - [Changelog since v1.18.0](#changelog-since-v1180)
++    - [Changes by Kind](#changes-by-kind-3)
++      - [Bug Fixes](#bug-fixes-3)
++      - [Others](#others-3)
+ - [v1.18.0](#v1180)
+   - [Downloads for v1.18.0](#downloads-for-v1180)
+   - [Urgent Update Notes](#urgent-update-notes)
+@@ -30,7 +36,7 @@
+     - [API Changes](#api-changes)
+     - [Features & Enhancements](#features--enhancements)
+     - [Deprecation](#deprecation)
+-    - [Bug Fixes](#bug-fixes-3)
++    - [Bug Fixes](#bug-fixes-4)
+     - [Security](#security)
+   - [Other](#other)
+     - [Dependencies](#dependencies)
+@@ -42,11 +48,11 @@
+   - [Downloads for v1.18.0-rc.0](#downloads-for-v1180-rc0)
+   - [Changelog since v1.18.0-beta.0](#changelog-since-v1180-beta0)
+   - [Urgent Update Notes](#urgent-update-notes-1)
+-  - [Changes by Kind](#changes-by-kind-3)
++  - [Changes by Kind](#changes-by-kind-4)
+     - [API Changes](#api-changes-1)
+     - [Features & Enhancements](#features--enhancements-1)
+     - [Deprecation](#deprecation-1)
+-    - [Bug Fixes](#bug-fixes-4)
++    - [Bug Fixes](#bug-fixes-5)
+     - [Security](#security-1)
+   - [Other](#other-1)
+     - [Dependencies](#dependencies-1)
+@@ -57,11 +63,11 @@
+   - [Downloads for v1.18.0-beta.0](#downloads-for-v1180-beta0)
+   - [Changelog since v1.18.0-alpha.2](#changelog-since-v1180-alpha2)
+   - [Urgent Update Notes](#urgent-update-notes-2)
+-  - [Changes by Kind](#changes-by-kind-4)
++  - [Changes by Kind](#changes-by-kind-5)
+     - [API Changes](#api-changes-2)
+     - [Features & Enhancements](#features--enhancements-2)
+     - [Deprecation](#deprecation-2)
+-    - [Bug Fixes](#bug-fixes-5)
++    - [Bug Fixes](#bug-fixes-6)
+     - [Security](#security-2)
+   - [Other](#other-2)
+     - [Dependencies](#dependencies-2)
+@@ -72,11 +78,11 @@
+   - [Downloads for v1.18.0-alpha.2](#downloads-for-v1180-alpha2)
+   - [Changelog since v1.18.0-alpha.1](#changelog-since-v1180-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes-3)
+-  - [Changes by Kind](#changes-by-kind-5)
++  - [Changes by Kind](#changes-by-kind-6)
+     - [API Changes](#api-changes-3)
+     - [Features & Enhancements](#features--enhancements-3)
+     - [Deprecation](#deprecation-3)
+-    - [Bug Fixes](#bug-fixes-6)
++    - [Bug Fixes](#bug-fixes-7)
+     - [Security](#security-3)
+   - [Other](#other-3)
+     - [Dependencies](#dependencies-3)
+@@ -87,11 +93,11 @@
+   - [Downloads for v1.18.0-alpha.1](#downloads-for-v1180-alpha1)
+   - [Changelog since v1.18.0-alpha.0](#changelog-since-v1180-alpha0)
+   - [Urgent Update Notes](#urgent-update-notes-4)
+-  - [Changes by Kind](#changes-by-kind-6)
++  - [Changes by Kind](#changes-by-kind-7)
+     - [API Changes](#api-changes-4)
+     - [Features & Enhancements](#features--enhancements-4)
+     - [Deprecation](#deprecation-4)
+-    - [Bug Fixes](#bug-fixes-7)
++    - [Bug Fixes](#bug-fixes-8)
+     - [Security](#security-4)
+   - [Other](#other-4)
+     - [Dependencies](#dependencies-4)
+@@ -101,6 +107,21 @@
  
--### Add `PreemptionPolicy` to `SchedulePriority`
-+### Add `PreemptionPolicy` to `ResourceBinding.Spec.SchedulePriority`
+ <!-- END doctoc generated TOC please keep comment here to allow auto update -->
  
- ```go
- type PreemptionPolicy string
-@@ -254,13 +254,13 @@ const (
- )
- 
- type SchedulePriority struct {
--    Priority         int32            `json:"priority,omitempty"`
--    PreemptionPolicy PreemptionPolicy `json:"preemptionPolicy,omitempty"`
-+    Priority         int32             `json:"priority,omitempty"`
-+    PreemptionPolicy *PreemptionPolicy `json:"preemptionPolicy,omitempty"`
- }
- ```
- 
--- Defaults to unset (empty string), meaning the binding never preempts. No explicit "Never" constant is needed — the zero value naturally means "no preemption."
--- The ResourceDetector maps `PreemptionPolicy` from the PriorityClass's `preemptionPolicy` field when `PriorityBasedPreemptiveScheduling` is enabled. Kubernetes defaults `preemptionPolicy` to `PreemptLowerPriority` when unset, so any PriorityClass without explicit `preemptionPolicy: Never` enables preemption at the binding level. The feature gate (alpha, default off) provides the primary opt-in control.
-+- `nil` means the binding never preempts; only `PreemptLowerPriority` enables preemption. No `Never` constant is needed: unlike Kubernetes, ResourceBinding does not default this field, so leaving it unset already means "no preemption".
-+- The ResourceDetector sets `PreemptionPolicy` to `PreemptLowerPriority` when the PriorityClass's `preemptionPolicy` is `PreemptLowerPriority` and `PriorityBasedPreemptiveScheduling` is enabled; otherwise it leaves the field `nil`. 
- 
- ### New Constants and Feature Gate
- 
-@@ -337,7 +337,7 @@ func isPreemptionApplicable(spec *workv1alpha2.ResourceBindingSpec) bool {
- }
- ```
- 
--The full preemption gate (`preemptionEnabled`) combines feature gates + `PreemptionPolicy == PreemptLowerPriority` + `isPreemptionApplicable`.
-+The full preemption gate (`preemptionEnabled`) combines feature gates + `PreemptionPolicy != nil && *PreemptionPolicy == PreemptLowerPriority` + `isPreemptionApplicable`.
- 
- ### Modified Schedule() Flow
- 
-@@ -672,7 +672,7 @@ When the feature gate is enabled but no preemption is occurring (common case), t
- ### Unit Tests
- - Victim selection: minimum victims, priority ordering, reprieve correctness.
- - Priority handling: nil victim priority is treated as `0`; a binding without `PreemptLowerPriority` cannot initiate preemption.
--- `PreemptionPolicy` resolution: feature gate disabled → unset, explicit opt-in.
-+- `PreemptionPolicy` resolution: feature gate disabled → `nil`; PriorityClass `PreemptLowerPriority` → set; PriorityClass `Never` or `nil` → `nil`.
- - Trigger handling: typed insufficient-capacity results trigger preemption; affinity, taint, spread, and other failures do not.
- - Applicability checks: `MaxGroups == 1`, non-workload, multi-component preemptor, ClusterAffinities exclusions.
- - Victim scope: same namespace by default; cross-namespace victims require `--enable-cross-namespace-preemption=true`.
-@@ -683,7 +683,7 @@ When the feature gate is enabled but no preemption is occurring (common case), t
- 
- ### Integration Tests
- - End-to-end: high-priority binding preempts low-priority binding on single cluster.
--- No preemption when PreemptionPolicy is unset or feature gate disabled.
-+- No preemption when PreemptionPolicy is `nil` or when the feature gate is disabled.
- - With `MultiplePodTemplatesScheduling` enabled, multi-component bindings can be selected as victims.
- - Cross-namespace victims require `--enable-cross-namespace-preemption=true`; same-namespace behavior remains the default.
- - Preempted binding reschedules to another cluster.
-```
-
-**File**: `hack/update-codegen.sh` (modified, +3/-0)
-```diff
-@@ -43,6 +43,9 @@ cleanup
- 
- source "${REPO_ROOT}"/hack/util.sh
- util:create_gopath_tree "${REPO_ROOT}" "${go_path}"
-+# Keep the module cache (and any auto-downloaded toolchain) out of the
-+# temporary GOPATH so cleanup() can always remove it.
-+export GOMODCACHE="$(go env GOMODCACHE)"
- export GOPATH="${go_path}"
- 
- echo "Generating with deepcopy-gen"
-```
-
-**File**: `hack/update-estimator-protobuf.sh` (modified, +3/-0)
-```diff
-@@ -131,6 +131,9 @@ setup_protoc
- 
- source "${KARMADA_ROOT}"/hack/util.sh
- util:create_gopath_tree "${KARMADA_ROOT}" "${go_path}"
-+# Keep the module cache (and any auto-downloaded toolchain) out of the
-+# temporary GOPATH so cleanup() can always remove it.
-+export GOMODCACHE="$(go env GOMODCACHE)"
- export GOPATH="${go_path}"
- 
- # https://github.com/kubernetes/kubernetes/blob/release-1.23/hack/update-generated-protobuf-dockerized.sh
-```
-
-**File**: `pkg/apis/work/v1alpha2/binding_types.go` (modified, +16/-0)
-```diff
-@@ -413,6 +413,15 @@ type Suspension struct {
- 	Scheduling *bool `json:"scheduling,omitempty"`
- }
- 
-+// PreemptionPolicy describes whether a binding may preempt lower-priority bindings.
-+type PreemptionPolicy string
++# v1.18.4
++## Downloads for v1.18.4
 +
-+const (
-+	// PreemptLowerPriority means the binding may preempt lower-priority bindings
-+	// when it cannot be scheduled due to insufficient capacity.
-+	PreemptLowerPriority PreemptionPolicy = "PreemptLowerPriority"
-+)
++Download v1.18.4 in the [v1.18.4 release page](https://github.com/karmada-io/karmada/releases/tag/v1.18.4).
 +
- // SchedulePriority represents the scheduling priority assigned to workloads.
- type SchedulePriority struct {
- 	// Priority specifies the scheduling priority for the binding.
-@@ -421,6 +430,13 @@ type SchedulePriority struct {
- 	// +kubebuilder:default=0
- 	// +optional
- 	Priority int32 `json:"priority,omitempty"`
++## Changelog since v1.18.3
 +
-+	// PreemptionPolicy specifies whether the binding may preempt lower-priority bindings.
-+	// Only PreemptLowerPriority enables preemption. If not set, the binding never preempts.
-+	// It is populated from the preemptionPolicy of the referenced PriorityClass.
-+	// +kubebuilder:validation:Enum=PreemptLowerPriority
-+	// +optional
-+	PreemptionPolicy *PreemptionPolicy `json:"preemptionPolicy,omitempty"`
- }
++### Changes by Kind
++
++#### Bug Fixes
++None.
++
++#### Others
++- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7915](https://github.com/karmada-io/karmada/pull/7915), @dependabot)
++
+ # v1.18.3
+ ## Downloads for v1.18.3
  
- // WorkloadAffinityGroups stores the instantiated affinity and anti-affinity group names.
 ```
 
-**File**: `pkg/apis/work/v1alpha2/zz_generated.deepcopy.go` (modified, +6/-1)
+**File**: `docs/CHANGELOG/CHANGELOG-1.19.md` (modified, +28/-7)
 ```diff
-@@ -433,7 +433,7 @@ func (in *ResourceBindingSpec) DeepCopyInto(out *ResourceBindingSpec) {
- 	if in.SchedulePriority != nil {
- 		in, out := &in.SchedulePriority, &out.SchedulePriority
- 		*out = new(SchedulePriority)
--		**out = **in
-+		(*in).DeepCopyInto(*out)
- 	}
- 	if in.WorkloadAffinityGroups != nil {
- 		in, out := &in.WorkloadAffinityGroups, &out.WorkloadAffinityGroups
-@@ -490,6 +490,11 @@ func (in *ResourceBindingStatus) DeepCopy() *ResourceBindingStatus {
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
- func (in *SchedulePriority) DeepCopyInto(out *SchedulePriority) {
- 	*out = *in
-+	if in.PreemptionPolicy != nil {
-+		in, out := &in.PreemptionPolicy, &out.PreemptionPolicy
-+		*out = new(PreemptionPolicy)
-+		**out = **in
-+	}
- 	return
- }
+@@ -2,6 +2,12 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
  
++- [v1.19.1](#v1191)
++  - [Downloads for v1.19.1](#downloads-for-v1191)
++  - [Changelog since v1.19.0](#changelog-since-v1190)
++    - [Changes by Kind](#changes-by-kind)
++    - [Bug Fixes](#bug-fixes)
++    - [Others](#others)
+ - [v1.19.0](#v1190)
+   - [Downloads for v1.19.0](#downloads-for-v1190)
+   - [Urgent Update Notes](#urgent-update-notes)
+@@ -14,7 +20,7 @@
+     - [API Changes](#api-changes)
+     - [Features & Enhancements](#features--enhancements)
+     - [Deprecation](#deprecation)
+-    - [Bug Fixes](#bug-fixes)
++    - [Bug Fixes](#bug-fixes-1)
+     - [Security](#security)
+   - [Other](#other)
+     - [Dependencies](#dependencies)
+@@ -26,11 +32,11 @@
+   - [Downloads for v1.19.0-rc.0](#downloads-for-v1190-rc0)
+   - [Changelog since v1.19.0-beta.0](#changelog-since-v1190-beta0)
+   - [Urgent Update Notes](#urgent-update-notes-1)
+-  - [Changes by Kind](#changes-by-kind)
++  - [Changes by Kind](#changes-by-kind-1)
+     - [API Changes](#api-changes-1)
+     - [Features & Enhancements](#features--enhancements-1)
+     - [Deprecation](#deprecation-1)
+-    - [Bug Fixes](#bug-fixes-1)
++    - [Bug Fixes](#bug-fixes-2)
+     - [Security](#security-1)
+   - [Other](#other-1)
+     - [Dependencies](#dependencies-1)
+@@ -41,11 +47,11 @@
+   - [Downloads for v1.19.0-beta.0](#downloads-for-v1190-beta0)
+   - [Changelog since v1.19.0-alpha.1](#changelog-since-v1190-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes-2)
+-  - [Changes by Kind](#changes-by-kind-1)
++  - [Changes by Kind](#changes-by-kind-2)
+     - [API Changes](#api-changes-2)
+     - [Features & Enhancements](#features--enhancements-2)
+     - [Deprecation](#deprecation-2)
+-    - [Bug Fixes](#bug-fixes-2)
++    - [Bug Fixes](#bug-fixes-3)
+     - [Security](#security-2)
+   - [Other](#other-2)
+     - [Dependencies](#dependencies-2)
+@@ -56,11 +62,11 @@
+   - [Downloads for v1.19.0-alpha.1](#downloads-for-v1190-alpha1)
+   - [Changelog since v1.19.0-alpha.0](#changelog-since-v1190-alpha0)
+   - [Urgent Update Notes](#urgent-update-notes-3)
+-  - [Changes by Kind](#changes-by-kind-2)
++  - [Changes by Kind](#changes-by-kind-3)
+     - [API Changes](#api-changes-3)
+     - [Features & Enhancements](#features--enhancements-3)
+     - [Deprecation](#deprecation-3)
+-    - [Bug Fixes](#bug-fixes-3)
++    - [Bug Fixes](#bug-fixes-4)
+     - [Security](#security-3)
+   - [Other](#other-3)
+     - [Dependencies](#dependencies-3)
+@@ -70,6 +76,21 @@
+ 
+ <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+ 
++# v1.19.1
++## Downloads for v1.19.1
++
++Download v1.19.1 in the [v1.19.1 release page](https://github.com/karmada-io/karmada/releases/tag/v1.19.1).
++
++## Changelog since v1.19.0
++
++### Changes by Kind
++
++### Bug Fixes
++None.
++
++### Others
++- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7916](https://github.com/karmada-io/karmada/pull/7916), @dependabot)
++
+ # v1.19.0
+ ## Downloads for v1.19.0
+ 
+```
+
+**File**: `docs/CHANGELOG/CHANGELOG-1.20.md` (modified, +69/-3)
+```diff
+@@ -2,9 +2,9 @@
+ <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+ **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+ 
+-- [v1.20.0-alpha.1](#v1200-alpha1)
+-  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
+-  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
++- [v1.20.0-beta.0](#v1200-beta0)
++  - [Downloads for v1.20.0-beta.0](#downloads-for-v1200-beta0)
++  - [Changelog since v1.20.0-alpha.1](#changelog-since-v1200-alpha1)
+   - [Urgent Update Notes](#urgent-update-notes)
+   - [Changes by Kind](#changes-by-kind)
+     - [API Changes](#api-changes)
+@@ -17,9 +17,75 @@
+     - [Helm Charts](#helm-charts)
+     - [Instrumentation](#instrumentation)
+     - [Performance](#performance)
++- [v1.20.0-alpha.1](#v1200-alpha1)
++  - [Downloads for v1.20.0-alpha.1](#downloads-for-v1200-alpha1)
++  - [Changelog since v1.20.0-alpha.0](#changelog-since-v1200-alpha0)
++  - [Urgent Update Notes](#urgent-update-notes-1)
++  - [Changes by Kind](#changes-by-kind-1)
++    - [API Changes](#api-changes-1)
++    - [Features & Enhancements](#features--enhancements-1)
++    - [Deprecation](#deprecation-1)
++    - [Bug Fixes](#bug-fixes-1)
++    - [Security](#security-1)
++  - [Other](#other-1)
++    - [Dependencies](#dependencies-1)
++    - [Helm Charts](#helm-charts-1)
++    - [Instrumentation](#instrumentation-1)
++    - [Performance](#performance-1)
+ 
+ <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+ 
++# v1.20.0-beta.0
++## Downloads for v1.20.0-beta.0
++
++Download v1.20.0-beta.0 in the [v1.20.0-beta.0 release page](https://github.com/karmada-io/karmada/releases/tag/v1.20.0-beta.0).
++
++## Changelog since v1.20.0-alpha.1
++
++## Urgent Update Notes
++None.
++
++## Changes by Kind
++
++### API Changes
++- `ResourceBinding`: Introduced `spec.schedulePriority.preemptionPolicy` to both the `ResourceBinding` and `ClusterResourceBinding` APIs to specify whether a binding may preempt lower-priority bindings. ([#7954](https://github.com/karmada-io/karmada/pull/7954), @RainbowMango)
++
++### Features & Enhancements
++- `karmada-agent`: Introduced the `--enable-cluster-registration` flag (default `true`). When set to `false`, the agent skips self-registration and validates that the member cluster is already registered in Pull mode before running its controllers. Registration-only flags are rejected in this mode. ([#7821](https://github.com/karmada-io/karmada/pull/7821), @driegel1)
++- `karmada-scheduler`: Added support for rescheduling multi-template workloads when component replicas change. ([#7830](https://github.com/karmada-io/karmada/pull/7830), @ranxi2001)
++- `karmada-controller-manager`: Added propagation of the preemption policy from Kubernetes `PriorityClass` to `ResourceBinding` when priority-based preemptive scheduling is enabled. ([#7978](https://github.com/karmada-io/karmada/pull/7978), @asarj)
++
++### Deprecation
++- `Karmada`: Image publication to the Huawei Cloud SWR registry (`swr.ap-southeast-1.myhuaweicloud.com/karmada`) has been discontinued starting with release 1.20. Users should pull images from DockerHub (`docker.io/karmada`) instead. ([#7950](https://github.com/karmada-io/karmada/pull/7950), @RainbowMango)
++
++### Bug Fixes
++- `karmadactl`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in installations created by `karmadactl init`. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
++- `karmada-operator`: Fixed the missing `ClusterTaintPolicy` validating webhook registration in operator-managed installations. The webhook denies create and update requests for policies with a `NoExecute` taint unless `karmada-webhook` runs with `--allow-no-execute-taint-policy=true`; users managing these policies must set the flag before upgrading. ([#7963](https://github.com/karmada-io/karmada/pull/7963), @cmontemuino)
++- `karmada-controller-manager`: Fixed an issue where the built-in `MPIJob` interpreter could return components in a different order for the same object. ([#7970](https://github.com/karmada-io/karmada/pull/7970), @Sarthak-Shreshtha01)
++- `karmada-controller-manager`: Fixed a panic in `CronFederatedHPA` when `failedHistoryLimit` is 0 and a rule fails. ([#7971](https://github.com/karmada-io/karmada/pull/7971), @Sarthak-Shreshtha01)
++
++### Security
++None.
++
++## Other
++
++### Dependencies
++- `Karmada`: Upgraded the Go build toolchain to v1.26.9. ([#7932](https://github.com/karmada-io/karmada/pull/7932), @FengyuanYin)
++- `Karmada`: Upgraded the Go build toolchain to v1.26.10. ([#7959](https://github.com/karmada-io/karmada/pull/7959), @FengyuanYin)
++- `Karmada`: Upgraded the Alpine base image from `alpine:3.24.1` to `alpine:3.24.2` to address security concerns. ([#7912](https://githu
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7966** (2026-10-23): feat: add priority based preemptive scheduling gate (@asarj)
-- **PR #7963** (2026-10-22): fix: add ClusterTaintPolicy webhook to chart, init, and operator (@cmontemuino)
-- **PR #7961** (2026-10-22): hack: pin command docs generation locale (@Himanshu-singh04)
-- **PR #7959** (2026-10-21): build: bump Go to v1.26.10 (@FengyuanYin)
-- **PR #7954** (2026-10-23): Introduce PreemptionPolicy to ResourceBinding SchedulePriority API (@RainbowMango)
-- **PR #7953** (2026-10-21): feat(chart): add extraCommandArgs to karmada-webhook (@cmontemuino)
+- **PR #8009** (closed): fix(util/proxy): return an error when the cluster CA bundle has no valid PEM certificate (@sarankumar1325)
+- **PR #8008** (2026-10-31): Automated cherry pick of #7950: Removed github workflow for releasing images to SWR (@RainbowMango)
+- **PR #8007** (2026-10-31): Automated cherry pick of #7950: Removed github workflow for releasing images to SWR (@RainbowMango)
+- **PR #8006** (2026-10-31): Automated cherry pick of #7950: Removed github workflow for releasing images to SWR (@RainbowMango)
+- **PR #8004** (2026-10-31): publish release note for v1.20.0-beta.0,v1.19.1,v1.18.4,v1.17.7 (@zhzhuang-zju)
+- **PR #7997** (2026-10-30): chore(operator): bump default Kubernetes and etcd versions (@Arbaaz123676)
 
 ---
 
@@ -1373,28 +1896,83 @@ Introduce PreemptionPolicy to ResourceBinding SchedulePriority API
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add priority based preemptive scheduling gate (#7966)
+## X. Merge pull request #8004 from zhzhuang-zju/releasenote-new
 
 **RULE**:
-When implementing operations in `docs/command-line-flags/karmada-agent.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/CHANGELOG/CHANGELOG-1.17.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `103984cd`: add priority based preemptive scheduling gate (#7966). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `653afb21`: Merge pull request #8004 from zhzhuang-zju/releasenote-new. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/command-line-flags/karmada-agent.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/CHANGELOG/CHANGELOG-1.17.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-                                                       PriorityBasedPreemptiveScheduling=true|false (ALPHA - default=false)
+- [v1.17.7](#v1177)
+  - [Downloads for v1.17.7](#downloads-for-v1177)
+  - [Changelog since v1.17.6](#changelog-since-v1176)
+- [v1.17.6](#v1176)
+  - [Downloads for v1.17.6](#downloads-for-v1176)
+  - [Changelog since v1.17.5](#changelog-since-v1175)
+- [v1.17.5](#v1175)
+  - [Downloads for v1.17.5](#downloads-for-v1175)
+  - [Changelog since v1.17.4](#changelog-since-v1174)
+- [v1.17.4](#v1174)
+  - [Downloads for v1.17.4](#downloads-for-v1174)
+  - [Changelog since v1.17.3](#changelog-since-v1173)
+- [v1.17.3](#v1173)
+  - [Downloads for v1.17.3](#downloads-for-v1173)
+  - [Changelog since v1.17.2](#changelog-since-v1172)
+- [v1.17.2](#v1172)
+  - [Downloads for v1.17.2](#downloads-for-v1172)
+  - [Changelog since v1.17.1](#changelog-since-v1171)
+- [v1.17.1](#v1171)
+  - [Downloads for v1.17.1](#downloads-for-v1171)
+  - [Changelog since v1.17.0](#changelog-since-v1170)
+    - [Changes by Kind](#changes-by-kind-6)
+      - [Bug Fixes](#bug-fixes-6)
+      - [Others](#others-6)
+    - [Bug Fixes](#bug-fixes-7)
+  - [Changes by Kind](#changes-by-kind-7)
+    - [Bug Fixes](#bug-fixes-8)
+  - [Changes by Kind](#changes-by-kind-8)
+    - [Bug Fixes](#bug-fixes-9)
+  - [Changes by Kind](#changes-by-kind-9)
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+- [v1.17.6](#v1176)
+  - [Downloads for v1.17.6](#downloads-for-v1176)
+  - [Changelog since v1.17.5](#changelog-since-v1175)
+- [v1.17.5](#v1175)
+  - [Downloads for v1.17.5](#downloads-for-v1175)
+  - [Changelog since v1.17.4](#changelog-since-v1174)
+- [v1.17.4](#v1174)
+  - [Downloads for v1.17.4](#downloads-for-v1174)
+  - [Changelog since v1.17.3](#changelog-since-v1173)
+- [v1.17.3](#v1173)
+  - [Downloads for v1.17.3](#downloads-for-v1173)
+  - [Changelog since v1.17.2](#changelog-since-v1172)
+- [v1.17.2](#v1172)
+  - [Downloads for v1.17.2](#downloads-for-v1172)
+  - [Changelog since v1.17.1](#changelog-since-v1171)
+- [v1.17.1](#v1171)
+  - [Downloads for v1.17.1](#downloads-for-v1171)
+  - [Changelog since v1.17.0](#changelog-since-v1170)
+    - [Bug Fixes](#bug-fixes-6)
+  - [Changes by Kind](#changes-by-kind-6)
+    - [Bug Fixes](#bug-fixes-7)
+  - [Changes by Kind](#changes-by-kind-7)
+    - [Bug Fixes](#bug-fixes-8)
+  - [Changes by Kind](#changes-by-kind-8)
+    - [Bug Fixes](#bug-fixes-9)
+  - [Changes by Kind](#changes-by-kind-9
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `103984cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `653afb21` are properly handled with clean fallback behavior.

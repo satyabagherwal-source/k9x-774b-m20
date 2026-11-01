@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `660ec51e`  
+> **Source Version**: `69c6653a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T17:29:22.398Z  
+> **Timestamp**: 2026-10-31T14:25:55.075Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T17:29:22.391Z  
+> **Harvest Timestamp**: 2026-10-31T14:25:55.070Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4069 stars
+- **Stars / Engagement**: 4367 stars
 
 ---
 
@@ -876,6 +876,7 @@ private final class MultitouchPinch {
 ### Core Architecture Module: `pixel/engine/crates/pixel-core/src/canvas.rs`
 ```
 use crate::surfaces::{OpaqueArea, Rect};
+use crate::system_fonts::{self, Glyph};
 use crate::text_input::{MARK_CHAR, Mark, mark_advance_at};
 
 #[derive(Clone, Copy)]
@@ -889,7 +890,87 @@ pub struct Frame<'a> {
 }
 
 type GlyphKey = (usize, char, u32);
-type GlyphCache = std::collections::HashMap<GlyphKey, (fontdue::Metrics, Vec<u8>)>;
+
+fn glyph_key(font: &crate::fonts::Font, ch: char, px: f32) -> GlyphKey {
+    (font.id(), ch, px.to_bits())
+}
+
+fn monospace_advance(font: &crate::fonts::Font, px: f32) -> Option<f32> {
+    let narrow = font.metrics('i', px).advance_width;
+    (narrow > 0.0 && narrow == font.metrics('M', px).advance_width).then_some(narrow)
+}
+
+fn draws_itself(font: &crate::fonts::Font, ch: char) -> bool {
+    ch.is_control() || font.lookup_glyph_index(ch) != 0 || (ch.is_whitespace() && font.fallback_for(ch).is_none())
+}
+
+fn cells(ch: char) -> usize {
+    unicode_width::UnicodeWidthChar::width(ch).unwrap_or(1)
+}
+
+fn natural_fallback_advance(font: &crate::fonts::Font, ch: char, px: f32) -> f32 {
+    if let Some(face) = font.fallback_for(ch) {
+        return face.metrics(ch, px).advance_width;
+    }
+    // Matches `rasterize_glyph`, which draws nothing for a zero-width character no font has.
+    system_fonts::advance(ch, px).unwrap_or_else(|| if cells(ch) == 0 { 0.0 } else { font.metrics(ch, px).advance_width })
+}
+
+fn glyph_advance(font: &crate::fonts::Font, ch: char, px: f32) -> f32 {
+    if draws_itself(font, ch) {
+        return font.metrics(ch, px).advance_width;
+    }
+    match monospace_advance(font, px) {
+        Some(cell) => cell * cells(ch) as f32,
+        None => natural_fallback_advance(font, ch, px),
+    }
+}
+
+fn rasterize_glyph(font: &crate::fonts::Font, ch: char, px: f32) -> Glyph {
+    if draws_itself(font, ch) {
+        let (metrics, pixels) = font.rasterize(ch, px);
+        return Glyph { metrics, pixels, color: false };
+    }
+    let cell = monospace_advance(font, px);
+    let span = cell.map(|cell| cell * cells(ch) as f32);
+    let mut glyph = borrowed_glyph(font, ch, px);
+    if let (Some(span), Some(drawn)) = (span, &glyph)
+        && span > 0.0
+        && drawn.metrics.width as f32 > span
+    {
+        glyph = borrowed_glyph(font, ch, px * span / drawn.metrics.width as f32);
+    }
+    let mut glyph = glyph.unwrap_or_else(|| {
+        if cells(ch) == 0 {
+            return Glyph { metrics: fontdue::Metrics::default(), pixels: Vec::new(), color: false };
+        }
+        let (metrics, pixels) = font.rasterize(ch, px);
+        Glyph { metrics, pixels, color: false }
+    });
+    if let (Some(cell), Some(span)) = (cell, span) {
+        fit_to_cells(&mut glyph.metrics, cell, span);
+    }
+    glyph
+}
+
+fn borrowed_glyph(font: &crate::fonts::Font, ch: char, px: f32) -> Option<Glyph> {
+    if let Some(face) = font.fallback_for(ch) {
+        let (metrics, pixels) = face.rasterize(ch, px);
+        return Some(Glyph { metrics, pixels, color: false });
+    }
+    system_fonts::rasterize(ch, px)
+}
+
+fn fit_to_cells(metrics: &mut fontdue::Metrics, cell: f32, span: f32) {
+    metrics.xmin = if span == 0.0 {
+        (-(cell + metrics.width as f32) / 2.0).round() as i32
+    } else {
+        metrics.xmin + ((span - metrics.advance_width) / 2.0).round() as i32
+    };
+    metrics.advance_width = span;
+}
+
+type GlyphCache = std::collections::HashMap<GlyphKey, Glyph>;
 std::thread_local! {
     static GLYPH_CACHE: std::cell::RefCell<GlyphCache> = std::cell::RefCell::new(GlyphCache::new());
     static ADVANCE_CACHE: std::cell::RefCell<std::collections::HashMap<GlyphKey, f32>> =
@@ -1109,95 +1190,7 @@ impl Canvas {
         }
     }
 
-    pub fn from_rgba(pixels: Vec<u8>, width: u32, height: u32) -> Self {
-        debug_assert_eq!(pixels.len(), (width * height * 4) as usize);
-        Self {
-            width,
-            height,
-            pixels,
-            clip_stack: Vec::new(),
-            occluders: Vec::new(),
-            next_occluder: 0,
-            scratch: Vec::new(),
-        }
-    }
-
-    pub fn push_clip(&mut self, x: f32, y: f32, w: f32, h: f32) {
-        let (cx1, cy1, cx2, cy2) = self.clip_bounds();
-        let x1 = (x.round().max(0.0) as u32).clamp(cx1, cx2);
-        let y1 = (y.round().max(0.0) as u32).clamp(cy1, cy2);
-        let x2 = ((x + w).round().max(0.0) as u32).clamp(x1, cx2);
-        let y2 = ((y + h).round().max(0.0) as u32).clamp(y1, cy2);
-        self.clip_stack.push((x1, y1, x2, y2));
-    }
-
-    pub fn pop_clip(&mut self) {
-        self.clip_stack.pop();
-    }
-
-    pub fn add_occluder(&mut self, x: f32, y: f32, w: f32, h: f32) -> u32 {
-        let token = self.next_occluder;
-        self.next_occluder += 1;
-        self.occluders.push((token, (x, y, w, h)));
-        token
-    }
-
-    pub fn remove_occluder(&mut self, token: u32) {
-        self.occluders.retain(|(t, _)| *t != token);
-    }
-
-    pub fn clear_occluders(&mut self) {
-        self.occluders.clear();
-    }
-
-    fn occluded(&self, x: f32, y: f32, w: f32, h: f32) -> bool {
-        let inside = self
-            .occluders
-            .iter()
-            .any(|&(_, (ox, oy, ow, oh))| x >= ox && y >= oy && x + w <= ox + ow && y + h <= oy + oh);
-        if inside {
-            tally(|s| &s.boxes_clipped_out);
-        }
-        inside
-    }
-
-    fn clip_bounds(&self) -> (u32, u32, u32, u32) {
-        self.clip_stack
-            .last()
-            .copied()
-            .unwrap_or((0, 0, self.width, self.height))
-    }
-
-    // weird impl, but its a fast way to fill an array to a given color without allocating memory beforehand
-    pub fn fill(&mut self, color: [u8; 4]) {
-        if self.pixels.is_empty() {
-            return;
-        }
-        self.pixels[..4].copy_from_slice(&color);
-        let mut filled = 4;
-        while filled < self.pixels.len() {
-            let (done, rest) = self.pixels.split_at_mut(filled);
-            let n = done.len().min(rest.len());
-            rest[..n].copy_from_slice(&done[..n]);
-            filled += n;
-        }
-    }
-
-    pub fn fill_rect(&mut self, x: u32, y: u32, w: u32, h: u32, color: [u8; 4]) {
-        for (fx1, fy1, fx2, fy2) in self.rect_fragments(x, y, w, h) {
-            self.fill_rows(fx1, fy1, fx2, fy2, color);
-        }
-    }
-
-    fn blend_rect(&mut self, x: u32, y: u32, w: u32, h: u32, color: [u8; 4]) {
-        let alpha = color[3];
-        let premultiplied = [
-            ((u32::from(color[0]) * u32::from(alpha) + 127) / 255) as u8,
-            ((u32::from(color[1]) * u32::from(alpha) + 127) / 255) as u8,
-            ((u32::from(color[2]) * u32::from(alpha) + 127) / 255) as u8,
-            alpha,
-        ];
-        for (fx1, fy1, fx2,
+    pub fn from_rgba(pixels: Vec<u8>,
 ```
 
 ### Core Architecture Module: `pixel/engine/crates/pixel-core/src/clipboard_image.rs`
@@ -1539,29 +1532,433 @@ impl Tree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3e60bc8` (2026-10-20)
-**Commit Message**: fix link
+### Incident Patch 1: `69c6653a` (2026-10-30)
+**Commit Message**: Add Zoom to the … menu and remove menu icons (#226)
 
-**File**: `pixel/website/app/page.tsx` (modified, +1/-1)
+**File**: `browser/src/session/session.tsx` (modified, +9/-9)
 ```diff
-@@ -11,7 +11,7 @@ export const revalidate = 3600;
+@@ -55,7 +55,6 @@ import { RecordSession } from "../record/session";
+ import type { RecordActions } from "../record/types";
+ import { Registry } from "../registry";
+ import { Chrome } from "../ui/chrome";
+-import { ICONS } from "../ui/icons";
+ import type {
+   ChromeActions,
+   ChromeLayout,
+@@ -261,7 +260,6 @@ class Session {
+   private grabs = new Map<number, Grab>();
+   private copyWatchers = new Map<number, CopyOnSelect>();
+   private readonly copyOnSelect: boolean;
+-  private readonly inspectIcon = bundledAsset(path.join("chromium", "logo.png"));
+   private readonly agentPanes: AgentPaneFinder;
+   private shownRecord: RecordSession | null = null;
+   private recordStarting = false;
+@@ -325,7 +323,8 @@ class Session {
+         onActiveState: (state, urlChanged) => {
+           if (urlChanged) rememberUrl(state.url);
+           this.ensureCopyWatcher();
+-          if (Math.abs(state.zoom - this.lastZoom) > 0.001) this.showZoomHud(state.zoom);
++          const zoomed = Math.abs(state.zoom - this.lastZoom) > 0.001;
++          if (zoomed && this.pageMenu?.kind !== "toolbar") this.showZoomHud(state.zoom);
+           this.lastZoom = state.zoom;
+           this.registry?.update();
+           this.syncTitle();
+@@ -688,6 +687,7 @@ class Session {
+     },
+     pageMenuAction: (id) => this.runPageMenu(id),
+     pageMenuClose: () => this.closePageMenu(),
++    pageMenuZoom: (direction) => this.applyZoom(direction),
+     settings: this.settings.actions,
+     record: this.recordActions(),
+   };
+@@ -1378,7 +1378,6 @@ class Session {
+       label: this.activeGrab()?.active ? "Stop selection" : "Send to agent",
+       enabled: true,
+       shortcut: this.keymap.label("grab.toggle"),
+-      icon: { kind: "path", d: ICONS.select },
+     };
+   }
  
- const REPO = "https://github.com/zenbu-labs/terminal-browser";
- const PIXEL = `${REPO}/tree/main/pixel`;
--const DOCS = `${PIXEL}#documentation`;
-+const DOCS = `${PIXEL}#docs`;
- const EXAMPLES = `${PIXEL}/examples`;
+@@ -1389,14 +1388,12 @@ class Session {
+         label: this.activeRecord() ? "Complete recording" : "Record",
+         enabled: true,
+         shortcut: this.activeRecord() ? "" : this.keymap.label("record.toggle"),
+-        icon: { kind: "path", d: ICONS.record, tint: "red", weight: 8 },
+       },
+       {
+         id: "inspect",
+         label: "Inspect",
+         enabled: true,
+         shortcut: this.keymap.label("devtools.toggle"),
+-        icon: this.inspectIcon ? { kind: "image", src: this.inspectIcon } : undefined,
+       },
+     ];
+   }
+@@ -1409,22 +1406,25 @@ class Session {
+         label: CLEAR_DATA_LABEL,
+         enabled: true,
+         shortcut: "",
+-        icon: { kind: "path", d: ICONS.trash },
+       },
+       {
+         id: "settings",
+         label: commandLabel("settings.open"),
+         enabled: true,
+         shortcut: this.keymap.label("settings.open"),
+-        icon: { kind: "path", d: ICONS.settings },
+       },
+     ];
+   }
  
- const FEATURES = [
+   private pageMenuView(): PageMenuView | null {
+     if (!this.pageMenu || !this.layout) return null;
+     if (this.pageMenu.kind === "toolbar") {
+-      return { x: this.layout.width, y: this.layout.toolbarHeight, items: this.toolbarMenuItems() };
++      return {
++        x: this.layout.width,
++        y: this.layout.toolbarHeight,
++        zoomPercent: Math.round((this.tabs.activeState?.zoom ?? 1) * 100),
++        items: this.toolbarMenuItems(),
++      };
+     }
+     const items: PageMenuItem[] = [
+       ...(this.pageMenu.selectionText
+```
+
+**File**: `browser/src/ui/context-menu.tsx` (modified, +82/-44)
+```diff
+@@ -1,6 +1,8 @@
+-import { Box, Image, Path, Text } from "@zenbu-labs/pixel";
++import { Box, Text } from "@zenbu-labs/pixel";
++import { Icon } from "./icons";
++import type { IconName } from "./icons";
+ import type { Theme } from "./theme";
+-import type { ChromeActions, ChromeLayout, PageMenuIcon, PageMenuItem, PageMenuView } from "./types";
++import type { ChromeActions, ChromeLayout, PageMenuItem, PageMenuView } from "./types";
+ 
+ export function PageContextMenu({
+   view,
+@@ -18,16 +20,15 @@ export function PageContextMenu({
+   const menuPad = Math.round(rem * 0.25);
+   const charW = rem * 0.82 * 0.6;
+   const shortcutW = rem * 0.72 * 0.6;
+-  const hasIcons = view.items.some((item) => item.icon);
+   const width = Math.round(
+     view.items.reduce((widest, item) => {
+       let row = rem * 1.8 + menuPad * 2 + item.label.length * charW;
+-      if (hasIcons) row += rem * 1.5;
+       if (item.shortcut) row += rem * 1 + item.shortcut.length * shortcutW;
+       return Math.max(widest, row);
+-    }, rem * 10),
++    }, view.zoomPercent === undefined ? rem * 10 : rem * 14),
+   );
+-  const height = view.items.length * rowH + menuPad * 2;
++  const dividerH = menuPad * 2 + 1;
++  const height = view.items.length * rowH + menuPad * 2 + (view.zoomPercent === undefined ? 0 : rowH + dividerH);
+   const x = Math.max(2, Math.min(view.x, layout.width - width - 4));
+   const y = Math.max(2, Math.min(view.y, layout.height - height - 4));
+   return (
+@@ -55,8 +56,14 @@ export function PageContextMenu({
+         }}
+       >
+         {view.items.map((item) => (
+-          <MenuRow key={item.id} item={item} rowH={rowH} rem={rem} theme={theme} actions={actions} alignIcons={hasIcons} />
++          <MenuRow key={item.id} item={item} rowH={rowH} rem={rem} theme={theme} actions={actions} />
+         ))}
++        {view.zoomPercent !== undefined && (
++          <>
++            <Box style={{ height: 1, margin: { top: menuPad, bottom: menuPad }, background: theme.hairline, flexShrink: 0 }} />
++            <ZoomRow percent={view.zoomPercent} rowH={rowH} rem={rem} theme={theme} actions={actions} />
++          </>
++        )}
+       </Box>
+     </>
+   );
+@@ -68,14 +75,12 @@ function MenuRow({
+   rem,
+   theme,
+   actions,
+-  alignIcons,
+ }: {
+   item: PageMenuItem;
+   rowH: number;
+   rem: number;
+   theme: Theme;
+   actions: ChromeActions;
+-  alignIcons: boolean;
+ }) {
+   return (
+     <Box
+@@ -90,11 +95,6 @@ function MenuRow({
+       }}
+       onClick={item.enabled ? () => actions.pageMenuAction(item.id) : undefined}
+     >
+-      {item.icon ? (
+-        <MenuIcon icon={item.icon} enabled={item.enabled} rem={rem} theme={theme} />
+-      ) : (
+-        alignIcons && <Box style={{ width: rem * 1, flexShrink: 0 }} />
+-      )}
+       <Text
+         style={{
+           flexGrow: 1,
+@@ -123,41 +123,79 @@ function MenuRow({
+   );
+ }
+ 
+-function MenuIcon({
++function ZoomRow({
++  percent,
++  rowH,
++  rem,
++  theme,
++  actions,
++}: {
++  percent: number;
++  rowH: number;
++  rem: number;
++  theme: Theme;
++  actions: ChromeActions;
++}) {
++  const controlH = Math.round(rem * 1.3);
++  const divider = <Box style={{ width: 1, height: controlH, background: theme.fieldBorder, flexShrink: 0 }} />;
++  return (
++    <Box
++      style={{ height: rowH, alignItems: "center", gap: rem * 0.45, padding: { left: rem * 0.4, right: rem * 0.4 }, flexShrink: 0 }}
++      onClick={() => {}}
++    >
++      <Text style={{ flexGrow: 1, flexBasis: 0, fontSize: rem * 0.82, color: theme.fg, wrap: false, selectable: false }}>
++        Zoom
++      </Text>
++      <Box
++        style={{
++          height: controlH,
++          alignItems: "center",
++          cornerRadius: rem * 0.35,
++          border: { width: 1, color: theme.fieldBorder },
++          background: theme.field,
++          overflow: "hidden",
++          flexShrink: 0,
++        }}
++      >
++        <ZoomButton icon="minus" size={controlH} rem={rem} theme={theme} onClick={() => actions.pageMenuZoom(-1)} />
++        {divider}
++        <Box style={{ width: rem * 3, height: controlH, alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
++          <Text style={{ fontSize: rem * 0.75, color: theme.fg, wrap: false, selectable: false }}>{`${percent}%`}</Text>
++        </Box>
++        {divider}
++        <ZoomButton icon="plus" size={controlH} rem={rem} theme={theme} onClick={() => actions.pageMenuZoom(1)} />
++      </Box>
++    </Box>
++  );
++}
++
++function ZoomButton({
+   icon,
+-  enabled,
++  size,
+   rem,
+   theme,
++  onClick,
+ }: {
+-  icon: PageMenuIcon;
+-  enabled: boolean;
++  icon: IconName;
++  size: number;
+   rem: number;
+   theme: Theme;
++  onClick(): void;
+ }) {
+-  switch (icon.kind) {
+-    case "image": {
+-      const size = rem * 1;
+-      return (
+-        <Image
+-          src={icon.src}
+-          error={<Box style={{ width: size, height: size }} />}
+-          style={{ width: size, height: size, flexShrink: 0 }}
+-        />
+-      );
+-    }
+-    case "path":
+-      return (
+-        <Path
+-          d={ico
+```
+
+**File**: `browser/src/ui/icons.tsx` (modified, +1/-4)
+```diff
+@@ -41,6 +41,7 @@ export const ICONS = {
+     "M 21 5 L 14 5 M 10 5 L 3 5 M 21 12 L 12 12 M 8 12 L 3 12 M 21 19 L 16 19 M 12 19 L 3 19 " +
+     "M 14 3 L 14 7 M 8 10 L 8 14 M 16 17 L 16 21",
+   plus: "M 12 5.5 L 12 18.5 M 5.5 12 L 18.5 12",
++  minus: "M 5.5 12 L 18.5 12",
+   reload: `${arcPath(12, 12, 7, 0, 270)} C 13.96 5 15.83 5.78 17.24 7.13 L 19 8.89 M 19 5 L 19 8.89 L 15.11 8.89`,
+   search: `${arcPath(11, 11, 5.75, 0, 360)} M 15.4 15.4 L 19.25 19.25`,
+   download: "M 12 4.5 L 12 14.5 M 7.75 10.5 L 12 14.75 L 16.25 10.5 M 5.5 18.5 L 18.5 18.5",
+@@ -56,7 +57,6 @@ export const ICONS = {
+   oval: arcPath(12, 12, 7.5, 0, 360),
+   text: "M 5.5 6 L 18.5 6 M 12 6 L 12 19",
+   crop: "M 7 3 L 7 17 L 21 17 M 3 7 L 17 7 L 17 21",
+-  record: arcPath(12, 12, 4.5, 0, 360),
+   play: "M 9 6.5 L 17.5 12 L 9 17.5 Z",
+   bolt: "M 13.2 3.5 L 6.5 13.5 L 11.2 13.5 L 10.4 20.5 L 17.5 10.2 L 12.4 10.2 Z",
+   camera:
+@@ -108,9 +108,6 @@ export const ICONS = {
+   volumeOff:
+     "M 11 4.7 L 6.4 7.6 L 5.4 8 L 3 8 C 2.45 8 2 8.45 2 9 L 2 15 C 2 15.55 2.45 16 3 16 " +
+     "L 5.4 16 L 6.4 16.4 L 11 19.3 Z M 22 9 L 16 15 M 16 9 L 22 15",
+-  trash:
+-    "M 3 6 L 21 6 M 19 6 L 19 20 C 19 21 18 22 17 22 L 7 22 C 6 22 5 21 5 20 L 5 6 " +
+-    "M 8 6 L 8 4 C 8 3 9 2 10 2 L 14 2 C 15 2 16 3 16 4 L 16 6 M 10 11 L 10 17 M 14 11 L 14 17",
+   monitor:
+     "M 4 4 L 20 4 C 21.1 4 22 4.9 22 6 L 22 15 C 22 16.1 21.1 17 20 17 L 4 17 " +
+     "C 2.9 17 2 16.1 2 15 L 2 6 C 2 4.9 2.9 4 4 4 Z M 8 21 L 16 21 M 12 17 L 12 21",
+```
+
+**File**: `browser/src/ui/types.ts` (modified, +3/-5)
+```diff
+@@ -10,6 +10,7 @@ import type {
+   PointerEvent,
+   WebViewHandle,
+   WebViewState,
++  ZoomDirection,
+ } from "@zenbu-labs/pixel";
+ import type { RecordActions } from "../record/types";
+ import type { BrowsingDataKind } from "../session/browsing-data";
+@@ -62,16 +63,11 @@ export interface DownloadView {
+   state: "progressing" | "done" | "failed";
+ }
+ 
+-export type PageMenuIcon =
+-  | { kind: "path"; d: string; tint?: "red"; weight?: number }
+-  | { kind: "image"; src: string };
+-
+ export interface PageMenuItem {
+   id: string;
+   label: string;
+   enabled: boolean;
+   shortcut: string;
+-  icon?: PageMenuIcon;
+ }
+ 
+ export interface ClearDataView {
+@@ -82,6 +78,7 @@ export interface ClearDataView {
+ export interface PageMenuView {
+   x: number;
+   y: number;
++  zoomPercent?: number;
+   items: PageMenuItem[];
+ }
+ 
+@@ -177,6 +174,7 @@ export interface ChromeActions {
+   devtoolsDividerHover(hovering: boolean): void;
+   pageMenuAction(id: string): void;
+   pageMenuClose(): void;
++  pageMenuZoom(direction: ZoomDirection): void;
+   permissionDecide(decision: PermissionDecision): void;
+   toastDismiss(): void;
+   clearDataToggle(kind: BrowsingDataKind): void;
+```
+
+**File**: `scripts/release.sh` (modified, +0/-3)
+```diff
+@@ -55,9 +55,6 @@ cp "$ROOT/assets/react-grab/"* "$STAGE/assets/react-grab/"
+ mkdir -p "$STAGE/assets/search"
+ cp "$ROOT/assets/search/"* "$STAGE/assets/search/"
+ 
+-mkdir -p "$STAGE/assets/chromium"
+-cp "$ROOT/assets/chromium/"* "$STAGE/assets/chromium/"
+-
+ ELECTRON_DIST="$(node -e '
+   const p = require("path");
+   const lib = require.resolve("@zenbu-labs/pixel/package.json", { paths: [process.argv[1]] });
+```
+
+---
+
+### Incident Patch 2: `2c6ff1c7` (2026-10-30)
+**Commit Message**: Clear cached favicons with Cached images and files (#225)
+
+**File**: `browser/src/session/browsing-data.ts` (modified, +2/-0)
+```diff
+@@ -1,3 +1,4 @@
++import { clearFavicons } from "@zenbu-labs/pixel";
+ import { session as electronSession } from "electron";
+ import type { Session } from "electron";
+ 
+@@ -22,6 +23,7 @@ export async function clearBrowsingData(session: Session, kinds: readonly Browsi
+   }
+   if (kinds.includes("cache")) {
+     await session.clearCache();
++    await clearFavicons();
+     await session.clearCodeCaches({});
+   }
+ }
+```
+
+**File**: `pixel/packages/pixel/src/index.ts` (modified, +1/-0)
+```diff
+@@ -27,6 +27,7 @@ export type { DevtoolsDock } from "./web/types";
+ export type { ZoomDirection } from "./web/zoom";
+ export type { TerminalTheme } from "./web/session";
+ export { QUIT_URL, defaultOpenWindow } from "./web/host";
++export { clearFavicons } from "./web/favicon";
+ 
+ export {
+   Box,
+```
+
+**File**: `pixel/packages/pixel/src/web/favicon.ts` (modified, +12/-1)
+```diff
+@@ -11,12 +11,19 @@ function isIco(data: Buffer): boolean {
+   return data.length > 4 && data[0] === 0 && data[1] === 0 && data[2] === 1 && data[3] === 0;
+ }
+ 
++let clears = 0;
++
++export async function clearFavicons(): Promise<void> {
++  clears++;
++  await fs.promises.rm(path.join(app.getPath("userData"), "favicons"), { recursive: true, force: true });
++}
+ 
+ export class FaviconCache {
+   constructor(private readonly dir: string = path.join(app.getPath("userData"), "favicons")) {}
+ 
+   async resolve(urls: string[], ses: Session): Promise<string | null> {
+     if (urls.length === 0) return null;
++    const clearsBefore = clears;
+     const candidates = [...urls].sort((a, b) => Number(RASTER_URL.test(b)) - Number(RASTER_URL.test(a)));
+     try {
+       const fallback = new URL("/favicon.ico", urls[0]).toString();
+@@ -26,14 +33,18 @@ export class FaviconCache {
+       this.dir,
+       crypto
+         .createHash("sha1")
+-        .update(`${ses.storagePath ?? ""}\0${candidates.join("\n")}`)
++        .update(`${ses.storagePath ?? ""}\0${clearsBefore}\0${candidates.join("\n")}`)
+         .digest("hex")
+         .slice(0, 16),
+     );
+     const cached = [`${stem}.png`, `${stem}.ico`].find((file) => fs.existsSync(file));
+     if (cached) return cached;
+     for (const url of candidates) {
+       const file = await this.fetchDecodable(url, ses, stem);
++      if (file && clears !== clearsBefore) {
++        await fs.promises.rm(file, { force: true });
++        return null;
++      }
+       if (file) return file;
+     }
+     return null;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #188** (2026-10-19): Add pixel starter kit (@RobPruzan)
-- **PR #187** (2026-10-19): Pointer shape, new example (@RobPruzan)
-- **PR #186** (2026-10-19): Add zed example to pixel (@RobPruzan)
-- **PR #185** (2026-10-19): Create pixel website + pixel docs (@RobPruzan)
-- **PR #184** (2026-10-17): fix noisy outputs (@RobPruzan)
-- **PR #182** (2026-10-17): fix postinstall (@RobPruzan)
+- **PR #226** (2026-10-30): Add Zoom to the … menu and drop menu icons (@RobPruzan)
+- **PR #225** (2026-10-30): Clear cached favicons with Cached images and files (@RobPruzan)
+- **PR #224** (2026-10-30): Add Clear browsing data (@RobPruzan)
+- **PR #223** (2026-10-30): Fix Continue with Google doing nothing (disable FedCM) (@RobPruzan)
+- **PR #218** (2026-10-29): Implmenet markdown rendering on .md files (@RobPruzan)
+- **PR #217** (2026-10-28): Add flag to remove chrome (@RobPruzan)
 
 ---
 
@@ -1581,28 +1978,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in page.tsx
+## X. Add Zoom to the … menu and remove menu icons (#226)
 
 **RULE**:
-When implementing operations in `pixel/website/app/page.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3e60bc8`: link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `69c6653a`: Add Zoom to the … menu and remove menu icons (#226). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixel/website/app/page.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-const DOCS = `${PIXEL}#docs`;
+          const zoomed = Math.abs(state.zoom - this.lastZoom) > 0.001;
+          if (zoomed && this.pageMenu?.kind !== "toolbar") this.showZoomHud(state.zoom);
+    pageMenuZoom: (direction) => this.applyZoom(direction),
+      return {
+        x: this.layout.width,
+        y: this.layout.toolbarHeight,
+        zoomPercent: Math.round((this.tabs.activeState?.zoom ?? 1) * 100),
+        items: this.toolbarMenuItems(),
+      };
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-const DOCS = `${PIXEL}#documentation`;
+import { ICONS } from "../ui/icons";
+  private readonly inspectIcon = bundledAsset(path.join("chromium", "logo.png"));
+          if (Math.abs(state.zoom - this.lastZoom) > 0.001) this.showZoomHud(state.zoom);
+      icon: { kind: "path", d: ICONS.select },
+        icon: { kind: "path", d: ICONS.record, tint: "red", weight: 8 },
+        icon: this.inspectIcon ? { kind: "image", src: this.inspectIcon } : undefined,
+        icon: { kind: "path", d: ICONS.trash },
+        icon: { kind: "path", d: ICONS.settings },
+      return { x: this.layout.width, y: this.layout.toolbarHeight, items: this.toolbarMenuItems() };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3e60bc8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `69c6653a` are properly handled with clean fallback behavior.

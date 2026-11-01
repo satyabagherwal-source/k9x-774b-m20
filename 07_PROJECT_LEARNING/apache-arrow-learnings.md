@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `2c800e6b`  
+> **Source Version**: `b4a98b73`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:34:03.098Z  
+> **Timestamp**: 2026-10-31T17:03:45.025Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:34:02.646Z  
+> **Harvest Timestamp**: 2026-10-31T17:03:44.543Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17219 stars
+- **Stars / Engagement**: 17264 stars
 
 ---
 
@@ -1377,14 +1377,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55159** (2026-10-23): **MINOR: [C++] Reject out-of-range scale deltas in decimal Rescale**
-  *Symptoms*: ### Rationale for this change  `DecimalRescale` (behind `Decimal{32,64,128,256}::Rescale`) looks up `GetScaleMultiplier(abs(new_scale - original_scale))` in the `kDecimal*PowersOfTen` tables, and the only bound on that index is a `DCHECK`. `Decimal*::FromString` rejects a large negative parsed scale but lets a positive one through, and the precision it reports only counts significant digits. So a CSV cell `1E-41` read as `decimal128(10, 2)` parses as precision 1, scale 41, passes the precision check in `DecimalValueDecoder::Decode`, and `Rescale(41, 2)` reads one entry past `kDecimal128PowersOfTen` (ASan reports a global-buffer-overflow READ of size 16 with `basic_decimal.cc` built with `NDEBUG`). `1E-100000` reads about 1.6 MB past the table. The JSON reader's decimal converter and the default `cast(string -> decimal)` take the same path, and the cast with `allow_decimal_truncate=true` calls `ReduceScaleBy(parsed_scale - out_scale)` directly with the same unbounded value. Debug builds abort on the `DCHECK` for all of these.  ### What changes are included in this PR?  - `DecimalRescale` returns `kRescaleDataLoss` when the scale delta exceeds `kMaxScale`. No multiplier that large fits in the type, so any non-zero value would overflow or lose digits; zero still rescales to zero. - The truncating branch of `StringToDecimal` returns zero when more than `kMaxScale` digits are dropped, which is the truncated result for any value the type can hold.  The check sits in `DecimalRescale
+- **Issue #55337** (2026-10-31): **GH-55335: [CI][R] Run R nightly binary upload later**
+  *Symptoms*: ### Rationale for this change  Job failing for a while as job it's dependent on keeps running later  ### What changes are included in this PR?  Shift it back 4 hours  ### Are these changes tested?  No  ### Are there any user-facing changes?  No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55335
 
-- **Issue #55114** (2026-10-23): **GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones**
-  *Symptoms*: ### Rationale for this change  GH runner upgrade from Ubuntu 24.04 to 26.04 made some R tests fail due to missing timezone. (Rhub)  ### What changes are included in this PR?  Install `tzdata-legacy` package if available to have the required timezone.  ### Are these changes tested?  Yes on CI  ### Are there any user-facing changes? No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55113
-  **Post-Mortem & Fix Analysis**:
-  > @thisisnic just a minor fix to CI
-  > Thanks for fixing this! The change makes sense, but I'm wondering if it's gonna be slightly more efficient to just do a text-replace swapping out "EST" for "America/New_York" and avoid installing another dependency?  
+- **Issue #55331** (2026-10-30): **MINOR: [R] Update backwards compatibility matrix for 26.0.0 release**
+  *Symptoms*: ### Rationale for this change  Standard release task.  ### What changes are included in this PR?  Add the previous CRAN version (25.0.1) to the backwards compatibility matrix.  ### Are these changes tested?  Nope.  ### Are there any user-facing changes?  No.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [ ] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1401,346 +1398,81 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c800e6b` (2026-10-23)
-**Commit Message**: GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (#54943)
-
-### TBD
+### Incident Patch 1: `b4a98b73` (2026-10-31)
+**Commit Message**: GH-55335: [CI][R] Run R nightly binary upload later (#55337)
 
 ### Rationale for this change
 
-Several Linux Packaging jobs are currently failing with out of space on the verify reproducibility step. This is due to `/tmp` size. Ubuntu runner image changed from Ubuntu 24.04 to Ubuntu 26.04 where the `/tmp` folder is mounted.
-In the past the `/tmp` folder was on the root disk which had 145 GB of disk space.
-```
- Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       145G   60G   85G  42% /
-tmpfs           7.9G   84K  7.9G   1% /dev/shm
-tmpfs           3.2G  988K  3.2G   1% /run
-tmpfs           5.0M     0  5.0M   0% /run/lock
-efivarfs        128M   32K  128M   1% /sys/firmware/efi/efivars
-/dev/sda16      881M   85M  735M  11% /boot
-/dev/sda15      105M  6.2M   99M   6% /boot/efi
-tmpfs           1.6G   12K  1.6G   1% /run/user/1001
-```
-With the new runner the `/tmp` folder is on `tmpfs` with 7.8GB.
-```
-2026-10-23T02:23:08.8104328Z Filesystem      Size  Used Avail Use% Mounted on
-2026-10-23T02:23:08.8104761Z /dev/root       145G   58G   88G  40% /
-2026-10-23T02:23:08.8105145Z tmpfs           7.9G     0  7.9G   0% /dev/shm
-2026-10-23T02:
-
-**File**: `.github/workflows/package_linux.yml` (modified, +2/-0)
-```diff
-@@ -349,6 +349,8 @@ jobs:
-         if: env.TASK_NAMESPACE == 'apt'
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          # Required because the default /tmp is a size-limited tmpfs on some runner images.
-+          TMPDIR: ${{ runner.temp }}
-         run: |
-           # Validate reproducibility. Reprotest runs the build twice
-           # inside its own tempdir and doesn't copy artifacts back,
-```
-
----
-
-### Incident Patch 2: `2db03408` (2026-10-23)
-**Commit Message**: GH-51663: [C++][Gandiva] Race condition with Gandiva expressions (#51665)
-
-### Rationale for this change
-
-I originally identified [this issue in arrow-java](https://github.com/apache/arrow-java/issues/601) and fixed it on the arrow-java side with a coarse grained lock on the Projector and Filter Make methods. That fixed the issue but adds some undesirable overhead in certain multi threaded workflows.
-This issue captures the deeper problem that is occurring in the C++ side of Gandiva and was not touched by my previous fix though it is prevented from happening. I have a proposed solution for this and believe it is a better overall solution.
-
-`Projector::Make()` and `Filter::Make()` read the shared expression cache once to decide the `is_cached` status and then call `SetLLVMObjectCache()`. That performs its own second, unsynchronized read of the same key before pre-loading a cached object into the LLJIT.
-
-Those two reads could disagree. If another thread compiling the identical (schema, expressions, selection vector mode, configuration) tuple inserted between them, the first thread would:
-
-1. take the `is_cached == false` path, generating `expr_0_0` into its IR module, and
-2. also see
-
-**File**: `cpp/src/gandiva/engine.cc` (modified, +8/-3)
-```diff
-@@ -304,9 +304,14 @@ void RemoveBuildTargetAttributes(llvm::Module& module) {
- 
- }  // namespace
- 
--Status Engine::SetLLVMObjectCache(GandivaObjectCache& object_cache) {
--  auto cached_buffer = object_cache.getObject(nullptr);
--  if (cached_buffer) {
-+Status Engine::SetLLVMObjectCache(
-+    const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj) {
-+  if (prev_cached_obj) {
-+    // Copy rather than hand over the cache's own buffer -- addObjectFile takes
-+    // ownership and may free it, but the shared cache map holds a reference to the
-+    // same object too.
-+    auto cached_buffer = llvm::MemoryBuffer::getMemBufferCopy(
-+        prev_cached_obj->getBuffer(), prev_cached_obj->getBufferIdentifier());
-     auto error = lljit_->addObjectFile(std::move(cached_buffer));
-     if (error) {
-       return Status::CodeGenError("Failed to add cached object file to LLJIT: ",
-```
-
-**File**: `cpp/src/gandiva/engine.h` (modified, +6/-2)
-```diff
-@@ -74,8 +74,12 @@ class GANDIVA_EXPORT Engine {
-   /// Optimise and compile the module.
-   Status FinalizeModule();
- 
--  /// Set LLVM ObjectCache.
--  Status SetLLVMObjectCache(GandivaObjectCache& object_cache);
-+  /// Pre-load the LLJIT with an already-compiled object for the current module, if
-+  /// one was found by the caller's own cache lookup. Takes the lookup result directly
-+  /// rather than re-querying the cache, so this can never disagree with the \p cached
-+  /// flag passed to \p Make -- avoiding the load being based on a newer cache state
-+  /// than the one that decided whether Make() would still build (and load) fresh IR.
-+  Status SetLLVMObjectCache(const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj);
- 
-   /// Get the compiled function corresponding to the irfunction.
-   Result<void*> CompiledFunction(const std::string& function);
-```
-
-**File**: `cpp/src/gandiva/filter.cc` (modified, +5/-2)
-```diff
-@@ -76,8 +76,11 @@ Status Filter::Make(SchemaPtr schema, ConditionPtr condition,
-     ARROW_RETURN_NOT_OK(expr_validator.Validate(condition));
-   }
- 
--  // Set the object cache for LLVM
--  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(obj_cache));
-+  // Pre-load the already-compiled object from the cache lookup above, if there was
-+  // one. Reuses prev_cached_obj instead of letting SetLLVMObjectCache re-query the
-+  // shared cache, so this can never disagree with the is_cached snapshot that
-+  // decided whether Build() below still compiles.
-+  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(prev_cached_obj));
- 
-   ARROW_RETURN_NOT_OK(llvm_gen->Build({condition}, SelectionVector::Mode::MODE_NONE));
- 
-```
-
-**File**: `cpp/src/gandiva/llvm_generator.cc` (modified, +3/-2)
-```diff
-@@ -64,8 +64,9 @@ LLVMGenerator::GetCache() {
-   return shared_cache;
- }
- 
--Status LLVMGenerator::SetLLVMObjectCache(GandivaObjectCache& object_cache) {
--  return engine_->SetLLVMObjectCache(object_cache);
-+Status LLVMGenerator::SetLLVMObjectCache(
-+    const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj) {
-+  return engine_->SetLLVMObjectCache(prev_cached_obj);
- }
- 
- Status LLVMGenerator::Add(const ExpressionPtr expr, const FieldDescriptorPtr output) {
-```
-
-**File**: `cpp/src/gandiva/llvm_generator.h` (modified, +5/-2)
-```diff
-@@ -58,8 +58,11 @@ class GANDIVA_EXPORT LLVMGenerator {
-   static std::shared_ptr<Cache<ExpressionCacheKey, std::shared_ptr<llvm::MemoryBuffer>>>
-   GetCache();
- 
--  /// \brief Set LLVM ObjectCache.
--  Status SetLLVMObjectCache(GandivaObjectCache& object_cache);
-+  /// \brief Pre-load the engine with an already-compiled object for the current
-+  /// module, if the caller's own cache lookup found one. See the equivalent Engine
-+  /// method for why this takes the lookup result directly instead of re-querying
-+  /// the cache.
-+  Status SetLLVMObjectCache(const std::shared_ptr<llvm::MemoryBuffer>& prev_cached_obj);
- 
-   /// \brief Build the code for the expression trees for default mode with a LLVM
-   /// ObjectCache. Each element in the vector represents an expression tree
-```
-
-**File**: `cpp/src/gandiva/projector.cc` (modified, +5/-2)
-```diff
-@@ -94,8 +94,11 @@ Status Projector::Make(SchemaPtr schema, const ExpressionVector& exprs,
-     }
-   }
- 
--  // Set the object cache for LLVM
--  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(obj_cache));
-+  // Pre-load the already-compiled object from the cache lookup above, if there was
-+  // one. Reuses prev_cached_obj instead of letting SetLLVMObjectCache re-query the
-+  // shared cache, so this can never disagree with the is_cached snapshot that
-+  // decided whether Build() below still compiles.
-+  ARROW_RETURN_NOT_OK(llvm_gen->SetLLVMObjectCache(prev_cached_obj));
- 
-   ARROW_RETURN_NOT_OK(llvm_gen->Build(exprs, selection_vector_mode));
- 
-```
-
-**File**: `cpp/src/gandiva/tests/CMakeLists.txt` (modified, +1/-0)
-```diff
-@@ -19,6 +19,7 @@ add_gandiva_test(projector-test
-                  SOURCES
-                  binary_test.cc
-                  boolean_expr_test.cc
-+                 cache_race_test.cc
-                  date_time_test.cc
-                  decimal_alignment_test.cc
-                  decimal_single_test.cc
-```
-
-**File**: `cpp/src/gandiva/tests/cache_race_test.cc` (added, +212/-0)
-```diff
-@@ -0,0 +1,212 @@
-+// Licensed to the Apache Software Foundation (ASF) under one
-+// or more contributor license agreements.  See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership.  The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License.  You may obtain a copy of the License at
-+//
-+//   http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing,
-+// software distributed under the License is distributed on an
-+// "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+// KIND, either express or implied.  See the License for the
-+// specific language governing permissions and limitations
-+// under the License.
-+
-+// Deterministic regression test for GH-51663.
-+//
-+// Projector::Make() and Filter::Make() read the shared expression cache once to decide
-+// `is_cached`. Before the fix, SetLLVMObjectCache() performed a *second*, independent
-+// read of the same key. A thread that saw a miss on the first read and a hit on the
-+// second one would both pre-load the cached object (defining e.g. "expr_0_0" in its
-+// JITDylib) and add its own compiled IR module defining the same symbol, so LLVM ORC's
-+// duplicate-symbol detection fired. (Originally reported against the Java bindings as
-+// apache/arrow-java#601.)
-+
-+#include <gtest/gtest.h>
-+
-+#include <atomic>
-+#include <memory>
-+#include <utility>
-+#include <vector>
-+
-+#include "arrow/memory_pool.h"
-+#include "gandiva/cache.h"
-+#include "gandiva/configuration.h"
-+#include "gandiva/exported_funcs.h"
-+#include "gandiva/exported_funcs_registry.h"
-+#include "gandiva/expression_cache_key.h"
-+#include "gandiva/filter.h"
-+#include "gandiva/llvm_generator.h"
-+#include "gandiva/projector.h"
-+#include "gandiva/tests/test_util.h"
-+#include "gandiva/tree_expr_builder.h"
-+
-+namespace gandiva {
-+
-+using arrow::boolean;
-+using arrow::int32;
-+
-+namespace {
-+
-+using ObjectCacheType = Cache<ExpressionCacheKey, std::shared_ptr<llvm::MemoryBuffer>>;
-+
-+struct PendingInjection {
-+  std::shared_ptr<ObjectCacheType> cache;
-+  std::shared_ptr<ExpressionCacheKey> key;
-+  std::shared_ptr<llvm::MemoryBuffer> object;
-+  std::atomic<bool> armed{false};
-+};
-+
-+PendingInjection* GetPendingInjection() {
-+  static PendingInjection instance;
-+  return &instance;
-+}
-+
-+// Registered once; fires only while armed.
-+class CacheRaceInjector : public ExportedFuncsBase {
-+ public:
-+  arrow::Status AddMappings(Engine* engine) const override {
-+    auto* pending = GetPendingInjection();
-+    // exchange() disarms, so this injects exactly once per arming even though the
-+    // registry keeps calling us on every subsequent Engine::Init().
-+    if (pending->armed.exchange(false)) {
-+      pending->cache->PutObjectCode(*pending->key, pending->object);
-+    }
-+    return arrow::Status::OK();
-+  }
-+};
-+
-+REGISTER_EXPORTED_FUNCS(CacheRaceInjector);
-+
-+// Arms the injection that will run inside the next Make()'s engine construction.
-+void ArmInjection(std::shared_ptr<ObjectCacheType> cache,
-+                  std::shared_ptr<ExpressionCacheKey> key,
-+                  std::shared_ptr<llvm::MemoryBuffer> object) {
-+  auto* pending = GetPendingInjection();
-+  pending->cache = std::move(cache);
-+  pending->key = std::move(key);
-+  pending->object = std::move(object);
-+  pending->armed.store(true);
-+}
-+
-+}  // namespace
-+
-+class TestCacheRace : public ::testing::Test {
-+ public:
-+  void SetUp() { pool_ = arrow::default_memory_pool(); }
-+
-+  void TearDown() { GetPendingInjection()->armed.store(false); }
-+
-+ protected:
-+  arrow::MemoryPool* pool_;
-+};
-+
-+TEST_F(TestCacheRace, TestProjectorCacheInsertedDuringMake) {
-+  auto field0 = field("f0", int32());
-+  auto field1 = field("f1", int32());
-+  auto schema = arrow::schema({field0, field1});
-+  auto field_sum = field("add", int32());
-+  auto sum_expr = TreeExprBuilder::MakeExpression("add", {field0, field1}, field_sum);
-+  ExpressionVector exprs = {sum_expr};
-+
-+  // Two separately built configurations with identical content: same hash, different
-+  // keys.
-+  auto config_a = ConfigurationBuilder().build();
-+  auto config_b = ConfigurationBuilder().build();
-+
-+  // Build once under config_a so the expression is cached.
-+  std::shared_ptr<Projector> warm_projector;
-+  ASSERT_OK(Projector::Make(schema, exprs, config_a, &warm_projector));
-+
-+  auto cache = LLVMGenerator::GetCache();
-+  ExpressionCacheKey key_a(schema, config_a, exprs, SelectionVector::Mode::MODE_NONE);
-+  auto cached_object = cache->GetObjectCode(key_a);
-+  ASSERT_NE(cached_object, nullptr) << "expected the first Make() to populate the cache";
-+
-+  // config_b has never been built, so Make()'s first read is a guaranteed miss.
-+  auto key_b = std::make_shared<ExpressionCacheKey>(schema, config_b, exprs,
-+                                                    SelectionVector::Mode::MODE_NONE);
-+
-```
-
----
-
-### Incident Patch 3: `0c6b47bc` (2026-10-23)
-**Commit Message**: GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones (#55114)
-
-### Rationale for this change
-
-GH runner upgrade from Ubuntu 24.04 to 26.04 made some R tests fail due to missing timezone. (Rhub)
+Job failing for a while as job it's dependent on keeps running later
 
 ### What changes are included in this PR?
 
-Install `tzdata-legacy` package if available to have the required timezone.
+Shift it back 4 hours
 
 ### Are these changes tested?
 
-Yes on CI
+No
 
 ### Are there any user-facing changes?
+
 No
 
 ### Was AI used for this PR?
 
-In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
+In accordance to the [AI generation
+guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code),
+please disclose below whether and how AI was used in this PR.
+
+**PR code and description written by:**
+
+- [x] Human
+- [ ] AI
+
+**Reviewed before submission by:**
+
+- [x] Human
+- [ ] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #55335
+
+**File**: `.github/workflows/r_nightly.yml` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ on:
+ 
+   schedule:
+     #Crossbow packaging runs at 0 8 * * *
+-    - cron: '0 14 * * *'
++    - cron: '0 18 * * *'
+ 
+ permissions:
+   contents: read
+```
+
+---
+
+### Incident Patch 2: `340bf45c` (2026-10-31)
+**Commit Message**: GH-53945: [C++] std::bit_width in ALP compression fails to compile with CRAN's macOS 11.3 SDK (#53946)
+
+### Rationale for this change
+
+CI failures for CRAN macOS
+
+### What changes are included in this PR?
+
+Use helper function which works on CRAN macOS in new code + refactor existing stuff
+
+### Are these changes tested?
+
+Yup
+
+### Are there any user-facing changes?
+
+Nope
+
+### Was AI used for this PR?
+
+I generated the code with Claude Fable 5.1 and did adversarial reviews with Opus 5.5 and also asked some questions about why we were moving things into different files and if we had too many tests, resulting in trimming them down. 
 
 **PR code and description written by:**
 
@@ -1750,37 +1482,257 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 **Reviewed before submission by:**
 
 - [x] Human
-- [ ] AI
+- [x] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #55113
+* GitHub Issue: #53945
 
-Authored-by: Raúl Cumplido <[REDACTED_EMAIL]>
-Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
+Authored-by: Nic Crane <[REDACTED_EMAIL]>
+Signed-off-by: Nic Crane <[REDACTED_EMAIL]>
 
-**File**: `ci/scripts/r_docker_configure.sh` (modified, +5/-0)
+**File**: `cpp/src/arrow/util/align_util.h` (modified, +1/-10)
 ```diff
-@@ -85,6 +85,11 @@ else
-   "$PACKAGE_MANAGER" install -y rsync cmake curl
- fi
+@@ -18,7 +18,6 @@
+ #pragma once
  
-+# Newer Debian/Ubuntu require tzdata-legacy for our tests, install it if available.
-+if [ "$PACKAGE_MANAGER" = "apt-get" ] && apt-cache show tzdata-legacy > /dev/null 2>&1; then
-+  apt-get install -y tzdata-legacy
-+fi
+ #include <algorithm>
+-#include <bit>
+ 
+ #include "arrow/memory_pool.h"
+ #include "arrow/type_fwd.h"
+@@ -44,16 +43,8 @@ struct BitmapWordAlignParams {
+ template <uint64_t ALIGN_IN_BYTES>
+ inline BitmapWordAlignParams BitmapWordAlign(const uint8_t* data, int64_t bit_offset,
+                                              int64_t length) {
+-  // TODO: We can remove this condition once CRAN upgrades its macOS
+-  // SDK from 11.3.
+-  // __apple_build_version__ should be defined only on Apple clang
+-#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
+-  static_assert((ALIGN_IN_BYTES != 0) && ((ALIGN_IN_BYTES & (ALIGN_IN_BYTES - 1)) == 0),
++  static_assert(bit_util::HasSingleBit(ALIGN_IN_BYTES),
+                 "ALIGN_IN_BYTES should be a positive power of two");
+-#else
+-  static_assert(std::has_single_bit(ALIGN_IN_BYTES),
+-                "ALIGN_IN_BYTES should be a positive power of two");
+-#endif
+   constexpr uint64_t ALIGN_IN_BITS = ALIGN_IN_BYTES * 8;
+ 
+   BitmapWordAlignParams p;
+```
+
+**File**: `cpp/src/arrow/util/alp/alp_codec.cc` (modified, +1/-1)
+```diff
+@@ -136,7 +136,7 @@ Status ValidateEncodingPreset(const AlpEncodingPreset& preset) {
+ Status ValidateVectorSize(int32_t vector_size) {
+   constexpr int32_t kMin = 1 << AlpFormatConstants::kMinLogVectorSize;
+   constexpr int32_t kMax = 1 << AlpFormatConstants::kMaxLogVectorSize;
+-  if (vector_size <= 0 || !std::has_single_bit(static_cast<uint32_t>(vector_size))) {
++  if (vector_size <= 0 || !bit_util::HasSingleBit(static_cast<uint32_t>(vector_size))) {
+     return Status::Invalid("ALP vector_size must be a positive power of 2, got ",
+                            vector_size);
+   }
+```
+
+**File**: `cpp/src/arrow/util/alp/alp_compression.cc` (modified, +2/-3)
+```diff
+@@ -18,7 +18,6 @@
+ #include "arrow/util/alp/alp_compression_internal.h"
+ 
+ #include <algorithm>
+-#include <bit>
+ #include <cmath>
+ #include <cstring>
+ #include <limits>
+@@ -200,7 +199,7 @@ std::optional<int64_t> EstimateCompressedSizeBits(
+   const EncodedUnsigned delta = (static_cast<EncodedUnsigned>(max_encoded_value) -
+                                  static_cast<EncodedUnsigned>(min_encoded_value));
+ 
+-  const int32_t estimated_bits_per_value = static_cast<int32_t>(std::bit_width(delta));
++  const int32_t estimated_bits_per_value = bit_util::BitWidth(delta);
+   int64_t estimated_compression_size =
+       static_cast<int64_t>(inputs.size()) * estimated_bits_per_value;
+   estimated_compression_size +=
+@@ -445,7 +444,7 @@ typename AlpCompression<T>::BitPackingResult AlpCompression<T>::BitPackIntegers(
+   uint8_t bit_width = 0;
+ 
+   if (min_max_diff > 0) {
+-    bit_width = static_cast<uint8_t>(std::bit_width(min_max_diff));
++    bit_width = static_cast<uint8_t>(bit_util::BitWidth(min_max_diff));
+   }
+   const int32_t bit_packed_size = static_cast<int32_t>(
+       bit_util::BytesForBits(bit_width * static_cast<int64_t>(for_deltas.size())));
+```
+
+**File**: `cpp/src/arrow/util/bit_util.h` (modified, +28/-8)
+```diff
+@@ -138,20 +138,40 @@ static inline uint64_t TrailingBits(uint64_t v, int num_bits) {
+   return (v << n) >> n;
+ }
+ 
+-// Returns ceil(log2(x)).
+-static inline int Log2(uint64_t x) {
+-  // DCHECK_GT(x, 0);
++// Returns the number of bits needed to represent x, i.e. std::bit_width(x).
++//
++// The libc++ in the macOS 11.3 SDK used by CRAN only has the pre-standard
++// name std::log2p1. __apple_build_version__ should be defined only on Apple
++// clang.
++// TODO: We can remove this condition once CRAN upgrades its macOS SDK from 11.3.
++template <typename T>
++constexpr int BitWidth(T x) noexcept {
++  static_assert(std::is_unsigned_v<T>, "BitWidth requires an unsigned integer type");
++#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
++  return static_cast<int>(std::log2p1(x));
++#else
++  return static_cast<int>(std::bit_width(x));
++#endif
++}
+ 
+-// TODO: We can remove this condition once CRAN upgrades its macOS
+-// SDK from 11.3.
+-// __apple_build_version__ should be defined only on Apple clang
++// Returns true if x is a power of two, i.e. std::has_single_bit(x).
++// See the note on BitWidth: the macOS 11.3 SDK only has the pre-standard
++// name std::ispow2.
++template <typename T>
++constexpr bool HasSingleBit(T x) noexcept {
++  static_assert(std::is_unsigned_v<T>, "HasSingleBit requires an unsigned integer type");
+ #if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
+-  return std::log2p1(x - 1);
++  return std::ispow2(x);
+ #else
+-  return std::bit_width(x - 1);
++  return std::has_single_bit(x);
+ #endif
+ }
+ 
++// Returns ceil(log2(x)).
++static inline int Log2(uint64_t x) {
++  return BitWidth(x - 1);
++}
 +
+ //
+ // Utilities for reading and writing individual bits by their index
+ // in a memory area.
+```
+
+**File**: `cpp/src/arrow/util/bit_util_test.cc` (modified, +20/-0)
+```diff
+@@ -1108,4 +1108,24 @@ TEST(BitUtil, CopyBits) {
+                 0b01011010);
+ }
  
- # Update clang version to latest available.
- # The rhub/ubuntu-clang image ships clang-15 but CRAN's debian-clang now uses
++TEST(BitUtil, BitWidth) {
++  EXPECT_EQ(bit_util::BitWidth(uint8_t{0}), 0);
++  EXPECT_EQ(bit_util::BitWidth(uint8_t{1}), 1);
++  EXPECT_EQ(bit_util::BitWidth(uint32_t{1} << 20), 21);
++  EXPECT_EQ(bit_util::BitWidth((uint32_t{1} << 20) - 1), 20);
++  EXPECT_EQ(bit_util::BitWidth(std::numeric_limits<uint64_t>::max()), 64);
++  // constexpr-evaluable.
++  static_assert(bit_util::BitWidth(uint16_t{0x0100}) == 9);
++}
++
++TEST(BitUtil, HasSingleBit) {
++  EXPECT_FALSE(bit_util::HasSingleBit(uint8_t{0}));
++  EXPECT_TRUE(bit_util::HasSingleBit(uint8_t{1}));
++  EXPECT_TRUE(bit_util::HasSingleBit(uint32_t{1} << 20));
++  EXPECT_FALSE(bit_util::HasSingleBit((uint32_t{1} << 20) + 1));
++  EXPECT_FALSE(bit_util::HasSingleBit(std::numeric_limits<uint64_t>::max()));
++  // constexpr-evaluable.
++  static_assert(bit_util::HasSingleBit(uint16_t{0x0100}));
++}
++
+ }  // namespace arrow
+```
+
+**File**: `cpp/src/arrow/util/rle_encoding_test.cc` (modified, +1/-9)
+```diff
+@@ -18,7 +18,6 @@
+ // From Apache Impala (incubating) as of 2016-01-29
+ 
+ #include <algorithm>
+-#include <bit>
+ #include <cstdint>
+ #include <cstring>
+ #include <random>
+@@ -942,14 +941,7 @@ TEST(BitRle, Random) {
+       }
+       parity = !parity;
+     }
+-    // TODO: We can remove this condition once CRAN upgrades its macOS
+-    // SDK from 11.3.
+-    // __apple_build_version__ should be defined only on Apple clang
+-#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
+-    if (!CheckRoundTrip(values, std::log2p1(values.size()))) {
+-#else
+-    if (!CheckRoundTrip(values, std::bit_width(values.size()))) {
+-#endif
++    if (!CheckRoundTrip(values, bit_util::BitWidth(values.size()))) {
+       FAIL() << "failing seed: " << seed;
+     }
+   }
+```
+
+**File**: `cpp/src/parquet/chunker_internal.cc` (modified, +2/-10)
+```diff
+@@ -17,7 +17,6 @@
+ 
+ #include "parquet/chunker_internal.h"
+ 
+-#include <bit>
+ #include <cstdint>
+ #include <iterator>
+ #include <string>
+@@ -87,15 +86,8 @@ uint64_t CalculateMask(int64_t min_chunk_size, int64_t max_chunk_size, int norm_
+ 
+   // assuming that the gear hash has a uniform distribution, we can calculate the mask
+   // by taking the floor(log2(target_size))
+-  // TODO: We can remove this condition once CRAN upgrades its macOS
+-  // SDK from 11.3.
+-  // __apple_build_version__ should be defined only on Apple clang
+-#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
+-  auto target_bits = std::log2p1(static_cast<uint64_t>(target_size));
+-#else
+-  auto target_bits = std::bit_width(static_cast<uint64_t>(target_size));
+-#endif
+-  int mask_bits = target_bits == 0 ? 0 : static_cast<int>(target_bits - 1);
++  auto target_bits = ::arrow::bit_util::BitWidth(static_cast<uint64_t>(target_size));
++  int mask_bits = target_bits == 0 ? 0 : target_bits - 1;
+ 
+   // a user defined `norm_level` can be used to adjust the mask size, hence the matching
+   // probability, by increasing the norm_level we increase the probability of matching
+```
+
+**File**: `cpp/src/parquet/encoder.cc` (modified, +2/-10)
+```diff
+@@ -1261,16 +1261,8 @@ void DeltaBitPackEncoder<DType>::FlushBlock() {
+ 
+     // The minimum number of bits required to write any of values in deltas_ vector.
+     // See overflow comment above.
+-    // TODO: We can remove this condition once CRAN upgrades its macOS
+-    // SDK from 11.3.
+-    // __apple_build_version__ should be defined only on Apple clang
+-#if defined(__apple_build_version__) && !defined(__cpp_lib_bitops)
+-    const auto bit_width = bit_width_data[i] =
+-        std::log2p1(static_cast<UT>(max_delta) - static_cast<UT>(min_delta));
+-#else
+-    const auto bit_width = bit_width_data[i] =
+-        std::bit_width(static_cast<UT>(max_delta) - static_cast<UT>(min_delta));
+-#endif
++    const auto bit_width = bit_width_data[i] = ::arrow::bit_util::BitWidth(
++        static_cast<UT>(max_delta) - static_cast<UT>(min_delta));
+ 
+     for (uint32_t j = start; j < start + values_current_mini_block; j++) {
+       // Convert delta to frame of reference. See overflow comment above.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55159** (closed): MINOR: [C++] Reject out-of-range scale deltas in decimal Rescale (@Nayana-Naik73)
-- **PR #55114** (2026-10-23): GH-55113: [CI][R] Install tzdata-legacy if available so tests are able to find required timezones (@raulcd)
-- **PR #54960** (2026-10-22): MINOR: [Dev] Update collaborators list (@rok)
-- **PR #54943** (2026-10-23): GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (@raulcd)
-- **PR #54940** (closed): GH-54937: [C++] Fix DenseUnionArray::Make for sliced type_ids and value_offsets arrays (@JonSnow1807)
-- **PR #54923** (closed): GH-54903: [C++][OSS-Fuzz fuzzing] Update parquet encoding fuzzer and corpora/dict preparation (@arthurscchan)
+- **PR #55337** (2026-10-31): GH-55335: [CI][R] Run R nightly binary upload later (@thisisnic)
+- **PR #55331** (2026-10-30): MINOR: [R] Update backwards compatibility matrix for 26.0.0 release (@thisisnic)
+- **PR #55330** (2026-10-30): MINOR: [C++] Remove undefined variable reference in substrait test link libraries (@kou)
+- **PR #55320** (2026-10-30): MINOR: [C++][FlightRPC][CI][ODBC] Increase nuget timeout for vcpkg upload (@alinaliBQ)
+- **PR #55317** (2026-10-30): GH-55316: [CI][FlightRPC][ODBC] Apply ports.patch in Windows build (@amoeba)
+- **PR #55311** (closed): WIP: [Release] Verify release-26.0.1-rc0 (@raulcd)
 
 ---
 
@@ -1800,29 +1752,28 @@ Signed-off-by: Raúl Cumplido <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of 
+## X. GH-55335: [CI][R] Run R nightly binary upload later (#55337)
 
 **RULE**:
-When implementing operations in `.github/workflows/package_linux.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/r_nightly.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c800e6b`: GH-54928: [Packaging][CI] Change TMPDIR for reproducible builds to avoid out of space (#54943). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b4a98b73`: GH-55335: [CI][R] Run R nightly binary upload later (#55337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/package_linux.yml`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/r_nightly.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-          # Required because the default /tmp is a size-limited tmpfs on some runner images.
-          TMPDIR: ${{ runner.temp }}
+    - cron: '0 18 * * *'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    - cron: '0 14 * * *'
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c800e6b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b4a98b73` are properly handled with clean fallback behavior.

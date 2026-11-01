@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source**: github ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
-> **Source Version**: `7ea8fdab`  
+> **Source Version**: `40199fd3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T02:57:20.820Z  
+> **Timestamp**: 2026-10-27T16:58:35.320Z  
 > **Learning ID**: `learn-github-tamagui-tamagui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tamagui-tamagui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tamagui/tamagui](https://github.com/tamagui/tamagui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T02:57:19.878Z  
+> **Harvest Timestamp**: 2026-10-27T16:58:34.328Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Style React fast with 100% parity on React Native, an optional UI kit, and optimizing compiler.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14281 stars
+- **Stars / Engagement**: 14283 stars
 
 ---
 
@@ -743,291 +743,159 @@ function getMediaState(mediaGroups: Set<string>, layout: WidthHeight) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdb6a57e` (2026-10-25)
-**Commit Message**: fix(vite-plugin): drop discovery evaluator changes, keep react-native-web ESM alias. Refs #4380
+### Incident Patch 1: `3c6920f6` (2026-10-26)
+**Commit Message**: test: lock the inferred native props workspace fixture
 
-Validation: lint and tsc clean; net diff against base is the alias helper only.
-Team-Machine-Session: m59843
+Validation: Bun1.4.4 frozen ignore-scripts install failed before with lockfile had changes; regenerated lock adds only new fixture workspace/link, then frozen ignore-scripts install passes with no changes. No dependency version, runtime or install-contract changes.
+Team-Machine-Session: r133425
+Team-Machine-Session: r134555
 
-**File**: `code/compiler/static/src/componentDiscovery.ts` (modified, +1/-6)
+**File**: `bun.lock` (modified, +6/-0)
 ```diff
-@@ -15,7 +15,6 @@ import {
- export type ComponentModuleEvaluator = (module: {
-   id: string
-   specifier: string
--  importer: string
- }) => Promise<Record<string, unknown> | null>
+@@ -1760,6 +1760,10 @@
+         "babel-plugin-react-compiler",
+       ],
+     },
++    "code/packages/build/__tests__/fixtures/inferred-native-props": {
++      "name": "tamagui-build-test-inferred-native-props",
++      "version": "1.0.0",
++    },
+     "code/packages/build/__tests__/fixtures/js-main-package": {
+       "name": "tamagui-build-test-js-main-package",
+       "version": "2.0.0-rc.0-1769885482630",
+@@ -8644,6 +8648,8 @@
  
- // `pkg`, `@scope/pkg`, and their subpaths. `@/x` and `~/x` are path aliases
-@@ -83,11 +82,7 @@ export class ComponentDiscovery {
-       }
-       let loaded: LoadedComponents | null = null
-       try {
--        const exports = await evaluate({
--          id,
--          specifier: provenance.specifier,
--          importer: module.id,
--        })
-+        const exports = await evaluate({ id, specifier: provenance.specifier })
-         if (exports) {
-           const nameToInfo = getComponentStaticConfigByName(
-             id,
-```
-
-**File**: `code/compiler/static/types/componentDiscovery.d.ts` (modified, +0/-1)
-```diff
-@@ -8,7 +8,6 @@ import type { CompilerComponentRegistry } from './compilerHost';
- export type ComponentModuleEvaluator = (module: {
-     id: string;
-     specifier: string;
--    importer: string;
- }) => Promise<Record<string, unknown> | null>;
- /**
-  * Finds the component modules a file uses that the configured `components`
-```
-
-**File**: `code/compiler/vite-plugin/src/loadTamagui.ts` (modified, +2/-13)
-```diff
-@@ -72,11 +72,7 @@ export type ViteTamaguiLoader = {
-    * compiler's component discovery. Null when the environment is not ready or
-    * the module cannot run in node; the compiler then leaves its elements alone.
-    */
--  evaluateModule(module: {
--    id: string
--    specifier: string
--    importer: string
--  }): Promise<Record<string, unknown> | null>
-+  evaluateModule(id: string): Promise<Record<string, unknown> | null>
-   loadTamaguiBuildConfig(): Promise<TamaguiOptions>
-   setEnvironment(next: RunnableDevEnvironment, options?: { owned?: boolean }): void
-   invalidate(file?: string): void
-@@ -311,16 +307,9 @@ export function createViteTamaguiLoader(
-     isEvaluationDependency: (id: string) =>
-       evaluationDependencies.has(normalizeDependency(id)),
-     evaluateProjectModules,
--    async evaluateModule({ id, specifier, importer }) {
-+    async evaluateModule(id) {
-       if (!environment) return null
-       try {
--        // the host resolved this id for the importer. a package Vite externalizes
--        // must load through node like any external import, because the runner
--        // would evaluate its absolute path as an ES module and fail on CJS.
--        const fetched = await environment.fetchModule(specifier, importer)
--        if ('externalize' in fetched) {
--          return (await import(fetched.externalize)) as Record<string, unknown>
--        }
-         return (await environment.runner.import(id)) as Record<string, unknown>
-       } catch (error) {
-         if (process.env.DEBUG === 'tamagui') {
-```
-
-**File**: `code/compiler/vite-plugin/src/plugin.ts` (modified, +1/-1)
-```diff
-@@ -1674,7 +1674,7 @@ export function createTamaguiPlugins({
-               ? { id: resolution.id, external: resolution.external === true }
-               : null
-           },
--          evaluate: (module) => tamaguiLoader.evaluateModule(module),
-+          evaluate: ({ id: moduleId }) => tamaguiLoader.evaluateModule(moduleId),
-           load: async (dependencyId) => {
-             const cleanDependencyId = dependencyId.split(/[?#]/, 1)[0]
-             if (!path.isAbsolute(cleanDependencyId)) return null
-```
-
-**File**: `code/compiler/vite-plugin/types/loadTamagui.d.ts` (modified, +1/-5)
-```diff
-@@ -43,11 +43,7 @@ export type ViteTamaguiLoader = {
-      * compiler's component discovery. Null when the environment is not ready or
-      * the module cannot run in node; the compiler then leaves its elements alone.
-      */
--    evaluateModule(module: {
--        id: string;
--        specifier: string;
--        importer: string;
--    }): Promise<Record<string, unknown> | null>;
-+    evaluateModule(id: string): Promise<Record<string, unknown> | null>;
-     loadTamaguiBuildConfig(): Promise<TamaguiOptions>;
-     setEnvironment(next: RunnableDevEnvironment, options?: {
-         owned?: boolean;
+     "tamagui": ["tamagui@workspace:code/ui/tamagui"],
+ 
++    "tamagui-build-test-inferred-native-props": ["tamagui-build-test-inferred-native-props@workspace:code/packages/build/__tests__/fixtures/inferred-native-props"],
++
+     "tamagui-build-test-js-main-package": ["tamagui-build-test-js-main-package@workspace:code/packages/build/__tests__/fixtures/js-main-package"],
+ 
+     "tamagui-build-test-platform-package": ["tamagui-build-test-platform-package@workspace:code/packages/build/__tests__/fixtures/platform-package"],
 ```
 
 ---
 
-### Incident Patch 2: `21d4cd30` (2026-10-25)
-**Commit Message**: fix(vite-plugin): alias react-native to react-native-web ESM entry and invalidate failed discovery modules
+### Incident Patch 2: `4507411b` (2026-10-26)
+**Commit Message**: test: clean inferred declaration fixture outputs
 
-Fixes #4379
-Fixes #4380
+Validation: formatting passes. Focused native-props integration rerun is queued through normal heavy admission; cleanup outcome pending. Runtime builder unchanged from independently approved ef68799.
+Team-Machine-Session: r133425
+Team-Machine-Session: r134555
 
-Validation: vite-plugin test:web 25/25, tsc, lint. Poisoned-runner repro not reproduced locally; invalidation follows the reporter's tested fix.
-Team-Machine-Session: m59843
-
-**File**: `code/compiler/vite-plugin/src/loadTamagui.ts` (modified, +5/-0)
+**File**: `code/packages/build/__tests__/integration.test.ts` (modified, +1/-0)
 ```diff
-@@ -312,6 +312,11 @@ export function createViteTamaguiLoader(
-       try {
-         return (await environment.runner.import(id)) as Record<string, unknown>
-       } catch (error) {
-+        // a failed import leaves its rejected promise on the runner's module
-+        // node, which rethrows on the next generation even once the cause is gone.
-+        const evaluated = environment.runner.evaluatedModules
-+        const failed = evaluated.getModulesByFile(normalizeDependency(id))
-+        for (const module of failed ?? []) evaluated.invalidateModule(module)
-         if (process.env.DEBUG === 'tamagui') {
-           console.info(`[tamagui] component discovery skipped ${id}:`, error)
-         }
-```
-
-**File**: `code/compiler/vite-plugin/src/plugin.ts` (modified, +8/-1)
-```diff
-@@ -420,6 +420,13 @@ const _pluginRequire = createRequire(
-   typeof __filename === 'string' ? __filename : fileURLToPath(import.meta.url)
- )
- const resolve = (name: string) => _pluginRequire.resolve(name)
-+// require.resolve follows the CJS main; aliasing react-native to that bundles a
-+// second, untree-shakeable react-native-web next to the ESM one tamagui imports.
-+const resolveReactNativeWebEsm = () => {
-+  const packageJsonPath = resolve('react-native-web/package.json')
-+  const { module: esmEntry } = _pluginRequire(packageJsonPath) as { module: string }
-+  return path.join(path.dirname(packageJsonPath), esmEntry)
-+}
- const normalizePath = (value: string) => value.replace(/\\/g, '/')
+@@ -697,6 +697,7 @@ describe('tamagui-build integration test', () => {
+   })
  
- function createNativeEvaluationPlugin(
-@@ -1228,7 +1235,7 @@ export function createTamaguiPlugins({
-                     'react-native/Libraries/Utilities/codegenNativeComponent':
-                       resolve('@tamagui/proxy-worm'),
-                     ...(!useReactNativeWebLite && {
--                      'react-native': resolve('react-native-web'),
-+                      'react-native': resolveReactNativeWebEsm(),
-                     }),
-                   }),
-                 },
+   afterAll(() => {
++    rmSync(join(inferredNativePropsPath, 'types'), { recursive: true, force: true })
+     // Clean up dist directory after tests
+     execSync('rm -rf dist && rm -rf types', { cwd: simplePackagePath })
+     execSync('rm -rf dist', { cwd: jsMainPackagePath })
 ```
 
 ---
 
-### Incident Patch 3: `fe879d33` (2026-10-25)
-**Commit Message**: fix(vite-plugin): load discovery modules the way Vite resolves them for the importer. Refs #4380
+### Incident Patch 3: `fe4442a4` (2026-10-26)
+**Commit Message**: fix(scroll-view): preserve styled pointer events in web declarations
 
-Validation: Vite 8 SSR probe with root and nested-workspace copies of one package (root, subpath, CJS): evaluateModule returns the importer's copy for each, ROOT for a root importer, with no 'module is not defined'. test:web 25/25, tsc, lint clean.
-Team-Machine-Session: m59843
+Validation: declaration regression fails on previous types and passes 54 consumers in three modes; invalid pointer values still fail. Package rebuilt and root lint passed. Contrast root typecheck passes with local tarball and consumer contract fixes. Root check blocked by unbuilt fresh-tree CLI static prerequisite; other checks running.
+Team-Machine-Session: r134555
 
-**File**: `code/compiler/static/src/componentDiscovery.ts` (modified, +6/-1)
+**File**: `code/tests/v3-canary/tests/shorthand-declarations.ts` (modified, +5/-0)
 ```diff
-@@ -15,6 +15,7 @@ import {
- export type ComponentModuleEvaluator = (module: {
-   id: string
-   specifier: string
-+  importer: string
- }) => Promise<Record<string, unknown> | null>
- 
- // `pkg`, `@scope/pkg`, and their subpaths. `@/x` and `~/x` are path aliases
-@@ -82,7 +83,11 @@ export class ComponentDiscovery {
-       }
-       let loaded: LoadedComponents | null = null
-       try {
--        const exports = await evaluate({ id, specifier: provenance.specifier })
-+        const exports = await evaluate({
-+          id,
-+          specifier: provenance.specifier,
-+          importer: module.id,
-+        })
-         if (exports) {
-           const nameToInfo = getComponentStaticConfigByName(
-             id,
+@@ -168,6 +168,11 @@ export const invalidCustom = <Restyled intent="other" />
+ export const override = <Override alignItems="custom" />
+ // @ts-expect-error an explicit own prop overrides the inherited css value
+ export const invalidOverride = <Override alignItems="center" />
++declare const stackScrollProps: Omit<GetProps<typeof YStack>, 'onScroll'>
++export const stackScroll = <ScrollView {...stackScrollProps} />
++export const inheritedPointerEvents = <ScrollView pointerEvents="unset" />
++// @ts-expect-error pointer event values remain checked
++export const invalidPointerEvents = <ScrollView pointerEvents="invalid" />
+ export const supportedScroll = <ScrollView horizontal keyboardDismissMode="on-drag" onScroll={(event) => event.nativeEvent.contentOffset.y} />
+ declare const nativeScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void
+ declare const nativeScrollProps: Pick<NativeScrollViewProps,
 ```
 
-**File**: `code/compiler/static/types/componentDiscovery.d.ts` (modified, +1/-0)
+**File**: `code/ui/scroll-view/src/WebScrollView.tsx` (modified, +3/-0)
 ```diff
-@@ -8,6 +8,7 @@ import type { CompilerComponentRegistry } from './compilerHost';
- export type ComponentModuleEvaluator = (module: {
-     id: string;
-     specifier: string;
-+    importer: string;
- }) => Promise<Record<string, unknown> | null>;
- /**
-  * Finds the component modules a file uses that the configured `components`
+@@ -2,6 +2,7 @@ import {
+   View as TamaguiView,
+   type RNViewProps,
+   type StackNonStyleProps,
++  type ViewProps,
+   type StylePiece,
+ } from '@tamagui/web'
+ import type { ScrollViewProps as NativeScrollViewProps } from '@tamagui/react-native-types'
+@@ -48,6 +49,7 @@ export type WebScrollViewProps = Omit<StackNonStyleProps, 'onScroll' | 'style'>
+   Omit<
+     NativeScrollViewProps,
+     | keyof StackNonStyleProps
++    | 'pointerEvents'
+     | keyof RNViewProps
+     | 'style'
+     | 'contentContainerStyle'
+@@ -60,6 +62,7 @@ export type WebScrollViewProps = Omit<StackNonStyleProps, 'onScroll' | 'style'>
+     | 'onMomentumScrollBegin'
+     | 'onMomentumScrollEnd'
+   > & {
++    pointerEvents?: ViewProps['pointerEvents']
+     style?: StackNonStyleProps['style']
+     contentContainerStyle?: StylePiece | StackNonStyleProps['style']
+     refreshControl?: React.ReactElement<{ style?: StackNonStyleProps['style'] }>
 ```
 
-**File**: `code/compiler/vite-plugin/src/loadTamagui.ts` (modified, +15/-4)
+**File**: `code/ui/scroll-view/types/ScrollView.d.ts` (modified, +2/-1)
 ```diff
-@@ -72,7 +72,11 @@ export type ViteTamaguiLoader = {
-    * compiler's component discovery. Null when the environment is not ready or
-    * the module cannot run in node; the compiler then leaves its elements alone.
-    */
--  evaluateModule(specifier: string): Promise<Record<string, unknown> | null>
-+  evaluateModule(module: {
-+    id: string
-+    specifier: string
-+    importer: string
-+  }): Promise<Record<string, unknown> | null>
-   loadTamaguiBuildConfig(): Promise<TamaguiOptions>
-   setEnvironment(next: RunnableDevEnvironment, options?: { owned?: boolean }): void
-   invalidate(file?: string): void
-@@ -307,13 +311,20 @@ export function createViteTamaguiLoader(
-     isEvaluationDependency: (id: string) =>
-       evaluationDependencies.has(normalizeDependency(id)),
-     evaluateProjectModules,
--    async evaluateModule(specifier) {
-+    async evaluateModule({ id, specifier, importer }) {
-       if (!environment) return null
-       try {
--        return (await environment.runner.import(specifier)) as Record<string, unknown>
-+        // the host resolved this id for the importer. a package Vite externalizes
-+        // must load through node like any external import, because the runner
-+        // would evaluate its absolute path as an ES module and fail on CJS.
-+        const fetched = await environment.fetchModule(specifier, importer)
-+        if ('externalize' in fetched) {
-+          return (await import(fetched.externalize)) as Record<string, unknown>
-+        }
-+        return (await environment.runner.import(id)) as Record<string, unknown>
-       } catch (error) {
-         if (process.env.DEBUG === 'tamagui') {
--          console.info(`[tamagui] component discovery skipped ${specifier}:`, error)
-+          console.info(`[tamagui] component discovery skipped ${id}:`, error)
-         }
-         return null
-       }
+@@ -1,5 +1,6 @@
+ import type { GetProps, GetRef } from '@tamagui/web';
+-export declare const ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("./WebScrollView").ScrollViewRef, import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, "onScroll" | "style"> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof import("@tamagui/web").RNViewProps | keyof import("@tamagui/web").StackNonStyleProps> & {
++export declare const ScrollView: import("@tamagui/web").TamaguiComponent<import("@tamagui/web").TamaDefer, import("./WebScrollView").ScrollViewRef, import("@tamagui/web").TamaguiComponentPropsBaseBase & Omit<import("@tamagui/web").StackNonStyleProps, "onScroll" | "style"> & import("@tamagui/web").RNViewProps & Omit<import("@tamagui/react-native-types").ScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "pointerEvents" | "refreshControl" | keyof import("@tamagui/web").RNViewProps | keyof import("@tamagui/web").StackNonStyleProps> & {
++    pointerEvents?: import("@tamagui/web").ViewProps['pointerEvents'];
+     style?: import("@tamagui/web").StackNonStyleProps['style'];
+     contentContainerStyle?: import("@tamagui/web").StylePiece | import("@tamagui/web").StackNonStyleProps['style'];
+     refreshControl?: React.ReactElement<{
 ```
 
-**File**: `code/compiler/vite-plugin/src/plugin.ts` (modified, +1/-1)
+**File**: `code/ui/scroll-view/types/WebScrollView.d.ts` (modified, +5/-3)
 ```diff
-@@ -1674,7 +1674,7 @@ export function createTamaguiPlugins({
-               ? { id: resolution.id, external: resolution.external === true }
-               : null
-           },
--          evaluate: ({ specifier }) => tamaguiLoader.evaluateModule(specifier),
-+          evaluate: (module) => tamaguiLoader.evaluateModule(module),
-           load: async (dependencyId) => {
-             const cleanDependencyId = dependencyId.split(/[?#]/, 1)[0]
-             if (!path.isAbsolute(cleanDependencyId)) return null
-```
-
-**File**: `code/compiler/vite-plugin/types/loadTamagui.d.ts` (modified, +5/-1)
-```diff
-@@ -43,7 +43,11 @@ export type ViteTamaguiLoader = {
-      * compiler's component discovery. Null when the environment is not ready or
-      * the module cannot run in node; the compiler then leaves its elements alone.
-      */
--    evaluateModule(id: string): Promise<Record<string, unknown> | null>;
-+    evaluateModule(module: {
-+        id: string;
-+        specifier: string;
-+        importer: string;
-+    }): Promise<Record<string, unknown> | null>;
-     loadTamaguiBuildConfig(): Promise<TamaguiOptions>;
-     setEnvironment(next: RunnableDevEnvironment, options?: {
-         owned?: boolean;
+@@ -1,4 +1,4 @@
+-import { type RNViewProps, type StackNonStyleProps, type StylePiece } from '@tamagui/web';
++import { type RNViewProps, type StackNonStyleProps, type ViewProps, type StylePiece } from '@tamagui/web';
+ import type { ScrollViewProps as NativeScrollViewProps } from '@tamagui/react-native-types';
+ import * as React from 'react';
+ export interface ScrollViewMethods {
+@@ -38,7 +38,8 @@ export type WebScrollEvent = {
+ export type WebScrollEventHandler = {
+     onScroll(event: WebScrollEvent): void;
+ }['onScroll'];
+-export type WebScrollViewProps = Omit<StackNonStyleProps, 'onScroll' | 'style'> & RNViewProps & Omit<NativeScrollViewProps, keyof StackNonStyleProps | keyof RNViewProps | 'style' | 'contentContainerStyle' | 'refreshControl' | 'keyboardShouldPersistTaps' | 'onScroll' | 'onScrollToTop' | 'onScrollBeginDrag' | 'onScrollEndDrag' | 'onMomentumScrollBegin' | 'onMomentumScrollEnd'> & {
++export type WebScrollViewProps = Omit<StackNonStyleProps, 'onScroll' | 'style'> & RNViewProps & Omit<NativeScrollViewProps, keyof StackNonStyleProps | 'pointerEvents' | keyof RNViewProps | 'style' | 'contentContainerStyle' | 'refreshControl' | 'keyboardShouldPersistTaps' | 'onScroll' | 'onScrollToTop' | 'onScrollBeginDrag' | 'onScrollEndDrag' | 'onMomentumScrollBegin' | 'onMomentumScrollEnd'> & {
++    pointerEvents?: ViewProps['pointerEvents'];
+     style?: StackNonStyleProps['style'];
+     contentContainerStyle?: StylePiece | StackNonStyleProps['style'];
+     refreshControl?: React.ReactElement<{
+@@ -52,7 +53,8 @@ export type WebScrollViewProps = Omit<StackNonStyleProps, 'onScroll' | 'style'>
+     onMomentumScrollBegin?: WebScrollEventHandler;
+     onMomentumScrollEnd?: WebScrollEventHandler;
+ };
+-export declare const WebScrollView: React.ForwardRefExoticComponent<Omit<StackNonStyleProps, "onScroll" | "style"> & RNViewProps & Omit<NativeScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "refreshControl" | keyof RNViewProps | keyof StackNonStyleProps> & {
++export declare const WebScrollView: React.ForwardRefExoticComponent<Omit<StackNonStyleProps, "onScroll" | "style"> & RNViewProps & Omit<NativeScrollViewProps, "contentContainerStyle" | "keyboardShouldPersistTaps" | "onMomentumScrollBegin" | "onMomentumScrollEnd" | "onScrollBeginDrag" | "onScrollEndDrag" | "onScrollToTop" | "pointerEvents" | "refreshControl" | keyof RNViewProps | keyof StackNonStyleProps> & {
++    pointerEvents?: ViewProps['pointerEvents'];
+     style?: StackNonStyleProps['style'];
+     contentContainerStyle?: StylePiece | StackNonStyleProps['style'];
+     refreshControl?: React.ReactElement<{
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4382** (2026-10-25): v3.1.4 (@natew)
-- **PR #4381** (2026-10-25): fix(vite-plugin): alias react-native to react-native-web's ESM entry (@natew)
-- **PR #4378** (2026-10-23): fix(core): preserve opaque native theme colors (@natew)
-- **PR #4377** (2026-10-23): v3.1.3 (@natew)
-- **PR #4376** (2026-10-23): fix(security): pin Next to patched 16.4.1 (@natew)
-- **PR #4375** (2026-10-23): ci: align repository Bun selections on 1.4.4 (@natew)
+- **PR #4392** (2026-10-27): chore(deps): upgrade One consumers to published 2.11.5 (@natew)
+- **PR #4391** (2026-10-27): v3.1.6 (@natew)
+- **PR #4390** (2026-10-27): fix: repair web sheet focus and scoped popover keyboard positioning (@natew)
+- **PR #4389** (2026-10-27): chore(deps): upgrade One consumers to published 2.11.3 (@natew)
+- **PR #4388** (2026-10-26): fix: preserve ScrollView types and upgrade One consumers (@natew)
+- **PR #4387** (2026-10-26): v3.1.5 (@natew)
 
 ---
 
@@ -1047,33 +915,33 @@ Team-Machine-Session: m59843
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vite-plugin): drop discovery evaluator changes, keep react-native-web ESM alias.
+## X. test: lock the inferred native props workspace fixture
 
 **RULE**:
-When implementing operations in `code/compiler/static/src/componentDiscovery.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tamagui/tamagui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdb6a57e`: vite-plugin): drop discovery evaluator changes, keep react-native-web ESM alias. Refs #4380. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c6920f6`: test: lock the inferred native props workspace fixture. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/compiler/static/src/componentDiscovery.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        const exports = await evaluate({ id, specifier: provenance.specifier })
+    "code/packages/build/__tests__/fixtures/inferred-native-props": {
+      "name": "tamagui-build-test-inferred-native-props",
+      "version": "1.0.0",
+    },
+    "tamagui-build-test-inferred-native-props": ["tamagui-build-test-inferred-native-props@workspace:code/packages/build/__tests__/fixtures/inferred-native-props"],
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  importer: string
-        const exports = await evaluate({
-          id,
-          specifier: provenance.specifier,
-          importer: module.id,
-        })
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdb6a57e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c6920f6` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md`  
 > **Source**: github ([https://github.com/DouyinFE/semi-design](https://github.com/DouyinFE/semi-design))  
-> **Source Version**: `4289eff2`  
+> **Source Version**: `0580665e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T14:44:27.740Z  
+> **Timestamp**: 2026-10-27T10:47:25.724Z  
 > **Learning ID**: `learn-github-douyinfe-semi-design`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/douyinfe-semi-design-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DouyinFE/semi-design](https://github.com/DouyinFE/semi-design))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T14:44:26.052Z  
+> **Harvest Timestamp**: 2026-10-27T10:47:24.747Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚀A modern, comprehensive, flexible design system and React UI library, AI-friendly built-in.🎨Provide 3000+ Design Tokens, easy to build your design system. Make Semi Design to Any Design.🧑🏻‍💻 Design to Code in one click
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 10420 stars
+- **Stars / Engagement**: 10431 stars
 
 ---
 
@@ -1500,467 +1500,128 @@ export default QueueStyledTransition;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4289eff2` (2026-10-20)
-**Commit Message**: docs: clarify React 19 and Tailwind setup (#3413)
+### Incident Patch 1: `0580665e` (2026-10-26)
+**Commit Message**: docs: clarify production CSS layer order with Tailwind (#3413)
 
-**File**: `content/ecosystem/react19/index-en-US.md` (modified, +6/-6)
+**File**: `content/ecosystem/tailwind/index-en-US.md` (modified, +30/-1)
 ```diff
-@@ -24,7 +24,7 @@ React 19 removed the legacy `ReactDOM.render` API in favor of `createRoot`. The
+@@ -135,6 +135,10 @@ For other build tools, refer to the principle below to wrap Semi CSS in a layer.
+ The configuration methods for Tailwind v3 and v4 are different. Please choose the corresponding configuration method based on the version you are using.
+ </Notice>
  
- ### 2. `ReactDOM.findDOMNode` Removed
- 
--React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. The following Semi components are affected:
-+React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. Semi provides a compatibility fallback starting in 2.95.1; the following components use this DOM resolution capability:
- 
- - `Tooltip` and all popup components based on it (`Popover`, `PopConfirm`, `Dropdown`, etc.)
- 
-@@ -111,12 +111,12 @@ function App() {
- 
- ### Tooltip and Class Component Limitations
- 
--Due to the removal of `ReactDOM.findDOMNode` in React 19, when the children of `Tooltip` (and components based on it like `Popover`, `PopConfirm`, `Dropdown`, etc.) is a **class component**, it may not be able to correctly get the DOM node for positioning.
-+When the child of `Tooltip` (or a component based on it, such as `Popover`, `PopConfirm`, or `Dropdown`) is a **class component**, Semi 2.95.1 and later can resolve its DOM node through a compatibility fallback in React 19. Class components are not categorically unsupported, but the fallback relies on React's internal Fiber structure. Prefer forwarding a real DOM ref or wrapping a custom class component in a DOM element instead of depending on this fallback.
- 
--**Affected scenarios**:
-+**A pattern that relies on the compatibility fallback**:
- 
- ```jsx
--// ❌ Class component as direct child of Tooltip may not position correctly
-+// A class component used directly relies on the DOM resolution fallback
- class MyComponent extends React.Component {
-     render() {
-         return <span {...this.props}>Content</span>;
-@@ -128,7 +128,7 @@ class MyComponent extends React.Component {
- </Tooltip>
- ```
- 
--**Solution**: Wrap the class component with a DOM element
-+**Recommended approach**: Wrap the class component with a DOM element
- 
- ```jsx
- // ✅ Recommended: wrap with a DOM element
-@@ -139,7 +139,7 @@ class MyComponent extends React.Component {
- </Tooltip>
- ```
- 
--**Unaffected scenarios**:
-+**Patterns that do not rely on the class component DOM fallback**:
- 
- - Function components that correctly forward ref using `forwardRef`
- - Native DOM elements (like `<span>`, `<div>`, `<button>`, etc.)
-```
-
-**File**: `content/ecosystem/react19/index.md` (modified, +6/-6)
-```diff
-@@ -24,7 +24,7 @@ React 19 移除了传统的 `ReactDOM.render` API，改为使用 `createRoot`。
- 
- ### 2. `ReactDOM.findDOMNode` 被移除
- 
--React 19 移除了 `ReactDOM.findDOMNode` API，该 API 用于从类组件实例获取对应的 DOM 节点。Semi 的以下组件受影响：
-+React 19 移除了 `ReactDOM.findDOMNode` API，该 API 用于从类组件实例获取对应的 DOM 节点。Semi 从 2.95.1 起提供类组件 DOM 解析的兼容回退，以下组件会使用相关 DOM 解析能力：
- 
- - `Tooltip` 及所有基于它的弹出层组件（`Popover`、`PopConfirm`、`Dropdown` 等）
- 
-@@ -111,12 +111,12 @@ function App() {
- 
- ### Tooltip 与类组件的限制
- 
--由于 React 19 移除了 `ReactDOM.findDOMNode`，当 `Tooltip`（及基于它的 `Popover`、`PopConfirm`、`Dropdown` 等）的 children 是**类组件**时，可能无法正确获取 DOM 节点进行定位。
-+当 `Tooltip`（及基于它的 `Popover`、`PopConfirm`、`Dropdown` 等）的 children 是**类组件**时，Semi 2.95.1 及以上版本可在 React 19 下通过兼容回退解析 DOM 节点。这不代表类组件在 React 19 下不受支持，但回退依赖 React 内部的 Fiber 结构，不建议自定义触发器依赖它；优先转发真实 DOM ref，或用 DOM 元素包裹类组件。
- 
--**受影响的场景**：
-+**依赖兼容回退的写法**：
- 
- ```jsx
--// ❌ 类组件作为 Tooltip 的直接子元素可能无法正确定位
-+// 类组件作为直接子元素时会依赖 DOM 解析兼容回退
- class MyComponent extends React.Component {
-     render() {
-         return <span {...this.props}>Content</span>;
-@@ -128,7 +128,7 @@ class MyComponent extends React.Component {
- </Tooltip>
- ```
- 
--**解决方案**：用 DOM 元素包裹类组件
-+**推荐方案**：用 DOM 元素包裹类组件
- 
- ```jsx
- // ✅ 推荐：用 DOM 元素包裹
-@@ -139,7 +139,7 @@ class MyComponent extends React.Component {
- </Tooltip>
- ```
- 
--**不受影响的场景**：
-+**不依赖类组件 DOM 回退的写法**：
- 
- - 函数组件配合 `forwardRef` 正确转发 ref 的情况
- - 原生 DOM 元素（如 `<span>`、`<div>`、`<button>` 等）
-```
-
-**File**: `content/ecosystem/tailwind/index-en-US.md` (modified, +50/-3)
-```diff
-@@ -29,6 +29,8 @@ There is no effect or component library style exception when using some atomic c
- #### Cause Analysis
- When using Tailwind, Tailwind modifies the dom style through className, which also affects the Semi component library. At the same time, Tailwind enables [Preflight](https://tailwindcss.com/docs/preflight) by default to reset the browser's default style.
- 
-+Projects with Preflight enabled usually do not need an additional `reset-css`. Adding another global reset does not resolve style priority conflicts. If you disable Preflight, choose a reset strategy appropriate for your project.
++<Notice type="warning" title="Ensure the CSS layer order in production">
++The entry import order below preserves the final CSS order in most projects, but the production output and the browser's actual styles are the source of truth. The layer order declaration must take effect before any styles first declare those layers, so normal declarations follow the intended priority: Preflight below Semi, and Semi below utilities. Enabling `cssLayer`, or putting an import on the first source line alone, does not cover every production chunking and CSS extraction setup. Verify the result using the “Check the production output” section below.
++</Notice>
 +
- At this time, depending on the configuration of your project and the import of the entry, there are two possibilities:
- 
- 1. Tailwind is introduced before Semi style, and Semi has higher priority
-@@ -82,7 +84,50 @@ module.exports = {
- };
- ```
- 
--For users who use neither webpack or rspack build, please refer to the principle to layer-wrap semi's css yourself
-+- Vite users: install `@douyinfe/semi-vite-plugin` (>= 2.98.0) and enable `cssLayer` in your existing React project's Vite configuration. This plugin processes Semi styles; it does not replace Tailwind's own build configuration.
-+
-+```shell
-+npm install -D @douyinfe/semi-vite-plugin
-+```
-+
-+For **Tailwind v4** with `@tailwindcss/vite`:
-+
-+```shell
-+npm install -D tailwindcss@^4 @tailwindcss/vite@^4
-+```
-+
-+```ts
-+// vite.config.ts
-+import { defineConfig } from 'vite';
-+import react from '@vitejs/plugin-react';
-+import tailwindcss from '@tailwindcss/vite';
-+import semiTheming from '@douyinfe/semi-vite-plugin';
-+
-+export default defineConfig({
-+    plugins: [
-+        react(),
-+        tailwindcss(),
-+        semiTheming({ cssLayer: true }),
-+    ],
-+});
-+```
-+
-+For **Tailwind v3**, retain your existing Tailwind PostCSS configuration. Do not install or use `@tailwindcss/vite`; configure Vite as follows:
-+
-+```ts
-+// vite.config.ts
-+import { defineConfig } from 'vite';
-+import react from '@vitejs/plugin-react';
-+import semiTheming from '@douyinfe/semi-vite-plugin';
-+
-+export default defineConfig({
-+    plugins: [react(), semiTheming({ cssLayer: true })],
-+});
-+```
-+
-+For either Vite setup, continue with the next section to configure the layer order and entry CSS for your Tailwind version. If you also need a theme package, add `theme` and other options to the same `semiTheming` configuration; see [Customize Theme](/en-US/advanced/customize-theme).
-+
-+For other build tools, refer to the principle below to wrap Semi CSS in a layer.
- 
- ** 3. Modify Tailwind entry configuration**
- 
-@@ -92,9 +137,11 @@ The configuration methods for Tailwind v3 and v4 are different. Please choose th
- 
  **Tailwind v4 Configuration:**
  
-+Include Tailwind's default `components` layer before `utilities` in the initial order declaration. Otherwise, Tailwind's later declaration appends `components` after the known layers, allowing custom component styles in that layer to override utility classes.
+ Include Tailwind's default `components` layer before `utilities` in the initial order declaration. Otherwise, Tailwind's later declaration appends `components` after the known layers, allowing custom component styles in that layer to override utility classes.
+@@ -156,7 +160,7 @@ import { Button } from '@douyinfe/semi-ui';
+ 
+ <Notice type="warning" title="Important">
+ 
+-`semi-layer.css` must be imported before any CSS file containing `@import "tailwindcss";` and before any Semi component imports, otherwise the CSS Layer order will be incorrect. It is recommended to place it on the first line of the entry file.
++In the source entry, import `semi-layer.css` before any CSS file containing `@import "tailwindcss";` and before any Semi component imports, preferably on the first line. Also ensure that the layer order declaration precedes the relevant layer styles in the production output.
+ 
+ </Notice>
+ 
+@@ -187,6 +191,31 @@ Modify it to (copy directly):
+ 
+ And import the above modified file at the **top** of the project's JS entry file (i.e. App.tsx or index.js). (Usually a Tailwind project has already processed the import of the above files, just put the import statement before all import statements)
+ 
++**4. Check the production output (applies to Tailwind v3 and v4)**
 +
- 1. Create a CSS file (e.g., `semi-layer.css`) with the following content:
- ```css
--@layer theme, base, semi, utilities;
-+@layer theme, base, semi, components, utilities;
- ```
++After configuration, run the project's production build and preview its output. A working development server or a successful build alone is not sufficient verification:
++
++1. Inspect the order of `<link rel="stylesheet">` / `<style>` elements in the generated HTML and the content order of their CSS files. Ensure that the complete layer order declaration precedes the first declaration of the relevant layers. This means cascade order in the document and stylesheets, not the order in which network requests finish.
++2. With `manualChunks`, shared dependency chunks, or other CSS extraction settings, Semi CSS may appear before the entry CSS. For example, if `@layer semi { ... }` appears before `@layer theme, base, semi, components, utilities;`, the latter cannot reorder the already registered `semi` layer, so Preflight may override Semi instead. Even when the build emits a single CSS file, check the declaration order inside it.
++3. In the production preview, check both default component styles and utility overrides. For example, verify the Button background and padding, and confirm that an explicitly applied padding utility still works.
++
++If entry imports cannot guarantee the production order, declare the layer order in the HTML `<head>` before all other styles. Keep the existing Tailwind entry CSS and the Semi plugin's `cssLayer` configuration. For example, a Vite project using Tailwind v4 can add the following to `index.html`:
++
++```html
++<head>
++    <style>@layer theme, base, semi, components, utilities;</style>
++    <!-- Other styles and entry scripts -->
++</head>
++```
++
++For Tailwind v3, replace the declaration inside the `<style>` element with:
++
++```css
++@layer tailwind-base, semi, tailwind-components, tailwind-utils;
++```
++
++If the project uses a strict Content Security Policy (CSP), authorize the inline style with an appropriate nonce/hash, or use a separate stylesheet guaranteed to load first, and verify the production output order again. Do not disable CSP for this declaration.
++
  
- 2. Import this file at the **very top** of your project's JS entry file (e.g., `main.tsx`, `App.tsx`, or `index.js`), before all other import statements:
-@@ -149,7 +196,7 @@ CSS Layer requires a browser version higher than Chromium 99 <a target="_blank"
- #### Principle
- Through the CSS Layer feature, priority setting of styles from different sources is achieved.
- 
--After enabling the plugin, all Semi styles will be wrapped by `@layer {xxxx}`. In addition, we also manually set the layers of various types of Tailwind styles in the project.
-+The plugin wraps Semi's compiled component and theme styles in `@layer semi { ... }`. Tailwind's style layers are configured separately in the application.
- 
- In addition, we configured the priority order of various Layers:
- ```css
+ <Notice title="Compatible with lower version browsers">
+ CSS Layer requires a browser version higher than Chromium 99 <a target="_blank" href="https://caniuse.com/?search=CSS%20Cascade%20Layers">(compatibility table)</a>, if you The website requires a lower version browser to access and needs to add CSS Layer Polyfill. Please refer to this Polyfill's <a target="_blank" href="https://github.com/csstools/postcss-plugins/tree/main/plugins/postcss-cascade-layers">PostCSS plugin documentation</a>
 ```
 
-**File**: `content/ecosystem/tailwind/index.md` (modified, +50/-3)
+**File**: `content/ecosystem/tailwind/index.md` (modified, +30/-1)
 ```diff
-@@ -31,6 +31,8 @@ Semi 不依赖任何第三方样式库，没有安装 Tailwind 一样可以运
- #### 原因分析
- 使用 Tailwind 时，Tailwind 通过 className 对 dom 进行样式修改，同样作用于 Semi 组件库。同时 Tailwind 默认开启了 [Preflight](https://tailwindcss.com/docs/preflight) 来重置浏览器默认样式。
+@@ -138,6 +138,10 @@ export default defineConfig({
+ Tailwind v3 和 v4 的配置方式不同，请根据你使用的版本选择对应的配置方式。
+ </Notice>
  
-+已启用 Preflight 的项目通常无需再引入 `reset-css`。重复引入其他全局 reset 并不能解决样式优先级冲突；如果手动禁用了 Preflight，请根据项目需要选择重置方案。
++<Notice type="warning" title="必须保证生产环境的 CSS 层顺序">
++以下入口 import 顺序在大多数项目中可以保证最终的 CSS 顺序，但最终应以生产构建产物和浏览器中的实际样式为准。Layer 顺序声明必须在任何首次声明这些层的样式之前生效，才能保证普通样式声明的优先级为 Preflight 低于 Semi、Semi 低于工具类。仅开启 `cssLayer`，或仅在源码中把 import 写在第一行，并不能覆盖所有生产分块和 CSS 提取场景。配置后请按下方“检查生产构建产物”一节验证。
++</Notice>
 +
- 此时根据你项目的配置和入口的 import，有两种可能：
- 
- 1. Tailwind 比 Semi 的样式先引入，Semi 优先级更高
-@@ -84,7 +86,50 @@ module.exports = {
- };
- ```
- 
--使用非 webpack rspack 构建的用户请参照原理自行对 semi 的 css 进行 layer 包裹
-+- Vite 用户：安装 `@douyinfe/semi-vite-plugin`（>= 2.98.0），在现有 React 项目的 Vite 配置中开启 `cssLayer`。该插件处理 Semi 样式，不代替 Tailwind 自身的构建配置。
-+
-+```shell
-+npm install -D @douyinfe/semi-vite-plugin
-+```
-+
-+**Tailwind v4** 使用 `@tailwindcss/vite` 时，配置如下：
-+
-+```shell
-+npm install -D tailwindcss@^4 @tailwindcss/vite@^4
-+```
-+
-+```ts
-+// vite.config.ts
-+import { defineConfig } from 'vite';
-+import react from '@vitejs/plugin-react';
-+import tailwindcss from '@tailwindcss/vite';
-+import semiTheming from '@douyinfe/semi-vite-plugin';
-+
-+export default defineConfig({
-+    plugins: [
-+        react(),
-+        tailwindcss(),
-+        semiTheming({ cssLayer: true }),
-+    ],
-+});
-+```
-+
-+**Tailwind v3** 保留项目已有的 Tailwind PostCSS 配置，不安装或使用 `@tailwindcss/vite`，Vite 配置为：
-+
-+```ts
-+// vite.config.ts
-+import { defineConfig } from 'vite';
-+import react from '@vitejs/plugin-react';
-+import semiTheming from '@douyinfe/semi-vite-plugin';
-+
-+export default defineConfig({
-+    plugins: [react(), semiTheming({ cssLayer: true })],
-+});
-+```
-+
-+以上两种 Vite 配置都需要继续按下一节设置对应 Tailwind 版本的 Layer 顺序和入口 CSS。若还需接入主题包，可在同一个 `semiTheming` 配置中增加 `theme` 等选项，详见[定制主题](/zh-CN/advanced/customize-theme)。
-+
-+使用其他构建工具的用户，可参照原理自行对 Semi 的 CSS 进行 Layer 包裹。
- 
- 
- ** 3. 修改 Tailwind 入口配置**
-@@ -95,9 +140,11 @@ Tailwind v3 和 v4 的配置方式不同，请根据你使用的版本选择对
- 
  **Tailwind v4 配置方式：**
  
-+层顺序需要包含 Tailwind 默认的 `components` 层，确保它位于 `utilities` 之前。否则 Tailwind 后续声明 `components` 时会将其追加到已知层的末尾，导致该层中的自定义组件样式反过来覆盖工具类。
-+
- 1. 创建一个 CSS 文件（如 `semi-layer.css`），内容如下：
- ```css
--@layer theme, base, semi, utilities;
-+@layer theme, base, semi, components, utilities;
- ```
+ 层顺序需要包含 Tailwind 默认的 `components` 层，确保它位于 `utilities` 之前。否则 Tailwind 后续声明 `components` 时会将其追加到已知层的末尾，导致该层中的自定义组件样式反过来覆盖工具类。
+@@ -159,7 +163,7 @@ import { Button } from '@douyinfe/semi-ui';
  
- 2. 在项目的 JS 入口文件（如 `main.tsx`、`App.tsx` 或 `index.js`）的**最顶部**，在所有其他 import 语句之前，import 这个文件：
-@@ -152,7 +199,7 @@ CSS Layer 要求浏览器版本高于 Chromium 99 <a target="_blank" href="https
- #### 原理
- 通过 CSS Layer 特性，实现不同来源的样式的优先级设置。
+ <Notice type="warning" title="重要">
  
--开启插件后，所有的 Semi 样式都会被 `@layer {xxxx}` 包裹。另外，我们也手动设置了项目中的 Tailwind 的各种类型的样式的 Layer。
-+插件将编译生成的 Semi 组件及主题样式包裹在 `@layer semi { ... }` 中；Tailwind 的各种样式层则由项目单独配置。
+-`semi-layer.css` 必须在任何包含 `@import "tailwindcss";` 的 CSS 文件和任何 Semi 组件的 import 之前引入，否则 CSS Layer 顺序将不正确。建议将其放在入口文件的第一行。
++在源码入口中，`semi-layer.css` 应在任何包含 `@import "tailwindcss";` 的 CSS 文件和任何 Semi 组件的 import 之前引入，建议放在入口文件的第一行；同时仍需确保生产产物中，Layer 顺序声明位于相关层的样式之前。
  
- 另外，我们配置了各种 Layer 的优先级顺序：
- ```css
-```
-
-**File**: `content/show/tooltip/index-en-US.md` (modified, +3/-2)
-```diff
-@@ -25,7 +25,7 @@ At the same time, in order to calculate the positioning of the popup layer, it i
- 
- 1. Functional components wrapped with `forwardRef` pass props and refs to the actual DOM nodes within their children.
- 2. Actual DOM nodes, such as span, div, p, etc.
--3. Class components do not require mandatory ref binding, but must ensure that props can be passed to the actual DOM nodes. (**Note**: This rule only applies to React versions lower than v19; `@douyinfe/semi-ui` is not applicable in React v19. See [React v19 Adaptation Notes](/en-US/start/react19#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9))
-+3. Class components must forward props to the actual DOM node. React 19 removed `findDOMNode`; Semi provides a compatibility fallback for resolving class component DOM nodes starting in 2.95.1. Because this fallback depends on React internals, wrap custom class components in a DOM element or use a function component that correctly forwards a DOM ref. All supported React versions use `@douyinfe/semi-ui`; see the [React 19 guide](/en-US/ecosystem/react19).
- 
- ```jsx live=true noInline=true dir="column"
- import React, { forwardRef } from 'react';
-@@ -51,8 +51,9 @@ function Demo() {
-             <Tooltip content={'semi design'}>
-                 <FCChildren />
-             </Tooltip>
-+            {/* A DOM wrapper avoids relying on the compatibility fallback */}
-             <Tooltip content={'semi design'}>
--                <MyComponent />
-+                <span><MyComponent /></span>
-             </Tooltip>
-             <Tooltip content={'semi design'}>
-                 <span style={style}>DOM</span>
-```
-
-**File**: `content/show/tooltip/index.md` (modified, +3/-2)
-```diff
-@@ -24,7 +24,7 @@ Tooltip 需要将 DOM 事件监听器应用到 children 中，如果子元素是
- 
- 1. 使用 forwardRef 包裹后的函数式组件，将 props 与 ref 透传到 children 内真实的 DOM 节点上
- 2. 真实 DOM 节点, 如 span，div，p...
--3. Class Component，不强制绑定ref，但需要确保 props 可被透传至真实的 DOM 节点上 (**注**: 此条规则仅在 React 版本低于 v19 时使用 @douyinfe/semi-ui 可行， 在 React v19 版本使用 @douyinfe/semi-ui-19 不可行，详情见 [React v19 适配注意事项](/zh-CN/start/react19#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9))
-+3. Class Component，需要确保 props 可被透传至真实的 DOM 节点上。React 19 移除了 `findDOMNode`，Semi 从 2.95.1 起提供类组件 DOM 解析的兼容回退；由于该回退依赖 React 内部结构，推荐用真实 DOM 元素包裹自定义类组件，或改用正确转发 DOM ref 的函数组件。各 React 版本均使用 `@douyinfe/semi-ui`，详情见 [React 19 适配指南](/zh-CN/ecosystem/react19)。
- 
- 
- ```jsx live=true noInline=true dir="column"
-@@ -51,8 +51,9 @@ function Demo() {
-             <Tooltip content={'semi design'}>
-                 <FCChildren />
-             </Tooltip>
-+            {/* 推荐用真实 DOM 元素包裹类组件，避免依赖兼容回退 */}
-             <Tooltip content={'semi design'}>
--                <MyComponent />
-+                <span><MyComponent /></span>
-             </Tooltip>
-             <Tooltip content={'semi design'}>
-                 <span style={style}>DOM</span>
-```
-
-**File**: `content/start/getting-started/index-en-US.md` (modified, +30/-15)
-```diff
-@@ -7,11 +7,14 @@ localeCode: en-US
- order: 2
- ---
- 
--Semi Design is maintained by the Douyin front-end team and provides 70+ ready-to-use React components and the Figam Variant UI Kit. You can import and use it in any React project (new projects are recommended to be created via Rsbuild, CreateReactApp, or Vite). Currently, it supports React v16, v17, v18, and v19 ([React v19 adaptation](/en-US/start/react19)).
-+Semi Design is maintained by the Douyin front-end team and provides 70+ ready-to-use React components and the Figam Variant UI Kit. You can import and use it in any React project (new projects are recommended to be created via Rsbuild, CreateReactApp, or Vite). Currently, it supports React v16, v17, v18, and v19 ([React v19 adaptation](/en-US/ecosystem/react19)).
- 
--If you need to use compile-time customization capabilities such as prefixCls, themes, and CSS Layers, we recommend using Webpack or Rspack/Rsbuild as your engineering build solution. (For ByteDance users, if you are using your company's internal engineering solution, please refer to the Lark documentation for configuration: <a href="https://bytedance.larkoffice.com/wiki/FaRwweDLmigrD0k8wLgcDaQtnbb" target="_blank">Semi Engineering FAQ</a>)
-+For compile-time customization such as prefixCls, themes, and CSS Layers, use the Semi plugin for your build tool. Webpack, Rspack/Rsbuild, and Vite are supported; see [Customize Theme](/en-US/advanced/customize-theme) and [With TailwindCSS](/en-US/ecosystem/tailwind). (For ByteDance users, if you are using your company's internal engineering solution, please refer to the Lark documentation for configuration: <a href="https://bytedance.larkoffice.com/wiki/FaRwweDLmigrD0k8wLgcDaQtnbb" target="_blank">Semi Engineering FAQ</a>)
-+
-+<Notice title='React Version Compatibility'>
-+
-+React 16, 17, 18, and 19 all use the same package, `@douyinfe/semi-ui`. React 19 projects must import `@douyinfe/semi-ui/react19-adapter` in the application entry before using Semi components; there is no need to install `@douyinfe/semi-ui-19`. See the [React 19 guide](/en-US/ecosystem/react19) for migration steps and limitations.
- 
--<Notice title='Important Notes'> The component package @douyinfe/semi-ui is suitable for React versions lower than v19. If using React v19, please use @douyinfe/semi-ui-19. In all examples below, @douyinfe/semi-ui can be replaced with @douyinfe/semi-ui-19.
  </Notice>
  
- ## 1. Install Library
-@@ -29,25 +32,38 @@ pnpm add @douyinfe/semi-ui
- ## 2. Use components in a modular way 💫
+@@ -190,6 +194,31 @@ Tailwind v3 入口的 CSS 通常是包含了下面三行的文件
  
- `Semi` provides esm format dist, and the css of the component is only imported by the corresponding js.  
--When used in `Webpack`, `Rspack`, `create-react-app` or `Vite` projects, there is no need to configure any compilation items.   
-+With the default theme, `Webpack`, `Rspack`, `create-react-app`, and `Vite` projects generally do not need a Semi-specific build plugin. For theme customization or Tailwind layers, follow the build configuration in the corresponding guide.
- All related resources are packaged on-demand at build process. Tree shaking will work without additional configuration.
+ 并在项目的 JS 入口文件（即 App.tsx 或 index.js）处**最上方** import 上面修改的文件。（通常一个 Tailwind 项目对于上面文件的 import 已经处理好，只要将该 import 语句提到所有 import 语句前即可）
  
-+For **React 19**, add the following import to your application entry before using any Semi components. React 16/17/18 projects do not need this import:
++**4. 检查生产构建产物（Tailwind v3 / v4 均适用）**
 +
-+```js
-+// main.tsx or index.tsx, React 19 only
-+import '@douyinfe/semi-ui/react19-adapter';
++完成配置后，请运行项目的生产构建和产物预览，不能仅以开发模式正常或构建成功作为验证依据：
++
++1. 检查生成的 HTML 中 `<link rel="stylesheet">` / `<style>` 的顺序，以及对应 CSS 文件中的内容顺序，确认完整的 Layer 顺序声明出现在相关层第一次被声明之前。这里指文档和样式表中的层叠顺序，不是网络请求完成的先后。
++2. 如果使用 `manualChunks`、共享依赖分块或其他 CSS 提取配置，Semi 的 CSS 可能被提到入口 CSS 之前。例如，先出现 `@layer semi { ... }`、再出现 `@layer theme, base, semi, components, utilities;`，后者无法重新排列已经注册的 `semi` 层，Preflight 就可能反过来覆盖 Semi。即使最终只生成一个 CSS 文件，也需检查文件内部的声明顺序。
++3. 在生产预览中同时检查默认组件样式和工具类覆盖效果，例如 Button 的背景、padding 是否正常，以及显式设置的 padding 工具类是否仍然生效。
++
++如果入口 import 无法保证生产顺序，可以将 Layer 顺序声明放在 HTML `<head>` 中所有其他样式之前，先建立层顺序；保留原有 Tailwind 入口 CSS 和 Semi 插件的 `cssLayer` 配置。例如，Tailwind v4 的 Vite 项目可以在 `index.html` 中添加：
++
++```html
++<head>
++    <style>@layer theme, base, semi, components, utilities;</style>
++    <!-- 其他样式和入口脚本 -->
++</head>
 +```
 +
-+Then import components from `@douyinfe/semi-ui` as usual:
++Tailwind v3 则将上述 `<style>` 中的声明替换为：
 +
- ```jsx
--import React, { Component } from 'react';
-+import React from 'react';
- import { Button, Toast } from '@douyinfe/semi-ui';
- 
--class Demo extends React.Component {
--    constructor(props) {
--        super(props);
--    }
-+const SemiApp = () => {
-+    return (
-+        <Button onClick={() => Toast.warning({ content: 'welcome' })}>Hello Semi</Button>
-+    );
-+};
- 
--    render() {
--        return <Button onClick={() => Toast.warning({ content: 'welcome' })}>Hello Semi</Button>;
--    }
--}
-+export default SemiApp;
- ```
- 
--> It is recommended to import [reset.css](https://www.npmjs.com/package/reset-css) into the project, which can avoid introducing the default style of the browser.
-+> If your project does not already have a CSS reset, consider [reset.css](https://www.npmjs.com/package/reset-css) to reduce differences between browser defaults. If Tailwind CSS Preflight is enabled, an additional reset.css is usually unnecessary; avoid applying redundant resets. If Preflight is disabled, choose a reset strategy appropriate for your project. See [With TailwindCSS](/en-US/ecosystem/tailwind) for style priority configuration.
-+
-+### On-demand loading and automatic imports
-+
-+On-demand loading is different from omitting `import` statements in source code. The explicit imports above allow your build tool to perform tree shaking; an automatic import plugin is not required for on-demand bundling.
-+
-+Official build plugins such as `@douyinfe/semi-vite-plugin` and `@douyinfe/semi-webpack-plugin` handle themes, CSS prefixes, and styles;
-```
-
-**File**: `content/start/getting-started/index.md` (modified, +26/-8)
-```diff
-@@ -8,13 +8,15 @@ order: 2
- ---
- 
- Semi Design 由抖音前端团队负责维护，提供 React 版本开箱即用的70+ 组件、 Figam Variant UI Kit  
--你可在任意 React 项目中引入使用 （新项目更推荐通过 Rsbuild、CreateReactApp、Vite 新建），当前支持搭配 React v16、v17、v18 、v19（[React v19 适配](/zh-CN/start/react19)）版本使用  
-+你可在任意 React 项目中引入使用 （新项目更推荐通过 Rsbuild、CreateReactApp、Vite 新建），当前支持搭配 React v16、v17、v18 、v19（[React v19 适配](/zh-CN/ecosystem/react19)）版本使用
- 
--若你需要使用 prefixCls、主题、CSS Layer等编译时定制能力的场景，我们更推荐使用 Webpack 或 Rspack/Rsbuild 作为工程化构建方案  
-+若你需要使用 prefixCls、主题、CSS Layer 等编译时定制能力，可使用对应的 Semi 构建插件，支持 Webpack、Rspack/Rsbuild 和 Vite。配置见[定制主题](/zh-CN/advanced/customize-theme)；与 Tailwind 搭配时另请参阅 [Tailwind 搭配使用](/zh-CN/ecosystem/tailwind)。
- （字节跳动用户，若使用的是公司内部相关工程化方案，配置请查阅飞书文档：<a href="https://bytedance.larkoffice.com/wiki/FaRwweDLmigrD0k8wLgcDaQtnbb" target="_blank">Semi工程化 FAQ</a>）
- 
--<Notice title='注意事项'>
--组件包 @douyinfe/semi-ui 适用于 React 版本低于 v19 的情况，如果使用 React v19，请使用 @douyinfe/semi-ui-19，下文中所有示例中的 @douyinfe/semi-ui 均可替换为 @douyinfe/semi-ui-19。
-+<Notice title='React 版本说明'>
-+
-+React 16、17、18、19 均使用同一个组件包 `@douyinfe/semi-ui`。React 19 项目需在应用入口、首次使用 Semi 组件前导入 `@douyinfe/semi-ui/react19-adapter`，无需另装 `@douyinfe/semi-ui-19`。旧包的迁移步骤和使用限制见 [React 19 适配指南](/zh-CN/ecosystem/react19)。
-+
- </Notice>
- 
- ## 1、安装 Semi
-@@ -34,21 +36,37 @@ pnpm add @douyinfe/semi-ui
- 
- ## 2、使用组件
- 
--在 Webpack、Rspack、create-react-app 或 Vite 项目中使用时，无需进行任何编译项配置，直接使用即可。构建时所有相关资源均会按需打包    
-+仅使用默认主题时，在 Webpack、Rspack、create-react-app 或 Vite 项目中通常无需额外的 Semi 编译插件，组件样式会随组件引入。定制主题或配置 Tailwind 样式层时，请参考对应指南中的构建配置。
-+
-+**React 19 项目**先在应用入口添加以下导入，确保在使用 Semi 组件之前完成适配。React 16/17/18 项目不需要此导入：
-+
-+```js
-+// main.tsx 或 index.tsx，仅 React 19 项目需要
-+import '@douyinfe/semi-ui/react19-adapter';
++```css
++@layer tailwind-base, semi, tailwind-components, tailwind-utils;
 +```
 +
-+然后在组件文件中统一从 `@douyinfe/semi-ui` 导入：
- 
- ```jsx
--import React, { Component } from 'react';
--// 如果为 React v19，需要从 @douyinfe/semi-ui-19 中导出组件
-+import React from 'react';
- import { Button, Toast } from '@douyinfe/semi-ui';
- 
- const SemiApp = () => {
-     return (
-         <Button onClick={() => Toast.warning({ content: 'welcome' })}>Hello Semi</Button>
-     );
- };
++如果项目启用了严格的 Content Security Policy（CSP），请为内联样式配置允许的 nonce/hash，或使用确保最先加载的独立样式表，并再次检查生产产物顺序；不要为了该声明关闭 CSP。
 +
-+export default SemiApp;
- ```
  
--> 推荐在项目中引入 [reset.css](https://www.npmjs.com/package/reset-css)，它可以重置浏览器自带的默认样式，避免不同UA之间的样式差异。
-+> 如果项目尚未使用样式重置方案，可引入 [reset.css](https://www.npmjs.com/package/reset-css)，以减少浏览器默认样式差异。使用 Tailwind CSS 且已启用 Preflight 时，通常无需再引入 reset.css，避免重复重置；如果禁用了 Preflight，请根据项目需要选择重置方案。Tailwind 与 Semi 的样式优先级配置见 [Tailwind 搭配使用](/zh-CN/ecosystem/tailwind)。
-+
-+### 按需加载与自动导入
-+
-+按需加载与省略源码中的 `import` 是两回事。上述显式导入方式可由构建工具进行 tree shaking，无需为了按需打包额外配置自动导入插件。
-+
-+`@douyinfe/semi-vite-plugin`、`@douyinfe/semi-webpack-plugin` 等官方构建插件用于主题、CSS 前缀和样式处理，不会自动生成 `Button`、`Toast` 等 JSX 组件的 import，也不提供组件自动导入 resolver。本文推荐保留显式导入，使用编辑器的自动导入功能；若选择第三方自动导入工具，请按该工具的 React/JSX 支持情况自行配置。
- 
- ## 3、在 NextJs 中使用
- 
+ <Notice title="兼容低版本浏览器">
+ CSS Layer 要求浏览器版本高于 Chromium 99 <a target="_blank" href="https://caniuse.com/?search=CSS%20Cascade%20Layers">(兼容性表格)</a>，如果你的网站需要低版本浏览器访问，需要添加 CSS Layer 的 Polyfill，请参考此 Polyfill 的 <a target="_blank" href="https://github.com/csstools/postcss-plugins/tree/main/plugins/postcss-cascade-layers">PostCSS 插件文档</a>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4058** (closed): docs(sidesheet): 更正 height 的默认值 (@smile-alive)
 - **PR #3423** (2026-10-20): fix(spin): 修复 delay 定时器重复创建和持续重渲染的问题 (@smile-alive)
 - **PR #3421** (2026-10-20): fix(switch): 修复 Form.Switch 失焦时不触发校验的问题 (@smile-alive)
 - **PR #3419** (2026-10-20): fix(form): 修复仅在字段上设置栅格布局时渲染报错的问题 (@smile-alive)
 - **PR #3417** (2026-10-20): fix(notification): 修复 useNotification 重渲染后无法关闭通知的问题 (@smile-alive)
 - **PR #3415** (2026-10-20): fix(highlight): 修复搜索词含 undefined 时渲染报错的问题 (@smile-alive)
-- **PR #3411** (2026-10-20): fix(upload): 修复粘贴上传未跟随 disabled 和 addOnPasting 更新的问题 (@smile-alive)
 
 ---
 
@@ -1980,38 +1641,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: clarify React 19 and Tailwind setup (#3413)
+## X. docs: clarify production CSS layer order with Tailwind (#3413)
 
 **RULE**:
-When implementing operations in `content/ecosystem/react19/index-en-US.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DouyinFE/semi-design. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `content/ecosystem/tailwind/index-en-US.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DouyinFE/semi-design. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4289eff2`: docs: clarify React 19 and Tailwind setup (#3413). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0580665e`: docs: clarify production CSS layer order with Tailwind (#3413). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `content/ecosystem/react19/index-en-US.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `content/ecosystem/tailwind/index-en-US.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. Semi provides a compatibility fallback starting in 2.95.1; the following components use this DOM resolution capability:
-When the child of `Tooltip` (or a component based on it, such as `Popover`, `PopConfirm`, or `Dropdown`) is a **class component**, Semi 2.95.1 and later can resolve its DOM node through a compatibility fallback in React 19. Class components are not categorically unsupported, but the fallback relies on React's internal Fiber structure. Prefer forwarding a real DOM ref or wrapping a custom class component in a DOM element instead of depending on this fallback.
-**A pattern that relies on the compatibility fallback**:
-// A class component used directly relies on the DOM resolution fallback
-**Recommended approach**: Wrap the class component with a DOM element
-**Patterns that do not rely on the class component DOM fallback**:
+<Notice type="warning" title="Ensure the CSS layer order in production">
+The entry import order below preserves the final CSS order in most projects, but the production output and the browser's actual styles are the source of truth. The layer order declaration must take effect before any styles first declare those layers, so normal declarations follow the intended priority: Preflight below Semi, and Semi below utilities. Enabling `cssLayer`, or putting an import on the first source line alone, does not cover every production chunking and CSS extraction setup. Verify the result using the “Check the production output” section below.
+</Notice>
+
+In the source entry, import `semi-layer.css` before any CSS file containing `@import "tailwindcss";` and before any Semi component imports, preferably on the first line. Also ensure that the layer order declaration precedes the relevant layer styles in the production output.
+**4. Check the production output (applies to Tailwind v3 and v4)**
+
+After configuration, run the project's production build and preview its output. A working development server or a successful build alone is not sufficient verification:
+
+1. Inspect the order of `<link rel="
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-React 19 removed the `ReactDOM.findDOMNode` API, which was used to get the DOM node from a class component instance. The following Semi components are affected:
-Due to the removal of `ReactDOM.findDOMNode` in React 19, when the children of `Tooltip` (and components based on it like `Popover`, `PopConfirm`, `Dropdown`, etc.) is a **class component**, it may not be able to correctly get the DOM node for positioning.
-**Affected scenarios**:
-// ❌ Class component as direct child of Tooltip may not position correctly
-**Solution**: Wrap the class component with a DOM element
-**Unaffected scenarios**:
+`semi-layer.css` must be imported before any CSS file containing `@import "tailwindcss";` and before any Semi component imports, otherwise the CSS Layer order will be incorrect. It is recommended to place it on the first line of the entry file.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4289eff2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0580665e` are properly handled with clean fallback behavior.

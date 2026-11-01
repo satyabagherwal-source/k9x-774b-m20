@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source**: github ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
-> **Source Version**: `37f49f24`  
+> **Source Version**: `146f7699`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:34:08.329Z  
+> **Timestamp**: 2026-10-30T13:58:26.000Z  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:34:07.948Z  
+> **Harvest Timestamp**: 2026-10-30T13:53:23.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7949 stars
+- **Stars / Engagement**: 7961 stars
 
 ---
 
@@ -917,16 +917,13 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5162** (2026-10-23): **feat(workflow): support serviceAccountName for task pods**
-  *Symptoms*: ## Why  Workflow Task scripts need dedicated ServiceAccounts so users can grant task-specific permissions without extending the shared default account.  Closes #5154.  ## What changed  - Add optional `task.serviceAccountName` and pass it to the generated Pod. - Regenerate CRDs, Swagger, and the UI API client, and add a changelog entry.  ## Scope  Each Task refers to an existing ServiceAccount in its Pod namespace. Users create the account and configure RBAC.  ## Blast radius  Omitted or empty names preserve the current Kubernetes default-account behavior. Existing node selectors and tolerations remain unchanged.  ## Verification  - `make generate` and UI OpenAPI code generation completed. - Existing Workflow API validation and type tests, focused Go vet, and standalone checks of four account configurations through the actual Pod constructor with a fake client passed. Generated CRD and Swagger schemas were checked. - All 9 OpenAPI generator tests and `pnpm build` passed.  UI lint reports 251 errors and 10 warnings, all in files unchanged from the base commit. No modified file has a lint diagnostic. No live-cluster test was run. 
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5162?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `0%` with `3 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 31.87%. Comparing base ([`9a80e21`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/9a80e21f6a06b3648dbd1fabd7ecd26c54846ff8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`9040bc0`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/9040bc0fcf409c5b4ffd3b4d30a41c78f0725224?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5162?drop
-  > Thanks for implementing and merging this feature!  Do you know when a new Chaos Mesh Helm chart version including this change will be released?
+- **Issue #5186** (2026-10-29): **ci(e2e): align release-2.8 Kubernetes versions**
+  *Symptoms*: ## What problem does this PR solve?  Reduce repeated E2E work on release-2.8 and align its Kubernetes test versions with master.  ## What's changed and how does it work?  - Run the existing E2E suites on Kubernetes 1.35 and 1.37. - Upgrade Minikube to 1.39.0 and omit Kubernetes patch versions so Minikube selects them from its bundled version table. - Use containerd for the test clusters and configure the Chaos Daemon runtime and socket to match.  ## Related changes  - [x] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs), covered by [chaos-mesh/website#475](https://github.com/chaos-mesh/website/pull/475) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.7 - [ ] release-2.6  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits include a Signed-off-by trailer. 
 
-- **Issue #5160** (2026-10-23): **feat: backport workflow task scheduling to release-2.8**
-  *Symptoms*: ## Why  Backport #4790 to `release-2.8` so Workflow Task pods can use `nodeSelector` and `tolerations`.  ## What changed  - Copy the Task scheduling fields into the Pod specification. - Regenerate API artifacts against the release dependencies, including existing definitions missing from the generated UI client. - Update the Unreleased changelog with the original PR link.  ## Scope  Workflow Task scheduling on the 2.8 release branch. Website documentation needs a separate update for the release that includes this feature.  ## Blast Radius  This affects pods created by Workflow Task nodes. Both scheduling fields are optional, so existing task definitions keep their behavior.  ## Verification  - Task package compilation, vet and an external JSON-to-Pod/schema check passed. - Existing API envtest suite, UI production build and 9 OpenAPI generator tests passed. - Repeated generation left all changed files identical. UI lint diagnostics match the release baseline.  Full repository checks and cluster E2E await this PR's CI. 
+- **Issue #5185** (2026-10-29): **chore(hack): remove obsolete scripts and fix image loading**
+  *Symptoms*: ## What problem does this PR solve?  The hack directory contains obsolete E2E entry points and a duplicate Swagger generation script. The PR image download script also passes the repository and run ID as one argument and imports image archives with the wrong command.  ## What's changed and how does it work?  - Remove `e2e.sh`, `run-e2e.sh`, `prepare-e2e.sh`, and `generate_swagger_spec.sh`. CI already runs E2E tests directly, and `make swagger_spec` generates the Swagger spec. - Pass the repository and run ID as separate arguments in `download-image.sh`. - Load the image archives with `docker image load` to match the workflow's `docker image save` output.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [ ] I have updated the `CHANGELOG.md` - [x] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  The commit includes a Signed-off-by trailer. 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5160?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :x: Patch coverage is `0%` with `10 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 23.29%. Comparing base ([`c58b44f`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/c58b44f18ff02f04965be5d439a68658e5d65fde?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`859db49`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/859db492c865d372c48a3e71bbccf2163a3f6421?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on release-2.8.  | [Files with missing lines](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/516
+  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5185?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 32.64%. Comparing base ([`65d6dc0`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/65d6dc0cb4d9a2668bf2a610ba57d5aa1ad1a304?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2ace5b2`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/2ace5b22c97dc4c1aca8c6420e9c63e22d76065b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff    
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -943,514 +940,690 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `37f49f24` (2026-10-23)
-**Commit Message**: feat(workflow): support serviceAccountName for task pods (#5162)
+### Incident Patch 1: `7549178e` (2026-10-29)
+**Commit Message**: fix(selector): skip terminated pods by default (#5150)
 
+Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
+Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -10,6 +10,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Added
- 
-+- Support `serviceAccountName` for Workflow Task pods [#5162](https://github.com/chaos-mesh/chaos-mesh/pull/5162)
- - Support `nodeSelector` and `tolerations` for Workflow Task pods [#4790](https://github.com/chaos-mesh/chaos-mesh/pull/4790)
- - Add the DNSChaos `static` action to resolve exact domain names to configured IPv4 or IPv6 addresses [#4674](https://github.com/chaos-mesh/chaos-mesh/pull/4674)
- - Add Prometheus Operator ServiceMonitor support to the Helm chart [#5076](https://github.com/chaos-mesh/chaos-mesh/pull/5076)
+@@ -75,6 +75,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+ - Fix StressChaos injection failures when inactive cgroup v1 controller directories are present. [#4407](https://github.com/chaos-mesh/chaos-mesh/pull/4407)
+ - Honor reconciliation cancellation in PhysicalMachineChaos requests to chaosd. [#5095](https://github.com/chaos-mesh/chaos-mesh/pull/5095)
+ - Fix `RemoteCluster` readiness to reflect successful setup, reconciliation failures, and deletion [#5157](https://github.com/chaos-mesh/chaos-mesh/pull/5157)
++- Skip Succeeded and Failed pods when `podPhaseSelectors` is unset [#5150](https://github.com/chaos-mesh/chaos-mesh/pull/5150)
+ - Reject PhysicalMachineChaos injection when `spec.uid` is empty and point users to the mutating webhook configuration [#5148](https://github.com/chaos-mesh/chaos-mesh/pull/5148)
+ - Preserve `spec.uid` when importing PhysicalMachineChaos YAML into the Dashboard and submitting the form [#5149](https://github.com/chaos-mesh/chaos-mesh/pull/5149)
+ - Treat physical machine process signals without recovery as one-shot actions to prevent repeated injection and blocked deletion [#5143](https://github.com/chaos-mesh/chaos-mesh/pull/5143)
 ```
 
-**File**: `api/v1alpha1/workflow_types.go` (modified, +6/-0)
+**File**: `pkg/selector/pod/phase_selector.go` (modified, +10/-0)
 ```diff
-@@ -153,6 +153,12 @@ type Task struct {
- 
- 	Labels map[string]string `json:"labels,omitempty"`
- 
-+	// ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+	// The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+	// If omitted or empty, the default ServiceAccount is used.
-+	// +optional
-+	ServiceAccountName string `json:"serviceAccountName,omitempty"`
+@@ -33,6 +33,11 @@ const phaseSelectorName = "phase"
+ type phaseSelector struct {
+ 	reqIncl []labels.Requirement
+ 	reqExcl []labels.Requirement
 +
- 	// NodeSelector is a selector which must be true for the pod to fit on a node.
- 	// Selector which must match a node's labels for the pod to be scheduled on that node.
- 	// +optional
++	// skipTerminated is set when no phase requirement is configured. Pods that
++	// have already terminated (Succeeded or Failed) have no running containers
++	// to inject faults into, so they are not selected by default.
++	skipTerminated bool
+ }
+ 
+ var _ generic.Selector = &phaseSelector{}
+@@ -48,6 +53,9 @@ func (s *phaseSelector) ListFunc(_ client.Reader) generic.ListFunc {
+ func (s *phaseSelector) Match(obj client.Object) bool {
+ 	included := len(s.reqIncl) == 0
+ 	pod := obj.(*v1.Pod)
++	if s.skipTerminated && (pod.Status.Phase == v1.PodSucceeded || pod.Status.Phase == v1.PodFailed) {
++		return false
++	}
+ 	selector := labels.Set{string(pod.Status.Phase): ""}
+ 
+ 	// include pod if one including requirement matches
+@@ -95,5 +103,7 @@ func newPhaseSelector(spec v1alpha1.PodSelectorSpec) (generic.Selector, error) {
+ 	return &phaseSelector{
+ 		reqIncl: reqIncl,
+ 		reqExcl: reqExcl,
++
++		skipTerminated: len(reqs) == 0,
+ 	}, nil
+ }
 ```
 
-**File**: `config/crd/bases/chaos-mesh.org_schedules.yaml` (modified, +6/-0)
+**File**: `pkg/selector/pod/phase_selector_test.go` (modified, +24/-0)
 ```diff
-@@ -11927,6 +11927,12 @@ spec:
-                                 NodeSelector is a selector which must be true for the pod to fit on a node.
-                                 Selector which must match a node's labels for the pod to be scheduled on that node.
-                               type: object
-+                            serviceAccountName:
-+                              description: |-
-+                                ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                If omitted or empty, the default ServiceAccount is used.
-+                              type: string
-                             tolerations:
-                               description: |-
-                                 Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflownodes.yaml` (modified, +12/-0)
-```diff
-@@ -15073,6 +15073,12 @@ spec:
-                                     NodeSelector is a selector which must be true for the pod to fit on a node.
-                                     Selector which must match a node's labels for the pod to be scheduled on that node.
-                                   type: object
-+                                serviceAccountName:
-+                                  description: |-
-+                                    ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                    The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                    If omitted or empty, the default ServiceAccount is used.
-+                                  type: string
-                                 tolerations:
-                                   description: |-
-                                     Tolerations is a list of tolerations attached to the pod.
-@@ -19270,6 +19276,12 @@ spec:
-                       NodeSelector is a selector which must be true for the pod to fit on a node.
-                       Selector which must match a node's labels for the pod to be scheduled on that node.
-                     type: object
-+                  serviceAccountName:
-+                    description: |-
-+                      ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                      The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                      If omitted or empty, the default ServiceAccount is used.
-+                    type: string
-                   tolerations:
-                     description: |-
-                       Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `config/crd/bases/chaos-mesh.org_workflows.yaml` (modified, +6/-0)
-```diff
-@@ -8495,6 +8495,12 @@ spec:
-                             NodeSelector is a selector which must be true for the pod to fit on a node.
-                             Selector which must match a node's labels for the pod to be scheduled on that node.
-                           type: object
-+                        serviceAccountName:
-+                          description: |-
-+                            ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                            The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                            If omitted or empty, the default ServiceAccount is used.
-+                          type: string
-                         tolerations:
-                           description: |-
-                             Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_schedules.yaml` (modified, +6/-0)
-```diff
-@@ -11927,6 +11927,12 @@ spec:
-                                 NodeSelector is a selector which must be true for the pod to fit on a node.
-                                 Selector which must match a node's labels for the pod to be scheduled on that node.
-                               type: object
-+                            serviceAccountName:
-+                              description: |-
-+                                ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                If omitted or empty, the default ServiceAccount is used.
-+                              type: string
-                             tolerations:
-                               description: |-
-                                 Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_workflownodes.yaml` (modified, +12/-0)
-```diff
-@@ -15073,6 +15073,12 @@ spec:
-                                     NodeSelector is a selector which must be true for the pod to fit on a node.
-                                     Selector which must match a node's labels for the pod to be scheduled on that node.
-                                   type: object
-+                                serviceAccountName:
-+                                  description: |-
-+                                    ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                                    The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                                    If omitted or empty, the default ServiceAccount is used.
-+                                  type: string
-                                 tolerations:
-                                   description: |-
-                                     Tolerations is a list of tolerations attached to the pod.
-@@ -19270,6 +19276,12 @@ spec:
-                       NodeSelector is a selector which must be true for the pod to fit on a node.
-                       Selector which must match a node's labels for the pod to be scheduled on that node.
-                     type: object
-+                  serviceAccountName:
-+                    description: |-
-+                      ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                      The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                      If omitted or empty, the default ServiceAccount is used.
-+                    type: string
-                   tolerations:
-                     description: |-
-                       Tolerations is a list of tolerations attached to the pod.
-```
-
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_workflows.yaml` (modified, +6/-0)
-```diff
-@@ -8495,6 +8495,12 @@ spec:
-                             NodeSelector is a selector which must be true for the pod to fit on a node.
-                             Selector which must match a node's labels for the pod to be scheduled on that node.
-                           type: object
-+                        serviceAccountName:
-+                          description: |-
-+                            ServiceAccountName is the name of the ServiceAccount for the task Pod.
-+                            The ServiceAccount must exist in the task Pod's namespace and have the required RBAC permissions.
-+                            If omitted or empty, the default ServiceAccount is used.
-+                          type: string
-                         tolerations:
-                           description: |-
-                             Tolerations is a list of tolerations attached to the pod.
+@@ -41,6 +41,9 @@ func TestPhaseSelectorMatch(t *testing.T) {
+ 	failedSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodFailed)}})
+ 	g.Expect(err).ShouldNot(HaveOccurred())
+ 
++	succeededSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodSucceeded)}})
++	g.Expect(err).ShouldNot(HaveOccurred())
++
+ 	unknownSelector, err := newPhaseSelector(v1alpha1.PodSelectorSpec{PodPhaseSelectors: []string{string(v1.PodUnknown)}})
+ 	g.Expect(err).ShouldNot(HaveOccurred())
+ 
+@@ -49,6 +52,7 @@ func TestPhaseSelectorMatch(t *testing.T) {
+ 		testutils.NewPod(testutils.PodArg{Name: "p2", Status: v1.PodRunning}),
+ 		testutils.NewPod(testutils.PodArg{Name: "p3", Status: v1.PodPending}),
+ 		testutils.NewPod(testutils.PodArg{Name: "p4", Status: v1.PodFailed}),
++		testutils.NewPod(testutils.PodArg{Name: "p5", Status: v1.PodSucceeded}),
+ 	}
+ 
+ 	tcs := []struct {
+@@ -72,6 +76,26 @@ func TestPhaseSelectorMatch(t *testing.T) {
+ 			pod:      pods[0],
+ 			selector: emptySelector,
+ 			match:    true,
++		}, {
++			name:     "empty filter skips failed pod",
++			pod:      pods[3],
++			selector: emptySelector,
++			match:    false,
++		}, {
++			name:     "empty filter skips succeeded pod",
++			pod:      pods[4],
++			selector: emptySelector,
++			match:    false,
++		}, {
++			name:     "empty filter keeps pending pod",
++			pod:      pods[2],
++			selector: emptySelector,
++			match:    true,
++		}, {
++			name:     "filter succeeded",
++			pod:      pods[4],
++			selector: succeededSelector,
++			match:    true,
+ 		}, {
+ 			name:     "filter running and pending",
+ 			pod:      pods[0],
 ```
 
 ---
 
-### Incident Patch 2: `9a80e21f` (2026-10-23)
-**Commit Message**: feat: add nodeSelector and tolerations support for workflow tasks (#4790)
+### Incident Patch 2: `24c8a932` (2026-10-29)
+**Commit Message**: chore(hack): remove obsolete scripts and fix image loading (#5185)
 
-Co-authored-by: Yue Yang <[REDACTED_EMAIL]>
-Signed-off-by: mantaspumputissumup <[REDACTED_EMAIL]>
 Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `hack/download-image.sh` (modified, +2/-2)
 ```diff
-@@ -10,6 +10,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
+@@ -54,7 +54,7 @@ function download_image() {
  
- ### Added
- 
-+- Support `nodeSelector` and `tolerations` for Workflow Task pods [#4790](https://github.com/chaos-mesh/chaos-mesh/pull/4790)
- - Add the DNSChaos `static` action to resolve exact domain names to configured IPv4 or IPv6 addresses [#4674](https://github.com/chaos-mesh/chaos-mesh/pull/4674)
- - Add Prometheus Operator ServiceMonitor support to the Helm chart [#5076](https://github.com/chaos-mesh/chaos-mesh/pull/5076)
- - Add fail-fast rejection behavior for NetworkChaos partitions, using TCP resets for TCP traffic and the platform-default rejection for remaining traffic [#5068](https://github.com/chaos-mesh/chaos-mesh/pull/5068)
-```
-
-**File**: `api/v1alpha1/workflow_types.go` (modified, +10/-0)
-```diff
-@@ -153,6 +153,16 @@ type Task struct {
- 
- 	Labels map[string]string `json:"labels,omitempty"`
- 
-+	// NodeSelector is a selector which must be true for the pod to fit on a node.
-+	// Selector which must match a node's labels for the pod to be scheduled on that node.
-+	// +optional
-+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
-+
-+	// Tolerations is a list of tolerations attached to the pod.
-+	// Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+	// +optional
-+	Tolerations []corev1.Toleration `json:"tolerations,omitempty"`
-+
- 	// TODO: maybe we could specify parameters in other ways, like loading context from file
+     for IMAGE in "chaos-mesh" "chaos-daemon" "chaos-dashboard"
+     do
+-        docker image import .cache/$IMAGE.tar ghcr.io/chaos-mesh/$IMAGE:latest &>/dev/null
++        docker image load --input ".cache/$IMAGE.tar" &>/dev/null
+         echo "Image ghcr.io/chaos-mesh/$IMAGE:latest loaded"
+     done
  }
+@@ -104,4 +104,4 @@ while [[ $# -gt 0 ]]; do
+     esac
+ done
  
+-download_image "$GITHUB_REPOSITORY $GITHUB_ACTION_ID"
++download_image "$GITHUB_REPOSITORY" "$GITHUB_ACTION_ID"
 ```
 
-**File**: `api/v1alpha1/zz_generated.deepcopy.go` (modified, +14/-0)
+**File**: `hack/e2e.sh` (removed, +0/-338)
 ```diff
-@@ -4736,6 +4736,20 @@ func (in *Task) DeepCopyInto(out *Task) {
- 			(*out)[key] = val
- 		}
- 	}
-+	if in.NodeSelector != nil {
-+		in, out := &in.NodeSelector, &out.NodeSelector
-+		*out = make(map[string]string, len(*in))
-+		for key, val := range *in {
-+			(*out)[key] = val
-+		}
-+	}
-+	if in.Tolerations != nil {
-+		in, out := &in.Tolerations, &out.Tolerations
-+		*out = make([]v1.Toleration, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
- }
- 
- // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Task.
+@@ -1,338 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-#
+-# E2E entrypoint script.
+-#
+-
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
+-cd "$ROOT"
+-
+-source "${ROOT}/hack/lib.sh"
+-
+-function usage() {
+-    cat <<'EOF'
+-This script is entrypoint to run e2e tests.
+-Usage: hack/e2e.sh [-h] -- [extra test args]
+-    -h      show this message and exit
+-Environments:
+-    PROVIDER                    Kubernetes provider, e.g. kind, gke, eks, defaults: kind
+-    IMAGE_REGISTRY              image docker registry
+-    IMAGE_TAG                   image tag
+-    SKIP_BUILD                  skip building binaries
+-    SKIP_IMAGE_BUILD            skip build and push images
+-    SKIP_UP                     skip starting the cluster
+-    SKIP_DOWN                   skip shutting down the cluster
+-    KUBE_VERSION                the version of Kubernetes to test against
+-    KUBE_WORKERS                the number of worker nodes (excludes master nodes), defaults: 3
+-    DOCKER_IO_MIRROR            configure mirror for docker.io
+-    GCR_IO_MIRROR               configure mirror for gcr.io
+-    QUAY_IO_MIRROR              configure mirror for quay.io
+-    KIND_DATA_HOSTPATH          (for kind) the host path of data directory for kind cluster, defaults: none
+-    GINKGO_NODES                ginkgo nodes to run specs, defaults: 1
+-    GINKGO_PARALLEL             if set to `y`, will run specs in parallel, the number of nodes will be the number of cpus
+-    GINKGO_NO_COLOR             if set to `y`, suppress color output in default reporter
+-Examples:
+-0) view help
+-    ./hack/e2e.sh -h
+-1) run all specs
+-    ./hack/e2e.sh
+-    GINKGO_NODES=8 ./hack/e2e.sh # in parallel
+-2) limit specs to run
+-    ./hack/e2e.sh -- --ginkgo.focus='Basic'
+-    ./hack/e2e.sh -- --ginkgo.focus='Backup\sand\srestore'
+-    See https://onsi.github.io/ginkgo/ for more ginkgo options.
+-3) reuse the cluster and don't tear down it after the testing
+-    SKIP_UP=y SKIP_DOWN=y ./hack/e2e.sh -- <e2e args>
+-4) use registry mirrors
+-    DOCKER_IO_MIRROR=https://dockerhub.azk8s.cn QUAY_IO_MIRROR=https://quay.azk8s.cn GCR_IO_MIRROR=https://gcr.azk8s.cn ./hack/e2e.sh -- <e2e args>
+-EOF
+-
+-}
+-
+-while getopts "h?" opt; do
+-    case "$opt" in
+-    h|\?)
+-        usage
+-        exit 0
+-        ;;
+-    esac
+-done
+-
+-if [ "${1:-}" == "--" ]; then
+-    shift
+-fi
+-
+-hack::ensure_kind
+-echo "ensured kind"
+-hack::ensure_kubectl
+-echo "ensured kubectl"
+-hack::ensure_kubebuilder
+-echo "ensured kubebuilder"
+-hack::ensure_kustomize
+-echo "ensured kustomize"
+-hack::ensure_kubetest2
+-echo "ensured kubetest2"
+-
+-PROVIDER=${PROVIDER:-kind}
+-IMAGE_REGISTRY=${IMAGE_REGISTRY:-ghcr.io}
+-IMAGE_TAG=${IMAGE_TAG:-latest}
+-CLUSTER=${CLUSTER:-chaos-mesh}
+-KUBECONFIG=${KUBECONFIG:-~/.kube/config}
+-SKIP_BUILD=${SKIP_BUILD:-}
+-SKIP_IMAGE_BUILD=${SKIP_IMAGE_BUILD:-}
+-SKIP_UP=${SKIP_UP:-}
+-SKIP_DOWN=${SKIP_DOWN:-}
+-SKIP_DUMP=${SKIP_DUMP:-}
+-SKIP_TEST=${SKIP_TEST:-}
+-KIND_DATA_HOSTPATH=${KIND_DATA_HOSTPATH:-none}
+-KUBE_VERSION=${KUBE_VERSION:-v1.20.7}
+-KUBE_WORKERS=${KUBE_WORKERS:-3}
+-DOCKER_IO_MIRROR=${DOCKER_IO_MIRROR:-}
+-GCR_IO_MIRROR=${GCR_IO_MIRROR:-}
+-QUAY_IO_MIRROR=${QUAY_IO_MIRROR:-}
+-RUNNER_SUITE_NAME=${RUNNER_SUITE_NAME:-}
+-ARTIFACTS=${ARTIFACTS:-}
+-
+-echo "PROVIDER: $PROVIDER"
+-echo "IMAGE_REGISTRY: $IMAGE_REGISTRY"
+-echo "IMAGE_TAG: $IMAGE_TAG"
+-echo "CLUSTER: $CLUSTER"
+-echo "KUBECONFIG: $KUBECONFIG"
+-echo "SKIP_BUILD: $SKIP_BUILD"
+-echo "SKIP_IMAGE_BUILD: $SKIP_IMAGE_BUILD"
+-echo "SKIP_UP: $SKIP_UP"
+-echo "SKIP_DOWN: $SKIP_DOWN"
+-echo "SKIP_DUMP: $SKIP_DUMP"
+-echo "KIND_DATA_HOSTPATH: $KIND_DATA_HOSTPATH"
+-echo "KUBE_VERSION: $KUBE_VERSION"
+-echo "DOCKER_IO_MIRROR: $DOCKER_IO_MIRROR"
+-echo "GCR_IO_MIRROR: $GCR_IO_MIRROR"
+-echo "QUAY_IO_MIRROR: $QUAY_IO_MIRROR"
+-echo "ARTIFACTS: $ARTIFACTS"
+-echo "KUBE_WORKERS: $KUBE_WORKERS"
+-
+-# https://github.com/kubernetes-sigs/kind/releases/tag/v0.11.1
+-declare -A kind_node_images
+-kind_node_images["v1.11.10"]="kindest/node:v1.11.10@sha256:74c8740710649a3abb169e7f348312deff88fc97d74cfb874c5095ab3866bb42"
+-kind_node_images["v1.12.10"]="kindest/node:v1.12.10@sha256:faeb82453af2f9373447bb63f50bae02b8020968e0889c7fa308e19b348916cb"
+-kind_node_images["v1.13.12"]="kindest/node:v1.13.12@sha256:214476f1514e47fe3f6f54d0f9e24cfb1e4cda449529791286c7161b7f9c08e7"
+-# the following node images support amd64 and arm64
+-
 ```
 
-**File**: `config/crd/bases/chaos-mesh.org_schedules.yaml` (modified, +49/-0)
+**File**: `hack/generate_swagger_spec.sh` (removed, +0/-35)
 ```diff
-@@ -11920,6 +11920,55 @@ spec:
-                               additionalProperties:
-                                 type: string
-                               type: object
-+                            nodeSelector:
-+                              additionalProperties:
-+                                type: string
-+                              description: |-
-+                                NodeSelector is a selector which must be true for the pod to fit on a node.
-+                                Selector which must match a node's labels for the pod to be scheduled on that node.
-+                              type: object
-+                            tolerations:
-+                              description: |-
-+                                Tolerations is a list of tolerations attached to the pod.
-+                                Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                              items:
-+                                description: |-
-+                                  The pod this Toleration is attached to tolerates any taint that matches
-+                                  the triple <key,value,effect> using the matching operator <operator>.
-+                                properties:
-+                                  effect:
-+                                    description: |-
-+                                      Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                      When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                    type: string
-+                                  key:
-+                                    description: |-
-+                                      Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                      If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                    type: string
-+                                  operator:
-+                                    description: |-
-+                                      Operator represents a key's relationship to the value.
-+                                      Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                      Exists is equivalent to wildcard for value, so that a pod can
-+                                      tolerate all taints of a particular category.
-+                                      Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                    type: string
-+                                  tolerationSeconds:
-+                                    description: |-
-+                                      TolerationSeconds represents the period of time the toleration (which must be
-+                                      of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                      it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                      negative values will be treated as 0 (evict immediately) by the system.
-+                                    format: int64
-+                                    type: integer
-+                                  value:
-+                                    description: |-
-+                                      Value is the taint value the toleration matches to.
-+                                      If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                    type: string
-+                                type: object
-+                              type: array
-                             volumes:
-                               description: Volumes is a list of volumes that can be
-                                 mounted by containers in a template.
+@@ -1,35 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-# This script call swag converts Go annotations to Swagger Documentation.
+-#
+-# See https://github.com/golang/go/wiki/Modules#how-can-i-track-tool-dependencies-for-a-module
+-
+-set -euo pipefail
+-
+-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+-PROJECT_DIR="$(dirname "$DIR")"
+-
+-cd $PROJECT_DIR
+-
+-export GOBIN=$PROJECT_DIR/bin
+-export PATH=$GOBIN:$PATH
+-
+-echo "+ Install swaggo/swag"
+-go install github.com/swaggo/swag/cmd/swag@v1.16.6
+-
+-echo "+ Generate swagger spec"
+-swag init -g cmd/chaos-dashboard/main.go --output pkg/dashboard/swaggerdocs --pd
 ```
 
-**File**: `config/crd/bases/chaos-mesh.org_workflownodes.yaml` (modified, +98/-0)
+**File**: `hack/prepare-e2e.sh` (removed, +0/-36)
 ```diff
-@@ -15066,6 +15066,55 @@ spec:
-                                   additionalProperties:
-                                     type: string
-                                   type: object
-+                                nodeSelector:
-+                                  additionalProperties:
-+                                    type: string
-+                                  description: |-
-+                                    NodeSelector is a selector which must be true for the pod to fit on a node.
-+                                    Selector which must match a node's labels for the pod to be scheduled on that node.
-+                                  type: object
-+                                tolerations:
-+                                  description: |-
-+                                    Tolerations is a list of tolerations attached to the pod.
-+                                    Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                                  items:
-+                                    description: |-
-+                                      The pod this Toleration is attached to tolerates any taint that matches
-+                                      the triple <key,value,effect> using the matching operator <operator>.
-+                                    properties:
-+                                      effect:
-+                                        description: |-
-+                                          Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                          When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                        type: string
-+                                      key:
-+                                        description: |-
-+                                          Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                          If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                        type: string
-+                                      operator:
-+                                        description: |-
-+                                          Operator represents a key's relationship to the value.
-+                                          Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                          Exists is equivalent to wildcard for value, so that a pod can
-+                                          tolerate all taints of a particular category.
-+                                          Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                        type: string
-+                                      tolerationSeconds:
-+                                        description: |-
-+                                          TolerationSeconds represents the period of time the toleration (which must be
-+                                          of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                          it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                          negative values will be treated as 0 (evict immediately) by the system.
-+                                        format: int64
-+                                        type: integer
-+                                      value:
-+                                        description: |-
-+                                          Value is the taint value the toleration matches to.
-+                                          If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                        type: string
-+                                    type: object
-+                                  type: array
-                                 volumes:
-                                   description: Volumes is a list of volumes that can
-                                     be mounted by containers in a template.
-@@ -19214,6 +19263,55 @@ spec:
-                     additionalProperties:
-                       type: string
-                     type: object
-+                  nodeSelector:
-+                    additionalProperties:
-+                      type: string
-+                    description: |-
-+                      NodeSelector is a selector which must be true for the pod to fit on a node.
-+                      Selector which must match a node's labels for the pod to be scheduled on that node.
-+                    type: object
-+                  tolerations:
-+                    description: |-
-+                      Tolerations is a list of tolerations attached to the pod.
+@@ -1,36 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-#
+-# This script runs before all e2e jobs to prepare shared files.
+-# This is optional. We only use it in CI to speed up our e2e process.
+-#
+-
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
+-cd $ROOT
+-
+-source "${ROOT}/hack/lib.sh"
+-
+-hack::ensure_kind
+-hack::ensure_kubectl
+-hack::ensure_helm
+-hack::ensure_kubebuilder
+-hack::ensure_kustomize
+-hack::ensure_kubetest2
+\ No newline at end of file
 ```
 
-**File**: `config/crd/bases/chaos-mesh.org_workflows.yaml` (modified, +49/-0)
+**File**: `hack/run-e2e.sh` (removed, +0/-182)
 ```diff
-@@ -8488,6 +8488,55 @@ spec:
-                           additionalProperties:
-                             type: string
-                           type: object
-+                        nodeSelector:
-+                          additionalProperties:
-+                            type: string
-+                          description: |-
-+                            NodeSelector is a selector which must be true for the pod to fit on a node.
-+                            Selector which must match a node's labels for the pod to be scheduled on that node.
-+                          type: object
-+                        tolerations:
-+                          description: |-
-+                            Tolerations is a list of tolerations attached to the pod.
-+                            Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                          items:
-+                            description: |-
-+                              The pod this Toleration is attached to tolerates any taint that matches
-+                              the triple <key,value,effect> using the matching operator <operator>.
-+                            properties:
-+                              effect:
-+                                description: |-
-+                                  Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                  When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                type: string
-+                              key:
-+                                description: |-
-+                                  Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                  If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                type: string
-+                              operator:
-+                                description: |-
-+                                  Operator represents a key's relationship to the value.
-+                                  Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                  Exists is equivalent to wildcard for value, so that a pod can
-+                                  tolerate all taints of a particular category.
-+                                  Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                type: string
-+                              tolerationSeconds:
-+                                description: |-
-+                                  TolerationSeconds represents the period of time the toleration (which must be
-+                                  of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                  it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                  negative values will be treated as 0 (evict immediately) by the system.
-+                                format: int64
-+                                type: integer
-+                              value:
-+                                description: |-
-+                                  Value is the taint value the toleration matches to.
-+                                  If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                type: string
-+                            type: object
-+                          type: array
-                         volumes:
-                           description: Volumes is a list of volumes that can be mounted
-                             by containers in a template.
+@@ -1,182 +0,0 @@
+-#!/usr/bin/env bash
+-# Copyright 2021 Chaos Mesh Authors.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-# http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-
+-set -o errexit
+-set -o nounset
+-set -o pipefail
+-
+-ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
+-cd $ROOT
+-
+-source $ROOT/hack/lib.sh
+-
+-hack::ensure_kubectl
+-hack::ensure_helm
+-hack::ensure_kind
+-
+-
+-PROVIDER=${PROVIDER:-}
+-CLUSTER=${CLUSTER:-}
+-IMAGE_TAG=${IMAGE_TAG:-}
+-E2E_IMAGE=${E2E_IMAGE:-ghcr.io/chaos-mesh/chaos-mesh-e2e:latest}
+-KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config}
+-KUBECONTEXT=${KUBECONTEXT:-kind-chaos-mesh}
+-REPORT_DIR=${REPORT_DIR:-}
+-REPORT_PREFIX=${REPORT_PREFIX:-}
+-GINKGO_NODES=${GINKGO_NODES:-}
+-GINKGO_PARALLEL=${GINKGO_PARALLEL:-n} # set to 'y' to run tests in parallel
+-# If 'y', Ginkgo's reporter will not print out in color when tests are run
+-# in parallel
+-GINKGO_NO_COLOR=${GINKGO_NO_COLOR:-n}
+-GINKGO_STREAM=${GINKGO_STREAM:-y}
+-SKIP_GINKGO=${SKIP_GINKGO:-}
+-# We don't finalizers namespace on failure by default for easier debugging in local development.
+-# TODO support this feature
+-DELETE_NAMESPACE_ON_FAILURE=${DELETE_NAMESPACE_ON_FAILURE:-false}
+-IMAGE_REGISTRY=${IMAGE_REGISTRY:-ghcr.io}
+-
+-if [ -z "$KUBECONFIG" ]; then
+-    echo "error: KUBECONFIG is required"
+-    exit 1
+-fi
+-
+-echo "PROVIDER: $PROVIDER"
+-echo "CLUSTER: $CLUSTER"
+-echo "IMAGE_TAG: $IMAGE_TAG"
+-echo "E2E_IMAGE: $E2E_IMAGE"
+-echo "KUBECONFIG: $KUBECONFIG"
+-echo "KUBECONTEXT: $KUBECONTEXT"
+-echo "REPORT_DIR: $REPORT_DIR"
+-echo "REPORT_PREFIX: $REPORT_PREFIX"
+-echo "DELETE_NAMESPACE_ON_FAILURE: $DELETE_NAMESPACE_ON_FAILURE"
+-echo "IMAGE_REGISTRY: $IMAGE_REGISTRY"
+-
+-function e2e::image_load() {
+-    local images=(
+-        chaos-mesh/chaos-mesh
+-        chaos-mesh/chaos-daemon
+-        chaos-mesh/e2e-helper
+-    )
+-    if [ "$PROVIDER" == "kind" ]; then
+-        local nodes=$($KIND_BIN get nodes --name $CLUSTER | grep -v 'control-plane$')
+-        echo $nodes
+-        echo "info: load images" "${images[@]}"
+-        for image in ${images[@]}; do
+-            $KIND_BIN load docker-image --name $CLUSTER ${IMAGE_REGISTRY}/$image:$IMAGE_TAG --nodes $(hack::join ',' ${nodes[@]})
+-        done
+-
+-        # bypassing docker pull rate limit inner the kind container: kindest/node has no credentials
+-        # we suppose that you could pull this image on your host docker
+-        echo "info: load images ghcr.io/chaos-mesh/chaos-coredns:v0.3.0, nginx:latest and gcr.io/google-containers/pause:latest"
+-        docker pull ghcr.io/chaos-mesh/chaos-coredns:v0.3.0
+-        docker pull nginx:latest
+-        docker pull gcr.io/google-containers/pause:latest
+-        $KIND_BIN load docker-image --name "$CLUSTER" ghcr.io/chaos-mesh/chaos-coredns:v0.3.0 --nodes "$(hack::join ',' ${nodes[@]})"
+-        $KIND_BIN load docker-image --name "$CLUSTER" nginx:latest --nodes "$(hack::join ',' ${nodes[@]})"
+-        $KIND_BIN load docker-image --name "$CLUSTER" gcr.io/google-containers/pause:latest --nodes "$(hack::join ',' ${nodes[@]})"
+-    fi
+-}
+-
+-
+-function e2e::get_kube_version() {
+-    $KUBECTL_BIN --context $KUBECONTEXT version --short | awk '/Server Version:/ {print $3}'
+-}
+-
+-if [ -z "$KUBECONTEXT" ]; then
+-    echo "info: KUBECONTEXT is not set, current context is used"
+-    KUBECONTEXT=$($KUBECTL_BIN config current-context 2>/dev/null) || true
+-    if [ -z "$KUBECONTEXT" ]; then
+-        echo "error: current context cannot be detected"
+-        exit 1
+-    fi
+-    echo "info: current kubeconfig context is '$KUBECONTEXT'"
+-fi
+-
+-e2e::image_load
+-echo "info: image loaded"
+-
+-if [ -n "$SKIP_GINKGO" ]; then
+-    echo "info: skipping ginkgo"
+-    exit 0
+-fi
+-
+-echo "info: start to run e2e process"
+-
+-ginkgo_args=()
+-
+-if [[ -n "${GINKGO_NODES:-}" ]]; then
+-    ginkgo_args+=("--nodes=${GINKGO_NODES}")
+-elif [[ ${GINKGO_PARALLEL} =~ ^[yY]$ ]]; then
+-    ginkgo_args+=("-p")
+-fi
+-
+-if [[ "${GINKGO_NO_COLOR}" == "y" ]]; then
+-    ginkgo_args+=("--noColor")
+-fi
+-
+-if [[ "${GINKGO_STREAM}" == "y" ]]; then
+-    ginkgo_args+=("--stream")
+-fi
+-
+-e2e_args=(
+-    /usr/local/bin/ginkgo
+-    ${ginkgo_args[@]:-}
+-    /usr/local/bin/e2e.test
+-    --
+-    --manager-image-registry="${IMAGE_REGISTRY}"
+-    --manager-image="chaos-mesh/chaos-mesh"
+-    --manager-image-tag="${IMAGE_TAG}"
+-    --daemon-image-registry="${IMAGE_REGISTRY}"
+-    --daemon-image="chaos-mesh/chaos-daemon"
+-    --daemon-image-tag="${IMAGE_TAG}"
+-    --e2e-image="${IMAGE_REGISTRY}/chaos-mesh/e2e-helper:${IMAGE_TAG}"
+-    --install-chaos-
 ```
 
-**File**: `examples/workflow/custom-task.yaml` (modified, +10/-0)
+---
+
+### Incident Patch 3: `c8d2dc02` (2026-10-29)
+**Commit Message**: fix(deps): update vulnerable dependencies and exclude e2e scans (#5182)
+
+Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/osv-scanner-pr.yml` (modified, +5/-0)
 ```diff
-@@ -78,3 +78,13 @@ spec:
-             - -d
-             - k1=v1&k2=v2
-             - https://jsonplaceholder.typicode.com/posts
-+        # Optional: nodeSelector to schedule the pod on specific nodes
-+        # nodeSelector:
-+        #   kubernetes.io/os: linux
-+        #   node-role.kubernetes.io/worker: ""
-+        # Optional: tolerations to allow scheduling on tainted nodes
-+        # tolerations:
-+        #   - key: "key1"
-+        #     operator: "Equal"
-+        #     value: "value1"
-+        #     effect: "NoSchedule"
+@@ -24,3 +24,8 @@ permissions:
+ jobs:
+   scan-pr:
+     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@v2.6.0"
++    with:
++      scan-args: |-
++        -r
++        --experimental-exclude=e2e-test
++        ./
 ```
 
-**File**: `helm/chaos-mesh/crds/chaos-mesh.org_schedules.yaml` (modified, +49/-0)
+**File**: `.github/workflows/osv-scanner-scheduled.yml` (modified, +5/-0)
 ```diff
-@@ -11920,6 +11920,55 @@ spec:
-                               additionalProperties:
-                                 type: string
-                               type: object
-+                            nodeSelector:
-+                              additionalProperties:
-+                                type: string
-+                              description: |-
-+                                NodeSelector is a selector which must be true for the pod to fit on a node.
-+                                Selector which must match a node's labels for the pod to be scheduled on that node.
-+                              type: object
-+                            tolerations:
-+                              description: |-
-+                                Tolerations is a list of tolerations attached to the pod.
-+                                Tolerations are applied to pods, and allow (but do not require) the pods to schedule onto nodes with matching taints.
-+                              items:
-+                                description: |-
-+                                  The pod this Toleration is attached to tolerates any taint that matches
-+                                  the triple <key,value,effect> using the matching operator <operator>.
-+                                properties:
-+                                  effect:
-+                                    description: |-
-+                                      Effect indicates the taint effect to match. Empty means match all taint effects.
-+                                      When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.
-+                                    type: string
-+                                  key:
-+                                    description: |-
-+                                      Key is the taint key that the toleration applies to. Empty means match all taint keys.
-+                                      If the key is empty, operator must be Exists; this combination means to match all values and all keys.
-+                                    type: string
-+                                  operator:
-+                                    description: |-
-+                                      Operator represents a key's relationship to the value.
-+                                      Valid operators are Exists, Equal, Lt, and Gt. Defaults to Equal.
-+                                      Exists is equivalent to wildcard for value, so that a pod can
-+                                      tolerate all taints of a particular category.
-+                                      Lt and Gt perform numeric comparisons (requires feature gate TaintTolerationComparisonOperators).
-+                                    type: string
-+                                  tolerationSeconds:
-+                                    description: |-
-+                                      TolerationSeconds represents the period of time the toleration (which must be
-+                                      of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default,
-+                                      it is not set, which means tolerate the taint forever (do not evict). Zero and
-+                                      negative values will be treated as 0 (evict immediately) by the system.
-+                                    format: int64
-+                                    type: integer
-+                                  value:
-+                                    description: |-
-+                                      Value is the taint value the toleration matches to.
-+                                      If the operator is Exists, the value should be empty, otherwise just a regular string.
-+                                    type: string
-+                                type: object
-+                              type: array
-                             volumes:
-                               description: Volumes is a list of volumes that can be
-                                 mounted by containers in a template.
+@@ -20,3 +20,8 @@ permissions:
+ jobs:
+   scan-scheduled:
+     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.6.0"
++    with:
++      scan-args: |-
++        -r
++        --experimental-exclude=e2e-test
++        ./
+```
+
+**File**: `api/go.mod` (modified, +6/-6)
+```diff
+@@ -62,14 +62,14 @@ require (
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.4 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.36.0 // indirect
+-	golang.org/x/sync v0.23.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/sync v0.24.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.15.0 // indirect
+-	golang.org/x/tools v0.49.0 // indirect
++	golang.org/x/tools v0.51.0 // indirect
+ 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
+ 	google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+```
+
+**File**: `api/go.sum` (modified, +12/-12)
+```diff
+@@ -165,22 +165,22 @@ go.yaml.in/yaml/v3 v3.0.4 h1:tfq32ie2Jv2UxXFdLJdh3jXuOzWiL1fo0bu/FbuKpbc=
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.36.0 h1:peZ/1z27fi9hUOFCAZaHyrpWG5lwe0RJEEEeH0ThlIs=
+ golang.org/x/oauth2 v0.36.0/go.mod h1:YDBUJMTkDnJS+A4BP4eZBjCqtokkg1hODuPjwiGPO7Q=
+-golang.org/x/sync v0.23.0 h1:KameEIfc1IkluZyXWLn39Wd4tURc6GbCiISGiZm2bQk=
+-golang.org/x/sync v0.23.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/term v0.46.0 h1:3+OXuTbaKDgwk8jTi3aSLHRlmWqHEUDUtxnbFigO4YE=
+-golang.org/x/term v0.46.0/go.mod h1:+K02xbkittuwc0Am4abfA3Fc+XRGXkvBXNO88NCXPoc=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
++golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
++golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
+ golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
+-golang.org/x/tools v0.49.0 h1:3NI7VXzL9+1WZD52Dx2ttoPwD5DWrFGpl9mFZDlmisI=
+-golang.org/x/tools v0.49.0/go.mod h1:SJNXV9DBKT0UbdttsQjbfJlAE/q+y36++zo3uL3N0Oo=
++golang.org/x/tools v0.51.0 h1:k4Xc/1Om9jwkBJBo4NVLMSARBoWtK10mx+W5BnXCeAI=
++golang.org/x/tools v0.51.0/go.mod h1:9eEncMayCV6zRMGhR5eZEC2iBx98qWcF1HZ9Z7wJOoA=
+ gomodules.xyz/jsonpatch/v2 v2.4.0 h1:Ci3iUJyx9UeRx7CeFN8ARgGbkESwJK+KB9lLcWxY/Zw=
+ gomodules.xyz/jsonpatch/v2 v2.4.0/go.mod h1:AH3dM2RI6uoBZxn3LVrfvJ3E0/9dG4cSrbuBJT4moAY=
+ google.golang.org/protobuf v1.36.12-0.20260120151049-f2248ac996af h1:+5/Sw3GsDNlEmu7TfklWKPdQ0Ykja5VEmq2i817+jbI=
+```
+
+**File**: `e2e-test/go.mod` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ require (
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/oauth2 v0.37.0 // indirect
+ 	golang.org/x/sync v0.24.0 // indirect
+ 	golang.org/x/sys v0.49.0 // indirect
+```
+
+**File**: `e2e-test/go.sum` (modified, +2/-2)
+```diff
+@@ -291,8 +291,8 @@ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJk
+ golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
+ golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
+ golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
+```
+
+**File**: `go.mod` (modified, +2/-2)
+```diff
+@@ -165,7 +165,7 @@ require (
+ 	github.com/glebarez/go-sqlite v1.22.0 // indirect
+ 	github.com/go-errors/errors v1.5.1 // indirect
+ 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
+-	github.com/go-jose/go-jose/v4 v4.1.4 // indirect
++	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+ 	github.com/go-ole/go-ole v1.3.0 // indirect
+ 	github.com/go-openapi/jsonpointer v1.0.2 // indirect
+@@ -286,7 +286,7 @@ require (
+ 	golang.org/x/arch v0.19.0 // indirect
+ 	golang.org/x/crypto v0.58.0 // indirect
+ 	golang.org/x/mod v0.41.0 // indirect
+-	golang.org/x/net v0.61.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
+ 	golang.org/x/term v0.47.0 // indirect
+ 	golang.org/x/text v0.43.0 // indirect
+ 	golang.org/x/time v0.16.0 // indirect
+```
+
+**File**: `go.sum` (modified, +4/-4)
+```diff
+@@ -287,8 +287,8 @@ github.com/go-errors/errors v1.5.1 h1:ZwEMSLRCapFLflTpT7NKaAc7ukJ8ZPEjzlxt8rPN8b
+ github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+ github.com/go-gorp/gorp/v3 v3.1.0 h1:ItKF/Vbuj31dmV4jxA1qblpSwkl9g1typ24xoe70IGs=
+ github.com/go-gorp/gorp/v3 v3.1.0/go.mod h1:dLEjIyyRNiXvNZ8PSmzpt1GsWAUK8kjVhEpjH8TixEw=
+-github.com/go-jose/go-jose/v4 v4.1.4 h1:moDMcTHmvE6Groj34emNPLs/qtYXRVcd6S7NHbHz3kA=
+-github.com/go-jose/go-jose/v4 v4.1.4/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
++github.com/go-jose/go-jose/v4 v4.1.6 h1:sNRkftxFJxwsILiQukqp5z83QBSmntVwmgRY7AqBDO4=
++github.com/go-jose/go-jose/v4 v4.1.6/go.mod h1:x4oUasVrzR7071A4TnHLGSPpNOm2a21K9Kf04k1rs08=
+ github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
+ github.com/go-logfmt/logfmt v0.4.0/go.mod h1:3RMwSq7FuexP4Kalkev3ejPJsZTpXXBr9+V4qmtdjCk=
+ github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
+@@ -890,8 +890,8 @@ golang.org/x/net v0.22.0/go.mod h1:JKghWKKOSdJwpW2GEx0Ja7fmaKnMsbu+MWVZTokSYmg=
+ golang.org/x/net v0.24.0/go.mod h1:2Q7sJY5mzlzWjKtYUEXSlBWCdyaioyXzRB2RtU8KVE8=
+ golang.org/x/net v0.25.0/go.mod h1:JkAGAh7GEvH74S6FOH42FLoXpXbE/aqXSrIQjXgsiwM=
+ golang.org/x/net v0.26.0/go.mod h1:5YKkiSynbBIh3p6iOc/vibscux0x38BZDkn8sCUPxHE=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5162** (2026-10-23): feat(workflow): support serviceAccountName for task pods (@g1eny0ung)
-- **PR #5160** (2026-10-23): feat: backport workflow task scheduling to release-2.8 (@g1eny0ung)
-- **PR #5157** (2026-10-22): fix(remotecluster): reconcile the Ready condition (@g1eny0ung)
-- **PR #5156** (2026-10-22): chore(helm): upgrade tooling and SDK to Helm 4.3.1 (@g1eny0ung)
-- **PR #5155** (2026-10-22): refactor(go): modernize code for Go 1.27 (@g1eny0ung)
-- **PR #5153** (2026-10-21): chore: ready for v2.8.6 (@g1eny0ung)
+- **PR #5186** (2026-10-29): ci(e2e): align release-2.8 Kubernetes versions (@g1eny0ung)
+- **PR #5185** (2026-10-29): chore(hack): remove obsolete scripts and fix image loading (@g1eny0ung)
+- **PR #5184** (2026-10-29): ci(e2e): test Kubernetes 1.35 and 1.37 (@g1eny0ung)
+- **PR #5183** (2026-10-29): chore(deps): simplify Kubernetes module replacements (@g1eny0ung)
+- **PR #5182** (2026-10-29): fix(deps): update vulnerable dependencies and exclude e2e scans (@g1eny0ung)
+- **PR #5181** (2026-10-29): fix(ci): correct SBOM namespaces and release job conditions (@g1eny0ung)
 
 ---
 
@@ -1470,13 +1643,13 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. workflow): support serviceAccountName for task pods (#5162)
+## X. selector): skip terminated pods by default (#5150)
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `37f49f24`: workflow): support serviceAccountName for task pods (#5162). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7549178e`: selector): skip terminated pods by default (#5150). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1484,7 +1657,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Support `serviceAccountName` for Workflow Task pods [#5162](https://github.com/chaos-mesh/chaos-mesh/pull/5162)
+- Skip Succeeded and Failed pods when `podPhaseSelectors` is unset [#5150](https://github.com/chaos-mesh/chaos-mesh/pull/5150)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1494,4 +1667,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `37f49f24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7549178e` are properly handled with clean fallback behavior.

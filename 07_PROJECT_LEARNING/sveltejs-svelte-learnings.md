@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source**: github ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
-> **Source Version**: `356c8766`  
+> **Source Version**: `fe21fce0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:17:16.928Z  
+> **Timestamp**: 2026-10-30T18:32:28.921Z  
 > **Learning ID**: `learn-github-sveltejs-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sveltejs-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sveltejs/svelte](https://github.com/sveltejs/svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:17:15.683Z  
+> **Harvest Timestamp**: 2026-10-30T18:32:27.690Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: web development for the rest of us
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 88428 stars
+- **Stars / Engagement**: 88493 stars
 
 ---
 
@@ -2003,692 +2003,275 @@ export function is_whitespace(cc) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2334f5ed` (2026-10-21)
-**Commit Message**: chore: add security policy section to AGENTS.md (#19067)
+### Incident Patch 1: `fe21fce0` (2026-10-29)
+**Commit Message**: docs: fix broken Svelte v2 docs link in FAQ (#19088)
 
-supersedes #19066
+What: replaced broken https://v2.svelte.dev/guide link with the archived
+v2 docs source on GitHub.
+Why: the v2.svelte.dev URL returns HTTP 525 consistently; the GitHub
+archive is available.
+How verified: checked both URLs (525 vs 200); git diff reviewed.
+No linked issue.
 
-**File**: `AGENTS.md` (modified, +4/-0)
+Co-authored-by: pei711 <[REDACTED_EMAIL]>
+
+**File**: `documentation/docs/07-misc/99-faq.md` (modified, +1/-1)
 ```diff
-@@ -6,6 +6,10 @@ This guide is for AI coding agents working in the Svelte monorepo.
+@@ -118,7 +118,7 @@ If you need to style something that Svelte can't identify at compile time, you w
  
- When submitting a PR, you **MUST** read [`PULL_REQUEST_TEMPLATE.md`](./.github/PULL_REQUEST_TEMPLATE.md) and fill it out correctly. **DO NOT** submit a PR without running the full test suite.
+ New features aren't being added to it, and bugs will probably only be fixed if they are extremely nasty or present some sort of security vulnerability.
  
-+## Security Policy
-+
-+See https://github.com/sveltejs/svelte/security/policy.
-+
- ## Quick Reference
+-The documentation is still available [here](https://v2.svelte.dev/guide).
++The documentation is still available [here](https://github.com/sveltejs/v2.svelte.dev/tree/master/content).
  
- If asked to do a performance investigation, use the `performance-investigation` skill.
+ ## How do I do hot module reloading?
+ 
 ```
 
 ---
 
-### Incident Patch 2: `91b5110b` (2026-10-21)
-**Commit Message**: fix: use the first valid fallback role in `role` for a11y checks (#19045)
+### Incident Patch 2: `120c0ed0` (2026-10-27)
+**Commit Message**: fix: reset dev update counters for sources written during traversal
 
-Co-authored-by: paoloricciuti <[REDACTED_EMAIL]>
+Co-authored-by: svelte-triage-bot <[REDACTED_EMAIL]>
 
-**File**: `.changeset/fallback-roles-a11y.md` (added, +5/-0)
+**File**: `.changeset/tidy-keyed-update-stacks.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'svelte': patch
 +---
 +
-+fix: use the first valid fallback role in `role` for a11y checks
++fix: reset dev update counters for sources written during batch traversal
 ```
 
-**File**: `packages/svelte/src/compiler/phases/2-analyze/visitors/shared/a11y/index.js` (modified, +30/-5)
+**File**: `packages/svelte/src/internal/client/reactivity/batch.js` (modified, +4/-14)
 ```diff
-@@ -40,7 +40,8 @@ import {
- 	regex_not_whitespace,
- 	regex_redundant_img_alt,
- 	regex_starts_with_vowel,
--	regex_whitespaces
-+	regex_whitespaces,
-+	regex_whitespaces_strict
- } from '../../../../patterns.js';
- import { is_event_attribute, is_text_attribute } from '../../../../../utils/ast.js';
- import { list } from '../../../../../utils/string.js';
-@@ -158,9 +159,7 @@ export function check_element(node, context) {
- 				if (typeof value !== 'string') {
- 					break;
- 				}
--				for (const c_r of value.split(regex_whitespaces)) {
--					const current_role = /** @type {ARIARoleDefinitionKey} current_role */ (c_r);
+@@ -89,8 +89,8 @@ export let legacy_updates = null;
+ 
+ var flush_count = 0;
+ 
+-/** @type {Set<Value>} */
+-var source_stacks = new Set();
++/** Sources whose DEV update counts and stack traces need resetting after the flush. @type {Set<Value>} */
++export const source_stacks = new Set();
+ 
+ let uid = 1;
+ 
+@@ -323,14 +323,6 @@ export class Batch {
+ 	#process() {
+ 		this.started = true;
+ 
+-		if (DEV) {
+-			// track all the values that were updated during this flush,
+-			// so that they can be reset afterwards
+-			for (const value of this.current.keys()) {
+-				source_stacks.add(value);
+-			}
+-		}
 -
-+				for (const current_role of get_role_tokens(value)) {
- 					if (current_role && is_abstract_role(current_role)) {
- 						w.a11y_no_abstract_role(attribute, current_role);
- 					} else if (current_role && !aria_roles.includes(current_role)) {
-@@ -286,7 +285,9 @@ export function check_element(node, context) {
- 	}
+ 		// We always reschedule previously-deferred effects, not just when
+ 		// #is_deferred() is true, because traversing the tree could make
+ 		// an if block that contains the last blocking pending effect falsy,
+@@ -638,10 +630,6 @@ export class Batch {
  
- 	const role = attribute_map.get('role');
--	const role_static_value = /** @type {ARIARoleDefinitionKey} */ (get_static_text_value(role));
-+	const role_static_value = /** @type {ARIARoleDefinitionKey} */ (
-+		get_effective_role(get_static_text_value(role))
-+	);
+ 	flush() {
+ 		try {
+-			if (DEV) {
+-				source_stacks.clear();
+-			}
+-
+ 			is_processing = true;
+ 			current_batch = this;
  
- 	// click-events-have-key-events
- 	if (handlers.has('click')) {
-@@ -778,6 +779,30 @@ function is_abstract_role(role) {
- 	return abstract_roles.includes(role);
- }
- 
-+/**
-+ * Role tokens use ASCII whitespace and ASCII case-insensitive matching.
-+ * @param {string} value
-+ */
-+function get_role_tokens(value) {
-+	return /** @type {ARIARoleDefinitionKey[]} */ (
-+		// we use this instead of value.toLowerCase() to avoid lowercasing non-ASCII characters
-+		value.replace(/[A-Z]/g, (char) => char.toLowerCase()).split(regex_whitespaces_strict)
-+	);
-+}
+@@ -662,6 +650,8 @@ export class Batch {
+ 				for (const source of source_stacks) {
+ 					source.updated = null;
+ 				}
 +
-+/**
-+ * The `role` attribute can list fallback roles, in which case the element
-+ * gets the first one that is a known, non-abstract role. Preserve the original
-+ * value if none match, so invalid roles retain their existing diagnostics.
-+ * @param {string | null} value
-+ */
-+function get_effective_role(value) {
-+	if (value === null) return null;
-+	const roles = get_role_tokens(value);
-+	// we return the whole value here in case there's no known, non-abstract role in the list
-+	return roles.find((role) => aria_roles.includes(role) && !is_abstract_role(role)) ?? value;
-+}
-+
- /**
-  * @param {AST.Attribute | undefined} attribute
-  */
-```
-
-**File**: `packages/svelte/tests/validator/samples/a11y-fallback-roles/input.svelte` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+<script>
-+	function handler() {}
-+</script>
-+
-+<!-- valid -->
-+<div role="switch checkbox" aria-checked="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="tab button" aria-selected="true" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="none presentation" onclick={handler}></div>
-+<div role=" button " tabindex="0" onclick={handler} onkeydown={handler}></div>
-+
-+<!-- invalid -->
-+<div role="button link" aria-checked="true" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+
-+<!-- valid -->
-+<div role="BUTTON link" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="&#9;button&#10;&#13;&#12;link&#9;" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role={'button'} aria-pressed="false" onclick={handler} onkeydown={handler}></div>
-+<div role=""></div>
-+<div role="&#9;&#10;&#13;&#12; "></div>
-+
-+<!-- invalid -->
-+<div role="button&nbsp;link" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="&nbsp;button&nbsp;" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="widget bogus" aria-checked="true" onkeydown={handler}></div>
-+<div role="bogus widget" aria-checked="true" onkeydown={handler}></div>
-+<div role="bogus button" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="widget button" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-+<div role="lin&#x212A; button" aria-pressed="false" tabindex="0" onclick={handler} onkeydown={handler}></div>
-```
-
-**File**: `packages/svelte/tests/validator/samples/a11y-fallback-roles/warnings.json` (added, +194/-0)
-```diff
-@@ -0,0 +1,194 @@
-+[
-+	{
-+		"code": "a11y_role_supports_aria_props",
-+		"end": {
-+			"column": 43,
-+			"line": 12
-+		},
-+		"message": "The attribute 'aria-checked' is not supported by the role 'button'",
-+		"start": {
-+			"column": 24,
-+			"line": 12
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 28,
-+			"line": 22
-+		},
-+		"message": "Unknown role 'button link'",
-+		"start": {
-+			"column": 5,
-+			"line": 22
-+		}
-+	},
-+	{
-+		"code": "a11y_no_noninteractive_tabindex",
-+		"end": {
-+			"column": 86,
-+			"line": 22
-+		},
-+		"message": "noninteractive element cannot have nonnegative tabIndex value",
-+		"start": {
-+			"column": 0,
-+			"line": 22
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 86,
-+			"line": 22
-+		},
-+		"message": "`<div>` with a click or keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 22
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 30,
-+			"line": 23
-+		},
-+		"message": "Unknown role ' button '. Did you mean 'button'?",
-+		"start": {
-+			"column": 5,
-+			"line": 23
-+		}
-+	},
-+	{
-+		"code": "a11y_no_noninteractive_tabindex",
-+		"end": {
-+			"column": 88,
-+			"line": 23
-+		},
-+		"message": "noninteractive element cannot have nonnegative tabIndex value",
-+		"start": {
-+			"column": 0,
-+			"line": 23
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 88,
-+			"line": 23
-+		},
-+		"message": "`<div>` with a click or keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 23
-+		}
-+	},
-+	{
-+		"code": "a11y_no_abstract_role",
-+		"end": {
-+			"column": 24,
-+			"line": 24
-+		},
-+		"message": "Abstract role 'widget' is forbidden",
-+		"start": {
-+			"column": 5,
-+			"line": 24
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 24,
-+			"line": 24
-+		},
-+		"message": "Unknown role 'bogus'",
-+		"start": {
-+			"column": 5,
-+			"line": 24
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 71,
-+			"line": 24
-+		},
-+		"message": "`<div>` with a keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 24
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 24,
-+			"line": 25
-+		},
-+		"message": "Unknown role 'bogus'",
-+		"start": {
-+			"column": 5,
-+			"line": 25
-+		}
-+	},
-+	{
-+		"code": "a11y_no_abstract_role",
-+		"end": {
-+			"column": 24,
-+			"line": 25
-+		},
-+		"message": "Abstract role 'widget' is forbidden",
-+		"start": {
-+			"column": 5,
-+			"line": 25
-+		}
-+	},
-+	{
-+		"code": "a11y_no_static_element_interactions",
-+		"end": {
-+			"column": 71,
-+			"line": 25
-+		},
-+		"message": "`<div>` with a keydown handler must have an ARIA role",
-+		"start": {
-+			"column": 0,
-+			"line": 25
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 24,
-+			"line": 26
-+		},
-+		"message": "Unknown role 'bogus'",
-+		"start": {
-+			"column": 5,
-+			"line": 26
-+		}
-+	},
-+	{
-+		"code": "a11y_no_abstract_role",
-+		"end": {
-+			"column": 25,
-+			"line": 27
-+		},
-+		"message": "Abstract role 'widget' is forbidden",
-+		"start": {
-+			"column": 5,
-+			"line": 27
-+		}
-+	},
-+	{
-+		"code": "a11y_unknown_role",
-+		"end": {
-+			"column": 30,
-+			"line": 28
-+		},
-+		"message": "Unknown role 'linK'. Did you mean 'link'?",
-+		"start": {
-+			"column": 5,
-+			"line": 28
-+		}
-+	}
-+]
-```
-
----
-
-### Incident Patch 3: `bd762fb1` (2026-10-20)
-**Commit Message**: fix: skip redundant attribute writes during hydration (#18869)
-
-Co-authored-by: Paolo Ricciuti <[REDACTED_EMAIL]>
-
-**File**: `.changeset/quiet-attributes-rest.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'svelte': patch
-+---
-+
-+fix: skip redundant attribute writes during hydration
-```
-
-**File**: `packages/svelte/src/internal/client/dom/elements/attributes.js` (modified, +10/-2)
-```diff
-@@ -178,7 +178,8 @@ export function set_attribute(element, attribute, value, skip_warning) {
++				source_stacks.clear();
+ 			}
  		}
  	}
- 
--	if (attributes[attribute] === (attributes[attribute] = value)) return;
-+	var previous = attributes[attribute];
-+	if (previous === (attributes[attribute] = value)) return;
- 
- 	if (attribute === 'loading') {
- 		// @ts-expect-error
-@@ -190,7 +191,14 @@ export function set_attribute(element, attribute, value, skip_warning) {
- 	} else if (typeof value !== 'string' && get_setters(element).has(attribute)) {
- 		// @ts-ignore
- 		element[attribute] = value;
--	} else {
-+	} else if (
-+		// while hydrating, skip a number or boolean whose string the server already rendered
-+		!(
-+			hydrating &&
-+			(typeof value === 'number' || typeof value === 'boolean') &&
-+			previous === String(value)
-+		)
-+	) {
- 		element.setAttribute(attribute, value);
- 	}
- }
 ```
 
-**File**: `packages/svelte/tests/hydration/samples/element-attribute-primitives/_config.js` (added, +121/-0)
+**File**: `packages/svelte/src/internal/client/reactivity/sources.js` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,121 @@
-+import { flushSync } from 'svelte';
-+import { test } from '../../test';
+@@ -37,7 +37,8 @@ import {
+ 	batch_values,
+ 	eager_block_effects,
+ 	schedule_effect,
+-	legacy_updates
++	legacy_updates,
++	source_stacks
+ } from './batch.js';
+ import { proxy } from '../proxy.js';
+ import { execute_derived } from './deriveds.js';
+@@ -202,6 +203,7 @@ export function internal_set(source, value, updated_during_traversal = null) {
+ 		if (DEV) {
+ 			if (tracing_mode_flag || active_effect !== null) {
+ 				source.updated ??= new Map();
++				source_stacks.add(source);
+ 
+ 				// For performance reasons, when not using $inspect.trace, we only start collecting stack traces
+ 				// after the same source has been updated more than 5 times in the same flush cycle.
+```
+
+**File**: `packages/svelte/tests/signals/test.ts` (modified, +118/-2)
+```diff
+@@ -1,18 +1,27 @@
+ import { describe, assert, it } from 'vitest';
+-import { flushSync } from '../../src/index-client';
++import { flushSync, tick } from '../../src/index-client';
+ import * as $ from '../../src/internal/client/runtime';
+ import { push, pop } from '../../src/internal/client/context';
+ import {
++	block,
+ 	effect,
+ 	effect_root,
+ 	render_effect,
+ 	user_effect,
+ 	user_pre_effect
+ } from '../../src/internal/client/reactivity/effects';
+-import { state, set, update, update_pre } from '../../src/internal/client/reactivity/sources';
++import {
++	internal_set,
++	source,
++	state,
++	set,
++	update,
++	update_pre
++} from '../../src/internal/client/reactivity/sources';
+ import type { Derived, Effect, Source, Value } from '../../src/internal/client/types';
+ import { proxy } from '../../src/internal/client/proxy';
+ import { derived } from '../../src/internal/client/reactivity/deriveds';
++import { source_stacks } from '../../src/internal/client/reactivity/batch';
+ import { snapshot } from '../../src/internal/shared/clone.js';
+ import { SvelteSet } from '../../src/reactivity/set';
+ import { CONNECTED, DESTROYED } from '../../src/internal/client/constants';
+@@ -548,6 +557,113 @@ describe('signals', () => {
+ 		};
+ 	});
+ 
++	it.each([false, true])(
++		'resets update counts for writes during traversal (tick: %s)',
++		async (use_tick) => {
++			const trigger = state(0);
++			const item = source(0);
++			const counts: number[] = [];
 +
-+let conversions = 0;
-+const object = { toString: () => String(++conversions) };
++			const destroy = effect_root(() => {
++				block(() => {
++					// Like each block item sources, this is first written during traversal,
++					// after the batch has already started processing.
++					internal_set(item, $.get(trigger));
++					counts.push(item.updated?.get('')?.count ?? 0);
++				});
++			});
 +
-+/** @type {Record<string, [server: any, client: any, written: boolean]>} */
-+const values = {
-+	'data-same': [1, 1, false],
-+	'data-nan': [NaN, NaN, false],
-+	'data-large': [1e21, 1e21, false],
-+	'data-yes': [true, true, false],
-+	'data-no': [false, false, false],
-+	'aria-hidden': [true, true, false],
-+	'data-decimal': ['1.0', 1, true],
-+	'data-zero': ['-0', -0, true],
-+	'aria-checked': ['False', false, true],
-+	'data-empty': ['', true, true],
-+	'aria-rowindex': [2, 3, true],
-+	'data-null': [1, null, true],
-+	'data-undefined': [1, undefined, true],
-+	'data-object': ['server', object, true],
-+	// a property setter still runs
-+	draggable: [false, false, true]
-+};
-+
-+/** @param {number} i */
-+const pick = (i) =>
-+	Object.fromEntries(Object.entries(values).map(([key, value]) => [key, value[i]]));
-+
-+/** @type {string[]} */
-+const changes = [];
-+
-+const custom = { is: 'svelte-observed-button', tabindex: -1, 'data-on': true };
-+
-+/** @type {MutationObserver} */
-+let observer;
-+
-+const written = () =>
-+	observer
-+		.takeRecords()
-+		.map((record) => `${record.target.nodeName.toLowerCase()} ${record.attributeName}`);
-+
-+export default test({
-+	server_props: {
-+		values: pick(0),
-+		spread: { disabled: true, tabindex: -1, hidden: false },
-+		custom,
-+		show: false
-+	},
-+
-+	props: {
-+		values: pick(1),
-+		spread: { disabled: true, tabindex: -1, hidden: true },
-+		custom,
-+		show: true
-+	},
-+
-+	before_test() {
-+		customElements.get(custom.is) ??
-+			customElements.define(
-+				custom.is,
-+				class extends HTMLButtonElement {
-+					static observedAttributes = ['tabindex', 'data-on'];
-+
-+					/**
-+					 * @param {string} name
-+					 * @param {string | null} old_value
-+					 * @param {string | null} value
-+					 */
-+					attributeChangedCallback(name, old_value, value) {
-+						// `htmlEqual` upgrades detached copies
-+						if (this.isConnected) changes.push(`${name} ${old_value} ${value}`);
++			try {
++				for (let i = 1; i <= 12; i++) {
++					set(trigger, i);
++					if (use_tick) {
++						await tick();
++					} else {
++						flushSync();
 +					}
-+				},
-+				{ extends: 'button' }
-+			);
 +
-+		changes.length = 0;
-+		observer = new MutationObserver(() => {});
-+		observer.observe(document.body, { attributes: true, subtree: true });
-+	},
-+
-+	test(assert, target, snapshot, component) {
-+		// spread `disabled` and `hidden` always use their setters
-+		assert.deepEqual(written(), [
-+			'button disabled',
-+			'button hidden',
-+			...Object.keys(values)
-+				.filter((key) => values[key][2])
-+				.map((key) => `div ${key}`)
-+		]);
-+		assert.equal(conversions, 1);
-+
-+		// a customized built-in is called back when it is upgraded, not again for the same value
-+		assert.deepEqual(changes, ['tabindex null -1', 'data-on null true']);
-+
-+		component.$set({ n: 2 });
-+		flushSync();
-+		// the mismatched `{#if}` branch was created, then hydration resumed for the `<p>`
-+		assert.deepEqual(
-+			written().filter((record) => record.endsWith('data-n')),
-+			['section data-n', 'p data-n']
-+		);
-+
-+		// after hydration, a number is written even when its string is unchanged
-+		component.$set({ n: '2' });
-+		flushSync();
-+		written();
-+		component.$set({ n: 2 });
-+		flushSync();
-+		assert.deepEqual(
-+			written().filter((record) => record.endsWith('data-n')),
-+			['section data-n', 'p data-n']
-+		);
-+	},
-+
-+	after_test() {
-+		observer.disconnect();
-+	}
-+});
-```
-
-**File**: `packages/svelte/tests/hydration/samples/element-attribute-primitives/_expected.html` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<!--[--><div tabindex="-1" data-same="1" data-nan="NaN" data-large="1e+21" data-yes="true" data-no="false" aria-hidden="true" data-decimal="1" data-zero="0" aria-checked="false" data-empty="true" aria-rowindex="3" data-object="1" draggable="false"></div> <svg width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24"><rect x="1"></rect></svg> <button tabindex="-1" disabled hidden>x</button> <button is="svelte-observed-button" tabindex="-1" data-on="true">y</button> <section data-n="1" tabindex="-1"></section><!----> <p data-n="1"></p><!--]-->
-```
-
-**File**: `packages/svelte/tests/hydration/samples/element-attribute-primitives/main.svelte` (added, +29/-0)
-```diff
-@@ -0,0 +1,29 @@
-+<script>
-+	let { values, size = 24, spread, custom, show, n = 1 } = $props();
-+</script>
-+
-+<div
-+	tabindex={-1}
-+	data-same={values['data-same']}
-+	data-nan={values['data-nan']}
-+	data-large={values['data-large']}
-+	data-yes={values['data-yes']}
-+	data-no={values['data-no']}
-+	aria-hidden={values['aria-hidden']}
-+	data-decimal={values['data-decimal']}
-+	data-zero={values['data-zero']}
-+	aria-checked={values['aria-checked']}
-+	data-empty={values['data-empty']}
-+	aria-rowindex={values['aria-rowindex']}
-+	data-null={values['data-null']}
-+	data-undefined={values['data-undefined']}
-+	data-object={values['data-object']}
-+	draggable={values.draggable}
-+></div>
-+<svg width={size} height={size} stroke-width={1.5} viewBox="0 0 24 24"><rect x={1} /></svg>
-+<button {...spread}>x</button>
-+<button {...custom}>y</button>
-+{#if show}
-+	<section data-n={n} tabindex={-1}></section>
-+{/if}
-+<p data-n={n}></p>
-```
-
-**File**: `packages/svelte/tests/runtime-browser/samples/hydration-attribute-custom-elements/_config.js` (added, +64/-0)
-```diff
-@@ -0,0 +1,64 @@
-+import { flushSync } from 'svelte';
-+import { assert_ok, test } from '../../assert';
-+
-+/** @type {string[]} */
-+const changes = [];
-+
-+let hydrating = false;
-+
-+/** @param {string} name */
-+function define(name) {
-+	customElements.define(
-+		name,
-+		class extends HTMLButtonElement {
-+			static observedAttributes = ['tabindex', 'data-on'];
-+
-+			/**
-+			 * @param {string} attribute
-+			 * @param {string | null} old_value
-+			 * @param {string | null} value
-+			 */
-+			attributeChangedCallback(attribute, old_value, value) {
-+				changes.push(`${this.textContent} ${attribute} ${old_value} ${value}`);
++					assert.equal(item.v, i);
++					assert.isNull(item.updated);
++				}
++				assert.deepEqual(counts, [0, ...Array(12).fill(1)]);
++			} finally {
++				destroy();
 +			}
-+		},
-+		{ extends: 'button' }
++		}
 +	);
-+}
 +
-+export default test({
-+	before_test() {
-+		// customized built-ins only come from the server markup here
-+		hydrating = document.querySelector('main')?.firstChild != null;
-+		/** @type {any} */ (globalThis).svelte_test_client = true;
-+
-+		// upgrades the server-rendered button before hydration
-+		define('svelte-early-button');
-+	},
-+
-+	test({ assert, component, target }) {
-+		if (!hydrating) return;
-+
-+		// the upgrade delivered the initial values, and hydration didn't write them again
-+		assert.deepEqual(changes.splice(0).sort(), [
-+			'early data-on null true',
-+			'early tabindex null -1'
-+		]);
-+
-+		// created with hydration turned off, after the `{#if}` mismatch, so its attributes are written
-+		const recovered = [...target.querySelectorAll('button')].find(
-+			(button) => button.textContent === 'recovered'
-+		);
-+		assert_ok(recovered);
-+		assert.equal(recovered.getAttribute('tabindex'), '-1');
-+		assert.equal(recovered.getAttribute('data-on'), 'true');
-+
-+		// defined after hydration: the upgrade still delivers the initial values
-+		define('svelte-late-button');
-+		assert.deepEqual(changes.splice(0).sort(), ['late data-on null true', 'late tabindex null -1']);
-+
-+		// a changed value is written
-+		flushSync(() => component.$set({ n: 0 }));
-+		assert.deepEqual(changes.splice(0).sort(), ['early tabindex -1 0', 'late tabindex -1 0']);
-+	}
-+});
-```
-
-**File**: `packages/svelte/tests/runtime-browser/samples/hydration-attribute-custom-elements/main.svelte` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+<script>
-+	let { n = -1 } = $props();
-+
-+	const early = { is: 'svelte-early-button', 'data-on': true };
-+	const late = { is: 'svelte-late-button', 'data-on': true };
-+
-+	// only the client sees this flag, so the `{#if}` doesn't match the server markup
-+	const mismatch = !!globalThis.svelte_test_client;
-+</script>
-+
-+<button {...early} tabindex={n}>early</button>
-+<button {...late} tabindex={n}>late</button>
-+{#if mismatch}
-+	<button {...early} tabindex={n}>recovered</button>
-+{/if}
-```
-
-**File**: `packages/svelte/tests/runtime-runes/samples/async-hydration-attribute-unchanged/_config.js` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+import { tick } from 'svelte';
-+import { test } from '../../test';
-+
-+/** @type {string[]} */
-+const written = [];
-+
-+/** @type {MutationObserver | undefined} */
-+let observer;
-+
-+export default test({
-+	mode: ['hydrate'],
-+
-+	server_props: { n: 1, m: 1 },
-+	props: { n: 1, m: 2 },
-+
-+	before_test() {
-+		observer?.disconnect();
-+		written.length = 0;
-+		observer = new MutationObserver((records) => {
-+			for (const record of records) written.push(/** @type {string} */ (record.attributeName));
++	it('cleans up update stacks recorded before flushing', () => {
++		const value = source(0);
++		const destroy = effect_root(() => {
++			block(() => {
++				for (let i = 1; i <= 6; i++) {
++					internal_set(value, i);
++					assert.equal(value.updated?.get('')?.count, i);
++					assert.equal(value.updated?.size, i <= 5 ? 1 : 2);
++				}
++			});
 +		});
-+		observer.observe(document.body, { attributes: true, subtree: true });
-+	},
 +
-+	async test({ assert, target }) {
-+		await tick();
-+		observer?.disconnect();
++		try {
++			assert.equal(value.updated?.size, 2);
++			flushSync();
++			assert.isNull(value.updated);
++			assert.equal(source_stacks.size, 0);
++		} finally {
++			destroy();
++		}
++	});
 +
-+		// the `{#if}` is hydrated once its condition resolves; an awaited value is applied after hydration
-+		assert.deepEqual(written.sort(), ['data-deferred', 'data-m']);
-+		assert.htmlEqual(
-+			target.innerHTML,
-+			'<div data-n="1" data-m="2"></div> <p data-deferred="1"></p>'
-+		);
-+	}
-+});
++	it('retains update counts across batches within a flush', () => {
++		push({}, true);
++		const trigger = state(0);
++		const value = source(0);
++		const counts: number[] = [];
++		const stacks: number[] = [];
++		const destroy = effect_root(() => {
++			user_effect(() => {
++				const n = $.get(trigger) + 1;
++				internal_set(value, n);
++				counts.push(value.updated?.get('')?.count ?? 0);
++				stacks.push(value.updated?.size ?? 0);
++				if (n < 7) set(trigger, n);
++			});
++		});
++
++		try {
++			flushSync();
++			assert.deepEqual(counts, [1, 2, 3, 4, 5, 6, 7]);
++			assert.deepEqual(stacks, [1, 1, 1, 1, 1, 2, 2]);
++			assert.isNull(value.updated);
++			assert.equal(source_stacks.size, 0);
++		} finally {
++			destroy();
++			pop();
++		}
++	});
++
++	it('cleans up traversal update counts when an effect throws', () => {
++		const trigger = state(false);
++		const value = source(0);
++		const destroy = effect_root(() => {
++			block(() => {
++				if ($.get(trigger)) {
++					internal_set(value, 1);
++					throw new Error('boom');
++				}
++			});
++		});
++
++		try {
++			set(trigger, true);
++			assert.throws(() => flushSync(), 'boom');
++			assert.isNull(value.updated);
++			assert.equal(source_stacks.size, 0);
++		} finally {
++			destroy();
++		}
++	});
++
+ 	test('schedules rerun when writing to signal before reading it', (runes) => {
+ 		if (!runes) return () => {};
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #19079** (2026-10-22): chore: skip eager effects during traversal (@Rich-Harris)
-- **PR #19074** (2026-10-22): chore: DRY out dirty reaction code (@Rich-Harris)
-- **PR #19068** (2026-10-22): chore: better async derived labels (@Rich-Harris)
-- **PR #19067** (2026-10-21): chore: add security policy section to AGENTS.md (@Rich-Harris)
-- **PR #19066** (closed): chore: add security policy document (@Rich-Harris)
-- **PR #19061** (2026-10-21): chore: DRY out batch intersection logic (@Rich-Harris)
+- **PR #19127** (2026-10-30): docs: fix various errors in `batch-views.md` (@Rich-Harris)
+- **PR #19126** (2026-10-30): fix: don't re-run effects that already saw a write made while a batch commits (@Rich-Harris)
+- **PR #19125** (2026-10-30): fix: rebase later batches whose writes are all among those of a committed batch (@Rich-Harris)
+- **PR #19123** (2026-10-29): chore: document that the active view sees writes made while it is active (@Rich-Harris)
+- **PR #19120** (2026-10-29): fix: reset view if fork callback throws (@Rich-Harris)
+- **PR #19119** (2026-10-29): fix: don't touch the active batch's records when running in the real world (@Rich-Harris)
 
 ---
 
@@ -2708,31 +2291,28 @@ Co-authored-by: Paolo Ricciuti <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add security policy section to AGENTS.md (#19067)
+## X. docs: fix broken Svelte v2 docs link in FAQ (#19088)
 
 **RULE**:
-When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `documentation/docs/07-misc/99-faq.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sveltejs/svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2334f5ed`: add security policy section to AGENTS.md (#19067). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe21fce0`: docs: fix broken Svelte v2 docs link in FAQ (#19088). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `documentation/docs/07-misc/99-faq.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-## Security Policy
-
-See https://github.com/sveltejs/svelte/security/policy.
-
+The documentation is still available [here](https://github.com/sveltejs/v2.svelte.dev/tree/master/content).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+The documentation is still available [here](https://v2.svelte.dev/guide).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2334f5ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe21fce0` are properly handled with clean fallback behavior.

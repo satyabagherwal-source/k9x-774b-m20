@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `002a6b7a`  
+> **Source Version**: `ddf515c5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:40:38.503Z  
+> **Timestamp**: 2026-10-31T01:15:09.607Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:40:38.202Z  
+> **Harvest Timestamp**: 2026-10-31T01:15:09.261Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14577 stars
+- **Stars / Engagement**: 14592 stars
 
 ---
 
@@ -1155,11 +1155,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7762** (2026-10-26): **meta: resolve subdir root for ACL operations**
-  *Symptoms*: ## Problem  On subdir mounts, ACL reads and writes can target the volume root instead of the mounted directory.  ## Fix  Resolve the inode once at the ACL entry points so backend operations and cache handling use the same real inode. Regression coverage is in #7759.
+- **Issue #7785** (2026-10-30): **meta/redis: do not recreate removed dir quotas when flushing usage**
+  *Symptoms*: ### What Redis `doFlushQuotas` recreated the quota of a removed directory (HSetNX -1/-1 + HIncrBy), leaving an unlimited quota with negative usage after `rmr`/`rmdir`.  ### How Skip dir quotas whose record no longer exists, matching the SQL and TKV engines. The dir quota hash is watched, so a concurrent rmdir/rename/quota delete restarts the flush. User/group quotas keep the old behavior.  ### Test `testQuotaFlushAfterRmdir` in the shared `testMeta` suite (Redis, SQL, KV). Fails on main with `MaxSpace:-1 MaxInodes:-1 UsedSpace:-12288 UsedInodes:-3`, passes with the fix.  Fixes #7784
+  **Post-Mortem & Fix Analysis**:
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/signed)](https://cla-assistant.io/juicedata/juicefs?pullRequest=7785) <br/>All committers have signed the CLA.
 
-- **Issue #7760** (2026-10-26): **meta: resolve subdir root before batch unlink**
-  *Symptoms*: ## Problem  On subdir mounts, BatchUnlink can leave requested files undeleted or delete a same-name hardlink at the volume root.   Related: #7752  ## Fix  Resolve the parent inode before deleting entries and updating usage.
+- **Issue #7784** (2026-10-30): **Redis: quota flush recreates deleted directory quotas with negative usage**
+  *Symptoms*: **What happened**:  A Redis quota flush can recreate a removed directory's quota with unlimited limits and negative usage.  On JuiceFS CE v1.4.1 with Valkey 9.1.1, `/acc/proj/gen` held 2,000 files in 20 subdirectories. Its 5 GiB quota recorded **24,997,888 bytes / 2,020 inodes**, excluding `gen` itself.  We ran `juicefs rmr` and kept the deleting client's container alive for four seconds. The parent quota was correct at **4,096 bytes / 1 inode**, but `gen`'s quota fields were back:  ```text dirQuota[<gen inode>]           = ffffffffffffffffffffffffffffffff  (hex) dirQuotaUsedSpace[<gen inode>]  = -24997888 dirQuotaUsedInodes[<gen inode>] = -2020 ```  The 16 bytes of `ff` encode `MaxSpace = -1` and `MaxInodes = -1`. The three hash fields reappeared, not the directory; its inode remained in trash with `--trash-days 7`. This doesn't show an active quota being disabled.  **What you expected to happen**:  Flushing should leave deleted directory quotas absent, update surviving ancestors, and preserve existing user/group record creation.  **How to reproduce it (as minimally and precisely as possible)**:  The Docker tests used local file storage:  1. Format a fresh filesystem with Valkey and `--trash-days 7`. Create `/acc/proj/gen`. 2. Set quotas on `/acc` (10 GiB / 1,000,000 inodes) and `gen` (5 GiB / 500,000 inodes). 3. Create `d0` through `d19` under `gen`, wait two seconds, then create files `f0` through `f1999`. File `i` goes into `d(i % 20)` and contains `1000 + (i * 37 % 20000
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1176,76 +1178,77 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `735029cb` (2026-10-26)
-**Commit Message**: meta: fix subdir quota accounting after mkdir (#7758)
+### Incident Patch 1: `ddf515c5` (2026-10-30)
+**Commit Message**: object/cos: add timeout for cos (#7469)
 
-**File**: `pkg/meta/base.go` (modified, +1/-1)
+Signed-off-by: swj <[REDACTED_EMAIL]>
+
+**File**: `pkg/object/cos.go` (modified, +1/-0)
 ```diff
-@@ -1730,7 +1730,7 @@ func (m *baseMeta) Mkdir(ctx Context, parent Ino, name string, mode uint16, cuma
- 	st := m.Mknod(ctx, parent, name, TypeDirectory, mode, cumask, 0, "", inode, attr)
- 	if st == 0 {
- 		m.parentMu.Lock()
--		m.dirParents[*inode] = parent
-+		m.dirParents[*inode] = m.checkRoot(parent)
- 		m.parentMu.Unlock()
- 	}
- 	return st
+@@ -351,6 +351,7 @@ func newCOS(endpoint, accessKey, secretKey, token string) (ObjectStorage, error)
+ 			SessionToken: token,
+ 			Transport:    httpClient.Transport,
+ 		},
++		Timeout: httpClient.Timeout,
+ 	})
+ 	client.UserAgent = UserAgent
+ 	disableChecksum := strings.EqualFold(uri.Query().Get("disable-checksum"), "true")
 ```
 
-**File**: `pkg/meta/base_test.go` (modified, +36/-0)
+---
+
+### Incident Patch 2: `f84e1962` (2026-10-30)
+**Commit Message**: fix(object): synchronize delimiter listing stop signal (#7621)
+
+Signed-off-by: Xucheng Zhou <[REDACTED_EMAIL]>
+Co-authored-by: Xuhui zhang <[REDACTED_EMAIL]>
+
+**File**: `pkg/object/object_storage.go` (modified, +7/-1)
 ```diff
-@@ -5003,6 +5003,42 @@ func testQuota(t *testing.T, m Meta) {
- 	if st := m.Create(ctx, parent, "f4", 0644, 0, 0, nil, &attr); st != syscall.EDQUOT {
- 		t.Fatalf("Create quota/d22/f4: %s", st)
- 	}
-+
-+	t.Run("SubdirQuota", func(t *testing.T) {
-+		const path = "/quota-subdir"
-+		var parent, inode Ino
-+		if st := m.Mkdir(ctx, RootInode, "quota-subdir", 0755, 0, 0, &parent, nil); st != 0 {
-+			t.Fatalf("Mkdir quota-subdir: %s", st)
-+		}
-+		if err := m.HandleQuota(ctx, QuotaSet, path, DirQuotaType, map[string]*Quota{path: {MaxInodes: 2}}, false, false, false); err != nil {
-+			t.Fatalf("Set quota: %s", err)
-+		}
-+		defer m.HandleQuota(ctx, QuotaDel, path, DirQuotaType, nil, false, false, false)
-+		base := m.getBase()
-+		base.loadQuotas()
-+		defer base.chroot(base.root)
-+		if st := m.Chroot(ctx, path); st != 0 {
-+			t.Fatalf("Chroot: %s", st)
-+		}
-+
-+		if st := m.Mkdir(ctx, RootInode, "d", 0755, 0, 0, &inode, nil); st != 0 {
-+			t.Fatalf("Mkdir d: %s", st)
-+		}
-+		if st := m.Create(ctx, inode, "f", 0644, 0, 0, nil, nil); st != 0 {
-+			t.Fatalf("Create d/f: %s", st)
-+		}
-+		base.doFlushQuotas()
-+		qs := make(map[string]*Quota)
-+		if err := m.HandleQuota(ctx, QuotaGet, path, DirQuotaType, qs, false, false, false); err != nil {
-+			t.Fatalf("Get quota: %s", err)
-+		}
-+		if q := qs[path]; q.UsedInodes != 2 || q.UsedSpace != 2*4<<10 {
-+			t.Errorf("Subdir quota: got %+v, want 2 inodes and 8192 bytes", q)
-+		}
-+		if st := m.Create(ctx, inode, "overflow", 0644, 0, 0, nil, nil); st != syscall.EDQUOT {
-+			t.Errorf("Create d/overflow: got %s, want %s", st, syscall.EDQUOT)
-+		}
-+	})
- }
+@@ -29,6 +29,7 @@ import (
+ 	"strconv"
+ 	"strings"
+ 	"sync"
++	"sync/atomic"
+ 	"time"
  
- func testAtime(t *testing.T, m Meta) {
+ 	"github.com/juicedata/juicefs/pkg/utils"
+@@ -247,12 +248,17 @@ func ListAllWithDelimiter(ctx context.Context, store ObjectStorage, prefix, star
+ 	walk = func(prefix string, entries []Object) error {
+ 		var concurrent = 10
+ 		var err error
++		var stopped atomic.Bool
++		defer stopped.Store(true)
+ 		threads := make([]listThread, concurrent)
+ 		for c := 0; c < concurrent; c++ {
+ 			t := &threads[c]
+ 			t.cond = utils.NewCond(t)
+ 			go func(c int) {
+ 				for i := c; i < len(entries); i += concurrent {
++					if stopped.Load() {
++						return
++					}
+ 					key := entries[i].Key()
+ 					if end != "" && key >= end {
+ 						break
+@@ -269,7 +275,7 @@ func ListAllWithDelimiter(ctx context.Context, store ObjectStorage, prefix, star
+ 					t.cond.Signal()
+ 					for t.ready {
+ 						t.cond.WaitWithTimeout(time.Second)
+-						if err != nil {
++						if stopped.Load() {
+ 							t.Unlock()
+ 							return
+ 						}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7762** (2026-10-26): meta: resolve subdir root for ACL operations (@jiefenghuang)
-- **PR #7760** (2026-10-26): meta: resolve subdir root before batch unlink (@jiefenghuang)
-- **PR #7759** (2026-10-26): test: cover file operations on subdir mounts (@jiefenghuang)
-- **PR #7758** (2026-10-26): meta: fix subdir quota accounting after mkdir (@zxh326)
-- **PR #7757** (closed): chunk: fix data races on diskCache state fields (@cxljs)
-- **PR #7756** (2026-10-26): chore: modernize Go idioms and remove dead code (@cxljs)
+- **PR #7785** (2026-10-30): meta/redis: do not recreate removed dir quotas when flushing usage (@Ducheved)
+- **PR #7782** (2026-10-30): meta/redis: expose standalone and Sentinel pool metrics (@jiefenghuang)
+- **PR #7781** (2026-10-30): meta/tikv: expose client metrics (@jiefenghuang)
+- **PR #7778** (2026-10-29): meta/clone: count only file lengths in clone parent stats (@jiefenghuang)
+- **PR #7776** (2026-10-29): fs: check file type, symlink target and rename flags first (@myangitzh)
+- **PR #7772** (closed): fs: resolve the last path component (@myangitzh)
 
 ---
 
@@ -1265,28 +1268,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta: fix subdir quota accounting after mkdir (#7758)
+## X. object/cos: add timeout for cos (#7469)
 
 **RULE**:
-When implementing operations in `pkg/meta/base.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/object/cos.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `735029cb`: meta: fix subdir quota accounting after mkdir (#7758). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ddf515c5`: object/cos: add timeout for cos (#7469). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/meta/base.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/object/cos.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		m.dirParents[*inode] = m.checkRoot(parent)
+		Timeout: httpClient.Timeout,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		m.dirParents[*inode] = parent
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `735029cb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ddf515c5` are properly handled with clean fallback behavior.

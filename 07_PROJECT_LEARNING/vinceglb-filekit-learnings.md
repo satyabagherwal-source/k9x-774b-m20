@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source**: github ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
-> **Source Version**: `75099ba5`  
+> **Source Version**: `ddc09b4a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:19:10.137Z  
+> **Timestamp**: 2026-10-29T16:36:45.334Z  
 > **Learning ID**: `learn-github-vinceglb-filekit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vinceglb-filekit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vinceglb/FileKit](https://github.com/vinceglb/FileKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:19:10.131Z  
+> **Harvest Timestamp**: 2026-10-29T16:36:44.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `vinceglb/FileKit`
-- **Description**: Pick and save Files, Medias and Folder for Kotlin Multiplatform / KMP and Compose Multiplatform / CMP
+- **Description**: File operations and native file pickers for Kotlin Multiplatform and Compose Multiplatform: read, write, copy and list files, open and save dialogs, image compression, bookmarks. Android, iOS, macOS, JVM desktop, Linux, Windows, JS, Wasm.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1555 stars
+- **Stars / Engagement**: 1557 stars
 
 ---
 
@@ -36,6 +36,193 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `brand/render.mjs`
+```
+// Renders every FileKit brand asset from the sources in this directory.
+//
+//   npm run render            # all assets
+//   npm run render -- hero    # only assets whose path contains "hero"
+//   npm run render -- sample  # only the sample app icons
+//   npm run preview           # serve the sources to tweak them live in a browser
+//
+// Raster images are screenshots of src/hero.html taken by headless Chromium (Playwright).
+// SVG logos are generated from src/mark.js and the outlines of Inter Bold Italic (opentype.js).
+// App icons are screenshots of src/icon.html; .icns and .ico files are assembled from those PNGs.
+
+import { createServer } from 'node:http';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, extname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import opentype from 'opentype.js';
+import { chromium } from 'playwright';
+import { MARK_BOX, markShapes, markSvg, markVectorDrawable } from './src/mark.js';
+
+const BRAND = dirname(fileURLToPath(import.meta.url));
+const REPO = resolve(BRAND, '..');
+const palette = JSON.parse(await readFile(join(BRAND, 'palette.json'), 'utf8'));
+
+// The film grain makes lossless PNGs heavy (~3.5 MB at 1920 px), so heroes are lossy:
+// WebP when the rounded corners need transparency, JPEG for social cards (GitHub caps those at 1 MB).
+// Only the dark theme is exported for now; src/hero.html also supports `theme=light`.
+const HEROES = [
+  { file: 'brand/exports/readme-hero.webp', width: 1920, height: 960, theme: 'dark', rounded: true },
+  { file: 'brand/exports/social-preview.jpg', width: 1280, height: 640, theme: 'dark' },
+  { file: 'docs/brand/hero.webp', width: 1920, height: 1080, theme: 'dark', rounded: true },
+  { file: 'docs/brand/og.jpg', width: 1200, height: 630, theme: 'dark' },
+];
+const QUALITY = 0.92;
+
+// ---------------------------------------------------------------------------------------------
+// Sample app icons (src/icon.html)
+
+const ANDROID_RES = 'sample/androidApp/src/main/res';
+const MACOS_ICONSET = 'sample/iosApp/macosApp/Assets.xcassets/AppIcon.appiconset';
+// Adaptive icon layers are 108 dp, of which launchers show the center 72 dp: keep the mark the same visible size.
+const ADAPTIVE = 72 / 108;
+const DENSITIES = { mdpi: 1, hdpi: 1.5, xhdpi: 2, xxhdpi: 3, xxxhdpi: 4 };
+
+/** One rendered PNG per entry; `sizes` packs several renders into one .icns or .ico file. */
+const ICONS = [
+  ...Object.entries(DENSITIES).flatMap(([density, x]) => [
+    { file: `${ANDROID_RES}/mipmap-${density}/ic_launcher.webp`, size: 48 * x, shape: 'rounded' },
+    { file: `${ANDROID_RES}/mipmap-${density}/ic_launcher_round.webp`, size: 48 * x, shape: 'circle' },
+    { file: `${ANDROID_RES}/mipmap-${density}/ic_launcher_foreground.webp`, size: 108 * x, layer: 'foreground', scale: ADAPTIVE },
+    { file: `${ANDROID_RES}/mipmap-${density}/ic_launcher_background.webp`, size: 108 * x, layer: 'background' },
+  ]),
+  { file: 'sample/androidApp/src/main/ic_launcher-playstore.png', size: 512 },
+  // iOS masks the corners itself and wants an opaque square.
+  { file: 'sample/iosApp/iosApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png', size: 1024 },
+  ...[16, 32, 128, 256, 512].flatMap((size) => [
+    { file: `${MACOS_ICONSET}/icon_${size}x${size}.png`, size, shape: 'macos' },
+    { file: `${MACOS_ICONSET}/icon_${size}x${size}@2x.png`, size: size * 2, shape: 'macos' },
+  ]),
+  // Desktop (Compose and Nucleus) native distributions.
+  { file: 'sample/icons/filekit.icns', sizes: [16, 32, 64, 128, 256, 512, 1024], shape: 'macos' },
+  { file: 'sample/icons/filekit.ico', sizes: [16, 24, 32, 48, 64, 128, 256], shape: 'rounded' },
+  { file: 'sample/icons/filekit.png', size: 512, shape: 'rounded' },
+];
+
+// ---------------------------------------------------------------------------------------------
+// SVG logos
+
+const fontBuffer = await readFile(join(BRAND, 'fonts/Inter-BoldItalic.ttf'));
+const font = opentype.parse(fontBuffer.buffer.slice(fontBuffer.byteOffset, fontBuffer.byteOffset + fontBuffer.byteLength));
+
+/** "FileKit" as an SVG path whose baseline is at y and cap height equals capHeight. */
+function wordmark(x, y, capHeight, fill) {
+  const size = (capHeight * font.unitsPerEm) / font.tables.os2.sCapHeight;
+  const scale = size / font.unitsPerEm;
+  const tracking = -0.02 * size; // same letter-spacing as the hero title
+  const glyphs = [...'FileKit'].map((c) => font.charToGlyph(c)); // no shaping needed for plain Latin
+  const path = new opentype.Path();
+  let pen = x;
+  glyphs.forEach((glyph, i) => {
+    path.extend(glyph.getPath(pen, y, size));
+    const kern = i < glyphs.length - 1 ? font.getKerningValue(glyph, glyphs[i + 1]) : 0;
+    pen += (glyph.advanceWidth + kern) * scale + tracking;
+  });
+  const box = path.getBoundingBox();
+  return { svg: `<path d="${path.toPathData(2)}" fill="${fill}"/>`, right: box.x2 };
+}
+
+/** Horizontal lockup: mark + wordmark, cropped to the mark's height (24 units). */
+function lockup(theme) {
+  const markColors = theme === 'dark' ? palette.markOnDark : palette.mark;
+  const textColor = theme === 'dark' ? '#FFFFFF' : palette.ink;
+  const cap = 17; // wordmark cap height, vertically centered on the sheet
+  const left = MARK_BOX.x;
+  const text = wordmark(left + MARK_BOX.width + 7, 16 + cap / 2, cap, textColor);
+  const width = Math.ceil(text.right - left + 0.5);
+  const { y, height } = MARK_BOX;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width * 4}" height="${height * 4}" viewBox="${left.toFixed(2)} ${y} ${width} ${height}" fill="none">` +
+    `${markShapes(markColors, `fk-${theme}`)}${text.svg}</svg>\n`;
+}
+
+const SVGS = [
+  { file: 'docs/brand/logo-light.svg', content: () => lockup('light') },
+  { file: 'docs/brand/logo-dark.svg', content: () => lockup('dark') },
+  { file: 'docs/brand/favicon.svg', content: () => markSvg(palette.mark, 32) + '\n' },
+  { file: 'brand/exports/mark.svg', content: () => markSvg(palette.mark, 512) + '\n' },
+  { file: 'sample/webApp/src/commonMain/resources/favicon.svg', content: () => markSvg(palette.mark, 32) + '\n' },
+  { file: 'sample/shared/src/commonMain/composeResources/drawable/filekit_mark_light.xml', content: () => markVectorDrawable(palette.mark) },
+  { file: 'sample/shared/src/commonMain/composeResources/drawable/filekit_mark_dark.xml', content: () => markVectorDrawable(palette.markOnDark) },
+];
+
+// ---------------------------------------------------------------------------------------------
+
+/** Static server for the HTML sources; serves brand/ and docs/brand/ only. */
+async function serve(port = 0) {
+  const types = {
+    '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2',
+    '.ttf': 'font/ttf', '.svg': 'image/svg+xml', '.webp': 'image/webp', '.jpg': 'image/jpeg',
+  };
+  const roots = [BRAND, join(REPO, 'docs/brand')];
+  const server = createServer(async (req, res) => {
+    try {
+      const path = join(REPO, decodeURIComponent(new URL(req.url, 'http://x').pathname));
+      if (!roots.some((root) => path.startsWith(root))) throw new Error('not served');
+      res.writeHead(200, { 'content-type': types[extname(path)] ?? 'application/octet-stream', 'cache-control': 'no-store' });
+      res.end(await readFile(path));
+    } catch {
+      res.writeHead(404).end();
+    }
+  }).listen(port, '127.0.0.1');
+  await new Promise((r) => server.once('listening', r));
+  return { server, base: `http://127.0.0.1:${server.address().port}` };
+}
+
+if (process.argv[2] === '--preview') {
+  const { base } = await serve(4173);
+  console.log(`Brand board:  ${base}/brand/src/board.html`);
+  console.log(`Live hero:    ${base}/brand/src/hero.html  (resize the window to try formats, add ?seed=3.6 to try a composition)`);
+  console.log('Ctrl+C to stop.');
+} else {
+  await render(process.argv[2]);
+}
+
+async function render(filter) {
+  const wanted = (file) => !filter || file.includes(filter);
+
+  for (const svg of SVGS.filter((s) => wanted(s.file))) {
+    await mkdir(dirname(join(REPO, svg.file)), { recursive: true });
+    await writeFile(join(REPO, svg.file), svg.content());
+    console.log('wrote', svg.file);
+  }
+
+  const heroes = HEROES.filter((h) => wanted(h.file));
+  const icons = ICONS.filter((i) => wanted(i.file));
+  if (heroes.length === 0 && icons.length === 0) return;
+  const { server, base } = await serve();
+  // SwiftShader keeps WebGL output identical across machines with or without a GPU.
+  const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  for (const hero of heroes) {
+    const page = await browser.newPage({ viewport: { width: hero.width, height: hero.height } });
+    page.on('pageerror', (e) => console.error(hero.file, e.message));
+    await page.goto(`${base}/brand/src/hero.html?theme=${hero.theme}&rounded=${hero.rounded ? 1 : 0}`);
+    await page.waitForSelector('body[data-ready]');
+    await mkdir(dirname(join(REPO, hero.file)), { recursive: true });
+    if (hero.file.endsWith('.jpg')) {
+      await page.screenshot({ path: join(REPO, hero.file), type: 'jpeg', quality: QUALITY * 100 });
+    } else {
+      const png = await page.screenshot({ omitBackground: true });
+      await writeFile(join(REPO, hero.file), await toWebp(page, png));
+    }
+    await page.close();
+    console.log('wrote', hero.file);
+  }
+  for (const icon of icons) {
+    const pngs = [];
+    for (const size of icon.sizes ?? [icon.size]) {
+      const page = await browser.newPage({ viewport: { width: size, height: size } });
+      page.on('pageerror', (e) => console.error(icon.file, e.message));
+      const query = new URLSearchParams({ layer: icon.layer ?? 'full', shape: icon.shape ?? 'square' });
+      if (icon.scale) query.set('scale', palette.icon.scale * icon.scale);
+      await page.goto(`${base}/brand/src/icon.html?${query}`);
+      await page.waitForSelector('body[data-ready]');
+      const png = await page.screenshot({ omitBackground: true });
+      pngs.push({ size, data: i
+```
 
 ### Core Architecture Module: `filekit-core/src/androidMain/kotlin/io/github/vinceglb/filekit/FileKit.android.kt`
 ```
@@ -828,300 +1015,6 @@ internal expect fun compress(
 
 ```
 
-### Core Architecture Module: `filekit-core/src/appleMain/kotlin/io/github/vinceglb/filekit/PlatformFile.apple.kt`
-```
-package io.github.vinceglb.filekit
-
-import io.github.vinceglb.filekit.exceptions.BookmarkResolutionException
-import io.github.vinceglb.filekit.exceptions.FileKitException
-import io.github.vinceglb.filekit.mimeType.MimeType
-import io.github.vinceglb.filekit.utils.toByteArray
-import io.github.vinceglb.filekit.utils.toKotlinxPath
-import io.github.vinceglb.filekit.utils.toNSData
-import kotlinx.cinterop.BetaInteropApi
-import kotlinx.cinterop.BooleanVar
-import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.ObjCObjectVar
-import kotlinx.cinterop.UnsafeNumber
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.convert
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.pointed
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.toKString
-import kotlinx.cinterop.value
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.withContext
-import kotlinx.io.IOException
-import kotlinx.io.files.Path
-import kotlinx.io.files.SystemFileSystem
-import kotlinx.serialization.Serializable
-import platform.CoreFoundation.CFRelease
-import platform.CoreFoundation.CFStringCreateWithCString
-import platform.CoreFoundation.CFStringGetCString
-import platform.CoreFoundation.CFStringGetLength
-import platform.CoreFoundation.CFStringGetMaximumSizeForEncoding
-import platform.CoreFoundation.CFStringRef
-import platform.CoreFoundation.kCFAllocatorDefault
-import platform.CoreFoundation.kCFStringEncodingUTF8
-import platform.CoreServices.UTTypeCopyPreferredTagWithClass
-import platform.CoreServices.kUTTagClassMIMEType
-import platform.Foundation.NSDate
-import platform.Foundation.NSError
-import platform.Foundation.NSFileManager
-import platform.Foundation.NSFileType
-import platform.Foundation.NSFileTypeSymbolicLink
-import platform.Foundation.NSLock
-import platform.Foundation.NSURL
-import platform.Foundation.NSURLContentModificationDateKey
-import platform.Foundation.NSURLContentTypeKey
-import platform.Foundation.NSURLCreationDateKey
-import platform.Foundation.NSURLResourceKey
-import platform.Foundation.NSURLTypeIdentifierKey
-import platform.Foundation.timeIntervalSince1970
-import platform.UniformTypeIdentifiers.UTType
-import platform.posix.errno
-import platform.posix.free
-import platform.posix.realpath
-import platform.posix.strerror
-import platform.posix.unlink
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
-
-/**
- * Represents a file on the Apple platform (iOS/macOS).
- *
- * @property nsUrl The underlying [NSURL] object.
- */
-@Serializable(with = PlatformFileSerializer::class)
-public actual class PlatformFile private constructor(
-    public val nsUrl: NSURL,
-    internal val appleBookmarkLease: AppleBookmarkLease?,
-) {
-    public constructor(nsUrl: NSURL) : this(nsUrl, null)
-
-    public actual override fun toString(): String = path
-
-    public operator fun component1(): NSURL = nsUrl
-
-    public fun copy(nsUrl: NSURL = this.nsUrl): PlatformFile = PlatformFile(
-        nsUrl = nsUrl,
-        appleBookmarkLease = appleBookmarkLease?.takeIf { it.covers(nsUrl) },
-    )
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is PlatformFile) return false
-        return nsUrl.path == other.nsUrl.path
-    }
-
-    override fun hashCode(): Int = nsUrl.path.hashCode()
-
-    public actual companion object {
-        internal fun withAppleBookmarkLease(url: NSURL): PlatformFile =
-            PlatformFile(url, AppleBookmarkLease(url))
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
-internal class AppleBookmarkLease(
-    url: NSURL,
-) {
-    private val lock = NSLock()
-    private val rootPath = url.standardizedPath
-    private var scopeUrl: NSURL? = url
-    private var activeAccesses = 0
-    private var released = false
-
-    fun covers(url: NSURL): Boolean = url.standardizedPath.isWithin(rootPath)
-
-    fun start(): Boolean = lock.withLock {
-        if (released) {
-            throw FileKitException("This security-scoped bookmark has been released")
-        }
-        val granted = requireNotNull(scopeUrl).startAccessingSecurityScopedResource()
-        if (granted) {
-            activeAccesses += 1
-        }
-        return granted
-    }
-
-    fun stop(): Unit = lock.withLock {
-        if (activeAccesses == 0) return@withLock
-        requireNotNull(scopeUrl).stopAccessingSecurityScopedResource()
-        activeAccesses -= 1
-        releaseNativeUrlIfDrained()
-    }
-
-    fun release(): Unit = lock.withLock {
-        if (released) return@withLock
-        released = true
-        releaseNativeUrlIfDrained()
-    }
-
-    private fun releaseNativeUrlIfDrained() {
-        if (released && activeAccesses == 0) {
-            scopeUrl = null
-        }
-    }
-}
-
-private inline fun <T> NSLock.withLock(block: () -> T): T {
-    lock()
-    return try {
-        block()
-    } finally {
-        unlock()
-    }
-}
-
-public actual fun PlatformFile(path: Path): PlatformFile =
-    if (path.isAbsolute) {
-        PlatformFile(NSURL.fileURLWithPath(path = path.toString()))
-    } else {
-        PlatformFile(NSURL(string = path.toString()))
-    }
-
-public actual fun PlatformFile.toKotlinxIoPath(): Path =
-    nsUrl.toKotlinxPath()
-
-@PublishedApi
-internal actual fun PlatformFile.withPath(path: Path): PlatformFile =
-    copy(PlatformFile(path).nsUrl)
-
-private fun String.isWithin(rootPath: String): Boolean {
-    val root = rootPath.trimEnd('/')
-    return when {
-        root.isEmpty() && rootPath.startsWith('/') -> startsWith('/')
-        this == root -> true
-        root.isNotEmpty() -> startsWith("$root/")
-        else -> false
-    }
-}
-
-@OptIn(ExperimentalForeignApi::class)
-private val NSURL.standardizedPath: String
-    get() {
-        val unresolvedSegments = mutableListOf<String>()
-        var candidate = path?.trimEnd('/').orEmpty().ifEmpty { "/" }
-        while (true) {
-            realpath(candidate, null)?.let { resolved ->
-                val canonicalPath = try {
-                    resolved.toKString()
-                } finally {
-                    free(resolved)
-                }
-                return unresolvedSegments
-                    .asReversed()
-                    .fold(canonicalPath) { current, segment -> "$current/$segment" }
-                    .normalizePosixPath()
-            }
-            if (candidate == "/") break
-            val separator = candidate.lastIndexOf('/')
-            unresolvedSegments += candidate.substring(separator + 1)
-            candidate = if (separator <= 0) "/" else candidate.substring(0, separator)
-        }
-        return URLByStandardizingPath?.path.orEmpty()
-    }
-
-private fun String.normalizePosixPath(): String {
-    val normalizedSegments = mutableListOf<String>()
-    for (segment in split('/')) {
-        when (segment) {
-            "", "." -> Unit
-            ".." -> if (normalizedSegments.isNotEmpty()) normalizedSegments.removeAt(normalizedSegments.lastIndex)
-            else -> normalizedSegments += segment
-        }
-    }
-    return normalizedSegments.joinToString(separator = "/", prefix = "/")
-}
-
-public actual val PlatformFile.extension: String
-    get() = nsUrl.pathExtension ?: ""
-
-public actual val PlatformFile.nameWithoutExtension: String
-    get() = name.substringBeforeLast(".", name)
-
-public actual fun PlatformFile.absolutePath(): String =
-    nsUrl.absoluteString ?: ""
-
-public actual inline fun PlatformFile.list(block: (List<PlatformFile>) -> Unit): Unit =
-    withScopedAccess {
-        val directoryFiles = SystemFileSystem
-            .list(toKotlinxIoPath())
-            .map(::withPath)
-        block(directoryFiles)
-    }
-
-public actual fun PlatformFile.list(): List<PlatformFile> =
-    withScopedAccess {
-        SystemFileSystem
-            .list(toKotlinxIoPath())
-            .map(::withPath)
-    }
-
-@OptIn(ExperimentalForeignApi::class, ExperimentalTime::class)
-public actual fun PlatformFile.createdAt(): Instant? = withScopedAccess {
-    val values = nsUrl.resourceValuesForKeys(listOf(NSURLCreationDateKey), null)
-    val date = values?.get(NSURLCreationDateKey) as? NSDate
-    Instant.fromEpochSeconds(date?.timeIntervalSince1970?.toLong() ?: 0L)
-}
-
-@OptIn(ExperimentalForeignApi::class, ExperimentalTime::class)
-public actual fun PlatformFile.lastModified(): Instant = withScopedAccess {
-    val values = nsUrl.resourceValuesForKeys(listOf(NSURLContentModificationDateKey), null)
-    val date = values?.get(NSURLContentModificationDateKey) as? NSDate
-    Instant.fromEpochSeconds(date?.timeIntervalSince1970?.toLong() ?: 0L)
-}
-
-public actual fun PlatformFile.mimeType(): MimeType? = withScopedAccess { file ->
-    file.nsUrl.mimeTypeFromMetadata()
-        ?: file.nsUrl.mimeTypeFromExtension()
-}?.takeIf { it.isNotBlank() }?.let(MimeType::parse)
-
-private fun NSURL.mimeTypeFromMetadata(): String? {
-    val contentType = resourceValue(NSURLContentTypeKey) as? UTType
-
-    val fromContentType = contentType?.preferredMIMEType
-    if (!fromContentType.isNullOrBlank()) {
-        return fromContentType
-    }
-
-    val identifier = contentType?.identifier
-        ?: resourceValue(NSURLTypeIdentifierKey) as? String
-
-    return identifier?.let(::mimeTypeFromUti)
-}
-
-private fun NSURL.mimeTypeFromExtension(): String? =
-    pathExtension
-        ?.takeIf { it.isNotBlank() }
-        ?.let { ext -> UTType.typeWithFilenameExtension(ext)?.preferredMIMEType }
-
-@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
-private fun NSURL.resourceValue(key: NSURLResourceKey): Any? = memScoped {
-    val valuePtr = alloc<ObjCObjectVar<Any?>>()
-    val success = getResourceValue(value = valuePtr.ptr, forKey = key, error = null)
-    if (success) valuePtr.value else null
-}
-
-@OptIn(ExperimentalForeignApi::class)
-private fun mimeTypeFromUti(uti: String): String? {
-    if (uti.isBlank()) {
-        return null
-    }
-
-    return memScoped {
-        val cfUti = CFStringCreateWithCString(
-            alloc = kCFAllocatorDefault,
-            cStr = uti,
-            enco
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1146,598 +1039,849 @@ private fun mimeTypeFromUti(uti: String): String? {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `75099ba5` (2026-10-22)
-**Commit Message**: 🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively
+### Incident Patch 1: `5f2c9211` (2026-10-28)
+**Commit Message**: 🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup
 
-✨ Add PlatformFile.walk() and sizeRecursively()
+🐛 Fix web serializer message, JVM open fallback, drop unused exception
 
-**File**: `docs/core/platform-file.mdx` (modified, +18/-0)
+**File**: `docs/dialogs/open-file.mdx` (modified, +2/-2)
 ```diff
-@@ -195,6 +195,24 @@ val relativeDir = PlatformFile("/path/to/relative")
- val absoluteDir: PlatformFile = relativeDir.absoluteFile()
- ```
+@@ -38,14 +38,14 @@ FileKit.openFileWithDefaultApplication(file)
  
-+### Walking a directory tree
-+
-+`walk()` lazily yields every file and subdirectory below a directory, depth-first, without the directory itself. `sizeRecursively()` returns the total size of the regular files in the tree:
-+
-+```kotlin
-+val fileCount = directory.walk().count { it.isRegularFile() }
-+val children = directory.walk(maxDepth = 1).toList() // like list()
-+val totalBytes: Long = directory.sizeRecursively()
-+```
-+
-+- Symbolic links are listed but never followed, so a link can't cause an infinite loop. They add nothing to `sizeRecursively()`. This also applies when you call either function on a link.
-+- On a regular file, `walk()` yields only that file and `sizeRecursively()` returns its size. `maxDepth` must be positive.
-+- `walk()` is synchronous, like `list()`: on non-web platforms, iterate it on `Dispatchers.IO`. `sizeRecursively()` is a suspend function that switches to `Dispatchers.IO` itself on non-web platforms.
-+- **Android**: each subdirectory of a document tree costs provider queries, so large trees are slow. Files whose provider doesn't report a size count as 0.
-+- **Apple platforms**: keep security-scoped access to the root active while iterating `walk()`, for example inside `withScopedAccess { }`.
-+- **Windows**: every reparse point counts as a link, including directory junctions and OneDrive Files On-Demand folders. `walk()` lists such a folder without its contents, and `sizeRecursively()` doesn't count them.
-+- **Web**: works on directories picked with the directory picker, whose tree is already in memory. Both functions run on the caller's dispatcher. Origin private file system directories aren't supported.
-+
- ## Converting to kotlinx-io
+ ## Platform notes
  
- `PlatformFile` provides built-in integration with [kotlinx-io](https://github.com/Kotlin/kotlinx-io).
+-Failures are not wrapped in `FileKitDialogException`. Each platform reports them its own way:
++Failures are reported differently on each platform. Only the JVM wraps some of them in `FileKitDialogException`:
+ 
+ | Platform | Behavior |
+ | --- | --- |
+ | Android | Sends an `ACTION_VIEW` intent with the MIME type of the file extension. Throws `ActivityNotFoundException` when no app handles that type, and `IllegalArgumentException` for a file outside the directories its FileProvider covers. |
+ | iOS | Calls `openURL`. If that fails, shows the "Open in" menu (`UIDocumentInteractionController`) so the user can pick an app. Reports no error. |
+ | macOS | Uses `NSWorkspace`. Reports no error. |
+-| JVM | Uses `java.awt.Desktop.open` without checking `Desktop.isDesktopSupported()`. Throws on headless setups (`HeadlessException`), when the action is unsupported (`UnsupportedOperationException`), or when no app is associated (`IOException`). |
++| JVM | Uses `java.awt.Desktop.open` when the desktop supports opening files. Otherwise (headless setups, Linux without GNOME libraries), on Linux it falls back to `xdg-open` and waits up to half a second for it to report an error. Throws `FileKitDialogException` when neither works: `Desktop` cannot open files and `xdg-open` is missing, cannot start, or exits with an error code. Errors from `Desktop.open` itself are not wrapped, such as `IOException` when no app is associated. |
+ | Linux native | Starts `xdg-open` without waiting for it. Throws `FileKitException` only if the process cannot start. |
+ | Windows native | Calls `ShellExecuteW` with the `open` verb. Reports no error. |
+ | Web | Not available. |
 ```
 
-**File**: `filekit-core/src/androidHostTest/kotlin/io/github/vinceglb/filekit/PlatformFileAndroidTest.kt` (modified, +13/-0)
+**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.kt` (modified, +10/-0)
 ```diff
-@@ -176,6 +176,19 @@ class PlatformFileAndroidTest {
-         assertEquals(listOf("note.txt"), notes.list().map { it.name })
-     }
+@@ -5,6 +5,16 @@ import kotlinx.serialization.descriptors.SerialDescriptor
+ import kotlinx.serialization.encoding.Decoder
+ import kotlinx.serialization.encoding.Encoder
  
-+    @Test
-+    fun PlatformFile_walkUriTree_yieldsDescendantsAndCountsUnknownSizesAsZero() = runBlocking {
-+        val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
-+        ShadowContentResolver.registerProviderInternal(
-+            "com.android.externalstorage.documents",
-+            createNestedTreeContentProvider(),
++/**
++ * kotlinx.serialization serializer for [PlatformFile], encoded as its path string.
++ *
++ * Serialization keeps the path, not access rights: a file picked outside the app (an Android
++ * `content://` file, a security-scoped file on Apple platforms) may not be readable once restored.
++ * Use bookmark data for persistent access.
++ *
++ * Not supported on web targets (JS and Wasm): [serialize] and [deserialize] throw an
++ * [IllegalStateException] there.
++ */
+ public expect object PlatformFileSerializer : KSerializer<PlatformFile> {
+     override val descriptor: SerialDescriptor
+ 
+```
+
+**File**: `filekit-core/src/webMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.web.kt` (renamed, +8/-1)
+```diff
+@@ -8,8 +8,15 @@ import kotlinx.serialization.encoding.Decoder
+ import kotlinx.serialization.encoding.Encoder
+ 
+ private const val UNSUPPORTED_MESSAGE =
+-    "PlatformFile serialization is not supported on Wasm JS targets"
++    "PlatformFile serialization is not supported on web targets (JS and Wasm)"
+ 
++/**
++ * Web (JS and Wasm) implementation of [PlatformFileSerializer].
++ *
++ * A web [PlatformFile] wraps a browser `File` object that has no path to persist, so
++ * [serialize] and [deserialize] always throw an [IllegalStateException]. The serializer
++ * exists so that `@Serializable` classes holding a [PlatformFile] still compile in shared code.
++ */
+ public actual object PlatformFileSerializer : KSerializer<PlatformFile> {
+     actual override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+         serialName = "io.github.vinceglb.filekit.PlatformFile",
+```
+
+**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKit.jvm.kt` (modified, +8/-2)
+```diff
+@@ -6,7 +6,6 @@ import io.github.vinceglb.filekit.dialogs.platform.PlatformFilePicker
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.withContext
+-import java.awt.Desktop
+ 
+ internal actual suspend fun FileKit.platformOpenFilePicker(
+     type: FileKitType,
+@@ -97,12 +96,19 @@ internal actual suspend fun FileKit.platformOpenFileSaver(
+ /**
+  * Opens a file with the default application associated with its file type.
+  *
++ * Uses `java.awt.Desktop` when it supports opening files. Otherwise, on Linux, falls back to
++ * `xdg-open` and waits half a second at most for it to report an error.
++ *
+  * @param file The file to open.
+  * @param openFileSettings Platform-specific settings for opening the file.
++ * @throws FileKitDialogException When `java.awt.Desktop` cannot open files (for example in a headless
++ * environment) and the `xdg-open` fallback is unavailable, cannot start, or exits with an error.
++ * Errors raised by `java.awt.Desktop.open` itself, such as an [java.io.IOException] when no application
++ * is associated with the file, are not wrapped.
+  */
+ public actual fun FileKit.openFileWithDefaultApplication(
+     file: PlatformFile,
+     openFileSettings: FileKitOpenFileSettings,
+ ) {
+-    Desktop.getDesktop()?.open(file.file)
++    JvmDefaultApplicationOpener.Default.open(file.file)
+ }
+```
+
+**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpener.kt` (added, +83/-0)
+```diff
+@@ -0,0 +1,83 @@
++package io.github.vinceglb.filekit.dialogs
++
++import io.github.vinceglb.filekit.utils.Platform
++import io.github.vinceglb.filekit.utils.PlatformUtil
++import java.awt.Desktop
++import java.io.File
++import java.io.IOException
++import java.util.concurrent.TimeUnit
++
++// Long enough to catch xdg-open failing fast (missing file or tool), short enough for a click handler.
++internal const val XDG_OPEN_EXIT_TIMEOUT_MILLIS: Long = 500
++
++/**
++ * Opens files with the default application on the JVM.
++ *
++ * Uses `java.awt.Desktop` when it can open files. Otherwise, on Linux, starts `xdg-open` and waits
++ * at most [XDG_OPEN_EXIT_TIMEOUT_MILLIS] for it to report an error. Throws [FileKitDialogException] when neither works.
++ */
++internal class JvmDefaultApplicationOpener(
++    private val isDesktopOpenSupported: () -> Boolean,
++    private val desktopOpen: (File) -> Unit,
++    private val isLinux: Boolean,
++    private val startProcess: (List<String>) -> Process,
++    private val exitTimeoutMillis: Long = XDG_OPEN_EXIT_TIMEOUT_MILLIS,
++) {
++    fun open(file: File) {
++        when {
++            isDesktopOpenSupported() -> desktopOpen(file)
++
++            isLinux -> openWithXdgOpen(file)
++
++            else -> throw FileKitDialogException(
++                "Could not open the file with the default application: " +
++                    "java.awt.Desktop cannot open files in this environment.",
++            )
++        }
++    }
++
++    private fun openWithXdgOpen(file: File) {
++        val process = try {
++            // An absolute path keeps xdg-open from reading the argument as an option or a URI scheme.
++            startProcess(listOf("xdg-open", file.absolutePath))
++        } catch (e: IOException) {
++            throw FileKitDialogException(
++                "Could not open the file with the default application: " +
++                    "java.awt.Desktop cannot open files and xdg-open could not be started.",
++                e,
++            )
++        }
++
++        val exited = try {
++            process.waitFor(exitTimeoutMillis, TimeUnit.MILLISECONDS)
++        } catch (_: InterruptedException) {
++            Thread.currentThread().interrupt()
++            return
++        }
++
++        // Some xdg-open fallbacks keep running until the viewer closes: treat that as success.
++        if (exited && process.exitValue() != 0) {
++            throw FileKitDialogException(
++                "Could not open the file with the default application: " +
++                    "xdg-open exited with code ${process.exitValue()}.",
++            )
++        }
++    }
++
++    companion object {
++        val Default: JvmDefaultApplicationOpener = JvmDefaultApplicationOpener(
++            isDesktopOpenSupported = {
++                Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)
++            },
++            desktopOpen = { Desktop.getDesktop().open(it) },
++            isLinux = PlatformUtil.current == Platform.Linux,
++            startProcess = { command ->
++                ProcessBuilder(command)
++                    .redirectInput(ProcessBuilder.Redirect.from(File("/dev/null")))
++                    .redirectOutput(ProcessBuilder.Redirect.DISCARD)
++                    .redirectError(ProcessBuilder.Redirect.DISCARD)
++                    .start()
++            },
 +        )
-+        val base = PlatformFile(treeUri)
-+
-+        assertEquals(listOf("Notes", "note.txt", "parent-only.txt"), base.walk().map { it.name }.toList())
-+        assertEquals(0L, base.sizeRecursively())
-+    }
-+
-     @Test
-     fun createDirectories_onNestedUriChild_createsMissingParents() {
-         val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
-```
-
-**File**: `filekit-core/src/androidMain/kotlin/io/github/vinceglb/filekit/PlatformFile.android.kt` (modified, +7/-2)
-```diff
-@@ -1162,16 +1162,21 @@ private fun Uri.toFileOrNull(): File? {
- }
- 
- // lstat/remove work on API 21 and operate on the link itself, including a dangling link.
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean {
-     val file = (androidFile as? AndroidFile.FileWrapper)?.file ?: return false
-     val metadata = try {
-         Os.lstat(file.absolutePath)
-     } catch (error: ErrnoException) {
-         if (error.errno == OsConstants.ENOENT || error.errno == OsConstants.ENOTDIR) return false
-         throw IOException("Could not inspect ${file.absolutePath}", error)
-     }
--    if (!OsConstants.S_ISLNK(metadata.st_mode)) return false
-+    return OsConstants.S_ISLNK(metadata.st_mode)
-+}
-+
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
- 
-+    val file = (androidFile as AndroidFile.FileWrapper).file
-     try {
-         Os.remove(file.absolutePath)
-     } catch (error: ErrnoException) {
-```
-
-**File**: `filekit-core/src/appleMain/kotlin/io/github/vinceglb/filekit/PlatformFile.apple.kt` (modified, +8/-2)
-```diff
-@@ -435,11 +435,17 @@ private fun NSError?.toBookmarkResolutionException(): BookmarkResolutionExceptio
- // attributesOfItemAtPath does not resolve the link, so a symlink reports its own type here rather
- // than the type of whatever it points at.
- @OptIn(ExperimentalForeignApi::class)
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean {
-     val path = nsUrl.path ?: return false
-     val attributes = NSFileManager.defaultManager.attributesOfItemAtPath(path, error = null)
--    if (attributes?.get(NSFileType) != NSFileTypeSymbolicLink) return false
-+    return attributes?.get(NSFileType) == NSFileTypeSymbolicLink
-+}
-+
-+@OptIn(ExperimentalForeignApi::class)
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
- 
-+    val path = nsUrl.path ?: return false
-     if (unlink(path) != 0) {
-         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
-     }
-```
-
-**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFile.kt` (modified, +62/-0)
-```diff
-@@ -147,3 +147,65 @@ public inline fun <T> PlatformFile.withScopedAccess(block: (PlatformFile) -> T):
-         }
-     }
- }
-+
-+/**
-+ * Lazily walks this directory recursively (depth-first). Yields files and subdirectories, but not
-+ * the starting directory itself. If this is a regular file or a symbolic link, yields only this
-+ * entry.
-+ *
-+ * Symbolic links (and Windows reparse points) are yielded but never followed, including this
-+ * entry. Errors throw, like [list]. On non-web platforms the walk does blocking I/O, so iterate it
-+ * on an IO dispatcher. On Apple platforms, keep security-scoped access to the root active while
-+ * iterating (see [withScopedAccess]).
-+ *
-+ * @param maxDepth The maximum depth to walk. `1` yields only the direct children. Must be positive.
-+ * @return A lazy [Sequence] of the entries in this tree.
-+ */
-+public fun PlatformFile.walk(maxDepth: Int = Int.MAX_VALUE): Sequence<PlatformFile> {
-+    require(maxDepth > 0) { "maxDepth must be positive, but was $maxDepth." }
-+    return sequence {
-+        if (isSymbolicLink() || isRegularFile()) yield(this@walk) else yieldDescendants(this@walk, maxDepth)
 +    }
 +}
-+
-+private suspend fun SequenceScope<PlatformFile>.yieldDescendants(directory: PlatformFile, maxDepth: Int) {
-+    directory.list().forEach { child ->
-+        yield(child)
-+        // Check for a link first: isDirectory() resolves the link and touches its target.
-+        if (maxDepth > 1 && !child.isSymbolicLink() && child.isDirectory()) {
-+            yieldDescendants(child, maxDepth - 1)
-+        }
-+    }
-+}
-+
-+/**
-+ * Returns the total size in bytes of all regular files in this tree. For a regular file, returns
-+ * its own size.
-+ *
-+ * Symbolic links, including this entry, are never followed and add nothing to the total. Files
-+ * whose size is unknown (for example, from Android document providers that don't report one) count
-+ * as 0. Errors throw, like [list]. Runs on `Dispatchers.IO` on non-web platforms.
-+ */
-+public expect suspend fun PlatformFile.sizeRecursively(): Long
-+
-+internal fun PlatformFile.computeSizeRecursively(): Long = withScopedAccess {
-+    when {
-+        isSymbolicLink() -> 0
-+        isRegularFile() -> size().coerceAtLeast(0)
-+        else -> sizeOfDescendants()
-+    }
-+}
-+
-+private fun PlatformFile.sizeOfDescendants(): Long = list().sumOf { child ->
-+    when {
-+        child.isSymbolicLink() -> 0
-+        child.isDirectory() -> child.sizeOfDescendants()
-+        else -> child.size().coerceAtLeast(0)
-+    }
-+}
-+
-+/**
-+ * Returns `true` if this entry is a symbolic link or a Windows reparse point, without following it.
-+ * Returns `false` for missing paths and on platforms without links.
-+ */
-+internal expect fun PlatformFile.isSymbolicLink(): Boolean
 ```
 
-**File**: `filekit-core/src/jvmMain/kotlin/io/github/vinceglb/filekit/PlatformFile.jvm.kt` (modified, +14/-13)
+**File**: `filekit-dialogs/src/jvmTest/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpenerTest.kt` (added, +148/-0)
 ```diff
-@@ -187,20 +187,21 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
-     )
- }
- 
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
--    val isLink = if (Platform.isWindows()) {
--        // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
--        val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
--        if (attributes == INVALID_FILE_ATTRIBUTES) {
--            val error = Kernel32.INSTANCE.GetLastError()
--            if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
--            throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
--        }
--        (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
--    } else {
--        Files.isSymbolicLink(file.toPath())
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean {
-+    if (!Platform.isWindows()) return Files.isSymbolicLink(file.toPath())
+@@ -0,0 +1,148 @@
++@file:Suppress("ktlint:standard:function-naming", "FunctionName")
 +
-+    // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
-+    val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
-+    if (attributes == INVALID_FILE_ATTRIBUTES) {
-+        val error = Kernel32.INSTANCE.GetLastError()
-+        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
-+        throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
-     }
--    if (!isLink) return false
-+    return (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
-+}
++package io.github.vinceglb.filekit.dialogs
 +
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
- 
-     // Unlike kotlinx-io's delete, this does not check whether the link's target exists first.
-     Files.delete(file.toPath())
-```
-
-**File**: `filekit-core/src/jvmTest/kotlin/io/github/vinceglb/filekit/PlatformFileJvmTest.kt` (modified, +27/-0)
-```diff
-@@ -43,6 +43,33 @@ class PlatformFileJvmTest {
-         }
-     }
- 
++import java.io.File
++import java.io.IOException
++import java.io.InputStream
++import java.io.OutputStream
++import java.util.concurrent.TimeUnit
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFailsWith
++import kotlin.test.assertIs
++import kotlin.test.assertTrue
++
++class JvmDefaultApplicationOpenerTest {
++    private val file = File("report.pdf")
++
 +    @Test
-+    fun PlatformFile_walk_symbolicLinks_areNotFollowed() = runTest {
-+        val tempRoot = createTempDirectory("filekit-walk-cycle")
-+        try {
-+            val outside = tempRoot.resolve("outside").createDirectory()
-+            outside.resolve("big.txt").writeText("not counted")
-+            val tree = tempRoot.resolve("tree").createDirectory()
-+            tree.resolve("file.txt").writeText("abc")
-+            Files.createSymbolicLink(tree.resolve("loop"), tree)
-+            Files.createSymbolicLink(tree.resolve("link.txt"), outside.resolve("big.txt"))
++    fun JvmDefaultApplicationOpener_desktopSupported_usesDesktopOnly() {
++        val opened = mutableListOf<File>()
++        val commands = mutableListOf<List<String>>()
++        val opener = opener(
++            desktopSupported = true,
++            isLinux = true,
++            opened = opened,
++            commands = commands,
++        )
 +
-+            val root = PlatformFile(tree.toFile())
++        opener.open(file)
 +
-+            assertEquals(setOf("file.txt", "loop", "link.txt"), root.walk().map { it.name }.toSet())
-+            assertEquals(3L, root.sizeRecursively())
-+
-+            // A link passed as the receiver is not followed either.
-+            for (name in listOf("loop", "link.txt")) {
-+                val link = PlatformFile(tree.resolve(name).toFile())
-+                assertEquals(listOf(name), link.walk().map { it.name }.toList())
-+                assertEquals(0L, link.sizeRecursively())
-+            }
-+        } finally {
-+            tempRoot.toFile().deleteRecursively()
-+        }
++        assertEquals(listOf(file), opened)
++        assertTrue(commands.isEmpty())
 +    }
 +
-     private val resourceDirectory = PlatformFile(Path("src/nonWebTest/resources"))
-     private val textFile = PlatformFile(resourceDirectory, "hello.txt")
-     private val imageFile = PlatformFile(resourceDirectory, "compose-logo.png")
++    @Test
++    fun JvmDefaultApplicationOpener_desktopError_isNotWrapped() {
++        val opener = JvmDefaultApplicationOpener(
++            isDesktopOpenSupported = { true },
++            desktopOpen = { throw IOException("No application") },
++            isLinux = true,
++            startProcess = { error("xdg-open must not run") },
++        )
++
++        assertFailsWith<IOException> { opener.open(file) }
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_desktopUnsupportedOnLinux_runsXdgOpenWithAbsolutePath() {
++        val commands = mutableListOf<List<String>>()
++        val opener = opener(
++            isLinux = true,
++            commands = commands,
++            process = FakeProcess(exitCode = 0),
++        )
++
++        opener.open(file)
++
++        assertEquals(listOf(listOf("xdg-open", file.absolutePath)), commands)
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_xdgOpenStillRunning_returnsWithoutWaitingForever() {
++        val process = FakeProcess(exitCode = null)
++        val opener = opener(isLinux = true, process = process)
++
++        opener.open(file)
++
++        assertEquals(TIMEOUT_MILLIS, process.waitedMillis)
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_xdgOpenNonZeroExit_throwsDialogException() {
++        val opener = opener(isLinux = true, process = FakeProcess(exitCode = 3))
++
++        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
++
++        assertTrue(exception.message!!.contains("xdg-open exited with code 3"))
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_xdgOpenMissing_throwsDialogExceptionWithCause() {
++        val opener = JvmDefaultApplicationOpener(
++            isDesktopOpenSupported = { false },
++            desktopOpen = { error("Desktop must not be used") },
++            isLinux = true,
++            startProcess = { throw IOException("Cannot run program \"xdg-open\"") },
++        )
++
++        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
++
++        assertIs<IOException>(exception.cause)
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_desktopUnsupportedOutsideLinux_throwsDialogException() {
++        val commands = mutableListOf<List<String>>()
++        val opener = opener(isLinux = false, commands = commands)
++
++        assertFailsWith<FileKitDialogException> { opener.open(file) }
++        assertTrue(commands.isEmpty())
++    }
++
++    private fun opener(
++        desktopSupported: Boolean = false,
++        isLinux: Boolean,
++        opened: MutableList<File> = mutableListOf(),
++        commands: MutableList<List<String>> = mutableListOf(),
++        process: Process = FakeProcess(exitCode = 0),
++    ) = JvmDefaultApplicationOpener(
++        isDesktopOpenSupported = { desktopSupported },
++        desktopOpen = { opened += it },
++        isLinux = isLinux,
++        startProcess = { command ->
++            commands += command
++            process
++        },
++        exitTimeoutMillis = TIMEOUT_MILLIS,
++    )
++
++    /** A process that has exited with [exitCode], or is still running when [exitCode] is null. */
++    private class FakeProcess(
++        private val exitCode: Int?,
++    ) : Process() {
++        var waitedMillis: Long? = null
++
++        override fun waitFor(timeout: Long, unit: TimeUnit): Boolean {
++            waitedMillis = unit.toMillis(timeout)
++            return exitCode != null
++        }
++
++        override fun waitFor(): Int = exitCode ?: error("Unbounded wait")
++
++        override fun exitValue(): Int = exitCode ?: throw IllegalThreadStateException()
++
++        override fun getOutputStream(): OutputStream = OutputStream.nullOutputStream()
++
++        override fun getInputStream(): InputStream = InputStream.nullInputStream()
++
++        override fun getErrorStream(): InputStream = InputStream.nullInputStream()
++
++        override fun destroy() = Unit
++    }
++
++    private companion object {
++        const val TIMEOUT_MILLIS = 50L
++    }
++}
 ```
 
-**File**: `filekit-core/src/linuxMain/kotlin/io/github/vinceglb/filekit/PlatformFile.linux.kt` (modified, +9/-3)
+**File**: `filekit-dialogs/src/webMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKitFileSaverWithoutBytesException.kt` (removed, +0/-7)
 ```diff
-@@ -307,17 +307,23 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
- 
- // lstat, not stat: stat would resolve the link and report on its target.
- @OptIn(ExperimentalForeignApi::class)
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean = memScoped {
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean = memScoped {
-     val path = absolutePath()
-     val statBuf = alloc<stat>()
-     if (lstat(path, statBuf.ptr) != 0) {
-         if (errno == ENOENT || errno == ENOTDIR) return@memScoped false
-         throw IOException("Could not inspect $path: ${strerror(errno)?.toKString()}")
-     }
--    if ((statBuf.st_mode.toInt() and S_IFMT) != S_IFLNK) return@memScoped false
-+    (statBuf.st_mode.toInt() and S_IFMT) == S_IFLNK
-+}
-+
-+@OptIn(ExperimentalForeignApi::class)
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
- 
-+    val path = absolutePath()
-     if (unlink(path) != 0) {
-         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
-     }
--    true
-+    return true
- }
+@@ -1,7 +0,0 @@
+-package io.github.vinceglb.filekit.dialogs
+-
+-public class FileKitFileSaverWithoutBytesException :
+-    IllegalArgumentException(
+-        "Bytes must not be null on Web platform. Use isSaveFileWithoutBytesSupported() " +
+-            "to check if the platform supports saving files without bytes.",
+-    )
 ```
 
 ---
 
-### Incident Patch 2: `0c42c93c` (2026-10-22)
-**Commit Message**: ✨ Add PlatformFile.walk() and sizeRecursively()
+### Incident Patch 2: `54e88f0d` (2026-10-28)
+**Commit Message**: 🐛 Fix web serializer message, JVM open fallback, drop unused exception
 
-walk() lazily yields a directory tree depth-first, without the starting
-directory, and never follows symbolic links. sizeRecursively() sums the
-regular files in the tree on Dispatchers.IO and counts unknown sizes as 0.
-
-Link detection moves out of deleteIfSymbolicLink() into an internal
-isSymbolicLink() so traversal reuses it. Delete behavior is unchanged.
+- Rename the web PlatformFileSerializer actual to PlatformFileSerializer.web.kt and say it is
+  unsupported on web targets (JS and Wasm), with KDoc on the expect and web declarations.
+- Remove FileKitFileSaverWithoutBytesException: it was public but never thrown, and its message
+  pointed to a function that does not exist.
+- JVM openFileWithDefaultApplication now checks Desktop support, falls back to xdg-open on Linux
+  with a bounded wait, and throws FileKitDialogException when neither works.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `docs/core/platform-file.mdx` (modified, +18/-0)
+**File**: `docs/dialogs/open-file.mdx` (modified, +2/-2)
 ```diff
-@@ -195,6 +195,24 @@ val relativeDir = PlatformFile("/path/to/relative")
- val absoluteDir: PlatformFile = relativeDir.absoluteFile()
+@@ -38,14 +38,14 @@ FileKit.openFileWithDefaultApplication(file)
+ 
+ ## Platform notes
+ 
+-Failures are not wrapped in `FileKitDialogException`. Each platform reports them its own way:
++Failures are reported differently on each platform. Only the JVM wraps some of them in `FileKitDialogException`:
+ 
+ | Platform | Behavior |
+ | --- | --- |
+ | Android | Sends an `ACTION_VIEW` intent with the MIME type of the file extension. Throws `ActivityNotFoundException` when no app handles that type, and `IllegalArgumentException` for a file outside the directories its FileProvider covers. |
+ | iOS | Calls `openURL`. If that fails, shows the "Open in" menu (`UIDocumentInteractionController`) so the user can pick an app. Reports no error. |
+ | macOS | Uses `NSWorkspace`. Reports no error. |
+-| JVM | Uses `java.awt.Desktop.open` without checking `Desktop.isDesktopSupported()`. Throws on headless setups (`HeadlessException`), when the action is unsupported (`UnsupportedOperationException`), or when no app is associated (`IOException`). |
++| JVM | Uses `java.awt.Desktop.open` when the desktop supports opening files. Otherwise (headless setups, Linux without GNOME libraries), on Linux it falls back to `xdg-open` and waits up to 3 seconds for it to report an error. Throws `FileKitDialogException` when neither works: `Desktop` cannot open files and `xdg-open` is missing, cannot start, or exits with an error code. Errors from `Desktop.open` itself are not wrapped, such as `IOException` when no app is associated. |
+ | Linux native | Starts `xdg-open` without waiting for it. Throws `FileKitException` only if the process cannot start. |
+ | Windows native | Calls `ShellExecuteW` with the `open` verb. Reports no error. |
+ | Web | Not available. |
+```
+
+**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.kt` (modified, +10/-0)
+```diff
+@@ -5,6 +5,16 @@ import kotlinx.serialization.descriptors.SerialDescriptor
+ import kotlinx.serialization.encoding.Decoder
+ import kotlinx.serialization.encoding.Encoder
+ 
++/**
++ * kotlinx.serialization serializer for [PlatformFile], encoded as its path string.
++ *
++ * Serialization keeps the path, not access rights: a file picked outside the app (an Android
++ * `content://` file, a security-scoped file on Apple platforms) may not be readable once restored.
++ * Use bookmark data for persistent access.
++ *
++ * Not supported on web targets (JS and Wasm): [serialize] and [deserialize] throw an
++ * [IllegalStateException] there.
++ */
+ public expect object PlatformFileSerializer : KSerializer<PlatformFile> {
+     override val descriptor: SerialDescriptor
+ 
+```
+
+**File**: `filekit-core/src/webMain/kotlin/io/github/vinceglb/filekit/PlatformFileSerializer.web.kt` (renamed, +8/-1)
+```diff
+@@ -8,8 +8,15 @@ import kotlinx.serialization.encoding.Decoder
+ import kotlinx.serialization.encoding.Encoder
+ 
+ private const val UNSUPPORTED_MESSAGE =
+-    "PlatformFile serialization is not supported on Wasm JS targets"
++    "PlatformFile serialization is not supported on web targets (JS and Wasm)"
+ 
++/**
++ * Web (JS and Wasm) implementation of [PlatformFileSerializer].
++ *
++ * A web [PlatformFile] wraps a browser `File` object that has no path to persist, so
++ * [serialize] and [deserialize] always throw an [IllegalStateException]. The serializer
++ * exists so that `@Serializable` classes holding a [PlatformFile] still compile in shared code.
++ */
+ public actual object PlatformFileSerializer : KSerializer<PlatformFile> {
+     actual override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor(
+         serialName = "io.github.vinceglb.filekit.PlatformFile",
+```
+
+**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKit.jvm.kt` (modified, +8/-2)
+```diff
+@@ -6,7 +6,6 @@ import io.github.vinceglb.filekit.dialogs.platform.PlatformFilePicker
+ import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.withContext
+-import java.awt.Desktop
+ 
+ internal actual suspend fun FileKit.platformOpenFilePicker(
+     type: FileKitType,
+@@ -97,12 +96,19 @@ internal actual suspend fun FileKit.platformOpenFileSaver(
+ /**
+  * Opens a file with the default application associated with its file type.
+  *
++ * Uses `java.awt.Desktop` when it supports opening files. Otherwise, on Linux, falls back to
++ * `xdg-open` and waits a few seconds at most for it to report an error.
++ *
+  * @param file The file to open.
+  * @param openFileSettings Platform-specific settings for opening the file.
++ * @throws FileKitDialogException When `java.awt.Desktop` cannot open files (for example in a headless
++ * environment) and the `xdg-open` fallback is unavailable, cannot start, or exits with an error.
++ * Errors raised by `java.awt.Desktop.open` itself, such as an [java.io.IOException] when no application
++ * is associated with the file, are not wrapped.
+  */
+ public actual fun FileKit.openFileWithDefaultApplication(
+     file: PlatformFile,
+     openFileSettings: FileKitOpenFileSettings,
+ ) {
+-    Desktop.getDesktop()?.open(file.file)
++    JvmDefaultApplicationOpener.Default.open(file.file)
+ }
+```
+
+**File**: `filekit-dialogs/src/jvmMain/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpener.kt` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++package io.github.vinceglb.filekit.dialogs
++
++import io.github.vinceglb.filekit.utils.Platform
++import io.github.vinceglb.filekit.utils.PlatformUtil
++import java.awt.Desktop
++import java.io.File
++import java.io.IOException
++import java.util.concurrent.TimeUnit
++
++internal const val XDG_OPEN_EXIT_TIMEOUT_MILLIS: Long = 3_000
++
++/**
++ * Opens files with the default application on the JVM.
++ *
++ * Uses `java.awt.Desktop` when it can open files. Otherwise, on Linux, starts `xdg-open` and waits
++ * a bounded time for it to report an error. Throws [FileKitDialogException] when neither works.
++ */
++internal class JvmDefaultApplicationOpener(
++    private val isDesktopOpenSupported: () -> Boolean,
++    private val desktopOpen: (File) -> Unit,
++    private val isLinux: Boolean,
++    private val startProcess: (List<String>) -> Process,
++    private val exitTimeoutMillis: Long = XDG_OPEN_EXIT_TIMEOUT_MILLIS,
++) {
++    fun open(file: File) {
++        when {
++            isDesktopOpenSupported() -> desktopOpen(file)
++
++            isLinux -> openWithXdgOpen(file)
++
++            else -> throw FileKitDialogException(
++                "Could not open the file with the default application: " +
++                    "java.awt.Desktop cannot open files in this environment.",
++            )
++        }
++    }
++
++    private fun openWithXdgOpen(file: File) {
++        val process = try {
++            // An absolute path keeps xdg-open from reading the argument as an option or a URI scheme.
++            startProcess(listOf("xdg-open", file.absolutePath))
++        } catch (e: IOException) {
++            throw FileKitDialogException(
++                "Could not open the file with the default application: " +
++                    "java.awt.Desktop cannot open files and xdg-open could not be started.",
++                e,
++            )
++        }
++
++        val exited = try {
++            process.waitFor(exitTimeoutMillis, TimeUnit.MILLISECONDS)
++        } catch (_: InterruptedException) {
++            Thread.currentThread().interrupt()
++            return
++        }
++
++        // Some xdg-open fallbacks keep running until the viewer closes: treat that as success.
++        if (exited && process.exitValue() != 0) {
++            throw FileKitDialogException(
++                "Could not open the file with the default application: " +
++                    "xdg-open exited with code ${process.exitValue()}.",
++            )
++        }
++    }
++
++    companion object {
++        val Default: JvmDefaultApplicationOpener = JvmDefaultApplicationOpener(
++            isDesktopOpenSupported = {
++                Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)
++            },
++            desktopOpen = { Desktop.getDesktop().open(it) },
++            isLinux = PlatformUtil.current == Platform.Linux,
++            startProcess = { command ->
++                ProcessBuilder(command)
++                    .redirectInput(ProcessBuilder.Redirect.from(File("/dev/null")))
++                    .redirectOutput(ProcessBuilder.Redirect.DISCARD)
++                    .redirectError(ProcessBuilder.Redirect.DISCARD)
++                    .start()
++            },
++        )
++    }
++}
+```
+
+**File**: `filekit-dialogs/src/jvmTest/kotlin/io/github/vinceglb/filekit/dialogs/JvmDefaultApplicationOpenerTest.kt` (added, +148/-0)
+```diff
+@@ -0,0 +1,148 @@
++@file:Suppress("ktlint:standard:function-naming", "FunctionName")
++
++package io.github.vinceglb.filekit.dialogs
++
++import java.io.File
++import java.io.IOException
++import java.io.InputStream
++import java.io.OutputStream
++import java.util.concurrent.TimeUnit
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFailsWith
++import kotlin.test.assertIs
++import kotlin.test.assertTrue
++
++class JvmDefaultApplicationOpenerTest {
++    private val file = File("report.pdf")
++
++    @Test
++    fun JvmDefaultApplicationOpener_desktopSupported_usesDesktopOnly() {
++        val opened = mutableListOf<File>()
++        val commands = mutableListOf<List<String>>()
++        val opener = opener(
++            desktopSupported = true,
++            isLinux = true,
++            opened = opened,
++            commands = commands,
++        )
++
++        opener.open(file)
++
++        assertEquals(listOf(file), opened)
++        assertTrue(commands.isEmpty())
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_desktopError_isNotWrapped() {
++        val opener = JvmDefaultApplicationOpener(
++            isDesktopOpenSupported = { true },
++            desktopOpen = { throw IOException("No application") },
++            isLinux = true,
++            startProcess = { error("xdg-open must not run") },
++        )
++
++        assertFailsWith<IOException> { opener.open(file) }
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_desktopUnsupportedOnLinux_runsXdgOpenWithAbsolutePath() {
++        val commands = mutableListOf<List<String>>()
++        val opener = opener(
++            isLinux = true,
++            commands = commands,
++            process = FakeProcess(exitCode = 0),
++        )
++
++        opener.open(file)
++
++        assertEquals(listOf(listOf("xdg-open", file.absolutePath)), commands)
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_xdgOpenStillRunning_returnsWithoutWaitingForever() {
++        val process = FakeProcess(exitCode = null)
++        val opener = opener(isLinux = true, process = process)
++
++        opener.open(file)
++
++        assertEquals(TIMEOUT_MILLIS, process.waitedMillis)
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_xdgOpenNonZeroExit_throwsDialogException() {
++        val opener = opener(isLinux = true, process = FakeProcess(exitCode = 3))
++
++        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
++
++        assertTrue(exception.message!!.contains("xdg-open exited with code 3"))
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_xdgOpenMissing_throwsDialogExceptionWithCause() {
++        val opener = JvmDefaultApplicationOpener(
++            isDesktopOpenSupported = { false },
++            desktopOpen = { error("Desktop must not be used") },
++            isLinux = true,
++            startProcess = { throw IOException("Cannot run program \"xdg-open\"") },
++        )
++
++        val exception = assertFailsWith<FileKitDialogException> { opener.open(file) }
++
++        assertIs<IOException>(exception.cause)
++    }
++
++    @Test
++    fun JvmDefaultApplicationOpener_desktopUnsupportedOutsideLinux_throwsDialogException() {
++        val commands = mutableListOf<List<String>>()
++        val opener = opener(isLinux = false, commands = commands)
++
++        assertFailsWith<FileKitDialogException> { opener.open(file) }
++        assertTrue(commands.isEmpty())
++    }
++
++    private fun opener(
++        desktopSupported: Boolean = false,
++        isLinux: Boolean,
++        opened: MutableList<File> = mutableListOf(),
++        commands: MutableList<List<String>> = mutableListOf(),
++        process: Process = FakeProcess(exitCode = 0),
++    ) = JvmDefaultApplicationOpener(
++        isDesktopOpenSupported = { desktopSupported },
++        desktopOpen = { opened += it },
++        isLinux = isLinux,
++        startProcess = { command ->
++            commands += command
++            process
++        },
++        exitTimeoutMillis = TIMEOUT_MILLIS,
++    )
++
++    /** A process that has exited with [exitCode], or is still running when [exitCode] is null. */
++    private class FakeProcess(
++        private val exitCode: Int?,
++    ) : Process() {
++        var waitedMillis: Long? = null
++
++        override fun waitFor(timeout: Long, unit: TimeUnit): Boolean {
++            waitedMillis = unit.toMillis(timeout)
++            return exitCode != null
++        }
++
++        override fun waitFor(): Int = exitCode ?: error("Unbounded wait")
++
++        override fun exitValue(): Int = exitCode ?: throw IllegalThreadStateException()
++
++        override fun getOutputStream(): OutputStream = OutputStream.nullOutputStream()
++
++        override fun getInputStream(): InputStream = InputStream.nullInputStream()
++
++        override fun getErrorStream(): InputStream = InputStream.nullInputStream()
++
++        override fun destroy() = Unit
++    }
++
++    private companion object {
++        const val TIMEOUT_MILLIS = 50L
++    }
++}
+```
+
+**File**: `filekit-dialogs/src/webMain/kotlin/io/github/vinceglb/filekit/dialogs/FileKitFileSaverWithoutBytesException.kt` (removed, +0/-7)
+```diff
+@@ -1,7 +0,0 @@
+-package io.github.vinceglb.filekit.dialogs
+-
+-public class FileKitFileSaverWithoutBytesException :
+-    IllegalArgumentException(
+-        "Bytes must not be null on Web platform. Use isSaveFileWithoutBytesSupported() " +
+-            "to check if the platform supports saving files without bytes.",
+-    )
+```
+
+---
+
+### Incident Patch 3: `518b3be1` (2026-10-28)
+**Commit Message**: 📝 Apply docs review fixes
+
+Fix the write-file note, bookmark helper and directory picker snippet,
+align link labels and Related sections, explain shared source sets,
+and make platform badges accessible.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/cookbook/test-resources.mdx` (modified, +1/-1)
+```diff
+@@ -52,4 +52,4 @@ class ResourcesTest {
+ ## Related
+ 
+ - [App directories](/core/file-utils) for runtime locations.
+-- [Read a file](/core/read-file) for the full read API.
++- [Reading files](/core/read-file) for the full read API.
+```
+
+**File**: `docs/cookbook/zip-archives.mdx` (modified, +1/-1)
+```diff
+@@ -185,6 +185,6 @@ FileKit.download(zipToBytes(files), "archive.zip")
+ 
+ The whole archive is kept in memory, so this approach is best suited for small files. See the [kmp-zip documentation](https://github.com/henrik242/kmp-zip#js-and-wasmjs-notes) for more details about web support.
+ 
+-## Related
++## Go further
+ 
+ kmp-zip also supports password-protected archives (AES and legacy ZipCrypto), GZIP, and reading a single entry without extracting the whole archive. See the [kmp-zip documentation](https://github.com/henrik242/kmp-zip).
+```
+
+**File**: `docs/core/bookmark-data.mdx` (modified, +3/-2)
+```diff
+@@ -28,7 +28,8 @@ Both functions are declared in `nonWebMain`. `bookmarkData()` is a suspend funct
+ A bookmark breaks when the user deletes the file, revokes your app's access, or (on path-based platforms) moves it. Handle failure and ask the user to pick the file again. This helper stores one bookmark in your app's files directory:
+ 
+ ```kotlin nonWebMain
+-private val bookmarkFile = FileKit.filesDir / "last-file.bookmark"
++// A getter, so FileKit.filesDir is only read after FileKit.init on desktop
++private val bookmarkFile get() = FileKit.filesDir / "last-file.bookmark"
+ 
+ suspend fun saveLastFile(file: PlatformFile) {
+     bookmarkFile.write(file.bookmarkData().bytes)
+@@ -56,7 +57,7 @@ suspend fun loadLastFile(): PlatformFile? {
+ 
+ Refreshing is best effort: the old bytes may still work, and `bookmarkData()` can fail if the file disappeared or macOS already revoked access. Use `fromBookmarkData` when you only need the file.
+ 
+-## Platform behavior
++## Platform notes
+ 
+ | Platform | Stored as | Security-scoped | Survives a move |
+ | --- | --- | --- | --- |
+```
+
+**File**: `docs/core/file-utils.mdx` (modified, +2/-2)
+```diff
+@@ -87,10 +87,10 @@ On JVM, Linux native, and Windows native, a missing folder is created when you r
+ 
+ ## Download a file on the web
+ 
+-Browsers have no app directories. To save bytes to the user's Downloads folder, use `FileKit.download`. See [Web](/core/web#download-files).
++Browsers have no app directories. To save bytes to the user's Downloads folder, use `FileKit.download`. See [Files on the web](/core/web#download-files).
+ 
+ ## Related
+ 
+ - [Core setup](/core/setup) to set the application ID or custom directories.
+-- [Write a file](/core/write-file) into these directories.
++- [Writing files](/core/write-file) into these directories.
+ - [Bookmark data](/core/bookmark-data) to keep access to files outside them.
+```
+
+**File**: `docs/core/image-and-video-utils.mdx` (modified, +1/-1)
+```diff
+@@ -84,7 +84,7 @@ val bitmap: ImageBitmap = file.toImageBitmap()
+ val png: ByteArray = bitmap.encodeToByteArray(format = ImageFormat.PNG)
  ```
  
-+### Walking a directory tree
-+
-+`walk()` lazily yields every file and subdirectory below a directory, depth-first, without the directory itself. `sizeRecursively()` returns the total size of the regular files in the tree:
-+
-+```kotlin
-+val fileCount = directory.walk().count { it.isRegularFile() }
-+val children = directory.walk(maxDepth = 1).toList() // like list()
-+val totalBytes: Long = directory.sizeRecursively()
-+```
-+
-+- Symbolic links are listed but never followed, so a link can't cause an infinite loop. They add nothing to `sizeRecursively()`. This also applies when you call either function on a link.
-+- On a regular file, `walk()` yields only that file and `sizeRecursively()` returns its size. `maxDepth` must be positive.
-+- `walk()` is synchronous, like `list()`: on non-web platforms, iterate it on `Dispatchers.IO`. `sizeRecursively()` is a suspend function that switches to `Dispatchers.IO` itself on non-web platforms.
-+- **Android**: each subdirectory of a document tree costs provider queries, so large trees are slow. Files whose provider doesn't report a size count as 0.
-+- **Apple platforms**: keep security-scoped access to the root active while iterating `walk()`, for example inside `withScopedAccess { }`.
-+- **Windows**: every reparse point counts as a link, including directory junctions and OneDrive Files On-Demand folders. `walk()` lists such a folder without its contents, and `sizeRecursively()` doesn't count them.
-+- **Web**: works on directories picked with the directory picker, whose tree is already in memory. Both functions run on the caller's dispatcher. Origin private file system directories aren't supported.
-+
- ## Converting to kotlinx-io
+-Both are suspend functions. `encodeToByteArray` defaults to `ImageFormat.JPEG` with `quality = 100`. To display a file in an `Image`, the [Coil integration](/integrations/coil) loads it for you, with caching.
++Both are suspend functions. `encodeToByteArray` defaults to `ImageFormat.JPEG` with `quality = 100`. To display a file in an `Image`, the [Coil](/integrations/coil) loads it for you, with caching.
  
- `PlatformFile` provides built-in integration with [kotlinx-io](https://github.com/Kotlin/kotlinx-io).
+ ## Related
+ 
 ```
 
-**File**: `filekit-core/src/androidHostTest/kotlin/io/github/vinceglb/filekit/PlatformFileAndroidTest.kt` (modified, +13/-0)
+**File**: `docs/core/platform-file.mdx` (modified, +1/-1)
 ```diff
-@@ -176,6 +176,19 @@ class PlatformFileAndroidTest {
-         assertEquals(listOf("note.txt"), notes.list().map { it.name })
-     }
+@@ -124,4 +124,4 @@ Serialization keeps the path, not the access rights. A file picked outside your
  
-+    @Test
-+    fun PlatformFile_walkUriTree_yieldsDescendantsAndCountsUnknownSizesAsZero() = runBlocking {
-+        val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
-+        ShadowContentResolver.registerProviderInternal(
-+            "com.android.externalstorage.documents",
-+            createNestedTreeContentProvider(),
-+        )
-+        val base = PlatformFile(treeUri)
-+
-+        assertEquals(listOf("Notes", "note.txt", "parent-only.txt"), base.walk().map { it.name }.toList())
-+        assertEquals(0L, base.sizeRecursively())
-+    }
-+
-     @Test
-     fun createDirectories_onNestedUriChild_createsMissingParents() {
-         val treeUri = Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADocuments")
+ - [Reading files](/core/read-file) and [Writing files](/core/write-file)
+ - [File operations](/core/file-operations): list, walk, copy, move, and delete
+-- [File utilities](/core/file-utils): app directories and user folders
++- [App directories](/core/file-utils): app directories and user folders
 ```
 
-**File**: `filekit-core/src/androidMain/kotlin/io/github/vinceglb/filekit/PlatformFile.android.kt` (modified, +7/-2)
+**File**: `docs/core/setup.mdx` (modified, +1/-1)
 ```diff
-@@ -1162,16 +1162,21 @@ private fun Uri.toFileOrNull(): File? {
- }
+@@ -154,5 +154,5 @@ If you shrink or obfuscate a JVM desktop app, add these rules to your `proguard-
  
- // lstat/remove work on API 21 and operate on the link itself, including a dangling link.
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean {
-     val file = (androidFile as? AndroidFile.FileWrapper)?.file ?: return false
-     val metadata = try {
-         Os.lstat(file.absolutePath)
-     } catch (error: ErrnoException) {
-         if (error.errno == OsConstants.ENOENT || error.errno == OsConstants.ENOTDIR) return false
-         throw IOException("Could not inspect ${file.absolutePath}", error)
-     }
--    if (!OsConstants.S_ISLNK(metadata.st_mode)) return false
-+    return OsConstants.S_ISLNK(metadata.st_mode)
-+}
-+
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
+ ## Related
  
-+    val file = (androidFile as AndroidFile.FileWrapper).file
-     try {
-         Os.remove(file.absolutePath)
-     } catch (error: ErrnoException) {
+-- [File utilities](/core/file-utils): app directories and user folders such as Downloads.
++- [App directories](/core/file-utils): app directories and user folders such as Downloads.
+ - [Dialogs setup](/dialogs/setup): Android activity registration and Linux packaging.
 ```
 
-**File**: `filekit-core/src/appleMain/kotlin/io/github/vinceglb/filekit/PlatformFile.apple.kt` (modified, +8/-2)
+**File**: `docs/core/write-file.mdx` (modified, +1/-1)
 ```diff
-@@ -435,11 +435,17 @@ private fun NSError?.toBookmarkResolutionException(): BookmarkResolutionExceptio
- // attributesOfItemAtPath does not resolve the link, so a symlink reports its own type here rather
- // than the type of whatever it points at.
- @OptIn(ExperimentalForeignApi::class)
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean {
-     val path = nsUrl.path ?: return false
-     val attributes = NSFileManager.defaultManager.attributesOfItemAtPath(path, error = null)
--    if (attributes?.get(NSFileType) != NSFileTypeSymbolicLink) return false
-+    return attributes?.get(NSFileType) == NSFileTypeSymbolicLink
-+}
-+
-+@OptIn(ExperimentalForeignApi::class)
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
+@@ -22,7 +22,7 @@ file.write("Hello again".encodeToByteArray())
+ Both are suspend functions that switch to `Dispatchers.IO`. The parent directory must exist: create it first with [`createDirectories()`](/core/file-operations#create-directories). Failures throw `kotlinx.io.IOException` or `FileKitException`.
  
-+    val path = nsUrl.path ?: return false
-     if (unlink(path) != 0) {
-         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
-     }
-```
-
-**File**: `filekit-core/src/commonMain/kotlin/io/github/vinceglb/filekit/PlatformFile.kt` (modified, +62/-0)
-```diff
-@@ -147,3 +147,65 @@ public inline fun <T> PlatformFile.withScopedAccess(block: (PlatformFile) -> T):
-         }
-     }
- }
-+
-+/**
-+ * Lazily walks this directory recursively (depth-first). Yields files and subdirectories, but not
-+ * the starting directory itself. If this is a regular file or a symbolic link, yields only this
-+ * entry.
-+ *
-+ * Symbolic links (and Windows reparse points) are yielded but never followed, including this
-+ * entry. Errors throw, like [list]. On non-web platforms the walk does blocking I/O, so iterate it
-+ * on an IO dispatcher. On Apple platforms, keep security-scoped access to the root active while
-+ * iterating (see [withScopedAccess]).
-+ *
-+ * @param maxDepth The maximum depth to walk. `1` yields only the direct children. Must be positive.
-+ * @return A lazy [Sequence] of the entries in this tree.
-+ */
-+public fun PlatformFile.walk(maxDepth: Int = Int.MAX_VALUE): Sequence<PlatformFile> {
-+    require(maxDepth > 0) { "maxDepth must be positive, but was $maxDepth." }
-+    return sequence {
-+        if (isSymbolicLink() || isRegularFile()) yield(this@walk) else yieldDescendants(this@walk, maxDepth)
-+    }
-+}
-+
-+private suspend fun SequenceScope<PlatformFile>.yieldDescendants(directory: PlatformFile, maxDepth: Int) {
-+    directory.list().forEach { child ->
-+        yield(child)
-+        // Check for a link first: isDirectory() resolves the link and touches its target.
-+        if (maxDepth > 1 && !child.isSymbolicLink() && child.isDirectory()) {
-+            yieldDescendants(child, maxDepth - 1)
-+        }
-+    }
-+}
-+
-+/**
-+ * Returns the total size in bytes of all regular files in this tree. For a regular file, returns
-+ * its own size.
-+ *
-+ * Symbolic links, including this entry, are never followed and add nothing to the total. Files
-+ * whose size is unknown (for example, from Android document providers that don't report one) count
-+ * as 0. Errors throw, like [list]. Runs on `Dispatchers.IO` on non-web platforms.
-+ */
-+public expect suspend fun PlatformFile.sizeRecursively(): Long
-+
-+internal fun PlatformFile.computeSizeRecursively(): Long = withScopedAccess {
-+    when {
-+        isSymbolicLink() -> 0
-+        isRegularFile() -> size().coerceAtLeast(0)
-+        else -> sizeOfDescendants()
-+    }
-+}
-+
-+private fun PlatformFile.sizeOfDescendants(): Long = list().sumOf { child ->
-+    when {
-+        child.isSymbolicLink() -> 0
-+        child.isDirectory() -> child.sizeOfDescendants()
-+        else -> child.size().coerceAtLeast(0)
-+    }
-+}
-+
-+/**
-+ * Returns `true` if this entry is a symbolic link or a Windows reparse point, without following it.
-+ * Returns `false` for missing paths and on platforms without links.
-+ */
-+internal expect fun PlatformFile.isSymbolicLink(): Boolean
-```
-
-**File**: `filekit-core/src/jvmMain/kotlin/io/github/vinceglb/filekit/PlatformFile.jvm.kt` (modified, +14/-13)
-```diff
-@@ -187,20 +187,21 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
-     )
- }
+ <Note>
+-These functions are declared for every platform except the web, so call them from `nonWebMain` or a platform source set. On the web, picked files are read-only: see [Write on the web](#write-on-the-web).
++These functions are not declared in `commonMain`. Call them from `nonWebMain` or a platform source set. The web has separate, experimental versions for the origin private file system: see [Write on the web](#write-on-the-web).
+ </Note>
  
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
--    val isLink = if (Platform.isWindows()) {
--        // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
--        val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
--        if (attributes == INVALID_FILE_ATTRIBUTES) {
--            val error = Kernel32.INSTANCE.GetLastError()
--            if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
--            throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
--        }
--        (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
--    } else {
--        Files.isSymbolicLink(file.toPath())
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean {
-+    if (!Platform.isWindows()) return Files.isSymbolicLink(file.toPath())
-+
-+    // Files.isSymbolicLink excludes directory junctions. Inspect the entry's reparse attribute.
-+    val attributes = Kernel32.INSTANCE.GetFileAttributes(file.absolutePath)
-+    if (attributes == INVALID_FILE_ATTRIBUTES) {
-+        val error = Kernel32.INSTANCE.GetLastError()
-+        if (error == ERROR_FILE_NOT_FOUND || error == ERROR_PATH_NOT_FOUND) return false
-+        throw IOException("Could not inspect ${file.absolutePath}: Windows error $error")
-     }
--    if (!isLink) return false
-+    return (attributes and FILE_ATTRIBUTE_REPARSE_POINT) != 0
-+}
-+
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
- 
-     // Unlike kotlinx-io's delete, this does not check whether the link's target exists first.
-     Files.delete(file.toPath())
-```
-
-**File**: `filekit-core/src/jvmTest/kotlin/io/github/vinceglb/filekit/PlatformFileJvmTest.kt` (modified, +27/-0)
-```diff
-@@ -43,6 +43,33 @@ class PlatformFileJvmTest {
-         }
-     }
- 
-+    @Test
-+    fun PlatformFile_walk_symbolicLinks_areNotFollowed() = runTest {
-+        val tempRoot = createTempDirectory("filekit-walk-cycle")
-+        try {
-+            val outside = tempRoot.resolve("outside").createDirectory()
-+            outside.resolve("big.txt").writeText("not counted")
-+            val tree = tempRoot.resolve("tree").createDirectory()
-+            tree.resolve("file.txt").writeText("abc")
-+            Files.createSymbolicLink(tree.resolve("loop"), tree)
-+            Files.createSymbolicLink(tree.resolve("link.txt"), outside.resolve("big.txt"))
-+
-+            val root = PlatformFile(tree.toFile())
-+
-+            assertEquals(setOf("file.txt", "loop", "link.txt"), root.walk().map { it.name }.toSet())
-+            assertEquals(3L, root.sizeRecursively())
-+
-+            // A link passed as the receiver is not followed either.
-+            for (name in listOf("loop", "link.txt")) {
-+                val link = PlatformFile(tree.resolve(name).toFile())
-+                assertEquals(listOf(name), link.walk().map { it.name }.toList())
-+                assertEquals(0L, link.sizeRecursively())
-+            }
-+        } finally {
-+            tempRoot.toFile().deleteRecursively()
-+        }
-+    }
-+
-     private val resourceDirectory = PlatformFile(Path("src/nonWebTest/resources"))
-     private val textFile = PlatformFile(resourceDirectory, "hello.txt")
-     private val imageFile = PlatformFile(resourceDirectory, "compose-logo.png")
-```
-
-**File**: `filekit-core/src/linuxMain/kotlin/io/github/vinceglb/filekit/PlatformFile.linux.kt` (modified, +9/-3)
-```diff
-@@ -307,17 +307,23 @@ public actual fun PlatformFile.Companion.resolveBookmarkData(
- 
- // lstat, not stat: stat would resolve the link and report on its target.
- @OptIn(ExperimentalForeignApi::class)
--internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean = memScoped {
-+internal actual fun PlatformFile.isSymbolicLink(): Boolean = memScoped {
-     val path = absolutePath()
-     val statBuf = alloc<stat>()
-     if (lstat(path, statBuf.ptr) != 0) {
-         if (errno == ENOENT || errno == ENOTDIR) return@memScoped false
-         throw IOException("Could not inspect $path: ${strerror(errno)?.toKString()}")
-     }
--    if ((statBuf.st_mode.toInt() and S_IFMT) != S_IFLNK) return@memScoped false
-+    (statBuf.st_mode.toInt() and S_IFMT) == S_IFLNK
-+}
-+
-+@OptIn(ExperimentalForeignApi::class)
-+internal actual fun PlatformFile.deleteIfSymbolicLink(): Boolean {
-+    if (!isSymbolicLink()) return false
- 
-+    val path = absolutePath()
-     if (unlink(path) != 0) {
-         throw IOException("Could not unlink $path: ${strerror(errno)?.toKString()}")
-     }
--    true
-+    return true
- }
+ ## Copy another file's content
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #684** (2026-10-22): ✨ Add PlatformFile.walk() and sizeRecursively() (@vinceglb)
-- **PR #683** (2026-10-22): 👷 Run JS and Wasm browser tests in CI (@vinceglb)
-- **PR #682** (2026-10-20): 📝 Use AGENTS.md as the single agent guide (@vinceglb)
-- **PR #681** (2026-10-20): ⬆️ Update Android targetSdk to 37 and minSdk to 24 (@vinceglb)
-- **PR #680** (2026-10-20): ⬆️ Update GitHub Actions versions (@vinceglb)
-- **PR #679** (2026-10-20): ⬆️ Update Kotlin and Gradle dependencies (@vinceglb)
+- **PR #702** (2026-10-29): 📝 Add tiered showcase and wall of love community pages (@vinceglb)
+- **PR #701** (2026-10-29): 🔥 Remove unused intro illustration from the docs (@vinceglb)
+- **PR #700** (2026-10-28): 🐛 Fix web serializer message, JVM open fallback, drop unused exception (@vinceglb)
+- **PR #699** (2026-10-28): 🎨 Apply the brand skin to the docs (@vinceglb)
+- **PR #698** (2026-10-28): 🎨 Put the sample apps on the FileKit brand (@vinceglb)
+- **PR #697** (2026-10-28): 📝 Use parentheses in bug form platform labels (@vinceglb)
 
 ---
 
@@ -1757,42 +1901,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively
+## X. 🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup
 
 **RULE**:
-When implementing operations in `docs/core/platform-file.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/dialogs/open-file.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vinceglb/FileKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `75099ba5`: 🔀 Merge pull request #684 from vinceglb/feature/walk-size-recursively. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f2c9211`: 🔀 Merge pull request #700 from vinceglb/fix/web-serializer-jvm-open-cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/core/platform-file.mdx`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/dialogs/open-file.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-### Walking a directory tree
-
-`walk()` lazily yields every file and subdirectory below a directory, depth-first, without the directory itself. `sizeRecursively()` returns the total size of the regular files in the tree:
-
-```kotlin
-val fileCount = directory.walk().count { it.isRegularFile() }
-val children = directory.walk(maxDepth = 1).toList() // like list()
-val totalBytes: Long = directory.sizeRecursively()
-```
-
-- Symbolic links are listed but never followed, so a link can't cause an infinite loop. They add nothing to `sizeRecursively()`. This also applies when you call either function on a link.
-- On a regular file, `walk()` yields only that file and `sizeRecursively()` returns its size. `maxDepth` must be positive.
-- `walk()` is synchronous, like `list()`: on non-web platforms, iterate it on `Dispatchers.IO`. `sizeRecursively()` is a suspend function that switches to `Dispatchers.IO` itself on non-web platforms.
-- **Android**: each subdirectory of a document tree costs provider queries, so large trees are slow. Files whose provider doesn't report a size count as 0.
-- **Apple platforms**: keep security-scoped access to the root active while iterating `walk()`, for example inside 
+Failures are reported differently on each platform. Only the JVM wraps some of them in `FileKitDialogException`:
+| JVM | Uses `java.awt.Desktop.open` when the desktop supports opening files. Otherwise (headless setups, Linux without GNOME libraries), on Linux it falls back to `xdg-open` and waits up to half a second for it to report an error. Throws `FileKitDialogException` when neither works: `Desktop` cannot open files and `xdg-open` is missing, cannot start, or exits with an error code. Errors from `Desktop.open` itself are not wrapped, such as `IOException` when no app is associated. |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Failures are not wrapped in `FileKitDialogException`. Each platform reports them its own way:
+| JVM | Uses `java.awt.Desktop.open` without checking `Desktop.isDesktopSupported()`. Throws on headless setups (`HeadlessException`), when the action is unsupported (`UnsupportedOperationException`), or when no app is associated (`IOException`). |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `75099ba5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f2c9211` are properly handled with clean fallback behavior.

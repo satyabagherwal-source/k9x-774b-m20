@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `07d9354d`  
+> **Source Version**: `f74bb39c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:40:31.147Z  
+> **Timestamp**: 2026-10-31T22:12:05.036Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:40:30.285Z  
+> **Harvest Timestamp**: 2026-10-31T22:12:05.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21218 stars
+- **Stars / Engagement**: 21371 stars
 
 ---
 
@@ -55,6 +55,7 @@ mod model_usage_tests;
 mod prompting;
 mod provider;
 mod response_recovery;
+mod runtime_recovery;
 mod status;
 mod streaming;
 #[cfg(test)]
@@ -307,8 +308,7 @@ fn log_agent_provider_stream_lifecycle(
     phase: &str,
     api_start: Instant,
     fields: Vec<(&str, String)>,
-) {
-    let mut owned =
+)
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/compaction.rs`
@@ -915,6 +915,53 @@ pub(crate) struct IdleCacheRelease {
     pub tool_index_entries: usize,
 }
 
+impl Agent {
+    /// Caller must hold the idle Agent reservation. Never checkpoint here:
+    /// save_prepared can succeed without writing under a migration lease.
+    /// Keeping the source history means waking is simply lazy cache rebuilding,
+    /// with no disk dependency, lifecycle hooks or environment resnapshotting.
+    pub(crate) fn hibernate_idle_caches(&mut self) -> Option<IdleCacheRelease> {
+        if crate::turn_cancel_registry::has_active_turn(self.session_id())
+            || self.session.migration_lease_block().is_some()
+            || !self.pending_alerts.is_empty()
+        {
+            return None;
+        }
+        let queue = self.soft_interrupt_queue.try_lock().ok()?;
+        if !queue.is_empty() {
+            return None;
+        }
+        let compaction = self.registry.compaction();
+        let manager = compaction.try_read().ok()?;
+        if manager.is_compacting() {
+            return None;
+        }
+        // A backgrounded tool can outlive the Agent lock. Do not disturb even
+        // derived state until every tool belonging to this history has settled.
+        if self.session.messages.iter().any(|message| {
+            message.content.iter().any(|block| match block {
+                ContentBlock::ToolUse { id, .. } => crate::tool::inflight::is_tool_in_flight(id),
+                _ => false,
+            })
+        }) {
+            return None;
+        }
+
+        let released = IdleCacheRelease {
+            provider_cache_bytes: self
+                .session
+                .memory_profile_snapshot()
+                .provider_cache_json_bytes,
+            tool_index_entries: self.tool_call_ids.len() + self.tool_result_ids.len(),
+        };
+        self.session.release_provider_messages_cache();
+        self.tool_call_ids = HashSet::new();
+        self.tool_result_ids = HashSet::new();
+        self.tool_output_scan_index = 0;
+        Some(released)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1113,56 +1160,7 @@ mod tests {
             modified
         );
 
-        agent.add_message(
-            Role::User,
-            vec![ContentBlock::Text {
-                text: "unsaved local state must survive a no-op save".into(),
-                cache_control: None,
-            }],
-        );
-        agent.session.messages_for_provider();
-        crate::storage::write_session_lease(&crate::storage::SessionLease {
-            session_id: agent.session_id().into(),
-            epoch: 1,
-            away_host: Some("elsewhere".into()),
-            repo_root: None,
-            last_sync_snapshot: None,
-            last_sync_head: None,
-            updated_at: chrono::Utc::now().to_rfc3339(),
-        })
-        .unwrap();
-        // Regression for the misleading successful-but-no-op save API.
-        assert!(agent.session.save_prepared().is_ok());
-        assert_eq!(std::fs::read(&path).unwrap(), before);
-        assert!(agent.hibernate_idle_caches().is_none());
-        assert_eq!(agent.session.messages.len(), 3);
-        assert_eq!(
-            agent
-                .session
-                .memory_profile_snapshot()
-                .provider_cache_message_count,
-            3
-        );
-        assert!(home.1.path().exists());
-    }
-
-    #[tokio::test]
-    async fn idle_hibernation_next_turn_sends_original_tool_pairs_without_duplicates() {
-        #[derive(Clone)]
-        struct CaptureProvider(Arc<std::sync::Mutex<Vec<Vec<Message>>>>);
-        #[async_trait::async_trait]
-        impl Provider for CaptureProvider {
-            async fn complete(
-                &self,
-                messages: &[Message],
-                _: &[ToolDefinition],
-                _: &str,
-                _: Option<&str>,
-            ) -> Result<crate::provider::EventStream> {
-                self.0.lock().unwrap().push(messages.to_vec());
-                Ok(Box::pin(futures::stream::iter(vec![
-                    Ok(StreamEvent::TextDelta("awake".into())),
-                    O
+    
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/inline_tail.rs`
@@ -1741,83 +1739,6 @@ impl Agent {
 ```
 use super::*;
 
-#[cfg(test)]
-mod durable_error_tests {
-    use super::*;
-
-    struct NoNetworkProvider;
-
-    #[async_trait::async_trait]
-    impl crate::provider::Provider for NoNetworkProvider {
-        async fn complete(
-            &self,
-            _: &[crate::message::Message],
-            _: &[crate::message::ToolDefinition],
-            _: &str,
-            _: Option<&str>,
-        ) -> anyhow::Result<crate::provider::EventStream> {
-            anyhow::bail!("test must not call provider")
-        }
-
-        fn name(&self) -> &str {
-            "mock"
-        }
-
-        fn fork(&self) -> Arc<dyn crate::provider::Provider> {
-            Arc::new(Self)
-        }
-    }
-
-    #[test]
-    fn failed_wake_error_is_saved_without_an_assistant_message() {
-        let _lock = crate::storage::lock_test_env();
-        let home = tempfile::tempdir().unwrap();
-        struct RestoreHome(Option<std::ffi::OsString>);
-        impl Drop for RestoreHome {
-            fn drop(&mut self) {
-                match self.0.take() {
-                    Some(value) => crate::env::set_var("JCODE_HOME", value),
-                    None => crate::env::remove_var("JCODE_HOME"),
-                }
-            }
-        }
-        let _restore = RestoreHome(std::env::var_os("JCODE_HOME"));
-        crate::env::set_var("JCODE_HOME", home.path());
-        let mut agent = Agent::new(Arc::new(NoNetworkProvider), Registry::empty());
-        agent.add_message_with_display_role(
-            Role::User,
-            vec![ContentBlock::Text {
-                text: "wake".into(),
-                cache_control: None,
-            }],
-            Some(StoredDisplayRole::System),
-        );
-        let error = anyhow::anyhow!("invalid_request_error: missing call_id")
-            .context("provider rejected wake");
-        let message = crate::util::format_error_chain(&error);
-        let message_count = agent.session.messages.len();
-        let provider_messages = serde_json::to_value(&agent.session.messages).unwrap();
-        agent.persist_turn_error(&message).unwrap();
-        let loaded = Session::load(agent.session_id()).unwrap();
-        assert_eq!(loaded.messages.len(), message_count);
-        assert_eq!(agent.session.messages.len(), message_count);
-        assert_eq!(
-            serde_json::to_value(&loaded.messages).unwrap(),
-            provider_messages
-        );
-        let history = crate::session::render_messages(&loaded);
-        assert_eq!(history.len(), 2);
-        assert_eq!(history[0].content, "wake");
-        assert_eq!(history[1].role, "error");
-        assert_eq!(history[1].content, message);
-        assert!(
-            history[1]
-                .content
-                .contains("invalid_request_error: missing call_id")
-        );
-    }
-}
-
 impl Agent {
     /// Keep failed turns visible after reconnect without adding diagnostic text
     /// to the provider's conversation context.
@@ -1998,7 +1919,84 @@ impl Agent {
                         // continuation and spends another call, with no tool result
                         // anywhere near.
                         && !trimmed.starts_with(
-     
+                            Self::EMPTY_POST_TOOL_CONTINUATION_PREFIX
+                        )
+                }
+                _ => false,
+            })
+        })
+    }
+}
+
+#[cfg(test)]
+mod durable_error_tests {
+    use super::*;
+
+    struct NoNetworkProvider;
+
+    #[async_trait::async_trait]
+    impl crate::provider::Provider for NoNetworkProvider {
+        async fn complete(
+            &self,
+            _: &[crate::message::Message],
+            _: &[crate::message::ToolDefinition],
+            _: &str,
+            _: Option<&str>,
+        ) -> anyhow::Result<crate::provider::EventStream> {
+            anyhow::bail!("test must not call provider")
+        }
+
+        fn name(&self) -> &str {
+            "mock"
+        }
+
+        fn fork(&self) -> Arc<dyn crate::provider::Provider> {
+            Arc::new(Self)
+        }
+    }
+
+    #[test]
+    fn failed_wake_error_is_saved_without_an_assistant_message() {
+        let _lock = crate::storage::lock_test_env();
+        let home = tempfile::tempdir().unwrap();
+        struct RestoreHome(Option<std::ffi::OsString>);
+        impl Drop for RestoreHome {
+            fn drop(&mut self) {
+                match self.0.take() {
+                    Some(value) => crate::env::set_var("JCODE_HOME", value),
+                    None => crate::env::remove_var("JCODE_HOME"),
+                }
+            }
+        }
+        let _restore = RestoreHome(std::env::var_os("JCODE_HOME"));
+        crate::env::set_var("JCODE_HOME", home.path());
+        let mut agent = Agent::new(Arc::new(NoNetworkProvider), Registry::empty());
+        agent.add_message_with_display_role(
+            Role::User,
+            vec![ContentBlock::Text {
+                text: "wake".into(),
+                cache_control: None,
+            }],
+            Some(StoredDisplayRole::System),
+        );
+        let error = anyhow::anyhow!("invalid_request_error: missing call_id")
+            .context("provider rejected wake");
+        let message = crate::util::format_error_chain(&error);
+        let message_count = agent.session.messages.len();
+        let provider_messages = serde_json::to_value(&agent.session.messages).unwrap();
+        agent.persist_turn_error(&message).unwrap();
+        let loaded = Session::load(agent.session_id()).unwrap();
+        assert_eq!(loaded.messages.len(), message_count);
+        assert_eq!(agent.session.messages.len(), message_count);
+        assert_eq!(
+            serde_json::to_value(&loaded.messages).unwrap(),
+            provider_messages
+        );
+        let history = crate::session::render_messages(&loaded);
+        assert_eq!(history.len(), 2);
+        assert_eq!(history[0].content, "wake");
+        assert_eq!(history[1].role, "error");
+        assert_eq!(history[1].
 ```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent/prompting.rs`
@@ -2364,6 +2362,30 @@ impl Agent {
         Ok(())
     }
 
+    /// Resolve the current model window and live global/session ceiling.
+    pub async fn effective_context_budget(&self) -> usize {
+        let compaction = self.registry.compaction();
+        let mut manager = compaction.write().await;
+        manager.set_budget(self.provider.context_window());
+        manager.token_budget()
+    }
+
+    /// Set this session's compaction ceiling without changing daemon config.
+    pub async fn set_context_cap(&mut self, max_context_tokens: Option<usize>) -> Result<usize> {
+        let cap = max_context_tokens.filter(|cap| *cap > 0);
+        let compaction = self.registry.compaction();
+        let mut manager = compaction.write().await;
+        let previous = self.session.context_cap;
+        self.session.context_cap = cap;
+        if let Err(error) = self.persist_session_now() {
+            self.session.context_cap = previous;
+            return Err(error);
+        }
+        manager.set_context_cap_override(cap);
+        manager.set_budget(self.provider.context_window());
+        Ok(manager.token_budget())
+    }
+
     fn refresh_compaction_budget(&self) {
         let compaction = self.registry.compaction();
         match compaction.try_write() {
@@ -2432,33 +2454,7 @@ impl Agent {
         let event = crate::provider::ProviderStateEvent::selected_model(source, resolved_model);
         self.provider_runtime_state.apply(event);
         self.refresh_compaction_budget();
-        self.persist_session_best_effort("route selection");
-        self.log_env_snapshot("set_route_selection");
-        Ok(())
-    }
 
-    pub(crate) fn set_model_from_auth(&mut self, model: &str) -> Result<()> {
-        self.set_model_from_provider_state_event(
-            model,
-            crate::provider::ProviderModelSelectionSource::Auth,
-        )
-    }
-
-    fn set_model_from_provider_state_event(
-        &mut self,
-        model: &str,
-        source: crate::provider::ProviderModelSelectionSource,
-    ) -> Result<()> {
-        crate::provider::set_model_with_auth_refresh(self.provider.as_ref(), model)?;
-        let resolved_model = self.provider.model();
-        self.session.provider_key =
-            crate::provider::MultiProvider::session_provider_key_after_model_switch(
-                model,
-                self.provider.name(),
-                self.session.provider_key.as_deref(),
-            );
-        if let Some(label) = self.provider.oauth_account_label() {
-            let method = if self.provider.name().eq_ignore_ascii_case("op
 ```
 
 
@@ -2467,11 +2463,11 @@ impl Agent {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1952** (2026-10-24): **bedrock tests pollute real user config on macOS (XDG_CONFIG_HOME ignored by app_config_dir)**
-  *Symptoms*: On macOS, `jcode-provider-bedrock` tests pollute the user's real config directory and then fail each other, because test isolation relies on `XDG_CONFIG_HOME` but the config path does not.  What happens:  1. Tests in `crates/jcode-provider-bedrock/src/tests.rs` set `XDG_CONFIG_HOME` to a tempdir and expect `app_config_dir()` to follow it. 2. `app_config_dir()` (`crates/jcode-storage/src/lib.rs:221`) uses `dirs::config_dir()`, which on macOS ignores `XDG_CONFIG_HOME` and returns `~/Library/Application Support`. 3. Tests then call `save_env_value_to_env_file(...)` (`configured_profile_from_bedrock_env_overrides_stale_bearer_token`, `detects_bedrock_login_env_file_credentials`, and friends), which writes real files: the user's `~/Library/Application Support/jcode/bedrock.env` gets fixture values like `AWS_BEARER_TOKEN_BEDROCK=expired-bearer-token`, `JCODE_BEDROCK_PROFILE=jcode-operator`. 4. Later runs read that same real file back, so assertions like `assert!(!BedrockProvider::has_credentials())` fail depending on machine state. On my machine:  ``` cargo test -p jcode-provider-bedrock --lib ... test tests::detects_env_credentials_requires_region_and_credential_hint ... FAILED test tests::detects_bedrock_login_env_file_credentials ... FAILED ```  Two failure modes in one bug: tests write into the user's real config (data pollution), and tests read whatever the user's real config contains (order and machine dependent). Same root cause as #1947's family: env-var isolation that the 
+- **Issue #2013** (2026-10-30): **Native edit tool schema permits incomplete arguments, causing failed first-attempt edits**
+  *Symptoms*: **Title:** Native `edit` tool schema permits incomplete arguments, causing failed first-attempt edits  **Version:** JCode 0.99.0-dev   **Platform:** macOS Apple Silicon   **Model:** Qwen3-Coder 30B via an OpenAI-compatible local gateway  ### Problem  The native `edit` tool advertises a JSON schema requiring only `file_path`, while the executor requires either:  - A nonempty `edits` array containing `old_string` and `new_string` for every entry, or - Both `old_string` and `new_string` as single-edit shorthand.  This mismatch permits incomplete tool calls that fail during execution.  ### Reproduction  Request a simple replacement in an existing text file.  Observed tool-call sequence:  1. `{"file_path":"...","edit_type":"replace","content":"EDIT_AFTER"}` — fails. 2. `{"file_path":"...","edit_type":"replace","old_string":"EDIT_BEFORE","content":"EDIT_AFTER"}` — fails. 3. `{"file_path":"...","edits":[{"old_string":"EDIT_BEFORE","new_string":"EDIT_AFTER"}]}` — succeeds.  ### Root cause  File: `crates/jcode-app-core/src/tool/edit.rs`  The `parameters_schema()` implementation declares:  `"required": ["file_path"]`  However, `EditInput::operations()` rejects calls without a complete replacement operation.  ### Proposed fix  Advertise `edits` as the required canonical format, with `minItems: 1` and both replacement strings required per item.  Retain legacy single-edit shorthand internally for backward compatibility.  ### Local validation  A local patch changing the required fields to 
 
-- **Issue #1950** (2026-10-24): **harness_api capability ledger test fails: AccountUsage untriaged (introduced d467dcb13)**
-  *Symptoms*: `cargo test -p jcode-harness-api --lib every_reference_client_capability_is_triaged` fails on current master (b2f9f9d8d):  ``` these daemon requests are used by the TUI/desktop but have no reviewed disposition in the harness API capability ledger: ["AccountUsage"] ```  Repro (deterministic, no env needed):  ``` cargo test -p jcode-harness-api --lib every_reference_client_capability_is_triaged ```  Bisected first-bad: d467dcb13 `feat(tui): receive daemon-owned account quota refreshes`. It added the `AccountUsage` request usage in the TUI but no matching entry in `LEDGER` in `crates/jcode-harness-api/src/harness_api_tests/capability_coverage.rs`. The test was green at 2f7039193 (Oct 14) and red from d467dcb13 on.  This suite is not part of CI's ubuntu/macos unit runs (CI runs app-core, jcode-base, embedding, tui unit suites only), so the failure ships silently on master.  Fix shape: add `("AccountUsage", ClientInternal)` (or the reviewed disposition you prefer) to `LEDGER`, then the test passes. Happy to send a small PR with the ledger entry plus a CI wiring suggestion (add `-p jcode-harness-api --lib` to the ubuntu test matrix) if useful.
+- **Issue #2010** (2026-10-30): **patch / apply_patch (unified diff) rejects every edit to a CRLF file**
+  *Symptoms*: Since 9d22cbb8e (v0.99.1), `patch`, and `apply_patch` when given a unified diff, fail on any CRLF file even when the hunk matches exactly:      f: context mismatch at old line 1; stale coordinates, regenerate patch against current contents; no files changed  Repro: a file containing `anchor\r\nold\r\n` and the patch      --- a/f     +++ b/f     @@ -1,2 +1,2 @@      anchor     -old     +new  `render_patch` splits the file with `split_terminator('\n')`, so its lines keep `\r`; `parse_patch` uses `str::lines()`, which drops it, so every line mismatches. Before 9d22cbb8e the file was read with `.lines()` too, so these edits applied (written back as LF). This hits every Windows checkout of jcode itself (`* text=auto`).  Expected: the hunk applies and the file stays CRLF. I have a small fix with tests. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2488,181 +2484,396 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f35542b2` (2026-10-26)
-**Commit Message**: test(tui): validate blocked todo marker lifecycle
+### Incident Patch 1: `acebecf0` (2026-10-31)
+**Commit Message**: fix(tui): keep resume search work off the input thread
 
-**File**: `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs` (modified, +24/-0)
+**File**: `crates/jcode-tui/src/tui/session_picker/filter.rs` (modified, +11/-7)
 ```diff
-@@ -34,6 +34,30 @@ fn blocked_todos_have_distinct_phase_and_lane_pips() {
-     }
- }
+@@ -50,17 +50,20 @@ impl SessionPicker {
+             return self.all_session_refs();
+         }
  
-+#[test]
-+fn blocked_marker_overrides_live_worker_and_clears_when_review_is_due() {
-+    let mut item = assigned(todo("1", "Activation", "in_progress", Some(1)), "fox");
-+    item.external_blocker = Some(crate::todo::TodoExternalBlocker {
-+        reason: "Need user authorization".into(),
-+        review_at: chrono::Utc::now() + chrono::Duration::hours(1),
-+    });
-+    let mut worker = agent("fox", "running", Some("Working"), Some(1));
-+    worker.todo_statuses = vec!["in_progress".into(), "pending".into()];
-+    let workers = [worker];
-+    let statuses = lane_item_statuses(&[&item], &workers);
-+    assert_eq!(statuses, vec![("blocked", false)]);
-+    let strip = lane_strip_spans(&statuses, 2);
-+    assert_eq!(strip[0].content, "⊳");
-+    assert_eq!(strip[0].style.fg, Some(rgb(225, 165, 90)));
-+    assert!(!Line::from(strip).to_string().contains(LIVE_DOT_SENTINEL));
-+
-+    item.external_blocker.as_mut().unwrap().review_at =
-+        chrono::Utc::now() - chrono::Duration::seconds(1);
-+    assert_eq!(todo_pip_status(&item), "in_progress");
-+    assert_eq!(lane_item_statuses(&[&item], &workers).len(), 2);
-+    assert_ne!(pip_span(&item).content, "⊳");
-+}
-+
- #[test]
- fn shortcut_badges_are_hidden_and_respect_lane_width() {
-     let mut item = assigned(todo("1", "Read types", "in_progress", Some(1)), "fox");
+-        // Fuzzy matches are not monotonic: adding a character can increase the
+-        // error budget or turn a short literal query into a typo-tolerant one.
+-        // Reconsider every session rather than narrowing the previous results.
++        // Keep literal matches immediate. Expensive typo-tolerant matching is
++        // debounced in the worker alongside transcript search, not performed
++        // on every keypress. Reconsider all sessions for new worker results.
+         let candidates = self.all_session_refs();
+-        let fuzzy = jcode_fuzzy::PreparedTokenQuery::new(&normalized);
++        let tokens = loading::search_query_tokens(&normalized);
+ 
+         let matches = candidates
+             .into_iter()
+             .filter(|session_ref| {
+                 self.session_by_ref(*session_ref).is_some_and(|session| {
+-                    fuzzy.matches_search_text(&session.search_index)
++                    (!self.transcript_search.defers_metadata()
++                        && tokens
++                            .iter()
++                            .all(|token| session.search_index.contains(token)))
+                         || self.transcript_search.contains(&session.id)
+                 })
+             })
+@@ -121,8 +124,9 @@ impl SessionPicker {
+         if !self.search_query.trim().is_empty() {
+             filtered.sort_by_cached_key(|session_ref| {
+                 !self.session_by_ref(*session_ref).is_some_and(|session| {
+-                    Self::session_matches_search(session, &self.search_query)
+-                        || self.transcript_search.contains(&session.id)
++                    (!self.transcript_search.defers_metadata()
++                        && Self::session_matches_search(session, &self.search_query))
++                        || self.transcript_search.contains_literal(&session.id)
+                 })
+             });
+         }
 ```
 
----
-
-### Incident Patch 2: `030f67ee` (2026-10-26)
-**Commit Message**: fix(tui): show blocked markers in compact todo pips
-
-**File**: `crates/jcode-tui/src/tui/ui_todo_stages.rs` (modified, +16/-1)
+**File**: `crates/jcode-tui/src/tui/session_picker/transcript_search.rs` (modified, +118/-19)
 ```diff
-@@ -274,12 +274,23 @@ fn current_stage(
-         .position(|stage| stage.item_indices().any(|i| !is_done(todos[i])))
+@@ -1,4 +1,5 @@
+-//! Cancellable full-transcript search. Never reads transcript files on the UI thread.
++//! Debounced fuzzy and full-transcript search. Only cheap literal metadata
++//! matching runs on the UI thread, never fuzzy DP or transcript file reads.
+ use super::loading::search_query_tokens;
+ use super::{ResumeTarget, SessionInfo};
+ use serde::de::{DeserializeSeed, IgnoredAny, MapAccess, SeqAccess, Visitor};
+@@ -13,10 +14,12 @@ use std::sync::{
+ use std::time::{Duration, Instant};
+ 
+ const DEBOUNCE: Duration = Duration::from_millis(150);
++const IMMEDIATE_METADATA_BYTES: usize = 1024 * 1024;
+ 
+ struct Candidate {
+     id: String,
+     paths: Vec<PathBuf>,
++    search_index: String,
+     missing_tokens: Vec<String>,
  }
  
-+fn todo_pip_status(todo: &crate::todo::TodoItem) -> &str {
-+    if crate::todo::is_incomplete_todo(todo)
-+        && (crate::todo::todo_has_external_blocker(todo) || !todo.blocked_by.is_empty())
-+    {
-+        "blocked"
-+    } else {
-+        &todo.status
-+    }
-+}
-+
- fn pip_span(todo: &crate::todo::TodoItem) -> Span<'static> {
--    status_pip_span(&todo.status)
-+    status_pip_span(todo_pip_status(todo))
+@@ -25,9 +28,11 @@ pub(super) struct TranscriptSearch {
+     query: String,
+     candidates: Vec<Candidate>,
+     started_at: Option<Instant>,
+-    receiver: Option<mpsc::Receiver<String>>,
++    receiver: Option<mpsc::Receiver<(String, bool)>>,
+     cancel: Arc<AtomicBool>,
+     matches: HashSet<String>,
++    literal_matches: HashSet<String>,
++    defer_metadata: bool,
  }
  
- fn status_pip_span(status: &str) -> Span<'static> {
-     let (glyph, color) = match status {
-+        "blocked" => ("⊳", rgb(225, 165, 90)),
-         "completed" => ("●", rgb(100, 180, 100)),
-         "in_progress" => ("●", asap_color()),
-         _ => ("○", rgb(90, 90, 105)),
-@@ -512,6 +523,10 @@ fn lane_item_statuses<'a>(
-     let mut seen = std::collections::HashSet::new();
-     let mut statuses = Vec::new();
-     for todo in lane_todos {
-+        if todo_pip_status(todo) == "blocked" {
-+            statuses.push(("blocked", false));
-+            continue;
-+        }
-         let agent = todo
-             .assigned_to
-             .as_deref()
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs` (modified, +33/-0)
-```diff
-@@ -1,6 +1,39 @@
- use super::*;
- use crate::todo::TodoItem;
- 
-+#[test]
-+fn blocked_todos_have_distinct_phase_and_lane_pips() {
-+    for external in [false, true] {
-+        let mut item = todo("1", "Activation", "pending", Some(2));
-+        item.group = Some("activation".into());
-+        if external {
-+            item.external_blocker = Some(crate::todo::TodoExternalBlocker {
-+                reason: "Need user authorization".into(),
-+                review_at: chrono::Utc::now() + chrono::Duration::hours(1),
+ impl Drop for TranscriptSearch {
+@@ -51,26 +56,30 @@ impl TranscriptSearch {
+             return;
+         }
+         let tokens = search_query_tokens(query);
++        let sessions: Vec<_> = sessions.collect();
++        self.defer_metadata = sessions
++            .iter()
++            .map(|session| session.search_index.len())
++            .sum::<usize>()
++            > IMMEDIATE_METADATA_BYTES;
+         for session in sessions {
+             let missing_tokens: Vec<_> = tokens
+                 .iter()
+                 .filter(|token| {
+-                    !jcode_fuzzy::PreparedTokenQuery::new(token)
+-                        .matches_search_text(&session.search_index)
++                    self.defer_metadata || !session.search_index.contains(token.as_str())
+                 })
+                 .cloned()
+                 .collect();
+             if missing_tokens.is_empty() {
+                 continue;
+             }
+             let paths = transcript_paths(session);
+-            if !paths.is_empty() {
+-                self.candidates.push(Candidate {
+-                    id: session.id.clone(),
+-                    paths,
+-                    missing_tokens,
+-                });
+-            }
++            self.candidates.push(Candidate {
++                id: session.id.clone(),
++                paths,
++                search_index: session.search_index.clone(),
++                missing_tokens,
 +            });
-+        } else {
-+            item.blocked_by = vec!["dependency".into()];
+         }
+         if !self.candidates.is_empty() {
+             self.started_at = Some(Instant::now());
+@@ -81,6 +90,14 @@ impl TranscriptSearch {
+         self.matches.contains(id)
+     }
+ 
++    pub(super) fn contains_literal(&self, id: &str) -> bool {
++        self.literal_matches.contains(id)
++    }
++
++    pub(super) fn defers_metadata(&self) -> bool {
++        self.defer_metadata
++    }
++
+     pub(super) fn pending(&self) -> bool {
+         self.started_at.is_some() || self.receiver.is_some()
+     }
+@@ -98,14 +115,73 @@ impl TranscriptSearch {
+             match std::thread::Builder::new()
+                 .name("jcode-transcript-search".into())
+                 .spawn(move || {
+-                    for candidate in candidates {
++                    // Finish the in-memory fuzzy pass before opening any large
++                    // transcripts. Neither DP matching nor disk scans belong
++                    // on the keystroke/render thread.
++                    let mut fuzzy_candidates = Vec::new();
++                    for mut candidate in candidates {
+                         if cancel.load(Ordering::Relaxed) {
+-                            break;
++                            return;
++                        }
++                        candidate
++                            .missing_tokens
++                            .retain(|token| !candidate.search_index.contains(token.as_str()));
++                        if candidate.missing_tokens.is_empty() {
++                            if sender.send((candidate.id, true)).is_err() {
++                                return;
++                            }
++                            continue;
+                         }
+-                        if paths_match(&candidate.paths, &candidate.missing_tokens, &cancel)
+-                            && sender.send(candidate.id).is_err()
++                        fuzzy_candidates.push(candidate);
++                    }
++                    let mut transcripts = Vec::new();
++                    for mut candidate in fuzzy_candidates {
++                        if cancel.load(Ordering::Relaxed) {
++                            return;
++                        }
++                        let mut fuzzy_missing = candidate.missing_tokens.clone();
++                        fuzzy_missing.retain(|token| {
++                            !jcode_fuzzy::PreparedTokenQuery::new(token)
++                                .matches_search_text(&can
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker/transcript_search_tests.rs` (modified, +105/-0)
+```diff
+@@ -1,5 +1,6 @@
+ use super::super::{SessionPicker, SessionSource, SessionStatus};
+ use super::*;
++use crossterm::event::{KeyCode, KeyModifiers};
+ 
+ fn external_session(id: &str, path: &Path) -> SessionInfo {
+     let now = chrono::Utc::now();
+@@ -185,6 +186,110 @@ fn typing_debounces_disk_work_and_metadata_search_stays_immediate() {
+     assert!(!picker.transcript_search.pending());
+ }
+ 
++#[test]
++fn fuzzy_metadata_matching_is_debounced_and_never_runs_on_keystroke() {
++    let temp = tempfile::tempdir().unwrap();
++    let mut session = external_session("one", &temp.path().join("absent.jsonl"));
++    session.search_index = "config deploy".into();
++    let mut picker = SessionPicker::new(vec![session]);
++    picker.search_query = "conifg".into();
++    picker.rebuild_items();
++    assert!(picker.visible_sessions.is_empty());
++    assert!(picker.transcript_search.receiver.is_none());
++    assert_eq!(picker.transcript_search.candidates.len(), 1);
++    assert_eq!(
++        picker.transcript_search.candidates[0].missing_tokens,
++        ["conifg"]
++    );
++    wait_for_search(&mut picker);
++    assert_eq!(picker.selected_session().unwrap().id, "one");
++    assert!(!picker.transcript_search.contains_literal("one"));
++}
++
++#[test]
++#[ignore = "manual typing latency benchmark, prints old synchronous matching versus key handling"]
++fn benchmark_resume_search_keystroke_latency() {
++    let temp = tempfile::tempdir().unwrap();
++    let sessions: Vec<_> = (0..100)
++        .map(|i| {
++            let mut session =
++                external_session(&format!("bench-{i}"), &temp.path().join("absent.jsonl"));
++            session.search_index =
++                "deployment performance synchronization throughput ".repeat(1400);
++            session
++        })
++        .collect();
++    let baseline = Instant::now();
++    let tokens = search_query_tokens("modal cli");
++    let fuzzy = jcode_fuzzy::PreparedTokenQuery::new("modal cli");
++    for session in &sessions {
++        for token in &tokens {
++            std::hint::black_box(
++                jcode_fuzzy::PreparedTokenQuery::new(token)
++                    .matches_search_text(&session.search_index),
++            );
 +        }
-+        assert_eq!(pip_span(&item).content, "⊳");
-+        let statuses = lane_item_statuses(&[&item], &[]);
-+        assert_eq!(statuses, vec![("blocked", false)]);
-+        assert_eq!(lane_strip_spans(&statuses, 1)[0].content, "⊳");
-+        let mut header = Vec::new();
-+        push_stage_pips(&mut header, &[&item], 80);
-+        assert!(Line::from(header).to_string().contains('⊳'));
-+        for width in 1..80 {
-+            for row in render(&[item.clone()], &[], width) {
-+                assert!(row.width() <= usize::from(width), "{width}: {row:?}");
-+            }
-+        }
-+        for status in ["completed", "cancelled"] {
-+            item.status = status.into();
-+            assert_ne!(pip_span(&item).content, "⊳");
-+            assert_ne!(lane_item_statuses(&[&item], &[])[0].0, "blocked");
-+        }
++        std::hint::black_box(fuzzy.matches_search_text(&session.search_index));
++    }
++    let baseline = baseline.elapsed();
++    let mut picker = SessionPicker::new(sessions);
++    picker.search_active = true;
++    picker.search_query = "modal cl".into();
++    let start = Instant::now();
++    picker
++        .handle_search_key(KeyCode::Char('i'), KeyModifiers::NONE)
++        .unwrap();
++    let elapsed = start.elapsed();
++    assert_eq!(picker.search_query, "modal cli");
++    assert!(picker.transcript_search.receiver.is_none());
++    eprintln!(
++        "100 sessions x 64 KiB: old synchronous matching {baseline:?}, new full key handler {elapsed:?}"
++    );
++}
++
++#[test]
++fn large_history_defers_even_literal_metadata_matching() {
++    let temp = tempfile::tempdir().unwrap();
++    let mut session = external_session("large", &temp.path().join("absent.jsonl"));
++    session.search_index = format!("{} modal cli", "x".repeat(IMMEDIATE_METADATA_BYTES + 1));
++    let mut picker = SessionPicker::new(vec![session]);
++    picker.search_query = "modal cli".into();
++    picker.rebuild_items();
++    assert!(picker.transcript_search.defers_metadata());
++    assert!(picker.visible_sessions.is_empty());
++    assert_eq!(
++        picker.transcript_search.candidates[0].missing_tokens,
++        ["modal", "cli"]
++    );
++    wait_for_search(&mut picker);
++    assert_eq!(picker.selected_session().unwrap().id, "large");
++    assert!(picker.transcript_search.contains_literal("large"));
++}
++
++#[test]
++fn literal_transcript_hit_outranks_newer_fuzzy_metadata_hit() {
++    let temp = tempfile::tempdir().unwrap();
++    let path = temp.path().join("transcript.jsonl");
++    std::fs::write(
++        &path,
++        r#"{"text":"optimizing muse kernels with modal cli"}"#,
++    )
++    .unwrap();
++    let exact = external_session("kernels", &path);
++    let mut fuzzy = external_session("unrelated", &temp.path().join("absent.jsonl"));
++    fuzzy.search_index = "model cli".into();
++    fuzzy.last_message_time = exact.last_message_time + chrono::Duration::seconds(10);
++    let mut picker = SessionPicker::new(vec![fuzzy, exact]);
++    picker.search_query = "modal cli".into();
++    picker.rebuild_items();
++    wait_for_search(&mut picker);
++    assert_eq!(picker.visible_sessions.len(), 2);
++    let first = picker.session_by_ref(picker.visible_sessions[0]).unwrap();
++    assert_eq!(first.id, "kernels");
++    assert!(picker.transcript_search.contains_literal("kernels"));
++    assert!(!picker.transcript_search.contains_literal("unrelated"));
++}
++
+ #[test]
+ fn session_refresh_restarts_search_for_new_transcript_paths() {
+     let temp = tempfile::tempdir().unwrap();
+```
+
+**File**: `crates/jcode-tui/src/tui/session_picker_tests.rs` (modified, +12/-0)
+```diff
+@@ -1116,12 +1116,23 @@ fn resume_search_recovers_matches_as_typo_query_grows() {
+         picker.search_query = query.into();
+         picker.rebuild_items();
+     }
++    wait_for_picker_search(&mut picker);
+     assert_eq!(picker.visible_sessions.len(), 1);
+     picker.search_query = "deply conifg".into();
+     picker.rebuild_items();
++    wait_for_picker_search(&mut picker);
+     assert_eq!(picker.visible_sessions.len(), 1);
+ }
+ 
++fn wait_for_picker_search(picker: &mut SessionPicker) {
++    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
++    while picker.transcript_search.pending() {
++        assert!(std::time::Instant::now() < deadline, "search timed out");
++        picker.poll_transcript_search();
++        std::thread::sleep(std::time::Duration::from_millis(1));
 +    }
 +}
 +
  #[test]
- fn shortcut_badges_are_hidden_and_respect_lane_width() {
-     let mut item = assigned(todo("1", "Read types", "in_progress", Some(1)), "fox");
+ fn resume_search_ranks_literal_matches_before_newer_typo_matches() {
+     let mut exact = make_session("literal", "literal", false, SessionStatus::Closed);
+@@ -1132,6 +1143,7 @@ fn resume_search_ranks_literal_matches_before_newer_typo_matches() {
+     let mut picker = SessionPicker::new(vec![typo, exact]);
+     picker.search_query = "config".into();
+     picker.rebuild_items();
++    wait_for_picker_search(&mut picker);
+     assert_eq!(picker.visible_sessions.len(), 2);
+     assert_eq!(
+         picker
 ```
 
----
-
-### Incident Patch 3: `07d9354d` (2026-10-26)
-**Commit Message**: Avoid production-length waits in status subprocess timeout test
-
-**File**: `crates/jcode-tui/src/tui/justrust_status.rs` (modified, +15/-2)
+**File**: `docs/benchmarks/resume-search-input-2026-10-30.md` (added, +47/-0)
 ```diff
-@@ -234,7 +234,11 @@ impl Snapshot {
- }
- 
- async fn query(program: &std::ffi::OsStr) -> Option<Snapshot> {
--    tokio::time::timeout(QUERY_TIMEOUT, async {
-+    query_with_timeout(program, QUERY_TIMEOUT).await
-+}
+@@ -0,0 +1,47 @@
++# Resume search input latency, October 30, 2026
 +
-+async fn query_with_timeout(program: &std::ffi::OsStr, timeout: Duration) -> Option<Snapshot> {
-+    tokio::time::timeout(timeout, async {
-         let mut child = tokio::process::Command::new(program)
-             .args(["status", "--json"])
-             .stdin(std::process::Stdio::null())
-@@ -538,8 +542,17 @@ mod tests {
-         write("exec head -c 524289 /dev/zero");
-         assert!(query(program.as_os_str()).await.is_none());
-         write("exec sleep 10");
-+        // Exercise the real subprocess cancellation path without making every
-+        // filtered test run wait for the production two-second deadline.
-+        assert_eq!(QUERY_TIMEOUT, Duration::from_secs(2));
-+        let timeout = Duration::from_millis(50);
-         let start = Instant::now();
--        assert!(query(program.as_os_str()).await.is_none());
-+        assert!(
-+            query_with_timeout(program.as_os_str(), timeout)
-+                .await
-+                .is_none()
-+        );
-+        assert!(start.elapsed() >= timeout);
-         assert!(start.elapsed() < Duration::from_secs(5));
-     }
- }
++## Change
++
++Fuzzy metadata matching previously ran twice on the input thread for each search
++edit: once to choose transcript candidates and again to filter visible sessions.
++Transcript file reads were asynchronous, but this matching was not. Large literal
++index scans also contributed measurable input latency.
++
++The picker now performs fuzzy matching in its cancellable, 150 ms debounced
++worker. Literal metadata matching remains immediate only when the total search
++index is at most 1 MiB. Larger indexes use the worker for literal matching too.
++Literal background hits retain a separate ranking tier above fuzzy hits. All
++literal transcript scans finish before fuzzy transcript fallback scans begin.
++Native JSONL journals are searched before their snapshot fallback.
++
++## Measurements
++
++Hosted Rust manual benchmark, 100 sessions with approximately 64 KiB indexes and
++a nonmatching `modal cli` query:
++
++- Equivalent old synchronous matching work: 188.49 ms.
++- New complete search key handler: 1.61 ms.
++- Command: `justrust test -p jcode-tui --lib benchmark_resume_search_keystroke_latency -- --ignored --nocapture`.
++- Hosted run: `20261030-232109807-2794365`.
++
++Local real-terminal smoke test against the actual session store, using isolated
++120-column by 40-row PTYs and typing `modal cli` one character at a time:
++
++| Binary | Key to next terminal write, milliseconds |
++| --- | --- |
++| Baseline `238464fe0` | 46.58, 39.34, 44.91, 144.63, 333.90, 151.51, 329.88, 335.63, 323.24 |
++| Candidate | 9.96, 7.35, 7.52, 8.18, 8.46, 0.78, 7.38, 5.83, 5.77 |
++
++The PTY timings measure the next terminal write, not a parsed query-specific
++frame. Background redraws can affect this proxy. Neither test selected a session
++or changed the shared daemon. These are single-run observations, not percentile
++claims.
++
++## Correctness
++
++`justrust test -p jcode-tui --lib session_picker -- --nocapture` passed 163 tests
++(10 ignored), hosted run `20261030-232058378-2795113`. Coverage includes deferred
++fuzzy matching, deferred literal matching for large indexes, query cancellation,
++metadata plus transcript token matching, progressive preview-scroll preservation,
++and an exact `modal cli` transcript hit ranking ahead of newer `model cli`
++fuzzy metadata.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2025** (closed): Add interactive /config settings wizard to the TUI (@remedialchaos)
+- **PR #2011** (closed): fix(patch): apply unified hunks to CRLF files (@jaeminbird)
+- **PR #2001** (closed): Never auto-background the ask_user chooser (@alecuba16)
 - **PR #1975** (closed): fix(tui): update the existing tmux config (@aphelion31)
 - **PR #1967** (closed): feat: per-session env for tool-spawned processes (@johnnyfish)
 - **PR #1965** (closed): chore(ci): refresh ratchet budgets for post-v0.99.1 growth (@ianalitis)
-- **PR #1963** (closed): style(tui): apply rustfmt to master fmt drift so the Format guardrail stops failing every PR (@ianalitis)
-- **PR #1959** (closed): fix(security): cure cargo-audit red from RUSTSEC-2026-0387 and RUSTSEC-2026-0385 (@alecuba16)
-- **PR #1954** (2026-10-24): fix: bound agentgrep memory, cancel searches, report Windows usage (@1jehuang)
 
 ---
 
@@ -2682,51 +2893,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(tui): validate blocked todo marker lifecycle
+## X. tui): keep resume search work off the input thread
 
 **RULE**:
-When implementing operations in `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-tui/src/tui/session_picker/filter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f35542b2`: test(tui): validate blocked todo marker lifecycle. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `acebecf0`: tui): keep resume search work off the input thread. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-tui/src/tui/session_picker/filter.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[test]
-fn blocked_marker_overrides_live_worker_and_clears_when_review_is_due() {
-    let mut item = assigned(todo("1", "Activation", "in_progress", Some(1)), "fox");
-    item.external_blocker = Some(crate::todo::TodoExternalBlocker {
-        reason: "Need user authorization".into(),
-        review_at: chrono::Utc::now() + chrono::Duration::hours(1),
-    });
-    let mut worker = agent("fox", "running", Some("Working"), Some(1));
-    worker.todo_statuses = vec!["in_progress".into(), "pending".into()];
-    let workers = [worker];
-    let statuses = lane_item_statuses(&[&item], &workers);
-    assert_eq!(statuses, vec![("blocked", false)]);
-    let strip = lane_strip_spans(&statuses, 2);
-    assert_eq!(strip[0].content, "⊳");
-    assert_eq!(strip[0].style.fg, Some(rgb(225, 165, 90)));
-    assert!(!Line::from(strip).to_string().contains(LIVE_DOT_SENTINEL));
-
-    item.external_blocker.as_mut().unwrap().review_at =
-        chrono::Utc::now() - chrono::Duration::seconds(1);
-    assert_eq!(todo_pip_status(&item), "in_progress");
-    assert_eq!(lane_item_statuses(&[&item], &workers).len(), 2);
-    assert_ne!(pip_span(&item).content, "⊳");
-}
-
+        // Keep literal matches immediate. Expensive typo-tolerant matching is
+        // debounced in the worker alongside transcript search, not performed
+        // on every keypress. Reconsider all sessions for new worker results.
+        let tokens = loading::search_query_tokens(&normalized);
+                    (!self.transcript_search.defers_metadata()
+                        && tokens
+                            .iter()
+                            .all(|token| session.search_index.contains(token)))
+                    (!self.transcript_search.defers_metadata()
+                        && Self::session_matches_search(session, &self.search_query))
+                        || self.transcript_search.contains_literal(&session.id)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        // Fuzzy matches are not monotonic: adding a character can increase the
+        // error budget or turn a short literal query into a typo-tolerant one.
+        // Reconsider every session rather than narrowing the previous results.
+        let fuzzy = jcode_fuzzy::PreparedTokenQuery::new(&normalized);
+                    fuzzy.matches_search_text(&session.search_index)
+                    Self::session_matches_search(session, &self.search_query)
+                        || self.transcript_search.contains(&session.id)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f35542b2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `acebecf0` are properly handled with clean fallback behavior.

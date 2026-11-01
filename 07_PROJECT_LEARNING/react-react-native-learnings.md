@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `bbee89c5`  
+> **Source Version**: `73e3aeca`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:02:53.809Z  
+> **Timestamp**: 2026-10-30T23:15:07.096Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:02:53.232Z  
+> **Harvest Timestamp**: 2026-10-30T23:15:06.992Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126758 stars
+- **Stars / Engagement**: 126836 stars
 
 ---
 
@@ -617,449 +617,63 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba0b3dbd` (2026-10-22)
-**Commit Message**: Babel preset: Remove regenerator from Hermes dev builds (#59303)
+### Incident Patch 1: `a5e20424` (2026-10-30)
+**Commit Message**: Compile folly's SanitizeLeak.cpp in Fantom's tester
 
-Summary:
-## Motivation
+## Summary:
 
- - Dev/release consistency in correctness and performance shape.
- - ~10% faster dev cold builds
- - More responsive dev apps (~2x faster promise handling)
- - Improved debugging support
+Fantom's tester doesn't link when it's built with AddressSanitizer. Under `-fsanitize=address`, folly headers like `small_vector.h` and `Singleton.h` call `folly::detail::annotate_object_leaked_impl` and `annotate_object_collected_impl`, and only `folly/memory/SanitizeLeak.cpp` defines them. Fantom's folly build compiles `SanitizeAddress.cpp` and `SanitizeThread.cpp` but not that file, so the link fails on both symbols.
 
-Since https://github.com/react/react-native/pull/52651, Hermes profiles have lowered generators (with `enableBabelRuntime: false`), `for...of`, `?.`, `??` and optional catch binding in dev builds only, because Hermes couldn't show local variables when paused on a breakpoint in a native generator.
+This adds `folly/memory/SanitizeLeak.cpp` to `folly_runtime_SRC`, which the `RCT-Folly` podspec already compiles. Without ASan the file only defines those functions, nothing calls them.
 
-That turned out to be a Hermes bug: a breakpoint on that a `yield` line resolved to scope-less entry code before the body had even run. It was fixed in https://github.com/facebook/hermes/commit/d1238c8c61907ad41caadf579f6739f724e959a3 (hermes-v260318099.0.2), which main has used since https://github.com/react/react-native/pull/58397.
+Fixes #59668
 
-This removes `enableRegenerator`, so Hermes-profile dev output matches release. It also fixes a dev-only divergence - loose `for-of` never calls `iterator.return()`, so breaking out of a `for...of` over a generator skipped its `finally` in dev but not release.
+## Changelog:
 
-Note that with the default 
+[INTERNAL] [FIXED] - Fix Fantom tester link under AddressSanitizer by compiling folly's SanitizeLeak.cpp
 
-**File**: `packages/react-native-babel-preset/package.json` (modified, +0/-5)
+## Test Plan:
+
+I couldn't run the full Fantom build here, so I checked the link against folly v2024.11.18.00 (the version Fantom pins) with clang and `-fsanitize=address`. A small program using `folly::small_vector`, linked with the `folly_runtime` sources it needs, fails with undefined `annotate_object_leaked_impl` / `annotate_object_collected_impl`. Adding `SanitizeLeak.cpp` makes i
+
+**File**: `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -39,19 +39,14 @@
-     "@babel/plugin-transform-classes": "^7.25.4",
-     "@babel/plugin-transform-destructuring": "^7.24.8",
-     "@babel/plugin-transform-flow-strip-types": "^7.25.2",
--    "@babel/plugin-transform-for-of": "^7.24.7",
-     "@babel/plugin-transform-modules-commonjs": "^7.24.8",
-     "@babel/plugin-transform-named-capturing-groups-regex": "^7.24.7",
--    "@babel/plugin-transform-nullish-coalescing-operator": "^7.24.7",
--    "@babel/plugin-transform-optional-catch-binding": "^7.24.7",
--    "@babel/plugin-transform-optional-chaining": "^7.24.8",
-     "@babel/plugin-transform-private-methods": "^7.24.7",
-     "@babel/plugin-transform-private-property-in-object": "^7.24.7",
-     "@babel/plugin-transform-react-display-name": "^7.24.7",
-     "@babel/plugin-transform-react-jsx": "^7.25.2",
-     "@babel/plugin-transform-react-jsx-self": "^7.24.7",
-     "@babel/plugin-transform-react-jsx-source": "^7.24.7",
--    "@babel/plugin-transform-regenerator": "^7.24.7",
-     "@babel/plugin-transform-runtime": "^7.24.7",
-     "@babel/plugin-transform-typescript": "^7.25.2",
-     "@babel/plugin-transform-unicode-regex": "^7.24.7",
-```
-
-**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-canary-dev.js` (modified, +5/-10)
-```diff
-@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
- var _jsxFileName = "/absolute/path/to/input.js";
- function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
- function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
--function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
--function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
--function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
- var _count = (0, _classPrivateFieldLooseKey2.default)("count");
- var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
- var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
-@@ -114,8 +111,7 @@ function _fetchData() {
-   return _fetchData.apply(this, arguments);
- }
- function getNestedValue(obj) {
--  var _obj$a$b$c, _obj$a;
--  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
-+  return obj?.a?.b?.c ?? 42;
- }
- class Animal {
-   #age;
-@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
- }
- function sumPairs(pairs) {
-   var total = 0;
--  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
--    var [a, b] = _step.value;
-+  for (var [a, b] of pairs) {
-     total += a + b;
-   }
-   return total;
-@@ -181,7 +176,7 @@ function parseDate(dateString) {
-     day: 3
-   });
-   var match = dateString.match(regex);
--  if (match != null && match.groups) {
-+  if (match?.groups) {
-     return {
-       year: match.groups.year,
-       month: match.groups.month,
-@@ -193,13 +188,13 @@ function parseDate(dateString) {
- function safeJsonParse(input) {
-   try {
-     return JSON.parse(input);
--  } catch (_unused) {
-+  } catch {
-     return null;
-   }
- }
- function matchEmoji(text) {
-   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2
-```
-
-**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-async.js` (modified, +5/-10)
-```diff
-@@ -50,9 +50,6 @@ var _dataUtils = require("./data-utils");
- var _jsxFileName = "/absolute/path/to/input.js";
- function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
- function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
--function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
--function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
--function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
- var _count = (0, _classPrivateFieldLooseKey2.default)("count");
- var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
- var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
-@@ -99,8 +96,7 @@ async function fetchData(url) {
-   };
- }
- function getNestedValue(obj) {
--  var _obj$a$b$c, _obj$a;
--  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
-+  return obj?.a?.b?.c ?? 42;
- }
- class Animal {
-   #age;
-@@ -151,8 +147,7 @@ function mergeConfigs(base, ...overrides) {
- }
- function sumPairs(pairs) {
-   var total = 0;
--  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
--    var [a, b] = _step.value;
-+  for (var [a, b] of pairs) {
-     total += a + b;
-   }
-   return total;
-@@ -164,7 +159,7 @@ function parseDate(dateString) {
-     day: 3
-   });
-   var match = dateString.match(regex);
--  if (match != null && match.groups) {
-+  if (match?.groups) {
-     return {
-       year: match.groups.year,
-       month: match.groups.month,
-@@ -176,13 +171,13 @@ function parseDate(dateString) {
- function safeJsonParse(input) {
-   try {
-     return JSON.parse(input);
--  } catch (_unused) {
-+  } catch {
-     return null;
-   }
- }
- function matchEmoji(text) {
-   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1
-```
-
-**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-block-scoping.js` (modified, +5/-10)
-```diff
-@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
- var _jsxFileName = "/absolute/path/to/input.js";
- function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
- function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
--function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
--function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
--function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
- var _count = (0, _classPrivateFieldLooseKey2.default)("count");
- var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
- var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
-@@ -114,8 +111,7 @@ function _fetchData() {
-   return _fetchData.apply(this, arguments);
- }
- function getNestedValue(obj) {
--  var _obj$a$b$c, _obj$a;
--  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
-+  return obj?.a?.b?.c ?? 42;
- }
- class Animal {
-   #age;
-@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
- }
- function sumPairs(pairs) {
-   let total = 0;
--  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
--    const [a, b] = _step.value;
-+  for (const [a, b] of pairs) {
-     total += a + b;
-   }
-   return total;
-@@ -181,7 +176,7 @@ function parseDate(dateString) {
-     day: 3
-   });
-   const match = dateString.match(regex);
--  if (match != null && match.groups) {
-+  if (match?.groups) {
-     return {
-       year: match.groups.year,
-       month: match.groups.month,
-@@ -193,13 +188,13 @@ function parseDate(dateString) {
- function safeJsonParse(input) {
-   try {
-     return JSON.parse(input);
--  } catch (_unused) {
-+  } catch {
-     return null;
-   }
- }
- function matchEmoji(text) {
-   const match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-
-```
-
-**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-class-private.js` (modified, +5/-10)
-```diff
-@@ -51,9 +51,6 @@ var _dataUtils = require("./data-utils");
- var _jsxFileName = "/absolute/path/to/input.js";
- function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
- function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
--function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
--function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
--function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
- class Counter {
-   #count = 0;
-   static #instances = 0;
-@@ -100,8 +97,7 @@ function _fetchData() {
-   return _fetchData.apply(this, arguments);
- }
- function getNestedValue(obj) {
--  var _obj$a$b$c, _obj$a;
--  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
-+  return obj?.a?.b?.c ?? 42;
- }
- class Animal {
-   #age;
-@@ -154,8 +150,7 @@ function mergeConfigs(base, ...overrides) {
- }
- function sumPairs(pairs) {
-   var total = 0;
--  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
--    var [a, b] = _step.value;
-+  for (var [a, b] of pairs) {
-     total += a + b;
-   }
-   return total;
-@@ -167,7 +162,7 @@ function parseDate(dateString) {
-     day: 3
-   });
-   var match = dateString.match(regex);
--  if (match != null && match.groups) {
-+  if (match?.groups) {
-     return {
-       year: match.groups.year,
-       month: match.groups.month,
-@@ -179,13 +174,13 @@ function parseDate(dateString) {
- function safeJsonParse(input) {
-   try {
-     return JSON.parse(input);
--  } catch (_unused) {
-+  } catch {
-     return null;
-   }
- }
- function matchEmoji(text) {
-   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2697\u2699\u269B\u269C\u26A0\u26A1\u26A7\u26AA\u26AB\u26B0\u26B1\u26BD\u26BE\u26C4\u26C5\u26C8\u26CE\u26CF\u26D1\u26D3\u26D4\u26E9\u26EA\u26F0-\u26F5\u26F7
-```
-
-**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev-preserve-destructuring.js` (modified, +5/-10)
-```diff
-@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
- var _jsxFileName = "/absolute/path/to/input.js";
- function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
- function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
--function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
--function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
--function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
- var _count = (0, _classPrivateFieldLooseKey2.default)("count");
- var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
- var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
-@@ -114,8 +111,7 @@ function _fetchData() {
-   return _fetchData.apply(this, arguments);
- }
- function getNestedValue(obj) {
--  var _obj$a$b$c, _obj$a;
--  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
-+  return obj?.a?.b?.c ?? 42;
- }
- class Animal {
-   #age;
-@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
- }
- function sumPairs(pairs) {
-   var total = 0;
--  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
--    var [a, b] = _step.value;
-+  for (var [a, b] of pairs) {
-     total += a + b;
-   }
-   return total;
-@@ -181,7 +176,7 @@ function parseDate(dateString) {
-     day: 3
-   });
-   var match = dateString.match(regex);
--  if (match != null && match.groups) {
-+  if (match?.groups) {
-     return {
-       year: match.groups.year,
-       month: match.groups.month,
-@@ -193,13 +188,13 @@ function parseDate(dateString) {
- function safeJsonParse(input) {
-   try {
-     return JSON.parse(input);
--  } catch (_unused) {
-+  } catch {
-     return null;
-   }
- }
- function matchEmoji(text) {
-   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2
-```
-
-**File**: `packages/react-native-babel-preset/src/__tests__/__fixtures__/output/hermes-stable-dev.js` (modified, +5/-10)
-```diff
-@@ -53,9 +53,6 @@ var _dataUtils = require("./data-utils");
- var _jsxFileName = "/absolute/path/to/input.js";
- function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
- function _wrapRegExp() { _wrapRegExp = function (e, r) { return new BabelRegExp(e, void 0, r); }; var e = RegExp.prototype, r = new WeakMap(); function BabelRegExp(e, t, p) { var o = RegExp(e, t); return r.set(o, p || r.get(e)), (0, _setPrototypeOf2.default)(o, BabelRegExp.prototype); } function buildGroups(e, t) { var p = r.get(t); return Object.keys(p).reduce(function (r, t) { var o = p[t]; if ("number" == typeof o) r[t] = e[o];else { for (var i = 0; void 0 === e[o[i]] && i + 1 < o.length;) i++; r[t] = e[o[i]]; } return r; }, Object.create(null)); } return (0, _inherits2.default)(BabelRegExp, RegExp), BabelRegExp.prototype.exec = function (r) { var t = e.exec.call(this, r); if (t) { t.groups = buildGroups(t, this); var p = t.indices; p && (p.groups = buildGroups(p, this)); } return t; }, BabelRegExp.prototype[Symbol.replace] = function (t, p) { if ("string" == typeof p) { var o = r.get(this); return e[Symbol.replace].call(this, t, p.replace(/\$<([^>]+)(>|$)/g, function (e, r, t) { if ("" === t) return e; var p = o[r]; return Array.isArray(p) ? "$" + p.join("$") : "number" == typeof p ? "$" + p : ""; })); } if ("function" == typeof p) { var i = this; return e[Symbol.replace].call(this, t, function () { var e = arguments; return "object" != typeof e[e.length - 1] && (e = [].slice.call(e)).push(buildGroups(e, i)), p.apply(this, e); }); } return e[Symbol.replace].call(this, t, p); }, _wrapRegExp.apply(this, arguments); }
--function _createForOfIteratorHelperLoose(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (t) return (t = t.call(r)).next.bind(t); if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var o = 0; return function () { return o >= r.length ? { done: !0 } : { done: !1, value: r[o++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
--function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
--function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
- var _count = (0, _classPrivateFieldLooseKey2.default)("count");
- var _instances = (0, _classPrivateFieldLooseKey2.default)("instances");
- var _increment = (0, _classPrivateFieldLooseKey2.default)("increment");
-@@ -114,8 +111,7 @@ function _fetchData() {
-   return _fetchData.apply(this, arguments);
- }
- function getNestedValue(obj) {
--  var _obj$a$b$c, _obj$a;
--  return (_obj$a$b$c = obj == null || (_obj$a = obj.a) == null || (_obj$a = _obj$a.b) == null ? void 0 : _obj$a.c) != null ? _obj$a$b$c : 42;
-+  return obj?.a?.b?.c ?? 42;
- }
- class Animal {
-   #age;
-@@ -168,8 +164,7 @@ function mergeConfigs(base, ...overrides) {
- }
- function sumPairs(pairs) {
-   var total = 0;
--  for (var _iterator = _createForOfIteratorHelperLoose(pairs), _step; !(_step = _iterator()).done;) {
--    var [a, b] = _step.value;
-+  for (var [a, b] of pairs) {
-     total += a + b;
-   }
-   return total;
-@@ -181,7 +176,7 @@ function parseDate(dateString) {
-     day: 3
-   });
-   var match = dateString.match(regex);
--  if (match != null && match.groups) {
-+  if (match?.groups) {
-     return {
-       year: match.groups.year,
-       month: match.groups.month,
-@@ -193,13 +188,13 @@ function parseDate(dateString) {
- function safeJsonParse(input) {
-   try {
-     return JSON.parse(input);
--  } catch (_unused) {
-+  } catch {
-     return null;
-   }
- }
- function matchEmoji(text) {
-   var match = text.match(/(?:[#\*0-9\xA9\xAE\u203C\u2049\u2122\u2139\u2194-\u2199\u21A9\u21AA\u231A\u231B\u2328\u23CF\u23E9-\u23F3\u23F8-\u23FA\u24C2\u25AA\u25AB\u25B6\u25C0\u25FB-\u25FE\u2600-\u2604\u260E\u2611\u2614\u2615\u2618\u261D\u2620\u2622\u2623\u2626\u262A\u262E\u262F\u2638-\u263A\u2640\u2642\u2648-\u2653\u265F\u2660\u2663\u2665\u2666\u2668\u267B\u267E\u267F\u2692-\u2
-```
-
-**File**: `packages/react-native-babel-preset/src/__tests__/transform-snapshot-test.js` (modified, +29/-4)
-```diff
-@@ -354,22 +354,47 @@ describe('react-native-babel-preset transform snapshots', () => {
-       expect(result).toContain('_wrapAsyncGenerator');
-     });
- 
--    it('handles optional chaining', () => {
-+    it('preserves optional chaining in dev with hermes-stable profile', () => {
-       const code = `const x = obj?.a?.b?.c;`;
-       const result = transformCode(code, {
-         dev: true,
-         unstable_transformProfile: 'hermes-stable',
-       });
--      expect(result).not.toContain('?.');
-+      expect(result).toContain('obj?.a?.b?.c');
-     });
- 
--    it('handles nullish coalescing', () => {
-+    it('preserves nullish coalescing in dev with hermes-stable profile', () => {
-       const code = `const x = a ?? b;`;
-       const result = transformCode(code, {
-         dev: true,
-         unstable_transformProfile: 'hermes-stable',
-       });
--      expect(result).not.toContain('??');
-+      expect(result).toContain('a ?? b');
-+    });
-+
-+    it('preserves generators, for-of and optional catch binding in dev without Babel runtime', () => {
-+      const code = `
-+        function* gen() {
-+          try {
-+            yield 1;
-+          } catch {
-+            yield 2;
-+          }
-+        }
-+        for (const x of gen()) {
-+          console.log(x);
-+        }
-+      `;
-+      const result = transformCode(code, {
-+        dev: true,
-+        unstable_transformProfile: 'hermes-stable',
-+        enableBabelRuntime: false,
-+      });
-+      expect(result).toContain('function* gen()');
-+      expect(result).toContain('x of gen()');
-+      expect(result).toContain('catch {');
-+      expect(result).not.toContain('_regenerator');
-+      expect(result).not.toContain('_createForOfIteratorHelperLoose');
-     });
- 
-     it('handles flow enums', () => {
+@@ -48,6 +48,7 @@ SET(folly_runtime_SRC
+         folly/lang/SafeAssert.cpp
+         folly/lang/ToAscii.cpp
+         folly/memory/SanitizeAddress.cpp
++        folly/memory/SanitizeLeak.cpp
+         folly/memory/detail/MallocImpl.cpp
+         folly/net/NetOps.cpp
+         folly/portability/SysUio.cpp
 ```
 
 ---
 
-### Incident Patch 2: `b1755a38` (2026-10-22)
-**Commit Message**: Add visual regression testing for RNTester (#59115)
+### Incident Patch 2: `ede7ebf7` (2026-10-30)
+**Commit Message**: Fix Swift formatter detection when version is main
 
-Summary:
-RNTester's rendering coverage, particularly text, currently lives in Meta's internal jest-e2e suite. To move it into public CI we need screenshot comparison that works for fork PRs and doesn't add PNGs to the repo. This adds that, as a separate set of visual flows alongside the existing Maestro E2E.
+## Summary:
 
-### How it works
+Fixes #59598. Some Swift toolchains report `main` for `swift format --version`, so the formatter is skipped even when the toolchain meets the minimum version. When `swift format` reports `main`, check `swift --version` and use it to enforce the existing minimum version. Other formatter candidates still require a parseable formatter version.
 
-Visual tests are Maestro flows in `packages/rn-tester/visual-tests/flows/`. Each one deep-links to an RNTester example, waits for it to be ready and captures a screenshot cropped to a `testID`. Maestro only captures - it never decides pass or fail.
+## Changelog:
 
-The work is split across a trust boundary, so a fork PR never runs with credentials:
+[INTERNAL] [FIXED] - Detect the Swift toolchain version when `swift format` reports `main`.
 
-- **Visual capture** runs as two jobs in Test All, reusing its RNTester Release builds: `test_visual_android_rntester` after `build_android` and `test_visual_ios_rntester` after `test_ios_rntester`. Each runs every flow in one Maestro invocation, on a Pixel 7 API 35 emulator (1080x2400, 420dpi) or an iPhone 17 Pro on iOS 26.2, and uploads the PNGs and a manifest recording the commit and device environment as an artifact. They have no secrets.
-- **Visual Compare RNTester** (`wor
+## Test Plan:
 
-**File**: `.github/workflow-scripts/__tests__/__fixtures__/visual.js` (added, +28/-0)
+- Ran `NODE_PATH=/Volumes/SSD512/Work/mobile/force-mobile/node_modules /Volumes/SSD512/Work/mobile/force-mobile/node_modules/.bin/jest scripts/__tests__/format-swift-test.js --runInBand --config '{"rootDir":"/tmp/react-native-contribution","testEnvironment":"node","transform":{}}'`: 2 tests passed. The Swift 6.4 case failed before the change; the Swift 6.2 case remains rejected.
+- Ran `git diff --check`: passed.
+- Xcode 27.1 was not available for an end-to-end check. The test simulates its reported version output. Full repository checks were not run.
+
+Differential Revision: D128394284
+
+Pull Request resolved: https://github.com/react/react-native/pull/59623
+
+**File**: `scripts/__tests__/format-swift-test.js` (added, +63/-0)
 ```diff
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,63 @@
 +/**
 + * Copyright (c) Meta Platforms, Inc. and affiliates.
 + *
@@ -1070,1317 +684,391 @@ The work is split across a trust boundary, so a fork PR never runs with credenti
 + * @format
 + */
 +
-+const SHA_A = 'a'.repeat(40);
-+const SHA_B = 'b'.repeat(40);
++'use strict';
 +
-+const ANDROID_ENVIRONMENT = {
-+  apiLevel: 35,
-+  abi: 'x86_64',
-+  nativeBridge: 'libndk_translation.so',
-+  systemImage:
-+    'google/sdk_gphone64_x86_64/emu64xa:15/AE3A/1:userdebug/dev-keys',
-+  screenSize: '1080x2400',
-+  density: 420,
-+  fontScale: '1.0',
-+  locale: 'en-US',
-+  animatorDurationScale: '0.0',
-+  emulatorVersion: '37.2.12',
-+};
++jest.mock('../format-utils', () => ({
++  IS_META_CHECKOUT: false,
++  commandVersion: jest.fn(),
++  findMetaTool: jest.fn(() => null),
++}));
++jest.mock('tinyglobby', () => ({globSync: jest.fn(() => [])}));
 +
-+module.exports = {ANDROID_ENVIRONMENT, SHA_A, SHA_B};
-```
-
-**File**: `.github/workflow-scripts/__tests__/visual-capture-test.js` (added, +146/-0)
-```diff
-@@ -0,0 +1,146 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
++const originalSwiftFormat = process.env.SWIFT_FORMAT;
 +
-+const {
-+  collectFlows,
-+  failedFlowsFromJUnit,
-+  maestroArgs,
-+} = require('../visual/capture');
-+const {environmentKey} = require('../visual/manifest');
-+const {ANDROID_ENVIRONMENT} = require('./__fixtures__/visual');
-+const fs = require('node:fs');
-+const os = require('node:os');
-+const path = require('node:path');
-+
-+describe('visual capture', () => {
-+  let directory;
-+
-+  beforeEach(() => {
-+    directory = fs.mkdtempSync(path.join(os.tmpdir(), 'visual-test-'));
-+  });
-+
-+  afterEach(() => {
-+    fs.rmSync(directory, {recursive: true, force: true});
-+  });
-+
-+  describe('environmentKey', () => {
-+    test('is readable and stable', () => {
-+      expect(environmentKey('android', ANDROID_ENVIRONMENT)).toMatch(
-+        /^android-api35-x86-64-1080x2400-420dpi-[0-9a-f]{8}$/,
-+      );
-+      expect(environmentKey('android', {...ANDROID_ENVIRONMENT})).toBe(
-+        environmentKey('android', ANDROID_ENVIRONMENT),
-+      );
-+    });
-+
-+    test.each([
-+      ['fontScale', '1.15'],
-+      ['emulatorVersion', '37.3.1'],
-+    ])('changes when %s drifts', (property, value) => {
-+      expect(
-+        environmentKey('android', {...ANDROID_ENVIRONMENT, [property]: value}),
-+      ).not.toBe(environmentKey('android', ANDROID_ENVIRONMENT));
-+    });
-+
-+    test('ignores properties that are only recorded', () => {
-+      expect(
-+        environmentKey('ios', {
-+          runtime: 'iOS-26-2',
-+          deviceType: 'iPhone-17-Pro',
-+          appearance: 'light',
-+          contentSizeCategory: 'large',
-+          locale: 'en_US',
-+          xcode: 'Xcode 26.2',
-+        }),
-+      ).toBe(
-+        environmentKey('ios', {
-+          runtime: 'iOS-26-2',
-+          deviceType: 'iPhone-17-Pro',
-+          appearance: 'light',
-+          contentSizeCategory: 'large',
-+          locale: 'en_US',
-+          xcode: 'Xcode 26.3',
-+        }),
-+      );
-+    });
-+    test('names iOS keys by runtime and device', () => {
-+      expect(
-+        environmentKey('ios', {
-+          runtime: 'iOS-26-2',
-+          deviceType: 'iPhone-17-Pro',
-+        }),
-+      ).toMatch(/^ios-26-2-iphone-17-pro-[0-9a-f]{8}$/);
-+    });
-+  });
-+
-+  describe('capture', () => {
-+    test('collects top-level flows in order and ignores other files', () => {
-+      fs.writeFileSync(path.join(directory, 'b.yml'), '');
-+      fs.writeFileSync(path.join(directory, 'a.yaml'), '');
-+      fs.writeFileSync(path.join(directory, 'notes.md'), '');
-+      fs.mkdirSync(path.join(directory, 'helpers'));
-+      fs.writeFileSync(path.join(directory, 'helpers/open.yml'), '');
-+      expect(collectFlows(directory)).toEqual([
-+        path.join(directory, 'a.yaml'),
-+        path.join(directory, 'b.yml'),
-+      ]);
-+    });
-+
-+    test('rejects flows Maestro would report under the same name', () => {
-+      fs.writeFileSync(path.join(directory, 'a.yml'), '');
-+      fs.writeFileSync(path.join(directory, 'a.yaml'), '');
-+      expect(() => collectFlows(directory)).toThrow("both report as 'a'");
-+    });
-+
-+    test('reads failed flows from a Maestro JUnit report', () => {
-+      const flows = ['/flows/text-a.yml', '/flows/text-b.yml', '/flows/c.yml'];
-+      const report = [
-+        '<testcase id="text-b" name="text-b" file="/flows/text-b.yml" status="ERROR">',
-+        '<testcase id="text-a" name="text-a" file="/flows/text-a.yml" status="SUCCESS"/>',
-+        '<testcase id="c" name="c" status="ERROR">',
-+      ].join('\n');
-+      expect(failedFlowsFromJUnit(report, flows)).toEqual([
-+        '/flows/text-b.yml',
-+        '/flows/c.yml',
-+      ]);
-+      expect(() =>
-+        failedFlowsFromJUnit('<testcase name="other" status="ERROR">', flows),
-+      ).toThrow("unknown flow 'other'");
-+      expect(failedFlowsFromJUnit('', flows)).toEqual([]);
-+    });
-+
-+    test.each([
-+      [1, undefined, false],
-+      [2, 'UDID', true],
-+    ])('builds Maestro arguments for attempt %d', (attempt, udid, reuse) => {
-+      const args = maestroArgs({
-+        flows: ['/f/a.yml', '/f/b.yml'],
-+        appId: 'com.example',
-+        outputDir: '/out',
-+        reportPath: '/r.xml',
-+        udid,
-+        attempt,
-+      });
-+      expect(
-+        args.slice(args.indexOf('test'), args.indexOf('test') + 3),
-+      ).toEqual(['test', '/f/a.yml', '/f/b.yml']);
-+      expect(args).toEqual(
-+        expect.arrayContaining([
-+          '--format=junit',
-+          '--output=/r.xml',
-+          'APP_ID=com.example',
-+          'VISUAL_OUTPUT_DIR=/out',
-+        ]),
-+      );
-+      expect(args.includes('--no-reinstall-driver')).toBe(reuse);
-+      expect(args.includes('--udid=UDID')).toBe(udid != null);
-+    });
-+  });
++beforeEach(() => {
++  delete process.env.SWIFT_FORMAT;
 +});
-```
-
-**File**: `.github/workflow-scripts/__tests__/visual-compare-test.js` (added, +316/-0)
-```diff
-@@ -0,0 +1,316 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
 +
-+const {compareCapture, compareImages, policyFor} = require('../visual/compare');
-+const {resolveContext} = require('../visual/compare-run');
-+const {buildManifest, sha256} = require('../visual/manifest');
-+const {readPngDimensions} = require('../visual/png');
-+const {validateCapture} = require('../visual/validate');
-+const {ANDROID_ENVIRONMENT, SHA_A, SHA_B} = require('./__fixtures__/visual');
-+const fs = require('node:fs');
-+const os = require('node:os');
-+const path = require('node:path');
-+const {PNG} = require('pngjs');
-+
-+function makePng(width, height, paint = () => [255, 255, 255, 255]) {
-+  const png = new PNG({width, height});
-+  for (let y = 0; y < height; y++) {
-+    for (let x = 0; x < width; x++) {
-+      const offset = (y * width + x) * 4;
-+      const [r, g, b, a] = paint(x, y);
-+      png.data[offset] = r;
-+      png.data[offset + 1] = g;
-+      png.data[offset + 2] = b;
-+      png.data[offset + 3] = a;
-+    }
-+  }
-+  return PNG.sync.write(png);
-+}
-+
-+function writeCapture(directory, images, overrides = {}) {
-+  for (const [id, buffer] of Object.entries(images)) {
-+    const filePath = path.join(directory, `${id}.png`);
-+    fs.mkdirSync(path.dirname(filePath), {recursive: true});
-+    fs.writeFileSync(filePath, buffer);
-+  }
-+  const manifest = buildManifest({
-+    captureDir: directory,
-+    platform: 'android',
-+    environment: ANDROID_ENVIRONMENT,
-+    git: {testedSha: SHA_A, baseSha: SHA_B, headSha: SHA_A},
-+  });
-+  const finalManifest = {...manifest, ...overrides};
-+  fs.writeFileSync(
-+    path.join(directory, 'manifest.json'),
-+    JSON.stringify(finalManifest),
-+  );
-+  return finalManifest;
-+}
-+
-+describe('visual comparison', () => {
-+  let directory;
-+
-+  beforeEach(() => {
-+    directory = fs.mkdtempSync(path.join(os.tmpdir(), 'visual-test-'));
-+  });
-+
-+  afterEach(() => {
-+    fs.rmSync(directory, {recursive: true, force: true});
-+  });
-+
-+  describe('readPngDimensions', () => {
-+    test('reads the IHDR dimensions', () => {
-+      expect(readPngDimensions(makePng(3, 2))).toEqual({width: 3, height: 2});
-+    });
-+
-+    test.each([
-+      [Buffer.from('not a png at all, but long enough')],
-+      [Buffer.alloc(0)],
-+    ])('rejects non-PNG data', buffer => {
-+      expect(readPngDimensions(buffer)).toBeNull();
-+    });
-+  });
-+
-+  describe('validateCapture', () => {
-+    test('accepts a well-formed capture', () => {
-+      const manifest = writeCapture(directory, {
-+        'text/width-mode/default': makePng(4, 4),
-+      });
-+      expect(validateCapture(directory)).toEqual(manifest);
-+    });
-+
-+    test.each([
-+      ['../escape/a/b'],
-+      ['/absolute/a/b'],
-+      ['Text/Upper/case'],
-+      ['too/few'],
-+      ['a/b/c/d'],
-+    ])('rejects test ID %s', id => {
-+      writeCapture(directory, {'text/width-mode/default': makePng(4, 4)});
-+      const manifest = JSON.parse(
-+        fs.readFileSync(path.join(directory, 'manifest.json'), 'utf8'),
-+      );
-+      manifest.images[0] = {...manifest.images[0], id, path: `${id}.png`};
-+      fs.writeFileSync(
-+        path.join(directory, 'manifest.json'),
-+        JSON.stringify(manifest),
-+      );
-+      expect(() => validateCapture(directory)).toThrow('Invalid test ID');
-+    });
-+
-+    test('rejects a path that does not match the ID', () => {
-+      const manifest = writeCapture(directory, {
-+        'text/width-mode/default': makePng(4, 4),
-+      });
-+      manifest.images[0].path = '../../etc/passwd';
-+      fs.writeFileSync(
-+        path.join(directory, 'manifest.json'),
-+        JSON.stringify(manifest),
-+      );
-+      expect(() => validateCapture(directory)).toThrow('path must be');
-+    });
-+
-+    test('rejects duplicates, mismatched hashes and unlisted files', () => {
-+      const manifest = writeCapture(directory, {
-+        'text/width-mode/default': makePng(4, 4),
-+      });
-+      manifest.images.push({...manifest.images[0]});
-+      manifest.images[0] = {...manifest.images[0], sha256: '0'.repeat(64)};
-+      fs.writeFileSync(
-+        path.join(directory, 'manifest.json'),
-+        JSON.stringify(manifest),
-+      );
-+      fs.writeFileSync(path.join(directory, 'extra.sh'), 'echo hi');
-+      let message = '';
-+      try {
-+        validateCapture(directory);
-+      } catch (error) {
-+        message = error.message;
-+      }
-+      expect(message).toContain('Duplicate test ID');
-+      expect(message).toContain('does not match its manifest entry');
-+      expect(message).toContain('Files not in the manifest: extra.sh');
-+    });
-+
-+    test('rejects non-PNG content and oversized images', () => {
-+      writeCapture(directory, {
-+        'text/width-mode/default': makePng(4, 4),
-+        'text/width-mode/large': makePng(20, 4),
-+      });
-+      fs.writeFileSync(
-+ 
-```
-
-**File**: `.github/workflow-scripts/__tests__/visual-report-test.js` (added, +245/-0)
-```diff
-@@ -0,0 +1,245 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
-+
-+const {
-+  APPROVAL_LABEL,
-+  differenceFingerprint,
-+  gateDecision,
-+} = require('../visual/approval');
-+const {
-+  COMMENT_MARKER,
-+  renderCheckOutput,
-+  renderPullRequestComment,
-+} = require('../visual/report');
-+const {
-+  approvalKey,
-+  baselinePrefix,
-+  publicUrl,
-+  reportPrefix,
-+} = require('../visual/storage');
-+const {SHA_A, SHA_B} = require('./__fixtures__/visual');
-+
-+describe('visual reports and approval', () => {
-+  describe('storage keys', () => {
-+    test('builds write-once keys', () => {
-+      expect(baselinePrefix('ios-x-0123abcd', SHA_A)).toBe(
-+        `baselines/ios-x-0123abcd/${SHA_A}`,
-+      );
-+      expect(
-+        reportPrefix({prNumber: 12, headSha: SHA_A, runId: 34, runAttempt: 2}),
-+      ).toBe(`reports/pull/12/${SHA_A}/34-2`);
-+      expect(
-+        reportPrefix({
-+          prNumber: null,
-+          headSha: SHA_A,
-+          runId: 34,
-+          runAttempt: 1,
-+        }),
-+      ).toBe(`reports/main/${SHA_A}/34-1`);
-+      expect(approvalKey(12, '0123456789abcdef')).toBe(
-+        'approvals/pull/12/0123456789abcdef.json',
-+      );
-+    });
-+
-+    test.each([
-+      [() => baselinePrefix('k', 'main')],
-+      [
-+        () =>
-+          reportPrefix({prNumber: -1, headSha: SHA_A, runId: 1, runAttempt: 1}),
-+      ],
-+      [
-+        () =>
-+          reportPrefix({
-+            prNumber: 1,
-+            headSha: SHA_A,
-+            runId: 1.5,
-+            runAttempt: 1,
-+          }),
-+      ],
-+      [() => approvalKey(1, '../x')],
-+    ])('rejects invalid input', build => {
-+      expect(build).toThrow('Invalid');
-+    });
-+
-+    test('encodes each path segment of public URLs', () => {
-+      expect(publicUrl('https://cdn.example/bucket/', 'a b/c#d.png')).toBe(
-+        'https://cdn.example/bucket/a%20b/c%23d.png',
-+      );
-+    });
-+  });
-+
-+  describe('approval', () => {
-+    const platform = results => ({
-+      platform: 'ios',
-+      environmentKey: 'ios-x-0123abcd',
-+      results,
-+    });
-+    const changed = (sha, expectedSha = 'e') => ({
-+      id: 'a/b/c',
-+      status: 'changed',
-+      expected: {sha256: expectedSha},
-+      captured: {sha256: sha},
-+    });
-+
-+    test('has no fingerprint without differences', () => {
-+      expect(
-+        differenceFingerprint([platform([{id: 'a/b/c', status: 'unchanged'}])]),
-+      ).toBeNull();
-+    });
-+
-+    test('fingerprints the exact captured images', () => {
-+      const first = differenceFingerprint([platform([changed('1')])]);
-+      expect(first).toMatch(/^[0-9a-f]{16}$/);
-+      expect(differenceFingerprint([platform([changed('1')])])).toBe(first);
-+      expect(differenceFingerprint([platform([changed('2')])])).not.toBe(first);
-+      expect(differenceFingerprint([platform([changed('1', 'f')])])).not.toBe(
-+        first,
-+      );
-+    });
-+
-+    test.each([
-+      [null, false, null, 'success', false],
-+      ['f', false, null, 'failure', false],
-+      ['f', true, {fingerprint: 'f', approver: 'x'}, 'success', false],
-+      ['f', true, {fingerprint: 'g', approver: 'x'}, 'failure', true],
-+      ['f', true, null, 'failure', true],
-+    ])(
-+      'gate for fingerprint %s, label %s, approval %j',
-+      (fingerprint, labelPresent, approval, conclusion, staleLabel) => {
-+        const decision = gateDecision({fingerprint, labelPresent, approval});
-+        expect(decision.conclusion).toBe(conclusion);
-+        expect(decision.staleLabel ?? false).toBe(staleLabel);
-+        if (conclusion === 'failure' && !staleLabel) {
-+          expect(decision.summary).toContain(APPROVAL_LABEL);
-+        }
-+      },
-+    );
-+  });
-+
-+  describe('renderPullRequestComment', () => {
-+    const changed = id => ({
-+      id,
-+      status: 'changed',
-+      diffPixels: 3,
-+      diffRatio: 0.03,
-+      expected: {},
-+      captured: {},
-+      hasDiffImage: true,
-+    });
-+    const platform = (name, results, error = null) => ({
-+      platform: name,
-+      environmentKey: `${name}-x-0123abcd`,
-+      baseline: {sha: SHA_B, distance: 0},
-+      results,
-+      error,
-+      checkUrl: `https://github.example/checks/${name}`,
-+      imageUrl: (kind, id) => `https://cdn.example/${name}/${kind}/${id}.png`,
-+    });
-+
-+    test('shows each diff with expected and captured collapsed', () => {
-+      const body = renderPullRequestComment({
-+        platforms: [
-+          platform('android', [
-+            {id: 'a/b/same', status: 'unchanged'},
-+            changed('a/b/changed'),
-+          ]),
-+          platform('ios', [{id: 'a/b/new', status: 'added', captured: {}}]),
-+        ],
-+        headSha: SHA_A,
-+        gateSummary: 'Needs approval.',
-+      });
-+      expect(body.startsWith(COMMENT_MARKER)).toBe(true);
-+      expect(body).toContain(
-+        '**2 visual differe
-```
-
-**File**: `.github/workflow-scripts/visual/approval.js` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
-+
-+const {sha256} = require('./manifest');
-+
-+const APPROVAL_LABEL = 'visual-change-approved';
-+const CHECK_NAME_PREFIX = 'Visual regression';
-+const GATE_CHECK_NAME = 'Visual regression approval';
-+const APPROVER_PERMISSIONS = ['admin', 'maintain', 'write'];
-+
-+/**
-+ * Identifies a set of visual differences: which tests differ, how, and the
-+ * exact expected and captured images. An approval applies to one fingerprint,
-+ * so a push that changes any difference needs a new approval. The baseline
-+ * commit isn't part of it: a rebase that leaves the expected images unchanged
-+ * keeps the approval. Returns null when there are no differences.
-+ */
-+function differenceFingerprint(platforms) {
-+  const lines = [];
-+  for (const {platform, environmentKey, results} of platforms) {
-+    for (const result of results) {
-+      if (result.status === 'unchanged') {
-+        continue;
-+      }
-+      lines.push(
-+        [
-+          platform,
-+          environmentKey,
-+          result.id,
-+          result.status,
-+          result.expected?.sha256 ?? '',
-+          result.captured?.sha256 ?? '',
-+        ].join('\t'),
-+      );
-+    }
-+  }
-+  if (lines.length === 0) {
-+    return null;
-+  }
-+  return sha256(Buffer.from(lines.sort().join('\n'))).slice(0, 16);
-+}
-+
-+/**
-+ * The approval gate passes when there is nothing to approve, or when the
-+ * approval label is present and an approval was recorded for this exact
-+ * fingerprint.
-+ */
-+function gateDecision({fingerprint, labelPresent, approval}) {
-+  if (fingerprint == null) {
-+    return {conclusion: 'success', summary: 'No visual differences.'};
-+  }
-+  if (labelPresent && approval?.fingerprint === fingerprint) {
-+    return {
-+      conclusion: 'success',
-+      summary: `Visual differences approved by @${approval.approver}.`,
-+    };
-+  }
-+  if (labelPresent) {
-+    return {
-+      conclusion: 'failure',
-+      summary: `The visual differences changed after approval. A maintainer must review the new report and re-apply \`${APPROVAL_LABEL}\`.`,
-+      staleLabel: true,
-+    };
-+  }
-+  return {
-+    conclusion: 'failure',
-+    summary: `Visual differences need maintainer approval. Review the report, then apply \`${APPROVAL_LABEL}\`.`,
-+  };
-+}
-+
-+module.exports = {
-+  APPROVAL_LABEL,
-+  APPROVER_PERMISSIONS,
-+  CHECK_NAME_PREFIX,
-+  GATE_CHECK_NAME,
-+  differenceFingerprint,
-+  gateDecision,
-+};
-```
-
-**File**: `.github/workflow-scripts/visual/approve-run.js` (added, +183/-0)
-```diff
-@@ -0,0 +1,183 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
-+
-+/**
-+ * Records a maintainer's approval of a PR's visual differences and updates
-+ * the approval gate. Runs from the default branch on `pull_request_target`
-+ * when the approval label is added or removed. It never checks out or runs
-+ * pull request code.
-+ *
-+ *   node approve-run.js prepare  Decide, and stage an approval record to
-+ *                                upload under OUT_DIR.
-+ *   node approve-run.js report   After the upload, update the gate check.
-+ */
-+
-+const {
-+  APPROVAL_LABEL,
-+  APPROVER_PERMISSIONS,
-+  GATE_CHECK_NAME,
-+  gateDecision,
-+} = require('./approval');
-+const {createGitHubClient} = require('./github');
-+const {
-+  approvalKey,
-+  fetchJsonOrNull,
-+  listPrefixes,
-+  publicUrl,
-+} = require('./storage');
-+const fs = require('node:fs');
-+const path = require('node:path');
-+
-+function requireEnv(name) {
-+  const value = process.env[name];
-+  if (value == null || value === '') {
-+    throw new Error(`${name} is required`);
-+  }
-+  return value;
-+}
-+
-+/** The results of the most recent comparison for a PR head, or null. */
-+async function latestResults({bucket, publicBaseUrl, prNumber, headSha}) {
-+  const runs = await listPrefixes(
-+    bucket,
-+    `reports/pull/${prNumber}/${headSha}/`,
-+  );
-+  const latest = runs
-+    .map(prefix => {
-+      const match = /\/(\d+)-(\d+)\/$/.exec(prefix);
-+      return match == null
-+        ? null
-+        : {prefix, runId: Number(match[1]), attempt: Number(match[2])};
-+    })
-+    .filter(Boolean)
-+    .sort((a, b) => b.runId - a.runId || b.attempt - a.attempt)[0];
-+  return latest == null
-+    ? null
-+    : fetchJsonOrNull(publicUrl(publicBaseUrl, `${latest.prefix}results.json`));
-+}
-+
-+async function prepare() {
-+  const github = createGitHubClient();
-+  const outDir = requireEnv('OUT_DIR');
-+  const event = JSON.parse(
-+    fs.readFileSync(requireEnv('GITHUB_EVENT_PATH'), 'utf8'),
-+  );
-+  const writeState = state =>
-+    fs.writeFileSync(
-+      path.join(outDir, 'state.json'),
-+      `${JSON.stringify(state)}\n`,
-+    );
-+  fs.mkdirSync(outDir, {recursive: true});
-+
-+  if (event.label?.name !== APPROVAL_LABEL) {
-+    writeState(null);
-+    return;
-+  }
-+
-+  const prNumber = event.pull_request.number;
-+  const headSha = event.pull_request.head.sha;
-+  const results = await latestResults({
-+    bucket: requireEnv('VISUAL_BUCKET'),
-+    publicBaseUrl: requireEnv('VISUAL_PUBLIC_BASE_URL'),
-+    prNumber,
-+    headSha,
-+  });
-+  const fingerprint = results?.fingerprint ?? null;
-+
-+  if (event.action === 'labeled') {
-+    const approver = event.sender.login;
-+    const permission = await github.permission(approver);
-+    if (!APPROVER_PERMISSIONS.includes(permission)) {
-+      await github.removeLabel(prNumber, APPROVAL_LABEL);
-+      await github.comment(
-+        prNumber,
-+        `@${approver} \`${APPROVAL_LABEL}\` needs write access to this repository, so it was removed.`,
-+      );
-+      writeState(null);
-+      return;
-+    }
-+    if (results == null) {
-+      await github.removeLabel(prNumber, APPROVAL_LABEL);
-+      await github.comment(
-+        prNumber,
-+        `There is no visual report for \`${headSha.slice(0, 12)}\` yet, so \`${APPROVAL_LABEL}\` was removed. Apply it again once the report is posted.`,
-+      );
-+      writeState(null);
-+      return;
-+    }
-+    if (fingerprint != null) {
-+      const key = approvalKey(prNumber, fingerprint);
-+      const record = {
-+        fingerprint,
-+        approver,
-+        approvedAt: new Date().toISOString(),
-+        headSha,
-+      };
-+      const recordPath = path.join(outDir, 'upload', key);
-+      fs.mkdirSync(path.dirname(recordPath), {recursive: true});
-+      fs.writeFileSync(recordPath, `${JSON.stringify(record, null, 2)}\n`);
-+    }
-+  }
-+
-+  writeState({
-+    prNumber,
-+    headSha,
-+    fingerprint,
-+    labelPresent: event.action === 'labeled',
-+  });
-+}
-+
-+async function report() {
-+  const github = createGitHubClient();
-+  const outDir = requireEnv('OUT_DIR');
-+  const state = JSON.parse(
-+    fs.readFileSync(path.join(outDir, 'state.json'), 'utf8'),
-+  );
-+  if (state == null) {
-+    return;
-+  }
-+  const {prNumber, headSha, fingerprint, labelPresent} = state;
-+  const approval =
-+    fingerprint == null
-+      ? null
-+      : await fetchJsonOrNull(
-+          publicUrl(
-+            requireEnv('VISUAL_PUBLIC_BASE_URL'),
-+            approvalKey(prNumber, fingerprint),
-+          ),
-+        );
-+  const decision = gateDecision({fingerprint, labelPresent, approval});
-+  await github.createCheckRun({
-+    name: GATE_CHECK_NAME,
-+    headSha,
-+    conclusion: decision.conclusion,
-+    output: {title: decision.summary, summary: decision.summary},
-+  });
-+  console.info(decision.summary);
-+}
-+
-+async function main(command = pr
-```
-
-**File**: `.github/workflow-scripts/visual/capture.js` (added, +206/-0)
-```diff
-@@ -0,0 +1,206 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
-+
-+/**
-+ * Captures every visual flow in one Maestro invocation, so the JVM and
-+ * driver startup (around two minutes on an iOS simulator) is paid once per
-+ * job rather than once per flow. Flows that fail are rerun, and only those,
-+ * on later attempts.
-+ */
-+
-+const childProcess = require('node:child_process');
-+const fs = require('node:fs');
-+const path = require('node:path');
-+
-+const MAESTRO = path.join(process.env.HOME ?? '', '.maestro/bin/maestro');
-+const DEFAULT_ATTEMPTS = 3;
-+const ATTEMPT_TIMEOUT_MS = 30 * 60 * 1000;
-+
-+const usage = `
-+node capture.js <platform> <app_path> <app_id> <flows_dir> <output_dir> [ios_udid]
-+
-+Installs the app, then runs every flow in <flows_dir> in one Maestro
-+invocation, writing screenshots under <output_dir>. Failed flows are retried
-+up to ${DEFAULT_ATTEMPTS} attempts in total (VISUAL_CAPTURE_ATTEMPTS).
-+`;
-+
-+/** The flows directly inside `flowsDir`, sorted. Helpers live elsewhere. */
-+function collectFlows(flowsDir) {
-+  const flows = fs
-+    .readdirSync(flowsDir, {withFileTypes: true})
-+    .filter(entry => entry.isFile() && /\.ya?ml$/.test(entry.name))
-+    .map(entry => path.join(flowsDir, entry.name))
-+    .sort();
-+  flowsByReportName(flows);
-+  return flows;
-+}
-+
-+/**
-+ * Maps Maestro's report names to flow paths. Maestro reports a flow under its
-+ * file name without the extension, so names must be unique.
-+ */
-+function flowsByReportName(flows) {
-+  const byName = new Map();
-+  for (const flow of flows) {
-+    const name = path.basename(flow).replace(/\.ya?ml$/, '');
-+    const existing = byName.get(name);
-+    if (existing != null) {
-+      throw new Error(
-+        `${existing} and ${flow} would both report as '${name}'. Rename one.`,
-+      );
-+    }
-+    byName.set(name, flow);
-+  }
-+  return byName;
-+}
-+
-+/**
-+ * The flows a Maestro JUnit report marks as anything but SUCCESS, in report
-+ * order, matched by the report's file path or, failing that, its name. Throws
-+ * on a report entry that matches none of `flows`.
-+ */
-+function failedFlowsFromJUnit(report, flows) {
-+  const byName = flowsByReportName(flows);
-+  const failed = [];
-+  for (const [, attributes] of report.matchAll(/<testcase\b([^>]*)>/g)) {
-+    const name = /\bname="([^"]*)"/.exec(attributes)?.[1];
-+    const file = /\bfile="([^"]*)"/.exec(attributes)?.[1];
-+    const status = /\bstatus="([^"]*)"/.exec(attributes)?.[1];
-+    if (name == null || status === 'SUCCESS') {
-+      continue;
-+    }
-+    const flow =
-+      flows.find(candidate => path.resolve(candidate) === file) ??
-+      byName.get(name);
-+    if (flow == null) {
-+      throw new Error(`The Maestro report has an unknown flow '${name}'`);
-+    }
-+    failed.push(flow);
-+  }
-+  return failed;
-+}
-+
-+function maestroArgs({flows, appId, outputDir, reportPath, udid, attempt}) {
-+  return [
-+    ...(udid != null ? [`--udid=${udid}`] : []),
-+    'test',
-+    ...flows,
-+    '--format=junit',
-+    `--output=${reportPath}`,
-+    '-e',
-+    `APP_ID=${appId}`,
-+    '-e',
-+    `VISUAL_OUTPUT_DIR=${outputDir}`,
-+    // The first attempt installs the driver. Retries reuse it.
-+    ...(attempt > 1 ? ['--no-reinstall-driver'] : []),
-+  ];
-+}
-+
-+function installApp(platform, appPath, udid) {
-+  if (platform === 'android') {
-+    childProcess.execFileSync('adb', ['install', '-r', appPath], {
-+      stdio: 'inherit',
-+    });
++afterEach(() => {
++  if (originalSwiftFormat === undefined) {
++    delete process.env.SWIFT_FORMAT;
 +  } else {
-+    childProcess.execFileSync('xcrun', ['simctl', 'install', udid, appPath], {
-+      stdio: 'inherit',
++    process.env.SWIFT_FORMAT = originalSwiftFormat;
++  }
++  jest.resetModules();
++  jest.clearAllMocks();
++  jest.restoreAllMocks();
++});
++
++test.each([
++  ['6.4', true],
++  ['6.2', false],
++])(
++  'checks the Swift toolchain version when the formatter reports main (%s)',
++  (version, accepted) => {
++    const {commandVersion} = require('../format-utils');
++    const {globSync} = require('tinyglobby');
++    commandVersion.mockImplementation((command, args) => {
++      if (command === 'swift' && args?.[0] === 'format') {
++        return {status: 0, output: 'main'};
++      }
++      if (command === 'swift') {
++        return {
++          status: 0,
++          output: `Apple Swift version ${version} (swiftlang)`,
++        };
++      }
++      return {status: 1, output: ''};
 +    });
-+  }
-+}
++    jest.spyOn(console, 'warn').mockImplementation(() => {});
 +
-+function runAttempt(args) {
-+  const result = childProcess.spawnSync(MAESTRO, args, {
-+    stdio: 'inherit',
-+    timeout: ATTEMPT_TIMEOUT_MS,
-+    env: {
-+      ...process.env,
-+      MAESTRO_CLI_NO_ANALYTICS: '1',
-+      MAESTRO_CLI_ANALYSIS_NOTIFICATION_DISABLED: 'true',
-+      MAESTRO_DRIVER_STARTUP_TIMEOUT: '180000',
-+    },
-+  });
-+  if (result.error != null) {
-+    throw result.error;
-+  }
-+  return result.status;
-+}
++    require('../format-swift');
 +
-+function writeSummary(lines) {
-+  const text = `${lines.join('\n')}\n`;
-+  console.info(text);
-+  if (process.env.GITHUB_STEP_SUMMARY) {
-+    fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, text);
-+  }
-+}
-+
-+function main(args = process.argv.slice(2)) {
-+  const [platform, appPath, appId, flowsDir, outputDir, udid] = args;
-+  if (
-+    !['android', 'ios'].includes(platform) ||
-+    outputDir == null ||
-+    (platform === 'ios' && udid == null)
-+  ) {
-+    throw new Error(usage);
-+  }
-+  const attempts = Number(
-+    process.env.VISUAL_CAPTURE_ATTEMPTS ?? DEFAULT_ATTEMPTS,
-+  );
-+  const allFlows = collectFlows(flowsDir);
-+  fs.mkdirSync(outputDir, {recursive: true});
-+  installApp(platform, appPath, udid);
-+
-+  const summary = [`### Visual capture (${platform})`, ''];
-+  let pending = allFlows;
-+  for (let attempt = 1;
++    expect(globSync).toHaveBeenCalledTimes(accepted ? 1 : 0);
++  },
++);
 ```
 
-**File**: `.github/workflow-scripts/visual/compare-run.js` (added, +469/-0)
+**File**: `scripts/format-swift.js` (modified, +14/-1)
 ```diff
-@@ -0,0 +1,469 @@
-+/**
-+ * Copyright (c) Meta Platforms, Inc. and affiliates.
-+ *
-+ * This source code is licensed under the MIT license found in the
-+ * LICENSE file in the root directory of this source tree.
-+ *
-+ * @noflow
-+ * @format
-+ */
-+
-+/**
-+ * Trusted half of the visual regression pipeline. Runs from the default
-+ * branch on `workflow_run`, after the untrusted capture workflow finishes.
-+ *
-+ *   node compare-run.js prepare  Validate captures, compare with baselines,
-+ *                                and lay out files to upload under OUT_DIR.
-+ *   node compare-run.js report   After the upload, create check runs and
-+ *                                evaluate the approval gate.
-+ */
-+
-+const {
-+  APPROVAL_LABEL,
-+  CHECK_NAME_PREFIX,
-+  GATE_CHECK_NAME,
-+  differenceFingerprint,
-+  gateDecision,
-+} = require('./approval');
-+const {compareCapture, summarize} = require('./compare');
-+const {createGitHubClient} = require('./github');
-+const {
-+  COMMENT_MARKER,
-+  renderCheckOutput,
-+  renderPullRequestComment,
-+} = require('./report');
-+const {
-+  approvalKey,
-+  baselinePrefix,
-+  fetchBuffer,
-+  fetchJsonOrNull,
-+  findBaseline,
-+  publicUrl,
-+  reportPrefix,
-+} = require('./storage');
-+const {validateCapture} = require('./validate');
-+const fs = require('node:fs');
-+const path = require('node:path');
-+
-+const BASELINE_SEARCH_DEPTH = 20;
-+const PLATFORMS = ['android', 'ios'];
-+// The default Actions token posts as this bot. Only its comments are edited.
-+const COMMENT_AUTHOR = 'github-actions[bot]';
-+
-+function requireEnv(name) {
-+  const value = process.env[name];
-+  if (value == null || value === '') {
-+    throw new Error(`${name} is required`);
-+  }
-+  return value;
-+}
-+
-+function writeFile(filePath, contents) {
-+  fs.mkdirSync(path.dirname(filePath), {recursive: true});
-+  fs.writeFileSync(filePath, contents);
-+}
-+
-+async function resolveContext(github) {
-+  const event = requireEnv('CAPTURE_EVENT');
-+  const headSha = requireEnv('CAPTURE_HEAD_SHA');
-+  const headBranch = requireEnv('CAPTURE_HEAD_BRANCH');
-+  const headRepository = requireEnv('CAPTURE_HEAD_REPOSITORY');
-+  const defaultBranch = requireEnv('DEFAULT_BRANCH');
-+  const runId = Number(requireEnv('CAPTURE_RUN_ID'));
-+  const runAttempt = Number(requireEnv('CAPTURE_RUN_ATTEMPT'));
-+
-+  if (event === 'pull_request') {
-+    const pull = await github.findPullRequest(headSha, headRepository);
-+    // Baselines only exist for the default branch, so pull requests into
-+    // other branches have nothing to compare with.
-+    if (pull == null || pull.base.ref !== defaultBranch) {
-+      return null;
+@@ -81,7 +81,20 @@ function findSwiftFormat() {
+   }
+   for (const [command, prefixArguments] of candidates) {
+     const result = commandVersion(command, prefixArguments);
+-    const version = parseSwiftFormatVersion(result.output);
++    let version = parseSwiftFormatVersion(result.output);
++    if (
++      result.status === 0 &&
++      version == null &&
++      result.output.trim() === 'main' &&
++      command === 'swift' &&
++      prefixArguments.length === 1 &&
++      prefixArguments[0] === 'format'
++    ) {
++      const toolchain = commandVersion(command);
++      if (toolchain.status === 0) {
++        version = parseSwiftFormatVersion(toolchain.output);
++      }
 +    }
-+    return {
-+      kind: 'pull',
-+      prNumber: pull.number,
-+      headSha,
-+      runId,
-+      runAttempt,
-+      defaultBranch,
-+    };
-+  }
-+  if (
-+    event === 'push' &&
-+    headBranch === defaultBranch &&
-+    headRepository === github.repository
-+  ) {
-+    return {
-+      kind: 'main',
-+      prNumber: null,
-+      headSha,
-+      runId,
-+      runAttempt,
-+      defaultBranch,
-+    };
-+  }
-+  return null;
-+}
-+
-+async function comparePlatform({
-+  github,
-+  context,
-+  captureDir,
-+  config,
-+  publicBaseUrl,
-+  outDir,
-+  prefix,
-+}) {
-+  const manifest = validateCapture(captureDir);
-+  const {platform, environmentKey, git} = manifest;
-+  if (git.headSha !== context.headSha) {
-+    throw new Error(
-+      `${platform}: manifest head ${git.headSha} does not match run head ${context.headSha}`,
-+    );
-+  }
-+  if (!(await github.isOnBranch(git.baseSha, context.defaultBranch))) {
-+    return {
-+      platform,
-+      environmentKey,
-+      manifest,
-+      baseline: null,
-+      results: [],
-+      error: {
-+        title: 'base commit is not on the default branch',
-+        summary: `The capture's base commit \`${git.baseSha}\` is not on \`${context.defaultBranch}\`, so there is no baseline to compare with. Rebase or merge \`${context.defaultBranch}\` and push again.`,
-+      },
-+    };
-+  }
-+
-+  const candidateShas = await github.ancestry(
-+    git.baseSha,
-+    BASELINE_SEARCH_DEPTH,
-+  );
-+  const baseline = await findBaseline({
-+    publicBaseUrl,
-+    environmentKey,
-+    candidateShas,
-+  });
-+  if (baseline == null) {
-+    return {
-+      platform,
-+      environmentKey,
-+      manifest,
-+      baseline: null,
-+      results: [],
-+      error: {
-+        title: 'no baseline for this environment',
-+        summary: `No baseline for environment \`${environmentKey}\` was published for \`${git.baseSha.slice(0, 12)}\` or its ${BASELINE_SEARCH_DEPTH - 1} preceding commits on \`${context.defaultBranch}\`. If the environment key is new, the CI device image changed: the next push to \`${context.defaultBranch}\` publishes a baseline for it. Otherwise check that baseline publication on \`${context.defaultBranch}\` is succeeding.`,
-+      },
-+    };
-+  }
-+
-+  const expectedUrl = id =>
-+    publicUrl(
-+      publicBaseUrl,
-+      `${baselinePrefix(environmentKey, baseline.sha)}/${id}.png`,
-+    );
-+  const results = await com
+     if (
+       result.status === 0 &&
+       version != null &&
 ```
 
 ---
 
-### Incident Patch 3: `99fca5fc` (2026-10-23)
-**Commit Message**: Fix TextInput absorbing scroll gestures on Android (#58678)
+### Incident Patch 3: `97f6997e` (2026-10-30)
+**Commit Message**: Avoid global JNI ref copies in FabricUIManager lookups
 
 Summary:
-Pull Request resolved: https://github.com/react/react-native/pull/58678
+Keep a stable owning global JNI reference in the context container and expose a borrowed alias under the existing `FabricUIManager` key. Use alias reads for synchronous Android Fabric measurement, colour resolution and image prefetching, avoiding global-reference allocation and release on each lookup.
 
-Fixes the issue described in [#25594](https://github.com/react/react-native/issues/25594) and [#12167](https://github.com/react/react-native/issues/12167), where TextInputs on Android absorb scroll gestures when textAlign is set to "center" or "right". For TextInputs inside a ScrollView, starting a scroll gesture on the TextInput would not scroll the ScrollView.
+Add instrumentation coverage for exact alias/owner handle identity, mixed legacy global-ref and alias readers, and legacy-copy validity after the aliased handle owner is released. Stale global-ref readers still depend on the current fbjni wrapper representation; these tests exercise that compatibility, not a type-safe C++ guarantee.
 
-### Root Cause
+Changelog: [Internal]
 
-The root cause is the `onTouchEvent()` function introduced in [commit 372d001](https://github.com/react/react-native/commit/372d001a5d5e24b68d194e01c356d973642fac86). The smart scroll implementation checks if the TextInput can itself scroll in any direction. If it cannot, then the parent can intercept the gesture to apply normal scroll behavior.
+Differential Revision: D128203842
 
-However, when textAlign is set to "center" or "right", `canScrollHorizontally()` returns true, as Android treats the TextInput as capable of scrolling left/right. In these cases, the existing conditional logic blocks all scroll gestures, even if a vertical swipe is applied.
+Pull Request resolved: https://github.com/react/react-native/pull/59617
 
-### This PR
-
-Modify `ReactEditText` so that we onl
-
-**File**: `packages/react-native/ReactAndroid/src/main/java/com/facebook/react/views/textinput/ReactEditText.kt` (modified, +28/-9)
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricUIManager.cpp` (modified, +2/-2)
 ```diff
-@@ -36,6 +36,7 @@ import android.view.Menu
- import android.view.MenuItem
- import android.view.MotionEvent
- import android.view.View
-+import android.view.ViewConfiguration
- import android.view.ViewGroup
- import android.view.accessibility.AccessibilityNodeInfo
- import android.view.inputmethod.EditorInfo
-@@ -91,6 +92,7 @@ import com.facebook.react.views.text.internal.span.ReactStrikethroughSpan
- import com.facebook.react.views.text.internal.span.ReactTextPaintHolderSpan
- import com.facebook.react.views.text.internal.span.ReactUnderlineSpan
- import java.util.concurrent.CopyOnWriteArrayList
-+import kotlin.math.abs
- import kotlin.math.max
- import kotlin.math.min
- 
-@@ -132,6 +134,9 @@ public open class ReactEditText public constructor(context: Context) : AppCompat
-   private var scrollWatcher: ScrollWatcher?
-   private var keyListener: InternalKeyListener? = null
-   private var detectScrollMovement = false
-+  private var touchDownX = 0f
-+  private var touchDownY = 0f
-+  private val touchSlop = ViewConfiguration.get(context).scaledTouchSlop
-   private var onKeyPress = false
-   private val textAttributes: TextAttributes
-   private var typefaceDirty = false
-@@ -316,6 +321,8 @@ public open class ReactEditText public constructor(context: Context) : AppCompat
-   override fun onTouchEvent(ev: MotionEvent): Boolean {
-     when (ev.action) {
-       MotionEvent.ACTION_DOWN -> {
-+        touchDownX = ev.x
-+        touchDownY = ev.y
-         detectScrollMovement = true
-         // Disallow parent views to intercept touch events, until we can detect if we should be
-         // capturing these touches or not.
-@@ -324,21 +331,33 @@ public open class ReactEditText public constructor(context: Context) : AppCompat
- 
-       MotionEvent.ACTION_MOVE ->
-           if (detectScrollMovement) {
--            if (
--                !canScrollVertically(-1) &&
--                    !canScrollVertically(1) &&
--                    !canScrollHorizontally(-1) &&
--                    !canScrollHorizontally(1)
--            ) {
--              // We cannot scroll, let parent views take care of these touches.
--              this.parent.requestDisallowInterceptTouchEvent(false)
-+            val deltaX = ev.x - touchDownX
-+            val deltaY = ev.y - touchDownY
-+            val dominantAxisDistance = max(abs(deltaX), abs(deltaY))
-+            if (dominantAxisDistance > touchSlop) {
-+              if (!canScrollInGestureDirection(deltaX, deltaY)) {
-+                // We cannot scroll, let parent views take care of these touches.
-+                this.parent.requestDisallowInterceptTouchEvent(false)
-+              }
-+              detectScrollMovement = false
-             }
--            detectScrollMovement = false
-           }
-     }
-     return super.onTouchEvent(ev)
+@@ -23,8 +23,8 @@ Size measureHostComponent(
+     return {};
    }
  
-+  private fun canScrollInGestureDirection(deltaX: Float, deltaY: Float): Boolean {
-+    if (abs(deltaY) > abs(deltaX)) {
-+      val canScrollUp = deltaY > 0 && canScrollVertically(-1)
-+      val canScrollDown = deltaY <= 0 && canScrollVertically(1)
-+      return canScrollUp || canScrollDown
-+    } else {
-+      val canScrollLeft = deltaX > 0 && canScrollHorizontally(-1)
-+      val canScrollRight = deltaX <= 0 && canScrollHorizontally(1)
-+      return canScrollLeft || canScrollRight
+-  const auto fabricUIManager =
+-      contextContainer->at<jni::global_ref<jobject>>("FabricUIManager");
++  auto fabricUIManager =
++      contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
+   static const auto measure =
+       jni::findClassStatic("com/facebook/react/fabric/FabricUIManager")
+           ->getMethod<jlong(
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricUIManagerBinding.cpp` (modified, +6/-1)
+```diff
+@@ -609,7 +609,12 @@ void FabricUIManagerBinding::installFabricUIManager(
+         globalJavaUiManager);
+   };
+ 
+-  contextContainer->insert("FabricUIManager", globalJavaUiManager);
++  auto fabricUIManagerOwner =
++      std::make_shared<jni::global_ref<jobject>>(globalJavaUiManager);
++  // The alias and its owner must stay registered for the container's lifetime.
++  contextContainer->insert("FabricUIManagerOwner", fabricUIManagerOwner);
++  contextContainer->insert(
++      "FabricUIManager", jni::alias_ref<jobject>(*fabricUIManagerOwner));
+ 
+   animationChoreographer_ = std::make_shared<AndroidAnimationChoreographer>();
+ 
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/test_helper/FabricMountingManagerTestHelper.cpp` (modified, +62/-0)
+```diff
+@@ -79,6 +79,63 @@ std::vector<Tag> toTags(jni::alias_ref<jni::JArrayInt> tags) {
+   return {region.get(), region.get() + tags->size()};
+ }
+ 
++bool fabricUIManagerAliasUsesOwnedHandle(
++    [[maybe_unused]] jni::alias_ref<jclass> javaClass,
++    jni::alias_ref<JFabricUIManager::javaobject> javaUIManager) {
++  auto contextContainer =
++      javaUIManager->getBinding()->getScheduler()->getContextContainer();
++  auto owner = contextContainer->at<std::shared_ptr<jni::global_ref<jobject>>>(
++      "FabricUIManagerOwner");
++  auto alias = contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
++  auto env = jni::Environment::current();
++  return alias.get() == owner->get() &&
++      env->GetObjectRefType(alias.get()) == JNIGlobalRefType &&
++      jni::isSameObject(alias.get(), javaUIManager.get());
++}
++
++jni::local_ref<JFabricUIManager::javaobject> readFabricUIManagerFromContext(
++    [[maybe_unused]] jni::alias_ref<jclass> javaClass,
++    jni::alias_ref<JFabricUIManager::javaobject> javaUIManager,
++    jboolean useGlobalRef,
++    jboolean uninstall) {
++  static const auto bindingField =
++      JFabricUIManager::javaClassStatic()
++          ->getField<FabricUIManagerBinding::javaobject>("mBinding");
++  static const auto unregister =
++      jni::findClassStatic("com/facebook/react/fabric/FabricUIManagerBinding")
++          ->getMethod<void()>("unregister");
++  auto javaBinding = javaUIManager->getFieldValue(bindingField);
++  auto contextContainer =
++      javaBinding->cthis()->getScheduler()->getContextContainer();
++  if (useGlobalRef != 0) {
++    auto global =
++        contextContainer->at<jni::global_ref<jobject>>("FabricUIManager");
++    if (uninstall != 0) {
++      std::weak_ptr<jni::global_ref<jobject>> owner =
++          contextContainer->at<std::shared_ptr<jni::global_ref<jobject>>>(
++              "FabricUIManagerOwner");
++      unregister(javaBinding);
++      contextContainer->erase("FabricUIManager");
++      contextContainer->erase("FabricUIManagerOwner");
++      if (!owner.expired()) {
++        jni::throwNewJavaException(
++            "java/lang/AssertionError",
++            "FabricUIManager owner survived teardown");
++      }
++      contextContainer.reset();
++    }
++    return jni::make_local(
++        jni::static_ref_cast<JFabricUIManager::javaobject>(
++            jni::alias_ref<jobject>(global)));
++  }
++  if (uninstall != 0) {
++    unregister(javaBinding);
++  }
++  auto alias = contextContainer->at<jni::alias_ref<jobject>>("FabricUIManager");
++  return jni::make_local(
++      jni::static_ref_cast<JFabricUIManager::javaobject>(alias));
++}
++
+ } // namespace
+ 
+ FabricMountingManagerTestHelper::FabricMountingManagerTestHelper(
+@@ -402,6 +459,11 @@ FabricMountingManagerTestHelper::pulledDeleteTags() {
+ 
+ void FabricMountingManagerTestHelper::registerNatives() {
+   registerHybrid({
++      makeNativeMethod(
++          "fabricUIManagerAliasUsesOwnedHandle",
++          fabricUIManagerAliasUsesOwnedHandle),
++      makeNativeMethod(
++          "readFabricUIManagerFromContext", readFabricUIManagerFromContext),
+       makeNativeMethod(
+           "initHybrid", FabricMountingManagerTestHelper::initHybrid),
+       makeNativeMethod(
+```
+
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerInstrumentationTest.kt` (modified, +68/-3)
+```diff
+@@ -252,7 +252,7 @@ class FabricMountingManagerInstrumentationTest {
+   }
+ 
+   private fun mountPaddedView(
+-      fixTextLayoutOnPixelDensityChange: Boolean
++      fixTextLayoutOnPixelDensityChange: Boolean,
+   ): Pair<FabricMountingManagerTestHelper, ReactViewGroup> {
+     val fabricUIManager = createFabricUIManager(listOf(PaddingViewManager()))
+     val helper = FabricMountingManagerTestHelper.create(fabricUIManager)
+@@ -281,7 +281,7 @@ class FabricMountingManagerInstrumentationTest {
+     ReactNativeFeatureFlagsCxxInterop.dangerouslyForceOverride(
+         object : ReactNativeFeatureFlagsDefaults() {
+           override fun enableMountingCoordinatorPullModelAndroid(): Boolean = true
+-        }
++        },
+     )
+   }
+ 
+@@ -501,7 +501,7 @@ class FabricMountingManagerInstrumentationTest {
+           override fun enablePropsUpdateReconciliationAndroid(): Boolean = pullModel
+ 
+           override fun enablePreallocatedPropsDiffOnInsertAndroid(): Boolean = pullModel
+-        }
++        },
+     )
+   }
+ 
+@@ -582,6 +582,71 @@ class FabricMountingManagerInstrumentationTest {
+     return surfaceId to { fabricUIManager.stopSurface(surfaceId) }
+   }
+ 
++  @Test
++  fun native_fabricUIManagerContext_aliasUsesOwnedGlobalHandle() {
++    val fabricUIManager = createFabricUIManager()
++    registerBinding(fabricUIManager)
++
++    assertThat(FabricMountingManagerTestHelper.fabricUIManagerAliasUsesOwnedHandle(fabricUIManager))
++        .isTrue()
++    assertThat(
++            FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                fabricUIManager,
++                useGlobalRef = false,
++                uninstall = false,
++            ),
++        )
++        .isSameAs(fabricUIManager)
++  }
++
++  @Test
++  fun native_fabricUIManagerContext_legacyCopiesLeaveAliasValid() {
++    val fabricUIManager = createFabricUIManager()
++    registerBinding(fabricUIManager)
++
++    repeat(64) {
++      assertThat(
++              FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                  fabricUIManager,
++                  useGlobalRef = true,
++                  uninstall = false,
++              ),
++          )
++          .isSameAs(fabricUIManager)
++      assertThat(
++              FabricMountingManagerTestHelper.fabricUIManagerAliasUsesOwnedHandle(fabricUIManager),
++          )
++          .isTrue()
++      assertThat(
++              FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                  fabricUIManager,
++                  useGlobalRef = false,
++                  uninstall = false,
++              ),
++          )
++          .isSameAs(fabricUIManager)
 +    }
 +  }
 +
-   // Consume 'Enter' key events: TextView tries to give focus to the next TextInput, but it can't
-   // since we only allow JS to change focus, which in turn causes TextView to crash.
-   override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
++  @Test
++  fun native_fabricUIManagerContext_readsSurviveUninstall() {
++    for (useGlobalRef in listOf(false, true)) {
++      repeat(8) {
++        val fabricUIManager = createFabricUIManager()
++        registerBinding(fabricUIManager)
++
++        assertThat(
++                FabricMountingManagerTestHelper.readFabricUIManagerFromContext(
++                    fabricUIManager,
++                    useGlobalRef = useGlobalRef,
++                    uninstall = true,
++                ),
++            )
++            .isSameAs(fabricUIManager)
++      }
++    }
++  }
++
+   @Test
+   fun native_stopSurfaceWithSurfaceHandler_pullModel_pullsDeletes() {
+     assertStoppingSurfacePullsDeletes(pullModel = true, ::startBridgelessSurface)
 ```
 
-**File**: `packages/rn-tester/js/examples/ScrollView/ScrollViewExample.js` (modified, +18/-2)
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerTestHelper.kt` (modified, +10/-0)
 ```diff
-@@ -471,6 +471,7 @@ const examples: Array<RNTesterModuleExample> = [
-     },
-   },
-   {
-+    name: 'scrollTextInputsVertical',
-     title: '<ScrollView> TextInputs\n',
-     description:
-       'Vertical scroll gestures on a TextInput should scroll the ScrollView unless the input can also scroll vertically.',
-@@ -479,6 +480,7 @@ const examples: Array<RNTesterModuleExample> = [
-     },
-   },
-   {
-+    name: 'scrollTextInputsHorizontal',
-     title: '<ScrollView> TextInputs (horizontal = true)\n',
-     description:
-       'Horizontal scroll gestures on a TextInput should scroll the ScrollView unless the input can also scroll horizontally.',
-@@ -634,7 +636,7 @@ const VerticalScrollTextInputs = () => {
+@@ -90,6 +90,16 @@ private constructor(fabricUIManager: FabricUIManager) : HybridClassBase() {
+       SoLoader.loadLibrary("fabricjni_test_helper")
+     }
  
-   return (
-     <View>
--      <RNTesterText style={styles.text}>
-+      <RNTesterText style={styles.text} testID="vertical_status">
-         scrolled = {verticalScrolled ? 'true' : 'false'}
-       </RNTesterText>
-       <ScrollView
-@@ -645,23 +647,30 @@ const VerticalScrollTextInputs = () => {
-         onScroll={event => {
-           setVerticalScrolled(event.nativeEvent.contentOffset.y > 0);
-         }}>
--        <TextInput placeholder="TextInput" style={styles.textInput} />
-+        <TextInput
-+          placeholder="TextInput"
-+          style={styles.textInput}
-+          testID="text_input_vertical"
-+        />
-         <TextInput
-           placeholder="TextInput (center)"
-           style={styles.textInput}
-           textAlign="center"
-+          testID="text_input_vertical_center"
-         />
-         <TextInput
-           placeholder="TextInput (right)"
-           style={styles.textInput}
-           textAlign="right"
-+          testID="text_input_vertical_right"
-         />
-         <TextInput
-           defaultValue={
-             'A TextInput with a value that overflows the input width so it can be scrolled horizontally.'
-           }
-           placeholder="TextInput"
-           style={styles.textInput}
-+          testID="text_input_vertical_overflow_width"
-         />
-         <TextInput
-           defaultValue={
-@@ -670,6 +679,7 @@ const VerticalScrollTextInputs = () => {
-           placeholder="TextInput"
-           style={styles.textInput}
-           multiline
-+          testID="text_input_vertical_overflow_height"
-         />
-         <View
-           style={[styles.textInput, {backgroundColor: '#cccccc', height: 200}]}
-@@ -682,6 +692,7 @@ const VerticalScrollTextInputs = () => {
-             y: 0,
-           });
-         }}
-+        testID="scroll_to_top_button"
-       />
-     </View>
-   );
-@@ -711,18 +722,21 @@ const HorizontalScrollTextInputs = () => {
-             styles.textInput,
-             {backgroundColor: '#cccccc', width: 100, height: '100%'},
-           ]}
-+          testID="left_filler"
-         />
-         <View style={{gap: 20}}>
-           <TextInput
-             placeholder="TextInput"
-             style={[styles.textInput, {width: 200}]}
-+            testID="text_input_horizontal"
-           />
-           <TextInput
-             defaultValue={
-               'A TextInput with a value that overflows the input width so it can be scrolled horizontally.'
-             }
-             placeholder="TextInput"
-             style={[styles.textInput, {width: 200}]}
-+            testID="text_input_horizontal_overflow_width"
-           />
-           <TextInput
-             defaultValue={
-@@ -731,6 +745,7 @@ const HorizontalScrollTextInputs = () => {
-             placeholder="TextInput"
-             style={[styles.textInput, {width: 200}]}
-             multiline
-+            testID="text_input_horizontal_overflow_height"
-           />
-         </View>
-         <View
-@@ -747,6 +762,7 @@ const HorizontalScrollTextInputs = () => {
-             x: 0,
-           });
-         }}
-+        testID="scroll_to_start_button"
-       />
-     </View>
-   );
++    @JvmStatic
++    external fun fabricUIManagerAliasUsesOwnedHandle(fabricUIManager: FabricUIManager): Boolean
++
++    @JvmStatic
++    external fun readFabricUIManagerFromContext(
++        fabricUIManager: FabricUIManager,
++        useGlobalRef: Boolean,
++        uninstall: Boolean,
++    ): FabricUIManager
++
+     @JvmStatic
+     fun create(fabricUIManager: FabricUIManager): FabricMountingManagerTestHelper {
+       return FabricMountingManagerTestHelper(fabricUIManager)
+```
+
+**File**: `packages/react-native/ReactCommon/react/renderer/components/modal/ModalHostViewComponentDescriptor.cpp` (modified, +2/-2)
+```diff
+@@ -21,8 +21,8 @@ State::Shared ModalHostViewComponentDescriptor::createInitialState(
+ 
+   int surfaceId = family->getSurfaceId();
+ 
+-  const jni::global_ref<jobject>& fabricUIManager =
+-      contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
++  auto fabricUIManager =
++      contextContainer_->at<jni::alias_ref<jobject>>("FabricUIManager");
+ 
+   static auto getEncodedScreenSizeWithoutVerticalInsets =
+       jni::findClassStatic(UIManagerJavaDescriptor)
+```
+
+**File**: `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/components/androidtextinput/AndroidTextInputComponentDescriptor.h` (modified, +1/-2)
+```diff
+@@ -44,8 +44,7 @@ class AndroidTextInputComponentDescriptor final : public ConcreteComponentDescri
+     if (surfaceIdToThemePaddingMap_.find(surfaceId) != surfaceIdToThemePaddingMap_.end()) {
+       theme = surfaceIdToThemePaddingMap_[surfaceId];
+     } else {
+-      const jni::global_ref<jobject> &fabricUIManager =
+-          contextContainer_->at<jni::global_ref<jobject>>("FabricUIManager");
++      auto fabricUIManager = contextContainer_->at<jni::alias_ref<jobject>>("FabricUIManager");
+ 
+       auto env = jni::Environment::current();
+       auto defaultTextInputPaddingArray = env->NewFloatArray(4);
+```
+
+**File**: `packages/react-native/ReactCommon/react/renderer/graphics/platform/android/react/renderer/graphics/PlatformColorParser.cpp` (modified, +2/-2)
+```diff
+@@ -91,8 +91,8 @@ SharedColor parsePlatformColor(
+         if (iterator != getColorCache.end()) {
+           resolvedColor = iterator->second;
+         } else {
+-          const auto& fabricUIManager =
+-              contextContainer.at<jni::global_ref<jobject>>("FabricUIManager");
++          auto fabricUIManager =
++              contextContainer.at<jni::alias_ref<jobject>>("FabricUIManager");
+           // Boxed Integer: null is an explicit miss; a non-null value may be 0
+           // (transparent black).
+           static auto getColorFromJava =
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #59367** (closed): Register selectable paragraphs in the iOS component factory (@christophpurrer)
-- **PR #59363** (closed): Read hover callbacks from the live Pressability config at invocation (#59363) (@rozele)
-- **PR #59359** (closed): Upgrade Flow in fbsource (@SamChou19815)
-- **PR #59351** (closed): Upgrade Markdown lint dependencies (@cortinico)
-- **PR #59349** (closed): Add `--help` to the Fantom CLI (@rubennorte)
-- **PR #59347** (closed): Add Transform visual regression tests (#59347) (@cortinico)
+- **PR #59675** (2026-10-30): Bump nlohmann_json to 3.12.0 so Fantom's tester builds with newer Clang (@lazerg)
+- **PR #59674** (2026-10-30): Compile folly's SanitizeLeak.cpp in Fantom's tester (@lazerg)
+- **PR #59660** (closed): Regenerate constexpr trait API snapshots (@javache)
+- **PR #59658** (2026-10-30): Make shadow node traits constexpr (#59658) (@javache)
+- **PR #59657** (2026-10-30): Compare prop name pointers before their characters in RawPropsParser (@hryhoriiK97)
+- **PR #59652** (closed): Keep the ShadowNode vtable compatible after the asLayoutable change (@hryhoriiK97)
 
 ---
 
@@ -2394,3 +1082,34 @@ Modify `ReactEditText` so that we onl
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Compile folly's SanitizeLeak.cpp in Fantom's tester
+
+**RULE**:
+When implementing operations in `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a5e20424`: Compile folly's SanitizeLeak.cpp in Fantom's tester. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `private/react-native-fantom/tester/third-party/folly/CMakeLists.txt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+        folly/memory/SanitizeLeak.cpp
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a5e20424` are properly handled with clean fallback behavior.

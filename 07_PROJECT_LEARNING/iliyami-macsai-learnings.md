@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source**: github ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
-> **Source Version**: `d4ccd8a7`  
+> **Source Version**: `8accd9cb`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:09:23.722Z  
+> **Timestamp**: 2026-10-30T22:10:24.260Z  
 > **Learning ID**: `learn-github-iliyami-macsai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:09:22.481Z  
+> **Harvest Timestamp**: 2026-10-30T22:10:22.909Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Apple-notarized alternative to CleanMyMac, built with Swift 6 and SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1951 stars
+- **Stars / Engagement**: 2032 stars
 
 ---
 
@@ -376,11 +376,12 @@ public struct CachedFileRecord: Sendable {
 ### Core Architecture Module: `Sources/MacClean/Core/Cleaner/CleaningEngine.swift`
 ```
 import Foundation
+import Darwin
 import MacCleanKit
 import OSLog
 
 public actor CleaningEngine {
-    public enum CleanMode: Sendable {
+    public enum CleanMode: Sendable, Equatable {
         case trash
         case permanent
         case dryRun
@@ -406,6 +407,8 @@ public actor CleaningEngine {
         public let skippedCount: Int
         /// Items actually moved to the Trash (empty for dry-run / permanent).
         public let trashedItems: [TrashedItem]
+        /// Cancellation in MacSai or in the system's authorization dialog.
+        public let wasCancelled: Bool
 
         public init(
             removedCount: Int,
@@ -413,7 +416,8 @@ public actor CleaningEngine {
             removedURLs: Set<URL>,
             errors: [CleanError],
             skippedCount: Int,
-            trashedItems: [TrashedItem] = []
+            trashedItems: [TrashedItem] = [],
+            wasCancelled: Bool = false
         ) {
             self.removedCount = removedCount
             self.freedBytes = freedBytes
@@ -421,6 +425,7 @@ public actor CleaningEngine {
             self.errors = errors
             self.skippedCount = skippedCount
             self.trashedItems = trashedItems
+            self.wasCancelled = wasCancelled
         }
     }
 
@@ -449,14 +454,39 @@ public actor CleaningEngine {
 
     private let safetyGuard = SafetyGuard()
     private let logger = Logger(subsystem: MCConstants.bundleIdentifier, category: "CleaningEngine")
+    private let trashService: BatchTrashService
+    private let trashRoot: String
+    private let readIdentity: @Sendable (URL) throws -> TrashItemIdentity
+    private let isMissing: @Sendable (URL) -> Bool
+    private let trashBatchSize: Int
+    private var isCleaning = false
 
-    public init() {}
+    public init() {
+        self.init(trashService: .live)
+    }
+
+    init(
+        trashService: BatchTrashService,
+        trashRoot: String = MCConstants.userTrash.path(percentEncoded: false),
+        batchSize: Int = 500,
+        readIdentity: @escaping @Sendable (URL) throws -> TrashItemIdentity = TrashItemIdentity.read,
+        isMissing: @escaping @Sendable (URL) -> Bool = { url in
+            var info = stat()
+            return lstat(url.path(percentEncoded: false), &info) != 0 && errno == ENOENT
+        }
+    ) {
+        self.trashService = trashService
+        self.trashRoot = trashRoot
+        self.trashBatchSize = min(max(1, batchSize), MCConstants.maxFilesPerOperation)
+        self.readIdentity = readIdentity
+        self.isMissing = isMissing
+    }
 
     /// Trash / permanently delete / dry-run the given items.
     ///
-    /// Large selections (chrome cache alone often has 20k+ entries) are
-    /// processed in chunks of `MCConstants.cleanChunkSize` so the per-chunk
-    /// SafetyGuard batch validation never trips on legitimate cleanups.
+    /// Large selections are processed in bounded batches. Trash batches are
+    /// smaller to keep cancellation responsive while the system owns a move;
+    /// permanent deletion and dry runs retain `MCConstants.cleanChunkSize`.
     /// Selections beyond `MCConstants.maxTotalItemsPerCleanOperation`
     /// (500k) are refused entirely as a runaway-protection — that's
     /// orders of magnitude above any realistic user scenario and signals
@@ -472,6 +502,14 @@ public actor CleaningEngine {
         mode: CleanMode = .trash,
         onProgress: (@Sendable (Progress) -> Void)? = nil
     ) async -> CleanResult {
+        guard !isCleaning else {
+            return CleanResult(removedCount: 0, freedBytes: 0, removedURLs: [],
+                               errors: [CleanError(path: "cleanup", error: L10n.tr(
+                                "另一项清理仍在进行中。", "Another cleanup is still running.", "Другая очистка ещё выполняется."))],
+                               skippedCount: items.count)
+        }
+        isCleaning = true
+        defer { isCleaning = false }
         // Upper bound: refuse genuinely runaway selections cleanly.
         if items.count > MCConstants.maxTotalItemsPerCleanOperation {
             let msg = L10n.tr("操作超过 \(MCConstants.maxTotalItemsPerCleanOperation) 项上限（尝试处理：\(items.count) 项）。这通常表示扫描器存在异常。", "Operation exceeds limit of \(MCConstants.maxTotalItemsPerCleanOperation) items (attempted: \(items.count)). This usually indicates a scanner bug.", "Операция превышает лимит в \(MCConstants.maxTotalItemsPerCleanOperation) \(L10n.russianPlural(MCConstants.maxTotalItemsPerCleanOperation, one: "объект", few: "объекта", many: "объектов")) (запрошено: \(items.count)). Обычно это указывает на ошибку сканера.")
@@ -491,14 +529,17 @@ public actor CleaningEngine {
         var errors: [CleanError] = []
         var skippedCount = 0
         var trashedItems: [TrashedItem] = []
+        var wasCancelled = false
 
-        // Internal chunking: SafetyGuard.validateDeletion runs per chunk
-        // (capped at MCConstants.maxFilesPerOperation), so even arbitrary-
-        // size total selections never blow past the per-batch cap. Yield
-        // between chunks so the UI runloop can repaint during long runs
-        // (a real fix for the UI freezing on 50k+ cleanups will come
-        // when we add a progress channel in a follow-up release).
-        let chunkSize = MCConstants.cleanChunkSize
+        // Direct engine callers get the same no-double-move guarantee as
+        // CleanActions. Keep the first URL's metadata.
+        var seen = Set<URL>()
+        let items = mode == .trash ? items.filter { seen.insert($0.url).inserted } : items
+
+        // Bounded batches reduce per-file system prompts while allowing
+        // cancellation between batches. AppKit controls authentication UI;
+        // it does not promise a single prompt for an entire cleanup.
+        let chunkSize = mode == .trash ? trashBatchSize : MCConstants.cleanChunkSize
         var startIndex = 0
         var processedSoFar = 0
         while startIndex < items.count {
@@ -507,15 +548,25 @@ public actor CleaningEngine {
             let chunk = Array(items[startIndex..<endIndex])
             startIndex = endIndex
 
-            processChunk(
-                chunk, mode: mode,
-                removedCount: &removedCount,
-                freedBytes: &freedBytes,
-                removedURLs: &removedURLs,
-                errors: &errors,
-                skippedCount: &skippedCount,
-                trashedItems: &trashedItems
-            )
+            if mode == .trash {
+                let result = await processTrashChunk(chunk)
+                removedCount += result.removedCount
+                freedBytes += result.freedBytes
+                removedURLs.formUnion(result.removedURLs)
+                errors.append(contentsOf: result.errors)
+                skippedCount += result.skippedCount
+                trashedItems.append(contentsOf: result.trashedItems)
+                wasCancelled = result.wasCancelled
+            } else {
+                processChunk(
+                    chunk, mode: mode,
+                    removedCount: &removedCount,
+                    freedBytes: &freedBytes,
+                    removedURLs: &removedURLs,
+                    errors: &errors,
+                    skippedCount: &skippedCount
+                )
+            }
             processedSoFar += chunk.count
 
             // Emit per-chunk progress so the UI can render an honest
@@ -527,6 +578,9 @@ public actor CleaningEngine {
                 removedSoFar: removedCount,
                 freedBytesSoFar: freedBytes
             ))
+            // A declined system prompt must not be immediately retried by
+            // the next batch (nor by a later CleanActions stage).
+            if wasCancelled { break }
 
             // Give the runloop room to breathe between chunks.
             await Task.yield()
@@ -540,82 +594,22 @@ public actor CleaningEngine {
             removedURLs: removedURLs,
             errors: errors,
             skippedCount: skippedCount,
-            trashedItems: trashedItems
+            trashedItems: trashedItems,
+            wasCancelled: wasCancelled || Task.isCancelled
         )
     }
 
-    /// One chunk's worth of cleanup. Batch-validates the chunk's paths,
-    /// then per-item processes if validation passed. On batch failure
-    /// (typically a protected path slipping through scanner-side filtering),
-    /// the whole chunk is skipped with a single error — partial
-    /// processing of a malformed chunk isn't worth the surprise.
-    private func processChunk(
-        _ chunk: [FileItem],
-        mode: CleanMode,
-        removedCount: inout Int,
-        freedBytes: inout UInt64,
-        removedURLs: inout Set<URL>,
-        errors: inout [CleanError],
-        skippedCount: inout Int,
-        trashedItems: inout [TrashedItem]
-    ) {
-        let urls = chunk.map(\.url)
-        do {
-            try safetyGuard.validateDeletion(paths: urls)
-        } catch SafetyGuard.SafetyError.tooManyFiles {
-            // Genuine over-cap chunk: skip it wholesale. Structurally this can't
-            // happen (chunks are <= cleanChunkSize < maxFilesPerOperation), but
-            // keep the guard so raising the chunk size can't bypass the cap.
-            logger.error("Chunk exceeds the \(MCConstants.maxFilesPerOperation)-file safety cap")
-            errors.append(CleanError(
-                path: "validation",
-                error: SafetyGuard.SafetyError.tooManyFiles(chunk.count).localizedDescription
-            ))
-            skippedCount += chunk.count
-            return
-        } catch {
-            // A single UNSAFE PATH failed batch validation. Do NOT skip the whole
-            // chunk (issue #104: one printer-PPD symlink left everything
-            // uncleaned). Fall through to the per-item loop below, which
-            // re-validates each path and skips only the offending one(s).
-            logger.notice("Chunk has an unsafe path; validating per-item instead of skipping all")
-        }
-
-        for item in chunk {
+    private func processTrashChunk(_ items: [FileItem]) async -> CleanResult {
+        var prepared: [(item: FileItem, bytes: UInt64, identity: TrashItemIdentity)] = []
+        var errors: [CleanError] = []
+        var skippedCount = 0
+        for item in items {
             if Task.isCancelled { break }
-
             do {
                 try safetyGuard.validatePath(item.url)
-            } catch {
-                skippedCount += 1
-                errors.append(CleanError(
-                    path: item.url.path(percentEncoded: false),
-                    error: error.localizedDescription
-                ))
-                continue
-            }
-
-            // For directories, totalFileAllocatedSize doesn't recurse —
-            // Apple's API returns 0 for dirs. Compute the real on-disk
-            // size by walking the subtree BEFORE we trash it (after,
-            // the path is gone). Without this, freedBytes massively
-            // undercounts: trashing ~/Library/Caches/com.foo/ shows
-            // "Zero KB freed" even when the dir held 200 MB.
-            let realSize: UInt64 = item.isDirectory
-                ? Self.recursiveAllocatedSize(of: item.url)
-                : item.size
-
-            switch mode {
-            case .dryRun:
-                removedCount += 1
-                freedBytes += realSize
-                removedURLs.insert(item.url)
-                logOperation(path: item.url, size: realSize, dryRun: true)
-
-            case .trash:
-                do {
-                    var resulting: NSURL?
- 
+                let identity = try readIdentity(item.url)
+                let bytes = item.isDirectory ? Self.recursiveAllocatedSize(of: item.url) : item.size
+                prepared.append((item, bytes, ident
 ```
 
 ### Core Architecture Module: `Sources/MacClean/Core/FSMonitor/FSEventMonitor.swift`
@@ -1614,6 +1608,24 @@ public enum SharedAppState {
         return Date().timeIntervalSince(when) < suppressionWindow
     }
 
+    // MARK: - Swap alert latch
+
+    /// Persisted so a widget restart while swap is still high does not
+    /// repeat an alert the user already saw.
+    private static let swapAlertLatchKey = "swapAlertLatch"
+
+    public static var swapAlertLatch: SwapAlertLatch {
+        get {
+            guard let data = defaults.data(forKey: swapAlertLatchKey) else { return SwapAlertLatch() }
+            return (try? JSONDecoder().decode(SwapAlertLatch.self, from: data)) ?? SwapAlertLatch()
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                defaults.set(data, forKey: swapAlertLatchKey)
+            }
+        }
+    }
+
     // MARK: - Notification suppression (Phase 4)
 
     /// One-time notifications (battery health below threshold, etc.)
@@ -1807,159 +1819,543 @@ public extension TipAction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d4ccd8a7` (2026-10-21)
-**Commit Message**: Match malware against Apple's on-disk XProtect signatures (#239)
+### Incident Patch 1: `8accd9cb` (2026-10-29)
+**Commit Message**: Show swap under memory and add opt-in swap and memory pressure alerts (#261)
 
-Read the hash rules Apple ships in XProtect.bundle (no network) and match
-files the scanner already walks: launch-item programs, Application Support,
-/Users/Shared, Downloads and (outside Smart Scan) app executables.
+The menu bar widget shows swap in use under the Memory card instead of an
+unlabeled icon in the bottom row. A new Alerts section in Settings turns
+the existing memory pressure alert on or off and adds a swap alert at
+2, 4 or 8 GB. It is off by default, fires once when swap crosses the
+threshold, and re-arms only after swap falls below 75% of it, with the
+latch persisted so a widget restart does not repeat it. Translated in
+every language.
 
-- Load both XProtect locations and use the one with the higher Version.
-- Read rules in context: YARA conditions are parsed (and/or/not/parens),
-  so a hash only counts with its filesize pin and its Macho / shebang
-  guard. Unguarded sized hashes under 1 KB are dropped, as are hashes in
-  opaque or multi-hash clauses. Plist identities under MatchAll are
-  skipped; NSURLFileSizeKey is not treated as a size.
-- Compute SHA-1 and SHA-256 in one pass, only for files whose size and
-  header can match a rule. Symlinks, FIFOs and other non-regular files
-  are never opened.
-- Launch-item program paths are canonicalized once (realpath, `..`
-  refused) and the same URL is hashed and removed. Removal escalates to
-  the innermost .app.
-- Safari extensions on XProtect's blocklist go to a new "Possible
-  Threats" category that is never pre-selected, and only when the
-  extension has a non-Apple team id.
-- Excluded fol
-
-**File**: `README.de.md` (modified, +1/-1)
+**File**: `Sources/MacClean/Views/Settings/SettingsPageView.swift` (modified, +39/-0)
 ```diff
-@@ -137,7 +137,7 @@ Ein voll ausgestatteter Mac-Reiniger sollte kein Jahresabo kosten und dich nicht
- ### 🛡️ Schutz
- | Modul | Was es tut |
- |--------|------------|
--| **Malware Removal** | Signaturbasiertes Scannen in 3 Tiefen (Schnell / Ausgewogen / Tief): Launch Agents und Daemons, Browser-Erweiterungen sowie bekannte Adware-/Malware-Muster (kuratierte Liste, kein Antivirus, und das sagt es auch) |
-+| **Malware Removal** | Signaturbasiertes Scannen in 3 Tiefen (Schnell / Ausgewogen / Tief): Launch Agents und Daemons, App-Bundles, Browser-Erweiterungen sowie bekannte Adware-/Malware-Muster. Exakter Hash-Abgleich mit Apples XProtect-Signaturen, die schon auf deinem Mac liegen, offline; Safari-Erweiterungen auf Apples Sperrliste werden zur Prüfung aufgelistet und nie vorausgewählt (kein Antivirus, und das sagt es auch) |
- | **Privacy** | Bereinigt Verlauf, Cookies und Cache von Safari, Chrome und Firefox, mit Zeitfiltern. Safari-**Lesezeichen werden nie angerührt** |
- | **Browser Extensions** | Listet die installierten Erweiterungen in Safari, Chrome, Brave, Edge, Arc und Firefox auf. Selbst installierte Chromium- und Firefox-Erweiterungen können in den Papierkorb, solange der Browser geschlossen ist; per Richtlinie oder vom Browser selbst installierte werden angezeigt, aber nicht angerührt. Safari-Erweiterungen verlinken zu den Safari-Einstellungen |
- | **Saved Wi-Fi** | Listet deine bevorzugten Drahtlosnetzwerke auf und vergisst die von dir ausgewählten |
-```
-
-**File**: `README.fr.md` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ Un nettoyeur Mac complet ne devrait pas coûter un abonnement annuel ni vous dem
- ### 🛡️ Protection
- | Module | Ce que ça fait |
- |--------|------------|
--| **Malware Removal** | Analyse par signatures à 3 profondeurs (Rapide / Équilibré / Approfondi) : agents et démons de lancement, extensions de navigateur et motifs connus d'adware/malware (liste organisée, pas un antivirus, et il le dit) |
-+| **Malware Removal** | Analyse par signatures à 3 profondeurs (Rapide / Équilibré / Approfondi) : agents et démons de lancement, paquets d'apps, extensions de navigateur et motifs connus d'adware/malware. Correspondance exacte de hachages avec les signatures Apple XProtect déjà présentes sur votre Mac, hors ligne ; les extensions Safari de la liste de blocage d'Apple sont listées pour vérification, jamais présélectionnées (pas un antivirus, et il le dit) |
- | **Privacy** | Nettoie l'historique, les cookies et le cache de Safari, Chrome et Firefox, avec des filtres temporels. Les **favoris de Safari ne sont jamais touchés** |
- | **Browser Extensions** | Liste les extensions installées dans Safari, Chrome, Brave, Edge, Arc et Firefox. Les extensions Chromium et Firefox que vous avez installées vous-même peuvent aller à la corbeille quand le navigateur est fermé ; celles installées par une stratégie ou par le navigateur lui-même sont affichées mais laissées intactes. Les extensions Safari renvoient vers les réglages de Safari |
- | **Saved Wi-Fi** | Liste vos réseaux sans fil préférés et oublie ceux que vous choisissez |
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ A full-featured Mac cleaner should not cost a yearly subscription or ask you to
- ### 🛡️ Protection
- | Module | What it does |
- |--------|------------|
--| **Malware Removal** | Signature-based scanning at 3 depths (Quick / Balanced / Deep): launch agents and daemons, browser extensions, and known adware/malware patterns (curated list, not an antivirus, and it says so) |
-+| **Malware Removal** | Signature-based scanning at 3 depths (Quick / Balanced / Deep): launch agents and daemons, app bundles, browser extensions, and known adware/malware patterns. Exact-hash matching against Apple's XProtect signatures already on your Mac, offline; Safari extensions on Apple's blocklist are listed for review, never pre-selected (not an antivirus, and it says so) |
- | **Privacy** | Cleans Safari, Chrome, and Firefox history, cookies, and cache, with time filters. Safari **bookmarks are never touched** |
- | **Browser Extensions** | Lists the extensions installed in Safari, Chrome, Brave, Edge, Arc, and Firefox. Chromium and Firefox extensions you installed yourself can go to the Trash while that browser is closed; ones installed by policy or by the browser itself are shown but left alone. Safari extensions link to Safari's settings |
- | **Saved Wi-Fi** | Lists your preferred wireless networks and forgets the ones you pick |
-```
-
-**File**: `README.ru.md` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ brew install --cask mac-sai
- ### 🛡️ Защита
- | Модуль | Что делает |
- |--------|------------|
--| **Удаление вредоносных программ** | Сигнатурное сканирование с 3 уровнями глубины (Быстрый / Сбалансированный / Глубокий): агенты и демоны запуска, расширения браузеров и известные шаблоны рекламного/вредоносного ПО (это выверенный список, а не антивирус, и мы так и говорим) |
-+| **Удаление вредоносных программ** | Сигнатурное сканирование с 3 уровнями глубины (Быстрый / Сбалансированный / Глубокий): агенты и демоны запуска, пакеты приложений, расширения браузеров и известные шаблоны рекламного/вредоносного ПО. Точная сверка хешей с сигнатурами Apple XProtect, которые уже есть на вашем Mac, без сети; расширения Safari из чёрного списка Apple показываются для проверки и никогда не отмечаются заранее (это не антивирус, и мы так и говорим) |
- | **Конфиденциальность** | Очищает историю, cookie и кэш Safari, Chrome и Firefox, с фильтрами по времени. Закладки Safari **никогда не затрагиваются** |
- | **Расширения браузеров** | Показывает расширения, установленные в Safari, Chrome, Brave, Edge, Arc и Firefox. Расширения Chromium и Firefox, установленные вами, можно переместить в Корзину, пока браузер закрыт; установленные политикой или самим браузером показываются, но не трогаются. Для расширений Safari открываются настройки Safari |
- | **Сохранённые сети Wi-Fi** | Показывает список предпочитаемых беспроводных сетей и забывает выбранные вами |
-```
-
-**File**: `README.zh-CN.md` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ brew install --cask mac-sai
- ### 🛡️ 防护
- | 模块 | 说明 |
- |--------|------------|
--| **恶意软件清理** | 基于特征码的扫描，提供 3 种深度（快速 / 平衡 / 深度）：检查启动代理与守护进程、浏览器扩展，以及已知的广告软件/恶意软件模式（这是一份精选清单，并非杀毒软件，我们也如实说明） |
-+| **恶意软件清理** | 基于特征码的扫描，提供 3 种深度（快速 / 平衡 / 深度）：检查启动代理与守护进程、应用包、浏览器扩展，以及已知的广告软件/恶意软件模式。离线使用你 Mac 上已有的 Apple XProtect 特征做精确哈希比对；Apple Safari 扩展黑名单中的扩展只列出供你核对，从不预先勾选（并非杀毒软件，我们也如实说明） |
- | **隐私清理** | 清理 Safari、Chrome 和 Firefox 的历史记录、Cookie 和缓存，可按时间过滤。Safari **书签绝不会被清理** |
- | **浏览器扩展** | 列出 Safari、Chrome、Brave、Edge、Arc 和 Firefox 中安装的扩展。你自己安装的 Chromium 和 Firefox 扩展可在浏览器关闭时移到废纸篓；由策略或浏览器自身安装的扩展会显示但不会被改动。Safari 扩展会链接到 Safari 设置 |
- | **已保存的 Wi-Fi** | 列出你的首选无线网络，并忘记你选择的那些 |
-```
-
-**File**: `README.zh-Hant.md` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ brew install --cask mac-sai
- ### 🛡️ 防護
- | 模組 | 說明 |
- |--------|------------|
--| **惡意軟體清理** | 基於特徵碼的掃描，提供 3 種深度（快速 / 平衡 / 深度）：檢查啟動代理與守護程序、瀏覽器擴充功能，以及已知的廣告軟體/惡意軟體模式（這是一份精選清單，並非防毒軟體，我們也如實說明） |
-+| **惡意軟體清理** | 基於特徵碼的掃描，提供 3 種深度（快速 / 平衡 / 深度）：檢查啟動代理與守護程序、應用程式包、瀏覽器擴充功能，以及已知的廣告軟體/惡意軟體模式。離線使用你 Mac 上已有的 Apple XProtect 特徵做精確雜湊比對；Apple Safari 擴充功能封鎖清單中的擴充功能只列出供你核對，從不預先勾選（並非防毒軟體，我們也如實說明） |
- | **隱私清理** | 清理 Safari、Chrome 和 Firefox 的歷史記錄、Cookie 和快取，可按時間過濾。Safari **書籤絕不會被清理** |
- | **瀏覽器擴充功能** | 列出 Safari、Chrome、Brave、Edge、Arc 和 Firefox 中安裝的擴充功能。你自己安裝的 Chromium 和 Firefox 擴充功能可在瀏覽器關閉時移到廢紙簍；由原則或瀏覽器本身安裝的擴充功能會顯示但不會被更動。Safari 擴充功能會連結到 Safari 設定 |
- | **已儲存的 Wi-Fi** | 列出你的首選無線網路，並忘記你選擇的那些 |
-```
-
-**File**: `Sources/MacClean/App/AppState.swift` (modified, +3/-1)
-```diff
-@@ -47,7 +47,9 @@ public final class AppState {
-             SystemJunkModule(),
-             MailAttachmentsModule(),
-             TrashBinsModule(),
--            MalwareModule(),
-+            // Smart Scan stays light: installed apps' executables are only
-+            // hashed from the Malware Removal screen.
-+            MalwareModule(hashesApplications: false),
-             PrivacyModule(),
-             OptimizationModule(),
-             MaintenanceModule(),
-```
-
-**File**: `Sources/MacClean/App/ScanResultsStore.swift` (modified, +11/-2)
-```diff
-@@ -19,6 +19,9 @@ public final class ScanResultsStore {
+@@ -24,6 +24,8 @@ struct SettingsPageView: View {
+     @AppStorage("lastUpdateCheckDate") private var lastUpdateCheckTimestamp: Double = 0
+     @AppStorage(AppearanceManager.defaultsKey) private var appearanceRaw = AppearanceMode.dark.rawValue
+     @AppStorage(AppLanguage.defaultsKey, store: SharedAppState.defaults) private var appLanguageRaw = AppLanguage.system.rawValue
++    @AppStorage(HealthAlertSettings.memoryPressureAlertKey, store: SharedAppState.defaults) private var memoryPressureAlert = true
++    @AppStorage(HealthAlertSettings.swapAlertThresholdKey, store: SharedAppState.defaults) private var swapAlertThresholdGB = 0
+     @State private var launcher = MenuBarLauncher.shared
+     @State private var loginLauncher = LaunchAtLoginManager.shared
+     @State private var updateState: UpdateUIState = .idle
+@@ -48,6 +50,7 @@ struct SettingsPageView: View {
+         Form {
+             headerSection
+             generalSection
++            alertsSection
+             interfaceLanguageSection
+             appearanceSection
+             languageSection
+@@ -276,6 +279,42 @@ struct SettingsPageView: View {
+         }
      }
  
-     private var entries: [SidebarItem: Entry] = [:]
-+    /// Why each Malware Removal item was flagged, kept alongside its entry so
-+    /// the reasons survive switching to another module and back.
-+    public var malwareReport: MalwareScanReport?
-     public init() {}
- 
-     public func entry(for item: SidebarItem) -> Entry? { entries[item] }
-@@ -27,6 +30,12 @@ public final class ScanResultsStore {
-         entries[item] = Entry(results: results, selection: selection, scanComplete: scanComplete)
-     }
- 
--    public func clear(_ item: SidebarItem) { entries[item] = nil }
--    public func clearAll() { entries.removeAll() }
-+    public func clear(_ item: SidebarItem) {
-+        entries[item] = nil
-+        if item == .malwareRemoval { malwareReport = nil }
++    // MARK: - Alerts
++
++    private var alertsSection: some View {
++        Section(HealthAlertStrings.sectionTitle) {
++            Toggle(isOn: $memoryPressureAlert) {
++                VStack(alignment: .leading, spacing: 2) {
++                    Text(HealthAlertStrings.memoryPressureToggle)
++                    Text(HealthAlertStrings.memoryPressureCaption)
++                        .font(.caption)
++                        .foregroundStyle(.secondary)
++                }
++            }
++            .toggleStyle(.switch)
++            Picker(selection: $swapAlertThresholdGB) {
++                ForEach(HealthAlertSettings.swapThresholdChoices, id: \.self) { gigabytes in
++                    Text(gigabytes == 0 ? HealthAlertStrings.swapOff : FileSizeFormatter.format(HealthAlertSettings.bytes(forGB: gigabytes)))
++                        .tag(gigabytes)
++                }
++            } label: {
++                VStack(alignment: .leading, spacing: 2) {
++                    Text(HealthAlertStrings.swapPicker)
++                    Text(HealthAlertStrings.swapCaption)
++                        .font(.caption)
++                        .foregroundStyle(.secondary)
++                }
++            }
++            .pickerStyle(.menu)
++            if !showMenuBarWidget {
++                Label(HealthAlertStrings.widgetRequired, systemImage: "info.circle")
++                    .font(.caption)
++                    .foregroundStyle(.secondary)
++            }
++        }
++        .disabled(!showMenuBarWidget)
 +    }
-+    public func clearAll() {
-+        entries.removeAll()
-+        malwareReport = nil
-+    }
++
+     // MARK: - Interface Language
+ 
+     private var interfaceLanguageHelp: String {
+```
+
+**File**: `Sources/MacCleanKit/Constants.swift` (modified, +1/-1)
+```diff
+@@ -232,5 +232,5 @@ public enum MCConstants {
+     // plugin was tried (commit history) but doesn't work under multi-arch
+     // `swift build --arch arm64 --arch x86_64` because xcbuild doesn't
+     // execute plugins.
+-    public static let appVersion = "1.27.5"
++    public static let appVersion = "1.28.0"
  }
 ```
 
+**File**: `Sources/MacCleanKit/HealthAlerts.swift` (added, +126/-0)
+```diff
+@@ -0,0 +1,126 @@
++import Foundation
++
++/// User choices for the menu bar widget's health alerts. Stored in the
++/// shared suite: Settings writes them in the main app and the widget's
++/// `HealthMonitor` reads them on every tick.
++public enum HealthAlertSettings {
++    public static let memoryPressureAlertKey = "memoryPressureAlertEnabled"
++    public static let swapAlertThresholdKey = "swapAlertThresholdGB"
++
++    /// Offered swap thresholds in GB; 0 means the alert is off. Decimal GB
++    /// so the size reads "4 GB" through `FileSizeFormatter`, like the swap
++    /// figure the widget shows.
++    public static let swapThresholdChoices = [0, 2, 4, 8]
++
++    public static func bytes(forGB gigabytes: Int) -> UInt64 {
++        UInt64(max(gigabytes, 0)) * 1_000_000_000
++    }
++
++    /// On by default, as it was before the setting existed.
++    public static var memoryPressureAlertEnabled: Bool {
++        SharedAppState.defaults.object(forKey: memoryPressureAlertKey) as? Bool ?? true
++    }
++
++    /// nil when the swap alert is off (the default).
++    public static var swapAlertThreshold: UInt64? {
++        let gigabytes = SharedAppState.defaults.integer(forKey: swapAlertThresholdKey)
++        return gigabytes > 0 ? bytes(forGB: gigabytes) : nil
++    }
++}
++
++/// Decides when a swap alert fires: once when swap crosses the threshold,
++/// then not again until swap has fallen well below it. macOS releases swap
++/// slowly, so without that gap the alert would repeat every time usage
++/// wobbles around the line.
++public struct SwapAlertLatch: Codable, Equatable, Sendable {
++    /// Swap must drop under this fraction of the threshold to re-arm.
++    public static let rearmFraction = 0.75
++
++    /// The threshold the alert last fired at; nil while armed.
++    public private(set) var firedAtThreshold: UInt64?
++
++    public init(firedAtThreshold: UInt64? = nil) {
++        self.firedAtThreshold = firedAtThreshold
++    }
++
++    /// Feeds one swap sample and returns whether to notify now. A changed
++    /// threshold re-arms, so lowering it below current usage alerts once.
++    public mutating func shouldAlert(swapUsed: UInt64, threshold: UInt64?) -> Bool {
++        guard let threshold, threshold > 0 else {
++            firedAtThreshold = nil
++            return false
++        }
++        if let fired = firedAtThreshold {
++            if fired == threshold {
++                if Double(swapUsed) < Double(threshold) * Self.rearmFraction {
++                    firedAtThreshold = nil
++                }
++                return false
++            }
++            firedAtThreshold = nil
++        }
++        guard swapUsed >= threshold else { return false }
++        firedAtThreshold = threshold
++        return true
++    }
++}
++
++/// Copy for the alert settings, the widget's swap line and the swap
++/// notification. Whole sentences with placeholders, so every language
++/// can match its translation key.
++public enum HealthAlertStrings {
++    public static var sectionTitle: String {
++        L10n.tr("提醒", "Alerts", "Уведомления")
++    }
++
++    public static var memoryPressureToggle: String {
++        L10n.tr("内存压力提醒", "Memory pressure alert", "Уведомление о нагрузке на память")
++    }
++
++    public static var memoryPressureCaption: String {
++        L10n.tr("内存压力持续偏高时通知你。", "Notifies you when memory pressure stays high.", "Сообщает, когда нагрузка на память долго остаётся высокой.")
++    }
++
++    public static var swapPicker: String {
++        L10n.tr("交换空间提醒", "Swap usage alert", "Уведомление о файле подкачки")
++    }
++
++    public static var swapCaption: String {
++        L10n.tr(
++            "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。",
++            "Notifies you once when swap goes above the chosen size, and again only after it has dropped well below it.",
++            "Сообщает один раз, когда подкачка превышает выбранный объём, и снова только после того, как она заметно уменьшится."
++        )
++    }
++
++    public static var swapOff: String {
++        L10n.tr("不提醒", "Off", "Выкл.")
++    }
++
++    public static var widgetRequired: String {
++        L10n.tr(
++            "提醒由菜单栏小组件发送，需要保持开启。",
++            "Alerts are sent by the menu bar widget, so it needs to be on.",
++            "Уведомления отправляет виджет в строке меню, поэтому он должен быть включён."
++        )
++    }
++
++    public static func swapLine(_ used: UInt64) -> String {
++        L10n.tr("交换空间 {size}", "Swap {size}", "Подкачка {size}")
++            .replacingOccurrences(of: "{size}", with: FileSizeFormatter.format(used))
++    }
++
++    public static var swapAlertTitle: String {
++        L10n.tr("交换空间使用过高", "Swap usage high", "Подкачка слишком велика")
++    }
++
++    public static func swapAlertBody(used: UInt64, threshold: UInt64) -> String {
++        L10n.tr(
++            "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。",
++            "Your Mac is using {used} of swap, above your {limit} alert. Quitting apps you aren't using eases memory pressure.",
++        
+```
+
+**File**: `Sources/MacCleanKit/Localization.swift` (modified, +44/-0)
+```diff
+@@ -290,6 +290,17 @@ public enum L10n {
+ 
+         "无法开启登录时启动：{message}": "無法開啟登入時啟動：{message}",
+         "无法关闭登录时启动：{message}": "無法關閉登入時啟動：{message}",
++        // Swap and memory alerts
++        "提醒": "提醒",
++        "内存压力提醒": "記憶體壓力提醒",
++        "内存压力持续偏高时通知你。": "記憶體壓力持續偏高時通知你。",
++        "交换空间提醒": "交換空間提醒",
++        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "交換空間超過所選大小時通知一次，降到明顯低於該值後才會再次提醒。",
++        "不提醒": "不提醒",
++        "提醒由菜单栏小组件发送，需要保持开启。": "提醒由選單列小工具傳送，需要保持開啟。",
++        "交换空间 {size}": "交換空間 {size}",
++        "交换空间使用过高": "交換空間使用過高",
++        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "你的 Mac 正在使用 {used} 交換空間，超過了你設定的 {limit} 提醒值。結束不用的 App 可以減輕記憶體壓力。",
+         // Post-clean support card and Settings link
+         "这次清理，你没花一分钱。": "這次清理，你沒花一分錢。",
+         "没有订阅，没有广告，没有追踪。Mac Sai 是我和几位志愿者在业余时间做的。如果它帮你省下了买清理软件的钱，请我喝杯咖啡，让它对所有人继续免费。": "沒有訂閱，沒有廣告，沒有追蹤。Mac Sai 是我和幾位志願者在業餘時間做的。如果它幫你省下了買清理軟體的錢，請我喝杯咖啡，讓它對所有人繼續免費。",
+@@ -922,6 +933,17 @@ public enum L10n {
+ 
+         "无法开启登录时启动：{message}": "Impossible d'activer le lancement au démarrage : {message}",
+         "无法关闭登录时启动：{message}": "Impossible de désactiver le lancement au démarrage : {message}",
++        // Swap and memory alerts
++        "提醒": "Alertes",
++        "内存压力提醒": "Alerte de pression mémoire",
++        "内存压力持续偏高时通知你。": "Vous avertit lorsque la pression mémoire reste élevée.",
++        "交换空间提醒": "Alerte d'utilisation du swap",
++        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "Vous avertit une fois lorsque le swap dépasse la taille choisie, puis seulement après qu'il est nettement redescendu.",
++        "不提醒": "Désactivée",
++        "提醒由菜单栏小组件发送，需要保持开启。": "Les alertes sont envoyées par le widget de la barre des menus, qui doit donc rester activé.",
++        "交换空间 {size}": "Swap {size}",
++        "交换空间使用过高": "Utilisation du swap élevée",
++        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "Votre Mac utilise {used} de swap, au-delà de votre seuil d'alerte de {limit}. Quitter les apps inutilisées réduit la pression mémoire.",
+         // Post-clean support card and Settings link
+         "这次清理，你没花一分钱。": "Ce nettoyage ne vous a rien coûté.",
+         "没有订阅，没有广告，没有追踪。Mac Sai 是我和几位志愿者在业余时间做的。如果它帮你省下了买清理软件的钱，请我喝杯咖啡，让它对所有人继续免费。": "Pas d'abonnement, pas de pub, pas de pistage. Je développe Mac Sai le soir et le week-end, avec quelques bénévoles. S'il vous a évité de payer un nettoyeur, un café le garde gratuit pour tout le monde.",
+@@ -1578,6 +1600,17 @@ public enum L10n {
+ 
+         "无法开启登录时启动：{message}": "„Beim Anmelden starten“ konnte nicht aktiviert werden: {message}",
+         "无法关闭登录时启动：{message}": "„Beim Anmelden starten“ konnte nicht deaktiviert werden: {message}",
++        // Swap and memory alerts
++        "提醒": "Hinweise",
++        "内存压力提醒": "Hinweis bei hoher Speicherauslastung",
++        "内存压力持续偏高时通知你。": "Benachrichtigt dich, wenn die Speicherauslastung dauerhaft hoch bleibt.",
++        "交换空间提醒": "Hinweis bei Swap-Nutzung",
++        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "Benachrichtigt dich einmal, wenn der Swap die gewählte Größe überschreitet, und erst wieder, nachdem er deutlich darunter gefallen ist.",
++        "不提醒": "Aus",
++        "提醒由菜单栏小组件发送，需要保持开启。": "Hinweise kommen vom Menüleisten-Widget, es muss also eingeschaltet sein.",
++        "交换空间 {size}": "Swap {size}",
++        "交换空间使用过高": "Hohe Swap-Nutzung",
++        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "Dein Mac nutzt {used} Swap und liegt damit über deiner Grenze von {limit}. Beende Apps, die du nicht brauchst, um den Speicher zu entlasten.",
+         // Post-clean support card and Settings link
+         "这次清理，你没花一分钱。": "Diese Reinigung hat dich nichts gekostet.",
+         "没有订阅，没有广告，没有追踪。Mac Sai 是我和几位志愿者在业余时间做的。如果它帮你省下了买清理软件的钱，请我喝杯咖啡，让它对所有人继续免费。": "Kein Abo, keine Werbung, kein Tracking. Ich entwickle Mac Sai abends und am Wochenende, zusammen mit ein paar Freiwilligen. Wenn es dir ein bezahltes Reinigungsprogramm erspart hat, hält ein Kaffee es für alle kostenlos.",
+@@ -2267,6 +2300,17 @@ public enum L10n {
+ 
+         "无法开启登录时启动：{message}": "Impossibile attivare l'apertura al login: {message}",
+         "无法关闭登录时启动：{message}": "Impossibile disattivare l'apertura al login: {message}",
++        // Swap and memory alerts
++        "提醒": "Avvisi",
++        "内存压力提醒": "Avviso di pressione della memoria",
++        "内存压力持续偏高时通知你。": "Ti avvisa quando la pressione della memoria resta alta.",
++        "交换空间提醒": "Avviso sull'uso dello swap",
++        "交换空间超过所选大小时通知一次，降到明显低于该值后才会再次提醒。": "Ti avvisa una volta quando lo swap supera la dimensione scelta, e di nuovo solo dopo che è sceso nettamente sotto.",
++        "不提醒": "Disattivato",
++        "提醒由菜单栏小组件发送，需要保持开启。": "Gli avvisi vengono inviati dal widget nella barra dei menu, che quindi deve restare attivo.",
++        "交换空间 {size}": "Swap {size}",
++        "交换空间使用过高": "Uso dello swap elevato",
++        "你的 Mac 正在使用 {used} 交换空间，超过了你设置的 {limit} 提醒值。退出不用的应用可以减轻内存压力。": "Il tuo Mac sta usando {used} di sw
+```
+
+**File**: `Sources/MacCleanKit/SharedAppState.swift` (modified, +18/-0)
+```diff
+@@ -94,6 +94,24 @@ public enum SharedAppState {
+         return Date().timeIntervalSince(when) < suppressionWindow
+     }
+ 
++    // MARK: - Swap alert latch
++
++    /// Persisted so a widget restart while swap is still high does not
++    /// repeat an alert the user already saw.
++    private static let swapAlertLatchKey = "swapAlertLatch"
++
++    public static var swapAlertLatch: SwapAlertLatch {
++        get {
++            guard let data = defaults.data(forKey: swapAlertLatchKey) else { return SwapAlertLatch() }
++            return (try? JSONDecoder().decode(SwapAlertLatch.self, from: data)) ?? SwapAlertLatch()
++        }
++        set {
++            if let data = try? JSONEncoder().encode(newValue) {
++                defaults.set(data, forKey: swapAlertLatchKey)
++            }
++        }
++    }
++
+     // MARK: - Notification suppression (Phase 4)
+ 
+     /// One-time notifications (battery health below threshold, etc.)
+```
+
+**File**: `Sources/MacCleanMenu/MacCleanMenuApp.swift` (modified, +19/-11)
+```diff
+@@ -179,7 +179,8 @@ struct MenuContentView: View {
+                      sub: nil)
+             ringCard(icon: "memorychip", label: L10n.tr("内存", "Memory", "Память"),
+                      value: s.memoryPressure, center: "\(Int((s.memoryPressure*100).rounded()))%",
+-                     sub: FileSizeFormatter.format(s.memoryUsed))
++                     sub: FileSizeFormatter.format(s.memoryUsed),
++                     detail: s.swapUsed > 0 ? HealthAlertStrings.swapLine(s.swapUsed) : nil)
+             ringCard(icon: "internaldrive", label: L10n.tr("磁盘", "Disk", "Диск"),
+                      value: diskUsed, center: "\(Int((diskUsed*100).rounded()))%",
+                      sub: L10n.tr("\(FileSizeFormatter.format(s.diskFree)) 可用", "\(FileSizeFormatter.format(s.diskFree)) free", "Свободно: \(FileSizeFormatter.format(s.diskFree))"))
+@@ -194,20 +195,31 @@ struct MenuContentView: View {
+         }
+     }
+ 
+-    private func ringCard(icon: String, label: String, value: Double, center: String, sub: String?, forceColor: Color? = nil) -> some View {
++    private func ringCard(icon: String, label: String, value: Double, center: String, sub: String?, detail: String? = nil, forceColor: Color? = nil) -> some View {
+         let color = forceColor ?? MenuPalette.barColor(value)
+         return VStack(spacing: 12) {
+             statHeader(icon: icon, label: label, tint: color)
+             RingGauge(value: value, color: color, center: center)
+                 .frame(width: 58, height: 58)
+             // Always render the subtitle line (a space when empty) so
+             // every card is the same height and the rings line up.
+-            Text(sub ?? " ")
+-                .font(.system(size: 10, design: .monospaced))
+-                .foregroundStyle(MenuPalette.textSecondary)
+-                .lineLimit(1)
++            VStack(spacing: 3) {
++                Text(sub ?? " ")
++                    .font(.system(size: 10, design: .monospaced))
++                    .foregroundStyle(MenuPalette.textSecondary)
++                    .lineLimit(1)
++                if let detail {
++                    Text(detail)
++                        .font(.system(size: 10, design: .monospaced))
++                        .foregroundStyle(MenuPalette.textSecondary)
++                        .lineLimit(1)
++                        .minimumScaleFactor(0.8)
++                }
++            }
+         }
+-        .frame(maxWidth: .infinity, alignment: .top)
++        // Fill the grid row so a card with a detail line and its neighbour
++        // stay the same height, rings aligned at the top.
++        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+         .padding(16)
+         .glassCard()
+     }
+@@ -246,10 +258,6 @@ struct MenuContentView: View {
+                 divider
+             }
+             netCell(icon: "clock", color: MenuPalette.textSecondary, value: formatUptime(s.uptime))
+-            if s.swapUsed > 0 {
+-                divider
+-                netCell(icon: "arrow.triangle.swap", color: MenuPalette.textSecondary, value: FileSizeFormatter.format(s.swapUsed))
+-            }
+         }
+         .padding(.vertical, 9)
+         .glassCard()
+```
+
+**File**: `Sources/MacCleanMenu/SystemStats/HealthMonitor.swift` (modified, +21/-0)
+```diff
+@@ -31,6 +31,7 @@ public actor HealthMonitor {
+     public func evaluate(stats: SystemStatsCollector.SystemStats) async {
+         await checkLowDisk(stats: stats)
+         await checkMemoryPressure(stats: stats)
++        await checkSwapUsage(stats: stats)
+         await checkBatteryHealth(stats: stats)
+         await checkBatteryCycles(stats: stats)
+     }
+@@ -50,6 +51,10 @@ public actor HealthMonitor {
+     }
+ 
+     private func checkMemoryPressure(stats: SystemStatsCollector.SystemStats) async {
++        guard HealthAlertSettings.memoryPressureAlertEnabled else {
++            memoryPressureSampleStreak = 0
++            return
++        }
+         if stats.memoryPressure >= thresholds.memoryPressureSustained {
+             memoryPressureSampleStreak += 1
+         } else {
+@@ -68,6 +73,22 @@ public actor HealthMonitor {
+         )
+     }
+ 
++    /// Off unless the user picked a threshold in Settings. The latch, not a
++    /// time throttle, keeps this to one alert per crossing.
++    private func checkSwapUsage(stats: SystemStatsCollector.SystemStats) async {
++        let threshold = HealthAlertSettings.swapAlertThreshold
++        let stored = SharedAppState.swapAlertLatch
++        var latch = stored
++        let alert = latch.shouldAlert(swapUsed: stats.swapUsed, threshold: threshold)
++        if latch != stored { SharedAppState.swapAlertLatch = latch }
++        guard alert, let threshold else { return }
++        await fire(
++            kind: "swap_high",
++            title: HealthAlertStrings.swapAlertTitle,
++            body: HealthAlertStrings.swapAlertBody(used: stats.swapUsed, threshold: threshold)
++        )
++    }
++
+     private func checkBatteryHealth(stats: SystemStatsCollector.SystemStats) async {
+         guard let health = stats.batteryHealth, health < thresholds.batteryHealthFloor else { return }
+         // Battery health degrades very slowly — once a week is more
+```
+
+**File**: `Tests/MacCleanKitTests/HealthAlertsTests.swift` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++import XCTest
++@testable import MacCleanKit
++
++final class SwapAlertLatchTests: XCTestCase {
++    private let fourGB = HealthAlertSettings.bytes(forGB: 4)
++
++    func testAlertsOnceWhenSwapCrossesTheThreshold() {
++        var latch = SwapAlertLatch()
++        XCTAssertFalse(latch.shouldAlert(swapUsed: 3_000_000_000, threshold: fourGB))
++        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_200_000_000, threshold: fourGB))
++        XCTAssertFalse(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: fourGB))
++    }
++
++    func testHoveringAroundTheThresholdDoesNotRepeat() {
++        var latch = SwapAlertLatch()
++        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_100_000_000, threshold: fourGB))
++        // Dips just under the line are not "well below" it.
++        for used: UInt64 in [3_900_000_000, 4_050_000_000, 3_100_000_000, 4_300_000_000] {
++            XCTAssertFalse(latch.shouldAlert(swapUsed: used, threshold: fourGB), "\(used)")
++        }
++    }
++
++    func testRearmsOnlyAfterDroppingWellBelowTheThreshold() {
++        var latch = SwapAlertLatch()
++        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_500_000_000, threshold: fourGB))
++        XCTAssertFalse(latch.shouldAlert(swapUsed: 2_900_000_000, threshold: fourGB)) // under 75%: re-arms
++        XCTAssertNil(latch.firedAtThreshold)
++        XCTAssertTrue(latch.shouldAlert(swapUsed: 4_000_000_000, threshold: fourGB))
++    }
++
++    func testOffNeverAlertsAndClearsTheLatch() {
++        var latch = SwapAlertLatch(firedAtThreshold: fourGB)
++        XCTAssertFalse(latch.shouldAlert(swapUsed: 9_000_000_000, threshold: nil))
++        XCTAssertNil(latch.firedAtThreshold)
++        XCTAssertFalse(latch.shouldAlert(swapUsed: 9_000_000_000, threshold: 0))
++    }
++
++    func testChangingTheThresholdRearms() {
++        var latch = SwapAlertLatch()
++        XCTAssertTrue(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: fourGB))
++        // Lowering the threshold under current usage alerts once more.
++        XCTAssertTrue(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: HealthAlertSettings.bytes(forGB: 2)))
++        // Raising it above current usage stays quiet until swap reaches it.
++        XCTAssertFalse(latch.shouldAlert(swapUsed: 5_000_000_000, threshold: HealthAlertSettings.bytes(forGB: 8)))
++        XCTAssertTrue(latch.shouldAlert(swapUsed: 8_000_000_000, threshold: HealthAlertSettings.bytes(forGB: 8)))
++    }
++
++    func testLatchSurvivesARoundTripThroughStorage() throws {
++        let latch = SwapAlertLatch(firedAtThreshold: fourGB)
++        let decoded = try JSONDecoder().decode(SwapAlertLatch.self, from: JSONEncoder().encode(latch))
++        XCTAssertEqual(decoded, latch)
++    }
++
++    func testThresholdChoicesStartWithOffAndUseDecimalGigabytes() {
++        XCTAssertEqual(HealthAlertSettings.swapThresholdChoices.first, 0)
++        XCTAssertEqual(HealthAlertSettings.bytes(forGB: 2), 2_000_000_000)
++        XCTAssertEqual(HealthAlertSettings.bytes(forGB: -1), 0)
++    }
++}
++
++final class HealthAlertLocalizationTests: AppLanguageTestCase {
++    private func allStrings() -> [String] {
++        [
++            HealthAlertStrings.sectionTitle,
++            HealthAlertStrings.memoryPressureToggle,
++            HealthAlertStrings.memoryPressureCaption,
++            HealthAlertStrings.swapPicker,
++            HealthAlertStrings.swapCaption,
++            HealthAlertStrings.swapOff,
++            HealthAlertStrings.widgetRequired,
++            HealthAlertStrings.swapLine(1),
++            HealthAlertStrings.swapAlertTitle,
++            HealthAlertStrings.swapAlertBody(used: 1, threshold: 2),
++        ]
++    }
++
++    /// German, French and Italian fall back to English and Traditional
++    /// Chinese to Simplified when a key is missing, so each must differ,
++    /// except where the right translation is spelled the same.
++    func testEveryStringIsTranslatedInEveryLanguage() {
++        let swapLine = 7 // "Swap 1 byte" is also German, French and Italian.
++        let sameInTraditional: Set = [0, 5] // 提醒, 不提醒
++        AppLanguage.current = .en
++        let english = allStrings()
++        AppLanguage.current = .zhHans
++        let simplified = allStrings()
++        for language in [AppLanguage.de, .fr, .it] {
++            AppLanguage.current = language
++            for (index, translated) in allStrings().enumerated() where index != swapLine {
++                XCTAssertNotEqual(translated, english[index], "\(language): \(english[index])")
++            }
++        }
++        AppLanguage.current = .zhHant
++        for (index, translated) in allStrings().enumerated() where !sameInTraditional.contains(index) {
++            XCTAssertNotEqual(translated, simplified[index], "zh-Hant: \(simplified[index])")
++        }
++    }
++
++    func testPlaceholdersAreFilledInEveryLanguage() {
++        for language in [AppLanguage.en, .de, .fr, .it, .ru, .zhHans, .zhHant] {
++            AppLanguage.current = language
++            let body = HealthAlertStrings.swapA
+```
+
 #### Recent Merged Pull Requests:
-- **PR #251** (2026-10-19): Fully translate the launch-at-login error in every language (@iliyami)
-- **PR #250** (2026-10-19): Never offer the Mac's own languages for Language Files cleanup (@iliyami)
-- **PR #249** (2026-10-19): Make the app icon transparent outside its rounded shape (fixes #248) (@iliyami)
-- **PR #241** (2026-10-19): Retry stapling when Apple's ticket service drops the connection (@iliyami)
-- **PR #240** (2026-10-17): CI: drop the keyword secret grep and the outdated network step (@iliyami)
-- **PR #239** (2026-10-21): Match malware against Apple's on-disk XProtect signatures (@mdesmet)
+- **PR #265** (closed): Surface OpenClaw logs (~/.openclaw) under User Log Files (@mehdiraized)
+- **PR #264** (closed): Add uv cache to Package Manager Caches (@mehdiraized)
+- **PR #263** (closed): Find pnpm stores and show Docker Desktop disk image (@mehdiraized)
+- **PR #261** (2026-10-29): Show swap under memory and add opt-in swap and memory pressure alerts (@iliyami)
+- **PR #260** (2026-10-28): README: live stats and a sponsor page with audience and rates (@iliyami)
+- **PR #259** (2026-10-28): Keep interface languages accessible in narrow Settings windows (@mrglonin)
 
 ---
 
@@ -1979,28 +2375,50 @@ files the scanner already walks: launch-item programs, Application Support,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Match malware against Apple's on-disk XProtect signatures (#239)
+## X. Show swap under memory and add opt-in swap and memory pressure alerts (#261)
 
 **RULE**:
-When implementing operations in `README.de.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/MacClean/Views/Settings/SettingsPageView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d4ccd8a7`: Match malware against Apple's on-disk XProtect signatures (#239). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8accd9cb`: Show swap under memory and add opt-in swap and memory pressure alerts (#261). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.de.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/MacClean/Views/Settings/SettingsPageView.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-| **Malware Removal** | Signaturbasiertes Scannen in 3 Tiefen (Schnell / Ausgewogen / Tief): Launch Agents und Daemons, App-Bundles, Browser-Erweiterungen sowie bekannte Adware-/Malware-Muster. Exakter Hash-Abgleich mit Apples XProtect-Signaturen, die schon auf deinem Mac liegen, offline; Safari-Erweiterungen auf Apples Sperrliste werden zur Prüfung aufgelistet und nie vorausgewählt (kein Antivirus, und das sagt es auch) |
+    @AppStorage(HealthAlertSettings.memoryPressureAlertKey, store: SharedAppState.defaults) private var memoryPressureAlert = true
+    @AppStorage(HealthAlertSettings.swapAlertThresholdKey, store: SharedAppState.defaults) private var swapAlertThresholdGB = 0
+            alertsSection
+    // MARK: - Alerts
+
+    private var alertsSection: some View {
+        Section(HealthAlertStrings.sectionTitle) {
+            Toggle(isOn: $memoryPressureAlert) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(HealthAlertStrings.memoryPressureToggle)
+                    Text(HealthAlertStrings.memoryPressureCaption)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .toggleStyle(.switch)
+            Picker(selection: $swapAlertThresholdGB) {
+                ForEach(HealthAlertSettings.swapThresholdChoices, id: \.self) { gigabytes in
+                    Text(gigabytes == 0 ? HealthAlertStrings.swapOff : FileSizeFormatter.format(HealthAlertSettings.bytes(forGB: gigabytes)))
+                        .tag(gigabytes)
+                }
+            } label: {
+                VStack(align
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-| **Malware Removal** | Signaturbasiertes Scannen in 3 Tiefen (Schnell / Ausgewogen / Tief): Launch Agents und Daemons, Browser-Erweiterungen sowie bekannte Adware-/Malware-Muster (kuratierte Liste, kein Antivirus, und das sagt es auch) |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d4ccd8a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8accd9cb` are properly handled with clean fallback behavior.

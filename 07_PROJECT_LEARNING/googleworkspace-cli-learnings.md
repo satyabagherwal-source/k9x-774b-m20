@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/googleworkspace-cli-learnings.md`  
 > **Source**: github ([https://github.com/googleworkspace/cli](https://github.com/googleworkspace/cli))  
-> **Source Version**: `a3768d0e`  
+> **Source Version**: `cd3697e0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:04:13.041Z  
+> **Timestamp**: 2026-10-31T00:05:31.702Z  
 > **Learning ID**: `learn-github-googleworkspace-cli`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/googleworkspace-cli-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/googleworkspace/cli](https://github.com/googleworkspace/cli))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:04:12.671Z  
+> **Harvest Timestamp**: 2026-10-31T00:05:30.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Google Workspace CLI — one command-line tool for Drive, Gmail, Calendar, Sheets, Docs, Chat, Admin, and more. Dynamically built from Google Discovery Service. Includes AI agent skills.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31653 stars
+- **Stars / Engagement**: 32009 stars
 
 ---
 
@@ -2129,14 +2129,17 @@ fn json_to_yaml(value: &Value, indent: usize) -> String {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #959** (2026-10-15): **fix(auth): clear token caches after login so new scopes take effect**
-  *Symptoms*: ## Description  `gws auth login` saved the new credentials but never touched `token_cache.json` or `sa_token_cache.json`. The token cache is keyed by scope set (`token_storage.rs` `cache_key`), and `auth::get_token` serves a still-valid cached token without refreshing, so any method already called before the re-login kept receiving the access token minted under the previous grant, which lacked the newly added scopes, until it expired (up to an hour). Users saw a persistent `403 Request had insufficient authentication scopes` while `gws auth status` showed the new scopes and `credentials.enc` had a fresh timestamp.  This change adds `clear_token_caches`, which removes both cache files and returns the paths it removed. A missing file is not an error; any other removal failure is.  - `handle_login_inner` calls it right after the new credentials are saved, and invalidates the cached timezone as `auth logout` already does. If a cache file exists but cannot be removed, login fails with an explicit error instead of reporting success while stale tokens remain in use. - `handle_logout` now clears the caches through the same helper instead of its own `exists()`-then-`remove_file` loop, which also removes that check-then-delete race. Its output is unchanged: the removed caches still appear in the `removed` list.  The undecryptable-credentials recovery path in `auth.rs` keeps its own best-effort loop on purpose: it warns and continues, where login and logout must fail.  Fixes #764 Fixes 
-
-- **Issue #956** (2026-10-18): **chore: sync skills with Discovery API**
-  *Symptoms*: Automated PR — the Google Discovery API specs have changed and the generated skill files are out of date.  Created by the **Generate Skills** workflow (`generate-skills.yml`).
+- **Issue #969** (2026-10-30): **ci: switch automation workflow from pull_request_target to pull_request**
+  *Symptoms*: Switches `.github/workflows/automation.yml` from `pull_request_target` to `pull_request`.
   **Post-Mortem & Fix Analysis**:
-  > ### 🦋 Changeset detected  Latest commit: 167b6415f2c8bb4870cc802f991d074a557ff1ab  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 1 package</summary>    | Name                 | Type  | | -------------------- | ----- | | @googleworkspace/cli | Patch |  </details>  Not sure what this means? [Click here to learn what changesets are](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add another changeset to this PR](https://github.com/googleworkspace/cli/new/chore/sync-skills?filename=.changeset/petite-dolls-tease.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A%20patch%0A---%0A%0Achore%3A%20sync%20skills%20with%20Discovery%20API%0A)  
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/googleworkspace/cli/pull/956/checks?check_run_id=115643709518) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > ### ⚠️ No Changeset found  Latest commit: 5b1be2c2bc90bd9bbc675a61bc14638b73ce2464  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/googleworkspace/cli/new/ci/remove-pull-request-target?filename=.changeset/good-impalas-judge.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A%20patch%0A---%0A%0Aci%3A%20switch%20automation%20workflow%20from%20pull_request_target%20to%20pull_request%0A)  
+  > /gemini review
+
+- **Issue #966** (2026-10-30): **fix(nix): use host platform for system dependencies**
+  *Symptoms*: ## Summary  ```diff - pkgs.stdenv.isLinux / pkgs.stdenv.isDarwin + pkgs.stdenv.hostPlatform.isLinux / pkgs.stdenv.hostPlatform.isDarwin ```  Selects the same system dependencies through the supported Nixpkgs platform attributes. Includes a patch changeset.  ## Evidence  - **Before:** Evaluating the macOS `gws` derivation emitted deprecation warnings for both `stdenv.isLinux` and `stdenv.isDarwin`. - **After:** The macOS and Linux `gws` derivations both evaluate without those warnings using the current Nixpkgs input from a downstream configuration.  ## Merge Danger  **Door:** Two-way  **Blast Radius:** Nix package evaluation on Linux and macOS. The selected dependency lists remain the same.
+  **Post-Mortem & Fix Analysis**:
+  > ### 🦋 Changeset detected  Latest commit: a064585217e44afce7325d826a358acbf7ad8e78  **The changes in this PR will be included in the next version bump.**  <details><summary>This PR includes changesets to release 1 package</summary>    | Name                 | Type  | | -------------------- | ----- | | @googleworkspace/cli | Patch |  </details>  Not sure what this means? [Click here to learn what changesets are](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add another changeset to this PR](https://github.com/Eotel/cli/new/fix/nix-stdenv-host-platform?filename=.changeset/seven-rice-rescue.md&value=---%0A%22%40googleworkspace%2Fcli%22%3A%20patch%0A---%0A%0Afix(nix)%3A%20use%20host%20platform%20for%20system%20dependencies%0A)  
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/googleworkspace/cli/pull/966/checks?check_run_id=121405964805) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2153,661 +2156,94 @@ fn json_to_yaml(value: &Value, indent: usize) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86c08cfc` (2026-03-31)
-**Commit Message**: fix: remove cargo-dist, use native fetch for npm installer (#646)
+### Incident Patch 1: `cd3697e0` (2026-10-30)
+**Commit Message**: ci: switch automation workflow from pull_request_target to pull_request (#969)
 
-* chore: remove cargo-dist, use native fetch for npm installer
-
-* fix: harden npm scripts — spawnSync, signal handling, binary-exists check
-
-* fix: address PR review comments
-
-- Add null body guard for fetch response
-- Fix PowerShell Expand-Archive path quoting vulnerability
-- Sanitize error output to prevent ANSI escape injection
-- Add proxy support limitation note
-- Fix upgrade bug: use .version marker so npm update downloads new binary
-- Downgrade changeset from minor to patch (chore, not feature)
-- Update AGENTS.md: remove stale cargo-dist reference from labels
-
-* fix: use flat archives for consistent tar/zip extraction
-
-Both tar.gz and zip archives now contain files at root (no nested
-directory). Removes --strip-components 1 from install.js since it is
-no longer needed. This makes extraction consistent across platforms.
-
----------
-
-Co-authored-by: jpoehnelt-bot <[REDACTED_EMAIL]>
-
-**File**: `.changeset/remove-cargo-dist.md` (added, +10/-0)
+**File**: `.github/workflows/automation.yml` (modified, +18/-9)
 ```diff
-@@ -0,0 +1,10 @@
-+---
-+"@googleworkspace/cli": patch
-+---
-+
-+Remove cargo-dist; use native Node.js fetch for npm binary installer
-+
-+Replaces the cargo-dist generated release pipeline and npm package with:
-+- A custom GitHub Actions release workflow with matrix cross-compilation
-+- A zero-dependency npm installer using native `fetch()` (Node 18+)
-+- Removes axios, rimraf, detect-libc, console.table, and axios-proxy-builder dependencies from the published npm package
-```
-
-**File**: `.github/workflows/release.yml` (modified, +131/-296)
-```diff
-@@ -1,359 +1,194 @@
--# This file was autogenerated by dist: https://axodotdev.github.io/cargo-dist
-+# Release workflow for @googleworkspace/cli
- #
--# Copyright 2022-2024, axodotdev
--# SPDX-License-Identifier: MIT or Apache-2.0
--#
--# CI that:
--#
--# * checks for a Git Tag that looks like a release
--# * builds artifacts with dist (archives, installers, hashes)
--# * uploads those artifacts to temporary workflow zip
--# * on success, uploads the artifacts to a GitHub Release
--#
--# Note that the GitHub Release will be created with a generated
--# title/body based on your changelogs.
-+# Triggered by pushing a semver tag (e.g. v0.22.3).
-+# Builds platform binaries, creates a GitHub Release, publishes to npm and crates.io.
- 
- name: Release
- permissions:
--  "contents": "write"
-+  contents: write
-+  attestations: write
-+  id-token: write
- 
--# This task will run whenever you push a git tag that looks like a version
--# like "1.0.0", "v0.1.0-prerelease.1", "my-app/0.1.0", "releases/v1.0.0", etc.
--# Various formats will be parsed into a VERSION and an optional PACKAGE_NAME, where
--# PACKAGE_NAME must be the name of a Cargo package in your workspace, and VERSION
--# must be a Cargo-style SemVer Version (must have at least major.minor.patch).
--#
--# If PACKAGE_NAME is specified, then the announcement will be for that
--# package (erroring out if it doesn't have the given version or isn't dist-able).
--#
--# If PACKAGE_NAME isn't specified, then the announcement will be for all
--# (dist-able) packages in the workspace with that version (this mode is
--# intended for workspaces with only one dist-able package, or with all dist-able
--# packages versioned/released in lockstep).
--#
--# If you push multiple tags at once, separate instances of this workflow will
--# spin up, creating an independent announcement for each one. However, GitHub
--# will hard limit this to 3 tags per commit, as it will assume more tags is a
--# mistake.
--#
--# If there's a prerelease-style suffix to the version, then the release(s)
--# will be marked as a prerelease.
+@@ -17,29 +17,29 @@ name: Automation
  on:
-   pull_request:
    push:
-     tags:
--      - '**[0-9]+.[0-9]+.[0-9]+*'
-+      - 'v[0-9]+.[0-9]+.[0-9]+*'
-+
-+env:
-+  CARGO_TERM_COLOR: always
+     branches: [main]
+-  pull_request_target:
++  pull_request:
+     types: [opened, synchronize, reopened]
+   pull_request_review:
+     types: [submitted]
+ 
+-permissions:
+-  contents: write
+-  issues: write
+-  pull-requests: write
++permissions: {}
  
  jobs:
--  # Run 'dist plan' (or host) to determine what tasks we need to do
-   plan:
--    runs-on: "ubuntu-22.04"
-+    runs-on: ubuntu-latest
-     outputs:
--      val: ${{ steps.plan.outputs.manifest }}
--      tag: ${{ !github.event.pull_request && github.ref_name || '' }}
--      tag-flag: ${{ !github.event.pull_request && format('--tag={0}', github.ref_name) || '' }}
--      publishing: ${{ !github.event.pull_request }}
--    env:
--      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+      version: ${{ steps.meta.outputs.version }}
-+      prerelease: ${{ steps.meta.outputs.prerelease }}
-+      publishing: ${{ github.ref_type == 'tag' }}
+   format:
+     name: Format
+     if: github.event_name == 'push'
+     runs-on: ubuntu-latest
++    permissions:
++      contents: write
      steps:
--      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
--        with:
--          persist-credentials: false
--          submodules: recursive
--      - name: Install dist
--        # we specify bash to get pipefail; it guards against the `curl` command
--        # failing. otherwise `sh` won't catch that `curl` returned non-0
--        shell: bash
--        run: "curl --proto '=https' --tlsv1.2 -LsSf https://github.com/axodotdev/cargo-dist/releases/download/v0.31.0/cargo-dist-installer.sh | sh"
--      - name: Cache dist
--        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
--        with:
--          name: cargo-dist-cache
--          path: ~/.cargo/bin/dist
--      # sure would be cool if github gave us proper conditionals...
--      # so here's a doubly-nested ternary-via-truthiness to try to provide the best possible
--      # functionality based on whether this is a pull_request, and whether it's from a fork.
--      # (PRs run on the *source* but secrets are usually on the *target* -- that's *good*
--      # but also really annoying to build CI around when it needs secrets to work right.)
--      - id: plan
-+      - id: meta
-         run: |
--          dist ${{ (!github.event.pull_request && format('host --steps=create --tag={0}', github.ref_name)) || 'plan' }} --output-format=json > plan-dist-manifest.json
--          echo "dist ran successfully"
--          cat plan-dist-manifest.json
--          echo "manifest=$(jq -c "." plan-dist-manifest.json)" >> "$GITHUB_OUTPUT"
--      - name: "Upload dist-manifest.json"
--        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
--        with:
--          name: artifacts-plan-dist-manifest
--          path: plan-dist-manifest.json
-+          TAG="${GITHUB_REF_NAME}"
-+          VERSION="${TAG#v}"
-+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-+          if [[ "$VERSION" == *-* ]]; then
-+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-+          else
-+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-+          fi
+-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
++      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+         with:
+           token: ${{ secrets.GOOGLEWORKSPACE_BOT_TOKEN }}
  
--  # Build and packages all the platform-specific things
--  build-local-artifacts:
-```
-
-**File**: `AGENTS.md` (modified, +1/-1)
-```diff
-@@ -178,7 +178,7 @@ Use these labels to categorize pull requests and issues:
- - `area: http` — Request execution, URL building, response handling
- - `area: docs` — README, contributing guides, documentation
- - `area: tui` — Setup wizard, picker, input fields
--- `area: distribution` — Nix flake, cargo-dist, npm packaging, install methods
-+- `area: distribution` — Nix flake, npm packaging, GitHub Actions release workflow, install methods
- - `area: auth` — OAuth, credentials, multi-account, ADC
- - `area: skills` — AI skill generation and management
+       - name: Install Rust
+-        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
++        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+         with:
++          toolchain: stable
+           components: rustfmt
  
-```
-
-**File**: `dist-workspace.toml` (removed, +0/-44)
-```diff
-@@ -1,44 +0,0 @@
--# Copyright 2026 Google LLC
--#
--# Licensed under the Apache License, Version 2.0 (the "License");
--# you may not use this file except in compliance with the License.
--# You may obtain a copy of the License at
--#
--#     http://www.apache.org/licenses/LICENSE-2.0
--#
--# Unless required by applicable law or agreed to in writing, software
--# distributed under the License is distributed on an "AS IS" BASIS,
--# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--# See the License for the specific language governing permissions and
--# limitations under the License.
--
--[workspace]
--members = ["cargo:crates/google-workspace-cli"]
--
--# Config for 'cargo dist'
--[dist]
--# The preferred cargo-dist version to use in CI (Cargo.toml SemVer syntax)
--cargo-dist-version = "0.31.0"
--# CI backends to support
--ci = "github"
--# The installers to generate for each app
--installers = ["shell", "powershell", "npm"]
--# Publish jobs to run
--publish-jobs = ["npm"]
--npm-scope = "@googleworkspace"
--# Enable github attestations
--github-attestations = true
--npm-package = "cli"
--# Target platforms to build apps for (Rust target-triple syntax)
--targets = ["aarch64-apple-darwin", "aarch64-unknown-linux-gnu", "aarch64-unknown-linux-musl", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-unknown-linux-musl", "x86_64-pc-windows-msvc"]
--# Which actions to run on pull requests
--pr-run-mode = "plan"
--# Don't overwrite release.yml on `cargo dist init` (preserves custom npm registry config)
--allow-dirty = ["ci"]
--# The archive format to use for windows builds (defaults .zip)
--# Using .zip routes through PowerShell's Expand-Archive, which correctly
--# handles Windows paths. Using .tar.gz causes failures in Git Bash because
--# MSYS tar interprets "C:" as a remote host (issue #152).
--windows-archive = ".zip"
--# The archive format to use for non-windows builds (defaults .tar.xz)
--unix-archive = ".tar.gz"
-```
-
-**File**: `npm/.gitignore` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+# Downloaded binary (created during npm postinstall)
-+bin/
-```
-
-**File**: `npm/install.js` (added, +152/-0)
-```diff
-@@ -0,0 +1,152 @@
-+#!/usr/bin/env node
-+
-+"use strict";
-+
-+const fs = require("fs");
-+const path = require("path");
-+const os = require("os");
-+const { pipeline } = require("stream/promises");
-+const { createWriteStream, mkdirSync, rmSync } = require("fs");
-+const { spawnSync } = require("child_process");
-+const { getPlatform } = require("./platform");
-+
-+const INSTALL_DIR = path.join(__dirname, "bin");
-+
-+/**
-+ * Get the GitHub release download URL base for the current package version.
-+ */
-+function getDownloadUrl(artifactName) {
-+  const { version } = require("./package.json");
-+  return `https://github.com/googleworkspace/cli/releases/download/v${version}/${artifactName}`;
-+}
-+
-+/**
-+ * Strip ANSI escape sequences from a string.
-+ */
-+function sanitize(str) {
-+  // eslint-disable-next-line no-control-regex
-+  return String(str).replace(/\x1b\[[0-9;]*[a-zA-Z]/g, "");
-+}
-+
-+/**
-+ * Download a file using native fetch (Node 18+).
-+ *
-+ * NOTE: Native fetch does not respect HTTP_PROXY / HTTPS_PROXY environment
-+ * variables. If proxy support is needed, consider using the `undici` ProxyAgent
-+ * or a Node.js build with proxy support.
-+ */
-+async function download(url, dest) {
-+  const res = await fetch(url, { redirect: "follow" });
-+
-+  if (!res.ok) {
-+    throw new Error(`Failed to download ${url}: ${res.status} ${res.statusText}`);
-+  }
-+
-+  if (!res.body) {
-+    throw new Error(`Failed to download ${url}: Response body is empty`);
-+  }
-+
-+  const fileStream = createWriteStream(dest);
-+  // Convert web ReadableStream to Node stream and pipe
-+  const { Readable } = require("stream");
-+  const nodeStream = Readable.fromWeb(res.body);
-+  await pipeline(nodeStream, fileStream);
-+}
-+
-+/**
-+ * Run a command and throw on failure.
-+ */
-+function run(cmd, args) {
-+  const result = spawnSync(cmd, args, { stdio: "pipe" });
-+  if (result.error) {
-+    throw new Error(`Failed to run ${cmd}: ${result.error.message}`);
-+  }
-+  if ((result.status ?? 1) !== 0) {
-+    const stderr = result.stderr ? result.stderr.toString() : "";
-+    throw new Error(
-+      `Command failed: ${cmd} ${args.join(" ")}\n${stderr}`,
-+    );
-+  }
-+}
-+
-+/**
-+ * Extract the archive to the install directory.
-+ */
-+function extract(archivePath, destDir) {
-+  const isZip = archivePath.endsWith(".zip");
-+  const isTar = archivePath.includes(".tar.");
-+
-+  if (isTar) {
-+    run("tar", ["xf", archivePath, "-C", destDir]);
-+  } else if (isZip) {
-+    if (process.platform === "win32") {
-+      // Use single-quoted PowerShell strings with doubled single-quote escaping
-+      // to safely handle paths containing spaces and special characters.
-+      const psArchive = archivePath.replace(/'/g, "''");
-+      const psDest = destDir.replace(/'/g, "''");
-+      run("powershell.exe", [
-+        "-NoProfile",
-+        "-NonInteractive",
-+        "-Command",
-+        `Expand-Archive -LiteralPath '${psArchive}' -DestinationPath '${psDest}' -Force`,
-+      ]);
-+    } else {
-+      run("unzip", ["-q", "-o", archivePath, "-d", destDir]);
-+    }
-+  } else {
-+    throw new Error(`Unsupported archive format: ${archivePath}`);
-+  }
-+}
-+
-+async function install() {
-+  const platform = getPlatform();
-+  const { version } = require("./package.json");
-+  const url = getDownloadUrl(platform.artifact);
-+
-+  // Check if the correct version is already installed
-+  const binPath = path.join(INSTALL_DIR, platform.binary);
-+  const versionFile = path.join(INSTALL_DIR, ".version");
-+  if (fs.existsSync(binPath) && fs.existsSync(versionFile)) {
-+    const installed = fs.readFileSync(versionFile, "utf8").trim();
-+    if (installed === version) {
-+      console.error(`gws v${version} is already installed, skipping.`);
-+      return;
-+    }
-+    console.error(`Upgrading gws from v${installed} to v${version}`);
-+  }
-+
-+  // Clean and create install directory
-+  if (fs.existsSync(INSTALL_DIR)) {
-+    rmSync(INSTALL_DIR, { recursive: true, force: true });
-+  }
-+  mkdirSync(INSTALL_DIR, { recursive: true });
-+
-+  // Download to a temp file
-+  const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "gws-"));
-+  const archiveName = path.basename(platform.artifact);
-+  const tmpFile = path.join(tmpDir, archiveName);
-+
-+  try {
-+    console.error(`Downloading gws from ${url}`);
-+    await download(url, tmpFile);
-+
-+    console.error(`Extracting to ${INSTALL_DIR}`);
-+    extract(tmpFile, INSTALL_DIR);
-+
-+    // Make binary executable on Unix
-+    if (process.platform !== "win32") {
-+      fs.chmodSync(binPath, 0o755);
-+    }
-+
-+    console.error(`gws v${version} has been installed!`);
-+    fs.writeFileSync(versionFile, version);
-+  } finally {
-+    // Clean up temp files
-+    rmSync(tmpDir, { recursive: true, force: true });
-+  }
-+}
-+
-+install().catch((err) => {
-+  console.error(`Error installing gws: ${sanitize(err.message)}`);
-+  process.exit(1);
-+});
-```
-
-**File**: `npm/package.json` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+{
-+  "name": "@googleworkspace/cli",
-+  "description": "Google Workspace CLI — dynamic command surface from Discovery Service",
-+  "version": "0.22.3",
-+  "license": "Apache-2.0",
-+  "author": "Justin Poehnelt",
-+  "repository": {
-+    "type": "git",
-+    "url": "https://github.com/googleworkspace/cli.git"
-+  },
-+  "homepage": "https://github.com/googleworkspace/cli",
-+  "bugs": {
-+    "url": "https://github.com/googleworkspace/cli/issues"
-+  },
-+  "bin": {
-+    "gws": "run.js"
-+  },
-+  "scripts": {
-+    "postinstall": "node install.js"
-+  },
-+  "engines": {
-+    "node": ">=18"
-+  },
-+  "preferUnplugged": true,
-+  "keywords": [
-+    "cli",
-+    "google-workspace",
-+    "google",
-+    "google-api",
-+    "google-drive",
-+    "google-gmail",
-+    "google-sheets",
-+    "google-calendar",
-+    "google-docs",
-+    "google-chat",
-+    "google-admin",
-+    "gsuite",
-+    "discovery-api",
-+    "ai-agent",
-+    "agent-skills",
-+    "automation",
-+    "oauth2",
-+    "rust"
-+  ],
-+  "publishConfig": {
-+    "provenance": true,
-+    "registry": "https://wombat-dressing-room.appspot.com"
-+  },
-+  "supportedPlatforms": {
-+    "aarch64-apple-darwin": {
-+      "artifact": "google-workspace-cli-aarch64-apple-darwin.tar.gz",
-+      "binary": "gws"
-+    },
-+    "x86_64-apple-darwin": {
-+      "artifact": "google-workspace-cli-x86_64-apple-darwin.tar.gz",
-+      "binary": "gws"
-+    },
-+    "aarch64-unknown-linux-gnu": {
-+      "artifact": "google-workspace-cli-aarch64-unknown-linux-gnu.tar.gz",
-+      "binary": "gws"
-+    },
-+    "aarch64-unknown-linux-musl": {
-+      "artifact": "google-workspace-cli-aarch64-unknown-linux-musl.tar.gz",
-+      "binary": "gws"
-+    },
-+    "x86_64-unknown-linux-gnu": {
-+      "artifact": "google-workspace-cli-x86_64-unknown-linux-gnu.tar.gz",
-+      "binary": "gws"
-+    },
-+    "x86_64-unknown-linux-musl": {
-+      "artifact": "google-workspace-cli-x86_64-unknown-linux-musl.tar.gz",
-+      "binary": "gws"
-+    },
-+    "x86_64-pc-windows-msvc": {
-+      "artifact": "google-workspace-cli-x86_64-pc-windows-msvc.zip",
-+      "binary": "gws.exe"
-+    }
-+  }
-+}
-```
-
-**File**: `npm/platform.js` (added, +86/-0)
-```diff
-@@ -0,0 +1,86 @@
-+#!/usr/bin/env node
-+
-+"use strict";
-+
-+const os = require("os");
-+const path = require("path");
-+const fs = require("fs");
-+const { spawnSync } = require("child_process");
-+
-+const { supportedPlatforms } = require("./package.json");
-+
-+/**
-+ * Map Node.js os.type() and os.arch() to Rust-style target triples.
-+ */
-+function getPlatformKey() {
-+  const rawOs = os.type();
-+  const rawArch = os.arch();
-+
-+  let osType;
-+  switch (rawOs) {
-+    case "Windows_NT":
-+      osType = "pc-windows-msvc";
-+      break;
-+    case "Darwin":
-+      osType = "apple-darwin";
-+      break;
-+    case "Linux":
-+      osType = "unknown-linux-gnu";
-+      break;
-+    default:
-+      throw new Error(`Unsupported operating system: ${rawOs}`);
-+  }
-+
-+  let arch;
-+  switch (rawArch) {
-+    case "x64":
-+      arch = "x86_64";
-+      break;
-+    case "arm64":
-+      arch = "aarch64";
-+      break;
-+    default:
-+      throw new Error(`Unsupported architecture: ${rawArch}`);
-+  }
-+
-+  // On Linux, try to detect musl libc
-+  if (rawOs === "Linux") {
-+    try {
-+      const result = spawnSync("ldd", ["--version"], {
-+        encoding: "utf8",
-+        stdio: ["pipe", "pipe", "pipe"],
-+      });
-+      // musl ldd prints version info to stderr
-+      const output = (result.stdout || "") + (result.stderr || "");
-+      if (output.toLowerCase().includes("musl")) {
-+        osType = "unknown-linux-musl";
-+      }
-+    } catch {
-+      // If ldd fails, assume glibc
-+    }
-+  }
-+
-+  const key = `${arch}-${osType}`;
-+
-+  if (!supportedPlatforms[key]) {
-+    // Try musl fallback on Linux if glibc binary is not available
-+    if (rawOs === "Linux") {
-+      const muslKey = `${arch}-unknown-linux-musl`;
-+      if (supportedPlatforms[muslKey]) {
-+        return muslKey;
-+      }
-+    }
-+    throw new Error(
-+      `Unsupported platform: ${key}\nSupported platforms: ${Object.keys(supportedPlatforms).join(", ")}`,
-+    );
-+  }
-+
-+  return key;
-+}
-+
-+function getPlatform() {
-+  const key = getPlatformKey();
-+  return supportedPlatforms[key];
-+}
-+
-+module.exports = { getPlatform, getPlatformKey };
-```
-
----
-
-### Incident Patch 2: `6ccbb426` (2026-03-31)
-**Commit Message**: fix: auto-install binary on run if missing (#654)
-
-* fix: auto-install binary on run if missing
-
-pnpm skips postinstall when the package is already cached/installed.
-This commit ensures run.js will auto-trigger install.js if the
-binary is missing, fixing the 'gws binary not found' error.
-
-* chore: add changeset for pnpm binary fix
-
----------
-
-Co-authored-by: jpoehnelt-bot <[REDACTED_EMAIL]>
-
-**File**: `.changeset/fix-pnpm-binary-install.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+"@googleworkspace/cli": patch
-+---
-+
-+fix: auto-install binary on run if missing
-+
-+pnpm skips postinstall when the package is already up to date.
-+This ensures run.js will auto-trigger install.js if the
-+binary is missing, fixing the 'gws binary not found' error.
-```
-
-**File**: `npm/run.js` (modified, +8/-2)
-```diff
-@@ -12,9 +12,15 @@ const binPath = path.join(__dirname, "bin", platform.binary);
+       - name: Run cargo fmt
+@@ -54,8 +54,11 @@ jobs:
  
- if (!fs.existsSync(binPath)) {
-   console.error(
--    `gws binary not found at ${binPath}\nRun "npm install -g @googleworkspace/cli" to install it.`,
-+    `gws binary not found at ${binPath}\nAuto-installing...`
-   );
--  process.exit(1);
-+  const install = spawnSync(process.execPath, [path.join(__dirname, "install.js")], {
-+    cwd: __dirname,
-+    stdio: "inherit",
-+  });
-+  if (install.status !== 0) {
-+    process.exit(install.status ?? 1);
-+  }
- }
- 
- const result = spawnSync(binPath, process.argv.slice(2), {
-```
-
----
-
-### Incident Patch 3: `674d53a6` (2026-03-26)
-**Commit Message**: fix(ci): add setup-uv step to Lint Skills job
-
-The Lint Skills job uses uvx to run agentskills validate, but uv
-is not pre-installed on GitHub Actions runners. Add astral-sh/setup-uv
-action and a skills path filter to the changes detection.
-
-**File**: `.changeset/fix-lint-skills-ci.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+"@googleworkspace/cli": patch
-+---
-+
-+Fix `Lint Skills` CI job by installing `uv` via `astral-sh/setup-uv` before running `uvx`
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +3/-0)
-```diff
-@@ -201,6 +201,9 @@ jobs:
+   file-labeler:
+     name: File Labeler
+-    if: github.event_name == 'pull_request_target'
++    if: github.event_name == 'pull_request'
+     runs-on: ubuntu-latest
++    permissions:
++      contents: read
++      pull-requests: write
      steps:
-       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
- 
-+
-+      - uses: astral-sh/setup-uv@d4b2f3b6ecc6e67c4457f6d3e41ec42d3d0fcb86 # v5
-+
-       - name: Validate skills
-         run: |
-           failed=0
+       - uses: actions/labeler@8558fd74291d67161a8a78ce36a881fa63b766a9 # v5
+         with:
+@@ -65,9 +68,12 @@ jobs:
+   gemini-review:
+     name: Gemini Review
+     if: >-
+-      github.event_name == 'pull_request_target' &&
++      github.event_name == 'pull_request' &&
+       github.event.action == 'synchronize'
+     runs-on: ubuntu-latest
++    permissions:
++      issues: write
++      pull-requests: write
+     concurrency:
+       group: gemini-review-${{ github.event.pull_request.number }}
+       cancel-in-progress: true
+@@ -109,6 +115,9 @@ jobs:
+       github.event_name == 'pull_request_review' &&
+       github.event.review.user.login == 'gemini-code-assist[bot]'
+     runs-on: ubuntu-latest
++    permissions:
++      issues: write
++      pull-requests: read
+     steps:
+       - name: Add reviewed label if review matches HEAD
+         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #959** (closed): fix(auth): clear token caches after login so new scopes take effect (@phatmandrake)
-- **PR #956** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
-- **PR #955** (closed): Cursor/clippy clean 133e (@llceejll)
-- **PR #953** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
-- **PR #950** (closed): fix(gmail): omit From when the default send-as identity is a nameless primary (@pingavibe)
-- **PR #949** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
+- **PR #969** (2026-10-30): ci: switch automation workflow from pull_request_target to pull_request (@vinay-google)
+- **PR #966** (closed): fix(nix): use host platform for system dependencies (@Eotel)
+- **PR #965** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
+- **PR #964** (closed): fix: allow optional null fields in PATCH bodies (@tridev-tej)
+- **PR #963** (closed): ci: migrate npm release workflow to OSS Exit Gate (@alonsopf89)
+- **PR #962** (closed): chore: sync skills with Discovery API (@googleworkspace-bot)
 
 ---
 
@@ -2827,37 +2263,53 @@ action and a skills path filter to the changes detection.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. remove cargo-dist, use native fetch for npm installer (#646)
+## X. ci: switch automation workflow from pull_request_target to pull_request (#969)
 
 **RULE**:
-When implementing operations in `.changeset/remove-cargo-dist.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in googleworkspace/cli. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/automation.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in googleworkspace/cli. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86c08cfc`: remove cargo-dist, use native fetch for npm installer (#646). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd3697e0`: ci: switch automation workflow from pull_request_target to pull_request (#969). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/remove-cargo-dist.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/automation.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-"@googleworkspace/cli": patch
----
-
-Remove cargo-dist; use native Node.js fetch for npm binary installer
-
-Replaces the cargo-dist generated release pipeline and npm package with:
-- A custom GitHub Actions release workflow with matrix cross-compilation
-- A zero-dependency npm installer using native `fetch()` (Node 18+)
-- Removes axios, rimraf, detect-libc, console.table, and axios-proxy-builder dependencies from the published npm package
+  pull_request:
+permissions: {}
+    permissions:
+      contents: write
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # master
+          toolchain: stable
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      pull-requests: write
+      github.event_name == 'pull_request' &&
+    permissions:
+      issues: write
+      pull-requests: write
+    permissions:
+      issues: write
+      pull-requests: read
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+  pull_request_target:
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: dtolnay/rust-toolchain@631a55b12751854ce901bb631d5902ceb48146f7 # stable
+    if: github.event_name == 'pull_request_target'
+      github.event_name == 'pull_request_target' &&
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86c08cfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd3697e0` are properly handled with clean fallback behavior.

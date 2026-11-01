@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `181d6814`  
+> **Source Version**: `0c3f87a5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T16:48:16.860Z  
+> **Timestamp**: 2026-10-31T22:31:27.579Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T16:48:16.853Z  
+> **Harvest Timestamp**: 2026-10-31T22:31:24.258Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Decentralized Operating System for ZK Applications
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4531 stars
+- **Stars / Engagement**: 4528 stars
 
 ---
 
@@ -422,6 +422,17 @@ use snarkvm::{ledger::Transaction, prelude::*};
 
 use crate::{CAPACITY_FOR_DEPLOYMENTS, CAPACITY_FOR_EXECUTIONS};
 
+/// The result of a successful insertion into the transactions queue.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum QueueInsertion {
+    /// The transaction was added to the queue.
+    Inserted,
+    /// The transaction was added to the queue, and a lower-priority transaction was evicted.
+    InsertedWithEviction,
+    /// The transaction was already in the queue; nothing changed.
+    Duplicate,
+}
+
 pub struct TransactionsQueue<N: Network> {
     pub deployments: TransactionsQueueInner<N>,
     pub executions: TransactionsQueueInner<N>,
@@ -446,8 +457,9 @@ impl<N: Network> TransactionsQueue<N> {
         transaction_id: N::TransactionID,
         transaction: Transaction<N>,
         priority_fee: U64<N>,
-    ) -> Result<()> {
-        let result = if transaction.is_execute() {
+    ) -> Result<QueueInsertion> {
+        let is_execute = transaction.is_execute();
+        let result = if is_execute {
             self.executions.insert(transaction_id, transaction, priority_fee)
         } else {
             self.deployments.insert(transaction_id, transaction, priority_fee)
@@ -455,6 +467,10 @@ impl<N: Network> TransactionsQueue<N> {
 
         #[cfg(feature = "metrics")]
         {
+            if let Ok(QueueInsertion::InsertedWithEviction) = result {
+                let kind = if is_execute { "execute" } else { "deploy" };
+                metrics::increment_counter_1(metrics::consensus::MEMPOOL_EVICTED, "kind", kind);
+            }
             metrics::gauge(metrics::consensus::DEPLOYMENTS_PRIORITY_QUEUE_SIZE, self.deployments.priority_len() as f64);
             metrics::gauge(metrics::consensus::DEPLOYMENTS_ZERO_FEE_QUEUE_SIZE, self.deployments.zero_fee_len() as f64);
             metrics::gauge(metrics::consensus::EXECUTIONS_PRIORITY_QUEUE_SIZE, self.executions.priority_len() as f64);
@@ -516,13 +532,13 @@ impl<N: Network> TransactionsQueueInner<N> {
         transaction_id: N::TransactionID,
         transaction: Transaction<N>,
         priority_fee: U64<N>,
-    ) -> Result<()> {
+    ) -> Result<QueueInsertion> {
         // Duplicates are a no-op: they must not evict anything or refresh recency.
         // Note: the transaction ID is the root of the transaction tree, which includes a leaf for the fee
         // transition. A transaction with the same ID therefore always has the same priority fee, and a
         // resubmission with a higher fee has a different ID, so there is nothing to replace here.
         if self.contains(&transaction_id) {
-            return Ok(());
+            return Ok(QueueInsertion::Duplicate);
         }
 
         // If the queue is not full, insert in the appropriate queue.
@@ -534,10 +550,10 @@ impl<N: Network> TransactionsQueueInner<N> {
             }
 
             debug_assert!(self.len() <= self.capacity, "The mempool exceeded its capacity");
-            return Ok(());
+            return Ok(QueueInsertion::Inserted);
         }
 
-        match (self.priority_queue.len() < self.capacity, *priority_fee) {
+        let insertion = match (self.priority_queue.len() < self.capacity, *priority_fee) {
             (_, 0) => {
                 #[cfg(feature = "metrics")]
                 metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
@@ -553,12 +569,14 @@ impl<N: Network> TransactionsQueueInner<N> {
                 );
 
                 // Remove an entry from the low-priority queue to make room for the high-priority transaction.
-                if self.fifo_queue.pop_lru().is_some() {
+                let evicted = self.fifo_queue.pop_lru().is_some();
+                if evicted {
                     #[cfg(feature = "metrics")]
                     metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
                 }
 
-                self.priority_queue.insert(transaction_id, transaction, priority_fee)
+                self.priority_queue.insert(transaction_id, transaction, priority_fee);
+                if evicted { QueueInsertion::InsertedWithEviction } else { QueueInsertion::Inserted }
             }
             // Invariant: if the queue is at capacity but the priority queue is
             // equal to the capacity, the low-priority queue must be empty.
@@ -568,12 +586,13 @@ impl<N: Network> TransactionsQueueInner<N> {
                     "The low-priority queue must be empty when the priority queue is full"
                 );
 
-                self.priority_queue.compare_insert(transaction_id, transaction, priority_fee)?
+                self.priority_queue.compare_insert(transaction_id, transaction, priority_fee)?;
+                QueueInsertion::InsertedWithEviction
             }
-        }
+        };
 
         debug_assert!(self.len() <= self.capacity, "The mempool exceeded its capacity");
-        Ok(())
+        Ok(insertion)
     }
 
     pub fn pop(&mut self) -> Option<(N::TransactionID, Transaction<N>)> {
@@ -632,40 +651,7 @@ impl<N: Network> PriorityQueue<N> {
             #[cfg(feature = "metrics")]
             metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
 
-            bail!("The memory pool is full");
-        }
-
-        // Otherwise, remove the current value and insert the new.
-        //
-        // SAFETY: the empty check guarantees an item will be returned
-        let (_, id) = self.transaction_ids.pop_last().expect("item must be present");
-        self.transactions.remove(&id);
-
-        #[cfg(feature = "metrics")]
-        metrics::increment_counter(metrics::consensus::DROPPED_TRANSACTIONS);
-
-        self.insert(transaction_id, transaction, fee);
-        Ok(())
-    }
-
-    fn pop(&mut self) -> Option<(N::TransactionID, Transaction<N>)> {
-        let (_, transaction_id) = self.transaction_ids.pop_first()?;
-        self.transactions.remove(&transaction_id).map(|transaction| (transaction_id, transaction))
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    use snarkvm::{
-        ledger::test_helpers::{sample_deployment_transaction, sample_execution_transaction_with_fee},
-        prelude::{MainnetV0, TestRng},
-    };
-
-    type CurrentNetwork = MainnetV0;
-
-    
+            bail!("The memory pool 
 ```
 
 ### Core Architecture Module: `node/sync/src/block_sync/sync_state.rs`
@@ -1155,6 +1141,9 @@ pub const LEGACY_ROUTER_PEER_CACHE_FILE: &str = "cached_router_peers";
 /// The filename of the proposal cache.
 pub const CURRENT_PROPOSAL_CACHE_FILE: &str = "current-proposal-cache";
 
+/// The filename of the consensus upgrade that validators require of this node.
+pub const REQUIRED_CONSENSUS_UPGRADE_FILE: &str = "required-consensus-upgrade";
+
 /// The filename used to persist the hotswapped dev committee's starting round.
 #[cfg(feature = "test_network")]
 pub const DEV_COMMITTEE_STATE_FILE: &str = "dev-committee-state";
@@ -1221,6 +1210,11 @@ impl NodeDataDir {
     /// The location to store the current proposal cache.
     pub fn current_proposal_cache_path(&self) -> PathBuf {
         self.path.join(CURRENT_PROPOSAL_CACHE_FILE)
+    }
+
+    /// The location to record the consensus upgrade that validators require of this node.
+    pub fn required_consensus_upgrade_path(&self) -> PathBuf {
+        self.path.join(REQUIRED_CONSENSUS_UPGRADE_FILE)
     }
 
     /// The location used to persist the hotswapped dev committee's starting round.
@@ -1410,6 +1404,9 @@ pub struct SignalHandler {
     /// This receiver is used to wait for the node to be stopped.
     stopped_receiver: Mutex<Option<oneshot::Receiver<()>>>,
 
+    /// The reason the node was stopped with, if the process should exit with an error.
+    error: Mutex<Option<String>>,
+
     /// An optional tokio runtime handle.
     pub handle: Option<Handle>,
 }
@@ -1421,6 +1418,7 @@ impl SignalHandler {
         let obj = Arc::new(Self {
             stopped_sender: RwLock::new(Some(stopped_sender)),
             stopped_receiver: Mutex::new(Some(stopped_receiver)),
+            error: Default::default(),
             handle,
         });
 
@@ -1469,6 +1467,19 @@ impl SignalHandler {
         }
 
         self.stop();
+    }
+
+    /// Stops the node, and records `error` as the reason for the process to exit with an error.
+    ///
+    /// Only the first error is kept.
+    pub fn stop_with_error(&self, error: String) {
+        self.error.lock().get_or_insert(error);
+        self.stop();
+    }
+
+    /// Returns the error the node was stopped with, if any.
+    pub fn error(&self) -> Option<String> {
+        self.error.lock().clone()
     }
 
     /// Waits until the signal handler was invoked or the stopped flag was set some other way.
@@ -1522,6 +1533,18 @@ mod tests {
         // The manual path, used when the node hits a fatal error rather than a Ctrl+C.
         handler.stop();
         assert!(handler.is_stopped());
+    }
+
+    #[tokio::test]
+    async fn a_signal_handler_keeps_the_first_error_it_was_stopped_with() {
+        let handler = SignalHandler::new(None);
+        assert_eq!(handler.error(), None);
+
+        handler.stop_with_error("first".to_string());
+        handler.stop_with_error("second".to_string());
+
+        assert!(handler.is_stopped());
+        assert_eq!(handler.error().as_deref(), Some("first"));
     }
 
     #[tokio::test]
@@ -1943,16 +1966,13 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4585** (2026-10-29): **[Bug] Block sync stalls for good when a validator peer drops rate-limited block requests**
+  *Symptoms*: ## 🐛 Bug Report  A validator that syncs blocks from a validator peer can stall for good. Two behaviors combine:  1. **The gateway drops excess block requests without a reply.** A validator counts the `BlockRequest`s from each peer over `CACHE_REQUESTS_INTERVAL` (2 seconds). From the `max_cache_duplicates()`-th request on, it returns `Ok(true)` and does nothing. It sends no response and logs nothing. The limit is the square of the current committee size, so it is 16 on a 4-validator devnet.    - [`gateway.rs#L650-L655`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L650-L655)    - [`gateway.rs#L400-L403`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/bft/src/gateway.rs#L400-L403) 2. **A dropped request never times out while its peer answers other requests.** `handle_block_request_timeouts` keeps a request whose peer sent any block response in the last `BLOCK_REQUEST_TIMEOUT` (60 seconds). It added this exemption in 71f5f74c0 ("do not ban responsive peers"). The peer keeps answering newer requests, so the dropped ones are never re-issued.    - [`block_sync.rs#L1247-L1249`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1247-L1249)    - [`block_sync.rs#L1384-L1389`](https://github.com/ProvableHQ/snarkOS/blob/6b124303c094f0a58bdf9f3517d3ac589dd0820f/node/sync/src/block_sync.rs#L1384-L1389)  The syncing node the
+
 - **Issue #4466** (2026-09-29): **[Bug] Spurious ERROR log: Attempted to decrease GC round from 36 to 34**
   *Symptoms*: ## 🐛 Bug Report  Link to testrun: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4270/workflows/6fe7a02c-9a65-48f9-86f1-b2438b7f6616/jobs/90558?utm_campaign=vcs-integration-link&utm_medium=referral&utm_source=github-checks-link  [ci-runner] 2026-09-17T17:42:01Z ❌ Test failed! Validator #1 logs contain errors. 2026-09-17T17:41:13.258841Z ERROR Block synchronization failed — Failed to garbage collect certificates — Attempted to decrease GC round from 36 to 34 
   **Post-Mortem & Fix Analysis**:
   > Likely already solved by 67810a9.
-
-- **Issue #4407** (2026-09-02): **[Bug] There are 1 surplus live tasks**
-  *Symptoms*: ## 🐛 Bug Report  Our good old friend has returned.  Example failure: https://app.circleci.com/pipelines/gh/ProvableHQ/snarkOS/4133/workflows/4789b13b-832a-46b2-a997-5109a89c889a/jobs/86849 
-  **Post-Mortem & Fix Analysis**:
-  > From what I can tell, this is fixed in `staging,` and it's the nature of this specific test script that caused (and will keep causing until the next release) the failure, as it involves a node upgrade, and the version being upgraded doesn't have the fix just yet.
-  > Closing per @ljedrz's diagnosis above: this is fixed in `staging`, and the remaining CI failures are an artifact of the test script upgrading from a release that predates the fix.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1969,181 +1989,29 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `181d6814` (2026-10-25)
-**Commit Message**: Merge pull request #4576 from aleo-labs-protocol/deps/relax-exact-pins
+### Incident Patch 1: `0c3f87a5` (2026-10-31)
+**Commit Message**: Merge pull request #4609 from aleo-labs-protocol/ci/merge-mainnet-into-staging
 
-Drop the elliptic-curve pin and the no-op tokio-stream =
 
-**File**: `Cargo.lock` (modified, +0/-1)
-```diff
-@@ -4938,7 +4938,6 @@ version = "4.12.0"
- dependencies = [
-  "built",
-  "clap",
-- "elliptic-curve",
-  "locktick",
-  "rusty-hook",
-  "snarkos-account",
-```
-
-**File**: `Cargo.toml` (modified, +0/-9)
-```diff
-@@ -118,7 +118,6 @@ version = "1"
- version = "0.57.2"
- 
- [workspace.dependencies.proptest]
--# Pin to 1.6 to match the version used in snarkVM. Avoids pulling in rand >=0.9.
- version = "1.6"
- 
- [workspace.dependencies.rayon]
-@@ -376,13 +375,6 @@ tikv-jemallocator = "0.7"
- [dependencies.tracing]
- workspace = true
- 
--# Pinned to =0.14.1 because k256 v0.14.0 requires it.
--# Adding this as a direct dependency forces cargo to resolve the exact version
--# and prevents automatic upgrades to incompatible releases.
--[dependencies.elliptic-curve]
--version = "=0.14.1"
--default-features = false
--
- [dev-dependencies.rusty-hook]
- version = "0.11.2"
- 
-@@ -414,7 +406,6 @@ opt-level = 2
- 
- [package.metadata.cargo-machete]
- ignored = [
--  "elliptic-curve", # Needed to pin the crate to a specific version
-   "snarkos-account", # Needed for cuda feature
-   "snarkos-node", # Needed for metrics feature
-   "snarkos-node-bft", # Needed for cuda and locktick features
-```
-
-**File**: `node/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@ workspace = true
- features = [ "rt", "signal" ]
- 
- [dependencies.tokio-stream]
--version = "=0.1"
-+version = "0.1"
- 
- [dependencies.tokio-util]
- workspace = true
-```
-
-**File**: `node/router/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -114,7 +114,7 @@ workspace = true
- features = [ "codec" ]
- 
- [dependencies.tokio-stream]
--version = "=0.1"
-+version = "0.1"
- 
- [dependencies.tracing]
- workspace = true
-```
 
 ---
 
-### Incident Patch 2: `8fd2c276` (2026-10-25)
-**Commit Message**: Drop the elliptic-curve pin and the no-op tokio-stream =
+### Incident Patch 2: `dd8e2adc` (2026-10-31)
+**Commit Message**: Merge mainnet into staging
 
-elliptic-curve was pinned for k256 release candidates. k256 0.14.0
-requires elliptic-curve ^0.14.1 itself, so the =0.14.1 pin only blocks
-patch releases. No snarkos code uses the crate; it was a direct
-dependency only to carry the pin, so it goes, with its cargo-machete
-exemption. The resolved version and its enabled features are unchanged.
+Changed by `.github/merge-fixup.sh`:
+    Cargo.lock
+    Cargo.toml
 
-tokio-stream's "=0.1" means any 0.1.x, the same as "0.1".
 
-The proptest comment said snarkVM uses 1.6; it uses 1.12 now. The "1.6"
-requirement admits that, so only the comment goes.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01WknVbv96cQthGZ7Ztp2dEQ
-
-**File**: `Cargo.lock` (modified, +0/-1)
-```diff
-@@ -4938,7 +4938,6 @@ version = "4.12.0"
- dependencies = [
-  "built",
-  "clap",
-- "elliptic-curve",
-  "locktick",
-  "rusty-hook",
-  "snarkos-account",
-```
-
-**File**: `Cargo.toml` (modified, +0/-9)
-```diff
-@@ -118,7 +118,6 @@ version = "1"
- version = "0.57.2"
- 
- [workspace.dependencies.proptest]
--# Pin to 1.6 to match the version used in snarkVM. Avoids pulling in rand >=0.9.
- version = "1.6"
- 
- [workspace.dependencies.rayon]
-@@ -376,13 +375,6 @@ tikv-jemallocator = "0.7"
- [dependencies.tracing]
- workspace = true
- 
--# Pinned to =0.14.1 because k256 v0.14.0 requires it.
--# Adding this as a direct dependency forces cargo to resolve the exact version
--# and prevents automatic upgrades to incompatible releases.
--[dependencies.elliptic-curve]
--version = "=0.14.1"
--default-features = false
--
- [dev-dependencies.rusty-hook]
- version = "0.11.2"
- 
-@@ -414,7 +406,6 @@ opt-level = 2
- 
- [package.metadata.cargo-machete]
- ignored = [
--  "elliptic-curve", # Needed to pin the crate to a specific version
-   "snarkos-account", # Needed for cuda feature
-   "snarkos-node", # Needed for metrics feature
-   "snarkos-node-bft", # Needed for cuda and locktick features
-```
-
-**File**: `node/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -158,7 +158,7 @@ workspace = true
- features = [ "rt", "signal" ]
- 
- [dependencies.tokio-stream]
--version = "=0.1"
-+version = "0.1"
- 
- [dependencies.tokio-util]
- workspace = true
-```
-
-**File**: `node/router/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -114,7 +114,7 @@ workspace = true
- features = [ "codec" ]
- 
- [dependencies.tokio-stream]
--version = "=0.1"
-+version = "0.1"
- 
- [dependencies.tracing]
- workspace = true
-```
 
 #### Recent Merged Pull Requests:
-- **PR #4576** (2026-10-25): Drop the elliptic-curve pin and the no-op tokio-stream = (@cbeck88)
-- **PR #4575** (2026-10-25): Remove the crypto-bigint pin to move past RUSTSEC-2026-0387 (@cbeck88)
-- **PR #4573** (2026-10-24): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
-- **PR #4572** (2026-10-22): Merge testnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4571** (2026-10-21): chore(deps): bump webpki-roots and webpki-root-certs to 1.0.10 (@awatts73)
-- **PR #4570** (2026-10-21): bench: rename cache-hit REST verification benches to cached_verify (@cbeck88)
+- **PR #4609** (2026-10-31): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4606** (2026-10-30): Bump crates with security advisories (@aleo-labs-merge-bot[bot])
+- **PR #4595** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
+- **PR #4593** (closed): Move fastsync into snarkOS as snarkos-ledger-distribution (@cbeck88-ai-dev)
+- **PR #4592** (2026-10-29): Merge testnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4591** (closed): [testnet] Move past open advisories (@cbeck88)
 
 ---
 

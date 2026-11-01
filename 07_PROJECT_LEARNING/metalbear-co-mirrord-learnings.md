@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source**: github ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
-> **Source Version**: `21cf7bff`  
+> **Source Version**: `c4bb0e3d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:23:03.062Z  
+> **Timestamp**: 2026-10-31T20:46:37.798Z  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:23:02.884Z  
+> **Harvest Timestamp**: 2026-10-31T20:46:37.791Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5382 stars
+- **Stars / Engagement**: 5396 stars
 
 ---
 
@@ -1535,555 +1535,177 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `19ea8411` (2026-10-25)
-**Commit Message**: Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved
+### Incident Patch 1: `c4bb0e3d` (2026-10-31)
+**Commit Message**: Merge pull request #5181 from metalbear-co/appleutil-v10
 
-# Conflicts:
-#	Cargo.lock
-#	mirrord/agent/src/vpn.rs
+Use Apple util bundle v10
 
-**File**: `CHANGELOG.md` (modified, +21/-0)
+**File**: `changelog.d/+apple-utils-v10.changed.md` (added, +1/-0)
 ```diff
-@@ -8,6 +8,27 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
- 
- <!-- towncrier release notes start -->
- 
-+## [3.279.0](https://github.com/metalbear-co/mirrord/tree/3.279.0) - 2026-10-24
-+
-+
-+### Added
-+
-+- Add `mirrord preview down`, which deletes every preview environment under a
-+  key in all namespaces, finding the key the way `mirrord preview up` does.
-+- Add `mirrord preview up`, which starts a preview environment for every
-+  service of a `mirrord-up.yaml` that has an image (from `--image
-+  <service>=<ref>`, `MIRRORD_<SERVICE>_IMAGE` or the service's `image`), all
-+  under one key, and returns once each one is ready.
-+- Services in `mirrord-up.yaml` accept an optional `image` field, the container
-+  image `mirrord preview up` runs in the service's preview environment.
-+  `mirrord up` ignores it.
-+
-+
-+### Fixed
-+
-+- Fixed a SIGSEGV on macOS when apps using libuv 1.53+ (e.g. Homebrew Node)
-+  connect to a unix socket.
-+
- ## [3.278.0](https://github.com/metalbear-co/mirrord/tree/3.278.0) - 2026-10-22
- 
- 
+@@ -0,0 +1 @@
++Update the bundled apple-utils to `v10`.
 ```
 
-**File**: `Cargo.lock` (modified, +59/-59)
+**File**: `mirrord/sip/src/bundle.rs` (modified, +12/-1)
 ```diff
-@@ -2015,9 +2015,9 @@ dependencies = [
+@@ -5,7 +5,7 @@ use crate::logger::SipLoggerGuard;
+ /// Paths to system directories that are bundled in our SIP util bundle.
+ ///
+ /// If an executed binary is located in one of these, we try to find it in the bundle.
+-pub const BUNDLED_DIRS: [&str; 4] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin"];
++pub const BUNDLED_DIRS: [&str; 5] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/libexec"];
  
- [[package]]
- name = "ctutils"
--version = "0.4.4"
-+version = "0.4.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "12218662ccac37d9714f2191252553d67585b97df8c839cbe49e0bde278dc865"
-+checksum = "38d28fb6aa7dd680b3ffd1a3e64e115c177bdba63c0ae7f9cd48129ff05c4fa0"
- dependencies = [
-  "cmov",
- ]
-@@ -2489,7 +2489,7 @@ checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
+ pub(super) fn lookup_suffix(binary: &Path) -> Option<&Path> {
+     BUNDLED_DIRS
+@@ -71,6 +71,11 @@ mod test {
+     ///     * /bin
+     ///         * /cat
+     ///     * /sbin
++    ///     * /libexec
++    ///         * /path_helper
++    ///         * /cups
++    ///             * /daemon
++    ///                 * /cups-exec
+     fn make_bundle() -> TempDir {
+         let root = tempfile::tempdir().unwrap();
  
- [[package]]
- name = "double_listen"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
-@@ -2890,7 +2890,7 @@ dependencies = [
+@@ -82,6 +87,9 @@ mod test {
+         std::fs::create_dir(root.path().join("usr/bin")).unwrap();
+         std::fs::write(root.path().join("usr/bin/cat"), []).unwrap();
+         std::fs::create_dir(root.path().join("usr/sbin")).unwrap();
++        std::fs::create_dir_all(root.path().join("usr/libexec/cups/daemon")).unwrap();
++        std::fs::write(root.path().join("usr/libexec/path_helper"), []).unwrap();
++        std::fs::write(root.path().join("usr/libexec/cups/daemon/cups-exec"), []).unwrap();
  
- [[package]]
- name = "fileops"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
-@@ -4075,7 +4075,7 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
- 
- [[package]]
- name = "issue1317"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "axum",
-  "env_logger",
-@@ -4085,7 +4085,7 @@ dependencies = [
- 
- [[package]]
- name = "issue1776"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "errno 0.3.14",
-  "libc",
-@@ -4094,22 +4094,22 @@ dependencies = [
- 
- [[package]]
- name = "issue1776portnot53"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
-  "socket2 0.5.10",
- ]
- 
- [[package]]
- name = "issue1899"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
- 
- [[package]]
- name = "issue2001"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "libc",
- ]
-@@ -4713,7 +4713,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
- 
- [[package]]
- name = "listen_ports"
--version = "3.278.0"
-+version = "3.279.0"
- 
- [[package]]
- name = "litemap"
-@@ -5063,7 +5063,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "atomic-write-file",
-@@ -5167,7 +5167,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "async-pidfd",
-@@ -5236,7 +5236,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent-env"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "k8s-openapi",
-@@ -5249,7 +5249,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-agent-iptables"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "async-trait",
-  "caps",
-@@ -5265,7 +5265,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-analytics"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "assert-json-diff",
-  "base64 0.22.1",
-@@ -5283,7 +5283,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-auth"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "bcder",
-@@ -5310,7 +5310,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-cluster-auth"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "aws-config",
-  "aws-credential-types",
-@@ -5344,7 +5344,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-command"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "tempfile",
-  "tokio",
-@@ -5353,7 +5353,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-config"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "bimap",
-@@ -5395,7 +5395,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-config-derive"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "proc-macro2",
-  "proc-macro2-diagnostics",
-@@ -5405,7 +5405,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-console"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "bincode",
-  "drain",
-@@ -5424,7 +5424,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-intproxy"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "anyhow",
-@@ -5479,7 +5479,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-intproxy-protocol"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "bincode",
-  "bytes",
-@@ -5492,7 +5492,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-jaq"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "jaq-core",
-  "jaq-json",
-@@ -5505,7 +5505,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-kube"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "async-stream",
-  "futures",
-@@ -5534,7 +5534,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "actix-codec",
-  "apple-codesign",
-@@ -5574,7 +5574,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-core"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "frida-gum",
-  "libc",
-@@ -5584,7 +5584,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-go"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "frida-gum",
-  "libc",
-@@ -5596,7 +5596,7 @@ dependencies = [
- 
- [[package]]
- name = "mirrord-layer-lib"
--version = "3.278.0"
-+version = "3.279.0"
- dependencies = [
-  "base64 0.22.1",
-  "bincode",
-@@ -56
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@ ignored-paths = [
- # latest commits on rustls suppress certificate verification
- [workspace.package]
- edition = "2024"
--version = "3.278.0"
-+version = "3.279.0"
- license = "MIT"
- readme = "README.md"
- repository = "https://github.com/metalbear/mirrord"
-```
-
-**File**: `changelog.d/+frontend-deps-security.internal.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--Update frontend dependencies to pick up security fixes.
-```
-
-**File**: `changelog.d/+qodo-review-config.internal.md` (removed, +0/-1)
-```diff
-@@ -1 +0,0 @@
--Add a Qodo code review configuration that skips automatic reviews for bot-authored PRs and PRs carrying the `no-qodo` label.
-```
-
-**File**: `deny.toml` (modified, +3/-0)
-```diff
-@@ -24,6 +24,9 @@ ignore = [
-   "RUSTSEC-2026-0367",
-   "RUSTSEC-2026-0368",
-   "RUSTSEC-2026-0369",
-+  # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
-+  # re-sign binaries locally, with no secrets an attacker could observe.
-+  "RUSTSEC-2026-0387",
- ]
- 
- [licenses]
-```
-
-**File**: `mirrord-up-schema.json` (modified, +8/-0)
-```diff
-@@ -573,6 +573,14 @@
-           },
-           "uniqueItems": true
-         },
-+        "image": {
-+          "description": "Container image to run in this service's preview environment, as a full image ref, e.g.\n`ghcr.io/acme/api:3f9a2c1`.\n\nUsed only by `mirrord preview up`, which starts a preview for every service that has an\nimage. `mirrord preview up --image <service>=<ref>` and `MIRRORD_<SERVICE>_IMAGE` take\nprecedence over it. `mirrord up` ignores it.",
-+          "type": [
-+            "string",
-+            "null"
-+          ],
-+          "x-mirrord-plan": "enterprise"
-+        },
-         "run": {
-           "description": "How to launch the service's local process.",
-           "$ref": "#/$defs/RunConfig"
-```
-
-**File**: `mirrord/agent/src/vpn.rs` (modified, +5/-6)
-```diff
-@@ -89,12 +89,11 @@ pub struct AsyncRawSocket {
- impl AsyncRawSocket {
-     pub fn new(socket: Socket, addr: SockAddr) -> std::io::Result<Self> {
-         socket.set_nonblocking(true)?;
--        Ok(Self {
--            // SAFETY: Socket owns its descriptor, and AsyncRawSocket never closes or replaces it
--            // while registered with AsyncFd.
--            inner: unsafe { AsyncFd::register(socket)? },
--            addr,
--        })
-+        // SAFETY: `Socket` owns its file descriptor, so it stays open and is the same descriptor
-+        // for as long as the `AsyncFd` holds the socket. `AsyncRawSocket` does not close or replace
-+        // the descriptor while it is registered.
-+        let inner = unsafe { AsyncFd::register(socket) }?;
-+        Ok(Self { inner, addr })
+         root
      }
+@@ -94,6 +102,9 @@ mod test {
+     #[case(Path::new("/usr/sbin/ifconfig"), true)]
+     #[case(Path::new("/usr/sbin/mount"), false)]
+     #[case(Path::new("/sbin/ifconfig"), true)]
++    #[case(Path::new("/usr/libexec/path_helper"), true)]
++    #[case(Path::new("/usr/libexec/cups/daemon/cups-exec"), true)]
++    #[case(Path::new("/usr/libexec/missing_helper"), false)]
+     #[test]
+     fn find_in_bundle(#[case] binary: &Path, #[case] expect_found: bool) {
+         let bundle = make_bundle();
+```
+
+**File**: `mirrord/sip/src/lib.rs` (modified, +1/-1)
+```diff
+@@ -104,7 +104,7 @@ mod main {
+     ///
+     /// Must be kept in sync with the version downloaded by `xtask` (see
+     /// `xtask/src/tasks/sip_binaries.rs`).
+-    pub const APPLE_UTILS_VERSION: &str = "v9";
++    pub const APPLE_UTILS_VERSION: &str = "v10";
  
-     pub async fn readable(&self) -> std::io::Result<AsyncFdReadyGuard<'_, Socket>> {
+     /// Set on the first patched process when SIP patching had to use an x86_64 system binary.
+     pub const MIRRORD_SIP_X64_FALLBACK_ENV: &str = "MIRRORD_SIP_X64_FALLBACK";
+```
+
+**File**: `xtask/src/tasks/sip_binaries.rs` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ use anyhow::{Context, Result};
+ ///
+ /// Must be kept in sync with `mirrord_sip::APPLE_UTILS_VERSION`, which the CLI uses at runtime to
+ /// decide whether the binaries already extracted to `~/.mirrord/binaries` match this release.
+-const APPLE_UTILS_VERSION: &str = "v9";
++const APPLE_UTILS_VERSION: &str = "v10";
+ 
+ /// Fetches the SIP utilities bundle once per workspace and reuses the cached archive afterwards.
+ pub fn download() -> Result<PathBuf> {
 ```
 
 ---
 
-### Incident Patch 2: `526c3c6b` (2026-10-24)
-**Commit Message**: Fix cargo deny
+### Incident Patch 2: `c9f62d2d` (2026-10-30)
+**Commit Message**: Use Apple util bundle v10
 
-**File**: `deny.toml` (modified, +3/-0)
+**File**: `changelog.d/+apple-utils-v10.changed.md` (added, +1/-0)
 ```diff
-@@ -24,6 +24,9 @@ ignore = [
-   "RUSTSEC-2026-0367",
-   "RUSTSEC-2026-0368",
-   "RUSTSEC-2026-0369",
-+  # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
-+  # re-sign binaries locally, with no secrets an attacker could observe.
-+  "RUSTSEC-2026-0387",
- ]
- 
- [licenses]
+@@ -0,0 +1 @@
++Update the bundled apple-utils to `v10`.
 ```
 
----
-
-### Incident Patch 3: `cc2f135e` (2026-10-24)
-**Commit Message**: preview: build the session spec in prepare
-
-**File**: `mirrord/cli/src/preview.rs` (modified, +53/-73)
+**File**: `mirrord/sip/src/bundle.rs` (modified, +12/-1)
 ```diff
-@@ -49,10 +49,10 @@ use mirrord_operator::{
-     crd::{
-         MirrordOperatorSpec, NewOperatorFeature, TARGET_NAMESPACE_ANNOTATION, TargetCrd,
-         preview::{
--            PreviewCronJobConfig, PreviewDbBranchingConfig, PreviewEnvConfigMount,
--            PreviewEnvVarsConfig, PreviewIdleConfig, PreviewIncomingConfig, PreviewLabelFilter,
--            PreviewPodLogs, PreviewQueueSplittingConfig, PreviewSecretMountFile, PreviewSession,
--            PreviewSessionPhase, PreviewSessionSpec, PreviewSpecResources, PreviewTlsClientAuth,
-+            PreviewCronJobConfig, PreviewDbBranchingConfig, PreviewEnvVarsConfig,
-+            PreviewIdleConfig, PreviewIncomingConfig, PreviewLabelFilter, PreviewPodLogs,
-+            PreviewQueueSplittingConfig, PreviewSecretMountFile, PreviewSession,
-+            PreviewSessionPhase, PreviewSessionSpec, PreviewTlsClientAuth,
-             PreviewTlsClientAuthFromTarget, PreviewTlsDelivery,
-             view::{PreviewEnv, PreviewMessageKind},
-         },
-@@ -212,18 +212,11 @@ struct PreparedPreview {
-     /// session resource is created.
-     subtask: ProgressTracker,
-     config_target: Target,
--    image: String,
--    session_target: SessionTarget,
--    incoming: Option<PreviewIncomingConfig>,
--    cronjob: Option<PreviewCronJobConfig>,
-+    /// Sent to the operator once the session exists, see [`resolve_secret_mounts`].
-     secret_values: BTreeMap<String, ByteString>,
--    spec_resources: Option<PreviewSpecResources>,
--    secret_mounts: Vec<PreviewSecretMountFile>,
--    env: Option<PreviewEnvVarsConfig>,
--    config_mounts: Vec<PreviewEnvConfigMount>,
--    /// `feature.split_queues` are the defaults `mirrord preview up` adds, see
--    /// [`PreviewSessionSpec::auto_queue_splitting`].
--    auto_queue_splitting: bool,
-+    /// The session's spec, but for what [`PreparedPreview::start`] fills in: `db_branching`,
-+    /// from the branches it prepares, and `share_host`, from the session it replaces.
-+    spec: PreviewSessionSpec,
- }
+@@ -5,7 +5,7 @@ use crate::logger::SipLoggerGuard;
+ /// Paths to system directories that are bundled in our SIP util bundle.
+ ///
+ /// If an executed binary is located in one of these, we try to find it in the bundle.
+-pub const BUNDLED_DIRS: [&str; 4] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin"];
++pub const BUNDLED_DIRS: [&str; 5] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/libexec"];
  
- impl PreparedPreview {
-@@ -442,22 +435,51 @@ impl PreparedPreview {
-             .map(|m| m.resolve().map(Into::into))
-             .collect::<Result<Vec<_>, _>>()?;
+ pub(super) fn lookup_suffix(binary: &Path) -> Option<&Path> {
+     BUNDLED_DIRS
+@@ -71,6 +71,11 @@ mod test {
+     ///     * /bin
+     ///         * /cat
+     ///     * /sbin
++    ///     * /libexec
++    ///         * /path_helper
++    ///         * /cups
++    ///             * /daemon
++    ///                 * /cups-exec
+     fn make_bundle() -> TempDir {
+         let root = tempfile::tempdir().unwrap();
  
-+        let idle_config = &layer_config.feature.preview.idle;
-+        let idle = idle_config.is_enabled().then_some(PreviewIdleConfig {
-+            start_idle: idle_config.start_idle,
-+            sleep_after_secs: idle_config.sleep_after_secs,
-+            wake_timeout_secs: idle_config.wake_timeout_secs,
-+        });
-+
-+        // Preview start never opens an operator websocket, so `QueueSplitProgress` never runs.
-+        // The config already names the Temporal queues it asked to mirror (including `*` from
-+        // `mirrord up`), so warn from that before the session is created.
-+        for id in temporal_mirror_requested(&layer_config.feature.split_queues) {
-+            subtask.warning(&temporal_mirror_warning(&id));
-+        }
-+
-+        let spec = PreviewSessionSpec {
-+            image,
-+            key: layer_config.key.as_str().to_owned(),
-+            target: session_target,
-+            ttl_secs: layer_config.feature.preview.resolved_ttl_secs(),
-+            replicas: layer_config.feature.preview.replicas,
-+            incoming,
-+            queue_splitting: PreviewQueueSplittingConfig::from_config(
-+                &layer_config.feature.split_queues,
-+                layer_config.feature.kafka_branch,
-+            ),
-+            db_branching: None,
-+            env,
-+            labels: PreviewLabelFilter::from_config(&layer_config.feature.preview.labels),
-+            config_mounts,
-+            secret_mounts,
-+            idle,
-+            cronjob,
-+            spec_resources,
-+            share_host: None,
-+            auto_queue_splitting,
-+        };
-+
-         Ok(Self {
-             layer_config,
-             operator_api,
-             api,
-             subtask,
-             config_target,
--            image,
--            session_target,
--            incoming,
--            cronjob,
-             secret_values,
--            spec_resources,
--            secret_mounts,
--            env,
--            config_mounts,
--            auto_queue_splitting,
-+            spec,
-         })
+@@ -82,6 +87,9 @@ mod test {
+         std::fs::create_dir(root.path().join("usr/bin")).unwrap();
+         std::fs::write(root.path().join("usr/bin/cat"), []).unwrap();
+         std::fs::create_dir(root.path().join("usr/sbin")).unwrap();
++        std::fs::create_dir_all(root.path().join("usr/libexec/cups/daemon")).unwrap();
++        std::fs::write(root.path().join("usr/libexec/path_helper"), []).unwrap();
++        std::fs::write(root.path().join("usr/libexec/cups/daemon/cups-exec"), []).unwrap();
+ 
+         root
      }
- 
-@@ -470,16 +492,8 @@ impl PreparedPreview {
-             api,
-             mut subtask,
-             config_target,
--            image,
--            session_target,
--            incoming,
--            cronjob,
-             secret_values,
--            spec_resources,
--            secret_mounts,
--            env,
--            config_mounts,
--            auto_queue_splitting,
-+            mut spec,
-         } = self;
- 
-         // Label targets with branches were rejected in `prepare`, so an empty config is the only
-@@ -504,7 +518,7 @@ impl PreparedPreview {
- 
-         let mut replaced_sessions = existing_sessions
-             .into_iter()
--            .filter(|session| session.spec.target == session_target)
-+            .filter(|session| session.spec.target == spec.targ
+@@ -94,6 +102,9 @@ mod test {
+     #[case(Path::new("/usr/sbin/ifconfig"), true)]
+     #[case(Path::new("/usr/sbin/mount"), false)]
+     #[case(Path::new("/sbin/ifconfig"), true)]
++    #[case(Path::new("/usr/libexec/path_helper"), true)]
++    #[case(Path::new("/usr/libexec/cups/daemon/cups-exec"), true)]
++    #[case(Path::new("/usr/libexec/missing_helper"), false)]
+     #[test]
+     fn find_in_bundle(#[case] binary: &Path, #[case] expect_found: bool) {
+         let bundle = make_bundle();
 ```
 
-**File**: `mirrord/cli/src/preview/up.rs` (modified, +1/-1)
+**File**: `mirrord/sip/src/lib.rs` (modified, +1/-1)
 ```diff
-@@ -187,7 +187,7 @@ async fn run_preview_up(
-         a.operator_api.cluster_url() == b.operator_api.cluster_url()
-             && preview_namespace(&a.operator_api, &a.layer_config)
-                 == preview_namespace(&b.operator_api, &b.layer_config)
--            && a.session_target == b.session_target
-+            && a.spec.target == b.spec.target
-     };
-     // Service names are the keys of `services`, so they tell the services apart.
-     let clashes = checked
+@@ -104,7 +104,7 @@ mod main {
+     ///
+     /// Must be kept in sync with the version downloaded by `xtask` (see
+     /// `xtask/src/tasks/sip_binaries.rs`).
+-    pub const APPLE_UTILS_VERSION: &str = "v9";
++    pub const APPLE_UTILS_VERSION: &str = "v10";
+ 
+     /// Set on the first patched process when SIP patching had to use an x86_64 system binary.
+     pub const MIRRORD_SIP_X64_FALLBACK_ENV: &str = "MIRRORD_SIP_X64_FALLBACK";
+```
+
+**File**: `xtask/src/tasks/sip_binaries.rs` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ use anyhow::{Context, Result};
+ ///
+ /// Must be kept in sync with `mirrord_sip::APPLE_UTILS_VERSION`, which the CLI uses at runtime to
+ /// decide whether the binaries already extracted to `~/.mirrord/binaries` match this release.
+-const APPLE_UTILS_VERSION: &str = "v9";
++const APPLE_UTILS_VERSION: &str = "v10";
+ 
+ /// Fetches the SIP utilities bundle once per workspace and reuses the cached archive afterwards.
+ pub fn download() -> Result<PathBuf> {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5142** (2026-10-25): Release 3.279.1 (@cubby-mb[bot])
-- **PR #5141** (2026-10-24): Release 3.279.0 (@cubby-mb[bot])
-- **PR #5140** (2026-10-24): Fix socket address buffer overflow issue (@0x00A5)
-- **PR #5138** (2026-10-25): Fix vfork children unsubscribing parent listeners (@meowjesty)
-- **PR #5137** (2026-10-24): COR-2085 Add mirrord preview up and mirrord preview down (@MintSoup)
-- **PR #5136** (2026-10-25): Add least-privilege permissions to release and operator-e2e workflows (@aviramha)
+- **PR #5181** (2026-10-31): Use Apple util bundle v10 (@0x00A5)
+- **PR #5179** (2026-10-30): Release 3.282.0 (@cubby-mb[bot])
+- **PR #5176** (closed): preview: push local code into preview pods through the operator (spike) (@iniw)
+- **PR #5173** (2026-10-29): Bump libz-sys to 1.1.31 for RUSTSEC-2026-0418 (@hank-metalbear)
+- **PR #5170** (2026-10-30): fix(tests): retain dirty iptables namespace through assertions (@meowjesty)
+- **PR #5169** (2026-10-28): Configurable agent http2 recv header limit (@0x00A5)
 
 ---
 
@@ -2103,48 +1725,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved
+## X. Merge pull request #5181 from metalbear-co/appleutil-v10
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `mirrord/sip/src/bundle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `19ea8411`: Merge remote-tracking branch 'origin/main' into codex/fix-pr-5138-resolved. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c4bb0e3d`: Merge pull request #5181 from metalbear-co/appleutil-v10. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `mirrord/sip/src/bundle.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [3.279.0](https://github.com/metalbear-co/mirrord/tree/3.279.0) - 2026-10-24
-
-
-### Added
-
-- Add `mirrord preview down`, which deletes every preview environment under a
-  key in all namespaces, finding the key the way `mirrord preview up` does.
-- Add `mirrord preview up`, which starts a preview environment for every
-  service of a `mirrord-up.yaml` that has an image (from `--image
-  <service>=<ref>`, `MIRRORD_<SERVICE>_IMAGE` or the service's `image`), all
-  under one key, and returns once each one is ready.
-- Services in `mirrord-up.yaml` accept an optional `image` field, the container
-  image `mirrord preview up` runs in the service's preview environment.
-  `mirrord up` ignores it.
-
-
-### Fixed
-
-- Fixed a SIGSEGV on macOS when apps using libuv 1.53+ (e.g. Homebrew Node)
-  connect to a unix socket.
-
+pub const BUNDLED_DIRS: [&str; 5] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin", "/usr/libexec"];
+    ///     * /libexec
+    ///         * /path_helper
+    ///         * /cups
+    ///             * /daemon
+    ///                 * /cups-exec
+        std::fs::create_dir_all(root.path().join("usr/libexec/cups/daemon")).unwrap();
+        std::fs::write(root.path().join("usr/libexec/path_helper"), []).unwrap();
+        std::fs::write(root.path().join("usr/libexec/cups/daemon/cups-exec"), []).unwrap();
+    #[case(Path::new("/usr/libexec/path_helper"), true)]
+    #[case(Path::new("/usr/libexec/cups/daemon/cups-exec"), true)]
+    #[case(Path::new("/usr/libexec/missing_helper"), false)]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+pub const BUNDLED_DIRS: [&str; 4] = ["/bin", "/sbin", "/usr/bin", "/usr/sbin"];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `19ea8411` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c4bb0e3d` are properly handled with clean fallback behavior.

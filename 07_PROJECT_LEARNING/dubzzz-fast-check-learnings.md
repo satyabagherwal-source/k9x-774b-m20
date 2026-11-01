@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source**: github ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
-> **Source Version**: `0118841e`  
+> **Source Version**: `58ad0125`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T09:58:01.354Z  
+> **Timestamp**: 2026-10-30T21:42:14.031Z  
 > **Learning ID**: `learn-github-dubzzz-fast-check`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dubzzz/fast-check](https://github.com/dubzzz/fast-check))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T09:57:59.338Z  
+> **Harvest Timestamp**: 2026-10-30T21:41:08.510Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Property based testing framework for JavaScript (like QuickCheck) written in TypeScript
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 5211 stars
+- **Stars / Engagement**: 5226 stars
 
 ---
 
@@ -615,11 +615,11 @@ export function runAllCallbacksAndReturn<T>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7474** (2026-10-22): **✅ Refine scheduler cloning and replay regression tests**
-  *Symptoms*: ## Description  > AI-agent disclosure: this PR was authored by an automated agent (Codex) and has not been line-by-line reviewed by a human before submission.  Follow-up to #7431, opened after it merged.  Use `hasCloneMethod` to narrow the scheduler before cloning, remove the unnecessary `noShrink`, and pass the suite's seed to the clone-order assertion.  Replace the replay test's ten hardcoded seeds with one check using the suite seed, then replay the reported seed and path. The fixture records task execution in `ran` and succeeds only when there are fewer than six tasks and task `0` runs first (`taskCount < 6 && ran[0] === 0`). Assert that a failure was found, that replay performs one run without further shrinking, and that the serialized counterexamples match.  Impact: tests only; no release bump.  ## Validation  - Build passed. - All 83 tests in `AsyncScheduler.spec.ts`, `SchedulerArbitrary.spec.ts`, and `SchedulerImplem.spec.ts` passed on merged main with `DEFAULT_SEED=42`. - The clone-order test failed with the original scheduler bug temporarily restored at `DEFAULT_SEED=42`. The replay test passed the reverted implementation for the checked seeds `0`, `42`, and `7431`, so detection of that bug by the revised replay predicate was not confirmed in these checks. Production files were restored afterward. - Formatting and the JavaScript TypeScript 6.0.3 fallback type check passed. - Native TypeScript 7 and type-aware lint could not run because this environment lacks `/proc/
+- **Issue #7514** (2026-10-30): **👷 Preserve setup-node runtime in tests and benchmarks**
+  *Symptoms*: ## Description  > AI-agent disclosure: this PR was authored by an automated agent (Codex / GPT-6) and has not been line-by-line reviewed by a human before submission.  The test and benchmark steps launch `bash -l`, which can replace setup-node's PATH with paths from login profiles. On the newer macOS runner image, setup-node selects Node 26.13.0 but the test runs under Homebrew Node 24.22.1. Its newer Unicode data changes the documentation examples and fails the snapshot check.  Use GitHub Actions' non-login `shell: bash` for both steps. Before running the workload, check the actual Node version against setup-node's resolved output and log the executable path, ICU, and Unicode versions. The test check runs through `pnpm exec node`, matching the test launch environment; the benchmark check uses `node`, matching its launcher.  Evidence from #7512: - [Rolldown 1.2.15 on main fails on image 20261026.0455.2](https://github.com/dubzzz/fast-check/actions/runs/41113495611/job/124262657399). - [Rolldown 1.2.16 passes on image 20261013.0424.1](https://github.com/dubzzz/fast-check/actions/runs/41114081454/job/124264172124). - Replaying the original CI bundle with only Unicode-property membership changed from Unicode 17 to 18 reproduces all five failing capitalized-word examples exactly.  Validation: - Parsed the workflow and checked the shared test steps for Linux, macOS, and Windows and the benchmark step. - Checked Bash syntax; executed both runtime guards with matching, mismatched, a
 
-- **Issue #7473** (2026-10-22): **⬆️ Update pnpm to v12.15.0**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [pnpm](https://pnpm.io) ([source](https://redirect.github.com/pnpm/pnpm/tree/HEAD/pnpm/npm/pnpm)) | [`12.14.0` → `12.15.0`](https://renovatebot.com/diffs/npm/pnpm/12.14.0/12.15.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/pnpm/12.15.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/pnpm/12.14.0/12.15.0?slim=true) |  ---  ### Release Notes  <details> <summary>pnpm/pnpm (pnpm)</summary>  ### [`v12.15.0`](https://redirect.github.com/pnpm/pnpm/releases/tag/v12.15.0): pnpm 12.15  [Compare Source](https://redirect.github.com/pnpm/pnpm/compare/v12.14.0...v12.15.0)  This release lets `pnpm-workspace.yaml` delegate settings to other files and config dependencies with `include`, adds `lockfile.integrityTarget: tar` and tar-registry support, accepts zstd-compressed registry responses, and honors `SOURCE_DATE_EPOCH` in `pnpm deploy` and `pnpm install`. It also rejects registry metadata that names a different package than the one requested and speeds up workspace installs and macOS file linking.  ##### Minor Changes  - `pnpm-workspace.yaml` can now delegate settings to other YAML files and to config dependencies through a new `include` field. Each source may define only the settings the root manifest delegates to it. Every setting has one owne
+- **Issue #7513** (2026-10-30): **⬆️ Update dependency rolldown-plugin-dts to ^0.29.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [rolldown-plugin-dts](https://redirect.github.com/sxzz/rolldown-plugin-dts) | [`^0.28.8` → `^0.29.0`](https://renovatebot.com/diffs/npm/rolldown-plugin-dts/0.28.8/0.29.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown-plugin-dts/0.29.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown-plugin-dts/0.28.8/0.29.0?slim=true) |  ---  ### Release Notes  <details> <summary>sxzz/rolldown-plugin-dts (rolldown-plugin-dts)</summary>  ### [`v0.29.0`](https://redirect.github.com/sxzz/rolldown-plugin-dts/releases/tag/v0.29.0)  [Compare Source](https://redirect.github.com/sxzz/rolldown-plugin-dts/compare/v0.28.8...v0.29.0)  #### Breaking Changes  ##### `@typescript/native-preview` is no longer supported  `tsgo` now loads TypeScript Go from the `typescript` package only. Install TypeScript 7.1 or later:  ```bash npm rm @typescript/native-preview npm i -D typescript@7.1.0-beta ```  To use a TypeScript Go build that is not installed as `typescript`, point `tsgo.moduleUrl` at it:  ```ts dts({   generator: 'tsgo',   tsgo: { moduleUrl: import.meta.resolve('typescript-next') }, }) ```  ##### `tsgo.path` changed meaning on TypeScript 7.1+  On 7.1+, `tsgo.path` is the API server executable (passed as `tsserverPath`), not the `tsgo` CLI. You usu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -636,109 +636,336 @@ export function runAllCallbacksAndReturn<T>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0118841e` (2026-10-22)
-**Commit Message**: ✅ Refine scheduler cloning and replay regression tests (#7474)
+### Incident Patch 1: `58ad0125` (2026-10-30)
+**Commit Message**: 👷 Preserve setup-node runtime in tests and benchmarks (#7514)
 
 ## Description
 
-> AI-agent disclosure: this PR was authored by an automated agent
-(Codex) and has not been line-by-line reviewed by a human before
+> AI-agent disclosure: this PR was authored by an automated agent (Codex
+/ GPT-6) and has not been line-by-line reviewed by a human before
 submission.
 
-Follow-up to #7431, opened after it merged.
+The test and benchmark steps launch `bash -l`, which can replace
+setup-node's PATH with paths from login profiles. On the newer macOS
+runner image, setup-node selects Node 26.13.0 but the test runs under
+Homebrew Node 24.22.1. Its newer Unicode data changes the documentation
+examples and fails the snapshot check.
 
-Use `hasCloneMethod` to narrow the scheduler before cloning, remove the
-unnecessary `noShrink`, and pass the suite's seed to the clone-order
-assertion.
+Use GitHub Actions' non-login `shell: bash` for both steps. Before
+running the workload, check the actual Node version against setup-node's
+resolved output and log the executable path, ICU, and Unicode versions.
+The test check runs through `pnpm exec node`, matching the test launch
+environment; the benchmark check uses `node`, matching its launcher.
 
-Replace the replay test's ten hardcoded seeds with one check using the
-suite seed, then replay the reported seed and path. The fixture records
-task execution in `ran` and succeeds only when there are fewer than six
-tasks and task `0` runs first (`taskCount < 6 && ran[0] === 0`). Assert
-that a failure was found, that replay performs one run without further
-shrinking, and that the serialized counterexamples match.
+Evidence from #7512:
+- [Rolldown 1.2.15 on main fails on image
+20261026.0455.2](https://github.com/dubzzz/fast-check/actions/runs/41113495611/job/124262657399).
+- [Rolldown 1.2.16 passes on image
+20261013.0424.1](https://github.com/dubzzz/fast-check/actions/runs/41114081454/job/124264172124).
+- Rep
 
-Impact: tests only; no release bump.
-
-## Validation
-
-- Build passed.
-- All 83 tests in `AsyncScheduler.spec.ts`,
-`SchedulerArbitrary.spec.ts`, and `SchedulerImplem.spec.ts` passed on
-merged main with `DEFAULT_SEED=42`.
-- The clone-order test failed with the original scheduler bug
-temporarily restored at `DEFAULT_SEED=42`. The replay test passed the
-reverted i
-
-**File**: `packages/fast-check/test/AsyncScheduler.spec.ts` (modified, +21/-18)
+**File**: `.github/workflows/build-status.yml` (modified, +22/-2)
 ```diff
-@@ -189,36 +189,39 @@ describe(`AsyncScheduler (seed: ${seed})`, () => {
-     };
+@@ -166,6 +166,7 @@ jobs:
+       - name: Install pnpm
+         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+       - name: Using Node v${{matrix.node-version}}
++        id: setup-node
+         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+         with:
+           node-version: ${{matrix.node-version}}
+@@ -189,10 +190,19 @@ jobs:
+         # untar seems to fail on Windows when untaring already existing files
+         run: pnpm run unpack || true
+       - name: Unit tests
+-        shell: bash -l {0}
++        shell: bash
++        env:
++          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
+         # The DEFAULT_SEED might be used by some of the packages and might be ignored by others
+         # It's aim is to help to diagnose infinite loop that may occur during tests and cannot be stopped by fast-check itself
+         run: |
++          pnpm exec node -e '
++            const { execPath, version, versions } = process;
++            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
++            if (version !== process.env.EXPECTED_NODE_VERSION) {
++              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
++            }
++          '
+           export EXPECT_DEFAULT_SEED="true"
+           export DEFAULT_SEED=$(node -p "Date.now() ^ (Math.random() * 0x100000000)")
+           export FAST_CI_RUN=$("${ENABLE_COVERAGE}" = "true")
+@@ -452,6 +462,7 @@ jobs:
+       - name: Install pnpm
+         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+       - name: Using Node v26.x
++        id: setup-node
+         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+         with:
+           node-version: '26.x'
+@@ -480,10 +491,19 @@ jobs:
+         run: node --run unpack
+       - name: Benchmark
+         id: bench
+-        shell: bash -l {0}
++        shell: bash
++        env:
++          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
+         # The DEFAULT_SEED has to be specified to make vitest.setup.mjs happy.
+         # But we don't use it for benchmarks.
+         run: |
++          node -e '
++            const { execPath, version, versions } = process;
++            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
++            if (version !== process.env.EXPECTED_NODE_VERSION) {
++              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
++            }
++          '
+           set -o pipefail
+           export EXPECT_DEFAULT_SEED="true"
+           export DEFAULT_SEED="0"
+```
+
+---
+
+### Incident Patch 2: `a860d51d` (2026-10-30)
+**Commit Message**: ⬆️ Update dependency rolldown to ^1.2.16 (#7512)
+
+This PR contains the following updates:
+
+| Package | Change |
+[Age](https://docs.renovatebot.com/merge-confidence/) |
+[Confidence](https://docs.renovatebot.com/merge-confidence/) |
+|---|---|---|---|
+| [rolldown](https://rolldown.rs/)
+([source](https://redirect.github.com/rolldown/rolldown/tree/HEAD/packages/rolldown))
+| [`^1.2.15` →
+`^1.2.16`](https://renovatebot.com/diffs/npm/rolldown/1.2.15/1.2.16) |
+![age](https://developer.mend.io/api/mc/badges/age/npm/rolldown/1.2.16?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/rolldown/1.2.15/1.2.16?slim=true)
+|
+
+---
+
+### Release Notes
+
+<details>
+<summary>rolldown/rolldown (rolldown)</summary>
+
+###
+[`v1.2.16`](https://redirect.github.com/rolldown/rolldown/blob/HEAD/CHANGELOG.md#1216---2026-10-29)
+
+[Compare
+Source](https://redirect.github.com/rolldown/rolldown/compare/v1.2.15...v1.2.16)
+
+##### 🚀 Features
+
+- perf-kit: check rendered output against the original build
+([#&#8203;11140](https://redirect.github.com/rolldown/rolldown/issues/11140))
+by [@&#8203;IWANABETHATGUY](https://redirect.github.com/IWANABETHATGUY)
+- perf-kit: node/deno server startup mode
+([#
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@
+     "oxlint-tsgolint": "^7.0.2005",
+     "pkg-pr-new": "^0.0.92",
+     "publint": "^0.3.25",
+-    "rolldown": "^1.2.15",
++    "rolldown": "^1.2.16",
+     "rolldown-plugin-dts": "^0.29.0",
+     "typescript": "~7.0.2",
+     "vitest": "^5.0.5"
+```
+
+**File**: `packages/ava/package.json` (modified, +1/-1)
+```diff
+@@ -42,7 +42,7 @@
+     "ava": "^8.2.0",
+     "esm": "^3.2.25",
+     "fast-check": "workspace:*",
+-    "rolldown": "^1.2.15",
++    "rolldown": "^1.2.16",
+     "rxjs": "^7.8.2",
+     "typescript": "~7.0.2",
+     "vitest": "^5.0.5"
+```
+
+**File**: `packages/packaged/package.json` (modified, +1/-1)
+```diff
+@@ -39,7 +39,7 @@
+   "devDependencies": {
+     "@types/npm-packlist": "^7.0.3",
+     "@types/npmcli__arborist": "^6.3.3",
+-    "rolldown": "^1.2.15",
++    "rolldown": "^1.2.16",
+     "typescript": "~7.0.2",
+     "vitest": "^5.0.5"
+   },
+```
+
+**File**: `packages/poisoning/package.json` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@
+   "devDependencies": {
+     "@fast-check/poisoning": "workspace:*",
+     "@types/node": "^26.6.6",
+-    "rolldown": "^1.2.15",
++    "rolldown": "^1.2.16",
+     "typescript": "~7.0.2",
+     "vitest": "^5.0.5"
+   },
+```
+
+**File**: `packages/vitest/package.json` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@
+     "@fast-check/vitest": "workspace:*",
+     "@types/node": "^26.6.6",
+     "fast-check": "workspace:*",
+-    "rolldown": "^1.2.15",
++    "rolldown": "^1.2.16",
+     "typescript": "~7.0.2",
+     "vite": "^8.3.5",
+     "vitest": "^5.0.5"
+```
+
+**File**: `pnpm-lock.yaml` (modified, +81/-81)
+```diff
+@@ -238,11 +238,11 @@ importers:
+         specifier: ^0.3.25
+         version: 0.3.25
+       rolldown:
+-        specifier: ^1.2.15
+-        version: 1.2.15
++        specifier: ^1.2.16
++        version: 1.2.16
+       rolldown-plugin-dts:
+         specifier: ^0.29.0
+-        version: 0.29.0(rolldown@1.2.15)(typescript@7.0.2)
++        version: 0.29.0(rolldown@1.2.16)(typescript@7.0.2)
+       typescript:
+         specifier: ~7.0.2
+         version: 7.0.2
+@@ -314,8 +314,8 @@ importers:
+         specifier: ^3.2.25
+         version: 3.2.25
+       rolldown:
+-        specifier: ^1.2.15
+-        version: 1.2.15
++        specifier: ^1.2.16
++        version: 1.2.16
+       rxjs:
+         specifier: ^7.8.2
+         version: 7.8.2
+@@ -416,8 +416,8 @@ importers:
+         specifier: ^6.3.3
+         version: 6.3.3
+       rolldown:
+-        specifier: ^1.2.15
+-        version: 1.2.15
++        specifier: ^1.2.16
++        version: 1.2.16
+       typescript:
+         specifier: ~7.0.2
+         version: 7.0.2
+@@ -434,8 +434,8 @@ importers:
+         specifier: ^26.6.6
+         version: 26.6.6
+       rolldown:
+-        specifier: ^1.2.15
+-        version: 1.2.15
++        specifier: ^1.2.16
++        version: 1.2.16
+       typescript:
+         specifier: ~7.0.2
+         version: 7.0.2
+@@ -456,8 +456,8 @@ importers:
+         specifier: ^26.6.6
+         version: 26.6.6
+       rolldown:
+-        specifier: ^1.2.15
+-        version: 1.2.15
++        specifier: ^1.2.16
++        version: 1.2.16
+       typescript:
+         specifier: ~7.0.2
+         version: 7.0.2
+@@ -2696,8 +2696,8 @@ packages:
+     resolution: {integrity: sha512-leBRl6F5F0TvWut8m1/aZcMTUHi2vXjKeMJ/Ik1lW7Q7Yy16Dhtkklu+cEqQww1p1NeLnUNzV3+uwpzqRcy9vw==}
+     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
  
-     await fc.assert(
--      fc.property(fc.noShrink(fc.scheduler()), async (scheduler) => {
--        const firstClone = await orderOf((scheduler as any)[fc.cloneMethod]());
--        const secondClone = await orderOf((scheduler as any)[fc.cloneMethod]());
-+      fc.property(fc.scheduler(), async (scheduler) => {
-+        if (!fc.hasCloneMethod(scheduler)) {
-+          throw new Error('Scheduler should be cloneable');
-+        }
-+        const firstClone = await orderOf(scheduler[fc.cloneMethod]());
-+        const secondClone = await orderOf(scheduler[fc.cloneMethod]());
-         expect(secondClone).toBe(firstClone);
-       }),
-+      { seed },
-     );
-   });
+-  '@oxc-project/types@0.155.0':
+-    resolution: {integrity: sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==}
++  '@oxc-project/types@0.156.0':
++    resolution: {integrity: sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==}
  
-   it('should replay the reported counterexample from its seed and path', async () => {
--    const lastTaskRunsFirst = fc.property(fc.scheduler(), fc.integer({ min: 2, max: 12 }), async (s, taskCount) => {
-+    const firstTaskRunsFirst = fc.property(fc.scheduler(), fc.integer({ min: 2, max: 12 }), async (s, taskCount) => {
-       const ran: number[] = [];
-       for (let task = 0; task < taskCount; task++) {
-         s.schedule(Promise.resolve(task)).then((t) => ran.push(t));
-       }
-       await s.waitAll();
--      if (taskCount >= 6 && ran[0] === taskCount - 1) {
--        throw new Error('last task ran first');
--      }
-+      return taskCount < 6 && ran[0] === 0;
-     });
+   '@oxfmt/binding-android-arm-eabi@0.75.0':
+     resolution: {integrity: sha512-zHJ7LcTN46/5mtoLxsUu14pdF9ixFwDURtmxZ0CeNwqom5qB5NRVqU6o2GRZ7QPdNBW8G6j9UTJzQ+EDevMH0w==}
+@@ -3133,98 +3133,98 @@ packages:
+     resolution: {integrity: sha512-4EDEmvxWtgsCnnVeBvtFIFZtUhPPt1+bA9JrSwU4Sa//6oKtzCSlGGXYJr44OD9aGISymbieJ4mCKHUygUDU+g==}
+     engines: {node: '>=18'}
  
--    for (let runSeed = 1; runSeed <= 10; runSeed++) {
--      const report = await fc.check(lastTaskRunsFirst, { seed: runSeed, numRuns: 200 });
--      if (!report.failed) continue;
--      const replay = await fc.check(lastTaskRunsFirst, {
--        seed: runSeed,
--        path: report.counterexamplePath!,
--        endOnFailure: true,
--      });
--      expect(replay.failed).toBe(true);
--      expect(fc.stringify(replay.counterexample)).toBe(fc.stringify(report.counterexample));
--    }
-+    const report = await fc.check(firstTaskRunsFirst, { seed });
-+    expect(report.failed).toBe(true);
-+
-+    const replay = await fc.check(firstTaskRunsFirst, {
-+      seed: report.seed,
-+      path: report.counterexamplePath!,
-+      endOnFailure: true,
-+    });
-+    expect(replay.failed).toBe(true);
-+    expect(replay.numRuns).toBe(1);
-+    expect(replay.numShrinks).toBe(0);
-+    expect(fc.stringify(replay.counterexample)).toBe(fc.stringify(report.counterexample));
-   });
- });
+-  '@rolldown/binding-android-arm-eabi@1.2.15':
+-    resolution: {integrity: sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==}
++  '@rolldown/binding-android-arm-eabi@1.2.16':
++    resolution: {integrity: sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm]
+     os: [android]
+ 
+-  '@rolldown/binding-android-arm64@1.2.15':
+-    resolution: {integrity: sha512-xD7DdZCrbThKuxNg7ooQmvp07ys4J/pnSEMTG3/OdOWl6daC67m/Q4fL78sRHMxTH/N4fGUbYhcPM0MF5WFHkg==}
++  '@rolldown/binding-android-arm64@1.2.16':
++    resolution: {integrity: sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [android]
+ 
+-  '@rolldown/binding-darwin-arm64@1.2.15':
+-    resolution: {integrity: sha512-m2WuQ6r0B4OTYxyPpNLtXaMRbRDUbG8YQV2Q3KTdSSK8Th6KHCnC8jVCJt8bvYeSB5WivkkNbc85mKadaSdOxA==}
++  '@rolldown/binding-darwin-arm64@1.2.16':
++    resolution: {integrity: sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2yCjygCFo2f83msQ==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@rolldown/binding-darwin-x64@1.2.15':
+-    resolution: {integrity: sha512-5RtnsHM36nodM9WbMy+zip0LGS/G+y5wro5RHrpOlr4ac24+1zSi9kiV2MP1myZeZ/ifEHfulQcWjnAXzc2C2A==}
++  '@rolldown/binding-darwin-x64@1.2.16':
++    resolution: {integrity: sha512-FdF+y48ND13eAyM2mQn+85kvAqNlvRWROy2rhgA463X/0Gv4vGtazZtfaF1mRBLscYvtOlh4QnLjOWiFzX69OQ==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@rolldown/binding-freebsd-x64@1.2.15':
+-    resolution: {integrity: sha512-g3l09pyFqhu+135JKkbkwiKGQmwU5hUMUPJ4VdBADvuqR8d33L6H578rh8m7rtxbdp+VmX/+nzI7nvhSZlzpUQ==}
++  '@rolldown/binding-freebsd-x64@1.2.16':
++    resolution: {integrity: sha512-ddjqFM5e95AgLbUPtKIS7V1KTVlA0RUgCVr5mn+/IEhsdy3pr+Vuj/HZ7nlMN2FyxIwUktOH1LEPIQXO1v9y1Q==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [x64]
+     os: [freebsd]
+ 
+-  '@rolldown/binding-linux-arm-gnueabihf@1.2.15':
+-    resolution: {integrity: sha512-nIe3VugI97nGQtspPxDqA4sXMUpeiocKIP/CqpY/u/vgbT+alX+cVxu1C/oVBPKg4feNTmYovE91v4DgXvXNwQ==}
++  '@rolldown/binding-linux-arm-gnueabihf@1.2.16':
++    resolution: {integrity: sha512-tHdKWbFkFBI687iim3LIyIvyL7j66VvQYkDPss5Stn/qyE2tWkR1YD0dXmXPFKKqT/o5ZEJVsaRsWS2meQwGOA==}
+     engines: {node: ^20.19.0 || >=22.12.0}
+     cpu: [arm]
+     os: [linux]
+ 
+-  '
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7474** (2026-10-22): ✅ Refine scheduler cloning and replay regression tests (@dubzzz)
-- **PR #7473** (2026-10-22): ⬆️ Update pnpm to v12.15.0 (@renovate[bot])
-- **PR #7472** (2026-10-22): ⬆️ Update dependency vite to ^8.3.5 (@renovate[bot])
-- **PR #7471** (2026-10-22): ⬆️ Update dependency rolldown to ^1.2.15 (@renovate[bot])
-- **PR #7469** (2026-10-22): 👥 Add zek as test contributor (@github-actions[bot])
-- **PR #7468** (2026-10-22): ⬆️ Update dependency @atproto/api to ^0.29.1 (@renovate[bot])
+- **PR #7514** (2026-10-30): 👷 Preserve setup-node runtime in tests and benchmarks (@dubzzz)
+- **PR #7513** (2026-10-30): ⬆️ Update dependency rolldown-plugin-dts to ^0.29.0 (@renovate[bot])
+- **PR #7512** (2026-10-30): ⬆️ Update dependency rolldown to ^1.2.16 (@renovate[bot])
+- **PR #7511** (2026-10-29): ⬆️ Lock file maintenance (@renovate[bot])
+- **PR #7510** (2026-10-29): 👷 Automerge routine development dependency and lockfile updates (@dubzzz)
+- **PR #7509** (2026-10-29): 👷 Typecheck the Bluesky release script in CI (@dubzzz)
 
 ---
 
@@ -758,65 +985,50 @@ reverted i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ✅ Refine scheduler cloning and replay regression tests (#7474)
+## X. 👷 Preserve setup-node runtime in tests and benchmarks (#7514)
 
 **RULE**:
-When implementing operations in `packages/fast-check/test/AsyncScheduler.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-status.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dubzzz/fast-check. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0118841e`: ✅ Refine scheduler cloning and replay regression tests (#7474). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `58ad0125`: 👷 Preserve setup-node runtime in tests and benchmarks (#7514). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/fast-check/test/AsyncScheduler.spec.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-status.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      fc.property(fc.scheduler(), async (scheduler) => {
-        if (!fc.hasCloneMethod(scheduler)) {
-          throw new Error('Scheduler should be cloneable');
-        }
-        const firstClone = await orderOf(scheduler[fc.cloneMethod]());
-        const secondClone = await orderOf(scheduler[fc.cloneMethod]());
-      { seed },
-    const firstTaskRunsFirst = fc.property(fc.scheduler(), fc.integer({ min: 2, max: 12 }), async (s, taskCount) => {
-      return taskCount < 6 && ran[0] === 0;
-    const report = await fc.check(firstTaskRunsFirst, { seed });
-    expect(report.failed).toBe(true);
-
-    const replay = await fc.check(firstTaskRunsFirst, {
-      seed: report.seed,
-      path: report.counterexamplePath!,
-      endOnFailure: true,
-    });
-    expect(replay.failed).toBe(true);
-    expect(replay.numRuns).toBe(1);
-    expect(replay.numShrinks).toBe(0);
-    expect(fc.stringify(replay.counterexample)).toBe(fc.stringify(report.counterexample));
+        id: setup-node
+        shell: bash
+        env:
+          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
+          pnpm exec node -e '
+            const { execPath, version, versions } = process;
+            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
+            if (version !== process.env.EXPECTED_NODE_VERSION) {
+              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
+            }
+          '
+        id: setup-node
+        shell: bash
+        env:
+          EXPECTED_NODE_VERSION: ${{ steps.setup-node.outputs.node-version }}
+          node -e '
+            const { execPath, version, versions } = process;
+            console.log({ execPath, version, icu: versions.icu, unicode: versions.unicode });
+            if (version !== process.env.EXPECTED_NODE_VERSION) {
+              throw new Error(`Expected Node ${process.env.EXPECTED_NODE_VERSION} from setup-node, got ${version}`);
+            }
+          '
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-      fc.property(fc.noShrink(fc.scheduler()), async (scheduler) => {
-        const firstClone = await orderOf((scheduler as any)[fc.cloneMethod]());
-        const secondClone = await orderOf((scheduler as any)[fc.cloneMethod]());
-    const lastTaskRunsFirst = fc.property(fc.scheduler(), fc.integer({ min: 2, max: 12 }), async (s, taskCount) => {
-      if (taskCount >= 6 && ran[0] === taskCount - 1) {
-        throw new Error('last task ran first');
-      }
-    for (let runSeed = 1; runSeed <= 10; runSeed++) {
-      const report = await fc.check(lastTaskRunsFirst, { seed: runSeed, numRuns: 200 });
-      if (!report.failed) continue;
-      const replay = await fc.check(lastTaskRunsFirst, {
-        seed: runSeed,
-        path: report.counterexamplePath!,
-        endOnFailure: true,
-      });
-      expect(replay.failed).toBe(true);
-      expect(fc.stringify(replay.counterexample)).toBe(fc.stringify(report.counterexample));
-    }
+        shell: bash -l {0}
+        shell: bash -l {0}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0118841e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `58ad0125` are properly handled with clean fallback behavior.

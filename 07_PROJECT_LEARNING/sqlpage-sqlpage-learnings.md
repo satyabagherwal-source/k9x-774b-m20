@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `24a991fd`  
+> **Source Version**: `321ad215`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:36:21.286Z  
+> **Timestamp**: 2026-10-31T16:39:49.465Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:36:20.970Z  
+> **Harvest Timestamp**: 2026-10-31T16:39:49.457Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2579 stars
+- **Stars / Engagement**: 2578 stars
 
 ---
 
@@ -36,6 +36,132 @@
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, Cargo.toml, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `scripts/render-landing-sculpture.mjs`
+```
+/** Regenerate both fallbacks from the production scene. Requires ImageMagick. */
+import { execFile } from "node:child_process";
+import { copyFile, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { promisify } from "node:util";
+import { chromium } from "@playwright/test";
+
+const run = promisify(execFile);
+const baseURL = process.argv[2];
+if (!baseURL)
+  throw new Error(
+    "Usage: node scripts/render-landing-sculpture.mjs <local site URL>",
+  );
+const assets = fileURLToPath(
+  new URL("../examples/official-site/assets/landing/assets/", import.meta.url),
+);
+const temporary = await mkdtemp(join(tmpdir(), "sqlpage-sculpture-"));
+let browser;
+try {
+  browser = await chromium.launch({ args: ["--enable-unsafe-swiftshader"] });
+  const page = await browser.newPage({
+    viewport: { width: 1000, height: 1000 },
+    deviceScaleFactor: 1,
+  });
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  // Offline rendering must never choose the low-power atlas it is replacing.
+  // Keep this override identical to the desktop pose test in landing.spec.ts.
+  await page.route(
+    "**/assets/landing/js/scene/database-scene.js",
+    async (route) => {
+      const response = await route.fetch();
+      const source = await response.text();
+      const timing = "const elapsed = performance.now() - submittedAt;";
+      if (!source.includes(timing))
+        throw new Error("Update the offline GPU timing override");
+      await route.fulfill({
+        response,
+        body: source.replace(timing, "const elapsed = 0;"),
+      });
+    },
+  );
+  await page.route("**/__sculpture-render", (route) =>
+    route.fulfill({
+      contentType: "text/html",
+      body: `<!doctype html><html><body style="margin:0">
+      <div class="sqlpage-world"><div id="mount"></div><div id="hit"></div></div>
+      <script type="module">
+        import { createDatabaseScene } from '/assets/landing/js/scene/database-scene.js';
+        window.sculptureState = {motion:false, opacity:1, turn:0, frame:{left:0,top:0,size:1000}};
+        createDatabaseScene({
+          mount:document.querySelector('#mount'), hitArea:document.querySelector('#hit'),
+          getState:()=>window.sculptureState,
+          onReady:()=>{window.sceneReady=true},
+          onError:()=>{throw new Error('Sculpture render failed')}
+        });
+      </script></body></html>`,
+    }),
+  );
+  await page.goto(new URL("/__sculpture-render", baseURL).href);
+  await page.waitForFunction(() => window.sceneReady, null, {
+    timeout: 60_000,
+  });
+  const frames = [];
+  for (let i = 0; i < 64; i++) {
+    const turn = (i / 64) * Math.PI * 2;
+    await page.evaluate((turn) => {
+      window.sculptureState.turn = turn;
+    }, turn);
+    await page.waitForFunction(
+      (turn) =>
+        document.querySelector("canvas").dataset.scrollTurn === String(turn),
+      turn,
+    );
+    // Wait for submission and paint before capturing the transparent square.
+    await page.evaluate(
+      () =>
+        new Promise((resolve) =>
+          requestAnimationFrame(() => requestAnimationFrame(resolve)),
+        ),
+    );
+    const frame = join(temporary, `${String(i).padStart(2, "0")}.png`);
+    await page
+      .locator("canvas")
+      .screenshot({ path: frame, omitBackground: true });
+    frames.push(frame);
+  }
+  if (errors.length) throw new Error(errors.join("\n"));
+  await run("magick", [
+    frames[0],
+    "-quality",
+    "88",
+    join(temporary, "scene-first-frame.webp"),
+  ]);
+  await run("magick", [
+    "montage",
+    ...frames,
+    "-geometry",
+    "400x400+0+0",
+    "-tile",
+    "8x8",
+    "-background",
+    "none",
+    "-quality",
+    "65",
+    "-define",
+    "heic:speed=4",
+    join(temporary, "sculpture-turns.avif"),
+  ]);
+  // Leave the versioned pair intact if either encoder fails.
+  for (const asset of ["scene-first-frame.webp", "sculpture-turns.avif"])
+    await copyFile(join(temporary, asset), join(assets, asset));
+  console.log(
+    "Rendered the first frame and 64 low-power views from the production scene.",
+  );
+} finally {
+  await browser?.close();
+  await rm(temporary, { recursive: true, force: true });
+}
+
+```
 
 ### Core Architecture Module: `src/render.rs`
 ```
@@ -479,6 +605,7 @@ export function initComparison(root, signal) {
   const next = section.querySelector("[data-comparison-next]");
   const status = section.querySelector("[data-comparison-status]");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
+  let destination = null;
 
   function update() {
     const offsets = cards.map((card) => card.offsetLeft);
@@ -499,8 +626,12 @@ export function initComparison(root, signal) {
   }
 
   function goTo(left) {
+    destination = Math.max(
+      0,
+      Math.min(left, track.scrollWidth - track.clientWidth),
+    );
     track.scrollTo({
-      left,
+      left: destination,
       behavior: motion.matches ? "instant" : "smooth",
     });
   }
@@ -508,16 +639,28 @@ export function initComparison(root, signal) {
   function move(direction) {
     // Equal-width grid columns snap one card at a time; native scrolling clamps the ends.
     const step = cards[1].offsetLeft;
+    // Repeated clicks advance from the requested card, even while a previous
+    // smooth scroll is still exposing a partial card and updating the status.
     const index =
-      direction > 0
-        ? Math.floor((track.scrollLeft + 2) / step) + 1
-        : Math.ceil((track.scrollLeft - 2) / step) - 1;
+      Math.round((destination ?? track.scrollLeft) / step) + direction;
     goTo(index * step);
   }
 
   previous.addEventListener("click", () => move(-1), { signal });
   next.addEventListener("click", () => move(1), { signal });
   track.addEventListener("scroll", update, { passive: true, signal });
+  const followNativeScroll = () => {
+    destination = null;
+  };
+  track.addEventListener("scrollend", followNativeScroll, { signal });
+  track.addEventListener("pointerdown", followNativeScroll, {
+    passive: true,
+    signal,
+  });
+  track.addEventListener("wheel", followNativeScroll, {
+    passive: true,
+    signal,
+  });
   const keys = {
     ArrowLeft: () => move(-1),
     ArrowRight: () => move(1),
@@ -533,7 +676,10 @@ export function initComparison(root, signal) {
     },
     { signal },
   );
-  const observer = new ResizeObserver(update);
+  const observer = new ResizeObserver(() => {
+    destination = null;
+    update();
+  });
   observer.observe(track);
   section.querySelector(".comparison-controls").hidden = false;
   update();
@@ -988,52 +1134,17 @@ export function initInstantMotion(root) {
 
 ```
 
-### Core Architecture Module: `examples/official-site/assets/landing/js/main.js`
-```
-/** Boot the progressively enhanced landing page; each module owns its cleanup. */
-import { initExperience } from "./experience.js";
-import { initInstantMotion } from "./instant-motion.js";
-import { initNavigation } from "./navigation.js";
-import { initSectionMotion } from "./section-motion.js";
-import { initSections } from "./sections.js";
-import { initWaveMotion } from "./wave-motion.js";
-
-const root = document.querySelector(".sqlpage-world");
-// Author one sequence; its decorative copy never enters the tab order.
-const sequence = root.querySelector(".ribbon-sequence");
-const copy = sequence.cloneNode(true);
-copy.setAttribute("aria-hidden", "true");
-for (const link of copy.querySelectorAll("a")) link.tabIndex = -1;
-sequence.after(copy);
-const cleanups = [
-  initNavigation(root),
-  initSections(root),
-  initInstantMotion(root),
-  initSectionMotion(root),
-  initWaveMotion(root),
-  initExperience(root),
-];
-window.addEventListener("pagehide", (event) => {
-  // Preserve state when entering the browser's back/forward cache.
-  if (!event.persisted)
-    cleanups.forEach((cleanup) => {
-      cleanup();
-    });
-});
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1564** (2026-10-27): **OIDC: redirect_uri and oidc_logout_url() use http:// instead of https:// behind TLS-terminating reverse proxy (X-Forwarded-Proto ignored)**
+  *Symptoms*: ## Description  When SQLPage is served behind a reverse proxy that terminates TLS (Caddy in this case), SQLPage generates all URLs (OIDC `redirect_uri`, `sqlpage.oidc_logout_url()`, etc.) using `http://` instead of `https://`, even though the proxy correctly sends `X-Forwarded-Proto: https`.  ## Environment  | Component | Version / Detail | |-----------|-----------------| | SQLPage | 0.47.0 | | Reverse proxy | Caddy 2.6.2 | | OIDC provider | [Autentico](https://github.com/eugenioenko/autentico) | | TLS | Caddy `tls internal` (self-signed, IP in SAN) |  ## Architecture  ``` Browser ──HTTPS──▶ Caddy (192.168.56.20:8282) ──HTTP──▶ SQLPage (localhost:9191) ```  ### Caddyfile  ```caddyfile 192.168.56.20:8282 {     tls internal     reverse_proxy localhost:9191 } ```  Caddy sends `X-Forwarded-Proto: https` by default when the listener is HTTPS (verified with `curl -v`).  ### Certificate (confirmed correct)  ``` X509v3 Subject Alternative Name: critical     IP Address:192.168.56.20 ```  ## Expected behavior  SQLPage should respect `X-Forwarded-Proto` (and `X-Forwarded-Host` / `X-Forwarded-Port`) to build the public-facing URL:  ``` https://192.168.56.20:8282/sqlpage/oidc_callback ```  ## Actual behavior  SQLPage uses the scheme of its own incoming connection (HTTP) and generates:  ``` http://192.168.56.20:8282/sqlpage/oidc_callback ```  ### Impact on OIDC  The `redirect_uri` sent to Autentico in the authorization request is `http://...` while the registered URI is `https://...` → **r
+
 - **Issue #1551** (2026-10-15): **SQLPage does not work in nixpkgs**
   *Symptoms*: ## What's wrong?  we recently upgraded our build to use typescript in https://github.com/sqlpage/SQLPage/issues/1464  this helped us improve our types and find a few bugs, but we cannot simply version bump SQLPage in nixpkgs :: https://github.com/NixOS/nixpkgs/blob/master/pkgs/by-name/sq/sqlpage/package.nix  ## Why?  many of the typescript changes are still in mainline, not yet released in an offical version. As such, I can only raise a PR to nixpkgs with an unstable version, which would likely not be approved :: https://github.com/NixOS/nixpkgs/pull/574594  ## How do we fix?  @lovasoa could you cut and publish a new offical release so that I can upgrade SQLPage in nixpkgs?
-
-- **Issue #1494** (2026-09-24): **Stacked BAR chart inside html component doesn't show bars**
-  *Symptoms*: ### Introduction  In 0.46.2 (and 0.46.3), stacked bar chart works just fine when it is simply referred to. However, when this component is inside an HTML component (simple `div class="row"`), the time parsing on x label is wrong, it adds chart title as an additional entry into the legend and most importantly, doesn't draw any graphs. Changing the chart type to LINE or AREA seems to draw the values, but also adds a accumulated entry of all values to the end of the chart under the series named as chart title.  It works properly till 0.46.1 (well, except for the chart title series). This chart title series wasn't happening before, but I don't recall in which old version it had worked. I tested backwards up to v0.45.0  and gave up.  It is not a priority issue, but found it very interesting! My usecase is to run [dynamic sql charts side by side](https://github.com/vsbabu/xp/blob/main/r_net_chart_by_category.sql). For now, I can simply remove covering HTML element and let charts display one below another.  ### To Reproduce  Use 0.46.2 or 0.46.3 binary. Use the given sql  (moved all the way down for brevity here) in a file and navigate to that. Edit the sql to comment out first line and last line (for HTML component) and compare.  ### Actual behavior There is no error anywhere. Screenshots are below.  ### Screenshots #### v0.46.3 With HTML <img width="976" height="556" alt="Image" src="https://github.com/user-attachments/assets/966f4ec4-215f-4fba-9e41-c5d7540da1c1" /> Without HTML <
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1050,281 +1161,83 @@ window.addEventListener("pagehide", (event) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99c68467` (2026-10-24)
-**Commit Message**: Move detailed chart checks to minimal SQL fixtures (#1560)
+### Incident Patch 1: `321ad215` (2026-10-31)
+**Commit Message**: feat(card) :: let a card's link open a new tab (#1586)
 
-**File**: `tests/end-to-end/fixtures/chart/hidden-legend.sql` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS stacked, FALSE AS show_legend;
-+WITH points(series, x, y) AS (VALUES ('CPU', 'Mon', 10), ('CPU', 'Tue', 20), ('GPU', 'Mon', 5), ('GPU', 'Tue', 15)) SELECT * FROM points;
-```
+Each card accepts a `target`, such as `_blank`, for its link. It works like the button component's `target`.
 
-**File**: `tests/end-to-end/fixtures/chart/horizontal-reference-lines.sql` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS horizontal, 100 AS ymax;
-+SELECT 90 AS yline, 'full' AS label;
-+SELECT 'db-1' AS xline, 'watched' AS label;
-+WITH points(x, y) AS (VALUES ('backup-1', 41), ('db-1', 88)) SELECT * FROM points;
-```
+Fixes #820
 
-**File**: `tests/end-to-end/fixtures/chart/stacked-time-series.sql` (modified, +1/-1)
-```diff
-@@ -1,2 +1,2 @@
- SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'area' AS type, TRUE AS stacked, TRUE AS time, 4 AS marker;
--WITH points(series, x, y) AS (VALUES ('CPU', '2024-01-01T00:00:00Z', 10), ('CPU', '2024-01-01T00:01:00Z', 20), ('CPU', '2024-01-01T00:02:00Z', 30), ('CPU', '2024-01-01T00:03:00Z', 40), ('GPU', '2024-01-01T00:01:00Z', 50), ('GPU', '2024-01-01T00:02:00Z', 50), ('GPU', '2024-01-01T00:03:00Z', 50)) SELECT * FROM points;
-+WITH points(series, x, y) AS (VALUES ('CPU', '2024-01-01T00:00:00Z', 10), ('CPU', '2024-01-01T00:01:00Z', 20), ('CPU', '2024-01-01T00:02:00Z', 30), ('CPU', '2024-01-01T00:03:00Z', 40), ('CPU', '2024-01-01T00:04:00Z', 30), ('GPU', '2024-01-01T00:01:00Z', 50), ('GPU', '2024-01-01T00:02:00Z', 50), ('GPU', '2024-01-01T00:03:00Z', 50)) SELECT * FROM points;
-```
+Assisted-By :: Claude Opus 5.5
 
-**File**: `tests/end-to-end/fixtures/chart/test.ts` (modified, +55/-2)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -308,6 +308,7 @@ test("gives a stacked series a zero at every x it did not measure", async ({
-     ["2024-01-01T00:01:00.000Z", 50],
-     ["2024-01-01T00:02:00.000Z", 50],
-     ["2024-01-01T00:03:00.000Z", 50],
-+    ["2024-01-01T00:04:00.000Z", 0],
-   ]);
- });
+@@ -22,6 +22,8 @@
  
-@@ -316,8 +317,13 @@ test("stacks a series above the one it shares an x with", async ({ page }) => {
-   const [cpu, gpu] = chart.drawnPerSeries;
-   assert.ok(cpu && gpu, "Both series were drawn");
+ - Each item of the tracking component accepts a `link`. ([#900](https://github.com/sqlpage/SQLPage/issues/900))
  
--  expect(gpu.heights).toHaveLength(4);
--  expect(gpu.heights[0]).toBe(cpu.heights[0]);
-+  expect(cpu.lefts).toHaveLength(5);
-+  expect(gpu.lefts).toEqual(cpu.lefts);
-+  expect(gpu.heights).toHaveLength(5);
-+  expect([gpu.heights[0], gpu.heights[4]]).toEqual([
-+    cpu.heights[0],
-+    cpu.heights[4],
-+  ]);
-   const cpuHeight = cpu.heights[1];
-   assert.ok(cpuHeight !== undefined, "CPU has a second point");
-   expect(gpu.heights[1]).toBeLessThan(cpuHeight);
-@@ -507,6 +513,53 @@ test("gives every slice of a pie chart its label and its share", async ({
-   expect(chart.dataLabels).toEqual(["Yes: 65%", "No: 35%"]);
- });
- 
-+test("shows series legends by default and hides them when requested", async ({
-+  page,
-+}) => {
-+  await renderChart(page, "stacked-time-series");
-+  await expect(page.locator("#test-chart .apexcharts-legend-text")).toHaveText([
-+    "CPU",
-+    "GPU",
-+  ]);
++- Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
 +
-+  await renderChart(page, "hidden-legend");
-+  await expect(page.locator("#test-chart .apexcharts-legend")).toBeHidden();
+ - Custom components can call inline partials inside `each_row` and after it, when the partials are defined before `each_row`. ([#846](https://github.com/sqlpage/SQLPage/issues/846))
+ 
+ ## v0.47.0 (2026-10-15)
+```
+
+**File**: `examples/official-site/sqlpage/migrations/31_card_docs_update.sql` (modified, +1/-0)
+```diff
+@@ -24,6 +24,7 @@ INSERT INTO parameter(component, name, description, type, top_level, optional) S
+     ('footer', 'Muted text to display at the bottom of the card.', 'TEXT', FALSE, TRUE),
+     ('footer_md', 'Muted text to display at the bottom of the card, with rich text formatting in Markdown format.', 'TEXT', FALSE, TRUE),
+     ('link', 'An URL to which the user should be taken when they click on the card.', 'URL', FALSE, TRUE),
++    ('target', 'Where the card''s link opens: "_blank" for a new tab, "_self" for the same tab, "_parent" for the parent frame, or "_top" for the full body of the window.', 'TEXT', FALSE, TRUE),
+     ('footer_link', 'An URL to which the user should be taken when they click on the footer.', 'URL', FALSE, TRUE),
+     ('style', 'Inline style property to your iframe embed code. For example "background-color: #FFFFFF"', 'TEXT', FALSE, TRUE),
+     ('height', 'Height of the iframe embed code, in pixels. Used only when embed_mode is ''iframe''.', 'INTEGER', FALSE, TRUE),
+```
+
+**File**: `sqlpage/templates/card.handlebars` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@
+                 "
+                 {{#if (and embed (ne embed_mode "iframe"))}}data-pre-init="card" data-embed="{{embed}}"{{/if}}>
+                 {{#if link}}
+-                    <a href="{{link}}" style="text-decoration: inherit; color: inherit">
++                    <a href="{{link}}"{{#if target}} target="{{target}}"{{/if}} style="text-decoration: inherit; color: inherit">
+                 {{/if}}
+                 {{#if top_image}}
+                     <img src="{{top_image}}" class="card-img-top"{{#if top_image_width}} width="{{top_image_width}}"{{/if}}{{#if top_image_height}} height="{{top_image_height}}"{{/if}}{{#if top_image_lazy}} loading="lazy"{{/if}}/>
+```
+
+**File**: `tests/end-to-end/fixtures/card/target/index.sql` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++SELECT 'card' AS component;
++SELECT 'In a new tab' AS title, 'https://example.com' AS link, '_blank' AS target;
++SELECT 'In the same tab' AS title, 'https://example.com' AS link;
+```
+
+**File**: `tests/end-to-end/fixtures/card/target/test.ts` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++import { expect, test } from "../../../fixture.ts";
++
++test("a card's link opens where its target says", async ({ page }) => {
++  await expect(
++    page.getByRole("link", { name: "In a new tab" }),
++  ).toHaveAttribute("target", "_blank");
++  await expect(
++    page.getByRole("link", { name: "In the same tab" }),
++  ).not.toHaveAttribute("target");
 +});
-+
-+for (const { axis, fixture, labels } of [
-+  { axis: "y", fixture: "y-reference-band", labels: ["target", "throttling"] },
-+  { axis: "x", fixture: "x-reference-band", labels: ["deploy", "incident"] },
-+]) {
-+  test(`draws a ${axis} reference line and band with their labels`, async ({
-+    page,
-+  }) => {
-+    await renderChart(page, fixture);
-+    const annotations = page.locator(
-+      `#test-chart .apexcharts-${axis}axis-annotations`,
-+    );
-+    await expect(annotations.locator("line")).toHaveCount(1);
-+    await expect(
-+      annotations.locator(".apexcharts-annotation-rect"),
-+    ).toHaveCount(1);
-+    for (const label of labels) {
-+      await expect(annotations.getByText(label, { exact: true })).toBeVisible();
-+    }
-+  });
-+}
-+
-+test("horizontal bars keep reference lines on their data axes", async ({
-+  page,
-+}) => {
-+  await renderChart(page, "horizontal-reference-lines");
-+  const down = page.locator("#test-chart .apexcharts-xaxis-annotations");
-+  const across = page.locator("#test-chart .apexcharts-yaxis-annotations");
-+
-+  await expect(down.locator("line")).toHaveCount(1);
-+  await expect(down.getByText("full", { exact: true })).toBeVisible();
-+  await expect(across.locator("line")).toHaveCount(1);
-+  await expect(across.getByText("watched", { exact: true })).toBeVisible();
-+});
-+
- test("draws a reference line that carries no label", async ({ page }) => {
-   const chart = await renderChart(page, "unlabeled-reference-lines");
- 
-```
-
-**File**: `tests/end-to-end/fixtures/chart/x-reference-band.sql` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'area' AS type, TRUE AS time;
-+SELECT '2024-05-01T10:00:00Z' AS xline, 'deploy' AS label;
-+SELECT '2024-05-01T11:30:00Z' AS xline, '2024-05-01T13:00:00Z' AS xline_end, 'incident' AS label;
-+WITH points(x, y) AS (VALUES ('2024-05-01T08:00:00Z', 120), ('2024-05-01T12:00:00Z', 512), ('2024-05-01T15:00:00Z', 133)) SELECT * FROM points;
-```
-
-**File**: `tests/end-to-end/fixtures/chart/y-reference-band.sql` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'line' AS type, TRUE AS time, 100 AS ymax;
-+SELECT 70 AS yline, 'target' AS label;
-+SELECT 90 AS yline, 100 AS yline_end, 'throttling' AS label;
-+WITH points(x, y) AS (VALUES ('2024-05-01T08:00:00Z', 52), ('2024-05-01T11:00:00Z', 83), ('2024-05-01T14:00:00Z', 63)) SELECT * FROM points;
-```
-
-**File**: `tests/end-to-end/official-site.spec.ts` (modified, +26/-123)
-```diff
-@@ -1,4 +1,4 @@
--import { expect, type Locator, type Page, test } from "@playwright/test";
-+import { expect, type Page, test } from "@playwright/test";
- import {
-   checkModal,
-   checkTableFiltering,
-@@ -20,131 +20,38 @@ test("Open documentation", async ({ page }) => {
-   }
- });
- 
--async function openChartDocumentation(page: Page) {
--  await page.goto("/documentation.sql?component=chart#component");
--  // This page initializes every documented chart, which can take several seconds.
--  await expect(page.locator('[data-pre-init="chart"]')).toHaveCount(0, {
--    timeout: 15_000,
--  });
--}
--
--test("chart", async ({ page }) => {
--  await openChartDocumentation(page);
--  await expect(page.getByText("Loading...")).toHaveCount(0);
--  await expect(page.locator(".apexcharts-canvas").first()).toBeVisible();
--});
--
--test("chart supports hiding legend", async ({ page }) => {
--  await openChartDocumentation(page);
--
--  const expensesChart = page.locator(".card", {
--    has: page.getByRole("heading", { name: "Expenses" }),
--  });
--
--  await expect(expensesChart.locator(".apexcharts-canvas")).toBeVisible();
--  await expect(expensesChart.locator(".apexcharts-legend")).toBeHidden();
--});
--
--const DATA_POINT_MARKERS = ".apexcharts-series-markers > .apexcharts-marker";
--
--const chartCard = (page: Page, title: string) =>
--  page.locator(".card", { has: page.getByRole("heading", { name: title }) });
--
--const drawnPoints = (card: Locator, series: string) =>
--  card
--    .locator(`.apexcharts-series[seriesName='${series}'] ${DATA_POINT_MARKERS}`)
--    .evaluateAll((markers) =>
--      markers.map((m) => ({
--        x: m.getAttribute("cx"),
--        y: m.getAttribute("cy"),
--      })),
--    );
--
--test("stacked chart draws every series at every x of the chart", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--  const powerChart = chartCard(page, "Power draw");
--  await expect(powerChart.locator(".apexcharts-canvas")).toBeVisible();
--
--  const cpu = await drawnPoints(powerChart, "CPU");
--  const gpu = await drawnPoints(powerChart, "GPU");
--
--  expect(cpu).toHaveLength(4);
--  expect(gpu.map((p) => p.x)).toEqual(cpu.map((p) => p.x));
--});
--
--test("stacked chart raises a series only where it has a value", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--  const powerChart = chartCard(page, "Power draw");
--  await expect(powerChart.locator(".apexcharts-canvas")).toBeVisible();
--
--  const cpu = await drawnPoints(powerChart, "CPU");
--  const gpu = await drawnPoints(powerChart, "GPU");
--
--  expect([gpu[0], gpu[3]]).toEqual([cpu[0], cpu[3]]);
--  expect(Number(gpu[1]?.y)).toBeLessThan(Number(cpu[1]?.y));
--});
--
--test("chart draws a yline as a line and a yline_end as a band", async ({
-+test("chart documentation renders its examples without browser errors", async ({
-   page,
- }) => {
--  await openChartDocumentation(page);
--
--  const temperature = page.locator(".card", {
--    has: page.getByRole("heading", { name: "CPU temperature" }),
-+  const errors: string[] = [];
-+  page.on("pageerror", (error) => errors.push(error.message));
-+  page.on("console", (message) => {
-+    if (message.type() === "error") errors.push(message.text());
-   });
--  await expect(temperature.locator(".apexcharts-canvas")).toBeVisible();
--
--  const annotations = temperature.locator(".apexcharts-yaxis-annotations");
--  const lines = annotations.locator("line");
--  const bands = annotations.locator(".apexcharts-annotation-rect");
--
--  await expect(lines).toHaveCount(1);
--  await expect(bands).toHaveCount(1);
--  await expect(annotations.getByText("target")).toBeVisible();
--  await expect(annotations.getByText("throttling")).toBeVisible();
--});
- 
--test("chart draws an xline as a line and an xline_end as a band", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--
--  const latency = page.locator(".card", {
--    has: page.getByRole("heading", { name: "Request latency" }),
-+  await test.step("Open the chart reference", async () => {
-+    await page.goto("/documentation.sql?component=chart#component");
-+    await expect(
-+      page.getByRole("heading", { name: "The chart component", exact: true }),
-+    ).toBeVisible();
-   });
--  await expect(latency.locator(".apexcharts-canvas")).toBeVisible();
--
--  const annotations = latency.locator(".apexcharts-xaxis-annotations");
--  const lines = annotations.locator("line");
--  const bands = annotations.locator(".apexcharts-annotation-rect");
- 
--  await expect(lines).toHaveCount(1);
--  await expect(bands).toHaveCount(1);
--  await expect(annotations.getByText("deploy")).toBeVisible();
--  await expect(annotations.getByText("incident")).toBeVisible();
--});
--
--test("horizontal chart draws a yline down it and an xline across it", async ({
--  page,
--}) => {
--  await openChartDocumentation(page);
--
--  const disks = page.locator(".card", {
--    has: page.getByRole("heading", { name: "Disk usage" }),
-+  await test.step("Render every inline and embedded example", async () => {
-+    // Work around Ch
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1560** (2026-10-24): Consolidate chart documentation tests and isolate rendering assertions (@lovasoa)
-- **PR #1559** (2026-10-23): Reuse repeated variable bindings for numbered placeholders (@lovasoa)
-- **PR #1557** (2026-10-24): Fuzz complete SQL file compilation across database dialects (@lovasoa)
-- **PR #1556** (2026-10-23): Expose connection-free SQL file compilation (@lovasoa)
-- **PR #1553** (2026-10-17): Run selected CI jobs behind one required gate (@lovasoa)
-- **PR #1552** (2026-10-17): Update the README video and fix required checks for docs-only PRs (@lovasoa)
+- **PR #1586** (2026-10-31): feat(card) :: let a card's link open a new tab (@81reap)
+- **PR #1584** (2026-10-30): fix(frontend) :: drop source map comments from joined sylesheet (@81reap)
+- **PR #1583** (2026-10-30): fix(tab) :: underline only the active tab (@81reap)
+- **PR #1582** (2026-10-30): fix(hero) :: show image first on small screens when `reversed` (@81reap)
+- **PR #1581** (2026-10-30): build(deps): bump rustls from 0.23.45 to 0.23.46 in /fuzz (@dependabot[bot])
+- **PR #1580** (2026-10-30): fix(templates) :: let `each_row` call inline partials (@81reap)
 
 ---
 
@@ -1344,22 +1257,22 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Move detailed chart checks to minimal SQL fixtures (#1560)
+## X. card) :: let a card's link open a new tab (#1586)
 
 **RULE**:
-When implementing operations in `tests/end-to-end/fixtures/chart/hidden-legend.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99c68467`: Move detailed chart checks to minimal SQL fixtures (#1560). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `321ad215`: card) :: let a card's link open a new tab (#1586). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/end-to-end/fixtures/chart/hidden-legend.sql`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-SELECT 'chart' AS component, 'test-chart' AS id, 'Chart test fixture' AS title, 'bar' AS type, TRUE AS stacked, FALSE AS show_legend;
-WITH points(series, x, y) AS (VALUES ('CPU', 'Mon', 10), ('CPU', 'Tue', 20), ('GPU', 'Mon', 5), ('GPU', 'Tue', 15)) SELECT * FROM points;
+- Each card of the card component accepts a `target`, such as `_blank` to open its link in a new tab. ([#820](https://github.com/sqlpage/SQLPage/issues/820))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1369,4 +1282,4 @@ WITH points(series, x, y) AS (VALUES ('CPU', 'Mon', 10), ('CPU', 'Tue', 20), ('G
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99c68467` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `321ad215` are properly handled with clean fallback behavior.

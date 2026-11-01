@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `263bc134`  
+> **Source Version**: `df57ae6d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T10:15:18.512Z  
+> **Timestamp**: 2026-10-30T20:05:15.617Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T10:15:17.376Z  
+> **Harvest Timestamp**: 2026-10-30T20:05:14.330Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32315 stars
+- **Stars / Engagement**: 32473 stars
 
 ---
 
@@ -1445,237 +1445,867 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `263bc134` (2026-10-26)
-**Commit Message**: Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body
+### Incident Patch 1: `266593d7` (2026-10-23)
+**Commit Message**: fix(openapi,swagger): skip null spec entries instead of panicking
 
-fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924)
+A null value in an OpenAPI or Swagger document (an empty list item, or a
+map key with no value) decodes to a nil pointer. Several of these were
+dereferenced without a check, so loading such a spec with -im openapi or
+-im swagger crashed nuclei with SIGSEGV.
 
-**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +18/-8)
+openapi (generator.go):
+- a null entry under `servers:` -> nil *Server
+- a null media type under `content:` -> nil *MediaType
+
+swagger (dereferenced inside kin-openapi's openapi2conv.ToV3):
+- a null path item under `paths:` -> nil *PathItem
+- a null item under path/operation `parameters:` or a null top-level
+  parameter -> nil *Parameter
+- a null operation or top-level response -> nil *Response
+
+Skip the nil entries in the generator, and drop them from the decoded
+Swagger document before converting it. Other null entries are already
+rejected by kin-openapi with an error and are left alone.
+
+Also add a go-fuzz harness for the OpenAPI parser with a seed corpus, so
+the weekly fuzz workflow picks it up, and regression tests that panic on
+the pre-fix code.
+
+**File**: `pkg/input/formats/openapi/fuzz.go` (added, +20/-0)
 ```diff
-@@ -3,20 +3,32 @@ package offlinehttp
- import (
- 	"bufio"
- 	"errors"
-+	"io"
- 	"net/http"
- 	"regexp"
- 	"strings"
- )
- 
--var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
-+var (
-+	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
-+	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
-+)
- 
- // readResponseFromString reads a raw http response from a string.
- func readResponseFromString(data string) (*http.Response, error) {
- 	// Check if "data" contains RFC compatible Request followed by a response
- 	br := bufio.NewReader(strings.NewReader(data))
- 	if req, err := http.ReadRequest(br); err == nil {
--		if resp, err := http.ReadResponse(br, req); err == nil {
--			return resp, nil
-+		if req.Body != nil {
-+			_, _ = io.Copy(io.Discard, req.Body)
-+			_ = req.Body.Close()
-+		}
-+		remaining, _ := io.ReadAll(br)
-+		if len(remaining) > 0 {
-+			remainingStr := addMinorVersionToHTTP(string(remaining))
-+			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
-+				return resp, nil
-+			}
- 		}
- 	}
- 
-@@ -25,13 +37,11 @@ func readResponseFromString(data string) (*http.Response, error) {
- 	if strings.HasPrefix(data, "HTTP/") {
- 		final = addMinorVersionToHTTP(data)
- 	} else {
--		lastIndex := strings.LastIndex(data, "HTTP/")
--		if lastIndex == -1 {
-+		loc := responseStatusRegex.FindStringIndex(data)
-+		if loc == nil {
- 			return nil, errors.New("malformed raw http response")
- 		}
--		final = data[lastIndex:] // choose last http/ in case of it being later.
--
--		final = addMinorVersionToHTTP(final)
-+		final = addMinorVersionToHTTP(data[loc[0]:])
- 	}
- 	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
- }
+@@ -0,0 +1,20 @@
++//go:build gofuzz
++// +build gofuzz
++
++package openapi
++
++// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
++// bytes are treated as a raw schema document (YAML or JSON) and fed through the
++// format's Parse, which loads the schema and generates requests from it.
++func Fuzz(data []byte) int {
++	if len(data) == 0 {
++		return 0
++	}
++	if len(data) > fuzzMaxInputSize {
++		return -1
++	}
++	if !fuzzOpenAPIParsing(data) {
++		return 0
++	}
++	return 1
++}
 ```
 
-**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +41/-0)
+**File**: `pkg/input/formats/openapi/fuzz_harness.go` (added, +32/-0)
 ```diff
-@@ -199,3 +199,44 @@ Server: Google Frontend
- 
- 	})
- }
+@@ -0,0 +1,32 @@
++package openapi
 +
++import (
++	"bytes"
 +
-+func TestReadResponse_HTTPInBodyCases(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		data         string
-+		expectedBody string
-+		statusCode   int
-+	}{
-+		{
-+			name:         "http2 response without minor version and HTTP/ in body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
-+		{
-+			name:         "request with body and HTTP/ in response body (#7924)",
-+			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
-+		{
-+			name:         "control http 1.1 with HTTP/ in response body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
++)
++
++const fuzzMaxInputSize = 64 << 10
++
++// fuzzOpenAPIParsing feeds data to the OpenAPI format parser as a raw schema
++// document and drives request generation. It must never panic for any input;
++// it returns true when the schema parsed and at least one request was produced.
++func fuzzOpenAPIParsing(data []byte) bool {
++	if len(data) == 0 || len(data) > fuzzMaxInputSize {
++		return false
 +	}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resp, err := readResponseFromString(tt.data)
-+			require.NoError(t, err, "could not read response from string")
-+			require.Equal(t, tt.statusCode, resp.StatusCode)
++	format := New()
++	format.SetOptions(formats.InputFormatOptions{})
 +
-+			body, err := io.ReadAll(resp.Body)
-+			require.NoError(t, err)
-+			require.Equal(t, tt.expectedBody, string(body))
++	produced := false
++	cb := func(rr *types.RequestResponse) bool {
++		produced = true
++		return true
++	}
++	if err := format.Parse(bytes.NewReader(data), cb, "fuzz.openapi"); err != nil {
++		return false
++	}
++	return produced
++}
+```
+
+**File**: `pkg/input/formats/openapi/fuzz_harness_test.go` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++package openapi
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++func TestFuzzOpenAPIParsingSeedCorpus(t *testing.T) {
++	entries, err := os.ReadDir("testdata/gofuzz-corpus")
++	require.NoError(t, err)
++	require.NotEmpty(t, entries)
++
++	for _, entry := range entries {
++		if entry.IsDir() {
++			continue
++		}
++
++		data, err := os.ReadFile(filepath.Join("testdata/gofuzz-corpus", entry.Name()))
++		require.NoError(t, err)
++		require.Truef(t, fuzzOpenAPIParsing(data), "seed %s should produce at least one request", entry.Name())
++	}
++}
++
++func TestFuzzOpenAPIParsingRejectsOversizeInput(t *testing.T) {
++	require.False(t, fuzzOpenAPIParsing(make([]byte, fuzzMaxInputSize+1)))
++}
++
++// Null entries decode to nil pointers and used to panic during request
++// generation. The remaining valid entries must still produce requests.
++func TestFuzzOpenAPIParsingNullEntries(t *testing.T) {
++	specs := map[string]string{
++		"null server": `
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers:
++  -
++  - {url: "http://example.com"}
++paths:
++  /users:
++    get:
++      responses: {"200": {description: ok}}
++`,
++		"null media type": `
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers: [{url: "http://example.com"}]
++paths:
++  /users:
++    post:
++      requestBody:
++        content:
++          application/xml:
++          application/json:
++            schema: {type: object, properties: {name: {type: string}}}
++      responses: {"200": {description: ok}}
++`,
++	}
++
++	for name, spec := range specs {
++		t.Run(name, func(t *testing.T) {
++			require.True(t, fuzzOpenAPIParsing([]byte(spec)))
 +		})
 +	}
 +}
+```
+
+**File**: `pkg/input/formats/openapi/generator.go` (modified, +10/-0)
+```diff
+@@ -49,6 +49,11 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
+ 	}
+ 
+ 	for _, serverURL := range schema.Servers {
++		// A null entry in the `servers:` list decodes to a nil *Server, so skip
++		// it rather than dereferencing it.
++		if serverURL == nil {
++			continue
++		}
+ 		pathURL := serverURL.URL
+ 		// Split the server URL into baseURL and serverPath
+ 		u, err := url.Parse(pathURL)
+@@ -268,6 +273,11 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
+ 
+ 	if opts.op.RequestBody != nil {
+ 		for content, value := range opts.op.RequestBody.Value.Content {
++			// A null media-type entry (e.g. `content: {application/json: }`)
++			// decodes to a nil *MediaType, so skip it before dereferencing.
++			if value == nil {
++				continue
++			}
+ 			cloned := req.Clone(req.Context())
+ 
+ 			var val interface{}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/json-spec.seed` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"openapi":"3.0.0","info":{"title":"t","version":"1"},"servers":[{"url":"http://example.com"}],"paths":{"/a":{"post":{"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"k":{"type":"string"}}}}}},"responses":{"200":{"description":"ok"}}}}}}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/minimal.seed` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers: [{url: "http://example.com"}]
++paths:
++  /users:
++    get:
++      responses: {"200": {description: ok}}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-media-type.seed` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers: [{url: "http://example.com"}]
++paths:
++  /users:
++    post:
++      requestBody:
++        content:
++          application/xml:
++          application/json:
++            schema: {type: object, properties: {name: {type: string}}}
++      responses: {"200": {description: ok}}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-server.seed` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers:
++  -
++  - {url: "http://example.com"}
++paths:
++  /users:
++    get:
++      responses: {"200": {description: ok}}
 ```
 
 ---
 
-### Incident Patch 2: `aa761b9c` (2026-10-25)
-**Commit Message**: fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924)
+### Incident Patch 2: `bdf7e983` (2026-10-30)
+**Commit Message**: Merge pull request #7990 from IBazsecI/fix/openapi-swagger-nil-panics
 
-Signed-off-by: TassioSales <[REDACTED_EMAIL]>
+fix(openapi,swagger): skip null spec entries instead of panicking
 
-**File**: `pkg/protocols/offlinehttp/read_response.go` (modified, +18/-8)
+**File**: `pkg/input/formats/openapi/fuzz.go` (added, +20/-0)
 ```diff
-@@ -3,20 +3,32 @@ package offlinehttp
- import (
- 	"bufio"
- 	"errors"
-+	"io"
- 	"net/http"
- 	"regexp"
- 	"strings"
- )
- 
--var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
-+var (
-+	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
-+	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
-+)
- 
- // readResponseFromString reads a raw http response from a string.
- func readResponseFromString(data string) (*http.Response, error) {
- 	// Check if "data" contains RFC compatible Request followed by a response
- 	br := bufio.NewReader(strings.NewReader(data))
- 	if req, err := http.ReadRequest(br); err == nil {
--		if resp, err := http.ReadResponse(br, req); err == nil {
--			return resp, nil
-+		if req.Body != nil {
-+			_, _ = io.Copy(io.Discard, req.Body)
-+			_ = req.Body.Close()
-+		}
-+		remaining, _ := io.ReadAll(br)
-+		if len(remaining) > 0 {
-+			remainingStr := addMinorVersionToHTTP(string(remaining))
-+			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
-+				return resp, nil
-+			}
- 		}
- 	}
- 
-@@ -25,13 +37,11 @@ func readResponseFromString(data string) (*http.Response, error) {
- 	if strings.HasPrefix(data, "HTTP/") {
- 		final = addMinorVersionToHTTP(data)
- 	} else {
--		lastIndex := strings.LastIndex(data, "HTTP/")
--		if lastIndex == -1 {
-+		loc := responseStatusRegex.FindStringIndex(data)
-+		if loc == nil {
- 			return nil, errors.New("malformed raw http response")
- 		}
--		final = data[lastIndex:] // choose last http/ in case of it being later.
--
--		final = addMinorVersionToHTTP(final)
-+		final = addMinorVersionToHTTP(data[loc[0]:])
- 	}
- 	return http.ReadResponse(bufio.NewReader(strings.NewReader(final)), nil)
- }
-```
-
-**File**: `pkg/protocols/offlinehttp/read_response_test.go` (modified, +41/-0)
-```diff
-@@ -199,3 +199,44 @@ Server: Google Frontend
- 
- 	})
- }
+@@ -0,0 +1,20 @@
++//go:build gofuzz
++// +build gofuzz
 +
++package openapi
 +
-+func TestReadResponse_HTTPInBodyCases(t *testing.T) {
-+	tests := []struct {
-+		name         string
-+		data         string
-+		expectedBody string
-+		statusCode   int
-+	}{
-+		{
-+			name:         "http2 response without minor version and HTTP/ in body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/2 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
-+		{
-+			name:         "request with body and HTTP/ in response body (#7924)",
-+			data:         "POST /search HTTP/1.1\r\nHost: example.com\r\nContent-Length: 3\r\n\r\nq=1HTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
-+		{
-+			name:         "control http 1.1 with HTTP/ in response body (#7924)",
-+			data:         "GET / HTTP/1.1\r\nHost: example.com\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 27\r\n\r\nSupports HTTP/2 and HTTP/3.",
-+			expectedBody: "Supports HTTP/2 and HTTP/3.",
-+			statusCode:   200,
-+		},
++// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
++// bytes are treated as a raw schema document (YAML or JSON) and fed through the
++// format's Parse, which loads the schema and generates requests from it.
++func Fuzz(data []byte) int {
++	if len(data) == 0 {
++		return 0
 +	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			resp, err := readResponseFromString(tt.data)
-+			require.NoError(t, err, "could not read response from string")
-+			require.Equal(t, tt.statusCode, resp.StatusCode)
-+
-+			body, err := io.ReadAll(resp.Body)
-+			require.NoError(t, err)
-+			require.Equal(t, tt.expectedBody, string(body))
-+		})
++	if len(data) > fuzzMaxInputSize {
++		return -1
 +	}
++	if !fuzzOpenAPIParsing(data) {
++		return 0
++	}
++	return 1
 +}
 ```
 
+**File**: `pkg/input/formats/openapi/fuzz_harness.go` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++package openapi
++
++import (
++	"bytes"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
++)
++
++const fuzzMaxInputSize = 64 << 10
++
++// fuzzOpenAPIParsing feeds data to the OpenAPI format parser as a raw schema
++// document and drives request generation. It must never panic for any input;
++// it returns true when the schema parsed and at least one request was produced.
++func fuzzOpenAPIParsing(data []byte) bool {
++	if len(data) == 0 || len(data) > fuzzMaxInputSize {
++		return false
++	}
++
++	format := New()
++	format.SetOptions(formats.InputFormatOptions{})
++
++	produced := false
++	cb := func(rr *types.RequestResponse) bool {
++		produced = true
++		return true
++	}
++	if err := format.Parse(bytes.NewReader(data), cb, "fuzz.openapi"); err != nil {
++		return false
++	}
++	return produced
++}
+```
+
+**File**: `pkg/input/formats/openapi/fuzz_harness_test.go` (added, +84/-0)
+```diff
+@@ -0,0 +1,84 @@
++package openapi
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
++	"github.com/stretchr/testify/require"
++)
++
++func TestFuzzOpenAPIParsingSeedCorpus(t *testing.T) {
++	entries, err := os.ReadDir("testdata/gofuzz-corpus")
++	require.NoError(t, err)
++	require.NotEmpty(t, entries)
++
++	for _, entry := range entries {
++		if entry.IsDir() {
++			continue
++		}
++
++		data, err := os.ReadFile(filepath.Join("testdata/gofuzz-corpus", entry.Name()))
++		require.NoError(t, err)
++		require.Truef(t, fuzzOpenAPIParsing(data), "seed %s should produce at least one request", entry.Name())
++	}
++}
++
++func TestFuzzOpenAPIParsingRejectsOversizeInput(t *testing.T) {
++	require.False(t, fuzzOpenAPIParsing(make([]byte, fuzzMaxInputSize+1)))
++}
++
++// Null entries decode to nil pointers and used to panic during request
++// generation. The remaining valid entries must still produce requests.
++func TestFuzzOpenAPIParsingNullEntries(t *testing.T) {
++	specs := map[string]string{
++		"null server": `
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers:
++  -
++  - {url: "http://example.com"}
++paths:
++  /users:
++    get:
++      responses: {"200": {description: ok}}
++`,
++		"null media type": `
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers: [{url: "http://example.com"}]
++paths:
++  /users:
++    post:
++      requestBody:
++        content:
++          application/xml:
++          application/json:
++            schema: {type: object, properties: {name: {type: string}}}
++      responses: {"200": {description: ok}}
++`,
++	}
++
++	for name, spec := range specs {
++		t.Run(name, func(t *testing.T) {
++			require.True(t, fuzzOpenAPIParsing([]byte(spec)))
++		})
++	}
++}
++
++func TestGenerateRequestsOnlyNullServers(t *testing.T) {
++	spec := `
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers:
++  -
++paths:
++  /users:
++    get:
++      responses: {"200": {description: ok}}
++`
++	err := New().Parse(strings.NewReader(spec), func(*types.RequestResponse) bool { return false }, "spec.yaml")
++	require.ErrorContains(t, err, "no servers found in openapi schema")
++}
+```
+
+**File**: `pkg/input/formats/openapi/generator.go` (modified, +14/-1)
+```diff
+@@ -9,6 +9,7 @@ import (
+ 	"net/http/httputil"
+ 	"net/url"
+ 	"os"
++	"slices"
+ 	"strings"
+ 
+ 	"github.com/clbanning/mxj/v2"
+@@ -33,7 +34,9 @@ const (
+ 
+ // GenerateRequestsFromSchema generates http requests from an OpenAPI 3.0 document object
+ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOptions, callback formats.ParseReqRespCallback) error {
+-	if len(schema.Servers) == 0 {
++	// Null entries in `servers:` are skipped below, so a list of only null
++	// entries has no usable server, the same as an empty list.
++	if !slices.ContainsFunc(schema.Servers, func(s *openapi3.Server) bool { return s != nil }) {
+ 		return errors.New("no servers found in openapi schema")
+ 	}
+ 	globalParams, globalSecurityErr := selectSecurityParameters(schema, &schema.Security, opts.Variables)
+@@ -49,6 +52,11 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
+ 	}
+ 
+ 	for _, serverURL := range schema.Servers {
++		// A null entry in the `servers:` list decodes to a nil *Server, so skip
++		// it rather than dereferencing it.
++		if serverURL == nil {
++			continue
++		}
+ 		pathURL := serverURL.URL
+ 		// Split the server URL into baseURL and serverPath
+ 		u, err := url.Parse(pathURL)
+@@ -268,6 +276,11 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
+ 
+ 	if opts.op.RequestBody != nil {
+ 		for content, value := range opts.op.RequestBody.Value.Content {
++			// A null media-type entry (e.g. `content: {application/json: }`)
++			// decodes to a nil *MediaType, so skip it before dereferencing.
++			if value == nil {
++				continue
++			}
+ 			cloned := req.Clone(req.Context())
+ 
+ 			var val interface{}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/json-spec.seed` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++{"openapi":"3.0.0","info":{"title":"t","version":"1"},"servers":[{"url":"http://example.com"}],"paths":{"/a":{"post":{"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"k":{"type":"string"}}}}}},"responses":{"200":{"description":"ok"}}}}}}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/minimal.seed` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers: [{url: "http://example.com"}]
++paths:
++  /users:
++    get:
++      responses: {"200": {description: ok}}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-media-type.seed` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers: [{url: "http://example.com"}]
++paths:
++  /users:
++    post:
++      requestBody:
++        content:
++          application/xml:
++          application/json:
++            schema: {type: object, properties: {name: {type: string}}}
++      responses: {"200": {description: ok}}
+```
+
+**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-server.seed` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++openapi: 3.0.0
++info: {title: t, version: "1"}
++servers:
++  -
++  - {url: "http://example.com"}
++paths:
++  /users:
++    get:
++      responses: {"200": {description: ok}}
+```
+
+---
+
+### Incident Patch 3: `7b0ca00f` (2026-10-30)
+**Commit Message**: fix(js): check redis reply headers in linear time, skip payloads
+
+The read cap scanned a reply line by line and copied what was left of
+its buffer for every line, so a 1 MiB bulk reply of newlines allocated
+17 GiB. It also checked lines inside bulk payloads as if they were
+headers, so a Lua script returning "a\n*abc" failed with "reply exceeds
+16777216 bytes".
+
+Follow the RESP framing as bytes pass instead: skip a bulk payload by
+its declared length and check only header lines. A rejected header's
+read now ends before its "\n", so go-redis never gets a line to
+allocate from, and nothing is buffered or copied.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `pkg/js/libs/redis/redis.go` (modified, +80/-103)
+```diff
+@@ -3,9 +3,7 @@ package redis
+ import (
+ 	"bytes"
+ 	"context"
+-	"errors"
+ 	"fmt"
+-	"io"
+ 	"net"
+ 	"strconv"
+ 	"time"
+@@ -287,140 +285,119 @@ func newClient(addr, password string) *redis.Client {
+ 	return redis.NewClient(opts)
+ }
+ 
+-// limitedConn fails a read once remaining is spent, and withholds a RESP length line whose
+-// declared size is over the cap so go-redis never allocates it.
++// maxHeaderLen fits a type byte, any int64, and "\r". Redis never sends a longer length header.
++const maxHeaderLen = 32
++
++// limitedConn fails a read once remaining is spent, and ends a read before the "\n" of a RESP
++// length header whose declared size is over the cap, so go-redis never gets the line to allocate
++// from.
++//
++// It follows the reply's framing as the bytes pass: a bulk payload is skipped by its declared
++// length, so only header lines are checked. A payload line such as "*abc" is data.
+ type limitedConn struct {
+ 	net.Conn
+ 	remaining int64
+-	pending   []byte
+-	partial   []byte
+-	err       error
+-	scratch   [32 << 10]byte
++	// payload is how many bytes of the current bulk payload, "\r\n" included, are still to come.
++	payload int64
++	// header is the start of the current header line, without its "\n".
++	header   []byte
++	overlong bool
++	err      error
+ }
+ 
+ func (c *limitedConn) Read(b []byte) (int, error) {
+-	if len(b) == 0 {
+-		return 0, nil
++	if c.err != nil {
++		return 0, c.err
+ 	}
+-	if len(c.pending) == 0 {
+-		if err := c.fill(); err != nil {
+-			return 0, err
+-		}
++	if c.remaining <= 0 {
++		return 0, errReadLimit
+ 	}
+-	n := copy(b, c.pending)
+-	c.pending = c.pending[n:]
+-	return n, nil
+-}
+-
+-func (c *limitedConn) fill() error {
+-	if len(c.pending) > 0 {
+-		return nil
++	if int64(len(b)) > c.remaining {
++		b = b[:c.remaining]
+ 	}
+-	if c.err != nil {
+-		return c.err
++	n, err := c.Conn.Read(b)
++	c.remaining -= int64(n)
++	// Errors from the connection, deadlines included, are returned as they come and not kept: a
++	// read deadline belongs to one call. go-redis peeks for push notifications with a few
++	// microseconds of deadline, and keeping that timeout would fail the command that follows.
++	kept, scanErr := c.scan(b[:n])
++	if scanErr == nil {
++		return n, err
+ 	}
+-	for len(c.pending) == 0 {
+-		if c.remaining <= 0 {
+-			c.err = errReadLimit
+-			return c.err
+-		}
+-		want := int64(len(c.scratch))
+-		if want > c.remaining {
+-			want = c.remaining
++	c.err = scanErr
++	if kept == 0 {
++		return 0, scanErr
++	}
++	return kept, nil
++}
++
++// scan follows the RESP framing of p and returns how many of its bytes may be returned.
++func (c *limitedConn) scan(p []byte) (int, error) {
++	for i := 0; i < len(p); {
++		if c.payload > 0 {
++			skip := min(c.payload, int64(len(p)-i))
++			c.payload -= skip
++			i += int(skip)
++			continue
+ 		}
+-		n, err := c.Conn.Read(c.scratch[:want])
+-		if n > 0 {
+-			c.remaining -= int64(n)
+-			if aerr := c.accept(c.scratch[:n]); aerr != nil {
+-				c.err = aerr
+-				if len(c.pending) > 0 {
+-					return nil
+-				}
+-				return aerr
+-			}
++		end := bytes.IndexByte(p[i:], '\n')
++		if end < 0 {
++			c.keepHeader(p[i:])
++			return len(p), nil
+ 		}
++		c.keepHeader(p[i : i+end])
++		payload, err := declaredPayload(c.header, c.overlong)
++		c.header, c.overlong = c.header[:0], false
+ 		if err != nil {
+-			// A read deadline belongs to one call. go-redis peeks for push notifications
+-			// with a few microseconds of deadline, and on Windows that peek always runs.
+-			// Keeping the timeout fails the command that follows.
+-			if timeoutErr(err) {
+-				if len(c.pending) > 0 {
+-					return nil
+-				}
+-				return err
+-			}
+-			c.err = err
+-			if len(c.pending) > 0 {
+-				return nil
+-			}
+-			return err
+-		}
+-		if n == 0 {
+-			c.err = io.ErrUnexpectedEOF
+-			return c.err
++			return i + end, err
+ 		}
++		c.payload = payload
++		i += end + 1
+ 	}
+-	return nil
++	return len(p), nil
+ }
+ 
+-func (c *limitedConn) accept(p []byte) error {
+-	c.partial = append(c.partial, p...)
+-	for {
+-		i := bytes.IndexByte(c.partial, '\n')
+-		if i < 0 {
+-			if int64(len(c.partial)) > maxReadBytes {
+-				c.partial = nil
+-				return errReadLimit
+-			}
+-			return nil
+-		}
+-		line := c.partial[:i+1]
+-		if lengthTooLarge(line) {
+-			c.partial = nil
+-			return errReadLimit
+-		}
+-		copied := make([]byte, len(line))
+-		copy(copied, line)
+-		c.pending = append(c.pending, copied...)
+-		rest := make([]byte, len(c.partial)-(i+1))
+-		copy(rest, c.partial[i+1:])
+-		c.partial = rest
++func (c *limitedConn) keepHeader(p []byte) {
++	if room := maxHeaderLen - len(c.header); len(p) > room {
++		p = p[:room]
++		c.overlong = true
+ 	}
++	c.header = append(c.header, p...)
+ }
+ 
+-// lengthTooLarge reports whether line is a RESP length header go-redis would allocate from.
+-// Bulk strings allocate the declared byte length. Arrays, sets, maps, attributes, and pushes
+-// allocate one interface per declared element.
+-func lengthTooLarge(line []byte) bool {
+-	if len(line) < 3 {
+-		return false
++// declaredPayload returns how many payload bytes, "\r\n" included, follo
+```
+
+**File**: `pkg/js/libs/redis/redis_test.go` (modified, +119/-38)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"bytes"
+ 	"context"
+ 	"fmt"
++	"io"
+ 	"net"
+ 	"runtime"
+ 	"strconv"
+@@ -90,37 +91,58 @@ func TestGetServerInfoAuthBoundsAReplyWithoutNewline(t *testing.T) {
+ }
+ 
+ func TestGetServerInfoAuthReadsAnInfoReply(t *testing.T) {
+-	listener, err := net.Listen("tcp", "127.0.0.1:0")
+-	require.NoError(t, err)
+-	t.Cleanup(func() {
+-		_ = listener.Close()
+-	})
++	tests := []struct {
++		name string
++		info string
++	}{
++		{name: "info", info: "# Server\r\nredis_version:7.2.4\r\n"},
++		// A bulk payload's lines are data, even when they start like a RESP length header.
++		{name: "header-like lines", info: "# Server\r\n*abc\r\n$ 5 dollars\r\n%x\r\n$99999999999\r\n"},
++		// Each line used to cost a copy of what was left of the read buffer.
++		{name: "many short lines", info: strings.Repeat("\n", 1<<20)},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			listener, err := net.Listen("tcp", "127.0.0.1:0")
++			require.NoError(t, err)
++			t.Cleanup(func() {
++				_ = listener.Close()
++			})
+ 
+-	const info = "# Server\r\nredis_version:7.2.4\r\n"
+-	go func() {
+-		for {
+-			conn, err := listener.Accept()
+-			if err != nil {
+-				return
+-			}
+-			go serveRESP(conn, info)
+-		}
+-	}()
++			go func() {
++				for {
++					conn, err := listener.Accept()
++					if err != nil {
++						return
++					}
++					go serveRESP(conn, tt.info)
++				}
++			}()
+ 
+-	executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
+-	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
+-	t.Cleanup(func() {
+-		protocolstate.Close(executionID)
+-	})
++			executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
++			require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
++			t.Cleanup(func() {
++				protocolstate.Close(executionID)
++			})
+ 
+-	addr, ok := listener.Addr().(*net.TCPAddr)
+-	require.True(t, ok)
++			addr, ok := listener.Addr().(*net.TCPAddr)
++			require.True(t, ok)
+ 
+-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+-	defer cancel()
+-	got, err := getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
+-	require.NoError(t, err)
+-	require.Equal(t, info, got)
++			var before runtime.MemStats
++			runtime.ReadMemStats(&before)
++
++			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
++			defer cancel()
++			got, err := getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
++
++			var after runtime.MemStats
++			runtime.ReadMemStats(&after)
++			require.NoError(t, err)
++			require.Equal(t, tt.info, got)
++			growth := int64(after.TotalAlloc - before.TotalAlloc)
++			require.Less(t, growth, int64(64<<20), "allocated %d MiB reading one reply", growth>>20)
++		})
++	}
+ }
+ 
+ // serveRESP answers HELLO as a Redis without RESP3 does, so the client falls back to RESP2, and
+@@ -182,26 +204,85 @@ func readRESPCommand(rd *bufio.Reader) (string, error) {
+ 	return command, nil
+ }
+ 
+-func TestLengthTooLarge(t *testing.T) {
++func TestDeclaredPayload(t *testing.T) {
+ 	tests := []struct {
+-		line string
+-		want bool
++		line     string
++		overlong bool
++		payload  int64
++		tooLarge bool
+ 	}{
+-		{line: fmt.Sprintf("$%d\r\n", maxReadBytes), want: false},
+-		{line: fmt.Sprintf("$%d\r\n", maxReadBytes+1), want: true},
+-		{line: "$-1\r\n", want: false},
+-		{line: "+OK\r\n", want: false},
+-		{line: fmt.Sprintf("*%d\r\n", maxAggregate), want: false},
+-		{line: fmt.Sprintf("*%d\r\n", maxAggregate+1), want: true},
+-		{line: "$999999999999999999999\r\n", want: true},
++		{line: fmt.Sprintf("$%d\r", maxReadBytes), payload: maxReadBytes + 2},
++		{line: fmt.Sprintf("$%d\r", maxReadBytes+1), tooLarge: true},
++		{line: "=10\r", payload: 12},
++		{line: "$-1\r"},
++		{line: "+OK\r"},
++		{line: "+OK\r", overlong: true},
++		{line: fmt.Sprintf("*%d\r", maxAggregate)},
++		{line: fmt.Sprintf("*%d\r", maxAggregate+1), tooLarge: true},
++		{line: "$999999999999999999999\r", tooLarge: true},
++		{line: "*abc\r", tooLarge: true},
++		{line: "$000000000000000000000000000000", overlong: true, tooLarge: true},
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.line, func(t *testing.T) {
+-			require.Equal(t, tt.want, lengthTooLarge([]byte(tt.line)))
++			payload, err := declaredPayload([]byte(tt.line), tt.overlong)
++			if tt.tooLarge {
++				require.ErrorIs(t, err, errReadLimit)
++				return
++			}
++			require.NoError(t, err)
++			require.Equal(t, tt.payload, payload)
+ 		})
+ 	}
+ }
+ 
++// The check that rejects a length header has to land on the "\n" when the header arrives over
++// several reads, and payload bytes have to pass whatever they contain.
++func TestLimitedConnFollowsFramingAcrossReads(t *testing.T) {
++	const ok = "*2\r\n$5\r\n*abc\n\r\n$-1\r\n+OK\r\n"
++	tooLarge := fmt.Sprintf("$%d\r\n", maxReadBytes+1)
++
++	tests := []struct {
++		name    string
++		stream  string
++		want    string
++		wantErr error
++	}{
++		{name: "payload passes", stream: ok, want: ok},
++		{name: "header rejected", stream: ok + tooLarge + "x", want: ok + tooLarge[:len(tooLarge)-1], wantErr:
+```
+
 #### Recent Merged Pull Requests:
-- **PR #7943** (2026-10-26): chore(deps): bump crate-ci/typos from 1.49.0 to 1.51.1 in the workflows group (@dependabot[bot])
-- **PR #7941** (2026-10-26): fix(offlinehttp): handle request body and unversioned HTTP/2 in passive mode (#7924) (@TassioSales)
-- **PR #7930** (2026-10-25): Keep template options on compiled-cache hits (@Mzack9999)
-- **PR #7929** (2026-10-25): Read the nuclei ignore file after init updates it (@Mzack9999)
-- **PR #7928** (2026-10-25): http: stop copying large request bodies (fixes OOM on multi-MB body templates) (@Ice3man543)
-- **PR #7926** (2026-10-25): apply host backoff to javascript template dials (@dogancanbakir)
+- **PR #7990** (2026-10-30): fix(openapi,swagger): skip null spec entries instead of panicking (@IBazsecI)
+- **PR #7988** (2026-10-30): fix(js): check redis reply headers in linear time, skip payloads (@gnuletik)
+- **PR #7981** (2026-10-29): Add JS modules for streaming hash and decompression (@kamilikamil)
+- **PR #7975** (2026-10-29): fix(cmd): ignore comments in -exclude-hosts values (@antcybersec)
+- **PR #7972** (2026-10-29): fix(output): encode nested template maps in JSON output (@arththebird)
+- **PR #7970** (2026-10-29): fix(runner): use -resolvers for the httpx probe of non-URL inputs (#7969) (@Eren-Akdag)
 
 ---
 
@@ -1695,52 +2325,47 @@ Signed-off-by: TassioSales <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body
+## X. openapi,swagger): skip null spec entries instead of panicking
 
 **RULE**:
-When implementing operations in `pkg/protocols/offlinehttp/read_response.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/input/formats/openapi/fuzz.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `263bc134`: Merge pull request #7941 from TassioSales/fix/passive-raw-response-http-body. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `266593d7`: openapi,swagger): skip null spec entries instead of panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/offlinehttp/read_response.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/input/formats/openapi/fuzz.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"io"
-var (
-	noMinor             = regexp.MustCompile(`^HTTP/([0-9]) `)
-	responseStatusRegex = regexp.MustCompile(`(?m)^HTTP/[0-9](?:\.[0-9])?\s+[0-9]{3}`)
-)
-		if req.Body != nil {
-			_, _ = io.Copy(io.Discard, req.Body)
-			_ = req.Body.Close()
-		}
-		remaining, _ := io.ReadAll(br)
-		if len(remaining) > 0 {
-			remainingStr := addMinorVersionToHTTP(string(remaining))
-			if resp, err := http.ReadResponse(bufio.NewReader(strings.NewReader(remainingStr)), req); err == nil {
-				return resp, nil
-			}
-		loc := responseStatusRegex.FindStringIndex(data)
-		if loc == nil {
-		final = addMinorVersionToHTTP(data[loc[0]:])
+//go:build gofuzz
+// +build gofuzz
+
+package openapi
+
+// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
+// bytes are treated as a raw schema document (YAML or JSON) and fed through the
+// format's Parse, which loads the schema and generates requests from it.
+func Fuzz(data []byte) int {
+	if len(data) == 0 {
+		return 0
+	}
+	if len(data) > fuzzMaxInputSize {
+		return -1
+	}
+	if !fuzzOpenAPIParsing(data) {
+		return 0
+	}
+	return 1
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-var noMinor = regexp.MustCompile(`^HTTP/([0-9]) `)
-		if resp, err := http.ReadResponse(br, req); err == nil {
-			return resp, nil
-		lastIndex := strings.LastIndex(data, "HTTP/")
-		if lastIndex == -1 {
-		final = data[lastIndex:] // choose last http/ in case of it being later.
-
-		final = addMinorVersionToHTTP(final)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `263bc134` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `266593d7` are properly handled with clean fallback behavior.

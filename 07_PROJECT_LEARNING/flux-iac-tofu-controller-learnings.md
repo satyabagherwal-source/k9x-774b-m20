@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `1a172945`  
+> **Source Version**: `e2db61bd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T03:59:34.230Z  
+> **Timestamp**: 2026-10-28T20:50:53.963Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T03:59:34.222Z  
+> **Harvest Timestamp**: 2026-10-28T20:50:53.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A GitOps OpenTofu and Terraform controller for Flux
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 1718 stars
+- **Stars / Engagement**: 1719 stars
 
 ---
 
@@ -37,7 +37,7 @@
 - Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
 - Evaluated system abstractions and modular contracts.
 
-### Core Architecture Module: `controllers/tf_controller_webhooks.go`
+### Core Architecture Module: `controllers/webhooks.go`
 ```
 package controllers
 
@@ -78,14 +78,14 @@ func shouldProcessPostPlanningWebhooks(terraform *infrav1.Terraform) bool {
 	return false
 }
 
-func (r *TerraformReconciler) prepareWebhookPayload(terraform *infrav1.Terraform, runnerClient runner.RunnerClient, payloadType string, tfInstance string) ([]byte, error) {
+func (r *TerraformReconciler) prepareWebhookPayload(ctx context.Context, terraform *infrav1.Terraform, runnerClient runner.RunnerClient, payloadType string, tfInstance string) ([]byte, error) {
 	toBytes, err := terraform.ToBytes(r.Scheme)
 	if err != nil {
 		err = fmt.Errorf("failed to marshal Terraform resource: %w", err)
 		return nil, err
 	}
 
-	reply, err := runnerClient.ShowPlanFile(context.Background(), &runner.ShowPlanFileRequest{
+	reply, err := runnerClient.ShowPlanFile(ctx, &runner.ShowPlanFileRequest{
 		TfInstance: tfInstance,
 		Filename:   runner.TFPlanName,
 	})
@@ -140,7 +140,7 @@ func (r *TerraformReconciler) prepareWebhookPayload(terraform *infrav1.Terraform
 	return jsonBytes, nil
 }
 
-func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, terraform *infrav1.Terraform, runnerClient runner.RunnerClient, revision string, tfInstance string) (*infrav1.Terraform, error) {
+func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, s *runnerSession, terraform *infrav1.Terraform) error {
 	log := ctrl.LoggerFrom(ctx)
 
 	hooks := []infrav1.Webhook{}
@@ -151,7 +151,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 	}
 
 	if len(hooks) == 0 {
-		return terraform, nil
+		return nil
 	}
 
 	disableWebhookTLSVerification := os.Getenv("DISABLE_WEBHOOK_TLS_VERIFY") == "1"
@@ -166,10 +166,10 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 
 		log.Info("webhook is enabled, processing")
 
-		payloadBytes, err := r.prepareWebhookPayload(terraform, runnerClient, webhook.PayloadType, tfInstance)
+		payloadBytes, err := r.prepareWebhookPayload(ctx, terraform, s.client, webhook.PayloadType, s.tfInstance)
 		if err != nil {
 			err = fmt.Errorf("failed to prepare webhook payload: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook payload prepared")
@@ -184,7 +184,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			u, err := url.Parse(webhook.URL)
 			if err != nil {
 				err = fmt.Errorf("failed to parse webhook URL: %w", err)
-				return terraform, err
+				return err
 			}
 
 			log.Info("webhook URL parsed", "host", u.Host)
@@ -203,7 +203,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			certificate, err := tls.LoadX509KeyPair(tlsCertPath, tlsKeyPath)
 			if err != nil {
 				err = fmt.Errorf("failed to load webhook TLS certificate: %w", err)
-				return terraform, err
+				return err
 			}
 
 			log.Info("webhook TLS cert loaded", "path", tlsCertPath, "keypath", tlsKeyPath)
@@ -219,23 +219,23 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		post, err := cli.Post(webhook.URL, "application/json", bytes.NewReader(payloadBytes))
 		if err != nil {
 			err = fmt.Errorf("failed to send webhook: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook sent")
 
 		if post.StatusCode != 200 {
-			return terraform, fmt.Errorf("webhook %s returned %d: %s", webhook.URL, post.StatusCode, post.Status)
+			return fmt.Errorf("webhook %s returned %d: %s", webhook.URL, post.StatusCode, post.Status)
 		}
 
-		log.Info(fmt.Sprintf("webhook returned %d: %s", post.StatusCode, post.Status))
+		log.Info("webhook returned", "statusCode", post.StatusCode, "status", post.Status)
 
 		// read json from post.Body, unmarshall to map[string]interface{}
 		jsonReply := map[string]any{}
 		err = json.NewDecoder(post.Body).Decode(&jsonReply)
 		if err != nil {
 			err = fmt.Errorf("failed to decode webhook reply: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook reply decoded")
@@ -247,7 +247,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			Parse(webhook.TestExpression)
 		if err != nil {
 			err = fmt.Errorf("failed to parse webhook test expression: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook test expression parsed")
@@ -256,7 +256,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		err = testExprTpl.Execute(&testExprBuf, jsonReply)
 		if err != nil {
 			err = fmt.Errorf("failed to execute webhook test expression: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook test expression executed")
@@ -268,7 +268,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		} else if testResult == "false" || testResult == "no" {
 			// do nothing
 		} else {
-			return terraform, fmt.Errorf("webhook test expression %q returned unexpected result: %s", webhook.TestExpression, testResult)
+			return fmt.Errorf("webhook test expression %q returned unexpected result: %s", webhook.TestExpression, testResult)
 		}
 
 		log.Info("webhook test expression returned false, webhook is not successful - prepare error message")
@@ -280,7 +280,7 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 			Parse(webhook.ErrorMessageTemplate)
 		if err != nil {
 			err = fmt.Errorf("failed to parse webhook error message template: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook error message template parsed")
@@ -289,17 +289,17 @@ func (r *TerraformReconciler) processPostPlanningWebhooks(ctx context.Context, t
 		err = errMsgTpl.Execute(&errorMessage, jsonReply)
 		if err != nil {
 			err = fmt.Errorf("failed to execute webhook error message template: %w", err)
-			return terraform, err
+			return err
 		}
 
 		log.Info("webhook error message template executed")
 
-		terraform = infrav1.TerraformPostPlanningWebhookFailed(terraform, revision, errorMessage.String())
+		infrav1.TerraformPostPlanningWebhookFailed(terraform, s.revision, errorMessage.String())
 		webhookErr := errors.New(errorMessage.String())
-		return terraform, webhookErr
+		return webhookErr
 	}
 
-	return terraform, nil
+	return nil
 }
 
 ```
@@ -974,11 +974,11 @@ package v1alpha1
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1910** (2026-10-23): **chore(deps): go minor bumps**
+- **Issue #1923** (2026-10-27): **fix: stop a pass hanging on a runner that never started**
   *Symptoms*: 
 
-- **Issue #1909** (2026-10-23): **chore(deps): bump go to 1.26.10**
-  *Symptoms*: - bumps go to 1.26.10 - bumps golang.org/x/net to v0.60.0
+- **Issue #1921** (2026-10-27): **fix: recover from runner pods that fail or cannot start**
+  *Symptoms*: 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -995,726 +995,202 @@ package v1alpha1
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a172945` (2026-10-23)
-**Commit Message**: fix(branch-planner): replace the PR source ref and only plan PRs targeting the tracked branch (#1908)
+### Incident Patch 1: `e2db61bd` (2026-10-28)
+**Commit Message**: feat: support ExternalArtifact as a Terraform source (#1901)
 
-* fix(branch-planner): replace the copied source ref with the PR head branch
+* feat: support ExternalArtifact as a Terraform source
 
-The PR's GitRepository copy previously only had spec.ref.branch overwritten, so an inherited name/tag/semver/commit kept taking precedence over the PR head in source-controller (e.g. Flux Operator sources using spec.ref.name). Replace spec.ref outright with a branch-only ref. A commit is deliberately not pinned: source-controller's commit clone path is neither shallow nor short-circuited by ls-remote, which would turn every polling interval into a full clone. The planned commit is still recorded in the revision (<branch>@sha1:<sha>) and the plan ID.
+Flux 2.7 introduced the ExternalArtifact source kind, whose artifacts
+are produced by controllers other than source-controller, such as
+source-watcher's ArtifactGenerator. Using one as a Terraform source
+lets each Terraform object reconcile from an artifact holding only its
+own module, so a commit touching one module does not re-plan every
+Terraform object that reads the same repository.
 
-Signed-off-by: Robin Breathe <[REDACTED_EMAIL]>
+This change:
 
-* fix(branch-planner): only plan PRs targeting the tracked branch
+- accepts ExternalArtifact as a v1alpha2 sourceRef kind and resolves it
+  in getSource;
+- indexes Terraform objects by the ExternalArtifact they reference and
+  watches ExternalArtifacts, so a new artifact revision triggers a
+  reconcile, as for the other source kinds;
+- grants the controller read access to externalartifacts in the
+  generated ClusterRole and the Helm chart's RBAC template;
+- lets `tfctl create --source` name an ExternalArtifact;
+- passes the manager's context to SetupWithManager for registering the
+  field indexes;
+- adds an envtest case that applies a Terraform object from an
+  ExternalArtifact and checks that a new revision is applied before the
+  
 
-Previously every open PR was planned, so two clusters tracking different branches at the same commit (e.g. main and develop) both planned a PR to develop. Filter PRs by base branch before the path filter: the branch tracked by the source (spec.ref.branch, or spec.ref.name of the form refs/heads/<branch>; source-controller's default branch (git.
-
-**File**: `api/v1alpha2/terraform_types.go` (modified, +7/-0)
+**File**: `.github/workflows/e2e.yaml` (modified, +24/-0)
 ```diff
-@@ -305,6 +305,13 @@ type BranchPlanner struct {
- 	// resources will be created only if there are any changes in terraform files.
- 	// +optional
- 	EnablePathScope bool `json:"enablePathScope"`
+@@ -100,6 +100,7 @@ jobs:
+             "--log-encoding=json",
+             "--enable-leader-election",
+             "--concurrent=10",
++            "--feature-gates=ExternalArtifact=true",
+             "--cert-rotation-check-frequency=6m0s",
+           ]}]'
+ 
+@@ -165,6 +166,26 @@ jobs:
+ 
+           # delete after tests
+           kubectl -n tofu-system delete -f ./config/testdata/vars
++      - name: Run ExternalArtifact source tests
++        run: |
++          kustomize build ./config/testdata/source-watcher | kubectl apply --server-side -f -
++          kubectl -n tofu-system rollout status deploy/source-watcher --timeout=2m
 +
-+	// BaseBranch restricts branch planning to Pull Requests targeting this branch.
-+	// Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-+	// or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-+	// does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-+	// +optional
-+	BaseBranch string `json:"baseBranch,omitempty"`
- }
- 
- type Remediation struct {
-```
-
-**File**: `charts/tofu-controller/crds/crds.yaml` (modified, +7/-0)
-```diff
-@@ -5809,6 +5809,13 @@ spec:
-               branchPlanner:
-                 description: BranchPlanner configuration.
-                 properties:
-+                  baseBranch:
-+                    description: |-
-+                      BaseBranch restricts branch planning to Pull Requests targeting this branch.
-+                      Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-+                      or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-+                      does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-+                    type: string
-                   enablePathScope:
-                     description: |-
-                       EnablePathScope specifies if the Branch Planner should or shouldn't check
-```
-
-**File**: `config/crd/bases/infra.contrib.fluxcd.io_terraforms.yaml` (modified, +7/-0)
-```diff
-@@ -5809,6 +5809,13 @@ spec:
-               branchPlanner:
-                 description: BranchPlanner configuration.
-                 properties:
-+                  baseBranch:
-+                    description: |-
-+                      BaseBranch restricts branch planning to Pull Requests targeting this branch.
-+                      Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-+                      or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-+                      does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-+                    type: string
-                   enablePathScope:
-                     description: |-
-                       EnablePathScope specifies if the Branch Planner should or shouldn't check
-```
-
-**File**: `docs/References/terraform.md` (modified, +1/-0)
-```diff
-@@ -53,6 +53,7 @@ _Appears in:_
- | Field | Description | Default | Validation |
- | --- | --- | --- | --- |
- | `enablePathScope` _boolean_ | EnablePathScope specifies if the Branch Planner should or shouldn't check<br />if a Pull Request has changes under `.spec.path`. If enabled extra<br />resources will be created only if there are any changes in terraform files. |  | Optional: \{\} <br /> |
-+| `baseBranch` _string_ | BaseBranch restricts branch planning to Pull Requests targeting this branch.<br />Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,<br />or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source<br />does not track a branch (tag, semver or commit-only), no Pull Requests are planned. |  | Optional: \{\} <br /> |
- 
- 
- ### CloudSpec
-```
-
-**File**: `docs/branch-planner/index.md` (modified, +4/-0)
-```diff
-@@ -8,6 +8,10 @@ Branch Planner supports **GitHub** (including GitHub Enterprise), **GitLab** (in
- 
- ![branch planner](branch-planner.png)
- 
-+### Base branch
++          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/generator.yaml
++          kubectl -n tofu-system wait artifactgenerator/helloworld --for=condition=ready --timeout=4m
 +
-+Only Pull Requests whose base branch matches the branch tracked by the Terraform object's source (`.spec.ref.branch`, or `.spec.ref.name` of the form `refs/heads/<branch>`) are planned. Set `spec.branchPlanner.baseBranch` to override this. Sources that track a tag, semver range or commit need the override, otherwise no Pull Requests are planned.
++          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/terraform.yaml
++          kubectl -n tofu-system wait terraform/helloworld-external-artifact --for=condition=ready --timeout=4m
 +
- ### Replan commands
++          # the Terraform object must have applied the ExternalArtifact's revision
++          artifact_revision=$(kubectl -n tofu-system get externalartifact/helloworld-module -o jsonpath='{.status.artifact.revision}')
++          applied_revision=$(kubectl -n tofu-system get terraform/helloworld-external-artifact -o jsonpath='{.status.lastAppliedRevision}')
++          echo "artifact revision: $artifact_revision, applied revision: $applied_revision"
++          [[ -n "$artifact_revision" && "$applied_revision" == "$artifact_revision" ]]
++
++          # delete the Terraform object before its source: finalizing it needs the ExternalArtifact
++          kubectl -n tofu-system delete -f ./config/testdata/external-artifact/terraform.yaml --timeout=4m
++          kubectl -n tofu-system delete -f ./config/testdata/external-artifact/generator.yaml --timeout=2m
+       - name: Run multi-tenancy test
+         run: |
+           kubectl -n tofu-system scale --replicas=3 deploy/tofu-controller
+@@ -250,6 +271,7 @@ jobs:
+       - name: Logs
+         run: |
+           kubectl -n tofu-system logs deploy/source-controller
++          kubectl -n tofu-system logs deploy/source-watcher
+           kubectl -n tofu-system logs deploy/tofu-controller
+       - name: Debug failure
+         if: failure()
+@@ -260,6 +282,8 @@ jobs:
+           kubectl -n tofu-system logs deploy/source-controller
+           kubectl -n tofu-system describe deploy/source-controller
+           kubectl -n tofu-system describe pod source-controller
++          kubectl -n tofu-system logs deploy/source-watcher
++          kubectl -n tofu-system get artifactgenerators,externalartifacts -oyaml
+           kubectl -n tofu-system logs deploy/tofu-controller
+           kubectl -n tofu-system describe deploy/tofu-controller
+           kubectl -n tofu-system describe pod tofu-controller
+```
+
+**File**: `Makefile` (modified, +1/-0)
+```diff
+@@ -85,6 +85,7 @@ download-crd-deps:
+ 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_gitrepositories.yaml > config/crd/bases/gitrepositories.yaml
+ 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_buckets.yaml > config/crd/bases/buckets.yaml
+ 	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_ocirepositories.yaml > config/crd/bases/ocirepositories.yaml
++	curl -s https://raw.githubusercontent.com/fluxcd/source-controller/${SOURCE_VER}/config/crd/bases/source.toolkit.fluxcd.io_externalartifacts.yaml > config/crd/bases/externalartifacts.yaml
  
- The Branch Planner also allows users to manually trigger the replan process. By simply commenting `!replan` under the PR or MR, the Branch Planner will be instructed to generate a new plan and post it under the PR/MR as a new comment.
-```
-
-**File**: `go.mod` (modified, +16/-0)
-```diff
-@@ -20,6 +20,7 @@ require (
- 	github.com/flux-iac/tofu-controller/api v0.0.0-20260505110553-6233d9ea1db8
- 	github.com/flux-iac/tofu-controller/tfctl v0.0.0-00010101000000-000000000000
- 	github.com/fluxcd/pkg/apis/meta v1.36.0
-+	github.com/fluxcd/pkg/git v0.53.0
- 	github.com/fluxcd/pkg/runtime v0.120.0
- 	github.com/fluxcd/pkg/tar v1.3.0
- 	github.com/fluxcd/source-controller/api v1.9.4
-@@ -65,6 +66,7 @@ require (
- 	github.com/Masterminds/goutils v1.1.1 // indirect
- 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
-+	github.com/ProtonMail/go-crypto v1.4.1 // indirect
- 	github.com/agext/levenshtein v1.2.1 // indirect
- 	github.com/apparentlymart/go-textseg v1.0.0 // indirect
- 	github.com/apparentlymart/go-textseg/v15 v15.0.0 // indirect
-@@ -109,6 +111,7 @@ require (
- 	github.com/chai2010/gettext-go v1.0.3 // indirect
- 	github.com/chainguard-dev/git-urls v1.0.2 // indirect
- 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
-+	github.com/cloudflare/circl v1.6.3 // indirect
- 	github.com/containerd/errdefs v1.0.0 // indirect
- 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
- 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-@@ -118,6 +121,7 @@ require (
- 	github.com/docker/go-connections v0.8.1 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
- 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
-+	github.com/emirpasic/gods v1.18.1 // indirect
- 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
- 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
- 	github.com/fatih/color v1.19.0 // indirect
-@@ -130,6 +134,9 @@ require (
- 	github.com/fxamacker/cbor/v2 v2.9.3 // indirect
- 	github.com/go-errors/errors v1.5.1 // indirect
- 	github.com/go-fed/httpsig v1.1.0 // indirect
-+	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
-+	github.com/go-git/go-billy/v5 v5.9.2 // indirect
-+	github.com/go-git/go-git/v5 v5.19.3 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
- 	github.com/go-logr/zapr v1.3.0 // indirect
- 	github.com/go-openapi/jsonpointer v1.0.0 // indirect
-@@ -148,17 +155,21 @@ require (
- 	github.com/go-openapi/swag/yamlutils v0.29.1 // indirect
- 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
- 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
-+	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
- 	github.com/google/btree v1.1.3 // indirect
- 	github.com/google/gnostic-models v0.7.1 // indirect
- 	github.com/google/go-cmp v0.7.0 // indirect
- 	github.com/google/go-github/v88 v88.0.0 // indirect
- 	github.com/google/go-querystring v1.2.0 // indirect
- 	github.com/hako/durafmt v0.0.0-20210608085754-5c1018a4e16b // indirect
- 	github.com/hashicorp/go-version v1.9.0 // indirect
-+	github.com/hiddeco/sshsig v0.2.0 // indirect
- 	github.com/huandu/xstrings v1.5.0 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-+	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/jmespath/go-jmespath v0.4.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
-+	github.com/kevinburke/ssh_config v1.2.0 // indirect
- 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
- 	github.com/mattn/go-colorable v0.1.14 // indirect
- 	github.com/mattn/go-isatty v0.0.20 // indirect
-@@ -178,6 +189,7 @@ require (
- 	github.com/opencontainers/image-spec v1.1.1 // indirect
- 	github.com/pelletier/go-toml/v2 v2.3.0 // indirect
- 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-+	github.com/pjbgf/sha1cd v0.7.0 // indirect
- 	github.com/pkg/errors v0.9.1 // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/client_golang v1.24.1 // indirect
-@@ -186,10 +198,12 @@ require (
- 	github.com/prometheus/procfs v0.22.0 // indirect
- 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
- 	github.com/sagikazarmark/locafero v0.12.0 // indirect
-+	github.com/sergi/go-diff v1.4.0 // indirect
- 	github.com/shopspring/decimal v1.4.0 // indirect
- 	github.com/shurcooL/githubv4 v0.0.0-20260209031235-2402fdf4a9ed // indirect
- 	github.com/shurcooL/graphql v0.0.0-20240915155400-7ee5256398cf // indirect
- 	github.com/sirupsen/logrus v1.10.2 // indirect
-+	github.com/skeema/knownhosts v1.3.1 // indirect
- 	github.com/spf13/cast v1.10.0 // indirect
- 	github.com/subosito/gotenv v1.6.0 // indirect
- 	github.com/theckman/yacspin v0.13.12 // indirect
-@@ -199,6 +213,7 @@ require (
- 	github.com/tidwall/sjson v1.2.5 // indirect
- 	github.com/wI2L/jsondiff v0.6.1 // indirect
- 	github.com/x448/float16 v0.8.4 // indirect
-+	github.com/xanzy/ssh-agent v0.3.3 // indirect
- 	github.com/xlab/treeprint v1.2.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
-@@ -223,6 +238,7 @@ require (
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260706201446-f0a921348800 // indirect
- 	gopk
-```
-
-**File**: `go.sum` (modified, +26/-0)
-```diff
-@@ -18,12 +18,15 @@ github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAw
- github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
- github.com/Masterminds/sprig/v3 v3.3.0 h1:mQh0Yrg1XPo6vjYXgtf5OtijNAKJRNcTdOOGZe3tPhs=
- github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSCzdgBfDb35Lz0=
-+github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
- github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERoyfY=
- github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
- github.com/ProtonMail/go-crypto v1.4.1 h1:9RfcZHqEQUvP8RzecWEUafnZVtEvrBVL9BiF67IQOfM=
- github.com/ProtonMail/go-crypto v1.4.1/go.mod h1:e1OaTyu5SYVrO9gKOEhTc+5UcXtTUa+P3uLudwcgPqo=
- github.com/agext/levenshtein v1.2.1 h1:QmvMAjj2aEICytGiWzmxoE0x2KZvE0fvmqMOfy2tjT8=
- github.com/agext/levenshtein v1.2.1/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
-+github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFIImctFaOjnTIavg87rW78vTPkQqLI8=
-+github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
- github.com/apparentlymart/go-dump v0.0.0-20180507223929-23540a00eaa3 h1:ZSTrOEhiM5J5RFxEaFvMZVEAM1KvT1YzbEOwB2EAGjA=
- github.com/apparentlymart/go-dump v0.0.0-20180507223929-23540a00eaa3/go.mod h1:oL81AME2rN47vu18xqj1S1jPIPuN7afo62yKTNn3XMM=
- github.com/apparentlymart/go-textseg v1.0.0 h1:rRmlIsPEEhUTIKQb7T++Nz/A5Q6C9IuX2wFoYVvnCs0=
-@@ -32,6 +35,8 @@ github.com/apparentlymart/go-textseg/v15 v15.0.0 h1:uYvfpb3DyLSCGWnctWKGj857c6ew
- github.com/apparentlymart/go-textseg/v15 v15.0.0/go.mod h1:K8XmNZdhEBkdlyDdvbmmsvpAG721bKi0joRfFdHIWJ4=
- github.com/apparentlymart/go-textseg/v17 v17.0.1 h1:bpMXRgQ5cEoRNuQke1a80/Nl6w3G5eoIbWo9f3gXkAs=
- github.com/apparentlymart/go-textseg/v17 v17.0.1/go.mod h1:fa8X4jgGeevslICIY6LcdjkSecWnXmYd9Lk34z/VxZs=
-+github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
-+github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
- github.com/aws/aws-sdk-go v1.55.5 h1:KKUZBfBoyqy5d3swXyiC7Q76ic40rYcbqH7qjh59kzU=
- github.com/aws/aws-sdk-go v1.55.5/go.mod h1:eRwEWoyTWFMVYVQzKMNHWP5/RV4xIUGMQfXQHfHkpNU=
- github.com/aws/aws-sdk-go-v2 v1.47.3 h1:HRoT/MkNi3bjO5xF4dCzLzvVmkvRGHj3/cLINDnJejk=
-@@ -158,6 +163,8 @@ github.com/docker/go-connections v0.8.1 h1:JibmG5hULs5qXSr/cp/w3Pw5fZuStt4MOHMUE
- github.com/docker/go-connections v0.8.1/go.mod h1:no1qkHdjq7kLMGUXYAduOhYPSJxxvgWBh7ogVvptn3Q=
- github.com/docker/go-units v0.5.0 h1:69rxXcBk27SvSaaxTtLh/8llcHD8vYHT7WSdRZ/jvr4=
- github.com/docker/go-units v0.5.0/go.mod h1:fgPhTUdO+D/Jk86RDLlptpiXQzgHJF7gydDDbaIK4Dk=
-+github.com/elazarl/goproxy v1.8.0 h1:dt561rX7UAYMeFRLtzFx6uQGl2TpL1dr6uCG23nFQSY=
-+github.com/elazarl/goproxy v1.8.0/go.mod h1:b5xm6W48AUHNpRTCvlnd0YVh+JafCCtsLsJZvvNTz+E=
- github.com/elgohr/go-localstack v1.0.169 h1:XTYFC6HzdnjK2dJtb/YX5MpfzwpkudW740V9tIx7egs=
- github.com/elgohr/go-localstack v1.0.169/go.mod h1:ElV4F6CaI8CcNuxIyG3U4M6rUuAAIJn4Yl3j/Ol2FRw=
- github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
-@@ -182,6 +189,8 @@ github.com/fluxcd/pkg/apis/event v0.32.0 h1:3zyjdUspwQN+EQJPlUXwCvCMbeqtB+azlNme
- github.com/fluxcd/pkg/apis/event v0.32.0/go.mod h1:ALma8dTqo+NbI+z4BawSzt0pAPjetCSNNUSSS/9p0VU=
- github.com/fluxcd/pkg/apis/meta v1.36.0 h1:sgT0N/tXPTLYPzYjO3WHt3LKaRBOlQIP+/dTrJRzvDQ=
- github.com/fluxcd/pkg/apis/meta v1.36.0/go.mod h1:1MLvK2Xu3UdTKBzg+Q1Oj7H9PHeiKsUB1UW3uwxAwiM=
-+github.com/fluxcd/pkg/git v0.53.0 h1:wHtxfJ+qaNSQowaZB8Lr5adZO7psAsaID0E5W5QZREs=
-+github.com/fluxcd/pkg/git v0.53.0/go.mod h1:soKweVZNZcHvKt9CP2GhJ/hoxJ3Ck3NglnRzKLHAjrA=
- github.com/fluxcd/pkg/runtime v0.120.0 h1:FEeTLB5tnhMVbpjAC9l2LUZr9T0Dl+Z3r16ERqLcVXc=
- github.com/fluxcd/pkg/runtime v0.120.0/go.mod h1:Cw0CQ/tVKS9lgJoyKVouZr1qVnoJcYnSHw3QDzIOOjA=
- github.com/fluxcd/pkg/ssa v0.80.0 h1:GgakpCFz4pY+unpOscPYlc5eVLUsB7hw9TmWSNr3yp8=
-@@ -197,6 +206,8 @@ github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx5
- github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
- github.com/fxamacker/cbor/v2 v2.9.3 h1:oQBnFATpNdY8gJHTndDDv5Xl4QqNaz51G5LLEPhng3Q=
- github.com/fxamacker/cbor/v2 v2.9.3/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
-+github.com/gliderlabs/ssh v0.3.8 h1:a4YXD1V7xMF9g5nTkdfnja3Sxy1PVDCj1Zg4Wb8vY6c=
-+github.com/gliderlabs/ssh v0.3.8/go.mod h1:xYoytBv1sV0aL3CavoDuJIQNURXkkfPA/wxQ1pL1fAU=
- github.com/go-errors/errors v1.5.1 h1:ZwEMSLRCapFLflTpT7NKaAc7ukJ8ZPEjzlxt8rPN8bk=
- github.com/go-errors/errors v1.5.1/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
- github.com/go-fed/httpsig v1.1.0 h1:9M+hb0jkEICD8/cAiNqEB66R87tTINszBRTjwjQzWcI=
-@@ -205,6 +216,8 @@ github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 h1:+
-```
-
-**File**: `internal/server/polling/poll_test.go` (modified, +63/-1)
-```diff
-@@ -17,6 +17,7 @@ import (
+ TEST_SETTINGS=INSECURE_LOCAL_RUNNER=1 DISABLE_K8S_LOGS=1 DISABLE_TF_LOGS=1 DISABLE_TF_K8S_BACKEND=1 DISABLE_WEBHOOK_TLS_VERIFY=1 KUBEBUILDER_ASSETS="$(shell $(ENVTEST) --arch=$(ENVTEST_ARCH) use -i $(ENVTEST_KUBERNETES_VERSION) --bin-dir=$(ENVTEST_ASSETS_DIR) -p path)"
  
- 	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
- 	"github.com/flux-iac/tofu-controller/internal/git/provider"
-+	"github.com/fluxcd/pkg/git"
- 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
+```
+
+**File**: `api/v1alpha2/reference_types.go` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ type CrossNamespaceSourceReference struct {
+ 	APIVersion string `json:"apiVersion,omitempty"`
+ 
+ 	// Kind of the referent.
+-	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository
++	// +kubebuilder:validation:Enum=GitRepository;Bucket;OCIRepository;ExternalArtifact
+ 	// +required
+ 	Kind string `json:"kind"`
+ 
+```
+
+**File**: `api/v1alpha2/terraform_types.go` (modified, +7/-6)
+```diff
+@@ -41,12 +41,13 @@ const (
+ 	CACertSecretName = "tf-controller.tls"
+ 	// RunnerTLSSecretName is the name of the secret containing a TLS cert that will be written to
+ 	// the namespace in which a terraform runner is created
+-	RunnerTLSSecretName     = "terraform-runner.tls"
+-	RunnerLabel             = "infra.contrib.fluxcd.io/terraform"
+-	GitRepositoryIndexKey   = ".metadata.gitRepository"
+-	BucketIndexKey          = ".metadata.bucket"
+-	OCIRepositoryIndexKey   = ".metadata.ociRepository"
+-	BreakTheGlassAnnotation = "break-the-glass.tf-controller/requestedAt"
++	RunnerTLSSecretName      = "terraform-runner.tls"
++	RunnerLabel              = "infra.contrib.fluxcd.io/terraform"
++	GitRepositoryIndexKey    = ".metadata.gitRepository"
++	BucketIndexKey           = ".metadata.bucket"
++	OCIRepositoryIndexKey    = ".metadata.ociRepository"
++	ExternalArtifactIndexKey = ".metadata.externalArtifact"
++	BreakTheGlassAnnotation  = "break-the-glass.tf-controller/requestedAt"
  )
  
-@@ -108,8 +109,11 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 		},
- 		Spec: sourcev1.GitRepositorySpec{
- 			URL: "https://github.com/tf-controller/helloworld",
-+			// Extra ref fields must not be inherited by the PR sources.
- 			Reference: &sourcev1.GitRepositoryRef{
- 				Branch: "main",
-+				Name:   "refs/heads/main",
-+				Commit: "0000000000000000000000000000000000000000",
- 			},
- 		},
- 	}
-@@ -163,6 +167,13 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 			BaseBranch: "main",
- 			HeadBranch: "test-branch-3",
- 		},
-+		{
-+			// Targets another branch than the source tracks, so it's not planned.
-+			Repository: repo,
-+			Number:     4,
-+			BaseBranch: "develop",
-+			HeadBranch: "test-branch-4",
-+		},
- 	}
- 
- 	server, err := New(
-@@ -186,6 +197,9 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 	}))
- 
- 	expectToEqual(t, g, len(tfList.Items), 4)
-+	for _, item := range tfList.Items {
-+		g.Expect(item.Labels[bpconfig.LabelPRIDKey]).NotTo(gomega.Equal("4"))
-+	}
- 	for _, item := range tfList.Items {
- 		if item.Name == original.Name {
- 			// Ignore the original source object.
-@@ -220,7 +234,7 @@ func Test_poll_reconcile_objects(t *testing.T) {
- 		}
- 		prID := item.Labels[bpconfig.LabelPRIDKey]
- 		expectToEqual(t, g, item.Name, config.SourceName(original.Name, source.Name, prID))
--		expectToEqual(t, g, item.Spec.Reference.Branch, "test-branch-"+prID)
-+		expectToEqual(t, g, item.Spec.Reference, &sourcev1.GitRepositoryRef{Branch: "test-branch-" + prID})
- 		expectToEqual(t, g, item.Labels[bpconfig.LabelKey], bpconfig.LabelValue)
- 		expectToEqual(t, g, item.Labels[bpconfig.LabelPRIDKey], prID)
- 		expectToEqual(t, g, item.Labels["test-label"], "123")
-@@ -379,3 +393,51 @@ func Test_poll_noPathChanges(t *testing.T) {
- 
- 	t.Cleanup(func() { expectToSucceed(t, g, k8sClient.Delete(context.Background(), ns)) })
- }
-+
-+func Test_filterPullRequestsByBaseBranch(t *testing.T) {
-+	prs := []provider.PullRequest{
-+		{Number: 1, BaseBranch: "main"},
-+		{Number: 2, BaseBranch: "develop"},
-+		{Number: 3, BaseBranch: "main"},
-+		{Number: 4, BaseBranch: git.DefaultBranch},
-+	}
-+	main := []provider.PullRequest{prs[0], prs[2]}
-+	develop := []provider.PullRequest{prs[1]}
-+	defaultBranch := []provider.PullRequest{prs[3]}
-+
-+	tests := []struct {
-+		name     string
-+		ref      *sourcev1.GitRepositoryRef
-+		override string
-+		want     []provider.PullRequest
-+	}{
-+		{"branch", &sourcev1.GitRepositoryRef{Branch: "main"}, "", main},
-+		{"override beats source", &sourcev1.GitRepositoryRef{Branch: "main"}, "develop", develop},
-+		{"name refs/heads", &sourcev1.GitRepositoryRef{Name: "refs/heads/develop"}, "", develop},
-+		{"name refs/pull", &sourcev1.GitRepositoryRef{Name: "refs/pull/1/head"}, "", []provider.PullRequest{}},
-+		{"tag", &sourcev1.GitRepositoryRef{Tag: "v1"}, "", []provider.PullRequest{}},
-+		{"semver", &sourcev1.GitRepositoryRef{SemVer: ">=1.0.0"}, "", []provider.PullRequest{}},
-+		{"commit only", &sourcev1.GitRepositoryRef{Commit: "1111111111111111111111111111111111111111"}, "", []provider.PullRequest{}},
-+		{"branch and commit", &sourcev1.GitRepositoryRef{Branch: "main", Commit: "1111111111111111111111111111111111111111"}, "", main},
-+		{"nil ref defaults to git default branch", nil, "", defaultBranch},
-+		{"empty ref defaults to git default branch", &sourcev1.GitRepositoryRef{}, "", defaultBranch},
-+		{"override with tag source", &sourcev1.GitRepositoryRef{Tag: "v1"}, "main", main},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			g := gomega.NewWithT(t)
-+
-+			tf := &infrav1.Terraform{}
-+			if tt.override != "" {
-+				tf.Spec.BranchPlanner = &infrav1.BranchPlanner{BaseBranch: tt.override}
-+			}
-+			source := &sourcev1.GitRepository{Spec: sourcev1.GitRepositorySpec{Reference: tt.ref}}
-+
-+			server, err := New()
-+			g.Expect(err).NotTo(gomega.HaveOccurred())
-+
-+			g.Expect(server.filterPullRequestsByBaseBranch(tf, source, prs)).To(gomega.ConsistOf(tt.want))
-+		})
-+	}
-+}
+ type ReadInputsFromSecretSpec struct {
 ```
 
----
-
-### Incident Patch 2: `e5dbc6ed` (2026-10-23)
-**Commit Message**: fix: read branch planner token secret just in time (#1883)
-
-The informer previously read the token secret once at startup and
-latched provider-construction errors forever via sync.Once. Re-read the
-ConfigMap and secret per comment interaction, matching the polling
-server's per-tick behaviour, so rotated tokens (e.g. GitHub App
-installation access tokens) keep working.
-
-Signed-off-by: Robin Breathe <[REDACTED_EMAIL]>
-Co-authored-by: Alex Marston <[REDACTED_EMAIL]>
-
-**File**: `cmd/branch-planner/informer.go` (modified, +6/-3)
+**File**: `charts/tofu-controller/README.md` (modified, +1/-0)
 ```diff
-@@ -19,8 +19,9 @@ import (
- )
- 
- func startInformer(ctx context.Context, log logr.Logger, dynamicClient *dynamic.DynamicClient, clusterClient client.Client, opts *applicationOptions) error {
--	providerOpts, err := getProviderOpts(ctx, clusterClient, opts.pollingConfigMap)
--	if err != nil {
-+	// The informer re-reads the config and secret just in time per
-+	// interaction; this call only validates the boot-time configuration.
-+	if _, err := getProviderOpts(ctx, clusterClient, opts.pollingConfigMap); err != nil {
- 		return fmt.Errorf("failed to get provider options: %w", err)
- 	}
- 
-@@ -32,7 +33,9 @@ func startInformer(ctx context.Context, log logr.Logger, dynamicClient *dynamic.
- 	informer, err := planner.NewInformer(
- 		planner.WithLogger(log),
- 		planner.WithClusterClient(clusterClient),
--		planner.WithProviderOpts(providerOpts...),
-+		planner.WithProviderOptsFn(func(ctx context.Context) ([]provider.ProviderOption, error) {
-+			return getProviderOpts(ctx, clusterClient, opts.pollingConfigMap)
-+		}),
- 		planner.WithSharedInformer(sharedInformer),
- 	)
- 	if err != nil {
+@@ -50,6 +50,7 @@ __Note__: If you need to use the `imagePullSecrets` it would be best to set `ser
+ | eksSecurityGroupPolicy.ids | list | `[]` | List of AWS Security Group IDs |
+ | eventsAddress | string | `"http://notification-controller.flux-system.svc.cluster.local./"` | Argument for `--events-addr` (Controller). The event address, default to the address of the Notification Controller |
+ | extraEnv | object | `{}` | Additional container environment variables. |
++| featureGates.externalArtifact | bool | `false` | Argument for `--feature-gates=ExternalArtifact=...` (Controller).  Allow `ExternalArtifact` as a Terraform source. Requires Flux 2.7 or higher, whose `ExternalArtifact` CRD must be installed. |
+ | fullnameOverride | string | `""` | Provide a fullname |
+ | image.pullPolicy | string | `"IfNotPresent"` | Controller image pull policy |
+ | image.repository | string | `"ghcr.io/flux-iac/tofu-controller"` | Controller image repository |
 ```
 
-**File**: `internal/informer/branch-planner/informer.go` (modified, +44/-28)
+**File**: `charts/tofu-controller/crds/crds.yaml` (modified, +1/-0)
 ```diff
-@@ -34,14 +34,13 @@ var (
- )
- 
- type Informer struct {
--	sharedInformer cache.SharedIndexInformer
--	handlers       cache.ResourceEventHandlerFuncs
--	log            logr.Logger
--	client         client.Client
--	gitProvider    provider.Provider
--	providerOpts   []provider.ProviderOption
--	providerOnce   sync.Once
--	providerErr    error
-+	sharedInformer      cache.SharedIndexInformer
-+	handlers            cache.ResourceEventHandlerFuncs
-+	log                 logr.Logger
-+	client              client.Client
-+	gitProvider         provider.Provider
-+	providerOptsFn      func(ctx context.Context) ([]provider.ProviderOption, error)
-+	gitProviderParserFn provider.URLParserFn
- 
- 	mux    *sync.RWMutex
- 	synced bool
-@@ -50,7 +49,9 @@ type Informer struct {
- type Option func(s *Informer) error
- 
- func NewInformer(options ...Option) (*Informer, error) {
--	informer := &Informer{}
-+	informer := &Informer{
-+		gitProviderParserFn: provider.FromURL,
-+	}
- 
- 	for _, opt := range options {
- 		if err := opt(informer); err != nil {
-@@ -226,7 +227,7 @@ func (i *Informer) updateHandler(oldObj, newObj any) {
- func (i *Informer) deleteHandler(obj any) {}
- 
- func (i *Informer) addCommentToPullRequest(ctx context.Context, tf *infrav1.Terraform, content []byte) {
--	repo, err := i.getRepo(ctx, tf)
-+	gitProvider, repo, err := i.getRepo(ctx, tf)
- 	if err != nil {
- 		i.log.Error(err, "failed getting repository")
- 		return
-@@ -250,13 +251,13 @@ func (i *Informer) addCommentToPullRequest(ctx context.Context, tf *infrav1.Terr
- 
- 	// If commentID is 0, it means that the comment has not been created yet.
- 	if commentID == 0 {
--		if _, err := i.gitProvider.AddCommentToPullRequest(ctx, pr, content); err != nil {
-+		if _, err := gitProvider.AddCommentToPullRequest(ctx, pr, content); err != nil {
- 			i.log.Error(err, "failed adding comment to pull request", "pr-id", tf.Labels[config.LabelPRIDKey], "namespace", tf.Namespace, "name", tf.Name)
- 		}
- 		return
- 	}
- 
--	if err := i.gitProvider.UpdateCommentOfPullRequest(ctx, pr, commentID, content); err != nil {
-+	if err := gitProvider.UpdateCommentOfPullRequest(ctx, pr, commentID, content); err != nil {
- 		i.log.Error(err, "failed updating comment in pull request", "pr-id", tf.Labels[config.LabelPRIDKey], "comment-id", commentID, "namespace", tf.Namespace, "name", tf.Name)
- 
- 		return
-@@ -334,9 +335,9 @@ func (i *Informer) isNewPlan(old, new *infrav1.Terraform) bool {
- 	return false
- }
- 
--func (i *Informer) getRepo(ctx context.Context, tf *infrav1.Terraform) (provider.Repository, error) {
-+func (i *Informer) getRepo(ctx context.Context, tf *infrav1.Terraform) (provider.Provider, provider.Repository, error) {
- 	if tf.Spec.SourceRef.Kind != sourcev1.GitRepositoryKind {
--		return provider.Repository{}, fmt.Errorf("branch based planner does not support source kind: %s", tf.Spec.SourceRef.Kind)
-+		return nil, provider.Repository{}, fmt.Errorf("branch based planner does not support source kind: %s", tf.Spec.SourceRef.Kind)
- 	}
- 
- 	ref := client.ObjectKey{
-@@ -345,24 +346,39 @@ func (i *Informer) getRepo(ctx context.Context, tf *infrav1.Terraform) (provider
- 	}
- 	obj := &sourcev1.GitRepository{}
- 	if err := i.client.Get(ctx, ref, obj); err != nil {
--		return provider.Repository{}, fmt.Errorf("unable to get Source: %w", err)
-+		return nil, provider.Repository{}, fmt.Errorf("unable to get Source: %w", err)
- 	}
- 
--	// Resolve the provider exactly once using sync.Once to avoid race
--	// conditions when multiple update events arrive concurrently. Skip
--	// resolution if a provider was already injected (e.g. via WithGitProvider
--	// in tests).
--	i.providerOnce.Do(func() {
--		if i.gitProvider != nil {
--			return
--		}
--		i.gitProvider, _, i.providerErr = provider.FromURL(obj.Spec.URL, i.providerOpts...)
--	})
--	if i.providerErr != nil {
--		return provider.Repository{}, fmt.Errorf("failed resolving git provider from URL: %w", i.providerErr)
-+	repo, err := provider.RepoFromURL(obj.Spec.URL)
-+	if err != nil {
-+		return nil, provider.Repository{}, err
-+	}
-+
-+	// A statically injected provider (e.g. via WithGitProvider in tests)
-+	// takes precedence.
-+	if i.gitProvider != nil {
-+		return i.gitProvider, repo, nil
-+	}
-+
-+	if i.providerOptsFn == nil {
-+		return nil, provider.Repository{}, fmt.Errorf("no provider options getter configured")
-+	}
-+
-+	// Resolve the provider per interaction so that a rotated token secret
-+	// (e.g. short-lived GitHub App installation tokens) is picked up just
-+	// in time.
-+	opts, err := i.providerOptsFn(ctx)
-+	if err != nil {
-+		return nil, provider.Repository{}, fmt.Errorf("failed to get provider options: %w", err)
-+	}
-+	opts = append([]provider.ProviderOption{provider.WithLogger(i.log)}, opts...)
-+
-+	gitProvider, _, err := i.gitProviderParserFn(obj.Spec.URL, opts...)
-+	if err != nil {
-+		return nil, provider.Repository{}, fmt.Errorf("failed resolving git provider from URL: %w", err)
- 	}
- 
--	return provider.RepoFromURL(obj.Spec.URL)
-+	return gitProvider, repo, nil
- }
- 
- func formatPlanOutput(planOut
+@@ -11277,6 +11277,7 @@ spec:
+                     - GitRepository
+                     - Bucket
+                     - OCIRepository
++                    - ExternalArtifact
+                     type: string
+                   name:
+                     description: Name of the referent.
 ```
 
-**File**: `internal/informer/branch-planner/informer_test.go` (modified, +151/-0)
+**File**: `charts/tofu-controller/templates/deployment.yaml` (modified, +1/-0)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/flux-iac/tofu-controller/api/plan"
- 	infrav1 "github.com/flux-iac/tofu-controller/api/v1alpha2"
- 	"github.com/flux-iac/tofu-controller/internal/config"
-+	"github.com/flux-iac/tofu-controller/internal/git/provider"
- 	"github.com/flux-iac/tofu-controller/internal/git/provider/providerfakes"
- 	sourcev1 "github.com/fluxcd/source-controller/api/v1"
- 	corev1 "k8s.io/api/core/v1"
-@@ -126,6 +127,156 @@ func TestInformer(t *testing.T) {
- 	}).Should(gom.ContainSubstring("terraform plan output"))
- }
- 
-+// TestInformerReadsProviderSecretJustInTime verifies that the informer
-+// resolves the git provider per PR interaction, re-reading the provider
-+// secret each time, so that a rotated token (e.g. a short-lived GitHub App
-+// installation token) is picked up without a restart.
-+func TestInformerReadsProviderSecretJustInTime(t *testing.T) {
-+	g := gom.NewWithT(t)
-+	ns := newNamespace(t, g)
-+	ctx := t.Context()
-+
-+	// Create a source for the Terraform object to point to
-+	source := &sourcev1.GitRepository{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "jit-source",
-+			Namespace: ns.Name,
-+		},
-+		Spec: sourcev1.GitRepositorySpec{
-+			URL: "https://github.com/tf-controller/helloworld",
-+			Reference: &sourcev1.GitRepositoryRef{
-+				Branch: "main",
-+			},
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), source))
-+
-+	tf := &infrav1.Terraform{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "jit-helloworld",
-+			Namespace: ns.Name,
-+			Labels: map[string]string{
-+				config.LabelKey:           config.LabelValue,
-+				"infra.weave.works/pr-id": "1",
-+			},
-+		},
-+		Spec: infrav1.TerraformSpec{
-+			SourceRef: infrav1.CrossNamespaceSourceReference{
-+				Name:      source.Name,
-+				Namespace: ns.Name,
-+				Kind:      "GitRepository",
-+			},
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), tf))
-+
-+	tfOutputCM := &corev1.ConfigMap{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "tfplan-default-jit-helloworld",
-+			Namespace: ns.Name,
-+			Labels: map[string]string{
-+				plan.TFPlanNameLabel:      plan.SafeLabelValue("jit-helloworld"),
-+				plan.TFPlanWorkspaceLabel: plan.SafeLabelValue("default"),
-+			},
-+			Annotations: map[string]string{
-+				plan.TFPlanSavedAnnotation:         "plan-main-1",
-+				plan.TFPlanFullWorkspaceAnnotation: "default",
-+			},
-+		},
-+		Data: map[string]string{
-+			"tfplan": "terraform plan output",
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), tfOutputCM))
-+
-+	secret := &corev1.Secret{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:      "jit-provider-secret",
-+			Namespace: ns.Name,
-+		},
-+		Data: map[string][]byte{
-+			"token": []byte("token-1"),
-+		},
-+	}
-+	expectToSucceed(t, g, k8sClient.Create(t.Context(), secret))
-+
-+	dynamicClient, err := dynamic.NewForConfig(k8sConfig)
-+	g.Expect(err).NotTo(gom.HaveOccurred())
-+
-+	// A single shared fake provider accumulates call counts across events.
-+	// The parser fn applies each interaction's options to it, so SetToken
-+	// records the token used per event.
-+	fakeProvider := &providerfakes.FakeProvider{}
-+	parserFn := func(repoURL string, options ...provider.ProviderOption) (provider.Provider, provider.Repository, error) {
-+		repo, err := provider.RepoFromURL(repoURL)
-+		if err != nil {
-+			return nil, provider.Repository{}, err
-+		}
-+		for _, opt := range options {
-+			if err := opt(fakeProvider); err != nil {
-+				return nil, provider.Repository{}, err
-+			}
-+		}
-+		return fakeProvider, repo, nil
-+	}
-+
-+	sharedInformer := createSharedInformer(g, ctx, k8sClient, dynamicClient)
-+
-+	log := logr.Discard()
-+
-+	informer, err := NewInformer(
-+		WithLogger(log),
-+		WithClusterClient(k8sClient),
-+		WithProviderOptsFn(func(ctx context.Context) ([]provider.ProviderOption, error) {
-+			liveSecret := &corev1.Secret{}
-+			if err := k8sClient.Get(ctx, client.ObjectKeyFromObject(secret), liveSecret); err != nil {
-+				return nil, err
-+			}
-+			return provider.OptsFromSecret(liveSecret.Data)
-+		}),
-+		WithCustomProviderURLParserFn(parserFn),
-+		WithSharedInformer(sharedInformer),
-+	)
-+	g.Expect(err).NotTo(gom.HaveOccurred())
-+
-+	go func() {
-+		g.Expect(informer.Start(ctx)).To(gom.Succeed())
-+	}()
-+
-+	g.Eventually(func() bool {
-+		return informer.HasSynced()
-+	}).Should(gom.BeTrue())
-+
-+	// Event 1: patch status to trigger the informer update function.
-+	expectToSucceed(t, g, k8sClient.Get(ctx, client.ObjectKeyFromObject(tf), tf))
-+	patch := client.MergeFrom(tf.DeepCopy())
-+	tf.Status.LastPlanAt = &metav1.Time{Time: time.Now()}
-+	expectToSucceed(t, g, k8sClient.Status().Patch(ctx, tf, patch))
-+
-+	g.Eventually(fakeProvider.AddCommentToPullRequestCallCount).Should(gom.Equal(1))
-+
-+	tokenType, token := fakeProvider.SetTokenArgsForCall(0)
-+	g.Expect(tokenType).To(gom.Equal(provider.APITokenType))
-+	g.Expect(token).To(gom.Equal("token-1"))
-+
-+	// Rotate the token in the secret.
-+	expectToSucceed(t, g, k8sClient.Get(ctx, client.ObjectKeyFromObject(secret), secret))
-+	secret.Data["token"] = 
+@@ -55,6 +55,7 @@ spec:
+         - --quota-retry-enabled={{ .Values.quotaRetryEnabled }}
+         - --quota-retry-delay={{ .Values.quotaRetryDelay }}
+         - --quota-retry-jitter-factor={{ .Values.quotaRetryJitterFactor }}
++        - --feature-gates=ExternalArtifact={{ .Values.featureGates.externalArtifact }}
+         env:
+           {{- include "pod-namespace" . | indent 8 }}
+         - name: RUNNER_POD_IMAGE
 ```
 
-**File**: `internal/informer/branch-planner/options.go` (modified, +12/-2)
+**File**: `charts/tofu-controller/templates/rbac.yaml` (modified, +2/-0)
 ```diff
-@@ -1,6 +1,8 @@
- package branchplanner
- 
- import (
-+	"context"
-+
- 	"github.com/flux-iac/tofu-controller/internal/git/provider"
- 	"github.com/go-logr/logr"
- 	"k8s.io/client-go/tools/cache"
-@@ -32,9 +34,17 @@ func WithGitProvider(provider provider.Provider) Option {
- 	}
- }
- 
--func WithProviderOpts(opts ...provider.ProviderOption) Option {
-+func WithProviderOptsFn(fn func(ctx context.Context) ([]provider.ProviderOption, error)) Option {
-+	return func(i *Informer) error {
-+		i.providerOptsFn = fn
-+
-+		return nil
-+	}
-+}
-+
-+func WithCustomProviderURLParserFn(fn provider.URLParserFn) Option {
- 	return func(i *Informer) error {
--		i.providerOpts = opts
-+		i.gitProviderParserFn = fn
- 
- 		return nil
- 	}
+@@ -151,6 +151,7 @@ rules:
+   - source.toolkit.fluxcd.io
+   resources:
+   - buckets
++  - externalartifacts
+   - gitrepositories
+   - ocirepositories
+   verbs:
+@@ -165,6 +166,7 @@ rules:
+   - source.toolkit.fluxcd.io
+   resources:
+   - buckets/status
++  - externalartifacts/status
+   - gitrepositories/status
+   - ocirepositories/status
+   verbs:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1910** (2026-10-23): chore(deps): go minor bumps (@alexandermarston)
-- **PR #1909** (2026-10-23): chore(deps): bump go to 1.26.10 (@alexandermarston)
-- **PR #1908** (2026-10-23): fix(branch-planner): replace the PR source ref and only plan PRs targeting the tracked branch (@isometry)
-- **PR #1906** (closed): chore(deps): bump the go-minor group across 3 directories with 24 updates (@dependabot[bot])
-- **PR #1904** (closed): chore(deps): bump the go-minor group across 3 directories with 21 updates (@dependabot[bot])
-- **PR #1903** (closed): chore(deps): bump the gh-minor group across 1 directory with 11 updates (@dependabot[bot])
+- **PR #1923** (2026-10-27): fix: stop a pass hanging on a runner that never started (@alexandermarston)
+- **PR #1921** (2026-10-27): fix: recover from runner pods that fail or cannot start (@alexandermarston)
+- **PR #1920** (2026-10-26): chore: release 0.16.6 (@alexandermarston)
+- **PR #1919** (2026-10-26): feat(chart): optionally bind the runner role per namespace (@alexandermarston)
+- **PR #1918** (2026-10-26): fix(drift): Ignore data-source-only reads (@cgroschupp)
+- **PR #1917** (2026-10-27): refactor: restructure the runner (@alexandermarston)
 
 ---
 
@@ -1734,27 +1210,37 @@ Co-authored-by: Alex Marston <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. branch-planner): replace the PR source ref and only plan PRs targeting the track
+## X. support ExternalArtifact as a Terraform source (#1901)
 
 **RULE**:
-When implementing operations in `api/v1alpha2/terraform_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/e2e.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a172945`: branch-planner): replace the PR source ref and only plan PRs targeting the tracked branch (#1908). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e2db61bd`: support ExternalArtifact as a Terraform source (#1901). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v1alpha2/terraform_types.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+            "--feature-gates=ExternalArtifact=true",
+      - name: Run ExternalArtifact source tests
+        run: |
+          kustomize build ./config/testdata/source-watcher | kubectl apply --server-side -f -
+          kubectl -n tofu-system rollout status deploy/source-watcher --timeout=2m
 
-	// BaseBranch restricts branch planning to Pull Requests targeting this branch.
-	// Defaults to the branch tracked by the source GitRepository (`.spec.ref.branch`,
-	// or `.spec.ref.name` of the form `refs/heads/<branch>`). If unset and the source
-	// does not track a branch (tag, semver or commit-only), no Pull Requests are planned.
-	// +optional
-	BaseBranch string `json:"baseBranch,omitempty"`
+          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/generator.yaml
+          kubectl -n tofu-system wait artifactgenerator/helloworld --for=condition=ready --timeout=4m
+
+          kubectl -n tofu-system apply -f ./config/testdata/external-artifact/terraform.yaml
+          kubectl -n tofu-system wait terraform/helloworld-external-artifact --for=condition=ready --timeout=4m
+
+          # the Terraform object must have applied the ExternalArtifact's revision
+          artifact_revision=$(kubectl -n tofu-system get externalartifact/helloworld-module -o jsonpath='{.status.artifact.revision}')
+          applied_revision=$(kubectl -n tofu-system get terraform/helloworld-external-artifact -o jsonpath='{.status.lastAppliedRevision}')
+          echo "artifact revision: $artifact_revision, applied revision: $applied_revision"
+          [[ -n "$artifact_revision" && "$applied_revi
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1764,4 +1250,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a172945` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e2db61bd` are properly handled with clean fallback behavior.

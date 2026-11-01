@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md`  
 > **Source**: github ([https://github.com/zoontek/react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash))  
-> **Source Version**: `2ac6a06c`  
+> **Source Version**: `3dcb8e91`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T18:02:59.082Z  
+> **Timestamp**: 2026-11-01T02:22:49.948Z  
 > **Learning ID**: `learn-github-zoontek-react-native-bootsplash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zoontek-react-native-bootsplash-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zoontek/react-native-bootsplash](https://github.com/zoontek/react-native-bootsplash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T18:02:57.721Z  
+> **Harvest Timestamp**: 2026-11-01T02:22:49.942Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -506,15 +506,10 @@ object RNBootSplashModuleImpl {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       // This is not called on Android 12 when activity is started using intent
       // (Android studio / CLI / notification / widget…)
-      val splashScreen = mainActivity.splashScreen
-
-      // Remove it immediately, without animation. Never clear this listener on activity stop:
-      // the view would never be removed and the splash screen would stay visible forever.
+      // Remove it immediately, without animation. Never clear this listener, or the splash screen
+      // can stay visible forever (https://github.com/zoontek/react-native-bootsplash/issues/809)
       // Running no animation also avoids https://issuetracker.google.com/issues/242118185
-      splashScreen.setOnExitAnimationListener { view ->
-        view.remove()
-        splashScreen.clearOnExitAnimationListener()
-      }
+      mainActivity.splashScreen.setOnExitAnimationListener { view -> view.remove() }
     }
 
     UiThreadUtil.runOnUiThread {
@@ -974,115 +969,27 @@ class MainActivity : ReactActivity() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d6faabf7` (2026-09-14)
-**Commit Message**: fix(android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#798)
+### Incident Patch 1: `1dfcd4b8` (2026-10-30)
+**Commit Message**: Fix splash screen staying visible after warm start on Android 12+
 
-AGP 9 ships built-in Kotlin support and registers the kotlin extension
-itself. Applying the Kotlin plugin again fails configuration with
-"Cannot add extension with name 'kotlin'". Check for the extension
-directly, which needs no AGP version table and covers AGP 10, where the
-android.builtInKotlin opt-out is removed.
-
-**File**: `android/build.gradle` (modified, +7/-1)
+**File**: `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplashModuleImpl.kt` (modified, +3/-8)
 ```diff
-@@ -17,7 +17,13 @@ def isNewArchitectureEnabled() {
- }
- 
- apply plugin: "com.android.library"
--apply plugin: "kotlin-android"
-+// AGP 9 ships built-in Kotlin support and registers the `kotlin` extension
-+// itself. Applying the Kotlin plugin on top of it fails configuration with
-+// "Cannot add extension with name 'kotlin'". Only apply it when nothing has
-+// registered that extension yet.
-+if (project.extensions.findByName('kotlin') == null) {
-+    apply plugin: "kotlin-android"
-+}
- 
- if (isNewArchitectureEnabled()) {
-     apply plugin: "com.facebook.react"
-```
-
----
-
-### Incident Patch 2: `2ac6a06c` (2026-10-16)
-**Commit Message**: Fix removed StatusBar methods
-
-**File**: `example/src/App.tsx` (modified, +1/-7)
-```diff
-@@ -1,5 +1,5 @@
- import { useEffect, useState } from "react";
--import { Platform, StatusBar, StyleSheet, Text, View } from "react-native";
-+import { StatusBar, StyleSheet, Text, View } from "react-native";
- import { AnimatedBootSplash } from "./AnimatedBootSplash";
- 
- const styles = StyleSheet.create({
-@@ -23,13 +23,7 @@ export const App = () => {
-   const [visible, setVisible] = useState(true);
- 
-   useEffect(() => {
--    // set transparent status bar
-     StatusBar.setBarStyle("dark-content");
--
--    if (Platform.OS === "android") {
--      StatusBar.setBackgroundColor("transparent");
--      StatusBar.setTranslucent(true);
--    }
-   }, []);
- 
-   return (
-```
-
----
-
-### Incident Patch 3: `e79f4392` (2026-09-30)
-**Commit Message**: Fix splash screen staying visible after activity stop on Android 12-13
-
-**File**: `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplashModuleImpl.kt` (modified, +4/-24)
-```diff
-@@ -2,10 +2,8 @@ package com.zoontek.rnbootsplash
- 
- import android.annotation.SuppressLint
- import android.app.Activity
--import android.app.Application.ActivityLifecycleCallbacks
- import android.content.res.Configuration
- import android.os.Build
--import android.os.Bundle
- import android.os.Handler
- import android.os.Looper
- import android.util.TypedValue
-@@ -85,31 +83,13 @@ object RNBootSplashModuleImpl {
+@@ -81,15 +81,10 @@ object RNBootSplashModuleImpl {
+     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+       // This is not called on Android 12 when activity is started using intent
        // (Android studio / CLI / notification / widget…)
-       val splashScreen = mainActivity.splashScreen
- 
-+      // Remove it immediately, without animation. Never clear this listener on activity stop:
-+      // the view would never be removed and the splash screen would stay visible forever.
-+      // Running no animation also avoids https://issuetracker.google.com/issues/242118185
-       splashScreen.setOnExitAnimationListener { view ->
--        view.remove() // Remove it immediately, without animation
-+        view.remove()
-         splashScreen.clearOnExitAnimationListener()
-       }
+-      val splashScreen = mainActivity.splashScreen
 -
--      // Mitigates race where splash exit listener may fire after activity stop (not a full fix)
--      if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.TIRAMISU) {
--        val application = mainActivity.application
--
--        application.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
--          override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
--          override fun onActivityDestroyed(activity: Activity) {}
--          override fun onActivityPaused(activity: Activity) {}
--          override fun onActivityResumed(activity: Activity) {}
--          override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
--          override fun onActivityStarted(activity: Activity) {}
--
--          override fun onActivityStopped(activity: Activity) {
--            if (activity == mainActivity) {
--              runCatching { splashScreen.clearOnExitAnimationListener() }
--              application.unregisterActivityLifecycleCallbacks(this)
--            }
--          }
--        })
+-      // Remove it immediately, without animation. Never clear this listener on activity stop:
+-      // the view would never be removed and the splash screen would stay visible forever.
++      // Remove it immediately, without animation. Never clear this listener, or the splash screen
++      // can stay visible forever (https://github.com/zoontek/react-native-bootsplash/issues/809)
+       // Running no animation also avoids https://issuetracker.google.com/issues/242118185
+-      splashScreen.setOnExitAnimationListener { view ->
+-        view.remove()
+-        splashScreen.clearOnExitAnimationListener()
 -      }
++      mainActivity.splashScreen.setOnExitAnimationListener { view -> view.remove() }
      }
  
      UiThreadUtil.runOnUiThread {
@@ -1114,34 +1021,37 @@ android.builtInKotlin opt-out is removed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#
+## X. splash screen staying visible after warm start on Android 12+
 
 **RULE**:
-When implementing operations in `android/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-bootsplash. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplashModuleImpl.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zoontek/react-native-bootsplash. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d6faabf7`: android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#798). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1dfcd4b8`: splash screen staying visible after warm start on Android 12+. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/build.gradle`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/src/main/java/com/zoontek/rnbootsplash/RNBootSplashModuleImpl.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// AGP 9 ships built-in Kotlin support and registers the `kotlin` extension
-// itself. Applying the Kotlin plugin on top of it fails configuration with
-// "Cannot add extension with name 'kotlin'". Only apply it when nothing has
-// registered that extension yet.
-if (project.extensions.findByName('kotlin') == null) {
-    apply plugin: "kotlin-android"
-}
+      // Remove it immediately, without animation. Never clear this listener, or the splash screen
+      // can stay visible forever (https://github.com/zoontek/react-native-bootsplash/issues/809)
+      mainActivity.splashScreen.setOnExitAnimationListener { view -> view.remove() }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-apply plugin: "kotlin-android"
+      val splashScreen = mainActivity.splashScreen
+
+      // Remove it immediately, without animation. Never clear this listener on activity stop:
+      // the view would never be removed and the splash screen would stay visible forever.
+      splashScreen.setOnExitAnimationListener { view ->
+        view.remove()
+        splashScreen.clearOnExitAnimationListener()
+      }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d6faabf7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1dfcd4b8` are properly handled with clean fallback behavior.

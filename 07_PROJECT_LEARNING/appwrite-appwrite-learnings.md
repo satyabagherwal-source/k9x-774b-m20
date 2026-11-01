@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `a9f8ae18`  
+> **Source Version**: `b805c0a5`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T06:36:22.130Z  
+> **Timestamp**: 2026-10-30T23:44:48.673Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T06:36:20.885Z  
+> **Harvest Timestamp**: 2026-10-30T23:44:48.666Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 57752 stars
+- **Stars / Engagement**: 57800 stars
 
 ---
 
@@ -1908,8 +1908,8 @@ export function DomainsEmptyState({
 - **Issue #14230** (2026-10-08): **🐛 Bug Report: Inviting a dotted Gmail address to an organization fails with 409 user_email_already_exists**
   *Symptoms*: ### 👟 Reproduction steps  1. On Appwrite Cloud, have a console account that signed in with Google using a dotted Gmail address, e.g. `first.last@gmail.com`. The console denies aliased emails, so the account is stored as `firstlast@gmail.com` while its Google sign-in keeps `first.last@gmail.com`. 2. From another account, open an organization's **Settings → Members** and invite `first.last@gmail.com`.  ### 👍 Expected behavior  The invite goes to the existing account. Gmail ignores dots, so `first.last@gmail.com` and `firstlast@gmail.com` are the same inbox.  ### 👎 Actual Behavior  `POST /v1/teams/:teamId/memberships` returns:  ```json {   "message": "A user with the same email already exists in the current project.",   "code": 409,   "type": "user_email_already_exists" } ```  The invite looks up the exact typed address, finds no account, then matches the Google sign-in that holds the dotted address and rejects the invite. A dotted Gmail address with no matching sign-in fails with `400 user_email_not_canonical` instead, so a dotted Gmail address can't be used to invite anyone to an organization.  The same happens on self-hosted projects that enable the deny-aliased-email policy.  Workaround: invite the dotless address.  Fix: https://github.com/appwrite/appwrite/pull/14172  ### 🎲 Appwrite version  Appwrite Cloud (also self-hosted 2.3.0 with the deny-aliased-email policy on)  ### 💻 Operating system  Something else (not OS-specific)  ### 🧱 Your Environment  Cloud console, org
 
-- **Issue #10857** (2026-02-24): **OAuth Callback Error: Invalid Scheme tauri://localhost Not Supported**
-  *Symptoms*: ### 👟 Reproduction steps  i ran my tauri app with `npm run build && npm run tauri dev` and tried to use the Appwrite SDK to login but instead i got this error: `Invalid Scheme: The scheme used (tauri) in the Origin (tauri://localhost) is not supported.  If you are using a custom scheme, please change it to appwrite-callback-<PROJECT_ID>`  source code:  ```js // Import necessary components import React, { useState } from "react"; import { ID,  Client, Account } from "appwrite"; console.log('Appwrite imports:', { Client, Account }); import "./AuthModal.css"; import { getTranslationObject } from "./locales/index.js";  // Define server credientials const client = new Client(); client   .setEndpoint("https://cloud.appwrite.io/v1")   .setProject("reskin");  let account; // Attempt to initialize Appwrite try {   account = new Account(client);   console.log('Appwrite initialized:', { client, account }); } catch (e) {   console.error('Error initializing Appwrite:', e); }  export default function AuthModal({ open, onClose, onAuth }) {   const language = localStorage.getItem("reskin_language") || "en";   const t = getTranslationObject(language);   const [mode, setMode] = useState("login");   const [username, setUsername] = useState("");   const [email, setEmail] = useState("");   const [password, setPassword] = useState("");   const [error, setError] = useState("");   const [loading, setLoading] = useState(false);   const [showRecovery, setShowRecovery] = useState(false);   const [reco
+- **Issue #13719** (2026-10-29): **packages/lock: negative timeout should wait forever, adapters treat it as no-wait**
+  *Symptoms*: `Utopia\Lock\Lock::acquire()` documents its contract as: 0.0 means do not wait, a negative value means wait forever.  `File::acquire()` returns `$this->tryAcquire()` for every `$timeout <= 0.0`, so a negative timeout is a single non-blocking attempt. Under contention a caller following the documented contract gets an immediate `false`, or a `Contention` exception from `withLock()`, instead of waiting. The Redis `Distributed` adapter and the non-coroutine `Mutex` and `Semaphore` paths have the same shape.  Either the adapters honour negative as unbounded, or the interface doc drops the negative case; pick one and cover it with a unit test on the file lock (contention from a second process or a pre-held handle, negative timeout, assert it blocks until release).  Found by review on #13718 while absorbing the package; left out of that PR because absorption does not change library behaviour. The library now lives at `packages/lock`, so the fix lands here and releases with `bin/monorepo release lock`.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1926,426 +1926,310 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed930d0d` (2026-10-23)
-**Commit Message**: fix(mqtt): scope the push ledger unique index to the topic instance
+### Incident Patch 1: `222fcc4a` (2026-10-30)
+**Commit Message**: docs(functions): tighten email trigger docs and render docs arrow links
 
-Deduplication looks a message up by (messageId, topicInternalId), but the unique index still covered (messageId, topic). A topic recreated under the same id, or a row written before the instance binding, made the lookup miss while the insert collided, so the publish failed. The index now covers (messageId, topicInternalId); NULLs are distinct under it, so pre-upgrade rows never block a publish. V25 drops the old index and creates the new one.
+Move screenshots under their headings, list the built-in address
+details as bullets, link the execute page Email section to the email
+triggers docs, and simplify the changelog entry. The docs ArrowLink
+component only rendered a title attribute that no page sets, so every
+docs arrow link was empty; render its link text with an arrow.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `app/config/collections/common.php` (modified, +1/-1)
+**File**: `apps/console/src/components/pages/docs/docs-markdoc-render.tsx` (modified, +16/-2)
 ```diff
-@@ -386,7 +386,7 @@
-         'indexes' => [
-             Index::key(key: '_key_topicInternalId_sequence', attributes: ['topicInternalId', 'sequence'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
-             Index::key(key: '_key_messageInternalId', attributes: ['messageInternalId'], orders: [OrderDirection::Asc]),
--            Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
-+            Index::unique(key: '_key_message_topicInternalId', attributes: ['messageId', 'topicInternalId'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
-         ],
-     ],
+@@ -2,6 +2,7 @@
  
+ import Markdoc from '@markdoc/markdoc'
+ import React from 'react'
++import { ArrowRight } from 'lucide-react'
+ import { docsMarkdocConfig } from '@/lib/docs/markdoc-config'
+ import { useDocsPrompt } from '@/components/pages/docs/DocsPromptContext'
+ import { Cards, CardsItem } from './markdoc/Cards'
+@@ -60,8 +61,21 @@ const baseMarkdocComponents = {
+   MarkdocTableHead,
+   MarkdocTableCell,
+   Section: () => null,
+-  ArrowLink: ({ href, title }: { href?: string; title?: string }) => (
+-    <DocsLink href={href}>{title}</DocsLink>
++  ArrowLink: ({
++    href,
++    title,
++    children,
++  }: {
++    href?: string
++    title?: string
++    children?: React.ReactNode
++  }) => (
++    <div className="my-4 [&_p]:m-0 [&_p]:inline">
++      <DocsLink href={href}>
++        {title ?? children}
++        <ArrowRight className="ms-1 inline size-3.5 align-[-2px]" aria-hidden />
++      </DocsLink>
++    </div>
+   ),
+   CallToAction: ({ href, title }: { href?: string; title?: string }) => (
+     <div className="not-prose my-6">
 ```
 
-**File**: `src/Appwrite/Messaging/Adapter/Push/Appwrite.php` (modified, +5/-3)
+**File**: `apps/console/src/content/blog/posts/announcing-function-email-triggers.markdoc` (modified, +4/-4)
 ```diff
-@@ -145,11 +145,13 @@ private function createUserTopic(string $name): string
-      * (getDocument FOR UPDATE). A concurrent attempt for the same message blocks on that
-      * lock, then re-reads the ledger row this transaction committed rather than racing a
-      * second increment — so the topic sequence can't advance without a matching row, and
--     * two attempts can't open a gap. The unique index on (messageId, topic) remains as a
--     * correctness backstop.
-+     * two attempts can't open a gap. The unique index on (messageId, topicInternalId) remains
-+     * as a correctness backstop.
-      *
-      * Rows are bound to the locked topic's internal id, so a topic deleted and recreated under
--     * the same id never shares a ledger, or a deduplication key, with its predecessor.
-+     * the same id never shares a ledger, or a deduplication key, with its predecessor. Rows
-+     * written before that binding have a null topicInternalId, which the unique index treats
-+     * as distinct, so they never block a publish.
-      */
-     private function persist(string $topic, string $payload): int
-     {
-```
-
-**File**: `src/Appwrite/Migration/Version/V25.php` (modified, +11/-2)
-```diff
-@@ -489,8 +489,9 @@ private function migrateCollections(): void
-                     $this->createCollection($id);
-                     // Ledger rows are bound to their topic instance. Rows written before the
-                     // binding keep a null topicInternalId and are never replayed; the age-based
--                    // prune removes them. A failure other than an existing attribute or index
--                    // propagates, since publishing needs the attribute.
-+                    // prune removes them. NULLs are distinct under the unique index, so they never
-+                    // block a publish. A failure other than an existing attribute or index
-+                    // propagates, since publishing needs the attribute and the instance-scoped index.
-                     try {
-                         $this->createAttributeFromCollection($this->dbForProject, $id, 'topicInternalId');
-                     } catch (Duplicate) {
-@@ -503,6 +504,14 @@ private function migrateCollections(): void
-                         $this->dbForProject->deleteIndex($id, '_key_topic_sequence');
-                     } catch (NotFound) {
-                     }
-+                    try {
-+                        $this->dbForProject->deleteIndex($id, '_key_message_topic');
-+                    } catch (NotFound) {
-+                    }
-+                    try {
-+                        $this->createIndexFromCollection($this->dbForProject, $id, '_key_message_topicInternalId');
-+                    } catch (Duplicate) {
-+                    }
-                     $this->dbForProject->purgeCachedCollection($id);
-                     break;
+@@ -46,16 +46,18 @@ When your function returns an error, Appwrite still confirms the email, and the
  
-```
-
-**File**: `tests/unit/Appwrite/Messaging/Adapter/Push/AppwriteTest.php` (modified, +44/-0)
-```diff
-@@ -10,6 +10,7 @@
- use PHPUnit\Framework\TestCase;
- use Utopia\Cache\Adapter\None as NoCache;
- use Utopia\Cache\Cache;
-+use Utopia\Config\Config;
- use Utopia\Database\Adapter\Memory;
- use Utopia\Database\Attribute;
- use Utopia\Database\Collection;
-@@ -131,6 +132,7 @@ protected function setUp(): void
-                 Attribute::string(key: 'messageInternalId', size: 255),
-                 Attribute::integer(key: 'sequence', required: true),
-             ],
-+            indexes: Config::getParam('collections', [])['projects']['pushLedger']['indexes'],
-             permissions: $any,
-             documentSecurity: false,
-         ));
-@@ -303,6 +305,48 @@ public function testRecreatedTopicGetsItsOwnLedger(): void
-         $this->assertSame(1, $rows['msg-2']->getAttribute('sequence'));
-     }
+ # Receive email at the built-in address
  
-+    public function testMessageReusedOnRecreatedTopicPublishes(): void
-+    {
-+        $this->seedTopic('topic-1', 0);
-+        $broker = new FakeBroker();
-+        $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'deleted topic'));
-+        $this->database->deleteDocument('topics', 'topic-1');
-+        $this->seedTopic('topic-1', 0);
-+        $recreated = (string) $this->topic('topic-1')->getSequence();
++![Email card with Email trigger turned on and the built-in address under Default address](/images/blog/announcing-function-email-triggers/built-in-address.avif)
 +
-+        $response = $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'recreated topic'));
-+
-+        $this->assertSame(1, $response['deliveredTo'], 'a message id already in the deleted topic\'s ledger must still publish to the recreated topic');
-+        $this->assertSame('success', $response['results'][0]['status']);
-+        $this->assertCount(2, $broker->published);
-+        $rows = \array_values(\array_filter(
-+            $this->ledger(),
-+            static fn (Document $row): bool => $row->getAttribute('topicInternalId') === $recreated,
-+        ));
-+        $this->assertCount(1, $rows);
-+        $this->assertSame(1, $rows[0]->getAttribute('sequence'));
-+    }
-+
-+    public function testLedgerRowWithoutTopicInstanceDoesNotBlockPublish(): void
-+    {
-+        $this->seedTopic('topic-1', 3);
-+        $this->database->skipValidation(fn () => $this->database->createDocument('pushLedger', new Document([
-+            'topic' => 'topic-1',
-+            'data' => '{}',
-+            'messageId' => 'msg-1',
-+            'messageInternalId' => 'internal-1',
-+            'sequence' => 3,
-+        ])));
-+
-+        $broker = new FakeBroker();
-+        $response = $this->adapter($broker, messageId: 'msg-1')->send(new Push(to: ['topic-1'], title: 'after upgrade'));
-+
-+        $this->assertSame(1, $response['deliveredTo'], 'a ledger row written before topic instances were recorded must not block a publish of the same message');
-+        $this->assertSame('success', $response['results'][0]['status']);
-+        $this->assertCount(2, $this->ledger());
-+        $this->assertSame(4, $this->topic('topic-1')->getAttribute('sequence'));
-+    }
-+
-     public function testEachTopicGetsItsOwnSequence(): void
-     {
-         // Two topics at different tails: each advances independently.
-```
-
-**File**: `tests/unit/Migration/Version/V25Test.php` (modified, +19/-1)
-```diff
-@@ -315,8 +315,9 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
-             $indexes = $collection['indexes'];
-             if ($id === 'pushLedger') {
-                 $attributes = \array_filter($attributes, static fn (Attribute $attribute): bool => $attribute->key !== 'topicInternalId');
--                $indexes = \array_filter($indexes, static fn (Index $index): bool => $index->key !== '_key_topicInternalId_sequence');
-+                $indexes = \array_filter($indexes, static fn (Index $index): bool => !\in_array($index->key, ['_key_topicInternalId_sequence', '_key_message_topicInternalId'], true));
-                 $indexes[] = Index::key(key: '_key_topic_sequence', attributes: ['topic', 'sequence']);
-+                $indexes[] = Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic']);
-             }
-             $database->createCollection(Collection::create(
-                 id: $id,
-@@ -325,6 +326,12 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
-             ));
-         }
-         $database->createCollection(Collection::create(id: 'audit'));
-+        $authorization->skip(fn () => $database->createDocument('pushLedger', new Document([
-+            'topic' => 'news',
-+            'data' => ['body' => 'before upgrade'],
-+            'messageId' => 'message',
-+            'sequence' => 1,
-+        ])));
+ Each function has a built-in email domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, and it does not need DNS records.
  
-         $migration = new V25();
-         $migration->setProject(new Document(['$id' => 'project', '$sequence' => '1']), $database, $database, $authorization);
-@@ -337,6 +344,17 @@ public function testBindsExistingPushLedgerToTopicInstances(): void
-         $this->assertContains('topicInternalId', $attributes);
-         $this->assertContains('_key_topicInternalId_sequence', $indexes);
-         $this->assertNotContains('_key_topic_sequence', $indexes, 'replay no longer reads by topic id, so its index must go');
-+        $this->assertContains('_key_message_topicInternalId', $indexes);
-+        $this->assertNotContains('_key_message_topic', $indexes, 'deduplication keys on the topic instance, so the topic id unique index must go');
-+
-+        $published = $authorization->skip(fn () => $database->createDocument('pushLedger', new Document([
-+            'topic' => 'news',
-+            'topicInternalId' => '7',
-+            'data' => ['body' => 'after upgrade'],
-+            'messageId' => 'message',
-+            'sequence' => 2,
-+        ])));
-+        $this->assertSame('7', $published->getAttribute('topicInternalId'), 'a row written before the upgrade must not block the same message on a topic instance');
-     }
+ Any name before the `@` works. For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function. The function reads the address that received the email from `envelope.to`.
  
-     public function testBackfillsLegacyTypeOnExistingTransactions(): void
-```
-
----
-
-### Incident Patch 2: `518749a7` (2026-10-23)
-**Commit Message**: Merge pull request #14771 from appwrite/security/vcs-fanout-after-verify
-
-fix(vcs): verify the GitHub webhook signature before fanning the event out
-
-**File**: `src/Appwrite/Platform/Modules/VCS/Http/GitHub/Events/Create.php` (modified, +5/-2)
-```diff
-@@ -64,8 +64,6 @@ public function action(
-         callable $deploymentsFactory,
-         array $platform
-     ) {
--        $this->preprocessEvent($request);
+ To turn on the trigger, open your function in the Appwrite Console, go to **Settings** > **Executions**, turn on **Email trigger** in the **Email** card, and click **Update**. The card shows an address of the function under **Default address**.
+ 
+-![Email card with Email trigger turned on and the built-in address under Default address](/images/blog/announcing-function-email-triggers/built-in-address.avif)
 -
-         $vcs = $vcsFactory->fromProvider('github');
+ # Connect a custom domain
  
-         $event = $request->getHeaderLine('x-github-event', '');
-@@ -82,6 +80,11 @@ public function action(
-             throw new Exception(Exception::GENERAL_ACCESS_FORBIDDEN, 'Invalid webhook payload signature. Please make sure the webhook secret has same value in your GitHub app and in the _APP_VCS_GITHUB_WEBHOOK_SECRET environment variable');
-         }
- 
-+        // Only a validly-signed delivery is preprocessed (on Cloud this fans the event out to
-+        // other regions). Running it before the signature check let an unauthenticated POST
-+        // trigger N cross-region forwards — an amplification vector.
-+        $this->preprocessEvent($request);
++![Verify email domain screen with the MX and TXT records for mail.example.com](/images/blog/announcing-function-email-triggers/custom-domain.avif)
 +
-         $parsedPayloads = $vcs->getEvents($event, $payload);
+ You can connect a domain that you own, such as `mail.example.com`. Every email sent to that domain goes to your function, so use a domain that you don't use for any other email.
  
-         foreach ($parsedPayloads as $parsedPayload) {
+ Turn on the email trigger first. Then open the **Domains** tab of your function, click **Add domain**, select the **Email** type, enter the domain, and click **Add**. The Console shows two DNS records to add at your DNS provider:
+@@ -65,8 +67,6 @@ Turn on the email trigger first. Then open the **Domains** tab of your function,
+ 
+ After you add the records, click **Verify**.
+ 
+-![Verify email domain screen with the MX and TXT records for mail.example.com](/images/blog/announcing-function-email-triggers/custom-domain.avif)
+-
+ {% info title="Domains with a CNAME record" %}
+ DNS does not allow an `MX` record on a name that has a `CNAME` record. If `support.example.com` already points to a site with a `CNAME` record, receive email on another subdomain, such as `mail.example.com`.
+ {% /info %}
+```
+
+**File**: `apps/console/src/content/changelog/entries/2026-10-30.markdoc` (modified, +2/-2)
+```diff
+@@ -6,9 +6,9 @@ cover: /images/blog/announcing-function-email-triggers/cover.avif
+ tags: functions
+ ---
+ 
+-Appwrite Functions on Appwrite Cloud can now execute when an email arrives. Turn on the **Email trigger** of a function, and any address at its built-in domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, executes it. You can also connect a domain that you own with an `MX` record and a `TXT` record.
++Appwrite Functions on Appwrite Cloud can now execute when an email arrives. Turn on the **Email trigger** of a function, and an email sent to an address such as `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` executes it. You can also connect a domain that you own with an MX record and a TXT record.
+ 
+-Your function receives the email as JSON and each attachment as a file in one `multipart/form-data` request, together with a spam score that it can use to decide what to keep. Appwrite does not store the email.
++Your function receives the email as JSON and each attachment as a file in one `multipart/form-data` request, together with a spam score that it can use to decide what to keep.
+ 
+ {% arrow_link href="/blog/post/announcing-function-email-triggers" %}
+ Read the announcement
+```
+
+**File**: `apps/console/src/content/docs/products/functions/email/index.markdoc` (modified, +20/-21)
+```diff
+@@ -9,7 +9,6 @@ readtime: 7
+ An email trigger executes your function when an email arrives at one of the function's addresses.
+ Each function has a [built-in address](#built-in-address), and you can also connect a [custom domain](#custom-domain).
+ Appwrite receives the email and executes your function with the email and its attachments in the request body.
+-Appwrite does not store the email.
+ Your function can save the email to a table, reply to the sender, or send the content to another service.
+ 
+ Email triggers are available on Appwrite Cloud, and they only receive email.
+@@ -33,6 +32,13 @@ The [execute access](/docs/products/functions/functions#execution-access) of the
+ 
+ # Turn on the email trigger {% #turn-on %}
+ 
++{% only_dark %}
++![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/dark/built-in-address.avif)
++{% /only_dark %}
++{% only_light %}
++![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/built-in-address.avif)
++{% /only_light %}
++
+ Turn on the email trigger of a function before it can receive email at its built-in address or at a custom domain.
+ 
+ 1. In the Appwrite Console's sidebar, click **Functions**.
+@@ -41,22 +47,15 @@ Turn on the email trigger of a function before it can receive email at its built
+ 1. In the **Email** card, turn on **Email trigger**.
+ 1. Click **Update**.
+ 
+-{% only_dark %}
+-![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/dark/built-in-address.avif)
+-{% /only_dark %}
+-{% only_light %}
+-![Email card with Email trigger turned on and the built-in address under Default address](/images/docs/functions/email/built-in-address.avif)
+-{% /only_light %}
+-
+ # Built-in address {% #built-in-address %}
+ 
+-Each function has its own email domain, `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`.
+-The Console shows `contact@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` as **Default address** in the **Email** card, but any name before the `@` works.
+-For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function.
+-The function reads which address received the email from [`envelope.to`](#request-body).
+-You do not need to configure DNS records for the built-in address.
++Each function has a built-in address that does not need DNS records.
++
++- **Domain:** `<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`, with the function ID in lowercase.
++- **Default address:** the **Email** card in the Console shows `contact@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email`.
++- **Other addresses:** any name before the `@` works. For example, `support@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` and `billing@<FUNCTION_ID>-<PROJECT_ID>.appwrite.email` both execute the same function.
++- **Receiving address:** the function reads which address received the email from [`envelope.to`](#request-body).
+ 
+-The domain contains the function ID in lowercase.
+ A function does not have a built-in address when:
+ 
+ - The function ID contains a `.` or a `_`.
+@@ -67,6 +66,13 @@ To receive email for such a function, connect a [custom domain](#custom-domain).
+ 
+ # Custom domain {% #custom-domain %}
+ 
++{% only_dark %}
++![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/dark/custom-domain.avif)
++{% /only_dark %}
++{% only_light %}
++![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/custom-domain.avif)
++{% /only_light %}
++
+ You can connect a domain that you own, such as `mail.example.com`, to your function.
+ Every email sent to that domain goes to your function, so use a domain that you don't use for any other email.
+ 
+@@ -95,13 +101,6 @@ To connect a domain:
+ 1. At your DNS provider, add the `MX` and `TXT` records that the Console shows.
+ 1. Click **Verify**.
+ 
+-{% only_dark %}
+-![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/dark/custom-domain.avif)
+-{% /only_dark %}
+-{% only_light %}
+-![Verify email domain screen with the MX and TXT records for mail.example.com](/images/docs/functions/email/custom-domain.avif)
+-{% /only_light %}
+-
+ If the records have not propagated yet, the domain stays unverified.
+ To verify it later, under the **Domains** tab, click **Retry** next to the domain. Then click **Verify**.
+ 
+```
+
+**File**: `apps/console/src/content/docs/products/functions/execute/index.markdoc` (modified, +1/-1)
+```diff
+@@ -1146,7 +1146,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
+ 
+ # Email {% #email %}
+ 
+-On Appwrite Cloud, after you turn on the email trigger of a function, the function executes when an email arrives at its built-in address or at an address on a custom domain that you connect.
++On Appwrite Cloud, after you turn on the [email trigger](/docs/products/functions/email) of a function, the function executes when an email arrives at its [built-in address](/docs/products/functions/email#built-in-address) or at an address on a [custom domain](/docs/products/functions/email#custom-domain) that you connect.
+ The execution receives the email and its attachments in a `multipart/form-data` request body, and the `x-appwrite-trigger` header is `email`.
+ Appwrite executes the function while the sending mail server waits, and accepts the email after the function finishes.
+ 
+```
+
+**File**: `apps/console/src/lib/docs/generated/search-index.ts` (modified, +1/-1)
+```diff
+@@ -4728,7 +4728,7 @@ export const DOCS_SEARCH_INDEX: DocsSearchEntry[] = [
+     "slug": "products/functions/email",
+     "title": "Email triggers",
+     "description": "Execute an Appwrite Function when an email arrives at its address. Use the built-in address of the function or connect a custom domain.",
+-    "excerpt": "An email trigger executes your function when an email arrives at one of the function's addresses. Each function has a built-in address, and you can also connect a custom domain. Appwrite receives the email and executes your function with the email and its attachments in the request body. Appwrite does not store the email. Your function can save the email to a table, reply to the sender, or send the content to another service. Email triggers are available on Appwrite…",
++    "excerpt": "An email trigger executes your function when an email arrives at one of the function's addresses. Each function has a built-in address, and you can also connect a custom domain. Appwrite receives the email and executes your function with the email and its attachments in the request body. Your function can save the email to a table, reply to the sender, or send the content to another service. Email triggers are available on Appwrite Cloud, and they only receive email.…",
+     "breadcrumbs": [
+       "Functions",
+       "Guides",
 ```
 
 ---
 
-### Incident Patch 3: `02672c8d` (2026-10-23)
-**Commit Message**: fix(query): validate AST identifiers without regex
+### Incident Patch 2: `b805c0a5` (2026-10-30)
+**Commit Message**: fix(console): drop the Everything in Pro line from the Enterprise pricing card
 
-AGENTS.md disallows regex validation, so Func and Cast now check names and
-types with strspn and string functions through a shared Grammar class. The
-accepted grammar is unchanged except that a trailing newline is now
-rejected: the previous pattern's `$` anchor matched before a final "\n", so
-"NOW\n" was accepted as a function name and "INT\n" as a cast type.
+The card already lists enterprise-only features, so the intro was redundant.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-**File**: `packages/query/src/AST/Call/Func.php` (modified, +2/-1)
+**File**: `apps/console/src/lib/i18n/dictionaries/he/pricing.ts` (modified, +0/-1)
 ```diff
-@@ -3,6 +3,7 @@
- namespace Utopia\Query\AST\Call;
- 
- use Utopia\Query\AST\Expression;
-+use Utopia\Query\AST\Grammar;
- use Utopia\Query\Exception\ValidationException;
- 
- readonly class Func implements Expression
-@@ -16,7 +17,7 @@ public function __construct(
-         public bool $distinct = false,
-         public ?Expression $filter = null,
-     ) {
--        if (!\preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $name)) {
-+        if (!Grammar::isIdentifier($name)) {
-             throw new ValidationException('Invalid function name: ' . $name);
-         }
-     }
+@@ -184,7 +184,6 @@ export const hePricingDictionary: Record<string, string> = {
+   'DocumentsDB, VectorsDB,\nPostgreSQL, MySQL,\nor upgraded TablesDB':
+     'DocumentsDB, VectorsDB,\nPostgreSQL, MySQL,\nאו TablesDB משודרג',
+   'Email support': 'תמיכה באימייל',
+-  'Everything in Pro, plus:': 'כל מה שיש ב-Pro, ובנוסף:',
+   'Fewer systems to integrate, secure, and maintain':
+     'פחות מערכות לשלב, לאבטח ולתחזק',
+   'Firewall': 'Firewall',
 ```
 
-**File**: `packages/query/src/AST/Expression/Cast.php` (modified, +2/-1)
+**File**: `apps/console/src/lib/i18n/dictionaries/ja/pricing.ts` (modified, +0/-1)
 ```diff
-@@ -3,6 +3,7 @@
- namespace Utopia\Query\AST\Expression;
- 
- use Utopia\Query\AST\Expression;
-+use Utopia\Query\AST\Grammar;
- use Utopia\Query\Exception\ValidationException;
- 
- readonly class Cast implements Expression
-@@ -11,7 +12,7 @@ public function __construct(
-         public Expression $expression,
-         public string $type,
-     ) {
--        if (!\preg_match('/^[A-Za-z_][A-Za-z0-9_]*(\s+[A-Za-z_][A-Za-z0-9_]*)*(\s*\(\s*[A-Za-z0-9_,\s]+\s*\))?$/', $type)) {
-+        if (!Grammar::isType($type)) {
-             throw new ValidationException('Invalid cast type: ' . $type);
-         }
-     }
+@@ -176,7 +176,6 @@ export const jaPricingDictionary: Record<string, string> = {
+   'Private WHOIS': 'プライベート WHOIS',
+   '50': '50',
+   'Email support': 'メールサポート',
+-  'Everything in Pro, plus:': 'Pro のすべてに加えて:',
+   'Firewall': 'Firewall',
+   'Firewall rules': 'ファイアウォールルール',
+   'From $0.05 per 1M tokens': '1M トークンあたり $0.05 から',
 ```
 
-**File**: `packages/query/src/AST/Grammar.php` (added, +49/-0)
+**File**: `apps/console/src/lib/pricing/plans.ts` (modified, +0/-1)
 ```diff
-@@ -0,0 +1,49 @@
-+<?php
-+
-+namespace Utopia\Query\AST;
-+
-+final class Grammar
-+{
-+    private const string IDENTIFIER_CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
-+
-+    private const string WHITESPACE = " \t\n\v\f\r";
-+
-+    private const string TYPE_ARGUMENT_CHARACTERS = self::IDENTIFIER_CHARACTERS . ',' . self::WHITESPACE;
-+
-+    public static function isIdentifier(string $value): bool
-+    {
-+        return $value !== ''
-+            && !\ctype_digit($value[0])
-+            && \strspn($value, self::IDENTIFIER_CHARACTERS) === \strlen($value);
-+    }
-+
-+    public static function isType(string $value): bool
-+    {
-+        $open = \strpos($value, '(');
-+
-+        if ($open === false) {
-+            return self::isWords($value);
-+        }
-+
-+        if (!\str_ends_with($value, ')')) {
-+            return false;
-+        }
-+
-+        $arguments = \substr($value, $open + 1, -1);
-+
-+        return $arguments !== ''
-+            && \strspn($arguments, self::TYPE_ARGUMENT_CHARACTERS) === \strlen($arguments)
-+            && self::isWords(\rtrim(\substr($value, 0, $open), self::WHITESPACE));
-+    }
-+
-+    private static function isWords(string $value): bool
-+    {
-+        $words = \explode(' ', \strtr($value, self::WHITESPACE, \str_repeat(' ', \strlen(self::WHITESPACE))));
-+
-+        if ($words[0] === '' || $words[\array_key_last($words)] === '') {
-+            return false;
-+        }
-+
-+        return \array_all($words, fn (string $word): bool => $word === '' || self::isIdentifier($word));
-+    }
-+}
+@@ -62,7 +62,6 @@ export const pricingPlans: readonly PricingPlan[] = [
+     price: 'Custom',
+     description:
+       'For enterprises that need more power, premium support, and advanced security features.',
+-    featuresIntro: 'Everything in Pro, plus:',
+     features: [
+       'Uptime SLAs',
+       'Success manager',
 ```
 
-**File**: `packages/query/tests/Regression/SecurityRegressionTest.php` (modified, +67/-0)
+---
+
+### Incident Patch 3: `ace0f441` (2026-10-30)
+**Commit Message**: fix(console): stop function card charts flashing on first load
+
+Gate chart points and totals on both usage queries resolving, matching
+DatabaseOperationsChartPreview, so the card fades in once instead of
+rendering executions, remounting, and fading in again.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `apps/console/src/components/pages/projects/$projectId/functions/_components/FunctionExecutionsChartPreview.tsx` (modified, +13/-6)
 ```diff
-@@ -73,6 +73,9 @@
-  *      testCastRejectsSqlInType
-  *      testCastAcceptsParameterisedType
-  *      testToAstRejectsUnsupportedFilterInsteadOfEmittingRaw
-+ *      testFuncRejectsTrailingWhitespaceInName
-+ *      testCastRejectsTrailingWhitespaceInType
-+ *      testCastAcceptsMultiWordType
-  */
- class SecurityRegressionTest extends TestCase
- {
-@@ -497,6 +500,70 @@ public function testCastRejectsSqlInType(): void
-         new Cast(new Column('price'), 'TEXT) OR (1=1');
-     }
+@@ -231,8 +231,19 @@ export function FunctionExecutionsChartPreview({
+     enabled,
+   )
  
-+    /**
-+     * @return array<string, array{string}>
-+     */
-+    public static function trailingWhitespaceFunctionNameProvider(): array
-+    {
-+        return [
-+            'newline' => ["NOW\n"],
-+            'carriage return and newline' => ["NOW\r\n"],
-+            'space' => ['NOW '],
-+            'tab' => ["NOW\t"],
-+        ];
-+    }
+-  const executionsPoints = executionsQuery.data?.chartPoints ?? []
+-  const gbHoursPoints = gbHoursQuery.data?.chartPoints ?? []
++  const usageReady =
++    !enabled ||
++    ((executionsQuery.isFetched || executionsQuery.isError) &&
++      (gbHoursQuery.isFetched || gbHoursQuery.isError))
 +
-+    #[DataProvider('trailingWhitespaceFunctionNameProvider')]
-+    public function testFuncRejectsTrailingWhitespaceInName(string $name): void
-+    {
-+        $this->expectException(ValidationException::class);
-+        $this->expectExceptionMessage('Invalid function name');
-+
-+        new Func($name);
-+    }
-+
-+    /**
-+     * @return array<string, array{string}>
-+     */
-+    public static function trailingWhitespaceCastTypeProvider(): array
-+    {
-+        return [
-+            'newline after word' => ["INT\n"],
-+            'newline after arguments' => ["DECIMAL(10, 2)\n"],
-+            'space after word' => ['INT '],
-+            'space after arguments' => ['DECIMAL(10, 2) '],
-+        ];
-+    }
-+
-+    #[DataProvider('trailingWhitespaceCastTypeProvider')]
-+    public function testCastRejectsTrailingWhitespaceInType(string $type): void
-+    {
-+        $this->expectException(ValidationException::class);
-+        $this->expectExceptionMessage('Invalid cast type');
-+
-+        new Cast(new Column('price'), $type);
-+    }
-+
-+    /**
-+     * @return array<string, array{string}>
-+     */
-+    public static function multiWordCastTypeProvider(): array
-+    {
-+        return [
-+            'two words' => ['DOUBLE PRECISION'],
-+            'tab separated' => ["DOUBLE\tPRECISION"],
-+            'four words' => ['TIMESTAMP WITH TIME ZONE'],
-+            'words and arguments' => ['CHARACTER VARYING (255)'],
-+            'whitespace inside arguments' => ["NUMERIC( 10 ,\n2 )"],
-+        ];
-+    }
-+
-+    #[DataProvider('multiWordCastTypeProvider')]
-+    public function testCastAcceptsMultiWordType(string $type): void
-+    {
-+        $this->assertSame($type, new Cast(new Column('price'), $type)->type);
-+    }
-+
-     public function testCastAcceptsParameterisedType(): void
-     {
-         $cast = new Cast(new Column('price'), 'DECIMAL(10, 2)');
++  const executionsPoints = useMemo(
++    () => (usageReady ? (executionsQuery.data?.chartPoints ?? []) : []),
++    [executionsQuery.data?.chartPoints, usageReady],
++  )
++  const gbHoursPoints = useMemo(
++    () => (usageReady ? (gbHoursQuery.data?.chartPoints ?? []) : []),
++    [gbHoursQuery.data?.chartPoints, usageReady],
++  )
+   const hasPoints = executionsPoints.length > 0 || gbHoursPoints.length > 0
+ 
+   const chartData = useMemo((): ChartPoint[] => {
+@@ -276,10 +287,6 @@ export function FunctionExecutionsChartPreview({
+     [gbHoursPoints],
+   )
+ 
+-  const usageReady =
+-    !enabled ||
+-    ((executionsQuery.isFetched || executionsQuery.isError) &&
+-      (gbHoursQuery.isFetched || gbHoursQuery.isError))
+   const fadeKey = usageReady ? 'data' : 'loading'
+   const fadeClassName = usageReady && enabled && USAGE_CHART_FADE_IN_CLASS_NAME
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14872** (2026-10-23): fix(users): require users.write to read MFA recovery codes (@HarshMN2345)
-- **PR #14871** (2026-10-23): fix(query): match exact searches without InnoDB phrase positions (@abnegate)
-- **PR #14870** (2026-10-23): fix(migrations): apply the outbound host policy to migration sources (@abnegate)
-- **PR #14868** (2026-10-23): fix(migrations): check source key scopes for DocumentsDB and VectorsDB (@abnegate)
-- **PR #14867** (2026-10-23): fix(mqtt): scope stored push messages to the topic instance (@abnegate)
-- **PR #14866** (2026-10-23): fix(query): tighten function name and cast type parsing in the AST (@abnegate)
+- **PR #15138** (2026-10-30): feat(console): show Enterprise prompts to Pro organizations (@eldadfux)
+- **PR #15133** (2026-10-30): docs(console): update the Stripe subscriptions tutorial for the current dashboards (@adityaoberai)
+- **PR #15127** (2026-10-30): feat(console): reorder, colors, banner and a creation wizard for project environments (@Meldiron)
+- **PR #15126** (closed): test(alerts): regression tests without the fix (do not merge) (@ChiragAgg5k)
+- **PR #15124** (2026-10-30): chore(locale): move the locale controller to a module (@HarshMN2345)
+- **PR #15122** (2026-10-30): fix(deletes): retire deployments in small batches to stop worker OOMs (@ChiragAgg5k)
 
 ---
 
@@ -2365,28 +2249,44 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mqtt): scope the push ledger unique index to the topic instance
+## X. docs(functions): tighten email trigger docs and render docs arrow links
 
 **RULE**:
-When implementing operations in `app/config/collections/common.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/console/src/components/pages/docs/docs-markdoc-render.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed930d0d`: mqtt): scope the push ledger unique index to the topic instance. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `222fcc4a`: docs(functions): tighten email trigger docs and render docs arrow links. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/config/collections/common.php`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/components/pages/docs/docs-markdoc-render.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            Index::unique(key: '_key_message_topicInternalId', attributes: ['messageId', 'topicInternalId'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
+import { ArrowRight } from 'lucide-react'
+  ArrowLink: ({
+    href,
+    title,
+    children,
+  }: {
+    href?: string
+    title?: string
+    children?: React.ReactNode
+  }) => (
+    <div className="my-4 [&_p]:m-0 [&_p]:inline">
+      <DocsLink href={href}>
+        {title ?? children}
+        <ArrowRight className="ms-1 inline size-3.5 align-[-2px]" aria-hidden />
+      </DocsLink>
+    </div>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-            Index::unique(key: '_key_message_topic', attributes: ['messageId', 'topic'], orders: [OrderDirection::Asc, OrderDirection::Asc]),
+  ArrowLink: ({ href, title }: { href?: string; title?: string }) => (
+    <DocsLink href={href}>{title}</DocsLink>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed930d0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `222fcc4a` are properly handled with clean fallback behavior.

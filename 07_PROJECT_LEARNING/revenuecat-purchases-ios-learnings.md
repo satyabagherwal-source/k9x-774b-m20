@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source**: github ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
-> **Source Version**: `742a03ea`  
+> **Source Version**: `373c6305`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T09:24:29.852Z  
+> **Timestamp**: 2026-10-30T11:12:25.479Z  
 > **Learning ID**: `learn-github-revenuecat-purchases-ios`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/revenuecat-purchases-ios-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RevenueCat/purchases-ios](https://github.com/RevenueCat/purchases-ios))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T09:18:55.563Z  
+> **Harvest Timestamp**: 2026-10-30T11:12:24.115Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, macOS, and visionOS.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3085 stars
+- **Stars / Engagement**: 3088 stars
 
 ---
 
@@ -527,151 +527,430 @@ struct YarnShape: Shape {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c4f9551c` (2026-10-23)
-**Commit Message**: Fix(paywalls) Native delayed back button (#8114)
+### Incident Patch 1: `4136b43e` (2026-10-30)
+**Commit Message**: build: don't block releases on CocoaPods publishing (#8125)
 
-* delayed back button
+CocoaPods trunk is read-only from Nov 1 to Nov 7, so pod pushes for
+releases in that window fail. make-release no longer requires them, so the
+GitHub release and SPM deploy still go out. Rerunning the failed pod jobs
+once trunk is writable pushes the pods for that tag.
 
-* fix test file
-
-**File**: `RevenueCatUI/Templates/V2/Components/Button/ButtonComponentView.swift` (modified, +1/-0)
+**File**: `.circleci/default_config.yml` (modified, +2/-1)
 ```diff
-@@ -124,6 +124,7 @@ struct ButtonComponentView: View {
-                 isWorkflowClose: self.viewModel.component.isCloseWorkflowAction,
-                 componentIdentifier: ObjectIdentifier(self.viewModel),
-                 interactionEnabled: !self.purchaseHandler.actionInProgress,
-+                registrationDelayMilliseconds: self.viewModel.component.transition?.animation?.msDelay ?? 0,
-                 action: {
-                     guard !self.purchaseHandler.actionInProgress else { return }
-                     try await self.performAction()
+@@ -2717,7 +2717,8 @@ workflows:
+           <<: *release-tags
+       - make-release:
+           requires:
+-            - push-revenuecatui-pod
++            # TODO: restore after Nov 7, 2026, once CocoaPods trunk is writable again.
++            # - push-revenuecatui-pod
+             - deploy-to-spm
+             - docs-deploy
+           <<: *release-tags
 ```
 
-**File**: `RevenueCatUI/Templates/V2/Components/Button/NativePaywallCloseButton.swift` (modified, +26/-1)
+---
+
+### Incident Patch 2: `4b78e974` (2026-10-28)
+**Commit Message**: Fix(Paywalls) Correct Hero Safe Area detection (#8126)
+
+* Determine when the safe area should be ignored
+
+* add files to project
+
+* Match hero visibility to component rendering context
+
+* Match hero text visibility to signed promotional offers
+
+* Trim overlapping hero layout regression tests
+
+* Keep horizontal hero rows with visible siblings inside safe area
+
+**File**: `RevenueCat.xcodeproj/project.pbxproj` (modified, +6/-0)
 ```diff
-@@ -23,6 +23,7 @@ struct NativePaywallCloseButton<Content: View>: View {
-     var isWorkflowClose = false
-     var componentIdentifier: ObjectIdentifier?
-     var interactionEnabled = true
-+    var registrationDelayMilliseconds = 0
-     let action: () async throws -> Void
-     @ViewBuilder var content: () -> Content
-     var availabilityChanged: ((Bool) -> Void)?
-@@ -42,6 +43,7 @@ struct NativePaywallCloseButton<Content: View>: View {
-                     accessibilityLabel: self.accessibilityLabel, role: self.role,
-                     isWorkflowClose: self.isWorkflowClose, registrationEnabled: self.registrationEnabled,
-                     interactionEnabled: self.interactionEnabled,
-+                    registrationDelayMilliseconds: self.registrationDelayMilliseconds,
-                     componentIdentifier: self.componentIdentifier, pageID: self.pageID, action: self.action,
-                     availabilityChanged: self.availabilityChanged
+@@ -232,6 +232,7 @@
+ 		2C08B2E92CD40DBF0024857B /* ButtonComponentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C08B2E82CD40DBF0024857B /* ButtonComponentTests.swift */; };
+ 		2C08B3072CD55D660024857B /* FlexHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C08B3062CD55D590024857B /* FlexHStack.swift */; };
+ 		2C08B3172CDA44440024857B /* ViewModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C08B3162CDA443A0024857B /* ViewModelFactory.swift */; };
++		DD3889B3AF7540A7BE84FB0F /* PaywallHeroLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 963F9E3F1811431799CA98C0 /* PaywallHeroLayout.swift */; };
+ 		2C08B3352CDD165B0024857B /* PaywallComponentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C08B3342CDD16550024857B /* PaywallComponentViewModel.swift */; };
+ 		2C0B98CD2797070B00C5874F /* PromotionalOffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0B98CC2797070B00C5874F /* PromotionalOffer.swift */; };
+ 		2C2AEB0F2CA64E0E00A50F38 /* Template1Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2AEB0E2CA64E0E00A50F38 /* Template1Preview.swift */; };
+@@ -2040,6 +2041,7 @@
+ 		2C08B2E82CD40DBF0024857B /* ButtonComponentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonComponentTests.swift; sourceTree = "<group>"; };
+ 		2C08B3062CD55D590024857B /* FlexHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexHStack.swift; sourceTree = "<group>"; };
+ 		2C08B3162CDA443A0024857B /* ViewModelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelFactory.swift; sourceTree = "<group>"; };
++		963F9E3F1811431799CA98C0 /* PaywallHeroLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallHeroLayout.swift; sourceTree = "<group>"; };
+ 		2C08B3342CDD16550024857B /* PaywallComponentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallComponentViewModel.swift; sourceTree = "<group>"; };
+ 		2C0B98CC2797070B00C5874F /* PromotionalOffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromotionalOffer.swift; sourceTree = "<group>"; };
+ 		2C2AEB0E2CA64E0E00A50F38 /* Template1Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Template1Preview.swift; sourceTree = "<group>"; };
+@@ -3526,6 +3528,7 @@
+ 		FACE0000000000000000F001 /* PaywallViewControllerExitOfferTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallViewControllerExitOfferTests.swift; sourceTree = "<group>"; };
+ 		FACE0000000000000000F002 /* PaywallViewControllerCustomVariablesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallViewControllerCustomVariablesTests.swift; sourceTree = "<group>"; };
+ 		FB5A72012F65F5B9005C64A1 /* ViewModelFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelFactoryTests.swift; sourceTree = "<group>"; };
++		F6FD5EFAD5E34697972DF77C /* PaywallHeroLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallHeroLayoutTests.swift; sourceTree = "<group>"; };
+ 		FCF81FAC33B948F0947AE312 /* RemoteConfigCallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteConfigCallback.swift; sourceTree = "<group>"; };
+ 		FD05A7192EE2430E00FE671F /* StoreKit2PromotionalOfferPurchaseOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKit2PromotionalOfferPurchaseOptions.swift; sourceTree = "<group>"; };
+ 		FD15AF572DF9A8F30062467E /* VirtualCurrenciesScrollViewWithOSBackgroundSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualCurrenciesScrollViewWithOSBackgroundSection.swift; sourceTree = "<group>"; };
+@@ -3793,6 +3796,7 @@
+ 				FACD00042F61A1230073D2DE /* StackBadgeOverrideTests.swift */,
+ 				C3B8FD38DB4F44BFBAF221AD /* StackOverflowOverrideTests.swift */,
+ 				FB5A72012F65F5B9005C64A1 /* ViewModelFactoryTests.swift */,
++				F6FD5EFAD5E34697972DF77C /* PaywallHeroLayoutTests.swift */,
+ 				FACD00072F61A1230073D2DE /* PackageComponentViewTests.swift */,
+ 				0DD50FFC7C0F48B6A0FDE360 /* PaywallPromoOfferCacheTests.swift */,
+ 				FACD00092F61A1230073D2DE /* PackageValidatorTests.swift */,
+@@ -4236,6 +4240,7 @@
+ 				03A98D372D2AC637009BCA61 /* UIConfigProvider.swift */,
+ 				2C74574A2CEA6B80004ACE52 /* LocalizationProvider.swift */,
+ 				2C08B3162CDA443A0024857B /* ViewModelFactory.swift */,
++				963F9E3F1811431799CA98C0 /* PaywallHeroLayout.swift */,
+ 				2C8EC71F2CCF275E00D6CCF8 /* PresentedPartials.swift */,
+ 				2C8EC6DC2CCC7C5500D6CCF8 /* PackageValidator.swift */,
+ 				88B1BAE72C813A3C001B7EE5 /* PaywallComponentTypeTransformers.swift */,
+@@ -9310,6 +9315,7 @@
+ 				F221538ADDD849338CEBB79F /* VoiceOverEnabledOverrid
+```
+
+**File**: `RevenueCatUI/Templates/V2/Components/ComponentsView.swift` (modified, +8/-7)
+```diff
+@@ -34,9 +34,8 @@ struct ComponentsView: View {
+     @Environment(\.nativePaywallLayoutButtons) private var registeredLayoutButtons
+ 
+     let componentViewModels: [PaywallComponentViewModel]
+-    /// When true, applies safe area top padding to all children except the first.
+-    /// Used for ZStacks where the first child is a hero image that bleeds into the safe area.
+-    private let pushNonFirstChildrenBelowSafeArea: Bool
++    /// The hero branch stays above the safe area while overlapping siblings receive padding.
++    private let safeAreaExemptChildIndex: Int?
+     private let onDismiss: () -> Void
+     private let defaultPackage: Package?
+ 
+@@ -48,12 +47,12 @@ struct ComponentsView: View {
+ 
+     init(
+         componentViewModels: [PaywallComponentViewModel],
+-        pushNonFirstChildrenBelowSafeArea: Bool = false,
+         onDismiss: @escaping () -> Void,
+-        defaultPackage: Package? = nil
++        defaultPackage: Package? = nil,
++        safeAreaExemptChildIndex: Int? = nil
+     ) {
+         self.componentViewModels = componentViewModels
+-        self.pushNonFirstChildrenBelowSafeArea = pushNonFirstChildrenBelowSafeArea
++        self.safeAreaExemptChildIndex = safeAreaExemptChildIndex
+         self.onDismiss = onDismiss
+         self.defaultPackage = defaultPackage
+     }
+@@ -76,7 +75,9 @@ struct ComponentsView: View {
+                 }
+                 .padding(
+                     .top,
+-                    index > 0 && pushNonFirstChildrenBelowSafeArea && !self.bodyHeroInsetAlreadyRestored
++                    self.safeAreaExemptChildIndex != nil
++                        && index != self.safeAreaExemptChildIndex
++                        && !self.bodyHeroInsetAlreadyRestored
+                         ? max(safeAreaInsets.top, overlaidHeaderHeight)
+                         : 0
                  )
-@@ -62,10 +64,13 @@ private struct RegisteredNativePaywallButton: View {
-     let isWorkflowClose: Bool
-     let registrationEnabled: Bool
-     let interactionEnabled: Bool
-+    let registrationDelayMilliseconds: Int
-     @Environment(\.nativePaywallControlsPresented) private var controlsPresented
-     @Environment(\.carouselState) private var carouselState
-     @Environment(\.isEnabled) private var isEnabled
-     @Environment(\.nativePaywallInteractionEnabled) private var workflowInteractionEnabled
-+    @Environment(\.workflowRenderingContext) private var workflowRenderingContext
-+    @State private var registrationDelayElapsed = false
-     let componentIdentifier: ObjectIdentifier?
-     let pageID: UUID?
-     let action: () async throws -> Void
-@@ -81,12 +86,19 @@ private struct RegisteredNativePaywallButton: View {
+```
+
+**File**: `RevenueCatUI/Templates/V2/Components/Root/RootView.swift` (modified, +6/-0)
+```diff
+@@ -23,6 +23,9 @@ struct RootView: View {
+     @Environment(\.safeAreaInsets)
+     private var safeAreaInsets
+ 
++    @Environment(\.paywallHeroLayout)
++    private var heroLayout
++
+     @Environment(\.userInterfaceIdiom)
+     private var userInterfaceIdiom
+ 
+@@ -110,6 +113,7 @@ struct RootView: View {
+                     onDismiss: onDismiss,
+                     additionalPadding: EdgeInsets(top: 0, leading: 0, bottom: overlaidFooterHeight, trailing: 0)
+                 )
++                .environment(\.paywallHeroLayout, self.heroLayout)
+                 .environment(\.overlaidHeaderHeight, overlaidHeaderHeight)
+                 .environment(\.nativePaywallBodyHeroIdentifier,
+                              viewModel.firstItemIsFullWidthMedia
+@@ -205,6 +209,8 @@ struct RootView: View {
+                 )
+             }
+         }
++        // The body owns this resolution; sheets and footers have independent layout roots.
++        .environment(\.paywallHeroLayout, nil)
      }
  
-     private var registration: Registration {
--        .init(enabled: self.registrationEnabled && (self.carouselState?.distanceFromActive ?? 0) == 0,
-+        .init(enabled: self.registrationEnabled && !self.shouldDelayRegistration
-+                  && (self.carouselState?.distanceFromActive ?? 0) == 0,
-               isEnabled: self.isEnabled && self.interactionEnabled && self.workflowInteractionEnabled,
-               label: self.accessibilityLabel,
-               role: self.role, isWorkflowClose: self.isWorkflowClose, pageID: self.pageID)
+     /// Returns the package that should be selected after a selection sheet is dismissed.
+```
+
+**File**: `RevenueCatUI/Templates/V2/Components/Stack/StackComponentView.swift` (modified, +12/-2)
+```diff
+@@ -54,6 +54,16 @@ struct StackComponentView: View {
+     @Environment(\.paywallStateDefaults)
+     private var paywallStateDefaults
+ 
++    @Environment(\.paywallHeroLayout)
++    private var heroLayout
++
++    private var safeAreaExemptChildIndex: Int? {
++        if let heroLayout = self.heroLayout {
++            return heroLayout.exemptChildIndicesByStack[ObjectIdentifier(self.viewModel)]
++        }
++        return self.viewModel.firstChildIsFullWidthMedia ? 0 : nil
++    }
++
+     @Environment(\.paywallRootStackIsZLayer)
+     private var paywallRootStackIsZLayer
+ 
+@@ -215,8 +225,8 @@ struct StackComponentView: View {
+                 ZStack(alignment: alignment.stackAlignment) {
+                     ComponentsView(
+                         componentViewModels: self.viewModel.viewModels,
+-                        pushNonFirstChildrenBelowSafeArea: self.viewModel.firstChildIsFullWidthMedia,
+-                        onDismiss: self.onDismiss
++                        onDismiss: self.onDismiss,
++                        safeAreaExemptChildIndex: self.safeAreaExemptChildIndex
+                     )
+                 }
+                 // These alignments define the position of inner components inside the ZStack
+```
+
+**File**: `RevenueCatUI/Templates/V2/Components/Text/TextComponentViewModel.swift` (modified, +37/-5)
+```diff
+@@ -88,21 +88,19 @@ class TextComponentViewModel {
+         isVoiceOverRunning: Bool = false,
+         @ViewBuilder apply: @escaping (TextComponentStyle) -> some View
+     ) -> some View {
+-        let isEligibleForPromoOffer = promoOffer != nil
+         let conditionContext = uiConfigProvider.conditionContext(
+             selectedPackageId: selectedPackageId,
+             customVariables: customVariables,
+             stateValues: stateValues,
+             stateDefaults: stateDefaults,
+             windowSize: windowSize
+         )
+-        let localizedPartial = LocalizedTextPartial.buildPartial(
++        let localizedPartial = self.resolveOverrides(
+             state: state,
+             condition: condition,
+             isEligibleForIntroOffer: isEligibleForIntroOffer,
+-            isEligibleForPromoOffer: isEligibleForPromoOffer,
+-            conditionContext: conditionContext,
+-            with: self.presentedOverrides
++            promoOffer: promoOffer,
++            conditionContext: conditionContext
+         )
+         let partial = localizedPartial?.partial
+         let text = localizedPartial?.text ?? self.text
+@@ -146,6 +144,21 @@ class TextComponentViewModel {
+         apply(style)
      }
  
-+    private var shouldDelayRegistration: Bool {
-+        return self.registrationDelayMilliseconds > 0
-+            && !self.registrationDelayElapsed
-+            && !self.workflowRenderingContext.pageTransition.isTransitioning
++    func visible(
++        state: ComponentViewState,
++        condition: ScreenCondition,
++        isEligibleForIntroOffer: Bool,
++        promoOffer: PromotionalOffer?,
++        conditionContext: ConditionContext
++    ) -> Bool {
++        let partial = self.resolveOverrides(
++            state: state, condition: condition,
++            isEligibleForIntroOffer: isEligibleForIntroOffer, promoOffer: promoOffer,
++            conditionContext: conditionContext
++        )
++        return partial?.partial.visible ?? self.component.visible ?? true
++    }
++
+     /// True when intro or promo eligibility can change the string this component shows, or whether it is shown.
+     /// A visibility change redacts too, so the real string is not shown and then hidden.
+     /// Color-only overrides are ignored.
+@@ -293,6 +306,25 @@ class TextComponentViewModel {
+ 
+ }
+ 
++@available(iOS 15.0, macOS 12.0, tvOS 15.0, watchOS 8.0, *)
++private extension TextComponentViewModel {
++
++    func resolveOverrides(
++        state: ComponentViewState,
++        condition: ScreenCondition,
++        isEligibleForIntroOffer: Bool,
++        promoOffer: PromotionalOffer?,
++        conditionContext: ConditionContext
++    ) -> LocalizedTextPartial? {
++        return LocalizedTextPartial.buildPartial(
++            state: state, condition: condition,
++            isEligibleForIntroOffer: isEligibleForIntroOffer, isEligibleForPromoOffer: promoOffer != nil,
++            conditionContext: conditionContext, with: self.presentedOverrides
++        )
++    }
++
++}
++
+ struct LocalizedTextPartial: PresentedPartial {
+ 
+     let text: String?
+```
+
+**File**: `RevenueCatUI/Templates/V2/Components/Video/VideoComponentView.swift` (modified, +8/-0)
+```diff
+@@ -38,6 +38,12 @@ struct VideoComponentView: View {
+     @Environment(\.paywallWindowSize)
+     private var paywallWindowSize
+ 
++    @Environment(\.paywallStateValues)
++    private var paywallStateValues
++
++    @Environment(\.paywallStateDefaults)
++    private var paywallStateDefaults
++
+     @Environment(\.colorScheme)
+     private var colorScheme
+ 
+@@ -84,6 +90,8 @@ struct VideoComponentView: View {
+                 ),
+                 selectedPackageId: self.selectedPackageId,
+                 customVariables: self.customVariables,
++                stateValues: self.paywallStateValues,
++                stateDefaults: self.paywallStateDefaults,
+                 windowSize: self.paywallWindowSize,
+                 colorScheme: colorScheme
+             ) { style in
+```
+
+**File**: `RevenueCatUI/Templates/V2/Components/Video/VideoComponentViewModel.swift` (modified, +4/-0)
+```diff
+@@ -87,13 +87,17 @@ class VideoComponentViewModel {
+         isEligibleForPromoOffer: Bool,
+         selectedPackageId: String?,
+         customVariables: [String: CustomVariableValue],
++        stateValues: [String: PaywallComponent.ConditionValue] = [:],
++        stateDefaults: [String: PaywallComponent.ConditionValue] = [:],
+         windowSize: CGSize? = nil,
+         colorScheme: ColorScheme,
+         @ViewBuilder apply: @escaping (VideoComponentStyle) -> some View
+     ) -> some View {
+         let conditionContext = self.uiConfigProvider.conditionContext(
+             selectedPackageId: selectedPackageId,
+             customVariables: customVariables,
++            stateValues: stateValues,
++            stateDefaults: stateDefaults,
+             windowSize: windowSize
+         )
+         let localizedPartial = LocalizedVideoPartial.buildPartial(
+```
+
+**File**: `RevenueCatUI/Templates/V2/PaywallsV2View.swift` (modified, +41/-8)
+```diff
+@@ -746,8 +746,43 @@ struct LoadedPaywallsV2View: View {
+         )
+     }
+ 
++    @Environment(\.componentViewState) private var componentViewState
++    @Environment(\.paywallStateValues) private var paywallStateValues
++    @Environment(\.paywallStateDefaults) private var paywallStateDefaults
++
++    private var heroLayout: PaywallHeroLayout? {
++        // Header overlay placement retains its existing policy.
++        guard self.paywallState.rootViewModel.headerViewModel == nil else { return nil }
++        return PaywallHeroLayoutResolver(
++            state: self.componentViewState,
++            condition: self.screenCondition,
++            isEligibleForIntroOffer: self.introOfferEligibilityContext.isEligible(
++                package: self.selectedPackageContext.package
++            ),
++            isEligibleForPromoOffer: self.paywallPromoOfferCache.isMostLikelyEligible(
++                for: self.selectedPackageContext.package
++            ),
++            textPromoOffer: self.paywallPromoOfferCache.get(for: self.selectedPackageContext.package),
++            conditionContext: self.uiConfigProvider.conditionContext(
++                selectedPackageId: self.selectedPackageContext.package?.identifier,
++                customVariables: self.customVariables,
++                stateValues: self.paywallStateValues,
++                stateDefaults: self.paywallStateDefaults,
++                windowSize: self.paywallWindowSize
++            ),
++            discardRules: self.paywallState.viewModelFactory.discardRules,
++            eligibilityForPackage: { package in
++                (
++                    intro: self.introOfferEligibilityContext.isEligible(package: package),
++                    promo: self.paywallPromoOfferCache.isMostLikelyEligible(for: package)
++                )
++            }
++        ).resolve(self.paywallState.rootViewModel.stackViewModel)
 +    }
 +
      var body: some View {
-         // Every opted-in component delegates its role to the shared toolbar. Only the
-         // coordinator selects which callback owns that slot; duplicates stay out of content.
-@@ -104,6 +116,19 @@ private struct RegisteredNativePaywallButton: View {
-         .onChangeOf(self.controlsPresented) { self.availabilityChanged?($0) }
-         // Refresh closures without publishing observable state during a body update.
-         .onReceive(Just(self.action)) { self.coordinator.refreshAction(id: self.identifier, action: $0) }
-+        .task(id: self.shouldDelayRegistration) {
-+            guard self.registrationDelayMilliseconds > 0 else { return }
-+            guard self.shouldDelayRegistration else {
-+                self.registrationDelayElapsed = true
-+                return
-+            }
-+            do {
-+                try await Task.sleep(nanoseconds: UInt64(self.registrationDelayMilliseconds) * 1_000_000)
-+            } catch {
-+                return
-+            }
-+            self.registrationDelayElapsed = true
-+        }
-         .onDisappear {
-             self.coordinator.unregister(id: self.identifier)
-             self.availabilityChanged?(false)
+-        GeometryReader { proxy in
++        let heroLayout = self.heroLayout
++        return GeometryReader { proxy in
+             VStack(spacing: 0) {
+                 ComponentsView(
+                     componentViewModels: [.root(paywallState.rootViewModel)],
+@@ -759,13 +794,11 @@ struct LoadedPaywallsV2View: View {
+             }
+             // Used for header image and sticky footer
+             .environment(\.safeAreaInsets, proxy.safeAreaInsets)
+-            .applyIf(
+-                paywallState.rootViewModel.headerViewModel != nil
+-                || paywallState.rootViewModel.firstItemIsFullWidthMedia,
+-                apply: { view in
+-                view
+-                    .edgesIgnoringSafeArea(.top)
+-            })
++            .environment(\.paywallHeroLayout, heroLayout)
++            .edgesIgnoringSafeArea(
++                self.paywallState.rootViewModel.headerViewModel != nil
++                    || heroLayout?.heroIdentifier != nil ? .top : []
++            )
+             .applyIf(paywallState.rootViewModel.stackViewModel.component.size.height.isFill, apply: { view in
+                 view.frame(maxHeight: .infinity, alignment: paywallState.rootViewModel.frameAlignment)
+             })
 ```
 
-**File**: `Tests/RevenueCatUITests/PaywallsV2/ButtonComponentViewTests.swift` (modified, +33/-0)
+---
+
+### Incident Patch 3: `ad30f673` (2026-10-30)
+**Commit Message**: Fix flaky StoreKit transaction fetcher test on iOS 17 (#8139)
+
+* test: stabilize finished transaction fixture on iOS 17
+
+* refactor: share StoreKit fixture finishing
+
+* test: simplify finished transaction synchronization
+
+**File**: `Tests/StoreKitUnitTests/StoreKit2/StoreKit2TransactionFetcherTests.swift` (modified, +5/-4)
 ```diff
-@@ -243,6 +243,39 @@ final class ButtonComponentViewTests: TestCase {
-         XCTAssertEqual(fallbackAppearances, 0)
+@@ -73,12 +73,13 @@ class StoreKit2TransactionFetcherTests: StoreKitConfigTestCase {
      }
  
-+    func testNativeBackRegistrationWaitsForConfiguredTransitionDelay() async throws {
-+        let coordinator = NativePaywallCloseCoordinator()
-+        let decoder = JSONDecoder()
-+        decoder.keyDecodingStrategy = .convertFromSnakeCase
-+        let transition = try decoder.decode(
-+            PaywallComponent.Transition.self,
-+            from: Data("""
-+            {
-+                "type": "fade",
-+                "displacement_strategy": "greedy",
-+                "animation": { "ms_delay": 500, "ms_duration": 0, "type": "linear" }
-+            }
-+            """.utf8)
-+        )
-+        let viewModel = try Self.makeViewModel(component: .init(
-+            action: .navigateBack,
-+            stack: Self.makeButtonStack(label: "Close"),
-+            transition: transition,
-+            useNativeIfPossible: true
-+        ))
-+        let view = Self.nativeTestView(viewModel: viewModel, onDismiss: {})
-+            .environment(\.workflowRenderingContext, .init(canNavigateBack: true))
-+            .environment(\.nativePaywallCloseCoordinator, coordinator)
-+        let (window, _) = Self.host(view)
-+        defer { window.isHidden = true; window.rootViewController = nil }
-+
-+        XCTAssertTrue(coordinator.actions.isEmpty)
-+        let registered = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-+            coordinator.action(for: .back) != nil
-+        }, object: nil)
-+        await fulfillment(of: [registered], timeout: 2)
-+    }
-+
-     func testNativeButtonsDoNotLeaveFlexStackSpacers() async throws {
-         try XCTSkipIf(UIApplication.shared.connectedScenes.isEmpty, "Requires UnitTestsHostApp")
-         let markers: [PaywallComponent] = ["#FF0000", "#0000FF"].map { color in
+     func testFiltersOutFinishedTransaction() async throws {
+-        _ = try await self.createTransaction(productID: Self.product1, finished: true)
++        let finishedTransaction = try await self.createTransaction(productID: Self.product1, finished: false)
++        // On iOS 17, finish() can be lost if purchase() returns before the transaction enters this queue.
++        try await self.waitUntilUnfinishedTransactions(condition: { $0 == 1 }, timeout: .seconds(10))
++        try await XCTUnwrap(finishedTransaction.sk2Transaction).finish()
+         let transaction = try await self.createTransaction(productID: Self.product2, finished: false)
+ 
+-        // `finish()` is eventually consistent on OS 27: the finished transaction can still be
+-        // listed in `Transaction.unfinished` for a short while after it returns, which would
+-        // otherwise make the fetcher report both transactions here.
++        // On iOS 27, finish() is eventually consistent. This also waits for the second transaction to appear.
+         try await self.waitUntilUnfinishedTransactions(condition: { $0 == 1 }, timeout: .seconds(10))
+ 
+         let result = await self.fetcher.unfinishedVerifiedTransactions
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8117** (2026-10-26): (Experimental) Allow configuring intro eligibility warm-up task priority (@ajpallares)
-- **PR #8114** (2026-10-23): Fix(paywalls) Native delayed back button (@JZDesign)
-- **PR #8113** (2026-10-23): Generating new test snapshots for `main` - BackendIntegrationTests (@RCGitBot)
-- **PR #8109** (2026-10-26): Share StoreKit 2 intro eligibility checks by subscription group (@ajpallares)
-- **PR #8107** (2026-10-22): Prepare next version: 5.99.0-SNAPSHOT (@RCGitBot)
-- **PR #8105** (2026-10-22): [AUTOMATIC] Release/5.98.0 (@RCGitBot)
+- **PR #8158** (2026-10-30): Chore(deps): Bump fastlane from 2.241.1 to 2.241.2 (@dependabot[bot])
+- **PR #8156** (2026-10-29): Generating new test snapshots for `post-pay-as-you-go-intro-duration` - ios-17 (@RCGitBot)
+- **PR #8155** (2026-10-29): Generating new test snapshots for `post-pay-as-you-go-intro-duration` - ios-26 (@RCGitBot)
+- **PR #8154** (2026-10-29): Generating new test snapshots for `post-pay-as-you-go-intro-duration` - ios-27 (@RCGitBot)
+- **PR #8153** (2026-10-29): Generating new test snapshots for `post-pay-as-you-go-intro-duration` - ios-15 (@RCGitBot)
+- **PR #8152** (2026-10-29): Generating new test snapshots for `post-pay-as-you-go-intro-duration` - ios-16 (@RCGitBot)
 
 ---
 
@@ -691,28 +970,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. paywalls) Native delayed back button (#8114)
+## X. build: don't block releases on CocoaPods publishing (#8125)
 
 **RULE**:
-When implementing operations in `RevenueCatUI/Templates/V2/Components/Button/ButtonComponentView.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.circleci/default_config.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RevenueCat/purchases-ios. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c4f9551c`: paywalls) Native delayed back button (#8114). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4136b43e`: build: don't block releases on CocoaPods publishing (#8125). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `RevenueCatUI/Templates/V2/Components/Button/ButtonComponentView.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.circleci/default_config.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                registrationDelayMilliseconds: self.viewModel.component.transition?.animation?.msDelay ?? 0,
+            # TODO: restore after Nov 7, 2026, once CocoaPods trunk is writable again.
+            # - push-revenuecatui-pod
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            - push-revenuecatui-pod
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c4f9551c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4136b43e` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source**: github ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
-> **Source Version**: `14ecdbc0`  
+> **Source Version**: `514f09ca`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:38:22.254Z  
+> **Timestamp**: 2026-10-30T19:54:17.779Z  
 > **Learning ID**: `learn-github-neuron-core-neuron-ai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/neuron-core/neuron-ai](https://github.com/neuron-core/neuron-ai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:38:22.055Z  
+> **Harvest Timestamp**: 2026-10-30T19:54:17.775Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Agentic Framework of the PHP ecosystem to build production-ready AI driven applications. Connect components (LLMs, Tools, vector DBs, memory) to agents that interact with your data and UI.
 - **Primary Language / Ecosystem**: PHP
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2153 stars
+- **Stars / Engagement**: 2163 stars
 
 ---
 
@@ -540,305 +540,149 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `14ecdbc0` (2026-10-25)
-**Commit Message**: fix batch embeddings and sentence splitter
+### Incident Patch 1: `4bac40d8` (2026-10-29)
+**Commit Message**: support protocol version in ag-ui adapter
 
-**File**: `src/RAG/Embeddings/AbstractEmbeddingsProvider.php` (modified, +23/-0)
+**File**: `skills/neuron-laravel-integration/references/reverb.md` (modified, +1/-1)
 ```diff
-@@ -4,8 +4,12 @@
+@@ -114,7 +114,7 @@ What the subscriber received in the run:
  
- namespace NeuronAI\RAG\Embeddings;
- 
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\RAG\Document;
- 
-+use function array_diff_key;
-+use function count;
-+
- abstract class AbstractEmbeddingsProvider implements EmbeddingsProviderInterface
- {
-     public function embedDocuments(array $documents): array
-@@ -23,4 +27,23 @@ public function embedDocument(Document $document): Document
- 
-         return $document;
-     }
-+
-+    /**
-+     * The whole batch response is checked before any embedding is set: a document it missed
-+     * would otherwise keep no embedding, or the one it carried before, without any error.
-+     *
-+     * @param Document[] $documents The documents of one request, in the order they were sent
-+     * @param array<int, array<int, int|float>> $embeddings Keyed by the position of the document they embed
-+     * @throws ProviderException
-+     */
-+    protected function assignEmbeddings(array $documents, array $embeddings): void
-+    {
-+        if (count($embeddings) !== count($documents) || array_diff_key($documents, $embeddings) !== []) {
-+            throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($documents).' documents sent.');
-+        }
-+
-+        foreach ($documents as $position => $document) {
-+            $document->setEmbedding($embeddings[$position]);
-+        }
-+    }
- }
+ ```
+ POST /runs 202 {"runId":"772d8d73-…"}
+-RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…"}
++RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…","protocolVersion":"1.0"}
+ TEXT_MESSAGE_START, TEXT_MESSAGE_CONTENT "Hello!", " You", " said:", …   (one event per token, about 30 ms apart)
+ TEXT_MESSAGE_END, RUN_FINISHED
+ stream.completed {"workflowId":"user-1-ec5d29d6-…"}
 ```
 
-**File**: `src/RAG/Embeddings/CohereEmbeddingsProvider.php` (modified, +4/-3)
+**File**: `src/Agent/Adapters/AGUIAdapter.php` (modified, +3/-0)
 ```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
+@@ -68,6 +68,8 @@ class AGUIAdapter implements CustomizableStreamAdapterInterface
+ {
+     use MapsStreamEvents;
  
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -61,6 +62,7 @@ public function embedText(string $text): array
++    protected const PROTOCOL_VERSION = '1.0';
++
+     protected ?string $currentMessageId = null;
+ 
+     protected bool $messageStarted = false;
+@@ -471,6 +473,7 @@ public function start(): iterable
+         yield new ProtocolEvent('RUN_STARTED', [
+             'runId' => $this->runId,
+             'threadId' => $this->threadId,
++            'protocolVersion' => self::PROTOCOL_VERSION,
+         ]);
+     }
+ 
+```
+
+**File**: `tests/Agent/Adapters/AgUIProtocolComplianceTest.php` (modified, +2/-1)
+```diff
+@@ -49,7 +49,7 @@ class AgUIProtocolComplianceTest extends TestCase
+     private const REQUIRED_FIELDS = [
+         'STATE_SNAPSHOT' => ['snapshot'],
+         'MESSAGES_SNAPSHOT' => ['messages'],
+-        'RUN_STARTED' => ['runId', 'threadId'],
++        'RUN_STARTED' => ['runId', 'threadId', 'protocolVersion'],
+         'RUN_FINISHED' => ['runId', 'threadId'],
+         'STEP_STARTED' => ['stepName'],
+         'STEP_FINISHED' => ['stepName'],
+@@ -322,6 +322,7 @@ private function assertCompliant(array $events): void
+ 
+             switch ($type) {
+                 case 'RUN_STARTED':
++                    $this->assertSame('1.0', $event['protocolVersion'], 'RUN_STARTED must declare the AG-UI version the adapter speaks');
+                     $runId = $event['runId'];
+                     $threadId = $event['threadId'];
+                     break;
+```
+
+---
+
+### Incident Patch 2: `2651265a` (2026-10-29)
+**Commit Message**: fix deepeseek reasoning content
+
+**File**: `src/RAG/Splitter/DelimiterTextSplitter.php` (modified, +1/-1)
+```diff
+@@ -6,8 +6,8 @@
+ 
+ use InvalidArgumentException;
+ use NeuronAI\RAG\Document;
+-
+ use NeuronAI\RAG\Schema\DocumentSchemaException;
++
+ use function array_map;
+ use function array_slice;
+ use function count;
+```
+
+---
+
+### Incident Patch 3: `aa8b748d` (2026-10-29)
+**Commit Message**: fix deepeseek reasoning content
+
+**File**: `src/Providers/Deepseek/MessageMapper.php` (modified, +8/-3)
+```diff
+@@ -15,14 +15,19 @@ protected function mapMessage(Message $message): array
+         return $this->withReasoningContent(parent::mapMessage($message), $message);
+     }
+ 
++    /**
++     * Thinking mode refuses a tool call it has no reasoning for, one from another provider
++     * or from a turn with thinking off, unless the call carries reasoning_content: an empty
++     * one is accepted.
++     */
+     protected function mapToolCall(ToolCallMessage $message): array
+     {
+-        return $this->withReasoningContent(parent::mapToolCall($message), $message);
++        return $this->withReasoningContent(parent::mapToolCall($message), $message) + ['reasoning_content' => ''];
+     }
  
      /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocuments(array $documents): array
-     {
-@@ -82,9 +84,7 @@ public function embedDocuments(array $documents): array
-                 )
-             )->json();
- 
--            foreach ($response['embeddings']['float'] as $index => $item) {
--                $chunk[$index]->setEmbedding($item);
--            }
-+            $this->assignEmbeddings($chunk, $response['embeddings']['float'] ?? []);
-         }
- 
-         return array_merge(...$chunks);
-@@ -94,6 +94,7 @@ public function embedDocuments(array $documents): array
-      * A stored document, so it takes the document input type, unlike embedText() at search time.
+-     * A reasoner turn must carry the field even when the model returned an empty
+-     * string: DeepSeek rejects an assistant message without reasoning_content.
++     * The reasoning goes back as the model returned it, an empty string included.
++     * A message that stored no reasoning has none to send.
       *
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocument(Document $document): Document
-     {
+      * @param array<string, mixed> $mapped
+      * @return array<string, mixed>
 ```
 
-**File**: `src/RAG/Embeddings/OllamaEmbeddingsProvider.php` (modified, +6/-0)
+**File**: `tests/Providers/Deepseek/DeepseekTest.php` (modified, +8/-1)
 ```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
- 
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -30,6 +31,7 @@ public function __construct(
- 
-     /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedText(string $text): array
-     {
-@@ -45,6 +47,10 @@ public function embedText(string $text): array
-             )
-         )->json();
- 
-+        if (!isset($response['embeddings'][0])) {
-+            throw new ProviderException('Ollama returned no embedding, as it does when the text to embed is empty.');
-+        }
-+
-         return $response['embeddings'][0];
-     }
- }
-```
-
-**File**: `src/RAG/Embeddings/OpenAIEmbeddingsProvider.php` (modified, +15/-2)
-```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
- 
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -15,6 +16,7 @@
- use function array_chunk;
- use function array_map;
- use function array_merge;
-+use function count;
- 
- class OpenAIEmbeddingsProvider extends AbstractEmbeddingsProvider
- {
-@@ -38,6 +40,7 @@ public function __construct(
- 
-     /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocuments(array $documents): array
-     {
-@@ -57,10 +60,20 @@ public function embedDocuments(array $documents): array
-                 )
-             )->json();
- 
-+            $embeddings = [];
-+
-             // Each item names the input it embeds, whatever order the server returns them in
--            foreach ($response['data'] as $position => $item) {
--                $chunk[$item['index'] ?? $position]->setEmbedding($item['embedding']);
-+            foreach ($response['data'] ?? [] as $position => $item) {
-+                $index = $item['index'] ?? $position;
-+
-+                if (isset($embeddings[$index])) {
-+                    throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($chunk).' documents sent.');
-+                }
-+
-+                $embeddings[$index] = $item['embedding'];
-             }
-+
-+            $this->assignEmbeddings($chunk, $embeddings);
-         }
- 
-         return array_merge(...$chunks);
-```
-
-**File**: `src/RAG/Embeddings/VoyageEmbeddingsProvider.php` (modified, +15/-2)
-```diff
-@@ -5,6 +5,7 @@
- namespace NeuronAI\RAG\Embeddings;
- 
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\HttpClient\Curl\CurlHttpClient;
- use NeuronAI\HttpClient\HasHttpClient;
- use NeuronAI\HttpClient\HttpClientInterface;
-@@ -15,6 +16,7 @@
- use function array_chunk;
- use function array_map;
- use function array_merge;
-+use function count;
- 
- class VoyageEmbeddingsProvider extends AbstractEmbeddingsProvider
- {
-@@ -58,6 +60,7 @@ public function embedText(string $text): array
- 
-     /**
-      * @throws HttpException
-+     * @throws ProviderException
-      */
-     public function embedDocuments(array $documents): array
-     {
-@@ -76,10 +79,20 @@ public function embedDocuments(array $documents): array
-                 )
-             )->json();
- 
-+            $embeddings = [];
-+
-             // Each item names the input it embeds, whatever order the server returns them in
--            foreach ($response['data'] as $position => $item) {
--                $chunk[$item['index'] ?? $position]->setEmbedding($item['embedding']);
-+            foreach ($response['data'] ?? [] as $position => $item) {
-+                $index = $item['index'] ?? $position;
-+
-+                if (isset($embeddings[$index])) {
-+                    throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($chunk).' documents sent.');
-+                }
-+
-+                $embeddings[$index] = $item['embedding'];
-             }
-+
-+            $this->assignEmbeddings($chunk, $embeddings);
-         }
- 
-         return array_merge(...$chunks);
-```
-
-**File**: `src/RAG/RAG.php` (modified, +4/-0)
-```diff
-@@ -132,6 +132,10 @@ protected function validateBatch(array $documents, int $chunkSize): void
-         $schema = $this->resolveVectorStore()->getSchema();
- 
-         foreach ($documents as $document) {
-+            if ($document->getContent() === '') {
-+                throw new DocumentSchemaException("Document {$document->getId()} has no content to embed.");
-+            }
-+
-             $schema->validate($document);
-         }
-     }
-```
-
-**File**: `src/RAG/Splitter/SentenceTextSplitter.php` (modified, +1/-1)
-```diff
-@@ -136,7 +136,7 @@ private function splitSentences(string $text): array
-     {
-         $pattern = '/(?<=[.!?…])\s+(?=(?:[\"\'\""\'\'«»„""]?)\p{Lu})/u';
-         $sentences = preg_split($pattern, trim($text));
--        return array_filter(array_map(trim(...), $sentences));
-+        return array_filter(array_map(trim(...), $sentences), static fn (string $sentence): bool => $sentence !== '');
+@@ -108,7 +108,7 @@ public function test_mapper_sends_reasoning_content_back_for_assistant_and_tool_
+         $this->assertArrayNotHasKey('reasoning_content', $mapped[2]);
      }
  
-     /**
-```
-
-**File**: `tests/RAG/Embeddings/CohereEmbeddingsProviderTest.php` (modified, +30/-0)
-```diff
-@@ -6,6 +6,7 @@
- 
- use GuzzleHttp\Psr7\Response;
- use NeuronAI\Exceptions\HttpException;
-+use NeuronAI\Exceptions\ProviderException;
- use NeuronAI\RAG\Document;
- use NeuronAI\RAG\Embeddings\CohereEmbeddingsProvider;
- use NeuronAI\Tests\RAG\Stub\RecordsJsonRequests;
-@@ -118,6 +119,35 @@ public function test_embed_documents_splits_requests_at_ninety_six_texts_and_kee
-         }
+-    public function test_mapper_sends_an_empty_reasoning_content_as_the_model_returned_none(): void
++    public function test_mapper_sends_an_empty_reasoning_content_back(): void
+     {
+         $answer = (new AssistantMessage('Answer'))->addMetadata('reasoning_content', '');
+         $toolCall = (new ToolCallMessage(null, [new ToolCall('clock', 'call_1', [])]))->addMetadata('reasoning_content', '');
+@@ -120,6 +120,13 @@ public function test_mapper_sends_an_empty_reasoning_content_as_the_model_return
+         $this->assertSame('', $mapped[1]['reasoning_content']);
      }
  
-+    /**
-+     * @return array<string, array{array<string, mixed>}>
-+     */
-+    public static function responsesNotEmbeddingEachDocument(): array
++    public function test_mapper_sends_an_empty_reasoning_content_for_a_tool_call_that_stored_none(): void
 +    {
-+        return [
-+            'fewer embeddings than documents' => [['embeddings' => ['float' => [[0.0], [1.0]]]]],
-+            'more embeddings than documents' => [['embeddings' => ['float' => [[0.0], [1.0], [2.0], [3.0]]]]],
-+            'no float embeddings' => [['embeddings' => []]],
-+        ];
++        $toolCall = new ToolCallMessage(null, [new ToolCall('clock', 'call_1', [])]);
++
++        $this->assertSame('', (new MessageMapper())->map([$toolCall])[0]['reasoning_content']);
 +    }
 +
-+    /** @param array<string, mixed> $body */
-+    #[DataProvider('responsesNotEmbeddingEachDocument')]
-+    public function test_a_response_not_embedding_each_document_is_refused_before_any_embedding_is_set(array $body): void
-+    {
-+        $documents = [new Document('First'), new Document('Second'), new Document('Third')];
-+        $provider = new CohereEmbeddingsProvider(key: 'cohere-key', model: 'embed-v4.0', httpClient: $this->recordingClient($this->jsonResponse($body)));
-+
-+        try {
-+            $provider->embedDocuments($documents);
-+            $this->fail('A response that does not embed each document must be refused.');
-+        } catch (ProviderException $exception) {
-+            $this->assertSame('The embeddings response does not have one embedding for each of the 3 documents sent.', $exception->getMessage());
-+        }
-+
-+        $this->assertSame([null, null, null], array_map(static fn (Document $document): ?array => $document->getEmbedding(), $documents));
-+    }
-+
-     public function test_embed_documents_without_documents_sends_nothing(): void
+     public function test_reasoning_blocks_are_not_sent_as_message_content(): void
      {
-         $provider = new CohereEmbeddingsProvider(key: 'cohere-key', model: 'embed-v4.0', httpClient: $this->recordingClient());
+         $message = new AssistantMessage([new ReasoningContent('Thinking'), new TextContent('Answer')]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #703** (2026-10-28): Bump the npm group with 3 updates (@dependabot[bot])
+- **PR #702** (2026-10-28): Bump docker/login-action from 4.6.0 to 4.7.0 in the github-actions group (@dependabot[bot])
+- **PR #700** (2026-10-29): Echo an empty reasoning_content from the deepseek mapper (@wpjscc)
+- **PR #697** (closed): Add deed.page toolkit to publish a web page (@f-o-x11)
 - **PR #694** (2026-10-25): Bump Weaviate test image to 1.39.13 (@dudanogueira)
 - **PR #692** (2026-10-25): Bump the npm group with 10 updates (@dependabot[bot])
-- **PR #691** (2026-10-16): Bump the github-actions group with 4 updates (@dependabot[bot])
-- **PR #690** (2026-10-16): Bump the npm group with 3 updates (@dependabot[bot])
-- **PR #688** (2026-10-12): fix MySQLSchemaTool FK introspection under ONLY_FULL_GROUP_BY (@cironapo)
-- **PR #687** (2026-10-08): Fix static analysis (@ilvalerione)
 
 ---
 
@@ -858,50 +702,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. batch embeddings and sentence splitter
+## X. support protocol version in ag-ui adapter
 
 **RULE**:
-When implementing operations in `src/RAG/Embeddings/AbstractEmbeddingsProvider.php`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `skills/neuron-laravel-integration/references/reverb.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in neuron-core/neuron-ai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `14ecdbc0`: batch embeddings and sentence splitter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4bac40d8`: support protocol version in ag-ui adapter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/RAG/Embeddings/AbstractEmbeddingsProvider.php`.
+Subsystems managing PHP data structures, boundary deserialization, API parsing, or resource lifecycles matching `skills/neuron-laravel-integration/references/reverb.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```php
 // Verified production-grade fix pattern:
-use NeuronAI\Exceptions\ProviderException;
-use function array_diff_key;
-use function count;
-
-
-    /**
-     * The whole batch response is checked before any embedding is set: a document it missed
-     * would otherwise keep no embedding, or the one it carried before, without any error.
-     *
-     * @param Document[] $documents The documents of one request, in the order they were sent
-     * @param array<int, array<int, int|float>> $embeddings Keyed by the position of the document they embed
-     * @throws ProviderException
-     */
-    protected function assignEmbeddings(array $documents, array $embeddings): void
-    {
-        if (count($embeddings) !== count($documents) || array_diff_key($documents, $embeddings) !== []) {
-            throw new ProviderException('The embeddings response does not have one embedding for each of the '.count($documents).' documents sent.');
-        }
-
-        foreach ($documents as $position => $document) {
-            $document->setEmbedding($embeddings[$position]);
-        }
-    }
+RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…","protocolVersion":"1.0"}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```php
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+RUN_STARTED {"runId":"772d8d73-…","threadId":"user-1-ec5d29d6-…"}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `14ecdbc0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4bac40d8` are properly handled with clean fallback behavior.

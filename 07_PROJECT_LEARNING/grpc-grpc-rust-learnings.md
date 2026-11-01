@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `0ecf9253`  
+> **Source Version**: `53d5d706`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:28:20.134Z  
+> **Timestamp**: 2026-11-01T02:22:45.338Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:28:20.126Z  
+> **Harvest Timestamp**: 2026-11-01T02:22:45.332Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12505 stars
+- **Stars / Engagement**: 12516 stars
 
 ---
 
@@ -230,6 +230,134 @@ impl WorkerService for WorkerServer {
     async fn quit_worker(&self, _request: Request<Void>) -> Result<Response<Void>, Status> {
         self.quit_notify.notify_one();
         Ok(Response::new(Void {}))
+    }
+}
+
+```
+
+### Core Architecture Module: `grpc-xds/src/dependency_manager/state.rs`
+```
+/*
+ *
+ * Copyright 2026 gRPC authors.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to
+ * deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+ * sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+ * IN THE SOFTWARE.
+ *
+ */
+
+//! The cached state of each watched xDS resource or DNS target.
+
+use std::sync::Arc;
+
+/// The latest known state of one watched resource or DNS target.
+///
+/// Follows gRFC A88: a *resource error* (the resource itself is bad) drops
+/// the cached value, while an *ambient error* (such as a broken stream) keeps
+/// it and only adds a note.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(super) enum WatchState<T> {
+    /// The watch has started but nothing has been received yet.
+    Pending,
+    /// A usable value. `note` holds the latest ambient error, if any; the next
+    /// valid update clears it.
+    Ready { value: T, note: Option<Arc<str>> },
+    /// Nothing usable: the resource does not exist, is invalid, or an error
+    /// arrived before the first valid value.
+    Failed(Arc<str>),
+}
+
+impl<T> WatchState<T> {
+    /// Applies a `ResourceChanged` event. An `Err` discards any cached value.
+    fn on_changed(&mut self, result: Result<T, Arc<str>>) {
+        *self = match result {
+            Ok(value) => Self::Ready { value, note: None },
+            Err(reason) => Self::Failed(reason),
+        };
+    }
+
+    /// Applies an `AmbientError` event: attaches `reason` to the cached value
+    /// as a note.
+    ///
+    /// The XdsClient sends ambient errors only once a value is cached, and
+    /// otherwise sends a `ResourceChanged` error (gRFC A88). Any other ambient
+    /// error is ignored, so that it can't hide the reason a watch failed.
+    fn on_ambient_error(&mut self, reason: Arc<str>) {
+        if let Self::Ready { note, .. } = self {
+            *note = Some(reason);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[derive(Debug)]
+    enum Event {
+        Changed(Result<u32, &'static str>),
+        Ambient(&'static str),
+    }
+
+    fn ready(value: u32, note: Option<&str>) -> WatchState<u32> {
+        WatchState::Ready {
+            value,
+            note: note.map(Arc::from),
+        }
+    }
+
+    fn failed(reason: &str) -> WatchState<u32> {
+        WatchState::Failed(reason.into())
+    }
+
+    #[test]
+    fn events_follow_a88_transitions() {
+        use Event::Ambient;
+        use Event::Changed;
+        use WatchState::Pending;
+
+        for (start, event, expected) in [
+            // A valid resource always replaces the state and clears the note.
+            (Pending, Changed(Ok(2)), ready(2, None)),
+            (ready(1, Some("old")), Changed(Ok(2)), ready(2, None)),
+            (failed("old"), Changed(Ok(2)), ready(2, None)),
+            // A resource error always discards the cached value.
+            (Pending, Changed(Err("gone")), failed("gone")),
+            (ready(1, None), Changed(Err("gone")), failed("gone")),
+            (failed("old"), Changed(Err("gone")), failed("gone")),
+            // An ambient error keeps a cached value and only replaces its note.
+            (ready(1, None), Ambient("down"), ready(1, Some("down"))),
+            (
+                ready(1, Some("old")),
+                Ambient("down"),
+                ready(1, Some("down")),
+            ),
+            // Without a cached value, it's ignored, keeping the failure reason.
+            (Pending, Ambient("down"), Pending),
+            (failed("gone"), Ambient("down"), failed("gone")),
+        ] {
+            let mut state = start.clone();
+            match &event {
+                Changed(result) => state.on_changed(result.map_err(Arc::from)),
+                Ambient(reason) => state.on_ambient_error(Arc::from(*reason)),
+            }
+            assert_eq!(state, expected, "{start:?} after {event:?}");
+        }
     }
 }
 
@@ -1765,231 +1893,17 @@ impl SubscriptionMode {
     fn resource_names_for_request(&se
 ```
 
-### Core Architecture Module: `codegen/src/main.rs`
-```
-/*
- *
- * Copyright 2025 gRPC authors.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to
- * deal in the Software without restriction, including without limitation the
- * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
- * sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- */
-
-use std::{
-    fs::File,
-    io::{BufWriter, Write as _},
-    path::{Path, PathBuf},
-    time::Instant,
-};
-
-use protox::prost::Message as _;
-use quote::quote;
-use tonic_prost_build::FileDescriptorSet;
-
-fn main() {
-    println!("Running codegen...");
-
-    let start = Instant::now();
-
-    // tonic-health
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-health"),
-        &["proto/health.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/grpc_health_v1_fds.rs"),
-        true,
-        true,
-    );
-
-    // tonic-reflection
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-reflection"),
-        &["proto/reflection_v1.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/reflection_v1_fds.rs"),
-        true,
-        true,
-    );
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-reflection"),
-        &["proto/reflection_v1alpha.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/reflection_v1alpha1_fds.rs"),
-        true,
-        true,
-    );
-
-    // tonic-types
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("tonic-types"),
-        &["proto/status.proto", "proto/error_details.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/types_fds.rs"),
-        false,
-        false,
-    );
-
-    // grpc
-    codegen(
-        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-            .parent()
-            .unwrap()
-            .join("grpc"),
-        &["proto/echo/echo.proto"],
-        &["proto"],
-        &PathBuf::from("src/generated"),
-        &PathBuf::from("src/generated/echo_fds.rs"),
-        true,
-        true,
-    );
-
-    println!("Codgen completed: {}ms", start.elapsed().as_millis());
-}
-
-fn codegen(
-    root_dir: &Path,
-    iface_files: &[&str],
-    include_dirs: &[&str],
-    out_dir: &Path,
-    file_descriptor_set_path: &Path,
-    build_client: bool,
-    build_server: bool,
-) {
-    let tempdir = tempfile::Builder::new()
-        .prefix("tonic-codegen-")
-        .tempdir()
-        .unwrap();
-
-    let iface_files = iface_files.iter().map(|&path| root_dir.join(path));
-    let include_dirs = include_dirs.iter().map(|&path| root_dir.join(path));
-    let out_dir = root_dir.join(out_dir);
-    let file_descriptor_set_path = root_dir.join(file_descriptor_set_path);
-
-    let fds = protox::compile(iface_files, include_dirs).unwrap();
-
-    write_fds(&fds, &file_descriptor_set_path);
-
-    tonic_prost_build::configure()
-        .build_client(build_client)
-        .build_server(build_server)
-        .build_transport(false)
-        .out_dir(&tempdir)
-        .compile_fds(fds)
-        .unwrap();
-
-    for path in std::fs::read_dir(tempdir.path()).unwrap() {
-        let path = path.unwrap().path();
-        let to = out_dir.join(
-            path.file_name()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .strip_suffix(".rs")
-                .unwrap()
-                .replace('.', "_")
-                + ".rs",
-        );
-        std::fs::copy(&path, &to).unwrap();
-    }
-}
-
-fn write_fds(fds: &FileDescriptorSet, path: &Path) {
-    const GENERATED_COMMENT: &str = "// This file is @generated by codegen.";
-
-    let mut file_header = String::new();
-
-    let mut fds = fds.clone();
-
-    for fd in fds.file.iter() {
-        let Some(source_code_info) = &fd.source_code_info else {
-            continue;
-        };
-
-        for location in &source_code_info.location {
-            for comment in &location.leading_detached_comments {
-                file_header += comment;
-            }
-        }
-    }
-
-    for fd in fds.file.iter_mut() {
-        fd.source_code_info = None;
-    }
-
-    let fds_raw = fds.encode_to_vec();
-    let tokens = quote! {
-        /// Byte encoded FILE_DESCRIPTOR_SET.
-        pub const FILE_DESCRIPTOR_SET: &[u8] = &[#(#fds_raw),*];
-    };
-    let ast = syn::parse2(tokens).unwrap();
-    let formatted = prettyplease::unparse(&ast);
-
-    let mut writer = BufWriter::new(File::create(path).unwrap());
-
-    writer.write_all(GENERATED_COMMENT.as_bytes()).unwrap();
-    writer.write_all(b"\n").unwrap();
-
-    if !file_header.is_empty() {
-        let file_header = comment_out(&file_header);
-        writer.write_all(file_header.as_bytes()).unwrap();
-        writer.write_all(b"\n").unwrap();
-    }
-
-    writer.write_all(formatted.as_bytes()).unwrap()
-}
-
-fn comment_out(s: &str) -> String {
-    s.split('\n')
-        .map(|line| format!("// {line}"))
-        .collect::<Vec<String>>()
-        .join("\n")
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2956** (2026-10-23): **Upgrade to Protobuf 36.2**
-  *Symptoms*: While the google-protobuf crate is replacing the protobuf crate and also has a 36.2 release, the google-protobuf-well-known-types crate doesn't yet have a usable release and the code generator is not yet referencing google_protobuf.  With this version we should be able to clean up the codegen for grpc-xds as protobuf now handles the same name being present in two different proto packages. But I'm leaving that cleanup as a follow-up.
+- **Issue #2982** (2026-10-29): **protoc-gen-grpc-rust: downgrade abseil**
+  *Symptoms*: The current version of abseil has a bug that includes bmi2intrin.h directly, which is not allowed and errors on the newest version of our runners (ubuntu 26):  https://github.com/grpc/grpc-rust/actions/runs/40946149760/job/123701909400?pr=2981#step:6:508 >     25 | # error "Never use <bmi2intrin.h> directly; include <x86gprintrin.h> instead."  ~This updates us to the current latest abseil release.~  \*ahem\*  Apparently the newest version also has a bug with windows builds.  It is fixed on master, but no release contains it.  So we need to downgrade instead. This makes us match protobuf's version from 2025-05-12. 
 
-- **Issue #2955** (2026-10-23): **Rename protoc-gen-rust-grpc to protoc-gen-grpc-rust**
-  *Symptoms*: gRPC isn't part of protobuf's rust codegen and isn't generating messages; people would expect the name to be protoc-gen-grpc-rust, matching that of examples like grpc-java, grpc-swift, grpc-web, and even Buf's protoc-gen-grpc-py. People (other than me!) have noticed the non-idiomatic name and even have workarounds for it by using symlinks to provide an alias[1]. Go is the only existing outlier I'm aware of (protoc-gen-go-grpc), but it has a complicated history anyway as it _was_ previously a plugin for the Go Protobuf plugin.  Unfortunately we have done a release, so the old name will be orphaned.  1. https://github.com/rvolosatovs/docker-protobuf/blob/d387177a3a8139c6a47f1b1a52232e0f4f39f9e2/Dockerfile#L548
+- **Issue #2980** (2026-10-29): **fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies**
+  *Symptoms*: ## Motivation  Since the hyper 1.0 upgrade, the server's connection builder only gets a timer on its HTTP/2 side (added in #1726 for keepalive). hyper's HTTP/1 `header_read_timeout` defaults to 30s, but hyper silently disables it when no timer is set.  As a result, a server built with `accept_http1(true)`, which `tonic-web` requires, never times out a client that doesn't finish sending its request headers. A slowloris client can hold connections open indefinitely and exhaust the server's file descriptors. Users can't fix this from outside, since the connection builder is internal and `Server` exposes no HTTP/1 options.  ## Solution  Set `TokioTimer` on the HTTP/1 builder too. This only turns on hyper's existing 30s default header read timeout. It adds no new API and changes nothing for HTTP/2-only servers.  Adds `http1_header_read_timeout_is_enforced`, which sends a partial HTTP/1 request head, advances the clock past 30s, and checks that the server closed the connection. It fails without the fix and passes with it. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2006,471 +1920,166 @@ fn comment_out(s: &str) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ecf9253` (2026-10-23)
-**Commit Message**: Upgrade to Protobuf 36.2 (#2956)
+### Incident Patch 1: `53d5d706` (2026-10-30)
+**Commit Message**: grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)
 
-While the google-protobuf crate is replacing the protobuf crate and also
-has a 36.2 release, the google-protobuf-well-known-types crate doesn't
-yet have a usable release and the code generator is not yet referencing
-google_protobuf.
+## Motivation
 
-With this version we should be able to clean up the codegen for grpc-xds
-as protobuf now handles the same name being present in two different
-proto packages. But I'm leaving that cleanup as a follow-up.
+As a leaf node of other LBs, pick_first might be told to exit_idle even
+when it is not in the idle state. This will cause unnecessary churn.
 
-**File**: `examples/Cargo.toml` (modified, +3/-3)
+## Solution
+
+Add a guard to only start a new connection pass if pick first is already
+in idle.
+
+## Notes
+
+This will also be fixed in the pick first revamp (#2784), but putting
+this guard in now allows us to move forward on other LBs with
+confidence. (e.g. #2931).
+
+**File**: `grpc/src/client/load_balancing/pick_first.rs` (modified, +37/-1)
 ```diff
-@@ -331,14 +331,14 @@ hyper-rustls = { version = "0.27.0", features = ["http2", "ring", "tls12"], opti
- tower-http = { version = "0.6", optional = true }
- grpc-google-cloud-auth = { path = "../grpc-google-cloud-auth", optional = true }
- grpc-protobuf = { path = "../grpc-protobuf", optional = true }
--protobuf = { version = "4.35.1-release", optional = true }
-+protobuf = { version = "4.36.2-release", optional = true }
- grpc = { path = "../grpc", optional = true }
- grpc-rustls = { path = "../grpc-rustls", optional = true }
- rustls = { version = "0.23", default-features = false, features = ["ring"], optional = true}
--protobuf-well-known-types = { version = "4.35.1-release", optional = true }
-+protobuf-well-known-types = { version = "0.36.2-release", optional = true }
+@@ -625,7 +625,13 @@ impl LbPolicy for PickFirstPolicy {
+     }
  
- [build-dependencies]
- tonic-prost-build = { path = "../tonic-prost-build" }
- grpc-protobuf-build = { path = "../grpc-protobuf-build", default-features = false }
- protoc-gen-grpc-rust = { path = "../protoc-gen-grpc-rust", optional = true }
--protobuf-well-known-types = { version = "4.35.1-release" }
-+protobuf-well-known-types = { version = "0.36.2-release" }
-```
-
-**File**: `examples/generated/helloworld/generated.rs` (modified, +3/-4)
-```diff
-@@ -1,10 +1,9 @@
- #[path = "helloworld.u.pb.rs"]
--#[allow(nonstandard_style, unused, unreachable_pub)]
--#[doc(hidden)]
--mod internal_do_not_use_helloworld;
-+#[allow(nonstandard_style, unused)]
-+pub mod helloworld_proto;
- #[allow(nonstandard_style, unused)]
- #[doc(inline)]
--pub use internal_do_not_use_helloworld::*;
-+pub use helloworld_proto::*;
- #[allow(nonstandard_style, unused)]
- pub mod __unstable {
-     pub static HELLOWORLD_DESCRIPTOR_INFO: ::protobuf::__internal::runtime::__unstable::DescriptorInfo = ::protobuf::__internal::runtime::__unstable::DescriptorInfo {
-```
-
-**File**: `examples/generated/helloworld/helloworld.u.pb.rs` (modified, +7/-7)
-```diff
-@@ -1,5 +1,5 @@
- const _: () = ::protobuf::__internal::assert_compatible_gencode_version(
--    "4.35.1-release",
-+    "0.36.2-release",
- );
- pub(crate) static mut helloworld__HelloRequest_msg_init: ::protobuf::__internal::runtime::MiniTableInitPtr = ::protobuf::__internal::runtime::MiniTableInitPtr(
-     ::protobuf::__internal::runtime::MiniTablePtr::dangling(),
-@@ -259,16 +259,16 @@ unsafe impl ::protobuf::__internal::runtime::AssociatedMiniTable for HelloReques
-         unsafe {
-             ONCE_LOCK
-                 .get_or_init(|| {
--                    super::helloworld__HelloRequest_msg_init.0 = ::protobuf::__internal::runtime::build_mini_table(
-+                    super::helloworld_proto::helloworld__HelloRequest_msg_init.0 = ::protobuf::__internal::runtime::build_mini_table(
-                         "$M1P",
-                     );
-                     ::protobuf::__internal::runtime::link_mini_table(
--                        super::helloworld__HelloRequest_msg_init.0,
-+                        super::helloworld_proto::helloworld__HelloRequest_msg_init.0,
-                         &[],
-                         &[],
-                     );
-                     ::protobuf::__internal::runtime::MiniTableInitPtr(
--                        super::helloworld__HelloRequest_msg_init.0,
-+                        super::helloworld_proto::helloworld__HelloRequest_msg_init.0,
-                     )
-                 })
-                 .0
-@@ -595,16 +595,16 @@ unsafe impl ::protobuf::__internal::runtime::AssociatedMiniTable for HelloReply
-         unsafe {
-             ONCE_LOCK
-                 .get_or_init(|| {
--                    super::helloworld__HelloReply_msg_init.0 = ::protobuf::__internal::runtime::build_mini_table(
-+                    super::helloworld_proto::helloworld__HelloReply_msg_init.0 = ::protobuf::__internal::runtime::build_mini_table(
-                         "$M1P",
-                     );
-                     ::protobuf::__internal::runtime::link_mini_table(
--                        super::helloworld__HelloReply_msg_init.0,
-+                        super::helloworld_proto::helloworld__HelloReply_msg_init.0,
-                         &[],
-                         &[],
-                     );
-                     ::protobuf::__internal::runtime::MiniTableInitPtr(
--                        super::helloworld__HelloReply_msg_init.0,
-+                        super::helloworld_proto::helloworld__HelloReply_msg_init.0,
-                     )
-                 })
-                 .0
-```
-
-**File**: `examples/generated/routeguide/generated.rs` (modified, +3/-4)
-```diff
-@@ -1,10 +1,9 @@
- #[path = "route_guide.u.pb.rs"]
--#[allow(nonstandard_style, unused, unreachable_pub)]
--#[doc(hidden)]
--mod internal_do_not_use_route__guide;
-+#[allow(nonstandard_style, unused)]
-+pub mod route_guide_proto;
- #[allow(nonstandard_style, unused)]
- #[doc(inline)]
--pub use internal_do_not_use_route__guide::*;
-+pub use route_guide_proto::*;
- #[allow(nonstandard_style, unused)]
- pub mod __unstable {
-     pub static ROUTE_GUIDE_DESCRIPTOR_INFO: ::protobuf::__internal::runtime::__unstable::DescriptorInfo = ::protobuf::__internal::runtime::__unstable::DescriptorInfo {
-```
-
-**File**: `examples/generated/routeguide/route_guide.u.pb.rs` (modified, +120/-72)
-```diff
-@@ -1,5 +1,5 @@
- const _: () = ::protobuf::__internal::assert_compatible_gencode_version(
--    "4.35.1-release",
-+    "0.36.2-release",
- );
- pub(crate) static mut routeguide__Point_msg_init: ::protobuf::__internal::runtime::MiniTableInitPtr = ::protobuf::__internal::runtime::MiniTableInitPtr(
-     ::protobuf::__internal::runtime::MiniTablePtr::dangling(),
-@@ -265,16 +265,16 @@ unsafe impl ::protobuf::__internal::runtime::AssociatedMiniTable for Point {
-         unsafe {
-             ONCE_LOCK
-                 .get_or_init(|| {
--                    super::routeguide__Point_msg_init.0 = ::protobuf::__internal::runtime::build_mini_table(
-+                    super::route_guide_proto::routeguide__Point_msg_init.0 = ::protobuf::__internal::runtime::build_mini_table(
-                         "$(P(P",
-                     );
-                     ::protobuf::__internal::runtime::link_mini_table(
--                        super::routeguide__Point_msg_init.0,
-+                        super::route_guide_proto::routeguide__Point_msg_init.0,
-                         &[],
-                         &[],
-                     );
-                     ::protobuf::__internal::runtime::MiniTableInitPtr(
--                        super::routeguide__Point_msg_init.0,
-+                        super::route_guide_proto::routeguide__Point_msg_init.0,
-                     )
-                 })
-                 .0
-@@ -407,30 +407,34 @@ impl<'msg> RectangleView<'msg> {
-     pub fn has_lo(self) -> bool {
-         unsafe { self.inner.ptr().has_field_at_index(0) }
-     }
--    pub fn lo_opt(self) -> ::std::option::Option<super::PointView<'msg>> {
-+    pub fn lo_opt(
-+        self,
-+    ) -> ::std::option::Option<super::route_guide_proto::PointView<'msg>> {
-         self.has_lo().then(|| self.lo())
-     }
--    pub fn lo(self) -> super::PointView<'msg> {
-+    pub fn lo(self) -> super::route_guide_proto::PointView<'msg> {
-         let submsg = unsafe { self.inner.ptr().get_message_at_index(0) };
-         submsg
-             .map(|ptr| unsafe {
-                 ::protobuf::__internal::runtime::MessageViewInner::wrap(ptr).into()
-             })
--            .unwrap_or(super::PointView::default())
-+            .unwrap_or(super::route_guide_proto::PointView::default())
-     }
-     pub fn has_hi(self) -> bool {
-         unsafe { self.inner.ptr().has_field_at_index(1) }
-     }
--    pub fn hi_opt(self) -> ::std::option::Option<super::PointView<'msg>> {
-+    pub fn hi_opt(
-+        self,
-+    ) -> ::std::option::Option<super::route_guide_proto::PointView<'msg>> {
-         self.has_hi().then(|| self.hi())
-     }
--    pub fn hi(self) -> super::PointView<'msg> {
-+    pub fn hi(self) -> super::route_guide_proto::PointView<'msg> {
-         let submsg = unsafe { self.inner.ptr().get_message_at_index(1) };
-         submsg
-             .map(|ptr| unsafe {
-                 ::protobuf::__internal::runtime::MessageViewInner::wrap(ptr).into()
-             })
--            .unwrap_or(super::PointView::default())
-+            .unwrap_or(super::route_guide_proto::PointView::default())
+     fn exit_idle(&mut self, channel_controller: &mut dyn ChannelController) {
+-        self.start_connection_pass(channel_controller);
++        // Only start a connection pass when in Idle and have already
++        // received a non-empty resolver update (`subchannels` is non-empty).
++        // Before the first resolver update, `connectivity_state` is Idle while
++        // `subchannels` is empty.
++        if self.connectivity_state == ConnectivityState::Idle && !self.subchannels.is_empty() {
++            self.start_connection_pass(channel_controller);
++        }
      }
  }
- unsafe impl ::std::marker::Sync for RectangleView<'_> {}
-@@ -517,18 +521,20 @@ impl<'msg> RectangleMut<'msg> {
-             self.inner.ptr().clear_field_at_index(0);
-         }
-     }
--    pub fn lo_opt(&self) -> ::std::option::Option<super::PointView<'_>> {
-+    pub fn lo_opt(
-+        &self,
-+    ) -> ::std::option::Option<super::route_guide_proto::PointView<'_>> {
-         self.has_lo().then(|| self.lo())
-     }
--    pub fn lo(&self) -> super::PointView<'_> {
-+    pub fn lo(&self) -> super::route_guide_proto::PointView<'_> {
-         let submsg = unsafe { self.inner.ptr().get_message_at_index(0) };
-         submsg
-             .map(|ptr| unsafe {
-                 ::protobuf::__internal::runtime::MessageViewInner::wrap(ptr).into()
-             })
--            .unwrap_or(super::PointView::default())
-+            .unwrap_or(super::route_guide_proto::PointView::default())
-     }
--    pub fn lo_mut(&mut self) -> super::PointMut<'_> {
-+    pub fn lo_mut(&mut self) -> super::route_guide_proto::PointMut<'_> {
-         let ptr = unsafe {
-             self.inner
-                 .ptr_mut()
-@@ -541,7 +547,10 @@ impl<'msg> RectangleMut<'msg> {
-             )
-             .into()
-     }
--    pub fn set_lo(&mut self, val: impl ::protobuf::IntoProxied<super::Point>) {
-+    pub fn set_lo(
-+        &mut self,
-+        val: impl ::protobuf::IntoProxied<super::route_guide_proto::Point>,
-+    ) {
-         unsafe {
-             ::protobuf::__internal::runtime::message_set_sub_message(
-                 ::protobuf::AsMut::as_mut(self).inner,
-@@ -558,18 +567,20 @@ impl<'msg> RectangleMut<'msg> {
-             self.inner.ptr().clear_field_at_index(1);
-         }
-     }
--    pub fn hi_opt(&self) -> ::std::option::Option<super::PointView<'_>> {
-+    pub fn hi_opt(
-+        &self,
-+    ) -> ::std::option::Option<super::route_guide_proto::PointView<'_>> {
-         self.has_hi().then(|| self.hi())
-     }
--
-```
-
-**File**: `grpc-benchmark/Cargo.toml` (modified, +3/-3)
-```diff
-@@ -22,8 +22,8 @@ hdrhistogram = { version = "7.5", default-features = false }
- pico-args = "0.5"
- prost = "0.14"
- prost-types = "0.14"
--protobuf = { version = "4.35.1-release" }
--protobuf-well-known-types = { version = "4.35.1-release" }
-+protobuf = { version = "4.36.2-release" }
-+protobuf-well-known-types = { version = "0.36.2-release" }
- rustls = "0.23"
- tokio = { version = "1.37.0", features = ["sync", "macros"] }
- tokio-stream = { version = "0.1.18", features = ["net", "sync"] }
-@@ -36,6 +36,6 @@ nix = { version = "0.31.3", features = ["resource"] }
  
- [build-dependencies]
- grpc-protobuf-build = { path = "../grpc-protobuf-build" }
--protobuf-well-known-types = { version = "4.35.1-release" }
-+protobuf-well-known-types = { version = "0.36.2-release" }
- protoc-gen-grpc-rust = { path = "../protoc-gen-grpc-rust" }
- tonic-prost-build = { path = "../tonic-prost-build" }
-```
-
-**File**: `grpc-protobuf-build/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ allowed_external_types = ["protobuf_codegen::Dependency"]
- 
- [dependencies]
- prettyplease = "0.2.35"
--protobuf-codegen = { version = "4.35.1-release" }
-+protobuf-codegen = { version = "4.36.2-release" }
- syn = "2.0.104"
- which = "8.0"
- protoc-gen-grpc-rust = { version = "0.10.0", path = "../protoc-gen-grpc-rust", optional = true }
-```
-
-**File**: `grpc-protobuf/Cargo.toml` (modified, +4/-4)
-```diff
-@@ -15,21 +15,21 @@ edition = "2024"
- [package.metadata.cargo_check_external_types]
- allowed_external_types = [
-     "grpc::*",
--    "protobuf::*",
-+    "google_protobuf::*",
- ]
- 
- [features]
- 
- [dependencies]
- bytes = "1.11.1"
- grpc = { version = "0.10.0", path = "../grpc", default-features = false }
--protobuf = "4.35.1-release"
--protobuf-well-known-types = "4.35.1-release"
-+protobuf = "4.36.2-release"
-+protobuf-well-known-types = "0.36.2-release"
- trait-variant = "0.1"
- 
- [dev-dependencies]
- tokio = { version = "1", features = ["rt", "macros"] }
- 
- [build-dependencies]
- grpc-protobuf-build = { version = "0.10.0", path = "../grpc-protobuf-build", default-features = false }
--protobuf-well-known-types = "4.35.1-release"
-+protobuf-well-known-types = "0.36.2-release"
+@@ -1604,4 +1610,34 @@ mod test {
+         let state = env.expect_picker_update();
+         assert_eq!(state.connectivity_state, ConnectivityState::Connecting);
+     }
++
++    // Tests that exit_idle is a no-op before the first resolver update or
++    // while Connecting or Ready.
++    #[tokio::test]
++    async fn test_pick_first_exit_idle() {
++        let mut env = new_env();
++
++        // Before any resolver update (Idle, but subchannels is empty),
++        // exit_idle should be a no-op.
++        env.policy.exit_idle(&mut env.tcc);
++        env.expect_no_events();
++
++        // While Connecting, exit_idle should be a no-op.
++        env.send_resolver_update(create_endpoints(vec!["addr1"], None))
++            .unwrap();
++        let sc1 = env.expect_new_subchannel_for("addr1");
++        env.expect_connect();
++        env.expect_queuing_picker();
++
++        env.policy.exit_idle(&mut env.tcc);
++        env.expect_no_events();
++
++        // While Ready, exit_idle should be a no-op and keep the selected
++        // subchannel active.
++        env.send_subchannel_update(&sc1, &SubchannelState::ready());
++        env.expect_ready_picker(&sc1);
++
++        env.policy.exit_idle(&mut env.tcc);
++        env.expect_no_events();
++    }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `8feaa9b8` (2026-10-23)
-**Commit Message**: grpc: properly return trailers after tonic transport stream errors (#2951)
+### Incident Patch 2: `6e481c4e` (2026-10-30)
+**Commit Message**: grpc-xds/load_balancing: move call-once for registration into register() (#2974)
 
-When tonic's `Streaming::message()` returns an error, the `Status`
-returned contains the trailers directly, and `Streaming::trailers()`
-returns `None`. Get the metadata from the status instead.
+## Motivation
 
-**File**: `grpc/src/client/transport/tonic/mod.rs` (modified, +2/-3)
+The pattern for registering into the global registery will be to have a
+single call to `register()` that gates all LB registrations behind a
+run-once guard.
+
+## Solution
+
+Move to using this policy in the grpc-xds crate by lifting the guard
+into `register()`.
+
+## Notes
+
+Originally this was #2931, but we are moving that LB into the grpc
+crate. However, since we do want that pattern I've split of this change
+into its own PR. See [this
+comment](https://github.com/grpc/grpc-rust/pull/2931#discussion_r4293203172).
+
+**File**: `grpc-xds/src/load_balancing/cluster_manager.rs` (modified, +1/-5)
 ```diff
-@@ -372,10 +372,9 @@ impl RecvStream for TonicRecvStream {
-                         None,
-                     ),
-                 },
--                Err(status) => {
-+                Err(mut status) => {
-                     // Stay closed after sending trailers (do not set self.state).
--                    let trailers = stream.trailers().await;
--                    let md = trailers.unwrap_or_default().unwrap_or_default();
-+                    let md = std::mem::take(status.metadata_mut());
-                     self.trailers_from_tonic_status(&status, md)
-                 }
-                 Ok(None) => {
-```
-
-**File**: `grpc/src/client/transport/tonic/test.rs` (modified, +102/-2)
-```diff
-@@ -980,6 +980,95 @@ async fn trailers_only_metadata() {
-     server_handle.await.unwrap();
+@@ -39,7 +39,6 @@
+ 
+ use std::collections::HashMap;
+ use std::sync::Arc;
+-use std::sync::Once;
+ 
+ use grpc::__unstable::client::load_balancing::ChannelController;
+ use grpc::__unstable::client::load_balancing::LbConfigJson;
+@@ -61,7 +60,6 @@ use grpc::StatusError;
+ use serde::Deserialize;
+ 
+ static POLICY_NAME: &str = "xds_cluster_manager_experimental";
+-static START: Once = Once::new();
+ 
+ // Target cluster option for an RPC, keyed by its `TypeId` in `CallOptions`.
+ #[derive(Debug, Clone)]
+@@ -216,9 +214,7 @@ impl Picker for ClusterPicker {
+ 
+ /// Register cluster manager as a LbPolicy.
+ pub(crate) fn reg() {
+-    START.call_once(|| {
+-        GLOBAL_LB_REGISTRY.add_builder(ClusterManagerBuilder {});
+-    });
++    GLOBAL_LB_REGISTRY.add_builder(ClusterManagerBuilder {});
  }
  
-+// Verifies that trailer metadata is preserved when the server returns an error
-+// status in trailers after sending headers and a message (i.e. not a
-+// Trailers-Only response).
-+#[tokio::test]
-+async fn error_trailers_after_headers_metadata() {
-+    let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+    let addr = listener.local_addr().unwrap();
-+    let shutdown_notify = Arc::new(Notify::new());
-+    let shutdown_notify_copy = shutdown_notify.clone();
+ #[cfg(test)]
+```
+
+**File**: `grpc-xds/src/load_balancing/mod.rs` (modified, +7/-1)
+```diff
+@@ -24,8 +24,12 @@
+ 
+ //! xDS-specific load balancing policies.
+ 
++use std::sync::Once;
 +
-+    let mut metadata = TonicMetadata::new();
-+    metadata.insert(
-+        "x-custom-trailer",
-+        TonicMetadataValue::from_static("custom-value"),
-+    );
-+    let status =
-+        TonicStatus::with_metadata(tonic::Code::InvalidArgument, "test error message", metadata);
+ pub(crate) mod cluster_manager;
+ 
++static START: Once = Once::new();
 +
-+    let server_handle = tokio::spawn(async move {
-+        let echo_server = EchoService {
-+            response_headers: None,
-+            response_error: Some(status),
-+        };
-+        let svc = EchoServer::new(echo_server);
-+        let _ = Server::builder()
-+            .add_service(svc)
-+            .serve_with_incoming_shutdown(
-+                TcpListenerStream::new(listener),
-+                shutdown_notify_copy.notified(),
-+            )
-+            .await;
+ /// Registers the xDS load balancing policies into the gRPC global LB registry.
+ ///
+ /// The `grpc` crate's registry is populated eagerly for its built-in policies,
+@@ -34,5 +38,7 @@ pub(crate) mod cluster_manager;
+ /// Only the first call has an effect, any additional ones are ignored.
+ #[allow(dead_code, reason = "no caller until there is an xDS resolver.")]
+ pub(crate) fn register() {
+-    cluster_manager::reg()
++    START.call_once(|| {
++        cluster_manager::reg();
 +    });
-+
-+    let target = format!("dns:///{}", addr);
-+    let channel = Channel::builder(&target, LocalChannelCredentials::new_arc()).build();
-+
-+    let (mut tx, mut rx) = channel
-+        .invoke(
-+            RequestHeaders::new().with_method_name("/grpc.examples.echo.Echo/ServerStreamingEcho"),
-+            CallOptions::default(),
-+        )
-+        .await;
-+    let req = WrappedEchoRequest(EchoRequest {
-+        message: "hello".into(),
-+    });
-+    tx.send(
-+        &req,
-+        SendOptions {
-+            final_msg: true,
-+            ..Default::default()
-+        },
-+    )
-+    .await
-+    .unwrap();
-+
-+    let mut resp = WrappedEchoResponse(EchoResponse::default());
-+    let item = rx.recv(&mut resp).await;
-+    let ResponseStreamItem::Headers(_) = item else {
-+        panic!("Expected Headers first, got {item:?}");
-+    };
-+    let item = rx.recv(&mut resp).await;
-+    let ResponseStreamItem::Message = item else {
-+        panic!("Expected Message after Headers, got {item:?}");
-+    };
-+    assert_eq!(resp.0.message, "hello");
-+    let item = rx.recv(&mut resp).await;
-+    let ResponseStreamItem::Trailers(trailers) = item else {
-+        panic!("Expected Trailers after Message, got {item:?}");
-+    };
-+
-+    let status_err = trailers.status().as_ref().unwrap_err();
-+    assert_eq!(status_err.code(), StatusCodeError::InvalidArgument);
-+    assert_eq!(status_err.message(), "test error message");
-+
-+    let value = trailers
-+        .metadata()
-+        .get("x-custom-trailer")
-+        .expect("trailer metadata should be preserved on error status");
-+    assert_eq!(value, "custom-value");
-+
-+    assert!(
-+        trailers.connection_info().is_none(),
-+        "trailers should not contain connection_info when headers were present"
-+    );
-+
-+    shutdown_notify.notify_one();
-+    server_handle.await.unwrap();
-+}
-+
- struct WrappedEchoRequest(EchoRequest);
- struct WrappedEchoResponse(EchoResponse);
- 
-@@ -1025,11 +1114,22 @@ impl Echo for EchoService {
- 
-     type ServerStreamingEchoStream = ReceiverStream<Result<EchoResponse, tonic::Status>>;
- 
-+    // Echoes the request message once, then ends the stream with
-+    // `response_error` (if set) in the trailers, or OK otherwise.  Unlike
-+    // `unary_echo`, this always sends response headers first, so an error is
-+    // delivered in trailers after headers rather than as a Trailers-Only
-+    // response.
-     async fn server_streaming_echo(
-         &self,
--        _: tonic::Request<EchoRequest>,
-+        request: tonic::Request<EchoRequest>,
-     ) -> Result<tonic::Response<Self::ServerStreamingEchoStream>, tonic::Status> {
--        unimplemented!()
-+        let message = request.into_inner().message;
-+        let (tx, rx) = tokio::sync::mpsc::channel(2);
-+        tx.send(Ok(EchoResponse { message })).await.unwrap();
-+        if let Some(err) = &self.response_error {
-+            tx.send(Err(err.clone())).await.unwrap();
-+        }
-+        Ok(tonic::Response::new(ReceiverStream::new(rx)))
-     }
- 
-     async fn client_streaming_echo(
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2956** (2026-10-23): Upgrade to Protobuf 36.2 (@ejona86)
-- **PR #2955** (2026-10-23): Rename protoc-gen-rust-grpc to protoc-gen-grpc-rust (@ejona86)
-- **PR #2953** (2026-10-23): Rename grpc-google to grpc-google-cloud-auth (@ejona86)
-- **PR #2952** (2026-10-23): Add script to sync .protos from grpc-proto (@ejona86)
-- **PR #2951** (2026-10-23): grpc: properly return trailers after tonic transport stream errors (@dfawley)
-- **PR #2949** (2026-10-22): grpc: disallow time functions that don't work with the runtime (@dfawley)
+- **PR #2982** (2026-10-29): protoc-gen-grpc-rust: downgrade abseil (@dfawley)
+- **PR #2980** (2026-10-29): fix(server): set a timer on HTTP/1 connections so hyper's header read timeout applies (@LucioFranco)
+- **PR #2979** (2026-10-29): chore: release v0.14.9 (@github-actions[bot])
+- **PR #2977** (2026-10-30): grpc/load_balancing: Add idle check in pick_first exit_idle() (@nathanielford)
+- **PR #2975** (2026-10-30): grpc/load_balancing: add send_resolver_update_with_config to TestEnv (@nathanielford)
+- **PR #2974** (2026-10-30): grpc-xds/load_balancing: move call-once for registration into register() (@nathanielford)
 
 ---
 
@@ -2490,32 +2099,57 @@ returns `None`. Get the metadata from the status instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Upgrade to Protobuf 36.2 (#2956)
+## X. grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977)
 
 **RULE**:
-When implementing operations in `examples/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `grpc/src/client/load_balancing/pick_first.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ecf9253`: Upgrade to Protobuf 36.2 (#2956). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53d5d706`: grpc/load_balancing: Add idle check in pick_first exit_idle() (#2977). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/client/load_balancing/pick_first.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-protobuf = { version = "4.36.2-release", optional = true }
-protobuf-well-known-types = { version = "0.36.2-release", optional = true }
-protobuf-well-known-types = { version = "0.36.2-release" }
+        // Only start a connection pass when in Idle and have already
+        // received a non-empty resolver update (`subchannels` is non-empty).
+        // Before the first resolver update, `connectivity_state` is Idle while
+        // `subchannels` is empty.
+        if self.connectivity_state == ConnectivityState::Idle && !self.subchannels.is_empty() {
+            self.start_connection_pass(channel_controller);
+        }
+
+    // Tests that exit_idle is a no-op before the first resolver update or
+    // while Connecting or Ready.
+    #[tokio::test]
+    async fn test_pick_first_exit_idle() {
+        let mut env = new_env();
+
+        // Before any resolver update (Idle, but subchannels is empty),
+        // exit_idle should be a no-op.
+        env.policy.exit_idle(&mut env.tcc);
+        env.expect_no_events();
+
+        // While Connecting, exit_idle should be a no-op.
+        env.send_resolver_update(create_endpoints(vec!["addr1"], None))
+            .unwrap();
+        let sc1 = env.expect_new_subchannel_for("addr1");
+        env.expect_connect();
+        env.expect_queuing_picker();
+
+        env.policy.exit_idle(&mut env.tcc);
+        env.expect_no_events();
+
+        // While Rea
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-protobuf = { version = "4.35.1-release", optional = true }
-protobuf-well-known-types = { version = "4.35.1-release", optional = true }
-protobuf-well-known-types = { version = "4.35.1-release" }
+        self.start_connection_pass(channel_controller);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ecf9253` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53d5d706` are properly handled with clean fallback behavior.

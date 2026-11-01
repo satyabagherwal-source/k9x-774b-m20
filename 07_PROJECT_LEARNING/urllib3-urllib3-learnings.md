@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source**: github ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
-> **Source Version**: `d07367de`  
+> **Source Version**: `2aa7e9c3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:51:55.206Z  
+> **Timestamp**: 2026-10-30T15:37:04.304Z  
 > **Learning ID**: `learn-github-urllib3-urllib3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/urllib3-urllib3-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/urllib3/urllib3](https://github.com/urllib3/urllib3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:51:54.221Z  
+> **Harvest Timestamp**: 2026-10-30T15:37:02.795Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: urllib3 is a user-friendly HTTP client library for Python
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4079 stars
+- **Stars / Engagement**: 4081 stars
 
 ---
 
@@ -1795,11 +1795,11 @@ class SSLTransport:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5331** (2026-10-21): **docs: set the JSON content type in the orjson example**
-  *Symptoms*: The orjson example sends encoded JSON through `body` but does not set `Content-Type`. Unlike `json=`, this does not add an application/json header, so a server may not parse the body as JSON and return the result shown in the guide.  Add the header and explain why it is needed. The example also uses HTTPS, as required by the documentation guidelines. No runtime behaviour changes.  Validation: ran the old and updated examples against a local HTTP server. The old request had no Content-Type; the updated request sent application/json and returned the expected JSON. The full Sphinx HTML build passed with warnings treated as errors, and `git diff --check` passed. Pre-commit had no applicable hooks for the changed RST file.  I did not call the live httpbin endpoint or run the full test/platform matrix for this documentation-only change.
+- **Issue #5347** (2026-10-29): **Keep the cached PoolKey when PoolManager looks up a pool**
+  *Symptoms*: <!--- Thanks for your contribution! ♥️  If this is your first PR to urllib3 please review the Contributing Guide: https://urllib3.readthedocs.io/en/latest/contributing.html  Adhering to the Contributing Guide means we can review, merge, and release your change faster! :) --->  Fixes #5346.  **TLDR:** A pool lookup no longer replaces the cached `PoolKey`. The key stays one long-lived object for the life of the pool.  ### Why it matters  `PoolManager` builds a new `PoolKey` for each request, and the lookup stores this new key in the cache. As a result, each request to a known host leaves a new GC-tracked tuple that young-generation collections must scan. Programs that call `gc.freeze()` after warm-up lose the freeze on each pool key after the next request.  ### Change  `RecentlyUsedContainer.__getitem__()` uses `move_to_end()` instead of `pop()` and a new insert. The eviction order does not change.  ### Evidence  `check_key.py` makes one request, freezes the GC, and makes a second request to the same host. It does not open a connection.  ```python import gc import urllib3  http = urllib3.PoolManager() http.connection_from_url("https://example.com/")  # no connection is opened gc.collect() gc.freeze() frozen_key = next(iter(http.pools._container))  http.connection_from_url("https://example.com/") key = next(iter(http.pools._container)) print("cached key is the frozen key:", key is frozen_key) print("cached key in GC generation 0:", any(o is key for o in gc.get_objects(generation
 
-- **Issue #5330** (2026-10-21): **Honor Retry-After on PoolManager redirects**
-  *Symptoms*: PoolManager followed redirects without honoring the Retry-After header, while HTTPConnectionPool already sleeps for Retry-After before it follows a redirect. This change calls Retry.sleep_for_retry() in PoolManager.urlopen() before the redirected request is sent, so both code paths behave the same and retry_after_max caps the wait. A new test in test/with_dummyserver/test_poolmanager.py mocks time.sleep and checks the one second wait, the retry_after_max cap, and that a Retry-After date in the past causes no wait. This was split out of #5010 at the reviewer's request since it does not depend on strict mode. 
+- **Issue #5346** (2026-10-29): **PoolManager replaces the cached PoolKey on every request**
+  *Symptoms*: ### Subject  Each request through an existing pool replaces the cached `PoolKey` in `PoolManager.pools` with the new key of that request. `RecentlyUsedContainer.__getitem__()` uses `pop()` and a new insert under the key of the caller ([_collections.py#L93-L98](https://github.com/urllib3/urllib3/blob/2.8.0/src/urllib3/_collections.py#L93-L98)).  Why this is a problem: the cached key must live as long as the pool. Instead, each request puts a new GC-tracked tuple in the cache. The young GC generation then scans the key again after each request, and a program that calls `gc.freeze()` cannot keep the key frozen.  ### Environment  ``` OS macOS-26.7.1-arm64-arm-64bit Python 3.12.12 OpenSSL 3.5.4 30 Sep 2025 urllib3 2.8.0 ```  ### Steps to Reproduce  ```python import urllib3  pm = urllib3.PoolManager() pm.connection_from_url("http://example.com/")  # no connection is opened first_key = next(iter(pm.pools._container))  pm.connection_from_url("http://example.com/") print(next(iter(pm.pools._container)) is first_key) ```  ### Expected Behavior  `True`. The lookup keeps the cached key.  ### Actual Behavior  `False`. The lookup replaced the cached key.  ### Possible fix  `move_to_end()` keeps the eviction order and the cached key:  ```diff          with self.lock: -            item = self._container.pop(key) -            self._container[key] = item +            item = self._container[key] +            self._container.move_to_end(key)              return item ```  I can open a PR with a t
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1816,350 +1816,222 @@ class SSLTransport:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c284372e` (2026-10-21)
-**Commit Message**: Avoid overflow in retry backoff calculation (#5305)
+### Incident Patch 1: `2aa7e9c3` (2026-10-29)
+**Commit Message**: Keep the stored key in RecentlyUsedContainer lookups (#5347)
 
-**File**: `changelog/5305.bugfix.rst` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+Fixed an ``OverflowError`` in retry backoff after many consecutive failures,
-+including when exponential backoff was disabled.
-```
+__getitem__() used pop() and a new insert, so each lookup replaced the
+stored key with the key of the caller. PoolManager builds a new PoolKey
+for each request, so the cached key changed on every request. Use
+move_to_end() to keep the stored key and the same eviction order.
 
-**File**: `src/urllib3/util/retry.py` (modified, +5/-1)
-```diff
-@@ -2,6 +2,7 @@
- 
- import email
- import logging
-+import math
- import random
- import re
- import time
-@@ -334,7 +335,10 @@ def get_backoff_time(self) -> float:
-         if consecutive_errors_len <= 1:
-             return 0
- 
--        backoff_value = self.backoff_factor * (2 ** (consecutive_errors_len - 1))
-+        try:
-+            backoff_value = math.ldexp(self.backoff_factor, consecutive_errors_len - 1)
-+        except OverflowError:
-+            backoff_value = math.inf if self.backoff_factor > 0 else -math.inf
-         if self.backoff_jitter != 0.0:
-             backoff_value += random.random() * self.backoff_jitter
-         return float(max(0, min(self.backoff_max, backoff_value)))
-```
+Fixes https://github.com/urllib3/urllib3/issues/5346
 
-**File**: `test/test_retry.py` (modified, +27/-0)
-```diff
-@@ -181,6 +181,33 @@ def test_configurable_backoff_max(self) -> None:
-         retry = retry.increment(method="GET")
-         assert retry.get_backoff_time() == max_backoff
- 
-+    @pytest.mark.parametrize(
-+        "factor, consecutive_errors, expected",
-+        [
-+            (0.0, 1025, 0.0),
-+            (0.5, 1025, 120.0),
-+            (-0.5, 1025, 0.0),
-+            (1.0, 1025, 120.0),
-+            (-1.0, 1025, 0.0),
-+            (2.0**-1024, 1025, 1.0),
-+            (2**1024, 2, 120.0),
-+            (-(2**1024), 2, 0.0),
-+        ],
-+    )
-+    def test_backoff_overflow(
-+        self, factor: float, consecutive_errors: int, expected: float
-+    ) -> None:
-+        retry = Retry(total=None, backoff_factor=factor)
-+        for _ in range(consecutive_errors):
-+            retry = retry.increment(method="GET")
-+        assert retry.get_backoff_time() == expected
-+
-+    def test_zero_backoff_large_retry_count_with_jitter(self) -> None:
-+        history = (RequestHistory("GET", "/", None, 503, None),) * 1025
-+        retry = Retry(backoff_factor=0.0, backoff_jitter=0.4, history=history)
-+        with mock.patch("random.random", return_value=0.5):
-+            assert retry.get_backoff_time() == 0.2
-+
-     def test_configurable_retry_after_max(self) -> None:
-         """Configurable retry after is computed correctly"""
-         max_retry_after = Retry.DEFAULT_RETRY_AFTER_MAX
-```
-
----
-
-### Incident Patch 2: `d07367de` (2026-10-21)
-**Commit Message**: Fix JSON content type in the orjson documentation example (#5331)
-
-**File**: `changelog/5331.misc.rst` (added, +1/-0)
+**File**: `changelog/5346.bugfix.rst` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Corrected the custom JSON request example to set the ``Content-Type`` header.
++Fixed ``PoolManager`` replacing its cached pool key with the key of each new request to the same host.
 ```
 
-**File**: `docs/user-guide.rst` (modified, +8/-2)
+**File**: `src/urllib3/_collections.py` (modified, +4/-3)
 ```diff
-@@ -117,15 +117,21 @@ method of the response:
+@@ -91,10 +91,11 @@ def __init__(
+         self.lock = RLock()
  
- Alternatively, Custom JSON libraries such as `orjson` can be used to encode data,
- retrieve data by decoding and deserializing the :attr:`~response.HTTPResponse.data` 
--attribute of the request:
-+attribute of the response. When sending pre-encoded JSON with ``body``, set the
-+``Content-Type`` header explicitly; urllib3 does not infer it from the bytes:
+     def __getitem__(self, key: _KT) -> _VT:
+-        # Re-insert the item, moving it to the end of the eviction line.
++        # Move the item to the end of the eviction line. move_to_end() keeps
++        # the stored key instead of replacing it with the caller's key.
+         with self.lock:
+-            item = self._container.pop(key)
+-            self._container[key] = item
++            item = self._container[key]
++            self._container.move_to_end(key)
+             return item
  
- .. code-block:: python
+     def __setitem__(self, key: _KT, value: _VT) -> None:
+```
+
+**File**: `test/test_collections.py` (modified, +11/-0)
+```diff
+@@ -70,6 +70,17 @@ def test_access_ordering(self) -> None:
  
-     import orjson
-     import urllib3
+         assert list(d._container.keys()) == new_order
  
-     encoded_data = orjson.dumps({"attribute": "value"})
--    resp = urllib3.request(method="POST", url="http://httpbin.org/post", body=encoded_data)
-+    resp = urllib3.request(
-+        "POST",
-+        "https://httpbin.org/post",
-+        body=encoded_data,
-+        headers={"Content-Type": "application/json"},
-+    )
++    def test_access_keeps_stored_key(self) -> None:
++        d: Container[tuple[str], int] = Container(5)
++        stored_key = ("foo",)
++        d[stored_key] = 1
++
++        equal_key = ("".join(["f", "oo"]),)
++        assert equal_key == stored_key and equal_key is not stored_key
++        d[equal_key]
++
++        assert next(iter(d._container)) is stored_key
++
+     def test_delete(self) -> None:
+         d: Container[int, bool] = Container(5)
  
-     print(orjson.loads(resp.data)["json"])
-     # {'attribute': 'value'}
 ```
 
 ---
 
-### Incident Patch 3: `01cd60b5` (2026-10-20)
-**Commit Message**: Fix redirect origin checks and Host header handling (#5126)
+### Incident Patch 2: `5feb9934` (2026-10-27)
+**Commit Message**: Tighten numeric validation of response framing (#5083)
 
-**File**: `changelog/5126.bugfix.rst` (added, +3/-0)
+Co-authored-by: “rootvector2” <“[REDACTED_EMAIL]”>
+Co-authored-by: Illia Volochii <[REDACTED_EMAIL]>
+
+**File**: `changelog/5083.bugfix.rst` (added, +1/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+Fixed ``PoolManager.urlopen()`` using the proxy's origin to decide when to
-+apply ``remove_headers_on_redirect``. The ``Host`` header is now updated on
-+cross-origin redirects.
+@@ -0,0 +1 @@
++Tightened numeric validation of response framing fields. ``Content-Length`` values such as ``1_000`` are now ignored when tracking response length, and chunk sizes such as ``0x5`` are now rejected when streaming chunked responses.
 ```
 
-**File**: `src/urllib3/connectionpool.py` (modified, +27/-16)
+**File**: `src/urllib3/response.py` (modified, +18/-5)
 ```diff
-@@ -578,22 +578,7 @@ def is_same_host(self, url: str) -> bool:
-         Check if the given ``url`` is a member of the same host as this
-         connection pool.
-         """
--        if url.startswith("/"):
--            return True
--
--        # TODO: Add optional support for socket.gethostbyname checking.
--        scheme, _, host, port, *_ = parse_url(url)
--        scheme = scheme or "http"
--        if host is not None:
--            host = _normalize_host(host, scheme=scheme)
--
--        # Use explicit default port for comparison when none is given
--        if self.port is not None and port is None:
--            port = port_by_scheme.get(scheme)
--        elif self.port is None and port == port_by_scheme.get(scheme):
--            port = None
--
--        return (scheme, host, port) == (self.scheme, self.host, self.port)
-+        return _is_same_host(url, self.scheme, self.host, self.port)
+@@ -4,6 +4,7 @@
+ import io
+ import json as _json
+ import logging
++import re
+ import socket
+ import sys
+ import typing
+@@ -53,6 +54,11 @@
+ # Read in 64 KiB chunks
+ _READ_CHUNK_SIZE = 2**16
  
-     def urlopen(  # type: ignore[override]
-         self,
-@@ -1197,6 +1182,32 @@ def _normalize_host(host: str | None, scheme: str | None) -> str | None:
-     return host
++# RFC 9112: Content-Length = 1*DIGIT and chunk-size = 1*HEXDIG.
++# int() is more permissive, so we match against the grammar before calling it.
++_CONTENT_LENGTH_RE = re.compile(r"[0-9]+")
++_CHUNK_SIZE_RE = re.compile(rb"[0-9A-Fa-f]+")
++
+ # Maximum length of a chunk-size line (and the trailing CRLF line) when reading a
+ # chunked-transfer-encoded response. Matches ``http.client._MAXLINE`` so urllib3's
+ # streaming path bounds these reads exactly like the stdlib ``.read()`` path does,
+@@ -893,7 +899,14 @@ def _init_length(self, request_method: str | None) -> int | None:
+                 # (e.g. Content-Length: 42, 42). This line ensures the values
+                 # are all valid ints and that as long as the `set` length is 1,
+                 # all values are the same. Otherwise, the header is invalid.
+-                lengths = {int(val) for val in content_length.split(",")}
++                lengths = set()
++                for val in content_length.split(","):
++                    # Only optional whitespace may surround each value; reject
++                    # signs, underscores and unicode digits that int() accepts.
++                    val = val.strip()
++                    if not _CONTENT_LENGTH_RE.fullmatch(val):
++                        raise ValueError("invalid Content-Length")
++                    lengths.add(int(val))
+                 if len(lengths) > 1:
+                     raise InvalidHeader(
+                         "Content-Length contained multiple "
+@@ -902,9 +915,6 @@ def _init_length(self, request_method: str | None) -> int | None:
+                 length = lengths.pop()
+             except ValueError:
+                 length = None
+-            else:
+-                if length < 0:
+-                    length = None
  
- 
-+def _is_same_host(
-+    url: str, scheme: str | None, host: str | None, port: int | None
-+) -> bool:
-+    """
-+    Check if the given ``url`` is a member of the same host as the given
-+    ``scheme``, ``host`` and ``port``. ``host`` is expected to be
-+    normalized with :func:`_normalize_host` already.
-+    """
-+    if url.startswith("/"):
-+        return True
-+
-+    # TODO: Add optional support for socket.gethostbyname checking.
-+    url_scheme, _, url_host, url_port, *_ = parse_url(url)
-+    url_scheme = url_scheme or "http"
-+    if url_host is not None:
-+        url_host = _normalize_host(url_host, scheme=url_scheme)
-+
-+    # Use explicit default port for comparison when none is given
-+    if port is not None and url_port is None:
-+        url_port = port_by_scheme.get(url_scheme)
-+    elif port is None and url_port == port_by_scheme.get(url_scheme):
-+        url_port = None
-+
-+    return (url_scheme, url_host, url_port) == (scheme, host, port)
-+
-+
- def _url_from_pool(
-     pool: HTTPConnectionPool | HTTPSConnectionPool, path: str | None = None
- ) -> str:
+         else:  # if content_length is None
+             length = None
+@@ -1381,7 +1391,10 @@ def _update_chunk_length(self) -> None:
+             ) from None
+         line = line.split(b";", 1)[0]
+         try:
+-            self.chunk_left = int(line, 16)
++            chunk_size = line.rstrip()
++            if not _CHUNK_SIZE_RE.fullmatch(chunk_size):
++                raise ValueError("invalid chunk size")
++            self.chunk_left = int(chunk_size, 16)
+         except ValueError:
+             self.close()
+             if line:
 ```
 
-**File**: `src/urllib3/poolmanager.py` (modified, +17/-7)
+**File**: `test/test_response.py` (modified, +49/-2)
 ```diff
-@@ -10,7 +10,13 @@
- from ._collections import HTTPHeaderDict, RecentlyUsedContainer
- from ._request_methods import RequestMethods
- from .connection import ProxyConfig
--from .connectionpool import HTTPConnectionPool, HTTPSConnectionPool, port_by_scheme
-+from .connectionpool import (
-+    HTTPConnectionPool,
-+    HTTPSConnectionPool,
-+    _is_same_host,
-+    _normalize_host,
-+    port_by_scheme,
-+)
- from .exceptions import (
-     LocationValueError,
-     MaxRetryError,
-@@ -488,15 +494,19 @@ def urlopen(  # type: ignore[override]
-         if not isinstance(retries, Retry):
-             retries = Retry.from_int(retries, redirect=redirect)
+@@ -1691,6 +1691,15 @@ def test_length_w_bad_header(self) -> None:
+         resp = HTTPResponse(fp, headers=garbage, preload_content=False)
+         assert resp.length_remaining is None
  
--        # Strip headers marked as unsafe to forward to the redirected location.
--        # Check remove_headers_on_redirect to avoid a potential network call within
--        # conn.is_same_host() which may use socket.gethostbyname() in the future.
--        if retries.remove_headers_on_redirect and not conn.is_same_host(
--            redirect_location
-+        # Strip headers marked as unsafe to forward to the redirected location,
-+        # along with Host, which ProxyManager._set_proxy_headers() derives from
-+        # the request URL and so has to be recomputed for the new location.
-+        # 'conn' is the proxy's pool when forwarding through an HTTP proxy, so
-+        # compare the request URL itself rather than asking the pool.
-+        scheme = u.scheme or "http"
-+        if kw["headers"] is not None and not _is_same_host(
-+            redirect_location, scheme, _normalize_host(u.host, scheme=scheme), u.port
-         ):
-+            headers_to_remove = retries.remove_headers_on_redirect | {"host"}
-             new_headers = kw["headers"].copy()
-             for header in kw["headers"]:
--                if header.lower() in retries.remove_headers_on_redirect:
-+                if header.lower() in headers_to_remove:
-                     new_headers.pop(header, None)
-             kw["headers"] = new_headers
- 
-```
-
-**File**: `test/with_dummyserver/test_poolmanager.py` (modified, +14/-0)
-```diff
-@@ -291,6 +291,20 @@ def test_redirect_cross_host_remove_headers(self) -> None:
-             assert "cookie" not in data
-             assert "Cookie" not in data
- 
-+    def test_redirect_cross_host_headers_none(self) -> None:
-+        with PoolManager() as http:
-+            r = http.urlopen(
-+                "GET",
-+                f"{self.base_url}/redirect?target={self.base_url_alt}/headers"
-+                "&status=302%20Found",
-+                headers=None,
-+            )
++    @pytest.mark.parametrize("value", ["1_000", "+5", "0x10", "0o10", "१२३"])
++    def test_length_w_non_rfc_header(self, value: str) -> None:
++        # int() accepts these forms but RFC 9112 section 6.3 only allows 1*DIGIT.
++        fp = BytesIO(b"12345")
++        resp = HTTPResponse(
++            fp, headers={"content-length": value}, preload_content=False
++        )
++        assert resp.length_remaining is None
 +
-+            assert r.status == 200
-+            assert isinstance(r, HTTPResponse)
-+            assert r._pool is not None
-+            assert r._pool.host == self.host_alt
-+
-     def test_redirect_cross_host_no_remove_headers(self) -> None:
-         with PoolManager() as http:
-             r = http.request(
-```
-
-**File**: `test/with_dummyserver/test_socketlevel.py` (modified, +71/-0)
-```diff
-@@ -1246,6 +1246,77 @@ def echo_socket_handler(listener: socket.socket) -> None:
-                 ]
-             )
+     def test_length_when_chunked(self) -> None:
+         # This is expressly forbidden in RFC 7230 sec 3.3.2
+         # We fall back to chunked in this case and try to
+@@ -1701,8 +1710,9 @@ def test_length_when_chunked(self) -> None:
+         resp = HTTPResponse(fp, headers=headers, preload_content=False)
+         assert resp.length_remaining is None
  
+-    def test_length_with_multiple_content_lengths(self) -> None:
+-        headers = {"content-length": "5, 5, 5"}
++    @pytest.mark.parametrize("value", ["5, 5, 5", " 5 , 5 , 5 ", "\t5\t,\t5\t, \t5 \t"])
++    def test_length_with_multiple_content_lengths(self, value: str) -> None:
++        headers = {"content-length": value}
+         garbage = {"content-length": "5, 42"}
+         fp = BytesIO(b"abcde")
+ 
+@@ -1904,6 +1914,43 @@ def test_invalid_chunk_length(self) -> None:
+         assert isinstance(orig_ex, InvalidChunkLength)
+         assert orig_ex.length == fp.BAD_LENGTH_LINE.encode()
+ 
++    @pytest.mark.parametrize("chunk_size", [b"-5", b"+5", b"0x5", b"1_f", b" 5"])
++    def test_non_rfc_chunk_length(self, chunk_size: bytes) -> None:
++        fp = BytesIO(chunk_size + b"\r\nHELLO\r\n0\r\n\r\n")
++        r = httplib.HTTPResponse(MockSock, method="GET")  # type: ignore[arg-type]
++        r.fp = fp  # type: ignore[assignment]
++        r.chunked = True
++        r.chunk_left = None
++        resp = HTTPResponse(
++            r, preload_content=False, headers={"transfer-encoding": "chunked"}
++        )
++        with pytest.raises(ProtocolError) as ctx:
++            next(resp.read_chunked())
++
++        orig_ex = ctx.value.args[1]
++        assert isinstance(orig_ex, InvalidChunkLength)
++        assert orig_ex.length == chunk_size + b"\r\n"
++        assert fp.closed
++        assert r.isclosed()
++        assert resp.closed
++
 +    @pytest.mark.parametrize(
-+        ("redirect_target", "expected_host", "expected_authorization"),
-+        [
-+            pytest.param(
-+                "http://example.com/second", b"example.com", False, id="cross-host"
-+            ),
-+            pytest.param(
-+                "http://google.com/second", b"google.com", True, id="same-host"
-+            ),
-+            # A redirect to the proxy's own origin is still cross-host for the
-+            # request target, so the credentials have to go.
-+            pytest.param(None, None, False, id="proxy-origin"),
-+        ],
++        "chunk_size", [b"5 ", b"5\t", b"5;name=value", b"5 \t;name=value"]
 +    )
-+    def test_redirect_rewrites_host_and_strips_credentials(
-+        self,
-+        redirect_target: str | None,
-+        expected_host: bytes | None,
-+        expected_authorization: bool,
++    def test_chunk_length_with_trailing_whitespace_or_extensions(
++        self, chunk_size: bytes
 +    ) -> None:
-+        requests: list[bytes] = []
++        fp = BytesIO(chunk_size + b"\r\nHELLO\r\n0\r\n\r\n")
++        r = httplib.HTTPResponse(MockSock, method="GET")  # type: ignore[arg-type]
++        r.fp = fp  # type: ignore[assignment]
++        resp = HTTPResponse(
++            r,
++            preload_content=False,
++            headers={"transfer-encoding": "chunked"},
++            original_response=r,
++        )
++        assert list(resp.read_chunked()) == [b"HELLO"]
 +
-+        def redirect_socket_handler(listener: socket.socket) -> None:
-+            for first in (True, False):
-+                sock = listener.accept()[0]
-+
-+                buf = b""
-+                while not buf.endswith(b"\r\n\r\n"):
-+                    buf += sock.recv(65536)
-+                requests.append(buf)
-+
-+                if first:
-+                    sock.send(
-+                        b"HTTP/1.1 302 Found\r\n"
-+                        b"Location: %s\r\n"
-+                        b"Content-Length: 0\r\n"
-+                        b"Connection: close\r\n"
-+                        b"\r\n" % location
-+                    )
-+                else:
-+                    sock.send(
-+                        b"HTTP/1.1 200 OK\r\n"
-+                        b"Content-Length: 0\r\n"
-+                        b"Connection: close\r\n"
-+                        b"\r\n"
-+                    )
-+                sock.close()
-+
-+        self._start_server(redirect_socket_handler)
-+        base_url = f"http://{self.host}:{self.port}"
-+
-+        # The proxy's port is only known once the server is running.
-+        if redirect_target is None:
-+            redirect_target = f"{base_url}/second"
-+            expected_host = f"{self.host}:{self.port}".encode()
-+        location = redirect_target.encode()
-+
-+        with proxy_from_url(
-+            base_url, headers={"Authorization": "Bearer secret"}
-+        ) as proxy:
-+            r = proxy.request("GET", "http://google.com/first")
-+
-+            assert r.status == 200
-+
-+        assert len(requests) == 2
-+        assert requests[1].startswith(b"GET %s HTTP/1.1" % redirect_target.encode())
-+        assert b"Host: %s\r\n" % expected_host in requests[1]
-+        assert (
-+            b"Authorization: Bearer secret\r\n" in requests[1]
-+        ) is expected_authorization
-+
-     def test_headers(self) -> None:
-         def echo_socket_handler(listener: socket.socket) -> None:
-             sock = listener.accept()[0]
+     def test_chunk_size_line_too_long(self) -> None:
+         # A malicious server can send a chunk-size line with no newline. urllib3's
+         # streaming path must reject it with a bounded read rather than buffering
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5347** (2026-10-29): Keep the cached PoolKey when PoolManager looks up a pool (@zek)
+- **PR #5333** (closed): Avoid building with vulnerable version of brotli & brotlicffi (@loganaden)
 - **PR #5331** (2026-10-21): docs: set the JSON content type in the orjson example (@Mohamedajab)
 - **PR #5330** (2026-10-21): Honor Retry-After on PoolManager redirects (@theluckystrike)
 - **PR #5329** (2026-10-21): Correct the HTTPHeaderDict.add combine example (@skyon0522-ai)
-- **PR #5327** (2026-10-20): Pin Python to 3.14 in the downstream GHA workflow (@illia-v)
-- **PR #5323** (closed): Reject NaN and infinite timeouts (@Cherith1222)
-- **PR #5313** (2026-10-14): Fix fingerprint verification test on PyPy 8.0.1 (@illia-v)
+- **PR #5328** (closed): Honor a zero Retry-After delay instead of applying backoff (@DGrutt)
 
 ---
 
@@ -2179,22 +2051,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Avoid overflow in retry backoff calculation (#5305)
+## X. Keep the stored key in RecentlyUsedContainer lookups (#5347)
 
 **RULE**:
-When implementing operations in `changelog/5305.bugfix.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/5346.bugfix.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in urllib3/urllib3. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c284372e`: Avoid overflow in retry backoff calculation (#5305). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2aa7e9c3`: Keep the stored key in RecentlyUsedContainer lookups (#5347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5305.bugfix.rst`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/5346.bugfix.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Fixed an ``OverflowError`` in retry backoff after many consecutive failures,
-including when exponential backoff was disabled.
+Fixed ``PoolManager`` replacing its cached pool key with the key of each new request to the same host.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2204,4 +2075,4 @@ including when exponential backoff was disabled.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c284372e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2aa7e9c3` are properly handled with clean fallback behavior.

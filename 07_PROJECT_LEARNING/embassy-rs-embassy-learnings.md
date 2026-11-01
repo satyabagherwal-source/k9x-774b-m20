@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source**: github ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
-> **Source Version**: `047ddf53`  
+> **Source Version**: `14cf6a68`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:15:20.437Z  
+> **Timestamp**: 2026-10-31T06:52:21.538Z  
 > **Learning ID**: `learn-github-embassy-rs-embassy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/embassy-rs/embassy](https://github.com/embassy-rs/embassy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:15:20.014Z  
+> **Harvest Timestamp**: 2026-10-31T06:52:21.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Modern embedded framework, using Rust and async.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10011 stars
+- **Stars / Engagement**: 10054 stars
 
 ---
 
@@ -1435,11 +1435,11 @@ unsafe fn bounce_chunks_inout(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7367** (2026-10-25): **Fix typo in embassy-usb-logger**
-  *Symptoms*: 
+- **Issue #7398** (2026-10-30): **embassy-usb: generate config.rs in a deterministic order**
+  *Symptoms*: build.rs collected the config values in a HashMap and wrote config.rs by iterating it, so the constants came out in a different order on every build. The generated source, and with it the crate hash, changed from one build of the same sources to the next, which breaks reproducible builds and caches of dependent crates (e.g. Nix): a dependent built against one build of embassy-usb fails with E0463 against another.  Use a BTreeMap so config.rs is written sorted by name, as ekv (embassy-rs/ekv#27) and smoltcp do.
 
-- **Issue #7366** (2026-10-25): **Fix more typos**
-  *Symptoms*: Made with AI and codespell.
+- **Issue #7397** (2026-10-30): **examples/stm32h7: fix off-by-one flash size in qspi_mdma**
+  *Symptoms*: `MAX_ADDRESS` is the last byte but was used as the size, so reads could not include the last byte, and a write or erase running past the end wrapped to address 1 instead of 0 (which would both be erased because erase wrapped the same way, so the write succeeds).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1456,192 +1456,221 @@ unsafe fn bounce_chunks_inout(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f1f86cc` (2026-10-24)
-**Commit Message**: Merge pull request #7361 from embassy-rs/revert-7344-stm32-adc-c5-prescaler
+### Incident Patch 1: `14cf6a68` (2026-10-30)
+**Commit Message**: Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size
 
-Revert "stm32/adc c5: apply the ADCDACPRE kernel clock prescaler, fixes #7264"
+examples/stm32h7: fix off-by-one flash size in qspi_mdma
 
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +0/-3)
+**File**: `examples/stm32h7/src/bin/qspi_mdma.rs` (modified, +11/-11)
 ```diff
-@@ -20,9 +20,6 @@ Time driver:
- I2C:
- - fix: stm32/i2c v2: disable own-address recognition before changing an enabled OA1/OA2 address, addressing mode, or OA2 mask.
+@@ -49,7 +49,7 @@ const READ_PARAMS_BIT_ODS2: u8 = 1 << 7;
+ // Memory array specifications as defined in the datasheet.
+ const SECTOR_SIZE: u32 = 4096;
+ const PAGE_SIZE: u32 = 256;
+-const MAX_ADDRESS: u32 = 0x7FFFFF;
++const FLASH_SIZE: u32 = 8 * 1024 * 1024;
  
--ADC:
--- fix: stm32/adc c5: `Adc::clock` returned the clock mux output and ignored the ADC/DAC kernel clock prescaler (`RCC_CCIPR2.ADCDACPRE`), so the `MAX_CLOCK` check in `Adc::new` compared the undivided mux output and panicked: an HCLK1 of 144 MHz with the default /4 is a 36 MHz ADC clock, but the check saw 144 MHz against a 70 MHz limit. The prescaler is now read back and applied, and `Adc::clock` reports the divided value.
--
- USART:
- - fix: stm32/usart: `BufferedUartTx::flush` could return before the last bytes left the UART when a write wrapped around the end of the TX buffer. The TC interrupt now reports done only when the TX buffer is empty, and every write pends the interrupt.
+ // Max Sector Erase time is 300ms
+ const SECTOR_ERASE_TIMEOUT: Duration = Duration::from_millis(600);
+@@ -83,7 +83,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+     }
  
-```
-
-**File**: `embassy-stm32/src/adc/v3.rs` (modified, +1/-11)
-```diff
-@@ -214,8 +214,7 @@ impl AdcRegs for Regs {
-             };
-             critical_section::with(|_| common.ccr().modify(|w| w.set_ckmode(ckmode)));
-         }
--        // N6 and C5 have no `CCR` prescaler (PRESC/CKMODE): the RCC supplies the ADC clock,
--        // and on C5 the RCC prescaler in front of it is applied in `clock()`.
-+        // N6 and C5 have no prescaler: the RCC clock is used as is.
-         #[cfg(not(adc_v3_f3))]
-         match config.clock {
-             Clock::Auto => {
-@@ -370,15 +369,6 @@ impl AdcRegs for Regs {
-         #[cfg(any(adc_v3_n6, adc_v3_c5))]
-         {
-             let _ = common;
--            #[cfg(adc_v3_c5)]
--            {
--                // The ADC/DAC kernel clock prescaler (RCC_CCIPR2.ADCDACPRE) divides the value
--                // coming out of the clock mux, and it is not part of the generated clock table,
--                // so `kernel_clock` still carries the undivided mux output. Read the prescaler
--                // back and apply it, the same way the F3 branch handles its own modes.
--                return kernel_clock / crate::pac::RCC.ccipr2().read().adcdacpre();
--            }
--            #[cfg(adc_v3_n6)]
-             kernel_clock
+     pub fn read(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+ 
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -113,7 +113,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+     }
+ 
+     pub fn write(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase(address, data.len() as u32);
+ 
+@@ -150,12 +150,12 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
          }
      }
+ 
+     pub fn erase(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -185,7 +185,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+@@ -335,7 +335,7 @@ impl<'a> Flash<'a, Async> {
+     }
+ 
+     pub async fn read_async(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+ 
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -350,7 +350,7 @@ impl<'a> Flash<'a, Async> {
+     }
+ 
+     pub async fn write_async(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase_async(address, data.len() as u32).await;
+         let mut length = data.len() as u32;
+@@ -387,12 +387,12 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+     pub async fn erase_async(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -422,7 +422,7 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `f81024fe` (2026-10-24)
-**Commit Message**: Revert "stm32/adc c5: apply the ADCDACPRE kernel clock prescaler, fixes #7264"
+### Incident Patch 2: `701d808d` (2026-10-30)
+**Commit Message**: examples/stm32h7: fix off-by-one flash size in qspi_mdma
 
-**File**: `embassy-stm32/CHANGELOG.md` (modified, +0/-3)
+MAX_ADDRESS is the last byte (0x7FFFFF) but was used as the size: reads
+could not include the last byte, and a write or erase running past the
+end wrapped to address 1 instead of 0. Use the 8 MiB size instead.
+
+**File**: `examples/stm32h7/src/bin/qspi_mdma.rs` (modified, +11/-11)
 ```diff
-@@ -20,9 +20,6 @@ Time driver:
- I2C:
- - fix: stm32/i2c v2: disable own-address recognition before changing an enabled OA1/OA2 address, addressing mode, or OA2 mask.
+@@ -49,7 +49,7 @@ const READ_PARAMS_BIT_ODS2: u8 = 1 << 7;
+ // Memory array specifications as defined in the datasheet.
+ const SECTOR_SIZE: u32 = 4096;
+ const PAGE_SIZE: u32 = 256;
+-const MAX_ADDRESS: u32 = 0x7FFFFF;
++const FLASH_SIZE: u32 = 8 * 1024 * 1024;
  
--ADC:
--- fix: stm32/adc c5: `Adc::clock` returned the clock mux output and ignored the ADC/DAC kernel clock prescaler (`RCC_CCIPR2.ADCDACPRE`), so the `MAX_CLOCK` check in `Adc::new` compared the undivided mux output and panicked: an HCLK1 of 144 MHz with the default /4 is a 36 MHz ADC clock, but the check saw 144 MHz against a 70 MHz limit. The prescaler is now read back and applied, and `Adc::clock` reports the divided value.
--
- USART:
- - fix: stm32/usart: `BufferedUartTx::flush` could return before the last bytes left the UART when a write wrapped around the end of the TX buffer. The TC interrupt now reports done only when the TX buffer is empty, and every write pends the interrupt.
- 
-```
-
-**File**: `embassy-stm32/src/adc/v3.rs` (modified, +1/-11)
-```diff
-@@ -214,8 +214,7 @@ impl AdcRegs for Regs {
-             };
-             critical_section::with(|_| common.ccr().modify(|w| w.set_ckmode(ckmode)));
-         }
--        // N6 and C5 have no `CCR` prescaler (PRESC/CKMODE): the RCC supplies the ADC clock,
--        // and on C5 the RCC prescaler in front of it is applied in `clock()`.
-+        // N6 and C5 have no prescaler: the RCC clock is used as is.
-         #[cfg(not(adc_v3_f3))]
-         match config.clock {
-             Clock::Auto => {
-@@ -370,15 +369,6 @@ impl AdcRegs for Regs {
-         #[cfg(any(adc_v3_n6, adc_v3_c5))]
-         {
-             let _ = common;
--            #[cfg(adc_v3_c5)]
--            {
--                // The ADC/DAC kernel clock prescaler (RCC_CCIPR2.ADCDACPRE) divides the value
--                // coming out of the clock mux, and it is not part of the generated clock table,
--                // so `kernel_clock` still carries the undivided mux output. Read the prescaler
--                // back and apply it, the same way the F3 branch handles its own modes.
--                return kernel_clock / crate::pac::RCC.ccipr2().read().adcdacpre();
--            }
--            #[cfg(adc_v3_n6)]
-             kernel_clock
-         }
+ // Max Sector Erase time is 300ms
+ const SECTOR_ERASE_TIMEOUT: Duration = Duration::from_millis(600);
+@@ -83,7 +83,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
      }
-```
-
----
-
-### Incident Patch 3: `047ddf53` (2026-10-25)
-**Commit Message**: Merge pull request #7367 from bugadani/logger-field
-
-Fix typo in embassy-usb-logger
-
-**File**: `embassy-usb-logger/src/lib.rs` (modified, +10/-10)
-```diff
-@@ -62,7 +62,7 @@ pub const MAX_PACKET_SIZE: u8 = 64;
- pub struct UsbLogger<const N: usize, T: ReceiverHandler + Send + Sync> {
-     buffer: Pipe<CS, N>,
-     custom_style: Option<fn(&Record, &mut Writer<'_, N>) -> ()>,
--    recieve_handler: Option<T>,
-+    receive_handler: Option<T>,
- }
  
- impl<const N: usize, T: ReceiverHandler + Send + Sync> UsbLogger<N, T> {
-@@ -71,7 +71,7 @@ impl<const N: usize, T: ReceiverHandler + Send + Sync> UsbLogger<N, T> {
-         Self {
-             buffer: Pipe::new(),
-             custom_style: None,
--            recieve_handler: None,
-+            receive_handler: None,
+     pub fn read(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+ 
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -113,7 +113,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+     }
+ 
+     pub fn write(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase(address, data.len() as u32);
+ 
+@@ -150,12 +150,12 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
          }
      }
  
-@@ -80,13 +80,13 @@ impl<const N: usize, T: ReceiverHandler + Send + Sync> UsbLogger<N, T> {
-         Self {
-             buffer: Pipe::new(),
-             custom_style: Some(custom_style),
--            recieve_handler: None,
-+            receive_handler: None,
+     pub fn erase(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -185,7 +185,7 @@ impl<MODE: Mode> Flash<'_, MODE> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
          }
      }
  
-     /// Add a command handler to the logger
-     pub fn with_handler(&mut self, handler: T) {
--        self.recieve_handler = Some(handler);
-+        self.receive_handler = Some(handler);
+@@ -335,7 +335,7 @@ impl<'a> Flash<'a, Async> {
      }
  
-     /// Run the USB logger using the state and USB driver. Never returns.
-@@ -140,29 +140,29 @@ impl<const N: usize, T: ReceiverHandler + Send + Sync> UsbLogger<N, T> {
-                 };
-             }
-         };
--        let reciever_fut = async {
--            let mut reciever_buf: [u8; MAX_PACKET_SIZE as usize] = [0; MAX_PACKET_SIZE as usize];
-+        let receiver_fut = async {
-+            let mut receiver_buf: [u8; MAX_PACKET_SIZE as usize] = [0; MAX_PACKET_SIZE as usize];
-             receiver.wait_connection().await;
-             loop {
--                let n = match receiver.read_packet(&mut reciever_buf).await {
-+                let n = match receiver.read_packet(&mut receiver_buf).await {
-                     Err(EndpointError::Disabled) => {
-                         receiver.wait_connection().await;
-                         continue;
-                     }
-                     Err(_) => continue,
-                     Ok(n) => n,
-                 };
--                match &self.recieve_handler {
-+                match &self.receive_handler {
-                     Some(handler) => {
--                        let data = &reciever_buf[..n];
-+                        let data = &receiver_buf[..n];
-                         handler.handle_data(data).await;
-                     }
-                     None => (),
-                 }
-             }
-         };
+     pub async fn read_async(&mut self, address: u32, buffer: &mut [u8]) {
+-        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
++        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
  
--        join(log_fut, reciever_fut).await;
-+        join(log_fut, receiver_fut).await;
+         let transaction = TransferConfig {
+             iwidth: QspiWidth::SING,
+@@ -350,7 +350,7 @@ impl<'a> Flash<'a, Async> {
      }
  
-     /// Creates the futures needed for the logger from a given class
+     pub async fn write_async(&mut self, mut address: u32, data: &[u8]) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(!data.is_empty());
+         self.erase_async(address, data.len() as u32).await;
+         let mut length = data.len() as u32;
+@@ -387,12 +387,12 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next page.
+             address += page_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
+     pub async fn erase_async(&mut self, mut address: u32, mut length: u32) {
+-        assert!(address <= MAX_ADDRESS);
++        assert!(address < FLASH_SIZE);
+         assert!(length > 0);
+ 
+         loop {
+@@ -422,7 +422,7 @@ impl<'a> Flash<'a, Async> {
+ 
+             // Jump to the next sector.
+             address += sector_remainder;
+-            address %= MAX_ADDRESS;
++            address %= FLASH_SIZE;
+         }
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7367** (2026-10-25): Fix typo in embassy-usb-logger (@bugadani)
-- **PR #7366** (2026-10-25): Fix more typos (@bugadani)
-- **PR #7364** (2026-10-25): Various typo fixes in comments and strings (@sourcebox)
-- **PR #7363** (2026-10-25): fix(nrf): make DPPIC10 channels and groups usable on nRF54Lx (@JulesGrd)
-- **PR #7362** (2026-10-24): ci: rm failing test (@xoviat)
-- **PR #7361** (2026-10-24): Revert "stm32/adc c5: apply the ADCDACPRE kernel clock prescaler, fixes #7264" (@xoviat)
+- **PR #7398** (2026-10-30): embassy-usb: generate config.rs in a deterministic order (@Sandvoxel)
+- **PR #7397** (2026-10-30): examples/stm32h7: fix off-by-one flash size in qspi_mdma (@Abrahamh08)
+- **PR #7395** (2026-10-30): Revert "stm32/eth: set v2 TX descriptor frame length" (@xoviat)
+- **PR #7394** (2026-10-30): [MCXA] use WAKETIMER for LPTMR time-driver alarms (@felipebalbi)
+- **PR #7391** (2026-10-30): nrf: enable i2s on the nrf91 family (@thijsc)
+- **PR #7390** (2026-10-29): fix: chacha counter wrap on 32 bit targets (@lulf)
 
 ---
 
@@ -1655,3 +1684,54 @@ Fix typo in embassy-usb-logger
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size
+
+**RULE**:
+When implementing operations in `examples/stm32h7/src/bin/qspi_mdma.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in embassy-rs/embassy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `14cf6a68`: Merge pull request #7397 from Abrahamh08/fix/stm32h7-qspi-mdma-flash-size. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/stm32h7/src/bin/qspi_mdma.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+const FLASH_SIZE: u32 = 8 * 1024 * 1024;
+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
+        assert!(address + buffer.len() as u32 <= FLASH_SIZE);
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
+        assert!(address < FLASH_SIZE);
+            address %= FLASH_SIZE;
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+const MAX_ADDRESS: u32 = 0x7FFFFF;
+        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
+        assert!(address + buffer.len() as u32 <= MAX_ADDRESS);
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
+        assert!(address <= MAX_ADDRESS);
+            address %= MAX_ADDRESS;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `14cf6a68` are properly handled with clean fallback behavior.

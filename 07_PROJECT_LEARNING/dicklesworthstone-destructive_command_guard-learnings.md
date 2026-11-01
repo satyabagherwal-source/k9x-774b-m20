@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `b33f3ef5`  
+> **Source Version**: `e4e06296`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T20:04:42.490Z  
+> **Timestamp**: 2026-10-31T11:09:23.325Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T20:04:42.480Z  
+> **Harvest Timestamp**: 2026-10-31T11:09:23.189Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `Dicklesworthstone/destructive_command_guard`
-- **Description**: The Destructive Command Guard (dcg) is for blocking dangerous git and shell commands from being executed by agents.
+- **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6212 stars
+- **Stars / Engagement**: 6232 stars
 
 ---
 
@@ -870,8 +870,8 @@ mod tests {
 //! Hook protocol handling.
 //!
 //! This module handles JSON input/output for supported hook protocols
-//! (Claude Code, Codex CLI, Copilot, VS Code Copilot Chat, Gemini, and Hermes
-//! Agent). It parses incoming hook requests and formats denial responses.
+//! (Claude Code, Factory Droid, Codex CLI, Copilot, VS Code Copilot Chat, Gemini,
+//! and Hermes Agent). It parses incoming hook requests and formats denials.
 
 use crate::evaluator::MatchSpan;
 use crate::exit_codes::EXIT_HOOK_BLOCK;
@@ -1087,7 +1087,7 @@ pub struct ToolCall {
 /// - a JSON array → each entry parsed individually as [`ToolCall`], with
 ///   entries that do not fit silently skipped (the ones that do fit are kept);
 /// - any non-array shape → `None`, so the rest of the payload still parses and
-///   the `tool_input` / `toolCall` extra
+///   the `tool_input` / `toolCall`
 ```
 
 ### Core Architecture Module: `src/packs/cdn/cloudflare_workers.rs`
@@ -1434,7 +1434,14 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
     shell::may_name_protected_path(command) || word_splitting::candidate(command)
 }
 
-/// IFS assignments and expansions belong to the outer shell, not to a quoted
+/// An extracted shell body can establish a destination in an earlier command.
+/// Its individual commands cannot retain that evidence. This is a candidate
+/// gate for an additional complete-source evaluation, never a path exemption.
+pub(crate) fn shell_destination_context_required(command: &str) -> bool {
+    word_splitting::candidate(command) || shell::indirection::candidate(command)
+}
+
+/// Scalar/IFS assignments and expansions belong to the outer shell, not to a quoted
 /// Python/Node program supplied on stdin (#560). Reuse the existing ownership
 /// proof instead of letting source text establish shell state or exhaust the
 /// shell event budget. It rejects unquoted bodies and ambiguous receivers.
@@ -1444,18 +1451,22 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
 /// `embedded::scan_command` below must always receive the original command.
 /// Do not apply a POSIX-only proof when the caller's dialect is unknown.
 fn scan_outer_writer_arguments(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWrite> {
-    if dialect != ShellDialect::Posix || !word_splitting::candidate(command) {
-        return word_splitting::scan(command, dialect);
-    }
-    let outer = crate::heredoc::mask_inert_interpreter_stdin(command);
-    word_splitting::scan(outer.as_ref(), dialect)
+    let outer = if dialect == ShellDialect::Posix && shell_destination_context_required(command) {
+        crate::heredoc::mask_inert_interpreter_stdin(command)
+    } else {
+        std::borrow::Cow::Borrowed(command)
+    };
+    let mut hits = word_splitting::scan(outer.as_ref(), dialect);
+    hits.extend(shell::indirection::scan(outer.as_ref(), dialect));
+    hits
 }
 
 /// Inspect executable source before shell segmentation or masking removes it.
 /// Shell syntax uses the separate [`classify_credential_file_write`] above;
 /// inline scripts, heredocs, and here-strings use their proven interpreter.
-/// The IFS view retains preceding assignments until each writer's arguments
-/// have been split, then delegates every destination to the same path policy.
+/// The shell views retain preceding scalar assignments and recognized Git
+/// origins, including IFS-dependent argv, and delegate destination evidence
+/// to the same native path policy before source segmentation discards it.
 /// Apply explicit language/content exemptions to each decoded program, not
 /// to another program or shell writer in the same command.
 /// Retain all rule families, including coincident spans from a single rename.
@@ -1611,17 +1622,7 @@ mod source_ownership_tests {
     }
 
     #[test]
-    fn unquoted_expansions_and_shell_receivers_keep_the_original_ifs_analysis_560() {
-        for command in [
-            "cat <<CODE\n$(IFS=@; tee $UNRESOLVED)\nCODE",
-            "python3 - <<CODE\nprint('$(IFS=@; tee $UNRESOLVED)')\nCODE",
-            "sh <<'CODE'\nIFS=@; tee $UNRESOLVED\nCODE",
-            "python3 -c 'import os,sys; os.system(sys.stdin.read())' <<'CODE'\nIFS=@; tee $UNRESOLVED\nCODE",
-        ] {
-            let original = word_splitting::scan(command, ShellDialect::Posix);
-            let outer = scan_outer_writer_arguments(command, ShellDialect::Posix);
-            assert_eq!(
-     
+    fn unquoted_expansions_and_shell
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded.rs`
@@ -2476,1097 +2477,1797 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b33f3ef5` (2026-10-25)
-**Commit Message**: fix(normalize): never take an option word for timeout's duration or chrt's program (#592)
+### Incident Patch 1: `4850e2da` (2026-10-30)
+**Commit Message**: fix(core): preserve shell field and execution boundaries in indirect writes
 
-Two wrapper parsers in the normalizer could still let an option word fill
-a positional slot, so the wrong word became the command (the same misread
-3d1bfe2b fixed for `time`):
+Resolve provable zero-field and multi-field scalar expansions, including
+empty concatenations, without reparsing expanded argv as shell syntax.
+Keep assignment prefixes out of operands and prove writer-specific option
+boundaries before retaining opaque quoted source arguments.
 
-- `timeout` read any word its option loop did not recognize as DURATION
-  and the word after it as the program. getopt clusters flags, and the
-  last letter of a cluster may be `-k` or `-s`, whose value is the rest of
-  the word or the next word: `timeout -vk 5 10 prog args` runs `prog`, but
-  normalized to `5 10 prog args`. A long-option abbreviation (`--sig KILL`)
-  or an unknown letter was misread the same way. The external pack keyed
-  on the real program was then not selected, and the command was allowed.
-- `chrt` with an optional priority (`-o`, `-b`, `-i`, `-d`, `-e`) took the
-  first word after its options as the program even when it was an option
-  the loop does not model, such as the `--fi` abbreviation of `--fifo`.
+Give expanded fields distinct analysis identities and map findings back
+to original source spans, preserving every protected rule family when a
+scalar contains several destinations. Inspect mandatory loop conditions
+and live grouped or assignment-only heredocs with correct mutation order.
 
-`timeout` now reads a cluster of `-f`/`-p`/`-v` that may end in `-k`/`-s`
-with its value, and leaves the wrapper in place when the word in the
-DURATION slot starts with `-`. `chrt` leaves the wra
+Extend strict Git path producers for quiet queries, path-format ordering,
+HEAD, index, config.worktree and config.lock. Preserve normalization at
+the query boundary and reject unquoted field assumptions contradicted by
+explicit root, hooksPath or IFS/glob inputs. No shell expression is run.
 
-**File**: `src/normalize.rs` (modified, +70/-6)
+Extend the real-CLI regression target to 13 tests with blocked writes,
+safe controls, linked worktrees, relocated hooks and allowlist cases.
+
+Validation:
+- 180/180 executable native-subsystem cases passed using byte-verified
+  production source and repository-
+
+**File**: `src/packs/core/credential_files/shell.rs` (modified, +26/-3)
 ```diff
-@@ -1249,20 +1249,43 @@ fn timeout_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Op
-             index += 1;
+@@ -3325,11 +3325,22 @@ fn skip_wrapper(name: &str, args: &[&Word]) -> Option<usize> {
+ const MAX_WRAPPER_DEPTH: usize = 16;
+ 
+ /// Drop reserved words, leading assignments, and wrapper commands.
+-fn strip_prefixes<'a>(mut words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
++fn strip_prefixes<'a>(words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
++    strip_prefixes_in_view(words, true)
++}
++
++/// Expanded argv has already lost syntactic assignment/reserved-word roles.
++/// A value such as `x=y` or `if` is an executable name, not new shell syntax.
++fn strip_prefixes_in_view<'a>(
++    mut words: &'a [&'a Word],
++    source_syntax: bool,
++) -> Option<&'a [&'a Word]> {
+     for _ in 0..MAX_WRAPPER_DEPTH {
+         let first = *words.first()?;
+         let text = first.as_string();
+-        if crate::context::is_shell_command_prefix_reserved_word(&text) || is_env_assignment(&text)
++        if source_syntax
++            && (crate::context::is_shell_command_prefix_reserved_word(&text)
++                || is_env_assignment(&text))
+         {
+             words = &words[1..];
              continue;
-         }
--        if word.strip_prefix('-').is_some_and(|flags| {
--            !flags.is_empty() && flags.bytes().all(|flag| matches!(flag, b'f' | b'p' | b'v'))
--        }) {
--            index += 1;
-+        if let Some(consume_next) = timeout_flag_cluster(&word) {
-+            if consume_next {
-+                wrapper_word(command, tokens, index + 1)?;
-+            }
-+            index += 1 + usize::from(consume_next);
-             continue;
-         }
-         break;
-     }
--    wrapper_word(command, tokens, index)?;
-+    // DURATION is a number with an optional unit, never an option word. Taking
-+    // an option this parser does not model (a long-option abbreviation such as
-+    // `--sig`, an unknown letter) for the duration made the real duration the
-+    // program.
-+    if wrapper_word(command, tokens, index)?.starts_with('-') {
-+        return None;
-+    }
-     let command_index = index.checked_add(1)?;
-     wrapper_word(command, tokens, command_index)?;
-     Some(command_index)
+@@ -3346,6 +3357,14 @@ fn strip_prefixes<'a>(mut words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
  }
  
-+/// A getopt cluster of `timeout` flags: `-f`/`-p`/`-v`, optionally ending in
-+/// `-k` or `-s`, whose value is the rest of the word or, when the letter ends
-+/// the word, the next word (returned as `Some(true)`). `None` when the word is
-+/// not such a cluster.
-+fn timeout_flag_cluster(word: &str) -> Option<bool> {
-+    let flags = word.strip_prefix('-').filter(|flags| !flags.is_empty())?;
-+    for (position, flag) in flags.bytes().enumerate() {
-+        match flag {
-+            b'f' | b'p' | b'v' => {}
-+            b'k' | b's' => return Some(position + 1 == flags.len()),
-+            _ => return None,
-+        }
-+    }
-+    Some(false)
+ fn classify_simple_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
++    classify_command_in_view(tokens, true)
 +}
 +
- fn stdbuf_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Option<usize> {
-     let mut index = 1usize;
-     while let Some(word) = wrapper_word(command, tokens, index) {
-@@ -1387,7 +1410,9 @@ fn chrt_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Optio
-         let command_index = index.checked_add(1)?;
-         wrapper_word(command, tokens, command_index)?;
-         Some(command_index)
--    } else if priority_optional {
-+    } else if priority_optional && !first.starts_with('-') {
-+        // An option word here is one the loop does not model (such as the
-+        // `--fi` abbreviation of `--fifo`), not the program.
-         Some(index)
-     } else {
-         None
-@@ -5497,6 +5522,45 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn timeout_and_chrt_never_take_an_option_word_as_the_duration_or_program() {
-+        // `timeout` clusters its flags getopt style, and the last letter of a
-+        // cluster may be `-k`/`-s`, whose value is the rest of the word or the
-+        // next word. Read as the DURATION, such a cluster made the real
-+        // duration the program. Synthetic program names.
-+        let stripped = [
-+            ("timeout -vk 5 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -vk5 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -fs KILL 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -pvsKILL 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -k 5 -v 10 zofftool shatter", "zofftool shatter"),
-+            ("timeout -- 10 zofftool shatter", "zofftool shatter"),
-+        ];
-+        for (command, expected) in stripped {
-+            assert_eq!(
-+                strip_wrapper_prefixes(command).normalized,
-+                expected,
-+                "{command}"
-+            );
-+        }
-+        // An option the parser does not model (a long-option abbreviation, an
-+        // unknown letter) is never the duration, and a word the priority slot
-+        // of `chrt` does not hold is never the program: the wrapper stays.
-+        for command in [
-+            "timeout --sig KILL 10 zofftool shatter",
-+            "timeout -x 10 zofftool shatter",
-+            "timeout -vx 10 zofftool shatter",
-+            "chrt -o --fi 0 zofftool shatter",
-+            "chrt --other -x zofftool shatter",
-+        ] {
-+            assert!(
-+                !strip_wrapper_prefixes(command).was_normalized(),
-+                "an option word was read as the duration or program: {command} -> {}",
-+                strip_wrapper_prefixes(command).normalized
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn wrapper_option_values_never_consume_redirections_issue_531() {
-         let wrappers: &[(&str, &[&str])] = &[
-```
-
-**File**: `tests/repro_592_external_pack_identity_selection.rs` (modified, +6/-0)
-```diff
-@@ -232,6 +232,12 @@ fn programs_behind_wrappers_and_launchers_select_the_external_pack() {
-         ("stripped wrapper", "time /opt/bin/frobtool zap"),
-         ("stripped wrapper", "time -o t.txt /fs/frobtool zap"),
-         ("stripped wrapper", "time -f%E /opt/frob''tool zap"),
-+        // A `timeout` flag cluster ending in `-k`/`-s` is not the duration,
-+        // and an option word is not the program behind `chrt`.
-+        ("stripped wrapper", "timeout -vk 5 10 $F zap"),
-+        ("stripped wrapper", "timeout -fsKILL 10 frob''tool zap"),
-+        ("wrapper left in place", "timeout --sig KILL 10 $F zap"),
-+        ("wrapper left in place", "chrt -o --fi 0 $F zap"),
-         ("launcher", "xargs $F zap"),
-         ("launcher", "xargs frob''tool zap"),
-         ("launcher", "xargs fr\\obtool zap"),
-```
-
----
-
-### Incident Patch 2: `3d1bfe2b` (2026-10-25)
-**Commit Message**: fix(normalize): keep a wrapped program whose second byte is f or o behind time (#592)
-
-`time -fFORMAT` and `time -oFILE` carry their value in the same word. The
-time wrapper parser matched that form by the second byte alone, so a
-program word such as `/opt/bin/tool` or `sofftool` was skipped as if it
-were an option, and the word after it became the command. The program a
-segment runs was then misread: an external pack keyed on that program was
-not selected (the #592 identity selection resolved the wrong word), and a
-rule spelling the program did not see it in the normalized text.
-
-The attached-value form now also requires the word to start with `-`.
-Separate `-f FORMAT` / `-o FILE`, `--format=`/`--output=` and the flag
-clusters are unchanged.
-
-Tests: a normalize unit test for each `time` option form with synthetic
-program names, and `time` rows with `/opt/...` and `/fs/...` program paths
-in the synthetic-pack identity-selection test. Both fail without the fix.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/normalize.rs` (modified, +29/-1)
-```diff
-@@ -1076,9 +1076,12 @@ fn time_wrapper_command_index(command: &str, tokens: &[NormalizeToken]) -> Optio
-             index += 2;
-             continue;
-         }
-+        // `-fFORMAT` / `-oFILE` carry their value. Only an option does: a
-+        // program word whose second byte is `f` or `o` (`/opt/...`, `sort`)
-+        // is the command, and skipping it handed the next word that role.
-         if word.starts_with("--format=")
-             || word.starts_with("--output=")
--            || word.len() > 2 && matches!(word.as_bytes()[1], b'f' | b'o')
-+            || word.len() > 2 && word.starts_with('-') && matches!(word.as_bytes()[1], b'f' | b'o')
-             || word.strip_prefix('-').is_some_and(|flags| {
-                 !flags.is_empty()
-                     && flags
-@@ -5408,6 +5411,31 @@ mod tests {
-         }
-     }
- 
-+    #[test]
-+    fn time_reads_attached_option_values_only_from_options() {
-+        // `-fFORMAT` and `-oFILE` carry their value. A wrapped program whose
-+        // second byte is `f` or `o` is still the program: it used to be skipped
-+        // as an option, so the word after it became the command. Synthetic
-+        // program names.
-+        let cases = [
-+            ("time zofftool shatter", "zofftool shatter"),
-+            ("time -p zofftool shatter", "zofftool shatter"),
-+            ("time /opt/bin/frobtool zap", "/opt/bin/frobtool zap"),
-+            ("time /fs/frobtool zap", "/fs/frobtool zap"),
-+            ("time -o t.txt zofftool shatter", "zofftool shatter"),
-+            ("time -ot.txt zofftool shatter", "zofftool shatter"),
-+            ("time -f%E zofftool shatter", "zofftool shatter"),
-+            ("time --output=t.txt zofftool shatter", "zofftool shatter"),
-+        ];
-+        for (command, expected) in cases {
-+            assert_eq!(
-+                strip_wrapper_prefixes(command).normalized,
-+                expected,
-+                "{command}"
-+            );
-+        }
-+    }
-+
-     #[test]
-     fn wrapper_option_values_never_consume_redirections_issue_531() {
-         let wrappers: &[(&str, &[&str])] = &[
-```
-
-**File**: `tests/repro_592_external_pack_identity_selection.rs` (modified, +5/-0)
-```diff
-@@ -227,6 +227,11 @@ fn programs_behind_wrappers_and_launchers_select_the_external_pack() {
-         ("wrapper left in place", "sudo -p prompt $F zap"),
-         ("wrapper left in place", "builtin command $F zap"),
-         ("option where the program goes", "time --unmodeled $F zap"),
-+        // A program word whose second byte is an option letter of `time`
-+        // (`-fFORMAT`, `-oFILE`) is still the program.
-+        ("stripped wrapper", "time /opt/bin/frobtool zap"),
-+        ("stripped wrapper", "time -o t.txt /fs/frobtool zap"),
-+        ("stripped wrapper", "time -f%E /opt/frob''tool zap"),
-         ("launcher", "xargs $F zap"),
-         ("launcher", "xargs frob''tool zap"),
-         ("launcher", "xargs fr\\obtool zap"),
-```
-
----
-
-### Incident Patch 3: `a2b42bdf` (2026-10-25)
-**Commit Message**: fix: preserve guardrail and written-script checks across arguments
-
-Global flags could hide dcg uninstall and exception grants from the enabled
-guardrails pack. An --agent value named test or explain could also grant
-the self-inspection exemption to a mutating command. Written Python and
-Node programs lost language-aware safety checks when invoked with flags
-or script arguments.
-
-Consume known global options with their real arity, normalize proven
-POSIX/PowerShell dcg option prefixes, and keep quoted agent-name data
-separate from executed commands. Preserve stable guardrails rule IDs and
-exercise Bash, PowerShell and Cmd hook envelopes.
-
-Recover the literal written script operand through supported interpreter
-flags and trailing argv. Carry that additional execution target separately
-from the original heredoc receiver, so typed safety checks are added
-without broadening literal-data exemptions or treating console.log text
-as a shell command.
-
-Allow otherwise proven local redirect paths under a verified startup
-TMPDIR. Reject home/system/credential roots, invalid root symlinks,
-unknown bindings, traversal and nonlocal filesystem contexts. Removal
-and mktemp rules retain their existin
-
-**File**: `src/allowlist.rs` (modified, +45/-5)
-```diff
-@@ -822,11 +822,28 @@ fn segment_is_dcg_inspection_call(segment: &str) -> bool {
-     if !is_dcg_binary_name(arg0) {
-         return false;
-     }
--    // Skip leading global option flags (`--robot`, `--no-color`, `-v`, ...) and
--    // require the first non-flag token to be a known diagnostic subcommand.
--    for token in tokens {
--        if token.starts_with('-') {
--            continue;
-+    // Global options have the same arity here as in `cli::Cli`. In particular,
-+    // `dcg --agent test allow-once ...` is a grant, not a diagnostic: `test`
-+    // is the agent name. Skipping flags without consuming their values would
-+    // exempt the whole mutating command before the guardrails pack sees it.
-+    while let Some(token) = tokens.next() {
-+        match token.as_str() {
-+            "--agent" => {
-+                if tokens.next().is_none() {
-+                    return false;
-+                }
-+                continue;
-+            }
-+            "--robot" | "--verbose" | "--quiet" | "--legacy-output" | "--no-color"
-+            | "--no-suggestions" | "-q" => continue,
-+            _ if token.starts_with("--agent=") => continue,
-+            _ if token.starts_with('-') => {
-+                if token.len() > 1 && token[1..].bytes().all(|byte| byte == b'v') {
-+                    continue;
-+                }
-+                return false;
-+            }
-+            _ => {}
-         }
-         return DCG_INSPECTION_SUBCOMMANDS.contains(&token.as_str());
-     }
-@@ -4151,6 +4168,29 @@ mod tests {
-         ));
-     }
- 
-+    #[test]
-+    fn dcg_self_inspection_consumes_global_option_values() {
-+        for command in [
-+            "dcg --agent codex --robot test 'rm -rf /'",
-+            "dcg --agent='test' -vv explain 'git reset --hard'",
-+            "dcg --no-suggestions --legacy-output --no-color classify 'git clean -fd'",
-+        ] {
-+            assert!(is_dcg_self_inspection_call(command), "{command}");
-+            assert!(is_dcg_self_inspection_segment(command), "{command}");
-+        }
-+        for command in [
-+            "dcg --agent test allow-once abc123 --yes",
-+            "dcg --agent explain uninstall",
-+            "dcg --agent classify allowlist add core.git:reset-hard --reason reviewed",
-+            "dcg --agent test",
-+            "dcg --agent",
-+            "dcg --unknown-option test 'rm -rf /'",
-+        ] {
-+            assert!(!is_dcg_self_inspection_call(command), "{command}");
-+            assert!(!is_dcg_self_inspection_segment(command), "{command}");
-+        }
-+    }
-+
-     #[test]
-     fn dcg_self_inspection_allows_path_qualified_binary() {
-         assert!(is_dcg_self_inspection_call(
-```
-
-**File**: `src/evaluator.rs` (modified, +121/-14)
-```diff
-@@ -26288,7 +26288,8 @@ fn filesystem_pre_rm_pattern_excluding_dynamic(name: Option<&str>) -> bool {
- /// `&&` chain, explicit tmp-rooted `mktemp -d`, and decimal `$$` components.
- /// A literal prefix may precede one proven variable (#526), including a
- /// literal for-loop variable and an immediately derived loop-local path.
--/// These additional forms must resolve under a tmp-family root. Rebinding,
-+/// These additional forms must resolve under a tmp-family root, including a
-+/// verified local startup `TMPDIR` (#590). Rebinding,
- /// unknown values, unsupported control flow, traversal, protected files, and
- /// additional non-fd redirects all retain the dynamic-path denial.
- fn statically_safe_variable_redirect(
-@@ -26440,6 +26441,87 @@ fn redirect_path_has_tmp_root(path: &str) -> bool {
-     ["/tmp/", "/var/tmp/", "/private/tmp/", "/private/var/tmp/"]
-         .iter()
-         .any(|prefix| path.starts_with(prefix))
-+        || redirect_path_is_under_startup_tmpdir(path)
++fn classify_expanded_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
++    classify_command_in_view(tokens, false)
 +}
 +
-+/// Startup `TMPDIR` is a local root hint, never a source of shell bindings.
-+/// A fully proven literal path below it may receive the redirect-only temp
-+/// proof (#590), but `$TMPDIR` itself still needs an assignment in the source.
-+/// Cache the bounded filesystem check once per process; changing TMPDIR in a
-+/// candidate command cannot grant a new root.
-+static STARTUP_TMPDIR_REDIRECT_ROOT: LazyLock<Option<String>> = LazyLock::new(|| {
-+    if !cfg!(unix) {
-+        return None;
-+    }
-+    let root = std::env::var("TMPDIR").ok()?;
-+    let root = root.trim_end_matches('/');
-+    if root.is_empty()
-+        || root.len() > MAX_REDIRECT_VALUE_BYTES
-+        || !Path::new(root).is_absolute()
-+        || root.split('/').any(|part| matches!(part, "." | ".."))
-+    {
-+        return None;
-+    }
-+    let canonical = fs::canonicalize(root).ok()?;
-+    if !canonical.is_dir()
-+        || !startup_tmpdir_root_is_unprotected(Path::new(root))
-+        || !startup_tmpdir_root_is_unprotected(&canonical)
-+    {
-+        return None;
-+    }
-+    Some(root.to_string())
-+});
-+
-+/// A supplied temp directory cannot turn a home/system tree into scratch.
-+/// Reuse the existing sensitive-redirect rule instead of maintaining a second
-+/// list of protected roots; the canonical spelling also catches root symlinks.
-+fn startup_tmpdir_root_is_unprotected(root: &Path) -> bool {
-+    if root.parent().is_none() {
-+        return false;
-+    }
-+    if let Some(home) = crate::config::home_dir() {
-+        let canonical_home = fs::canonicalize(&home).unwrap_or_else(|_| home.clone());
-+        if [&home, &canonical_home]
-+            .iter()
-+            .any(|home| root.starts_with(home) || home.starts_with(root))
++fn classify_command_in_view(tokens: &[Token], source_syntax: bool) -> Option<CredentialFileWrite> {
+     let mut words: Vec<&Word> = Vec::new();
+     for token in tokens {
+         match token {
+@@ -3366,7 +3385,11 @@ fn classify_simple_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
+             Token::Separator => {}
+         }
+     }
+-    let argv = strip_prefixes(&words)?;
++    let argv = if source_syntax {
++        strip_prefixes(&words)
++    } else {
++        strip_prefixes_in_view(&words, false)
++    }?;
+     let (argv0, args) = argv.split_first()?;
+     let kind = writer_kind(&executable_name(argv0)?)?;
+     match kind {
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection.rs` (modified, +238/-54)
+```diff
+@@ -5,7 +5,7 @@
+ //! reparses expanded data as shell syntax. Unknown values lose their proof.
+ 
+ use super::super::word_splitting;
+-use super::{CredentialFileWrite, Token, Word, classify_simple_command, git_redirect_write};
++use super::{CredentialFileWrite, Token, Word, classify_expanded_command, git_redirect_write};
+ use crate::normalize::ShellDialect;
+ use ast_grep_core::{AstGrep, Node, tree_sitter::StrDoc};
+ use ast_grep_language::SupportLang;
+@@ -132,6 +132,11 @@ impl Value {
+         let Some(ifs) = state.ifs.as_deref() else {
+             return false;
+         };
++        if let Self::Git { path, .. } = self
++            && !path.one_unquoted_field(ifs)
 +        {
 +            return false;
 +        }
-+    }
-+    let Some(path) = root.to_str() else {
-+        return false;
-+    };
-+    // macOS resolves `/etc` and `/var` through `/private`; that spelling
-+    // must not make an otherwise protected system tree an eligible root.
-+    let system_path = path.strip_prefix("/private/").map_or_else(
-+        || Cow::Borrowed(path),
-+        |rest| Cow::Owned(format!("/{rest}")),
-+    );
-+    let target = format!("{system_path}/dcg-scratch-root-check");
-+    if crate::packs::core::credential_files::names_protected_file(&shell_words::quote(&target)) {
-+        return false;
-+    }
-+    let Some(pattern) = REGISTRY.get("core.filesystem").and_then(|pack| {
-+        pack.destructive_patterns
-+            .iter()
-+            .find(|pattern| pattern.name == Some("redirect-truncate-root-home"))
-+    }) else {
-+        return false;
-+    };
-+    !pattern
-+        .regex
-+        .is_match(&format!(": > {}", shell_words::quote(&target)))
-+}
-+
-+fn redirect_path_is_under_startup_tmpdir(path: &str) -> bool {
-+    if NonlocalFilesystemScope::active() {
-+        return false;
-+    }
-+    STARTUP_TMPDIR_REDIRECT_ROOT.as_ref().is_some_and(|root| {
-+        path.strip_prefix(root)
-+            .and_then(|suffix| suffix.strip_prefix('/'))
-+            .is_some_and(|suffix| !suffix.is_empty())
-+    })
- }
- 
- /// A PID cannot introduce separators, traversal, quoting, or further expansion.
-@@ -26680,7 +26762,8 @@ fn parse_posix_variable_with_literal_affixes(token: &str) -> Option<(&str, &str,
- /// Redirect operators whose targets are proven in their complete shell source.
- /// The source supplies assignment and loop scope that an extracted command
- /// alone does not retain. Strict scope and a temporary root are required for
--/// this additional route, which must never depend on local filesystem state.
-+/// this additional route. A remote filesystem scope keeps this proof lexical:
-+/// only a local source may borrow the verified startup TMPDIR hint.
- fn proven_bash_redirect_offsets(source: &str) -> Vec<usize> {
-     if source.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
-         || !source.contains('>')
-@@ -26917,6 +27000,8 @@ fn embedded_bash_proven_redirect_offsets(command: &str) -> Vec<usize> {
-            
-```
-
-**File**: `src/heredoc.rs` (modified, +297/-15)
-```diff
-@@ -1529,6 +1529,20 @@ pub struct ExtractedContent {
-     /// The command that receives this heredoc (e.g., "cat", "bash").
-     /// Used to determine if content should be evaluated as executable.
-     pub target_command: Option<String>,
-+    /// An additional, proven interpreter that executes a written file with
-+    /// script arguments. Language-aware safety checks use this receiver;
-+    /// raw-shell quote classification keeps `target_command`'s original
-+    /// provenance. This evidence cannot grant a literal-data exemption.
-+    pub additional_execution_target: Option<String>,
-+}
-+
-+impl ExtractedContent {
-+    /// The receiving program for additive language-aware safety checks.
-+    pub(crate) fn execution_target(&self) -> Option<&str> {
-+        self.additional_execution_target
-+            .as_deref()
-+            .or(self.target_command.as_deref())
-+    }
- }
- 
- /// Reason why extraction was skipped (for observability/logging).
-@@ -2759,6 +2773,7 @@ fn extract_inline_scripts(
-                 quoted: true, // -c/-e content is always in quotes
-                 heredoc_type: None,
-                 target_command: Some(cmd_name.to_string()), // -c/-e content is executed by the interpreter
-+                additional_execution_target: None,
-             });
-         }
-     };
-@@ -3116,6 +3131,7 @@ fn push_windows_inner(
-         quoted: true,
-         heredoc_type: None,
-         target_command: Some(target.to_string()),
-+        additional_execution_target: None,
-     });
-     true
- }
-@@ -4222,6 +4238,7 @@ fn extract_deno_eval_inline_scripts(
-             quoted: true,
-             heredoc_type: None,
-             target_command: Some("deno".to_string()),
-+            additional_execution_target: None,
-         });
-     }
- }
-@@ -7637,6 +7654,7 @@ fn extract_herestrings(
-                 quoted: is_quoted,
-                 heredoc_type: Some(HeredocType::HereString),
-                 target_command: target_cmd,
-+                additional_execution_target: None,
-             });
-         }
-     };
-@@ -7811,7 +7829,14 @@ fn extract_heredocs(
- 
-     let mut hit_limit = false;
-     let mut foreign_body_ranges = None;
--    let written_source = written_heredoc_interpreter(command);
-+    // A script's argv does not stop the file from being executable source.
-+    // This wider identity is for additive language analysis only; proofs
-+    // that exempt literal data still require the isolated invocation below.
-+    let written_source = written_heredoc_interpreter(command)
-+        .map(|source| (source, false))
-+        .or_else(|| {
-+            written_heredoc_interpreter_with_argv(command, true).map(|source| (source, true))
-+        });
-     for cap in HEREDOC_EXTRACTOR.captures_iter(command) {
-         if record_timeout_if_needed(start_time, timeout, limits.timeout_ms, skip_reasons) {
-             return;
-@@ -7923,16 +7948,23 @@ fn extract_heredocs(
-                 // executable source, not a data-only cat body (#519). Bind
-                 // the language to this exact operator and body, so the AST
-                 // and synchronous sink backstops inspect the written bytes.
--                let target_cmd = if let Some(source) = written_source.as_ref().filter(|source| {
-+                let mut target_cmd = extract_heredoc_target_command(command, full_match.start());
-+                let mut additional_execution_target = None;
-+                if let Some((source, additional)) = written_source.as_ref().filter(|(source, _)| {
-                     quoted
-                         && source.operator_start == full_match.start()
-                         && source.body == (body_start_abs..body_end_abs)
-                 }) {
-                     language = source.language;
--                    Some(source.interpreter.clone())
--                } else {
--                    extract_heredoc_target_command(command, full_match.start())
--                };
-+                    if *additional {
-+                        // An additive source identity must not turn a print
-+                        // literal into raw shell code merely by changing its
-+                        // receiver from tee/cat to node/python.
-+                        additional_execution_target = Some(source.interpreter.clone());
-+                    } else {
-+                        target_cmd = Some(source.interpreter.clone());
-+                    }
-+                }
-                 extracted.push(ExtractedContent {
-                     content,
-                     language,
-@@ -7943,6 +7975,7 @@ fn extract_heredocs(
-                     quoted,
-                     heredoc_type: Some(heredoc_type),
-                     target_command: target_cmd,
-+                    additional_execution_target,
-                 });
-             }
-             Err(reason) => {
-@@ -9739,6 +9772,16 @@ pub(crate) fn written_javascript_arrow_offsets(command: &str) -> Vec<usize> {
- /// proof. In particular a later `bash file` must not borrow an earlier
- /// `n
-```
-
-**File**: `src/normalize.rs` (modified, +131/-0)
-```diff
-@@ -3874,6 +3874,7 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
-         .as_bytes()
-         .iter()
-         .any(|b| matches!(b, b'\'' | b'"' | b'\\' | b'<' | b'>'))
-+        || (dialect == ShellDialect::PowerShell && command.contains('`'))
-         || command.to_ascii_lowercase().contains(".exe");
- 
-     if !needs_normalization {
-@@ -3900,12 +3901,21 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
-     let mut segment_has_cmd = false;
-     let mut current_cmd_word: Option<String> = None;
-     let mut wrapper: NormalizeWrapper = NormalizeWrapper::None;
-+    // Some(false): dcg's global prefix; Some(true): the same prefix after
-+    // `allowlist`. Stop at a real subcommand, unknown option or shell stop-
-+    // parsing marker, so argument data cannot become command syntax.
-+    let mut dcg_global_prefix: Option<bool> = None;
-+    let mut dcg_agent_value = false;
-+    let mut dcg_decoder = ShellTokenDecoder::new(dialect);
- 
-     for tok in &tokens {
-         if tok.kind == NormalizeTokenKind::Separator {
-             segment_has_cmd = false;
-             current_cmd_word = None;
-             wrapper = NormalizeWrapper::None;
-+            dcg_global_prefix = None;
-+            dcg_agent_value = false;
-+            dcg_decoder = ShellTokenDecoder::new(dialect);
-             continue;
-         }
- 
-@@ -3915,6 +3925,49 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
+         let Some(word) = self.word(0..0) else {
+             return false;
          };
+@@ -156,6 +161,77 @@ fn path_prefix(prefix: &str) -> bool {
+     )
+ }
  
-         if segment_has_cmd {
-+            if let Some(after_allowlist) = dcg_global_prefix {
-+                if let Some(decoded) = dcg_decoder.decode(token_text, ShellTokenRole::Syntax) {
-+                    let word = decoded.as_ref();
-+                    let may_replace = if std::mem::take(&mut dcg_agent_value) {
-+                        // --agent consumes exactly one argv word. Decode an
-+                        // ordinary name, but preserve spaces, paths, runtime
-+                        // expansions and metacharacters as opaque data.
-+                        Some(looks_like_subcommand_word(word))
-+                    } else if word == "--agent" {
-+                        dcg_agent_value = true;
-+                        Some(true)
-+                    } else if let Some(value) = word.strip_prefix("--agent=") {
-+                        Some(value.is_empty() || looks_like_subcommand_word(value))
-+                    } else if matches!(
-+                        word,
-+                        "--robot"
-+                            | "--verbose"
-+                            | "--quiet"
-+                            | "--legacy-output"
-+                            | "--no-color"
-+                            | "--no-suggestions"
-+                            | "-q"
-+                    ) || word
-+                        .strip_prefix('-')
-+                        .is_some_and(|flags| !flags.is_empty() && flags.bytes().all(|b| b == b'v'))
-+                    {
-+                        Some(true)
-+                    } else if word == "allowlist" && !after_allowlist {
-+                        dcg_global_prefix = Some(true);
-+                        Some(true)
-+                    } else {
-+                        None
-+                    };
-+                    if let Some(may_replace) = may_replace {
-+                        if may_replace && word != token_text {
-+                            replacements.push((tok.byte_range.clone(), decoded.into_owned()));
-+                        }
-+                        continue;
-+                    }
-+                }
-+                dcg_global_prefix = None;
-+            }
-+
-             // Check if we should skip dequoting for this command
-             if let Some(cmd) = &current_cmd_word {
-                 if crate::context::SAFE_STRING_REGISTRY.is_all_args_data(cmd) {
-@@ -3975,6 +4028,14 @@ fn dequote_segment_command_words_in_dialect(command: &str, dialect: ShellDialect
-         let replacement = normalize_command_word_token_in_dialect(current, dialect);
-         // Track the normalized command word for safe registry checks
-         current_cmd_word = Some(replacement.clone().unwrap_or_else(|| current.to_string()));
-+        if matches!(dialect, ShellDialect::Posix | ShellDialect::PowerShell)
-+            && current_cmd_word.as_deref().is_some_and(|word| {
-+                let name = word.rsplit(['/', '\\']).next().unwrap_or(word);
-+                name.eq_ignore_ascii_case("dcg") || name.eq_ignore_ascii_case("dcg.exe")
-+            })
-+        {
-+            dcg_global_prefix = Some(false);
-+        }
- 
-         if let Some(repl) = replacement {
-             replacements.push((tok.byte_range.clone(), repl));
-@@ -5855,6 +5916,76 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn dcg_global_option_syntax_is_decoded_without_promoting_agent_data() {
-+        for dialect in [ShellDialect::Posix, ShellDialect::PowerShell] {
-+            for (command, expected) in [
-+        
-```
-
-**File**: `src/packs/careful_company_running_windows/guardrails.rs` (modified, +109/-16)
-```diff
-@@ -47,8 +47,24 @@
- 
- use crate::destructive_pattern;
- use crate::packs::careful_company_running_windows::shared_safe_patterns;
-+use crate::packs::regex_engine::LazyCompiledRegex;
- use crate::packs::{DestructivePattern, Pack, PatternSuggestion, SafePattern};
- 
-+// Match the global options declared by `cli::Cli`, including between an
-+// `allowlist` command and its subcommand. Only --agent consumes a value: a
-+// subcommand-looking agent name is data, while --robot never consumes the
-+// following word. Help/version and arbitrary positional words are not skipped.
-+// This grammar adds destructive evidence; it grants no exemption.
-+macro_rules! dcg_global_options {
-+    () => {
-+        concat!(
-+            r"(?:(?:--(?:verbose|quiet|legacy-output|no-color|no-suggestions|robot)|-v+|-q)[ \t]+",
-+            r#"|--agent=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>]*)[ \t]+"#,
-+            r#"|--agent[ \t]+(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s"'|&;<>]+)[ \t]+)*"#
-+        )
-+    };
++fn scalar_name(raw: &str) -> Option<&str> {
++    let name = raw
++        .strip_prefix("${")
++        .and_then(|value| value.strip_suffix('}'))
++        .or_else(|| raw.strip_prefix('$'))?;
++    word_splitting::identifier(name).then_some(name)
 +}
 +
- const CONTROL_SUGGESTIONS: &[PatternSuggestion] = &[
-     PatternSuggestion::new(
-         "Ask the operator to make the change",
-@@ -315,12 +331,17 @@ fn create_destructive_patterns() -> Vec<DestructivePattern> {
-             CONTROL_SUGGESTIONS
-         ),
-         // === dcg and agent configuration ===
--        destructive_pattern!(
--            "dcg-bypass-or-uninstall",
--            r"(?i)\bDCG_BYPASS\b\s*[=:]\s*[\x22']?(?:1|true|yes|y|on)\b|\bsetx?\s+DCG_BYPASS\s+[\x22']?(?:1|true|yes|y|on)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_BYPASS\b[^|&;\r\n]*(?:-value\s+)?[\x22']?(?:1|true|yes|y|on)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_BYPASS[\x22']\s*,\s*[\x22']?(?:1|true|yes|y|on)\b|\bdcg(?:\.exe)?\s+uninstall\b|\buninstall\.ps1\b",
--            "Bypassing or uninstalling dcg removes the guard that is supervising this session.",
--            Critical,
--            "`DCG_BYPASS=1` disables every rule for an invocation and `dcg uninstall` removes the \
-+        DestructivePattern {
-+            name: Some("dcg-bypass-or-uninstall"),
-+            regex: LazyCompiledRegex::new(concat!(
-+                r"(?i)\bDCG_BYPASS\b\s*[=:]\s*[\x22']?(?:1|true|yes|y|on)\b|\bsetx?\s+DCG_BYPASS\s+[\x22']?(?:1|true|yes|y|on)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_BYPASS\b[^|&;\r\n]*(?:-value\s+)?[\x22']?(?:1|true|yes|y|on)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_BYPASS[\x22']\s*,\s*[\x22']?(?:1|true|yes|y|on)\b|\bdcg(?:\.exe)?[ \t]+",
-+                dcg_global_options!(),
-+                r"uninstall\b|\buninstall\.ps1\b"
-+            )),
-+            reason: "Bypassing or uninstalling dcg removes the guard that is supervising this session.",
-+            severity: crate::packs::Severity::Critical,
-+            explanation: Some(
-+                "`DCG_BYPASS=1` disables every rule for an invocation and `dcg uninstall` removes the \
-              hook entirely. The escape hatch exists for a person at a terminal who has decided to \
-              accept the risk — an agent reaching for it has removed the only thing checking its \
-              work. A *truthy assignment* is required, so reading the variable, setting it to a false \
-@@ -329,14 +350,23 @@ fn create_destructive_patterns() -> Vec<DestructivePattern> {
-              - `dcg explain \"<command>\"` to find out precisely which rule is in the way\n\
-              - `dcg allowlist add <ruleId> -r \"<reason>\"` to permit one rule, with the reason recorded\n\
-              - Ask the operator to run the command manually if it is genuinely needed",
--            DCG_SUGGESTIONS
--        ),
--        destructive_pattern!(
--            "dcg-policy-self-weakening",
--            r"(?i)\bdcg(?:\.exe)?\s+(?:allowlist\s+(?:add|add-command|import)|allow-once|allow)\b|\bDCG_(?:DISABLE|PACKS|CONFIG)\b\s*[=:]|\bsetx?\s+DCG_(?:DISABLE|PACKS|CONFIG)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_(?:DISABLE|PACKS|CONFIG)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_(?:DISABLE|PACKS|CONFIG)[\x22']\s*,|\bDCG_POLICY_DEFAULT_MODE\b\s*[=:]\s*[\x22']?(?:log|warn)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_POLICY_DEFAULT_MODE\b[^|&;\r\n]*[\x22']?(?:log|warn)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_POLICY_DEFAULT_MODE[\x22']\s*,\s*[\x22'](?:log|warn)\b|\bDCG_POLICY_OBSERVE_UNTIL\b\s*[=:]\s*\S|\bset-item\b[^|&;\r\n]*\benv:DCG_POLICY_OBSERVE_UNTIL\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_POLICY_OBSERVE_UNTIL[\x22']\s*,|\bDCG_HEREDOC_ENABLED\b\s*[=:]\s*[\x22']?(?:false|0|off|no)\b|\bset-item\b[^|&;\r\n]*\benv:DCG_HEREDOC_ENABLED\b[^|&;\r\n]*[\x22']?(?:false|0|off|no)\b|\bsetenvironmentvariable\s*\(\s*[\x22']DCG_HEREDOC_ENABLED[\x22']\s*,\s*[\x22']?(?:false|0|off|no)\b",
--            "Granting an allowlist exception or overriding pack/policy config lets the agent clear its own path.",
--            Critical,
--            "`dcg allowlist add` and `dcg allow-once` grant permission for a rule or command, and the \
-+            ),
-+            suggestions: DCG_SUGGESTIONS,
-+            executables: None,
-+        },
-+        DestructivePattern {
++/// Only a complete scalar read can be split independently of neighboring
++/// literal/quoted pieces. Expanded bytes stay data, including quotes and `$`.
++fn scalar_fields(raw: &str, state: &State, range: Range<usize>) -> Option<Vec<Word>> {
++    if state.attributes_unknown {
++        return None;
++    }
++    let value = state.values.get(scalar_name(raw)?)?.literal()?;
++    word_splitting::fields(value, state.ifs.as_deref()?)
++        .ok()?
++        .into_iter()
++        .map(|field| Value::Literal(field.to_owned()).word(range.clone()))
++        .collect()
++}
++
++fn quoted_scalar_field(raw: &str) -> bool {
++    raw.strip_prefix('"')
++        .and_then(|value| value.strip_suffix('"'))
++        .and_then(scalar_name)
++        .is_some()
++}
++
++fn source_command<'a>(
++    node: &Node<'a, StrDoc<SupportLang>>,
++) -> Option<Node<'a, StrDoc<SupportLang>>> {
++    if node.kind() == "command" {
++        Some(node.clone())
++    } else {
++        node.field("body").filter(|body| body.kind() == "command")
++    }
++}
++
++/// Quoted opaque scalar operands after the writer's own `--` cannot inject
++/// options or alter operand count. Wrapper separators do not establish this
++/// boundary for the wrapped writer, and unknown unquoted fields never qualify.
++fn argv_ownership_proven(tokens: &[Token], unknown: &[(Range<usize>, bool)]) -> bool {
++    if unknown.is_empty() {
++        return true;
++    }
++    let words: Vec<_> = tokens
++        .iter()
++        .filter_map(|token| match token {
++            Token::Word(word) => Some(word),
++            _ => None,
++        })
++        .collect();
++    let Some(argv) = super::strip_prefixes_in_view(&words, false) else {
++        return false;
++    };
++    let mut operands = false;
++    let mut accepted = 0;
++    for word in argv.iter().skip(1) {
++        if let Some((_, single)) = unknown.iter().find(|(range, _)| *range == word.range) {
++            if !operands || !single {
++                return false;
++            }
++            accepted += 1;
++        } else if word.is_all_literal() && word.as_string() == "--" {
++            operands = true;
++        }
++    }
++    accepted == unknown.len()
++}
++
+ #[derive(Clone)]
+ struct State {
+     values: HashMap<String, Value>,
+@@ -225,6 +301,7 @@ impl State {
+ struct Decoded {
+     value: Value,
+     expanded: bool,
++    present: bool,
+ }
+ 
+ /// Decode a single scalar, retaining quoted data and expansion-time origins.
+@@ -240,14 +317,18 @@ fn decode(raw: &str, state: &State, assignment: bool) -> Option<Decoded> {
+     let mut quote = None;
+     let mut index = 0;
+     let mut expanded = false;
++    let mut quoted = false;
+     while index < raw.len() {
+         let ch = raw[index..].chars().next()?;
+         let here = index;
+         index += ch.len_utf8();
+         match (quote, ch) {
+             (Some('\''), '\'') | (Some('"'), '"') => quote = None,
+             (Some('\''), _) => chunk.push(ch),
+-            (None, '\'' | '"') => quote = Some(ch),
++            (None, '\'' | '"') => {
++                quote = Some(ch);
++                quoted = true;
++            }
+             (_, '\\') => {
+                 let next = raw[index..].chars().next()?;
+                 index += next.len_utf8();
+@@ -279,6 +360,7 @@ fn decode(raw: &str, state: &State, assignment: bool) -> Option<Decoded> {
+                         return None;
+                     }
+                     index = end;
++                    quoted = true;
+                     Value::Literal(word.as_string())
+                 } else {
+                     if state.attributes_unknown {
+@@ -314,7 +396,11 @@ fn decode(raw: &str, state: &State, assignment: bool) -> Option<Decoded> {
+                         })
+                     })?
+                 };
+-                if !assignment && quote.is_none() && !next.one_unquoted_field(state) {
++                if !assignment
++    
 ```
 
-**File**: `tests/regression_heredoc_masking.rs` (modified, +136/-0)
+**File**: `src/packs/core/credential_files/shell/indirection/git_paths.rs` (modified, +260/-34)
 ```diff
-@@ -327,6 +327,142 @@ EOF";
+@@ -16,7 +16,7 @@ const MAX_PATH_COMPONENTS: usize = 64;
+ enum GitPathKind {
+     Directory,
+     Hooks,
+-    Config,
++    File(&'static str),
+ }
+ 
+ #[derive(Debug, Clone, PartialEq, Eq)]
+@@ -26,13 +26,23 @@ pub(super) struct GitPath {
+     /// use: appending `name` to `/a/..` makes `/a/..name`, not `/name`.
+     /// Its normalized components never escape the symbolic root.
+     tail: String,
++    /// Git may remove a trailing slash or dot component while formatting its
++    /// output. Do not join another component onto an uncertain query boundary.
++    /// Once literal text has been appended, its exact boundary is known.
++    requires_separator: bool,
++    /// Literal path inputs which may appear in Git's output. They are shape
++    /// evidence only: the policy alias must never stand in for these bytes
++    /// when deciding whether an unquoted expansion is one shell field.
++    output_inputs: Vec<String>,
+ }
+ 
+ impl GitPath {
+     fn new(kind: GitPathKind) -> Self {
+         Self {
+             kind,
+             tail: String::new(),
++            requires_separator: true,
++            output_inputs: Vec::new(),
          }
      }
  
-+    #[test]
-+    fn written_script_arguments_cannot_skip_python_and_node_safety_checks() {
-+        for (body, consumer, expected_rule) in [
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 /tmp/program argument",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 -I /tmp/program",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 -IuB -- /tmp/program --argument",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 /tmp/program \"$USER\"",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "import shutil\nshutil.rmtree('/home/user')",
-+                "python3 -I /tmp/program \"$@\" $1",
-+                "heredoc.python:shutil_rmtree",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node /tmp/program argument",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node -- /tmp/program --eval",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node --no-warnings /tmp/program argument",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node /tmp/program \"${USER}\"",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+            (
-+                "require('fs').rmSync('/home/user', {recursive: true});",
-+                "node -- /tmp/program *.txt",
-+                "heredoc.javascript:fs_rmsync.catastrophic",
-+            ),
-+        ] {
-+            for writer in [
-+                "tee /tmp/program <<'EOF' >/dev/null",
-+                "cat >/tmp/program <<'EOF'",
-+            ] {
-+                let command = format!("{writer}\n{body}\nEOF\n{consumer}");
-+                let (decision, rule) = hook_decision(&command);
-+                assert_eq!(
-+                    decision, "deny",
-+                    "script arguments cannot hide source: {command:?}"
-+                );
-+                assert_eq!(
-+                    rule, expected_rule,
-+                    "typed safety check required: {command:?}"
-+                );
-+            }
+@@ -42,8 +52,8 @@ impl GitPath {
+         if suffix.is_empty() {
+             return Some(self.clone());
+         }
+-        if self.tail.is_empty() && !suffix.starts_with('/')
+-            || self.kind == GitPathKind::Config
++        if self.requires_separator && !suffix.starts_with('/')
++            || matches!(self.kind, GitPathKind::File(_))
+             || self.tail.len().saturating_add(suffix.len()) > MAX_PATH_BYTES
+             || suffix.contains('\0')
+         {
+@@ -54,23 +64,60 @@ impl GitPath {
+         Some(Self {
+             kind: self.kind,
+             tail,
++            requires_separator: false,
++            output_inputs: self.output_inputs.clone(),
+         })
+     }
+ 
++    pub(super) fn one_unquoted_field(&self, ifs: &str) -> bool {
++        // Keep the scanner's denial-only interpretation of an otherwise
++        // unspecified Git environment. A custom non-whitespace separator
++        // cannot be checked against an opaque root, and observed root text
++        // must not be hidden by the semantic `.git` spelling.
++        if !ifs.chars().all(|ch| matches!(ch, ' ' | '\t' | '\n')) {
++            return false;
 +        }
++        let splits_or_globs = |text: &str| {
++            text.chars()
++                .any(|ch| ifs.contains(ch) || matches!(ch, '*' | '?' | '[' | '('))
++        };
++        !splits_or_globs(&self.tail)
++            && self
++                .output_inputs
++                .iter()
++                .all(|input| !input.is_empty() && !splits_or_globs(input))
 +    }
 +
-+    #[test]
-+    fn written_script_arguments_preserve_safe_programs_and_document_data() {
-+        for command in [
-+            "tee /tmp/program <<'EOF' >/dev/null\nprint('hello')\nEOF\npython3 -I /tmp/program argument",
-+            "cat >/tmp/program <<'EOF'\nprint('hello')\nEOF\npython3 -- /tmp/program --argument",
-+            "tee /tmp/program <<'EOF' >/dev/null\nconsole.log('hello');\nEOF\nnode -- /tmp/program argument",
-+            "tee /tmp/program <<'EOF' >/dev/null\nconsole.log('hello');\nEOF\nnode --no-warnings /tmp/program argument",
-+            "tee /tmp/program <<'EOF' >/dev/null\nprint('hello')\nEOF\npython3 /tmp/program \"$USER\"",
-+            "tee /tmp/program <<'EOF' >/dev/null\nconsole.log('hello');\nEOF\nnode /tmp/program \"$@\"",
-+            "tee /tmp/program <<'EOF' >/dev/null\nimport shutil\nshutil.rmtree('/home/user')\nEOF\ncat /tmp/program",
-+            "tee /tmp/program <<'EOF' >/dev/null\nrequire('fs').rmSync('/home/user', {recursive: true});\nEOF\nwc -l /tmp/program",
-+            "tee /tmp/program <<'EOF' >/dev/null\nimport shutil\nshutil.rmtree('/home/user')\nEOF\npython3 -c 'print(1)' /tmp/program \"$USER\"",
-+            "tee /tmp/program <<'EOF' >/dev/null\nrequire('fs').rmSync('/home/user', {recursive: true});\nEOF\nnode -e 'console.log(1)' /tmp/program \"$USER\"",
-+        ] {
-+            let (decision, rule) = hook_decision(command);
-+            assert_eq!(decision, "allow", "{command:?}: {rule}");
-+        }
++    fn query_boundary(mut self) -> Self {
++        self.requires_separator = self
++            .tail
++            .rsplit('/')
++            .next()
++            .is_none_or(|component| matches!(component, "" | "." | ".."));
++        let components = normalized_components(&self.tail)
++            .expect("GitPath construction checks the symbolic root");
++        self.tail = if components.is_empty() {
++            String::new()
++        } else {
++            format!("/{}", components.join("/"))
++        };
++        self
 +    }
 +
-+    #[test]
-+    fn written_script_arguments_keep_executed_substitutions_visible() {
-+        for (body, consumer) in [
-+            (
-+                "print('hello')",
-+                "python3 /tmp/program \"$(git reset --hard)\"",
-+            ),
-+            (
-+                "console.log('hello');",
-+                "node -- /tmp/program \"$(git reset --hard)\"",
-+            ),
-+        ] {
-+            let command = format!("tee /tmp/program <<'EOF' >/dev/null\n{body}\nEOF\n{consumer}");
-+            let (decision, rule) = hook_decision(&command);
-+            assert_eq!(decision, "den
+     /// An alias for the existing protected-path table. A bare directory gets
+     /// a trailing slash so the table recognizes its directory anchor as well.
+     pub(super) fn policy_path(&self) -> String {
+         let base = match self.kind {
+-            GitPathKind::Directory => ".git",
+-            GitPathKind::Hooks => ".git/hooks",
+-            GitPathKind::Config => ".git/config",
++            GitPathKind::Directory => ".git".to_owned(),
++            GitPathKind::Hooks => ".git/hooks".to_owned(),
++            GitPathKind::File(name) => format!(".git/{name}"),
+         };
+         let tail = normalized_components(&self.tail)
+             .expect("GitPath construction checks the symbolic root")
+             .join("/");
+         if tail.is_empty() {
+-            if self.kind == GitPathKind::Config {
+-                base.to_owned()
++            if matches!(self.kind, GitPathKind::File(_)) {
++                base
+             } else {
+                 format!("{base}/")
+             }
+@@ -112,46 +159,78 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+         return None;
+     }
+     let mut index = 1;
++    let mut output_inputs = Vec::new();
++    let mut hooks_path = None;
+     while argv.get(index)?.as_str() != "rev-parse" {
+         let option = argv.get(index)?.as_str();
+         match option {
+-            "-C" | "-c" | "--git-dir" | "--work-tree" => {
+-                argv.get(index + 1)?;
++            "-C" | "--git-dir" | "--work-tree" => {
++                let input = argv.get(index + 1)?;
++                // `git -C ''` explicitly leaves the current directory alone.
++                if option != "-C" || !input.is_empty() {
++                    output_inputs.push(input.clone());
++                }
++                index +=
 ```
 
-**File**: `tests/repro_313_powershell_read_only_false_positives.rs` (modified, +223/-1)
+**File**: `src/packs/core/credential_files/word_splitting.rs` (modified, +1/-1)
 ```diff
-@@ -62,7 +62,16 @@ fn assert_blocked(command: &str, rule: &str) {
-         result.starts_with("Result: BLOCKED") || result.starts_with("Result: REVIEW REQUIRED"),
-         "command: {command}\n{full}"
+@@ -328,7 +328,7 @@ fn argv_needs_field_analysis(node: Node<'_, StrDoc<SupportLang>>) -> bool {
+ /// POSIX distinguishes IFS whitespace from other separators. Empty fields
+ /// before/interior to non-whitespace separators survive; a final separator
+ /// terminates the preceding field rather than inventing a final argument.
+-fn fields<'a>(value: &'a str, ifs: &str) -> Result<Vec<&'a str>, ()> {
++pub(super) fn fields<'a>(value: &'a str, ifs: &str) -> Result<Vec<&'a str>, ()> {
+     if value.len() > MAX_VALUE_BYTES
+         || ifs.len() > MAX_VALUE_BYTES
+         || !ifs.is_ascii()
+```
+
+**File**: `tests/repro_609_613_indirect_destinations.rs` (modified, +69/-0)
+```diff
+@@ -209,6 +209,8 @@ fn reported_scalar_destinations_have_their_literal_rule_identity() {
+         "f=/etc/sudoers; result=$(tee -a \"$f\")",
+         "f=/etc/sudoers; export result=$(tee -a \"$f\")",
+         "if true; then f=/etc/sudoers; tee -a \"$f\"; fi",
++        "f=/etc/sudoers; while tee \"$f\"; do break; done",
++        "f=/etc/sudoers; until tee \"$f\"; do break; done",
+     ] {
+         fixture.deny(source, CREDENTIAL);
+     }
+@@ -269,6 +271,8 @@ fn scalar_values_are_snapshots_and_child_scopes_do_not_replace_them() {
+         "f=/tmp/out; read f; tee -a \"$f\"",
+         "f=/etc/sudoers; printf -- '%n' f; tee -a \"$f\"",
+         r#"f=/etc/sudoers; printf '%s' "$((f=0))" "$(tee "$f")""#,
++        r#"f=/etc/sudoers; for x in "$((f=0))" "$(tee "$f")"; do :; done"#,
++        r#"f=/etc/sudoers; case "$((f=0))$(tee "$f")" in *) :;; esac"#,
+     ] {
+         fixture.allow(source);
+     }
+@@ -289,6 +293,8 @@ fn quoted_data_reads_and_benign_scalar_destinations_keep_their_behavior() {
+         "f=/etc/sudoers; cat \"$f\"",
+         "f=/etc/sudoers; chmod 600 \"$f\"",
+         "f=/etc/sudoers; cp \"$f\" /tmp/backup",
++        "f=/tmp/out; while tee \"$f\"; do break; done",
++        "f=/tmp/out; until tee \"$f\"; do break; done",
+         "option='--target-directory=/tmp'; cp /etc/sudoers \"$option\"",
+         "f='$(git rev-parse --git-dir)/config'; printf '%s' \"$f\"",
+         "printf '%s' 'f=/etc/sudoers; tee -a $f'",
+@@ -305,6 +311,7 @@ fn unresolved_option_fields_do_not_turn_protected_sources_into_destinations() {
+         "f=/etc/sudoers; options='--target-directory /tmp'; cp $options \"$f\"",
+         "f=~/.ssh/authorized_keys; options='-t /tmp'; install $options \"$f\"",
+         "options='-t /tmp'; d=$(git rev-parse --git-dir); cp $options \"$d/config\"",
++        "f=/etc/sudoers; sudo -- cp \"$unknown\" \"$f\"",
+     ] {
+         fixture.allow(source);
+     }
+@@ -313,6 +320,41 @@ fn unresolved_option_fields_do_not_turn_protected_sources_into_destinations() {
+         "f=/etc/sudoers; options='-t /tmp'; cp $options source >> \"$f\"",
+         CREDENTIAL,
      );
--    assert!(full.contains(rule), "expected {rule} for {command}\n{full}");
-+    let separate_fields = rule.split_once(':').is_some_and(|(pack, pattern)| {
-+        full.lines().any(|line| line == format!("Pack: {pack}"))
-+            && full
-+                .lines()
-+                .any(|line| line == format!("Pattern: {pattern}"))
-+    });
-+    assert!(
-+        full.contains(rule) || separate_fields,
-+        "expected {rule} for {command}\n{full}"
-+    );
++    // After the writer's own option terminator, quoted unknown scalars keep
++    // one operand each and cannot change a later proved destination's role.
++    for source in [
++        "f=/etc/sudoers; cp -- \"$unknown_source\" \"$f\"",
++        "f=/etc/sudoers; tee -- \"$unknown\" \"$f\"",
++        "f=/etc/sudoers; sudo -- cp -- \"$unknown_source\" \"$f\"",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++}
++
++#[test]
++fn complete_scalar_fields_keep_splitting_and_command_name_semantics() {
++    let fixture = Fixture::new();
++    for source in [
++        "f=/etc/sudoers; empty=; tee $empty \"$f\"",
++        "f=/etc/sudoers; empty=; tee ${empty} \"$f\"",
++        "empty=; f=/etc/sudoers; tee $empty\"$f\"",
++        "empty=; f=/etc/sudoers; tee $empty${empty} \"$f\"",
++        "files='/tmp/out /etc/sudoers'; tee $files",
++        "options='-t /etc'; cp $options sudoers",
++        "v='a b'; f=/etc/sudoers; X=$v tee \"$f\"",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        "files='/tmp/out /etc/sudoers'; tee \"$files\"",
++        "empty=; f=/tmp/out; tee \"$empty\" \"$f\"",
++        "runner='x=y'; f=/etc/sudoers; $runner tee \"$f\"",
++        "runner='x=y'; f=/etc/sudoers; \"$runner\" tee \"$f\"",
++        "runner=if; f=/etc/sudoers; $runner tee \"$f\"",
++        "runner='!'; f=/etc/sudoers; $runner tee \"$f\"",
++    ] {
++        fixture.allow(source);
++    }
  }
  
  #[test]
-@@ -176,3 +185,216 @@ fn items1_and_2_planted_negatives_recursive_delete_still_denies() {
-         "windows.filesystem",
-     );
- }
-+
-+#[test]
-+fn global_options_cannot_hide_guardrail_changes() {
-+    for command in [
-+        "dcg --robot allow-once abc123 --yes",
-+        "dcg --agent codex --no-color allow-once abc123 --yes",
-+        "dcg --agent test allow-once abc123 --yes",
-+        "dcg --agent classify allowlist add core.git:reset-hard --reason reviewed",
-+        "dcg --robot allowlist add core.git:reset-hard --reason reviewed",
-+        "dcg allowlist --robot add core.git:reset-hard --reason reviewed",
-+        "dcg allowlist --agent=codex add-command 'rm -rf dist' --reason reviewed",
-+        "dcg --legacy-output -vv allow core.git:reset-hard --reason reviewed",
-+        "env dcg --robot allow-once abc123 --yes",
-+    ] {
-+        assert_blocked(
-+            command,
-+            "careful_company_running_windows.guardrails:dcg-policy-self-weakening",
-+        );
-+    }
-+    for command in [
-+        "dcg --robot uninstall",
-+        "dcg -q --no-suggestions uninstall",
-+        "dcg --agent 'codex' --no-color uninstall",
-+        "dcg --agent= --robot uninstall",
-+        "dcg --agent explain uninstall",
-+        "dcg --agent='dcg --robot uninstall' --robot uninstall",
-+        "dcg --agent='dcg --robot uninstall' doctor; dcg --robot uninstall",
-+        "bash -c 'dcg --robot uninstall'",
-+        r"C:\tools\dcg.exe --robot uninstall",
-+        "git status && dcg --robot uninstall",
-+    ] {
-+        assert_blocked(
-+            command,
-+            "careful_company_running_windows.guardrails:dcg-bypass-or-uninstall",
-+        );
-+    }
-+}
-+
-+#[test]
-+fn global_options_preserve_inspection_and_argument_data() {
-+    for command in [
-+        "dcg --robot allowlist list",
-+        "dcg allowlist --agent add list",
-+        "dcg --agent uninstall doctor",
-+        "dcg --agent='allowlist add' doctor",
-+        "dcg --agent='dcg --robot uninstall' doctor",
-+        "dcg --agent='dcg --robot allow-once abc --yes' allowlist list",
-+        "dcg --robot allowlist remove core.git:reset-hard",
-+        "dcg --robot test 'dcg --robot uninstall'",
-+        "dcg --no-color explain 'dcg --robot allow-once abc123 --yes'",
-+        "dcg --agent codex --robot test 'dcg --robot uninstall'",
-+        "printf '%s\\n' 'dcg --robot uninstall'",
-+        "echo 'dcg --robot allowlist add core.git:reset-hard --reason reviewed'",
-+    ] {
-+        assert_allowed(command);
-+    }
-+}
-+
-+#[test]
-+fn hook_protocol_keeps_guardrails_active_with_global_options() {
-+    use std::io::Write;
-+
-+    // The strings are hook input only; no uninstall or exception grant runs.
-+    let temp = tempfile::tempdir().expect("isolated hook test");
-+    let home = temp.path().join("home");
-+    std::fs::create_dir_all(&home).expect("isolated home");
-+    let config = temp.path().join("config.toml");
-+    std::fs::write(&config, "[history]\nenabled = false\n").expect("hook config");
-+    for tool_name in ["Bash", "PowerShell", "cmd"] {
-+        let cases: &[(&str, Option<&str>)] = if tool_name == "cmd" {
-+            &[
-+                (
-+                    "echo 'data & dcg --robot uninstall & data'",
-+                    Some("dcg-bypass-or-uninstall"),
-+                ),
-+                ("echo \"data & dcg --robot uninstall & data\"", None),
-+            ]
-+        } else {
-+            &[
-+                (
-+                    "dcg --robot allow-once abc123 --yes",
-+                    Some("dcg-policy-self-weakening"),
-+                ),
-+                (
-+                    "dcg --agent test allow-once abc123 --yes",
-+                    Some("dcg-policy-self-weakening"),
-+                ),
-+                (
-+                    "dcg --agent 'test' --robot allow-once abc123 --yes",
-+                    Some("dcg-policy-self-weakening"),
-+                ),
-+                (
-+                    "dcg --agent explain uninstall",
-+                    Some("dcg-bypass-or-uninstall"),
-+                ),
-+                (
-+                    "dcg --agent co'dex' --robot uninstall",
-+                    Some("dcg-bypass-or-uninstall"),
-+                ),
-+                (
-+                    "dcg --a'gent'=codex --robot uninstall",
-+                 
+@@ -324,6 +366,8 @@ fn heredoc_data_and_process_substitution_arguments_preserve_execution_boundaries
+         "f=/etc/sudoers; tee /tmp/out <<DATA\n$f\nDATA",
+         "f=/tmp/out; tee \"$f\" <<'DATA'\n/etc/sudoers\nDATA",
+         "f=/etc/sudoers; cat <<'DATA'\n$(tee -a \"$f\")\nDATA",
++        "f=/etc/sudoers; { :; } <<'DATA'\n$(tee -a \"$f\")\nDATA",
++        "f=/etc/sudoers; { f=/tmp/out; cat <<'INNER' | tee \"$f\"\ndata\nINNER\n} <<'OUTER'\ndata\nOUTER",
+         "f=/etc/sudoers; tee /tmp/out <(printf '%s' \"$f\")",
+     ] {
+         fixture.allow(source);
+@@ -332,6 +376,8 @@ fn heredoc_data_and_process_substitution_arguments_preserve_execution_boundaries
+         "f=/etc/sudoers; tee -a \"$f\" <<'DATA'\nordinary input\nDATA",
+         "f=/etc/sudoers; cat <<DATA\n$(tee -a \"$f\")\nDATA",
+         "f=/etc/sudoers; cat <<'DATA' | tee -a \"$f\"\nordinary input\nDATA",
++        "f=/etc/sudoers; { :; } <<DATA\n$(tee -a \"$f\")\nDATA",
++        "f=/etc/sudoers; unused=x <<DATA\n$(tee -a \"$f\")\nDATA",
+     ] {
+         fixture.deny(source, CREDENTIAL);
+     }
+@@ -343,17 +389,25 @@ fn git_admin_queries_and_bound_values_reach_native_writer_rules() {
+     for source in [
+         "cp source .git/config",
+         "cp source \"$(git rev-parse --git-dir)/config\"",
++        "cp source \"$(git rev-parse --quiet --git-dir)/config\"",
++        "cp source \"$(git rev-parse --git-dir --path-format=absolute)/config\"",
+         "cp so
 ```
 
-**File**: `tests/repro_536_tmp_redirect_resolution.rs` (modified, +122/-1)
+---
+
+### Incident Patch 2: `e4e06296` (2026-10-30)
+**Commit Message**: fix(core): retain protected destinations across shell scopes
+
+Preserve assignment context when checking literal shell scripts, including
+-c, -lc, -cl and heredoc bodies, while retaining existing leaf-command
+checks and allowlist handling. Merge case and conditional execution paths
+conservatively and invalidate command identity after hash -p rebinding.
+
+Keep Git query results tied to the caller's working directory after -C,
+preserving proven absolute and administered paths without treating benign
+relative destinations as protected.
+
+Restrict POSIX heredoc masking to launcher discovery and proven stdin-data
+receivers. Continue checking live substitutions and executable receivers,
+so protected writers retain their credential-file rule identities.
+
+Expand the real-CLI regressions to 17 tests covering both reports, shell
+scope, worktrees, relocated hooks, traversal, safe controls, rule IDs and
+allowlist precedence. Production analysis never executes shell expressions.
+
+Validation: all 17 CLI tests passed; both reports were reproduced on
+efc1092e through dcg test and the batch hook. All 82 supplementary candidate
+observations passed, including 14 under default evaluation budgets.
+All-tar
+
+**File**: `src/evaluator.rs` (modified, +60/-13)
 ```diff
-@@ -10,8 +10,16 @@ use std::process::{Command, Stdio};
- 
- /// `(decision, rule id)` from an isolated invocation of the real hook.
- fn hook(command: &str) -> (String, String) {
-+    hook_with_environment(command, None, None)
+@@ -6089,13 +6089,21 @@ fn evaluate_windows_launcher_envelopes(
+     // a Windows shell launcher. A quoted body that is a proven non-shell
+     // interpreter's program (`python3 - <<'PY'`) is not shell syntax either:
+     // its own language's analysis and the raw rescan judge it (#560).
+-    // Expanding heredocs and executing targets stay visible, preserving the
+-    // fail-closed path for real substitutions.
++    // Substitution output supplied as contained stdin data is not an outer
++    // executable name either. Only this launcher view hides those bodies;
++    // the original source still reaches live command-substitution analysis.
++    // Executing or ambiguous receivers retain the fail-closed launcher path.
+     let data_view;
++    let stdin_view;
+     let launcher_source = match outer_dialect {
+         ShellDialect::Posix | ShellDialect::Unknown => {
+             data_view = crate::heredoc::mask_non_expanding_data_heredocs(command);
+-            crate::heredoc::mask_inert_interpreter_stdin(data_view.as_ref())
++            stdin_view = if outer_dialect == ShellDialect::Posix {
++                crate::heredoc::mask_launcher_stdin_data(data_view.as_ref())
++            } else {
++                Cow::Borrowed(data_view.as_ref())
++            };
++            crate::heredoc::mask_inert_interpreter_stdin(stdin_view.as_ref())
+         }
+         ShellDialect::PowerShell | ShellDialect::Cmd => std::borrow::Cow::Borrowed(command),
+     };
+@@ -27906,6 +27914,17 @@ fn proven_bash_redirect_offsets(source: &str) -> Vec<usize> {
+ fn literal_bash_source_range(
+     command: &str,
+     content: &crate::heredoc::ExtractedContent,
++) -> Option<Range<usize>> {
++    literal_bash_source_range_with_flags(command, content, &["-c"])
 +}
 +
-+fn hook_with_environment(
++/// Share exact source and receiver ownership without widening the flags that
++/// can establish an exemption. Additional flags are used only for the
++/// complete-source destination check, which can add protected-write findings.
++fn literal_bash_source_range_with_flags(
 +    command: &str,
-+    tmpdir: Option<&std::path::Path>,
-+    home_override: Option<&std::path::Path>,
-+) -> (String, String) {
-     let temp = tempfile::tempdir().expect("temp dir");
--    let home = temp.path().join("home");
-+    let home = home_override.map_or_else(|| temp.path().join("home"), std::path::Path::to_path_buf);
-     std::fs::create_dir_all(&home).expect("home");
-     let config = temp.path().join("config.toml");
-     std::fs::write(&config, "[history]\nenabled = false\n").expect("config");
-@@ -33,6 +41,7 @@ fn hook(command: &str) -> (String, String) {
-         .env("LOCALAPPDATA", home.join("localappdata"))
-         .env("TEMP", temp.path())
-         .env("TMP", temp.path())
-+        .env("TMPDIR", tmpdir.unwrap_or(temp.path()))
-         .env("DCG_CONFIG", &config)
-         .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
-         .env(
-@@ -82,6 +91,118 @@ fn assert_denied(command: &str) {
-     assert!(!rule.is_empty(), "denial needs a rule id: {command:?}");
++    content: &crate::heredoc::ExtractedContent,
++    inline_flags: &[&str],
+ ) -> Option<Range<usize>> {
+     if command.len() > crate::heredoc::MAX_SUBSTITUTION_SOURCE_BYTES
+         || !matches!(
+@@ -28028,7 +28047,7 @@ fn literal_bash_source_range(
+             let shell_script = bash
+                 && !nonlocal
+                 && literal_posix_shell_program(program_name.as_ref())
+-                && operand_text.as_ref() == "-c";
++                && inline_flags.contains(&operand_text.as_ref());
+             let ssh_script = ssh_inline
+                 && matches!(program_name.as_ref(), "ssh" | "/bin/ssh" | "/usr/bin/ssh")
+                 && literal_ssh_destination(operand_text.as_ref());
+@@ -34630,12 +34649,20 @@ fn evaluate_heredoc(
+             let inner_ordered_packs = carrier_first_packs
+                 .as_deref()
+                 .unwrap_or(context.ordered_packs);
+-            let contextual_redirects =
+-                if per_command_pass && literal_bash_source_range(command, &content).is_some() {
+-                    proven_bash_redirect_offsets(&content.content)
+-                } else {
+-                    Vec::new()
+-                };
++            let literal_shell_source =
++                per_command_pass && literal_bash_source_range(command, &content).is_some();
++            let contextual_redirects = if literal_shell_source {
++                proven_bash_redirect_offsets(&content.content)
++            } else {
++                Vec::new()
++            };
++            let destination_source_context = per_command_pass
++                && crate::packs::core::credential_files::shell_destination_context_required(
++                    &content.content,
++                )
++                && (literal_shell_source
++                    || literal_bash_source_range_with_flags(command, &content, &["-lc", "-cl"])
++                        .is_some());
+             let evaluate_source = |source: &str| {
+                 evaluate_command_with_pack_order_deadline_at_path_inner(
+                     source,
+@@ -34654,7 +34681,7 @@ fn evaluate_heredoc(
+                 )
+             };
+             let mut complete_source_result = None;
+-            let inner_commands = if per_command_pass {
++            let mut inner_commands = if per_command_pass {
+                 crate::heredoc::extract_shell_commands(&content.content)
+             } else {
+                 // Without a keyword or trigger the per-command pass has
+@@ -34681,7 +34708,23 @@ fn evaluate_heredoc(
+                     line_number: 1,
+                 }]
+             };
+-            for inner in inner_commands {
++            if destination_source_context {
++                // `f=/etc/sudoers; tee "$f"` requires both statements. Keep
++                // the existing per-command checks as well: they reach bodies
++                // of functions and other constructs the outer walk may not
++                // evaluate. Only proven
+```
+
+**File**: `src/heredoc.rs` (modified, +217/-0)
+```diff
+@@ -11717,6 +11717,190 @@ pub fn mask_non_expanding_data_heredocs(command: &str) -> std::borrow::Cow<'_, s
+     mask_non_executing_heredocs_with_policy(command, true)
  }
  
-+/// Three leading slashes are a POSIX spelling of the same absolute path, but
-+/// are outside the literal `/tmp/` prefix. This gives each Unix test a real,
-+/// writable alternate root without requiring a privileged `/data/tmp` fixture.
-+#[cfg(unix)]
-+fn alternate_tmpdir() -> (tempfile::TempDir, std::path::PathBuf) {
-+    let directory = tempfile::tempdir_in("/tmp").expect("alternate temp root");
-+    let spelling = std::path::PathBuf::from(format!("//{}", directory.path().display()));
-+    (directory, spelling)
-+}
-+
-+#[cfg(unix)]
-+#[test]
-+fn startup_tmpdir_extends_only_proven_local_redirect_paths_590() {
-+    let (_directory, root) = alternate_tmpdir();
-+    let root_text = root.to_str().expect("UTF-8 test path");
-+    for command in [
-+        format!("S={root_text}/scratchpad; echo hi > $S/a.txt"),
-+        format!("S={root_text}/scratchpad && echo hi > $S/a.txt"),
-+        format!("for n in 1 2; do echo hi > {root_text}/scratchpad/l$n.txt; done"),
-+        format!("S={root_text}/scratchpad; T=\"$S/sub\"; echo hi > \"$T/a.txt\""),
-+        format!("echo hi > {root_text}/scratchpad/run-$$.txt"),
-+        format!("bash -c 'S={root_text}/scratchpad; echo hi > \"$S/a.txt\"'"),
-+        format!("TMPDIR=/etc; S={root_text}/scratchpad; echo hi > \"$S/a.txt\""),
-+    ] {
-+        let (decision, rule) = hook_with_environment(&command, Some(&root), None);
-+        assert_eq!(
-+            decision, "allow",
-+            "startup root should prove {command:?}: {rule}"
-+        );
-+        let (decision, rule) = hook(&command);
-+        assert_eq!(
-+            decision, "deny",
-+            "an unconfigured root remains unproven: {command:?}: {rule}"
-+        );
++/// The output of a substitution inside stdin data is not an outer-shell
++/// executable name. This view is only for launcher discovery: callers must
++/// still inspect the original source's live substitutions independently.
++pub(crate) fn mask_launcher_stdin_data(command: &str) -> Cow<'_, str> {
++    if !command.contains("<<") || command.len() > MAX_SUBSTITUTION_SOURCE_BYTES {
++        return Cow::Borrowed(command);
++    }
++    let Some(heredocs) = active_heredocs(command) else {
++        return Cow::Borrowed(command);
++    };
++    let discarded = discarded_heredoc_operators(command);
++    let bodies: Vec<_> = heredocs
++        .iter()
++        .filter_map(|heredoc| match heredoc.body {
++            ActiveHeredocBody::Heredoc {
++                body_start,
++                body_end,
++                ..
++            } => Some(body_start..body_end),
++            ActiveHeredocBody::HereString => None,
++        })
++        .collect();
++    let mut output_executed = None;
++    let masked: Vec<_> = heredocs
++        .iter()
++        .filter_map(|heredoc| {
++            let ActiveHeredocBody::Heredoc {
++                body_start,
++                body_end,
++                ..
++            } = heredoc.body
++            else {
++                return None;
++            };
++            if discarded.contains(&heredoc.operator_start) {
++                return Some(body_start..body_end);
++            }
++            if heredoc.output != Some(HeredocOutput::Contained)
++                || heredoc.live_spans.is_none()
++                || stdin_is_the_program(command, heredoc.operator_start)
++            {
++                return None;
++            }
++            let target = extract_heredoc_target_command(command, heredoc.operator_start)?;
++            let data_sink = is_non_executing_heredoc_command(&target)
++                || is_noop_stdin_discarding_command(&target)
++                || is_structured_stdin_data_sink(command, heredoc.operator_start);
++            (data_sink
++                && !stdin_data_sink_may_be_overridden(command, heredoc.operator_start, &target)
++                && !*output_executed
++                    .get_or_insert_with(|| written_file_is_executed(command, &bodies)))
++            .then_some(body_start..body_end)
++        })
++        .collect();
++    if masked.is_empty() {
++        Cow::Borrowed(command)
++    } else {
++        Cow::Owned(blank_ranges(command, &masked))
 +    }
 +}
 +
-+#[cfg(unix)]
++/// Only simple literal assignments and no-op groups establish that no command
++/// reads this descriptor. A group containing `bash`, `read`, a substitution,
++/// or an unknown command can consume and execute the body and never qualifies.
++fn discarded_heredoc_operators(command: &str) -> Vec<usize> {
++    const MAX_PROOF_NODES: usize = 4096;
++    let Ok(ast) = try_parse_shell_ast(command) else {
++        return Vec::new();
++    };
++    if ast.root().get_inner_node().has_error() {
++        return Vec::new();
++    }
++    let nodes: Vec<_> = ast.root().dfs().take(MAX_PROOF_NODES + 1).collect();
++    if nodes.len() > MAX_PROOF_NODES {
++        return Vec::new();
++    }
++    let assignment_attributes_known = !nodes.iter().any(|node| match node.kind().as_ref() {
++        "declaration_command" | "function_definition" => true,
++        "command_name" => {
++            let text = node.text();
++            crate::normalize::decode_posix_literal_word(text.as_ref()).is_none_or(|name| {
++                matches!(
++                    name.as_ref(),
++                    "eval"
++                        | "."
++                        | "source"
++                        | "trap"
++                        | "declare"
++                        | "typeset"
++                        | "local"
++                        | "readonly"
++                        | "export"
++                        | "builtin"
++                        | "command"
++                        | "alias"
++                        | "unalias"
++                        | "enable"
++                )
++            })
++        }
++        _ => false,
++    });
++    let mut discarded = Vec::new();
++    let mut pending = vec![ast.root()];
++    while let Some(node) = pending.pop() {
++        if node.kind().as_ref() != "heredoc_redirect" {
++            if node.kind().as_ref() != "heredoc_body" {
++                pending.extend(node.children());
++            }
++            continue;
++        }
++        let Some(owner) = node.parent() else {
++            continue;
++        };
++        let Some(body) = owner.field("body") else {
++            continue;
++        };
++        if owner.kind().as_ref() != "redirected_statement"
++            || owner
++                .children()
++                .filter(ast_grep_core::Node::is_named)
++                .any(|child| child.range() != body.range() && child.range() != node.range())
+
+```
+
+**File**: `src/packs/core/credential_files.rs` (modified, +8/-3)
+```diff
+@@ -33,6 +33,13 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+     shell::may_name_protected_path(command) || word_splitting::candidate(command)
+ }
+ 
++/// An extracted shell body can establish a destination in an earlier command.
++/// Its individual commands cannot retain that evidence. This is a candidate
++/// gate for an additional complete-source evaluation, never a path exemption.
++pub(crate) fn shell_destination_context_required(command: &str) -> bool {
++    word_splitting::candidate(command) || shell::indirection::candidate(command)
++}
++
+ /// Scalar/IFS assignments and expansions belong to the outer shell, not to a quoted
+ /// Python/Node program supplied on stdin (#560). Reuse the existing ownership
+ /// proof instead of letting source text establish shell state or exhaust the
+@@ -43,9 +50,7 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+ /// `embedded::scan_command` below must always receive the original command.
+ /// Do not apply a POSIX-only proof when the caller's dialect is unknown.
+ fn scan_outer_writer_arguments(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWrite> {
+-    let outer = if dialect == ShellDialect::Posix
+-        && (word_splitting::candidate(command) || shell::indirection::candidate(command))
+-    {
++    let outer = if dialect == ShellDialect::Posix && shell_destination_context_required(command) {
+         crate::heredoc::mask_inert_interpreter_stdin(command)
+     } else {
+         std::borrow::Cow::Borrowed(command)
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection.rs` (modified, +173/-36)
+```diff
+@@ -232,6 +232,24 @@ fn argv_ownership_proven(tokens: &[Token], unknown: &[(Range<usize>, bool)]) ->
+     accepted == unknown.len()
+ }
+ 
++/// Bash's `hash -p` can give a familiar command an unrelated implementation.
++/// Listing the cache leaves scalar values and producer identities unchanged.
++fn hash_may_rebind(args: &[&Word]) -> bool {
++    for word in args {
++        if !word.is_all_literal() {
++            return true;
++        }
++        let text = word.as_string();
++        if text == "-" || !text.starts_with('-') || text.starts_with("--") {
++            return false;
++        }
++        if text[1..].contains('p') {
++            return true;
++        }
++    }
++    false
++}
++
+ #[derive(Clone)]
+ struct State {
+     values: HashMap<String, Value>,
+@@ -298,6 +316,14 @@ impl State {
+     }
+ }
+ 
++fn merge_path(paths: &mut Option<State>, next: State) {
++    if let Some(paths) = paths {
++        paths.intersect(&next);
++    } else {
++        *paths = Some(next);
++    }
++}
++
+ struct Decoded {
+     value: Value,
+     expanded: bool,
+@@ -672,22 +698,7 @@ impl Scanner<'_> {
+                 state.attributes_unknown |= iteration.attributes_unknown;
+                 state.commands_unknown |= iteration.commands_unknown;
+             }
+-            "case_statement" => {
+-                if let Some(value) = node.field("value") {
+-                    if has_expansion_effect(value.clone()) {
+-                        state.forget();
+-                    }
+-                    self.nested(value, state, depth + 1);
+-                }
+-                for branch in node.children().filter(|child| child.kind() == "case_item") {
+-                    let mut local = state.clone();
+-                    local.forget();
+-                    self.children(branch, &mut local, depth + 1);
+-                    state.attributes_unknown |= local.attributes_unknown;
+-                    state.commands_unknown |= local.commands_unknown;
+-                }
+-                state.forget();
+-            }
++            "case_statement" => self.case_statement(node, state, depth),
+             "test_command" => {
+                 if has_expansion_effect(node.clone()) {
+                     state.forget();
+@@ -754,33 +765,157 @@ impl Scanner<'_> {
+         state: &mut State,
+         depth: usize,
+     ) {
+-        let mut alternative = None;
+-        let mut merged: Option<State> = None;
++        let (mut finished, mut remaining) = self.conditional_clause(node.clone(), state, depth);
++        let mut exhaustive = false;
++        for alternative in node
++            .children()
++            .filter(|child| matches!(child.kind().as_ref(), "elif_clause" | "else_clause"))
++        {
++            if alternative.kind() == "elif_clause" {
++                let (branch, skipped) = self.conditional_clause(alternative, &remaining, depth + 1);
++                finished.intersect(&branch);
++                remaining = skipped;
++            } else {
++                self.children(alternative, &mut remaining, depth + 1);
++                finished.intersect(&remaining);
++                exhaustive = true;
++            }
++        }
++        // An explicit else consumes the final false path. Retaining a
++        // fictitious skipped path would lose assignments made by every arm.
++        if !exhaustive {
++            finished.intersect(&remaining);
++        }
++        *state = finished;
++    }
++
++    fn conditional_clause(
++        &mut self,
++        node: Node<'_, StrDoc<SupportLang>>,
++        incoming: &State,
++        depth: usize,
++    ) -> (State, State) {
++        if depth > MAX_DEPTH || self.visited >= MAX_NODES {
++            let mut unknown = incoming.clone();
++            unknown.forget();
++            return (unknown.clone(), unknown);
++        }
++        self.visited += 1;
++        let mut conditions = Vec::new();
++        let mut body = Vec::new();
++        let mut in_body = false;
+         for child in node.children() {
+             if child.kind() == "then" {
+-                alternative = Some(state.clone());
+-            } else if child.is_named() {
+-                if matches!(child.kind().as_ref(), "elif_clause" | "else_clause") {
+-                    let mut branch = alternative.clone().unwrap_or_else(|| state.clone());
+-                    self.walk(child, &mut branch, depth + 1);
+-                    merged
+-                        .get_or_insert_with(|| state.clone())
+-                        .intersect(&branch);
+-                    if let Some(alternative) = &mut alternative {
+-                        alternative.intersect(&branch);
++                in_body = true;
++            } else if child.is_named()
++                && !matches!(child.kind().as_ref(), "elif_clause" | "else_clause")
++            {
++                if in_body {
++                    body.push(child);
++                } else {
++                    conditions.push(child);
++                }
++            }
++        }
++        let mut success = incoming.clone();
++    
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection/git_paths.rs` (modified, +118/-7)
+```diff
+@@ -19,6 +19,13 @@ enum GitPathKind {
+     File(&'static str),
+ }
+ 
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum PathFormat {
++    Default,
++    Absolute,
++    Relative,
++}
++
+ #[derive(Debug, Clone, PartialEq, Eq)]
+ pub(super) struct GitPath {
+     kind: GitPathKind,
+@@ -161,6 +168,8 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+     let mut index = 1;
+     let mut output_inputs = Vec::new();
+     let mut hooks_path = None;
++    let mut git_dir = None;
++    let mut changes_directory = false;
+     while argv.get(index)?.as_str() != "rev-parse" {
+         let option = argv.get(index)?.as_str();
+         match option {
+@@ -170,6 +179,11 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+                 if option != "-C" || !input.is_empty() {
+                     output_inputs.push(input.clone());
+                 }
++                if option == "-C" {
++                    changes_directory |= !unchanged_directory(input);
++                } else if option == "--git-dir" {
++                    git_dir = Some(input.as_str());
++                }
+                 index += 2;
+             }
+             "-c" => {
+@@ -182,30 +196,46 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+             }
+             "--bare" | "--no-pager" | "--no-optional-locks" => index += 1,
+             _ => {
+-                output_inputs.push(attached_global_option(option)?.to_owned());
++                let input = attached_global_option(option)?;
++                output_inputs.push(input.to_owned());
++                if option.starts_with("--git-dir=") {
++                    git_dir = Some(input);
++                }
+                 index += 1;
+             }
+         }
+     }
+     index += 1;
+     let mut path = None;
+-    let mut reformats_paths = false;
++    let mut format = PathFormat::Default;
+     while let Some(argument) = argv.get(index) {
+         match argument.as_str() {
+             // These options do not print anything, and rev-parse accepts them
+             // before or after the one path query. A format option only affects
+             // later queries; either spelling retains the same path origin.
+-            "--path-format=absolute" | "--path-format=relative" => reformats_paths = true,
++            "--path-format=absolute" => format = PathFormat::Absolute,
++            "--path-format=relative" => format = PathFormat::Relative,
+             "--quiet" | "-q" => {}
+             "--git-dir" | "--absolute-git-dir" | "--git-common-dir" if path.is_none() => {
++                // A relative result is interpreted by the caller's shell,
++                // which did not follow Git's -C options. Only retain an
++                // absolute result or an explicit literal .git spelling.
++                if changes_directory && !caller_anchored_directory(argument, format, git_dir) {
++                    return None;
++                }
+                 path = Some(GitPath::new(GitPathKind::Directory));
+             }
+             "--git-path" if path.is_none() => {
+                 index += 1;
+                 let operand = argv.get(index)?;
+                 let queried = administered_path(operand)?;
++                if changes_directory
++                    && !caller_anchored_path(&queried, format, git_dir, hooks_path.as_deref())
++                {
++                    return None;
++                }
+                 output_inputs.push(operand.clone());
+-                path = Some(if reformats_paths {
++                path = Some(if format != PathFormat::Default {
+                     queried.query_boundary()
+                 } else {
+                     queried
+@@ -226,6 +256,47 @@ pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
+     })
+ }
+ 
++fn caller_anchored_directory(query: &str, format: PathFormat, git_dir: Option<&str>) -> bool {
++    format == PathFormat::Absolute
++        || query == "--absolute-git-dir"
++        || query == "--git-dir"
++            && format == PathFormat::Default
++            && git_dir.is_some_and(|root| root.starts_with('/') || contains_git_component(root))
++}
++
++fn caller_anchored_path(
++    path: &GitPath,
++    format: PathFormat,
++    git_dir: Option<&str>,
++    hooks_path: Option<&str>,
++) -> bool {
++    if format != PathFormat::Default {
++        return format == PathFormat::Absolute;
++    }
++    match path.kind {
++        GitPathKind::Hooks => hooks_path.is_some_and(|root| root.starts_with('/')),
++        GitPathKind::Directory | GitPathKind::File("HEAD" | "config.worktree" | "config.lock") => {
++            git_dir.is_some_and(|root| root.starts_with('/'))
++        }
++        // GIT_INDEX_FILE and GIT_COMMON_DIR can supply relative paths even
++        // when --git-dir is explicitly absolute. The latter also owns config.
++        GitPathKind::File(_) => false,
++    }
++}
++
++fn unchanged_directory(path: &str) -> bool {
++    // Do not cancel pairs such as `-C subdir -C ..`: a symlink can make the
++    // second directory diff
+```
+
+**File**: `tests/repro_609_613_indirect_destinations.rs` (modified, +177/-6)
+```diff
+@@ -88,7 +88,14 @@ impl Fixture {
+         command
+     }
+ 
+-    fn assert(&self, source: &str, expected: &str, rule: Option<&str>, granted: bool) {
++    fn assert(
++        &self,
++        source: &str,
++        expected: &str,
++        rule: Option<&str>,
++        granted: bool,
++        require_span: bool,
++    ) {
+         for hook in [false, true] {
+             let mut command = self.command();
+             let input = if hook {
+@@ -131,7 +138,7 @@ impl Fixture {
+             );
+             if let Some(rule) = rule {
+                 assert_eq!(json["rule_id"], rule, "{source:?}, hook={hook}: {json}");
+-                if !hook {
++                if !hook && (require_span || !json["matched_span"].is_null()) {
+                     let span = json["matched_span"]
+                         .as_array()
+                         .expect("native destination finding has an original-source span");
+@@ -160,11 +167,11 @@ impl Fixture {
+     }
+ 
+     fn deny(&self, source: &str, rule: &str) {
+-        self.assert(source, "deny", Some(rule), false);
++        self.assert(source, "deny", Some(rule), false, true);
+     }
+ 
+     fn allow(&self, source: &str) {
+-        self.assert(source, "allow", None, false);
++        self.assert(source, "allow", None, false, false);
+     }
+ 
+     fn git(&self, cwd: &Path, arguments: &[&str]) -> String {
+@@ -278,6 +285,117 @@ fn scalar_values_are_snapshots_and_child_scopes_do_not_replace_them() {
+     }
+ }
+ 
 +#[test]
-+fn startup_tmpdir_keeps_unknown_protected_and_nonlocal_targets_denied_590() {
-+    let (_directory, root) = alternate_tmpdir();
-+    let root_text = root.to_str().expect("UTF-8 test path");
-+    for command in [
-+        // Startup context supplies a root, never a shell variable value.
-+        "echo hi > $TMPDIR/a.txt".to_string(),
-+        "TMPDIR=/etc; echo hi > $TMPDIR/passwd".to_string(),
-+        format!("S={root_text}/scratchpad; read S; echo hi > $S/a.txt"),
-+        format!("false && S={root_text}/scratchpad; echo hi > $S/a.txt"),
-+        format!("S={root_text}/scratchpad; echo hi > $S/$UNKNOWN"),
-+        format!("S={root_text}; echo hi > $S/../outside.txt"),
-+        format!("S={root_text}; echo hi > $S/.git/config"),
-+        format!("S={root_text}; echo hi > $S/.ssh/id_rsa"),
-+        format!("S={root_text}; echo hi > $S/a.txt > $OTHER"),
-+        format!("S={root_text}; echo hi > $S/a.txt; git reset --hard"),
-+        format!("S={root_text}-outside; echo hi > $S/a.txt"),
-+        format!("S={root_text}; echo hi > $S"),
-+        // Recursive removal and mktemp producer rules are not widened.
-+        format!("S={root_text}/scratchpad; rm -rf $S"),
-+        format!("D=$(mktemp -d -p {root_text}); echo hi > $D/a.txt"),
-+        // Local startup context is not evidence about an SSH/container host.
-+        format!("ssh host 'S={root_text}/scratchpad; echo hi > \"$S/a.txt\"'"),
-+        format!("ssh host 'for n in 1 2; do echo hi > {root_text}/l$n.txt; done'"),
-+        format!("ssh host <<'SH'\nS={root_text}/scratchpad; echo hi > \"$S/a.txt\"\nSH"),
-+        format!("ssh host <<'SH'\nbash -c 'S={root_text}; echo hi > \"$S/a.txt\"'\nSH"),
-+        format!("docker exec container sh -c 'S={root_text}; echo hi > \"$S/a.txt\"'"),
-+        format!("chroot /sandbox sh -c 'S={root_text}; echo hi > \"$S/a.txt\"'"),
-+        format!("nsenter -t 1 -m sh -c 'S={root_text}; echo hi > \"$S/a.txt\"'"),
++fn case_patterns_and_fallthrough_preserve_only_agreed_bindings() {
++    let fixture = Fixture::new();
++    for source in [
++        "f=/etc/sudoers; case x in x) tee \"$f\";; esac",
++        "f=/etc/sudoers; case \"$mode\" in first|second) tee \"$f\";; *) :;; esac",
++        "f=/etc/sudoers; case x in \"$(tee \"$f\")\") :;; esac",
++        "case x in x) f=/etc/sudoers; tee \"$f\";; esac",
++        "f=/etc/sudoers; case \"$mode\" in first) : ;& second) tee \"$f\";; esac",
++        "f=/etc/sudoers; case \"$mode\" in first) : ;;& *) tee \"$f\";; esac",
++        "f=/etc/sudoers; case x in x) f=/tmp/out & wait; tee \"$f\";; esac",
 +    ] {
-+        let (decision, rule) = hook_with_environment(&command, Some(&root), None);
-+        ass
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        "f=/tmp/out; case x in x) tee \"$f\";; esac",
++        "f=/etc/sudoers; case x in x) f=/tmp/out; tee \"$f\";; esac",
++        "f=/tmp/out; case x in x) f=/etc/sudoers & wait; tee \"$f\";; esac",
++        r#"f=/etc/sudoers; case x in "$((f=0))") :;; *) tee "$f";; esac"#,
++        r#"f=/etc/sudoers; case x in "$((f=0))$(tee "$f")") :;; esac"#,
++        "f=/etc/sudoers; case x in x) f=/tmp/out ;& y) tee \"$f\";; esac",
++        "f=/etc/sudoers; case x in x) f=/tmp/out ;;& *) tee \"$f\";; esac",
++    ] {
++        fixture.allow(source);
++    }
++}
++
++#[test]
++fn conditional_joins_preserve_exhaustive_and_success_path_proofs() {
++    let fixture = Fixture::new();
++    for source in [
++        "if test \"$mode\"; then f=/etc/sudoers; else f=/etc/sudoers; fi; tee \"$f\"",
++        "if test \"$mode\"; then f=/etc/sudoers; elif test \"$other\"; then f=/etc/sudoers; else f=/etc/sudoers; fi; tee \"$f\"",
++        "if test \"$mode\" && f=/etc/sudoers; then tee \"$f\"; fi",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        "f=/etc/sudoers; if test \"$mode\"; then f=/tmp/one; else f=/tmp/two; fi; tee \"$f\"",
++        "if test \"$mode\"; then f=/etc/sudoers; else f=/tmp/out; fi; tee \"$f\"",
++        "f=/tmp/out; if test \"$mode\"; then f=/etc/sudoers; fi; tee \"$f\"",
++        "f=/tmp/out; if test \"$mode\" && f=/etc/sudoers; then f=/tmp/out; else f=/tmp/out; fi; tee \"$f\"",
++    ] {
++        fixture.allow(source);
++    }
++}
++
++#[test]
++fn command_cache_rebinding_cannot_supply_false_writer_or_git_proofs() {
++    let fixture = Fixture::new();
++    for source in [
++        "hash -p /usr/bin/printf git; cp source \"$(git rev-parse --git-dir)\"",
++        "option=-p; hash \"$option\" /usr/bin/printf git; cp source \"$(git rev-parse --git-dir)\"",
++        "f=/etc/sudoers; hash -p /usr/bin/printf tee; tee \"$f\"",
++        "hash -p /usr/bin/printf tee; f=/etc/sudoers; tee \"$f\"",
++    ] {
++        fixture.allow(source);
++    }
++    for operation in [
++        "hash",
++        "hash -t git",
++        "hash -l",
++        "hash --help",
++        "hash -- -p",
++    ] {
++        fixture.deny(
++            &format!("f=/etc/sudoers; {operation}; tee \"$f\""),
++            CREDENTIAL,
++        );
++    }
++    fixture.deny(
++        "option=-t; f=/etc/sudoers; hash \"$option\" git; tee \"$f\"",
++        CREDENTIAL,
++    );
++}
++
++#[test]
++fn complete_literal_shell_bodies_keep_their_own_scalar_context() {
++    let fixture = Fixture::new();
++    for source in [
++        r#"bash -c 'f=/etc/sudoers; tee "$f"'"#,
++        r#"bash -lc 'f=/etc/sudoers; tee "$f"'"#,
++        r#"bash -cl 'f=/etc/sudoers; tee "$f"'"#,
++        "sh <<'SH'\nf=/etc/sudoers\ntee \"$f\"\nSH",
++    ] {
++        fixture.deny(source, CREDENTIAL);
++    }
++    for source in [
++        r#
+```
+
+---
+
+### Incident Patch 3: `12036e96` (2026-10-30)
+**Commit Message**: fix(core): resolve indirect protected writer destinations
+
+Track bounded same-command scalar values and recognized Git rev-parse path
+origins before shell segmentation discards their context. Feed typed words
+to the existing native destination policy, preserving credential, Git-write,
+and append/truncate redirect rule identities and ordinary allowlist handling.
+
+Keep Git-directory, common-directory, config, and relocated-hook origins
+symbolic so linked worktrees and core.hooksPath do not depend on a literal
+.git directory or executing a query. Reject ambiguous producers, root-crossing
+traversal, unresolved argv ownership, and quote/continuation splicing.
+
+Respect assignment snapshots, child/background scopes, boolean-list paths,
+mutation barriers, nested substitutions, and heredoc execution boundaries.
+Retain original source spans when an expanded option is longer than its
+source expression. Bound source, state, tokens, and materialized arguments.
+
+Add real dcg test and hook --batch regressions for both reports, safe computed
+paths, worktrees, relocated hooks, rule grants, and a no-execution sentinel.
+Run the new target in the existing credential-policy verification workflow.
+
+Pre-
+
+**File**: `.github/workflows/credential-policy-verification.yml` (modified, +5/-0)
+```diff
+@@ -12,6 +12,7 @@ on:
+       - src/heredoc.rs
+       - tests/credential_file_embedded_e2e.rs
+       - tests/credential_file_transfer_e2e.rs
++      - tests/repro_609_613_indirect_destinations.rs
+       - tests/repro_440_eval_sink_in_data_heredoc.rs
+       - tests/regression_heredoc_masking.rs
+       - Cargo.toml
+@@ -53,6 +54,10 @@ jobs:
+         with:
+           shared-key: credential-php-perl-verification
+           cache-on-failure: true
++      - name: Indirect destination CLI and hook regressions
++        run: |
++          set -euo pipefail
++          cargo test --locked --test repro_609_613_indirect_destinations -- --test-threads=1 2>&1 | tee target/credential-policy-verification/indirect-destinations.log
+       - name: Protected-file unit regressions
+         run: |
+           set -euo pipefail
+```
+
+**File**: `src/packs/core/credential_files.rs` (modified, +14/-8)
+```diff
+@@ -33,7 +33,7 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+     shell::may_name_protected_path(command) || word_splitting::candidate(command)
+ }
+ 
+-/// IFS assignments and expansions belong to the outer shell, not to a quoted
++/// Scalar/IFS assignments and expansions belong to the outer shell, not to a quoted
+ /// Python/Node program supplied on stdin (#560). Reuse the existing ownership
+ /// proof instead of letting source text establish shell state or exhaust the
+ /// shell event budget. It rejects unquoted bodies and ambiguous receivers.
+@@ -43,18 +43,24 @@ pub(crate) fn may_name_protected_path(command: &str) -> bool {
+ /// `embedded::scan_command` below must always receive the original command.
+ /// Do not apply a POSIX-only proof when the caller's dialect is unknown.
+ fn scan_outer_writer_arguments(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWrite> {
+-    if dialect != ShellDialect::Posix || !word_splitting::candidate(command) {
+-        return word_splitting::scan(command, dialect);
+-    }
+-    let outer = crate::heredoc::mask_inert_interpreter_stdin(command);
+-    word_splitting::scan(outer.as_ref(), dialect)
++    let outer = if dialect == ShellDialect::Posix
++        && (word_splitting::candidate(command) || shell::indirection::candidate(command))
++    {
++        crate::heredoc::mask_inert_interpreter_stdin(command)
++    } else {
++        std::borrow::Cow::Borrowed(command)
++    };
++    let mut hits = word_splitting::scan(outer.as_ref(), dialect);
++    hits.extend(shell::indirection::scan(outer.as_ref(), dialect));
++    hits
+ }
+ 
+ /// Inspect executable source before shell segmentation or masking removes it.
+ /// Shell syntax uses the separate [`classify_credential_file_write`] above;
+ /// inline scripts, heredocs, and here-strings use their proven interpreter.
+-/// The IFS view retains preceding assignments until each writer's arguments
+-/// have been split, then delegates every destination to the same path policy.
++/// The shell views retain preceding scalar assignments and recognized Git
++/// origins, including IFS-dependent argv, and delegate destination evidence
++/// to the same native path policy before source segmentation discards it.
+ /// Apply explicit language/content exemptions to each decoded program, not
+ /// to another program or shell writer in the same command.
+ /// Retain all rule families, including coincident spans from a single rename.
+```
+
+**File**: `src/packs/core/credential_files/shell.rs` (modified, +2/-1)
+```diff
+@@ -28,6 +28,7 @@ use crate::normalize::{ShellDialect, is_env_assignment};
+ use crate::packs::PatternSuggestion;
+ use std::ops::Range;
+ 
++pub(super) mod indirection;
+ mod windows_shells;
+ 
+ /// Rule name under `core.filesystem`. The pattern entry in
+@@ -1274,7 +1275,7 @@ enum WriteMode {
+     Append,
+ }
+ 
+-#[derive(Debug)]
++#[derive(Debug, Clone)]
+ enum Token {
+     Word(Word),
+     /// An output redirect with a file target.
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection.rs` (added, +1009/-0)
+```diff
+@@ -0,0 +1,1009 @@
++//! Positive destination evidence from same-command scalars and Git queries.
++//!
++//! This view only adds findings to the native path policy. It never grants a
++//! safe-path exemption, executes shell source, reads Git configuration, or
++//! reparses expanded data as shell syntax. Unknown values lose their proof.
++
++use super::super::word_splitting;
++use super::{CredentialFileWrite, Token, Word, classify_simple_command, git_redirect_write};
++use crate::normalize::ShellDialect;
++use ast_grep_core::{AstGrep, Node, tree_sitter::StrDoc};
++use ast_grep_language::SupportLang;
++use std::collections::HashMap;
++use std::ops::Range;
++
++mod git_paths;
++
++const MAX_BYTES: usize = 64 * 1024;
++const MAX_VALUE_BYTES: usize = 16 * 1024;
++const MAX_BINDINGS: usize = 64;
++const MAX_NODES: usize = 4096;
++const MAX_DEPTH: usize = 32;
++const MAX_TOKENS: usize = 128;
++const MAX_MATERIALIZED_BYTES: usize = 64 * 1024;
++
++/// Provenance is separate from bytes. In particular, the literal value
++/// `'$(git rev-parse --git-dir)'` can never acquire a Git origin on expansion.
++#[derive(Clone, Debug, PartialEq, Eq)]
++enum Value {
++    Literal(String),
++    Home {
++        prefix: String,
++        root: String,
++        tail: String,
++    },
++    Git {
++        prefix: String,
++        path: git_paths::GitPath,
++    },
++}
++
++impl Value {
++    fn append(self, next: Self) -> Option<Self> {
++        match (self, next) {
++            (Self::Literal(mut before), Self::Literal(after)) => {
++                before.push_str(&after);
++                (before.len() <= MAX_VALUE_BYTES).then_some(Self::Literal(before))
++            }
++            (
++                Self::Home {
++                    prefix,
++                    root,
++                    mut tail,
++                },
++                Self::Literal(after),
++            ) => {
++                if tail.is_empty() && !after.is_empty() && !after.starts_with('/') {
++                    return None;
++                }
++                tail.push_str(&after);
++                (prefix.len() + root.len() + tail.len() <= MAX_VALUE_BYTES).then_some(Self::Home {
++                    prefix,
++                    root,
++                    tail,
++                })
++            }
++            (Self::Git { prefix, path }, Self::Literal(after)) => Some(Self::Git {
++                prefix,
++                path: path.append_literal(&after)?,
++            }),
++            (Self::Literal(before), Self::Home { prefix, root, tail }) => Some(Self::Home {
++                prefix: before + &prefix,
++                root,
++                tail,
++            }),
++            (Self::Literal(before), Self::Git { prefix, path }) => Some(Self::Git {
++                prefix: before + &prefix,
++                path,
++            }),
++            // Two independently expanded roots do not prove a path.
++            _ => None,
++        }
++    }
++
++    fn word(&self, range: Range<usize>) -> Option<Word> {
++        let (text, literal) = match self {
++            Self::Literal(value) => {
++                let text: Vec<char> = value.chars().collect();
++                let literal = vec![true; text.len()];
++                (text, literal)
++            }
++            Self::Home { prefix, root, tail } => {
++                if !path_prefix(prefix) {
++                    return None;
++                }
++                let (home, end) = super::read_word(root, 0);
++                if end != root.len() {
++                    return None;
++                }
++                let mut text: Vec<char> = prefix.chars().collect();
++                let mut literal = vec![true; text.len()];
++                text.extend(home.text);
++                literal.extend(home.literal);
++                text.extend(tail.chars());
++                literal.resize(text.len(), true);
++                (text, literal)
++            }
++            Self::Git { prefix, path } => {
++                if !path_prefix(prefix) {
++                    return None;
++                }
++                let text: Vec<char> = (prefix.clone() + &path.policy_path()).chars().collect();
++                let literal = vec![true; text.len()];
++                (text, literal)
++            }
++        };
++        (text.len() <= MAX_VALUE_BYTES).then_some(Word {
++            text,
++            literal,
++            range,
++            glued_paren: false,
++        })
++    }
++
++    fn literal(&self) -> Option<&str> {
++        match self {
++            Self::Literal(value) => Some(value),
++            Self::Home { .. } | Self::Git { .. } => None,
++        }
++    }
++
++    fn one_unquoted_field(&self, state: &State) -> bool {
++        let Some(ifs) = state.ifs.as_deref() else {
++            return false;
++        };
++        let Some(word) = self.word(0..0) else {
++            return false;
++        };
++        // Default splitting is a possible reading of a fresh shell. This is
++        // positive denial evidence only, never a claim that an unknown caller
++     
+```
+
+**File**: `src/packs/core/credential_files/shell/indirection/git_paths.rs` (added, +416/-0)
+```diff
+@@ -0,0 +1,416 @@
++//! Symbolic destinations returned by a single, statically identified Git query.
++//!
++//! No repository lookup is needed: a worktree's administrative directory and
++//! a relocated hooks directory keep their policy identity wherever Git stores
++//! them. The policy spelling below is a semantic alias, never a claim that the
++//! query actually printed `.git`.
++
++use super::super::read_word;
++
++const MAX_QUERY_BYTES: usize = 8 * 1024;
++const MAX_QUERY_WORDS: usize = 64;
++const MAX_PATH_BYTES: usize = 16 * 1024;
++const MAX_PATH_COMPONENTS: usize = 64;
++
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum GitPathKind {
++    Directory,
++    Hooks,
++    Config,
++}
++
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub(super) struct GitPath {
++    kind: GitPathKind,
++    /// Decoded suffix below the symbolic root. Keep its exact characters until
++    /// use: appending `name` to `/a/..` makes `/a/..name`, not `/name`.
++    /// Its normalized components never escape the symbolic root.
++    tail: String,
++}
++
++impl GitPath {
++    fn new(kind: GitPathKind) -> Self {
++        Self {
++            kind,
++            tail: String::new(),
++        }
++    }
++
++    /// Append decoded literal path text. The caller retains expansion/quoting
++    /// provenance and must never pass an unresolved expansion here.
++    pub(super) fn append_literal(&self, suffix: &str) -> Option<Self> {
++        if suffix.is_empty() {
++            return Some(self.clone());
++        }
++        if self.tail.is_empty() && !suffix.starts_with('/')
++            || self.kind == GitPathKind::Config
++            || self.tail.len().saturating_add(suffix.len()) > MAX_PATH_BYTES
++            || suffix.contains('\0')
++        {
++            return None;
++        }
++        let tail = format!("{}{suffix}", self.tail);
++        normalized_components(&tail)?;
++        Some(Self {
++            kind: self.kind,
++            tail,
++        })
++    }
++
++    /// An alias for the existing protected-path table. A bare directory gets
++    /// a trailing slash so the table recognizes its directory anchor as well.
++    pub(super) fn policy_path(&self) -> String {
++        let base = match self.kind {
++            GitPathKind::Directory => ".git",
++            GitPathKind::Hooks => ".git/hooks",
++            GitPathKind::Config => ".git/config",
++        };
++        let tail = normalized_components(&self.tail)
++            .expect("GitPath construction checks the symbolic root")
++            .join("/");
++        if tail.is_empty() {
++            if self.kind == GitPathKind::Config {
++                base.to_owned()
++            } else {
++                format!("{base}/")
++            }
++        } else {
++            format!("{base}/{tail}")
++        }
++    }
++}
++
++fn normalized_components(tail: &str) -> Option<Vec<&str>> {
++    let mut components = Vec::new();
++    for component in tail.split('/') {
++        match component {
++            "" | "." => {}
++            ".." => {
++                // A linked worktree's git-dir need not be the common
++                // directory. Crossing either symbolic base loses the proof;
++                // do not pretend it is a top-level `.git` folder.
++                components.pop()?;
++            }
++            other => {
++                components.push(other);
++                if components.len() > MAX_PATH_COMPONENTS {
++                    return None;
++                }
++            }
++        }
++    }
++    Some(components)
++}
++
++/// Recognize the complete BODY of `$(...)` or backquotes, never source which
++/// merely contains a Git command. Multiple outputs, redirections, operators,
++/// dynamic argv and unbalanced quotes cannot supply a single-path proof.
++pub(super) fn resolve_query(source: &str) -> Option<GitPath> {
++    let argv = literal_argv(source)?;
++    let executable = argv.first()?.rsplit('/').next()?;
++    if !matches!(executable, "git" | "git.exe") {
++        return None;
++    }
++    let mut index = 1;
++    while argv.get(index)?.as_str() != "rev-parse" {
++        let option = argv.get(index)?.as_str();
++        match option {
++            "-C" | "-c" | "--git-dir" | "--work-tree" => {
++                argv.get(index + 1)?;
++                index += 2;
++            }
++            "--bare" | "--no-pager" | "--no-optional-locks" => index += 1,
++            _ if attached_global_option(option) => index += 1,
++            _ => return None,
++        }
++    }
++    index += 1;
++    while argv.get(index).is_some_and(|argument| {
++        matches!(
++            argument.as_str(),
++            "--path-format=absolute" | "--path-format=relative"
++        )
++    }) {
++        index += 1;
++    }
++    match &argv[index..] {
++        [query]
++            if matches!(
++                query.as_str(),
++                "--git-dir" | "--absolute-git-dir" | "--git-common-dir"
++            ) =>
++        {
++            Some(GitPath::new(GitPathKind::Directory))
++        }
++        [query, path] if query == "--git-path" => ad
+```
+
+**File**: `src/packs/core/credential_files/word_splitting.rs` (modified, +9/-9)
+```diff
+@@ -90,7 +90,7 @@ impl State {
+     }
+ }
+ 
+-fn maintained_variable(name: &str) -> bool {
++pub(super) fn maintained_variable(name: &str) -> bool {
+     name.starts_with("BASH_")
+         || matches!(
+             name,
+@@ -110,14 +110,14 @@ fn maintained_variable(name: &str) -> bool {
+         )
+ }
+ 
+-fn identifier(name: &str) -> bool {
++pub(super) fn identifier(name: &str) -> bool {
+     !name.is_empty()
+         && name.bytes().enumerate().all(|(index, byte)| {
+             byte.is_ascii_alphabetic() || byte == b'_' || index > 0 && byte.is_ascii_digit()
+         })
+ }
+ 
+-fn assignment(raw: &str) -> Option<(&str, bool, &str)> {
++pub(super) fn assignment(raw: &str) -> Option<(&str, bool, &str)> {
+     let (left, rhs) = raw.split_once('=')?;
+     let name = left.strip_suffix('+').unwrap_or(left);
+     identifier(name).then_some((name, left != name, rhs))
+@@ -772,7 +772,7 @@ fn classify(argv: &[String], span: Range<usize>) -> Result<Vec<CredentialFileWri
+ /// modifiers do not make a count assignment harmless. Backslash escapes do
+ /// not protect a source `%`: `\%n` still performs the assignment, whereas
+ /// `\045n` only prints percent/n and must not be re-parsed as a conversion.
+-fn printf_format_may_assign(format: &str) -> bool {
++pub(super) fn printf_format_may_assign(format: &str) -> bool {
+     let bytes = format.as_bytes();
+     let mut index = 0;
+     while index < bytes.len() {
+@@ -845,7 +845,7 @@ fn printf_may_assign(words: &[String], state: &State) -> bool {
+     false
+ }
+ 
+-fn mutates_shell(name: &str) -> bool {
++pub(super) fn mutates_shell(name: &str) -> bool {
+     matches!(
+         name,
+         "read"
+@@ -876,7 +876,7 @@ fn mutates_shell(name: &str) -> bool {
+     )
+ }
+ 
+-fn special_builtin(name: &str) -> bool {
++pub(super) fn special_builtin(name: &str) -> bool {
+     matches!(
+         name,
+         ":" | "."
+@@ -899,7 +899,7 @@ fn special_builtin(name: &str) -> bool {
+ /// The async terminator belongs to the whole statement, not to each
+ /// assignment inside it. Ask the syntax tree so line continuations before
+ /// `&`, and the distinct `&&` and `&>` operators, keep their shell meaning.
+-fn has_async_terminator(node: &Node<'_, StrDoc<SupportLang>>) -> bool {
++pub(super) fn has_async_terminator(node: &Node<'_, StrDoc<SupportLang>>) -> bool {
+     node.get_inner_node()
+         .next_sibling()
+         .is_some_and(|sibling| sibling.kind() == "&")
+@@ -911,7 +911,7 @@ fn has_async_terminator(node: &Node<'_, StrDoc<SupportLang>>) -> bool {
+ /// literal value. Keep quoted/escaped braces and commas as data. This bounded
+ /// lexical check never enumerates alternatives (which can grow exponentially)
+ /// and deliberately treats malformed range candidates as uncertain too.
+-fn declaration_may_expand_braces(raw: &str) -> bool {
++pub(super) fn declaration_may_expand_braces(raw: &str) -> bool {
+     let mut quote = None;
+     let mut braces = Vec::new();
+     let mut previous_dot = false;
+@@ -979,7 +979,7 @@ pub(super) fn scan(command: &str, dialect: ShellDialect) -> Vec<CredentialFileWr
+ /// it before reading words, and for each byte of that source the offset of the
+ /// same byte in `command`, with one more entry for the end. `None` when
+ /// nothing was removed.
+-fn join_line_continuations(command: &str) -> Option<(String, Vec<usize>)> {
++pub(super) fn join_line_continuations(command: &str) -> Option<(String, Vec<usize>)> {
+     if !command.contains("\\\n") {
+         return None;
+     }
+```
+
+**File**: `tests/repro_609_613_indirect_destinations.rs` (added, +566/-0)
+```diff
+@@ -0,0 +1,566 @@
++//! #609 / #613: shell indirection must not conceal protected destinations.
++//!
++//! Every source string is data sent to the real CLI and batch hook. The only
++//! commands executed by the fixture are Git repository/worktree setup and
++//! read-only queries used to establish the linked-worktree controls.
++
++use std::io::Write;
++use std::path::{Path, PathBuf};
++use std::process::{Command, Stdio};
++
++const CREDENTIAL: &str = "core.filesystem:credential-file-write";
++const GIT_WRITE: &str = "core.filesystem:git-internals-write";
++const GIT_APPEND: &str = "core.filesystem:redirect-append-git-internals-relative";
++const GIT_TRUNCATE: &str = "core.filesystem:redirect-truncate-git-internals-relative";
++const GRANT_REASON: &str = "isolated indirect-destination rule grant";
++
++struct Fixture {
++    directory: tempfile::TempDir,
++    home: PathBuf,
++    config: PathBuf,
++    cwd: PathBuf,
++    executable_dir: PathBuf,
++}
++
++impl Fixture {
++    fn new() -> Self {
++        let directory = tempfile::tempdir().expect("isolated regression directory");
++        let home = directory.path().join("home");
++        let cwd = directory.path().join("cwd");
++        let executable_dir = directory.path().join("executables");
++        for path in [&home, &cwd, &executable_dir] {
++            std::fs::create_dir(path).expect("isolated directory");
++        }
++        let config = directory.path().join("config.toml");
++        std::fs::write(&config, "[history]\nenabled = false\n").expect("isolated config");
++        Self {
++            directory,
++            home,
++            config,
++            cwd,
++            executable_dir,
++        }
++    }
++
++    fn grant(&self, rule: &str) {
++        let contents = format!("[[allow]]\nrule = \"{rule}\"\nreason = \"{GRANT_REASON}\"\n");
++        for relative in ["config/dcg", ".config/dcg", "appdata/dcg"] {
++            let directory = self.home.join(relative);
++            std::fs::create_dir_all(&directory).expect("allowlist directory");
++            std::fs::write(directory.join("allowlist.toml"), &contents)
++                .expect("isolated single-rule grant");
++        }
++    }
++
++    fn command(&self) -> Command {
++        let mut command = Command::new(env!("CARGO_BIN_EXE_dcg"));
++        command
++            .env_clear()
++            // A static proof must not require Git, a shell, or another
++            // producer executable to be installed on the classifier's PATH.
++            .env("PATH", &self.executable_dir)
++            .env("HOME", &self.home)
++            .env("USERPROFILE", &self.home)
++            .env("XDG_CONFIG_HOME", self.home.join("config"))
++            .env("XDG_DATA_HOME", self.home.join("data"))
++            .env("XDG_CACHE_HOME", self.home.join("cache"))
++            .env("APPDATA", self.home.join("appdata"))
++            .env("LOCALAPPDATA", self.home.join("localappdata"))
++            .env("TEMP", self.directory.path())
++            .env("TMP", self.directory.path())
++            .env("TMPDIR", self.directory.path())
++            .env("DCG_CONFIG", &self.config)
++            .env("DCG_ALLOWLIST_SYSTEM_PATH", "")
++            .env(
++                "DCG_PENDING_EXCEPTIONS_PATH",
++                self.directory.path().join("pending.jsonl"),
++            )
++            .env("DCG_SELF_HEAL_HOOK", "0")
++            .env("DCG_NO_SELF_HEAL", "1")
++            .env("DCG_HISTORY_DISABLED", "1")
++            // Semantic verdicts, not a change to the production budgets.
++            .env("DCG_HOOK_TIMEOUT_MS", "5000")
++            .env("DCG_AST_TIMEOUT_MS", "5000")
++            .current_dir(&self.cwd)
++            .stdin(Stdio::piped())
++            .stdout(Stdio::piped())
++            .stderr(Stdio::piped());
++        command
++    }
++
++    fn assert(&self, source: &str, expected: &str, rule: Option<&str>, granted: bool) {
++        for hook in [false, true] {
++            let mut command = self.command();
++            let input = if hook {
++                command.args(["hook", "--batch"]);
++                serde_json::json!({
++                    "hook_event_name": "PreToolUse",
++                    "tool_name": "Bash",
++                    "tool_input": { "command": source },
++                })
++                .to_string()
++                    + "\n"
++            } else {
++                command.args(["test", "--stdin", "--dialect", "posix", "--format", "json"]);
++                source.to_owned()
++            };
++            let mut child = command
++                .spawn()
++                .expect("spawn the classifier, never the source");
++            child
++                .stdin
++                .take()
++                .expect("classifier stdin")
++                .write_all(input.as_bytes())
++                .expect("write classifier input");
++            let output = child.wait_with_output().expect("classifier response");
++            let stderr = String::from_utf8_lossy(&output.stderr);
++            let stdout = String::from_utf8_loss
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #596** (2026-10-27): deps(deps): bump smallvec from 1.16.3 to 1.16.4 in the rust-minor-patch group (@dependabot[bot])
+- **PR #595** (2026-10-26): deps(deps): bump ast-grep-core from 0.45.3 to 0.51.0 (@dependabot[bot])
+- **PR #594** (2026-10-26): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
 - **PR #581** (2026-10-19): deps(deps): bump ast-grep-core from 0.45.3 to 0.51.0 (@dependabot[bot])
 - **PR #580** (2026-10-19): deps(deps): bump serde_json from 1.0.151 to 1.0.154 in the serde group (@dependabot[bot])
 - **PR #579** (2026-10-19): deps(deps): bump the rust-minor-patch group with 5 updates (@dependabot[bot])
-- **PR #578** (2026-10-19): ci(deps): bump the actions group with 2 updates (@dependabot[bot])
-- **PR #559** (closed): deps(deps): bump ast-grep-core from 0.45.3 to 0.50.0 (@dependabot[bot])
-- **PR #557** (2026-10-14): deps(deps): bump the rust-minor-patch group with 3 updates (@dependabot[bot])
 
 ---
 
@@ -3586,58 +4287,55 @@ and mktemp rules retain their existin
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. normalize): never take an option word for timeout's duration or chrt's program (
+## X. core): preserve shell field and execution boundaries in indirect writes
 
 **RULE**:
-When implementing operations in `src/normalize.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/packs/core/credential_files/shell.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b33f3ef5`: normalize): never take an option word for timeout's duration or chrt's program (#592). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4850e2da`: core): preserve shell field and execution boundaries in indirect writes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/normalize.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/packs/core/credential_files/shell.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        if let Some(consume_next) = timeout_flag_cluster(&word) {
-            if consume_next {
-                wrapper_word(command, tokens, index + 1)?;
-            }
-            index += 1 + usize::from(consume_next);
-    // DURATION is a number with an optional unit, never an option word. Taking
-    // an option this parser does not model (a long-option abbreviation such as
-    // `--sig`, an unknown letter) for the duration made the real duration the
-    // program.
-    if wrapper_word(command, tokens, index)?.starts_with('-') {
-        return None;
-    }
-/// A getopt cluster of `timeout` flags: `-f`/`-p`/`-v`, optionally ending in
-/// `-k` or `-s`, whose value is the rest of the word or, when the letter ends
-/// the word, the next word (returned as `Some(true)`). `None` when the word is
-/// not such a cluster.
-fn timeout_flag_cluster(word: &str) -> Option<bool> {
-    let flags = word.strip_prefix('-').filter(|flags| !flags.is_empty())?;
-    for (position, flag) in flags.bytes().enumerate() {
-        match flag {
-            b'f' | b'p' | b'v' => {}
-            b'k' | b's' => return Some(position + 1 == flags.len()),
-            _ => return None,
-        }
-    }
-    Some(false
+fn strip_prefixes<'a>(words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
+    strip_prefixes_in_view(words, true)
+}
+
+/// Expanded argv has already lost syntactic assignment/reserved-word roles.
+/// A value such as `x=y` or `if` is an executable name, not new shell syntax.
+fn strip_prefixes_in_view<'a>(
+    mut words: &'a [&'a Word],
+    source_syntax: bool,
+) -> Option<&'a [&'a Word]> {
+        if source_syntax
+            && (crate::context::is_shell_command_prefix_reserved_word(&text)
+                || is_env_assignment(&text))
+    classify_command_in_view(tokens, true)
+}
+
+fn classify_expanded_command(tokens: &[Token]) -> Option<CredentialFileWrite> {
+    classify_command_in_view(tokens, false)
+}
+
+fn classify_command_in_view(tokens: &[Token], source_syntax: bool) -> Option<CredentialFileWrite> {
+    let argv = if source_syntax {
+        strip_prefixes(&words)
+    } else {
+        strip_prefixes_in_view(&words, false)
+    }?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        if word.strip_prefix('-').is_some_and(|flags| {
-            !flags.is_empty() && flags.bytes().all(|flag| matches!(flag, b'f' | b'p' | b'v'))
-        }) {
-            index += 1;
-    wrapper_word(command, tokens, index)?;
-    } else if priority_optional {
+fn strip_prefixes<'a>(mut words: &'a [&'a Word]) -> Option<&'a [&'a Word]> {
+        if crate::context::is_shell_command_prefix_reserved_word(&text) || is_env_assignment(&text)
+    let argv = strip_prefixes(&words)?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b33f3ef5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4850e2da` are properly handled with clean fallback behavior.

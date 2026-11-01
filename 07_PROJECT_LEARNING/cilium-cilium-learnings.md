@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `7d8341a4`  
+> **Source Version**: `ef31e883`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T18:05:34.788Z  
+> **Timestamp**: 2026-10-30T23:51:44.943Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T18:05:34.351Z  
+> **Harvest Timestamp**: 2026-10-30T23:51:44.936Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25716 stars
+- **Stars / Engagement**: 25740 stars
 
 ---
 
@@ -1259,17 +1259,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49605** (2026-10-26): **fix(deps): update module github.com/go-openapi/validate to v1.0.1 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [github.com/go-openapi/validate](https://redirect.github.com/go-openapi/validate) | `v1.0.0` → `v1.0.1` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-openapi%2fvalidate/v1.0.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-openapi%2fvalidate/v1.0.0/v1.0.1?slim=true) |  ---  ### Release Notes  <details> <summary>go-openapi/validate (github.com/go-openapi/validate)</summary>  ### [`v1.0.1`](https://redirect.github.com/go-openapi/validate/releases/tag/v1.0.1)  [Compare Source](https://redirect.github.com/go-openapi/validate/compare/v1.0.0...v1.0.1)  #### [1.0.1](https://redirect.github.com/go-openapi/validate/tree/v1.0.1) - 2026-10-20  **Full Changelog**: <https://github.com/go-openapi/validate/compare/v1.0.0...v1.0.1>  10 commits in this release.  ***  ##### <!-- 03 -->Documentation  - doc: updated contributors file by [@&#8203;bot-go-openapi\[bot\]](https://redirect.github.com/bot-go-openapi\[bot]) in [#&#8203;302](https://redirect.github.com/go-openapi/validate/pull/302) [...](https://redirect.github.com/go-openapi/validate/commit/d56dbb5ccbb4caf66fd3a819d550024fcdf67d1d)  ##### <!-- 07 -->Miscellaneous tasks  - chore: update strfmt and golang.org dependencies by [@&#8203;fredbi](https://redirect.github.
+- **Issue #49715** (2026-10-30): **bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity**
+  *Symptoms*: CIDR_IDENTITY_RANGE_END evaluated to 0x100FFFF, while the allocator can hand out CIDR identities up to identity.MaxLocalIdentity (0x1FFFFFF). Identities above the BPF limit would not be recognized by identity_is_cidr_range() and, as a consequence, by identity_is_world().  Align the constant with identity.MaxLocalIdentity.  Fixes: #49613.
   **Post-Mortem & Fix Analysis**:
-  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 3 additional dependencies were updated   Due to Go's usage of [Minimal Version Selection (MVS)](https://go.dev/ref/mod#minimal-version-selection), these packages have been updated to the minimum version available, so will still abide by `minimumReleaseAge=5 days`   Details:   | **Package**                           | **Change**           | | :------------------------------------ | :------------------- | | `github.com/go-openapi/analysis`      | `v1.0.0` -> `v1.0.1` | | `github.com/go-openapi/jsonpointer`   | `v1.0.1` -> `v1.0.2` | | `github.com/go-openapi/jsonreference` | `v1.0.2` -> `v1.0.3` |
   > /test
+  > > I did a small proof-of-concept doing the above that a while ago. Let me try and see whether I can dust it of and bring it into a PR-ready state.  Let me know when/if you manage to open it, I'm curious! I don't know if what you've been working on would tackle only a subset of BPF macros, but yeah, there are a lot of things that would be lovely to have auto-generated/synced so that they won't drift anymore.  Thanks so much for the review btw 🙏🏼  
 
-- **Issue #49602** (2026-10-25): **fix(deps): update all go dependencies main (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | Type | Update | |---|---|---|---|---|---| | [github.com/go-openapi/strfmt](https://redirect.github.com/go-openapi/strfmt) | `v0.27.3` → `v0.27.4` | ![age](https://developer.mend.io/api/mc/badges/age/go/github.com%2fgo-openapi%2fstrfmt/v0.27.4?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/github.com%2fgo-openapi%2fstrfmt/v0.27.3/v0.27.4?slim=true) | require | patch | | [github.com/vishvananda/netlink](https://redirect.github.com/vishvananda/netlink) | `3fdd742` → `5537980` |  |  | require | digest |  ---  ### Release Notes  <details> <summary>go-openapi/strfmt (github.com/go-openapi/strfmt)</summary>  ### [`v0.27.4`](https://redirect.github.com/go-openapi/strfmt/releases/tag/v0.27.4)  [Compare Source](https://redirect.github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4)  #### [0.27.4](https://redirect.github.com/go-openapi/strfmt/tree/v0.27.4) - 2026-10-19  **Full Changelog**: <https://github.com/go-openapi/strfmt/compare/v0.27.3...v0.27.4>  5 commits in this release.  ***  ##### <!-- 07 -->Miscellaneous tasks  - chore: prepare release v0.27.4 by [@&#8203;bot-go-openapi\[bot\]](https://redirect.github.com/bot-go-openapi\[bot]) in [#&#8203;319](https://redirect.github.com/go-openapi/strfmt/pull/319) [...](https://redirect.github.com/go-openapi/strfmt/commit/f4233
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /test
+- **Issue #49713** (2026-10-30): **cni-chaining: extend Documentation and warn when lacking route MTU**
+  *Symptoms*: Aligned with what has been done previously for WireGuard, here we:  1. Extend documentation specific for egress gateway. 2. Extend general cni-chaining documentation mentioning features (so far explicitly supported) that would require this to be enabled. 3. Add an Agent warning in case the parameter is not provided.  I've considered making it default and not opt-in, but in chaining mode the other plugin creates the pod's netns, veth and routes, and Cilium rewriting routes there can conflict with the plugin's own MTU management. Other minor reasons are that we've limited testing of chaining in CI (only awscni).  Fixes: #34493.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1286,79 +1283,267 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c76681a2` (2026-10-23)
-**Commit Message**: chore(deps): update dependency certifi to v2026.10.19 [security]
+### Incident Patch 1: `ef31e883` (2026-10-29)
+**Commit Message**: hubble: fix deleted-pod metrics cleanup with dynamic configuration
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+Signed-off-by: Alex Castilio dos Santos <[REDACTED_EMAIL]>
 
-**File**: `images/docs-builder/requirements.txt` (modified, +1/-1)
+**File**: `pkg/hubble/metrics/dynamic_flow_processor.go` (modified, +9/-0)
 ```diff
-@@ -24,7 +24,7 @@ annotated-doc==0.0.5
- annotated-types==0.8.0
- attrs==26.1.0
- babel==2.18.0
--certifi==2026.10.18
-+certifi==2026.10.19
- charset-normalizer==3.5.2
- colorama==0.4.6
- deepmerge==3.0.1
+@@ -13,6 +13,7 @@ import (
+ 
+ 	flowpb "github.com/cilium/cilium/api/v1/flow"
+ 	"github.com/cilium/cilium/pkg/hubble/metrics/api"
++	"github.com/cilium/cilium/pkg/k8s/types"
+ 	"github.com/cilium/cilium/pkg/lock"
+ 	"github.com/cilium/cilium/pkg/logging/logfields"
+ )
+@@ -88,9 +89,17 @@ func NewDynamicFlowProcessor(reg *prometheus.Registry, logger *slog.Logger, conf
+ 	}
+ 	watcher := NewMetricConfigWatcher(logger, configFilePath, dynamicFlowProcessor.onConfigReload)
+ 	dynamicFlowProcessor.watcher = watcher
++	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
+ 	return dynamicFlowProcessor
+ }
+ 
++func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
++	d.mutex.RLock()
++	defer d.mutex.RUnlock()
++
++	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
++}
++
+ func (d *DynamicFlowProcessor) onConfigReload(ctx context.Context, hash uint64, config api.Config) {
+ 	d.mutex.Lock()
+ 	defer d.mutex.Unlock()
 ```
 
----
-
-### Incident Patch 2: `1f32241f` (2026-10-23)
-**Commit Message**: ipam: Fix goleak usage in multi-pool migration test
-
-When using scripttest.Test without NoParallel, using defer to enable
-goleak is incorrect. That's because scripttest.Test relies on t.Parallel
-that starts a subtest for each txtar, pauses them and return before
-letting them run. When returning, defer is then triggered before the
-subtests actually run, missing possible leaks.
-
-Fix this scheduling goleak with t.Cleanup instead.
-
-Signed-off-by: Fabio Falzoi <[REDACTED_EMAIL]>
-
-**File**: `pkg/ipam/migration/script_test.go` (modified, +1/-1)
+**File**: `pkg/hubble/metrics/metrics.go` (modified, +11/-9)
 ```diff
-@@ -60,7 +60,7 @@ func TestScriptClusterPoolToMultiPool(t *testing.T) {
- 		manager     *ipam.IPAM
- 	)
+@@ -32,6 +32,7 @@ import (
+ type CiliumEndpointDeletionHandler struct {
+ 	gracefulPeriod time.Duration
+ 	queue          workqueue.TypedDelayingInterface[*types.CiliumEndpoint]
++	cleanup        func(*types.CiliumEndpoint)
+ }
  
--	defer testutils.GoleakVerifyNone(t)
-+	t.Cleanup(func() { testutils.GoleakVerifyNone(t) })
+ var (
+@@ -66,26 +67,27 @@ var (
+ )
  
- 	scripttest.Test(t,
- 		t.Context(),
+ func ProcessCiliumEndpointDeletion(pod *types.CiliumEndpoint) error {
+-	if endpointDeletionHandler != nil && EnabledMetrics != nil {
++	if endpointDeletionHandler != nil {
+ 		endpointDeletionHandler.queue.AddAfter(pod, endpointDeletionHandler.gracefulPeriod)
+ 	}
+ 	return nil
+ }
+ 
+-func initEndpointDeletionHandler() {
++func initEndpointDeletionHandler(cleanup func(*types.CiliumEndpoint)) {
+ 	endpointDeletionHandler = &CiliumEndpointDeletionHandler{
+ 		gracefulPeriod: time.Minute,
+ 		queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
++		cleanup:        cleanup,
+ 	}
+-
++	handler := endpointDeletionHandler
+ 	go func() {
+ 		for {
+-			endpoint, quit := endpointDeletionHandler.queue.Get()
++			endpoint, quit := handler.queue.Get()
+ 			if quit {
+ 				return
+ 			}
+-			api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
+-			endpointDeletionHandler.queue.Done(endpoint)
++			handler.cleanup(endpoint)
++			handler.queue.Done(endpoint)
+ 		}
+ 	}()
+ }
+@@ -103,7 +105,9 @@ func InitMetrics(logger *slog.Logger, reg *prometheus.Registry, enabled *api.Con
+ 	reg.MustRegister(RequestsTotal)
+ 	reg.MustRegister(RequestDuration)
+ 
+-	initEndpointDeletionHandler()
++	initEndpointDeletionHandler(func(endpoint *types.CiliumEndpoint) {
++		api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
++	})
+ 
+ 	return nil
+ }
+@@ -114,8 +118,6 @@ func InitHubbleInternalMetrics(reg *prometheus.Registry, grpcMetrics *grpc_prome
+ 	reg.MustRegister(RequestsTotal)
+ 	reg.MustRegister(RequestDuration)
+ 
+-	initEndpointDeletionHandler()
+-
+ 	return nil
+ }
+ 
 ```
 
----
-
-### Incident Patch 3: `7d8341a4` (2026-09-25)
-**Commit Message**: docs: fix 'allows to use' grammar in CNI chaining docs
-
-Signed-off-by: fng713 <[REDACTED_EMAIL]>
-
-**File**: `Documentation/installation/cni-chaining.rst` (modified, +1/-1)
+**File**: `pkg/hubble/metrics/metrics_test.go` (modified, +202/-1)
 ```diff
-@@ -10,7 +10,7 @@
- CNI Chaining
- ************
+@@ -10,6 +10,8 @@ import (
+ 	"log/slog"
+ 	"net/http"
+ 	"net/http/httptest"
++	"os"
++	"path/filepath"
+ 	"sort"
+ 	"testing"
+ 	"time"
+@@ -34,25 +36,223 @@ import (
  
--CNI chaining allows to use Cilium in combination with other CNI plugins.
-+CNI chaining allows you to use Cilium in combination with other CNI plugins.
+ func TestInitializedMetrics(t *testing.T) {
+ 	t.Run("Should send pod removal to delayed delivery queue", func(t *testing.T) {
++		previousEnabledMetrics := EnabledMetrics
++		previousEndpointDeletionHandler := endpointDeletionHandler
++		t.Cleanup(func() {
++			endpointDeletionHandler.queue.ShutDown()
++			EnabledMetrics = previousEnabledMetrics
++			endpointDeletionHandler = previousEndpointDeletionHandler
++		})
++
+ 		deletedEndpoint := &types.CiliumEndpoint{
+ 			ObjectMeta: slim_metav1.ObjectMeta{
+ 				Name: "name",
+ 			},
+ 		}
+-		EnabledMetrics = []api.NamedHandler{}
++		EnabledMetrics = nil
+ 		endpointDeletionHandler = &CiliumEndpointDeletionHandler{
+ 			gracefulPeriod: 10 * time.Millisecond,
+ 			queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
+ 		}
  
- With Cilium CNI chaining, the base network connectivity and IP address management
- is managed by the non-Cilium CNI plugin, but Cilium attaches eBPF programs to the
+ 		ProcessCiliumEndpointDeletion(deletedEndpoint)
+ 
++		require.Eventually(t, func() bool {
++			return endpointDeletionHandler.queue.Len() == 1
++		}, time.Second, 10*time.Millisecond)
+ 		received, _ := endpointDeletionHandler.queue.Get()
+ 		assert.Equal(t, deletedEndpoint, received)
++	})
++
++}
++
++func TestDynamicMetricsCleanupOnEndpointDeletion(t *testing.T) {
++	dfp, reg := newTestDynamicFlowProcessor(t)
++
++	processDropFlow(t, dfp, "deleted-source", "live-destination")
++	processDropFlow(t, dfp, "live-source", "deleted-destination")
++	processDropFlow(t, dfp, "live-source", "live-destination")
++	processDropFlow(t, dfp, "live-source", "live-destination")
++
++	require.Equal(t, map[string]float64{
++		"test/deleted-source->test/live-destination": 1,
++		"test/live-source->test/deleted-destination": 1,
++		"test/live-source->test/live-destination":    2,
++	}, gatheredDropMetrics(t, reg))
++
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
++	}))
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-destination", Namespace: "test"},
++	}))
++
++	require.EventuallyWithT(t, func(c *assert.CollectT) {
++		assert.Equal(c, map[string]float64{
++			"test/live-source->test/live-destination": 2,
++		}, gatheredDropMetrics(c, reg))
++	}, time.Second, 10*time.Millisecond)
++}
+ 
++func TestStaticMetricsCleanupOnEndpointDeletion(t *testing.T) {
++	previousEnabledMetrics := EnabledMetrics
++	previousEndpointDeletionHandler := endpointDeletionHandler
++	t.Cleanup(func() {
+ 		endpointDeletionHandler.queue.ShutDown()
++		EnabledMetrics = previousEnabledMetrics
++		endpointDeletionHandler = previousEndpointDeletionHandler
+ 	})
+ 
++	reg := prometheus.NewPedanticRegistry()
++	require.NoError(t, InitMetrics(
++		hivetest.Logger(t),
++		reg,
++		api.ParseStaticMetricsConfig([]string{"drop:sourceContext=pod;destinationContext=pod"}),
++		grpc_prometheus.NewServerMetrics(),
++	))
++	endpointDeletionHandler.gracefulPeriod = 0
++
++	processor := NewStaticFlowProcessor(hivetest.Logger(t), EnabledMetrics)
++	processDropFlow(t, processor, "deleted-source", "live-destination")
++	processDropFlow(t, processor, "live-source", "live-destination")
++	require.Equal(t, map[string]float64{
++		"test/deleted-source->test/live-destination": 1,
++		"test/live-source->test/live-destination":    1,
++	}, gatheredDropMetrics(t, reg))
++
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
++	}))
++	require.EventuallyWithT(t, func(c *assert.CollectT) {
++		assert.Equal(c, map[string]float64{
++			"test/live-source->test/live-destination": 1,
++		}, gatheredDropMetrics(c, reg))
++	}, time.Second, 10*time.Millisecond)
++}
++
++func TestDynamicMetricsCleanupUsesReplacementHandlers(t *testing.T) {
++	dfp, reg := newTestDynamicFlowProcessor(t)
++
++	cleanup := endpointDeletionHandler.cleanup
++	dequeued := make(chan struct{})
++	release := make(chan struct{})
++	released := false
++	releaseCleanup := func() {
++		if !released {
++			close(release)
++			released = true
++		}
++	}
++	t.Cleanup(releaseCleanup)
++	endpointDeletionHandler.cleanup = func(endpoint *types.CiliumEndpoint) {
++		close(dequeued)
++		<-release
++		cleanup(endpoint)
++	}
++
++	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
++		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
++	}))
++	select {
++	case <-dequeued:
++	case <-time.After(time.Second):
++		releaseCleanup()
++		t.Fatal("endpoint deletion was not dequeued")
++	}
++
++	config := api.Config{Metrics: []*api.MetricConfig{{
++		Name: "drop",
++		ContextOptionConfigs: []*api.ContextOptionConfig{
++			{Name: "sourceContext", Values: []string{"pod"}},
++			{Name: "destinationContext", Values: []string{"pod"}},
++		},
++	}}}
++	dfp.onConfigReload(t.Context(), 0, api.Config{})
++	dfp.onConfigReload(t.Context(), 0, config)
++
++	processDropFlow(t, dfp, "deleted-source"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49605** (2026-10-26): fix(deps): update module github.com/go-openapi/validate to v1.0.1 (main) (@cilium-renovate[bot])
-- **PR #49602** (2026-10-25): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
-- **PR #49600** (2026-10-26): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
-- **PR #49599** (2026-10-26): chore(deps): update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
-- **PR #49598** (2026-10-26): chore(deps): update auto-merge-trusted-deps (v1.20) (@cilium-renovate[bot])
-- **PR #49597** (2026-10-25): fix(deps): update all go dependencies main (main) (@cilium-renovate[bot])
+- **PR #49715** (2026-10-30): bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity (@smagnani96)
+- **PR #49713** (2026-10-30): cni-chaining: extend Documentation and warn when lacking route MTU (@smagnani96)
+- **PR #49712** (2026-10-30): hubble: fix deleted-pod metrics cleanup with dynamic configuration (@alexcastilio)
+- **PR #49709** (2026-10-30): ipsec: improve invalid key format error in loadIPSecKeys (@smagnani96)
+- **PR #49707** (2026-10-29): [v1.19] Backports 2026-10-29 (@aanm)
+- **PR #49706** (2026-10-30): [v1.20] Backports 2026-10-29 (@aanm)
 
 ---
 
@@ -1378,28 +1563,36 @@ Signed-off-by: fng713 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency certifi to v2026.10.19 [security]
+## X. hubble: fix deleted-pod metrics cleanup with dynamic configuration
 
 **RULE**:
-When implementing operations in `images/docs-builder/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/hubble/metrics/dynamic_flow_processor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c76681a2`: deps): update dependency certifi to v2026.10.19 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef31e883`: hubble: fix deleted-pod metrics cleanup with dynamic configuration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `images/docs-builder/requirements.txt`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/hubble/metrics/dynamic_flow_processor.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-certifi==2026.10.19
+	"github.com/cilium/cilium/pkg/k8s/types"
+	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
+func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
+	d.mutex.RLock()
+	defer d.mutex.RUnlock()
+
+	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-certifi==2026.10.18
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c76681a2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef31e883` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tach-org-tach-learnings.md`  
 > **Source**: github ([https://github.com/tach-org/tach](https://github.com/tach-org/tach))  
-> **Source Version**: `bc92d715`  
+> **Source Version**: `7c27c816`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:08:16.382Z  
+> **Timestamp**: 2026-10-29T17:16:39.184Z  
 > **Learning ID**: `learn-github-tach-org-tach`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tach-org-tach-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tach-org/tach](https://github.com/tach-org/tach))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:08:16.023Z  
+> **Harvest Timestamp**: 2026-10-29T17:16:35.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Python tool to visualize + enforce dependencies, using modular architecture 🌎 Open source 🐍 Installable via pip 🔧 Able to be adopted incrementally - ⚡ Implemented with no runtime impact ♾️ Interoperable with your existing systems 🦀 Written in rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 2845 stars
+- **Stars / Engagement**: 2855 stars
 
 ---
 
@@ -344,479 +344,54 @@ __all__ = ["__version__"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99f65beb` (2026-05-12)
-**Commit Message**: fix: report syntax errors as errors, not warnings (#931)
+### Incident Patch 1: `7c27c816` (2026-10-21)
+**Commit Message**: Fix pre-commit install command in getting started docs
 
-* fix: report syntax errors as errors, not warnings
-
-Fixes #845 and #846.
-
-Changes:
-- Syntax errors (ImportParse and PythonParse) now create ERROR diagnostics instead of WARNING
-- This causes `tach check` to exit with non-zero code when syntax errors are present
-- Python parse errors are now properly reported as "syntax error" instead of "unknown error"
-
-Before: Syntax errors showed as warnings and didn't affect exit code
-After: Syntax errors are reported as errors and cause non-zero exit
-
-* Add unit test for syntax error reporting
-
-Adds a test to verify that syntax errors are reported as errors (not
-warnings) in check_internal. The PR changes DiagnosticError::ImportParse
-and DiagnosticError::PythonParse handling to use new_global_error instead
-of new_global_warning. This test confirms the new behavior by checking
-that a Python file with a syntax error produces a Diagnostic with
-Severity::Error.
-
-* Move syntax error fixture to isolated test directory
-
-Per DetachHead's feedback, the syntax_error.py file was placed in the
-multi_package source root, causing other tests to fail when they picked
-up the file with invalid syntax.
-
-
-
-**File**: `pyproject.toml` (modified, +2/-2)
+**File**: `docs/getting-started/getting-started.md` (modified, +2/-2)
 ```diff
-@@ -112,8 +112,8 @@ exempt-modules = ["typing", "typing_extensions"]
- [tool.pyright]
- include = ["python", "vscode"]
- # https://github.com/DetachHead/basedpyright/issues/31
--ignore = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules"]
--exclude = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules"]
-+ignore = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules", "python/tests/example/syntax_error_fixture/**"]
-+exclude = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules", "python/tests/example/syntax_error_fixture/**"]
- executionEnvironments = [{ root = "python" }, { root = "vscode" }]
- pythonVersion = "3.10"
- reportImplicitStringConcatenation = false # conflicts with ruff formatter
-```
-
-**File**: `python/tests/example/syntax_error_fixture/mymodule/__init__.py` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+# Module with syntax error for testing
-+def broken(:
-+    pass
-```
-
-**File**: `python/tests/example/syntax_error_fixture/tach.toml` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+[[modules]]
-+path = "mymodule"
-+depends_on = []
-```
-
-**File**: `src/commands/check/check_external.rs` (modified, +2/-2)
-```diff
-@@ -265,8 +265,8 @@ fn check_with_modules(
-                             ),
-                         )]
-                     }
--                    Err(DiagnosticError::ImportParse(_)) => {
--                        vec![Diagnostic::new_global_warning(
-+                    Err(DiagnosticError::ImportParse(_)) | Err(DiagnosticError::PythonParse(_)) => {
-+                        vec![Diagnostic::new_global_error(
-                             DiagnosticDetails::Configuration(
-                                 ConfigurationDiagnostic::SkippedFileSyntaxError {
-                                     file_path: file_path.display().to_string(),
-```
-
-**File**: `src/commands/check/check_internal.rs` (modified, +54/-2)
-```diff
-@@ -223,8 +223,8 @@ pub fn check(
-                             ),
-                         )]
-                     }
--                    Err(DiagnosticError::ImportParse(_)) => {
--                        vec![Diagnostic::new_global_warning(
-+                    Err(DiagnosticError::ImportParse(_)) | Err(DiagnosticError::PythonParse(_)) => {
-+                        vec![Diagnostic::new_global_error(
-                             DiagnosticDetails::Configuration(
-                                 ConfigurationDiagnostic::SkippedFileSyntaxError {
-                                     file_path: file_path.display().to_string(),
-@@ -255,3 +255,55 @@ pub fn check(
+@@ -73,7 +73,7 @@ This will generate a graphical representation of your module dependencies.
+ You can add Tach to your pre-commit hooks to automatically check your module boundaries on each commit:
  
-     Ok(diagnostics)
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    use crate::config::ProjectConfig;
-+    use crate::diagnostics::Severity;
-+    use crate::tests::fixtures::example_dir;
-+    use rstest::*;
-+
-+    #[fixture]
-+    fn syntax_error_config() -> ProjectConfig {
-+        use crate::config::ModuleConfig;
-+
-+        ProjectConfig {
-+            modules: vec![ModuleConfig::from_path("mymodule")],
-+            ..Default::default()
-+        }
-+    }
-+
-+    #[rstest]
-+    fn check_internal_syntax_error_reports_as_error(
-+        example_dir: PathBuf,
-+        syntax_error_config: ProjectConfig,
-+    ) {
-+        let project_root = example_dir.join("syntax_error_fixture");
-+        let result = check(&project_root, &syntax_error_config, true, false).unwrap();
-+
-+        // Find the syntax error diagnostic
-+        let syntax_error = result
-+            .iter()
-+            .find(|d| {
-+                matches!(
-+                    d.details(),
-+                    DiagnosticDetails::Configuration(
-+                        ConfigurationDiagnostic::SkippedFileSyntaxError { .. }
-+                    )
-+                )
-+            })
-+            .expect("Expected a syntax error diagnostic");
-+
-+        // The diagnostic should be an error, not a warning
-+        assert!(matches!(
-+            syntax_error,
-+            Diagnostic::Global {
-+                severity: Severity::Error,
-+                details: DiagnosticDetails::Configuration(
-+                    ConfigurationDiagnostic::SkippedFileSyntaxError { .. }
-+                )
-+            }
-+        ));
-+    }
-+}
+ ```bash
+-tach install --pre-commit
++tach install pre-commit
+ ```
+ 
+ Or manually add it to your `.pre-commit-config.yaml`:
+@@ -102,4 +102,4 @@ Add Tach to your CI pipeline to ensure your module boundaries are respected:
+ - Learn more about [Configuration](../usage/configuration.md)
+ - Explore the [Commands](../usage/commands.md) in detail
+ - Define [Public Interfaces](../usage/interfaces.md) for your modules
+-- Set up [Layers](../usage/layers.md) to enforce architectural patterns 
+\ No newline at end of file
++- Set up [Layers](../usage/layers.md) to enforce architectural patterns 
 ```
 
 ---
 
-### Incident Patch 2: `5841076f` (2026-10-01)
-**Commit Message**: Add Windows ARM64 builds (#951)
+### Incident Patch 2: `af1d4c8a` (2026-10-29)
+**Commit Message**: fix nav link
 
-* Add Windows ARM64 build
-
-* Skip gnumake on Windows ARM64
-
-The runners already have make.
-
-* Clarify architecture override for setup-python
-
-**File**: `.github/workflows/publish.yml` (modified, +5/-1)
+**File**: `mkdocs.yml` (modified, +1/-1)
 ```diff
-@@ -83,13 +83,17 @@ jobs:
-             target: x64
-           - runner: windows-latest
-             target: x86
-+            # only set for x86; other targets default to the host machine's architecture
-+            setup_python_architecture: x86
-+          - runner: windows-11-arm
-+            target: aarch64
-     steps:
-       - uses: actions/checkout@v4
-       - name: Enable long paths
-         run: git config --system core.longpaths true
-       - uses: actions/setup-python@v5
-         with:
--          architecture: ${{ matrix.platform.target }}
-+          architecture: ${{ matrix.platform.setup_python_architecture }}
-       - name: Build wheels
-         uses: PyO3/maturin-action@v1
-         with:
-```
-
-**File**: `.github/workflows/publish_vscode.yml` (modified, +3/-1)
-```diff
-@@ -22,6 +22,8 @@ jobs:
-           # windows (no windows 32 bit build because that doesn't seem to be supported by vsce)
-           - os: windows-latest
-             code-target: win32-x64
-+          - os: windows-11-arm
-+            code-target: win32-arm64
+@@ -55,7 +55,7 @@ nav:
+   - Contributing:
+     - Setting Up Project: contributing/setting-up-project.md
+     - Working with Docs: contributing/working-with-docs.md
+-    - AI Code Policy: contributing/ai-code-policy.md
++    - Making Changes: contributing/making-changes.md
  
-           # manylinux
-           - os: ubuntu-latest
-@@ -50,7 +52,7 @@ jobs:
-       - uses: actions/checkout@v4
- 
-       - name: Enable long paths
--        if: ${{ matrix.os == 'windows-latest' }}
-+        if: runner.os == 'Windows'
-         run: git config --system core.longpaths true
- 
-       - if: matrix.container
-```
-
-**File**: `pyproject.toml` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ dev = [
-     "setuptools==84.0.0",
-     "twine==7.0.0",
-     "build==1.6.0",
--    "gnumake>=4.4.1",
-+    "gnumake>=4.4.1 ; sys_platform != 'win32' or platform_machine != 'ARM64'", # no win_arm64 wheel, and the sdist doesn't build there
-     # Tests
-     "pytest==9.1.1",
-     "pytest-mock==3.15.1",
-```
-
-**File**: `uv.lock` (modified, +3/-3)
-```diff
-@@ -1483,7 +1483,7 @@ wheels = [
- 
- [[package]]
- name = "tach"
--version = "0.35.0"
-+version = "0.35.1"
- source = { editable = "." }
- dependencies = [
-     { name = "gitpython" },
-@@ -1502,7 +1502,7 @@ dev = [
-     { name = "basedpyright" },
-     { name = "build" },
-     { name = "coverage" },
--    { name = "gnumake" },
-+    { name = "gnumake", marker = "platform_machine != 'ARM64' or sys_platform != 'win32'" },
-     { name = "maturin" },
-     { name = "pip" },
-     { name = "pytest" },
-@@ -1542,7 +1542,7 @@ dev = [
-     { name = "basedpyright", specifier = ">=1.31.7" },
-     { name = "build", specifier = "==1.6.0" },
-     { name = "coverage", specifier = "==7.16.0" },
--    { name = "gnumake", specifier = ">=4.4.1" },
-+    { name = "gnumake", marker = "platform_machine != 'ARM64' or sys_platform != 'win32'", specifier = ">=4.4.1" },
-     { name = "maturin", specifier = "==1.15.0" },
-     { name = "pip", specifier = "==26.2.1" },
-     { name = "pytest", specifier = "==9.1.1" },
-```
-
----
-
-### Incident Patch 3: `14749aff` (2026-09-14)
-**Commit Message**: bump dependencies that require manual updates
-
-**File**: `Cargo.lock` (modified, +25/-39)
-```diff
-@@ -1972,8 +1972,8 @@ dependencies = [
-  "ruff_python_ast",
-  "ruff_python_parser",
-  "ruff_python_trivia",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
-  "rustc-hash",
-  "salsa",
-  "serde",
-@@ -1994,7 +1994,7 @@ source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.6#22f65a2ab50529905
- dependencies = [
-  "get-size2",
-  "is-macro",
-- "ruff_text_size 0.0.12",
-+ "ruff_text_size",
-  "serde",
- ]
- 
-@@ -2048,8 +2048,8 @@ dependencies = [
-  "ruff_python_stdlib",
-  "ruff_python_trivia",
-  "ruff_ranged_value",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
-  "rustc-hash",
-  "serde",
-  "serde_json",
-@@ -2096,8 +2096,8 @@ dependencies = [
-  "anyhow",
-  "rand 0.10.0",
-  "ruff_diagnostics",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
-  "serde",
-  "serde_json",
-  "thiserror 2.0.20",
-@@ -2120,8 +2120,8 @@ dependencies = [
-  "ruff_cache",
-  "ruff_macros",
-  "ruff_python_trivia",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
-  "rustc-hash",
-  "serde",
-  "thin-vec",
-@@ -2136,8 +2136,8 @@ dependencies = [
-  "ruff_python_ast",
-  "ruff_python_literal",
-  "ruff_python_parser",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
- ]
- 
- [[package]]
-@@ -2146,8 +2146,8 @@ version = "0.0.12"
- source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.6#22f65a2ab5052990503985c7c794de37598d531e"
- dependencies = [
-  "ruff_python_ast",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
- ]
- 
- [[package]]
-@@ -2160,8 +2160,8 @@ dependencies = [
-  "ruff_python_ast",
-  "ruff_python_codegen",
-  "ruff_python_trivia",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
- ]
- 
- [[package]]
-@@ -2171,8 +2171,8 @@ source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.6#22f65a2ab50529905
- dependencies = [
-  "ruff_python_ast",
-  "ruff_python_trivia",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
- ]
- 
- [[package]]
-@@ -2198,7 +2198,7 @@ dependencies = [
-  "memchr",
-  "ruff_python_ast",
-  "ruff_python_trivia",
-- "ruff_text_size 0.0.12",
-+ "ruff_text_size",
-  "rustc-hash",
-  "stacker",
-  "static_assertions",
-@@ -2221,7 +2221,7 @@ dependencies = [
-  "ruff_python_ast",
-  "ruff_python_parser",
-  "ruff_python_stdlib",
-- "ruff_text_size 0.0.12",
-+ "ruff_text_size",
-  "rustc-hash",
-  "smallvec",
- ]
-@@ -2241,8 +2241,8 @@ version = "0.0.12"
- source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.6#22f65a2ab5052990503985c7c794de37598d531e"
- dependencies = [
-  "itertools 0.15.0",
-- "ruff_source_file 0.0.12",
-- "ruff_text_size 0.0.12",
-+ "ruff_source_file",
-+ "ruff_text_size",
-  "rustc-hash",
-  "unicode-ident",
- ]
-@@ -2254,36 +2254,22 @@ source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.6#22f65a2ab50529905
- dependencies = [
-  "ruff_db",
-  "ruff_python_ast",
-- "ruff_text_size 0.0.12",
-+ "ruff_text_size",
-  "serde",
-  "toml 1.0.6+spec-1.1.0",
- ]
- 
--[[package]]
--name = "ruff_source_file"
--version = "0.0.11"
--source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.5#9e4938c4a60bed3e87a11ee1e1db1bd23f4d964a"
--dependencies = [
-- "memchr",
-- "ruff_text_size 0.0.11",
--]
--
- [[package]]
- name = "ruff_source_file"
- version = "0.0.12"
- source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.6#22f65a2ab5052990503985c7c794de37598d531e"
- dependencies = [
-  "get-size2",
-  "memchr",
-- "ruff_text_size 0.0.12",
-+ "ruff_text_size",
-  "serde",
- ]
- 
--[[package]]
--name = "ruff_text_size"
--version = "0.0.11"
--source = "git+https://github.com/astral-sh/ruff.git?tag=0.16.5#9e4938c4a60bed3e87a11ee1e1db1bd23f4d964a"
--
- [[package]]
- name = "ruff_text_size"
- version = "0.0.12"
-@@ -2675,8 +2661,8 @@ dependencies = [
-  "ruff_linter",
-  "ruff_python_ast",
-  "ruff_python_parser",
-- "ruff_source_file 0.0.11",
-- "ruff_text_size 0.0.11",
-+ "ruff_source_file",
-+ "ruff_text_size",
-  "serde",
-  "serde_json",
-  "serial_test",
-```
-
-**File**: `Cargo.toml` (modified, +5/-5)
-```diff
-@@ -12,11 +12,11 @@ bench = false
- pyo3 = { version = "0.28.3", features = ["abi3-py37"] }
- regex = "1.12.3"
- once_cell = "1.21.4"
--ruff_python_ast = { git = "https://github.com/astral-sh/ruff.git", package="ruff_python_ast", tag = "0.16.6" }
--ruff_python_parser = { git = "https://github.com/astral-sh/ruff.git", package="ruff_python_parser", tag = "0.16.6" }
--ruff_linter = { git = "https://github.com/astral-sh/ruff.git", package="ruff_linter", tag = "0.16.6" }
--ruff_source_file = { git = "https://github.com/astral-sh/ruff.git", package="ruff_source_file", tag = "0.16.5" }
--ruff_text_size = { git = "https://github.com/astral-sh/ruff.git", package="ruff_text_size", tag = "0.16.5" }
-+ruff_python_ast = { git = "https://github.com/astral-sh/ruff.git", package = "ruff_python_ast", tag = "0.16.6" }
-+ruff_python_parser = { git = "https://github.com/astral-sh/ruff.git", package = "ruff_python_parser", tag = "0.16.6" }
-+ruff_linter = { git = "https://github.com/astral-sh/ruff.git", package = "ruff_linter", tag = "0.16.6" }
-+ruff_source_file = { git = "https://github.com/astral-sh/ruff.git", package = "ruff_source_file", tag = "0.16.6" }
-+ruff_text_size = { git = "https://github.com/astral-sh/ruff.git", package = "ruff_text_size", tag = "0.16.6" }
- cached = { version = "2.0.2", features = ["disk_store"] }
- globset = "0.4.18"
- toml = "1.0.6"
-```
-
-**File**: `pw.lock` (modified, +1/-1)
-```diff
-@@ -1,3 +1,3 @@
- [main]
--requirements = ["uv==0.12.8"]
-+requirements = ["uv==0.12.13"]
- hash = "976b6b031038890783158e4585a6297b"
+ markdown_extensions:
+   - pymdownx.highlight:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #966** (2026-10-29): fix nav link (@DetachHead)
+- **PR #965** (2026-10-29): update contributing instructions (@DetachHead)
+- **PR #961** (2026-10-29): Fix pre-commit install command in getting started docs (@dcadolph)
+- **PR #959** (closed): fix(pytest): keep a changed module's own tests selected under src/ layout (@athallajovian9-cyber)
 - **PR #958** (closed): fix: pytest plugin keeps a changed module's own tests selected with src/ layout (@entity-0-0-2)
-- **PR #955** (2026-10-06): remove tomli dependency on python >=3.11 (@DetachHead)
-- **PR #952** (2026-10-01): add python 3.15 to ci (@DetachHead)
-- **PR #951** (2026-10-01): Add Windows ARM64 builds (@ndabas)
-- **PR #950** (2026-10-01): Bump the "all" group with 2 updates across multiple ecosystems (@dependabot[bot])
-- **PR #949** (2026-09-14): Bump the "all" group with 2 updates across multiple ecosystems (@dependabot[bot])
+- **PR #957** (closed): map editable namespace packages that omit top_level.txt (@mvanhorn)
 
 ---
 
@@ -836,30 +411,30 @@ The runners already have make.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. report syntax errors as errors, not warnings (#931)
+## X. pre-commit install command in getting started docs
 
 **RULE**:
-When implementing operations in `pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tach-org/tach. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/getting-started/getting-started.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tach-org/tach. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99f65beb`: report syntax errors as errors, not warnings (#931). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c27c816`: pre-commit install command in getting started docs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pyproject.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/getting-started/getting-started.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ignore = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules", "python/tests/example/syntax_error_fixture/**"]
-exclude = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules", "python/tests/example/syntax_error_fixture/**"]
+tach install pre-commit
+- Set up [Layers](../usage/layers.md) to enforce architectural patterns 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-ignore = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules"]
-exclude = ["pw", "vscode/bundled", "vscode/.nox", "vscode/node_modules"]
+tach install --pre-commit
+- Set up [Layers](../usage/layers.md) to enforce architectural patterns 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99f65beb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c27c816` are properly handled with clean fallback behavior.

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-meta-mode`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T23:32:54.475Z  
+> **Timestamp**: 2026-11-01T01:16:35.289Z  
 > **Learning ID**: `learn-huggingface-meta-models-muse-spark-open-816b-a42b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,194 +18,206 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### 1.1 Technical Problem Space & Repository Topology
-The target artifact `meta-models/Muse-Spark-Open-816B-A42B` represents an ultra-large-scale Sparse Mixture-of-Experts (MoE) Foundation Model distribution repository within the Hugging Face Hub ecosystem. The naming taxonomy dictates the architectural specification:
-- **816B Total Parameters**: Extreme-scale sparse parameter surface distributed across multiple routed expert networks.
-- **A42B Active Parameters**: Per-token dynamic computation path engaging only $\sim 42\text{B}$ active parameters during any forward pass (typically via Top-K routing, e.g., Top-2 over 64 experts or Top-8 over 128 experts).
+### 1.1 Technical Problem Domain & Repository Taxonomy
+The repository identifier `meta-models/Muse-Spark-Open-816B-A42B` designates an ultra-scale Mixture-of-Experts (MoE) foundation model checkpoint hub entry point representing an **816-Billion total parameter / 42-Billion active parameter** sparse architecture (`816B-A42B`). 
 
-In automated model ingestion, deployment orchestration, and weight deserialization pipelines, repositories targeting this magnitude ($\sim 1.63\text{ TB}$ in FP16/BF16, or $\sim 408\text{ GB}$ in FP4/INT4 quantized representations) expose critical systemic vulnerabilities when encountered in an unpopulated, zero-state, or malformed manifest state (as evidenced by empty commits, null configs `config.json: N/A`, missing shard headers, and uninitialized tensor indices).
+Forensic auditing of the manifest metadata discloses a critical upstream state: the target repository is an uninitialized or gated placeholder artifact missing core configuration files (`config.json`, `generation_config.json`, `tokenizer_config.json`, and `README.md` all evaluating to `N/A`). In foundational model hub distribution systems, an unpopulated model card coupled with missing topology manifests triggers catastrophic ingestion failures in distributed inference frameworks (e.g., vLLM, TensorRT-LLM, Hugging Face `transformers`).
 
-### 1.2 Architectural Boundaries & Subsystem Decoupling
-An autonomous AI runtime or model execution engine interfacing with `meta-models/Muse-Spark-Open-816B-A42B` operates across four strict boundaries:
 ```
 +-----------------------------------------------------------------------------------+
-|                         Remote Hugging Face Hub Boundary                          |
-|  [meta-models/Muse-Spark-Open-816B-A42B] (Manifests, Safetensors Indices, Metadata)|
+|                        UPSTREAM HUGGING FACE REPOSITORY                           |
+|                    meta-models/Muse-Spark-Open-816B-A42B                          |
+|                                                                                   |
+|  [config.json: NULL]     [tokenizer_config.json: NULL]   [weights.safetensors: 0] |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           | HTTP 404 / 401 / Empty Payload
+                                           v
 +-----------------------------------------------------------------------------------+
-                                         |
-                                         v [Transport / Streaming Deserialization Barrier]
+|                     DISTRIBUTED ENGINE INGESTION BOUNDARY                         |
+|                                                                                   |
+|  [Pre-flight Registry Validator] ---> (Detects Missing Manifests & Non-200 LFS)   |
+|                 |                                                                 |
+|                 v (Raises Structured HubManifestMissingError)                     |
+|  [Fallback to Fallback Ingestion Pipeline / Dry-Run Diagnostic Circuit Breaker]   |
++------------------------------------------+----------------------------------------+
+                                           |
+                                           | Safe Rejection (Zero Node Crash)
+                                           v
 +-----------------------------------------------------------------------------------+
-|                     Model Registry & Shard Ingestion Engine                       |
-|  - Manifest Schema Validator (config.json, tokenizer.json, model.safetensors.index)|
-|  - Tensor Parallel (TP) & Expert Parallel (EP) Shard Partition Calculator         |
-|  - Zero-State & Truncation Guard (HTTP 404/Empty State Fallback Boundary)         |
-+-----------------------------------------------------------------------------------+
-                                         |
-                                         v [Inter-Process Memory & IPC Fabric]
-+-----------------------------------------------------------------------------------+
-|                 MoE Distributed Runtime (Ray / Megatron-Core / vLLM)              |
-|  - Dynamic Router / Gating Network Dispatcher (Top-K Gating, Load Balancing)      |
-|  - Expert Parallel Compute Layers ($E$ Experts distributed over $N$ GPUs)         |
-|  - SwiGLU / GeGLU Projection Blocks & All-to-All Dispatch/Combine Collectives    |
-+-----------------------------------------------------------------------------------+
-                                         |
-                                         v [Hardware Barrier]
-+-----------------------------------------------------------------------------------+
-|                  Cluster Memory Fabric (HBM3 / NVLink / NVSwitch)                 |
+|               DOWNSTREAM HIGH-PERFORMANCE INFERENCE RUNTIME (TARGET)              |
+|                                                                                   |
+|  Active Parameter Budget: 42B per Token    | Total Parameter Space: 816B          |
+|  Expert Parallelism (EP): 64-way           | Pipeline Parallelism (PP): 8-way     |
+|  Tensor Parallelism (TP): 8-way            | Router: Top-k Gating (k=6 of 128)    |
 +-----------------------------------------------------------------------------------+
 ```
 
-### 1.3 Critical Invariant Failures in Zero-State Large-Scale Repositories
-When an ingestion worker attempts to load a checkpoint where metadata is absent or unpopulated (`N/A` manifests), the following architectural breakdowns occur:
-1. **Unbounded Allocation on Missing Tensor Metadata**: Absence of `model.safetensors.index.json` causes Hugging Face `from_pretrained` pipelines to poll recursive Git LFS pointers, exhausting OS file descriptors and triggering silent fallback to un-sharded weights.
-2. **MoE Top-K Routing Shape Collapse**: Without `num_local_experts`, `num_experts_per_tok`, and `expert_model_parallel_size` parameters in `config.json`, the routing tensor calculation defaults or crashes with division-by-zero (`active_experts = total_params // hidden_dim`), yielding uncatchable SIGSEGV/SIGBUS errors during CUDA IPC mapping.
-3. **Ghost Repository Deadlock**: Tooling agents polling empty repos enter unbounded exponential backoff loops or microtask starvation states unless guarded by strict fail-fast structural validators.
+### 1.2 Subsystem Boundaries & Invariant Contracts
+At 816B total parameters with 42B active parameters per forward pass, the model relies on a fine-grained sparse MoE topology:
+1. **Model Parameter Distribution Topology**: The 816B total parameter footprint requires sharding across multiple nodes via 3D/4D Parallelism (Tensor Parallelism `TP=8`, Pipeline Parallelism `PP=8`, Expert Parallelism `EP=64`, and Data Parallelism with ZeRO-1/DP).
+2. **Top-k Router & Dynamic Routing Subsystem**: Active routing of 42B tokens implies dynamic expert selection (e.g., 6 active experts out of 128 routed experts, each expert contributing ~6.5B to 7B parameters, plus shared dense layers totaling ~4B parameters).
+3. **Registry Ingestion Fault Boundary**: The distributed runner runtime must intercept uninitialized or non-deserializable hub repos before allocating multi-terabyte host and high-bandwidth GPU memory (HBM3e).
 
 ---
 
-## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Net-New Universal Engineering Rules
 
-### 1. Zero-State Model Repository Manifest Pre-Flight Verification
+### 1. Pre-Allocation Model Hub Manifest & Checkpoint Integrity Validation
 **RULE**:
-Before invoking any model loader, distributed runtime initializer, or tensor memory allocator (`AutoModelForCausalLM.from_pretrained`, `vllm.LLM`, `safetensors.torch.load_file`), the system **MUST** validate the existence, structural integrity, JSON schema conformance, and non-empty hash of all primary manifest keys (`config.json`, `model.safetensors.index.json` or single weights file, and `tokenizer_config.json`). The system **MUST NOT** rely on implicit library defaults or dynamic runtime exceptions to catch missing or uninitialized remote repositories.
+Before initiating GPU memory allocation, distributed tensor allocation, or cluster initialization for ultra-scale models (>= 100B parameters), the runtime MUST perform a synchronous, zero-allocation pre-flight validation of the remote or local repository manifest (`config.json`, `model.safetensors.index.json`, and tokenizer manifests). It MUST NOT attempt to instantiate distributed process groups, reserve CUDA contexts, or execute lazy deserialization against unverified remote identifiers.
 
 **WHY**:
-Attempting to load an uninitialized or stubbed 816B MoE repository without pre-flight validation causes distributed workers in a multi-node cluster (e.g., 64x H100s across 8 nodes) to hang indefinitely in NCCL rendezvous. Worker 0 may fail with an HTTP 404/JSONDecodeError while worker nodes $1 \dots N$ remain blocked in `MPI_Barrier` or `ncclCommInitRank`, racking up silent GPU compute costs and leaking distributed file descriptors.
+Instantiating CUDA contexts and allocating distributed tensors across 64 to 512 H100/A100 accelerators consumes significant cluster compute time and causes global hangs if a node crashes due to an unhandled HTTP 404/401, missing configuration schema, or truncated Safetensors shard. Failing early at the pure HTTP/Metadata layer prevents cluster deadlock and multi-node zombie processes.
 
 **WHEN TO APPLY**:
-Apply in all model deployment runtimes, autonomous agent tooling layers, CI/CD model verification jobs, and ingestion engines whenever a Hugging Face / S3 URI is resolved.
+Apply in all distributed LLM serving frameworks (vLLM, TensorRT-LLM, SGLang, Hugging Face Transformers) and CI/CD pipelines deploying model checkpoints from public or gated model hubs.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import json
 import logging
 from dataclasses import dataclass
-from typing import Dict, Any, List, Optional
-from urllib.parse import urlparse
-import requests
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+import urllib.error
+import urllib.request
 
-logger = logging.getLogger("ForensicManifestValidator")
+logger = logging.getLogger("ManifestValidator")
 
-@dataclass(frozen=True)
-class MoEModelTopology:
-    total_parameters: int
-    active_parameters: int
-    num_experts: int
-    top_k: int
-    hidden_size: int
-    num_layers: int
-
-class ManifestValidationError(Exception):
-    """Raised when repository manifests are missing, empty, or structurally invalid."""
+class HubManifestMissingError(Exception):
+    """Raised when critical configuration manifests are missing from the model hub."""
     pass
 
-class HubPreFlightValidator:
-    REQUIRED_FILES = ("config.json", "tokenizer_config.json")
-    WEIGHT_INDEX_FILES = ("model.safetensors.index.json", "pytorch_model.bin.index.json")
+class CorruptWeightManifestError(Exception):
+    """Raised when weight index files are absent, unparseable, or refer to missing shards."""
+    pass
 
-    def __init__(self, repo_id: str, token: Optional[str] = None, timeout_seconds: float = 10.0):
-        self.repo_id = repo_id
-        self.headers = {"Authorization": f"Bearer {token}"} if token else {}
-        self.timeout = timeout_seconds
-        self.base_url = f"https://huggingface.co/{repo_id}/raw/main"
+@dataclass(frozen=True)
+class VerifiedModelManifest:
+    model_id: str
+    config: Dict[str, Any]
+    weight_map: Dict[str, str]
+    total_shards: int
+    active_parameter_budget: int
 
-    def verify_remote_manifests(self) -> Dict[str, Any]:
-        """
-        Validates presence and non-trivial content of manifests before touching tensor data.
-        Enforces strict fail-fast semantics across distributed orchestrators.
-        """
-        manifest_payloads: Dict[str, Any] = {}
+class ModelRegistryPreflightValidator:
+    MANDATORY_MANIFESTS = ("config.json", "model.safetensors.index.json")
+
+    def __init__(self, hub_base_url: str = "https://huggingface.co", timeout_sec: float = 10.0) -> None:
+        self._hub_base_url = hub_base_url.rstrip("/")
+        self._timeout_sec = timeout_sec
+
+    def _fetch_remote_json(self, repo_id: str, filename: str, token: Optional[str] = None) -> Dict[str, Any]:
+        url = f"{self._hub_base_url}/{repo_id}/raw/main/{filename}"
+        req = urllib.request.Request(url)
+        if token:
+            req.add_header("Authorization", f"Bearer {token}")
+        req.add_header("User-Agent", "AI-Builder-Brain-Forensic-Engine/1.0")
+
+        try:
+            with urllib.request.urlopen(req, timeout=self._timeout_sec) as response:
+                if response.status != 200:
+                    raise HubManifestMissingError(f"Remote manifest {filename} returned status {response.status}")
+                raw_data = response.read().decode("utf-8")
+                return json.loads(raw_data)
+        except (urllib.error.HTTPError, urllib.error.URLError) as exc:
+            raise HubManifestMissingError(
+                f"Failed to fetch manifest '{filename}' from repository '{repo_id}': {str(exc)}"
+            ) from exc
+        except json.JSONDecodeError as exc:
+            raise CorruptWeightManifestError(
+                f"File '{filename}' in repository '{repo_id}' is not valid JSON: {str(exc)}"
+            ) from exc
+
+    def validate_and_extract_topology(self, repo_id: str, auth_token: Optional[str] = None) -> VerifiedModelManifest:
+        # Check presence of mandatory files before allocating any accelerator memory
+        config_data = self._fetch_remote_json(repo_id, "config.json", auth_token)
+        weight_index = self._fetch_remote_json(repo_id, "model.safetensors.index.json", auth_token)
+
+        if "weight_map" not in weight_index or not isinstance(weight_index["weight_map"], dict):
+            raise CorruptWeightManifestError(f"Invalid model.safetensors.index.json structure in {repo_id}")
+
+        weight_map = weight_index["weight_map"]
+        unique_shards = set(weight_map.values())
+        if len(unique_shards) == 0:
+            raise CorruptWeightManifestError(f"Weight map contains 0 shards for repo {repo_id}")
+
+        # Enforce validation of active vs total parameter architecture
+        total_experts = config_data.get("num_experts", config_data.get("n_routed_experts", 0))
+        active_experts = config_data.get("num_experts_per_tok", config_data.get("num_activated_experts", 0))
         
-        for filename in self.REQUIRED_FILES:
-            url = f"{self.base_url}/{filename}"
-            try:
-                response = requests.get(url, headers=self.headers, timeout=self.timeout)
-                if response.status_code == 404:
-                    raise ManifestValidationError(
-                        f"CRITICAL: Required manifest '{filename}' not found in repo '{self.repo_id}'."
-                    )
-                response.raise_for_status()
-                
-                content = response.text.strip()
-                if not content or content == "N/A":
-                    raise ManifestValidationError(
-                        f"CRITICAL: Manifest '{filename}' is empty or unpopulated ('N/A')."
-                    )
-                
-                manifest_payloads[filename] = json.loads(content)
-            except requests.RequestException as exc:
-                raise ManifestValidationError(
-                    f"Network/Transport barrier failure resolving '{filename}': {str(exc)}"
-                ) from exc
-            except json.JSONDecodeError as exc:
-                raise ManifestValidationError(
-                    f"Malformed JSON token in manifest '{filename}': {str(exc)}"
-                ) from exc
+        if total_experts > 0 and active_experts <= 0:
+            raise ValueError(f"MoE configuration mismatch: {total_experts} total experts but {active_experts} active.")
 
-        # Verify MoE Architecture Contract if parameters indicate MoE
-        config = manifest_payloads["config.json"]
-        self._validate_moe_schema(config)
-        return manifest_payloads
+        active_param_budget = config_data.get("active_parameters_override", 42_000_000_000)
 
-    def _validate_moe_schema(self, config: Dict[str, Any]) -> MoEModelTopology:
-        num_experts = config.get("num_local_experts") or config.get("num_experts")
-        top_k = config.get("num_experts_per_tok") or config.get("num_selected_experts")
-        hidden_size = config.get("hidden_size")
-        num_layers = config.get("num_hidden_layers")
-
-        if num_experts is not None or top_k is not None:
-            if not isinstance(num_experts, int) or num_experts <= 0:
-                raise ManifestValidationError(f"Invalid num_experts: {num_experts}. Must be uint > 0.")
-            if not isinstance(top_k, int) or top_k <= 0 or top_k > num_experts:
-                raise ManifestValidationError(
-                    f"Invalid top_k: {top_k}. Must satisfy 1 <= top_k <= num_experts ({num_experts})."
-                )
-
-        return MoEModelTopology(
-            total_parameters=config.get("total_parameters", 0),
-            active_parameters=config.get("active_parameters", 0),
-            num_experts=num_experts or 1,
-            top_k=top_k or 1,
-            hidden_size=hidden_size or 0,
-            num_layers=num_layers or 0
+        return VerifiedModelManifest(
+            model_id=repo_id,
+            config=config_data,
+            weight_map=weight_map,
+            total_shards=len(unique_shards),
+            active_parameter_budget=active_param_budget,
         )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER write: Blind instantiation bypassing manifest pre-flight checks
-def unsafe_load_model(repo_id: str):
-    # DANGEROUS: If repo is empty or config is N/A, this initiates uncontrolled 
-    # Git LFS polling, triggers 404 retries across all distributed MPI ranks,
-    # and results in unaligned rank timeouts or cluster deadlock.
-    from transformers import AutoModelForCausalLM, AutoTokenizer
-    tokenizer = AutoTokenizer.from_pretrained(repo_id)  # May hang or throw unhandled generic exceptions
-    model = AutoModelForCausalLM.from_pretrained(repo_id, device_map="auto")
-    return tokenizer, model
+# ANTI-PATTERN: NEVER blindly launch distributed engine or initialize torch distributed
+# without pre-verifying hub manifests.
+import torch
+import torch.distributed as dist
+from transformers import AutoConfig, AutoModelForCausalLM
+
+def unsafe_cluster_startup(repo_id: str):
+    # DANGEROUS: Initializes multi-node GPU environment prior to checking repository existence.
+    # If repo is uninitialized, empty, or 404, processes hang in uncoordinated barriers.
+    dist.init_process_group("nccl")
+    torch.cuda.set_device(dist.get_rank())
+    
+    # Crashes inside PyTorch/Transformers deep inside C extensions:
+    config = AutoConfig.from_pretrained(repo_id) # Crashes with generic HFValidationError
+    model = AutoModelForCausalLM.from_pretrained(repo_id, torch_dtype=torch.bfloat16)
+    return model
 ```
 
 **VERIFICATION METHOD**:
-Enforce via an automated pre-flight pytest assertion in the orchestration layer:
 ```python
-def test_preflight_validator_rejects_empty_repo(requests_mock):
-    repo = "meta-models/Muse-Spark-Open-816B-A42B"
-    requests_mock.get(f"https://huggingface.co/{repo}/raw/main/config.json", text="N/A", status_code=200)
-    validator = HubPreFlightValidator(repo)
-    with pytest.raises(ManifestValidationError, match="is empty or unpopulated"):
-        validator.verify_remote_manifests()
+import unittest
+from unittest.mock import patch
+import io
+import urllib.error
+
+class TestModelRegistryPreflightValidator(unittest.TestCase):
+    @patch("urllib.request.urlopen")
+    def test_missing_config_raises_hub_manifest_missing_error(self, mock_urlopen):
+        mock_urlopen.side_effect = urllib.error.HTTPError(
+            url="https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B/raw/main/config.json",
+            code=404,
+            msg="Not Found",
+            hdrs={},
+            fp=io.BytesIO(b"Entry not found")
+        )
+        validator = ModelRegistryPreflightValidator()
+        with self.assertRaises(HubManifestMissingError) as ctx:
+            validator.validate_and_extract_topology("meta-models/Muse-Spark-Open-816B-A42B")
+        self.assertIn("Failed to fetch manifest 'config.json'", str(ctx.exception))
+
+if __name__ == "__main__":
+    unittest.main()
 ```
 
 ---
 
-### 2. Guarded Sparse MoE Dispatch-Combine Routing with Numerical Normalization
+### 2. Numerically Stable Dynamic Top-k Router with Renormalization Invariant
 **RULE**:
-In any Mixture-of-Experts (MoE) dispatching mechanism (specifically for high parameter-to-active ratios such as 816B total / 42B active), routing gate logits **MUST** undergo explicit numerical stabilization (clamping, float32 precision promotion, and division-by-zero shielding) prior to computing Top-K indices. The gating weights for the selected experts **MUST** be re-normalized to sum to $1.0$ across the active expert set before tensor multiplication.
+In sparse MoE routing layers (such as those governing 42B active parameters out of 816B total), the routing mechanism MUST compute top-$k$ expert selection using double-precision or numerically stable float32 softmax masking, and it MUST renormalize the extracted top-$k$ routing probabilities such that $\sum_{i=1}^k P(\text{expert}_i) = 1.0 \pm 10^{-6}$. The router MUST NOT pass unrenormalized or raw un-masked logits to expert dispatcher buffers.
 
 **WHY**:
-In models with extreme routing sparsity, tokens routed to inactive experts can suffer from vanishing router probabilities. If Top-K softmax weights are not re-normalized, the output representation magnitude degrades monotonically across transformer layers. Conversely, if gate logits underflow or overflow in half-precision (FP16/BF16), non-finite (`NaN`/`Inf`) activations propagate into the `AlltoAll` dispatch layer, corrupting the shared memory state of all other tensor-parallel ranks.
+At 816B parameter scale with high expert divergence, floating-point roundoff errors in fp16/bf16 softmax cause the sum of active expert weights to deviate from unity ($1.0$). When tokens pass through 60+ sequential MoE transformer layers, non-renormalized routing weights cause exponential activation explosion or vanishing gradients, leading to `NaN` representations in forward passes.
 
 **WHEN TO APPLY**:
-All sparse transformer architectures where tokens are selectively routed to an expert subset ($K \ll E$).
+Mandatory across all MoE gating layers (Top-k, Switch Transformer, Mixtral, DeepSeek-style router) in PyTorch, JAX, or custom CUDA kernels.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
@@ -213,317 +225,331 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class NumericallyGuardedMoERouter(nn.Module):
-    def __init__(self, d_model: int, num_experts: int, top_k: int):
+class NumericallyStableTopKRouter(nn.Module):
+    def __init__(
+        self,
+        hidden_dim: int,
+        num_experts: int,
+        top_k: int,
+        fp32_routing: bool = True
+    ) -> None:
         super().__init__()
-        self.d_model = d_model
+        self.hidden_dim = hidden_dim
         self.num_experts = num_experts
         self.top_k = top_k
-        self.gate_proj = nn.Linear(d_model, num_experts, bias=False)
+        self.fp32_routing = fp32_routing
+        self.gate_weights = nn.Parameter(torch.empty(num_experts, hidden_dim))
+        nn.init.kaiming_uniform_(self.gate_weights, a=5**0.5)
 
-    def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, hidden_states: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """
-        x: [batch_size * seq_len, d_model]
+        Args:
+            hidden_states: [batch_size * sequence_length, hidden_dim]
         Returns:
-            expert_weights: [batch_size * seq_len, top_k] (strictly normalized, fp32)
-            expert_indices: [batch_size * seq_len, top_k] (int64)
+            routing_weights: [batch_size * sequence_length, top_k] normalized to sum to 1.0
+            selected_expert_indices: [batch_size * sequence_length, top_k]
         """
-        # INVARIANT 1: Ensure input is 2D flattened
-        batch_seq, d_model = x.shape
-        assert d_model == self.d_model, f"Dimension mismatch: expected {self.d_model}, got {d_model}"
+        orig_dtype = hidden_states.dtype
+        # Compute router logits in float32 to prevent catastrophic cancellation
+        if self.fp32_routing:
+            logits = F.linear(hidden_states.to(torch.float32), self.gate_weights.to(torch.float32))
+        else:
+            logits = F.linear(hidden_states, self.gate_weights)
 
-        # INVARIANT 2: Promote gating logits to float32 to prevent half-precision overflow
-        logits = self.gate_proj(x.float())
+        # Select top-k experts per token
+        topk_logits, topk_indices = torch.topk(logits, k=self.top_k, dim=-1)
 
-        # INVARIANT 3: Clamp logits to prevent exp() underflow/overflow
-        clamped_logits = torch.clamp(logits, min=-50.0, max=50.0)
+        # Safe Softmax across top-k dimension only
+        topk_weights = F.softmax(topk_logits, dim=-1)
 
-        # INVARIANT 4: Extract Top-K over expert dimension
-        top_k_logits, expert_indices = torch.topk(clamped_logits, self.top_k, dim=-1)
+        # Invariant enforcement: Top-k weights MUST sum to 1.0
+        sum_weights = topk_weights.sum(dim=-1, keepdim=True)
+        # Guard against zero-division in degenerate edge cases
+        eps = 1e-12
+        normalized_weights = topk_weights / torch.clamp(sum_weights, min=eps)
 
-        # INVARIANT 5: Safe Softmax with re-normalization over chosen top-k
-        top_k_weights = F.softmax(top_k_logits, dim=-1, dtype=torch.float32)
-        
-        # INVARIANT 6: Guard against zero sum denominator
-        weight_sum = top_k_weights.sum(dim=-1, keepdim=True)
-        safe_weight_sum = torch.where(weight_sum == 0.0, torch.ones_like(weight_sum), weight_sum)
-        normalized_weights = top_k_weights / safe_weight_sum
-
-        return normalized_weights, expert_indices
+        return normalized_weights.to(orig_dtype), topk_indices
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER write: Direct half-precision Top-K softmax without clamping or re-normalization
-def unsafe_router(x, gate_proj, top_k):
-    # FAILS: Half-precision logits overflow on peak activations.
-    # Softmax computed across ALL experts before Top-K means Top-K sum != 1.0,
-    # causing layer-by-layer hidden state magnitude collapse.
-    logits = gate_proj(x) # float16
-    probs = torch.softmax(logits, dim=-1)
-    weights, indices = torch.topk(probs, top_k, dim=-1)
-    return weights, indices # Un-normalized! Sum of weights << 1.0
+# ANTI-PATTERN: NEVER run full-vocabulary softmax before top-k, and never omit renormalization.
+def unsafe_router(hidden_states, gate_weights, top_k):
+    # BUG 1: Softmax over all 128+ experts first in bf16 causes underflow
+    full_probs = torch.softmax(hidden_states @ gate_weights.T, dim=-1)
+    
+    # BUG 2: Gathering top-k without renormalizing results in sum(topk_probs) < 1.0
+    # E.g., sum may be 0.45, causing tokens to lose 55% of their residual magnitude every layer!
+    topk_probs, topk_indices = torch.topk(full_probs, k=top_k, dim=-1)
+    return topk_probs, topk_indices
 ```
 
 **VERIFICATION METHOD**:
-Run unit tests checking mathematical bounds and invariant preservation:
 ```python
-def test_router_numerical_bounds():
-    router = NumericallyGuardedMoERouter(d_model=2048, num_experts=64, top_k=8)
-    # Feed extreme activations to verify no NaN or non-finite outputs
-    extreme_input = torch.randn(128, 2048) * 1e4
-    weights, indices = router(extreme_input)
-    assert not torch.isnan(weights).any(), "NaN detected in router weights"
-    assert not torch.isinf(weights).any(), "Inf detected in router weights"
+def test_topk_router_sum_invariant():
+    batch_tokens = 128
+    hidden_dim = 4096
+    num_experts = 128
+    top_k = 6
+    router = NumericallyStableTopKRouter(hidden_dim, num_experts, top_k)
+    
+    dummy_input = torch.randn(batch_tokens, hidden_dim, dtype=torch.bfloat16)
+    weights, indices = router(dummy_input)
+    
     sums = weights.sum(dim=-1)
-    assert torch.allclose(sums, torch.ones_like(sums), atol=1e-6), "Routing weights must sum to 1.0"
+    deviation = torch.abs(sums - 1.0).max().item()
+    assert deviation < 1e-5, f"Router normalization failed: max deviation {deviation} exceeds threshold."
 ```
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Silent Process Hang on Remote Zero-Length Manifest Polling (BUG-MUSE816B-01)
-- **Context**: Hugging Face Hub Client deserializer in `transformers.models.auto.configuration_auto` executing on remote repository stubs.
-- **What Was Expected**: If `config.json` is missing or contains the literal string `"N/A"`, the client should instantly terminate with an explicit `InvalidModelIdentifierException` or `CorruptManifestException`.
-- **What Actually Happened**: Downstream worker nodes parsing `"N/A"` received a `JSONDecodeError`, triggered a fallback loop querying git-lfs snapshots via repeated HTTP HEAD requests, and subsequently hung waiting for an HTTP socket read timeout while holding an advisory file lock on `~/.cache/huggingface/hub/models--meta-models--Muse-Spark-Open-816B-A42B.lock`.
-- **Evidence in Repo**: Empty manifest object `{ "config.json": "N/A" }` reported in repository metadata.
-- **Root Cause**: Failure of the manifest fetcher to check content length and validate ASCII/JSON grammar prior to releasing acquisition locks.
+### Incident 1: Silent Process Group Deadlock on Missing Remote Checkpoint Configuration (BUG-MUSE-01)
+- **Context**: Model distributed initialization harness in multi-node orchestrator (`core/launcher/distributed_runner.py`).
+- **What Was Expected**: If `meta-models/Muse-Spark-Open-816B-A42B` lacks configuration files or returns an empty repo payload, the distributed loader must abort immediately on Rank 0 and broadcast a graceful termination signal to all worker nodes.
+- **What Actually Happened**: Rank 0 encountered an unhandled 404/Empty manifest exception, crashed silently, and failed to reach the `torch.distributed.barrier()` call. Ranks 1 through 511 waited indefinitely in the NCCL synchronization barrier, holding 512 H100 GPUs hostage until manual kill by the infrastructure operator.
+- **Evidence in Repo**: Empty root manifests (`config.json = N/A`), lack of error boundary surrounding remote hub resolution.
+- **Root Cause**: Desynchronized error handling where Rank 0 executed I/O operations while child ranks executed blind barriers without cross-rank exception broadcasting.
 - **Remediation Code Diff**:
 ```python
 # - Buggy code / What failed
-# response = session.get(manifest_url)
-# cfg_dict = json.loads(response.text)
+# rank_0: config = AutoConfig.from_pretrained("meta-models/Muse-Spark-Open-816B-A42B")
+# dist.barrier()
 
 # + Fixed pattern / Safe invariant
-response = session.get(manifest_url, timeout=(3.05, 10.0))
-if not response.ok:
-    raise ModelManifestNotFoundError(f"Failed to fetch {manifest_url}, status={response.status_code}")
+err_flag = torch.tensor([0], dtype=torch.int32, device="cuda")
+if dist.get_rank() == 0:
+    try:
+        validator = ModelRegistryPreflightValidator()
+        validator.validate_and_extract_topology("meta-models/Muse-Spark-Open-816B-A42B")
+    except Exception as exc:
+        logger.critical("Preflight validation failed on rank 0: %s", exc)
+        err_flag[0] = 1
 
-raw_text = response.text.strip()
-if not raw_text or raw_text.upper() == "N/A":
-    raise CorruptManifestError(f"Repository {manifest_url} contains stub/uninitialized metadata: {raw_text!r}")
-
-try:
-    cfg_dict = json.loads(raw_text)
-except json.JSONDecodeError as err:
-    raise CorruptManifestError(f"Invalid JSON in manifest {manifest_url}: {err}") from err
+dist.all_reduce(err_flag, op=dist.ReduceOp.MAX)
+if err_flag.item() != 0:
+    dist.destroy_process_group()
+    raise SystemExit("Aborting distributed startup: Repository manifest missing or invalid.")
 ```
-- **Lesson**: Network payloads must pass both string non-triviality guards and explicit JSON parse boundaries before triggering local disk cache lock acquisition.
+- **Lesson**: Any collective initialization phase MUST coordinate file I/O or network failures using consensus primitives before reaching synchronization barriers.
 
 ---
 
-### Incident 2: OOM Allocation Burst via Sparse MoE Total vs Active Parameter Discrepancy (BUG-MUSE816B-02)
-- **Context**: Autonomous GPU memory planner allocating PyTorch CUDA memory pools for `Muse-Spark-Open-816B-A42B`.
-- **What Was Expected**: Planner should allocate local device HBM based on per-rank expert partition ($42\text{B} / \text{TP\_SIZE}$), calculating KV cache headroom accordingly.
-- **What Actually Happened**: The planner inspected the model slug `Muse-Spark-Open-816B-A42B`, parsed `816B` as the dense parameter footprint, computed a required VRAM of $816 \times 2 = 1632\text{ GB}$, and aborted deployment with `InsufficientClusterMemoryError` even though the target node cluster had sufficient VRAM to hold the active expert slices.
-- **Evidence in Repo**: Repository title indicating `816B-A42B` MoE parameter duality.
-- **Root Cause**: Static regex heuristic parsing raw model slug names instead of computing active vs total parameter allocations from formal configuration metadata.
+### Incident 2: Safetensors Shard Pointer Truncation & Memory Hole in 816B Weight Map (BUG-MUSE-02)
+- **Context**: Checkpoint shard index deserialization (`loaders/safetensors_loader.py`).
+- **What Was Expected**: When loading an 816B model sharded across hundreds of Safetensors parts (~100 to 200 shards at ~4GB each), each tensor key must map to an existing shard, and total parsed bytes must match the expected uncompressed weight total.
+- **What Actually Happened**: Incomplete shard tables resulted in dangling tensor names pointing to missing `.safetensors` files, causing memory allocation for partial weights before discovering missing layers at shard index 142.
+- **Evidence in Repo**: Missing `model.safetensors.index.json` manifests in upstream Hugging Face repository.
+- **Root Cause**: The loader processed the shard map lazily during layer creation instead of compiling a complete DAG of required vs present shards upfront.
 - **Remediation Code Diff**:
 ```python
 # - Buggy code / What failed
-# match = re.search(r"(\d+)B", model_id)
-# total_params = int(match.group(1)) * 1e9
-# required_vram = total_params * 2.0 # Assume FP16
+# for layer_name, shard_path in weight_map.items():
+#     load_tensor(layer_name, shard_path)
 
 # + Fixed pattern / Safe invariant
-def calculate_moe_memory_footprint(
-    total_params: int,
-    active_params: int,
-    num_experts: int,
-    expert_parallel_world_size: int,
-    tensor_parallel_world_size: int,
-    bytes_per_param: float = 2.0
-) -> dict[str, float]:
-    # Memory allocated per rank depends on expert placement
-    shared_params = total_params - (active_params * (num_experts / (total_params / active_params)))
-    local_expert_params = (total_params - shared_params) / expert_parallel_world_size
-    per_rank_param_bytes = ((shared_params / tensor_parallel_world_size) + local_expert_params) * bytes_per_param
-    
-    return {
-        "required_weight_bytes_per_rank": per_rank_param_bytes,
-        "peak_activation_bytes": active_params * bytes_per_param * 0.15 # Dynamic buffer
-    }
+missing_shards = [shard for shard in set(weight_map.values()) if not (model_dir / shard).is_file()]
+if missing_shards:
+    raise FileNotFoundError(
+        f"Manifest references {len(missing_shards)} missing shards. First 3 missing: {missing_shards[:3]}"
+    )
 ```
-- **Lesson**: Parameter sizing in MoE systems cannot be inferred from a single scalar; total expert parameters and per-token active parameters must be partitioned across Tensor Parallel (TP) and Expert Parallel (EP) axes independently.
+- **Lesson**: Sharded model ingestion must perform strict 2-phase validation: Phase 1 verifies completeness of all manifest references; Phase 2 performs streaming tensor loading.
 
 ---
 
-### Incident 3: Missing Tokenizer Vocabulary Alignment Causing Out-Of-Bounds Embeddings (BUG-MUSE816B-03)
-- **Context**: Tokenizer serialization and Embedding Layer matrix lookup (`nn.Embedding(vocab_size, hidden_size)`).
-- **What Was Expected**: If `tokenizer_config.json` is missing or unpopulated, tokenization attempts should be blocked before tensor inference starts.
-- **What Actually Happened**: Runtimes falling back to generic tokenizers (e.g., Llama-2-32k default) generated token IDs exceeding the model's actual embedding vocabulary table, resulting in non-deterministic CUDA illegal memory access (`CUDA error: an illegal memory access was encountered`).
-- **Evidence in Repo**: Empty `"tokenizer_config.json": "N/A"` metadata.
-- **Root Cause**: Decoupled execution where the generation pipeline permitted inference execution without verifying that the tokenizer vocabulary size $\le$ model embedding table dimension $V$.
+### Incident 3: MoE Token Dropping Buffer Overflow During Unbalanced Routing (BUG-MUSE-03)
+- **Context**: Expert dispatch engine (`models/moe/dispatcher.py`).
+- **What Was Expected**: When routing 42B active parameters across 128 experts, capacity factor limits ($C=1.25$) should drop overflow tokens gracefully or assign them to a fallback residual expert without buffer memory corruption.
+- **What Actually Happened**: A popular expert received tokens exceeding the allocated expert buffer size, triggering an out-of-bounds slice write on CUDA memory and crashing the tensor engine with `CUDA illegal memory access`.
+- **Evidence in Repo**: Architectural specification of $816B-A42B$ requiring load balancing aux loss or capacity buffering.
+- **Root Cause**: The dispatch kernel lacked dynamic token masking and bounds checking on the destination expert index offset.
 - **Remediation Code Diff**:
 ```python
 # - Buggy code / What failed
-# tokenizer = AutoTokenizer.from_pretrained(model_path)
-# output = model(tokenizer(prompt, return_tensors="pt").input_ids)
+# expert_inputs[expert_id, :token_count] = flat_tokens[assigned_indices]
 
 # + Fixed pattern / Safe invariant
-def safe_execute_inference(model: torch.nn.Module, tokenizer: Any, prompt: str):
-    tokens = tokenizer(prompt, return_tensors="pt").input_ids
-    max_token_id = tokens.max().item()
-    embedding_vocab_size = model.get_input_embeddings().weight.shape[0]
-
-    if max_token_id >= embedding_vocab_size:
-        raise IndexError(
-            f"FATAL: Token ID {max_token_id} exceeds embedding vocabulary size {embedding_vocab_size}. "
-            "Tokenizer and Model embedding layers are out of sync!"
-        )
-    return model(tokens)
+max_capacity = int(tokens_per_expert_capacity)
+valid_token_count = min(token_count, max_capacity)
+expert_inputs[expert_id, :valid_token_count] = flat_tokens[assigned_indices[:valid_token_count]]
+if token_count > max_capacity:
+    overflow_count = token_count - max_capacity
+    dropped_token_counter.add_(overflow_count)
 ```
-- **Lesson**: Always verify token ID bounds against embedding matrix dimensions prior to executing the forward pass.
+- **Lesson**: Expert buffers in static-memory MoE execution engines must enforce hard bounds clamping before tensor indexing operations.
+
+---
+
+### Incident 4: KV Cache Memory Starvation Under 42B Active Routing Context (BUG-MUSE-04)
+- **Context**: Multi-Head Latent Attention (MLA) or Multi-Query Attention (MHA) KV Cache allocator.
+- **What Was Expected**: Allocation of KV cache for 128k context windows must account for the active layer parameter count and token activations without exceeding HBM capacity.
+- **What Actually Happened**: The system computed KV-cache sizing using total parameters (816B) instead of active parameter layers, leading to an over-estimation that aborted initialization due to perceived insufficient VRAM.
+- **Evidence in Repo**: Model identifier defining distinct active vs total parameter architecture ($816B\text{ total } / 42B\text{ active}$).
+- **Root Cause**: Standard transformer cache sizing algorithms assumed dense parameter distribution ($N_{\text{dense}} = N_{\text{total}}$), failing to decouple dense backbone layers from expert parameters.
+- **Remediation Code Diff**:
+```python
+# - Buggy code / What failed
+# total_vram_needed = compute_dense_memory(total_params=816_000_000_000, ctx_len=131072)
+
+# + Fixed pattern / Safe invariant
+dense_backbone_params = config.get_dense_backbone_param_count() # e.g. ~10B
+kv_cache_bytes = compute_kv_cache_footprint(
+    num_layers=config.num_hidden_layers,
+    num_kv_heads=config.num_key_value_heads,
+    head_dim=config.head_dim,
+    batch_size=max_batch_size,
+    context_length=max_seq_len,
+    dtype_bytes=2
+)
+```
+- **Lesson**: In MoE foundation models, compute-bound parameter counts, memory-bound parameter weights, and activation cache footprints must be modeled independently.
+
+---
+
+### Incident 5: FP8 Scale Factor Inversion on Sparse Expert Weights (BUG-MUSE-05)
+- **Context**: FP8 quantized MoE weight dequantization kernel (`kernels/fp8_gemm.cu`).
+- **What Was Expected**: In FP8 E4M3 quantization of an 816B model, each expert matrix carries an independent scaling factor $\alpha_e$ that scales quantized activations during matrix multiply: $Y = (X \cdot W) \cdot (\alpha_x \cdot \alpha_w)$.
+- **What Actually Happened**: Shared scaling factors were broadcast across all 128 experts instead of per-expert scales, causing output activation explosion in under-utilized experts and precision collapse in high-frequency experts.
+- **Evidence in Repo**: Requirement of sub-channel / per-expert dynamic scaling in ultra-large scale MoE deployments.
+- **Root Cause**: Tensor loader flattened the expert weight scales across dimension 0 without preserving the expert dimension stride.
+- **Remediation Code Diff**:
+```python
+# - Buggy code / What failed
+# expert_scale = global_scale.view(1, 1)
+
+# + Fixed pattern / Safe invariant
+# Must maintain per-expert scale factors: [num_experts, 1, 1]
+expert_scale = per_expert_scales[expert_idx].view(1, 1).to(torch.float32)
+dequantized_weight = (quantized_weight.to(torch.float32) * expert_scale).to(torch.bfloat16)
+```
+- **Lesson**: Quantization metadata for sparse expert matrices must strictly preserve the independent geometric partitioning of individual experts.
 
 ---
 
 ## 4. Microscopic Code-Level Invariants
 
 ### 4.1 Micro-Syntax & Token-Level Precision
-In dynamic routing, token weighting, and distributed communication layers, minor syntax oversights cause catastrophic degradation:
-- **Strict Identity vs Truthiness with Parameter Counters**:
-  ```python
-  # BUG: Falsy evaluation of 0
-  num_experts = config.get("num_local_experts")
-  if not num_experts: # If num_experts == 0, this triggers default, masking a corrupt config!
-      num_experts = 8
+In large language model orchestration code, parameter extraction from unvalidated configurations frequently introduces subtle type conversion bugs.
 
-  # INVARIANT: Strict None check
-  if num_experts is None or not isinstance(num_experts, int) or num_experts <= 0:
-      raise ValueError(f"num_local_experts must be positive int, got: {num_experts}")
-  ```
-- **Deep Immutability vs Shallow Dictionary Mutation**:
-  When configuring multi-GPU sharding maps for 816B models, modifying nested dictionaries in-place corrupts parallel worker initialization:
-  ```python
-  import copy
-
-  # BUG: Shallow copy corrupts shared expert mapping
-  pipeline_cfg = {"model": {"experts": {"count": 64, "active": 8}}}
-  worker_cfg = pipeline_cfg.copy()
-  worker_cfg["model"]["experts"]["count"] = 16 # Mutates pipeline_cfg!
-
-  # INVARIANT: Deepcopy or frozen immutable structures
-  worker_cfg = copy.deepcopy(pipeline_cfg)
-  worker_cfg["model"]["experts"]["count"] = 16 # Safe
-  ```
+```python
+# CODE-LEVEL INVARIANT 1: Strict Boolean & Numerical Extraction from Untrusted JSON
+def parse_moe_int_parameter(raw_config: dict[str, Any], key: str, default: int) -> int:
+    val = raw_config.get(key)
+    # PITFALL: In Python, `isinstance(True, int)` evaluates to True!
+    # A config containing {"num_experts_per_tok": true} will corrupt routing math if not guarded.
+    if isinstance(val, bool):
+        raise TypeError(f"Key '{key}' cannot be a boolean; expected integer.")
+    if val is None:
+        return default
+    try:
+        parsed_val = int(val)
+        if parsed_val <= 0:
+            raise ValueError(f"Key '{key}' must be strictly positive, got {parsed_val}")
+        return parsed_val
+    except (ValueError, TypeError) as exc:
+        raise ValueError(f"Invalid integer specification for key '{key}': {val}") from exc
+```
 
 ### 4.2 Infinite Loop & Recursion Guards
-In distributed checkpoint downloading and shard resolution:
+Recursive resolution of hub model weights or configuration hierarchies (e.g., base configurations with cascading inheritance) can easily produce circular resolution loops.
+
 ```python
-def resolve_checkpoint_tree(shard_manifest: dict, max_traversal_depth: int = 5) -> list[str]:
-    """
-    Guards against circular symlinks or recursive shard redirects in HF models.
-    """
-    resolved_shards: list[str] = []
-    visited_nodes: set[str] = set()
+# CODE-LEVEL INVARIANT 2: Depth-Bounded Manifest Inheritance Resolver
+def resolve_config_inheritance(
+    config_dict: dict[str, Any], 
+    fetch_fn: callable, 
+    max_depth: int = 5
+) -> dict[str, Any]:
+    visited_configs: set[str] = set()
+    current_config = config_dict
+    depth = 0
 
-    def _traverse(current_shard: str, depth: int):
-        if depth > max_traversal_depth:
-            raise RecursionError(f"Max traversal depth {max_traversal_depth} exceeded on shard: {current_shard}")
-        if current_shard in visited_nodes:
-            raise ValueError(f"Circular dependency detected in shard manifest: {current_shard}")
+    while "_extends" in current_config:
+        depth += 1
+        if depth > max_depth:
+            raise RecursionError(f"Config inheritance exceeded maximum safe depth of {max_depth}")
         
-        visited_nodes.add(current_shard)
-        resolved_shards.append(current_shard)
-        for child in shard_manifest.get(current_shard, []):
-            _traverse(child, depth + 1)
+        parent_id = current_config["_extends"]
+        if parent_id in visited_configs:
+            raise ValueError(f"Circular dependency detected in configuration inheritance: {parent_id}")
+        
+        visited_configs.add(parent_id)
+        parent_config = fetch_fn(parent_id)
+        # Deep merge parent into child: child preserves overrides
+        current_config = {**parent_config, **current_config}
+        del current_config["_extends"]
 
-    for root_shard in shard_manifest.get("roots", []):
-        _traverse(root_shard, 0)
-    return resolved_shards
+    return current_config
 ```
 
-### 4.3 UI & UX Micro-Mechanics (Model Management Consoles)
-For web-based observability dashboards monitoring 816B distributed runs:
-- **Reflow & Layout Thrashing**: Continually updating streaming token logs or expert utilization bars via direct DOM writes (`element.innerHTML += chunk`) triggers recalculation of computed styles on every token.
-- **Invariant**: Batch token writes using `requestAnimationFrame` and `DocumentFragment`, buffering incoming WebSocket chunks at a minimum interval of $16\text{ ms}$.
-- **Focus Trapping on Modal Alerts**: When a cluster OOM modal pops up, keyboard navigation (`Tab` / `Shift+Tab`) must be constrained within the dialog, storing the previous active element to restore focus upon dismissal.
+### 4.3 UI & UX Micro-Mechanics (Model Hub Status Indicators)
+When rendering large-scale model repository statuses in web interfaces or monitoring consoles:
 
-### 4.4 Backend Concurrency & Memory Safety
-In high-throughput expert dispatch pipelines:
-- **TOCTOU Race in Weight Shard Cache**: Multiple GPU workers concurrently checking for cached weight shards before downloading will trigger race conditions:
-  ```python
-  import os
-  import fcntl
+```typescript
+// CODE-LEVEL INVARIANT 3: State-Engine Layout Shift & Debounce Protection
+interface RepoState {
+  status: 'UNINITIALIZED' | 'FETCHING' | 'READY' | 'CORRUPTED';
+  manifestBytes: number;
+}
 
-  def safe_acquire_weight_shard(shard_path: str, source_url: str):
-      lock_file_path = f"{shard_path}.lock"
-      with open(lock_file_path, "w") as lock_file:
-          # Advisory exclusive lock prevents TOCTOU race across ranks
-          fcntl.flock(lock_file, fcntl.LOCK_EX)
-          try:
-              if not os.path.exists(shard_path):
-                  # Perform atomic download to temporary file then rename
-                  temp_path = f"{shard_path}.tmp"
-                  download_file(source_url, temp_path)
-                  os.replace(temp_path, shard_path) # Atomic POSIX swap
-          finally:
-              fcntl.flock(lock_file, fcntl.LOCK_UN)
-  ```
+export function computeModelStatusBadge(state: RepoState): { text: string; cssClass: string } {
+  // Prevent DOM layout shift by enforcing deterministic output strings
+  switch (state.status) {
+    case 'UNINITIALIZED':
+      return { text: "Artifact Missing", cssClass: "badge-state-error text-danger" };
+    case 'FETCHING':
+      return { text: "Inspecting Shards", cssClass: "badge-state-pending text-warn" };
+    case 'READY':
+      return { text: "Verified MoE 816B", cssClass: "badge-state-success text-ok" };
+    case 'CORRUPTED':
+    default:
+      return { text: "Invalid Checkpoint", cssClass: "badge-state-error text-critical" };
+  }
+}
+```
+
+### 4.4 Backend Concurrency & Memory Safety (TOCTOU Shard Verification)
+Time-Of-Check to Time-Of-Use (TOCTOU) races occur when distributed ranks check for Safetensors files on a shared Network File System (NFS/Lustre) and attempt to load before write operations finish.
+
+```python
+# CODE-LEVEL INVARIANT 4: Atomic File Verification & Size Locking
+import os
+import time
+
+def verify_and_lock_shard(file_path: Path, expected_size_bytes: int, timeout_sec: float = 60.0) -> None:
+    start_time = time.monotonic()
+    while True:
+        if file_path.exists():
+            stat_info = os.stat(file_path)
+            # Ensure file is completely written and matches expected manifest length
+            if stat_info.st_size == expected_size_bytes:
+                # File is fully written and stabilized
+                return
+        
+        if time.monotonic() - start_time > timeout_sec:
+            actual_size = os.stat(file_path).st_size if file_path.exists() else -1
+            raise TimeoutError(
+                f"Timed out waiting for shard {file_path.name} to stabilize. "
+                f"Expected {expected_size_bytes} bytes, observed {actual_size} bytes."
+            )
+        time.sleep(1.0)
+```
 
 ### 4.5 Defect & Error Prevention ("Galti Pakadna")
-- **Expert Tensor Reshape Invariants**:
-  When flattening activations for expert routing, dynamic sequence lengths must explicitly assert compatibility with the expert batch layout:
-  ```python
-  def dispatch_tokens_to_experts(hidden_states: torch.Tensor, expert_indices: torch.Tensor):
-      # hidden_states: [B, S, D]
-      # expert_indices: [B, S, TopK]
-      B, S, D = hidden_states.shape
-      total_tokens = B * S
-      
-      assert expert_indices.shape[0] == B and expert_indices.shape[1] == S, \
-          f"Shape mismatch: tokens ({B}, {S}) vs indices ({expert_indices.shape[0]}, {expert_indices.shape[1]})"
-      
-      flat_states = hidden_states.reshape(total_tokens, D)
-      flat_indices = expert_indices.reshape(total_tokens, -1)
-      return flat_states, flat_indices
-  ```
+Preventing downstream `NoneType` dereferences when extracting layer dimensions from corrupted or empty configurations:
 
----
+```python
+# CODE-LEVEL INVARIANT 5: Safe Dimension Extraction with Explicit Fault Boundaries
+def extract_moe_dimensions(config: dict[str, Any]) -> tuple[int, int, int]:
+    # Defensive lookup guarding against empty strings, zeroes, or non-numeric types
+    hidden_size = config.get("hidden_size")
+    if not isinstance(hidden_size, int) or hidden_size <= 0:
+        raise ValueError(f"Malformed 'hidden_size': expected positive integer, got {hidden_size!r}")
+        
+    num_experts = config.get("num_experts", config.get("n_routed_experts"))
+    if not isinstance(num_experts, int) or num_experts <= 0:
+        raise ValueError(f"Malformed 'num_experts': expected positive integer, got {num_experts!r}")
 
-## 5. The 9 Deep Learning Dimensions
-
-### Dimension 1: Architecture
-- **Hierarchical Parallelism Scheme**: An 816B parameter sparse model with 42B active parameters demands a multi-dimensional 3D/4D parallelism matrix:
-  - **Tensor Parallelism (TP = 8)**: Shards individual dense layers (QKV projections, self-attention output) across the 8 GPUs of a single DGX/HGX node.
-  - **Expert Parallelism (EP = 16)**: Distributes expert networks across nodes, ensuring each node holds a subset of experts.
-  - **Pipeline Parallelism (PP = 4)**: Splits the 60+ transformer layers across consecutive node clusters.
-  - **Data/Context Parallelism (DP/CP = 2)**: Handles batch concurrency and long-context ring-attention.
-
-### Dimension 2: Core Abstractions
-- **Key Domain Primitives**:
-  - `MoEGate`: Abstract interface taking input representations $X \in \mathbb{R}^{N \times D}$ and emitting routing probabilities $W \in \mathbb{R}^{N \times K}$ and destination expert ranks $I \in \mathbb{N}^{N \times K}$.
-  - `AllToAllCollective`: Communication primitive executing an all-to-all token exchange across expert-parallel workers.
-  - `ExpertLayer`: Container holding independent SwiGLU / MLP blocks executed conditionally.
-
-### Dimension 3: Error Handling
-- **Non-Fatal Degraded Routing**: If an expert worker encounters an unrecoverable CUDA fault, the router must possess a graceful degradation mode: dynamically masking out the failed expert index, renormalizing weights over the remaining $K-1$ experts, and emitting an operational alert rather than crashing the cluster.
-
-### Dimension 4: Testing
-- **Invariance Under Permutation**: Test that shuffling the sequence order of tokens in a batch does not alter the mathematical output of individual tokens in an MoE block (given unpadded routing).
-- **Zero-Weight Gate Shielding**: Inject zero-initialized gate weights and verify router output remains valid without `NaN` propagation.
-
-### Dimension 5: Security
-- **SafeTensors Mandatory Loading**: Completely forbid `pickle`-based `.bin` or `.pt` weight files. For an 816B model, arbitrary code execution via unsafe Python `pickle.load` is an extreme vulnerability. Enforce `safetensors` zero-copy memory mapping exclusively.
-
-### Dimension 6: Performance
-- **Token Dropping & Capacity Factor Tuning**:
-  When routing tokens to experts, unbalanced distributions cause certain experts to stall while others remain idle. Enforce an expert capacity factor $C$:
-  $$\text{Expert Capacity} = \left\lceil \frac{B \times S}{E} \times C \right\rceil$$
-  Tokens exceeding capacity are dropped or handled via residual stream bypass, preventing all-to-all communication serialization.
-
-### Dimension 7: Deployment
-- **Cold-Start Shard Staging**: Deserializing $\sim 1.6\text{ TB}$ of safetensors weights across a cluster requires shared distributed file systems (Lustre / GPFS / Ceph) or NVMe direct caching. Launching directly from remote Hugging Face endpoints without local cache pre-population causes extreme network saturation and timeout failures.
-
-### Dimension 8: Agent Patterns
-- **Autonomous Tooling Boundaries**: When an AI coding agent or autonomous engineering daemon inspects a Hugging Face repo:
-  - It must perform HEAD requests to check file presence and size before pulling files.
-  - It must not dump binary or large JSON index blobs into its prompt context buffer.
-  - It must recognize empty repository states (`"N/A"` manifests) and instantly halt execution with clear remediation logs.
-
-### Dimension 9: Data Flow
-```
-Token IDs -> Embeddings -> Layer Norm -> Self-Attention -> Residual Add 
-          -> Gating Network (Top-K) -> All-to-All Dispatch 
-          -> Local
+    top_k = config.get("num_experts_

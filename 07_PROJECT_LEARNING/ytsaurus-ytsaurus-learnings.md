@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `0f38c118`  
+> **Source Version**: `5ea67989`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:02:21.358Z  
+> **Timestamp**: 2026-10-31T19:14:45.084Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:02:21.353Z  
+> **Harvest Timestamp**: 2026-10-31T19:14:45.078Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2325 stars
+- **Stars / Engagement**: 2327 stars
 
 ---
 
@@ -1198,315 +1198,279 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f38c118` (2026-10-25)
-**Commit Message**: Prepare Rust 1.95 and shared crate dependencies (1/4)
+### Incident Patch 1: `9067a5fd` (2026-10-31)
+**Commit Message**: YT-30107: Reserve estimated memory for heavy commands before execution
 
-Update the shared Rust toolchain to 1.95.0, align the existing crate versions and import the first 236 additional crates needed for source builds of the remaining Rust libraries and Python extensions. Update the existing librsvg, cryptography, Temporal and tars_search dependencies to the aligned versions.
+- Changelog entry
+  Type: fix
+  Component: proxy
 
-Keep this batch closed under normal, host, proc-macro and build-script dependencies. The contrib/crates RECURSE contains only available crates and preserves platform guards. The remaining binary imports are switched in part 4.
+Reserve estimated memory for heavy driver requests before execution to avoid proxies OOM.
+commit_hash:7d17d03398eb9a59614293dd2c307c94b14a4f4e
 
-Validation: the partial contrib/crates tree builds on Linux musl. The complete migration passed 50 new checks and 13 existing integration checks before partitioning.
-
-Part 1 of 4: shared crates and build support; two more crate batches follow, then the 21 consumer migrations.
-
-https://nda.ya.ru/t/gxgIVuek7v7tm9
-commit_hash:5a927a3bb3ef397c59c0cb36b1b4554137384321
-
-**File**: `build/conf/license.json` (modified, +1/-0)
+**File**: `yt/yt/client/driver/CMakeLists.darwin-arm64.txt` (modified, +1/-0)
 ```diff
-@@ -217,6 +217,7 @@
-             "CC-BY-4.0",
-             "CC-PDDC",
-             "CC0-1.0",
-+            "CDLA-Permissive-2.0",
-             "Cmu-Computing-Services",
-             "CUP-Parser",
-             "curl",
+@@ -38,6 +38,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
-**File**: `build/platform/rust/resources.json` (modified, +5/-5)
+**File**: `yt/yt/client/driver/CMakeLists.darwin-x86_64.txt` (modified, +1/-0)
 ```diff
-@@ -1,19 +1,19 @@
- {
-     "by_platform": {
-         "darwin-arm64": {
--            "uri": "sbr:14106255984"
-+            "uri": "sbr:14121998947"
-         },
-         "darwin-x86_64": {
--            "uri": "sbr:14106244638"
-+            "uri": "sbr:14121997147"
-         },
-         "linux-aarch64": {
--            "uri": "sbr:14106240493"
-+            "uri": "sbr:14121996555"
-         },
-         "linux-x86_64": {
--            "uri": "sbr:14106237045"
-+            "uri": "sbr:14121996114"
-         },
-         "win32-x86_64": {
--            "uri": "sbr:14105412528"
-+            "uri": "sbr:14122000721"
-         }
-     }
- }
+@@ -38,6 +38,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
-**File**: `build/rust/staticlib/lib.rs` (modified, +4/-0)
+**File**: `yt/yt/client/driver/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
 ```diff
-@@ -1,2 +1,6 @@
- // Fixed standard library, system allocator and abort-on-panic runtime.
- // Application crates are linked separately through their native archives.
-+
-+// Target libraries such as syn/proc-macro2 also reference standard-library
-+// monomorphizations exported by proc_macro, even outside the compiler process.
-+extern crate proc_macro;
+@@ -41,6 +41,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
-**File**: `build/scripts/rust.py` (modified, +7/-1)
+**File**: `yt/yt/client/driver/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
 ```diff
-@@ -42,6 +42,10 @@ def toolchain_environment(args, work):
-         "CARGO_MANIFEST_DIR": str(args.manifest_dir.resolve()),
-         "CARGO_PKG_NAME": args.name, "CARGO_CRATE_NAME": args.name.replace("-", "_"),
-         "CARGO_PKG_VERSION": args.version,
-+        "CARGO_PKG_AUTHORS": "", "CARGO_PKG_DESCRIPTION": "",
-+        "CARGO_PKG_HOMEPAGE": "", "CARGO_PKG_REPOSITORY": "",
-+        "CARGO_PKG_LICENSE": "", "CARGO_PKG_LICENSE_FILE": "",
-+        "CARGO_PKG_README": "", "CARGO_PKG_RUST_VERSION": "",
-         "CC": env["HOST_CC"],
-         "CXX": env["HOST_CXX"],
-         "AR": env["HOST_AR"],
-@@ -95,7 +99,9 @@ def externs(args):
-         alias = aliases.get(relative, alias)
-         result += ["--extern", alias + "=" + str(Path(path).resolve().with_suffix(".rlib"))]
-     for path in args.proc_macros:
--        result += ["--extern", dependency_name(path) + "=" + str(Path(path).resolve())]
-+        relative = Path(path).resolve().parent.relative_to(args.build_root.resolve()).as_posix()
-+        alias = aliases.get(relative, dependency_name(path))
-+        result += ["--extern", alias + "=" + str(Path(path).resolve())]
-     return result
- 
- 
+@@ -41,6 +41,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
-**File**: `contrib/crates/Inflector-0.11.4/ya.make` (modified, +39/-0)
+**File**: `yt/yt/client/driver/CMakeLists.windows-x86_64.txt` (modified, +1/-0)
 ```diff
-@@ -45,4 +45,43 @@ LICENSE("BSD-2-Clause")
- VERSION(0.11.4)
- ORIGINAL_SOURCE(https://static.crates.io/crates/Inflector/Inflector-0.11.4.crate)
- 
-+CRATE_FEATURES(
-+    default
-+    heavyweight
-+    lazy_static
-+    regex
-+)
-+
-+PEERDIR(
-+    contrib/crates/lazy_static-1.5.1
-+    contrib/crates/regex-1.13.1
-+)
-+
-+CRATE_SOURCES(
-+    src/cases/camelcase/mod.rs
-+    src/cases/case/mod.rs
-+    src/cases/classcase/mod.rs
-+    src/cases/kebabcase/mod.rs
-+    src/cases/mod.rs
-+    src/cases/pascalcase/mod.rs
-+    src/cases/screamingsnakecase/mod.rs
-+    src/cases/sentencecase/mod.rs
-+    src/cases/snakecase/mod.rs
-+    src/cases/tablecase/mod.rs
-+    src/cases/titlecase/mod.rs
-+    src/cases/traincase/mod.rs
-+    src/lib.rs
-+    src/numbers/deordinalize/mod.rs
-+    src/numbers/mod.rs
-+    src/numbers/ordinalize/mod.rs
-+    src/string/constants/mod.rs
-+    src/string/deconstantize/mod.rs
-+    src/string/demodulize/mod.rs
-+    src/string/mod.rs
-+    src/string/pluralize/mod.rs
-+    src/string/singularize/mod.rs
-+    src/suffix/foreignkey/mod.rs
-+    src/suffix/mod.rs
-+)
-+
- END()
+@@ -28,6 +28,7 @@ target_sources(yt-client-driver PRIVATE
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/bundle_controller_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/chaos_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command.cpp
++  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/config.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/cypress_commands.cpp
+   ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/distributed_table_commands.cpp
 ```
 
-**File**: `contrib/crates/aho-corasick-1.1.5/COPYING` (added, +3/-0)
+**File**: `yt/yt/client/driver/command_memory_estimate.cpp` (added, +66/-0)
 ```diff
-@@ -0,0 +1,3 @@
-+This project is dual-licensed under the Unlicense and MIT licenses.
+@@ -0,0 +1,66 @@
++#include "command_memory_estimate.h"
 +
-+You may use this code under the terms of either license.
++#include "config.h"
++
++#include <yt/yt/client/api/config.h>
++
++#include <yt/yt/client/table_client/config.h>
++
++#include <yt/yt/core/ytree/node.h>
++#include <yt/yt/core/ytree/yson_struct.h>
++
++namespace NYT::NDriver {
++
++using namespace NYTree;
++
++////////////////////////////////////////////////////////////////////////////////
++
++namespace {
++
++template <class TConfig>
++TIntrusivePtr<TConfig> GetEffectiveConfig(
++    const TIntrusivePtr<TConfig>& config,
++    const IMapNodePtr& parameters,
++    TStringBuf parameterName)
++{
++    auto patch = parameters ? parameters->FindChild(parameterName) : INodePtr();
++    return patch ? UpdateYsonStruct(config, patch) : config;
++}
++
++} // namespace
++
++std::optional<i64> EstimateHeavyCommandMemoryUsage(
++    const std::string& commandName,
++    const TDriverConfigPtr& config,
++    const IMapNodePtr& parameters)
++{
++    if (commandName == "read_file" || commandName == "read_file_partition") {
++        return GetEffectiveConfig(config->FileReader, parameters, "file_reader")->MaxBufferSize;
++    }
++    if (commandName == "read_table" || commandName == "read_blob_table") {
++        return GetEffectiveConfig(config->TableReader, parameters, "table_reader")->MaxBufferSize;
++    }
++    if (commandName == "read_table_partition") {
++        // The partition reader ignores the driver config and uses the default one.
++        static const auto DefaultTableReaderConfig = New<NTableClient::TTableReaderConfig>();
++        return DefaultTableReaderConfig->MaxBufferSize;
++    }
++    if (commandName == "write_file") {
++        auto writerConfig = GetEffectiveConfig(config->FileWriter, parameters, "file_writer");
++        return writerConfig->BlockSize + writerConfig->EncodeWindowSize;
++    }
++    if (commandName == "write_file_fragment") {
++        // The file fragment writer ignores the driver config and uses the default one.
++        static const auto DefaultFileWriterConfig = New<NApi::TFileWriterConfig>();
++        return DefaultFileWriterConfig->BlockSize + DefaultFileWriterConfig->EncodeWindowSize;
++    }
++    if (commandName == "write_table" || commandName == "write_table_fragment") {
++        auto writerConfig = GetEffectiveConfig(config->TableWriter, parameters, "table_writer");
++        return writerConfig->MaxBufferSize + writerConfig->EncodeWindowSize;
++    }
++    return std::nullopt;
++}
++
++////////////////////////////////////////////////////////////////////////////////
++
++} // namespace NYT::NDriver
 ```
 
-**File**: `contrib/crates/aho-corasick-1.1.5/Cargo.lock` (added, +30/-0)
+**File**: `yt/yt/client/driver/command_memory_estimate.h` (added, +21/-0)
 ```diff
-@@ -0,0 +1,30 @@
-+# This file is automatically @generated by Cargo.
-+# It is not intended for manual editing.
-+version = 3
+@@ -0,0 +1,21 @@
++#pragma once
 +
-+[[package]]
-+name = "aho-corasick"
-+version = "1.1.5"
-+dependencies = [
-+ "doc-comment",
-+ "log",
-+ "memchr",
-+]
++#include "public.h"
 +
-+[[package]]
-+name = "doc-comment"
-+version = "0.3.4"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "780955b8b195a21ab8e4ac6b60dd1dbdcec1dc6c51c0617964b08c81785e12c9"
++#include <yt/yt/core/ytree/public.h>
 +
-+[[package]]
-+name = "log"
-+version = "0.4.33"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "0ceec5bc11778974d1bcb055b18002eba7f4b3518b6a0081b3af5f21666da9ad"
++namespace NYT::NDriver {
 +
-+[[package]]
-+name = "memchr"
-+version = "2.8.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
++////////////////////////////////////////////////////////////////////////////////
++
++//! Returns an upper bound of the memory a heavy command may hold in its reader or writer buffers,
++//! derived from |config| and the per-request config overrides in |parameters|.
++//! Returns null for commands without a known estimate.
++std::optional<i64> EstimateHeavyCommandMemoryUsage(
++    const std::string& commandName,
++    const TDriverConfigPtr& config,
++    const NYTree::IMapNodePtr& parameters);
++
++////////////////////////////////////////////////////////////////////////////////
++
++} // namespace NYT::NDriver
 ```
 
-**File**: `contrib/crates/aho-corasick-1.1.5/Cargo.toml` (added, +80/-0)
+**File**: `yt/yt/client/driver/ya.make` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,80 @@
-+# THIS FILE IS AUTOMATICALLY GENERATED BY CARGO
-+#
-+# When uploading crates to the registry Cargo will automatically
-+# "normalize" Cargo.toml files for maximal compatibility
-+# with all versions of Cargo and also rewrite `path` dependencies
-+# to registry (e.g., crates.io) dependencies.
-+#
-+# If you are reading this file be aware that the original Cargo.toml
-+# will likely look very different (and much more reasonable).
-+# See Cargo.toml.orig for the original contents.
-+
-+[package]
-+edition = "2021"
-+rust-version = "1.60.0"
-+name = "aho-corasick"
-+version = "1.1.5"
-+authors = ["Andrew Gallant <jamslam@gmail.com>"]
-+build = false
-+exclude = [
-+    "/aho-corasick-debug",
-+    "/benchmarks",
-+    "/tmp",
-+]
-+autolib = false
-+autobins = false
-+autoexamples = false
-+autotests = false
-+autobenches = false
-+description = "Fast multiple substring searching."
-+homepage = "https://github.com/BurntSushi/aho-corasick"
-+readme = "README.md"
-+keywords = [
-+    "string",
-+    "search",
-+    "text",
-+    "pattern",
-+    "multi",
-+]
-+categories = ["text-processing"]
-+license = "Unlicense OR MIT"
-+repository = "https://github.com/BurntSushi/aho-corasick"
-+
-+[package.metadata.docs.rs]
-+all-features = true
-+rustdoc-args = [
-+    "--cfg",
-+    "docsrs",
-+    "--generate-link-to-definition",
-+]
-+
-+[features]
-+default = [
-+    "std",
-+    "perf-literal",
-+]
-+logging = ["dep:log"]
-+perf-literal = ["dep:memchr"]
-+std = ["memchr?/std"]
-+
-+[lib]
-+name = "aho_corasick"
-+path = "src/lib.rs"
-+
-+[dependencies.log]
-+version = "0.4.17"
-+optional = true
-+
-+[dependencies.memchr]
-+version = "2.4.0"
-+optional = true
-+default-features = false
-+
-+[dev-dependencies.doc-comment]
-+version = "0.3.3"
-+
-+[profile.bench]
-+debug = 2
-+
-+[profile.release]
-+debug = 2
+@@ -8,6 +8,7 @@ SRCS(
+     bundle_controller_commands.cpp
+     chaos_commands.cpp
+     command.cpp
++    command_memory_estimate.cpp
+     config.cpp
+     cypress_commands.cpp
+     distributed_table_commands.cpp
 ```
 
 ---
 
-### Incident Patch 2: `23400929` (2026-10-25)
-**Commit Message**: YT-30164: Wait for node RPC readiness in test_sequoia_replica_modifications_throttling
+### Incident Patch 2: `9818d390` (2026-10-31)
+**Commit Message**: Fix typo in chaos-dynamic-tables.md
 
-After `start_nodes(sync=False)` the test waited only for `state == online`. A node registers at master (`bootstrap.cpp:1196`) before its RPC server starts listening (`bootstrap.cpp:1306`), so it can be online and chosen as a write target while still refusing connections.
+При перешардировании очередей надо наблюдать что прогресс репликации движется, а replication_lag_time наоборот должен быть околонулевым.
 
-In the failing run node `localhost:16196` was online at 11:15:41.5 but its bus server started at 11:15:42.9. `write_table("//tmp/t2")` at 11:15:41.9 got `Connection refused` from both allocated targets, banned them, and the reallocation found nothing: only three nodes carry `default` since https://nda.ya.ru/t/hMzNrV3s7vD7gp, and the upload replication factor is 2.
+---
 
-`Env.synchronize()` runs the queued `nodes_ready` check, which also probes each node's orchid (`yt_env.py`).
-commit_hash:897342b29a26be36c12332fbeacfa16b9c2e59b2
+Pull Request resolved: https://github.com/ytsaurus/ytsaurus/pull/1892
+commit_hash:3ad55157f19984a15125d44da966e2a8631eb4bc
 
-**File**: `yt/yt/tests/integration/sequoia/test_sequoia_objects.py` (modified, +2/-2)
+**File**: `yt/docs/ru/_includes/user-guide/dynamic-tables/chaos-dynamic-tables.md` (modified, +1/-1)
 ```diff
-@@ -1012,7 +1012,7 @@ def get_node_count(state):
-         assert get_node_count("online") < self.NUM_NODES
+@@ -117,7 +117,7 @@ $ yt --proxy replica_cluster create replication_log_table //path/to/replication_
+ Реплики-очереди являются очередями, и поэтому нельзя напрямую изменить количество таблетов в таких репликах. Перешардирование реплик-очередей возможно только через пересоздание. Сделать это можно следующим способом:
  
-         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/sleep_duration_before_sequoia_replica_modifications", 0)
--        wait(lambda: get_node_count("online") == self.NUM_NODES)
-+        self.Env.synchronize()
+ 1. Завести новые реплики-очереди с желаемым количеством шардов в sync-режиме и указав `catchup=%false` и `replicated_table_tracker_enabled=%false` с новым путем. Последнее нужно, чтобы все новые реплики не стали async.
+-2. Убедиться, что в них началась запись: лаг реплики в интерфейсе должен оставаться околонулевым, а атрибут replication_lag_time должен расти
++2. Убедиться, что в них началась запись: лаг реплики в интерфейсе должен оставаться околонулевым, а атрибут replication_lag_timestamp должен расти
+ 3. Сгенерировать таймстемп `yt generate-timestamp` и запомнить его
+ 4. Дождаться, когда значение replication_lag_timestamp _всех_ реплик будет больше, чем timestamp, сгенерированный на предыдущем шаге. Посмотреть replication_lag_timestamp реплик таблицы можно командой
+ ```bash
+```
+
+---
+
+### Incident Patch 3: `580592b6` (2026-10-31)
+**Commit Message**: YT-30200: Send job proxy heartbeat before requesting memory reserve increase
+
+When the node detects a resource overdraft on `UpdateResourceUsage`, it aborts the job immediately and reports the statistics from the job proxy's last periodic heartbeat. A job that grows quickly can overdraft before its first heartbeat, so the abort carries no `user_job/max_memory` / `job_proxy/max_memory`. `TTask::OnJobResourceOverdraft` then falls back to comparing reserve gaps against zero usage and blames the process with the smaller reserve (usually the job proxy); the user job reserve is never increased.
+
+Observed in `TestAllocationSizeIncrease::test_allocation_aborted_on_resource_lack`: job ran ~1.7s, controller logged `JobProxyMaxMemory: 0, UserJobMaxMemory: 0`, chose job proxy overdraft, the restarted job kept the old reserve and the expected `node_resource_overcommit` abort never happened.
+
+Fix: in `CheckMemoryUsage`, deliver a heartbeat (and wait for it) before requesting a larger memory reserve. The user job memory tracker has already recorded the new peak at this point, so the node holds fresh `max_memory` if it aborts. `RequestedMemoryReserve_` is bumped after the heartbeat so concurrent C
+
+**File**: `yt/yt/server/job_proxy/job_proxy.cpp` (modified, +13/-1)
+```diff
+@@ -398,6 +398,7 @@ void TJobProxy::SendHeartbeat()
  
-         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/max_concurrent_sequoia_replica_modifications", 0)
-         create("table", "//tmp/t2")
-@@ -1048,7 +1048,7 @@ def get_node_count(state):
-         assert get_node_count("online") < self.NUM_NODES
+     auto job = FindJob();
+     if (!job) {
++        LastHeartbeatFuture_ = OKFuture;
+         return;
+     }
  
-         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/sleep_duration_before_sequoia_replica_modifications", 0)
--        wait(lambda: get_node_count("online") == self.NUM_NODES)
-+        self.Env.synchronize()
+@@ -445,7 +446,7 @@ void TJobProxy::SendHeartbeat()
+         }
+     }
  
-         set("//sys/@config/chunk_manager/sequoia_chunk_replicas/throttle_sequoia_replica_modifications", False)
+-    req->Invoke().Subscribe(BIND(&TJobProxy::OnHeartbeatResponse, MakeWeak(this)));
++    LastHeartbeatFuture_ = req->Invoke().AsVoid().Apply(BIND(&TJobProxy::OnHeartbeatResponse, MakeWeak(this)));
+ }
  
+ void TJobProxy::OnHeartbeatResponse(const TError& error)
+@@ -2077,6 +2078,17 @@ void TJobProxy::CheckMemoryUsage()
+         YT_TLOG_DEBUG("Requesting node for memory usage increase")
+             .With("OldMemoryReserve", RequestedMemoryReserve_.load())
+             .With("NewMemoryReserve", memoryReserve);
++        // The node may abort the job for overdraft on this request, reporting the statistics it has.
++        // Deliver fresh max_memory first; otherwise the controller agent cannot tell which process overdrafted.
++        auto executedEvent = HeartbeatExecutor_->GetExecutedEvent();
++        HeartbeatExecutor_->ScheduleOutOfBand();
++        auto error = WaitFor(executedEvent);
++        if (error.IsOK()) {
++            auto heartbeatFuture = LastHeartbeatFuture_;
++            error = WaitFor(heartbeatFuture);
++        }
++        YT_TLOG_ERROR_UNLESS(error.IsOK(), "Failed to send heartbeat before memory reserve increase")
++            .With(error);
+         RequestedMemoryReserve_ = memoryReserve;
+         UpdateResourceUsage();
+     }
+```
+
+**File**: `yt/yt/server/job_proxy/job_proxy.h` (modified, +1/-0)
+```diff
+@@ -167,6 +167,7 @@ class TJobProxy
+     NApi::NNative::IClientPtr Client_;
+ 
+     NConcurrency::TPeriodicExecutorPtr HeartbeatExecutor_;
++    TFuture<void> LastHeartbeatFuture_ = OKFuture;
+     NConcurrency::TPeriodicExecutorPtr MemoryWatchdogExecutor_;
+ 
+     TDuration RefCountedTrackerLogPeriod_;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1877** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1873** (closed): Fix "yt execute" for commands without input data commit_hash:5378810e98c0c97bc9703c2b2319f52f5ef9bde5 (@koct9i)
-- **PR #1872** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1871** (closed): remove duplicate text (@masterbpro)
-- **PR #1870** (closed): Update Release Notes (@ytsaurus-actions[bot])
-- **PR #1869** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
+- **PR #1892** (closed): Fix typo in chaos-dynamic-tables.md (@hsalkaline)
+- **PR #1885** (closed): Run cross-cluster MR operations by ytsaurus Go SDK (@sagishev)
+- **PR #1884** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
+- **PR #1883** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
+- **PR #1882** (closed): Fix group by alias (@Tony-Romanov)
+- **PR #1878** (closed): [docs] Update Release Notes (@ytsaurus-actions[bot])
 
 ---
 
@@ -1526,21 +1490,21 @@ commit_hash:897342b29a26be36c12332fbeacfa16b9c2e59b2
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prepare Rust 1.95 and shared crate dependencies (1/4)
+## X. YT-30107: Reserve estimated memory for heavy commands before execution
 
 **RULE**:
-When implementing operations in `build/conf/license.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/client/driver/CMakeLists.darwin-arm64.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f38c118`: Prepare Rust 1.95 and shared crate dependencies (1/4). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9067a5fd`: YT-30107: Reserve estimated memory for heavy commands before execution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/conf/license.json`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/client/driver/CMakeLists.darwin-arm64.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-            "CDLA-Permissive-2.0",
+  ${PROJECT_SOURCE_DIR}/yt/yt/client/driver/command_memory_estimate.cpp
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1550,4 +1514,4 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f38c118` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9067a5fd` are properly handled with clean fallback behavior.

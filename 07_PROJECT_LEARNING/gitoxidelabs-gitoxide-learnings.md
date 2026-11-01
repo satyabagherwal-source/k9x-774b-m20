@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source**: github ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
-> **Source Version**: `9f805e24`  
+> **Source Version**: `95194788`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T17:58:19.763Z  
+> **Timestamp**: 2026-10-31T23:16:01.017Z  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,17 +17,17 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T17:58:15.915Z  
+> **Harvest Timestamp**: 2026-10-31T23:16:01.008Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `GitoxideLabs/gitoxide`
-- **Description**: An idiomatic, lean, fast & safe pure Rust implementation of Git
+- **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12066 stars
+- **Stars / Engagement**: 12094 stars
 
 ---
 
@@ -1612,14 +1612,13 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3124** (2026-10-25): **Add benchmark for `gix-blame`**
-  *Symptoms*: This PR adds a benchmark for `gix-blame`. This will hopefully be the basis for some upcoming work on `gix-blame` that I intend to do.  The benchmark is deliberately simple, and it deliberately does not set up a synthetic repository, but measures `gix_blame::file()` on a set of files from the `gitoxide` repository itself. I hope that the files I chose are somewhat representative of real-world workloads.  The benchmark only measures `gix_blame::file()`, excluding the time it takes to construct and destruct the resource cache.  ```bash # to capture a baseline cargo bench -p gix-blame --bench blame -- --save-baseline baseline  # to compare a change against a captured baseline cargo bench -p gix-blame --bench blame -- --baseline baseline ``` 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"950f4081d98882da5d0cc79d28646d461bc9dd6d","has_any_findings":null,"has_unresolved_findings":null,"status":"running"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | 🔄 **Running** since <relative-time datetime="2026-10-25T17:19:43.912308Z">2026-10-25T17:19:43.912308Z</relative-time> | `950f408` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review
-  > Thanks!  In future, I'd hope to see what's in the PR description in the commit as well, as I still think that having as much context as possible in the commit history is valuable, also in the long run. Also no need to rely on information that is on GitHub exclusively.
+- **Issue #3142** (2026-10-31): **fast ci**
+  *Symptoms*: faster CI? 
 
-- **Issue #3123** (2026-10-25): **[macOS] `getattrlistbulk` is used unconditionally but may not be available, which breaks linking**
-  *Symptoms*: ### Current behavior 😯  ``` Undefined symbols for architecture ppc:   "_getattrlistbulk", referenced from:       _ZRIG2cI13dua_core4_1_05macos7ReadDir0g6refill0g in libdua_core-4_1_0.rlib.o Undefined symbols for architecture ppc:   "_getattrlistbulk", referenced from:       _ZRIG2cI13dua_core4_1_05macos7ReadDir0g6refill0g in libdua_core-4_1_0.rlib.o ld: symbol(s) not found for architecture ppc collect2: error: ld returned 1 exit status C Compiler failed to execute - error code 256 ld: symbol(s) not found for architecture ppc collect2: error: ld returned 1 exit status C Compiler failed to execute - error code 256 Process exited with non-zero exit status 1 FAILING COMMAND: /opt/local/libexec/mrustc/bin/mrustc /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/src/ein.rs -o /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release/ein -C emit-depfile=/opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release/ein.d --cfg debug_assertions -O -L /opt/local/libexec/mrustc/lib -L /opt/local/var/macports/build/gitoxide-c5c4da4e/work/gitoxide-0.61.0/target/powerpc-apple-darwin/release --cfg feature="default" --cfg feature="max" --cfg feature="hashes" --cfg feature="max-control" --cfg feature="fast" --cfg feature="gitoxide-core-tools-query" --cfg feature="gitoxide-core-tools-corpus" --cfg feature="gitoxide-core-blocking-client" --cfg feature="http-client-curl-openssl" --cfg fe
+- **Issue #3141** (2026-10-31): **fast ci**
+  *Symptoms*: CI performance improvements, and better local quality evaluation 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"0472e4ca564e1d01ee931f67c8a92b10684a034b","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  ## Codex Review Summary  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-10-31T10:06:41.246953Z">2026-10-31T10:06:41.246953Z</relative-time> | `0472e4c` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comment "@codex review" or "@codex security review".  Codex 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1636,190 +1635,637 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9f805e24` (2026-10-25)
-**Commit Message**: Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame
+### Incident Patch 1: `dd59ccde` (2026-10-30)
+**Commit Message**: fix(gix-dir): keep all conflict stages tracked (#3134)
 
-Add benchmark for `gix-blame`
+Removed some gitoxide-core tests, which only have tests for `organize` right now.
 
-**File**: `Cargo.lock` (modified, +2/-0)
+<!-- agent -->
+Callers of `Repository::status()` reported a deleted-by-us conflict twice:
+once as a conflict and once as an untracked file. They had to filter those
+duplicates themselves. The same directory walk also misclassifies added-by-them
+and both-deleted conflicts, and can apply ignore rules to these tracked paths.
+
+The stage-0/ours lookup is appropriate for consumers reading index content,
+but membership must include any conflict stage. Use the existing path-stage
+range lookup in the directory walk, preferring ours for type information and
+otherwise the highest available stage. Use any-stage membership lookups in
+`gix exclude query` and the fixture archive exclusion helper as well. Leave the
+public index lookup API unchanged.
+
+When a directory on disk also has a conflicting file entry, check for indexed
+children before treating it as only that file. Otherwise an ignore rule can
+hide the children and make `gix clean` remove a directory containing tracked
+files. Keep these directories tracked so traversal and collapsing preserve
+their inde
+
+**File**: `gitoxide-core/src/repository/exclude.rs` (modified, +12/-4)
 ```diff
-@@ -1668,9 +1668,11 @@ dependencies = [
- name = "gix-blame"
- version = "0.20.0"
- dependencies = [
-+ "criterion",
-  "gix-commitgraph",
-  "gix-date",
-  "gix-diff",
-+ "gix-discover",
-  "gix-error",
-  "gix-filter",
-  "gix-fs",
-```
-
-**File**: `gix-blame/Cargo.toml` (modified, +6/-0)
-```diff
-@@ -32,7 +32,9 @@ gix-traverse = { version = "^0.64.0", path = "../gix-traverse" }
- smallvec = "1.15.1"
+@@ -56,7 +56,7 @@ pub fn query(
+             .metadata()
+             .ok()
+             .map(|m| is_dir_to_mode(m.is_dir()))
+-            .or_else(|| path.ends_with(b"/").then_some(gix::index::entry::Mode::DIR));
++            .or_else(|| is_directory_query(path.as_bstr()).then_some(gix::index::entry::Mode::DIR));
+         let query_path = repo.normalize_path(&path)?;
+         let entry = cache.at_entry(query_path.as_bstr(), mode)?;
+         let match_ = entry
+@@ -72,19 +72,27 @@ pub fn query(
+     Ok(())
+ }
  
- [dev-dependencies]
-+criterion = "0.8.2"
- insta = "1.46.3"
-+gix-discover = { path = "../gix-discover", features = ["sha1", "sha256"] }
- gix-hash = { path = "../gix-hash", features = ["sha1", "sha256"] }
- gix-ref = { path = "../gix-ref", features = ["sha1", "sha256"] }
- gix-filter = { path = "../gix-filter" }
-@@ -42,5 +44,9 @@ gix-odb = { path = "../gix-odb", features = ["sha1"] }
- gix-testtools = { path = "../tests/tools" }
- pretty_assertions = "1.4.0"
- 
-+[[bench]]
-+name = "blame"
-+harness = false
-+
- [package.metadata.docs.rs]
- features = ["sha1"]
-```
-
-**File**: `gix-blame/benches/blame.rs` (added, +102/-0)
-```diff
-@@ -0,0 +1,102 @@
-+//! A benchmark for `gix-blame`. It benchmarks blames for files in `gitoxide` itself, in order to
-+//! exercise somewhat realistic workloads.
-+use std::path::PathBuf;
-+
-+use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
-+use gix_hash::ObjectId;
-+
-+// These are files whose blames are supposed to be somewhat representative of real-world use cases.
-+const FILES_TO_BLAME: [&str; 9] = [
-+    // These files are among the most frequently changed ones in the entire repository. They mostly
-+    // exercise blob diffs and history traversal.
-+    "CHANGELOG.md",
-+    "STABILITY.md",
-+    "README.md",
-+    "Cargo.toml",
-+    // These files live in nested directories. In addition to blob diffs and history traversal,
-+    // they also exercise tree diffs.
-+    "gix-blame/src/file/function.rs",
-+    "gix-path/src/env/mod.rs",
-+    "gix-index/tests/index/file/write.rs",
-+    "gix-object/src/lib.rs",
-+    "gix-odb/src/store_impls/loose/write.rs",
-+];
-+
-+// The commit to start blame from. A fixed commit was chosen to make the benchmark start from a
-+// stable starting point. This commit was created on 2026-10-25.
-+const COMMIT_TO_BLAME: &str = "d4db00dfdd5874ad13a40eff4d820fb242b986f7";
-+
-+fn bench_blame(c: &mut Criterion) {
-+    let crate_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-+    let (repository, _trust) = gix_discover::upwards(&crate_path).expect("did not find a repository");
-+    let (git_dir, worktree_dir) = repository.into_repository_and_work_tree_directories();
-+
-+    let common_dir = match gix_discover::path::from_plain_file(&git_dir.join("commondir"))
-+        .transpose()
-+        .expect("was not able to resolve common dir")
-+    {
-+        Some(path) => git_dir.join(path),
-+        None => git_dir.clone(),
-+    }
-+    .canonicalize()
-+    .expect("was not able to canonicalize common dir");
-+
-+    let odb = gix_odb::at(common_dir.join("objects"), gix_hash::Kind::Sha1).expect("object database could not be read");
-+
-+    let head_id = ObjectId::from_hex(COMMIT_TO_BLAME.as_bytes()).expect("commit to blame to point to an actual commit");
-+
-+    let index = gix_index::File::at(git_dir.join("index"), gix_hash::Kind::Sha1, false, Default::default())
-+        .expect("index could not be read");
-+
-+    let create_resource_cache = || {
-+        let stack = gix_worktree::Stack::from_state_and_ignore_case(
-+            worktree_dir.as_deref().unwrap_or(&git_dir),
-+            false,
-+            gix_worktree::stack::State::AttributesAndIgnoreStack {
-+                attributes: Default::default(),
-+                ignore: Default::default(),
-+            },
-+            &index,
-+            index.path_backing(),
-+        );
-+        gix_diff::blob::Platform::new(
-+            Default::default(),
-+            gix_diff::blob::Pipeline::new(
-+                gix_diff::blob::pipeline::WorktreeRoots {
-+                    old_root: None,
-+                    new_root: None,
-+                },
-+                gix_filter::Pipeline::new(Default::default(), gix_hash::Kind::Sha1, Default::default()),
-+                vec![],
-+                gix_diff::blob::pipeline::Options {
-+                    large_file_threshold_bytes: 0,
-+                    fs: Default::default(),
-+                },
-+            ),
-+            gix_diff::blob::pipeline::Mode::ToGit,
-+            stack,
-+        )
-+    };
-+
-+    for file in FILES_TO_BLAME {
-+        c.bench_function(file, |b| {
-+            // This benchmark measures `gix_blame::file` alone. Construction and destruction of
-+            // `resource_cache` is outside the timed section.
-+            b.iter_batched_ref(
-+                create_resource_cache,
-+                |resource_cache| {
-+                    let start = gix_blame::Start::Commit(head_id);
-+
-+                    std::hint::black_box(
-+                        gix_blame::file(&odb, start, None, resource_cache, file.as_ref(), Default::default())
-+                            .expect("blame to not fail"),
-+                    )
-+                },
-+                BatchSize::SmallInput,
-+            );
-+        });
-+    }
++fn is_directory_query(path: &BStr) -> bool {
++    path.ends_with(b"/") || path.ends_with(b"/.")
 +}
 +
-+criterion_group!(benches, bench_blame);
-+criterion_main!(benches);
+ fn print_match_unless_tracked(
+     match_: Option<gix::ignore::search::Match<'_>>,
+     index: &gix::index::State,
+     query_path: &BStr,
+     display_path: &BStr,
+     out: impl std::io::Write,
+ ) -> std::io::Result<()> {
+-    print_match(match_.filter(|_| !is_tracked(index, query_path)), display_path, out)
++    print_match(
++        match_.filter(|_| !is_tracked(index, query_path, is_directory_query(display_path))),
++        display_path,
++        out,
++    )
+ }
+ 
+-fn is_tracked(index: &gix::index::State, path: &BStr) -> bool {
++fn is_tracked(index: &gix::index::State, path: &BStr, is_directory_query: bool) -> bool {
+     let path = path.trim_end_with(|b| b == '/').as_bstr();
+-    index.entry_by_path(path).is_some() || index.path_is_directory(path)
++    (!is_directory_query && index.entry_index_by_path(path).is_ok()) || index.path_is_directory(path)
+ }
+ 
+ fn print_match(
+```
+
+**File**: `gitoxide-core/src/repository/status.rs` (modified, +2/-14)
+```diff
+@@ -6,7 +6,7 @@ use gix::{
+     error::{ResultExt, bail, unsupported},
+     status::{self, index_worktree},
+ };
+-use gix_status::index_as_worktree::{Change, Conflict, EntryStatus};
++use gix_status::index_as_worktree::{Change, EntryStatus};
+ 
+ use crate::OutputFormat;
+ 
+@@ -228,7 +228,7 @@ fn print_index_entry_status(
+ ) -> std::io::Result<()> {
+     let char_storage;
+     let status = match status {
+-        EntryStatus::Conflict { summary, entries: _ } => as_str(summary),
++        EntryStatus::Conflict { summary, entries: _ } => summary.as_str(),
+         EntryStatus::Change(change) => {
+             char_storage = change_to_char(&change);
+             std::str::from_utf8(std::slice::from_ref(&char_storage)).expect("valid ASCII")
+@@ -244,18 +244,6 @@ fn print_index_entry_status(
+     writeln!(out, "{status: >3} {}", display_path.display())
+ }
+ 
+-fn as_str(c: Conflict) -> &'static str {
+-    match c {
+-        Conflict::BothDeleted => "DD",
+-        Conflict::AddedByUs => "AU",
+-        Conflict::DeletedByThem => "UD",
+-        Conflict::AddedByThem => "UA",
+-        Conflict::DeletedByUs => "DU",
+-        Conflict::BothAdded => "AA",
+-        Conflict::BothModified => "UU",
+-    }
+-}
+-
+ fn change_to_char(change: &Change<(), gix::submodule::Status>) -> u8 {
+     // Known status letters: https://github.com/git/git/blob/6807fcfedab84bc8cd0fbf721bc13c4e68cda9ae/diff.h#L613
+     match change {
+```
+
+**File**: `gix-dir/src/walk/classify.rs` (modified, +26/-3)
+```diff
+@@ -192,12 +192,27 @@ pub fn path(
+         return Ok(out.with_status(entry::Status::Pruned));
+     }
+ 
+-    let (uptodate_index_kind, index_kind, property) = resolve_file_type_with_index(
++    let (uptodate_index_kind, mut index_kind, property) = resolve_file_type_with_index(
+         rela_path,
+         ctx.index,
+         ctx.ignore_case_index_lookup.filter(|_| ignore_case),
+     );
+     let mut kind = uptodate_index_kind.or(disk_kind).or_else(on_demand_disk_kind);
++    if kind == Some(entry::Kind::Directory) && index_kind.is_some_and(|kind| !kind.is_dir()) {
++        // A conflict can index both a file and its children; keep the directory tracked.
++        let has_indexed_children = if let Some(lookup) = ctx.ignore_case_index_lookup.filter(|_| ignore_case) {
++            ctx.index
++                .path_is_directory_icase(rela_path.as_bstr(), ignore_case, lookup)
++        } else {
++            rela_path.push(b'/');
++            let has_children = ctx.index.prefixed_entries_range(rela_path.as_bstr()).is_some();
++            rela_path.pop();
++            has_children
++        };
++        if has_indexed_children {
++            index_kind = Some(entry::Kind::Directory);
++        }
++    }
+ 
+     // We always check the pathspec to have the value filled in reliably.
+     out.pathspec_match = ctx
+@@ -423,7 +438,8 @@ fn resolve_file_type_with_index(
+             }
+         }
+     } else {
+-        match index.entry_by_path(rela_path.as_bstr()) {
++        // Prefer our side's type, but conflicts without ours are tracked as well.
++        match index.entry_range(rela_path.as_bstr()) {
+             None => {
+                 rela_path.push(b'/');
+                 let res = index.prefixed_entries_range(rela_path.as_bstr());
+@@ -459,7 +475,14 @@ fn resolve_file_type_with_index(
+                 }
+                 (kind, is_tracked.then_some(entry::Kind::Directory))
+             }
+-            Some(entry) => entry_to_kinds(entry),
++            Some(range) => {
++                let entries = &index.entries()[range];
++                let entry = entries
++                    .iter()
++                    .find(|entry| entry.stage() == gix_index::entry::Stage::Ours)
++                    .unwrap_or_else(|| &entries[entries.len() - 1]);
++                entry_to_kinds(entry)
++            }
+         }
+     };
+     (uptodate_kind, index_kind, special_property)
+```
+
+**File**: `gix-dir/tests/dir/walk.rs` (modified, +126/-0)
+```diff
+@@ -20,6 +20,132 @@ use crate::walk_utils::{
+     try_collect_filtered_opts, try_collect_filtered_opts_collect, try_collect_filtered_opts_collect_with_root,
+ };
+ 
++#[test]
++fn conflict_paths_at_any_stage_stay_tracked_like_git() -> TestResult {
++    let root = gix_testtools::scripted_fixture_read_only("conflicts.sh")?;
++    assert_eq!(
++        std::fs::read_to_string(root.join(".git/baseline-clean"))?,
++        "",
++        "Git preserves an ignored directory with an indexed conflict child"
++    );
++    for ignore_case in [false, true] {
++        let baseline = std::fs::read_to_string(root.join(format!(".git/baseline-untracked-{ignore_case}")))?;
++        assert_eq!(
++            baseline,
++            "nested/untracked
++untracked
++",
++            "Git excludes every conflict-stage combination from untracked files"
++        );
++        for emit_untracked in [Matching, CollapseDirectory] {
++            let ((_, _), entries) = try_collect_filtered_opts_collect(
++                &root,
++                None,
++                |keep, ctx| {
++                    walk(
++                        &root,
++                        ctx,
++                        walk::Options {
++                            ignore_case,
++                            emit_untracked,
++                            emit_ignored: Some(Matching),
++                            for_deletion: Some(ForDeletionMode::IgnoredDirectoriesCanHideNestedRepositories),
++                            ..options()
++                        },
++                        keep,
++                    )
++                },
++                None::<&str>,
++                Options {
++                    fresh_index: false,
++                    ..Default::default()
++                },
++            )?;
++            assert_eq!(
++                entries,
++                &[
++                    entry("nested/untracked", Untracked, File),
++                    entry("untracked", Untracked, File)
++                ],
++                "conflicts are neither untracked nor ignored, including when directories collapse (ignore_case={ignore_case})"
++            );
++        }
++    }
++    assert!(
++        std::fs::read_to_string(root.join(".git/baseline-stages"))?
++            .lines()
++            .any(|line| line.starts_with("120000 ") && line.split_whitespace().nth(2) == Some("2")),
++        "Git's index records a symlink on our side of the mixed-type conflict"
++    );
++    let ((_, _), entries) = try_collect_filtered_opts_collect(
++        &root,
++        None,
++        |keep, ctx| {
++            walk(
++                &root,
++                ctx,
++                walk::Options {
++                    emit_tracked: true,
++                    ..options()
++                },
++                keep,
++            )
++        },
++        Some("nested/UU.txt"),
++        Options {
++            fresh_index: false,
++            ..Default::default()
++        },
++    )?;
++    assert_eq!(entries.len(), 1, "the pathspec selects the mixed-type conflict");
++    assert_eq!(
++        entries[0].0.index_kind,
++        Some(Symlink),
++        "case-sensitive classification still prefers our side's type"
++    );
++    Ok(())
++}
++
++#[test]
++fn conflict_children_with_different_casing_stay_tracked_like_git() -> TestResult {
++    let root = gix_testtools::scripted_fixture_read_only("conflicts-ignore-case.sh")?;
++    assert_eq!(
++        std::fs::read_to_string(root.join(".git/baseline-clean"))?,
++        "",
++        "Git preserves conflict children when core.ignoreCase is enabled"
++    );
++    for emit in [Matching, CollapseDirectory] {
++        let ((_, _), entries) = try_collect_filtered_opts_collect(
++            &root,
++            None,
++            |keep, ctx| {
++                walk(
++                    &root,
++                    ctx,
++                    walk::Options {
++                        ignore_case: true,
++                        emit_untracked: emit,
++                        emit_ignored: Some(emit),
++                        for_deletion: Some(ForDeletionMode::IgnoredDirectoriesCanHideNestedRepositories),
++                        ..options()
++                    },
++                    keep,
++                )
++            },
++            None::<&str>,
++            Options {
++                fresh_index: false,
++                ..Default::default()
++            },
++        )?;
++        assert!(
++            entries.is_empty(),
++            "case-insensitive cleanup cannot emit tracked conflict children or their parents: {entries:?}"
++        );
++    }
++    Ok(())
++}
++
+ #[cfg(windows)]
+ #[test]
+ fn invalid_directory_names_return_errors_for_entries_and_traversal_roots() -> TestResult {
+```
+
+**File**: `gix-dir/tests/fixtures/conflicts-ignore-case.sh` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++#!/usr/bin/env bash
++set -eu -o pipefail
++
++# The on-disk directories differ in case from both their indexed ancestor file
++# and child. Case-insensitive cleanup must still descend to the tracked child.
++git init -q
++printf 'file-dir-*/\n' >.gitignore
++git add .gitignore
++blob_id=$(printf 'content\n' | git hash-object -w --stdin)
++for stage in 1 2 3; do
++  child_stage=3
++  if [[ "$stage" == 3 ]]; then
++    child_stage=2
++  fi
++  mkdir "file-dir-$stage"
++  printf 'content\n' >"file-dir-$stage/bar"
++  printf '100644 %s %s\tFILE-DIR-%s\n100644 %s %s\tFILE-DIR-%s/bar\n' \
++    "$blob_id" "$stage" "$stage" "$blob_id" "$child_stage" "$stage"
++done | git update-index --index-info
++git -c core.ignoreCase=true clean -ndx >.git/baseline-clean
+```
+
+**File**: `gix-dir/tests/fixtures/conflicts.sh` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++#!/usr/bin/env bash
++set -eu -o pipefail
++
++# Populate every nonempty combination of conflict stages, at the root, nested,
++# and under an ignore rule. Files remain on disk even for DD: any index stage
++# must keep them tracked regardless of ignore rules or directory collapsing.
++# The nested UU path has a symlink at stage 2 to check our side's type preference.
++git init -q
++printf 'ignored/*.txt\n*.txt/\nfile-dir-*/\n' >.gitignore
++git add .gitignore
++git commit -qm init
++mkdir nested ignored
++blob_id=$(printf 'content\n' | git hash-object -w --stdin)
++for prefix in '' nested/ ignored/; do
++  for conflict in 'DD:1' 'AU:2' 'UA:3' 'UD:1 2' 'DU:1 3' 'AA:2 3' 'UU:1 2 3'; do
++    path="${prefix}${conflict%%:*}.txt"
++    printf 'content\n' >"$path"
++    for stage in ${conflict#*:}; do
++      mode=100644
++      if [[ "$path" == nested/UU.txt && "$stage" == 2 ]]; then
++        mode=120000
++      fi
++      printf '%s %s %s\t%s\n' "$mode" "$blob_id" "$stage" "$path"
++    done
++  done
++done | git update-index --index-info
++
++# A file/directory conflict can index both the directory's name and its child.
++# Ignoring the directory must never hide the indexed child from a cleanup walk.
++for conflict in 'file-dir-base:1' 'file-dir-ours:2' 'file-dir-theirs:3'; do
++  path=${conflict%:*}
++  stage=${conflict#*:}
++  child_stage=3
++  if [[ "$stage" == 3 ]]; then
++    child_stage=2
++  fi
++  mkdir "$path"
++  printf 'content\n' >"$path/bar"
++  printf '100644 %s %s\t%s\n100644 %s %s\t%s/bar\n' \
++    "$blob_id" "$stage" "$path" "$blob_id" "$child_stage" "$path"
++done | git update-index --index-info
++touch untracked nested/untracked
++
++# Keep Git's baselines outside the walked worktree so they cannot affect the results.
++git -c core.ignoreCase=false clean -ndx -- 'file-dir-*' >.git/baseline-clean
++for ignore_case in false true; do
++  git -c core.ignoreCase="$ignore_case" ls-files --others --exclude-standard >".git/baseline-untracked-$ignore_case"
++done
++git ls-files --stage -- nested/UU.txt >.git/baseline-stages
+```
+
+**File**: `gix-index/src/access/mod.rs` (modified, +5/-1)
+```diff
+@@ -381,6 +381,7 @@ impl State {
+     /// Return the slice of entries which all share the same `prefix`, or `None` if there isn't a single such entry.
+     ///
+     /// The `prefix` must use the repository-relative, slash-separated [`State`] path format.
++    /// See [`prefixed_entries_range()`][Self::prefixed_entries_range()] for matching rules and directory prefixes.
+     ///
+     /// If `prefix` is empty, all entries are returned.
+     pub fn prefixed_entries(&self, prefix: &BStr) -> Option<&[Entry]> {
+@@ -389,7 +390,10 @@ impl State {
+ 
+     /// Return the range of entries which all share the same `prefix`, or `None` if there isn't a single such entry.
+     ///
+-    /// The `prefix` must use the repository-relative, slash-separated [`State`] path format.
++    /// The `prefix` must use the repository-relative, slash-separated [`State`] path format, without a leading `/` or `./`.
++    /// Matching is case-sensitive and compares literal bytes without path normalization or glob interpretation.
++    /// The prefix may end within a path component: `dir` also matches `dirname/file` and `dir.txt`.
++    /// To match only entries inside a directory, include the trailing slash, for example `dir/`.
+     ///
+     /// If `prefix` is empty, the range will include all entries.
+     pub fn prefixed_entries_range(&self, prefix: &BStr) -> Option<Range<usize>> {
+```
+
+**File**: `gix-status/src/index_as_worktree/function.rs` (modified, +13/-0)
+```diff
+@@ -659,6 +659,19 @@ impl<'a, T> Iterator for OffsetIter<'a, T> {
+ }
+ 
+ impl Conflict {
++    /// Return the two-letter unmerged status code used by `git status --short` and `--porcelain=v1`.
++    pub const fn as_str(&self) -> &'static str {
++        match self {
++            Conflict::BothDeleted => "DD",
++            Conflict::AddedByUs => "AU",
++            Conflict::DeletedByThem => "UD",
++            Conflict::AddedByThem => "UA",
++            Conflict::DeletedByUs => "DU",
++            Conflict::BothAdded => "AA",
++            Conflict::BothModified => "UU",
++        }
++    }
++
+     /// Given `entries` and `path_backing` obtained from an [index](gix_index::State), inspect up to three consecutive
+     /// conflict-stage entries starting at `start_index` whose path equals `entry_path`.
+     ///
 ```
 
 ---
 
-### Incident Patch 2: `02e6d7e4` (2026-10-25)
-**Commit Message**: review
+### Incident Patch 2: `251322d4` (2026-10-30)
+**Commit Message**: fix(gix): resolve rename modes and limits independently (#3133)
 
-**File**: `gix-blame/benches/blame.rs` (modified, +0/-10)
+Removed the elaborate tests for this trivial change, as I don't expect it
+to regress. And before that has a chance to happen, tests can always be regenerated.
+
+<!-- agent -->
+While investigating status configuration for #3133, edited staged renames
+showed that correcting the section names was insufficient: a standalone
+`status.renameLimit` was still ignored. A status-specific mode also
+prevented falling back to `diff.renameLimit`. The shared resolver had the
+same problem for diff and merge limits, silently ignoring their limits
+unless a corresponding `renames` key was also set.
+
+Resolve rename mode and limit independently in the existing shared helper.
+Unset status/merge keys each fall back to the corresponding diff key.
+A configured limit uses the default rename mode when no mode is set.
+Retain explicit disabling, strict/lenient validation, copy settings, and
+the public helper's empty-configuration signal. Remove redundant whole-
+configuration fallback from the status and merge callers.
+
+Git 2.54.0 is the executed baseline. Git's
+`builtin/commit.c::git_status_config()` resolves status mode and limit
+separately, and `
+
+**File**: `gix/src/diff.rs` (modified, +25/-14)
 ```diff
-@@ -1,15 +1,5 @@
- //! A benchmark for `gix-blame`. It benchmarks blames for files in `gitoxide` itself, in order to
- //! exercise somewhat realistic workloads.
--//!
--//! ## Running the benchmark
--//!
--//!     # to capture a baseline
--//!     cargo bench -p gix-blame --bench blame -- --save-baseline baseline
--//!
--//!     # to compare a change against a captured baseline
--//!     cargo bench -p gix-blame --bench blame -- --baseline baseline
--//!
--//! Since `gitoxide` uses SHA-1 hashes, we can hardcode `object_hash` to `Sha1`.
- use std::path::PathBuf;
+@@ -130,39 +130,50 @@ pub(crate) mod utils {
+     };
  
- use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
+     /// Create an instance by reading all relevant information from the `config`uration, while being `lenient` or not.
+-    /// Returns `Ok((None, false))` if nothing is configured, or `Ok((None, true))` if it's configured and disabled.
++    /// Returns `Ok((None, false))` if neither rename mode nor limit is configured, or `Ok((None, true))` if disabled.
+     ///
+     /// Note that missing values will be defaulted similar to what git does.
+     pub fn new_rewrites(config: &gix_config::File, lenient: bool) -> Result<(Option<Rewrites>, bool)> {
+         new_rewrites_inner(config, lenient, &Diff::RENAMES, &Diff::RENAME_LIMIT)
+     }
+ 
++    /// Resolve rename mode and limit independently, falling back to their `diff` keys when unset.
+     pub(crate) fn new_rewrites_inner(
+         config: &gix_config::File,
+         lenient: bool,
+         renames: &'static crate::config::tree::diff::Renames,
+         rename_limit: &'static crate::config::tree::keys::UnsignedInteger,
+     ) -> Result<(Option<Rewrites>, bool)> {
+-        let copies = match renames
++        let mut tracking = renames
+             .try_into_renames(config.boolean(renames))
+-            .with_leniency(lenient)?
+-        {
+-            Some(renames) => match renames {
+-                Tracking::Disabled => return Ok((None, true)),
+-                Tracking::Renames => None,
+-                Tracking::RenamesAndCopies => Some(Copies::default()),
+-            },
+-            None => return Ok((None, false)),
++            .with_leniency(lenient)?;
++        if tracking.is_none() {
++            tracking = Diff::RENAMES
++                .try_into_renames(config.boolean(Diff::RENAMES))
++                .with_leniency(lenient)?;
++        }
++        let copies = match tracking {
++            Some(Tracking::Disabled) => return Ok((None, true)),
++            Some(Tracking::RenamesAndCopies) => Some(Copies::default()),
++            _ => None,
+         };
++        let mut limit = rename_limit
++            .try_into_usize(config.integer(rename_limit))
++            .with_leniency(lenient)?;
++        if limit.is_none() {
++            limit = Diff::RENAME_LIMIT
++                .try_into_usize(config.integer(Diff::RENAME_LIMIT))
++                .with_leniency(lenient)?;
++        }
++        if tracking.is_none() && limit.is_none() {
++            return Ok((None, false));
++        }
+ 
+         let default = Rewrites::default();
+         Ok((
+             Rewrites {
+                 copies,
+-                limit: rename_limit
+-                    .try_into_usize(config.integer(rename_limit))
+-                    .with_leniency(lenient)?
+-                    .unwrap_or(default.limit),
++                limit: limit.unwrap_or(default.limit),
+                 ..default
+             }
+             .into(),
+```
+
+**File**: `gix/src/repository/merge.rs` (modified, +1/-5)
+```diff
+@@ -82,16 +82,12 @@ impl Repository {
+ 
+     /// Read all relevant configuration options to instantiate options for use in [`merge_trees()`](Self::merge_trees).
+     pub fn tree_merge_options(&self) -> Result<crate::merge::tree::Options> {
+-        let (mut rewrites, mut is_configured) = crate::diff::utils::new_rewrites_inner(
++        let (mut rewrites, is_configured) = crate::diff::utils::new_rewrites_inner(
+             &self.config.resolved,
+             self.config.lenient_config,
+             &tree::Merge::RENAMES,
+             &tree::Merge::RENAME_LIMIT,
+         )?;
+-        if !is_configured {
+-            (rewrites, is_configured) =
+-                crate::diff::utils::new_rewrites(&self.config.resolved, self.config.lenient_config)?;
+-        }
+         if !is_configured {
+             rewrites = Some(Default::default());
+         }
+```
+
+**File**: `gix/src/status/tree_index.rs` (modified, +3/-7)
+```diff
+@@ -3,8 +3,8 @@ use crate::{Repository, Result, config::tree};
+ /// Specify how to perform rewrite tracking [Repository::tree_index_status()].
+ #[derive(Default, Debug, Copy, Clone)]
+ pub enum TrackRenames {
+-    /// Check `status.renames` and then `diff.renames` if the former isn't set. Otherwise, default to performing rewrites if nothing
+-    /// is set.
++    /// Check `status.renames` and `status.renameLimit`, independently falling back to `diff.renames` and
++    /// `diff.renameLimit` when unset. Default to performing rewrites if nothing is set.
+     #[default]
+     AsConfigured,
+     /// Track renames according ot the given configuration.
+@@ -54,16 +54,12 @@ impl Repository {
+         let tree_index: gix_index::State = self.index_from_tree(tree_id)?.into();
+         let rewrites = match renames {
+             TrackRenames::AsConfigured => {
+-                let (mut rewrites, mut is_configured) = crate::diff::utils::new_rewrites_inner(
++                let (mut rewrites, is_configured) = crate::diff::utils::new_rewrites_inner(
+                     &self.config.resolved,
+                     self.config.lenient_config,
+                     &tree::Status::RENAMES,
+                     &tree::Status::RENAME_LIMIT,
+                 )?;
+-                if !is_configured {
+-                    (rewrites, is_configured) =
+-                        crate::diff::utils::new_rewrites(&self.config.resolved, self.config.lenient_config)?;
+-                }
+                 if !is_configured {
+                     rewrites = Some(Default::default());
+                 }
+```
+
+---
+
+### Incident Patch 3: `7e48cb03` (2026-10-30)
+**Commit Message**: fix(gix): read status rename keys from the status section (#3133)
+
+Removed the test as this is a trivial change. While it's now defintely
+untested, I found it overkill.
+
+<!-- agent -->
+Consumers of `Repository::status()` reported that `status.renames=false`
+still paired staged renames, while unrelated `merge.renames` settings
+changed status results. They had to resolve configuration themselves and
+pass explicit rename options as a workaround.
+
+Both `Status::RENAMES` and `Status::RENAME_LIMIT` were accidentally attached
+to the `merge` section. Attach them to `status`, preserving the existing
+fallback to `diff.renames` when status rename tracking is unset.
+
+Assisted-by: GPT 6.1 Sol
+Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
+
+**File**: `gix/src/config/tree/sections/status.rs` (modified, +2/-2)
+```diff
+@@ -13,13 +13,13 @@ impl Status {
+     /// The `status.renameLimit` key.
+     pub const RENAME_LIMIT: keys::UnsignedInteger = keys::UnsignedInteger::new_unsigned_integer(
+         "renameLimit",
+-        &config::Tree::MERGE,
++        &config::Tree::STATUS,
+     )
+     .with_note(
+         "The limit is actually squared, so 1000 stands for up to 1 million diffs if fuzzy rename tracking is enabled",
+     );
+     /// The `status.renames` key.
+-    pub const RENAMES: super::diff::Renames = super::diff::Renames::new_renames("renames", &config::Tree::MERGE);
++    pub const RENAMES: super::diff::Renames = super::diff::Renames::new_renames("renames", &config::Tree::STATUS);
+ }
+ 
+ /// The `status.showUntrackedFiles` key.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3124** (2026-10-25): Add benchmark for `gix-blame` (@cruessler)
-- **PR #3122** (2026-10-25): Give the Windows console editor test 2 minutes instead of 30 seconds (@EliahKagan)
-- **PR #3121** (2026-10-25): Build `gix-glob`'s `glob` integration tests again (@EliahKagan)
-- **PR #3120** (2026-10-25): Remove two fixture archives left over from replaced fixture scripts (@EliahKagan)
-- **PR #3119** (2026-10-25): fix: apply `gitoxide.core.defaultPackCacheMemoryLimit` to the default pack cache (@castrog)
-- **PR #3118** (2026-10-24): Pin `test-32bit (i386)` to `ubuntu-24.04` (@EliahKagan)
+- **PR #3142** (2026-10-31): fast ci (@Byron)
+- **PR #3141** (closed): fast ci (@Byron)
+- **PR #3140** (2026-10-31): fix(gix): handle conflict paths and status rename configuration (@Byron)
+- **PR #3139** (2026-10-29): Preserve Cargo.lock in dependency checks (@EliahKagan)
+- **PR #3138** (2026-10-30): fix(gix): reject symlinks in configured submodule paths (@Byron)
+- **PR #3137** (2026-10-29): Restore transitive soundness advisory reporting (@EliahKagan)
 
 ---
 
@@ -1839,29 +2285,42 @@ Add benchmark for `gix-blame`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame
+## X. gix-dir): keep all conflict stages tracked (#3134)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gitoxide-core/src/repository/exclude.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9f805e24`: Merge pull request #3124 from cruessler/add-benchmark-for-gix-blame. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd59ccde`: gix-dir): keep all conflict stages tracked (#3134). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gitoxide-core/src/repository/exclude.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "criterion",
- "gix-discover",
+            .or_else(|| is_directory_query(path.as_bstr()).then_some(gix::index::entry::Mode::DIR));
+fn is_directory_query(path: &BStr) -> bool {
+    path.ends_with(b"/") || path.ends_with(b"/.")
+}
+
+    print_match(
+        match_.filter(|_| !is_tracked(index, query_path, is_directory_query(display_path))),
+        display_path,
+        out,
+    )
+fn is_tracked(index: &gix::index::State, path: &BStr, is_directory_query: bool) -> bool {
+    (!is_directory_query && index.entry_index_by_path(path).is_ok()) || index.path_is_directory(path)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            .or_else(|| path.ends_with(b"/").then_some(gix::index::entry::Mode::DIR));
+    print_match(match_.filter(|_| !is_tracked(index, query_path)), display_path, out)
+fn is_tracked(index: &gix::index::State, path: &BStr) -> bool {
+    index.entry_by_path(path).is_some() || index.path_is_directory(path)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9f805e24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd59ccde` are properly handled with clean fallback behavior.

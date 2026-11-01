@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source**: github ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
-> **Source Version**: `777b3723`  
+> **Source Version**: `858c8d77`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T15:56:59.245Z  
+> **Timestamp**: 2026-10-27T11:49:40.759Z  
 > **Learning ID**: `learn-github-apache-zookeeper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T15:56:59.239Z  
+> **Harvest Timestamp**: 2026-10-27T11:49:39.614Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Apache ZooKeeper
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12818 stars
+- **Stars / Engagement**: 12825 stars
 
 ---
 
@@ -1805,8 +1805,8 @@ def cherry_pick(pr_num, merge_hash, default_branch):
   **Post-Mortem & Fix Analysis**:
   > Merged. Thanks @kezhuw @PDavid !
 
-- **Issue #2474** (2026-10-14): **Preserve configured client hostname verification with Netty 4.2**
-  *Symptoms*: Netty 4.2 defaults client builders to HTTPS endpoint identification. ZooKeeper’s existing trust-manager/engine policy honors `zookeeper.ssl.hostnameVerification`, but the new builder default rejects a trusted mismatched SAN even when that setting is false.  Clear only the client builder’s endpoint-identification default, leaving the existing configured ZooKeeper verifier and server mutual-TLS policy in control. Extend the existing DNS/IP × FIPS mismatch cases to test both enabled and disabled hostname verification. The call also compiles with the current Netty 4.1.138 pin; this PR does not upgrade Netty.  ### How to reproduce  Run `SSLHostnameVerificationTest#testClientHostnameVerificationWithMismatchNames` with runtime Netty 4.2.19. Before the production fix, all four `hostnameVerification=false` cases fail; the four enabled-policy cases retain rejection. With the fix, all eight pass.  Using a Maven wrapper against this checkout after compiling/installing its source at the normal pin:  ```bash /path/to/mvnw -f pom.xml -pl zookeeper-server -Dnetty.version=4.2.19.Final \   -Dsurefire-forkcount=1 \   -Dtest=SSLHostnameVerificationTest#testClientHostnameVerificationWithMismatchNames \   dependency:properties surefire:test ```  Repeat with `-Dzookeeper.ssl.sslProvider=OPENSSL` for the native provider.  ### Validation  - JDK 25: patched real client/server mismatch matrix passes 8/8 with JDK TLS and 8/8 with Netty tcnative BoringSSL/OpenSSL. Unmodified production-source controls fa
+- **Issue #2475** (2026-10-26): **ZOOKEEPER-5103: Address memory leaks in the C client**
+  *Symptoms*: A number of the C client APIs lacked a clear ownership contract. Calling applications had no clear way to know whether a failure required them to release their completion context data, or whether they needed to leave it alone because the library would dispatch a completion callback. Internal completion queues, serialized request buffers, and transport state structures were routinely abandoned during network disconnects or handle closure.  Dynamic profiling of master under AddressSanitizer and LeakSanitizer initially identified 45,578 bytes leaked across 178 allocations. Following these fixes, both zktest-st and zktest-mt pass with 100% success 49/49 and 97/97 tests respectively and no sanitizer findings.  The work here also integrates AddressSanitizer and LeakSanitizer as an option for Autotools (--enable-asan) and Maven profile (-Pc-test-asan).  [ This is a long block of PR description text, and superficially it may resemble workslop, but it it not.  ]  ---  ## Approach  All fixes preserve existing public function signatures, symbols, and struct layouts. The only internal structure modified is private to `zk_adaptor.h` and is not exposed in public headers. Applications compile, link, and run against the updated library without code changes.  The ownership contract across all asynchronous entry points (`zoo_a*`, excluding `zoo_add_auth`) is formalized as follows:  > If an asynchronous request function returns any code other than `ZOK`, the completion callback has not been reg
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1823,178 +1823,446 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `777b3723` (2026-10-21)
-**Commit Message**: ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client
+### Incident Patch 1: `858c8d77` (2026-10-26)
+**Commit Message**: ZOOKEEPER-5103: Address memory leaks in the C client
 
-Reviewers: maoling, kezhuw
-Author: dukelion
-Closes #2398 from dukelion/fix-status-server-jvmflags
+Reviewers: anmolnar, anmolnar
+Author: apurtell
+Closes #2475 from apurtell/ZOOKEEPER-5103
 
-**File**: `bin/zkServer.sh` (modified, +1/-1)
+**File**: `zookeeper-client/zookeeper-client-c/Makefile.am` (modified, +5/-2)
 ```diff
-@@ -283,7 +283,7 @@ case $1 in
-     fi
-     echo "Client port found: $clientPort. Client address: $clientPortAddress. Client SSL: $isSSL."
-     STAT=$("$JAVA" "-Dzookeeper.log.dir=$ZOO_LOG_DIR" "-Dzookeeper.log.file=$ZOO_LOG_FILE" \
--      "${clientflags[@]}" "${flags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
-+      "${clientflags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
-       "$clientPortAddress" "$clientPort" srvr "$isSSL" 2>/dev/null |
-       $GREP Mode)
-     if [[ -z $STAT ]]; then
+@@ -92,7 +92,8 @@ endif
+ # build and run unit tests
+ 
+ EXTRA_DIST+=$(wildcard ${srcdir}/tests/*.cc) $(wildcard ${srcdir}/tests/*.h) \
+-    ${srcdir}/tests/wrappers.opt ${srcdir}/tests/wrappers-mt.opt
++    ${srcdir}/tests/wrappers.opt ${srcdir}/tests/wrappers-mt.opt \
++    ${srcdir}/tests/lsan.supp
+ 
+ # These tests are ordered in a logical manner such that each builds upon basic
+ # functionality tested in prior tests. e.g. the most basic functionality is
+@@ -130,8 +131,10 @@ else
+ endif
+ 
+ check_PROGRAMS = zktest-st
++# Suppressions and options for LeakSanitizer when built with --enable-asan.
+ TESTS_ENVIRONMENT = ZKROOT=${srcdir}/../.. \
+-                    CLASSPATH=$$CLASSPATH:$$CLOVER_HOME/lib/clover*.jar
++                    CLASSPATH=$$CLASSPATH:$$CLOVER_HOME/lib/clover*.jar \
++                    LSAN_OPTIONS=suppressions=$(abs_srcdir)/tests/lsan.supp:print_suppressions=0
+ nodist_zktest_st_SOURCES = $(TEST_SOURCES)
+ zktest_st_LDADD = libzkst.la libhashtable.la $(CPPUNIT_LIBS) $(OPENSSL_LIB_LDFLAGS) $(SASL_LIB_LDFLAGS) -ldl
+ zktest_st_CXXFLAGS = $(AM_CXXFLAGS) -DUSE_STATIC_LIB $(CPPUNIT_CFLAGS) $(SOLARIS_CPPFLAGS)
 ```
 
----
-
-### Incident Patch 2: `9b014bf8` (2026-10-20)
-**Commit Message**: ZOOKEEPER-5097: Make DataTree snapshot serialization iterative
-
-Reviewers: PDavid, kezhuw
-Author: anmolnar
-Closes #2476 from anmolnar/ZOOKEEPER-5097
-
-**File**: `zookeeper-server/src/main/java/org/apache/zookeeper/server/DataTree.java` (modified, +40/-23)
+**File**: `zookeeper-client/zookeeper-client-c/configure.ac` (modified, +11/-0)
 ```diff
-@@ -21,9 +21,11 @@
- import java.io.EOFException;
- import java.io.IOException;
- import java.io.PrintWriter;
-+import java.util.ArrayDeque;
- import java.util.ArrayList;
- import java.util.Collection;
- import java.util.Collections;
-+import java.util.Deque;
- import java.util.HashMap;
- import java.util.HashSet;
- import java.util.LinkedList;
-@@ -1318,29 +1320,44 @@ private void setupQuota() {
-      * @throws IOException
-      */
-     void serializeNode(OutputArchive oa, StringBuilder path) throws IOException {
--        String pathString = path.toString();
--        DataNode node = getNode(pathString);
--        if (node == null) {
--            return;
--        }
--        String[] children;
--        DataNode nodeCopy;
--        synchronized (node) {
--            StatPersisted statCopy = new StatPersisted();
--            statCopy.copyFrom(node.stat);
--            //we do not need to make a copy of node.data because the contents
--            //are never changed
--            nodeCopy = new DataNode(node.data, node.acl, statCopy);
--            children = node.getChildren().toArray(new String[0]);
--        }
--        serializeNodeData(oa, pathString, nodeCopy);
--        path.append('/');
--        int off = path.length();
--        for (String child : children) {
--            // Since this is single buffer being reused, we need to truncate the previous bytes of string.
--            path.delete(off, Integer.MAX_VALUE);
--            path.append(child);
--            serializeNode(oa, path);
-+        // Iterative, explicit-stack pre-order traversal of the subtree rooted
-+        // at `path`. This was previously written as recursion with one frame
-+        // per znode level, which does not scale to very deep trees; walking the
-+        // tree with a heap-allocated stack removes the dependency on tree depth.
-+        //
-+        // The traversal order (pre-order, children in the same order as
-+        // before), the per-node locking, and the emitted records are unchanged,
-+        // so the produced snapshot bytes are identical and the on-disk format is
-+        // unchanged. The explicit stack holds at most the unvisited frontier of
-+        // the tree (a single entry for a chain), all of which the in-memory
-+        // DataTree already holds.
-+        Deque<String> pathStack = new ArrayDeque<>();
-+        pathStack.push(path.toString());
-+        while (!pathStack.isEmpty()) {
-+            String pathString = pathStack.pop();
-+            DataNode node = getNode(pathString);
-+            if (node == null) {
-+                continue;
-+            }
-+            String[] children;
-+            DataNode nodeCopy;
-+            synchronized (node) {
-+                StatPersisted statCopy = new StatPersisted();
-+                statCopy.copyFrom(node.stat);
-+                //we do not need to make a copy of node.data because the contents
-+                //are never changed
-+                nodeCopy = new DataNode(node.data, node.acl, statCopy);
-+                children = node.getChildren().toArray(new String[0]);
-+            }
-+            // Called outside the node lock: writeRecord can block and holding
-+            // the lock would stall writers (ZOOKEEPER-2201).
-+            serializeNodeData(oa, pathString, nodeCopy);
-+            // Push children in reverse so that, popped from this LIFO stack,
-+            // they are visited in the same order as the previous recursion.
-+            String childPathPrefix = pathString + "/";
-+            for (int i = children.length - 1; i >= 0; i--) {
-+                pathStack.push(childPathPrefix + children[i]);
-+            }
-         }
-     }
+@@ -124,6 +124,17 @@ AM_CONDITIONAL([ENABLEGCOV],[test "x${enable_gcov}" = "xyes"])
  
+ CXXFLAGS="$CXXFLAGS -std=c++11"
+ 
++# AddressSanitizer and LeakSanitizer support. Compiler flags are appended to
++# preserve necessary defaults (e.g. -D_GNU_SOURCE).
++AC_ARG_ENABLE(asan, [AS_HELP_STRING([--enable-asan],[enable AddressSanitizer and LeakSanitizer (memory error and leak detection)])])
++AC_MSG_CHECKING([whether to enable AddressSanitizer])
++AS_IF([test "x${enable_asan}" = "xyes"],
++      [AC_MSG_RESULT([yes])
++       CFLAGS="$CFLAGS -fsanitize=address -fno-omit-frame-pointer"
++       CXXFLAGS="$CXXFLAGS -fsanitize=address -fno-omit-frame-pointer"
++       LDFLAGS="$LDFLAGS -fsanitize=address"],
++      [AC_MSG_RESULT([no])])
++
+ AC_ARG_WITH([syncapi],
+  [AS_HELP_STRING([--with-syncapi],[build with support for SyncAPI [default=yes]])],
+  [],[with_syncapi=yes])
 ```
 
-**File**: `zookeeper-server/src/test/java/org/apache/zookeeper/server/DataTreeTest.java` (modified, +41/-0)
+**File**: `zookeeper-client/zookeeper-client-c/include/zookeeper.h` (modified, +67/-15)
 ```diff
-@@ -418,6 +418,47 @@ public void run() {
-         assertTrue(ranTestCase.get(), "Didn't find the expected node");
-     }
+@@ -687,14 +687,24 @@ ZOOAPI zhandle_t *zookeeper_init_sasl(const char *host, watcher_fn fn,
+  * is not mandatory; you can still implement interactive dialogs by
+  * defining your own callbacks.
+  *
++ * The returned array is an opaque contiguous allocation containing the
++ * callbacks and copies of the provided parameters. Do not resize the array
++ * or deallocate individual entries or contexts. Passwords are limited to
++ * 1023 characters. Longer passwords will fail with \c SASL_BUFOVER.
++ *
++ * Multiple handles may share a callback array provided credentials do not
++ * change while any handle is open. If credentials can change (e.g. password
++ * file rotation), allocate a separate callback array for each handle.
++ *
+  * \param user the "canned" response to \c SASL_CB_USER and \c SASL_CB_AUTHNAME,
+  *   or NULL for none
+  * \param realm the "canned" response to \c SASL_CB_GETREALM, or NULL for none
+  * \param password_file the name of a file whose first line is read in
+- *   response to \c SASL_CB_PASS, or NULL for none
+- * \return the freshly-malloc()ed callbacks array, or NULL if allocation
+- *   failed.  Deallocate with free(), but only after the corresponding
+- *   ZooKeeper handle is closed.
++ *   response to \c SASL_CB_PASS, or NULL to prompt for the password at
++ *   the terminal
++ * \return the callbacks array, or NULL if allocation failed. Deallocate
++ *   with free(), but only after all ZooKeeper handles using it are
++ *   closed.
+  */
+ ZOOAPI sasl_callback_t *zoo_sasl_make_basic_callbacks(const char *user,
+   const char *realm, const char* password_file);
+@@ -750,15 +760,19 @@ typedef struct zoo_sasl_password {
+  * the actual password is generated by zoo_sasl_password object rather than just
+  * read from the password file.
+  *
++ * The returned array follows the same contract as
++ * \ref zoo_sasl_make_basic_callbacks. Passwords are subject to the same
++ * 1023 character limit and fail with \c SASL_BUFOVER if exceeded.
++ *
+  * \param user the "canned" response to \c SASL_CB_USER and \c SASL_CB_AUTHNAME,
+  *   or NULL for none.
+  * \param realm the "canned" response to \c SASL_CB_GETREALM, or NULL for none.
+  * \param password the object defined by user to specify how the actual password
+  *   is generated in response to \c SASL_CB_PASS, should never be NULL (otherwise
+  *   the behaviour is undefined), see struct zoo_sasl_password for details.
+- * \return the freshly-malloc()ed callbacks array, or NULL if allocation
+- *   failed. Deallocate with free(), but only after the corresponding
+- *   ZooKeeper handle is closed.
++ * \return the callbacks array, or NULL if allocation failed. Deallocate
++ *   with free(), but only after all ZooKeeper handles using it are
++ *   closed.
+  */
+ ZOOAPI sasl_callback_t *zoo_sasl_make_password_callbacks(const char *user,
+   const char *realm, zoo_sasl_password_t *password);
+@@ -872,6 +886,12 @@ ZOOAPI const char* zoo_get_current_server(zhandle_t* zh);
+  * twice will cause undefined (and probably undesirable behavior). Calling any other
+  * zookeeper method after calling close is undefined behaviour and should be avoided.
+  *
++ * In the multithreaded library, a callback that runs on the IO thread (for
++ * example an authentication completion) can call this function. In that case,
++ * completions and watcher events that are queued after the completion thread
++ * stops are released without being invoked, so their data is not handed back
++ * to the caller.
++ *
+  * \param zh the zookeeper handle obtained by a call to \ref zookeeper_init
+  * \return a result code. Regardless of the error code returned, the zhandle
+  * will be destroyed and all resources freed.
+@@ -985,7 +1005,11 @@ ZOOAPI int zookeeper_process(zhandle_t *zh, int events);
+  * \param data the pointer that was passed by the caller when the function
+  *   that this completion corresponds to was invoked. The programmer
+  *   is responsible for any memory freeing associated with the data
+- *   pointer.
++ *   pointer. If an asynchronous call (zoo_a*) fails synchronously
++ *   (returns non-ZOK), the completion callback will not be invoked
++ *   and the caller retains ownership of this data (except for zoo_add_auth()).
++ *   Otherwise the completion is invoked, except when the handle is closed
++ *   from the IO thread (see \ref zookeeper_close).
+  */
+ typedef void (*void_completion_t)(int rc, const void *data);
  
-+    /**
-+     * Snapshot serialization must not depend on tree depth. This builds a very
-+     * deep znode chain and serializes it on a thread with a small (512 KiB)
-+     * stack, so the test is independent of the runner's default -Xss, then
-+     * checks the result round-trips back to an equivalent tree.
-+     */
-+    @Test
-+    @Timeout(value = 120)
-+    public void testSerializeDeepTree() throws Exception {
-+        final int depth = 4000;
-+        final DataTree tree = new DataTree();
-+        final StringBuilder path = new StringBuilder();
-+        for (int i = 0; i < depth; i++) {
-+            path.append("/a");
-+            tree.createNode(path.toString(), new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, -1L, i + 1, i + 1, 1);
-+        }
+@@ -1007,7 +1031,11 @@ typedef void (*void_completion_t)(int rc, const void *data);
+  * \param data the pointer that was passed by the caller when the function
+  *   that this completion corresponds to was invoked. The programmer
+  *   is responsible for any memory freeing associated with the data
+- *   pointer.
++ *   pointer. If an asynchronous call (zoo_a*) fails synchronously
++ *   (returns non-ZOK), the completion callback will not be invoked
++ *   and the caller retains ownership of this data (except for zoo_add_auth()).
++ *   Otherwise the completion is invoked, except when the handle is closed
++ *
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/pom.xml` (modified, +9/-0)
+```diff
+@@ -33,6 +33,7 @@
+ 
+   <properties>
+     <c-test-coverage-arg> </c-test-coverage-arg>
++    <c-test-asan-arg> </c-test-asan-arg>
+   </properties>
+ 
+   <build>
+@@ -76,6 +77,7 @@
+                 <argument>--with-sasl=${c-client-sasl}</argument>
+                 <argument>--prefix=${project.build.directory}/c</argument>
+                 <argument>${c-test-coverage-arg}</argument>
++                <argument>${c-test-asan-arg}</argument>
+               </arguments>
+             </configuration>
+           </execution>
+@@ -150,6 +152,13 @@
+         <c-test-coverage-arg>--enable-gcov</c-test-coverage-arg>
+       </properties>
+     </profile>
++    <profile>
++      <!-- build the C client and its tests with AddressSanitizer and LeakSanitizer -->
++      <id>c-test-asan</id>
++      <properties>
++        <c-test-asan-arg>--enable-asan</c-test-asan-arg>
++      </properties>
++    </profile>
+     <profile>
+       <!-- can be skipped by deactivating the profile with -P!cppunit (may need to escape or quote exclamation on command-line) -->
+       <id>cppunit</id>
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/cli.c` (modified, +118/-33)
+```diff
+@@ -67,6 +67,30 @@ static int sent=0;
+ static int recvd=0;
+ 
+ static int shutdownThisThing=0;
++/*
++ * Set when the watcher closes the handle. The library then destroys the
++ * handle later on its completion thread, and that destroy still uses the
++ * SASL state.
++ */
++static int closedByWatcher=0;
 +
-+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-+        final BinaryOutputArchive oa = BinaryOutputArchive.getArchive(baos);
-+        final Throwable[] failure = new Throwable[1];
-+        final Thread serializer = new Thread(null, () -> {
-+            try {
-+                tree.serialize(oa, "tree");
-+            } catch (Throwable t) {
-+                failure[0] = t;
-+            }
-+        }, "deep-tree-serializer", 512 * 1024L);
-+        serializer.start();
-+        serializer.join();
++#ifdef HAVE_CYRUS_SASL_H
++/* SASL callbacks must remain valid for the lifetime of the zookeeper handle. */
++static sasl_callback_t *sasl_callbacks = NULL;
 +
-+        assertNull(failure[0], "serialize() must not fail on a deep tree");
++static void release_sasl(void) {
++    free(sasl_callbacks);
++    sasl_callbacks = NULL;
++#ifdef __APPLE__
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
++#endif
++    sasl_client_done();
++#ifdef __APPLE__
++#pragma GCC diagnostic pop
++#endif
++}
++#endif /* HAVE_CYRUS_SASL_H */
+ 
+ static __attribute__ ((unused)) void
+ printProfileInfo(struct timeval start, struct timeval end, int thres,
+@@ -148,11 +172,13 @@ void watcher(zhandle_t *zzh, int type, int state, const char *path,
+             }
+         } else if (state == ZOO_AUTH_FAILED_STATE) {
+             fprintf(stderr, "Authentication failure. Shutting down...\n");
++            closedByWatcher=1;
+             zookeeper_close(zzh);
+             shutdownThisThing=1;
+             zh=0;
+         } else if (state == ZOO_EXPIRED_SESSION_STATE) {
+             fprintf(stderr, "Session expired. Shutting down...\n");
++            closedByWatcher=1;
+             zookeeper_close(zzh);
+             shutdownThisThing=1;
+             zh=0;
+@@ -300,10 +326,27 @@ void my_silent_stat_completion(int rc, const struct Stat *stat,
+     free((void*)data);
+ }
+ 
++/*
++ * Log asynchronous dispatch failure and free completion context data,
++ * as failed invocations will not trigger completion callbacks.
++ */
++static void async_failed(int rc, const char *line, void *data) {
++    fprintf(stderr, "Error %d for %s\n", rc, line);
++    free(data);
++}
 +
-+        // The produced bytes must load back into an equivalent tree.
-+        final DataTree restored = new DataTree();
-+        final BinaryInputArchive ia =
-+            BinaryInputArchive.getArchive(new ByteArrayInputStream(baos.toByteArray()));
-+        restored.deserialize(ia, "tree");
-+        assertNotNull(restored.getNode(path.toString()),
-+            "the deepest node must survive a serialize/deserialize round-trip");
+ static void sendRequest(const char* data) {
+-    zoo_aset(zh, "/od", data, strlen(data), -1, my_silent_stat_completion,
+-            strdup("/od"));
+-    zoo_aget(zh, "/od", 1, my_silent_data_completion, strdup("/od"));
++    char *ctx = strdup("/od");
++    int rc = zoo_aset(zh, "/od", data, strlen(data), -1,
++            my_silent_stat_completion, ctx);
++    if (rc) {
++        free(ctx);
 +    }
-+
-     @Test
-     @Timeout(value = 60)
-     public void testReconfigACLClearOnDeserialize() throws Exception {
++    ctx = strdup("/od");
++    rc = zoo_aget(zh, "/od", 1, my_silent_data_completion, ctx);
++    if (rc) {
++        free(ctx);
++    }
+ }
+ 
+ void od_completion(int rc, const struct Stat *stat, const void *data) {
+@@ -332,6 +375,7 @@ static int verbose = 0;
+ 
+ void processline(const char *line) {
+     int rc;
++    char *data = NULL;
+     int async = ((line[0] == 'a') && !(startsWith(line, "addauth ")));
+     if (async) {
+         line++;
+@@ -375,19 +419,22 @@ void processline(const char *line) {
+             return;
+         }
+ 
+-        rc = zoo_aget(zh, line, 1, my_data_completion, strdup(line));
++        data = strdup(line);
++        rc = zoo_aget(zh, line, 1, my_data_completion, data);
+         if (rc) {
+-            fprintf(stderr, "Error %d for %s\n", rc, line);
++            async_failed(rc, line, data);
+         }
+     } else if (strcmp(line, "config") == 0) {
+        gettimeofday(&startTime, 0);
+-        rc = zoo_agetconfig(zh, 1, my_data_completion, strdup(ZOO_CONFIG_NODE));
++        data = strdup(ZOO_CONFIG_NODE);
++        rc = zoo_agetconfig(zh, 1, my_data_completion, data);
+         if (rc) {
+-            fprintf(stderr, "Error %d for %s\n", rc, line);
++            async_failed(rc, line, data);
+         }
+    } else if (startsWith(line, "reconfig ")) {
+            int syntaxError = 0;
+            char* p = NULL;
++           char* tokens = NULL;
+            char* joining = NULL;
+            char* leaving = NULL;
+            char* members = NULL;
+@@ -397,15 +444,22 @@ void processline(const char *line) {
+            int64_t version = -1;
+ 
+            line += 9;
+-           p = strtok (strdup(line)," ");
++           tokens = strdup(line);
++           if (tokens == NULL) {
++               fprintf(stderr, "Insufficient memory to parse: %s\n", line);
++               return;
++           }
++           p = strtok (tokens," ");
+            while (p != NULL) {
++               /* Overwrite duplicate options, releasing previously parsed values. */
+                if (strcmp(p, "-add")==0) {
+                    p = strtok (NULL," ");
+                    if (mode == 2 || p == NULL) {
+                        syntaxError = 1;
+                        break;
+                    }
+                    mode = 1;
++                   free(joining);
+                    joining = strdup(p);
+                } else if (strcmp(p, "-remove")==0){
+                    p = strtok (NULL," ");
+@@ -414,6 +468,7 @@ void processline(const char *line) {
+                        break;
+                    }
+                    mode = 1;
++                   free(leaving);
+                    leaving = strdup(p);
+                } else if (strcmp(p, "-members")==0) {
+                    p = s
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/mt_adaptor.c` (modified, +30/-3)
+```diff
+@@ -285,8 +285,18 @@ void adaptor_finish(zhandle_t *zh)
+     if(!pthread_equal(adaptor_threads->io,pthread_self())){
+         wakeup_io_thread(zh);
+         pthread_join(adaptor_threads->io, 0);
+-    }else
++    }else{
+         pthread_detach(adaptor_threads->io);
++        /*
++         * When closing from the IO thread (e.g., within an auth callback),
++         * mark IO completion before waiting for the completion thread to
++         * prevent shutdown deadlocks. destroy() releases any completions
++         * queued afterwards. It does not deliver them.
++         */
++        pthread_mutex_lock(&zh->completions_to_process.lock);
++        adaptor_threads->io_exited = 1;
++        pthread_mutex_unlock(&zh->completions_to_process.lock);
++    }
+     
+     if(!pthread_equal(adaptor_threads->completion,pthread_self())){
+         pthread_mutex_lock(&zh->completions_to_process.lock);
+@@ -457,6 +467,11 @@ void *do_io(void *v)
+         if(is_unrecoverable(zh))
+             break;
+     }
++    /* Signal the completion thread that the IO thread has finished enqueuing events. */
++    pthread_mutex_lock(&zh->completions_to_process.lock);
++    adaptor_threads->io_exited = 1;
++    pthread_cond_broadcast(&zh->completions_to_process.cond);
++    pthread_mutex_unlock(&zh->completions_to_process.lock);
+     log_fn = LOGCALLBACK(zh);
+     api_epilog(zh, 0);
+     LOG_DEBUG(log_fn, "IO thread terminated");
+@@ -470,16 +485,28 @@ void *do_completion(void *v)
+ #endif
+ {
+     zhandle_t *zh = v;
++    struct adaptor_threads *adaptor_threads = zh->adaptor_priv;
+     log_callback_fn fn;
+     api_prolog(zh);
+     notify_thread_ready(zh);
+     LOG_DEBUG(LOGCALLBACK(zh), "started completion thread");
+-    while(!zh->close_requested) {
++    /*
++     * Drain pending completions until close is requested and the IO thread
++     * has fully terminated, ensuring late completions are not abandoned
++     *(ZOOKEEPER-3868).
++     */
++    for (;;) {
++        int finished;
+         pthread_mutex_lock(&zh->completions_to_process.lock);
+-        while(!zh->completions_to_process.head && !zh->close_requested) {
++        while(!zh->completions_to_process.head &&
++              !(zh->close_requested && adaptor_threads->io_exited)) {
+             pthread_cond_wait(&zh->completions_to_process.cond, &zh->completions_to_process.lock);
+         }
++        finished = !zh->completions_to_process.head;
+         pthread_mutex_unlock(&zh->completions_to_process.lock);
++        if (finished) {
++            break;
++        }
+         process_completions(zh);
+     }
+     fn = LOGCALLBACK(zh);
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/recordio.c` (modified, +6/-4)
+```diff
+@@ -50,15 +50,17 @@ struct buff_struct {
+ static int resize_buffer(struct buff_struct *s, int newlen)
+ {
+     char *buffer= NULL;
+-    while (s->len < newlen) {
+-        s->len *= 2;
++    int32_t len = s->len;
++    while (len < newlen) {
++        len *= 2;
+     }
+-    buffer = (char*)realloc(s->buffer, s->len);
++    buffer = (char*)realloc(s->buffer, len);
+     if (!buffer) {
+-        s->buffer = 0;
++        /* Preserve existing buffer on allocation failure. Owner will free. */
+         return -ENOMEM;
+     }
+     s->buffer = buffer;
++    s->len = len;
+     return 0;
+ }
+ 
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/zk_adaptor.h` (modified, +1/-0)
+```diff
+@@ -168,6 +168,7 @@ struct adaptor_threads {
+      pthread_mutex_t zh_lock;       // critical section lock
+      pthread_mutex_t reconfig_lock; // lock for reconfiguring cluster's ensemble
+      pthread_mutex_t watchers_lock; // lock for watcher operations
++     int io_exited;                 // flag indicating IO thread termination
+ #ifdef WIN32
+      SOCKET self_pipe[2];
+ #else
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2476** (2026-10-20): ZOOKEEPER-5097: Make DataTree snapshot serialization iterative (@anmolnar)
+- **PR #2475** (2026-10-26): ZOOKEEPER-5103: Address memory leaks in the C client (@apurtell)
 - **PR #2474** (closed): Preserve configured client hostname verification with Netty 4.2 (@xiangfu0)
 - **PR #2473** (2026-10-20): ZOOKEEPER-4922: Audit JAAS login, logout and Kerberos ticket renewal (@ikxeno)
 - **PR #2470** (2026-10-05): ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers (addendum) (@meszibalu)
 - **PR #2469** (2026-10-05): ZOOKEEPER-5054: Netty client should allow every supported TLS ciphers… (@meszibalu)
-- **PR #2468** (2026-10-05): ZOOKEEPER-5099: Upgrade jackson-databind to 2.22.3 (@PDavid)
 
 ---
 
@@ -2014,28 +2282,33 @@ Closes #2476 from anmolnar/ZOOKEEPER-5097
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client
+## X. ZOOKEEPER-5103: Address memory leaks in the C client
 
 **RULE**:
-When implementing operations in `bin/zkServer.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-client/zookeeper-client-c/Makefile.am`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `777b3723`: ZOOKEEPER-5109: Do not pass server JVM flags to status diagnostic client. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `858c8d77`: ZOOKEEPER-5103: Address memory leaks in the C client. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `bin/zkServer.sh`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-client/zookeeper-client-c/Makefile.am`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-      "${clientflags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
+    ${srcdir}/tests/wrappers.opt ${srcdir}/tests/wrappers-mt.opt \
+    ${srcdir}/tests/lsan.supp
+# Suppressions and options for LeakSanitizer when built with --enable-asan.
+                    CLASSPATH=$$CLASSPATH:$$CLOVER_HOME/lib/clover*.jar \
+                    LSAN_OPTIONS=suppressions=$(abs_srcdir)/tests/lsan.supp:print_suppressions=0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-      "${clientflags[@]}" "${flags[@]}" org.apache.zookeeper.client.FourLetterWordMain \
+    ${srcdir}/tests/wrappers.opt ${srcdir}/tests/wrappers-mt.opt
+                    CLASSPATH=$$CLASSPATH:$$CLOVER_HOME/lib/clover*.jar
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `777b3723` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `858c8d77` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source**: github ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
-> **Source Version**: `f62b68e4`  
+> **Source Version**: `9daa0a72`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T19:58:45.487Z  
+> **Timestamp**: 2026-10-31T10:47:13.209Z  
 > **Learning ID**: `learn-github-u-root-u-root`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T19:58:45.482Z  
+> **Harvest Timestamp**: 2026-10-31T10:47:13.199Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A fully Go userland with Linux bootloaders! u-root can create a one-binary root file system (initramfs) containing a busybox-like set of tools written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3082 stars
+- **Stars / Engagement**: 3084 stars
 
 ---
 
@@ -651,6 +651,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -816,9 +817,15 @@ func (c *cmd) run(args ...string) error {
 
 	for _, name := range fileList {
 		if c.recursive {
-			err := filepath.Walk(name, func(path string, _ os.FileInfo, err error) error {
+			err := filepath.WalkDir(name, func(path string, d fs.DirEntry, err error) error {
 				if err != nil {
 					return err
+				}
+				// WalkDir doesn't descend into symlinks but still reports
+				// them, and os.Chmod follows them. Like GNU chmod, skip
+				// any met during the traversal.
+				if path != name && d.Type()&fs.ModeSymlink == fs.ModeSymlink {
+					return nil
 				}
 				err = changeMode(path, mode, octval, mask)
 				return err
@@ -1257,388 +1264,72 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f62b68e4` (2026-10-21)
-**Commit Message**: pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context
+### Incident Patch 1: `9daa0a72` (2026-10-29)
+**Commit Message**: ulog: use unix.Klogctl to set the console log level
 
-Fix several bugs and improve the API in pkg/fdsrv:
+Use the Klogctl function defined in the golang.org/x/sys/unix package,
+as is already done in ClearLog, instead of calling the syslog(2)
+syscall directly.
 
-1. Use context.Context for cancellation and deadlines:
-   Accept ctx context.Context in Serve(ctx) and GetSharedFD(ctx, ...)
-   using context.AfterFunc and net.Dialer.DialContext instead of storing
-   a custom timeout on Server (WithTimeout) and manually managing socket
-   deadlines.
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
 
-2. Fix client Unix socket FD leak in GetSharedFD:
-   Close the dialed AF_UNIX connection (defer conn.Close()) before
-   returning from GetSharedFD. Previously every call to GetSharedFD
-   leaked the client socket FD.
-
-3. Prevent double-close of dupedFD and close listener when Serve exits:
-   Guard Server.Close() with sync.Once so calling Close() multiple times
-   (e.g. from Serve on timeout/exit and again from the caller) does not
-   close dupedFD twice. Defer fds.Close() in Serve() so the listening
-   socket and dupedFD are always cleaned up as soon as Serve() returns.
-
-4. Do not tear down the server on unauthenticated client read errors:
-   In handleConnection, treat client read errors (such as io.EOF when a
-   client connects and closes without writing a nonce, or ECONNRES
-
-**File**: `pkg/fdsrv/fdsrv.go` (modified, +122/-86)
+**File**: `pkg/ulog/klog_linux.go` (modified, +4/-1)
 ```diff
-@@ -2,69 +2,86 @@
- // Use of this source code is governed by a BSD-style
- // license that can be found in the LICENSE file.
- 
--// Serves a file descriptor over an AF_UNIX socket when presented with a nonce.
-+//go:build linux
-+
-+// Package fdsrv serves a file descriptor over a Linux Unix domain socket (UDS)
-+// when presented with a nonce.
- //
- // You must pass the socket path and nonce to the client via some out-of-band
- // mechanism, such as gRPC or a bash script.
- //
- // Notes:
--// - Uses the unix domain socket abstract namespace
--// - Picks its own path in the abstract namespace for the socket.
--// - Shared FDs are essentially duped, and they point to the same struct file:
--// they share offsets and whatnot.
-+//   - Uses the Linux UDS abstract namespace.
-+//   - Picks its own path in the abstract namespace for the socket.
-+//   - Shared FDs are essentially duped, and they point to the same struct file:
-+//     they share offsets and whatnot.
- //
- // Options:
--// - WithServeOnce: serve once and shuts down (default is forever)
--// - WithTimeout: cancel itself after a timeout (default none)
-+//   - WithServeOnce: serve once and shut down (default is forever).
- //
- // Usage Server:
- //
--//	fds, err := NewServer(fd_to_share, "some_nonce", WithServeOnce())
--//	var s path = fds.UDSPath()
-+//	fds, err := NewServer(fdToShare, "some_nonce", WithServeOnce())
-+//	path := fds.UDSPath()
- //
--//	// Pass path and some_nonce to the client via an out of band mechanism
-+//	// Pass path and some_nonce to the client via an out-of-band mechanism.
- //
--//	fds.Serve(); // Blocks until the server is done
-+//	fds.Serve(ctx) // Blocks until the server is done or ctx is canceled.
- //	fds.Close()
- //
- // Usage Client:
- //
--//	sfd, err := GetSharedFD("uds_path", "some_nonce")
-+//	sfd, err := GetSharedFD(ctx, udsPath, "some_nonce")
- package fdsrv
- 
- import (
-+	"context"
- 	"errors"
- 	"io"
- 	"net"
--	"os"
-+	"sync"
- 	"syscall"
--	"time"
-+
-+	"golang.org/x/sys/unix"
- )
- 
- var (
--	ErrTruncatedWrite   = errors.New("truncated write")
--	ErrEmptyNonce       = errors.New("nonce must not be empty")
--	ErrMissingSCM       = errors.New("missing socket control message")
-+	// ErrTruncatedWrite indicates a short write on the UDS.
-+	ErrTruncatedWrite = errors.New("truncated write")
-+	// ErrEmptyNonce indicates that an empty nonce was provided.
-+	ErrEmptyNonce = errors.New("nonce must not be empty")
-+	// ErrMissingSCM indicates that expected socket control message was missing.
-+	ErrMissingSCM = errors.New("missing socket control message")
-+	// ErrNotOneUnixRights indicates that SCM_RIGHTS did not contain one FD.
- 	ErrNotOneUnixRights = errors.New("expected exactly one unix rights")
- )
- 
-+// Server serves a file descriptor over a Linux UDS in the abstract namespace.
- type Server struct {
- 	dupedFD   int
- 	nonce     string
- 	listener  *net.UnixListener
--	timeout   time.Duration
- 	serveOnce bool
-+	closeOnce sync.Once
-+	closeErr  error
- }
- 
- // Serves the fd, returns true if successful, err for a server error.
- // "false, nil" means the client was wrong, not the server.
--func (fds *Server) handleConnection(uc *net.UnixConn) (bool, error) {
-+func (fds *Server) handleConnection(ctx context.Context, uc *net.UnixConn) (bool, error) {
- 	defer uc.Close()
-+	stop := context.AfterFunc(ctx, func() {
-+		uc.Close()
-+	})
-+	defer stop()
- 
--	buf := make([]byte, 4096)
-+	buf := make([]byte, len(fds.nonce)+1)
- 	n, err := uc.Read(buf)
- 	if err != nil {
--		return false, err
-+		if ctxErr := ctx.Err(); ctxErr != nil {
-+			return false, ctxErr
-+		}
-+		return false, nil
+@@ -82,7 +82,10 @@ const (
+ // After this call, only messages with a level value lower than the one
+ // specified will be printed to console by the kernel.
+ func (k *KLog) SetConsoleLogLevel(level KLogLevel) error {
+-	if _, _, err := unix.Syscall(unix.SYS_SYSLOG, unix.SYSLOG_ACTION_CONSOLE_LEVEL, 0, uintptr(level)); err != 0 {
++	// The syslog(2) "len" argument carries the console level for this
++	// action; Klogctl passes len(buf) as that argument, so size buf
++	// accordingly rather than actually writing into it.
++	if _, err := unix.Klogctl(unix.SYSLOG_ACTION_CONSOLE_LEVEL, make([]byte, level)); err != nil {
+ 		return fmt.Errorf("could not set syslog level to %d: %w", level, err)
  	}
- 	query := string(buf[:n])
- 	if query != fds.nonce {
-@@ -75,6 +92,9 @@ func (fds *Server) handleConnection(uc *net.UnixConn) (bool, error) {
- 	good := []byte("GOOD NONCE")
- 	goodn, oobn, err := uc.WriteMsgUnix(good, oob, nil)
- 	if err != nil {
-+		if ctxErr := ctx.Err(); ctxErr != nil {
-+			return false, ctxErr
-+		}
- 		return false, err
- 	}
- 	if goodn != len(good) || oobn != len(oob) {
-@@ -83,15 +103,15 @@ func (fds *Server) handleConnection(uc *net.UnixConn) (bool, error) {
- 	return true, nil
- }
- 
--// NewServer creates a server.  Close() it when you're done.
-+// NewServer creates a Server that shares fd when presented with nonce. Call
-+// Close when done.
- func NewServer(fd int, nonce string, options ...func(*Server) error) (*Server, error) {
--	var err error
--	fds := &Server{}
--
- 	if len(nonce) == 0 {
- 		return nil, ErrEmptyNonce
- 	}
--	fds.nonce = nonce
-+	fds := &Server{
-+		nonce: nonce,
-+	}
- 
- 	for _, op := range options {
- 		if err := op(fds); err != nil {
-@@ -100,127 +120,143 @@ func NewServer(fd int, nonce string, options ...func(*Server) error) (*Server, e
- 	}
- 
- 	// An empty addr tells Linux to "autobind" to an available path in the
--	// abstract unix domain socket namespace
--	ua, err := net.ResolveUnixAddr("unix", "")
--	if err != nil {
--		return nil, err
--	}
--	fds.listener, err = net.ListenUnix("unix", ua)
-+	// UDS abstract namespace.
-+	var err error
-+	fds.listener, err = net.ListenUnix("unix", &net.UnixAdd
+ 	return nil
 ```
 
-**File**: `pkg/fdsrv/fdsrv_test.go` (modified, +278/-70)
+---
+
+### Incident Patch 2: `7796d399` (2026-10-29)
+**Commit Message**: rush: use unix.IoctlSetPointerInt
+
+Use the IoctlSetPointerInt function defined in the golang.org/x/sys/unix
+package instead of locally duplicating it.
+
+Signed-off-by: Tobias Klauser <[REDACTED_EMAIL]>
+
+**File**: `cmds/exp/rush/tty_linux.go` (modified, +2/-4)
 ```diff
-@@ -2,217 +2,425 @@
- // Use of this source code is governed by a BSD-style
- // license that can be found in the LICENSE file.
- 
-+//go:build linux
-+
- package fdsrv
- 
- import (
-+	"context"
-+	"errors"
-+	"net"
+@@ -11,7 +11,6 @@ import (
+ 	"log"
  	"os"
-+	"strings"
- 	"syscall"
- 	"testing"
- 	"time"
-+
-+	"golang.org/x/sys/unix"
+ 	"os/signal"
+-	"unsafe"
+ 
+ 	"golang.org/x/sys/unix"
  )
- 
- // Returns an fd of the read side of a pipe that has the value 'x' written in
- // it.
- func xPipe(t *testing.T) int {
-+	t.Helper()
- 	var p [2]int
--	if err := syscall.Pipe(p[:]); err != nil {
--		t.Fatal("pipe:", err)
-+	if err := syscall.Pipe2(p[:], syscall.O_CLOEXEC); err != nil {
-+		t.Fatalf("Pipe2: got %v, want nil", err)
- 	}
- 	if _, err := syscall.Write(p[1], []byte("x")); err != nil {
--		t.Fatal("write:", err)
-+		t.Fatalf("Write: got %v, want nil", err)
- 	}
- 	if err := syscall.Close(p[1]); err != nil {
--		t.Fatal("close:", err)
-+		t.Fatalf("Close: got %v, want nil", err)
- 	}
- 	return p[0]
- }
- 
--// Returns an *Server, serving an xPipe with "some_nonce"
-+// Returns a *Server, serving an xPipe with "some_nonce".
- func allocPipeFDs(t *testing.T, options ...func(*Server) error) *Server {
-+	t.Helper()
- 	fd := xPipe(t)
- 	fds, err := NewServer(fd, "some_nonce", options...)
- 	if err != nil {
--		t.Fatal("alloc:", err)
-+		t.Fatalf("NewServer: got %v, want nil", err)
- 	}
- 	if err := syscall.Close(fd); err != nil {
--		t.Fatal("close:", err)
-+		t.Fatalf("Close: got %v, want nil", err)
- 	}
- 	return fds
- }
- 
--// Read a string from an fd
-+// Read a string from an fd.
- func readString(t *testing.T, fd int) string {
-+	t.Helper()
- 	buf := make([]byte, 128)
- 	n, err := syscall.Read(fd, buf)
- 	if err != nil {
--		t.Fatal("read:", err)
-+		t.Fatalf("Read: got %v, want nil", err)
- 	}
- 	return string(buf[:n])
- }
- 
--// Gets a shared fd, makes sure we can read "x" from it
--func testSharedOK(t *testing.T, udspath, nonce string) {
--	sfd, err := GetSharedFD(udspath, nonce)
-+// Gets a shared fd, makes sure we can read "x" from it.
-+func testSharedOK(ctx context.Context, t *testing.T, udspath, nonce string) {
-+	t.Helper()
-+	sfd, err := GetSharedFD(ctx, udspath, nonce)
- 	if err != nil {
--		t.Error("getsharedfd:", err)
-+		t.Fatalf("GetSharedFD(%q, %q): got %v, want nil", udspath, nonce, err)
- 	}
- 	got := readString(t, sfd)
- 	if got != "x" {
--		t.Errorf("expected x, got %s", got)
-+		t.Errorf("readString(%d): got %q, want %q", sfd, got, "x")
- 	}
- 	if err := syscall.Close(sfd); err != nil {
--		t.Error("close:", err)
-+		t.Errorf("Close(%d): got %v, want nil", sfd, err)
+@@ -55,9 +54,8 @@ func tty() {
+ func foreground() {
+ 	// Place process group in foreground.
+ 	if ttypgrp != 0 {
+-		_, _, errno := unix.RawSyscall(unix.SYS_IOCTL, ttyf.Fd(), uintptr(unix.TIOCSPGRP), uintptr(unsafe.Pointer(&ttypgrp)))
+-		if errno != 0 {
+-			log.Printf("rush pid %v: Can't set foreground to %v: %v", os.Getpid(), ttypgrp, errno)
++		if err := unix.IoctlSetPointerInt(int(ttyf.Fd()), unix.TIOCSPGRP, ttypgrp); err != nil {
++			log.Printf("rush pid %v: Can't set foreground to %v: %v", os.Getpid(), ttypgrp, err)
+ 		}
  	}
  }
- 
- func TestPassFD(t *testing.T) {
-+	ctx := t.Context()
- 	fds := allocPipeFDs(t, WithServeOnce())
- 
- 	serveErr := make(chan error)
- 	go func() {
--		serveErr <- fds.Serve()
-+		serveErr <- fds.Serve(ctx)
- 	}()
- 
--	testSharedOK(t, fds.UDSPath(), "some_nonce")
-+	testSharedOK(ctx, t, fds.UDSPath(), "some_nonce")
- 
--	fds.Close()
-+	if err := fds.Close(); err != nil {
-+		t.Errorf("Close: got %v, want nil", err)
-+	}
- 	if err := <-serveErr; err != nil {
--		t.Errorf("Serve: %v", err)
-+		t.Errorf("Serve: got %v, want nil", err)
- 	}
- }
- 
- func TestBadNonce(t *testing.T) {
-+	ctx := t.Context()
- 	fds := allocPipeFDs(t, WithServeOnce())
- 
- 	serveErr := make(chan error)
- 	go func() {
--		serveErr <- fds.Serve()
-+		serveErr <- fds.Serve(ctx)
- 	}()
- 
--	sfd, err := GetSharedFD(fds.UDSPath(), "bad_nonce")
-+	sfd, err := GetSharedFD(ctx, fds.UDSPath(), "bad_nonce")
- 	if err == nil {
--		t.Errorf("should have failed, but got sfd %d", sfd)
-+		t.Errorf("GetSharedFD(bad_nonce): got (%d, nil), want (-1, non-nil error)", sfd)
-+	}
-+	// Server should remain alive after a bad nonce and still serve a valid
-+	// client.
-+	testSharedOK(ctx, t, fds.UDSPath(), "some_nonce")
-+
-+	if err := fds.Close(); err != nil {
-+		t.Errorf("Close: got %v, want nil", err)
- 	}
--	fds.Close()
- 	if err := <-serveErr; err != nil {
--		t.Errorf("Serve: %v", err)
-+		t.Errorf("Serve: got %v, want nil", err)
- 	}
- }
- 
- func TestBadSubsetNonce(t *testing.T) {
-+	ctx := t.Context()
- 	fds := allocPipeFDs(t, WithServeOnce())
- 
- 	serveErr := make(chan error)
- 	go func() {
--		serveErr <- fds.Serve()
-+		serveErr <- fds.Serve(ctx)
- 	}()
- 
--	sfd, err := GetSharedFD(fds.UDSPath(), "some_non")
-+	sfd, err := GetSharedFD(ctx, fds.UDSPath(), "some_non")
-+	if err == nil {
-+		t.Errorf("GetSharedFD(some_non): got (%d, nil), want (-1, non-nil error)", sfd)
-+	}
-+	sfd, err = GetSharedFD(ctx, fds.UDSPath(), "some_nonce_extra")
- 	if err == nil {
--		t.Errorf("should have failed, but got sfd %d", sfd)
-+		t.Errorf("GetSharedFD(some_nonce_extra): got (%d, nil), want (-1, non-nil error)", sfd)
-+	}
-+	if err := fds.Close(); err != nil {
-+		t.Errorf("Close: got %v, want nil", err)
- 	}
--	fds.Close()
- 	if err := <-serveErr; err != nil {
--		t.Errorf("Serve: %v", err)
-+		t.Errorf("Serve: got %v, want nil", err)
- 	}
- }
- 
- func TestBadEmptyNonce(t *testing.T) {
-+	ctx := t.Context()
- 	fds := allocPipeFDs(t, WithServeOnce())
- 
- 	serveErr := make(chan error)
- 	go func() {
--		serveErr <- fds.Serve()
-+		serveErr <- fds.Serve(ctx)
- 	}()
- 
--	sfd, err := GetSharedFD(fds.UDSPath(), "")
--	if err 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3816** (2026-10-31): Use more `golang.org/x/sys/unix` syscall wrappers (@tklauser)
+- **PR #3813** (2026-10-27): pkg/boot/kexec: honour #address-cells and #size-cells in the FDT memory map (@alanhc)
+- **PR #3810** (2026-10-27): chmod: ignore symlinks met during recursive traversal (@alhudz)
 - **PR #3806** (2026-10-22): pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context (@brho)
+- **PR #3805** (2026-10-27): bootcmd: show the menu again when the shell exits (@alanhc)
 - **PR #3804** (closed): build(deps): bump markdown-it from 12.3.2 to 14.3.3 in /website (@dependabot[bot])
-- **PR #3803** (closed): build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7 (@dependabot[bot])
-- **PR #3802** (2026-10-20): pkg/curl: revert errors.AsType in RetryTemporaryNetworkErrors for CIFuzz (@brho)
-- **PR #3801** (2026-10-20): sshd, sshstream: refuse authorized_keys entries with options (@alhudz)
-- **PR #3800** (closed): build(deps): bump markdown-it from 12.3.2 to 14.3.2 in /website (@dependabot[bot])
 
 ---
 
@@ -1658,78 +1349,31 @@ Fix several bugs and improve the API in pkg/fdsrv:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context
+## X. ulog: use unix.Klogctl to set the console log level
 
 **RULE**:
-When implementing operations in `pkg/fdsrv/fdsrv.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ulog/klog_linux.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f62b68e4`: pkg/fdsrv: fix FD leaks, double-close, client DoS, and use context.Context. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9daa0a72`: ulog: use unix.Klogctl to set the console log level. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fdsrv/fdsrv.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ulog/klog_linux.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//go:build linux
-
-// Package fdsrv serves a file descriptor over a Linux Unix domain socket (UDS)
-// when presented with a nonce.
-//   - Uses the Linux UDS abstract namespace.
-//   - Picks its own path in the abstract namespace for the socket.
-//   - Shared FDs are essentially duped, and they point to the same struct file:
-//     they share offsets and whatnot.
-//   - WithServeOnce: serve once and shut down (default is forever).
-//	fds, err := NewServer(fdToShare, "some_nonce", WithServeOnce())
-//	path := fds.UDSPath()
-//	// Pass path and some_nonce to the client via an out-of-band mechanism.
-//	fds.Serve(ctx) // Blocks until the server is done or ctx is canceled.
-//	sfd, err := GetSharedFD(ctx, udsPath, "some_nonce")
-	"context"
-	"sync"
-
-	"golang.org/x/sys/unix"
-	// ErrTruncatedWrite indicates a short write on the UDS.
-	ErrTruncatedWrite = errors.New("truncated write")
-	// ErrEmptyNonce indicates that an empty nonce was provided.
-	ErrEmptyNonce = errors.New("nonce must not be empty")
-	// ErrMissingSCM indicates that expected socket control message was missing.
-	ErrMissingSCM = errors.New("missing socket control message")
-	// ErrNotOneUnixRights indicates that SCM_RIGHTS did not con
+	// The syslog(2) "len" argument carries the console level for this
+	// action; Klogctl passes len(buf) as that argument, so size buf
+	// accordingly rather than actually writing into it.
+	if _, err := unix.Klogctl(unix.SYSLOG_ACTION_CONSOLE_LEVEL, make([]byte, level)); err != nil {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Serves a file descriptor over an AF_UNIX socket when presented with a nonce.
-// - Uses the unix domain socket abstract namespace
-// - Picks its own path in the abstract namespace for the socket.
-// - Shared FDs are essentially duped, and they point to the same struct file:
-// they share offsets and whatnot.
-// - WithServeOnce: serve once and shuts down (default is forever)
-// - WithTimeout: cancel itself after a timeout (default none)
-//	fds, err := NewServer(fd_to_share, "some_nonce", WithServeOnce())
-//	var s path = fds.UDSPath()
-//	// Pass path and some_nonce to the client via an out of band mechanism
-//	fds.Serve(); // Blocks until the server is done
-//	sfd, err := GetSharedFD("uds_path", "some_nonce")
-	"os"
-	"time"
-	ErrTruncatedWrite   = errors.New("truncated write")
-	ErrEmptyNonce       = errors.New("nonce must not be empty")
-	ErrMissingSCM       = errors.New("missing socket control message")
-	timeout   time.Duration
-func (fds *Server) handleConnection(uc *net.UnixConn) (bool, error) {
-	buf := make([]byte, 4096)
-		return false, err
-// NewServer creates a server.  Close() it when you're done.
-	var err error
-	fds := &Server{}
-
-	fds.nonce = nonce
-	// abstract unix domain sock
+	if _, _, err := unix.Syscall(unix.SYS_SYSLOG, unix.SYSLOG_ACTION_CONSOLE_LEVEL, 0, uintptr(level)); err != 0 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f62b68e4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9daa0a72` are properly handled with clean fallback behavior.

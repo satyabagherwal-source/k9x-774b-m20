@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `03d8a981`  
+> **Source Version**: `0fa7bec6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T08:39:33.069Z  
+> **Timestamp**: 2026-10-31T13:20:58.693Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T08:39:07.605Z  
+> **Harvest Timestamp**: 2026-10-31T13:20:58.685Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15721 stars
+- **Stars / Engagement**: 15728 stars
 
 ---
 
@@ -1955,15 +1955,13 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #70456** (2026-10-23): **[Bug]: 47818**
-  *Symptoms*: ### What happened?  47818  ### Type of salt install  Official deb  ### Major version  3006.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  debian-11  ### salt --versions-report output  ```shell 3006.x ```
-  **Post-Mortem & Fix Analysis**:
-  > Closing as part of a backlog cleanup — this issue was filed without a Salt versions-report, so there's no explicit version attached to compare against.  **If you (or anyone else) can still reproduce this on 3008.3 or later, please comment with:**  - A fresh reproduction - The output of `salt --versions-report`  and the issue will be reopened. The original reporter can also reopen directly.
+- **Issue #70598** (2026-10-30): **[Bug]: nox docs-html/docs-man fail: requirements/base.in and zeromq.in do not exist**
+  *Symptoms*: ### What happened?  `python -m nox -e 'docs-html(compress=False, clean=False)'` fails during the pip install step:  ``` ERROR: Could not open requirements file: [Errno 2] No such file or directory: 'requirements/base.in' nox > Session docs-html(compress=False, clean=False) failed. ```  The `docs-html` and `docs-man` sessions in `noxfile.py` reference `requirements/base.in` and `requirements/zeromq.in`, but the repository only contains `requirements/base.txt` and `requirements/zeromq.txt`.  Expected: the sessions install the existing requirements files and build the docs.  ### Environment  - Branch: master (522f75a) - OS: macOS (arm64), Python 3.14, nox 2026.10.20 - Type of Salt install: pip (git) 
 
-- **Issue #70455** (2026-10-23): **[Bug]: 47816**
-  *Symptoms*: ### What happened?  47816  ### Type of salt install  Official deb  ### Major version  3006.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  debian-11  ### salt --versions-report output  ```shell 3006.x ```
+- **Issue #70590** (2026-10-28): **[Bug]: ResourceWarning emitted after calling destroy() on MasterMinion**
+  *Symptoms*: ### What happened?  `MasterMinion.__del__` [checks](https://github.com/saltstack/salt/blob/3008.x/salt/minion.py#L1746) whether the object leaked by comparing certain attributes with `None`. However, in [`destroy`](https://github.com/saltstack/salt/blob/3008.x/salt/minion.py#L1662), `{}` is assigned to object instead of `None`. So, this is always `False` and false-positive warnings are appearing in the logs.  ### Type of salt install  pip (pypi)  ### Major version  3008.x  ### What supported OS are you seeing the problem on? Can select multiple. (If bug appears on an unsupported OS, please open a GitHub Discussion instead)  ubuntu-24.04  ### salt --versions-report output  ```shell Salt Version:           Salt: 3008.3-1   Python Version:         Python: 3.14.7 (main, Sep 30 2026, 03:35:11) [GCC 11.2.0]   Dependency Versions:           cffi: 2.0.0       cherrypy: 18.10.0   cryptography: 50.0.1       dateutil: 2.9.0.post0      docker-py: Not Installed          gitdb: 4.0.12      gitpython: 3.2.0         Jinja2: 3.1.6        libgit2: Not Installed   looseversion: 1.3.0       M2Crypto: Not Installed           Mako: Not Installed        msgpack: 1.2.1   msgpack-pure: Not Installed   mysql-python: Not Installed      packaging: 24.0      pycparser: 3.00       pycrypto: Not Installed   pycryptodome: 3.23.0         pygit2: Not Installed   python-gnupg: 0.5.6         PyYAML: 6.0.3          PyZMQ: 27.1.0         relenv: 0.22.27          smmap: 5.0.2        timelib: 0.3.0        Tornado: 
   **Post-Mortem & Fix Analysis**:
-  > Closing as part of a backlog cleanup — this issue was filed without a Salt versions-report, so there's no explicit version attached to compare against.  **If you (or anyone else) can still reproduce this on 3008.3 or later, please comment with:**  - A fresh reproduction - The output of `salt --versions-report`  and the issue will be reopened. The original reporter can also reopen directly.
+  > Sorry, already fixed in fd30146e77
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1980,225 +1978,212 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6e7e758c` (2026-10-21)
-**Commit Message**: Potassium cleanup: fix lint + docs — drop unused ssh/wrapper imports, remove deleted-module doc stubs
+### Incident Patch 1: `0fa7bec6` (2026-10-30)
+**Commit Message**: Do not crash at start on NetBSD and OpenBSD (#68773)
 
-**File**: `doc/ref/internals/aggregation.rst` (modified, +0/-1)
+* salt.grain.core: do not crash at start on NetBSD and OpenBSD
+
+This avoids accessing an undefined element of the grains dictionary, on
+both NetBSD and OpenBSD. This matches the corresponding code for
+FreeBSD.
+
+Tested on NetBSD/amd64.
+
+* salt.utils.network: do not crash at start on NetBSD
+
+This patch restricts the OS version test to the part before "_" on
+NetBSD; this could raise an exception if py-packaging wasn't aware of
+the suffix (e.g., "BETA" would work but "STABLE" not).
+
+Tested on NetBSD/amd64.
+
+* Add changelog and tests for NetBSD/OpenBSD startup crash fixes
+
+Add changelog entry 68773 and unit tests covering:
+- netbsd_interfaces() tolerating OS version strings with underscore
+  suffixes (e.g. 10.1_STABLE) without raising InvalidVersion
+- os_data() correctly setting osfullname on NetBSD and OpenBSD
+
+* test: skip os.uname test on Windows
+
+The new test_netbsd_interfaces_version_with_suffix patches os.uname,
+which does not exist on Windows and causes the Windows unit zeromq
+job to fail. Add skip_on_windows mark to match the sibling grains
+test.
+
+---------
+
+Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
+
+**File**: `changelog/68773.fixed.md` (added, +1/-0)
 ```diff
-@@ -4,4 +4,3 @@ salt.aggregation
+@@ -0,0 +1 @@
++Fix salt-master startup crashes on NetBSD and OpenBSD: strip version suffix (e.g. `_STABLE`) before passing the OS release string to `packaging.version.Version` in `netbsd_interfaces()`, and ensure `osfullname` is initialised early in the OpenBSD/NetBSD branch of `os_data()`.
+```
+
+**File**: `salt/grains/core.py` (modified, +1/-1)
+```diff
+@@ -2874,7 +2874,7 @@ def os_data():
+         grains["osfullname"] = "{} {}".format(grains["kernel"], grains["osrelease"])
+         grains.update(_bsd_cpudata(grains))
+     elif grains["kernel"] in ("OpenBSD", "NetBSD"):
+-        grains["os_family"] = grains["os"] = grains["kernel"]
++        grains["os_family"] = grains["osfullname"] = grains["os"] = grains["kernel"]
+         grains.update(_bsd_cpudata(grains))
+         grains["osrelease"] = grains["kernelrelease"].split("-")[0]
+         grains["osfullname"] = "{} {}".format(grains["kernel"], grains["osrelease"])
+```
+
+**File**: `salt/utils/network.py` (modified, +1/-1)
+```diff
+@@ -1114,7 +1114,7 @@ def netbsd_interfaces():
+     address)
+     """
+     # NetBSD versions prior to 8.0 can still use linux_interfaces()
+-    if Version(os.uname()[2]) < Version("8.0"):
++    if Version(os.uname()[2].split("_")[0]) < Version("8.0"):
+         return linux_interfaces()
  
- .. automodule:: salt.utils.aggregation
-     :members:
--    :noindex: salt.utils.odict.OrderedDict
+     ifconfig_path = salt.utils.path.which("ifconfig")
 ```
 
-**File**: `doc/ref/modules/all/index.rst` (modified, +0/-2)
+**File**: `tests/pytests/unit/grains/test_core.py` (modified, +68/-0)
 ```diff
-@@ -238,7 +238,6 @@ execution modules
-     useradd
-     vagrant
-     virtualenv_mod
--    vsphere
-     webutil
-     win_appx
-     win_auditpol
-@@ -280,7 +279,6 @@ execution modules
-     win_wua
-     win_wusa
-     winrepo
--    x509
-     x509_v2
-     xfs
-     xml
-```
-
-**File**: `doc/ref/modules/all/salt.modules.vsphere.rst` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
--salt.modules.vsphere
--====================
--
--.. automodule:: salt.modules.vsphere
--    :members:
-```
-
-**File**: `doc/ref/modules/all/salt.modules.x509.rst` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
--salt.modules.x509
--=================
--
--.. automodule:: salt.modules.x509
--    :members:
-```
-
-**File**: `doc/ref/states/all/index.rst` (modified, +0/-1)
-```diff
-@@ -140,5 +140,4 @@ state modules
-     win_wua
-     win_wusa
-     winrepo
--    x509
-     x509_v2
-```
-
-**File**: `doc/ref/states/all/salt.states.x509.rst` (removed, +0/-5)
-```diff
-@@ -1,5 +0,0 @@
--salt.states.x509
--================
--
--.. automodule:: salt.states.x509
--    :members:
-```
-
-**File**: `doc/topics/proxyminion/index.rst` (modified, +0/-1)
-```diff
-@@ -933,6 +933,5 @@ For more information please refer to class `SSHConnection`_.
-     ssh
-     beacon
-     state
--    ../tutorials/esxi_proxy_minion
+@@ -3488,6 +3488,74 @@ def test_bsd_osfullname():
+     assert os_grains.get("osfullname") == "FreeBSD 10.3"
  
- .. _SSHConnection: https://github.com/saltstack/salt/blob/b8271c7512da7e048019ee26422be9e7d6b795ab/salt/utils/vt_helper.py#L28
+ 
++@pytest.mark.skip_on_windows
++@pytest.mark.parametrize(
++    "kernel,kernelrelease,expected_osfullname",
++    [
++        # kernelrelease.split("-")[0] strips the -RELEASE suffix but not _STABLE
++        ("NetBSD", "10.1_STABLE", "NetBSD 10.1_STABLE"),
++        ("OpenBSD", "7.4-RELEASE", "OpenBSD 7.4"),
++    ],
++)
++def test_netbsd_openbsd_osfullname(kernel, kernelrelease, expected_osfullname):
++    """
++    Test that os_data() sets osfullname for NetBSD and OpenBSD without crashing.
++    The OpenBSD/NetBSD branch must set osfullname so that _osrelease_data() can
++    use it later.
++    """
++    nt_uname = namedtuple(
++        "nt_uname", ["system", "node", "release", "version", "machine", "processor"]
++    )
++    mock_uname = MagicMock(
++        return_value=nt_uname(
++            kernel,
++            "hostname",
++            kernelrelease,
++            f"{kernel} {kernelrelease}",
++            "amd64",
++            "amd64",
++        )
++    )
++    empty_mock = MagicMock(return_value={})
++
++    _cmd_run_map = {
++        "/sbin/sysctl -n hw.physmem": "2121781248",
++        "/sbin/sysctl -n vm.swap_total": "419430400",
++    }
++    cmd_run_mock = MagicMock(side_effect=lambda x: _cmd_run_map.get(x, ""))
++
++    with patch.object(platform, "uname", mock_uname), patch.object(
++        salt.utils.platform, "is_linux", MagicMock(return_value=False)
++    ), patch.object(
++        salt.utils.platform, "is_proxy", MagicMock(return_value=False)
++    ), patch.object(
++        salt.utils.platform, "is_windows", MagicMock(return_value=False)
++    ), patch.object(
++        salt.utils.platform, "is_freebsd", MagicMock(return_value=False)
++    ), patch(
++        "salt.utils.path.which", return_value="/sbin/sysctl"
++    ):
++        with patch.object(core, "_bsd_cpudata", empty_mock), patch.object(
++            core, "_hw_data", empty_mock
++        ), patch.object(core, "_virtual", empty_mock), patch.object(
++            core, "_virtual_hv", empty_mock
++        ), patch.object(
++            core, "_ps", empty_mock
++        ), patch.object(
++            core, "_memdata", empty_mock
++        ), patch.object(
++            core, "_netbsd_gpu_data", empty_mock
++        ), patch.dict(
++            core.__salt__, {"cmd.run": cmd_run_mock}
++        ):
++            os_grains = core.os_data()
++
++    assert "osfullname" in os_grains
++    assert os_grains.get("osfullname") == expected_osfullname
++    assert os_grains.get("os") == kernel
++    assert os_grains.get("os_family") == kernel
++
++
+ def test_saltversioninfo():
+     """
+     test saltversioninfo core grain.
 ```
 
-**File**: `doc/topics/tutorials/esxi_proxy_minion.rst` (removed, +0/-525)
+**File**: `tests/pytests/unit/utils/test_network.py` (modified, +43/-0)
 ```diff
-@@ -1,525 +0,0 @@
--.. _tutorial-esxi-proxy:
--
--=================
--ESXi Proxy Minion
--=================
--
--.. versionadded:: 2015.8.4
--
--.. note::
--
--    This tutorial assumes basic knowledge of Salt. To get up to speed, check
--    out the :ref:`Salt Walkthrough <tutorial-salt-walk-through>`.
--
--    This tutorial also assumes a basic understanding of Salt Proxy Minions. If
--    you're unfamiliar with Salt's Proxy Minion system, please read the
--    :ref:`Salt Proxy Minion <proxy-minion>` documentation and the
--    :ref:`Salt Proxy Minion End-to-End Example <proxy-minion-end-to-end-example>`
--    tutorial.
--
--    The third assumption that this tutorial makes is that you also have a
--    basic understanding of ESXi hosts. You can learn more about ESXi hosts on
--    `VMware's various resources`_.
--
--.. _VMware's various resources: https://www.vmware.com/products/esxi-and-esx.html
--
--Salt's ESXi Proxy Minion allows a VMware ESXi host to be treated as an individual
--Salt Minion, without installing a Salt Minion on the ESXi host.
--
--Since an ESXi host may not necessarily run on an OS capable of hosting a Python
--stack, the ESXi host can't run a regular Salt Minion directly. Therefore, Salt's
--Proxy Minion functionality enables you to designate another machine to host a
--proxy process that "proxies" communication from the Salt Master to the ESXi host.
--The master does not know or care that the ESXi target is not a "real" Salt Minion.
--
--More in-depth conceptual reading on Proxy Minions can be found in the
--:ref:`Proxy Minion <proxy-minion>` section of Salt's documentation.
--
--Salt's ESXi Proxy Minion was added in the 2015.8.4 release of Salt.
--
--.. note::
--
--    Be aware that some functionality for the ESXi Proxy Minion may depend on the
--    type of license attached the ESXi host(s).
--
--    For example, certain services are only available to manipulate service state
--    or policies with a VMware vSphere Enterprise or Enterprise Plus license, while
--    others are available with a Standard license. The ``ntpd`` service is restricted
--    to an Enterprise Plus license, while ``ssh`` is available via the Standard
--    license.
--
--    Please see the `vSphere Comparison`_ page for more information.
--
--.. _vSphere Comparison: https://www.vmware.com/products/vsphere.html#compare
--
--
--Dependencies
--============
--
--Manipulation of the ESXi host via a Proxy Minion requires the machine running
--the Proxy Minion process to have the ESXCLI package (and all of its dependencies)
--and the pyVmomi Python Library to be installed.
--
--ESXi Password
---------------
--
--The ESXi Proxy Minion uses VMware's API to perform tasks on the host as if it was
--a regular Salt Minion. In order to access the API that is already running on the
--ESXi host, the ESXi host must have a username and password that is used to log
--into the host. The username is usually ``root``. Before Salt can access the ESXi
--host via VMware's API, a default password *must* be set on the host.
--
--pyVmomi
---------
--
--The pyVmomi Python library must be installed on the machine that is running the
--proxy process. pyVmomi can be installed via pip:
--
--.. code-block:: bash
--
--    pip install pyVmomi
--
--.. note::
--
--    Version 6.0 of pyVmomi has some problems with SSL error handling on certain
--    versions of Python. If using version 6.0 of pyVmomi, the machine that you
--    are running the proxy minion process from must have either Python 2.6,
--    Python 2.7.9, or newer. This is due to an upstream dependency in pyVmomi 6.0
--    that is not supported in Python version 2.7 to 2.7.8. If the
--    version of Python running the proxy process is not in the supported range, you
--    will need to install an earlier version of pyVmomi. See `Issue #29537`_ for
--    more information.
--
--.. _Issue #29537: https://github.com/saltstack/salt/issues/29537
--
--Based on the note above, to install an earlier version of pyVmomi than the
--version currently listed in PyPi, run the following:
--
--.. code-block:: bash
--
--    pip install pyVmomi==5.5.0.2014.1.1
--
--The 5.5.0.2014.1.1 is a known stable version that the original ESXi Proxy Minion
--was developed against.
--
--ESXCLI
--------
--
--Currently, about a third of the functions used for the ESXi Proxy Minion require
--the ESXCLI package be installed on the machine running the Proxy Minion process.
--
--The ESXCLI package is also referred to as the VMware vSphere CLI, or vCLI. See
--the `VMware vSphere documentation`_ for vCLI package installation instructions.
--
--.. _VMware vSphere documentation: https://techdocs.broadcom.com/us/en/vmware-cis/vcf/vcf-9-0-and-later/9-1/vsphere-supervisor-installation-and-configuration.html
--
--Once all of the required dependencies are in place and the vCLI package is
--installed, you can check to see if you can connect to your ESXi host by running
--the following command:
--
--.. code-block:: bash
--
--    esxcli -s <host-location> -u <username> -p <password> system syslog config get
--
--If the connection was successful, ESXCLI wa
+@@ -1803,3 +1803,46 @@ def test_neigh_expand_warning_none_warns_and_returns_false():
+     with pytest.warns(DeprecationWarning, match="network.arp"):
+         result = network.neigh_expand_warning("network.arp", None)
+     assert result is False
++
++
++@pytest.mark.skip_on_windows
++@pytest.mark.parametrize(
++    "uname_release",
++    [
++        "10.1_STABLE",
++        "10.1_BETA",
++        "9.3_STABLE",
++    ],
++)
++def test_netbsd_interfaces_version_with_suffix(uname_release):
++    """
++    netbsd_interfaces() must not raise InvalidVersion when os.uname()[2]
++    contains a suffix separated by underscore (e.g. '10.1_STABLE').
++    """
++    from packaging.version import Version
++
++    # Build a fake uname result where index 2 (release) has the given value.
++    # os.uname() is accessed as os.uname()[2] in netbsd_interfaces().
++    fake_uname = ("NetBSD", "hostname", uname_release, "", "amd64")
++    uname_mock = MagicMock(return_value=fake_uname)
++
++    version_part = uname_release.split("_")[0]
++    is_old = Version(version_part) < Version("8.0")
++
++    with patch("os.uname", uname_mock):
++        if is_old:
++            with patch.object(network, "linux_interfaces", MagicMock(return_value={})):
++                result = network.netbsd_interfaces()
++                assert result == {}
++        else:
++            with patch("salt.utils.path.which", return_value="/sbin/ifconfig"), patch(
++                "subprocess.Popen"
++            ) as mock_popen:
++                mock_popen.return_value.communicate.return_value = (b"", None)
++                with patch.object(
++                    network,
++                    "_netbsd_interfaces_ifconfig",
++                    MagicMock(return_value={}),
++                ):
++                    result = network.netbsd_interfaces()
++                    assert isinstance(result, dict)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #70511** (closed): charlie_codex (@charzl)
-- **PR #70510** (closed): Make pillar_mask_output a default-off feature flag with a single repr switch (@charzl)
-- **PR #70466** (2026-10-22): 3008.3-1: fix pip/certifi for the eMudhra/emSign CA incident (@twangboy)
-- **PR #70462** (closed): Apply black formatting to test_minion.py (@twangboy)
-- **PR #70460** (2026-10-21): Skip brew functional tests on macOS Intel (@twangboy)
-- **PR #70457** (2026-10-23): Merge forward 3008.x into master (@dwoz)
+- **PR #70601** (2026-10-30): Fix unit tests failing on macOS (@sudipto674)
+- **PR #70600** (2026-10-30): Fix nox docs sessions requirements file names (@sudipto674)
+- **PR #70597** (2026-10-29): Wait for SSH banner in test_ssh_setup to kill kex_exchange_identification race (@dwoz)
+- **PR #70596** (2026-10-29): Stabilize minion blackout scenario tests (@dwoz)
+- **PR #70595** (2026-10-29): Re-enable ssh tests skipped for old Python compat (#66545) (@dwoz)
+- **PR #70594** (2026-10-29): Re-enable tests/pytests/functional/utils/test_process.py (#66551) (@dwoz)
 
 ---
 
@@ -2212,3 +2197,34 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Do not crash at start on NetBSD and OpenBSD (#68773)
+
+**RULE**:
+When implementing operations in `changelog/68773.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0fa7bec6`: Do not crash at start on NetBSD and OpenBSD (#68773). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/68773.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+Fix salt-master startup crashes on NetBSD and OpenBSD: strip version suffix (e.g. `_STABLE`) before passing the OS release string to `packaging.version.Version` in `netbsd_interfaces()`, and ensure `osfullname` is initialised early in the OpenBSD/NetBSD branch of `os_data()`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0fa7bec6` are properly handled with clean fallback behavior.

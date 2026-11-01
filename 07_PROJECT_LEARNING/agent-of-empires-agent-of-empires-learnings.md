@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `a927b3d6`  
+> **Source Version**: `8bd72072`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:39:19.209Z  
+> **Timestamp**: 2026-10-31T14:45:47.136Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:39:19.200Z  
+> **Harvest Timestamp**: 2026-10-31T14:45:47.129Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3383 stars
+- **Stars / Engagement**: 3398 stars
 
 ---
 
@@ -652,7 +652,9 @@ impl Session {
                     // The supervisor publishes the terminal here (#1100).
                     info!(target: "acp.protocol", "force-stop requested with no prompt in flight; best-effort cancel only");
                     self.stand_down_idle_completion();
-                    let _ = self.send_cancel().await;
+                    if let Err(error) = self.send_cancel().await {
+                        debug!(target: "acp.protocol", %error, "cancel notification failed");
+                    }
                 }
                 Some(ClientCmd::SetMode(mode_id)) => self.dispatch_mode(mode_id, false),
                 Some(ClientCmd::DeleteSession {
@@ -716,10 +718,7 @@ impl Session {
         // An adopted turn races the detached resume-idle task for its
         // terminal; state is reset either way.
         let adopted = shared.adopted_turn_active.swap(false, Ordering::Relaxed);
-        if adopted && !shared.terminal_claim.claim() {
-            return false;
-        }
-        // The limit arrives as agent text with no prompt error; 
+        if adopted && !shar
 ```
 
 ### Core Architecture Module: `src/acp/acp_client/lifecycle.rs`
@@ -1152,6 +1151,9 @@ struct Construction {
     retire_previous: std::sync::atomic::AtomicBool,
     spawn_attestor:
         Mutex<Option<tokio::sync::mpsc::UnboundedSender<tokio::sync::oneshot::Sender<bool>>>>,
+    /// Wall-clock ms of admission, refreshed on install so a slow start
+    /// does not read as idle; atomic only so tests can backdate it.
+    idle_baseline_ms: std::sync::atomic::AtomicI64,
 }
 
 impl Default for Construction {
@@ -1172,6 +1174,9 @@ impl Default for Construction {
             previous_runner: Mutex::default(),
             retire_previous: std::sync::atomic::AtomicBool::new(false),
             spawn_attestor: Mutex::default(),
+            idle_baseline_ms: std::sync::atomic::AtomicI64::new(
+                chrono::Utc::now().timestamp_millis(),
+            ),
         }
     }
 }
@@ -1201,6 +1206,20 @@ pub(crate) struct AdapterRetirementRoute {
 }
 
 impl Lease {
+    /// When this epoch was admitted or last became running, in ms since the Unix epoch.
+    pub(crate) fn idle_baseline_ms(&self) -> i64 {
+        self.construction
+            .idle_baseline_ms
+            .load(std::sync::atomic::Ordering::Relaxed)
+    }
+
+    #[cfg(test)]
+    pub(crate) fn test_backdate_idle_baseline(&self, ms: i64) {
+        self.construction
+            .idle_baseline_ms
+            .store(ms, std::sync::atomic::Ordering::Relaxed);
+    }
+
     /// An attach observes the original runner until installation or an explicit stop.
     pub(crate) fn is_borrowed_attach(&self) -> bool {
         !self
@@ -1279,25 +1298,7 @@ impl Lease {
             .unwrap_or_else(|error| error.into_inner())
     }
 
-    /// Freeze the predecessor role, never a later registry observation.
-    pub(crate) fn owe_previous_retirement(&self) {
-        self.construction
-            .retire_previous
-            .store(true, std::sync::atomic::Ordering::Release);
-    }
-
-    /// The original captured predecessor, only after its retirement debt is owed.
-    pub(crate) fn retirement_previous_runner(&self) -> Option<RunnerIdentity> {
-        self.construction
-            .retire_previous
-            .load(std::sync::atomic::Ordering::Acquire)
-            .then(|| self.previous_runner())
-            .flatten()
-    }
-
-    pub(crate) fn retirement_runners(&self) -> impl Iterator<Item = RunnerIdentity> {
-        let current = self.spawned_runner().filter(|_| !self.is_borrowed_attach());
-        let previous = self.retirement_previous_runn
+    /// Freeze the predeces
 ```
 
 ### Core Architecture Module: `src/acp/state.rs`
@@ -1305,6 +1306,7 @@ impl Lease {
 //! `AcpState`: the structured view session state, folded from `Event`s by a single writer.
 
 use crate::daemon::PromptAttachmentRef;
+use crate::session::Status;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -1619,8 +1621,7 @@ pub enum StartupErrorDetail {
         auto_install: bool,
     },
     MissingAgentInfo {
-        expected_package: String,
-        i
+        expecte
 ```
 
 ### Core Architecture Module: `src/cli/hooks.rs`
@@ -2217,11 +2218,11 @@ impl Transaction {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4793** (2026-10-23): **Record benchmark quit timeouts as failed runs**
-  *Symptoms*: ### What happened?  P3 follow-up to #4566, verified on main `4cdb0fea3042f25aa3881d182d78e1c03b0d335f`.  After the first frame, if all PTY slave descriptors close while the child remains alive, Linux can report EIO on the master. The quit loop then [calls `process.wait(timeout=...)`](https://github.com/agent-of-empires/agent-of-empires/blob/4cdb0fea3042f25aa3881d182d78e1c03b0d335f/scripts/bench-startup.py#L133-L140). If that wait expires, `subprocess.TimeoutExpired` bypasses the [per-run `except RuntimeError`](https://github.com/agent-of-empires/agent-of-empires/blob/4cdb0fea3042f25aa3881d182d78e1c03b0d335f/scripts/bench-startup.py#L226-L245), aborting the series with a traceback instead of recording a failed measurement and continuing. Cleanup still runs.  **Reproduction scenario, source-traced, not executed:** in a two-iteration fixture, deliver the first frame, then make the post-quit PTY read raise EIO while `poll()` reports a live child and `wait()` raises `TimeoutExpired`. The exception escapes the first iteration. A stuck child that retains the PTY follows the already-handled deadline branch; this is not a claim about every slow quit or ordinary TUI shutdown.  **Expected correction:** normalize this wait timeout to the existing `RuntimeError("quit timed out after the first frame")`. Add a deterministic regression proving a `FAIL` record, continuation to the next iteration, a nonzero aggregate result and retained cleanup. Do not extend deadlines or suppress failures.  P
+- **Issue #5056** (2026-10-30): **TUI test harness inherits daemon endpoint and credentials**
+  *Symptoms*: ## What happened?  P3 follow-up from #5028: TUI test processes still inherit `AOE_DAEMON_URL` and `AOE_DAEMON_TOKEN`, although directly launched CLI fixtures now clear them.  ### Reproduction scenario  1. Export a nonempty daemon URL and a sentinel token before the harness's tmux server starts. 2. Run a local TUI fixture, such as `settings_shortcut_bar_hides_the_row_and_survives_restart`, without an explicit remote override. 3. The pane inherits those variables and starts remote-home instead of using the fixture's isolated local state. An existing harness tmux server can retain the same overrides.  Expected: local fixtures ignore inherited daemon discovery settings; only explicit fixture overrides select a remote endpoint. Actual source behavior causes host-dependent startup failures or access to the configured daemon's session state. No destructive remote action or dynamic reproduction is claimed.  Evidence: [tmux launch environment](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/tests/e2e/harness.rs#L875-L895), [peer/server launch](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/tests/e2e/harness.rs#L943-L954), and [remote-mode selection before local startup](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/tui/mod.rs#L244-L250).  ### Acceptance  - Apply URL/token isolation at the actual pane launch boundary, including 
 
-- **Issue #4748** (2026-10-23): **fix(trash): restoring worktree fails with 'validation failed' when .git pointer is relative**
-  *Symptoms*: ### What happened?  Restoring a trashed session with an aoe-managed worktree fails with: ``` Could not restore the worktree: git worktree move: Git worktree command failed: fatal: validation failed, cannot move working tree ```  #### Root Cause 1. On worktree creation (`src/git/worktree/create.rs`), AoE intentionally runs `convert_git_file_to_relative()`, writing a relative pointer into the worktree's `.git` file (e.g. `gitdir: ../../private-node-agent/.git/worktrees/bonial`). 2. When the session is trashed (`src/session/trash.rs`), the worktree is relocated into `<repo-worktrees>/.aoe-trash/<session-id>`. 3. Because `.aoe-trash/` introduces an extra nesting level (+1 directory depth), the existing relative path `../../...` becomes broken while in trash (it resolves to `<repo-worktrees>/<repo>` instead of reaching the parent directory containing the main repo). 4. When restoring via `aoe session restore` or the UI, AoE calls `git.move_worktree(&current, &original)` which runs `git worktree move`. Git runs `validate_worktree()` before moving, attempts to resolve the broken relative path in `.git`, and aborts with:    ```    fatal: validation failed, cannot move working tree    ```  #### Steps to reproduce 1. Create a session with a managed worktree located in a sibling directory (e.g. `<repo>-worktrees/<session-name>`), where `.git` contains a relative pointer (`gitdir: ../../<repo>/.git/worktrees/<session-name>`). 2. Trash the session (relocates it into `<repo>-worktrees/.aoe
+- **Issue #5051** (2026-10-30): **Quote worktree paths in displayed repair commands**
+  *Symptoms*: ## What happened?  P3 recovery-guidance follow-up to #4824. Two degraded-move warnings interpolate the destination directly into a copyable `git worktree repair` command.  ### Source-traced recovery scenario, not an executed reproduction  1. Rename a linked worktree with initialized submodules under a parent such as `/home/alice/My Projects` or `/home/o'connor/projects`. 2. If post-move `.git` pointer conversion fails, read the degraded-result warning. The repair-failure plus failed-rollback branch emits the same kind of command. 3. Copy the suggested command. `git worktree repair /home/alice/My Projects/new` supplies two paths; an unescaped apostrophe can leave an unterminated shell quote.  **Expected:** the command preserves the destination as one literal argument. **Actual:** raw `to.display()` is inserted in [the repair/rollback warning](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/git/worktree/relocate.rs#L343) and [the pointer-conversion warning](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/git/worktree/relocate.rs#L355). The [parent directory is retained](https://github.com/agent-of-empires/agent-of-empires/blob/e83da88452d65b3a6d80dd1443bba0ae546a8d23/src/session/worktree_edit.rs#L53), so these are supported paths.  ### Correction and acceptance  Quote the destination operand in both displayed commands using existing POSIX word-quoting support that prese
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2238,604 +2239,690 @@ impl Transaction {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ee49af3` (2026-10-25)
-**Commit Message**: fix(daemon): stop trusting group-writable ancestors of the socket dir (#4929)
+### Incident Patch 1: `3b7b4b7f` (2026-10-30)
+**Commit Message**: fix(serve): turn off the Funnel a failed Tailscale start switched on (#5043)
 
-* fix(daemon): stop trusting group-writable ancestors of the socket dir
+* fix(serve): turn off the Funnel a failed Tailscale start switched on
 
-user_private_gid inferred a private group from an empty gr_mem, which
-omits accounts whose primary GID is that group. Another passwd entry
-sharing the owner's GID could then write an owner-owned 0775 ancestor
-and replace the daemon directory. Drop the exception: ancestors must
-have no group or other write, apart from root-owned sticky directories.
+`aoe serve` with Tailscale runs `tailscale funnel --bg` and then reads the
+public URL. If that read failed, timed out, or the start was cancelled, the
+Funnel stayed on, pointing at a port nothing served.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+The start now records whether :443 already carried our Funnel before it ran.
+If it didn't, a guard armed after `--bg` turns the Funnel back off with
+`tailscale funnel --https=443 off`: awaited (bounded) on the error and
+timeout paths, and from Drop only when the start future is cancelled. A
+Funnel the user already had on this port is never touched.
 
-* fix(daemon): drop the unused st_gid from the Linux Stat
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Nothing reads the group id once the private-group exception is gone, so
-Linux clippy rejected the field as dead code.
+* fix(serve): keep the Funnel reset armed until it finishes, and match our port exactly
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Two gaps in the failed-start reset:
 
----------
+- `reset()` disarmed the guard before awaiting `funnel --https=443 off`. A
+  start cancelled during that await killed the command, and Drop then saw
+  nothing to do, so the Funnel stayed on. It now disarms after the await;
+  a second `off` from Drop is harmless.
+- The pre-flight took any proxy containing `127.0.0.
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/cli/runtime_read/uds.rs` (modified, +14/-32)
+**File**: `docs/guides/web-dashboard.md` (modified, +1/-1)
 ```diff
-@@ -336,12 +336,9 @@ fn walk_directory(path: &Path, euid: u32, admission: bool) -> Result<OwnedFd, Tr
-     if !path.is_absolute() {
-         return Err(TrustedPathError::Invalid);
-     }
--    let private_gid = admission
--        .then(|| crate::daemon::transport::user_private_gid(euid))
--        .flatten();
-     let root = open_dir(Path::new("/"))?;
-     if admission {
--        validate_directory_stat(&root, euid, private_gid, false, true, Path::new("/"))?;
-+        validate_directory_stat(&root, euid, false, true, Path::new("/"))?;
-     }
-     let mut components = path.components().skip(1).peekable();
-     if components.peek().is_none() {
-@@ -367,7 +364,7 @@ fn walk_directory(path: &Path, euid: u32, admission: bool) -> Result<OwnedFd, Tr
-             })?;
-         // Connection trust is checked on opened objects, never on their pathnames.
-         if admission {
--            validate_directory_stat(&next, euid, private_gid, final_component, true, &walked)?;
-+            validate_directory_stat(&next, euid, final_component, true, &walked)?;
-         }
-         current = next;
-     }
-@@ -468,7 +465,6 @@ fn validate_directory_owner(
- fn validate_directory_stat(
-     file: &OwnedFd,
-     euid: u32,
--    private_gid: Option<u32>,
-     final_component: bool,
-     root_check: bool,
-     path: &Path,
-@@ -483,7 +479,7 @@ fn validate_directory_stat(
-             "Inspect the existing path at {path}; select a directory without removing configuration.",
-         )));
-     }
--    if !group_other_writes_allowed(&stat, final_component, euid, private_gid) {
-+    if !group_other_writes_allowed(&stat, final_component, euid) {
-         return Err(TrustedPathError::Refused(RefusedComponent::new(
-             path,
-             mode,
-@@ -516,21 +512,10 @@ fn validate_directory_stat(
-     Ok(())
- }
+@@ -65,7 +65,7 @@ In `--remote` mode the token rotates every four hours. Use `aoe url` for the liv
  
--fn group_other_writes_allowed(
--    stat: &os::Stat,
--    final_component: bool,
--    owner: u32,
--    private_gid: Option<u32>,
--) -> bool {
-+fn group_other_writes_allowed(stat: &os::Stat, final_component: bool, owner: u32) -> bool {
-     stat.st_mode & 0o022 == 0
-         || (!final_component
--            && crate::daemon::transport::trusted_ancestor(
--                stat.st_uid,
--                stat.st_gid,
--                stat.st_mode,
--                owner,
--                private_gid,
--            ))
-+            && crate::daemon::transport::trusted_ancestor(stat.st_uid, stat.st_mode, owner))
- }
+ `--remote` selects a tunnel in this order, unless named-tunnel flags override it:
  
- async fn connect_admission(
-@@ -1350,36 +1335,33 @@ mod tests {
-     }
+-1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced.
++1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced. AoE also refuses to start Funnel when port 443 has tailnet-only Serve config, which Funnel would make public, or when `tailscale funnel status` can't be read. If a start fails after turning Funnel on, AoE turns it back off, but only when port 443 was unused before and still holds just AoE's route; otherwise the error says what was left on. Two aoe daemons on one machine, such as a release and a debug build, take turns: a start waits up to 60 s for the other's to finish.
+ 2. **Named Cloudflare tunnel:** an explicit named tunnel takes precedence over Tailscale and provides a stable hostname on your domain:
  
-     #[test]
--    fn writable_ancestors_preserve_private_groups_and_final_directory_isolation() {
-+    fn writable_ancestors_preserve_sticky_roots_and_final_directory_isolation() {
-         let mut stat = os::Stat {
-             st_mode: os::DIRECTORY | 0o777,
-             st_uid: 0,
--            st_gid: 0,
-             st_dev: 0,
-             st_ino: 0,
-             st_nlink: 1,
-         };
- 
-         stat.st_uid = 0;
--        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, true, 1));
-         stat.st_mode |= crate::process::runtime_io::STICKY;
--        assert!(group_other_writes_allowed(&stat, false, 1, None));
--        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-+        assert!(group_other_writes_allowed(&stat, false, 1));
-+        assert!(!group_other_writes_allowed(&stat, true, 1));
- 
-         stat.st_uid = 1;
--        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, false, 1));
- 
-         stat.st_uid = 0;
-         stat.st_mode = crate::process::runtime_io::DIRECTORY | 0o755;
--        assert!(group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(group_other_writes_allowed(&stat, false, 1));
-         stat.st_mode = crate::process::runtime_io::DIRECTORY | 0o757;
--        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, false, 1));
-         stat.st_uid = 1;
--        stat.st_gid = 1;
-         stat.st_mode = os::DIRECTORY | 0o775;
--        assert!(group_other_writes_allowed(&stat, false, 1, Some(1)));
--        assert!(!group_other_writes_allowed(&stat, true, 1, Some(1)));
--        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-+        assert!(!group_other_writes_allowed(&stat, false, 1));
-+        assert!(!group_other_writes_allowed(&stat, true, 1));
-         stat.st_uid = 1;
-         stat.st_mode = os::DIRECTORY | 0o700;
-         assert!(matches!(
+    ```bash
 ```
 
-**File**: `src/daemon/transport.rs` (modified, +13/-32)
+**File**: `src/server/tunnel.rs` (modified, +1012/-64)
 ```diff
-@@ -50,13 +50,12 @@ pub(crate) fn prepare_runtime_directory(parent: &Path) -> anyhow::Result<()> {
-     if let Some(app_dir) = parent.parent() {
-         drop_group_other_write(app_dir, owner)?;
-     }
--    let private_gid = user_private_gid(owner);
-     for ancestor in parent.ancestors() {
-         let meta = std::fs::symlink_metadata(ancestor)?;
-         anyhow::ensure!(
-             meta.is_dir()
-                 && !meta.file_type().is_symlink()
--                && trusted_ancestor(meta.uid(), meta.gid(), meta.mode(), owner, private_gid),
-+                && trusted_ancestor(meta.uid(), meta.mode(), owner),
-             "Unsafe daemon socket directory: {}",
-             ancestor.display()
+@@ -170,6 +170,18 @@ impl TunnelHandle {
+     /// Configure Tailscale Funnel for the local port and return a handle carrying the
+     /// stable `https://<host>.<tailnet>.ts.net` URL.
+     pub async fn spawn_tailscale(local_port: u16) -> anyhow::Result<Self> {
++        use anyhow::Context as _;
++        let home =
++            dirs::home_dir().context("couldn't find the home directory for the Funnel lock")?;
++        let lock = funnel_lock_path(&home);
++        Self::spawn_tailscale_with(std::ffi::OsStr::new("tailscale"), &lock, local_port).await
++    }
++
++    async fn spawn_tailscale_with(
++        program: &std::ffi::OsStr,
++        lock: &std::path::Path,
++        local_port: u16,
++    ) -> anyhow::Result<Self> {
+         // Hard cap on each tailscale command so we never wedge if tailscale pops an
+         // interactive prompt (HTTPS-certs consent, Funnel-not-enabled-in-ACL, node not
+         // signed in).
+@@ -181,7 +193,7 @@ impl TunnelHandle {
          );
-@@ -80,24 +79,9 @@ fn drop_group_other_write(dir: &Path, owner: u32) -> anyhow::Result<()> {
-     Ok(())
- }
  
--/// Accept only same-name user-private primary groups without extra members.
--pub(crate) fn user_private_gid(owner: u32) -> Option<u32> {
--    use nix::unistd::{Group, Uid, User};
--    let user = User::from_uid(Uid::from_raw(owner)).ok()??;
--    let group = Group::from_gid(user.gid).ok()??;
--    (group.name == user.name && group.mem.is_empty()).then(|| user.gid.as_raw())
--}
--
--pub(crate) fn trusted_ancestor(
--    uid: u32,
--    gid: u32,
--    mode: u32,
--    owner: u32,
--    private_gid: Option<u32>,
--) -> bool {
-+pub(crate) fn trusted_ancestor(uid: u32, mode: u32, owner: u32) -> bool {
-     let trusted_sticky = uid == 0 && mode & 0o1000 != 0;
--    let private_group_write = uid == owner && mode & 0o002 == 0 && private_gid == Some(gid);
--    (uid == owner || uid == 0) && (mode & 0o022 == 0 || trusted_sticky || private_group_write)
-+    (uid == owner || uid == 0) && (mode & 0o022 == 0 || trusted_sticky)
- }
- 
- pub(crate) async fn connect_unix(path: &Path) -> Result<tokio::net::UnixStream, DaemonClientError> {
-@@ -371,24 +355,21 @@ mod tests {
-     }
- 
-     #[test]
--    fn ancestor_trust_allows_only_owner_private_or_sticky_writes() {
-+    fn ancestor_trust_allows_only_owner_or_root_sticky_writes() {
-         const ME: u32 = 1000;
--        const PRIVATE: Option<u32> = Some(1000);
-         let cases = [
--            (ME, 1000, 0o755, PRIVATE, true),
--            (ME, 1000, 0o775, PRIVATE, true),
--            (ME, 1000, 0o775, None, false),
--            (ME, 100, 0o775, PRIVATE, false),
--            (ME, 1000, 0o777, PRIVATE, false),
--            (0, 0, 0o1777, PRIVATE, true),
--            (0, 1000, 0o775, PRIVATE, false),
--            (2000, 2000, 0o755, PRIVATE, false),
-+            (ME, 0o755, true),
-+            (ME, 0o775, false),
-+            (ME, 0o777, false),
-+            (0, 0o1777, true),
-+            (0, 0o775, false),
-+            (2000, 0o755, false),
-         ];
--        for (uid, gid, mode, private_gid, expected) in cases {
-+        for (uid, mode, expected) in cases {
-             assert_eq!(
--                trusted_ancestor(uid, gid, mode, ME, private_gid),
-+                trusted_ancestor(uid, mode, ME),
-                 expected,
--                "uid={uid} gid={gid} mode={mode:o} private={private_gid:?}"
-+                "uid={uid} mode={mode:o}"
+         // Pre-flight 1.
+-        if let Err(e) = check_funnel_capability().await {
++        if let Err(e) = check_funnel_capability(program).await {
+             debug!(reason = %e, "spawn_tailscale: funnel cap check failed");
+             anyhow::bail!(
+                 "Tailscale Funnel is not enabled for this tailnet. \
+@@ -190,14 +202,14 @@ impl TunnelHandle {
              );
          }
-     }
-```
-
-**File**: `src/process/linux.rs` (modified, +0/-2)
-```diff
-@@ -1576,7 +1576,6 @@ pub(crate) mod runtime_io {
-     pub(crate) struct Stat {
-         pub st_mode: u32,
-         pub st_uid: u32,
--        pub st_gid: u32,
-         pub st_dev: u64,
-         pub st_ino: u64,
-         pub st_nlink: libc::nlink_t,
-@@ -1585,7 +1584,6 @@ pub(crate) mod runtime_io {
-         Stat {
-             st_mode: stat.st_mode,
-             st_uid: stat.st_uid,
--            st_gid: stat.st_gid,
-             st_dev: stat.st_dev,
-             st_ino: stat.st_ino,
-             st_nlink: stat.st_nlink,
+ 
++        // Held until this start succeeds or its reset ends; the guard owns it, so it's released
++        // after the guard's own `off`. Another aoe daemon can't activate in between.
++        let funnel_lock = lock_funnel_starts(lock).await?;
++
+         // Pre-flight 2.
+-        if let Some(existing) = inspect_existing_funnel(local_port).await {
+-            anyhow::bail!(
+-                "port 443 is already configured on this node for a different \
+-                 backend ({}). Run `tailscale funnel reset` to clear the \
+-                 existing config, or pass --no-tailscale to use Cloudflare.",
+-                existing
+-            );
++        let preflight = inspect_existing_funnel(program, local_port).await;
++        if let FunnelPreflight::Refuse(why) = &preflight {
++            anyhow::bail!("{why}");
+         }
+ 
+         // Single-command Funnel (Tailscale 1.52+).
+@@ -208,14 +220,33 @@ impl TunnelHandle {
+             local_port
+         );
+ 
+-        let mut child = Command::new("tailscale")
++        // If :443 had nothing on it before, everything there from now on is this start's: a
++        // start that fails or is cancelled turns it back off, even while `--bg` is still running
++        // (it may already have applied the config), so no Funnel is left pointing at a port
++        // nothing serves. A public Funnel that was already there (the user's own, or a sibling
++        // path) keeps its other routes; only `/` changes.
++        let mut guard = FunnelStartGuard::new(
++            program,
++            local_port,
++            preflight == FunnelPreflight::Unused,
++            funnel_lock,
++        );
++
++        let child = Command::new(program)
+             .args(funnel_args)
+             .stdin(std::process::Stdio::null())
+             .stdout(std::process::Stdio::piped())
+             .stderr(std::process::Stdio::piped())
+             .kill_on_drop(true)
+-            .spawn()
+-            .map_err(|e| anyhow::anyhow!("failed to run tailscale funnel: {}", e))?;
++            .spawn();
++        let mut child = match child {
++            Ok(child) => child,
++            Err(e) => {
++                // `--bg` never ran, so there's nothing to turn off.
++                guard.disarm();
++                anyhow::bail!("failed to run tailscale funnel: {e}");
++            }
++        };
+         let stdout = child.stdout.take();
+         let stderr = child.stderr.take();
+ 
+@@ -257,29 +288,39 @@ impl TunnelHandle {
+                     Err(_) => "Enable it from your tailnet admin console under \
+                               Settings > Features > Funnel.".to_string(),
+                 };
+-                return Err(anyhow::anyhow!(
++                let e = anyhow::anyhow!(
+                     "Tailscale Funnel is not enabled for this tailnet.\n\n\
+                      {detail}\n\n\
+                      After enabling, re-run `aoe serve --remote`. \
+                      Or pass --no-tailscale to use Cloudflare instead."
+-                ));
+-            }
+-            res = tokio::time::timeout(STEP_TIMEOUT, child.wait()) => {
+-                res
+-                    .map_err(|_| {
+-                        anyhow::anyhow!(
+-                            "tailscale funnel timed out after {}s; your node may not have \
+-                             HTTPS certs enabled or Funnel may not be enabled in your tailnet \
+-                             ACL. Run `AGENT_OF_EMPIRES_DEBUG=1 aoe serve --remote` and \
+-                             check debug.log for the live output, or try \
+-                             `tailscale funnel --bg --yes {}` ma
 ```
 
 ---
 
-### Incident Patch 2: `5f4bcc3e` (2026-10-25)
-**Commit Message**: fix(session): release the create spawn reservation when a stop cancels it (#4940)
+### Incident Patch 2: `687771d9` (2026-10-31)
+**Commit Message**: fix(logging): make debug.log diagnosable, nothing dropped and every lifecycle event and failure logged (#5093)
 
-* fix(session): release the create spawn reservation when a stop cancels it
+* fix(logging): stop dropping unrooted targets and log session lifecycle
 
-The acp.create_spawn task waited on the prompt-submission and instance
-guards without watching its lease. A purge of a Starting session holds
-both guards while it waits for that reservation to drop, so the wait
-ran into its 5 s timeout and the scratch dir was only removed later by
-purge recovery. Race the guard acquisition against the lease
-cancellation and return, dropping the reservation, on cancel.
+`filter_for_level` built the EnvFilter from `DEFAULT_TARGET_ROOTS` alone, so
+events on any other root (`task.panic` errors, `push`, `file_watch`,
+`events`, `conversation_summary`, `shutdown`) were dropped at every level,
+and dependency crates never logged. Add the missing roots, prepend a fixed
+`warn` catch-all, and add a source-scan test so a new root cannot drift
+out again. Migration v053 deletes the persisted `runtime_filter`, which
+would otherwise re-apply the old root list at boot.
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Log every committed status transition once at `publish` time (ACP sessions
+had none), add `info` summaries for session create/purge/trash/restart/
+rename, and move the two per-poll debug sites that made up 88% of the file
+(`list_sessions resolved`, `worker rpc ok`) to `trace`.
 
-* fix(session): include the namespace read in the cancellable spawn acquisition
+Prune dead `KNOWN_SUB_TARGETS` entries, add the new ones, and test both
+that each entry exists in source and that the web mirror matches.
 
-Addresses review comment from jerome-benoit on #4940.
+Co-Authored-By: Claude Fable 5.1 <[REDACTED_EMAIL]>
 
-create_spawn took the profile namespace read before the cancellable
-acquisition. A queued namespace writer (rename) makes that read wait
-behind a purge's read lease, and the purge waits on the reservation,
-so the select was never reached. Acquire namespace, submission and
-instance guards together, in the same order, against the lease
-cancellation, and cover the queued-writer case.
+* feat(logging): narrate every lifecycle event and
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
------
-
-**File**: `src/server/session_spawn.rs` (modified, +69/-4)
+**File**: `docs/development.md` (modified, +5/-3)
 ```diff
-@@ -744,10 +744,16 @@ pub(crate) async fn spawn_structured_session(
-                 let spawn_state = state.clone();
-                 let claude_store_pin = response_instance.selected_claude_store_pin();
-                 service.work.spawn("acp.create_spawn", async move {
--                    let namespace = spawn_state.profile_namespace.read().await;
--                    let submission = service_for_check.prompt_submission(&id).await;
--                    let inst_lock = service_for_check.instance_lock(&id).await;
--                    let guard = inst_lock.lock().await;
-+                    let Some((namespace, submission, guard)) = acquire_spawn_guards(
-+                        &service_for_check,
-+                        &spawn_state.profile_namespace,
-+                        &id,
-+                        reservation.lease().cancellation(),
-+                    )
-+                    .await
-+                    else {
-+                        return;
-+                    };
-                     let check_id = id.clone();
-                     let checked = tokio::task::spawn_blocking(move || {
-                         use crate::session::SessionStore;
-@@ -869,6 +875,32 @@ pub(crate) async fn spawn_structured_session(
-     }
+@@ -51,9 +51,11 @@ aoe logs
+ `cargo xtask dev` runs a dashboard-enabled debug backend on 8081 and Vite with HMR on 5173; `--watch` rebuilds and restarts the backend when Rust inputs change, leaving the previous backend running if a rebuild fails.
+ 
+ Use explicit dotted tracing area targets so per-target logging overrides affect
+-native and dashboard failures consistently. Settings > Logging exposes server,
+-migration and process areas; clearing one override restores inheritance without
+-clearing other targets.
++native and dashboard failures consistently. Every `target:` root used in `src/`
++must be listed in `DEFAULT_TARGET_ROOTS` in `src/logging.rs`; a unit test
++enforces it, and an unlisted root only reaches the file at `warn` and above.
++Dependency crates log at `warn` regardless of `default_level`. Clearing one override in
++Settings > Logging restores inheritance without clearing other targets.
+ 
+ Filter changes saved in Settings > Logging apply to the TUI, running daemon and structured runners in the same app namespace. Sink and rotation changes require restart. No-op and unrelated saves preserve temporary runtime filters.
+ 
+```
+
+**File**: `docs/guides/configuration.md` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ Updates use a locked read-modify-write operation, preserving concurrent changes.
+ | Variable | Description |
+ |----------|-------------|
+ | `AGENT_OF_EMPIRES_PROFILE` | Default profile |
+-| `AOE_LOG_LEVEL` | File log level: `trace`, `debug`, `info`, `warn`, `error` |
++| `AOE_LOG_LEVEL` | File log level for AoE's own targets: `trace`, `debug`, `info`, `warn`, `error`. Dependency crates stay at `warn`. One-shot CLI commands always log to the same file at the configured level once the app directory exists; `[logging].output = "stdout"` applies to a foreground `aoe serve` only |
+ | `AGENT_OF_EMPIRES_DEBUG` | Legacy alias for `AOE_LOG_LEVEL=debug` |
+ | `AOE_DEFER_SANDBOX_MIGRATION` | Start without moving sandboxed sessions' agent stores; retried later or by `aoe migrate`. See [Per-session agent stores](sandbox.md#per-session-agent-stores) |
+ 
+```
+
+**File**: `src/acp/acp_client/connection/command_loop.rs` (modified, +3/-1)
+```diff
+@@ -160,7 +160,9 @@ impl Session {
+                     // The supervisor publishes the terminal here (#1100).
+                     info!(target: "acp.protocol", "force-stop requested with no prompt in flight; best-effort cancel only");
+                     self.stand_down_idle_completion();
+-                    let _ = self.send_cancel().await;
++                    if let Err(error) = self.send_cancel().await {
++                        debug!(target: "acp.protocol", %error, "cancel notification failed");
++                    }
+                 }
+                 Some(ClientCmd::SetMode(mode_id)) => self.dispatch_mode(mode_id, false),
+                 Some(ClientCmd::DeleteSession {
+```
+
+**File**: `src/acp/acp_client/connection/notifications.rs` (modified, +1/-1)
+```diff
+@@ -283,7 +283,7 @@ impl Shared {
+             // During replay only transcript events are dropped; ambient state
+             // and lifecycle events still pass so pickers stay current.
+             if suppressing && is_transcript_event(&event) {
+-                debug!(
++                tracing::trace!(
+                     target: "acp.protocol",
+                     session = %self.session_label,
+                     kind = transcript_event_kind(&event),
+```
+
+**File**: `src/acp/acp_client/connection/prompt.rs` (modified, +10/-3)
+```diff
+@@ -84,6 +84,8 @@ struct TurnFlags {
+     prompt_cancelled: bool,
+     orphan_cancel_sent: bool,
+     cancelling: bool,
++    /// What the adapter reported; `None` when no `PromptResponse` arrived.
++    agent_stop_reason: Option<StopReason>,
  }
  
-+/// Takes the namespace, submission and instance guards, or `None` once a stop
-+/// cancels the lease. A purge holds them while it waits for this reservation
-+/// to drop, and a queued namespace writer makes the read wait behind it, so
-+/// waiting through a cancel deadlocks until the purge timeout.
-+async fn acquire_spawn_guards(
-+    service: &SessionService,
-+    namespace: &Arc<tokio::sync::RwLock<()>>,
-+    id: &str,
-+    cancelled: &tokio_util::sync::CancellationToken,
-+) -> Option<(
-+    tokio::sync::OwnedRwLockReadGuard<()>,
-+    tokio::sync::OwnedMutexGuard<()>,
-+    tokio::sync::OwnedMutexGuard<()>,
-+)> {
-+    let acquire = async {
-+        let namespace = namespace.clone().read_owned().await;
-+        let submission = service.prompt_submission(id).await;
-+        let instance = service.instance_lock(id).await.lock_owned().await;
-+        (namespace, submission, instance)
-+    };
-+    tokio::select! {
-+        guards = acquire => Some(guards),
-+        () = cancelled.cancelled() => None,
-+    }
+ struct Turn {
+@@ -304,6 +306,7 @@ impl Session {
+         let e = match res {
+             Ok(resp) => {
+                 turn.flags.prompt_cancelled = matches!(resp.stop_reason, StopReason::Cancelled);
++                turn.flags.agent_stop_reason = Some(resp.stop_reason);
+                 if !turn.flags.prompt_cancelled {
+                     if let Some(info) = self.take_parking_rejection() {
+                         self.shared.emit(Event::RateLimit { info }).await;
+@@ -400,7 +403,9 @@ impl Session {
+                     target: "acp.protocol",
+                     "force-stop requested during in-flight prompt; ending turn and restarting worker"
+                 );
+-                let _ = self.send_cancel().await;
++                if let Err(error) = self.send_cancel().await {
++                    debug!(target: "acp.protocol", %error, "cancel notification failed");
++                }
+                 turn.flags.force_stopped = true;
+                 turn.flags.shutdown = true;
+                 return Ok(Flow::Break);
+@@ -642,11 +647,13 @@ impl Session {
+         shared.reset_message_dedup();
+         shared.prompt_in_flight.store(false, Ordering::Relaxed);
+         // Missing after a Stopped, this line signals a stranded prompt (#3190).
+-        debug!(
++        info!(
+             target: "acp.protocol",
+             session = %shared.session_label,
+             reason,
+-            "prompt drain complete; between-prompt idle ownership restored"
++            agent_stop_reason = ?f.agent_stop_reason,
++            duration_ms = now_ms() - prompt_started_at_ms,
++            "turn finished; between-prompt idle ownership restored"
+         );
+     }
+ }
+```
+
+**File**: `src/acp/acp_client/spawn.rs` (modified, +11/-2)
+```diff
+@@ -9,7 +9,7 @@ use std::process::Stdio;
+ use tracing::{debug, info, warn};
+ 
+ use super::errors::AcpError;
+-use super::resolve_command::resolve_agent_command;
++use super::resolve_command::{resolve_agent_command, Unresolved};
+ 
+ #[derive(Debug, Clone)]
+ pub struct SpawnConfig {
+@@ -464,7 +464,16 @@ pub(super) fn spawn_subprocess(
+             r.path.to_string_lossy().into_owned(),
+             r.prepend_paths.clone(),
+         ),
+-        Err(_) => (config.spec.command.clone(), Vec::new()),
++        Err(Unresolved::NotBare) => (config.spec.command.clone(), Vec::new()),
++        Err(error) => {
++            debug!(
++                target: "acp.protocol.spawn",
++                command = %config.spec.command,
++                ?error,
++                "could not resolve command via node-manager dirs; using bare command"
++            );
++            (config.spec.command.clone(), Vec::new())
++        }
+     };
+ 
+     let mut cmd = tokio::process::Command::new(&spawn_command);
+```
+
+**File**: `src/acp/adapters.rs` (modified, +4/-2)
+```diff
+@@ -1,7 +1,7 @@
+ use std::path::{Path, PathBuf};
+ 
+ use thiserror::Error;
+-use tracing::{info, warn};
++use tracing::{error, info, warn};
+ 
+ use crate::acp::node::{NodeSource, ResolvedNode};
+ 
+@@ -347,7 +347,9 @@ fn publish(tmp: &Path, final_dir: &Path) -> std::io::Result<()> {
+             Ok(())
+         }
+         Err(e) => {
+-            let _ = std::fs::rename(&backup, final_dir);
++            if let Err(error) = std::fs::rename(&backup, final_dir) {
++                error!(target: "acp.adapters", %error, backup = %backup.display(), "failed to restore adapter backup");
++            }
+             let _ = std::fs::remove_dir_all(tmp);
+             Err(e)
+         }
+```
+
+**File**: `src/acp/event_store/mod.rs` (modified, +12/-0)
+```diff
+@@ -339,6 +339,18 @@ fn decode(json: &str) -> Option<Event> {
+     serde_json::from_str(json).ok()
+ }
+ 
++fn decode_logged(json: &str, session_id: &str, what: &str) -> Option<Event> {
++    serde_json::from_str(json)
++        .map_err(|e| {
++            warn!(
++                target: "acp.event_store",
++                session = %session_id,
++                "{what}: deserialise failed: {e}"
++            )
++        })
++        .ok()
 +}
 +
- pub(crate) async fn finish_structured_launch(
-     state: &Arc<super::AppState>,
-     native: Arc<super::session_store::NativeSessionStore>,
-@@ -919,6 +951,39 @@ pub(crate) async fn finish_structured_launch(
- mod tests {
-     use super::*;
- 
-+    #[tokio::test]
-+    async fn spawn_guard_wait_yields_to_lease_cancellation() {
-+        let state = crate::server::test_support::build_test_app_state(Vec::new());
-+        let service = &state.session_service;
-+        let namespace = &state.profile_namespace;
-+        let cancelled = tokio_util::sync::CancellationToken::new();
-+        assert!(acquire_spawn_guards(service, namespace, "s1", &cancelled)
-+            .await
-+            .is_some());
-+
-+        // A purge holds a namespace read and the instance lock; a rename queues
-+        // a namespace writer, which blocks any further read.
-+        let purge_lease = namespace.clone().read_owned().await;
-+        let held = service.instance_lock("s1").await.lock_owned().await;
-+        let writer = tokio::spawn(namespace.clone().write_owned());
-+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(5);
-+        while namespace.try_read().is_ok() {
-+            assert!(std::time::Instant::now() < deadline, "writer never queued");
-+            tokio::task::yield_now().await;
-+        }
-+
-+        cancelled.cancel();
-+        let waited = tokio::time::timeout(
-+            std::time::Duration::from_secs(5),
-+            acquire_spawn_guards(service, namespace, "s1", &cancelled),
-+        )
-+        .await
-+        .expect("a cancelled lease must not wait on the held guards");
-+        assert!(waited.is_none());
-+        drop((held, purge_lease));
-+        writer.await.unwrap();
-+    }
-+
-     #[tokio::test]
-     #[serial_test::serial]
-     async fn pre_launch_hook_failure_rolls_back_resources_and_owner() {
+ /// Log a failed query as `None`.
+ fn logged<T>(result: rusqlite::Result<T>, what: &str, session_id: &str) -> Option<T> {
+     result
 ```
 
 ---
 
-### Incident Patch 3: `01054558` (2026-10-25)
-**Commit Message**: fix(serve): retry transient lifecycle snapshot read failures with a bounded budget (#4938)
+### Incident Patch 3: `2a2e1a42` (2026-10-31)
+**Commit Message**: feat(tui): show plugin-provided row status (#4789)
 
-* fix(serve): retry transient lifecycle snapshot read failures with a bounded budget
+* feat(tui): show plugin status and browser links
 
-observe_disk now reports Settled, Again or ReadFailed. The disk consumer
-paces repeats with ReadRetry: read failures draw on a five-attempt
-exponential budget that a healthy read or fresh filesystem activity
-refills, and the wait is a shutdown-aware select arm instead of a
-spawned timer.
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+* test(tui): cover plugin status provider combinations
 
-* fix(serve): stop the disk consumer when shutdown races a retry wake
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-Addresses review comment from CodeRabbit on #4938.
+* refactor(tui): keep plugin contributions status-only
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-* fix(serve): refill the read retry budget on a fully readable second look
+* docs: clarify native TUI plugin row rendering
 
-Observed::Again now carries whether every profile was read. A healthy
-Again refills the budget; one that still has an unread profile does not,
-so mixed reads stay bounded.
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-Addresses review feedback from jerome-benoit on #4938.
+* fix(tui): stabilize plugin status CI
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
----------
+* docs: preserve plugin badge ordering contract
 
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
 
-**File**: `src/server/disk_watch.rs` (modified, +14/-12)
+* fix(tui): address plugin status review feedback
+
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
+
+* fix(tui): factor status plan test cases into a type alias
+
+Co-Authored-By: openai-codex/gpt-6-luna <[REDACTED_EMAIL]>
+
+* fix(tui): harden plugin status poller and drop the web gate
+
+Keeps the last good snapshot on transient fetch failures, clears it only
+when the local daemon is genuinely gone, and stops polling on a rejected
+bearer token to avoid repeated IP-wide lockout
+
+**File**: `docs/plugin-api.md` (modified, +5/-1)
 ```diff
-@@ -4,6 +4,7 @@
- use crate::file_watch::{FileMatcher, WatchSpec};
- use std::sync::Arc;
+@@ -429,7 +429,9 @@ request({ method: "ready", params: { nonce: location.hash.slice(1) } }, (m) => p
  
-+use super::lifecycle_feed::ReadRetry;
- #[cfg(test)]
- use super::reload::load_all_profiles;
- use super::reload::reload_state_instances_from_disk;
-@@ -261,10 +262,17 @@ pub(super) async fn init_disk_watch_subscriptions_inner<F>(
- /// pattern but does NOT touch tmux or `state.status_tx`. Polling stays
- /// canonical; this task is pure latency reduction.
- pub(super) async fn disk_watcher_consumer(state: Arc<AppState>) {
-+    let mut retry = ReadRetry::default();
-+    let mut retry_in = None;
-     loop {
--        tokio::select! {
-+        let fresh_wake = tokio::select! {
-             _ = state.shutdown.cancelled() => break,
--            _ = state.disk_changed.notified() => {}
-+            _ = state.disk_changed.notified() => true,
-+            _ = tokio::time::sleep(retry_in.unwrap_or_default()), if retry_in.is_some() => false,
-+        };
-+        retry_in = None;
-+        if state.shutdown.is_cancelled() {
-+            break;
-         }
-         let started = std::time::Instant::now();
-         let namespace = state.profile_namespace.read().await;
-@@ -301,17 +309,11 @@ pub(super) async fn disk_watcher_consumer(state: Arc<AppState>) {
-         };
-         let ((fresh, metadata), live_worker_records) = loaded;
-         // Diff before the reload consumes the rows. A session missing once is only a suspect,
--        // and a snapshot a commit overtook is dropped, so look again shortly rather than
--        // waiting for the next file event.
--        let observe_again = state.lifecycle.observe_disk(lifecycle_since, &fresh);
-+        // a snapshot a commit overtook is dropped, and a failed read says nothing, so look
-+        // again shortly rather than waiting for the next file event.
-+        let observed = state.lifecycle.observe_disk(lifecycle_since, &fresh);
-         drop(lifecycle_turn);
--        if observe_again {
--            let again = state.disk_changed.clone();
--            tokio::spawn(async move {
--                tokio::time::sleep(std::time::Duration::from_millis(250)).await;
--                again.notify_one();
--            });
--        }
-+        retry_in = retry.next(observed, fresh_wake);
-         let count = fresh.instances.len();
-         reload_state_instances_from_disk(
-             &state,
+ `status-bar`, `header-start` and `detail-badge` also take an integer `order`, default 0, lowest first; ties keep plugin id then entry id order. In the terminal UI they render as text and tone in the status line, `header-start` first; icons, tooltips and links are web only.
+ 
+-Give items a shared `group` to collapse them into one chip that shows one item at a time. Clicking or tapping it advances to the next item and wraps around, for example a usage badge cycling `5h`, `7d` and `opus` values:
++`row-badge` items on terminal session rows render every item with `text` or `tooltip`, using `tooltip` when `text` is absent. With no `items` list, the top-level `row-badge` uses `tooltip` as a fallback label for missing `text`. `row-column` renders text only; the TUI omits icons and links.
++
++In the web dashboard, give items a shared `group` to collapse them into one chip that shows one item at a time. Clicking or tapping it advances to the next item and wraps around, for example a usage badge cycling `5h`, `7d` and `opus` values:
+ 
+ ```json
+ { "items": [
+@@ -441,6 +443,8 @@ Give items a shared `group` to collapse them into one chip that shows one item a
+ 
+ Items without a `group` stay separate chips, and each distinct `group` cycles independently. The position is kept per browser tab and is never sent to the worker. A cycling chip ignores `href`; a group with a single item renders as a normal chip. The TUI cannot click and shows the first item with text.
+ 
++Grouped `row-badge` items remain separate in the TUI and do not cycle.
++
+ ### Pane payload
+ 
+ A `pane` entry renders a dockable tool-window, pushed with `ui.state.set`:
 ```
 
-**File**: `src/server/lifecycle_feed.rs` (modified, +211/-18)
+**File**: `src/plugin/ui_state.rs` (modified, +2/-1)
 ```diff
-@@ -5,6 +5,7 @@
- //! also covers writers in other processes and profile moves, but is debounced.
+@@ -252,7 +252,8 @@ pub struct Notification {
+     pub href: Option<String>,
+ }
  
- use std::sync::{Arc, Mutex};
-+use std::time::Duration;
+-#[derive(Debug, Clone, Serialize, Deserialize)]
++/// One entry in a plugin UI snapshot.
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+ pub struct UiEntry {
+     pub plugin_id: String,
+     pub slot: UiSlot,
+```
+
+**File**: `src/tui/app.rs` (modified, +6/-0)
+```diff
+@@ -1316,6 +1316,8 @@ impl App {
+                 needs_full_refresh = true;
+             }
  
- use tokio::sync::broadcast;
- 
-@@ -19,6 +20,64 @@ const LIFECYCLE_CHANNEL_CAPACITY: usize = 256;
- /// Reads of the baseline before giving up on a quiet moment between commits.
- const BASELINE_ATTEMPTS: usize = 5;
- 
-+/// Wait before looking again at a missing session or an overtaken snapshot.
-+const AGAIN_DELAY: Duration = Duration::from_millis(250);
++            self.home.request_plugin_ui_refresh();
 +
-+/// Observations repeated after a failed read before waiting for the next filesystem event.
-+const READ_RETRY_ATTEMPTS: u32 = 5;
+             if last_metrics_sample.elapsed() >= METRICS_SAMPLE_INTERVAL {
+                 self.home.request_metrics_refresh();
+                 last_metrics_sample = std::time::Instant::now();
+@@ -1325,6 +1327,10 @@ impl App {
+                 refresh_needed = true;
+             }
+ 
++            if self.home.apply_plugin_ui_updates() {
++                needs_full_refresh = true;
++            }
 +
-+/// Wait before the first read retry; each further one doubles it.
-+const READ_RETRY_BASE_DELAY: Duration = Duration::from_millis(250);
+             needs_full_refresh |= self.home.apply_session_feed();
+             needs_full_refresh |= self.poll_dashboard_launch();
+             needs_full_refresh |= self.poll_dashboard_stop();
+```
+
+**File**: `src/tui/home/lifecycle.rs` (modified, +1/-0)
+```diff
+@@ -230,6 +230,7 @@ impl HomeView {
+             search_matches: Vec::new(),
+             search_match_index: 0,
+             available_tools,
++            plugin_ui: crate::tui::plugin_ui_poller::PluginUiState::default(),
+             show_diagnostics: resolved.session.show_diagnostics_pane,
+             show_shortcut_bar: resolved.session.show_shortcut_bar,
+             preview_link_prefixes: resolved.session.preview_link_prefixes.clone(),
+```
+
+**File**: `src/tui/home/mod.rs` (modified, +1/-0)
+```diff
+@@ -355,6 +355,7 @@ pub struct HomeView {
+ 
+     pub(super) available_tools: AvailableTools,
+ 
++    pub(super) plugin_ui: crate::tui::plugin_ui_poller::PluginUiState,
+     pub(super) show_diagnostics: bool,
+     pub(super) show_shortcut_bar: bool,
+     pub(super) preview_link_prefixes: Vec<String>,
+```
+
+**File**: `src/tui/home/render.rs` (modified, +160/-5)
+```diff
+@@ -889,6 +889,65 @@ fn title_width_for_column(
+     (title_width.min(budget), false)
+ }
+ 
++const MAX_PLUGIN_STATUS_WIDTH: usize = 32;
 +
-+/// What an observation asks of the consumer.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(super) enum Observed {
-+    Settled,
-+    /// A missing session awaits a second look, or a commit overtook the snapshot and nothing
-+    /// was applied. `read_healthy` is whether every profile was listed and read.
-+    Again {
-+        read_healthy: bool,
-+    },
-+    /// The profile listing or a profile's storage could not be read.
-+    ReadFailed,
++const MAX_PLUGIN_STATUS_COUNT: usize = 16;
++
++#[derive(Clone, Copy)]
++struct PluginStatusSpan<'a> {
++    text: &'a str,
++    tone: Option<crate::plugin::ui_state::Tone>,
++    width: usize,
 +}
 +
-+/// Paces repeated observations. Read failures draw on a bounded budget that a healthy read or
-+/// fresh filesystem activity refills, so a profile that stays unreadable is not reloaded
-+/// forever.
-+#[derive(Default)]
-+pub(super) struct ReadRetry {
-+    failures: u32,
++struct PluginStatusPlan<'a> {
++    spans: [Option<PluginStatusSpan<'a>>; MAX_PLUGIN_STATUS_COUNT],
++    len: usize,
++    width: usize,
 +}
 +
-+impl ReadRetry {
-+    /// How long to wait before observing again; `None` waits for the next filesystem event.
-+    /// `fresh` is whether this observation was woken by filesystem activity, not by a retry.
-+    pub(super) fn next(&mut self, observed: Observed, fresh: bool) -> Option<Duration> {
-+        if fresh {
-+            self.failures = 0;
-+        }
-+        match observed {
-+            Observed::Settled => {
-+                self.failures = 0;
-+                None
-+            }
-+            Observed::Again { read_healthy } => {
-+                if read_healthy {
-+                    self.failures = 0;
-+                }
-+                Some(AGAIN_DELAY)
-+            }
-+            Observed::ReadFailed if self.failures < READ_RETRY_ATTEMPTS => {
-+                let delay = READ_RETRY_BASE_DELAY * 2u32.pow(self.failures);
-+                self.failures += 1;
-+                Some(delay)
-+            }
-+            Observed::ReadFailed => None,
-+        }
++impl<'a> PluginStatusPlan<'a> {
++    fn iter(&self) -> impl Iterator<Item = PluginStatusSpan<'a>> + '_ {
++        self.spans[..self.len].iter().flatten().copied()
 +    }
 +}
 +
- /// Runs before each publication, so a test can hold one producer there.
- #[cfg(test)]
- type PublishHook = Arc<dyn Fn(&LifecycleChange) + Send + Sync>;
-@@ -57,30 +116,37 @@ impl LifecycleFeed {
++fn plan_plugin_statuses<'a>(
++    statuses: impl Iterator<Item = (&'a str, Option<crate::plugin::ui_state::Tone>)>,
++    budget: usize,
++) -> PluginStatusPlan<'a> {
++    let mut plan = PluginStatusPlan {
++        spans: [None; MAX_PLUGIN_STATUS_COUNT],
++        len: 0,
++        width: 0,
++    };
++    let budget = budget.min(MAX_PLUGIN_STATUS_WIDTH);
++
++    for (text, tone) in statuses {
++        if plan.len == MAX_PLUGIN_STATUS_COUNT {
++            break;
++        }
++        let available = budget.saturating_sub(plan.width).saturating_sub(2);
++        if available == 0 {
++            break;
++        }
++        let text_width = rendered_width(text);
++        let visible_width = text_width.min(available);
++        plan.spans[plan.len] = Some(PluginStatusSpan {
++            text,
++            tone,
++            width: visible_width,
++        });
++        plan.len += 1;
++        plan.width += 2 + visible_width;
++        if visible_width < text_width {
++            break;
++        }
++    }
++
++    plan
++}
++
+ /// The activity column's text: remaining snooze under Attention sort, else the age of a
+ /// resting (Idle or Unknown) row, else blank. `last_accessed_at` is only a fallback for a
+ /// missing `idle_entered_at`; on an active row it reads as idle time.
+@@ -1975,6 +2034,7 @@ impl HomeView {
+         line_spans.push(Span::styled(format!("{} ", icon), icon_style));
+         let prefix_width: usize = line_spans.iter().map(|s| s.width()).sum();
+         let room = (list_width as usize).saturating_sub(prefix_width);
++        let text_width = rendered_width(&text);
+ 
+         let inst = match item {
+             Item::Session { id, .. } => self.get_instance(id).map(|inst| (id, inst)),
+@@ -2039,18 +2099,46 @@ impl HomeView {
+             LAST_ACTIVITY_SLOT
+         };
+ 
+-        let (title_width, keep_tag) = title_width_for_column(
+-            rendered_width(&text),
+-            room,
+-            tag_span.as_ref().map_or(0, |s| s.width()),
+-            slot_width + badge_width + LAST_ACTIVITY_RIGHT_MARGIN,
++        let tag_width = tag_span.as_ref().map_or(0, |span| span.width());
++        let fixed_trailing = slot_width + badge_width + LAST_ACTIVITY_RIGHT_MARGIN;
++
++        let status_budget = room
++            .saturating_sub(tag_width + fixed_trailing + text_width.min(MIN_TITLE_CELLS))
++            .min(MAX_PLUGIN_STATUS_WIDTH);
++
++        let plugin_status_plan = plan_plugin_statuses(
++            crate::tui::plugin_ui::session_row_statuses(&self.plugin_ui.snapshot, id),
++            status_budget,
+         );
++        let plugin_status_width = plugin_status_plan.width;
++
++        let (title_width, keep_tag) = if plugin_status_width > 0 {
++            (
++                text_width
++                    .min(room.saturating_sub(tag_width + fixed_trailing + plugin_status_width)),
++                true,
++            )
++        } else {
++            title_width_for_column(text_width, room, tag_width, fixed_trailing)
++        };
+         line_spans.push(Span::styled(
+             truncate_to_width(&text, title_width),
+             text_style,
+         ));
+         line_spans.extend(tag_span.filter(|_| keep_tag));
+ 
++        for status in plugin_status_plan.iter() {
++            line_spans.push(Span::raw("  "));
++            let status_style = crate::tui::plugin_ui::tone_style(status.tone, theme);
++            line_spans.push(Span::styled(
++                truncate_to_width(status.text, status.width),
++                if is_selected {
++                    selected_row_style(status_style, theme)
++                } else {
++                    status_style
++                },
++            ));
++        }
+         let used_width: usize = line_spans.iter().map(|s| s.width()).sum();
+         let column_pad = activity_column_padding(used_width, list_width, slot_width, badge_width);
+         let column_fits = column_pad.is_some();
+@@ -5427,3 +5515,70 @@ mod tests {
+         assert_eq!(sb.rendered(), "[sb]");
+     }
+ }
++
++#[cfg(test)]
++mod plugin_status_plan_tests {
++    use super::plan_plugin_statuses;
++    use crate::plugin::ui_state::Tone;
++
++    /// (name, budget, count, expected span list, expected width).
++    type StatusPlanCase = (
++        &'static str,
++        usize,
++        usize,
++        Vec<(&'static str, Option<Tone>, usize)>,
++        usize,
++    );
++
++    #[test]
++    fn s
+```
+
+**File**: `src/tui/home/status.rs` (modified, +8/-0)
+```diff
+@@ -9,6 +9,14 @@ impl HomeView {
+         self.instances.values().cloned().collect()
      }
  
-     /// Diff the freshly loaded sessions of every profile, read after `since` was taken from
--    /// [`Self::commit_generation`]. Returns whether to observe again shortly: a missing
--    /// session awaits a second look, or a commit overtook the snapshot and nothing was applied.
--    pub(super) fn observe_disk(&self, since: u64, loaded: &LoadedInstances) -> bool {
-+    /// [`Self::commit_generation`].
-+    pub(super) fn observe_disk(&self, since: u64, loaded: &LoadedInstances) -> Observed {
-         let health = &loaded.cache.health;
-         if health.enumeration_failed {
-             // An empty listing says nothing about which sessions exist.
-             self.apply(|tracker| {
-                 tracker.baseline_unavailable();
-                 (Vec::new(), ())
-             });
--            return false;
-+            return Observed::ReadFailed;
-         }
-         let rows: Vec<LifecycleRow> = loaded
-             .instances
-             .iter()
-             .map(|inst| LifecycleRow::of(inst, &inst.effective_profile()))
-             .collect();
-         let unread: Vec<String> = health.unreadable_profiles.iter().cloned().collect();
-+        let read_healthy = unread.is_empty();
-         self.apply(|tracker| {
-             if tracker.commits() != since {
--                return (Vec::new(), true);
-+                return (Vec::new(), Observed::Again { read_healthy });
-             }
-             let changes = tracker.observe(&rows, &unread);
--            (changes, tracker.has_suspects(&unread))
-+            let observed = if tracker.has_suspects(&unread) {
-+                Observed::Again { read_healthy }
-+            } else if read_healthy {
-+                Observed::Settled
-+            } else {
-+                Observed::ReadFailed
-+            };
-+            (changes, observed)
-         })
-     }
- 
-@@ -131,7 +197,7 @@ impl LifecycleFeed {
-             if loaded.cache.health.enumeration_failed {
-                 continue;
-             }
--            if !self.observe_disk(since, &loaded) {
-+            if !matches!(self.observe_disk(since, &loaded), Observed::Again { .. }) {
-                 return true;
-             }
-         }
-@@ -205,7 +271,10 @@ mod tests {
- 
-     /// A complete disk read taken just now.
-     fn observe(feed: &LifecycleF
++    pub fn request_plugin_ui_refresh(&mut self) {
++        self.plugin_ui.request_refresh(!self.instances.is_empty());
++    }
++
++    pub fn apply_plugin_ui_updates(&mut self) -> bool {
++        self.plugin_ui.apply_pending()
++    }
++
+     /// Request a system-health sample in the background while either health
+     /// surface is visible. Call `apply_metrics_updates` to pick up the result.
+     pub fn request_metrics_refresh(&mut self) {
+```
+
+**File**: `src/tui/mod.rs` (modified, +2/-0)
+```diff
+@@ -15,6 +15,8 @@ pub(crate) mod markdown;
+ mod metrics_poller;
+ pub(crate) mod open_url;
+ pub(crate) mod plugin_ui;
++pub(crate) mod plugin_ui_poller;
++
+ pub(crate) mod remote_home;
+ pub(crate) mod responsive;
+ mod session_feed;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4940** (2026-10-25): fix(session): release the create spawn reservation when a stop cancels it (@Seluj78)
-- **PR #4939** (2026-10-25): fix(serve): quiesce structured worker on profile-only session move (@Seluj78)
-- **PR #4938** (2026-10-25): fix(serve): retry transient lifecycle snapshot read failures with a bounded budget (@Seluj78)
-- **PR #4937** (2026-10-25): feat(daemon): tag group-not-empty rejection with an error code (@Seluj78)
-- **PR #4936** (2026-10-25): refactor(tui): adopt cycle_focus in remaining dialogs (@Seluj78)
-- **PR #4931** (2026-10-25): fix(update): give Nix installs a command that updates them (@Seluj78)
+- **PR #5178** (2026-10-31): docs(suggestions): add user guide for suggested sessions (@Seluj78)
+- **PR #5175** (2026-10-31): fix(tui): repair the two unit tests red on the suggestions integration branch (@Seluj78)
+- **PR #5170** (2026-10-31): feat(suggestions): started-session link, grouped view with refresh status, edge states (@Seluj78)
+- **PR #5169** (2026-10-31): feat(tui): initial_prompt in the new-session dialog and aoe add --prompt, sanitise suggestion text (@Seluj78)
+- **PR #5168** (2026-10-31): feat(suggestions): refresh interval, wizard Edit template link, uses_agent and provider fix (@Seluj78)
+- **PR #5167** (2026-10-31): refactor(tui): share one suggestions store and open a suggestion's source from the palette (@Seluj78)
 
 ---
 
@@ -2855,67 +2942,28 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. daemon): stop trusting group-writable ancestors of the socket dir (#4929)
+## X. serve): turn off the Funnel a failed Tailscale start switched on (#5043)
 
 **RULE**:
-When implementing operations in `src/cli/runtime_read/uds.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guides/web-dashboard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ee49af3`: daemon): stop trusting group-writable ancestors of the socket dir (#4929). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3b7b4b7f`: serve): turn off the Funnel a failed Tailscale start switched on (#5043). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cli/runtime_read/uds.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/web-dashboard.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        validate_directory_stat(&root, euid, false, true, Path::new("/"))?;
-            validate_directory_stat(&next, euid, final_component, true, &walked)?;
-    if !group_other_writes_allowed(&stat, final_component, euid) {
-fn group_other_writes_allowed(stat: &os::Stat, final_component: bool, owner: u32) -> bool {
-            && crate::daemon::transport::trusted_ancestor(stat.st_uid, stat.st_mode, owner))
-    fn writable_ancestors_preserve_sticky_roots_and_final_directory_isolation() {
-        assert!(!group_other_writes_allowed(&stat, true, 1));
-        assert!(group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, true, 1));
-        assert!(!group_other_writes_allowed(&stat, false, 1));
-        assert!(group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, false, 1));
-        assert!(!group_other_writes_allowed(&stat, true, 1));
+1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced. AoE also refuses to start Funnel when port 443 has tailnet-only Serve config, which Funnel would make public, or when `tailscale funnel status` can't be read. If a start fails after turning Funnel on, AoE turns it back off, but only when port 443 was unused before and still holds just AoE's route; otherwise the error says what was left on. Two aoe daemons on one machine, such as a release and a debug build, take turns: a start waits up to 60 s for the other's to finish.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let private_gid = admission
-        .then(|| crate::daemon::transport::user_private_gid(euid))
-        .flatten();
-        validate_directory_stat(&root, euid, private_gid, false, true, Path::new("/"))?;
-            validate_directory_stat(&next, euid, private_gid, final_component, true, &walked)?;
-    private_gid: Option<u32>,
-    if !group_other_writes_allowed(&stat, final_component, euid, private_gid) {
-fn group_other_writes_allowed(
-    stat: &os::Stat,
-    final_component: bool,
-    owner: u32,
-    private_gid: Option<u32>,
-) -> bool {
-            && crate::daemon::transport::trusted_ancestor(
-                stat.st_uid,
-                stat.st_gid,
-                stat.st_mode,
-                owner,
-                private_gid,
-            ))
-    fn writable_ancestors_preserve_private_groups_and_final_directory_isolation() {
-            st_gid: 0,
-        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-        assert!(group_other_writes_allowed(&stat, false, 1, None));
-        assert!(!group_other_writes_allowed(&stat, true, 1, None));
-        assert!(!group_other_writes_allowed(&stat, false, 1, None));
-        assert!(group_other_writes_allowed(&stat, false
+1. **Tailscale Funnel:** if `tailscale` is installed and logged in, AoE runs `tailscale funnel --bg --yes <port>` for a stable `https://<machine>.<tailnet>.ts.net` URL. Install Tailscale, run `tailscale up`, enable [Funnel](https://login.tailscale.com/f/funnel), and grant the node the `funnel` nodeAttr in its [ACL](https://login.tailscale.com/admin/acls/file). Target the node's tag if tagged. A conflicting non-loopback Funnel on port 443 is refused, not replaced; clear it with `tailscale funnel reset`, or use `--no-tailscale`. Stale loopback AoE configuration can be replaced.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ee49af3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3b7b4b7f` are properly handled with clean fallback behavior.

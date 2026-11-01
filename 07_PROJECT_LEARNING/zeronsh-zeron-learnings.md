@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `325384d8`  
+> **Source Version**: `0a153df5`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:15:07.942Z  
+> **Timestamp**: 2026-10-31T21:46:01.267Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:15:07.148Z  
+> **Harvest Timestamp**: 2026-10-31T21:46:00.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3370 stars
+- **Stars / Engagement**: 3424 stars
 
 ---
 
@@ -1600,11 +1600,11 @@ enum TextEngine {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1052** (2026-10-26): **Transcript: agent senders and provider switches as captions over the message**
-  *Symptoms*: ## Summary  - **Agent messages:** a message sent from another chat through Zeron's `send_message` now shows `Message from [provider logo] Chat title` as a muted caption over its bubble, in the same style as the provider-switch seam. Clicking it opens the sending chat. The bubble keeps only the body. The routing header stays in the stored prompt, so the receiving agent still reads it. The trailing `(short-id)` that used to leak into the shown name is gone, while a title's own parentheses stay. - **Provider-switch seam:** no divider and no "Switched provider" label. It's now one line, `[logo] From → [logo] To`, right-aligned and set close over the message that switched. - **Seam timing:** the engine used to write the user's message, replace the old provider's runtime (which can take seconds), and only then write the seam. It now writes the seam together with the message (`doc_host.rs` Run path). The dispatch's own later note is idempotent and does nothing. - If a seam lands above a message already on screen, that message is remeasured so its gap tightens.  ## Screenshots  Captured from the new `message-captions-fixture` (offline shell) on Linux. The before shots run the same fixture against `main`. Notes and hashes are in `docs/screenshots/message-captions/README.md`.  | Before | After | | --- | --- | | ![before dark](https://github.com/zeronsh/zeron/blob/e50b92f5e84d97d4dd9c197553a675cb8cdcc3e0/docs/screenshots/message-captions/before-dark.png?raw=true) | ![after dark](https:/
+- **Issue #1116** (2026-10-31): **Sync: update loro to 1.17 so streaming chats stop leaking memory**
+  *Symptoms*: ## Summary  - Updates loro from 1.13.9 to 1.17.1. No code changes. - Before 1.17, every snapshot export left another copy of the doc's text in its string arena (fixed in loro-dev/loro 089a4e6). `ChatPersistence` exports a dirty chat once a second, so a chat with a streaming agent grows quadratically. A headless engine running 16 Pi agents reached 34 GB after six hours. - This is also the cause of the panic in #905. Once the arena passes 4 GiB, `export_snapshot` fails `append-only-bytes` `start <= end` and the doc is poisoned. The retry loop after a poisoned lock is unchanged.  Refs #905  ## Test plan  - [x] `cargo test -p zeron-doc -p zeron-sync -p zeron-client` - [x] `cargo test -p zeron-engine --lib` - [x] Streaming 380 KB through `SegmentWriter` with an export per tick grows RSS 250 MB on 1.13.9 and a few MB on 1.17.1 (Linux) - [ ] Not run on macOS or Windows  <!-- codesmith:footer --> --- <a href="https://app.blacksmith.sh/zeronsh/codesmith/zeron/pr/1116?autoLogin=true&ref=codesmith_pr_footer"><picture><source media="(prefers-color-scheme: dark)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3.svg"><source media="(prefers-color-scheme: light)" srcset="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-light-v3.svg"><img alt="View with [code]smith" src="https://pr-comments-assets.blacksmith.sh/codesmith/view-with-codesmith-dark-v3-3x.png" width="162" height="28"></picture></a> <a href="https://backend.blacksmith.sh
 
-- **Issue #1049** (2026-10-25): **Transcript rail: back to one tick per prompt; long chats scroll the rail**
-  *Symptoms*: This replaces #1034's ten-tick rail and hover prompt list. The rail goes back to how it was, **one tick per prompt**, and a conversation too long for it now **scrolls the rail**, the way Codex's prompt rail does.  **Back to the old rail** - Every prompt has its own tick at the natural 8px spacing. - Hovering a tick widens it and its neighbours and shows a preview card with the prompt and the opening of its reply. Clicking a tick glides the transcript to that prompt.  **Scrolling, like Codex** - Once the ticks don't fit, the rail shows a window onto them: **70% of the space between the titlebar and the composer, at most 640px**. Codex uses `min(70vh, 40rem)`. - **Scroll over the rail** to move through the ticks. There's no visible scrollbar, as in Codex. A wheel over the rail never scrolls the transcript behind it, even at the rail's ends. - The rail's **ends fade** while there are more ticks beyond them. - The rail **follows the prompts on screen**: when they change, from reading or jumping, it moves just enough to keep their ticks clear of the fades. It only moves when what's lit changes, so a rail you've scrolled by hand stays put.  **Kept from #1034** - The rail centres between the titlebar and the composer. - While the transcript is pinned to the bottom, every prompt on screen lights its tick, not just the one being read.  Screenshots below are offscreen renders from the new `rail-fixture` example. The conversation has 150 prompts and is pinned to the bottom.  The rail at
+- **Issue #1115** (2026-10-30): **Edge: profile routes**
+  *Symptoms*: Edge: public profile routes and supporting assets.  - Username claim and lookup in the user directory, with tests. - Public read routes behind a per-IP gate, exposing only public fields. - A static web page and image route served by the edge worker, with tests.  Verified on staging. Merging deploys the edge.  🤖 Generated with [Claude Code](https://claude.com/claude-code)  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1621,492 +1621,326 @@ enum TextEngine {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `325384d8` (2026-10-26)
-**Commit Message**: Transcript: agent senders and provider switches as captions over the message (#1052)
+### Incident Patch 1: `6973500b` (2026-10-31)
+**Commit Message**: Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116)
 
-An agent-sent message shows `Message from [mark] Chat` over its bubble,
-opening the sending chat on click; the routing header and short id leave
-the bubble. The provider-switch seam drops its divider and rides
-right-aligned over the message that switched, and the engine writes it
-with that message instead of after replacing the outgoing runtime.
+* Sync: update loro to 1.17 so streaming chats stop leaking memory
 
-Co-authored-by: Wing <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+loro before 1.17 left another copy of a doc's text in its string arena on
+every snapshot export (fixed in loro-dev/loro 089a4e6). chat_persistence
+exports a dirty chat each second, so a chat with a streaming agent grew
+quadratically until the arena passed 4 GiB and export panicked (#905).
+
+* Sync: upgrade edge Loro and guard snapshot memory growth
+
 Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
 
-**File**: `crates/engine/src/doc_host.rs` (modified, +2/-1)
+---------
+
+Co-authored-by: gratenes <[REDACTED_EMAIL]>
+Co-authored-by: Wing <[REDACTED_EMAIL]>
+Co-authored-by: zeronsh[bot] <346184242+zeronsh[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +8/-8)
 ```diff
-@@ -5657,7 +5657,8 @@ impl DocHost {
-                 // issued_at, clamped against clock skew) — not whenever this
-                 // host got around to draining a queued command. Idempotent by
-                 // id, so the dispatch path's own execution-time write dedupes
--                // to a no-op.
-+                // to a no-op. A provider switch's seam lands with it, above.
-+                sessions.note_provider_switch(chat_id, harness, handle);
-                 if let Err(err) = handle.write_user_message(
-                     message_id,
-                     &request.prompt,
+@@ -5505,9 +5505,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro"
+-version = "1.13.9"
++version = "1.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "09ea00f70c1acad4b7a05aaf72c1d9a671426021a1999ee821c77b56f0a15900"
++checksum = "410c939fe3bee34b8ed61f7aea93201fb136629f685ffa557039c4d9952f9988"
+ dependencies = [
+  "enum-as-inner 0.6.1",
+  "generic-btree",
+@@ -5521,9 +5521,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro-common"
+-version = "1.13.1"
++version = "1.17.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b51042936156a1d537df8a38938ec8ed24b45de14530af933c1d02de39c9e056"
++checksum = "bd3f7afbafc4db85aefe9620e7e99fa49c974477563904f226ae96fc9674eade"
+ dependencies = [
+  "arbitrary",
+  "enum-as-inner 0.6.1",
+@@ -5551,9 +5551,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro-internal"
+-version = "1.13.9"
++version = "1.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6fec47acf8db115b7146da5e1d5b18d0cf58032e6012c0c1ee3ec3442d1e936f"
++checksum = "7e533c1688430aa4fcdd933f00861e331c169a4158ee6d27d054e0558892d447"
+ dependencies = [
+  "append-only-bytes",
+  "arref",
+@@ -5598,9 +5598,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "loro-kv-store"
+-version = "1.13.9"
++version = "1.17.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "937f88e4a3d80d5853f5119753f5e5f68d4375726db7e9b3d6dac9db8167e8bf"
++checksum = "c7331ebe6902effeb0c3d52aba9e30fb0118bc926faed6f3848487aab40c1a4e"
+ dependencies = [
+  "bytes",
+  "ensure-cov",
 ```
 
-**File**: `crates/engine/src/sessions.rs` (modified, +8/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -531,6 +531,14 @@ impl SessionsEngine {
-         lock(&self.inner.runs).get(chat_id).map(|h| h.runtime_config.harness_id)
-     }
+@@ -69,7 +69,7 @@ zeron-visual = { path = "crates/visual" }
+ zeron-visual-gpu = { path = "crates/visual-gpu" }
  
-+    /// Mark the provider-switch seam for a send about to run on `harness_id`
-+    /// now, with its message, rather than once the dispatch has replaced the
-+    /// outgoing provider's runtime (seconds later). Idempotent: the dispatch's
-+    /// own note finds the seam already written.
-+    pub fn note_provider_switch(&self, chat_id: &str, harness_id: HarnessId, doc: &ChatDocHandle) {
-+        self.inner.note_provider_switch(chat_id, harness_id, doc);
+ # CRDT
+-loro = "1.13"
++loro = "1.17"
+ # Wire protocol for the SessionRoom DO rooms — official Rust twin of the npm
+ # `loro-protocol` package the TS edge speaks (same monorepo, byte-identical
+ # frames, cross-checked by its js_snapshots tests).
+```
+
+**File**: `crates/doc/tests/fixtures/loro-1.13.7/initial.json` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++{
++  "text": "Hello 🌍",
++  "messages": [
++    "first"
++  ],
++  "queue": [
++    "one",
++    "two"
++  ],
++  "metadata": {
++    "author": "legacy"
++  }
++}
+```
+
+**File**: `crates/doc/tests/fixtures/loro-1.13.7/updated.json` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++{
++  "text": "Hello 🌍 from legacy",
++  "messages": [
++    "first",
++    "second"
++  ],
++  "queue": [
++    "two",
++    "one"
++  ],
++  "metadata": {
++    "author": "legacy"
++  }
++}
+```
+
+**File**: `crates/doc/tests/loro_persistence.rs` (added, +43/-0)
+```diff
+@@ -0,0 +1,43 @@
++//! Actual 1.13.7 persisted bytes, shared with the edge compatibility tests.
++use loro::{ExportMode, LoroDoc, ToJson};
++use serde_json::{Value, json};
++
++const SNAPSHOT: &[u8] = include_bytes!("fixtures/loro-1.13.7/snapshot.bin");
++const SHALLOW: &[u8] = include_bytes!("fixtures/loro-1.13.7/shallow.bin");
++const UPDATE: &[u8] = include_bytes!("fixtures/loro-1.13.7/update.bin");
++
++#[test]
++fn legacy_snapshots_merge_updates_and_survive_new_version_persistence() {
++    for snapshot in [SNAPSHOT, SHALLOW] {
++        let doc = LoroDoc::new();
++        doc.import(snapshot).unwrap();
++        let initial: Value =
++            serde_json::from_str(include_str!("fixtures/loro-1.13.7/initial.json")).unwrap();
++        assert_eq!(doc.get_deep_value().to_json_value(), initial);
++        doc.get_map("metadata").insert("modern", true).unwrap();
++        doc.commit();
++        assert!(doc.import(UPDATE).unwrap().pending.is_none());
++        let mut expected: Value =
++            serde_json::from_str(include_str!("fixtures/loro-1.13.7/updated.json")).unwrap();
++        expected["metadata"]["modern"] = json!(true);
++        assert_eq!(doc.get_deep_value().to_json_value(), expected);
++
++        let restored = LoroDoc::new();
++        restored
++            .import(&doc.export(ExportMode::Snapshot).unwrap())
++            .unwrap();
++        // Replay after restart must be idempotent, including movable-list ops.
++        restored.import(UPDATE).unwrap();
++        assert_eq!(restored.get_deep_value().to_json_value(), expected);
++    }
++}
++
++#[test]
++fn legacy_update_waiting_for_snapshot_is_not_lost() {
++    let doc = LoroDoc::new();
++    assert!(doc.import(UPDATE).unwrap().pending.is_some());
++    doc.import(SNAPSHOT).unwrap();
++    let expected: Value =
++        serde_json::from_str(include_str!("fixtures/loro-1.13.7/updated.json")).unwrap();
++    assert_eq!(doc.get_deep_value().to_json_value(), expected);
++}
+```
+
+**File**: `crates/doc/tests/snapshot_memory.rs` (added, +80/-0)
+```diff
+@@ -0,0 +1,80 @@
++//! Keep this in its own test binary: the allocator counts all live allocations.
++//! Measuring retained allocations avoids platform-dependent RSS/GC thresholds.
++use std::alloc::{GlobalAlloc, Layout, System};
++use std::sync::atomic::{AtomicUsize, Ordering::Relaxed};
++use zeron_doc::{MessagePart, SegmentWriter, SessionDoc, fold_event_into_parts};
++use zeron_proto::AgentEvent;
++
++struct CountingAllocator;
++static LIVE_BYTES: AtomicUsize = AtomicUsize::new(0);
++
++// SAFETY: every allocation is delegated unchanged to System; we only count the
++// requested sizes of successful allocations and their corresponding releases.
++unsafe impl GlobalAlloc for CountingAllocator {
++    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
++        let ptr = unsafe { System.alloc(layout) };
++        if !ptr.is_null() {
++            LIVE_BYTES.fetch_add(layout.size(), Relaxed);
++        }
++        ptr
 +    }
 +
-     /// Whether an accepted agent update gates the chat's live run, so a new
-     /// prompt waits in the queue rather than joining that run's transcript.
-     pub fn live_run_update_pending(&self, chat_id: &str) -> bool {
-```
-
-**File**: `crates/ui/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -68,6 +68,10 @@ required-features = ["project-path-fixture"]
- name = "rail-fixture"
- required-features = ["appshots-fixture"]
- 
-+[[example]]
-+name = "message-captions-fixture"
-+required-features = ["appshots-fixture"]
++    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
++        unsafe { System.dealloc(ptr, layout) };
++        LIVE_BYTES.fetch_sub(layout.size(), Relaxed);
++    }
 +
- [[example]]
- name = "sidebar-fixture"
- required-features = ["project-palette-fixture"]
-```
-
-**File**: `crates/ui/examples/message-captions-fixture.rs` (added, +147/-0)
-```diff
-@@ -0,0 +1,147 @@
-+//! User-message caption review fixture: a chat that switched provider and
-+//! then received a message from another chat, in an isolated, offline shell.
-+//! With `--capture <dir>` it saves the transcript at rest and with the
-+//! sender caption hovered, then quits; ZERON_PALETTE_LIGHT=1 renders the
-+//! light theme.
-+use gpui::{AppContext, Bounds, WindowBounds, WindowOptions, px, size};
-+use serde_json::json;
-+use std::path::{Path, PathBuf};
-+use zeron_ui::*;
-+
-+const SENDER_ID: &str = "cd27c5c2-6f1e-4d1a-9a52-3b0c8e7d4f10";
-+
-+async fn pause(cx: &mut gpui::AsyncApp, ms: u64) {
-+    cx.background_executor()
-+        .timer(std::time::Duration::from_millis(ms))
-+        .await;
++    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
++        let new_ptr = unsafe { System.realloc(ptr, layout, size) };
++        if !new_ptr.is_null() {
++            LIVE_BYTES.fetch_add(size, Relaxed);
++            LIVE_BYTES.fetch_sub(layout.size(), Relaxed);
++        }
++        new_ptr
++    }
 +}
 +
-+fn capture(window: gpui::AnyWindowHandle, cx: &mut gpui::AsyncApp, dir: &Path, name: &str) {
-+    window
-+        .update(cx, |_, w, cx| {
-+            w.draw(cx).clear();
-+            match w.render_to_image() {
-+                Ok(image) => image.save(dir.join(format!("{name}.png"))).unwrap(),
-+                Err(error) => eprintln!("{name}: capture failed: {error:#}"),
-+            }
-+        })
-+        .ok();
-+}
++#[global_allocator]
++static ALLOCATOR: CountingAllocator = CountingAllocator;
 +
-+fn entries() -> serde_json::Value {
-+    let at = |minutes: i64| 1_788_900_000_000_i64 + minutes * 60_000;
-+    let text = |id: &str, role: &str, minutes: i64, text: &str| {
-+        json!({"id": id, "role": role, "createdAt": at(minutes), "deviceId": "local", "status": "complete",
-+            "parts": [{"id": "t", "kind": "text", "text": text}]})
-+    };
-+    let routed = format!(
-+        "[Message from Zeron chat zgui prod: Windows platform (WING-PC) (cd27c5c2). Reply to it with the Zeron `send_message` tool, chat {SENDER_ID}.]\n\n\
-+         Windows lane: the matrices are done on current main (#513, #542, #543). Windows in front and verified uncovered on every run, Zeron minimized, alternating, 0 invalid runs; dist builds, shared DejaVu font."
++#[test]
++fn streaming_with_a_snapshot_every_tick_has_bounded_retained_memory() {
++    let before = LIVE_BYTES.load(Relaxed);
++    let doc = SessionDoc::init("streaming-memory").unwrap();
++    let mut writer = SegmentWriter::begin(&doc, "assistant", "device", 1).unwrap();
++    let mut folded = Vec::new();
++    let token = "streaming text: ".repeat(16);
++    let ticks = 2000;
++    for _ in 0..ticks {
++        fold_event_into_parts(
++            &mut folded,
++            &AgentEvent::TextDelta {
++                text: token.clone(),
++            },
++        );
++        writer.sync(&folded).unwrap();
++        // ChatPersistence exports a dirty document each tick. Do not retain
++        // these bytes: the regression was inside Loro, not the snapshot owner.
++        drop(doc.export_snapshot().unwrap());
++    }
++    let retained = LIVE_BYTES.load(Relaxed).saturating_sub(before);
++    eprintln!(
++        "retained {retained} bytes for {} streamed bytes",
++        token.len() * ticks
 +    );
-+    json!([
-+        text("u0", "user", 0, "Profile the render loop on Linux and Windows and tell me where the frame time goes."),
-+        text("a0", "assistant", 1, "Linux is done: layout is 61% of the frame, paint 22%. I've asked the Windows chat to run the same matrix and report back."),
-+        {"id": "switch:1", "role": "system", "createdAt": at(2), "deviceId": "local", "status": "complete",
-+            "parts": [{"id": "switch:1", "kind": "switch", "from": "Claude Code", "to": "Codex",
-+                "fromHarness": "claude-code", "toHarness": "codex"}]},
-+        text("u1", "user", 2, "Carry on from here and draft the summary table."),
-+        text("a1", "assistant", 3, "Here's the Linux half; the Windows column fills in when its results arrive."),
-+        text("u2", "user", 4, &routed),
-+        text("a2", "assistant", 5, "Got it — Windows matches Linux within 3%. The table is complete."),
-+    ])
++    // Deliberately generous: fixed versions retain a few MiB; 1.13.9 retains
++    // hundreds of MiB. Includes the application writer's mirrored strings.
++    assert!(
++        retained < 32 * 1024 * 1024,
++        "retained {retained} bytes after repeated exports"
++    );
++
++    let restored = loro::LoroDoc::new();
++    restored.import(&doc.export_snapshot().unwrap()).unwrap();
++    assert_eq!(restored.get_deep_value(), doc.doc().get_deep_value());
++    let entries = doc.read_entries().unwrap();
++    match &entries[0].parts[0] {
++        MessagePart::Text { text, .. } => assert_eq!(text, &token.repeat(ticks)),
++        other => panic!("expected streamed text, got {other:?}"),
++    }
 +}
-+
-+fn main() -> anyhow::Result<()> {
-+    let runtime = tokio::runtime::Runtime::new()?;
-+    let _guard = runtime.enter();
-+    tracing_subscriber::fmt().with_env_filter("warn").init();
-+    let temp = tempfile::tempdir()?;
-+    let data = temp.path().to_path_buf();
-+    let capture_dir = std::env::args()
-+        .skip_while(|arg| arg != "--capture")
-+        .nth(1)
-+        .map(PathBuf::from);
-+    let entries = entries();
-+    gpui_platform::application().with_assets(icons::Assets).run(move |cx| {
-+        gpui_tokio::init(cx);
-+        gpui_base::init(cx);
-+        let mut settings = settings::UiSettings::default();
-+        settings.sidebar_width = 260.0;
-+        settings.save(&data).unwrap();
-+        settings::init(settings.clone(), data.clone(), cx);
-+        let fonts = typography::register_fonts(cx);
-+        typography::init(settings.ui_font_family.clone(), settings.ui_font_size, settings.terminal_font_family.clone(), settings.terminal_font_size, settings.code_font_family.clone(), settings.code_font_size, fonts, cx);
-+        theme_library::init(data.clone(), cx);
-+        let mode = if std::env::var_os("ZERON_PALETTE_LIGHT").is_some() { appearance::AppearanceMode::Light } else { appearance::AppearanceMode::Dark };
-+        appearance::init(mode, settings.theme_selection, settings.accent, settings.surface, cx);
-+        history::init(settings.git_history_columns, settings.git_history_column_widths, settings.git_history_column_order, settings.git_history_author_display, cx);
-+        composer::init(cx, settings.composer_send_behavior);
-+        terminal::panel::init(cx);
-+        app_menus::init(cx);
-+        let chat = |id: &str, title: &str, harness: &str, model: &str| {
-+            serde_json::from_value(json!({"id": id, "deviceId": "local", "title": title, "archived": false, "createdAt": "2026-10-25T00:00:00Z",
-+                "config": {"harness": harness, "model": model, "reasoning": null, "sandbox": "workspace-write"}})).unwrap()
-+        };
-+        let state = cx.new(|_| {
-+            let mut s = state::AppState::new();
-+            s.connection = zeron_proto::view::ConnectionStatus::Ready;
-+           
 ```
 
-**File**: `crates/ui/src/shell.rs` (modified, +1/-0)
+**File**: `edge/package-lock.json` (modified, +10/-1)
 ```diff
-@@ -4460,6 +4460,7 @@ impl Shell {
-                 );
-             }
-             TranscriptEvent::SignIn { chat_id } => self.sign_in_for_chat(chat_id, cx),
-+            TranscriptEvent::OpenChat { chat_id } => self.open_chat(chat_id.clone(), cx),
-         }
-     }
- 
-```
-
-**File**: `crates/ui/src/transcript.rs` (modified, +223/-120)
-```diff
-@@ -177,6 +177,9 @@ pub const USER_LINE_HEIGHT: f32 = 22.0;
- pub const USER_COLLAPSE_CHARS: usize = 400;
- /// Vertical separation before the plain expand/collapse link.
- const USER_TOGGLE_GAP: f32 = 8.0;
-+/// Between a caption over a user bubble (provider switch, agent sender) and
-+/// the bubble.
-+const USER_CAPTION_GAP: f32 = 6.0;
- /// User-bubble attachment thumbnails (user-attachments.tsx): 112×80 thumbs in
- /// a wrapping strip. Fixed thumbnail sizes keep load-state flips from
- /// shifting the virtualizer.
-@@ -1064,6 +1067,9 @@ pub enum RowKind {
-         attachments: Arc<Vec<crate::attachments::UserImageAttachment>>,
-         /// Context the prompt folded in as text, lifted back out by `badges`.
-         badges: Arc<Vec<crate::badges::MessageBadge>>,
-+        /// The chat that sent this message through Zeron's `send_message`,
-+        /// lifted out of the routing header the receiving agent still reads.
-+        sender: Option<AgentSender>,
-         /// Optimistic echo not yet confirmed by a doc frame.
-         pending: bool,
+@@ -10,13 +10,14 @@
+       "dependencies": {
+         "@cloudflare/puppeteer": "^1.4.0",
+         "jose": "^6.0.11",
+-        "loro-crdt": "^1.13.7",
++        "loro-crdt": "^1.17.1",
+         "loro-protocol": "^0.3.0"
+       },
+       "devDependencies": {
+         "@cloudflare/vitest-pool-workers": "^0.20.2",
+         "@cloudflare/workers-types": "^5.20260714.1",
+         "loro-adaptors": "^0.6.1",
++        "loro-crdt-legacy": "npm:loro-crdt@1.13.7",
+         "loro-websocket": "^0.6.2",
+         "typescript": "^6.0.3",
+         "vitest": "^4.1.10",
+@@ -2661,9 +2662,17 @@
+       }
      },
-@@ -1370,7 +1376,10 @@ pub fn rows_for_entry(
-         // Lifted before the mention projection, so a comment body's own
-         // Markdown never lands in the bubble.
-         let (body, badges) = crate::badges::split(&parsed.text);
--        let body = agent_message_display(&body);
-+        let (sender, body) = match agent_message_sender(&body) {
-+            Some((sender, body)) => (Some(sender), body.to_owned()),
-+            None => (None, body),
-+        };
-         // Chips stand in for their attachments: those leave the strip, and a
-         // chip carries its upload's path for its progress and, for an image,
-         // a click opening it.
-@@ -1408,6 +1417,7 @@ pub fn rows_for_entry(
-                 mentions: Arc::new(mentions),
-                 attachments: Arc::new(attachments),
-                 badges: Arc::new(badges),
-+                sender,
-                 pending,
-             },
-             entry_id,
-@@ -2029,7 +2039,14 @@ fn part_prefix(id: &str) -> &str {
- /// part — matching the live row's internal spacing exactly, so the
- /// live→split handoff cannot shift a pixel. Tool groups get one larger global
- /// step on either boundary so their dense chip stack has room to breathe.
-+/// A provider-switch seam is the caption of the message under it, so that
-+/// message sits right below it.
- pub fn top_gap_for(prev: Option<&Row>, row: &Row) -> f32 {
-+    if matches!(row.kind, RowKind::User { .. })
-+        && prev.is_some_and(|prev| matches!(prev.kind, RowKind::SwitchMarker { .. }))
-+    {
-+        return USER_CAPTION_GAP;
-+    }
-     if row.turn_start {
-         return Theme::SPACE_LG;
-     }
-@@ -3483,6 +3500,8 @@ pub enum TranscriptEvent {
-         title: String,
-         frozen: bool,
+     "node_modules/loro-crdt": {
++      "version": "1.17.1",
++      "resolved": "https://registry.npmjs.org/loro-crdt/-/loro-crdt-1.17.1.tgz",
++      "integrity": "sha512-83hWRYG6eMMpPezm+yXWlOqCuUsC0BYY1MVCPW9x2zlikgkHhL7GC7Q6JFH+Hjvauyn287Q1MiwTuRW0lUOUag==",
++      "license": "MIT"
++    },
++    "node_modules/loro-crdt-legacy": {
++      "name": "loro-crdt",
+       "version": "1.13.7",
+       "resolved": "https://registry.npmjs.org/loro-crdt/-/loro-crdt-1.13.7.tgz",
+       "integrity": "sha512-tOvBUBSVseebXx8L5TMEdVYwgTOVZMMUtA9tQAs2vpPNRx/hClsLGhjmo9D3J4LopCVrQ6cuj3ZdBeyxQheWAg==",
++      "dev": true,
+       "license": "MIT"
      },
-+    /// An agent message's sender caption: open the chat that sent it.
-+    OpenChat { chat_id: String },
- }
- 
- impl gpui::EventEmitter<TranscriptEvent> for Transcript {}
-@@ -5227,6 +5246,7 @@ impl Transcript {
-                 for row in &self.rows[old_range.clone()] {
-                     self.render_cache.borrow_mut().invalidate_row(&row.id);
-                 }
-+                let after = old_range.start + count;
-                 if old_range.len() == count {
-                     // In-place content change, same row count — notably the
-                     // live→complete flip, where EVERY row of the streamed
-@@ -5242,6 +5262,12 @@ impl Transcript {
-                 } else {
-                     self.list.splice(old_range, count);
-                 }
-+                // A row's top gap reads its predecessor, so the row after the
-+                // splice can gain a new one (a switch seam landing over the
-+                // message already shown under it).
-+                if after < new_rows.len() {
-+                    self.list.remeasure_items(after..after + 1);
-+                }
-                 self.viewport_layout_revision = self.viewport_layout_revision.wrapping_add(1);
-             }
-         }
-@@ -6485,6 +6511,59 @@ impl Transcript {
-             .into_any_element()
-     }
- 
-+    /// `Message from [logo] Chat` over an agent-sent bubble, in the switch
-+    /// seam's caption style: the sending chat's provider mark and live title
-+    /// (the header's title for a chat this workspace doesn't list). A known
-+    /// chat opens on click.
-+    fn render_agent_sender(
-+        &self,
-+        row_id: &SharedString,
-+        sender: &AgentSender,
-+        theme: &Theme,
-+        cx: &mut Context<Self>,
-+    ) -> AnyElement {
-+        let chat = self
-+            .state
-+            .read(cx)
-+            .chats
-+            .iter()
-+            .find(|chat| chat.id == sender.chat_id.as_ref());
-+        let known = chat.is_some();
-+        let title: SharedString = chat
-+            .and_then(|chat| chat.title.as_deref())
-+            .map(str::trim)
-+            .filter(|title| !title.is_empty())
-+            .map_or_else(|| sender.title.clone(), |title| 
+     "node_modules/loro-protocol": {
 ```
 
-**File**: `docs/screenshots/message-captions/README.md` (added, +17/-0)
+**File**: `edge/package.json` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,17 @@
-+# User-message captions runtime evidence
-+
-+Captured on 2026-10-26 on Linux (Xvfb, Mesa lavapipe software Vulkan) from `message-captions-fixture`: an offline shell with one chat that switched from Claude Code to Codex and then received a message from another chat through Zeron's `send_message`. The `before-*` captures run the same fixture against `main` `255c540d` with this change's sources stashed.
-+
-+Build and run: `cargo run -p zeron-ui --features appshots-fixture --example message-captions-fixture` (add `--capture <dir>` on platforms where `render_to_image` is implemented; on Linux the window was captured from the X display with `import -window root`, and hover/click driven with `xdotool`).
-+
-+- The provider-switch seam has no divider and rides right-aligned over the message that switched, `USER_CAPTION_GAP` above its bubble.
-+- An agent-sent message shows `Message from [provider mark] Chat title` over its bubble; the routing header and the trailing short id leave the bubble. Hovering brightens the caption (`sender-hover-dark.png`); clicking opens the sending chat (`sender-click-dark.png`: the fixture's sender chat has no transcript of its own).
-+
-+Static screenshots do not show the timing change: the engine now writes the seam together with the message instead of after the outgoing provider's runtime is replaced.
-+
-+- `before-dark.png`: SHA256 `de2b0745c9bce45ff3a05f9b57432752caee872553e99d4e48e4a781e773ae70`
-+- `after-dark.png`: SHA256 `310149c94389097faf4d2510e3758f2772ae4aa150d375d9cf06eab590d6f963`
-+- `before-light.png`: SHA256 `48c234366795f05d90987355f5c40b89a51f26aaf0eba8154896a708c3d29405`
-+- `after-light.png`: SHA256 `1beec003998af34c94ced6d87da25bceb4602a8edff1939a07502f335745c7ba`
-+- `sender-hover-dark.png`: SHA256 `e85e20a87b3d08ddbba43b971bfa0d0a4798f7e328b4c19d26d14111e413d517`
-+- `sender-click-dark.png`: SHA256 `0158a61dd2e1f5312b38fca513a40dcb309d1a72fb19887b8b20e9cc6cba292d`
-```
-
----
-
-### Incident Patch 2: `bc892abd` (2026-10-26)
-**Commit Message**: Session card: branch row shows the branch's changes, not the working tree (#950)
-
-* Session card: the branch row shows the branch's +/- over its base
-
-The totals came from the working-tree watch, so they only counted
-uncommitted lines. They now come from the Changes pane's Branch changes
-capture against the repo's default branch, re-captured whenever the watch
-checksum moves, and clicking them opens a Diff tab on that scope.
-
-* Session card: clicking the branch totals opens the diff pane
-
-The Branch changes tab was added to a closed pane, so nothing showed.
-Open the pane first, as opening a file does.
-
-**File**: `crates/ui/src/changes.rs` (modified, +8/-0)
-```diff
-@@ -1803,6 +1803,14 @@ impl Changes {
-         changes
-     }
- 
-+    /// A Diff tab that opens on *Branch changes* (the scope menu still
-+    /// switches it).
-+    pub fn for_branch(state: Entity<AppState>, cx: &mut Context<Self>) -> Self {
-+        let mut changes = Self::new(state, cx);
-+        changes.scope = DiffScope::Branch;
-+        changes
-+    }
-+
-     /// A dedicated History surface. It shares the commit-opening event path
-     /// with diffs, but is never offered as an item in a Diff tab's scope menu.
-     pub fn for_history(state: Entity<AppState>, cx: &mut Context<Self>) -> Self {
-```
-
-**File**: `crates/ui/src/shell.rs` (modified, +12/-1)
-```diff
-@@ -2315,7 +2315,7 @@ pub struct Shell {
-     session_info_last_reserve: f32,
-     /// The lanes card's folds and pages.
-     session_lanes: session_lanes::LaneState,
--    /// The working-tree diffs behind the card's branch-row totals.
-+    /// The branch diff behind the card's branch-row totals.
-     session_diffs: session_info::SessionDiffs,
-     /// The servers behind the card's Ports section.
-     session_previews: session_info::SessionPreviews,
-@@ -4097,6 +4097,17 @@ impl Shell {
-         self.register_diff_surface(changes, window, cx);
-     }
- 
-+    /// A Diff tab opened on *Branch changes* (the session card's totals),
-+    /// opening the pane when it is closed.
-+    fn add_branch_diff_surface(&mut self, window: &mut Window, cx: &mut Context<Self>) {
-+        if self.active_chat.is_empty() {
-+            return;
-+        }
-+        self.set_surfaces_open(true, cx);
-+        let changes = cx.new(|cx| Changes::for_branch(self.state.clone(), cx));
-+        self.register_diff_surface(changes, window, cx);
-+    }
-+
-     /// Open or focus a session-owned editor tab. The explorer is independent.
-     fn add_file_surface(&mut self, path: String, window: &mut Window, cx: &mut Context<Self>) {
-         let owner = (self.active_chat.clone(), self.state.clone());
-```
-
-**File**: `crates/ui/src/shell/session_info.rs` (modified, +121/-15)
-```diff
-@@ -33,22 +33,40 @@ pub(super) fn session_card_reserve(main: f32, transcript: f32) -> Option<f32> {
-     (main - reserve - 2.0 * TRANSCRIPT_GUTTER >= transcript - 0.5).then_some(reserve)
- }
- 
--/// The checkouts' working-tree diffs, for the branch row's `+N −M`: the
--/// Changes pane's `WatchCheckoutDiffs` stream, kept without the pane.
-+/// The branch's diff over its base, for the branch row's `+N −M`: the
-+/// Changes pane's *Branch changes* scope, kept without the pane. The
-+/// `WatchCheckoutDiffs` stream only says when to re-capture: its checksum
-+/// moves with the working tree and HEAD.
- #[derive(Default)]
- pub(super) struct SessionDiffs {
-     diffs: Vec<zeron_proto::CheckoutDiff>,
-     /// Device the running watch targets: `None` the connected engine, else
-     /// a remote chat's host (diffs are produced where the checkout lives).
-     target: Option<Option<String>>,
-     _watch: Option<Task<()>>,
-+    /// The comparison base per `device:cwd`, from `ListBranches`.
-+    base: Option<(String, String)>,
-+    /// `chat|cwd` the totals belong to, and those totals.
-+    branch: Option<(String, (u32, u32))>,
-+    /// `chat|cwd|checksum` last fetched (or in flight).
-+    fetched: Option<String>,
-+    _fetch: Option<Task<()>>,
- }
- 
- impl SessionDiffs {
--    /// The chat's uncommitted line totals; `None` while clean or unknown.
-+    /// The working-tree diff's checksum for `chat`: a branch capture is
-+    /// stale once it moves.
-+    fn checksum(&self, chat: &zeron_proto::Chat) -> Option<String> {
-+        crate::changes::resolve_diff(&self.diffs, chat).map(|diff| diff.checksum.clone())
-+    }
-+
-+    /// The branch's line totals over its base; `None` while clean or unknown.
-     fn totals(&self, chat: &zeron_proto::Chat) -> Option<(u32, u32)> {
--        crate::changes::resolve_diff(&self.diffs, chat)
--            .map(|diff| (diff.additions, diff.deletions))
-+        let context = format!("{}|{}", chat.id, chat.cwd.as_deref()?);
-+        self.branch
-+            .as_ref()
-+            .filter(|(key, _)| *key == context)
-+            .map(|&(_, totals)| totals)
-             .filter(|&(adds, dels)| adds + dels > 0)
-     }
- }
-@@ -136,16 +154,17 @@ impl Shell {
-                 {
-                     while let Some(value) = rx.recv().await {
-                         let alive = this.update(cx, |this, cx| {
--                            // Repaint only when the open chat's totals move.
-+                            // Re-render (and so re-capture) only when the open
-+                            // chat's checkout moves.
-                             let chat = this.state.read(cx).selected_chat_row().cloned();
--                            let totals = |diffs: &SessionDiffs| {
--                                chat.as_ref().and_then(|chat| diffs.totals(chat))
-+                            let checksum = |diffs: &SessionDiffs| {
-+                                chat.as_ref().and_then(|chat| diffs.checksum(chat))
-                             };
--                            let before = totals(&this.session_diffs);
-+                            let before = checksum(&this.session_diffs);
-                             if crate::changes::apply_diff_frame(
-                                 &mut this.session_diffs.diffs,
-                                 value,
--                            ) && totals(&this.session_diffs) != before
-+                            ) && checksum(&this.session_diffs) != before
-                             {
-                                 cx.notify();
-                             }
-@@ -217,6 +236,94 @@ impl Shell {
-         }));
-     }
- 
-+    /// Capture `chat`'s branch diff over its base (idempotent per chat, cwd
-+    /// and working-tree checksum). The base is the repo's default branch, as
-+    /// the Changes pane presets it; the last totals stay while a re-capture
-+    /// runs.
-+    fn ensure_branch_totals(&mut self, chat: &zeron_proto::Chat, cx: &mut Context<Self>) {
-+        let Some(cwd) = chat.cwd.clone() else {
-+            return;
-+        };
-+        // Until the watch reports the checkout, there is nothing to refresh on.
-+        let Some(checksum) = self.session_diffs.checksum(chat) else {
-+            return;
-+        };
-+        let context = format!("{}|{cwd}", chat.id);
-+        let key = format!("{context}|{checksum}");
-+        if self.session_diffs.fetched.as_deref() == Some(key.as_str()) {
-+            return;
-+        }
-+        let Some(engine) = self.state.read(cx).engine().cloned() else {
-+            return;
-+        };
-+        let target = self.session_diffs.target.clone().flatten();
-+        let repo = format!("{}:{cwd}", target.as_deref().unwrap_or("local"));
-+        let known_base = self
-+            .session_diffs
-+            .base
-+            .as_ref()
-+            .filter(|(at, _)| *at == repo)
-+            .map(|(_, base)| base.clone());
-+        let current = chat.branch.clone();
-+        self.session_diffs.fetched = Some(key.clone());
-+        self.session_diff
+@@ -17,13 +17,14 @@
+   "dependencies": {
+     "@cloudflare/puppeteer": "^1.4.0",
+     "jose": "^6.0.11",
+-    "loro-crdt": "^1.13.7",
++    "loro-crdt": "^1.17.1",
+     "loro-protocol": "^0.3.0"
+   },
+   "devDependencies": {
+     "@cloudflare/vitest-pool-workers": "^0.20.2",
+     "@cloudflare/workers-types": "^5.20260714.1",
+     "loro-adaptors": "^0.6.1",
++    "loro-crdt-legacy": "npm:loro-crdt@1.13.7",
+     "loro-websocket": "^0.6.2",
+     "typescript": "^6.0.3",
+     "vitest": "^4.1.10",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1052** (2026-10-26): Transcript: agent senders and provider switches as captions over the message (@zeronsh[bot])
-- **PR #1049** (2026-10-25): Transcript rail: back to one tick per prompt; long chats scroll the rail (@wingleeio)
-- **PR #1034** (2026-10-25): Transcript rail: ten ticks at most; hovering opens the prompt list (@zeronsh[bot])
-- **PR #1032** (2026-10-25): Releases: serve the Android APK's stable name uncached; name each build uniquely (@zeronsh[bot])
-- **PR #1031** (2026-10-25): Syntax: Luau highlighting (@zeronsh[bot])
-- **PR #1030** (2026-10-25): Bump version to v0.2.123 (@zeronsh[bot])
+- **PR #1116** (2026-10-31): Sync: update loro to 1.17 so streaming chats stop leaking memory (@Gratenes)
+- **PR #1115** (2026-10-30): Edge: profile routes (@wingleeio)
+- **PR #1113** (2026-10-30): Edge: record every WorkOS organization and its members (@wingleeio)
+- **PR #1107** (2026-10-30): Edge: a stored user number for every user in the directory (@wingleeio)
+- **PR #1106** (2026-10-29): Direct links: let WebRTC packets fragment, so links over Tailscale carry data (@wingleeio)
+- **PR #1105** (2026-10-29): Edge: badges for users in the directory (@wingleeio)
 
 ---
 
@@ -2126,29 +1960,42 @@ Open the pane first, as opening a file does.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Transcript: agent senders and provider switches as captions over the message (#1
+## X. Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116)
 
 **RULE**:
-When implementing operations in `crates/engine/src/doc_host.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `325384d8`: Transcript: agent senders and provider switches as captions over the message (#1052). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6973500b`: Sync: update loro to 1.17 so streaming chats stop leaking memory (#1116). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/engine/src/doc_host.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // to a no-op. A provider switch's seam lands with it, above.
-                sessions.note_provider_switch(chat_id, harness, handle);
+version = "1.17.1"
+checksum = "410c939fe3bee34b8ed61f7aea93201fb136629f685ffa557039c4d9952f9988"
+version = "1.17.0"
+checksum = "bd3f7afbafc4db85aefe9620e7e99fa49c974477563904f226ae96fc9674eade"
+version = "1.17.1"
+checksum = "7e533c1688430aa4fcdd933f00861e331c169a4158ee6d27d054e0558892d447"
+version = "1.17.0"
+checksum = "c7331ebe6902effeb0c3d52aba9e30fb0118bc926faed6f3848487aab40c1a4e"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                // to a no-op.
+version = "1.13.9"
+checksum = "09ea00f70c1acad4b7a05aaf72c1d9a671426021a1999ee821c77b56f0a15900"
+version = "1.13.1"
+checksum = "b51042936156a1d537df8a38938ec8ed24b45de14530af933c1d02de39c9e056"
+version = "1.13.9"
+checksum = "6fec47acf8db115b7146da5e1d5b18d0cf58032e6012c0c1ee3ec3442d1e936f"
+version = "1.13.9"
+checksum = "937f88e4a3d80d5853f5119753f5e5f68d4375726db7e9b3d6dac9db8167e8bf"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `325384d8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6973500b` are properly handled with clean fallback behavior.

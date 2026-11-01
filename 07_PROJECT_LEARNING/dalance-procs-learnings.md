@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source**: github ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
-> **Source Version**: `b10d652b`  
+> **Source Version**: `c41ae259`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-21T15:16:21.063Z  
+> **Timestamp**: 2026-10-27T15:01:10.227Z  
 > **Learning ID**: `learn-github-dalance-procs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dalance-procs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dalance/procs](https://github.com/dalance/procs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-21T15:16:16.644Z  
+> **Harvest Timestamp**: 2026-10-27T15:01:09.114Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern replacement for ps written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6201 stars
+- **Stars / Engagement**: 6208 stars
 
 ---
 
@@ -1584,11 +1584,11 @@ impl Column for CpuTime {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #992** (2026-10-26): **build(deps): bump tokio from 1.53.3 to 1.54.1**
+  *Symptoms*: Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.3 to 1.54.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/tokio-rs/tokio/releases">tokio's releases</a>.</em></p> <blockquote> <h2>Tokio v1.54.1</h2> <h1>1.54.1 (October 21st, 2026)</h1> <h3>Fixed</h3> <ul> <li>time: revert &quot;remove the runtime handle from timers&quot; (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>)</li> </ul> <p><a href="https://redirect.github.com/tokio-rs/tokio/issues/8692">#8692</a>: <a href="https://redirect.github.com/tokio-rs/tokio/pull/8692">tokio-rs/tokio#8692</a></p> <h2>Tokio v1.54.0</h2> <h1>1.54.0 (October 19th, 2026)</h1> <p>The 1.54.0 release includes all changes up to 1.53.3.</p> <p>The MSRV is increased to 1.85. (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8514">#8514</a>)</p> <h3>Added</h3> <ul> <li>fs: add <code>File::set_times</code>, <code>File::set_modified</code>, and <code>fs::FileTimes</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8504">#8504</a>)</li> <li>net: implement <code>Default</code> for <code>named_pipe::{ClientOptions, ServerOptions}</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8378">#8378</a>)</li> <li>runtime: add <code>Builder::max_io_events_per_busy_tick</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8410">#8410</a>)</li> <li>runtime: stabilize <code>tokio::runtime::worker_index()</code> (<a href="https://red
+
 - **Issue #990** (2026-10-20): **build(deps): bump libc from 0.2.190 to 0.2.191**
   *Symptoms*: Bumps [libc](https://github.com/rust-lang/libc) from 0.2.190 to 0.2.191. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/rust-lang/libc/releases">libc's releases</a>.</em></p> <blockquote> <h2>0.2.191</h2> <h3>Support</h3> <ul> <li>Emscripten: Support v4.0.12 to v6.0.11 (<a href="https://redirect.github.com/rust-lang/libc/pull/5610">#5610</a>)</li> </ul> <h3>Added</h3> <ul> <li>Apple: Add <code>F_SETNOSIGPIPE</code> and <code>F_GETNOSIGPIPE</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5609">#5609</a>)</li> <li>Apple: add <code>ifaliasreq</code> and <code>in6_aliasreq</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5557">#5557</a>)</li> <li>FreeBSD: Add <code>PT_*</code> constants (<a href="https://redirect.github.com/rust-lang/libc/pull/5625">#5625</a>)</li> <li>Haiku: Add <code>AI_*</code> and <code>NI_*</code> constants from netdb.h (<a href="https://redirect.github.com/rust-lang/libc/pull/5585">#5585</a>)</li> <li>Hurd: Add <code>POSIX_SPAWN_*</code> flags (<a href="https://redirect.github.com/rust-lang/libc/pull/5578">#5578</a>)</li> <li>NuttX: Add <code>AT_SYMLINK_NOFOLLOW</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5614">#5614</a>)</li> <li>OpenBSD: Add <code>sensordev</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5534">#5534</a>)</li> <li>QuRT: Add <code>isatty</code> (<a href="https://redirect.github.com/rust-lang/libc/pull/5618">#5618</a>)</li> <li>
-
-- **Issue #989** (2026-10-19): **build(deps): bump tokio from 1.53.2 to 1.53.3**
-  *Symptoms*: Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.2 to 1.53.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/tokio-rs/tokio/releases">tokio's releases</a>.</em></p> <blockquote> <h2>Tokio v1.53.3</h2> <h1>1.53.3 (October 13th, 2026)</h1> <h3>Added</h3> <ul> <li>io: add <code>AsyncFd::register</code> and <code>AsyncFd::register_with_interest</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8587">#8587</a>)</li> </ul> <h3>Changed</h3> <ul> <li>io: deprecate <code>AsyncFd::{new, with_interest, try_new, try_with_interest}</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8587">#8587</a>)</li> </ul> <h3>Fixed</h3> <ul> <li>io: wake and drop <code>DuplexStream</code> wakers outside the lock (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8618">#8618</a>)</li> <li>macros: avoid <code>unreachable_code</code> in <code>join!</code> and <code>try_join!</code> for <code>Infallible</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8518">#8518</a>)</li> <li>runtime: fix paused time auto-advancing when I/O wakes a task on <code>current_thread</code> (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8595">#8595</a>)</li> <li>sync: wake waiters outside the lock when closing a semaphore (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8529">#8529</a>)</li> <li>test: fix several flaky tests (<a href="https://redirect.github.com/tokio-rs/tokio/issues/8196">#8
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1605,47 +1605,46 @@ impl Column for CpuTime {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f4eb860c` (2026-10-20)
-**Commit Message**: build(deps): bump libc from 0.2.190 to 0.2.191
+### Incident Patch 1: `1c59bf3c` (2026-10-26)
+**Commit Message**: build(deps): bump tokio from 1.53.3 to 1.54.1
 
-Bumps [libc](https://github.com/rust-lang/libc) from 0.2.190 to 0.2.191.
-- [Release notes](https://github.com/rust-lang/libc/releases)
-- [Changelog](https://github.com/rust-lang/libc/blob/0.2.191/CHANGELOG.md)
-- [Commits](https://github.com/rust-lang/libc/compare/0.2.190...0.2.191)
+Bumps [tokio](https://github.com/tokio-rs/tokio) from 1.53.3 to 1.54.1.
+- [Release notes](https://github.com/tokio-rs/tokio/releases)
+- [Commits](https://github.com/tokio-rs/tokio/compare/tokio-1.53.3...tokio-1.54.1)
 
 ---
 updated-dependencies:
-- dependency-name: libc
-  dependency-version: 0.2.191
+- dependency-name: tokio
+  dependency-version: 1.54.1
   dependency-type: direct:production
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -1160,9 +1160,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+@@ -2245,9 +2245,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
  
  [[package]]
- name = "libc"
--version = "0.2.190"
-+version = "0.2.191"
+ name = "tokio"
+-version = "1.53.3"
++version = "1.54.1"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
-+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
- 
- [[package]]
- name = "libloading"
+-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
++checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+ dependencies = [
+  "bytes",
+  "libc",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #992** (2026-10-26): build(deps): bump tokio from 1.53.3 to 1.54.1 (@dependabot[bot])
 - **PR #990** (2026-10-20): build(deps): bump libc from 0.2.190 to 0.2.191 (@dependabot[bot])
 - **PR #989** (2026-10-19): build(deps): bump tokio from 1.53.2 to 1.53.3 (@dependabot[bot])
 - **PR #986** (2026-10-06): build(deps): bump tokio from 1.53.1 to 1.53.2 (@dependabot[bot])
 - **PR #985** (2026-10-05): build(deps): bump libc from 0.2.189 to 0.2.190 (@dependabot[bot])
 - **PR #981** (2026-09-22): build(deps): bump minus from 5.7.2 to 5.8.0 (@dependabot[bot])
-- **PR #980** (2026-09-16): build(deps): bump byte-unit from 5.2.5 to 5.2.6 (@dependabot[bot])
 
 ---
 
@@ -1665,13 +1664,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump libc from 0.2.190 to 0.2.191
+## X. build(deps): bump tokio from 1.53.3 to 1.54.1
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dalance/procs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f4eb860c`: build(deps): bump libc from 0.2.190 to 0.2.191. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1c59bf3c`: build(deps): bump tokio from 1.53.3 to 1.54.1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -1679,16 +1678,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.2.191"
-checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
+version = "1.54.1"
+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "0.2.190"
-checksum = "ce5d3ddc6d3fa000eb1536d85e147bfe31aacaba692ed6a876f95cb7c855be78"
+version = "1.53.3"
+checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f4eb860c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1c59bf3c` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `b60d3fc5`  
+> **Source Version**: `6f14910d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T23:45:31.015Z  
+> **Timestamp**: 2026-10-31T10:40:28.747Z  
 > **Learning ID**: `learn-github-dosco-graphjin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T23:45:29.701Z  
+> **Harvest Timestamp**: 2026-10-31T10:40:28.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One governed graph for AI agents — GraphQL + MCP over your databases, files, APIs, and code
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3213 stars
+- **Stars / Engagement**: 3225 stars
 
 ---
 
@@ -2730,285 +2730,591 @@ func
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6a44cbd2` (2026-10-07)
-**Commit Message**: fix: serialize background discovery with config applies
+### Incident Patch 1: `2a0d99ef` (2026-10-31)
+**Commit Message**: fix(discovery): aggregate SQLite index statistics per table (#692)
 
-Background discovery after a config apply ran without the config lock.
-A second apply or a shutdown then changed the same service fields, and
-the race detector failed the source-scoped reload tests on master.
-
-Background discovery now holds the config lock. A newer apply or a
-shutdown cancels a pending run, and shutdown closes discovery under the
-lock.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `serv/api.go` (modified, +3/-3)
+**File**: `core/discovery/namespaces.go` (modified, +3/-1)
 ```diff
-@@ -137,6 +137,8 @@ type graphjinService struct {
- 	watchCoord           watchCoordinator
- 	watchSnoozeMu        sync.Mutex
- 	watchSnoozeLastSweep time.Time
-+	discoveryBgMu        sync.Mutex
-+	discoveryBgCancel    context.CancelFunc
- 	revisionSignalWG     sync.WaitGroup
- 	revisionConsumerWG   sync.WaitGroup
- 	catalogMu            sync.Mutex
-@@ -443,9 +445,7 @@ func (s *graphjinService) closeServResources() {
- 	if s.semantic != nil {
- 		s.semantic.Close()
- 	}
--	if s.discovery != nil {
--		s.discovery.Close()
+@@ -194,7 +194,9 @@ func sqliteNamespaceRollup(ctx context.Context, db *sql.DB) ([]NamespaceRollup,
+ 	const q = `
+ SELECT 'main' AS db, '' AS sch,
+        (SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%') AS table_count,
+-       COALESCE((SELECT SUM(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1), 0) AS approx_row_total`
++       COALESCE((SELECT SUM(row_count)
++                 FROM (SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) AS row_count
++                       FROM sqlite_stat1 GROUP BY tbl)), 0) AS approx_row_total`
+ 	return scanNamespaceRollup(ctx, db, q, true)
+ }
+ 
+```
+
+**File**: `core/discovery/rowcount.go` (modified, +11/-17)
+```diff
+@@ -3,7 +3,6 @@ package discovery
+ import (
+ 	"context"
+ 	"database/sql"
+-	"fmt"
+ 	"log"
+ 	"strings"
+ 	"time"
+@@ -152,23 +151,15 @@ func bigqueryRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema)
+ }
+ 
+ func sqliteRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema) (int64, bool) {
+-	var stat sql.NullString
++	var n sql.NullInt64
+ 	err := db.QueryRowContext(ctx,
+-		`SELECT stat FROM sqlite_stat1 WHERE tbl = ? LIMIT 1`,
++		`SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1 WHERE tbl = ?`,
+ 		schema.Name,
+-	).Scan(&stat)
+-	if err != nil || !stat.Valid || stat.String == "" {
+-		return 0, false
 -	}
-+	s.closeDiscovery()
- 	if s.closeFn != nil {
- 		s.closeFn()
+-	fields := strings.Fields(stat.String)
+-	if len(fields) == 0 {
+-		return 0, false
+-	}
+-	var n int64
+-	if _, err := fmt.Sscanf(fields[0], "%d", &n); err != nil || n <= 0 {
++	).Scan(&n)
++	if err != nil || !n.Valid || n.Int64 <= 0 {
+ 		return 0, false
  	}
-```
-
-**File**: `serv/discovery_generations.go` (modified, +41/-6)
-```diff
-@@ -398,13 +398,48 @@ func (m *discoveryGenerationManager) RefreshNow(ctx context.Context) error {
- 	}
+-	return n, true
++	return n.Int64, true
  }
  
--var discoveryReconfigureMu sync.Mutex
--
-+// reconfigureDiscoveryInBackground runs discovery after a config apply returns.
-+// It holds the config lock, so the next apply waits for it. A newer apply or
-+// shutdown cancels a pending run.
- func (s *graphjinService) reconfigureDiscoveryInBackground(ctx context.Context) {
--	discoveryReconfigureMu.Lock()
--	defer discoveryReconfigureMu.Unlock()
--	if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && s.log != nil {
--		s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
-+	s = s.liveService()
-+	ctx, cancel := context.WithCancel(context.WithoutCancel(ctx))
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
-+	}
-+	s.discoveryBgCancel = cancel
-+	s.discoveryBgMu.Unlock()
+ func oracleRowCount(ctx context.Context, db *sql.DB, schema *core.TableSchema) (int64, bool) {
+@@ -315,13 +306,16 @@ WHERE TABLE_TYPE = 'BASE TABLE'
+ }
+ 
+ func sqliteNamespaceRowCounts(ctx context.Context, db *sql.DB) (map[string]int64, error) {
+-	// LEFT JOIN: tables without sqlite_stat1 entries get NULL → skipped.
++	// ANALYZE records one estimate per index. Use the largest estimate per
++	// table so multiple indexes do not duplicate rows and partial indexes do
++	// not replace a full-table estimate. Missing stats remain NULL → skipped.
+ 	const q = `
+ SELECT m.name,
+-       CAST(substr(s.stat,1,instr(s.stat||' ',' ')-1) AS INTEGER)
++       MAX(CAST(substr(s.stat,1,instr(s.stat||' ',' ')-1) AS INTEGER))
+ FROM sqlite_master m
+ LEFT JOIN sqlite_stat1 s ON s.tbl = m.name
+-WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%'`
++WHERE m.type = 'table' AND m.name NOT LIKE 'sqlite_%'
++GROUP BY m.name`
+ 	return scanRowCountPairs(ctx, db, q)
+ }
+ 
+```
+
+**File**: `core/discovery/sqlite_stats_test.go` (added, +65/-0)
+```diff
+@@ -0,0 +1,65 @@
++package discovery
 +
-+	s.revisionConsumerWG.Add(1)
-+	go func() {
-+		defer s.revisionConsumerWG.Done()
-+		defer cancel()
-+		lock := s.configLocker()
-+		lock.Lock()
-+		defer lock.Unlock()
-+		if ctx.Err() != nil {
-+			return
++import (
++	"context"
++	"database/sql"
++	"testing"
++
++	core "github.com/dosco/graphjin/core/v3"
++	_ "github.com/mattn/go-sqlite3"
++)
++
++func TestSQLiteDiscoveryCountsTablesInsteadOfIndexes(t *testing.T) {
++	db, err := sql.Open("sqlite3", ":memory:")
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer db.Close()
++	db.SetMaxOpenConns(1)
++	for _, statement := range []string{
++		"CREATE TABLE orders(id INTEGER PRIMARY KEY, account_id INTEGER, state TEXT)",
++		"CREATE TABLE customers(id INTEGER PRIMARY KEY)",
++		"CREATE INDEX aa_full ON orders(account_id)",
++		"CREATE INDEX bb_full ON orders(state)",
++		"CREATE INDEX zz_partial ON orders(state) WHERE id <= 2",
++		"INSERT INTO orders VALUES(1,1,'open'),(2,2,'open'),(3,0,'open'),(4,1,'open'),(5,2,'open'),(6,0,'open'),(7,1,'open'),(8,2,'open'),(9,0,'open'),(10,1,'open')",
++		"INSERT INTO customers VALUES(1),(2),(3)",
++		"ANALYZE",
++	} {
++		if _, err := db.Exec(statement); err != nil {
++			t.Fatal(err)
 +		}
-+		if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && ctx.Err() == nil && s.log != nil {
-+			s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
++	}
++	var orders, customers int64
++	if err := db.QueryRow("SELECT COUNT(*) FROM orders").Scan(&orders); err != nil {
++		t.Fatal(err)
++	}
++	if err := db.QueryRow("SELECT COUNT(*) FROM customers").Scan(&customers); err != nil {
++		t.Fatal(err)
++	}
++	ctx := context.Background()
++	t.Run("namespace rollup", func(t *testing.T) {
++		rows, err := sqliteNamespaceRollup(ctx, db)
++		if err != nil {
++			t.Fatal(err)
 +		}
-+	}()
++		if len(rows) != 1 || rows[0].TableCount != 2 || rows[0].ApproxRowTotal != orders+customers {
++			t.Fatalf("got %+v, want two tables with %d rows", rows, orders+customers)
++		}
++	})
++	t.Run("namespace table estimates", func(t *testing.T) {
++		counts, err := sqliteNamespaceRowCounts(ctx, db)
++		if err != nil {
++			t.Fatal(err)
++		}
++		if counts["orders"] != orders || counts["customers"] != customers {
++			t.Fatalf("counts = %v, want orders=%d customers=%d", counts, orders, customers)
++		}
++	})
++	t.Run("single table estimate", func(t *testing.T) {
++		got, available := sqliteRowCount(ctx, db, &core.TableSchema{Name: "orders"})
++		if !available || got != orders {
++			t.Fatalf("orders count = %d available=%v, want %d", got, available, orders)
++		}
++	})
 +}
-+
-+// closeDiscovery cancels a pending background run and closes discovery once
-+// a running one releases the config lock.
-+func (s *graphjinService) closeDiscovery() {
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
-+	}
-+	s.discoveryBgMu.Unlock()
-+	lock := s.configLocker()
-+	lock.Lock()
-+	defer lock.Unlock()
-+	if s.discovery != nil {
-+		s.discovery.Close()
- 	}
- }
- 
-```
-
-**File**: `serv/mcp_config.go` (modified, +1/-1)
-```diff
-@@ -880,7 +880,7 @@ func (ms *mcpServer) handleUpdateCurrentConfig(ctx context.Context, req mcp.Call
- 	refreshDiscovery := false
- 	defer func() {
- 		if refreshDiscovery {
--			go ms.service.reconfigureDiscoveryInBackground(context.WithoutCancel(ctx))
-+			ms.service.reconfigureDiscoveryInBackground(ctx)
- 		}
- 	}()
- 
 ```
 
 ---
 
-### Incident Patch 2: `7df5acb6` (2026-10-10)
-**Commit Message**: fix: keep operator lists out of the operator_set search summary
+### Incident Patch 2: `0528d728` (2026-10-31)
+**Commit Message**: fix(graph): require complete standalone argument values (#690)
 
-The per-family operator lists in the operator.filters summary made the
-row rank into unrelated seed searches. It pushed help:runtime out of the
-watch delivery seed, so the security gate intercepted the write and the
-replayed script looped on duplicate catalog calls. Move the lists to the
-row's Arguments, which agents read but search does not index.
-
-**File**: `core/internal/catalog/language.go` (modified, +16/-16)
+**File**: `core/internal/graph/complete_argument_test.go` (added, +36/-0)
 ```diff
-@@ -1,10 +1,6 @@
- package catalog
+@@ -0,0 +1,36 @@
++package graph
++
++import "testing"
++
++func TestParseArgValueRequiresOneCompleteValue(t *testing.T) {
++	for _, value := range []string{`{id: {eq: 1}`, `[1, 2`, `{id: 1} {id: 2}`, `1 2`, `"first" "second"`} {
++		if _, err := ParseArgValue(value, false); err == nil {
++			t.Errorf("accepted incomplete or trailing input %q", value)
++		}
++	}
++}
++
++func TestParseArgValueConsumesTerminalNames(t *testing.T) {
++	for _, tc := range []struct {
++		input string
++		kind  ParserType
++		value string
++	}{
++		{"true", NodeBool, "true"}, {"false", NodeBool, "false"},
++		{"null", NodeLabel, "null"}, {"ACTIVE", NodeLabel, "ACTIVE"},
++	} {
++		node, err := ParseArgValue(tc.input, false)
++		if err != nil {
++			t.Errorf("%s: %v", tc.input, err)
++			continue
++		}
++		if node.Type != tc.kind || node.Val != tc.value {
++			t.Errorf("%s decoded as %#v", tc.input, node)
++		}
++	}
++	for _, value := range []string{`{id: {eq: 1}}`, `[1, 2]`, `[]`, `{}`, `true # comment`, `"value"`} {
++		if _, err := ParseArgValue(value, false); err != nil {
++			t.Errorf("valid %q: %v", value, err)
++		}
++	}
++}
+```
+
+**File**: `core/internal/graph/lex.go` (modified, +0/-5)
+```diff
+@@ -356,11 +356,6 @@ func lexName(l *lexer) StateFn {
+ 	for {
+ 		r := l.next()
  
--import (
--	"strings"
+-		if r == eof {
+-			l.emit(itemEOF)
+-			return nil
+-		}
 -
--	"github.com/dosco/graphjin/core/v3/whereop"
--)
-+import "github.com/dosco/graphjin/core/v3/whereop"
+ 		if !isAlphaNumeric(r) {
+ 			l.backup()
+ 			val := l.current()
+```
+
+**File**: `core/internal/graph/parse.go` (modified, +16/-3)
+```diff
+@@ -328,7 +328,14 @@ func ParseArgValue(argVal string, json bool) (*Node, error) {
+ 		items: l.items,
+ 		json:  json,
+ 	}
+-	return p.parseValue()
++	node, err := p.parseValue()
++	if err != nil {
++		return nil, err
++	}
++	if !p.peek(itemEOF) {
++		return nil, errors.New("unexpected input after argument value")
++	}
++	return node, nil
+ }
  
- type Feature struct {
- 	ID             string
-@@ -258,17 +254,21 @@ var languageFeatures = []Feature{
- 		SuggestedNext:  []string{"query_catalog", "graphjin_repair"},
- 	},
- 	{
--		ID:    "operator.filters",
--		Kind:  "operator_set",
--		Name:  "filter operators",
--		Scope: "where",
--		Summary: "GraphJin where operators are typed by column shape. " +
--			"Numeric and date/timestamp columns: " + strings.Join(whereop.FamilyOperators(whereop.Temporal), ", ") + ". " +
--			"Text columns: " + strings.Join(whereop.FamilyOperators(whereop.Text), ", ") + ". " +
--			"Boolean and uuid columns: " + strings.Join(whereop.FamilyOperators(whereop.Boolean), ", ") + ". " +
--			"JSON columns: " + strings.Join(whereop.FamilyOperators(whereop.JSON), ", ") + ". " +
--			"Array columns: " + strings.Join(whereop.FamilyOperators(whereop.Array), ", ") + ". " +
--			"Spatial columns: " + strings.Join(whereop.FamilyOperators(whereop.Geometry), ", ") + ".",
-+		ID:      "operator.filters",
-+		Kind:    "operator_set",
-+		Name:    "filter operators",
-+		Scope:   "where",
-+		Summary: "GraphJin where operators are typed by column shape.",
-+		// Kept out of Summary: Summary is search-indexed, and the full lists
-+		// pull this row into unrelated seed searches.
-+		Arguments: []FeatureArg{
-+			{Name: "numeric and date/timestamp columns", Values: whereop.FamilyOperators(whereop.Temporal)},
-+			{Name: "text columns", Values: whereop.FamilyOperators(whereop.Text)},
-+			{Name: "boolean and uuid columns", Values: whereop.FamilyOperators(whereop.Boolean)},
-+			{Name: "json columns", Values: whereop.FamilyOperators(whereop.JSON)},
-+			{Name: "array columns", Values: whereop.FamilyOperators(whereop.Array)},
-+			{Name: "spatial columns", Values: whereop.FamilyOperators(whereop.Geometry)},
-+		},
- 		Examples: []string{
- 			`where: { price: { gt: 50 }, name: { ilike: "%shoe%" }, id: { in: [1, 2, 3] } }`,
- 			`where: { created_at: { gte: "2025-01-01", lt: "2026-01-01" } }`,
+ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
+@@ -660,7 +667,10 @@ func (p *Parser) parseList() (*Node, error) {
+ 
+ 	var ty ParserType
+ 	for {
+-		if p.peek(itemEOF, itemListClose) {
++		if p.peek(itemEOF) {
++			return nil, errors.New("end reached before list was closed")
++		}
++		if p.peek(itemListClose) {
+ 			p.ignore()
+ 			break
+ 		}
+@@ -700,7 +710,10 @@ func (p *Parser) parseObj() (*Node, error) {
+ 	parent.CMap = make(map[string]*Node)
+ 
+ 	for {
+-		if p.peek(itemEOF, itemObjClose) {
++		if p.peek(itemEOF) {
++			return nil, errors.New("end reached before object was closed")
++		}
++		if p.peek(itemObjClose) {
+ 			p.ignore()
+ 			break
+ 		}
+```
+
+**File**: `core/internal/psql/role_filter_complete_dialects_test.go` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++package psql_test
++
++import (
++	"github.com/dosco/graphjin/core/v3/internal/qcode"
++	"testing"
++)
++
++func TestRoleFiltersRequireCompleteValuesAcrossDialects(t *testing.T) {
++	for _, dialect := range []string{"postgres", "mysql", "sqlite"} {
++		t.Run(dialect, func(t *testing.T) {
++			for _, filter := range []string{`{ id: { eq: 1 }`, `{ id: { eq: 1 } } { id: { eq: 2 } }`} {
++				qc, _ := newDialectCompilers(t, dialect)
++				err := qc.AddRole("restricted", "public", "products", qcode.TRConfig{Query: qcode.QueryConfig{Filters: []string{filter}}})
++				if err == nil {
++					t.Errorf("accepted malformed role filter %q", filter)
++				}
++			}
++			qc, pc := newDialectCompilers(t, dialect)
++			if err := qc.AddRole("user", "public", "products", qcode.TRConfig{Query: qcode.QueryConfig{Filters: []string{`{ id: { eq: 1 } }`}}}); err != nil {
++				t.Fatal(err)
++			}
++			compileWith(t, qc, pc, `query { products { id } }`)
++		})
++	}
++}
 ```
 
 ---
 
-### Incident Patch 3: `13a29df6` (2026-10-07)
-**Commit Message**: Merge pull request #654 from dosco/fix/background-discovery-config-lock
+### Incident Patch 3: `24100083` (2026-10-31)
+**Commit Message**: fix(graph): accept contextual keywords as GraphQL names (#688)
 
-fix: serialize background discovery with config applies
-
-**File**: `serv/api.go` (modified, +3/-3)
+**File**: `core/internal/graph/contextual_names_test.go` (added, +49/-0)
 ```diff
-@@ -137,6 +137,8 @@ type graphjinService struct {
- 	watchCoord           watchCoordinator
- 	watchSnoozeMu        sync.Mutex
- 	watchSnoozeLastSweep time.Time
-+	discoveryBgMu        sync.Mutex
-+	discoveryBgCancel    context.CancelFunc
- 	revisionSignalWG     sync.WaitGroup
- 	revisionConsumerWG   sync.WaitGroup
- 	catalogMu            sync.Mutex
-@@ -443,9 +445,7 @@ func (s *graphjinService) closeServResources() {
- 	if s.semantic != nil {
- 		s.semantic.Close()
- 	}
--	if s.discovery != nil {
--		s.discovery.Close()
--	}
-+	s.closeDiscovery()
- 	if s.closeFn != nil {
- 		s.closeFn()
- 	}
-```
-
-**File**: `serv/discovery_generations.go` (modified, +41/-6)
-```diff
-@@ -398,13 +398,48 @@ func (m *discoveryGenerationManager) RefreshNow(ctx context.Context) error {
- 	}
- }
- 
--var discoveryReconfigureMu sync.Mutex
--
-+// reconfigureDiscoveryInBackground runs discovery after a config apply returns.
-+// It holds the config lock, so the next apply waits for it. A newer apply or
-+// shutdown cancels a pending run.
- func (s *graphjinService) reconfigureDiscoveryInBackground(ctx context.Context) {
--	discoveryReconfigureMu.Lock()
--	defer discoveryReconfigureMu.Unlock()
--	if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && s.log != nil {
--		s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
-+	s = s.liveService()
-+	ctx, cancel := context.WithCancel(context.WithoutCancel(ctx))
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
-+	}
-+	s.discoveryBgCancel = cancel
-+	s.discoveryBgMu.Unlock()
+@@ -0,0 +1,49 @@
++package graph
 +
-+	s.revisionConsumerWG.Add(1)
-+	go func() {
-+		defer s.revisionConsumerWG.Done()
-+		defer cancel()
-+		lock := s.configLocker()
-+		lock.Lock()
-+		defer lock.Unlock()
-+		if ctx.Err() != nil {
-+			return
++import "testing"
++
++func TestKeywordNamesInFieldContexts(t *testing.T) {
++	op, err := Parse([]byte(`query on { products { on true false ON True alias: on } }`))
++	if err != nil {
++		t.Fatal(err)
++	}
++	if op.Name != "on" {
++		t.Fatalf("operation name %q", op.Name)
++	}
++	for i, want := range []string{"products", "on", "true", "false", "ON", "True", "on"} {
++		if op.Fields[i].Name != want {
++			t.Fatalf("field %d got %q want %q", i, op.Fields[i].Name, want)
 +		}
-+		if err := s.reconfigureDiscoveryAfterConfigChange(ctx); err != nil && ctx.Err() == nil && s.log != nil {
-+			s.log.Warnf("coordinated discovery refresh error: %s", redactRuntimeError(err))
-+		}
-+	}()
++	}
 +}
 +
-+// closeDiscovery cancels a pending background run and closes discovery once
-+// a running one releases the config lock.
-+func (s *graphjinService) closeDiscovery() {
-+	s.discoveryBgMu.Lock()
-+	if s.discoveryBgCancel != nil {
-+		s.discoveryBgCancel()
++func TestKeywordObjectKeysAndValues(t *testing.T) {
++	op, err := Parse([]byte(`{ products(where: {on: {eq: on}, true: {eq: true}, false: {eq: false}}) { id } }`))
++	if err != nil {
++		t.Fatal(err)
 +	}
-+	s.discoveryBgMu.Unlock()
-+	lock := s.configLocker()
-+	lock.Lock()
-+	defer lock.Unlock()
-+	if s.discovery != nil {
-+		s.discovery.Close()
- 	}
- }
- 
++	where := op.Fields[0].Args[0].Val
++	if where.Children[0].Name != "on" || where.Children[0].Children[0].Type != NodeLabel || where.Children[0].Children[0].Val != "on" {
++		t.Fatalf("enum on: %#v", where.Children[0])
++	}
++	if where.Children[1].Children[0].Type != NodeBool || where.Children[2].Children[0].Type != NodeBool {
++		t.Fatal("boolean semantics changed")
++	}
++}
++
++func TestKeywordNameHandlingPreservesBooleans(t *testing.T) {
++	op, err := Parse([]byte(`{ products(where: {available: {eq: TRUE}}) { id } }`))
++	if err != nil {
++		t.Fatal(err)
++	}
++	value := op.Fields[0].Args[0].Val.Children[0].Children[0]
++	if value.Type != NodeBool || value.Val != "true" {
++		t.Fatalf("boolean %#v", value)
++	}
++	if _, err = Parse([]byte(`fragment on on products { id } query { products { id } }`)); err == nil {
++		t.Fatal("accepted reserved fragment name on")
++	}
++	if _, err = Parse([]byte(`fragment true on products { id } query { products { ...true } }`)); err != nil {
++		t.Fatal(err)
++	}
++}
 ```
 
-**File**: `serv/mcp_config.go` (modified, +1/-1)
+**File**: `core/internal/graph/lex.go` (modified, +3/-3)
 ```diff
-@@ -880,7 +880,7 @@ func (ms *mcpServer) handleUpdateCurrentConfig(ctx context.Context, req mcp.Call
- 	refreshDiscovery := false
- 	defer func() {
- 		if refreshDiscovery {
--			go ms.service.reconfigureDiscoveryInBackground(context.WithoutCancel(ctx))
-+			ms.service.reconfigureDiscoveryInBackground(ctx)
- 		}
- 	}()
+@@ -367,11 +367,11 @@ func lexName(l *lexer) StateFn {
  
+ 			switch {
+ 			case equals(val, onToken):
+-				l.emitL(itemOn)
++				l.emit(itemOn)
+ 			case equals(val, trueToken):
+-				l.emitL(itemBoolVal)
++				l.emit(itemBoolVal)
+ 			case equals(val, falseToken):
+-				l.emitL(itemBoolVal)
++				l.emit(itemBoolVal)
+ 			default:
+ 				l.emit(itemName)
+ 			}
+```
+
+**File**: `core/internal/graph/parse.go` (modified, +18/-13)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"bytes"
+ 	"errors"
+ 	"fmt"
++	"strings"
+ 	"sync"
+ 	"unsafe"
+ )
+@@ -187,7 +188,7 @@ func Parse(gql []byte) (op Operation, err error) {
+ func (p *Parser) parseFragment() (frag Fragment, err error) {
+ 	s := p.curr().pos
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemBoolVal) {
+ 		frag.Name = p.val(p.next())
+ 	} else {
+ 		err = errors.New("fragment: missing name")
+@@ -201,7 +202,7 @@ func (p *Parser) parseFragment() (frag Fragment, err error) {
+ 		return
+ 	}
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemOn, itemBoolVal) {
+ 		frag.On = p.vall(p.next())
+ 	} else {
+ 		err = errors.New("fragment: missing table name after 'on' keyword")
+@@ -290,7 +291,7 @@ func (p *Parser) parseOpTypeAndArgs(op *Operation) (err error) {
+ 
+ 	op.Args = op.argsA[:0]
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemOn, itemBoolVal) {
+ 		op.Name = p.val(p.next())
+ 	}
+ 
+@@ -334,7 +335,7 @@ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
+ 	var err error
+ 	st := NewStack()
+ 
+-	if !p.peek(itemName, itemSpread) {
++	if !p.peek(itemName, itemOn, itemBoolVal, itemSpread) {
+ 		return nil, p.tokErr(`field name or ...Fragment`)
+ 	}
+ 
+@@ -380,7 +381,7 @@ func (p *Parser) parseFields(fields []Field) ([]Field, error) {
+ }
+ 
+ func (p *Parser) parseNormalFields(st *Stack, fields []Field) ([]Field, error) {
+-	if !p.peek(itemName) {
++	if !p.peek(itemName, itemOn, itemBoolVal) {
+ 		return nil, p.tokErr(`expecting an alias or field name`)
+ 	}
+ 
+@@ -439,7 +440,7 @@ func (p *Parser) parseFragmentFields(st *Stack, fields []Field) ([]Field, error)
+ 		}
+ 
+ 	} else {
+-		if !p.peek(itemName) {
++		if !p.peek(itemName, itemOn, itemBoolVal) {
+ 			return nil, fmt.Errorf("expecting a fragment name, got: %s", p.next())
+ 		}
+ 
+@@ -503,7 +504,7 @@ func (p *Parser) parseField(f *Field) error {
+ 	if p.peek(itemColon) {
+ 		p.ignore()
+ 
+-		if p.peek(itemName) {
++		if p.peek(itemName, itemOn, itemBoolVal) {
+ 			f.Alias = p.val(v)
+ 			f.Name = p.val(p.next())
+ 		} else {
+@@ -571,6 +572,7 @@ func (p *Parser) parseVarDef(op *Operation) (err error) {
+ 	p.ignore()
+ 
+ 	if !p.peek(itemName,
++		itemOn,
+ 		itemStringVal,
+ 		itemNumberVal,
+ 		itemBoolVal,
+@@ -594,9 +596,9 @@ func (p *Parser) parseArgs(args []Arg) ([]Arg, error) {
+ 
+ 	var argNameTypes []MType
+ 	if p.json {
+-		argNameTypes = []MType{itemName, itemStringVal}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal, itemStringVal}
+ 	} else {
+-		argNameTypes = []MType{itemName}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal}
+ 	}
+ 
+ 	for {
+@@ -634,7 +636,7 @@ func (p *Parser) parseDirective(dirs []Directive) ([]Directive, error) {
+ 	var err error
+ 	var d Directive
+ 
+-	if p.peek(itemName) {
++	if p.peek(itemName, itemOn, itemBoolVal) {
+ 		d.Name = p.val(p.next())
+ 	} else {
+ 		return nil, fmt.Errorf("expecting directive name after @ symbol got: %s", p.peekNext())
+@@ -690,9 +692,9 @@ func (p *Parser) parseObj() (*Node, error) {
+ 
+ 	var argNameTypes []MType
+ 	if p.json {
+-		argNameTypes = []MType{itemName, itemStringVal}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal, itemStringVal}
+ 	} else {
+-		argNameTypes = []MType{itemName}
++		argNameTypes = []MType{itemName, itemOn, itemBoolVal}
+ 	}
+ 
+ 	parent.CMap = make(map[string]*Node)
+@@ -755,13 +757,16 @@ func (p *Parser) parseValue() (*Node, error) {
+ 		node.Type = NodeBool
+ 	case itemVariable:
+ 		node.Type = NodeVar
+-	case itemName:
++	case itemName, itemOn:
+ 		node.Type = NodeLabel
+ 	default:
+ 		return nil, fmt.Errorf("expecting a number, string, object, list or variable as an argument value (not '%s' of type '%s')", p.val(item), item._type)
+ 
+ 	}
+ 	node.Val = p.val(item)
++	if item._type == itemBoolVal {
++		node.Val = strings.ToLower(node.Val)
++	}
+ 
+ 	return node, nil
+ }
+```
+
+**File**: `core/internal/graph/schema.go` (modified, +3/-3)
+```diff
+@@ -94,7 +94,7 @@ func (p *Parser) parseType() (t Type, err error) {
+ 	}
+ 	p.ignore()
+ 
+-	if !p.peek(itemName) {
++	if !p.peek(itemName, itemOn, itemBoolVal) {
+ 		err = p.tokErr(`type name`)
+ 		return
+ 	}
+@@ -126,7 +126,7 @@ func (p *Parser) parseType() (t Type, err error) {
+ 
+ 		var f TField
+ 
+-		if !p.peek(itemName) {
++		if !p.peek(itemName, itemOn, itemBoolVal) {
+ 			err = p.tokErr(`field name`)
+ 			return
+ 		}
+@@ -143,7 +143,7 @@ func (p *Parser) parseType() (t Type, err error) {
+ 			f.List = true
+ 		}
+ 
+-		if !p.peek(itemName) {
++		if !p.peek(itemName, itemOn, itemBoolVal) {
+ 			err = p.tokErr(`field type`)
+ 			return
+ 		}
+```
+
+**File**: `core/internal/psql/contextual_names_dialects_test.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++package psql_test
++
++import (
++	"github.com/dosco/graphjin/core/v3/internal/psql"
++	"github.com/dosco/graphjin/core/v3/internal/qcode"
++	"github.com/dosco/graphjin/core/v3/internal/sdata"
++	"strings"
++	"testing"
++)
++
++func TestKeywordColumnNamesAcrossDialects(t *testing.T) {
++	for _, dialect := range []string{"postgres", "mysql", "sqlite"} {
++		t.Run(dialect, func(t *testing.T) {
++			cols := []sdata.DBColumn{}
++			for _, name := range []string{"id", "on", "true", "false"} {
++				cols = append(cols, sdata.DBColumn{Schema: "public", Table: "switches", Name: name, Type: "text", PrimaryKey: name == "id"})
++			}
++			schema, err := sdata.NewDBSchema(sdata.NewDBInfo(dialect, 0, "public", "test", cols, nil, nil), nil)
++			if err != nil {
++				t.Fatal(err)
++			}
++			qc, err := qcode.NewCompiler(schema, qcode.Config{DBSchema: "public"})
++			if err != nil {
++				t.Fatal(err)
++			}
++			compiled, err := qc.Compile([]byte(`{ switches { id on true false } }`), nil, "user", "")
++			if err != nil {
++				t.Fatal(err)
++			}
++			_, sql, err := psql.NewCompiler(psql.Config{DBType: dialect}).CompileEx(compiled)
++			if err != nil {
++				t.Fatal(err)
++			}
++			for _, name := range []string{"on", "true", "false"} {
++				quote := `"`
++				if dialect == "mysql" {
++					quote = "`"
++				}
++				if !strings.Contains(string(sql), quote+name+quote) {
++					t.Fatalf("column %q missing: %s", name, sql)
++				}
++			}
++		})
++	}
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #662** (2026-10-18): perf(catalog): reuse catalog snapshots and rank search rows by key (@amitdeshmukh)
-- **PR #661** (2026-10-15): Publish DeepORG Gemini Argon evaluation (@amitdeshmukh)
-- **PR #660** (2026-10-15): fix(core): read null and list filters on JSON keys and escape string literals (@amitdeshmukh)
-- **PR #659** (2026-10-14): feat(core): query, order, page, aggregate and merge keys inside JSON columns (@amitdeshmukh)
-- **PR #658** (2026-10-15): feat(benchmark): introduce DeepContoso retail & supply chain evaluation benchmark (@HerambVE)
-- **PR #657** (2026-10-10): fix: where-clause validators accept the operators the compiler runs (#656) (@amitdeshmukh)
+- **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
+- **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
+- **PR #688** (2026-10-31): fix(graph): parse contextual keyword names (@rudycelekli)
+- **PR #687** (2026-10-31): fix(openapi): expand environment values in nested token request bodies (@rudycelekli)
+- **PR #686** (2026-10-31): fix(openapi): negotiate declared JSON response media types (@rudycelekli)
+- **PR #685** (2026-10-31): fix(openapi): reuse short-lived authentication tokens before expiry (@rudycelekli)
 
 ---
 
@@ -3028,32 +3334,30 @@ fix: serialize background discovery with config applies
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. serialize background discovery with config applies
+## X. discovery): aggregate SQLite index statistics per table (#692)
 
 **RULE**:
-When implementing operations in `serv/api.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/discovery/namespaces.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6a44cbd2`: serialize background discovery with config applies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a0d99ef`: discovery): aggregate SQLite index statistics per table (#692). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `serv/api.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/discovery/namespaces.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	discoveryBgMu        sync.Mutex
-	discoveryBgCancel    context.CancelFunc
-	s.closeDiscovery()
+       COALESCE((SELECT SUM(row_count)
+                 FROM (SELECT MAX(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) AS row_count
+                       FROM sqlite_stat1 GROUP BY tbl)), 0) AS approx_row_total`
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	if s.discovery != nil {
-		s.discovery.Close()
-	}
+       COALESCE((SELECT SUM(CAST(substr(stat,1,instr(stat||' ',' ')-1) AS INTEGER)) FROM sqlite_stat1), 0) AS approx_row_total`
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6a44cbd2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a0d99ef` are properly handled with clean fallback behavior.

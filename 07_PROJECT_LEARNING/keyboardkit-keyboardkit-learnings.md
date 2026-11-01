@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source**: github ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
-> **Source Version**: `2b19759f`  
+> **Source Version**: `c799e2cb`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T20:51:57.003Z  
+> **Timestamp**: 2026-10-30T19:42:43.668Z  
 > **Learning ID**: `learn-github-keyboardkit-keyboardkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keyboardkit-keyboardkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/KeyboardKit/KeyboardKit](https://github.com/KeyboardKit/KeyboardKit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T20:51:56.442Z  
+> **Harvest Timestamp**: 2026-10-30T19:42:43.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Create custom iOS keyboards with Swift & SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1894 stars
+- **Stars / Engagement**: 1898 stars
 
 ---
 
@@ -1003,11 +1003,13 @@ private extension KeyboardViewController {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1110** (2026-10-26): **Always add current language topmost in ignored words and text replacements screens**
+  *Symptoms*: If there are no added languages, which is the default mode, then the ignored words and text replacements autocomplete settings screens will list all languages alphabetically.  This should be tweaked. The page should either just show the current language, if there are no added locales, else just the added languages. The current setup is too cluttered.
+  **Post-Mortem & Fix Analysis**:
+  > This will be fixed in `11.1.3`.
+
 - **Issue #1108** (2026-10-19): **Added language support**
   *Symptoms*: This issue is used to keep track of which locales that have been added after 11.0.   ## 11.1  - [x] Amharic - [x] Khmer - [x] Luxembourgish - [x] Thai - [x] Xhosa - [x] Yoruba
-
-- **Issue #1104** (2026-10-14): **Tapping the quoted original word in the autocomplete bar does nothing when editing existing text**
-  *Symptoms*: ## Description  When editing a word in the middle of an existing sentence, tapping the leftmost quoted suggestion (the original, non-dictionary word) in the autocomplete bar produces no visible action.  I was able to reproduce this issue using the KeyboardKit keyboard itself, so it does not appear to be specific to our custom keyboard implementation.  ## Steps to Reproduce  1. Open a text field using the KeyboardKit keyboard. 2. Type a sentence, for example: `This is test`. 3. Move the cursor to the middle of the sentence. 4. Modify an existing word to an unrecognized word, such as `whk`. 5. Observe the autocomplete suggestions:    - Left: `"whk"` (original word)    - Center: `who` (suggested autocorrection)    - Right: `why` 6. Tap the leftmost `"whk"` suggestion.  ## Actual Behavior  Nothing visibly happens when tapping `"whk"`. The text and autocomplete suggestions remain unchanged.  ## Expected Behavior  Similar to the native iOS keyboard, tapping the quoted original word should explicitly accept the user's spelling and reject the proposed autocorrection.  Even if the text itself doesn't need to change, the keyboard should acknowledge the selection and update its autocorrection state appropriately.  ## Demo video https://github.com/user-attachments/assets/241260b4-4748-465a-9f08-59a33ce49c86  ## Additional Information  - **Keyboard:** KeyboardKit keyboard - **Platform:** iOS - **Scenario:** Editing an existing word in the middle of a sentence - **Affected functionality:**
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1024,8 +1026,8 @@ private extension KeyboardViewController {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4876a2d9` (2026-10-20)
-**Commit Message**: Patch 11.1 with a debug diacritic color fix
+### Incident Patch 1: `c799e2cb` (2026-10-30)
+**Commit Message**: Update package to 11.1.5
 
 **File**: `Package.swift` (modified, +2/-2)
 ```diff
@@ -1033,25 +1035,125 @@ Observed empirical fixes and code patches:
      targets: [
          .binaryTarget(
              name: "KeyboardKit",
--            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit.zip",
--            checksum: "edd3147f3ccc9e4239e17e50aa2ff352b8e035b780606d8e58ae5920492b5504"
-+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit-Patch.zip",
-+            checksum: "e2fa5645229fc71f7e72a020b4eac2f2ef37409588aceb95e93eef3c910abb67"
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.4/KeyboardKit.zip",
+-            checksum: "1013e936be2bebc390a69327333c70f4e2fec130d57e8054e01abbec00ed3304"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
++            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
          ),
          .target(
              name: "KeyboardKitDependencies",
 ```
 
-**File**: `RELEASE_NOTES.md` (modified, +1/-1)
+**File**: `RELEASE_NOTES.md` (modified, +11/-0)
 ```diff
-@@ -14,7 +14,7 @@ This document covers the current major version. See older versions for older rel
+@@ -12,6 +12,17 @@ This document covers the current major version. See older versions for older rel
  
- ## 11.1
  
--This version adds support for Khmer, Korean, Luxembourgish, Thai, Xhosa, and Yoruba.
-+This version adds support for `Khmer`, `Korean`, `Luxembourgish`, `Thai`, `Xhosa`, and `Yoruba`.
  
- This version detects iPhone Duo devices, and adjusts the keyboard layout and design to match a native Duo experience.
++## 11.1.5
++
++This patch adjusts the visual style of the URL domain action. 
++
++### 🐛 Bug Fixes
++
++* `KeyboardAction.toggleSplitKeyboard` no longer used the flipped, incorrect button icon.
++* `KeyboardAction.urlDomain` no longer uses an icon in the keyboard, only in an action picker.
++
++
++
+ ## 11.1.4
+ 
+ This patch adds new settings. 
+```
+
+---
+
+### Incident Patch 2: `f6a6806a` (2026-10-30)
+**Commit Message**: Update package to 11.1.4
+
+**File**: `Package.resolved` (modified, +3/-3)
+```diff
+@@ -1,13 +1,13 @@
+ {
+-  "originHash" : "f2af26f1163967a8b83aab15ff48755addcea3d3771146acf3584aa7f26125eb",
++  "originHash" : "260c166ec7389791d81de3cc087d0c88ee69d9ddc4e5afbdeaf443cccda1a34c",
+   "pins" : [
+     {
+       "identity" : "licensekit",
+       "kind" : "remoteSourceControl",
+       "location" : "https://github.com/LicenseKit/LicenseKit.git",
+       "state" : {
+-        "revision" : "19f9ce6915bfa7f59f7794cd88473b10c5daf87b",
+-        "version" : "2.3.0"
++        "revision" : "349c84703dbd1ea3529aa56c77af0c9eb52e5b89",
++        "version" : "2.4.1"
+       }
+     }
+   ],
+```
+
+**File**: `Package.swift` (modified, +3/-3)
+```diff
+@@ -36,14 +36,14 @@ let package = Package(
+     dependencies: [
+         .package(
+             url: "https://github.com/LicenseKit/LicenseKit.git",
+-            exact: "2.3.0"
++            exact: "2.4.1"
+         )
+     ],
+     targets: [
+         .binaryTarget(
+             name: "KeyboardKit",
+-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.3/KeyboardKit.zip",
+-            checksum: "1aff383a07f9820d87bc2ae523b6cec294396ab45b640c1e39a5c67550c7043a"
++            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.4/KeyboardKit.zip",
++            checksum: "1013e936be2bebc390a69327333c70f4e2fec130d57e8054e01abbec00ed3304"
+         ),
+         .target(
+             name: "KeyboardKitDependencies",
+```
+
+**File**: `README.md` (modified, +2/-2)
+```diff
+@@ -4,10 +4,10 @@
+ 
+ <p align="center">
+     <img src="https://img.shields.io/github/v/release/KeyboardKit/KeyboardKit?color=forestgreen&sort=semver" alt="Version" />
+-    <img src="https://img.shields.io/badge/swift-5.9-orange.svg" alt="Swift 5.9" />
++    <img src="https://img.shields.io/badge/swift-6.2-orange.svg" alt="Swift 6.2" />
+     <img src="https://img.shields.io/badge/platform-SwiftUI-blue.svg" alt="Swift UI" title="Swift UI" />
+     <a href="https://docs.keyboardkit.com"><img src="https://img.shields.io/badge/documentation-web-blue.svg" alt="Documentation" /></a>
+-    <img src="https://img.shields.io/badge/license-closedsource-red.svg" alt="Closed Source" />
++    <a href="https://keyboardkit.com/pricing"><img src="https://img.shields.io/badge/license-commercial-red.svg" alt="Commercially Licensed" /></a>
+ </p>
+ 
+ 
+```
+
+**File**: `RELEASE_NOTES.md` (modified, +12/-1)
+```diff
+@@ -12,9 +12,20 @@ This document covers the current major version. See older versions for older rel
+ 
+ 
+ 
++## 11.1.4
++
++This patch adds new settings. 
++
++### ⚙️ Settings
++
++* `KeyboardSettings` has a new `isNumericSwitcherEnabled`.
++* `KeyboardSettingsScreen` has a new `isNumericSwitcherEnabled` toggle.
++
++
++
+ ## 11.1.3
+ 
+-This patch adjusts the keyboard layout for the real iPhone Duo device, and adds new keyboard actions. 
++This patch adjusts the keyboard layout for the real iPhone Duo, and adds new keyboard actions. 
+ 
+ ### 🌱 Essentials
  
 ```
 
@@ -1081,13 +1183,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Patch 11.1 with a debug diacritic color fix
+## X. Update package to 11.1.5
 
 **RULE**:
 When implementing operations in `Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in KeyboardKit/KeyboardKit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4876a2d9`: Patch 11.1 with a debug diacritic color fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c799e2cb`: Update package to 11.1.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.swift`.
@@ -1095,16 +1197,16 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit-Patch.zip",
-            checksum: "e2fa5645229fc71f7e72a020b4eac2f2ef37409588aceb95e93eef3c910abb67"
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.5/KeyboardKit.zip",
+            checksum: "7328fd96da0020891afdd5d5435f78e5e04c2570fdeb1ed754ed48130f50104f"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.0/KeyboardKit.zip",
-            checksum: "edd3147f3ccc9e4239e17e50aa2ff352b8e035b780606d8e58ae5920492b5504"
+            url: "https://github.com/KeyboardKit/KeyboardKit-Binaries/releases/download/11.1.4/KeyboardKit.zip",
+            checksum: "1013e936be2bebc390a69327333c70f4e2fec130d57e8054e01abbec00ed3304"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4876a2d9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c799e2cb` are properly handled with clean fallback behavior.

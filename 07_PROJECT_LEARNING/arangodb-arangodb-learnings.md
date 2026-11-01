@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source**: github ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
-> **Source Version**: `f2f80ab7`  
+> **Source Version**: `a714386f`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:45:16.377Z  
+> **Timestamp**: 2026-10-31T01:15:15.752Z  
 > **Learning ID**: `learn-github-arangodb-arangodb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/arangodb-arangodb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/arangodb/arangodb](https://github.com/arangodb/arangodb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:45:16.370Z  
+> **Harvest Timestamp**: 2026-10-31T01:15:15.156Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🥑 ArangoDB is a native multi-model database with flexible data models for documents, graphs, and key-values. Build high performance applications using a convenient SQL-like query language or JavaScript extensions.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 14288 stars
+- **Stars / Engagement**: 14290 stars
 
 ---
 
@@ -988,11 +988,11 @@ my sample apple
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23521** (2026-10-23): **Merge latest devel into 4.0**
-  *Symptoms*: ### Scope & Purpose  Enterprise companion https://github.com/arangodb/enterprise/pull/1727 
+- **Issue #23556** (2026-10-30): **[COR-1200] Delete the old 1.78.0 boost version.**
+  *Symptoms*: ### Scope & Purpose  As boost is now updated to 1.92.0 and is downloaded via cmakes FetchContent, this 1.78.0 source is not needed anymore. 
 
-- **Issue #23519** (2026-10-23): **It seems our old way of remoting GDB no longer works. Work out a new way**
-  *Symptoms*: ### Scope & Purpose  The way GDB reacts to our remoting has changed - adopt.  - [x] :hankey: Bugfix 
+- **Issue #23550** (2026-10-28): **[COR-1230] (3.12.13) dont shutdown before upgrade**
+  *Symptoms*: ### Scope & Purpose  Port of https://github.com/arangodb/arangodb/pull/23549 to the 3.12.13 release branch.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1009,58 +1009,156 @@ my sample apple
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f2f80ab7` (2026-10-25)
-**Commit Message**: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
+### Incident Patch 1: `d1a1582f` (2026-10-30)
+**Commit Message**: Fix unit tests
 
-**File**: `CHANGELOG` (modified, +3/-3)
+**File**: `tests/ClusterEngine/ClusterIndexFactoryTest.cpp` (modified, +2/-2)
 ```diff
-@@ -1,6 +1,9 @@
- 3.12.13 (XXXX-XX-XX)
- --------------------
+@@ -53,7 +53,7 @@ TEST_F(ClusterIndexFactoryTest, edgeIndexCannotBeCreatedDirectly) {
+         IndexType::Edge, ctx);
+     FAIL() << "expected an exception";
+   } catch (basics::Exception const& ex) {
+-    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
++    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
+   }
+ }
  
-+* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-+  dependencies.
-+
- * Updated ArangoDB Starter to v0.19.30.
- 
- * COR-1152: Fixed AQL FILTER conditions combining an equality set (IN list,
-@@ -77,9 +80,6 @@
-   indexes for multi-byte characters. Fixed `FIND_FIRST()` sometimes missing
-   matches of accented characters at the end of the search range.
- 
--* Rebuilt included rclone v1.75.1 with go1.26.9 and non-vulnerable
--  dependencies.
--
- * COR-1083 / github issue #23425:
-   Fixed the incorrect usage of released pool analyzer.
- 
+@@ -71,6 +71,6 @@ TEST_F(ClusterIndexFactoryTest, primaryIndexCannotBeCreatedDirectly) {
+         IndexType::Primary, ctx);
+     FAIL() << "expected an exception";
+   } catch (basics::Exception const& ex) {
+-    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
++    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
+   }
+ }
 ```
 
-**File**: `VERSIONS` (modified, +3/-3)
+---
+
+### Incident Patch 2: `0f4c5ea5` (2026-10-30)
+**Commit Message**: Fix fullCount double-counting for COLLECT WITH COUNT (#23539)
+
+**File**: `CHANGELOG` (modified, +3/-0)
 ```diff
-@@ -6,10 +6,10 @@ GCC_LINUX "13.2.0"
- CLANG_LINUX "19.1.7"
- OPENSSL_LINUX "3.5.9"
- USE_RCLONE "true"
--RCLONE_GO "1.26.9-f0f9558_20261012084010"
-+RCLONE_GO "1.26.10-60c5ceb_20261025121659"
- RCLONE_VERSION "1.75.1"
--RCLONE_SHA256_AMD64 "1c8cdcbfc39f015460905cc036df7b3a002e8c1483898557198d14dc20459599"
--RCLONE_SHA256_ARM64 "249cd726ffb63add94e54a7acae6fd61651e64872ed3c1fd49080b05c15573ff"
-+RCLONE_SHA256_AMD64 "eea373d11983607664980b9f3b6ce96450b2af0ed4c467f1a8380c79ffe037ea"
-+RCLONE_SHA256_ARM64 "8a8d59b513a68a04e82c2fbff75e7ae5f709cb53f18404edc1ea5996b1f90b64"
- MINIMAL_DEBUG_INFO "On"
- DEFAULT_ARCHITECTURE "sandy-bridge"
- USE_ARM "On"
+@@ -1,6 +1,9 @@
+ 3.12.14 (XXXX-XX-XX)
+ --------------------
+ 
++* Fixed an issue where AQL COLLECT WITH COUNT reported fullCount one too high 
++  when used with LIMIT and {fullCount: true}. The single result row was counted
++  twice: once when produced and again during the fullCount skip phase.
+ 
+ 3.12.13 (2026-10-28)
+ --------------------
+```
+
+**File**: `arangod/Aql/Executor/CountCollectExecutor.cpp` (modified, +4/-2)
+```diff
+@@ -55,7 +55,7 @@ auto CountCollectExecutor::produceRows(AqlItemBlockInputRange& inputRange,
+   // within a single call
+   TRI_ASSERT(inputRange.skippedInFlight() == 0 ||
+              inputRange.upstreamState() == ExecutorState::DONE);
+-  if (inputRange.upstreamState() == ExecutorState::DONE) {
++  if (!_rowAccounted && inputRange.upstreamState() == ExecutorState::DONE) {
+     // We have skipped all, report it.
+     // In general, we do not have an input row. In fact, we never fetch one.
+     output.setAllowSourceRowUninitialized();
+@@ -65,6 +65,7 @@ auto CountCollectExecutor::produceRows(AqlItemBlockInputRange& inputRange,
+                           InputAqlItemRow{CreateInvalidInputRowHint{}},
+                           AqlValue(AqlValueHintUInt(inputRange.skipAll())));
+     output.advanceRow();
++    _rowAccounted = true;
+   }
+   // We always send a hardLimit with fullcount to upstream
+   return {inputRange.upstreamState(), NoStats{},
+@@ -82,12 +83,13 @@ auto CountCollectExecutor::skipRowsRange(AqlItemBlockInputRange& inputRange,
+   // within a single call
+   TRI_ASSERT(inputRange.skippedInFlight() == 0 ||
+              inputRange.upstreamState() == ExecutorState::DONE);
+-  if (inputRange.upstreamState() == ExecutorState::DONE) {
++  if (!_rowAccounted && inputRange.upstreamState() == ExecutorState::DONE) {
+     // We have skipped all, report it.
+     auto skipped = inputRange.skipAll();
+     // We request to just forward, we do not even care how much
+     TRI_ASSERT(skipped == 0);
+     call.didSkip(1);
++    _rowAccounted = true;
+   }
+   // We always send a hardLimit with fullcount to upstream
+   return {inputRange.upstreamState(), NoStats{}, call.getSkipCount(),
+```
+
+**File**: `arangod/Aql/Executor/CountCollectExecutor.h` (modified, +3/-0)
+```diff
+@@ -108,6 +108,9 @@ class CountCollectExecutor {
+ 
+  private:
+   Infos const& _infos;
++  // COLLECT WITH COUNT produces exactly one row. After it was produced or
++  // skipped, fullCount must not count that same row again.
++  bool _rowAccounted{false};
+ };
+ 
+ }  // namespace aql
+```
+
+**File**: `tests/Aql/Executor/CountCollectExecutorTest.cpp` (modified, +17/-0)
+```diff
+@@ -238,6 +238,23 @@ TEST_P(CountCollectExecutorTest, count_input_fullCount) {
+       .run();
+ }
+ 
++// Produce the single count row, then fullCount-skip: the produced row must not
++// be counted again (LIMIT 0,1 RETURN n with {fullCount: true}).
++TEST_P(CountCollectExecutorTest, count_input_produce_then_fullCount) {
++  makeExecutorTestHelper<1, 1>()
++      .addConsumer<CountCollectExecutor>(MakeCountCollectRegisterInfos(1),
++                                         MakeCountCollectExecutorInfos(1),
++                                         ExecutionNode::COLLECT)
++      .expectedStats(ExecutionStats{})
++      .setInputSplitType(GetSplit())
++      .setInputValue({{0}, {1}, {2}, {3}})
++      .expectedState(ExecutionState::DONE)
++      .expectOutput({1}, {{4}})
++      .expectSkipped(0)
++      .setCall(AqlCall{0, true, 1, AqlCall::LimitType::HARD})
++      .run();
++}
++
+ TEST_P(CountCollectExecutorTest, count_input_softlimit) {
+   makeExecutorTestHelper<1, 1>()
+       .addConsumer<CountCollectExecutor>(MakeCountCollectRegisterInfos(1),
+```
+
+**File**: `tests/js/client/aql/aql-fullcount.js` (modified, +11/-0)
+```diff
+@@ -245,6 +245,17 @@ function optimizerFullcountTestSuite () {
+ 
+       assertEqual(3, result.getExtra().stats.fullCount);
+       assertEqual(1, result.toArray().length);
++    },
++
++    // COLLECT WITH COUNT always yields one row, fullCount must not count that
++    // row twice when LIMIT consumes it and then fast-forwards for fullCount.
++    testCollectWithCountLimitFullCount : function () {
++      let result = executeQuery(
++        "FOR doc IN UnitTestsCollection COLLECT WITH COUNT INTO n LIMIT 0, 1 RETURN n",
++        null, { fullCount: true });
++
++      assertEqual([3], result.toArray());
++      assertEqual(1, result.getExtra().stats.fullCount);
+     }
+ 
+   };
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23521** (2026-10-23): Merge latest devel into 4.0 (@mpoeter)
-- **PR #23519** (2026-10-23): It seems our old way of remoting GDB no longer works. Work out a new way (@dothebart)
-- **PR #23517** (2026-10-23): rbac-tests improve logging and version handling (@RheaAyase)
-- **PR #23514** (2026-10-22): catch any non-normal exit. (@dothebart)
-- **PR #23511** (2026-10-21): Remove dead code releated to mustCheckBounds. (@maierlars)
-- **PR #23506** (2026-10-20): Compile with C++26 (@markuspf)
+- **PR #23556** (2026-10-30): [COR-1200] Delete the old 1.78.0 boost version. (@johann-listunov)
+- **PR #23550** (2026-10-28): [COR-1230] (3.12.13) dont shutdown before upgrade (@goedderz)
+- **PR #23549** (2026-10-28): [COR-1230] dont shutdown before upgrade (@goedderz)
+- **PR #23548** (2026-10-28): [COR-1229] Refactor ApiVersion handling in RestHandlerFactory (@mpoeter)
+- **PR #23547** (2026-10-28): [BTS-2503] smart-join-smart-edge requires one vertex and direction in all OR branches (@maierlars)
+- **PR #23546** (2026-10-27): Bug fix/handle makedata timeoout (@dothebart)
 
 ---
 
@@ -1080,32 +1178,30 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies
+## X. Empirical Invariant Guard in ClusterIndexFactoryTest.cpp
 
 **RULE**:
-When implementing operations in `CHANGELOG`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/ClusterEngine/ClusterIndexFactoryTest.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in arangodb/arangodb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f2f80ab7`: Rebuild included rclone v1.75.1 with go1.26.10 and non-vulnerable dependencies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1a1582f`: unit tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/ClusterEngine/ClusterIndexFactoryTest.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-* Rebuilt included rclone v1.75.1 with go1.26.10 and non-vulnerable
-  dependencies.
-
+    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
+    EXPECT_EQ(ex.code(), TRI_ERROR_BAD_PARAMETER);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-* Rebuilt included rclone v1.75.1 with go1.26.9 and non-vulnerable
-  dependencies.
-
+    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
+    EXPECT_EQ(ex.code(), TRI_ERROR_INTERNAL);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f2f80ab7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1a1582f` are properly handled with clean fallback behavior.

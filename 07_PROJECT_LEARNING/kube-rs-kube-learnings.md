@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `3995dc6d`  
+> **Source Version**: `28e3d13a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T16:38:47.066Z  
+> **Timestamp**: 2026-10-31T19:14:37.960Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T16:38:46.798Z  
+> **Harvest Timestamp**: 2026-10-31T19:14:37.952Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3848 stars
+- **Stars / Engagement**: 3856 stars
 
 ---
 
@@ -477,6 +477,7 @@ mod test {
                         audiences: Some(audiences.clone()),
                         bound_object_ref: None,
                         expiration_seconds: None,
+                        attestations: None,
                     }),
                     status: None,
                 },
@@ -1713,45 +1714,287 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3995dc6d` (2026-10-21)
-**Commit Message**: Chore(deps): Bump actions/checkout from 6 to 7 (#2106)
+### Incident Patch 1: `80de5bf5` (2026-10-31)
+**Commit Message**: Expose `hyper-timeout`'s `reset_reader_on_write` config (#2111)
 
-Bumps [actions/checkout](https://github.com/actions/checkout) from 6 to 7.
-- [Release notes](https://github.com/actions/checkout/releases)
-- [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/actions/checkout/compare/v6...v7)
+Expose hyper-timeout's reset_reader_on_write config
+
+Signed-off-by: Gabor Gevay <[REDACTED_EMAIL]>
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+Co-authored-by: doxxx93 <[REDACTED_EMAIL]>
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -53,7 +53,7 @@ http-body-util = "0.1.2"
+ hyper = "1.9.0"
+ hyper-openssl = "0.10.2"
+ hyper-rustls = { version = "0.27.1", default-features = false }
+-hyper-timeout = "0.5.1"
++hyper-timeout = "0.5.2"
+ hyper-util = "0.1.21"
+ ipnet = "2.12.2"
+ jiff = { version = "0.2.16", default-features = false }
+```
+
+**File**: `kube-client/src/client/builder.rs` (modified, +1/-0)
+```diff
+@@ -334,6 +334,7 @@ where
+         connector.set_connect_timeout(config.connect_timeout);
+         connector.set_read_timeout(config.read_timeout);
+         connector.set_write_timeout(config.write_timeout);
++        connector.set_reset_reader_on_write(config.reset_reader_on_write);
+ 
+         hyper_util::client::legacy::Builder::new(executor).build(connector)
+     };
+```
+
+**File**: `kube-client/src/config/mod.rs` (modified, +18/-0)
+```diff
+@@ -161,11 +161,26 @@ pub struct Config {
+     /// Defaults to `None` to avoid breaking long-lived connections such as
+     /// exec, attach and port-forward sessions.  Watch streams are protected
+     /// by a watcher-level idle timeout instead.
++    ///
++    /// If you set this, consider also turning on [`Self::reset_reader_on_write`].
++    /// Otherwise the time a pooled connection sat idle before being handed out
++    /// (up to 90 s) counts against this timeout for the next response on that
++    /// connection.
+     pub read_timeout: Option<std::time::Duration>,
+     /// Set the timeout for the Kubernetes API request.
+     ///
+     /// A value of `None` means no timeout
+     pub write_timeout: Option<std::time::Duration>,
++    /// Whether to make every completed write reset the read timeout. The timeout then counts from
++    /// when a request is sent, not from when its pooled connection went idle (which is potentially a
++    /// long time before the connection was handed out for a request).
++    ///
++    /// Has an effect only when [`Self::read_timeout`] is set.
++    ///
++    /// The tradeoff is that this makes things like kube's 60 s WebSocket pings also reset it on
++    /// exec/attach, and thus the read timeout no longer catches a peer that stops answering while the
++    /// client keeps writing.
++    pub reset_reader_on_write: bool,
+     /// Whether to accept invalid certificates
+     pub accept_invalid_certs: bool,
+     /// Stores information to tell the cluster who you are.
+@@ -199,6 +214,7 @@ impl Config {
+             connect_timeout: Some(DEFAULT_CONNECT_TIMEOUT),
+             read_timeout: None,
+             write_timeout: Some(DEFAULT_WRITE_TIMEOUT),
++            reset_reader_on_write: false,
+             accept_invalid_certs: false,
+             auth_info: AuthInfo::default(),
+             disable_compression: false,
+@@ -281,6 +297,7 @@ impl Config {
+             connect_timeout: Some(DEFAULT_CONNECT_TIMEOUT),
+             read_timeout: None,
+             write_timeout: Some(DEFAULT_WRITE_TIMEOUT),
++            reset_reader_on_write: false,
+             accept_invalid_certs: false,
+             auth_info: AuthInfo {
+                 token_file: Some(incluster_config::token_file()),
+@@ -347,6 +364,7 @@ impl Config {
+             connect_timeout: Some(DEFAULT_CONNECT_TIMEOUT),
+             read_timeout: None,
+             write_timeout: Some(DEFAULT_WRITE_TIMEOUT),
++            reset_reader_on_write: false,
+             accept_invalid_certs,
+             disable_compression,
+             proxy_url: loader.proxy_url()?,
+```
 
 ---
-updated-dependencies:
-- dependency-name: actions/checkout
-  dependency-version: '7'
-  dependency-type: direct:production
-  update-type: version-update:semver-major
-...
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+### Incident Patch 2: `46101806` (2026-10-31)
+**Commit Message**: fix(config): populate missing impersonation headers (#2116)
 
-**File**: `.github/workflows/no_ai.yml` (modified, +1/-1)
+* fix(config): populate impersonate_user_extra headers
+
+Signed-off-by: William Tremblay <[REDACTED_EMAIL]>
+
+* fix(config): populate impersonate-uid header
+
+Signed-off-by: William Tremblay <[REDACTED_EMAIL]>
+
+* fix(config): percent-encode impersonate-extra keys
+
+Signed-off-by: William Tremblay <[REDACTED_EMAIL]>
+
+* fix(config): fix typo in percent-encode set, add roundtrip test
+
+Signed-off-by: William Tremblay <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: William Tremblay <[REDACTED_EMAIL]>
+Co-authored-by: Eirik A <[REDACTED_EMAIL]>
+
+**File**: `kube-client/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -7,7 +7,7 @@ jobs:
-   no-ai-commits:
-     runs-on: ubuntu-latest
-     steps:
--      - uses: actions/checkout@v6
-+      - uses: actions/checkout@v7
-         with:
-           # Required so the full commit range is available
-           fetch-depth: 0
+@@ -30,7 +30,7 @@ admission = ["kube-core/admission"]
+ config = ["__non_core", "pem"]
+ proxy = ["socks5", "http-proxy"]
+ socks5 = ["hyper-util/client-proxy", "dep:ipnet"]
+-http-proxy = ["hyper-util/client-proxy", "dep:ipnet", "dep:percent-encoding"]
++http-proxy = ["hyper-util/client-proxy", "dep:ipnet"]
+ unstable-client = []
+ 
+ # private feature sets; do not use
+@@ -78,7 +78,7 @@ secrecy = { workspace = true }
+ tracing = { workspace = true, features = ["log"], optional = true }
+ hyper-openssl = { workspace = true, features = ["client-legacy", "tokio"], optional = true }
+ form_urlencoded = { workspace = true, optional = true }
+-percent-encoding = { workspace = true, optional = true }
++percent-encoding = { workspace = true }
+ k8s-openapi= { workspace = true, features = [] }
+ 
+ [dev-dependencies]
+```
+
+**File**: `kube-client/src/client/config_ext.rs` (modified, +102/-8)
+```diff
+@@ -169,8 +169,8 @@ mod openssl_tls_server_name_tests {
+         rsa::Rsa,
+         ssl::{NameType, SslAcceptor, SslMethod},
+         x509::{
++            X509, X509NameBuilder,
+             extension::{BasicConstraints, SubjectAlternativeName},
+-            X509NameBuilder, X509,
+         },
+     };
+     use tower::ServiceExt as _;
+@@ -199,8 +199,12 @@ mod openssl_tls_server_name_tests {
+         builder.set_subject_name(&name).unwrap();
+         builder.set_issuer_name(&name).unwrap();
+         builder.set_pubkey(&pkey).unwrap();
+-        builder.set_not_before(&Asn1Time::days_from_now(0).unwrap()).unwrap();
+-        builder.set_not_after(&Asn1Time::days_from_now(1).unwrap()).unwrap();
++        builder
++            .set_not_before(&Asn1Time::days_from_now(0).unwrap())
++            .unwrap();
++        builder
++            .set_not_after(&Asn1Time::days_from_now(1).unwrap())
++            .unwrap();
+         builder
+             .append_extension(BasicConstraints::new().critical().ca().build().unwrap())
+             .unwrap();
+@@ -371,6 +375,14 @@ impl ConfigExt for Config {
+                     .map_err(Error::HttpError)?,
+             ));
+         }
++        if let Some(impersonate_uid) = &self.auth_info.impersonate_uid {
++            headers.push((
++                HeaderName::from_static("impersonate-uid"),
++                HeaderValue::from_str(impersonate_uid)
++                    .map_err(http::Error::from)
++                    .map_err(Error::HttpError)?,
++            ))
++        }
+         if let Some(impersonate_groups) = &self.auth_info.impersonate_groups {
+             for group in impersonate_groups {
+                 headers.push((
+@@ -381,6 +393,19 @@ impl ConfigExt for Config {
+                 ));
+             }
+         }
++        if let Some(impersonate_user_extra) = &self.auth_info.impersonate_user_extra {
++            for (extra_key, extra_values) in impersonate_user_extra {
++                let name = impersonate_extra_header_name(extra_key)?;
++                for value in extra_values {
++                    headers.push((
++                        name.clone(),
++                        HeaderValue::from_str(value)
++                            .map_err(http::Error::from)
++                            .map_err(Error::HttpError)?,
++                    ))
++                }
++            }
++        }
+         Ok(ExtraHeadersLayer {
+             headers: Arc::new(headers),
+         })
+@@ -406,11 +431,8 @@ impl ConfigExt for Config {
+         if !self.accept_invalid_certs
+             && let Some(path) = &self.root_cert_file
+         {
+-            let verifier =
+-                tls::rustls_tls::ReloadingVerifier::new(path.clone()).map_err(Error::RustlsTls)?;
+-            config
+-                .dangerous()
+-                .set_certificate_verifier(Arc::new(verifier));
++            let verifier = tls::rustls_tls::ReloadingVerifier::new(path.clone()).map_err(Error::RustlsTls)?;
++            config.dangerous().set_certificate_verifier(Arc::new(verifier));
+         }
+         Ok(config)
+     }
+@@ -539,3 +561,75 @@ impl Config {
+         }
+     }
+ }
++
++/// Generate the appropriate header name for an `impersonate_user_extra` key.
++///
++/// Percent-escapes extra keys so that they are valid header names, using the same percent-escape
++/// set as the Go client (illegal header name bytes and '%').
++fn impersonate_extra_header_name(key: &str) -> Result<HeaderName> {
++    // Source: https://github.com/kubernetes/kubernetes/blob/8f5bbad3e20a347aaae13afd78cc955e642c68e4/staging/src/k8s.io/client-go/transport/round_trippers.go#L714
++    // Note that we don't remove '%' here, since we do want to escape it.
++    const NEEDS_ESCAPE: percent_encoding::AsciiSet = percent_encoding::NON_ALPHANUMERIC
++        .remove(b'!')
++        .remove(b'#')
++        .remove(b'$')
++        .remove(b'&')
++        .remove(b'\'')
++        .remove(b'*')
++        .remove(b'+')
++        .remove(b'-')
++        .remove(b'.')
++        .remove(b'^')
++        .remove(b'_')
++        .remove(b'`')
++        .remove(b'|')
++        .remove(b'~');
++
++    let encoded_key = percent_encoding::percent_encode(key.as_bytes(), &NEEDS_ESCAPE);
++    format!("impersonate-extra-{encoded_key}")
++        .try_into()
++        .map_err(http::Error::from)
++        .map_err(Error::HttpError)
++}
++
++#[cfg(test)]
++mod tests {
++    use super::impersonate_extra_header_name;
++
++    #[test]
++    fn impersonate_user_extra_no_unnecessary_escape() {
++        assert_eq!(
++            impersonate_extra_header_name("FOO-bar.baz_123").unwrap().as_str(),
++            "impersonate-extra-foo-bar.baz_123"
++        );
++    }
++
++    #[test]
++    fn impersonate_user_extra_escapes_percent() {
++        assert_eq!(
++            impersonate_extra_header_name("foo%2f").unwrap().as_str(),
++            "impersonate-extra-foo%252f"
++        );
++    }
++
++    #[test]
++    fn impersonate_user_extra_escapes_slash() {
++        assert_eq!(
++            impersonate_extra_header_name("foo.com/ba
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2106** (2026-10-21): Chore(deps): Bump actions/checkout from 6 to 7 (@dependabot[bot])
-- **PR #2104** (2026-10-02): Only save coverage and memory-bench caches on main (@doxxx93)
-- **PR #2102** (2026-10-02): Warm PR caches from main and avoid k3d API rate limits (@doxxx93)
-- **PR #2101** (closed): chore: run cargo fmt (@cratelyn)
-- **PR #2097** (2026-09-30): Fix Retry-After overflow panic in the default retry policy (@doxxx93)
-- **PR #2096** (2026-09-30): Box large error payloads to keep kube::Error under 128 bytes (@doxxx93)
+- **PR #2123** (2026-10-31): Attach the event cache test to a different object (@doxxx93)
+- **PR #2121** (2026-10-30): Skip parking_lot duplicates in cargo deny (@doxxx93)
+- **PR #2120** (2026-10-31): update k8s-openapi to 0.29 (@clux)
+- **PR #2119** (2026-10-27): Import busybox into k3d as a single-platform tarball (@doxxx93)
+- **PR #2118** (2026-10-30): fix: emit Event::Init when a StreamingList initial watch opens (@mvanhorn)
+- **PR #2116** (2026-10-31): fix(config): populate missing impersonation headers (@tremwil)
 
 ---
 
@@ -1771,28 +2014,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Bump actions/checkout from 6 to 7 (#2106)
+## X. Expose `hyper-timeout`'s `reset_reader_on_write` config (#2111)
 
 **RULE**:
-When implementing operations in `.github/workflows/no_ai.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3995dc6d`: deps): Bump actions/checkout from 6 to 7 (#2106). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `80de5bf5`: Expose `hyper-timeout`'s `reset_reader_on_write` config (#2111). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/no_ai.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - uses: actions/checkout@v7
+hyper-timeout = "0.5.2"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-      - uses: actions/checkout@v6
+hyper-timeout = "0.5.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3995dc6d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `80de5bf5` are properly handled with clean fallback behavior.

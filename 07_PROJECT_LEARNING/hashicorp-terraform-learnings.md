@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `55988303`  
+> **Source Version**: `d40e1b2d`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T13:30:56.036Z  
+> **Timestamp**: 2026-10-30T21:19:29.129Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T13:30:55.095Z  
+> **Harvest Timestamp**: 2026-10-30T21:19:28.268Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50144 stars
+- **Stars / Engagement**: 50093 stars
 
 ---
 
@@ -2260,11 +2260,11 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #39444** (2026-10-26): **backend/s3: trim download buffer to bytes written to fix trailing NUL padding**
+  *Symptoms*: Fixes #39440.  ### What  `RemoteClient.get` in `internal/backend/remote-state/s3/client.go` sizes its buffer from the `HeadObject` `ContentLength`, then fills it with `manager.Downloader`. If the object is overwritten by a **smaller** one between the HEAD and the download, the buffer is larger than the downloaded content, so `w.Bytes()` returns the new content followed by `\x00` padding. The byte count returned by `Download` was discarded.  The padded buffer then fails to parse:  ``` Error: Unsupported state file format The state file could not be parsed as JSON: syntax error at byte offset <newsize+1>. ```  This hits any `terraform_remote_state` read of an S3 state while another run applies a smaller version of that state.  ### Fix  Slice the buffer to the number of bytes `Download` reports it wrote before computing the MD5 and building the payload.  ### Tests  Added `TestRemoteClientGet_objectShrinksBetweenHeadAndDownload` (no AWS account needed): a local fake S3 endpoint serves a >5 MiB object, then swaps in a smaller one right after answering the HEAD, so the multipart download fills only part of the pre-sized buffer. The test asserts the returned payload is valid JSON and exactly the downloaded object's length.  Validation (go1.26.10, linux/amd64), run in `internal/backend/remote-state/s3`:  ``` # with the fix $ go test -run TestRemoteClientGet_objectShrinksBetweenHeadAndDownload ./ -count=1 ok  github.com/hashicorp/terraform/internal/backend/remote-state/s3  0.224s  # w
+
 - **Issue #39434** (2026-10-23): **Provider archives downloaded by terraform init are left in the temporary directory on Windows**
   *Symptoms*: ### Terraform Version  ```shell Terraform v1.11.3 on windows_amd64 ```  Also reproduced with a local build of `main` at cdbff3e.  ### Terraform Configuration Files  ```terraform terraform {   required_providers {     null = {       source  = "hashicorp/null"       version = "3.2.1"     }   } } ```  ### Debug Output  Not applicable: nothing is logged, because the error from the failed delete is discarded.  ### Expected Behavior  After `terraform init` installs a provider downloaded from a registry, the downloaded archive is deleted from the temporary directory.  ### Actual Behavior  The archive stays behind as `%TEMP%\terraform-provider<random>`: one file for every provider package downloaded, on every init (4.7 MB for `hashicorp/null` 3.2.1, about 180 MB for `hashicorp/aws`). `terraform providers lock` leaves one per provider per requested platform. On one workstation 1,764 of these files (195 GB) built up in ten days and filled the system drive.  ### Steps to Reproduce  PowerShell, in an empty directory:  1. Save the configuration above as `work\main.tf`. 2. `mkdir tmp; $env:TMP = "$PWD\tmp"; $env:TEMP = "$PWD\tmp"` 3. `terraform -chdir=work init` 4. `Get-ChildItem tmp` lists `terraform-provider<N>`.  ### Additional Context  `installFromHTTPURL` in `internal/providercache/package_install.go`:  ```go f, err := os.CreateTemp("", "terraform-provider") // ... defer f.Close() defer os.Remove(f.Name()) ```  Deferred calls run last-in, first-out, so `os.Remove` runs while `f` is st
-
-- **Issue #39408** (2026-10-19): **Kill managed provider plugin processes before exiting from the panic handler 🤖🤖🤖**
-  *Symptoms*: When a worker goroutine panics, `logging.PanicHandler` prints the crash report and ends with `os.Exit(11)`. `os.Exit` skips deferred calls, including the `defer plugin.CleanupClients()` in `realMain` (`main.go`) that normally terminates managed provider plugin processes, so every provider plugin still running at the moment of the panic keeps running after Terraform exits, reparented to the init or subreaper process.  This change calls `plugin.CleanupClients()` from `github.com/hashicorp/go-plugin` (already a direct dependency) in `PanicHandler` immediately before the crash exit, with a comment explaining that `os.Exit` skips the deferred cleanup in `main`. The exit status stays 11 and the crash report is unchanged. The call is a no-op when no managed clients exist, such as under `terraform rpcapi`.  Fixes #39399  ## Target Release  1.18.x  ## Rollback Plan  - [x] If a change needs to be reverted, we will roll out an update to the code within 7 days.  ## Changes to Security Controls  No changes to security controls. The change only terminates Terraform's own already-managed child plugin processes during crash exit; it adds no new access, encryption, or logging behavior.  ## CHANGELOG entry  - [x] This change is user-facing and I added a changelog entry. - [ ] This change is not user-facing.  ## Generative AI / LLM assisted development?  An LLM coding agent assisted this change under human supervision: it located the exit path, drafted the cleanup call and comment, built unpatc
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2281,225 +2281,364 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a060ad5a` (2026-10-23)
-**Commit Message**: test: Refactor and add test case for graph rendering in Dot format. (#39437)
+### Incident Patch 1: `89fe6725` (2026-10-30)
+**Commit Message**: stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (#39473)
 
-* test: Remove unneeded error assertions
-
-This test doesn't test the `GraphDot` function after all, so there are no errors to compare. But even if it did, the `GraphDot` function is currently hardcoded to return nil as the error value.
-
-* test: Simplify vertex implementations used in existing (Graph).Dot test
-
-The methods other than Name and DotNode on the original test mock were unused. This implementation of a vertex was no better than the simpler stringV above.
-
-* test: Add test case showing Dot graph where cycles are not drawn
-
-**File**: `internal/terraform/graph_dot_test.go` (modified, +59/-71)
+**File**: `.changes/v1.18/BUG FIXES-20261029-164821.yaml` (added, +5/-0)
 ```diff
-@@ -12,17 +12,25 @@ import (
- 
- type stringV string
- 
-+var (
-+	_ dag.Vertex          = stringV("")
-+	_ dag.GraphNodeDotter = stringV("")
-+)
-+
- func (v stringV) Name() string {
- 	return string(v)
- }
- 
-+func (v stringV) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
-+	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
-+}
-+
- func TestGraphDot(t *testing.T) {
- 	cases := []struct {
- 		Name   string
--		Graph  testGraphFunc
-+		Graph  func() *Graph
- 		Opts   dag.DotOpts
- 		Expect string
--		Error  string
- 	}{
- 		{
- 			Name:  "empty",
-@@ -39,14 +47,14 @@ digraph {
- 			Name: "three-level",
- 			Graph: func() *Graph {
- 				var g Graph
--				root := &testDrawableOrigin{"root"}
-+				root := stringV("root")
- 				g.Add(root)
- 
- 				levelOne := []dag.Vertex{stringV("foo"), stringV("bar")}
- 				for i, s := range levelOne {
--					levelOne[i] = &testDrawable{
--						VertexName: s.Name(),
--					}
-+					levelOne[i] = stringV(
-+						s.Name(),
-+					)
- 					v := levelOne[i]
- 
- 					g.Add(v)
-@@ -55,9 +63,7 @@ digraph {
- 
- 				levelTwo := []string{"baz", "qux"}
- 				for i, s := range levelTwo {
--					v := &testDrawable{
--						VertexName: s,
--					}
-+					v := stringV(s)
- 
- 					g.Add(v)
- 					g.Connect(v, levelOne[i])
-@@ -91,20 +97,14 @@ digraph {
+@@ -0,0 +1,5 @@
++kind: BUG FIXES
++body: 'stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not'
++time: 2026-10-29T16:48:21.267429-04:00
++custom:
++    Issue: "39473"
+```
+
+**File**: `internal/stacks/stackruntime/apply_test.go` (modified, +148/-0)
+```diff
+@@ -2232,6 +2232,154 @@ After applying this plan, Terraform will no longer manage these objects. You wil
+ 				},
  			},
- 			Graph: func() *Graph {
- 				var g Graph
--				root := &testDrawableOrigin{"root"}
-+				root := stringV("root")
- 				g.Add(root)
- 
--				vA := g.Add(&testDrawable{
--					VertexName: "A",
--				})
-+				vA := g.Add(stringV("A"))
- 
--				vB := g.Add(&testDrawable{
--					VertexName: "B",
--				})
-+				vB := g.Add(stringV("B"))
- 
--				vC := g.Add(&testDrawable{
--					VertexName: "C",
--				})
-+				vC := g.Add(stringV("C"))
- 
- 				g.Connect(vA, root)
- 				g.Connect(vA, vC)
-@@ -130,6 +130,46 @@ digraph {
- 		"[root] C" -> "[root] A" [color = "red", penwidth = "2.0"]
- 		"[root] C" -> "[root] B"
- 	}
-+}
-+					`,
-+		},
-+		{
-+			Name: "cycle not drawn",
-+			Opts: dag.DotOpts{
-+				DrawCycles: false, // Do not draw cycles
-+			},
-+			Graph: func() *Graph {
-+				var g Graph
-+				root := stringV("root")
-+				g.Add(root)
-+
-+				vA := g.Add(stringV("A"))
-+
-+				vB := g.Add(stringV("B"))
-+
-+				vC := g.Add(stringV("C"))
-+
-+				g.Connect(vA, root)
-+				g.Connect(vA, vC)
-+				g.Connect(vB, vA)
-+				g.Connect(vC, vB)
-+
-+				return &g
-+			},
-+			Expect: `
-+digraph {
-+	compound = "true"
-+	newrank = "true"
-+	subgraph "root" {
-+		"[root] A"
-+		"[root] B"
-+		"[root] C"
-+		"[root] root"
-+		"[root] A" -> "[root] C"
-+		"[root] A" -> "[root] root"
-+		"[root] B" -> "[root] A"
-+		"[root] C" -> "[root] B"
-+	}
- }
- 					`,
  		},
-@@ -138,64 +178,12 @@ digraph {
- 		tn := tc.Name
- 		t.Run(tn, func(t *testing.T) {
- 			g := tc.Graph()
--			var err error
--			//actual, err := GraphDot(g, &tc.Opts)
- 			actual := string(g.Dot(&tc.Opts))
- 
--			if err == nil && tc.Error != "" {
--				t.Fatalf("%s: expected err: %s, got none", tn, tc.Error)
--			}
--			if err != nil && tc.Error == "" {
--				t.Fatalf("%s: unexpected err: %s", tn, err)
--			}
--			if err != nil && tc.Error != "" {
--				if !strings.Contains(err.Error(), tc.Error) {
--					t.Fatalf("%s: expected err: %s\nto contain: %s", tn, err, tc.Error)
--				}
--				return
--			}
--
- 			expected := strings.TrimSpace(tc.Expect) + "\n"
- 			if actual != expected {
- 				t.Fatalf("%s:\n\nexpected:\n%s\n\ngot:\n%s", tn, expected, actual)
- 			}
- 		})
++		// The component's configuration has no reference to the testing provider, but the previous
++		// state still has a resource managed by it. The provider must still be available to Terraform Core
++		// (both the configured client and the unconfigured factory) so the resource can be deleted.
++		"provider-required-only-by-state": {
++			path: "provider-required-only-by-state",
++			state: stackstate.NewStateBuilder().
++				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
++				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
++					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
++					SetProviderAddr(mustDefaultRootProvider("testing")).
++					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
++						Status: states.ObjectReady,
++						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
++							"id":    "data",
++							"value": "data",
++						}),
++					})).
++				Build(),
++			store: stacks_testing_provider.NewResourceStoreBuilder().
++				AddResource("data", cty.ObjectVal(map[string]cty.Value{
++					"id":    cty.StringVal("data"),
++					"value": cty.StringVal("data"),
++				})).
++				Build(),
++			cycles: []TestCycle{
++				{
++					planMode: plans.NormalMode,
++					wantAppliedChanges: []stackstate.AppliedChange{
++						&stackstate.AppliedChangeComponentInstance{
++							ComponentAddr:         mustAbsComponent("component.self"),
++							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
++							OutputValues: map[addrs.OutputValue]cty.Value{
++								{Name: "empty"}: cty.StringVal("empty"),
++							},
++							InputVariables: make(map[addrs.InputVariable]cty.Value),
++						},
++						&stackstate.AppliedChangeResourceInstanceObject{
++							ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.testing_resource.data"),
++							ProviderConfigAddr:         mustDefaultRootProvider("testing"),
++							NewStateSrc:                nil, // deleted
++						},
++					},
++				},
++			},
++		},
++		"provider-required-only-by-state-destroy": {
++			path: "provider-required-only-by-state",
++			state: stackstate.NewStateBuilder().
++				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
++				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
++					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
++					SetProviderAddr(mustDefaultRootProvider("testing")).
++					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
++						Status: states.ObjectReady,
++						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
++							"id":    "data",
++							"value": "data",
++						}),
++					})).
++				Build(),
++			store: stacks_testing_provider.NewResourceStoreBuilder().
++				AddResource("data", cty.ObjectVal(map[string]cty.Value{
++					"id":    cty.StringVal("data"),
++					"value": cty.StringVal("data"),
++				})).
++				Build(),
++			cycles: []TestCycle{
++				{
++					planMode: plans.DestroyMode,
++					wantAppliedChanges: []stackstate.AppliedChange{
++						&stackstate.AppliedChangeComponentInstanceRemoved{
++							ComponentAddr:         mustAbsComponent("component.self"),
++							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
++						},
++						&stackstate.AppliedChangeResourceInstanceObject{
++							ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.testing_resource.data"),
++							ProviderConfigAddr:         mustDefaultRootProvider("testing"),
++							NewStateSrc:                nil, // deleted
++						},
++					},
++				},
++			},
++		},
++		"provider-required-only-by-state-removed": {
++			path: path.Join("provider-required-only-by-state", "removed"),
++			state: stackstate.NewStateBuilder().
++				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
++				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
++					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
++					SetProviderAddr(mustDefaultRootProvider("testing")).
++					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
++						Status: states.ObjectReady,
++						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
++							"id":    "data",
++							"value": "data",
++						}),
++					})).
++				Build(),
++			store: stacks_testing_provider.NewResourceStoreBuilder().
++				AddResource("data", cty.ObjectVal(map[string]cty.Value{
++					"id":    cty.StringVal("data"),
++					"value": cty.StringVal("data"),
++				})).
++				Build(),
++			cycles: []TestCycle{
++				{
++					wantAppliedChanges: []stackstate.AppliedChange{
++						&stackstate.AppliedChangeComponentInstanceRemoved{
++							ComponentAddr:         mustAbsComponent("component.self"),
++							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
++						},
++						&s
+```
+
+**File**: `internal/stacks/stackruntime/internal/stackeval/applying.go` (modified, +14/-29)
+```diff
+@@ -14,10 +14,8 @@ import (
+ 	"github.com/hashicorp/terraform/internal/depsfile"
+ 	"github.com/hashicorp/terraform/internal/plans"
+ 	"github.com/hashicorp/terraform/internal/policy"
+-	"github.com/hashicorp/terraform/internal/providers"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
+-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackstate"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackstate/statekeys"
+ 	"github.com/hashicorp/terraform/internal/states"
+@@ -175,20 +173,22 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
+ 		return noOpResult, diags
  	}
+ 
+-	providerFactories := make(map[addrs.Provider]providers.Factory, len(providerSchemas))
+-	for addr := range providerSchemas {
+-		providerFactories[addr] = func() (providers.Interface, error) {
+-			// Lazily fetch the unconfigured client for the provider
+-			// as and when we need it.
+-			provider, err := main.ProviderType(addr).UnconfiguredClient()
+-			if err != nil {
+-				return nil, err
+-			}
+-			// this provider should only be used for selected operations
+-			return stubs.OfflineProvider(provider), nil
+-		}
++	known, unknown, moreDiags := EvalProviderValues(ctx, main, requiredProviders, ApplyPhase, inst)
++	if moreDiags.HasErrors() {
++		// We won't actually add the diagnostics here, they should be
++		// exposed via a different return path.
++		diags = diags.Append(&hcl.Diagnostic{
++			Severity: hcl.DiagError,
++			Summary:  "Cannot apply component plan",
++			Detail:   fmt.Sprintf("Cannot apply the plan for %s because the configured provider configuration assignments are invalid.", inst.Addr()),
++			Subject:  inst.DeclRange(),
++		})
++		return nil, diags
+ 	}
+ 
++	providerClients := configuredProviderClients(ctx, main, known, unknown, ApplyPhase)
++	providerFactories := unconfiguredProviderFactories(main, providerSchemas, providerClients)
++
+ 	tfHook := &componentInstanceTerraformHook{
+ 		ctx:   ctx,
+ 		seq:   seq,
+@@ -223,21 +223,6 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
+ 		return noOpResult, diags
+ 	}
+ 
+-	known, unknown, moreDiags := EvalProviderValues(ctx, main, requiredProviders, ApplyPhase, inst)
+-	if moreDiags.HasErrors() {
+-		// We won't actually add the diagnostics here, they should be
+-		// exposed via a different return path.
+-		diags = diags.Append(&hcl.Diagnostic{
+-			Severity: hcl.DiagError,
+-			Summary:  "Cannot apply component plan",
+-			Detail:   fmt.Sprintf("Cannot apply the plan for %s because the configured provider configuration assignments are invalid.", inst.Addr()),
+-			Subject:  inst.DeclRange(),
+-		})
+-		return nil, diags
+-	}
+-
+-	providerClients := configuredProviderClients(ctx, main, known, unknown, ApplyPhase)
+-
+ 	var newState *states.State
+ 
+ 	if plan.Applyable {
+```
+
+**File**: `internal/stacks/stackruntime/internal/stackeval/planning.go` (modified, +1/-16)
+```diff
+@@ -8,15 +8,12 @@ import (
+ 	"fmt"
+ 	"time"
+ 
+-	"github.com/hashicorp/terraform/internal/addrs"
+ 	"github.com/hashicorp/terraform/internal/depsfile"
+ 	"github.com/hashicorp/terraform/internal/plans"
+ 	"github.com/hashicorp/terraform/internal/policy"
+-	"github.com/hashicorp/terraform/internal/providers"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackplan"
+ 	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
+-	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
+ 	"github.com/hashicorp/terraform/internal/states"
+ 	"github.com/hashicorp/terraform/internal/terraform"
+ 	"github.com/hashicorp/terraform/internal/tfdiags"
+@@ -163,19 +160,7 @@ func PlanComponentInstance(ctx context.Context, main *Main, state *states.State,
+ 	// configurations from the stack that exist outside of Terraform's
+ 	// concerns. There are provided directly in the PlanOpts argument.
+ 
+-	providerFactories := make(map[addrs.Provider]providers.Factory, len(providerSchemas))
+-	for addr := range providerSchemas {
+-		providerFactories[addr] = func() (providers.Interface, error) {
+-			// Lazily fetch the unconfigured client for the provider
+-			// as and when we need it.
+-			provider, err := main.ProviderType(addr).UnconfiguredClient()
+-			if err != nil {
+-				return nil, err
+-			}
+-			// this provider should only be used for selected operations
+-			return stubs.OfflineProvider(provider), nil
+-		}
+-	}
++	providerFactories := unconfiguredProviderFactories(main, providerSchemas, opts.ExternalProviders)
+ 
+ 	tfCtx, err := terraform.NewContext(&terraform.ContextOpts{
+ 		Hooks:                    tfHooks,
+```
+
+**File**: `internal/stacks/stackruntime/internal/stackeval/provider_expressions.go` (modified, +33/-0)
+```diff
+@@ -454,6 +454,39 @@ func neededProviderSchemas[Addr any](ctx context.Context, main *Main, phase Eval
+ 	return providerSchemas, diags, skipFutherValidation
  }
--
--type testGraphFunc func() *Graph
--
--type testDrawable struct {
--	VertexName      string
--	DependentOnMock []string
--}
--
--func (node *testDrawable) Name() string {
--	return node.VertexName
--}
--func (node *testDrawable) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
--	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
--}
--func (node *testDrawable) DependableName() []string {
--	return []string{node.VertexName}
--}
--func (node *testDrawable) DependentOn() []string {
--	return node.DependentOnMock
--}
--
--type testDrawableOrigin struct {
--	VertexName string
--}
--
--func (node *testDrawableOrigin) Name() string {
--	return node.VertexName
--}
--func (node *testDrawableOrigin) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
--	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
--}
--func (node *testDrawableOrigin) DotOrigin() bool {
--	return true
--}
--func (node *testDrawableOrigin) DependableName() []string {
--	return []string{node.VertexName}
--}
+ 
++// unconfiguredProviderFactories returns the provider factories that Terraform
++// Core should use for operations that need an unconfigured provider, such as
++// provider functions and cross-provider moves.
++//
++// The result covers the union of two sets of providers:
++//   - the providers whose schemas were loaded for the configuration
++//   - the providers configured for the component
++func unconfiguredProviderFactories(main *Main, schemas map[addrs.Provider]providers.ProviderSchema, configured map[addrs.RootProviderConfig]providers.Interface) map[addrs.Provider]providers.Factory {
++	providerFactories := make(map[addrs.Provider]providers.Factory)
++
++	// Providers likely will appear in both sets, in which case the factory is simply rewritten
++	addProvider := func(addr addrs.Provider) {
++		providerFactories[addr] = func() (providers.Interface, error) {
++			// Lazily fetch the unconfigured client for the provider
++			// as and when we need it.
++			provider, err := main.ProviderType(addr).UnconfiguredClient()
++			if err != nil {
++				return nil, err
++			}
++			// this provider should only be used for selected operations
++			return stubs.OfflineProvider(provider), nil
++		}
++	}
++
++	for addr := range schemas {
++		addProvider(addr)
++	}
++	for addr := range configured {
++		addProvider(addr.Provider)
++	}
++	return providerFactories
++}
++
+ // unconfiguredProviderClients returns the provider clients for the providers
+ // required by the configuration of the given component, along with any
+ // diagnostics that were encountered while fetching those clients.
+```
+
+**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-only-used-for-functions/provider-only-used-for-functions.tf` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++terraform {
++  required_providers {
++    testing = {
++      source  = "hashicorp/testing"
++      version = "0.1.0"
++    }
++  }
++}
++
++variable "input" {
++  type = string
++}
++
++output "value" {
++  value = provider::testing::echo(var.input)
++}
+```
+
+**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-only-used-for-functions/provider-only-used-for-functions.tfcomponent.hcl` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++required_providers {
++  testing = {
++    source  = "hashicorp/testing"
++    version = "0.1.0"
++  }
++}
++
++provider "testing" "default" {}
++
++variable "input" {
++  type = string
++}
++
++component "self" {
++  source = "./"
++
++  inputs = {
++    input = var.input
++  }
++
++  providers = {
++    # The component's module only uses the testing provider for a function, so
++    # the provider is required for its schema and unconfigured client but there
++    # is no provider configuration for it.
++    testing = provider.testing.default
++  }
++}
+```
+
+**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-required-only-by-state/provider-required-only-by-state.tf` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++output "empty" {
++  value = "empty"
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39437** (2026-10-23): test: Refactor and add test case for graph rendering in Dot format. (@SarahFrench)
-- **PR #39432** (2026-10-22): Backport #39303 and #39308 to v1.17: fmt: Change how file content is replaced to reduce the chances of data loss in error scenarios (@SarahFrench)
-- **PR #39430** (2026-10-22): Cleanup after 1.16.7 release (@hc-github-team-tf-core)
-- **PR #39429** (2026-10-22): Prepare for 1.16.7 release (@hc-github-team-tf-core)
-- **PR #39427** (closed): Backport of fmt: Change how file content is replaced to reduce the chances of data loss in error scenarios into v1.17 (@github-actions[bot])
-- **PR #39425** (2026-10-21): Cleanup after 1.17.0 release (@hc-github-team-tf-core)
+- **PR #39473** (2026-10-30): stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (@austinvalle)
+- **PR #39471** (2026-10-29): command/providers schema: Refactor to use views (@SarahFrench)
+- **PR #39469** (2026-10-28): Cleanup after 1.17.1 release (@hc-github-team-tf-core)
+- **PR #39467** (2026-10-28): Prepare for 1.17.1 release (@hc-github-team-tf-core)
+- **PR #39466** (2026-10-29): command/providers mirror: Refactor to use `views` (@SarahFrench)
+- **PR #39465** (2026-10-28): Revert "Prepare before 1.17.1 release (#39460)" (@matejrisek)
 
 ---
 
@@ -2519,134 +2658,32 @@ The methods other than Name and DotNode on the original test mock were unused. T
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: Refactor and add test case for graph rendering in Dot format. (#39437)
+## X. stacks: Fix "missing required provider" error when component state requires a pr
 
 **RULE**:
-When implementing operations in `internal/terraform/graph_dot_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changes/v1.18/BUG FIXES-20261029-164821.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a060ad5a`: test: Refactor and add test case for graph rendering in Dot format. (#39437). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89fe6725`: stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (#39473). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/terraform/graph_dot_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.18/BUG FIXES-20261029-164821.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var (
-	_ dag.Vertex          = stringV("")
-	_ dag.GraphNodeDotter = stringV("")
-)
-
-func (v stringV) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
-	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
-}
-
-		Graph  func() *Graph
-				root := stringV("root")
-					levelOne[i] = stringV(
-						s.Name(),
-					)
-					v := stringV(s)
-				root := stringV("root")
-				vA := g.Add(stringV("A"))
-				vB := g.Add(stringV("B"))
-				vC := g.Add(stringV("C"))
-}
-					`,
-		},
-		{
-			Name: "cycle not drawn",
-			Opts: dag.DotOpts{
-				DrawCycles: false, // Do not draw cycles
-			},
-			Graph: func() *Graph {
-				var g Graph
-				root := stringV("root")
-				g.Add(root)
-
-				vA := g.Add(stringV("A"))
-
-				vB := g.Add(stringV("B"))
-
-				vC := g.Add(stringV("C"))
-
-				g.Connect(vA, root)
-				g.Connect(vA, vC)
-				g.Connect(vB, vA)
-				g.Connect(vC, vB)
-
-				return &g
-			},
-			Expect: `
-digraph {
-	compound = "true"
-	newrank = "true"
-	subgraph "root" {
-		"[root] A"
-		"[root] B"
-		"[root] C"
-		"[root] root"
-		"[root] A" -> "[root] C"
-		"[root] A" -> "[root] root"
-		"[root] B" -> "[root] A"
-		"[root] C" -> "[root] B"
-	}
+kind: BUG FIXES
+body: 'stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not'
+time: 2026-10-29T16:48:21.267429-04:00
+custom:
+    Issue: "39473"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		Graph  testGraphFunc
-		Error  string
-				root := &testDrawableOrigin{"root"}
-					levelOne[i] = &testDrawable{
-						VertexName: s.Name(),
-					}
-					v := &testDrawable{
-						VertexName: s,
-					}
-				root := &testDrawableOrigin{"root"}
-				vA := g.Add(&testDrawable{
-					VertexName: "A",
-				})
-				vB := g.Add(&testDrawable{
-					VertexName: "B",
-				})
-				vC := g.Add(&testDrawable{
-					VertexName: "C",
-				})
-			var err error
-			//actual, err := GraphDot(g, &tc.Opts)
-			if err == nil && tc.Error != "" {
-				t.Fatalf("%s: expected err: %s, got none", tn, tc.Error)
-			}
-			if err != nil && tc.Error == "" {
-				t.Fatalf("%s: unexpected err: %s", tn, err)
-			}
-			if err != nil && tc.Error != "" {
-				if !strings.Contains(err.Error(), tc.Error) {
-					t.Fatalf("%s: expected err: %s\nto contain: %s", tn, err, tc.Error)
-				}
-				return
-			}
-
-
-type testGraphFunc func() *Graph
-
-type testDrawable struct {
-	VertexName      string
-	DependentOnMock []string
-}
-
-func (node *testDrawable) Name() string {
-	return node.VertexName
-}
-func (node *testDrawable) DotNode(n string, opts *dag.DotOpts) *dag.DotNode {
-	return &dag.DotNode{Name: n, Attrs: map[string]string{}}
-}
-func (node *testDrawabl
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a060ad5a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89fe6725` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source**: github ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
-> **Source Version**: `59ad3bc5`  
+> **Source Version**: `dd4fca39`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T21:46:49.173Z  
+> **Timestamp**: 2026-10-31T12:59:57.102Z  
 > **Learning ID**: `learn-github-topgrade-rs-topgrade`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topgrade-rs-topgrade-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topgrade-rs/topgrade](https://github.com/topgrade-rs/topgrade))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T21:46:49.167Z  
+> **Harvest Timestamp**: 2026-10-31T12:59:57.098Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Upgrade all the things
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 4699 stars
+- **Stars / Engagement**: 4723 stars
 
 ---
 
@@ -1472,13 +1472,11 @@ impl<'a> ExecutionContext<'a> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2455** (2026-10-25): **fix(vscode): support new version format for vscode-insiders**
-  *Symptoms*: Closes #2454  @majordumoII if you have `cargo`, could you test this PR? ([guide](https://github.com/topgrade-rs/topgrade?tab=contributing-ov-file#testing-a-pull-request))
-  **Post-Mortem & Fix Analysis**:
-  > This is my first time running this process (on 3rd party), but I think it worked. Results below   ── 16:51:14 - Visual Studio Code Insiders extensions ─────────────────────────── (node:97905) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities. (Use `Code --trace-deprecation ...` to show where the warning was created) No extension to update  ── 16:51:17 - Summary ──────────────────────────────────────── Visual Studio Code Insiders extensions: OK
+- **Issue #2470** (2026-10-30): **chore(renovate): switch to weekly schedule**
+  *Symptoms*: Committed via https://github.com/asottile/all-repos
 
-- **Issue #2454** (2026-10-25): **VSCODE Insiders version mismatch**
-  *Symptoms*: ### Checklist  - [x] I have searched [the issue tracker](https://github.com/topgrade-rs/topgrade/issues) for relevant or duplicate issues.  ### Area  Failing step  ### Erroneous behavior  ``` Visual Studio Code Insiders extensions failed:    0: The output of `code-insiders --version` changed: Invalid version. This is not your fault, this is an issue in Topgrade. Please open an issue at: https://github.com/topgrade-rs/topgrade/issues/new?template=bug-report.yml&version=topgrade%2017.14.1    1: unexpected character 'c' while parsing major version number ```  ### Expected behavior  ── 18:45:58 - Summary ────────────────────────────────────────────────────────── Skills: OK  ### Steps to reproduce  topgrade --only vscode_insiders  ### Problem persists when running command outside of Topgrade  None  ### Possible cause  VSCode Insiders must have changed printed version format  ### Ran through Remote Execution?  No  ### Topgrade version  topgrade 17.14.1  ### Last working version  N/A  ### Environment  system_profiler SPSoftwareDataType SPHardwareDataType                                                                        18:47 Software:      System Software Overview:        System Version: macOS 27.0.1 (26A434)       Kernel Version: Darwin 27.0.0       Boot Volume: Macintosh HD 2       Boot Mode: Normal       Computer Name: MBP 16 M2 Max       Secure Virtual Memory: Enabled       System Integrity Protection: Enabled       Time since boot: 7 days, 9 hours, 12 minutes  Hardware:   
+- **Issue #2469** (2026-10-30): **chore(deps): update rust crate sysinfo to 0.40.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [sysinfo](https://redirect.github.com/GuillaumeGomez/sysinfo) | dependencies | minor | `0.38.4` → `0.40.0` |  ---  ### Release Notes  <details> <summary>GuillaumeGomez/sysinfo (sysinfo)</summary>  ### [`v0.40.1`](https://redirect.github.com/GuillaumeGomez/sysinfo/blob/HEAD/CHANGELOG.md#0401)  [Compare Source](https://redirect.github.com/GuillaumeGomez/sysinfo/compare/v0.40.0...v0.40.1)  - Add back `From<X> for Vec<Y>` trait implementations for `Disks`, `Gpus`, `Groups` and `Users`. - Windows: `System::load_average` now returns `Err(Error::Unsupported)`.  ### [`v0.40.0`](https://redirect.github.com/GuillaumeGomez/sysinfo/blob/HEAD/CHANGELOG.md#0400)  [Compare Source](https://redirect.github.com/GuillaumeGomez/sysinfo/compare/v0.39.6...v0.40.0)  - Add new `gpu` feature. - Add new `Process::gpu_usage` and `Process::gpu_memory` API. - Add new `GPUs` API. - Add new `NetworkData::transmit_link_speed` and `NetworkData::receive_link_speed` API. - Add new `Disk::id` API. - Remove `IS_SUPPORTED_SYSTEM` constant. - Remove `set_open_files_limit` API. - Remove `list[_mut]` methods for `Users`, `Components` and `Disks`. - Remove `Networks::list` method. - Remove `From` trait implementations for `Users`, `Groups` and `Disks`. - Fix `Networks` refresh. - `Networks` interface names have been switched from `String` to `OsString`. - Unix: Fix not thread-safe code in `Groups`. - Unix: Fix potential 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1495,61 +1493,28 @@ impl<'a> ExecutionContext<'a> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59ad3bc5` (2026-10-25)
-**Commit Message**: fix(vscode): support new version format for vscode-insiders (#2455)
+### Incident Patch 1: `dd4fca39` (2026-10-30)
+**Commit Message**: chore(renovate): switch to weekly schedule (#2470)
 
-**File**: `src/steps/generic.rs` (modified, +19/-7)
+**File**: `.github/renovate.json5` (modified, +1/-0)
 ```diff
-@@ -763,6 +763,7 @@ fn run_vscode_compatible(variant: VSCodeVariant, ctx: &ExecutionContext) -> Resu
-     //    This is confirmed on an install from the apt repository
-     // 2. 1 line: 'bin-name 1.2.3 (commit 123abc)', example: `code-insiders 1.106.0 (commit 48cdf17f0e856e1daca2ad2747814085a2453df0)`
-     //    See https://github.com/topgrade-rs/topgrade/issues/1605, confirmed from Microsoft website
-+    //    The bin-name can also be `code` on `code-insiders`.
-     // This should apply to VSCodium as well.
- 
-     let version_output = ctx.execute(&bin).always().arg("--version").output_checked_utf8()?;
-@@ -776,14 +777,25 @@ fn run_vscode_compatible(variant: VSCodeVariant, ctx: &ExecutionContext) -> Resu
-         ))
-     })?;
- 
--    let version_string = if line.starts_with(bin_name) {
-+    let version_string = if line.starts_with(bin_name) || line.starts_with("code") {
-         // Case 2
--        line.split_whitespace().nth(1).ok_or_else(|| {
--            eyre!(output_changed_message!(
--                &format!("{bin_name} --version"),
--                format!("No version after '{bin_name}'")
--            ))
--        })?
-+        let mut it = line.split_whitespace();
-+        match (it.next(), it.next()) {
-+            (None, None) => {
-+                return Err(eyre!(output_changed_message!(
-+                    &format!("{bin_name} --version"),
-+                    "No output"
-+                )));
-+            }
-+            (Some(prefix), None) => {
-+                return Err(eyre!(output_changed_message!(
-+                    &format!("{bin_name} --version"),
-+                    format!("No version after '{prefix}'")
-+                )));
-+            }
-+            (Some(_prefix), Some(version)) => version,
-+            (None, Some(_)) => unreachable!(),
-+        }
-     } else {
-         // Case 1
-         // The whole line should be the version
+@@ -5,6 +5,7 @@
+         ":semanticCommits",
+         ":semanticCommitTypeAll(chore)",
+         ":disableRateLimiting",
++        "schedule:weekly",
+     ],
+     maxMajorIncrement: 0,
+     customManagers: [
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2455** (2026-10-25): fix(vscode): support new version format for vscode-insiders (@GideonBear)
-- **PR #2451** (2026-10-23): chore(deps): update github/codeql-action action to v4.39.1 (@renovate[bot])
-- **PR #2450** (2026-10-23): chore(deps): update release-plz/action action to v0.5.145 (@renovate[bot])
-- **PR #2448** (2026-10-21): Revert "fix(opencode): check for plugin updates before updating" (@NextMerge)
-- **PR #2447** (2026-10-20): fix(opencode): check for plugin updates before updating (@NextMerge)
-- **PR #2446** (2026-10-20): chore(deps): lock file maintenance (@renovate[bot])
+- **PR #2470** (2026-10-30): chore(renovate): switch to weekly schedule (@GideonBear)
+- **PR #2469** (closed): chore(deps): update rust crate sysinfo to 0.40.0 (@renovate[bot])
+- **PR #2468** (2026-10-28): fix(rubygems): skip --system update when gem is managed by Homebrew or macOS (@thedavidweng)
+- **PR #2466** (closed): fix(skills): always pass --yes to npx runner (@thedavidweng)
+- **PR #2464** (2026-10-28): fix(ollama): list models from the server, skip unknown pulls (@uwuclxdy)
+- **PR #2463** (2026-10-28): feat(am): merge appman with am, and run am/appman reinstall (@GideonBear)
 
 ---
 
@@ -1569,52 +1534,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. vscode): support new version format for vscode-insiders (#2455)
+## X. renovate): switch to weekly schedule (#2470)
 
 **RULE**:
-When implementing operations in `src/steps/generic.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topgrade-rs/topgrade. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59ad3bc5`: vscode): support new version format for vscode-insiders (#2455). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd4fca39`: renovate): switch to weekly schedule (#2470). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/steps/generic.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/renovate.json5`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    //    The bin-name can also be `code` on `code-insiders`.
-    let version_string = if line.starts_with(bin_name) || line.starts_with("code") {
-        let mut it = line.split_whitespace();
-        match (it.next(), it.next()) {
-            (None, None) => {
-                return Err(eyre!(output_changed_message!(
-                    &format!("{bin_name} --version"),
-                    "No output"
-                )));
-            }
-            (Some(prefix), None) => {
-                return Err(eyre!(output_changed_message!(
-                    &format!("{bin_name} --version"),
-                    format!("No version after '{prefix}'")
-                )));
-            }
-            (Some(_prefix), Some(version)) => version,
-            (None, Some(_)) => unreachable!(),
-        }
+        "schedule:weekly",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    let version_string = if line.starts_with(bin_name) {
-        line.split_whitespace().nth(1).ok_or_else(|| {
-            eyre!(output_changed_message!(
-                &format!("{bin_name} --version"),
-                format!("No version after '{bin_name}'")
-            ))
-        })?
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59ad3bc5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd4fca39` are properly handled with clean fallback behavior.

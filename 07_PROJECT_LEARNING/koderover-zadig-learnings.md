@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source**: github ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
-> **Source Version**: `c11f9323`  
+> **Source Version**: `0462edd7`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:17:02.064Z  
+> **Timestamp**: 2026-10-28T12:02:03.497Z  
 > **Learning ID**: `learn-github-koderover-zadig`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:17:01.856Z  
+> **Harvest Timestamp**: 2026-10-28T12:02:03.490Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zadig: An AI-powered, cloud-native, distributed DevOps platform designed for developers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3258 stars
+- **Stars / Engagement**: 3263 stars
 
 ---
 
@@ -1158,512 +1158,461 @@ func FileExists(filePath string) (bool, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ebae75b4` (2026-10-20)
-**Commit Message**: fix(codehost): handle bot identity changes in review summaries
+### Incident Patch 1: `0462edd7` (2026-10-28)
+**Commit Message**: Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-short-name
 
-Archive only summaries by the current author and bound GitHub App validation to 30 seconds.
+fix: improve rollback image checks and error logging
 
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/common/service/scmnotify/ai_review_summary.go` (modified, +5/-5)
+**File**: `pkg/microservice/aslan/core/common/service/registry/service.go` (modified, +23/-2)
 ```diff
-@@ -18,7 +18,7 @@ func isAIReviewSummary(body string) bool {
- 
- const aiReviewArchiveCheckpoint = "<!-- zadig-ai-review-archive-checkpoint -->"
- 
--func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID int64, currentBody string) error {
-+func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID, authorID int64, currentBody string) error {
- 	if !isAIReviewSummary(currentBody) {
- 		return fmt.Errorf("current GitHub comment %d is not an AI review summary", currentID)
- 	}
-@@ -46,7 +46,7 @@ func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client,
- 		}
- 		for i := len(comments) - 1; i >= 0; i-- {
- 			comment := comments[i]
--			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || !isAIReviewSummary(comment.GetBody()) {
-+			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || comment.GetUser().GetID() != authorID || !isAIReviewSummary(comment.GetBody()) {
- 				continue
- 			}
- 			if comment.GetNodeID() == "" {
-@@ -55,7 +55,7 @@ func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client,
- 			if err := reviewfeedback.MinimizeGitHubComment(ctx, cli, comment.GetNodeID()); err != nil {
- 				return fmt.Errorf("minimize GitHub summary comment %d: %w", comment.GetID(), err)
- 			}
--			// A checkpoint confirms every older summary was successfully archived.
-+			// A checkpoint confirms every older summary by this author was successfully archived.
- 			if strings.Contains(comment.GetBody(), aiReviewArchiveCheckpoint) {
- 				complete = true
- 				break
-@@ -75,15 +75,15 @@ func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client,
- 	return nil
- }
- 
--func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64) error {
-+func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64, authorID int) error {
- 	opts := &gitlab.ListMergeRequestNotesOptions{OrderBy: gitlab.String("created_at"), Sort: gitlab.String("asc"), ListOptions: gitlab.ListOptions{PerPage: 100}}
- 	for {
- 		notes, resp, err := cli.Notes.ListMergeRequestNotes(project, pr, opts, gitlab.WithContext(ctx))
- 		if err != nil {
- 			return err
- 		}
- 		for _, note := range notes {
--			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
-+			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.Author.ID != authorID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
- 				continue
- 			}
- 			body := "<details>\n<summary>点击展开 Zadig AI Review 详情</summary>\n\n" + note.Body + "\n\n</details>"
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/scmnotify/client.go` (modified, +2/-2)
-```diff
-@@ -141,7 +141,7 @@ func (c *Client) createAIReviewComment(ctx context.Context, cli *aiReviewComment
- 		if isAIReviewSummary(comment) {
- 			ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
- 			defer cancel()
--			if err := archiveGitLabAIReviewSummaries(ctx, cli.gitlab, projectID, prID, int64(item.ID)); err != nil && c.logger != nil {
-+			if err := archiveGitLabAIReviewSummaries(ctx, cli.gitlab, projectID, prID, int64(item.ID), item.Author.ID); err != nil && c.logger != nil {
- 				c.logger.Warnf("failed to collapse previous GitLab AI review summaries for %s#%d: %v", projectID, prID, err)
- 			}
- 		}
-@@ -154,7 +154,7 @@ func (c *Client) createAIReviewComment(ctx context.Context, cli *aiReviewComment
- 	if isAIReviewSummary(comment) {
- 		ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
- 		defer cancel()
--		if err := archiveGitHubAIReviewSummaries(ctx, cli.github, repoOwner, repoName, prID, item.GetID(), comment); err != nil && c.logger != nil {
-+		if err := archiveGitHubAIReviewSummaries(ctx, cli.github, repoOwner, repoName, prID, item.GetID(), item.GetUser().GetID(), comment); err != nil && c.logger != nil {
- 			c.logger.Warnf("failed to minimize previous GitHub AI review summaries for %s/%s#%d: %v", repoOwner, repoName, prID, err)
- 		}
- 	}
-```
-
-**File**: `pkg/tool/git/github/client.go` (modified, +1/-1)
-```diff
-@@ -157,7 +157,7 @@ func GetApp(cfg *Config) (*github.App, error) {
- 		return nil, fmt.Errorf("%w: %v", ErrInvalidAppPrivateKey, err)
- 	}
- 
--	gc := NewClient(&Config{HTTPClient: &http.Client{Transport: trans}})
-+	gc := NewClient(&Config{HTTPClient: &http.Client{Transport: trans, Timeout: 30 * time.Second}})
- 	app, _, err := gc.Apps.Get(context.TODO(), "")
- 	return app, err
- }
-```
-
----
-
-### Incident Patch 2: `09ea74d9` (2026-10-20)
-**Commit Message**: chore(codehost): exclude local regression tests
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/systemconfig/core/codehost/repository/mongodb/codehost_bot_test.go` (removed, +0/-82)
-```diff
-@@ -1,82 +0,0 @@
--/*
--Copyright 2026 The KodeRover Authors.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package mongodb
--
--import (
--	"testing"
--
--	"go.mongodb.org/mongo-driver/bson"
--	"go.mongodb.org/mongo-driver/mongo/integration/mtest"
--
--	"github.com/koderover/zadig/v2/pkg/microservice/systemconfig/core/codehost/repository/models"
--	"github.com/koderover/zadig/v2/pkg/setting"
--)
--
--func TestCodeHostUpdatePersistsBotAtomically(t *testing.T) {
--	mt := mtest.New(t, mtest.NewOptions().ClientType(mtest.Mock))
--	defer mt.Close()
--	for _, tc := range []struct {
--		name             string
--		updateBot, clear bool
--	}{
--		{name: "omitted bot"},
--		{name: "configured bot", updateBot: true},
--		{name: "clear bot", updateBot: true, clear: true},
--	} {
--		mt.Run(tc.name, func(mt *mtest.T) {
--			host := &models.CodeHost{ID: 7, Type: setting.SourceFromGitlab, Alias: "new-alias", AccessToken: "oauth-token", RefreshToken: "oauth-refresh", UpdatedAt: 123,
--				Bot: &models.CodeHostBot{GitLab: &models.CodeHostGitLabBot{Token: "bot-pat"}},
--			}
--			if tc.clear {
--				host.Bot = nil
--			}
--			mt.AddMockResponses(mtest.CreateSuccessResponse(bson.E{Key: "n", Value: 1}, bson.E{Key: "nModified", Value: 1}))
--			coll := &CodehostColl{Collection: mt.Coll}
--			if _, err := coll.UpdateCodeHost(host, tc.updateBot); err != nil {
--				mt.Fatal(err)
--			}
--			events := mt.GetAllStartedEvents()
--			if len(events) != 1 || events[0].CommandName != "update" {
--				mt.Fatal("codehost and bot did not use one update")
--			}
--			update := events[0].Command.Lookup("updates").Array().Index(0).Value().Document().Lookup("u").Document()
--			set := update.Lookup("$set").Document()
--			if set.Lookup("alias").StringValue() != "new-alias" || set.Lookup("access_token").StringValue() != "oauth-token" || set.Lookup("refresh_token").StringValue() != "oauth-refresh" || set.Lookup("updated_at").Int64() != 123 {
--				mt.Fatal("codehost or OAuth fields were changed incorrectly")
--			}
--			_, setBotErr := set.LookupErr("bot")
--			unset, unsetErr := update.LookupErr("$unset")
--			if tc.updateBot && !tc.clear {
--				if setBotErr != nil || set.Lookup("bot").Document().Lookup("gitlab").Document().Lookup("token").StringValue() != "bot-pat" {
--					mt.Fatal("bot not persisted with codehost")
--				}
--			} else if setBotErr == nil {
--				mt.Fatal("bot was overwritten unexpectedly")
--			}
--			if tc.clear {
--				if unsetErr != nil {
--					mt.Fatal("bot not removed")
--				}
--				if _, err := unset.Document().LookupErr("bot"); err != nil {
--					mt.Fatal("bot not removed")
--				}
--			} else if unsetErr == nil {
--				mt.Fatal("unrelated update removed bot")
--			}
--		})
--	}
--}
-```
-
-**File**: `pkg/microservice/systemconfig/core/codehost/service/codehost_bot_test.go` (removed, +0/-224)
-```diff
-@@ -1,224 +0,0 @@
--/*
--Copyright 2026 The KodeRover Authors.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package service
--
--import (
--	"encoding/json"
--	"fmt"
--	"net/http"
--	"net/http/httptest"
--	"strings"
--	"testing"
--
--	"github.com/gin-gonic/gin"
--	"github.com/koderover/zadig/v2/pkg/microservice/systemconfig/core/codehost/repository/models"
--	"github.com/koderover/zadig/v2/pkg/setting"
--	internalhandler "github.com/koderover/zadig/v2/pkg/shared/handler"
--)
--
--func TestCodeHostBotPreserveClearAndReject(t *testing.T) {
--	for _, tc := range []struct {
--		name, body, wantError string
--		cleared               bool
--	}{
--		{name: "omitted", body: `{}`},
--		{name: "explicit null", body: `{"bot":null}`, cleared: true},
--		{name: "empty object", body: `{"bot":{}}`, wantError: "gitlab"},
--		{name: "wrong provider", body: `{"bot":{"github":{"app_id":2}}}`, wantError: "gitlab"},
--		{name: "both providers", body: `{"bot":{"gitlab":{},"github":{}}}`, wantError: "gitlab"},
--		{name: "invalid shape", body: `{"bot":"secret"}`, wantError: "bot"},
--	} {
--		t.Run(tc.name, func(t *testing.T) {
--			old := &models.CodeHostBot{GitLab: &models.CodeHostGitLabBot{Token: "old-token"}}
--			host := &models.CodeHost{IntegrationLevel: setting.IntegrationLevelSystem, Type: setting.SourceFromGitlab, Bot: old}
--			var args CodeHostArgs
--			if err := json.Unmarshal([]byte(tc.body), &args); err != nil {
--				t.Fatal(err)
--			}
--			err := applyCodeHostBot(host, args.Bot, "admin")
--			if tc.wantError != "" {
--				if err == nil || !strings.Contains(err.Error(), tc.wantError) {
--					t.Fatalf("got %v, want %q", err, tc.wantError)
--				}
--			} else if err != nil {
--				t.Fatal(err)
--			}
--			if tc.cleared {
--				if host.Bot != nil {
--					t.Fatal("bot was not cleared")
--				}
--			} else if host.Bot != old {
--				t.Fatal("existing configuration changed")
--			}
--		})
--	}
--}
--
--func TestCodeHostGitLabBotValidatesEffectiveSettings(t *testing.T) {
--	server := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		if r.URL.Path == "/api/v4/" {
--			return
--		}
--		if r.URL.Path != "/api/v4/user" {
--			t.Errorf("unexpected path: %s", r.URL.Path)
--		}
--		if r.Header.Get("PRIVATE-TOKEN") != "service-account-pat" {
--			w.WriteHeader(http.StatusUnauthorized)
--			return
--		}
--		w.Header().Set("Content-Type", "application/json")
--		fmt.Fprint(w, `{"username":"ai-review-service-account"}`)
--	}))
--	defer server.Close()
--	for _, tc := range []struct {
--		name, raw, wantError string
--		existing             bool
--	}{
--		{name: "first configuration", raw: `{"gitlab":{"token":"service-account-pat"}}`},
--		{name: "retained token", raw: `{"gitlab":{}}`, existing: true},
--		{name: "blank retains token", raw: `{"gitlab":{"token":""}}`, existing: true},
--		{name: "missing first token", raw: `{"gitlab":{}}`, wantError: "首次配置"},
--		{name: "invalid token", raw: `{"gitlab":{"token":"bad-token"}}`, existing: true, wantError: "校验失败"},
--	} {
--		t.Run(tc.name, func(t *testing.T) {
--			host := &models.CodeHost{IntegrationLevel: setting.IntegrationLevelSystem, Type: setting.SourceFromGitlab, Address: server.URL, DisableSSL: true, UpdatedAt: 123}
--			if tc.existing {
--				host.Bot = &models.CodeHostBot{GitLab: &models.CodeHostGitLabBot{Token: "service-account-pat"}}
--			}
--			old := host.Bot
--			err := applyCodeHostBot(host, json.RawMessage(tc.raw), "admin")
--			if tc.wantError != "" {
--				if err == nil || !strings.Contains(err.Error(), tc.wantError) {
--					t.Fatalf("got %v, want %q", err, tc.wantError)
--				}
--				if host.Bot != old {
--					t.Fatal("failed validation modified stored configuration")
--				}
--				return
--			}
--			if err != nil {
--				t.Fatal(err)
--			}
--			if host.Bot.GitLab.Token != "service-account-pat" || host.Bot.GitLab.BotUsername != "ai-review-service-account" {
--				t.Fatal("wrong bot identity")
--			}
--			if host.Bot.UpdatedBy != "admin" || host.Bot.UpdatedAt == 0 {
--				t.Fatal("missing bot audit fields")
--			}
--			if host.UpdatedAt != 123 {
--				t.Fatal("bot update changed OAuth timestamp")
--			}
--		})
--	}
--}
--
--func TestCodeHostBotResponseHidesCredentials(t *testing.T) {
--	for _, source := range []string{setting.SourceFromGitlab, setting.SourceFromGithub, setting.SourceFromGitee} {
--		for _, level := range []setting.IntegrationLevel{setting.IntegrationLevelSystem, setting.IntegrationLevelProject} {
--			host := &models.CodeHost{ID: 7, Type: source, IntegrationLevel: level, Alias: "existing-alias", Bot: &models.CodeHostBot{
--				GitLab
-```
-
-**File**: `pkg/middleware/gin/request_log_codehost_test.go` (removed, +0/-66)
-```diff
-@@ -1,66 +0,0 @@
--/*
--Copyright 2026 The KodeRover Authors.
--
--Licensed under the Apache License, Version 2.0 (the "License");
--you may not use this file except in compliance with the License.
--You may obtain a copy of the License at
--
--    http://www.apache.org/licenses/LICENSE-2.0
--
--Unless required by applicable law or agreed to in writing, software
--distributed under the License is distributed on an "AS IS" BASIS,
--WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--See the License for the specific language governing permissions and
--limitations under the License.
--*/
--
--package gin
--
--import (
--	"io"
--	"net/http/httptest"
--	"strings"
--	"testing"
--
--	gingonic "github.com/gin-gonic/gin"
--	"go.uber.org/zap"
--	"go.uber.org/zap/zaptest/observer"
--)
--
--func TestCodeHostCredentialsAreNotLogged(t *testing.T) {
--	for _, tc := range []struct {
--		method, path string
--		hidden       bool
--	}{
--		{"POST", "/api/v1/codehosts", true},
--		{"PATCH", "/api/v1/codehosts/7", true},
--		{"POST", "/api/directory/codehosts", true},
--		{"PATCH", "/api/directory/codehosts/7", true},
--		{"POST", "/api/v1/other", false},
--	} {
--		t.Run(tc.method+tc.path, func(t *testing.T) {
--			core, logs := observer.New(zap.InfoLevel)
--			r := gingonic.New()
--			r.Use(RequestLog(zap.New(core)))
--			body := `{"bot":{"gitlab":{"token":"secret-token"}}}`
--			r.Handle(tc.method, tc.path, func(c *gingonic.Context) {
--				got, err := io.ReadAll(c.Request.Body)
--				if err != nil || string(got) != body {
--					t.Fatal("middleware changed the request body")
--				}
--				c.Status(200)
--			})
--			r.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(tc.method, tc.path, strings.NewReader(body)))
--			if logs.Len() != 1 {
--				t.Fatalf("got %d log entries", logs.Len())
--			}
--			got := logs.All()[0].ContextMap()["body"]
--			if tc.hidden && got != "" {
--				t.Fatal("codehost credentials were captured in request logs")
--			}
--			if !tc.hidden && got != body {
--				t.Fatal("unrelated request logging changed")
--			}
--		})
--	}
--}
-```
-
----
-
-### Incident Patch 3: `c11f9323` (2026-10-23)
-**Commit Message**: fix: use target Kubernetes version when rendering Helm charts
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/job_helm_deploy.go` (modified, +1/-1)
-```diff
-@@ -114,7 +114,7 @@ func (c *HelmDeployJobCtl) Run(ctx context.Context) {
- 	}
- 
- 	helmDeploySvc := helmservice.NewHelmDeployService()
--	helmClient, err := helmtool.NewClient()
-+	helmClient, err := helmtool.NewClientFromNamespace(productInfo.ClusterID, productInfo.Namespace)
+@@ -273,13 +273,19 @@ func (c *authClient) listTags(repoName string) (tags []string, err error) {
+ func (c *authClient) tagExists(repoName, tag string) (bool, error) {
+ 	repo, err := c.getRepository(repoName)
  	if err != nil {
- 		msg := fmt.Sprintf("failed to new helm client, err %s", err)
- 		logError(c.job, msg, c.logger)
++		c.log.Errorf("failed to get repository for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, err)
+ 		return false, err
+ 	}
+ 
+ 	_, err = repo.Tags(c.ctx).Get(c.ctx, tag)
+ 	if err == nil {
+ 		return true, nil
+ 	}
++	details, marshalErr := json.Marshal(err)
++	if marshalErr != nil {
++		c.log.Errorf("failed to encode registry error for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, marshalErr)
++	}
++	c.log.Errorf("failed to get registry image %s/%s:%s: %v, details: %s", c.endpoint.Addr, repoName, tag, err, details)
+ 	if isRegistryImageNotFound(err) {
+ 		return false, nil
+ 	}
+@@ -575,27 +581,39 @@ func (s *v2RegistryService) GetImageInfo(option GetRepoImageDetailOption, log *z
+ func (s *v2RegistryService) CheckImageExist(option CheckImageExistOption, log *zap.SugaredLogger) (bool, error) {
+ 	cli, err := s.createClient(option.Endpoint, log)
+ 	if err != nil {
++		log.Errorf("failed to create registry client for image %s/%s/%s (tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
+ 		return false, err
+ 	}
+ 
+ 	repoName := strings.Trim(strings.Join([]string{option.Namespace, option.Image}, "/"), "/")
+ 	if option.Digest == "" {
+-		return cli.tagExists(repoName, option.Tag)
++		exists, err := cli.tagExists(repoName, option.Tag)
++		if err != nil {
++			log.Errorf("failed to check registry image %s/%s:%s: %v", option.Addr, repoName, option.Tag, err)
++		}
++		return exists, err
+ 	}
+ 
+ 	dgst, err := digest.Parse(option.Digest)
+ 	if err != nil {
++		log.Errorf("failed to parse image digest %s (registry: %s, repository: %s): %v", option.Digest, option.Addr, repoName, err)
+ 		return false, err
+ 	}
+ 	repo, err := cli.getRepository(repoName)
+ 	if err != nil {
++		log.Errorf("failed to get repository for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+ 		return false, err
+ 	}
+ 	manifestService, err := repo.Manifests(cli.ctx)
+ 	if err != nil {
++		log.Errorf("failed to get manifest service for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+ 		return false, err
+ 	}
+-	return manifestService.Exists(cli.ctx, dgst)
++	exists, err := manifestService.Exists(cli.ctx, dgst)
++	if err != nil {
++		log.Errorf("failed to check registry manifest %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
++	}
++	return exists, err
+ }
+ 
+ type ReverseStringSlice []string
+@@ -783,6 +801,7 @@ func (s *swrService) CheckImageExist(option CheckImageExistOption, log *zap.Suga
+ 	}
+ 	repoTags, err := swrCli.ListRepositoryTags(request)
+ 	if err != nil {
++		log.Errorf("failed to list SWR image tags (registry: %s, namespace: %s, repository: %s, tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
+ 		return false, err
+ 	}
+ 	if repoTags.Body == nil {
+@@ -933,6 +952,7 @@ func (s *ecrService) GetImageInfo(option GetRepoImageDetailOption, log *zap.Suga
+ func (s *ecrService) CheckImageExist(option CheckImageExistOption, log *zap.SugaredLogger) (bool, error) {
+ 	svc, err := s.getECRService(option.Endpoint, log)
+ 	if err != nil {
++		log.Errorf("failed to create ECR client for image %s/%s (tag: %s, digest: %s): %v", option.Addr, option.Image, option.Tag, option.Digest, err)
+ 		return false, err
+ 	}
+ 	imageID := &ecr.ImageIdentifier{}
+@@ -946,6 +966,7 @@ func (s *ecrService) CheckImageExist(option CheckImageExistOption, log *zap.Suga
+ 		RepositoryName: aws.String(option.Image),
+ 	})
+ 	if err != nil {
++		log.Errorf("failed to describe ECR image (registry: %s, repository: %s, tag: %s, digest: %s): %v", option.Addr, option.Image, option.Tag, option.Digest, err)
+ 		if awsErr, ok := err.(awserr.Error); ok && awsErr.Code() == ecr.ErrCodeImageNotFoundException {
+ 			return false, nil
+ 		}
 ```
 
-**File**: `pkg/tool/helmclient/clone_version_test.go` (added, +55/-0)
+**File**: `pkg/microservice/aslan/core/common/service/version.go` (modified, +19/-14)
 ```diff
-@@ -0,0 +1,55 @@
-+package helmclient
+@@ -308,6 +308,7 @@ type CheckRollbackEnvServiceVersionResponse struct {
+ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredLogger) ([]string, error) {
+ 	registryInfos, err := ListRegistryNamespaces("", false, log)
+ 	if err != nil {
++		log.Errorf("failed to list registries for rollback image check: %v", err)
+ 		return nil, fmt.Errorf("failed to list registries for rollback image check: %w", err)
+ 	}
+ 
+@@ -320,7 +321,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 	for _, registryInfo := range registryInfos {
+ 		registryAddress, err := registryInfo.GetRegistryAddress()
+ 		if err != nil {
+-			log.Warnf("skip invalid registry %s during rollback image check: %v", registryInfo.ID.Hex(), err)
++			log.Errorf("skip invalid registry %s during rollback image check: %v", registryInfo.ID.Hex(), err)
+ 			continue
+ 		}
+ 
+@@ -341,16 +342,17 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 
+ 		named, err := reference.ParseNormalizedNamed(container.Image)
+ 		if err != nil {
++			log.Errorf("invalid rollback image %s: %v", container.Image, err)
+ 			missingImages = append(missingImages, container.Image)
+ 			continue
+ 		}
+-		imageRegistry, err := ExtractImageRegistry(container.Image)
+-		if err != nil {
+-			missingImages = append(missingImages, container.Image)
+-			continue
++		imageRegistry := reference.Domain(named)
++		imagePath := reference.Path(named)
++		imageNamespace := ""
++		if i := strings.LastIndex(imagePath, "/"); i >= 0 {
++			imageNamespace = imagePath[:i]
+ 		}
+-		imageRegistry = strings.Split(strings.Trim(imageRegistry, "/"), "/")[0]
+-		imageNamespace := strings.Trim(ExtractRegistryNamespace(container.Image), "/")
++		log.Infof("checking rollback image %s (normalized: %s)", container.Image, named.String())
+ 		var matchedRegistry *rollbackImageRegistry
+ 		for _, registry := range registries {
+ 			if !strings.EqualFold(imageRegistry, registry.host) {
+@@ -365,7 +367,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 			}
+ 		}
+ 		if matchedRegistry == nil {
+-			log.Warnf("no matching registry configured for rollback image %s, skip image existence check", container.Image)
++			log.Errorf("no matching registry configured for rollback image %s, skip image existence check", container.Image)
+ 			continue
+ 		}
+ 
+@@ -374,21 +376,21 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 		if !ok {
+ 			registryInfo, err = FindRegistryById(registryID, true, log)
+ 			if err != nil {
+-				log.Warnf("failed to get credentials for rollback image %s from registry %s: %v", container.Image, matchedRegistry.host, err)
++				log.Errorf("failed to get credentials for rollback image %s from registry %s: %v", container.Image, matchedRegistry.host, err)
+ 				continue
+ 			}
+ 			credentialRegistries[registryID] = registryInfo
+ 		}
+ 
+-		repositoryName := reference.Path(named)
++		repositoryName := imagePath
+ 		namespace := strings.Trim(registryInfo.Namespace, "/")
+ 		if namespace != "" {
+ 			repositoryName = strings.TrimPrefix(repositoryName, namespace+"/")
+ 		}
+ 
+-		tag := ExtractImageTag(container.Image)
+-		if tag == "" {
+-			tag = "latest"
++		tag := "latest"
++		if tagged, ok := named.(reference.Tagged); ok {
++			tag = tagged.Tag()
+ 		}
+ 
+ 		tlsEnabled, tlsCert := true, ""
+@@ -409,10 +411,11 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ 			Tag:   tag,
+ 		}, log)
+ 		if err != nil {
+-			log.Warnf("failed to check whether rollback image %s exists: %v", container.Image, err)
++			log.Errorf("failed to check whether rollback image %s exists: %v", container.Image, err)
+ 			continue
+ 		}
+ 		if !exists {
++			log.Errorf("rollback image %s does not exist", container.Image)
+ 			missingImages = append(missingImages, container.Image)
+ 		}
+ 	}
+@@ -423,6 +426,7 @@ func checkRollbackImages(containers []*commonmodels.Container, log *zap.SugaredL
+ func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, revision int64, isHelmChart, isProduction bool, log *zap.SugaredLogger) (*CheckRollbackEnvServiceVersionResponse, error) {
+ 	envSvcVersion, err := mongodb.NewEnvServiceVersionColl().Find(projectName, envName, serviceName, isHelmChart, isProduction, revision)
+ 	if err != nil {
++		log.Errorf("failed to find service version for rollback image check: %v", err)
+ 		if mongodb.IsErrNoDocuments(err) {
+ 			return nil, fmt.Errorf("历史版本 %d 不存在", revision)
+ 		}
+@@ -431,6 +435,7 @@ func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, re
+ 
+ 	unavailableImages, err := checkRollbackImages(envSvcVersion.Service.Containers, log)
+ 	if err != nil {
++		log.Errorf("rollback image check failed: %v", err)
+ 		return nil, err
+ 	}
+ 	return &CheckRollbackEnvServiceVersionResponse{
+```
+
+---
+
+### Incident Patch 2: `e145a8e5` (2026-10-28)
+**Commit Message**: Merge pull request #5034 from huanghongbo-hhb/fix/host-build-registry-validation
+
+fix(workflow): allow host builds without registry
+
+**File**: `pkg/microservice/aslan/core/workflow/service/workflow/controller/job/job_build.go` (modified, +32/-10)
+```diff
+@@ -30,6 +30,7 @@ import (
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/config"
+ 	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
+ 	commonrepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb"
++	templaterepo "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/mongodb/template"
+ 	commonservice "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service"
+ 	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/repository"
+ 	templ "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/template"
+@@ -324,9 +325,17 @@ func (j BuildJobController) ClearSelection() {
+ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error) {
+ 	logger := log.SugaredLogger()
+ 	resp := make([]*commonmodels.JobTask, 0)
+-	registry, err := commonservice.FindRegistryById(j.jobSpec.DockerRegistryID, true, logger)
++	project, err := templaterepo.NewProductColl().Find(j.workflow.Project)
+ 	if err != nil {
+-		return nil, fmt.Errorf("find docker registry: %s error: %v", j.jobSpec.DockerRegistryID, err)
++		return nil, fmt.Errorf("failed to find project %s, err: %v", j.workflow.Project, err)
++	}
++	needRegistry := !project.IsCVMProduct() || j.jobSpec.DockerRegistryID != ""
++	registry := &commonmodels.RegistryNamespace{}
++	if needRegistry {
++		registry, err = commonservice.FindRegistryById(j.jobSpec.DockerRegistryID, true, logger)
++		if err != nil {
++			return nil, fmt.Errorf("find docker registry: %s error: %v", j.jobSpec.DockerRegistryID, err)
++		}
+ 	}
+ 
+ 	registries, err := commonservice.ListRegistryNamespaces("", true, logger)
+@@ -352,20 +361,26 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
+ 	for jobSubTaskID, build := range j.jobSpec.ServiceAndBuilds {
+ 		imageTag := commonservice.ReleaseCandidate(build.Repos, taskID, j.workflow.Project, build.ServiceModule, "", build.ImageName, "image")
+ 
+-		image := fmt.Sprintf("%s/%s", registry.RegAddr, imageTag)
+-		if len(registry.Namespace) > 0 {
+-			image = fmt.Sprintf("%s/%s/%s", registry.RegAddr, registry.Namespace, imageTag)
+-		}
++		image := ""
++		if needRegistry {
++			image = fmt.Sprintf("%s/%s", registry.RegAddr, imageTag)
++			if len(registry.Namespace) > 0 {
++				image = fmt.Sprintf("%s/%s/%s", registry.RegAddr, registry.Namespace, imageTag)
++			}
+ 
+-		image = strings.TrimPrefix(image, "http://")
+-		image = strings.TrimPrefix(image, "https://")
++			image = strings.TrimPrefix(image, "http://")
++			image = strings.TrimPrefix(image, "https://")
++		}
+ 
+ 		pkgFile := fmt.Sprintf("%s.tar.gz", commonservice.ReleaseCandidate(build.Repos, taskID, j.workflow.Project, build.ServiceModule, "", build.ImageName, "tar"))
+ 
+ 		buildInfo, err := buildSvc.GetBuild(build.BuildName, build.ServiceName, build.ServiceModule)
+ 		if err != nil {
+ 			return nil, fmt.Errorf("find build: %s error: %v", build.BuildName, err)
+ 		}
++		if !needRegistry && buildInfo.PostBuild != nil && buildInfo.PostBuild.DockerBuild != nil {
++			return nil, fmt.Errorf("build %s/%s has docker build configured but no docker registry selected", build.ServiceName, build.ServiceModule)
++		}
+ 		basicImage, err := commonrepo.NewBasicImageColl().Find(buildInfo.PreBuild.ImageID)
+ 		if err != nil {
+ 			return nil, fmt.Errorf("find base image: %s error: %v", buildInfo.PreBuild.ImageID, err)
+@@ -567,7 +582,10 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
+ 		if jobTask.Infrastructure == setting.JobVMInfrastructure {
+ 			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
+ 		} else {
+-			scripts = append([]string{dockerLoginCmd}, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
++			if needRegistry {
++				scripts = append(scripts, dockerLoginCmd)
++			}
++			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.Scripts), "\n")...)
+ 			scripts = append(scripts, outputScript(outputs, jobTask.Infrastructure)...)
+ 		}
+ 		scriptStep := &commonmodels.StepTask{
+@@ -719,7 +737,11 @@ func (j BuildJobController) ToTask(taskID int64) ([]*commonmodels.JobTask, error
+ 
+ 		// init post build shell step
+ 		if buildInfo.PostBuild != nil && buildInfo.PostBuild.Scripts != "" {
+-			scripts := append([]string{dockerLoginCmd}, strings.Split(replaceWrapLine(buildInfo.PostBuild.Scripts), "\n")...)
++			scripts := make([]string, 0)
++			if needRegistry {
++				scripts = append(scripts, dockerLoginCmd)
++			}
++			scripts = append(scripts, strings.Split(replaceWrapLine(buildInfo.PostBuild.Scripts), "\n")...)
+ 			shellStep := &commonmodels.StepTask{
+ 				Name:     build.ServiceName + "-post-shell",
+ 				JobName:  jobTask.Name,
+```
+
+---
+
+### Incident Patch 3: `e15828ec` (2026-10-28)
+**Commit Message**: Merge pull request #5031 from PetrusZ/fix/build_vars
+
+fix: isolate cached build and template configurations
+
+**File**: `pkg/microservice/aslan/core/common/service/build.go` (modified, +15/-2)
+```diff
+@@ -31,6 +31,7 @@ import (
+ 	e "github.com/koderover/zadig/v2/pkg/tool/errors"
+ 	"github.com/koderover/zadig/v2/pkg/tool/log"
+ 	"github.com/koderover/zadig/v2/pkg/types"
++	"github.com/koderover/zadig/v2/pkg/util"
+ )
+ 
+ func CreateBuild(username string, build *commonmodels.Build, log *zap.SugaredLogger) error {
+@@ -271,10 +272,15 @@ func (c *BuildService) GetBuild(buildName, serviceName, serviceModule string) (*
+ 		buildInfo = buildMapValue.(*commonmodels.Build)
+ 	}
+ 
+-	if err := FillBuildDetail(buildInfo, serviceName, serviceModule, &c.BuildTemplateMap); err != nil {
++	// Deep copy so service overrides and caller mutations cannot change the cached Build.
++	buildCopy := new(commonmodels.Build)
++	if err := util.DeepCopy(buildCopy, buildInfo); err != nil {
++		return nil, fmt.Errorf("copy build %s: %w", buildName, err)
++	}
++	if err := FillBuildDetail(buildCopy, serviceName, serviceModule, &c.BuildTemplateMap); err != nil {
+ 		return nil, err
+ 	}
+-	return buildInfo, nil
++	return buildCopy, nil
+ }
+ 
+ func FillBuildDetail(moduleBuild *commonmodels.Build, serviceName, serviceModule string, cacheMap *sync.Map) error {
+@@ -307,6 +313,13 @@ func FillBuildDetail(moduleBuild *commonmodels.Build, serviceName, serviceModule
+ 		}
+ 	}
+ 
++	// Build copying does not cover template pointers assigned below; copy the template to keep its cache immutable.
++	templateCopy := new(commonmodels.BuildTemplate)
++	if err := util.DeepCopy(templateCopy, buildTemplate); err != nil {
++		return fmt.Errorf("copy build template %s: %w", moduleBuild.TemplateID, err)
++	}
++	buildTemplate = templateCopy
++
+ 	moduleBuild.Timeout = buildTemplate.Timeout
+ 	moduleBuild.PreBuild = buildTemplate.PreBuild
+ 	moduleBuild.JenkinsBuild = buildTemplate.JenkinsBuild
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/build_test.go` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++/*
++Copyright 2026 The KodeRover Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package service
 +
 +import (
-+	"path/filepath"
-+	"strings"
++	"reflect"
 +	"testing"
 +
-+	hc "github.com/mittwald/go-helm-client"
-+	"helm.sh/helm/v3/pkg/chart"
-+	"helm.sh/helm/v3/pkg/chartutil"
-+	"k8s.io/client-go/rest"
++	commonmodels "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
++	"github.com/koderover/zadig/v2/pkg/util"
 +)
 +
-+func TestHelmClientCloneRendersWithClusterVersion(t *testing.T) {
-+	t.Setenv("HELM_DRIVER", "memory")
-+	client, err := NewClientFromRestConf(&rest.Config{Host: "https://127.0.0.1:6443"}, "test")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	client.KubeVersion, err = chartutil.ParseKubeVersion("v1.30.0")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	clone, err := client.Clone()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
++func TestGetBuildDoesNotMutateCaches(t *testing.T) {
++	for _, templateID := range []string{"", "template"} {
++		t.Run("template="+templateID, func(t *testing.T) {
++			cached := &commonmodels.Build{
++				TemplateID: templateID,
++				PreBuild: &commonmodels.PreBuild{Envs: commonmodels.KeyValList{
++					{Key: "ENV", Value: "default", ChoiceOption: []string{"default", "A"}},
++				}},
++				Targets: []*commonmodels.ServiceModuleTarget{
++					{
++						ServiceWithModule: commonmodels.ServiceWithModule{ServiceName: "A", ServiceModule: "a"},
++						Envs:              commonmodels.KeyValList{{Key: "ENV", Value: "A"}},
++					},
++					{ServiceWithModule: commonmodels.ServiceWithModule{ServiceName: "B", ServiceModule: "b"}},
++				},
++			}
++			template := &commonmodels.BuildTemplate{PreBuild: cached.PreBuild}
++			svc := NewBuildService()
++			svc.BuildMap.Store("build", cached)
++			svc.BuildTemplateMap.Store(templateID, template)
++			originalBuild := new(commonmodels.Build)
++			originalTemplate := new(commonmodels.BuildTemplate)
++			if err := util.DeepCopy(originalBuild, cached); err != nil {
++				t.Fatal(err)
++			}
++			if err := util.DeepCopy(originalTemplate, template); err != nil {
++				t.Fatal(err)
++			}
 +
-+	chartDir := t.TempDir()
-+	err = chartutil.SaveDir(&chart.Chart{
-+		Metadata: &chart.Metadata{
-+			APIVersion:  "v2",
-+			Name:        "version-check",
-+			Version:     "0.1.0",
-+			KubeVersion: ">=1.24.0-0",
-+		},
-+		Templates: []*chart.File{{
-+			Name: "templates/configmap.yaml",
-+			Data: []byte("apiVersion: v1\nkind: ConfigMap\nmetadata:\n  name: version-check\ndata:\n  kubeVersion: {{ .Capabilities.KubeVersion.Version | quote }}\n"),
-+		}},
-+	}, chartDir)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	manifest, err := clone.TemplateChart(&hc.ChartSpec{
-+		ReleaseName: "version-check",
-+		ChartName:   filepath.Join(chartDir, "version-check"),
-+	}, &hc.HelmTemplateOptions{KubeVersion: clone.KubeVersion})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	if !strings.Contains(string(manifest), `kubeVersion: "v1.30.0"`) {
-+		t.Fatalf("rendered manifest does not use the cluster version:\n%s", manifest)
++			a, err := svc.GetBuild("build", "A", "a")
++			if err != nil {
++				t.Fatal(err)
++			}
++			wantA := "default"
++			if templateID != "" {
++				wantA = "A"
++			}
++			if got := a.PreBuild.Envs[0].Value; got != wantA {
++				t.Fatalf("A ENV = %q, want %q", got, wantA)
++			}
++			b, err := svc.GetBuild("build", "B", "b")
++			if err != nil {
++				t.Fatal(err)
++			}
++			if got := b.PreBuild.Envs[0].Value; got != "default" {
++				t.Errorf("B inherited A's ENV: got %q, want default", got)
++			}
++			if got := a.PreBuild.Envs[0].Value; got != wantA {
++				t.Errorf("reading B changed A's ENV: got %q, want %q", got, wantA)
++			}
++			a.PreBuild.Envs[0].Value = "caller mutation"
++			a.PreBuild.Envs[0].ChoiceOption[0] = "caller mutation"
++			if got := b.PreBuild.Envs[0].Value; got != "default" {
++				t.Errorf("mutating A changed B's ENV: %q", got)
++			}
++			if !reflect.DeepEqual(cached, originalBuild) {
++				t.Error("cached build was mutated")
++			}
++			if !reflect.DeepEqual(template, originalTemplate) {
++				t.Error("cached template was mutated")
++			}
++		})
 +	}
 +}
 ```
 
-**File**: `pkg/tool/helmclient/helmclient.go` (modified, +5/-2)
-```diff
-@@ -101,8 +101,10 @@ type HelmClient struct {
- 	Transport      *http.Transport
- }
- 
--// NewClient returns a new Helm client with no construct parameters
--// used to update helm repo data and download index.yaml or helm charts
-+// NewClient returns a Helm client for repository operations and chart downloads.
-+// It is not bound to a target cluster and leaves KubeVersion unset, so template
-+// rendering uses Helm's default Kubernetes version. Use NewClientFromNamespace
-+// when rendering charts for a target cluster to honor its Kubernetes version.
- func NewClient() (*HelmClient, error) {
- 	hcClient, err := hc.New(&hc.Options{
- 		RepositoryConfig: generalSettings.RepositoryConfig,
-@@ -1079,6 +1081,7 @@ func (hClient *HelmClient) Clone() (*HelmClient, error) {
- 		return nil, err
- 	}
- 	ret.kubeClient = hClient.kubeClient
-+	ret.KubeVersion = hClient.KubeVersion
- 	return ret, nil
- }
- 
-```
-
 #### Recent Merged Pull Requests:
+- **PR #5047** (2026-10-26): cherry pick #5045 to release 5.0.0 (@PetrusZ)
+- **PR #5046** (2026-10-28): feat(codehost): support bot identities on project codehosts (@huanghongbo-hhb)
+- **PR #5045** (2026-10-26): perf: batch test report queries in workflow task history (@PetrusZ)
+- **PR #5044** (2026-10-26): cherry pick #5041 to release 5.0.0 (@PetrusZ)
+- **PR #5042** (2026-10-28): feat: enhance basic image deletion logic and error handling. (@leozhang2018)
 - **PR #5041** (2026-10-23): fix: use target Kubernetes version when rendering Helm charts (@PetrusZ)
-- **PR #5036** (2026-10-23): feat(codehost): support bot identities for AI review comments (@huanghongbo-hhb)
-- **PR #5033** (2026-10-20): feat: ai apollo create summary (@Cynthia-0203)
-- **PR #5032** (2026-10-19): feat(workflow): support variable-group freestyle tasks (@Cynthia-0203)
-- **PR #5030** (2026-10-16): fix: sync Helm chart values and preserve source metadata (@Cynthia-0203)
-- **PR #5029** (2026-10-19): fix(zgctl): launch local script without shell command interpolation (@PetrusZ)
 
 ---
 
@@ -1683,36 +1632,46 @@ Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. codehost): handle bot identity changes in review summaries
+## X. Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/service/scmnotify/ai_review_summary.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/common/service/registry/service.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ebae75b4`: codehost): handle bot identity changes in review summaries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0462edd7`: Merge pull request #5040 from Cynthia-0203/fix/image-rollback-check-logging-and-short-name. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/scmnotify/ai_review_summary.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/service/registry/service.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID, authorID int64, currentBody string) error {
-			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || comment.GetUser().GetID() != authorID || !isAIReviewSummary(comment.GetBody()) {
-			// A checkpoint confirms every older summary by this author was successfully archived.
-func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64, authorID int) error {
-			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.Author.ID != authorID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
+		c.log.Errorf("failed to get repository for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, err)
+	details, marshalErr := json.Marshal(err)
+	if marshalErr != nil {
+		c.log.Errorf("failed to encode registry error for image %s/%s:%s: %v", c.endpoint.Addr, repoName, tag, marshalErr)
+	}
+	c.log.Errorf("failed to get registry image %s/%s:%s: %v, details: %s", c.endpoint.Addr, repoName, tag, err, details)
+		log.Errorf("failed to create registry client for image %s/%s/%s (tag: %s, digest: %s): %v", option.Addr, option.Namespace, option.Image, option.Tag, option.Digest, err)
+		exists, err := cli.tagExists(repoName, option.Tag)
+		if err != nil {
+			log.Errorf("failed to check registry image %s/%s:%s: %v", option.Addr, repoName, option.Tag, err)
+		}
+		return exists, err
+		log.Errorf("failed to parse image digest %s (registry: %s, repository: %s): %v", option.Digest, option.Addr, repoName, err)
+		log.Errorf("failed to get repository for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+		log.Errorf("failed to get manifest service for image %s/%s@%s: %v", option.Addr, repoName, option.Digest, err)
+	exists, err := manifestService.Exists(cli.ctx, dgst)
+	if err != nil {
+		log.Er
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-func archiveGitHubAIReviewSummaries(ctx context.Context, cli *githubapi.Client, owner, name string, pr int, currentID int64, currentBody string) error {
-			if comment == nil || comment.GetID() <= 0 || comment.GetID() >= currentID || !isAIReviewSummary(comment.GetBody()) {
-			// A checkpoint confirms every older summary was successfully archived.
-func archiveGitLabAIReviewSummaries(ctx context.Context, cli *gitlab.Client, project string, pr int, currentID int64) error {
-			if note == nil || note.ID <= 0 || int64(note.ID) >= currentID || note.System || note.Position != nil || note.Type == "DiffNote" || !isAIReviewSummary(note.Body) {
+		return cli.tagExists(repoName, option.Tag)
+	return manifestService.Exists(cli.ctx, dgst)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ebae75b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0462edd7` are properly handled with clean fallback behavior.

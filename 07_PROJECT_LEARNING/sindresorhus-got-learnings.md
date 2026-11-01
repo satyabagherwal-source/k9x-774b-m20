@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sindresorhus-got-learnings.md`  
 > **Source**: github ([https://github.com/sindresorhus/got](https://github.com/sindresorhus/got))  
-> **Source Version**: `05b44769`  
+> **Source Version**: `6b5aafc1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T23:53:46.023Z  
+> **Timestamp**: 2026-10-30T14:40:23.542Z  
 > **Learning ID**: `learn-github-sindresorhus-got`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sindresorhus-got-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sindresorhus/got](https://github.com/sindresorhus/got))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T23:53:44.850Z  
+> **Harvest Timestamp**: 2026-10-30T14:40:22.023Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🌐 Human-friendly and powerful HTTP request library for Node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 14952 stars
+- **Stars / Engagement**: 14956 stars
 
 ---
 
@@ -236,6 +236,7 @@ export function publishRedirect(message: DiagnosticResponseRedirect): void {
 ```
 import is from '@sindresorhus/is';
 import stripUrlAuth from './utils/strip-url-auth.js';
+import type {StandardSchemaV1Issue} from './standard-schema.js';
 import type {Timings} from './utils/timer.js';
 import type Options from './options.js';
 import type {TimeoutError as TimedOutTimeoutError} from './timed-out.js';
@@ -495,6 +496,40 @@ export class AbortError extends RequestError {
 		if (request.options?.signal?.aborted) {
 			this.cause = request.options.signal.reason;
 		}
+	}
+}
+
+/**
+An error to be thrown when the response body does not match the [Standard Schema](https://standardschema.dev) validator passed to `.json(schema)`. Includes an `issues` property with the issues from the schema. Each issue has a `message` and an optional `path`.
+
+It intentionally does not extend `RequestError`, because the request succeeded. The user-provided schema did not accept the data, so it has no `code`, `options`, `request`, `response` or `timings` property, and it is not passed to `beforeError` hooks.
+
+@example
+```
+import got, {SchemaValidationError} from 'got';
+import {z} from 'zod';
+
+const userSchema = z.object({name: z.string()});
+
+try {
+	const user = await got('https://example.com/user').json(userSchema);
+	console.log(user.name);
+} catch (error) {
+	if (error instanceof SchemaValidationError) {
+		console.error(error.issues);
+	} else {
+		throw error;
+	}
+}
+```
+*/
+export class SchemaValidationError extends Error {
+	override name = 'SchemaValidationError';
+	readonly issues: readonly StandardSchemaV1Issue[];
+
+	constructor(issues: readonly StandardSchemaV1Issue[]) {
+		super('Response schema validation failed');
+		this.issues = issues;
 	}
 }
 
@@ -1441,6 +1476,7 @@ export const parseBody = (response: Response, responseType: ResponseType, parseJ
 		}
 
 		if (responseType === 'json') {
+			// TODO: In the next major version, return `undefined` instead of `''` for an empty body, to match Ky. This affects `.json()`, `.json(schema)`, and `responseType: 'json'`. Also decide whether a custom `parseJson` should be called with `''` (Ky calls it).
 			if (rawBody.length === 0) {
 				return '';
 			}
@@ -1462,6 +1498,67 @@ export const parseBody = (response: Response, responseType: ResponseType, parseJ
 		name: 'Error',
 	}, response);
 };
+
+```
+
+### Core Architecture Module: `source/core/standard-schema.ts`
+```
+/**
+The types of the [Standard Schema](https://standardschema.dev) specification (`v1`).
+
+Copied from the specification so Got does not need a dependency for types only.
+*/
+export type StandardSchemaV1Issue = {
+	readonly message: string;
+	readonly path?: ReadonlyArray<PropertyKey | {readonly key: PropertyKey}> | undefined;
+};
+
+export type StandardSchemaV1SuccessResult<OutputType> = {
+	readonly value: OutputType;
+	readonly issues?: undefined;
+};
+
+export type StandardSchemaV1FailureResult = {
+	readonly issues: readonly StandardSchemaV1Issue[];
+	readonly value?: undefined;
+};
+
+export type StandardSchemaV1Result<OutputType> = StandardSchemaV1SuccessResult<OutputType> | StandardSchemaV1FailureResult;
+
+export type StandardSchemaV1Types<InputType, OutputType> = {
+	readonly input: InputType;
+	readonly output: OutputType;
+};
+
+export type StandardSchemaV1Options = {
+	readonly libraryOptions?: Readonly<Record<string, unknown>> | undefined;
+};
+
+export type StandardSchemaV1<InputType = unknown, OutputType = InputType> = {
+	readonly '~standard': {
+		readonly version: 1;
+		readonly vendor: string;
+		readonly validate: (
+			value: unknown,
+			options?: StandardSchemaV1Options,
+		) => StandardSchemaV1Result<OutputType> | Promise<StandardSchemaV1Result<OutputType>>;
+		readonly types?: StandardSchemaV1Types<InputType, OutputType> | undefined;
+	};
+};
+
+/**
+Infer the output type of a Standard Schema.
+*/
+export type StandardSchemaV1InferOutput<Schema extends StandardSchemaV1> = Schema['~standard'] extends {
+	readonly types: StandardSchemaV1Types<unknown, infer OutputType>;
+}
+	? OutputType
+	: Extract<
+		Awaited<ReturnType<Schema['~standard']['validate']>>,
+		StandardSchemaV1SuccessResult<unknown>
+	> extends StandardSchemaV1SuccessResult<infer OutputType>
+		? OutputType
+		: unknown;
 
 ```
 
@@ -1761,364 +1858,6 @@ export default function decompressResponseBody(response: IncomingMessage): Incom
 
 ```
 
-### Core Architecture Module: `source/core/utils/dns-cache.ts`
-```
-import {
-	ADDRCONFIG,
-	ALL,
-	V4MAPPED,
-	getDefaultResultOrder,
-	lookup as dnsLookup,
-	promises as dnsPromises,
-	type LookupOptions,
-} from 'node:dns';
-import {isIP, type LookupFunction} from 'node:net';
-import os from 'node:os';
-import {promisify} from 'node:util';
-
-type DnsFamily = 4 | 6;
-
-type DnsLookupOptions = Omit<LookupOptions, 'verbatim'> & {
-	verbatim?: boolean;
-};
-
-type DnsLookupCallback = Parameters<LookupFunction>[2];
-type DnsLookupOrder = ReturnType<typeof getDefaultResultOrder>;
-
-type ResolverRecord = {
-	address: string;
-	ttl: number;
-};
-
-type Resolver = {
-	resolve4(hostname: string, options: {ttl: true}): Promise<ResolverRecord[]> | ResolverRecord[];
-	resolve6(hostname: string, options: {ttl: true}): Promise<ResolverRecord[]> | ResolverRecord[];
-};
-
-type DnsLookupResult = {
-	address: string;
-	family: DnsFamily;
-};
-
-type DnsCacheEntry = DnsLookupResult & {
-	expires?: number;
-};
-
-type CachedFamily = {
-	entries: DnsCacheEntry[];
-	expires: number;
-	clearVersion: number;
-};
-
-type MaybePromise<T> = T | Promise<T>;
-
-type DnsCacheStore = {
-	get(key: string): MaybePromise<CachedFamily | undefined>;
-	set(key: string, value: CachedFamily): MaybePromise<unknown>;
-	delete(key: string): boolean;
-};
-
-export type DnsCacheOptions = {
-	cache?: DnsCacheStore;
-	maxTtl?: number;
-	fallbackDuration?: number;
-	errorTtl?: number;
-	resolver?: Resolver;
-	lookup?: LookupFunction | false;
-};
-
-export type DnsCacheLookup = {
-	lookup: LookupFunction;
-	clear?(hostname?: string): void;
-};
-
-const ttl = {ttl: true} as const;
-const noResultErrorCodes = new Set(['ENODATA', 'ENOTFOUND', 'ENOENT']);
-const maximumCacheTtl = Math.floor(2_147_483_647 / 1000);
-
-const isPromiseLike = <T>(value: MaybePromise<T>): value is Promise<T> => typeof (value as Promise<T>)?.then === 'function';
-
-const now = () => Date.now();
-
-const hasUnexpired = (cache: Map<string, number>, key: string) => {
-	const expires = cache.get(key);
-
-	if (expires === undefined) {
-		return false;
-	}
-
-	if (expires <= now()) {
-		cache.delete(key);
-		return false;
-	}
-
-	return true;
-};
-
-const deleteExpiredMapEntries = (cache: Map<string, number>, time = now()) => {
-	for (const [key, expires] of cache) {
-		if (expires <= time) {
-			cache.delete(key);
-		}
-	}
-};
-
-// eslint-disable-next-line no-bitwise
-const hasFlag = (value: number | undefined, flag: number) => value !== undefined && (value & flag) === flag;
-
-const getConfiguredFamilies = (): Set<DnsFamily> => {
-	const families = new Set<DnsFamily>();
-
-	for (const networkInterface of Object.values(os.networkInterfaces())) {
-		for (const address of networkInterface ?? []) {
-			if (!address.internal) {
-				families.add(address.family === 'IPv6' ? 6 : 4);
-			}
-		}
-	}
-
-	return families;
-};
-
-const createNoResultError = (hostname: string): NodeJS.ErrnoException => {
-	const error = new Error(`DNS cache lookup ENOTFOUND ${hostname}`) as NodeJS.ErrnoException & {hostname: string};
-	error.code = 'ENOTFOUND';
-	error.hostname = hostname;
-	return error;
-};
-
-// Caller mutations must not change an in-flight lookup or its callback shape.
-const normalizeLookupOptions = (options: number | DnsLookupOptions | undefined): DnsLookupOptions =>
-	typeof options === 'number' ? {family: options} : {...options};
-
-const normalizeResolverRecord = (record: ResolverRecord, family: DnsFamily, maxTtl: number): DnsCacheEntry => {
-	// A record without a usable TTL must expire immediately. A `NaN` expiry would never
-	// elapse, which caches the address forever.
-	const recordTtl = record.ttl;
-	const entryTtl = Number.isFinite(recordTtl) ? Math.min(recordTtl, maxTtl) : 0;
-
-	return {
-		address: record.address,
-		family,
-		expires: now() + (entryTtl * 1000),
-	};
-};
-
-const map4To6 = (entries: DnsCacheEntry[]): DnsCacheEntry[] => entries.map(entry => {
-	if (entry.family === 6) {
-		return entry;
-	}
-
-	return {
-		...entry,
-		address: `::ffff:${entry.address}`,
-		family: 6,
-	};
-});
-
-const familyFromOptions = (options: DnsLookupOptions): DnsFamily | undefined => {
-	if (options.family === 4 || options.family === 6) {
-		return options.family;
-	}
-
-	if (options.family === 'IPv4') {
-		return 4;
-	}
-
-	return options.family === 'IPv6' ? 6 : undefined;
-};
-
-const orderFromOptions = (options: DnsLookupOptions): DnsLookupOrder => {
-	if (options.order !== undefined) {
-		return options.order;
-	}
-
-	if (options.verbatim !== undefined) {
-		return options.verbatim ? 'verbatim' : 'ipv4first';
-	}
-
-	return getDefaultResultOrder();
-};
-
-const familiesFromOptions = (options: DnsLookupOptions): DnsFamily[] => {
-	const family = familyFromOptions(options);
-
-	if (family === 6 && hasFlag(options.hints, V4MAPPED) && hasFlag(options.hints, ALL)) {
-		return [6, 4];
-	}
-
-	if (family !== undefined) {
-		return [family];
-	}
-
-	return orderFromOptions(options) === 'ipv6first' ? [6, 4] : [4, 6];
-};
-
-const filterFamiliesByAddrConfig = (families: DnsFamily[], options: DnsLookupOptions): DnsFamily[] => {
-	if (!hasFlag(options.hints, ADDRCONFIG)) {
-		return families;
-	}
-
-	const configuredFamilies = getConfiguredFamilies();
-	return families.filter(family => configuredFamilies.has(family));
-};
-
-const shouldQueryMappedIpv4 = (entries: DnsCacheEntry[], options: DnsLookupOptions): boolean => familyFromOptions(options) === 6
-	&& hasFlag(options.hints, V4MAPPED)
-	&& !hasFlag(options.hints, ALL)
-	&& entries.every(entry => entry.family !== 6);
-
-const cacheKey = (hostname: string, family: DnsFamily) => `${hostname}:${family}`;
-
-const lookupOptionsKey = (hostname: string, options: DnsLookupOptions) => `${hostname}:${familyFromOptions(options) ?? 0}:${options.hints ?? 0}:${orderFromOptions(options)}`;
-
-const shouldIgnoreResolveError = (error: NodeJS.ErrnoException) => error.code !== undefined && noResultErrorCodes.has(error.code);
-
-const toLookupResult = ({address, family}: DnsCacheEntry): DnsLookupResult => ({
-	address,
-	family,
-});
-
-export default class DnsCache implements DnsCacheLookup {
-	readonly lookup: LookupFunction;
-
-	readonly #cache: DnsCacheStore;
-	readonly #resolver: Resolver;
-	readonly #dnsLookupAsync?: (hostname: string, options: DnsLookupOptions) => Promise<any>;
-	readonly #cacheKeys = new Set<string>();
-	readonly #pending = new Map<string, Promise<DnsCacheEntry[]>>();
-	readonly #pendingFallback = new Map<string, Promise<DnsCacheEntry[]>>();
-	readonly #lookupOptionsToFallback = new Map<string, number>();
-	readonly #lookupOptionsWithoutFallback = new Map<string, number>();
-	readonly #maxTtl: number;
-	readonly #fallbackDuration: number;
-	readonly #errorTtl: number;
-	readonly #minimumVersionByHostname = new Map<string, number>();
-	readonly #activeQueriesByHostname = new Map<string, number>();
-	#minimumVersion = 0;
-	#clearVersion = 0;
-
-	constructor({
-		cache = new Map<string, CachedFamily>(),
-		maxTtl = maximumCacheTtl,
-		fallbackDuration = 3600,
-		errorTtl = 0.15,
-		resolver = new dnsPromises.Resolver(),
-		lookup = dnsLookup,
-	}: DnsCacheOptions = {}) {
-		this.#cache = cache;
-		this.#resolver = resolver;
-		this.#maxTtl = Math.min(maxTtl, maximumCacheTtl);
-		this.#fallbackDuration = fallbackDuration;
-		this.#errorTtl = errorTtl;
-		this.#dnsLookupAsync = lookup === false ? undefined : promisify(lookup);
-		this.lookup = this.#lookup.bind(this);
-	}
-
-	async lookupAsync(hostname: string, options?: number | DnsLookupOptions): Promise<DnsLookupResult | DnsLookupResult[]> {
-		const normalizedOptions = normalizeLookupOptions(options);
-		const literalFamily = isIP(hostname) as DnsFamily | 0;
-
-		if (literalFamily !== 0) {
-			const entries = [{
-				address: hostname,
-				family: literalFamily,
-			}];
-			return normalizedOptions.all ? entries : entries[0]!;
-		}
-
-		let entries = await this.#query(hostname, normalizedOptions);
-		entries = this.#filterEntries(entries, normalizedOptions);
-
-		if (entries.length === 0) {
-			throw createNoResultError(hostname);
-		}
-
-		const lookupResults = entries.map(entry => toLookupResult(entry));
-
-		return normalizedOptions.all ? lookupResults : lookupResults[0]!;
-	}
-
-	clear(hostname?: string): void {
-		this.#clearVersion++;
-
-		if (hostname === undefined) {
-			this.#minimumVersion = this.#clearVersion;
-			this.#minimumVersionByHostname.clear();
-			for (const key of this.#cacheKeys) {
-				this.#cache.delete(key);
-			}
-
-			this.#cacheKeys.clear();
-			this.#pending.clear();
-			this.#pendingFallback.clear();
-			this.#lookupOptionsToFallback.clear();
-			this.#lookupOptionsWithoutFallback.clear();
-			return;
-		}
-
-		for (const family of [4, 6] as const) {
-			const key = cacheKey(hostname, family);
-			this.#deleteCacheEntry(key);
-			this.#pending.delete(key);
-		}
-
-		if (this.#activeQueriesByHostname.has(hostname)) {
-			this.#minimumVersionByHostname.set(hostname, this.#clearVersion);
-		}
-
-		for (const map of [this.#pendingFallback, this.#lookupOptionsToFallback, this.#lookupOptionsWithoutFallback]) {
-			for (const key of map.keys()) {
-				if (key.startsWith(`${hostname}:`)) {
-					map.delete(key);
-				}
-			}
-		}
-	}
-
-	#lookup(hostname: string, options: number | DnsLookupOptions | DnsLookupCallback, callback?: DnsLookupCallback): void {
-		if (typeof options === 'function') {
-			callback = options;
-			options = {};
-		}
-
-		if (callback === undefined) {
-			throw new Error('Callback must be a function.');
-		}
-
-		const normalizedOptions = normalizeLookupOptions(options);
-
-		void this.#lookupAndCallback(hostname, normalizedOptions, callback);
-	}
-
-	async #lookupAndCallback(hostname: string, options: DnsLookupOptions, callback: DnsLookupCallback): Promise<void> {
-		let result: DnsLookupResult | DnsLookupResult[];
-
-		try {
-			result = await this.lookupAsync(hostname, options);
-		} catch (error: unknown) {
-			queueMicrotask(() => {
-				const callbackWithError = callback as (error: NodeJS.ErrnoException) => void;
-				callbackWithError(error as NodeJS.ErrnoException);
-			});
-
-			return;
-		}
-
-		queueMicrotask(() => {
-			if (options.all) {
-				callback(null, result as DnsLookupResult[]);
-				return;
-			}
-
-			const entry = result as DnsLookupResult;
-			callback(null, entry.address, entry.family);
-		});
-	}
-
-	async #query(hostname:
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2146,349 +1885,296 @@ export default class DnsCache implements DnsCacheLookup {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `724ebc29` (2026-10-04)
-**Commit Message**: Do not arm timeouts that Node.js cannot represent
+### Incident Patch 1: `6b5aafc1` (2026-10-30)
+**Commit Message**: 16.2.0
 
-Node.js collapses timer delays above the 32-bit limit (including
-Infinity) to 1 ms with a warning, so timeout: {request: Infinity}
-produced an instant TimeoutError and timeout: {socket: Infinity}
-threw ERR_OUT_OF_RANGE. Treat an unarmable delay as no timeout in the
-phase timers, the request budget and the HTTP/2 path, mirroring how
-retry delays already treat overflowing values.
-
-**File**: `source/core/index.ts` (modified, +6/-1)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -21,7 +21,7 @@ import decompressResponse from './utils/decompress-response.js';
- import getBodySize from './utils/get-body-size.js';
- import isNonReplayableBody from './utils/is-non-replayable-body.js';
- import proxyEvents from './utils/proxy-events.js';
--import timedOut, {TimeoutError as TimedOutTimeoutError} from './timed-out.js';
-+import timedOut, {TimeoutError as TimedOutTimeoutError, isArmableTimerDelay} from './timed-out.js';
- import stripUrlAuth from './utils/strip-url-auth.js';
- import WeakableMap from './utils/weakable-map.js';
- import calculateRetryDelay from './calculate-retry-delay.js';
-@@ -2461,6 +2461,11 @@ export default class Request extends Duplex implements RequestEvents<Request> {
- 			return;
- 		}
+@@ -1,6 +1,6 @@
+ {
+ 	"name": "got",
+-	"version": "16.1.0",
++	"version": "16.2.0",
+ 	"description": "Human-friendly and powerful HTTP request library for Node.js",
+ 	"license": "MIT",
+ 	"repository": "sindresorhus/got",
+```
+
+---
+
+### Incident Patch 2: `d6fb3bda` (2026-10-30)
+**Commit Message**: Add Standard Schema support to `.json()` (#2477)
+
+**File**: `documentation/1-promise.md` (modified, +26/-0)
+```diff
+@@ -34,6 +34,32 @@ A shortcut method that gives a Promise returning a JSON object.
  
-+		// Node turns overflowing timer delays into 1 ms, so an unarmable budget means no timeout.
-+		if (!isArmableTimerDelay(remaining)) {
-+			return;
-+		}
+ It is semantically the same as setting [`options.resolveBodyOnly`](2-options.md#resolvebodyonly) to `true` and [`options.responseType`](2-options.md#responsetype) to `'json'`.
+ 
++### `promise.json(schema)`
 +
- 		this._requestTimeout = setTimeout(() => {
- 			// A hook may have changed the budget while the timer was pending, so only an unchanged budget expires here.
- 			if (this.options.timeout.request === budget) {
++**Returns: `Promise<StandardSchemaV1InferOutput<Schema>>`**
++
++A shortcut method that gives a Promise returning a JSON object validated with a [Standard Schema](https://standardschema.dev)-compatible validator, such as [Zod](https://github.com/colinhacks/zod) or [Valibot](https://valibot.dev). The promise resolves with the output of the schema, and the return type is inferred from it.
++
++A custom [`parseJson`](2-options.md#parsejson) option runs first, so the schema receives the parsed body. The `validate` method of the schema may return a Promise.
++
++An empty response body parses to an empty string, the same as for [`promise.json<T>()`](1-promise.md#promisejsont), so the schema receives `''`.
++
++Throws a [`SchemaValidationError`](8-errors.md#schemavalidationerror) when the body does not match the schema.
++
++> [!NOTE]
++> A `TypeError` is thrown when the argument does not follow the Standard Schema specification, for example when it has no `~standard.validate` method.
++
++```js
++import got from 'got';
++import {z} from 'zod';
++
++const userSchema = z.object({name: z.string()});
++
++const user = await got('https://example.com/user').json(userSchema);
++
++console.log(user.name);
++```
++
+ ### `promise.buffer()`
+ 
+ **Returns: `Promise<Uint8Array>`**
 ```
 
-**File**: `source/core/options.ts` (modified, +4/-3)
+**File**: `documentation/2-options.md` (modified, +2/-0)
 ```diff
-@@ -28,7 +28,7 @@ import type {IncomingMessageWithTimings} from './utils/timer.js';
- import parseLinkHeader from './parse-link-header.js';
- import {decodeUint8Array, type PlainResponse, type Response} from './response.js';
- import {normalizeError, type RequestError} from './errors.js';
--import type {Delays} from './timed-out.js';
-+import {isArmableTimerDelay, type Delays} from './timed-out.js';
- import {getUnixSocketPath} from './utils/is-unix-socket-url.js';
- import DnsCache, {type DnsCacheLookup} from './utils/dns-cache.js';
- import http2Client from './utils/http2-client.js';
-@@ -1603,14 +1603,15 @@ const cloneRaw = (raw: OptionsInit) => {
- };
+@@ -658,6 +658,8 @@ The parsing method.
+ The promise also has `.text()`, `.json()` and `.buffer()` methods which return another Got promise for the parsed body.\
+ It's like setting the options to `{responseType: 'json', resolveBodyOnly: true}` but without affecting the main Got promise.
  
- // The HTTP/2 client uses one timer for these phases, so the smallest value decides both when
--// it fires and which phase the resulting error reports.
-+// it fires and which phase the resulting error reports. Delays Node.js cannot arm mean no
-+// constraint and are excluded instead of winning the minimum.
- const getHttp2Timeout = (internals: typeof defaultInternals): {timeout: number; phase: 'lookup' | 'connect' | 'secureConnect' | 'request'} | undefined => {
- 	const delays: Array<['lookup' | 'connect' | 'secureConnect' | 'request', number]> = [
- 		['lookup', internals.timeout.lookup],
- 		['connect', internals.timeout.connect],
- 		['secureConnect', internals.timeout.secureConnect],
- 		['request', internals.timeout.request],
--	].filter((entry): entry is ['lookup' | 'connect' | 'secureConnect' | 'request', number] => typeof entry[1] === 'number');
-+	].filter((entry): entry is ['lookup' | 'connect' | 'secureConnect' | 'request', number] => typeof entry[1] === 'number' && isArmableTimerDelay(entry[1]));
++`.json()` also accepts a [Standard Schema](https://standardschema.dev) validator, in which case the promise resolves with the output of the schema. See [`promise.json(schema)`](1-promise.md#promisejsonschema).
++
+ ```js
+ import got from 'got';
  
- 	if (delays.length === 0) {
- 		return undefined;
 ```
 
-**File**: `source/core/timed-out.ts` (modified, +14/-1)
+**File**: `documentation/8-errors.md` (modified, +28/-1)
 ```diff
-@@ -43,6 +43,15 @@ export class TimeoutError extends Error {
+@@ -15,6 +15,9 @@ All Got errors contain various metadata, such as:
+ - `response` (optional) - An instance of Got Response,
+ - `timings` (optional) - Points to `response.timings`.
+ 
++> [!NOTE]
++> [`SchemaValidationError`](#schemavalidationerror) is the exception: it comes from the user-provided schema instead of the request lifecycle, so the only metadata it adds is the schema `issues`.
++
+ #### Capturing async stack traces
+ 
+ Read the article [here](async-stack-traces.md).
+@@ -27,7 +30,7 @@ Read the article [here](async-stack-traces.md).
+ 
+ **Code: `ERR_GOT_REQUEST_ERROR`**
+ 
+-When a request fails. Contains a `code` property with error class code, like `ECONNREFUSED`. All the errors below inherit this one.
++When a request fails. Contains a `code` property with error class code, like `ECONNREFUSED`. All the errors below inherit this one, except [`SchemaValidationError`](#schemavalidationerror).
+ 
+ ### `CacheError`
+ 
+@@ -49,6 +52,30 @@ The error code will be `ERR_HTTP_CONTENT_LENGTH_MISMATCH` when the `strictConten
+ 
+ When server response code is 2xx, and parsing body fails. Includes a `response` property.
+ 
++### `SchemaValidationError`
++
++When the response body does not match the [Standard Schema](https://standardschema.dev) validator passed to [`promise.json(schema)`](1-promise.md#promisejsonschema). Includes an `issues` property with the issues from the schema. Each issue has a `message` and an optional `path`.
++
++It intentionally does not extend [`RequestError`](#requesterror), because the request succeeded. The user-provided schema did not accept the data, so it has no `code`, `options`, `request`, `response` or `timings` property, and it is not passed to [`beforeError` hooks](9-hooks.md#beforeerror).
++
++```js
++import got, {SchemaValidationError} from 'got';
++import {z} from 'zod';
++
++const userSchema = z.object({name: z.string()});
++
++try {
++	const user = await got('https://example.com/user').json(userSchema);
++	console.log(user.name);
++} catch (error) {
++	if (error instanceof SchemaValidationError) {
++		console.error(error.issues);
++	} else {
++		throw error;
++	}
++}
++```
++
+ ### `UploadError`
+ 
+ **Code: `ERR_UPLOAD`**
+```
+
+**File**: `documentation/9-hooks.md` (modified, +3/-0)
+```diff
+@@ -409,6 +409,9 @@ const instance = got.extend({
+ 
+ Called with a [`RequestError`](8-errors.md#requesterror) instance. The error is passed to the hook right before it's thrown.
+ 
++> [!NOTE]
++> A [`SchemaValidationError`](8-errors.md#schemavalidationerror) is not passed to this hook, because it does not extend `RequestError`.
++
+ This hook can return any `Error` instance, allowing you to:
+ - Return custom error classes for better error handling in your application
+ - Extend `RequestError` with additional properties
+```
+
+**File**: `documentation/quick-start.md` (modified, +1/-1)
+```diff
+@@ -118,7 +118,7 @@ See the documentation for other [options](2-options.md#options).
+ 
+ ## Errors
+ 
+-Both Promise and Stream APIs throw errors with metadata.
++Both Promise and Stream APIs throw errors with metadata, such as `response` and `timings`.
+ 
+ ```js
+ import got from 'got';
+```
+
+**File**: `documentation/typescript.md` (modified, +7/-0)
+```diff
+@@ -58,6 +58,7 @@ console.log(result.buzz); // boolean
+ 
+ **Note:**
+ > - Use `.json<T>()` to get `RequestPromise<T>` with the body-only response.
++> - Use `.json(schema)` to validate the body with a [Standard Schema](https://standardschema.dev) validator and get the output type of the schema.
+ > - Use `.buffer()` or `.text()` for other response types.
+ > - Without calling these methods, you'll get `RequestPromise<Response<T>>`.
+ > - Use `signal` and `AbortController` to abort requests.
+@@ -111,6 +112,12 @@ Here's a list of types that Got exports:
+ 
+ ### [`RequestPromise<T extends Response | Response['body'] = Response['body']>`](https://github.com/sindresorhus/got/blob/ae04c0e36cf3f5b2e356df7d48a5b19988f935a2/source/as-promise/types.ts#L26)
+ 
++### [`StandardSchemaV1`](https://github.com/sindresorhus/got/blob/main/source/core/standard-schema.ts)
++
++### [`StandardSchemaV1InferOutput<Schema>`](https://github.com/sindresorhus/got/blob/main/source/core/standard-schema.ts)
++
++### [`StandardSchemaV1Issue`](https://github.com/sindresorhus/got/blob/main/source/core/standard-schema.ts)
++
+ ### [`Delays`](https://github.com/sindresorhus/got/blob/ae04c0e36cf3f5b2e356df7d48a5b19988f935a2/source/core/timed-out.ts#L14)
+ 
+ ### [`Timings`](https://github.com/sindresorhus/got/blob/main/source/core/utils/timer.ts#L19)
+```
+
+**File**: `readme.md` (modified, +2/-1)
+```diff
+@@ -82,7 +82,7 @@ npm install got
+ ### JSON mode
+ 
+ Got has a dedicated option for handling JSON payload.\
+-Furthermore, the promise exposes a `.json<T>()` function that returns `Promise<T>`.
++Furthermore, the promise exposes a `.json<T>()` function that returns `Promise<T>`. It also exposes a `.json(schema)` function that validates the payload with a [Standard Schema](https://standardschema.dev) and infers the type from the schema.
+ 
+ ```js
+ import got from 'got';
+@@ -119,6 +119,7 @@ By default, Got will retry on failure. To disable this option, set [`options.ret
+ - [x] [Advanced HTTPS API](documentation/5-https.md)
+ - [x] [HTTP/2 support](documentation/2-options.md#http2)
+ - [x] [`Response` class](documentation/3-streams.md#response-2)
++- [x] [Response validation with Standard Schema](documentation/1-promise.md#promisejsonschema)
+ 
+ #### Timeouts and retries
+ 
+```
+
+**File**: `source/as-promise/index.ts` (modified, +33/-4)
+```diff
+@@ -4,9 +4,11 @@ import {
+ 	normalizeError,
+ 	HTTPError,
+ 	RetryError,
++	SchemaValidationError,
+ 	type RequestError,
+ } from '../core/errors.js';
+ import Request from '../core/index.js';
++import type {StandardSchemaV1} from '../core/standard-schema.js';
+ import isNonReplayableBody from '../core/utils/is-non-replayable-body.js';
+ import {
+ 	decodeUint8Array,
+@@ -36,6 +38,23 @@ const proxiedRequestEvents = [
+ 	'downloadProgress',
+ ];
+ 
++const validateWithSchema = async (value: unknown, schema: StandardSchemaV1): Promise<unknown> => {
++	// JavaScript users can pass anything, so check the shape before calling into the schema.
++	const standardSchema = is.object(schema) ? schema['~standard'] : undefined;
++
++	if (!is.object(standardSchema) || typeof standardSchema.validate !== 'function') {
++		throw new TypeError('The `schema` argument must follow the Standard Schema specification');
++	}
++
++	const validationResult = await standardSchema.validate(value);
++
++	if (validationResult.issues) {
++		throw new SchemaValidationError(validationResult.issues);
++	}
++
++	return validationResult.value;
++};
++
+ export default function asPromise<T>(firstRequest?: Request): RequestPromise<T> {
+ 	let globalRequest: Request;
+ 	let globalResponse: Response;
+@@ -261,7 +280,7 @@ export default function asPromise<T>(firstRequest?: Request): RequestPromise<T>
+ 		};
  	}
- }
  
-+// Node.js turns timer delays above the 32-bit limit (including `Infinity`) into 1 ms with a
-+// warning, so such a delay means "no timeout" instead of an instant timeout.
-+const maximumTimerDelay = 2_147_483_647;
+-	const shortcut = <T>(promiseToAwait: RequestPromise, responseType: Options['responseType']): RequestPromise<T> => {
++	const shortcut = <T>(promiseToAwait: RequestPromise, responseType: Options['responseType'], schema?: StandardSchemaV1): RequestPromise<T> => {
+ 		const newPromise = (async () => {
+ 			// Wait until downloading has ended
+ 			const response = await promiseToAwait as Response | undefined;
+@@ -275,7 +294,17 @@ export default function asPromise<T>(firstRequest?: Request): RequestPromise<T>
+ 
+ 			// `parseBody` wraps a decode failure in a `ParseError`, so an unusable encoding is
+ 			// reported with the response attached instead of as a bare `TypeError`.
+-			return parseBody(globalResponse, responseType, options.parseJson, options.encoding) as T;
++			const body = parseBody(globalResponse, responseType, options.parseJson, options.encoding);
 +
-+/**
-+Whether a delay can be armed as a Node.js timer without collapsing into an instant timeout.
-+*/
-+export const isArmableTimerDelay = (delay: number): boolean => delay <= maximumTimerDelay && Number.isFinite(delay);
-+
- export default function timedOut(request: ClientRequest, delays: Delays, options: TimedOutOptions): () => void {
- 	// `reentry` is a symbol, so it cannot collide with a header name, and the request object is
- 	// itself the marker. Rewriting either line as an `Object.hasOwn` call would check something else.
-@@ -57,6 +66,10 @@ export default function timedOut(request: ClientRequest, delays: Delays, options
- 	const handled = new Set<string>();
- 
- 	const addTimeout = (delay: number, callback: (delay: number, event: string) => void, event: string): (typeof noop) => {
-+		if (!isArmableTimerDelay(delay)) {
-+			return noop;
-+		}
-+
- 		const timeout = setTimeout(callback, delay, delay, event);
- 
- 		timeout.unref();
-@@ -101,7 +114,7 @@ export default function timedOut(request: ClientRequest, delays: Delays, options
- 		}
- 	});
- 
--	if (delays.socket !== undefined) {
-+	if (delays.socket !== undefined && isArmableTimerDelay(delays.socket)) {
- 		const {socket} = delays;
- 
- 		const socketTimeoutHandler = (): void => {
-```
-
-**File**: `source/core/utils/http2-client.ts` (modified, +11/-1)
-```diff
-@@ -15,7 +15,7 @@ import {Writable, Readable} from 'node:stream';
- import tls from 'node:tls';
- import {urlToHttpOptions} from 'node:url';
- import net, {type Socket} from 'node:net';
--import {TimeoutError} from '../timed-out.js';
-+import {TimeoutError, isArmableTimerDelay} from '../timed-out.js';
- 
- const {
- 	HTTP2_HEADER_AUTHORITY,
-@@ -436,6 +436,11 @@ const resolveProtocol = async (
- 		};
- 
- 		const applySocketTimeout = () => {
-+			// A delay Node.js cannot arm means no socket timeout.
-+			if (!isArmableTimerDelay(_socketTimeout!)) {
-+				return;
++			if (schema === undefined) {
++				return body as T;
 +			}
 +
- 			socketTimeoutApplied = true;
- 			socket.setTimeout(_socketTimeout!);
- 			socket.once('timeout', onSocketTimeout);
-@@ -983,6 +988,11 @@ export class Http2Agent extends EventEmitter {
- 		};
- 
- 		const applySocketTimeout = () => {
-+			// A delay Node.js cannot arm means no socket timeout.
-+			if (!isArmableTimerDelay(_socketTimeout!)) {
-+				return;
-+			}
++			// Awaiting instead of returning the validation promise keeps the caller's frame in the
++			// async stack trace of a `SchemaValidationError`.
++			const validatedBody = await validateWithSchema(body, schema);
 +
- 			socketTimeoutApplied = true;
- 			session.setTimeout(_socketTimeout!, onSocketTimeout);
- 		};
-```
-
-**File**: `test/timeout.ts` (modified, +38/-0)
-```diff
-@@ -3194,3 +3194,41 @@ test('http2 socket timeout applies to a stalled response body', async t => {
- 	assert.strictEqual(error?.event, 'socket');
- 	assert.match(error?.message ?? '', /^Timeout awaiting 'socket' for 300ms$/v);
- });
-+
-+// Node.js collapses timer delays above the 32-bit limit to 1 ms, so such delays, including
-+// `Infinity`, must mean "no timeout" rather than an instant timeout.
-+test('delays above the Node.js timer limit are not armed as timeouts', withServer, async (_t, server, got) => {
-+	server.get('/', (_request, response) => {
-+		response.end('ok');
-+	});
-+
-+	const response = await got(server.url, {
-+		timeout: {
-+			request: Infinity,
-+			response: Infinity,
-+			connect: Infinity,
-+			send: Infinity,
-+			socket: Infinity,
-+		},
-+		retry: {limit: 0},
-+	});
-+
-+	assert.strictEqual(response.body, 'ok');
-+});
-+
-+test('a read delay above the Node.js timer limit does not abort the body', withServer, async (_t, server, got) => {
-+	server.get('/', (_request, response) => {
-+		response.writeHead(200, {'transfer-encoding': 'chunked'});
-+		response.write('part');
-+		setTimeout(() => {
-+			response.end(' done');
-+		}, 50);
-+	});
-+
-+	const response = await got(server.url, {
-+		timeout: {read: Infinity},
-+		retry: {limit: 0},
-+	});
-+
-+	assert.strictEqual(response.body, 'part done');
-+});
-```
-
----
-
-### Incident Patch 2: `1c947954` (2026-10-04)
-**Commit Message**: Fix documentation drift in the hooks, timeout, https and cache contracts
-
-The beforeRedirect example rewrote options.hostname, which is not an
-Options property, so the documented rewrite silently did nothing; it
-now rewrites options.url. The read timeout was struck through as
-blocked, but it is implemented and tested. The cache and dnsCache
-defaults normalize to undefined rather than false, and alpnProtocols
-defaults to offering no protocols, with the h2 offer coming from the
-http2 negotiation path.
-
-**File**: `documentation/5-https.md` (modified, +2/-2)
-```diff
-@@ -11,11 +11,11 @@ This option represents the options used to make HTTPS requests.
- #### `alpnProtocols`
++			return validatedBody as T;
+ 		})();
  
- **Type: `string[]`**\
--**Default: `['http/1.1']`**
-+**Default: `undefined`**
+ 		// eslint-disable-next-line @typescript-eslint/no-floating-promises
+@@ -288,7 +317,7 @@ export default function asPromise<T>(firstRequest?: Request): RequestPromise<T>
+ 	// When custom handlers wrap the promise to transform errors, these methods
+ 	// are copied to the handler's promise. Using `this` ensures we await the
+ 	// handler's wrapped promise, not the original, so errors propagate correctly.
+-	promise.json = function (this: RequestPromise) {
++	promise.json = function (this: RequestPromise, schema?: StandardSchemaV1) {
+ 		if (globalRequest.options) {
+ 			const {headers} = globalRequest.options;
  
- Acceptable [ALPN](https://en.wikipedia.org/wiki/Application-Layer_Protocol_Negotiation) protocols.
- 
--If the `http2` option is `true`, this defaults to `['h2', 'http/1.1']`.
-+By default no ALPN protocols are offered. When the `http2` option is `true`, the HTTP/2 negotiation path offers `['h2', 'http/1.1']` unless this option is set.
- 
- #### `rejectUnauthorized`
- 
-```
-
-**File**: `documentation/6-timeout.md` (modified, +1/-4)
-```diff
-@@ -120,16 +120,13 @@ Ends when all data have been written to the socket.
- Starts when request has been flushed.\
- Ends when the headers are received.
- 
--#### ~~`read`~~
-+#### `read`
- 
- **Type: `number`**
- 
- Starts when the headers are received.\
- Ends when the response's `end` event fires.
- 
--**Note:**
--> - This timeout is blocked by https://github.com/nodejs/node/issues/35923
--
- #### `request`
- 
- **Type: `number`**
-```
-
-**File**: `documentation/9-hooks.md` (modified, +2/-2)
-```diff
-@@ -189,8 +189,8 @@ const response = await got('https://example.com', {
- 	hooks: {
- 		beforeRedirect: [
- 			(options, response) => {
--				if (options.hostname === 'deadSite') {
--					options.hostname = 'fallbackSite';
-+				if (options.url.hostname === 'deadSite') {
-+					options.url = 'https://fallbackSite.com';
- 				}
+@@ -297,7 +326,7 @@ export default function asPromise<T>(firstRequest?: Request): RequestPromise<T>
  			}
- 		]
-```
-
-**File**: `source/core/options.ts` (modified, +4/-4)
-```diff
-@@ -324,8 +324,8 @@ export type Hooks = {
- 		hooks: {
- 			beforeRedirect: [
- 				(options, response) => {
--					if (options.hostname === 'deadSite') {
--						options.hostname = 'fallbackSite';
-+					if (options.url.hostname === 'deadSite') {
-+						options.url = 'https://fallbackSite.com';
- 					}
- 				}
- 			]
-@@ -2459,7 +2459,7 @@ export default class Options {
+ 		}
  
- 	__Note__: This should stay disabled when making requests to internal hostnames such as `localhost`, `database.local` etc.
+-		return shortcut(this, 'json');
++		return shortcut(this, 'json', schema);
+ 	};
  
--	@default false
-+	@default undefined
- 	*/
- 	get dnsCache(): DnsCacheLookup | undefined {
- 		return this.#internals.dnsCache;
-@@ -2612,7 +2612,7 @@ export default class Options {
- 	/**
- 	A cache adapter instance for storing cached response data.
- 
--	@default false
-+	@default undefined
- 	*/
- 	get cache(): string | StorageAdapter | boolean | undefined {
- 		return this.#internals.cache;
-```
-
----
-
-### Incident Patch 3: `494279ba` (2026-10-05)
-**Commit Message**: Name null in the beforeError return validation
-
-typeof null is object, so a hook returning null was told it returned
-an object. Report null as null, like undefined already is.
-
-**File**: `source/core/index.ts` (modified, +2/-1)
-```diff
-@@ -2929,7 +2929,8 @@ export default class Request extends Duplex implements RequestEvents<Request> {
- 
- 						// Validate hook return value
- 						if (!(error instanceof Error)) {
--							throw new TypeError(`The \`beforeError\` hook must return an Error instance. Received ${is.string(error) ? 'string' : (typeof error)}.`);
-+							const received = error === null ? 'null' : (is.string(error) ? 'string' : (typeof error));
-+							throw new TypeError(`The \`beforeError\` hook must return an Error instance. Received ${received}.`);
- 						}
- 					}
- 
-```
-
-**File**: `test/error.ts` (modified, +16/-0)
-```diff
-@@ -973,3 +973,19 @@ for (const [name, responseType, expected] of [
- 		assert.deepStrictEqual(error?.response?.body, expected);
- 	});
- }
-+
-+test('a beforeError hook returning null is named in the validation error', withServer, async (_t, server, got) => {
-+	server.get('/', (_request, response) => {
-+		response.statusCode = 404;
-+		response.end('nope');
-+	});
-+
-+	const error = await rejects(got('', {
-+		retry: {limit: 0},
-+		hooks: {
-+			beforeError: [() => null as any],
-+		},
-+	}));
-+
-+	assert.match(error.message, /Received null/v);
-+});
+ 	promise.buffer = function (this: RequestPromise) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2477** (2026-10-30): Add Standard Schema support to `.json()` (@sindresorhus)
 - **PR #2471** (2026-08-29): Fix HTTP/2 socket timeout handling (@sindresorhus)
 - **PR #2470** (2026-08-28): Fix retries on connection errors (@sindresorhus)
 - **PR #2466** (2026-07-06): Add support for `QUERY` HTTP method (@sindresorhus)
 - **PR #2465** (2026-07-06): Various tweaks (@sindresorhus)
 - **PR #2464** (2026-07-06): Remove HTTP/2 wrapper (@sindresorhus)
-- **PR #2463** (2026-07-05):  Replace `cacheable-lookup` dependency with internal DNS cache (@sindresorhus)
 
 ---
 
@@ -2508,33 +2194,28 @@ an object. Report null as null, like undefined already is.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Do not arm timeouts that Node.js cannot represent
+## X. Empirical Invariant Guard in package.json
 
 **RULE**:
-When implementing operations in `source/core/index.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sindresorhus/got. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sindresorhus/got. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `724ebc29`: Do not arm timeouts that Node.js cannot represent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6b5aafc1`: 16.2.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `source/core/index.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import timedOut, {TimeoutError as TimedOutTimeoutError, isArmableTimerDelay} from './timed-out.js';
-		// Node turns overflowing timer delays into 1 ms, so an unarmable budget means no timeout.
-		if (!isArmableTimerDelay(remaining)) {
-			return;
-		}
-
+	"version": "16.2.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-import timedOut, {TimeoutError as TimedOutTimeoutError} from './timed-out.js';
+	"version": "16.1.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `724ebc29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6b5aafc1` are properly handled with clean fallback behavior.

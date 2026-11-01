@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source**: github ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
-> **Source Version**: `7a16befc`  
+> **Source Version**: `94b12bd6`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T10:16:52.756Z  
+> **Timestamp**: 2026-10-28T02:04:57.560Z  
 > **Learning ID**: `learn-github-vikejs-vike`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vikejs-vike-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vikejs/vike](https://github.com/vikejs/vike))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T10:16:51.886Z  
+> **Harvest Timestamp**: 2026-10-28T02:04:56.532Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -433,13 +433,11 @@ async function onRenderClient(pageContext) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3658** (2026-10-24): **docs: Next.js page: Fix formatting of AI section**
-  *Symptoms*: 
+- **Issue #3675** (2026-10-27): **fix: pass `headers` to telefunc `serve()` (telefunc 0.3.0)**
+  *Symptoms*: <img src="https://github.com/claude.png" width="20" height="20" alt="Claude"> *Claude Opus 5.5 (low effort) wrote this; another Claude Opus 5.5 (low effort) agent reviewed it.*  This fixes the CI of #3671, which bumps telefunc from 0.2.24 to 0.3.0. In 0.3.0, `serve({ url, method, body })` needs `headers` too, so every Telefunc call in three test apps fails and the Cloudflare test app no longer type-checks.  | Case | Observed on #3671 | Expected | |---|---|---| | A telefunction call in `examples/telefunc`, `test-deprecated-design/telefunc` and `test/@cloudflare_vite-plugin` | `[telefunc@0.3.0][Wrong Usage] serve({ headers }): argument headers is missing.` ([CI run](https://github.com/vikejs/vike/actions/runs/40439421763/job/121975935351)) | The todo list updates | | `tsc` in `test/@cloudflare_vite-plugin` | `error TS2345: … Property 'headers' is missing` on `worker/telefunc.ts` | No error |  The two Express servers now pass `headers: req.headers`, the form the [Telefunc docs](https://github.com/brillout/telefunc/blob/main/docs/pages/serve/%2BPage.mdx) show for Express. The Cloudflare worker already has a web `Request`, so it now calls `serve({ request })`, the way `test/universal-deploy/pages/middlewareTelefunc.ts` already does.  ### What you should see  **1.** The e2e tests of the jobs that failed on #3671 fail with the three files as they are on #3671's head (427ce4a67), and pass on this PR's head (0c22f8f42). Local runs with `pnpm exec test-e2e` on Node 22.21.0:  ``` # 427c
 
-- **Issue #3657** (2026-10-24): **docs: Add AI & Code Generation comparison section**
-  *Symptoms*: Added a section comparing AI code generation in Next.js and Vike, highlighting the advantages of Vike's architecture for deterministic AI output.
-  **Post-Mortem & Fix Analysis**:
-  > Neat
+- **Issue #3674** (2026-10-27): **fix: usage error for a pointer import through a path alias that resolves outside of the root directory (instead of `[Bug]`)**
+  *Symptoms*: <img src="https://github.com/claude.png" width="20" height="20" alt="Claude"> *Claude Opus 5.5 (high effort) wrote the code and this description; Claude Opus 5.5 (high effort) tested and reviewed it.*  A pointer import in a `+config.js` through a path alias that resolves outside the root directory stops `vike build` and `vike dev` with `[Bug]`, while the same import written as a relative path gets a usage error. This PR gives the alias the same usage error. The user in #2326 had such an alias (`#firebase/*` pointing to a sibling folder) and hit the same `[Bug]` through a plain import, which 77128be fixed. A pointer import through that alias still crashes.  | Import in `+config.js`, with `tsconfig.json` `paths` `"#shared/*": ["../shared/*"]` | Observed on `main` | Expected | |---|---|---| | `import onRenderHtml from '#shared/render' with { type: 'vike:pointer' }` | `[vike@0.4.268][Bug] You stumbled upon a Vike bug.` | the usage error the relative form gets |  [`classifyImport()`](https://github.com/vikejs/vike/blob/57a213e390005b75e908690f7c2728b9488d95fe/packages/vike/src/node/vite/shared/resolveVikeConfigInternal/transpileAndExecuteFile.ts#L416) takes its path-alias branch only when the resolved file is inside the root, so an alias not shaped like an npm package name that resolves outside it falls through to an assertion that it is an npm package. It now also takes that branch for such an alias, which leads to the existing usage error. Only strings that assertion rejects cha
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -456,86 +454,238 @@ async function onRenderClient(pageContext) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7a16befc` (2026-10-24)
-**Commit Message**: docs: Next.js page: Fix formatting of AI section (#3658)
+### Incident Patch 1: `94b12bd6` (2026-10-27)
+**Commit Message**: chore(deps): bump telefunc from 0.2.24 to 0.3.0 (#3671)
 
-**File**: `docs/pages/nextjs/+Page.mdx` (modified, +5/-4)
+**File**: `examples/telefunc/package.json` (modified, +1/-1)
 ```diff
-@@ -265,7 +265,7 @@ We foster the proliferation of React frameworks, highly-tailored to specific use
- Read more at [Vike.land](https://land.vike.dev).
+@@ -14,7 +14,7 @@
+     "express": "^5.2.1",
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "typescript": "^7.0.2",
+     "vike": "0.4.268",
+     "vite": "^7.1.5"
+```
+
+**File**: `examples/telefunc/server/index.js` (modified, +7/-1)
+```diff
+@@ -25,7 +25,13 @@ async function startServer() {
+   app.use(express.text()) // Parse & make HTTP request body available at `req.body`
+   app.all('/_telefunc', async (req, res) => {
+     const context = {}
+-    const httpResponse = await serve({ url: req.originalUrl, method: req.method, body: req.body, context })
++    const httpResponse = await serve({
++      url: req.originalUrl,
++      method: req.method,
++      body: req.body,
++      headers: req.headers,
++      context,
++    })
+     const { body, statusCode, headers } = httpResponse
+     headers.forEach(([name, value]) => res.setHeader(name, value))
+     res.status(statusCode).send(body)
+```
+
+**File**: `pnpm-lock.yaml` (modified, +34/-47)
+```diff
+@@ -588,8 +588,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       typescript:
+         specifier: ^7.0.2
+         version: 7.0.2
+@@ -1291,8 +1291,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.1.0(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.1.0(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       typescript:
+         specifier: ^7.0.2
+         version: 7.0.2
+@@ -1375,8 +1375,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       vike:
+         specifier: 0.4.268
+         version: link:../../packages/vike
+@@ -1421,8 +1421,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@8.0.7(@types/node@24.10.2)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@8.0.7(@types/node@24.10.2)(esbuild@0.27.3)(jiti@2.6.1)(terser@5.38.1)(tsx@4.20.6))
+       vike:
+         specifier: 0.4.268
+         version: link:../../packages/vike
+@@ -1949,8 +1949,8 @@ importers:
+         specifier: ^19.2.6
+         version: 19.2.6(react@19.2.6)
+       telefunc:
+-        specifier: ^0.2.24
+-        version: 0.2.24(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
++        specifier: ^0.3.0
++        version: 0.3.0(@babel/core@7.29.7)(@babel/parser@7.29.7)(@babel/types@7.29.8)(react-streaming@0.4.23(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(srvx@0.12.8)(vite@7.3.1(@types/node@24.10.2)(jiti@2.6.1)(lightningcss@1.32.0)(terser@5.38.1)(tsx@4.20.6))
+       vike-react:
+         specifier: ^0.6.31
+         version: 0.6.31(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(vike@packages+vike)
+@@ -2646,9 +2646,6 @@ packages:
+   '@brillout/import@0.2.6':
+     resolution: {integrity: sha512-1GUTmADc8trUC1YSW2lp9r6PmwluMoEyHajnE1kxVdbKGD0wJOlq/DvTWMUqLtBDCnQR+n//qgMtz6HwA/lotA==}
  
+-  '@brillout/json-serializer@0.5.25':
+-    resolution: {integrity: sha512-/Ahv1XIHAYyROWfyOQZxbxmkvM3ef3aMPPzEC0EfkyZUFb88y/nFFwCFvYUjE20MGoF8/9Z1jIy7ihkpkE+maw==}
+-
+   '@brillout/json-serializer@0.5.27':
+     resolution: {integrity: sha512-D+Pc40tS6mme3dtlQzOD+nqP+yAWHQ+KX7gcJJ3DRs02pbqBh/6FBk/OWkLuNyaI0rgedh4KYla/xCSg0jArEw==}
  
--## AI & Code Generation: 
-+## AI & Code Generation
+@@ -2690,9 +2687,6 @@ packages:
+     peerDependencies:
+       typescript: '>=4.0.0'
  
- ### Training Volume vs. Architectural Determinism
- 
-@@ -275,17 +275,18 @@ Read more at [Vike.land](https://land.vike.dev).
- 
- ### Detailed Comparison:
- 
--* **The Next.js AI Dilemma (High Volume, High Hallucination Rate):**
-+#### Next.js' AI dilemma (High Volume, High Hallucination Rate):
- 
- While LLMs know Next.js syntax well due to sheer dataset size, the rapid shift from the Pages Router to the App Router (RSC, `'use client'` boundaries, implicit caching, and server actions) created massive amounts of outdated or conflicting code in LLM training sets. As a result, AI coding agents (such as Cursor, Copilot, or Claude) can struggle with:
- 
-   - Incorrectly splitting Server Components vs. Client Components.
-   - Importing server-only modules inside `'use client'` boundaries.
-   - Misunderstanding Next.js-specific caching and revalidation rules.
- 
--**Context Window & Rule File Overhead:** To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
-+Context Window & Rule File Overhead:
-+To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
- 
--* **The Vike Advantage (Low Abstraction Surface = Deterministic AI Output):**
-+#### Vike's Advantage (Low Abstraction Surface = Deterministic AI Output):
- 
- Vike relies on standard Vite primitives and explicit, minimal lifecycle hooks (`+Page`, `+data`, `+onRenderHtml`). Because there are no hidden compiler passes or implicit server/client transformations:
- 
+-  '@brillout/vite-plugin-server-entry@0.7.22':
+-    resolution: {integrity: sha512-83BZjKoD95Cn4kLMYGUx9By17Y9n1aQYNXzLjh4teZtNP8eDfXrSjHS028nPAW1nkTTkMc+sDtzsL/0JGnY48g==}
+-
+   '@brillout/vite-plugin-server-entry@0.7.23':
+     resolution: {integrity: sha512-tHI6zRUM+1yQxiC4CTwpPhYhU9Cdo4LkPy0JRxDiFBZSVSauzWTzZv/r7/+dKV
+```
+
+**File**: `test-deprecated-design/telefunc/package.json` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+     "express": "^5.2.1",
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "typescript": "^7.0.2",
+     "vike": "0.4.268",
+     "vite": "7.1.0"
+```
+
+**File**: `test-deprecated-design/telefunc/server/index.js` (modified, +7/-1)
+```diff
+@@ -31,7 +31,13 @@ async function startServer() {
+   app.use(express.text()) // Parse & make HTTP request body available at `req.body`
+   app.all('/_telefunc', async (req, res) => {
+     const context = {}
+-    const httpResponse = await serve({ url: req.originalUrl, method: req.method, body: req.body, context })
++    const httpResponse = await serve({
++      url: req.originalUrl,
++      method: req.method,
++      body: req.body,
++      headers: req.headers,
++      context,
++    })
+     const { body, statusCode, headers } = httpResponse
+     headers.forEach(([name, value]) => res.setHeader(name, value))
+     res.status(statusCode).send(body)
+```
+
+**File**: `test/@cloudflare_vite-plugin/package.json` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+   "dependencies": {
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "vike": "0.4.268",
+     "vike-react": "^0.6.31"
+   },
+```
+
+**File**: `test/@cloudflare_vite-plugin/worker/telefunc.ts` (modified, +1/-3)
+```diff
+@@ -5,9 +5,7 @@ import { serve } from 'telefunc'
+ async function handleTelefunc(request: Request) {
+   const { pathname } = new URL(request.url)
+   if (!pathname.startsWith('/_telefunc')) return null
+-  const { method } = request
+-  const body = await request.text()
+-  const httpResponse = await serve({ url: pathname, method, body })
++  const httpResponse = await serve({ request })
+   return new Response(httpResponse.body, {
+     headers: httpResponse.headers,
+     status: httpResponse.statusCode,
+```
+
+**File**: `test/@cloudflare_vite-plugin_ud/package.json` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+     "@universal-middleware/core": "^0.7.1",
+     "react": "^19.2.6",
+     "react-dom": "^19.2.6",
+-    "telefunc": "^0.2.24",
++    "telefunc": "^0.3.0",
+     "vike": "0.4.268",
+     "vike-react": "^0.6.31"
+   },
 ```
 
 ---
 
-### Incident Patch 2: `2a992f10` (2026-10-23)
-**Commit Message**: fix: Vike's client code no longer loads twice in dev (#3651)
+### Incident Patch 2: `0f0fed75` (2026-10-27)
+**Commit Message**: docs: further clarify OSP enforcement
 
-**File**: `packages/vike/src/node/vite/plugins/pluginDev/optimizeDeps.ts` (modified, +5/-4)
+**File**: `docs/pages/pricing/+Page.mdx` (modified, +14/-4)
 ```diff
-@@ -49,13 +49,13 @@ const LATE_DISCOVERED = [
- const ALWAYS_REMOVE = ['@brillout/require-shim', 'vike > @brillout/require-shim']
+@@ -40,15 +40,25 @@ We designed it with meticulous care to <Link href="#is-vike-still-free-software"
  
- const optimizeDeps = {
-+  // Client-side
-   optimizeDeps: {
-     exclude: [
-       // We must exclude Vike's client runtime so it can import virtual modules
--      'vike/client',
--      'vike/client/router',
--      // Also all entries of Vike's client runtime, otherwise pre-bundling an entry would load a second copy of Vike's client code (also problematic as it duplicates module-level variables that don't use `getGlobalObject()`)
--      'vike/__internal/client',
-+      // - The 'vike' entry excludes all import paths ('vike/client', 'vike/client/router', 'vike/__internal/client', ...) which is what we want: pre-bundling any import path would load a second copy of Vike's client code (also problematic as it duplicates module-level variables that don't use `getGlobalObject()`)
-+      // - https://github.com/vikejs/vike/pull/3651
-+      'vike',
-     ],
-     include: [
-       // Avoid:
-@@ -68,6 +68,7 @@ const optimizeDeps = {
-       'vike > @brillout/picocolors',
-     ],
-   },
-+  // Server-side
-   ssr: {
-     optimizeDeps: {
-       exclude: [
+ #### The idea
+ 
+-As a small team, you use Vike like any other open-source tool — 100% free and without any license key.
++Vike uses a heuristic to determine whether you're most likely a small or large team:
++- **Small team:** You use Vike like any other open-source tool — 100% free and without any license key.
++- **Large team:** You are required to have a license key (see <Link href="#enforcement" />).
++  - **Small company:** You get a license key <Link href="/free">for free</Link>.
++  - **Large company:** You get a license key by purchasing one.
+ 
+-As a larger team, you will see a pesky toaster `Get your license key at ...` in development. You can remove it by purchasing a license key and adding it to your `+config.js` (or by setting the `VIKE_KEY` environment variable).
++In other words, <Link href="#pricing">only larger teams in larger companies pay</Link> — Vike stays free for everyone else.
++
++#### Enforcement
++
++If Vike detects you're a larger team (see <Link href="#the-idea"/>), you will see a pesky toaster `Get your license key at ...` in development, and you won't be able to build for production.
++
++Also, the `vike` npm package will adopt a proprietary license requiring companies to get a license key if they encounter the pesky toaster. (Vike's repository remains open source.)
+ 
+ #### 100% Open Source
+ 
+-The npm package `vike` will adopt a proprietary license requiring companies to get a license key when they see the pesky toaster. Vike's Git repository stays 100% MIT-licensed.
++Vike's Git repository stays 100% MIT-licensed.
+ 
+-In theory, since Vike is 100% open source, you could fork it, remove the pesky toaster, and publish your own npm package. But maintaining a fork requires non-negligible effort &mdash; you might as well <Link href="/free">apply for a free license key</Link> instead.
++In theory, since Vike is 100% open source, you could fork it, remove the pesky toaster, and publish your own npm package. However, we'll hide some of the enforcement code, making this non-trivial — you might as well <Link href="/free">apply for a free license key</Link> instead.
+ 
+ #### 100% offline
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3658** (2026-10-24): docs: Next.js page: Fix formatting of AI section (@redbar0n)
-- **PR #3657** (2026-10-24): docs: Add AI & Code Generation comparison section (@redbar0n)
-- **PR #3656** (2026-10-23): docs: add Auto Bild to use cases (@brillout-agent)
-- **PR #3655** (2026-10-23): chore(deps): bump vike-react from 0.6.29 to 0.6.30 (@dependabot[bot])
-- **PR #3654** (2026-10-23): chore(deps): bump vike-vue from 0.9.15 to 0.9.16 (@dependabot[bot])
-- **PR #3653** (2026-10-23): chore(deps): bump @batijs/elements from 0.0.99 to 0.0.100 (@dependabot[bot])
+- **PR #3675** (2026-10-27): fix: pass `headers` to telefunc `serve()` (telefunc 0.3.0) (@nitedani-agent)
+- **PR #3674** (closed): fix: usage error for a pointer import through a path alias that resolves outside of the root directory (instead of `[Bug]`) (@nitedani-agent)
+- **PR #3673** (closed): fix: usage error for a path alias in an `import:` string (instead of `[Bug]`) (@nitedani-agent)
+- **PR #3672** (2026-10-27): fix: an asset without file extension, e.g. `import url from './LICENSE?url'` (@nitedani-agent)
+- **PR #3671** (2026-10-27): chore(deps): bump telefunc from 0.2.24 to 0.3.0 (@dependabot[bot])
+- **PR #3670** (2026-10-26): chore(deps): bump vike-react from 0.6.30 to 0.6.31 (@nitedani-agent)
 
 ---
 
@@ -555,35 +705,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: Next.js page: Fix formatting of AI section (#3658)
+## X. deps): bump telefunc from 0.2.24 to 0.3.0 (#3671)
 
 **RULE**:
-When implementing operations in `docs/pages/nextjs/+Page.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vikejs/vike. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/telefunc/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vikejs/vike. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7a16befc`: docs: Next.js page: Fix formatting of AI section (#3658). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94b12bd6`: deps): bump telefunc from 0.2.24 to 0.3.0 (#3671). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/pages/nextjs/+Page.mdx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/telefunc/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## AI & Code Generation
-#### Next.js' AI dilemma (High Volume, High Hallucination Rate):
-Context Window & Rule File Overhead:
-To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
-#### Vike's Advantage (Low Abstraction Surface = Deterministic AI Output):
+    "telefunc": "^0.3.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-## AI & Code Generation: 
-* **The Next.js AI Dilemma (High Volume, High Hallucination Rate):**
-**Context Window & Rule File Overhead:** To stop AI agents from generating broken Next.js App Router code, developers routinely have to maintain massive, multi-page `.cursorrules` or system prompt files explaining complex framework restrictions (e.g., caching opt-outs, boundary passing rules, and router behaviors). This consumes valuable context window tokens and increases latency, while still leaving room for agent errors when edge cases arise.
-* **The Vike Advantage (Low Abstraction Surface = Deterministic AI Output):**
+    "telefunc": "^0.2.24",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7a16befc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94b12bd6` are properly handled with clean fallback behavior.

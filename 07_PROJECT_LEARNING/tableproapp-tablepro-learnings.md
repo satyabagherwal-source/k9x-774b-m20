@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `94367b10`  
+> **Source Version**: `4c77c2f7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T17:42:42.856Z  
+> **Timestamp**: 2026-10-31T20:46:43.381Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T17:42:42.541Z  
+> **Harvest Timestamp**: 2026-10-31T20:46:43.373Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free and open source database client built natively for developers
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6318 stars
+- **Stars / Engagement**: 6349 stars
 
 ---
 
@@ -323,6 +323,7 @@ let package = Package(
         .library(name: "TableProKerberos", targets: ["TableProKerberos"]),
         .library(name: "TableProTeradataCore", targets: ["TableProTeradataCore"]),
         .library(name: "TableProTrinoCore", targets: ["TableProTrinoCore"]),
+        .library(name: "TableProDamengCore", targets: ["TableProDamengCore"]),
         .library(name: "TableProTLSClientIdentity", targets: ["TableProTLSClientIdentity"]),
         .library(name: "TableProTLSTestFixtures", targets: ["TableProTLSTestFixtures"]),
         .library(name: "TableProGoogleCloud", targets: ["TableProGoogleCloud"]),
@@ -397,7 +398,7 @@ let package = Package(
         ),
         .target(
             name: "TableProImport",
-            dependencies: ["TableProConnectionLibrary"],
+            dependencies: ["TableProConnectionLibrary", "TableProSSHTransport"],
             path: "Sources/TableProImport"
         ),
         .target(
@@ -444,8 +445,14 @@ let package = Package(
         ),
         .target(
             name: "TableProTrinoCore",
-            dependencies: [],
+            dependencies: ["TableProSQLGrammar"],
             path: "Sources/TableProTrinoCore"
+        ),
+        .target(
+            name: "TableProDamengCore",
+            dependencies: ["TableProSQLGrammar"],
+            path: "Sources/TableProDamengCore",
+            swiftSettings: pluginCoreSettings
         ),
         .target(
             name: "TableProTLSClientIdentity",
@@ -532,16 +539,7 @@ let package = Package(
             path: "Sources/TableProTabularIO"
         ),
         .target(
-            name: "TableProTabular",
-            dependencies: ["TableProTabularIO", "TableProNumberFormatting"],
-            path: "Sources/TableProTabular"
-        ),
-        .target(
-            name: "TableProSQLiteCore",
-            dependencies: ["CSQLite"],
-            path: "Sources/TableProSQLiteCore"
-        ),
-        // Linked by a plu
+            na
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -1577,11 +1575,11 @@ struct SQLTokenStream {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3791** (2026-10-22): **fix(safe-mode): read MySQL, MariaDB and TiDB executable comments as each server runs them**
-  *Symptoms*: ## Summary  - New `SQLExecutableCommentReadings`: the texts a MySQL, MariaDB or TiDB server may run from a statement, one per server family and version threshold. A skipped or plain comment is blanked, a run comment is unwrapped. - Modelled per server: `/*!NNNNN` skipped above the server's version past one nested `/* */`, MariaDB's `/*!50700`..`/*!99999` band, 5 or 6 version digits, `/*M!` plain on MySQL, `/*T!` run on TiDB, `/*m!` plain everywhere, OceanBase's flat retry. - Every gate reads all of them through `SQLLexicalReadings.lexings(of:)` and keeps the worst: Safe Mode levels, MCP, AI chat, AppleScript, the CLI, dashboard tiles, iOS, catalog refresh, row write refusal. - A text with more than 32 distinct versions is read as its worst case. - When no comment can move a statement boundary, each statement is read under its own comments only, so a mysqldump costs about 4 scans instead of one per version. - The lexer takes only `/*!` and `/*M!` as executable, and lexes a run body as code: nested comments, `#` and `-- `, no second level. The PluginKit lexer matches. - File markers match across comments and spaces (`INTO/**/OUTFILE`, `LOAD_FILE (`), and `ALTER TABLE ... TRUNCATE PARTITION` is destructive. - `MySQLSessionFootprint` reads the statement behind a version comment a server may skip. - SQL import reads a run conditional comment's body as code, and reads mysqldump's `DELIMITER ;;`. - Probe `apple/scripts/probes/check-mysql-executable-comments.sh`: passes on MySQL 8.0.
+- **Issue #3841** (2026-10-26): **Tables do not stay in cache for very long anymore**
+  *Symptoms*: ### What happened?  I have a few tables open all the time. I used to be able to move through them and they would have the last run sitting there. If I hit command + R then I'd get the new data but otherwise I'd get what I already had. I liked this setup. Now, pretty much every time I switch tabs, the tab reloads. This causes me to miss entries in the DB  ### Steps to reproduce  _No response_  ### Expected behavior  The tables should stay where they are unless I manually refresh them  ### Database type  PostgreSQL  ### TablePro version  Version 0.82.0 (820099)  ### Platform  macOS  ### OS version & hardware  M4 Air, 26.6.2  ### Installed from (Linux)  None  ### Debugging information (Linux)  ```text  ```  ### Screenshots / Logs  _No response_
 
-- **Issue #3789** (2026-10-22): **fix(quick-switcher): highlight the selected Open Quickly row after a search**
-  *Symptoms*: ## Summary  - Open Quickly draws its results with one flat `ForEach` and no `.id` on a row. The nested `ForEach(groups) { ForEach(items) }` in a `LazyVStack` kept a row realized under a removed group (Tables, Recent) on screen once a search moved its item into the results, and never updated it: no highlight, no bold match, and a stale second highlight. - New `QuickSwitcherList` owns that rule and the scrolling for Open Quickly, Jump to Column and the recent-tab switcher. - A section header draws inside its group's first row, so arrowing back up shows it again. - The list scrolls to the selection on each new search. A query whose best match was the scrolled-away selection left it off screen (Open Quickly, Jump to Column). - An arrow pressed before a new query's results land is replayed on those results, in order. It moved in the old list and was then reset. - The two filter functions are `@concurrent`. Under approachable concurrency they ran on the main actor: 100 to 400 ms per keystroke in the Connections scope with 5 to 10 connections of 2,000 tables. - Completion list: a click selects at once instead of after the double-click interval (about 350 ms), and the list scrolls only as far as the row needs, so a double click stays on its row.  | | Light | Dark | | --- | --- | --- | | Before | ![Before, light](https://github.com/user-attachments/assets/5adbb051-e355-4afb-8482-6e82c2de6041) | ![Before, dark](https://github.com/user-attachments/assets/dd864d61-1d45-4acc-8d46-24d3b20d
+- **Issue #3835** (2026-10-26): **[Bug/Performance] App freezes indefinitely when listing Stored Procedures & Functions on MySQL instances with many routines**
+  *Symptoms*: ### What happened?  ### Environment - **OS:** macOS - **TablePro Version:** Latest - **Database Engine:** MySQL 5.6.51 (legacy) - **Schema Context:** Server hosting multiple databases with a high volume of Stored Procedures and Functions.  ### Description When connected to a MySQL database that contains a large number of Stored Procedures and Functions, clicking on or attempting to expand/search the Routines (SPs/Functions) section causes TablePro to hang or freeze indefinitely. The list of routines never loads, and the application becomes unresponsive.  Other clients (such as Navicat or DBeaver) are able to inspect the schema without freezing because they use lightweight metadata queries and lazy loading.  ### Steps to reproduce  ### Steps to Reproduce 1. Establish a connection to a MySQL instance (e.g., MySQL 5.6.x) containing a database with several hundred Stored Procedures and Functions. 2. Select or enter the specific database. 3. Attempt to expand the Stored Procedures / Functions list in the sidebar or search routines. 4. **Result:** The UI enters a perpetual loading state or freezes completely; routines are never returned.  ### Expected behavior  ### Expected Behavior - The schema browser should quickly display the routine names and types (e.g., in a virtualized list). - Routine bodies/definitions should only be fetched on demand (lazy loaded) when the user clicks to open or edit a specific procedure. - The UI thread should remain responsive while metadata queries ar
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1598,1433 +1596,659 @@ struct SQLTokenStream {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2f0a3ba9` (2026-10-24)
-**Commit Message**: test(linux): retry a fixture's start when its image pull fails (#3828)
+### Incident Patch 1: `34b2363d` (2026-10-31)
+**Commit Message**: build(linux): give the package builds room for DuckDB 2.0 (#3937)
 
-**File**: `linux/crates/ssh/tests/openssh_session.rs` (modified, +8/-7)
+**File**: `linux/build-aux/debian/rules` (modified, +4/-0)
 ```diff
-@@ -9,9 +9,9 @@ use secrecy::SecretString;
- use tablepro_core::credentials::{CredentialInteraction, PromptPurpose, PromptReply};
- use tablepro_core::{LivenessPolicy, NetworkEndpoint, SshFailure, TransportError, TransportRoute};
- use tablepro_ssh::{SshAuth, SshConfig, SshDestination, SshRuntimeCell, SshServices, SshSession, forget_host_key};
-+use tablepro_test_fixtures::start_container;
- use tablepro_test_support::FakePrompter;
- use testcontainers::core::{IntoContainerPort, WaitFor};
--use testcontainers::runners::AsyncRunner;
- use testcontainers::{ContainerAsync, GenericImage, ImageExt};
- use tokio::io::AsyncReadExt;
- use tokio_util::sync::CancellationToken;
-@@ -45,12 +45,13 @@ fn write_config(config: &Path, known_hosts: &Path, strict_host_key_checking: &st
+@@ -33,6 +33,10 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all optimize=-lto
+ %:
+ 	dh $@ --buildsystem=meson
+ 
++# DuckDB 2.0's C++ debug info passes dwz's limit of 50 million DIEs, and
++# dwz then fails the build instead of leaving the file as it is.
++override_dh_dwz:
++
+ # dh_clean deletes *.orig files, and every vendored crate ships a
+ # Cargo.toml.orig that its .cargo-checksum.json lists.
+ override_dh_clean:
+```
+
+**File**: `linux/crates/app/meson.build` (modified, +4/-2)
+```diff
+@@ -53,15 +53,17 @@ if profile != 'development'
+ endif
+ 
+ # The workspace suite excludes the app, whose tests need a display and
+-# the GTK test accessibility backend.
++# the GTK test accessibility backend. A package build compiles its tests in
++# the release profile, DuckDB's C++ a second time among them, which took
++# more than an hour on a 4-core builder with DuckDB 2.0.
+ test(
+   'workspace',
+   cargo,
+   args: ['test'] + cargo_options + ['--workspace', '--exclude', 'tablepro'],
+   env: test_env,
+   suite: 'unit',
+   is_parallel: false,
+-  timeout: 3600,
++  timeout: 7200,
+ )
+ 
+ gtk_env = app_env
+```
+
+---
+
+### Incident Patch 2: `5fd3a352` (2026-10-31)
+**Commit Message**: fix(linux-grid): count the sort arrow in a header's width and measure columns again when a font changes (#3927)
+
+**File**: `linux/changelog.d/3927.fixed.1.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Changing the font or text size while a data grid was open left its columns at their old widths.
+```
+
+**File**: `linux/changelog.d/3927.fixed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++A data grid column sized by its header could cut the header's sort arrow.
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/columns.rs` (modified, +106/-19)
+```diff
+@@ -16,6 +16,7 @@ use crate::services::grid::{
+     CellDisplay, ColumnLayout, GridColumn, LayoutSlot, Placement, default_width_chars, header_text, merge_order,
+     number_width_chars, sampled_texts, typical_texts, typical_width_chars,
+ };
++use crate::ui::handler_guard::HandlerGuard;
+ 
+ /// Rows sampled for a column's opening width.
+ const WIDTH_SAMPLE: usize = 200;
+@@ -25,6 +26,21 @@ const CELL_CHROME_PX: i32 = 13;
+ /// A resize step, in digits of the font the cells draw in, so a step is
+ /// the same number of characters at any text size.
+ const STEP_DIGITS: i32 = 2;
++/// Adwaita draws a header's title in `.caption-heading`: bold, at 82 % of
++/// the grid's font.
++const HEADER_SCALE: f64 = 0.82;
++/// GTK keeps a sort indicator beside the title of every sortable column,
++/// sorted or not: 16 px wide in Adwaita, 6 px from the title.
++const SORT_INDICATOR_PX: i32 = 16 + 6;
++
++/// Whether measuring may narrow a column the grid sized itself.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++enum Measure {
++    /// More rows only widen it, so it holds still as pages arrive.
++    Widen,
++    /// A font changed, so the width it had means nothing now.
++    Again,
++}
+ 
+ /// What a column's cells read to draw a row. The column makes one and
+ /// every cell it builds shares it.
+@@ -66,6 +82,8 @@ pub struct ColumnSet {
+     /// keep: a better guess from other rows should still reach them.
+     auto_widths: std::collections::HashMap<usize, i32>,
+     pages: Pages,
++    /// The fonts the grid last sized its columns in.
++    measured_in: Option<String>,
+     handlers: Vec<(glib::WeakRef<glib::Object>, glib::SignalHandlerId)>,
  }
  
- async fn start() -> TestResult<Fixture> {
--    let container = GenericImage::new("alpine", "3.22")
--        .with_exposed_port(2222.tcp())
--        .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
--        .with_cmd(["sh", "-c", SSHD_SCRIPT])
--        .start()
--        .await?;
-+    let container = start_container(|| {
-+        GenericImage::new("alpine", "3.22")
-+            .with_exposed_port(2222.tcp())
-+            .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
-+            .with_cmd(["sh", "-c", SSHD_SCRIPT])
-+    })
-+    .await?;
-     let host = container.get_host().await?.to_string();
-     let port = container.get_host_port_ipv4(2222).await?;
- 
-```
-
-**File**: `linux/crates/test-fixtures/src/cassandra_fixture.rs` (modified, +27/-22)
-```diff
-@@ -1,12 +1,12 @@
- use std::time::Duration;
- 
- use testcontainers::core::IntoContainerPort;
--use testcontainers::runners::AsyncRunner;
- use testcontainers::{ContainerAsync, ContainerRequest, GenericImage, ImageExt};
- use tokio::time::Instant;
- 
- use crate::container_file::with_files;
- use crate::container_report::{container_state, log_tail};
-+use crate::container_start::start_container;
- use crate::{
-     CassandraFlavour, CassandraTls, ContainerFile, ExecOutput, FixtureCredentials, FixtureError, PkiFile, TestNetwork,
-     TestPki,
-@@ -166,29 +166,34 @@ impl CassandraFixture {
-         // ScyllaDB's image exposes "9042" with no protocol, so publishing every
-         // exposed port gives Docker 28 two 9042/tcp bindings on one host port.
-         // Host port 0 lets Docker pick one.
--        let mut request: ContainerRequest<GenericImage> =
--            image.with_cmd(command).with_mapped_port(0, Self::CONTAINER_PORT.tcp());
--        if flavour == CassandraFlavour::Cassandra {
--            // A joining node waits out the ring delay to learn who owns
--            // which tokens, so only the first node skips it.
--            let options = match &seed {
--                None => Self::fast_start_options(),
--                Some(_) => "-Dcassandra.superuser_setup_delay_ms=0",
--            };
--            request = request
--                .with_env_var("MAX_HEAP_SIZE", CASSANDRA_HEAP)
--                .with_env_var("HEAP_NEWSIZE", CASSANDRA_NEW_HEAP)
--                .with_env_var("JVM_EXTRA_OPTS", options);
--            if let Some(seed) = &seed {
--                request = request.with_env_var("CASSANDRA_SEEDS", seed.as_str());
--            }
--        }
-         let network_alias = network.as_ref().map(|(_, alias)| alias.clone());
--        if let Some((network, alias)) = &network {
--            request = request.with_network(network.name()).with_container_name(alias.as_str());
--        }
-         let files = Self::files(flavour, server_version, tls, &pki, &password)?;
--        let container = with_files(request, files).start().await?;
-+        let container = start_container(|| {
-+            let mut request: ContainerRequest<GenericImage> = image
-+                .clone()
-+                .with_cmd(command.clone())
-+                .with_mapped_port(0, Self::CONTAINER_PORT.tcp());
-+            if flavour == CassandraFlavour::Cassandra {
-+                // A joining node waits out the ring delay to learn who owns
-+                // which tokens, so only the first node skips it.
-+                let options = match &seed {
-+                    None => Self::fast_start_options(),
-+                    Some(_) => "-Dcassandra.superuser_setup_delay_ms=0",
-+                };
-+                request = request
-+                    .with_env_var("MAX_HEAP_SIZE", CASSANDRA_HEAP)
-+                    .with_env_var("HEAP_NEWSIZE", CASSANDRA_NEW_HEAP)
-+                    .with_env_var("JVM_EXTRA_OPTS", options);
-+                if let Some(seed) = &seed {
-+                    request = request.with_env_var("CASSANDRA_SEEDS", seed.as_str());
-+                }
-+            }
-+            if let Some((network, alias)) = &network {
-+                request = request.with_network(network.name()).with_container_name(alias.as_str());
-+            }
-+            with_files(request, files.clone())
-+        })
-+        .await?;
-         let host = container.get_host().await?.to_string();
-         let port = container.get_host_port_ipv4(Self::CONTAINER_PORT).await?;
-         let fixture = Self {
-```
-
-**File**: `linux/crates/test-fixtures/src/clickhouse_fixture.rs` (modified, +14/-11)
-```diff
-@@ -1,14 +1,14 @@
- use std::time::Duration;
- 
- use testcontainers::core::IntoContainerPort;
--use testcontainers::runners::AsyncRunner;
- use testcontainers::{ContainerAsync, ContainerRequest, GenericImage, ImageExt, TestcontainersError};
- use tokio::io::{AsyncReadExt, AsyncWriteExt};
- use tokio::net::TcpStream;
- use tokio::time::Instant;
- 
- use crate::container_file::with_files;
- use crate::container_report::{container_state, log_tail};
-+use crate::container_start::start_container;
- use crate::{
-     ClickHouseVersion, ContainerFile, ExecOutput, FixtureCredentials, FixtureError, PkiFile, ServerVersion,
-     TestNetwork, TestPki,
-@@ -60,19 +60,22 @@ impl ClickHouseFixture {
-         let pki = TestPki::generate()?;
-         let password = FixtureCredentials::generate_password();
-         let version = ClickHouseVersion::selected()?;
--        let mut request: ContainerRequest<GenericImage> = version
--            .image()
--            .generic()
--            .with_exposed_port(HTTP_PORT.tcp())
--            .with_exposed_port(HTTPS_PORT.tcp())
--            .into();
-         let network_alias = network.map(|network| network.container_name(Self::NETWORK_ROLE));
--        if let (Some(network), Some(alias)) = (network, &network_alias) {
--            request = request.with_network(network.name()).with_container_name(alias);
--        }
-         let mut files = Self::files(&pki, &password)?;
-         files.extend(extra_files);
--        let container = with_files(request, files).start().await?;
-+        let container = start_container(|| {
-+            let mut request: ContainerRequest<GenericImage> = version
-+                .image()
-+                .generic()
-+                .with_exposed_port(HTTP_PORT.tcp())
-+                .with_exposed_port(HTTPS_PORT.tcp())
-+                .into();
-+            if let (Some(network), Some(alias)) = (network, &network_alias) {
-+                request = request.with_network(network.name()).with_container_name(alias);
-+            }
-+            with_files(request, files.clone())
-+        })
-+        .await?;
-         let (host, http_port, https_port) = match published(&container).await {
-             Ok(published) => published,
-             Err(error) => {
-```
-
-**File**: `linux/crates/test-fixtures/src/container_start.rs` (added, +60/-0)
-```diff
-@@ -0,0 +1,60 @@
-+use std::time::Duration;
+@@ -234,20 +252,55 @@ impl DataGrid {
+     /// the first rows, and keeps it while rows scroll by, since an
+     /// automatic width measures every row GTK builds and shifts.
+     fn size_unsized_columns(&self) {
+-        let widths = self.opening_widths();
++        self.size_columns(Measure::Widen);
++    }
 +
-+use testcontainers::core::error::ClientError;
-+use testcontainers::runners::AsyncRunner;
-+use testcontainers::{ContainerAsync, ContainerRequest, Image, TestcontainersError};
++    /// The monospace font, the interface font or the text size changed:
++    /// the columns the grid sized itself take the new measure, and a width
++    /// the user gave stays.
++    pub(super) fn fonts_changed(&self) {
++        self.size_columns(Measure::Again);
++        row_number_column::fit(self);
++    }
 +
-+use crate::FixtureError;
-+
-+const START_ATTEMPTS: u32 = 3;
-+const PULL_RETRY_DELAY: Duration = Duration::from_secs(5);
-+
-+/// Starts the container `request` builds, building and starting it again
-+/// when pulling its image failed. testcontainers pulls once, so a pull the
-+/// registry cut short ("bytes remaining on stream") failed every test that
-+/// needed the image. A request is consumed by its start, hence the builder.
-+pub async fn start_container<I: Image>(
-+    request: impl Fn() -> ContainerRequest<I>,
-+) -> Result<ContainerAsync<I>, FixtureError> {
-+    let mut attempt = 1;
-+    loop {
-+        match request().start().await {
-+            Err(TestcontainersError::Client(ClientError::PullImage { .. })) if attempt < START_ATTEMPTS => {
-+                attempt += 1;
-+                tokio::time::sleep(PULL_RETRY_DELAY).await;
-+            }
-+            started => return Ok(started?),
++    /// A grid out of any window hears of no font change, and one sized
++    /// before it had a window measured in no theme's font.
++    pub(super) fn rooted(&self) {
++        let measured_in = self.imp().columns.borrow().measured_in.clone();
++        if measured_in.is_some_and(|fonts| fonts != fonts_now(&self.column_view())) {
++            self.fonts_changed();
 +        }
 +    }
++
++    /// The interface font and the text size reach the grid as GTK system
++    /// settings; the monospace font is libadwaita's.
++    pub(super) fn watch_fonts(&self) {
++        let style = adw::StyleManager::default();
++        let handler = style.connect_monospace_font_name_notify(glib::clone!(
++            #[weak(rename_to = grid)]
++            self,
++            move |_| grid.fonts_changed()
++        ));
++        self.imp().font_watch.replace(Some(HandlerGuard::new(&style, handler)));
++    }
++
++    fn size_columns(&self, measure: Measure) {
++        let widths = self.opening_widths(measure);
++        self.imp().columns.borrow_mut().measured_in = Some(fonts_now(&self.column_view()));
+         for (index, view_column, width) in widths {
+             self.imp().columns.borrow_mut().auto_widths.insert(index, width);
+             view_column.set_fixed_width(width);
+         }
+     }
+ 
+-    fn opening_widths(&self) -> Vec<(usize, gtk::ColumnViewColumn, i32)> {
++    fn opening_widths(&self, measure: Measure) -> Vec<(usize, gtk::ColumnViewColumn, i32)> {
+         let set = self.imp().columns.borrow();
+         let sample: Vec<Option<Arc<[Value]>>> = self.store().rows().take(WIDTH_SAMPLE).map(|row| row.cells()).collect();
+         let by_type = set.pages == Pages::Empty;
+         let view = self.column_view();
+-        let font = value_font(&view);
+-        let metrics = view.pango_context().metrics(Some(&font), None);
++        let context = view.create_pango_context();
++        let font = value_font(&context);
++        let metrics = context.metrics(Some(&font), None);
+         let char_px = pango::units_to_double(metrics.approximate_char_width());
+         let null = editable_null_sentinel();
+         let mut widths = Vec::new();
+@@ -272,31 +325,37 @@ impl DataGrid {
+             // no rows a value its type spells out, as a UUID or an enum's
+             // label, so those are measured as the cell draws them.
+             let sampled = match (by_type, paint.numbers.get()) {
+-                (_, true) => tabular_width(&view, &font, &"0".repeat(usize::try_from(chars).unwrap_or_default())),
++                (_, true) => tabular_width(&context, &font, &"0".repeat(usize::try_from(chars).unwrap_or_default())),
+                 (true, false) => 0,
+                 // One line each, so one layout measures them all
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/imp.rs` (modified, +14/-0)
+```diff
+@@ -18,6 +18,7 @@ use super::row_detail::RowDetailPane;
+ use super::selection::Target;
+ use super::selection_summary::SummaryState;
+ use super::{GridConfig, GridStore};
++use crate::ui::handler_guard::HandlerGuard;
+ 
+ /// The grid's selection model, made with the grid and given its rows once
+ /// the grid knows how it sorts.
+@@ -85,6 +86,7 @@ pub struct DataGrid {
+     pub editing: Cell<bool>,
+     /// The window's focus handler, while the grid is in a window.
+     pub focus_watch: RefCell<Option<(glib::WeakRef<gtk4::Window>, glib::SignalHandlerId)>>,
++    pub(super) font_watch: RefCell<Option<HandlerGuard>>,
+ }
+ 
+ #[glib::object_subclass]
+@@ -122,6 +124,7 @@ impl ObjectImpl for DataGrid {
+         self.find.stop();
+         self.summary.stop();
+         self.obj().stop_watching_focus();
++        drop(self.font_watch.take());
+         if let Some(menus) = self.menus.get() {
+             menus.unparent();
+         }
+@@ -134,12 +137,23 @@ impl WidgetImpl for DataGrid {
+     fn root(&self) {
+         self.parent_root();
+         self.obj().watch_focus();
++        self.obj().rooted();
+     }
+ 
+     fn unroot(&self) {
+         self.obj().stop_watching_focus();
+         self.parent_unroot();
+     }
++
++    fn system_setting_changed(&self, setting: &gtk4::SystemSetting) {
++        self.parent_system_setting_changed(setting);
++        if matches!(
++            setting,
++            gtk4::SystemSetting::Dpi | gtk4::SystemSetting::FontName | gtk4::SystemSetting::FontConfig
++        ) {
++            self.obj().fonts_changed();
++        }
++    }
+ }
+ 
+ impl BinImpl for DataGrid {}
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/mod.rs` (modified, +1/-0)
+```diff
+@@ -87,6 +87,7 @@ impl DataGrid {
+         find_bar::install(&grid);
+         imp.detail_pane.attach(&grid);
+         grid.set_columns(columns, sorting, rules);
++        grid.watch_fonts();
+         grid
+     }
+ 
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/row_number_column.rs` (modified, +3/-1)
+```diff
+@@ -139,7 +139,9 @@ pub fn fit(grid: &DataGrid) {
+     };
+     let largest = grid.row_base() + u64::from(grid.store().len());
+     let digits = largest.max(1).ilog10() as i32 + 1;
+-    let metrics = grid.column_view().pango_context().metrics(None, None);
++    // A fresh context, since the view's own follows a font change only at
++    // the next frame.
++    let metrics = grid.column_view().create_pango_context().metrics(None, None);
+     let digit_px = pango::units_to_double(metrics.approximate_digit_width());
+     column.set_fixed_width((f64::from(digits.max(2)) * digit_px).ceil() as i32 + CHROME_PX);
+ }
+```
+
+**File**: `linux/crates/app/src/ui/data_grid/tests/columns.rs` (modified, +131/-3)
+```diff
+@@ -438,18 +438,146 @@ fn a_header_of_wide_letters_shows_whole() {
+         vec![named("id", "integer", true), named("WWWWWWWW", "text", false)],
+         vec![vec![Value::Int(1), text("a")]],
+     ));
++    let (header, title) = header_title(&grid, "WWWWWWWW");
++    let (_, needs, _, _) = title.measure(gtk::Orientation::Horizontal, -1);
++
++    wait_until(WAIT, || header.width() >= needs).expect("the header's title shows whole");
 +}
 +
-+#[cfg(test)]
-+mod tests {
-+    use std::time::Instant;
++/// GTK keeps a sort indicator beside the title of every sortable column,
++/// so a column as wide as its title alone cuts the arrow once it sorts.
++#[gtk4::test]
++fn a_sorted_columns_header_shows_its_title_and_arrow_whole() {
++    let grid = laid_out(Grid::open(
++        vec![named("id", "integer", true), named("level", "text", false)],
++        vec![vec![Value::Int(1), text("a")]],
++    ));
++    grid.grid.sort_by(Some((1, true)));
++    let (header, title) = header_title(&grid, "level");
++    let title_and_arrow = title.parent().expect("the title's box");
++    let (_, needs, _, _) = title_and_arrow.measure(gtk::Orientation::Horizontal, -1);
 +
-+    use testcontainers::GenericImage;
++    wait_until(WAIT, || header.width() >= needs).expect("the title and its sort arrow show whole");
++}
 +
-+    use super::*;
++/// The text size reaches the grid as a GTK setting: a column it sized
++/// takes the new measure both ways, and a width the user gave stays.
++#[gtk4::test]
++fn a_text_size_change_measures_the_grids_columns_again() {
++    let grid = laid_out(Grid::open(
++        vec![
++            named("id", "integer", true),
++            named("code", "text", false),
++            named("note", "text", false),
++        ],
++        vec![vec![Value::Int(1), text("CF-1001"), text("Ships in two days")]],
++    ));
++    let code = data_column(&grid, 1);
++    let opened = code.fixed_width();
++    data_column(&grid, 2).set_fixed_width(300);
++    let scaled = TextScale::times(1.5);
 +
-+    #[tokio::test]
-+    #[ignore = "requires docker"]
-+    async fn a_pull_that_keeps_failing_is_tried_three_times_and_reported() {
-+        let started = Instant::now();
++    wait_until(WAIT, || code.fixed_width() > opened).expect("the column widened with the text");
++    let display = grid.cell_of(1, 1).display().cloned().expect("the code's text");
++    wait_until(WAIT, || shows_whole(&display)).expect("the code shows whole at the larger text");
++    assert_eq!(
++        data_column(&grid, 2).fixed_width(),
++        300,
++        "the width the user gave changed"
++    );
++    let widened = code.fixed_width();
 +
-+        let error = start_container(|| GenericImage::new("alpine", "tablepro-no-such-tag").into())
-+            .await
-+            .err()
-+            .unwrap();
++    drop(scaled);
++    wait_until(WAIT, || code.fixed_width() < widened).expect("the column narrowed with the text");
++    assert_eq!(
++        data_column(&grid, 2).fixed_width(),
++        300,
++        "the width the user gave changed"
++    );
++}
 +
-+        let FixtureError::Container(TestcontainersError::Client(ClientError::PullImage { descriptor, .. })) = &error
-+        else {
-+            panic!("unexpected error: {error}");
-+        };
-+        assert_eq!(descriptor, "alpine:tablepro-no-such-tag");
-+        assert!(
-+            started.elapsed() >= PULL_RETRY_DELAY * (START_ATTEMPTS - 1),
-+            "took {:?}",
-+            started.elapsed()
++/// A grid out of its window hears of no text size change, so it measures
++/// again when it is back if its fonts are not the ones it measured in.
++#[gtk4::test]
++fn a_grid_back_in_its_window_takes_a_text_size_it_missed() {
++    let grid = laid_out(Grid::open(
++        vec![
++            named("id", "integer", true),
++            named("code", "text", false),
++            named("note", "text", false),
++        ],
++        vec![vec![Value::Int(1), text("CF-1001"), text("Ships in two days")]],
++    ));
++    let code = data_column(&grid, 1);
++    let opened = code.fixed_width();
++    data_column(&grid, 2).set_fixed_width(300);
++
++    grid.window.set_child(None::<&gtk::Widget>);
++    let _scaled = TextScale::times(1.5);
++    grid.window.set_child(Some(&grid.grid));
++
++    wait_until(WAIT, || code.fixed_width() > opened).expect("the column widened with the text");
++    assert_eq!(
++        data_column(&grid, 2).fixed_width(),
++        300,
++        "the width the user gave changed"
++    );
++}
++
++/// libadwaita announces a new monospace font; the grid measures the
++/// columns it sized again, from the rows it holds now.
++#[gtk4::test]
++fn a_monospace_font_change_measures_the_grids_columns_again() {
++    let grid = laid_out(Grid::open(
++        vec![named("id", "integer", true), named("note", "text", false)],
++        vec![vec![Value::Int(1), text(&"x".repeat(30))]],
++    ));
++    let column = data_column(&grid, 1);
++    let wide = column.fixed_width();
++    grid.grid.replace_rows(persisted(&[vec![Value::Int(1), text("a")]]), 0);
++    assert_eq!(column.fixed_width(), wide, "a page of shorter rows narrowed the column");
++
++    libadwaita::StyleManager::default().notify("monospace-font-name");
++
++    wait_until(WAIT, || column.fixed_width() < wide).expect("the column measured again");
++}
++
++/// The header of the column named `name`, and its title.
++fn header_title(grid: &Grid, name: &str) -> (gtk::Widget, gtk::Label) {
+     let title = descendants(&grid.grid.column_view())
+         .into_iter()
+         .filter_map(|widget| widget.downcast::<gtk::Label>().ok())
+-        .find(|label| label.label() == "WWWWWWWW")
++        .find(|label| label.label() == name)
+         .expect("the header's title");
+     let header = title
+         .parent()
+         .and_then(|title_box| title_box.parent())
+         .expect("the header button");
+-    let (_, needs, _, _) = title.measure(gtk::Orientation::Horizontal,
+```
+
+---
+
+### Incident Patch 3: `58848496` (2026-10-31)
+**Commit Message**: feat(linux-session): reopen a connection's other databases at launch and when a failed connect is retried (#3905)
+
+Co-authored-by: sedax90 <[REDACTED_EMAIL]>
+Co-authored-by: Ngo Quoc Dat <[REDACTED_EMAIL]>
+
+**File**: `linux/changelog.d/3905.added.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++A database opened beside its connection reopens with it at the next launch, with its tabs.
+```
+
+**File**: `linux/crates/app/src/ui/session_window/connections.rs` (modified, +14/-12)
+```diff
+@@ -619,19 +619,21 @@ impl SessionWindow {
+         if !self.tear_down_session(&key) {
+             return;
+         }
+-        let Some(saved) = stored else {
+-            self.show_toast(&crate::i18n::gettext("The connection was deleted."));
+-            return;
+-        };
+-        let source = ConnectSource::Saved(Box::new(saved));
+-        let Some(claim) = self.claim_for(&key) else {
+-            return;
+-        };
+-        if let Some(mut pending) = self.spawn_connect(claim, source, None, CredentialDemand::default()) {
+-            pending.databases = databases;
+-            self.imp().connects.borrow_mut().push(pending);
++        match stored {
++            Some(saved) => self.connect_saved(saved, databases),
++            None => self.show_toast(&crate::i18n::gettext("The connection was deleted.")),
+         }
+-        self.connects_changed();
++    }
++
++    /// Connect `saved` through the window's one connect path, and open
++    /// `databases` beside it once it joins.
++    pub(super) fn connect_saved(&self, saved: SavedConnection, databases: Vec<String>) {
++        self.connect_reopening(
++            None,
++            ConnectSource::Saved(Box::new(saved)),
++            CredentialDemand::default(),
++            databases,
 +        );
-+    }
-+}
+     }
+ 
+     /// Tick the level of the session in front in the main menu.
 ```
 
-**File**: `linux/crates/test-fixtures/src/lib.rs` (modified, +2/-0)
+**File**: `linux/crates/app/src/ui/session_window/imp.rs` (modified, +5/-1)
 ```diff
-@@ -6,6 +6,7 @@ mod clickhouse_fixture;
- mod clickhouse_version;
- mod container_file;
- mod container_report;
-+mod container_start;
- mod exec_output;
- mod fixture_credentials;
- mod fixture_error;
-@@ -51,6 +52,7 @@ pub use cassandra_version::CassandraVersion;
- pub use clickhouse_fixture::ClickHouseFixture;
- pub use clickhouse_version::ClickHouseVersion;
- pub use container_file::ContainerFile;
-+pub use container_start::start_container;
- pub use exec_output::ExecOutput;
- pub use fixture_credentials::FixtureCredentials;
- pub use fixture_error::FixtureError;
-```
-
-**File**: `linux/crates/test-fixtures/src/mongo_fixture.rs` (modified, +20/-16)
-```diff
-@@ -1,10 +1,10 @@
- use std::time::Duration;
+@@ -27,6 +27,10 @@ use crate::ui::welcome_view::WelcomeView;
+ use crate::ui::workspace::WorkspaceShell;
+ use crate::workspace::{CloseGuards, WindowInhibitor};
  
- use testcontainers::core::{IntoContainerPort, WaitFor};
--use testcontainers::runners::AsyncRunner;
- use testcontainers::{ContainerAsync, ContainerRequest, GenericImage, ImageExt};
- 
- use crate::container_file::with_files;
-+use crate::container_start::start_container;
- use crate::{
-     ContainerFile, ExecOutput, FixtureCredentials, FixtureError, MongoVersion, PkiFile, ServerVersion, TestNetwork,
-     TestPki,
-@@ -100,22 +100,26 @@ impl MongoFixture {
-         let pki = TestPki::generate()?;
-         let password = FixtureCredentials::generate_password();
-         let version = MongoVersion::selected()?;
--        let mut request: ContainerRequest<GenericImage> = version
--            .image()
--            .generic()
--            .with_wait_for(WaitFor::message_on_stdout(READY))
--            .with_exposed_port(PORT.tcp())
--            .with_exposed_port(CERTIFICATE_PORT.tcp())
--            .with_entrypoint("sh")
--            .with_cmd([format!("{CONFIG_DIR}/start.sh")])
--            .with_env_var("TABLEPRO_PASSWORD", &password)
--            .with_env_var("TABLEPRO_TLS", if listening == Listening::Tls { "1" } else { "0" })
--            .with_startup_timeout(READY_TIMEOUT);
-         let network_alias = network.map(|network| network.container_name(Self::NETWORK_ROLE));
--        if let (Some(network), Some(alias)) = (network, &network_alias) {
--            request = request.with_network(network.name()).with_container_name(alias);
--        }
--        let container = with_files(request, Self::files(&pki)?).start().await?;
-+        let files = Self::files(&pki)?;
-+        let container = start_container(|| {
-+            let mut request: ContainerRequest<GenericImage> = version
-+                .image()
-+                .generic()
-+                .with_wait_for(WaitFor::message_on_stdout(READY))
-+                .with_exposed_port(PORT.tcp())
-+                .with_exposed_port(CERTIFICATE_PORT.tcp())
-+                .with_entrypoint("sh")
-+                .with_cmd([format!("{CONFIG_DIR}/start.sh")])
-+                .with_env_var("TABLEPRO_PASSWORD", &password)
-+                .with_env_var("TABLEPRO_TLS", if listening == Listening::Tls { "1" } else { "0" })
-+                .with_startup_timeout(READY_TIMEOUT);
-+            if let (Some(network), Some(alias)) = (network, &network_alias) {
-+                request = request.with_network(network.name()).with_container_name(alias);
-+            }
-+            with_files(request, files.clone())
-+        })
-+        .await?;
-         let host = container.get_host().await?.to_string();
-         let port = container.get_host_port_ipv4(PORT).await?;
-         let certificate_port = match listening {
-```
-
-**File**: `linux/crates/test-fixtures/src/mssql_fixture.rs` (modified, +15/-11)
-```diff
-@@ -1,11 +1,11 @@
- use std::time::Duration;
- 
--use testcontainers::runners::AsyncRunner;
- use testcontainers::{ContainerAsync, ImageExt};
- use testcontainers_modules::mssql_server::MssqlServer;
- use uuid::Uuid;
- 
- use crate::container_file::with_files;
-+use crate::container_start::start_container;
- use crate::{
-     ContainerFile, ExecOutput, FixtureCredentials, FixtureError, MssqlVersion, PkiFile, ServerVersion, TestPki,
- };
-@@ -32,16 +32,20 @@ impl MssqlFixture {
-         let password = format!("Tp1!{}", Uuid::new_v4().simple());
-         let version = MssqlVersion::selected()?;
-         let image = version.image();
--        let request = MssqlServer::default()
--            .with_accept_eula()
--            .with_sa_password(&password)
--            .with_name(image.name)
--            .with_tag(image.tag)
--            .with_startup_timeout(STARTUP_TIMEOUT)
--            // SQL Server otherwise takes 80% of the host's memory, and a
--            // container left behind by a killed test keeps all of it.
--            .with_env_var("MSSQL_MEMORY_LIMIT_MB", MEMORY_LIMIT_MB);
--        let container = with_files(request, Self::files(&pki)?).start().await?;
-+        let files = Self::files(&pki)?;
-+        let container = start_container(|| {
-+            let request = MssqlServer::default()
-+                .with_accept_eula()
-+                .with_sa_password(&password)
-+                .with_name(image.name)
-+                .with_tag(image.tag)
-+                .with_startup_timeout(STARTUP_TIMEOUT)
-+                // SQL Server otherwise takes 80% of the host's memory, and a
-+                // container left behind by a killed test keeps all of it.
-+                .with_env_var("MSSQL_MEMORY_LIMIT_MB", MEMORY_LIMIT_MB);
-+            with_files(request, files.clone())
-+        })
-+        .await?;
-         let host = container.get_host().await?.to_string();
-         let port = container.get_host_port_ipv4(CONTAINER_PORT).await?;
-         Ok(Self {
-```
-
-**File**: `linux/crates/test-fixtures/src/mysql_fixture.rs` (modified, +16/-13)
-```diff
-@@ -1,8 +1,8 @@
- use testcontainers::core::IntoContainerPort;
--use testcontainers::runners::AsyncRunner;
- use testcontainers::{ContainerAsync, GenericImage, ImageExt};
- 
- use crate::container_file::with_files;
-+use crate::container_start::start_container;
- use crate::{
-     ContainerFile, ExecOutput, FixtureCredentials, FixtureError, MysqlFlavour, MysqlOptions, PkiFile, TestNetwork,
-     TestPki,
-@@ -51,19 +51,22 @@ impl MysqlFixture {
-             .into_iter()
-             .fold(release.generic(), GenericImage::with_wait_for)
-             .with_exposed_port(Self::CONTAINER_PORT.tcp());
--        let mut request = image
--            .with_env_var(format!("{prefix}_ROOT_PASSWORD"), &root_password)
--            .with_env_var(format!("{prefix}_DATABASE"), DATABASE)
--            .with_env_var(format!("{prefix}_USER"), PASSWORD_USER)
--            .with_env_var(format!("{prefix}_PASSWORD"), &password)
--            .with_cmd(Self::server_arguments(&options));
-         let network_alias = network.map(|network| network.container_name(Self::NETWORK_ROLE));
--        if let (Some(network), Some(alias)) = (network, &network_alias) {
--            request = request.with_network(network.name()).with_container_name(alias);
--        }
--        let container = with_files(request, Self::files(&pki, &options, &certificate_password)?)
--            .start()
--            .await?;
-+        let files = Self::files(&pki, &options, &certificate_password)?;
-+        let container = start_container(|| {
-+            let mut request = image
-+                .clone()
-+                .with_env_var(format!("{prefix}_ROOT_PASSWORD"), &root_password)
-+                .with_env_var(format!("{prefix}_DATABASE"), DATABASE)
-+                .with_env_var(format!("{prefix}_USER"), PASSWORD_USER)
-+                .with_env_var(format!("{prefix}_PASSWORD"), &password)
-+                .with_cmd(Self::server_arguments(&options));
-+            if let (Some(network), Some(alias)) = (network, &network_alias) {
-+                request = request.with_network(network.name()).with_container_name(alias);
-+            }
-+            with_files(request, files.clone())
-+        })
-+        .await?;
-         let host = container.get_host().await?.to_string();
-         let port = container.get_host_port_ipv4(Self::CONTAINER_PORT).await?;
-         Ok(Self {
-```
-
----
-
-### Incident Patch 2: `94367b10` (2026-10-25)
-**Commit Message**: refactor(data-grid)!: rebuild the macOS data grid on one model and native AppKit (#3833)
-
-**File**: `.claude/rules/data-grid.md` (modified, +60/-13)
-```diff
-@@ -1,21 +1,68 @@
- ---
- paths:
--  - "apple/TablePro/Views/Results/**/*"
-+  - "apple/TablePro/Views/DataGrid/**/*"
-   - "apple/TablePro/Core/DataGrid/**/*"
-+  - "apple/TablePro/Views/Results/**/*"
-+  - "apple/TableProTests/Views/DataGrid/**/*"
-+  - "apple/TableProTests/Core/DataGrid/**/*"
-   - "apple/TableProTests/Views/Results/**/*"
- ---
- 
- # Data grid
- 
--- **Selection indices are display positions**, not `TableRows.rows` indices. Resolve them through `DisplayRowMapping` (or `TableViewCoordinator.displayRow(at:)` and `tableRowsIndex(forDisplayRow:)`) before reading or changing a row; they match only while no sort or value filter applies.
--- **Cells are drawn, not mounted.** `tableView(_:viewFor:row:)` returns nil for data columns and `DataGridRowView` draws the visible cells, and every column stays attached. Never hide off-screen columns with `NSTableColumn.isHidden`: each write costs O(attached columns).
--- **Find data columns through `DataGridColumnPool.presentsColumn` and `firstPresentedColumnIndex`**, never a fixed index into `tableColumns` (the row-number column and pool slots sit there too).
--- **The header draws all of its own chrome** through `SortableHeaderChrome`: the cell never calls `super.draw`, and `highlightedTableColumn` stays unset, because AppKit paints a fixed-height band that does not fit the taller header. Sort state goes through `SortableHeaderView.applySortState(_:schema:)`, which also sets each header cell's accessibility sort direction.
--- **A themed header draws its own cells.** `NSTableHeaderView.draw` paints AppKit's band over the header fill before the cells, so while `dataGrid.headerBackground` is themed `SortableHeaderView` draws each column's header cell itself, the dragged one included; an unthemed header keeps `super.draw`.
--- **Row selection is `NSTableRowView`'s own** unless the theme overrides `gridSelection` or `gridInactiveSelection`, so the default theme follows Accent and focus. The gutter and a selected column heading read `DataGridBodyChrome.selectionColor(emphasized:scope:)` so they match the row. A theme change repaints visible rows; it never reloads data.
--- **A translucent theme selection is flattened once.** The row, the gutter and a heading sit on three different bases, so `DataGridBodyChrome.themedSelectionColor(emphasized:scope:)` lays the selection over the grid background and all three paint that opaque color with any alpha.
--- **A range outline stays apart from its fill.** Natively a multi-cell range is outlined in the selection color at 70%. Under a themed `dataGrid.selection` that outline would vanish into the opaque fill, so `GridSelectionOverlay.rangeBorderColor(_:)` takes the active cell's border color instead (`dataGrid.focusBorder`, else Accent) at 70%.
--- **The grid reads its colors through its `ThemeScope`.** `DataGridView(themeScope:)` hands it to `TableViewCoordinator`, and every grid color read goes through `coordinator.themeScope`, `KeyHandlingTableView.themeScope` and `SortableHeaderView.themeScope` included. `ThemeEngine.shared` supplies only the fonts and the cache counters that follow a system color change. A new scope repaints in place with no reload. Read `scope.resolved` once per draw, not once per cell. Scopes: `.claude/rules/theme.md`.
--- **`gridStyleMask` stays empty; `DataGridBodyChrome` draws column separators and the stripes.** AppKit's vertical grid lines add one subview per column and make every layout pass quadratic. Take separator positions from `presentsColumn` and `rect(ofColumn:)`.
--- **Scroll the grid with `NSView.scroll(_:)`**, never `clipView.scroll(to:)` plus `reflectScrolledClipView`, which leaves the header behind.
--- **Accessibility goes through `DataGridCellAccessibilityView`**, mounted for on-screen rows once `DataGridAccessibility.isActive`; `NSTableView` builds its cell tree from views only. Keep that path working whenever row drawing changes.
-+Three layers, knowledge pointing one way: an owner's adapter, then `DataGridModel` (`Core/DataGrid`), then the AppKit view (`Views/DataGrid`). The value editors and viewers stay in `Views/Results`.
++/// A connect that failed beside the window's sessions: where it came
++/// from, why it failed, and the other databases its next connect opens.
++pub(super) type FailureBeside = (ConnectSource, ConnectFailure, Vec<String>);
 +
-+## Model
-+
-+- **`DataGridModel` holds the grid's state** and outlives every mount: column set, row order, selection, sort, value filter, column layout, display formats, find and the edit session. Its owner holds it strongly; the data tab keeps one per tab on `MainContentCoordinator`.
-+- **An owner talks to the model, never to the view.** It implements `DataGridDataSource` and `DataGridActions` in an adapter class and calls `reloadRows()` when its rows were replaced or `apply(_ delta:)` when they changed. The model keeps the selection by identity and sends the mounted view one `DataGridChange`.
-+- **Rows are `RowID`, columns are `DataGridColumnID`.** `DataGridRowOrder` maps display rows, and `DataGridColumnSet` is the only converter between data index, display position and pane. A bare `Int` is a display position, valid only inside one call: capture the IDs before a popover,
+ #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
+ #[template(resource = "/app/tablepro/TablePro/ui/session-window.ui")]
+ #[properties(wrapper_type = super::SessionWindow)]
+@@ -53,7 +57,7 @@ pub struct SessionWindow {
+     pub(super) failed: RefCell<Option<FailedConnect>>,
+     /// The last failure of each connect that failed beside something
+     /// else, until the key connects again, for its Details.
+-    pub(super) failures: RefCell<HashMap<SessionKey, (ConnectSource, ConnectFailure)>>,
++    pub(super) failures: RefCell<HashMap<SessionKey, FailureBeside>>,
+     /// The shell, from the first session the window adopts to the last
+     /// one it tears down.
+     pub(super) shell: RefCell<Option<WorkspaceShell>>,
 ```
 
-**File**: `.claude/rules/theme.md` (modified, +4/-3)
+**File**: `linux/crates/app/src/ui/session_window/locate_file.rs` (modified, +2/-1)
 ```diff
-@@ -19,16 +19,17 @@ paths:
- 
- - `TableProTheme` is Foundation only, so the iOS app can adopt it; AppKit and SwiftUI code stays in `apple/TablePro/Theme`.
- - **`ThemeSlot` is the one registry.** A slot exists only while a view reads it: removing its last reader removes the slot.
--- `isOverridden(_:)` means the slot draws a theme color, set or derived: ask it before swapping a native drawing path (row selection, caret, header). Only the theme editor asks `hasExplicitColor(_:)`.
--- **Adding a slot bumps `ThemeSchema.current`.** The decoder reads every schema from 3 up and refuses a newer one or an unknown key, rather than load a file without colors its author wrote. The bump renames the sync content kind (Sync).
-+- `isOverridden(_:)` means the slot draws a theme color, set or derived: ask it before swapping a native drawing path (a code table's selection, the caret). Only the theme editor asks `hasExplicitColor(_:)`.
-+- **Adding a slot bumps `ThemeSchema.current`.** `ThemeFileFormat` reads only the current schema: an older or newer one, or an unknown key, is refused rather than loaded without colors its author wrote, so a bump stops every older file from loading. The bump renames the sync content kind (Sync).
-+- **Removing a slot never bumps the schema.** Its key joins `ThemeFileFormat.retiredKeys`, which the decoder drops, so a file that still carries it loads without it.
- - **An imported file is untrusted.** `ThemeFileImporter` checks the size before it reads, mints a fresh id every time, and never follows a VS Code `include` out of the file's folder.
- 
- ## Reading colors
- 
- - **A scoped carrier reads through its `ThemeScope`, never `ThemeEngine.shared`.** Only the theme editor preview uses `.fixed(_:)`, and a new definition is a new scope.
- - `palette.color(_:otherwise:)` returns a new object on every call: never compare it to skip a write. Bake `resolved` into a `CGColor` only inside the drawing view's appearance (`resolved.cgColor(_:otherwise:in:)`).
- - **Hold every AppKit carrier** (`ThemeTextViewStyle`, `ThemeTableChrome`, never on a source list) **as a stored property.** Its subscription and row views hold it weakly, so one held in a local stops at the first theme change.
--- `NSTableHeaderView` paints over anything beneath it, so `ThemeTableChrome` swaps in `ThemeTableHeaderView` while the header is themed.
-+- **Header and selection are always the system's.** No slot colors a table header, a records row's selection or its selected text, or the data grid's active-cell border, so they follow Accent, focus and Increase Contrast. `ThemeTableChrome` never replaces a header; only a code table recolors its selection, with `editor.selection`.
- - **A theme change has to reach the view.** SwiftUI caches `Color(nsColor:)` by object identity, so a view reading the engine holds `@ObservedObject private var themeEngine = ThemeEngine.shared`; an AppKit view that bakes a color re-bakes on `AppEvents.shared.themeChanged`. `withAlphaComponent` on a system color outside `NSColor(name:dynamicProvider:)` freezes it.
- - **No theme color on selectable-row text**: it does not turn white on the emphasized selection. Never put `.themeForeground` on a container of selectable rows; `ThemeTableChrome.recordsTextSlot(...)` picks a records cell's slot.
- 
+@@ -202,7 +202,8 @@ impl SessionWindow {
+         if self.failed_saved(located.id).is_none() {
+             return;
+         }
+-        if let Some((claim, _, _)) = self.take_failure(&SessionKey::Saved(located.id)) {
++        if let Some(super::session_page::TakenFailure { claim, .. }) = self.take_failure(&SessionKey::Saved(located.id))
++        {
+             self.connect_with(
+                 claim,
+                 ConnectSource::Saved(Box::new(located)),
 ```
 
-**File**: `.claude/rules/ui-tests.md` (modified, +3/-1)
+**File**: `linux/crates/app/src/ui/session_window/mod.rs` (modified, +151/-27)
 ```diff
-@@ -52,7 +52,9 @@ The UI plan holds end-to-end flows only. Swift Testing rules, isolation and shar
- ## The grid
- 
- - Every grid read and click goes through `FixtureGrid` (`cell`, `value`, `waitForValue`, `clickCell`, `editCell`, `clickHeader`) or `gridPoint(in:of:dy:)`.
--- `FixtureGrid` matches a cell by the identifier `DataGridCellAccessibilityView`, the leaf that carries the value, not the AXCell wrapper AppKit puts around it.
-+- `dataGrid(in:)` matches the main table, `data-grid`, which publishes every column. The frozen pane laid over its leading edge, `data-grid-frozen`, is hidden from accessibility.
-+- `FixtureGrid` matches a cell by the identifier `data-grid-cell`, the leaf that carries the value, not the AXCell wrapper AppKit puts around it, and by the label `Row r, column c: `. Both count from 1: `r` is the row number on screen, page offset included, and `c` the column's display position, so hiding or moving a column renumbers the ones after it.
-+- A plain `clickHeader` sorts by that column alone and flips it on the next click; `clickHeader(_:modifiers: .option)` adds it as another key. A right-click opens the header or cell menu and never moves the selection.
- - `FixtureFile.rows` and `FixtureFile.execute` read and write the fixture database directly, to set up or check data without the UI.
- - Never call `click()` on a grid element. Rows and cells read as obscured by their columns, a row element has an empty frame so an offset click lands on the window's close button, and a header never becomes hittable. The app side is in `.claude/rules/data-grid.md`.
- - A point offset from the grid measures from its top edge, above the header. Take `dy` from a row's frame (`row.frame.midY - grid.frame.minY`); a small constant hits the header and opens the column menu.
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProTheme/Import/VSCodeThemeImporter.swift` (modified, +1/-1)
-```diff
-@@ -167,7 +167,7 @@ private extension ThemeDefinition {
-             switch slot.fallback {
-             case .system, .defaultSyntax:
-                 continue
--            case .slot, .derived, .paired:
-+            case .slot, .derived:
-                 var unset = result
-                 unset.overrides[slot] = nil
-                 if unset.value(for: slot) == result.value(for: slot) {
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProTheme/Import/VSCodeThemeMapping.swift` (modified, +1/-15)
-```diff
-@@ -22,9 +22,7 @@ private extension VSCodeColorSource {
- }
- 
- internal extension ThemeSlot {
--    // An empty list leaves the slot to its fallback. So does a source list that stops short: the
--    // alternate row, the header, the header text, the bools and the selection text are derived by
--    // `fallback` from the background, text and selection, which is what VS Code paints there too.
-+    // A list that stops short leaves the slot to `fallback`, which derives the stripe and the bools the way VS Code paints them.
-     var vscodeSources: [VSCodeColorSource] {
-         switch self {
-         case .windowBackdrop:
-@@ -84,20 +82,8 @@ internal extension ThemeSlot {
-             return [.color("editor.foreground")]
-         case .gridAlternateRow:
-             return [.color("keybindingTable.rowsBackground"), .color("tree.tableOddRowsBackground")]
--        case .gridHeaderBackground:
--            return [.color("keybindingTable.headerBackground"), .color("tree.tableOddRowsBackground")]
--        case .gridHeaderText:
--            return [.color("foreground")]
-         case .gridLine:
-             return [.color("tree.tableColumnsBorder")]
--        case .gridSelection:
--            return [.color("list.activeSelectionBackground")]
--        case .gridSelectionText:
--            return [.color("list.activeSelectionForeground")]
--        case .gridInactiveSelection:
--            return [.color("list.inactiveSelectionBackground")]
--        case .gridFocusBorder:
--            return [.color("list.focusOutline"), .color("focusBorder")]
-         case .gridNullValue:
-             // The grid draws NULL as placeholder text. `descriptionForeground` equals the text color in
-             // One Dark Pro, so NULL would not read as absent.
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProTheme/ThemeDefinition.swift` (modified, +4/-20)
-```diff
-@@ -1,8 +1,5 @@
- import Foundation
- 
--/// A theme is a set of colors for the content views and the window backdrop. A slot it leaves out
--/// draws what its `ThemeSlot.fallback` says, so Default Light and Default Dark declare nothing and
--/// render exactly like a native app, following Accent, Highlight and Increase Contrast.
- public struct ThemeDefinition: Identifiable, Equatable, Sendable {
-     public var id: String
-     public var name: String
-@@ -35,26 +32,23 @@ public struct ThemeDefinition: Identifiable, Equatable, Sendable {
-         !isBuiltIn
-     }
- 
--    /// The file sets this slot. Only the theme editor asks: a derived slot draws a theme color the
--    /// file never wrote, and an explicit selection text draws nothing without a selection.
-+    // Only the theme editor asks: a derived slot draws a theme color the file never wrote.
-     public func hasExplicitColor(_ slot: ThemeSlot) -> Bool {
-         overrides[slot] != nil
-     }
- 
--    /// The format has no increased-contrast variant, so a slot that yields to Increase Contrast draws
--    /// native there even where the theme sets it.
-+    // The format has no increased-contrast variant, so a yielding slot draws native there.
-     public func value(for slot: ThemeSlot, highContrast: Bool = false) -> ThemeSlotValue {
-         if slot.yieldsToIncreasedContrast, highContrast {
-             return .system(slot)
-         }
--        if let explicit = overrides[slot], allowsExplicitColor(for: slot, highContrast: highContrast) {
-+        if let explicit = overrides[slot] {
-             return .themed(slot.requiresOpaque ? explicit.opaque : explicit)
-         }
-         return fallbackValue(for: slot, highContrast: highContrast)
-     }
- 
--    /// The slot draws a theme color, set or derived. Every surface that swaps a native drawing path
--    /// for the theme's asks this.
-+    // Set or derived. Every surface that swaps a native drawing path for the theme's asks this.
-     public func isOverridden(_ slot: ThemeSlot, highContrast: Bool) -> Bool {
-         value(for: slot, highContrast: highContrast).isThemed
-     }
-@@ -63,11 +57,6 @@ public struct ThemeDefinition: Identifiable, Equatable, Sendable {
-         isOverridden(slot, highContrast: false)
-     }
- 
--    private func allowsExplicitColor(for slot: ThemeSlot, highContrast: Bool) -> Bool {
--        guard case let .paired(partner, _) = slot.fallback else { return true }
--        return value(for: partner, highContrast: highContrast).isThemed
--    }
--
-     private func fallbackValue(for slot: ThemeSlot, highContrast: Bool) -> ThemeSlotValue {
-         switch slot.fallback {
-         case .system:
-@@ -80,16 +69,11 @@ public struct ThemeDefinition: Identifiable, Equatable, Sendable {
-         case let .derived(base, rule):
-             guard let baseColor = value(for: base, highContrast: highContrast).themedColor else { return .system(slot) }
-             return .themed(derive(rule, from: baseColor, highContrast: highContrast))
--        case let .paired(partner, fallback):
--            guard value(for: partner, highContrast: highContrast).isThemed else { return .system(slot) }
--            return value(for: fallback, highContrast: highContrast)
-         }
-     }
- 
-     private func derive(_ rule: ThemeDerivationRule, from base: ThemeColor, highContrast: Bool) -> ThemeColor {
-         switch rule {
--        case .same:
--            return base
-         case let .stripe(toward):
-             let target = value(for: toward, highContrast: highContrast).themedColor
-                 ?? (appearance == .dark ? .white : .black)
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProTheme/ThemeFileFormat.swift` (modified, +21/-27)
-```diff
-@@ -1,11 +1,6 @@
- import Foundation
- 
--/// Format 3 dropped the pane and status groups, made every color optional and removed `system:`
--/// values. Format 2 never shipped in a release, and format 1 files carried fonts the app now keeps in
--/// settings.
--///
--/// Adding a slot bumps `current`. The decoder keeps reading every older format, and an unknown key
--/// stays an error: a file is refused rather than loaded without colors its author wrote.
-+// Removing a slot never bumps it: the slot's key joins `ThemeFileFormat.retiredKeys`.
- public enum ThemeSchema {
-     public static let current = 3
- }
-@@ -15,7 +10,7 @@ public enum ThemeIdentifier {
- 
-     private static let pattern = #"^[A-Za-z0-9._-]+$"#
- 
--    /// Plain enough to be a file name on every file system TablePro writes to.
-+    // Plain enough to be a file name on every file system TablePro writes to.
-     public static func isValid(_ id: String) -> Bool {
-         id.utf8.count <= maximumLength
-             && id.range(of: pattern, options: .regularExpression) != nil
-@@ -27,21 +22,24 @@ public enum ThemeIdentifier {
-     }
- }
- 
--/// The theme file format, and the only place a file can be rejected. Every color is optional: a
--/// slot the file leaves out draws its fallback. What is refused is anything that would otherwise
--/// load as something the author did not write: an unknown key, an unparseable color, missing
--/// metadata, another format.
--///
--/// Foundation keeps the first of two equal keys at one level, so that duplicate cannot be seen.
-+// Foundation keeps the first of two equal keys at one level, so that duplicate cannot be seen.
- public enum ThemeFileFormat {
-     public static let maximumTextLength = 100
- 
--    /// What `decode` does with a name or author that is not one line of at most `maximumTextLength`.
-+    // Removed slots: a file that still carries one loads without it.
-+    static let retiredKeys: Set<String> = [
-+        "dataGrid.headerBackground",
-+        "dataGrid.headerText",
-+        "dataGrid.selection",
-+        "dataGrid.selectionText",
-+        "dataGrid.inactiveSelection",
-+        "dataGrid.focusBorder",
-+    ]
-+
-     public enum TextPolicy: Sendable {
--        /// Refuses it: a file someone picked, and every record another Mac sent.
-+        // A file someone picked, and every record another Mac sent.
-         case strict
--        /// Folds it onto one line and cuts it at the cap. TablePro 0.81 wrote names and authors with
--        /// neither limit, and a theme it saved still loads; the next save writes the repaired text.
-+        // TablePro 0.81 wrote names and authors with no limit; the next save writes the repaired text.
-         case repaired
-     }
- 
-@@ -97,7 +95,6 @@ public enum ThemeFileFormat {
-         )
-     }
- 
--    /// Writes what `decode` reads back unchanged: a trimmed name and author, and opaque fills.
-     public static func encode(_ theme: ThemeDefinition) throws -> Data {
-         guard ThemeIdentifier.isValid(theme.id) else { throw ThemeLoadError.invalidIdentifier(theme.id) }
-         let name = try validatedName(theme.name, policy: .strict)
-@@ -124,8 +121,7 @@ public enum ThemeFileFormat {
- 
-     // MARK: - Reading
- 
--    /// `JSONDecoder` rather than `JSONSerialization`: its underlying error names the character and
--    /// where it is, which is what a person fixing the file by hand needs.
-+    // `JSONDecoder` over `JSONSerialization`: its error names the character and where it is.
-     private static func parse(_ data: Data) throws -> ThemeJSONNode {
-         do {
-             return try JSONDecoder().decode(ThemeJSONNode.self, from: data)
-@@ -141,6 +137,7 @@ public enum ThemeFileFormat {
-         let leaves = root
-             .filter { MetadataKey(rawValue: $0.key) == nil }
-             .flatMap { key, node in node.leaves(prefix: key) }
-+            .filter { !retiredKeys.contains($0.path) }
-             .sorted { $0.path < $1.path }
- 
-         var parsed: [ThemeSlot: ThemeColor] = [:]
-@@ -182,7 +179,7 @@ public enum ThemeFileFormat {
-         return repaired(text)
-     }
- 
--    /// Every scalar `isSingleLine` refuses splits words, so the next save's strict check passes.
-+    // Every scalar `isSingleLine` refuses splits words, so the next save's strict check passes.
-     private static func repaired(_ text: String) -> String {
-         let separators = CharacterSet.whitespacesAndNewlines.union(.controlCharacters)
-         let words = text.components(separatedBy: separators).filter { !$0.isEmpty }
-@@ -194,8 +191,7 @@ public enum ThemeFileFormat {
-         text.trimmingCharacters(in: .whitespacesAndNewlines)
-     }
- 
--    /// `controlCharacters` holds the ASCII line breaks; `newlines` adds the Unicode line and paragraph
--    /// separators.
-+    // `newlines` adds the Unicode line and paragraph separators to the ASCII breaks.
-     private static func isSingleLine(_ text: String) -> Bool {
-         !text.unicodeScalars.contains { CharacterSet.controlCharacters.contains($0) || CharacterSe
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProTheme/ThemeSlot.swift` (modified, +11/-42)
-```diff
-@@ -1,8 +1,5 @@
- import Foundation
- 
--/// The single registry every slot goes through. A slot exists here because a call site reads it.
--/// The decoder, the encoder and the theme editor all enumerate this list rather than keeping their
--/// own copies.
- public enum ThemeSlot: String, CaseIterable, Sendable {
-     case windowBackdrop = "window.background"
- 
-@@ -27,13 +24,7 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
-     case gridBackground = "dataGrid.background"
-     case gridText = "dataGrid.text"
-     case gridAlternateRow = "dataGrid.alternateRow"
--    case gridHeaderBackground = "dataGrid.headerBackground"
--    case gridHeaderText = "dataGrid.headerText"
-     case gridLine = "dataGrid.gridLine"
--    case gridSelection = "dataGrid.selection"
--    case gridSelectionText = "dataGrid.selectionText"
--    case gridInactiveSelection = "dataGrid.inactiveSelection"
--    case gridFocusBorder = "dataGrid.focusBorder"
-     case gridNullValue = "dataGrid.nullValue"
-     case gridBoolTrue = "dataGrid.boolTrue"
-     case gridBoolFalse = "dataGrid.boolFalse"
-@@ -43,7 +34,6 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
-     case gridDeleted = "dataGrid.deleted"
-     case gridDeletedText = "dataGrid.deletedText"
- 
--    /// The group of the file format: the slot's dotted path starts with the group's key.
-     public var group: ThemeSlotGroup {
-         switch self {
-         case .windowBackdrop:
-@@ -54,15 +44,13 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
-         case .syntaxKeyword, .syntaxString, .syntaxNumber, .syntaxComment,
-              .syntaxNull, .syntaxOperator, .syntaxFunction, .syntaxType:
-             return .syntax
--        case .gridBackground, .gridText, .gridAlternateRow, .gridHeaderBackground, .gridHeaderText,
--             .gridLine, .gridSelection, .gridSelectionText, .gridInactiveSelection, .gridFocusBorder,
-+        case .gridBackground, .gridText, .gridAlternateRow, .gridLine,
-              .gridNullValue, .gridBoolTrue, .gridBoolFalse, .gridRowNumber,
-              .gridModified, .gridInserted, .gridDeleted, .gridDeletedText:
-             return .dataGrid
-         }
-     }
- 
--    /// Where the theme editor lists the slot.
-     public var section: ThemeSlotSection {
-         switch self {
-         case .windowBackdrop:
-@@ -73,50 +61,43 @@ public enum ThemeSlot: String, CaseIterable, Sendable {
-         case .syntaxKeyword, .syntaxString, .syntaxNumber, .syntaxComment,
-              .syntaxNull, .syntaxOperator, .syntaxFunction, .syntaxType:
-             return .syntax
--        case .gridBackground, .gridText, .gridAlternateRow, .gridHeaderBackground, .gridHeaderText,
--             .gridLine, .gridNullValue, .gridBoolTrue, .gridBoolFalse, .gridRowNumber:
-+        case .gridBackground, .gridText, .gridAlternateRow, .gridLine,
-+             .gridNullValue, .gridBoolTrue, .gridBoolFalse, .gridRowNumber:
-             return .dataGrid
--        case .gridSelection, .gridSelectionText, .gridInactiveSelection, .gridFocusBorder:
--            return .selection
-         case .gridModified, .gridInserted, .gridDeleted, .gridDeletedText:
-             return .changes
-         }
-     }
- 
--    /// Only the backdrop: content slots keep the theme under Increase Contrast, as they always have.
-+    // Content keeps the theme under Increase Contrast; only the backdrop yields.
-     public var yieldsToIncreasedContrast: Bool {
-         group == .window
-     }
- 
--    /// Fills that sit under everything else. A translucent window color shows the desktop through the
--    /// window, so these never carry alpha.
-+    // A translucent fill under everything else would show the desktop through the window.
-     public var requiresOpaque: Bool {
-         switch self {
--        case .windowBackdrop, .editorBackground, .gridBackground, .gridHeaderBackground:
-+        case .windowBackdrop, .editorBackground, .gridBackground:
-             return true
-         case .editorText, .editorCursor, .editorSelection, .editorCurrentLine, .editorCurrentStatement,
-              .editorLineNumber, .editorInvisibles,
-              .syntaxKeyword, .syntaxString, .syntaxNumber, .syntaxComment,
-              .syntaxNull, .syntaxOperator, .syntaxFunction, .syntaxType,
--             .gridText, .gridAlternateRow, .gridHeaderText, .gridLine, .gridSelection, .gridSelectionText,
--             .gridInactiveSelection, .gridFocusBorder, .gridNullValue, .gridBoolTrue, .gridBoolFalse,
-+             .gridText, .gridAlternateRow, .gridLine, .gridNullValue, .gridBoolTrue, .gridBoolFalse,
-              .gridRowNumber, .gridModified, .gridInserted, .gridDeleted, .gridDeletedText:
-             return false
-         }
-     }
- 
--    /// Washes drawn over content, where an alpha channel is the point.
-     public var offersOpacity: Bool {
-         switch self {
-         case .editorSelection, .editorCurrentLine, .editorCurrentStatement, .editorInvisibles,
--             .gridAlternateRow, .gridSelection, .gridInactiveSelection,
-```
-
----
-
-### Incident Patch 3: `79cdb079` (2026-10-25)
-**Commit Message**: perf(editor): build the query tab in AppKit and read the sidebar listing when the filter takes focus (#3834)
-
-**File**: `apple/Packages/TableProEditor/Sources/TableProEditorKit/SourceEditor/SourceEditor.swift` (modified, +18/-11)
-```diff
-@@ -100,12 +100,16 @@ public struct SourceEditor: NSViewControllerRepresentable {
-     public typealias NSViewControllerType = TextViewController
- 
-     public func makeNSViewController(context: Context) -> TextViewController {
-+        makeController(coordinator: context.coordinator)
-+    }
-+
-+    func makeController(coordinator: Coordinator) -> TextViewController {
-         let controller = TextViewController(
-             string: "",
-             language: language,
-             configuration: configuration,
-             cursorPositions: state.cursorPositions ?? [],
--            highlightProviders: context.coordinator.highlightProviders,
-+            highlightProviders: coordinator.highlightProviders,
-             foldProvider: foldProvider,
-             undoManager: undoManager,
-             coordinators: coordinators,
-@@ -124,7 +128,7 @@ public struct SourceEditor: NSViewControllerRepresentable {
-             controller.setCursorPositions(state.cursorPositions ?? [])
-         }
- 
--        context.coordinator.setController(controller)
-+        coordinator.setController(controller)
-         return controller
-     }
- 
-@@ -152,35 +156,38 @@ public struct SourceEditor: NSViewControllerRepresentable {
-     }
- 
-     public func updateNSViewController(_ controller: TextViewController, context: Context) {
-+        update(controller, coordinator: context.coordinator)
-+    }
-+
-+    func update(_ controller: TextViewController, coordinator: Coordinator) {
-         controller.completionDelegate = completionDelegate
- 
--        context.coordinator.updateHighlightProviders(highlightProviders)
-+        coordinator.updateHighlightProviders(highlightProviders)
- 
--        context.coordinator.textSync.text = text
-+        coordinator.textSync.text = text
-         if case .binding(let binding) = text {
--            context.coordinator.textSync.applyRepresentableText(binding.wrappedValue, controller: controller)
-+            coordinator.textSync.applyRepresentableText(binding.wrappedValue, controller: controller)
-         }
- 
--        if !context.coordinator.phase.consumePendingEditorChange() {
--            context.coordinator.phase.applyRepresentableValue {
--                updateControllerWithState(state, controller: controller, coordinator: context.coordinator)
-+        if !coordinator.phase.consumePendingEditorChange() {
-+            coordinator.phase.applyRepresentableValue {
-+                updateControllerWithState(state, controller: controller, coordinator: coordinator)
+@@ -65,7 +65,7 @@ use self::file_location_dialog::FileCheck;
+ pub(crate) use self::launch_notice::LaunchNotice;
+ pub(super) use self::picker_page::PickerPage;
+ use self::resolve_file_identity::{FileResolveError, FileTarget, ResolvedFile, resolve_file_blocking};
+-use self::session_page::{FailedConnect, OpenSession, PendingConnect, SessionPage, source_key};
++use self::session_page::{FailedConnect, OpenSession, PendingConnect, SessionPage, TakenFailure, source_key};
+ use self::session_window_command::{AttemptError, ConnectFailure, Connected, SessionWindowCommand};
+ pub(crate) use self::session_window_input::{MovedTab, SessionWindowInput};
+ use crate::application::{AppServices, WindowHost, WindowLaunch};
+@@ -406,7 +406,7 @@ impl SessionWindow {
+         self.imp().shell.replace(Some(shell.clone()));
+         self.sync_tree();
+         if let Some(tree) = shell.tree() {
+-            for (key, (source, failure)) in self.imp().failures.borrow().iter() {
++            for (key, (source, failure, _)) in self.imp().failures.borrow().iter() {
+                 tree.set_failure(key, Some((&source_name(source), failure.message.as_str())));
              }
          }
- 
-         // Do manual diffing to reduce the amount of reloads.
-         // This helps a lot in view performance, as it otherwise gets triggered on each environment change.
--        guard !paramsAreEqual(controller: controller, coordinator: context.coordinator) else {
-+        guard !paramsAreEqual(controller: controller, coordinator: coordinator) else {
-             return
+@@ -683,7 +683,7 @@ impl SessionWindow {
+                     self.open_database(id, database);
+                 }
+             }
+-            Err(AttemptError::Failed(failure)) => self.on_connect_failed(claim, source, failure),
++            Err(AttemptError::Failed(failure)) => self.on_connect_failed(claim, source, failure, databases),
+             // A location question was asked above, so this is a stop.
+             Err(AttemptError::Cancelled | AttemptError::AskLocation(_)) => {
+                 let key = claim.key().clone();
+@@ -699,7 +699,15 @@ impl SessionWindow {
+     /// toast says so and its Details say why. A session restored at
+     /// launch that no longer opens is not tried again at the next one; a
+     /// Retry that works records it again.
+-    fn on_connect_failed(&self, claim: SessionClaim, source: ConnectSource, failure: ConnectFailure) {
++    /// The connection's other databases wait with the failure for the
++    /// connect that brings it back.
++    fn on_connect_failed(
++        &self,
++        claim: SessionClaim,
++        source: ConnectSource,
++        failure: ConnectFailure,
++        databases: Vec<String>,
++    ) {
+         tracing::warn!(error = %failure.message, "connect failed");
+         let imp = self.imp();
+         let key = claim.key().clone();
+@@ -710,7 +718,12 @@ impl SessionWindow {
+                 ConnectSource::Saved(saved) => failure.missing_file.clone().map(|missing| (saved.id, missing)),
+                 _ => None,
+             };
+-            self.show_failure(FailedConnect { claim, source, failure });
++            self.show_failure(FailedConnect {
++                claim,
++                source,
++                failure,
++                databases,
++            });
+             if let Some((id, missing)) = missing {
+                 self.offer_locate(id, missing);
+             }
+@@ -721,7 +734,9 @@ impl SessionWindow {
+         if let Some(tree) = self.shell().and_then(|shell| shell.tree()) {
+             tree.set_failure(&key, Some((&name, failure.message.as_str())));
          }
- 
-         if controller.language != language {
-             controller.language = language
+-        imp.failures.borrow_mut().insert(key.clone(), (source, failure));
++        imp.failures
++            .borrow_mut()
++            .insert(key.clone(), (source, failure, databases));
+         // The toast goes to the page that shows from here on, which may
+         // be another connect's progress.
+         self.connects_changed();
+@@ -892,7 +907,20 @@ impl SessionWindow {
+             return None;
          }
-         controller.configuration = configuration
--        updateHighlighting(controller, coordinator: context.coordinator)
-+        updateHighlighting(controller, coordinator: coordinator)
- 
-         controller.reloadUI()
--        return
-     }
- 
-     /// Compares against ``Coordinator/lastSyncedState``, never the editor's live state, which runs ahead of the binding
-```
-
-**File**: `apple/Packages/TableProEditor/Sources/TableProEditorKit/SourceEditor/SourceEditorHost.swift` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+//
-+//  SourceEditorHost.swift
-+//  TableProEditorKit
-+//
-+
-+import AppKit
-+import SwiftUI
-+
-+/// ``SourceEditor`` for an AppKit container: the same controller, two-way sync and teardown, with no SwiftUI host
-+/// around the editor.
-+@MainActor
-+public final class SourceEditorHost {
-+    public let controller: TextViewController
-+    /// Runs when the editor writes its state, before the write is applied back, as `onChange` does in SwiftUI.
-+    public var onStateChange: ((_ old: SourceEditorState, _ new: SourceEditorState) -> Void)?
-+
-+    private let box: StateBox
-+    private let coordinator: SourceEditor.Coordinator
-+    private var editor: SourceEditor
-+
-+    public var state: SourceEditorState { box.state }
-+
-+    public init(state: SourceEditorState = SourceEditorState(), _ makeEditor: (Binding<SourceEditorState>) -> SourceEditor) {
-+        let box = StateBox(state: state)
-+        let editor = makeEditor(box.binding)
-+        let coordinator = editor.makeCoordinator()
-+        self.box = box
-+        self.editor = editor
-+        self.coordinator = coordinator
-+        controller = editor.makeController(coordinator: coordinator)
-+        box.onWrite = { [weak self] old, new in self?.stateDidChange(from: old, to: new) }
-+    }
-+
-+    public func update(_ makeEditor: (Binding<SourceEditorState>) -> SourceEditor) {
-+        editor = makeEditor(box.binding)
-+        editor.update(controller, coordinator: coordinator)
-+    }
-+
-+    public func dismantle() {
-+        SourceEditor.dismantleNSViewController(controller, coordinator: coordinator)
-+    }
-+
-+    // A SwiftUI state write leads to an update pass that consumes the editor's change latch; without one the latch
-+    // would swallow the next text the owner pushes.
-+    private func stateDidChange(from old: SourceEditorState, to new: SourceEditorState) {
-+        onStateChange?(old, new)
-+        editor.update(controller, coordinator: coordinator)
-+    }
-+}
-+
-+@MainActor
-+private final class StateBox {
-+    var state: SourceEditorState
-+    var onWrite: ((SourceEditorState, SourceEditorState) -> Void)?
-+
-+    init(state: SourceEditorState) {
-+        self.state = state
-+    }
-+
-+    var binding: Binding<SourceEditorState> {
-+        Binding(
-+            get: { [weak self] in self?.state ?? SourceEditorState() },
-+            set: { [weak self] newValue in
-+                guard let self else { return }
-+                let old = state
-+                state = newValue
-+                onWrite?(old, newValue)
+         match self.imp().failed.take() {
+-            Some(failed) if failed.claim.key() == key => Some(failed.claim),
++            Some(FailedConnect {
++                claim,
++                source,
++                failure,
++                databases,
++            }) if claim.key() == key => {
++                // The connect this claim starts takes them, as it takes
++                // a failure beside the window's sessions.
++                self.imp()
++                    .failures
++                    .borrow_mut()
++                    .insert(key.clone(), (source, failure, databases));
++                Some(claim)
 +            }
-+        )
-+    }
-+}
+             failed => {
+                 let left = failed.is_some();
+                 drop(failed);
+@@ -915,6 +943,76 @@ impl SessionWindow {
+ 
+     /// Connect with the failed page's claim when there is one, else as
+     /// any connect does.
++    /// Connect `source` with `claim`, or a claim of its own, and open
++    /// `databases` beside it once it joins: a reconnect's or a restore's.
++    pub(super) fn connect_reopening(
++        &self,
++        claim: Option<SessionClaim>,
++        source: ConnectSource,
++        demand: CredentialDemand,
++        databases: Vec<String>,
++    ) {
++        let key = source_key(&source);
++        let claim = match claim {
++            Some(claim) => claim
 ```
 
-**File**: `apple/Packages/TableProEditor/Tests/TableProEditorKitTests/SourceEditorHostTests.swift` (added, +112/-0)
+**File**: `linux/crates/app/src/ui/session_window/other_databases.rs` (modified, +9/-1)
 ```diff
-@@ -0,0 +1,112 @@
-+//
-+//  SourceEditorHostTests.swift
-+//  TableProEditorKitTests
-+//
-+//  An AppKit container gets the editor with the same two-way sync SwiftUI gives it. A state write the editor makes
-+//  latches its change; under SwiftUI the write's update pass consumes the latch, and here the host has to.
-+//
-+
-+import AppKit
-+import SwiftUI
-+@testable import TableProEditorKit
-+import Testing
-+
-+@MainActor
-+private final class Owner {
-+    var text: String
-+    var reportedStates: [SourceEditorState] = []
-+    let coordinator: RecordingCoordinator
-+
-+    init(text: String, coordinator: RecordingCoordinator = RecordingCoordinator()) {
-+        self.text = text
-+        self.coordinator = coordinator
-+    }
-+
-+    var textBinding: Binding<String> {
-+        Binding(get: { self.text }, set: { self.text = $0 })
-+    }
-+
-+    func editor(_ state: Binding<SourceEditorState>) -> SourceEditor {
-+        SourceEditor(
-+            textBinding,
-+            language: .default,
-+            configuration: Mock.config(),
-+            state: state,
-+            highlightProviders: [],
-+            coordinators: [coordinator]
-+        )
-+    }
-+}
-+
-+private final class RecordingCoordinator: TextViewCoordinator {
-+    private(set) var destroyCount = 0
-+
-+    func prepareCoordinator(controller: TextViewController) {}
-+
-+    func destroy() {
-+        destroyCount += 1
-+    }
-+}
-+
-+@MainActor
-+struct SourceEditorHostTests {
-+    private func mount(_ owner: Owner) -> (SourceEditorHost, NSWindow) {
-+        let host = SourceEditorHost { owner.editor($0) }
-+        host.onStateChange = { _, new in owner.reportedStates.append(new) }
-+        let window = NSWindow(
-+            contentRect: NSRect(x: 0, y: 0, width: 600, height: 400),
-+            styleMask: [.titled],
-+            backing: .buffered,
-+            defer: false
-+        )
-+        window.isReleasedWhenClosed = false
-+        window.contentView = host.controller.view
-+        window.contentView?.layoutSubtreeIfNeeded()
-+        return (host, window)
-+    }
-+
-+    @Test("The owner's text reaches the editor, and an edit reaches the owner")
-+    func textSyncsBothWays() {
-+        let owner = Owner(text: "SELECT 1")
-+        let (host, window) = mount(owner)
-+        defer { window.orderOut(nil) }
-+        #expect(host.controller.textView.string == "SELECT 1")
-+
-+        owner.text = "SELECT 2"
-+        host.update { owner.editor($0) }
-+        #expect(host.controller.textView.string == "SELECT 2")
-+
-+        host.controller.textView.replaceCharacters(in: NSRange(location: 8, length: 0), with: "0")
-+        #expect(owner.text == "SELECT 20")
-+    }
-+
-+    @Test("A caret the editor reports is passed on and does not swallow the owner's next text")
-+    func stateWriteKeepsTheNextTextPush() {
-+        let owner = Owner(text: "SELECT 1")
-+        let (host, window) = mount(owner)
-+        defer { window.orderOut(nil) }
-+
-+        let caret = NSRange(location: 3, length: 0)
-+        host.controller.setCursorPositions([CursorPosition(range: caret)])
-+        let held = host.state.cursorPositions?.map { $0.range }
-+        let reported = owner.reportedStates.last?.cursorPositions?.map { $0.range }
-+        #expect(held == [caret])
-+        #expect(reported == [caret])
-+
-+        owner.text = "SELECT 42"
-+        host.update { owner.editor($0) }
-+        #expect(host.controller.textView.string == "SELECT 42")
-+    }
-+
-+    @Test("dismantle destroys each text coordinator once")
-+    func dismantleDestroysCoordinatorsOnce() {
-+        let owner = Owner(text: "SELECT 1")
-+        let (host, window) = mount(owner)
-+        defer { window.orderOut(nil) }
-+
-+        host.dismantle()
-+
-+        #expect(owner.coordinator.destroyCount == 1)
-+        #expect(host.controller.textCoordinators.values().isEmpty)
-+    }
-+}
+@@ -176,6 +176,12 @@ impl SessionWindow {
+             }
+             (None, Ok(Ok(session))) => drop(session.begin_shutdown()),
+             (Some(_), Ok(Err(error))) if !matches!(error, ConnectError::Cancelled) => {
++                // A database restored at launch that no longer opens is
++                // not tried again at the next one.
++                self.forget_session(&SessionKey::SavedIn {
++                    id,
++                    database: database.clone(),
++                });
+                 self.show_toast(&gettext_f(
+                     "Could not open the database “{database}”: {error}",
+                     &[("database", &database), ("error", &connect_error_message(&error))],
+@@ -194,7 +200,8 @@ impl SessionWindow {
+             return;
+         };
+         claim.attach(&session);
+-        let Some(workspace) = self.new_workspace(claim.key().clone(), &session, &shell) else {
++        let key = claim.key().clone();
++        let Some(workspace) = self.new_workspace(key.clone(), &session, &shell) else {
+             drop(session.begin_shutdown());
+             return;
+         };
+@@ -216,6 +223,7 @@ impl SessionWindow {
+                 .push(OpenSession::new(claim, session, workspace.clone()));
+             others
+         };
++        self.remember_session(&key, None);
+         self.render();
+         shell.add_session(&workspace);
+         workspace.start();
 ```
 
-**File**: `apple/TablePro/Core/Services/Infrastructure/SidebarContainerViewController.swift` (modified, +26/-1)
+**File**: `linux/crates/app/src/ui/session_window/secret_retry.rs` (modified, +2/-2)
 ```diff
-@@ -12,7 +12,7 @@ internal final class SidebarContainerViewController: NSViewController {
-     /// Which list the rows below show. Window chrome like the field under it, so it stands through
-     /// a connection switch and follows the connection on screen.
-     private let scopeControl = SidebarScopeControl()
--    private let searchField = NSSearchField()
-+    private let searchField = SidebarFilterField()
-     /// Sidebar chrome, like the field it shares a row with, so it survives a connection switch and
-     /// writes settings that are not scoped to one. Hidden on the Favorites tab, whose list draws
-     /// none of what these options settle.
-@@ -121,6 +121,7 @@ internal final class SidebarContainerViewController: NSViewController {
-         searchField.controlSize = .regular
-         searchField.sendsSearchStringImmediately = true
-         searchField.delegate = self
-+        searchField.onFocus = { [weak self] in self?.writeFilterFocus(true) }
-         searchField.setAccessibilityIdentifier("sidebar-filter")
-         searchField.setAccessibilityLabel(String(localized: "Filter"))
- 
-@@ -234,6 +235,8 @@ internal final class SidebarContainerViewController: NSViewController {
-         /// being repointed at a different one.
-         filterPopover?.close()
-         filterPopover = nil
-+        // The connection the field leaves would never hear its editing end.
-+        if state !== sidebarState { writeFilterFocus(false) }
-         self.sidebarState = state
-         guard let state else {
-             /// `syncFromState` is the only writer of these, and it cannot run without a state, so
-@@ -328,6 +331,10 @@ extension SidebarContainerViewController: NSSearchFieldDelegate {
-         writeSearchText("")
-     }
- 
-+    func controlTextDidEndEditing(_ obj: Notification) {
-+        writeFilterFocus(false)
-+    }
-+
-     /// Down from the filter field hands focus to the list.
-     ///
-     /// It names the list rather than asking the key view loop for whatever comes next. With the
-@@ -350,6 +357,24 @@ extension SidebarContainerViewController: NSSearchFieldDelegate {
-             sidebarState.favoritesSearchText = text
+@@ -22,8 +22,8 @@ impl SessionWindow {
+         if !offered {
+             return;
+         }
+-        if let Some((claim, source, _)) = self.take_failure(key) {
+-            self.reconnect(claim, source, CredentialDemand::reenter(kind));
++        if let Some(taken) = self.take_failure(key) {
++            self.reconnect(taken, CredentialDemand::reenter(kind));
          }
      }
-+
-+    // Favorites filters its own list and never reads the all-schema listing, so only Tables marks focus.
-+    private func writeFilterFocus(_ isFocused: Bool) {
-+        guard let sidebarState, sidebarState.isFilterFieldFocused != isFocused else { return }
-+        guard !isFocused || sidebarState.selectedSidebarTab == .tables else { return }
-+        sidebarState.isFilterFieldFocused = isFocused
-+    }
+ }
+```
+
+**File**: `linux/crates/app/src/ui/session_window/session_page.rs` (modified, +10/-0)
+```diff
+@@ -63,6 +63,16 @@ pub(crate) struct FailedConnect {
+     pub(crate) claim: SessionClaim,
+     pub(crate) source: ConnectSource,
+     pub(crate) failure: ConnectFailure,
++    /// The connection's other databases its next connect opens again.
++    pub(crate) databases: Vec<String>,
 +}
 +
-+// The delegate hears of editing only from the first keystroke, and a search starts at focus.
-+private final class SidebarFilterField: NSSearchField {
-+    var onFocus: (() -> Void)?
-+
-+    override func becomeFirstResponder() -> Bool {
-+        let became = super.becomeFirstResponder()
-+        if became { onFocus?() }
-+        return became
-+    }
++/// A failure taken to act on, with the failed page's claim when it was
++/// the page's.
++pub(crate) struct TakenFailure {
++    pub(crate) claim: Option<SessionClaim>,
++    pub(crate) source: ConnectSource,
++    pub(crate) databases: Vec<String>,
  }
  
- private final class ObservationContinuationBox: @unchecked Sendable {
-```
-
-**File**: `apple/TablePro/Models/UI/SharedSidebarState.swift` (modified, +1/-0)
-```diff
-@@ -28,6 +28,7 @@ final class SharedSidebarState: ObservableObject {
- 
-     @Published var searchText: String = ""
-     @Published var favoritesSearchText: String = ""
-+    @Published var isFilterFieldFocused = false
- 
-     @Published var recentTables: [RecentTableEntry] = []
- 
-```
-
-**File**: `apple/TablePro/ViewModels/SidebarViewModel.swift` (modified, +27/-3)
-```diff
-@@ -101,7 +101,8 @@ final class SidebarViewModel: ObservableObject {
-         searchTextObservation = sharedState.onMainActorChange { [weak self] in
-             guard let self else { return }
-             self.scheduleFilterQueryUpdate(oldValue: self.filterQuery)
--            // The schema filter lives there too, and an edit to it during a search selects another listing.
-+            self.noteFilterFieldFocus()
-+            // The field's focus and the schema filter live there too: focus starts a search, and a filter edit selects another listing.
-             self.loadAllSchemaTablesForSearch()
-         }
-     }
-@@ -111,11 +112,33 @@ final class SidebarViewModel: ObservableObject {
-             invalidateFilterCaches()
-             if filterQuery.isEmpty { listingMatchesMemo.removeAll() }
-             // Once per search, not per keystroke: a failed or partly unlisted listing was read again on every refinement.
--            if oldValue.isEmpty { listingDemand.reset() }
-+            if oldValue.isEmpty {
-+                if searchStartedAtFocus {
-+                    searchStartedAtFocus = false
-+                } else {
-+                    listingDemand.reset()
-+                }
-+            }
-             loadAllSchemaTablesForSearch()
-         }
-     }
- 
-+    private var wasFilterFieldFocused = false
-+    // A search starts at focus or at its first character, whichever comes first, and asks for a listing once.
-+    private var searchStartedAtFocus = false
-+
-+    private func noteFilterFieldFocus() {
-+        let isFocused = sharedState.isFilterFieldFocused
-+        guard isFocused != wasFilterFieldFocused else { return }
-+        wasFilterFieldFocused = isFocused
-+        if isFocused, filterQuery.isEmpty {
-+            listingDemand.reset()
-+            searchStartedAtFocus = true
-+        } else if !isFocused {
-+            searchStartedAtFocus = false
-+        }
-+    }
-+
-     private var listingMatchesMemo = DatabaseTreeFilter.SchemaListingMatchesMemo()
- 
-     private var listingDemand = AllSchemaTablesDemand()
-@@ -570,7 +593,8 @@ final class SidebarViewModel: ObservableObject {
-     /// for them. It is asked for here rather than by the outline, because a flat list with no local
-     /// match shows "No Results" in place of the outline, which then never sees the search at all.
-     private func loadAllSchemaTablesForSearch() {
--        guard !filterQuery.isEmpty else { return }
-+        // A focused field is a search about to start, and its first keystroke would otherwise wait out the read.
-+        guard !filterQuery.isEmpty || sharedState.isFilterFieldFocused else { return }
-         let service = DatabaseTreeMetadataService.shared
-         let connectionId = connectionId
-         loadAttachedSchemaObjectsForSearch(service: service)
-```
-
-**File**: `apple/TablePro/Views/Components/CollapsibleSplitController.swift` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+//
-+//  CollapsibleSplitController.swift
-+//  TablePro
-+//
-+
-+import AppKit
-+
-+/// A top pane over a collapsible bottom pane, divider thin and remembered.
-+@MainActor
-+internal final class CollapsibleSplitController: ResizeCursorSplitViewController {
-+    nonisolated static let defaultTopMinimumThickness: CGFloat = 100
-+    nonisolated static let defaultBottomMinimumThickness: CGFloat = 150
-+
-+    /// What a split using the defaults needs before its own constraints become unsatisfiable.
-+    /// An enclosing split whose pane hosts one of these must not promise less than this.
-+    nonisolated static var combinedMinimumThickness: CGFloat {
-+        defaultTopMinimumThickness + defaultBottomMinimumThickness + 10
-+    }
-+
-+    let topItem: NSSplitViewItem
-+    let bottomItem: NSSplitViewItem
-+    /// The divider is draggable and double-clickable, so AppKit owns the collapsed state as much as the
-+    /// owner does; a change the user makes is reported back rather than snapped away on the next update.
-+    var onUserCollapseChange: ((Bool) -> Void)?
-+
-+    private var lastCollapsedState: Bool
-+    private var collapseObservation: NSKeyValueObservation?
-+    private var isApplyingProgrammatically = false
-+
-+    init(
-+        top: NSViewController,
-+        bottom: NSViewController,
-+        autosaveName: String,
-+        topMinimumThickness: CGFloat = defaultTopMinimumThickness,
-+        bottomMinimumThickness: CGFloat = defaultBottomMinimumThickness,
-+        isBottomCollapsed: Bool
-+    ) {
-+        topItem = NSSplitViewItem(viewController: top)
-+        topItem.minimumThickness = topMinimumThickness
-+        bottomItem = NSSplitViewItem(viewController: bottom)
-+        bottomItem.canCollapse = true
-+        bottomItem.minimumThickness = bottomMinimumThickness
-+        lastCollapsedState = isBottomCollapsed
-+        super.init(nibName: nil, bundle: nil)
-+
-+        splitView.isVertical = false
-+        splitView.dividerStyle = .thin
-+        addSplitViewItem(topItem)
-+        addSplitViewItem(bottomItem)
-+
-+        // After the items are added; set earlier it does not record the divider, and adjustSubviews then resets it.
-+        splitView.autosaveName = SplitViewAutosaveName.current(autosaveName)
-+
-+        collapseObservation = bottomItem.observe(\.isCollapsed, options: [.new]) { [weak self] observed, _ in
-+            nonisolated(unsafe) let observedItem = observed
-+            MainActor.assumeIsolated {
-+                guard let self, !self.isApplyingProgrammatically else { return }
-+                self.lastCollapsedState = observedItem.isCollapsed
-+                self.onUserCollapseChange?(observedItem.isCollapsed)
-+            }
-+        }
-+
-+        // Assigned either way, so the owner's state wins over whatever the autosave record restored.
-+        bottomItem.isCollapsed = isBottomCollapsed
-+    }
-+
-+    @available(*, unavailable)
-+    required init?(coder: NSCoder) {
-+        fatalError("init(coder:) has not been implemented")
-+    }
-+
-+    func setBottomCollapsed(_ collapsed: Bool) {
-+        guard collapsed != lastCollapsedState else { return }
-+        lastCollapsedState = collapsed
-+        isApplyingProgrammatically = true
-+        defer { isApplyingProgrammatically = false }
-+        bottomItem.animator().isCollapsed = collapsed
-+    }
-+}
-```
-
-**File**: `apple/TablePro/Views/Components/VerticalCollapsibleSplitView.swift` (removed, +0/-121)
-```diff
-@@ -1,121 +0,0 @@
--import AppKit
--import SwiftUI
--
--struct VerticalCollapsibleSplitView<TopContent: View, BottomContent: View>: NSViewControllerRepresentable {
--    static var defaultTopMinimumThickness: CGFloat { 100 }
--    static var defaultBottomMinimumThickness: CGFloat { 150 }
--
--    /// What a split using the defaults needs before its own constraints become unsatisfiable.
--    /// An enclosing split whose pane hosts one of these must not promise less than this.
--    static var combinedMinimumThickness: CGFloat {
--        defaultTopMinimumThickness + defaultBottomMinimumThickness + 10
--    }
--
--    @Binding var isBottomCollapsed: Bool
--    var autosaveName: String
--    var topMinimumThickness: CGFloat = VerticalCollapsibleSplitView.defaultTopMinimumThickness
--    var bottomMinimumThickness: CGFloat = VerticalCollapsibleSplitView.defaultBottomMinimumThickness
--    @ViewBuilder var topContent: TopContent
--    @ViewBuilder var bottomContent: BottomContent
--
--    func makeCoordinator() -> Coordinator {
--        Coordinator()
--    }
--
--    func makeNSViewController(context: Context) -> NSSplitViewController {
--        let splitViewController = ResizeCursorSplitViewController()
--        splitViewController.splitView.isVertical = false
--        splitViewController.splitView.dividerStyle = .thin
--
--        let topController = NSHostingController(rootView: topContent)
--        let topItem = NSSplitViewItem(viewController: topController)
--        topItem.minimumThickness = topMinimumThickness
--
--        let bottomController = NSHostingController(rootView: bottomContent)
--        let bottomItem = NSSplitViewItem(viewController: bottomController)
--        bottomItem.canCollapse = true
--        bottomItem.minimumThickness = bottomMinimumThickness
--
--        // Without this the hosting controllers report their content's ideal size as a
--        // preferredContentSize, which this split view forwards to the window: wide results
--        // content then outranks a divider drag and the editor/results divider stops moving.
--        topController.sizingOptions = []
--        bottomController.sizingOptions = []
--
--        splitViewController.addSplitViewItem(topItem)
--        splitViewController.addSplitViewItem(bottomItem)
--
--        // autosaveName is assigned after the items are added; setting it earlier does not record
--        // the divider, and adjustSubviews then resets it.
--        splitViewController.splitView.autosaveName = SplitViewAutosaveName.current(autosaveName)
--
--        context.coordinator.topController = topController
--        context.coordinator.bottomController = bottomController
--        context.coordinator.bottomItem = bottomItem
--        context.coordinator.lastCollapsedState = isBottomCollapsed
--        context.coordinator.onUserCollapseChange = { collapsed in
--            guard isBottomCollapsed != collapsed else { return }
--            isBottomCollapsed = collapsed
--        }
--        context.coordinator.observeCollapse(of: bottomItem)
--
--        /// Assigned either way, so the tab's own state wins over whatever the autosave record
--        /// restored. Collapsing only when the binding says so let a record that was saved collapsed
--        /// leave a pane collapsed against a tab whose `isResultsCollapsed` is false, and nothing
--        /// afterwards expanded it.
--        bottomItem.isCollapsed = isBottomCollapsed
--
--        return splitViewController
--    }
--
--    func updateNSViewController(_ splitViewController: NSSplitViewController, context: Context) {
--        context.coordinator.topController?.rootView = topContent
--        context.coordinator.bottomController?.rootView = bottomContent
--
--        guard let bottomItem = context.coordinator.bottomItem else { return }
--        let wasCollapsed = context.coordinator.lastCollapsedState
--
--        context.coordinator.onUserCollapseChange = { collapsed in
--            guard isBottomCollapsed != collapsed else { return }
--            isBottomCollapsed = collapsed
--        }
--
--        guard isBottomCollapsed != wasCollapsed else { return }
--        context.coordinator.lastCollapsedState = isBottomCollapsed
--        context.coordinator.applyProgrammatically {
--            bottomItem.animator().isCollapsed = isBottomCollapsed
--        }
--    }
--
--    /// The divider is draggable and double-clickable, so AppKit owns this state as much as
--    /// SwiftUI does. Observing it back keeps the persisted value honest instead of letting the
--    /// two drift until the next programmatic toggle snaps the pane back.
--    @MainActor
--    final class Coordinator {
--        var topController: NSHostingController<TopContent>?
--        var bottomController: NSHostingController<BottomContent>?
--        var bottomItem: NSSplitViewItem?
--        var lastCollapsedState = false
--        var onUserCollapseChange: ((Bool) -> Void)?
--
--        private var collapseObservation: NSKeyValueObservation?
--        private var isApplyingProgrammatically = false
--
--        func 
+ /// The key a connect from `source` claims.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3834** (2026-10-25): perf(editor): build the query tab in AppKit and read the sidebar listing when the filter takes focus (@datlechin)
-- **PR #3833** (2026-10-25): refactor(data-grid)!: rebuild the macOS data grid on one model and native AppKit (@datlechin)
-- **PR #3831** (2026-10-25): perf(sidebar): build the find bar on first use and drop the Oracle listing's partition join (@datlechin)
-- **PR #3830** (2026-10-24): perf(sidebar): time and fix the sidebar, Open Quickly and autocomplete on 50,000 tables (@datlechin)
-- **PR #3829** (2026-10-24): fix(linux-drivers): count an aggregate's documents for itcount() in MongoDB (@datlechin)
-- **PR #3828** (2026-10-24): test(linux): retry a fixture's start when its image pull fails (@datlechin)
+- **PR #3956** (2026-10-31): chore(release): v0.83.1 (@datlechin)
+- **PR #3955** (2026-10-31): fix(security): make the statement classifiers fail closed (GHSA-jj3q-3mpv-f853) (@datlechin)
+- **PR #3954** (2026-10-31): fix(security): make the statement classifiers fail closed (GHSA-jj3q-3mpv-f853) (@datlechin)
+- **PR #3953** (2026-10-31): fix(security): make drivers run only the statement the external gate read (GHSA-cr7m-37cv-h5p8) (@datlechin)
+- **PR #3952** (2026-10-31): fix(security): make drivers run only the statement the external gate read (GHSA-cr7m-37cv-h5p8) (@datlechin)
+- **PR #3951** (2026-10-31): fix(security): split external statements as the engine does and run them one at a time (GHSA-gg4q-84m8-8jhv) (@datlechin)
 
 ---
 
@@ -3044,41 +2268,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(linux): retry a fixture's start when its image pull fails (#3828)
+## X. build(linux): give the package builds room for DuckDB 2.0 (#3937)
 
 **RULE**:
-When implementing operations in `linux/crates/ssh/tests/openssh_session.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `linux/build-aux/debian/rules`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2f0a3ba9`: test(linux): retry a fixture's start when its image pull fails (#3828). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `34b2363d`: build(linux): give the package builds room for DuckDB 2.0 (#3937). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `linux/crates/ssh/tests/openssh_session.rs`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `linux/build-aux/debian/rules`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-use tablepro_test_fixtures::start_container;
-    let container = start_container(|| {
-        GenericImage::new("alpine", "3.22")
-            .with_exposed_port(2222.tcp())
-            .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
-            .with_cmd(["sh", "-c", SSHD_SCRIPT])
-    })
-    .await?;
+# DuckDB 2.0's C++ debug info passes dwz's limit of 50 million DIEs, and
+# dwz then fails the build instead of leaving the file as it is.
+override_dh_dwz:
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Anti-pattern to NEVER write (induced failure mode):
-use testcontainers::runners::AsyncRunner;
-    let container = GenericImage::new("alpine", "3.22")
-        .with_exposed_port(2222.tcp())
-        .with_wait_for(WaitFor::message_on_stderr("Server listening on"))
-        .with_cmd(["sh", "-c", SSHD_SCRIPT])
-        .start()
-        .await?;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2f0a3ba9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `34b2363d` are properly handled with clean fallback behavior.

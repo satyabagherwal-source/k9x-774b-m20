@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `9df9e7ce`  
+> **Source Version**: `99e571f4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:12:49.360Z  
+> **Timestamp**: 2026-10-31T09:36:48.767Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:12:49.353Z  
+> **Harvest Timestamp**: 2026-10-31T09:36:47.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3792 stars
+- **Stars / Engagement**: 3919 stars
 
 ---
 
@@ -61,28 +61,22 @@ pub fn impl_device_copy(input: &DeriveInput, import: TokenStream) -> TokenStream
     // type-bound on DeviceCopy and call it with every type that's in the struct/union.
     // This will fail to compile if any of the nested types doesn't implement DeviceCopy.
     //
-    // Enums are deliberately rejected: `DeviceCopy`'s safety contract requires
-    // every bit pattern, including the all-zero pattern written by
-    // `DeviceBuffer::zeroed`, to be a valid value of the type. That holds for
-    // product types (structs/unions) when every field is `DeviceCopy`, but NOT
-    // for enums, whose discriminant leaves most byte patterns invalid. A zeroed
-    // or device-written buffer could then materialize an out-of-range
-    // discriminant (undefined behavior). This is the same reason `bool`, `char`,
-    // and `NonZeroU32` are not `DeviceCopy`. Per-field checking is necessary but
-    // not sufficient for enums, so we refuse rather than emit an unsound impl.
+    // Enums need more than field checks: the all-zero representation must also
+    // select a valid discriminant and payload. This derive does not analyze
+    // enum layouts, so it conservatively rejects them. DeviceCopy does not
+    // require every bit pattern to be valid (bool implements it); an enum with
+    // a valid zero representation can have a manually justified unsafe impl.
     let check_types_code = match input.data {
         Data::Struct(ref data_struct) => type_check_struct(data_struct),
         Data::Union(ref data_union) => type_check_union(data_union),
         Data::Enum(_) => {
             return syn::Error::new_spanned(
                 input_type,
-                "`#[derive(DeviceCopy)]` cannot be applied to enums: `DeviceCopy` requires \
-                 every bit pattern (including the all-zero pattern written by \
-                 `DeviceBuffer::zeroed`) to be a valid value, but an enum's discriminant \
-                 leaves most byte patterns invalid, so a zeroed or device-written buffer \
-                 could materialize an out-of-range discriminant (undefined behavior). If you \
-                 can guarantee every device-produced byte pattern is a valid variant, write \
-                 `unsafe impl DeviceCopy for ... {}` by hand.",
+                "`#[derive(DeviceCopy)]` cannot be applied to enums: this derive cannot \
+                 prove that the all-zero representation selects a valid discriminant and \
+                 payload. `DeviceCopy` requires byte-copyable values and a valid all-zero \
+                 representation, but not validity of every bit pattern. If the enum meets \
+                 the full safety contract, write `unsafe impl DeviceCopy for ... {}` by hand.",
             )
             .to_compile_error();
         }
@@ -190,6 +184,311 @@ pub fn device_copy(input: TokenStream) -> TokenStream {
     code.into()
 }
 
+```
+
+### Core Architecture Module: `cuda-core/src/allocation.rs`
+```
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+//! Shared allocation ownership, byte views, and in-flight access tracking.
+
+use crate::{Context, DriverError, Stream};
+use cuda_bindings::CUdeviceptr;
+use std::sync::{Arc, Mutex};
+
+/// A foreign allocation whose owner keeps both its memory and CUDA context alive.
+///
+/// # Safety
+/// The pointer, byte extent, and context must remain stable and valid for the
+/// owner's lifetime. The pointer must address at least `len_bytes` bytes in that
+/// context. Per-operation exclusion from foreign accesses remains the obligation
+/// of callers constructing typed views over this memory.
+pub unsafe trait DeviceAllocation: Send + Sync + 'static {
+    fn device_ptr(&self) -> CUdeviceptr;
+    fn len_bytes(&self) -> usize;
+    fn context(&self) -> Arc<Context>;
+    fn device_id(&self) -> usize {
+        self.context().ordinal()
+    }
+}
+
+struct Access {
+    id: u64,
+    stream: usize,
+    write: bool,
+    recording: bool,
+    completion: Option<Arc<crate::Event>>,
+}
+
+#[derive(Default)]
+struct Accesses {
+    next_id: u64,
+    active: Vec<Access>,
+}
+
+impl Accesses {
+    fn register(
+        &mut self,
+        stream: usize,
+        write: bool,
+        recording: bool,
+    ) -> Result<u64, DriverError> {
+        // A synchronous wait on another thread may have completed a retired
+        // operation before the worker got to its lease. Do not report a stale
+        // conflict in that case. Errors leave the exclusion intact.
+        self.active
+            .retain(|a| !matches!(a.completion.as_ref().map(|e| e.query()), Some(Ok(true))));
+        if !recording
+            && self
+                .active
+                .iter()
+                .any(|a| !a.recording && a.stream != stream && (write || a.write))
+        {
+            return Err(DriverError(
+                cuda_bindings::cudaError_enum_CUDA_ERROR_NOT_READY,
+            ));
+        }
+        let id = self.next_id.checked_add(1).ok_or(DriverError(
+            cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE,
+        ))?;
+        self.next_id = id;
+        self.active.push(Access {
+            id,
+            stream,
+            write,
+            recording,
+            completion: None,
+        });
+        Ok(id)
+    }
+}
+
+enum Owner {
+    Synchronous,
+    StreamOrdered(Arc<Stream>),
+    Borrowed,
+    Foreign(#[allow(dead_code)] Arc<dyn DeviceAllocation>),
+}
+
+struct Allocation {
+    ptr: CUdeviceptr,
+    bytes: usize,
+    context: Arc<Context>,
+    owner: Owner,
+    accesses: Mutex<Accesses>,
+}
+
+impl Drop for Allocation {
+    fn drop(&mut self) {
+        if self.ptr == 0 || matches!(self.owner, Owner::Borrowed | Owner::Foreign(_)) {
+            return;
+        }
+        let ptr = self.ptr;
+        let context = self.context.clone();
+        let allocation_stream = match &self.owner {
+            Owner::StreamOrdered(s) => Some(s.clone()),
+            _ => None,
+        };
+        // All safe users hold an independent access lease until completion.
+        // Driver teardown is retired on a worker, never on the dropping thread.
+        crate::completion::defer(move || {
+            if let Err(error) = context.bind_to_thread() {
+                context.record_err(Err::<(), _>(error));
+                std::mem::forget((context, allocation_stream));
+                return;
+            }
+            let result = if let Some(stream) = &allocation_stream {
+                // SAFETY: the allocation is no longer accessed and the retained
+                // stream is the one on which its allocation became valid.
+                unsafe { crate::memory::free_async(ptr, stream.cu_stream()) }
+            } else {
+                // SAFETY: ownership of this synchronous allocation is unique.
+                unsafe { crate::memory::free_sync(ptr) }
+            };
+            if let Err(error) = result {
+                context.record_err(Err::<(), _>(error));
+                std::mem::forget((context, allocation_stream));
+            }
+        });
+    }
+}
+
+/// A byte view sharing an allocation owner and access tracker with every derived
+/// typed buffer, tensor, and sliced view. Cloning does not copy device memory.
+#[derive(Clone)]
+pub struct RawDeviceBuffer {
+    allocation: Arc<Allocation>,
+    // Only user-visible views share this token. Completion leases retain the
+    // allocation directly, so creating/dropping them cannot affect uniqueness.
+    views: Arc<()>,
+    offset: usize,
+    len: usize,
+}
+
+impl std::fmt::Debug for RawDeviceBuffer {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("RawDeviceBuffer")
+            .field("ptr", &self.cu_deviceptr())
+            .field("len", &self.len)
+            .field("context", &self.allocation.context)
+            .finish_non_exhaustive()
+    }
+}
+
+impl RawDeviceBuffer {
+    fn new(ptr: CUdeviceptr, bytes: usize, context: Arc<Context>, owner: Owner) -> Self {
+        assert!(
+            ptr.checked_add(bytes as u64).is_some(),
+            "device allocation extent overflows"
+        );
+        Self {
+            allocation: Arc::new(Allocation {
+                ptr,
+                bytes,
+                context,
+                owner,
+                accesses: Mutex::default(),
+            }),
+            views: Arc::new(()),
+            offset: 0,
+            len: bytes,
+        }
+    }
+
+    /// Adopts a synchronous CUDA allocation.
+    ///
+    /// # Safety
+    /// `ptr` must uniquely own `bytes` bytes allocated by `cuMemAlloc` in
+    /// `context`, with no outstanding untracked accesses.
+    pub unsafe fn from_raw_parts(ptr: CUdeviceptr, bytes: usize, context: Arc<Context>) -> Self {
+        Self::new(ptr, bytes, context, Owner::Synchronous)
+    }
+
+    /// Adopts a stream-ordered CUDA allocation.
+    ///
+    /// # Safety
+    /// `ptr` must uniquely own `bytes` bytes from `cuMemAllocAsync` or its pool
+    /// variant on `stream`. The caller must establish allocation ordering for
+    /// every use and retain the allocation through outstanding work.
+    pub unsafe fn from_raw_parts_async(
+        ptr: CUdeviceptr,
+        bytes: usize,
+        stream: Arc<Stream>,
+    ) -> Self {
+        Self::new(
+            ptr,
+            bytes,
+            stream.context().clone(),
+            Owner::StreamOrdered(stream),
+        )
+    }
+
+    /// Borrows externally managed memory without taking ownership.
+    ///
+    /// # Safety
+    /// Memory and context must outlive every derived view and queued use. No
+    /// external access may conflict with accesses through this allocation.
+    pub unsafe fn borrowed_from_raw_parts(
+        ptr: CUdeviceptr,
+        bytes: usize,
+        context: Arc<Context>,
+    ) -> Self {
+        Self::new(ptr, bytes, context, Owner::Borrowed)
+    }
+
+    /// Retains an external owner and limits the logical view to `bytes` bytes.
+    /// No CUDA calls are made, permitting metadata validation before submission.
+    pub fn foreign(owner: Arc<dyn DeviceAllocation>, bytes: usize) -> Self {
+        assert!(
+            bytes <= owner.len_bytes(),
+            "view exceeds foreign allocation"
+        );
+        Self::new(
+            owner.device_ptr(),
+            bytes,
+            owner.context(),
+            Owner::Foreign(owner),
+        )
+    }
+
+    pub fn cu_deviceptr(&self) -> CUdeviceptr {
+        self.allocation.ptr + self.offset as u64
+    }
+    pub fn len_bytes(&self) -> usize {
+        self.len
+    }
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
+    }
+    pub fn context(&self) -> &Arc<Context> {
+        &self.allocation.context
+    }
+    pub(crate) fn allocation_stream(&self) -> Option<&Arc<Stream>> {
+        match &self.allocation.owner {
+            Owner::StreamOrdered(stream) => Some(stream),
+            _ => None,
+        }
+    }
+    pub fn device_id(&self) -> usize {
+        self.context().ordinal()
+    }
+    /// Identity of the owner/access tracker, unchanged across byte views.
+    pub fn allocation_id(&self) -> usize {
+        Arc::as_ptr(&self.allocation) as usize
+    }
+
+    /// Creates a bounds-checked view without changing allocation identity.
+    pub fn slice_bytes(&self, offset: usize, bytes: usize) -> Result<Self, DriverError> {
+        if offset.checked_add(bytes).is_none_or(|end| end > self.len) {
+            return Err(DriverError(
+                cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE,
+            ));
+        }
+        Ok(Self {
+            allocation: self.allocation.clone(),
+            views: self.views.clone(),
+            offset: self.offset + offset,
+            len: bytes,
+        })
+    }
+
+    /// Whether only this user-visible view owns the allocation. Completion leases
+    /// do not count as user aliases; they still enforce in-flight exclusion.
+    pub fn is_unique(&self) -> bool {
+        Arc::strong_count(&self.views) == 1
+    }
+
+    /// Acquires an allocation-wide access, rejecting cross-stream conflicts.
+    /// The returned lease must be retained until the submitted work completes.
+    pub fn acquire(
+        &self,
+        stream: &Stream,
+        write: bool,
+        recording: bool,
+    ) -> Result<AllocationLease, DriverError> {
+        if self.context().as_ref() != stream.context().as_ref() {
+            return Err(DriverError(
+                cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_CONTEXT,
+            ));
+        }
+        self.acquire_on_stream(stream.cu_stream() as usize, write, recording)
+    }
+
+    /// Registers bookkeeping for a known stream handle. This does not submit GPU
+    /// work or grant permission to dereference pointers. Runtime adapters must
+    /// separately validate the stream's context before submitting work.
+    #[doc(hidden)]
+    pub fn acquire_on_stream(
+        &self,
+        stream: usize,
+        write: bool,
+        recording: bool,
+    ) -> Result<AllocationLease, DriverError> {
+        let mut accesses = self
+ 
 ```
 
 ### Core Architecture Module: `cuda-core/src/api.rs`
@@ -367,6 +666,7 @@ pub unsafe fn malloc_async(
     num_bytes: usize,
     stream: &Arc<Stream>,
 ) -> Result<sys::CUdeviceptr, DriverError> {
+    stream.context().bind_to_thread()?;
     crate::cudarc_shim::memory::malloc_async(stream.cu_stream(), num_bytes)
 }
 
@@ -381,6 +681,7 @@ pub unsafe fn malloc_from_pool_async(
     pool: &Arc<crate::MemPool>,
     stream: &Arc<Stream>,
 ) -> Result<sys::CUdeviceptr, DriverError> {
+    stream.context().bind_to_thread()?;
     crate::cudarc_shim::pool::malloc_from_pool_async(pool.cu_pool(), stream.cu_stream(), num_bytes)
 }
 
@@ -395,6 +696,7 @@ pub unsafe fn memset_d8_async(
     num_bytes: usize,
     stream: &Arc<Stream>,
 ) -> Result<(), DriverError> {
+    stream.context().bind_to_thread()?;
     crate::cudarc_shim::memory::memset_d8_async(dptr, value, num_bytes, stream.cu_stream())
 }
 
@@ -405,6 +707,7 @@ pub unsafe fn memset_d8_async(
 /// [`malloc_from_pool_async`], `stream` must be ordered after every use of
 /// the allocation, and `dptr` must not be used after this call.
 pub unsafe fn free_async(dptr: sys::CUdeviceptr, stream: &Arc<Stream>) -> Result<(), DriverError> {
+    stream.context().bind_to_thread()?;
     crate::cudarc_shim::memory::free_async(dptr, stream.cu_stream())
 }
 
@@ -418,6 +721,7 @@ pub unsafe fn memcpy_htod_async<T>(
     num_elements: usize,
     stream: &Arc<Stream>,
 ) -> Result<(), DriverError> {
+    stream.context().bind_to_thread()?;
     let num_bytes = num_elements * mem::size_of::<T>();
     unsafe {
         crate::cudarc_shim::memory::memcpy_htod_async(dst, src, num_bytes, stream.cu_stream())
@@ -434,6 +738,7 @@ pub unsafe fn memcpy_dtoh_async<T>(
     num_elements: usize,
     stream: &Arc<Stream>,
 ) -> Result<(), DriverError> {
+    stream.context().bind_to_thread()?;
     let num_bytes = num_elements * mem::size_of::<T>();
     unsafe {
         crate::cudarc_shim::memory::memcpy_dtoh_async(dst, src, num_bytes, stream.cu_stream())
@@ -450,6 +755,7 @@ pub unsafe fn memcpy_dtod_async<T>(
     num_elements: usize,
     stream: &Arc<Stream>,
 ) -> Result<(), DriverError> {
+    stream.context().bind_to_thread()?;
     let num_bytes = num_elements * mem::size_of::<T>();
     unsafe {
         crate::cudarc_shim::memory::memcpy_dtod_async(dst, src, num_bytes, stream.cu_stream())
@@ -458,13 +764,343 @@ pub unsafe fn memcpy_dtod_async<T>(
 
 /// Wrappers around the cuRAND random number generation library.
 pub mod curand {
-    // TODO (hme): Probably move this into its own file at some point.
+    // TODO (hme): Probably move this into its own file at so
+```
 
-    use crate::runtime::Stream;
-    use cuda_bindings::{
-        curandCreateGenerator, curandDestroyGenerator, curandGenerateNormal,
-        curandGenerateNormalDouble, curandGenerateUniform, curandGenerateUniformDouble,
-        curandGenerator_t, curandRngType_CURAND
+### Core Architecture Module: `cuda-core/src/completion.rs`
+```
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+//! Completion-bound retirement without waiting in destructors.
+
+use crate::{DriverError, Event, Stream};
+use std::sync::{mpsc, Arc, OnceLock};
+use std::time::Duration;
+
+type Cleanup = Box<dyn FnOnce() + Send>;
+struct Pending {
+    event: Option<Arc<Event>>,
+    cleanup: Cleanup,
+}
+
+fn enqueue(pending: Pending) {
+    static QUEUE: OnceLock<Option<mpsc::Sender<Pending>>> = OnceLock::new();
+    let queue = QUEUE.get_or_init(|| {
+        let (sender, receiver) = mpsc::channel::<Pending>();
+        std::thread::Builder::new()
+            .name("cuda-resource-retirement".into())
+            .spawn(move || {
+                let mut pending = Vec::<Pending>::new();
+                loop {
+                    match receiver.recv_timeout(Duration::from_millis(1)) {
+                        Ok(item) => pending.push(item),
+                        Err(mpsc::RecvTimeoutError::Disconnected) => break,
+                        Err(mpsc::RecvTimeoutError::Timeout) => {}
+                    }
+                    pending.extend(receiver.try_iter());
+                    let mut i = 0;
+                    while i < pending.len() {
+                        let ready = pending[i]
+                            .event
+                            .as_ref()
+                            .map_or(Ok(true), |event| event.query());
+                        match ready {
+                            Ok(false) => i += 1,
+                            Ok(true) => {
+                                let item = pending.swap_remove(i);
+                                // Preserve the event's context until cleanup has finished.
+                                let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(
+                                    item.cleanup,
+                                ));
+                            }
+                            Err(_) => {
+                                // Completion is unknown: leaking the owner and its access
+                                // lease is safer than freeing memory or allowing conflicting work.
+                                std::mem::forget(pending.swap_remove(i));
+                            }
+                        }
+                    }
+                }
+                for item in pending {
+                    std::mem::forget(item);
+                }
+            })
+            .ok()
+            .map(|_| sender)
+    });
+    if let Some(queue) = queue {
+        if let Err(error) = queue.send(pending) {
+            std::mem::forget(error.0);
+        }
+    } else {
+        std::mem::forget(pending);
+    }
+}
+
+pub(crate) fn defer(cleanup: impl FnOnce() + Send + 'static) {
+    enqueue(Pending {
+        event: None,
+        cleanup: Box::new(cleanup),
+    });
+}
+
+/// Keeps an owner or access lease alive until work already queued on `stream`
+/// completes. Dropping the caller's future cannot shorten this lifetime.
+///
+/// Failure to record or observe completion intentionally leaks the owner;
+/// releasing it could invalidate work that the driver has already accepted.
+pub fn retain_until_complete(
+    owner: impl Send + 'static,
+    stream: &Stream,
+) -> Result<(), DriverError> {
+    let event = match stream.record_event(None) {
+        Ok(event) => event,
+        Err(error) => {
+            std::mem::forget(owner);
+            return Err(error);
+        }
+    };
+    enqueue(Pending {
+        event: Some(Arc::new(event)),
+        cleanup: Box::new(move || drop(owner)),
+    });
+    Ok(())
+}
+
+pub(crate) fn retain_until_event(owner: impl Send + 'static, event: Arc<Event>) {
+    enqueue(Pending {
+        event: Some(event),
+        cleanup: Box::new(move || drop(owner)),
+    });
+}
+
+```
+
+### Core Architecture Module: `cuda-core/src/context.rs`
+```
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+//! Context queries and configuration shared by both programming models.
+
+pub use crate::runtime::{Context, Context as CudaContext};
+use crate::{DeviceLaunchLimits, DriverError, IntoResult, KeepAlive, Stream};
+use std::{
+    ffi::c_int,
+    mem::MaybeUninit,
+    sync::{atomic::Ordering, Arc},
+};
+
+/// The device's meaningful stream priorities, from
+/// [`Context::stream_priority_range`].
+///
+/// CUDA orders priorities the opposite way round to intuition: **a lower
+/// number is a higher priority**, so the range runs from
+/// [`greatest`](Self::greatest) up to [`least`](Self::least) and
+/// `greatest <= least` always holds.
+///
+/// A priority outside the range is not refused when a stream is created. The
+/// driver clamps it to the nearest end and reports nothing, so a caller that
+/// wants to know what it will get should ask [`clamp`](Self::clamp) rather
+/// than assume the request survived.
+///
+/// A device without priority support reports `0` for both ends, which
+/// [`is_supported`](Self::is_supported) reads as unsupported. Creating a
+/// stream still succeeds there; every priority simply collapses to the same
+/// one.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct StreamPriorityRange {
+    /// Numerically largest value, the *lowest* priority.
+    least: i32,
+    /// Numerically smallest value, the *highest* priority.
+    greatest: i32,
+}
+
+impl StreamPriorityRange {
+    /// The lowest priority, which is the numerically largest value.
+    pub fn least(&self) -> i32 {
+        self.least
+    }
+
+    /// The highest priority, which is the numerically smallest value.
+    pub fn greatest(&self) -> i32 {
+        self.greatest
+    }
+
+    /// Whether this device implements stream priorities at all.
+    ///
+    /// False when the driver reports `0` for both ends, which is how
+    /// `cuCtxGetStreamPriorityRange` answers on a device without support.
+    /// A device with support always reports a range wider than one value.
+    pub fn is_supported(&self) -> bool {
+        self.least != self.greatest
+    }
+
+    /// Whether `priority` lies inside the range, and so survives stream
+    /// creation unchanged.
+    pub fn contains(&self, priority: i32) -> bool {
+        (self.greatest..=self.least).contains(&priority)
+    }
+
+    /// The value the driver will actually apply for a request of `priority`.
+    ///
+    /// Answers the silent clamp in
+    /// [`Context::new_stream_with_priority`] ahead of the call.
+    pub fn clamp(&self, priority: i32) -> i32 {
+        priority.clamp(self.greatest, self.least)
+    }
+}
+
+/// A per-context device limit (`CU_LIMIT_*`), read with
+/// [`Context::limit`] and written with [`Context::set_limit`].
+///
+/// Every limit is state on the device's **primary** context, so it is shared
+/// by every [`Context`] for that device, by any runtime-API user of the
+/// same device in this process, and across library boundaries. A limit set
+/// here is not scoped to the handle that set it.
+///
+/// The driver is free to clamp or round a request. Read the limit back after
+/// setting it to observe what was actually applied.
+///
+/// # Ordering constraints
+///
+/// [`PrintfFifoSize`](Self::PrintfFifoSize) and
+/// [`MallocHeapSize`](Self::MallocHeapSize) must be set **before the first
+/// kernel launch in the process that uses `printf` or device `malloc`**;
+/// afterwards the driver rejects the write with `CUDA_ERROR_INVALID_VALUE`.
+/// Because the limit lives on the shared primary context, "first launch"
+/// counts launches made through any handle, not just this one.
+///
+/// # Omitted variants
+///
+/// `CU_LIMIT_SHMEM_SIZE`, `CU_LIMIT_CIG_ENABLED` and
+/// `CU_LIMIT_CIG_SHMEM_FALLBACK_ENABLED` are absent. The first two are
+/// query-only, all three concern CIG (graphics-interop) contexts, and none
+/// predates CUDA 12.5, so naming them would need a header probe and a `cfg`
+/// in the manner of `cuda_has_cuEventElapsedTime_v2`. The seven variants
+/// below have been present since CUDA 11 and are the ones
+/// `cuCtxSetLimit`'s own documentation specifies.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ContextLimit {
+    /// Stack size in bytes for each GPU thread (`CU_LIMIT_STACK_SIZE`).
+    ///
+    /// The driver raises this on its own whenever a launched kernel needs a
+    /// larger frame and **does not lower it again**, so a read reflects the
+    /// high-water mark of everything launched in this context so far. The
+    /// reservation scales as roughly `bytes * mp_count * threads_per_mp` and
+    /// is invisible to the allocation APIs: it simply reduces the device
+    /// memory a later allocation can obtain. Lowering it after a deep-frame
+    /// kernel has raised it is how that memory is handed back.
+    StackSize,
+    /// Size in bytes of the FIFO backing the device `printf`
+    /// (`CU_LIMIT_PRINTF_FIFO_SIZE`).
+    ///
+    /// The FIFO is circular: once a launch fills it, the **oldest** output is
+    /// overwritten and lost silently, with no error and no marker in the
+    /// stream the host prints. Raising this is the only fix for a kernel
+    /// whose output is truncated. Subject to the ordering constraint above.
+    PrintfFifoSize,
+    /// Size in bytes of the heap backing device `malloc` and `free`
+    /// (`CU_LIMIT_MALLOC_HEAP_SIZE`). Subject to the ordering constraint
+    /// above.
+    MallocHeapSize,
+    /// Maximum grid nesting depth at which a device-runtime thread may call
+    /// `cudaDeviceSynchronize` (`CU_LIMIT_DEV_RUNTIME_SYNC_DEPTH`).
+    ///
+    /// Applies only to devices of compute capability below 9.0; elsewhere the
+    /// driver returns `CUDA_ERROR_UNSUPPORTED_LIMIT`. Each level of depth
+    /// reserves device memory, so a request the driver cannot back fails with
+    /// `CUDA_ERROR_OUT_OF_MEMORY` and leaves the limit settable at a lower
+    /// value.
+    DevRuntimeSyncDepth,
+    /// Maximum number of outstanding device-runtime launches from this
+    /// context (`CU_LIMIT_DEV_RUNTIME_PENDING_LAUNCH_COUNT`), default 2048.
+    ///
+    /// Reserves device memory in proportion, and fails the same way as
+    /// [`DevRuntimeSyncDepth`](Self::DevRuntimeSyncDepth) when the
+    /// reservation cannot be met.
+    DevRuntimePendingLaunchCount,
+    /// L2 fetch granularity in bytes, 0 to 128
+    /// (`CU_LIMIT_MAX_L2_FETCH_GRANULARITY`). A hint: the platform may ignore
+    /// or clamp it, and a read need not return what was written.
+    MaxL2FetchGranularity,
+    /// Bytes of L2 set aside for persisting lines
+    /// (`CU_LIMIT_PERSISTING_L2_CACHE_SIZE`). A hint, with the same caveat as
+    /// [`MaxL2FetchGranularity`](Self::MaxL2FetchGranularity).
+    PersistingL2CacheSize,
+}
+
+impl ContextLimit {
+    /// Maps to the raw `CUlimit` the driver expects.
+    fn to_raw(self) -> cuda_bindings::CUlimit {
+        match self {
+            ContextLimit::StackSize => cuda_bindings::CUlimit_enum_CU_LIMIT_STACK_SIZE,
+            ContextLimit::PrintfFifoSize => cuda_bindings::CUlimit_enum_CU_LIMIT_PRINTF_FIFO_SIZE,
+            ContextLimit::MallocHeapSize => cuda_bindings::CUlimit_enum_CU_LIMIT_MALLOC_HEAP_SIZE,
+            ContextLimit::DevRuntimeSyncDepth => {
+                cuda_bindings::CUlimit_enum_CU_LIMIT_DEV_RUNTIME_SYNC_DEPTH
+            }
+            ContextLimit::DevRuntimePendingLaunchCount => {
+                cuda_bindings::CUlimit_enum_CU_LIMIT_DEV_RUNTIME_PENDING_LAUNCH_COUNT
+            }
+            ContextLimit::MaxL2FetchGranularity => {
+                cuda_bindings::CUlimit_enum_CU_LIMIT_MAX_L2_FETCH_GRANULARITY
+            }
+            ContextLimit::PersistingL2CacheSize => {
+                cuda_bindings::CUlimit_enum_CU_LIMIT_PERSISTING_L2_CACHE_SIZE
+            }
+        }
+    }
+}
+
+/// Context scheduling policy (`CU_CTX_SCHED_*`), governing how the driver
+/// waits when the calling host thread blocks on GPU work (a stream or
+/// context synchronize).
+///
+/// Set via [`Context::set_sync_policy`], read via
+/// [`Context::sync_policy`]. The trade-off is host CPU against wake
+/// latency: [`Spin`](Self::Spin) burns a full core for the lowest latency,
+/// [`BlockingSync`](Self::BlockingSync) frees the core but wakes later. On a
+/// host with spare cores this trade rarely matters; on a CPU-constrained one
+/// (few physical cores, a sync-heavy pipeline) it can cost double-digit
+/// percentages of host CPU for no wall-clock benefit, which is the case
+/// [`BlockingSync`](Self::BlockingSync) exists to fix.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SyncPolicy {
+    /// Driver-chosen default: spin if the process has more logical CPUs than
+    /// active contexts, otherwise yield.
+    Auto,
+    /// Spin the calling thread while waiting. Lowest latency, highest CPU use.
+    Spin,
+    /// Yield the calling thread's timeslice while waiting.
+    Yield,
+    /// Block the calling thread on a synchronization primitive while
+    /// waiting. Lowest CPU use, highest wake latency.
+    BlockingSync,
+}
+
+impl SyncPolicy {
+    fn to_raw(self) -> cuda_bindings::CUctx_flags_enum {
+        match self {
+            SyncPolicy::Auto => cuda_bindings::CUctx_flags_enum_CU_CTX_SCHED_AUTO,
+            SyncPolicy::Spin => cuda_bindings::CUctx_flags_enum_CU_CTX_SCHED_SPIN,
+            SyncPolicy::Yield => cuda_bindings::CUctx_flags_enum_CU_CTX_SCHED_YIELD,
+            SyncPolicy::BlockingSync => cuda_bindings::CUctx_flags_enum_CU_CTX_SCHED_BLOCKING_SYNC,
+        }
+    }
+
+    /// Decodes the scheduling bits (`CU_CTX_SCHED_MASK`) out of a raw flags
+    /// word. `None` for a driver-reserved combination this enum does not
+    /// name (the mask is 3 bits wide; only 4 of 8 values are assigned today).
+    fn from_raw(raw: cuda_bindings::CUctx_flags_enum) -> Option<Self> {
+        match raw & cuda_bindings::CUctx_flags_enum_CU_CTX_SCHED_MASK {
+            cuda_bindings::CUctx_flags_enum_CU_CTX_SCHED_AUTO => Some(SyncPolicy::Auto),
+          
 ```
 
 ### Core Architecture Module: `cuda-core/src/cudarc_shim.rs`
@@ -770,6 +1406,283 @@ pub(crate) mod stream {
     pub unsafe
 ```
 
+### Core Architecture Module: `cuda-core/src/device_buffer.rs`
+```
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+//! Owning device memory buffer with ergonomic host-device transfer methods.
+//!
+//! [`DeviceBuffer<T>`] is analogous to `Vec<T>` on the host: it owns a
+//! contiguous allocation of `len` elements on the device and frees it on
+//! drop. The stream is an explicit parameter on every transfer operation,
+//! making data-flow and synchronization transparent. Buffers allocated with
+//! [`DeviceBuffer::uninitialized_async`] retain their allocation stream for
+//! deallocation.
+//!
+//! Drop does not wait for GPU work. Safe launch and transfer APIs retain the
+//! shared allocation owner and access leases independently until completion.
+//! Unsafe raw-pointer callers must retain storage and order accesses themselves.
+//!
+//! # Quick start
+//!
+//! ```ignore
+//! let a_dev = DeviceBuffer::from_host(&stream, &a_host)?;
+//! let c_dev = DeviceBuffer::<f32>::zeroed(&stream, N)?;
+//! // ... kernel launch ...
+//! let c_host = c_dev.to_host_vec(&stream)?;
+//! ```
+
+use std::marker::PhantomData;
+use std::mem::MaybeUninit;
+use std::num::Wrapping;
+use std::sync::Arc;
+
+use bytemuck::{AnyBitPattern, NoUninit};
+use cuda_bindings::CUdeviceptr;
+use cuda_repr::DeviceRepr;
+
+use crate::context::Context;
+use crate::error::DriverError;
+use crate::pinned_host_buffer::PinnedHostBuffer;
+use crate::stream::Stream;
+
+/// Marker trait for values that can be safely copied between host and device
+/// memory as raw bytes.
+///
+/// Types implementing `DeviceCopy` must not contain Rust-owned allocations,
+/// references, or other values whose validity depends on host-side ownership or
+/// drop semantics. This is the device-memory equivalent of a plain-old-data
+/// contract.
+///
+/// # Safety
+///
+/// Implementors must be safe to duplicate with a byte-for-byte copy, and the
+/// all-zero bit pattern must be a valid value because [`DeviceBuffer::zeroed`]
+/// initializes memory with zero bytes. Types whose zero pattern is invalid,
+/// such as `NonZeroU32`, cannot implement `DeviceCopy`.
+///
+/// `DeviceCopy` does not promise that every bit pattern is valid. `bool`
+/// implements it although only `0` and `1` are `bool` values. That is sound
+/// because a typed `DeviceBuffer<T>` holds valid `T` values by construction:
+/// the safe constructors copy `T` values from the host or write zero bytes, a
+/// kernel that writes through `&mut T` writes a `T`, and the raw constructors
+/// are `unsafe`, so their caller vouches for the contents. The one place
+/// arbitrary bytes could become typed values is the safe reinterpreting casts,
+/// [`DeviceBuffer::cast_elem`] and [`DeviceBuffer::cast_chunks`]. They require
+/// the source to implement [`bytemuck::NoUninit`] and the target to implement
+/// [`bytemuck::AnyBitPattern`]. This excludes uninitialized source bytes and
+/// padding, and rejects `bool` as a target, so a `DeviceBuffer<bool>` can only
+/// come from memory written as `bool`.
+pub unsafe trait DeviceCopy: Copy {}
+
+macro_rules! impl_device_copy {
+    ($($ty:ty),+ $(,)?) => {
+        $(
+            unsafe impl DeviceCopy for $ty {}
+        )+
+    };
+}
+
+impl_device_copy!(
+    (),
+    i8,
+    i16,
+    i32,
+    i64,
+    i128,
+    isize,
+    u8,
+    u16,
+    u32,
+    u64,
+    u128,
+    usize,
+    f32,
+    f64
+);
+
+// Zero is `false`, and the trait documentation explains why the `0`/`1`
+// validity requirement does not stop `bool` from being `DeviceCopy`. It is not
+// `bytemuck::AnyBitPattern`, so the reinterpreting casts cannot produce it.
+unsafe impl DeviceCopy for bool {}
+
+unsafe impl<T: DeviceCopy, const N: usize> DeviceCopy for [T; N] {}
+unsafe impl<T: ?Sized> DeviceCopy for *const T {}
+unsafe impl<T: ?Sized> DeviceCopy for *mut T {}
+
+// Wrapper types that don't change the byte representation: a value of the
+// wrapper has the same layout and validity invariants as the inner `T`.
+// `PhantomData<T>` is a zero-sized marker -- always trivially copyable
+// regardless of `T`. `MaybeUninit<T>` accepts any bit pattern by design.
+// `Wrapping<T>` is a `#[repr(transparent)]` newtype.
+unsafe impl<T: ?Sized> DeviceCopy for PhantomData<T> {}
+unsafe impl<T: DeviceCopy> DeviceCopy for MaybeUninit<T> {}
+unsafe impl<T: DeviceCopy> DeviceCopy for Wrapping<T> {}
+
+macro_rules! impl_device_copy_tuple {
+    ($($name:ident),+ $(,)?) => {
+        unsafe impl<$($name: DeviceCopy),+> DeviceCopy for ($($name,)+) {}
+    };
+}
+
+impl_device_copy_tuple!(A);
+impl_device_copy_tuple!(A, B);
+impl_device_copy_tuple!(A, B, C);
+impl_device_copy_tuple!(A, B, C, D);
+impl_device_copy_tuple!(A, B, C, D, E);
+impl_device_copy_tuple!(A, B, C, D, E, F);
+impl_device_copy_tuple!(A, B, C, D, E, F, G);
+impl_device_copy_tuple!(A, B, C, D, E, F, G, H);
+
+#[cfg(feature = "f16")]
+unsafe impl DeviceCopy for f16 {}
+unsafe impl DeviceCopy for half::bf16 {}
+unsafe impl DeviceCopy for half::f16 {}
+
+// SAFETY: these transparent numeric storage wrappers own no resources, have
+// valid all-zero representations, and can be duplicated byte-for-byte. Packed
+// FP4 remains one byte holding two logical values; copying does not unpack it.
+impl_device_copy!(
+    crate::tf32,
+    crate::f8e4m3fn,
+    crate::f8e5m2,
+    crate::f8e8m0fnu,
+    crate::f8e5m3fnu,
+    crate::f4e2m1fnx2
+);
+
+/// Owning handle to a contiguous device allocation of `T` elements.
+///
+/// Shares an allocation owner, its CUDA context, and an access tracker with
+/// tensor and byte views. Safe submissions retain independent access leases
+/// until completion, including when a launch future is dropped or forgotten.
+/// Drop retires deallocation on a worker without waiting on the caller's
+/// thread. Unsafe raw-pointer users must retain storage through their own work.
+///
+/// Device buffers may only transfer plain device-copyable values. Owning host
+/// types such as [`String`] are rejected because copying their bytes to and
+/// from device memory would not preserve Rust ownership invariants.
+///
+/// ```compile_fail
+/// # use cuda_core::{Stream, DeviceBuffer};
+/// # fn rejects_non_device_copy(stream: &Stream) {
+/// let _ = DeviceBuffer::<String>::zeroed(stream, 1);
+/// # }
+/// ```
+pub struct DeviceBuffer<T> {
+    storage: crate::RawDeviceBuffer,
+    shared_access_writes: bool,
+    ptr: CUdeviceptr,
+    len: usize,
+    num_bytes: usize,
+    _marker: PhantomData<T>,
+}
+
+// SAFETY: CUdeviceptr is a u64 handle valid across threads when the owning
+// context is bound. The PhantomData<T> is Send if T is Send.
+unsafe impl<T: Send> Send for DeviceBuffer<T> {}
+// SAFETY: &DeviceBuffer only exposes cu_deviceptr() and len(), both of which
+// return Copy values. No interior mutability.
+unsafe impl<T: Send + Sync> Sync for DeviceBuffer<T> {}
+
+impl<T> DeviceBuffer<T> {
+    fn enqueue_access(
+        &self,
+        stream: &Stream,
+        write: bool,
+        enqueue: impl FnOnce() -> Result<(), DriverError>,
+    ) -> Result<(), DriverError> {
+        let lease = self.storage.acquire(stream, write, false)?;
+        self.storage.context().bind_to_thread()?;
+        let submitted = enqueue();
+        let retained = lease.retain_until_complete(stream);
+        submitted.and(retained)
+    }
+
+    /// The shared byte storage and allocation identity underlying this view.
+    pub fn storage(&self) -> &crate::RawDeviceBuffer {
+        &self.storage
+    }
+    /// Whether a shared kernel reference may mutate elements through interior
+    /// mutability. Representation wrappers and unclassified raw types are
+    /// conservative; ordinary DeviceCopy values can share read accesses.
+    #[doc(hidden)]
+    pub fn shared_access_writes(&self) -> bool {
+        self.shared_access_writes
+    }
+
+    /// Erases the element type without copying or releasing storage.
+    pub fn into_storage(self) -> crate::RawDeviceBuffer {
+        self.storage
+    }
+
+    /// Constructs a typed view over shared byte storage.
+    ///
+    /// # Safety
+    /// Every initialized element must be a valid `T`; the caller must preserve
+    /// element validity across all aliases (including future writes through
+    /// aliases with another element type). The storage must be initialized before
+    /// any read, and raw foreign accesses must obey its access-exclusion contract.
+    pub unsafe fn from_storage(
+        storage: crate::RawDeviceBuffer,
+        len: usize,
+    ) -> Result<Self, DriverError> {
+        let num_bytes = allocation_size::<T>(len)?;
+        let ptr = storage.cu_deviceptr();
+        if num_bytes != storage.len_bytes()
+            || (num_bytes != 0 && !(ptr as usize).is_multiple_of(std::mem::align_of::<T>()))
+        {
+            return Err(DriverError(
+                cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE,
+            ));
+        }
+        Ok(Self {
+            ptr,
+            len,
+            num_bytes,
+            storage,
+            shared_access_writes: true,
+            _marker: PhantomData,
+        })
+    }
+
+    /// Borrows a contiguous range of elements while retaining the same storage
+    /// owner and access tracker. No device memory is copied.
+    pub fn slice(
+        &self,
+        range: std::ops::Range<usize>,
+    ) -> Result<DeviceBufferView<'_, T>, DriverError> {
+        if range.start > range.end || range.end > self.len {
+            return Err(DriverError(
+                cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE,
+            ));
+        }
+        let storage = self.storage.slice_bytes(
+            allocation_size::<T>(range.start)?,
+            allocation_size::<T>(range.end - range.start)?,
+        )?;
+        Ok(DeviceBufferView {
+            storage,
+            shared_access_writes: self.shared_access_writes,
+            len: range.end - range.start,
+            _borrow: PhantomData,
+        })
+    }
+
+    /// Returns the raw `CUdeviceptr` for use in kernel argument lists.
+    #[inline]
+    pub fn cu_deviceptr(&self) -> CUdeviceptr {
+        self.ptr
+    }
+
+    /// Number of `T` elements in the buffer.
+    #[inline]
+
+```
+
 ### Core Architecture Module: `cuda-core/src/dtype.rs`
 ```
 /*
@@ -900,6 +1813,28 @@ impl f4e2m1fnx2 {
 #[allow(non_camel_case_types)]
 pub struct i4(pub u8);
 
+// Every bit pattern of the underlying `u8` or `u32` is a valid value of each
+// wrapper: the fields are public or reachable through a safe `from_bits`, and
+// nothing is reserved. That makes them plain old data in bytemuck's sense,
+// which is what lets byte storage be reinterpreted as one of them through
+// `DeviceBuffer::cast_elem`, `DeviceBuffer::cast_chunks`, and
+// `Tensor::reinterpret`, all bounded on `AnyBitPattern` (#1506). `bool` is
+// a `DType` too but deliberately has no such impl: only `0` and `1` are
+// valid, so a `bool` buffer or tensor can only come from memory written as
+// `bool`.
+macro_rules! impl_pod_newtype {
+    ($($ty:ty),+ $(,)?) => {
+        $(
+            // SAFETY: `#[repr(transparent)]` over an integer, so there is no
+            // padding, and every bit pattern is a valid value (see above).
+            unsafe impl bytemuck::Zeroable for $ty {}
+            unsafe impl bytemuck::Pod for $ty {}
+        )+
+    };
+}
+
+impl_pod_newtype!(tf32, f8e4m3fn, f8e5m2, f8e8m0fnu, f8e5m3fnu, f4e2m1fn, f4e2m1fnx2, i4);
+
 /// Runtime identifier for a `DType`.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DTypeId {
@@ -1025,1118 +1960,293 @@ impl_dtype!(
     f16 => F16, f16::ZERO, f16::ONE,
     bf16 => BF16, bf16::ZERO, bf16::ONE,
     f32 => F32, 0.0, 1.0,
-    tf32 => TF32, tf32(0), tf32(0x3F800000),  // IEEE 754 1.0 in f32 bits
-    f64 => F64, 0.0, 1.0,
-    f8e4m3fn => F8E4M3FN, f8e4m3fn(0), f8e4m3fn(0x38),  // 1.0 in E4M3FN
-    f8e5m2 => F8E5M2, f8e5m2(0), f8e5m2(0x3C),          // 1.0 in E5M2
-    f8e8m0fnu => F8E8M0FNU, f8e8m0fnu(0), f8e8m0fnu(0x7F),
-    f8e5m3fnu => F8E5M3FNU, f8e5m3fnu(0), f8e5m3fnu(0x78),
-    f4e2m1fnx2 => F4E2M1FNX2, f4e2m1fnx2::from_bits(0), f4e2m1fnx2::from_nibbles(0x2, 0x2),
-);
+    tf32 => TF32, tf32(0), tf32(0x3F800000),  // IEEE 754 1.0 in f32 
+```
+
+### Core Architecture Module: `cuda-core/src/embedded.rs`
+```
+/*
+ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+//! Loading CUDA modules from embedded device artifact bundles.
+
+use crate::{Context, DriverError, Module};
+use oxide_artifacts::ArtifactError;
+pub use oxide_artifacts::{
+    ArtifactCompileOptions, ArtifactDebugPolicy, ArtifactPayloadKind, OwnedArtifactBundle,
+    COMPILE_OPTIONS_TARGET_MARKER,
+};
+use std::fmt;
+use std::path::{Path, PathBuf};
+use std::sync::Arc;
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct EmbeddedModule {
+    bundle: OwnedArtifactBundle,
+}
+
+impl EmbeddedModule {
+    pub fn new(bundle: OwnedArtifactBundle) -> Option<Self> {
+        loadable_payload(&bundle)
+            .is_some()
+            .then_some(Self { bundle })
+    }
+
+    pub fn name(&self) -> &str {
+        &self.bundle.name
+    }
+
+    pub fn target(&self) -> &str {
+        &self.bundle.target
+    }
+
+    pub fn bundle(&self) -> &OwnedArtifactBundle {
+        &self.bundle
+    }
+
+    pub fn payload(&self, kind: ArtifactPayloadKind) -> Option<&[u8]> {
+        self.bundle.payload(kind)
+    }
+
+    pub fn load(&self, ctx: &Arc<Context>) -> Result<Arc<Module>, EmbeddedModuleError> {
+        let image =
+            loadable_payload(&self.bundle).expect("EmbeddedModule always has a loadable payload");
+        ctx.load_module_from_image(image)
+            .map_err(EmbeddedModuleError::Driver)
+    }
+}
+
+pub fn artifact_bundles_from_current_exe() -> Result<Vec<OwnedArtifactBundle>, EmbeddedModuleError>
+{
+    let path =
+        std::env::current_exe().map_err(|source| EmbeddedModuleError::CurrentExe { source })?;
+    artifact_bundles_from_binary_path(path)
+}
+
+pub fn artifact_bundles_from_binary_path(
+    path: impl AsRef<Path>,
+) -> Result<Vec<OwnedArtifactBundle>, EmbeddedModuleError> {
+    let path = path.as_ref();
+    let bytes = std::fs::read(path).map_err(|source| EmbeddedModuleError::Io {
+        path: path.to_path_buf(),
+        source,
+    })?;
+    oxide_artifacts::read_artifact_bundles_from_object_bytes(&bytes)
+        .map_err(EmbeddedModuleError::Artifacts)
+}
+
+pub fn embedded_modules_from_current_exe() -> Result<Vec<EmbeddedModule>, EmbeddedModuleError> {
+    Ok(artifact_bundles_from_current_exe()?
+        .into_iter()
+        .filter_map(EmbeddedModule::new)
+        .collect())
+}
+
+pub fn load_embedded_module(
+    ctx: &Arc<Context>,
+    name: &str,
+) -> Result<Arc<Module>, EmbeddedModuleError> {
+    let module = embedded_modules_from_current_exe()?
+        .into_iter()
+        .find(|module| module.name() == name)
+        .ok_or_else(|| EmbeddedModuleError::ModuleNotFound {
+            name: name.to_string(),
+        })?;
+    module.load(ctx)
+}
+
+pub fn load_first_embedded_module(ctx: &Arc<Context>) -> Result<Arc<Module>, EmbeddedModuleError> {
+    let module = embedded_modules_from_current_exe()?
+        .into_iter()
+        .next()
+        .ok_or(EmbeddedModuleError::NoModules)?;
+    module.load(ctx)
+}
+
+fn loadable_payload(bundle: &OwnedArtifactBundle) -> Option<&[u8]> {
+    bundle
+        .payload(ArtifactPayloadKind::Cubin)
+        .or_else(|| bundle.payload(ArtifactPayloadKind::Ptx))
+}
+
+#[derive(Debug)]
+pub enum EmbeddedModuleError {
+    CurrentExe {
+        source: std::io::Error,
+    },
+    Io {
+        path: PathBuf,
+        source: std::io::Error,
+    },
+    Artifacts(ArtifactError),
+    ModuleNotFound {
+        name: String,
+    },
+    NoModules,
+    Driver(DriverError),
+}
+
+impl fmt::Display for EmbeddedModuleError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::CurrentExe { source } => {
+                write!(f, "failed to resolve the current executable: {source}")
+            }
+            Self::Io { path, source } => write!(f, "failed to read {}: {source}", path.display()),
+            Self::Artifacts(error) => write!(f, "failed to read embedded artifacts: {error}"),
+            Self::ModuleNotFound { name } => {
+                write!(f, "embedded CUDA module '{name}' was not found")
+            }
+            Self::NoModules => f.write_str("no embedded CUDA modules were found"),
+            Self::Driver(error) => write!(f, "failed to load embedded CUDA module: {error}"),
+        }
+    }
+}
+
+impl std::error::Error for EmbeddedModuleError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::CurrentExe { source } | Self::Io { source, .. } => Some(source),
+            Self::Artifacts(error) => Some(error),
+            Self::Driver(error) => Some(error),
+            Self::ModuleNotFound { .. } | Self::NoModules => None,
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use oxide_artifacts::OwnedArtifactPayload;
+    // Only the host-object tests below (gated to linux/x86_64) use these.
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    use oxide_artifacts::{
+        build_artifact_blob, build_host_object_for_target, ArtifactBundleSpec, ArtifactPayloadSpec,
+    };
 
     #[test]
-    fn dtype_enum_as_str() {
-        assert_eq!(DTypeId::Bool.as_str(), "bool");
-        assert_eq!(DTypeId::U8.as_str(), "u8");
-        assert_eq!(DTypeId::U16.as_str(), "u16");
-        assert_eq!(DTypeId::U32.as_str(), "u32");
-        assert_eq!(DTypeId::U64.as_str(), "u64");
-        assert_eq!(DTypeId::I8.as_str(), "i8");
-        assert_eq!(DTypeId::I16.as_str(), "i16");
-        assert_eq!(DTypeId::I32.as_str(), "i32");
-        assert_eq!(DTypeId::I64.as_str(), "i64");
-        assert_eq!(DTypeId::F16.as_str(), "f16");
-        assert_eq!(DTypeId::BF16.as_str(), "bf16");
-        assert_eq!(DTypeI
-```
-
-### Core Architecture Module: `cuda-core/src/error.rs`
-```
-/*
- * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
-
-//! CUDA driver error types and result conversion utilities.
-
-use std::ffi::CStr;
-use std::mem::MaybeUninit;
-use std::{
-    error,
-    fmt::{self, Display, Formatter},
-};
-
-/// Wrapper around a CUDA driver API error code.
-#[derive(Clone, Copy, PartialEq, Eq)]
-pub struct DriverError(pub cuda_bindings::CUresult);
-
-impl DriverError {
-    /// Returns true when the driver cannot JIT the PTX version in a module.
-    ///
-    /// This usually means the selected CUDA toolkit is newer than the
-    /// installed driver. PTX requires direct driver support even when other
-    /// parts of the toolkit can use CUDA minor-version compatibility.
-    pub fn is_unsupported_ptx_version(&self) -> bool {
-        self.0 == cuda_bindings::cudaError_enum_CUDA_ERROR_UNSUPPORTED_PTX_VERSION
-    }
-
-    fn _fmt(&self, formatter: &mut Formatter) -> fmt::Result {
-        self.fmt_with_loader_error(formatter, cuda_bindings::cuda_driver_load_error())
-    }
-
-    /// Reports a driver library that could not be loaded when the code says
-    /// so. Takes the loader's cached failure as a parameter so the keying can
-    /// be unit-tested on a machine where the driver loads fine.
-    ///
-    /// Every driver entry point goes through a loader shim that returns
-    /// `CUDA_ERROR_NOT_INITIALIZED` when libcuda could not be loaded at all;
-    /// `CUDA_ERROR_SHARED_OBJECT_INIT_FAILED` is what the driver itself (and
-    /// an earlier shim) reports for the same condition. Both codes are
-    /// otherwise opaque, while the loader's message names the library
-    /// candidates tried and why they failed, which is the actionable part.
-    fn fmt_with_loader_error(
-        &self,
-        formatter: &mut Formatter,
-        load_error: Option<&cuda_bindings::DynLoadError>,
-    ) -> fmt::Result {
-        if let Some(load_error) = load_error {
-            if self.0 == cuda_bindings::cudaError_enum_CUDA_ERROR_NOT_INITIALIZED
-                || self.0 == cuda_bindings::cudaError_enum_CUDA_ERROR_SHARED_OBJECT_INIT_FAILED
-            {
-                return formatter
-                    .debug_tuple("DriverError")
-                    .field(&self.0)
-                    .field(&format!("CUDA driver library unavailable: {load_error}"))
-                    .finish();
-            }
-        }
-
-        let help = "the CUDA driver cannot JIT PTX from the selected toolkit; upgrade the driver \
-                    or select a compatible toolkit with CUDA_TOOLKIT_PATH or CUDA_HOME";
-
-        let mut output = formatter.debug_tuple("DriverError");
-        output.field(&self.0);
-        match self.error_string() {
-            Ok(err_str) => {
-                output.field(&err_str);
-            }
-            Err(_) => {
-                output.field(&"<Failure when calling cuGetErrorString()>");
-            }
-        }
-        if self.is_unsupported_ptx_version() {
-            output.field(&help);
-        }
-        output.finish()
-    }
-}
-
-impl Display for DriverError {
-    fn fmt(&self, formatter: &mut Formatter) -> fmt::Result {
-        self._fmt(formatter)
-    }
-}
-
-impl std::fmt::Debug for DriverError {
-    fn fmt(&self, formatter: &mut std::fmt::Formatter) -> fmt::Result {
-        self._fmt(formatter)
-    }
-}
-
-impl error::Error for DriverError {}
-
-/// Converts a CUDA driver call return value into a `Result`.
-pub trait IntoResult<T> {
-    /// Returns `Ok` on `CUDA_SUCCESS`, or `Err(DriverError)` otherwise.
-    fn result(self) -> Result<T, DriverError>
-    where
-        Self: Sized;
-}
-
-impl IntoResult<()> for cuda_bindings::CUresult {
-    fn result(self) -> Result<(), DriverError> {
-        match self {
-            cuda_bindings::cudaError_enum_CUDA_SUCCESS => Ok(()),
-            _ => Err(DriverError(self)),
-        }
-    }
-}
-
-impl<T> IntoResult<T> for (cuda_bindings::CUresult, T) {
-    fn result(self) -> Result<T, DriverError> {
-        match self.0 {
-            cuda_bindings::cudaError_enum_CUDA_SUCCESS => Ok(self.1),
-            _ => Err(DriverError(self.0)),
-        }
-    }
-}
-
-impl<T> IntoResult<T> for (cuda_bindings::CUresult, MaybeUninit<T>) {
-    fn result(self) -> Result<T, DriverError> {
-        match self.0 {
-            cuda_bindings::cudaError_enum_CUDA_SUCCESS => Ok(unsafe { self.1.assume_init() }),
-            _ => Err(DriverError(self.0)),
-        }
-    }
-}
-
-impl DriverError {
-    /// Returns the short error name string for this CUDA error code.
-    pub fn error_name(&self) -> Result<&CStr, DriverError> {
-        let mut err_str = MaybeUninit::uninit();
-        unsafe {
-            cuda_bindings::cuGetErrorName(self.0, err_str.as_mut_ptr()).result()?;
-            Ok(CStr::from_ptr(err_str.assume_init()))
-        }
-    }
-
-    /// Returns the human-readable description string for this CUDA error code.
-    pub fn error_string(&self) -> Result<&CStr, DriverError> {
-        let mut err_str = MaybeUninit::uninit();
-        unsafe {
-            cuda_bindings::cuGetErrorString(self.0, err_str.as_mut_ptr()).result()?;
-            Ok(CStr::from_ptr(err_str.assume_init()))
-        }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::DriverError;
-
-    #[test]
-    fn identifies_unsupported_ptx_version() {
-        let unsupported =
-            DriverError(cuda_bindings::cudaError_enum_CUDA_ERROR_UNSUPPORTED_PTX_VERSION);
-        let unrelated = DriverError(cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE);
-
-        assert!(unsupported.is_unsupported_ptx_version());
-        assert!(!unrelated.is_unsupported_ptx_version());
-    }
-
-    const NOT_INITIALIZED: cuda_bindings::CUresult =
-        cuda_bindings::cudaError_enum_CUDA_ERROR_NOT_INITIALIZED;
-    const SHARED_OBJECT_INIT_FAILED: cuda_bindings::CUresult =
-        cuda_bindings::cudaError_enum_CUDA_ERROR_SHARED_OBJECT_INIT_FAILED;
-
-    /// Renders `error` as `Display` would, but with an explicit loader state.
-    fn format_with(error: DriverError, load_error: Option<&cuda_bindings::DynLoadError>) -> String {
-        struct WithLoader<'a>(DriverError, Option<&'a cuda_bindings::DynLoadError>);
-        impl std::fmt::Display for WithLoader<'_> {
-            fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                self.0.fmt_with_loader_error(f, self.1)
-            }
-        }
-        WithLoader(error, load_error).to_string()
-    }
-
-    /// The loader shims report an unloadable libcuda as `NOT_INITIALIZED`
-    /// (3), so the hint must key on that code as well as on the driver's own
-    /// `SHARED_OBJECT_INIT_FAILED` (303), and on nothing else. Runs the real
-    /// formatting path with a synthetic loader failure, so it holds on a
-    /// machine where the driver loads.
-    #[test]
-    fn loader_hint_is_attached_to_both_unavailable_driver_codes() {
-        let load_error = cuda_bindings::DynLoadError::RuntimeTooOld {
-            compile_version: 13030,
-            runtime_version: 12040,
+    fn embedded_module_filters_unloadable_bundles() {
+        let bundle = OwnedArtifactBundle {
+            name: "demo".to_string(),
+            target: "sm_90".to_string(),
+            compile_options: ArtifactCompileOptions::new(),
+            payloads: Vec::new(),
+            entries: Vec::new(),
         };
 
-        for code in [NOT_INITIALIZED, SHARED_OBJECT_INIT_FAILED] {
-            let formatted = format_with(DriverError(code), Some(&load_error));
-            assert!(
-                formatted.contains("CUDA driver library unavailable"),
-                "code {code}: expected the loader hint, got: {formatted}"
-            );
-            assert!(
-                formatted.contains("CUDA driver too old"),
-                "code {code}: expected the loader's own message, got: {formatted}"
+        assert!(EmbeddedModule::new(bundle).is_none());
+    }
+
+    #[test]
+    fn embedded_module_accepts_ptx_payload() {
+        let bundle = OwnedArtifactBundle {
+            name: "demo".to_string(),
+            target: "sm_90".to_string(),
+            compile_options: ArtifactCompileOptions::new(),
+            payloads: vec![OwnedArtifactPayload {
+                kind: ArtifactPayloadKind::Ptx,
+                name: "demo.ptx".to_string(),
+                bytes: b"ptx".to_vec(),
+            }],
+            entries: Vec::new(),
+        };
+
+        let module = EmbeddedModule::new(bundle).unwrap();
+        assert_eq!(module.name(), "demo");
+        assert_eq!(module.payload(ArtifactPayloadKind::Ptx), Some(&b"ptx"[..]));
+    }
+
+    #[test]
+    fn embedded_module_accepts_cubin_payload() {
+        let bundle = OwnedArtifactBundle {
+            name: "demo".to_string(),
+            target: "sm_90".to_string(),
+            compile_options: ArtifactCompileOptions::new(),
+            payloads: vec![OwnedArtifactPayload {
+                kind: ArtifactPayloadKind::Cubin,
+                name: "demo.cubin".to_string(),
+                bytes: b"cubin".to_vec(),
+            }],
+            entries: Vec::new(),
+        };
+
+        let module = EmbeddedModule::new(bundle).unwrap();
+        assert_eq!(module.name(), "demo");
+        assert_eq!(
+            module.payload(ArtifactPayloadKind::Cubin),
+            Some(&b"cubin"[..])
+        );
+    }
+
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    #[test]
+    fn artifact_bundles_from_binary_path_reads_linked_executable() {
+        let temp_dir = unique_temp_dir("cuda-core-embedded-artifacts");
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        let source_path = temp_dir.join("main.rs");
+        let object_path = temp_dir.join("artifact.o");
+        let exe_path = temp_dir.join("host");
+
+        let blob = build_artifact_blob(&ArtifactBundleSpec::new("linked", "sm_90").with_payload(
+            ArtifactPayloadSpec::new(ArtifactPayloadKind::Ptx, "linked.ptx", b"ptx"),
+        ))
+        .unwrap();
+        // Mirror production: the backend always defines a link-anchor
+        // symbol in the artifact object. The linked-executable round trip
+        // must keep working with that symbol present.
+        // `reserved_oxide_symbols::artifact_anchor_symbol("linked", "0.0.0")`,
+        // precomputed: that crate is cuda-oxide-internal and not a
+        // dependency here. Format: prefix + sanitized(name) + '_' +
+        // sanitized(version), non-alphanumerics mapped to '_'.
+        let anchor = "cuda_oxide_artifact_anchor_246e25db_linked_0_0_0".to_string();
+        let object =
+            build_host_object_for_target(&blob, "x86_64-unknown-linux-gnu", Some(anchor.as_str()))
+                .unwrap();
+        std::fs::write(&source_path, "fn main() {}\n").unwrap();
+        std::fs::write(&object_path, object).unwrap();
+
+        let rustc = std::env::var_os("RUSTC").unwrap_or_else(|| "rustc".into());
+        let output = std::process::Command::new(rustc)
+            .arg(&source_path)
+            .arg("-C")
+            .arg(format!("link-arg={}", object_path.display()))
+            .arg("-o")
+            .arg(&exe_path)
+            .output()
+            .unwrap();
+
+        if !output.status.success() {
+            panic!(
+                "failed to link artifact test executable\nstdout:\n{}\nstderr:\n{}",
+                String::from_utf8_lossy(&output.stdout),
+                String::from_utf8_lossy(&output.stderr)
             );
         }
 
-        // Any other code keeps the plain rendering even while the loader has failed.
-        let unrelated = format_with(
-            DriverError(cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE),
-            Some(&load_error),
-        );
-        assert!(
-            !unrelated.contains("CUDA driver library unavailable"),
-            "an unrelated code must not carry the loader hint, got: {unrelated}"
+        let bundles = artifact_bundles_from_binary_path(&exe_path).unwrap();
+        assert_eq!(bundles.len(), 1);
+        assert_eq!(bundles[0].name, "linked");
+        assert_eq!(
+            bundles[0].payload(ArtifactPayloadKind::Ptx),
+            Some(&b"ptx"[..])
         );
 
-        // And with a loaded driver the two codes render plainly too.
-        for code in [NOT_INITIALIZED, SHARED_OBJECT_INIT_FAILED] {
-            let formatted = format_with(DriverError(code), None);
-            assert!(
-                !formatted.contains("CUDA driver library unavailable"),
-                "code {code}: no loader failure, no hint; got: {formatted}"
-            );
-        }
+        let _ = std::fs::remove_dir_all(temp_dir);
     }
 
-    /// The end-to-end path, exercised only where the driver really is
-    /// unavailable: `Display` picks up the loader's cached failure itself.
-    #[test]
-    fn display_surfaces_the_real_loader_error_when_driver_is_missing() {
-        let Some(load_error) = cuda_bindings::cuda_driver_load_error() else {
-            return;
-        };
-        let expected_detail = match load_error {
-            cuda_bindings::DynLoadError::LoadFailed { .. } => "failed to load any of",
-            cuda_bindings::DynLoadError::RuntimeTooOld { .. } => "CUDA driver too old",
-        };
-
-        for code in [NOT_INITIALIZED, SHARED_OBJECT_INIT_FAILED] {
-            let formatted = DriverError(code).to_string();
-            assert!(
-                formatted.contains("CUDA driver library unavailable"),
-                "code {code}: expected a human-readable loader hint, got: {formatted}"
-            );
-            assert!(
-                formatted.contains(expected_detail),
-                "code {code}: expected the cached loader failure context, got: {formatted}"
-            );
-        }
+    #[cfg(all(target_os = "linux", target_arch = "x86_64"))]
+    fn unique_temp_dir(name: &str) -> PathBuf {
+        let nanos = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        std::env::temp_dir().join(format!("{name}-{}-{nanos}", std::process::id()))
     }
 }
 
-```
-
-### Core Architecture Module: `cuda-core/src/lib.rs`
-```
-/*
- * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
-
-//! Low-level CUDA driver API bindings and safe wrappers.
-
-#![cfg_attr(feature = "f16", feature(f16))]
-
-mod api;
-pub(crate) mod cudarc_shim;
-mod dtype;
-mod error;
-mod runtime;
-pub mod simt;
-pub mod vmm;
-
-pub use api::*;
-pub use cuda_bindings as sys;
-pub use dtype::*;
-pub use error::*;
-pub use runtime::*;
-
-// The cuda-oxide surface, re-exported at the root where its consumers
-// expect it. `simt::LaunchConfig` and `simt::vmm` are deliberately absent:
-// they collide with this crate's own `LaunchConfig` and with the reviewed
-// `vmm` module above (both forks of the same cuda-oxide ancestor), and stay
-// reachable only through `simt::`.
-pub use simt::embedded;
-pub use simt::{
-    launch_kernel_cooperative, launch_kernel_cooperative_on_stream, launch_kernel_ex,
-    launch_kernel_ex_cooperative, launch_kernel_ex_cooperative_on_stream,
-    launch_kernel_ex_on_stream, launch_kernel_on_stream, BlockRequirement, ConstantHandle,
-    ContextLimit, CudaContext, CudaEvent, CudaFunction, CudaModule, CudaStream, DeviceBuffer,
-    DeviceCopy, DeviceLaunchLimits, DynamicSharedMemoryRequirement, EmbeddedModule,
-    EmbeddedModuleError, KernelLaunchConfig, KernelLaunchContract, LaunchAxis, LaunchConfig1D,
-    LaunchConfig2D, LaunchConfig3D, LaunchContractError, LaunchContractSpec, LaunchDimension,
-    PinnedHostBuffer, PreparedLaunch, StreamPriorityRange, SyncPolicy,
-};
-
-```
-
-### Core Architecture Module: `cuda-core/src/runtime.rs`
-```
-/*
- * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
-
-//! CUDA runtime types: Device, Stream, Module, Function, LaunchConfig.
-//!
-//! These are the public API of `cuda-core`. They wrap raw CUDA driver
-//! handles with RAII lifetimes and provide `borrow_raw` constructors
-//! for interop with external frameworks (cudarc, etc.).
-
-use std::ffi::{c_int, c_void, CString};
-use std::sync::Arc;
-
-use crate::cudarc_shim::{ctx, device, module, pool, primary_ctx, stream};
-use crate::error::*;
-use crate::init;
-
-/// Kernel launch configuration specifying grid, block, and shared memory sizes.
-#[derive(Clone, Copy, Debug)]
-pub struct LaunchConfig {
-    /// Grid dimensions `(x, y, z)` in thread blocks.
-    pub grid_dim: (u32, u32, u32),
-    /// Block dimensions `(x, y, z)` in threads.
-    pub block_dim: (u32, u32, u32),
-    /// Bytes of dynamic shared memory per block.
-    pub shared_mem_bytes: u32,
-}
-
-/// Anything that owns an external CUDA resource. A borrowed handle can hold an
-/// `Arc<dyn ForeignOwner>` as a *liveness token*: while the handle (and anything
-/// derived from it) is alive, the token's refcount is nonzero, so the external
-/// owner cannot be dropped — and the resource it backs cannot be destroyed —
-/// out from under cutile. Blanket-implemented, so any `Arc<T>` erases to
-/// `Arc<dyn ForeignOwner>`.
-pub trait ForeignOwner: Send + Sync + 'static {}
-impl<T: Send + Sync + 'static> ForeignOwner for T {}
-
-/// Optional liveness token held by a borrowed handle (see [`ForeignOwner`]).
-///
-/// Compares equal regardless of contents (the token is an ownership detail, not
-/// part of a handle's identity) and prints opaquely, so the handle types keep
-/// their `Debug`/`PartialEq`/`Eq` derives.
-#[derive(Clone, Default)]
-pub struct KeepAlive(Option<Arc<dyn ForeignOwner>>);
-
-impl KeepAlive {
-    /// A token holding nothing (owned or raw-borrowed handles).
-    pub fn none() -> Self {
-        Self(None)
-    }
-    /// A token keeping `owner` alive for the handle's lifetime.
-    pub fn owner(owner: Arc<dyn ForeignOwner>) -> Self {
-        Self(Some(owner))
-    }
-}
-
-impl std::fmt::Debug for KeepAlive {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.write_str(if self.0.is_some() {
-            "KeepAlive(owner)"
-        } else {
-            "KeepAlive(none)"
-        })
-    }
-}
-
-impl PartialEq for KeepAlive {
-    fn eq(&self, _: &Self) -> bool {
-        true
-    }
-}
-impl Eq for KeepAlive {}
-
-/// A GPU device handle wrapping a CUDA primary context.
-///
-/// Can be **owned** (created via [`Device::new`], releases the primary context
-/// on drop), **borrowed** (created via [`Device::borrow_raw`], does NOT release
-/// on drop), or **foreign** (created via [`Device::borrow_with_owner`], holds a
-/// liveness token so the external owner outlives it).
-#[derive(Debug)]
-pub struct Device {
-    pub(crate) cu_device: cuda_bindings::CUdevice,
-    pub(crate) cu_ctx: cuda_bindings::CUcontext,
-    pub(crate) ordinal: usize,
-    owned: bool,
-    _keep_alive: KeepAlive,
-}
-
-unsafe impl Send for Device {}
-unsafe impl Sync for Device {}
-
-impl Drop for Device {
-    fn drop(&mut self) {
-        if !self.owned {
-            return;
-        }
-        let _guard = teardown_lock();
-        // Streams hold an Arc<Device>, so by the time the last device handle
-        // for this ordinal drops, every pooled handle is idle; the context
-        // release below reclaims them. Discard so a later re-retain cannot
-        // pop a handle from a torn-down context.
-        stream_pool()
-            .lock()
-            .unwrap_or_else(|poisoned| poisoned.into_inner())
-            .remove(&self.ordinal);
-        let _ = self.bind_to_thread();
-        let ctx = std::mem::replace(&mut self.cu_ctx, std::ptr::null_mut());
-        if !ctx.is_null() {
-            let _ = unsafe { primary_ctx::release(self.cu_device) };
-        }
-    }
-}
-
-impl PartialEq for Device {
-    fn eq(&self, other: &Self) -> bool {
-        self.cu_device == other.cu_device
-            && self.cu_ctx == other.cu_ctx
-            && self.ordinal == other.ordinal
-    }
-}
-impl Eq for Device {}
-
-/// The driver indexes devices with a C `int`. An ordinal that does not fit is
-/// not a device at all; `as c_int` would wrap it onto some other device's
-/// index, so it is rejected up front with `CUDA_ERROR_INVALID_DEVICE`.
-fn ordinal_to_c_int(ordinal: usize) -> Result<c_int, DriverError> {
-    c_int::try_from(ordinal)
-        .map_err(|_| DriverError(cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_DEVICE))
-}
-
-impl Device {
-    /// Creates a new owned device on the specified ordinal.
-    ///
-    /// Errors with `CUDA_ERROR_INVALID_DEVICE` (before touching the driver)
-    /// when `ordinal` does not fit the driver's `int` ordinal type.
-    pub fn new(ordinal: usize) -> Result<Arc<Self>, DriverError> {
-        let cu_ordinal = ordinal_to_c_int(ordinal)?;
-        unsafe { init(0)? };
-        let cu_device = device::get(cu_ordinal)?;
-        let cu_ctx = unsafe { primary_ctx::retain(cu_device) }?;
-        let device = Arc::new(Device {
-            cu_device,
-            cu_ctx,
-            ordinal,
-            owned: true,
-            _keep_alive: KeepAlive::none(),
-        });
-        device.bind_to_thread()?;
-        Ok(device)
-    }
-
-    /// Wraps externally-owned CUDA handles without taking ownership.
-    ///
-    /// Inputs are the raw C primitives (`CUcontext` is an opaque pointer,
-    /// `CUdevice` is `int` in the driver API). Accepting primitives rather
-    /// than `cuda_bindings::CU*` typedefs keeps this API agnostic to which
-    /// binding crate the caller uses — a cudarc `CUcontext`, a fresh
-    /// `bindgen` wrapper, or a hand-rolled FFI type all cast in the same way.
-    ///
-    /// # Safety
-    ///
-    /// The caller must ensure:
-    /// - `cu_ctx` points to a valid retained `CUcontext` for `cu_device`
-    /// - The handles outlive the returned `Device` **and everything derived
-    ///   from it**. Streams from [`new_stream`](Self::new_stream) hold the
-    ///   device alive and, because the device is borrowed, are never parked in
-    ///   the process-wide stream pool: each is synchronized and destroyed
-    ///   against `cu_ctx` when it drops (see [`Stream`]). `cu_ctx` must
-    ///   therefore still be valid when the last such stream drops.
-    /// - No concurrent destruction of the handles
-    pub unsafe fn borrow_raw(cu_ctx: *mut c_void, cu_device: c_int, ordinal: usize) -> Arc<Self> {
-        Arc::new(Device {
-            cu_device: cu_device as cuda_bindings::CUdevice,
-            cu_ctx: cu_ctx as cuda_bindings::CUcontext,
-            ordinal,
-            owned: false,
-            _keep_alive: KeepAlive::none(),
-        })
-    }
-
-    /// Wraps externally-owned CUDA handles, holding `owner` alive for the
-    /// returned device's lifetime.
-    ///
-    /// Same as [`borrow_raw`](Self::borrow_raw), but the liveness obligation is
-    /// discharged by construction: `owner` is whatever owns the context (a
-    /// cudarc device, a torch context handle, ...), and holding it here
-    /// guarantees the handles stay valid as long as this `Device` — or anything
-    /// derived from it — lives. Only the point-in-time validity of the handles
-    /// remains a caller assertion.
-    ///
-    /// # Safety
-    /// The caller must ensure, *at construction*, that:
-    /// - `cu_ctx` points to a valid retained `CUcontext` for `cu_device`, and
-    /// - dropping `owner` would release those handles (i.e. `owner` really is
-    ///   what keeps them alive).
-    pub unsafe fn borrow_with_owner(
-        cu_ctx: *mut c_void,
-        cu_device: c_int,
-        ordinal: usize,
-        owner: Arc<dyn ForeignOwner>,
-    ) -> Arc<Self> {
-        Arc::new(Device {
-            cu_device: cu_device as cuda_bindings::CUdevice,
-            cu_ctx: cu_ctx as cuda_bindings::CUcontext,
-            ordinal,
-            owned: false,
-            _keep_alive: KeepAlive::owner(owner),
-        })
-    }
-
-    /// Returns the number of CUDA-capable devices available.
-    pub fn device_count() -> Result<i32, DriverError> {
-        unsafe { init(0)? };
-        device::get_count()
-    }
-
-    /// Returns the raw `CUdevice` handle for a given ordinal without
-    /// creating a full `Device` (no context retained). Rejects an ordinal
-    /// that does not fit `c_int` like [`new`](Self::new) does.
-    pub fn raw_device(ordinal: usize) -> Result<cuda_bindings::CUdevice, DriverError> {
-        let cu_ordinal = ordinal_to_c_int(ordinal)?;
-        unsafe { init(0)? };
-        device::get(cu_ordinal)
-    }
-
-    /// Get the `ordinal` index of the device this is on.
-    pub fn ordinal(&self) -> usize {
-        self.ordinal
-    }
-
-    /// Get the name of this device.
-    pub fn name(&self) -> Result<String, DriverError> {
-        device::get_name(self.cu_device)
-    }
-
-    /// Returns the raw `CUdevice` handle.
-    pub fn cu_device(&self) -> cuda_bindings::CUdevice {
-        self.cu_device
-    }
-
-    /// Returns the raw `CUcontext` handle.
-    pub fn cu_ctx(&self) -> cuda_bindings::CUcontext {
-        self.cu_ctx
-    }
-
-    /// Binds this context to the calling thread if not already current.
-    pub fn bind_to_thread(&self) -> Result<(), DriverError> {
-        if match ctx::get_current()? {
-            Some(curr_ctx) => curr_ctx != self.cu_ctx,
-            None => true,
-        } {
-            unsafe { ctx::set_current(self.cu_ctx) }?;
-        }
-        Ok(())
-    }
-
-    /// Blocks until all work on this device's context is complete.
-    ///
-    /// # Safety
-    /// The caller must ensure this device's context is current on the
-    /// calling thread (via [`bind_to_thread`](Device::bind_to_thread)).
-    pub unsafe fn synchronize(&self) -> Result<(), DriverError> {
-        ctx::synchronize()
-    }
-
-    /// Creates a new non-blocking CUDA stream on this device.
-    ///
-    /// On an owned device the handle may be one parked by an earli
-```
-
-### Core Architecture Module: `cuda-core/src/simt/context.rs`
-```
-/*
- * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
-
-//! CUDA context management (primary context, RAII).
-//!
-//! [`CudaContext`] retains the **primary context** for a given device ordinal
-//! via `cuDevicePrimaryCtxRetain` and releases it on [`Drop`]. The primary
-//! context is shared across the process; multiple `CudaContext` instances for
-//! the same device share the same underlying `CUcontext`.
-//!
-//! # Thread binding
-//!
-//! CUDA driver calls are context-scoped and thread-local. [`CudaContext`]
-//! transparently calls `cuCtxSetCurrent` before any driver operation, so
-//! callers do not need to manage the context stack manually.
-
-use crate::error::{DriverError, IntoResult};
-use crate::simt::launch::DeviceLaunchLimits;
-use crate::simt::stream::CudaStream;
-use std::ffi::c_int;
-use std::mem::MaybeUninit;
-use std::sync::atomic::{AtomicBool, AtomicU32, AtomicUsize, Ordering};
-use std::sync::Arc;
-
-/// Owns a reference to a CUDA device's primary context.
-///
-/// Created via [`CudaContext::new`] and typically held in an `Arc` so streams,
-/// events, and modules can share the same context. Dropping the last reference
-/// releases the primary context (`cuDevicePrimaryCtxRelease`).
-///
-/// Tracks live stream count and accumulated error state atomically for
-/// cross-thread diagnostics.
-#[derive(Debug)]
-pub struct CudaContext {
-    /// Raw CUDA device handle (`CUdevice`).
-    pub(crate) cu_device: cuda_bindings::CUdevice,
-    /// Raw CUDA context handle (`CUcontext`). Set to null on drop.
-    pub(crate) cu_ctx: cuda_bindings::CUcontext,
-    /// Zero-based device ordinal passed to [`CudaContext::new`].
-    pub(crate) ordinal: usize,
-    /// Number of live [`CudaStream`] instances sharing this context.
-    pub(crate) num_streams: AtomicUsize,
-    /// When `true`, the first [`new_stream`](CudaContext::new_stream) call
-    /// synchronizes the context to establish a clean ordering baseline.
-    pub(crate) event_tracking: AtomicBool,
-    /// Sticky error state recorded by [`record_err`](CudaContext::record_err).
-    /// Stores the raw `CUresult` value, or `0` if no error.
-    pub(crate) error_state: AtomicU32,
-}
-
-/// # Safety
-///
-/// `CUdevice` and `CUcontext` are process-wide handles. All mutable state
-/// (`num_streams`, `event_tracking`, `error_state`) uses atomics. The CUDA
-/// driver itself is thread-safe for distinct contexts, and the
-/// [`bind_to_thread`](CudaContext::bind_to_thread) mechanism ensures the
-/// correct context is current before each call.
-unsafe impl Send for CudaContext {}
-/// See [`Send`] impl.
-unsafe impl Sync for CudaContext {}
-
-/// Releases the primary context on drop.
-///
-/// Binds the context to the current thread first (required by
-/// `cuDevicePrimaryCtxRelease`). Errors during teardown are recorded via
-/// [`record_err`](CudaContext::record_err) rather than panicking.
-impl Drop for CudaContext {
-    fn drop(&mut self) {
-        self.record_err(self.bind_to_thread());
-        let ctx = std::mem::replace(&mut self.cu_ctx, std::ptr::null_mut());
-        if !ctx.is_null() {
-            self.record_err(unsafe {
-                cuda_bindings::cuDevicePrimaryCtxRelease_v2(self.cu_device).result()
-            });
-        }
-    }
-}
-
-/// Equality is based on device handle, context handle, and ordinal.
-impl PartialEq for CudaContext {
-    fn eq(&self, other: &Self) -> bool {
-        self.cu_device == other.cu_device
-            && self.cu_ctx == other.cu_ctx
-            && self.ordinal == other.ordinal
-    }
-}
-impl Eq for CudaContext {}
-
-/// The device's meaningful stream priorities, from
-/// [`CudaContext::stream_priority_range`].
-///
-/// CUDA orders priorities the opposite way round to intuition: **a lower
-/// number is a higher priority**, so the range runs from
-/// [`greatest`](Self::greatest) up to [`least`](Self::least) and
-/// `greatest <= least` always holds.
-///
-/// A priority outside the range is not refused when a stream is created. The
-/// driver clamps it to the nearest end and reports nothing, so a caller that
-/// wants to know what it will get should ask [`clamp`](Self::clamp) rather
-/// than assume the request survived.
-///
-/// A device without priority support reports `0` for both ends, which
-/// [`is_supported`](Self::is_supported) reads as unsupported. Creating a
-/// stream still succeeds there; every priority simply collapses to the same
-/// one.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct StreamPriorityRange {
-    /// Numerically largest value, the *lowest* priority.
-    least: i32,
-    /// Numerically smallest value, the *highest* priority.
-    greatest: i32,
-}
-
-impl StreamPriorityRange {
-    /// The lowest priority, which is the numerically largest value.
-    pub fn least(&self) -> i32 {
-        self.least
-    }
-
-    /// The highest priority, which is the numerically smallest value.
-    pub fn greatest(&self) -> i32 {
-        self.greatest
-    }
-
-    /// Whether this device implements stream priorities at all.
-    ///
-    /// False when the driver reports `0` for both ends, which is how
-    /// `cuCtxGetStreamPriorityRange` answers on a device without support.
-    /// A device with support always reports a range wider than one value.
-    pub fn is_supported(&self) -> bool {
-        self.least != self.greatest
-    }
-
-    /// Whether `priority` lies inside the range, and so survives stream
-    /// creation unchanged.
-    pub fn contains(&self, priority: i32) -> bool {
-        (self.greatest..=self.least).contains(&priority)
-    }
-
-    /// The value the driver will actually apply for a request of `priority`.
-    ///
-    /// Answers the silent clamp in
-    /// [`CudaContext::new_stream_with_priority`] ahead of the call.
-    pub fn clamp(&self, priority: i32) -> i32 {
-        priority.clamp(self.greatest, self.least)
-    }
-}
-
-/// A per-context device limit (`CU_LIMIT_*`), read with
-/// [`CudaContext::limit`] and written with [`CudaContext::set_limit`].
-///
-/// Every limit is state on the device's **primary** context, so it is shared
-/// by every [`CudaContext`] for that device, by any runtime-API user of the
-/// same device in this process, and across library boundaries. A limit set
-/// here is not scoped to the handle that set it.
-///
-/// The driver is free to clamp or round a request. Read the limit back after
-/// setting it to observe what was actually applied.
-///
-/// # Ordering constraints
-///
-/// [`PrintfFifoSize`](Self::PrintfFifoSize) and
-/// [`MallocHeapSize`](Self::MallocHeapSize) must be set **before the first
-/// kernel launch in the process that uses `printf` or device `malloc`**;
-/// afterwards the driver rejects the write with `CUDA_ERROR_INVALID_VALUE`.
-/// Because the limit lives on the shared primary context, "first launch"
-/// counts launches made through any handle, not just this one.
-///
-/// # Omitted variants
-///
-/// `CU_LIMIT_SHMEM_SIZE`, `CU_LIMIT_CIG_ENABLED` and
-/// `CU_LIMIT_CIG_SHMEM_FALLBACK_ENABLED` are absent. The first two are
-/// query-only, all three concern CIG (graphics-interop) contexts, and none
-/// predates CUDA 12.5, so naming them would need a header probe and a `cfg`
-/// in the manner of `cuda_has_cuEventElapsedTime_v2`. The seven variants
-/// below have been present since CUDA 11 and are the ones
-/// `cuCtxSetLimit`'s own documentation specifies.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum ContextLimit {
-    /// Stack size in bytes for each GPU thread (`CU_LIMIT_STACK_SIZE`).
-    ///
-    /// The driver raises this on its own whenever a launched kernel needs a
-    /// larger frame and **does not lower it again**, so a read reflects the
-    /// high-water mark of everything launched in this context so far. The
-    /// reservation scales as roughly `bytes * mp_count * threads_per_mp` and
-    /// is invisible to the allocation APIs: it simply reduces the device
-    /// memory a later allocation can obtain. Lowering it after a deep-frame
-    /// kernel has raised it is how that memory is handed back.
-    StackSize,
-    /// Size in bytes of the FIFO backing the device `printf`
-    /// (`CU_LIMIT_PRINTF_FIFO_SIZE`).
-    ///
-    /// The FIFO is circular: once a launch fills it, the **oldest** output is
-    /// overwritten and lost silently, with no error and no marker in the
-    /// stream the host prints. Raising this is the only fix for a kernel
-    /// whose output is truncated. Subject to the ordering constraint above.
-    PrintfFifoSize,
-    /// Size in bytes of the heap backing device `malloc` and `free`
-    /// (`CU_LIMIT_MALLOC_HEAP_SIZE`). Subject to the ordering constraint
-    /// above.
-    MallocHeapSize,
-    /// Maximum grid nesting depth at which a device-runtime thread may call
-    /// `cudaDeviceSynchronize` (`CU_LIMIT_DEV_RUNTIME_SYNC_DEPTH`).
-    ///
-    /// Applies only to devices of compute capability below 9.0; elsewhere the
-    /// driver returns `CUDA_ERROR_UNSUPPORTED_LIMIT`. Each level of depth
-    /// reserves device memory, so a request the driver cannot back fails with
-    /// `CUDA_ERROR_OUT_OF_MEMORY` and leaves the limit settable at a lower
-    /// value.
-    DevRuntimeSyncDepth,
-    /// Maximum number of outstanding device-runtime launches from this
-    /// context (`CU_LIMIT_DEV_RUNTIME_PENDING_LAUNCH_COUNT`), default 2048.
-    ///
-    /// Reserves device memory in proportion, and fails the same way as
-    /// [`DevRuntimeSyncDepth`](Self::DevRuntimeSyncDepth) when the
-    /// reservation cannot be met.
-    DevRuntimePendingLaunchCount,
-    /// L2 fetch granularity in bytes, 0 to 128
-    /// (`CU_LIMIT_MAX_L2_FETCH_GRANULARITY`). A hint: the platform may ignore
-    /// or clamp it, and a read need not return what was written.
-    MaxL2FetchGranularity,
-    /// Bytes of L2 set aside for persisting lines
-    /// (`CU_LIMIT_PERSISTING_L2_CACHE_SIZE`). A hint, with the same caveat as
-    /// [`MaxL2FetchGranularity`](Self::MaxL2FetchGranularity).
-    PersistingL2CacheSize,
-}
-
-impl ContextLimit {
-    /// 
-```
-
-### Core Architecture Module: `cuda-core/src/simt/device_buffer.rs`
-```
-/*
- * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
- * SPDX-License-Identifier: Apache-2.0
- */
-
-//! Owning device memory buffer with ergonomic host-device transfer methods.
-//!
-//! [`DeviceBuffer<T>`] is analogous to `Vec<T>` on the host: it owns a
-//! contiguous allocation of `len` elements on the device and frees it on
-//! drop. The stream is an explicit parameter on every transfer operation,
-//! making data-flow and synchronization transparent. Buffers allocated with
-//! [`DeviceBuffer::uninitialized_async`] retain their allocation stream for
-//! deallocation.
-//!
-//! Ordinary drop synchronizes the context before freeing an asynchronous
-//! allocation, because safe operations may have submitted work using the
-//! buffer on any stream in that context. The unsafe
-//! [`DeviceBuffer::drop_async`] avoids that host-side synchronization by
-//! freeing on a chosen stream; its caller takes over the obligation to
-//! order every other stream that uses the buffer before that stream.
-//!
-//! # Quick start
-//!
-//! ```ignore
-//! let a_dev = DeviceBuffer::from_host(&stream, &a_host)?;
-//! let c_dev = DeviceBuffer::<f32>::zeroed(&stream, N)?;
-//! // ... kernel launch ...
-//! let c_host = c_dev.to_host_vec(&stream)?;
-//! ```
-
-use std::marker::PhantomData;
-use std::mem::MaybeUninit;
-use std::num::Wrapping;
-use std::sync::Arc;
-
-use cuda_bindings::CUdeviceptr;
-
-use crate::error::DriverError;
-use crate::simt::context::CudaContext;
-use crate::simt::pinned_host_buffer::PinnedHostBuffer;
-use crate::simt::stream::CudaStream;
-
-/// Marker trait for values that can be safely copied between host and device
-/// memory as raw bytes.
-///
-/// Types implementing `DeviceCopy` must not contain Rust-owned allocations,
-/// references, or other values whose validity depends on host-side ownership or
-/// drop semantics. This is the device-memory equivalent of a plain-old-data
-/// contract.
-///
-/// # Safety
-///
-/// Implementors must be safe to duplicate with a byte-for-byte copy. Values
-/// copied back from device memory must have a bit pattern that is valid for
-/// `Self`, and the all-zero bit pattern must also be valid because
-/// [`DeviceBuffer::zeroed`] initializes memory with zero bytes.
-///
-/// `Copy` alone is not enough: types such as `bool`, `char`, and
-/// `NonZeroU32` are `Copy`, but not every byte pattern is a valid value of
-/// those types. `DeviceCopy` is the stronger promise required when
-/// `DeviceBuffer` turns raw device bytes back into initialized Rust values.
-pub unsafe trait DeviceCopy: Copy {}
-
-macro_rules! impl_device_copy {
-    ($($ty:ty),+ $(,)?) => {
-        $(
-            unsafe impl DeviceCopy for $ty {}
-        )+
-    };
-}
-
-impl_device_copy!(
-    (),
-    i8,
-    i16,
-    i32,
-    i64,
-    i128,
-    isize,
-    u8,
-    u16,
-    u32,
-    u64,
-    u128,
-    usize,
-    f32,
-    f64
-);
-
-unsafe impl<T: DeviceCopy, const N: usize> DeviceCopy for [T; N] {}
-unsafe impl<T: ?Sized> DeviceCopy for *const T {}
-unsafe impl<T: ?Sized> DeviceCopy for *mut T {}
-
-// Wrapper types that don't change the byte representation: a value of the
-// wrapper has the same layout and validity invariants as the inner `T`.
-// `PhantomData<T>` is a zero-sized marker -- always trivially copyable
-// regardless of `T`. `MaybeUninit<T>` accepts any bit pattern by design.
-// `Wrapping<T>` is a `#[repr(transparent)]` newtype.
-unsafe impl<T: ?Sized> DeviceCopy for PhantomData<T> {}
-unsafe impl<T: DeviceCopy> DeviceCopy for MaybeUninit<T> {}
-unsafe impl<T: DeviceCopy> DeviceCopy for Wrapping<T> {}
-
-macro_rules! impl_device_copy_tuple {
-    ($($name:ident),+ $(,)?) => {
-        unsafe impl<$($name: DeviceCopy),+> DeviceCopy for ($($name,)+) {}
-    };
-}
-
-impl_device_copy_tuple!(A);
-impl_device_copy_tuple!(A, B);
-impl_device_copy_tuple!(A, B, C);
-impl_device_copy_tuple!(A, B, C, D);
-impl_device_copy_tuple!(A, B, C, D, E);
-impl_device_copy_tuple!(A, B, C, D, E, F);
-impl_device_copy_tuple!(A, B, C, D, E, F, G);
-impl_device_copy_tuple!(A, B, C, D, E, F, G, H);
-
-#[cfg(feature = "f16")]
-unsafe impl DeviceCopy for f16 {}
-unsafe impl DeviceCopy for half::bf16 {}
-unsafe impl DeviceCopy for half::f16 {}
-
-/// Owning handle to a contiguous device allocation of `T` elements.
-///
-/// Holds a raw device pointer, element count, and a reference-counted
-/// context that keeps the CUDA context alive. Synchronous allocations are
-/// freed with `cuMemFree`. Dropping a stream-ordered allocation synchronizes
-/// its context before enqueueing `cuMemFreeAsync` on its retained allocation
-/// stream. Use the unsafe [`DeviceBuffer::drop_async`] when the caller can
-/// provide explicit stream ordering and must avoid that context-wide
-/// synchronization.
-///
-/// Device buffers may only transfer plain device-copyable values. Owning host
-/// types such as [`String`] are rejected because copying their bytes to and
-/// from device memory would not preserve Rust ownership invariants.
-///
-/// ```compile_fail
-/// # use cuda_core::{CudaStream, DeviceBuffer};
-/// # fn rejects_non_device_copy(stream: &CudaStream) {
-/// let _ = DeviceBuffer::<String>::zeroed(stream, 1);
-/// # }
-/// ```
-pub struct DeviceBuffer<T> {
-    ptr: CUdeviceptr,
-    len: usize,
-    num_bytes: usize,
-    ctx: Arc<CudaContext>,
-    /// Retains the allocation stream for a stream-ordered (`cuMemAllocAsync`)
-    /// allocation. Ordinary `Drop` first synchronizes the context so work
-    /// submitted on any stream has completed, then frees on this stream.
-    /// `None` identifies a synchronous (`cuMemAlloc`) allocation.
-    dealloc_stream: Option<Arc<CudaStream>>,
-    _marker: PhantomData<T>,
-}
-
-// SAFETY: CUdeviceptr is a u64 handle valid across threads when the owning
-// context is bound. The PhantomData<T> is Send if T is Send.
-unsafe impl<T: Send> Send for DeviceBuffer<T> {}
-// SAFETY: &DeviceBuffer only exposes cu_deviceptr() and len(), both of which
-// return Copy values. No interior mutability.
-unsafe impl<T: Send + Sync> Sync for DeviceBuffer<T> {}
-
-impl<T> Drop for DeviceBuffer<T> {
-    fn drop(&mut self) {
-        if self.ptr != 0 {
-            self.ctx.record_err(self.ctx.bind_to_thread());
-            // Safe buffer operations can enqueue work on any stream in this
-            // context. Synchronize all of them before implicitly freeing a
-            // stream-ordered allocation.
-            let result = match &self.dealloc_stream {
-                Some(stream) => match self.ctx.synchronize() {
-                    Ok(()) => unsafe {
-                        crate::simt::memory::free_async(self.ptr, stream.cu_stream())
-                    },
-                    Err(error) => Err(error),
-                },
-                None => unsafe { crate::simt::memory::free_sync(self.ptr) },
-            };
-            self.ctx.record_err(result);
-        }
-    }
-}
-
-impl<T> DeviceBuffer<T> {
-    /// Returns the raw `CUdeviceptr` for use in kernel argument lists.
-    #[inline]
-    pub fn cu_deviceptr(&self) -> CUdeviceptr {
-        self.ptr
-    }
-
-    /// Number of `T` elements in the buffer.
-    #[inline]
-    pub fn len(&self) -> usize {
-        self.len
-    }
-
-    /// Returns `true` if the buffer has zero elements.
-    #[inline]
-    pub fn is_empty(&self) -> bool {
-        self.len == 0
-    }
-
-    /// Total size in bytes (`len * size_of::<T>()`).
-    #[inline]
-    pub fn num_bytes(&self) -> usize {
-        self.num_bytes
-    }
-
-    /// Returns a reference to the owning context.
-    #[inline]
-    pub fn context(&self) -> &Arc<CudaContext> {
-        &self.ctx
-    }
-
-    /// Constructs a `DeviceBuffer` from pre-existing raw parts.
-    ///
-    /// # Safety
-    ///
-    /// - `ptr` must have been allocated via `cuMemAlloc*` with at least
-    ///   `len * size_of::<T>()` bytes.
-    /// - `ptr` must belong to the same CUDA context as `ctx`.
-    /// - The caller transfers ownership -- `ptr` will be freed on drop.
-    /// - `ptr` is assumed to be a synchronous (`cuMemAlloc`) allocation and is
-    ///   freed with the synchronous `cuMemFree` on drop. Do not pass a
-    ///   stream-ordered (`cuMemAllocAsync`) pointer here.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `len * size_of::<T>()` overflows `usize`.
-    pub unsafe fn from_raw_parts(ptr: CUdeviceptr, len: usize, ctx: Arc<CudaContext>) -> Self {
-        // SAFETY: `from_raw_parts` has the same raw-allocation safety contract,
-        // with no stream-ordered deallocation metadata attached.
-        unsafe { Self::from_raw_parts_with_dealloc_stream(ptr, len, ctx, None) }
-    }
-
-    unsafe fn from_raw_parts_with_dealloc_stream(
-        ptr: CUdeviceptr,
-        len: usize,
-        ctx: Arc<CudaContext>,
-        dealloc_stream: Option<Arc<CudaStream>>,
-    ) -> Self {
-        let num_bytes =
-            allocation_size::<T>(len).expect("DeviceBuffer::from_raw_parts byte size overflow");
-        Self {
-            ptr,
-            len,
-            num_bytes,
-            ctx,
-            dealloc_stream,
-            _marker: PhantomData,
-        }
-    }
-
-    /// Consumes the buffer and returns the raw parts without freeing.
-    ///
-    /// The caller is responsible for eventually freeing `ptr` with the
-    /// allocator that matches how it was created. For stream-ordered
-    /// allocations, this does not return the stored deallocation stream; the
-    /// caller must already know which stream to use for `cuMemFreeAsync`.
-    pub fn into_raw_parts(self) -> (CUdeviceptr, usize, Arc<CudaContext>) {
-        let (ptr, len, ctx, _dealloc_stream) = self.into_all_raw_parts();
-        (ptr, len, ctx)
-    }
-
-    fn into_all_raw_parts(
-        self,
-    ) -> (
-        CUdeviceptr,
-        usize,
-        Arc<CudaContext>,
-        Option<Arc<CudaStream>>,
-    ) {
-        // Suppress the buffer's `Drop` (which would free `ptr`) while still
-        // moving out the heap-owned fields. Callers that do not need
-        // `dealloc_stream` can drop it after this helper returns.
-        let this = std::mem::ManuallyDrop::new(self);
-        let ptr = this.pt
 ```
 
 
@@ -2145,11 +2255,11 @@ impl<T> DeviceBuffer<T> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1655** (2026-10-29): **fix(cuda-oxide-mlir-export): saturate float to int casts**
+  *Symptoms*: ## What This PR Does  Fixes `#1642` in `cuda-oxide-mlir-export` (`cutlass-mlir` backend) so Rust float-to-integer `as` casts (`MirCastKindAttr::FloatToInt`) saturate on out-of-range inputs and map `NaN` to `0`, matching Rust semantics and `mir-lower`:  1. **Lower `MirCastKindAttr::FloatToInt` to `llvm.fptosi.sat` / `llvm.fptoui.sat` via `llvm.call_intrinsic` and reject integer destinations wider than 64 bits (`cuda-oxide-mlir-export`)** 2. **Add unit tests covering `f16` (`FP16Type` and `MirFP16Type`), `f32`, `f64`, and `i128` / `u128` rejection (`cuda-oxide-mlir-export`)**  ---  ### 1. Why `arith.fptosi` / `arith.fptoui` Miscompiled Out-of-Range and `NaN` Casts  Previously, `CastTranslation::translate` in `cuda-oxide-mlir-export/src/mir/core.rs` lowered `MirCastKindAttr::FloatToInt` to MLIR `arith.fptosi` / `arith.fptoui`, which have poison semantics on `NaN` or out-of-range values:  ```text BEFORE (arith.fptosi / arith.fptoui under cutlass-mlir on sm_120a):   300.0f32 as u8    ──► 44          (wrapped low byte instead of clamping to 255)   128.0f32 as i8    ──► -128        (wrapped instead of clamping to 127)   f32::NAN as i64   ──► i64::MIN    (returned -9223372036854775808 instead of 0)  AFTER (llvm.call_intrinsic "llvm.fpto{s|u}i.sat.i{W}.f{F}"):   300.0f32 as u8    ──► 255         (clamped via FMNMX + F2I)   128.0f32 as i8    ──► 127         (clamped to i8::MAX)   f32::NAN as i64   ──► 0           (mapped to 0 via DSETP.NAN + SEL) ```  * Rejects destination integer widt
+
 - **Issue #1612** (2026-10-22): **DivHint::from_ptr loses pointer alignment at 0x80000000 in 0.2.0/0.3.0 (fixed in 0.3.1)**
   *Symptoms*: `DivHint::from_ptr` in published `cutile-compiler` 0.2.0 and 0.3.0 can return a negative pointer-divisibility hint for an aligned address whose low 32 bits equal `0x8000_0000`. This drops an otherwise valid alignment assumption and can inhibit memory-access optimizations.  **Already fixed:** [NVlabs/cutile-rs#244](https://github.com/NVlabs/cutile-rs/pull/244), merged August 27, 2026, computes alignment from the full `u64` address. The first published version containing the fix is **0.3.1**. This report records the affected versions and verification; it is not an outstanding defect in current `main`.  ### Cause  The affected implementation casts the pointer to `i32` before computing its lowest set bit. At this boundary, `val & val.wrapping_neg()` yields `i32::MIN`, and `.min(16)` preserves the negative result. The entry generator's `div > 1` check then skips the pointer alignment assumption. The conservative omission also produces a different specialization from other equally aligned addresses.  ### Minimal arithmetic reproducer  This reproduces the old arithmetic with a synthetic address. It does not allocate or dereference memory and requires no CUDA or dependencies.  Save as `repro.rs`, then run `rustc repro.rs -o repro && ./repro`:  ```rust fn from_ptr(ptr: u64) -> i32 {     let val = ptr as i32;     let raw = if val == 0 { 16 } else { val & val.wrapping_neg() };     raw.min(16) }  fn main() {     let ptr = 0x0000_0000_8000_0000_u64;     assert_eq!(ptr % 16, 0);     assert
-
-- **Issue #1556** (2026-10-20): **fix(oxide-tilebc): write the fragment's symbolic shape as the 13.5 assembler reads it**
-  *Symptoms*: ## What this adds  A `.tilelib` written by `cargo oxide tilelib` now loads on the CUDA 13.5 assembler.  ```text before: 13.5 tileiras rejects the implementation descriptor: "concrete shape cache rank (1) does not match symbolic shape rank (0)" after:  the descriptor parses, and a Tile C++ kernel calls the three exports through the library ```  ## What we fixed  - The 13.5 assembler keeps a full-rank symbolic shape on `preview$fragment`, one integer expression per dimension. The compiler trunk switched on 2026-09-08 to holding only the dynamic dimensions, and the writer produced that trunk form for every version. - The fragment type now encodes per version: full rank below 13.6, dynamic-only from 13.6 on. Nothing else in the descriptors changes.  <details> <summary>Implementation</summary>  - `oxide-tilebc`'s type table carries the bytecode version, and the fragment arm branches on it. - The 13.5 golden in the writer tests now holds a one-element symbolic tuple.  </details>  ## Verification  Checked at `514be3a18`:  - ✅ oxide-tilebc 15 unit tests, clippy with warnings as errors, rustdoc. - ✅ CUDA 13.5.40 release toolkit, RTX 5090: `cargo oxide tilelib tilelib_relu --arch sm_120` builds the library, its disassembler reads both descriptors, and `cpp/tile_caller.cu` passes 3 of 3 through it. - ✅ The 13.6 development build still reads the dynamic-only form: the same library built at 13.6 passes 3 of 3 there too.  ## Caveats  - The version switch keys on 13.6 because that is where 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2166,127 +2276,1691 @@ impl<T> DeviceBuffer<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc747196` (2026-10-23)
-**Commit Message**: fix: bump example tokio pins past RUSTSEC-2026-0386 (#1619)
+### Incident Patch 1: `0925800d` (2026-10-31)
+**Commit Message**: fix(cutile): validate full tensor shapes before allocation (#1452)
 
-## Summary
+Closes #1451 
 
-Fixes #1618.
-[RUSTSEC-2026-0386](https://rustsec.org/advisories/RUSTSEC-2026-0386)
-rejects `tokio` before 1.53.3 on the 1.53 line. These locks move to
-1.54.1:
+`api::full` currently uses unchecked multiplication to calculate its
+flattened element count. Invalid shapes can panic during construction or
+wrap before allocation and initialization, with shape validation
+occurring later during `reshape`.
 
-- `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp`
-- `cuda-oxide/crates/rustc-codegen-cuda/examples/async_vecadd`
-- `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel`
-- `cutile-rs/Cargo.lock` (`cutile-rs/deny.toml` checks advisories and
-does not ignore this one)
+Validate the element count with checked multiplication and reject zero
+dimensions and flattened lengths above `i32::MAX`. Invalid inputs return
+`DeviceError::Internal` when the operation executes, before GPU
+allocation or kernel execution. `zeros` and `ones` inherit the
+validation through `full`.
+
+Add five host tests and three GPU tests covering overflow, zero
+dimensions, the `i32` boundary, construction without panics, and valid
+tensor shapes and values. Preserve scalar shape `[]`.
+
+### Validation
+
+Run from `cutile-rs`:
+
+```bash
+cargo fmt --all -- --check
+git diff --check
+cargo test -p cutile --lib api::full_shape_tests
+cargo test -p cutile --release --lib api::full_shape_tests
+cargo test -p cutile --test gpu tensor_guards::full_
+cargo test -p cutile --release --test gpu tensor_guards::full_
+cargo clippy -p cutile --lib --test gpu -- -D warnings
+RUST_TEST_THREAD
+
+**File**: `cutile-rs/cutile/src/api.rs` (modified, +99/-8)
+```diff
+@@ -534,6 +534,12 @@ pub fn ones<T: DType + cuda_core::DeviceCopy>(
+ /// Allocates GPU memory and fills it with the specified value. This uses a GPU kernel
+ /// to initialize the memory efficiently.
+ ///
++/// ## Errors
++///
++/// Returns an error on execution if a dimension is zero, the element count
++/// overflows `usize`, or the flattened element count exceeds `i32::MAX`.
++/// Invalid shapes are rejected before GPU allocation or kernel execution.
++///
+ /// ## Examples
+ ///
+ /// ```rust,ignore
+@@ -547,15 +553,40 @@ pub fn full<T: DType + cuda_core::DeviceCopy>(
+     val: T,
+     shape: &[usize],
+ ) -> impl DeviceOp<Output = Tensor<T>> {
++    let len = match checked_full_len(shape) {
++        Ok(len) => len,
++        Err(message) => return fail::<Tensor<T>>(message).boxed(),
++    };
+     let shape = shape.to_vec();
+-    let len = shape.iter().product::<usize>();
+-    Tensor::<T>::uninitialized(len).then(move |t| {
+-        // TODO (hme): It's awkward to assume_init this before actually initializing it.
+-        let partition_size = 128;
+-        let result = unsafe { t.assume_init() }.partition([partition_size]);
+-        let (_, res) = value((val, result)).then(full_apply).unzip();
+-        res.unpartition().reshape(&shape)
+-    })
++    Tensor::<T>::uninitialized(len)
++        .then(move |t| {
++            // TODO (hme): It's awkward to assume_init this before actually initializing it.
++            let partition_size = 128;
++            let result = unsafe { t.assume_init() }.partition([partition_size]);
++            let (_, res) = value((val, result)).then(full_apply).unzip();
++            res.unpartition().reshape(&shape)
++        })
++        .boxed()
++}
++
++// `full` initializes a flat tensor before reshaping it. Its element count
++// must fit that tensor's i32 dimension, which also bounds every positive
++// target dimension and contiguous stride. An empty shape remains a scalar.
++fn checked_full_len(shape: &[usize]) -> Result<usize, String> {
++    let len = shape
++        .iter()
++        .try_fold(1usize, |len, &dim| len.checked_mul(dim))
++        .ok_or_else(|| format!("full: shape {shape:?} element count overflows usize"))?;
++    if len == 0 {
++        return Err(format!("full: shape {shape:?} contains a zero dimension"));
++    }
++    if i32::try_from(len).is_err() {
++        return Err(format!(
++            "full: shape {shape:?} element count {len} exceeds i32::MAX ({})",
++            i32::MAX
++        ));
++    }
++    Ok(len)
+ }
+ 
+ pub fn fill<T: DType + cuda_core::DeviceCopy>(
+@@ -973,3 +1004,63 @@ pub trait DeviceOpReshapeShared<T: DType + Send>:
+ }
+ 
+ impl<T: DType + Send, DI: DeviceOp<Output = Arc<Tensor<T>>>> DeviceOpReshapeShared<T> for DI {}
++
++#[cfg(test)]
++mod full_shape_tests {
++    use super::{checked_full_len, full, ones, zeros};
++
++    #[test]
++    fn accepts_valid_shapes_and_i32_boundary() {
++        assert_eq!(checked_full_len(&[]), Ok(1));
++        assert_eq!(checked_full_len(&[1024]), Ok(1024));
++        assert_eq!(checked_full_len(&[3, 5]), Ok(15));
++        assert_eq!(checked_full_len(&[2, 3, 4]), Ok(24));
++        assert_eq!(
++            checked_full_len(&[i32::MAX as usize]),
++            Ok(i32::MAX as usize)
++        );
++    }
++
++    #[test]
++    fn rejects_zero_dimensions() {
++        for shape in [&[0][..], &[3, 0][..], &[0, usize::MAX][..]] {
++            let error = checked_full_len(shape).expect_err("zero dimension must fail");
++            assert!(error.contains("zero dimension"), "{error}");
++        }
++    }
++
++    #[test]
++    fn rejects_usize_product_overflow() {
++        // The first product wraps to 1 without overflow checks. The second
++        // overflows even though every individual dimension fits in i32.
++        for shape in [&[usize::MAX, usize::MAX][..], &[i32::MAX as usize; 3][..]] {
++            let error = checked_full_len(shape).expect_err("shape product must fail");
++            assert!(error.contains("overflows usize"), "{error}");
++        }
++    }
++
++    #[test]
++    fn rejects_flattened_length_above_i32_max() {
++        // Both products fit usize on 32-bit and 64-bit hosts.
++        for shape in [&[i32::MAX as usize + 1][..], &[32768, 65536][..]] {
++            let error = checked_full_len(shape).expect_err("flat dimension must fail");
++            assert!(error.contains("exceeds i32::MAX"), "{error}");
++        }
++    }
++
++    #[test]
++    fn invalid_shapes_do_not_panic_during_construction() {
++        // Only construct the lazy operations: this must not need a CUDA
++        // context, panic on arithmetic, or reach the zero-length assertion.
++        for shape in [
++            &[usize::MAX, usize::MAX][..],
++            &[i32::MAX as usize + 1][..],
++            &[32768, 65536][..],
++            &[0][..],
++        ] {
++            let _ = full(7.0f32, shape);
++            let _ = zeros::<f32>(shape);
++            let _ = ones::<f32>(shape);
++        }
++    }
++}
+```
+
+**File**: `cutile-rs/cutile/tests/gpu/tensor_guards.rs` (modified, +67/-0)
+```diff
+@@ -9,6 +9,7 @@
+ 
+ use std::panic::{self, AssertUnwindSafe};
+ 
++use cuda_async::error::DeviceError;
+ use cutile::api;
+ use cutile::prelude::*;
+ 
+@@ -104,3 +105,69 @@ fn oversized_allocation_is_an_error_not_a_panic() {
+         .expect("allocation after OOM");
+     assert_eq!(t.shape(), &[16]);
+ }
++
++const INVALID_FULL_SHAPES: &[(&[usize], &str)] = &[
++    (&[usize::MAX, usize::MAX], "overflows usize"),
++    (&[i32::MAX as usize; 3], "overflows usize"),
++    (&[i32::MAX as usize + 1], "exceeds i32::MAX"),
++    (&[32768, 65536], "exceeds i32::MAX"),
++    (&[0], "zero dimension"),
++    (&[3, 0], "zero dimension"),
++];
++
++fn assert_full_shape_error(error: DeviceError, expected: &str) {
++    match error {
++        DeviceError::Internal(message) => {
++            assert!(message.starts_with("full: "), "{message}");
++            assert!(message.contains(expected), "{message}");
++        }
++        other => panic!("expected full shape validation error, got: {other:?}"),
++    }
++}
++
++#[test]
++fn full_reports_invalid_shapes_as_errors() {
++    // Check the specific error, not just is_err(): in release builds the
++    // old product could wrap, allocate and fill, then fail during reshape.
++    for &(shape, expected) in INVALID_FULL_SHAPES {
++        let error = api::full(7.0f32, shape)
++            .sync()
++            .expect_err("invalid full shape must fail");
++        assert_full_shape_error(error, expected);
++    }
++}
++
++#[test]
++fn full_wrappers_report_invalid_shapes_as_errors() {
++    for &(shape, expected) in INVALID_FULL_SHAPES {
++        let zeros_error = api::zeros::<f32>(shape)
++            .sync()
++            .expect_err("invalid zeros shape must fail");
++        assert_full_shape_error(zeros_error, expected);
++
++        let ones_error = api::ones::<f32>(shape)
++            .sync()
++            .expect_err("invalid ones shape must fail");
++        assert_full_shape_error(ones_error, expected);
++    }
++}
++
++#[test]
++fn full_and_wrappers_preserve_shape_and_values() {
++    // Exercise a matrix reshape and a partial edge tile of the fill kernel.
++    for (shape, expected_shape) in [
++        (&[2usize, 3][..], &[2i32, 3][..]),
++        (&[129usize][..], &[129i32][..]),
++    ] {
++        let tensors = [
++            (api::full(3.25f32, shape).sync().expect("valid full"), 3.25),
++            (api::zeros::<f32>(shape).sync().expect("valid zeros"), 0.0),
++            (api::ones::<f32>(shape).sync().expect("valid ones"), 1.0),
++        ];
++        for (tensor, expected) in tensors {
++            assert_eq!(tensor.shape(), expected_shape);
++            let host: Vec<f32> = tensor.to_host_vec().sync().expect("copy");
++            assert_eq!(host, vec![expected; shape.iter().product()]);
++        }
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `2d47e43e` (2026-10-31)
+**Commit Message**: fix(cuda-bindings): preserve complete struct layouts with libclang 22 (#1684)
+
+Older bindgen can emit a one-byte placeholder instead of the fields of a
+forward-declared C struct when using libclang 22. This produces
+incorrect CUDA bindings and failing layout checks. Upgrade
+`cuda-bindings` to bindgen 0.72.1, which includes the upstream
+type-completeness fix in
+[rust-lang/rust-bindgen#3278](https://github.com/rust-lang/rust-bindgen/pull/3278).
+
+The regression test uses a self-contained C typedef chain and verifies
+that both fields of the completed struct survive binding generation.
+With bindgen 0.69.5 and libclang 22 it fails because only `_address` is
+emitted; with 0.72.1 it passes. It runs as part of the existing
+`cuda-bindings` test suite. Use libclang 22 to exercise the original
+failure.
+
+The large diff is generated lockfile maintenance: 263 affected
+workspace/example lockfiles now resolve the updated shared bindings
+dependency. Package additions are limited to the new bindgen and its
+required rustc-hash version; obsolete transitive dependencies disappear.
+Archived benchmarks that use separately published crates are unchanged.
+
+Validation:
+
+- The regression fails with bindgen 0.
+
+**File**: `Cargo.lock` (modified, +6/-144)
+```diff
+@@ -19,25 +19,22 @@ checksum = "2a4385e2e34eb35d6b3efe798b9eb88096925d87726c0798709bf56d9ed84af3"
+ 
+ [[package]]
+ name = "bindgen"
+-version = "0.69.5"
++version = "0.72.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
++checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
+ dependencies = [
+  "bitflags",
+  "cexpr",
+  "clang-sys",
+  "itertools",
+- "lazy_static",
+- "lazycell",
+  "log",
+  "prettyplease",
+  "proc-macro2",
+  "quote",
+  "regex",
+- "rustc-hash 1.1.0",
++ "rustc-hash",
+  "shlex",
+  "syn",
+- "which",
+ ]
+ 
+ [[package]]
+@@ -135,7 +132,7 @@ dependencies = [
+  "half",
+  "loom",
+  "once_cell",
+- "rustc-hash 2.1.2",
++ "rustc-hash",
+  "thiserror",
+ ]
+ 
+@@ -204,16 +201,6 @@ version = "1.0.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
+ 
+-[[package]]
+-name = "errno"
+-version = "0.3.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+-dependencies = [
+- "libc",
+- "windows-sys 0.61.2",
+-]
 -
-`cutile-rs/cutile-benchmarks/paper/app_exp1_work_distribution/bimodal_gemms_rust`
-
-`launch_overhead_rust` still pins `tokio` 1.53.0. Its manifest patches
-dependencies to a local path outside this tree, so that lock was not
-updated here.
-
-## Test plan
-
-- [ ] `cargo-deny / deny.toml governs the example workspaces` passes
-- [ ] `bash cuda-oxide/scripts/sync-example-locks.sh --check` still
-reports one version per crate
-- [ ] `cargo deny --manifest-path cutile-rs/Cargo.toml --locked check`
-passes advisories
-
----------
-
-Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
-
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -824,9 +824,9 @@ dependencies = [
+ [[package]]
+ name = "find-msvc-tools"
+ version = "0.1.9"
+@@ -368,15 +355,6 @@ version = "0.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+ 
+-[[package]]
+-name = "home"
+-version = "0.5.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
+-dependencies = [
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "indexmap"
+ version = "2.14.0"
+@@ -408,12 +386,6 @@ version = "1.5.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+ 
+-[[package]]
+-name = "lazycell"
+-version = "1.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.186"
+@@ -430,12 +402,6 @@ dependencies = [
+  "windows-link",
+ ]
+ 
+-[[package]]
+-name = "linux-raw-sys"
+-version = "0.4.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
+-
+ [[package]]
+ name = "lock_api"
+ version = "0.4.14"
+@@ -501,7 +467,7 @@ version = "0.50.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys",
+ ]
  
  [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
+@@ -616,31 +582,12 @@ version = "0.8.10"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+ checksum = "dc897dd8d9e8bd1ed8cdad82b5966c3e0ecae09fb1907d58efaa013543185d0a"
+ 
+-[[package]]
+-name = "rustc-hash"
+-version = "1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
+-
+ [[package]]
+ name = "rustc-hash"
+ version = "2.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "94300abf3f1ae2e2b8ffb7b58043de3d399c73fa6f4b73826402a5c457614dbe"
+ 
+-[[package]]
+-name = "rustix"
+-version = "0.38.44"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
+-dependencies = [
+- "bitflags",
+- "errno",
+- "libc",
+- "linux-raw-sys",
+- "windows-sys 0.59.0",
+-]
+-
+ [[package]]
+ name = "rustversion"
+ version = "1.0.22"
+@@ -907,25 +854,13 @@ version = "0.1.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
+ 
+-[[package]]
+-name = "which"
+-version = "4.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
+-dependencies = [
+- "either",
+- "home",
+- "once_cell",
+- "rustix",
+-]
+-
+ [[package]]
+ name = "winapi-util"
+ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
  dependencies = [
-  "pin-project-lite",
-  "tokio-macros",
+- "windows-sys 0.61.2",
++ "windows-sys",
+ ]
+ 
+ [[package]]
+@@ -943,15 +878,6 @@ dependencies = [
+  "windows-link",
+ ]
+ 
+-[[package]]
+-name = "windows-sys"
+-version = "0.59.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
+-dependencies = [
+- "windows-targets",
+-]
+-
+ [[package]]
+ name = "windows-sys"
+ version = "0.61.2"
+@@ -961,70 +887,6 @@ dependencies = [
+  "windows-link",
+ ]
+ 
+-[[package]]
+-name = "windows-targets"
+-version = "0.52.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9b724
 ```
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/async_vecadd/Cargo.lock` (modified, +2/-2)
+**File**: `cuda-bindings/Cargo.toml` (modified, +5/-1)
 ```diff
-@@ -824,9 +824,9 @@ dependencies = [
+@@ -16,12 +16,16 @@ doctest = false
+ libloading = "0.8"
  
- [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "pin-project-lite",
-  "tokio-macros",
+ [build-dependencies]
+-bindgen = "0.69.4"
++bindgen = "0.72.1"
+ prettyplease = "0.2.35"
+ proc-macro2 = { version = "1", features = ["span-locations"] }
+ quote = "1.0.35"
+ syn = { version = "2.0", features = ["full", "extra-traits", "visit", "visit-mut", "fold"] }
+ 
++[dev-dependencies]
++bindgen = "0.72.1"
++syn = { version = "2.0", features = ["full"] }
++
+ [lints.rust]
+ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(loom)'] }
+ 
 ```
 
-**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/cutile_inter_kernel/Cargo.lock` (modified, +2/-2)
+**File**: `cuda-bindings/tests/forward_declared_struct.rs` (added, +38/-0)
 ```diff
-@@ -1017,9 +1017,9 @@ dependencies = [
+@@ -0,0 +1,38 @@
++// SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++// SPDX-License-Identifier: Apache-2.0
++
++//! libclang 22 returns a forward declaration where older versions returned the
++//! definition. Bindgen must follow it to the definition before emitting fields.
++
++#[test]
++fn typedef_chain_preserves_forward_declared_struct_fields() {
++    let bindings = bindgen::builder()
++        .header_contents(
++            "forward_declared_struct.h",
++            r#"
++                typedef struct Packet_st Packet_v1;
++                typedef Packet_v1 Packet;
++                struct Packet_st {
++                    unsigned long long address;
++                    unsigned long long count;
++                };
++            "#,
++        )
++        .generate()
++        .expect("generate bindings for the forward-declared struct");
++    let file = syn::parse_file(&bindings.to_string()).expect("parse generated bindings");
++    let packet = file
++        .items
++        .iter()
++        .find_map(|item| match item {
++            syn::Item::Struct(item) if item.ident == "Packet_st" => Some(item),
++            _ => None,
++        })
++        .expect("emit the complete struct definition");
++    let fields: Vec<_> = packet
++        .fields
++        .iter()
++        .map(|field| field.ident.as_ref().expect("named field").to_string())
++        .collect();
++    assert_eq!(fields, ["address", "count"]);
++}
+```
+
+**File**: `cuda-oxide/Cargo.lock` (modified, +18/-152)
+```diff
+@@ -53,7 +53,7 @@ version = "1.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
+ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys",
+ ]
  
  [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+@@ -64,7 +64,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
  dependencies = [
-  "bytes",
+  "anstyle",
+  "once_cell_polyfill",
+- "windows-sys 0.61.2",
++ "windows-sys",
+ ]
+ 
+ [[package]]
+@@ -155,25 +155,22 @@ dependencies = [
+ 
+ [[package]]
+ name = "bindgen"
+-version = "0.69.5"
++version = "0.72.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
++checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
+ dependencies = [
+  "bitflags",
+  "cexpr",
+  "clang-sys",
+  "itertools",
+- "lazy_static",
+- "lazycell",
+  "log",
+  "prettyplease",
+  "proc-macro2",
+  "quote",
+  "regex",
+- "rustc-hash 1.1.0",
++ "rustc-hash",
+  "shlex",
+  "syn 2.0.117",
+- "which",
+ ]
+ 
+ [[package]]
+@@ -407,7 +404,7 @@ dependencies = [
+  "futures",
+  "half",
+  "once_cell",
+- "rustc-hash 2.1.3",
++ "rustc-hash",
+  "thiserror 1.0.69",
+ ]
+ 
+@@ -697,7 +694,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
   "libc",
-```
-
-**File**: `cutile-rs/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -1812,9 +1812,9 @@ dependencies = [
+- "windows-sys 0.61.2",
++ "windows-sys",
+ ]
  
  [[package]]
- name = "tokio"
--version = "1.52.1"
-+version = "1.54.1"
+@@ -900,15 +897,6 @@ dependencies = [
+  "wide",
+ ]
+ 
+-[[package]]
+-name = "home"
+-version = "0.5.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
+-dependencies = [
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "iket-lower"
+ version = "0.1.0"
+@@ -958,18 +946,6 @@ version = "1.0.18"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b67dee974fe86fd92cc45b7a95fdd2f99a36a6d7b0d431a231178d3d670bbcc6"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
- dependencies = [
-  "bytes",
+ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+ 
+-[[package]]
+-name = "lazy_static"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+-
+-[[package]]
+-name = "lazycell"
+-version = "1.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.186"
+@@ -1015,12 +991,6 @@ dependencies = [
+  "syn 3.0.9",
+ ]
+ 
+-[[package]]
+-name = "linux-raw-sys"
+-version = "0.4.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
+-
+ [[package]]
+ name = "linux-raw-sys"
+ version = "0.12.1"
+@@ -1042,7 +1012,7 @@ dependencies = [
+  "pliron-derive",
+  "pliron-llvm",
+  "reserved-oxide-symbols",
+- "rustc-hash 2.1.3",
++ "rustc-hash",
+  "thiserror 2.0.21",
+ ]
+ 
+@@ -1092,7 +1062,7 @@ dependencies = [
+  "pliron",
+  "pliron-derive",
+  "reserved-oxide-symbols",
+- "rustc-hash 2.1.3",
++ "rustc-hash",
+  "thiserror 2.0.21",
+ ]
+ 
+@@ -1109,7 +1079,7 @@ dependencies = [
+  "pliron",
+  "pliron-derive",
+  "reserved-oxide-symbols",
+- "rustc-hash 2.1.3",
++ "rustc-hash",
+  "thiserror 2.0.21",
+ ]
+ 
+@@ -1120,7 +1090,7 @@ dependencies = [
+  "dialect-mir",
+  "pliron",
+  "reserved-oxide-symbols",
+- "rustc-hash 2.1.3",
++ "rustc-hash",
+  "thiserror 2.0.21",
+ ]
+ 
+@@ -1250,7 +1220,7 @@ dependencies = [
+  "once_vec",
+  "pliron-derive",
+  "regex",
+- "rustc-hash 2.1.3",
++ "rustc-hash",
+  "rustc_apfloat",
+  "slotmap",
+  "smallvec",
+@@ -1270,7 +1240,7 @@ dependencies = [
+  "indexmap",
+  "proc-macro2",
+  "quote",
+- "rustc-hash 2.1.3",
++ "rustc-hash",
+  "syn 3.0.9",
+ ]
+ 
+@@ -1402,12 +1372,6 @@ version = "0.1.28"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b74b56ffa8bb2830709a538c2cbcae9aa062db0d2a42563bfb09bdaae44020eb"
+ 
+-[[package]]
+-name = "rustc-hash"
+-version = "1.1.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
+-
+ [[package]]
+ name = "rustc-hash"
+ version = "2.1.3"
+@@ -1424,19 +1388,6 @@ dependencies = [
+  "smallvec",
+ ]
+ 
+-[[package]]
+-name = "rustix"
+-version = "0.38.44"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
+-dependencies = [
+- "bitflags",
+- "errno",
+- "libc",
+- "linux-raw-sys 0.4.15",
+- "windows-sys 0.59.0",
+-]
+-
+ [[package]]
+ name = "rustix"
+ version = "1.1.4"
+@@ -1446,8 +1397,8 @@ dependencies = [
+  "bitflags",
+  "errno",
   "libc",
-```
-
-**File**: `cutile-rs/cutile-benchmarks/paper/app_exp1_work_distribution/bimodal_gemms_rust/Cargo.lock` (modified, +2/-2)
-```diff
-@@ -861,9 +861,9 @@ dependencies = [
+- "linux-raw-sys 0.12.1",
+- "windows-sys 0.61.2",
++ "linux-raw-sys",
++ "windows-sys",
+ ]
  
  [[package]]
- name = "tokio"
--version = "1.52.3"
-+version = "1.54.1"
+@@ -1613,8 +1564,8 @@ dependencies = [
+  "fastrand",
+  "getrandom",
+  "once_cell",
+- "rustix 1.1.4",
+- "windows-sys 0.61.2",
++ "rustix",
++ "windows-sys",
+ ]
+ 
+ [[package]]
+@@ -1768,18 +1719,6 @@ version = "0.9.5"
+ source = "registry+https://githu
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/abi_hmm/Cargo.lock` (modified, +4/-157)
+```diff
+@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
+ 
+ [[package]]
+ name = "bindgen"
+-version = "0.69.5"
++version = "0.72.1"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
-+checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+-checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
++checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
  dependencies = [
-  "pin-project-lite",
-  "tokio-macros",
+  "bitflags",
+  "cexpr",
+  "clang-sys",
+  "itertools",
+- "lazy_static",
+- "lazycell",
+  "log",
+  "prettyplease",
+  "proc-macro2",
+@@ -46,7 +44,6 @@ dependencies = [
+  "rustc-hash",
+  "shlex",
+  "syn",
+- "which",
+ ]
+ 
+ [[package]]
+@@ -255,16 +252,6 @@ version = "1.0.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
+ 
+-[[package]]
+-name = "errno"
+-version = "0.3.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+-dependencies = [
+- "libc",
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "foldhash"
+ version = "0.1.5"
+@@ -314,15 +301,6 @@ version = "0.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+ 
+-[[package]]
+-name = "home"
+-version = "0.5.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
+-dependencies = [
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "indexmap"
+ version = "2.14.0"
+@@ -348,18 +326,6 @@ version = "1.0.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+ 
+-[[package]]
+-name = "lazy_static"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+-
+-[[package]]
+-name = "lazycell"
+-version = "1.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.186"
+@@ -385,12 +351,6 @@ dependencies = [
+  "thiserror",
+ ]
+ 
+-[[package]]
+-name = "linux-raw-sys"
+-version = "0.4.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
+-
+ [[package]]
+ name = "log"
+ version = "0.4.29"
+@@ -439,12 +399,6 @@ dependencies = [
+  "memchr",
+ ]
+ 
+-[[package]]
+-name = "once_cell"
+-version = "1.21.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+-
+ [[package]]
+ name = "oxide-artifacts"
+ version = "0.2.1"
+@@ -530,22 +484,9 @@ version = "0.2.1"
+ 
+ [[package]]
+ name = "rustc-hash"
+-version = "1.1.0"
++version = "2.1.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
+-
+-[[package]]
+-name = "rustix"
+-version = "0.38.44"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
+-dependencies = [
+- "bitflags",
+- "errno",
+- "libc",
+- "linux-raw-sys",
+- "windows-sys 0.59.0",
+-]
++checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
+ 
+ [[package]]
+ name = "serde"
+@@ -656,106 +597,12 @@ version = "0.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+ 
+-[[package]]
+-name = "which"
+-version = "4.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
+-dependencies = [
+- "either",
+- "home",
+- "once_cell",
+- "rustix",
+-]
+-
+ [[package]]
+ name = "windows-link"
+ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+ 
+-[[package]]
+-name = "windows-sys"
+-version = "0.59.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
+-dependencies = [
+- "windows-targets",
+-]
+-
+-[[package]]
+-name = "windows-sys"
+-version = "0.61.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+-dependencies = [
+- "windows-link",
+-]
+-
+-[[package]]
+-name = "windows-targets"
+-version = "0.52.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
+-dependencies = [
+- "windows_aarch64_gnullvm",
+- "windows_aarch64_msvc",
+- "windows_i686_gnu",
+- "windows_i686_gnullvm",
+- "
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/addressof_sharedarray/Cargo.lock` (modified, +4/-157)
+```diff
+@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
+ 
+ [[package]]
+ name = "bindgen"
+-version = "0.69.5"
++version = "0.72.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
++checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
+ dependencies = [
+  "bitflags",
+  "cexpr",
+  "clang-sys",
+  "itertools",
+- "lazy_static",
+- "lazycell",
+  "log",
+  "prettyplease",
+  "proc-macro2",
+@@ -46,7 +44,6 @@ dependencies = [
+  "rustc-hash",
+  "shlex",
+  "syn",
+- "which",
+ ]
+ 
+ [[package]]
+@@ -255,16 +252,6 @@ version = "1.0.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
+ 
+-[[package]]
+-name = "errno"
+-version = "0.3.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+-dependencies = [
+- "libc",
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "foldhash"
+ version = "0.1.5"
+@@ -314,15 +301,6 @@ version = "0.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+ 
+-[[package]]
+-name = "home"
+-version = "0.5.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
+-dependencies = [
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "indexmap"
+ version = "2.14.0"
+@@ -348,18 +326,6 @@ version = "1.0.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+ 
+-[[package]]
+-name = "lazy_static"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+-
+-[[package]]
+-name = "lazycell"
+-version = "1.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.186"
+@@ -385,12 +351,6 @@ dependencies = [
+  "thiserror",
+ ]
+ 
+-[[package]]
+-name = "linux-raw-sys"
+-version = "0.4.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
+-
+ [[package]]
+ name = "log"
+ version = "0.4.29"
+@@ -439,12 +399,6 @@ dependencies = [
+  "memchr",
+ ]
+ 
+-[[package]]
+-name = "once_cell"
+-version = "1.21.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+-
+ [[package]]
+ name = "oxide-artifacts"
+ version = "0.2.1"
+@@ -530,22 +484,9 @@ version = "0.2.1"
+ 
+ [[package]]
+ name = "rustc-hash"
+-version = "1.1.0"
++version = "2.1.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
+-
+-[[package]]
+-name = "rustix"
+-version = "0.38.44"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
+-dependencies = [
+- "bitflags",
+- "errno",
+- "libc",
+- "linux-raw-sys",
+- "windows-sys 0.59.0",
+-]
++checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
+ 
+ [[package]]
+ name = "serde"
+@@ -656,106 +597,12 @@ version = "0.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+ 
+-[[package]]
+-name = "which"
+-version = "4.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
+-dependencies = [
+- "either",
+- "home",
+- "once_cell",
+- "rustix",
+-]
+-
+ [[package]]
+ name = "windows-link"
+ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+ 
+-[[package]]
+-name = "windows-sys"
+-version = "0.59.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
+-dependencies = [
+- "windows-targets",
+-]
+-
+-[[package]]
+-name = "windows-sys"
+-version = "0.61.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+-dependencies = [
+- "windows-link",
+-]
+-
+-[[package]]
+-name = "windows-targets"
+-version = "0.52.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
+-dependencies = [
+- "windows_aarch64_gnullvm",
+- "windows_aarch64_msvc",
+- "windows_i686_gnu",
+- "windows_i686_gnullvm",
+- "
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/aligned_field_loads/Cargo.lock` (modified, +4/-157)
+```diff
+@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
+ 
+ [[package]]
+ name = "bindgen"
+-version = "0.69.5"
++version = "0.72.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
++checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
+ dependencies = [
+  "bitflags",
+  "cexpr",
+  "clang-sys",
+  "itertools",
+- "lazy_static",
+- "lazycell",
+  "log",
+  "prettyplease",
+  "proc-macro2",
+@@ -46,7 +44,6 @@ dependencies = [
+  "rustc-hash",
+  "shlex",
+  "syn",
+- "which",
+ ]
+ 
+ [[package]]
+@@ -255,16 +252,6 @@ version = "1.0.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
+ 
+-[[package]]
+-name = "errno"
+-version = "0.3.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+-dependencies = [
+- "libc",
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "foldhash"
+ version = "0.1.5"
+@@ -314,15 +301,6 @@ version = "0.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+ 
+-[[package]]
+-name = "home"
+-version = "0.5.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
+-dependencies = [
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "indexmap"
+ version = "2.14.0"
+@@ -348,18 +326,6 @@ version = "1.0.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+ 
+-[[package]]
+-name = "lazy_static"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+-
+-[[package]]
+-name = "lazycell"
+-version = "1.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.186"
+@@ -385,12 +351,6 @@ dependencies = [
+  "thiserror",
+ ]
+ 
+-[[package]]
+-name = "linux-raw-sys"
+-version = "0.4.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
+-
+ [[package]]
+ name = "log"
+ version = "0.4.29"
+@@ -439,12 +399,6 @@ dependencies = [
+  "memchr",
+ ]
+ 
+-[[package]]
+-name = "once_cell"
+-version = "1.21.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+-
+ [[package]]
+ name = "oxide-artifacts"
+ version = "0.2.1"
+@@ -530,22 +484,9 @@ version = "0.2.1"
+ 
+ [[package]]
+ name = "rustc-hash"
+-version = "1.1.0"
++version = "2.1.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
+-
+-[[package]]
+-name = "rustix"
+-version = "0.38.44"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
+-dependencies = [
+- "bitflags",
+- "errno",
+- "libc",
+- "linux-raw-sys",
+- "windows-sys 0.59.0",
+-]
++checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
+ 
+ [[package]]
+ name = "serde"
+@@ -656,106 +597,12 @@ version = "0.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+ 
+-[[package]]
+-name = "which"
+-version = "4.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
+-dependencies = [
+- "either",
+- "home",
+- "once_cell",
+- "rustix",
+-]
+-
+ [[package]]
+ name = "windows-link"
+ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+ 
+-[[package]]
+-name = "windows-sys"
+-version = "0.59.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
+-dependencies = [
+- "windows-targets",
+-]
+-
+-[[package]]
+-name = "windows-sys"
+-version = "0.61.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+-dependencies = [
+- "windows-link",
+-]
+-
+-[[package]]
+-name = "windows-targets"
+-version = "0.52.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
+-dependencies = [
+- "windows_aarch64_gnullvm",
+- "windows_aarch64_msvc",
+- "windows_i686_gnu",
+- "windows_i686_gnullvm",
+- "
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/aligned_field_stores/Cargo.lock` (modified, +4/-157)
+```diff
+@@ -28,16 +28,14 @@ checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
+ 
+ [[package]]
+ name = "bindgen"
+-version = "0.69.5"
++version = "0.72.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "271383c67ccabffb7381723dea0672a673f292304fcb45c01cc648c7a8d58088"
++checksum = "993776b509cfb49c750f11b8f07a46fa23e0a1386ffc01fb1e7d343efc387895"
+ dependencies = [
+  "bitflags",
+  "cexpr",
+  "clang-sys",
+  "itertools",
+- "lazy_static",
+- "lazycell",
+  "log",
+  "prettyplease",
+  "proc-macro2",
+@@ -46,7 +44,6 @@ dependencies = [
+  "rustc-hash",
+  "shlex",
+  "syn",
+- "which",
+ ]
+ 
+ [[package]]
+@@ -255,16 +252,6 @@ version = "1.0.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
+ 
+-[[package]]
+-name = "errno"
+-version = "0.3.14"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+-dependencies = [
+- "libc",
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "foldhash"
+ version = "0.1.5"
+@@ -314,15 +301,6 @@ version = "0.17.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
+ 
+-[[package]]
+-name = "home"
+-version = "0.5.12"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cc627f471c528ff0c4a49e1d5e60450c8f6461dd6d10ba9dcd3a61d3dff7728d"
+-dependencies = [
+- "windows-sys 0.61.2",
+-]
+-
+ [[package]]
+ name = "indexmap"
+ version = "2.14.0"
+@@ -348,18 +326,6 @@ version = "1.0.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+ 
+-[[package]]
+-name = "lazy_static"
+-version = "1.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
+-
+-[[package]]
+-name = "lazycell"
+-version = "1.3.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
+-
+ [[package]]
+ name = "libc"
+ version = "0.2.186"
+@@ -385,12 +351,6 @@ dependencies = [
+  "thiserror",
+ ]
+ 
+-[[package]]
+-name = "linux-raw-sys"
+-version = "0.4.15"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d26c52dbd32dccf2d10cac7725f8eae5296885fb5703b261f7d0a0739ec807ab"
+-
+ [[package]]
+ name = "log"
+ version = "0.4.29"
+@@ -439,12 +399,6 @@ dependencies = [
+  "memchr",
+ ]
+ 
+-[[package]]
+-name = "once_cell"
+-version = "1.21.4"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
+-
+ [[package]]
+ name = "oxide-artifacts"
+ version = "0.2.1"
+@@ -530,22 +484,9 @@ version = "0.2.1"
+ 
+ [[package]]
+ name = "rustc-hash"
+-version = "1.1.0"
++version = "2.1.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
+-
+-[[package]]
+-name = "rustix"
+-version = "0.38.44"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fdb5bc1ae2baa591800df16c9ca78619bf65c0488b41b96ccec5d11220d8c154"
+-dependencies = [
+- "bitflags",
+- "errno",
+- "libc",
+- "linux-raw-sys",
+- "windows-sys 0.59.0",
+-]
++checksum = "6b1e7f9a428571be2dc5bc0505c13fb6bf936822b894ec87abf8a08a4e51742d"
+ 
+ [[package]]
+ name = "serde"
+@@ -656,106 +597,12 @@ version = "0.9.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+ 
+-[[package]]
+-name = "which"
+-version = "4.4.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "87ba24419a2078cd2b0f2ede2691b6c66d8e47836da3b6db8265ebad47afbfc7"
+-dependencies = [
+- "either",
+- "home",
+- "once_cell",
+- "rustix",
+-]
+-
+ [[package]]
+ name = "windows-link"
+ version = "0.2.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+ 
+-[[package]]
+-name = "windows-sys"
+-version = "0.59.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
+-dependencies = [
+- "windows-targets",
+-]
+-
+-[[package]]
+-name = "windows-sys"
+-version = "0.61.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+-dependencies = [
+- "windows-link",
+-]
+-
+-[[package]]
+-name = "windows-targets"
+-version = "0.52.6"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "9b724f72796e036ab90c1021d4780d4d3d648aca59e491e6b98e725b84e99973"
+-dependencies = [
+- "windows_aarch64_gnullvm",
+- "windows_aarch64_msvc",
+- "windows_i686_gnu",
+- "windows_i686_gnullvm",
+- "
+```
+
+---
+
+### Incident Patch 3: `dfea1169` (2026-10-30)
+**Commit Message**: cuda-core: safe element casts require AnyBitPattern; bool is DeviceCopy (#1516)
+
+Closes #1506. First change under #1460; implements the `bool` decision
+recorded there and in #1461 and #1503.
+
+Safe element casts previously checked size and alignment but could turn
+a byte containing `2` into a Rust `bool`. This PR rejects those casts,
+supports initialized `bool` buffers, and closes the host-side
+initialization, atomic-reference, kernel-argument, and pinned-alignment
+holes found during review and follow-up auditing.
+
+## Element validity
+
+`DeviceBuffer::cast_elem`, `cast_chunks`, `can_cast_chunks`, and
+`Tensor::reinterpret` require `bytemuck::AnyBitPattern` on the target.
+Casting into `bool` is therefore a compile error.
+
+The two safe buffer casts also require `T: bytemuck::NoUninit` on their
+source: padding or `MaybeUninit` bytes must not become initialized
+destination values. `can_cast_chunks` remains a layout query. These
+bounds do not restrict `DeviceCopy` itself, and bool-to-byte casts
+remain supported.
+
+`bool` implements `DeviceCopy`: valid values can be copied between host
+and device, and its all-zero representation is valid. `DeviceCopy` does
+not promise that every bit pattern 
+
+**File**: `.github/workflows/book.yml` (modified, +2/-1)
+```diff
+@@ -15,7 +15,8 @@ on:
+   # only ever built after merge, so a PR that broke it could not be caught by
+   # review or by CI.
+   pull_request:
+-    branches: [main]
++    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
++    branches: [main, "pull-request/[0-9]+"]
+     paths:
+       - 'cuda-oxide/cuda-oxide-book/**'
+       - 'cutile-rs/cutile-book/**'
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-1)
+```diff
+@@ -12,17 +12,20 @@ on:
+       - 'cuda-bindings/**'
+       - 'cuda-core/**'
+       - 'cuda-core-derive/**'
++      - 'cuda-repr/**'
+       - 'cuda-async/**'
+       - 'Cargo.toml'
+       - 'Cargo.lock'
+       - '.github/workflows/**'
+   pull_request:
+-    branches: [main]
++    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
++    branches: [main, "pull-request/[0-9]+"]
+     paths:
+       - 'cuda-oxide/**'
+       - 'cuda-bindings/**'
+       - 'cuda-core/**'
+       - 'cuda-core-derive/**'
++      - 'cuda-repr/**'
+       - 'cuda-async/**'
+       - 'Cargo.toml'
+       - 'Cargo.lock'
+```
+
+**File**: `.github/workflows/codeql.yml` (modified, +2/-1)
+```diff
+@@ -15,7 +15,8 @@ on:
+       - '**/*.sh'
+       - '**/*.py'
+   pull_request:
+-    branches: [main]
++    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
++    branches: [main, "pull-request/[0-9]+"]
+     paths:
+       - '**/*.rs'
+       - '**/Cargo.toml'
+```
+
+**File**: `.github/workflows/cutile-rs.yml` (modified, +1/-0)
+```diff
+@@ -64,6 +64,7 @@ jobs:
+               - 'cuda-bindings/**'
+               - 'cuda-core/**'
+               - 'cuda-core-derive/**'
++              - 'cuda-repr/**'
+               - 'cuda-async/**'
+               - 'Cargo.toml'
+               - 'Cargo.lock'
+```
+
+**File**: `.github/workflows/docs.yml` (modified, +4/-1)
+```diff
+@@ -10,17 +10,20 @@ on:
+       - 'cuda-bindings/**'
+       - 'cuda-core/**'
+       - 'cuda-core-derive/**'
++      - 'cuda-repr/**'
+       - 'cuda-async/**'
+       - 'Cargo.toml'
+       - 'Cargo.lock'
+       - '.github/workflows/**'
+   pull_request:
+-    branches: [main]
++    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
++    branches: [main, "pull-request/[0-9]+"]
+     paths:
+       - 'cuda-oxide/**'
+       - 'cuda-bindings/**'
+       - 'cuda-core/**'
+       - 'cuda-core-derive/**'
++      - 'cuda-repr/**'
+       - 'cuda-async/**'
+       - 'Cargo.toml'
+       - 'Cargo.lock'
+```
+
+**File**: `.github/workflows/examples-compile.yml` (modified, +4/-1)
+```diff
+@@ -10,17 +10,20 @@ on:
+       - 'cuda-bindings/**'
+       - 'cuda-core/**'
+       - 'cuda-core-derive/**'
++      - 'cuda-repr/**'
+       - 'cuda-async/**'
+       - 'Cargo.toml'
+       - 'Cargo.lock'
+       - '.github/workflows/**'
+   pull_request:
+-    branches: [main]
++    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
++    branches: [main, "pull-request/[0-9]+"]
+     paths:
+       - 'cuda-oxide/**'
+       - 'cuda-bindings/**'
+       - 'cuda-core/**'
+       - 'cuda-core-derive/**'
++      - 'cuda-repr/**'
+       - 'cuda-async/**'
+       - 'Cargo.toml'
+       - 'Cargo.lock'
+```
+
+**File**: `.github/workflows/naming-guard.yml` (modified, +2/-1)
+```diff
+@@ -16,7 +16,8 @@ on:
+       - 'cuda-oxide/scripts/check-reserved-prefixes.sh'
+       - '.github/workflows/naming-guard.yml'
+   pull_request:
+-    branches: [main]
++    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
++    branches: [main, "pull-request/[0-9]+"]
+     paths:
+       - 'cuda-oxide/crates/**'
+       - 'cuda-oxide/scripts/check-reserved-prefixes.sh'
+```
+
+**File**: `.github/workflows/status-guard.yml` (modified, +2/-1)
+```diff
+@@ -5,7 +5,8 @@ on:
+   push:
+     branches: [main]
+   pull_request:
+-    branches: [main]
++    # Include PRs stacked on copy-pr-bot mirrors of their prerequisites.
++    branches: [main, "pull-request/[0-9]+"]
+ 
+ # Each commit on main gets its own group, so it starts at once. Any other ref
+ # still shares one group and cancels the older run.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1640** (2026-10-25): docs(book): soften dark-mode SVG fill colors across cute and compiler diagrams (@nihalpasham)
-- **PR #1626** (closed): Support one uniform i32 capture in checked block callbacks (@tpn)
-- **PR #1619** (2026-10-23): fix: bump example tokio pins past RUSTSEC-2026-0386 (@roivanov)
-- **PR #1617** (2026-10-23): docs(cuda-oxide): update remaining nightly references and doctor check for 1.99.1 (@nihalpasham)
-- **PR #1616** (2026-10-23): chore(cuda-oxide): update flake.lock for 1.99.1, scaffold config, and clean up docs (@nihalpasham)
-- **PR #1615** (2026-10-23): chore(cute-rs): sync shared host crate versions to v0.5.0 in lockfiles (@nihalpasham)
+- **PR #1684** (2026-10-31): fix(cuda-bindings): preserve complete struct layouts with libclang 22 (@elibol)
+- **PR #1683** (2026-10-30): test(cutile): skip FP8 execution on unsupported targets (@elibol)
+- **PR #1672** (2026-10-30): feat(cute-rs): complete SM120a CuTeDSL parity, TiledCopy, BF16/NVFP4 TiledMma, and workload migrations (@nihalpasham)
+- **PR #1671** (2026-10-30): feat(cute-rs): add CuTeDSL-aligned SM100 pipelines, TmemAllocator, and arch forwarders (@nihalpasham)
+- **PR #1665** (2026-10-29): Put the Rust row inside the prerequisites table (@CanReader)
+- **PR #1663** (2026-10-27): perf(cuda-oxide): 7-stage SMEM pipeline and wave-tail tile balancing in gemm_sol_final (@nihalpasham)
 
 ---
 
@@ -2306,30 +3980,63 @@ Signed-off-by: Roman Ivanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump example tokio pins past RUSTSEC-2026-0386 (#1619)
+## X. cutile): validate full tensor shapes before allocation (#1452)
 
 **RULE**:
-When implementing operations in `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cutile-rs/cutile/src/api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc747196`: bump example tokio pins past RUSTSEC-2026-0386 (#1619). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0925800d`: cutile): validate full tensor shapes before allocation (#1452). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cuda-oxide/crates/rustc-codegen-cuda/examples/async_mlp/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/cutile/src/api.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.54.1"
-checksum = "b52fd3255258d26fac7264ab5a76b53c13367136dc011d3d6ad4f8ed070396a3"
+/// ## Errors
+///
+/// Returns an error on execution if a dimension is zero, the element count
+/// overflows `usize`, or the flattened element count exceeds `i32::MAX`.
+/// Invalid shapes are rejected before GPU allocation or kernel execution.
+///
+    let len = match checked_full_len(shape) {
+        Ok(len) => len,
+        Err(message) => return fail::<Tensor<T>>(message).boxed(),
+    };
+    Tensor::<T>::uninitialized(len)
+        .then(move |t| {
+            // TODO (hme): It's awkward to assume_init this before actually initializing it.
+            let partition_size = 128;
+            let result = unsafe { t.assume_init() }.partition([partition_size]);
+            let (_, res) = value((val, result)).then(full_apply).unzip();
+            res.unpartition().reshape(&shape)
+        })
+        .boxed()
+}
+
+// `full` initializes a flat tensor before reshaping it. Its element count
+// must fit that tensor's i32 dimension, which also bounds every positive
+// target dimension and contiguous stride. An empty shape remains a scalar.
+fn checked_full_len(shape: &[usize]) -> Result<usize, String> {
+    let len = shape
+        .iter()
+        .try_fold(1usize, |len, &dim| len.checked_mul(dim))
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-version = "1.52.3"
-checksum = "8fc7f01b389ac15039e4dc9531aa973a135d7a4135281b12d7c1bc79fd57fffe"
+    let len = shape.iter().product::<usize>();
+    Tensor::<T>::uninitialized(len).then(move |t| {
+        // TODO (hme): It's awkward to assume_init this before actually initializing it.
+        let partition_size = 128;
+        let result = unsafe { t.assume_init() }.partition([partition_size]);
+        let (_, res) = value((val, result)).then(full_apply).unzip();
+        res.unpartition().reshape(&shape)
+    })
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc747196` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0925800d` are properly handled with clean fallback behavior.

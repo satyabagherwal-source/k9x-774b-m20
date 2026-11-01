@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source**: github ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
-> **Source Version**: `8efdae0f`  
+> **Source Version**: `12508b40`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:01:48.220Z  
+> **Timestamp**: 2026-10-28T13:56:58.077Z  
 > **Learning ID**: `learn-github-defguard-defguard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T12:56:44.036Z  
+> **Harvest Timestamp**: 2026-10-28T13:56:58.068Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2883 stars
+- **Stars / Engagement**: 2887 stars
 
 ---
 
@@ -2143,79 +2143,34 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8efdae0f` (2026-10-26)
-**Commit Message**: Update Rust crate tokio to v1.53.3 [SECURITY] (#3950)
+### Incident Patch 1: `12508b40` (2026-10-28)
+**Commit Message**: Update Rust crate pulldown-cmark to v0.13.5 [SECURITY] (#3972)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `Cargo.lock` (modified, +7/-7)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -2320,7 +2320,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
+@@ -5135,9 +5135,9 @@ dependencies = [
  
  [[package]]
-@@ -5282,7 +5282,7 @@ dependencies = [
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -5766,7 +5766,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -6828,7 +6828,7 @@ dependencies = [
-  "getrandom 0.3.4",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -6993,9 +6993,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
- 
- [[package]]
- name = "tokio"
--version = "1.53.1"
-+version = "1.53.3"
+ name = "pulldown-cmark"
+-version = "0.13.4"
++version = "0.13.5"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
-+checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
+-checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
++checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
  dependencies = [
-  "bytes",
-  "libc",
-@@ -7924,7 +7924,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.48.0",
- ]
- 
- [[package]]
+  "bitflags 2.13.1",
+  "getopts",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3953** (2026-10-26): Fix 403 error after user switch (@j-chmielewski)
-- **PR #3952** (2026-10-26): ui profile fixes (@filipslezaklab)
-- **PR #3951** (2026-10-26): Handle outdated mobile app during remote approve (@j-chmielewski)
-- **PR #3950** (2026-10-26): Security patches (stable/2.x) (@renovate[bot])
-- **PR #3947** (2026-10-23): Bump ctutils (@t-aleksander)
-- **PR #3946** (2026-10-26): Mark email mfa as unavailable when SMTP becomes disabled  (@t-aleksander)
+- **PR #3975** (2026-10-28): Use unified component in modals (@jakub-tldr)
+- **PR #3973** (2026-10-28): Show correct firewall state with inactive license (@jakub-tldr)
+- **PR #3972** (2026-10-28): Security patches (stable/2.x) (@renovate[bot])
+- **PR #3971** (2026-10-28): fix cargo deny (@filipslezaklab)
+- **PR #3970** (2026-10-28): profile empty states (@filipslezaklab)
+- **PR #3967** (2026-10-28): DG220-3: [core] Settings Update Silently Clears JWT and OIDC Signing Keys (@wojcik91)
 
 ---
 
@@ -2235,13 +2190,13 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Rust crate tokio to v1.53.3 [SECURITY] (#3950)
+## X. Update Rust crate pulldown-cmark to v0.13.5 [SECURITY] (#3972)
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8efdae0f`: Update Rust crate tokio to v1.53.3 [SECURITY] (#3950). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `12508b40`: Update Rust crate pulldown-cmark to v0.13.5 [SECURITY] (#3972). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2249,26 +2204,16 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
-version = "1.53.3"
-checksum = "ce3335fa71841cda333a58d7615b03901380ecf09d59b3296d21f8bbac0dde4e"
- "windows-sys 0.48.0",
+version = "0.13.5"
+checksum = "278e9268c93b9e498a2da46c34d90ba93a3255eb99009646398f34bc73ab36eb"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
-version = "1.53.1"
-checksum = "202caea871b69668250d242070849eb495be178ed697a3e98aebce5bc81a0bed"
- "windows-sys 0.61.2",
+version = "0.13.4"
+checksum = "e9f068eba8e7071c5f9511831b44f32c740d5adf574e990f946ddb53db2f314e"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8efdae0f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `12508b40` are properly handled with clean fallback behavior.

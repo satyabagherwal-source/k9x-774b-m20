@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source**: github ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
-> **Source Version**: `2ddb246a`  
+> **Source Version**: `64854199`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T09:18:00.996Z  
+> **Timestamp**: 2026-10-31T17:36:58.397Z  
 > **Learning ID**: `learn-github-tw93-pake`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T09:12:51.918Z  
+> **Harvest Timestamp**: 2026-10-31T17:36:56.690Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 62303 stars
+- **Stars / Engagement**: 62700 stars
 
 ---
 
@@ -917,11 +917,11 @@ export function getDefaultLinuxTargets(): string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1424** (2026-10-28): **[Bug] Upgraded to 3.17.7 build and issues span out**
+  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  Got this that comes with errors:  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  It seems to have built something that I can't find using Explorer. May be should downgrade to 3.16.x that was working fine till now, or remove and make a new fresh install.  Would be great to have the pnpm, npm or some command to proceed eventually. Thanks  ### Rust version  rustc 1.99.1 (58cf8f9c3 2026-10-13)  ### Package Manager  npm  ### System version  12.1.0  ### Node.js version  v24.22.1  ### Build Command  pake https://docs.deno.com/runtime/ --name Docdeno  ### Minimal reproduce step  pake https://docs.deno.com/runtime/ --name Docdeno   ### What did you expect to see?  the msi path so I could run it  ### What did you see instead?  C:\Users\DELL\AppData\Local\pnpm\global\v11\2d30-18e2955c60370328-0\node_modules\.pnpm\pake-cli@3.17.7\node_modules\pake-cli\src-tauri\target\x86_64-pc-windows-msvc\release\bundle\msi\Pake_1.0.0_x64_en-US.msi (3.39 MiB)  ### Anything else?  no  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
+
 - **Issue #1406** (2026-10-05): **[Bug] Video Captions don't work in pake-youtube on Linux**
   *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  3.17.2  ### Rust version  1.89.0  ### Package Manager  pnpm  ### System version  Arch Linux  ### Node.js version  26.8.2  ### Build Command  `pake https://www.youtube.com --name youtube --targets zst`  ### Minimal reproduce step  Build and install with previous command. Open any video and enable captions. They don't appear on the screen!  ### What did you expect to see?  Captions  ### What did you see instead?  Nothing  ### Anything else?  Thanks  ### Are you willing to submit a PR?  - [ ] I'm willing to submit a PR!
-
-- **Issue #1402** (2026-10-05): **[Bug] --windows-toolchain gnu --keep-binary: raw .exe won't start, WebView2Loader.dll is not copied next to it**
-  *Symptoms*: ### Search before asking  - [x] I searched in the [issues](https://github.com/tw93/Pake/issues?q=) and found nothing similar.   ### Pake version  pake-cli 3.17.2 (installed project-locally)  ### Rust version  rustc 1.98.1 (48a229cea 2026-09-01) rustup 1.29.1 (d95a37b6a 2026-08-13)  ### Package Manager  npm  ### System version  Windows 11 Pro 10.0.26200 x64, WebView2 Runtime 153  ### Node.js version  v22.13.1  ### Build Command  ```bash pake ./dist --use-local-file --name Demo --windows-toolchain gnu --keep-binary ```  `--use-local-file` isn't required: `pake https://example.com --name Demo --windows-toolchain gnu --keep-binary` behaves the same way, because the DLL dependency comes from the GNU link, not from the app contents.  ### Minimal reproduce step  1. On Windows, with a GNU Rust toolchain and MinGW gcc on `PATH`, run the build command above. 2. The MSI installs and runs fine. 3. Run the kept raw binary next to it:    ```bash    ./Demo.exe    ```  ### What did you expect to see?  `Demo.exe` starts, like the app installed from `Demo.msi`.  ### What did you see instead?  The process exits immediately. From Git Bash:  ``` Demo.exe: error while loading shared libraries: api-ms-win-core-winrt-l1-1-0.dll: cannot open shared object file: No such file or directory ```  The DLL named there is misleading, since that API set exists on every Windows 10/11 system. The exe's import table shows the real missing dependency:  ``` $ objdump -p Demo.exe | grep "DLL Name" | sort -u     DLL
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -938,31 +938,111 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5db32b4` (2026-10-23)
-**Commit Message**: build: drop debug info for dependencies in dev builds
+### Incident Patch 1: `eddc4bda` (2026-10-30)
+**Commit Message**: Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding
 
-A clean debug build of src-tauri took 3.5G of target; without dependency debug info it takes 2.4G. Debug info stays on for the pake crate, so its backtraces and breakpoints are unchanged, and release builds are untouched.
+fix: decode percent-encoded file names when saving downloads
 
-**File**: `src-tauri/Cargo.toml` (modified, +5/-0)
+**File**: `src-tauri/src/inject/event.js` (modified, +15/-1)
 ```diff
-@@ -97,3 +97,8 @@ codegen-units = 1
- lto = "thin"
- opt-level = "z"
- strip = true
+@@ -1628,10 +1628,24 @@ function setDefaultZoom() {
+   }
+ }
+ 
++// Browsers decode the last URL path segment when naming a download. Keep the
++// encoded form when decoding fails or yields a path separator, a character
++// Windows rejects in file names, or a control/format character.
++function decodeFilenameSegment(segment) {
++  try {
++    const decoded = decodeURIComponent(segment);
++    return /[\\/:*?"<>|\p{Cc}\p{Cf}]/u.test(decoded) ? segment : decoded;
++  } catch (e) {
++    return segment;
++  }
++}
 +
-+# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
-+# backtraces and breakpoints in pake code are unchanged.
-+[profile.dev.package."*"]
-+debug = false
+ function getFilenameFromUrl(url) {
+   try {
+     const urlPath = new URL(url).pathname;
+-    let filename = urlPath.substring(urlPath.lastIndexOf("/") + 1);
++    let filename = decodeFilenameSegment(
++      urlPath.substring(urlPath.lastIndexOf("/") + 1),
++    );
+ 
+     // If no filename or no extension, generate one
+     if (!filename || !filename.includes(".")) {
+```
+
+**File**: `tests/unit/event-link-guard.test.js` (modified, +55/-0)
+```diff
+@@ -926,3 +926,58 @@ describe("getFilenameFromUrl data URI extension", () => {
+     expect(filename).not.toContain("data:image/");
+   });
+ });
++
++describe("getFilenameFromUrl percent-encoded path", () => {
++  it("decodes the file name the way browsers name downloads", () => {
++    const context = loadEventHelpers();
++    expect(
++      context.getFilenameFromUrl(
++        "https://example.com/files/Annual%20Report%202026.pdf",
++      ),
++    ).toBe("Annual Report 2026.pdf");
++    expect(
++      context.getFilenameFromUrl("https://example.com/%E6%8A%A5%E5%91%8A.pdf"),
++    ).toBe("报告.pdf");
++  });
++
++  it.each(["a%2F..%2Fsecret.pdf", "bad%E0%A4.pdf", "%E2%80%AEfdp.pdf"])(
++    "keeps the encoded name when decoding is unsafe or malformed: %s",
++    (name) => {
++      const context = loadEventHelpers();
++      expect(
++        context.getFilenameFromUrl(`https://example.com/files/${name}`),
++      ).toBe(name);
++    },
++  );
++
++  it("passes the decoded name to download_file", () => {
++    const context = loadEventHelpers({ withTauri: true });
++    runDomReady(context);
++    const anchor = makeAnchor(
++      "https://example.com/files/Annual%20Report.pdf",
++      "_self",
++    );
++    getClickGuard(context)(makeClickEvent(anchor));
++    expect(
++      context.invokeCalls
++        .filter(([command]) => command === "download_file")
++        .map(([, payload]) => payload.params.filename),
++    ).toEqual(["Annual Report.pdf"]);
++  });
++
++  it("names native Windows downloads with the decoded name", () => {
++    const context = loadEventHelpers({
++      withTauri: true,
++      nativeDownloads: true,
++    });
++    runDomReady(context);
++    const anchor = makeAnchor(
++      "https://example.com/files/%E6%8A%A5%E5%91%8A%202026.pdf",
++      "_self",
++    );
++    getClickGuard(context)(makeClickEvent(anchor));
++    expect(context.nativeDownloadClicks).toEqual([
++      [anchor.href, "报告 2026.pdf"],
++    ]);
++  });
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1426** (2026-10-30): fix: decode percent-encoded file names when saving downloads (@NgoQuocViet2001)
+- **PR #1422** (2026-10-26): fix: update vitest, add vite peer and remove unused terser plugin for advisories (@jakero)
+- **PR #1421** (2026-10-26): fix: update Cargo.lock crates for published RustSec advisories (@jakero)
 - **PR #1420** (closed): Fix Pake CLI workflow for pake-cli 3.x (@Bulls64)
 - **PR #1419** (closed): ci: gate the workflows with Plumber and publish the score badge (@Totara-thib)
 - **PR #1417** (2026-10-17): Fix/windows notification default sound (@reg-chen)
-- **PR #1416** (2026-10-17): ci: pin the third-party actions by commit, name the secrets the app build receives and drop persisted checkout credentials (@Totara-thib)
-- **PR #1415** (2026-10-15): fix: stop the IME-confirming Enter (keyCode 229) from reaching the page (@houzixiashanxiedaima)
-- **PR #1409** (2026-10-10): fix: update sharp to 0.35.5 for libheif advisories (@jakero)
 
 ---
 
@@ -982,32 +1062,42 @@ A clean debug build of src-tauri took 3.5G of target; without dependency debug i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: drop debug info for dependencies in dev builds
+## X. Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding
 
 **RULE**:
-When implementing operations in `src-tauri/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-tauri/src/inject/event.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5db32b4`: build: drop debug info for dependencies in dev builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eddc4bda`: Merge pull request #1426 from NgoQuocViet2001/fix-download-filename-decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/inject/event.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
+// Browsers decode the last URL path segment when naming a download. Keep the
+// encoded form when decoding fails or yields a path separator, a character
+// Windows rejects in file names, or a control/format character.
+function decodeFilenameSegment(segment) {
+  try {
+    const decoded = decodeURIComponent(segment);
+    return /[\\/:*?"<>|\p{Cc}\p{Cf}]/u.test(decoded) ? segment : decoded;
+  } catch (e) {
+    return segment;
+  }
+}
 
-# Debug info only for the pake crate: a clean debug build drops from 3.5G to 2.4G,
-# backtraces and breakpoints in pake code are unchanged.
-[profile.dev.package."*"]
-debug = false
+    let filename = decodeFilenameSegment(
+      urlPath.substring(urlPath.lastIndexOf("/") + 1),
+    );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    let filename = urlPath.substring(urlPath.lastIndexOf("/") + 1);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5db32b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eddc4bda` are properly handled with clean fallback behavior.

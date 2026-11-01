@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `656d02b6`  
+> **Source Version**: `564a2074`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T01:55:34.812Z  
+> **Timestamp**: 2026-10-31T16:50:25.806Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T01:55:33.580Z  
+> **Harvest Timestamp**: 2026-10-31T16:50:24.467Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 91172 stars
+- **Stars / Engagement**: 91394 stars
 
 ---
 
@@ -959,20 +959,17 @@ pub async fn audit_lock(
         .into_iter()
         .filter(|finding| match finding {
             Finding::Vulnerability(vulnerability) => {
-                if let Some(id) = ignore.iter().find(|id| vulnerability.matches(id)) {
-                    matched_ignores.insert(id.clone());
-                    return false;
-                }
-                if let Some(id) = ignore_until_fixed
-                    .iter()
-                    .find(|id| vulnerability.matches(id))
-                {
-                    matched_ignores.insert(id.clone());
-                    if vulnerability.fix_versions.is_empty() {
-                        return false;
+                let mut ignored = false;
+                for (rules, suppress_if_matched) in [
+                    (ignore, true),
+                    (ignore_until_fixed, vulnerability.fix_versions.is_empty()),
+                ] {
+                    for id in rules.iter().filter(|id| vulnerability.matches(id)) {
+                        matched_ignores.insert(id.clone());
+                        ignored |= suppress_if_matched;
                     }
                 }
-                true
+                !ignored
             }
             Finding::ProjectStatus(_) => true,
         })
@@ -1138,7 +1135,9 @@ impl AuditResults {
                     )?;
 
                     if vulnerability.fix_versions.is_empty() {
-                        writ
+                        writeln!(
+                            self.printer.stdout_important(),
+      
 ```
 
 ### Core Architecture Module: `crates/uv-audit-operations/src/reporter.rs`
@@ -1497,11 +1496,11 @@ mod types;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #22836** (2026-10-23): **fix(python): preserve variant in `uv python upgrade`**
-  *Symptoms*: ## Summary  Fixes #22831.  Previously, running `uv python upgrade` without explicit version targets failed to upgrade free-threaded (or other non-default variant) managed Python installations:  1. `From<&ManagedPythonInstallation> for PythonDownloadRequest` hardcoded `PythonVariant::Default` instead of preserving `key.variant` when constructing the download request for installed managed Pythons. As a result, `uv python upgrade` and `uv python install --reinstall` converted free-threaded installations (e.g., `3.14t`) into default-variant requests (`3.14`). 2. `requested_minor_versions` in `crates/uv-python-commands/src/install.rs` tracked only `(major, minor)` tuples from `PythonRequest::Version(VersionRequest::MajorMinor(..))`, ignoring both the `PythonVariant` and `PythonRequest::Key(download_request)` entries created by bare `uv python upgrade`.  This change: - Preserves `key.variant` in `From<&ManagedPythonInstallation> for PythonDownloadRequest`. - Tracks `(major, minor, variant)` in `requested_minor_versions` across both `PythonRequest::Version` and `PythonRequest::Key` so `upgradeable` filtering matches the exact variant being upgraded.  ## Test Plan  - Added unit test `test_download_request_from_installation_preserves_variant` in `crates/uv-python-managed/src/managed.rs`. - Extended `python_upgrade_without_version` in `crates/uv/tests/python/python_upgrade.rs` to verify bare `uv python upgrade` upgrades an installed `3.13.1t` to the latest `3.13t` patch release alongsi
+- **Issue #23012** (2026-10-30): **Allow an empty inline sources table in uv remove**
+  *Symptoms*: ## Summary  With the following configuration, `uv add anyio` and `uv lock --check` succeed, but `uv remove anyio` fails with “Sources in `pyproject.toml` are malformed”.  ```toml [tool.uv] sources = {} ```  Source cleanup tries to open the empty inline table as a regular table. We now skip that lookup when the inline table is empty. Removing the dependency leaves `sources = {}` in place. 
 
-- **Issue #22831** (2026-10-23): **`uv python upgrade` doesn't upgrade free-threaded versions**
-  *Symptoms*: ### Summary  Due to recent infosec hilarity I would like to avoid having old certificate bundles on my system, and as such I would like to upgrade all the available Python versions to their latest bugfix releases and then remove the old ones.  I had a number of Python versions installed by uv.  Focusing to just 3.14, I had  - cpython-3.14.7-linux-x86_64-gnu - cpython-3.14.7+freethreaded-linux-x86_64-gnu  Then I ran `uv python upgrade` and got  - cpython-3.14.9-linux-x86_64-gnu  I expected to also get cpython-3.14.9+freethreaded-linux-x86_64-gnu, which is a thing that exists according to `uv python list --only-downloads`.  (Now I'm off to write a script to clean up the old versions, since #15805 seems stuck.)  ### Platform  Ubuntu 24.04 on WSL (Linux 6.6.87.2-microsoft-standard-WSL2 x86_64 GNU/Linux)  ### Version  uv 0.13.5 (x86_64-unknown-linux-gnu)  ### Python version  Python 3.12.3
+- **Issue #23008** (2026-10-30): **Escape literal paths when adding workspace members**
+  *Symptoms*: ## Summary  When `uv init '[v2]/api'` adds the project to a workspace, it writes `[v2]/api` directly into `tool.uv.workspace.members`. That field accepts globs, so `uv lock` can silently lock a different project at `v/api` or omit the new project entirely.  We escape glob metacharacters when `uv init` or `uv add` writes a concrete member path. For this example, the generated entry is `[[]v2[]]/api`, which matches the literal directory. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1518,328 +1517,301 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `656d02b6` (2026-10-25)
-**Commit Message**: Disable automatic rebase scans in uv-dev (#22918)
+### Incident Patch 1: `564a2074` (2026-10-31)
+**Commit Message**: Consistently use`[expected]` table for packse (#23025)
 
-Each push to `main` in `uv-dev` scans open pull requests for conflicts
-and may rebase them, restarting CI for inactive pull requests. Skip
-these automatic scans in `uv-dev`; manual scans, `bot:rebase` requests,
-and stack retargets remain available.
+Use an explicit `[expected]` table in the static provider order test to
+match the other Packse fixtures.
 
-Co-authored-by: zaniebot <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/pull-request-conflicts.yml` (modified, +3/-1)
+**File**: `crates/uv/tests/pip_install/wheel_variant_compatibility.rs` (modified, +3/-1)
 ```diff
-@@ -35,7 +35,9 @@ env:
- jobs:
-   identify:
-     name: Identify conflicted pull requests
--    if: github.repository == 'astral-sh/uv-dev' || github.repository == 'astral-sh/uv'
-+    if: >-
-+      github.repository == 'astral-sh/uv' ||
-+      (github.repository == 'astral-sh/uv-dev' && github.event_name == 'workflow_dispatch')
-     runs-on: ${{ github.repository_owner == 'astral-sh' && 'github-ubuntu-24.04-x86_64-2' || 'ubuntu-slim' }}
-     timeout-minutes: 5
-     permissions:
+@@ -115,7 +115,9 @@ fn select_variant_by_static_provider_order() -> Result<()> {
+     let server = PackseServer::from_toml(indoc! {r#"
+         name = "static-provider-order"
+         root = {}
+-        expected.satisfiable = true
++
++        [expected]
++        satisfiable = true
+ 
+         [packages.ok.versions."1.0.0"]
+         wheel = false
 ```
 
 ---
 
-### Incident Patch 2: `84515f75` (2026-10-25)
-**Commit Message**: Nest module owners in workspace metadata objects (#22638)
+### Incident Patch 2: `01959f80` (2026-10-31)
+**Commit Message**: Handle project names starting with a digit in `uv init` (#23022)
 
-Replace the workspace metadata `module_owners` map with `modules`. Each
-module name now maps to an object containing an `owners` array. Update
-the documentation and existing snapshots for the new shape.
+## Summary
 
-A ty release containing
-[astral-sh/ruff#29436](https://github.com/astral-sh/ruff/pull/29436)
-must be published before this PR is merged.
+`uv init --package 3d-print` generates a launcher containing `from
+3d_print import main`. The project builds and installs, but running the
+command fails because a Python identifier cannot start with a digit.
 
-This is a followup to
-https://github.com/astral-sh/uv/pull/22395#discussion_r4262558676 by
-@zanieb
+```console
+$ uv init --package 3d-print
+$ cd 3d-print
+$ uv run 3d-print
+  ...
+    from 3d_print import main
+         ^
+SyntaxError: invalid decimal literal
+```
 
-**File**: `crates/uv-lock/src/lock/export/metadata.rs` (modified, +13/-6)
+We now generate `src/_3d_print/` and point the `3d-print` entry point at
+`_3d_print:main`. For backends that infer the module name from the
+distribution name, we also configure the module to include in the wheel.
+
+**File**: `crates/uv-project-commands/src/init.rs` (modified, +86/-36)
 ```diff
-@@ -82,9 +82,9 @@ pub struct Metadata {
-     requires_python: RequiresPython,
-     /// Info about conflicting packages
-     conflicts: MetadataConflicts,
--    /// A mapping from importable module names to the package nodes that provide them
-+    /// Information about importable modules, keyed by module name.
-     #[serde(skip_serializing_if = "BTreeMap::is_empty", default)]
--    module_owners: BTreeMap<ModuleName, Vec<MetadataModuleOwner>>,
-+    modules: BTreeMap<ModuleName, MetadataModule>,
-     /// An index of which nodes are workspace members
-     ///
-     /// These entries are often what you should use as the entry-points into the `resolve` graph.
-@@ -248,6 +248,13 @@ impl MetadataWorkspaceMember {
+@@ -1,3 +1,4 @@
++use std::borrow::Cow;
+ use std::fmt::Write;
+ use std::iter;
+ use std::path::{Path, PathBuf};
+@@ -829,21 +830,31 @@ fn init_project_kind(
+             // Add a build system
+             let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
+             pyproject.push('\n');
+-            pyproject.push_str(&pyproject_build_system(name, build_backend));
++            pyproject.push_str(&pyproject_build_system(
++                &name.as_dist_info_name(),
++                build_backend,
++            ));
+         }
+-        InitProjectKind::ApplicationWithLibrary => {
+-            // Since it'll be packaged, we can add a `[project.scripts]` entry
+-            pyproject.push('\n');
+-            pyproject.push_str(&pyproject_project_scripts(name, name.as_str(), "main"));
+-
+-            // Add a build system
++        InitProjectKind::ApplicationWithLibrary | InitProjectKind::Library => {
+             let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
+-            pyproject.push('\n');
+-            pyproject.push_str(&pyproject_build_system(name, build_backend));
+-            pyproject_build_backend_prerequisites(name, path, build_backend)?;
++            let module = InitModuleName::from_package(name);
++            let module_name = module.as_str();
++            let is_lib = matches!(project_kind, InitProjectKind::Library);
++
++            if !is_lib {
++                pyproject.push_str(&indoc::formatdoc! {r#"
+ 
+-            // Generate `src` files with app-style `main()` in `__init__.py`
+-            generate_package_scripts(name, path, build_backend, false)?;
++                    [project.scripts]
++                    {name} = "{module_name}:main"
++                "#});
++            }
++            if let Some(explicit) = module.explicit.as_deref() {
++                pyproject.push_str(&pyproject_module_override(explicit, build_backend));
++            }
++            pyproject.push('\n');
++            pyproject.push_str(&pyproject_build_system(module_name, build_backend));
++            pyproject_build_backend_prerequisites(&module, path, build_backend)?;
++            generate_package_scripts(name, module_name, path, build_backend, is_lib)?;
+         }
+         InitProjectKind::Application => {
+             let main_contents = indoc::formatdoc! {r#"
+@@ -863,15 +874,6 @@ fn init_project_kind(
+                 fs_err::write(path.join("main.py"), main_contents)?;
+             }
+         }
+-        InitProjectKind::Library => {
+-            let build_backend = build_backend.unwrap_or(ProjectBuildBackend::Uv);
+-            pyproject.push('\n');
+-            pyproject.push_str(&pyproject_build_system(name, build_backend));
+-            pyproject_build_backend_prerequisites(name, path, build_backend)?;
+-
+-            // Generate `src` files
+-            generate_package_scripts(name, path, build_backend, true)?;
+-        }
+     }
+     fs_err::write(path.join("pyproject.toml"), pyproject)?;
+     Ok(())
+@@ -934,8 +936,7 @@ fn pyproject_project(
+ 
+ /// Generate the `[build-system]` section of a `pyproject.toml`.
+ /// Generate the `[tool.]` section of a `pyproject.toml` where applicable.
+-fn pyproject_build_system(package: &PackageName, build_backend: ProjectBuildBackend) -> String {
+-    let module_name = package.as_dist_info_name();
++fn pyproject_build_system(module_name: &str, build_backend: ProjectBuildBackend) -> String {
+     match build_backend {
+         ProjectBuildBackend::Uv => {
+             // Limit to the stable version range.
+@@ -1018,24 +1019,70 @@ fn pyproject_build_system(package: &PackageName, build_backend: ProjectBuildBack
      }
  }
  
-+/// Information about an importable module.
-+#[derive(Debug, serde::Serialize)]
-+struct MetadataModule {
-+    /// Installed distributions that provide this module.
-+    owners: Vec<MetadataModuleOwner>,
+-/// Generate the `[project.scripts]` section of a `pyproject.toml`.
+-fn pyproject_project_scripts(package: &PackageName, executable_name: &str, target: &str) -> String {
+-    let module_name = package.as_dist_info_name();
+-    indoc::formatdoc! {r#"
+-        [project.scripts]
+-        {executable_name} = "{module_name}:{target}"
+-    "#}
++/// The module name inferred from a distribution and any override needed by the scaffold.
++struct InitModuleName<'a> {
++    inferred: Cow<'a, str>,
++    explicit: Option<String>,
 +}
 +
- /// An installed distribution that provides an importable module.
- #[derive(Debug, serde::Serialize)]
- struct MetadataModuleOwner {
-@@ -1468,7 +1475,7 @@ impl Metadata {
-             environment: None,
-             script,
-             workspace: workspace_metadata,
--            module_owners: BTreeMap::new(),
-+            modules: BTreeMap::new(),
-             workspace_root,
-             requires_python: lock.requires_python.clone(),
-             members,
-@@ -1516,8 +1523,8 @@ impl Metadata {
-     }
- 
-     #[must_use]
--    pub fn with_module_owners(mut self, module_owners: BTreeMap<ModuleName, Vec<String>>) -> Self {
--        self.module_owners = module_owners
-+    pub fn with_modules(mut self, module_owners: BTreeMap<ModuleName, Vec<String>>) -> Self {
-+        self.modules = module_owners
-             .into_iter()
-             .filter_map(|(module, owners)| {
-                 let owners = owners
-@@ -1529,7 +1536,7 @@ impl Metadata {
-                     })
-                     .map(|package_id| MetadataModuleOwner { package_id })
-                     .collect::<Vec<_>>();
--                (!owners.is_empty()).then_some((module, owners))
-+                (!owners.is_empty()).then_some((module, MetadataModule { owners }))
-             })
-             .collect();
-         self
++impl<'a> InitModuleName<'a> {
++    fn from_package(package: &'a PackageName) -> Self {
++        let inferred = package.as_dist_info_name();
++        // Distribution names can start with a digit, but Python identifiers cannot.
++        let explicit = inferred
++            .starts_with(|c: char| c.is_ascii_digit())
++            .then(|| format!("_{inferred}"));
++        Self { inferred, explicit }
++    }
++
++    fn as_str(&self) -> &str {
++        self.explicit.as_deref().unwrap_or(&self.inferred)
++    }
++}
++
++/// Configure build backends that discover packages by their distribution name.
++fn pyproject_module_override(module_name: &str, build_backend: ProjectBuildBackend) -> String {
++    match build_backend {
++        ProjectBuildBackend::Uv => indoc::formatdoc! {r#"
++
++            [tool.uv.build-backend]
++      
 ```
 
-**File**: `crates/uv-workspace-commands/src/metadata.rs` (modified, +1/-1)
+**File**: `crates/uv/tests/project/init.rs` (modified, +106/-0)
 ```diff
-@@ -312,7 +312,7 @@ pub async fn metadata(
-         .context("Failed to inspect environment")?;
-         export = export
-             .with_environment(&environment, collected.packages)
--            .with_module_owners(collected.module_owners);
-+            .with_modules(collected.module_owners);
-     }
- 
-     print_metadata(&export, printer)
-```
-
-**File**: `crates/uv/tests/project/check.rs` (modified, +2/-2)
-```diff
-@@ -16,9 +16,9 @@ use uv_test::{diff_snapshot, uv_snapshot};
- fn workspace_check(context: &uv_test::TestContext) -> Command {
-     let mut command = context.check();
-     command.env("TY_OUTPUT_FORMAT", "concise");
--    // Select ty 0.0.80 independently of the suite-wide cutoff so these checks
-+    // Select ty 0.0.90 independently of the suite-wide cutoff so these checks
-     // can exercise new ty features without disrupting other tests.
--    command.env(EnvVars::UV_EXCLUDE_NEWER, "2026-09-10T00:00:00Z");
-+    command.env(EnvVars::UV_EXCLUDE_NEWER, "2026-10-21T00:00:00Z");
-     command
+@@ -625,6 +625,55 @@ fn init_package() -> Result<()> {
+     Ok(())
  }
  
-```
-
-**File**: `crates/uv/tests/workspace/workspace_metadata.rs` (modified, +231/-175)
-```diff
-@@ -522,27 +522,35 @@ import iniconfig
-       "conflicts": {
-         "sets": []
-       },
--      "module_owners": {
--        "iniconfig": [
--          {
--            "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
--          }
--        ],
--        "iniconfig._parse": [
--          {
--            "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
--          }
--        ],
--        "iniconfig._version": [
--          {
--            "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
--          }
--        ],
--        "iniconfig.exceptions": [
--          {
--            "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
--          }
--        ]
-+      "modules": {
-+        "iniconfig": {
-+          "owners": [
-+            {
-+              "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
-+            }
-+          ]
-+        },
-+        "iniconfig._parse": {
-+          "owners": [
-+            {
-+              "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
-+            }
-+          ]
-+        },
-+        "iniconfig._version": {
-+          "owners": [
-+            {
-+              "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
-+            }
-+          ]
-+        },
-+        "iniconfig.exceptions": {
-+          "owners": [
-+            {
-+              "package_id": "iniconfig==2.0.0@registry+https://pypi.org/simple"
-+            }
-+          ]
-+        }
-       },
-       "resolution": {
-         "iniconfig==2.0.0@registry+https://pypi.org/simple": {
-@@ -742,7 +750,7 @@ fn workspace_metadata_script_exact_sync_removes_extraneous_packages() -> Result<
-     insta::with_settings!({ filters => context.filters() }, {
-         insta::assert_json_snapshot!(serde_json::json!({
-             "installed_packages": metadata["environment"]["packages"],
--            "module_owners": metadata["module_owners"],
-+            "modules": metadata["modules"],
-             "resolution": metadata["resolution"],
-         }), @r#"
-         {
-@@ -754,12 +762,14 @@ fn workspace_metadata_script_exact_sync_removes_extraneous_packages() -> Result<
-               "version": "0.1.0"
-             }
-           },
--          "module_owners": {
--            "extra_module": [
--              {
--                "package_id": "metadata-extra==0.1.0@unmanaged+[SITE_PACKAGES]/metadata_extra-0.1.0.dist-info"
--              }
--            ]
-+          "modules": {
-+            "extra_module": {
-+              "owners": [
-+                {
-+                  "package_id": "metadata-extra==0.1.0@unmanaged+[SITE_PACKAGES]/metadata_extra-0.1.0.dist-info"
-+                }
-+              ]
-+            }
-           },
-           "resolution": {
-             "script+[TEMP_DIR]/script.py": {
-@@ -793,12 +803,12 @@ fn workspace_metadata_script_exact_sync_removes_extraneous_packages() -> Result<
-             .status
-             .success(),
-         "installed_packages": metadata["environment"]["packages"],
--        "module_owners": metadata.get("module_owners"),
-+        "modules": metadata.get("modules"),
-     }), @r#"
-     {
-       "extraneous_installed": false,
-       "installed_packages": {},
--      "module_owners": null
-+      "modules": null
-     }
-     "#);
++/// A launcher for a digit-prefixed distribution must use a valid module name in its import.
++#[test]
++fn init_package_leading_digit() {
++    let context = uv_test::test_context!("3.12");
++
++    uv_snapshot!(context.filters(), context.init().arg("--package").arg("3d-print"), @"
++    exit_code: 0 (success)
++    ----- stderr -----
++    Initialized project `3d-print` at `[TEMP_DIR]/3d-print`
++    ");
++
++    insta::with_settings!({ filters => context.filters() }, {
++        assert_snapshot!(context.read("3d-print/pyproject.toml"), @r#"
++        [project]
++        name = "3d-print"
++        version = "0.1.0"
++        description = "Add your description here"
++        readme = "README.md"
++        requires-python = ">=3.12"
++        dependencies = []
++
++        [project.scripts]
++        3d-print = "_3d_print:main"
++
++        [tool.uv.build-backend]
++        module-name = "_3d_print"
++
++        [build-system]
++        requires = ["uv_build>=[CURRENT_VERSION],<[NEXT_BREAKING]"]
++        build-backend = "uv_build"
++        "#);
++    });
++
++    let child = context.temp_dir.child("3d-print");
++    uv_snapshot!(context.filters(), context.run().current_dir(&child).env_remove(EnvVars::VIRTUAL_ENV).arg("3d-print"), @"
++    exit_code: 0 (success)
++    ----- stdout -----
++    Hello from 3d-print!
++
++    ----- stderr -----
++    Using CPython 3.12.[X] interpreter at: [PYTHON-3.12]
++    Creating virtual environment at: .venv
++    Resolved 1 package in [TIME]
++    Prepared 1 package in [TIME]
++    Installed 1 package in [TIME]
++     + 3d-print==0.1.0 (from file://[TEMP_DIR]/3d-print)
++    ");
++}
++
+ #[test]
+ fn init_bare_lib() {
+     let context = uv_test::test_context!("3.12");
+@@ -3756,6 +3805,63 @@ fn init_app_build_backend_scikit() -> Result<()> {
+     Ok(())
+ }
  
-@@ -1264,22 +1274,26 @@ fn workspace_metadata_exact_sync_removes_extraneous_packages() -> Result<()> {
-     insta::with_settings!({ filters => context.filters() }, {
-         insta::assert_json_snapshot!(serde_json::json!({
-             "extraneous_installed": extraneous_installed,
--            "module_owners": metadata["module_owners"],
-+            "modules": metadata["modules"],
-             "required_installed": required_installed,
-         }), @r#"
-         {
-           "extraneous_installed": true,
--          "module_owners": {
--            "extra_module": [
--              {
--                "package_id": "metadata-extra==0.1.0@unmanaged+[SITE_PACKAGES]/metadata_extra-0.1.0.dist-info"
--              }
--            ],
--            "required_module": [
--              {
--                "package_id": "metadata-required==0.1.0@path+[TEMP_DIR]/metadata_required-0.1.0-py3-none-any.whl"
--              }
--            ]
-+          "modules": {
-+            "extra_module": {
-+              "owners": [
-+                {
-+                  "package_id": "metadata-extra==0.1.0@unmanaged+[SITE_PACKAGES]/metadata_extra-0.1.0.dist-info"
-+                }
-+              ]
-+            },
-+            "required_module": {
-+              "owners": [
-+                {
-+                  "package_id": "metadata-required==0.1.0@path+[TEMP_DIR]/metadata_required-0.1.0-py3-none-any.whl"
-+                }
-+              ]
-+            }
-           },
-           "required_installed": true
-         }
-@@ -1309,17 +1323,19 @@ fn workspace_metadata_exact_sync_removes_extraneous_packages() -> Result<()> {
-     insta::with_settings!({ filters => context.filters() }, {
-         insta::assert_json_snapshot!(serde_
-```
-
-**File**: `docs/reference/internals/metadata.md` (modified, +11/-8)
-```diff
-@@ -58,8 +58,9 @@ An installed distribution is matched by normalized name to a package in the sele
- matched entry then uses that package's resolution node ID. The entry's `version` reports the actual
- installed version; node IDs should be treated as opaque.
- 
--`module_owners` maps importable module names to package IDs in `environment.packages`. IDs for
--packages outside the selected resolution do not appear in `resolution`.
-+`modules` maps importable module names to objects whose `owners` array contains `package_id`
-+references to `environment.packages`. IDs for packages outside the selected resolution do not appear
-+in `resolution`. The map is omitted when empty.
- 
- ## Handling multiple versions of a package
- 
-@@ -227,12 +228,14 @@ Here is a human-readable annotated example:
-   "requires_python": ">=3.12",
-   // Module owners refer to entries in `environment.packages`.
-   // Matched package IDs also refer to nodes in `resolution`.
--  "module_owners": {
--    "idna": [
--      {
--        "package_id": "idna==3.10@unmanaged+/workspace/.venv/lib/python3.12/site-packages/idna-3.10.dist-info"
--      }
--    ]
-+  "modules": {
-+    "idna": {
-+      "owners": [
-+        {
-+          "package_id": "idna==3.10@unmanaged+/workspace/.venv/lib/python3.12/site-packages/idna-3.10.dist-info"
-+        }
-+      ]
-+    }
-   },
-   // A list of workspace members
-   "members": [
++/// Scikit must install the native extension into the package imported by the launcher.
++#[test]
++fn init_app_build_backend_scikit_leading_digit() {
++    let context = uv_test::test_context!("3.12");
++
++    uv_snapshot!(context.filters(), context.init().args(["--package", "--build-backend", "scikit", "3d-print"]), @"
++    exit_code: 0 (success)
++    ----- stderr -----
++    Initialized project `3d-print` at `[TEMP_DIR]/3d-print`
++    ");
++
++    assert_snapshot!(context.read("3d-print/pyproject.toml"), @r#"
++    [project]
++    name = "3d-print"
++    version = "0.1.0"
++    description = "Add your description here"
++    readme = "README.md"
++    requires-python = ">=3.12"
++    dependencies = []
++
++    [project.scripts]
++    3d-print = "_3d_print:main"
++
++    [tool.scikit-build.wheel]
++    packages = ["src/_3d_print"]
++
++    [tool.scikit-build]
++    minimum-version = "build-system.requires"
++    build-dir = "build/{wheel_tag}"
++
++    [tool.uv]
++    cache-keys = [{ file = "pyproject.toml" }, { file = "src/**/*.{h,c,hpp,cpp}" }, { file = "CMakeLists.txt" }]
++
++    [build-system]
++    requires = ["scikit-build-core>=0.12", "pybind11>=3"]
++    build-backend = "scikit_build_core.build"
++    "#);
++
++    assert_snapshot!(context.read("3d-print/src/_3d_print/__init__.py"), @"
++    from _3d_print._core import hello_from_bin
++
++
++    def main() -> None:
++        print(hello_from_bin())
++    ");
++
++    assert_snapshot!(context.read("3d-print/CMakeLists.txt"), @"
++    cmake_minimum_required(VERSION 3.15...4.0)
++    project(${SKBUILD_PROJECT_NAME} LANGUAGES CXX)
++
++    find_package(pybind11 CONFIG REQUIRED)
++
++    pybind11_add_module(_core MODULE src/main.cpp)
++    install(TARGETS _core DESTINATION _3d_print)
++    ");
++}
++
+ /// Run `uv init --lib --build-backend maturin` to create a packaged application project
+ #[test]
+ #[cfg(feature = "test-crates-io")]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22918** (2026-10-25): Disable automatic rebase scans in uv-dev (@astral-automations-bot[bot])
-- **PR #22917** (closed): Experiment with bbtree for Simple API version grouping (@charliermarsh)
-- **PR #22910** (closed): Avoid activating conflicting extras during workspace metadata environment inspection (@lucasmeyer-dev)
-- **PR #22908** (closed): Move UV_RUN_MAX_RECURSION_DEPTH parsing to EnvironmentOptions (@joshcazalas)
-- **PR #22904** (2026-10-24): Restore build-script input timestamps in Linux CI (@astral-automations-bot[bot])
-- **PR #22903** (closed): Enable the segment heap for Windows x64 release builds (@charliermarsh)
+- **PR #23027** (closed): feat(export): include license information in CycloneDX export (#21617) (@omid-io)
+- **PR #23025** (2026-10-31): Consistently use`[expected]` table for packse (@konstin)
+- **PR #23022** (2026-10-31): Handle project names starting with a digit in `uv init` (@charliermarsh)
+- **PR #23021** (2026-10-30): Add `PackseServer::from_toml` convenience constructor (@konstin)
+- **PR #23019** (closed): fix: Annotated-tag object id given as a git rev fails with "Exact Git revision does not match precise commit" (@xixi-box)
+- **PR #23017** (2026-10-30): Preserve inline comments when updating an existing dependency group (@charliermarsh)
 
 ---
 
@@ -1859,30 +1831,30 @@ https://github.com/astral-sh/uv/pull/22395#discussion_r4262558676 by
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Disable automatic rebase scans in uv-dev (#22918)
+## X. Consistently use`[expected]` table for packse (#23025)
 
 **RULE**:
-When implementing operations in `.github/workflows/pull-request-conflicts.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv/tests/pip_install/wheel_variant_compatibility.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `656d02b6`: Disable automatic rebase scans in uv-dev (#22918). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `564a2074`: Consistently use`[expected]` table for packse (#23025). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pull-request-conflicts.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv/tests/pip_install/wheel_variant_compatibility.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    if: >-
-      github.repository == 'astral-sh/uv' ||
-      (github.repository == 'astral-sh/uv-dev' && github.event_name == 'workflow_dispatch')
+
+        [expected]
+        satisfiable = true
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    if: github.repository == 'astral-sh/uv-dev' || github.repository == 'astral-sh/uv'
+        expected.satisfiable = true
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `656d02b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `564a2074` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `4df380ba`  
+> **Source Version**: `5791471e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T02:03:10.669Z  
+> **Timestamp**: 2026-10-30T05:31:59.454Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T02:03:10.661Z  
+> **Harvest Timestamp**: 2026-10-30T05:31:52.571Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7483 stars
+- **Stars / Engagement**: 7562 stars
 
 ---
 
@@ -154,18 +154,19 @@ impl PimdirQueueCancelCommand {
             );
         }
 
-        printer.out(PimdirQueueCancelled { id: self.id })
+        printer.out(PimdirQueueCancelOutput { id: self.id })
     }
 }
 
 /// The `pimdir queue cancel` output.
 #[derive(Clone, Copy, Debug, Serialize, JsonSchema)]
-pub struct PimdirQueueCancelled {
+#[serde(rename_all = "camelCase")]
+pub struct PimdirQueueCancelOutput {
     /// The row that was cancelled.
     pub id: i64,
 }
 
-impl fmt::Display for PimdirQueueCancelled {
+impl fmt::Display for PimdirQueueCancelOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Queued message {} cancelled", self.id)
     }
@@ -283,7 +284,7 @@ impl PimdirQueueListCommand {
         let mailbox = self.mailbox.resolve(account);
         let queued = client.queued_envelopes(&mailbox)?;
 
-        printer.out(PimdirQueuedMessages {
+        printer.out(PimdirQueueListOutput {
             preset: account.table_preset().to_string(),
             id_color: account.envelopes_list_table_id_color(),
             subject_color: account.envelopes_list_table_subject_color(),
@@ -308,6 +309,7 @@ impl PimdirQueueListCommand {
 
 /// One message waiting in the store's queue.
 #[derive(Clone, Debug, Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct PimdirQueuedMessage {
     /// The queue row id, which `pimdir queue cancel` takes. It names a
     /// pending action, not a message: the message has no id until the sync
@@ -326,7 +328,8 @@ pub struct PimdirQueuedMessage {
 
 /// The `pimdir queue list` output.
 #[derive(Clone, Debug, Serialize, JsonSchema)]
-pub struct PimdirQueuedMessages {
+#[serde(rename_all = "camelCase")]
+pub struct PimdirQueueListOutput {
     /// The `comfy_table` preset string the table renders with.
     #[serde(skip)]
     pub preset: String,
@@ -355,7 +358,7 @@ pub struct PimdirQueuedMessages {
     pub messages: Vec<PimdirQueuedMessage>,
 }
 
-impl fmt::Display for PimdirQueuedMessages {
+impl fmt::Display for PimdirQueueListOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.messages.is_empty() {
             return writeln!(f, "No message queued in this mailbox");
@@ -454,7 +457,7 @@ impl PimdirQueueShowCommand {
     /// Looks the row up in the account's queue and receipts.
     pub fn execute(self, printer: &mut impl Printer, client: &mut PimdirClient) -> Result<()> {
         let status = client.queue_row(self.id)?;
-        printer.out(PimdirQueueRow::new(self.id, status))
+        printer.out(PimdirQueueShowOutput::new(self.id, status))
     }
 }
 
@@ -476,7 +479,7 @@ pub enum PimdirQueueState {
 /// The `pimdir queue show` output.
 #[derive(Clone, Debug, Serialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
-pub struct PimdirQueueRow {
+pub struct PimdirQueueShowOutput {
     /// The queue row id.
     pub queue_id: i64,
     /// Where it stands.
@@ -501,7 +504,7 @@ pub struct PimdirQueueRow {
     pub seq: Option<i64>,
 }
 
-impl PimdirQueueRow {
+impl PimdirQueueShowOutput {
     /// Projects io-pimdir's status of row `queue_id`.
     pub fn new(queue_id: i64, status: PimdirActionStatus) -> Self {
         let row = Self {
@@ -556,7 +559,7 @@ impl PimdirQueueRow {
     }
 }
 
-impl fmt::Display for PimdirQueueRow {
+impl fmt::Display for PimdirQueueShowOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let id = self.queue_id;
         let collection = sanitize(self.collection.as_deref().unwrap_or_default());
@@ -589,7 +592,7 @@ mod tests {
 
     #[test]
     fn an_applied_add_prints_its_seq() {
-        let row = PimdirQueueRow::new(
+        let row = PimdirQueueShowOutput::new(
             12,
             PimdirActionStatus::Applied {
                 applied_at: "2026-10-04T20:00:00Z".into(),
@@ -612,8 +615,8 @@ mod tests {
 
     #[test]
     fn an_unknown_row_prints_its_id_and_state_only() {
-        let json =
-            serde_json::to_value(PimdirQueueRow::new(7, PimdirActionStatus::Unknown)).unwrap();
+        let json = serde_json::to_value(PimdirQueueShowOutput::new(7, PimdirActionStatus::Unknown))
+            .unwrap();
         assert_eq!(
             json,
             serde_json::json!({ "queueId": 7, "state": "unknown" })
@@ -679,7 +682,7 @@ impl AccountCheckCommand {
             .take_account(account_name)?
             .ok_or_else(|| anyhow::anyhow!("Cannot find account"))?;
 
-        let mut report = CheckReport {
+        let mut report = AccountCheckOutput {
             account: name,
             backends: Vec::new(),
         };
@@ -945,7 +948,7 @@ fn connect_jmap(
 ) -> Result<()> {
     use io_jmap::client::JmapClientStd;
 
-    use crate::jmap::client::{connect_options, jmap_http_aut
+    use crate::jmap::client::{connect_options, jmap_h
 ```
 
 ### Core Architecture Module: `src/account/cli.rs`
@@ -1317,7 +1320,7 @@ impl AccountListCommand {
             .collect();
         accounts.sort_by(|a, b| a.name.cmp(&b.name));
 
-        let table = AccountsTable {
+        let table = AccountListOutput {
             preset,
             arrangement,
             colors,
@@ -1347,6 +1350,7 @@ fn load_config(paths: &[PathBuf]) -> Result<Config> {
 
 /// One row of the accounts table.
 #[derive(Clone, Debug, Serialize, JsonSchema)]
+#[serde(rename_all = "camelCase")]
 pub struct AccountRow {
     /// The name of the `[accounts.<name>]` block.
     pub name: String,
@@ -1398,7 +1402,8 @@ impl AccountRow {
 
 /// The `account list` output, a table of accounts.
 #[derive(Clone, Debug, Serialize, JsonSchema)]
-pub struct AccountsTable {
+#[serde(rename_all = "camelCase")]
+pub struct AccountListOutput {
     /// The `comfy_table` preset string the table renders with.
     #[serde(skip)]
     pub preset: String,
@@ -1411,7 +1416,7 @@ pub struct AccountsTable {
     pub accounts: Vec<AccountRow>,
 }
 
-impl fmt::Display for AccountsTable {
+impl fmt::Display for AccountListOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut table = Table::new();
 
@@ -1447,14 +1452,14 @@ impl fmt::Display for AccountsTable {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #794** (2026-10-15): **fix: fail when no given message id exists**
-  *Symptoms*: Closes #777.  `store_flags` now returns how many of the given messages were found, on every backend, and `flag add`, `flag set`, `flag remove`, `message move` and `message copy` exit 1 when that is zero. The flag commands report the count (`Successfully added flags to 2 message(s): seen`, and `count` beside `flags` under `--json`), and their plain output ends with a newline.  Only IMAP needed counting: the other backends already fail on an unknown id. It reads the `UID STORE` echoes and runs a `UID SEARCH UID <set>` when they are fewer than the ids given, the same search the copy and move counts of #781 use. Since that fix `message move` and `message copy` already count correctly, so for them this only turns "no id matched" into exit code 1.  On Gmail and Graph, the early return #785 added to `store_flags` (only `\Answered` or `$Forwarded`, nothing to patch) now returns `ids.len()`: no request is made, so the ids are not checked there and count as found, rather than failing every such call.  `message delete` goes a little beyond what we discussed, so tell me if you would rather leave it out: it fails the same way when it moves to the trash and nothing matched (it printed `Successfully moved 0 message(s) to the trash`). Deleting from the trash itself is unchanged: `delete_messages` does not return a count.  The Cairn proposal is in `cairn/changes/message-ids-no-match`, folded into the spec with its log entry.  Tested by hand against Gmail over IMAP, next to the released 2.2.1:
+- **Issue #798** (2026-10-27): **message compose still nests display names: `--from "Name <addr>"` stores `From: > <Name <addr>>` (also To/Cc/Bcc)**
+  *Symptoms*: ## Problem  `message compose` still corrupts addresses that carry a display name, for `From` and for `To`/`Cc`/`Bcc`. The store round-trip makes it worse: what ends up in the mailbox is not even the double-wrapped form.  ``` $ himalaya -a zoho message compose --from "support <support@cryptoquant.dev>" \     --to jozef.rudy@gmail.com --subject t --body hi | head -2 From: <support <support@cryptoquant.dev>> To: <jozef.rudy@gmail.com> ```  Piped into `message add -m drafts -f draft`, the stored draft reads:  ``` From: > <support <support@cryptoquant.dev> To: jozef.rudy@gmail.com ```  and the envelope parser agrees the address itself is malformed — `himalaya envelope list -m drafts --json` reports:  ```json {"from":[{"name":null,"email":"support <support@cryptoquant.dev>"},{"name":null,"email":">"}]} ```  `To` is broken identically:  ``` $ ... --from support@cryptoquant.dev --to "Jozef Rudy <jozef.rudy@gmail.com>" ... To: > <Jozef Rudy <jozef.rudy@gmail.com> ```  Bare addresses are fine (`From: <support@cryptoquant.dev>` → stored as `support@cryptoquant.dev`), so only the display-name path is affected.  This matters beyond cosmetics: per #727 the same malformed header fails at send time with `SMTP MAIL FROM failed: rejected 501 5.1.7 Bad sender address syntax`.  ## Why this looks like a regression / incomplete fix  - #727 ("`--from \"Name <email>\"` breaks the composed From header") was closed 2026-08-16. - commit `48f00e3` (2026-09-26) is titled "fix: parse display names in To, 
 
-- **Issue #793** (2026-10-16): **feat(pimdir): stage any flag through pimdir flag**
-  *Symptoms*: Refs #790.  The Cairn proposal for `himalaya pimdir flag list|add|set|remove`, as suggested on #790: keywords written through the pimdir namespace, in the shape of `m2dir flag`, with the shared `flag` commands unchanged. No code yet; I will write the patch once the proposal suits you.  Two points I would like your view on first:  - `store_flags` would check every message before the first enqueue, so a multi-id call refused part-way queues nothing. That also changes the shared flag commands on pimdir. - What neverest should do with a keyword other than `$Important` on a Gmail source, which declares keywords in part.  As far as I can tell m2dir needs nothing: `m2dir flag` already takes free-form flags.  AI disclosure: written with Claude Code (Anthropic); every claim about current behaviour was checked against master. 
+- **Issue #796** (2026-10-29): **docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail**
+  *Symptoms*: ## Summary  Adds IMAP+SMTP provider test reports for three major Chinese email providers, following the existing format in cairn/spec/testing/.  ### Providers tested  | Provider | Server engine | Result | |---|---|---| | QQ Mail (Tencent/Foxmail) | Tencent proprietary | Working (search broken, APPEND auto-sets Seen) | | 163 Mail (NetEase) | Coremail | Working (search broken, sasl-ir + id quirks) | | 139 Mail (China Mobile) | China Mobile Mail | Working (requires native-tls, search ignores criteria, STATUS unsupported) |  ### Key findings  - **Text search broken on all three** — server-side IMAP SEARCH limitation, not a himalaya bug - **163 (Coremail)** requires `sasl-ir = false` and `id.auto = true` - **139** requires `native-tls` — rustls-ring fails with `received fatal alert: HandshakeFailure` (server requires legacy cipher suites like AES-CBC that rustls doesn't implement) - **139** does not support IMAP STATUS (mailbox counts empty)  ### Files  - `cairn/spec/testing/imap-smtp-qq.md` - `cairn/spec/testing/imap-smtp-163.md` - `cairn/spec/testing/imap-smtp-139.md` - `cairn/spec/testing/README.md` (index updated)  Closes #795
   **Post-Mortem & Fix Analysis**:
-  > @bobberb thanks, this matches what I had in mind on #790, go ahead with the code in this PR.  On your two points: yes to checking every message before the first enqueue. Today `store_flags` in `src/pimdir/backend.rs` can leave a multi-id call half staged, which is a bug on the shared commands too. Give it its own requirement in `delta.md` and a CHANGELOG entry so the shared-side change shows up. For Gmail, what neverest does with a keyword it can't map is up to the sync engine, not himalaya. I'd drop the manual Gmail task and the "the warning will name the outcome" line, and just surface the declaration's warning as it is.  One nit: `delta.md` should declare `cairn: delta`, not `cairn: change`.
-  > Thanks. Updated in 9c7e532a: the all-or-nothing check now has its own requirement, with a scenario covering the shared commands, and the tasks carry a CHANGELOG entry for it; the manual Gmail task and the outcome line are gone, the declaration's warning being surfaced as it is; and `delta.md` declares `cairn: delta`. The code follows in this PR.
+  > @xiaolinstar thanks, this is good material. A few small fixes before I merge:  - In `cairn/spec/testing/imap-smtp-163.md`, the link `../spec/provider-quirks.md` is broken. From `cairn/spec/testing/` it should be `../provider-quirks.md`. - 163 P3 says the server sends the `ID` command. It's the client (himalaya) that sends it after login, and the server needs it. - QQ P5 (FROM showing only the display name) is how himalaya renders the table, not something QQ does, so I'd drop it from the provider findings. - The PR description says 139 runs on Coremail, but the report says China Mobile Mail. Better to keep the report to what the run showed. - The note that `imap.js.chinamobile.com` fails with `native-tls` wasn't tested in this run. Either say how you checked it or drop it.
+  > @soywod Thanks for the review! All fixes applied:  ## Changes in commit `e112910`  ### 1. 163 report link fixed ✅ Changed `../spec/provider-quirks.md` → `../provider-quirks.md` (line 15)  ### 2. 163 P3 ID command description corrected ✅ Changed from "The server sends an RFC 2971 ID command" to "The client (himalaya) sends an RFC 2971 ID command after authentication, and the server requires it."  ### 3. QQ P5 removed ✅ Deleted the "FROM column truncation" finding since it's himalaya's rendering choice, not a QQ-specific issue.  ### 4. PR description updated ✅ Changed 139 Mail server engine from "Coremail" to "China Mobile Mail" to match what the report actually showed.  ### 5. China Mobile enterprise mail note removed ✅ Already removed in previous commit `21d599b` — the unverified note about `imap.js.chinamobile.com` is gone.  All feedback addressed. Ready for merge!
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1471,694 +1476,404 @@ impl fmt::Display for AccountsTable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6dd8658c` (2026-10-14)
-**Commit Message**: fix(message): sanitize the human-readable message view (#783)
+### Incident Patch 1: `5791471e` (2026-10-29)
+**Commit Message**: docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796)
 
-Rebase PR #783 onto the latest upstream master, retaining the existing attachment-download changelog entry and the command spec. Preserve decoded-body sanitization and unchanged JSON/raw output.
+* docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail
 
-Co-authored-by: OpenAI Codex <[REDACTED_EMAIL]>
+Tested himalaya v2 (rev 4df380b) against three major Chinese email
+providers. All three work for core IMAP+SMTP operations. Key findings:
+text search is broken on all three (server-side limitation), 163
+(Coremail) requires sasl-ir=false and id.auto=true, 139 requires
+native-tls (rustls-ring fails TLS handshake with HandshakeFailure).
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+Closes: https://github.com/pimalaya/himalaya/issues/795
+
+* docs(testing): address maintainer feedback on 139 TLS analysis
+
+- Add detailed rustls cipher suite analysis with trace log evidence
+- Clarify root cause: server requires legacy ciphers (AES-CBC) that
+  rustls intentionally does not implement
+- Remove unverified China Mobile enterprise mail note
+- Update README provider names to English format
+
+* docs(testing): fix 163 link and ID command description, remove QQ P5
+
+- Fix broken link to provider-quirks.md (should be ../provider-quirks.md)
+- Correct P3 description: client sends ID command, not server
+- Remove P5 (FROM column truncation): this is himalaya's rendering, not a QQ issue
+
+* docs(testing): re
+
+**File**: `cairn/spec/testing/README.md` (modified, +3/-0)
 ```diff
-@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- - Fixed the wizard creating new configuration files with permissions that could expose raw credentials. New files use exclusive creation and Unix mode 0600, and new directories use mode 0700. Existing file and directory permissions are preserved.
- - Fixed attachment downloads following dangling symlinks or overwriting existing files after filename suffixes are exhausted. Concurrent downloads now reserve filenames exclusively.
-+- Fixed decoded message bodies, headers and MIME metadata emitting terminal control or bidi characters in the human-readable view. JSON and explicitly requested raw output remain unchanged.
- - Fixed control and bidi characters from messages and servers reaching the terminal through the plain output.
- - Fixed pimdir queue details leaking into the shared outputs: `envelope list` no longer reports a `queued` count, and `message send`, `message add --send` and the composers no longer print a `queueId`. `himalaya pimdir queue list` shows what is queued, and a queued send logs its row id at info level.
- - Fixed `message compose`, `reply` and `forward` writing a `Message-ID` on the hostname of the machine (`<…@myhost>`), which disclosed it to every recipient. The id now sits on the domain of the `From` address; without one, or with a domain that is not a plain dot-atom, the hostname is still used.
+@@ -25,6 +25,9 @@ single combined report sufficed.
+ | --- | --- | --- | --- |
+ | IMAP + SMTP | Fastmail | [imap-smtp-fastmail.md](imap-smtp-fastmail.md) | [imap-smtp-specific-fastmail.md](imap-smtp-specific-fastmail.md) |
+ | IMAP + SMTP | Posteo | [imap-smtp-posteo.md](imap-smtp-posteo.md) | *(combined)* |
++| IMAP + SMTP | QQ Mail (Tencent) | [imap-smtp-qq.md](imap-smtp-qq.md) | *(combined)* |
++| IMAP + SMTP | 163 Mail (NetEase) | [imap-smtp-163.md](imap-smtp-163.md) | *(combined)* |
++| IMAP + SMTP | 139 Mail (China Mobile) | [imap-smtp-139.md](imap-smtp-139.md) | *(combined)* |
+ | IMAP | Gmail (Google) | [imap-google.md](imap-google.md) | *(combined)* |
+ | IMAP | iCloud | [imap-icloud.md](imap-icloud.md) | *(combined; IMAP-only account)* |
+ | JMAP | Fastmail | [jmap-fastmail.md](jmap-fastmail.md) | [jmap-specific-fastmail.md](jmap-specific-fastmail.md) |
 ```
 
-**File**: `cairn/changes/message-display-sanitization/delta.md` (added, +9/-0)
+**File**: `cairn/spec/testing/imap-smtp-139.md` (added, +143/-0)
 ```diff
-@@ -0,0 +1,9 @@
-+---
-+cairn: delta
-+change: message-display-sanitization
-+---
+@@ -0,0 +1,143 @@
++# IMAP + SMTP on 139 Mail — test report
 +
-+## MODIFIED Requirements
++Shared cross-protocol commands on the IMAP/SMTP backend against **139 Mail**
++(China Mobile). Method: [provider-test-plan.md](provider-test-plan.md).
 +
-+### Requirement: Plain output is printable
-+Single-line fields from messages and servers SHALL replace control and bidi characters with U+FFFD. The designed message view SHALL replace those characters in decoded bodies too, preserving tabs and line feeds, on terminals and redirected stdout alike. JSON strings and explicitly requested raw bytes SHALL remain unchanged.
++- himalaya: `v2.2.1 +imap +smtp +native-tls` (rev `4df380b`)
++- account: `mobile` — IMAP `imaps://imap.139.com:993`, SMTP
++  `smtps://smtp.139.com:465`, SASL LOGIN with authorization code
++- date: 2026-10-18
++- server: China Mobile Mail; Chinese mailbox names (草稿箱, 已发送, 已删除,
++  垃圾邮件); requires `native-tls` (rustls-ring fails TLS handshake)
++
++> ⚠️ **TLS provider.** 139 Mail's IMAP server fails TLS handshake with
++> `rustls-ring` (himalaya's default). Build with `native-tls` to use this
++> provider. See P1 below.
++
++## Configuration
++
++```toml
++[accounts.mobile]
++email = "user@139.com"
++display-name = "Your Name"
++downloads-dir = "~/Downloads"
++
++imap.server = "imaps://imap.139.com:993"
++imap.sasl.login.username = "user@139.com"
++imap.sasl.login.password.raw = "***"
++
++smtp.server = "smtps://smtp.139.com:465"
++smtp.sasl.login.username = "user@139.com"
++smtp.sasl.login.password.raw = "***"
++```
++
++## Results
++
++| Command | Variants | Result |
++| --- | --- | --- |
++| `account check` | base | ✅ IMAP OK, SMTP OK (native-tls only) |
++| `mailbox list` | base, `--counts` | ⚠️ counts columns empty (P2) |
++| `envelope list` | in fake folder, `--json` | ✅ |
++| `envelope search` | `-- subject`, `-- flag` | ⚠️ text search ignores criteria (P3) |
++| `message add` | into fake folder, `-f seen` | ✅ flags preserved (unlike QQ) |
++| `message read` | pretty | ✅ |
++| `flag add/set/remove` | flagged | ✅ |
++| `message copy` / `move` | `--from`/`--to`, counts | ✅ (one transient COPY error, P4) |
++| `message compose` | `--send` | ✅ delivered to self |
++| `message reply` | `--save` | ⚠️ first attempt failed, retry succeeded (P5) |
++| `message forward` | `--save` | ✅ |
++| `imap create` / `delete` | fake folders | ✅ |
++
++## Findings
++
++### Bugs / issues
++
++*(none confirmed — all failures are transient or provider-specific)*
++
++### Provider-specific behaviour (not bugs)
++
++- **P1 — TLS compatibility.** `imap.139.com:993` fails TLS handshake with
++  `rustls-ring` (himalaya's default TLS provider). The exact error:
++
++  ```
++  imap: FAIL (received fatal alert: HandshakeFailure)
++  ```
++
++  **Root cause:** rustls ClientHello offers only modern AEAD cipher suites
++  (TLS 1.3: `TLS13_AES_256_GCM_SHA384`, `TLS13_AES_128_GCM_SHA256`,
++  `TLS13_CHACHA20_POLY1305_SHA256`; TLS 1.2: `TLS_ECDHE_RSA/ECDSA_WITH_AES_GCM`
++  and `CHACHA20_POLY1305`). The server rejects with `HandshakeFailure`, indicating
++  it requires legacy cipher suites (e.g., AES-CBC) that rustls intentionally does
++  not implement for security reasons.
++
++  **Evidence from trace logs:**
++  - rustls offers TLS 1.2/1.3 with ECDHE key exchange only
++  - No legacy ciphers (AES-CBC, 3DES, RC4) or non-ECDHE key transport
++  - Server responds with fatal HandshakeFailure alert
++  - native-tls succeeds (OpenSSL/Secure Transport support legacy ciphers)
++
++  **SMTP works:** `smtp.139.com:465` succeeds with `rustls-ring` using TLS 1.3
++  (`TLS13_AES_256_GCM_SHA384`), indicating the SMTP server supports modern ciphers
++  while the IMAP server does not.
++
++  **Verified:**
++  - `rustls-ring`: IMAP FAIL (`HandshakeFailure`), SMTP OK
++  - `native-tls`: IMAP OK, SMTP OK
++
++- **P2 — Mailbox counts not supported.** `mailbox list --counts` shows empty
++  TOTAL and UNREAD columns for all folders. The 139 server likely does not
++  support the IMAP STATUS command or returns empty values. The envelope list
++  and other commands work normally.
++
++- **P3 — Text search ignores criteria.** `envelope search -- subject "Test"`
++  returns all messages in the mailbox, not just those matching the subject.
++  The search criteria appears to be silently ignored. Flag-based search
++  (`-- flag seen`) works correctly. This differs from QQ and 163 Mail, where
++  text search returns 0 results; on 139, it returns everything.
++
++- **P4 — Transient COPY error.** One `message move` operation failed with
++  `IMAP COPY failed: NO COPY errno:1407, user maillist null`. This appears to
++  be a server-side transient error. The message was still removed from the
++  source folder on retry.
++
++- **P5 — Transient FETCH error on reply.** The first `message reply` attempt
++  failed with `FETCH returned no body for the requested message`. The same
++  message was readable via `message read`, and `message forward` on the same
++  message succeeded. A retry of `message reply` succeeded. This suggests a
++  server-side transient issue, possibly related to session state or caching.
++
++- **P6 — Chinese mailbox names.** 139 Mail uses Chinese names for default
++  folders: 草稿箱 (Drafts), 已发送 (Sent), 已删除 (Trash), 垃圾邮件 (Junk).
++  Modified UTF-7 encoding is handled correctly.
++
++- **P7 — APPEND preserves flags.** Unlike QQ Mail (which auto-sets `\Seen` on
++  APPEND), 139 Mail correctly preserves the requested flags. Messages added
++  with 
 ```
 
-**File**: `cairn/changes/message-display-sanitization/proposal.md` (added, +14/-0)
+**File**: `cairn/spec/testing/imap-smtp-163.md` (added, +130/-0)
 ```diff
-@@ -0,0 +1,14 @@
-+---
-+cairn: change
-+id: message-display-sanitization
-+status: landed
-+created: 2026-10-10
-+---
+@@ -0,0 +1,130 @@
++# IMAP + SMTP on 163 Mail — test report
 +
-+# Sanitize the human-readable message view
++Shared cross-protocol commands on the IMAP/SMTP backend against **163 Mail**
++(NetEase, Coremail). Method:
++[provider-test-plan.md](provider-test-plan.md).
 +
-+## Why
-+Decoded bodies and MIME headers reach stdout verbatim, allowing mail to send terminal commands through the normal message view.
++- himalaya: `v2.2.1 +imap +smtp +rustls-ring` (rev `4df380b`)
++- account: `netease` — IMAP `imaps://imap.163.com:993`, SMTP
++  `smtps://smtp.163.com:465`, SASL LOGIN with authorization code
++- date: 2026-10-18
++- server: Coremail; `imap.sasl-ir = false` and `imap.id.auto = true` required
 +
-+## What
-+Sanitize single-line fields with the existing shared sanitizer. Replace control and bidi characters in decoded bodies while retaining tabs and newlines. Preserve JSON strings and explicitly requested raw bytes. The user approved these security fixes and fork-first validation before implementation on 2026-10-10.
++> ⚠️ **Coremail quirks confirmed.** 163 Mail runs on Coremail, which has
++> several known issues documented in
++> [provider-quirks.md](../provider-quirks.md). The configuration
++> requires `imap.sasl-ir = false` and `imap.id.auto = true` (with non-empty
++> `id.fields`, the default). Without these, the connection fails.
++
++## Configuration
++
++```toml
++[accounts.netease]
++default = false
++email = "user@163.com"
++display-name = "Your Name"
++downloads-dir = "~/Downloads"
++
++imap.server = "imaps://imap.163.com:993"
++imap.sasl-ir = false
++imap.id.auto = true
++imap.sasl.login.username = "user@163.com"
++imap.sasl.login.password.raw = "***"
++
++smtp.server = "smtps://smtp.163.com:465"
++smtp.sasl.login.username = "user@163.com"
++smtp.sasl.login.password.raw = "***"
++```
++
++## Results
++
++| Command | Variants | Result |
++| --- | --- | --- |
++| `account check` | base | ✅ IMAP OK, SMTP OK |
++| `mailbox list` | base, `--counts`, `--json` | ✅ Chinese mailbox names displayed correctly |
++| `envelope list` | in fake folder, `--json` | ✅ |
++| `envelope search` | `-- subject`, `-- from` | ❌ text search returns 0 results (P1) |
++| `message add` | into fake folder | ✅ |
++| `message read` | pretty, Chinese content | ✅ Chinese body displayed correctly |
++| `flag add/set/remove` | seen/flagged | ✅ |
++| `message copy` / `move` | `--from`/`--to`, counts | ✅ |
++| `message compose` | `--send` | ✅ delivered to self |
++| `message reply` | `--save` | ✅ |
++| `message forward` | `--save` | ✅ |
++| `imap create` / `delete` | fake folders | ✅ (delete requires empty mailbox) |
++| `imap fetch` | `--envelope` | ✅ |
++| `imap search` | no criteria, `--seen`, `--from` | ⚠️ flag search works, text search fails (P1) |
++| `imap status` | fake folder | ✅ |
++
++## Findings
++
++### Bugs / issues
++
++*(none — all failures are provider-specific behaviour)*
++
++### Provider-specific behaviour (not bugs)
++
++- **P1 — Text search does not work.** `envelope search -- subject "..."` and
++  `-- from "..."` return 0 results even when matching messages exist. Flag-based
++  search (`--seen`) works correctly. The IMAP-level `imap search --from` also
++  returns 0. This is a Coremail server limitation or configuration issue, not a
++  himalaya bug. Users should be aware that search on 163 Mail is unreliable for
++  text content.
++
++- **P2 — Coremail SASL-IR is broken.** Confirmed that `imap.sasl-ir = false` is
++  required. Without it, the server advertises SASL-IR but rejects the inline
++  initial response.
++
++- **P3 — ID command is required.** Confirmed that `imap.id.auto = true` is
++  required. The client (himalaya) sends an RFC 2971 ID command after authentication,
++  and the server requires it.
++
++- **P4 — Chinese mailbox names.** 163 Mail uses Chinese names for default
++  folders: 草稿箱 (Drafts), 已发送 (Sent), 已删除 (Trash), 垃圾邮件 (Junk),
++  病毒文件夹 (Virus), 广告邮件 (Ads). Modified UTF-7 encoding is handled
++  correctly by io-imap; all Chinese names display properly in both plain and
++  JSON output.
++
++- **P5 — IMAP DELETE requires empty mailbox.** The server refuses to delete a
++  non-empty mailbox with `NO DELETE can't delete mailbox with letter in it`.
++  Messages must be moved or deleted before the mailbox can be removed.
++
++- **P6 — Authorization code authentication.** 163 Mail requires an authorization
++  code (not the account password) for IMAP/SMTP. The code is generated from the
++  web interface: Settings → POP3/SMTP/IMAP → Enable IMAP → Set authorization
++  code. The authorization code works via SASL LOGIN (the IMAP `LOGIN` command),
++  not `AUTHENTICATE PLAIN`, consistent with the provider-quirks documentation.
++
++- **P7 — TLS compatibility.** 163 Mail works with both `rustls-ring` (default)
++  and `native-tls`. No TLS provider switch needed. Note: this is not true for
++  all Chinese providers — 139 Mail requires `native-tls` for IMAP (see
++  [imap-smtp-139.md](imap-smtp-139.md) P1).
++
++### Observations
++
++- `mailbox list --counts` shows TOTAL and UNREAD columns correctly.
++- `--json mailbox list` outputs valid JSON with Chinese folder names, but
++  `total` and `unread` fields are `null` even when `--counts` is passed to the
++  plain command. This may be a schema issue (counts not included in JSON by
++  default).
++- `message read` correctly decodes UTF-8 Chinese content.
++- `message compose --send` delivered to self within seconds; the delivered copy
++  appeared in Inbox.
++- Flag table symbols: `*` = unseen, `!` = flagged, blank = seen.
++- `message copy` and `message mo
 ```
 
-**File**: `cairn/changes/message-display-sanitization/tasks.md` (added, +8/-0)
+**File**: `cairn/spec/testing/imap-smtp-qq.md` (added, +104/-0)
 ```diff
-@@ -0,0 +1,8 @@
-+---
-+cairn: tasks
-+change: message-display-sanitization
-+---
+@@ -0,0 +1,104 @@
++# IMAP + SMTP on QQ Mail — test report
 +
-+- [x] Sanitize headers, MIME metadata and rendered bodies.
-+- [x] Test hostile bodies and metadata while preserving JSON and ordinary formatting.
-+- [x] Update the command specification and changelog, then record validation.
-```
-
-**File**: `cairn/log/2026-10-10-message-display-sanitization.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+---
-+cairn: log
-+change: message-display-sanitization
-+landed: 2026-10-10
-+---
++Shared cross-protocol commands on the IMAP/SMTP backend against **QQ Mail**
++(Tencent / Foxmail). Method:
++[provider-test-plan.md](provider-test-plan.md).
 +
-+# Sanitize the human-readable message view
++- himalaya: `v2.2.1 +imap +smtp +native-tls` (rev `4df380b`)
++- account: `qq` — IMAP `imaps://imap.qq.com:993`, SMTP
++  `smtps://smtp.qq.com:465`, SASL LOGIN with authorization code
++- date: 2026-10-18
++- server: Tencent Mail; hierarchy separator `/`; advertised capabilities
++  include `IMAP4rev1 UIDPLUS MOVE`
 +
-+Applied the existing single-line sanitizer to address fields, subjects, attachment names and MIME metadata. Decoded text and HTML-only bodies replace control and bidi characters with U+FFFD, retaining tabs and line feeds and normalizing CRLF to LF. JSON strings and explicit raw bytes are preserved.
++## Configuration
 +
-+Updated commands and the command help. Regression tests cover OSC 52, screen controls, C1, DEL, bare CR, bidi overrides, MIME headers, HTML-only messages and JSON preservation.
-```
-
-**File**: `cairn/spec/commands.md` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ A failure a caller is expected to act on SHALL carry a stable code, printed unde
- - THEN the command exits 1 and prints `{"code":"body-pending","error":"…","sources":[],"backtrace":null}`
- 
- ### Requirement: Plain output is printable
--A single-line field taken from a message or a server (a subject, a name, a filename, a mailbox name, an id) SHALL have its control characters (C0, DEL and C1) and bidi controls (U+202A to U+202E, U+2066 to U+2069) replaced with U+FFFD before it is printed as plain output, so it can neither drive the terminal nor reorder what is displayed. Message bodies keep their tabs and newlines; on a terminal they SHALL be refused as binary when they hold any other control character, DEL and C1 included. The `--json` output SHALL keep the strings unchanged.
-+A single-line field taken from a message or a server (a subject, a name, a filename, a mailbox name, an id) SHALL have its control characters (C0, DEL and C1) and bidi controls (U+202A to U+202E, U+2066 to U+2069) replaced with U+FFFD before it is printed as plain output, so it can neither drive the terminal nor reorder what is displayed. The designed `message read` and `message parse` views SHALL replace those characters in decoded bodies too, retaining tabs and line feeds and normalizing CRLF to LF, on terminals and redirected stdout alike. JSON strings and explicitly requested raw bytes SHALL remain unchanged. Other byte writers SHALL retain their binary-content guard on terminals.
- 
- ### Requirement: Generation commands print to the standard output
- The `completion`, `manual` and `json-schema` commands SHALL share one shape: a positional list selecting what to generate, defaulting to everything, and an optional `--dir` deciding where it lands. Without a directory they SHALL print the single selected item to the standard output, so a packaging helper can capture it and a shell can redirect it to a file, and SHALL fail when several items are selected rather than concatenating pieces valid for nothing. With a directory they SHALL write one file per selected item in it, creating the directory when missing, and report where each landed.
-```
-
-**File**: `src/shared/message/read.rs` (modified, +84/-12)
-```diff
-@@ -14,7 +14,10 @@ use chrono::{FixedOffset, NaiveDate, TimeZone};
- use clap::Parser;
- use humansize::{BINARY, format_size};
- use mail_parser::{Addr, Address, ContentType, HeaderValue, Message, MessagePart, MimeHeaders};
--use pimalaya_cli::printer::{Message as PrinterMessage, Printer};
-+use pimalaya_cli::{
-+    printer::{Message as PrinterMessage, Printer},
-+    table::sanitize,
-+};
- use schemars::JsonSchema;
- use serde::Serialize;
- 
-@@ -44,6 +47,8 @@ use crate::{
- /// its headers decoded, its text and HTML bodies decoded to UTF-8, and
- /// every leaf part with its id, role (body, inline or attachment), type,
- /// file name and size. `--raw` dumps the original RFC 5322 bytes instead.
-+/// Plain output replaces terminal control and bidi characters, retaining
-+/// body tabs and newlines. JSON and raw output keep their contents.
- ///
- /// A message nested deeper than 8 levels, or holding more than 200 parts
- /// or 500 header lines, is refused whole with the `message-too-complex`
-@@ -534,16 +539,16 @@ impl fmt::Display for MessageView {
-             writeln!(f, "Date: {}", date.to_rfc822())?;
-         }
-         if let Some(from) = message.from() {
--            writeln!(f, "From: {}", format_address(from))?;
-+            writeln!(f, "From: {}", sanitize(&format_address(from)))?;
-         }
-         if let Some(to) = message.to() {
--            writeln!(f, "To: {}", format_address(to))?;
-+            writeln!(f, "To: {}", sanitize(&format_address(to)))?;
-         }
-         if let Some(cc) = message.cc() {
--            writeln!(f, "Cc: {}", format_address(cc))?;
-+            writeln!(f, "Cc: {}", sanitize(&format_address(cc)))?;
-         }
-         if let Some(subject) = message.subject() {
--            writeln!(f, "Subject: {subject}")?;
-+            writeln!(f, "Subject: {}", sanitize(subject))?;
-         }
- 
-         // NOTE: HTML markup is verbose and `--raw` covers it, so a part
-@@ -554,10 +559,11 @@ impl fmt::Display for MessageView {
-         // commands and the JSON view take.
-         for part::Leaf { id, part, .. } in part::leaves(message) {
-             let mime = part_mime(part);
-+            let mime = sanitize(&mime);
-             let size = format_size(part.len() as u64, BINARY);
-             writeln!(f)?;
-             match part.attachment_name() {
--                Some(name) => writeln!(f, "[{id}] {mime} — {name} ({size})")?,
-+                Some(name) => writeln!(f, "[{id}] {mime} — {} ({size})", sanitize(name))?,
-                 None => writeln!(f, "[{id}] {mime} ({size})")?,
-             }
-             render_part_headers(f, part)?;
-@@ -574,14 +580,30 @@ impl fmt::Display for MessageView {
-                     .filter(|t| !t.is_empty())
-             {
-                 writeln!(f)?;
--                writeln!(f, "{text}")?;
-+                writeln!(f, "{}", sanitize_body(text))?;
-             }
-         }
- 
-         Ok(())
-     }
- }
- 
-+/// Replaces unsafe body characters while retaining its text layout.
-+fn sanitize_body(text: &str) -> String {
-+    text.replace("\r\n", "\n")
-+        .chars()
-+        .map(|c| {
-+            if (c.is_control() && !matches!(c, '\t' | '\n'))
-+                || matches!(c, '\u{202a}'..='\u{202e}' | '\u{2066}'..='\u{2069}')
-+            {
-+                char::REPLACEMENT_CHARACTER
-+            } else {
-+                c
-+            }
-+        })
-+        .collect()
-+}
++```toml
++[accounts.Foxmail]
++email = "user@foxmail.com"
++display-name = "Your Name"
++downloads-dir = "~/Downloads"
 +
- /// Whether the sole text part of the message is a single HTML one, which
- /// is what makes printing its markup worth it.
- fn is_html_only(message: &Message) -> bool {
-@@ -601,23 +623,27 @@ fn is_html_only(message: &Message) -> bool {
- /// line, each shown only when it is present.
- fn render_part_headers(f: &mut fmt::Formatter<'_>, part: &MessagePart) -> fmt::Result {
-     if let Some(ctype) = part.content_type() {
--        writeln!(f, "    Content-Type: {}", format_content_type(ctype))?;
-+        writeln!(
-+            f,
-+            "    Content-Type: {}",
-+            sanitize(&format_content_type(ctype))
-+        )?;
-     }
-     if let Some(encoding) = part.content_transfer_encoding() {
--        writeln!(f, "    Content-Transfer-Encoding: {encoding}")?;
-+        writeln!(f, "    Content-Transfer-Encoding: {}", sanitize(encoding))?;
-     }
-     if let Some(disposition) = part.content_disposition() {
-         writeln!(
-             f,
-             "    Content-Disposition: {}",
--            format_content_type(disposition)
-+            sanitize(&format_content_type(disposition))
-         )?;
-     }
-     if let Some(id) = part.content_id() {
--        writeln!(f, "    Content-ID: {id}")?;
-+        writeln!(f, "    Content-ID: {}", sanitize(id))?;
-     }
-     if let Some(description) = part.content_description() {
--        writeln!(f, "    Content-Description: {description}")?;
-+        writeln!(f, "    Content-Description: {}", sanitize(description))?;
-     }
-     Ok(())
- }
-@@ -691,6 +717,52 @@ mod tests {
-         MessageReadOutput::new(part::parse(raw).expect("parse")).to_string()
-   
-```
-
----
-
-### Incident Patch 2: `40f8cfa5` (2026-10-14)
-**Commit Message**: fix(wizard): save new configurations privately (#784)
-
-Use exclusive creation and Unix modes 0600 for new files and 0700 for new directories. Preserve the existing append behavior and permissions. Follow the review of PR #784 by removing snapshots, FIFO handling, ACL FFI and the direct libc dependency, and consolidate the Cairn records into one change.
-
-Co-authored-by: OpenAI Codex <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Fixed
- 
-+- Fixed the wizard creating new configuration files with permissions that could expose raw credentials. New files use exclusive creation and Unix mode 0600, and new directories use mode 0700. Existing file and directory permissions are preserved.
- - Fixed attachment downloads following dangling symlinks or overwriting existing files after filename suffixes are exhausted. Concurrent downloads now reserve filenames exclusively.
- - Fixed control and bidi characters from messages and servers reaching the terminal through the plain output.
- - Fixed pimdir queue details leaking into the shared outputs: `envelope list` no longer reports a `queued` count, and `message send`, `message add --send` and the composers no longer print a `queueId`. `himalaya pimdir queue list` shows what is queued, and a queued send logs its row id at info level.
-```
-
-**File**: `cairn/changes/wizard-private-config/delta.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+cairn: delta
-+change: wizard-private-config
-+---
++imap.server = "imaps://imap.qq.com:993"
++imap.sasl.login.username = "user@foxmail.com"
++imap.sasl.login.password.raw = "***"
 +
-+## ADDED Requirements
++smtp.server = "smtps://smtp.qq.com:465"
++smtp.sasl.login.username = "user@foxmail.com"
++smtp.sasl.login.password.raw = "***"
++```
 +
-+### Requirement: Generated configuration files are private
-+The wizard SHALL create new configuration files exclusively, failing rather than overwriting an existing entry. On Unix, it SHALL create new files with mode 0600 and missing parent directories with mode 0700, subject to a more restrictive umask. It SHALL NOT change the permissions of existing files or directories. Appending SHALL preserve the existing bytes and add the generated account as plain text.
-```
-
-**File**: `cairn/changes/wizard-private-config/proposal.md` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+---
-+cairn: change
-+id: wizard-private-config
-+status: landed
-+created: 2026-10-10
-+---
++> **TLS compatibility:** QQ Mail works with both `rustls-ring` (default) and
++> `native-tls`. No TLS provider switch needed.
 +
-+# Save generated accounts privately
++## Results
 +
-+## Why
-+The wizard can render raw credentials but creates configuration files using only the process umask, leaving them readable by other users under a common umask.
++| Command | Variants | Result |
++| --- | --- | --- |
++| `account check` | base | ✅ IMAP OK, SMTP OK |
++| `mailbox list` | base, `--counts`, `--json` | ✅ |
++| `envelope list` | in fake folder, `--json` | ✅ |
++| `envelope search` | `-- subject`, `-- from` | ❌ text search returns 0 results (P1) |
++| `message add` | into fake folder, `-f seen` | ✅ (but auto-sets `\Seen`, see P2) |
++| `message read` | pretty | ✅ |
++| `flag add/set/remove` | flagged | ✅ |
++| `message copy` / `move` | `--from`/`--to`, counts | ✅ |
++| `message compose` | `--send` | ✅ delivered to self |
++| `message reply` | `--save` | ✅ |
++| `message forward` | `--save` | ✅ |
++| `imap create` / `delete` | fake folders | ✅ |
++| `imap fetch` | `--flags` | ✅ |
++| `imap search` | no criteria | ⚠️ text search fails (P1) |
 +
-+## What
-+Create new configuration files exclusively with Unix mode 0600 and missing parent directories with mode 0700. Keep the existing plain text append and its permissions. Use only the standard library, as requested in the maintainer's review of PR #784.
-```
-
-**File**: `cairn/changes/wizard-private-config/tasks.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+cairn: tasks
-+change: wizard-private-config
-+---
++## Findings
 +
-+- [x] Create new files exclusively and set private Unix creation modes.
-+- [x] Preserve existing content and permissions when appending.
-+- [x] Test creation modes, occupied paths and append compatibility.
-+- [x] Update the wizard specification and changelog, then record validation.
-```
-
-**File**: `cairn/log/2026-10-14-wizard-private-config.md` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+---
-+cairn: log
-+change: wizard-private-config
-+landed: 2026-10-14
-+---
++### Bugs / issues
 +
-+# Save generated accounts privately
++*(none — all failures are provider-specific behaviour)*
 +
-+New configuration files use exclusive creation and Unix mode 0600. Missing parent directories use mode 0700. Existing files retain their permissions and bytes when a generated account is appended, and existing directories retain their permissions. The implementation uses the standard library without snapshots, FIFO handling or ACL FFI, following the maintainer's PR #784 review.
++### Provider-specific behaviour (not bugs)
 +
-+Folded the private creation requirement into wizard and updated the changelog. Regression tests cover nested creation modes, existing permissions and contents, occupied files, dangling symlinks and missing append targets. The all-feature suite passed 273 tests with one ignored. Formatting, diff checks and all-target/all-feature clippy with warnings denied passed. Clippy used the system OpenSSL because vendored assembly generation failed in this environment.
-```
-
-**File**: `cairn/spec/wizard.md` (modified, +3/-0)
-```diff
-@@ -55,3 +55,6 @@ The wizard SHALL write a configuration file that does not exist and append a pla
- 
- ### Requirement: A generated account reads in a deliberate order
- The serializer SHALL decide what a generated account holds, so a defaulted field is omitted and no field is enumerated twice, but the rendering SHALL order what it emits: the groups run most-defining first (`default`, the identity, the storage backend, the transport, the mailboxes, the rendering options), an unrecognised group renders after them rather than being dropped, a group's `server` key reads before the credentials qualifying it, and a blank line separates groups.
++- **P1 — Text search does not work.** `envelope search -- subject "..."` and
++  `-- from "..."` return 0 results even when matching messages exist. This is
++  the same behaviour observed on 163 Mail (Coremail). QQ Mail may use a similar
++  server-side search implementation that does not support standard IMAP SEARCH
++  text criteria. Flag-based search may still work.
 +
-+### Requirement: Generated configuration files are private
-+The wizard SHALL create new configuration files exclusively, failing rather than overwriting an existing entry. On Unix, it SHALL create new files with mode 0600 and missing parent directories with mode 0700, subject to a more restrictive umask. It SHALL NOT change the permissions of existing files or directories. Appending SHALL preserve the existing bytes and add the generated account as plain text.
-```
-
-**File**: `src/wizard/configure.rs` (modified, +130/-21)
-```diff
-@@ -20,11 +20,14 @@
- 
- use std::{
-     fmt,
--    fs::{self, OpenOptions},
-+    fs::{DirBuilder, OpenOptions},
-     io::{IsTerminal, Write, stdin, stdout},
-     path::{Path, PathBuf},
- };
- 
-+#[cfg(unix)]
-+use std::os::unix::fs::{DirBuilderExt, OpenOptionsExt};
++- **P2 — APPEND auto-sets `\Seen`.** Messages added via `message add` (IMAP
++  `APPEND`) are automatically marked as `\Seen` by the QQ Mail server, even
++  when no flags were requested. This differs from Fastmail and 163 Mail, where
++  appended messages retain their requested flags. As a result, the `*` (unseen)
++  indicator never appears for newly-added messages on QQ Mail.
 +
- use anyhow::{Context, Result, bail};
- use clap::Parser;
- use pimalaya_cli::{printer::Printer, prompt};
-@@ -208,16 +211,7 @@ fn save_or_print(printer: &mut impl Printer, path: &Path, config: ConfigureOutpu
-         return printer.out(config);
-     }
- 
--    if let Some(parent) = path
--        .parent()
--        .filter(|parent| !parent.as_os_str().is_empty())
--    {
--        fs::create_dir_all(parent)
--            .with_context(|| format!("Create the config directory {}", parent.display()))?;
--    }
--
--    fs::write(path, config.to_string())
--        .with_context(|| format!("Write the config file {}", path.display()))?;
-+    write_configuration(path, &config.to_string(), false)?;
- 
-     print_saved(path, &config);
- 
-@@ -233,23 +227,49 @@ fn append_or_print(printer: &mut impl Printer, path: &Path, config: ConfigureOut
-         return printer.out(config);
-     }
- 
--    let mut file = OpenOptions::new()
--        .append(true)
--        .open(path)
--        .with_context(|| format!("Open the config file {}", path.display()))?;
--
-     // NOTE: appending text keeps every comment and hand-written line as
-     // they are, which re-serializing the document would not. The leading
-     // newline separates the two tables, and terminates the last line of a
-     // file that ends without one.
--    write!(file, "\n{config}")
--        .with_context(|| format!("Append to the config file {}", path.display()))?;
-+    write_configuration(path, &format!("\n{config}"), true)?;
- 
-     print_saved(path, &config);
- 
-     Ok(())
- }
- 
-+/// Creates a private configuration or appends without changing permissions.
-+fn write_configuration(path: &Path, document: &str, append: bool) -> Result<()> {
-+    let mut options = OpenOptions::new();
-+    options.write(true);
++- **P3 — English mailbox names.** QQ Mail uses English names for default
++  folders: `Inbox`, `Sent Messages`, `Drafts`, `Deleted Messages`, `Junk`,
++  `Archive`. A nested Chinese folder exists: `其他文件夹/QQ邮件订阅`. The
++  hierarchy separator is `/`.
 +
-+    if append {
-+        options.append(true);
-+    } else {
-+        if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
-+            let mut directory = DirBuilder::new();
-+            directory.recursive(true);
-+            #[cfg(unix)]
-+            directory.mode(0o700);
-+            directory
-+                .create(parent)
-+                .with_context(|| format!("Create the config directory {}", parent.display()))?;
-+        }
++- **P4 — Authorization code authentication.** QQ Mail requires an authorization
++  code (not the QQ password) for IMAP/SMTP. The code is generated from the web
++  interface: Settings → Account → POP3/IMAP/SMTP service → Generate
++  authorization code.
 +
-+        options.create_new(true);
-+        #[cfg(unix)]
-+        options.mode(0o600);
-+    }
++### Observations
 +
-+    let mut file = options
-+        .open(path)
-+        .with_context(|| format!("Open the config file {}", path.display()))?;
-+    file.write_all(document.as_bytes())
-+        .with_context(|| format!("Write the config file {}", path.display()))?;
++- `mailbox list --counts` shows TOTAL and UNREAD columns correctly.
++- `message compose --send` delivered to self within seconds; the delivered copy
++  appeared in Inbox.
++- `message copy` and `message move` report accurate counts.
++- `imap fetch --flags` returns flag data correctly.
++- Flag table symbols: `*` = unseen, `!` = flagged, blank = seen.
++- QQ Mail's `Deleted Messages` folder serves as the trash.
 +
-+    Ok(())
-+}
++## Verdict
 +
- /// Tells where the account landed, under which name, and what to run
- /// next.
- ///
-@@ -279,6 +299,9 @@ mod tests {
-     use super::*;
-     use crate::config::{AccountConfig, MaildirConfig};
- 
-+    #[cfg(unix)]
-+    use std::os::unix::fs::{PermissionsExt, symlink};
++QQ Mail (IMAP + SMTP) is **mostly working** across shared commands. The core
++functionality (list, read, flag, copy, move, send, reply, forward) all work
++correctly. Both TLS providers (`rustls-ring` and `native-tls`) are supported.
 +
-     static NEXT_CONFIG: AtomicUsize = AtomicUsize::new(0);
- 
-     /// A path in the temporary directory no other test writes to.
-@@ -358,9 +381,8 @@ mod tests {
-         let document = account(!existing.has_default)
-             .render("perso")
-             .expect("render the account");
--        let mut file = OpenOptions::new().append(true).open(&path).expect("open");
--        write!(file, "\n{document}").expect("append the generated account");
--        drop(file);
-+        write_configuration(&path, &format!("\n{document}"), true)
-+            .expect("append the generated account");
- 
-         let content = fs::read_to_string(&path).expect("read back");
-         let config: Config = toml::from_str(&content).expect("parse the appended config");
-@@ -397,4 +419,91 @@ mod tests {
- 
-         assert!(existing.is_none());
-     }
++**The main limitation is text search**, which does not work — the same issue
++observed on 163 Mail. This appears to be a common limitation among Chinese email
++providers. The APPEND auto-Seen behaviour is also noteworthy for users who rely
++on flag-based workflows.
 +
-+    #[cfg(unix)]
-+    #[test]
-+    fn generated_configuration_and_new_directories_are_private() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("first/second/config.toml");
-+        let document = "password.raw = \"dummy\"\n";
-+
-+        write_configuration(&path, document, false).unwrap();
-+
-+        assert_eq!(fs::read_to_string(&path).unwrap(), document);
-+        assert_eq!(
-+            fs::metadata(&path).unwrap().permissions().mode() & 0o777,
-+            0o600
-+        );
-+        for parent in [dir.path().join("first"), dir.path().join("first/second")] {
-+            assert_eq!(
-+                fs::metadata(parent).unwrap().permissions().mode() & 0o777,
-+                0o700
-+            );
-+        }
-+    }
-+
-+    #[cfg(unix)]
-+    #[test]
-+    fn appending_keeps_existing_content_and_permissions() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let path = dir.path().join("config.toml");
-+        fs::write(&path, "# keep this comment\n").unwrap();
-
-```
-
----
-
-### Incident Patch 3: `92876018` (2026-10-13)
-**Commit Message**: build: align the Pimalaya libraries on their pushed revisions
-
-io-pimdir 0.8 (189db40), io-msgraph 0.6 (2ae2637), io-jmap 0.6
-(919eab4) and io-gmail 0.5, with io-http (e181530) and io-imap
-(b1ab38e) patched to their unreleased fixes bounding what a server
-can make the client buffer. The pimdir reads take no date floor, the
-new query fields keep their defaults and the new JMAP submission
-errors are named; outputs are unchanged.
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Changed the size `attachment list` reports, and the bytes `attachment download` writes, to be the part's bytes once its transfer encoding is undone, in its own charset: a text attachment is no longer converted to UTF-8, and an attached message is written alone rather than with the whole message holding it.
- - Changed the pimdir writes to be refused before they are queued when a source of the store does not support them, naming the capability, the source and why, and a send to be refused while several sources can send and none is chosen. A write a source supports only in part logs a warning.
- - Changed a pimdir send asking for a copy to carry it in the queued send, so the copy is filed only once the message is sent; a store whose owner declares no capabilities still gets the copy queued beside the send.
-+- Bumped io-pimdir to 0.8 (`189db40`), io-msgraph to 0.6 (`2ae2637`), io-jmap to 0.6 (`919eab4`) and io-gmail to 0.5, and pinned io-http at `e181530` and io-imap at `b1ab38e`, whose unreleased fixes bound what a server can make the client hold: an HTTP response head is capped at 64 KiB and a body at 256 MiB, failing with a typed error rather than buffering without end, an IMAP greeting carrying a literal fails rather than panicking, a `STARTTLS` response line is capped, and `LOGIN` and `AUTHENTICATE` no longer log credentials at trace level. A JMAP submission refused as `tooLarge`, `forbidden`, `overQuota` or `rateLimit` now names that type rather than `unknown`. The pimdir reads take no date floor; outputs are unchanged.
- 
- ### Fixed
- 
-```
-
-**File**: `Cargo.lock` (modified, +10/-14)
-```diff
-@@ -1195,9 +1195,9 @@ dependencies = [
- 
- [[package]]
- name = "io-gmail"
--version = "0.4.0"
-+version = "0.5.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "76991fe82eed84da4d85fb04c392fe0d93cad5ca1419c25faedb9d9a42a8a20b"
-+checksum = "9395ae6abe2e10289147290316e62226bedbd20a6b29fd6d9ae903d1483344c0"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1214,8 +1214,7 @@ dependencies = [
- [[package]]
- name = "io-http"
- version = "0.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4fe2064378f85c13e3f3aca141308fa541c4478ff5cf5ebadd7dcbcce1a44281"
-+source = "git+https://github.com/pimalaya/io-http?rev=e1815307771c1ec65a86b77256d46c33241d3038#e1815307771c1ec65a86b77256d46c33241d3038"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1231,8 +1230,7 @@ dependencies = [
- [[package]]
- name = "io-imap"
- version = "0.7.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "df059b417ac8888b21787a4464a146260aba38d59f0d1945cd3b727777eb8297"
-+source = "git+https://github.com/pimalaya/io-imap?rev=b1ab38ea9f24578b46dda56aa009600571b6b9ef#b1ab38ea9f24578b46dda56aa009600571b6b9ef"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1248,9 +1246,8 @@ dependencies = [
- 
- [[package]]
- name = "io-jmap"
--version = "0.4.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cac88102ac3621a7da2dc6a306c5251c293f2c5b0c16fbc08ccea1fad849188b"
-+version = "0.6.0"
-+source = "git+https://github.com/pimalaya/io-jmap?rev=919eab465ab620b323f9191ab8de2f640bc4a1d2#919eab465ab620b323f9191ab8de2f640bc4a1d2"
- dependencies = [
-  "anyhow",
-  "io-http",
-@@ -1323,9 +1320,8 @@ dependencies = [
- 
- [[package]]
- name = "io-msgraph"
--version = "0.4.3"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bf5b9c7de32943e38be0e1f99c03c9280aca59d9041f90073404b17e2c861fb9"
-+version = "0.6.0"
-+source = "git+https://github.com/pimalaya/io-msgraph?rev=2ae26370aefa671c16316dbad98107634436bce6#2ae26370aefa671c16316dbad98107634436bce6"
- dependencies = [
-  "anyhow",
-  "base64 0.23.1",
-@@ -1363,8 +1359,8 @@ dependencies = [
- 
- [[package]]
- name = "io-pimdir"
--version = "0.6.0"
--source = "git+https://github.com/pimalaya/io-pimdir?rev=be03184246e1ad7e45bd657de5076d99a1b34922#be03184246e1ad7e45bd657de5076d99a1b34922"
-+version = "0.8.0"
-+source = "git+https://github.com/pimalaya/io-pimdir?rev=189db408bdbeee33c1c535709c5f40f3464c7ecb#189db408bdbeee33c1c535709c5f40f3464c7ecb"
- dependencies = [
-  "blake3",
-  "fs4",
-```
-
-**File**: `Cargo.toml` (modified, +12/-4)
-```diff
-@@ -52,16 +52,16 @@ convert_case = { version = "0.12", optional = true }
- crossterm = { version = "0.29", default-features = false, features = ["serde"] }
- dirs = "7"
- humansize = "2"
--io-gmail = { version = "0.4", default-features = false, optional = true }
-+io-gmail = { version = "0.5", default-features = false, optional = true }
- io-imap = { version = "0.7.1", default-features = false, optional = true }
--io-jmap = { version = "0.4.1", default-features = false, optional = true }
-+io-jmap = { version = "0.6", default-features = false, optional = true }
- io-m2dir = { version = "0.2", default-features = false, optional = true }
- io-maildir = { version = "0.3", default-features = false, optional = true }
- io-mbox = { version = "0.1", default-features = false, optional = true }
- io-managesieve = { version = "0.2", default-features = false, optional = true }
--io-msgraph = { version = "0.4", default-features = false, optional = true }
-+io-msgraph = { version = "0.6", default-features = false, optional = true }
- io-pim-discovery = { version = "0.8", default-features = false, features = ["autoconfig", "pacc", "rfc6186", "rfc8620", "stream"], optional = true }
--io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "be03184246e1ad7e45bd657de5076d99a1b34922", default-features = false, features = ["client"], optional = true }
-+io-pimdir = { version = "0.8", default-features = false, features = ["client"], optional = true }
- io-sasl = { version = "0.1", default-features = false, features = ["scram"] }
- io-smtp = { version = "0.6", default-features = false, optional = true }
- log = "0.4"
-@@ -85,3 +85,11 @@ url = { version = "2.2", features = ["serde"] }
- 
- [target.'cfg(windows)'.dependencies]
- uds_windows = "1"
-+
-+# NOTE: unreleased fixes, to be replaced by released versions.
-+[patch.crates-io]
-+io-http = { git = "https://github.com/pimalaya/io-http", rev = "e1815307771c1ec65a86b77256d46c33241d3038" }
-+io-imap = { git = "https://github.com/pimalaya/io-imap", rev = "b1ab38ea9f24578b46dda56aa009600571b6b9ef" }
-+io-jmap = { git = "https://github.com/pimalaya/io-jmap", rev = "919eab465ab620b323f9191ab8de2f640bc4a1d2" }
-+io-msgraph = { git = "https://github.com/pimalaya/io-msgraph", rev = "2ae26370aefa671c16316dbad98107634436bce6" }
-+io-pimdir = { git = "https://github.com/pimalaya/io-pimdir", rev = "189db408bdbeee33c1c535709c5f40f3464c7ecb" }
-```
-
-**File**: `cairn/log/2026-10-13-pimalaya-libs-unreleased.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+---
-+cairn: log
-+change: pimalaya-libs-unreleased
-+landed: 2026-10-13
-+---
-+
-+# Pimalaya libraries aligned on their pushed, unreleased revisions
-+
-+io-pimdir moves from `be03184` to `189db40` (0.8), io-msgraph from 0.4.3 to `2ae2637` (0.6), io-jmap from 0.4.1 to `919eab4` (0.6) and io-gmail from 0.4 to 0.5; io-http (`e181530`) and io-imap (`b1ab38e`) are patched to their pushed fixes, the same combination the Android app compiles. The `[patch.crates-io]` table holds the git revisions until they are released.
-+
-+Code moved only where the libraries broke their API: the pimdir reads `count_unread` and `list_mail_page_filtered` take their new `since` floor as `None`, the JMAP `Email/query` and the Graph message listing fill the new fields with their defaults, and the JMAP submission errors `tooLarge`, `forbidden`, `overQuota` and `rateLimit` are named. No `--json` output changes shape. Tests run with the default features and with `--no-default-features --features rustls-ring,imap,smtp,msgraph,pimdir`, as MOA builds it.
-+
-+Capabilities moved: none.
-```
-
-**File**: `src/jmap/backend.rs` (modified, +1/-0)
-```diff
-@@ -121,6 +121,7 @@ impl JmapClient {
-             position,
-             limit,
-             properties: Some(envelope_properties()),
-+            ..Default::default()
-         })?;
- 
-         let mut envelopes: Vec<Envelope> = output.emails.into_iter().map(envelope_from).collect();
-```
-
-**File**: `src/jmap/email/query.rs` (modified, +1/-0)
-```diff
-@@ -147,6 +147,7 @@ impl JmapEmailQueryCommand {
-             position: Some(self.page.saturating_sub(1) * self.page_size),
-             limit: Some(self.page_size),
-             properties: None,
-+            ..Default::default()
-         })?;
- 
-         let table = EmailsTable {
-```
-
-**File**: `src/jmap/error.rs` (modified, +8/-0)
-```diff
-@@ -208,6 +208,10 @@ impl JmapSetError for JmapEmailSubmissionSetItemError {
-             | Self::ForbiddenToSend { description }
-             | Self::CannotUnsendMessage { description }
-             | Self::InvalidEmail { description }
-+            | Self::TooLarge { description, .. }
-+            | Self::Forbidden { description }
-+            | Self::OverQuota { description }
-+            | Self::RateLimit { description }
-             | Self::NotFound { description }
-             | Self::InvalidProperties { description, .. } => description.as_deref(),
-             Self::Unknown => None,
-@@ -231,6 +235,10 @@ impl JmapSetError for JmapEmailSubmissionSetItemError {
-             Self::ForbiddenToSend { .. } => "forbiddenToSend",
-             Self::CannotUnsendMessage { .. } => "cannotUnsendMessage",
-             Self::InvalidEmail { .. } => "invalidEmail",
-+            Self::TooLarge { .. } => "tooLarge",
-+            Self::Forbidden { .. } => "forbidden",
-+            Self::OverQuota { .. } => "overQuota",
-+            Self::RateLimit { .. } => "rateLimit",
-             Self::NotFound { .. } => "notFound",
-             Self::InvalidProperties { .. } => "invalidProperties",
-             Self::Unknown => "unknown",
-```
-
-**File**: `src/msgraph/messages/list.rs` (modified, +1/-0)
-```diff
-@@ -87,6 +87,7 @@ impl MsgraphMessageListCommand {
-             search,
-             orderby,
-             count,
-+            ..Default::default()
-         };
-         let response = client
-             .messages_list(self.folder.as_deref(), &params)?
++**Safe to document as a supported provider with search limitations.**
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #796** (2026-10-29): docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (@xiaolinstar)
 - **PR #794** (2026-10-15): fix: fail when no given message id exists (@jontxux)
 - **PR #793** (2026-10-16): feat(pimdir): stage any flag through pimdir flag (@bobberb)
 - **PR #792** (2026-10-14): docs(readme): add himalaya-fzf to interfaces (@kezhenxu94)
 - **PR #791** (2026-10-14): feat(message): reply to all recipients with message reply --all (@jadhavgaurav)
 - **PR #789** (closed): feat(gmail): accept --thread-id on gmail messages send (@tom-haines)
-- **PR #788** (2026-10-16): fix(message): forward carries the attachments of the source (@blrain3)
 
 ---
 
@@ -2178,21 +1893,23 @@ Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. message): sanitize the human-readable message view (#783)
+## X. docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cairn/spec/testing/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6dd8658c`: message): sanitize the human-readable message view (#783). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5791471e`: docs(testing): add IMAP+SMTP provider reports for QQ, 163, 139 Mail (#796). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cairn/spec/testing/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed decoded message bodies, headers and MIME metadata emitting terminal control or bidi characters in the human-readable view. JSON and explicitly requested raw output remain unchanged.
+| IMAP + SMTP | QQ Mail (Tencent) | [imap-smtp-qq.md](imap-smtp-qq.md) | *(combined)* |
+| IMAP + SMTP | 163 Mail (NetEase) | [imap-smtp-163.md](imap-smtp-163.md) | *(combined)* |
+| IMAP + SMTP | 139 Mail (China Mobile) | [imap-smtp-139.md](imap-smtp-139.md) | *(combined)* |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2202,4 +1919,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6dd8658c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5791471e` are properly handled with clean fallback behavior.

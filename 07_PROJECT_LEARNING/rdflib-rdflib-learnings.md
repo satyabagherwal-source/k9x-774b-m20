@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source**: github ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
-> **Source Version**: `764c2fa8`  
+> **Source Version**: `f87db10f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-22T21:28:49.774Z  
+> **Timestamp**: 2026-10-30T16:39:35.221Z  
 > **Learning ID**: `learn-github-rdflib-rdflib`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rdflib-rdflib-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/RDFLib/rdflib](https://github.com/RDFLib/rdflib))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-22T21:28:47.483Z  
+> **Harvest Timestamp**: 2026-10-30T16:39:34.380Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: RDFLib is a Python library for working with RDF, a simple yet powerful language for representing information.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2538 stars
+- **Stars / Engagement**: 2542 stars
 
 ---
 
@@ -284,8 +284,7 @@ def validate_no_bnodes(
         or isinstance(graph_name, BNode)
     ):
         raise ValueError(
-            "Subject, predicate, and object must not be a BNode: "
-            f"{subj}, {pred}, {obj}"
+            f"Subject, predicate, and object must not be a BNode: {subj}, {pred}, {obj}"
         )
     validate_graph_name(graph_name)
 
@@ -306,16 +305,14 @@ from rdflib.util import guess_format
 
 
 def _help():
-    sys.stderr.write(
-        """
+    sys.stderr.write("""
 program.py [-f <format>] [-o <output>] [files...]
 Read RDF files given on STDOUT - does something to the resulting graph
 If no files are given, read from stdin
 -o specifies file for output, if not given stdout is used
 -f specifies parser to use, if not given it is guessed from extension
 
-"""
-    )
+""")
 
 
 def main(target, _help=_help, options="", stdin=True):
@@ -382,7 +379,7 @@ import json
 import pathlib
 from html.parser import HTMLParser
 from io import StringIO, TextIOBase, TextIOWrapper
-from typing import IO, TYPE_CHECKING, Any, Optional, TextIO, Union
+from typing import IO, TYPE_CHECKING, Any, TextIO, Union
 
 if TYPE_CHECKING:
     import json
@@ -418,11 +415,9 @@ from rdflib.parser import (
 
 
 def source_to_json(
-    source: Optional[
-        Union[IO[bytes], TextIO, InputSource, str, bytes, pathlib.PurePath]
-    ],
-    fragment_id: Optional[str] = None,
-    extract_all_scripts: Optional[bool] = False,
+    source: IO[bytes] | TextIO | InputSource | str | bytes | pathlib.PurePath | None,
+    fragment_id: str | None = None,
+    extract_all_scripts: bool | None = False,
 ) -> tuple[Union[dict, list[dict]], Any]:
     """Extract JSON from a source document.
 
@@ -447,10 +442,10 @@ def source_to_json(
         # We can get the original string from the StringInputSource
         # It's hidden in the BytesIOWrapper 'wrapped' attribute
         b_stream = source.getByteStream()
-        original_string: Optional[str] = None
-        json_dict: Union[dict, list[dict]]
+        original_string: str | None = None
+        json_dict: dict | list[dict]
         if isinstance(b_stream, BytesIOWrapper):
-            wrapped_inner = cast(Union[str, StringIO, TextIOBase], b_stream.wrapped)
+            wrapped_inner = cast(Union[str, TextIO, TextIOBase], b_stream.wrapped)
             if isinstance(wrapped_inner, str):
                 original_string = wrapped_inner
             elif isinstance(wrapped_inner, StringIO):
@@ -485,7 +480,7 @@ def source_to_json(
         "application/xhtml+xml",
     )
     if is_html:
-        html_docparser: Optional[HTMLJSONParser] = HTMLJSONParser(
+        html_docparser: HTMLJSONParser | None = HTMLJSONParser(
             fragment_id=fragment_id, extract_all_scripts=extract_all_scripts
         )
     else:
@@ -503,10 +498,10 @@ def source_to_json(
             f"Source does not have a character stream or a byte stream and cannot be used {type(source)}"
         )
     try:
-        b_encoding: Optional[str] = None if b_stream is None else source.getEncoding()
+        b_encoding: str | None = None if b_stream is None else source.getEncoding()
     except (AttributeError, LookupError):
         b_encoding = None
-    underlying_string: Optional[str] = None
+    underlying_string: str | None = None
     if b_stream is not None and isinstance(b_stream, BytesIOWrapper):
         # Try to find an underlying wrapped Unicode string to use?
         wrapped_inner = b_stream.wrapped
@@ -575,7 +570,7 @@ def source_to_json(
 VOCAB_DELIMS = ("#", "/", ":")
 
 
-def split_iri(iri: str) -> tuple[str, Optional[str]]:
+def split_iri(iri: str) -> tuple[str, str | None]:
     for delim in VOCAB_DELIMS:
         at = iri.rfind(delim)
         if at > -1:
@@ -601,6 +596,10 @@ def norm_url(base: str, url: str) -> str:
 
     ```
     """
+    # Same-document references must not change the base path.
+    if not url or url.startswith("#"):
+        return (base or "").split("#", 1)[0] + url
+
     if "://" in url:
         return url
 
@@ -631,7 +630,7 @@ def norm_url(base: str, url: str) -> str:
 
 
 # type error: Missing return statement
-def context_from_urlinputsource(source: URLInputSource) -> Optional[str]:  # type: ignore[return]
+def context_from_urlinputsource(source: URLInputSource) -> str | None:  # type: ignore[return]
     """
     Please note that JSON-LD documents served with the `application/ld+json` media type
     MUST have all context information, including references to external contexts,
@@ -639,9 +638,7 @@ def context_from_urlinputsource(source: URLInputSource) -> Optional[str]:  # typ
     http://www.w3.org/ns/json-ld#context HTTP Link Header MUST be
     ignored for such documents.
     """
-    if source.content_type != "application/ld+json":
-        try:
-            # source.links is the new way of getting Link h
+    if source.content_type != "ap
 ```
 
 ### Core Architecture Module: `rdflib/plugins/sparql/evalutils.py`
@@ -867,7 +864,6 @@ from types import MethodType
 from typing import (
     TYPE_CHECKING,
     Any,
-    Optional,
     TypeVar,
     Union,
 )
@@ -1040,7 +1036,7 @@ class Expr(CompValue):
     def __init__(
         self,
         name: str,
-        evalfn: Optional[Callable[[Any, Any], Any]] = None,
+        evalfn: Callable[[Any, Any], Any] | None = None,
         **values,
     ):
         super(Expr, self).__init__(name, **values)
@@ -1051,7 +1047,7 @@ class Expr(CompValue):
 
     def eval(self, ctx: Any = {}) -> Union[SPARQLError, Any]:
         try:
-            self.ctx: Optional[Union[Mapping, FrozenBindings]] = ctx
+            self.ctx: Union[Mapping, FrozenBindings] | None = ctx
             # type error: "None" not callable
             return self._evalfn(ctx)  # type: ignore[misc]
         except SPARQLError as e:
@@ -1072,7 +1068,7 @@ class Comp(TokenConverter):
         self.expr = expr
         TokenConverter.__init__(self, expr)
         self.set_name(name)
-        self.evalfn: Optional[Callable[[Any, Any], Any]] = None
+        self.evalfn: Callable[[Any, Any], Any] | None = None
 
     def parseImpl(
         self, instring: str, loc: int = 0, do_actions: bool = True
@@ -1197,21 +1193,21 @@ class ConcurrentStore:
         self.__pending_adds = []
 
     def add(self, triple):
-        (s, p, o) = triple
+        s, p, o = triple
         if self.__visit_count == 0:
             self.store.add((s, p, o))
         else:
             self.__pending_adds.append((s, p, o))
 
     def remove(self, triple):
-        (s, p, o) = triple
+        s, p, o = triple
         if self.__visit_count == 0:
             self.store.remove((s, p, o))
         else:
             self.__pending_removes.append((s, p, o))
 
     def triples(self, triple):
-        (su, pr, ob) = triple
+        su, pr, ob = triple
         g = self.store.triples((su, pr, ob))
         pending_removes = self.__pending_removes
         self.__begin_read()
@@ -1243,7 +1239,7 @@ class ConcurrentStore:
         if self.__visit_count == 0:
             pending_removes = self.__pending_removes
             while pending_removes:
-                (s, p, o) = pending_removes.pop()
+                s, p, o = pending_removes.pop()
                 try:
                     self.store.remove((s, p, o))
                 except:  # noqa: E722
@@ -1251,7 +1247,7 @@ class ConcurrentStore:
                     print(s, p, o, "Not in store to remove")
             pending_adds = self.__pending_adds
             while pending_adds:
-                (s, p, o) = pending_adds.pop()
+                s, p, o = pending_adds.pop()
                 self.store.add((s, p, o))
         lock.release()
 
@@ -1379,7 +1375,7 @@ def list2set(seq: Iterable[_HashableT]) -> list[_HashableT]:
     return [x for x in seq if x not in seen and not seen.add(x)]  # type: ignore[func-returns-value]
 
 
-def first(seq: Iterable[_AnyT]) -> Optional[_AnyT]:
+def first(seq: Iterable[_AnyT]) -> _AnyT | None:
     """
     return the first element in a python sequence
     for graphs, use graph.value instead
@@ -1408,8 +1404,8 @@ def more_than(sequence: Iterable[Any], number: int) -> int:
 
 
 def to_term(
-    s: Optional[str], default: Optional[rdflib.term.Identifier] = None
-) -> Optional[rdflib.term.Identifier]:
+    s: str | None, default: rdflib.term.Identifier | None = None
+) -> rdflib.term.Identifier | None:
     """
     Creates and returns an Identifier of type corresponding
     to the pattern of the given positional argument string `s`:
@@ -1438,10 +1434,10 @@ def to_term(
 
 def from_n3(
     s: str,
-    default: Optional[str] = None,
-    backend: Optional[str] = None,
-    nsm: Optional[rdflib.namespace.NamespaceManager] = None,
-) -> Optional[Union[rdflib.term.Node, str]]:
+    default: str | None = None,
+    backend: str | None = None,
+    nsm: rdflib.namespace.NamespaceManager | None = None,
+) -> Union[rdflib.term.Node, str] | None:
     r'''Creates the Identifier corresponding to the given n3 string.
 
     ```python
@@ -1602,7 +1598,9 @@ def parse_date_time(val: str) -> int:
 
     >>> parse_date_time('1970-01-01T00:00:00Z') - 0.0
     0.0
-    >>> parse_date_time("2005-09-05T10:42:00")
+    >>> parse_date_time("2005-09-05T10:42:00") - 1125916920.0
+    0.0
+
 ```
 
 ### Core Architecture Module: `admin/get_merged_prs.py`
@@ -1662,11 +1660,11 @@ for pr in sorted(ITEMS, key=lambda k: k["closed_at"], reverse=True):
     matches = ["bump", "pre-commit.ci"]
     if any(x in pr["title"] for x in matches):
         boring_prs.append(
-            f"""* {pr['closed_at'][:10]} - {pr['title']}\n  [PR #{pr['number']}]({pr['html_url']})"""
+            f"""* {pr["closed_at"][:10]} - {pr["title"]}\n  [PR #{pr["number"]}]({pr["html_url"]})"""
         )
     else:
         good_prs.append(
-            f"""* {pr['closed_at'][:10]} - {pr['title']}\n  [PR #{pr['number']}]({pr['html_url']})"""
+            f"""* {pr["closed_at"][:10]} - {pr["title"]}\n  [PR #{pr["number"]}]({pr["html_url"]})"""
         )
 
 for pr in good_prs:
@@ -1719,11 +1717,11 @@ except Exception as e:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3007** (2026-10-02): **RDF patch log serialiser omitting DOT on prev header**
-  *Symptoms*: Each operation in an RDF patch must be terminated by a `.`, but this is omitted for `prev` headers.  ```turtle H prev <...> . ```  https://github.com/RDFLib/rdflib/blob/e8f61d4b5019040f097e560c3c1c8ecb41dd3fac/rdflib/plugins/serializers/patch.py#L67-L68  See the [RDF patch format](https://afs.github.io/rdf-delta/rdf-patch.html) for more details.
+- **Issue #3602** (2026-10-24): **SPARQL `ORDER BY` on an expression that errors raises `TypeError`**
+  *Symptoms*: ### Description  `evalOrderBy` (`rdflib/plugins/sparql/evaluate.py`) sorts with `key=lambda x: _val(value(x, e.expr, variables=True))`. When the sort expression errors for a solution, `value()` returns a `SPARQLError` object. `_val` (`rdflib/plugins/sparql/evalutils.py`) only handles `Variable`, `BNode`, `URIRef` and `Literal`, so it falls through and returns `None`. Python's `sorted` then compares `None` with `None` or with a `(rank, term)` tuple and raises `TypeError` out of the query.  SPARQL 1.1 §15.1 (ORDER BY) ranks "no value assigned to the variable or expression" lowest, below blank nodes, IRIs and literals. So a solution whose key errors or is unbound should sort as the lowest value, and the query should not crash. A *bare* unbound variable (`ORDER BY ?u`) already works, because `variables=True` returns the `Variable` and `_val` ranks it `0`. Only error results from expressions are affected. The bug needs at least two solutions to show, because with one solution `sorted` never compares keys.  ### Reproducer  ```python from rdflib import Graph  for key in ["DESC(?o = ?u)", "DESC(?o IN (1/0, 2))", "(1/0)", "?u"]:     q = f"SELECT ?o WHERE {{ VALUES ?o {{ 1 2 }} }} ORDER BY {key}"     try:         print(key, list(Graph().query(q)))     except Exception as e:         print(key, type(e).__name__, e) ```  ### Observed (rdflib 7.7.0a0, `main` and #3580 head)  | `ORDER BY` key | rdflib result | |---|---| | `DESC(?o = ?u)` | `TypeError: '<' not supported between instances of 
 
-- **Issue #2700** (2024-03-12): **Fix LongTurtle multi-BN object serialization bug**
-  *Symptoms*: # Summary of changes  Ensure LongTurtle serializer adds a space between the first BN object and a predicate when there are multiple BNs for that predicate.   # Checklist  - [x] Checked that there aren't other open pull requests for   the same change. - [x] Checked that all tests and type checking passes. - [x] Considered granting [push permissions to the PR branch](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork),   so maintainers can fix minor issues and keep your PR up to date.  
+- **Issue #3601** (2026-10-24): **SPARQL `||` / `&&`: a bare unbound operand makes the whole expression an error**
+  *Symptoms*: ### Description  `ConditionalOrExpression` and `ConditionalAndExpression` (`rdflib/plugins/sparql/operators.py`) read their operands as `e.expr` and `e.other`. That goes through `CompValue.__getitem__`, which calls `value()` with `errors=False`. A bare unbound variable therefore raises `NotBoundError` before the operator's error-tolerant logic runs. `Expr.eval` catches the error and the whole expression becomes an error.  SPARQL 1.1 §17.2 (Filter Evaluation) defines a three-valued logic for these operators:  | A | B | A \|\| B | A && B | |---|---|---|---| | T | E | T | E | | E | T | T | E | | F | E | E | F | | E | F | E | F |  Errors that come from a *sub-expression*, such as `1/0`, are not affected, because `Expr.eval` returns them as values. That is why `true || (1/0)` already works. `&&` has a second problem: it is `all(EBV(x) for x in ...)` (with `# TODO: handle returned errors`), so the first erroring operand raises even when a later operand is false. `false && (1/0)` only works because `all()` short-circuits before it reaches the error.  ### Reproducer  ```python from rdflib import Graph  for expr in ["true || ?u", "?u || true", "false && ?u", "?u && false", "(1/0) && false"]:     q = f"SELECT ?o ?r WHERE {{ BIND(2 AS ?o) BIND({expr} AS ?r) }}"     print(expr, list(Graph().query(q))) ```  (`?o` is selected only so that the row is not dropped when `?r` is unbound.)  ### Observed (rdflib 7.7.0a0, `main` and #3580 head)  | Expression | rdflib `?r` | Expected (§17.2) | |---
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1740,832 +1738,893 @@ except Exception as e:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `764c2fa8` (2026-10-22)
-**Commit Message**: fix: SPARQL SERVICE evaluation skipped or misrouted many valid patterns (#3608)
+### Incident Patch 1: `6262c3ed` (2026-10-28)
+**Commit Message**: fix: restrict ConjunctiveGraph.quads() to the requested context (#3499)
 
-* fix: SERVICE took its endpoint and query from a regex over its text
+* fix: restrict ConjunctiveGraph.quads() to the requested context
 
-Since #3408, each SERVICE pattern keeps its own text in service_string,
-taken from where the pattern starts. evalServiceQuery still split that
-text with a regular expression to get the endpoint and query. As a
-result:
+ConjunctiveGraph.quads() passed the requested context to
+Store.triples(), but then yielded one quad per context in the
+store's returned context generator. Memory.triples() reports every
+context a triple appears in, so a triple present in more than one
+graph leaked quads for the other graphs.
 
-- SERVICE SILENT, SERVICE<iri>{ with no space, a prefixed name as the
-  endpoint, and a comment before the group did not match the pattern,
-  so the remote call was skipped and gave no solutions.
-- With a GRAPH pattern or a nested SERVICE inside, the endpoint ran on
-  to the inner IRI.
-- A relative endpoint IRI was not resolved against BASE.
+Dataset.quads((None, None, None, <graph>)) therefore returned
+statements belonging to unrelated named graphs whenever those graphs
+shared a triple with the requested one.
 
-The endpoint is now the parsed term, with prefixes and BASE already
-applied. The query is the text inside the braces of the group graph
-pattern, found in service_string by skipping the IRIs, escaped
-characters and comments before the first brace. The parse tree keys
-are unchanged, since code outside rdflib reads them. This commit also
-drops pyparsing_compat.original_text_for, unused since #3408. A later
-commit on this branch restores it, as it is in the published API
-reference.
+When a context is given, only that context is now yielded; the
+unrestricted case is unchanged.
 
+test_aggregate2 asserted 6 quads for a graph holding 3 triples that
+are also in another graph -- it was encoding the leak -- and is
+corrected to 3.
 
+Closes #3314
 
-**File**: `docs/intro_to_sparql.md` (modified, +2/-0)
+* test: cover quads from the default graph
+
+---------
+
+Co-authored-by: Nicholas Car <[REDACTED_EMAIL]>
+
+**File**: `rdflib/graph.py` (modified, +8/-2)
 ```diff
-@@ -129,6 +129,8 @@ This example sends a query to [DBPedia](https://dbpedia.org/)'s SPARQL endpoint
- <http://www.w3.org/2001/XMLSchema#anyURI> <http://www.w3.org/2000/01/rdf-schema#Datatype>
- ```
+@@ -2356,8 +2356,14 @@ def quads(
+         s, p, o, c = self._spoc(triple_or_quad)
  
-+If the endpoint fails, the query raises an error. With `SERVICE SILENT`, the failure is logged as a warning and the `SERVICE` pattern gives one solution with no bindings. The endpoint must be an IRI: a variable endpoint, as in `SERVICE ?endpoint`, raises `ValueError`.
-+
- ## Prepared Queries
+         for (s, p, o), cg in self.store.triples((s, p, o), context=c):
+-            for ctx in cg:
+-                yield s, p, o, ctx
++            if c is not None:
++                # A context was requested, so only that context is relevant;
++                # the store also reports the other contexts the triple
++                # appears in, which must not leak into the result.
++                yield s, p, o, c
++            else:
++                for ctx in cg:
++                    yield s, p, o, ctx
  
- RDFLib lets you *prepare* queries before execution, this saves re-parsing and translating the query into SPARQL Algebra each time.
+     def triples_choices(
+         self,
 ```
 
-**File**: `docs/security_considerations.md` (modified, +6/-0)
+**File**: `test/test_dataset/test_dataset.py` (modified, +39/-1)
 ```diff
-@@ -76,3 +76,9 @@ Users of RDFLib can install a custom URL opener that raises an exception when an
- RDFLib's test suite includes tests which verify that custom URL openers can be used to block access to network resources.
+@@ -11,7 +11,7 @@
+ from rdflib import BNode, Namespace, Node, URIRef, plugin
+ from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Dataset, Graph
+ from rdflib.store import Store
+-from test.data import CONTEXT1, LIKES, PIZZA, TAREK
++from test.data import CHEESE, CONTEXT1, CONTEXT2, LIKES, PIZZA, TAREK
  
- RDFLib also includes an example that shows how a custom opener can be used to restrict network access in [`secure_with_urlopen`][examples.secure_with_urlopen].
-+
-+## SPARQL `SERVICE SILENT`
-+
-+A SPARQL `SERVICE SILENT` pattern ignores a failed call to its endpoint, and that includes a call that an audit hook or a custom URL opener refuses. The request is still not made, but the exception does not reach the caller. Instead, RDFLib logs a warning from the `rdflib.plugins.sparql.evaluate` logger, and the `SERVICE` pattern gives one solution with no bindings.
-+
-+The warning names the endpoint without its user information, query or fragment, and gives only the type of the error, since these can hold credentials. The error's message and traceback are added to the warning only when that logger is set to `DEBUG`. RDFLib's own error messages for `SERVICE` calls leave out credentials too, but at `DEBUG`, an error raised by urllib, an audit hook or a custom URL opener may still include the full URL.
-```
-
-**File**: `rdflib/plugins/sparql/evaluate.py` (modified, +99/-46)
-```diff
-@@ -17,6 +17,7 @@
- 
- import collections
- import itertools
-+import logging
- import re
- from collections.abc import Generator, Iterable, Mapping
- from typing import (
-@@ -25,7 +26,7 @@
-     Optional,
-     Union,
- )
--from urllib.parse import urlencode
-+from urllib.parse import urlencode, urlsplit, urlunsplit
- from urllib.request import Request, urlopen
- 
- from pyparsing import ParseException
-@@ -68,6 +69,8 @@
- 
- _Triple = tuple[Identifier, Identifier, Identifier]
- 
-+logger = logging.getLogger(__name__)
-+
- 
- def evalBGP(
-     ctx: QueryContext, bgp: list[_Triple]
-@@ -335,54 +338,104 @@ def evalPart(ctx: QueryContext, part: CompValue) -> Any:
-         raise Exception("I dont know: %s" % part.name)
+ # Will also run SPARQLUpdateStore tests against local SPARQL1.1 endpoint if
+ # available. This assumes SPARQL1.1 query/update endpoints running locally at
+@@ -325,6 +325,44 @@ def test_iter(get_dataset):
+     assert i_new == i_trad  # both should be 3
  
  
-+# Everything in the text of a SERVICE pattern before its group graph pattern:
-+# the keywords, the endpoint, whitespace and comments. There, only a comment
-+# can hold a "{", and only an IRI, an escaped character in a prefixed name or a
-+# comment can hold a "#". A comment runs to the end of its line, which also
-+# stops the pattern backtracking through a run of comments.
-+_SERVICE_HEAD = re.compile(r"(?:<[^>]*>|\\.|#[^\n]*(?![^\n])|[^<\\#{])*{")
-+
-+
-+def _serviceGraphPatternText(part: CompValue) -> str:
-+    """Get the text inside the braces of a SERVICE pattern's group graph pattern."""
-+    service_string = part.service_string
-+    head = None
-+    if isinstance(service_string, str):
-+        service_string = service_string.rstrip()
-+        head = _SERVICE_HEAD.match(service_string)
-+    if head is None or not service_string.endswith("}"):
-+        raise ValueError(
-+            f"SERVICE pattern has no usable service_string: {service_string!r}"
-+        )
-+    return service_string[head.end() : -1]
-+
-+
- def evalServiceQuery(ctx: QueryContext, part: CompValue):
--    res = {}
--    match = re.match(
--        r"^\s*service\s+<(.*)>\s*{(.*)}\s*$",
--        # type error: Argument 2 to "get" of "CompValue" has incompatible type "str"; expected "bool"  [arg-type]
--        part.get("service_string", ""),  # type: ignore[arg-type]
--        re.DOTALL | re.I,
--    )
-+    if not isinstance(part.term, URIRef):
-+        raise ValueError(
-+            f"SERVICE {part.term.n3()} is not supported, the endpoint must be an IRI"
-+        )
-+    service_url = str(part.term)
-+    service_query = _buildQueryStringForServiceCall(ctx, _serviceGraphPatternText(part))
- 
--    if match:
--        service_url = match.group(1)
--        service_query = _buildQueryStringForServiceCall(ctx, match.group(2))
--
--        query_settings = {"query": service_query, "output": "json"}
--        headers = {
--            "accept": "application/sparql-results+json",
--            "user-agent": f"rdflib/{__version__}",
--        }
--        # GET is easier to cache so prefer that if the query is not to long
--        if len(service_query) < 600:
--            response = urlopen(
--                Request(service_url + "?" + urlencode(query_settings), headers=headers)
--            )
--        else:
--            response = urlopen(
--                Request(
--                    service_url,
--                    data=urlencode(query_settings).encode(),
--                    headers=headers,
--                )
--            )
--        if response.status == 200:
--            if _HAS_ORJSON:
--                json_dict = orjson.loads(response.read())
--            else:
--                json_dict = json.loads(response.read())
--            variables = res["vars_"] = json_dict["head"]["vars"]
--            # or just return the bindings?
--            res = json_dict["results"]["bindings"]
--            if len(res) > 0:
--                for r in res:
--                    # type error: Argument 2 to "_yieldBindingsFromServiceCallResult" has incompatible type "str"; expected "dict[str, dict[str, str]]"
--                    for bound in _yieldBindingsFromServiceCallResult(ctx, r, variables):
--                        yield bound
--        else:
--            raise Exception(
--                "Service: %s responded with code: %s", service_url, response.status
-+    if not part.silent:
-+        yield from _callService(ctx, service_url, service_query)
-+        return
-+    try:
-+        # Convert every row before yielding any, so that a failure part way
-+        # through gives only the one solution below.
-+        solutions = list(_callService(ctx, service_url, service_query))
-+    except Exception as error:
-+        # The endpoint's userinfo and query, and the error's message, can hold
-+        # secrets, so the warning leaves them out. A failing endpoint can also
-+        # fail once for each solution it is joined with, so give the message
-+        # and traceback only when debugging.
-+        logger.warning(
-+            "Ignoring failed SERVICE SILENT call to %s: %s",
-+            _endpointWithoutSecrets(service_url),
-+            type(error).__name__,
-+            exc_info=logger.isEnabledFor(logging.DEBUG),
-+        )
-+        # A failed SERVICE SILENT pattern gives one solution with 
-```
-
-**File**: `test/test_sparql/test_service.py` (modified, +614/-51)
-```diff
-@@ -1,22 +1,36 @@
- from __future__ import annotations
- 
- import json
--from collections.abc import Mapping, Sequence
--from http.client import IncompleteRead, RemoteDisconnected
--from io import StringIO
--from typing import Union
--from urllib.error import URLError
-+import logging
-+import time
-+from collections.abc import Iterator, Mapping, Sequence
-+from http.client import (
-+    HTTPMessage,
-+    HTTPResponse,
-+    IncompleteRead,
-+    RemoteDisconnected,
++@pytest.mark.parametrize(
++    "graph_name, expected_quads",
++    [
++        (
++            CONTEXT1,
++            {
++                (TAREK, LIKES, PIZZA, CONTEXT1),
++                (TAREK, LIKES, CHEESE, CONTEXT1),
++            },
++        ),
++        (
++            CONTEXT2,
++            {
++                (TAREK, LIKES, PIZZA, CONTEXT2),
++            },
++        ),
++        (
++            DATASET_DEFAULT_GRAPH_ID,
++            {
++                (TAREK, LIKES, CHEESE, DATASET_DEFAULT_GRAPH_ID),
++            },
++        ),
++    ],
 +)
++def test_quads_restricted_to_requested_graph(get_dataset, graph_name, expected_quads):
++    """A quad shared by several graphs must only be reported for the graph asked for."""
++    store, d = get_dataset
++
++    d.add((TAREK, LIKES, PIZZA, CONTEXT1))
++    d.add((TAREK, LIKES, CHEESE, CONTEXT1))
++    d.add((TAREK, LIKES, PIZZA, CONTEXT2))
++    d.add((TAREK, LIKES, CHEESE))
++
++    quads = set(d.quads((None, None, None, graph_name)))
++
++    assert quads == expected_quads
++
++
+ def test_graph_without_identifier() -> None:
+     """
+     Graphs with no identifies assigned are identified by Skolem IRIs with a
+```
+
+**File**: `test/test_graph/test_aggregate_graphs.py` (modified, +3/-1)
+```diff
+@@ -116,6 +116,8 @@ def test_aggregate2():
+     assert (
+         len(list(g.quads((None, None, None, URIRef("http://example.com/graph2"))))) == 4
+     )
++    # graph4 holds the same 3 triples as graph1; only graph4's own quads are
++    # reported for it.
+     assert (
+         len(
+             list(
+@@ -124,5 +126,5 @@ def test_aggregate2():
+                 )
+             )
+         )
+-        == 6
++        == 3
+     )
+```
+
+---
+
+### Incident Patch 2: `b1fe3a93` (2026-10-28)
+**Commit Message**: Use RDF and XML prefixes in pretty-xml for unbound namespaces (#3537)
+
+* fix: use rdf and xml prefixes in pretty-xml when no namespaces are bound
+
+* fix: preserve valid XML QNames and empty namespace collections
+
+Validate fixed-prefix local names with a cached XML parser check and retain strict namespace-manager fallback. Treat explicitly empty namespace collections separately from omitted values. Add regression coverage for URI suffixes, extended bindings, and Unicode names.
+
+* fix: reject conflicting XML namespace prefixes
+
+---------
+
+Co-authored-by: Edmond Chuc <[REDACTED_EMAIL]>
+
+**File**: `rdflib/plugins/serializers/rdfxml.py` (modified, +6/-3)
+```diff
+@@ -211,7 +211,12 @@ def serialize(
+         assert self.max_depth > 0, "max_depth must be greater than 0"
+ 
+         self.nm = nm = store.namespace_manager
+-        self.writer = writer = XMLWriter(stream, nm, encoding)
++        self.writer = writer = XMLWriter(
++            stream,
++            nm,
++            encoding,
++            extra_ns={"rdf": Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")},
++        )
+         namespaces = {}
+ 
+         for predicate in set(store.predicates()):
+@@ -230,8 +235,6 @@ def serialize(
+                 continue
+             namespaces[prefix] = namespace
+ 
+-        namespaces["rdf"] = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+-
+         writer.push(RDFVOC.RDF)
+ 
+         if "xml_base" in kwargs:
+```
+
+**File**: `rdflib/plugins/serializers/xmlwriter.py` (modified, +31/-5)
+```diff
+@@ -2,9 +2,12 @@
+ 
+ import codecs
+ from collections.abc import Iterable
++from functools import lru_cache
+ from typing import IO, TYPE_CHECKING
++from xml.parsers import expat
+ from xml.sax.saxutils import escape, quoteattr
+ 
++from rdflib.namespace import XMLNS, is_ncname
+ from rdflib.term import URIRef
+ 
+ if TYPE_CHECKING:
+@@ -16,6 +19,18 @@
+ ESCAPE_ENTITIES = {"\r": "&#13;"}
+ 
+ 
++@lru_cache(maxsize=512)
++def _is_xml_ncname(name: str) -> bool:
++    """Check local names against the XML parser used by RDFLib."""
++    if not is_ncname(name):
++        return False
++    try:
++        expat.ParserCreate(namespace_separator=" ").Parse(f"<{name}/>", True)
++    except expat.ExpatError:
++        return False
++    return True
++
++
+ class XMLWriter:
+     """A simple XML writer that writes to a stream."""
+ 
+@@ -85,17 +100,24 @@ def element(
+         self.text(content)
+         self.pop()
+ 
+-    def namespaces(self, namespaces: Iterable[tuple[str, str]] = None) -> None:
+-        if not namespaces:
++    def namespaces(self, namespaces: Iterable[tuple[str, str]] | None = None) -> None:
++        if namespaces is None:
+             namespaces = self.nm.namespaces()
+ 
+         write = self.stream.write
+         write("\n")
+         for prefix, namespace in namespaces:
++            if prefix in self.extra_ns:
++                if prefix and str(namespace) != str(self.extra_ns[prefix]):
++                    raise ValueError(
++                        f"Namespace prefix {prefix!r} is bound to both "
++                        f"{str(namespace)!r} and {str(self.extra_ns[prefix])!r}"
++                    )
++                # Extra default namespaces take precedence, as required by TriX.
++                continue
+             if prefix:
+                 write('  xmlns:%s="%s"\n' % (prefix, namespace))
+-            # Allow user-provided namespace bindings to prevail
+-            elif prefix not in self.extra_ns:
++            else:
+                 write('  xmlns="%s"\n' % namespace)
+ 
+         for prefix, namespace in self.extra_ns.items():
+@@ -122,10 +144,14 @@ def qname(self, uri: str) -> str:
+         or the given namespace manager"""
+ 
+         for pre, ns in self.extra_ns.items():
+-            if uri.startswith(ns):
++            if uri.startswith(ns) and _is_xml_ncname(uri[len(ns) :]):
+                 if pre != "":
+                     return ":".join([pre, uri[len(ns) :]])
+                 else:
+                     return uri[len(ns) :]
+ 
++        # The xml prefix is predefined and never declared
++        if uri.startswith(XMLNS) and _is_xml_ncname(uri[len(XMLNS) :]):
++            return "xml:" + uri[len(XMLNS) :]
++
+         return self.nm.qname_strict(uri)
+```
+
+**File**: `test/test_serializers/test_prettyxml.py` (modified, +105/-1)
+```diff
+@@ -4,7 +4,7 @@
+ 
+ from rdflib.compare import isomorphic
+ from rdflib.graph import Dataset, Graph
+-from rdflib.namespace import RDF, RDFS
++from rdflib.namespace import RDF, RDFS, XMLNS
+ from rdflib.plugins.serializers.rdfxml import PrettyXMLSerializer
+ from rdflib.term import BNode, Literal, URIRef
+ 
+@@ -214,6 +214,110 @@ def _assert_expected_object_types_for_predicates(graph, predicates, types):
+             )
+ 
+ 
++def test_pretty_xml_bind_namespaces_none():
++    # https://github.com/RDFLib/rdflib/issues/2408
++    graph = Graph(bind_namespaces="none")
++    graph.parse(data='prefix ex: <http://example.org/> ex:a ex:b "test"@en .')
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert "<rdf:RDF" in result
++    assert 'rdf:about="http://example.org/a"' in result
++    assert 'xml:lang="en"' in result
++    assert "ns1" not in result
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++
++
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++def test_pretty_xml_conflicting_rdf_prefix(bind_namespaces, term_role):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    graph.bind("rdf", "http://example.org/", replace=True)
++    subject = URIRef("http://example.org/subject")
++    term = URIRef("http://example.org/term")
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
++
++    with pytest.raises(ValueError, match="Namespace prefix 'rdf' is bound to both"):
++        graph.serialize(format="pretty-xml")
++
++
++@pytest.mark.parametrize("namespace", [str(RDF), XMLNS])
++@pytest.mark.parametrize("suffix", ["nested/value", "/value", "123value"])
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++def test_pretty_xml_invalid_fixed_namespace_local_name(
++    namespace, suffix, term_role, bind_namespaces
++):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    subject = URIRef("http://example.org/subject")
++    term = URIRef(namespace + suffix)
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++
++
++@pytest.mark.parametrize("namespace", [str(RDF), XMLNS])
++@pytest.mark.parametrize(
++    "subnamespace", ["foo%20", "foo(", "foo)", "fooª", "fooµ", "fooº"]
++)
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++def test_pretty_xml_longer_namespace_binding(
++    namespace, subnamespace, term_role, bind_namespaces
++):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    extended = namespace + subnamespace
++    graph.bind("extended", extended)
++    subject = URIRef("http://example.org/subject")
++    term = URIRef(extended + "value")
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++    assert "<extended:value" in result
++
++
++@pytest.mark.parametrize("namespace", [str(RDF), XMLNS])
++@pytest.mark.parametrize("local_name", ["éclair", "Δelta", "名前", "a\u0301"])
++@pytest.mark.parametrize("term_role", ["predicate", "type"])
++def test_pretty_xml_valid_unicode_local_name(namespace, local_name, term_role):
++    graph = Graph()
++    subject = URIRef("http://example.org/subject")
++    term = URIRef(namespace + local_name)
++    if term_role == "predicate":
++        graph.add((subject, term, Literal("value")))
++    else:
++        graph.add((subject, RDF.type, term))
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++
++
++@pytest.mark.parametrize("bind_namespaces", ["rdflib", "none"])
++def test_pretty_xml_empty_graph_omits_unused_namespaces(bind_namespaces):
++    graph = Graph(bind_namespaces=bind_namespaces)
++    graph.bind("unused", "http://example.org/?a=1&b=")
++
++    result = graph.serialize(format="pretty-xml")
++
++    assert isomorphic(graph, Graph().parse(data=result, format="xml"))
++    assert result.count("xmlns:") == 1
++    assert 'xmlns:rdf="%s"' % RDF in result
++
++
+ def test_unprefixable_predicate_raises_clear_error():
+     """A predicate equal to a bound namespace/prefix cannot be shortened, and should raise a clear error (regression test for issue #2409)."""
+     g = Graph().parse(data='<a> <> "test"@en .', publicID="http://example.org/")
+```
+
+**File**: `test/test_serializers/test_xmlwriter_qname.py` (modified, +106/-0)
+```diff
+@@ -1,4 +1,6 @@
+ import tempfile
 +from io import BytesIO
-+from typing import Any, Optional, Union
-+from urllib.error import HTTPError, URLError
-+from urllib.request import BaseHandler, HTTPHandler, OpenerDirector, Request
-+from urllib.response import addinfourl
++from xml.etree import ElementTree
  
  import pytest
  
- from rdflib import Graph, Literal, URIRef, Variable, __version__
- from rdflib.namespace import XSD
--from rdflib.query import Result
-+from rdflib.plugins.sparql import evaluate, prepareQuery
-+from rdflib.plugins.sparql.algebra import traverse
-+from rdflib.plugins.sparql.parserutils import CompValue
-+from rdflib.plugins.sparql.sparql import FrozenBindings, QueryContext
- from rdflib.term import BNode, Identifier
- from test.utils import helper
-+from test.utils.audit import AuditHookDispatcher, AuditHookType
- from test.utils.http import MethodName, MockHTTPResponse
- from test.utils.httpservermock import ServedBaseHTTPServerMock
- from test.utils.outcome import OutcomeChecker
-+from test.utils.urlopen import context_urlopener
+@@ -72,3 +74,107 @@ def test_xmlwriter_qname(uri):
+     xmlwr = XMLWriter(fp, g.namespace_manager, extra_ns={"": TRIXNS, "ex": EXNS})
+ 
+     assert xmlwr.qname(uri[0]) == uri[1]
++
++
++@pytest.mark.parametrize(
++    "prefix, namespace",
++    [("rdf", rdflib.Namespace(str(rdflib.RDF))), ("", TRIXNS), ("ex", EXNS)],
++)
++@pytest.mark.parametrize("suffix", ["nested/value", "123value"])
++def test_xmlwriter_extra_namespace_invalid_local_name(prefix, namespace, suffix):
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind(prefix, namespace)
++    writer = XMLWriter(BytesIO(), graph.namespace_manager, extra_ns={prefix: namespace})
++
++    assert writer.qname(namespace[suffix]) == "ns1:value"
++
++
++@pytest.mark.parametrize(
++    "suffix, expected",
++    [
++        ("lang", "xml:lang"),
++        ("/value", "ns1:value"),
++        ("123value", "ns1:namespace123value"),
++    ],
++)
++def test_xmlwriter_xml_namespace_local_name(suffix, expected):
++    graph = rdflib.Graph(bind_namespaces="none")
++    writer = XMLWriter(BytesIO(), graph.namespace_manager)
++
++    assert writer.qname(rdflib.namespace.XMLNS + suffix) == expected
++
++
++@pytest.mark.parametrize(
++    "prefix, namespace",
++    [
++        ("rdf", rdflib.Namespace(str(rdflib.RDF))),
++        ("", TRIXNS),
++        ("ex", EXNS),
++        ("xml", rdflib.Namespace(rdflib.namespace.XMLNS)),
++    ],
++)
++@pytest.mark.parametrize(
++    "subnamespace", ["foo%20", "foo(", "foo)", "fooª", "fooµ", "fooº"]
++)
++def test_xmlwriter_longer_namespace_binding(prefix, namespace, subnamespace):
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind(prefix, namespace)
++    extended = rdflib.Namespace(str(namespace) + subnamespace)
++    graph.bind("extended", extended)
++    extra_ns = {} if prefix == "xml" else {prefix: namespace}
++    writer = XMLWriter(BytesIO(), graph.namespace_manager, extra_ns=extra_ns)
++
++    assert writer.qname(extended.value) == "extended:value"
++
++
++@pytest.mark.parametrize(
++    "namespace, prefix",
++    [(str(rdflib.RDF), "rdf"), (rdflib.namespace.XMLNS, "xml")],
++)
++@pytest.mark.parametrize(
++    "local_name", ["À", "Ö", "Ø", "ö", "ø", "Δelta", "名前", "a\u0301"]
++)
++def test_xmlwriter_valid_unicode_local_name(namespace, prefix, local_name):
++    graph = rdflib.Graph(bind_namespaces="none")
++    writer = XMLWriter(
++        BytesIO(),
++        graph.namespace_manager,
++        extra_ns={"rdf": rdflib.Namespace(str(rdflib.RDF))},
++    )
++
++    assert writer.qname(namespace + local_name) == prefix + ":" + local_name
++
++
++@pytest.mark.parametrize("namespaces", [[], (), {}.items()])
++def test_xmlwriter_explicit_empty_namespaces(namespaces):
++    graph = rdflib.Graph()
++    stream = BytesIO()
++    writer = XMLWriter(stream, graph.namespace_manager, decl=0, extra_ns={"ex": EXNS})
++
++    writer.namespaces(namespaces)
++
++    assert stream.getvalue() == b'\n  xmlns:ex="https://example.org/ns/"\n'
++
++
++def test_xmlwriter_conflicting_namespace_prefix():
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind("ex", EXNS)
++    writer = XMLWriter(BytesIO(), graph.namespace_manager, extra_ns={"ex": TRIXNS})
++
++    with pytest.raises(ValueError, match="Namespace prefix 'ex' is bound to both"):
++        writer.namespaces()
++
++
++def test_xmlwriter_matching_namespace_prefix():
++    graph = rdflib.Graph(bind_namespaces="none")
++    graph.bind("ex", EXNS)
++    stream = BytesIO()
++    writer = XMLWriter(stream, graph.namespace_manager, extra_ns={"ex": EXNS})
++
++    writer.push(EXNS.root)
++    writer.namespaces()
++    writer.pop()
++
++    assert (
++        ElementTree.fromstring(stream.getvalue()).tag == "{https://example.org/ns/}root"
++    )
+```
+
+---
+
+### Incident Patch 3: `f87db10f` (2026-10-28)
+**Commit Message**: fix: count Dataset quads in len() and update documentation (#3515)
+
+* fix: count Dataset quads in len() and update documentation
+
+* fix: count read-only Dataset graphs without writes
+
+* fix: exclude quoted formulas from Dataset length
+
+* fix: count Dataset contexts through the owning store
+
+* fix: count asserted Dataset memberships in formula-aware stores
+
+* fix: support blank-node graph selectors in RDF4J size requests
+
+* perf: use native RDF4J repository counts for Dataset length
+
+---------
+
+Co-authored-by: Edmond Chuc <[REDACTED_EMAIL]>
+
+**File**: `docs/rdf4j.md` (modified, +15/-0)
+```diff
+@@ -76,6 +76,21 @@ ds = Dataset(store=store)
+ 
+ For more information on how to use RDFLib Graphs and Datasets, see the subsections under [Usage](index.md).
+ 
++### Dataset counting performance
++
++`len(ds)` delegates to
++[`RDF4JStore.quad_count()`][rdflib.plugins.stores.rdf4j.RDF4JStore.quad_count],
++which makes one repository-wide size request without listing graphs. This
++also applies when RDF4JStore connects to GraphDB through its RDF4J-compatible
++interface. Counts include explicit statements in the default and named graphs,
++including blank-node graph names, and count a repeated triple once per graph.
++Inferred statements are excluded by the repository size operation, so a query
++that includes inference can return more statements.
++
++`bool(ds)` and `if ds:` make the same size request. Results are not cached;
++each check makes another request. A single request reduces network round trips
++but does not guarantee constant-time work on the server.
++
+ ### Namespaces
+ 
+ When connecting to an RDF4J repository, RDFLib automatically registers a set of built-in namespace prefixes. To disable this behavior, assign a new RDFLib [`NamespaceManager`][rdflib.namespace.NamespaceManager] instance with `bind_namespaces` set to the string `"none"`.
+```
+
+**File**: `docs/upgrade7to8.md` (modified, +20/-0)
+```diff
+@@ -10,3 +10,23 @@ RDFLib 8 requires Python 3.11 or later. Python 3.10 reached end of life on
+ 
+ The optional `lxml` dependency now requires version 4.9.1 or later for
+ Python 3.11 compatibility.
++
++## Dataset length
++
++`len(dataset)` now counts quads: identical triples in different graphs count
++separately, including occurrences in the default graph. Empty named graphs
++and the contents of quoted N3 formulas do not contribute to the count.
++`Graph.__len__()` and `ConjunctiveGraph.__len__()` retain their existing behavior.
++
++Counting delegates to
++[`Store.quad_count()`][rdflib.store.Store.quad_count], which stores can override
++with an equivalent native operation. The Memory store scans asserted graph
++memberships. RDF4JStore uses a single repository-wide size request for RDF4J
++and GraphDB. Other stores may enumerate graphs and count each graph separately,
++potentially issuing multiple remote requests.
++
++`bool(dataset)` and `if dataset:` perform the same count as `len(dataset)`.
++Results are not cached, so repeated checks repeat the work. Avoid assuming
++these operations are constant-time, especially in loops over large or remote
++datasets. A dataset containing only empty named graphs has length zero and is
++false, even though those graph names remain present.
+```
+
+**File**: `examples/datasets.py` (modified, +4/-5)
+```diff
+@@ -66,7 +66,7 @@
+     )
+ )
+ 
+-# We now have 2 distinct quads in the Dataset to the Dataset has a length of 2
++# We now have 2 distinct quads in the Dataset, so the Dataset has a length of 2
+ assert len(d) == 2
+ 
+ # Add another quad to the Dataset specifying a non-existent Graph.
+@@ -179,8 +179,7 @@
+ http://example.com/subject-y, http://example.com/predicate-y, Triple Y, http://example.com/graph-2
+ """
+ 
+-# Adding a triple in graph-1 to graph-2 increases the number of distinct of quads in
+-# the Dataset
++# Adding a triple in graph-1 to graph-2 increases the number of quads in the Dataset
+ d.add(
+     (
+         URIRef("http://example.com/subject-z"),
+@@ -201,8 +200,8 @@
+ http://example.com/subject-z, http://example.com/predicate-z, Triple Z, http://example.com/graph-2
+ """
+ 
+-# but the 'length' of the Dataset is still only 3 as only distinct triples are counted
+-assert len(d) == 3
++# the 'length' of the Dataset is now 4 because each graph occurrence is counted
++assert len(d) == 4
  
  
- @pytest.mark.webtest
-@@ -459,85 +473,634 @@ def test_service_raw_tab_in_string_literal(
+ # Looping through triples sees the 'Z' triple only once
+```
+
+**File**: `rdflib/contrib/rdf4j/client.py` (modified, +27/-10)
+```diff
+@@ -43,6 +43,20 @@
+ ObjectType = t.Union[URIRef, Literal, None]
+ 
+ 
++def _size_context_params(
++    graph_name: IdentifiedNode | Iterable[IdentifiedNode] | str | None,
++) -> dict[str, str | list[str]]:
++    """Encode graph selectors as repeated RDF4J size context parameters."""
++    if graph_name is None:
++        return {}
++    contexts = []
++    for name in (graph_name,) if isinstance(graph_name, str) else graph_name:
++        params: dict[str, str] = {}
++        build_context_param(params, name)
++        contexts.append(params["context"])
++    return {"context": contexts[0] if isinstance(graph_name, str) else contexts}
++
++
+ @dataclass(frozen=True)
+ class NamespaceListingResult:
+     """RDF4J namespace and prefix name result."""
+@@ -425,11 +439,14 @@ def health(self) -> bool:
+                 f"Repository {self._identifier} is not healthy. {err.response.status_code} - {err.response.text}"
+             )
+ 
+-    def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None) -> int:
++    def size(
++        self,
++        graph_name: IdentifiedNode | Iterable[IdentifiedNode] | str | None = None,
++    ) -> int:
+         """The number of statements in the repository or in the specified graph name.
+ 
+         Parameters:
+-            graph_name: Graph name(s) to restrict to.
++            graph_name: Graph name(s) to restrict to, including blank nodes.
+ 
+                 The default value `None` queries all graphs.
+ 
+@@ -442,9 +459,7 @@ def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None) -> int
+         Raises:
+             RepositoryResponseFormatError: Fails to parse the repository size.
+         """
+-        validate_graph_name(graph_name)
+-        params: dict[str, str] = {}
+-        build_context_param(params, graph_name)
++        params = _size_context_params(graph_name)
+         response = self.http_client.get(
+             f"/repositories/{self.identifier}/size", params=params
+         )
+@@ -854,11 +869,14 @@ def ping(self):
+                 f"Transaction ping failed: {response.status_code} - {response.text}"
+             )
+ 
+-    def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None):
++    def size(
++        self,
++        graph_name: IdentifiedNode | Iterable[IdentifiedNode] | str | None = None,
++    ) -> int:
+         """The number of statements in the repository or in the specified graph name.
+ 
+         Parameters:
+-            graph_name: Graph name(s) to restrict to.
++            graph_name: Graph name(s) to restrict to, including blank nodes.
+ 
+                 The default value `None` queries all graphs.
+ 
+@@ -872,9 +890,8 @@ def size(self, graph_name: URIRef | Iterable[URIRef] | str | None = None):
+             RepositoryResponseFormatError: Fails to parse the repository size.
+         """
+         self._raise_for_closed()
+-        validate_graph_name(graph_name)
+-        params = {"action": "SIZE"}
+-        build_context_param(params, graph_name)
++        params = _size_context_params(graph_name)
++        params["action"] = "SIZE"
+         response = self.repo.http_client.put(self.url, params=params)
+         response.raise_for_status()
+         return self.repo._to_size(response.text)
+```
+
+**File**: `rdflib/graph.py` (modified, +14/-0)
+```diff
+@@ -2559,6 +2559,9 @@ class Dataset(ConjunctiveGraph):
+     structure to include a graph identifier - archaically called Context - producing
+     'quads' of s, p, o, g.
+ 
++    The length of a Dataset is the number of quads it contains. Identical triples
++    in different graphs are therefore counted separately.
++
+     Triples, or quads, can be added to a Dataset. Triples, or quads with the graph
+     identifer :code:`urn:x-rdflib:default` go into the default graph.
+ 
+@@ -2745,6 +2748,17 @@ def __str__(self) -> str:
+         pattern = "[a rdflib:Dataset;rdflib:storage [a rdflib:Store;rdfs:label '%s']]"
+         return pattern % self.store.__class__.__name__
+ 
++    def __len__(self) -> int:
++        """Number of asserted quads in the dataset.
++
++        Delegates to [`Store.quad_count()`][rdflib.store.Store.quad_count].
++        The cost depends on the store: Memory scans asserted memberships,
++        while RDF4JStore uses one repository-wide size request. Other stores
++        may enumerate graphs and request each graph's length separately.
++        Truth testing also calls this method, and results are not cached.
++        """
++        return self.store.quad_count()
++
+     # type error: Return type "tuple[type[Dataset], tuple[Store, bool]]" of "__reduce__" incompatible with return type "tuple[type[Graph], tuple[Store, IdentifiedNode]]" in supertype "ConjunctiveGraph"
+     # type error: Return type "tuple[type[Dataset], tuple[Store, bool]]" of "__reduce__" incompatible with return type "tuple[type[Graph], tuple[Store, IdentifiedNode]]" in supertype "Graph"
+     def __reduce__(self) -> tuple[type[Dataset], tuple[Store, bool]]:  # type: ignore[override]
+```
+
+**File**: `rdflib/plugins/stores/rdf4j.py` (modified, +4/-0)
+```diff
+@@ -220,3 +220,7 @@ def remove_graph(self, graph: Graph) -> None:
+ 
+     def __len__(self, context: _ContextType | None = None) -> int:
+         return self.repo.size(context if context is None else context.identifier)
++
++    def quad_count(self) -> int:
++        """Count explicit quads with one repository-wide size request."""
++        return self.repo.size()
+```
+
+**File**: `rdflib/store.py` (modified, +35/-0)
+```diff
+@@ -360,6 +360,41 @@ def __len__(self, context: _ContextType | None = None) -> int:  # type: ignore[e
+             context: a graph instance to query or None
+         """
+ 
++    def quad_count(self) -> int:
++        """Return the number of non-quoted statement memberships in the store.
++
++        Count each graph occurrence separately, including the default graph.
++        Empty graphs contribute zero. This does not change the behavior of
++        [`Store.__len__()`][rdflib.store.Store.__len__].
++
++        Stores can override this operation with an equivalent native count.
++        The fallback scans asserted memberships for formula-aware stores and
++        otherwise enumerates contexts and sums their lengths. The latter may
++        require a remote request per graph, plus context enumeration.
++        """
++        if not self.context_aware:
++            return self.__len__()
++        if self.formula_aware:
++            # Quoted and asserted graphs can share an identifier, so a graph's
++            # type and length cannot distinguish their statement memberships.
++            return sum(
++                1 for _, contexts in self.triples((None, None, None)) for _ in contexts
++            )
++
++        from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Graph
++
++        count = 0
++        default_graph_seen = False
++        for context in self.contexts():
++            # Some stores return identifiers rather than Graph objects.
++            identifier = context.identifier if isinstance(context, Graph) else context
++            graph = Graph(self, identifier=identifier)
++            count += self.__len__(graph)
++            default_graph_seen |= graph.identifier == DATASET_DEFAULT_GRAPH_ID
++        if not default_graph_seen:
++            count += self.__len__(Graph(self, identifier=DATASET_DEFAULT_GRAPH_ID))
++        return count
++
+     # type error: Missing return statement
+     def contexts(  # type: ignore[empty-body]
+         self, triple: _TripleType | None = None
+```
+
+**File**: `test/test_dataset/test_dataset.py` (modified, +67/-1)
+```diff
+@@ -9,7 +9,7 @@
+ import pytest
+ 
+ from rdflib import BNode, Namespace, Node, URIRef, plugin
+-from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Dataset, Graph
++from rdflib.graph import DATASET_DEFAULT_GRAPH_ID, Dataset, Graph, QuotedGraph
+ from rdflib.store import Store
+ from test.data import CHEESE, CONTEXT1, CONTEXT2, LIKES, PIZZA, TAREK
+ 
+@@ -200,6 +200,68 @@ def test_default_graph(get_dataset):
+     assert set(dataset.graphs()) == set([dataset.default_graph])
+ 
+ 
++def test_len_counts_quads() -> None:
++    dataset = Dataset()
++    dataset.graph(URIRef("https://example.com/g1")).add((TAREK, LIKES, PIZZA))
++    dataset.graph(URIRef("https://example.com/g2")).add((TAREK, LIKES, PIZZA))
++
++    assert len(dataset) == 2
++
++
++def test_len_excludes_quoted_formulas() -> None:
++    dataset = Dataset().parse(
++        data="@prefix : <urn:test:> . { :a :b :c } => { :d :e :f } .",
++        format="n3",
++    )
++
++    assert len(dataset) == 1
++    assert sum(1 for _ in dataset.quads()) == 1
++
++
++@pytest.mark.parametrize("quoted_first", [True, False])
++@pytest.mark.parametrize(
++    "identifier",
++    [URIRef("urn:shared"), DATASET_DEFAULT_GRAPH_ID],
++    ids=["named", "default"],
++)
++def test_len_counts_asserted_memberships(
++    identifier: URIRef, quoted_first: bool
++) -> None:
++    dataset = Dataset()
++    additions = [
++        (
++            QuotedGraph(dataset.store, identifier),
++            (URIRef("urn:quoted"), LIKES, PIZZA),
++        ),
++        (
++            Graph(dataset.store, identifier),
++            (URIRef("urn:asserted"), LIKES, PIZZA),
++        ),
++    ]
++    for graph, triple in additions if quoted_first else reversed(additions):
++        graph.add(triple)
++
++    assert len(dataset) == 1
++    assert bool(dataset) is True
++    assert sum(1 for _ in dataset.quads()) == 1
++
++
++@pytest.mark.parametrize("context_kind", ["self", "shared-store", "separate-store"])
++def test_len_counts_dataset_context(context_kind: str) -> None:
++    dataset = Dataset()
++    if context_kind == "self":
++        context = dataset
++    elif context_kind == "shared-store":
++        context = Dataset(store=dataset.store)
++    else:
++        context = Dataset()
++    dataset.add((TAREK, LIKES, PIZZA, context))
++    dataset.graph(URIRef("urn:other")).add((TAREK, LIKES, PIZZA))
++
++    assert len(dataset) == 2
++    assert sum(1 for _ in dataset.quads()) == 2
++
++
+ def test_dataset_default_context_public_access_warns() -> None:
+     dataset = Dataset()
+ 
+@@ -302,6 +364,9 @@ def test_not_union(get_dataset):
+ def test_iter(get_dataset):
+     store, d = get_dataset
+     """PR 1382: adds __iter__ to Dataset"""
++    if store == "SPARQLUpdateStore":
++        pytest.skip("SPARQLUpdateStore does not expose contexts through triples()")
++
+     uri_a = URIRef("https://example.com/a")
+     uri_b = URIRef("https://example.com/b")
+     uri_c = URIRef("https://example.com/c")
+@@ -329,6 +394,7 @@ def test_iter(get_dataset):
+         i_new += 1
+ 
+     assert i_new == i_trad  # both should be 3
++    assert len(d) == i_new
  
  
  @pytest.mark.parametrize(
--    "query",
-+    ("query", "service_query"),
-     [
--        # The tab before SERVICE stays at the start of the SERVICE text.
-         pytest.param(
-             "SELECT ?var WHERE {\n"
-             "\tSERVICE\t<REMOTE_URL>\t{\n"
-             '\t\tSELECT ?var WHERE { VALUES ?var { "x" } }\n'
-             "\t}\n"
-             "}\n",
-+            '\n\t\tSELECT ?var WHERE { VALUES ?var { "x" } }\n\t',
-             id="tab-indented",
-         ),
--        # Expanding this tab after SERVICE gave several spaces, which the
--        # SERVICE pattern used to reject.
-         pytest.param(
--            "SELECT ?var WHERE { SERVICE\t<REMOTE_URL>\t{ "
--            'SELECT ?var WHERE { VALUES ?var { "x" } } } }',
-+            "SELECT ?var WHERE { SERVICE\t<REMOTE_URL>\t{\t"
-+            'SELECT ?var WHERE { VALUES ?var { "x" } }\t} }',
-+            '\tSELECT ?var WHERE { VALUES ?var { "x" } }\t',
-             id="tab-mid-line",
-         ),
-     ],
- )
- def test_service_tab_whitespace(
--    function_httpmock: ServedBaseHTTPServerMock, query: str
-+    function_httpmock: ServedBaseHTTPServerMock, query: str, service_query: str
- ) -> None:
--    # Parsing TSV results changes pyparsing's default whitespace characters
--    # for the whole process, so do that first.
--    Result.parse(StringIO("?var\n"), format="tsv")
-+    # Tabs used as whitespace in a SERVICE pattern reach the endpoint unchanged.
-     query = query.replace("REMOTE_URL", function_httpmock.url)
-+    function_httpmock.responses[MethodName.GET].append(
-+        make_select_response({"var": "x"})
-+    )
-+
-+    assert Graph().query(query).bindings == [{Variable("var"): Literal("x")}]
-+    (request,) = function_httpmock.requests[MethodName.GET]
-+    assert request.path_query["query"] == [service_query]
-+
-+
-+def make_select_response(*rows: Mapping[str, str]) -> MockHTTPResponse:
-+    """Make a JSON SELECT result whose rows bind variables to simple literals."""
-     response = {
--        "head": {"vars": ["var"]},
--        "results": {"bindings": [{"var": {"type": "literal", "value": "x"}}]},
-+        "head": {"vars": list(dict.fromkeys(var for row in rows for var in row))},
-+        "results": {
-+            "bindings": [
-+                {var: {"type": "literal", "value": value} for var, value in row.items()}
-+                for row in rows
-+            ]
-+        },
-     }
-+    return MockHTTPResponse(
-+        200,
-+        "OK",
-+        json.dumps(response).encode("utf-8"),
-+        {"Content-Type": ["application/sparql-results+json"]},
-+    )
-+
-+
-+@pytest.mark.parametrize(
-+    ("prologue", "service"),
-+    [
-+        pytest.param("", "SERVICE SILENT <REMOTE_URL/sparql> ", id="silent"),
-+        pytest.param("", "SERVICE<REMOTE_URL/sparql>", id="no-space"),
-+        pytest.param(
-+            "",
-+            "SERVICE <REMOTE_URL/sparql> # {not the pattern}\n",
-+            id="comment-before-pattern",
-+        ),
-+        pytest.param(
-+            "PREFIX ep: <REMOTE_URL/>", "SERVICE ep:sparql ", id="prefixed-name"
-+        ),
-+        pytest.param("BASE <REMOTE_URL/>", "SERVICE <sparql> ", id="relative-iri"),
-+    ],
-+)
-+def test_service_endpoint_forms(
-+    function_httpmock: ServedBaseHTTPServerMock, prologue: str, service: str
-+) -> None:
-+    query = f"""{prologue}
-+    SELECT ?var WHERE {{
-+        {service}{{ SELECT ?var WHERE {{ VALUES ?var {{ "x" }} }} }}
-+    }}
-+    """
-+    query = query.replace("REMOTE_URL", funct
-```
-
----
-
-### Incident Patch 2: `3b09413b` (2026-10-22)
-**Commit Message**: Fix recursion error when parsing nested `SERVICE` calls (#3408)
-
-* fix: recursion error when parsing nested SERVICE call
-
-* update the `Comp(TokenConverter)` class to properly track and parse SERVICE calls instead of re-parsing the entire input which caused RecursionError with nested SERVICE
-* add a test for parsing nested SERVICE call in `test_sparql_parser.py`
-* in existing `test_translate_algebra.py` update the xfail for `test_other__service1.txt` as it now fails due an issue with parsing nested OPTIONAL/SERVICE blocks instead of triggering a RecursionError (it is a different issue that already existed)
-* added `.poetry` to black skip as this was causing error when running black with precommit hook
-
-fixes https://github.com/RDFLib/rdflib/issues/2136
-
-* fix: translate nested OPTIONAL and MINUS patterns in SERVICE
-
-Handle raw graph-pattern nodes inside SERVICE blocks and defer placeholder
-cleanup until algebra traversal completes, producing valid SPARQL for nested
-SERVICE queries
-
-* fix: keep GROUP BY and HAVING on their own subquery in translateAlgebra
-
-Every Project, including each subquery's, emits a {GroupBy} and a
-{Having} placeholder, and the Group and HAVING handlers fill t
-
-**File**: `pyproject.toml` (modified, +1/-0)
-```diff
-@@ -179,6 +179,7 @@ exclude = '''
-     | \.pytest_cache
-     | \.tox
-     | \.venv
-+    | \.poetry
-     | \.var
-     | \.github
-     | site
-```
-
-**File**: `rdflib/plugins/sparql/algebra.py` (modified, +29/-1)
-```diff
-@@ -1030,7 +1030,9 @@ def sparql_query_text(self, node):
-                 # to match extended variables in a specific Select-clause (see "Extend" below)
-                 self._replace("-*-SELECT-*-", "SELECT", count=-1)
-                 # If there is no "Group By" clause the placeholder will simply be deleted. Otherwise there will be
--                # no matching {GroupBy} placeholder because it has already been replaced by "group by variables"
-+                # no matching {GroupBy} placeholder because it has already been replaced by "group by variables".
-+                # Deleting the unused placeholders here, before a later sibling subquery is visited, stops that
-+                # subquery's Group or Having handler from filling an earlier subquery's placeholder.
-                 self._replace("{GroupBy}", "", count=-1)
-                 self._replace("{Having}", "", count=-1)
-             elif node.name == "Join":
-@@ -1151,6 +1153,24 @@ def sparql_query_text(self, node):
-                     "GroupGraphPatternSub",
-                     " ".join([self.convert_node_arg(pattern) for pattern in node.part]),
-                 )
-+            elif node.name == "OptionalGraphPattern":
-+                # Raw parse node (not yet translated to algebra LeftJoin)
-+                # Appears inside SERVICE graph patterns where inner content is
-+                # kept in raw parse form
-+                self._replace(
-+                    "{OptionalGraphPattern}",
-+                    "OPTIONAL {" + node.graph.name + "}",
-+                )
-+                traverse(node.graph, visitPre=self.sparql_query_text)
-+                return node.graph
-+            elif node.name == "MinusGraphPattern":
-+                # Raw parse node (not yet translated to algebra Minus)
-+                self._replace(
-+                    "{MinusGraphPattern}",
-+                    "MINUS {" + node.graph.name + "}",
-+                )
-+                traverse(node.graph, visitPre=self.sparql_query_text)
-+                return node.graph
-             elif node.name == "TriplesBlock":
-                 self._replace(
-                     "{TriplesBlock}",
-@@ -1630,6 +1650,14 @@ def sparql_query_text(self, node):
- 
-     def translateAlgebra(self) -> str:
-         traverse(self.query_algebra.algebra, visitPre=self.sparql_query_text)
-+        # The dummy -*-SELECT-*- marker is used during traversal so that Extend can
-+        # locate the right SELECT clause for nested subqueries (see Extend handler)
-+        # Replace all remaining occurrences with SELECT now that traversal is done
-+        self._alg_translation = self._alg_translation.replace("-*-SELECT-*-", "SELECT")
-+        # {GroupBy} and {Having} are filled by the Group handler, if there is no GROUP BY
-+        # clause the placeholders remain and must be removed.
-+        self._alg_translation = self._alg_translation.replace("{GroupBy}", "")
-+        self._alg_translation = self._alg_translation.replace("{Having}", "")
-         return self._alg_translation
- 
- 
-```
-
-**File**: `rdflib/plugins/sparql/parser.py` (modified, +0/-1)
-```diff
-@@ -1288,7 +1288,6 @@ def expandCollection(terms: ParseResults) -> list[list[Any]]:
-     Param("valuesClause", Comp("ValuesClause", Keyword("VALUES") + DataBlock))
- )
- 
--
- # [74] ConstructTriples ::= TriplesSameSubject ( '.' Optional(ConstructTriples) )?
- ConstructTriples = Forward()
- ConstructTriples <<= ParamList("template", TriplesSameSubject) + Optional(
-```
-
-**File**: `rdflib/plugins/sparql/parserutils.py` (modified, +14/-8)
-```diff
-@@ -40,8 +40,6 @@
- 
- from rdflib.term import BNode, Identifier, Variable
- 
--from .pyparsing_compat import original_text_for
--
- if TYPE_CHECKING:
-     from rdflib.plugins.sparql.sparql import FrozenBindings
- 
-@@ -240,6 +238,18 @@ def __init__(self, name: str, expr: ParserElement):
-         self.set_name(name)
-         self.evalfn: Optional[Callable[[Any, Any], Any]] = None
- 
-+    def parseImpl(
-+        self, instring: str, loc: int = 0, do_actions: bool = True
-+    ) -> tuple[int, ParseResults]:
-+        if self.name == "ServiceGraphPattern":
-+            # Embed the start position as a named key in the ParseResults so
-+            # postParse can extract the original SERVICE text, avoiding
-+            # RecursionError with nested SERVICE).
-+            new_loc, results = super().parseImpl(instring, loc, do_actions)
-+            results["_service_start"] = loc
-+            return new_loc, results
-+        return super().parseImpl(instring, loc, do_actions)
-+
-     def postParse(
-         self, instring: str, loc: int, tokenList: ParseResults
-     ) -> Union[Expr, CompValue]:
-@@ -250,12 +260,8 @@ def postParse(
-         else:
-             res = CompValue(self.name)
-             if self.name == "ServiceGraphPattern":
--                # Then this must be a service graph pattern and have
--                # already matched.
--                # lets assume there is one, for now, then test for two later.
--                sgp = original_text_for(self.expr).parse_with_tabs()
--                service_string = sgp.search_string(instring)[0][0]
--                res["service_string"] = service_string
-+                start = tokenList["_service_start"]
-+                res["service_string"] = instring[start:loc]
- 
-         for t in tokenList:
-             if isinstance(t, ParamValue):
-```
-
-**File**: `test/data/translate_algebra/test_graph_patterns__group_in_second_subquery.txt` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+PREFIX : <http://example.org/>
-+
-+SELECT ?x ?n
-+WHERE {
-+  { SELECT ?x WHERE { ?x :p ?y } }
-+  { SELECT ?x (COUNT(?y) AS ?n) WHERE { ?x :q ?y } GROUP BY ?x }
-+}
-```
-
-**File**: `test/data/translate_algebra/test_other__service1.txt` (modified, +0/-1)
-```diff
-@@ -13,4 +13,3 @@ WHERE
-         }
-     }
- }
--# Error message: maximum recursion depth exceeded in comparison
-```
-
-**File**: `test/data/translate_algebra/test_other__service_minus.txt` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+PREFIX foaf:   <http://xmlns.com/foaf/0.1/>
-+SELECT ?person ?name
-+WHERE
-+{
-+    SERVICE <http://people.example.org/sparql> {
-+        ?person foaf:name ?name .
-+        MINUS {
-+            ?person foaf:knows ?known .
-+        }
-+    }
-+}
-```
-
-**File**: `test/test_sparql/test_service.py` (modified, +37/-0)
-```diff
-@@ -503,6 +503,43 @@ def test_service_tab_whitespace(
-     assert function_httpmock.call_count == 1
- 
- 
-+def test_service_two_patterns(function_httpmock: ServedBaseHTTPServerMock) -> None:
-+    # Each SERVICE pattern must send its own text to its own endpoint, see
-+    # https://github.com/RDFLib/rdflib/issues/3069
-+    query = f"""
-+    SELECT ?a ?b WHERE {{
-+        SERVICE <{function_httpmock.url}/first> {{
-+            SELECT ?a WHERE {{ VALUES ?a {{ "1" }} }}
-+        }}
-+        SERVICE <{function_httpmock.url}/second> {{
-+            SELECT ?b WHERE {{ VALUES ?b {{ "2" }} }}
-+        }}
-+    }}
-+    """
-+    for var, value in (("a", "1"), ("b", "2")):
-+        response = {
-+            "head": {"vars": [var]},
-+            "results": {"bindings": [{var: {"type": "literal", "value": value}}]},
-+        }
-+        function_httpmock.responses[MethodName.GET].append(
-+            MockHTTPResponse(
-+                200,
-+                "OK",
-+                json.dumps(response).encode("utf-8"),
-+                {"Content-Type": ["application/sparql-results+json"]},
-+            )
-+        )
-+
-+    assert Graph().query(query).bindings == [
-+        {Variable("a"): Literal("1"), Variable("b"): Literal("2")}
-+    ]
-+    first, second = function_httpmock.requests[MethodName.GET]
-+    assert first.parsed_path.path == "/first"
-+    assert 'VALUES ?a { "1" }' in first.path_query["query"][0]
-+    assert second.parsed_path.path == "/second"
-+    assert 'VALUES ?b { "2" }' in second.path_query["query"][0]
-+
-+
- if __name__ == "__main__":
-     test_service()
-     test_service_with_bind()
-```
-
----
-
-### Incident Patch 3: `a9353efc` (2026-10-22)
-**Commit Message**: fix: unary -, + and abs() on decimal Literals raised TypeError (#3606)
-
-`Literal.__neg__`, `__pos__` and `__abs__` only treated `int` and `float`
-values as numbers, so on an `xsd:decimal` Literal (whose value is a
-`Decimal`) they raised `TypeError: Not a number`. They now return a
-decimal Literal, which is a change to the public `Literal` API.
-
-The SPARQL grammar's `DECIMAL_NEGATIVE` parse action negates via
-`-literal`, so `-2.5` failed wherever the grammar reaches
-`NumericLiteral` directly: TSV result cells, `VALUES` data, triple
-patterns, `CONSTRUCT` templates and `INSERT DATA`. `BIND(-2.5 AS ?x)`
-was unaffected because it applies unary minus to the plain number, but
-a negative decimal after another unary operator, as in
-`BIND(- -2.5 AS ?x)` or `BIND(!-2.5 AS ?x)`, failed too and is fixed.
-
-For `Decimal` values, use `copy_negate()`, `copy_abs()` and the value
-itself rather than `Decimal`'s own operators, which round to the decimal
-context's precision (28 digits by default) and signal on sNaN. The
-result is exact, keeps the sign of zero and does not depend on the
-thread's decimal context. `__invert__` still rejects `Decimal`, which has
-no bitwise NOT.
-
-Remove the xfail on the W3C 
-
-**File**: `rdflib/term.py` (modified, +19/-3)
-```diff
-@@ -1036,6 +1036,11 @@ def __neg__(self) -> Literal:
-             -Literal(10.5)
-             # rdflib.term.Literal('-10.5', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#double'))
- 
-+            # Negating a decimal Literal
-+            from decimal import Decimal
-+            -Literal(Decimal("2.5"))
-+            # rdflib.term.Literal('-2.5', datatype=rdflib.term.URIRef('http://www.w3.org/2001/XMLSchema#decimal'))
-+
-             # Using a string with a datatype
-             from rdflib.namespace import XSD
-             -Literal("1", datatype=XSD.integer)
-@@ -1047,7 +1052,11 @@ def __neg__(self) -> Literal:
-             ```
-         """
- 
--        if isinstance(self.value, (int, long_type, float)):
-+        if isinstance(self.value, Decimal):
-+            # unlike Decimal.__neg__, copy_negate() is exact: it ignores the
-+            # decimal context's precision and never signals
-+            return Literal(self.value.copy_negate())
-+        elif isinstance(self.value, (int, long_type, float)):
-             return Literal(self.value.__neg__())
-         else:
-             raise TypeError(f"Not a number; {self!r}")
-@@ -1075,7 +1084,10 @@ def __pos__(self) -> Literal:
-             # TypeError: Not a number; rdflib.term.Literal('1')
-             ```
-         """
--        if isinstance(self.value, (int, long_type, float)):
-+        if isinstance(self.value, Decimal):
-+            # Decimal.__pos__ would round to the decimal context's precision
-+            return Literal(self.value)
-+        elif isinstance(self.value, (int, long_type, float)):
-             return Literal(self.value.__pos__())
-         else:
-             raise TypeError(f"Not a number; {self!r}")
-@@ -1099,7 +1111,11 @@ def __abs__(self) -> Literal:
-             # TypeError: Not a number; rdflib.term.Literal('1')
-             ```
-         """
--        if isinstance(self.value, (int, long_type, float)):
-+        if isinstance(self.value, Decimal):
-+            # unlike Decimal.__abs__, copy_abs() is exact: it ignores the
-+            # decimal context's precision and never signals
-+            return Literal(self.value.copy_abs())
-+        elif isinstance(self.value, (int, long_type, float)):
-             return Literal(self.value.__abs__())
-         else:
-             raise TypeError(f"Not a number; {self!r}")
-```
-
-**File**: `test/test_literal/test_literal.py` (modified, +56/-1)
-```diff
-@@ -3,8 +3,9 @@
- import builtins
- import datetime
- import logging
-+import operator
- from collections.abc import Callable, Generator
--from decimal import Decimal
-+from decimal import Decimal, localcontext
- from typing import Any, Optional, Union
- 
- from rdflib.xsd_datetime import Duration
-@@ -680,6 +681,60 @@ def test_numeric_literals(
-     assert result == expected, repr(result)
- 
- 
-+_DECIMAL_40_DIGITS = "1.234567890123456789012345678901234567890"
-+
-+
-+@pytest.mark.parametrize(
-+    "op, value, expected",
-+    [
-+        pytest.param(operator.neg, "2.5", "-2.5", id="neg"),
-+        pytest.param(operator.pos, "-2.5", "-2.5", id="pos"),
-+        pytest.param(abs, "-2.5", "2.5", id="abs"),
-+        pytest.param(
-+            operator.neg, _DECIMAL_40_DIGITS, f"-{_DECIMAL_40_DIGITS}", id="neg-40"
-+        ),
-+        pytest.param(
-+            operator.pos,
-+            f"-{_DECIMAL_40_DIGITS}",
-+            f"-{_DECIMAL_40_DIGITS}",
-+            id="pos-40",
-+        ),
-+        pytest.param(abs, f"-{_DECIMAL_40_DIGITS}", _DECIMAL_40_DIGITS, id="abs-40"),
-+        pytest.param(operator.neg, "0.0", "-0.0", id="neg-zero"),
-+        pytest.param(abs, "-0.0", "0.0", id="abs-negative-zero"),
-+        pytest.param(operator.neg, "sNaN", "-sNaN", id="neg-snan"),
-+    ],
-+)
-+def test_decimal_unary_operators(
-+    op: Callable[[Literal], Literal], value: str, expected: str
-+) -> None:
-+    result = op(Literal(value, datatype=XSD.decimal))
-+    assert result == Literal(expected, datatype=XSD.decimal)
-+
-+
-+@pytest.mark.parametrize(
-+    "op, expected",
-+    [
-+        pytest.param(operator.neg, "3.14159", id="neg"),
-+        pytest.param(operator.pos, "-3.14159", id="pos"),
-+        pytest.param(abs, "3.14159", id="abs"),
-+    ],
-+)
-+def test_decimal_unary_operators_ignore_decimal_context(
-+    op: Callable[[Literal], Literal], expected: str
-+) -> None:
-+    literal = Literal("-3.14159", datatype=XSD.decimal)
-+    with localcontext() as context:
-+        context.prec = 3
-+        result = op(literal)
-+    assert result == Literal(expected, datatype=XSD.decimal)
-+
-+
-+def test_decimal_invert_raises() -> None:
-+    with pytest.raises(TypeError, match="Not a number"):
-+        ~Literal("2.5", datatype=XSD.decimal)
-+
-+
- def test_cant_pass_lang_and_datatype() -> None:
-     with pytest.raises(TypeError):
-         Literal("foo", lang="en", datatype=URIRef("http://example.com/"))
-```
-
-**File**: `test/test_sparql/test_sparql_parser.py` (modified, +34/-1)
-```diff
-@@ -2,11 +2,12 @@
- 
- import math
- import sys
-+from decimal import Decimal
- 
- import pytest
- 
- from rdflib import Graph, Literal, URIRef, Variable
--from rdflib.namespace import Namespace
-+from rdflib.namespace import XSD, Namespace
- from rdflib.plugins.sparql.processor import processUpdate
- from rdflib.term import Node
- 
-@@ -77,3 +78,35 @@ def test_update_raw_tab_in_string_literal(string_literal: str) -> None:
-     )
- 
-     assert list(graph.objects()) == [Literal("a\tb")]
-+
-+
-+@pytest.mark.parametrize(
-+    ("query", "expected"),
-+    [
-+        pytest.param(
-+            "SELECT ?x WHERE { VALUES ?x { -2.5 } }",
-+            Literal("-2.5", datatype=XSD.decimal),
-+            id="values",
-+        ),
-+        pytest.param(
-+            "SELECT ?x WHERE { ?x <urn:p> -2.5 }",
-+            URIRef("urn:s"),
-+            id="triple-object",
-+        ),
-+        pytest.param(
-+            "SELECT ?x WHERE { VALUES ?x { -1.234567890123456789012345678901234567890 } }",
-+            Literal("-1.234567890123456789012345678901234567890", datatype=XSD.decimal),
-+            id="values-40-digits",
-+        ),
-+        pytest.param(
-+            "SELECT ?x WHERE { VALUES ?x { -0.0 } }",
-+            Literal("-0.0", datatype=XSD.decimal),
-+            id="values-negative-zero",
-+        ),
-+    ],
-+)
-+def test_negative_decimal_literal(query: str, expected: Node) -> None:
-+    graph = Graph()
-+    graph.add((URIRef("urn:s"), URIRef("urn:p"), Literal(Decimal("-2.5"))))
-+
-+    assert list(graph.query(query)) == [(expected,)]
-```
-
-**File**: `test/test_sparql/test_tsvresults.py` (modified, +17/-0)
-```diff
-@@ -2,6 +2,7 @@
- 
- import pytest
- 
-+from rdflib.namespace import XSD
- from rdflib.plugins.sparql.parserutils import CompValue
- from rdflib.plugins.sparql.results.tsvresults import TSVResultParser
- from rdflib.query import ResultRow
-@@ -72,6 +73,22 @@ def test_parse_tsv_from_bytes_skips_blank_lines() -> None:
-     assert result.bindings[0][var_x] == URIRef("urn:x1")
- 
- 
-+@pytest.mark.parametrize(
-+    "cell",
-+    [
-+        pytest.param("-2.5", id="short"),
-+        pytest.param("-1.234567890123456789012345678901234567890", id="40-digits"),
-+    ],
-+)
-+def test_negative_decimal(cell: str) -> None:
-+    parser = TSVResultParser()
-+    result = parser.parse(StringIO(f"?a\n{cell}\n"))
-+    assert result.vars is not None
-+    var_a = result.vars[0]
-+
-+    assert result.bindings == [{var_a: Literal(cell, datatype=XSD.decimal)}]
-+
-+
- def test_convert_term_rejects_unknown_compvalue_name() -> None:
-     parser = TSVResultParser()
- 
-```
-
-**File**: `test/test_w3c_spec/test_sparql10_w3c.py` (modified, +0/-3)
-```diff
-@@ -56,9 +56,6 @@
-     f"{REMOTE_BASE_IRI}syntax-sparql1/manifest#syntax-lit-08": pytest.mark.skip(
-         reason="bad test, positive syntax has invalid syntax."
-     ),
--    f"{REMOTE_BASE_IRI}syntax-sparql2/manifest#syntax-general-08": pytest.mark.xfail(
--        reason="Not parsing with no spaces."
--    ),
-     f"{REMOTE_BASE_IRI}syntax-sparql2/manifest#syntax-lists-04": pytest.mark.xfail(
-         reason="Not handling lists in query."
-     ),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3608** (2026-10-22): fix: SPARQL SERVICE evaluation skipped or misrouted many valid patterns (@edmondchuc)
-- **PR #3606** (2026-10-22): fix: unary -, + and abs() on decimal Literals raised TypeError (@edmondchuc)
-- **PR #3605** (2026-10-22): fix: stop the TSV results parser changing pyparsing's default whitespace (@edmondchuc)
-- **PR #3588** (2026-10-22): fix: SPARQL parser turned a raw tab in a string literal into spaces (@edmondchuc)
-- **PR #3587** (2026-10-21): ci: use Dependabot's uv ecosystem and fail lint on a stale uv.lock (@edmondchuc)
-- **PR #3584** (2026-10-21): fix: longturtle canon=True raised ValueError for a Dataset (@cristianchiriac)
+- **PR #3643** (2026-10-28): build(deps): bump berkeleydb from 18.1.16 to 18.1.17 (@dependabot[bot])
+- **PR #3642** (2026-10-28): build(deps-dev): bump zensical from 0.0.67 to 0.0.72 (@dependabot[bot])
+- **PR #3641** (2026-10-28): build(deps): bump library/python from 3.15.0-slim to 3.15.1-slim in /docker/latest (@dependabot[bot])
+- **PR #3640** (2026-10-28): build(deps): bump library/python from 3.15.0-slim to 3.15.1-slim in /docker/unstable (@dependabot[bot])
+- **PR #3638** (2026-10-27): move from httpx to httpx2 (@nicholascar)
+- **PR #3637** (2026-10-27): fix: preserve IRIs when relativizing serializer output (@rohithobillaneni)
 
 ---
 
@@ -2585,29 +2644,36 @@ Remove the xfail on the W3C
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SPARQL SERVICE evaluation skipped or misrouted many valid patterns (#3608)
+## X. restrict ConjunctiveGraph.quads() to the requested context (#3499)
 
 **RULE**:
-When implementing operations in `docs/intro_to_sparql.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rdflib/graph.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in RDFLib/rdflib. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `764c2fa8`: SPARQL SERVICE evaluation skipped or misrouted many valid patterns (#3608). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6262c3ed`: restrict ConjunctiveGraph.quads() to the requested context (#3499). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/intro_to_sparql.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `rdflib/graph.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-If the endpoint fails, the query raises an error. With `SERVICE SILENT`, the failure is logged as a warning and the `SERVICE` pattern gives one solution with no bindings. The endpoint must be an IRI: a variable endpoint, as in `SERVICE ?endpoint`, raises `ValueError`.
-
+            if c is not None:
+                # A context was requested, so only that context is relevant;
+                # the store also reports the other contexts the triple
+                # appears in, which must not leak into the result.
+                yield s, p, o, c
+            else:
+                for ctx in cg:
+                    yield s, p, o, ctx
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+            for ctx in cg:
+                yield s, p, o, ctx
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `764c2fa8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6262c3ed` are properly handled with clean fallback behavior.

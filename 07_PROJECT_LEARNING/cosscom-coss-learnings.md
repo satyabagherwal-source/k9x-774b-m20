@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source**: github ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
-> **Source Version**: `f2ec86f7`  
+> **Source Version**: `4960bab3`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:24:37.914Z  
+> **Timestamp**: 2026-10-27T17:10:00.672Z  
 > **Learning ID**: `learn-github-cosscom-coss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cosscom-coss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cosscom/coss](https://github.com/cosscom/coss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:24:36.401Z  
+> **Harvest Timestamp**: 2026-10-27T17:04:58.958Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4 stars
+- **Stars / Engagement**: 5 stars
 
 ---
 
@@ -1847,13 +1847,14 @@ export function createWebhookListenerRoutes(deps: {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #160** (2026-10-22): **Docs and tools for coding agents: Markdown API reference, .md pages, key flow, Claude Code plugin**
-  *Symptoms*: ## Summary  Someone pointing a coding agent at coss.com should get everything it needs, with a person only approving a key.  **The API reference as text.** Each operation's Markdown is now rendered from the OpenAPI document (`apps/site/src/lib/operation-markdown.ts`): the full URL, path/query/header parameters, request body fields (types, required, limits, nested objects), responses with an example, every error, and samples for TypeScript, HTTP and the six generated SDKs. Before, `/llms.txt`, `/llms-full.txt` and "Copy Markdown" had only each operation's description, printed twice. `/llms-full.txt` keeps one short entry per operation that links its full page.  **Every docs page as Markdown at `<page>.md`** (`/docs/index.md` for the home), prerendered and cached like the pages (`next.config.ts` rewrites to `src/app/docs/md`). HTML pages link it as `rel="alternate" type="text/markdown"`. No `Accept` negotiation on purpose: CloudFront caches by URL.  **Telling agents how to start.** `/llms.txt` and `/llms-full.txt` open with a brief (`AGENT_BRIEF`): read the `.md` pages, get a development key with `npx coss-cli init` (and when the user has to run it themselves), never ask for a live key, `{ data, error }`, `verifyWebhook`, `coss listen`. The index links every page's `.md`, operations as `METHOD /path` (70 KB → 45 KB). The landing page's prompt now points at `npx coss-cli init`, the quickstart mentions it, and a new `/docs/agents` page ties it together.  **Packaged instructions.*
-
-- **Issue #159** (2026-10-22): **iOS app: spend, budgets and API key owners**
-  *Symptoms*: ## Summary  The iOS app was missing the dashboard's Spend pages and the spend management changes to API keys (2f2c9824). This brings it up to date.  - **Spend** (`/[org]/spend`, every member, as on the dashboard): billing readers see this month's total split into organization and personal keys, the spend limit, spend per day, and the breakdown by member / project / environment / API key with each row's budget meter and "Paused" badge, plus the "N budgets are used up" warning. Other members see "Your spend": their personal keys' total, budget, remaining, per-day chart and by-key list. - **Budgets** (`/[org]/spend/budgets`, billing readers): members, projects and key budgets, read-only with a link to coss.com. - **API keys**: owner (Organization / You / member, "Left" for former members), "Paused" when a budget of the key, its owner or its project is used up, and whether "Personal keys for members" is on. - **Organization screen**: a Spend link, and the dashboard layout's banner when the member's own personal keys are over budget (`OrganizationResponse.budget_paused`). - **Push**: "Budget used up" now opens Spend instead of Billing (added to the app's allow-list). Older TestFlight builds don't know the path, so tapping it there just opens the app.  To keep both sides showing the same numbers, the Spend pages' row/label/daily/budget-status logic moved from the dashboard pages into `apps/web/src/lib/spend.ts`; the dashboard pages and the mobile API's mapping (`api/mobile/v1/orgs/
+- **Issue #169** (2026-10-26): **Publish templates and register webhook endpoints from the agent tools**
+  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> Agents can finish the two steps that used to stop outside the tools they already call.  `publish_email_template` reads the draft and publishes that revision, so a concurrent save is refused instead of publishing a newer edit. Publishing the same revision again returns the version already published.  `create_webhook_endpoint` and `coss webhooks add <url>` create an endpoint once. The signing secret is returned only then and is written to the project env file as `COSS_WEBHOOK_SECRET`, which `verifyWebhook` and `coss listen` both use. A previous value is replaced so local forwarding and the endpoint sign the same way. If that URL already has an endpoint, it is left as it is unless `force` / `--force`.  `coss init` snippets send to `bounce@simulator.amazonses.com` from the address `describeSetup` reports.  ## Testing  - `bun run --cwd packages/sdk test setup.test.ts` - `bun run --cwd packages/mcp test` - `bun run --cwd packages/cli test` - `bun run --cwd packages/sdk typecheck`, `packages/mcp`, and `packages/cli`  <!-- CURSOR_AGENT_PR_BODY_END -->  <div><a href="https://cursor.com/agents/bc-50f78189-1935-4a67-910c-9a48fb28aad9?cursor_ref=pr_footer&cursor_cta=open_in_web"><picture><source media="(prefers-color-scheme: dark)" srcset="https://cursor.com/assets/images/open-in-web-dark.png"><source media="(prefers-color-scheme: light)" srcset="https://cursor.com/assets/images/open-in-web-light.png"><img alt="Open in Web" width="114" height="28" src=
   **Post-Mortem & Fix Analysis**:
-  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6711">ENG-6711</a></p>
+  > <!-- linear-linkback --> <p><a href="https://linear.app/calcom/issue/ENG-6912">ENG-6912</a></p>
+  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/cosscom/coss?pullRequest=169) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/cosscom/coss?pullRequest=169) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/cosscom/coss?pullRequest=169) it.</sub>
+
+- **Issue #167** (2026-10-26): **Version packages**
+  *Symptoms*: This PR was opened by the [Changesets release](https://github.com/changesets/action) GitHub action. When you're ready to do a release, you can merge this and publish to npm yourself or [setup this action to publish automatically](https://github.com/changesets/action#with-publishing). If you're not ready to do a release yet, that's fine, whenever you add more changesets to main, this PR will be updated.   # Releases ## coss-cli@0.4.0  ### Minor Changes  - 57397ff: Setup status for agents, error hints, and one project key.      `describeSetup` reports a from address that will succeed and one next step. API errors can include `hint` (a fix, often with a docs URL), and the SDK copies it onto `CossError`. `coss init` writes agent notes by default, points at the project's mail library or framework driver, and prints that setup. `coss listen` writes `COSS_WEBHOOK_SECRET` into the project env file. `coss-mcp` loads a development key from that file and adds setup, risk, Hooks and template tools. - 2b6c98e: Publish a template and register a webhook endpoint from the tools an agent already uses.      `publish_email_template` publishes the draft revision it just read. `create_webhook_endpoint` and `coss webhooks add` create an endpoint once and write its signing secret to the project env file as `COSS_WEBHOOK_SECRET`. A URL that already has an endpoint is left as it is. `coss init` snippets send to the mailbox simulator from the address setup reports.  ### Patch Changes  - Updated depend
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1870,268 +1871,695 @@ export function createWebhookListenerRoutes(deps: {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9584ac78` (2026-10-21)
-**Commit Message**: Regenerate the SDKs for main's API (SMS, template rendering, test webhook events, storage settings)
+### Incident Patch 1: `cfbc88d6` (2026-10-26)
+**Commit Message**: iOS app: polish sweep, account deletion, read-only billing, crash reporting
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Polish (apps/mobile):
+- ListRow centres its trailing mark unless the row has both a subtitle and a
+  detail; Badge follows its row's alignment (the reputation badge sat low).
+- Pull-to-refresh only shows its spinner for a pull; a failed background
+  refetch keeps the data on screen; queries refetch when the app returns to
+  the foreground; mutations stay pending until their refetch lands.
+- Cold-start notifications and deep links are no longer covered by the
+  organization auto-open; sign-in and sign-out handle failures and slow
+  networks.
+- Layout, copy, plural and date fixes across the screens (see the diff), plus
+  dark-mode switch colours and Segmented labels.
 
-**File**: `sdks/dotnet/.fern/metadata.json` (modified, +1/-1)
+Account deletion (dashboard and app; App Store guideline 5.1.1(v)):
+- @coss/tenancy planAccountDeletion/deleteUserAccount: organizations the user
+  is the only member of are deleted with the account, shared ones are left;
+  personal API keys are deleted and SSO providers they registered move to
+  another owner before the user row goes. Blocked for the only owner of an
+  organization with other members, suspended organizations, platform admins
+ 
+
+**File**: `AGENTS.md` (modified, +5/-6)
 ```diff
-@@ -10,7 +10,7 @@
-     "user-agent": "coss-dotnet/{version}",
-     "enable-forward-compatible-enums": true
+@@ -33,7 +33,7 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
+ | `apps/api` | `@coss/api` | Hono on Bun public API (:3001): `/v1/*`, `/openapi.json`, `/health`. Commits its OpenAPI document as `openapi.json`. |
+ | `apps/site` | `@coss/site` | coss.com (:3002): placeholder landing page, Shipyard's landing page and docs at `/shipyard`, kloq's pages at `/kloq` (landing page, demo, tools, comparisons, docs, shadcn registry) + Fumadocs docs at `/docs` (guides, Twoslash-checked SDK docs, API reference generated from `apps/api/openapi.json`). See `apps/site/AGENTS.md`. |
+ | `apps/portal` | `@coss/portal` | The Hooks portal (:3003) on its own domain (production: `portal.cosshooks.com`, Cloudflare → ALB, `PORTAL_HOST` in `infra/aws/routing.ts`): customers' users manage one application's endpoints and see its deliveries, signed in by a session the customer's backend creates (token in the URL fragment, never a cookie). See `apps/portal/AGENTS.md`. |
+-| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing and plans, audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
++| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing (read-only), audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts, crash reporting (Sentry) and account deletion. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
+ | `apps/smtp` | `@coss/smtp` | Bun SMTP relay (`smtp.coss.com`; locally :2465 implicit TLS, :2587 STARTTLS) on `smtp-server`: username `coss`, an API key as the password; each message becomes a `POST /v1/emails` request (`@coss/email/smtp`) stored through the same email service, rate limits and quotas. Behind an NLB; terminates TLS itself (exported ACM certificate). See `apps/smtp/AGENTS.md`. |
+ | `apps/worker` | `@coss/worker` | Bun background worker: email dispatch (pg-boss), scheduled sends, broadcast fan-out, webhook deliveries, domain re-checks, dedicated IP pools, stale-claim/unclaimed sweeps, data retention purges, organization deletions, SES events and received emails from SQS (`EMAIL_PROVIDER=ses`). `scripts/ses-bootstrap.ts`. Safe to run several. |
+ | `packages/db` | `@coss/db` | Drizzle schema (generated Better Auth tables + domain tables), pg client, TypeIDs, migrations, test guard; `./jobs` (pg-boss); `./idempotency` (`withIdempotencyKey`, request hashes); `./partitions` (daily range partitions: create ahead, drop expired). |
+@@ -67,14 +67,14 @@ text it shows is a gist that must match `CLA.md`: change both together, as a new
+ | `integrations/{laravel,rails,django}` | `coss/laravel`, `coss-rails`, `coss-django` | **Public** framework mail drivers (PHP/Composer, Ruby gem, Python/PyPI), each sending its framework's messages to `POST /v1/emails` with a small HTTP client of its own. Not Bun workspaces (turbo, Biome and the images never see them). Shared rules in `integrations/README.md`, shared test scenarios in `integrations/conformance/*.json`. |
+ | `infra` | `@coss/infra` | AWS deployment spec (ECS services, env vars, ALB rules, CloudFront behaviours), checked by tests, and the production Terraform + deploy scripts that apply it. See `infra/AGENTS.md`. |
+ 
+-Runtime dependencies: `observability` (no workspace deps) ← `api`, `worker`, `web`, `site`, `portal`, `smtp`, `infra`; `signals` (no workspace deps) ← `auth`, `webhooks`, `risk`; `db ← auth ← tenancy`,
++Runtime dependencies: `observability` (no workspace deps) ← `api`, `worker`, `web`, `site`, `portal`, `smtp`, `infra`, `mobile` (only `./scrub`, bundled by Metro: keep it dependency-free); `signals` (no workspace deps) ← `auth`, `webhooks`, `risk`; `db ← auth ← tenancy`,
+ `db ← logs ← webhooks ← risk` (`risk` also `→ signals, ratelimit, retention, screening` — only screening's DB-free `./classifier`, `./text`, `./runtime`, `./testing`; `email` imports only `@coss/risk/schemas`, for `WEBHOOK_EVENT_TYPES`), `db ← logs ← webhooks ← reputatio
+```
+
+**File**: `apps/mobile/AGENTS.md` (modified, +28/-3)
+```diff
+@@ -3,16 +3,17 @@
+ Expo (SDK 57, React Native 0.86, Expo Router) companion app for the dashboard. Organization:
+ projects, reputation, domains (DNS records, DMARC reports), dedicated IPs, SMS senders (numbers,
+ carrier registrations, countries), members, settings (general, single sign-on, directory sync),
+-billing, plans and invoices, the audit log. Environment: activity, sent and received emails,
++billing and invoices (read-only), the audit log. Environment: activity, sent and received emails,
+ templates and their versions, suppressions, open/click tracking, content storage, sent and
+ received SMS, SMS suppressions, broadcasts, contacts (and their properties), audiences, segments,
+ topics, marketing settings, risk assessments, rules, lists, rate limits, calibration and settings,
+ Hooks (applications, endpoints, messages, event types, portal settings), API keys, webhook
+ endpoints and deliveries, logs, log drains. A few changes, each mirroring a dashboard action (same
+ checks, same audit event): retrying a webhook delivery, recovering an endpoint's failed
+ deliveries, enabling or disabling an endpoint, canceling or rescheduling a scheduled email,
+-pausing, resuming or canceling a broadcast, and reporting a risk assessment's outcome (also from
+-the review queue); everything else is read-only (with a link to the same page on coss.com). It
++pausing, resuming or canceling a broadcast, reporting a risk assessment's outcome (also from
++the review queue), and deleting the account (`delete-account.tsx`, App Store guideline 5.1.1(v));
++everything else is read-only (with a link to the same page on coss.com). It
+ talks only to the dashboard's `/api/mobile/v1/*` (never the public API: it holds no API key).
+ 
+ ## Expo has changed — do not trust your training data
+@@ -88,8 +89,32 @@ an allow-list of the paths `@coss/push` builds) accepts it: a new kind of notifi
+ path added there. Remote notifications need a physical iPhone or a Simulator on an Apple-silicon
+ Mac, and `APNS_*` set for the worker (it prints them without).
+ 
++## Crash reporting
++
++Sentry (`@sentry/react-native`, organization `cosscom`, project `ios`): the config plugin in
++`app.json` (`@sentry/react-native/expo`) and `metro.config.js` (`getSentryExpoConfig`: debug ids for
++source maps), `src/lib/monitoring.ts` (imported first by `_layout.tsx`, which is wrapped in
++`Sentry.wrap` and exports an `ErrorBoundary` that reports render crashes). The DSN is
++`EXPO_PUBLIC_SENTRY_DSN`, inlined by Metro: set in `eas.json`'s production profile (the `ios`
++project's DSN, public by design: it ships in the app), unset locally, and unset means Sentry is
++never initialised. Release builds upload source maps and dSYMs with `SENTRY_AUTH_TOKEN` (an EAS
++secret, never committed); without it the upload step fails the build
++(`SENTRY_DISABLE_AUTO_UPLOAD=true` skips it). `@sentry/cli` is declared (the version
++`@sentry/react-native` pins) only because the Xcode phases `require.resolve` it from the app, which
++the isolated linker allows only for declared packages; bump the two together. Crashes and errors
++only: no tracing, replay, screenshots, view hierarchy, `sendDefaultPii` or user, so the App Store
++privacy label is crash data and diagnostics "not linked to you". `beforeSend`/`beforeBreadcrumb` run
++`@coss/observability/scrub`'s `scrubUrl` (query strings: the sign-in callback's `code`/`state`) and
++mask the `cm1.` credential; the servers' `scrubEvent` is typed for another `@sentry/core` major than
++the React Native SDK's, so the app scrubs its few event fields itself.
++
+ ## Conventions
+ 
++- Billing is read-only (App Store guideline 3.1.1): no buttons, links or copy that send people to pay,
++  upgrade, buy add-ons or numbers, or compare plans, on coss.com or anywhere else. Plan-gated features
++  say which plan includes them as plain text, and their screens hide the header's web button while
++  gated (coss.com's page there is an upgrade prompt).
++
+ - Wire types come from `@coss/companion`, imported **type-only** (Metro never bundles it). Change
+   the dashboard handlers and the type together. Newer areas keep their types in a file of their
+   own (`packages/companion/src/<area>.ts`, re-exported by `export type *` — which silently drops a
+```
+
+**File**: `apps/mobile/app.json` (modified, +9/-1)
+```diff
+@@ -33,7 +33,15 @@
+           ]
+         }
+       ],
+-      "@react-native-community/datetimepicker"
++      "@react-native-community/datetimepicker",
++      [
++        "@sentry/react-native/expo",
++        {
++          "url": "https://sentry.io/",
++          "organization": "cosscom",
++          "project": "ios"
++        }
++      ]
+     ],
+     "experiments": {
+       "reactCompiler": true
+```
+
+**File**: `apps/mobile/eas.json` (modified, +2/-1)
+```diff
+@@ -9,7 +9,8 @@
+       "bun": "1.4.2",
+       "env": {
+         "EXPO_PUBLIC_DASHBOARD_URL": "https://coss.com",
+-        "EXPO_NO_TYPESCRIPT_SETUP": "1"
++        "EXPO_NO_TYPESCRIPT_SETUP": "1",
++        "EXPO_PUBLIC_SENTRY_DSN": "https://3452a792db1ec8e88f0517d18f48c1b1@o4512237982711808.ingest.de.sentry.io/4512323850534992"
+       }
+     }
    },
--  "originGitCommit": "22f1393886309f16341682ab6a08490f9064c8e4",
-+  "originGitCommit": "d0301a609489f8f501c6bcadf209b524c230247e",
-   "originGitCommitIsDirty": true,
-   "invokedBy": "manual",
-   "requestedVersion": "0.1.0",
 ```
 
-**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Billing/UsageTest.cs` (modified, +6/-0)
+**File**: `apps/mobile/metro.config.js` (added, +5/-0)
 ```diff
-@@ -21,6 +21,9 @@ public async Task MockServerTest_1()
-                   "meter": "email.recipients",
-                   "dimension": "dimension",
-                   "environment_id": "environment_id",
-+                  "project_id": "project_id",
-+                  "api_key_id": "api_key_id",
-+                  "user_id": "user_id",
-                   "start": "2024-01-15T09:30:00.000Z",
-                   "end": "2024-01-15T09:30:00.000Z",
-                   "quantity": 1000000
-@@ -30,6 +33,9 @@ public async Task MockServerTest_1()
-                   "meter": "email.recipients",
-                   "dimension": "dimension",
-                   "environment_id": "environment_id",
-+                  "project_id": "project_id",
-+                  "api_key_id": "api_key_id",
-+                  "user_id": "user_id",
-                   "start": "2024-01-15T09:30:00.000Z",
-                   "end": "2024-01-15T09:30:00.000Z",
-                   "quantity": 1000000
+@@ -0,0 +1,5 @@
++// Sentry's Expo config: gives each bundle and its source map the same debug id, so the source
++// maps uploaded by the native build symbolicate crashes.
++const { getSentryExpoConfig } = require("@sentry/react-native/metro");
++
++module.exports = getSentryExpoConfig(__dirname);
 ```
 
-**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/Broadcasts/ListEmailsTest.cs` (modified, +14/-3)
+**File**: `apps/mobile/package.json` (modified, +3/-0)
 ```diff
-@@ -110,7 +110,11 @@ public async Task MockServerTest_1()
-                     "version": 1000000,
-                     "locale": "locale"
-                   },
--                  "broadcast_id": "broadcast_id"
-+                  "broadcast_id": "broadcast_id",
-+                  "content_storage": {
-+                    "mode": "store",
-+                    "discarded_at": "2024-01-15T09:30:00.000Z"
-+                  }
+@@ -10,10 +10,12 @@
+     "test": "bun test"
+   },
+   "dependencies": {
++    "@coss/observability": "workspace:*",
+     "@coss/retention": "workspace:*",
+     "@expo/log-box": "~57.0.4",
+     "@expo/metro-runtime": "~57.0.17",
+     "@react-native-community/datetimepicker": "9.1.0",
++    "@sentry/react-native": "~7.11.0",
+     "@tanstack/react-query": "5.104.3",
+     "expo": "~57.0.29",
+     "expo-clipboard": "~57.0.2",
+@@ -40,6 +42,7 @@
+   "devDependencies": {
+     "@coss/companion": "workspace:*",
+     "@coss/tsconfig": "workspace:*",
++    "@sentry/cli": "2.58.4",
+     "@types/bun": "catalog:",
+     "@types/react": "~19.2.2",
+     "typescript": "catalog:"
+```
+
+**File**: `apps/mobile/src/app/(app)/[org]/dedicated-ips.tsx` (modified, +13/-34)
+```diff
+@@ -3,7 +3,6 @@ import { Network } from "lucide-react-native";
+ import { StyleSheet, View } from "react-native";
+ import { Alert } from "../../../components/alert";
+ import { Badge, StatusDot } from "../../../components/badge";
+-import { Button } from "../../../components/button";
+ import { EmptyState } from "../../../components/empty";
+ import { Panel, Ruled } from "../../../components/panel";
+ import { ErrorState, Loading, PageIntro, Screen } from "../../../components/screen";
+@@ -14,10 +13,9 @@ import { formatCount } from "../../../lib/format";
+ import { useDedicatedIps } from "../../../lib/queries-sms-senders";
+ import { DEDICATED_IP_STATUS } from "../../../lib/status-sms-senders";
+ import { colors } from "../../../lib/theme";
+-import { openOnWeb } from "../../../lib/web";
+ 
+-// Copy from apps/web/src/app/[orgSlug]/dedicated-ips/page.tsx. Read-only: the add-on is managed on
+-// coss.com's billing page.
++// Copy from apps/web/src/app/[orgSlug]/dedicated-ips/page.tsx. Read-only, without the add-on's price or a
++// way to add it (App Store guideline 3.1.1).
+ 
+ // The dashboard's `formatDate` (apps/web/src/lib/billing-format.ts).
+ const DATE = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" });
+@@ -27,14 +25,20 @@ export default function DedicatedIpsScreen() {
+   const router = useRouter();
+   const query = useDedicatedIps(org);
+   if (query.isPending) return <Loading />;
+-  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
++  if (query.isError && !query.data) {
++    return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
++  }
+   const pool = query.data;
+   const status = DEDICATED_IP_STATUS[pool.status];
+-  const billingPath = `/${org}/settings/billing`;
+ 
+   return (
+-    <Screen onRefresh={() => query.refetch()} refreshing={query.isRefetching} title="Dedicated IPs">
+-      <Stack.Screen options={{ headerRight: () => <WebButton path={`/${org}/dedicated-ips`} /> }} />
++    <Screen onRefresh={() => query.refetch()} title="Dedicated IPs">
++      {/* Without the add-on, coss.com's page offers to buy it: no purchase links here (3.1.1). */}
++      {pool.status === "not_enabled" ? null : (
++        <Stack.Screen
++          options={{ headerRight: () => <WebButton path={`/${org}/dedicated-ips`} /> }}
++        />
++      )}
+       <PageIntro
+         description="Your own sending IPs, so no other sender's reputation affects yours. SES leases, scales and warms them up automatically."
+         meta={
+@@ -50,18 +54,7 @@ export default function DedicatedIpsScreen() {
+       {pool.status === "not_enabled" ? (
+         <Panel>
+           <EmptyState
+-            action={
+-              pool.can_read_billing ? (
+-                <Button
+-                  onPress={() => openOnWeb(billingPath)}
+-                  size="sm"
+-                  title="Add on the billing page"
+-                />
+-              ) : null
+-            }
+-            description={`${pool.add_on.monthly_price} per month on the ${pool.add_on.plans.join(
+-              " and ",
+-            )} plans, plus usage for email sent through them. Best for steady volume: the first IP is assigned once you send a few hundred emails a day.`}
++            description={`An add-on of the ${pool.add_on.plans.join(" and ")} plans. Best for steady volume: the first IP is assigned once you send a few hundred emails a day.`}
+             icon={Network}
+             title="Dedicated IPs aren't on your plan"
+           />
+@@ -139,20 +132,6 @@ export default function DedicatedIpsScreen() {
+             >
+               Reputation page
+             </Text>
+-            . Manage the add-on on the{" "}
+-            {pool.can_read_billing ? (
+-              <Text
+-                onPress={() =>
+-                  router.push({ pathname: "/[org]/settings/billing", params: { org } })
+-                }
+-                style={styles.link}
+-                variant="small"
+-              >
+-                billing page
+-              </Text>
+-            ) : (
+-              "billing page"
+-            )}
+             .
+           </Text>
+         </>
+```
+
+**File**: `apps/mobile/src/app/(app)/[org]/domains/[domainId]/dmarc/[reportId].tsx` (modified, +4/-2)
+```diff
+@@ -63,11 +63,13 @@ export default function DmarcReportScreen() {
+   }>();
+   const query = useDmarcReport(org, domainId, reportId);
+   if (query.isPending) return <Loading />;
+-  if (query.isError) return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
++  if (query.isError && !query.data) {
++    return <ErrorState error={query.error} onRetry={() => query.refetch()} />;
++  }
+   const { domain, report } = query.data;
+   const title = `Report from ${report.reporter}`;
+   return (
+-    <Screen onRefresh={() => query.refetch()} refreshing={query.isRefetching} title={title}>
++    <Screen onRefresh={() => query.refetch()} title={title}>
+       <Stack.Screen
+         options={{
+           headerRight: () => <WebButton path={`/${org}/domains/${domain.id}/dmarc/${report.id}`} />,
+```
+
+---
+
+### Incident Patch 2: `6f42b94b` (2026-10-26)
+**Commit Message**: Legal: self-service account deletion, the iOS app, crash reporting
+
+Privacy Policy: the iOS app is part of the Services (sessions, push tokens,
+crash reports), Sentry is listed as a subprocessor, Apple's push service is
+named, and account retention describes deleting an account from settings.
+Terms: the iOS app joins the Services, and accounts can be closed by deleting
+them in account settings.
+
+**File**: `apps/site/content/legal/privacy.mdx` (modified, +24/-6)
+```diff
+@@ -1,12 +1,12 @@
+ ---
+ title: Privacy Policy
+ description: What personal data Cal.com collects for coss.com, why, who we share it with, and your rights.
+-lastUpdated: 2026-10-19
++lastUpdated: 2026-10-26
+ ---
+ 
+ This Privacy Policy explains how **Cal.com, Inc.** ("**Cal.com**", "**we**", "**us**") handles personal data in
+-connection with coss.com: the website and documentation at coss.com, the dashboard, the API and the SDK (together, the
+-"**Services**"). Capitalized terms not defined here have the meaning given in our [Terms of Service](/legal/terms).
++connection with coss.com: the website and documentation at coss.com, the dashboard, the iOS app, the API and the SDK
++(together, the "**Services**"). Capitalized terms not defined here have the meaning given in our [Terms of Service](/legal/terms).
+ 
+ ## The short version
+ 
+@@ -54,6 +54,13 @@ SMS provider, to the carriers and their registries for review.
+ can review and revoke your sessions. We use IP addresses and hashed email addresses to rate-limit sign-in attempts and
+ API requests. Platform administrators' actions are recorded in an audit log.
+ 
++**iOS app.** Signing in to the app opens a session like a browser sign-in, recorded with your IP address and the app's
++version as its user agent. If you turn on notifications, we store your device's push notification token and the kinds
++of notifications you chose. When the app crashes or runs into an error, it sends a crash report to our error monitoring
++provider: the error and where in the app's code it happened, the paths of the screens and requests that led up to it
++(with query strings and credentials removed), and the device model and iOS and app versions. The app doesn't attach
++your name, email address or account ID to crash reports, or screenshots or other contents of the screen.
++
+ **API keys.** API keys are stored only as hashes, together with their environment, permissions and when they were last
+ used.
+ 
+@@ -153,13 +160,18 @@ We share personal data only as described here:
+   - **Twilio Inc.** (United States): SMS delivery and receiving, phone numbers, and carrier registration of the
+     business details organizations submit to send SMS.
+   - **Cloudflare, Inc.** (United States): DNS for coss.com.
++  - **Functional Software, Inc. (Sentry)** (United States, with data stored in the European Union): error and crash
++    reports from the dashboard, the API and the iOS app.
+ 
+   The complete, current list of Cal.com subprocessors is in our Trust Center at
+   [trust.cal.com](https://trust.cal.com). We give customers 30 days' notice of new subprocessors of Customer Data, and
+   they may object on reasonable data protection grounds, as described in the [DPA](/legal/dpa#5-subprocessors).
+ - **Message delivery.** Sending a message necessarily discloses its content to the recipients' mail servers or, for
+   SMS, to the recipients' mobile carriers. To let an organization send SMS in the United States, its registration
+   details go to mobile carriers and their registries.
++- **Apple.** If you turn on notifications in the iOS app, Apple's push notification service delivers them. It receives
++  your device's push token, each notification's text (organization, project and environment names and counts, never
++  message content or addresses) and the path of the page it opens.
+ - **Your webhook endpoints** receive event data about your messages (never message bodies, headers, cc or bcc).
+ - **Your organization.** Organization owners and administrators can see the members of the organization and the data
+   in it.
+@@ -173,16 +185,22 @@ We share personal data only as described here:
+ 
+ ## 6. How long we keep it
+ 
+-- **Account and organization data:** while your account is active. You can ask us to close your account at
+-  [support@cal.com](mailto:support@cal.com). After it is closed, you have at least 30 days to
+-  export your data, and we then delete it on our standard schedule, except what we must keep by law.
++- **Account and organization data:** while your account is active. You can delete your account at any time in your
++  account settings, in the dashboard or the iOS app. We delete it right away, with your sessions, sign-in methods and
++  personal API keys. Organizations you are the only member of are deleted with it, and their data follows on our
++  standard schedule; organizations you share with others keep their data, and their audit logs keep the record of what
++  you did in them, with your email address. You can instead ask us to close your account at
++  [support@cal.com](mailto:support@cal.com): you then have at least 30 days to export your data, and we delete it on
++  our standard schedule. Either way, we keep what we must by law.
+ - **Messages and delivery events:** while your organization's account is active, so that you can look them up in the
+   dashboard and the API. Your organization can ask us to delete them sooner by writing to
+   [privacy@cal.com](mailto:privacy@cal.com). Attachment contents
+```
+
+**File**: `apps/site/content/legal/terms.mdx` (modified, +4/-3)
+```diff
+@@ -1,7 +1,7 @@
+ ---
+ title: Terms of Service
+ description: The agreement between you and Cal.com, Inc. for using coss.com, its API, SDK and dashboard.
+-lastUpdated: 2026-10-19
++lastUpdated: 2026-10-26
+ ---
+ 
+ These Terms of Service (the "**Terms**") are a binding agreement between **Cal.com, Inc.**, a Delaware corporation
+@@ -20,7 +20,7 @@ Terms where they conflict.
+ ## 1. Definitions
+ 
+ - "**Services**" means coss.com: the hosted application programming interface (the "**API**"), the dashboard at coss.com,
+-  the documentation, and any related features, tools and support we provide.
++  the coss.com iOS app, the documentation, and any related features, tools and support we provide.
+ - "**SDK**" means the `coss` client libraries and other code we publish for use with the API.
+ - "**Organization**" means a workspace in the Services, together with its projects and environments, that you create
+   or are invited to.
+@@ -241,7 +241,8 @@ You will not use the Services to send messages to, or on behalf of, any such per
+ ## 16. Term and termination
+ 
+ These Terms apply from when you first accept them until your account is closed. You may stop using the Services at any time,
+-and close your account by writing to [support@cal.com](mailto:support@cal.com). We may terminate these Terms or your account for convenience with 30 days' notice, or
++and close your account by deleting it in your account settings (in the dashboard or the iOS app), which also deletes
++the Organizations you are the only member of, or by writing to [support@cal.com](mailto:support@cal.com). We may terminate these Terms or your account for convenience with 30 days' notice, or
+ immediately if you materially breach these Terms (including the Acceptable Use Policy), or if we are required to by
+ law.
+ 
+```
+
+---
+
+### Incident Patch 3: `3af5e904` (2026-10-26)
+**Commit Message**: Merge pull request #165 from cosscom/cursor/ai-dx-agent-loop-aad9
+
+Give agents one project key, a next step, and an error hint
+
+**File**: `.changeset/ai-dx-agent-loop.md` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++---
++"coss": minor
++"coss-mcp": minor
++"coss-cli": minor
++---
++
++Setup status for agents, error hints, and one project key.
++
++`describeSetup` reports a from address that will succeed and one next step. API errors can include `hint` (a fix, often with a docs URL), and the SDK copies it onto `CossError`. `coss init` writes agent notes by default, points at the project's mail library or framework driver, and prints that setup. `coss listen` writes `COSS_WEBHOOK_SECRET` into the project env file. `coss-mcp` loads a development key from that file and adds setup, risk, Hooks and template tools.
+```
+
+**File**: `.gitignore` (modified, +3/-0)
+```diff
+@@ -8,6 +8,9 @@ next-env.d.ts
+ .env
+ .env.local
+ .env.*.local
++# Fixture env files hold development keys the agent-outcome test reads.
++!packages/cli/test/fixtures/**/.env
++!packages/cli/test/fixtures/**/.env.local
+ *.tgz
+ .DS_Store
+ 
+```
+
+**File**: `AGENTS.md` (modified, +16/-7)
+```diff
+@@ -262,7 +262,7 @@ are never inlined into builds (no `NEXT_PUBLIC_*`), which is what makes pass-thr
+   (`src/routes/tracking.ts`). They are plain Hono routes outside `/v1` and the OpenAPI document, never return the
+   error envelope, record nothing for HEAD, and get `Cross-Origin-Resource-Policy: cross-origin` (everything else keeps
+   `same-origin`).
+-- Errors are always the envelope `{ error: { type, code, message, param?, issues?, request_id } }`, built only by
++- Errors are always the envelope `{ error: { type, code, message, param?, issues?, hint?, request_id } }`, built only by
+   `errorResponse` (`src/errors.ts`). Throw `new ApiError(status, { type, code, message, param? })` with `type` from
+   `ERROR_TYPES`, or a product error mapped in `toApiError`; anything else is logged and returned as a generic 500. Never
+   hand-build error JSON.
+@@ -385,15 +385,19 @@ are never inlined into builds (no `NEXT_PUBLIC_*`), which is what makes pass-thr
+ 
+ - `createCossMcpServer({ coss, apiKey })` (`src/server.ts`) registers every tool on an `McpServer`
+   (`@modelcontextprotocol/server` v2); `src/cli.ts` serves it over stdio (`serveStdio`). Configuration comes from the
+-  environment only (`COSS_API_KEY`, `COSS_BASE_URL`), never argv; stdout is the protocol, so log to stderr.
++  environment only (`COSS_API_KEY`, `COSS_BASE_URL`), never argv; stdout is the protocol, so log to stderr. With no
++  `COSS_API_KEY`, `cli.ts` reads a `coss_test_` key from the project's `.env.local` or `.env` (`project-env.ts`) and
++  never loads a `coss_live_` key from that file.
+ - Tools (`src/tools/*.ts`) call only the public SDK — never workspace packages (AGPL) or the database — so anything a
+   tool needs must exist in the public API first. The exception is `search_docs`/`read_docs` (`tools/docs.ts`), which
+   fetch coss.com's public docs (`/docs/search.json`, `<page>.md`, nothing outside `/docs`) and work without a key:
+   with no `COSS_API_KEY` the server registers only them. Every tool carries annotations (`READ_ONLY`, `WRITE`,
+   `DESTRUCTIVE`, `SENDS` in `tools/shared.ts`); clients rely on them to prompt (full-access keys hold every
+   permission; a restricted key's 403 hint points at `get_account_status`, which lists what it holds).
+ - Answers stay small: lists drop content (`compact`, `emailListItem`), bodies are cut (`truncate`), API failures
+-  become `isError` results with a hint (`result.ts`). Third-party text (email content, received mail, bounce and
++  become `isError` results with a hint (`result.ts`; the API's `error.hint` wins over the local one). `get_setup`
++  (`tools/setup.ts`, `describeSetup` in the SDK) is the readiness answer. Risk, Hooks and template drafts have tools
++  that call only the public SDK. Third-party text (email content, received mail, bounce and
+   webhook responses) is labelled untrusted, and the server's `instructions` say so.
+ - Delivery diagnosis is the SDK's `coss/diagnose` (`packages/sdk/src/diagnose.ts`, shared with `coss emails
+   diagnose`): `diagnoseEmail` is pure (email + events + best-effort context → verdict), `diagnose` fetches first;
+@@ -411,7 +415,7 @@ What an agent pointed at coss.com reads, all describing the same facts — chang
+   key with `npx coss-cli init`, the SDK's conventions, testing webhooks. Every docs page is Markdown at `<page>.md`
+   (`apps/site/AGENTS.md`); API reference pages render the OpenAPI document (`operation-markdown.ts`).
+ - The landing page's prompt (`AGENT_PROMPT`, `apps/site/src/lib/site.ts`), quoted by `/docs/agents`.
+-- The `coss` skill (`plugins/coss/skills/coss/SKILL.md`), the notes `coss init --agents` writes into a project's
++- The `coss` skill (`plugins/coss/skills/coss/SKILL.md`), the notes `coss init` writes into a project's
+   AGENTS.md (`agentNotes`, `packages/cli/src/commands/init.ts`) and the MCP server's instructions (`src/server.ts`).
+ - `claude plugin validate .` and `claude plugin validate plugins/coss` check the marketplace and the plugin. The
+   plugin has no `version` on purpose: installs follow main. Its MCP server takes the key from the plugin's optional
+@@ -436,12 +440,17 @@ What an agent pointed at coss.com reads, all describing the same facts — chang
+ - `init` reuses login's browser flow with a `project` hint (the approval page then offers sandbox environments
+   only and names the key after the project; `apps/web/src/app/app/authorize/cli/params.ts`), checks the key's
+   environment again (a live key is revoked, never written) and writes it to the project's env file, never the
+-  profile. The update notice (`src/update-check.ts`) asks the npm registry at most once a day, runs alongside the
++  profile. Agent notes are on by default (`--no-agents` skips them). It detects Nodemailer, Better Auth, Auth.js,
++  Laravel, Rails and Django (`project-stack.ts`) and prints that drop-in, then `fetchSetupReport` (`describeSetup`
++  in the SDK) as the one next step (`--json` includes it as `setup`; a failed list is a warning and still returns
+
+```
+
+**File**: `apps/api/openapi.json` (modified, +4/-0)
+```diff
+@@ -3259,6 +3259,10 @@
                  },
-                 {
-                   "object": "email",
-@@ -206,7 +210,11 @@ public async Task MockServerTest_1()
-                     "version": 1000000,
-                     "locale": "locale"
-                   },
--                  "broadcast_id": "broadcast_id"
-+                  "broadcast_id": "broadcast_id",
-+                  "content_storage": {
-+                    "mode": "store",
-+                    "discarded_at": "2024-01-15T09:30:00.000Z"
-+                  }
-                 }
-               ],
-               "has_more": true
-@@ -295,7 +303,10 @@ public async Task MockServerTest_2()
-                     "click_count": 0
-                   },
-                   "created_at": "2026-10-10T12:00:00.000Z",
--                  "sent_at": "2026-10-10T12:00:01.000Z"
-+                  "sent_at": "2026-10-10T12:00:01.000Z",
-+                  "content_storage": {
-+                    "mode": "store"
-+                  }
-                 }
-               ],
-               "has_more": true
-```
-
-**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/CancelTest.cs` (modified, +9/-2)
-```diff
-@@ -107,7 +107,11 @@ public async Task MockServerTest_1()
-                 "version": 1000000,
-                 "locale": "locale"
+                 "description": "Every problem: of the request (`validation_error`) or of a template (`invalid_template_variables`, `template_invalid`)."
                },
--              "broadcast_id": "broadcast_id"
-+              "broadcast_id": "broadcast_id",
-+              "content_storage": {
-+                "mode": "store",
-+                "discarded_at": "2024-01-15T09:30:00.000Z"
-+              }
-             }
-             """;
- 
-@@ -189,7 +193,10 @@ public async Task MockServerTest_2()
-                 "click_count": 0
-               },
-               "created_at": "2026-10-10T12:00:00.000Z",
--              "sent_at": "2026-10-10T12:00:01.000Z"
-+              "sent_at": "2026-10-10T12:00:01.000Z",
-+              "content_storage": {
-+                "mode": "store"
-+              }
-             }
-             """;
- 
++              "hint": {
++                "type": "string",
++                "description": "What to try next. Present when coss.com can name a fix, and often includes a docs URL."
++              },
+               "request_id": {
+                 "type": "string",
+                 "examples": [
 ```
 
-**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/GetBatchTest.cs` (modified, +14/-3)
+**File**: `apps/api/src/errors.ts` (modified, +58/-1)
 ```diff
-@@ -111,7 +111,11 @@ public async Task MockServerTest_1()
-                     "version": 1000000,
-                     "locale": "locale"
-                   },
--                  "broadcast_id": "broadcast_id"
-+                  "broadcast_id": "broadcast_id",
-+                  "content_storage": {
-+                    "mode": "store",
-+                    "discarded_at": "2024-01-15T09:30:00.000Z"
-+                  }
-                 },
-                 {
-                   "object": "email",
-@@ -207,7 +211,11 @@ public async Task MockServerTest_1()
-                     "version": 1000000,
-                     "locale": "locale"
-                   },
--                  "broadcast_id": "broadcast_id"
-+                  "broadcast_id": "broadcast_id",
-+                  "content_storage": {
-+                    "mode": "store",
-+                    "discarded_at": "2024-01-15T09:30:00.000Z"
-+                  }
-                 }
-               ],
-               "created_at": "2024-01-15T09:30:00.000Z"
-@@ -291,7 +299,10 @@ public async Task MockServerTest_2()
-                     "click_count": 0
-                   },
-                   "created_at": "2026-10-10T12:00:00.000Z",
--                  "batch_id": "batch_01k8d0n6x5f3w2e1r9t7y4u6i8"
-+                  "batch_id": "batch_01k8d0n6x5f3w2e1r9t7y4u6i8",
-+                  "content_storage": {
-+                    "mode": "store"
-+                  }
-                 }
-               ],
-               "created_at": "2026-10-10T12:00:00.000Z"
+@@ -1,6 +1,8 @@
+ /**
+  * The public error envelope. Every non-2xx response is
+- * `{ "error": { type, code, message, param?, issues?, request_id } }`, built only here.
++ * `{ "error": { type, code, message, param?, issues?, hint?, request_id } }`, built only here.
++ * `hint` is optional and additive: it names a fix (often with a docs URL) for the errors an
++ * agent hits first. Compute it here so every constructor does not have to.
+  */
+ 
+ import { BillingError } from "@coss/billing";
+@@ -53,6 +55,10 @@ export const ErrorEnvelope = z
+             "Every problem: of the request (`validation_error`) or of a template " +
+             "(`invalid_template_variables`, `template_invalid`).",
+         }),
++      hint: z.string().optional().meta({
++        description:
++          "What to try next. Present when coss.com can name a fix, and often includes a docs URL.",
++      }),
+       request_id: z.string().meta({ examples: ["req_01k7c8m4q2f3e9v6t5r1n0p8yz"] }),
+     }),
+   })
+@@ -66,6 +72,8 @@ type ApiErrorDetails = {
+   message: string;
+   param?: string;
+   issues?: ApiErrorIssue[];
++  /** Overrides the hint `errorResponse` would derive from `code`. */
++  hint?: string;
+ };
+ 
+ /** An expected failure with a public envelope. Throw it anywhere; `app.onError` renders it. */
+@@ -75,6 +83,7 @@ export class ApiError extends Error {
+   readonly code: string;
+   readonly param?: string;
+   readonly issues?: ApiErrorIssue[];
++  readonly hint?: string;
+   readonly headers?: Record<string, string>;
+ 
+   constructor(
+@@ -89,18 +98,66 @@ export class ApiError extends Error {
+     this.code = details.code;
+     this.param = details.param;
+     this.issues = details.issues;
++    this.hint = details.hint;
+     this.headers = headers;
+   }
+ }
+ 
++const DOCS = {
++  domains: "https://coss.com/docs/email/domains.md",
++  environments: "https://coss.com/docs/environments.md",
++  delivery: "https://coss.com/docs/email/delivery.md",
++  sdk: "https://coss.com/docs/sdk.md",
++  sending: "https://coss.com/docs/email/sending.md",
++} as const;
++
++/**
++ * The fix for an error an agent can act on, derived from the code (and, for reserved headers,
++ * from the issue text — those share `validation_error` with every other bad field).
++ */
++export function hintFor(error: {
++  code: string;
++  issues?: { message: string }[];
++  hint?: string;
++}): string | undefined {
++  if (error.hint) return error.hint;
++  switch (error.code) {
++    case "domain_not_verified":
++      return (
++        "A live key can only send from a verified domain. A sandbox key accepts any from " +
++        `address. ${DOCS.domains}`
++      );
++    case "sandbox_only":
++      return `This only works with a sandbox key. ${DOCS.environments}`;
++    case "organization_suspended":
++    case "account_suspended":
++      return (
++        "This organization is suspended, so sending and changes are refused until it is " +
++        `reinstated. ${DOCS.delivery}`
++      );
++    case "idempotency_key_reused":
++    case "request_in_progress":
++      return `Reuse an Idempotency-Key only for the same request. ${DOCS.sdk}`;
++    case "validation_error":
++      if (error.issues?.some((issue) => issue.message.includes("set by coss.com"))) {
++        return `Those headers are set by coss.com and cannot be overridden. ${DOCS.sending}`;
++      }
++      return undefined;
++    default:
++      return undefined;
++  }
++}
++
+ export function errorResponse(c: Context<AppEnv>, error: ApiError): Response {
++  const hint = hintFor(error);
+   const body: ErrorEnvelopeBody = {
+     error: {
+       type: error.type,
+       code: error.code,
+       message: error.message,
+       ...(error.param !== undefined && { param: error.param }),
+       ...(error.issues !== undefined && { issues: error.issues }),
++      ...(hint !== undefined && { hint }),
+       request_id: c.var.requestId,
+     },
+   };
 ```
 
-**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/GetTest.cs` (modified, +9/-2)
+**File**: `apps/api/test/auth.test.ts` (modified, +5/-1)
 ```diff
-@@ -107,7 +107,11 @@ public async Task MockServerTest_1()
-                 "version": 1000000,
-                 "locale": "locale"
-               },
--              "broadcast_id": "broadcast_id"
-+              "broadcast_id": "broadcast_id",
-+              "content_storage": {
-+                "mode": "store",
-+                "discarded_at": "2024-01-15T09:30:00.000Z"
-+              }
-             }
-             """;
- 
-@@ -184,7 +188,10 @@ public async Task MockServerTest_2()
-                 "click_count": 0
-               },
-               "created_at": "2026-10-10T12:00:00.000Z",
--              "sent_at": "2026-10-10T12:00:01.000Z"
-+              "sent_at": "2026-10-10T12:00:01.000Z",
-+              "content_storage": {
-+                "mode": "store"
-+              }
-             }
-             """;
- 
-```
-
-**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/ListTest.cs` (modified, +14/-3)
-```diff
-@@ -89,7 +89,11 @@ public async Task MockServerTest_1()
-                     "version": 1000000,
-                     "locale": "locale"
-                   },
--                  "broadcast_id": "broadcast_id"
-+                  "broadcast_id": "broadcast_id",
-+                  "content_storage": {
-+                    "mode": "store",
-+                    "discarded_at": "2024-01-15T09:30:00.000Z"
-+                  }
-                 },
-                 {
-                   "object": "email",
-@@ -164,7 +168,11 @@ public async Task MockServerTest_1()
-                     "version": 1000000,
-                     "locale": "locale"
-                   },
--                  "broadcast_id": "broadcast_id"
-+                  "broadcast_id": "broadcast_id",
-+                  "content_storage": {
-+                    "mode": "store",
-+                    "discarded_at": "2024-01-15T09:30:00.000Z"
-+                  }
-                 }
-               ],
-               "has_more": true
-@@ -235,7 +243,10 @@ public async Task MockServerTest_2()
-                   },
-                   "created_at": "2026-10-10T12:00:00.000Z",
-                   "sent_at": "2026-10-10T12:00:01.000Z",
--                  "broadcast_id": "broadcast_id"
-+                  "broadcast_id": "broadcast_id",
-+                  "content_storage": {
-+                    "mode": "store"
-+                  }
-                 }
-               ],
-               "has_more": false
-```
-
-**File**: `sdks/dotnet/src/Coss.Test/Unit/MockServer/Email/Received/GetTest.cs` (modified, +4/-3)
-```diff
-@@ -1,4 +1,3 @@
--using Coss.Email;
- using Coss.Test.Unit.MockServer;
- using Coss.Test.Utils;
- using NUnit.Framework;
-@@ -104,7 +103,9 @@ public async Task MockServerTest_1()
-                     .WithBody(mockResponse)
-             );
- 
--        var response = await Client.Email.Received.GetAsync(new GetReceivedRequest { Id = "id" });
-+        var response = await Client.Email.Received.GetAsync(
-+            new Coss.Email.GetReceivedRequest { Id = "id" }
-+        );
-         JsonAssert.AreEqual(response, mockResponse);
+@@ -148,7 +148,11 @@ describe("authentication", () => {
+       const res = await sendEmail(app, key, emailBody());
+       expect(res.status).toBe(403);
+       const error = await errorOf(res);
+-      expect(error).toMatchObject({ type: "permission_error", code: "organization_suspended" });
++      expect(error).toMatchObject({
++        type: "permission_error",
++        code: "organization_suspended",
++        hint: expect.stringContaining("https://coss.com/docs/email/delivery.md"),
++      });
+       // The internal reason is never shown to the organization.
+       expect(error.message).not.toContain("Abuse");
      }
+```
+
+**File**: `apps/api/test/emails.test.ts` (modified, +17/-0)
+```diff
+@@ -88,10 +88,25 @@ describe("POST /v1/emails", () => {
+       type: "invalid_request_error",
+       code: "domain_not_verified",
+       param: "from",
++      hint: expect.stringContaining("https://coss.com/docs/email/domains.md"),
+     });
+     expect(liveProvider.sent).toHaveLength(0);
+   });
  
-@@ -192,7 +193,7 @@ public async Task MockServerTest_2()
-             );
++  test("a reserved header points at the sending docs", async () => {
++    const tenant = await createTestTenant();
++    const { app } = createTestApp();
++    const res = await sendEmail(
++      app,
++      tenant.sandboxKey,
++      emailBody({ headers: { "Message-ID": "<a@b>" } }),
++    );
++    expect(res.status).toBe(422);
++    const error = await errorOf(res);
++    expect(error.code).toBe("validation_error");
++    expect(error.hint).toContain("https://coss.com/docs/email/sending.md");
++  });
++
+   test("a paused organization can't send with a live key", async () => {
+     const tenant = await createTestTenant();
+     const { app } = createTestApp();
+@@ -293,6 +308,7 @@ describe("POST /v1/emails", () => {
+       type: "idempotency_error",
+       code: "idempotency_key_reused",
+       param: "Idempotency-Key",
++      hint: expect.stringContaining("https://coss.com/docs/sdk.md"),
+     });
+     expect(queue.jobs).toHaveLength(1);
+   });
+@@ -333,6 +349,7 @@ describe("POST /v1/emails", () => {
+     expect(await errorOf(res)).toMatchObject({
+       type: "idempotency_error",
+       code: "request_in_progress",
++      hint: expect.stringContaining("https://coss.com/docs/sdk.md"),
+     });
+   });
  
-         var response = await Client.Email.Received.GetAsync(
--            new GetReceivedRequest { Id = "rcvd_01k7c8m4q2f3e9v6t5r1n0p8yz" }
-+            new Coss.Email.GetReceivedRequest { Id = "rcvd_01k7c8m4q2f3e9v6t5r1n0p8yz" }
-         );
-         JsonAssert.AreEqual(response, mockResponse);
-     }
+```
+
+**File**: `apps/api/test/reputation.test.ts` (modified, +1/-0)
+```diff
+@@ -57,6 +57,7 @@ describe("GET /v1/reputation", () => {
+     const live = await sendEmail(app, tenant.liveKey, emailBody({ from }));
+     expect(live.status).toBe(403);
+     expect(await errorOf(live)).toMatchObject({
++      hint: expect.stringContaining("https://coss.com/docs/email/delivery.md"),
+       type: "permission_error",
+       code: "account_suspended",
+     });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #160** (2026-10-22): Docs and tools for coding agents: Markdown API reference, .md pages, key flow, Claude Code plugin (@pumfleet)
-- **PR #159** (2026-10-22): iOS app: spend, budgets and API key owners (@pumfleet)
-- **PR #158** (2026-10-21): SDKs for Python, Go, Ruby, PHP, Java and .NET, generated from openapi.json (@pumfleet)
-- **PR #157** (2026-10-21): iOS app: catch up with the dashboard's pages (@pumfleet)
-- **PR #156** (2026-10-21): Email: Domain Connect template is single-instance (@pumfleet)
-- **PR #155** (2026-10-19): Import from Resend, SendGrid and Postmark (@pumfleet)
+- **PR #169** (2026-10-26): Publish templates and register webhook endpoints from the agent tools (@pumfleet)
+- **PR #167** (2026-10-26): Version packages (@github-actions[bot])
+- **PR #166** (2026-10-26): iOS app: polish, account deletion, read-only billing, crash reporting (@pumfleet)
+- **PR #165** (2026-10-26): Give agents one project key, a next step, and an error hint (@pumfleet)
+- **PR #164** (2026-10-26): Release: pass the notarization check's requirement inline (@pumfleet)
+- **PR #163** (2026-10-26): Release: fix the notarization check's code requirement (@pumfleet)
 
 ---
 
@@ -2151,28 +2579,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Regenerate the SDKs for main's API (SMS, template rendering, test webhook events
+## X. iOS app: polish sweep, account deletion, read-only billing, crash reporting
 
 **RULE**:
-When implementing operations in `sdks/dotnet/.fern/metadata.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cosscom/coss. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9584ac78`: Regenerate the SDKs for main's API (SMS, template rendering, test webhook events, storage settings). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfbc88d6`: iOS app: polish sweep, account deletion, read-only billing, crash reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/dotnet/.fern/metadata.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  "originGitCommit": "d0301a609489f8f501c6bcadf209b524c230247e",
+| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing (read-only), audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts, crash reporting (Sentry) and account deletion. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
+Runtime dependencies: `observability` (no workspace deps) ← `api`, `worker`, `web`, `site`, `portal`, `smtp`, `infra`, `mobile` (only `./scrub`, bundled by Metro: keep it dependency-free); `signals` (no workspace deps) ← `auth`, `webhooks`, `risk`; `db ← auth ← tenancy`,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-  "originGitCommit": "22f1393886309f16341682ab6a08490f9064c8e4",
+| `apps/mobile` | `@coss/mobile` | Expo (SDK 57) iOS companion app mirroring the dashboard's pages (organization: projects, reputation, domains with DMARC, dedicated IPs, SMS senders, members, settings with SSO and SCIM, billing and plans, audit log; environment: emails, templates, received, suppressions, tracking, content storage, SMS, broadcasts, contacts, audiences, segments, topics, marketing settings, risk with its rules, lists and settings, Hooks, API keys, webhooks, logs, log drains), mostly read-only, signed in through the dashboard (browser hand-off + PKCE) and using its `/api/mobile/v1/*`, with push notifications (APNs) for alerts. Not deployed by `infra`. See `apps/mobile/AGENTS.md`. |
+Runtime dependencies: `observability` (no workspace deps) ← `api`, `worker`, `web`, `site`, `portal`, `smtp`, `infra`; `signals` (no workspace deps) ← `auth`, `webhooks`, `risk`; `db ← auth ← tenancy`,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9584ac78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfbc88d6` are properly handled with clean fallback behavior.

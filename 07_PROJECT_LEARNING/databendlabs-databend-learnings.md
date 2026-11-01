@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `058a1e8f`  
+> **Source Version**: `1bb45751`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:32:06.782Z  
+> **Timestamp**: 2026-10-30T17:06:08.225Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:32:06.239Z  
+> **Harvest Timestamp**: 2026-10-30T17:06:07.297Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9479 stars
+- **Stars / Engagement**: 9488 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20822** (2026-10-23): **chore(meta): reuse source-option read when validating MV source**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Address the duplicate source-metadata read in item 2 of #20286.  When `CREATE MATERIALIZED VIEW` includes a source-options update, `create_table()` already reads the source metadata, checks its sequence, and adds an exact source CAS condition. Reuse that read's source ID and dropped status for MV validation when both requests refer to the same source, avoiding the redundant lookup within that transaction attempt.  - Keep the existing lookup when there is no source-options update or the source IDs differ. - Recompute the local status on every retry. Do not clone or cache the full `TableMeta`. - Preserve the source CAS, atomic metadata publication, privilege model, and persistent formats. - Extend the existing `materialized_view_lifecycle` cases to reject missing/dropped MV sources without publishing the source-options update.  The documentation and old-binary compatibility follow-ups are covered by databendlabs/databend-docs#3532, which is still open. This PR addresses the code follow-up only and intentionally does not auto-close #20286.  ## Tests  - [x] Unit Test — existing schema API integration suite - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  Passed locally:  ```sh CARGO_BUILD_JOBS=4 RUST_MIN_STACK=16777216 cargo nextest run --offline \   -p databend-common-meta-schema-api-tests --test it \   -E 'test(test_schema_api_single_node) | test(tes
+- **Issue #20897** (2026-10-30): **fix(query): exact float-to-decimal casts and decimal quantile_cont**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - fixes: #20781 - Float to decimal casts computed `value * 10^scale` in f64, so the product was already rounded at larger scales: `415210.34::DOUBLE::DECIMAL(38,10)` gave `415210.3400000001`. `Decimal::from_float` now takes the target size and rounding mode and scales the exact binary value (significand × 5^scale, then one binary shift that truncates or rounds half away from zero). It uses native u64/u128 products when they fit and widens otherwise. `CAST`/`TRY_CAST`, `INSERT`, `MODIFY COLUMN` and Float64 inside `VARIANT` all go through it. - Decimal statistics bounds travel as the nearest f64, and truncating its exact value could exclude the original decimal (0.3 → 0.2999… → 0.2) and let partition pruning drop matching data. `Domain::from_bounds` now recovers the decimal by nearest rounding when the float is finer than the scale, and otherwise widens the bound one step past the neighbouring float. - Decimal `quantile_cont`/`median` multiplied by `from_float(frac)`, which truncated to 0, so they always returned the lower neighbour. They now interpolate exactly in BigInt and round once to the input scale, without overflowing on `upper - lower`. - Behavior changes:   - Casting NaN to decimal now errors (`TRY_CAST` returns NULL) instead of returning 0.   - Decimal median/quantile results change, e.g. the median of 1.00..4.00 becomes 2.50 instead of 2.00.   - The last dig
 
-- **Issue #20821** (2026-10-23): **fix(query): cap window top-n cardinality estimate by partition count**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Cardinality estimation for the common "top-N per key" pattern  ```sql SELECT ... FROM (   SELECT ..., row_number() OVER (PARTITION BY k1, k2, k3 ORDER BY d DESC) AS rn FROM t ) WHERE rn = 1 ```  passed the whole input cardinality through the `Window` / `WindowPartition` nodes, and in some shapes through the `Filter` as well, although the output is bounded by `distinct partition keys × N`. The bad estimate is harmless for the standalone subquery but misleads join ordering and join type selection when such a subquery is joined to other tables.  ### Root cause  `RulePushDownFilterWindowTopN` records the per-partition `top`, but statistics derivation only used it to bound the ranking column's value range and ndv:  - Single window function (`Window` over `Sort { window_partition }`): `top` lives on `Sort.window_partition.top`, which `Sort::derive_stats` ignored. `WindowPartition` and `Window` kept the input cardinality; the `Filter` estimate was only right by accident for a single partition column with `rn = 1`, and wrong for multi-column keys or `rank() <= N` (full input). - Several window functions (`WindowGroup`): `top` is set on the window, so the ranking column got ndv 1 in range `[1, 1]` while the group cardinality stayed at the input, which made `rn = 1` estimated as keeping every row.  ### Fix  - `plans/window.rs`: add `estimate_partition_count` (returns `None` whe
+- **Issue #20894** (2026-10-30): **fix(query): decode each segment once in row fetch**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Row fetch (the lazy read after TopN, and the row fetch of mutations) decoded the block metas of a whole segment once for every 10-block window it fetched rows from. `ParquetRowsFetcher::fetch_metadata` called `CompactSegmentInfo::block_metas()`, which decompresses and deserializes the metas of every block of the segment, then kept the metadata of only the 10 blocks around the target block. Rows from blocks in different windows decoded the segment again, so the cost grew with the size of the segment: on a segment of 192 blocks, `SELECT * ... ORDER BY k LIMIT 100` spent 148 ms in RowFetch, against 10 ms when the same blocks are split into segments of 8.  Changes in `parquet_rows_fetcher.rs`: - `RowFetchSegmentCache`: each fetcher keeps the decoded block metas of up to 16 segments (LRU, by segment index in the snapshot), so a segment is decoded once per fetcher. - The row fetch metadata is built for the target block only, on each call. The 10-block window and the per-block metadata cache (`block_meta_lru_cache`) are removed: building the metadata of one block is cheap next to reading it, and a block is looked up once per batch. - `ColumnNodes` of the table schema are built once per fetcher, not on every metadata build. - The unused `RowsFetchMetadataImpl::block_bytes` and `ParquetRowsFetcher::schema` fields are removed.  **Benchmark**: 1M rows, 25 columns (`k BIGINT` and
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,637 +1217,924 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `45a88e44` (2026-10-23)
-**Commit Message**: fix(query): release queued acquire entry when future is dropped (#20629)
+### Incident Patch 1: `23e080ae` (2026-10-30)
+**Commit Message**: fix(query): dedup in-flight cascades group tasks (#20883)
 
-* fix(query): release queued acquire entry when future is dropped
+* fix(query): dedup in-flight cascades group tasks
 
-A queued `AcquireQueueFuture` registers its entry in the queue on the
-first pending poll and only unregisters it when it completes. If the
-caller cancels the acquisition by dropping the future, the entry (and
-the query context and session it keeps alive) stays in the queue
-indefinitely, so the queue length keeps growing and the session slot
-is never released.
+OptimizeExprTask scheduled an OptimizeGroupTask for every child whose
+(group, required_prop) had no best cost yet. Tasks run breadth-first,
+so a group requested through several parent expressions got one task
+per request, and each UnionAll level doubled the work in distributed
+mode. A 40-branch UNION ALL exhausted DEFAULT_TASK_LIMIT and fell back
+to the heuristic plan.
 
-Implement `PinnedDrop` for `AcquireQueueFuture` to remove any entry
-still owned by the future. Completed acquisitions have already
-released the key, so this is a no-op for them.
+Track in-flight OptimizeGroupTasks by (group_index, required_prop) and
+attach later requests as waiters. Enforcer self-references keep a
+private task. TaskManager::run errors out when all queued tasks are
+blocked instead of spinning, so a wait cycle falls back to the
+heuristic plan. Expose scheduler stats for tests.
 
-Add regression tests covering dropped acquisitions, repeated abort
-notifications, a real queued query with `max_active_sessions = 1`, and
-exactly-once cleanup on success or explicit removal.
+Backport of release commit N38 dfc0b28a4c.
 
-Refs #20606
+* test(query): update eager_q0 goldens for cascades task dedup
 
-* fix(query): only drop queue entries owned by the cancelled acquire
+Both join alternatives for orders x customer cost 0 in this fixture,
+and Group::update_best_cost keeps the first one on a tie. Deduplicated
+tasks finish in a different order, so (Any, Broadcast) now wins over
+(Hash, Hash). The new plan drops a redundant hash shuffle of orders
+under a broa
 
-Queue keys are not unique. `add_entity` replaces an existing entry with
-the same key, so when a replaced acquisition is cancelled, an
-unconditional `remove_entity(&key)` would delete the entry now owned by
-the other acquisition. That acquisit
-
-**File**: `src/query/service/src/sessions/queue_mgr.rs` (modified, +13/-0)
+**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/cascade.rs` (modified, +14/-1)
 ```diff
-@@ -491,6 +491,19 @@ where T: Future<Output =  std::result::Result<std::result::Result<Permit, E>, El
-     key: Option<Data::Key>,
-     manager: Arc<QueueManager<Data>>,
- }
-+
-+impl<Data: QueueData, T, Permit, E> PinnedDrop for AcquireQueueFuture<Data, T, Permit, E>
-+where T: Future<Output = std::result::Result<std::result::Result<Permit, E>, Elapsed>>
-+{
-+    fn drop(this: Pin<&mut Self>) {
-+        let this = this.project();
-+        // Cancellation can drop the future without polling it to completion.
-+        // Release the registered entry and the query context it owns in that case.
-+        if let Some(key) = this.key.take() {
-+            this.manager.remove_entity(&key);
-+        }
-+    }
-+}
+@@ -31,6 +31,7 @@ use crate::optimizer::optimizers::cascades::cost::DefaultCostModel;
+ use crate::optimizer::optimizers::cascades::rule::StrategyFactory;
+ use crate::optimizer::optimizers::cascades::tasks::DEFAULT_TASK_LIMIT;
+ use crate::optimizer::optimizers::cascades::tasks::OptimizeGroupTask;
++use crate::optimizer::optimizers::cascades::tasks::SchedulerStat;
+ use crate::optimizer::optimizers::cascades::tasks::Task;
+ use crate::optimizer::optimizers::cascades::tasks::TaskManager;
+ use crate::optimizer::optimizers::distributed::DistributedOptimizer;
+@@ -47,6 +48,8 @@ pub struct CascadesOptimizer {
+     pub(crate) memo: Memo,
+     pub(crate) cost_model: Box<dyn CostModel>,
+     pub(crate) explore_rule_set: RuleSet,
++    /// Scheduler statistics of the last search, for diagnostics and tests.
++    scheduler_stat: Option<SchedulerStat>,
  }
  
- impl<Data: QueueData, T, Permit, E> AcquireQueueFuture<Data, T, Permit, E>
+ impl CascadesOptimizer {
+@@ -74,13 +77,20 @@ impl CascadesOptimizer {
+             memo,
+             cost_model,
+             explore_rule_set,
++            scheduler_stat: None,
+         })
+     }
+ 
+     pub fn memo(&self) -> &Memo {
+         &self.memo
+     }
+ 
++    /// Statistics of the task scheduler collected by the last search, for
++    /// diagnostics and tests.
++    pub fn scheduler_stat(&self) -> Option<&SchedulerStat> {
++        self.scheduler_stat.as_ref()
++    }
++
+     pub(crate) fn enforce_distribution(&self) -> bool {
+         self.opt_ctx.get_enable_distributed_optimization()
+     }
+@@ -123,6 +133,7 @@ impl CascadesOptimizer {
+                     let mut local_optimizer = CascadesOptimizer::new(opt_ctx)?;
+                     let local_expr = local_optimizer.optimize_without_staging(&s_expr)?;
+                     self.memo = local_optimizer.memo;
++                    self.scheduler_stat = local_optimizer.scheduler_stat;
+                     return Ok(local_expr);
+                 }
+             }
+@@ -213,7 +224,9 @@ impl CascadesOptimizer {
+ 
+         let mut scheduler = TaskManager::new().with_task_limit(task_limit);
+         scheduler.add_task(Task::OptimizeGroup(root_task));
+-        scheduler.run(self)?;
++        let run_result = scheduler.run(self);
++        self.scheduler_stat = Some(scheduler.into_stat());
++        run_result?;
+ 
+         debug!("Memo:\n{}", self.memo.display()?);
+ 
 ```
 
-**File**: `src/query/service/tests/it/sessions/queue_mgr.rs` (modified, +157/-0)
+**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/mod.rs` (modified, +2/-0)
 ```diff
-@@ -14,6 +14,8 @@
+@@ -18,3 +18,5 @@ pub mod rule;
+ pub mod tasks;
  
- use std::collections::HashMap;
+ pub use cascade::CascadesOptimizer;
++pub use tasks::DEFAULT_TASK_LIMIT;
++pub use tasks::SchedulerStat;
+```
+
+**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/mod.rs` (modified, +2/-0)
+```diff
+@@ -28,4 +28,6 @@ pub use optimize_group::OptimizeGroupTask;
+ pub use task::SharedCounter;
+ pub use task::Task;
+ pub use task_manager::DEFAULT_TASK_LIMIT;
++pub use task_manager::OptimizeGroupWaiters;
++pub use task_manager::SchedulerStat;
+ pub use task_manager::TaskManager;
+```
+
+**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/optimize_expr.rs` (modified, +31/-8)
+```diff
+@@ -235,14 +235,37 @@ impl OptimizeExprTask {
+ 
+             let group = optimizer.memo.group(m_expr.children[child_index])?;
+             if group.best_prop(&required_prop).is_none() {
+-                let task = OptimizeGroupTask::new(
+-                    self.ctx.clone(),
+-                    Some((self.group_index, self.m_expr_index)),
+-                    group.group_index,
+-                    required_prop.clone(),
+-                )
+-                .with_parent(self.ref_count.clone());
+-                scheduler.add_task(Task::OptimizeGroup(task));
++                let child_group_index = group.group_index;
++                // An in-flight task for the same `(group, required_prop)` computes exactly
++                // the result we need, so wait for it instead of scheduling a duplicate.
++                //
++                // Enforcer expressions (e.g. `Exchange`) have their own group as child and
++                // rely on `owner_expr` to skip themselves; those requests keep a private
++                // task so that the skip stays tied to the requesting expression.
++                let shareable = child_group_index != self.group_index;
++                let attached = shareable
++                    && scheduler.attach_optimize_group_waiter(
++                        child_group_index,
++                        &required_prop,
++                        &self.ref_count,
++                    );
++                if !attached {
++                    let task = OptimizeGroupTask::new(
++                        self.ctx.clone(),
++                        Some((self.group_index, self.m_expr_index)),
++                        child_group_index,
++                        required_prop.clone(),
++                    )
++                    .with_parent(self.ref_count.clone());
++                    if shareable {
++                        scheduler.register_optimize_group(
++                            child_group_index,
++                            required_prop.clone(),
++                            task.waiters.clone(),
++                        );
++                    }
++                    scheduler.add_task(Task::OptimizeGroup(task));
++                }
+             }
+ 
+             self.last_optimized_child_index = Some(child_index + 1);
+```
+
+**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/optimize_group.rs` (modified, +23/-0)
+```diff
+@@ -12,6 +12,8 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use std::cell::RefCell;
++use std::rc::Rc;
  use std::sync::Arc;
-+use std::sync::atomic::AtomicUsize;
-+use std::sync::atomic::Ordering;
+ 
+ use databend_common_catalog::table_context::TableContext;
+@@ -26,6 +28,7 @@ use crate::optimizer::ir::RelExpr;
+ use crate::optimizer::ir::RequiredProperty;
+ use crate::optimizer::optimizers::cascades::CascadesOptimizer;
+ use crate::optimizer::optimizers::cascades::tasks::ExploreGroupTask;
++use crate::optimizer::optimizers::cascades::tasks::OptimizeGroupWaiters;
+ use crate::optimizer::optimizers::cascades::tasks::SharedCounter;
+ use crate::optimizer::optimizers::cascades::tasks::TaskManager;
+ use crate::plans::Operator;
+@@ -60,6 +63,20 @@ pub struct OptimizeGroupTask {
+ 
+     pub ref_count: SharedCounter,
+     pub parent: Option<SharedCounter>,
++
++    /// Tasks that requested the same `(group_index, required_prop)` while this task was
++    /// in flight, see `TaskManager::attach_optimize_group_waiter`. Released when this
++    /// task is dropped.
++    #[educe(Debug(ignore))]
++    pub waiters: OptimizeGroupWaiters,
++}
++
++impl Drop for OptimizeGroupTask {
++    fn drop(&mut self) {
++        // The scheduler may still hold a handle to the list, so release the waiters
++        // explicitly instead of relying on the last `Rc` going away.
++        self.waiters.borrow_mut().clear();
++    }
+ }
+ 
+ impl OptimizeGroupTask {
+@@ -78,6 +95,7 @@ impl OptimizeGroupTask {
+             ref_count: SharedCounter::new(),
+             parent: None,
+             owner_expr,
++            waiters: Rc::new(RefCell::new(Vec::new())),
+         }
+     }
+ 
+@@ -120,6 +138,11 @@ impl OptimizeGroupTask {
+             (OptimizeGroupState::Explored, OptimizeGroupEvent::Optimizing) => {}
+             (OptimizeGroupState::Explored, OptimizeGroupEvent::Optimized) => {
+                 self.state = OptimizeGroupState::Optimized;
++                scheduler.unregister_optimize_group(
++                    self.group_index,
++                    &self.required_prop,
++                    &self.waiters,
++                );
+             }
+             _ => Err(ErrorCode::Internal(format!(
+                 "Invalid transition from {:?} with {:?}",
+```
+
+**File**: `src/query/sql/src/planner/optimizer/optimizers/cascades/tasks/task_manager.rs` (modified, +174/-1)
+```diff
+@@ -12,20 +12,36 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use std::cell::RefCell;
++use std::collections::HashMap;
+ use std::collections::VecDeque;
++use std::rc::Rc;
  use std::time::Duration;
- use std::time::Instant;
- use std::time::SystemTime;
-@@ -26,18 +28,22 @@ use databend_common_base::runtime::workload_group::MAX_CONCURRENCY_QUOTA_KEY;
- use databend_common_base::runtime::workload_group::QuotaValue;
- use databend_common_base::runtime::workload_group::WorkloadGroup;
- use databend_common_base::runtime::workload_group::WorkloadGroupResource;
-+use databend_common_catalog::session_type::SessionType;
- use databend_common_exception::ErrorCode;
+ 
++use databend_common_exception::ErrorCode;
  use databend_common_exception::Result;
- use databend_common_meta_store::MetaStore;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_common_sql::Planner;
-+use databend_common_version::BUILD_INFO;
- use databend_meta_client::RpcClientConf;
- use databend_meta_runtime::DatabendRuntime;
- use databend_query::interpreters::InterpreterFactory;
- use databend_query::sessions::QueryEntry;
- use databend_query::sessions::QueueData;
- use databend_query::sessions::QueueManager;
-+use databend_query::sessions::SessionManager;
- use databend_query::sessions::TableContextSettings;
-+use databend_query::test_kits::ConfigBuilder;
- use databend_query::test_kits::TestFixture;
- use log::error;
- use tokio::sync::Mutex;
-@@ -48,6 +54,7 @@ struct TestData<const PASSED: bool = false> {
-     acquire_id: String,
-     abort_notify: Arc<WatchNotify>,
-     test_timeout: Duration,
-+    wait_exits: Arc<AtomicUsize>,
+ use log::info;
+ 
++use crate::IndexType;
++use crate::optimizer::ir::RequiredProperty;
+ use crate::optimizer::optimizers::CascadesOptimizer;
++use crate::optimizer::optimizers::cascades::tasks::SharedCounter;
+ use crate::optimizer::optimizers::cascades::tasks::Task;
+ 
++/// Extra waiters of an in-flight `OptimizeGroupTask`.
++///
++/// The task owns one handle and the scheduler keeps another one in
++/// `TaskManager::in_flight_optimize_groups`. Every `SharedCounter` stored here is a
++/// clone of the `ref_count` of a task that is blocked on the in-flight task; clearing
++/// the list (when the in-flight task is dropped) releases all of them at once.
++pub type OptimizeGroupWaiters = Rc<RefCell<Vec<SharedCounter>>>;
++
+ /// It will cost about 4000ns to execute a task in average,
+ /// so the default task limit is 1,250,000 which means the
+ /// optimizer will cost at most 5s to optimize a query.
+ pub const DEFAULT_TASK_LIMIT: u64 = 1_250_000;
+ 
++#[derive(Debug, Clone)]
+ pub struct SchedulerStat {
+     pub scheduled_task_count: u64,
+     pub explore_task_count: u64,
+@@ -37,6 +53,9 @@ pub struct SchedulerStat {
+     pub optimize_group_prune_count: u64,
+     pub optimize_group_expr_count: u64,
+     pub optimize_group_expr_prune_count: u64,
++    /// Requests that attached to an in-flight `OptimizeGroupTask` instead of
++    /// scheduling a duplicate one.
++    pub optimize_group_wait_count: u64,
  }
  
- impl<const PASSED: bool> std::fmt::Debug for TestData<PASSED> {
-@@ -67,6 +74,7 @@ impl<const PASSED: bool> TestData<PASSED> {
-             acquire_id,
-             abort_notify: Arc::new(WatchNotify::new()),
-             test_timeout: Duration::from_secs(1000),
-+            wait_exits: Arc::new(AtomicUsize::new(0)),
-         }
-     }
+ pub struct TaskManager {
+@@ -49,6 +68,18 @@ pub struct TaskManager {
  
-@@ -76,6 +84,7 @@ impl<const PASSED: bool> TestData<PASSED> {
-             acquire_id,
-             abort_notify: Arc::new(WatchNotify::new()),
-             test_timeout: timeout,
-+            wait_exits: Arc::new(AtomicUsize::new(0)),
-         }
-     }
+     /// Statistics of the scheduler.
+     pub(super) stat: SchedulerStat,
++
++    /// `OptimizeGroupTask`s that have been scheduled but not finished yet, keyed by
++    /// `(group_index, required_prop)`.
++    ///
++    /// Tasks are scheduled breadth-first, so a group that is reachable through several
++    /// parent expressions (e.g. every level of a deep `UNION ALL` chain enumerates two
++    /// required distributions for its children) would otherwise get one
++    /// `OptimizeGroupTask` per request before any of them finishes and populates
++    /// `Group::best_prop`. That doubles the work at every level and blows up
++    /// exponentially with plan depth. Requests for an in-flight task attach to it as an
++    /// extra waiter instead of scheduling a duplicate.
++    in_flight_optimize_groups: HashMap<(IndexType, RequiredProperty), OptimizeGroupWaiters>,
  }
-@@ -107,6 +116,10 @@ impl<const PASSED: bool> QueueData for TestData<PASSED> {
-         !PASSED
-     }
  
-+    fn exit_wait_pending(&self, _wait_time: Duration) {
-+        self.wait_exits.fetch_add(1, Ordering::SeqCst);
+ impl TaskManager {
+@@ -66,7 +97,68 @@ impl TaskManager {
+                 optimize_group_prune_count: 0,
+                 optimize_group_expr_count: 0,
+                 optimize_group_expr_prune_count: 0,
++                optimize_group_wait_count: 0,
+             },
++            in_flight_optimize_groups: HashMap::new(),
++        }
 +    }
 +
-     fn get_abort_notify(&self) -> Arc<WatchNotify> {
-         self.abort_notify.clone()
-     }
-@@ -523,6 +536,110 @@ async fn test_watch_abort_notify_immediate_abort() -> anyhow::Result<()> {
++    /// Attach `waiter` to the in-flight `OptimizeGroupTask` of `(group_index, required_prop)`.
++    ///
++    /// Returns `false` if there is no such task, in which case the caller must schedule
++    /// one (and register it with [`Self::register_optimize_group`]).
++    pub fn attach_optimize_group_waiter(
++        &mut self,
++        group_index: IndexType,
++        required_prop: &RequiredProperty,
++        waiter: &SharedCounter,
++    ) -> bool {
++        let key = (group_index, required_prop.clone());
++        match self.in_flight_optimize_groups.get(&key) {
++            // The task still holds its handle, so it is alive and will release the
++            // waiters when it is dropped.
++            Some(waiters) if Rc::strong_count(waiters) > 1 => {
++                waiters.borrow_mut().push(waiter.clone());
++                self.stat.optimize_group_wait_count += 1;
++                true
++            }
++            // Stale entry: the task has already been dropped without unregistering
++            // itself. Never attach to it, the waiter would block forever.
++            Some(_) => {
++                self.in_flight_optimize_groups.remove(&key);
++                false
++            }
++            None => false,
++        }
++    }
++
++    pub fn register_optimize_group(
++        &mut self,
++        group_index: IndexType,
++        required_prop: RequiredProperty,
++        waiters: OptimizeGroupWaiters,
++    ) {
++        self.in_flight_optimize_groups
++            .insert((group_index, required_prop), waiters);
++    }
++
++    /// Remove the registration of a finished `OptimizeGroupTask`.
++    ///
++    /// Only removes the entry if it still refers to `waiters`, so a task never
++    /// unregisters a newer task for the same key.
++    pub fn unregister_optimize_group(
++        &mut self,
++        group_index: IndexType,
++        required_prop: &RequiredProperty,
++        waiters: &OptimizeGroupWaiters,
++    ) {
++        let 
+```
+
+**File**: `src/query/sql/src/planner/optimizer/optimizers/mod.rs` (modified, +2/-0)
+```diff
+@@ -22,6 +22,8 @@ pub mod operator;
+ pub mod recursive;
+ pub mod rule;
+ pub use cascades::CascadesOptimizer;
++pub use cascades::DEFAULT_TASK_LIMIT;
++pub use cascades::SchedulerStat;
+ pub use cse::CommonSubexpressionOptimizer;
+ pub use cte_filter_pushdown::CTEFilterPushdownOptimizer;
+ pub use eliminate_self_join::EliminateSelfJoinOptimizer;
+```
+
+**File**: `src/query/sql/test-support/data/results/eager_aggregation/eager_q0_optimized.txt` (modified, +5/-7)
+```diff
+@@ -35,11 +35,9 @@ Sort
+                                 │       ├── filters: [eq(customer.c_mktsegment (#15), 'BUILDING')]
+                                 │       ├── order by: []
+                                 │       └── limit: NONE
+-                                └── Exchange(Hash)
+-                                    ├── Exchange(Hash): keys: [orders.o_custkey (#1)]
+-                                    └── Scan
+-                                        ├── table: default.orders (#0)
+-                                        ├── filters: [lt(orders.o_orderdate (#4), '1995-03-15')]
+-                                        ├── order by: []
+-                                        └── limit: NONE
++                                └── Scan
++                                    ├── table: default.orders (#0)
++                                    ├── filters: [lt(orders.o_orderdate (#4), '1995-03-15')]
++                                    ├── order by: []
++                                    └── limit: NONE
+ 
+```
+
+---
+
+### Incident Patch 2: `619aa314` (2026-10-30)
+**Commit Message**: fix(query): keep hash shuffle sender running after its output finishes (#20893)
+
+* fix(query): keep hash shuffle sender running after its output finishes
+
+HashSendTransform hands its own partition to its direct output when
+`can_push()` is true. `OutputPort::can_push()` does not check
+IS_FINISHED, so it stays true when the receiver finishes the port after
+it asked for data, e.g. when a downstream LIMIT is reached. The sender
+then pushed its own partition into the finished port and returned
+NeedConsume. Nothing consumes that block, so the processor was never
+scheduled again: it stopped pulling its input, never released its
+channels, and the other nodes waited forever for EOF.
+
+The guard against a finished output was lost in the refactor of #20778.
+Check `is_finished()` before handing the partition to the output.
+
+* fix(query): release exchange queue quota when receivers are dropped
+
+Exchange queues are drained only by an explicit `close()`. An aborted query
+(KILL, timeout or error) drops its pipeline without calling it, so the
+queued items keep their receive quota. The producers waiting for that quota
+keep the queue alive in turn:
+
+- The router of an inbound connection stays parked i
+
+**File**: `src/query/service/src/servers/flight/v1/exchange/hash_send_transform.rs` (modified, +5/-1)
+```diff
+@@ -92,7 +92,11 @@ impl Processor for HashSendTransform {
+ 
+             let budget_reached = self.writer.add_block(data_block)?;
+             if budget_reached {
+-                let own = self.output.can_push().then_some(self.local_pos);
++                // `can_push` stays true on a port finished while it needed data. A
++                // block pushed there is never consumed, and this processor would
++                // wait for that consumption instead of pulling its input again.
++                let own = (!self.output.is_finished() && self.output.can_push())
++                    .then_some(self.local_pos);
+                 let (own_block, sends_pending) = self.writer.flush(own)?;
+                 let pushed = if let Some(block) = own_block {
+                     self.output.push_data(Ok(block));
+```
+
+**File**: `src/query/service/src/servers/flight/v1/exchange/hash_shuffle_tests.rs` (modified, +65/-50)
+```diff
+@@ -483,59 +483,74 @@ fn test_hash_senders_flush_tail_and_release_channels_before_processor_drop() ->
      Ok(())
  }
  
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_dropped_acquire_releases_queue_entry() -> anyhow::Result<()> {
-+    let queue = QueueManager::<TestData>::create(1, create_meta_store().await?, false);
-+    let holder = queue
-+        .acquire(TestData::new("drop_wait".into(), "holder".into()))
-+        .await?;
++/// The receiver may finish the direct output after it asked for data, which
++/// leaves `can_push` true. The sender must keep pulling its input and sending the
++/// other partitions instead of waiting on a block pushed to the finished port.
+ #[test]
+ fn test_hash_transform_closed_output_keeps_sending_other_partitions() -> Result<()> {
+-    let channels = ExchangeReceiveChannels::new(2);
+-    let receivers = channels.receivers.clone();
+-    let nodes = vec![ShuffleNode {
+-        partitions: 0..2,
+-        dispatcher: HashShuffleDispatcher::local(create_local_block_senders(&channels)),
+-    }];
+-    drop(channels);
+-    let scatter: Arc<Box<dyn FlightScatter>> = Arc::new(Box::new(KeyScatter { num_partitions: 2 }));
+-    let item = HashSendTransform::create_item(0, 0, scatter, nodes, ExecutorWaker::create(), 1);
+-    let upstream = OutputPort::create();
+-    let downstream = InputPort::create();
+-    // Ports are connected before use; this test alone drives the processor sequentially.
+-    unsafe {
+-        connect(&item.inputs_port[0], &upstream);
+-        connect(&downstream, &item.outputs_port[0]);
++    for need_data_before_finish in [false, true] {
++        let channels = ExchangeReceiveChannels::new(2);
++        let receivers = channels.receivers.clone();
++        let nodes = vec![ShuffleNode {
++            partitions: 0..2,
++            dispatcher: HashShuffleDispatcher::local(create_local_block_senders(&channels)),
++        }];
++        drop(channels);
++        let scatter: Arc<Box<dyn FlightScatter>> =
++            Arc::new(Box::new(KeyScatter { num_partitions: 2 }));
++        let item = HashSendTransform::create_item(0, 0, scatter, nodes, ExecutorWaker::create(), 1);
++        let upstream = OutputPort::create();
++        let downstream = InputPort::create();
++        // Ports are connected before use; this test alone drives the processor sequentially.
++        unsafe {
++            connect(&item.inputs_port[0], &upstream);
++            connect(&downstream, &item.outputs_port[0]);
++        }
++        if need_data_before_finish {
++            downstream.set_need_data();
++        }
++        downstream.finish();
++        assert!(matches!(
++            unsafe { item.processor.event(EventCause::Output(0))? },
++            Event::NeedData
++        ));
++        assert!(receivers[0].is_closed());
++        assert!(!receivers[1].is_closed());
 +
-+    let data = TestData::new("drop_wait".into(), "waiter".into());
-+    let wait_exits = data.wait_exits.clone();
-+    let mut acquire = Box::pin(queue.acquire(data));
-+    assert!(futures::poll!(acquire.as_mut()).is_pending());
-+    assert_eq!(queue.length(), 1);
-+    let weak_data = Arc::downgrade(&queue.list()[0]);
++        for keys in [vec![0, 1, 2, 3], vec![4, 5, 6, 7]] {
++            upstream.push_data(Ok(DataBlock::new_from_columns(vec![
++                UInt64Type::from_data(keys.clone()),
++            ])));
++            assert!(matches!(
++                unsafe { item.processor.event(EventCause::Input(0))? },
++                Event::NeedData
++            ));
++            assert!(!item.outputs_port[0].has_data());
++            let QueueItem::LocalData(data) = receivers[1].try_recv().unwrap() else {
++                panic!("expected local data");
++            };
++            let column = data.into_data().get_by_offset(0).to_column();
++            let received = UInt64Type::try_downcast_column(&column).unwrap();
++            assert_eq!(
++                received.iter().copied().collect::<Vec<_>>(),
++                keys.into_iter().filter(|x| x % 2 == 1).collect::<Vec<_>>()
++            );
++        }
++        assert!(matches!(
++            receivers[0].try_recv(),
++            Err(async_channel::TryRecvError::Closed)
++        ));
 +
-+    // Dropping the caller's future must clean up even without an abort notification.
-+    drop(acquire);
-+    assert_eq!(queue.length(), 0);
-+    assert!(weak_data.upgrade().is_none());
-+    assert_eq!(wait_exits.load(Ordering::SeqCst), 1);
-+
-+    drop(holder);
-+    let _guard = queue
-+        .acquire(TestData::new("drop_wait".into(), "next".into()))
-+        .await?;
-+    Ok(())
-+}
-+
-+#[tokio::test(flavor = "multi_thread")]
-+async fn test_aborted_queued_query_releases_session() -> anyhow::Result<()> {
-+    let mut config = ConfigBuilder::create().config();
-+    config.query.common.max_active_sessions = 1;
-+    let fixture = TestFixture::setup_with_config(&config).await?;
-+    let queue = QueueManager::<QueryEntry>::create(1, create_meta_store().await?, false);
-+
-+    let holder_ctx = fixture.new_query_ctx().await?;
-+    let extras = Planner::new(holder_ctx.clone()).parse_sql("SELECT 1")?;
-+    let _holder = queue
-+        .acquire(QueryEntry::create_entry(&holder_ctx, &extras, true)?)
-+        .await?;
-+
-+    let session = fixture.new_session_with_type(SessionType::MySQL).await?;
-+    let session_id = session.get_id();
-+    let weak_session = Arc::downgrade(&session);
-+    let ctx = session.create_query_context(&BUILD_INFO).await?;
-+    let weak_ctx = Arc::downgrade(&ctx);
-+    let entry = QueryEntry::create_entry(&ctx, &extras, true)?;
-+    let abort_notify = entry.get_abort_notify();
-+    drop(ctx);
-+    drop(session);
-+
-+    let mut acquire = Box::pin(queue.acquire(entry));
-+    assert!(futures::poll!(acquire.as_mut()).is_pending());
-+    assert_eq!(queue.length(), 1);
-+    assert!(weak_session.upgrade().is_some());
-+    assert!(
-+        SessionManager::instance()
-+            .create_session(SessionType::MySQL)
-+            .await
-+         
-```
-
----
-
-### Incident Patch 2: `058a1e8f` (2026-10-23)
-**Commit Message**: chore(build): generate the embedded meta-service code once (#20814)
-
-* chore(build): generate the embedded meta-service code once
-
-`create_meta_store::<DatabendRuntime>()` is an async fn, so its state
-machine, down to the embedded openraft node and the tasks it spawns, was
-code-generated in every crate that awaited it, including databend-query,
-the last crate before linking. meta-store itself had none of that code.
-
-Add a non-generic `create_default_meta_store()` returning a boxed
-`dyn Future`, so the code is generated once in meta-store and callers
-only go through the vtable. Switch all callers to it and drop the now
-unused databend-meta-runtime dependency from catalog, users and sql
-test-support.
-
-databend-query: LLVM IR 12.39M -> 10.71M lines; its lib build drops by
-about 4s without incremental and 6s with it. No behavior change; one
-extra allocation per meta-store creation at startup.
-
-* fix(test): import DatabendRuntime in users external access tests
-
-The tests merged from main relied on user_api.rs importing
-DatabendRuntime, which this branch removed together with the
-databend-meta-runtime dependency. Import it in the test module and
-keep the crate as a dev-dependency only.
-
-**File**: `Cargo.lock` (modified, +0/-2)
-```diff
-@@ -3075,7 +3075,6 @@ dependencies = [
-  "databend-common-storage",
-  "databend-common-users",
-  "databend-meta-client 260205.13.5",
-- "databend-meta-runtime",
-  "databend-storages-common-session",
-  "databend-storages-common-table-meta",
-  "dyn-clone",
-@@ -4008,7 +4007,6 @@ dependencies = [
-  "databend-common-storage",
-  "databend-common-users",
-  "databend-meta-client 260205.13.5",
-- "databend-meta-runtime",
-  "databend-storages-common-session",
-  "databend-storages-common-table-meta",
-  "goldenfile",
-```
-
-**File**: `src/meta/store/src/lib.rs` (modified, +13/-0)
-```diff
-@@ -16,6 +16,7 @@ databend_common_tracing::register_module_tag!("[META_CLIENT]", "databend_meta_cl
- 
- pub(crate) mod local;
- 
-+use std::future::Future;
- use std::ops::Deref;
- use std::pin::Pin;
- use std::sync::Arc;
-@@ -213,6 +214,18 @@ impl MetaStoreProvider {
-         MetaStoreProvider { rpc_conf }
++        upstream.finish();
++        assert!(matches!(
++            unsafe { item.processor.event(EventCause::Input(0))? },
++            Event::Finished
++        ));
++        assert!(matches!(
++            receivers[1].try_recv(),
++            Err(async_channel::TryRecvError::Closed)
++        ));
      }
- 
-+    /// [`Self::create_meta_store`] for the production runtime.
-+    ///
-+    /// The embedded meta-service behind it is a whole openraft node. An `async fn`'s state
-+    /// machine is code-generated in every crate that polls it, so returning it as a boxed
-+    /// `dyn Future` makes this crate the only one that generates the raft code; callers only go
-+    /// through the vtable.
-+    pub fn create_default_meta_store(
-+        &self,
-+    ) -> Pin<Box<dyn Future<Output = Result<MetaStore, CreationError>> + Send + '_>> {
-+        Box::pin(self.create_meta_store::<DatabendRuntime>())
-+    }
-+
-     pub async fn create_meta_store<RT: RuntimeApi>(&self) -> Result<MetaStore, CreationError> {
-         if self.rpc_conf.local_mode() {
-             let local = match &self.rpc_conf.embedded_dir {
+-    downstream.finish();
+-    assert!(matches!(
+-        unsafe { item.processor.event(EventCause::Output(0))? },
+-        Event::NeedData
+-    ));
+-    assert!(receivers[0].is_closed());
+-    assert!(!receivers[1].is_closed());
+-
+-    upstream.push_data(Ok(DataBlock::new_from_columns(vec![
+-        UInt64Type::from_data(vec![0, 1, 2, 3]),
+-    ])));
+-    assert!(matches!(
+-        unsafe { item.processor.event(EventCause::Input(0))? },
+-        Event::NeedData
+-    ));
+-    let QueueItem::LocalData(data) = receivers[1].try_recv().unwrap() else {
+-        panic!("expected local data");
+-    };
+-    let column = data.into_data().get_by_offset(0).to_column();
+-    let keys = UInt64Type::try_downcast_column(&column).unwrap();
+-    assert_eq!(keys.iter().copied().collect::<Vec<_>>(), vec![1, 3]);
+-    assert!(matches!(
+-        receivers[0].try_recv(),
+-        Err(async_channel::TryRecvError::Closed)
+-    ));
+-
+-    upstream.finish();
+-    assert!(matches!(
+-        unsafe { item.processor.event(EventCause::Input(0))? },
+-        Event::Finished
+-    ));
+-    assert!(matches!(
+-        receivers[1].try_recv(),
+-        Err(async_channe
 ```
 
-**File**: `src/query/catalog/Cargo.toml` (modified, +0/-1)
+**File**: `src/query/service/src/servers/flight/v1/network/inbound/exchange_queue.rs` (modified, +108/-3)
 ```diff
-@@ -27,7 +27,6 @@ databend-common-statistics = { workspace = true }
- databend-common-storage = { workspace = true }
- databend-common-users = { workspace = true }
- databend-meta-client = { workspace = true }
--databend-meta-runtime = { workspace = true }
- databend-storages-common-session = { workspace = true }
- databend-storages-common-table-meta = { workspace = true }
- dyn-clone = { workspace = true }
-```
-
-**File**: `src/query/catalog/src/catalog/manager.rs` (modified, +3/-7)
-```diff
-@@ -39,7 +39,6 @@ use databend_common_meta_app::tenant::Tenant;
- use databend_common_meta_store::MetaStore;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_meta_client::types::anyerror::func_name;
--use databend_meta_runtime::DatabendRuntime;
- use databend_storages_common_session::SessionState;
- use parking_lot::RwLock;
- 
-@@ -94,12 +93,9 @@ impl CatalogManager {
-         let meta = {
-             let provider = Arc::new(MetaStoreProvider::new(conf.meta.to_meta_grpc_client_conf()));
- 
--            provider
--                .create_meta_store::<DatabendRuntime>()
--                .await
--                .map_err(|e| {
--                    ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
--                })?
-+            provider.create_default_meta_store().await.map_err(|e| {
-+                ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
-+            })?
-         };
- 
-         let tenant = conf.query.tenant_id.clone();
-```
-
-**File**: `src/query/ee/src/resource_management/mod.rs` (modified, +1/-5)
-```diff
-@@ -26,7 +26,6 @@ use databend_common_exception::Result;
- use databend_common_management::WarehouseMgr;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_enterprise_resources_management::ResourcesManagement;
--use databend_meta_runtime::DatabendRuntime;
- use databend_query::sessions::BuildInfoRef;
- pub use resources_management_kubernetes::KubernetesResourcesManagement;
- pub use resources_management_self_managed::SelfManagedResourcesManagement;
-@@ -52,10 +51,7 @@ pub async fn init_resources_management(cfg: &InnerConfig, version: BuildInfoRef)
-                 "system_managed" => {
-                     let meta_api_provider =
-                         MetaStoreProvider::new(cfg.meta.to_meta_grpc_client_conf());
--                    match meta_api_provider
--                        .create_meta_store::<DatabendRuntime>()
--                        .await
--                    {
-+                    match meta_api_provider.create_default_meta_store().await {
-                         Err(cause) => {
-                             let err = ErrorCode::MetaServiceError(format!(
-                                 "Failed to create meta store: {}",
-```
-
-**File**: `src/query/ee/tests/it/storages/fuse/operations/clone.rs` (modified, +1/-2)
-```diff
-@@ -20,7 +20,6 @@ use databend_common_meta_app::principal::UserPrivilegeType;
- use databend_common_meta_store::MetaStoreProvider;
- use databend_common_storages_fuse::FuseTable;
- use databend_enterprise_query::test_kits::context::EESetup;
--use databend_meta_runtime::DatabendRuntime;
- use databend_query::sessions::TableContextTableAccess;
- use databend_query::test_kits::TestFixture;
- use databend_query::test_kits::query_count;
-@@ -48,7 +47,7 @@ async fn assert_secured_rows(
- async fn test_clone_inherited_policies_for_restricted_owner() -> anyhow::Result<()> {
-     // Catalog metadata and policy APIs must share one Meta service, as they do in production.
-     let meta = MetaStoreProvider::new(MetaConfig::default().to_meta_grpc_client_conf())
--        .create_meta_store::<DatabendRuntime>()
-+        .create_default_meta_store()
-         .await?;
-     let mut setup = EESetup::new();
-     setup.config_mut().meta.endpoints = meta.inner().endpoints.clone();
-```
-
-**File**: `src/query/ee/tests/it/storages/fuse/operations/vacuum.rs` (modified, +1/-5)
-```diff
-@@ -57,7 +57,6 @@ use databend_enterprise_vacuum_handler::vacuum_handler::VacuumTempOptions;
- use databend_meta_client::kvapi::KvApiExt;
- use databend_meta_client::kvapi::ListOptions;
- use databend_meta_client::types::TxnRequest;
--use databend_meta_runtime::DatabendRuntime;
- use databend_query::sessions::TableContextSettings;
- use databend_query::sessions::TableContextTableAccess;
- use databend_query::test_kits::*;
-@@ -1585,10 +1584,7 @@ async fn new_local_meta() -> MetaStore {
-     let meta_config = MetaConfig::default();
-     let config = meta_config.to_meta_grpc_client_conf();
-     let provider = MetaStoreProvider::new(config);
--    provider
--        .create_meta_store::<DatabendRuntime>()
--        .await
--        .unwrap()
-+    provider.create_default_meta_store().await.unwrap()
+@@ -44,6 +44,28 @@ impl ExchangeReceiveChannels {
+     }
  }
  
- #[tokio::test(flavor = "multi_thread")]
-```
-
-**File**: `src/query/service/src/catalogs/default/mutable_catalog.rs` (modified, +3/-7)
-```diff
-@@ -139,7 +139,6 @@ use databend_common_users::GrantObjectVisibilityChecker;
- use databend_meta_client::types::Change;
- use databend_meta_client::types::MetaId;
- use databend_meta_client::types::SeqV;
--use databend_meta_runtime::DatabendRuntime;
- use fastrace::func_name;
- use log::info;
- use log::warn;
-@@ -193,12 +192,9 @@ impl MutableCatalog {
-         let meta = {
-             let provider = Arc::new(MetaStoreProvider::new(conf.meta.to_meta_grpc_client_conf()));
++impl Drop for ExchangeReceiveChannels {
++    /// A query aborted before its pipelines took the receivers leaves this
++    /// collection as their last owner: release what was already queued for them.
++    fn drop(&mut self) {
++        for receiver in &self.receivers {
++            if receiver.receiver_count() == 1 {
++                close_queue(receiver);
++            }
++        }
++    }
++}
++
++/// Stop producers and discard queued items, releasing their quota.
++///
++/// Producers wait for the quota of queued items, and keep the queue alive while
++/// they wait, so a queue left by its last receiver must be drained explicitly.
++fn close_queue(receiver: &Receiver<QueueItem>) {
++    receiver.close();
++
++    while receiver.try_recv().is_ok() {}
++}
++
+ /// Received encoded data holding receive quota until dequeued for decoding.
+ pub struct RemoteQueueItem {
+     pub data: FlightData,
+@@ -107,9 +129,7 @@ impl ExchangeQueueReceiver {
  
--            provider
--                .create_meta_store::<DatabendRuntime>()
--                .await
--                .map_err(|e| {
--                    ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
--                })?
-+            provider.create_default_meta_store().await.map_err(|e| {
-+                ErrorCode::MetaServiceError(format!("Failed to create meta store: {}", e))
-+            })?
-         };
+     /// Stop producers and discard queued items, releasing their quota.
+     pub fn close(&self) {
+-        self.receiver.close();
+-
+-        while self.receiver.try_recv().is_ok() {}
++        close_queue(&self.receiver);
+     }
  
-         let tenant = conf.query.tenant_id.clone();
+     /// Whether no queued blocks remain and no more can arrive.
+@@ -134,15 +154,100 @@ impl ExchangeQueueReceiver {
+     }
+ }
+ 
++impl Drop for ExchangeQueueReceiver {
++    /// An aborted pipeline drops its receivers without closing them. Their queued
++    /// items would keep the quota a connection's router waits for: the router would
++    /// never answer again, and its sender would wait for that answer forever.
++    fn drop(&mut self) {
++        self.close();
++    }
++}
++
+ #[cfg(test)]
+ mod tests {
++    use std::task::Poll;
++
+     use databend_common_expression::DataSchema;
++    use databend_common_expression::FromData;
++    use databend_common_expression::types::UInt64Type;
+     use futures::FutureExt;
+ 
+     use super::*;
+     use crate::servers::flight::v1::network::inbound::ExchangeFrameRouter;
+     use crate::servers::flight::v1::network::outbound::BlockSender;
++    use crate::servers::flight::v1::network::outbound::LOCAL_CHANNEL_MAX_BYTES;
+     use crate::servers::flight::v1::network::outbound::create_local_block_senders;
++    use crate::servers::flight::v1::network::wire_format::flight_data_size;
++
++    fn receiver(queues: &ExchangeReceiveChannels) -> Arc<ExchangeQueueReceiver> {
++        ExchangeQueueReceiver::create(&Arc::new(DataSchema::empty()), queues.receivers[0].clone())
++    }
++
++    /// A router waiting for connection quota held by queued items must be released
++    /// when the queue loses its last receiver without `close`, as on abort: either
++    /// a pipeline's receiver, or the collection when no pipeline took it yet.
++    #[test]
++    fn test_dropped_receiver_releases_connection_quota() {
++        futures::executor::block_on(async {
++            for pipeline_built in [true, false] {
++                let frame = || FlightData {
++                    app_metadata: 0u16.to_le_bytes().to_vec().into(),
++                    data_body: vec![42; 8].into(),
++                    ..FlightData::default()
++                };
++                let queues = ExchangeReceiveChannels::new(1);
++                let router = ExchangeFrameRouter::new(&queues, flight_data_size(&frame()));
++                let receiver = pipeline_built.then(|| receiver(&queues));
++                let queues = match pipeline_built {
++                    true => {
++                        drop(queues);
++                        None
++                    }
++                    false => Some(queues),
++                };
++
++                router.route_frame(frame()).await.unwrap();
++                let mut pending = Box::pin(router.route_frame(frame()));
++                assert!(futures::poll!(pending.as_mut()).is_pending());
++
++                drop(receiver);
++                drop(queues);
++                assert!(matches!(
++                    futures::poll!(pending.as_mut()),
++                    Poll::Ready(Err(()))
++                ));
++            }
++        });
++    }
++
++    /// The same for a local sender waiting for the node's local quota.
++    #[test]
++    fn test_dropped_receiver_releases_local_quota() {
++        futures::executor::block_on(async {
++            let queues = ExchangeReceiveChannels::new(1);
++            let senders = create_local_block_senders(&queues);
++            let receiver = receiver(&queues);
++            drop(queues);
++
++            let block = |rows: usize| {
++                DataBlock::new_from_columns(vec![UInt64Type::from_data(vec![0u64; rows])])
++            };
++            // Takes the whole local quota.
++            senders[0]
++                .send_block(block(LOCAL_CHANNEL_MAX_BYTES / 8))
++                .await
++                .unwrap();
++            let mut pending = senders[0].send_block(block(1));
++            assert!(futures::poll!(pending.as_mut()).is_pending());
++
++  
 ```
 
 ---
 
-### Incident Patch 3: `b6fada3a` (2026-10-23)
-**Commit Message**: fix(optimizer): avoid incorrect anti joins for expression keys (#20804)
+### Incident Patch 3: `e02aacb0` (2026-10-29)
+**Commit Message**: fix(query): reject spilling blocks without columns (#20855)
 
-* fix(optimizer): require a column witness for outer-to-anti rewrites
+A hash join without keys whose sides output no columns (e.g. count(*) over
+a LEFT JOIN or EXISTS with a non-equi condition) could switch to grace
+spill and write zero-column blocks. Parquet derives a row group's row count
+from its column writers, so these blocks were written as row groups with
+num_rows = 0; restore then read no batch and panicked on unwrap.
 
-* test(optimizer): focus expression-key anti-join regression in SQL
+- Hybrid hash join no longer switches to grace mode when the join has no
+  keys: every row hashes to the same partition, so spilling cannot shrink
+  the working set. Zero-column join blocks can only appear without keys.
+- SpillsDataWriter returns an error for blocks without columns instead of
+  silently losing their rows, and SpillsDataReader reports a missing batch
+  as an error instead of panicking.
+- Add a forced-spill sqllogictest covering join, aggregate and materialized
+  CTE spill with minimal columns, and a unit test for the writer check.
 
-* test(optimizer): record expression-key anti-join plans
-
----------
-
-Co-authored-by: dantengsky <[REDACTED_EMAIL]>
-
-**File**: `src/query/sql/src/planner/optimizer/optimizers/rule/join_rules/push_down_filter_join/outer_join_to_anti_join.rs` (modified, +6/-2)
+**File**: `src/query/service/src/pipelines/processors/transforms/new_hash_join/hybrid/hybrid_join.rs` (modified, +4/-0)
 ```diff
-@@ -25,7 +25,8 @@ use crate::plans::ScalarExpr;
- use crate::plans::ScalarItem;
+@@ -194,7 +194,11 @@ impl Join for HybridHashJoin {
+             HybridJoinMode::Memory(memory_join) => {
+                 memory_join.add_block(data)?;
  
- /// Convert an outer-join exclusion pattern to the corresponding anti join when
--/// the null-tested expression is a regular equi-key on the null-extended side:
-+/// the null-tested expression is a direct column and a regular equi-key on the
-+/// null-extended side:
- ///
- /// ```text
- /// Filter(right_key IS NULL)
-@@ -38,6 +39,8 @@ use crate::plans::ScalarItem;
- /// A matched row cannot have a NULL regular equi-join key, even when the source
- /// column itself is nullable. Therefore the filter keeps exactly the preserved
- /// side's unmatched rows. Null-equal join conditions are deliberately excluded.
-+/// An arbitrary equi-key expression may map null-extended inputs to a non-NULL
-+/// value, so its NULL test does not necessarily select unmatched rows.
- pub fn outer_join_to_anti_join(s_expr: &SExpr, metadata: MetadataRef) -> Result<Option<SExpr>> {
-     let filter = s_expr.plan().as_filter().unwrap();
-     let join_expr = s_expr.unary_child();
-@@ -49,7 +52,8 @@ pub fn outer_join_to_anti_join(s_expr: &SExpr, metadata: MetadataRef) -> Result<
-     };
- 
-     let Some(predicate_index) = filter.predicates.iter().position(|predicate| {
--        let Some(null_tested_expr) = null_tested_expr(predicate) else {
-+        let Some(null_tested_expr @ ScalarExpr::BoundColumnRef(_)) = null_tested_expr(predicate)
-+        else {
-             return false;
-         };
- 
++                // Grace partitions rows by join keys. Without keys every row lands in the same
++                // partition, so spilling cannot shrink the working set and would only round-trip
++                // both sides (possibly blocks without any columns) through storage.
+                 if self.state.can_next_layer_join()
++                    && !self.desc.build_keys.is_empty()
+                     && (self.memory_settings.check_spill() || self.state.check_spilled())
+                 {
+                     self.switch_to_grace_mode(finished)?;
 ```
 
-**File**: `src/query/sql/tests/it/optimizer/outer_join_to_anti.rs` (modified, +18/-0)
+**File**: `src/query/service/src/spillers/async_buffer.rs` (modified, +59/-1)
 ```diff
-@@ -120,6 +120,24 @@ LIMIT 10",
- FROM outer_to_anti_left AS l
- RIGHT JOIN outer_to_anti_right AS r ON l.k = r.k
- WHERE l.keep IS NULL",
-+        },
-+        SqlTestCase {
-+            name: "left_expression_key_is_not_anti_join",
-+            description: "IF returns 0 on an unmatched right side, so its NULL test must not become a left anti join.",
-+            setup_sqls: &[LEFT_TABLE, RIGHT_TABLE],
-+            sql: "SELECT l.k
-+FROM outer_to_anti_left AS l
-+LEFT JOIN outer_to_anti_right AS r ON l.k = IF(r.k IS NULL, 0, r.payload)
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL",
-+        },
-+        SqlTestCase {
-+            name: "right_expression_key_is_not_anti_join",
-+            description: "The RIGHT JOIN mirror must also avoid the expression-key anti rewrite; later valid simplifications are allowed.",
-+            setup_sqls: &[LEFT_TABLE, RIGHT_TABLE],
-+            sql: "SELECT l.k
-+FROM outer_to_anti_right AS r
-+RIGHT JOIN outer_to_anti_left AS l ON IF(r.k IS NULL, 0, r.payload) = l.k
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL",
-         },
-         SqlTestCase {
-             name: "null_safe_condition_keeps_left_outer",
+@@ -436,6 +436,15 @@ impl SpillsDataWriter {
+     }
+ 
+     pub fn write(&mut self, block: DataBlock) -> Result<()> {
++        // Parquet takes a row group's row count from its column writers, so a block
++        // without columns would be written as an empty row group and lose its rows.
++        if block.num_columns() == 0 {
++            return Err(ErrorCode::Internal(format!(
++                "Cannot spill a block without columns ({} rows)",
++                block.num_rows()
++            )));
++        }
++
+         match self {
+             SpillsDataWriter::Uninitialize {
+                 writer,
+@@ -624,7 +633,12 @@ impl SpillsDataReader {
+             num_rows,
+             None,
+         )?;
+-        let batch = reader.next().transpose()?.unwrap();
++        let Some(batch) = reader.next().transpose()? else {
++            return Err(ErrorCode::Internal(format!(
++                "Spilled row group with {} rows returned no record batch",
++                num_rows
++            )));
++        };
+         debug_assert!(reader.next().is_none());
+         record_read_profile(self.target, start.elapsed(), fetched.read_bytes);
+         Ok(Some(DataBlock::from_record_batch_keep_null_const(
+@@ -855,6 +869,8 @@ mod tests {
+     use std::sync::atomic::Ordering;
+ 
+     use databend_common_base::runtime::spawn;
++    use databend_common_expression::FromData;
++    use databend_common_expression::types::Int32Type;
+     use opendal::Operator;
+ 
+     use super::*;
+@@ -1023,6 +1039,48 @@ mod tests {
+         assert!(metadata.content_length() > 0);
+     }
+ 
++    #[tokio::test(flavor = "multi_thread")]
++    async fn test_spill_rejects_blocks_without_columns() {
++        let pool = SpillsBufferPool::create(1).unwrap();
++        let operator = create_test_operator().unwrap();
++
++        // Rejected as the first block, before the parquet schema is inferred.
++        let mut writer = pool
++            .writer(
++                operator.clone(),
++                "zero_column_first_block".to_string(),
++                CHUNK_SIZE,
++                SpillTarget::Local,
++            )
++            .unwrap();
++        assert!(writer.write(DataBlock::new(vec![], 5)).is_err());
++        writer.close().unwrap();
++
++        // Rejected after the writer is initialized by a block with columns.
++        let mut writer = pool
++            .writer(
++                operator,
++                "zero_column_later_block".to_string(),
++                CHUNK_SIZE,
++                SpillTarget::Local,
++            )
++            .unwrap();
++        writer
++            .write(DataBlock::new_from_columns(vec![Int32Type::from_data(
++                vec![1, 2, 3],
++            )]))
++            .unwrap();
++        assert!(writer.write(DataBlock::new(vec![], 5)).is_err());
++        let (_, row_groups) = writer.close().unwrap();
++        assert_eq!(
++            row_groups
++                .iter()
++                .map(|rg| rg.num_rows())
++                .collect::<Vec<_>>(),
++            vec![3]
++        );
++    }
++
+     #[tokio::test(flavor = "multi_thread")]
+     async fn test_concurrent_writers() {
+         let pool = SpillsBufferPool::create(4).unwrap();
 ```
 
-**File**: `src/query/sql/tests/it/optimizer/outer_join_to_anti.txt` (modified, +90/-0)
+**File**: `tests/sqllogictests/suites/query/spill_without_columns.test` (added, +87/-0)
 ```diff
-@@ -372,6 +372,96 @@ Filter
-         └── limit: NONE
- 
- 
-+=== left_expression_key_is_not_anti_join ===
-+description: IF returns 0 on an unmatched right side, so its NULL test must not become a left anti join.
-+sql: SELECT l.k
-+FROM outer_to_anti_left AS l
-+LEFT JOIN outer_to_anti_right AS r ON l.k = IF(r.k IS NULL, 0, r.payload)
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL
-+raw_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#0) AS (#0)]
-+└── Filter
-+    ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))))]
-+    └── Join(Left)
-+        ├── build keys: [if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))]
-+        ├── probe keys: [outer_to_anti_left.k (#0)]
-+        ├── other filters: []
-+        ├── Scan
-+        │   ├── table: default.outer_to_anti_right (#1)
-+        │   ├── filters: []
-+        │   ├── order by: []
-+        │   └── limit: NONE
-+        └── Scan
-+            ├── table: default.outer_to_anti_left (#0)
-+            ├── filters: []
-+            ├── order by: []
-+            └── limit: NONE
-+
-+optimized_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#0) AS (#0), outer_to_anti_right.k (#3) AS (#6), outer_to_anti_right.payload (#5) AS (#7)]
-+└── Join(Inner)
-+    ├── build keys: [if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))]
-+    ├── probe keys: [outer_to_anti_left.k (#0)]
-+    ├── other filters: []
-+    ├── Scan
-+    │   ├── table: default.outer_to_anti_right (#1)
-+    │   ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#3))), 0, outer_to_anti_right.payload (#5))))]
-+    │   ├── order by: []
-+    │   └── limit: NONE
-+    └── Scan
-+        ├── table: default.outer_to_anti_left (#0)
-+        ├── filters: []
-+        ├── order by: []
-+        └── limit: NONE
-+
-+
-+=== right_expression_key_is_not_anti_join ===
-+description: The RIGHT JOIN mirror must also avoid the expression-key anti rewrite; later valid simplifications are allowed.
-+sql: SELECT l.k
-+FROM outer_to_anti_right AS r
-+RIGHT JOIN outer_to_anti_left AS l ON IF(r.k IS NULL, 0, r.payload) = l.k
-+WHERE IF(r.k IS NULL, 0, r.payload) IS NULL
-+raw_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#3) AS (#3)]
-+└── Filter
-+    ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))))]
-+    └── Join(Right)
-+        ├── build keys: [outer_to_anti_left.k (#3)]
-+        ├── probe keys: [if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))]
-+        ├── other filters: []
-+        ├── Scan
-+        │   ├── table: default.outer_to_anti_left (#1)
-+        │   ├── filters: []
-+        │   ├── order by: []
-+        │   └── limit: NONE
-+        └── Scan
-+            ├── table: default.outer_to_anti_right (#0)
-+            ├── filters: []
-+            ├── order by: []
-+            └── limit: NONE
-+
-+optimized_plan:
-+EvalScalar
-+├── scalars: [outer_to_anti_left.k (#3) AS (#3), outer_to_anti_right.k (#0) AS (#6), outer_to_anti_right.payload (#2) AS (#7)]
-+└── Join(Inner)
-+    ├── build keys: [outer_to_anti_left.k (#3)]
-+    ├── probe keys: [if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))]
-+    ├── other filters: []
-+    ├── Scan
-+    │   ├── table: default.outer_to_anti_left (#1)
-+    │   ├── filters: []
-+    │   ├── order by: []
-+    │   └── limit: NONE
-+    └── Scan
-+        ├── table: default.outer_to_anti_right (#0)
-+        ├── filters: [not(is_not_null(if(not(is_not_null(outer_to_anti_right.k (#0))), 0, outer_to_anti_right.payload (#2))))]
-+        ├── order by: []
-+        └── limit: NONE
-+
-+
- === null_safe_condition_keeps_left_outer ===
- description: A null-safe condition is not a regular equi-key in the raw plan and must remain a left outer join.
- sql: SELECT l.k, r.k
-```
-
-**File**: `tests/sqllogictests/suites/query/join/outer_join_to_anti.test` (modified, +31/-0)
-```diff
-@@ -74,6 +74,37 @@ where l.k is null;
- ----
- NULL 90 NULL
- 
-+# Use NULL keys and payloads so IF can return NULL on source rows, but 0
-+# for an unmatched row. That makes IS NULL different from an anti-join test.
-+statement ok
-+create or replace table outer_to_anti_left(k int);
+@@ -0,0 +1,87 @@
++# Spill writers reject blocks without columns, since parquet would drop their
++# row counts. Every operator that spills must keep such blocks in memory, so
++# force each spill path with queries whose inputs carry as few columns as possible.
++# Window partitions always carry their partition keys, see window_partition_spill.test.
 +
 +statement ok
-+create or replace table outer_to_anti_right(k int, payload int);
++create or replace table t_spill_no_cols_l as select number % 10 as k from numbers(100);
 +
 +statement ok
-+insert into outer_to_anti_left values (0), (1), (2);
++create or replace table t_spill_no_cols_r as select number % 10 as k from numbers(100);
 +
++# Hash join without keys, where neither side outputs any column.
 +statement ok
-+insert into outer_to_anti_right values (null, null), (1, null), (1, 1);
++set force_join_data_spill = 1;
 +
-+# No row passes. In particular, unmatched key 2 gets IF(NULL IS NULL,0,NULL)
-+# = 0, which is not NULL. The old anti rewrite incorrectly returns 2.
 +query I
-+select l.k
-+from outer_to_anti_left l
-+left join outer_to_anti_right r on l.k = if(r.k is null, 0, r.payload)
-+where if(r.k is null, 0, r.payload) is null;
++select count(*) from t_spill_no_cols_l left join t_spill_no_cols_r on t_spill_no_cols_l.k > 5;
 +----
++4060
 +
-+# The same data/query with RIGHT JOIN must also return no rows.
 +query I
-+select l.k
-+from outer_to_anti_right r
-+right join outer_to_anti_left l on if(r.k is null, 0, r.payload) = l.k
-+where if(r.k is null, 0, r.payload) is null;
++select count(*) from t_spill_no_cols_r right join t_spill_no_cols_l on t_spill_no_cols_l.k > 5;
 +----
++4060
 +
- statement ok
- drop table outer_to_anti_left;
- 
++query I
++select count(*) from t_spill_no_cols_l where exists (select 1 from t_spill_no_cols_r where t_spill_no_cols_l.k > 5);
++----
++40
++
++query I
++select count(*) from t_spill_no_cols_l where not exists (select 1 from t_spill_no_cols_r where t_spill_no_cols_l.k > 5);
++----
++60
++
++query I
++select count(*) from t_spill_no_cols_l inner join t_spill_no_cols_r on t_spill_no_cols_l.k = t_spill_no_cols_r.k;
++----
++1000
++
++statement ok
++unset force_join_data_spill;
++
++# Aggregate with only group keys or only aggregate states.
++statement ok
++set force_aggregate_data_spill = 1;
++
++query I
++select count(*) from (select k from t_spill_no_cols_l group by k);
++----
++10
++
++query I
++select count(*) from (select count(*) from t_spill_no_cols_l group by k);
++----
++10
++
++query I
++select count(*) from t_spill_no_cols_l group by 'a';
++----
++100
++
++statement ok
++unset force_aggregate_data_spill;
++
++# Materialized CTE, with and without referenced columns.
++statement ok
++set force_materialized_cte_spill = 1;
++
++query I
++with c as materialized (select k from t_spill_no_cols_l) select count(*) from c;
++----
++100
++
++query I
++with c as materialized (select k from t_spill_no_cols_l) select count(*) from c x, c y where x.k = y.k;
++----
++1000
++
++statement ok
++unset force_materialized_cte_spill;
++
++statement ok
++drop table t_spill_no_cols_l;
++
++statement ok
++drop table t_spill_no_cols_r;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20822** (2026-10-23): chore(meta): reuse source-option read when validating MV source (@zhyass)
-- **PR #20821** (closed): fix(query): cap window top-n cardinality estimate by partition count (@dqhl76)
-- **PR #20816** (2026-10-22): ci(query): cover numeric ranges with string bounds (@KKould)
-- **PR #20815** (2026-10-23): feat(storage): detect S3 region via AWS_REGION regional endpoint (@dantengsky)
-- **PR #20814** (2026-10-23): chore(build): generate the embedded meta-service code once (@sundy-li)
-- **PR #20812** (2026-10-23): fix(query): accelerate single-key hash shuffle (@dqhl76)
+- **PR #20897** (2026-10-30): fix(query): exact float-to-decimal casts and decimal quantile_cont (@forsaken628)
+- **PR #20894** (2026-10-30): fix(query): decode each segment once in row fetch (@b41sh)
+- **PR #20893** (2026-10-30): fix(query): keep hash shuffle sender running after its output finishes (@dqhl76)
+- **PR #20890** (closed): chore(query): cover empty-build probe skip for all join types (@SkyFan2002)
+- **PR #20883** (2026-10-30): fix(query): dedup in-flight cascades group tasks (@SkyFan2002)
+- **PR #20882** (2026-10-29): chore(settings): disable enable_recluster_multiway_merge by default (@zhang2014)
 
 ---
 
@@ -1867,40 +2154,41 @@ Co-authored-by: dantengsky <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): release queued acquire entry when future is dropped (#20629)
+## X. query): dedup in-flight cascades group tasks (#20883)
 
 **RULE**:
-When implementing operations in `src/query/service/src/sessions/queue_mgr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/sql/src/planner/optimizer/optimizers/cascades/cascade.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `45a88e44`: query): release queued acquire entry when future is dropped (#20629). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23e080ae`: query): dedup in-flight cascades group tasks (#20883). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/sessions/queue_mgr.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/sql/src/planner/optimizer/optimizers/cascades/cascade.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-impl<Data: QueueData, T, Permit, E> PinnedDrop for AcquireQueueFuture<Data, T, Permit, E>
-where T: Future<Output = std::result::Result<std::result::Result<Permit, E>, Elapsed>>
-{
-    fn drop(this: Pin<&mut Self>) {
-        let this = this.project();
-        // Cancellation can drop the future without polling it to completion.
-        // Release the registered entry and the query context it owns in that case.
-        if let Some(key) = this.key.take() {
-            this.manager.remove_entity(&key);
-        }
+use crate::optimizer::optimizers::cascades::tasks::SchedulerStat;
+    /// Scheduler statistics of the last search, for diagnostics and tests.
+    scheduler_stat: Option<SchedulerStat>,
+            scheduler_stat: None,
+    /// Statistics of the task scheduler collected by the last search, for
+    /// diagnostics and tests.
+    pub fn scheduler_stat(&self) -> Option<&SchedulerStat> {
+        self.scheduler_stat.as_ref()
     }
-}
+
+                    self.scheduler_stat = local_optimizer.scheduler_stat;
+        let run_result = scheduler.run(self);
+        self.scheduler_stat = Some(scheduler.into_stat());
+        run_result?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+        scheduler.run(self)?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `45a88e44` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23e080ae` are properly handled with clean fallback behavior.

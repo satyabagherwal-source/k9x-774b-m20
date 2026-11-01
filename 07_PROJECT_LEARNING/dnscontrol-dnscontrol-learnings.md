@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source**: github ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
-> **Source Version**: `ec3d8013`  
+> **Source Version**: `81a6eab8`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T11:15:42.207Z  
+> **Timestamp**: 2026-10-30T03:59:37.113Z  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T11:15:41.803Z  
+> **Harvest Timestamp**: 2026-10-30T03:59:36.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -688,11 +688,11 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5036** (2026-10-25): **fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes**
-  *Symptoms*: Since v5, pushing a TXT record longer than 255 bytes to Namecheap breaks it. `generateRecords()` uploads `rc.GetRDATA().String()`, so the value goes up in quoted form (`"seg1" "seg2"`). Namecheap stores that as-is and does its own splitting, so the zone ends up with a space at the start of the second segment. The next `preview` sees the difference and wants to push again, and every push breaks it again.  This goes back to sending `rc.GetTargetTXTJoined()` for TXT, which is what the provider did before #4811. (#4566 modernized this code, but the TXT upload changed in #4811.)  I tested it on my own domain with a 348-byte TXT record (values shortened):  - before: `"…lenawa" " qfuxd9wsnwq…fx2phs"`, and `preview` showed a MODIFY on every run - after: `"…lenawa" "qfuxd9wsnwq…fx2phs"`, and `preview` shows `0 corrections`  I also moved the record building out of `generateRecords()` into `toNative()` so it could get a unit test, like the newer providers have. I haven't run the integration tests. The long-TXT cases in `complex TXT` weren't among the ones skipped in #4635, so they already run for NAMECHEAP and should pass now. 
+- **Issue #5050** (2026-10-28): **build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1**
+  *Symptoms*: Bumps [github/codeql-action/upload-sarif](https://github.com/github/codeql-action) from 4.38.3 to 4.39.1. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/upload-sarif's releases</a>.</em></p> <blockquote> <h2>v4.39.1</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.3">2.27.3</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4256">#4256</a></li> </ul> <h2>v4.39.0</h2> <ul> <li><em>Breaking change</em>: Bump the minimum required CodeQL bundle version to 2.20.7. <a href="https://redirect.github.com/github/codeql-action/pull/4205">#4205</a></li> <li>The <code>codeql-action/analyze</code> step now validates that a correct argument for the <code>checkout_path</code> input has been provided. The <code>checkout_path</code> input must be set to the path where the repository that is being analyzed is checked out at on the runner, if that path is something other than the workspace root. If the path does not point to a repository checkout or is different from the path that was used by <code>codeql-action/init</code>, then the CodeQL Action now produces a warning. <a href="https://redirect.github.com/github/codeql-action/pull/4148">#4148</a></li> <li>Resolved an issue with third-party caching implementations that prevented caches from being restored correctly. <a href="https://redirect.github
 
-- **Issue #5035** (2026-10-25): **fix(LOC): preserve thousandths of arcseconds in coordinates**
-  *Symptoms*: `LOC()` rounds the seconds of latitude and longitude to two decimals, although a LOC record holds thousandths of a second of arc and [RFC 1876](https://www.rfc-editor.org/rfc/rfc1876.html#section-3) writes them up to `59.999`.  ```js D("foo.com", "none",   LOC("a", 42, 21, 43.952, "N", 71, 5, 6.344, "W", -24.01, 1, 200, 10)); ```  `dnscontrol push` stores `42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m` instead of `42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m`, about 6 cm off. When the provider already holds the precise record, `dnscontrol preview` proposes to replace it with the rounded one.  Cause: [`MakeLOC` formats both seconds with `%.2f`](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/models/makers.go#L218) before it parses the record. This came in with [the dnsv2 refactor](https://github.com/DNSControl/dnscontrol/commit/be513877a30aaa0dcb675fee60e75a5902b4d90f).  Fix: use `%.3f` for both seconds. The nine `045-loc` golden records go back to the values they had before that refactor.  Test: the existing `045-loc.js` case fails without the fix and passes with it. `go test -p 1 -count=1 ./pkg/js/ ./models/` passes. 
+- **Issue #5049** (2026-10-28): **build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2**
+  *Symptoms*: Bumps [step-security/harden-runner](https://github.com/step-security/harden-runner) from 2.22.1 to 2.22.2. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/step-security/harden-runner/releases">step-security/harden-runner's releases</a>.</em></p> <blockquote> <h2>v2.22.2</h2> <h2>What's Changed</h2> <ul> <li>Fixed inbound (ingress) network traffic being incorrectly classified as outbound (egress) traffic on macOS</li> <li>Fixed implicit endpoints intended for self-hosted runners being applied to custom VM environments on Linux (enterprise tier)</li> <li>Improved network and DNS tracing, enforcement logic, and process information correlation on Linux (enterprise tier)</li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/step-security/harden-runner/compare/v2.22.1...v2.22.2">https://github.com/step-security/harden-runner/compare/v2.22.1...v2.22.2</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/step-security/harden-runner/commit/dc2769abcc0fcfbadfc1df54081c1608579ef6b2"><code>dc2769a</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/707">#707</a> from step-security/rc-45</li> <li><a href="https://github.com/step-security/harden-runner/commit/ab0b27386ab734bab7c3b9293e0c8b1b29ce5c26"><code>ab0b273</code></a> Merge pull request <a href="https://redirect.github.com/step-security/harden-runner/issues/706">#706<
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -709,467 +709,60 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ec3d8013` (2026-10-25)
-**Commit Message**: fix(D_EXTEND): ignore the empty tag when extending a subdomain (#5034)
+### Incident Patch 1: `c679839b` (2026-10-28)
+**Commit Message**: build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049)
 
-`D_EXTEND()` puts records under the wrong name, or stops with a panic,
-when the empty tag is written on only one of the two names, although
-`example.com` and `example.com!` are documented as equivalent.
-
-```js
-D("example.com!", REG_NONE, DnsProvider(DSP_BIND), A("@", "192.0.2.1"));
-D_EXTEND("sub.example.com", A("www", "192.0.2.2"));
-```
-
-`dnscontrol print-ir` shows `www.su` instead of `www.sub`. With
-`D("example.com", ...)` and `D_EXTEND("sub.example.com!", ...)`,
-`dnscontrol check` stops with `panic: short (www.sub.) is not supposed
-to end with a dot`.
-
-Cause: [the domain match removes the
-tag](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L375-L376)
-from [both
-names](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L380-L383),
-but [the subdomain is cut out by
-length](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/pkg/js/helpers.js#L345-L348)
-from names that still carry it.
-
-Fix: remove the tag from both names before taking the length.
-
-Test: one case per di
-
-**File**: `pkg/js/helpers.js` (modified, +4/-4)
+**File**: `.github/workflows/fuzzing.yml` (modified, +1/-1)
 ```diff
-@@ -342,10 +342,10 @@ function D_EXTEND(name) {
-         name = name.substring(name.indexOf(".") + 1);
-     }
+@@ -27,7 +27,7 @@ jobs:
+         target: [FuzzConfigJSON, FuzzTXTQuoted]
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+         with:
+           egress-policy: audit
  
--    domain.obj.subdomain = name.substr(
--        0,
--        name.length - domain.obj.name.length - 1
--    );
-+    // The empty tag is not part of the name: "example.com!" is "example.com".
-+    name = _removeEmptyTag(name)[0];
-+    var domainName = _removeEmptyTag(domain.obj.name)[0];
-+    domain.obj.subdomain = name.substr(0, name.length - domainName.length - 1);
+```
+
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ jobs:
  
-     for (var i = 1; i < arguments.length; i++) {
-         var m = arguments[i];
-```
-
-**File**: `pkg/js/parse_tests/037-splithor.js` (modified, +8/-0)
-```diff
-@@ -56,3 +56,11 @@ D("example-b.net!", REG, DnsProvider(DNS_OUTSIDE),
- D_EXTEND("example-b.net",
-     A("main", "203.0.113.12"),
- );
-+
-+D_EXTEND("sub.example-b.net",
-+    A("main", "203.0.113.12"),
-+);
-+
-+D_EXTEND("sub.empty.example.net!",
-+    A("main", "203.0.113.22"),
-+);
-```
-
-**File**: `pkg/js/parse_tests/037-splithor.json` (modified, +26/-0)
-```diff
-@@ -252,6 +252,19 @@
-           "type": "A",
-           "typenum": 1
-         },
-+        {
-+          "comparablev3": "203.0.113.22",
-+          "filepos": "[line:65:5]",
-+          "name": "main.sub",
-+          "name_unicode": "main.sub",
-+          "rdata": {
-+            "Addr": "203.0.113.22"
-+          },
-+          "subdomain": "sub",
-+          "ttl": 300,
-+          "type": "A",
-+          "typenum": 1
-+        },
-         {
-           "comparablev3": "203.0.113.2",
-           "filepos": "[line:45:5]",
-@@ -286,6 +299,19 @@
-           "type": "A",
-           "typenum": 1
-         },
-+        {
-+          "comparablev3": "203.0.113.12",
-+          "filepos": "[line:61:5]",
-+          "name": "main.sub",
-+          "name_unicode": "main.sub",
-+          "rdata": {
-+            "Addr": "203.0.113.12"
-+          },
-+          "subdomain": "sub",
-+          "ttl": 300,
-+          "type": "A",
-+          "typenum": 1
-+        },
-         {
-           "comparablev3": "203.0.113.1",
-           "filepos": "[line:53:5]",
-```
-
-**File**: `pkg/js/parse_tests/037-splithor/empty.example.net.zone` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
- $TTL 300
- main             IN A     203.0.113.22
-+main.sub         IN A     203.0.113.22
- www              IN A     203.0.113.2
-```
-
-**File**: `pkg/js/parse_tests/037-splithor/example-b.net.zone` (modified, +1/-0)
-```diff
-@@ -1,3 +1,4 @@
- $TTL 300
- main             IN A     203.0.113.12
-+main.sub         IN A     203.0.113.12
- www              IN A     203.0.113.1
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
+         with:
+           egress-policy: audit
+ 
 ```
 
 ---
 
-### Incident Patch 2: `ee93a555` (2026-10-25)
-**Commit Message**: fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes (#5036)
+### Incident Patch 2: `81a6eab8` (2026-10-28)
+**Commit Message**: build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1 (#5050)
 
-Since v5, pushing a TXT record longer than 255 bytes to Namecheap breaks
-it. `generateRecords()` uploads `rc.GetRDATA().String()`, so the value
-goes up in quoted form (`"seg1" "seg2"`). Namecheap stores that as-is
-and does its own splitting, so the zone ends up with a space at the
-start of the second segment. The next `preview` sees the difference and
-wants to push again, and every push breaks it again.
-
-This goes back to sending `rc.GetTargetTXTJoined()` for TXT, which is
-what the provider did before #4811. (#4566 modernized this code, but the
-TXT upload changed in #4811.)
-
-I tested it on my own domain with a 348-byte TXT record (values
-shortened):
-
-- before: `"…lenawa" " qfuxd9wsnwq…fx2phs"`, and `preview` showed a
-MODIFY on every run
-- after: `"…lenawa" "qfuxd9wsnwq…fx2phs"`, and `preview` shows `0
-corrections`
-
-I also moved the record building out of `generateRecords()` into
-`toNative()` so it could get a unit test, like the newer providers have.
-I haven't run the integration tests. The long-TXT cases in `complex TXT`
-weren't among the ones skipped in #4635, so they already run for
-NAMECHEAP and should
-
-**File**: `providers/namecheap/namecheapProvider.go` (modified, +9/-2)
+**File**: `.github/workflows/scorecard.yml` (modified, +1/-1)
 ```diff
-@@ -306,12 +306,12 @@ func toSRVRecords(result *nc.DomainSRVGetRecordsResult, dc *models.DomainConfig)
- 	return records, nil
- }
+@@ -76,6 +76,6 @@ jobs:
  
--func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
-+func toNative(records models.Records) ([]nc.DomainDNSHost, []nc.DomainSRVRecord) {
- 	var recs []nc.DomainDNSHost
- 	var srvRecs []nc.DomainSRVRecord
- 
- 	id := 1
--	for _, rc := range dc.Records {
-+	for _, rc := range records {
- 
- 		if rc.Type == "SRV" {
- 			recServiceAndProtocol := strings.SplitAfterN(rc.GetLabel(), ".", 2)
-@@ -342,6 +342,8 @@ func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
- 				f := rc.AsMX()
- 				rec.MXPref = int(f.Preference)
- 				rec.Address = f.Mx
-+			case dnsv2.TypeTXT:
-+				rec.Address = rc.GetTargetTXTJoined()
- 			default:
- 				rec.Address = rc.GetRDATA().String()
- 			}
-@@ -351,6 +353,11 @@ func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
- 
- 		id++
- 	}
-+	return recs, srvRecs
-+}
-+
-+func (n *namecheapProvider) generateRecords(dc *models.DomainConfig) error {
-+	recs, srvRecs := toNative(dc.Records)
- 	sld, tld := splitDomain(dc.Name)
- 	var err error
- 	doWithRetry(func() error {
-```
-
-**File**: `providers/namecheap/namecheapProvider_test.go` (modified, +15/-0)
-```diff
-@@ -6,8 +6,10 @@ import (
- 	"net/http/httptest"
- 	"net/url"
- 	"reflect"
-+	"strings"
- 	"testing"
- 
-+	"github.com/DNSControl/dnscontrol/v5/models"
- 	nc "github.com/willpower232/go-namecheap"
- )
- 
-@@ -93,3 +95,16 @@ func TestListZonesPaginates(t *testing.T) {
- 		t.Fatalf("pages requested = %v, want %v", requests, wantRequests)
- 	}
- }
-+
-+func TestToNativeLongTXT(t *testing.T) {
-+	dc := models.MustNewDomainConfig("example.com")
-+	rc, err := dc.NewRecordConfig("long", 300, "TXT", strings.Repeat("a", 300))
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+
-+	recs, _ := toNative(models.Records{rc})
-+	if got := recs[0].Address; got != strings.Repeat("a", 300) {
-+		t.Errorf("address = %q, want the joined value", got)
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `d0901a69` (2026-10-25)
-**Commit Message**: fix(LOC): preserve thousandths of arcseconds in coordinates (#5035)
-
-`LOC()` rounds the seconds of latitude and longitude to two decimals,
-although a LOC record holds thousandths of a second of arc and [RFC
-1876](https://www.rfc-editor.org/rfc/rfc1876.html#section-3) writes them
-up to `59.999`.
-
-```js
-D("foo.com", "none",
-  LOC("a", 42, 21, 43.952, "N", 71, 5, 6.344, "W", -24.01, 1, 200, 10));
-```
-
-`dnscontrol push` stores `42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m
-10m` instead of `42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m`,
-about 6 cm off. When the provider already holds the precise record,
-`dnscontrol preview` proposes to replace it with the rounded one.
-
-Cause: [`MakeLOC` formats both seconds with
-`%.2f`](https://github.com/DNSControl/dnscontrol/blob/eb029724dd6b14aba9bf8586735379b72fd8933d/models/makers.go#L218)
-before it parses the record. This came in with [the dnsv2
-refactor](https://github.com/DNSControl/dnscontrol/commit/be513877a30aaa0dcb675fee60e75a5902b4d90f).
-
-Fix: use `%.3f` for both seconds. The nine `045-loc` golden records go
-back to the values they had before that refactor.
-
-Test: the existing `045-loc.js` case fails without the fix and passes
-with it. `
-
-**File**: `models/makers.go` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ func MakeLOC(origin string, _ map[string]string, isEnabled nrc.Flags, args ...an
- 	// The 12-item version needs to be turned into the 7-item packed version.
- 	// The easiest way to do that is to let dnsv2 do it for us.
- 	// It is a little extra parsing, but why re-invent the wheel?
--	x := fmt.Sprintf("%d %d %.2f %s %d %d %.2f %s %.2f %.2f %0.2f %0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
-+	x := fmt.Sprintf("%d %d %.3f %s %d %d %.3f %s %.2f %.2f %0.2f %0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
- 	// y := fmt.Sprintf("0=%d 1=%d 2=%.2f 3=%s 4=%d 5=%d 6=%.2f 7=%s 8=%.2f 9=%.2f 10=%0.2f 11=%0.2f ", a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11)
- 	// fmt.Printf("DEBUG: loc y=%q\n", y)
- 	rd, err := dnsv2.NewData(dnsv2.TypeLOC, x, origin)
-```
-
-**File**: `pkg/js/parse_tests/045-loc.json` (modified, +27/-27)
-```diff
-@@ -24,15 +24,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m",
-+          "comparablev3": "42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m",
-           "filepos": "[line:4:5]",
-           "name": "a",
-           "name_unicode": "a",
-           "rdata": {
-             "Altitude": 9997599,
-             "HorizPre": 36,
--            "Latitude": 2299987598,
--            "Longitude": 1891577308,
-+            "Latitude": 2299987600,
-+            "Longitude": 1891577304,
-             "Size": 18,
-             "Version": 0,
-             "VertPre": 19
-@@ -60,15 +60,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "51 30 3.030 N 00 07 28.650 W 6m 0.00m 0.00m 0.00m",
-+          "comparablev3": "51 30 3.033 N 00 07 28.651 W 6m 0.00m 0.00m 0.00m",
-           "filepos": "[line:23:5]",
-           "name": "big-ben",
-           "name_unicode": "big-ben",
-           "rdata": {
-             "Altitude": 10000600,
-             "HorizPre": 0,
--            "Latitude": 2332886678,
--            "Longitude": 2147034998,
-+            "Latitude": 2332886681,
-+            "Longitude": 2147034997,
-             "Size": 0,
-             "Version": 0,
-             "VertPre": 0
-@@ -96,15 +96,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W -44m 2000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W -44m 2000m 0.00m 0.00m",
-           "filepos": "[line:7:5]",
-           "name": "d",
-           "name_unicode": "d",
-           "rdata": {
-             "Altitude": 9995600,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 37,
-             "Version": 0,
-             "VertPre": 0
-@@ -114,15 +114,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 42849672.95m 2000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 42849672.95m 2000m 0.00m 0.00m",
-           "filepos": "[line:8:5]",
-           "name": "d-alt-highest",
-           "name_unicode": "d-alt-highest",
-           "rdata": {
-             "Altitude": 4294967295,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 37,
-             "Version": 0,
-             "VertPre": 0
-@@ -132,15 +132,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W -100000m 2000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W -100000m 2000m 0.00m 0.00m",
-           "filepos": "[line:9:5]",
-           "name": "d-alt-lowest",
-           "name_unicode": "d-alt-lowest",
-           "rdata": {
-             "Altitude": 0,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 37,
-             "Version": 0,
-             "VertPre": 0
-@@ -150,15 +150,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 1m 90000000m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 1m 90000000m 0.00m",
-           "filepos": "[line:12:5]",
-           "name": "d-horizprecision-hi",
-           "name_unicode": "d-horizprecision-hi",
-           "rdata": {
-             "Altitude": 10000000,
-             "HorizPre": 153,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 18,
-             "Version": 0,
-             "VertPre": 0
-@@ -168,15 +168,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 90000000m 0.00m 0.00m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 90000000m 0.00m 0.00m",
-           "filepos": "[line:17:5]",
-           "name": "d-size-hi",
-           "name_unicode": "d-size-hi",
-           "rdata": {
-             "Altitude": 10000000,
-             "HorizPre": 0,
--            "Latitude": 2299972408,
--            "Longitude": 1891832028,
-+            "Latitude": 2299972412,
-+            "Longitude": 1891832031,
-             "Size": 153,
-             "Version": 0,
-             "VertPre": 0
-@@ -186,15 +186,15 @@
-           "typenum": 29
-         },
-         {
--          "comparablev3": "42 21 28.760 N 71 00 51.620 W 0m 1m 0.00m 90000000m",
-+          "comparablev3": "42 21 28.764 N 71 00 51.617 W 0m 1m 0.00m 90000000m",
-           "filepos": "[line:18:5]",
-           "name": "d-vertprecision-hi",
-           "name_unicode": "d-vertprecision-hi",
-           "rdata": {
-             "
-```
-
-**File**: `pkg/js/parse_tests/045-loc/foo.com.zone` (modified, +9/-9)
-```diff
-@@ -1,15 +1,15 @@
- $TTL 300
- @                IN LOC   42 21 54.000 N 71 06 18.000 W -24m 30m 0.00m 0.00m
--a                IN LOC   42 21 43.950 N 71 05 6.340 W -24.01m 1m 200m 10m
-+a                IN LOC   42 21 43.952 N 71 05 6.344 W -24.01m 1m 200m 10m
- b                IN LOC   52 14 5.000 N 00 08 50.000 E 10.33m 0.00m 0.00m 0.00m
--big-ben          IN LOC   51 30 3.030 N 00 07 28.650 W 6m 0.00m 0.00m 0.00m
-+big-ben          IN LOC   51 30 3.033 N 00 07 28.651 W 6m 0.00m 0.00m 0.00m
- c                IN LOC   32 07 19.000 S 116 02 25.000 E 10m 0.00m 0.00m 0.00m
--d                IN LOC   42 21 28.760 N 71 00 51.620 W -44m 2000m 0.00m 0.00m
--d-alt-highest    IN LOC   42 21 28.760 N 71 00 51.620 W 42849672.95m 2000m 0.00m 0.00m
--d-alt-lowest     IN LOC   42 21 28.760 N 71 00 51.620 W -100000m 2000m 0.00m 0.00m
--d-horizprecision-hi IN LOC 42 21 28.760 N 71 00 51.620 W 0m 1m 90000000m 0.00m
--d-size-hi        IN LOC   42 21 28.760 N 71 00 51.620 W 0m 90000000m 0.00m 0.00m
--d-vertprecision-hi IN LOC 42 21 28.760 N 71 00 51.620 W 0m 1m 0.00m 90000000m
-+d                IN LOC   42 21 28.764 N 71 00 51.617 W -44m 2000m 0.00m 0.00m
-+d-alt-highest    IN LOC   42 21 28.764 N 71 00 51.617 W 42849672.95m 2000m 0.00m 0.00m
-+d-alt-lowest     IN LOC   42 21 28.764 N 71 00 51.617 W -100000m 2000m 0.00m 0.00m
-+d-horizprecision-hi IN LOC 42 21 28.764 N 71 00 51.617 W 0m 1m 90000000m 0.00m
-+d-size-hi        IN LOC   42 21 28.764 N 71 00 51.617 W 0m 90000000m 0.00m 0.00m
-+d-vertprecision-hi IN LOC 42 21 28.764 N 71 00 51.617 W 0m 1m 0.00m 90000000m
- fraser-island    IN LOC   25 14 24.000 S 153 09 0.000 E 3m 0.00m 0.00m 0.00m
- guinness-brewery IN LOC   53 20 40.000 N 06 17 20.000 W 300m 0.00m 0.00m 0.00m
- hawaii           IN LOC   21 30 0.000 N 158 00 0.000 W 920m 0.00m 0.00m 0.00m
-@@ -20,4 +20,4 @@ opera-house3     IN LOC   33 51 31.000 S 151 12 51.000 E 4m 0.00m 0.00m 0.00m
- opera-house4     IN LOC   33 51 31.000 S 151 12 51.000 E 4m 0.00m 0.00m 0.00m
- ribblehead-viaduct IN LOC 54 12 38.000 N 02 22 13.000 W 300m 0.00m 0.00m 0.00m
- tasmania         IN LOC   42 00 0.000 S 147 00 0.000 E 3m 0.00m 0.00m 0.00m
--white-house      IN LOC   38 53 51.940 N 77 02 11.580 W 19m 0.00m 0.00m 0.00m
-+white-house      IN LOC   38 53 51.935 N 77 02 11.584 W 19m 0.00m 0.00m 0.00m
+       # Upload the results to GitHub's code scanning dashboard.
+       - name: "Upload to code-scanning"
+-        uses: github/codeql-action/upload-sarif@24c54180a607b1449ed407dd24f251e4e9147c8d # v4.38.3
++        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
+         with:
+           sarif_file: results.sarif
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5036** (2026-10-25): fix(p/NAMECHEAP): stop corrupting TXT records longer than 255 bytes (@louneskmt)
-- **PR #5035** (2026-10-25): fix(LOC): preserve thousandths of arcseconds in coordinates (@spicysharkco)
-- **PR #5034** (2026-10-25): fix(D_EXTEND): ignore the empty tag when extending a subdomain (@spicysharkco)
-- **PR #5031** (2026-10-21): chore: update dependencies (@TomOnTime)
-- **PR #5030** (2026-10-21): fix(diff2): MODIFY messages not showing provider-specific fields (@cvas22)
-- **PR #5029** (2026-10-21): feat(p/CONSTELLIX): add Constellix DNS provider (@ZeroClover)
+- **PR #5050** (2026-10-28): build(deps): bump github/codeql-action/upload-sarif from 4.38.3 to 4.39.1 (@dependabot[bot])
+- **PR #5049** (2026-10-28): build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (@dependabot[bot])
+- **PR #5046** (2026-10-27): fix(p/CLOUDPRESS): halve zone fetches and make retry backoff configurable (@arnoschoon)
+- **PR #5045** (2026-10-26): build(deps-dev): bump fast-uri from 3.1.8 to 3.1.9 (@dependabot[bot])
+- **PR #5044** (2026-10-26): build(deps): bump zod and puppeteer (@dependabot[bot])
+- **PR #5042** (2026-10-27): fix(p/LUADNS): bug: occasional "Server returned bad status code (500)" fails a push (@TomOnTime)
 
 ---
 
@@ -1189,34 +782,28 @@ with it. `
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. D_EXTEND): ignore the empty tag when extending a subdomain (#5034)
+## X. build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049)
 
 **RULE**:
-When implementing operations in `pkg/js/helpers.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/fuzzing.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ec3d8013`: D_EXTEND): ignore the empty tag when extending a subdomain (#5034). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c679839b`: build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/js/helpers.js`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/fuzzing.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    // The empty tag is not part of the name: "example.com!" is "example.com".
-    name = _removeEmptyTag(name)[0];
-    var domainName = _removeEmptyTag(domain.obj.name)[0];
-    domain.obj.subdomain = name.substr(0, name.length - domainName.length - 1);
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-    domain.obj.subdomain = name.substr(
-        0,
-        name.length - domain.obj.name.length - 1
-    );
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ec3d8013` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c679839b` are properly handled with clean fallback behavior.

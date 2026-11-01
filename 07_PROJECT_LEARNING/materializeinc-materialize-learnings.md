@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `05f166aa`  
+> **Source Version**: `07eda4c6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T17:58:30.062Z  
+> **Timestamp**: 2026-10-31T14:19:41.656Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T17:58:29.378Z  
+> **Harvest Timestamp**: 2026-10-31T14:19:41.648Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6388 stars
+- **Stars / Engagement**: 6392 stars
 
 ---
 
@@ -880,7 +880,7 @@ export async function fetchClusterReplicasWithUtilization(
 
 ```
 
-### Core Architecture Module: `console/src/api/materialize/query-history/statementLoggingMaxSampleRate.ts`
+### Core Architecture Module: `console/src/api/materialize/cluster/workerCpu.ts`
 ```
 // Copyright Materialize, Inc. and contributors. All rights reserved.
 //
@@ -891,43 +891,169 @@ export async function fetchClusterReplicasWithUtilization(
 // the Business Source License, use of this software will be governed
 // by the Apache License, Version 2.0.
 
-import { QueryKey } from "@tanstack/react-query";
-import { sql } from "kysely";
+import { RawBuilder, sql } from "kysely";
 
-import { executeSqlV2, queryBuilder } from "~/api/materialize";
+import { queryBuilder } from "~/api/materialize";
+import { buildSubscribeQuery } from "~/api/materialize/buildSubscribeQuery";
 
-export const buildStatementLoggingMaxSampleRateQuery = () => {
-  return sql<{
-    statement_logging_max_sample_rate: string;
-  }>`SHOW statement_logging_max_sample_rate`;
-};
+// These read a replica's introspection relations, so they must run in
+// a session pinned to that replica (`cluster` and `cluster_replica`). They then
+// run on that cluster, not on `mz_catalog_server`.
+//
+// A dataflow's root operator (an address of length one) accounts for all the
+// time spent in the regions and operators it contains, so summing roots counts
+// each nanosecond once. Summing every operator would count it once per level
+// of nesting.
+
+/** The unit the subscribes round elapsed time down to, in nanoseconds. */
+export const ELAPSED_UNIT_NS = 10_000_000;
+
+// Every dataflow's counter grows each second, idle or not, so unrounded these
+// send an update per dataflow and worker each second. In 10 ms units an idle
+// dataflow's value stops changing and the subscribe sends nothing for it:
+// measured 22 rows/s unrounded against 1.2 on an idle 11-dataflow, 2-worker
+// replica. A difference of two values is then off by under 10 ms per
+// dataflow, 0.02% of a core over the minute a measurement spans at least, and
+// a dataflow that runs under 10 ms in all reads as idle. 100 ms would be 2% of
+// what two workers 5% busy spend in a minute.
+const roundedElapsedNs = (elapsedNs: RawBuilder<unknown>) =>
+  sql<
+    number | null
+  >`(floor(${elapsedNs} / ${sql.lit(ELAPSED_UNIT_NS)}) * ${sql.lit(ELAPSED_UNIT_NS)})::float8`;
+
+const dataflowIdOfRoot = sql`${sql.ref("a.address")}[1]`;
+const isRootOperator = sql<boolean>`list_length(${sql.ref("a.address")}) = 1`;
+
+/** One dataflow's cumulative time on one worker. */
+export interface DataflowWorkerCpuRow {
+  dataflowId: string;
+  workerId: number;
+  elapsedNs: number;
+}
+
+/** An object a dataflow maintains. */
+export interface DataflowExportRow {
+  objectId: string;
+  dataflowId: string;
+  /** The connection id of a subscribe's session, or null for other exports. */
+  connectionId: number | null;
+  /** The dataflow's name, for a transient (`t`) export. */
+  dataflowName: string | null;
+}
+
+/** A row of `buildWorkerCpuSubscribe`. */
+export type WorkerCpuRow =
+  | ({ kind: "elapsed" } & DataflowWorkerCpuRow & {
+        objectId: null;
+        connectionId: null;
+        dataflowName: null;
+      })
+  | ({ kind: "export" } & DataflowExportRow & {
+        workerId: null;
+        elapsedNs: null;
+      });
+
+/** Each dataflow's cumulative time on each worker, in 10 ms units. */
+export function buildDataflowElapsedQuery() {
+  // NOTE: roots are filtered before counting, joined on the full key of both
+  // relations' indexes. Counting through `mz_scheduling_elapsed_per_worker`
+  // keeps a count per operator and worker in the subscribe's dataflow:
+  // measured 94 against 13 ms/s of CPU per worker, and 92 against 0.7 MB, on
+  // 500 dataflows over 8 workers.
+  return queryBuilder
+    .selectFrom("mz_scheduling_elapsed_raw as r")
+    .innerJoin("mz_dataflow_addresses_per_worker as a", (join) =>
+      join.onRef("a.id", "=", "r.id").onRef("a.worker_id", "=", "r.worker_id"),
+    )
+    .where(isRootOperator)
+    .groupBy([dataflowIdOfRoot, "r.worker_id"])
+    .select([
+      sql<WorkerCpuRow["kind"]>`'elapsed'`.as("kind"),
+      sql<string>`${dataflowIdOfRoot}::text`.as("dataflowId"),
+      sql<number | null>`${sql.ref("r.worker_id")}::int4`.as("workerId"),
+      roundedElapsedNs(sql`count(*)`).as("elapsedNs"),
+      sql<string | null>`NULL::text`.as("objectId"),
+      sql<number | null>`NULL::uint4`.as("connectionId"),
+      sql<string | null>`NULL::text`.as("dataflowName"),
+    ]);
+}
 
 /**
- * Fetches the system-wide cap on the statement logging sample rate. The effective rate is
- * `min(session statement_logging_sample_rate, this)`, so a value of `0` means statement
- * logging is off for everyone and query history can never have rows.
- *
- * Returns `null` if the variable could not be read as a number.
+ * What each dataflow maintains: user objects (`u` ids) and transient
+ * dataflows (`t` ids), named so a caller can tell a session's queries and
+ * subscribes from the coordinator's own. System dataflows still count toward
+ * each worker's total, but have nothing to name.
  */
-export default async function fetchStatementLoggingMaxSampleRate({
-  queryKey,
-  requestOptions,
-}: {
-  queryKey: QueryKey;
-  requestOptions: RequestInit;
-}) {
-  const compiledQuery =
-    buildStatementLoggingMaxSampleRateQuery().compile(queryBuilder);
+export function buildDataflowExportsQuery() {
+  // NOTE: names are joined per worker, on the full key of the operators'
+  // index. Through `mz_dataflows`, which keeps worker 0, the subscribe
+  // arranges every operator's name.
+  const transientNames = queryBuilder
+    .selectFrom("mz_compute_exports_per_worker as xw")
+    .innerJoin("mz_dataflow_addresses_per_worker as a", (join) =>
+      join
+        .onRef("a.worker_id", "=", "xw.worker_id")
+        .on(sql<boolean>`${dataflowIdOfRoot} = ${sql.ref("xw.dataflow_id")}`)
+        .on(isRootOperator),
+    )
+    .innerJoin("mz_dataflow_operators_per_worker as o", (join) =>
+      join.onRef("o.id", "=", "a.id").onRef("o.worker_id", "=", "a.worker_id"),
+    )
+    .where("xw.export_id", "like", "t%")
+    .select(["xw.export_id as exportId", "o.name"])
+    .distinct();
+  return queryBuilder
+    .selectFrom("mz_compute_exports as x")
+    .leftJoin("mz_subscriptions as s", "s.id", "x.export_id")
+    .leftJoin("mz_sessions as ss", "ss.id", "s.session_id")
+    .leftJoin(transientNames.as("n"), "n.exportId", "x.export_id")
+    .where((eb) =>
+      eb.or([eb("x.export_id", "like", "u%"), eb("x.export_id", "like", "t%")]),
+    )
+    .select([
+      sql<WorkerCpuRow["kind"]>`'export'`.as("kind"),
+      sql<string>`${sql.ref("x.dataflow_id")}::text`.as("dataflowId"),
+      sql<number | null>`NULL::int4`.as("workerId"),
+      sql<number | null>`NULL::float8`.as("elapsedNs"),
+      sql<string | null>`${sql.ref("x.export_id")}`.as("objectId"),
+      sql<number | null>`${sql.ref("ss.connection_id")}`.as("connectionId"),
+      sql<string | null>`${sql.ref("n.name")}`.as("dataflowName"),
+    ]);
+}
 
-  const response = await executeSqlV2({
-    queries: compiledQuery,
-    queryKey,
-    requestOptions,
-  });
+/**
+ * Each dataflow's time on each worker and what each dataflow maintains, in
+ * one subscribe that ends on its own once its frontier passes `upToMs`, so a
+ * client that stops reading without closing it stops costing the replica.
+ */
+export function buildWorkerCpuSubscribe(upToMs: number) {
+  return buildSubscribeQuery<WorkerCpuRow>(
+    buildDataflowElapsedQuery().unionAll(buildDataflowExportsQuery()),
+    {
+      upsertKey: ["kind", "dataflowId", "workerId", "objectId"],
+      upToMs,
+    },
+  );
+}
 
-  const rate = parseFloat(response.rows[0]?.statement_logging_max_sample_rate);
+/** A `buildWorkerCpuSubscribe` row's upsert key. */
+export const workerCpuRowKey = (row: WorkerCpuRow) =>
+  `${row.kind}|${row.dataflowId}|${row.workerId}|${row.objectId}`;
 
-  return Number.isFinite(rate) ? rate : null;
+/** `buildWorkerCpuSubscribe`'s rows, split by kind. */
+export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
+  const dataflows: DataflowWorkerCpuRow[] = [];
+  const exports: DataflowExportRow[] = [];
+  for (const row of rows) {
+    if (row.kind === "elapsed") {
+      const { dataflowId, workerId, elapsedNs } = row;
+      dataflows.push({ dataflowId, workerId, elapsedNs });
+    } else {
+      const { objectId, dataflowId, connectionId, dataflowName } = row;
+      exports.push({ objectId, dataflowId, connectionId, dataflowName });
+    }
+  }
+  return { dataflows, exports };
 }
 
 ```
@@ -938,11 +1064,11 @@ export default async function fetchStatementLoggingMaxSampleRate({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40183** (2026-10-26): **adapter: Turn on persist_fast_path_order by default**
-  *Symptoms*: LaunchDarkly serves `persist_fast_path_order` on in every cloud environment: its default rule is true in production and staging, after a staged rollout that finished on 2026-10-20. This PR flips the compiled default to match, so self-managed environments get the same behavior.  CI has run with the flag on since it was added (`get_variable_system_parameters` in `misc/python/materialize/mzcompose/__init__.py`), and `test/sqllogictest/persist-fast-path.slt` covers both cases (#39784). Setting `persist_fast_path_order` to false turns it off.  User-visible effect: a `SELECT` on a table, source or materialized view that has no index on the target cluster can be answered directly from storage, without building a temporary dataflow, in two more cases: it orders by the collection's leading columns with a small `LIMIT` and no filter, or it looks up a whole key with literals.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #40383** (2026-10-31): **cargo-bench: Only create one CI annotation**
+  *Symptoms*: Less noisy. Test run: https://buildkite.com/materialize/nightly/builds/18645  Before: <img width="1684" height="668" alt="Screenshot 2026-10-31 at 08 20 09" src="https://github.com/user-attachments/assets/40e34813-3cc8-4e6d-8681-f4f95236bacc" /> After: <img width="1684" height="80" alt="Screenshot 2026-10-31 at 08 50 35" src="https://github.com/user-attachments/assets/0ca57d12-793c-4785-8884-ceed0f6d4230" /> 
 
-- **Issue #40182** (2026-10-26): **testdrive: fix flaky replacement of a constant view in kafka-sink-errors.td**
-  *Symptoms*: ### Motivation  Since https://github.com/MaterializeInc/materialize/pull/39594, `CREATE REPLACEMENT` rejects a sealed target. In `kafka-sink-errors.td`, the replacement's target read a constant, which seals as soon as its dataflow runs, so the test failed whenever that happened before `CREATE REPLACEMENT` ran (for example in [Nightly 18585](https://buildkite.com/materialize/nightly/builds/18585) on main).  ### Description  * The target now reads a table, which doesn't seal. The test still checks that a replacement can't be exported as a sink.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #40379** (2026-10-30): **doc: lead v26.48 Kafka sink headers note with the transactional use case**
+  *Symptoms*: Reframes the v26.48 "Kafka sink headers are generally available" release note around the customer so-what: using the `materialize-sink-id` header to deliver transactionally consistent updates to downstream systems, with a link to the [Transactional downstream updates using Kafka](https://materialize.com/docs/export-data/patterns/transactional-downstream-updates-kafka/) pattern up front. The `HEADERS` GA detail moves to a second paragraph.  The section anchor (`#v26.48-kafka-sink-headers-ga`) is unchanged so existing links keep working.  Feedback from the #shipped-it post that the original note didn't land the "so what" for customers.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -959,357 +1085,301 @@ export default async function fetchStatementLoggingMaxSampleRate({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87001216` (2026-10-26)
-**Commit Message**: build(deps): bump actions/checkout from 6.0.2 to 7.0.1 (#40164)
+### Incident Patch 1: `07eda4c6` (2026-10-31)
+**Commit Message**: cargo-bench: Only create one CI annotation (#40383)
 
-Bumps [actions/checkout](https://github.com/actions/checkout) from 6.0.2
-to 7.0.1.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/actions/checkout/releases">actions/checkout's
-releases</a>.</em></p>
-<blockquote>
-<h2>v7.0.1</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>skip running unsafe pr check if input is default by <a
-href="https://github.com/aiqiaoy"><code>@​aiqiaoy</code></a> in <a
-href="https://redirect.github.com/actions/checkout/pull/2518">actions/checkout#2518</a></li>
-<li>trim only ascii whitespace for branch by <a
-href="https://github.com/aiqiaoy"><code>@​aiqiaoy</code></a> in <a
-href="https://redirect.github.com/actions/checkout/pull/2521">actions/checkout#2521</a></li>
-<li>escape values passed to --unset by <a
-href="https://github.com/aiqiaoy"><code>@​aiqiaoy</code></a> in <a
-href="https://redirect.github.com/actions/checkout/pull/2530">actions/checkout#2530</a></li>
-<li>Various dependency updates</li>
-</ul>
-<p><strong>Full Changelog</strong>: <a
-href="https://github.com/actions/checkout/compare/v7...v7.0.1">https://github.com/actions/checkout/compare/v7...v7.0.1</a></
+Less noisy. Test run:
+https://buildkite.com/materialize/nightly/builds/18645
 
-**File**: `.github/workflows/afdocs_report.yml` (modified, +2/-2)
+Before:
+<img width="1684" height="668" alt="Screenshot 2026-10-31 at 08 20 09"
+src="https://github.com/user-attachments/assets/40e34813-3cc8-4e6d-8681-f4f95236bacc"
+/>
+After:
+<img width="1684" height="80" alt="Screenshot 2026-10-31 at 08 50 35"
+src="https://github.com/user-attachments/assets/0ca57d12-793c-4785-8884-ceed0f6d4230"
+/>
+
+**File**: `ci/mkpipeline.py` (modified, +26/-0)
 ```diff
-@@ -49,7 +49,7 @@ jobs:
-     timeout-minutes: 30
-     steps:
-       - name: Checkout repository
--        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
+@@ -189,6 +189,30 @@ def annotate(style: str, context: str, markdown: str) -> None:
+         print(f"Failed to post annotation: {e}")
  
-@@ -81,7 +81,7 @@ jobs:
-     timeout-minutes: 10
-     steps:
-       - name: Checkout repository
--        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-         with:
-           persist-credentials: false
  
++def initialize_cargo_bench_annotation(pipeline: Any) -> None:
++    """Open the shared results disclosure before Cargo bench shards start."""
++    if not any(
++        step.get("id") == "cargo-bench" and not step.get("skip")
++        for step in steps(pipeline)
++    ):
++        return
++    initialized_key = "cargo-bench-annotation-initialized"
++    if (
++        spawn.capture(
++            ["buildkite-agent", "meta-data", "get", initialized_key, "--default=false"]
++        ).strip()
++        == "true"
++    ):
++        return
++    # NOTE: Keep the outer details open so appends, including retries, stay
++    # nested. The HTML renderer closes it at the end of the annotation.
++    spawn.runv(
++        ["buildkite-agent", "annotate", "--context=cargo-bench", "--style=info"],
++        stdin=b"<details><summary>Cargo bench results</summary>\n\n",
++    )
++    spawn.runv(["buildkite-agent", "meta-data", "set", initialized_key, "true"])
++
++
+ def main() -> int:
+     parser = argparse.ArgumentParser(
+         prog="mkpipeline",
+@@ -422,6 +446,8 @@ def fetch_hashes() -> None:
+     cmd = ["buildkite-agent", "pipeline", "upload"]
+     if args.dry_run:
+         cmd.append("--dry-run")
++    else:
++        initialize_cargo_bench_annotation(pipeline)
+     spawn.runv(cmd, stdin=yaml.dump(pipeline).encode())
+ 
+     if fail_build_reason is not None and not args.dry_run:
+```
+
+**File**: `test/cargo-bench/mzcompose.py` (modified, +22/-7)
+```diff
+@@ -856,13 +856,28 @@ def workflow_default(c: Composition, parser: WorkflowArgumentParser) -> None:
+ 
+     failed = report.has_regressions or bool(current_failures) or bool(mispredicted)
+     if buildkite.is_in_buildkite():
+-        buildkite.add_annotation(
+-            "error" if failed else "info",
+-            f"Cargo bench results ({', '.join(shard_packages)})",
+-            markdown,
+-            # `bin/ci-annotate-errors` posts under the job's style-named
+-            # context (`error` or `info`) and would otherwise replace this table.
+-            context="cargo-bench",
++        title = ", ".join(shard_packages)
++        retry_count = int(os.getenv("BUILDKITE_RETRY_COUNT", "0"))
++        if retry_count > 0:
++            title += f" (retry #{retry_count})"
++        if failed:
++            title += " [failed]"
++        annotation = (
++            f"\n\n<details><summary>{title}</summary>\n\n"
++            f"{buildkite.truncate_annotation_str(markdown)}\n\n</details>\n\n"
++        )
++        annotate_cmd = [
++            "buildkite-agent",
++            "annotate",
++            "--context=cargo-bench",
++            "--append",
++        ]
++        # Only failures set the shared style so passing shards preserve it.
++        if failed:
++            annotate_cmd.append("--style=error")
++        spawn.runv(
++            annotate_cmd,
++            stdin=annotation.encode(),
+         )
+         try:
+             spawn.runv(
 ```
 
 ---
 
-### Incident Patch 2: `05a6948a` (2026-10-26)
-**Commit Message**: build(deps): bump the tanstack-db group across 1 directory with 2 updates (#40159)
+### Incident Patch 2: `6f20f9fc` (2026-10-31)
+**Commit Message**: tests: Make cargo bench more stable (#40369)
 
-Bumps the tanstack-db group with 2 updates in the /console directory:
-[@tanstack/db](https://github.com/TanStack/db/tree/HEAD/packages/db) and
-[@tanstack/react-db](https://github.com/TanStack/db/tree/HEAD/packages/react-db).
+Fixes: [QAR-162](https://linear.app/materializeinc/issue/QAR-162)
 
-Updates `@tanstack/db` from 0.15.0 to 0.15.2
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/TanStack/db/releases">@​tanstack/db's
-releases</a>.</em></p>
-<blockquote>
-<h2><code>@​tanstack/db</code><a
-href="https://github.com/0"><code>@​0</code></a>.15.2</h2>
-<h3>Patch Changes</h3>
-<ul>
-<li>
-<p>Keep a settled optimistic row visible while its server row waits
-behind an earlier persisted write. Previously, two quick writes to one
-row in a persisted Collection could briefly show the row before the
-second write. (<a
-href="https://redirect.github.com/TanStack/db/pull/2208">#2208</a>)</p>
-</li>
-<li>
-<p>LocalStorage Collections with the default JSON parser now reject an
-insert or update whose row a restore could not return, such as a row
-with a function, symbol, <code>NaN</code>, <code>Map</code>,
-<code>Set</code>, or <code>undefined</code> ar
+Motivated by https://buildkite.com/materialize/nightly/builds/18633
 
-**File**: `console/package.json` (modified, +2/-2)
+Test run: https://buildkite.com/materialize/nightly/builds/18636 &
+https://buildkite.com/materialize/nightly/builds/18638
+
+**File**: `ci/nightly/pipeline.template.yml` (modified, +1/-9)
 ```diff
-@@ -57,8 +57,8 @@
-     "@sentry/react": "^10.45.0",
-     "@stripe/react-stripe-js": "^7.0.0",
-     "@stripe/stripe-js": "^10.0.0",
--    "@tanstack/db": "0.15.0",
--    "@tanstack/react-db": "0.5.10",
-+    "@tanstack/db": "0.15.2",
-+    "@tanstack/react-db": "0.5.12",
-     "@tanstack/react-query": "^5.104.5",
-     "@tanstack/react-query-devtools": "^5.104.5",
-     "@tanstack/react-table": "^8.21.3",
+@@ -297,18 +297,10 @@ steps:
+                 - common-ancestor
+ 
+       - id: cargo-bench
+-        label: ":rust: Cargo bench against ancestor"
++        label: ":rust: Cargo bench against merge base or 'latest'"
+         sanitizer: skip
+         depends_on: []
+-        # Measured: 48 minutes for the largest closure built twice on the
+-        # 8-core queue, 73 minutes for a shard that also ran its benchmarks.
+         timeout_in_minutes: 240
+-        # Annotation-only while the noise floor on this hardware is being
+-        # calibrated. QAR-162 covers dropping `soft_fail` so regressions and
+-        # HEAD build failures fail the build.
+-        soft_fail: true
+-        # One shard per package with bench targets, so this should track that
+-        # package count. Extra shards exit as no-ops, fewer shards double up.
+         parallelism: 9
+         inputs:
+           - Cargo.lock
 ```
 
-**File**: `console/yarn.lock` (modified, +11/-11)
+**File**: `ci/plugins/mzcompose/hooks/command` (modified, +1/-1)
 ```diff
-@@ -4679,16 +4679,16 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tanstack/db@npm:0.15.0":
--  version: 0.15.0
--  resolution: "@tanstack/db@npm:0.15.0"
-+"@tanstack/db@npm:0.15.2":
-+  version: 0.15.2
-+  resolution: "@tanstack/db@npm:0.15.2"
-   dependencies:
-     "@standard-schema/spec": "npm:^1.1.0"
-     "@tanstack/db-ivm": "npm:0.2.0"
-     "@tanstack/pacer-lite": "npm:^0.2.1"
-   peerDependencies:
-     typescript: ">=4.7"
--  checksum: 10c0/a6bec954e5591b5b2e0dae62891a23a67c0ab6708c089281d2dec5fd7536a97e9713a7f7b67f24615aaf3650dc8049f34c3586fd4baf2f84f81786a209dfb406
-+  checksum: 10c0/ad34721e796bd7b87e2dc1e57de14edfb4004b815de643109fafb4f58ee9c4e0c91c04e78f8a0643d3ff8e903f6167a52015d7249f90ae5ce4efd8934352bb45
-   languageName: node
-   linkType: hard
- 
-@@ -4749,14 +4749,14 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@tanstack/react-db@npm:0.5.10":
--  version: 0.5.10
--  resolution: "@tanstack/react-db@npm:0.5.10"
-+"@tanstack/react-db@npm:0.5.12":
-+  version: 0.5.12
-+  resolution: "@tanstack/react-db@npm:0.5.12"
-   dependencies:
--    "@tanstack/db": "npm:0.15.0"
-+    "@tanstack/db": "npm:0.15.2"
-   peerDependencies:
-     react: ">=18.0.0"
--  checksum: 10c0/ebb426120c8bb871464a421aefca4b6c20c83910d7f8202e594ab64487c50317e42f51af70237172a1e85c91b051444c54f55fe557ca8c817d5587c6456dc9dc
-+  checksum: 10c0/50902e9076bb962bae98a02f321abd57b43f7d528bb6dc4190cc5e8756107334af8036c184f9fb7849b0689cdbf72eb71e7cb0ae6dd2aa0c36eef2a83ab5455f
-   languageName: node
-   linkType: hard
- 
-@@ -11835,9 +11835,9 @@ __metadata:
-     "@stripe/react-stripe-js": "npm:^7.0.0"
-     "@stripe/stripe-js": "npm:^10.0.0"
-     "@svgr/babel-plugin-transform-svg-component": "npm:^8.0.0"
--    "@tanstack/db": "npm:0.15.0"
-+    "@tanstack/db": "npm:0.15.2"
-     "@tanstack/eslint-plugin-query": "npm:^5.104.5"
--    "@tanstack/react-db": "npm:0.5.10"
-+    "@tanstack/react-db": "npm:0.5.12"
-     "@tanstack/react-query": "npm:^5.104.5"
-     "@tanstack/react-query-devtools": "npm:^5.104.5"
-     "@tanstack/react-table": "npm:^8.21.3"
+@@ -455,7 +455,7 @@ cleanup() {
+     && [[ ! "$BUILDKITE_LABEL" =~ Terraform\ .* ]] \
+     && [[ ! "$BUILDKITE_LABEL" =~ Orchestratord\ .* ]] \
+     && [[ ! "$BUILDKITE_LABEL" =~ Cluster\ spec\ sheet.* ]] \
+-    && [[ ! "$BUILDKITE_LABEL" =~ ^:rust:\ Cargo\ bench\ against\ ancestor ]]; then
++    && [[ ! "$BUILDKITE_LABEL" =~ ^:rust:\ Cargo\ bench\ .* ]]; then
+       echo "+++ services.log is empty, failing"
+       if [[ $CI_ANNOTATE_ERRORS_RESULT -ne 0 ]]; then
+         # Keep the retryable code (128 for GHCR/DockerHub trouble, 199 for a
 ```
 
----
-
-### Incident Patch 3: `979aa86e` (2026-10-26)
-**Commit Message**: build(deps-dev): bump the typescript-and-eslint group in /console with 3 updates (#40154)
-
-Bumps the typescript-and-eslint group in /console with 3 updates:
-[@tanstack/eslint-plugin-query](https://github.com/TanStack/query/tree/HEAD/packages/eslint-plugin-query),
-[eslint](https://github.com/eslint/eslint) and
-[typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint).
-
-Updates `@tanstack/eslint-plugin-query` from 5.104.3 to 5.104.5
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/TanStack/query/releases">@​tanstack/eslint-plugin-query's
-releases</a>.</em></p>
-<blockquote>
-<h2><code>@​tanstack/eslint-plugin-query</code><a
-href="https://github.com/5"><code>@​5</code></a>.104.5</h2>
-<p>No changes in this release.</p>
-<h2><code>@​tanstack/eslint-plugin-query</code><a
-href="https://github.com/5"><code>@​5</code></a>.104.4</h2>
-<h3>Patch Changes</h3>
-<ul>
-<li>
-<p><a
-href="https://redirect.github.com/TanStack/query/pull/12044">#12044</a>
-<a
-href="https://github.com/TanStack/query/commit/a5f1b092bb7b733b85f50575b93e2e3b1db3d09c"><code>a5f1b09</code></a>
-- refactor(eslint-plugin-query/exhaustive-
-
-**File**: `console/package.json` (modified, +3/-3)
+**File**: `misc/python/materialize/cargo_bench/ancestor.py` (modified, +3/-4)
 ```diff
-@@ -132,7 +132,7 @@
-     "@sentry/vite-plugin": "^5.4.0",
-     "@storybook/react-vite": "^10",
-     "@svgr/babel-plugin-transform-svg-component": "^8.0.0",
--    "@tanstack/eslint-plugin-query": "^5.104.3",
-+    "@tanstack/eslint-plugin-query": "^5.104.5",
-     "@testing-library/dom": "^10.4.2",
-     "@testing-library/jest-dom": "^6.9.1",
-     "@testing-library/react": "^16.3.3",
-@@ -155,7 +155,7 @@
-     "core-js": "^3.50.0",
-     "debug": "^4.4.3",
-     "dedent": "^1.7.2",
--    "eslint": "^10.12.0",
-+    "eslint": "^10.13.0",
-     "eslint-config-prettier": "^10.1.8",
-     "eslint-plugin-jest-formatting": "^3.1.0",
-     "eslint-plugin-prettier": "^5.5.7",
-@@ -184,7 +184,7 @@
-     "storybook": "^10",
-     "terser": "^5.51.2",
-     "tsx": "^4.23.15",
--    "typescript-eslint": "^8.71.2",
-+    "typescript-eslint": "^8.72.0",
-     "typescript-eslint-language-service": "^5.0.5",
-     "vite": "^8.3.1",
-     "vite-bundle-analyzer": "^1.3.9",
+@@ -7,7 +7,7 @@
+ # the Business Source License, use of this software will be governed
+ # by the Apache License, Version 2.0.
+ 
+-"""Clamping of the cargo-bench comparison point to the bench baseline."""
++"""Clamping of cargo-bench pull request comparisons to the bench baseline."""
+ 
+ import subprocess
+ from pathlib import Path
+@@ -20,9 +20,8 @@
+ # benches ran on the system allocator.
+ #
+ # Bump this to the merge commit of any future change of that kind (allocator,
+-# bench profile, measurement harness). Without the bump, every comparison
+-# against an older ancestor reports the change itself as regressions and
+-# improvements until the next release branch point moves past it.
++# bench profile, measurement harness). Without the bump, PR comparisons
++# against an older merge base attribute changes in the bench setup to the PR.
+ BENCH_BASELINE = "e95ca7eec04d5817669176949c48a417856cf656"
+ 
+ 
 ```
 
-**File**: `console/yarn.lock` (modified, +127/-44)
+**File**: `test/cargo-bench/mzcompose.py` (modified, +66/-32)
 ```diff
-@@ -4692,9 +4692,9 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -19,9 +19,10 @@
+ first run compiles it from scratch into a parked target dir and later runs
+ reuse that.
  
--"@tanstack/eslint-plugin-query@npm:^5.104.3":
--  version: 5.104.3
--  resolution: "@tanstack/eslint-plugin-query@npm:5.104.3"
-+"@tanstack/eslint-plugin-query@npm:^5.104.5":
-+  version: 5.104.5
-+  resolution: "@tanstack/eslint-plugin-query@npm:5.104.5"
-   dependencies:
-     "@typescript-eslint/utils": "npm:^8.71.0"
-   peerDependencies:
-@@ -4703,7 +4703,7 @@ __metadata:
-   peerDependenciesMeta:
-     typescript:
-       optional: true
--  checksum: 10c0/0bfe63610ef1583d34dbdec9bb27421fb16f7563fd818bd07b179cf2b5bed88dec276a29483cd29e80421cdb8fadbf59c67f350ded44516610e1b7e023466ad2
-+  checksum: 10c0/0667a02e6e3f08e6e4b96d63e5cb18a5bf6592ecad6fa750dcf4694ec5c5efd3693e2320ec3a9c70cfbe06065823415e22bedfce8e95bfd8b21e1afc7f31b5db
-   languageName: node
-   linkType: hard
+-A package whose dependency closure has no committed change between the ancestor
+-and the current commit is not built at all: identical source at identical paths
+-would only reproduce the identical-binary skip below at the cost of two builds.
++Unless the benchmark harness changed, a package whose dependency closure has no
++committed change between the ancestor and the current commit is not built at
++all: identical source at identical paths would only reproduce the
++identical-binary skip below at the cost of two builds.
+ That prediction is unchecked by construction, so scheduled runs build those
+ packages anyway and fail when a predicted-unchanged package yields differing
+ binaries, which points at a hole in the closure or an unpinned compile-time
+@@ -76,6 +77,8 @@
+ # dependency versions, workspace profiles, and the rustflags cargo applies.
+ BUILD_INPUTS = ("Cargo.lock", "Cargo.toml", ".cargo")
  
-@@ -5681,39 +5681,39 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"@typescript-eslint/eslint-plugin@npm:8.71.2":
--  version: 8.71.2
--  resolution: "@typescript-eslint/eslint-plugin@npm:8.71.2"
-+"@typescript-eslint/eslint-plugin@npm:8.72.0":
-+  version: 8.72.0
-+  resolution: "@typescript-eslint/eslint-plugin@npm:8.72.0"
-   dependencies:
-     "@eslint-community/regexpp": "npm:^4.12.2"
--    "@typescript-eslint/scope-manager": "npm:8.71.2"
--    "@typescript-eslint/type-utils": "npm:8.71.2"
--    "@typescript-eslint/utils": "npm:8.71.2"
--    "@typescript-eslint/visitor-keys": "npm:8.71.2"
-+    "@typescript-eslint/scope-manager": "npm:8.72.0"
-+    "@typescript-eslint/type-utils": "npm:8.72.0"
-+    "@typescript-eslint/utils": "npm:8.72.0"
-+    "@typescript-eslint/visitor-keys": "npm:8.72.0"
-     ignore: "npm:^7.0.5"
-     natural-compare: "npm:^1.4.0"
-     ts-api-utils: "npm:^2.5.0"
-   peerDependencies:
--    "@typescript-eslint/parser": ^8.71.2
-+    "@typescript-eslint/parser": ^8.72.0
-     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-     typescript: ">=4.8.4 <6.1.0"
--  checksum: 10c0/977add368d9fdb30d175b15fcf68d0b4ab721aeb89b185a2dc2a30b95e90a08d9def66573944f49fd472f87beb73edda38b98e0d25ab1078d7cb5e56802588d7
-+  checksum: 10c0/19e7a2fff7fa15a41662eab550918f8e060e522de5621cb78b1cf0516f9dd845878f03f351d503161a3d0417bc87e73b582d2c41d13a51bb3e7d3088cce41fe2
-   languageName: node
-   linkType: hard
- 
--"@typescript-eslint/parser@npm:8.71.2":
--  version: 8.71.2
--  resolution: "@typescript-eslint/parser@npm:8.71.2"
-+"@typescript-eslint/parser@npm:8.72.0":
-+  version: 8.72.0
-+  resolution: "@typescript-eslint/parser@npm:8.72.0"
-   dependencies:
--    "@typescript-eslint/scope-manager": "npm:8.71.2"
--    "@typescript-eslint/types": "npm:8.71.2"
--    "@typescript-eslint/typescript-estree": "npm:8.71.2"
--    "@typescript-eslint/visitor-keys": "npm:8.71.2"
-+    "@typescript-eslint/scope-manager": "npm:8.72.0"
-+    "@typescript-eslint/types": "npm:8.72.0"
-+    "@typescript-eslint/typescript-estree": "npm:8.72.0"
-+    "@typescript-eslint/visitor-keys": "npm:8.72.0"
-     debug: "npm:^4.4.3"
-   peerDependencies:
-     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-     typescript: ">=4.8.4 <6.1.0"
--  checksum: 10c0/8c94eb5464beda9bcbd58e63a402fac10ab382dbc2e4506473902bc1e957f425f4ca9d59916b3f2d86f835d36cbbd27d362a5c2977b0778d83203111be7bcf69
-+  checksum: 10c0/da37b31758b3a90eaca4cdf650f71a565fe0b0c1f4348281623b790d53858fd1afda185f5da9530858d0eada39ba1aabc4bdc10c2c449c001c4186471cd1f761
-   languageName: node
-   linkType: hard
- 
-@@ -5730,6 +5730,19 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
-+"@typescript-eslint/project-service@npm:8.72.0":
-+  version: 8.72.0
-+  resolution: "@typescript-eslint/project-service@npm:8.72.0"
-+  dependencies:
-+    "@typescript-eslint/tsconfig-utils": "npm:^8.72.0"
-+    "@typescript-eslint/types": "npm:^8.72.0"
-+    debug: "npm:^4.4.3"
-+  peerDependencies:
-+    typescript: ">=4.8.4 <6.1.0"
-+  checksum: 10c0/33825ee41b6f0281f40fca6c9123af5493225a971f62173381984de52d4101cc974fdb93077e16ac4b67b3c345bea738c1bc228b76610bd1737f6b2af2c0ccaf
-+  languageName: node
-+  linkType: hard
++HARNESS_INPUTS = ("test/cargo-bench", "misc/python/materialize/cargo_bench")
 +
- "@typescript-eslint/scope-manager@npm:8.71.2":
-   version: 8.71.2
-   resolution: "@typescript-eslint/scope-manager@npm:8.71.2"
-@@ -5740,6 +5753,16 @@ __metadata:
-   languageName: node
-   linkType: hard
  
-+"@typescript-eslint/scope-manager@npm:8.72.0":
-+  version: 8.72.0
-+  resolution: "@typescript-eslint/scope-manager@npm:8.72.0"
-+  dependencies:
-+    "@typescript-eslint/types": "npm:8.72.0"
-+    "@typescript-eslint/visitor-keys": "npm:8.72.0"
-+  checksum: 10c0/f8e40de6c306aa5792ede4389aa279cca8ea43d0ea31fec083102bd563ac22d14a6b0554b641e27f476421e033adc299c6b4d4d026bb1fd84f7694421fb5a74f
-+  languageName: node
-+  linkType: hard
+ @dataclass(frozen=True)
+ class TargetFailure:
+@@ -84,8 +87,10 @@ class TargetFailure:
+ 
+ 
+ def resolve_ancestor() -> str:
+-    """Pick the commit to compare against: `default_ancestor()`, moved forward to the bench baseline when HEAD contains the baseline and that ancestor does not."""
++    """Choose the comparison commit, clamping PR merge bases to the bench baseline."""
+     ancestor = default_ancestor()
++    if not buildkite.is_in_pull_request():
++        return ancestor
+     clamped = clamp_to_baseline(ancestor, "HEAD", MZ_ROOT)
+     if clamped != ancestor:
+         print(
+@@ -95,7 +100,7 @@ def resolve_ancestor() -> str:
+ 
+ 
+ def default_ancestor() -> str:
+-    """The merge base in a pull request, else the latest release tag."""
++    """The PR merge base, or the latest stable release's commit."""
+     if buildkite.is_in_pull_request():
+         return buildkite.get_merge_base()
+     current = MzVersion.parse_cargo()
+@@ -108,12 +113,9 @@ def default_ancestor() -> str:
+     ]
+     if not releases:
+         raise RuntimeError(f"no release tag older than {current} found")
+-    tag = spawn.capture(
++    return spawn.capture(
+         ["git", "rev-parse", f"{max(releases)}^{{commit}}"], cwd=MZ_ROOT
+     ).strip()
+-    # The tag sits on its release branch and carries backports that main
+-    # lacks, so the comparison point is where that branch left main.
+-    return spawn.capture(["git", "merge-base", tag, "HEAD"], cwd=MZ_ROOT).strip()
+ 
+ 
+ def target_dir() -> Path:
+@@ -369,6 +371,8 @@ def run_benches(
+     env: dict[str, str],
+     results_root: Path,
+     threshold: float,
++    *,
++    force_run: bool = False,
+ ) -> tuple[
+     list[TargetFailure], list[TargetFailure], list[TargetFailure], list[BuiltBench]
+ ]:
+@@ -382,16 +386,13 @@ def run_benches(
+     only in the ancestor is never run, since there is no HEAD result to
+     compare it against.
+ 
+-    Benchmarks that regress in the first pass are measured once more, both
+-    sides again, restricted to exactly those benchmark ids. Between-process
+-    variance on large inputs dwarfs criterion's within-run interval, and a
+-    swing that does not reproduce on the spot is not a regression. The rerun
+-    costs time proportional to the number of flagged rows, nothing when there
+-    are none.
++    First-pass regressions get up to four paired reruns, filtered to those IDs.
++    A clean comparison ends confirmation. Earlier attempts remain in artifacts.
 +
- "@typescript-eslint/tsconfig-utils@npm:8.71.2, @typescript-eslint/tsconfig-utils@npm:^8.71.2":
-   version: 8.71.2
-   resolution: "@typescript-eslint/tsconfig-utils@npm:8.71.2"
-@@ -5749,19 +5772,28 @@ __metadata:
-   languageName: node
-   linkType: hard
++    `force_run` runs targets even when their binaries are identical.
  
--"@typescript-eslint/type-utils@npm:8.71.2":
--  version: 8.71.2
--  resolution: "@typescript-eslint/type-utils@npm:8.71.2
+     Returns the ancestor, current, and rerun failures, then the targets
+-    skipped for identical binaries. A rerun failure is not a failure of the
+-    commit under test: the flagged rows keep their first-pass verdict.
++    skipped for identical binaries. Current-side failures also fail the step.
+     """
+     ancestor_by_key = {(b.package, b.name): b for b in ancestor_built}
+     ancestor_target_by_key = {(t.package, t.name): t for t in ancestor_targets}
+@@ -431,7 +432,8 @@ def run_benches(
+         ancestor_digest = loaded_image_digest(ancestor_bin.executable, scratch)
+         head_digest = loaded_image_digest(head_bin.executable, scratch)
+         if (
+-            ancestor_digest is not None
++            not force_run
++            and ancestor_digest is not None
+             and head_digest is not None
+             and ancestor_digest == head_digest
+         ):
+@@ -466,18 +468,30 @@ def run_benches(
+         # id, so an anchored alternation reruns exactly the flagged ids and
+         # nothing else.
+         pattern = "^(?:" + "|".join(re.escape(id) for id in regressed) + ")$"
+-        ancestor_rc, head_rc = run_pair(
+-            ancestor_bin,
+-            head_bin,
+-            env,
+-            results_root / RERUN / head_bin.package / head_bin.name,
+-            [pattern],
+-            f", confirming {len(regressed)} regression(s)",
+-            h
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40183** (2026-10-26): adapter: Turn on persist_fast_path_order by default (@ggevay)
-- **PR #40182** (2026-10-26): testdrive: fix flaky replacement of a constant view in kafka-sink-errors.td (@ggevay)
-- **PR #40180** (2026-10-26): Aljoscha/ddl review explain rejection 40008 (@aljoscha)
-- **PR #40176** (2026-10-26): adapter: compare structured webhook endpoint names (@aljoscha)
-- **PR #40175** (2026-10-26): build(deps): bump the simple group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #40173** (2026-10-26): build(deps): bump google-cloud-storage from 1.20.0 to 1.21.0 (@dependabot[bot])
+- **PR #40383** (2026-10-31): cargo-bench: Only create one CI annotation (@def-)
+- **PR #40379** (2026-10-30): doc: lead v26.48 Kafka sink headers note with the transactional use case (@val-materialize)
+- **PR #40375** (2026-10-30): release: mark v26.48 as released (@materialize-bot)
+- **PR #40374** (closed): v26.48.2 release notes (@bosconi)
+- **PR #40373** (closed): v26.48.1 release notes (@bosconi)
+- **PR #40369** (2026-10-31): tests: Make cargo bench more stable (@def-)
 
 ---
 
@@ -1329,30 +1399,53 @@ href="https://github.com/TanStack/query/commit/a5f1b092bb7b733b85f50575b93e2e3b1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump actions/checkout from 6.0.2 to 7.0.1 (#40164)
+## X. cargo-bench: Only create one CI annotation (#40383)
 
 **RULE**:
-When implementing operations in `.github/workflows/afdocs_report.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/mkpipeline.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87001216`: build(deps): bump actions/checkout from 6.0.2 to 7.0.1 (#40164). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `07eda4c6`: cargo-bench: Only create one CI annotation (#40383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/afdocs_report.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/mkpipeline.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+def initialize_cargo_bench_annotation(pipeline: Any) -> None:
+    """Open the shared results disclosure before Cargo bench shards start."""
+    if not any(
+        step.get("id") == "cargo-bench" and not step.get("skip")
+        for step in steps(pipeline)
+    ):
+        return
+    initialized_key = "cargo-bench-annotation-initialized"
+    if (
+        spawn.capture(
+            ["buildkite-agent", "meta-data", "get", initialized_key, "--default=false"]
+        ).strip()
+        == "true"
+    ):
+        return
+    # NOTE: Keep the outer details open so appends, including retries, stay
+    # nested. The HTML renderer closes it at the end of the annotation.
+    spawn.runv(
+        ["buildkite-agent", "annotate", "--context=cargo-bench", "--style=info"],
+        stdin=b"<details><summary>Cargo bench results</summary>\n\n",
+    )
+    spawn.runv(["buildkite-agent", "meta-data", "set", initialized_key, "true"])
+
+
+    else:
+        initialize_cargo_bench_annotation(pipeline)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87001216` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `07eda4c6` are properly handled with clean fallback behavior.

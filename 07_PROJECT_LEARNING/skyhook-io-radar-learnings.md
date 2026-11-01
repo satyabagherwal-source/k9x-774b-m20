@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `51b8067b`  
+> **Source Version**: `d9e73f40`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T23:10:53.281Z  
+> **Timestamp**: 2026-11-01T00:10:33.549Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T23:10:53.100Z  
+> **Harvest Timestamp**: 2026-11-01T00:10:33.544Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3908 stars
+- **Stars / Engagement**: 4000 stars
 
 ---
 
@@ -2207,11 +2207,11 @@ export function AWSMachineRenderer({ data }: Props) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2411** (2026-10-28): **The update from the app isn’t working**
+  *Symptoms*: ## Describe the bug  The update from the app isn’t working.  ## To reproduce  Steps to reproduce the behavior:  1. Run radar.exe 2. Click on check for updates 3. See the error in the screenshot  ## Expected behavior  I expected the program to update and restart automatically.  ## Screenshots  <img width="381" height="148" alt="Image" src="https://github.com/user-attachments/assets/4f00f96d-72cc-4089-b580-08b1390ac980" /> 
+
 - **Issue #2302** (2026-10-25): **Issues flags completed Job/CronJob pods as a warning (“Controller reports a problem”: `Ready: PodCompleted`)**
   *Symptoms*: ### What happens  Every pod created by a CronJob or Job shows up in Issues as a warning, "Controller reports a problem" (category `operator_condition_failed`), after it finishes successfully. The detail reads:  > Ready: PodCompleted > present since creation or first reconciliation  The pod is `Succeeded` and its Job is `Complete 1/1`. Nothing is wrong. A finished pod has `Ready=False` with reason `PodCompleted`, and the Issues engine treats that as a failed condition.  <img width="1538" height="436" alt="Image" src="https://github.com/user-attachments/assets/75fefb95-f9aa-4d7d-a6b1-814cc1676fc2" />  ### Why it's noisy  With a CronJob on a short schedule, this puts a fresh warning in the list every run, and it stays until the Job's TTL or history limit removes the pod. In my cluster an every-5-minutes CronJob keeps one or two of these showing at all times, which buries real issues.  ### Steps to reproduce  1. Create a CronJob whose container exits 0, for example `busybox` running `true`, on a `*/5 * * * *` schedule. 2. Wait for a run to finish. 3. Open Issues. The completed pod appears as a warning with `Ready: PodCompleted`.  ### Expected  Pods in phase `Succeeded` (or with Ready reason `PodCompleted`) should be skipped by the condition-based issue detection, since a Job pod ending in that state is the normal outcome. Failed Job pods (phase `Failed`, `BackoffLimitExceeded`, etc.) should still be reported.  ### Notes  - Radar already treats this as expected elsewhere. `package
-
-- **Issue #2236** (2026-10-25): **Live Traffic Source Selection**
-  *Symptoms*: ## Describe the bug and snapshot  Try the radar both v1.16 and v1.17 and face below issues. I have istio and hubble for my live traffic. If I select to Istio, then I could not choose back to hubble anymore.  ##   <img width="342" height="129" alt="Image" src="https://github.com/user-attachments/assets/a90bbf4c-d2c2-4814-8361-6dfb0e09e068" /> <img width="267" height="50" alt="Image" src="https://github.com/user-attachments/assets/36bbb5ef-63f3-4985-bb8b-ec2651ea569f" /> <img width="116" height="46" alt="Image" src="https://github.com/user-attachments/assets/cead954c-f945-46d0-bb47-47586dc16818" />  Can you guide how to do the selection. If this is a bug, can you help fix it.  Thanks a lot! 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2228,313 +2228,342 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7cacbbcc` (2026-10-25)
-**Commit Message**: Fix memory quantity suffixes in Prometheus chart overlays (#2301)
+### Incident Patch 1: `d9e73f40` (2026-10-31)
+**Commit Message**: Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state (#2060)
 
-Prometheus memory charts read a request such as `1181116006400m` (the
-canonical serialization of `1.1Gi`) as 1000× too large, placing request
-and limit reference lines incorrectly. This path has its own parser and
-was not covered by #2283.
+## Why
 
-Recognize `m`, `u`, `n`, and the also-missing lowercase `k` suffix in
-that parser, preserving its handling of unreadable values and zero.
-Regression tests cover request and limit values, mixed binary/millibyte
-sums across native sidecars, and invalid/zero inputs.
+**Argo CD rollback in Radar is broken today.** Radar writes
+`operation.rollback` to the Application, a field the Application CRD
+doesn't have, so the API server drops it. Radar reports success, then
+Argo fails with *"Invalid operation request: no operation specified."*
+History entry #0 is also rejected outright, and Argo numbers history
+from 0.
 
-Validation: `make tsc`; 24 overlay and chart-grid tests passed, with the
-new regressions confirmed failing before the fix; full frontend, embed,
-and Go binary build. Visual-test skipped for this parser-only change.
+Two related problems:
+- **Auto-sync state is misread.** Argo CD 3 can switch auto-sync off in
+place with `automated.enabled: false`. Radar sees an `automated` block
+and treats the Application as auto-syncing.
+- **Rollback has no follow-up.** After a rollback, nothing tells you
+what was deployed. Nothing warns you that pressing Sync will undo it.
 
-**File**: `web/src/components/resource/PrometheusCharts.overlays.test.ts` (modified, +45/-0)
+## What changes
+
+**1. Rollback works the way argocd-server does it.** argocd-server
+implements rollback as a sync pinned to the history entry. Radar now
+writes the same `operation.sync`, carrying that entry's recorded source
+and revision (or its sources and revisions, for a multi-source app).
+Hooks don't run, the Application's current sync options apply, and prune
+stays off unless you ask for it. Histo
+
+**File**: `docs/gitops.md` (modified, +11/-5)
 ```diff
-@@ -19,4 +19,49 @@ describe('Pod request and limit overlays', () => {
-     } } } }
-     expect(computeRequestLimitLines(resource, 'Deployment', 'cpu')![0].value).toBeCloseTo(1.2)
-   })
+@@ -50,19 +50,21 @@ Per managed resource, in one row:
+ - **Recent events** (5 most recent, namespace-RBAC-filtered) so `ImagePullBackOff`, `FailedScheduling`, webhook denials, PVC pending, etc. show up next to the resource that caused them
+ - **Open** button — drops into the standard resource drawer
+ 
++Resource guidance helpers accept named `{ hazard?, rolledBack? }` context. A supplied sync hazard takes precedence over rollback advice for non-Synced Missing rows and OutOfSync/Missing status explanations, deferring to the sync warning above. A Missing row still reported Synced asks for a refresh.
 +
-+  it.each([
-+    ['1024000m', '2048000m'],
-+    ['1024000000u', '2048000000u'],
-+    ['1024000000000n', '2048000000000n'],
-+    ['1.024k', '2.048k'],
-+    ['1.024K', '2.048K'],
-+  ])('reads memory request %s and limit %s as bytes', (request, limit) => {
-+    const resource = { spec: { containers: [
-+      { resources: { requests: { memory: request }, limits: { memory: limit } } },
-+    ] } }
-+    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
-+      { value: 1024, label: 'request 1KiB', kind: 'request' },
-+      { value: 2048, label: 'limit 2KiB', kind: 'limit' },
-+    ])
-+  })
-+
-+  it('sums binary and millibyte quantities across containers and native sidecars', () => {
-+    const resource = { spec: { template: { spec: {
-+      containers: [{ resources: { requests: { memory: '16Gi' }, limits: { memory: '16Gi' } } }],
-+      initContainers: [{ restartPolicy: 'Always', resources: {
-+        requests: { memory: '1181116006400m' }, limits: { memory: '1073741824000m' },
-+      } }],
-+    } } } }
-+    const lines = computeRequestLimitLines(resource, 'Deployment', 'memory')!
-+    expect(lines[0].value).toBeCloseTo(18360985190.4)
-+    expect(lines[0].label).toBe('request 17.1GiB')
-+    expect(lines[1]).toEqual({ value: 17 * 1024 ** 3, label: 'limit 17.0GiB', kind: 'limit' })
-+  })
-+
-+  it.each(['abcMi', 'abcm', 'abcu', 'abcn', '', undefined])('omits unreadable memory quantities: %s', (memory) => {
-+    const resource = { spec: { containers: [
-+      { resources: { requests: { memory }, limits: { memory } } },
-+    ] } }
-+    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toBeUndefined()
-+  })
-+
-+  it('retains a genuine zero request while omitting a zero limit', () => {
-+    const resource = { spec: { containers: [
-+      { resources: { requests: { memory: '0m' }, limits: { memory: '0m' } } },
-+    ] } }
-+    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
-+      { value: 0, label: 'request 0KiB', kind: 'request' },
-+    ])
-+  })
- })
+ OutOfSync alerts in the Issues band at the top of the page are clickable — they jump to the affected row and highlight it for ~4 seconds.
+ 
+ ### Activity tab
+ 
+-Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline.
++Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
+ 
+ ## Diagnosis pipeline
+ 
+ The Issues band at the top of the detail page surfaces seven classes of problems:
+ 
+ - **Operation failures** (Argo) — the parser recognizes known controller failures (annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.) and rewrites each into a plain-English cause
+-- **Stuck-drift loop** — when sync succeeded but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration)
+-- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below)
++- **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync window. Missing apply/comparison evidence does not establish a loop
++- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below). A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its delayed manual-drift warning after a successful rollback, with guidance to fix or revert Git before syncing again, or keep auto-sync off. Dry runs and failed or pending operations do not qualify. A later operation, including a dry-run, replaces the rollback evidence even if it does not move the app; Radar then returns to ordinary diagnosis. Argo's native rollback and a sync to an older revision have indistinguishable durable operation records, so Radar does not infer a rollback fr
 ```
 
-**File**: `web/src/components/resource/PrometheusCharts.tsx` (modified, +2/-2)
+**File**: `docs/integrations.md` (modified, +1/-1)
 ```diff
-@@ -209,7 +209,7 @@ function collectRuntimeContainers(podSpec: any): any[] {
- const CPU_SUFFIXES: Record<string, number> = { n: 1e-9, u: 1e-6, m: 1e-3 }
- const MEMORY_SUFFIXES: Record<string, number> = {
-   Ki: 1024, Mi: 1024 ** 2, Gi: 1024 ** 3, Ti: 1024 ** 4, Pi: 1024 ** 5, Ei: 1024 ** 6,
--  K: 1e3, M: 1e6, G: 1e9, T: 1e12, P: 1e15, E: 1e18,
-+  n: 1e-9, u: 1e-6, m: 1e-3, k: 1e3, K: 1e3, M: 1e6, G: 1e9, T: 1e12, P: 1e15, E: 1e18,
+@@ -751,7 +751,7 @@ permits the reference or has produced an artifact.
+ **Diagnosis**:
+ - **Per-resource field diff** computed from each resource's `kubectl.kubernetes.io/last-applied-configuration` annotation vs live spec — works for any Argo client-side-applied resource without calling the Argo API
+ - **Recent events** surfaced inline per managed resource (5 most recent, namespace-RBAC-filtered)
+-- **Stuck-drift-loop detector** — flags `sync=OutOfSync ∧ opPhase=Succeeded ∧ auto-sync on ∧ reconciledAt<30min` with the likely cause (mutating webhook, sibling controller, schema migration)
++- **Stuck-drift-loop detector** — flags `sync=OutOfSync ∧ opPhase=Succeeded ∧ applied sources/revisions match the desired comparison ∧ auto-sync on ∧ reconciledAt<30min` with the likely cause (mutating webhook, sibling controller, schema migration)
+ - **Manual-drift detector** — calls out OutOfSync apps with auto-sync disabled
+ - **Argo Application conditions** extracted to issues (ComparisonError, OrphanedResourceWarning, etc.) with type-aware severity and per-condition action text
+ - **Operation-failure parser** recognizes 11 patterns: annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.
+```
+
+**File**: `docs/mcp.md` (modified, +1/-1)
+```diff
+@@ -1281,7 +1281,7 @@ selector change.
+ | `manage_workload` | Restart, scale, or rollback a Deployment, StatefulSet, DaemonSet, or Argo Rollout. Note: `scale` is not supported for DaemonSets. On a Rollout, `rollback` rewrites the pod template and therefore starts a **new** rollout that re-runs every canary step, pause, and analysis — use `manage_rollout` `abort` to revert traffic immediately, or follow the rollback with `promote-full`. | `action` (required: `restart`, `scale`, `rollback`), `kind` (required), `namespace` (required), `name` (required), `replicas` (for scale), `revision` (for rollback — enumerate with `get_resource include=revisions`) |
+ | `manage_rollout` | Drive an Argo Rollout's progressive delivery — the verbs with no Deployment equivalent. `abort` reverts traffic to the last stable version at once without touching spec and stays aborted until retried (the incident-response verb); `retry` clears an abort; `promote` clears the current pause to advance one step; `promote-full` skips all remaining steps, pauses, and analysis (emergency hotfix) — it waits for the controller to observe the current pod template first, so straight after a rollback it may report that the controller has not caught up, which is safe to retry; `skip-step` advances exactly one canary step (canary only). Rollback / restart / scale go through `manage_workload` with `kind=rollout`. | `action` (required: `abort`, `retry`, `promote`, `promote-full`, `skip-step`), `namespace` (required), `name` (required) |
+ | `manage_cronjob` | Trigger, suspend, or resume a CronJob | `action` (required: `trigger`, `suspend`, `resume`), `namespace` (required), `name` (required) |
+-| `manage_gitops` | Manage ArgoCD and FluxCD resources — sync, refresh, terminate, suspend, resume, rollback (Argo), reconcile (Flux), reconcile-with-source (Flux) | `action` (required), `tool` (required: `argocd` or `fluxcd`), `namespace` (required), `name` (required), `kind` (FluxCD only). For `sync`: `revision`, `prune`, `dry_run`, `force`, `apply_only`, `sync_options`. For `rollback` (Argo only): `history_id` (required), `prune`, `dry_run`. Per-action input validation rejects flags that don't apply to the action (e.g. `force` on `suspend`) so callers fail loudly instead of silently. |
++| `manage_gitops` | Manage ArgoCD and FluxCD resources — sync, refresh, terminate, suspend, resume, rollback (Argo), reconcile (Flux), reconcile-with-source (Flux) | `action` (required), `tool` (required: `argocd` or `fluxcd`), `namespace` (required), `name` (required), `kind` (FluxCD only). For `sync`: `revision`, `prune`, `dry_run`, `force`, `apply_only`, `sync_options`. For `rollback` (Argo only): `history_id` (required; the first history entry is 0), `prune`, `dry_run`; refused while the Application has auto-sync enabled; before Argo CD 2.12, rollback across a single-source/multi-source change or of a multi-source entry can deploy the wrong revisions or render nothing; with prune, it can delete resources. This warning applies when the current Application uses `spec.sources` too; Radar does not refuse on controller-version grounds. Per-action input validation rejects flags that don't apply to the action (e.g. `force` on `suspend`) so callers fail loudly instead of silently. |
+ | `manage_node` | Cordon, uncordon, or drain a Kubernetes node. A drain waits by default until the evicted pods are deleted, and reports `outcome` as `complete`, `incomplete`, `unconfirmed` or `started`. Incomplete/unconfirmed results return `partial`: check `errors`, observed `pendingPods`, `unconfirmedPods` and `verificationError`. Expected DaemonSet, static and terminal exclusions are listed in `skippedPods` with `expectedSkip: true`; they do not prevent completion. Completion confirms required workload removal, not overall shutdown safety | `action` (required: `cordon`, `uncordon`, `drain`), `name` (required), `delete_empty_dir_data` (optional, default true), `force` (optional), `wait_for_deletion` (optional, default true), `timeout` (optional, seconds; default 2 minutes when waiting, 60 otherwise) |
+ 
+ Optional write tool (off by default):
+```
+
+**File**: `internal/issues/category.go` (modified, +1/-1)
+```diff
+@@ -407,7 +407,7 @@ func classifyGitOpsReason(reason string, fallback issuesapi.Category) issuesapi.
+ 		return issuesapi.CategoryGitOpsRenderFailed
+ 	case "InvalidSpecError":
+ 		return issuesapi.CategoryGitOpsSpecInvalid
+-	case "OperationFailed", "SyncError", "StuckDriftLoop":
++	case "OperationFailed", "SyncError", "StuckDriftLoop", "RollbackRevisionMismatch":
+ 		return issuesapi.CategoryGitOpsOperationFailed
+ 	case "AutoSyncBlockedEmpty":
+ 		return issuesapi.CategoryGitOpsSyncFailed
+```
+
+**File**: `internal/issues/category_test.go` (modified, +1/-0)
+```diff
+@@ -65,6 +65,7 @@ func TestClassify(t *testing.T) {
+ 		{"argo controller stalled is gitops_stale", classifyInput{Source: SourceProblem, Kind: "StatefulSet", APIGroup: "apps", Reason: "GitOpsControllerStalled"}, issuesapi.CategoryGitOpsStale},
+ 		{"argo comparisons stale rollup is gitops_stale", classifyInput{Source: SourceProblem, Kind: "StatefulSet", APIGroup: "apps", Reason: "GitOpsComparisonsStale"}, issuesapi.CategoryGitOpsStale},
+ 		{"argo comparison stale per-app is gitops_stale", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "ComparisonStale"}, issuesapi.CategoryGitOpsStale},
++		{"argo rollback mismatch", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "RollbackRevisionMismatch"}, issuesapi.CategoryGitOpsOperationFailed},
+ 		{"argo operation failed", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "OperationFailed"}, issuesapi.CategoryGitOpsOperationFailed},
+ 		{"argo comparison error is render", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "ComparisonError"}, issuesapi.CategoryGitOpsRenderFailed},
+ 		{"argo invalid spec", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "InvalidSpecError"}, issuesapi.CategoryGitOpsSpecInvalid},
+```
+
+**File**: `internal/issues/identity_test.go` (modified, +72/-0)
+```diff
+@@ -2,9 +2,15 @@ package issues
+ 
+ import (
+ 	"testing"
++	"time"
+ 
++	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/pkg/issuesapi"
+ 	"github.com/skyhook-io/radar/pkg/subject"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	dynamicfake "k8s.io/client-go/dynamic/fake"
+ )
+ 
+ // ScopeForKind + IssueID determinism/keying now live in (and are tested by)
+@@ -37,6 +43,72 @@ func TestEnrichIdentity_SubjectIsOwnerElseSelf(t *testing.T) {
+ 	}
  }
  
- // NOT a duplicate of @skyhook-io/k8s-ui/utils/format's parseCPUToNanocores /
-@@ -232,7 +232,7 @@ function readQuantity(raw: unknown, category: 'cpu' | 'memory'): number | null {
-   for (const suffix of ['Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei']) {
-     if (s.endsWith(suffix)) return scaleOrNull(s, MEMORY_SUFFIXES[suffix])
-   }
--  for (const suffix of ['K', 'M', 'G', 'T', 'P', 'E']) {
-+  for (const suffix of ['n', 'u', 'm', 'k', 'K', 'M', 'G', 'T', 'P', 'E']) {
-     if (s.endsWith(suffix)) return scaleOrNull(s, MEMORY_SUFFIXES[suffix])
-   }
-   const v = parseFloat(s)
++func TestRollbackOutcomeKeepsDistinctIdentity(t *testing.T) {
++	t.Cleanup(k8s.ResetTestDynamicState)
++	now := time.Now().UTC().Truncate(time.Second)
++	app := &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "argoproj.io/v1alpha1", "kind": "Application",
++		"metadata": map[string]any{"name": "demo", "namespace": "argocd"},
++		"status": map[string]any{
++			"health": map[string]any{"status": "Healthy"},
++			"sync":   map[string]any{"status": "Synced"},
++			"operationState": map[string]any{
++				"phase": "Succeeded", "finishedAt": now.Add(-time.Minute).Format(time.RFC3339),
++				"operation": map[string]any{
++					"info": []any{map[string]any{"name": "radarhq.io/rollback", "value": "true"}},
++					"sync": map[string]any{"revision": "requested"},
++				},
++				"syncResult": map[string]any{"revision": "applied"},
++			},
++		},
++	}}
++	gvr := schema.GroupVersionResource{Group: "argoproj.io", Version: "v1alpha1", Resource: "applications"}
++	client := dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), map[schema.GroupVersionResource]string{gvr: "ApplicationList"}, app)
++	if err := k8s.InitTestDynamicResourceCache(client, []k8s.APIResource{{Group: gvr.Group, Version: gvr.Version, Kind: "Application", Name: gvr.Resource, Namespaced: true, Verbs: []string{"list", "watch"}}}); err != nil {
++		t.Fatal(err)
++	}
++	cache := k8s.GetDynamicResourceCache()
++	if err := cache.EnsureWatching(gvr); err != nil || !cache.WaitForSync(gvr, 2*time.Second) {
++		t.Fatalf("Application cache did not sync: %v", err)
++	}
++	detections := k8s.DetectGitOpsProblems(cache, k8s.GetResourceDiscovery(), "argocd")
++	if len(detections) != 1 || detections[0].Reason != "RollbackRevisionMismatch" {
++		t.Fatalf("want rollback mismatch detection, got %+v", detections)
++	}
++	rollback := fromProblem(detections[0], now, SourceProblem)
++	if rollback.Category != issuesapi.CategoryGitOpsOperationFailed || rollback.Cause == "" || rollback.Action == "" {
++		t.Fatalf("rollback category or diagnosis missing: %+v", rollback)
++	}
++	for _, reason := range []string{"SyncError", "StuckDriftLoop", "OperationFailed"} {
++		t.Run(reason, func(t *testing.T) {
++			current := fromProblem(k8s.Detection{
++				Kind: "Application", Group: gvr.Group, Namespace: "argocd", Name: "demo",
++				Reason: reason, Severity: "critical", Cause: "current failure", Action: "fix current failure",
++			}, now, SourceProblem)
++			if current.Category != rollback.Category {
++				t.Fatalf("want same category, got %q / %q", current.Category, rollback.Category)
++			}
++			if current.ID == rollback.ID {
++				t.Errorf("rollback and %s share issue ID %q", reason, rollback.ID)
++			}
++			grouped := GroupIssues([]Issue{rollback, current})
++			if len(grouped) != 2 {
++				t.Fatalf("rollback and %s collapsed into %d groups: %+v", reason, len(grouped), grouped)
++			}
++			for _, issue := range grouped {
++				if issue.ID == rollback.ID && (issue.Reason != rollback.Reason || issue.Severity != SeverityWarning || issue.Cause != rollback.Cause || issue.Action != rollback.Action) {
++					t.Errorf("grouping changed rollback warning or recovery advice: %+v", issue)
++				}
++			}
++		})
++	}
++	later := k8s.DetectGitOpsProblems(cache, k8s.GetResourceDiscovery(), "argocd")
++	if len(later) != 1 {
++		t.Fatalf("want one rollback detection on next poll, got %+v", later)
++	}
++	assertSameID(t, rollback, fromProblem(later[0], now.Add(time.Hour), SourceProblem))
++}
++
+ // TestEnrichIdentity_DistinctCausesDoNotCollapse pins that two distinct causes
+ // on the same subject+category (a workload missing both a ConfigMap and a
+ // Secret — both missing_config_ref) get DISTINCT ids via the stable
+```
+
+**File**: `internal/k8s/capabilities.go` (modified, +5/-0)
+```diff
+@@ -180,6 +180,11 @@ type FeatureCapabilities struct {
+ 	TrafficRecords        bool `json:"trafficRecords"`        // GET /api/traffic/flows/records
+ 	GitOpsWriteEvidence   bool `json:"gitopsWriteEvidence"`   // POST /api/gitops/write-evidence
+ 	AgentSigninCheck      bool `json:"agentSigninCheck"`      // GET /api/agents/signin
++	// POST /api/argo/applications/{namespace}/{name}/rollback starts a sync to
++	// the history entry (id 0 included), and .../resume also clears
++	// spec.syncPolicy.automated.enabled: false. An older Radar writes an
++	// operation.rollback the API server prunes, and leaves enabled: false set.
++	ArgoRollbackSync bool `json:"argoRollbackSync"`
+ 	// PUT/DELETE /api/resources/{kind}/_/{name} and GET /api/audit/resource/{kind}/_/{name}
+ 	// read "_" as a cluster-scoped resource.
+ 	ClusterScopedPlaceholder bool `json:"clusterScopedPlaceholder"`
+```
+
+**File**: `internal/k8s/detect_gitops.go` (modified, +19/-19)
+```diff
+@@ -11,6 +11,7 @@ import (
+ 	"github.com/skyhook-io/radar/pkg/conditions"
+ 	"github.com/skyhook-io/radar/pkg/gitops"
+ 	"github.com/skyhook-io/radar/pkg/gitops/diagnose"
++	gitopsinsights "github.com/skyhook-io/radar/pkg/gitops/insights"
+ 	"github.com/skyhook-io/radar/pkg/timeutil"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -206,6 +207,7 @@ func gitopsProblem(now time.Time, kind, group, ns, name, severity, reason, messa
+ // Failed operations with a message suppress only their parallel failed-attempt
+ // condition. Independent errors and resource warnings retain their own rows;
+ // Degraded health retains Argo's health message alongside error conditions.
++// The latest rollback outcome is independent of the current health/drift row.
+ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDriftTracker, now time.Time) []Detection {
+ 	var out []Detection
+ 	for _, app := range apps {
+@@ -225,7 +227,9 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 			return fallback
+ 		}
+ 
+-		automated := argoIsAutomated(app)
++		// An automated app is expected to self-heal, so OutOfSync/Missing is a
++		// real failure rather than an operator who hasn't synced a manual app yet.
++		automated := gitops.ArgoAutoSyncEnabled(app)
+ 		outOfSync := strings.EqualFold(sync, "OutOfSync")
+ 		// Track drift continuity for every app before any gate short-circuits the
+ 		// loop, so a suspended-then-resumed or mid-degraded app that stays
+@@ -282,6 +286,15 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 			}
+ 			out = append(out, d)
+ 		}
++		if mismatch := gitopsinsights.DetectArgoRollbackRevisionMismatch(app); mismatch != nil {
++			d := gitopsProblem(now, "Application", argoGroup, ns, name, "warning", mismatch.Reason, mismatch.Message, createdAt)
++			d.Fingerprint = "argo:rollback-revision-mismatch"
++			d.Cause, d.Action = mismatch.Cause, mismatch.Action
++			if transitionAt, ok := argoOperationIssueTime(app, now); ok {
++				setDetectionOnset(&d, now, transitionAt)
++			}
++			out = append(out, d)
++		}
+ 		if strings.EqualFold(health, "Suspended") && !operationFailed {
+ 			continue
+ 		}
+@@ -376,6 +389,10 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 				fmt.Sprintf("Application has been out of sync for %s and auto-sync is not enabled", timeutil.FormatAgeShort(manualDriftFor)), createdAt)
+ 			setDetectionOnset(&dd, now, outOfSyncAt)
+ 			dd.Action = "Review the drift in Changes, then Sync the application (or enable auto-sync) if the drift is unintended."
++			if revision, _ := gitops.ArgoSuccessfulRollback(app); revision != "" {
++				dd.Message = "Last rollback deployed " + revision + "; the live state differs from the desired state and auto-sync is off."
++				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits."
++			}
+ 			if hazard := argoSyncHazardAction(app); hazard != "" {
+ 				dd.Action = hazard
+ 				dd.Hazard = hazard
+@@ -564,7 +581,7 @@ func durationFromTimestamp(now time.Time, ts string) (time.Duration, bool) {
+ // shouldn't-happen guard, not a swallowed error.
+ func isArgoStuckDriftLoop(app *unstructured.Unstructured, now time.Time) bool {
+ 	phase, _, _ := unstructured.NestedString(app.Object, "status", "operationState", "phase")
+-	if !strings.EqualFold(phase, "Succeeded") {
++	if !strings.EqualFold(phase, "Succeeded") || !gitops.ArgoAppliedCurrentComparison(app) {
+ 		return false
+ 	}
+ 	reconciledAt, _, _ := unstructured.NestedString(app.Object, "status", "reconciledAt")
+@@ -581,23 +598,6 @@ func isArgoStuckDriftLoop(app *unstructured.Unstructured, now time.Time) bool {
+ 	return now.Sub(t) <= 30*time.Minute
+ }
+ 
+-// argoIsAutomated reports whether spec.syncPolicy.automated is present — i.e. the
+-// app is expected to self-heal, so OutOfSync/Missing is a real failure rather
+-// than an operator who simply hasn't synced a manual app yet.
+-func argoIsAutomated(app *unstructured.Unstructured) bool {
+-	automated, found, _ := unstructured.NestedMap(app.Object, "spec", "syncPolicy", "automated")
+-	if !found {
+-		return false
+-	}
+-	// Newer Argo CD can disable auto-sync without removing the block, via
+-	// spec.syncPolicy.automated.enabled: false — treat that as manual so an
+-	// intentionally-unsynced app isn't flagged for OutOfSync/Missing.
+-	if enabled, ok, _ := unstructured.NestedBool(automated, "enabled"); ok && !enabled {
+-		return false
+-	}
+-	return true
+-}
+-
+ // argoErrorCondition returns the first status.conditions entry whose type names
+ // an error (ComparisonError / InvalidSpecError / SyncError). Argo writes these
+ // as {type, message} without a status field, so FindFalseCondition can't match
 ```
 
 ---
 
-### Incident Patch 2: `3ffa2c2d` (2026-10-25)
-**Commit Message**: fix(capacity): read milli-suffixed memory quantities as fractions of a byte (#2283)
+### Incident Patch 2: `7ba9c400` (2026-10-31)
+**Commit Message**: README: restore the top-post Product Hunt badge (#2460)
 
-## Description
+The Oct 29 launch is over (finished #8 of the day). Removes the "on
+Product Hunt today" line and puts back the #3 Product of the Day badge
+from the May launch, reverting #2421.
 
-The Capacity page can report cluster memory requests about 1000× too
-high. On one production cluster it showed 1,770,775 GiB requested
-against 3,232 GiB allocatable, while the real sum is about 1,754 GiB.
-
-A memory request may be written with a milli suffix (`1181116006400m` is
-a valid request, and some generators emit it). When the backend sums
-requests, `resource.Quantity.Add` keeps the finest scale, so a single
-milli-suffixed pod makes the whole total serialize in milli-bytes:
-`16Gi` + `1181116006400m` becomes `18360985190400m`.
-`parseMemoryToBytes` had no entry for `m`, `u` or `n`, so it fell
-through to "no suffix = bytes" and read the total as 1000× its value.
-
-The parser now accepts the sub-unit decimal suffixes, so every caller of
-`parseMemoryToBytes` and `formatMemoryString` (Capacity, resource views,
-renderers) reads them correctly.
-
-## Type of change
-
-- [x] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing
-functionality to change)
-- [ ] Documentat
-
-**File**: `packages/k8s-ui/src/utils/format.test.ts` (modified, +7/-0)
+**File**: `README.md` (modified, +1/-3)
 ```diff
-@@ -50,6 +50,13 @@ describe('parseMemoryToBytes', () => {
-     expect(parseMemoryToBytes('1E3')).toBe(1000)
-     expect(formatMemoryString('1e9')).toBe('954 MiB')
-   })
-+
-+  it('reads sub-unit suffixes as fractions of a byte', () => {
-+    expect(parseMemoryToBytes('1181116006400m')).toBeCloseTo(1181116006.4)
-+    expect(parseMemoryToBytes('1000000u')).toBeCloseTo(1)
-+    expect(parseMemoryToBytes('1000000000n')).toBeCloseTo(1)
-+    expect(formatMemoryString('18360985190400m')).toBe('17.1 GiB')
-+  })
- })
+@@ -7,9 +7,7 @@
  
- describe('parseQuantityToNumber', () => {
-```
-
-**File**: `packages/k8s-ui/src/utils/format.ts` (modified, +6/-1)
-```diff
-@@ -141,8 +141,13 @@ export function parseMemoryToBytes(memString: string): number {
-     'Ei': 1024 ** 6,
-   }
+ Radar shows you what's broken in a Kubernetes cluster, why, and what changed: issues, topology, a timeline of events and resource changes, Helm, GitOps, traffic, audit, and upgrade impact. Your AI agent reads the same cluster data and relationships through Radar's MCP server, and Radar can run an AI investigation for you with the agent CLI you already use. It runs on your laptop as a `kubectl` plugin or desktop app, or in-cluster with Helm.
  
--  // Decimal suffixes (powers of 1000)
-+  // Decimal suffixes (powers of 1000). The sub-unit ones are real inputs too:
-+  // a request written as "1288490188800m" is valid, and a sum that includes one
-+  // keeps the milli scale, so a whole cluster's total serializes with "m".
-   const decimalSuffixes: Record<string, number> = {
-+    'n': 1000 ** -3,
-+    'u': 1000 ** -2,
-+    'm': 1000 ** -1,
-     'k': 1000,
-     'K': 1000,
-     'M': 1000 ** 2,
-```
-
----
-
-### Incident Patch 3: `ba8a17a6` (2026-10-25)
-**Commit Message**: Fix touch visibility and failed namespace selection retries
-
-**File**: `packages/k8s-ui/src/components/namespace-switcher/NamespacePicker.test.tsx` (modified, +49/-2)
-```diff
-@@ -1,8 +1,8 @@
- // @vitest-environment jsdom
--import { act, useState, type ReactNode } from 'react'
-+import { act, createRef, useState, type ReactNode } from 'react'
- import { createRoot, type Root } from 'react-dom/client'
- import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
--import { NamespacePicker, type NamespacePickerProps, type NamespaceScopeView } from './NamespacePicker'
-+import { NamespacePicker, type NamespacePickerHandle, type NamespacePickerProps, type NamespaceScopeView } from './NamespacePicker'
+-<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
+-
+-🚀 **We're on Product Hunt today** with Radar's upgraded MCP server and AI investigations. [Come say hi and drop us a comment](https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=text&utm_campaign=ph-launch-2026-10).
++<a href="https://www.producthunt.com/products/radar-7?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_campaign=badge-radar-42edb7b0-e388-4fa8-9ba5-4876c2c0d638" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=1130618&theme=neutral&period=daily" alt="Radar - The missing open-source Kubernetes UI | Product Hunt" width="250" height="54" /></a>
  
- vi.mock('../ui/Tooltip', () => ({
-   Tooltip: ({ children, content }: { children: ReactNode; content: ReactNode }) => (
-@@ -224,6 +224,53 @@ describe('NamespacePicker Only button', () => {
-     expect(document.activeElement).toBe(only)
-   })
- 
-+  it.each(['Only', 'Done', 'Clear all'])('reopens from active namespaces after an unacknowledged %s apply', async (action) => {
-+    const onApply = await open()
-+    if (action === 'Only') {
-+      await act(async () => { onlyButton('team-c').click() })
-+    } else if (action === 'Done') {
-+      await act(async () => { checkbox('team-b').click() })
-+      await act(async () => { doneButton().click() })
-+    } else {
-+      const clear = document.querySelector<HTMLButtonElement>('button[aria-label="Clear namespace selection"]')!
-+      await act(async () => { clear.click() })
-+    }
-+    expect(onApply).toHaveBeenCalledTimes(1)
-+    expect(isOpen()).toBe(false)
-+
-+    await act(async () => { triggerButton().click() })
-+    expect(checkbox('team-a').checked).toBe(true)
-+    expect(checkbox('team-b').checked).toBe(false)
-+    expect(checkbox('team-c').checked).toBe(false)
-+    await act(async () => { document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })) })
-+    expect(onApply).toHaveBeenCalledTimes(1)
-+  })
-+
-+  it('also refreshes the draft when the keyboard shortcut opens the picker', async () => {
-+    const ref = createRef<NamespacePickerHandle>()
-+    const onApply = vi.fn()
-+    await act(async () => { root.render(<NamespacePicker ref={ref} scope={scope} onApply={onApply} />) })
-+    await act(async () => { ref.current?.open() })
-+    await act(async () => { onlyButton('team-c').click() })
-+    await act(async () => { ref.current?.open() })
-+    expect(checkbox('team-a').checked).toBe(true)
-+    expect(checkbox('team-c').checked).toBe(false)
-+    await act(async () => { doneButton().click() })
-+    expect(onApply).toHaveBeenCalledTimes(1)
-+  })
-+
-+  it('keeps current edits if the open shortcut is used while the menu is already open', async () => {
-+    const ref = createRef<NamespacePickerHandle>()
-+    const onApply = vi.fn()
-+    await act(async () => { root.render(<NamespacePicker ref={ref} scope={scope} onApply={onApply} />) })
-+    await act(async () => { ref.current?.open() })
-+    await act(async () => { checkbox('team-b').click() })
-+    await act(async () => { ref.current?.open() })
-+    expect(checkbox('team-a').checked).toBe(true)
-+    expect(checkbox('team-b').checked).toBe(true)
-+    expect(onApply).not.toHaveBeenCalled()
-+  })
-+
-   describe('returning focus after the switch', () => {
-     let setPending: (pending: boolean) => void
- 
-```
-
-**File**: `packages/k8s-ui/src/components/namespace-switcher/NamespacePicker.tsx` (modified, +8/-7)
-```diff
-@@ -151,12 +151,13 @@ export const NamespacePicker = forwardRef<NamespacePickerHandle, NamespacePicker
-     applySelection(draft)
-   }, [applySelection, draft])
- 
--  useImperativeHandle(ref, () => ({
--    open: () => {
--      if (disabled || loading || pending) return
--      setIsOpen(true)
--    },
--  }), [disabled, loading, pending])
-+  const openPicker = useCallback(() => {
-+    if (isOpen || disabled || loading || pending) return
-+    setDraft(new Set(scopeActives))
-+    setIsOpen(true)
-+  }, [isOpen, disabled, loading, pending, scopeActives])
-+
-+  useImperativeHandle(ref, () => ({ open: openPicker }), [openPicker])
- 
-   // Disabling the trigger while a switch is pending drops its focus, so this stays armed through that cycle.
-   useEffect(() => {
-@@ -287,7 +288,7 @@ export const NamespacePicker = forwardRef<NamespacePickerHandle, NamespacePicker
-       >
-         <button
-           ref={triggerRef}
--          onClick={() => !isDisabled && (isOpen ? closeAndApply() : setIsOpen(true))}
-+          onClick={() => !isDisabled && (isOpen ? closeAndApply() : openPicker())}
-           disabled={isDisabled}
-           className={
-             variant === 'segment'
-```
-
-**File**: `packages/k8s-ui/src/components/ui/MultiSelectPicker.test.tsx` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ describe('MultiSelectPicker', () => {
-     expect(only).toContain('group-hover/row:opacity-100')
-     expect(only).toContain('group-has-[:focus-visible]/row:opacity-100')
-     expect(only).toContain('focus-visible:opacity-100')
--    expect(only).toContain('[@media(hover:none)]:opacity-100')
-+    expect(only).toContain('any-pointer-coarse:opacity-100')
-   })
- 
-   it('shows the filter input above the threshold and hides it below', () => {
-```
-
-**File**: `packages/k8s-ui/src/components/ui/MultiSelectPicker.tsx` (modified, +2/-2)
-```diff
-@@ -157,12 +157,12 @@ export function MultiSelectPicker({
-               </span>
-             </label>
-             {onSelectOnly && (
--              // Tailwind's hover: only matches devices that can hover, so touch needs its own rule.
-+              // Touchscreens can coexist with a hover-capable mouse.
-               <button
-                 type="button"
-                 onClick={() => onSelectOnly(item)}
-                 aria-label={`Show only ${item}`}
--                className="shrink-0 mr-2 px-1.5 py-0.5 rounded border border-theme-border bg-theme-surface text-[11px] text-theme-text-secondary hover:bg-theme-elevated hover:text-theme-text-primary opacity-0 transition-opacity group-hover/row:opacity-100 group-has-[:focus-visible]/row:opacity-100 focus-visible:opacity-100 [@media(hover:none)]:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-+                className="shrink-0 mr-2 px-1.5 py-0.5 rounded border border-theme-border bg-theme-surface text-[11px] text-theme-text-secondary hover:bg-theme-elevated hover:text-theme-text-primary opacity-0 transition-opacity group-hover/row:opacity-100 group-has-[:focus-visible]/row:opacity-100 focus-visible:opacity-100 any-pointer-coarse:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-               >
-                 Only
-               </button>
+ [![CI](https://github.com/skyhook-io/radar/actions/workflows/ci.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/ci.yml)
+ [![CodeQL](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2303** (2026-10-25): Keep successfully completed Pods out of condition-based Issues (@nadaverell)
-- **PR #2301** (2026-10-25): Fix memory quantity suffixes in Prometheus chart overlays (@nadaverell)
-- **PR #2300** (2026-10-25): deps: batch soaked Wails, D-Bus, and undici updates (@nadaverell)
-- **PR #2299** (closed): deps(npm): bump undici from 7.29.1 to 7.30.1 (@dependabot[bot])
-- **PR #2296** (2026-10-24): Document audit resource budgets, drain completion and Trivy search (@nadaverell)
-- **PR #2295** (2026-10-24): Add a discoverable What's New skill with companion-repo workflows (@nadaverell)
+- **PR #2460** (2026-10-31): README: restore the top-post Product Hunt badge (@nadaverell)
+- **PR #2442** (2026-10-30): Accept groups sent as repeated headers in proxy mode (@hisco)
+- **PR #2441** (2026-10-30): Prerelease tags publish only the Docker image and Helm chart (@hisco)
+- **PR #2436** (2026-10-29): What's New: Radar v1.19.0 release notes (@nadaverell)
+- **PR #2433** (2026-10-29): README: give MCP and AI investigations equal footing with the UI (@nadaverell)
+- **PR #2432** (2026-10-29): Start an investigation from the Home cluster card (@nadaverell)
 
 ---
 
@@ -2554,55 +2583,33 @@ functionality to change)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. memory quantity suffixes in Prometheus chart overlays (#2301)
+## X. Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state
 
 **RULE**:
-When implementing operations in `web/src/components/resource/PrometheusCharts.overlays.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gitops.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7cacbbcc`: memory quantity suffixes in Prometheus chart overlays (#2301). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9e73f40`: Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state (#2060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/src/components/resource/PrometheusCharts.overlays.test.ts`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gitops.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
+Resource guidance helpers accept named `{ hazard?, rolledBack? }` context. A supplied sync hazard takes precedence over rollback advice for non-Synced Missing rows and OutOfSync/Missing status explanations, deferring to the sync warning above. A Missing row still reported Synced asks for a refresh.
 
-  it.each([
-    ['1024000m', '2048000m'],
-    ['1024000000u', '2048000000u'],
-    ['1024000000000n', '2048000000000n'],
-    ['1.024k', '2.048k'],
-    ['1.024K', '2.048K'],
-  ])('reads memory request %s and limit %s as bytes', (request, limit) => {
-    const resource = { spec: { containers: [
-      { resources: { requests: { memory: request }, limits: { memory: limit } } },
-    ] } }
-    expect(computeRequestLimitLines(resource, 'Pod', 'memory')).toEqual([
-      { value: 1024, label: 'request 1KiB', kind: 'request' },
-      { value: 2048, label: 'limit 2KiB', kind: 'limit' },
-    ])
-  })
-
-  it('sums binary and millibyte quantities across containers and native sidecars', () => {
-    const resource = { spec: { template: { spec: {
-      containers: [{ resources: { requests: { memory: '16Gi' }, limits: { memory: '16Gi' } } }],
-      initContainers: [{ restartPolicy: 'Always', resources: {
-        requests: { memory: '1181116006400m' }, limits: { memory: '1073741824000m' },
-      } }],
-    } } } }
-    const lines = computeRequestLimitLines(resource, 'Deployment', 'memory')!
-    expect(lines[0].value).toBeCloseTo(18360985190.4)
-    expect(lines[0].label).toBe('request 17.1GiB')
-    expec
+Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
+- **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline.
+- **Stuck-drift loop** — when sync succeeded but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration)
+- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7cacbbcc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9e73f40` are properly handled with clean fallback behavior.

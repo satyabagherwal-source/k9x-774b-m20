@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `fe883d1b`  
+> **Source Version**: `77d1bd0e`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T18:15:32.450Z  
+> **Timestamp**: 2026-10-29T23:28:41.818Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T18:15:32.443Z  
+> **Harvest Timestamp**: 2026-10-29T23:28:41.815Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4494 stars
+- **Stars / Engagement**: 4495 stars
 
 ---
 
@@ -992,6 +992,10 @@ impl ImportingDatabaseHandle for ImportingLocalDatabaseHandle {
         import_commit(intent, |typedb_source| LocalServerStateError::DatabaseDataCommitFailed { typedb_source })
     }
 
+    fn try_unwrap(self: Arc<Self>) -> Result<Box<dyn ImportingDatabaseHandle>, Arc<dyn ImportingDatabaseHandle>> {
+        Arc::try_unwrap(self).map(|this| Box::new(this) as _).map_err(|this| this as _)
+    }
+
     fn finalise(self: Box<Self>) -> Result<(), MigrationOperationError> {
         let Self { database_manager, staged_database } = *self;
         let name = staged_database.name().to_owned();
@@ -1053,7 +1057,7 @@ impl LocalDatabaseOperator {
         .await;
     }
 
-    pub fn start_importer(&self, importing_database: Box<dyn ImportingDatabaseHandle>) -> DatabaseImporterHandle {
+    pub fn start_importer(&self, importing_database: Arc<dyn ImportingDatabaseHandle>) -> DatabaseImporterHandle {
         let scratch_directory = self.database_manager.import_directory().to_owned();
         DatabaseImporter::start(
             importing_database,
@@ -1111,12 +1115,7 @@ pub fn get_database_type_schema<D: DurabilityClient>(
 
 #[async_trait]
 impl DatabaseOperator for LocalDatabaseOperator {
-    async fn all(&self) -> Result<Vec<String>, ArcServerStateError> {
-        Ok(self.database_manager.database_names())
-    }
-
-    async fn contains(&self, name: &str) -> Result<bool, ArcServerStateError> {
-        Ok(self.database_manager.database(name).is_some())
+    async fn all(&self) -> Result<Vec<String>, ArcServer
 ```
 
 ### Core Architecture Module: `server/state/mod.rs`
@@ -1835,13 +1834,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8037** (2026-10-24): **Drop HTTP transaction service lock while handling request**
-  *Symptoms*: ## Product change and motivation  TypeDB transactions are designed to allow concurrent read queries to be executed, while writes are exclusive (to prevent read/write issues on the mutable transaction buffer).  This is correctly implemented in gRPC, but did not work in HTTP since we held the service locks while executing queries and other operations. We now drop the lock before handling the user's operation.  ## Implementation  - Clone the TransactionInfo out of the locked services map to unblock other operations. 
-  **Post-Mortem & Fix Analysis**:
-  > TODO: cleanup
+- **Issue #8040** (2026-10-29): **Don't let transaction services excessively hold query manager refs**
+  *Symptoms*: ## Product change and motivation  Fix a server crash when a database is deleted right after a transaction on it commits or closes. The delete could panic with "Cannot get exclusive ownership of inner of Arc<QueryCache>", stopping the server.  ## Implementation  The gRPC and HTTP transaction services kept a strong reference to the transaction's query manager, and with it the database's query cache, until the service ended, up to 500 ms after a commit or close while draining the request stream. `Database::delete` needs exclusive ownership of the query cache, so a delete in that window panicked.  The services now hold the query manager weakly, so it is released together with the transaction on every path.
 
-- **Issue #8036** (2026-10-24): **Fix concurrent read queries within a transaction over HTTP**
-  *Symptoms*: ## Product change and motivation  We fix the implementation of multiple read queries being executed concurrently in HTTP services. Previously, we supported at most 1 read or write query a time. The new behaviour matches gRPC, where multiple read queries can operate concurrently exclusively against 1 write or schema query at a time.  Other changes: - Writes, schema queries, rollback, and close interrupts running read queries - A commit interrupts all running read queries but does finish all queued write queries.  - A failed read or analyse only fails that request. Previously any read error closed the HTTP transaction.  - A commit sent while a write was still running closed the transaction without committing, losing the write, while the write's client was told it had been applied (TSV23). - we fix a crash that occurs during a double 'interrupt' signal internally  ## Implementation  - Keep a set of running concurrently read query handles - Introduce a new common method to 'interrupt' currently running queries, which interrupts & awaits read queries, and waits for writes to finish (without responding to the user).  - `finish_running_write_query_no_transmit` now continues after a successful write instead of always returning Break, as in gRPC.  - `ExecutionInterrupt::check` treats `Lagged` as interrupted, returning the latest interrupt
+- **Issue #8039** (2026-10-28): **Let the HTTP endpoint accept clients without a client certificate, matching gRPC**
+  *Symptoms*: ## Product change and motivation  Sync up the client certificate validation rules between gRPC and HTTP when `ca-certificate` is set. Now, the HTTP endpoint accepts clients without a client certificate, following what the gRPC endpoint already does. Client certificates that clients present are still verified against the CA.  TypeDB drivers, Console, and Studio have no option to send a client certificate. When running a server like this: ``` typedb server --server.encryption.enabled=true --server.encryption.certificate=server.pem \     --server.encryption.certificate-key=server-key.pem --server.encryption.ca-certificate=ca.pem ```  **Before:** - Console and drivers successfully connect over gRPC. - Studio, the HTTP drivers, and `curl --cacert ca.pem https://host:8000/v1/version` fail with `tlsv13 alert certificate required`.  **After:** both protocols accept them.  Setting `ca-certificate` does not make client certificates mandatory on either endpoint: it only rejects clients that present a certificate the CA did not sign. Most databases either use the same allowance pattern or explicitly expose "force client certificate verification" in the server's config. We support what already works in gRPC.  ## Implementation Add `allow_unauthenticated` to the `WebPkiClientVerifier` builder for HTTP. It is the alternative to `tonic`'s `client_auth_optional(true)` when we set a CA certificate.  Ignore the error of installing the default `rustls` crypto provider if a p
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1858,181 +1855,435 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe883d1b` (2026-10-24)
-**Commit Message**: Fix concurrent read queries within a transaction over HTTP (#8036)
+### Incident Patch 1: `77d1bd0e` (2026-10-29)
+**Commit Message**: Don't let transaction services excessively hold query manager refs (#8040)
 
 ## Product change and motivation
 
-We fix the implementation of multiple read queries being executed
-concurrently in HTTP services. Previously, we supported at most 1 read
-or write query a time. The new behaviour matches gRPC, where multiple
-read queries can operate concurrently exclusively against 1 write or
-schema query at a time.
-
-Other changes:
-- Writes, schema queries, rollback, and close interrupts running read
-queries
-- A commit interrupts all running read queries but does finish all
-queued write queries.
-- A failed read or analyse only fails that request. Previously any read
-error closed the HTTP transaction.
-
-- A commit sent while a write was still running closed the transaction
-without committing, losing the write, while the write's client was told
-it had been applied (TSV23).
-- we fix a crash that occurs during a double 'interrupt' signal
-internally
+Fix a server crash when a database is deleted right after a transaction
+on it commits or closes. The delete could panic with "Cannot get
+exclusive ownership of inner of Arc<QueryCache>", stopping the server.
 
 ## Implementation
 
-- Keep a set of running concurrently read query handles
-- Introduce a new common method to 'interrupt' currently running
-queries, which interrupts & awaits read queries, and waits for writes to
-finish (without responding to the user).
-- `fi
+The gRPC and HTTP transaction services kept a strong reference to the
+transaction's query manager, and with it the database's query cache,
+until the service ended, up to 500 ms after a commit or close while
+draining the request stream. `Database::delete` needs exclusive
+ownership of the query cache, so a delete in that window panicked.
 
-**File**: `executor/lib.rs` (modified, +5/-2)
-```diff
-@@ -99,9 +99,12 @@ impl ExecutionInterrupt {
-             Some(signal) => match signal.try_recv() {
-                 Ok(type_) => Some(type_),
-                 Err(TryRecvError::Empty) => None,
--                Err(TryRecvError::Closed) | Err(TryRecvError::Lagged(_)) => {
-+                // If lagged, the interrupt has been triggered multiple times.
-+                // Once we take that error state, we return the latest
-+                Err(TryRecvError::Lagged(_)) => signal.try_recv().ok(),
-+                Err(TryRecvError::Closed) => {
-                     unreachable!(
--                        "Unexpected interrupt signal state. They should never be lagged or closed before cleaning up the receivers."
-+                        "Unexpected interrupt signal state. They should never be closed before cleaning up the receivers."
-                     )
-                 }
-             },
-```
+The services now hold the query manager weakly, so it is released
+together with the transaction on every path.
 
-**File**: `server/service/grpc/transaction_service.rs` (modified, +1/-1)
+**File**: `server/service/grpc/transaction_service.rs` (modified, +6/-6)
 ```diff
-@@ -1206,7 +1206,7 @@ impl TransactionService {
-         given_rows: Option<GivenRowsGrpc>,
-         source_query: String,
-     ) -> JoinHandle<()> {
--        debug_assert!(self.query_queue.is_empty() && self.running_write_query.is_none() && self.transaction.is_some());
-+        debug_assert!(self.running_write_query.is_none() && self.transaction.is_some());
-         let timeout_at = self.timeout_at;
-         let interrupt = self.query_interrupt_receiver.clone();
-         let diagnostics_manager = self.server_state.diagnostics_manager();
-```
-
-**File**: `server/service/http/transaction_service.rs` (modified, +70/-39)
-```diff
-@@ -44,7 +44,7 @@ use tokio::{
-         mpsc::{Receiver, Sender},
-         oneshot,
+@@ -11,7 +11,7 @@ use std::{
+         ControlFlow,
+         ControlFlow::{Break, Continue},
      },
--    task::{JoinHandle, spawn_blocking},
-+    task::{JoinHandle, JoinSet, spawn_blocking},
-     time::Instant,
+-    sync::Arc,
++    sync::{Arc, Weak},
+     time::Duration,
  };
- use tracing::{Level, event};
-@@ -162,6 +162,7 @@ pub(crate) struct TransactionService {
-     query_manager: Option<QueryManager>,
+ 
+@@ -147,7 +147,7 @@ pub(crate) struct TransactionService {
+ 
+     is_open: bool,
+     transaction: Option<Transaction>,
+-    query_manager: Option<Arc<QueryManager>>,
++    query_manager: Weak<QueryManager>,
+     query_queue: VecDeque<(Uuid, QueueOptions, Arc<TypeQLPipeline>, Option<GivenRowsGrpc>, String)>,
+     query_responders: HashMap<Uuid, (JoinHandle<()>, QueryStreamTransmitter)>,
+     running_write_query: Option<(Uuid, JoinHandle<(Transaction, WriteQueryResult)>)>,
+@@ -183,7 +183,7 @@ impl TransactionService {
+ 
+             is_open: false,
+             transaction: None,
+-            query_manager: None,
++            query_manager: Weak::new(),
+             query_queue: VecDeque::with_capacity(20),
+             query_responders: HashMap::new(),
+             running_write_query: None,
+@@ -484,7 +484,7 @@ impl TransactionService {
+             transaction.load_kind(),
+             ClientEndpoint::Grpc,
+         ));
+-        self.query_manager = Some(transaction.query_manager());
++        self.query_manager = Arc::downgrade(&transaction.query_manager());
+         self.transaction = Some(transaction);
+         self.timeout_at = init_transaction_timeout(Some(transaction_timeout_millis));
+         self.is_open = true;
+@@ -769,7 +769,7 @@ impl TransactionService {
+         analyse_req: typedb_protocol::analyze::Req,
+     ) -> Result<ControlFlow<(), ()>, Status> {
+         let query = analyse_req.query;
+-        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
++        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
+             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
+             Ok(ParsedQuery::Schema(_)) => {
+                 let response =
+@@ -813,7 +813,7 @@ impl TransactionService {
+ 
+         let query = query_req.query;
+         let given_rows = query_req.given.map(GivenRowsGrpc);
+-        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
++        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
+             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
+             Ok(ParsedQuery::Schema(schema_query)) => {
+                 // schema queries are handled immediately so there is a query response or a fatal Status
+```
+
+**File**: `server/service/http/transaction_service.rs` (modified, +6/-6)
+```diff
+@@ -11,7 +11,7 @@ use std::{
+         ControlFlow,
+         ControlFlow::{Break, Continue},
+     },
+-    sync::Arc,
++    sync::{Arc, Weak},
+ };
+ 
+ use compiler::query_structure::PipelineStructure;
+@@ -159,7 +159,7 @@ pub(crate) struct TransactionService {
+     timeout_at: Instant,
+ 
+     transaction: Option<Transaction>,
+-    query_manager: Option<QueryManager>,
++    query_manager: Weak<QueryManager>,
      query_queue: VecDeque<(TransactionResponder, QueueOptions, Arc<TypeQLPipeline>, Option<GivenRowsHttp>, String)>,
      running_write_query: Option<(TransactionResponder, JoinHandle<(Transaction, WriteQueryResult)>)>,
-+    running_read_queries: JoinSet<ControlFlow<(), ()>>,
+     running_read_queries: JoinSet<ControlFlow<(), ()>>,
+@@ -256,7 +256,7 @@ impl TransactionService {
+             timeout_at: init_transaction_timeout(None),
  
-     close_sender: Sender<()>,
-     close_receiver: Receiver<()>,
-@@ -258,6 +259,7 @@ impl TransactionService {
-             query_manager: None,
+             transaction: None,
+-            query_manager: None,
++            query_manager: Weak::new(),
              query_queue: VecDeque::with_capacity(20),
              running_write_query: None,
-+            running_read_queries: JoinSet::new(),
+             running_read_queries: JoinSet::new(),
+@@ -292,7 +292,7 @@ impl TransactionService {
+             transaction.load_kind(),
+             ClientEndpoint::Http,
+         ));
+-        self.query_manager = Some(with_readable_transaction!(&transaction, |txn| { (*txn.query_manager).clone() }));
++        self.query_manager = with_readable_transaction!(&transaction, |txn| { Arc::downgrade(&txn.query_manager) });
+         self.transaction = Some(transaction);
+         self.timeout_at = init_transaction_timeout(Some(transaction_timeout_millis));
  
-             close_sender,
-             close_receiver,
-@@ -355,6 +357,9 @@ impl TransactionService {
-                         self.do_close().await;
-                         return;
-                     }
-+                    Some(read_query_result) = self.running_read_queries.join_next(), if !self.running_read_queries.is_empty() => {
-+                        read_query_result.expect("Expected read query completion")
-+                    }
-                     next = self.request_stream.recv() => {
-                         self.handle_next(next).await
-                     }
-@@ -389,15 +394,17 @@ impl TransactionService {
-     }
- 
-     async fn handle_commit(&mut self, responder: TransactionResponder) -> ControlFlow<(), ()> {
--        // finish any running write query, interrupt running queries, clear all running/queued reads, finish all writes
-+        // finish any running write query, interrupt running reads, clear queued reads, finish all queued writes
-         //   note: if any write query errors, the whole transaction errors
-         // finish any active write query
-         if let Break(()) = self.finish_running_write_query_no_transmit(InterruptType::TransactionCommitted).await {
-             return Break(());
+@@ -660,7 +660,7 @@ impl TransactionService {
          }
  
-         // interrupt active queries
--        self.interrupt(InterruptType::TransactionCommitted).await;
-+        if let Break(()) = self.interrupt_running_queries(InterruptType::TransactionCommitted).await {
-+            return Break(());
-+        }
-         if let Break(()) = self.cancel_queued_read_queries(InterruptType::TransactionCommitted).await {
-             respond_error_and_return_break!(responder, TransactionServiceError::QueueCleanupFailed {});
-         }
-@@ -451,12 +458,11 @@ impl TransactionService {
-     }
+         // Step 1 (parse) needs no transaction, so this is safe even while a write holds it.
+-        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
++        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
+             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
+             Ok(ParsedQuery::Schema(schema_query)) => {
+                 // schema queries are handled immediately so there is a query response or a fatal error
+@@ -1215,7 +1215,7 @@ impl TransactionService {
  
-     async fn handle_rollback(&mut self, responder: TransactionResponder) -> ControlFlow<(), ()> {
--        // interrupt all queries, cancel writes, then rollback
--        self.interrupt(InterruptType::TransactionRolledback).await;
--        if let Break(()) = self.cancel_queued_read_queries(InterruptType::TransactionRolledback).await {
-+        // interrupt and finish running queries, cancel queued reads and writes, then rollback
-+        if let Break(()) = self.interrupt_running_queries(InterruptType::TransactionRolledback).await {
-             return Break(());
-         }
--        if let Break(()) = self.finish_running_write_query_no_transmit(InterruptType::TransactionCommitted).await {
-+        if let Break(()) = self.cancel_queued_read_queries(InterruptType::TransactionRolledback).await {
-             return Break(());
-         }
-         if let Break(()) = self.cancel_queued_write_queries(InterruptType::TransactionRolledback).await {
-@@ -496,9 +502,8 @@ impl TransactionService {
-     }
- 
-     async fn do_close(&mut self) {
--        self.interrupt(InterruptType::TransactionClosed).await;
-+        let _ = self.interrupt_running_queries(InterruptType::TransactionClosed).await;
-         let _ = self.cancel_queued_read_queries(InterruptType::TransactionClosed).await;
--        let _ = self.finish_running_write_query_no_transmit(InterruptType::TransactionClosed).await;
-         let _ = self.cancel_queued_write_queries(InterruptType::TransactionClosed).await;
- 
-         match self.transaction.take() {
-@@ -510,6 +515,23 @@ impl TransactionService {
-         self.txn_metrics.take(); // drop -> submit
-     }
- 
-+    async fn interrupt_running_queries(&mut self, interrupt: InterruptType) -> ControlFlow<(), ()> {
-+        self.interrupt(interrupt).await;
-+        let reads = self.finish_running_read_queries().await;
-+        let write = self.finish_running_write_query_no_transmit(interrupt).await;
-+        if reads.is_break() { reads } else { write }
-+    }
+     async fn handle_analyse_query(&mut self, query: String, responder: TransactionResponder) -> ControlFlow<(), ()> {
+         // Step 1 (parse) needs no transaction, so this is safe even while a write holds it.
+-        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
++        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
+             Ok(ParsedQuery::Pipeline(pipeline)) => pipeline,
+             Ok(ParsedQuery::Schema(_)) => {
+                 respond_error_and_return_break!(responder, TransactionServiceError::AnalyseQueryExpectsPipeline {});
+```
+
+---
+
+### Incident Patch 2: `ddc372fc` (2026-10-28)
+**Commit Message**: Let the HTTP endpoint accept clients without a client certificate, matching gRPC (#8039)
+
+## Product change and motivation
+
+Sync up the client certificate validation rules between gRPC and HTTP
+when `ca-certificate` is set. Now, the HTTP endpoint accepts clients
+without a client certificate, following what the gRPC endpoint already
+does. Client certificates that clients present are still verified
+against the CA.
+
+TypeDB drivers, Console, and Studio have no option to send a client
+certificate. When running a server like this:
+```
+typedb server --server.encryption.enabled=true --server.encryption.certificate=server.pem \
+    --server.encryption.certificate-key=server-key.pem --server.encryption.ca-certificate=ca.pem
+```
+
+**Before:**
+- Console and drivers successfully connect over gRPC.
+- Studio, the HTTP drivers, and `curl --cacert ca.pem
+https://host:8000/v1/version` fail with `tlsv13 alert certificate
+required`.
+
+**After:** both protocols accept them.
+
+Setting `ca-certificate` does not make client certificates mandatory on
+either endpoint: it only rejects clients that present a certificate the
+CA did not sign. Most databases either use the same allowance pattern or
+explicitly expos
+
+**File**: `.factory/automation.yml` (modified, +1/-0)
+```diff
+@@ -98,6 +98,7 @@ build:
+         bazel test --config=ci $(bazel query 'kind(rust_test, //function/tests/...)') --test_output=streamed
+         bazel test --config=ci $(bazel query 'kind(rust_test, //ir/tests/...)') --test_output=streamed
+         bazel test --config=ci $(bazel query 'kind(rust_test, //query/tests/...)') --test_output=streamed
++        bazel test --config=ci $(bazel query 'kind(rust_test, //server/tests/...)') --test_output=streamed
+         # TODO: Uncomment!
+         # bazel test --config=ci $(bazel query 'kind(rust_test, //storage/tests/...)') --test_output=streamed
+         bazel test --config=ci //storage/tests:test_mvcc //storage/tests:test_snapshot //storage/tests:test_isolation \
+```
+
+**File**: `server/Cargo.toml` (modified, +4/-0)
+```diff
+@@ -203,3 +203,7 @@
+ [[test]]
+ 	name = "test_admin_service"
+ 	path = "service/admin/admin_service_test.rs"
 +
-+    async fn finish_running_read_queries(&mut self) -> ControlFlow<(), ()> {
-+        let mut control = Continue(());
-+        while let Some(result) = self.running_read_queries.join_next().await {
-+            if let Break(()) = result.expect("Expected read query completion") {
-+                control = Break(());
-+    
++[[test]]
++	name = "test_encryption"
++	path = "tests/encryption.rs"
+```
+
+**File**: `server/error.rs` (modified, +0/-1)
+```diff
+@@ -93,7 +93,6 @@ typedb_error! {
+         HttpCouldNotReadRootCa(21, "Could not read root CA from '{path}' for the HTTP server.", path: String, source: Arc<RustlsCertError>),
+         HttpInvalidRootCa(22, "Invalid root CA for the HTTP server.", source: Arc<RustlsVerifierError>),
+         HttpTlsFailedConfiguration(23, "Failed to configure TLS for the HTTP server.", source: Arc<tokio_rustls::rustls::Error>),
+-        HttpTlsUnsetDefaultCryptoProvider(24, "Failed to install default crypto provider for the HTTP server TLS configuration."),
+         HttpTlsPemFileError(25, "Invalid PEM file specified for the HTTP server.", source: Arc<tokio_rustls::rustls::pki_types::pem::Error>),
+         ServerState(26, "Invalid server state.", typedb_source: ArcServerStateError),
+         AddressResolutionFailed(27, "Could not resolve address '{address}'.", address: String, source: Arc<io::Error>),
+```
+
+**File**: `server/lib.rs` (modified, +5/-5)
+```diff
+@@ -299,7 +299,7 @@ impl Server {
+         background_tasks_spawner: TokioTaskSpawner,
+         admin_serve_override: Option<AdminServeFuture>,
+     ) -> Result<(), ServerOpenError> {
+-        Self::install_default_encryption_provider()?;
++        Self::install_default_encryption_provider();
+ 
+         let mut servers: Vec<Pin<Box<dyn Future<Output = Result<(), ServerOpenError>> + Send>>> = Vec::new();
+ 
+@@ -583,10 +583,10 @@ impl Server {
+         }
+     }
+ 
+-    fn install_default_encryption_provider() -> Result<(), ServerOpenError> {
+-        tokio_rustls::rustls::crypto::ring::default_provider()
+-            .install_default()
+-            .map_err(|_| ServerOpenError::HttpTlsUnsetDefaultCryptoProvider {})
++    fn install_default_encryption_provider() {
++        // `install_default` fails only if a process-wide provider is already installed (by an earlier server in
++        // this process or another crate), which rustls then uses
++        let _ = tokio_rustls::rustls::crypto::ring::default_provider().install_default();
+     }
+ 
+     pub fn server_state(&self) -> Arc<ServerState> {
+```
+
+**File**: `server/parameters/cli.rs` (modified, +2/-1)
+```diff
+@@ -76,7 +76,8 @@ pub struct CLIArgs {
+     #[arg(long = "server.encryption.certificate-key", value_name = "FILE")]
+     pub server_encryption_certificate_key: Option<String>,
+ 
+-    /// Encryption CA in PEM format
++    /// CA certificate in PEM format used to verify client certificates, if clients present one. Clients without a
++    /// certificate are still accepted
+     #[arg(long = "server.encryption.ca-certificate", value_name = "FILE")]
+     pub server_encryption_ca_certificate: Option<String>,
+ 
+```
+
+**File**: `server/service/http/encryption.rs` (modified, +1/-0)
+```diff
+@@ -59,6 +59,7 @@ pub(crate) fn prepare_tls_config(
+             }
+             Some(
+                 WebPkiClientVerifier::builder(Arc::new(client_auth_roots))
++                    .allow_unauthenticated()
+                     .build()
+                     .map_err(|source| ServerOpenError::HttpInvalidRootCa { source: Arc::new(source) })?,
+             )
+```
+
+**File**: `server/tests/BUILD` (added, +35/-0)
+```diff
+@@ -0,0 +1,35 @@
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at https://mozilla.org/MPL/2.0/.
++
++load("@typedb_dependencies//tool/checkstyle:rules.bzl", "checkstyle_test")
++load("@rules_rust//rust:defs.bzl", "rust_test", "rustfmt_test")
++package(default_visibility = ["//visibility:public",])
++
++rust_test(
++    name = "test_encryption",
++    srcs = ["encryption.rs"],
++    data = ["//server:config.yml"],
++    deps = [
++        "//resource",
++        "//server",
++        "//util/test:test_utils",
++
++        "@crates//:tokio",
++        "@crates//:tokio-rustls",
++    ]
++)
++
++rustfmt_test(
++    name = "rustfmt_test",
++    targets = [
++        ":test_encryption",
++    ],
++    size = "small",
++)
++
++checkstyle_test(
++    name = "checkstyle",
++    include = glob(["*"]),
++    license_type = "mpl-header",
++)
+```
+
+**File**: `server/tests/encryption.rs` (added, +308/-0)
+```diff
+@@ -0,0 +1,308 @@
++/*
++ * This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
++ */
++
++use std::{
++    net::{SocketAddr, TcpListener},
++    path::{Path, PathBuf},
++    sync::{Arc, LazyLock},
++    time::Duration,
++};
++
++use resource::distribution_info::DistributionInfo;
++use server::{
++    ServerBuilder,
++    error::ServerOpenError,
++    parameters::config::{ConfigBuilder, DiagnosticsConfig, EncryptionConfig},
++};
++use test_utils::{TempDir, create_tmp_storage_dir};
++use tokio::{
++    io::{AsyncReadExt, AsyncWriteExt},
++    net::TcpStream,
++    sync::{Mutex, watch},
++    task::JoinHandle,
++};
++use tokio_rustls::{
++    TlsConnector,
++    rustls::{
++        ClientConfig, RootCertStore,
++        crypto::ring::default_provider,
++        pki_types::{CertificateDer, PrivateKeyDer, ServerName, pem::PemObject},
++    },
++};
++
++const HTTP2_SETTINGS_FRAME_TYPE: u8 = 0x4;
++
++const DISTRIBUTION_INFO: DistributionInfo =
++    DistributionInfo { logo: "logo", distribution: "TypeDB CE TEST", version: "0.0.0-test" };
++
++// Test-only certificates (EC P-256, valid for 100 years): a CA, a server certificate for 'localhost'
++// and a client certificate signed by it, and a client certificate signed by an unrelated CA.
++const CA_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
++MIIBmjCCAT+gAwIBAgIUeXX3y2t3srD1KO4q/Ywv3akJB9kwCgYIKoZIzj0EAwIw
++GTEXMBUGA1UEAwwOVHlwZURCIHRlc3QgQ0EwIBcNMjYxMDI0MTE1MTQ2WhgPMjEy
++NjA5MzAxMTUxNDZaMBkxFzAVBgNVBAMMDlR5cGVEQiB0ZXN0IENBMFkwEwYHKoZI
++zj0CAQYIKoZIzj0DAQcDQgAEsaqmk8pEQ/L1A1umD3SL6prNHv0PtQl3zfDRG4+n
++LkFGPfXKgK6qh1RxSA47ycTyfBhz4AVFDc7cIxlnZ23zOqNjMGEwHQYDVR0OBBYE
++FJJenktDHldT1kKlwMmTsmgVju6MMB8GA1UdIwQYMBaAFJJenktDHldT1kKlwMmT
++smgVju6MMA8GA1UdEwEB/wQFMAMBAf8wDgYDVR0PAQH/BAQDAgIEMAoGCCqGSM49
++BAMCA0kAMEYCIQCVXDj4G3TIzyycOLyuMMhKSOJ9MA1iEQW5Cnxov78fbwIhAMqr
++QGITAj95W8HgJUPQB0k1cQckY3/CYQL8z2EKglov
++-----END CERTIFICATE-----
++";
++const SERVER_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
++MIIBhjCCASygAwIBAgIJAOFKz6nAUso4MAoGCCqGSM49BAMCMBkxFzAVBgNVBAMM
++DlR5cGVEQiB0ZXN0IENBMCAXDTI2MTAyNDExNTE0NloYDzIxMjYwOTMwMTE1MTQ2
++WjARMQ8wDQYDVQQDDAZzZXJ2ZXIwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAR8
++evgpckA47ayvKObDgQNmo/QGCqvERH7QzTOetMCvgF3nQH19Y1R7eBmCZsf0SQGC
++iRvept3ExEML5CtDhy5Vo2MwYTAUBgNVHREEDTALgglsb2NhbGhvc3QwCQYDVR0T
++BAIwADAdBgNVHQ4EFgQUi+nTDxXwGzpYJfCxs/Lg2n+N98gwHwYDVR0jBBgwFoAU
++kl6eS0MeV1PWQqXAyZOyaBWO7owwCgYIKoZIzj0EAwIDSAAwRQIhAOx/pEZWLwSm
++SR6cJUoC/aBd2kums8nOjrQ13q6UXKE8AiAYZYMPlUuPvFK8dvq2t+ebZuL9H5Cw
++j4E1xCbvELY5Jg==
++-----END CERTIFICATE-----
++";
++const SERVER_KEY: &str = r"-----BEGIN PRIVATE KEY-----
++MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgIu7frd6r4IP7YPHt
++w0bcgaM0bbSmYXkFQk98z2rwRRqhRANCAAR8evgpckA47ayvKObDgQNmo/QGCqvE
++RH7QzTOetMCvgF3nQH19Y1R7eBmCZsf0SQGCiRvept3ExEML5CtDhy5V
++-----END PRIVATE KEY-----
++";
++const CLIENT_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
++MIIBgzCCASmgAwIBAgIJAJC+1oxb+cNJMAoGCCqGSM49BAMCMBkxFzAVBgNVBAMM
++DlR5cGVEQiB0ZXN0IENBMCAXDTI2MTAyNDExNTE0NloYDzIxMjYwOTMwMTE1MTQ2
++WjARMQ8wDQYDVQQDDAZjbGllbnQwWTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAATC
++MmlSIzg5z6paXJ5fNTOOjVGlX5oZeFbfg/VbSxm3DhsDzk4fdvrsr6XMHZmoY619
++9LjlVkkbcMcol0uFqBJfo2AwXjARBgNVHREECjAIggZjbGllbnQwCQYDVR0TBAIw
++ADAdBgNVHQ4EFgQU6P27Vd8bx4cHDIPpNQ1UV4vrhUgwHwYDVR0jBBgwFoAUkl6e
++S0MeV1PWQqXAyZOyaBWO7owwCgYIKoZIzj0EAwIDSAAwRQIgNoN3yA8xmbwI/gIB
++hc1NJaM9djGwneaWEI8Gmx7mUs0CIQCJEW7n3TbAkyj2jMNdUP4cmEbXW2NpFc5i
++GsiWq+92EA==
++-----END CERTIFICATE-----
++";
++const CLIENT_KEY: &str = r"-----BEGIN PRIVATE KEY-----
++MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg0yf6XjsVaFlwWm+m
++lf91GC3ONCTk4LP5kXmpC2CWIG+hRANCAATCMmlSIzg5z6paXJ5fNTOOjVGlX5oZ
++eFbfg/VbSxm3DhsDzk4fdvrsr6XMHZmoY6199LjlVkkbcMcol0uFqBJf
++-----END PRIVATE KEY-----
++";
++const FOREIGN_CLIENT_CERTIFICATE: &str = r"-----BEGIN CERTIFICATE-----
++MIIBkTCCATigAwIBAgIIH0UlCWQWm9cwCgYIKoZIzj0EAwIwITEfMB0GA1UEAwwW
++VHlwZURCIHRlc3QgZm9yZWlnbiBDQTAgFw0yNjEwMjQxMTUxNDZaGA8yMTI2MDkz
++MDExNTE0NlowGTEXMBUGA1UEAwwOZm9yZWlnbi1jbGllbnQwWTATBgcqhkjOPQIB
++BggqhkjOPQMBBwNCAAQ8ugpMgZ9M1qrLezvW7UzqMfWZFEjbe8TJqwxNtKJteno5
++7TQvOB+oMwbLEF8hIdveMgU+6imkY0m2/JfMM2Tzo2AwXjARBgNVHREECjAIggZj
++bGllbnQwCQYDVR0TBAIwADAdBgNVHQ4EFgQUwPsjwJHZtzXICnxFKBLZVXphbhAw
++HwYDVR0jBBgwFoAULCwpqE40qBy/r6dNUERa/3dq7TswCgYIKoZIzj0EAwIDRwAw
++RAIgKStUBM4ErD8W1+zFwxSria4rnou0m/tzhsiG6MfVCL8CIDqKvkYLzN4zwyyH
++iKPV7iDXS/+AxrlYd+J1KVx4X4kH
++-----END CERTIFICATE-----
++";
++const FOREIGN_CLIENT_KEY: &str = r"-----BEGIN PRIVATE KEY-----
++MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgqiMeIW/cpGQP6Qx8
++68LTu+fOn7jG1BFC/8EYL+Mfw7mhRANCAAQ8ugpMgZ9M1qrLezvW7UzqMfWZFEjb
++e8TJqwxNtKJteno57TQvOB+oMwbLEF8hIdveMgU+6imkY0m2/JfMM2Tz
++-----END PRIVATE KEY-----
++";
++
++#[derive(Debug, Clone, Copy)]
++enum Endpoint {
++    Grpc,
++    Http,
++}
++
++const ENDPOINTS: [Endpoint; 2] = [Endpoint::Grpc, Endpoint::Http];
++
++static SERVER_LOCK: LazyLock<Mutex<()>> = LazyLock:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8040** (2026-10-29): Don't let transaction services excessively hold query manager refs (@farost)
+- **PR #8039** (2026-10-28): Let the HTTP endpoint accept clients without a client certificate, matching gRPC (@farost)
 - **PR #8037** (2026-10-24): Drop HTTP transaction service lock while handling request (@flyingsilverfin)
 - **PR #8036** (2026-10-24): Fix concurrent read queries within a transaction over HTTP (@flyingsilverfin)
+- **PR #8035** (2026-10-27): Bound the query caches by query size, not entry count (@caniko)
 - **PR #8033** (2026-10-22): Prepare release 3.14.1 (@flyingsilverfin)
-- **PR #8032** (2026-10-21): Prepare release 3.14.0 (@flyingsilverfin)
-- **PR #8031** (2026-10-21): Fix query planner memory leak (@farost)
-- **PR #8028** (2026-10-17): Prepare for release 3.14.0-rc1 (@farost)
 
 ---
 
@@ -2052,33 +2303,38 @@ finish (without responding to the user).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. concurrent read queries within a transaction over HTTP (#8036)
+## X. Don't let transaction services excessively hold query manager refs (#8040)
 
 **RULE**:
-When implementing operations in `executor/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/service/grpc/transaction_service.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe883d1b`: concurrent read queries within a transaction over HTTP (#8036). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `77d1bd0e`: Don't let transaction services excessively hold query manager refs (#8040). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `executor/lib.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/service/grpc/transaction_service.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // If lagged, the interrupt has been triggered multiple times.
-                // Once we take that error state, we return the latest
-                Err(TryRecvError::Lagged(_)) => signal.try_recv().ok(),
-                Err(TryRecvError::Closed) => {
-                        "Unexpected interrupt signal state. They should never be closed before cleaning up the receivers."
+    sync::{Arc, Weak},
+    query_manager: Weak<QueryManager>,
+            query_manager: Weak::new(),
+        self.query_manager = Arc::downgrade(&transaction.query_manager());
+        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
+        let pipeline = match self.query_manager.upgrade().expect("transaction is open").parse(&query) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                Err(TryRecvError::Closed) | Err(TryRecvError::Lagged(_)) => {
-                        "Unexpected interrupt signal state. They should never be lagged or closed before cleaning up the receivers."
+    sync::Arc,
+    query_manager: Option<Arc<QueryManager>>,
+            query_manager: None,
+        self.query_manager = Some(transaction.query_manager());
+        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
+        let pipeline = match self.query_manager.as_ref().expect("transaction is open").parse(&query) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe883d1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `77d1bd0e` are properly handled with clean fallback behavior.

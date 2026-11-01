@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `6acf1e16`  
+> **Source Version**: `c42dc08b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:29:04.274Z  
+> **Timestamp**: 2026-10-31T01:04:55.583Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:29:03.765Z  
+> **Harvest Timestamp**: 2026-10-31T01:04:55.573Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17054 stars
+- **Stars / Engagement**: 17071 stars
 
 ---
 
@@ -767,11 +767,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17299** (2026-10-26): **docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.0)**
-  *Symptoms*: Cherry-picked docs: replace the MinIO Helm install with the quick-start S3 server (#17246)
+- **Issue #17372** (2026-10-30): **chore(deps): update dependency sass to v1.107.0 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [sass](https://redirect.github.com/sass/dart-sass) | [`1.105.0` → `1.107.0`](https://renovatebot.com/diffs/npm/sass/1.105.0/1.107.0) | ![age](https://developer.mend.io/api/mc/badges/age/npm/sass/1.107.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/npm/sass/1.107.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/npm/sass/1.105.0/1.107.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/sass/1.105.0/1.107.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### Release Notes  <details> <summary>sass/dart-sass (sass)</summary>  ### [`v1.107.0`](https://redirect.github.com/sass/dart-sass/blob/HEAD/CHANGELOG.md#11070)  [Compare Source](https://redirect.github.com/sass/dart-sass/compare/1.106.1...1.107.0)  ##### Command-Line Interface  - The `--fatal-deprecation` flag can now exclude deprecations that would   otherwise be included by passing a version number. To exclude a deprecation,   add `-` before its name. For example, `--fatal-deprecation=1.107.0,-import`   incl
 
-- **Issue #17298** (2026-10-26): **docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.1)**
-  *Symptoms*: Cherry-picked docs: replace the MinIO Helm install with the quick-start S3 server (#17246)  Signed-off-by: YoungjuKim <fjvbn2003@gmail.com>
+- **Issue #17371** (2026-10-30): **chore(deps): update dependency python to 3.15 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [python](https://redirect.github.com/actions/python-versions) | uses-with | minor | `3.14` → `3.15` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### Release Notes  <details> <summary>actions/python-versions (python)</summary>  ### [`v3.15.2`](https://redirect.github.com/actions/python-versions/releases/tag/3.15.2-40340363276): 3.15.2  [Compare Source](https://redirect.github.com/actions/python-versions/compare/3.15.1-39619321210...3.15.2-40340363276)  Python 3.15.2  ### [`v3.15.1`](https://redirect.github.com/actions/python-versions/releases/tag/3.15.1-39619321210): 3.15.1  [Compare Source](https://redirect.github.com/actions/python-versions/compare/3.15.0-38076878863...3.15.1-39619321210)  Python 3.15.1  ### [`v3.15.0`](https://redirect.github.com/actions/python-versions/releases/tag/3.15.0-38076878863): 3.15.0  [Compare Source](https://redirect.github.com/actions/python-versions/compare/3.14.10-40336797752...3.15.0-38076878863)  Python 3.15.0  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -788,619 +788,433 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6acf1e16` (2026-10-26)
-**Commit Message**: chore(deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)
+### Incident Patch 1: `c5b27daf` (2026-10-30)
+**Commit Message**: chore(deps): update step-security/harden-runner action to v2.22.3 (main) (#17347)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `.github/workflows/changelog.yaml` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/cherry-pick-single.yml` (modified, +1/-1)
+```diff
+@@ -47,7 +47,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/cherry-pick.yml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/ci-build.yaml` (modified, +9/-9)
+```diff
+@@ -35,7 +35,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -148,7 +148,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -218,7 +218,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -363,7 +363,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -464,7 +464,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -494,7 +494,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -537,7 +537,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -567,7 +567,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+@@ -614,7 +614,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/dependabot-reviewer.yml` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/devcontainer.yaml` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/docs.yaml` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+**File**: `.github/workflows/pr-feature.yaml` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ jobs:
+     steps:
+       - name: Harden the runner (Audit all outbound calls)
+         if: ${{ vars.disable_harden_runner != 'true' }}
+-        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
++        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+         with:
+           egress-policy: audit
+ 
+```
+
+---
+
+### Incident Patch 2: `8ddad2a3` (2026-10-30)
+**Commit Message**: chore(deps): update dependency decode-uri-component to v0.5.1 [security] (main) (#17357)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 **File**: `ui/yarn.lock` (modified, +3/-3)
 ```diff
-@@ -8386,9 +8386,9 @@ send@~0.19.0, send@~0.19.1:
-     statuses "~2.0.2"
+@@ -3688,9 +3688,9 @@ decode-named-character-reference@^1.0.0:
+     character-entities "^2.0.0"
  
- serialize-javascript@^6.0.2, serialize-javascript@^7.0.5:
--  version "7.1.2"
--  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.2.tgz#0161010a0815dd7b7e011cbc5a3644850b8c2289"
--  integrity sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==
-+  version "7.1.4"
-+  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.4.tgz#477af55bdec0d831fa3b209245f673217fd27380"
-+  integrity sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==
+ decode-uri-component@^0.2.0, decode-uri-component@^0.5.0:
+-  version "0.5.0"
+-  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.5.0.tgz#4592fa1e1d640ec5e2760e2e168ad2ab5f2c9da1"
+-  integrity sha512-1BiQVoK8C9gUbQU6NzAtO/tkz2qOFpEObMWpcFvhx4fYnj4Oc5yzaJN/LD36ihkVUdXyh5ZekzX+yM+ty/SrPg==
++  version "0.5.1"
++  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.5.1.tgz#7f66b25bf435df723f9af55713dcf860a1c297d2"
++  integrity sha512-vWHQkXgg2cE3BB4rR0c+PYw9BCQzLoNIRMI7AunIkZst74tw/vpPp7VLoYtsR/cy1f55g3XDWUslfeCZjiZJyA==
  
- serve-index@^1.9.1:
-   version "1.9.2"
+ deep-diff@^0.3.5:
+   version "0.3.8"
 ```
 
 ---
 
-### Incident Patch 2: `750c81fc` (2026-10-26)
-**Commit Message**: docs: replace the MinIO Helm install with the quick-start S3 server (#17246)
+### Incident Patch 3: `439434a1` (2026-10-30)
+**Commit Message**: fix(executor): allow archive root dir entry in untar path-traversal check (#17064)
 
-Signed-off-by: YoungjuKim <[REDACTED_EMAIL]>
+Signed-off-by: Vilmos Nagy <[REDACTED_EMAIL]>
+Co-authored-by: Claude Sonnet 5 <[REDACTED_EMAIL]>
 
-**File**: `.cspell.json` (modified, +2/-1)
+**File**: `workflow/executor/executor.go` (modified, +10/-4)
 ```diff
-@@ -91,6 +91,7 @@
-     "workflowkey",
-     "workflowtemplate",
-     "workflowtemplates",
--    "zstd"
-+    "zstd",
-+    "pgsty"
-   ]
- }
-```
-
-**File**: `docs/configure-artifact-repository.md` (modified, +11/-22)
-```diff
-@@ -100,38 +100,27 @@ aliyun oss lifecycle --method put oss://my-artifact-bucket lifecycle.json
+@@ -494,7 +494,7 @@ func (we *WorkflowExecutor) unarchiveArtifact(ctx context.Context, art wfv1.Arti
  
- ## Configuring MinIO
- 
--You can install MinIO into your cluster via Helm.
--
--First, [install `helm`](https://helm.sh/docs/intro/install/). Then, install MinIO with the below commands:
-+For a test setup, you can install the S3 compatible server that the [quick start](quick-start.md) uses.
-+It runs `docker.io/pgsty/silo`, a fork of the MinIO server that keeps the S3 API and the `MINIO_*` settings:
- 
- ```bash
--helm repo add minio https://charts.min.io/ # official minio Helm charts
--helm repo update
--helm install argo-artifacts minio/minio --set service.type=LoadBalancer --set fullnameOverride=argo-artifacts
-+kubectl apply -n argo -k "https://github.com/argoproj/argo-workflows//manifests/quick-start/base/minio?ref=v4.1.5"
- ```
- 
--Login to the MinIO UI using a web browser (port 9000) after obtaining the
--external IP using `kubectl`.
-+This creates:
- 
--```bash
--kubectl get service argo-artifacts
--```
-+- a Deployment and a Service named `minio`, with the S3 API on port 9000 and the web console on port 9001
-+- a bucket named `my-bucket`
-+- a Secret named `my-minio-cred` with the keys `accesskey` and `secretkey`, which you can reference from the [artifact repository configuration](artifact-repository-ref.md)
-+
-+The server stores data in the container file system and uses the fixed credentials `admin` and `password`, so do not use it for production artifacts.
- 
--On Minikube:
-+To open the web console, forward the port and log in with these credentials:
- 
- ```bash
--minikube service --url argo-artifacts
-+kubectl -n argo port-forward svc/minio 9001:9001
- ```
- 
--NOTE: When MinIO is installed via Helm, it generates
--credentials, which you will use to login to the UI:
--Use the commands shown below to see the credentials
--
--- `AccessKey`: `kubectl get secret argo-artifacts -o jsonpath='{.data.accesskey}' | base64 --decode`
--- `SecretKey`: `kubectl get secret argo-artifacts -o jsonpath='{.data.secretkey}' | base64 --decode`
--
--Create a bucket named `my-bucket` from the MinIO UI.
--
- If MinIO is configured to use TLS you need to set the parameter `insecure` to `false`. Additionally, if MinIO is protected by certificates generated by a custom CA, you first need to save the CA certificate in a Kubernetes secret, then set the `caSecret` parameter accordingly. This will allow Argo to correctly verify the server certificate presented by MinIO. For example:
- 
- ```bash
-```
-
----
-
-### Incident Patch 3: `f484e700` (2026-10-26)
-**Commit Message**: fix(executor): bound task result retries by time, not by backoff steps (#17212)
-
-Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-Co-authored-by: Tim Collins <[REDACTED_EMAIL]>
-Co-authored-by: Mason Malone <[REDACTED_EMAIL]>
-
-**File**: `cmd/argoexec/executor/init.go` (modified, +1/-0)
-```diff
-@@ -85,6 +85,7 @@ func InitProcess(ctx context.Context, clientConfig clientcmd.ClientConfig) *exec
- 			InitlessPod:                  common.IsInitlessPod(),
- 			RetryBackoff:                 retry.ExecutorRetry(ctx),
- 			ResourceStateCheckInterval:   env.LookupEnvDurationOr(ctx, "RESOURCE_STATE_CHECK_INTERVAL", 5*time.Second),
-+			TaskResultRetryTimeout:       retry.ExecutorTaskResultRetryTimeout(ctx),
- 		},
- 	)
- 	CheckErr(err)
-```
-
-**File**: `docs/environment-variables.md` (modified, +1/-0)
-```diff
-@@ -136,6 +136,7 @@ Gains may vary under load: if the workflow informer is behind the controller's l
- | `EXECUTOR_RETRY_BACKOFF_FACTOR`        | `float`         | `1.6`   | The retry back-off factor when the workflow executor performs retries.                                 |
- | `EXECUTOR_RETRY_BACKOFF_JITTER`        | `float`         | `0.5`   | The retry back-off jitter when the workflow executor performs retries.                                 |
- | `EXECUTOR_RETRY_BACKOFF_STEPS`         | `int`           | `5`     | The retry back-off steps when the workflow executor performs retries.                                  |
-+| `EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS` | `int` | `600` | How long, in seconds, the workflow executor retries each final task result write (outputs, completion) through transient errors before giving up; the placeholder write when the pod starts gives up after 30 seconds whatever this is set to, and progress writes give up after 30 seconds and the executor tries again on the next update; the backoff schedule is fixed and not affected by `EXECUTOR_RETRY_BACKOFF_*`; the value must be positive, and non-positive values use the default. |
- | `REMOVE_LOCAL_ART_PATH`                | `bool`          | `false` | Whether to remove local artifacts.                                                                     |
- | `RESOURCE_STATE_CHECK_INTERVAL`        | `time.Duration` | `5s`    | The time interval between resource status checks against the specified success and failure conditions. |
- 
-```
-
-**File**: `util/retry/retry.go` (modified, +23/-0)
-```diff
-@@ -2,11 +2,13 @@ package retry
- 
- import (
- 	"context"
-+	"math"
- 	"time"
- 
- 	"k8s.io/apimachinery/pkg/util/wait"
- 
- 	envutil "github.com/argoproj/argo-workflows/v4/util/env"
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
- )
- 
- // DefaultRetry is a default retry backoff settings when retrying API calls
-@@ -39,3 +41,24 @@ func ExecutorRetry(ctx context.Context) wait.Backoff {
- 	jitter := envutil.LookupEnvFloatOr(ctx, "EXECUTOR_RETRY_BACKOFF_JITTER", 0.5)
- 	return wait.Backoff{Steps: steps, Duration: duration, Factor: factor, Jitter: jitter}
- }
-+
-+// DefaultExecutorTaskResultRetryTimeout is the default for
-+// ExecutorTaskResultRetryTimeout.
-+const DefaultExecutorTaskResultRetryTimeout = 10 * time.Minute
-+
-+// ExecutorTaskResultRetryTimeout is how long the WorkflowExecutor keeps
-+// retrying transient errors when writing its task result. Values that are
-+// not positive, or too large for a time.Duration, use the default.
-+func ExecutorTaskResultRetryTimeout(ctx context.Context) time.Duration {
-+	const maxSeconds = math.MaxInt64 / int64(time.Second)
-+	seconds := envutil.LookupEnvIntOr(ctx, "EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", int(DefaultExecutorTaskResultRetryTimeout/time.Second))
-+	if seconds <= 0 || int64(seconds) > maxSeconds {
-+		logging.RequireLoggerFromContext(ctx).WithFields(logging.Fields{
-+			"EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS": seconds,
-+			"max":     maxSeconds,
-+			"default": DefaultExecutorTaskResultRetryTimeout,
-+		}).Warn(ctx, "EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS is out of range (1 to max), using the default")
-+		return DefaultExecutorTaskResultRetryTimeout
-+	}
-+	return time.Duration(seconds) * time.Second
-+}
-```
-
-**File**: `util/retry/retry_test.go` (added, +39/-0)
-```diff
-@@ -0,0 +1,39 @@
-+package retry
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/argoproj/argo-workflows/v4/util/logging"
-+)
-+
-+func TestExecutorTaskResultRetryTimeout(t *testing.T) {
-+	ctx := logging.TestContext(t.Context())
-+	t.Run("Default", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("FromEnv", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "90")
-+		assert.Equal(t, 90*time.Second, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("NegativeUsesDefault", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "-1")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("ZeroUsesDefault", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "0")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("TooLargeUsesDefault", func(t *testing.T) {
-+		// 1e10 seconds overflows time.Duration, which tops out near 9.2e9.
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "10000000000")
-+		assert.Equal(t, 10*time.Minute, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+	t.Run("LargestAllowed", func(t *testing.T) {
-+		t.Setenv("EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS", "9223372036")
-+		assert.Equal(t, 9223372036*time.Second, ExecutorTaskResultRetryTimeout(ctx))
-+	})
-+}
-```
-
-**File**: `workflow/executor/executor.go` (modified, +96/-41)
-```diff
-@@ -4,6 +4,7 @@ import (
- 	"archive/tar"
- 	"archive/zip"
- 	"bufio"
-+	"cmp"
- 	"compress/gzip"
- 	"context"
- 	"encoding/json"
-@@ -53,6 +54,27 @@ const (
- 	tempOutArtDir = "/tmp/argo/outputs/artifacts"
- )
- 
-+// defaultTaskResultBackoff spaces out task result retries: the delay grows
-+// until it reaches Cap and then stays there. Only the retry timeout ends
-+// the retries.
-+var defaultTaskResultBackoff = wait.Backoff{
-+	Duration: time.Second,
-+	Factor:   2,
-+	Jitter:   0.1,
-+	Steps:    math.MaxInt32, // the delay only grows while steps remain
-+	Cap:      30 * time.Second,
-+}
-+
-+// defaultInterimResultRetryTimeout limits the retries of the task result
-+// writes before the final ones: InitializeOutput's placeholder and the
-+// progress reports. Neither waits long: a failed placeholder write errors
-+// the step, as it always has, and the progress monitor sends the latest
-+// progress again on its next tick. Waiting would hold up the
-+// deadline monitor and the resource action, which start after
-+// InitializeOutput. 30s is about what every write got before the retry
-+// timeout existed, when the backoff gave up on reaching its cap.
-+const defaultInterimResultRetryTimeout = 30 * time.Second
-+
- // Process holds the state shared by every task an argoexec process runs:
- // API clients, the container runtime, tracing and pod-scoped settings. It
- // is built once per process by NewProcess; the per-task state lives in the
-@@ -84,6 +106,13 @@ type Process struct {
- 	initlessPod                  bool
- 	retryBackoff                 wait.Backoff
- 	resourceStateCheckInterval   time.Duration
-+	// taskResultRetryTimeout limits the retries of the final task result
-+	// writes and interimResultRetryTimeout those of the writes before
-+	// them; taskResultBackoff spaces out the retries of both. NewProcess
-+	// resolves their defaults.
-+	taskResultRetryTimeout    time.Duration
-+	interimResultRetryTimeout time.Duration
-+	taskResultBackoff         wait.Backoff
- }
- 
- // WorkflowExecutor runs one task (one template on one node) within a
-@@ -162,6 +191,10 @@ type ProcessConfig struct {
- 	// ResourceStateCheckInterval is the poll interval for resource template
- 	// state checks (RESOURCE_STATE_CHECK_INTERVAL).
- 	ResourceStateCheckInterval time.Duration
-+	// TaskResultRetryTimeout bounds how long writes to the task result retry
-+	// transient errors (EXECUTOR_TASK_RESULT_RETRY_TIMEOUT_SECONDS); zero means
-+	// retry.DefaultExecutorTaskResultRetryTimeout.
-+	TaskResultRetryTimeout time.Duration
- }
- 
- // TaskConfig carries the per-task values a WorkflowExecutor is constructed
-@@ -259,6 +292,9 @@ func NewProcess(
- 		initlessPod:                  cfg.InitlessPod,
- 		retryBackoff:                 cfg.RetryBackoff,
- 		resourceStateCheckInterval:   cfg.ResourceStateCheckInterval,
-+		taskResultRetryTimeout:       cmp.Or(cfg.TaskResultRetryTimeout, retry.DefaultExecutorTaskResultRetryTimeout),
-+		interimResultRetryTimeout:    defaultInterimResultRetryTimeout,
-+		taskResultBackoff:            defaultTaskResultBackoff,
- 	}, nil
- }
- 
-@@ -1039,15 +1075,7 @@ func (we *WorkflowExecutor) CaptureScriptResult(ctx context.Context) error {
- func (we *WorkflowExecutor) FinalizeOutput(ctx context.Context) {
- 	logger := logging.RequireLoggerFromContext(ctx)
- 	var count uint64
--	err := retryutil.OnError(wait.Backoff{
--		Duration: time.Second,
--		Factor:   2,
--		Jitter:   0.1,
--		Steps:    math.MaxInt32, // effectively infinite retries
--		Cap:      30 * time.Second,
--	}, func(err error) bool {
--		return errorsutil.IsTransientErr(ctx, err)
--	}, func() error {
-+	err := we.retryTaskResult(ctx, we.taskResultRetryTimeout, func(ctx context.Context) error {
- 		err := we.patchTaskResultLabels(ctx, map[string]string{
- 			common.LabelKeyReportOutputsCompleted: "true",
- 		})
-@@ -1065,27 +1093,7 @@ func (we *WorkflowExecutor) FinalizeOutput(ctx context.Context) {
- }
- 
- func (we *WorkflowExecutor) InitializeOutput(ctx context.Context) {
--	logger := logging.RequireLoggerFromContext(ctx)
--	var count uint64
--	err := retryutil.OnError(wait.Backoff{
--		Duration: time.Second,
--		Factor:   2,
--		Jitter:   0.1,
--		Steps:    math.MaxInt32, // effectively infinite retries
--		Cap:      30 * time.Second,
--	}, func(err error) bool {
--		return errorsutil.IsTransientErr(ctx, err)
--	}, func() error {
--		err := we.upsertTaskResult(ctx, wfv1.NodeResult{})
--		if apierr.IsForbidden(err) {
--			logger.WithError(err).WithField("attempt", count).Warn(ctx, "failed to patch task result, see https://argo-workflows.readthedocs.io/en/latest/workflow-rbac/")
--		} else if err != nil && count%20 == 0 {
--			logger.WithError(err).WithField("attempt", count).Warn(ctx, "failed to patch task result")
--		}
--		count++
--		return err
--	})
--	if err != nil {
-+	if err := we.reportResultWithin(ctx, we.interimResultRetryTimeout, wfv1.NodeResult{}); err != nil {
- 		we.AddError(ctx, err)
+ 	switch {
+ 	case isTar:
+-		err = untar(tempArtPath, artPath)
++		err = untar(unarchiveCtx, tempArtPath, artPath)
+ 		_ = os.Remove(tempArtPath)
+ 	case isZip:
+ 		err = unzip(unarchiveCtx, tempArtPath, artPath)
+@@ -751,7 +751,7 @@ func (we *WorkflowExecutor) stageArchiveFile(ctx context.Context, containerName
+ 	// localArtPath now points to a .tgz file, and the archive strategy is *not* tar. We need to untar it
+ 	logger.WithField("path", localArtPath).Info(ctx, "Untarring archive before upload")
+ 	unarchivedArtPath := path.Join(filepath.Dir(localArtPath), art.Name)
+-	err = untar(localArtPath, unarchivedArtPath)
++	err = untar(ctx, localArtPath, unarchivedArtPath)
+ 	if err != nil {
+ 		return "", "", err
  	}
- }
-@@ -1107,18 +1115,17 @@ func (we *WorkflowExecutor) ReportOutputsLogs(ctx context.Context) error {
- 	return we.reportResult(ctx, w
+@@ -1227,7 +1227,8 @@ func isTarball(ctx context.Context, filePath string) (bool, error) {
+ 
+ // untar extracts a tarball to a temporary directory,
+ // renaming it to the desired location
+-func untar(tarPath string, destPath string) error {
++func untar(ctx context.Context, tarPath string, destPath string) error {
++	logger := logging.RequireLoggerFromContext(ctx)
+ 	decompressor := func(src string, dest string) error {
+ 		f, err := os.Open(src)
+ 		if err != nil {
+@@ -1251,7 +1252,12 @@ func untar(tarPath string, destPath string) error {
+ 				continue
+ 			}
+ 			target := filepath.Join(dest, filepath.Clean(header.Name))
+-			if !strings.HasPrefix(target, filepath.Clean(dest)+string(os.PathSeparator)) {
++			cleanDest := filepath.Clean(dest)
++			if target == cleanDest && header.Typeflag == tar.TypeDir {
++				logger.WithFields(logging.Fields{"target": target, "typeflag": header.Typeflag}).Debug(ctx, "extracted archive root directory entry matches destination, skipping")
++				continue
++			}
++			if !strings.HasPrefix(target, cleanDest+string(os.PathSeparator)) {
+ 				return fmt.Errorf("illegal file path: %s", header.Name)
+ 			}
+ 			switch header.Typeflag {
 ```
 
-**File**: `workflow/executor/executor_test.go` (modified, +174/-3)
+**File**: `workflow/executor/executor_test.go` (modified, +176/-2)
 ```diff
-@@ -4,8 +4,10 @@ import (
- 	"archive/tar"
- 	"archive/zip"
- 	"compress/gzip"
-+	"context"
- 	"fmt"
- 	"io"
-+	"math"
- 	"os"
- 	"os/exec"
- 	"path/filepath"
-@@ -18,8 +20,12 @@ import (
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
- 	corev1 "k8s.io/api/core/v1"
-+	apierr "k8s.io/apimachinery/pkg/api/errors"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	k8sruntime "k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/util/wait"
- 	"k8s.io/client-go/kubernetes/fake"
-+	k8stesting "k8s.io/client-go/testing"
- 
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- 	argofake "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/fake"
-@@ -649,9 +655,12 @@ func TestMonitorProgress(t *testing.T) {
- 			Namespace:                    fakeNamespace,
- 			AnnotationPatchTickDuration:  annotationPackTickDuration,
- 			ReadProgressFileTickDuration: readProgressFileTickDuration,
-+			TaskResultRetryTimeout:       90 * time.Second,
- 		},
- 	)
- 	require.NoError(t, err)
-+	assert.Equal(t, 90*time.Second, process.taskResultRetryTimeout)
-+	assert.Equal(t, defaultTaskResultBackoff, process.taskResultBackoff)
- 	we := process.NewExecutor(TaskConfig{
- 		WorkflowName:        fakeWorkflow,
- 		WorkflowUID:         fakeWorkflowUID,
-@@ -748,9 +757,11 @@ func TestReportOutputs(t *testing.T) {
- 		require.NoError(t, err)
- 		we := WorkflowExecutor{
- 			Process: &Process{
--				RuntimeExecutor:  &mockRuntimeExecutor,
--				taskResultClient: mockTaskResultClient,
--				Tracing:          tracing,
-+				RuntimeExecutor:        &mockRuntimeExecutor,
-+				taskResultClient:       mockTaskResultClient,
-+				Tracing:                tracing,
-+				taskResultRetryTimeout: time.Minute,
-+				taskResultBackoff:      defaultTaskResultBackoff,
- 			},
- 			Template: templateWithArtifacts,
- 		}
-@@ -762,6 +773,166 @@ func TestReportOutputs(t *testing.T) {
- 	})
+@@ -408,14 +408,15 @@ func TestUnzip(t *testing.T) {
  }
  
-+// newFlakyTaskResultExecutor returns an executor whose task result API
-+// fails with a transient error until outage has passed (forever if
-+// outage is negative). Retries are scaled down to milliseconds: the
-+// backoff reaches its cap after 15ms.
-+func newFlakyTaskResultExecutor(t *testing.T, outage, retryTimeout time.Duration) (*WorkflowExecutor, *argofake.Clientset) {
-+	t.Helper()
+ func TestUntar(t *testing.T) {
 +	ctx := logging.TestContext(t.Context())
-+	tr, err := tracing.New(ctx, `argoexec`)
-+	require.NoError(t, err)
-+	clientset := argofake.NewClientset()
-+	start := time.Now()
-+	clientset.PrependReactor("*", "workflowtaskresults", func(k8stesting.Action) (bool, k8sruntime.Object, error) {
-+		if outage < 0 || time.Since(start) < outage {
-+			return true, nil, apierr.NewServiceUnavailable("API server unavailable")
-+		}
-+		return false, nil, nil
-+	})
-+	return &WorkflowExecutor{
-+		Process: &Process{
-+			taskResultClient:          clientset.ArgoprojV1alpha1().WorkflowTaskResults(fakeNamespace),
-+			Tracing:                   tr,
-+			taskResultRetryTimeout:    retryTimeout,
-+			interimResultRetryTimeout: retryTimeout,
-+			taskResultBackoff:         wait.Backoff{Duration: time.Millisecond, Factor: 2, Steps: math.MaxInt32, Cap: 10 * time.Millisecond},
-+		},
-+		workflow: fakeWorkflow,
-+		nodeID:   fakeNodeID,
-+	}, clientset
-+}
-+
-+func TestDefaultTaskResultBackoff(t *testing.T) {
-+	backoff := defaultTaskResultBackoff
-+	backoff.Jitter = 0
-+	delay := backoff.DelayFunc()
-+	var delays []time.Duration
-+	for range 8 {
-+		delays = append(delays, delay())
-+	}
-+	s := time.Second
-+	assert.Equal(t, []time.Duration{1 * s, 2 * s, 4 * s, 8 * s, 16 * s, 30 * s, 30 * s, 30 * s}, delays)
-+}
-+
-+func TestTaskResultRetries(t *testing.T) {
-+	t.Run("OutageLongerThanTimeoutFails", func(t *testing.T) {
-+		ctx := logging.TestContext(t.Context())
-+		we, _ := newFlakyTaskResultExecutor(t, -1, 100*time.Millisecond)
-+
-+		start := time.Now()
-+		err := we.reportResult(ctx, wfv1.NodeResult{Progress: "1/2"})
-+		require.Error(t, err)
-+		assert.True(t, apierr.IsServiceUnavailable(err), "returns the last API error, got %v", err)
-+		require.ErrorContains(t, err, "gave up writing task result after 100ms: ")
-+		assert.GreaterOrEqual(t, time.Since(start), 100*time.Millisecond)
-+
-+		we.InitializeOutput(ctx)
-+		we.FinalizeOutput(ctx)
-+		assert.Len(t, we.errors, 2)
-+	})
-+	t.Run("InterimWritesUseTheirOwnLimit", func(t *testing.T) {
-+		ctx := logging.TestContext(t.Context())
-+		we, _ := newFlakyTaskResultExecutor(t, -1, time.Minute)
-+		we.interimResultRetryTimeout = 50 * time.Millisecond
-+
-+		start := time.Now()
-+		we.InitializeOutput(ctx)
-+		assert.Less(t, time.Since(start), 10*time.Second)
-+		require.Len(t, we.errors, 1)
-+		assert.True(t, apierr.IsServiceUnavailable(we.errors[0]), "got %v", we.errors[0])
-+	})
-+	t.Run("OutagePastBackoffCapButShorterThanTimeoutSucceeds", func(t *testing.T) {
-+		ctx := logging.TestContext(t.Context())
-+		we, clientset := newFlakyTaskResultExecutor(t, 200*time.Millisecond, time.Minute)
-+
-+		require.NoError(t, we.reportResult(ctx, wfv1.NodeResult{Progress: "1/2"}))
-+		result, err := clien
-```
-
-**File**: `workflow/executor/postmain_test.go` (modified, +104/-0)
-```diff
-@@ -1,16 +1,25 @@
- package executor
+ 	tarPath := "testdata/file.tar.gz"
+ 	destPath := "testdata/untarredDir"
+ 	filePath := "testdata/untarredDir/file"
+ 	linkPath := "testdata/untarredDir/link"
+ 	emptyDirPath := "testdata/untarredDir/empty-dir"
  
- import (
-+	"bytes"
-+	"context"
-+	"os"
-+	"path/filepath"
-+	"sync"
-+	"sync/atomic"
- 	"testing"
-+	"time"
+ 	// test
+-	err := untar(tarPath, destPath)
++	err := untar(ctx, tarPath, destPath)
+ 	require.NoError(t, err)
  
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/mock"
- 	"github.com/stretchr/testify/require"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
- 	"k8s.io/apimachinery/pkg/types"
- 	"k8s.io/client-go/kubernetes/fake"
- 
- 	wfv1 "github.com/argoproj/argo-workflows/v4/pkg/apis/workflow/v1alpha1"
- 	argofake "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/fake"
-+	typedv1alpha1 "github.com/argoproj/argo-workflows/v4/pkg/client/clientset/versioned/typed/workflow/v1alpha1"
- 	"github.com/argoproj/argo-workflows/v4/util/logging"
- 	utilretry "github.com/argoproj/argo-workflows/v4/util/retry"
- 	"github.com/argoproj/argo-workflows/v4/workflow/executor/mocks"
-@@ -33,6 +42,10 @@ func newTestPostMainExecutor(t *testing.T, tmpl wfv1.Template, mockRuntime *mock
- 			Tracing:            tracingObj,
- 			memoizedConfigMaps: map[string]string{},
- 			retryBackoff:       utilretry.ExecutorRetry(ctx),
-+			// The defaults NewProcess would set.
-+			taskResultRetryTimeout:    utilretry.DefaultExecutorTaskResultRetryTimeout,
-+			interimResultRetryTimeout: defaultInterimResultRetryTimeout,
-+			taskResultBackoff:         defaultTaskResultBackoff,
- 		},
- 		workflow:    fakeWorkflow,
- 		workflowUID: types.UID(fakeWorkflowUID),
-@@ -135,3 +148,94 @@ func TestPostMain_WaitErrorIsAggregated(t *testing.T) {
- 	err := we.PostMain(ctx, ctx, false)
- 	require.Error(t, err, "Wait error must surface via HasError")
+ 	// check untarred contents
+@@ -447,6 +448,178 @@ func TestUntar(t *testing.T) {
+ 	require.NoError(t, err)
  }
-+
-+// serialTaskResults wraps a task result client and records how many writes
-+// were in flight at once. Progress writes stall until their ctx ends, as
-+// they would against an API server that has stopped answering.
-+type serialTaskResults struct {
-+	typedv1alpha1.WorkflowTaskResultInterface
-+	progressStarted chan struct{}
-+	startOnce       sync.Once
-+	progressWrites  atomic.Int32
-+
-+	mu          sync.Mutex
-+	inFlight    int
-+	maxInFlight int
+ 
++func buildTarGz(t *testing.T, path string, entries []struct {
++	header  tar.Header
++	content string
++},
++) {
++	t.Helper()
++	f, err := os.Create(path)
++	require.NoError(t, err)
++	defer f.Close()
++	gw := gzip.NewWriter(f)
++	tw := tar.NewWriter(gw)
++	for _, e := range entries {
++		h := e.header
++		if e.content != "" {
++			h.Size = int64(len(e.content))
++		}
++		require.NoError(t, tw.WriteHeader(&h))
++		if e.content != "" {
++			_, err := tw.Write([]byte(e.content))
++			require.NoError(t, err)
++		}
++	}
++	require.NoError(t, tw.Close())
++	require.NoError(t, gw.Close())
 +}
 +
-+func (c *serialTaskResults) begin() (end func()) {
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	c.inFlight++
-+	c.maxInFlight = max(c.maxInFlight, c.inFlight)
-+	return func() {
-+		c.mu.Lock()
-+		defer c.mu.Unlock()
-+		c.inFlight--
++func TestUntarRootDirEntryIsNoOp(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++
++	// rootDirEntryNames are the spellings tar writers use for the archive root:
++	// GNU/BSD `tar -C <dir> .` writes "./", Python's tarfile.add(".") writes ".".
++	var rootDirEntryNames = []string{"./", "."}
++
++	for _, rootName := range rootDirEntryNames {
++		t.Run(rootName, func(t *testing.T) {
++			tmpDir := t.TempDir()
++			tarPath := filepath.Join(tmpDir, "dataset.tar.gz")
++			destDir := filepath.Join(tmpDir, "dest")
++
++			buildTarGz(t, tarPath, []struct {
++				header  tar.Header
++				content string
++			}{
++				{header: tar.Header{Name: rootName, Typeflag: tar.TypeDir, Mode: 0o755}},
++				{header: tar.Header{Name: "./file.txt", Typeflag: tar.TypeReg, Mode: 0o644}, content: "hello"},
++				{header: tar.Header{Name: "./subdir/", Typeflag: tar.TypeDir, Mode: 0o755}},
++				{header: tar.Header{Name: "./subdir/nested.txt", Typeflag: tar.TypeReg, Mode: 0o644}, content: "nested"},
++			})
++
++			err := untar(ctx, tarPath, destDir)
++			require.NoError(t, err)
++
++			// The root entry must not add anything: dest holds exactly the archive's children.
++			entries, err := os.ReadDir(destDir)
++			require.NoError(t, err)
++			names := make([]string, 0, len(entries))
++			for _, e := range entries {
++				names = append(names, e.Name())
++			}
++			assert.Equal(t, []string{"file.txt", "subdir"}, names)
++
++			content, err := os.ReadFile(filepath.Join(destDir, "file.txt"))
++			require.NoError(t, err)
++			assert.Equal(t, "hello", string(content))
++
++			content, err = os.ReadFile(filepath.Join(destDir, "subdir", "nested.txt"))
++			require.NoError(t, err)
++			assert.Equal(t, "nested", string(content))
++		})
 +	}
 +}
 +
-+func (c *serialTaskResults) stallProgress(ctx context.Context) error {
-+	c.progressWrites.Add(1)
-+	c.startOnce.Do(func() { close(c.progressStarted) })
-+	<-ctx.Done()
-+	return ctx.Err()
-+}
++// A `tar -C <dir> .` archive of a directory holding a single file goes through
++// unpack()'s single-entry branch, which renames that entry to destPath. This
++// pins the existing behaviour: dest becomes the file, not a directory holding it.
++func TestUntarRootDirEntrySingleChild(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
 +
-+func (c *serialTaskResults) Create(ctx context.Context, tr *wfv1.WorkflowTaskResult, opts metav1.CreateOptions) (*wfv1.WorkflowTaskResult, error) {
-+	end := c.begin()
-+	defer end()
-+	if tr.Progress != "" {
-+		return nil, c.stallProgress(ctx)
++	// rootDirEntryNames are the spellings tar writers use for the archive root:
++	// GNU/BSD `tar -C <dir> .` writes "./", Python's tarfile.add(".") writes ".".
++	var rootDirEntryNames = []string{"./", "."}
++
++	for _, rootName := range rootDirEntryNames {
++		t.Run(rootName, func(t *testing.T) {
++			tmpDir := t.TempDir()
++			tarPath := filepath.Join(tmpDir, "dataset.tar.gz")
++			destDir := filepath.Join(tmpDir, "dest")
++
++			buildTarGz(t, tarPath, []struct {
++				header  tar.Header
++				content string
++			}{
++				{header: tar.Header{Name: rootName, Typeflag: tar.TypeDir, Mode: 0o755}},
++				{header: tar.Header{Name: "./file.txt", Typeflag: tar.TypeReg, Mode: 0o644}, content: "hello"},
++			})
++
++			err := untar(ctx, tarPath, destDir)
++			require.NoError(t, err)
++
++			fi, err := os.Stat(destDir)
++			require.NoError(t, err)
++			assert.True(t, fi.Mode().IsRegular(), "dest should be the single extracted file")
++
++			content, err := os.ReadFile(destDir)
++			require.NoError(t, err)
++			assert.Equal(t, "hello", string(content))
++		})
 +	}
-+	return c.WorkflowTaskResultInterface.Create(ctx, tr, opts)
 +}
 +
-+func (c *serialTaskResults) Patch(ctx context.Context, name string, pt types.PatchType, data []byte, opts metav1.PatchOptions, subresources ...string) (*wfv1.WorkflowTaskResult, error) {
-+	end := c.begin()
-+	defer end()
-+	if bytes.Contains(data, []byte(`"progress"`)) {
-+		return nil, c.stallProgress(ctx)
++func TestUntarRootEntryNonDirRejected(t *testing.T) {
++	ctx := logging.TestContext(t.Context())
++
++	tests := []struct {
++		name    string
++		header  tar.Header
++		content string // tar disallows body data on non-regular entries (e.g. symlinks)
++		wantErr string
++	}{
++		{
++			name:    "regular file at root",
++			header:  tar.Header{Name: ".", Typeflag: tar.TypeReg, Mode: 0o644},
++			content: "pwned",
++			wantErr: "illegal file path: .",
++		},
++		{
++			name:    "symlink at root",
++			header:  tar.Header{Name: ".", Typeflag: tar.TypeSymlink, Linkname: "/etc/passwd", Mode: 0o777},
++			wantErr: "illegal file path: .",
++		},
 +	}
-+	return c.WorkflowTaskResultInterface.Patch(ctx, name, pt, data, opts, subresources...)
-+}
 +
-+// TestPostMain_ProgressReportsStopBeforeFinalReports verifies that main
-+// exiting while a progress report is stuck retrying stops the progress
-+// monitor, and cuts off the stuck report, before the final reports write
-+// the same task result. Both Collect variants are covered; the pod layouts
-+// differ only in Prepare.
-+func TestPostMain_ProgressReportsStopBeforeFinalReports(t *testing.T) {
-+	for name, tmpl := range map[string]wfv1.Template{
-+		"Container": {Name: "container-tmpl"},
-+		"Resource":  {Name: "resource-tmpl", Resource: &wfv1.ResourceTemplate{Action: "get"}},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			ctx := logging.TestContext(t.Context())
-+			mockRuntime := &mocks.ContainerRuntimeExecutor{}
-+			we := newTestPostMainExecutor(t, tmpl, mockRuntime)
-+			taskResults := &serialTaskResults{WorkflowTaskResultInterface: we.taskResultClient, progressStarted: make(chan struct{})}
-+			we.taskResultClient = taskResults
-+			we.annotationPatchTickDuration = time.Millisecond
-+			we.readProgressFileTickDuration = time.Millisecond
-+			we.progressFile = filepath.Join(t.TempDir(), "progress")
-+			require.NoError(t, os.WriteFile(we.progressFile, []byte("1/2\n"), 0o600))
-+			// main exits while a progress report is stuck.
-+			mockRuntime.On("Wait", mock.Anything, []string{"main"}).Run(func(mock.Arguments) {
-+				select {
-+				case <-taskResults.progressStarted:
-+				case <-time.After(10 * time.Second):
-+				}
-+			}).Return(nil)
-+
-+			require.NoError(t, we.PostMain(ctx, ctx, false))
-+			we.FinalizeOutput(ctx)
-+			progressWrites := taskResults.progressWrites.Load()
-+			require.Positive(t, progressWrites, "no progress report was made")
-+			time.Sleep(20 * time.Millisecond) // many progress ticks
-+			assert.Equal(t, progressWrites, taskResults.progressWrites.Load(), "progress reports continued afte
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			tmpDir := t.TempDir()
++			tarPath := filepath.Join(tmp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17299** (2026-10-26): docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.0) (@Joibel)
-- **PR #17298** (2026-10-26): docs: replace the MinIO Helm install with the quick-start S3 server (cherry-pick #17246 for 4.1) (@argo-cd-cherry-pick-bot[bot])
-- **PR #17297** (2026-10-26): chore(deps): update dependency serialize-javascript to v7.1.3 [security] (main) (@renovate[bot])
-- **PR #17274** (2026-10-22): docs: update CHANGELOG.md for v4.0.15 (@github-actions[bot])
-- **PR #17273** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.1) (@Joibel)
-- **PR #17271** (2026-10-22): fix(build): install Go 1.26 in the Windows builder, not an exact patch (release-4.0) (@Joibel)
+- **PR #17372** (2026-10-30): chore(deps): update dependency sass to v1.107.0 (main) (@renovate[bot])
+- **PR #17371** (2026-10-30): chore(deps): update dependency python to 3.15 (main) (@renovate[bot])
+- **PR #17370** (2026-10-30): chore(deps): update dependency markdownlint-cli to v0.50.0 (main) (@renovate[bot])
+- **PR #17369** (2026-10-30): chore(deps): update module github.com/klauspost/compress to v1.20.3 (main) (@renovate[bot])
+- **PR #17368** (2026-10-30): chore(deps): update module github.com/aws/aws-sdk-go-v2/config to v1.33.12 (main) (@renovate[bot])
+- **PR #17367** (2026-10-30): chore(deps): update dependency eslint-plugin-prettier to v5.5.7 (main) (@renovate[bot])
 
 ---
 
@@ -1420,32 +1234,28 @@ Co-authored-by: Mason Malone <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency serialize-javascript to v7.1.3 [security] (#17297)
+## X. deps): update step-security/harden-runner action to v2.22.3 (main) (#17347)
 
 **RULE**:
-When implementing operations in `ui/yarn.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/changelog.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6acf1e16`: deps): update dependency serialize-javascript to v7.1.3 [security] (#17297). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c5b27daf`: deps): update step-security/harden-runner action to v2.22.3 (main) (#17347). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/yarn.lock`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/changelog.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  version "7.1.4"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.4.tgz#477af55bdec0d831fa3b209245f673217fd27380"
-  integrity sha512-FqlEuoTq/zRmA4Lg6aOqyH3lCHbUtCB0bmHCeFniX2GBdDqMJM3FwdvEhlE5Pim1dlt2FfBdVPmUNNiGhhKqpw==
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-  version "7.1.2"
-  resolved "https://registry.yarnpkg.com/serialize-javascript/-/serialize-javascript-7.1.2.tgz#0161010a0815dd7b7e011cbc5a3644850b8c2289"
-  integrity sha512-GL2BWwVa6JydKO6l/ljVgjAZF4QJ3S7dWDWi53s5GZT8PJzD2fNxi67HANQGKAqPrwEpL5ba7gUBGi0Ls/sEoQ==
+        uses: step-security/harden-runner@ccd8616d44fd3846e67624a50d5aad6d37bf2d25 # v2.22.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6acf1e16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c5b27daf` are properly handled with clean fallback behavior.

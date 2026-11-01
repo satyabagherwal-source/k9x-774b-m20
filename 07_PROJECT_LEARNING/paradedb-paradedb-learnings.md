@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `1b30ad1b`  
+> **Source Version**: `6e3efd5a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:45:40.059Z  
+> **Timestamp**: 2026-10-31T10:27:16.232Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:45:40.051Z  
+> **Harvest Timestamp**: 2026-10-31T10:27:16.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9445 stars
+- **Stars / Engagement**: 9464 stars
 
 ---
 
@@ -770,7 +770,7 @@ impl LazyWeight {
         )
     }
 
-    fn get(&self) -> &dyn Weight {
+    pub(super) fn get(&self) -> &dyn Weight {
         self.weight
             .get_or_init(|| {
                 self.query
@@ -2301,11 +2301,11 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6885** (2026-10-21): **Regex search on one large segment ignores cancel until the segment is done**
-  *Symptoms*: # What happens?  When a serial Top-K scan runs a `pdb.regex` query on one large segment, `pg_cancel_backend` waits until that segment is searched. The search phase checks for interrupts once per segment (`segments_to_query` in `top_k.rs`). Tantivy walks the term dictionary and opens the matching postings with no check in between. One segment means one check.  On a 20M row table with one segment, the query below runs 18 s. A cancel sent at 1 s landed after 13.8 s. With the same table split into 10 segments, the query runs 8.3 s and the cancel landed in 0.18 s.  Found on 0.26.2 while we looked for paths that hold interrupts (see #6881). Big single segments are what the merger produces on large tables, so this isn't an artificial shape.  ## To Reproduce  1. Start `paradedb/paradedb:0.26.2-pg18` and connect. 2. In session 1, build the table and run the query.  ```sql SET maintenance_work_mem = '2GB'; CREATE TABLE docs AS SELECT i AS id, md5(i::text) || ' ' || md5((i * 7)::text) || ' common words here' AS body FROM generate_series(1, 20000000) AS i; CREATE INDEX docs_idx ON docs USING bm25 (id, body) WITH (target_segment_count = 1); VACUUM ANALYZE docs;  SET max_parallel_workers_per_gather = 0; SELECT id FROM docs WHERE body @@@ pdb.regex('.*abc.*') ORDER BY id DESC LIMIT 10; ```  3. In session 2, right after the `SELECT` starts, run `SELECT pg_cancel_backend(<session 1 pid>);`. 4. Session 1 reports the cancel about 14 s later. Rebuild the index with `target_segment_count = 10` an
+- **Issue #7091** (2026-10-30): **Hash-join InList pushdown disabled when build-side join key contains NULL**
+  *Symptoms*: ### What happens?  If the build side of a hash join has a NULL key, the `InList` dynamic filter is never pushed down as a `TermSetQuery`. The probe side falls back to a full scan + `PreFilter`.  Cause: `try_convert_in_list_to_query` (`scan/pre_filter.rs`) collects terms into `Option<Vec<Term>>`, and `from_scalar` returns `None` for a NULL, so one NULL rejects the whole list. NULLs can just be skipped, since they never match in a non-negated `IN` / inner join.  ### To Reproduce  Stackoverflow benchmark, 100k posts:  ```sql SELECT b.name, COUNT(*) FROM stackoverflow_posts p JOIN badges b ON b.user_id = p.owner_user_id WHERE p.body ||| 'postgres' GROUP BY b.name ORDER BY COUNT(*) DESC LIMIT 10; ```  118 matching posts, 1 with `owner_user_id IS NULL`. No pushdown, and the `badges` scan reads all ~5.95M docs.  With NULLs skipped:  | term | before | after | |---|---|---| | postgres | 115 ms | 43 ms | | regex | 133 ms | 54 ms |  ### Environment  - OS: Linux x86_64 - Version: pg_search 0.26.0 (`main` @ 1a4c5ecd9) - pg_search extension, PG18 
 
-- **Issue #6884** (2026-10-19): **IVF training ignores cancel and terminate during CREATE INDEX and merges**
-  *Symptoms*: # What happens?  When a vector index trains its IVF centroids, the backend ignores `pg_cancel_backend` and `pg_terminate_backend` until training ends. `SuperKMeansIvfClusterer::train` calls `superkmeans::train_owned`, which has no interrupt hook. The assign step after it polls `wants_cancel` in `mvcc.rs`. That reads `QueryCancelPending` but not `ProcDiePending`, so a cancel lands there and a terminate doesn't.  Background merges attach the same clusterer (`SearchIndexMerger::open`). A merger that is training ignores `SIGTERM` the same way, and a fast shutdown waits for it.  Measured on 0.26.2 with `CREATE INDEX` on 1M rows of `vector(512)` and `target_segment_count = 1`. The build reports `train=29264 assign=22265 encode=21265` ms.  | Phase | `pg_cancel_backend` | `pg_terminate_backend` | |---|---|---| | train (29 s) | waits for train to end | waits for train and assign to end | | assign (22 s) | lands in 0.6 s | waits for assign to end | | encode (21 s) | lands in 0.1 s | lands in 0.1 s |  A terminate sent during training landed after 41.7 s. A cancel sent during training landed after 14.4 s, when the phase ended. Training time grows with rows times dims, so I'd expect a few million 1536-dim rows to train for minutes.  Found while we looked for paths that hold interrupts (see #6881). A fix needs two parts, I think. `wants_cancel` should also test `ProcDiePending`, and the clusterer needs a check between splits, which `superkmeans` doesn't expose today.  ## To Reproduce  1. S
+- **Issue #7079** (2026-10-29): **qgen aggregate join test silently falls back because rating is not indexed**
+  *Symptoms*: ## Problem  `generated_aggregate_join` is intended to exercise ParadeDB aggregate pushdown, but its shared qgen fixture deliberately leaves `rating` unindexed for heap-filter coverage. The test nevertheless generates `MIN(users.rating)` and `MAX(users.rating)`. ParadeDB correctly warns that the aggregate argument is not columnar indexed and falls back to PostgreSQL execution.  The test checks result equivalence without checking that the intended DataFusion aggregate path was selected. This lets fallback silently satisfy the test until it becomes slow enough to time out.  ## Evidence  The October 28 Enterprise Antithesis run reported a 60-second statement timeout for `generated_aggregate_join::case_2_churn`, while the harness reported a declared fault pause. This was an execution timeout, not an observed result mismatch.  Run: `7ca15ed5f6be3f861d09eecbb6d51d93-64-10`   Session: `f2b3d1701ab837ac4536d5d15a64a47c-64-10`   Qgen setup seed: `8222010017877383816`  Replayed the full SQL below on pg_search 0.26.3:  - Original fixture: valid warning that `users.rating` is not columnar indexed; PostgreSQL hash FULL JOINs and a sequential search filter. Results matched the baseline locally. - Adding only `rating` to the generated indexes: **ParadeDB Aggregate Scan, Backend: DataFusion**, with both FULL JOINs in the DataFusion physical plan. Results still matched.  This confirms a fixture/coverage problem in qgen. It does not establish a ParadeDB planner bug: the warning correctly descri
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2322,1594 +2322,682 @@ static mut PREV_PLANNER_HOOK: pg_sys::planner_hook_type = None;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `185c6094` (2026-10-24)
-**Commit Message**: fix: make merges and VACUUM's merger wait interruptible (#6740)
+### Incident Patch 1: `3c13589a` (2026-10-30)
+**Commit Message**: fix: omit graph dependencies from Stressgres runtime image (#7129)
 
-## Summary
+The Stressgres runtime image installs Fontconfig and its font/XML
+dependencies for graph generation, although Antithesis only needs the
+workload runner. Make graph generation a default-enabled Cargo feature
+and disable it in the Docker build. Normal source builds retain the
+graph command; the image retains UI, headless, auto, and CSV commands.
 
-Make segment merges and VACUUM's wait for mergers interruptible. No
-on-disk format or merge-policy change.
+Remove the graphics development packages from the builder and
+libfontconfig1 from the runtime. Debian's package resolver confirms this
+avoids eight runtime packages: libfontconfig1, libexpat1, libfreetype6,
+libpng16-16t64, libbrotli1, fontconfig-config, fonts-dejavu-core, and
+fonts-dejavu-mono. Keep the libraries needed by PostgreSQL TLS and the
+copied psql client, plus Bash and flock for Antithesis scripts.
 
-Stacked: reclaiming the output of a merge that stops early is #6981,
-which builds on this branch.
+Document that the image disables graph generation. A temporary
+runtime-dependency smoke step passed in GitHub Actions and was then
+removed; the existing Docker test remains unchanged.
 
-## Problem
+Validation: built the full ARM64 DST Docker image with Rust 1.99.0 and
+ran the temporary runtime smoke step successfully, both locally and in
+GitHub Actions. Stressgres/headless/CSV help,
 
-A merger holds a shared buffer content lock for the entire merge.
-Content locks are LWLocks, so interrupts are deferred while it is held:
-a cancel or SIGTERM stops the merge only at tantivy's next
-`wants_cancel()` poll, the writer-level interrupt check between polls
-never fires, and the ERROR is raised only after the lock is released.
-VACUUM's wait for the exclusive content lock cannot be cancelled at all.
-
-A heavyweight page lock instead (an earlier revision of this PR) queues
-new mergers behind a waiting VACUUM, which stops foreground
-backpressure. Dropping the coordination is not an option: VACUUM must
-wait for admitted mergers before selecting segments, and its final
-reader/merger barrier must survive.
-
-## Coordination objects
-
-| Object | Who holds it | What it protects |
-|---|---|---|
-| **MergeLock**, the merge page's exclusive content lock | Mergers
-during selection and completion; VAC
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `docker/Dockerfile.stressgres` (modified, +3/-5)
 ```diff
-@@ -5120,6 +5120,7 @@ dependencies = [
-  "pgrx",
-  "pgrx-tests",
-  "postcard",
-+ "postgres",
-  "proptest 1.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
-  "prost 0.14.4",
-  "rand 0.10.3",
+@@ -24,9 +24,6 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
+     pkg-config \
+     libpq-dev \
+     libssl-dev \
+-    libpng-dev \
+-    libjpeg-dev \
+-    libfontconfig1-dev \
+     curl \
+     postgresql-client \
+     && rm -rf /var/lib/apt/lists/*
+@@ -46,7 +43,7 @@ RUN cargo fetch --manifest-path /home/app/Cargo.toml && \
+     TARGET="$(rustc -vV | sed -n 's/^host: //p')" && \
+     env "CARGO_TARGET_$(echo "$TARGET" | tr 'a-z-' 'A-Z_')_RUSTFLAGS=-Ccodegen-units=1 -Cpasses=sancov-module -Cllvm-args=-sanitizer-coverage-level=3 -Cllvm-args=-sanitizer-coverage-trace-pc-guard -Clink-args=-Wl,--build-id" \
+         cargo build --offline --profile dst --target "$TARGET" \
+-        --manifest-path /home/app/Cargo.toml -p stressgres --features dst && \
++        --manifest-path /home/app/Cargo.toml -p stressgres --no-default-features --features dst && \
+     cp "/home/app/target/$TARGET/dst/stressgres" /tmp/stressgres && \
+     cp /usr/lib/postgresql/17/bin/psql /tmp/psql
+ 
+@@ -59,10 +56,11 @@ FROM debian:trixie-slim AS runtime
+ # Upgrade the runtime packages so a rebuild picks up all available Debian
+ # security fixes. psql is used by the Antithesis setup/verification scripts;
+ # util-linux provides flock for the recovery-liveness script.
++# Graph generation is disabled in this image, avoiding Fontconfig and its
++# transitive font/XML dependencies. Normal source builds retain graph support.
+ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+     bash \
+     ca-certificates \
+-    libfontconfig1 \
+     libpq5 \
+     libreadline8t64 \
+     libssl3t64 \
 ```
 
-**File**: `docs/project/changelog/unreleased/6740.stability.mdx` (added, +5/-0)
+**File**: `stressgres/Cargo.toml` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+- Fixed delayed cancellation and termination during segment merges and made VACUUM's wait for mergers interruptible, while preserving foreground merging during that wait. VACUUM's buffer-pin waits support cancellation and `statement_timeout`, not `lock_timeout`.
+@@ -9,6 +9,8 @@ license = { workspace = true }
+ workspace = true
+ 
+ [features]
++default = ["graph"]
++graph = ["dep:image", "dep:plotters"]
+ dst = ["dst/enabled"]
+ 
+ [dependencies]
+@@ -22,12 +24,12 @@ cursive_table_view = "0.15.0"
+ dst = { path = "../dst" }
+ human_bytes = "0.4.3"
+ humantime = "2.3.0"
+-image = "0.25.9"
++image = { version = "0.25.9", optional = true }
+ libc = "0.2.190"
+ openssl = "0.10.78"
+ parking_lot = "0.12.5"
+ pgrx-pg-config = "=0.19.3"
+-plotters = "0.3.7"
++plotters = { version = "0.3.7", optional = true }
+ postgres = "0.19.13"
+ postgres-openssl = "0.5.3"
+ rust_decimal = { version = "1.43.0", features = ["db-postgres"] }
 ```
 
-**File**: `nix/pg_search.nix` (modified, +1/-1)
+**File**: `stressgres/README.md` (modified, +1/-1)
 ```diff
-@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-TqEOOJfxgTFZD6j2RP/joQv9KxdBFOm3df1cONsZcY0=";
-+  cargoHash = "sha256-gPXpWm9uw86JdlVgQTQ9HcheWmnjIbrF3ES3x5a+a9s=";
+@@ -49,7 +49,7 @@ To run Stressgres from within Docker, use:
+ docker run --rm paradedb/stressgres:latest /symbols/stressgres headless stressgres/suites/single-node-planner-paths.toml
+ ```
  
-   inherit cargo-pgrx postgresql;
+-The source, including all suites, is included in the Docker image. The image prebuilds Stressgres at `/symbols/stressgres` and can run in air-gapped environments like Antithesis.
++The image includes the suites and a prebuilt Stressgres binary at `/symbols/stressgres`, and can run in air-gapped environments like Antithesis. It disables the `graph` feature to omit native font dependencies.
+ 
+ For an interactive shell:
  
 ```
 
-**File**: `pg_search/Cargo.toml` (modified, +1/-0)
+**File**: `stressgres/src/cli.rs` (modified, +2/-0)
 ```diff
-@@ -113,5 +113,6 @@ superkmeans = { git = "https://github.com/paradedb/superkmeans-rs", package = "s
+@@ -76,6 +76,7 @@ pub enum Command {
+     Headless(HeadlessArgs),
  
- [dev-dependencies]
- pgrx-tests.workspace = true
-+postgres = "0.19.14"
- rstest = "0.27.0"
- proptest = "1.11.0"
+     /// Parse a log file and generate metric graphs from the contained data
++    #[cfg(feature = "graph")]
+     Graph(GraphArgs),
+ 
+     /// Parse a log file and generate an aggregated CSV report of contained data
+@@ -136,6 +137,7 @@ pub struct HeadlessArgs {
+ }
+ 
+ /// Arguments for parsing a log file and generating the desired charts.
++#[cfg(feature = "graph")]
+ #[derive(Debug, Args)]
+ pub struct GraphArgs {
+     /// Path to the log file produced by a headless run.
 ```
 
-**File**: `pg_search/src/index/writer/index.rs` (modified, +2/-0)
+**File**: `stressgres/src/main.rs` (modified, +2/-0)
 ```diff
-@@ -633,6 +633,8 @@ impl Mergeable for SearchIndexMerger {
-         // We cannot call `check_for_interrupts!()` here because `merge_index` in
-         // `postgres/merge.rs` relies on `merge_segments` returning `Err` so it can remove its
-         // `MergeEntry` before unwinding (see https://github.com/paradedb/paradedb/issues/6962).
-+        // The block writers underneath do check for interrupts; an entry orphaned by such an
-+        // ERROR is retired by `MergeEntry::is_live` once its xmin is no longer in progress.
-         let new_segment = writer.merge_foreground(segment_ids, true)?;
- 
-         if let Some(new_segment) = new_segment.as_ref() {
-```
-
-**File**: `pg_search/src/postgres/delete.rs` (modified, +13/-15)
-```diff
-@@ -103,28 +103,24 @@ pub unsafe extern "C-unwind" fn ambulkdelete(
-         callback(&mut ctid, callback_state)
-     };
- 
--    // First, we need an exclusive lock on the CLEANUP_LOCK. Once we get it, we know that there
--    // are no concurrent merges happening. We signal background merge workers via an advisory lock
--    // so they exit early and we don't wait for long-running merges to complete.
-+    // Signal background merge workers via an advisory lock so they yield between candidates.
-     // Open metadata before taking the signal to keep the lock window small.
-     let mut metadata = MetaPage::open(&index_relation);
-     let signal = Rc::new(RefCell::new(Some(
-         VacuumSignal::new(index_relation.oid()).lock(),
-     )));
-     let signal_finally = signal.clone();
- 
--    // Ensure the signal advisory lock is released if a PostgreSQL ERROR
--    // occurs while acquiring cleanup_lock_exclusive.
--    let cleanup_lock = PgTryBuilder::new(AssertUnwindSafe(|| {
--        // Acquire cleanup_lock - blocks until workers release
--        let cleanup_lock = metadata.cleanup_lock_exclusive();
-+    // AdvisoryLock's Drop skips the unlock while an ERROR unwinds, so release the signal here.
-+    let merge_lock = PgTryBuilder::new(AssertUnwindSafe(|| {
-+        let merge_lock = metadata.acquire_merge_lock_for_cleanup();
- 
-         // Workers have exited - release signal
-         if let Some(lock) = signal.borrow_mut().take() {
-             drop(lock);
+@@ -21,6 +21,7 @@ mod auto;
+ mod cli;
+ mod csv;
+ mod fault_tolerance;
++#[cfg(feature = "graph")]
+ mod graph;
+ mod headless;
+ mod metrics;
+@@ -121,6 +122,7 @@ fn main() -> anyhow::Result<()> {
          }
  
--        cleanup_lock
-+        merge_lock
-     }))
-     .finally(move || {
-         // Release signal if error occurred before we released it
-@@ -134,23 +130,22 @@ pub unsafe extern "C-unwind" fn ambulkdelete(
-     })
-     .execute();
- 
--    // take the MergeLock
--    let merge_lock = metadata.acquire_merge_lock();
--
-     // garbage_collect reclaims stale entries (owning backend exited or transaction ended) left
-     // behind by a cancelled or crashed merge.
-     //
-     // We don't assert the list is empty afterwards. A merge that errored between writing its
-     // MergeEntry and removing it leaves a not-yet-recyclable entry (backend alive, xmin in
-     // progress) that survives garbage_collect. Such an entry is a harmless leftover, not a
--    // concurrent merge -- we hold the CLEANUP_LOCK exclusively, and a live merge holds it shared
--    // for its whole duration -- and a later garbage_collect reclaims it.
-+    // concurrent merge: the cleanup acquisition above waited out admitted mergers and MergeLock
-+    // blocks new selection. A later garbage_collect reclaims it.
-     merge_lock
-         .merge_list()
-         .garbage_collect(pg_sys::ReadNextFullTransactionId());
- 
-     let mutable_segments = metadata.freeze_mutable_segments();
--    drop(cleanup_lock);
-+
-+    #[cfg(feature = "pg_test")]
-+    crate::postgres::storage::coordination_test::vacuum_setup_pause();
- 
-     let reader = SearchIndexReader::empty(&index_relation, MvccSatisfies::Vacuum)
-         .expect("ambulkdelete: should be able to open a SearchIndexReader");
-@@ -164,6 +159,9 @@ pub unsafe extern "C-unwind" fn ambulkdelete(
-     // It's important to drop the merge lock after the `vacuum_sentinel` is pinned
-     drop(merge_lock);
- 
-+    #[cfg(feature = "pg_test")]
-+    crate::postgres::storage::coordination_test::vacuum_pause();
-+
-     let mut old_metas = Vec::new();
-     let mut new_metas = Vec::new();
- 
-```
-
-**File**: `pg_search/src/postgres/insert.rs` (modified, +4/-3)
-```diff
-@@ -443,9 +443,10 @@ pub fn insertcleanup(state: &InsertState, mode: InsertMode) {
-         if created_segment {
-             do_merge(
-                 &state.indexrel,
--                MergeStyle::Insert,
--                Some(pg_sys::GetCurrentFullTransactionId()),
--                Some(pg_sys::ReadNextFullTransactionId()),
-+                MergeStyle::Insert {
-+                    current_xid: pg_sys::GetCurrentFullTransactionId(),
-+                    next_xid: pg_sys::ReadNextFullTransactionId(),
-+                },
-             )
-             .expect("should be able to merge");
+         // When using the "graph" subcommand.
++        #[cfg(feature = "graph")]
+         Command::Graph(graph_args) => {
+             graph::run(&graph_args)?;
          }
-```
-
-**File**: `pg_search/src/postgres/merge.rs` (modified, +50/-49)
-```diff
-@@ -25,10 +25,10 @@ use crate::postgres::locks::AdvisoryLock;
- use crate::postgres::ps_status::{MERGING, set_ps_display_suffix};
- use crate::postgres::storage::LinkedItemList;
- use crate::postgres::storage::block::{MVCCEntry, SegmentMetaEntry};
--use crate::postgres::storage::buffer::{Buffer, BufferManager};
-+use crate::postgres::storage::buffer::BufferManager;
- use crate::postgres::storage::fsm::FreeSpaceManager;
- use crate::postgres::storage::merge::MergeLock;
--use crate::postgres::storage::metadata::MetaPage;
-+use crate::postgres::storage::metadata::{MergePins, MetaPage};
- 
- use pgrx::bgworkers::*;
- use pgrx::pg_sys::panic::CaughtError;
-@@ -85,23 +85,27 @@ fn merge_crash_details(caught: &CaughtError) -> Option<serde_json::Value> {
-     }))
- }
- 
--#[derive(Debug, Clone, Copy, PartialEq, Eq)]
--#[repr(u8)]
-+#[derive(Debug, Clone, Copy)]
- pub(crate) enum MergeStyle {
--    Insert,
-+    /// An INSERT created a segment. A foreground merge runs inside that statement's transaction
-+    /// and publishes under these ids.
-+    Insert {
-+        current_xid: pg_sys::FullTransactionId,
-+        next_xid: pg_sys::FullTransactionId,
-+    },
-+    /// VACUUM finished; only a background merge may follow.
-     Vacuum,
- }
- 
--impl TryFrom<u8> for MergeStyle {
--    type Error = anyhow::Error;
--
--    fn try_from(value: u8) -> Result<Self, Self::Error> {
--        Ok(match value {
--            0 => MergeStyle::Insert,
--            1 => MergeStyle::Vacuum,
--            _ => anyhow::bail!("invalid merge style: {value}"),
--        })
--    }
-+/// Who runs a merge, which decides what happens between candidates.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub(crate) enum MergeMode {
-+    /// Runs inside the statement that triggered it: ignores the VACUUM signal and returns blocks
-+    /// to the FSM once, after the last candidate.
-+    Foreground,
-+    /// Runs in a background worker: yields to a waiting VACUUM between candidates and returns
-+    /// blocks to the FSM after each one.
-+    Background,
- }
- 
- #[repr(C)]
-@@ -279,7 +283,7 @@ impl IndexLayerSizes {
- /// We need backpressure if there are more than 2 mutable segments present during an insert
- #[inline]
- fn need_backpressure(style: MergeStyle, segment_metas: LinkedItemList<SegmentMetaEntry>) -> bool {
--    if style != MergeStyle::Insert {
-+    if !matches!(style, MergeStyle::Insert { .. }) {
-         return false;
-     }
- 
-@@ -298,12 +302,7 @@ fn need_backpressure(style: MergeStyle, segment_metas: LinkedItemList<SegmentMet
- ///
- /// First merge into the smaller layers in the foreground,
- /// then launch a background worker to merge down the larger layers.
--pub unsafe fn do_merge(
--    index: &PgSearchRelation,
--    style: MergeStyle,
--    current_xid: Option<pg_sys::FullTransactionId>,
--    next_xid: Option<pg_sys::FullTransactionId>,
--) -> anyhow::Result<()> {
-+pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
-     // don't kick off merges for invalid indexes
-     if !index.is_valid() {
-         return Ok(());
-@@ -315,7 +314,7 @@ pub unsafe fn do_merge(
-     // apply backpressure if there are too many mutable segments
-     // this means forcing a foreground merge of the mutable segments
-     let need_backpressure = need_backpressure(style, metadata.segment_metas());
--    let cleanup_lock = metadata.cleanup_lock_shared();
-+    let merge_pins = metadata.pin_merge();
-     let merge_lock = metadata.acquire_merge_lock();
-     let foreground_layer_sizes = layer_sizes.foreground_layer_sizes.clone();
- 
-@@ -339,10 +338,13 @@ pub unsafe fn do_merge(
-         // if we need (and think we can do) a background merge then we prefer to do that
-         // we no longer need to hold the [`MergeLock`] as we're not merging in the foreground
-         drop(merge_lock);
--        drop(cleanup_lock);
-+        drop(merge_pins);
- 
-         try_launch_background_merger(index, largest_layer_size);
--    } else if style == MergeStyle::Insert
-+    } else if let MergeStyle::Insert {
-+        current_xid,
-+        next_xid,
-+    } = style
-         && (!foreground_layer_sizes.is_empty() || need_backpressure)
-     {
-         let foreground_layer_sizes = if foreground_layer_sizes.is_empty() {
-@@ -355,11 +357,10 @@ pub unsafe fn do_merge(
-             index,
-             foreground_merge_policy,
-             merge_lock,
--            cleanup_lock,
--            false,
--            false,
--            current_xid.expect("foreground merging requires a current transaction id"),
--            next_xid.expect("foreground merging requires a next transaction id"),
-+            merge_pins,
-+            MergeMode::Foreground,
-+            current_xid,
-+            next_xid,
-         );
- 
-         // The foreground merge only covers the foreground layers, so the background layers still
-@@ -476,7 +477,7 @@ unsafe extern "C-unwind" fn background_merge(arg: pg_sys::Datum) {
-         let layer_sizes = IndexLayerSizes::from(&index);
-         let merge_policy = LayeredMergePolicy::new(laye
 ```
 
 ---
 
-### Incident Patch 2: `ae0f70b0` (2026-10-24)
-**Commit Message**: refactor: Consolidate benchmark publishing, snapshots, and workload image builds (#6749)
-
-## What
-
-Consolidate benchmark result publishing and heap snapshot generation,
-build Antithesis and benchmarker workload images through the same source
-Dockerfile, and rename the Hacker News benchmark dataset to
-`hackernews`.
-
-## Why
-
-The benchmark suites duplicated gh-pages publishing, snapshot generation
-had two entry points, and Antithesis compiled and packaged pg_search
-separately despite needing the same commit-to-workload-image flow as
-benchmarker.
-
-## How
-
-- Add `publish-benchmark-results`, used by benchmarker, queries, and
-Stressgres. Preserve existing series names, history directories, metric
-directions, thresholds, baseline policies, and comment behavior. All
-three publishers now generate fresh ParadeDB GitHub App tokens before
-publishing. Keep k6 extraction/dashboard publishing, Stressgres CSV
-conversion, and query paired-bootstrap comparisons in their suite
-actions; the publisher leaves its local Pages clone available for
-bootstrap comparisons.
-- Extend `generate-benchmark-snapshots.yml` to select Stack Overflow,
-Cohere, Stack Exchange, Wikipedia, or all. Native datasets retain
-pgB
-
-**File**: `.github/actions/benchmark-queries/action.yml` (modified, +37/-19)
-```diff
-@@ -14,14 +14,17 @@ inputs:
-   ref:
-     description: "Git ref or short SHA to report in benchmarks"
-     required: true
--  github_token:
--    description: "GitHub token to authenticate with"
-+  github_app_client_id:
-+    description: "ParadeDB GitHub App client ID"
-+    required: true
-+  github_app_private_key:
-+    description: "ParadeDB GitHub App private key"
-     required: true
-   fail_on_error:
-     description: "Whether to fail on query errors. Set to 'false' for backfills against older versions."
-     required: false
-     default: "true"
--  publish:
-+  publish_baseline:
-     description: "Whether to push results to the gh-pages baseline that later runs are diffed against. Only a run on main should; every run compares against the baseline regardless."
-     required: false
-     default: "false"
-@@ -101,27 +104,42 @@ runs:
-         PG_VERSION: ${{ env.pg_version }}
-       run: ./.github/scripts/render_crashdump.sh
- 
--    # Necessary to avoid "destination path is not empty" error
--    - name: Cleanup Previous Benchmark Publish Working Directory
-+    - name: Generate GitHub App Token
-+      id: app-token
-+      uses: actions/create-github-app-token@v3.2.0 # Keep the exact pin because actionlint 1.7.12 has stale @v3 metadata that rejects client-id
-+      with:
-+        client-id: ${{ inputs.github_app_client_id }}
-+        private-key: ${{ inputs.github_app_private_key }}
-+
-+    - name: Wait for App Token to Become Usable
-       shell: bash
--      run: rm -rf ./benchmark-data-repository
-+      env:
-+        APP_TOKEN: ${{ steps.app-token.outputs.token }}
-+      run: |
-+        auth="Authorization: Basic $(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)"
-+        for attempt in $(seq 1 10); do
-+          if git -c http.extraheader="$auth" ls-remote \
-+              "https://github.com/${GITHUB_REPOSITORY}.git" HEAD >/dev/null 2>&1; then
-+            echo "App token usable after ${attempt} attempt(s)"
-+            exit 0
-+          fi
-+          echo "App token not usable yet (attempt ${attempt}/10); retrying in 5s"
-+          sleep 5
-+        done
-+        echo "App token never became usable after 10 attempts" >&2
-+        exit 1
- 
-     - name: Publish Benchmark Metrics
--      uses: benchmark-action/github-action-benchmark@v1
-+      uses: ./.github/actions/publish-benchmark-results
-       with:
-         name: "pg_search '${{ inputs.dataset }} (${{ inputs.index }})' (${{ env.ROWS_LABEL }} rows)"
-         ref: ${{ inputs.ref }}
--        tool: customSmallerIsBetter
--        output-file-path: benchmarks/results.json
--        github-token: ${{ inputs.github_token }}
--        gh-repository: github.com/${{ github.repository }}
--        gh-pages-branch: gh-pages
--        auto-push: ${{ inputs.publish }}
--        benchmark-data-dir-path: benchmarks
--        alert-threshold: ${{ inputs.alert_threshold }}
--        comment-on-alert: true # We comment and alert rather than failing, so regressions are reported on GitHub
--        alert-comment-cc-users: "@${{ github.actor }}"
--        comment-always: ${{ github.event_name == 'pull_request' }}
-+        metrics_file: benchmarks/results.json
-+        github_token: ${{ steps.app-token.outputs.token }}
-+        publish_baseline: ${{ inputs.publish_baseline }}
-+        pages_directory: benchmarks
-+        alert_threshold: ${{ inputs.alert_threshold }}
-+        comment_summary: ${{ github.event_name == 'pull_request' }}
- 
-     # The publish step above appends the current run to its local gh-pages clone, so the script
-     # takes the second-to-last entry as the baseline.
-@@ -143,7 +161,7 @@ runs:
-       if: inputs.alert_strategy == 'paired-bootstrap' && steps.paired_bootstrap.outputs.alert == 'true'
-       shell: bash
-       env:
--        GH_TOKEN: ${{ inputs.github_token }}
-+        GH_TOKEN: ${{ steps.app-token.outputs.token }}
-       run: |
-         printf '\ncc @%s\n' "${GITHUB_ACTOR}" >> benchmark-alert.md
-         gh api "repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/comments" \
-```
-
-**File**: `.github/actions/benchmark-stressgres/action.yml` (modified, +14/-34)
-```diff
-@@ -126,49 +126,29 @@ runs:
-         echo "App token never became usable after 10 attempts" >&2
-         exit 1
- 
--    # Necessary to avoid "destination path is not empty" error
--    - name: Cleanup Previous Benchmark Publish Working Directory
--      shell: bash
--      run: rm -rf ./benchmark-data-repository
--
-     - name: Publish TPS Metrics
--      uses: benchmark-action/github-action-benchmark@v1
-+      uses: ./.github/actions/publish-benchmark-results
-       with:
-         name: "pg_search ${{ inputs.test_file }} Performance - TPS"
-         ref: ${{ inputs.ref }}
--        tool: customBiggerIsBetter
--        output-file-path: pg_search_tps.json
--        github-token: ${{ steps.app-token.outputs.token }}
--        gh-repository: github.com/${{ github.repository }}
--        gh-pages-branch: gh-pages
--        auto-push: ${{ github.event_name != 'pull_request' }}
--        benchmark-data-dir-path: stressgres
--        alert-threshold: "115%"
--        comment-on-alert: true # We comment and alert rather than failing, so regressions are reported on GitHub
--        alert-comment-cc-users: "@${{ github.actor }}"
--        comment-always: ${{ github.event_name == 'pull_request' }}
--
--    # Necessary to avoid "destination path is not empty" error
--    - name: Cleanup Previous Benchmark Publish Working Directory
--      shell: bash
--      run: rm -rf ./benchmark-data-repository
-+        direction: bigger
-+        metrics_file: pg_search_tps.json
-+        github_token: ${{ steps.app-token.outputs.token }}
-+        publish_baseline: ${{ github.event_name != 'pull_request' }}
-+        pages_directory: stressgres
-+        comment_summary: ${{ github.event_name == 'pull_request' }}
- 
-     - name: Publish Other Metrics
--      uses: benchmark-action/github-action-benchmark@v1
-+      uses: ./.github/actions/publish-benchmark-results
-       with:
-         name: "pg_search ${{ inputs.test_file }} Performance - Other Metrics"
-         ref: ${{ inputs.ref }}
--        tool: customSmallerIsBetter
--        output-file-path: pg_search_other.json
--        github-token: ${{ steps.app-token.outputs.token }}
--        gh-repository: github.com/${{ github.repository }}
--        gh-pages-branch: gh-pages
--        auto-push: ${{ github.event_name != 'pull_request' }}
--        benchmark-data-dir-path: stressgres
--        alert-threshold: "110%"
--        comment-on-alert: true
--        alert-comment-cc-users: "@${{ github.actor }}"
--        comment-always: ${{ github.event_name == 'pull_request' }}
-+        metrics_file: pg_search_other.json
-+        github_token: ${{ steps.app-token.outputs.token }}
-+        publish_baseline: ${{ github.event_name != 'pull_request' }}
-+        pages_directory: stressgres
-+        alert_threshold: "110%"
-+        comment_summary: ${{ github.event_name == 'pull_request' }}
- 
-     - name: Print Postgres Logs
-       if: always()
-```
-
-**File**: `.github/actions/build-paradedb-image/action.yml` (modified, +29/-4)
-```diff
-@@ -1,5 +1,5 @@
- name: Build ParadeDB Image
--description: Build ParadeDB Docker image with pg_search compiled from source
-+description: Compile pg_search at a selected ref and build a ParadeDB workload image
- 
- inputs:
-   ref:
-@@ -17,6 +17,26 @@ inputs:
-     description: "Scope for GHA cache"
-     required: false
-     default: "benchmarker-source-pg18-arm64"
-+  dst:
-+    description: "Build the instrumented dst profile (currently Antithesis, requires linux/amd64)"
-+    required: false
-+    default: "false"
-+  platforms:
-+    description: "Target platforms (empty uses the runner architecture)"
-+    required: false
-+    default: ""
-+  labels:
-+    description: "Newline-separated image metadata labels"
-+    required: false
-+    default: ""
-+  push:
-+    description: "Push image_tag to the registry (caller must log in first)"
-+    required: false
-+    default: "false"
-+  load:
-+    description: "Load the image into the local Docker daemon"
-+    required: false
-+    default: "true"
- 
- outputs:
-   short_commit:
-@@ -43,14 +63,19 @@ runs:
-     - name: Set Up Docker Buildx
-       uses: docker/setup-buildx-action@v4
- 
--    - name: Build ParadeDB image from source
-+    - name: Build ParadeDB Image
-       uses: docker/build-push-action@v7
-       with:
-         context: pg_search_source
-         file: docker/Dockerfile.source
--        build-args: BASE_IMAGE=${{ inputs.base_image }}
-+        platforms: ${{ inputs.platforms }}
-+        build-args: |
-+          BASE_IMAGE=${{ inputs.base_image }}
-+          DST=${{ inputs.dst }}
-         pull: true
--        load: true
-+        push: ${{ inputs.push == 'true' }}
-+        load: ${{ inputs.load == 'true' }}
-         tags: ${{ inputs.image_tag }}
-+        labels: ${{ inputs.labels }}
-         cache-from: type=gha,scope=${{ inputs.cache_scope }}
-         cache-to: type=gha,mode=max,scope=${{ inputs.cache_scope }}
-```
-
-**File**: `.github/actions/publish-benchmark-results/action.yml` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+name: Publish Benchmark Results
-+description: Publish prepared benchmark metrics to gh-pages and report regressions
-+
-+inputs:
-+  name:
-+    description: "Benchmark suite name"
-+    required: true
-+  metrics_file:
-+    description: "Prepared github-action-benchmark metrics JSON"
-+    required: true
-+  ref:
-+    description: "Git ref or commit benchmarked"
-+    required: true
-+  github_token:
-+    description: "ParadeDB GitHub App installation token"
-+    required: true
-+  direction:
-+    description: "Metric direction: smaller or bigger"
-+    required: false
-+    default: "smaller"
-+  pages_directory:
-+    description: "Metrics directory on gh-pages"
-+    required: true
-+  publish_baseline:
-+    description: "Whether to write the baseline to gh-pages"
-+    required: false
-+    default: "false"
-+  alert_threshold:
-+    description: "Regression threshold ratio"
-+    required: false
-+    default: "115%"
-+  comment_on_regression:
-+    description: "Whether to post a regression warning when the threshold is exceeded"
-+    required: false
-+    default: "true"
-+  comment_summary:
-+    description: "Whether to post a comparison summary even without a regression"
-+    required: false
-+    default: "false"
-+
-+runs:
-+  using: composite
-+  steps:
-+    - name: Validate Metric Direction
-+      shell: bash
-+      env:
-+        DIRECTION: ${{ inputs.direction }}
-+      run: |
-+        case "$DIRECTION" in
-+          smaller|bigger) ;;
-+          *) echo "Invalid metric direction: $DIRECTION" >&2; exit 1 ;;
-+        esac
-+
-+    # Leave the new clone in place for query benchmark bootstrap comparisons.
-+    - name: Cleanup Previous Benchmark Publish Working Directory
-+      shell: bash
-+      run: rm -rf ./benchmark-data-repository
-+
-+    - name: Publish Metrics
-+      uses: benchmark-action/github-action-benchmark@v1
-+      with:
-+        name: ${{ inputs.name }}
-+        ref: ${{ inputs.ref }}
-+        tool: ${{ inputs.direction == 'bigger' && 'customBiggerIsBetter' || 'customSmallerIsBetter' }}
-+        output-file-path: ${{ inputs.metrics_file }}
-+        github-token: ${{ inputs.github_token }}
-+        gh-repository: github.com/${{ github.repository }}
-+        gh-pages-branch: gh-pages
-+        benchmark-data-dir-path: ${{ inputs.pages_directory }}
-+        auto-push: ${{ inputs.publish_baseline == 'true' }}
-+        alert-threshold: ${{ inputs.alert_threshold }}
-+        comment-on-alert: ${{ inputs.comment_on_regression == 'true' }}
-+        alert-comment-cc-users: "@${{ github.actor }}"
-+        comment-always: ${{ inputs.comment_summary == 'true' }}
-```
-
-**File**: `.github/actions/publish-benchmarker-results/action.yml` (modified, +59/-66)
-```diff
-@@ -3,62 +3,74 @@ description: Extract latency and QPS metrics, upload dashboards, publish to gh-p
- 
- inputs:
-   dataset:
--    description: "Dataset name (e.g. hn-ci, stackexchange)"
-+    description: "Dataset name (e.g. hackernews, stackexchange)"
-     required: true
-   short_commit:
-     description: "Short commit SHA"
-     required: true
-   ref:
-     description: "Git ref or commit benchmarked"
-     required: true
--  image_tag:
--    description: "Image tag tested"
--    required: false
--    default: "paradedb-source:ci"
--  results_dir:
--    description: "Directory containing results json and html files"
--    required: false
--    default: "benchmarker/results"
--  metrics_file:
--    description: "Path to write extracted latency metrics json"
--    required: false
--    default: "benchmarker/benchmarker_metrics.json"
--  throughput_metrics_file:
--    description: "Path to write extracted QPS metrics json"
--    required: false
--    default: "benchmarker/benchmarker_throughput_metrics.json"
--  github_token:
--    description: "GitHub token for publishing and comments"
-+  github_app_client_id:
-+    description: "ParadeDB GitHub App client ID"
-+    required: true
-+  github_app_private_key:
-+    description: "ParadeDB GitHub App private key"
-     required: true
-   pr_number:
-     description: "PR number to comment on (empty if not a PR)"
-     required: false
-     default: ""
--  auto_push:
--    description: "Whether to auto-push baseline metrics to gh-pages"
-+  publish_baseline:
-+    description: "Whether to publish baseline metrics to gh-pages"
-     required: false
-     default: "false"
- 
- runs:
-   using: composite
-   steps:
-+    - name: Generate GitHub App Token
-+      id: app-token
-+      uses: actions/create-github-app-token@v3.2.0 # Keep the exact pin because actionlint 1.7.12 has stale @v3 metadata that rejects client-id
-+      with:
-+        client-id: ${{ inputs.github_app_client_id }}
-+        private-key: ${{ inputs.github_app_private_key }}
-+
-+    - name: Wait for App Token to Become Usable
-+      shell: bash
-+      env:
-+        APP_TOKEN: ${{ steps.app-token.outputs.token }}
-+      run: |
-+        auth="Authorization: Basic $(printf 'x-access-token:%s' "$APP_TOKEN" | base64 -w0)"
-+        for attempt in $(seq 1 10); do
-+          if git -c http.extraheader="$auth" ls-remote \
-+              "https://github.com/${GITHUB_REPOSITORY}.git" HEAD >/dev/null 2>&1; then
-+            echo "App token usable after ${attempt} attempt(s)"
-+            exit 0
-+          fi
-+          echo "App token not usable yet (attempt ${attempt}/10); retrying in 5s"
-+          sleep 5
-+        done
-+        echo "App token never became usable after 10 attempts" >&2
-+        exit 1
-+
-     - name: Upload dashboards
-       uses: actions/upload-artifact@v7
-       with:
-         overwrite: true
-         retention-days: 30
-         name: benchmarker-dashboards-${{ inputs.dataset }}-${{ inputs.short_commit }}
-         path: |
--          ${{ inputs.results_dir }}/*.json
--          ${{ inputs.results_dir }}/*.html
-+          benchmarker/results/*.json
-+          benchmarker/results/*.html
-         if-no-files-found: warn
- 
-     - name: Extract tracked metrics
-       shell: bash
-       env:
--        RESULTS_DIR: ${{ inputs.results_dir }}
--        METRICS_FILE: ${{ inputs.metrics_file }}
--        THROUGHPUT_METRICS_FILE: ${{ inputs.throughput_metrics_file }}
-+        RESULTS_DIR: benchmarker/results
-+        METRICS_FILE: benchmarker/benchmarker_metrics.json
-+        THROUGHPUT_METRICS_FILE: benchmarker/benchmarker_throughput_metrics.json
-       run: |
-         set -euo pipefail
-         shopt -s nullglob
-@@ -118,29 +130,19 @@ runs:
-           cat "${METRICS_FILE}" "${THROUGHPUT_METRICS_FILE}"
-         fi
- 
--    - name: Cleanup Previous Benchmark Publish Working Directory
--      shell: bash
--      run: rm -rf ./benchmark-data-repository
--
-     - name: Publish Latency Metrics (p50, p95, and p99)
-       id: publish_latency
--      if: hashFiles(inputs.metrics_file) != ''
-+      if: hashFiles('benchmarker/benchmarker_metrics.json') != ''
-       continue-on-error: true
--      uses: benchmark-action/github-action-benchmark@v1
-+      uses: ./.github/actions/publish-benchmark-results
-       with:
-         name: "benchmarker ${{ inputs.dataset }} (latency)"
-         ref: ${{ inputs.ref }}
--        tool: customSmallerIsBetter
--        output-file-path: ${{ inputs.metrics_file }}
--        github-token: ${{ inputs.github_token }}
--        gh-repository: github.com/${{ github.repository }}
--        gh-pages-branch: gh-pages
--        benchmark-data-dir-path: benchmarker
--        auto-push: ${{ inputs.auto_push == 'true' }}
--        alert-threshold: "115%"
--        comment-on-alert: ${{ inputs.pr_number == '' }}
--        alert-comment-cc-users: "@${{ github.actor }}"
--        comment-always: false
-+        metrics_file: benchmarker/benchmarker_metrics.json
-+        github_token: ${{ steps.app-token.outputs.token }}
-+        pages_directory: benchmarker
-+  
-```
-
-**File**: `.github/workflows/benchmark-pg_search-benchmarker.yml` (modified, +26/-32)
-```diff
-@@ -1,6 +1,6 @@
- # Benchmark pg_search (Benchmarker)
- #
--# Runs the benchmarker suite on hn-ci, stackexchange, and wikipedia, indexing
-+# Runs the benchmarker suite on hackernews, stackexchange, and wikipedia, indexing
- # with a pg_search compiled from this repo's source and overlaid onto a
- # released ParadeDB image. StackExchange and Wikipedia use their native
- # workloads from benchmarker dataset prefixes in S3. Heap-backed runs exclude
-@@ -15,41 +15,34 @@ on:
-     paths:
-       - ".github/actions/build-paradedb-image/**"
-       - ".github/actions/publish-benchmarker-results/**"
-+      - ".github/actions/publish-benchmark-results/**"
-       - ".github/actions/setup-benchmarker/**"
-       - ".github/workflows/benchmark-pg_search-benchmarker.yml"
-       - "docker/Dockerfile.source"
-       - "Cargo.lock"
-       - "**/*.rs"
-       - "**/*.toml"
-   pull_request:
--    types: [labeled] # Opt in with `benchmark-benchmarker` (all) or `benchmark-benchmarker-{hn,stackexchange,wikipedia}`.
-+    types: [labeled] # Opt in with `benchmarks`, `benchmark-benchmarker` (all), or `benchmark-benchmarker-{hackernews,stackexchange,wikipedia}`.
-   workflow_dispatch:
-     inputs:
-       dataset:
--        description: "Which dataset(s) to benchmark: 'all', 'hn-ci', 'stackexchange', or 'wikipedia'."
-+        description: "Which dataset(s) to benchmark: 'all', 'hackernews', 'stackexchange', or 'wikipedia'."
-         required: false
-         type: string
-         default: "all"
-       commit:
-         description: "pg_search commit/ref to benchmark. Defaults to the triggering ref (main on a manual run)."
-         required: false
-         default: ""
--      benchmarker_hn_ref:
--        description: "benchmarker repo ref for hn-ci (branch/tag/SHA)."
-+      benchmarker_hackernews_ref:
-+        description: "benchmarker repo ref for hackernews (branch/tag/SHA)."
-         required: false
-         default: "main"
--      benchmarker_stackexchange_repo:
--        description: "benchmarker repo to clone for stackexchange."
--        required: false
--        default: "paradedb/benchmarker"
-       benchmarker_stackexchange_ref:
-         description: "benchmarker repo ref for stackexchange (branch/tag/SHA)."
-         required: false
-         default: "main"
--      benchmarker_wikipedia_repo:
--        description: "benchmarker repo to clone for wikipedia."
--        required: false
--        default: "paradedb/benchmarker"
-       benchmarker_wikipedia_ref:
-         description: "benchmarker repo ref for wikipedia (branch/tag/SHA)."
-         required: false
-@@ -66,8 +59,8 @@ permissions:
- # No concurrency group: let every run complete and append to gh-pages history.
- 
- jobs:
--  benchmark-hn:
--    name: Benchmarker (hn-ci)
-+  benchmark-hackernews:
-+    name: Benchmarker (hackernews)
-     runs-on:
-       - runs-on=${{ github.run_id }}
-       - retry=when-interrupted
-@@ -76,25 +69,27 @@ jobs:
-       - extras=s3-cache # S3-backed cache; https://runs-on.com/caching/magic-cache/
-       # No EBS volume: on-machine NVMe avoids run-to-run variance.
-     if: >-
--      (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'hn-ci' || inputs.dataset == '')) ||
--      (github.event_name == 'pull_request' && (github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hn'))
-+      (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'hackernews' || inputs.dataset == '')) ||
-+      (github.event_name == 'pull_request' && (github.event.label.name == 'benchmarks' || github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hackernews'))
-     env:
--      DATASET: hn-ci
-+      DATASET: hackernews
-+      # Keep the existing archive key; the loader extracts into datasets/${DATASET}.
-       DATASET_S3: s3://paradedb-benchmarker/datasets/hn-ci.tar.gz
-       IMAGE_TAG: paradedb-source:ci
- 
-     steps:
-       # The label triggers this run; remove it so it can be re-applied to re-run.
-       - name: Maybe Remove Label
--        if: github.event_name == 'pull_request' && (github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hn')
-+        if: github.event_name == 'pull_request' && (github.event.label.name == 'benchmarks' || github.event.label.name == 'benchmark-benchmarker' || github.event.label.name == 'benchmark-benchmarker-hackernews')
-         env:
-           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           PR_NUMBER: ${{ github.event.pull_request.number }}
-         run: |
-           gh pr edit "${PR_NUMBER}" \
-             --repo "${GITHUB_REPOSITORY}" \
-+            --remove-label benchmarks \
-             --remove-label benchmark-benchmarker \
--            --remove-label benchmark-benchmarker-hn || true
-+            --remove-label benchmark-benchmarker-hackernews || true
- 
-       - name: Determine Ref to Benchmark
-         id: determine-ref
-@@ -129,8 +124,7 @@ 
-```
-
-**File**: `.github/workflows/benchmark-pg_search-queries.yml` (modified, +30/-19)
-```diff
-@@ -5,14 +5,15 @@
- 
- name: Benchmark pg_search (Queries)
- 
--# We run benchmarks on push to `main` and on benchmark-labeled PRs. stackoverflow runs by default;
--# cohere is opt-in via the benchmark-cohere-{hnsw,ivfflat} labels (or a manual run).
-+# Stack Overflow runs on push to main. The benchmarks label also runs every Cohere index.
-+# Individual datasets and indexes can be selected with their labels or a manual run.
- on:
-   push:
-     branches:
-       - main
-     paths:
-       - ".github/actions/benchmark-queries/**"
-+      - ".github/actions/publish-benchmark-results/**"
-       - ".github/actions/benchmarks-from-main/**"
-       - ".github/actions/setup-benchmark-cluster/**"
-       - ".github/actions/setup-pg-search-build-environment/**"
-@@ -27,7 +28,7 @@ on:
-   workflow_dispatch:
-     inputs:
-       dataset:
--        description: "Dataset to benchmark on a manual run. Ignored otherwise: push and the benchmarks/benchmark-stackoverflow labels run stackoverflow; benchmark-cohere-{hnsw,ivfflat} labels run cohere."
-+        description: "Dataset to benchmark on a manual run. Ignored otherwise: push and benchmark-stackoverflow run Stack Overflow; benchmarks runs Stack Overflow and every Cohere index."
-         required: true
-         type: choice
-         options:
-@@ -76,11 +77,17 @@ permissions:
- jobs:
-   benchmark-pg_search-queries:
-     name: Run Benchmark Jobs
-+    strategy:
-+      fail-fast: false
-+      max-parallel: 2
-+      matrix:
-+        # The empty entry retains the usual dataset selection. Other entries run one Cohere index.
-+        cohere_index: ${{ fromJSON(github.event.label.name == 'benchmarks' && '["", "hnsw", "ivfflat", "vchord", "pg_search", "pgvectorscale"]' || '[""]') }}
-     # pgvectorscale sweeps query_search_list_size to its 10000 maximum on the filtered arms, and
-     # post-filter streaming at 1% selectivity makes the top of that ladder enormously more expensive
-     # per point than any other index here. Its first run died at the 360m default. A day is enough
-     # to measure it rather than truncate the sweep; every other arm keeps the default it fits in.
--    timeout-minutes: ${{ (inputs.cohere_index == 'pgvectorscale' || github.event.label.name == 'benchmark-cohere-pgvectorscale') && 1440 || 360 }}
-+    timeout-minutes: ${{ (matrix.cohere_index == 'pgvectorscale' || inputs.cohere_index == 'pgvectorscale' || github.event.label.name == 'benchmark-cohere-pgvectorscale') && 1440 || 360 }}
-     runs-on:
-       # To configure the runners: https://runs-on.com/configuration/job-labels/#how-it-works (runs in us-east-1)
-       - runs-on=${{ github.run_id }}
-@@ -107,14 +114,13 @@ jobs:
-       BACKREST_REPO_S3_KEY_TYPE: shared
-       # Which datasets this run benchmarks, resolved once.
-       # stackoverflow: push to main, the benchmarks/benchmark-stackoverflow PR labels, or a manual run.
--      # cohere: opt-in only -- the benchmark-cohere-{hnsw,ivfflat} PR labels, or a manual run. The
--      # chosen index comes from the dispatch input or the label name (no default).
--      RUN_STACKOVERFLOW: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'stackoverflow')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmarks", "benchmark-stackoverflow"]'), github.event.label.name)) }}
--      RUN_COHERE: ${{ (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'cohere')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmark-cohere-hnsw", "benchmark-cohere-ivfflat", "benchmark-cohere-vchord", "benchmark-cohere-pg_search", "benchmark-cohere-pgvectorscale"]'), github.event.label.name)) }}
-+      # Cohere runs for every matrix index under benchmarks, or the individually selected index.
-+      RUN_STACKOVERFLOW: ${{ matrix.cohere_index == '' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'stackoverflow')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmarks", "benchmark-stackoverflow"]'), github.event.label.name))) }}
-+      RUN_COHERE: ${{ matrix.cohere_index != '' || (github.event_name == 'workflow_dispatch' && (inputs.dataset == 'all' || inputs.dataset == 'cohere')) || (github.event_name == 'pull_request' && contains(fromJson('["benchmark-cohere-hnsw", "benchmark-cohere-ivfflat", "benchmark-cohere-vchord", "benchmark-cohere-pg_search", "benchmark-cohere-pgvectorscale"]'), github.event.label.name)) }}
-       # Only main writes the baseline. Every other run still fetches it and diffs against it,
-       # so a PR gets its comparison without being able to move the reference point.
-       PUBLISH_BASELINE: ${{ github.ref == 'refs/heads/main' && (github.event_name != 'workflow_dispatch' || inputs.publish_baseline) }}
--      COHERE_INDEX: ${{ inputs.cohere_index || (github.event.label.name == 'benchmark-cohere-ivfflat' && 'ivfflat') || (github.event.label.name
-```
-
-**File**: `.github/workflows/generate-benchmark-snapshots.yml` (modified, +152/-11)
-```diff
-@@ -2,13 +2,12 @@
- #
- # Generate Benchmark Heap Snapshots
- #
--# Loads a dataset's heap (load-heap) and captures it as a pgBackRest snapshot (snapshot-heap),
--# uploading to s3://paradedb-ci-benchmarks/snapshots/{dataset}/{size}/. Runs on the same CI runners
--# as the benchmark workflow, so the snapshot's Postgres data directory is platform-compatible with
--# the cluster that restores it. The benchmark workflow then just restore-heaps these.
--#
--# Prerequisite: each dataset's sampled source data must already be in the CI bucket at
--# s3://paradedb-ci-benchmarks/datasets/{dataset}/sampled/{size}/{csv|parquet}/.
-+# Stack Overflow and Cohere: native pgrx clusters backed up with pgBackRest to
-+# s3://paradedb-ci-benchmarks/snapshots/{dataset}/{size}/. Sampled source data must
-+# exist at datasets/{dataset}/sampled/{size}/{csv|parquet}/ in that bucket.
-+# Stack Exchange and Wikipedia: benchmarker Docker heaps archived to
-+# s3://paradedb-ci-benchmarks/snapshots/benchmarker/{dataset}/heap.tar.zst.
-+# Each path uses the same platform and format as its benchmark's restore path.
- 
- name: Generate Benchmark Snapshots
- 
-@@ -23,11 +22,26 @@ on:
-           - all
-           - stackoverflow
-           - cohere
-+          - stackexchange
-+          - wikipedia
-         default: all
-       size:
--        description: "Optional single size to snapshot (e.g. 100k, 1m, 20m). Blank = all sizes for the dataset."
-+        description: "Optional size for stackoverflow/cohere (e.g. 100k, 1m, 20m). Blank = all sizes. Not supported for stackexchange/wikipedia."
-+        required: false
-+        default: ""
-+      benchmarker_ref:
-+        description: "Benchmarker ref for stackexchange/wikipedia (branch/tag/SHA)."
-+        required: false
-+        default: "main"
-+      dataset_source:
-+        description: "Optional S3 prefix override. Defaults to s3://paradedb-benchmarker/datasets/<dataset>/."
-         required: false
-+        type: string
-         default: ""
-+      base_paradedb_image:
-+        description: "Released image for benchmarker heap loading."
-+        required: false
-+        default: "paradedb/paradedb:latest-pg18"
- 
- permissions:
-   contents: read
-@@ -39,14 +53,16 @@ jobs:
-     name: Resolve Snapshot Matrix
-     runs-on: ubuntu-latest
-     outputs:
--      matrix: ${{ steps.build.outputs.matrix }}
-+      native: ${{ steps.build.outputs.native }}
-+      benchmarker: ${{ steps.build.outputs.benchmarker }}
-     steps:
-       - name: Build matrix
-         id: build
-         env:
-           DATASET: ${{ inputs.dataset }}
-           SIZE: ${{ inputs.size }}
-         run: |
-+          set -euo pipefail
-           all='[
-             {"dataset":"stackoverflow","size":"100k"},
-             {"dataset":"stackoverflow","size":"1m"},
-@@ -58,11 +74,19 @@ jobs:
-             --arg ds "${DATASET:-all}" --arg sz "${SIZE}" \
-             '[ .[] | select(($ds=="all" or .dataset==$ds) and ($sz=="" or .size==$sz)) ]')
-           echo "Selected entries: $include"
--          echo "matrix={\"include\":$include}" >> "$GITHUB_OUTPUT"
-+          docker=$(jq -cn --arg ds "${DATASET:-all}" --arg sz "$SIZE" \
-+            '["stackexchange", "wikipedia"] | map(select(($ds=="all" or .==$ds) and $sz==""))')
-+          if [ "$include" = '[]' ] && [ "$docker" = '[]' ]; then
-+            echo "No snapshot matches dataset=$DATASET size=$SIZE" >&2
-+            exit 1
-+          fi
-+          echo "native=$include" >> "$GITHUB_OUTPUT"
-+          echo "benchmarker=$docker" >> "$GITHUB_OUTPUT"
- 
-   generate:
-     name: Snapshot ${{ matrix.dataset }} (${{ matrix.size }})
-     needs: prep
-+    if: needs.prep.outputs.native != '[]'
-     runs-on:
-       # To configure the runners: https://runs-on.com/configuration/job-labels/#how-it-works (runs in us-east-1)
-       - runs-on=${{ github.run_id }}
-@@ -72,7 +96,8 @@ jobs:
-       - extras=s3-cache
-     strategy:
-       fail-fast: false
--      matrix: ${{ fromJson(needs.prep.outputs.matrix) }}
-+      matrix:
-+        include: ${{ fromJSON(needs.prep.outputs.native) }}
-     env:
-       pg_version: 18
-       BACKREST_STANZA: bench
-@@ -153,3 +178,119 @@ jobs:
-             --repo-endpoint "${BACKREST_REPO_ENDPOINT}" \
-             --repo-s3-key-type "${BACKREST_REPO_S3_KEY_TYPE}" \
-             --process-max 8
-+
-+  generate-benchmarker:
-+    name: Snapshot ${{ matrix.dataset }} (benchmarker)
-+    needs: prep
-+    if: needs.prep.outputs.benchmarker != '[]'
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        dataset: ${{ fromJSON(needs.prep.outputs.benchmarker) }}
-+    runs-on:
-+      - runs-on=${{ github.run_id }}
-+      - retry=when-interrupted
-+      - family=c8gd.metal-24xl
-+      - image=ubuntu26-full-arm64
-+      - extras=s3-cache
-+    env:
-+      BACKREST_REPO_BUCKET: paradedb-ci-benchmarks
-+      SNAPSHOT_PREFIX: snapshots/benchmarker
-+      DATASET: ${{ matrix.dataset }}
-+      DATASET_SOURCE: ${{ inputs.dataset_source || format('s3://paradedb-benchmarker/datasets/{0}/', matrix.dataset) }}
-+      PARADEDB
-```
-
----
-
-### Incident Patch 3: `24919e6c` (2026-10-24)
-**Commit Message**: fix: parse numeric fields in query strings (#6209)
+### Incident Patch 2: `5b16358a` (2026-10-30)
+**Commit Message**: fix: raise on float division by zero in Join Scan (#7104)
 
 # Ticket(s) Closed
 
-- Closes #6105
+- Closes #6930
 
 ## What
 
-Fix `NUMERIC` literals, range bounds, and `IN` sets in explicitly
-fielded `pdb.parse()` queries and in `pdb.parse_with_field()`.
+Float division by zero inside an expression absorbed by the Join Scan
+now raises PostgreSQL's `division by zero` instead of evaluating to
+`Infinity`.
 
 ## Why
 
-Tantivy reads the physical field type, not PostgreSQL's logical
-`NUMERIC` type. Passing numeric text directly could return wrong rows,
-no rows, or parse errors.
-
-Fixed-precision comparisons must also preserve exact values. A literal
-between two stored values must match nothing, and each range bound must
-move in the correct direction.
+`PredicateTranslator::translate_op_expr` maps `/` to DataFusion's
+`Operator::Divide`. For floats, Arrow follows IEEE-754 and returns
+`inf`, `-inf` or `NaN` for a zero divisor without an error, while
+`float8div` and `float4div` raise one.
 
 ## How
 
-- Extend the existing query AST walker to resolve numeric fields and
-rewrite their literals, bounds, and set elements.
-- Validate literals through PostgreSQL's `numeric_in` via `AnyNumeric`,
-then use normalized numeric text.
-- Use the shared conversion and bound helpers from #6978. Preserve
-off-grid and out-of-domain equality as a no-match query.
-- Encode `Numeric64` values as scaled `i64` text and `NumericBytes`
-values as version-aware decimal bytes. Use `base64` directly for
-standard Base64 encoding. The direct dependency is `0.22.1`, which was
-already in `Cargo.lock` transitively.
-- Report strict-mode errors a
+`translate_op_expr` declines `/` when the operator's result type is
+`float4` or `float8`. `translate` then wraps the subtree with the
+existing `try_wrap_as_udf` fallback, so PostgreSQL evaluates the
+division. The expression is still absorbed by the Join Scan, as the
+EXPLAIN in the new test shows.
 
-**File**: `Cargo.lock` (modified, +1/-0)
-```diff
-@@ -5096,6 +5096,7 @@ dependencies = [
-  "arrow-select 59.2.0",
-  "async-stream",
-  "async-trait",
-+ "base64 0.22.1",
-  "bigdecimal",
-  "bincode 2.0.1",
-  "bitpacking",
-```
+Integer division is unchanged, since Arrow's integer kernel
+(`div_checked`) already errors on a zero divisor.
 
-**File**: `docs/project/changelog/unreleased/6209.stability.mdx` (added, +5/-0)
+The trade-off is that float division now runs through the UDF rather
+than a native Arrow kernel. Two existing expected outputs change for
+that reason, and only in their plan text. Their result rows are
+identical (`join_distinct_expr`, `topk-agg-facet`).
+
+This touches the same spo
+
+**File**: `docs/project/changelog/unreleased/7104.bugfix.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- Fixed `pdb.parse()` queries on `NUMERIC` fields that returned wrong rows, no rows, or parse errors. Literals, ranges, and sets use exact comparisons, and invalid input follows strict or lenient parsing rules (#6105).
++- Float division by zero in expressions evaluated by the Join Scan now raises `division by zero` instead of returning `Infinity`.
 ```
 
-**File**: `nix/pg_search.nix` (modified, +1/-1)
+**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +17/-0)
 ```diff
-@@ -65,7 +65,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-gPXpWm9uw86JdlVgQTQ9HcheWmnjIbrF3ES3x5a+a9s=";
-+  cargoHash = "sha256-oyQ90QGSKo45odJy31IGsecgVmwYmplKPQZXNayIW6s=";
- 
-   inherit cargo-pgrx postgresql;
- 
-```
-
-**File**: `pg_search/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -36,6 +36,7 @@ arrow-array = "59.1.0"
- arrow-buffer = "59.1.0"
- arrow-schema = "59.1.0"
- arrow-select = "59.1.0"
-+base64 = "0.22.1"
- bitpacking = "0.9.3"
- chrono = "0.4.45"
- time = "0.3.47"
-```
-
-**File**: `pg_search/src/query/pdb_query.rs` (modified, +289/-54)
-```diff
-@@ -19,7 +19,7 @@ use crate::api::FieldName;
- use crate::api::version::{Version, VersionInfo};
- use crate::postgres::datetime::PostgresDateTime;
- use crate::postgres::pdb_owned_value::PdbOwnedValue;
--use crate::postgres::types::{is_datetime_type, is_pgoid_datetime_type};
-+use crate::postgres::types::is_datetime_type;
- use crate::query::more_like_this::MoreLikeThisQueryBuilder;
- use crate::query::numeric::{
-     clamp_int_bounds, convert_value_for_field, convert_value_for_range_field,
-@@ -34,6 +34,10 @@ use crate::query::{
-     QueryError, SearchQueryInput, check_range_bounds, coerce_bound_to_field_type, value_to_term,
- };
- use crate::schema::{IndexRecordOption, SearchField, SearchFieldType, SearchIndexSchema};
-+use anyhow::Context;
-+use base64::Engine;
-+use base64::engine::general_purpose::STANDARD;
-+use pgrx::AnyNumeric;
- use pgrx::PgOid;
- use pgrx::pg_sys::BuiltinOid;
- use pgrx::{InOutFuncs, StringInfo, pg_extern, pg_schema};
-@@ -2004,13 +2008,16 @@ fn parse_with_field<QueryParserCtor: Fn() -> QueryParser>(
-         SearchFieldType::Numeric64(_, _) | SearchFieldType::NumericBytes(..)
-     ) {
-         // Convert the query string to the appropriate numeric format
--        let value = PdbOwnedValue::Str(query_string.trim().to_string());
--        // An impossible numeric term must not fall back to parsing the physical I64 value.
--        if is_outside_int_domain(&value, &field_type) {
--            return Ok(Box::new(EmptyQuery));
--        }
--        if let Ok(converted) = convert_value_for_field(value, &field_type, index_created_by_version)
--        {
-+        if let Ok(converted) = numeric_literal_to_field_value(
-+            query_string.trim(),
-+            field,
-+            &field_type,
-+            index_created_by_version,
-+        ) {
-+            let Some(converted) = converted else {
-+                // No value the field can hold equals the literal.
-+                return Ok(Box::new(EmptyQuery));
-+            };
-             let tantivy_field_type = search_field.field_entry().field_type();
-             let term = value_to_term(
-                 search_field.field(),
-@@ -2024,7 +2031,8 @@ fn parse_with_field<QueryParserCtor: Fn() -> QueryParser>(
-                 IndexRecordOption::WithFreqs.into(),
-             )));
+@@ -601,6 +601,23 @@ impl<'a> PredicateTranslator<'a> {
+             return None;
          }
--        // If conversion fails, fall through to standard parsing (will likely error)
-+        // A query string that is not one NUMERIC literal, such as `[1 TO 2]`, is parsed below,
-+        // which converts each NUMERIC phrase in it or reports the invalid one.
-     }
  
-     if matches!(search_field.field_entry().field_type(), FieldType::Facet(_)) {
-@@ -2278,108 +2286,272 @@ pub(super) fn parse_tantivy_query(
- ) -> anyhow::Result<Box<dyn Query>> {
-     if lenient {
-         let (mut ast, _) = query_grammar::parse_query_lenient(query_string);
--        if index_created_by_version.stores_datetimes_in_i64() {
--            rewrite_timestamp_literals(&mut ast, schema);
--        }
-+        rewrite_field_literals(&mut ast, schema, index_created_by_version, lenient)?;
-         let (parsed_query, _) = parser.build_query_from_user_input_ast_lenient(ast);
-         Ok(parsed_query)
-     } else {
-         let mut ast = query_grammar::parse_query(query_string)
-             .map_err(|_| QueryError::GrammarParseError(query_string.to_string()))?;
--        if index_created_by_version.stores_datetimes_in_i64() {
--            rewrite_timestamp_literals(&mut ast, schema);
--        }
-+        rewrite_field_literals(&mut ast, schema, index_created_by_version, lenient)?;
-         let parsed_query = parser
-             .build_query_from_user_input_ast(ast)
-             .map_err(|err| QueryError::ParseError(err, query_string.to_string()))?;
-         Ok(parsed_query)
-     }
- }
- 
--/// Walks the parsed user query AST and rewrites date/timestamp-string phrases as i64s.
--/// Best-effort: phrases that fail to parse as datetimes are left untouched, which
--/// preserves the original tantivy error path for genuinely malformed input.
--pub(super) fn rewrite_timestamp_literals(ast: &mut UserInputAst, schema: &SearchIndexSchema) {
-+/// Walks the parsed user query AST and rewrites logical Postgres values to their physical Tantivy
-+/// representation. Invalid NUMERIC phrases return an error unless parsing is lenient.
-+fn rewrite_field_literals(
-+    ast: &mut UserInputAst,
-+    schema: &SearchIndexSchema,
-+    index_created_by_version: Option<Version>,
-+    lenient: bool,
-+) -> anyhow::Result<()> {
-     match ast {
-         UserInputAst::Clause(children) => {
-             for (_, child) in children {
--                rewrite_timestamp_literals(child, schema);
-+                rewrite_field_literals(child, schema, index_created_by_version, lenient)?;
-+            }
++        // Arrow divides floats by zero to Infinity or NaN where PostgreSQL raises an
++        // error, so let the UDF fallback evaluate float division.
++        if op == Operator::Divide
++            && matches!(
++                (*op_expr).opresulttype,
++                pg_sys::FLOAT4OID | pg_sys::FLOAT8OID
++            )
++        {
++            pgrx::debug1!(
++                "PredicateTranslator: float division left to PostgreSQL [OpExpr] types=({}, {}) | {}",
++                type_name(left_type),
++                type_name(right_type),
++                self.deparse_for_debug(node)
++            );
++            return None;
 +        }
-+        UserInputAst::Boost(inner, _) => {
-+            rewrite_field_literals(inner, schema, index_created_by_version, lenient)?;
++
+         let collid = (*op_expr).inputcollid;
+         if collid != pg_sys::Oid::INVALID {
+             let required_op = match op_str {
+```
+
+**File**: `pg_search/tests/pg_regress/expected/issue_6930.out` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++CREATE TABLE issue_6930_i (id int PRIMARY KEY, body text, f float8, r float4);
++CREATE TABLE issue_6930_e (id int PRIMARY KEY, tag text, b int4, z float4);
++INSERT INTO issue_6930_i VALUES (1, 'alpha', 0.0, 0.0), (2, 'beta', 1.0, 3.0);
++INSERT INTO issue_6930_e VALUES (1, 'x', 1, 1.0), (2, 'y', 0, 0.0);
++CREATE INDEX issue_6930_i_idx ON issue_6930_i USING paradedb (id, body, f, r);
++CREATE INDEX issue_6930_e_idx ON issue_6930_e USING paradedb (id, tag, b, z);
++SET paradedb.enable_join_custom_scan = on;
++-- Float division in a Join Scan is evaluated by PostgreSQL
++EXPLAIN (COSTS OFF)
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++                                                                                      QUERY PLAN                                                                                      
++--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: i INNER e
++   Join Cond: e.id = i.id
++   Join Predicate: heap:((i.f / (e.b)::double precision) > '0'::double precision)
++   Limit: 10
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
++     :   GlobalLimitExec: skip=0, fetch=10
++     :     VisibilityFilterExec: tables=[i, e]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_eval_expr_opexpr_9c511f53(f@0, b@1) > 0
++     :         CooperativeExec
++     :           PgSearchScan: table=i, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"beta","lenient":null,"conjunction_mode":null}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
++(14 rows)
++
++-- Division by zero raises an error instead of yielding Infinity
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++ERROR:  division by zero
++SELECT i.id, (i.f / e.b) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++ERROR:  division by zero
++SELECT i.id, (i.r / e.z) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++ERROR:  division by zero
++SELECT i.id, (e.z / i.r) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  division by zero
++-- Division by a non-zero value is unchanged
++SELECT i.id, (i.f / e.b) AS q, (i.r / e.z) AS p FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.f / e.b) >= 0 LIMIT 10;
++ id | q | p 
++----+---+---
++  1 | 0 | 0
++(1 row)
++
++RESET paradedb.enable_join_custom_scan;
++DROP TABLE issue_6930_i;
++DROP TABLE issue_6930_e;
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_distinct_expr.out` (modified, +1/-1)
+```diff
+@@ -734,7 +734,7 @@ ORDER BY p.name
+    Order By: p.name asc
+    DataFusion Physical Plan: 
+      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
+-     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_funcexpr_eb551b6f(supplier_id@1) / 3 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
++     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_5205a10c(supplier_id@1) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
+      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
+      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, ctid_1@1]
+      :         CooperativeExec
+```
+
+**File**: `pg_search/tests/pg_regress/expected/topk-agg-facet.out` (modified, +3/-3)
+```diff
+@@ -2574,16 +2574,16 @@ JOIN product_reviews r ON p.id = r.product_id
+ WHERE p.description ||| 'laptop'
+ ORDER BY r.score DESC
+ LIMIT 3;
+-                                                                                                                                                                                                         QUERY PLAN                                                                                                                                                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++                                                                                                                                                                                       QUERY PLAN                                                                                                                                                                                       
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Join Scan)
+    Output: p.id, r.score, ((pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text) + 1)), ((r.score + pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text))), (((pdb.window_agg('count(*) FILTER (WHERE (r.score > 80)) OVER ()'::text))::double precision / (pdb.window_agg('count(*) OVER ()'::text))::double precision))
+    Relation Tree: p INNER r
+    Join Cond: p.id = r.product_id
+    Limit: 3
+    Order By: r.score desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[get_field(__topk@0, c0) as col_1, get_field(__topk@0, c1) as col_2, pdb_eval_expr_opexpr_9c4317b6(window_agg_1@1) as col_3, pdb_eval_expr_opexpr_bea5004f(get_field(__topk@0, c1), window_agg_1@1) as col_4, pdb_eval_expr_funcexpr_01980a78(window_agg_1@1) / pdb_eval_expr_funcexpr_02120823(window_agg_4@2) as col_5, get_field(__topk@0, c2) as ctid_0, get_field(__topk@0, c3) as ctid_1]
++     : ProjectionExec: expr=[get_field(__topk@0, c0) as col_1, get_field(__topk@0, c1) as col_2, pdb_eval_expr_opexpr_9c4317b6(window_agg_1@1) as col_3, pdb_eval_expr_opexpr_bea5004f(get_field(__topk@0, c1), window_agg_1@1) as col_4, pdb_eval_expr_opexpr_d5caad3d(window_agg_1@1, window_agg_4@2) as col_5, get_field(__topk@0, c2) as ctid_0, get_field(__topk@0, c3) as ctid_1]
+      :   GlobalLimitExec: skip=0, fetch=3
+      :     UnnestExec
+      :       AggregateExec: mode=Single, gby=[], aggr=[topk_as_agg(p_0.id, r_1.score, p_0.ctid_0, r_1.ctid_1, 3, [2, 3]) ORDER BY [r_1.score DESC NULLS FIRST] as __topk, count(1) FILTER (WHERE r_1.score > Int64(80)) as window_agg_1, count(1) as window_agg_4]
+```
+
+**File**: `pg_search/tests/pg_regress/sql/issue_6930.sql` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++
++CREATE TABLE issue_6930_i (id int PRIMARY KEY, body text, f float8, r float4);
++CREATE TABLE issue_6930_e (id int PRIMARY KEY, tag text, b int4, z float4);
++INSERT INTO issue_6930_i VALUES (1, 'alpha', 0.0, 0.0), (2, 'beta', 1.0, 3.0);
++INSERT INTO issue_6930_e VALUES (1, 'x', 1, 1.0), (2, 'y', 0, 0.0);
++CREATE INDEX issue_6930_i_idx ON issue_6930_i USING paradedb (id, body, f, r);
++CREATE INDEX issue_6930_e_idx ON issue_6930_e USING paradedb (id, tag, b, z);
++
++SET paradedb.enable_join_custom_scan = on;
++
++-- Float division in a Join Scan is evaluated by PostgreSQL
++EXPLAIN (COSTS OFF)
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++
++-- Division by zero raises an error instead of yielding Infinity
++SELECT i.id FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.f / e.b) > 0 LIMIT 10;
++SELECT i.id, (i.f / e.b) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++SELECT i.id, (i.r / e.z) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' LIMIT 10;
++SELECT i.id, (e.z / i.r) AS q FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++
++-- Division by a non-zero value is unchanged
++SELECT i.id, (i.f / e.b) AS q, (i.r / e.z) AS p FROM issue_6930_i i JOIN issue_6930_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.f / e.b) >= 0 LIMIT 10;
++
++RESET paradedb.enable_join_custom_scan;
++
++DROP TABLE issue_6930_i;
++DROP TABLE issue_6930_e;
+```
+
+---
+
+### Incident Patch 3: `822b944e` (2026-10-30)
+**Commit Message**: fix: raise on integer overflow in Join Scan arithmetic (#7103)
+
+# Ticket(s) Closed
+
+- Closes #6931
+
+## What
+
+Integer `+`, `-` and `*` inside an expression absorbed by the Join Scan
+now raise PostgreSQL's `integer out of range` / `bigint out of range` on
+overflow, instead of silently wrapping.
+
+## Why
+
+`PredicateTranslator::translate_op_expr` maps these operators to
+DataFusion's `Operator::Plus`/`Minus`/`Multiply`. DataFusion's physical
+`BinaryExpr` evaluates them with Arrow's wrapping kernels unless
+`fail_on_overflow` is set. That flag only exists on the physical
+expression, and the planner always builds it as `false`, so the logical
+`Expr` we produce has no way to ask for checked arithmetic.
+
+## How
+
+`translate_op_expr` declines `+`, `-` and `*` when the operator's result
+type is `int2`, `int4` or `int8`. `translate` then wraps the subtree
+with the existing `try_wrap_as_udf` fallback, so PostgreSQL evaluates it
+with its own overflow checks. The expression is still absorbed by the
+Join Scan.
+
+Float and numeric arithmetic, and integer `/` and `%`, are unchanged.
+Arrow already errors on integer division by zero.
+
+The trade-off is that these expressions now run through the UDF rather
+
+
+**File**: `docs/project/changelog/unreleased/7103.bugfix.mdx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++- Integer `+`, `-` and `*` in expressions evaluated by the Join Scan now raise an out-of-range error on overflow instead of silently wrapping.
+```
+
+**File**: `pg_search/src/postgres/customscan/datafusion/expr_translators.rs` (modified, +20/-2)
+```diff
+@@ -583,6 +583,24 @@ impl<'a> PredicateTranslator<'a> {
+             }
+         };
+ 
++        // Arrow wraps integer overflow where PostgreSQL raises an error, so let the
++        // UDF fallback evaluate integer arithmetic.
++        if matches!(op, Operator::Plus | Operator::Minus | Operator::Multiply)
++            && matches!(
++                (*op_expr).opresulttype,
++                pg_sys::INT2OID | pg_sys::INT4OID | pg_sys::INT8OID
++            )
++        {
++            pgrx::debug1!(
++                "PredicateTranslator: integer arithmetic left to PostgreSQL [OpExpr] op=\"{}\", types=({}, {}) | {}",
++                op_str,
++                type_name(left_type),
++                type_name(right_type),
++                self.deparse_for_debug(node)
++            );
++            return None;
 +        }
-+        UserInputAst::Leaf(leaf) => {
-+            if !rewrite_leaf(leaf, schema, index_created_
++
+         let collid = (*op_expr).inputcollid;
+         if collid != pg_sys::Oid::INVALID {
+             let required_op = match op_str {
+@@ -965,7 +983,7 @@ mod tests {
+             Just("length(e.pattern) > 3".to_string()),
+             Just("upper(e.pattern) = upper(i.name)".to_string()),
+             Just("COALESCE(e.pattern, '') = i.name".to_string()),
+-            // Arithmetic operators — native via translate_op_expr (+, -, *, /, %).
++            // Arithmetic operators. Integer +, - and * go through the UDF fallback.
+             Just("e.threshold + 10 > i.value".to_string()),
+             Just("e.threshold * 2 > 50".to_string()),
+             Just("i.value - e.threshold > 0".to_string()),
+@@ -1023,7 +1041,7 @@ mod tests {
+             Just("e.pattern = i.name OR length(e.pattern) > 100".to_string()),
+             Just("e.pattern = i.name OR e.pattern IS NULL".to_string()),
+             Just("upper(e.pattern) = i.name OR e.threshold > i.value".to_string()),
+-            // Arithmetic cross-table predicates — now native OpExpr.
++            // Arithmetic cross-table predicates, absorbed via the UDF fallback.
+             Just("e.threshold * 2 > i.value".to_string()),
+             Just("e.threshold + i.value > 100".to_string()),
+         ]
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/numeric64_high_precision_literal.out` (modified, +1/-2)
+**File**: `pg_search/tests/pg_regress/expected/issue_6931.out` (added, +58/-0)
 ```diff
-@@ -437,8 +437,7 @@ WHERE price @@@ pdb.term('abc') ORDER BY id;
- ERROR:  Str("abc") is not a number
- SELECT id, price FROM numeric64_high_precision
- WHERE price @@@ pdb.parse_with_field('12,34') ORDER BY id;
--ERROR:  could not parse query string 'price:(12,34)'.
--           make sure to use column:term pairs, and to capitalize AND/OR.
-+ERROR:  invalid NUMERIC value '12,34' for field 'price'
- DROP TABLE numeric64_high_precision;
- CREATE TABLE numeric64_negative_scale (id int PRIMARY KEY, price numeric(8, -2));
- INSERT INTO numeric64_negative_scale VALUES (1, 1200), (2, 123400), (3, 'NaN');
+@@ -0,0 +1,58 @@
++CREATE EXTENSION IF NOT EXISTS pg_search;
++CREATE TABLE issue_6931_i (id int PRIMARY KEY, body text, a int4, w int8);
++CREATE TABLE issue_6931_e (id int PRIMARY KEY, tag text, b int4);
++INSERT INTO issue_6931_i VALUES (1, 'alpha', 2147483647, 9223372036854775807), (2, 'beta', 5, 10);
++INSERT INTO issue_6931_e VALUES (1, 'x', 1), (2, 'y', 0);
++CREATE INDEX issue_6931_i_idx ON issue_6931_i USING paradedb (id, body, a, w);
++CREATE INDEX issue_6931_e_idx ON issue_6931_e USING paradedb (id, tag, b);
++SET paradedb.enable_join_custom_scan = on;
++-- Integer arithmetic in a Join Scan is evaluated by PostgreSQL
++EXPLAIN (COSTS OFF)
++SELECT i.id FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
++                                                                                      QUERY PLAN                                                                                       
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: i INNER e
++   Join Cond: e.id = i.id
++   Join Predicate: heap:((i.w + e.b) > 0)
++   Limit: 10
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
++     :   GlobalLimitExec: skip=0, fetch=10
++     :     VisibilityFilterExec: tables=[i, e]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@1, id@1)], filter=pdb_eval_expr_opexpr_e8373b5a(w@0, b@1) > 0
++     :         CooperativeExec
++     :           PgSearchScan: table=i, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"alpha","lenient":null,"conjunction_mode":null}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=e, segments=1, dynamic_filters=1, query="all"
++(14 rows)
++
++-- Overflow raises an error instead of wrapping
++SELECT i.id FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' AND (i.w + e.b) > 0 LIMIT 10;
++ERROR:  bigint out of range
++SELECT i.id, (i.w + e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  bigint out of range
++SELECT i.id, (i.a + e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  integer out of range
++SELECT i.id, (-i.a - 2 * e.b) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  integer out of range
++SELECT i.id, (i.w * (e.b + 1)) AS s FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'alpha' LIMIT 10;
++ERROR:  bigint out of range
++-- Arithmetic that does not overflow is unchanged
++SELECT i.id, (i.w + e.b) AS s, (i.a - e.b) AS d, (i.a * 2) AS m
++FROM issue_6931_i i JOIN issue_6931_e e ON e.id = i.id
++WHERE i.body @@@ 'beta' AND (i.w + e.b) > 0 LIMIT 10;
++ id | s  | d | m  
++----+----+---+----
++  2 | 10 | 5 | 10
++(1 row)
++
++RESET paradedb.enable_join_custom_scan;
++DROP TABLE issue_6931_i;
++DROP TABLE issue_6931_e;
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/parse.out` (modified, +470/-3)
+**File**: `pg_search/tests/pg_regress/expected/join_distinct_expr.out` (modified, +2/-2)
 ```diff
-@@ -8,10 +8,28 @@ CALL paradedb.create_paradedb_test_table(
-   schema_name => 'public',
-   table_name => 'mock_items'
- );
--ALTER TABLE mock_items ADD COLUMN created_at_tz TIMESTAMPTZ, ADD COLUMN latest_available_time_tz TIMETZ;
--UPDATE mock_items SET created_at_tz = created_at AT TIME ZONE 'UTC', latest_available_time_tz = (latest_available_time || '+00')::timetz;
-+ALTER TABLE mock_items
-+    ADD COLUMN created_at_tz TIMESTAMPTZ,
-+    ADD COLUMN latest_available_time_tz TIMETZ,
-+    ADD COLUMN arbitrary_precision NUMERIC,
-+    ADD COLUMN fixed_precision NUMERIC(10, 2);
-+UPDATE mock_items SET
-+    created_at_tz = created_at AT TIME ZONE 'UTC',
-+    latest_available_time_tz = (latest_available_time || '+00')::timetz,
-+    arbitrary_precision = CASE id
-+        WHEN 1 THEN 1234
-+        WHEN 2 THEN 5678
-+        WHEN 3 THEN -100
-+        WHEN 4 THEN 100000000000000000000.123
-+    END,
-+    fixed_precision = CASE id
-+        WHEN 1 THEN 1.00
-+        WHEN 2 THEN 0.01
-+        WHEN 3 THEN 1.23
-+        WHEN 4 THEN 2.50
-+    END;
- CREATE INDEX on mock_items
--USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz);
-+USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz, arbitrary_precision, fixed_precision);
- SELECT id, description, category FROM mock_items
- WHERE id @@@ pdb.parse('description:(running shoes) AND category:footwear');
-  id |     description     | category 
-@@ -74,4 +92,453 @@ WHERE id @@@ pdb.parse('latest_available_time_tz:"09:12:34+00"') ORDER BY id;
-   1 | Ergonomic metal keyboard | 09:12:34+00
- (1 row)
- 
-+-- Global parsing must apply the same logical-to-physical conversion as field-specific parsing.
-+-- INTEGER is the control: its logical and physical values are identical.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('id:1') ORDER BY id;
-+ id 
-+----
-+  1
-+(1 row)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse_with_field('1') ORDER BY id;
-+ id 
-+----
-+  1
-+(1 row)
-+
-+-- Unlimited NUMERIC uses the NumericBytes representation.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:1234') ORDER BY id;
-+ id 
-+----
-+  1
-+(1 row)
-+
-+SELECT id FROM mock_items
-+WHERE arbitrary_precision @@@ pdb.parse_with_field('1234') ORDER BY id;
-+ id 
-+----
-+  1
-+(1 row)
-+
-+-- NUMERIC(10,2) uses a scaled Numeric64 representation.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:1') ORDER BY id;
-+ id 
-+----
-+  1
-+(1 row)
-+
-+SELECT id FROM mock_items
-+WHERE fixed_precision @@@ pdb.parse_with_field('1') ORDER BY id;
-+ id 
-+----
-+  1
-+(1 row)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:1.23') ORDER BY id;
-+ id 
-+----
-+  3
-+(1 row)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:100000000000000000000.123') ORDER BY id;
-+ id 
-+----
-+  4
-+(1 row)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:-100') ORDER BY id;
-+ id 
-+----
-+  3
-+(1 row)
-+
-+-- Conversion also applies to range bounds and each field in a compound AST.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:[1 TO 2]') ORDER BY id;
-+ id 
-+----
-+  1
-+  3
-+(2 rows)
-+
-+SELECT id FROM mock_items
-+WHERE fixed_precision @@@ pdb.parse_with_field('[1 TO 2]') ORDER BY id;
-+ id 
-+----
-+  1
-+  3
-+(2 rows)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:[-100 TO 1234]') ORDER BY id;
-+ id 
-+----
-+  1
-+  3
-+(2 rows)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision: IN [0.01 2.5]') ORDER BY id;
-+ id 
-+----
-+  2
-+  4
-+(2 rows)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 -100]') ORDER BY id;
-+ id 
-+----
-+  1
-+  3
-+(2 rows)
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('(arbitrary_precision:1234 AND fixed_precision:1) OR id:2') ORDER BY id;
-+ id 
-+----
-+  1
-+  2
-+(2 rows)
-+
-+-- Invalid NUMERIC literals, range bounds, and set elements report a numeric conversion error.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:not-a-number') ORDER BY id;
-+ERROR:  invalid NUMERIC value 'not-a-number' for field 'arbitrary_precision'
-+SELECT id FROM mock_items
-+WHERE fixed_precision @@@ pdb.parse_with_field('not-a-number') ORDER BY id;
-+ERROR:  invalid NUMERIC value 'not-a-number' for field 'fixed_precision'
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:[1 TO not-a-number]') ORDER BY id;
-+ERROR:  invalid NUMERIC value 'not-a-number' for field 'fixed_precision'
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 not-a-number]') ORDER BY id;
-+ERROR:  invalid NUMERIC value 'not-a-number' for field 'arbitrary_precision'
-+-- PostgreSQL rejects these, so they must not be rounded or read as zero.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:1.2x') ORDER BY id;
-+ERROR:  invalid 
+@@ -206,7 +206,7 @@ ORDER BY p.name
+    Order By: p.name asc
+    DataFusion Physical Plan: 
+      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
+-     :   AggregateExec: mode=Single, gby=[supplier_id@1 * 10 + id@3 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
++     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_06483cda(supplier_id@1, id@3) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
+      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
+      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, id@5, ctid_1@1]
+      :         CooperativeExec
+@@ -666,7 +666,7 @@ ORDER BY p.name
+    Order By: p.name asc
+    DataFusion Physical Plan: 
+      : SortExec: TopK(fetch=10), expr=[col_2@1 ASC NULLS LAST], preserve_partitioning=[false]
+-     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_funcexpr_f1ebe528(supplier_id@1) * 100 as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
++     :   AggregateExec: mode=Single, gby=[pdb_eval_expr_opexpr_78b131ee(supplier_id@1) as col_1, name@2 as col_2], aggr=[min(p_0.ctid_0) as ctid_0]
+      :     VisibilityFilterExec: tables=[p, s], pruned=[s]
+      :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@0, supplier_id@1)], projection=[ctid_0@2, supplier_id@3, name@4, ctid_1@1]
+      :         CooperativeExec
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/parse.sql` (modified, +251/-3)
+**File**: `pg_search/tests/pg_regress/expected/join_order_from_path.out` (modified, +3/-3)
 ```diff
-@@ -5,11 +5,29 @@ CALL paradedb.create_paradedb_test_table(
-   table_name => 'mock_items'
- );
- 
--ALTER TABLE mock_items ADD COLUMN created_at_tz TIMESTAMPTZ, ADD COLUMN latest_available_time_tz TIMETZ;
--UPDATE mock_items SET created_at_tz = created_at AT TIME ZONE 'UTC', latest_available_time_tz = (latest_available_time || '+00')::timetz;
-+ALTER TABLE mock_items
-+    ADD COLUMN created_at_tz TIMESTAMPTZ,
-+    ADD COLUMN latest_available_time_tz TIMETZ,
-+    ADD COLUMN arbitrary_precision NUMERIC,
-+    ADD COLUMN fixed_precision NUMERIC(10, 2);
-+UPDATE mock_items SET
-+    created_at_tz = created_at AT TIME ZONE 'UTC',
-+    latest_available_time_tz = (latest_available_time || '+00')::timetz,
-+    arbitrary_precision = CASE id
-+        WHEN 1 THEN 1234
-+        WHEN 2 THEN 5678
-+        WHEN 3 THEN -100
-+        WHEN 4 THEN 100000000000000000000.123
-+    END,
-+    fixed_precision = CASE id
-+        WHEN 1 THEN 1.00
-+        WHEN 2 THEN 0.01
-+        WHEN 3 THEN 1.23
-+        WHEN 4 THEN 2.50
-+    END;
- 
- CREATE INDEX on mock_items
--USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz);
-+USING paradedb (id, description, rating, category, metadata, created_at, last_updated_date, latest_available_time, created_at_tz, latest_available_time_tz, arbitrary_precision, fixed_precision);
- 
- SELECT id, description, category FROM mock_items
- WHERE id @@@ pdb.parse('description:(running shoes) AND category:footwear');
-@@ -35,4 +53,234 @@ WHERE id @@@ pdb.parse('created_at_tz:"2023-05-01 09:12:34+00"') ORDER BY id;
- SELECT id, description, latest_available_time_tz FROM mock_items
- WHERE id @@@ pdb.parse('latest_available_time_tz:"09:12:34+00"') ORDER BY id;
- 
-+-- Global parsing must apply the same logical-to-physical conversion as field-specific parsing.
-+-- INTEGER is the control: its logical and physical values are identical.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('id:1') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse_with_field('1') ORDER BY id;
-+
-+-- Unlimited NUMERIC uses the NumericBytes representation.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:1234') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE arbitrary_precision @@@ pdb.parse_with_field('1234') ORDER BY id;
-+
-+-- NUMERIC(10,2) uses a scaled Numeric64 representation.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:1') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE fixed_precision @@@ pdb.parse_with_field('1') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:1.23') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:100000000000000000000.123') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:-100') ORDER BY id;
-+
-+-- Conversion also applies to range bounds and each field in a compound AST.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:[1 TO 2]') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE fixed_precision @@@ pdb.parse_with_field('[1 TO 2]') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:[-100 TO 1234]') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision: IN [0.01 2.5]') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 -100]') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('(arbitrary_precision:1234 AND fixed_precision:1) OR id:2') ORDER BY id;
-+
-+-- Invalid NUMERIC literals, range bounds, and set elements report a numeric conversion error.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:not-a-number') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE fixed_precision @@@ pdb.parse_with_field('not-a-number') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:[1 TO not-a-number]') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision: IN [1234 not-a-number]') ORDER BY id;
-+
-+-- PostgreSQL rejects these, so they must not be rounded or read as zero.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:1.2x') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE fixed_precision @@@ pdb.parse_with_field('1.2x') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision:1..2') ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:""') ORDER BY id;
-+
-+-- Lenient parsing still ignores invalid phrases and converts the remaining NUMERIC values.
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('arbitrary_precision:not-a-number OR fixed_precision:1.23', lenient => true) ORDER BY id;
-+
-+SELECT id FROM mock_items
-+WHERE id @@@ pdb.parse('fixed_precision: IN [not-a-number 1.23]', lenient => true) ORDER BY id;
-+
-+-- Tantivy's lenient parser makes an invalid bound unbounded, so 
+@@ -223,8 +223,8 @@ JOIN jo_reviews r ON r.book_id = b.id
+ JOIN jo_authors a ON a.id > b.author_id + r.rating
+ WHERE a.bio @@@ 'orchid'
+ ORDER BY b.id, r.id LIMIT 5;
+-                                                                                                         QUERY PLAN                                                                                                         
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++                                                                                                                               QUERY PLAN                                                                                                                                
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Custom Scan (ParadeDB Join Scan)
+    Relation Tree: (b INNER r) INNER a
+    Join Cond: r.book_id = b.id
+@@ -239,7 +239,7 @@ ORDER BY b.id, r.id LIMIT 5;
+      :         NestedLoopJoinExec: join_type=Inner, filter=id@0 > join_proj_push_down_1@1, projection=[id@0, ctid_2@1, ctid_0@2, author_id@3, id@4, ctid_1@5, rating@6, book_id@7, id@8]
+      :           CooperativeExec
+      :             PgSearchScan: table=a, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"bio","query_string":"orchid","lenient":null,"conjunction_mode":null}}}}
+-     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, author_id@1 + rating@4 as join_proj_push_down_1]
++     :           ProjectionExec: expr=[ctid_0@0 as ctid_0, author_id@1 as author_id, id@2 as id, ctid_1@3 as ctid_1, rating@4 as rating, book_id@5 as book_id, id@6 as id, CAST(pdb_eval_expr_opexpr_6edbbeb8(author_id@1, rating@4) AS Int64) as join_proj_push_down_1]
+      :             HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(id@2, book_id@2)]
+      :               CooperativeExec
+      :                 PgSearchScan: table=b, segments=1, query="all"
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_orderby_expression.out` (modified, +9/-9)
+```diff
+@@ -112,7 +112,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -195,7 +195,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 - 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_e22d00d8(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -243,7 +243,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_46622aa0(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -339,7 +339,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -388,7 +388,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.big_id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, big_id@2 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_40249b18(big_id@2) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[big_id@2 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -419,7 +419,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.big_id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, big_id@2 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_a0b34269(big_id@2) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[big_id@2 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -450,7 +450,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, 0 + id@1 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_662fe57b(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -481,7 +481,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_cf5a22da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+@@ -739,7 +739,7 @@ LIMIT 10;
+    Limit: 10
+    Order By: c.id desc
+    DataFusion Physical Plan: 
+-     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, id@1 + 0 as col_3, ctid_0@0 as ctid_0]
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, pdb_eval_expr_opexpr_fd4454da(id@1) as col_3, ctid_0@0 as ctid_0]
+      :   SortExec: TopK(fetch=10), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[c]
+      :       HashJoinExec: mode=CollectLeft, join_type=LeftSemi, on=[(id@1, company_id@0)]
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_predicates.out` (modified, +1/-1)
+```diff
+@@ -815,7 +815,7 @@ LIMIT 10;
+      : ProjectionExec: expr=[id@2 as col_1, supplier_id@1 as col_2, id@4 as col_3, ctid_0@0 as ctid_0, ctid_1@3 as ctid_1]
+      :   SortExec: TopK(fetch=10), expr=[id@2 ASC NULLS LAST], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[p, s]
+-     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(supplier_id@1, id@1)], filter=abs(supplier_id@0 - id@1) >= 0
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(supplier_id@1, id@1)], filter=abs(pdb_eval_expr_opexpr_1d849f2b(supplier_id@0, id@1)) >= 0
+      :         CooperativeExec
+      :           PgSearchScan: table=p, segments=1, dynamic_filters=1, query={"with_index":{"query":{"match":{"field":"description","value":"wireless","tokenizer":null,"distance":null,"transposition_cost_one":null,"prefix":null,"conjunction_mode":false}}}}
+      :         CooperativeExec
+```
+
+**File**: `pg_search/tests/pg_regress/expected/join_semi_anti_disjunctive.out` (modified, +1/-1)
+```diff
+@@ -1222,7 +1222,7 @@ LIMIT 5;
+      :   SortExec: TopK(fetch=5), expr=[id@1 DESC], preserve_partitioning=[false]
+      :     VisibilityFilterExec: tables=[i]
+      :       NestedLoopJoinExec: join_type=RightAnti, filter=join_proj_push_down_1@1 > id@0, projection=[ctid_0@0, id@1]
+-     :         ProjectionExec: expr=[id@0 as id, id@0 * 2 as join_proj_push_down_1]
++     :         ProjectionExec: expr=[id@0 as id, pdb_eval_expr_opexpr_b2e4dd8d(id@0) as join_proj_push_down_1]
+      :           CooperativeExec
+      :             PgSearchScan: table=e, segments=1, visibility=eager, query={"with_index":{"query":"all"}}
+      :         CooperativeExec
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7019** (2026-10-24): test: use a unique tiebreaker in generated_subquery (@philippemnoel)
-- **PR #7016** (2026-10-24): fix: make merges and VACUUM's merger wait interruptible (@paradedb-github-bot[bot])
-- **PR #7014** (2026-10-24): test: use a unique tiebreaker in generated_paging_small (@abelmarnk)
-- **PR #7013** (2026-10-24): fix: search predicates above an Append opened the partitioned parent index (@mdashti)
-- **PR #7011** (2026-10-24): ci: standardize RunsOn setup before cache and artifact operations (@paradedb-github-bot[bot])
-- **PR #7010** (2026-10-24): ci: standardize RunsOn setup before cache and artifact operations (@philippemnoel)
+- **PR #7140** (2026-10-31): chore: Fix clash between #6869 and #7051 (@stuhood)
+- **PR #7133** (closed): ci: Use an unlinked author for benchmark commits (@paradedb-github-bot[bot])
+- **PR #7132** (closed): ci: Use an unlinked author for benchmark commits (@paradedb-github-bot[bot])
+- **PR #7131** (2026-10-30): ci: Use an unlinked author for benchmark commits (@philippemnoel)
+- **PR #7129** (2026-10-30): fix: omit graph dependencies from Stressgres runtime image (@philippemnoel)
+- **PR #7125** (2026-10-31): fix: pin workflow actions and enforce immutable references (@philippemnoel)
 
 ---
 
@@ -3929,28 +3017,34 @@ already in `Cargo.lock` transitively.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. make merges and VACUUM's merger wait interruptible (#6740)
+## X. omit graph dependencies from Stressgres runtime image (#7129)
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docker/Dockerfile.stressgres`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `185c6094`: make merges and VACUUM's merger wait interruptible (#6740). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c13589a`: omit graph dependencies from Stressgres runtime image (#7129). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/Dockerfile.stressgres`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "postgres",
+        --manifest-path /home/app/Cargo.toml -p stressgres --no-default-features --features dst && \
+# Graph generation is disabled in this image, avoiding Fontconfig and its
+# transitive font/XML dependencies. Normal source builds retain graph support.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    libpng-dev \
+    libjpeg-dev \
+    libfontconfig1-dev \
+        --manifest-path /home/app/Cargo.toml -p stressgres --features dst && \
+    libfontconfig1 \
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `185c6094` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c13589a` are properly handled with clean fallback behavior.

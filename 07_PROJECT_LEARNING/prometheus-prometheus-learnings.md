@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `79e49c75`  
+> **Source Version**: `9e28ec50`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T17:58:24.808Z  
+> **Timestamp**: 2026-10-31T02:28:00.059Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T17:58:23.871Z  
+> **Harvest Timestamp**: 2026-10-31T02:27:59.658Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 66776 stars
+- **Stars / Engagement**: 66866 stars
 
 ---
 
@@ -747,6 +747,7 @@ import (
 	"math"
 	"slices"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 	"unique"
@@ -793,6 +794,11 @@ const (
 	reasonUnintentionalDroppedSeries = "unintentionally_dropped_series"
 	reasonNHCBNotSupported           = "nhcb_in_rw1_not_supported"
 	reasonNHCBConversionError        = "nhcb_to_classic_conversion_error"
+	reasonClassicHistogramNotAllowed = "classic_histogram_not_allowed"
+	// TODO(bwplotka): Temporary, fixed in https://github.com/prometheus/prometheus/pull/20070.
+	reasonDetachedExemplarNotAllowed = "detached_exemplar_not_allowed"
+	reasonMissingMetadataType        = "missing_metadata_type"
+	reasonMissingStartTimestamp      = "missing_start_timestamp"
 )
 
 type queueManagerMetrics struct {
@@ -957,12 +963,7 @@ func newQueueManagerMetrics(r prometheus.Registerer, rn, e string) *queueManager
 		Name:        "exemplars_dropped_total",
 		Help:        "Total number of exemplars which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentionally because of an unknown reference ID.",
 		ConstLabels: constLabels,
-	}, []string{"reason"})
-	m.droppedHistogramsTotal = prometheus.NewCounterVec(prometheus.CounterOpts{
-		Namespace:   namespace,
-		Subsystem:   subsystem,
-		Name:        "histograms_dropped_total",
-		Help:        "Total number of histograms which were dropped after being read from the WAL before being sent via remote write, either via relabelling, due to being too old or unintentio
+	}, []string{"reason
 ```
 
 ### Core Architecture Module: `tsdb/chunks/chunk_write_queue.go`
@@ -1005,12 +1006,12 @@ const (
 )
 
 type chunkWriteJob struct {
-	cutFile   bool
 	seriesRef HeadSeriesRef
 	mint      int64
 	maxt      int64
 	chk       chunkenc.Chunk
 	ref       ChunkDiskMapperRef
+	cutFile   bool
 	isOOO     bool
 	callback  func(error)
 }
@@ -1500,11 +1501,11 @@ func openDir(path string) (fd syscall.Handle, err error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20195** (2026-10-26): **Add changelog entry for cherry-pick**
-  *Symptoms*:  ```release-notes NONE ``` 
+- **Issue #20237** (2026-10-30): **chore(compliance): enable stateless and stateless-st remote write sender tests**
+  *Symptoms*: Bump `github.com/prometheus/compliance` to latest `main` and run `sender.StatelessComplianceTests()` and `sender.StatelessSTComplianceTests()` against both `server` and `agent` modes in `TestRemoteWriteSender` now that `remote_write.mode` (#20098) is merged.  Commits: - `compliance: enable stateless and stateless-st remote write sender tests`  ```release-notes NONE ```
 
-- **Issue #20194** (2026-10-26): **release: omit authors and parentheses from generated PR references**
-  *Symptoms*: <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [FEATURE] API: Add 
+- **Issue #20227** (2026-10-29): **docs: simplify 3.16 changelog PR references**
+  *Symptoms*: As we usually do <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword -->  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  <!-- Write NONE only if there is no user-facing change.  Otherwise use one of: [FEATURE] [ENHANCEMENT] [PERF] [BUGFIX] [SECURITY] [CHANGE] Following the pattern `[TYPE] Component: description.`  Example: [
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1521,256 +1522,119 @@ func openDir(path string) (fd syscall.Handle, err error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d5a5c1d` (2026-10-26)
-**Commit Message**: Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval
+### Incident Patch 1: `4e062fea` (2026-10-30)
+**Commit Message**: Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest
 
-tsdb: use a persistent maintenance ticker
+tsdb: use synctest for series eviction reader wait test
 
-**File**: `tsdb/db.go` (modified, +3/-1)
+**File**: `tsdb/head_series_eviction_test.go` (modified, +47/-35)
 ```diff
-@@ -1294,6 +1294,8 @@ func (db *DB) run(ctx context.Context) {
- 	defer close(db.donec)
- 
- 	backoff := time.Duration(0)
-+	blockReloadTick := time.NewTicker(db.opts.BlockReloadInterval)
-+	defer blockReloadTick.Stop()
- 
- 	for {
- 		select {
-@@ -1303,7 +1305,7 @@ func (db *DB) run(ctx context.Context) {
- 		}
- 
- 		select {
--		case <-time.After(db.opts.BlockReloadInterval):
-+		case <-blockReloadTick.C:
- 			db.cmtx.Lock()
- 			if err := db.reloadBlocks(); err != nil {
- 				db.logger.Error("reloadBlocks", "err", err)
-```
-
-**File**: `tsdb/db_test.go` (modified, +53/-0)
-```diff
-@@ -36,6 +36,7 @@ import (
+@@ -20,6 +20,7 @@ import (
+ 	"slices"
  	"strconv"
- 	"sync"
  	"testing"
 +	"testing/synctest"
  	"time"
  
- 	"github.com/gogo/protobuf/proto"
-@@ -10341,6 +10342,58 @@ func TestBlockReloadInterval(t *testing.T) {
+ 	prom_testutil "github.com/prometheus/client_golang/prometheus/testutil"
+@@ -744,42 +745,53 @@ func TestSeriesEviction_QueryStartingAtLastTimestampIsWaitedForByNextEviction(t
  	}
- }
- 
-+func TestFrequentCommitsDoNotStarveMaintenance(t *testing.T) {
-+	cases := []struct {
-+		name        string
-+		autoCompact bool
-+	}{
-+		{"automatic compaction disabled", false},
-+		{"automatic compaction enabled", true},
-+	}
-+	for _, c := range cases {
-+		t.Run(c.name, func(t *testing.T) {
+ 	for name, openQuery := range queriers {
+ 		t.Run(name, func(t *testing.T) {
+-			testDB := newSeriesEvictionTestDB(t)
+-			db := testDB.db
+-
+-			// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
+-			// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
+-			// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
+-			db.compactHeadViewBeforeEvictTestingCallback = func() {
+-				app := db.Appender(context.Background())
+-				_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
 +			synctest.Test(t, func(t *testing.T) {
-+				db := newTestDB(t, withOpts(&Options{
-+					BlockReloadInterval: time.Second,
-+					CompactionDelay:     time.Hour,
-+				}), withRngs(10))
-+				if !c.autoCompact {
-+					db.DisableCompactions()
++				testDB := newSeriesEvictionTestDB(t)
++				db := testDB.db
++
++				// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
++				// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
++				// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
++				db.compactHeadViewBeforeEvictTestingCallback = func() {
++					app := db.Appender(context.Background())
++					_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
++					require.NoError(t, err)
++					require.NoError(t, app.Commit())
 +				}
++				var reading *readingSeries
++				db.Head().testAfterWaitingForReadersToEvictSeries = func() {
++					reading = openQuery(t, db, lateSampleTs, lateSampleTs)
++				}
++				require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
++				require.NotNil(t, reading)
++				require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
 +
-+				lset := labels.FromStrings("series", "frequent-commit")
-+
-+				// Make the head compactable before the loop.
-+				app := db.Appender(context.Background())
-+				_, err := app.Append(0, lset, 0, 0)
-+				require.NoError(t, err)
-+				_, err = app.Append(0, lset, 19, 0)
-+				require.NoError(t, err)
-+				require.NoError(t, app.Commit())
++				// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
++				done := make(chan error, 1)
++				go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
 +				synctest.Wait()
 +
-+				for ts := int64(20); ts < 120; ts++ {
-+					app := db.Appender(context.Background())
-+					_, err := app.Append(0, lset, ts, 0)
-+					require.NoError(t, err)
-+					compactionsBefore := prom_testutil.ToFloat64(db.metrics.compactionsTriggered)
-+					require.NoError(t, app.Commit())
-+					// Commit faster than BlockReloadInterval.
-+					time.Sleep(100 * time.Millisecond)
-+					synctest.Wait()
-+					require.True(t, db.Head().compactable())
-+					require.Greater(t, prom_testutil.ToFloat64(db.metrics.compactionsTriggered), compactionsBefore)
++				// The query is still open, so the eviction must be waiting for it.
++				select {
++				case err := <-done:
++					require.FailNow(t, "the eviction must wait for the query that starts at its last timestamp", "eviction returned: %v", err)
++				default:
 +				}
++				samples, err := reading.read()
+ 				require.NoError(t, err)
+-				require.NoError(t, app.Commit())
+-			}
+-			var reading *readingSeries
+-			db.Head().testAfterWaitingForReadersToEvictSeries = func() {
+-				reading = openQuery(t, db, lateSampleTs, lateSampleTs)
+-			}
+-			require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
+-			require.NotNil(t, reading)
+-			require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
+-
+-			// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
+-			done := make(chan error, 1)
+-			go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
+-
+-			// The query is still open, so the eviction must keep waiting for it, with the series in the head.
+-			select {
+-			case err := <-done:
+-				require.FailNow(t, "the eviction must wait for the query that starts at its last timestamp", "eviction returned: %v", err)
+-			case <-time.After(time.Second):
+-			}
+-			samples, err := reading.read()
+-			require.NoError(t, err)
+-			require.Equal(t, map[string]int{evictionTestLabels(0).String(): 1}, samples)
+-			require.NoError(t, reading.close())
+-
+-			require.NoError(t, <-done)
++				require.Equal(t, map[string]int{evictionTestLabels(0).String(): 1}, samples)
++				require.NoError(t, reading.close())
 +
-+				// Verify that maintenance ran without head compaction.
-+				require.Empty(t, db.Blocks())
-+				require.Greater(t, prom_testutil.ToFloat64(db.metrics.reloads), 1.0)
-+				require.Greater(t, prom_testutil.ToFloat64(db.Head().metrics.mmapChunksTotal), 0.0)
++				// Advance fake time past the reader-wait polling interval.
++				time.Sleep(time.Second)
++				synctest.Wait()
++				select {
++				case err := <-done:
++					require.NoError(t, err)
++				default:
++					t.Fatal("the eviction must complete after the query closes")
++				}
 +			})
-+		})
-+	}
-+}
-+
- func TestStaleSeriesCompaction(t *testing.T) {
- 	opts := DefaultOptions()
- 	opts.MinBlockDuration = 1000
-```
-
----
-
-### Incident Patch 2: `79e49c75` (2026-10-26)
-**Commit Message**: Merge pull request #20194 from roidelapluie/changelog-fix
-
-release: omit authors and parentheses from generated PR references
-
-**File**: `scripts/generate_release_notes.sh` (modified, +4/-2)
-```diff
-@@ -64,7 +64,8 @@ if [[ "${patch}" == "0" ]]; then
- 		--org prometheus --repo prometheus \
- 		--required-author="" --dependencies=false \
- 		--go-template="go-template:inline:${TMPL}" \
--		--output=/dev/stdout
-+		--output=/dev/stdout |
-+		sed -E 's/\(#([0-9]+), @[A-Za-z0-9_-]+\)$/#\1/'
- else
- 	# Patch release: cover commits since the previous patch tag.
- 	prev_patch=$(( patch - 1 ))
-@@ -79,5 +80,6 @@ else
- 		--required-author="" --dependencies=false \
- 		--go-template="go-template:inline:${TMPL}" \
- 		--skip-first-commit \
--		--output=/dev/stdout
-+		--output=/dev/stdout |
-+		sed -E 's/\(#([0-9]+), @[A-Za-z0-9_-]+\)$/#\1/'
- fi
-```
-
----
-
-### Incident Patch 3: `dd8f8e7a` (2026-10-26)
-**Commit Message**: Merge pull request #20193 from prometheus/bwplotka/fix-windows-tsdb-tests
-
-tsdb: fix Windows test flake and timeout in WBL tests
-
-**File**: `tsdb/db_append_v2_test.go` (modified, +23/-19)
-```diff
-@@ -5693,7 +5693,6 @@ func TestWBLAndMmapReplay_AppendV2(t *testing.T) {
- 	t.Parallel()
- 	for name, scenario := range sampleTypeScenarios {
- 		t.Run(name, func(t *testing.T) {
--			t.Parallel()
- 			testWBLAndMmapReplayAppendV2(t, scenario)
  		})
  	}
-@@ -5771,6 +5770,10 @@ func testWBLAndMmapReplayAppendV2(t *testing.T, scenario sampleTypeScenario) {
- 
- 	// Making a copy of original state of WBL and Mmap files to use it later.
- 	mmapDir := mmappedChunksDir(db.head.opts.ChunkDirRoot)
-+	// On Windows, head chunk files are preallocated to 128 MiB (MaxHeadChunkFileSize)
-+	// with trailing zeros. Truncate the closed file to the non-Windows preallocation
-+	// size (128 KiB) before copying mmapDir repeatedly across subtests.
-+	require.NoError(t, os.Truncate(filepath.Join(mmapDir, "000001"), chunks.MinWriteBufferSize*2))
- 	wblDir := db.head.wbl.Dir()
- 	originalWblDir := filepath.Join(t.TempDir(), "original_wbl")
- 	originalMmapDir := filepath.Join(t.TempDir(), "original_mmap")
-@@ -6505,14 +6508,25 @@ func TestWBLCorruption_AppendV2(t *testing.T) {
- 	// We corrupt WBL after the sample at 255. So everything added later
- 	// should be deleted after replay.
- 
-+	// segmentSize returns the on-disk size of the named WBL segment. It opens
-+	// the file and stats the handle instead of relying on os.ReadDir's cached
-+	// directory metadata, which on Windows can be stale for a segment that was
-+	// just closed asynchronously by WL.NextSegment.
-+	segmentSize := func(name string) int64 {
-+		f, err := os.Open(path.Join(db.head.wbl.Dir(), name))
-+		require.NoError(t, err)
-+		defer f.Close()
-+		fi, err := f.Stat()
-+		require.NoError(t, err)
-+		return fi.Size()
-+	}
-+
- 	// Checking where we corrupt it.
- 	require.NoError(t, db.head.wbl.Sync()) // Syncing to make sure wbl is flushed in windows.
- 	files, err := os.ReadDir(db.head.wbl.Dir())
- 	require.NoError(t, err)
- 	require.Len(t, files, 2)
--	f1, err := files[1].Info()
--	require.NoError(t, err)
--	corruptIndex := f1.Size()
-+	corruptIndex := segmentSize(files[1].Name())
- 	corruptFilePath := path.Join(db.head.wbl.Dir(), files[1].Name())
- 
- 	// Corrupt the WBL by adding a malformed record.
-@@ -6533,15 +6547,9 @@ func TestWBLCorruption_AppendV2(t *testing.T) {
- 	files, err = os.ReadDir(db.head.wbl.Dir())
- 	require.NoError(t, err)
- 	require.Len(t, files, 3)
--	f1, err = files[1].Info()
--	require.NoError(t, err)
--	require.Greater(t, f1.Size(), corruptIndex)
--	f0, err := files[0].Info()
--	require.NoError(t, err)
--	require.Greater(t, f0.Size(), int64(100))
--	f2, err := files[2].Info()
--	require.NoError(t, err)
--	require.Greater(t, f2.Size(), int64(100))
-+	require.Greater(t, segmentSize(files[1].Name()), corruptIndex)
-+	require.Greater(t, segmentSize(files[0].Name()), int64(100))
-+	require.Greater(t, segmentSize(files[2].Name()), int64(100))
- 
- 	verifySamples := func(expSamples []chunks.Sample) {
- 		sort.Slice(expSamples, func(i, j int) bool {
-@@ -6577,12 +6585,8 @@ func TestWBLCorruption_AppendV2(t *testing.T) {
- 	files, err = os.ReadDir(db.head.wbl.Dir())
- 	require.NoError(t, err)
- 	require.Len(t, files, 3)
--	f0, err = files[0].Info()
--	require.NoError(t, err)
--	require.Greater(t, f0.Size(), int64(100))
--	f2, err = files[2].Info()
--	require.NoError(t, err)
--	require.Equal(t, int64(0), f2.Size())
-+	require.Greater(t, segmentSize(files[0].Name()), int64(100))
-+	require.Equal(t, int64(0), segmentSize(files[2].Name()))
- 	require.Equal(t, corruptFilePath, path.Join(db.head.wbl.Dir(), files[1].Name()))
- 
- 	// Verifying that everything after the corruption point is set to 0.
-```
-
-**File**: `tsdb/db_test.go` (modified, +4/-1)
-```diff
-@@ -7757,7 +7757,6 @@ func TestWBLAndMmapReplay(t *testing.T) {
- 	t.Parallel()
- 	for name, scenario := range sampleTypeScenarios {
- 		t.Run(name, func(t *testing.T) {
--			t.Parallel()
- 			testWBLAndMmapReplay(t, scenario)
- 		})
- 	}
-@@ -7835,6 +7834,10 @@ func testWBLAndMmapReplay(t *testing.T, scenario sampleTypeScenario) {
- 
- 	// Making a copy of original state of WBL and Mmap files to use it later.
- 	mmapDir := mmappedChunksDir(db.head.opts.ChunkDirRoot)
-+	// On Windows, head chunk files are preallocated to 128 MiB (MaxHeadChunkFileSize)
-+	// with trailing zeros. Truncate the closed file to the non-Windows preallocation
-+	// size (128 KiB) before copying mmapDir repeatedly across subtests.
-+	require.NoError(t, os.Truncate(filepath.Join(mmapDir, "000001"), chunks.MinWriteBufferSize*2))
- 	wblDir := db.head.wbl.Dir()
- 	originalWblDir := filepath.Join(t.TempDir(), "original_wbl")
- 	originalMmapDir := filepath.Join(t.TempDir(), "original_mmap")
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20195** (2026-10-26): Add changelog entry for cherry-pick (@ywwg)
-- **PR #20194** (2026-10-26): release: omit authors and parentheses from generated PR references (@roidelapluie)
-- **PR #20193** (2026-10-26): tsdb: fix Windows test flake and timeout in WBL tests (@bwplotka)
-- **PR #20187** (closed): storage/remote: count metadata entries received from WAL (@shilohlee98)
-- **PR #20181** (closed): docs: add AppArmor profile example (@rizzabhdwaj)
-- **PR #20172** (closed): scrape: reuse labels.Builder across sample label mutations (@bwplotka)
+- **PR #20237** (2026-10-30): chore(compliance): enable stateless and stateless-st remote write sender tests (@bwplotka)
+- **PR #20227** (2026-10-29): docs: simplify 3.16 changelog PR references (@roidelapluie)
+- **PR #20226** (2026-10-30): tsdb: use synctest for series eviction reader wait test (@roidelapluie)
+- **PR #20225** (2026-10-30): storage[PERF]: reuse histogram decoding targets (@pedro-stanaka)
+- **PR #20224** (2026-10-29): docs: fix flag name for start timestamp processing in API reference (@gauvainw)
+- **PR #20223** (2026-10-29): fix(storage/remote): fall back to WAL metadata when type-and-unit labels are empty (@bwplotka)
 
 ---
 
@@ -1790,30 +1654,75 @@ tsdb: fix Windows test flake and timeout in WBL tests
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval
+## X. Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest
 
 **RULE**:
-When implementing operations in `tsdb/db.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tsdb/head_series_eviction_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0d5a5c1d`: Merge pull request #20161 from guidonguido/fix/tsdb/block-reload-interval. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e062fea`: Merge pull request #20226 from roidelapluie/roidelapluie/pr-20204-synctest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/db.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tsdb/head_series_eviction_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	blockReloadTick := time.NewTicker(db.opts.BlockReloadInterval)
-	defer blockReloadTick.Stop()
-		case <-blockReloadTick.C:
+	"testing/synctest"
+			synctest.Test(t, func(t *testing.T) {
+				testDB := newSeriesEvictionTestDB(t)
+				db := testDB.db
+
+				// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
+				// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
+				// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
+				db.compactHeadViewBeforeEvictTestingCallback = func() {
+					app := db.Appender(context.Background())
+					_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
+					require.NoError(t, err)
+					require.NoError(t, app.Commit())
+				}
+				var reading *readingSeries
+				db.Head().testAfterWaitingForReadersToEvictSeries = func() {
+					reading = openQuery(t, db, lateSampleTs, lateSampleTs)
+				}
+				require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
+				require.NotNil(t, reading)
+				require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
+
+				// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
+				done := make(chan error, 1)
+		
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-		case <-time.After(db.opts.BlockReloadInterval):
+			testDB := newSeriesEvictionTestDB(t)
+			db := testDB.db
+
+			// The first eviction selects the series to evict, then series 0 gets a late sample, and so it is not
+			// evicted. A query for the timestamp of the late sample is opened after the first eviction waited for the
+			// readers, so it has the series 0 in the set being evicted, and the late sample is in the head only.
+			db.compactHeadViewBeforeEvictTestingCallback = func() {
+				app := db.Appender(context.Background())
+				_, err := app.Append(0, evictionTestLabels(0), lateSampleTs, 42)
+				require.NoError(t, app.Commit())
+			}
+			var reading *readingSeries
+			db.Head().testAfterWaitingForReadersToEvictSeries = func() {
+				reading = openQuery(t, db, lateSampleTs, lateSampleTs)
+			}
+			require.NoError(t, db.CompactSelectedSeries(testDB.evictedRefs))
+			require.NotNil(t, reading)
+			require.Equal(t, uint64(evictionTestSeries-evictionTestEvictedSeries+1), db.Head().NumSeries())
+
+			// The second eviction persists the late sample, and its last timestamp is the one the query starts at.
+			done := make(chan error, 1)
+			go func() { done <- db.CompactSelectedSeries(testDB.evictedRefs[:1]) }()
+
+			// The query is still open, so 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d5a5c1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e062fea` are properly handled with clean fallback behavior.

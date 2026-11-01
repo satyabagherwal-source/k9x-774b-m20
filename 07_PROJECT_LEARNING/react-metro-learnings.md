@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `5cfcfe21`  
+> **Source Version**: `fcced577`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T05:27:40.692Z  
+> **Timestamp**: 2026-10-31T10:07:25.930Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T05:27:40.538Z  
+> **Harvest Timestamp**: 2026-10-31T10:07:25.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🚇 The JavaScript bundler for React Native
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5653 stars
+- **Stars / Engagement**: 5659 stars
 
 ---
 
@@ -1237,6 +1237,21 @@ function chunkString(str: string, size: number): Array<string> {
 }
 
 /**
+ * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
+ * usually share the terminal (e.g. `console.error()`).
+ */
+function getBytesWritten(stream: tty.WriteStream): number {
+  if (stream !== process.stdout && stream !== process.stderr) {
+    return stream.bytesWritten;
+  }
+
+  return (
+    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
+    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
+  );
+}
+
+/**
  * Get the stream as a TTY if it effectively looks like a valid TTY.
  */
 function getTTYStream(stream: UnderlyingStream): ?tty.WriteStream {
@@ -1289,6 +1304,7 @@ export default class Terminal {
   #isPendingUpdate: boolean;
   #shouldFlush: boolean;
   #writeStatusThrottled: string => void;
+  #bytesWrittenAfterStatus: ?number;
 
   constructor(stream: UnderlyingStream, opts: {ttyPrint?: boolean} = {}) {
     this.#logLines = [];
@@ -1319,13 +1335,13 @@ export default class Terminal {
     }
 
     this.#isUpdating = true;
-    this.#updatePromise = this.#update().then(async () => {
+    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
       while (this.#isPendingUpdate) {
         if (!this.#shouldFlush) {
           await new Promise(resolve => setTimeout(resolve, 33));
         }
         this.#isPendingUpdate = false;
-        await this.#update();
+        await Promise.all(this.#updateSync());
       }
       this.#isUpdating = false;
       this.#shouldFlush = false;
@@ -1351,12 +1367,10 @@ export default class Terminal {
   }
 
   /**
-   * Clear and write the new status, logging in bulk in-between. Doing this in a
-   * throttled way (in a different tick than the calls to `log()` and
-   * `status()`) prevents us from repeatedly rewriting the status in case
-   * `terminal.log()` is called several times.
+   * Issues the update's writes without awaiting in between, so no other output
+   * can land in the middle of an update. Returns the pending writes.
    */
-  async #update(): Promise<void> {
+  #updateSync(): Array<Promise<unknown>> {
     const ttyStream = this.#ttyStream;
 
     const nextStatusStr = this.#nextStatusStr;
@@ -1368,29 +1382,43 @@ export default class Terminal {
     this.#logLines = [];
 
     if (statusStr === nextStatusStr && logLines.length === 0) {
-      return;
+      return [];
     }
 
-    if (ttyStream && statusStr.length > 0) {
+    const writes: Array<Promise<unknown>> = [];
+
+    if (
+      ttyStream &&
+      statusStr.length > 0 &&
+      // If anything printed outside of Terminal (like direct console.log),
+      // don't try to clear latest status, and just print a new one instead
+      // or we might delete that external print
+      getBytesWritten(ttyStream) === this.#bytesWrittenAfterStatus
+    ) {
       const statusLinesCount = statusStr.split('\n').length - 1;
       // extra -1 because we print the status with a trailing new line
-      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
-      await clearScreenDown(ttyStream);
+      writes.push(
+        moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1),
+        clearScreenDown(ttyStream),
+      );
     }
 
     if (logLines.length > 0) {
-      await streamWrite(this.#stream, logLines.join('\n') + '\n');
+      writes.push(streamWrite(this.#stream, logLines.join('\n') + '\n'));
     }
 
     if (ttyStream) {
       if (nextStatusStr.length > 0) {
-        await streamWrite(this.#stream, nextStatusStr + '\n');
+        writes.push(streamWrite(this.#stream, nextStatusStr + '\n'));
       }
+      this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
     } else {
       this.#writeStatusThrottled(
         nextStatusStr.length > 0 ? nextStatusStr + '\n' : '',
       );
     }
+
+    return writes;
   }
 
   /**
@@ -1469,930 +1497,210 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `85585223` (2026-10-23)
-**Commit Message**: Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, symbolicate)
+### Incident Patch 1: `fcced577` (2026-10-30)
+**Commit Message**: Don't clear over output printed outside of Terminal
 
 Summary:
-Replaces three sketchy-null suppressions in Metro with explicit checks that keep the exact runtime behavior.
+`Terminal` redraws its interactive status by moving the cursor up over the status lines and clearing to the end of the screen. Anything printed without going through `Terminal` (a dependency's `console.log`, `console.error`, Node deprecation warnings) lands inside that area and is erased by the next redraw.
 
-- `metro-transform-plugins/src/constant-folding-plugin.js`: removes `$FlowFixMe[sketchy-null-mixed]` on `path.replaceWith(result.value ? node.consequent : node.alternate)`. `result.value` is `unknown`, so the test becomes `Boolean(result.value)`. That is the same truthiness test the ternary did implicitly, for every value. It is read into `const valueIsTruthy` first because Metro's ESLint `no-extra-boolean-cast` flags `Boolean()` directly in a ternary test. The existing `$FlowFixMe[incompatible-type]` on the call is unchanged.
-- `metro/src/DeltaBundler/Serializers/getRamBundleInfo.js`: removes `$FlowFixMe[sketchy-null-bool]` on `preloadedModules || {}`. `preloadedModules` is typed `?Readonly<{[path: string]: true}> | false`. An object is always truthy, so `||` falls back exactly for `null`, `undefined` and `false`; the new check is `preloadedModules != null && preloadedModules !== false ? preloadedModules : {}`.
-- `metro-symbolicate/src/symbolicate.js` (`readAll`): removes 
+This keeps that output with a minimal change, without patching `console`, `process.stdout.write` or any other global:
+- After each status write, `Terminal` saves the stream's `bytesWritten`. When the stream is stdout or stderr, it uses the sum of both, as they usually share the terminal.
+- Before the next redraw, if the counter changed, something else printed after the status. `Terminal` then skips the cursor-up and clear and prints the new status below that output.
+- The writes of an update are issued without awaiting in between (`#updateSync`), so other output can't land between the cursor move, the clear and the new status.
+- The `--tty-print` help text in `fb-metro-cli` no longer says console output gets deleted by the status.
 
-**File**: `packages/metro-symbolicate/src/symbolicate.js` (modified, +3/-3)
+Known limits: each time other output is detected, the previous status stays in the his
+
+**File**: `packages/metro-core/src/Terminal.js` (modified, +41/-13)
 ```diff
-@@ -243,10 +243,10 @@ function readAll(stream: Readable | ReadStream) {
+@@ -49,6 +49,21 @@ function chunkString(str: string, size: number): Array<string> {
+   return str.match(new RegExp(`(?:${SKIP_ANSI}.){1,${size}}`, 'g')) || [];
+ }
  
-     stream.setEncoding('utf8');
-     stream.on('readable', () => {
--      let chunk;
--      // flowlint-next-line sketchy-null-string:off
--      while ((chunk = stream.read())) {
-+      let chunk = stream.read();
-+      while (chunk != null && chunk !== '') {
-         data += chunk.toString();
-+        chunk = stream.read();
++/**
++ * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
++ * usually share the terminal (e.g. `console.error()`).
++ */
++function getBytesWritten(stream: tty.WriteStream): number {
++  if (stream !== process.stdout && stream !== process.stderr) {
++    return stream.bytesWritten;
++  }
++
++  return (
++    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
++    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
++  );
++}
++
+ /**
+  * Get the stream as a TTY if it effectively looks like a valid TTY.
+  */
+@@ -102,6 +117,7 @@ export default class Terminal {
+   #isPendingUpdate: boolean;
+   #shouldFlush: boolean;
+   #writeStatusThrottled: string => void;
++  #bytesWrittenAfterStatus: ?number;
+ 
+   constructor(stream: UnderlyingStream, opts: {ttyPrint?: boolean} = {}) {
+     this.#logLines = [];
+@@ -132,13 +148,13 @@ export default class Terminal {
+     }
+ 
+     this.#isUpdating = true;
+-    this.#updatePromise = this.#update().then(async () => {
++    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
+       while (this.#isPendingUpdate) {
+         if (!this.#shouldFlush) {
+           await new Promise(resolve => setTimeout(resolve, 33));
+         }
+         this.#isPendingUpdate = false;
+-        await this.#update();
++        await Promise.all(this.#updateSync());
+       }
+       this.#isUpdating = false;
+       this.#shouldFlush = false;
+@@ -164,12 +180,10 @@ export default class Terminal {
+   }
+ 
+   /**
+-   * Clear and write the new status, logging in bulk in-between. Doing this in a
+-   * throttled way (in a different tick than the calls to `log()` and
+-   * `status()`) prevents us from repeatedly rewriting the status in case
+-   * `terminal.log()` is called several times.
++   * Issues the update's writes without awaiting in between, so no other output
++   * can land in the middle of an update. Returns the pending writes.
+    */
+-  async #update(): Promise<void> {
++  #updateSync(): Array<Promise<unknown>> {
+     const ttyStream = this.#ttyStream;
+ 
+     const nextStatusStr = this.#nextStatusStr;
+@@ -181,29 +195,43 @@ export default class Terminal {
+     this.#logLines = [];
+ 
+     if (statusStr === nextStatusStr && logLines.length === 0) {
+-      return;
++      return [];
+     }
+ 
+-    if (ttyStream && statusStr.length > 0) {
++    const writes: Array<Promise<unknown>> = [];
++
++    if (
++      ttyStream &&
++      statusStr.length > 0 &&
++      // If anything printed outside of Terminal (like direct console.log),
++      // don't try to clear latest status, and just print a new one instead
++      // or we might delete that external print
++      getBytesWritten(ttyStream) === this.#bytesWrittenAfterStatus
++    ) {
+       const statusLinesCount = statusStr.split('\n').length - 1;
+       // extra -1 because we print the status with a trailing new line
+-      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
+-      await clearScreenDown(ttyStream);
++      writes.push(
++        moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1),
++        clearScreenDown(ttyStream),
++      );
+     }
+ 
+     if (logLines.length > 0) {
+-      await streamWrite(this.#stream, logLines.join('\n') + '\n');
++      writes.push(streamWrite(this.#stream, logLines.join('\n') + '\n'));
+     }
+ 
+     if (ttyStream) {
+       if (nextStatusStr.length > 0) {
+-        await streamWrite(this.#stream, nextStatusStr + '\n');
++        writes.push(streamWrite(this.#stream, nextStatusStr + '\n'));
+       }
++      this.#bytesWrittenAfterStatus = getBytesWritten(ttyStream);
+     } else {
+       this.#writeStatusThrottled(
+         nextStatusStr.length > 0 ? nextStatusStr + '\n' : '',
+       );
+     }
++
++    return writes;
+   }
+ 
+   /**
+```
+
+**File**: `packages/metro-core/src/__tests__/Terminal-test.js` (modified, +15/-0)
+```diff
+@@ -54,12 +54,15 @@ describe.each([false, true])(
+           ? require('node:tty').WriteStream.prototype
+           : require('node:net').Socket,
+       );
++      let bytesWritten = 0;
++      Object.defineProperty(stream, 'bytesWritten', {get: () => bytesWritten});
+       Object.assign(stream, {
+         cursor: 0,
+         buffer: ' '.repeat(columns * lines).split(''),
+         columns,
+         lines,
+         write(str, callback = () => {}) {
++          bytesWritten += str.length;
+           for (let i = 0; i < str.length; ++i) {
+             if (str[i] === '\n') {
+               this.cursor = this.cursor - (this.cursor % columns) + columns;
+@@ -181,6 +184,18 @@ describe.each([false, true])(
        }
      });
-     stream.on('end', () => {
-```
-
-**File**: `packages/metro-transform-plugins/src/constant-folding-plugin.js` (modified, +2/-2)
-```diff
-@@ -142,9 +142,9 @@ export default function constantFoldingPlugin(context: {
-           state.stripped = true;
  
-           if (result.value || node.alternate) {
-+            const valueIsTruthy = Boolean(result.value);
-             // $FlowFixMe[incompatible-type]
--            // $FlowFixMe[sketchy-null-mixed] Flow error uncovered by typing Babel more strictly
--            path.replaceWith(result.value ? node.consequent : node.alternate);
-+            path.replaceWith(valueIsTruthy ? node.consequent : node.alternate);
-           } else if (!result.value) {
-             path.remove();
-           }
-```
-
-**File**: `packages/metro/src/DeltaBundler/Serializers/getRamBundleInfo.js` (modified, +4/-2)
-```diff
-@@ -161,8 +161,10 @@ async function _getRamOptions(
-   );
- 
-   return {
--    // $FlowFixMe[sketchy-null-bool]
--    preloadedModules: preloadedModules || {},
-+    preloadedModules:
-+      preloadedModules != null && preloadedModules !== false
-+        ? preloadedModules
-+        : {},
-     ramGroups: ramGroups || [],
-   };
- }
++    test('keeps output written outside of Terminal', async () => {
++      const {stream, terminal} = prepare({isTTY: true, ttyPrint});
++      terminal.status('status');
++      await terminal.flush();
++      stream.write('external\n');
++      terminal.status('status2');
++      await terminal.flush();
++      expect(stream.buffer.join('').trim()).toEqual(
++        'status    external  status2',
++      );
++    });
++
+     test('flush- multi-line', async () => {
+       const {stream, terminal} = prepare({isTTY: true, ttyPrint});
+       terminal.log('foo');
 ```
 
 ---
 
-### Incident Patch 2: `104590ad` (2026-10-23)
-**Commit Message**: Inline destructured requires (#2087)
+### Incident Patch 2: `bd3fa8cb` (2026-10-30)
+**Commit Message**: Upgrade Flow in fbsource
 
-`inlineRequires` only inlined requires assigned to an identifier, so `const {foo} = require('foo')` stayed eager at module scope unless a Babel preset had lowered the destructuring first. `@react-native/babel-preset` stopped lowering destructuring for Hermes profiles in react/react-native#58965.
+Summary:
+Upgrade Flow.
 
-This inlines top-level object patterns with plain, renamed or string keys directly: each reference becomes `require('foo').foo`, matching the lowered form. With `memoizeCalls`, a module's properties share one memoized module. Defaults, rest elements, nesting and computed keys are left alone, as are reassigned bindings and properties assigned on the module.
+___
 
-Changelog: [Performance] Inline destructured CommonJS requires (`const {foo} = require('foo')`) under `inlineRequires`
+landed-with-radar-review
 
-**File**: `packages/metro-transform-plugins/src/__tests__/__snapshots__/inline-requires-plugin-test.js.snap` (modified, +141/-0)
+Differential Revision: D128608923
+
+Pull Request resolved: https://github.com/react/metro/pull/2136
+
+**File**: `packages/metro/src/lib/formatBundlingError.js` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,16 @@ var foo = require(\\"foo\\");
-       ↓ ↓ ↓ ↓ ↓ ↓
- 
- 
-+"
-+`;
-+
-+exports[`memoizeCalls=false: inline-requires deletes unused destructured requires: deletes unused destructured requires 1`] = `
-+"
-+const {a} = require(\\"foo\\");
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+
- "
- `;
- 
-@@ -91,6 +101,25 @@ function test() {
- "
- `;
- 
-+exports[`memoizeCalls=false: inline-requires ignores destructured properties that are re-assigned: ignores destructured properties that are re-assigned 1`] = `
-+"
-+var X = require(\\"X\\");
-+const {a} = require(\\"X\\");
-+X.a = function() {
-+  a();
-+};
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+const {
-+  a
-+} = require(\\"X\\");
-+require(\\"X\\").a = function () {
-+  a();
-+};
-+"
-+`;
-+
- exports[`memoizeCalls=false: inline-requires ignores require properties (as identifiers) that are re-assigned: ignores require properties (as identifiers) that are re-assigned 1`] = `
- "
- var X = require(\\"X\\");
-@@ -137,6 +166,46 @@ require(\\"foo\\").method();
- "
- `;
- 
-+exports[`memoizeCalls=false: inline-requires inlines destructured requires referenced across scopes: inlines destructured requires referenced across scopes 1`] = `
-+"
-+const {a, b} = require(\\"foo\\");
-+function f() {
-+  return a() + b();
-+}
-+function g() {
-+  if (b()) {
-+    a();
-+  }
-+}
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+function f() {
-+  return require(\\"foo\\").a() + require(\\"foo\\").b();
-+}
-+function g() {
-+  if (require(\\"foo\\").b()) {
-+    require(\\"foo\\").a();
-+  }
-+}
-+"
-+`;
-+
-+exports[`memoizeCalls=false: inline-requires inlines destructured requires: inlines destructured requires 1`] = `
-+"
-+const {a, b: c, \\"d-e\\": de} = require(\\"foo\\");
-+a();
-+c.x();
-+de();
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+require(\\"foo\\").a();
-+require(\\"foo\\").b.x();
-+require(\\"foo\\")[\\"d-e\\"]();
-+"
-+`;
-+
- exports[`memoizeCalls=false: inline-requires inlines functions provided via \`inlineableCalls\`: inlines functions provided via \`inlineableCalls\` 1`] = `
- "
- const inlinedCustom = customStuff(\\"foo\\");
-@@ -244,6 +313,16 @@ var foo = require(\\"foo\\");
-       ↓ ↓ ↓ ↓ ↓ ↓
- 
- 
-+"
-+`;
-+
-+exports[`memoizeCalls=true: inline-requires deletes unused destructured requires: deletes unused destructured requires 1`] = `
-+"
-+const {a} = require(\\"foo\\");
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+
- "
- `;
- 
-@@ -331,6 +410,26 @@ function test() {
- "
- `;
- 
-+exports[`memoizeCalls=true: inline-requires ignores destructured properties that are re-assigned: ignores destructured properties that are re-assigned 1`] = `
-+"
-+var X = require(\\"X\\");
-+const {a} = require(\\"X\\");
-+X.a = function() {
-+  a();
-+};
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+var X;
-+const {
-+  a
-+} = require(\\"X\\");
-+(X || (X = require(\\"X\\"))).a = function () {
-+  a();
-+};
-+"
-+`;
-+
- exports[`memoizeCalls=true: inline-requires ignores require properties (as identifiers) that are re-assigned: ignores require properties (as identifiers) that are re-assigned 1`] = `
- "
- var X = require(\\"X\\");
-@@ -380,6 +479,48 @@ var baz = 4;
- "
- `;
- 
-+exports[`memoizeCalls=true: inline-requires inlines destructured requires referenced across scopes: inlines destructured requires referenced across scopes 1`] = `
-+"
-+const {a, b} = require(\\"foo\\");
-+function f() {
-+  return a() + b();
-+}
-+function g() {
-+  if (b()) {
-+    a();
-+  }
-+}
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+var _foo;
-+function f() {
-+  return (_foo || (_foo = require(\\"foo\\"))).a() + _foo.b();
-+}
-+function g() {
-+  if ((_foo || (_foo = require(\\"foo\\"))).b()) {
-+    (_foo || (_foo = require(\\"foo\\"))).a();
-+  }
-+}
-+"
-+`;
-+
-+exports[`memoizeCalls=true: inline-requires inlines destructured requires: inlines destructured requires 1`] = `
-+"
-+const {a, b: c, \\"d-e\\": de} = require(\\"foo\\");
-+a();
-+c.x();
-+de();
-+
-+      ↓ ↓ ↓ ↓ ↓ ↓
-+
-+var _foo;
-+(_foo || (_foo = require(\\"foo\\"))).a();
-+_foo.b.x();
-+_foo[\\"d-e\\"]();
-+"
-+`;
-+
- exports[`memoizeCalls=true: inline-requires inlines functions provided via \`inlineableCalls\`: inlines functions provided via \`inlineableCalls\` 1`] = `
- "
- const inlinedCustom = customStuff(\\"foo\\");
-```
-
-**File**: `packages/metro-transform-plugins/src/__tests__/inline-requires-plugin-test.js` (modified, +91/-0)
-```diff
-@@ -238,6 +238,97 @@ const TEST_CASES: TestCases = {
-     code: ['const a = require("Foo", "Bar", 47);', '', 'a();'].join('\n'),
-     snapshot: true,
-   },
-+
-+  'inlines destructured requires': {
-+    code: [
-+      'const {a, b: c, "d-e": de} = require("foo");',
-+      'a();',
-+      'c.x();',
-+      'de();',
-+    ].join('\n'),
-+    snapshot: true,
-+  },
-+
-+  'inlines destructured requires referenced across scopes': {
-+    code: [
-+      'const {a, b} = require("foo");',
-+      'function f() {',
-+      '  return a() + b();',
-+      '}',
-+      'function g() {',
-+      '  if (b()) {',
-+      '    a();',
-+      '  }',
-+      '}',
-+    ].join('\n'),
-+    snapshot: true,
-+  },
-+
-+  'deletes unused destructured requires': {
-+    code: ['const {a} = require("foo");'].join('\n'),
-+    snapshot: true,
-+  },
-+
-+  'ignores destructured requires with defaults': {
-+    code: ['const {', '  a = 1', '} = require("foo");', 'a();'].join('\n'),
-+    snapshot: false,
-+  },
-+
-+  'ignores destructured requires with rest elements': {
-+    code: [
-+      'const {',
-+      '  a,',
-+      '  ...rest',
-+      '} = require("foo");',
-+      'a(rest);',
-+    ].join('\n'),
-+    snapshot: false,
-+  },
-+
-+  'ignores nested destructured requires': {
-+    code: [
-+      'const {',
-+      '  a: {',
-+      '    b',
-+      '  }',
-+      '} = require("foo");',
-+      'b();',
-+    ].join('\n'),
-+    snapshot: false,
-+  },
-+
-+  'ignores destructured requires with computed keys': {
-+    code: ['const {', '  [key]: a', '} = require("foo");', 'a();'].join('\n'),
-+    snapshot: false,
-+  },
-+
-+  'ignores destructured requires that are re-assigned': {
-+    code: [
-+      'let {',
-+      '  a,',
-+      '  b',
-+      '} = require("foo");',
-+      'b = 1;',
-+      'a(b);',
-+    ].join('\n'),
-+    snapshot: false,
-+  },
-+
-+  'ignores destructured properties that are re-assigned': {
-+    code: [
-+      'var X = require("X");',
-+      'const {a} = require("X");',
-+      'X.a = function() {',
-+      '  a();',
-+      '};',
-+    ].join('\n'),
-+    snapshot: true,
-+  },
-+
-+  'ignores destructured requires in `ignoredRequires`': {
-+    code: ['const {', '  a', '} = require("CommonFoo");', 'a();'].join('\n'),
-+    snapshot: false,
-+  },
- };
- 
- describe.each([true, false])('memoizeCalls=%s:', memoizeCalls => {
-```
-
-**File**: `packages/metro-transform-plugins/src/inline-requires-plugin.js` (modified, +199/-3)
-```diff
-@@ -58,11 +58,15 @@ export type State = {
-  *     g(require('foo').bar);
-  *
-  * Destructuring also works the same way. For instance:
-- *     const {Baz} = require('foo');
-- *     h(Baz);
-+ *     const {Baz, qux: Qux} = require('foo');
-+ *     h(Baz, Qux);
-  *
-  * Is also successfully inlined into:
-- *     g(require('foo').Baz);
-+ *     h(require('foo').Baz, require('foo').qux);
-+ *
-+ * With `memoizeCalls`, destructured properties share one memoized module.
-+ * Destructuring with defaults, rest elements, nesting or computed keys is not
-+ * inlined.
-  */
- export default ({types: t, traverse}: Babel): PluginObj<State> => ({
-   name: 'inline-requires',
-@@ -89,10 +93,146 @@ export default ({types: t, traverse}: Babel): PluginObj<State> => ({
-         if (programNode.type !== 'Program') {
-           return;
-         }
-+        const program: Program = programNode;
-+
-+        // Inlines `const {a, b: c} = require('m')` by replacing each reference
-+        // to `a` or `c` with `require('m').a` or `require('m').b`. When calls
-+        // are memoized, all properties share one memoized module, so each
-+        // scope requires `m` at most once.
-+        function inlineDestructuredRequire(
-+          {
-+            declarationPath,
-+            moduleName,
-+            requireFnName,
-+            properties,
-+          }: InlineableDestructuring,
-+          state: State,
-+        ): void {
-+          const references: Array<{key: string, referencePath: NodePath<>}> =
-+            [];
-+          for (const {key, localName} of properties) {
-+            const binding = declarationPath.scope.getBinding(localName);
-+            if (
-+              binding == null ||
-+              binding.constantViolations.length > 0 ||
-+              isExcludedMemberAssignment(moduleName, key, state)
-+            ) {
-+              return;
-+            }
-+            for (const referencePath of binding.referencePaths) {
-+              references.push({key, referencePath});
-+            }
-+          }
-+          // A memoized require is only assigned by the first reference in a
-+          // scope, so references are replaced in source order.
-+          references.sort(
-+            (a, b) =>
-+              (a.referencePath.node.start ?? 0) -
-+              (b.referencePath.node.start ?? 0),
-+          );
-+
-+          const declarator = declarationPath.node;
-+          const initPath = declarationPath.get('init');
-+          if (
-+            declarator.type !== 'VariableDeclarator' ||
-+            declarator.init == null ||
-+            Array.isArray(initPath)
-+          ) {
-+            return;
-+          }
-+          const init: Expression = declarator.init;
-+          const initLoc = getNearestLocFromPath(initPath);
-+          deleteLocation(init);
-+          traverse(init, {
-+            noScope: true,
-+            enter: path => deleteLocation(path.node),
-+          });
-+
-+          const getRequireExpr = () => {
-+            const refExpr = t.cloneDeep(init);
-+            // $FlowFixMe[prop-missing]
-+            refExpr.METRO_INLINE_REQUIRES_INIT_LOC = initLoc;
-+            return refExpr;
-+          };
-+          const getMember = (object: Expression, key: string) =>
-+            t.isValidIdentifier(key)
-+              ? t.memberExpression(object, t.identifier(key))
-+              : t.memberExpression(object, t.stringLiteral(key), true);
-+
-+          let memoVarName: ?string = null;
-+          if (
-+            memoizeCalls &&
-+            references.length > 0 &&
-+            !nonMemoizedModules.has(moduleName)
-+          ) {
-+            const name = path.scope.generateUid(moduleName);
-+            declarationPath.remove();
-+            if (
-+              addStmtToBlock(
-+                program,
-+                t.variableDeclaration('var', [
-+                  t.variableDeclarator(t.identifier(name)),
-+                ]),
-+                0,
-+              )
-+            ) {
-+              memoVarName = name;
-+            }
-+          }
-+
-+          let thrown = false;
-+          const scopesWithInlinedRequire = new Set<Scope>();
-+          for (const {key, referencePath} of references) {
-+            try {
-+              referencePath.scope.rename(requireFnName);
-+              if (memoVarName == null) {
-+                referencePath.replaceWith(getMember(getRequireExpr(), key));
-+                continue;
-+              }
-+              referencePath.scope.rename(memoVarName);
-+              const memoOrCall = t.logicalExpression(
-+                '||',
-+                t.identifier(memoVarName),
-+                t.assignmentExpression(
-+                  '=',
-+                  t.identifier(memoVarName),
-+                  getRequireExpr(),
-+                ),
-+              );
-+              // Reuse the memoized module directly once this scope has
-+              // assigned it, as for identifier aliases above.
-+              if (!isDirectlyEnclosedByBlock(t, referencePath)) {
-+                referencePath.replaceWit
-```
-
----
-
-### Incident Patch 3: `b9a150f4` (2026-10-21)
-**Commit Message**: Docs: Fix inaccurate and outdated documentation (#2077) (#2077)
-
-**File**: `docs/API.md` (modified, +32/-12)
-```diff
-@@ -44,31 +44,37 @@ title: Bundling API
- 
- ## Reference
- 
--All functions exposed below accept an additional `config` option. This object should be the [Metro configuration](CLI.md) exposed by your `metro.config.js` file - you can obtain it using `Metro.loadConfig`.
-+The `config` object accepted by the functions below is the [Metro configuration](./Configuration.md) exported by your `metro.config.js` file, which you can obtain with `Metro.loadConfig`.
- 
--### `loadConfig(<options>)`
-+### `loadConfig(<options>, <defaultConfigOverrides>)`
- 
- **Basic options:** `config`, `cwd`
- 
--Load the Metro configuration, either from `config` in options if specified, or by traversing the directory hierarchy from `cwd` to the root until it finds a file (by default `metro.config.js`). The returned configuration will have been normalized and merged with Metro's default values.
-+Load the Metro configuration, either from the path given in `config` if specified, or by traversing the directory hierarchy from `cwd` up to the user's home directory until it finds a [config file](./Configuration.md). The returned configuration will have been normalized and merged with Metro's default values, after applying `defaultConfigOverrides` to the defaults.
- 
--### `async runMetro(config)`
-+`loadConfig` also accepts the options of the [CLI](./CLI.md), which override the corresponding config values: `port` ([`server.port`](./Configuration.md#port)), `projectRoot`, `watchFolders`, `assetExts`, `sourceExts` and `platforms` (the `resolver` options of the same names), [`maxWorkers`](./Configuration.md#maxworkers) (which defaults to a number based on `os.availableParallelism()`), `transformer` ([`transformer.babelTransformerPath`](./Configuration.md#babeltransformerpath)), `resetCache`, and `verbose` (`false` silences Metro's terminal output).
- 
--Creates a Metro server based on the config and returns it. You can use this as a middleware in your existing server.
-+### `async runMetro(config, <options>)`
-+
-+**Basic options:** `waitForBundler`, `watch`, `onBundleBuilt`, `hasReducedPerformance`
-+
-+Creates a Metro server based on the config and returns it. Its `processRequest` method can be used as a middleware in your existing server. `hasReducedPerformance` only makes Metro's terminal output warn that Metro is operating with reduced performance.
- 
- ### `async runBuild(config, <options>)`
- 
--**Required options:** `entry`, `out`
-+**Required options:** `entry`
-+
-+**Basic options:** `out`, `bundleOut`, `sourceMapOut`, `dev`, `minify`, `platform`, `sourceMap`, `sourceMapUrl`, `assets`, `onBegin`, `onProgress`, `onComplete`, `customResolverOptions`, `customTransformOptions`, `output`
- 
--**Basic options:** `dev`, `minify`, `platform`, `sourceMap`, `sourceMapUrl`, `assets`
-+Bundles `entry` for the given `platform` (defaults to `'web'`). If `out` or `bundleOut` is given, saves the bundle to `bundleOut`, or to `out` with a `.js` extension. If `sourceMap` is set, also generates a source map. The source map will be inlined, unless `sourceMapUrl` is also defined, in which case `sourceMapUrl` is used as the bundle's `sourceMappingURL`. When saving to disk, the source map is also written to `sourceMapOut`, or to `out` with a `.map` extension. If `assets` is `true`, an array of `AssetData` will be generated and returned in the `assets` property of the result object.
- 
--Bundles `entry` for the given `platform`, and saves it to location `out`. If `sourceMap` is set, also generates a source map. The source map will be inlined, unless `sourceMapUrl` is also defined. In the latter case, a new file will be generated with the basename of the `sourceMapUrl` parameter. If `assets` is `true`, an array of `AssetData` will be generated and returned in the `assets` property of the result object.
-+`output` replaces how the bundle is built and written to disk. It is an object with two functions: `build(server, requestOptions, buildOptions)`, whose result `runBuild` resolves to and passes to `save`, and `save(bundle, outputOptions, log)`, which is only called if `out` or `bundleOut` is given. Defaults to Metro's plain bundle output, `metro/private/shared/output/bundle`. For example, `require('metro/private/shared/output/RamBundle')` writes a [RAM bundle](./Bundling.md#indexed-ram-bundle) instead.
- 
- ### `async runServer(config, <options>)`
- 
--**Basic options:** `host`, `port`, `secureServerOptions`, `unstable_middleware`, `unstable_priorityMiddleware`, `unstable_onServerCreated`, `secure (DEPRECATED)`, `secureKey (DEPRECATED)`, `secureCert (DEPRECATED)`
-+**Basic options:** `host`, `onReady`, `onClose`, `onError`, `waitForBundler`, `watch`, `hasReducedPerformance`, `websocketEndpoints`, `secureServerOptions`, `unstable_middleware`, `unstable_priorityMiddleware`, `unstable_onServerCreated`, `secure (DEPRECATED)`, `secureKey (DEPRECATED)`, `secureCert (DEPRECATED)`
- 
--Starts a full Metro HTTP server. It will listen on the specified `host:port`, and can then be queried to retrieve bundles fo
-```
-
-**File**: `docs/Bundling.md` (modified, +12/-10)
-```diff
-@@ -7,23 +7,25 @@ When bundling, each of the modules gets assigned a numeric id, meaning no dynami
- 
- ## Plain bundle
- 
--This is the standard bundling format. In this format, all files are wrapped with a function call, then added to the global file. This is useful for environments that expect a JS only bundle (e.g. a browser). Just requiring the entry point with the `.bundle` extension should trigger a build of it.
-+This is the standard bundling format. In this format, all files are wrapped with a function call (`__d()`, which registers the module with Metro's module system), then concatenated into a single file. This is useful for environments that expect a JS only bundle (e.g. a browser). Just requiring the entry point with the `.bundle` extension should trigger a build of it.
- 
- ## Indexed RAM bundle
- 
-+RAM (Random Access Modules) bundles store each module separately, so the app can load a module's code only when it is first required.
-+
- This format composes the bundle as a binary file, which format has the following parts (all numbers are expressed in Little Endian):
- 
- * A magic number: a `uint32` must be located at the beginning of the file, with the value `0xFB0BD1E5`. This is used to verify the file.
- * An offset table: the table is a sequence of `uint32` pairs, with a header
--    * For the header, two `uint32`s can be found: the length of the table, and the length of the startup code.
--    * For the pairs, they represent the offset in the file and the length of code module, in bytes.
--* Each of the modules, finished by a null byte (`\0`).
-+    * For the header, two `uint32`s can be found: the number of table entries (highest module id + 1), and the length of the startup code, in bytes.
-+    * For the pairs, they represent the offset of the module code relative to the start of the startup code, and the length of the module code, in bytes.
-+* The startup code, followed by each of the modules, each finished by a null byte (`\0`). The startup code runs when the bundle loads: polyfills, Metro's module system, [`preloadedModules`](./Configuration.md#gettransformoptions), and the call that runs the entry point.
- 
- ```
- ` 0                   1                   2                   3                   4                   5                   6
-  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
--|                          Magic number                         |                          Header size                          |
-+|                          Magic number                         |                       Number of entries                       |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                       Startup code size                       |                        Module 0 offset                        |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-@@ -35,9 +37,9 @@ This format composes the bundle as a binary file, which format has the following
- +                                                               +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |                                                               |                        Module n offset                        |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
--|                        Module n length                        | Module 0 code | Module 0 code |      ...      |       \0      |
-+|                        Module n length                        | Startup code  | Startup code  |      ...      |       \0      |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
--| Module 1 code | Module 1 code |      ...      |       \0      |                                                               |
-+| Module 0 code | Module 0 code |      ...      |       \0      |                                                               |
- +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                                                               +
- |                                                                                                                               |
- +                                                              ...                                                              +
-@@ -49,12 +51,12 @@ This format composes the bundle as a binary file, which format has the following
- 
- This structure is optimal for an environment that is able to load all code in memory at once:
- 
--* By using the offset table, one can load any module in cons
-```
-
-**File**: `docs/CLI.md` (modified, +32/-12)
-```diff
-@@ -14,25 +14,45 @@ Generates a JavaScript bundle containing the specified entrypoint and its descen
- 
- | Option   | Alias    | Description    | Value |
- |----------|----------|----------|----------|
--| `out`    | `O` | File name where to store the output | String |
--| `platform` | `p` | Which platform to bundle for | `web`, `android`, `ios` |
-+| `out`    | `O` | File name where to store the output (required) | String |
-+| `platform` | `p` | Which platform to bundle for (e.g. `web`, `android`, `ios`) | String |
- | `minify` | `z` | Whether Metro should minify the bundle | Boolean |
--| `dev` | `g` | Create a development version of the build (`process.env.NODE_ENV = 'development'`) | Boolean |
-+| `dev` | `g` | Create a development build, in which `__DEV__` is `true` | Boolean |
- | `config` | `c` | Location of the `metro.config.js` to use | String |
--| `max-workers` | `j` | The number of workers Metro should parallelize the transformer on | Number |
--| `project-roots` | `P` | The root folder of your project | Array |
-+| `max-workers` | `j` | The number of workers Metro should parallelize the transformer on. Overrides [`maxWorkers`](./Configuration.md#maxworkers) which defaults to a number based on `os.availableParallelism()` | Number |
-+| `project-roots` | `P` | Accepted, but has no effect | Array |
- | `source-map` |  | Whether Metro should generate source maps | Boolean |
- | `source-map-url` |  | URL where the source map can be found | String |
--| `legacy-bundler` |  | Whether Metro should use the legacy bundler | Boolean |
-+| `legacy-bundler` |  | Accepted, but has no effect | Boolean |
- | `resolver-option` |  | [Custom resolver options](./Resolution.md#customresolveroptions-string-mixed) of the form `key=value` | Array |
--| `transform-option` |  | Custom transform options of the form `key=value` | Array |
-+| `transform-option` | `transformer-option` | Custom transform options of the form `key=value` | Array |
-+| `reset-cache` |  | **Deprecated.** Clears Metro's caches before building, like [`resetCache`](./Configuration.md#resetcache) | Boolean |
-+| `output-type` | `t` | Accepted, but has no effect | String |
- 
- 
- ## `serve`
- 
--Starts Metro on the given port, building bundles on the fly.
-+Alias: `start`
- 
--## `get-dependencies <entryFile>`
-+Starts Metro on the given port, building bundles on the fly. Restarts the server when the config file changes.
-+
-+### Options
-+
-+| Option   | Alias    | Description    | Value |
-+|----------|----------|----------|----------|
-+| `host` | `h` | Host to listen on. Defaults to `localhost` | String |
-+| `port` | `p` | Port to listen on. Defaults to `8081`, overriding [`server.port`](./Configuration.md#port) | Number |
-+| `config` | `c` | Location of the `metro.config.js` to use | String |
-+| `max-workers` | `j` | The number of workers Metro should parallelize the transformer on. Overrides [`maxWorkers`](./Configuration.md#maxworkers) which defaults to a number based on `os.availableParallelism()` | Number |
-+| `secure-server-options` | `s` | Options for the HTTPS server, using dot notation (e.g. `-s.cert="$(cat path/to/cert)" -s.key="$(cat path/to/key)"`) | Object |
-+| `secure` |  | **Deprecated.** Serve over HTTPS. Use `secure-server-options` instead | Boolean |
-+| `secure-key` |  | **Deprecated.** Path to the key file for HTTPS when `secure` is set | String |
-+| `secure-cert` |  | **Deprecated.** Path to the cert file for HTTPS when `secure` is set | String |
-+| `reset-cache` |  | **Deprecated.** Clears Metro's caches on startup, like [`resetCache`](./Configuration.md#resetcache) | Boolean |
-+| `project-roots` | `P` | Accepted, but has no effect | Array |
-+| `hmr-enabled` | `hmr` | Accepted, but has no effect | Boolean |
-+
-+## `get-dependencies [entryFile]`
- 
- List all dependencies that will be bundled for a given entry point.
- 
-@@ -44,6 +64,6 @@ List all dependencies that will be bundled for a given entry point.
- | `output` | File name where to store the output, ex. /tmp/dependencies.txt |
- | `platform` | The platform extension used for selecting modules |
- | `transformer` | Specify a custom transformer to be used |
--| `max-workers` | Specifies the maximum number of workers the worker-pool will spawn for transforming files. This defaults to the number of the cores available on your machine. |
--| `dev` | If false, skip all dev-only code path |
--| `verbose` | Enables logging |
-+| `max-workers` | Specifies the maximum number of workers the worker-pool will spawn for transforming files. Overrides [`maxWorkers`](./Configuration.md#maxworkers) which defaults to a number based on `os.availableParallelism()`. |
-+| `dev` | If false, skip all dev-only code path. Defaults to `true` |
-+| `verbose` | Enables logging. Defaults to `false` |
-```
-
-**File**: `docs/Caching.md` (modified, +17/-4)
-```diff
-@@ -13,22 +13,32 @@ A typical setup for a remote cache involves:
- 2. Running [`metro build`](./CLI.md#build-entry) periodically (e.g. in a CI job) to populate the cache, using `HttpStore` (or a custom read/write cache store) in your Metro config.
- 3. Configuring Metro on your development machines to read from the cache, using `HttpGetStore` (or a custom read-only cache store) in your Metro config.
- 
--The main option for configuring the Metro cache is [`cacheStores`](./Configuration.md#cachestores). Typically, the local cache (e.g. `FileStore`) should be listed first, followed by the remote cache (e.g. `HttpCache`).
-+The main option for configuring the Metro cache is [`cacheStores`](./Configuration.md#cachestores). Typically, the local cache (e.g. `FileStore`) should be listed first, followed by the remote cache (e.g. `HttpStore` or `HttpGetStore`).
- 
- ## Built-in cache stores
- 
- Metro provides a number of built-in cache store implementations for use with the [`cacheStores`](./Configuration.md#cachestores) config option:
- 
- * **`FileStore({root: string})`** will store cache entries as files under the directory specified by `root`.
--* **`AutoCleanFileStore()`** <div class="label deprecated">Deprecated</div> is a `FileStore` that periodically cleans up old entries. It accepts the same options as `FileStore` plus the following:
-+* **`AutoCleanFileStore(options)`** <div class="label deprecated">Deprecated</div> is a `FileStore` that periodically cleans up old entries. It accepts the same options as `FileStore` plus the following:
-   * **`options.intervalMs: number`** is the time in milliseconds between cleanup attempts. Defaults to 10 minutes.
-   * **`options.cleanupThresholdMs: number`** is the minimum time in milliseconds since the last modification of an entry before it can be deleted. Defaults to 3 days.
- * **`HttpStore(options)`** is a bare-bones remote cache client that reads (`GET`) and writes (`PUT`) compressed cache artifacts over HTTP or HTTPS.
--  * **`options.endpoint: string`** is the base URL for the cache server. For example, an `HttpStore` with `'http://www.example.com/endpoint'` as the endpoint would issue requests to URLs such as `http://www.example.com/endpoint/c083bff944879d9f528cf185eba0f496bc10a47d`.
-+  * **`options.endpoint: string`** is the base URL for the cache server. For example, an `HttpStore` with `'http://www.example.com/endpoint'` as the endpoint would issue requests to URLs such as `http://www.example.com/endpoint/c083bff944879d9f528cf185eba0f4962fd4e5b1a6a7d2a1c0bd42c3c0d5f0e1b6a9e7c8` (the hex-encoded cache key).
-   * **`options.timeout: number`** is the timeout for requests to the cache server, in milliseconds. Defaults to 5000.
-   * **`options.family: 4 | 6`** is the same as the `family` parameter to Node's [`http.request`](https://nodejs.org/api/http.html#httprequesturl-options-callback).
-   * **`options.cert`, `options.ca`, `options.key`**: HTTPS options passed directly to [Node's built-in HTTPS client](https://nodejs.org/api/https.html).
--* **`HttpGetStore(options)`** is a read-only version of `HttpStore`.
-+  * **`options.headers: {[string]: string}`**: HTTP headers sent with every request.
-+  * **`options.params: URLSearchParams`**: Query parameters appended to every request URL.
-+  * **`options.additionalSuccessStatuses: Array<number>`**: Additional HTTP status codes treated as success.
-+  * **`options.maxAttempts: number`**: The maximum number of attempts per request, with exponential backoff. Defaults to 1 (no retries).
-+  * **`options.retryStatuses: Set<number>`**: HTTP status codes that trigger a retry.
-+  * **`options.retryNetworkErrors: boolean`**: Whether to retry on network errors. Defaults to `false`.
-+  * **`options.debug: boolean`**: Whether to include the response body in HTTP error messages. Defaults to `false`.
-+  * **`options.socketPath: string`**: A Unix domain socket to connect through.
-+  * **`options.proxy: string`**: A proxy URL to connect through.
-+  * Alternatively, `options` may be `{getOptions, setOptions}`, each an object with the options above, to use different settings for reads and writes.
-+* **`HttpGetStore(options)`** is a read-only version of `HttpStore`. HTTP and network errors on read are treated as cache misses (with a one-time warning) rather than failing the build.
- 
- You can import these classes from the `metro-cache` package or get them through the function form of `cacheStores`:
- 
-@@ -53,6 +63,9 @@ To implement a custom cache store, pass an instance of a class with the followin
- 
- ```flow
- interface CacheStore<T: Buffer | JsonSerializable> {
-+  // Optional name used in Metro's cache logs. Defaults to the class name.
-+  name?: string;
-+
-   // Read an entry from the cache. Returns `null` if not found.
-   get(key: Buffer): ?T | Promise<?T>;
- 
-```
-
-**File**: `docs/Configuration.md` (modified, +116/-31)
-```diff
-@@ -6,16 +6,16 @@ title: Configuring Metro
- A Metro config can be created in the following file formats (ordered by priority):
- 
- 1.  `metro.config.js` / `metro.config.cjs` / `metro.config.mjs` (CommonJS or ESM)
--2.  `metro.config.ts` / `metro.config.cts` / `metro.config.mts` (TypeScript)
--3.  `metro.config.json`
--4.  `.config/metro.js` / `.config/metro.cjs` / `.config/metro.mjs` / `.config/metro.ts` / `.config/metro.cts` / `.config/metro.mts` / `.config/metro.json`
-+2.  `metro.config.json`
-+3.  `metro.config.ts` / `metro.config.cts` / `metro.config.mts` (TypeScript)
-+4.  `.config/metro.js` / `.config/metro.cjs` / `.config/metro.mjs` / `.config/metro.json` / `.config/metro.ts` / `.config/metro.cts` / `.config/metro.mts`
- 5.  The `metro` field in `package.json`
- 
- You can also give a custom file to the configuration by specifying `--config <path/to/config>` when calling the CLI.
- 
- :::info TypeScript Config Support
- 
--Metro uses Node.js native TypeScript support to load `.*ts` config files. For Node.js 22.18.0 and later or 24.0.0 later, _erasable_ TypeScript is supported out of the box. For Node.js < 22.18.0, use the `--experimental-strip-types` flag. See https://nodejs.org/learn/typescript/run-natively.
-+Metro uses Node.js native TypeScript support to load `.*ts` config files. For Node.js 22.18.0 and later or 24.0.0 and later, _erasable_ TypeScript is supported out of the box. For Node.js 22.6.0 to 22.17.x, use the `--experimental-strip-types` flag. See https://nodejs.org/learn/typescript/run-natively.
- 
- :::
- 
-@@ -49,6 +49,9 @@ const config: MetroConfig = {
-   server: {
-     /* server options */
-   },
-+  symbolicator: {
-+    /* symbolicator options */
-+  },
-   watcher: {
-     /* watcher options */
-     watchman: {
-@@ -161,12 +164,11 @@ If `true`, Metro will use a stable mapping from files to transformer workers, so
- 
- Type: `number`
- 
--The number of workers to use for parallel processing in Metro. Defaults to approximately half of the number of cores available on the machine, as reported by [`os.availableParallelism()`](https://nodejs.org/api/os.html#osavailableparallelism).
-+The number of workers to use for parallel processing in Metro. Defaults to roughly 75% of the cores available on the machine (as reported by [`os.availableParallelism()`](https://nodejs.org/api/os.html#osavailableparallelism)) for up to 8 cores, falling to 50% for 48 or more, e.g. 6 workers on 8 cores, 10 on 16 and 32 on 64.
- 
- :::note
--1. Values exceeding the number of available cores have no effect.
--2. If `maxWorkers` is set to 1 or lower, worker code will run in the main Metro process instead of concurrently.
--3. Metro has two separate worker pools - one for transformation and one for building the file map. Each pool has its worker count set to `maxWorkers` independently.
-+1. If `maxWorkers` is set to 1 or lower, worker code will run in the main Metro process instead of concurrently.
-+2. Metro has two separate worker pools - one for transformation and one for building the file map. Each pool has its worker count set to `maxWorkers` independently.
- :::
- 
- #### `fileMapCacheDirectory`
-@@ -189,16 +191,16 @@ A logger factory function that can be used to get insights about Metro performan
- 
- ```flow
- function unstable_perfLoggerFactory(
--  type: string,
--  opts: $ReadOnly<{
--    key?: string
-+  type: 'START_UP' | 'BUNDLING_REQUEST' | 'HMR',
-+  opts?: $ReadOnly<{
-+    key?: number
-   }>,
- ): RootPerfLogger {
-   // ...
- };
- ```
- 
--* **`type`** Type of event being logged, e.g. `'STARTUP'`, `'BUNDLING_REQUEST'`, `'HMR'`. See type definition of [PerfLoggerFactory](https://github.com/react/metro/blob/main/packages/metro-config/src/types.js) for a full list of event types.
-+* **`type`** Type of event being logged, e.g. `'START_UP'`, `'BUNDLING_REQUEST'`, `'HMR'`. See type definition of [PerfLoggerFactory](https://github.com/react/metro/blob/main/packages/metro-config/src/types.js) for a full list of event types.
- * **`opts`**
-   * **`key`**: An opaque identifier to distinguish between instances of an event type (e.g. multiple, possibly concurrent, HMR requests).
- 
-@@ -318,7 +320,7 @@ For more information on customizing the resolver, see [Module Resolution](https:
- 
- #### `schemeResolvers`
- 
--Type: `?{[scheme: string]: `[`CustomResolver`](./Resolution.md#resolverequest-customresolver)`}`
-+Type: `{[scheme: string]: `[`CustomResolver`](./Resolution.md#resolverequest-customresolver)`}`
- 
- An object of custom resolvers for import specifiers prefixed with a URI scheme, keyed by lowercase scheme name (the prefix before the first `:`, without the colon). When Metro's default resolution encounters a specifier whose scheme matches a registered key (for example `my-scheme:foo` matching `'my-scheme'`), the corresponding resolver is invoked with the full specifier.
- 
-@@ -366,6 +368,8 @@ Type: `RegExp` or `Array<RegExp>`
- 
- A regular expression (or list of regular expressions) defining which paths to exclude from Metro's file map. Files whose absolute path
-```
-
-**File**: `docs/GettingStarted.md` (modified, +39/-22)
-```diff
-@@ -77,28 +77,32 @@ app.listen(8081);
- ### Method `runServer(config, options)`
- 
- Starts a development server based on the given configuration and options. Returns an object with `httpServer`, the Node.js HTTP(S) server.
--We recommend using `runMetro` instead of `runServer`, `runMetro` calls this function.
-+`runServer` calls `runMetro` internally. Use `runMetro` instead to attach Metro to your own HTTP server.
- 
- #### Options
- 
- * `host (string)`: Where to host the server on.
--* `onReady (Function)`: Called when the server is ready to serve requests.
-+* `onReady (Function)`: Called with the HTTP(S) server when it is ready to serve requests.
-+* `onError (Function)`: Called with the error if the HTTP(S) server fails.
- * `onClose (Function)`: Called when the server and all other Metro processes are closed. You can also observe the server close event directly using `httpServer.on('close', () => {});`.
- 
- ```js
- const config = await Metro.loadConfig();
- 
--await Metro.runServer(config, {
-+const {httpServer} = await Metro.runServer(config, {
-   onClose: () => {console.log('metro server and all associated processes are closed')}
- });
- 
- httpServer.on('close', () => {console.log('metro server is closed')});
- ```
- * `secure (boolean)`: **DEPRECATED** Whether the server should run on `https` instead of `http`.
--* `secureKey (string)`: **DEPRECATED** The key to use for `https` when `secure` is on.
--* `secureCert (string)`: **DEPRECATED** The cert to use for `https` when `secure` is on.
-+* `secureKey (string)`: **DEPRECATED** Path to the key file to use for `https` when `secure` is on.
-+* `secureCert (string)`: **DEPRECATED** Path to the cert file to use for `https` when `secure` is on.
- * `secureServerOptions (Object)`: The options object to pass to Metro's HTTPS server. The presence of this object will make Metro's server run on `https`. Refer to the [Node docs](https://nodejs.org/api/https.html#https_https_createserver_options_requestlistener) for valid options.
- * `waitForBundler (boolean)`: Whether to wait for the bundler to finish initializing before returning the server instance.
-+* `watch (boolean)`: Whether to watch the filesystem for changes.
-+* `websocketEndpoints (Object)`: Map of URL paths to [`ws`](https://github.com/websockets/ws) `WebSocketServer` instances that handle upgrade requests on those paths.
-+* `hasReducedPerformance`, `unstable_middleware`, `unstable_priorityMiddleware`, `unstable_onServerCreated`: See [Bundling API](./API.md).
- 
- ```js
- const config = await Metro.loadConfig();
-@@ -126,21 +130,21 @@ Given a configuration and a set of options that you would typically pass to a se
- 
- #### Options
- 
--<!-- TODO(ives): Decide whether we need to show this to the user  * `output (boolean)` -->
--
- * `assets (boolean)`: Whether to include the assets in the result.
- * `bundleOut (string)`: Path to save the bundle. No extension will be added.
--* `dev (boolean)`: Create a development version of the build (`process.env.NODE_ENV = 'development'`).
-+* `customResolverOptions (Object)`, `customTransformOptions (Object)`: Custom options passed to the resolver and transformer.
-+* `dev (boolean)`: Create a development build, in which `__DEV__` is `true`. Otherwise, `__DEV__` and `process.env.NODE_ENV` are inlined as `false` and `'production'`.
- * `entry (string)`: Pointing to the entry file to bundle.
- * `onBegin (Function)`: Called when the bundling starts.
- * `onComplete (Function)`: Called when the bundling finishes.
- * `onProgress (Function)`: Called during the bundle, every time there's new information available about the module count/progress.
- * `minify (boolean)`: Whether Metro should minify the bundle.
- * `out (string)`: Shorthand path to the output bundle and source map. A `.js` extension will be added (if not given) for the bundle and `.map` for the source map. Customize with `bundleOut` / `sourceMapOut`.
--* `platform ('web' | 'android' | 'ios')`: Which platform to bundle for if a list of platforms is provided.
-+* `output (Object)`: Replaces how the bundle is built and saved. See [Bundling API](./API.md).
-+* `platform (string)`: Which platform to bundle for (e.g. `'web'`, `'android'`, `'ios'`). Defaults to `'web'`.
- * `sourceMap (boolean)`: Whether Metro should generate source maps.
- * `sourceMapOut (string)`: Where to save the source map, if `sourceMap == true`. No extension will be added.
--* `sourceMapUrl (string)`: URL where the source map can be found. It defaults to the same URL as the bundle, but changing the extension from `.bundle` to `.map`. When `inlineSourceMap` is `true`, this property has no effect.
-+* `sourceMapUrl (string)`: URL where the source map can be found, written as the bundle's `sourceMappingURL`. If `sourceMap` is `true` and `sourceMapUrl` is not set, the source map is inlined into the bundle.
- 
- ```js
- const config = await Metro.loadConfig();
-@@ -153,13 +157,16 @@ await Metro.runBuild(config, {
- });
- ```
- 
--### Method `createConnectMiddleware(config)`
-+### Method `createConnec
-```
-
-**File**: `docs/LocalDevelopment.md` (modified, +2/-2)
-```diff
-@@ -9,7 +9,7 @@ This page includes tips for developers working on Metro itself, including how to
- 
- When developing Metro, running your iterations against a local target project can be a great way to test the impact of your changes end-to-end.
- 
--Our recommended workflow is to use [`yarn link`][1] to register local `metro` packages within your development clone and then hot-switch to these versions in the consuming project. These instructions cover linking a local Metro clone with a bare workflow React Native app (i.e. having run `npx react-native init MetroTestApp`).
-+Our recommended workflow is to use [`yarn link`][1] to register local `metro` packages within your development clone and then hot-switch to these versions in the consuming project. These instructions cover linking a local Metro clone with a bare workflow React Native app (i.e. having run `npx @react-native-community/cli init MetroTestApp`).
- 
- ```sh
- .
-@@ -39,7 +39,7 @@ Our recommended workflow is to use [`yarn link`][1] to register local `metro` pa
- 
- 3. **Configure Metro `watchFolders` to work with our linked packages**
- 
--    Because `yarn link` has included files outside of the immediate React Native project folder, we need to inform Metro that this set of files exists (as it will not automatically follow the symlinks). Add the following to your `metro.config.js`:
-+    Because `yarn link` has included files outside of the immediate React Native project folder, we need to inform Metro that this set of files exists (Metro follows symlinks, but their targets must be within `watchFolders`). Add the following to your `metro.config.js`:
- 
-     ```diff
-     + const path = require('path');
-```
-
-**File**: `docs/ModuleAPI.md` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@ const jsonData = require('./path/data.json');
- const {View} = require('react-native');
- ```
- 
--The argument to `require()` must be a compile-time constant. The [`dynamicDepsInPackages`](./Configuration.md#dynamicdepsinpackages) config option controls whether calling `require()` with a non-constant argument will fail at build time or at runtime.
-+The argument to `require()` must be a compile-time constant. Calling `require()` with a non-constant argument fails at build time, except in files inside `node_modules`, where the [`dynamicDepsInPackages`](./Configuration.md#dynamicdepsinpackages) config option controls whether it fails at build time or at runtime.
- 
- ### Advanced usage: `require` at runtime
- 
+@@ -66,6 +66,7 @@ export default function formatBundlingError(
+       errors: [
+         {
+           description: error.message,
++          // $FlowFixMe[prop-missing]
+           filename: error.filename,
+           lineNumber: error.lineNumber,
+         },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2099** (closed): Tolerate configs without the newer server middleware options (fix accidental breaking change) (@robhogan)
-- **PR #2091** (2026-10-23): Remove the server.enhanceMiddleware deprecation warning (@robhogan)
-- **PR #2090** (2026-10-23): Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, symbolicate) (@jcperez-ch)
-- **PR #2087** (2026-10-23): Inline destructured requires (@robhogan)
-- **PR #2086** (2026-10-23): Upgrade Flow to 0.337.0 (#2086) (@panagosg7)
-- **PR #2084** (2026-10-23): Docs: Document the `unstable_*` options users would set (@vzaidman)
+- **PR #2136** (2026-10-30): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #2132** (2026-10-29): Enable unstable_disableInputAstCloning by default (@vzaidman)
+- **PR #2131** (2026-10-29): Upgrade flow in fbsource (@SamChou19815)
+- **PR #2130** (2026-10-30): Don't clear over output printed outside of Terminal (@vzaidman)
+- **PR #2129** (2026-10-30): Docs: Format the docs with prettier (@vzaidman)
+- **PR #2126** (closed): CODE_OF_CONDUCT.md (@king2168)
 
 ---
 
@@ -2412,32 +1720,70 @@ Changelog: [Performance] Inline destructured CommonJS requires (`const {foo} = r
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, s
+## X. Don't clear over output printed outside of Terminal
 
 **RULE**:
-When implementing operations in `packages/metro-symbolicate/src/symbolicate.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/metro-core/src/Terminal.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `85585223`: Remove 3 sketchy-null suppressions (constant-folding-plugin, getRamBundleInfo, symbolicate). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fcced577`: Don't clear over output printed outside of Terminal. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-symbolicate/src/symbolicate.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-core/src/Terminal.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      let chunk = stream.read();
-      while (chunk != null && chunk !== '') {
-        chunk = stream.read();
+/**
+ * Bytes written by `stream` and, when it is stdout or stderr, by both, as they
+ * usually share the terminal (e.g. `console.error()`).
+ */
+function getBytesWritten(stream: tty.WriteStream): number {
+  if (stream !== process.stdout && stream !== process.stderr) {
+    return stream.bytesWritten;
+  }
+
+  return (
+    // $FlowFixMe[prop-missing] `bytesWritten` is missing when redirected to a file
+    (process.stdout.bytesWritten ?? 0) + (process.stderr.bytesWritten ?? 0)
+  );
+}
+
+  #bytesWrittenAfterStatus: ?number;
+    this.#updatePromise = Promise.all(this.#updateSync()).then(async () => {
+        await Promise.all(this.#updateSync());
+   * Issues the update's writes without awaiting in between, so no other output
+   * can land in the middle of an update. Returns the pending writes.
+  #updateSync(): Array<Promise<unknown>> {
+      return [];
+    const writes: Array<Promise<unknown>> = [];
+
+    if (
+      ttyStream &&
+      statusStr.length > 0 &&
+      // If anything printed outside of Terminal (like direct console.log),
+      // don't try to clear latest status, and just print a new one instead
+      // or we might delete that external print
+      getBytesWritten(ttyStream) === t
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-      let chunk;
-      // flowlint-next-line sketchy-null-string:off
-      while ((chunk = stream.read())) {
+    this.#updatePromise = this.#update().then(async () => {
+        await this.#update();
+   * Clear and write the new status, logging in bulk in-between. Doing this in a
+   * throttled way (in a different tick than the calls to `log()` and
+   * `status()`) prevents us from repeatedly rewriting the status in case
+   * `terminal.log()` is called several times.
+  async #update(): Promise<void> {
+      return;
+    if (ttyStream && statusStr.length > 0) {
+      await moveCursor(ttyStream, -ttyStream.columns, -statusLinesCount - 1);
+      await clearScreenDown(ttyStream);
+      await streamWrite(this.#stream, logLines.join('\n') + '\n');
+        await streamWrite(this.#stream, nextStatusStr + '\n');
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `85585223` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fcced577` are properly handled with clean fallback behavior.

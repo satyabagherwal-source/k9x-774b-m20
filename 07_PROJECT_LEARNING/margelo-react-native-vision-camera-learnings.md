@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md`  
 > **Source**: github ([https://github.com/margelo/react-native-vision-camera](https://github.com/margelo/react-native-vision-camera))  
-> **Source Version**: `1a69f290`  
+> **Source Version**: `6624e8cd`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-19T00:48:20.929Z  
+> **Timestamp**: 2026-10-31T05:14:16.073Z  
 > **Learning ID**: `learn-github-margelo-react-native-vision-camera`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/margelo-react-native-vision-camera-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/margelo/react-native-vision-camera](https://github.com/margelo/react-native-vision-camera))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-19T00:48:20.922Z  
+> **Harvest Timestamp**: 2026-10-31T05:14:15.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 📸 A powerful, high-performance React Native Camera library.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9645 stars
+- **Stars / Engagement**: 9650 stars
 
 ---
 
@@ -559,902 +559,324 @@ export function normalizeRotationDegrees(degrees: number): number {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8015396b` (2026-08-21)
-**Commit Message**: fix: Deep-compare `constraints` instead of `JSON.stringify`-ing them (#4167)
+### Incident Patch 1: `6624e8cd` (2026-10-29)
+**Commit Message**: chore: update generated camera specs
 
-`useCameraController` kept the user's `constraints` stable by putting
-`JSON.stringify(constraints)` into the `useMemo` dependency array. That
-works for plain constraints like `{ fps: 60 }`, but it silently breaks for
-`{ resolutionBias: someOutput }`.
-
-Nitro `HybridObject`s are created via `Object.create(prototype)` and hold
-every property on their shared prototype, so the JS object itself has no own
-keys. `JSON.stringify(...)` therefore serializes *every* `CameraOutput` to
-`{}` (release) or `{"__type":"HybridObject<CameraPhotoOutput>"}` (debug) -
-two different outputs of the same type produce the exact same string. Any
-change that only re-points a `resolutionBias` at a different output is
-invisible to the memo, and the session is never re-configured.
-
-Replace the stringification with an explicit deep comparison that compares
-object literals and arrays by value and everything else (i.e. `HybridObject`s)
-by identity. That also drops a full JSON serialization from every render.
-
-Also adds two Harness tests: one that re-renders with an inline `constraints`
-array and asserts the session is configured exactly o
-
-**File**: `apps/simple-camera/__tests__/visioncamera.hooks.harness.tsx` (modified, +174/-0)
+**File**: `packages/react-native-vision-camera/nitrogen/generated/android/kotlin/com/margelo/nitro/camera/HybridTapToFocusGestureControllerSpec.kt` (modified, +2/-2)
 ```diff
-@@ -469,4 +469,178 @@ describe('VisionCamera - Hooks', () => {
- 
-     expect(onError).not.toHaveBeenCalled()
-   })
-+
-+  it('does not re-configure the session when constraints are passed as an inline array', async () => {
-+    const onConfigured = fn<() => void>()
-+    const onError = fn<(error: Error) => void>()
-+    const onRendered = fn<(renderIndex: number) => void>()
-+
-+    function TestCamera({
-+      renderIndex,
-+      fps,
-+    }: {
-+      renderIndex: number
-+      fps: number
-+    }): null {
-+      // CameraX requires at least one use case when configuring a session.
-+      const previewOutput = usePreviewOutput()
-+      useCamera({
-+        isActive: false,
-+        device: 'back',
-+        outputs: [previewOutput],
-+        // An inline array of inline object literals, so `constraints` has a
-+        // fresh identity on every single render even though its values never
-+        // change. It must not re-configure the session.
-+        constraints: [{ fps: fps }],
-+        onConfigured,
-+        onError,
-+      })
-+
-+      useEffect(() => {
-+        onRendered(renderIndex)
-+      }, [renderIndex])
-+
-+      return null
-+    }
-+
-+    const waitForRender = async (renderIndex: number): Promise<void> => {
-+      await waitFor(
-+        () => {
-+          const error = onError.mock.lastCall?.[0]
-+          if (error != null) throw error
-+          expect(onRendered).toHaveBeenLastCalledWith(renderIndex)
-+        },
-+        { timeout: 10_000 },
-+      )
-+    }
-+
-+    const { rerender } = await render(<TestCamera renderIndex={0} fps={30} />, {
-+      timeout: 10_000,
-+    })
-+    await waitForRender(0)
-+    await waitFor(
-+      () => {
-+        const error = onError.mock.lastCall?.[0]
-+        if (error != null) throw error
-+        expect(onConfigured).toHaveBeenCalledTimes(1)
-+      },
-+      { timeout: 15_000 },
-+    )
-+
-+    // Re-rendering with the same constraint values must not re-configure.
-+    for (const renderIndex of [1, 2, 3]) {
-+      await rerender(<TestCamera renderIndex={renderIndex} fps={30} />)
-+      await waitForRender(renderIndex)
-+      expect(onConfigured).toHaveBeenCalledTimes(1)
-+    }
-+
-+    // Changing the actual constraint values must re-configure exactly once more.
-+    await rerender(<TestCamera renderIndex={4} fps={24} />)
-+    await waitForRender(4)
-+    await waitFor(
-+      () => {
-+        const error = onError.mock.lastCall?.[0]
-+        if (error != null) throw error
-+        expect(onConfigured).toHaveBeenCalledTimes(2)
-+      },
-+      { timeout: 15_000 },
-+    )
-+
-+    expect(onError).not.toHaveBeenCalled()
-+  })
-+
-+  it('re-configures the session when a resolutionBias constraint points at a different output', async () => {
-+    // Two outputs of the same HybridObject type. They are only used as
-+    // resolution hints, so the attached `outputs` stay identical across every
-+    // re-render and the `constraints` are the only thing that changes.
-+    const lowResolutionBias = VisionCamera.createPhotoOutput({
-+      targetResolution: CommonResolutions.VGA_4_3,
-+      containerFormat: 'jpeg',
-+      quality: 0.8,
-+      qualityPrioritization: 'balanced',
-+    })
-+    const highResolutionBias = VisionCamera.createPhotoOutput({
-+      targetResolution: CommonResolutions.UHD_4_3,
-+      containerFormat: 'jpeg',
-+      quality: 0.8,
-+      qualityPrioritization: 'balanced',
-+    })
-+    const onConfigured = fn<() => void>()
-+    const onError = fn<(error: Error) => void>()
-+    const onRendered = fn<(renderIndex: number) => void>()
-+
-+    function TestCamera({
-+      renderIndex,
-+      resolutionBias,
-+    }: {
-+      renderIndex: number
-+      resolutionBias: CameraPhotoOutput
-+    }): null {
-+      // CameraX requires at least one use case when configuring a session.
-+      const previewOutput = usePreviewOutput()
-+      useCamera({
-+        isActive: false,
-+        device: 'back',
-+        outputs: [previewOutput],
-+        constraints: [{ resolutionBias: resolutionBias }],
-+        onConfigured,
-+        onError,
-+      })
-+
-+      useEffect(() => {
-+        onRendered(renderIndex)
-+      }, [renderIndex])
-+
-+      return null
-+    }
-+
-+    const waitForRender = async (renderIndex: number): Promise<void> => {
-+      await waitFor(
-+        () => {
-+          const error = onError.mock.lastCall?.[0]
-+          if (error != null) throw error
-+          expect(onRendered).toHaveBeenLastCalledWith(renderIndex)
-+        },
-+        { timeout: 10_000 },
-+      )
-+    }
-+
-+    const { rerender } = await render(
-+      <TestCamera renderIndex={0} resolutionBias={lowResolutionBias} />,
-+      { timeout: 10_000 },
-+    )
-+    await waitForRender(0)
-+    await waitFor(
-+      () => {
-+        const error = onError.mock.lastCall?.[0]
-+        if (error != null) throw error
-+        expect(onConfigured).toHaveBeenCalledTimes(1)
-+      },
-+      { timeout: 15_000 },
-+    )
-+
-+    // Re-rendering with the same output must not re-configure.
-+    await rerender(
-+      <TestCame
+@@ -37,9 +37,9 @@ abstract class HybridTapToFocusGestureControllerSpec: HybridGestureControllerSpe
+     val __result = addOnTapListener(onTap)
+     return __result
+   }
+-
++  
+   abstract fun addOnFocusCompletedListener(onFocusCompleted: (point: HybridMeteringPointSpec) -> Unit): ListenerSubscription
+-
++  
+   @DoNotStrip
+   @Keep
+   private fun addOnFocusCompletedListener_cxx(onFocusCompleted: Func_void_std__shared_ptr_HybridMeteringPointSpec_): ListenerSubscription {
 ```
 
-**File**: `packages/react-native-vision-camera/src/hooks/internal/useCameraController.ts` (modified, +4/-4)
+**File**: `packages/react-native-vision-camera/nitrogen/generated/ios/VisionCamera-Swift-Cxx-Bridge.cpp` (modified, +2/-2)
 ```diff
-@@ -9,6 +9,7 @@ import type { CameraSession } from '../../specs/session/CameraSession.nitro'
- import type { CameraSessionConfig } from '../../specs/session/CameraSessionConfig.nitro'
- import type { CameraSessionConfiguration } from '../../specs/session/CameraSessionConfiguration'
- import { useMemoizedArray } from './useMemoizedArray'
-+import { useMemoizedConstraints } from './useMemoizedConstraints'
- import { useStableCallback } from './useStableCallback'
- 
- interface Config extends CameraSessionConfiguration {
-@@ -61,14 +62,13 @@ export function useCameraController(
-   )
-   const stableOnError = useStableCallback(onError)
- 
--  // TODO: Can we use something like useSyncExternalStore or whatever to avoid "wrong" dependencies?
--  // biome-ignore lint/correctness/useExhaustiveDependencies: It's an array of objects, we either have to deep-memo or just stringify.
-+  const stableUserConstraints = useMemoizedConstraints(constraints)
-   const stableConstraints = useMemo<Constraint[]>(() => {
-     return [
--      ...constraints,
-+      ...stableUserConstraints,
-       ...stableOutputs.map<Constraint>((o) => ({ resolutionBias: o })),
-     ]
--  }, [JSON.stringify(constraints), stableOutputs])
-+  }, [stableUserConstraints, stableOutputs])
- 
-   // This effect re-configures the CameraSession and returns a `controller`.
-   // This is expensive and should only be done if any inputs change.
+@@ -465,7 +465,7 @@ namespace margelo::nitro::camera::bridge::swift {
+     VisionCamera::HybridNativeThreadFactorySpec_cxx& swiftPart = swiftWrapper->getSwiftPart();
+     return swiftPart.toUnsafe();
+   }
+-
++  
+   // pragma MARK: std::function<void(const std::shared_ptr<HybridMeteringPointSpec>& /* point */)>
+   Func_void_std__shared_ptr_HybridMeteringPointSpec_ create_Func_void_std__shared_ptr_HybridMeteringPointSpec_(void* NON_NULL swiftClosureWrapper) noexcept {
+     auto swiftClosure = VisionCamera::Func_void_std__shared_ptr_HybridMeteringPointSpec_::fromUnsafe(swiftClosureWrapper);
+@@ -481,7 +481,7 @@ namespace margelo::nitro::camera::bridge::swift {
+       swiftClosure.call(zoom);
+     };
+   }
+-
++  
+   // pragma MARK: std::function<void(const std::vector<std::shared_ptr<HybridCameraDeviceSpec>>& /* newDevices */)>
+   Func_void_std__vector_std__shared_ptr_HybridCameraDeviceSpec__ create_Func_void_std__vector_std__shared_ptr_HybridCameraDeviceSpec__(void* NON_NULL swiftClosureWrapper) noexcept {
+     auto swiftClosure = VisionCamera::Func_void_std__vector_std__shared_ptr_HybridCameraDeviceSpec__::fromUnsafe(swiftClosureWrapper);
 ```
 
-**File**: `packages/react-native-vision-camera/src/hooks/internal/useMemoizedConstraints.ts` (added, +67/-0)
+**File**: `packages/react-native-vision-camera/nitrogen/generated/ios/VisionCamera-Swift-Cxx-Bridge.hpp` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,67 @@
-+import { useRef } from 'react'
-+import type {
-+  Constraint,
-+  ResolutionBiasConstraint,
-+} from '../../specs/common-types/Constraint'
-+import type { CameraOutput } from '../../specs/outputs/CameraOutput.nitro'
-+import type { CameraSession } from '../../specs/session/CameraSession.nitro'
-+
-+/**
-+ * Returns whether the given {@linkcode value} is a plain JS object
-+ * (i.e. an object literal like `{ fps: 60 }`), and not a class instance,
-+ * an `Array`, or a Nitro `HybridObject`.
-+ */
-+function isPlainObject(value: unknown): value is Record<string, unknown> {
-+  if (typeof value !== 'object' || value === null) return false
-+  const prototype = Object.getPrototypeOf(value)
-+  return prototype === Object.prototype || prototype === null
-+}
-+
-+/**
-+ * Deep-compares two {@linkcode Constraint} values.
-+ *
-+ * Object literals (e.g. `{ fps: 60 }`, or a `TargetDynamicRange`) and
-+ * `Array`s are compared by value, everything else - most importantly the
-+ * {@linkcode CameraOutput} of a {@linkcode ResolutionBiasConstraint} - is
-+ * compared by identity.
-+ *
-+ * Nitro `HybridObject`s cannot be compared by value at all; they are created
-+ * via `Object.create(prototype)` and hold every property on their shared
-+ * prototype, so the actual JS object has no own keys (which is also why
-+ * `JSON.stringify(...)` serializes every `CameraOutput` to the exact same
-+ * string).
-+ */
-+function isEqual(left: unknown, right: unknown): boolean {
-+  if (Object.is(left, right)) return true
-+
-+  if (Array.isArray(left) || Array.isArray(right)) {
-+    if (!Array.isArray(left) || !Array.isArray(right)) return false
-+    if (left.length !== right.length) return false
-+    return left.every((item, index) => isEqual(item, right[index]))
-+  }
-+
-+  if (!isPlainObject(left) || !isPlainObject(right)) return false
-+  const leftKeys = Object.keys(left)
-+  const rightKeys = Object.keys(right)
-+  if (leftKeys.length !== rightKeys.length) return false
-+  return leftKeys.every((key) => key in right && isEqual(left[key], right[key]))
-+}
-+
-+/**
-+ * Memoizes the given {@linkcode Constraint}s by value instead of by identity.
-+ *
-+ * {@linkcode Constraint}s are usually written as an inline array of object
-+ * literals (e.g. `constraints={[{ fps: 60 }]}`), which allocates a new array
-+ * and new objects on every render. Using those as a `useEffect` dependency
-+ * would re-configure the {@linkcode CameraSession} on every single render,
-+ * which renders again, and so on.
-+ */
-+export function useMemoizedConstraints(
-+  constraints: Constraint[],
-+): Constraint[] {
-+  const memoized = useRef(constraints)
-+  if (!isEqual(memoized.current, constraints)) {
-+    memoized.current = constraints
-+  }
-+  return memoized.current
-+}
-```
-
----
-
-### Incident Patch 2: `2ae908ab` (2026-08-21)
-**Commit Message**: fix: Memoize `targetResolution` in output hooks (#4166)
-
-`targetResolution` (and `previewImageTargetSize`) are `Size` objects that
-users almost always pass as inline object literals:
-
-```tsx
-const photoOutput = usePhotoOutput({
-  targetResolution: { width: 1920, height: 1080 },
-})
-```
-
-Those literals get a fresh identity on every render, so the `useMemo(...)`
-inside `usePhotoOutput` / `useVideoOutput` / `useFrameOutput` /
-`useDepthOutput` misses its cache and creates a brand new `CameraOutput`
-every time.
-
-That is not just wasteful, it self-perpetuates: a new output changes the
-`outputs` array, which re-runs the `useCameraController` effect, which
-re-configures the `CameraSession`, which calls `setController(...)`, which
-renders again, which creates yet another output. The session ends up in an
-endless reconfigure loop and takes the app down with it within seconds.
-
-Memoize `Size` props by value (`width`/`height`) via a new
-`useMemoizedSize(...)` internal hook so the outputs are only re-created
-when the requested resolution actually changes.
-
-Also adds a Harness test that re-renders a component with inline
-`targetResolution` literals and asserts that the outputs keep their
-identity
-
-**File**: `apps/simple-camera/__tests__/visioncamera.hooks.harness.tsx` (modified, +128/-0)
-```diff
-@@ -19,16 +19,21 @@ import type {
-   CameraDevice,
-   CameraDeviceFactory,
-   CameraOrientation,
-+  CameraPhotoOutput,
-   CameraPosition,
-+  CameraVideoOutput,
-   DeviceFilter,
-   TargetCameraPosition,
- } from 'react-native-vision-camera'
- import {
-+  CommonResolutions,
-   getUIRotation,
-   useCamera,
-   useCameraDevice,
-   useOrientation,
-+  usePhotoOutput,
-   usePreviewOutput,
-+  useVideoOutput,
-   VisionCamera,
- } from 'react-native-vision-camera'
- 
-@@ -341,4 +346,127 @@ describe('VisionCamera - Hooks', () => {
- 
-     expect(onError).not.toHaveBeenCalled()
-   })
-+
-+  it('keeps outputs stable when targetResolution is passed as an inline object literal', async () => {
-+    const onConfigured = fn<() => void>()
-+    const onError = fn<(error: Error) => void>()
-+    const onRendered =
-+      fn<
-+        (
-+          renderIndex: number,
-+          photoOutput: CameraPhotoOutput,
-+          videoOutput: CameraVideoOutput,
-+        ) => void
-+      >()
-+
-+    function TestCamera({
-+      renderIndex,
-+      width,
-+      height,
-+    }: {
-+      renderIndex: number
-+      width: number
-+      height: number
-+    }): null {
-+      // CameraX requires at least one use case when configuring a session.
-+      const previewOutput = usePreviewOutput()
-+      // Both `targetResolution`s are inline object literals, so they have a
-+      // fresh identity on every single render even though their values never
-+      // change. They must not re-create the outputs.
-+      const photoOutput = usePhotoOutput({
-+        targetResolution: { width: width, height: height },
-+      })
-+      const videoOutput = useVideoOutput({
-+        targetResolution: { width: width, height: height },
-+        enableAudio: false,
-+      })
-+      useCamera({
-+        isActive: false,
-+        device: 'back',
-+        outputs: [previewOutput, photoOutput, videoOutput],
-+        onConfigured,
-+        onError,
-+      })
-+
-+      useEffect(() => {
-+        onRendered(renderIndex, photoOutput, videoOutput)
-+      }, [renderIndex, photoOutput, videoOutput])
-+
-+      return null
-+    }
-+
-+    const waitForRender = async (renderIndex: number): Promise<void> => {
-+      await waitFor(
-+        () => {
-+          const error = onError.mock.lastCall?.[0]
-+          if (error != null) throw error
-+          expect(onRendered.mock.lastCall?.[0]).toBe(renderIndex)
-+        },
-+        { timeout: 10_000 },
-+      )
-+    }
-+
-+    const stableResolution = CommonResolutions.HD_4_3
-+    const changedResolution = CommonResolutions.VGA_4_3
-+
-+    const { rerender } = await render(
-+      <TestCamera
-+        renderIndex={0}
-+        width={stableResolution.width}
-+        height={stableResolution.height}
-+      />,
-+      { timeout: 10_000 },
-+    )
-+    await waitForRender(0)
-+    await waitFor(
-+      () => {
-+        const error = onError.mock.lastCall?.[0]
-+        if (error != null) throw error
-+        expect(onConfigured).toHaveBeenCalledTimes(1)
-+      },
-+      { timeout: 15_000 },
-+    )
-+
-+    const initialPhotoOutput = onRendered.mock.lastCall?.[1]
-+    const initialVideoOutput = onRendered.mock.lastCall?.[2]
-+    expect(initialPhotoOutput).toBeDefined()
-+    expect(initialVideoOutput).toBeDefined()
-+
-+    // Re-rendering with the same resolution values must reuse the same outputs.
-+    for (const renderIndex of [1, 2, 3]) {
-+      await rerender(
-+        <TestCamera
-+          renderIndex={renderIndex}
-+          width={stableResolution.width}
-+          height={stableResolution.height}
-+        />,
-+      )
-+      await waitForRender(renderIndex)
-+      expect(onRendered.mock.lastCall?.[1]).toBe(initialPhotoOutput)
-+      expect(onRendered.mock.lastCall?.[2]).toBe(initialVideoOutput)
-+    }
-+
-+    // Changing the actual resolution values must re-create the outputs and
-+    // re-configure the session exactly once more.
-+    await rerender(
-+      <TestCamera
-+        renderIndex={4}
-+        width={changedResolution.width}
-+        height={changedResolution.height}
-+      />,
-+    )
-+    await waitForRender(4)
-+    expect(onRendered.mock.lastCall?.[1]).not.toBe(initialPhotoOutput)
-+    expect(onRendered.mock.lastCall?.[2]).not.toBe(initialVideoOutput)
-+    await waitFor(
-+      () => {
-+        const error = onError.mock.lastCall?.[0]
-+        if (error != null) throw error
-+        expect(onConfigured).toHaveBeenCalledTimes(2)
-+      },
-+      { timeout: 15_000 },
-+    )
-+
-+    expect(onError).not.toHaveBeenCalled()
-+  })
- })
-```
-
-**File**: `packages/react-native-vision-camera/src/hooks/internal/useMemoizedSize.ts` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+import { useMemo } from 'react'
-+import type { Size } from '../../specs/common-types/Size'
-+import type { CameraOutput } from '../../specs/outputs/CameraOutput.nitro'
-+import type { CameraSession } from '../../specs/session/CameraSession.nitro'
-+
-+/**
-+ * Memoizes the given {@linkcode Size} by value instead of by identity.
-+ *
-+ * {@linkcode Size}s are usually written as inline object literals
-+ * (e.g. `useVideoOutput({ targetResolution: { width: 1920, height: 1080 } })`),
-+ * which allocates a new object on every render. Using such a {@linkcode Size}
-+ * as a `useMemo` dependency would re-create the {@linkcode CameraOutput} on
-+ * every render, and re-creating an output re-configures the
-+ * {@linkcode CameraSession} - which renders again, which re-creates the
-+ * output again, and so on.
-+ */
-+export function useMemoizedSize(size: Size): Size
-+export function useMemoizedSize(size: Size | undefined): Size | undefined
-+export function useMemoizedSize(size: Size | undefined): Size | undefined {
-+  const width = size?.width
-+  const height = size?.height
-+
-+  return useMemo(() => {
-+    if (width == null || height == null) return undefined
-+    return { width: width, height: height }
-+  }, [width, height])
-+}
-```
-
-**File**: `packages/react-native-vision-camera/src/hooks/useDepthOutput.ts` (modified, +11/-7)
-```diff
-@@ -8,6 +8,7 @@ import type {
- import { VisionCameraWorkletsProxy } from '../third-party/VisionCameraWorkletsProxy'
- import { CommonResolutions } from '../utils/CommonResolutions'
- import { VisionCamera } from '../VisionCamera'
-+import { useMemoizedSize } from './internal/useMemoizedSize'
- 
- type BaseDepthOptions = Pick<
-   DepthFrameOutputOptions,
-@@ -75,25 +76,28 @@ export function useDepthOutput({
-   dropFramesWhileBusy = true,
-   allowDeferredStart = true,
- }: UseDepthOutputProps): CameraDepthFrameOutput {
--  // 1. Create depth output
-+  // 1. `targetResolution` is usually an inline object literal - memoize it by value.
-+  const memoizedTargetResolution = useMemoizedSize(targetResolution)
-+
-+  // 2. Create depth output
-   const depthOutput = useMemo(
-     () =>
-       VisionCamera.createDepthFrameOutput({
--        targetResolution: targetResolution,
-+        targetResolution: memoizedTargetResolution,
-         enableFiltering: enableFiltering,
-         enablePhysicalBufferRotation: false,
-         dropFramesWhileBusy: dropFramesWhileBusy,
-         allowDeferredStart: allowDeferredStart,
-       }),
-     [
--      targetResolution,
-+      memoizedTargetResolution,
-       enableFiltering,
-       dropFramesWhileBusy,
-       allowDeferredStart,
-     ],
-   )
- 
--  // 2. Add Frame dropped warner
-+  // 3. Add Frame dropped warner
-   const onDepthFrameDroppedRef = useRef(onDepthFrameDropped)
-   onDepthFrameDroppedRef.current = onDepthFrameDropped
-   useEffect(() => {
-@@ -104,16 +108,16 @@ export function useDepthOutput({
-     })
-   }, [depthOutput])
- 
--  // 3. Create Worklet Runtime for NativeThread
-+  // 4. Create Worklet Runtime for NativeThread
-   const runtime = useMemo(
-     () => VisionCameraWorkletsProxy.createRuntimeForThread(depthOutput.thread),
-     [depthOutput.thread],
-   )
--  // 4. Update onDepth() callback if it changed
-+  // 5. Update onDepth() callback if it changed
-   useEffect(() => {
-     runtime.setOnDepthFrameCallback(depthOutput, onDepth)
-   }, [runtime, depthOutput, onDepth])
- 
--  // 5. Return :)
-+  // 6. Return :)
-   return depthOutput
- }
-```
-
-**File**: `packages/react-native-vision-camera/src/hooks/useFrameOutput.ts` (modified, +11/-7)
-```diff
-@@ -14,6 +14,7 @@ import type {
- import { VisionCameraWorkletsProxy } from '../third-party/VisionCameraWorkletsProxy'
- import { CommonResolutions } from '../utils/CommonResolutions'
- import { VisionCamera } from '../VisionCamera'
-+import { useMemoizedSize } from './internal/useMemoizedSize'
- 
- export interface UseFrameOutputProps extends Partial<FrameOutputOptions> {
+@@ -1346,7 +1346,7 @@ namespace margelo::nitro::camera::bridge::swift {
+   inline Func_void_std__shared_ptr_HybridMeteringPointSpec__Wrapper wrap_Func_void_std__shared_ptr_HybridMeteringPointSpec_(Func_void_std__shared_ptr_HybridMeteringPointSpec_ value) noexcept {
+     return Func_void_std__shared_ptr_HybridMeteringPointSpec__Wrapper(std::move(value));
+   }
+-
++  
+   // pragma MARK: std::function<void(double /* zoom */)>
    /**
-@@ -129,11 +130,14 @@ export function useFrameOutput({
-   onFrame,
-   onFrameDropped,
- }: UseFrameOutputProps): CameraFrameOutput {
--  // 1. Create frame output
-+  // 1. `targetResolution` is usually an inline object literal - memoize it by value.
-+  const memoizedTargetResolution = useMemoizedSize(targetResolution)
-+
-+  // 2. Create frame output
-   const frameOutput = useMemo(
-     () =>
-       VisionCamera.createFrameOutput({
--        targetResolution: targetResolution,
-+        targetResolution: memoizedTargetResolution,
-         pixelFormat: pixelFormat,
-         enablePhysicalBufferRotation: enablePhysicalBufferRotation,
-         enableCameraMatrixDelivery: enableCameraMatrixDelivery,
-@@ -142,7 +146,7 @@ export function useFrameOutput({
-         dropFramesWhileBusy: dropFramesWhileBusy,
-       }),
-     [
--      targetResolution,
-+      memoizedTargetResolution,
-       pixelFormat,
-       dropFramesWhileBusy,
-       enableCameraMatrixDelivery,
-@@ -152,7 +156,7 @@ export function useFrameOutput({
-     ],
-   )
- 
--  // 2. Add Frame dropped warner
-+  // 3. Add Frame dropped warner
-   const onFrameDroppedRef = useRef(onFrameDropped)
-   onFrameDroppedRef.current = onFrameDropped
-   useEffect(() => {
-@@ -163,16 +167,16 @@ export function useFrameOutput({
-     })
-   }, [frameOutput])
- 
--  // 3. Create Worklet Runtime for NativeThread
-+  // 4. Create Worklet Runtime for NativeThread
-   const runtime = useMemo(
-     () => VisionCameraWorkletsProxy.createRuntimeForThread(frameOutput.thread),
-     [frameOutput.thread],
-   )
--  // 4. Update onFrame() callback if it changed
-+  // 5. Update onFrame() callback if it changed
-   useEffect(() => {
-     runtime.setOnFrameCallback(frameOutput, onFrame)
-   }, [runtime, frameOutput, onFrame])
- 
--  // 5. Return :)
-+  // 6. Return :)
-   return frameOutput
- }
+    * Specialized version of `std::function<void(double)>`.
+@@ -1368,7 +1368,7 @@ namespace margelo::nitro::camera::bridge::swift {
+   inline Func_void_double_Wrapper wrap_Func_void_double(Func_void_double value) noexcept {
+     return Func_void_double_Wrapper(std::move(value));
+   }
+-
++  
+   // pragma MARK: std::vector<std::shared_ptr<HybridCameraDeviceSpec>>
+   /**
+    * Specialized version of `std::vector<std::shared_ptr<HybridCameraDeviceSpec>>`.
 ```
 
-**File**: `packages/react-native-vision-camera/src/hooks/usePhotoOutput.ts` (modified, +10/-5)
+**File**: `packages/react-native-vision-camera/nitrogen/generated/ios/swift/PhotoFile.swift` (modified, +7/-7)
 ```diff
-@@ -7,6 +7,7 @@ import type {
- import { CommonResolutions } from '../utils/CommonResolutions'
- import { VisionCamera } from '../VisionCamera'
- import type { Camera } from '../views/Camera'
-+import { useMemoizedSize } from './internal/useMemoizedSize'
- 
- /**
-  * Use a {@linkcode CameraPhotoOutput} for capturing {@linkcode Photo}s.
-@@ -35,22 +36,26 @@ export function usePhotoOutput({
-   qualityPrioritization = 'balanced',
-   previewImageTargetSize = undefined,
- }: Partial<PhotoOutputOptions> = {}): CameraPhotoOutput {
--  // 1. Create photo output
-+  // 1. `Size`s are usually inline object literals - memoize them by value.
-+  const memoizedTargetResolution = useMemoizedSize(targetResolution)
-+  const memoizedPreviewImageTargetSize = useMemoizedSize(previewImageTargetSize)
-+
-+  // 2. Create photo output
-   const photoOutput = useMemo(
-     () =>
-       VisionCamera.createPhotoOutput({
--        targetResolution: targetResolution,
-+        targetResolution: memoizedTargetResolution,
-         containerFormat: containerFormat,
-         quality: quality,
-         qualityPrioritization: qualityPrioritization,
--        previewImageTargetSize: previewImageTargetSize,
-+        previewImageTargetSize: memoizedPreviewImageTargetSize,
-       }),
-     [
--      targetResolution,
-+      memoizedTargetResolution,
-       containerFormat,
-       quality,
-       qualityPrioritization,
--      previewImageTargetSize,
-+      memoizedPreviewImageTargetSize,
-     ],
-   )
- 
-```
-
-**File**: `packages/react-native-vision-camera/src/hooks/useVideoOutput.ts` (modified, +6/-2)
-```diff
-@@ -7,6 +7,7 @@ import type { Recorder } from '../specs/outputs/Recorder.nitro'
- import { CommonResolutions } from '../utils/CommonResolutions'
- import { VisionCamera } from '../VisionCamera'
- import type { Camera } from '../views/Camera'
-+import { useMemoizedSize } from './internal/useMemoizedSize'
- 
- /**
-  * Use a {@linkcode CameraVideoOutput} for recording videos.
-@@ -42,10 +43,13 @@ export function useVideoOutput({
-   enableAudio,
-   fileType,
- }: Partial<VideoOutputOptions> = {}): CameraVideoOutput {
-+  // `targetResolution` is usually an inline object literal - memoize it by value.
-+  const memoizedTargetResolution = useMemoizedSize(targetResolution)
-+
-   const videoOutput = useMemo(
-     () =>
-       VisionCamera.createVideoOutput({
--        targetResolution: targetResolution,
-+        targetResolution: memoizedTargetResolution,
-         targetBitRate: targetBitRate,
-         enablePersistentRecorder: enablePersistentRecorder,
-         enableAudio: enableAudio,
-@@ -55,7 +59,7 @@ export function useVideoOutput({
-       enablePersistentRecorder,
-       targetBitRate,
-       enableAudio,
--      targetResolution,
-+      memoizedTargetResolution,
-       fileType,
-     ],
-   )
+@@ -26,37 +26,37 @@ public extension PhotoFile {
+   var filePath: String {
+     return String(self.__filePath)
+   }
+-
++  
+   @inline(__always)
+   var width: Double {
+     return self.__width
+   }
+-
++  
+   @inline(__always)
+   var height: Double {
+     return self.__height
+   }
+-
++  
+   @inline(__always)
+   var orientation: CameraOrientation {
+     return self.__orientation
+   }
+-
++  
+   @inline(__always)
+   var isMirrored: Bool {
+     return self.__isMirrored
+   }
+-
++  
+   @inline(__always)
+   var timestamp: Double {
+     return self.__timestamp
+   }
+-
++  
+   @inline(__always)
+   var isRawPhoto: Bool {
+     return self.__isRawPhoto
+   }
+-
++  
+   @inline(__always)
+   var containerFormat: PhotoContainerFormat {
+     return self.__containerFormat
 ```
 
 ---
 
-### Incident Patch 3: `019764cb` (2026-08-12)
-**Commit Message**: test: Add tests for `onUIRotationChanged` (#4148)
+### Incident Patch 2: `cd95a93a` (2026-10-29)
+**Commit Message**: chore: release 5.2.4
 
-* test: Add tests for `onUIRotationChanged`
-
-* Update visioncamera.hooks.harness.tsx
-
-* test: Refine UI rotation harness coverage
-
-**File**: `apps/simple-camera/__tests__/README.md` (modified, +1/-1)
+**File**: `apps/simple-camera/ios/Podfile.lock` (modified, +10/-10)
 ```diff
-@@ -27,7 +27,7 @@ Tests are split by domain. Each file tests one slice of the imperative `VisionCa
- | [visioncamera.multi-output.harness.ts](visioncamera.multi-output.harness.ts) | Multi-output sessions that combine photo, video, and frame outputs, output replacement while other outputs stay attached, persistent recording across session restarts |
- | [visioncamera.constraints.harness.ts](visioncamera.constraints.harness.ts) | `VisionCamera.resolveConstraints` + `onSessionConfigSelected`, FPS / HDR / stabilization / binned / pixelFormat / resolutionBias constraints |
- | [visioncamera.controller.harness.ts](visioncamera.controller.harness.ts) | `CameraController` — zoom, torch, exposure bias, focus metering, low-light boost, subject area listener |
--| [visioncamera.hooks.harness.tsx](visioncamera.hooks.harness.tsx) | React hook reactivity for `useCameraDevice(...)` position and physical-device filter changes |
-+| [visioncamera.hooks.harness.tsx](visioncamera.hooks.harness.tsx) | React hook reactivity for `useCameraDevice(...)` position and physical-device filter changes, and `useCamera(...).onUIRotationChanged` |
- | [visioncamera.utils.harness.ts](visioncamera.utils.harness.ts) | Pure public utilities such as `getUIRotation(...)` across every output/interface orientation pair |
- | [visioncamera.coordinates.harness.ts](visioncamera.coordinates.harness.ts) | `Frame.convertFramePointToCameraPoint` / `convertCameraPointToFramePoint`, `PreviewView.convertViewPointToCameraPoint` / `convertCameraPointToViewPoint`, `PreviewView.createMeteringPoint`, `convertScannedObjectCoordinatesToViewCoordinates`, end-to-end Frame → Camera → View round-trip |
- | [visioncamera.nativepreviewview.harness.tsx](visioncamera.nativepreviewview.harness.tsx) | Bare `NativePreviewView` lifecycle, layout-sensitive preview regression coverage, `resizeMode`, Android `implementationMode`, gesture controllers, multi-preview mounting, `PreviewView` ref methods, Android `takeSnapshot()` dimensions |
+@@ -2344,7 +2344,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - ReactNativeDependencies
+     - Yoga
+-  - VisionCamera (5.2.3):
++  - VisionCamera (5.2.4):
+     - hermes-engine
+     - NitroImage
+     - NitroModules
+@@ -2369,7 +2369,7 @@ PODS:
+     - ReactCommon/turbomodule/core
+     - ReactNativeDependencies
+     - Yoga
+-  - VisionCameraBarcodeScanner (5.2.3):
++  - VisionCameraBarcodeScanner (5.2.4):
+     - GoogleMLKit/BarcodeScanning (= 9.0.0)
+     - hermes-engine
+     - NitroImage
+@@ -2396,7 +2396,7 @@ PODS:
+     - ReactNativeDependencies
+     - VisionCamera
+     - Yoga
+-  - VisionCameraLocation (5.2.3):
++  - VisionCameraLocation (5.2.4):
+     - hermes-engine
+     - NitroModules
+     - RCTRequired
+@@ -2421,7 +2421,7 @@ PODS:
+     - ReactNativeDependencies
+     - VisionCamera
+     - Yoga
+-  - VisionCameraResizer (5.2.3):
++  - VisionCameraResizer (5.2.4):
+     - hermes-engine
+     - NitroModules
+     - RCTRequired
+@@ -2446,7 +2446,7 @@ PODS:
+     - ReactNativeDependencies
+     - VisionCamera
+     - Yoga
+-  - VisionCameraWorklets (5.2.3):
++  - VisionCameraWorklets (5.2.4):
+     - hermes-engine
+     - NitroModules
+     - RCTRequired
+@@ -2872,11 +2872,11 @@ SPEC CHECKSUMS:
+   RNScreens: 991cc417cd396602a6cf59a42139e5a9d91462a9
+   RNVectorIcons: 97f26211c07d69e45b189f9dd0dbbe5e2d2b0b92
+   RNWorklets: 04a35c45bd72d24914cbaf24bdfa4e30e1eab2df
+-  VisionCamera: f84550cffbbf23f3cac7a3d1d2e66e5098a4e8eb
+-  VisionCameraBarcodeScanner: 20cca2d99425546548511a95980bb8b1117fb830
+-  VisionCameraLocation: 8b23e0c80d722a090590d99b738d2fcc78e5ef3e
+-  VisionCameraResizer: ff4f3c9bd01f23392b367a65e16c18cc17b94e31
+-  VisionCameraWorklets: b6de1b4f950e958236366987750ed0b3c86228b9
++  VisionCamera: bd275acfc8307bfadc8f320880a14d196c243ef7
++  VisionCameraBarcodeScanner: f323ff15285506ab428226fd03ddfb7add98cbad
++  VisionCameraLocation: 7381650de6fce6386e555cbf0cd4d414e1b077ad
++  VisionCameraResizer: f887ca7660580dad0d0da536d75aa77908f572f6
++  VisionCameraWorklets: 02b8a518be01168864acef59e39bc9031bcf0567
+   Yoga: 77dfa8673de2874e1855002ae59c68b8be9b007b
+ 
+ PODFILE CHECKSUM: 225e4ff5bb6719c47fa66724251c4ad2098c76da
 ```
 
-**File**: `apps/simple-camera/__tests__/visioncamera.hooks.harness.tsx` (modified, +128/-1)
+**File**: `apps/simple-camera/package.json` (modified, +1/-1)
 ```diff
-@@ -1,4 +1,5 @@
- import { useEffect } from 'react'
-+import { StyleSheet } from 'react-native'
- import {
-   beforeAll,
-   describe,
-@@ -9,14 +10,27 @@ import {
-   render,
-   waitFor,
- } from 'react-native-harness'
-+import {
-+  Screen,
-+  type ScreenOrientationTypes,
-+  ScreenStack,
-+} from 'react-native-screens'
- import type {
-   CameraDevice,
-   CameraDeviceFactory,
-+  CameraOrientation,
-   CameraPosition,
-   DeviceFilter,
-   TargetCameraPosition,
- } from 'react-native-vision-camera'
--import { useCameraDevice, VisionCamera } from 'react-native-vision-camera'
-+import {
-+  getUIRotation,
-+  useCamera,
-+  useCameraDevice,
-+  useOrientation,
-+  usePreviewOutput,
-+  VisionCamera,
-+} from 'react-native-vision-camera'
- 
- interface DeviceSnapshot {
-   requestedPosition: TargetCameraPosition
-@@ -214,4 +228,117 @@ describe('VisionCamera - Hooks', () => {
-     )
-     await expectLatestDeviceSnapshot(onSnapshot, 'back', tripleDevice)
-   })
-+
-+  it('updates onUIRotationChanged when the interface orientation changes', async () => {
-+    const onConfigured = fn<() => void>()
-+    const onInterfaceOrientationChanged =
-+      fn<(orientation: CameraOrientation | undefined) => void>()
-+    const onUIRotationChanged = fn<(rotation: number) => void>()
-+    const onError = fn<(error: Error) => void>()
-+
-+    function TestCamera({
-+      screenOrientation,
-+    }: {
-+      screenOrientation: ScreenOrientationTypes
-+    }): React.ReactElement {
-+      // CameraX requires at least one use case when configuring a session.
-+      const previewOutput = usePreviewOutput()
-+      const interfaceOrientation = useOrientation('interface')
-+      useEffect(() => {
-+        onInterfaceOrientationChanged(interfaceOrientation)
-+      }, [interfaceOrientation])
-+      useCamera({
-+        isActive: false,
-+        device: 'back',
-+        outputs: [previewOutput],
-+        orientationSource: 'custom',
-+        onConfigured,
-+        onUIRotationChanged,
-+        onError,
-+      })
-+
-+      return (
-+        <ScreenStack style={StyleSheet.absoluteFill}>
-+          <Screen
-+            enabled={true}
-+            activityState={2}
-+            screenOrientation={screenOrientation}
-+            style={StyleSheet.absoluteFill}
-+          />
-+        </ScreenStack>
-+      )
-+    }
-+
-+    const waitForRotation = async (
-+      allowedOrientations: readonly CameraOrientation[],
-+    ): Promise<CameraOrientation> => {
-+      let receivedOrientation: CameraOrientation | undefined
-+      await waitFor(
-+        () => {
-+          const error = onError.mock.lastCall?.[0]
-+          if (error != null) throw error
-+
-+          const orientation = onInterfaceOrientationChanged.mock.lastCall?.[0]
-+          if (orientation == null) {
-+            throw new Error('No interface orientation was received yet.')
-+          }
-+          receivedOrientation = orientation
-+          expect(allowedOrientations).toContain(orientation)
-+          const expectedRotation = getUIRotation('up', orientation)
-+          expect(onUIRotationChanged).toHaveBeenLastCalledWith(expectedRotation)
-+        },
-+        { timeout: 10_000 },
-+      )
-+      if (receivedOrientation == null) {
-+        throw new Error('No interface orientation was received.')
-+      }
-+      return receivedOrientation
-+    }
-+
-+    const { rerender } = await render(
-+      <TestCamera screenOrientation="portrait_up" />,
-+      {
-+        timeout: 10_000,
-+      },
-+    )
-+    await waitFor(
-+      () => {
-+        const error = onError.mock.lastCall?.[0]
-+        if (error != null) throw error
-+        expect(onConfigured).toHaveBeenCalledTimes(1)
-+      },
-+      { timeout: 10_000 },
-+    )
-+    await waitFor(
-+      () => {
-+        const error = onError.mock.lastCall?.[0]
-+        if (error != null) throw error
-+        const expectedRotation = getUIRotation('up', 'up')
-+        expect(onUIRotationChanged).toHaveBeenLastCalledWith(expectedRotation)
-+      },
-+      { timeout: 10_000 },
-+    )
-+
-+    try {
-+      onInterfaceOrientationChanged.mockClear()
-+      onUIRotationChanged.mockClear()
-+      await rerender(<TestCamera screenOrientation="landscape_left" />)
-+      const firstLandscapeOrientation = await waitForRotation(['left', 'right'])
-+      const oppositeLandscapeOrientation =
-+        firstLandscapeOrientation === 'left' ? 'right' : 'left'
-+      onInterfaceOrientationChanged.mockClear()
-+      onUIRotationChanged.mockClear()
-+      await rerender(<TestCamera screenOrientation="landscape_right" />)
-+      await waitForRotation([oppositeLandscapeOrientation])
-+
-+      onInterfaceOrientationChanged.mockClear()
-+      onUIRotationChanged.mockClear()
-+      await rerender(<TestCamera screenOrientation="portrait_up" />)
-+      await waitForRotation(['up'])
-+    } finally {
-+      await rerender(<TestCamera screenOrientation="portrait_up" />)
-+    }
-+
-+    expect(onError).not.toHaveBeenCalled()
-+  })
- })
+@@ -64,5 +64,5 @@
+   "trustedDependencies": [
+     "@shopify/react-native-skia"
+   ],
+-  "version": "5.2.3"
++  "version": "5.2.4"
+ }
+```
+
+**File**: `bun.lock` (modified, +7/-7)
+```diff
+@@ -20,7 +20,7 @@
+     },
+     "apps/simple-camera": {
+       "name": "simple-camera",
+-      "version": "5.2.3",
++      "version": "5.2.4",
+       "dependencies": {
+         "@react-native-community/blur": "^4.4.1",
+         "@react-native-menu/menu": "^2.0.0",
+@@ -103,7 +103,7 @@
+     },
+     "packages/react-native-vision-camera": {
+       "name": "react-native-vision-camera",
+-      "version": "5.2.3",
++      "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+         "nitrogen": "0.37.0",
+@@ -125,7 +125,7 @@
+     },
+     "packages/react-native-vision-camera-barcode-scanner": {
+       "name": "react-native-vision-camera-barcode-scanner",
+-      "version": "5.2.3",
++      "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+         "nitrogen": "0.37.0",
+@@ -149,7 +149,7 @@
+     },
+     "packages/react-native-vision-camera-location": {
+       "name": "react-native-vision-camera-location",
+-      "version": "5.2.3",
++      "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+         "nitrogen": "0.37.0",
+@@ -171,7 +171,7 @@
+     },
+     "packages/react-native-vision-camera-resizer": {
+       "name": "react-native-vision-camera-resizer",
+-      "version": "5.2.3",
++      "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+         "nitrogen": "0.37.0",
+@@ -193,7 +193,7 @@
+     },
+     "packages/react-native-vision-camera-skia": {
+       "name": "react-native-vision-camera-skia",
+-      "version": "5.2.3",
++      "version": "5.2.4",
+       "devDependencies": {
+         "@shopify/react-native-skia": "2.6.4",
+         "@types/react": "19.2.15",
+@@ -218,7 +218,7 @@
+     },
+     "packages/react-native-vision-camera-worklets": {
+       "name": "react-native-vision-camera-worklets",
+-      "version": "5.2.3",
++      "version": "5.2.4",
+       "devDependencies": {
+         "@types/react": "19.2.15",
+         "nitrogen": "0.37.0",
+```
+
+**File**: `package.json` (modified, +1/-1)
+```diff
+@@ -128,5 +128,5 @@
+   "patchedDependencies": {
+     "react-native@0.85.3": "patches/react-native@0.85.3.patch"
+   },
+-  "version": "5.2.3"
++  "version": "5.2.4"
+ }
+```
+
+**File**: `packages/react-native-vision-camera-barcode-scanner/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-vision-camera-barcode-scanner",
+-  "version": "5.2.3",
++  "version": "5.2.4",
+   "description": "Barcode scanning plugin for react-native-vision-camera powered by ML Kit.",
+   "main": "lib/index",
+   "module": "lib/index",
+```
+
+**File**: `packages/react-native-vision-camera-location/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-vision-camera-location",
+-  "version": "5.2.3",
++  "version": "5.2.4",
+   "description": "Location tagging plugin for react-native-vision-camera for photo EXIF and video metadata.",
+   "main": "lib/index",
+   "module": "lib/index",
+```
+
+**File**: `packages/react-native-vision-camera-resizer/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-vision-camera-resizer",
+-  "version": "5.2.3",
++  "version": "5.2.4",
+   "description": "High-performance image and frame resizing plugin using Metal/Vulkan for react-native-vision-camera.",
+   "main": "lib/index",
+   "module": "lib/index",
+```
+
+**File**: `packages/react-native-vision-camera-skia/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "react-native-vision-camera-skia",
+-  "version": "5.2.3",
++  "version": "5.2.4",
+   "description": "Skia rendering plugin for react-native-vision-camera for drawing camera frames in React Native.",
+   "main": "lib/index",
+   "module": "lib/index",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1477,72 +899,3 @@ identity
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Deep-compare `constraints` instead of `JSON.stringify`-ing them (#4167)
-
-**RULE**:
-When implementing operations in `apps/simple-camera/__tests__/visioncamera.hooks.harness.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in margelo/react-native-vision-camera. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `8015396b`: Deep-compare `constraints` instead of `JSON.stringify`-ing them (#4167). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/simple-camera/__tests__/visioncamera.hooks.harness.tsx`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-
-  it('does not re-configure the session when constraints are passed as an inline array', async () => {
-    const onConfigured = fn<() => void>()
-    const onError = fn<(error: Error) => void>()
-    const onRendered = fn<(renderIndex: number) => void>()
-
-    function TestCamera({
-      renderIndex,
-      fps,
-    }: {
-      renderIndex: number
-      fps: number
-    }): null {
-      // CameraX requires at least one use case when configuring a session.
-      const previewOutput = usePreviewOutput()
-      useCamera({
-        isActive: false,
-        device: 'back',
-        outputs: [previewOutput],
-        // An inline array of inline object literals, so `constraints` has a
-        // fresh identity on every single render even though its values never
-        // change. It must not re-configure the session.
-        constraints: [{ fps: fps }],
-        onConfigured,
-        onError,
-      })
-
-      useEffect(() => {
-        onRendered(renderIndex)
-      }, [renderIndex])
-
-      return null
-    }
-
-    const waitForRender = async (renderIndex: number): Promise<void> => {
-      await waitFor(
-        () => {
-          const error = onError.mock.lastCall?.[0]
-          if (error != null) th
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8015396b` are properly handled with clean fallback behavior.

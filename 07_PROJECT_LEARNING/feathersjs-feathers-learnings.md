@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
 > **Source**: github ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
-> **Source Version**: `572574e3`  
+> **Source Version**: `8c007bc4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-18T22:23:16.823Z  
+> **Timestamp**: 2026-10-31T02:00:27.008Z  
 > **Learning ID**: `learn-github-feathersjs-feathers`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/feathersjs-feathers-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/feathersjs/feathers](https://github.com/feathersjs/feathers))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-18T22:23:16.815Z  
+> **Harvest Timestamp**: 2026-10-31T02:00:27.001Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The API and real-time application framework
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15259 stars
+- **Stars / Engagement**: 15257 stars
 
 ---
 
@@ -494,6 +494,60 @@ import koaCookieSession from 'koa-session'
 import { AuthenticationService } from '@feathersjs/authentication'
 import { GrantConfig } from 'grant'
 
+/**
+ * Grant options a request must not override for providers with `dynamic: true`, since they
+ * decide where tokens and profiles come from and how the response is checked.
+ */
+const PROTECTED_DYNAMIC_OPTIONS = [
+  'request_url',
+  'authorize_url',
+  'access_url',
+  'profile_url',
+  'oauth',
+  'origin',
+  'prefix',
+  'redirect_uri',
+  'callback',
+  'transport',
+  'response',
+  'key',
+  'secret',
+  'client_id',
+  'client_secret',
+  'consumer_key',
+  'consumer_secret',
+  'public_key',
+  'private_key',
+  'token_endpoint_auth_method',
+  'token_endpoint_auth_signing_alg',
+  'state',
+  'nonce',
+  'pkce',
+  'subdomain',
+  'name',
+  'dynamic',
+  'overrides'
+]
+
+/**
+ * Authorization parameters `custom_params` must not replace, since Grant copies it over them.
+ */
+const PROTECTED_CUSTOM_PARAMS = [
+  'client_id',
+  'app_id',
+  'appid',
+  'client_key',
+  'redirect_uri',
+  'response_type',
+  'state',
+  'nonce',
+  'code_challenge',
+  'code_challenge_method'
+]
+
+const omit = (data: any, keys: string[]) =>
+  Object.fromEntries(Object.entries(data).filter(([key]) => !keys.includes(key)))
+
 export interface OauthSetupSettings {
   linkStrategy: string
   authService?: string
@@ -546,6 +600,24 @@ export const getGrantConfig = (service: AuthenticationService): GrantConfig => {
   }
 
   return grant
+}
+
+/**
+ * Remove protected options from the request data for providers (or overrides) that are
+ * configured with `dynamic: true`. `options` is the provider configuration as resolved by Grant.
+ */
+export const filterDynamic = (options: any, data: any) => {
+  if (options?.dynamic !== true || !data || typeof data !== 'object') {
+    return data
+  }
+
+  const result = omit(data, PROTECTED_DYNAMIC_OPTIONS)
+
+  if (result.custom_params && typeof result.custom_params === 'object') {
+    result.custom_params = omit(result.custom_params, PROTECTED_CUSTOM_PARAMS)
+  }
+
+  return result
 }
 
 export const setExpressParams: RequestHandler = (req, res, next) => {
@@ -1057,634 +1129,394 @@ export default (event: ConnectionEvent) => async (context: HookContext, next: Ne
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a58896a` (2026-08-11)
-**Commit Message**: fix(authentication-oauth): allow any port on loopback OAuth origins (#3699)
+### Incident Patch 1: `5c77e7f2` (2026-10-28)
+**Commit Message**: docs: add a security policy
 
-* fix(authentication-oauth): allow any port on loopback OAuth origins
-
-Exact origin matching from the 5.0.40 security fix rejected common local
-dev setups where the frontend runs on a different port than the configured
-origin (e.g. http://localhost vs http://localhost:5173).
-
-For localhost, 127.0.0.1, and ::1 only, match on scheme + host and ignore
-port, then redirect using the referer origin so the token returns to the
-correct local port. Non-loopback hosts still require an exact origin match.
-
-Closes #3684
-
-* fix(authentication-oauth): treat 0.0.0.0 as loopback and improve origin errors
-
-Include 0.0.0.0 in the loopback port-flex allowlist used for local OAuth
-redirects. When a referer is rejected, report the normalized origin,
-configured allowlist, and a short hint about ports and loopback matching.
-
-**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +53/-5)
+**File**: `SECURITY.md` (added, +11/-0)
 ```diff
-@@ -11,6 +11,51 @@ import qs from 'qs'
+@@ -0,0 +1,11 @@
++# Security Policy
++
++## Supported versions
++
++Security fixes are released for the latest Feathers 5 (`dove`) version.
++
++## Reporting a vulnerability
++
++Please do not report security vulnerabilities in public issues, discussions or Discord.
++
++Report them privately through [GitHub's private vulnerability reporting](https://github.com/feathersjs/feathers/security/advisories/new). We will confirm the report, work on a fix in a private advisory, and credit you when the advisory is published unless you prefer otherwise.
+```
+
+---
+
+### Incident Patch 2: `04633b4e` (2026-10-28)
+**Commit Message**: docs: fix broken anchors to application API sections (#3714)
+
+**File**: `docs/api/application.md` (modified, +1/-1)
+```diff
+@@ -135,7 +135,7 @@ messageService.on('created', (message: Message) => {
  
- const debug = createDebug('@feathersjs/authentication-oauth/strategy')
+ <BlockQuote type="info" label="Note">
  
-+// Local machine addresses: match any port when scheme + host are allowlisted.
-+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0'])
+-Note that a server side `app.service(path)` only allows the original service name (e.g. `app.service(':userId/messages')`) and does not parse placeholders. To get a service with route paramters use [.lookup](#lookuppath)
++Note that a server side `app.service(path)` only allows the original service name (e.g. `app.service(':userId/messages')`) and does not parse placeholders. To get a service with route paramters use [.lookup](#lookup-path)
+ 
+ </BlockQuote>
+ 
+```
+
+**File**: `docs/api/databases/common.md` (modified, +1/-1)
+```diff
+@@ -35,7 +35,7 @@ The following options are available for all database adapters:
+ 
+ The following legacy options are still available but should be avoided:
+ 
+-- `events {string[]}` (_optional_, **deprecated**) - A list of [custom service events](../events.md#custom-events) sent by this service. Use the `events` option when [registering the service with app.use](../application.md#usepath-service--options) instead.
++- `events {string[]}` (_optional_, **deprecated**) - A list of [custom service events](../events.md#custom-events) sent by this service. Use the `events` option when [registering the service with app.use](../application.md#use-path-service-options) instead.
+ - `operators {string[]}` (_optional_, **deprecated**) - A list of additional non-standard query parameters to allow (e.g `[ '$regex' ]`). Prefer a [query schema](../schema/validators.md#validatequery) instead.
+ - `filters {Object}` (_optional_, **deprecated**) - An object of additional top level query filters, e.g. `{ $populate: true }`. Can also be a converter function like `{ $ignoreCase: (value) => value === 'true' ? true : false }`. Prefer a [query schema](../schema/validators.md#validatequery) instead.
+ 
+```
+
+**File**: `docs/api/events.md` (modified, +1/-1)
+```diff
+@@ -151,7 +151,7 @@ messages.remove(1)
+ 
+ ## Custom events
+ 
+-By default, real-time clients will only receive the [standard events](#service-events). However, it is possible to define a list of custom events that should also be sent to the client when registering the service with [app.use](./application.md##use-path-service-options), when `service.emit('customevent', data)` is called on the server. The `context` for custom events won't be a full hook context but just an object containing `{ app, service, path, result }`.
++By default, real-time clients will only receive the [standard events](#service-events). However, it is possible to define a list of custom events that should also be sent to the client when registering the service with [app.use](./application.md#use-path-service-options), when `service.emit('customevent', data)` is called on the server. The `context` for custom events won't be a full hook context but just an object containing `{ app, service, path, result }`.
+ 
+ <BlockQuote type="warning" label="important">
+ 
+```
+
+**File**: `docs/api/hooks.md` (modified, +2/-2)
+```diff
+@@ -312,7 +312,7 @@ app.service('servicename').hooks({
+ 
+ <BlockQuote type="warning">
+ 
+-Hooks will only be available for the standard service methods or methods passed in `options.methods` to [app.use](application.md#usepath-service--options). See the [documentation for @feathersjs/hooks](https://github.com/feathersjs/hooks) how to use hooks on other methods.
++Hooks will only be available for the standard service methods or methods passed in `options.methods` to [app.use](application.md#use-path-service-options). See the [documentation for @feathersjs/hooks](https://github.com/feathersjs/hooks) how to use hooks on other methods.
+ 
+ </BlockQuote>
+ 
+@@ -374,7 +374,7 @@ app.hooks({
+ 
+ ### Setup and teardown
+ 
+-A special kind of application hooks are [app.setup](./application.md#setupserver) and [app.teardown](./application.md#teardownserver) hooks. They are around hooks that can be used to initialize database connections etc. and only run once when the application starts or shuts down. Setup and teardown hooks only have `context.app` and `context.server` available in the hook context.
++A special kind of application hooks are [app.setup](./application.md#setup-server) and [app.teardown](./application.md#teardown-server) hooks. They are around hooks that can be used to initialize database connections etc. and only run once when the application starts or shuts down. Setup and teardown hooks only have `context.app` and `context.server` available in the hook context.
+ 
+ ```ts
+ import { MongoClient } from 'mongodb'
+```
+
+**File**: `docs/api/koa.md` (modified, +2/-2)
+```diff
+@@ -49,7 +49,7 @@ If no Feathers application is passed, `koa() -> app` returns a plain Koa applica
+ 
+ ## app.listen(port)
+ 
+-`app.listen(port) -> HttpServer` will first call Koa [app.listen](https://github.com/koajs/koa/blob/master/docs/api/index.md#applisten) and then internally also call the [Feathers app.setup(server)](./application.md#setupserver).
++`app.listen(port) -> HttpServer` will first call Koa [app.listen](https://github.com/koajs/koa/blob/master/docs/api/index.md#applisten) and then internally also call the [Feathers app.setup(server)](./application.md#setup-server).
+ 
+ ```js
+ // Listen on port 3030
+@@ -181,7 +181,7 @@ app.listen(3030)
+ 
+ ## Service middleware
+ 
+-When registering a service, it is also possible to pass custom Koa middleware that should run `before` the specific service method in the `koa` [service option](./application.md#usepath-service--options):
++When registering a service, it is also possible to pass custom Koa middleware that should run `before` the specific service method in the `koa` [service option](./application.md#use-path-service-options):
+ 
+ ```ts
+ app.use('/todos', new TodoService(), {
+```
+
+**File**: `docs/api/services.md` (modified, +5/-5)
+```diff
+@@ -59,7 +59,7 @@ Always use the service returned by `app.service(path)` not the service object or
+ 
+ <BlockQuote type="tip">
+ 
+-Methods are optional and if a method is not implemented Feathers will automatically emit a `NotImplemented` error. At least one standard service method must be implemented to be considered a service. If you used `methods` option when registering the service via [app.use](./application.md#usepath-service--options), all methods listed must be available.
++Methods are optional and if a method is not implemented Feathers will automatically emit a `NotImplemented` error. At least one standard service method must be implemented to be considered a service. If you used `methods` option when registering the service via [app.use](./application.md#use-path-service-options), all methods listed must be available.
+ 
+ </BlockQuote>
+ 
+@@ -69,7 +69,7 @@ Service methods must use [async/await](https://developer.mozilla.org/en-US/docs/
+ - `data` — The resource data.
+ - `params` - Additional parameters for the method call (see [params](#params))
+ 
+-Once registered, the service can be retrieved and used via [app.service()](./application.md#servicepath):
++Once registered, the service can be retrieved and used via [app.service()](./application.md#service-path):
+ 
+ ```js
+ const myService = app.service('my-service')
+@@ -230,17 +230,17 @@ With [database adapters](./databases/adapters.md) the [`multi` option](./databas
+ 
+ `service.setup(app, path) -> Promise` is a special method that initializes the service, passing an instance of the Feathers application and the path it has been registered on.
+ 
+-When calling [app.listen](application.md#listenport) or [app.setup](application.md#setupserver) all registered services `setup` methods will be called. If a service is registered afterwards, the `setup` method will be called immediately.
++When calling [app.listen](application.md#listen-port) or [app.setup](application.md#setup-server) all registered services `setup` methods will be called. If a service is registered afterwards, the `setup` method will be called immediately.
+ 
+ ### .teardown(app, path)
+ 
+-`service.teardown(app, path) -> Promise` is a special method that shuts down the service, passing an instance of the Feathers application and the path it has been registered on. If a service implements a `teardown` method, it will be called during [app.teardown()](application.md#teardownserver) or when unregistering the service via [app.unuse](./application.md#unusepath).
++`service.teardown(app, path) -> Promise` is a special method that shuts down the service, passing an instance of the Feathers application and the path it has been registered on. If a service implements a `teardown` method, it will be called during [app.teardown()](application.md#teardown-server) or when unregistering the service via [app.unuse](./application.md#unuse-path).
+ 
+ ## Custom Methods
+ 
+ A custom method is any other service method you want to expose publicly. A custom method **must have** the signature of `(data, params)` with the same semantics as standard service methods (`data` is the payload, `params` is the service [params](#params)). They can be used with [hooks](./hooks.md) (including authentication) and must be `async` or return a Promise.
+ 
+-In order to register a public custom method, the names of _all methods_ have to be passed as the `methods` option when registering the service with [app.use()](./application.md#usepath-service--options)
++In order to register a public custom method, the names of _all methods_ have to be passed as the `methods` option when registering the service with [app.use()](./application.md#use-path-service-options)
+ 
+ ```ts
+ import type { Id, Params } from '@feathersjs/feathers'
+```
+
+**File**: `docs/api/socketio.md` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ This page describes how to set up a Socket.io server. The [Socket.io client chap
+ 
+ ### socketio()
+ 
+-`app.configure(socketio())` sets up the Socket.io transport with the default configuration using either the server provided by [app.listen](./application.md#listenport) or passed in [app.setup(server)](./application.md#setupserver).
++`app.configure(socketio())` sets up the Socket.io transport with the default configuration using either the server provided by [app.listen](./application.md#listen-port) or passed in [app.setup(server)](./application.md#setup-server).
+ 
+ ```ts
+ import { feathers } from '@feathersjs/feathers'
+```
+
+**File**: `docs/guides/basics/services.md` (modified, +1/-1)
+```diff
+@@ -29,7 +29,7 @@ Service methods are [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_an
+ - `setup` - Called when the application is started
+ - `teardown` - Called when the application is shut down
+ 
+-Below is an example of Feathers service interface as a class and basic registration on a Feathers application via [app.use(name, service[, options])](../../api/application.md#use-path-service):
++Below is an example of Feathers service interface as a class and basic registration on a Feathers application via [app.use(name, service[, options])](../../api/application.md#use-path-service-options):
+ 
+ ```ts
+ import { feathers } from '@feathersjs/feathers'
+```
+
+---
+
+### Incident Patch 3: `1f1e4b3b` (2026-10-28)
+**Commit Message**: fix(authentication-oauth): validate redirects for a relative oauth.redirect
+
+**File**: `docs/api/authentication/oauth.md` (modified, +2/-0)
+```diff
+@@ -219,6 +219,8 @@ Dynamic redirects to the same URL are possible by setting the `redirect` query p
+ 
+ With the above configuration will redirect to `https://app.mydomain.com/dashboard` after the OAuth flow.
+ 
++The `redirect` query parameter has to stay on the same origin as the configured `redirect` or allowed origin, otherwise the OAuth flow fails with an `Invalid redirect path.` error. With a relative `redirect` like `/`, use `?redirect=dashboard` instead of `?redirect=/dashboard`, since `//dashboard` points to a different host.
 +
-+/** Strip IPv6 brackets so `[::1]` and `::1` compare the same. */
-+function normalizeHostname(hostname: string) {
-+  return hostname.toLowerCase().replace(/^\[|\]$/g, '')
-+}
-+
-+function isLoopbackHost(hostname: string) {
-+  return LOOPBACK_HOSTS.has(normalizeHostname(hostname))
-+}
-+
-+/**
-+ * Match key for origin allowlisting.
-+ * Non-loopback hosts use the full WHATWG origin (scheme + host + port).
-+ * Loopback hosts drop the port so local frontends on any port can match a single allowlist entry.
-+ */
-+function originMatchKey(value: string) {
-+  const url = new URL(value)
-+  const host = normalizeHostname(url.hostname)
-+
-+  if (isLoopbackHost(host)) {
-+    return `${url.protocol}//${host}`
-+  }
-+
-+  return url.origin.toLowerCase()
-+}
-+
-+function isOriginAllowed(refererOrigin: string, configured: string) {
-+  try {
-+    return originMatchKey(refererOrigin) === originMatchKey(configured)
-+  } catch {
-+    return false
-+  }
-+}
-+
-+function originNotAllowedMessage(refererOrigin: string, origins: string[]) {
-+  return (
-+    `Referer origin "${refererOrigin}" is not allowed. ` +
-+    `Configured origins: ${origins.join(', ')}. ` +
-+    `Use a full origin (scheme + host + port when non-default). ` +
-+    `Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.`
-+  )
-+}
+ ## Options
+ 
+ Options are usually set under the registered name via [Feathers configuration](../configuration.md) in `config/default.json` or `config/<environment>.json` under the `authentication.oauth` section. Available options are:
+```
+
+**File**: `packages/authentication-oauth/src/service.ts` (modified, +2/-1)
+```diff
+@@ -199,7 +199,8 @@ export class OAuthService {
+         location
+       }
+     } catch (error: any) {
+-      const location = strategy ? await strategy.getRedirect(error, authParams) : null
++      // The redirect itself can be invalid, the session still has to be destroyed
++      const location = strategy ? await strategy.getRedirect(error, authParams).catch((): null => null) : null
+       const e = new OAuthError(error.message, error.data, location)
+ 
+       if (typeof params.session.destroy === 'function') {
+```
+
+**File**: `packages/authentication-oauth/src/strategy.ts` (modified, +9/-10)
+```diff
+@@ -57,35 +57,34 @@ function originNotAllowedMessage(refererOrigin: string, origins: string[]) {
+   )
+ }
+ 
++// Relative redirects are checked against a placeholder origin that can never be a real host
++const RELATIVE_ORIGIN = 'http://feathers.invalid'
 +
  /**
   * Validates that appending a user-supplied path to a base URL does not change the origin.
   * Uses both URL resolution and string concatenation checks to catch all open redirect vectors:
-@@ -117,17 +162,20 @@ export class OAuthStrategy extends AuthenticationBaseStrategy {
-       try {
-         refererOrigin = new URL(referer).origin
-       } catch {
--        throw new NotAuthenticated(`Invalid referer "${referer}".`)
-+        throw new NotAuthenticated(
-+          `Invalid referer "${referer}". Expected an absolute URL (e.g. http://localhost:3000).`
-+        )
-       }
+  * authority injection (@), protocol-relative (//), backslash, and domain suffix attacks.
++ * A relative base URL (e.g. `/`) is resolved against a placeholder origin and checked the same way.
+  *
+  * @throws NotAuthenticated if the redirect path would change the URL origin
+  */
+ function validateRedirectOrigin(baseUrl: string, redirectPath: string) {
+-  let allowedOrigin: string
+-
+   try {
+-    allowedOrigin = new URL(baseUrl).origin
+-  } catch {
+-    // baseUrl is a relative path (e.g. /home) — no open redirect risk
+-    return
+-  }
++    // A relative baseUrl is checked too, since '/' + '/evil.com' is //evil.com
++    const base = new URL(baseUrl, RELATIVE_ORIGIN)
++    const allowedOrigin = base.origin
  
--      // Compare full origins
--      const allowedOrigin = origins.find((current) => refererOrigin.toLowerCase() === current.toLowerCase())
-+      // Exact origin match; loopback hosts also match any port (see originMatchKey).
-+      // Always return the referer origin so redirects use the port the client came from.
-+      const allowedOrigin = origins.find((current) => isOriginAllowed(refererOrigin, current))
+-  try {
+     // URL resolution catches protocol-relative (//) and backslash attacks
+     // e.g. new URL('//attacker.com', 'https://target.com') → https://attacker.com
+-    const resolvedUrl = new URL(redirectPath, baseUrl)
++    const resolvedUrl = new URL(redirectPath, base)
  
-       if (!allowedOrigin) {
--        throw new NotAuthenticated(`Referer "${referer}" is not allowed.`)
-+        throw new NotAuthenticated(originNotAllowedMessage(refererOrigin, origins))
-       }
- 
--      return allowedOrigin
-+      return refererOrigin
+     if (resolvedUrl.origin !== allowedOrigin) {
+       throw new NotAuthenticated('Invalid redirect path.')
      }
  
-     return redirect
-```
-
-**File**: `packages/authentication-oauth/test/strategy.test.ts` (modified, +166/-3)
-```diff
-@@ -202,7 +202,11 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
-             }
-           ),
-         {
--          message: 'Referer "https://target.com.attacker.com/login" is not allowed.'
-+          message:
-+            'Referer origin "https://target.com.attacker.com" is not allowed. ' +
-+            'Configured origins: https://target.com. ' +
-+            'Use a full origin (scheme + host + port when non-default). ' +
-+            'Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.'
-         }
-       )
-     })
-@@ -220,7 +224,11 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
-             }
-           ),
-         {
--          message: 'Referer "https://target.com-evil.attacker.com/login" is not allowed.'
-+          message:
-+            'Referer origin "https://target.com-evil.attacker.com" is not allowed. ' +
-+            'Configured origins: https://target.com. ' +
-+            'Use a full origin (scheme + host + port when non-default). ' +
-+            'Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.'
-         }
-       )
-     })
-@@ -238,6 +246,157 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
-       assert.equal(redirect, 'https://target.com#access_token=testing')
-     })
-   })
-+
-+  describe('loopback origin port matching (#3684)', () => {
-+    afterEach(() => {
-+      delete app.get('authentication').oauth.origins
-+    })
-+
-+    it('should allow any port on localhost when configured without a port', async () => {
-+      app.get('authentication').oauth.origins = ['http://localhost']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://localhost:5173/login'
-+          }
-+        }
-+      )
-+
-+      // Redirect must use the referer port, not the config string
-+      assert.equal(redirect, 'http://localhost:5173#access_token=testing')
-+    })
-+
-+    it('should allow a different loopback port than the configured one', async () => {
-+      app.get('authentication').oauth.origins = ['http://localhost:3030']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://localhost:3000/app'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://localhost:3000#access_token=testing')
-+    })
-+
-+    it('should allow any port on 127.0.0.1', async () => {
-+      app.get('authentication').oauth.origins = ['http://127.0.0.1:8080']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://127.0.0.1:5173/'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://127.0.0.1:5173#access_token=testing')
-+    })
-+
-+    it('should allow any port on IPv6 loopback', async () => {
-+      app.get('authentication').oauth.origins = ['http://[::1]']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://[::1]:4173/path'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://[::1]:4173#access_token=testing')
-+    })
-+
-+    it('should allow any port on 0.0.0.0', async () => {
-+      app.get('authentication').oauth.origins = ['http://0.0.0.0:3030']
-+
-+      const redirect = await strategy.getRedirect(
-+        { accessToken: 'testing' },
-+        {
-+          headers: {
-+            referer: 'http://0.0.0.0:5173/app'
-+          }
-+        }
-+      )
-+
-+      assert.equal(redirect, 'http://0.0.0.0:5173#access_token=testing')
-+    })
-+
-+    it('should not treat localhost and 127.0.0.1 as the same host', async () => {
-+      app.get('authentication').oauth.origins = ['http://localhost']
-+
-+      await assert.rejects(
-+        () =>
-+          strategy.getRedirect(
-+            { accessToken: 'testing' },
-+            {
-+              headers: {
-+                referer: 'http://127.0.0.1:3000/login'
-+              }
-+            }
-+          ),
-+        {
-+          message:
-+            'Referer origin "http://127.0.0.1:3000" is not allowed. ' +
-+            'Configured origins: http://localhost. ' +
-+            'Use a full origin (scheme + host + port when non-default). ' +
-+            'Loopback hosts (localhost, 127.0.0.1, ::1, 0.0.0.0) match any port.'
-+        }
-+      )
-+    })
-+
-+    it('should still require exact port match for non-loopback hosts', async () => {
-+      app.get('authentication').oauth.origins = ['https://app.example.com']
-+
-+      await assert.rejects(
-+        () =>
-+          strategy.getRedirect(
-+            { accessToken: 'testing' },
-+            {
-+              headers: {
-+                referer: 'https://app.example.com:8443/login'
-+              }
-+            }
-+          ),
-+        {
-+          message:
-+            'Referer origin "https://app.exa
-```
-
----
-
-### Incident Patch 2: `15f5ee92` (2026-08-11)
-**Commit Message**: docs(authentication): clarify OAuth authStrategies security (#3698)
-
-Document that OAuth providers belong under authentication.oauth and
-must not be listed in public authStrategies for browser redirect SSO.
-Rewrite flow #2 guidance so provider-token login requires a verifying
-getProfile, and cross-link guides and cookbooks.
-
-**File**: `docs/api/authentication/oauth.md` (modified, +74/-9)
-```diff
-@@ -56,6 +56,55 @@ The following settings for `app.configure(oauth())` are available:
- - `expressSession` - An Express middleware for handling sessions. By default will use an HTTP cookie that is only available for the oAuth flow. **This normally does not need to be changed.**
- - `koaSession` - A Koa middleware for handling sessions. By default will use an HTTP cookie that is only available for the oAuth flow. **This normally does not need to be changed.**
+     // String concatenation check catches domain suffix attacks
+     // e.g. 'https://target.com' + '.evil.com' → https://target.com.evil.com
+-    const concatenatedUrl = new URL(`${baseUrl}${redirectPath}`)
++    const concatenatedUrl = new URL(`${baseUrl}${redirectPath}`, RELATIVE_ORIGIN)
  
-+### Configuration and security
+     if (concatenatedUrl.origin !== allowedOrigin) {
+       throw new NotAuthenticated('Invalid redirect path.')
+```
+
+**File**: `packages/authentication-oauth/test/service.test.ts` (modified, +21/-0)
+```diff
+@@ -549,6 +549,27 @@ describe('OAuth callback validation for other providers', () => {
+     )
+   })
+ 
++  it('destroys the session when the redirect is invalid', async () => {
++    const authService = app.service('authentication')
++    let destroyed = false
++    const params = callbackParams('github', { code: 'code' }, { response: { profile: { id: 'redirect' } } })
 +
-+OAuth setup uses three separate pieces. Only the first two are required for the usual browser redirect login:
-+
-+| Piece | Role |
-+| --- | --- |
-+| `authentication.register('google', new OAuthStrategy())` | Registers the strategy so the OAuth callback can run it |
-+| `authentication.oauth.google` in configuration | Grant provider options (`key`, `secret`, `scope`, …) |
-+| `authentication.authStrategies` | Strategy names clients may use on **external** `POST /authentication` |
-+
-+Browser redirect SSO (`/oauth/<provider>`) only needs **register** + **`authentication.oauth`**. The OAuth callback allows that provider for the internal authentication call after Grant finishes. Provider names do **not** need to be listed in public [`authStrategies`](./service.md#configuration).
-+
-+The [Feathers generator](../../guides/cli/authentication.md) already follows this pattern: OAuth providers are configured under `authentication.oauth`, while `authStrategies` typically stays `["jwt", "local"]`.
-+
-+```json
-+// Typical safe config for browser-only OAuth (matches the generator)
-+{
-+  "authentication": {
-+    "authStrategies": ["jwt", "local"],
-+    "oauth": {
-+      "google": {
-+        "key": "<Client ID>",
-+        "secret": "<Client secret>"
-+      }
++    params.session.redirect = '/evil.example'
++    params.session.destroy = async () => {
++      destroyed = true
 +    }
-+  }
-+}
-+```
++    authService.configuration.oauth.redirect = '/'
 +
-+```json
-+// Unsafe for the default OAuthStrategy when you only need browser SSO.
-+// Do not list provider names here unless you implement verified token login (flow #2).
-+{
-+  "authentication": {
-+    "authStrategies": ["jwt", "local", "google", "microsoft"]
-+  }
-+}
-+```
++    try {
++      await assert.rejects(() => oauthService.authenticate(params, null as any), {
++        message: 'Invalid redirect path.'
++      })
++      assert.ok(destroyed, 'Session should be destroyed')
++    } finally {
++      delete authService.configuration.oauth.redirect
++    }
++  })
 +
-+<BlockQuote type="warning" label="Important">
-+
-+Putting an OAuth provider name (for example `google` or `github`) in [`authStrategies`](./service.md#configuration) exposes that strategy on external `POST /authentication`.
-+
-+The default [`getProfile`](#getprofile-data-params) implementation returns `data.profile` from the authentication payload. That is safe when the payload is built **server-side** by the OAuth callback after Grant. It is **not** safe to accept a client-supplied `profile` (for example `{ strategy: 'google', profile: { sub: '...' } }`) as proof of identity. A provider `sub` or `id` is an identifier, not a credential.
-+
-+Only add a provider to `authStrategies` when you intentionally support [flow #2](#flow) (existing provider access token) **and** override `getProfile` to verify that token with the provider. See the [Facebook](../../cookbook/authentication/facebook.md) and [Firebase](../../cookbook/authentication/firebase.md) cookbooks for verified-token patterns.
-+
-+</BlockQuote>
-+
- ### Providers
- 
- For specific OAuth provider setup see the following [cookbook](../../cookbook/) guides:
-@@ -73,22 +122,29 @@ There are two ways to initiate OAuth authentication:
-    - User clicks on link to OAuth URL (`oauth/<provider>`)
-    - Gets redirected to provider and authorizes the application
-    - Callback to the [OauthStrategy](#oauthstrategy) which
--     - Gets the users profile
-+     - Gets the users profile (from the server-side Grant response)
-      - Finds or creates the user (entity) for that profile
-    - The [AuthenticationService](./service.md) creates an access token for that entity
-    - Redirects back to the origin URL including the generated access token
-    - The frontend (e.g. the Feathers [authentication client](./client.md)) uses the returned access token to authenticate
- 
--2. With an existing access token, e.g. obtained through the Facebook mobile SDK
--   - Authenticate normally through the [authentication service](./service.md) with `{ strategy: '<name>', accessToken: 'oauth access token' }`.
--   - Calls the [OauthStrategy](#oauthstrategy) which
--     - Gets the users profile
--     - Finds or creates the entity for that profile
-+   This flow does **not** require the provider name in [`authStrategies`](./service.md#configuration). See [Configuration and security](#configuration-and-security).
-+
-+2. With an existing provider access token (for example from a mobile SDK)
-+
-+   - Authenticate through the [authentication service](./service.md) with a request like `{ strategy: '<name>', accessToken: '<provider access token>' }` (some providers use `access_token` or an ID token instead).
-+   - The strategy must obtain the user profile by **verifying that token with the provider** (userinfo endpoint, Graph API, ID token verification, and so on).
-+   - Finds or creates the entity for that profile
-    - Returns the authentication result
- 
- <BlockQuote type="warning" label="Impor
+   it('takes the Apple identity from the verified id_token, not the callback body', async () => {
+     const victim = await app.service('users').create({ appleId: 'victim', email: 'victim@example.com' })
+     const result: any = await oauthService.authenticate(
 ```
 
-**File**: `docs/api/authentication/service.md` (modified, +2/-2)
+**File**: `packages/authentication-oauth/test/strategy.test.ts` (modified, +81/-0)
 ```diff
-@@ -63,7 +63,7 @@ The following options are available:
- 
- - `secret`: The JWT signing secret.
- - `service`: The path of the entity service
--- `authStrategies`: A list of authentication strategy names to allow on this authentication service to create access tokens.
-+- `authStrategies`: A list of authentication strategy names allowed for **external** `create` calls (`POST /authentication` / `app.service('authentication').create`). Typical values are `jwt`, `local`, API keys, and only those custom strategies that accept external credentials. [OAuth](./oauth.md) providers used solely via the `/oauth/<provider>` redirect flow should be [registered](#register-name-strategy) and configured under `authentication.oauth`, but are usually **omitted** from this list. See [OAuth configuration and security](./oauth.md#configuration-and-security).
- - `parseStrategies`: A list of authentication strategies that should be used to parse HTTP requests. Defaults to the same as `authStrategies`.
- - `entity`: The name of the field that will contain the entity after successful authentication. Will also be used to set `params[entity]` (usually `params.user`) when using the [authenticate hook](./hook). Can be `null` if no entity is used (see [stateless tokens](../../cookbook/authentication/stateless.md)).
- - `entityId`: The id property of an entity object. Only necessary if the entity service does not have an `id` property (e.g. when using a custom entity service).
-@@ -95,7 +95,7 @@ An authentication service configuration in `config/default.json` can look like t
- 
- </BlockQuote>
- 
--Additionally to the above configuration, most [strategies](./strategy.md) will look for their own configuration under the name it was registered. An example can be found in the [local strategy configuration](./local.md#configuration).
-+Additionally to the above configuration, most [strategies](./strategy.md) will look for their own configuration under the name it was registered. An example can be found in the [local strategy configuration](./local.md#configuration). OAuth provider settings live under `authentication.oauth` (see [OAuth options](./oauth.md#options)), which is separate from `authStrategies`.
- 
- ## Authentication flows
- 
-```
-
-**File**: `docs/cookbook/authentication/facebook.md` (modified, +2/-0)
-```diff
-@@ -44,6 +44,8 @@ The client id (App ID) and secret can be found in the Settings of the [Facebook
- 
- The standard OAuth strategy only returns the default profile fields (`id` and `name`). To get other fields, like the email or profile picture, the [getProfile](../../api/authentication/oauth.md#getprofile-data-params) method of the [OAuth strategy needs to be customized](../../api/authentication/oauth.md#customization) to call the Graph API profile endpoint `https://graph.facebook.com/me` with an HTTP request library like [Axios](https://developers.facebook.com/tools/explorer/) requesting the additional fields.
- 
-+This `getProfile` pattern (call Graph with the provider access token) is also **required** if you put `"facebook"` in [`authStrategies`](../../api/authentication/service.md#configuration) so clients can authenticate with `{ strategy: 'facebook', accessToken: '...' }` on `POST /authentication`. Never accept a client-supplied `profile` as identity. Browser-only Facebook login via `/oauth/facebook` does not need the provider in `authStrategies`. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
-+
- > __Pro tip:__ Facebook API requests can be tested via the [Graph API explorer](https://developers.facebook.com/tools/explorer/).
- 
- The following example allows to log in with Facebook in the [chat application from the guide](../../guides/index.md):
-```
-
-**File**: `docs/cookbook/authentication/firebase.md` (modified, +3/-0)
-```diff
-@@ -16,6 +16,7 @@ Update `config/default.json`:
- ```json
- {
-   "authentication": {
-+    "authStrategies": ["jwt", "firebase"],
-     "oauth": {}
-   },
-   "firebase": {
-@@ -28,6 +29,8 @@ Update `config/default.json`:
- ```
- > Note: Since Firebase can be used for more than just authentication, we'll store our service account in the root of our config. Otherwise, if preferred, you can store under `authentication.oauth`.
- 
-+`"firebase"` must be listed in `authStrategies` because clients authenticate with `POST /authentication` (flow #2). That is only safe because `getProfile` below calls `verifyIdToken` — never trust a client-supplied profile. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
-+
- ## Authentication Strategy
- 
- Create a file under `src/firebase.js`:
-```
-
-**File**: `docs/cookbook/authentication/google.md` (modified, +2/-0)
-```diff
-@@ -111,4 +111,6 @@ module.exports = app => {
- ```
- **Important**: googleId, profilePicture and email are properties that should exist on the database model!
- 
-+Browser Google login uses `/oauth/google`. You do **not** need to add `"google"` to `authentication.authStrategies` for that redirect flow. Only add it if you implement verified provider-token login on `POST /authentication` — see [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
-+
- 
-```
-
-**File**: `docs/guides/basics/login.md` (modified, +1/-1)
-```diff
-@@ -239,7 +239,7 @@ export const authentication = (app: Application) => {
- 
- <BlockQuote type="info">
- 
--For more information about the OAuth flow and strategy see the [OAuth API documentation](../../api/authentication/oauth.md).
-+For more information about the OAuth flow and strategy see the [OAuth API documentation](../../api/authentication/oauth.md). Generated apps keep OAuth providers under `authentication.oauth` and **out** of public `authStrategies` on purpose so browser login uses `/oauth/github` only. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
- 
- </BlockQuote>
- 
-```
-
-**File**: `docs/guides/cli/authentication.md` (modified, +3/-1)
-```diff
-@@ -30,4 +30,6 @@ export const authentication = (app: Application) => {
- 
- ## oAuth
- 
--Note that when selecting oAuth logins (Google, Facebook, GitHub etc.), the standard registered oAuth strategy only uses the `<name>Id` property to create a new user. This will fail validation against the default user [schema](./service.schemas.md) which requires an `email` property to exist. If the provider (and user) allows fetching the email, you can customize the oAuth strategy like shown for GitHub in the [oAuth authentication guide](../basics/authentication.md#login-with-github). You can also make the email in the schema optional with `email: Type.Optional(Type.String())`.
-+When you select oAuth logins (Google, Facebook, GitHub etc.), the generator registers each provider strategy and adds it under `authentication.oauth` in configuration. Provider names are **not** added to `authentication.authStrategies` — browser SSO uses `/oauth/<provider>` instead of `POST /authentication`. See [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
-+
-+Note that the standard registered oAuth strategy only uses the `<name>Id` property to create a new user. This will fail validation against the default user [schema](./service.schemas.md) which requires an `email` property to exist. If the provider (and user) allows fetching the email, you can customize the oAuth strategy like shown for GitHub in the [oAuth authentication guide](../basics/authentication.md#login-with-github). You can also make the email in the schema optional with `email: Type.Optional(Type.String())`.
-```
-
-**File**: `docs/guides/cli/default.json.md` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ These options are used directly in the generated application
- 
- ### authentication
- 
--`authentication` contains the configuration for the authentication service and strategies. See the [authentication service configuration](../../api/authentication/service.md#configuration) for more information. For strategy specific settings refer to the [jwt](../../api/authentication/jwt.md#options), [local](../../api/authentication/local.md#options) and [oAuth](../../api/authentication/oauth.md#options) API documentation.
-+`authentication` contains the configuration for the authentication service and strategies. See the [authentication service configuration](../../api/authentication/service.md#configuration) for more information. For strategy specific settings refer to the [jwt](../../api/authentication/jwt.md#options), [local](../../api/authentication/local.md#options) and [oAuth](../../api/authentication/oauth.md#options) API documentation. `authStrategies` lists strategies allowed on external `POST /authentication` (usually `jwt` and `local`). OAuth provider keys live under `authentication.oauth` and are separate from that list — see [OAuth configuration and security](../../api/authentication/oauth.md#configuration-and-security).
- 
- ### Databases
- 
-```
-
----
-
-### Incident Patch 3: `0526ffd9` (2026-03-05)
-**Commit Message**: fix(mongodb): Block $rename operator in _patch data by default (CWE-943) (#3665)
-
-**File**: `docs/api/databases/mongodb.md` (modified, +47/-0)
-```diff
-@@ -63,6 +63,7 @@ MongoDB adapter specific options are:
- - `Model {Promise<MongoDBCollection>}` (**required**) - A Promise that resolves with the MongoDB collection instance. This can also be the return value of an `async` function without `await`
- - `disableObjectify {boolean}` (_optional_, default `false`) - This will disable conversion of the id field to a MongoDB ObjectID if you want to e.g. use normal strings
- - `useEstimatedDocumentCount {boolean}` (_optional_, default `false`) - If `true` document counting will rely on `estimatedDocumentCount` instead of `countDocuments`
-+- `disabledOperators {string[]}` (_optional_, default `['$rename']`) - A list of [MongoDB update operators](https://www.mongodb.com/docs/manual/reference/operator/update/) to block in `patch` data. See [Securing update operators](#securing-update-operators) for details.
- 
- The [common API options](./common.md#options) are:
- 
-@@ -164,6 +165,52 @@ Note that creating indexes for an existing collection with many entries should b
- 
- Additionally to the [common querying mechanism](./querying.md) this adapter also supports [MongoDB's query syntax](https://www.mongodb.com/docs/manual/tutorial/query-documents/) and the `update` method also supports MongoDB [update operators](https://www.mongodb.com/docs/manual/reference/operator/update/).
- 
-+## Securing update operators
-+
-+The `patch` method supports MongoDB [update operators](https://www.mongodb.com/docs/manual/reference/operator/update/) like `$push`, `$inc`, and `$unset` in the data payload. While this is powerful, it can be a security risk if patch data from the client is not properly validated. For example, an authenticated user who can patch their own profile could send:
-+
-+```ts
-+// Escalate privileges by pushing to a roles array
-+await app.service('users').patch(userId, { $push: { roles: 'admin' } })
-+
-+// Expose internal fields by renaming them
-+await app.service('users').patch(userId, { $rename: { secretField: 'public' } })
-+```
-+
-+### Schema validation
-+
-+The primary defense is to use [schema validation](../schema/validators.md) on your patch data. When your schema only allows known fields with known types, unexpected operators will be rejected before they reach the database.
-+
-+### The `disabledOperators` option
-+
-+As an additional layer of defense, the `disabledOperators` option blocks specific update operators from being passed through to MongoDB. By default, `$rename` is blocked.
-+
-+To block additional operators on a service:
-+
-+```ts
-+new MongoDBService({
-+  Model: app.get('mongodbClient').then((db) => db.collection('users')),
-+  disabledOperators: ['$rename', '$unset', '$inc']
-+})
-+```
-+
-+To override per-call via `params.adapter`:
-+
-+```ts
-+service.patch(id, data, {
-+  adapter: { disabledOperators: ['$rename', '$unset'] }
-+})
-+```
-+
-+To allow all operators (not recommended without schema validation):
-+
-+```ts
-+new MongoDBService({
-+  Model: app.get('mongodbClient').then((db) => db.collection('messages')),
-+  disabledOperators: []
-+})
-+```
-+
- ## Search
- 
- <BlockQuote type="warning" label="Important">
-```
-
-**File**: `packages/mongodb/src/adapter.ts` (modified, +8/-1)
-```diff
-@@ -29,6 +29,12 @@ export interface MongoDBAdapterOptions extends AdapterServiceOptions {
-   Model: Collection | Promise<Collection>
-   disableObjectify?: boolean
-   useEstimatedDocumentCount?: boolean
-+  /**
-+   * A list of MongoDB update operators to block in `patch` data.
-+   * Defaults to `['$rename']`. Any `$`-prefixed key in this list will be
-+   * silently dropped from the update.
-+   */
-+  disabledOperators?: string[]
- }
- 
- export interface MongoDBAdapterParams<Q = AdapterQuery> extends AdapterParams<
-@@ -404,6 +410,7 @@ export class MongoDbAdapter<
-       query,
-       filters: { $sort, $select }
-     } = this.filterQuery(id, params)
-+    const disabledOperators = this.getOptions(params).disabledOperators || ['$rename']
- 
-     const replacement = Object.keys(data).reduce(
-       (current, key) => {
-@@ -416,7 +423,7 @@ export class MongoDbAdapter<
-             ...current.$set,
-             ...value
-           }
--        } else {
-+        } else if (!disabledOperators.includes(key)) {
-           current[key] = value
-         }
- 
-```
-
-**File**: `packages/mongodb/test/index.test.ts` (modified, +47/-0)
-```diff
-@@ -839,6 +839,53 @@ describe('Feathers MongoDB Service', () => {
+@@ -86,6 +86,87 @@ describe('@feathersjs/authentication-oauth/strategy security', () => {
      })
    })
  
-+  describe('disabledOperators in _patch', () => {
-+    it('drops $rename by default', async () => {
-+      const person = await app.service('people').create({ name: 'Secure', age: 30 })
-+
-+      const result = await app.service('people').patch(person._id, {
-+        name: 'Updated',
-+        $rename: { age: 'exposed' }
-+      } as any)
-+
-+      assert.strictEqual(result.name, 'Updated')
-+      assert.strictEqual(result.age, 30)
-+
-+      await app.service('people').remove(person._id)
++  describe('open redirect with a relative oauth.redirect', () => {
++    afterEach(() => {
++      delete app.get('authentication').oauth.redirect
 +    })
 +
-+    it('allows $push and other operators not in the denylist', async () => {
-+      const person = await app.service('people').create({ name: 'PushTest', age: 20 })
++    it('should reject a redirect parameter that makes a protocol-relative URL', async () => {
++      app.get('authentication').oauth.redirect = '/'
 +
-+      const result = await app.service('people').patch(person._id, {
-+        $push: { friends: 'Alice' }
-+      } as any)
-+
-+      assert.strictEqual(result.friends?.length, 1)
-+      assert.strictEqual(result.friends[0], 'Alice')
-+
-+      await app.service('people').remove(person._id)
-+    })
-+
-+    it('drops operators added to disabledOperators', async () => {
-+      const person = await app.service('people').create({ name: 'IncTest', age: 25 })
-+
-+      const result = await app.service('people').patch(
-+        person._id,
-+        {
-+          $inc: { age: 100 }
-+        } as any,
-+        {
-+          adapter: { disabledOperators: ['$rename', '$inc'] }
-+        }
++      await assert.rejects(
++        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/evil.example/steal' }),
++        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
 +      )
++    })
 +
-+      assert.strictEqual(result.age, 25)
++    it('should reject a redirect parameter starting with a backslash', async () => {
++      app.get('authentication').oauth.redirect = '/'
 +
-+      await app.service('people').remove(person._id)
++      await assert.rejects(
++        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '\\evil.example/steal' }),
++        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
++      )
++    })
++
++    it('should reject a protocol-relative redirect hidden by a tab', async () => {
++      app.get('authentication').oauth.redirect = '/'
++
++      await assert.rejects(
++        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/\t/evil.example' }),
++        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
++      )
++    })
++
++    it('should reject an error redirect that leaves the origin', async () => {
++      app.get('authentication').oauth.redirect = '/'
++
++      await assert.rejects(() => strategy.getRedirect(new Error('failed'), { redirect: '/evil.example' }), {
++        name: 'NotAuthenticated',
++        message: 'Invalid redirect path.'
++      })
++    })
++
++    it('should allow same origin redirects', async () => {
++      app.get('authentication').oauth.redirect = '/'
++
++      assert.equal(
++        await strategy.getRedirect({ accessToken: 'testing' }, { redirect: 'dashboard' }),
++        '/dashboard#access_token=testing'
++      )
++      assert.equal(await strategy.getRedirect({ accessToken: 'testing' }), '/#access_token=testing')
++
++      app.get('authentication').oauth.redirect = '/home'
++
++      assert.equal(
++        await strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/hi-there' }),
++        '/home/hi-there#access_token=testing'
++      )
++    })
++
++    it('should reject a protocol-relative redirect with a relative path base', async () => {
++      app.get('authentication').oauth.redirect = '/home'
++
++      await assert.rejects(
++        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '//evil.example' }),
++        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
++      )
++    })
++
++    it('should validate redirects against a protocol-relative oauth.redirect', async () => {
++      app.get('authentication').oauth.redirect = '//app.example.com'
++
++      assert.equal(
++        await strategy.getRedirect({ accessToken: 'testing' }, { redirect: '/dashboard' }),
++        '//app.example.com/dashboard#access_token=testing'
++      )
++      await assert.rejects(
++        () => strategy.getRedirect({ accessToken: 'testing' }, { redirect: '.evil.example' }),
++        { name: 'NotAuthenticated', message: 'Invalid redirect path.' }
++      )
 +    })
 +  })
 +
-   describe('NoSQL injection via object id', () => {
-     let target: Person
- 
+   describe('open redirect via domain suffix attack', () => {
+     beforeEach(() => {
+       app.get('authentication').oauth.origins = ['https://target.com']
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3715** (2026-10-17): fix(http): Do not allow standard methods via method override header (v6) (@fratzinger)
-- **PR #3706** (2026-09-17): fix(authentication): reject leftover codegen params for user (#3599) (@tonycoder-hub)
-- **PR #3705** (2026-09-24): fix(schema): recheck external dispatch after resolving (@akasakariko)
-- **PR #3704** (2026-09-11): fix: Update all dependencies (@daffl)
-- **PR #3703** (2026-09-11): fix: Update dependencies (@daffl)
-- **PR #3701** (2026-09-11): fix(transport-commons): map HEAD requests like GET for REST services (@rome-xi)
+- **PR #3725** (2026-10-27): fix(knex): omit queries from all database error messages (@marshallswain)
+- **PR #3722** (2026-10-28): chore: Update to Vitest 5 and move hook benchmarks to vitest bench (v6) (@fratzinger)
+- **PR #3720** (2026-10-28): chore: Require Node.js 24 or later (v6) (@fratzinger)
+- **PR #3719** (2026-10-23): fix(create-feathers): Call app.setup in Deno and Bun apps (v6) (@fratzinger)
+- **PR #3718** (2026-10-23): fix(client): Stringify dates in queries as ISO strings (v6) (@fratzinger)
+- **PR #3717** (2026-10-23): fix(hooks): Allow synchronous functions to return null or undefined (v6) (@fratzinger)
 
 ---
 
@@ -1704,70 +1536,38 @@ getProfile, and cross-link guides and cookbooks.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. authentication-oauth): allow any port on loopback OAuth origins (#3699)
+## X. docs: add a security policy
 
 **RULE**:
-When implementing operations in `packages/authentication-oauth/src/strategy.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feathersjs/feathers. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in feathersjs/feathers. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a58896a`: authentication-oauth): allow any port on loopback OAuth origins (#3699). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c77e7f2`: docs: add a security policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/authentication-oauth/src/strategy.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// Local machine addresses: match any port when scheme + host are allowlisted.
-const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '0.0.0.0'])
+# Security Policy
 
-/** Strip IPv6 brackets so `[::1]` and `::1` compare the same. */
-function normalizeHostname(hostname: string) {
-  return hostname.toLowerCase().replace(/^\[|\]$/g, '')
-}
+## Supported versions
 
-function isLoopbackHost(hostname: string) {
-  return LOOPBACK_HOSTS.has(normalizeHostname(hostname))
-}
+Security fixes are released for the latest Feathers 5 (`dove`) version.
 
-/**
- * Match key for origin allowlisting.
- * Non-loopback hosts use the full WHATWG origin (scheme + host + port).
- * Loopback hosts drop the port so local frontends on any port can match a single allowlist entry.
- */
-function originMatchKey(value: string) {
-  const url = new URL(value)
-  const host = normalizeHostname(url.hostname)
+## Reporting a vulnerability
 
-  if (isLoopbackHost(host)) {
-    return `${url.protocol}//${host}`
-  }
+Please do not report security vulnerabilities in public issues, discussions or Discord.
 
-  return url.origin.toLowerCase()
-}
-
-function isOriginAllowed(refererOrigin: string, configured: string) {
-  try {
-    return originMatchKey(refererOrigin) === originMatchKey(configured)
-  } catch {
-    return false
-  }
-}
-
-function originNotAllowedMessage(refererOrigin: string, origins: string[]) {
-  return (
-    `Referer origin "${refererOrigin}" is not a
+Report them privately through [GitHub's private vulnerability reporting](https://github.com/feathersjs/feathers/security/advisories/new). We will confirm the report, work on a fix in a private advisory, and credit you when the advisory is published unless you prefer otherwise.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-        throw new NotAuthenticated(`Invalid referer "${referer}".`)
-      // Compare full origins
-      const allowedOrigin = origins.find((current) => refererOrigin.toLowerCase() === current.toLowerCase())
-        throw new NotAuthenticated(`Referer "${referer}" is not allowed.`)
-      return allowedOrigin
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a58896a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c77e7f2` are properly handled with clean fallback behavior.

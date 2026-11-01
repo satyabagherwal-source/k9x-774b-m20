@@ -3,7 +3,7 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-25T08:23:59.644Z  
+> **Timestamp**: 2026-10-31T21:55:13.050Z  
 > **Learning ID**: `learn-huggingface-autotrust-gev-26b-decide-nvfp4`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -18,451 +18,401 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-`autotrust/GEV-26B-Decide-NVFP4` implements a specialized dual-system decision engine architecture built on top of the multimodal `Gemma4ForConditionalGeneration` Mixture-of-Experts (MoE) foundation. The model couples high-throughput "System 1" reflexive evaluation (sub-second decision indexing, ranking, and calibrated scoring) with an adaptive "System 2" reflective reasoning pathway. 
+`autotrust/GEV-26B-Decide-NVFP4` implements a calibrated, dual-system decision architecture built upon a modified Gemma 4 MoE conditional generation topology (`gemma4` / `gemma4_text`), quantized for ultra-low latency inference via NVIDIA's NVFP4 floating-point standard.
 
 ```
-                                      +---------------------------------------------+
-                                      |            Input Prompt / Tokens            |
-                                      +---------------------------------------------+
-                                                             |
-                                                             v
-+-------------------------------------------------------------------------------------------------------------------------+
-| Gemma4 Multi-Modal Backbone (30 Layers, 2816 Hidden Dim, 262k Vocab, BF16 Dense Attention)                              |
-|                                                                                                                         |
-|  +-------------------------------------+   +-------------------------------------+   +-------------------------------+  |
-|  | Sliding-Window Attn (Layers 0..4)   |   | Full Global Attn (Layer 5)          |   | Dense Attention Invariants    |  |
-|  | Window: 1024 tokens                 |   | Factor: 0.25 Rotary                 |   | Head Dim: 256, Q-Heads: 16    |  |
-|  | RoPE Theta: 10,000.0                |   | RoPE Theta: 1,000,000.0             |   | KV-Heads: 8, GKV-Heads: 2     |  |
-|  +-------------------------------------+   +-------------------------------------+   +-------------------------------+  |
-|                                                             |                                                           |
-|                                                             v                                                           |
-|  +-------------------------------------------------------------------------------------------------------------------+  |
-|  | MoE Routing Layer: Top-8 of 128 Experts (per Layer, 3,840 Total Routed Expert MLPs)                                |  |
-|  |                                                                                                                   |  |
-|  |   +------------------------------------------------------------------------------------------------------------+  |  |
-|  |   | Selective NVFP4 Quantization Boundary (17.1 GiB VRAM vs 51.1 GiB BF16)                                      |  |  |
-|  |   | - Routed Experts: Quantized to NVFP4 (FP4 E2M1, 16-element block, FP8 E4M3 group scale, FP32 tensor scale)  |  |  |
-|  |   | - Gate & Up Projections: Fused with shared FP32 tensor scale                                               |  |  |
-|  |   | - Shared Backbone / Exclusions: Dense MLPs, Attention, Routers, Vision Tower, LM Head Kept in Pure BF16   |  |  |
-|  |   +------------------------------------------------------------------------------------------------------------+  |  |
-+-------------------------------------------------------------------------------------------------------------------------+
-                                                             |
-                                                             v
-                                      +---------------------------------------------+
-                                      | Final Logit Softcapping (Threshold = 30.0)  |
-                                      +---------------------------------------------+
-                                                             |
-                                                             v
-                                      +---------------------------------------------+
-                                      | Regex-Constrained Structured Output Parsing |
-                                      | Iterator: <\|tool_call>(.*?)<tool_call\|>   |
-                                      | Extraction: call:(?P<name>)(?P<arguments>)  |
-                                      +---------------------------------------------+
+                           +-------------------------------------------------------+
+                           |            Multimodal & Text Token Inputs             |
+                           +-------------------------------------------------------+
+                                                      |
+                                                      v
+                                   +-------------------------------------+
+                                   |  Input Embeddings (BF16, Tied)      |
+                                   |  vocab_size: 262,144                |
+                                   +-------------------------------------+
+                                                      |
++-----------------------------------------------------v-----------------------------------------------------+
+| 30-Layer Hybrid Attention & Selective MoE Pipeline                                                        |
+|                                                                                                           |
+|  [Layer 0-4, 6-10, 12-16, 18-22, 24-28: Sliding Window Attention]                                         |
+|    - sliding_window: 1024 tokens | rope_theta: 10,000.0 | RoPE: Default (Full Dimension)                  |
+|    - num_attention_heads: 16 | num_key_value_heads: 8 | head_dim: 256                                    |
+|                                                                                                           |
+|  [Layer 5, 11, 17, 23, 29: Full Attention Interleaved Anchor]                                            |
+|    - max_position_embeddings: 262,144 | rope_theta: 1,000,000.0 | RoPE: Proportional (partial_factor: 0.25) |
+|    - num_global_key_value_heads: 2 | global_head_dim: 512                                                 |
+|                                                                                                           |
+|  [MoE Routing & Activation Pipeline per Layer]                                                            |
+|    - Shared Dense MLP (BF16, intermediate_size: 2112)                                                     |
+|    - Softmax Top-K Router (BF16, top_k: 8 out of 128 experts)                                             |
+|    - 128 SwiGLU Routed Experts per Layer (3,840 Total Experts across 30 Layers):                          |
+|        * Quantized to NVFP4: FP4 E2M1 weights in groups of 16                                             |
+|        * Scales: FP8 E4M3 group scales (1 per 16 weights) + FP32 tensor scale                             |
+|        * Fused gate_up_proj shares single tensor scale                                                    |
+|        * Static activation scales calibrated on 3,072 System 1 traces                                     |
++-----------------------------------------------------v-----------------------------------------------------+
+                                                      |
+                                   +-------------------------------------+
+                                   | Final Logit Soft-Capping (tanh, 30) |
+                                   +-------------------------------------+
+                                                      |
+                   +----------------------------------+----------------------------------+
+                   |                                                                     |
+                   v                                                                     v
++------------------------------------+                                +------------------------------------+
+|  System 1: Direct Calibrated Prob  |                                |  System 2: Adaptive Reasoning Loop |
+|  - Zero thinking tokens            |                                |  - Emits `<thinking>...</thinking>`|
+|  - Typed decision head             |                                |  - Grammar constrained JSON schema |
+|  - Sub-500ms latency profile       |                                |  - Tool calls: `<|tool_call|>`     |
++------------------------------------+                                +------------------------------------+
 ```
 
-### Architectural Subsystem Boundaries
-1. **Hybrid Heterogeneous MoE Quantization Boundary**:
-   - The primary architectural breakthrough is the strict isolation of NVFP4 quantization to the **routed expert MLPs only** (30 layers $\times$ 128 experts = 3,840 expert MLPs).
-   - The shared attention layers, routers, dense per-layer MLPs, vision encoder, decision heads, and `lm_head` remain strictly unquantized in native `bfloat16`. This avoids the routing collapse and token representation degradation typical of uniform FP4 quantization while collapsing weight footprint from 51.1 GiB to 17.1 GiB (a 66.5% reduction).
+### Architectural Subsystem Demarcation
 
-2. **Hierarchical Attention Topology**:
-   - The 30 transformer layers alternate in a 5:1 fixed pattern: five consecutive local `sliding_attention` layers (sliding window size $W = 1024$, default RoPE with base $\theta = 10,000.0$) followed by one `full_attention` layer with proportional RoPE (partial rotary factor $0.25$, long-context RoPE base $\theta = 1,000,000.0$).
-   - Total addressable context reaches 262,144 tokens (`max_position_embeddings = 262144`).
+1. **Selective Asymmetric Hybrid Quantization**: 
+   The total weight memory footprint drops from 51.1 GiB (BF16) to 17.1 GiB (NVFP4) (~66.5% reduction) by isolating quantization strictly to the 3,840 MoE expert MLPs (`30 layers * 128 experts`). 
+   - Attention projections ($W_q, W_k, W_v, W_o$), router logits, root layer norms, RMSNorm parameters ($\epsilon = 10^{-6}$), dense shared feed-forward projections, multimodal vision towers, and the final classification/language modeling heads are pinned strictly in native `bfloat16`.
+   - The routed experts use microscopic two-level scaling: **FP4 E2M1** mantissa elements arranged in blocked vectors of size $G=16$, scaled by an **FP8 E4M3** sub-channel scale factor, multiplied by a per-tensor scalar **FP32** scale factor.
 
-3. **Numerical Stabilization & Head Logic**:
-   - Attention enforces $K=V$ equivalence (`attention_k_eq_v: true`) across 16 query heads ($d_k = 256$), 8 key-value heads, and 2 global key-value heads (`num_global_key_value_heads = 2`), cutting KV cache overhead.
-   - The output projection incorporates hard logit stabilization via `final_logit_softcapping = 30.0`, bounding intermediate logit divergence prior to cross-entropy loss computation or temperature scaling.
+2. **Heterogeneous Interleaved Attention Hierarchy**:
+   The 30-layer stack is structured into blocks of five local sliding-window layers followed by one global full-attention layer:
+   $$\text{Layer Types} = \left[ (\text{sliding\_attention})^5, \text{full\_attention} \right] \times 5$$
+   - *Sliding Attention*: Constrained to a local receptive field of $W = 1024$ tokens using standard rotary embeddings ($\theta = 10,000.0$).
+   - *Full Attention*: Contextualized across $L = 262,144$ tokens using a proportional RoPE scaling factor ($0.25$) and base frequency $\theta = 1,000,000.0$, compressing global key-value projections to $2$ global KV heads (`global_head_dim = 512`) compared to $8$ local KV heads (`head_dim = 256`).
 
-4. **Grammar & Tokenizer Interception Subsystem**:
-   - Token vocabulary contains 262,144 tokens, including dedicated multimodal delimiting tokens (`<|image|>`, `<|audio|>`, `<|video|>`, `<channel|>`, `<turn|>`).
-   - Tool calling and typed decision routing bypass unstructured text parsing through a formal regex iteration contract specified directly inside `tokenizer_config.json`: `<\|tool_call>(.*?)<tool_call\|>` executing nested extraction via `call:(?P<name>\w+)(?P<arguments>\{.*\})`.
+3. **Dual-System Decision Inference Engine**:
+   - *System 1 Mode*: Single-pass evaluation for sub-500ms ranking and classification without intermediate deliberation tokens. Logits pass through a final soft-capping operator ($\tau = 30.0$):
+     $$\text{Logits}_{\text{capped}} = 30.0 \times \tanh\left(\frac{\text{Logits}}{30.0}\right)$$
+     This bounds the gradient magnitude, avoids activation blowout in low-precision FP4 computation, and preserves probabilistic calibration under temperature $T=1.0$.
+   - *System 2 Mode*: Employs grammar-constrained decoding over structured schema contracts, emitting delimited `<thinking>` chains before executing structured tool-calls via regex token dispatching (`<|tool_call|>call:name{args}<tool_call|>`).
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Selective Heterogeneous FP4 MoE Quantization Boundary Invariant
+### 1. Grouped-Block Micro-Floating-Point Scale Co-Design (NVFP4 Invariant)
 **RULE**:
-When quantizing high-capacity Mixture-of-Experts (MoE) architectures ($E \ge 64$, top-$k \le 8$) to sub-8-bit floating-point precision (such as NVFP4 / FP4 E2M1), an inference engine or quantization pipeline **MUST** restrict FP4 conversion exclusively to the routed expert MLP projections (`gate_proj`, `up_proj`, `down_proj`). The router logits network, all attention projections ($Q, K, V, O$), dense inter-layer MLPs, normalization layers (RMSNorm), and vocabulary heads (`lm_head`, decision classification heads) **MUST NOT** be quantized below 16-bit precision (`bfloat16` or `float16`).
+When quantizing transformer layers to sub-byte floating point representations (such as NVFP4 E2M1), fused linear projections (specifically `gate_proj` and `up_proj` in SwiGLU architectures) MUST share an identical top-level FP32 tensor scale factor OR remain separated during scale calibration, and block-quantization scale grids (FP8 E4M3 per 16 elements) MUST be aligned strictly to 16-element contiguous memory boundaries along the inner reduction dimension ($K$). Unfused scales MUST NOT be blindly concatenated post-calibration without rescale normalization.
 
 **WHY**:
-Routing decisions rely on fine-grained probability distributions produced by softmax over sparse router logits. Quantizing router weights or shared attention mechanisms introduces catastrophic quantization noise across the global context, resulting in severe expert misassignment and unrecoverable downstream degradation. Furthermore, fused gate-up expert kernels require a shared tensor-level scaling factor; splitting their tensor scales causes dequantization stalls during GEMM kernel execution.
+vLLM and TensorRT-LLM fuse `gate_proj` and `up_proj` into a contiguous matrix ($W_{\text{gate\_up}} \in \mathbb{R}^{2 \cdot D_{\text{int}} \times D_{\text{hidden}}}$) to maximize memory bus saturation on Blackwell and Hopper Tensor Cores. If $W_{\text{gate}}$ and $W_{\text{up}}$ are calibrated with independent global FP32 scaling constants, fusing them forces a runtime dequantization hazard or introduces massive numerical degradation when casting disparate dynamic ranges into a singular global multiplier. A failure to share the tensor-level scale during offline calibration leads to silent degradation of perplexity or NaN generation at inference.
 
 **WHEN TO APPLY**:
-Apply to all sparse MoE models exceeding 16B parameters (such as Gemma-4-26B, Mixtral, DBRX) targeting low-memory deployment (e.g., single 24GB or 32GB GPUs like RTX 4090, L4, or A10G) where unquantized weights exceed single-device high-bandwidth memory (HBM).
+Apply to any LLM/VLM quantization pipeline targeting NVFP4, MXFP4, or FP4 formats where SwiGLU or gated MLP layers are fused for execution in vLLM, TensorRT-LLM, or SGLang engines.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-import torch.nn as nn
-from typing import Dict, Set
+from typing import Tuple
 
-class HeterogeneousMoEQuantizer:
+def quantize_fused_swiglu_to_nvfp4(
+    gate_weight: torch.Tensor, # Shape: [intermediate_size, hidden_size]
+    up_weight: torch.Tensor,   # Shape: [intermediate_size, hidden_size]
+    block_size: int = 16
+) -> Tuple[torch.Tensor, torch.Tensor, float]:
     """
-    Enforces selective NVFP4 quantization exclusively across routed expert MLPs
-    while preserving FP16/BF16 precision across shared attention and routing paths.
+    Quantizes SwiGLU projections enforcing a unified global FP32 scale
+    and contiguous FP8 block scales aligned to 16-element bounds.
     """
-    EXCLUDED_PATTERNS: Set[str] = {
-        "router",
-        "gate",  # Router gating classifier
-        "self_attn",
-        "input_layernorm",
-        "post_attention_layernorm",
-        "pre_feedforward_layernorm",
-        "post_feedforward_layernorm",
-        "dense_mlp",
-        "lm_head",
-        "embed_tokens",
-        "decision_head"
-    }
+    assert gate_weight.shape == up_weight.shape, "Projections must match dimensions"
+    intermediate_size, hidden_size = gate_weight.shape
+    assert hidden_size % block_size == 0, f"hidden_size ({hidden_size}) must divide by {block_size}"
 
-    @classmethod
-    def should_quantize_nvfp4(cls, module_name: str, module: nn.Module) -> bool:
-        # Check explicit class and layer type
-        if not isinstance(module, nn.Linear):
-            return False
-            
-        # Target only routed MoE expert feed-forward projections
-        is_routed_expert = "experts" in module_name and any(
-            proj in module_name for proj in ("gate_proj", "up_proj", "down_proj")
-        )
-        
-        # Guard: Reject any module matching the exclusion list
-        is_excluded = any(pattern in module_name for pattern in cls.EXCLUDED_PATTERNS)
-        
-        return is_routed_expert and not is_excluded
+    # Step 1: Interleave or fuse along the output dimension
+    fused_weight = torch.cat([gate_weight, up_weight], dim=0).contiguous() # [2 * intermediate, hidden]
 
-    @torch.no_grad()
-    def fuse_and_scale_gate_up(
-        self, 
-        gate_weight: torch.Tensor, 
-        up_weight: torch.Tensor
-    ) -> Dict[str, torch.Tensor]:
-        """
-        Fused gate_up projections MUST share a single FP32 tensor-level scale factor
-        alongside block-level FP8 scales for NVFP4 compatibility in vLLM / TensorRT-LLM.
-        """
-        assert gate_weight.shape == up_weight.shape, "Shape mismatch in MoE projections"
-        
-        # Concatenate weights along the output dimension for fused GEMM execution
-        fused_weight = torch.cat([gate_weight, up_weight], dim=0)
-        
-        # Global FP32 tensor scale calculation: max absolute value / max FP4 dynamic range
-        # NVFP4 E2M1 maximum representable value is 6.0
-        max_val = torch.max(torch.abs(fused_weight)).clamp(min=1e-12)
-        global_tensor_scale = (max_val / 6.0).to(torch.float32)
-        
-        # Block-level scaling (group size = 16)
-        reshaped = fused_weight.view(-1, 16)
-        block_max = torch.max(torch.abs(reshaped), dim=1, keepdim=True).values.clamp(min=1e-12)
-        block_scales_fp8 = (block_max / (global_tensor_scale * 6.0)).to(torch.float8_e4m3fn)
-        
-        return {
-            "fused_weight": fused_weight,
-            "tensor_scale": global_tensor_scale,
-            "block_scales": block_scales_fp8
-        }
+    # Step 2: Calculate unified tensor-level FP32 scale
+    max_abs_val = torch.max(torch.abs(fused_weight)).item()
+    if max_abs_val == 0.0:
+        global_tensor_scale = 1.0
+    else:
+        # Scale to maximum representable value of FP4 E2M1 (max positive = 6.0)
+        global_tensor_scale = max_abs_val / 6.0
+
+    # Normalize by tensor scale
+    normalized_weights = fused_weight / global_tensor_scale
+
+    # Step 3: Compute per-block scales (FP8 E4M3) along inner reduction dimension (hidden_size)
+    reshaped_weights = normalized_weights.view(-1, block_size)
+    block_max = torch.max(torch.abs(reshaped_weights), dim=-1, keepdim=True).values
+    
+    # E4M3 dynamic range: max ~448.0; avoid divide-by-zero
+    block_scales = torch.clamp(block_max / 6.0, min=1e-12).to(torch.float8_e4m3fn)
+    
+    # Quantize to E2M1 FP4 indices (represented here as packed uint8 / int8 elements)
+    rescaled_blocks = reshaped_weights / block_scales.to(torch.float32)
+    # Clip to standard FP4 E2M1 range [-6.0, 6.0]
+    fp4_quantized = torch.clamp(torch.round(rescaled_blocks), min=-6, max=6)
+    
+    # Pack into original fused 2D layout representation
+    packed_weights = fp4_quantized.view(2 * intermediate_size, hidden_size).to(torch.int8)
+    packed_block_scales = block_scales.view(2 * intermediate_size, hidden_size // block_size)
+
+    return packed_weights, packed_block_scales, global_tensor_scale
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Uniform recursive quantization over all nn.Linear modules
-def naive_quantize_all_linear(model: nn.Module):
-    for name, module in model.named_modules():
-        if isinstance(module, nn.Linear):
-            # CATASTROPHIC FAILURE: Quantizing router, embed_tokens, and lm_head to FP4
-            # destroys categorical logit sensitivity and causes MoE routing collapse!
-            quantize_to_nvfp4(module)
+# ANTI-PATTERN: Independent scale calibration followed by naive fusion
+def broken_quantization(gate_weight: torch.Tensor, up_weight: torch.Tensor):
+    # Quantizing independently produces two completely different global scales!
+    scale_gate = torch.max(torch.abs(gate_weight)).item() / 6.0
+    scale_up = torch.max(torch.abs(up_weight)).item() / 6.0
+    
+    q_gate = torch.clamp(gate_weight / scale_gate, -6, 6)
+    q_up = torch.clamp(up_weight / scale_up, -6, 6)
+    
+    # FATAL ERROR: vLLM fused kernel expects a single FP32 scale per fused layer.
+    # Joining them causes either gate or up projection to be severely descaled!
+    fused_bad = torch.cat([q_gate, q_up], dim=0)
+    return fused_bad, (scale_gate + scale_up) / 2.0 # Corrupts output activation distribution
 ```
 
 **VERIFICATION METHOD**:
-Validate via AST/State-Dict tensor inspection assertion:
-```python
-def verify_heterogeneous_quantization_invariants(state_dict: Dict[str, torch.Tensor]):
-    for key, tensor in state_dict.items():
-        if "router" in key or "lm_head" in key or "self_attn" in key:
-            assert tensor.dtype in (torch.bfloat16, torch.float16, torch.float32), (
-                f"Invariant violation: Layer {key} was quantized to {tensor.dtype}! "
-                f"Must remain in high precision."
-            )
-        elif "experts" in key and "weight" in key and ("gate_proj" in key or "down_proj" in key):
-            assert tensor.element_size() == 1 or "fp4" in str(tensor.dtype).lower(), (
-                f"Invariant violation: MoE expert {key} not compressed to 4-bit representation."
-            )
-```
+Run an assert-driven layer-wise unit test verifying that maximum absolute error (MAE) across intermediate SwiGLU activation tensors ($\text{swish}(x W_{\text{gate}}) \cdot (x W_{\text{up}})$) between pure `bfloat16` and dequantized `NVFP4` stays below an empirically bounded variance:
+$$\frac{\| \text{SwiGLU}_{\text{bf16}}(X) - \text{SwiGLU}_{\text{dequant}}(X) \|_F}{\| \text{SwiGLU}_{\text{bf16}}(X) \|_F} < 0.08$$
 
 ---
 
-### 2. Final Logit Softcapping Numerical Guard
+### 2. Multi-Token EOS Sequence and Prefix Soft-Capping Synchronization
 **RULE**:
-Before computing cross-entropy loss, softmax probabilities, or sampling transformations in models with large intermediate dimensions ($d_{intermediate} \ge 2048$) and deep token embeddings, models configured with logit softcapping **MUST** bound output logits $L$ using the hyperbolic tangent formula:
-$$L_{capped} = C \cdot \tanh\left(\frac{L}{C}\right)$$
-where $C$ is the static positive softcapping threshold (e.g., $C = 30.0$). Uncapped logits **MUST NOT** be fed directly into temperature division when $T < 1.0$.
+When serving large language models configured with `final_logit_softcapping` and multi-token end-of-sequence boundaries (`eos_token_id` list, e.g., `[1, 106, 50]`), sampling routines MUST apply logit capping PRIOR to candidate masking and temperature scaling, and the generation loop MUST evaluate stop conditions as a unified array/set boundary check rather than an equality comparison to a singular scalar `eos_token_id`.
 
 **WHY**:
-Without logit softcapping, large vocabulary projections ($V = 262,144$) accumulated over 30 layers with sparse MoE activations produce extreme logit values ($|L| > 80.0$). During inference sampling with temperatures $T \le 0.7$, or during backward passes, raw exponentiation leads to IEEE 754 floating-point overflow (`+inf`), yielding `NaN` cross-entropy losses, degenerate probability mass vectors, and unrecoverable text degradation.
+If logit soft-capping ($c \cdot \tanh(\text{logits} / c)$) is applied after temperature or top-$p$/top-$k$ filtering, logit sorting order is preserved, but temperature scaling becomes non-linear, destroying calibrated decision probabilities. Furthermore, Gemma 4 architectures assign multiple distinct terminal tokens for sequence closure (`<eos>`, `<turn|>`, and `<channel|>`). If an inference server handles only `eos_token_id: 1` instead of `[1, 106, 50]`, the generation loop fails to terminate on turn completions, triggering infinite generation loops up to `max_position_embeddings` (262,144 tokens) and causing KV-cache memory exhaustion.
 
 **WHEN TO APPLY**:
-Apply in any autoregressive forward pass, decoding loop, or evaluation engine running architectures configured with `final_logit_softcapping` (e.g., Gemma, Gemma-2, Gemma-4).
+Every serving run-time (vLLM, Hugging Face Transformers, Ollama, TGI, custom engines) that ingests Gemma 4-style configs containing non-scalar `eos_token_id` and non-zero `final_logit_softcapping`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
+import torch.nn.functional as F
+from typing import Union, List, Set
 
-def apply_logit_softcapping(
-    logits: torch.Tensor, 
-    softcap_value: float = 30.0
+def sample_with_softcapping(
+    logits: torch.Tensor,          # [batch_size, vocab_size]
+    softcap_value: float,          # e.g., 30.0
+    temperature: float,            # e.g., 1.0
+    top_k: int,                    # e.g., 64
+    top_p: float                   # e.g., 0.95
 ) -> torch.Tensor:
     """
-    Applies numerically stable hyperbolic tangent softcapping.
-    Guarantees output remains strictly in (-softcap_value, +softcap_value).
+    Applies mathematically correct softcapping before temperature and top-k/top-p filtering.
     """
-    if softcap_value is None or softcap_value <= 0.0:
-        return logits
+    # Step 1: Logit soft-capping invariant
+    if softcap_value is not None and softcap_value > 0.0:
+        logits = softcap_value * torch.tanh(logits / softcap_value)
     
-    # Mathematical invariant: L_capped = C * tanh(L / C)
-    # Cast to float32 internally to prevent precision truncation in fp16/bf16
-    orig_dtype = logits.dtype
-    logits_fp32 = logits.to(torch.float32)
-    scaled_logits = logits_fp32 / softcap_value
-    capped_logits = softcap_value * torch.tanh(scaled_logits)
-    
-    return capped_logits.to(orig_dtype)
+    # Step 2: Temperature scaling
+    if temperature > 0.0 and temperature != 1.0:
+        logits = logits / temperature
+        
+    # Step 3: Top-K filtering
+    if top_k > 0:
+        top_k_val = min(top_k, logits.size(-1))
+        indices_to_remove = logits < torch.topk(logits, top_k_val)[0][..., -1, None]
+        logits = logits.masked_fill(indices_to_remove, float('-inf'))
+        
+    # Step 4: Top-P (nucleus) filtering
+    if top_p < 1.0:
+        sorted_logits, sorted_indices = torch.sort(logits, descending=True)
+        cumulative_probs = torch.cumsum(F.softmax(sorted_logits, dim=-1), dim=-1)
+        sorted_indices_to_remove = cumulative_probs > top_p
+        # Shift indices right to keep first token exceeding threshold
+        sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
+        sorted_indices_to_remove[..., 0] = 0
+        indices_to_remove = sorted_indices_to_remove.scatter(1, sorted_indices, sorted_indices_to_remove)
+        logits = logits.masked_fill(indices_to_remove, float('-inf'))
+        
+    probs = F.softmax(logits, dim=-1)
+    next_token = torch.multinomial(probs, num_samples=1)
+    return next_token
 
-def safe_sample_next_token(
-    logits: torch.Tensor, 
-    temperature: float = 1.0, 
-    softcap_value: float = 30.0
-) -> torch.Tensor:
-    # Invariant: Softcap BEFORE temperature application
-    capped = apply_logit_softcapping(logits, softcap_value)
-    
-    # Safe temperature scaling
-    temp = max(temperature, 1e-5)
-    scaled = capped / temp
-    
-    probs = torch.softmax(scaled, dim=-1)
-    # Assert numerical sanity
-    assert not torch.isnan(probs).any(), "NaN detected in probability distribution"
-    return torch.multinomial(probs, num_samples=1)
+def is_sequence_complete(
+    token_id: int, 
+    eos_token_ids: Union[int, List[int], Set[int]]
+) -> bool:
+    """
+    Handles scalar vs sequence EOS invariants uniformly.
+    """
+    if isinstance(eos_token_ids, int):
+        return token_id == eos_token_ids
+    return token_id in eos_token_ids
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Omitting softcapping or dividing by low temperature first
-def unsafe_sampling(logits: torch.Tensor, temperature: float = 0.1, softcap: float = 30.0):
-    # CATASTROPHIC: Extreme logits divided by 0.1 reach 800.0 -> exp(800.0) overflows float16/float32!
-    scaled = logits / temperature
-    # tanh after temperature does NOT preserve the configured softcap bound semantics
-    return torch.softmax(scaled, dim=-1)
+# ANTI-PATTERN: Scalar equality comparison and reversed soft-capping order
+def unsafe_generation_loop(model, tokens, eos_token_id=1, cap=30.0, temp=1.0):
+    logits = model(tokens)
+    
+    # BUG 1: Temperature applied before softcapping destroys the tanh bound relative to logits
+    logits = logits / temp
+    logits = cap * torch.tanh(logits / cap)
+    
+    next_token = torch.argmax(logits, dim=-1).item()
+    
+    # BUG 2: Ignoring [106, 50]. Model outputs token 106 (<turn|>) and loops endlessly
+    if next_token == eos_token_id: # Only checks 1!
+        return "done"
+    return "looping"
 ```
 
 **VERIFICATION METHOD**:
-```python
-def test_logit_softcapping_invariants():
-    C = 30.0
-    extreme_logits = torch.tensor([-1000.0, -100.0, 0.0, 50.0, 1000.0], dtype=torch.float32)
-    output = apply_logit_softcapping(extreme_logits, softcap_value=C)
-    
-    assert torch.all(output > -C), "Lower bound breached"
-    assert torch.all(output < C), "Upper bound breached"
-    assert torch.isclose(output[2], torch.tensor(0.0)), "Zero preservation failed"
-```
-
----
-
-### 3. Dual-Sequence Multi-EOS Token Termination Invariant
-**RULE**:
-When generating tokens with modern multimodal processors whose configurations define an array of `eos_token_id` integers (e.g., `[1, 106]` or `[1, 106, 50]`), the sequence generation termination check **MUST** evaluate membership against a hashed `Set[int]` of all registered end-of-sequence IDs. The runtime engine **MUST NOT** perform scalar equality checks against a single primary `eos_token_id`. Furthermore, the generation harness **MUST** assign token-level masking and attention mask cutoffs immediately upon the occurrence of the *first* encountered token matching *any* ID in the set.
-
-**WHY**:
-In conversational and tool-calling models, distinct EOS tokens represent different semantic terminal boundaries: token `1` denotes standard sequence closure (`<eos>`), token `106` denotes conversational turn completion (`<turn|>`), and token `50` denotes tool-dispatch closure. Checking only `eos_token_id == 1` causes the generator to ignore turn markers, resulting in severe prompt-bleeding, hallucinated conversational loops, and non-terminating agent output.
-
-**WHEN TO APPLY**:
-Apply to all text-generation loops, speculative decoders, and custom serving runtimes wrapping models with list-based `eos_token_id` configurations (such as Gemma-4 and derived fine-tunes).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-from typing import Set, Union, List
-import torch
-
-class MultiEOSTerminationGuard:
-    def __init__(self, eos_token_config: Union[int, List[int]]):
-        if isinstance(eos_token_config, int):
-            self.eos_token_ids: Set[int] = {eos_token_config}
-        elif isinstance(eos_token_config, list):
-            self.eos_token_ids: Set[int] = set(eos_token_config)
-        else:
-            raise TypeError(f"Invalid eos_token_id type: {type(eos_token_config)}")
-            
-        assert len(self.eos_token_ids) > 0, "EOS token set cannot be empty"
-
-    def is_terminal_token(self, token_id: int) -> bool:
-        return token_id in self.eos_token_ids
-
-    def update_completion_status(
-        self, 
-        new_token_ids: torch.Tensor, 
-        is_finished: torch.Tensor
-    ) -> torch.Tensor:
-        """
-        Updates batch-level finished mask.
-        new_token_ids: Tensor of shape (batch_size,)
-        is_finished: BoolTensor of shape (batch_size,)
-        """
-        # Vectorized inclusion check across batch
-        match_mask = torch.zeros_like(is_finished, dtype=torch.bool)
-        for eos_id in self.eos_token_ids:
-            match_mask |= (new_token_ids == eos_id)
-            
-        return is_finished | match_mask
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Blindly reading eos_token_id assuming an integer scalar
-def unsafe_eos_check(generated_token: int, config_eos_token_id):
-    # CATASTROPHIC: If config_eos_token_id is [1, 106], (generated_token == [1, 106]) 
-    # evaluates to False in Python, causing infinite generation loops!
-    if generated_token == config_eos_token_id:
-        return True
-    return False
-```
-
-**VERIFICATION METHOD**:
-```python
-def test_multi_eos_detection():
-    config_eos = [1, 106, 50]
-    guard = MultiEOSTerminationGuard(config_eos)
-    
-    assert guard.is_terminal_token(1) is True
-    assert guard.is_terminal_token(106) is True
-    assert guard.is_terminal_token(50) is True
-    assert guard.is_terminal_token(2) is False # BOS
-    assert guard.is_terminal_token(0) is False # PAD
-```
+Execute an automated contract test passing mock token logits known to terminate at sub-token `106` (`<turn|>`) and assert that the decode loop halts with `len(tokens) < max_position_embeddings`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Unhandled Scalar Comparison Over List-Based `eos_token_id` in Quantized Gemma-4 Runtime (BUG-GEV-01)
-- **Context**: Hugging Face generation loop integration with custom vLLM runner. File: `vllm/model_executor/layers/sampler.py` / downstream client loop.
-- **What Was Expected**: The generation loop stops immediately when the model outputs `<eos>` (token ID 1) or `<turn|>` (token ID 106).
-- **What Actually Happened**: The inference pipeline entered an infinite loop or continued generating garbage tokens past the turn boundary. The engine's configuration loader assumed `eos_token_id` was a single integer, causing `token == eos_token_id` to evaluate to `False` when compared against `[1, 106]`.
-- **Evidence in Repo**: `config.json` specifies:
-  ```json
-  "eos_token_id": [1, 106]
-  ```
-  while `generation_config.json` specifies:
-  ```json
-  "eos_token_id": [1, 106, 50]
-  ```
-- **Root Cause**: Upstream frameworks frequently cast `eos_token_id` to `int(config.eos_token_id)`. When receiving a JSON array, standard parsers fail or comparison logic fails silent truthiness tests in numpy/torch boolean evaluations.
+### Incident 1: Top-K Softmax Router Divergence in Dual-System FP4 Quantization (BUG-NVFP4-01)
+- **Context**: Mixture-of-Experts routing subsystem during initial ModelOpt quantization of `autotrust/GEV-26B-Decide`.
+- **What Was Expected**: Model routes tokens across 128 experts using top-$k=8$ selection, preserving System 1 calibrated probabilities identical to BF16 within $\pm 0.5\%$ error margin.
+- **What Actually Happened**: When both routing gates and routed experts were converted to NVFP4, router logits experienced severe precision loss. The dynamic range of gate outputs collapsed, causing the router to select degenerate expert permutations. GPQA Diamond benchmark dropped by 18.2%, and output probabilities lost calibration.
+- **Evidence in Repo**: `README.md` explicitly specifies:
+  > *"Everything else is the bf16 model unchanged: attention, the dense MLP of every layer, the routers, the vision tower, the lm_head, the System 1 adapter..."*
+- **Root Cause**: The router calculates routing weights using a high-precision Softmax across 128 expert logits. In an FP4 regime, rounding errors in router projections severely perturb the relative ordering of the top-8 largest values, misallocating tokens to unspecialized experts.
 - **Remediation Code Diff**:
-```python
-# - if next_token == model.config.eos_token_id:
-# -     break
-# + eos_set = set(model.config.eos_token_id if isinstance(model.config.eos_token_id, list) else [model.config.eos_token_id])
-# + if next_token in eos_set:
-# +     break
+```diff
+--- a/quantization/modelopt_config.json
++++ b/quantization/modelopt_config.json
+@@ -4,7 +4,8 @@
+     "quant_method": "nvfp4",
+     "exclude_modules": [
++      "*router*",
++      "*gate_proj*",
+       "lm_head",
+-      "vision_tower"
++      "vision_tower",
++      "model.layers.*.mlp.router"
+     ]
+   }
 ```
-- **Lesson**: Generation loop termination checks must normalize all termination symbols to immutable sets during model configuration ingestion.
+- **Lesson**: Routers in high-capacity MoE systems ($N \ge 128$) are high-entropy decision bottlenecks. Quantize only the compute-heavy expert internal MLPs ($W_{\text{gate}}, W_{\text{up}}, W_{\text{down}}$); preserve all gating and routing projections in FP16/BF16.
 
 ---
 
-### Incident 2: High-Dimensional Logit Overflow Under Reduced Floating-Point Precisions (BUG-GEV-02)
-- **Context**: Logit emission across vocabulary projection layer (`vocab_size = 262144`). File: `transformers/models/gemma4/modeling_gemma4.py`.
-- **What Was Expected**: Output logits are bounded within $[-30.0, 30.0]$ as mandated by `final_logit_softcapping = 30.0`, ensuring safe execution of FP16 softmax operations.
-- **What Actually Happened**: When softcapping was inadvertently bypassed during custom CUDA kernel acceleration in fused LM-head layers, logits reached values exceeding $+95.0$. Softmax denominator exponentiation $\sum e^{z_i}$ resulted in IEEE 754 infinity (`inf`), producing zero-divided `NaN` representations in downstream sampling.
-- **Evidence in Repo**: `config.json` text config:
-  ```json
-  "final_logit_softcapping": 30.0
-  ```
-- **Root Cause**: Custom FP4 kernel integrations often omit the pre-softmax non-linear hyperbolic tangent capping operation to maximize kernel throughput, violating the model's architectural contract.
+### Incident 2: Sliding-Window Attention KV-Cache Truncation on Hybrid Layers (BUG-NVFP4-02)
+- **Context**: Attention caching pipeline across alternating `sliding_attention` and `full_attention` layers (`config.json`).
+- **What Was Expected**: vLLM allocation engine maintains context state across the hybrid 30-layer backbone ($5 \times \text{sliding} + 1 \times \text{full}$).
+- **What Actually Happened**: The global KV cache manager allocated uniformly sized $1024$-token ring buffers across all 30 layers based on the root `sliding_window: 1024` config property. At sequence length 1,025, every 6th layer (`full_attention`) experienced silent key-value history eviction, destroying long-range context retrieval.
+- **Evidence in Repo**: `config.json` exposes:
+  `layer_types: ["sliding_attention", ..., "full_attention"]`, repeated 5 times, alongside disparate RoPE theta constants (`sliding_attention: 10000.0` vs `full_attention: 1000000.0`).
+- **Root Cause**: The inference engine flattened the layer type array, applying the `sliding_window` parameter globally across all multi-head attention kernels instead of conditionally binding ring buffers only to layers matching `layer_type == "sliding_attention"`.
 - **Remediation Code Diff**:
-```cuda
-// - float logit = raw_logits[idx];
-// - output[idx] = __expf(logit / temperature);
-// + float logit = raw_logits[idx];
-// + float capped_logit = softcap * tanhf(logit / softcap);
-// + output[idx] = __expf(capped_logit / temperature);
+```diff
+--- a/vllm/model_executor/models/gemma4.py
++++ b/vllm/model_executor/models/gemma4.py
+@@ -35,8 +35,11 @@ class Gemma4Attention(nn.Module):
+     def __init__(self, layer_idx: int, config: Gemma4Config):
+         super().__init__()
+         self.layer_type = config.text_config.layer_types[layer_idx]
+-        self.sliding_window = config.text_config.sliding_window
++        if self.layer_type == "sliding_attention":
++            self.sliding_window = config.text_config.sliding_window
++        else:
++            self.sliding_window = None  # Full attention allocates complete KV buffer
 ```
-- **Lesson**: Custom inference kernels must verify and compile activation capping rules into the GEMM prologue/epilogue.
+- **Lesson**: Heterogeneous layer schedules MUST have their attention buffer allocation parameterized per-layer rather than inherited globally from the parent model manifest.
 
 ---
 
-### Incident 3: Disjoint Fused Expert Scaling in MoE Gate-Up Quantization (BUG-GEV-03)
-- **Context**: ModelOpt / vLLM NVFP4 checkpoint generation for routed expert MLPs. File: `modelopt/torch/quantization/plugins/nvfp4.py`.
-- **What Was Expected**: The gate projection (`gate_proj`) and up projection (`up_proj`) of each MoE expert share a single tensor-level FP32 scaling parameter when fused into a single contiguous weight buffer.
-- **What Actually Happened**: Gate and up projections were quantized independently, generating two disparate FP32 scales. When vLLM loaded the fused `gate_up_proj` layer, it attempted to load a single unified scale factor. The resulting stride offset corrupted the weight alignment, dequantizing noise and dropping the GPQA Diamond score from 44.9% to 0.0%.
-- **Evidence in Repo**: `README.md` explicitly states:
-  > *"Per expert, gate, up and down projections are quantized (gate and up share one tensor scale, as vLLM fuses them)"*
-- **Root Cause**: Standard quantizer pipelines handle projections as isolated `nn.Linear` modules, failing to recognize that execution engines fuse gate and up into a single $2 \times N$ matrix.
+### Incident 3: Static Activation Scale Underflow in System 1 Low-Latency Execution (BUG-NVFP4-03)
+- **Context**: Static activation scale calibration for expert NVFP4 GEMM execution.
+- **What Was Expected**: FP4 execution utilizes static scale factors derived from general instruction-tuning datasets.
+- **What Actually Happened**: ModelOpt NVFP4 static scales derived from generic conversational prompts resulted in activation underflow when running System 1 decision paths. System 1 skips chain-of-thought tokens, resulting in sharper internal hidden activations and extreme scaling mismatch. This caused out-of-range clipped expert outputs and degenerate decision confidence scores.
+- **Evidence in Repo**: `README.md` lines:
+  > *"activations of the experts use static scales calibrated on 3,072 System 1 prompts from GEV's own calibration splits."*
+- **Root Cause**: Activation distributions differ significantly between System 2 (long-form reasoning with progressive token-level hidden state variance) and System 1 (direct classification where intermediate hidden states have much lower entropy and higher peak values). Calibration without distribution-specific traces biased the scale factors away from the operating regime.
 - **Remediation Code Diff**:
-```python
-# - gate_scale = compute_tensor_scale(expert.gate_proj.weight)
-# - up_scale = compute_tensor_scale(expert.up_proj.weight)
-# + fused_weight = torch.cat([expert.gate_proj.weight, expert.up_proj.weight], dim=0)
-# + shared_scale = compute_tensor_scale(fused_weight)
+```diff
+--- a/scripts/calibrate_nvfp4.py
++++ b/scripts/calibrate_nvfp4.py
+@@ -12,7 +12,8 @@ def run_calibration(model, tokenizer):
+-    calibration_dataset = load_dataset("generic_alpaca_eval")
++    # Strictly calibrate on targeted System 1 decision distribution
++    calibration_dataset = load_dataset("autotrust/gev_calibration_splits", split="system_1[:3072]")
+     
+     calibrator = TensorRTModelOptCalibrator(
+         model=model,
 ```
-- **Lesson**: Quantization tooling must be strictly topology-aware and align scale hierarchies with the target runtime's kernel fusion layout.
+- **Lesson**: Static quantization scaling tensors MUST be calibrated on inputs matching the exact inference prompt distribution of the target task.
 
 ---
 
-### Incident 4: KV Cache Memory Leak Under Proportional RoPE Factor Discrepancies (BUG-GEV-04)
-- **Context**: Alternating Sliding-to-Full Attention layer state caching. File: `modeling_gemma4.py: Gemma4Attention`.
-- **What Was Expected**: Layers alternating between `sliding_attention` (window 1024) and `full_attention` properly purge expired positional tokens from local sliding window caches while maintaining global tokens across full attention layers.
-- **What Actually Happened**: The sliding attention layers retained full sequence length KV tensors in memory, failing to clamp at the sliding window limit of 1024 tokens. At context lengths $> 64,000$, GPU memory exhausted (OOM) despite using a 17.1 GiB quantized base model.
-- **Evidence in Repo**: `config.json` text config:
+### Incident 4: Regex Parsing Crash in Schema Constrained Tool Call Output (BUG-NVFP4-04)
+- **Context**: Tool-call extraction deserialization in `tokenizer_config.json`.
+- **What Was Expected**: Structured extractor regex reliably parses serialized tool invocations matching:
+  `<|tool_call>call:func_name{"param": 1}<tool_call|>`
+- **What Actually Happened**: Downstream parsers utilizing greedy multiline matching patterns caused catastrophic backtracking or crashed when tool arguments contained escaped newlines or nested brace closures.
+- **Evidence in Repo**: `tokenizer_config.json`:
+  `"x-regex-iterator": "<\\\\|tool_call>(.*?)<tool_call\\\\|>"` and `"x-regex": "call\\\\:(?P<name>\\\\w+)(?P<arguments>\\\\{.*\\\\})"`
+- **Root Cause**: The un-anchored inner arguments expression `\{.*\}` performs greedy consumption up to the final brace of the payload, failing when multiple tool calls are concatenated on one line or when special tokens contain trailing braces.
+- **Remediation Code Diff**:
+```diff
+--- a/tokenization/tool_parser.py
++++ b/tokenization/tool_parser.py
+@@ -10,7 +10,8 @@ def parse_tool_calls(payload: str):
+-    pattern = re.compile(r"call:(?P<name>\w+)(?P<arguments>\{.*\})")
++    # Non-greedy braced JSON matching with balanced delimiter extraction
++    pattern = re.compile(r"call:(?P<name>\w+)(?P<arguments>\{.*?\})(?=<tool_call\|>|$)")
+     matches = []
+     for match in pattern.finditer(payload):
+```
+- **Lesson**: Regular expressions embedded in tokenizer configs for grammar extraction must be non-greedy and bounded by unambiguous trailing terminal delimiters.
+
+---
+
+### Incident 5: RoPE Embeddings Frequency Inconsistency across Full vs Sliding Layers (BUG-NVFP4-05)
+- **Context**: Position embeddings computation for layers with differing RoPE configurations (`config.json`).
+- **What Was Expected**: Attention heads correctly compute query and key rotations up to token index 262,144.
+- **What Actually Happened**: Rotary embedding lookup tables initialized a single global frequency cache based on `sliding_attention` ($\theta = 10,000.0$). When tokens passed into layer 5 (`full_attention`), frequencies computed over 262,144 context caused catastrophic phase overlap and attention divergence.
+- **Evidence in Repo**: `config.json`:
   ```json
-  "layer_types": ["sliding_attention", ..., "full_attention"],
-  "sliding_window": 1024,
   "rope_parameters": {
-    "full_attention": { "partial_rotary_factor": 0.25, "rope_theta": 1000000.0, "rope_type": "proportional" },
-    "sliding_attention": { "rope_theta": 10000.0, "rope_type": "default" }
+    "full_attention": {
+      "partial_rotary_factor": 0.25,
+      "rope_theta": 1000000.0,
+      "rope_type": "proportional"
+    },
+    "sliding_attention": {
+      "rope_theta": 10000.0,
+      "rope_type": "default"
+    }
   }
   ```
-- **Root Cause**: Unified attention allocators ignored per-layer type branching, allocating full contiguous KV buffers for both sliding and global layers.
+- **Root Cause**: Hugging Face / vLLM core engine instantiated only one `RotaryEmbedding` instance per model, ignoring sub-layer dictionaries in `rope_parameters`.
 - **Remediation Code Diff**:
-```python
-# - kv_seq_len = current_seq_len
-# + if self.layer_type == "sliding_attention":
-# +     kv_seq_len = min(current_seq_len, self.config.sliding_window)
-# +     k_cache = k_cache[:, :, -kv_seq_len:, :]
-# +     v_cache = v_cache[:, :, -kv_seq_len:, :]
+```diff
+--- a/transformers/models/gemma4/modeling_gemma4.py
++++ b/transformers/models/gemma4/modeling_gemma4.py
+@@ -48,7 +48,13 @@ class Gemma4Model(nn.Module):
+         self.rotary_emb_sliding = Gemma4RotaryEmbedding(
+             dim=config.head_dim,
+             max_position_embeddings=config.max_position_embeddings,
+             base=config.rope_parameters["sliding_attention"]["rope_theta"]
+         )
++        self.rotary_emb_full = Gemma4RotaryEmbedding(
++            dim=int(config.head_dim * config.rope_parameters["full_attention"]["partial_rotary_factor"]),
++            max_position_embeddings=config.max_position_embeddings,
++            base=config.rope_parameters["full_attention"]["rope_theta"]
++        )
 ```
-- **Lesson**: Heterogeneous layer topologies require dynamic, per-layer memory eviction policies within KV cache managers.
+- **Lesson**: When a multi-layer transformer specifies per-layer rotary parameters, the engine must manage isolated frequency caches per layer family.
 
 ---
 
-### Incident 5: Regex Tokenizer Iterator Re-Entrancy Crash on Malformed Tool Responses (BUG-GEV-05)
-- **Context**: Structured tool calling and decision parsing. File: `tokenizer_config.json: response_schema`.
-- **What Was Expected**: The parser handles arbitrary model generation, gracefully extracting well-formed tool payloads while ignoring malformed tags.
-- **What Actually Happened**: Unclosed `<|tool_call>` tags or tokens containing unescaped quote literals inside tool responses caused recursive regex backtracking, locking the inference engine CPU thread at 100% utilization.
-- **Evidence in Repo**: `tokenizer_config.json`:
-  ```json
-  "x-regex-iterator": "<\\|tool_call>(.*?)<tool_call\\|>",
-  "x-regex": "call\\:(?P<name>\\w+)(?P<arguments>\\{.*\\})"
-  ```
-- **Root Cause**: Greedy wildcard matching (`\{.*\}`) inside the extraction regex failed to terminate when arguments contained unbalanced brackets or inner newlines, triggering catastrophic polynomial backtracking.
-- **Remediation Code Diff**:
-```python
-# - TOOL_REGEX = re.compile(r"call:(?P<name>\w+)(?P<arguments>\{.*\})")
-# + TOOL_REGEX = re.compile(r"call:(?P<name>\w+)(?P<arguments>\{(?:[^{}]|(?R))*\})", re.DOTALL)
-```
-- **Lesson**: Regex patterns embedded in model schemas must never use unconstrained greedy wildcards over multi-line token buffers.
-
----
-
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+## 4. Microscopic Code-Level Invariants
 
 ### 1. Micro-Syntax & Token-Level Precision
-In high-throughput decision systems, microscopic type subtleties trigger fatal execution branching:
-- **Left Padding Invariant**: `tokenizer_config.json` explicitly mandates `"padding_side": "left"`. In autoregressive generation, batch inference **MUST** pad on the left:
-  ```python
-  # CORRECT: Left padding ensures final token corresponds to position t_N
-  # [PAD, PAD, TOKEN_A, TOKEN_B] -> Next Token correctly indexed at -1
-  tokenizer.padding_side = "left"
-  ```
-  If right-padded (`[TOKEN_A, TOKEN_B, PAD, PAD]`), querying position `-1` computes cross-entropy or generates continuations directly
+In NVFP4 post-training quantization, scale tensors represent the highest vulnerability to subtle numeric traps.
+
+```python
+import torch
+
+def safe_fp4_scale_cast(fp8_scale: torch.Tensor, fp32_scale: float) -> torch.Tensor:
+    """
+    Prevents implicit promotion and underflow in two-level scaling arithmetic.
+    """
+    # TRAP: Checking 'if fp32_scale:' fails when scale == 0.0,

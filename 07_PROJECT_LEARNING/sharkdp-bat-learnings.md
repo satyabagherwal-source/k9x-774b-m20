@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
-> **Source Version**: `a9aa73d2`  
+> **Source Version**: `8f5727ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-20T21:27:32.364Z  
+> **Timestamp**: 2026-10-30T23:35:08.037Z  
 > **Learning ID**: `learn-github-sharkdp-bat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-20T21:27:32.227Z  
+> **Harvest Timestamp**: 2026-10-30T23:35:07.146Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 60868 stars
+- **Stars / Engagement**: 60988 stars
 
 ---
 
@@ -590,7 +590,6 @@ impl AssetsMetadata {
 - **Issue #4005** (2026-09-25): **Font color not readable in light mode**
   *Symptoms*: **What steps will reproduce the bug?**  1. Open the MacOS Terminal app during light mode on the OS 2. Run bat on any file. I did it on my /etc/fstab  **What happens?** Notice how the font color of the the first words on some lines are white on the white background. <img width="888" height="432" alt="Image" src="https://github.com/user-attachments/assets/0fdda316-ace7-4aee-963f-9c960e9b0cf5" /> **What did you expect to happen instead?** To have a readable font color.    **How did you install `bat`?**  With apt install bat I think.   **bat version and environment** bat 0.24.0  
   **Post-Mortem & Fix Analysis**:
-  > bat 0.24.0 always uses the same default theme, and that theme is designed for dark backgrounds. Starting with v0.25.0, bat picks a theme based on the terminal's background color (#2896), so a light Terminal.app should get a light theme automatically. The latest release is v0.26.1, which also fixes `BAT_THEME_LIGHT`/`BAT_THEME_DARK` being ignored. If you upgrade, you can set a specific light theme with `--theme-light` or `BAT_THEME_LIGHT`. If you'd rather stay on the apt 0.24.0 package, setting `BAT_THEME` to a light theme (for example `export BAT_THEME=GitHub`; `bat --list-themes` shows the options) should make the text readable. 
   > You are right. My ubuntu version didn't suggest me installing the later version by default. But via override install to the latest bat it worked! Theme issue resolved. 
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -608,133 +607,85 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2fd71ad5` (2026-10-20)
-**Commit Message**: Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang
+### Incident Patch 1: `8f5727ea` (2026-10-29)
+**Commit Message**: Merge pull request #4068 from ump45nose/diag-list-bat-config-dir
 
-Fix hang on block comment after an expression in JavaScript
+Report BAT_CONFIG_DIR in bat --diagnostic
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -26,6 +26,7 @@
+@@ -28,6 +28,7 @@
  - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
  
  ## Bugfixes
-+- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
++- Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
+ - Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
  - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
  - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
- - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
 ```
 
-**File**: `assets/patches/JavaScript.sublime-syntax.patch` (modified, +10/-0)
+**File**: `src/bin/bat/main.rs` (modified, +1/-0)
 ```diff
-@@ -12,3 +12,13 @@ index 05a4fed6..78a7bf55 100644
-  scope: source.js
-  variables:
-    bin_digit: '[01_]'
-+@@ -93,7 +93,8 @@ variables:
-+       (?! \+\+ | -- )
-+       (?=
-+         != |
-+-        [-+*/%><=&|^\[(;,.:?] |
-++        [-+*%><=&|^\[(;,.:?] |
-++        /(?!\*) |
-+         (?:in|instanceof){{identifier_break}}
-+       )
-+     ))
+@@ -333,6 +333,7 @@ fn invoke_bugreport(app: &App, cache_dir: &Path) -> Result<()> {
+         .info(CommandLine::default())
+         .info(EnvironmentVariables::list(&[
+             "BAT_CACHE_PATH",
++            "BAT_CONFIG_DIR",
+             "BAT_CONFIG_PATH",
+             "BAT_OPTS",
+             "BAT_PAGER",
 ```
 
-**File**: `tests/syntax-tests/highlighted/Svelte/comment_after_expression.svelte` (added, +5/-0)
+**File**: `tests/integration_tests.rs` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,5 @@
-+[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m
-+[38;2;248;248;242m  [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m
-+[38;2;248;248;242m}[0m
-+
-+[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m[38;2;248;248;242m [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m[38;2;248;248;242m}[0m
-```
-
-**File**: `tests/syntax-tests/source/Svelte/comment_after_expression.svelte` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+{a
-+  /* comment */
-+}
-+
-+{a /* comment */}
+@@ -1755,6 +1755,7 @@ fn diagnostic_sanity_check() {
+         .success()
+         .stdout(predicate::str::contains("BAT_PAGER="))
+         .stdout(predicate::str::contains("BAT_WIDTH="))
++        .stdout(predicate::str::contains("BAT_CONFIG_DIR="))
+         .stderr("");
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `54b1f9c6` (2026-10-20)
-**Commit Message**: Fix hang on block comment after an expression in JavaScript
+### Incident Patch 2: `b4fdcec6` (2026-10-29)
+**Commit Message**: Merge branch 'master' into diag-list-bat-config-dir
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/CICD.yml` (modified, +2/-1)
 ```diff
-@@ -26,6 +26,7 @@
- - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
- 
- ## Bugfixes
-+- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #XXXX (@NavpreetSSidhu)
- - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
- - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
- - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
+@@ -166,7 +166,8 @@ jobs:
+           - { target: arm-unknown-linux-gnueabihf , os: ubuntu-latest , dpkg_arch: armhf,            use-cross: true }
+           - { target: arm-unknown-linux-musleabihf, os: ubuntu-latest , dpkg_arch: musl-linux-armhf, use-cross: true }
+           - { target: i686-pc-windows-msvc        , os: windows-2025  ,                                              }
+-          - { target: i686-unknown-linux-gnu      , os: ubuntu-latest , dpkg_arch: i386,             use-cross: true }
++          # The timeout test's socketpair fails on the Ubuntu 26.04 runner.
++          - { target: i686-unknown-linux-gnu      , os: ubuntu-24.04  , dpkg_arch: i386,             use-cross: true }
+           - { target: i686-unknown-linux-musl     , os: ubuntu-latest , dpkg_arch: musl-linux-i686,  use-cross: true }
+           - { target: x86_64-apple-darwin         , os: macos-15-intel,                                              }
+           - { target: aarch64-apple-darwin        , os: macos-latest  ,                                              }
 ```
 
-**File**: `assets/patches/JavaScript.sublime-syntax.patch` (modified, +10/-0)
+**File**: `CHANGELOG.md` (modified, +3/-0)
 ```diff
-@@ -12,3 +12,13 @@ index 05a4fed6..78a7bf55 100644
-  scope: source.js
-  variables:
-    bin_digit: '[01_]'
-+@@ -93,7 +93,8 @@ variables:
-+       (?! \+\+ | -- )
-+       (?=
-+         != |
-+-        [-+*/%><=&|^\[(;,.:?] |
-++        [-+*%><=&|^\[(;,.:?] |
-++        /(?!\*) |
-+         (?:in|instanceof){{identifier_break}}
-+       )
-+     ))
-```
-
-**File**: `tests/syntax-tests/highlighted/Svelte/comment_after_expression.svelte` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m
-+[38;2;248;248;242m  [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m
-+[38;2;248;248;242m}[0m
-+
-+[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m[38;2;248;248;242m [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m[38;2;248;248;242m}[0m
-```
-
-**File**: `tests/syntax-tests/source/Svelte/comment_after_expression.svelte` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+{a
-+  /* comment */
-+}
-+
-+{a /* comment */}
-```
-
----
-
-### Incident Patch 3: `a9aa73d2` (2026-10-20)
-**Commit Message**: Merge pull request #3895 from 1t1sCooL/fix-vcredist-link
-
-docs: fix dead Visual C++ Redistributable link in README
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -3,6 +3,7 @@
+@@ -3,6 +3,8 @@
  
  ## Other
  
++- Pin the i686 GNU CI runner to Ubuntu 24.04 to avoid `socketpair` failures on Ubuntu 26.04, see #4101 (@PerchAnton)
 +- Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
  - Document `StripAnsiMode` and its variants in rustdoc, see #4067 (@ump45nose)
  - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
  - Add instructions for removing fish help abbreviations to README, see #3655 (@claw-explorer). Closes #3536
+@@ -27,6 +29,7 @@
+ 
+ ## Bugfixes
+ - Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
++- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
+ - Fix the first line of UTF-16BE input swallowing the second line, which broke line numbers, `--line-range` and highlighting, see #XXXX (@cindykrafft)
+ - Exit quietly with status 0 instead of panicking when stdout is closed early (broken pipe) on auxiliary output paths such as `--completion`, `--config-file`, `--diagnostic`, `--generate-config-file`, `--set-terminal-title` and `cache --build`/`--clear`, matching the main output path since #232, closes #4034, see #4035 (@Mathjk)
+ - Track strikethrough (SGR 9 / 29) in the ANSI style tracker so it is re-emitted like bold, dim, italic, and underline, and is no longer dropped after the first highlighted token when displaying ANSI input with syntax highlighting, see #4015 (@mikehasa)
 ```
 
 **File**: `README.md` (modified, +2/-2)
@@ -759,13 +710,51 @@ docs: fix dead Visual C++ Redistributable link in README
  
 ```
 
+**File**: `assets/patches/JavaScript.sublime-syntax.patch` (modified, +10/-0)
+```diff
+@@ -12,3 +12,13 @@ index 05a4fed6..78a7bf55 100644
+  scope: source.js
+  variables:
+    bin_digit: '[01_]'
++@@ -93,7 +93,8 @@ variables:
++       (?! \+\+ | -- )
++       (?=
++         != |
++-        [-+*/%><=&|^\[(;,.:?] |
+++        [-+*%><=&|^\[(;,.:?] |
+++        /(?!\*) |
++         (?:in|instanceof){{identifier_break}}
++       )
++     ))
+```
+
+**File**: `tests/syntax-tests/highlighted/Svelte/comment_after_expression.svelte` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m
++[38;2;248;248;242m  [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m
++[38;2;248;248;242m}[0m
++
++[38;2;248;248;242m{[0m[38;2;255;255;255ma[0m[38;2;248;248;242m [0m[38;2;117;113;94m/*[0m[38;2;117;113;94m comment [0m[38;2;117;113;94m*/[0m[38;2;248;248;242m}[0m
+```
+
+**File**: `tests/syntax-tests/source/Svelte/comment_after_expression.svelte` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++{a
++  /* comment */
++}
++
++{a /* comment */}
+```
+
 #### Recent Merged Pull Requests:
+- **PR #4101** (2026-10-28): ci: pin the i686 GNU runner to Ubuntu 24.04 (@PerchAnton)
 - **PR #4091** (2026-10-20): Fix hang on block comment after an expression in JavaScript (@NavpreetSSidhu)
+- **PR #4087** (closed): Prevent JavaScript syntax loop after unclosed expression (@Huang-404-Q)
 - **PR #4076** (2026-10-17): Fix the first line of UTF-16BE input swallowing the second line (@cindykrafft)
 - **PR #4069** (2026-10-17): Add syntax mapping for Podman `.quadlets` files (@injust)
-- **PR #4067** (2026-10-17): Document StripAnsiMode and its variants (@ump45nose)
-- **PR #4065** (2026-10-14): Document WrappingMode::NoWrapping's bool payload with a doc comment (@ump45nose)
-- **PR #4064** (2026-10-14): Document RangeCheckResult variants with doc comments (@ump45nose)
+- **PR #4068** (2026-10-29): Report BAT_CONFIG_DIR in bat --diagnostic (@ump45nose)
 
 ---
 
@@ -785,13 +774,13 @@ docs: fix dead Visual C++ Redistributable link in README
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang
+## X. Merge pull request #4068 from ump45nose/diag-list-bat-config-dir
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2fd71ad5`: Merge pull request #4091 from NavpreetSSidhu/fix-js-block-comment-hang. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8f5727ea`: Merge pull request #4068 from ump45nose/diag-list-bat-config-dir. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -799,7 +788,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fix `bat` hanging forever on JavaScript (and Svelte) code where an expression is followed by a block comment, e.g. `a /* x */`. Closes #4080, see #4091 (@NavpreetSSidhu)
+- Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -809,4 +798,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2fd71ad5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8f5727ea` are properly handled with clean fallback behavior.

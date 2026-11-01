@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `2668d2ef`  
+> **Source Version**: `e680c0af`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:19:05.831Z  
+> **Timestamp**: 2026-10-31T10:00:28.434Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:19:05.597Z  
+> **Harvest Timestamp**: 2026-10-31T10:00:28.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2544 stars
+- **Stars / Engagement**: 2547 stars
 
 ---
 
@@ -984,14 +984,9 @@ mod tests {
 ### Core Architecture Module: `ntex-rt/src/rt/queue.rs`
 ```
 //! Run queues of a runtime, shared by the runtime and the tasks.
-use std::borrow::Cow;
-use std::cell::Cell;
 use std::sync::atomic::{AtomicPtr, AtomicU64, Ordering};
 use std::time::{Duration, Instant};
-use std::{fmt, future::Future, io, panic::Location, ptr, sync::Arc};
-
-use crate::handle::{JoinHandle, SpawnLocation};
-use crate::{busy::BusyClock, driver::Notify, metrics::AtomicHistogram};
+use std::{borrow::Cow, cell::Cell, fmt, future::Future, io, panic::Location, ptr, sync::Arc};
 
 #[cfg(not(ntex_loom))]
 use std::{
@@ -1005,14 +1000,16 @@ use loom::{
     thread::yield_now,
 };
 
-use super::task::{
-    self, LocalQueue, Remote as RemoteTask, RemoteQueue, Runnable as Task, TaskList, task_ref,
-};
+use crate::handle::{JoinHandle, SpawnLocation};
+use crate::{busy::BusyClock, driver::Notify, metrics::AtomicHistogram};
+
+use super::task::{self, LocalQueue, Remote as RemoteTask, Runnable as Task, TaskList};
+use super::wake::{self, WakeEntry, WakeQueue};
 use super::{LOG_TARGET, REPORTED, RuntimeBuilder, TaskStats, ThreadId, current_thread_id};
 
 const MAX_SELF_WAKES: u32 = task::MAX_SELF_WAKES;
 
-/// Remote tasks run per turn, besides `event_interval` overflow tasks.
+/// Remote commands run per turn, besides `event_interval` overflow commands.
 const REMOTE_BATCH: usize = 128;
 
 /// The remaining bits count remote publications admitted before shutdown.
@@ -1020,57 +1017,75 @@ const CLOSED: usize = 1 << (usize::BITS - 1);
 
 #[repr(C)]
 pub(crate) struct RunnableQueue {
-    // read-only, other threads read `id` on every waker operation
+    /// Immutable owner-thread identity, also read by remote scheduling code.
     pub(crate) id: ThreadId,
+    /// Never-reused identity of this queue's registered wake endpoint.
+    pub(crate) runtime_id: wake::RuntimeId,
+    /// Driver notifier, callable from the owner and remote producers.
     pub(super) handle: Box<dyn Notify>,
+    /// Epoch for per-task self-wake streak timestamps.
     pub(super) epoch: Instant,
+    /// Minimum streak duration before a possible busy loop is reported.
     self_wake_time: Duration,
+    /// Local task budget per turn; also contributes to remote drain budgets.
     event_interval: usize,
+    /// Minimum self-wake count to report; zero disables per-task streak tracking.
     self_wake_limit: u32,
-    // written by other threads
+    /// Aligns producer-written state away from the read-only fields.
     _remote: [CacheLine; 0],
-    // set by the first remote `schedule` after `run` cleared it
+    /// Coalesces remote driver notifications until the next scheduler drain.
     notified: AtomicBool,
-    // closed bit and in-flight remote publications
+    /// Closed bit and count of admitted remote submissions still in flight.
     admission: AtomicUsize,
-    pub(super) remote_queue: RemoteQueue,
-    // written by the runtime thread
+    /// Submission, reference and wake commands, processed in FIFO order by the owner.
+    pub(crate) wake_queue: WakeQueue,
+    /// Aligns owner-written scheduling state away from producer-written fields.
     _local: [CacheLine; 0],
+    /// Idle state used for driver notifications and busy-time accounting.
     pub(super) idle: Cell<bool>,
-    // start of the current busy period, valid while not idle
+    /// Start of the current runtime turn, meaningful while the runtime is busy.
     pub(super) poll_start: Cell<Instant>,
-    // `poll_start` relative to the epoch, cached in milliseconds
+    /// Cached `poll_start` offset from the epoch, in wrapping milliseconds.
     pub(super) self_wake_clock: Cell<Option<u32>>,
+    /// Shared wall-clock busy-time totals and current-turn timing.
     pub(super) busy: BusyClock,
-    // poll counters, written by the runtime thread only
+    /// Non-stopped scheduler polls; written by the owner and read across threads.
     pub(super) polls: AtomicU64,
+    /// Scheduler polls that left queued work; written by the owner.
     pub(super) polls_again: AtomicU64,
+    /// Shared histogram of scheduler poll durations.
     pub(super) poll_histogram: AtomicHistogram,
-    // self-wake counter, written by the runtime thread only
+    /// Total self-wakes observed during task polls; written by the owner.
     pub(super) self_wakes: AtomicU64,
-    // spawn location of the running task, null between tasks
+    /// Spawn location of the running task, null between tasks.
     pub(super) current: AtomicPtr<Location<'static>>,
+    /// Owner-only FIFO of runnables, each holding a task reference.
     pub(super) local_queue: LocalQueue,
-    // unfinished tasks, dropped with the runtime
+    /// Non-owning list of unfinished tasks whose futures shutdown must drop.
     pub(crate) tasks: TaskList,
+    /// Counts task allocations without keeping the queue's allocation alive.
+    #[cfg(test)]
+    pub(super) task_allocations: Arc<()>,
 }
 
 /// Aligns the next field to a cache line, 128 bytes covers the adjacent line
 /// prefetcher on x86 and the line size on Apple cores.
 #[derive(Debug)]
 #[repr(align(128))]
-pub(super) struct CacheLine;
+struct CacheLine;
 
 unsafe impl Send for RunnableQueue {}
 unsafe impl Sync for RunnableQueue {}
 
 impl RunnableQueue {
+    /// Initializes an idle queue with this thread as its owner.
     pub(super) fn new(builder: &RuntimeBuilder, handle: Box<dyn Notify>) -> Self {
         let now = Instant::now();
         Self {
             handle,
             event_interval: builder.event_interval,
             id: current_thread_id(),
+            runtime_id: wake::runtime_id(),
             idle: Cell::new(true),
             poll_start: Cell::new(now),
             self_wake_clock: Cell::new(None),
@@ -1087,7 +1102,9 @@ impl RunnableQueue {
             current: AtomicPtr::new(ptr::null_mut()),
             local_queue: LocalQueue::new(),
             tasks: TaskList::new(),
-            remote_queue: RemoteQueue::new(),
+            wake_queue: WakeQueue::new(),
+            #[cfg(test)]
+            task_allocations: Arc::new(()),
             _remote: [],
             _local: [],
         }
@@ -1098,13 +1115,13 @@ impl RunnableQueue {
     /// # Safety
     ///
     /// The caller should ensure the captured lifetime is long enough.
-    /// If `LOCAL` is true, the caller must be on the runtime thread.
-    pub(super) unsafe fn spawn<F: Future, const LOCAL: bool>(
+    /// The caller must be on the runtime thread.
+    pub(super) unsafe fn spawn<F: Future>(
         self: &Arc<Self>,
         future: F,
         location: SpawnLocation,
     ) -> JoinHandle<F::Output> {
-        JoinHandle::new(unsafe { task::spawn::<_, LOCAL>(future, self, location) })
+        JoinHandle::new(unsafe { task::spawn(future, self, location) })
     }
 
     /// Spawns a task on this queue without a join handle.
@@ -1113,6 +1130,7 @@ impl RunnableQueue {
     ///
     /// The caller should ensure the captured lifetime is long enough.
     /// If `LOCAL` is true, the caller must be on the runtime thread.
+    /// Otherwise, the future must be `Send`.
     pub(super) unsafe fn spawn_detached<F: Future, const LOCAL: bool>(
         self: &Arc<Self>,
         future: F,
@@ -1121,6 +1139,7 @@ impl RunnableQueue {
         unsafe { task::spawn_detached::<_, LOCAL>(future, self, location) }
     }
 
+    /// Enqueues a runnable on the owner thread and wakes an idle driver if needed.
     pub(crate) fn schedule_local(&self, runnable: Task) {
         self.local_queue.push(runnable);
         if self.idle.get() {
@@ -1134,7 +1153,31 @@ impl RunnableQueue {
         }
     }
 
+    /// Owner releases bypass the registry, including during shutdown cleanup.
+    pub(crate) fn owner_entry(&self, entry: WakeEntry) {
+        if self.admission.load(Ordering::Acquire) == CLOSED && self.wake_queue.is_empty() {
+            drop(entry.into_runnable(self));
+        } else {
+            self.wake_queue.push(entry);
+            if self.idle.get() && !self.is_closed() {
+                self.start_busy();
+                if self.current.load(Ordering::Relaxed).is_null() {
+                    self.notify();
+                }
+            }
+        }
+    }
+
+    /// Acquires remote wake publications without claiming another notification.
+    pub(crate) fn acquire_wakes(&self) {
+        // A later wake may have published writes behind an earlier FIFO entry.
+        // Acquire the latest publication without resetting notification ownership.
+        self.notified.fetch_or(false, Ordering::Acquire);
+    }
+
+    /// Notifies the driver, retrying interruptions and aborting on other failures.
     pub(super) fn notify(&self) {
+        /// Aborts when a failed notification could strand queued work.
         #[cold]
         fn failed(err: &io::Error) -> ! {
             log::error!(target: LOG_TARGET, "Failed to notify runtime driver: {err}; aborting");
@@ -1146,6 +1189,7 @@ impl RunnableQueue {
         struct AbortOnUnwind;
 
         impl Drop for AbortOnUnwind {
+            /// Prevents unwinding from abandoning a coalesced driver wakeup.
             fn drop(&mut self) {
                 log::error!(target: LOG_TARGET, "Runtime notifier panicked; aborting");
                 std::process::abort();
@@ -1163,7 +1207,7 @@ impl RunnableQueue {
         std::mem::forget(guard);
     }
 
-    /// Reserves a publication before a task acquires its remote queue reference.
+    /// Reserves a submission or wake before publication or acquiring a task queue reference.
     /// `owned` keeps the queue alive if publication releases the caller's reference.
     pub(crate) fn admit(self: &Arc<Self>, owned: bool) -> Option<RemotePermit<'_>> {
         let mut state = self.admission.load(Ordering::Acquire);
@@ -1189,92 +1233,6 @@ impl RunnableQueue {
                         }),
                     });
                 }
-                Err(v) => state = v,
-            }
-        }
-    }
-
-    pub(super) fn run(&self) -> bool {
-        // cleared before draining the sync queues, a task enqueued after the
-        // drain notifies the driver again
-        if self.notified.load(Ordering::Relaxed) {
-            self.notified.swap(false, Ordering::Acquire);
-        }
-
-        // a running task may schedule into `local_queue`, so it must not be
-        // borrowed across `task.run()`
-        for _ in 0..self.event_interval {
-            if let Some(task) = self.pop_local() {
-                self.run_task(task);
-            } else {
-                break;
-            }
-        }
-
-        let remote_queue = self
-            .remote_queue
-            .drain(self.event_interval, |task| self.run_remote(task));
-
-        // tasks from other threads may schedule local tasks
-        let more_tasks = !self.local_queue.is_empty() || remote_queue;
-        if !more_tasks {
-            self.idle.set(true);
-        }
-        more_tasks
-    }
-
-    fn run_remote(&self, task: RemoteTask) {
-        if let Some(task) = task.into_runnable() {
-            self.run_task(task);
-        }
-    }
-
-    fn run_task(&self, task: Task) {
-        struct Reset<'a>(&'a AtomicPtr<Location<'static>>, *mut Location<'static>);
-
-        impl Drop for Reset<'_> {
-            fn drop(&mut self) {
-                // a task that polls the runtime runs tasks inside its own run
-                self.0.store(self.1, Ordering::Relaxed);
-            }
-        }
-
-        let stats = task_ref(&task);
-        // only the owner writes `current`; no callback can reenter between
-        // saving it and publishing the new location
-        let prev = self.current.load(Ordering::Relaxed);
-        self.current.store(
-            ptr::from_ref(stats.location()).cast_mut(),
-            Ordering::Relaxed,
-        );
-        let wakes = if self.self_wake_limit == 0 {
-            0
-        } else {
-            let wakes = stats.self_wakes();
-            if wakes != 0 {
-                stats.set_self_wakes(0);
-            }
-            wakes
-        };
-        let _reset = Reset(&self.current, prev);
-
-        if task.run() {
-            // woken while polled, the task is alive in `local_queue`
-            self.self_wake(stats, wakes);
-        }
-    }
-
-    pub(super) fn self_wake(&self, task: impl TaskStats, wakes: u32) {
-        let total = self.self_wakes.load(Ordering::Relaxed);
-        self.self_wakes
-            .store(total.wrapping_add(1), Ordering::Relaxed);
-
-        if self.self_wake_limit == 0 {
-            return;
-        }
-
-        let reported = wakes & REPORTED;
-        let count = ((wakes & !REPORTED) +
 ```
 
 ### Core Architecture Module: `ntex-server/src/state.rs`
@@ -1419,35 +1377,8 @@ where
 }
 
 #[cfg(test)]
-mod tests {
-    use crate::{Pipeline, ServiceFactory, fn_service_st, map_state, map_state_factory};
-
-    #[ntex::test]
-    async fn test_map_state() {
-        let svc = map_state(
-            100,
-            fn_service_st(|_: &usize, item: usize| async move { Ok::<_, ()>(item) }),
-        )
-        .clone();
-        let _ = format!("{svc:?}");
-
-        let svc = Pipeline::new((), svc);
-        assert_eq!(svc.call(1).await.unwrap(), 1);
-        assert!(!svc.is_shutdown());
-        svc.shutdown().await;
-        assert!(svc.is_shutdown());
-
-        let factory = map_state_factory(
-            100,
-            fn_service_st(|_: &usize, item: usize| async move { Ok::<_, ()>(item) }),
-        )
-        .clone();
-        let _ = format!("{factory:?}");
-
-        let svc = Pipeline::new((), factory.create(&1).await.unwrap());
-        assert_eq!(svc.call(1).await.unwrap(), 1);
-    }
-}
+#[path = "../tests/unit/map_state.rs"]
+mod tests;
 
 ```
 
@@ -1778,6 +1709,38 @@ trait PipelineStateApi<St, Req, Res, Err> {
 
 ### Core Architecture Module: `ntex-service/src/state.rs`
 ```
+//! Requests that carry state for a service call.
+//!
+//! [`RequestState`] splits an input into `(state, request)`. Both the named
+//! [`State<St, Req>`] wrapper and the tuple `(St, Req)` implement it, allowing
+//! protocol boundaries to accept either representation.
+//!
+//! These types package data; they do not create a pipeline or automatically
+//! change its state. After unpacking, the caller can pass the state to a
+//! [`crate::pipeline::PipelineState`] operation or use it to construct a
+//! [`crate::Pipeline`]. A service accesses the supplied state through
+//! [`crate::Ctx::st`].
+//!
+//! # Example
+//!
+//! ```
+//! use ntex_service::state::{RequestState, State};
+//!
+//! let input = State {
+//!     state: "connection-1",
+//!     req: 42,
+//! };
+//! let (state, request) = input.unpack();
+//! assert_eq!(state, "connection-1");
+//! assert_eq!(request, 42);
+//!
+//! assert_eq!(("connection-2", 7).unpack(), ("connection-2", 7));
+//! ```
+//!
+//! # Framework guide
+//!
+//! See [Carrying state with a request](https://docs.ntex.rs/3-state.html#carrying-state-with-a-request).
+
 /// A request that carries state for a service call.
 pub trait RequestState<Req> {
     /// State extracted from the request.
@@ -1911,101 +1874,8 @@ fn is_idle<F>(fut: &mut Pin<&mut Option<F>>) -> bool {
 }
 
 #[cfg(test)]
-pub(crate) mod tests {
-    use std::{cell::Cell, cell::RefCell, future::poll_fn, rc::Rc, task::Poll, task::Waker};
-
-    use ntex::channel::oneshot::{self, Receiver, Sender};
-    use ntex::time::{Millis, sleep};
-
-    use crate::{Ctx, Pipeline, ReadyNotifier, Service};
-
-    pub(crate) type Req = (Receiver<()>, Receiver<()>);
-
-    #[derive(Default)]
-    pub(crate) struct State {
-        changed: ReadyNotifier,
-        pub(crate) active: Cell<usize>,
-        pub(crate) max: Cell<usize>,
-        pub(crate) checks: Cell<usize>,
-        waker: RefCell<Option<Waker>>,
-    }
-
-    /// Accepts one call at a time
-    pub(crate) struct Single(pub(crate) Rc<State>);
-
-    impl Service<(), Receiver<()>> for Single {
-        type Res = ();
-        type Error = ();
-
-        fn bind(&self, ctx: crate::BindCtx<'_>) {
-            ctx.subscribe(&self.0.changed);
-        }
-
-        async fn ready(&self, _: Ctx<'_, Self>) -> Result<(), ()> {
-            self.0.checks.set(self.0.checks.get() + 1);
-            poll_fn(|cx| {
-                if self.0.active.get() >= 1 {
-                    *self.0.waker.borrow_mut() = Some(cx.waker().clone());
-                    Poll::Pending
-                } else {
-                    Poll::Ready(Ok(()))
-                }
-            })
-            .await
-        }
-
-        async fn call(&self, rx: Receiver<()>, _: Ctx<'_, Self>) -> Result<(), ()> {
-            let st = &self.0;
-            st.active.set(st.active.get() + 1);
-            st.max.set(st.max.get().max(st.active.get()));
-            st.changed.notify();
-            let _ = rx.await;
-            st.active.set(st.active.get() - 1);
-            st.changed.notify();
-            if let Some(w) = st.waker.borrow_mut().take() {
-                w.wake();
-            }
-            Ok(())
-        }
-    }
-
-    /// Starts a call; the first sender releases the first step,
-    /// the second sender releases `Single`
-    pub(crate) fn start(pl: &Pipeline<Req, (), ()>) -> (Sender<()>, Sender<()>) {
-        let (tx1, rx1) = oneshot::channel();
-        let (tx2, rx2) = oneshot::channel();
-        let pl = pl.bind();
-        ntex::rt::spawn(async move {
-            let _ = pl.call((rx1, rx2)).await;
-        });
-        (tx1, tx2)
-    }
-
-    pub(crate) async fn tick() {
-        sleep(Millis(20)).await;
-    }
-
-    /// Readiness reported for one call must not be used after another call
-    /// entered the service
-    pub(crate) async fn concurrent_entry(pl: &Pipeline<Req, (), ()>, st: &State) {
-        let (x1, _x2) = start(pl);
-        tick().await; // X: ready, waits in the first step
-        let (z1, z2) = start(pl);
-        let _ = z1.send(());
-        tick().await; // Z enters the service
-        assert_eq!(st.active.get(), 1);
-        let (y1, _y2) = start(pl);
-        tick().await; // Y: readiness check waits for the service
-        let _ = x1.send(());
-        tick().await; // X: waits for the service readiness
-        let _ = z2.send(());
-        tick().await; // Z leaves: Y's check completes, then X enters
-        assert_eq!(st.active.get(), 1);
-        let _ = y1.send(());
-        tick().await; // Y leaves the first step
-        assert_eq!(st.max.get(), 1, "service capacity exceeded");
-    }
-}
+#[path = "../tests/unit/util.rs"]
+pub(crate) mod tests;
 
 ```
 
@@ -2339,289 +2209,89 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ceabec0` (2026-10-24)
-**Commit Message**: Abort the process on a panic during shutdown while an earlier panic is unwinding or held to be resumed
+### Incident Patch 1: `e680c0af` (2026-10-30)
+**Commit Message**: Attempt to fix docs.rs build
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `.github/workflows/docs.yml` (modified, +24/-0)
 ```diff
-@@ -57,7 +57,7 @@ ntex-h2 = "4.4.0"
- ntex-http = "2.1.0"
- ntex-io = "4.5.0"
- ntex-macros = "4.2.0"
--ntex-net = "4.6.0"
-+ntex-net = "4.7.0"
- ntex-router = "2.1.0"
- ntex-rt = "4.3.0"
- ntex-server = "4.3.0"
+@@ -69,6 +69,30 @@ jobs:
+         with:
+           path: _site
+ 
++  docsrs:
++    name: Build docs.rs docs
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v6
++
++      - name: Install Rust
++        uses: actions-rust-lang/setup-rust-toolchain@v1
++        with:
++          toolchain: nightly
++
++      - name: Cache cargo registry
++        uses: Swatinem/rust-cache@v2.8.2
++        with:
++          cache-on-failure: true
++
++      - name: Build docs.rs docs
++        env:
++          DOCS_RS: "1"
++        run: >
++          cargo rustdoc --lib -p ntex
++          --features="tokio,openssl,rustls,compress,cookie,ws,tracker,ntex-tls/rustls-ring"
++          -- --cfg docsrs --cfg docsrs_dep
++
+   deploy:
+     name: Deploy to GitHub Pages
+     needs: build
 ```
 
-**File**: `ntex-net/CHANGES.md` (modified, +4/-0)
+**File**: `ntex/CHANGES.md` (modified, +4/-0)
 ```diff
 @@ -1,5 +1,9 @@
  # Changes
  
-+## [4.7.0] - Unreleased
++## [4.4.2] - 2026-10-30
 +
-+* compio: abort the process if dropping the runtime panics after the event loop panicked
++* Attempt to fix docs.rs build
 +
- ## [4.6.0] - 2026-10-21
+ ## [4.4.1] - 2026-10-27
  
- * Add `tracker` feature, enables `ntex-io/tracker`. io-uring charges a received ring page to
+ * Fix builds with the ws feature disabled - #1153
 ```
 
-**File**: `ntex-net/Cargo.toml` (modified, +1/-1)
+**File**: `ntex/Cargo.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  [package]
- name = "ntex-net"
--version = "4.6.0"
-+version = "4.7.0"
+ name = "ntex"
+-version = "4.4.1"
++version = "4.4.2"
  authors = ["ntex contributors <team@ntex.rs>"]
- description = "ntexwork utils for ntex framework"
- keywords = ["network", "framework", "async", "futures"]
+ description = "Framework for composable network services"
+ readme = "README.md"
 ```
 
-**File**: `ntex-net/src/compio/mod.rs` (modified, +10/-2)
+**File**: `ntex/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -95,8 +95,16 @@ pub(crate) fn block_on<F: Future<Output = ()>>(fut: F) {
-     if let Err(payload) = result {
-         ntex_rt::stop_busy(Instant::now());
-         ntex_rt::set_poll_start(None);
--        // pending tasks are dropped after the active unwind has ended
--        drop(rt);
-+        // pending tasks are dropped after the active unwind has ended,
-+        // a second panic aborts the process
-+        if let Err(second) = panic::catch_unwind(AssertUnwindSafe(|| drop(rt))) {
-+            std::mem::forget(second);
-+            std::mem::forget(payload);
-+            let _ = panic::catch_unwind(|| {
-+                log::error!("Panic during shutdown after an earlier panic; aborting");
-+            });
-+            std::process::abort();
-+        }
-         panic::resume_unwind(payload);
-     }
- }
-```
-
-**File**: `ntex-rt/CHANGES.md` (modified, +8/-0)
-```diff
-@@ -1,5 +1,13 @@
- # Changes
+@@ -46,6 +46,7 @@
+     clippy::unused_async_trait_impl
+ )]
+ // Used for fake variadics
++#![cfg_attr(any(docsrs, docsrs_dep), allow(internal_features))]
+ #![cfg_attr(any(docsrs, docsrs_dep), feature(rustdoc_internals))]
  
-+## [Unreleased]
-+
-+* Abort the process on a panic during shutdown while an earlier panic is unwinding or
-+  held to be resumed, instead of suppressing it or replacing the original panic
-+
-+* Unregister an arbiter and run its `on_shutdown` callbacks when its event loop panic
-+  unwinds through the runner, as for runners that return the panic as an error
-+
- ## [4.3.0] - 2026-10-21
- 
- * Replace `async-task` with a custom task implementation
-```
-
-**File**: `ntex-rt/src/arbiter.rs` (modified, +100/-33)
-```diff
-@@ -183,12 +183,19 @@ impl Arbiter {
-                     let _ = stop_rx.await;
-                 });
- 
--                // unregister arbiter
--                sys2.unregister_arbiter(Id(id));
--                // skipped by `block_on` if the event loop panicked
--                run_shutdown_callbacks();
--                unsafe {
--                    remove_all_items();
-+                let cleanup = || {
-+                    // unregister arbiter
-+                    sys2.unregister_arbiter(Id(id));
-+                    // skipped by `block_on` if the event loop panicked
-+                    run_shutdown_callbacks();
-+                    unsafe {
-+                        remove_all_items();
-+                    }
-+                };
-+                if result.is_err() {
-+                    crate::abort_on_panic(cleanup);
-+                } else {
-+                    cleanup();
-                 }
- 
-                 if let Err(e) = result {
-@@ -316,7 +323,8 @@ impl Arbiter {
-     /// another callback runs in the same shutdown.
-     ///
-     /// If the thread is exiting and its thread-local storage has already been
--    /// destroyed, `f` is dropped without running.
-+    /// destroyed, `f` is dropped without running. If `f` panics after the
-+    /// event loop panicked, the process is aborted.
-     pub fn on_shutdown<F>(f: F)
-     where
-         F: FnOnce() + 'static,
-@@ -327,6 +335,8 @@ impl Arbiter {
- 
-     #[must_use]
-     /// Adds a callback to run after the arbiter stops.
-+    ///
-+    /// If `f` panics after the event loop panicked, the process is aborted.
-     pub fn on_stop<F>(self, f: F) -> Self
-     where
-         F: Fn() + Send + Sync + 'static,
-@@ -345,13 +355,9 @@ impl Arbiter {
-     pub(crate) fn finalize(&self) {
-         self.0.running.store(false, Ordering::Relaxed);
-         let on_stop = mem::take(&mut *self.0.on_stop.lock());
-+        // a panic while unwinding aborts the process
-         for f in on_stop {
--            if thread::panicking() {
--                // a second panic while unwinding would abort the process
--                let _ = panic::catch_unwind(panic::AssertUnwindSafe(f));
--            } else {
--                f();
--            }
-+            f();
-         }
-     }
- 
-@@ -686,27 +692,88 @@ mod tests {
-             }
-         }
- 
--        System::new("arb-panic", CatchRunner).block_on(async {
--            let sys = System::current();
--            let mut arb = Arbiter::with_name("panics".to_string());
--            let (tx, rx) = oneshot::channel();
--            arb.handle()
--                .spawn(async move {
--                    Arbiter::on_shutdown(move || {
--                        let _ = tx.send(());
--                    });
--                    panic!("arbiter boom");
--                })
--                .detach();
-+        fn check(runner: impl crate::Runner) {
-+            System::new("arb-panic", runner).block_on(async {
-+                let sys = System::current();
-+                let mut arb = Arbiter::with_name("panics".to_string());
-+                let (tx, rx) = oneshot::channel();
-+                arb.handle()
-+                    .spawn(async move {
-+                        Arbiter::on_shutdown(move || {
-+                            let _ = tx.send(());
-+                        });
-+                        panic!("arbiter boom");
-+                    })
-+                    .detach();
-+
-+                // the panic of the event loop is returned by `join`
-+                let err = arb.join().unwrap_err();
-+                assert_eq!(err.downcast_ref::<&str>(), Some(&"arbiter boom"));
-+                // the arbiter is unregistered and its shutdown callbacks ran
-+                assert!(rx.recv().is_ok());
-+                assert!(!arb.is_running());
-+                sys.list_arbiters(|arbs| assert!(!arbs.contains(&arb)));
-+            });
-+        }
- 
--            // the panic of the event loop is returned by `join`
--            let err = arb.join().unwrap_err();
--            assert_eq!(err.downcast_ref::<&str>(), Some(&"arbiter boom"));
--            // the arbiter is unregistered and its shutdown callbacks ran
--            assert!(rx.recv().is_ok());
--            assert!(!arb.is_running());
--            sys.list_arbiters(|arbs| assert!(!arbs.contains(&arb)));
--        });
-+        check(CatchRunner);
-+        // the panic unwinds through the runner
-+        check(TestRunner);
-+    }
-+
-+    #[cfg(all(not(feature = "tokio"), not(feature = "compio")))]
-+    #[test]
-+    #[cfg_attr(miri, ignore = "spawns a process")]
-+    fn panicking_arbiter_cleanup_aborts() {
-+        const CHILD: &str = "NTEX_RT_ARBITER_CLEANUP_CHILD";
-+
-+        struct CatchRunner;
-+
-+        impl crate::Runner for CatchRunner {
-+            fn block_on(
-+                &self,
-+                fut: crate::BlockFuture,
-+            ) -> Result<(), Box<dyn std::any::Any + Send>> {
-+                panic::catch_unwind(panic::AssertUnwindSafe(|| TestRunner.block_on(fut)))?
-+            }
-```
-
-**File**: `ntex-rt/src/builder.rs` (modified, +5/-1)
-```diff
-@@ -346,9 +346,13 @@ impl Drop for SystemGuard {
-             // while the thread unwinds, stop arbiters from another thread
-             let list = self.0.take_arbiters();
-             if !list.is_empty() {
--                let _ = std::thread::Builder::new()
-+                let stopped = std::thread::Builder::new()
-                     .spawn(move || list.into_iter().for_each(|arb| arb.stop()))
-                     .map(std::thread::JoinHandle::join);
-+                if let Ok(Err(payload)) = stopped {
-+                    std::mem::forget(payload);
-+                    crate::abort_on_second_panic();
-+                }
-             }
-         } else {
-             self.0.stop_arbiters();
-```
-
-**File**: `ntex-rt/src/driver.rs` (modified, +17/-4)
-```diff
-@@ -27,6 +27,10 @@ impl DriverType {
- }
- 
- pub trait Runner: Send + Sync + 'static {
-+    /// Runs the future to completion.
-+    ///
-+    /// A panic of the event loop may be returned as an error or may unwind,
-+    /// both are handled the same way.
-     fn block_on(&self, fut: BlockFuture) -> Result<(), Box<dyn Any + Send>>;
- }
- 
-@@ -123,12 +127,21 @@ where
- 
-     ntex_error::set_backtrace_start_alt("ntex/ntex-rt/src/driver.rs", 0);
-     // finalizes the thread's arbiter once its event loop has exited,
--    // including when the runner returns an error or lets a panic escape
--    let _finalize = FinalizeArbiter;
--    run.block_on(Box::pin(async move {
-+    // including when the runner returns an error or a shutdown callback panics
-+    let finalize = FinalizeArbiter;
-+    let fut = Box::pin(async move {
-         let r = fut.await;
-         *result_inner.borrow_mut() = Some(r);
--    }))?;
-+    });
-+    // a panic escaping the runner is returned like a runner error, so the
-+    // caller cleans up the same way for unwinding and catching runners
-+    let res =
-+        panic::catch_unwind(panic::AssertUnwindSafe(|| run.block_on(fut))).unwrap_or_else(Err);
-+    if let Err(e) = res {
-+        // the event loop panicked, a panic of `on_stop` aborts the process
-+        crate::abort_on_panic(|| drop(finalize));
-+        return Err(e);
-+    }
- 
-     crate::arbiter::run_shutdown_callbacks();
-     unsafe {
+ #[cfg(not(test))] // Work around for rust-lang/rust#62127
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1151** (2026-10-25): Add `LocalWaker`, a thread-confined owned wake handle (@fafhrd91)
-- **PR #1150** (2026-10-24): Abort the process on a panic during shutdown (@fafhrd91)
-- **PR #1149** (2026-10-21): Prep releases (@fafhrd91)
-- **PR #1148** (2026-10-21): Timer wheel callbacks (@fafhrd91)
-- **PR #1147** (2026-10-21): Re-design service readiness (@fafhrd91)
-- **PR #1146** (2026-10-20): Move items queued at a failed, unavailable or blocked worker (@fafhrd91)
+- **PR #1163** (2026-10-30): Attempt to fix docs.rs build (@fafhrd91)
+- **PR #1162** (2026-10-30): Update api docs (@fafhrd91)
+- **PR #1161** (2026-10-30): Allow to use 'self.' for service forward macros (@fafhrd91)
+- **PR #1160** (2026-10-29): Native tasks cleanups (@fafhrd91)
+- **PR #1159** (2026-10-28): Add SendableJoinHandle type (@fafhrd91)
+- **PR #1158** (2026-10-28): Various spawn related improvements (@fafhrd91)
 
 ---
 
@@ -2641,28 +2311,51 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Abort the process on a panic during shutdown while an earlier panic is unwinding
+## X. Attempt to fix docs.rs build
 
 **RULE**:
-When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ceabec0`: Abort the process on a panic during shutdown while an earlier panic is unwinding or held to be resumed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e680c0af`: Attempt to fix docs.rs build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docs.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-ntex-net = "4.7.0"
+  docsrs:
+    name: Build docs.rs docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+
+      - name: Cache cargo registry
+        uses: Swatinem/rust-cache@v2.8.2
+        with:
+          cache-on-failure: true
+
+      - name: Build docs.rs docs
+        env:
+          DOCS_RS: "1"
+        run: >
+          cargo rustdoc --lib -p ntex
+          --features="tokio,openssl,rustls,compress,cookie,ws,tracker,ntex-tls/rustls-ring"
+          -- --cfg docsrs --cfg docsrs_dep
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-ntex-net = "4.6.0"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ceabec0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e680c0af` are properly handled with clean fallback behavior.

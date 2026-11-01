@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `564d808e`  
+> **Source Version**: `9f1dcebf`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-23T11:37:45.647Z  
+> **Timestamp**: 2026-10-31T02:51:09.622Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-23T11:37:45.469Z  
+> **Harvest Timestamp**: 2026-10-31T02:51:09.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13037 stars
+- **Stars / Engagement**: 13082 stars
 
 ---
 
@@ -923,7 +923,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_supported_audience():
-    return [users.AUDIENCE, spot.AUDIENCE]
+    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
 
 
 def is_spot_token(token: str) -> bool:
@@ -938,16 +938,35 @@ def is_spot_token(token: str) -> bool:
         raise
 
 
+def is_mcp_token(token: str) -> bool:
+    try:
+        if len(token) < 5 or "." not in token:
+            return False
+        decoded_token = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
+        audience = decoded_token.get("aud")
+        return audience == "mcp:OpenReplay"
+    except jwt.InvalidTokenError:
+        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
+        raise
+
+
 def jwt_authorizer(scheme: str, token: str, leeway=0) -> dict | None:
     if scheme.lower() != "bearer" or len(token) < 5 or "." not in token:
         return None
     if not token or token.count(".") != 2:
         logger.debug("! JWT Malformed token")
         return None
+    key = config("JWT_SECRET")
+    algorithm = config("JWT_ALGORITHM")
+    if is_spot_token(token):
+        key = config("JWT_SPOT_SECRET")
+    elif is_mcp_token(token):
+        key = config("JWT_MCP_SECRET")
+        algorithm = config("JWT_MCP_ALGORITHM")
     try:
         payload = jwt.decode(jwt=token,
-                             key=config("JWT_SECRET") if not is_spot_token(token) else config("JWT_SPOT_SECRET"),
-                             algorithms=config("JWT_ALGORITHM"),
+                             key=key,
+                             algorithms=algorithm,
                              audience=get_supported_audience(),
                              leeway=leeway)
     except jwt.ExpiredSignatureError:
@@ -1036,11 +1055,11 @@ def api_key_authorizer(token):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5005** (2026-10-15): **Co-browsing Metadata autocomplete returns no values although manually entered filters work**
-  *Symptoms*: **Describe the issue**  On a self-hosted OpenReplay v1.28.0 installation, Metadata filter suggestions on the Co-browsing page can be empty even when connected sessions contain matching metadata. Suggestions work on the recorded Sessions page.  The problem affects discovering/selecting values: entering a known `tenant_id` manually and applying the filter successfully returns matching live sessions. The behavior is not universal: `user_name` suggestions worked during a later browser test, but after removing that filter and selecting `tenant_id`, its suggestions remained empty. An earlier recording also showed empty autocomplete responses for the `user_name` slot.  **Steps to reproduce the issue**  The following sequence was observed on the affected installation:  1. Have sessions connected to Assist with `user_name` and `tenant_id` metadata. 2. Open Co-browsing, add a Metadata filter for `user_name`, and select a suggested    value. In the later test, this displayed matching sessions successfully. 3. Remove the filter and add a Metadata filter for `tenant_id`. 4. Open the value selector. No values are suggested; typing a search also returns    no suggestions. 5. Enter a known tenant identifier manually and apply the filter. Matching    Co-browsing sessions are returned. 6. Compare with recorded Sessions, where Metadata values are suggested normally.  The affected project maps `user_name` to slot 5 and `tenant_id` to slot 7. Actual tenant identifiers and user names are omitted f
+- **Issue #5096** (2026-10-30): **Network panel crashes with React #300 when opening requests after scrolling**
+  *Symptoms*: ### Describe the bug  The session player can become blank when opening a Network request after scrolling to the end of a long Fetch/XHR list. Filtering can trigger the same error:  ``` Minified React error #300 Rendered fewer hooks than expected. ```  ### Steps to reproduce  1. Open a recorded web session with a long list of network requests (reproduced with approximately 1,200 Fetch/XHR entries). 2. Open Network and select Fetch/XHR. 3. Scroll the request table to the bottom. 4. Open a request near the end of the list. 5. The player becomes blank. Filtering the list can also reproduce it.  ### Expected behavior  The request details should open and the player should remain usable.  ### OpenReplay version  Self-hosted frontend v1.28.5. The same offending code and compiled cache branch remain in frontend v1.28.6 and in main at 2008f30172a65eabc40b11ab0482b43072e60a08.  ### Additional context  `NetworkPanelComp.tsx` uses `useTranslation()` inside ordinary `renderStatus` / `renderDuration` callbacks. `TimeTable/RowColumns` calls `render(row)` directly. React Compiler can skip the memoized `columns.map(...)` on a subsequent render, changing the hook count.  Using `i18n.t` in those two callbacks, as `renderSize` already does, fixes the reproduced crash while retaining the parent's language-change subscription. A minimal fix and regression tests are ready. 
 
-- **Issue #4993** (2026-10-09): **Installer: OVERRIDE_FILE merge breaks the vars.yaml anchor and splits the minio credentials**
-  *Symptoms*: **Describe the issue**  `scripts/helmcharts/vars.yaml` holds the object-store credentials in two places: `minio.global.minio.accessKey/secretKey` (server side, lines 69 to 70 on `main`) and `global.s3.accessKey/secretKey` (client side, lines 158 to 159). The template ties them with a YAML anchor (`&accessKey` / `*accessKey`), so a plain `openreplay -i` keeps them equal.  The documented `OVERRIDE_FILE` path in `scripts/helmcharts/openreplay-cli` (`install()`, line 378) merges the override with  ``` yq '(load("new_vars.yaml") | .. | select(tag != "!!map" and tag != "!!seq")) as $i ireduce(.; setpath($i | path; $i))' old_vars.yaml ```  which replaces the aliased leaf under `global.s3` with a literal. `init.sh` then runs `templater` (after the merge, cli line 383) and renders the still-templated `minio.global.minio.*` with new random values. The two pairs silently diverge, the `minio` secret in `db` no longer matches `or-secrets` in `app`, and `databases-migrate` fails in its `minio` container with:  ``` mc: <ERROR> ... The Access Key Id you provided does not exist in our records. ```  The only guard today is the comment at lines 155 to 157 asking the operator to keep the two blocks in sync.  **Steps to reproduce the issue**  1. Fresh box, no `/var/lib/openreplay/vars.yaml`. 2. Override file that pins only the client side:    ```yaml    global:      s3:        accessKey: "pinnedaccesskey00001"        secretKey: "pinnedsecretkey000000001"    ``` 3. `OVERRIDE_FILE=/root/override.ya
+- **Issue #5062** (2026-10-28): **Lazy-loaded images are replayed without src/srcset; with WordPress sizes="auto" they take 3000px and blank out sliders**
+  *Symptoms*: **Describe the issue** The tracker sends an image's `src`/`srcset` only after the image has finished loading: `sendImgAttrs` in `tracker/tracker/src/main/modules/img.ts` returns early on `if (!img.complete)`, and the generic attribute path skips `src`/`srcset`. So every `loading="lazy"` image the user never scrolled to is replayed with no `src` and no `srcset`.  On WordPress sites this doesn't just leave those images blank, it breaks the layout in the player. WordPress adds `sizes="auto, …"` to lazy images and prints `img:is([sizes="auto" i], [sizes^="auto," i]) { contain-intrinsic-size: 3000px 1500px }`, and Chrome applies `contain: size` to `sizes=auto` images. While the `img` has its `src` this is harmless (even before it loads), but an `img` with no `src`/`srcset` takes the 3000px placeholder size.  Real case: a WooCommerce product page with a horizontal photo slider (a flex row of square slides; photos 2–9 are lazy). The user saw the slider normally and swiped through four photos. In the replay, photos 5–9 have no `src`, each slide is laid out 3000×3000, the row stretches to 3000px and the first photo is centred about 1300px down, so the visible frame stays empty the whole time the page is shown. Microsoft Clarity's recording of the same visit shows the slider correctly.  **Steps to reproduce the issue** 1. Record a session on a page like this (a minimal version of the gallery): ~~~html <style>img:is([sizes="auto" i],[sizes^="auto," i]){contain-intrinsic-size:3000px 1500
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1057,199 +1076,293 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8b3b42fb` (2026-10-21)
-**Commit Message**: ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038)
+### Incident Patch 1: `d10fa567` (2026-10-29)
+**Commit Message**: fix(chalice): changed MCP auth
 
-**File**: `player/src/common/unpack.ts` (modified, +27/-1)
+**File**: `api/chalicelib/core/authorizers.py` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,32 @@
- import { gunzipSync } from 'fflate';
- import * as fzstd from 'fzstd';
+@@ -12,7 +12,7 @@
  
-+// fzstd's one-shot decompress computes bit positions as `byteOffset << 3` (int32),
-+// which overflows once the input passes 256MiB and fails with "invalid zstd data".
-+// The streaming decoder only ever indexes into the chunk it was pushed.
-+const ZSTD_ONESHOT_LIMIT = 1 << 28;
-+const ZSTD_CHUNK = 1 << 20;
-+
-+const zstdDecompress = (b: Uint8Array): Uint8Array => {
-+  if (b.byteLength < ZSTD_ONESHOT_LIMIT) return fzstd.decompress(b);
-+  const parts: Uint8Array[] = [];
-+  let length = 0;
-+  const stream = new fzstd.Decompress((chunk) => {
-+    parts.push(chunk);
-+    length += chunk.length;
-+  });
-+  for (let i = 0; i < b.byteLength; i += ZSTD_CHUNK) {
-+    stream.push(b.subarray(i, i + ZSTD_CHUNK), i + ZSTD_CHUNK >= b.byteLength);
-+  }
-+  const out = new Uint8Array(length);
-+  let offset = 0;
-+  for (const part of parts) {
-+    out.set(part, offset);
-+    offset += part.length;
-+  }
-+  return out;
-+};
-+
- const unpack = (b: Uint8Array): Uint8Array => {
-   // zstd magical numbers 40 181 47 253
-   const isZstd =
-@@ -23,7 +49,7 @@ const unpack = (b: Uint8Array): Uint8Array => {
-   }
-   if (isZstd) {
-     const now = performance.now();
--    const uData = fzstd.decompress(b);
-+    const uData = zstdDecompress(b);
-     console.debug(
-       'Zstd unpack time',
-       `${Math.floor(performance.now() - now)}ms`,
-```
-
-**File**: `player/src/web/managers/CanvasManager.ts` (modified, +1/-0)
-```diff
-@@ -67,6 +67,7 @@ export default class CanvasManager extends ListWalker<Timestamp> {
-           console.error(
-             'Failed to load canvas recording for node',
-             this.nodeId,
-+            e,
-           );
-         }
-       });
+ 
+ def get_supported_audience():
+-    return [users.AUDIENCE, spot.AUDIENCE]
++    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
+ 
+ 
+ def is_spot_token(token: str) -> bool:
 ```
 
 ---
 
-### Incident Patch 2: `8cdfe016` (2026-10-21)
-**Commit Message**: fix(ci): build managed patch images from branch
+### Incident Patch 2: `6f96ebf1` (2026-10-29)
+**Commit Message**: fix(chalice): changed MCP auth
 
-clone_msaas checked out $INPUT_TAG in the openreplay submodule, but
-the tag is only moved to the patched commit in the final step. Managed
-(ARM) frontend/chalice images were therefore built from the unpatched
-code while OSS/EE images had the fix (seen in run 39618595495 for the
-v1.27.0 zstd patch). Check out the patch branch head instead.
-
-**File**: `.github/workflows/patch-build-old.yaml` (modified, +2/-1)
+**File**: `api/chalicelib/core/authorizers.py` (modified, +21/-2)
 ```diff
-@@ -134,7 +134,8 @@ jobs:
-           [ -d $MSAAS_REPO_FOLDER ] || {
-           git clone -b $INPUT_TAG --recursive https://x-access-token:$MSAAS_REPO_CLONE_TOKEN@$MSAAS_REPO_URL $MSAAS_REPO_FOLDER
-           cd $MSAAS_REPO_FOLDER
--          cd openreplay && git fetch origin && git checkout $INPUT_TAG
-+          # Build from the patch branch; INPUT_TAG still points to the old commit until the last step.
-+          cd openreplay && git fetch origin $BRANCH_NAME && git checkout FETCH_HEAD
-           git log -1
-           cd $MSAAS_REPO_FOLDER
-           bash git-init.sh
+@@ -27,16 +27,35 @@ def is_spot_token(token: str) -> bool:
+         raise
+ 
+ 
++def is_mcp_token(token: str) -> bool:
++    try:
++        if len(token) < 5 or "." not in token:
++            return False
++        decoded_token = jwt.decode(token, options={"verify_signature": False, "verify_exp": False})
++        audience = decoded_token.get("aud")
++        return audience == "mcp:OpenReplay"
++    except jwt.InvalidTokenError:
++        logger.error(f"Invalid token for is_spot_token: {sanitize(token, max_length=16)}...")
++        raise
++
++
+ def jwt_authorizer(scheme: str, token: str, leeway=0) -> dict | None:
+     if scheme.lower() != "bearer" or len(token) < 5 or "." not in token:
+         return None
+     if not token or token.count(".") != 2:
+         logger.debug("! JWT Malformed token")
+         return None
++    key = config("JWT_SECRET")
++    algorithm = config("JWT_ALGORITHM")
++    if is_spot_token(token):
++        key = config("JWT_SPOT_SECRET")
++    elif is_mcp_token(token):
++        key = config("JWT_MCP_SECRET")
++        algorithm = config("JWT_MCP_ALGORITHM")
+     try:
+         payload = jwt.decode(jwt=token,
+-                             key=config("JWT_SECRET") if not is_spot_token(token) else config("JWT_SPOT_SECRET"),
+-                             algorithms=config("JWT_ALGORITHM"),
++                             key=key,
++                             algorithms=algorithm,
+                              audience=get_supported_audience(),
+                              leeway=leeway)
+     except jwt.ExpiredSignatureError:
 ```
 
 ---
 
-### Incident Patch 3: `179a4013` (2026-10-20)
-**Commit Message**: fix(gapi): fixed get events
+### Incident Patch 3: `ada14b94` (2026-10-28)
+**Commit Message**: fix(tracker): flush pending messages in forceFlushBatch, add flushInterval (#5082)
 
-**File**: `backend/pkg/events/events.go` (modified, +34/-14)
+Data the worker has buffered but not yet uploaded is lost when a page is
+fully unloaded (same-URL navigation, reload, or any page that does not
+enter the bfcache): the dedicated worker is terminated before its
+`closing` upload completes. With the 30 s auto-send interval that can be
+up to 30 s of clicks, DOM changes and custom events.
+
+- forceFlushBatch() now hands messages still waiting for the next commit
+  to the worker before flushing, so `event(); forceFlushBatch()` includes
+  the event. Previously the flush ran before the event reached the worker.
+- New `flushInterval` option (ms) for the worker's auto-send interval.
+  Defaults to the current 30 s; invalid values fall back to it.
+
+**File**: `tracker/tracker/src/common/interaction.ts` (modified, +3/-0)
 ```diff
-@@ -6,10 +6,10 @@ import (
- 	"fmt"
- 	"net/url"
- 	"strconv"
-+	"strings"
- 	"time"
- 	"unicode"
- 
--	"github.com/ClickHouse/clickhouse-go/v2/lib/chcol"
- 	"github.com/ClickHouse/clickhouse-go/v2/lib/driver"
- 
- 	"openreplay/backend/pkg/logger"
-@@ -273,16 +273,36 @@ func (e *eventsImpl) GetErrorsBySessionID(projectID uint32, sessID uint64, lower
+@@ -5,6 +5,9 @@ export type DataType = 'player' | 'assets' | 'devtools' | 'analytics' | 'visual'
+ export interface Options {
+   connAttemptCount?: number
+   connAttemptGap?: number
++  /** How often (ms) the worker uploads what it has buffered. Defaults to 30 000. Anything
++   *  still buffered is lost if the page is unloaded without entering the bfcache. */
++  flushInterval?: number
  }
  
- type customEvent struct {
--	Name                   string     `ch:"name" json:"name"`
--	Type                   string     `ch:"type" json:"type"`
--	AutoCapturedProperties chcol.JSON `ch:"auto_props" json:"autoCapturedProperties"`
--	Properties             chcol.JSON `ch:"properties" json:"properties"`
--	CreatedAt              time.Time  `ch:"created_at" json:"-"`
-+	Name                   string    `ch:"name" json:"name"`
-+	Type                   string    `ch:"type" json:"type"`
-+	AutoCapturedProperties string    `ch:"auto_props" json:"autoCapturedProperties"`
-+	Properties             string    `ch:"properties" json:"properties"`
-+	CreatedAt              time.Time `ch:"created_at" json:"-"`
+ type Start = {
+```
+
+**File**: `tracker/tracker/src/main/app/index.ts` (modified, +14/-0)
+```diff
+@@ -1817,6 +1817,7 @@ export default class App {
+       url: document.URL,
+       connAttemptCount: this.options.connAttemptCount,
+       connAttemptGap: this.options.connAttemptGap,
++      flushInterval: this.options.flushInterval,
+       tabId: this.session.getTabId(),
+       localDebug: this.options.__local_debug,
+     })
+@@ -1929,6 +1930,7 @@ export default class App {
+       url: document.URL,
+       connAttemptCount: this.options.connAttemptCount,
+       connAttemptGap: this.options.connAttemptGap,
++      flushInterval: this.options.flushInterval,
+       tabId: this.session.getTabId(),
+       localDebug: this.options.__local_debug,
+     })
+@@ -2251,6 +2253,18 @@ export default class App {
+   }
+ 
+   forceFlushBatch() {
++    // Hand over messages still waiting for the next commit first, so that
++    // event(); forceFlushBatch() includes the event.
++    if (
++      this.activityState === ActivityState.Active &&
++      !this.socketMode &&
++      !this.insideIframe &&
++      this.messages.length
++    ) {
++      this.messages.unshift(Timestamp(this.timestamp()), TabData(this.session.getTabId()))
++      this.postToWorker(this.messages)
++      this.messages.length = 0
++    }
+     this.worker?.postMessage('forceFlushBatch')
+   }
+ 
+```
+
+**File**: `tracker/tracker/src/tests/flush.test.ts` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++// @ts-nocheck
++import { describe, expect, test, jest, beforeAll, afterAll, beforeEach } from '@jest/globals'
++import Tracker, { Options } from '../main/index.js'
++import { Type as MType } from '../common/messages.gen.js'
++
++jest.mock('@openreplay/network-proxy', () => ({
++  default: jest.fn(() => 'mocked network-proxy content'),
++}))
++// src/common may also hold the compiled ESM build, which the worker test can't require.
++jest.mock('../common/messages.gen', () => jest.requireActual('../common/messages.gen.ts'))
++
++// App's ActivityState enum is not exported.
++const ACTIVE = 2
++const COLD_START = 3
++
++const options = {
++  projectKey: 'test-project-key',
++  ingestPoint: 'test-ingest-point',
++  respectDoNotTrack: false,
++  network: {},
++  mouse: {},
++  __DISABLE_SECURE_MODE: true,
 +}
 +
-+// parseJSONObject decodes a JSON object produced by ClickHouse's toJSONString()
-+// into a nested map. Numbers are kept as json.Number so they round-trip
-+// unchanged. Empty or malformed input yields an empty map.
-+func parseJSONObject(raw string) map[string]interface{} {
-+	res := make(map[string]interface{})
-+	raw = strings.TrimSpace(raw)
-+	if raw == "" || raw == "null" {
-+		return res
-+	}
-+	dec := json.NewDecoder(strings.NewReader(raw))
-+	dec.UseNumber()
-+	if err := dec.Decode(&res); err != nil {
-+		return make(map[string]interface{})
-+	}
-+	return res
- }
- 
- func (e *eventsImpl) GetCustomsBySessionID(projectID uint32, sessID uint64, lower, upper time.Time) ([]interface{}, error) {
--	query := `SELECT "$properties" AS auto_props,
--				properties,
-+	// JSON columns are serialised to strings server-side: the native JSON
-+	// object encoding is not fully decoded by clickhouse-go (shared-data paths
-+	// desynchronise the stream and surface as "unsupported column type <path>").
-+	query := `SELECT toJSONString("$properties") AS auto_props,
-+				toJSONString(properties) AS properties,
- 				created_at,
- 				'CUSTOM' AS type,
- 				"$event_name" AS name
-@@ -306,10 +326,10 @@ func (e *eventsImpl) GetCustomsBySessionID(projectID uint32, sessID uint64, lowe
- 		event["type"] = cEvent.Type
- 		event["timestamp"] = cEvent.CreatedAt.UnixMilli()
- 
--		for key, value := range cEvent.AutoCapturedProperties.NestedMap() {
-+		for key, value := range parseJSONObject(cEvent.AutoCapturedProperties) {
- 			event[toCamelCase(key)] = value
- 		}
--		event["properties"] = cEvent.Properties.NestedMap()
-+		event["properties"] = parseJSONObject(cEvent.Properties)
- 
- 		res = append(res, event)
- 	}
-@@ -508,8 +528,8 @@ type mobileEvent struct {
- }
- 
- func (e *eventsImpl) GetMobileCrashesBySessionID(projID uint32, sessID uint64, lower, upper time.Time) ([]interface{}, error) {
--	query := `SELECT ` + "`$properties`" + `AS auto_captures,
--				properties,
-+	query := `SELECT toJSONString(` + "`$properties`" + `) AS auto_captures,
-+				toJSONString(properties) AS properties,
- 				created_at,
- 				'CRASH' AS type,
- 				` + "`$event_name`" + ` AS name
-@@ -533,8 +553,8 @@ func (e *eventsImpl) GetMobileCrashesBySessionID(projID uint32, sessID uint64, l
- }
- 
- func (e *eventsImpl) GetMobileCustomsBySessionID(projID uint32, sessID uint64, lower, upper time.Time) ([]interface{}, error) {
--	query := `SELECT ` + "`$properties`" + `AS auto_captures,
--				properties,
-+	query := `SELECT toJSONString(` + "`$properties`" + `) AS auto_captures,
-+				toJSONString(properties) AS properties,
- 				created_at,
- 				'CUSTOM' AS type,
- 				` + "`$event_name`" + `AS name
++describe('forceFlushBatch', () => {
++  let app: any
++
++  beforeAll(() => {
++    Object.defineProperty(window, 'performance', {
++      value: { timing: {}, now: jest.fn(() => 1000) },
++      configurable: true,
++    })
++    Object.defineProperty(window, 'Worker', {
++      value: jest.fn(() => 'mocked worker content'),
++      configurable: true,
++    })
++    globalThis.IntersectionObserver = jest.fn(() => ({
++      observe: jest.fn(),
++      unobserve: jest.fn(),
++      disconnect: jest.fn(),
++    }))
++    app = new Tracker(options as unknown as Options).app
++  })
++
++  afterAll(() => {
++    delete window.performance
++    delete window.Worker
++    delete globalThis.IntersectionObserver
++  })
++
++  // The app clears its message array after posting, so keep a copy of what was sent.
++  let posted: any[]
++
++  beforeEach(() => {
++    posted = []
++    app.worker = {
++      postMessage: jest.fn((data) => posted.push(Array.isArray(data) ? [...data] : data)),
++    }
++    app.activityState = ACTIVE
++    app.messages.length = 0
++  })
++
++  test('hands pending messages to the worker before flushing', () => {
++    app.send([MType.CustomEvent, 'checkout_submitted', '{}'])
++    app.forceFlushBatch()
++
++    expect(posted).toHaveLength(2)
++    expect(posted[0].map((message) => message[0])).toEqual([
++      MType.Timestamp,
++      MType.TabData,
++      MType.CustomEvent,
++    ])
++    expect(posted[1]).toBe('forceFlushBatch')
++    expect(app.messages).toHaveLength(0)
++  })
++
++  test('only flushes when nothing is pending', () => {
++    app.forceFlushBatch()
++    expect(posted).toEqual(['forceFlushBatch'])
++  })
++
++  test('does not hand over messages before the tracker is active', () => {
++    app.activityState = COLD_START
++    app.messages.push([MType.CustomEvent, 'early', '{}'])
++    app.forceFlushBatch()
++    expect(posted).toEqual(['forceFlushBatch'])
++    expect(app.messages).toHaveLength(1)
++  })
++})
++
++describe('worker flushInterval', () => {
++  const start = (extra = {}) => ({
++    type: 'start',
++    ingestPoint: 'test-ingest-point',
++    pageNo: 0,
++    timestamp: 0,
++    url: 'https://example.com/',
++    tabId: 'tab',
++    ...extra,
++  })
++
++  const intervalFor = (extra) => {
++    // The worker keeps its interval in module state, so load a fresh copy each time.
++    jest.isolateModules(() => {
++      require('../webworker/index')
++    })
++    const setIntervalSpy = jest.spyOn(globalThis, 'setInterval')
++    self.onmessage({ data: start(extra) })
++    const delay = setIntervalSpy.mock.calls[0]?.[1]
++    clearInterval(setIntervalSpy.mock.results[0]?.value)
++    setIntervalSpy.mockRestore()
++    return delay
++  }
++
++  test('defaults to 30 seconds', () => {
++    expect(intervalFor({})).toBe(30 * 1000)
++  })
++
++  test('uses the configured interval', () => {
++    expect(intervalFor({ flushInterval: 1000 })).toBe(1000)
++  })
++
++  test('ignores invalid intervals', () => {
++    expect(intervalFor({ flushInterval: 0 })).toBe(30 * 1000)
++    expect(intervalFor({ flushInterval: -5 })).toBe(30 * 1000)
++  })
++})
+```
+
+**File**: `tracker/tracker/src/webworker/index.ts` (modified, +3/-1)
+```diff
+@@ -189,7 +189,9 @@ self.onmessage = ({ data }: { data: ToWorkerData }): any => {
+     detectors = new Detectors((msg) => writer?.writeMessage(msg), data.localDebug ?? false)
+     detectorsTimestamp = 0
+     if (sendIntervalID === null) {
+-      sendIntervalID = setInterval(finalize, AUTO_SEND_INTERVAL)
++      const flushInterval =
++        data.flushInterval && data.flushInterval > 0 ? data.flushInterval : AUTO_SEND_INTERVAL
++      sendIntervalID = setInterval(finalize, flushInterval)
+     }
+     return (workerStatus = WorkerStatus.Active)
+   }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5054** (2026-10-23): Updated patch build from main b382c9e9739761abf5416e6b732657daafdf0bc2 (@estradino)
-- **PR #5053** (2026-10-23): Updated patch build from main 79f56ad449ab5892fe12d0422e88fabe7d9752da (@estradino)
-- **PR #5052** (2026-10-23): refactor(chalice): upgraded dependencies (@tahayk)
-- **PR #5051** (2026-10-22): Updated patch build from main 3d82a5aa91f2b87ffc7d92242c87b6033d751e55 (@estradino)
-- **PR #5050** (2026-10-22): refactor(chalice): changed authorizer (@tahayk)
-- **PR #5048** (2026-10-22): refactor(chalice): upgraded dependencies (@tahayk)
+- **PR #5104** (2026-10-30): or 3943 security fat image for anthropic oss scanner (@rjshrjndrn)
+- **PR #5102** (2026-10-30): fix(backend): escape @ in PG password before parsing connection URL (@zavorotynskiy)
+- **PR #5101** (2026-10-30): fix(tracker): mask attributes and selected text of masked content (@josh08h)
+- **PR #5100** (closed): fix(tracker): mask attributes and selected text of masked content (@josh08h)
+- **PR #5098** (2026-10-30): Updated patch build from main 7aad334aa8536f14e81e24888ec83eb376d4a80e (@estradino)
+- **PR #5097** (2026-10-30): keep Network cell renderers hook-free (@i-chirkov)
 
 ---
 
@@ -1269,54 +1382,28 @@ v1.27.0 zstd patch). Check out the patch branch head instead.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038)
+## X. chalice): changed MCP auth
 
 **RULE**:
-When implementing operations in `player/src/common/unpack.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/chalicelib/core/authorizers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8b3b42fb`: ui: use streaming zstd decompression to avoid 32bit pointer overflow (#5038). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d10fa567`: chalice): changed MCP auth. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `player/src/common/unpack.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/chalicelib/core/authorizers.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// fzstd's one-shot decompress computes bit positions as `byteOffset << 3` (int32),
-// which overflows once the input passes 256MiB and fails with "invalid zstd data".
-// The streaming decoder only ever indexes into the chunk it was pushed.
-const ZSTD_ONESHOT_LIMIT = 1 << 28;
-const ZSTD_CHUNK = 1 << 20;
-
-const zstdDecompress = (b: Uint8Array): Uint8Array => {
-  if (b.byteLength < ZSTD_ONESHOT_LIMIT) return fzstd.decompress(b);
-  const parts: Uint8Array[] = [];
-  let length = 0;
-  const stream = new fzstd.Decompress((chunk) => {
-    parts.push(chunk);
-    length += chunk.length;
-  });
-  for (let i = 0; i < b.byteLength; i += ZSTD_CHUNK) {
-    stream.push(b.subarray(i, i + ZSTD_CHUNK), i + ZSTD_CHUNK >= b.byteLength);
-  }
-  const out = new Uint8Array(length);
-  let offset = 0;
-  for (const part of parts) {
-    out.set(part, offset);
-    offset += part.length;
-  }
-  return out;
-};
-
-    const uData = zstdDecompress(b);
+    return [users.AUDIENCE, spot.AUDIENCE, "mcp:OpenReplay"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    const uData = fzstd.decompress(b);
+    return [users.AUDIENCE, spot.AUDIENCE]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8b3b42fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d10fa567` are properly handled with clean fallback behavior.

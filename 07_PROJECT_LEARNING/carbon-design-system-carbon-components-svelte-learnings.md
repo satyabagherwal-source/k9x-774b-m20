@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source**: github ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
-> **Source Version**: `21400fab`  
+> **Source Version**: `52889ec2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T22:00:35.953Z  
+> **Timestamp**: 2026-10-28T01:29:01.913Z  
 > **Learning ID**: `learn-github-carbon-design-system-carbon-components-svelte`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/carbon-design-system-carbon-components-svelte-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/carbon-design-system/carbon-components-svelte](https://github.com/carbon-design-system/carbon-components-svelte))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T22:00:35.774Z  
+> **Harvest Timestamp**: 2026-10-28T01:29:00.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Svelte implementation of the Carbon Design System
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 2918 stars
+- **Stars / Engagement**: 2917 stars
 
 ---
 
@@ -172,8 +172,8 @@ group("toggleCheckboxNode (cascade check) — deep/narrow (chain)", () => {
 
 ### Core Architecture Module: `e2e/fixtures/notification-queue.ts`
 ```
-import { mount } from "./mount";
 import NotificationQueueFixture from "./NotificationQueueFixture.svelte";
+import { mount } from "./mount";
 
 mount(NotificationQueueFixture);
 
@@ -306,11 +306,9 @@ type Join<K, P> = K extends string | number
  * otherwise widen `PropertyPath` to plain `string`.
  */
 export type KeysWithoutIndexSignature<T> = {
-  [K in keyof T as string extends K
-    ? never
-    : number extends K
-      ? never
-      : K]: T[K];
+  [
+    K in keyof T as string extends K ? never : number extends K ? never : K
+  ]: T[K];
 };
 
 // For performance, the maximum traversal depth is 3.
@@ -335,15 +333,14 @@ export type PropertyPathIgnoringIndexSignatures<T, D extends number = 3> = [
   : T extends object
     ? {
         [K in keyof KeysWithoutIndexSignature<T>]-?: K extends string | number
-          ?
-              | `${K}`
-              | Join<
-                  K,
-                  PropertyPathIgnoringIndexSignatures<
-                    KeysWithoutIndexSignature<T>[K],
-                    PathDepth[D]
-                  >
+          ? | `${K}`
+            | Join<
+                K,
+                PropertyPathIgnoringIndexSignatures<
+                  KeysWithoutIndexSignature<T>[K],
+                  PathDepth[D]
                 >
+              >
           : never;
       }[keyof KeysWithoutIndexSignature<T>]
     : "";
@@ -1062,11 +1059,11 @@ export declare function observeModalClose(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5065** (2026-10-25): **fix(big-number): put the percent sign where the locale puts it**
-  *Symptoms*: `percentage` and `deltaPercentage` appended an ASCII "%" after the number in every locale. Turkish writes "%12", French "12 %" and Egyptian Arabic "١٢٪". Both now format with Intl's "percent" unit, which follows the locale's percent pattern. The percent sign, and the space some locales put beside it, keep the smaller type step.  | Change | Before | After | | :--- | :--- | :--- | | White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-white-after.png"> | | Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5065/percent-locales-g100-after.png"> |  **Notes** - The "percent" unit gives the same text as `style: "percent"` (checked   in about 170 locales) and takes the number as given. `value / 100`   can print "12.300000000000001%". - Percentages are no longer abbreviated ("1,234.5%", not "1.2K%").   ICU's compact percent patterns put Turkish's sign after the "%"   ("%+4,2") and swap French's no-break space for a plain one.  
+- **Issue #5198** (2026-10-28): **fix(data-table): keep the header in view when virtualize scrolls**
+  *Symptoms*: A virtualized DataTable without `stickyHeader` scrolls its wrapper and sets `position: sticky` on the header, as the docs promise. The header still scrolled away. Upstream's `overflow-x: auto` on `.bx--data-table-content` makes that inner div a scroll container too, and a sticky box sticks to its nearest one. The div never scrolls vertically, so the header stuck to nothing.  Mark the wrapper with `bx--data-table-virtual` and drop the inner div's overflow under it. The wrapper already scrolls on both axes.  Scrolled to row 20:  | Change | Before | After | | :--- | :--- | :--- | | White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/white-after.png"> | | Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5198/g100-after.png"> |  
 
-- **Issue #5057** (2026-10-25): **fix(link): keep a visited link's color while pressed or disabled**
-  *Symptoms*: A link with `visited` showed the hover color while pressed, and a disabled one showed the visited color. The rules for the prop came after the pressed and disabled rules they tie, so they won by order. They now sit ahead of those rules in the link mixin.  | Change | Before | After | | :--- | :--- | :--- | | Pressed, White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-white-after.png"> | | Pressed, Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-pressed-g100-after.png"> | | Pressed color (White) | `#0043ce` (hover) | `#0f62fe` (link) | | Disabled, hovered, White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-disabled-hover-white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5057/visited-disabled-hover-white-after.png"> | | Disabled, hovered, Gray 100 | <img width="400
+- **Issue #5197** (2026-10-28): **fix(data-table): size the selection column under fixedLayout**
+  *Symptoms*: With `fixedLayout`, the browser takes column widths from the header row. In a radio or non-batch selectable table, the selection header cell had no class and so no width. When the other headers filled the table, the checkboxes landed on the next column. Give the header cell the same `bx--table-column-checkbox` and `bx--table-column-radio` classes as its body cells.  A 300px wide table with 12rem and 8rem columns:  | Change | Before | After | | :--- | :--- | :--- | | White | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/white-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/white-after.png"> | | Gray 100 | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/g100-before.png"> | <img width="400" src="https://raw.githubusercontent.com/carbon-design-system/carbon-components-svelte/metonym/pr-screenshots/5197/g100-after.png"> |  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1083,460 +1080,342 @@ export declare function observeModalClose(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `39000589` (2026-10-17)
-**Commit Message**: fix(slider): move the number input below a short track
+### Incident Patch 1: `bc2f18a0` (2026-10-27)
+**Commit Message**: fix(data-table): keep the header in view when virtualize scrolls
 
-An invalid or warning slider's number input is 96px wide, to hold its
-icon, and beside the shortest track it overflowed a 200px container by
-26px.
+Without `stickyHeader`, the wrapper around the table scrolls and the
+`thead` is `position: sticky`. Carbon's `overflow-x: auto` on
+`.bx--data-table-content` also makes that inner div a scroll container
+on both axes, so the header stuck to a box that never scrolls and moved
+away with the rows.
 
-The slider's row now wraps, and the track's flex basis is its 48px
-minimum, so the input moves to a second line only when it doesn't fit
-beside even that; the track then grows back toward 200px. The track's
-200px width still sizes a container sized to its content, and every
-layout with room for one line is unchanged.
+Stop the inner div from scrolling when the wrapper does, as the docs
+describe.
 
-**File**: `css/vendor/carbon-components/scss/components/slider/_slider.scss` (modified, +11/-5)
+**File**: `css/vendor/carbon-components/scss/components/data-table/_data-table.scss` (modified, +24/-0)
 ```diff
-@@ -20,20 +20,26 @@
-   .#{$prefix}--slider-container {
-     display: flex;
-     max-width: 100%;
-+    // ccs: wraps the number input onto a second line in a container too
-+    // narrow for it beside even the shortest track (the track's flex basis
-+    // below), instead of overflowing.
-+    flex-wrap: wrap;
-     align-items: center;
-+    row-gap: $carbon--spacing-03;
-     user-select: none;
-   }
- 
-   .#{$prefix}--slider {
-     position: relative;
-     // ccs: 200px where there's room, as before, and down to 48px when the
-     // container is narrower: a 200px minimum pushed the number input out
--    // of narrow containers. `width` (not `flex-basis`), so the container
--    // sizes to it.
-+    // of narrow containers. `width` sizes a content-sized container to the
-+    // 200px track; the 48px flex basis decides when the row wraps, and the
-+    // track grows from it back to 200px.
-     width: to-rem(200px);
-     min-width: to-rem(48px);
--    max-width: to-rem(640px);
--    flex-shrink: 1;
-+    max-width: to-rem(200px);
-+    flex: 1 1 to-rem(48px);
-     padding: $spacing-05 0;
-     margin: 0 $carbon--spacing-05;
-     cursor: pointer;
-@@ -44,7 +50,7 @@
-   }
- 
-   .#{$prefix}--slider-container--full-width .#{$prefix}--slider {
--    flex-grow: 1;
-+    max-width: to-rem(640px);
-   }
- 
-   // ccs: `hideRangeLabels`. The track's side margins space it from the range
+@@ -350,3 +350,27 @@
+ @include exports("data-table-fixed-layout") {
+   @include data-table-fixed-layout;
+ }
++
++// carbon-components-svelte patch (DataTable virtualize without stickyHeader)
++@import "carbon-components/scss/globals/scss/vars";
++@import "carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/import-once/import-once";
++
++/// Keep the header of a virtualized `DataTable` in view while it scrolls.
++/// Without `stickyHeader`, the wrapper around the table scrolls and the `thead`
++/// is `position: sticky`. A sticky box sticks to its nearest scroll container,
++/// and upstream's `overflow-x: auto` on `.bx--data-table-content` makes that
++/// inner `div` the scroll container (the other axis computes to `auto` too).
++/// It never scrolls vertically, so the header sticks to nothing and scrolls
++/// away with the body. The wrapper already scrolls on both axes, so the inner
++/// `div` stops being a scroll container.
++/// @access private
++/// @group components
++@mixin data-table-virtual {
++  .#{$prefix}--data-table-virtual > .#{$prefix}--data-table-content {
++    overflow: visible;
++  }
++}
++
++@include exports("data-table-virtual") {
++  @include data-table-virtual;
++}
 ```
 
-**File**: `e2e/fixtures/SliderFitFixture.svelte` (modified, +8/-0)
+**File**: `e2e/data-table-virtual.test.ts` (modified, +25/-0)
 ```diff
-@@ -11,6 +11,14 @@
-     <RangeSlider labelText="Price" valueFrom={20} valueTo={60} />
-   </div>
- {/each}
-+<!-- An invalid slider's number input is wider (it holds the icon). -->
-+<div data-testid="invalid-200" style="width: 200px; margin: 1rem;">
-+  <Slider labelText="Volume" value={40} invalid invalidText="Too loud" />
-+</div>
-+<!-- A slider in a container sized to its content. -->
-+<div data-testid="content-sized" style="display: inline-block; margin: 1rem;">
-+  <Slider labelText="Volume" value={40} />
-+</div>
- <div data-testid="full-600" style="width: 600px; margin: 1rem;">
-   <Slider fullWidth labelText="Volume" value={40} />
- </div>
+@@ -49,6 +49,31 @@ test.describe("DataTable virtualization", () => {
+     ).toHaveCount(0);
+   });
+ 
++  test("header stays at the top of the scroll container while scrolling", async ({
++    page,
++  }) => {
++    const scrollContainer = page
++      .getByTestId("data-table-virtual-root")
++      .locator(".bx--data-table-container > div")
++      .filter({ has: page.locator("table.bx--data-table") });
++    await expect(scrollContainer).toBeVisible();
++
++    await scrollContainer.evaluate((el) => {
++      el.scrollTop = 50 * 48;
++    });
++    await expect(
++      page.getByRole("cell", { name: "Row 50", exact: true }),
++    ).toBeVisible();
++
++    const container = await scrollContainer.boundingBox();
++    const header = await page
++      .getByRole("columnheader", { name: "Name" })
++      .boundingBox();
++    expect(container).not.toBeNull();
++    expect(header).not.toBeNull();
++    expect(header?.y).toBeCloseTo(container?.y ?? Number.NaN, 0);
++  });
++
+   test("virtual scroll container is height-limited and scrollable", async ({
+     page,
+   }) => {
 ```
 
-**File**: `e2e/slider-fit.test.ts` (modified, +6/-2)
+**File**: `src/DataTable/DataTable.svelte` (modified, +1/-0)
 ```diff
-@@ -2,14 +2,17 @@ import { expect, test } from "./helpers/host";
- 
- /**
-  * Sliders fit a container narrower than their 200px track plus labels
-- * and number inputs, keep the 200px track where there's room, and still
-- * fill the row with fullWidth.
-+ * and number inputs, keep the 200px track where there's room (also in a
-+ * container sized to its content), and still fill the row with
-+ * fullWidth. Where even the shortest track leaves no room for the number
-+ * input, the input moves to a second line.
-  */
- test("sliders fit their container", async ({ page }) => {
-   await page.goto("/slider-fit.html");
- 
-   const fits = [
-     "slider-200",
-+    "invalid-200",
-     "slider-320",
-     "range-320",
-     "slider-600",
-@@ -32,5 +35,6 @@ test("sliders fit their container", async ({ page }) => {
-   const track = (id: string) =>
-     page.getByTestId(id).locator(".bx--slider").boundingBox();
-   expect((await track("slider-600"))?.width).toBeCloseTo(200, 0);
-+  expect((await track("content-sized"))?.width).toBeCloseTo(200, 0);
-   expect((await track("full-600"))?.width).toBeGreaterThan(400);
- });
+@@ -1428,6 +1428,7 @@
+   <div
+     bind:this={scrollContainerRef}
+     use:formReset={handleFormReset}
++    class:bx--data-table-virtual={virtualScrollContainer}
+     style:max-height={virtualScrollContainer
+       ? `${calculatedContainerHeight}px`
+       : undefined}
 ```
 
 ---
 
-### Incident Patch 2: `3d72d221` (2026-10-21)
-**Commit Message**: fix(list-box): keep an inline label's words whole in a narrow row
+### Incident Patch 2: `3de78af5` (2026-10-27)
+**Commit Message**: fix(overflow-menu): forward aria attributes to the menu item
 
-An inline Dropdown or MultiSelect in a row short of space broke its
-label down to a letter a line ("R/e/g/i/o/n/s"). Labels may break
-inside a word so a long word can't run out of its component (#4682),
-but that also let the label's grid track shrink below its words.
+OverflowMenuItem moved only `aria-label`, `aria-labelledby` and
+`aria-describedby` to the menu item and left every other `aria-*` rest
+prop on the `role="none"` li, where `aria-keyshortcuts` or
+`aria-current` do nothing. Move every `aria-*` attribute to the
+button or link.
 
-The inline label now uses `word-break: normal` with `overflow-wrap:
-break-word`, so the track can't shrink below the longest word while
-the label still wraps between words.
-
-A single word wider than the room beside the control now runs past its
-box instead of breaking, because the track can't shrink below it.
-
-**File**: `css/_long-words.scss` (modified, +10/-0)
+**File**: `src/OverflowMenu/OverflowMenuItem.svelte` (modified, +6/-12)
 ```diff
-@@ -24,6 +24,16 @@
-   .#{$prefix}--btn {
-     word-break: break-word;
+@@ -96,7 +96,7 @@
+     getContext,
+     onMount,
+   } from "svelte";
+-  import { splitAriaNaming } from "../utils/aria-naming.js";
++  import { splitAria } from "../utils/aria-naming.js";
+   import { resolveLinkRel } from "../utils/link-rel.js";
+   import { scrollIntoViewWithin } from "../utils/scroll-into-view-within.js";
+   import { uniqueId } from "../utils/unique-id.js";
+@@ -127,28 +127,22 @@
+     }
+   });
+ 
+-  // Naming and description belong on the menuitem, not the `role="none"` li.
+-  $: ({
+-    ariaLabel,
+-    ariaLabelledBy,
+-    ariaDescribedBy,
+-    rest: wrapperProps,
+-  } = splitAriaNaming($$restProps));
++  // Every `aria-*` attribute belongs on the menuitem, not the `role="none"`
++  // li: naming, description, `aria-keyshortcuts` and the rest.
++  $: ({ aria: ariaProps, rest: wrapperProps } = splitAria($$restProps));
+ 
+   $: buttonProps = {
++    ...ariaProps,
+     role: "menuitem",
+     tabindex: "-1",
+     class: "bx--overflow-menu-options__btn",
+     type: href ? undefined : "button",
+     disabled: href ? undefined : disabled,
+-    "aria-disabled": href && disabled ? "true" : undefined,
++    "aria-disabled": href && disabled ? "true" : ariaProps["aria-disabled"],
+     href: href ? href : undefined,
+     target: href && target ? target : undefined,
+     rel: resolveLinkRel(target, rel),
+     title: requireTitle ? ($$slots.default ? undefined : text) : undefined,
+-    "aria-label": ariaLabel,
+-    "aria-labelledby": ariaLabelledBy,
+-    "aria-describedby": ariaDescribedBy,
+   };
+ 
+   /** @param {MouseEvent} event */
+```
+
+**File**: `src/utils/aria-naming.d.ts` (modified, +13/-0)
+```diff
+@@ -13,3 +13,16 @@ export function splitAriaNaming<T extends Record<string, unknown>>(
+   ariaDescribedBy: string | undefined;
+   rest: Omit<T, "aria-label" | "aria-labelledby" | "aria-describedby">;
+ };
++
++/**
++ * Split every `aria-*` attribute out of a component's rest props, for a
++ * component whose root is a wrapper with no role, such as a presentational
++ * `li`. Those attributes describe the control inside it. The rest stay on
++ * the wrapper.
++ */
++export function splitAria<T extends Record<string, unknown>>(
++  restProps: T,
++): {
++  aria: Record<`aria-${string}`, string | undefined>;
++  rest: Omit<T, `aria-${string}`>;
++};
+```
+
+**File**: `src/utils/aria-naming.js` (modified, +19/-0)
+```diff
+@@ -16,3 +16,22 @@ export function splitAriaNaming(restProps) {
+   } = restProps;
+   return { ariaLabel, ariaLabelledBy, ariaDescribedBy, rest };
+ }
++
++/**
++ * Split every `aria-*` attribute out of a component's rest props, for a
++ * component whose root is a wrapper with no role, such as a presentational
++ * `li`. Those attributes describe the control inside it. The rest stay on
++ * the wrapper.
++ *
++ * @param {Record<string, any>} restProps
++ */
++export function splitAria(restProps) {
++  /** @type {Record<string, any>} */
++  const aria = {};
++  /** @type {Record<string, any>} */
++  const rest = {};
++  for (const [name, value] of Object.entries(restProps)) {
++    (name.startsWith("aria-") ? aria : rest)[name] = value;
++  }
++  return { aria, rest };
++}
+```
+
+**File**: `tests/OverflowMenu/OverflowMenu.test.ts` (modified, +20/-0)
+```diff
+@@ -12,6 +12,7 @@ import OverflowMenuRel from "./OverflowMenu.rel.test.svelte";
+ import OverflowMenu from "./OverflowMenu.test.svelte";
+ import OverflowMenuInBreadcrumb from "./OverflowMenuInBreadcrumb.test.svelte";
+ import OverflowMenuInModal from "./OverflowMenuInModal.test.svelte";
++import OverflowMenuItemAria from "./OverflowMenuItem.aria.test.svelte";
+ import OverflowMenuItemIcons from "./OverflowMenuItem.icons.test.svelte";
+ import OverflowMenuPrimaryFocus from "./OverflowMenuPrimaryFocus.test.svelte";
+ import { closeDetails, openMenu } from "./helpers";
+@@ -728,6 +729,25 @@ describe("OverflowMenu", () => {
+     });
+   });
+ 
++  it("puts aria attributes on the menu item, and the rest on the wrapper", () => {
++    render(OverflowMenuItemAria);
++
++    const button = screen.getByRole("menuitem", { name: "Save" });
++    expect(button).toHaveAttribute("aria-keyshortcuts", "Control+S");
++    expect(button).toHaveAttribute("aria-describedby", "save-hint");
++    expect(button).toHaveAccessibleDescription("Saves the draft");
++
++    const link = screen.getByRole("menuitem", { name: "Docs" });
++    expect(link).toHaveAttribute("aria-keyshortcuts", "Control+D");
++    expect(link).toHaveAttribute("aria-current", "page");
++
++    const wrapper = screen.getByTestId("save");
++    expect(wrapper).toHaveAttribute("role", "none");
++    for (const name of wrapper.getAttributeNames()) {
++      expect(name.startsWith("aria-")).toBe(false);
++    }
++  });
++
+   it("focuses the primaryFocus item, not the first item, when opened", async () => {
+     render(OverflowMenuPrimaryFocus);
+ 
+```
+
+**File**: `tests/OverflowMenu/OverflowMenuItem.aria.test.svelte` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++<script lang="ts">
++  import OverflowMenu from "carbon-components-svelte/OverflowMenu/OverflowMenu.svelte";
++  import OverflowMenuItem from "carbon-components-svelte/OverflowMenu/OverflowMenuItem.svelte";
++</script>
++
++<OverflowMenu open>
++  <OverflowMenuItem
++    text="Save"
++    aria-keyshortcuts="Control+S"
++    aria-describedby="save-hint"
++    data-testid="save"
++  />
++  <OverflowMenuItem
++    href="/docs"
++    text="Docs"
++    aria-keyshortcuts="Control+D"
++    aria-current="page"
++  />
++</OverflowMenu>
++<span id="save-hint">Saves the draft</span>
+```
+
+---
+
+### Incident Patch 3: `8b4ff1b3` (2026-10-27)
+**Commit Message**: fix(menu): read a disabled MenuItem as GrayText in forced colors
+
+Forced colors repaint the text color of a disabled item with the same
+value as an enabled one, so the label, shortcut and icon showed no
+sign that the item was disabled. Set them to `GrayText` in a
+forced-colors block, with the selectors of the disabled rules they
+override.
+
+**File**: `css/vendor/carbon-components/scss/components/menu/_menu.scss` (modified, +13/-1)
+```diff
+@@ -241,14 +241,26 @@
+ // The Menu surface is separated from the page only by a box-shadow, which
+ // forced-colors mode drops. A transparent outline is repainted as a visible
+ // system colour there.
++//
++// Forced colors repaint a disabled item's text in the same color as an
++// enabled one, so nothing marked it. Its label, shortcut and icon read
++// `GrayText`. The selectors repeat the disabled rules above, which set
++// `color`, and win on order.
+ 
+-/// Menu surface edge in forced-colors mode.
++/// Menu surface edge and disabled items in forced-colors mode.
+ /// @access private
+ /// @group menu
+ @mixin menu-forced-colors {
+   .#{$prefix}--menu {
+     @include high-contrast-mode("outline");
    }
 +
-+  // `word-break` also lets a box shrink below its longest word, so in a
-+  // row short of space an inline Dropdown's or MultiSelect's label went to
-+  // a letter a line ("R/e/g/i/o/n/s"). Words stay whole here and the label
-+  // still wraps between them. A single word wider than the room left beside
-+  // the control now runs past its box instead of breaking.
-+  .#{$prefix}--list-box__wrapper--inline > .#{$prefix}--label {
-+    word-break: normal;
-+    overflow-wrap: break-word;
++  .#{$prefix}--menu-option__content--disabled,
++  .#{$prefix}--menu-option__content--disabled .#{$prefix}--menu-option__label,
++  .#{$prefix}--menu-option__content--disabled .#{$prefix}--menu-option__info,
++  .#{$prefix}--menu-option__content--disabled .#{$prefix}--menu-option__icon {
++    @include high-contrast-mode("disabled");
 +  }
  }
  
- @include exports("long-words") {
+ @include exports("menu-forced-colors") {
 ```
 
-**File**: `e2e/fixtures/LongWordsFixture.svelte` (modified, +47/-0)
+**File**: `e2e/fixtures/ForcedColorsFixture.svelte` (modified, +1/-0)
 ```diff
-@@ -4,8 +4,10 @@
-     AccordionItem,
-     Button,
-     Checkbox,
-+    Dropdown,
-     InlineNotification,
-     Link,
-+    MultiSelect,
-     RadioButton,
-     TextInput,
-     Tile,
-@@ -15,6 +17,11 @@
+@@ -242,6 +242,7 @@
+   <button bind:this={menuAnchor} type="button">Menu anchor</button>
+   <Menu anchor={menuAnchor} open labelText="Menu">
+     <MenuItem labelText="Item" />
++    <MenuItem labelText="Disabled item" shortcutText="⌘S" disabled />
+   </Menu>
  
-   const word = "Datenschutzgrundverordnungskonformitätsprüfung";
-   const url = "https://api.example.com/v2/organizations/8f14e45fceea167a";
-+  const regions = [
-+    { id: "us", text: "US East" },
-+    { id: "eu", text: "EU West" },
-+    { id: "ap", text: "Asia Pacific" },
-+  ];
- </script>
- 
- <div data-testid="column" style="width: 12rem">
-@@ -40,3 +47,43 @@
-     timeout={0}
-   />
- </div>
-+
-+<!-- Inline controls in a row that shrinks: the filter beside each gives
-+     way, so each label keeps its words whole and the row stays inside its
-+     box. -->
-+<div style="display: grid; gap: 1rem">
-+  {#each [
-+    { id: "dropdown", label: "Region" },
-+    { id: "multiselect", label: "Regions" },
-+  ] as { id, label }}
-+    <div data-testid="rows-{id}" style="display: flex; gap: 1rem; width: 22rem">
-+      {#if id === "dropdown"}
-+        <Dropdown
-+          type="inline"
-+          labelText={label}
-+          items={regions}
-+          selectedId="us"
-+        />
-+      {:else}
-+        <MultiSelect
-+          type="inline"
-+          labelText={label}
-+          placeholder="Choose regions"
-+          items={regions}
-+          selectedIds={["us", "eu"]}
-+        />
-+      {/if}
-+      <div style="flex: 1 1 14rem; min-width: 0">
-+        <TextInput labelText="Filter" hideLabel placeholder="Filter" />
-+      </div>
-+    </div>
-+  {/each}
-+  <div data-testid="rows-words" style="width: 12rem">
-+    <Dropdown
-+      type="inline"
-+      labelText="A label with several words in it"
-+      items={regions}
-+      selectedId="us"
-+    />
-+  </div>
-+</div>
+   <ShapeIndicator kind="medium" label="Medium" />
 ```
 
-**File**: `e2e/long-words.test.ts` (modified, +54/-0)
+**File**: `e2e/forced-colors.test.ts` (modified, +2/-0)
 ```diff
-@@ -27,4 +27,58 @@ test.describe("long words stay inside their column", () => {
-       });
-       expect(spills).toEqual([]);
-     });
-+
-+  // A word is split when its range has client rects on more than one line.
-+  const splitWords = (root: Element) => {
-+    const out: string[] = [];
-+    const range = document.createRange();
-+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-+    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-+      for (const match of (node.textContent ?? "").matchAll(/\S+/g)) {
-+        range.setStart(node, match.index ?? 0);
-+        range.setEnd(node, (match.index ?? 0) + match[0].length);
-+        const tops = new Set(
-+          [...range.getClientRects()]
-+            .filter((rect) => rect.width > 0)
-+            .map((rect) => Math.round(rect.top)),
-+        );
-+        if (tops.size > 1) out.push(match[0]);
-+      }
-+    }
-+    return out;
-+  };
-+
-+  test("the split-word detector flags a word broken across lines", async ({
-+    page,
-+  }) => {
-+    await page.goto("/long-words.html");
-+    const flagged = await page.evaluate((source) => {
-+      const el = document.createElement("div");
-+      el.style.cssText = "width: 3ch; word-break: break-all";
-+      el.textContent = "Regions";
-+      document.body.append(el);
-+      const out = new Function(`return (${source})`)()(el);
-+      el.remove();
-+      return out;
-+    }, splitWords.toString());
-+    expect(flagged).toEqual(["Regions"]);
-+  });
-+
-+  // A word that fits its row stays whole, and the row stays in its box: the
-+  // control beside it gives way, not the label.
-+  for (const id of ["rows-dropdown", "rows-multiselect", "rows-words"])
-+    test(`an inline label in ${id} keeps its words whole inside its box`, async ({
-+      page,
-+    }) => {
-+      await page.goto("/long-words.html");
-+      const box = page.getByTestId(id);
-+      await expect(box).toBeVisible();
-+      const spill = await box.evaluate((root) => {
-+        const edge = root.getBoundingClientRect().right;
-+        const control = root.querySelector(".bx--list-box");
-+        return Math.round((control?.getBoundingClientRect().right ?? 0) - edge);
-+      });
-+      expect(spill).toBeLessThanOrEqual(0);
-+      expect(await box.evaluate(splitWords)).toEqual([]);
-+    });
- });
-```
-
----
-
-### Incident Patch 3: `3274f971` (2026-10-17)
-**Commit Message**: fix(pin-code-input): fit the segments to a narrow container
-
-Segments had a minimum width equal to their width, and the fieldset
-holding them took their full width whatever its container's, so six
-segments overflowed a 200px container by 76px.
-
-The fieldset now stops at its container's width, and segments shrink
-there, down to a minimum (24px at the default size) that still fits a
-character. Where there's room they keep their size.
-
-**File**: `css/_fluid-pin-code-input.scss` (modified, +4/-4)
-```diff
-@@ -59,7 +59,7 @@
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input {
-     block-size: to-rem(40px);
-     inline-size: to-rem(40px);
--    min-inline-size: to-rem(40px);
-+    min-inline-size: to-rem(24px);
-     padding: 0;
-     border: none;
-     border-block-end: none;
-@@ -78,21 +78,21 @@
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xs {
-     block-size: to-rem(24px);
-     inline-size: to-rem(24px);
--    min-inline-size: to-rem(24px);
-+    min-inline-size: to-rem(16px);
-   }
- 
-   .#{$prefix}--pin-code-input--fluid
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--sm {
-     block-size: to-rem(32px);
-     inline-size: to-rem(32px);
--    min-inline-size: to-rem(32px);
-+    min-inline-size: to-rem(20px);
-   }
- 
-   .#{$prefix}--pin-code-input--fluid
-     .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xl {
-     block-size: to-rem(48px);
-     inline-size: to-rem(48px);
--    min-inline-size: to-rem(48px);
-+    min-inline-size: to-rem(28px);
-   }
- 
-   // v10 applies invalid outlines on unfocused inputs. Suppress those in the
-```
-
-**File**: `css/_pin-code-input.scss` (modified, +12/-4)
-```diff
-@@ -10,7 +10,12 @@
- /// @access private
- /// @group components
- @mixin pin-code-input {
-+  // The fieldset takes its segments' width but no more than its container's,
-+  // so they shrink to fit a narrow one. (A fieldset's default minimum is its
-+  // content width.)
-   .#{$prefix}--pin-code-input .#{$prefix}--pin-code-input__fieldset {
-+    min-inline-size: 0;
-+    max-inline-size: 100%;
-     border: 0;
-     margin: 0;
-     padding: 0;
-@@ -26,11 +31,14 @@
-     gap: $carbon--spacing-01;
-   }
- 
-+  // Segments keep their size where there's room and shrink, down to the
-+  // minimum, in a narrower container rather than overflowing it. One
-+  // character still fits at the minimum.
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input {
-     @include type-style("body-compact-01");
- 
-     width: to-rem(40px);
--    min-width: to-rem(40px);
-+    min-width: to-rem(24px);
-     height: to-rem(40px);
-     padding: 0;
-     text-align: center;
-@@ -54,19 +62,19 @@
- 
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xs {
-     width: to-rem(24px);
--    min-width: to-rem(24px);
-+    min-width: to-rem(16px);
-     height: to-rem(24px);
-   }
- 
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--sm {
-     width: to-rem(32px);
--    min-width: to-rem(32px);
-+    min-width: to-rem(20px);
-     height: to-rem(32px);
-   }
- 
-   .#{$prefix}--pin-code-input__field.#{$prefix}--text-input--xl {
-     width: to-rem(48px);
--    min-width: to-rem(48px);
-+    min-width: to-rem(28px);
-     height: to-rem(48px);
-   }
- 
-```
-
-**File**: `e2e/fixtures/PinCodeInputFixture.svelte` (modified, +12/-0)
-```diff
-@@ -35,6 +35,18 @@
-     />
-   </div>
- 
-+  <!-- Six segments plus a status icon, in containers of two widths. -->
-+  {#each [200, 400] as width (width)}
-+    <div data-testid="pin-code-input-{width}" style="width: {width}px">
-+      <PinCodeInput
-+        labelText="Six-digit code"
-+        count={6}
-+        invalid
-+        invalidText="Incorrect code"
-+      />
-+    </div>
-+  {/each}
-+
-   <div data-testid="pin-code-input-disabled">
-     <PinCodeInput labelText="Verification code" disabled={true} value="0182" />
-   </div>
-```
-
-**File**: `e2e/pin-code-input.test.ts` (modified, +29/-0)
-```diff
-@@ -153,4 +153,33 @@ test.describe("PinCodeInput", () => {
-     ).toHaveText("");
-     await expect(segment(section, "Verification code", 1)).toHaveValue("");
-   });
-+
-+  // Segments keep their size where there's room and shrink, down to a
-+  // minimum, in a container too narrow for them.
-+  test("fits six segments to a narrow container", async ({ page }) => {
-+    const widths = (id: string) =>
-+      page
-+        .getByTestId(id)
-+        .locator(".bx--pin-code-input__field")
-+        .evaluateAll((fields) =>
-+          fields.map((f) => Math.round(f.getBoundingClientRect().width)),
-+        );
-+    const overflow = (id: string) =>
-+      page.getByTestId(id).evaluate((box) => {
-+        const edge = box.getBoundingClientRect().right;
-+        return Math.max(
-+          0,
-+          ...[...box.querySelectorAll("*")].map(
-+            (el) => el.getBoundingClientRect().right - edge,
-+          ),
-+        );
-+      });
-+
-+    expect(await widths("pin-code-input-400")).toEqual(Array(6).fill(40));
-+    expect(await overflow("pin-code-input-400")).toBeLessThanOrEqual(0);
-+
-+    const narrow = await widths("pin-code-input-200");
-+    expect(narrow.every((w) => w >= 24 && w < 40)).toBe(true);
-+    expect(await overflow("pin-code-input-200")).toBeLessThanOrEqual(0);
-+  });
- });
+@@ -217,6 +217,8 @@ test.describe("forced colors", () => {
+       ".bx--card--disabled",
+       ".bx--card--disabled .bx--card__label",
+       ".bx--card--disabled .bx--card__title-text-row",
++      ".bx--menu-option--disabled .bx--menu-option__label",
++      ".bx--menu-option--disabled .bx--menu-option__info",
+     ]) {
+       // biome-ignore lint/performance/noAwaitInLoops: hover moves one pointer
+       await page.hover(selector, { force: true });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5081** (2026-10-25): chore(scripts): skip full runs for deleted fixtures and type-check files (@metonym)
-- **PR #5078** (2026-10-25): docs(breadcrumb): close the separator example (@metonym)
-- **PR #5077** (2026-10-25): docs(contributing): add CI probing, dead globs and flake triage (@metonym)
-- **PR #5076** (2026-10-25): chore(scripts): compile CSS at a ref with crassus compileAt (@metonym)
-- **PR #5075** (2026-10-25): chore(bench): scope the DOM preload to the component tier (@metonym)
-- **PR #5074** (2026-10-25): chore(scripts): annotate sveld diagnostics on the PR diff (@metonym)
+- **PR #5200** (2026-10-27): chore(deps-dev): bump bivium to 0.2.0 (@metonym)
+- **PR #5198** (2026-10-28): fix(data-table): keep the header in view when virtualize scrolls (@metonym)
+- **PR #5197** (2026-10-28): fix(data-table): size the selection column under fixedLayout (@metonym)
+- **PR #5196** (2026-10-28): fix(overflow-menu): forward aria attributes to the menu item (@metonym)
+- **PR #5195** (2026-10-28): fix(data-table): allow a null sortKey (@metonym)
+- **PR #5192** (2026-10-28): fix(menu): read a disabled MenuItem as GrayText in forced colors (@metonym)
 
 ---
 
@@ -1556,42 +1435,51 @@ character. Where there's room they keep their size.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. slider): move the number input below a short track
+## X. data-table): keep the header in view when virtualize scrolls
 
 **RULE**:
-When implementing operations in `css/vendor/carbon-components/scss/components/slider/_slider.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `css/vendor/carbon-components/scss/components/data-table/_data-table.scss`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in carbon-design-system/carbon-components-svelte. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `39000589`: slider): move the number input below a short track. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bc2f18a0`: data-table): keep the header in view when virtualize scrolls. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `css/vendor/carbon-components/scss/components/slider/_slider.scss`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `css/vendor/carbon-components/scss/components/data-table/_data-table.scss`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // ccs: wraps the number input onto a second line in a container too
-    // narrow for it beside even the shortest track (the track's flex basis
-    // below), instead of overflowing.
-    flex-wrap: wrap;
-    row-gap: $carbon--spacing-03;
-    // of narrow containers. `width` sizes a content-sized container to the
-    // 200px track; the 48px flex basis decides when the row wraps, and the
-    // track grows from it back to 200px.
-    max-width: to-rem(200px);
-    flex: 1 1 to-rem(48px);
-    max-width: to-rem(640px);
+
+// carbon-components-svelte patch (DataTable virtualize without stickyHeader)
+@import "carbon-components/scss/globals/scss/vars";
+@import "carbon-components/scss/globals/scss/vendor/@carbon/elements/scss/import-once/import-once";
+
+/// Keep the header of a virtualized `DataTable` in view while it scrolls.
+/// Without `stickyHeader`, the wrapper around the table scrolls and the `thead`
+/// is `position: sticky`. A sticky box sticks to its nearest scroll container,
+/// and upstream's `overflow-x: auto` on `.bx--data-table-content` makes that
+/// inner `div` the scroll container (the other axis computes to `auto` too).
+/// It never scrolls vertically, so the header sticks to nothing and scrolls
+/// away with the body. The wrapper already scrolls on both axes, so the inner
+/// `div` stops being a scroll container.
+/// @access private
+/// @group components
+@mixin data-table-virtual {
+  .#{$prefix}--data-table-virtual > .#{$prefix}--data-table-content {
+    overflow: visible;
+  }
+}
+
+@include exports("data-table-virtual") {
+  @include data-table-virtual;
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-    // of narrow containers. `width` (not `flex-basis`), so the container
-    // sizes to it.
-    max-width: to-rem(640px);
-    flex-shrink: 1;
-    flex-grow: 1;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `39000589` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bc2f18a0` are properly handled with clean fallback behavior.

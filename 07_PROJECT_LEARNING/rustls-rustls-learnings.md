@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `8f54626e`  
+> **Source Version**: `8dca43ed`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T13:34:05.655Z  
+> **Timestamp**: 2026-10-31T20:46:48.674Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T13:33:57.169Z  
+> **Harvest Timestamp**: 2026-10-31T20:46:48.667Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7712 stars
+- **Stars / Engagement**: 7723 stars
 
 ---
 
@@ -1108,16 +1108,14 @@ pub struct CommonState {
     pub(crate) outputs: ConnectionOutputs,
     pub(crate) send: SendPath,
     pub(crate) recv: ReceivePath,
-    pub(crate) fips: FipsStatus,
 }
 
 impl CommonState {
     pub(crate) fn new(side: Side, fips: FipsStatus) -> Self {
         Self {
-            outputs: ConnectionOutputs::default(),
+            outputs: ConnectionOutputs::new(fips),
             send: SendPath::default(),
             recv: ReceivePath::new(side),
-            fips,
         }
     }
 
@@ -1163,8 +1161,8 @@ impl fmt::Debug for CommonState {
 }
 
 /// Facts about the connection learned through the handshake.
-#[derive(Default)]
 pub struct ConnectionOutputs {
+    pub(crate) fips: FipsStatus,
     negotiated_version: Option<ProtocolVersion>,
     handshake_kind: Option<HandshakeKind>,
     suite: Option<SupportedCipherSuite>,
@@ -1177,6 +1175,21 @@ pub struct ConnectionOutputs {
 }
 
 impl ConnectionOutputs {
+    fn new(fips: FipsStatus) -> Self {
+        Self {
+            fips,
+            negotiated_version: None,
+            handshake_kind: None,
+            suite: None,
+            negotiated_kx_group: None,
+            alpn_protocol: None,
+            peer_identity: None,
+            extended_main_secret: None,
+            exporter: None,
+            early_exporter: None,
+        }
+    }
+
     /// Retrieves the certificate chain or the raw public key used by the peer to authenticate.
     ///
     /// This is made available for both full and resumed handshakes.
@@ -1223,6 +1236,17 @@ impl ConnectionOutputs {
     /// This returns `None` until the version is agreed.
     pub fn protocol_version(&self) -> Option<ProtocolVersion> {
         self.negotiated_version
+    }
+
+    /// Return the FIPS validation status of the connection.
+    ///
+    /// This is different from [`CryptoProvider::fips()`][]:
+    /// it is concerned only with cryptography, whereas this _also_ covers TLS-level
+    /// configuration that NIST recommends, as well as ECH HPKE suites if applicable.
+    ///
+    /// [`CryptoProvider::fips()`]: crate::crypto::CryptoProvider::fips()
+    pub fn fips(&self) -> FipsStatus {
+        self.fips
     }
 
     /// Whether the Extended Main Secret extension was negotiated.
@@ -1305,6 +1329,7 @@ impl ConnectionOutput for ConnectionOutputs {
 impl fmt::Debug for ConnectionOutputs {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let Self {
+            fips,
             negotiated_version,
             handshake_kind,
             suite,
@@ -1316,6 +1341,7 @@ impl fmt::Debug for ConnectionOutputs {
             early_exporter: _,
         } = self;
         f.debug_struct("ConnectionOutputs")
+            .field("fips", fips)
             .field("negotiated_version", negotiated_version)
             .field("handshake_kind", handshake_kind)
             .field("suite", suite)
@@ -1330,31 +1356,7 @@ impl fmt::Debug for ConnectionOutputs {
 /// Send an alert via `output` if `error` specifies one.
 pub(crate) fn maybe_send_fatal_alert(
     send: &mut dyn SendOutput,
-    error: &Error,
-    tls: &mut Vec<u8>,
-) -> Result<(), Error> {
-    let Ok(alert) = AlertDescription::try_from(error) else {
-        return Ok(());
-    };
-    send.send_alert(AlertLevel::Fatal, alert, tls)
-}
-
-/// Describes which sort of handshake happened.
-#[derive(Debug, PartialEq, Clone, Copy)]
-#[non_exhaustive]
-pub enum HandshakeKind {
-    /// A full handshake.
-    ///
-    /// This is the typical TLS connection initiation process when resumption is
-    /// not available, and the initial `ClientHello` was accepted by the server.
-    Full,
-
-    /// A full TLS1.3 handshake, with an extra round-trip for a `HelloRetryRequest`.
-    ///
-    /// The server can respond with a `HelloRetryRequest` if the initial `ClientHello`
-    /// is unacceptable for several reasons, the most likely being if no supported key
-    /// shares were offered by the client.
-    
+    error: 
 ```
 
 ### Core Architecture Module: `admin/threads-seq.rs`
@@ -1569,6 +1571,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
         .with_custom_certificate_verifier(Arc::new(DummyServerAuth::new(
             &opts.trusted_cert_file,
             opts.ocsp,
+            opts.enable_ocsp_stapling,
             opts.expected_server_names(),
             &provider,
         )));
@@ -1651,6 +1654,7 @@ pub(crate) fn config(opts: &Options, key_log: &Arc<KeyLogMemo>) -> Arc<ClientCon
 struct DummyServerAuth {
     parent: Arc<dyn ServerVerifier>,
     ocsp: OcspValidation,
+    enable_ocsp_stapling: bool,
     expect_server_names: Vec<ServerName<'static>>,
     server_name_index: AtomicUsize,
 }
@@ -1659,6 +1663,7 @@ impl DummyServerAuth {
     fn new(
         trusted_cert_file: &str,
         ocsp: OcspValidation,
+        enable_ocsp_stapling: bool,
         expect_server_names: Vec<ServerName<'static>>,
         provider: &CryptoProvider,
     ) -> Self {
@@ -1669,6 +1674,7 @@ impl DummyServerAuth {
                     .unwrap(),
             ),
             ocsp,
+            enable_ocsp_stapling,
             expect_server_names,
             server_name_index: AtomicUsize::new(0),
         }
@@ -1713,7 +1719,7 @@ impl ServerVerifier for DummyServerAuth {
     }
 
     fn request_ocsp_response(&self) -> bool {
-        true
+        self.enable_ocsp_stapling
     }
 
     fn hash_config(&self, h: &mut dyn Hasher) {
@@ -1787,12 +1793,7 @@ impl client::ClientCredentialResolver for MultipleClientCredentialResolver {
 
         quit(match all_must_match_issuer {
             true => ":NO_MATCHING_ISSUER:",
-            false => ":NO_COMMON_SIGNATURE_ALGORITHMS:",
-        })
-    }
-
-    fn supported_certificate_types(&self) -> &'static [CertificateType] {
-        match self.de
+        
 ```
 
 ### Core Architecture Module: `bogo/src/compress.rs`
@@ -2242,11 +2243,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3389** (2026-10-25): **⚡ [Buzz] Fix CVE-2024-24576: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows**
-  *Symptoms*: ## ⚡ Buzz Automated Security Remediation (`CVE-2024-24576`)  - **Vulnerability**: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows - **Target File**: `Cargo.toml` (`L14`) - **Synthesized By**: Gemini 4 Argon (`gemini-4-argon`)  ### Remediation Applied ``` Upgrade `rust` (generic) to Upgrade to latest release to remediate CVE-2024-24576 (CWE-78). ```
+- **Issue #3402** (2026-10-31): **Fix nightly clippy `redundant_clone` case**
+  *Symptoms*: Regressed in 139738f7f which was masked by e9bb7b3da
+  **Post-Mortem & Fix Analysis**:
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1346667 | 1340345 | ✅ [-6322](https://bench.rustls.dev/comparisons/6148ff168bee9ca3716ff3c22de66f2e174122fa:b7bf2e14b8482c632b69cf2c3f7cee501299041c/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (-0.47%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_rsa_aes_server | 10882153 | 10944433 | [62280](https://bench.rustls.dev/comparisons/6148ff168bee9ca3716ff3c22de66f2e174122fa:b7bf2e14b8482c632b69cf2c3f7cee501299041c/cacheg
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3402?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.64%. Comparing base ([`6148ff1`](https://app.codecov.io/gh/rustls/rustls/commit/6148ff168bee9ca3716ff3c22de66f2e174122fa?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`b7bf2e1`](https://app.codecov.io/gh/rustls/rustls/commit/b7bf2e14b8482c632b69cf2c3f7cee501299041c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3402   +/-   ## ======================================= 
 
-- **Issue #3385** (2026-10-26): **Expand exactly key_len bytes for TLS 1.3 AEAD keys**
-  *Symptoms*: Currently, hkdf_expand_label_aead_key encodes key_len as the HkdfLabel length but then asks the HKDF expander for AeadKey::MAX_LEN bytes and trims the output. For AES-128-GCM the info says 16 while the provider is asked to fill 32.  The derived key is unchanged, because HKDF-Expand's first n bytes of output is invariant regardless of requested length. However, the implementation is not HKDF-Expand-Label as RFC 8446 section 7.1 defines it, and a provider that checks the requested length against the encoded one rejects every 16-byte key.  For clarity of code, we add an AeadKey::new_with constructor, rather than construct the key in a buffer and then copy. The with_length() method has no other caller and is removed.  
+- **Issue #3401** (2026-10-30): **Ensure rustls-ring crate is used by rustls-test**
+  *Symptoms*: This fixes a new-ish cargo lint (https://github.com/rust-lang/cargo/pull/17298 -- not sure why it only just turned up)  ``` warning: unused dependency `rustls-ring`   --> rustls-test/Cargo.toml:18:1    | 18 | rustls-ring = { path = "../rustls-ring", optional = true }    | ^^^^^^^^^^^    |    = note: `cargo::unused_dependencies` is set to `warn` by default ```  This is needed as a dependency as it is optional (so can't be dev-dep which is what it actually is, due to cargo features being a little underbaked.)
+  **Post-Mortem & Fix Analysis**:
+  >   # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server | 1340087 | 1346600 | ⚠️ [6513](https://bench.rustls.dev/comparisons/0c05a2c1f9452034042826713961276918d75c10:34becce95da816b48a29e0ca64f7f17d4f967914/cachegrind-diff/handshake_no_resume_aws_lc_rs_1.3_ecdsap256_chacha_server) (0.49%) | 0.20% |   </details>    #### Other differences    <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | handshake_no_resume_aws_lc_rs_1.2_rsa_aes_server | 10396668 | 10430386 | [33718](https://bench.rustls.dev/comparisons/0c05a2c1f9452034042826713961276918d75c10:34becce95da816b48a29e0ca64f7f17d4f967914/cachegr
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3401?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 95.65%. Comparing base ([`44323f5`](https://app.codecov.io/gh/rustls/rustls/commit/44323f51bfdd090e7cbd0fe3f6012ba194a74abc?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`34becce`](https://app.codecov.io/gh/rustls/rustls/commit/34becce95da816b48a29e0ca64f7f17d4f967914?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 1 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3401 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2263,129 +2270,31 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8f54626e` (2026-10-24)
-**Commit Message**: Expand exactly key_len bytes for TLS 1.3 AEAD keys.
+### Incident Patch 1: `8dca43ed` (2026-10-31)
+**Commit Message**: Fix clippy `redundant_clone` case
 
-Currently, hkdf_expand_label_aead_key encodes key_len as the HkdfLabel
-length but then asks the HKDF expander for AeadKey::MAX_LEN bytes and
-trims the output. For AES-128-GCM the info says 16 while the provider is
-asked to fill 32.
+Regressed in 139738f7f which was masked by e9bb7b3da
 
-The derived key is unchanged, because HKDF-Expand's first n bytes of
-output is invariant regardless of requested length. However, the
-implementation is not HKDF-Expand-Label as RFC 8446 section 7.1 defines
-it, and a provider that checks the requested length against the encoded
-one rejects every 16-byte key.
-
-For clarity of code, we add an AeadKey::new_with constructor, rather
-than construct the key in a buffer and then copy. The with_length()
-method has no other caller and is removed.
-
-**File**: `rustls/src/crypto/cipher/mod.rs` (modified, +12/-5)
+**File**: `rustls-test/tests/api/resume.rs` (modified, +1/-1)
 ```diff
-@@ -374,11 +374,18 @@ impl AeadKey {
-         key
-     }
- 
--    pub(crate) fn with_length(self, len: usize) -> Self {
--        let Self { mut buf, used } = self;
--        assert!(len <= used);
--        buf[len..used].zeroize();
--        Self { buf, used: len }
-+    /// Builds a key of `len` bytes by letting `fill` write directly into it.
-+    pub(crate) fn new_with<E>(
-+        len: usize,
-+        fill: impl FnOnce(&mut [u8]) -> Result<(), E>,
-+    ) -> Result<Self, E> {
-+        debug_assert!(len <= Self::MAX_LEN);
-+        let mut key = Self {
-+            buf: [0u8; Self::MAX_LEN],
-+            used: len,
-+        };
-+        fill(&mut key.buf[..len])?;
-+        Ok(key)
-     }
- 
-     /// Largest possible AEAD key in the ciphersuites we support.
-```
-
-**File**: `rustls/src/tls13/key_schedule.rs` (modified, +51/-1)
-```diff
-@@ -1091,7 +1091,10 @@ pub(crate) fn hkdf_expand_label_aead_key(
-     context: &[u8],
- ) -> AeadKey {
-     hkdf_expand_label_inner(expander, label, context, key_len, |e, info| {
--        expand::<AeadKey, { AeadKey::MAX_LEN }>(e, info).with_length(key_len)
-+        // Request exactly `key_len` bytes so `L` matches the length
-+        // encoded in the HkdfLabel.
-+        AeadKey::new_with(key_len, |out| e.expand_slice(info, out))
-+            .expect("AEAD key length from cipher suite must be within MAX_LEN")
-     })
- }
- 
-@@ -1239,6 +1242,53 @@ mod tests {
-     use crate::key_log::KeyLog;
-     use crate::tls13::Tls13CipherSuite;
- 
-+    /// Checks that HKDF-Expand-Label asks the expander for exactly the
-+    /// number of bytes encoded in the HkdfLabel length field, for AEAD
-+    /// keys of both supported sizes and for whole blocks.
-+    #[test]
-+    fn expand_label_length_matches_hkdf_label() {
-+        let expander = LengthCheckingExpander;
-+        let expected = [LengthCheckingExpander::FILL; LengthCheckingExpander::HASH_LEN];
-+
-+        for key_len in [16, 32] {
-+            let key = hkdf_expand_label_aead_key(&expander, key_len, b"key", &[]);
-+            assert_eq!(key.as_ref(), &expected[..key_len]);
-+        }
-+
-+        let block = hkdf_expand_label_block(&expander, b"derived", &[]);
-+        assert_eq!(block.as_ref(), &expected[..]);
-+    }
-+
-+    /// An expander that rejects any request whose output length differs
-+    /// from the length encoded at the start of the info.
-+    struct LengthCheckingExpander;
-+
-+    impl LengthCheckingExpander {
-+        const HASH_LEN: usize = 32;
-+        const FILL: u8 = 0xab;
-+    }
-+
-+    impl HkdfExpander for LengthCheckingExpander {
-+        fn expand_slice(&self, info: &[&[u8]], output: &mut [u8]) -> Result<(), OutputLengthError> {
-+            let info = info.concat();
-+            let encoded = u16::from_be_bytes([info[0], info[1]]) as usize;
-+            assert_eq!(output.len(), encoded, "L does not match HkdfLabel.length");
-+            output.fill(Self::FILL);
-+            Ok(())
-+        }
-+
-+        fn expand_block(&self, info: &[&[u8]]) -> OkmBlock {
-+            let mut block = [0u8; Self::HASH_LEN];
-+            self.expand_slice(info, &mut block)
-+                .unwrap();
-+            OkmBlock::new(&block)
-+        }
-+
-+        fn hash_len(&self) -> usize {
-+            Self::HASH_LEN
-+        }
-+    }
-+
-     #[test]
-     fn test_vectors() {
-         /* These test vectors generated with OpenSSL. */
+@@ -93,7 +93,7 @@ fn client_only_attempts_resumption_with_compatible_security() {
+         let mut client_output = Vec::new();
+         let mut server_output = Vec::new();
+         let (mut client, mut server) = make_pair_for_configs(
+-            client_config.clone(),
++            client_config,
+             ServerConfig::clone(&server_config),
+             &mut client_output,
+         );
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3389** (closed): ⚡ [Buzz] Fix CVE-2024-24576: Rusts's `std::process::Command` did not properly escape arguments of batch files on Windows (@AgenticJamesBond)
-- **PR #3385** (2026-10-26): Expand exactly key_len bytes for TLS 1.3 AEAD keys (@6d7770)
-- **PR #3384** (2026-10-23): Avoid panic for error handling in `set_resumption_data()` (@ctz)
-- **PR #3383** (2026-10-23): Take semver-compatible updates (@ctz)
-- **PR #3382** (closed): Discard TLS 1.3 tickets with a zero lifetime (@6d7770)
-- **PR #3379** (2026-10-23): docs: add rustls-pure to the third-party providers (@Gilfeather)
+- **PR #3402** (2026-10-31): Fix nightly clippy `redundant_clone` case (@ctz)
+- **PR #3401** (2026-10-30): Ensure rustls-ring crate is used by rustls-test (@ctz)
+- **PR #3400** (2026-10-30): Ensure hashing of type_id is for concrete type (@ctz)
+- **PR #3398** (closed): Enforce TLS 1.2 ECDSA certificate curve against offered groups (@parthod0x)
+- **PR #3397** (2026-10-30): Send internal_error for Error::Other (@loadingalias)
+- **PR #3396** (2026-10-29): Minor performance improvements (@ctz)
 
 ---
 
@@ -2405,43 +2314,28 @@ method has no other caller and is removed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Expand exactly key_len bytes for TLS 1.3 AEAD keys.
+## X. clippy `redundant_clone` case
 
 **RULE**:
-When implementing operations in `rustls/src/crypto/cipher/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rustls-test/tests/api/resume.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8f54626e`: Expand exactly key_len bytes for TLS 1.3 AEAD keys.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8dca43ed`: clippy `redundant_clone` case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls/src/crypto/cipher/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rustls-test/tests/api/resume.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Builds a key of `len` bytes by letting `fill` write directly into it.
-    pub(crate) fn new_with<E>(
-        len: usize,
-        fill: impl FnOnce(&mut [u8]) -> Result<(), E>,
-    ) -> Result<Self, E> {
-        debug_assert!(len <= Self::MAX_LEN);
-        let mut key = Self {
-            buf: [0u8; Self::MAX_LEN],
-            used: len,
-        };
-        fill(&mut key.buf[..len])?;
-        Ok(key)
+            client_config,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-    pub(crate) fn with_length(self, len: usize) -> Self {
-        let Self { mut buf, used } = self;
-        assert!(len <= used);
-        buf[len..used].zeroize();
-        Self { buf, used: len }
+            client_config.clone(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8f54626e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8dca43ed` are properly handled with clean fallback behavior.

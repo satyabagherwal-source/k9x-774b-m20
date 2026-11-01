@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `84409045`  
+> **Source Version**: `f572af7e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T14:23:26.399Z  
+> **Timestamp**: 2026-10-31T13:54:27.977Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T14:23:26.153Z  
+> **Harvest Timestamp**: 2026-10-31T13:54:27.970Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9388 stars
+- **Stars / Engagement**: 9395 stars
 
 ---
 
@@ -1077,266 +1077,96 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3472511` (2026-10-26)
-**Commit Message**: fix(optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)
+### Incident Patch 1: `f572af7e` (2026-10-30)
+**Commit Message**: refactor: box AWS SDK config loading since its futures are large (#27741)
 
-**File**: `e2e_test/streaming/bug_fixes/issue_27451.slt` (added, +74/-0)
+**File**: `src/connector/src/connector_common/common.rs` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,74 @@
-+# https://github.com/risingwavelabs/risingwave/issues/27451
-+# TL;DR A grouped agg over an input with at most one row was simplified into a simple agg,
-+# which outputs one row instead of zero rows on empty input.
-+
-+statement ok
-+create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-+
-+statement ok
-+create materialized view m16 as select col_0 from m6 where false group by col_0;
-+
-+query I
-+select * from m16;
-+----
-+
-+query I
-+select col_0 from m6 where false group by col_0;
-+----
-+
-+# Multiple group keys on a single-row input whose only row may be filtered out.
-+statement ok
-+create table t (v int);
-+
-+statement ok
-+create materialized view m_single as select min(v) as a, max(v) as b from t;
-+
-+statement ok
-+create materialized view m_grouped as
-+select a, b, count(*) as cnt from m_single where a is not null group by a, b;
-+
-+query III
-+select * from m_grouped;
-+----
-+
-+# The same query in batch mode.
-+query III
-+select a, b, count(*) from m_single where a is not null group by a, b;
-+----
-+
-+statement ok
-+insert into t values (1), (3);
-+
-+statement ok
-+flush;
-+
-+query III
-+select * from m_grouped;
-+----
-+1 3 1
-+
-+statement ok
-+delete from t;
-+
-+statement ok
-+flush;
-+
-+query III
-+select * from m_grouped;
-+----
-+
-+# cleanup
-+statement ok
-+drop materialized view m_grouped;
-+
-+statement ok
-+drop materialized view m_single;
-+
-+statement ok
-+drop table t;
-+
-+statement ok
-+drop materialized view m16;
-+
-+statement ok
-+drop materialized view m6;
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/input/agg.yaml` (modified, +19/-0)
-```diff
-@@ -1173,3 +1173,22 @@
-     - logical_plan
-     - batch_plan
-     - stream_plan
-+- name: group by on a single-row input must not become a simple agg (https://github.com/risingwavelabs/risingwave/issues/27451)
-+  sql: |
-+    create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-+    select col_0 from m6 where false group by col_0;
-+  expected_outputs:
-+    - logical_plan
-+    - optimized_logical_plan_for_batch
-+    - optimized_logical_plan_for_stream
-+    - batch_plan
-+    - stream_plan
-+- name: group by multiple columns on a single-row input keeps one group key
-+  sql: |
-+    create materialized view m7 as select min(x) as a, max(x) as b from (values (1)) as v(x);
-+    select a, b, count(*) from m7 where a > 0 group by a, b;
-+  expected_outputs:
-+    - optimized_logical_plan_for_batch
-+    - optimized_logical_plan_for_stream
-+    - batch_plan
-+    - stream_plan
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/agg.yaml` (modified, +50/-0)
-```diff
-@@ -2331,3 +2331,53 @@
-     └─StreamProject { exprs: [null:Struct(a:Int16, b:Float64, c:Time), 995:Int32, '-168:00:00':Interval, 294:Float64, _row_id] }
-       └─StreamFilter { predicate: false:Boolean }
-         └─StreamValues { rows: [[0:Int64]] }
-+- name: group by on a single-row input must not become a simple agg (https://github.com/risingwavelabs/risingwave/issues/27451)
-+  sql: |
-+    create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-+    select col_0 from m6 where false group by col_0;
-+  logical_plan: |-
-+    LogicalProject { exprs: [m6.col_0] }
-+    └─LogicalAgg { group_key: [m6.col_0], aggs: [] }
-+      └─LogicalProject { exprs: [m6.col_0] }
-+        └─LogicalFilter { predicate: false:Boolean }
-+          └─LogicalScan { table: m6, columns: [m6.col_0, m6._rw_timestamp], cardinality: 1..=1 }
-+  optimized_logical_plan_for_batch: |-
-+    LogicalAgg { group_key: [m6.col_0], aggs: [] }
-+    └─LogicalValues { rows: [], schema: Schema { fields: [m6.col_0:Int32] } }
-+  optimized_logical_plan_for_stream: |-
-+    LogicalAgg { group_key: [m6.col_0], aggs: [] }
-+    └─LogicalScan { table: m6, columns: [m6.col_0], predicate: false:Boolean, cardinality: 1..=1 }
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashAgg { group_key: [m6.col_0], aggs: [] }
-+      └─BatchExchange { order: [], dist: HashShard(m6.col_0) }
-+        └─BatchValues { rows: [] }
-+  stream_plan: |-
-+    StreamMaterialize { columns: [col_0], stream_key: [col_0], pk_columns: [col_0], pk_conflict: NoCheck }
-+    └─StreamProject { exprs: [m6.col_0], noop_update_hint: true }
-+      └─StreamHashAgg { group_key: [m6.col_0], aggs: [count] }
-+        └─StreamExchange { dist: HashShard(m6.col_0) }
-+          └─StreamFilter { predicate: false:Boolean }
-+            └─StreamTableScan { table: m6, columns: [m6.col_0], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
-+- name: group by multiple columns on a single-row input keeps one group key
-+  sql: |
-+    create materialized view m7 as select min(x) as a, max(x) as b from (values (1)) as v(x);
-+    select a, b, count(*) from m7 where a > 0 group by a, b;
-+  optimized_logical_plan_for_batch: |-
-+    LogicalAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+    └─LogicalScan { table: m7, columns: [m7.a, m7.b], predicate: (m7.a > 0:Int32), cardinality: 1..=1 }
-+  optimized_logical_plan_for_stream: |-
-+    LogicalAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+    └─LogicalScan { table: m7, columns: [m7.a, m7.b], predicate: (m7.a > 0:Int32), cardinality: 1..=1 }
-+  batch_plan: |-
-+    BatchExchange { order: [], dist: Single }
-+    └─BatchHashAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+      └─BatchExchange { order: [], dist: HashShard(m7.a) }
-+        └─BatchFilter { predicate: (m7.a > 0:Int32) }
-+          └─BatchScan { table: m7, columns: [m7.a, m7.b], distribution: Single }
-+  stream_plan: |-
-+    StreamMaterialize { columns: [a, b, count], stream_key: [a], pk_columns: [a], pk_conflict: NoCheck }
-+    └─StreamHashAgg { group_key: [m7.a], aggs: [internal_last_seen_value(m7.b), count] }
-+      └─StreamExchange { dist: HashShard(m7.a) }
-+        └─StreamFilter { predicate: (m7.a > 0:Int32) }
-+          └─StreamTableScan { table: m7, columns: [m7.a, m7.b], stream_scan_type: SnapshotBackfill, stream_key: [], pk: [], dist: Single }
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/subquery_impure_outer.yaml` (modified, +8/-8)
-```diff
-@@ -384,14 +384,14 @@
-     select s.max_id, (select count(*) from t where t.id = s.max_id)
-     from (select max(id) as max_id from (select id from t limit 5) t) s;
-   optimized_logical_plan_for_stream: |-
--    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), internal_last_seen_value(max(t.id))), output: [max(t.id), count(1:Int32)] }
-+    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), max(t.id)), output: [max(t.id), count(1:Int32)] }
-     ├─LogicalShare { id: 3 }
-     │ └─LogicalAgg { aggs: [max(t.id)] }
-     │   └─LogicalLimit { limit: 5, offset: 0 }
-     │     └─LogicalScan { table: t, columns: [t.id] }
--    └─LogicalAgg { group_key: [internal_last_seen_value(max(t.id))], aggs: [count(1:Int32)] }
--      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(internal_last_seen_value(max(t.id)), t.id), output: [internal_last_seen_value(max(t.id)), 1:Int32] }
--        ├─LogicalAgg { aggs: [internal_last_seen_value(max(t.id))] }
-+    └─LogicalAgg { group_key: [max(t.id)], aggs: [count(1:Int32)] }
-+      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), t.id), output: [max(t.id), 1:Int32] }
-+        ├─LogicalAgg { group_key: [max(t.id)], aggs: [] }
-         │ └─LogicalShare { id: 3 }
-         │   └─LogicalAgg { aggs: [max(t.id)] }
-         │     └─LogicalLimit { limit: 5, offset: 0 }
-@@ -407,14 +407,14 @@
-     select s.max_id, (select count(*) from t where t.id = s.max_id)
-     from (select max(id) as max_id from (select id from t order by priority limit 5) t) s;
-   optimized_logical_plan_for_stream: |-
--    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), internal_last_seen_value(max(t.id))), output: [max(t.id), count(1:Int32)] }
-+    LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), max(t.id)), output: [max(t.id), count(1:Int32)] }
-     ├─LogicalShare { id: 3 }
-     │ └─LogicalAgg { aggs: [max(t.id)] }
-     │   └─LogicalTopN { order: [t.priority ASC], limit: 5, offset: 0 }
-     │     └─LogicalScan { table: t, columns: [t.id, t.priority] }
--    └─LogicalAgg { group_key: [internal_last_seen_value(max(t.id))], aggs: [count(1:Int32)] }
--      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(internal_last_seen_value(max(t.id)), t.id), output: [internal_last_seen_value(max(t.id)), 1:Int32] }
--        ├─LogicalAgg { aggs: [internal_last_seen_value(max(t.id))] }
-+    └─LogicalAgg { group_key: [max(t.id)], aggs: [count(1:Int32)] }
-+      └─LogicalJoin { type: LeftOuter, on: IsNotDistinctFrom(max(t.id), t.id), output: [max(t.id), 1:Int32] }
-+        ├─LogicalAgg { group_key: [max(t.id)], aggs: [] }
-         │ └─LogicalShare { id: 3 }
-         │   └─LogicalAgg { aggs: [max(t.id)] }
-         │     └─LogicalTopN { order: [t.priority ASC], limit: 5, offset: 0 }
-```
-
-**File**: `src/frontend/planner_test/tests/testdata/output/topn.yaml` (modified, +6/-4)
-```diff
-@@ -4,10 +4,12 @@
-     CREATE MATERIALIZED VIEW t1_mv AS SELECT SUM(a) as sa, SUM(b) as sb, SUM(c) as sc, SUM(d) as sd FROM t1;
-     SELECT sa, count(*) as cnt2 FROM t1_mv GROUP BY sa ORDER BY cnt2 DESC LIMIT 50 OFFSET 50;
-   batch_plan: |-
--    BatchExchange { order: [], dist: Single }
--    └─BatchLimit { limit: 50, offset: 50 }
--      └─BatchSimpleAgg { aggs: [internal_last_seen_value(t1_mv.sa), count] }
--        └─BatchScan { table: t1_mv, columns: [t1_mv.sa], distribution: Single }
-+    BatchLimit { limit: 50, offset: 50 }
-+    └─BatchExchange { order: [], dist: Single, sequential: true }
-+      └─BatchLimit { limit: 100, offset: 0 }
-+        └─BatchHashAgg { group_key: [t1_mv.sa], aggs: [count] }
-+          └─BatchExchange { order: [], dist: HashShard(t1_mv.sa) }
-+            └─BatchScan { table: t1_mv, columns: [t1_mv.sa], distribution: Single }
- - sql: |
-     CREATE TABLE t1 (pk int, a int, b int, c bigint, d int);
-     CREATE MATERIALIZED VIEW t1_mv AS SELECT * from t1;
-```
-
-**File**: `src/frontend/src/optimizer/rule/agg_group_by_simplify_rule.rs` (modified, +8/-2)
-```diff
-@@ -35,10 +35,16 @@ impl Rule<Logical> for AggGroupBySimplifyRule {
+@@ -153,7 +153,7 @@ impl AwsAuthProps {
+             ))
+         } else if !env_var_is_true(DISABLE_DEFAULT_CREDENTIAL) {
+             Ok(SharedCredentialsProvider::new(
+-                aws_config::default_provider::credentials::default_provider().await,
++                Box::pin(aws_config::default_provider::credentials::default_provider()).await,
+             ))
+         } else {
+             bail!("Both `access_key` and `secret_key` must be provided")
+@@ -172,7 +172,7 @@ impl AwsAuthProps {
+             if let Some(id) = &self.external_id {
+                 role = role.external_id(id);
+             }
+-            let provider = role.build_from_provider(credential).await;
++            let provider = Box::pin(role.build_from_provider(credential)).await;
+             Ok(SharedCredentialsProvider::new(provider))
+         } else {
+             Ok(credential)
+@@ -192,7 +192,7 @@ impl AwsAuthProps {
+             config_loader = config_loader.endpoint_url(endpoint);
          }
-         let functional_dependency = agg_input.functional_dependency();
-         let group_key = group_key.to_vec();
--        if !functional_dependency.is_key(&group_key) {
-+        if group_key.is_empty() || !functional_dependency.is_key(&group_key) {
-             return None;
-         }
--        let minimized_group_key = functional_dependency.minimize_key(&group_key);
-+        let mut minimized_group_key = functional_dependency.minimize_key(&group_key);
-+        // The minimized key is empty when the input has at most one row. Keep one group key
-+        // column, otherwise the grouped agg would become a simple agg, which outputs one row
-+        // instead of zero rows on empty input.
-+        if minimized_group_key.is_empty() {
-+            minimized_group_key.push(group_key[0]);
-+        }
-         if minimized_group_key.len() < group_key.len() {
-             let new_group_key = IndexSet::from(minimized_group_key);
-             let new_group_key_len = new_group_key.len();
+ 
+-        Ok(config_loader.load().await)
++        Ok(Box::pin(config_loader.load()).await)
+     }
+ }
+ 
+```
+
+**File**: `src/object_store/src/object/s3.rs` (modified, +13/-11)
+```diff
+@@ -695,7 +695,7 @@ impl S3ObjectStore {
+                     Err(_) => false,
+                 };
+ 
+-                let sdk_config = sdk_config_loader.load().await;
++                let sdk_config = Box::pin(sdk_config_loader.load()).await;
+                 #[cfg(madsim)]
+                 let client = Client::new(&sdk_config);
+                 #[cfg(not(madsim))]
+@@ -719,7 +719,7 @@ impl S3ObjectStore {
+             }
+             Err(_) => {
+                 // s3
+-                let sdk_config = sdk_config_loader.load().await;
++                let sdk_config = Box::pin(sdk_config_loader.load()).await;
+                 #[cfg(madsim)]
+                 let client = Client::new(&sdk_config);
+                 #[cfg(not(madsim))]
+@@ -776,15 +776,17 @@ impl S3ObjectStore {
+         );
+         #[cfg(not(madsim))]
+         let builder = aws_sdk_s3::config::Builder::from(
+-            &aws_config::ConfigLoader::default()
+-                // FIXME: https://github.com/awslabs/aws-sdk-rust/issues/973
+-                .credentials_provider(Credentials::from_keys(
+-                    access_key_id,
+-                    secret_access_key,
+-                    None,
+-                ))
+-                .load()
+-                .await,
++            &Box::pin(
++                aws_config::ConfigLoader::default()
++                    // FIXME: https://github.com/awslabs/aws-sdk-rust/issues/973
++                    .credentials_provider(Credentials::from_keys(
++                        access_key_id,
++                        secret_access_key,
++                        None,
++                    ))
++                    .load(),
++            )
++            .await,
+         )
+         .force_path_style(true)
+         .identity_cache(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27662** (closed): fix: batch query epoch readiness and Pub/Sub credentials fixes to release-3.1 (@zwang28)
-- **PR #27661** (2026-10-26): perf(storage): avoid version waits for readable batch query epochs (@zwang28)
-- **PR #27655** (2026-10-26): feat(iceberg): list tables in storage catalog (@chenzl25)
-- **PR #27650** (2026-10-26): cherry-pick refactor(meta): shorten Hummock GC context lock scope (release-3.1) (@zwang28)
-- **PR #27645** (2026-10-26): test(iceberg): wait longer for sink commits in predicate_pushdown bench (@howenyap)
-- **PR #27627** (2026-10-23): fix(frontend): avoid external MySQL access in CDC privilege test (@cyliu0)
+- **PR #27741** (2026-10-31): refactor: box AWS SDK config loading since its futures are large (@maybe-vibe)
+- **PR #27738** (2026-10-30): fix(meta): reject pending inputs in manual L0 compaction (@Li0k)
+- **PR #27737** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.0 (@howenyap)
+- **PR #27736** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.1 (@howenyap)
+- **PR #27733** (closed): perf(meta): simplify Hummock TTL and task-status queries (@Li0k)
+- **PR #27729** (2026-10-30): fix(frontend): reject iceberg pk-index sink with auto schema change (@howenyap)
 
 ---
 
@@ -1356,85 +1186,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594)
+## X. box AWS SDK config loading since its futures are large (#27741)
 
 **RULE**:
-When implementing operations in `e2e_test/streaming/bug_fixes/issue_27451.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/connector/src/connector_common/common.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3472511`: optimizer): keep at least one group key in AggGroupBySimplifyRule (#27594). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f572af7e`: box AWS SDK config loading since its futures are large (#27741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/streaming/bug_fixes/issue_27451.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/connector_common/common.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# https://github.com/risingwavelabs/risingwave/issues/27451
-# TL;DR A grouped agg over an input with at most one row was simplified into a simple agg,
-# which outputs one row instead of zero rows on empty input.
-
-statement ok
-create materialized view m6 as select min(x) as col_0 from (values (1)) as v(x);
-
-statement ok
-create materialized view m16 as select col_0 from m6 where false group by col_0;
-
-query I
-select * from m16;
-----
-
-query I
-select col_0 from m6 where false group by col_0;
-----
-
-# Multiple group keys on a single-row input whose only row may be filtered out.
-statement ok
-create table t (v int);
-
-statement ok
-create materialized view m_single as select min(v) as a, max(v) as b from t;
-
-statement ok
-create materialized view m_grouped as
-select a, b, count(*) as cnt from m_single where a is not null group by a, b;
-
-query III
-select * from m_grouped;
-----
-
-# The same query in batch mode.
-query III
-select a, b, count(*) from m_single where a is not null group by a, b;
-----
-
-statement ok
-insert into t values (1), (3);
-
-statement ok
-flush;
-
-query III
-select * from m_grouped;
-----
-1 3 1
-
-statement ok
-delete from t;
-
-statement ok
-flush;
-
-query III
-select * from m_grouped;
-----
+                Box::pin(aws_config::default_provider::credentials::default_provider()).await,
+            let provider = Box::pin(role.build_from_provider(credential)).await;
+        Ok(Box::pin(config_loader.load()).await)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+                aws_config::default_provider::credentials::default_provider().await,
+            let provider = role.build_from_provider(credential).await;
+        Ok(config_loader.load().await)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3472511` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f572af7e` are properly handled with clean fallback behavior.

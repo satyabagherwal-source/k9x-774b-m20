@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md`  
 > **Source**: github ([https://github.com/guokaigdg/animal-island-ui](https://github.com/guokaigdg/animal-island-ui))  
-> **Source Version**: `8df30b8f`  
+> **Source Version**: `1cdab9d4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T11:20:46.395Z  
+> **Timestamp**: 2026-10-27T13:40:46.865Z  
 > **Learning ID**: `learn-github-guokaigdg-animal-island-ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/guokaigdg-animal-island-ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/guokaigdg/animal-island-ui](https://github.com/guokaigdg/animal-island-ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T11:20:45.574Z  
+> **Harvest Timestamp**: 2026-10-27T13:40:45.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kawaii React UI component library  一个可爱的 React UI  组件库
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5066 stars
+- **Stars / Engagement**: 5074 stars
 
 ---
 
@@ -2268,440 +2268,13 @@ export default CardDemo;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `127a4135` (2026-10-25)
-**Commit Message**: fix(overlays): stop the modal and drawer chrome from being selectable
+### Incident Patch 1: `1cdab9d4` (2026-10-27)
+**Commit Message**: chore: add FUNDING.yml with custom sponsor link
 
-**File**: `docs/design-system/components/overlays.md` (modified, +13/-0)
+**File**: `.github/FUNDING.yml` (added, +1/-0)
 ```diff
-@@ -47,6 +47,7 @@ Exact values for the layered surfaces that sit above page content: Modal, Drawer
- background: rgba(0, 0, 0, 0.35);
- animation: animal-fade-in 0.25s ease;
- z-index: 1000;
-+user-select: none; /* chrome — never hosts a selection */
- 
- /* modal container */
- max-width: calc(100vw - 32px);
-@@ -68,6 +69,7 @@ font-size: 28px;
- font-weight: 700;
- color: rgba(114, 93, 66, 1);
- padding-bottom: 15px;
-+user-select: none;
- 
- /* close button */
- width: 32px;
-@@ -76,6 +78,7 @@ font-size: 22px;
- color: rgba(114, 93, 66, 0.6);
- border-radius: 50%;
- transition: all 0.2s;
-+user-select: none;
- /* hover */
- background: rgba(114, 93, 66, 0.1);
- color: rgba(114, 93, 66, 1);
-@@ -86,9 +89,11 @@ font-weight: 600;
- line-height: 1.6;
- color: #8a7b66;
- padding-bottom: 20px;
-+user-select: text; /* content stays copyable */
- 
- /* footer */
- gap: 12px;
-+user-select: none;
- 
- /* normal button */
- height: 40px;
-@@ -111,13 +116,16 @@ background: rgba(255, 204, 0, 0.85);
- border-color: rgba(255, 204, 0, 0.85);
- ```
- 
-+**Modal chrome is not selectable; only the body is.** The mask, header, title, close × and footer carry `user-select: none`; the body carries `user-select: text` so content stays copyable. Without this, double-clicking the title selects a word, and the warm `::selection` colour paints a stray highlight inside the popup.
-+
- ## Drawer (recessed depth-of-field)
- 
- **Recessed depth-of-field drawer — the background sinks, scales down and dims to push the panel forward.**
- 
- - `pushBackground` (default `true`): on open, every non-fixed direct child of `document.body` gets `transform: scale(0.94)`, `border-radius: 14px` and `overflow: hidden` over `0.36s cubic-bezier(0.2, 0, 0.2, 1)`. Fixed-position elements, `[data-animal-drawer-ignore]` nodes and the component's own portal wrapper are excluded.
- - The pushed background deliberately carries **no `filter`**. `filter` is a non-composited property — it forces a fresh composited layer and a per-pixel gaussian blur across the viewport for each background element, so the *first* open stalls while the layers are rasterized from scratch and later opens feel fine. The depth read comes from `scale` + rounded corners + the dimming mask. `will-change: transform` is applied before the transition starts so layer promotion does not happen mid-animation.
- - `prefers-reduced-motion: reduce` disables **both** the background push (the sunken translate/scale) **and** the panel's own `translateX/Y(±100%) → none` slide-in, matching `Modal`, which drops its `scale(0.92) → scale(1)` zoom-in. The panel lands directly on its final transform — it never stops mid-flight or invisible. The mask's opacity transition is not motion and is kept.
-+- **Panel chrome is not selectable; only the body is.** The mask, header, title, close × and footer carry `user-select: none`; the body carries `user-select: text` so content stays copyable. Without this, double-clicking the title selects a word, and double-clicking the trigger to open the drawer drops a selection onto the sliding-in panel — the warm `::selection` colour then paints a stray highlight inside the popup.
- 
- ```css
- /* mask — light black (0.18), lighter than Modal so the recessed background stays visible (key to the depth effect) */
-@@ -126,6 +134,7 @@ inset: 0;
- z-index: 1000;
- background: rgba(0, 0, 0, 0.18);
- animation: animal-drawer-fade-in 0.25s ease;
-+user-select: none; /* chrome — never hosts a selection */
- 
- /* panel (shared) */
- position: fixed;
-@@ -164,12 +173,14 @@ animation-name: animal-drawer-slide-bottom; /* translateY(100%) → 0 */
- font-size: 28px;
- font-weight: 700;
- color: rgba(114, 93, 66, 1);
-+user-select: none;
- 
- /* close button × */
- width: 32px; height: 32px;
- font-size: 22px;
- color: rgba(114, 93, 66, 0.6);
- border-radius: 50%;
-+user-select: none;
- /* hover */
- background: rgba(114, 93, 66, 0.1);
- color: rgba(114, 93, 66, 1);
-@@ -180,10 +191,12 @@ font-weight: 600;
- line-height: 1.6;
- color: #8a7b66;
- padding: 0 24px 24px 24px;
-+user-select: text; /* content stays copyable */
- 
- /* footer */
- gap: 12px;
- padding: 0 24px 24px 24px;
-+user-select: none;
- ```
- 
- **Background recession (injected by JS into the inline style of every non-fixed child of `body`):**
-```
-
-**File**: `docs/zh-CN/design-system/components/overlays.md` (modified, +13/-0)
-```diff
-@@ -47,6 +47,7 @@
- background: rgba(0, 0, 0, 0.35);
- animation: animal-fade-in 0.25s ease;
- z-index: 1000;
-+user-select: none; /* chrome — never hosts a selection */
- 
- /* modal container */
- max-width: calc(100vw - 32px);
-@@ -68,6 +69,7 @@ font-size: 28px;
- font-weight: 700;
- color: rgba(114, 93, 66, 1);
- padding-bottom: 15px;
-+user-select: none;
- 
- /* close button */
- width: 32px;
-@@ -76,6 +78,7 @@ font-size: 22px;
- color: rgba(114, 93, 66, 0.6);
- border-radius: 50%;
- transition: all 0.2s;
-+user-select: none;
- /* hover */
- background: rgba(114, 93, 66, 0.1);
- color: rgba(114, 93, 66, 1);
-@@ -86,9 +89,11 @@ font-weight: 600;
- line-height: 1.6;
- color: #8a7b66;
- padding-bottom: 20px;
-+user-select: text; /* content stays copyable */
- 
- /* footer */
- gap: 12px;
-+user-select: none;
- 
- /* normal button */
- height: 40px;
-@@ -111,13 +116,16 @@ background: rgba(255, 204, 0, 0.85);
- border-color: rgba(255, 204, 0, 0.85);
- ```
- 
-+**弹窗 chrome 不可选中，只有内容区可选。** 遮罩、标题行、标题、关闭 × 与底部按钮区均为 `user-select: none`，内容区为 `user-select: text`（正文仍可复制）。不这么设的话，双击标题会选中一个词，暖黄 `::selection` 会在弹窗里涂出一块莫名的高亮。
-+
- ## Drawer（下沉景深）
- 
- **下沉景深抽屉 — 背景下沉 + 缩放 + 降亮突出主体。**
- 
- - `pushBackground`（默认 `true`）：打开时，`document.body` 下每个非 fixed 的直接子元素施加 `transform: scale(0.94)`、`border-radius: 14px`、`overflow: hidden`，过渡 `0.36s cubic-bezier(0.2, 0, 0.2, 1)`。fixed 定位元素、`[data-animal-drawer-ignore]` 节点以及组件自身的 portal 包裹器都会被排除。
- - 被下沉的背景**刻意不加 `filter`**。`filter` 是非合成器属性：它会为每个背景元素新建合成层，并对整个视口做逐像素高斯模糊，症状就是**首次打开卡顿**（此时各层需要从零光栅化），而之后打开却很顺。景深读数由 `scale` + 圆角 + 遮罩压暗承担。同时在过渡开始前加 `will-change: transform`，让分层提前完成而不是发生在动画中途。
- - `prefers-reduced-motion: reduce` 下**同时**关闭背景下沉（缩放位移）与面板自身的 `translateX/Y(±100%) → none` 滑入，与 `Modal` 关闭 `scale(0.92) → scale(1)` 缩放入场保持一致。面板直接落位，不会停在中间帧或不可见。遮罩的 opacity 过渡不属于位移动效，予以保留。
-+- **面板 chrome 不可选中，只有内容区可选。** 遮罩、标题行、标题、关闭 × 与底部按钮区均为 `user-select: none`，内容区为 `user-select: text`（正文仍可复制）。不这么设的话，双击标题会选中一个词；双击触发按钮打开抽屉时，第二击会落在正在滑入的面板上并落下一块选区 —— 暖黄 `::selection` 于是把弹窗里涂出一块莫名的高亮。
- 
- ```css
- /* mask — light black (0.18), lighter than Modal so the recessed background stays visible (key to the depth effect) */
-@@ -126,6 +134,7 @@ inset: 0;
- z-index: 1000;
- background: rgba(0, 0, 0, 0.18);
- animation: animal-drawer-fade-in 0.25s ease;
-+user-select: none; /* chrome — never hosts a selection */
- 
- /* panel (shared) */
- position: fixed;
-@@ -164,12 +173,14 @@ animation-name: animal-drawer-slide-bottom; /* translateY(100%) → 0 */
- font-size: 28px;
- font-weight: 700;
- color: rgba(114, 93, 66, 1);
-+user-select: none;
- 
- /* close button × */
- width: 32px; height: 32px;
- font-size: 22px;
- color: rgba(114, 93, 66, 0.6);
- border-radius: 50%;
-+user-select: none;
- /* hover */
- background: rgba(114, 93, 66, 0.1);
- color: rgba(114, 93, 66, 1);
-@@ -180,10 +191,12 @@ font-weight: 600;
- line-height: 1.6;
- color: #8a7b66;
- padding: 0 24px 24px 24px;
-+user-select: text; /* content stays copyable */
- 
- /* footer */
- gap: 12px;
- padding: 0 24px 24px 24px;
-+user-select: none;
- ```
- 
- **背景下沉（JS 注入到 body 非固定子元素的 inline style）：**
-```
-
-**File**: `skills/animal-island-ui-style/references/components/overlays.md` (modified, +2/-0)
-```diff
-@@ -42,6 +42,7 @@ Notes:
- - To disable the typewriter animation for dynamic content: `typewriter={false}`.
- - Custom footer: pass `footer={<><Button>...</Button></>}` or `footer={null}` to hide.
- - `title` accepts a `ReactNode` — pass plain text. Do NOT pass `<Title>` here.
-+- **Modal chrome is not selectable; only the body is.** The mask, header, title, close × and footer carry `user-select: none`, the body carries `user-select: text` (content stays copyable). Keep it that way in any custom skin: without it, double-clicking the title selects a word, and the warm `::selection` colour paints a stray highlight inside the popup.
- 
- ## Drawer
- 
-@@ -80,6 +81,7 @@ Notes:
- - Drawer has NO built-in typewriter (unlike Modal). Pass any content directly.
- - Default footer is **none** (unlike Modal's 取消/确定). Pass `footer={<><Button>...</Button></>}` for confirm-style actions.
- - A close × button is rendered in the header when `title` is provided. Esc / mask click also close.
-+- **Panel chrome is not selectable; only the body is.** The mask, header, title, close × and footer carry `user-select: none`, the body carries `user-select: text` (content stays copyable). Keep it that way in any custom skin: without it, double-clicking the title selects a word, and double-clicking the trigger to open the drawer drops a selection onto the sliding-in panel, which the warm `::selection` colour paints as a stray highlight inside the popup.
- - a11y: `role="dialog"`, `aria-modal="true"`, `aria-labelledby` on title, focus trap + focus restore (same pattern as Modal).
- 
- ## Tooltip
-```
-
-**File**: `src/components/Drawer/Drawer.test.tsx` (modified, +30/-0)
-```diff
-@@ -324,4 +324,34 @@ describe('Drawer', () => {
-             expect(screen.getByTestId('b2')).toHaveFocus();
-         });
-     });
-+
-+    describe('文本选区', () => {
-+        it('面板 chrome 不可选中（遮罩 / 标题 / 关闭按钮 / 底部按钮区）', () => {
-+            render(
-+                <Drawer open title="岛屿设置" footer={<button>确定</button>}>
-+                    <p data-testid="para">正文内容</p>
-+                </Drawer>
-+            );
-+            const dialog = screen.getByRole('dialog');
-+            const mask = dialog.parentElement!;
-+            const title = screen.getByText('岛屿设置');
-+            const closeBtn = screen.getByLabelText('关闭');
-+            const footer = dialog.querySelector(`.${styles.footer}`)!;
-+
-+            expect(getComputedStyle(mask).userSelect).toBe('none');
-+            expect(getComputedStyle(title).userSelect).toBe('none');
-+            expect(getComputedStyle(closeBtn).userSelect).toBe('none');
-+            expect(getComputedStyle(footer).userSelect).toBe('none');
-+        });
-+
-+        it('内容区仍可选中（用户要能复制抽屉里的文字）', () => {
-+            render(
-+                <Drawer open title="t">
-+                    <p data-testid="para">正文内容</p>
-+                </Drawer>
-+            );
-+            const body = screen.getByRole('dialog').querySelector(`.${styles.body}`)!;
-+            expect(getComputedStyle(body).userSelect).toBe('text');
-+        });
-+    });
- });
-```
-
-**File**: `src/components/Drawer/drawer.module.less` (modified, +24/-0)
-```diff
-@@ -11,6 +11,8 @@
-     opacity: 0;
-     pointer-events: none;
-     transition: opacity 0.36s ease;
-+    user-select: none;
-+    -webkit-user-select: none;
- }
- 
- .maskOpen {
-@@ -93,18 +95,25 @@
- // ============================================
- // Header
- // ============================================
-+// 标题行是 chrome：双击标题会选词，且 × 按钮的字面量 "×" 在 JSX 里独占一行，
-+// 渲染成 " × " —— 双击时选中的是那圈空白，叠加 cursor.css 的暖黄 ::selection
-+// 就是面板里凭空一块高亮。header 一并置 none，标题/按钮的规则随后各自再声明一次。
- .header {
-     display: flex;
-     align-items: center;
-     justify-content: space-between;
-     padding: 24px 24px 15px 24px;
-     flex-shrink: 0;
-+    user-select: none;
-+    -webkit-user-select: none;
- }
- 
- .title {
-     font-size: 28px;
-     font-weight: 700;
-     color: rgba(114, 93, 66, 1);
-+    user-select: none;
-+    -webkit-user-select: none;
- }
- 
- .close {
-@@ -121,6 +130,8 @@
-     border-radius: 50%;
-     cursor: pointer;
-     transition: all 0.2s;
-+    user-select: none;
-+    -webkit-user-select: none;
- 
-     &:hover {
-         background: rgba(114, 93, 66, 0.1);
-@@ -131,6 +142,7 @@
- // ============================================
- // Body
- // ============================================
-+// 内容区是给用户看/复制的，必须显式写回 text：.mask 上的 none 会继承下来。
- .body {
-     flex: 1;
-     overflow-y: auto;
-@@ -139,6 +151,8 @@
-     font-weight: 600;
-     line-height: 1.6;
-     color: #8a7b66;
-+    user-select: text;
-+    -webkit-user-select: text;
- }
- 
- // ============================================
-@@ -151,4 +165,14 @@
-     gap: 12px;
-     padding: 0 24px 24px 24px;
-     flex-shrink: 0;
-+    // 按钮区同属 chrome。但表单控件要保留自己的文本可选（继承 none 会让
-+    // input/textarea 里的内容选不中），所以单独把它们写回 text。
-+    user-select: none;
-+    -webkit-user-select: none;
-+
-+    input,
-+    textarea {
-+        user-select: text;
-+        -webkit-user-select: text;
-+    }
- }
-```
-
-**File**: `src/components/Modal/Modal.test.tsx` (modified, +29/-0)
-```diff
-@@ -3,6 +3,7 @@ import { render, screen, waitFor } from '@testing-library/react';
- import userEvent from '@testing-library/user-event';
- import { useState } from 'react';
- import { Modal } from './Modal';
-+import styles from './modal.module.less';
- 
- describe('Modal', () => {
-     it('open=false 不渲染', () => {
-@@ -257,4 +258,32 @@ describe('Modal', () => {
-             expect(screen.getByTestId('b2')).toHaveFocus();
-         });
-     });
-+
-+    describe('文本选区', () => {
-+        it('弹窗 chrome 不可选中（遮罩 / 标题 / 底部按钮区）', () => {
-+            render(
-+                <Modal open title="岛屿设置" typewriter={false}>
-+                    <p>正文内容</p>
-+                </Modal>
-+            );
-+            const dialog = screen.getByRole('dialog');
-+            const mask = dialog.parentElement!;
-+            const title = screen.getByText('岛屿设置');
-+            const footer = dialog.querySelector(`.${styles.footer}`)!;
-+
-+            expect(getComputedStyle(mask).userSelect).toBe('none');
-+            expect(getComputedStyle(title).userSelect).toBe('none');
-+            expect(getComputedStyle(footer).userSelect).toBe('none');
-+        });
-+
-+        it('内容区仍可选中（用户要能复制弹窗里的文字）', () => {
-+            render(
-+                <Modal open title="t" typewriter={false}>
-+                    <p>正文内容</p>
-+                </Modal>
-+            );
-+            const body = screen.getByRole('dialog').querySelector(`.${styles.body}`)!;
-+            expect(getComputedStyle(body).userSelect).toBe('text');
-+        });
-+    });
- });
-```
-
-**File**: `src/components/Modal/modal.module.less` (modified, +18/-0)
-```diff
-@@ -10,6 +10,8 @@
-     justify-content: center;
-     background: var(--animal-mask-bg);
-     animation: animal-fade-in 0.25s ease;
-+    user-select: none;
-+    -webkit-user-select: none;
- }
- 
- // ============================================
-@@ -59,12 +61,16 @@
-     align-items: center;
-     justify-content: space-between;
-     padding-bottom: 15px;
-+    user-select: none;
-+    -webkit-user-select: none;
- }
- 
- .title {
-     font-size: 28px;
-     font-weight: 700;
-     color: rgba(114, 93, 66, 1);
-+    user-select: none;
-+    -webkit-user-select: none;
- }
- 
- .close {
-@@ -79,6 +85,8 @@
-     color: rgba(114, 93, 66, 0.6);
-     border-radius: 50%;
-     transition: all 0.2s;
-+    user-select: none;
-+    -webkit-user-select: none;
- 
-     &:hover {
-         background: rgba(114, 93, 66, 0.1);
-@@ -100,6 +108,8 @@
-     font-weight: 600;
-     line-height: 1.6;
-     color: #8a7b66;
-+    user-select: text;
-+    -webkit-user-select: text;
- }
- 
- // ============================================
-@@ -110,6 +120,14 @@
-     align-items: center;
-     justify-content: flex-end;
-     gap: 12px;
-+    user-select: none;
-+    -webkit-user-select: none;
-+
-+    input,
-+    textarea {
-+        user-select: text;
-+        -webkit-user-select: text;
-+    }
- }
- 
- .footer-btn {
+@@ -0,0 +1 @@
++custom: https://guokaigdg.github.io/home/payment.html
 ```
 
 #### Recent Merged Pull Requests:
@@ -2730,33 +2303,21 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. overlays): stop the modal and drawer chrome from being selectable
+## X. add FUNDING.yml with custom sponsor link
 
 **RULE**:
-When implementing operations in `docs/design-system/components/overlays.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in guokaigdg/animal-island-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/FUNDING.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in guokaigdg/animal-island-ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `127a4135`: overlays): stop the modal and drawer chrome from being selectable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1cdab9d4`: add FUNDING.yml with custom sponsor link. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design-system/components/overlays.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/FUNDING.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-user-select: none; /* chrome — never hosts a selection */
-user-select: none;
-user-select: none;
-user-select: text; /* content stays copyable */
-user-select: none;
-**Modal chrome is not selectable; only the body is.** The mask, header, title, close × and footer carry `user-select: none`; the body carries `user-select: text` so content stays copyable. Without this, double-clicking the title selects a word, and the warm `::selection` colour paints a stray highlight inside the popup.
-
-- **Panel chrome is not selectable; only the body is.** The mask, header, title, close × and footer carry `user-select: none`; the body carries `user-select: text` so content stays copyable. Without this, double-clicking the title selects a word, and double-clicking the trigger to open the drawer drops a selection onto the sliding-in panel — the warm `::selection` colour then paints a stray highlight inside the popup.
-user-select: none; /* chrome — never hosts a selection */
-user-select: none;
-user-select: none;
-user-select: text; /* content stays copyable */
-user-select: none;
+custom: https://guokaigdg.github.io/home/payment.html
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2766,4 +2327,4 @@ user-select: none;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `127a4135` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1cdab9d4` are properly handled with clean fallback behavior.

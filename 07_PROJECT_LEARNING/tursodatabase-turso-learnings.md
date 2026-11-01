@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
-> **Source Version**: `aa93d669`  
+> **Source Version**: `31315b3d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:48:36.744Z  
+> **Timestamp**: 2026-10-31T23:49:58.610Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-turso-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/turso](https://github.com/tursodatabase/turso))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:48:36.736Z  
+> **Harvest Timestamp**: 2026-10-31T23:49:58.602Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25043 stars
+- **Stars / Engagement**: 25108 stars
 
 ---
 
@@ -1376,11 +1376,13 @@ async fn main() -> Result<(), Error> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #10721** (2026-10-25): **core: key the schema by namespace and resolve names to a namespace**
-  *Symptoms*: ## Description  Key the schema by namespace. A `Schema` keeps its objects per `NamespaceId`: every database has the root namespace, and a schema can have more, each with its own tables, views, indexes, triggers and sequences. Every object lookup on `Schema` takes a namespace id, and the resolver turns a written name into a `NamespaceRef`, the database and the namespace of the object, instead of a bare database id. The search order of unqualified names is a list of namespaces, and the scope of a view or trigger body is its namespace.  This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed by `(relname, relnamespace)` and `namespace.c` walks a list of namespace ids, probing each. Core now has the same split. `Schema` is the catalog keyed by namespace, the resolver is the policy that picks the namespace, and the connection owns the names it knows. The follow-up, #10585, stores PostgreSQL schemas as namespaces of the main database, and nothing above `Schema` has to learn how they are stored.  Nothing changes in behavior. Only the root namespace exists, so every namespace is the root of a database and every lookup finds what it found before. The maps of a namespace are private to `schema.rs`; the code that used to reach into `schema.tables` and friends goes through named methods such as `tables`, `views`, `indices_including_backing`, `add_sequence`, `take_triggers` and `table_with_indices_mut`. Each method treats its name argument exactly as the map access it repla
+- **Issue #11194** (2026-10-31): **postgres: yield during deferred cleanup and transaction rollback**
+  *Symptoms*: # NOTICE:  This PR uses a branch in the same repository; maintainers with write access can edit it.  ## Description  Add a cooperative PostgreSQL cleanup API, resumable aborted-transaction rollback, and schema-based preparation checks.  - Expose `Statement::cleanup_nonblock()` so callers can drive deferred cleanup before reset or drop. - Retain rollback state across I/O completions and preserve the original execution error and PostgreSQL transaction state. - Replace blocking catalog queries used for index naming, DROP VIEW validation, and COPY TO STDOUT preparation with connection-schema lookups.  `reset()` and `Drop` retain synchronous fallbacks. Core statement reset, COPY file loading, and server-side COPY export execution are not made nonblocking by this change.  ## Motivation and context  Deferred execution already yields, but preparation checks and transaction cleanup could still execute SQL synchronously inside that path. Callers need an explicit way to finish PostgreSQL cleanup cooperatively without losing rollback progress or reporting success before cleanup completes.  Follow-up to #11190 and #11191.  Thread: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee  ## Description of AI Usage  Amp implemented the changes and performed local validation under the author's direction. The linked thread contains the investigation, implementation decisions, and remaining blocking-path limitations. 
 
-- **Issue #10719** (2026-10-25): **postgres: support timestamptz and date/time types**
-  *Symptoms*: Part 3 of 3: #10717 → #10718 → #10719. Replaces #10668.  ## What this does  tursopg gets PostgreSQL's date/time types: `timestamptz`, `timestamp`, `date`, `time` and `interval`. Input, output, arithmetic, `to_char` and error codes all follow PostgreSQL.  ```sql SELECT '2026-10-08 12:34:56.123456+02'::timestamptz;   -- 2026-10-08 10:34:56.123456+00 SELECT 'infinity'::timestamptz, 'epoch'::timestamptz;  -- infinity | 1970-01-01 00:00:00+00 SELECT '2026-01-31'::date + interval '1 month';        -- 2026-02-28 00:00:00 SELECT '2026-10-08'::date = '2026-10-08 00:00'::timestamp;  -- true SELECT 'garbage'::timestamptz;                         -- ERROR 22007 SELECT '2026-10-08 25:00'::timestamptz;                -- ERROR 22008 ```  It works the same in CAST, INSERT, WHERE and bind parameters. A parameter sent with a date OID is a date, so `$1 + 1` adds a day.  Also: - `now()` and `CURRENT_TIMESTAMP` give the transaction start time. `statement_timestamp()` and `clock_timestamp()` work as in PostgreSQL. - `interval * n` and `interval / n` work. - timestamptz is stored as UTC text, the same as before. `+00` is added when the value is shown.  Fixes #10262.  ## Dialect method  - `takes_operand_type_names`: `time` and `interval` values are both stored as text like `'01:00:00'`. For `a + b`, `datetime_pl` can't tell which is which from the value. With this method on, core passes each column's declared type to the function, so `time_col + interval_col` works in joins and with any column name.
+- **Issue #11191** (2026-10-31): **postgres: reuse yielding execution for deferred session statements**
+  *Symptoms*: # NOTICE:  This branch is in the main repository, so maintainers with repository write access can edit it directly.  ## Description  Remove deferred callbacks and reuse the prerequisite execution state machine for session statements. Schema operations and COPY database work retain their active statement across yields and return I/O completions to the caller through the existing nonblocking runners.  Schema creation and cascading drops use savepoint cleanup so failure or cancellation before commit rolls back the complete operation. COPY file reading and parsing, and reset/drop cleanup, remain synchronous.  ## Motivation and context  Builds on #11190. The prerequisite runner already supports resumable execution, but the remaining deferred callbacks still execute database work synchronously. Sharing that runner removes the separate callback path and preserves progress, interruption handling, and cleanup across yields.  ## Description of AI Usage  Amp implemented and verified this change under the author’s direction. The author requested removal of Callback and reuse of the existing prerequisite execution logic.  Thread: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee
+  **Post-Mortem & Fix Analysis**:
+  > <!-- __CODSPEED_PERFORMANCE_REPORT_COMMENT__ --> ## Merging this PR will **not alter performance**  <details> <summary><b>2 warnings, 1 note</b></summary>  > :warning: **Unable to measure the execution of 1 benchmark** > > This benchmark measured no execution time, so its result is not comparable and counts as unchanged. This usually happens when the compiler removes the code under test. > > [Prevent compiler optimizations](https://codspeed.io/docs/troubleshooting?utm_source=github&utm_medium=comment-v2&utm_content=optimized_out#optimized-out-benchmarks) > > [See affected benchmarks](https://app.codspeed.io/tursodatabase/turso/branches/fix%2Fpg-deferred-callbacks?q=has%3Aoptimized_out&utm_source=github&utm_medium=comment-v2&utm_content=affected_benchmarks)  > :warning: **83 benchmarks are dominated by system calls** > > System calls cannot be simulated consistently and are left out of the measure. The reported value understates the real cost. Switch to the Walltime instrument to measur
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1397,622 +1399,742 @@ async fn main() -> Result<(), Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aa93d669` (2026-10-25)
-**Commit Message**: Merge 'core: key the schema by namespace and resolve names to a namespace' from Pekka Enberg
+### Incident Patch 1: `01cddb12` (2026-10-31)
+**Commit Message**: Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turso-github-handyman
 
-Key the schema by namespace. A `Schema` keeps its objects per
-`NamespaceId`: every database has the root namespace, and a schema can
-have more, each with its own tables, views, indexes, triggers and
-sequences. Every object lookup on `Schema` takes a namespace id, and the
-resolver turns a written name into a `NamespaceRef`, the database and
-the namespace of the object, instead of a bare database id. The search
-order of unqualified names is a list of namespaces, and the scope of a
-view or trigger body is its namespace.
+## Problem
 
-This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed
-by `(relname, relnamespace)` and `namespace.c` walks a list of namespace
-ids, probing each. Core now has the same split. `Schema` is the catalog
-keyed by namespace, the resolver is the policy that picks the namespace,
-and the connection owns the names it knows. The follow-up, #10585,
-stores PostgreSQL schemas as namespaces of the main database, and
-nothing above `Schema` has to learn how they are stored.
-
-Nothing changes in behavior. Only the root namespace exists, so every
-namespace is the root of a datab
-
-**File**: `core/benches/fts_benchmark.rs` (modified, +2/-1)
-```diff
-@@ -12,6 +12,7 @@
- 
- #[cfg(not(feature = "codspeed"))]
- use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
-+use turso_core::NamespaceId;
- use turso_core::SqliteDialect;
- 
- #[cfg(feature = "codspeed")]
-@@ -772,7 +773,7 @@ fn bench_fts_searcher_cache(criterion: &mut Criterion) {
-         let attachment = conn
-             .with_schema_mut(|schema| {
-                 schema
--                    .get_index("docs", "docs_fts")
-+                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
-                     .unwrap()
-                     .index_method
-                     .clone()
+```sql
+CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
+CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
+CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
+INSERT INTO t1 VALUES(NULL);
+INSERT INTO t2 VALUES(NULL);
+INSERT INTO t3 VALUES(NULL);
+UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
+INSERT INTO t3 VALUES(NULL);
+SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
+-- Turso (main):      SQLite:
+-- 1|t1|1             1|t1|1
+-- 2||2               2||1     // t3's counter written into the NULL row
+-- 3|t3|1             3|t3|2
 ```
 
-**File**: `core/btree_dump.rs` (modified, +5/-6)
-```diff
-@@ -1,3 +1,4 @@
-+use crate::namespace::NamespaceId;
- use crate::schema::Schema;
- use crate::storage::btree::BTreeCursor;
- use crate::storage::btree::CursorTrait;
-@@ -112,15 +113,13 @@ impl BtreeDumpCursor {
-     /// Look up the root page for a given name (index first, then table).
-     fn find_root_page(&self, name: &str) -> Option<i64> {
-         // Search indexes first (indexes are stored by table name, so iterate all)
--        for indexes in self.schema.indexes.values() {
--            for index in indexes {
--                if index.name.eq_ignore_ascii_case(name) {
--                    return Some(index.root_page);
--                }
-+        for index in self.schema.indexes(NamespaceId::ROOT) {
-+            if index.name.eq_ignore_ascii_case(name) {
-+                return Some(index.root_page);
-             }
-         }
-         // Then search tables
--        if let Some(table) = self.schema.get_table(name) {
-+        if let Some(table) = self.schema.get_table(NamespaceId::ROOT, name) {
-             return table.get_root_page().ok();
-         }
-         None
-```
+The same thing happens with other statements:
+- `ALTER TABLE t3 RENAME TO t4` also renames the NULL row, so there are
+two `t4` rows.
+- `DROP TABLE t3` also deletes the NULL row.
+- In MVCC (multi-version concurrency control) mode, an INSERT deletes
+the NULL row.
 
-**File**: `core/connection.rs` (modified, +32/-17)
-```diff
-@@ -3,6 +3,7 @@ use crate::connection_hooks::{ConnectionHooks, SavepointMemo};
- use crate::error::io_error;
- #[cfg(any(test, injected_yields))]
- use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
-+use crate::namespace::NamespaceId;
- use crate::state_machine::StateMachine;
- use crate::statement::StatementOrigin;
- use crate::storage::{checksum::CHECKSUM_REQUIRED_RESERVED_BYTES, pager::SavepointResult};
-@@ -1519,7 +1520,7 @@ impl Connection {
-                     // descriptor SELECTs can resolve the backing tables.
-                     if pending.is_none() {
-                         if let Some(sequences) = inner.preserved_sequences.take() {
--                            inner.fresh.sequences = sequences;
-+                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
-                             *pending = Some(crate::alloc::vec![]);
-                         } else {
-                             let work = inner.fresh.sequence_backing_table_names();
-@@ -1548,7 +1549,11 @@ impl Connection {
-                         };
-                         let (backing_table_name, seq_name) = entry;
-                         let normalized = crate::util::normalize_ident(&seq_name);
--                        if inner.fresh.sequences.contains_key(&normalized) {
-+                        if inner
-+                            .fresh
-+                            .get_sequence(NamespaceId::ROOT, &normalized)
-+                            .is_some()
-+                        {
-                             *idx += 1;
-                             *stmt = None;
-                             *meta = None;
-@@ -1588,7 +1593,11 @@ impl Connection {
-                             mv_store.set_sequence_watermark(&normalized, watermark);
-                         }
-                         let sequence = seq.take().expect("sequence set above");
--                        inner.fresh.sequences.insert(normalized, Arc::new(sequence));
-+                        inner.fresh.insert_sequence(
-+                            NamespaceId::ROOT,
-+                            normalized,
-+                            Arc::new(sequence),
-+                        );
-                         *idx += 1;
-                         *stmt = None;
-                         *meta = None;
-@@ -1600,8 +1609,7 @@ impl Connection {
-                     if self.experimental_custom_types_enabled()
-                         && inner
-                             .fresh
--                            .tables
--                            .contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+                            .has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-                     {
-                         // Temporarily install the schema so we can query against it.
-                         self.with_schema_mut(|schema| {
-@@ -1646,7 +1654,7 @@ impl Connection {
-                     tracing::debug!(
-                         "reparse_schema: schema_version={}, tables={:?}",
-                         fresh.schema_version,
--                        fresh.tables.keys()
-+                        fresh.table_names(NamespaceId::ROOT).collect::<Vec<_>>()
-                     );
-                     self.with_schema_mut(|schema| {
-                         *schema = fresh;
-@@ -1937,7 +1945,7 @@ impl Connection {
-     pub(crate) fn query_stored_type_definitions(self: &Arc<Connection>) -> Result<Vec<String>> {
-         let has_types_table = {
-             let s = self.schema.read();
--            s.tables.contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+            s.has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-         };
-         if !has_types_table {
-             return Ok(Vec::new());
-@@ -3301,7 +3309,7 @@ impl Connection {
-         let entry = attached_dbs
-             .index_to_data
-             .get(&database_id)
--            .expect("Database ID should be valid after resolve_database_id");
-+            .expect("Database ID should be valid after resolve_namespace");
-         let schema = entry.db.schema.lock().clone();
-         schema
-     }
-@@ -3602,7 +3610,9 @@ impl Connection {
-         };
-         let get = |db_id: usize, seq_name: &str| {
-             self.with_schema(db_id, |schema| {
--                schema.get_sequence(seq_name).map(Arc::clone)
-+                schema
-+                    .get_sequence(NamespaceId::ROOT, seq_name)
-+                    .map(Arc::clone)
-             })
-             .map(|sequence| (db_id, sequence))
-         };
-@@ -3734,8 +3744,9 @@ impl Connection {
-                     };
-                     let (backing_table_name, seq_name) = entry;
-                     let normalized = crate::util::normalize_ident(&seq_name);
--                    let already_present =
--                        self.with_schema(MAIN_DB_ID, |s| s.get_sequence(&normalized).is_some());
-+                    let already_present = self.with_schema(MAIN_DB_ID, |s| {
-+                        s.get_sequence(Names
-```
+The loops that find a table's `sqlite_sequence` row compare names with
+`Insn::Ne` without the jump-if-NULL flag. `Ne` falls through when an
+operand is NULL, so a row with a NULL name counts as a match.
 
-**File**: `core/database.rs` (modified, +2/-1)
+## Fix
+
+The flag is now `CmpInsFlags::default().jump_if_n
+
+**File**: `core/translate/alter.rs` (modified, +2/-2)
 ```diff
-@@ -4,6 +4,7 @@
- //! attached databases.
+@@ -322,7 +322,7 @@ fn emit_rename_sqlite_sequence_entry(
+             lhs: sequence_name_reg,
+             rhs: row_name_to_replace_reg,
+             target_pc: continue_loop_label,
+-            flags: CmpInsFlags::default(),
++            flags: CmpInsFlags::default().jump_if_null(),
+             collation: CollationSeq::for_internal_values(),
+         });
  
- use crate::connection_hooks::{ConnectionContext, ConnectionHooks};
-+use crate::namespace::NamespaceId;
- use crate::types::IOResultOr;
- use crate::util::IOExt;
- #[cfg(feature = "io_memory_yield")]
-@@ -3474,7 +3475,7 @@ impl Database {
- 
-     pub fn register_virtual_table(&self, table: Arc<VirtualTable>) -> Result<String> {
-         let name = table.name.clone();
--        self.with_schema_mut(|schema| schema.add_virtual_table(table))?;
-+        self.with_schema_mut(|schema| schema.add_virtual_table(NamespaceId::ROOT, table))?;
-         Ok(name)
-     }
+@@ -402,7 +402,7 @@ fn emit_delete_sqlite_sequence_entry(
+             lhs: sequence_name_reg,
+             rhs: row_name_to_delete_reg,
+             target_pc: continue_loop_label,
+-            flags: CmpInsFlags::default(),
++            flags: CmpInsFlags::default().jump_if_null(),
+             collation: CollationSeq::for_internal_values(),
+         });
  
 ```
 
-**File**: `core/dialect/sqlite/mod.rs` (modified, +3/-1)
+**File**: `core/translate/insert.rs` (modified, +1/-1)
 ```diff
-@@ -9,6 +9,7 @@
- //! SQLite one namespace per database, are in [`attach`].
- 
- pub mod attach;
-+use crate::namespace::NamespaceId;
- use crate::pragma::PragmaVirtualTable;
- use crate::schema::{BTreeTable, Schema, Table};
- use crate::sync::Arc;
-@@ -163,7 +164,8 @@ pub fn register_builtin_catalog(
-     enable_custom_types: bool,
- ) -> crate::Result<()> {
-     for vtab in pragma_vtabs() {
--        schema.tables.insert(
-+        schema.insert_table(
-+            NamespaceId::ROOT,
-             vtab.name.to_owned(),
-             Arc::new(Table::Virtual(Arc::new((*vtab).clone()))),
-         );
+@@ -1850,7 +1850,7 @@ fn reload_autoincrement_state(program: &mut ProgramBuilder, meta: AutoincMeta) {
+         lhs: table_name_reg,
+         rhs: name_col_reg,
+         target_pc: found_label,
+-        flags: Default::default(),
++        flags: CmpInsFlags::default().jump_if_null(),
+         collation: super::collate::CollationSeq::NOCASE,
+     });
+     program.emit_insn(Insn::Copy {
 ```
 
-**File**: `core/ext/mod.rs` (modified, +2/-1)
+**File**: `core/translate/schema.rs` (modified, +1/-1)
 ```diff
-@@ -10,6 +10,7 @@ use crate::index_method::toy_vector_sparse_ivf::VectorSparseInvertedIndexMethod;
- use crate::index_method::{
-     BACKING_BTREE_INDEX_METHOD_NAME, TOY_VECTOR_SPARSE_IVF_INDEX_METHOD_NAME,
- };
-+use crate::namespace::NamespaceId;
- use crate::schema::{Schema, Table};
- use crate::sync::atomic::{AtomicU64, Ordering};
- use crate::sync::Mutex;
-@@ -87,7 +88,7 @@ pub(crate) unsafe extern "C" fn register_vtab_module(
-                 let Ok(schema) = Schema::try_make_mut(&mut guard) else {
-                     return ResultCode::Error;
-                 };
--                schema.tables.insert(name_str, table);
-+                schema.insert_table(NamespaceId::ROOT, name_str, table);
-             } else {
-                 return ResultCode::Error;
-             }
+@@ -2748,7 +2748,7 @@ pub fn translate_drop_table(
+             lhs: seq_table_name_reg,
+             rhs: dropped_table_name_reg,
+             target_pc: continue_loop_label,
+-            flags: CmpInsFlags::default(),
++            flags: CmpInsFlags::default().jump_if_null(),
+             collation: CollationSeq::NOCASE,
+         });
+ 
 ```
 
-**File**: `core/incremental/cursor.rs` (modified, +2/-1)
+**File**: `core/translate/sequence.rs` (modified, +1/-1)
 ```diff
-@@ -257,6 +257,7 @@ fn read_only_error() -> Box<LimboError> {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use crate::namespace::NamespaceId;
-     use crate::storage::btree::BTreeCursor;
-     use crate::sync::Arc;
-     use crate::util::IOExt;
-@@ -325,7 +326,7 @@ mod tests {
-         let view_mutex = conn
-             .schema
-             .read()
--            .get_materialized_view(view_name)
-+            .get_materialized_view(NamespaceId::ROOT, view_name)
-             .ok_or_else(|| crate::LimboError::InternalError("View not found".to_string()))?;
- 
-         // Get the view's root page
+@@ -758,7 +758,7 @@ pub(crate) fn emit_sqlite_sequence_sync(
+         lhs: col_name_reg,
+         rhs: name_reg,
+         target_pc: skip_delete_label,
+-        flags: CmpInsFlags::default(),
++        flags: CmpInsFlags::default().jump_if_null(),
+         collation: CollationSeq::for_internal_values(),
+     });
+     program.emit_insn(Insn::Delete {
 ```
 
-**File**: `core/incremental/vdbe_maintenance.rs` (modified, +11/-6)
+**File**: `sqlite/conformance/sqlite-sqltests/autoincr.sqltest` (modified, +55/-0)
 ```diff
-@@ -24,6 +24,7 @@
- //! completion (or before an in-statement view read), or inside the CREATE
- //! MATERIALIZED VIEW statement for initial population.
- 
-+use crate::namespace::NamespaceRef;
- use rustc_hash::FxHashMap;
- use turso_parser::ast;
- 
-@@ -219,9 +220,11 @@ impl Connection {
-         view_name: &str,
-     ) -> Result<Vec<Option<String>>> {
-         let schema = self.schema.read().clone();
--        let view = schema.get_materialized_view(view_name).ok_or_else(|| {
--            LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
--        })?;
-+        let view = schema
-+            .get_materialized_view(crate::namespace::NamespaceId::ROOT, view_name)
-+            .ok_or_else(|| {
-+                LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
-+            })?;
-         let select = view.lock().select_stmt.clone();
-         let plan = build_plan_for_connection(view_name, &select, &schema, self)?;
-         Ok(plan
-@@ -256,9 +259,11 @@ fn build_plan_for_connection(
-     // names the same way CREATE did: within the view's own database, never
-     // through a TEMP table that happens to share a source table's name
-     // (#9456). Materialized views always live in main.
--    resolver.with_view_scope(crate::MAIN_DB_ID, view_name.to_string(), || {
--        plan_view(view_name, select, &resolver, connection)
--    })
-+    resolver.with_view_scope(
-+        NamespaceRef::root_of(crate::MAIN_DB_ID),
-+        view_name.to_string(),
-+        || plan_view(view_name, select, &resolver, connection),
-+    )
+@@ -618,3 +618,58 @@ expect {
+ 	2|second
+ 	a"b|2
  }
- 
- /// Emit every node once in DAG topological order.
++
++# A sqlite_sequence row with a NULL name belongs to no table: INSERT,
++# ALTER TABLE RENAME and DROP TABLE must leave it alone.
++@cross-check-integrity
++test autoinc-insert-skips-null-name-sequence-row {
++	CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	INSERT INTO t1 VALUES(NULL);
++	INSERT INTO t2 VALUES(NULL);
++	INSERT INTO t3 VALUES(NULL);
++	UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
++	INSERT INTO t3 VALUES(NULL);
++	SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
++}
++expect {
++	1|t1|1
++	2||1
++	3|t3|2
++}
++
++@cross-check-integrity
++test autoinc-rename-skips-null-name-sequence-row {
++	CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	INSERT INTO t1 VALUES(NULL);
++	INSERT INTO t2 VALUES(NULL);
++	INSERT INTO t3 VALUES(NULL);
++	UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
++	ALTER TABLE t3 RENAME TO t4;
++	SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
++}
++expect {
++	1|t1|1
++	2||1
++	3|t4|1
++}
++
++@cross-check-integrity
++test autoinc-drop-skips-null-name-sequence-row {
++	CREATE TABLE t1(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	CREATE TABLE t2(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	CREATE TABLE t3(i INTEGER PRIMARY KEY AUTOINCREMENT);
++	INSERT INTO t1 VALUES(NULL);
++	INSERT INTO t2 VALUES(NULL);
++	INSERT INTO t3 VALUES(NULL);
++	UPDATE sqlite_sequence SET name=NULL WHERE name='t2';
++	DROP TABLE t3;
++	SELECT rowid, name, seq FROM sqlite_sequence ORDER BY rowid;
++}
++expect {
++	1|t1|1
++	2||1
++}
+```
+
+**File**: `sqlite/conformance/turso-sqltests/mvcc_sequence.sqltest` (modified, +18/-0)
+```diff
+@@ -505,3 +505,21 @@ expect {
+     6
+     6
+ }
++
++# A sqlite_sequence row with a NULL name belongs to no table, so the MVCC
++# sqlite_sequence sync must not delete it.
++test mvcc-autoincrement-keeps-null-name-sequence-row {
++    PRAGMA journal_mode = 'mvcc';
++    CREATE TABLE t1 (i INTEGER PRIMARY KEY AUTOINCREMENT);
++    CREATE TABLE t2 (i INTEGER PRIMARY KEY AUTOINCREMENT);
++    INSERT INTO t1 VALUES (NULL);
++    INSERT INTO t2 VALUES (NULL);
++    UPDATE sqlite_sequence SET name = NULL WHERE name = 't1';
++    INSERT INTO t2 VALUES (NULL);
++    SELECT name, seq FROM sqlite_sequence ORDER BY name;
++}
++expect {
++    mvcc
++    |1
++    t2|2
++}
 ```
 
 ---
 
-### Incident Patch 2: `3eece806` (2026-10-24)
-**Commit Message**: core: key the schema by namespace and resolve names to a namespace
+### Incident Patch 2: `5b3a3267` (2026-10-31)
+**Commit Message**: postgres: yield while executing statement prerequisites
 
-A schema keeps its objects per namespace. Every database has the root
-namespace; a schema can have more, each with its own tables, views,
-indexes, triggers and sequences. Every object lookup on `Schema` takes a
-`NamespaceId`, and the resolver turns a written name into a
-`NamespaceRef`, the database and the namespace of the object, instead
-of a bare database id. The search order of unqualified names is a list
-of namespaces, and the scope of a view or trigger body is its
-namespace.
+Deferred prerequisite execution must return pending I/O to callers instead of driving it synchronously inside nonblocking statement methods.
 
-This is the catalog shape PostgreSQL schemas need: `pg_class` is keyed
-by `(relname, relnamespace)` and `namespace.c` walks a list of namespace
-ids, probing each. Core now has the same split: `Schema` is the catalog
-keyed by namespace, the resolver is the policy that picks the namespace,
-and the connection owns the names it knows. A later change stores
-PostgreSQL schemas as namespaces of the main database and nothing above
-`Schema` has to learn how they are stored.
+Use the existing nonblocking runners and retain each active statement across yields. Keep savepoint cleanup resumable during execution and preserve the caller's original transaction state. Reset and drop retain synchronous cleanup semantics.
 
-Nothing changes in behavior: only the root namespace exists, so every
-namespace is the root of a database and every lookup finds what it found
-before. The maps of a namespace 
+Tests: cargo test -p turso_pg -p turso_pg_tests; cargo clippy -p turso_pg --all-targets --no-deps -- --deny=warnings; cargo fmt --all -- --check
 
-**File**: `core/benches/fts_benchmark.rs` (modified, +2/-1)
+Amp-Thread-ID: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee
+Co-authored-by: pedro muniz <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -12,6 +12,7 @@
- 
- #[cfg(not(feature = "codspeed"))]
- use criterion::{criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
-+use turso_core::NamespaceId;
- use turso_core::SqliteDialect;
- 
- #[cfg(feature = "codspeed")]
-@@ -772,7 +773,7 @@ fn bench_fts_searcher_cache(criterion: &mut Criterion) {
-         let attachment = conn
-             .with_schema_mut(|schema| {
-                 schema
--                    .get_index("docs", "docs_fts")
-+                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
-                     .unwrap()
-                     .index_method
-                     .clone()
+@@ -7282,6 +7282,7 @@ dependencies = [
+  "serde_json",
+  "strum",
+  "tempfile",
++ "tracing",
+  "turso_core",
+  "turso_ext",
+  "turso_parser",
 ```
 
-**File**: `core/btree_dump.rs` (modified, +5/-6)
+**File**: `postgres/frontend/Cargo.toml` (modified, +2/-1)
 ```diff
-@@ -1,3 +1,4 @@
-+use crate::namespace::NamespaceId;
- use crate::schema::Schema;
- use crate::storage::btree::BTreeCursor;
- use crate::storage::btree::CursorTrait;
-@@ -112,15 +113,13 @@ impl BtreeDumpCursor {
-     /// Look up the root page for a given name (index first, then table).
-     fn find_root_page(&self, name: &str) -> Option<i64> {
-         // Search indexes first (indexes are stored by table name, so iterate all)
--        for indexes in self.schema.indexes.values() {
--            for index in indexes {
--                if index.name.eq_ignore_ascii_case(name) {
--                    return Some(index.root_page);
--                }
-+        for index in self.schema.indexes(NamespaceId::ROOT) {
-+            if index.name.eq_ignore_ascii_case(name) {
-+                return Some(index.root_page);
-             }
-         }
-         // Then search tables
--        if let Some(table) = self.schema.get_table(name) {
-+        if let Some(table) = self.schema.get_table(NamespaceId::ROOT, name) {
-             return table.get_root_page().ok();
-         }
-         None
+@@ -19,6 +19,7 @@ rustc-hash = "2.0"
+ serde_json = { workspace = true }
+ strum = { workspace = true }
+ tempfile = { workspace = true }
++tracing = { workspace = true }
+ turso_core = { workspace = true, default-features = true, features = [
+     "conn_raw_api",
+ ] }
+@@ -28,7 +29,7 @@ turso_pg_parser = { workspace = true }
+ uuid = "1.11.0"
+ 
+ [dev-dependencies]
+-turso_core = { workspace = true, features = ["io_memory_yield"] }
++turso_core = { workspace = true, features = ["io_memory_yield", "test_helper"] }
+ 
+ [lints]
+ workspace = true
 ```
 
-**File**: `core/connection.rs` (modified, +32/-17)
+**File**: `postgres/frontend/session.rs` (modified, +218/-55)
 ```diff
-@@ -3,6 +3,7 @@ use crate::connection_hooks::{ConnectionHooks, SavepointMemo};
- use crate::error::io_error;
- #[cfg(any(test, injected_yields))]
- use crate::mvcc::yield_points::{FailureInjector, YieldInjector};
-+use crate::namespace::NamespaceId;
- use crate::state_machine::StateMachine;
- use crate::statement::StatementOrigin;
- use crate::storage::{checksum::CHECKSUM_REQUIRED_RESERVED_BYTES, pager::SavepointResult};
-@@ -1519,7 +1520,7 @@ impl Connection {
-                     // descriptor SELECTs can resolve the backing tables.
-                     if pending.is_none() {
-                         if let Some(sequences) = inner.preserved_sequences.take() {
--                            inner.fresh.sequences = sequences;
-+                            inner.fresh.set_sequences(NamespaceId::ROOT, sequences);
-                             *pending = Some(crate::alloc::vec![]);
-                         } else {
-                             let work = inner.fresh.sequence_backing_table_names();
-@@ -1548,7 +1549,11 @@ impl Connection {
-                         };
-                         let (backing_table_name, seq_name) = entry;
-                         let normalized = crate::util::normalize_ident(&seq_name);
--                        if inner.fresh.sequences.contains_key(&normalized) {
-+                        if inner
-+                            .fresh
-+                            .get_sequence(NamespaceId::ROOT, &normalized)
-+                            .is_some()
-+                        {
-                             *idx += 1;
-                             *stmt = None;
-                             *meta = None;
-@@ -1588,7 +1593,11 @@ impl Connection {
-                             mv_store.set_sequence_watermark(&normalized, watermark);
-                         }
-                         let sequence = seq.take().expect("sequence set above");
--                        inner.fresh.sequences.insert(normalized, Arc::new(sequence));
-+                        inner.fresh.insert_sequence(
-+                            NamespaceId::ROOT,
-+                            normalized,
-+                            Arc::new(sequence),
-+                        );
-                         *idx += 1;
-                         *stmt = None;
-                         *meta = None;
-@@ -1600,8 +1609,7 @@ impl Connection {
-                     if self.experimental_custom_types_enabled()
-                         && inner
-                             .fresh
--                            .tables
--                            .contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+                            .has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-                     {
-                         // Temporarily install the schema so we can query against it.
-                         self.with_schema_mut(|schema| {
-@@ -1646,7 +1654,7 @@ impl Connection {
-                     tracing::debug!(
-                         "reparse_schema: schema_version={}, tables={:?}",
-                         fresh.schema_version,
--                        fresh.tables.keys()
-+                        fresh.table_names(NamespaceId::ROOT).collect::<Vec<_>>()
-                     );
-                     self.with_schema_mut(|schema| {
-                         *schema = fresh;
-@@ -1937,7 +1945,7 @@ impl Connection {
-     pub(crate) fn query_stored_type_definitions(self: &Arc<Connection>) -> Result<Vec<String>> {
-         let has_types_table = {
-             let s = self.schema.read();
--            s.tables.contains_key(crate::schema::TURSO_TYPES_TABLE_NAME)
-+            s.has_table(NamespaceId::ROOT, crate::schema::TURSO_TYPES_TABLE_NAME)
-         };
-         if !has_types_table {
-             return Ok(Vec::new());
-@@ -3290,7 +3298,7 @@ impl Connection {
-         let entry = attached_dbs
-             .index_to_data
-             .get(&database_id)
--            .expect("Database ID should be valid after resolve_database_id");
-+            .expect("Database ID should be valid after resolve_namespace");
-         let schema = entry.db.schema.lock().clone();
-         schema
-     }
-@@ -3591,7 +3599,9 @@ impl Connection {
-         };
-         let get = |db_id: usize, seq_name: &str| {
-             self.with_schema(db_id, |schema| {
--                schema.get_sequence(seq_name).map(Arc::clone)
-+                schema
-+                    .get_sequence(NamespaceId::ROOT, seq_name)
-+                    .map(Arc::clone)
-             })
-             .map(|sequence| (db_id, sequence))
-         };
-@@ -3723,8 +3733,9 @@ impl Connection {
-                     };
-                     let (backing_table_name, seq_name) = entry;
-                     let normalized = crate::util::normalize_ident(&seq_name);
--                    let already_present =
--                        self.with_schema(MAIN_DB_ID, |s| s.get_sequence(&normalized).is_some());
-+                    let already_present = self.with_schema(MAIN_DB_ID, |s| {
-+                        s.get_sequence(Names
-```
-
-**File**: `core/database.rs` (modified, +2/-1)
-```diff
-@@ -4,6 +4,7 @@
- //! attached databases.
+@@ -3,14 +3,17 @@ use std::borrow::Cow;
+ use std::num::NonZero;
+ use std::str;
+ use std::sync::Arc;
++use std::task::Waker;
  
- use crate::connection_hooks::{ConnectionContext, ConnectionHooks};
-+use crate::namespace::NamespaceId;
- use crate::types::IOResultOr;
- use crate::util::IOExt;
- #[cfg(feature = "io_memory_yield")]
-@@ -3474,7 +3475,7 @@ impl Database {
+ use crate::catalog::{self, PostgresDialect};
+ use crate::error::{in_failed_sql_transaction_error, sqlstate_error};
+ use crate::functions::{find_parameter, ConfigParameter, Parameter};
+ use crate::settings::{ConnectionSettings, PgSessionState, SettingScope};
+ use crate::statement::{PgTxState, PostRunFn, TxRole};
+ use turso_core::schema::{Table, SEQ_BACKING_TABLE_PREFIX};
+-use turso_core::{Connection, LimboError, Qualifier, Result, Statement, Value};
++use turso_core::{
++    Connection, IOResult, LimboError, Qualifier, Result, Statement, StepResult, Value,
++};
+ use turso_parser::ast::{self};
+ use turso_pg_parser::foreign_key_tables;
+ use turso_pg_parser::sqlstate::{
+@@ -447,14 +450,22 @@ fn prepare_statement_inner(
+         .conn
+         .prepare_translated_cmd(cmd.clone(), &sql)
+         .map_err(schema_error)?;
+-    let pg_conn = Arc::clone(pg_conn);
+-    let prereqs = translated.prereqs;
+-    let sql_owned = sql.into_owned();
+-    Ok(crate::Statement::with_deferred(
++    Ok(crate::Statement::with_prerequisites(
+         inner,
+-        Box::new(move |inner| {
+-            execute_cmd_with_prereqs(&pg_conn, &prereqs, &cmd, &sql_owned, inner)
+-        }),
++        PrerequisiteExecution {
++            pg_conn: Arc::clone(pg_conn),
++            prereqs: translated.prereqs,
++            cmd,
++            sql: sql.into_owned(),
++            phase: PrerequisitePhase::Start,
++            active: None,
++            io_completions: None,
++            was_in_tx: None,
++            savepoint_open: false,
++            target_exists: false,
++            error: None,
++            interrupted: false,
++        },
+     )
+     .with_tx_tracking(conn, tx, role)
+     .with_query_start_marking(marks_query_start)
+@@ -559,65 +570,221 @@ fn tx_role(stmt: &ast::Stmt) -> TxRole {
  
-     pub fn register_virtual_table(&self, table: Arc<VirtualTable>) -> Result<String> {
-         let name = table.name.clone();
--        self.with_schema_mut(|schema| schema.add_virtual_table(table))?;
-+        self.with_schema_mut(|schema| schema.add_virtual_table(NamespaceId::ROOT, table))?;
-         Ok(name)
+ const PG_STMT_SAVEPOINT: &str = "__turso_pg_stmt";
+ 
+-fn execute_cmd_with_prereqs(
+-    pg_conn: &Arc<PgConnectionInner>,
+-    prereqs: &[ast::Stmt],
+-    cmd: &ast::Cmd,
+-    sql: &str,
+-    inner: &mut Statement,
+-) -> Result<()> {
+-    let conn = &pg_conn.conn;
+-    if create_table_if_not_exists_target_present(conn, cmd)? {
+-        *inner = conn
+-            .prepare_translated_cmd(cmd.clone(), sql)
+-            .map_err(schema_error)?;
+-        return inner.run_ignore_rows();
++#[derive(Clone, Copy, PartialEq, Eq)]
++enum PrerequisitePhase {
++    Start,
++    CheckTarget,
++    Savepoint,
++    Prerequisite(usize),
++    Main,
++    Release,
++    Rollback,
++    RollbackRelease,
++    Done,
++}
++
++pub(crate) struct PrerequisiteExecution {
++    pg_conn: Arc<PgConnectionInner>,
++    prereqs: Vec<ast::Stmt>,
++    cmd: ast::Cmd,
++    sql: String,
++    phase: PrerequisitePhase,
++    active: Option<Statement>,
++    pub(crate) io_completions: Option<turso_core::types::IOCompletions>,
++    pub(crate) was_in_tx: Option<bool>,
++    savepoint_open: bool,
++    target_exists: bool,
++    error: Option<LimboError>,
++    pub(crate) interrupted: bool,
++}
++
++impl PrerequisiteExecution {
++    pub(crate) fn step(
++        &mut self,
++        inner: &mut Statement,
++        waker: Option<&Waker>,
++    ) -> Result<StepResult> {
++        self.io_completions = None;
++        loop {
++            if self.phase == PrerequisitePhase::Done {
++                return self.error.clone().map_or(Ok(StepResult::Done), Err);
++            }
++            match self.run_phase_nonblock(inner) {
++                Ok(IOResult::Done(())) => continue,
++                Ok(IOResult::IO(io)) => {
++                    io.set_waker(waker);
++                    let result = if io.is_explicit_yield() {
++                        StepResult::Yield
++                    } else {
++                        StepResult::IO
++                    };
++                    self.io_completions = Some(io);
++                    return Ok(result);
++                }
++                Err(error) => self.fail(error),
++            }
++        }
      }
  
+-    let started_in_autocommit = conn.get_auto_commit();
+-    let begin_sp = format!("SAVEPOINT \"{PG_STMT_SAVEPOINT}\"");
+-    let release_sp = format!("RELEASE SAVEPOINT \"{PG_STMT_SAVEPOINT}\"");
+-    execute_sqlite(conn, begin_sp)?;
+-    let result = (|| {
+-        for prereq in prereqs {
+-            let input = prereq.to_string();
+-            let mut stmt = conn
+-                .prepare_translated_stmt(prereq.clone(), &input)
+-                .map_err(schema_error)?;
+-            stmt.run_ignore_rows()?;
++    fn run_phase_nonblock(&mut self, inner: &mut Statement) -> Result<IOResult<()>> {
++        use PrerequisitePhase::*;
++
++        let conn = &self.pg_conn.conn;
++        if self.phase == Start {
++            self.was_in_tx = Some(!conn.get_auto_commit());
++            self.active = prepare_create_table_target_check(conn, &self.cmd)?;
++            self.phase = if self.active.is_some() {
++                CheckTarget
++            } else {
++              
 ```
 
-**File**: `core/dialect/sqlite/mod.rs` (modified, +3/-1)
+**File**: `postgres/frontend/statement.rs` (modified, +77/-51)
 ```diff
-@@ -9,6 +9,7 @@
- //! SQLite one namespace per database, are in [`attach`].
- 
- pub mod attach;
-+use crate::namespace::NamespaceId;
- use crate::pragma::PragmaVirtualTable;
- use crate::schema::{BTreeTable, Schema, Table};
- use crate::sync::Arc;
-@@ -163,7 +164,8 @@ pub fn register_builtin_catalog(
-     enable_custom_types: bool,
- ) -> crate::Result<()> {
-     for vtab in pragma_vtabs() {
--        schema.tables.insert(
-+        schema.insert_table(
-+            NamespaceId::ROOT,
-             vtab.name.to_owned(),
-             Arc::new(Table::Virtual(Arc::new((*vtab).clone()))),
-         );
-```
-
-**File**: `core/ext/mod.rs` (modified, +2/-1)
-```diff
-@@ -10,6 +10,7 @@ use crate::index_method::toy_vector_sparse_ivf::VectorSparseInvertedIndexMethod;
- use crate::index_method::{
-     BACKING_BTREE_INDEX_METHOD_NAME, TOY_VECTOR_SPARSE_IVF_INDEX_METHOD_NAME,
+@@ -12,14 +12,15 @@ use turso_core::{
  };
-+use crate::namespace::NamespaceId;
- use crate::schema::{Schema, Table};
- use crate::sync::atomic::{AtomicU64, Ordering};
- use crate::sync::Mutex;
-@@ -87,7 +88,7 @@ pub(crate) unsafe extern "C" fn register_vtab_module(
-                 let Ok(schema) = Schema::try_make_mut(&mut guard) else {
-                     return ResultCode::Error;
-                 };
--                schema.tables.insert(name_str, table);
-+                schema.insert_table(NamespaceId::ROOT, name_str, table);
-             } else {
-                 return ResultCode::Error;
-             }
-```
-
-**File**: `core/incremental/cursor.rs` (modified, +2/-1)
-```diff
-@@ -257,6 +257,7 @@ fn read_only_error() -> Box<LimboError> {
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use crate::namespace::NamespaceId;
-     use crate::storage::btree::BTreeCursor;
-     use crate::sync::Arc;
-     use crate::util::IOExt;
-@@ -325,7 +326,7 @@ mod tests {
-         let view_mutex = conn
-             .schema
-             .read()
--            .get_materialized_view(view_name)
-+            .get_materialized_view(NamespaceId::ROOT, view_name)
-             .ok_or_else(|| crate::LimboError::InternalError("View not found".to_string()))?;
  
-         // Get the view's root page
-```
-
-**File**: `core/incremental/vdbe_maintenance.rs` (modified, +11/-6)
-```diff
-@@ -24,6 +24,7 @@
- //! completion (or before an in-statement view read), or inside the CREATE
- //! MATERIALIZED VIEW statement for initial population.
+ use crate::error::in_failed_sql_transaction_error;
++use crate::session::PrerequisiteExecution;
+ use crate::Result;
  
-+use crate::namespace::NamespaceRef;
- use rustc_hash::FxHashMap;
- use turso_parser::ast;
+ pub(crate) type DeferredExec =
+     Box<dyn FnMut(&mut turso_core::Statement) -> turso_core::Result<()> + Send + Sync>;
  
-@@ -219,9 +220,11 @@ impl Connection {
-         view_name: &str,
-     ) -> Result<Vec<Option<String>>> {
-         let schema = self.schema.read().clone();
--        let view = schema.get_materialized_view(view_name).ok_or_else(|| {
--            LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
--        })?;
-+        let view = schema
-+            .get_materialized_view(crate::namespace::NamespaceId::ROOT, view_name)
-+            .ok_or_else(|| {
-+                LimboError::InvalidArgument(format!("no such materialized view: {view_name}"))
-+            })?;
-         let select = view.lock().select_stmt.clone();
-         let plan = build_plan_for_connection(view_name, &select, &schema, self)?;
-         Ok(plan
-@@ -256,9 +259,11 @@ fn build_plan_for_connection(
-     // names the same way CREATE did: within the view's own database, never
-     // through a TEMP table that happens to share a source table's name
-     // (#9456). Materialized views always live in main.
--    resolver.with_view_scope(crate::MAIN_DB_ID, view_name.to_string(), || {
--        plan_view(view_name, select, &resolver, connection)
--    })
-+    resolver.with_view_scope(
-+        NamespaceRef::root_of(crate::MAIN_DB_ID),
-+        view_name.to_string(),
-+        || plan_view(view_name, select, &resolver, connection),
-+    )
+-struct DeferredState {
+-    exec: DeferredExec,
+-    completed: bool,
++enum DeferredState {
++    Callback { exec: DeferredExec, completed: bool },
++    Prerequisites(Box<PrerequisiteExecution>),
  }
  
- /// Emit every node once in DAG topological order.
+ /// How a statement interacts with PostgreSQL's aborted-transaction state.
+@@ -191,13 +192,22 @@ impl Statement {
+ 
+     pub(crate) fn with_deferred(inner: turso_core::Statement, exec: DeferredExec) -> Self {
+         let mut stmt = Self::new(inner);
+-        stmt.deferred = Some(DeferredState {
++        stmt.deferred = Some(DeferredState::Callback {
+             exec,
+             completed: false,
+         });
+         stmt
+     }
+ 
++    pub(crate) fn with_prerequisites(
++        inner: turso_core::Statement,
++        exec: PrerequisiteExecution,
++    ) -> Self {
++        let mut stmt = Self::new(inner);
++        stmt.deferred = Some(DeferredState::Prerequisites(Box::new(exec)));
++        stmt
++    }
++
+     pub(crate) fn with_tx_tracking(
+         mut self,
+         conn: Arc<Connection>,
+@@ -289,44 +299,46 @@ impl Statement {
+         }
+     }
+ 
+-    fn execute_deferred(&mut self, was_in_tx: bool) -> Result<()> {
+-        let Some(deferred) = self.deferred.as_mut() else {
+-            return Ok(());
+-        };
+-        if !deferred.completed {
+-            let result: Result<()> = (deferred.exec)(&mut self.inner).map_err(Into::into);
+-            if result.is_err() {
+-                self.note_execution_error(was_in_tx);
+-                return result;
+-            }
+-            deferred.completed = true;
+-        }
+-        Ok(())
+-    }
+-
+     pub fn step(&mut self) -> Result<StepResult> {
+-        let Some(was_in_tx) = self.tx_gate()? else {
+-            return Ok(StepResult::Done);
+-        };
+-        self.mark_query_start();
+-        if self.deferred.is_some() {
+-            self.execute_deferred(was_in_tx)?;
+-            return Ok(StepResult::Done);
+-        }
+-        let result = self.inner.step().map_err(Into::into);
+-        self.finish_step(result, was_in_tx)
++        self.step_inner(None)
+     }
+ 
+     pub fn step_with_waker(&mut self, waker: &Waker) -> Result<StepResult> {
+-        let Some(was_in_tx) = self.tx_gate()? else {
+-            return Ok(StepResult::Done);
++        self.step_inner(Some(waker))
++    }
++
++    fn step_inner(&mut self, waker: Option<&Waker>) -> Result<StepResult> {
++        let saved_tx = match &self.deferred {
++            Some(DeferredState::Prerequisites(exec)) => exec.was_in_tx,
++            _ => None,
+         };
+-        self.mark_query_start();
+-        if self.deferred.is_some() {
+-            self.execute_deferred(was_in_tx)?;
++        let tx = match saved_tx {
++            Some(was_in_tx) => Some(was_in_tx),
++            None => self.tx_gate()?,
++        };
++        let Some(was_in_tx) = tx else {
+             return Ok(StepResult::Done);
++        };
++        if saved_tx.is_none() {
++            self.mark_query_start();
+         }
+-        let result = self.inner.step_with_waker(waker).map_err(Into::into);
++        let result = match &mut self.deferred {
++            Some(DeferredState::Callback { exec, completed }) => {
++                if *completed {
++                    return Ok(StepResult::Done);
++                }
++                exec(&mut self.inner).map(|()| {
++                    *completed = true;
++                    StepResult::Done
++                })
++            }
++            Some(DeferredState::Prerequisites(exec)) => exec.step(&mut self.inner, waker),
++            None => match waker {
++                Some(waker) => self.inner.step_with_waker(waker),
++                None => self.inner.step(),
++            },
++        }
++        .map_err(Into::into);
+         self.finish_step(result, was_in_tx)
+     }
+ 
+@@ -357,8 +369,10 @@ impl Statement {
+     }
+ 
+     pub fn reset(&mut self) -> Result<()> {
+-        if let Some(deferred) = self.deferred.as_mut() {
+-            deferred.completed = false;
++        match &mut self.deferred {
++            Some(DeferredState::Callback { completed, .. }) => *completed = false,
++            Some(DeferredState::Prerequisites(exec)) => exec.reset()?,
++            None => {}
+         }
+         self.commit_became_rollback = false;
+         self.inner.reset().map_err(Into::into)
+@@ -386,26 +400,26 @@ impl Statement {
+     }
+ 
+     pub fn run_ignore_rows(&mut self) -> Result<()> {
++        if self.deferred.is_some() {
++            return self.run_with_row_callback(|_| Ok(()));
++        }
+         let Some(was_in_tx) = self.tx_gate()? else {
+             return Ok(());
+         };
+         self.mark_query_start();
+-        if self.deferred.is_some() {
+-            return self.execute_deferred(was_in_tx);
+-        }
+         let resu
+```
+
+**File**: `postgres/frontend/tests/embedded_errors.rs` (modified, +383/-0)
+```diff
+@@ -999,6 +999,389 @@ fn transaction_rolled_back_by_the_core_still_reports_aborted() {
+     conn1.execute("COMMIT").unwrap();
+ }
+ 
++#[test]
++fn serial_prerequisites_yield_to_the_caller() {
++    use turso_core::{IOResult, IO};
++
++    for method in 0..4 {
++        let io = Arc::new(CountedYieldIO::default());
++        let db = turso_pg::open_database_with_io(
++            io.clone(),
++            "serial-yield.db",
++            OpenFlags::default(),
++            DatabaseOpts::new(),
++        )
++        .unwrap();
++        let conn = Connection::connect(&db).unwrap();
++        let mut stmt = conn
++            .prepare("CREATE TABLE t (a SERIAL, b SERIAL, payload INT)")
++            .unwrap();
++        conn.inner()
++            .set_yield_injector(Some(Arc::new(NthYield::new(4))));
++        let wakes = Arc::new(WakeCounter::default());
++        let waker = std::task::Waker::from(wakes.clone());
++        let mut yields = 0;
++        let mut explicit_yields = 0;
++        loop {
++            let before = io.steps.load(std::sync::atomic::Ordering::Relaxed);
++            let result = match method {
++                0 => stmt.step(),
++                1 => stmt.step_with_waker(&waker),
++                2 | 3 => {
++                    let result = if method == 2 {
++                        stmt.run_ignore_rows_nonblock()
++                    } else {
++                        stmt.run_with_row_callback_nonblock(|_| panic!("DDL returned a row"))
++                    };
++                    result.map(|result| match result {
++                        IOResult::Done(()) => StepResult::Done,
++                        IOResult::IO(completion) => {
++                            assert!(completion.is_explicit_yield() || !completion.finished());
++                            if completion.is_explicit_yield() {
++                                StepResult::Yield
++                            } else {
++                                StepResult::IO
++                            }
++                        }
++                    })
++                }
++                _ => unreachable!(),
++            };
++            assert_eq!(
++                io.steps.load(std::sync::atomic::Ordering::Relaxed),
++                before,
++                "method {method} pumped I/O inside the nonblocking call"
++            );
++            let result = result.unwrap();
++            match result {
++                StepResult::Done => break,
++                StepResult::IO | StepResult::Yield | StepResult::Sleep { .. } => {
++                    yields += 1;
++                    if method < 2 {
++                        let completion = stmt.take_io_completions().unwrap();
++                        assert!(completion.is_explicit_yield() || !completion.finished());
++                    }
++                    if matches!(result, StepResult::Yield) {
++                        explicit_yields += 1;
++                    }
++                    let before_wake = wakes.0.load(std::sync::atomic::Ordering::Relaxed);
++                    io.step().unwrap();
++                    if method == 1 && matches!(result, StepResult::IO) {
++                        assert!(wakes.0.load(std::sync::atomic::Ordering::Relaxed) > before_wake);
++                    }
++                }
++                other => panic!("unexpected result: {other:?}"),
++            }
++        }
++        assert!(yields > 0);
++        assert!(explicit_yields > 0);
++        conn.inner().set_yield_injector(None);
++        assert_eq!(conn.transaction_state(), TransactionState::Idle);
++        conn.execute("INSERT INTO t (payload) VALUES (42)").unwrap();
++        assert_eq!(
++            conn.prepare("SELECT a, b FROM t")
++                .unwrap()
++                .run_collect_rows()
++                .unwrap(),
++            vec![vec![Value::from_i64(1), Value::from_i64(1)]]
++        );
++        assert_eq!(
++            conn.prepare("SELECT sequencename FROM pg_sequences ORDER BY sequencename")
++                .unwrap()
++                .run_collect_rows()
++                .unwrap(),
++            vec![
++                vec![Value::build_text("t_a_seq")],
++                vec![Value::build_text("t_b_seq")]
++            ]
++        );
++    }
++}
++
++#[test]
++fn serial_prerequisites_clean_up_when_abandoned() {
++    use turso_core::IO;
++
++    for action in 0..3 {
++        for pause_at in 1..200 {
++            let io = Arc::new(CountedYieldIO::default());
++            let db = turso_pg::open_database_with_io(
++                io.clone(),
++                "abandoned.db",
++                OpenFlags::default(),
++                DatabaseOpts::new(),
++            )
++            .unwrap();
++            let conn = Connection::connect(&db).unwrap();
++            conn.execute(
++                "CREATE TABLE kept (v INT); BEGIN; INSERT INTO kept VALUES (42); SAVEPOINT user_sp",
++            )
++            .unwrap();
++            let mut stmt = conn.prepare("CREATE TABLE t (a SERIAL, b SERIAL)").unwrap();
++            let injector =
+```
+
+---
+
+### Incident Patch 3: `0fc3ce83` (2026-10-31)
+**Commit Message**: postgres: extract prerequisite phase SQL generation
+
+Keep phase SQL generation separate from preparation while preserving translated AST preparation and lazy execution.
+
+Amp-Thread-ID: https://ampcode.com/threads/T-28890b5f-9c6b-4688-9cfe-d58e60c893ee
+Co-authored-by: pedro muniz <[REDACTED_EMAIL]>
+
+**File**: `postgres/frontend/session.rs` (modified, +22/-10)
+```diff
+@@ -640,23 +640,17 @@ impl PrerequisiteExecution {
+             };
+         }
+         if self.active.is_none() {
++            let sql = self.phase_sql();
+             self.active = Some(match self.phase {
+-                Savepoint => conn.prepare_sqlite(format!("SAVEPOINT \"{PG_STMT_SAVEPOINT}\""))?,
+                 Prerequisite(index) => {
+                     let stmt = &self.prereqs[index];
+-                    conn.prepare_translated_stmt(stmt.clone(), &stmt.to_string())
++                    conn.prepare_translated_stmt(stmt.clone(), &sql)
+                         .map_err(schema_error)?
+                 }
+                 Main => conn
+-                    .prepare_translated_cmd(self.cmd.clone(), &self.sql)
++                    .prepare_translated_cmd(self.cmd.clone(), &sql)
+                     .map_err(schema_error)?,
+-                Release | RollbackRelease => {
+-                    conn.prepare_sqlite(format!("RELEASE SAVEPOINT \"{PG_STMT_SAVEPOINT}\""))?
+-                }
+-                Rollback if self.was_in_tx == Some(true) => {
+-                    conn.prepare_sqlite(format!("ROLLBACK TO SAVEPOINT \"{PG_STMT_SAVEPOINT}\""))?
+-                }
+-                Rollback => conn.prepare_sqlite("ROLLBACK")?,
++                Savepoint | Release | Rollback | RollbackRelease => conn.prepare_sqlite(&sql)?,
+                 Start | CheckTarget | Done => unreachable!(),
+             });
+         }
+@@ -710,6 +704,24 @@ impl PrerequisiteExecution {
+         Ok(IOResult::Done(()))
+     }
+ 
++    fn phase_sql(&self) -> Cow<'_, str> {
++        use PrerequisitePhase::*;
++
++        match self.phase {
++            Savepoint => format!("SAVEPOINT \"{PG_STMT_SAVEPOINT}\"").into(),
++            Prerequisite(index) => self.prereqs[index].to_string().into(),
++            Main => Cow::Borrowed(&self.sql),
++            Release | RollbackRelease => {
++                format!("RELEASE SAVEPOINT \"{PG_STMT_SAVEPOINT}\"").into()
++            }
++            Rollback if self.was_in_tx == Some(true) => {
++                format!("ROLLBACK TO SAVEPOINT \"{PG_STMT_SAVEPOINT}\"").into()
++            }
++            Rollback => Cow::Borrowed("ROLLBACK"),
++            Start | CheckTarget | Done => unreachable!(),
++        }
++    }
++
+     fn fail(&mut self, error: LimboError) {
+         let cleaning_up = matches!(
+             self.phase,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #10721** (2026-10-25): core: key the schema by namespace and resolve names to a namespace (@penberg)
-- **PR #10719** (closed): postgres: support timestamptz and date/time types (@jussisaurio)
-- **PR #10718** (closed): postgres: support casts to boolean, uuid and varchar(n) (@jussisaurio)
-- **PR #10717** (closed): core: convert literals and text compared with custom type columns (@jussisaurio)
-- **PR #10714** (2026-10-25): postgres: keep mod() integer when both arguments are integers (@turso-github-handyman[bot])
-- **PR #10713** (2026-10-25): postgres: expose empty pg_seclabels catalog (@pedrocarlo)
+- **PR #11194** (2026-10-31): postgres: yield during deferred cleanup and transaction rollback (@pedrocarlo)
+- **PR #11191** (2026-10-31): postgres: reuse yielding execution for deferred session statements (@pedrocarlo)
+- **PR #11190** (2026-10-31): postgres: yield while executing statement prerequisites (@pedrocarlo)
+- **PR #11182** (closed): tursopg: accept non-UTF-8 bind parameters as blobs (@k-park)
+- **PR #11179** (2026-10-31): tools/dbhash: add --cipher and --hexkey to hash encrypted databases (@turso-github-handyman[bot])
+- **PR #11170** (2026-10-31): core: fix two virtual generated column bugs (DELETE RETURNING, ALTER TABLE on STRICT tables) (@glommer)
 
 ---
 
@@ -2032,29 +2154,30 @@ before. The maps of a namespace
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core: key the schema by namespace and resolve names to a namespace' from 
+## X. Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turs
 
 **RULE**:
-When implementing operations in `core/benches/fts_benchmark.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/translate/alter.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aa93d669`: Merge 'core: key the schema by namespace and resolve names to a namespace' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01cddb12`: Merge 'core/translate: skip sqlite_sequence rows with a NULL name' from app/turso-github-handyman. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/benches/fts_benchmark.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/translate/alter.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use turso_core::NamespaceId;
-                    .get_index(NamespaceId::ROOT, "docs", "docs_fts")
+            flags: CmpInsFlags::default().jump_if_null(),
+            flags: CmpInsFlags::default().jump_if_null(),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                    .get_index("docs", "docs_fts")
+            flags: CmpInsFlags::default(),
+            flags: CmpInsFlags::default(),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aa93d669` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01cddb12` are properly handled with clean fallback behavior.

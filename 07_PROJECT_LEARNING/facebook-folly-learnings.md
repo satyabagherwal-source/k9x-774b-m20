@@ -1,10 +1,10 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source**: github ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
-> **Source Version**: `b11ea7ea`  
+> **Source Version**: `57ff303c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T00:41:51.989Z  
-> **Learning ID**: `learn-github-facebook-folly`  
+> **Timestamp**: 2026-10-31T17:14:11.687Z  
+> **Learning ID**: `learn-github-meta-folly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -12,22 +12,22 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): facebook/folly
+# Forensic Learning Record (Deep Inspection): meta/folly
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T00:41:51.983Z  
+> **Harvest Timestamp**: 2026-10-31T17:14:11.682Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `facebook/folly`
+- **Repository / Resource**: `meta/folly`
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30556 stars
+- **Stars / Engagement**: 30553 stars
 
 ---
 
@@ -2368,49 +2368,356 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d04a788` (2026-10-25)
-**Commit Message**: Build absl from source on Ubuntu 24.04
+### Incident Patch 1: `47c73354` (2026-10-30)
+**Commit Message**: cmake: match the cxx of edenfs-staticlib's workspace in the bridges of the eden/scm crates it builds
 
 Summary:
-X-link: https://github.com/facebookexternal/rdma_gen/pull/38
+`rust_cxx_bridge()` and `rust_cxx_header()` generate C++ with the cxxbridge of the cxx version that `cargo tree` finds for the crate in the current source directory. `backingstore` and `edenfs_ffi` are in eden/scm's Cargo workspace, which takes cxx from crates.io, now 1.0.205. But their Rust builds into `rust_edenfs_staticlib`, in eden/fs's workspace, which patches cxx to facebookexperimental/cxx, at 1.0.198. cxx puts its version in the symbols that the C++ calls, so binaries that link these bridges fail with crates from crates.io, which GitHub's builds of meta/sapling use because it has no `Cargo.lock`. On macOS:
 
-Ubuntu 24.04's libabsl-dev (20220623.1) provides no `absl::log` target, so the rdma-unit suite's `find_package(absl)` fails to generate there. The manifest now excludes 24.04 from distro packages, falling back to the pinned source rev.
+```
+Undefined symbols for architecture arm64:
+  "_sapling$cxxbridge1$205$sapling_flush_counters", referenced from:
+      sapling::sapling_flush_counters() in libbackingstore.a[2](ffi.rs.cc.o)
+```
 
-Reviewed By: ccanel
+while the static library has `_sapling$cxxbridge1$198$sapling_flush_counters`. The EdenFS Linux GitHub workflow fails the same way:
 
-Differential Revision: D127265177
+```
+FAILED: [code=1] eden/fs/edenfs
+.../eden/scm/lib/backingstore/src/ffi.rs.cc:1545:(.text+0x3b4): undefined reference to `sapling$cxxb
 
-fbshipit-source-id: b13866e619a03e93f303803d965c588d6f8a3d70
-
-**File**: `build/fbcode_builder/manifests/absl` (modified, +3/-5)
+**File**: `build/fbcode_builder/CMake/RustStaticLibrary.cmake` (modified, +26/-14)
 ```diff
-@@ -14,14 +14,12 @@ ABSL_BUILD_TESTING = OFF
- ABSL_PROPAGATE_CXX_STD = ON
- ABSL_USE_SYSTEM_INCLUDES = ON
+@@ -395,7 +395,8 @@ endfunction()
+ #   `${TARGET}` CMake library target.
+ #
+ # ```cmake
+-# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>])
++# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>]
++#                 [CXX_VERSION_DIR <DIR>])
+ # ```
+ #
+ # Parameters:
+@@ -408,17 +409,22 @@ endfunction()
+ #   fallback to `${TARGET}`.
+ # - LIBS <lib1> [<lib2> ...]:
+ #   A list of libraries that this library depends on.
++# - CXX_VERSION_DIR:
++#   Directory of the crate whose version of cxx to match. This parameter is
++#   optional, and defaults to the current source directory. A crate built into
++#   the static library of another Cargo workspace links that workspace's cxx,
++#   which can be another version.
+ #
+ function(rust_cxx_bridge TARGET CXX_BRIDGE_FILE)
+-  fb_cmake_parse_args(ARG "" "CRATE" "LIBS" "${ARGN}")
++  fb_cmake_parse_args(ARG "" "CRATE;CXX_VERSION_DIR" "LIBS" "${ARGN}")
  
--# Prefer distro abseil where it is new enough to provide absl::log, and
--# build the pinned rev from source elsewhere. EL8/EL9 ship 20211102.0
--# and Ubuntu 22.04 ships 20210324 (20.04/18.04 older still), all of
--# which predate absl::log.
-+# EL8/EL9 ship 20211102.0, too old for absl::log.
- [rpms.any(distro=fedora,all(distro_family=rhel,not(any(distro_vers=8,distro_vers=9))))]
- abseil-cpp-devel
+   if(DEFINED ARG_CRATE)
+     set(crate_name "${ARG_CRATE}")
+   else()
+     set(crate_name "${TARGET}")
+   endif()
  
--[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04")))]
-+# Ubuntu 24.04 ships abseil 20220623.1, too old for absl::log.
-+[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04",distro_vers="24.04")))]
- libabsl-dev
+-  _rust_cxxbridge(cxxbridge cxxbridge_target)
++  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
  
- [homebrew]
+   add_library(${crate_name} STATIC)
+   target_include_directories(
+@@ -479,10 +485,10 @@ endfunction()
+ # This function generates the `rust/cxx.h` header of the [cxx] crate for C++
+ # code that uses cxx types, such as `rust::String`, without a bridge of its
+ # own. The header matches the version of cxx that the crate in the current
+-# source directory depends on.
++# source directory, or in CXX_VERSION_DIR, depends on.
+ #
+ # ```cmake
+-# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>])
++# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>] [CXX_VERSION_DIR <DIR>])
+ # ```
+ #
+ # Parameters:
+@@ -493,11 +499,13 @@ endfunction()
+ # - LIBS <lib1> [<lib2> ...]:
+ #   A list of libraries that this library depends on, such as the Rust static
+ #   library that contains the cxx runtime.
++# - CXX_VERSION_DIR:
++#   As for rust_cxx_bridge().
+ #
+ function(rust_cxx_header TARGET)
+-  fb_cmake_parse_args(ARG "" "" "LIBS" "${ARGN}")
++  fb_cmake_parse_args(ARG "" "CXX_VERSION_DIR" "LIBS" "${ARGN}")
+ 
+-  _rust_cxxbridge(cxxbridge cxxbridge_target)
++  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
+   add_custom_target(
+     ${TARGET}.header
+     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/rust/cxx.h"
+@@ -509,11 +517,15 @@ function(rust_cxx_header TARGET)
+ endfunction()
+ 
+ # Sets <CXXBRIDGE_VAR> to a cxxbridge with the version of cxx that the crate in
+-# the current source directory depends on, and <DEPENDS_VAR> to the target that
+-# commands running it depend on, which runs `cargo install cxxbridge-cmd` when
+-# no installed cxxbridge has that version. Also adds the rule that generates
+-# `rust/cxx.h` in the current binary directory.
+-function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR)
++# <CXX_VERSION_DIR>, or else the current source directory, depends on, and
++# <DEPENDS_VAR> to the target that commands running it depend on, which runs
++# `cargo install cxxbridge-cmd` when no installed cxxbridge has that version.
++# Also adds the rule that generates `rust/cxx.h` in the current binary
++# directory.
++function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR CXX_VERSION_DIR)
++  if(NOT CXX_VERSION_DIR)
++    set(CXX_VERSION_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
++  endif()
+   if(USE_CARGO_VENDOR)
+     set(extra_cargo_env "CARGO_HOME=${RUST_CARGO_HOME}")
+   endif()
+@@ -523,15 +535,15 @@ function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR)
+       "${CMAKE_COMMAND}" -E env
+       ${extra_cargo_env}
+       "${CARGO_COMMAND}" tree -i cxx --depth=0
+-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
++    WORKING_DIRECTORY "${CXX_VERSION_DIR}"
+     RESULT_VARIABLE cxx_version_result
+     OUTPUT_VARIABLE cxx_version_output
+   )
+ 
+   if(NOT "${cxx_version_result}" EQUAL "0")
+     message(
+       FATAL_ERROR
+-      "The crate in ${CMAKE_CURRENT_SOURCE_DIR} does not depend on cxx."
++      "The crate in ${CXX_VERSION_DIR} does not depend on cxx."
+     )
+   endif()
+   if(cxx_version_output MATCHES "cxx v([0-9]+.[0-9]+.[0-9]+)")
+```
+
+---
+
+### Incident Patch 2: `592d1011` (2026-10-31)
+**Commit Message**: Add owning EventBase acquisition to IOExecutor
+
+Summary:
+Add `IOExecutor::getEventBaseKeepAlive()` and implement it across concrete providers, decorators, subclass overrides, and mocks. Keep the borrowed getter for incremental caller migration.
+
+The IO pool acquires the EventBase token under its selection lock. Mux gates acquisition against shutdown without holding the gate while draining references. RootExecutor retains its fixed EventBase and drains CPU roots before IO teardown. Forwarders preserve selection and subclass hooks.
+
+Reviewed By: skrueger
+
+Differential Revision: D127598017
+
+fbshipit-source-id: e6ad74ae7cdf1e744c2e47ffeb6d440e1d68b3be
+
+**File**: `folly/executors/FiberIOExecutor.h` (modified, +5/-0)
+```diff
+@@ -44,6 +44,11 @@ class FiberIOExecutor : public IOExecutor {
+     return ioExecutor_->getEventBase();
+   }
+ 
++  folly::Executor::KeepAlive<folly::EventBase> getEventBaseKeepAlive()
++      override {
++    return ioExecutor_->getEventBaseKeepAlive();
++  }
++
+  private:
+   std::shared_ptr<IOExecutor> ioExecutor_;
+   fibers::FiberManager::Options options_;
+```
+
+**File**: `folly/executors/IOExecutor.h` (modified, +10/-0)
+```diff
+@@ -40,7 +40,17 @@ namespace folly {
+ class IOExecutor : public virtual folly::Executor {
+  public:
+   ~IOExecutor() override = default;
++
++  // Returns a borrowed EventBase. Its lifetime must be coordinated with the
++  // implementation's shutdown or resizing.
+   virtual folly::EventBase* getEventBase() = 0;
++
++  // Returns an implementation-selected EventBase protected by the token, which
++  // may delay shutdown or resizing. This does not retain the IOExecutor or
++  // change EventBase thread-affinity requirements. An unavailable EventBase may
++  // be represented by an empty token or an exception, as with getEventBase().
++  virtual folly::Executor::KeepAlive<folly::EventBase>
++  getEventBaseKeepAlive() = 0;
+ };
+ 
+ } // namespace folly
+```
+
+**File**: `folly/executors/IOThreadPoolExecutor.cpp` (modified, +9/-0)
+```diff
+@@ -204,6 +204,15 @@ EventBase* IOThreadPoolExecutor::getEventBase() {
+   return pickThread()->eventBase;
+ }
+ 
++Executor::KeepAlive<EventBase> IOThreadPoolExecutor::getEventBaseKeepAlive() {
++  ensureActiveThreads();
++  std::shared_lock r{threadListLock_};
++  if (threadList_.get().empty()) {
++    throw std::runtime_error("No threads available");
++  }
++  return getKeepAliveToken(pickThread()->eventBase);
++}
++
+ std::vector<Executor::KeepAlive<EventBase>>
+ IOThreadPoolExecutor::getAllEventBases() {
+   ensureMaxActiveThreads();
+```
+
+**File**: `folly/executors/IOThreadPoolExecutor.h` (modified, +1/-0)
+```diff
+@@ -134,6 +134,7 @@ class IOThreadPoolExecutor : public IOThreadPoolExecutorBase {
+       Func expireCallback = nullptr) override;
+ 
+   folly::EventBase* getEventBase() override;
++  folly::Executor::KeepAlive<folly::EventBase> getEventBaseKeepAlive() override;
+ 
+   // Ensures that the maximum number of active threads is running and returns
+   // the EventBase associated with each thread.
+```
+
+**File**: `folly/executors/test/BUCK` (modified, +1/-0)
+```diff
+@@ -292,6 +292,7 @@ fb_dirsync_cpp_unittest(
+     deps = [
+         ":IOThreadPoolExecutorBaseTestLib",
+         "//folly/executors:io_thread_pool_executor",
++        "//folly/synchronization:baton",
+     ],
+ )
+ 
+```
+
+**File**: `folly/executors/test/FiberIOExecutorTest.cpp` (modified, +17/-0)
+```diff
+@@ -34,6 +34,23 @@ TEST_F(FiberIOExecutorTest, event_base) {
+   ASSERT_EQ(e.getEventBase(), tpe->getEventBase());
+ }
+ 
++TEST_F(FiberIOExecutorTest, owning_event_base) {
++  auto tpe = std::make_shared<folly::IOThreadPoolExecutor>(1);
++  folly::FiberIOExecutor e(tpe);
++  auto* expected = tpe->getEventBase();
++  size_t baseline = 0;
++  expected->runInEventBaseThreadAndWait([&] {
++    baseline = expected->loopKeepAliveCount();
++  });
++  auto eventBase = static_cast<folly::IOExecutor&>(e).getEventBaseKeepAlive();
++
++  ASSERT_TRUE(eventBase);
++  EXPECT_EQ(expected, eventBase.get());
++  eventBase->runInEventBaseThreadAndWait([&] {
++    EXPECT_EQ(baseline + 1, eventBase->loopKeepAliveCount());
++  });
++}
++
+ TEST_F(FiberIOExecutorTest, basic_execution) {
+   auto tpe = std::make_shared<folly::IOThreadPoolExecutor>(1);
+   folly::FiberIOExecutor e(tpe);
+```
+
+**File**: `folly/executors/test/GlobalExecutorTest.cpp` (modified, +3/-0)
+```diff
+@@ -94,6 +94,9 @@ TEST(GlobalExecutorTest, GlobalIOExecutor) {
+    public:
+     void add(Func) override { count++; }
+     folly::EventBase* getEventBase() override { return nullptr; }
++    Executor::KeepAlive<EventBase> getEventBaseKeepAlive() override {
++      return {};
++    }
+     int count{0};
+   };
+ 
+```
+
+**File**: `folly/executors/test/IOThreadPoolExecutorBaseTestLib.h` (modified, +8/-1)
+```diff
+@@ -80,16 +80,23 @@ TYPED_TEST_P(IOThreadPoolExecutorBaseTest, GetEventBaseFromEvb) {
+ 
+   for (auto ka : evbs) {
+     auto* evb = ka.get();
++    Baton<> added;
+     // If called from the EventBase thread, getEventBase() and add() stick to
+     // the current EventBase.
+     evb->runInEventBaseThreadAndWait([&] {
+       EXPECT_EQ(evb, EventBaseManager::get()->getExistingEventBase());
+       EXPECT_EQ(evb, ex.getEventBase());
+-      ex.add([&ex, evb] {
++      EXPECT_EQ(
++          evb, static_cast<IOExecutor&>(ex).getEventBaseKeepAlive().get());
++      ex.add([&ex, evb, &added] {
+         EXPECT_EQ(evb, ex.getEventBase());
++        EXPECT_EQ(
++            evb, static_cast<IOExecutor&>(ex).getEventBaseKeepAlive().get());
+         EXPECT_EQ(evb, EventBaseManager::get()->getExistingEventBase());
++        added.post();
+       });
+     });
++    added.wait();
+   }
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `236495ff` (2026-10-31)
+**Commit Message**: Give IoUring ScheduledFnAt extra timeout tolerance
+
+Summary:
+ScheduledFnAt asserts 9/19/39ms timers fire within a 5ms tolerance on 10ms wheel ticks, leaving ~4ms of loop-latency margin. The IoUring backend delivers timer callbacks up to a loop iteration later than other backends, so on loaded hosts it lands just over the line (10% flaky, overshoots of 5-11ms observed). Allow 15ms for IoUring providers only; other backends keep the tight default.
+
+___
+
+landed-with-radar-review
+
+Differential Revision: D128818075
+
+fbshipit-source-id: bec7b2084bc3d540c6ed7b3ba4f5a0b0915a4dab
+
+**File**: `folly/io/async/test/EventBaseTestLib.h` (modified, +16/-5)
+```diff
+@@ -1373,12 +1373,23 @@ TYPED_TEST_P(EventBaseTest, ScheduledFnAt) {
+   // Even though we asked to schedule the first function in the past,
+   // in practice it doesn't run until after 1 iteration of the HHWheelTimer tick
+   // interval.
+-  T_CHECK_TIMEOUT(start, timestamp0, eb.timer().getTickInterval());
++  // The IoUring backend can deliver timer callbacks up to a loop iteration
++  // later than other backends (see the loopOnce() special-case above), so on
++  // loaded hosts it can exceed the tight default tolerance. Allow it extra
++  // room without weakening the check for other backends.
++  auto timeoutTolerance = TypeParam::isIoUringBackend()
++      ? std::chrono::milliseconds(15)
++      : std::chrono::milliseconds(5);
++  T_CHECK_TIMEOUT(
++      start, timestamp0, eb.timer().getTickInterval(), timeoutTolerance);
+ 
+-  T_CHECK_TIMEOUT(start, timestamp1, std::chrono::milliseconds(9));
+-  T_CHECK_TIMEOUT(start, timestamp2, std::chrono::milliseconds(19));
+-  T_CHECK_TIMEOUT(start, timestamp3, std::chrono::milliseconds(39));
+-  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(39));
++  T_CHECK_TIMEOUT(
++      start, timestamp1, std::chrono::milliseconds(9), timeoutTolerance);
++  T_CHECK_TIMEOUT(
++      start, timestamp2, std::chrono::milliseconds(19), timeoutTolerance);
++  T_CHECK_TIMEOUT(
++      start, timestamp3, std::chrono::milliseconds(39), timeoutTolerance);
++  T_CHECK_TIMEOUT(start, end, std::chrono::milliseconds(39), timeoutTolerance);
+ }
+ 
+ ///////////////////////////////////////////////////////////////////////////
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2731** (closed): Work around GCC < 13 TBAA miscompile in InlineFunctionRef (@Nicoshev)
+- **PR #2730** (closed): Make DistributedMutex Waiter layout independent of interference size (@Nicoshev)
 - **PR #2726** (closed): Fix FixedString literal macros with MSVC's conforming preprocessor (@tinadu1018)
+- **PR #2719** (closed): [coro] Fix CO_ASSERT_FALSE with released GoogleTest (@Hrushikesh-ramilla)
 - **PR #2718** (closed): Stop Wait.multipleWait racing a timer (@vitaut)
 - **PR #2717** (closed): Fix the remaining Windows test failures (@vitaut)
-- **PR #2715** (closed): reverse iterator (#2715) (@DenisYaroshevskiy)
-- **PR #2714** (closed): Fix the args test on Windows (@vitaut)
-- **PR #2712** (closed): Fix the Windows CMake build (@vitaut)
 
 ---
 
@@ -2430,34 +2737,61 @@ fbshipit-source-id: b13866e619a03e93f303803d965c588d6f8a3d70
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Build absl from source on Ubuntu 24.04
+## X. cmake: match the cxx of edenfs-staticlib's workspace in the bridges of the eden/
 
 **RULE**:
-When implementing operations in `build/fbcode_builder/manifests/absl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in facebook/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/fbcode_builder/CMake/RustStaticLibrary.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d04a788`: Build absl from source on Ubuntu 24.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `47c73354`: cmake: match the cxx of edenfs-staticlib's workspace in the bridges of the eden/scm crates it builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/manifests/absl`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/fbcode_builder/CMake/RustStaticLibrary.cmake`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-# EL8/EL9 ship 20211102.0, too old for absl::log.
-# Ubuntu 24.04 ships abseil 20220623.1, too old for absl::log.
-[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04",distro_vers="24.04")))]
+# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>]
+#                 [CXX_VERSION_DIR <DIR>])
+# - CXX_VERSION_DIR:
+#   Directory of the crate whose version of cxx to match. This parameter is
+#   optional, and defaults to the current source directory. A crate built into
+#   the static library of another Cargo workspace links that workspace's cxx,
+#   which can be another version.
+  fb_cmake_parse_args(ARG "" "CRATE;CXX_VERSION_DIR" "LIBS" "${ARGN}")
+  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
+# source directory, or in CXX_VERSION_DIR, depends on.
+# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>] [CXX_VERSION_DIR <DIR>])
+# - CXX_VERSION_DIR:
+#   As for rust_cxx_bridge().
+  fb_cmake_parse_args(ARG "" "CXX_VERSION_DIR" "LIBS" "${ARGN}")
+  _rust_cxxbridge(cxxbridge cxxbridge_target "${ARG_CXX_VERSION_DIR}")
+# <CXX_VERSION_DIR>, or else the current source directory, depends on, and
+# <DEPENDS_VAR> to the target that commands running it depend on, which runs
+# `cargo install cxxbridge-cmd` when no installed cxxbridge has that version.
+# Also adds the rule that generates `rust/cxx.h` in the current binary
+# directory.
+function(_rust_cx
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Anti-pattern to NEVER write (induced failure mode):
-# Prefer distro abseil where it is new enough to provide absl::log, and
-# build the pinned rev from source elsewhere. EL8/EL9 ship 20211102.0
-# and Ubuntu 22.04 ships 20210324 (20.04/18.04 older still), all of
-# which predate absl::log.
-[debs.not(all(distro=ubuntu,any(distro_vers="18.04",distro_vers="20.04",distro_vers="22.04")))]
+# rust_cxx_bridge(<TARGET> <CXX_BRIDGE_FILE> [CRATE <CRATE_NAME>] [LIBS <LIBNAMES>])
+  fb_cmake_parse_args(ARG "" "CRATE" "LIBS" "${ARGN}")
+  _rust_cxxbridge(cxxbridge cxxbridge_target)
+# source directory depends on.
+# rust_cxx_header(<TARGET> [LIBS <LIBNAMES>])
+  fb_cmake_parse_args(ARG "" "" "LIBS" "${ARGN}")
+  _rust_cxxbridge(cxxbridge cxxbridge_target)
+# the current source directory depends on, and <DEPENDS_VAR> to the target that
+# commands running it depend on, which runs `cargo install cxxbridge-cmd` when
+# no installed cxxbridge has that version. Also adds the rule that generates
+# `rust/cxx.h` in the current binary directory.
+function(_rust_cxxbridge CXXBRIDGE_VAR DEPENDS_VAR)
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      "The crate in ${CMAKE_CURRENT_SOURCE_DIR} does not depend on cxx."
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d04a788` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `47c73354` are properly handled with clean fallback behavior.

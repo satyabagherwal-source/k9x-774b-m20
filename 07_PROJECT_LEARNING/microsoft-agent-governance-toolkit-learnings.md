@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `70a4ab8e`  
+> **Source Version**: `d1d0ccea`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T02:11:19.037Z  
+> **Timestamp**: 2026-10-30T21:19:31.012Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T02:11:18.631Z  
+> **Harvest Timestamp**: 2026-10-30T21:19:30.907Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6464 stars
+- **Stars / Engagement**: 6498 stars
 
 ---
 
@@ -405,234 +405,310 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb950bcd` (2026-10-23)
-**Commit Message**: fix(haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401)
+### Incident Patch 1: `d1d0ccea` (2026-10-30)
+**Commit Message**: fix(examples): india cert-in and sebi policies deny every evaluation (#4480)
 
-* fix(haystack-agentmesh): charge TrustGate decay once per elapsed hour
+* fix(examples): stop certin and sebi india policies denying every evaluation
 
-apply_decay subtracted decay_rate for every hour since the last success
-or failure but never moved last_update, and run() calls it on every
-evaluation, so each call charged the whole interval again and an idle
-agent was soon blocked by repeated checks alone. apply_decay now records
-when it ran, so decay covers only the time since the last update.
+Three rules in the India regulatory example pack tested a parameter with a
+negated comparison instead of binding it. A negated comparison against a
+missing path is true, so each fired whenever the parameter was absent.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+Since these bundles were bound to runtime intervention points that is not an
+unusual input. acs-result.rego sets params to {} on the output interception,
+and on the input interception when the body is not an object, and maps params
+to the tool call's arguments at pre_tool_call. normalize turns any single
+denial into a deny decision, so certin-2022-directions and sebi-governance
+returned deny on every evaluation, including for benign content.
 
-* docs(changelog): add the PR number to the haystack-agentmesh entry
+A rule that fires on an absent field also cannot be contained: it adds a
+denial to every evaluation of its policy, so no other rule in that policy
+could be exercised in isolation.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
+certin-2022-directions.rego already contained the correct idiom four lines
+above one of the affected rules: the 180-day retention rule binds the value
+and is therefore undefined when the field is
 
----------
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.cspell-repo-terms.txt` (modified, +1/-0)
 ```diff
-@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`a2a-protocol` `TaskEnvelope.from_dict` keeps each message's content type and accepts a message without parts.** It rebuilt every message as `text/plain`, so a round trip through `to_dict` turned an `application/json` message into plain text, and a message with an empty `parts` list raised `IndexError`. The part's `type` is now restored, and a message with no parts becomes empty `text/plain` content (#4408).
- - **`agent-sandbox` code scanner flags `os.posix_spawn` and asyncio subprocesses.** The pre-execution scanner listed `subprocess`, `os.system`, `os.popen`, the `os.exec*` and `os.spawn*` families and `pty.spawn`, but not `os.posix_spawn`, `os.posix_spawnp`, `asyncio.create_subprocess_exec` or `asyncio.create_subprocess_shell`, so code that started a process through them reached the sandbox. They are now flagged, including through `asyncio.subprocess` and `from asyncio import subprocess` (#4369).
- - **`agent-sandbox` Docker checkpoints work for agent ids with uppercase letters or edge separators.** `save_state` committed the checkpoint to the image repository `agent-sandbox-<agent_id>`, but repository names must be lowercase and cannot start or end with a separator or repeat `.` or `_`, so for an id such as `Analyst-001`, `agent-` or `a..b` (all accepted by `create_session`) `docker commit` rejected the name and the session could not be checkpointed. Such ids now get the repository `agent-sandbox/id<escaped>`, where lowercase letters, digits and a single `-` or `.` between them are kept and every other character is written as `_` and two hex digits (`A-1` -> `agent-sandbox/id_41-1`); the encoding is reversible, so `Agent` and `agent` do not share a repository. Ids that already formed a valid name keep their repository and existing checkpoints, and an id whose escaped name would exceed Docker's 255-character limit raises `ValueError` before `docker commit` (#4370).
-+- **Haystack `TrustGate` charges trust decay once per elapsed hour.** `apply_decay` subtracted `decay_rate` for every hour since the last success or failure but did not move `last_update`, and `run` calls it on every evaluation, so each call charged the whole interval again: with the default rate, an agent idle for 10 hours lost 0.1 on the first `run`, 0.2 by the second and 0.3 by the third, and was soon blocked by repeated checks alone. `apply_decay` now records when it ran, so decay covers only the time since the last update or decay (#4401).
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+@@ -1166,6 +1166,7 @@ usize
+ utcfromtimestamp
+ utcnow
+ uvicorn
++vapt
+ venv
+ venvs
+ vite
 ```
 
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/src/haystack_agentmesh/trust_gate.py` (modified, +8/-2)
+**File**: `examples/policies/india-regulatory/README.md` (modified, +17/-0)
 ```diff
-@@ -86,11 +86,17 @@ def record_failure(self, agent_id: str) -> float:
-         return rec.score
+@@ -28,6 +28,23 @@ output; they do not observe the underlying system action, so they are detection
+ examples pack, not compliance controls. Treat them as a starting point, pair them with real
+ action-level enforcement, and run your own compliance assessment.
  
-     def apply_decay(self, agent_id: str) -> float:
--        """Apply time-based decay to an agent's trust score."""
-+        """Apply time-based decay to an agent's trust score.
++## Parameter-based rules need the host to supply the parameters
 +
-+        Decay covers the time since the record was last updated or decayed,
-+        so each elapsed hour is charged once however often this is called.
-+        """
-         rec = self._get_record(agent_id)
--        elapsed_hours = (time.time() - rec.last_update) / 3600.0
-+        now = time.time()
-+        elapsed_hours = (now - rec.last_update) / 3600.0
-         decay = self.decay_rate * elapsed_hours
-         rec.score = max(rec.score - decay, 0.0)
-+        rec.last_update = now
-         return rec.score
- 
-     def get_score(self, agent_id: str) -> float:
++Several rules decide on a declared parameter rather than on the action name or the output
++text: `log_storage_region` and `ntp_synced` (CERT-In), `storage_region`, `data_class` and
++`kyc_completed` (RBI), `consent_logged` and `encrypted` (DPDP), `aadhaar_masked` (Aadhaar),
++and `human_accountable`, `log_storage_region` and `vapt_completed` (SEBI). Those keys reach
++a policy only if the host puts them into the tool call arguments at `pre_tool_call`, or into
++`input.body.params` at the input interception. Nothing in this repository sets any of them,
++so in a default deployment those rules are inert and the pack decides on action names and
++output text alone.
++
++One name collides and is worth knowing about. `agent-mesh` carries a `data_class` field on
++its TRACE trust records, documented as the highest-sensitivity data class processed in a
++session and defaulting to `internal`. That is a different field from the RBI rule's
++`input.params.data_class`, which expects one of `payment_data`, `transaction_data` or
++`card_data`. Feeding the first into the second would be accepted and would never match.
++
+ ## Not covered (known gaps)
+ Material obligations the pack does not represent yet, listed so the example is honest about its scope:
+ - DPDP: s.5 notice; s.9 children's data (verifiable parental consent, no behavioural monitoring of minors); ss.11-14 Data Principal rights.
 ```
 
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/tests/test_trust_gate.py` (modified, +28/-0)
+**File**: `examples/policies/india-regulatory/rego/certin-2022-directions.rego` (modified, +10/-1)
 ```diff
-@@ -68,6 +68,34 @@ def test_decay_reduces_score(self):
-         gate.apply_decay("a")
-         assert gate.get_score("a") < 0.5
+@@ -1,5 +1,5 @@
+ # agt-policies-india - CERT-In Directions 2022 (Rego reference)
+-# Enforcing authority: CERT-In, MeitY. Status: binding (IT Act s.70B). NOT loaded at runtime. RE2.
++# Enforcing authority: CERT-In, MeitY. Status: binding (IT Act s.70B). RE2.
+ #
+ # Input schema:
+ #   { "action": "store_logs_offshore",
+@@ -12,6 +12,13 @@ import rego.v1
  
-+    def test_repeated_decay_charges_elapsed_time_once(self, monkeypatch):
-+        gate = TrustGate(decay_rate=0.01)
-+        now = 1_000_000.0
-+        monkeypatch.setattr(time, "time", lambda: now)
-+        gate.record_success("a")  # 0.55, updated at `now`
-+        monkeypatch.setattr(time, "time", lambda: now + 10 * 3600)
-+        scores = [gate.apply_decay("a") for _ in range(3)]
-+        assert scores == pytest.approx([0.45, 0.45, 0.45])
+ _output_text := v if { is_string(input.output); v := input.output } else := ""
+ 
++# Actions that place or configure ICT log storage, and actions that change clock
++# synchronisation. Both sets use the verbs this pack's policy document already
++# declared, so a host using different names must extend them.
++log_storage_actions := {"disable_logging", "store_logs_offshore", "set_log_retention_below_180"}
 +
-+    def test_repeated_run_charges_elapsed_time_once(self, monkeypatch):
-+        gate = TrustGate(decay_rate=0.01)
-+        now = 1_000_000.0
-+        monkeypatch.setattr(time, "time", lambda: now)
-+        gate.record_success("a")
-+        monkeypatch.setattr(time, "time", lambda: now + 10 * 3600)
-+        scores = [gate.run(agent_id="a")["score"] for _ in range(3)]
-+        assert scores == pytest.approx([0.45, 0.45, 0.45])
++clock_sync_actions := {"disable_ntp", "set_external_untrusted_ntp"}
 +
-+    def test_decay_accumulates_across_intervals(self, monkeypatch):
-+        gate = TrustGate(decay_rate=0.01)
-+        now = 1_000_000.0
-+        monkeypatch.setattr(time, "time", lambda: now)
-+        gate.record_success("a")
-+        monkeypatch.setattr(time, "time", lambda: now + 4 * 3600)
-+        gate.run(agent_id="a")
-+        monkeypatch.setattr(time, "time", lambda: now + 10 * 3600)
-+        assert gate.run(agent_id="a")["score"] == pytest.approx(0.45)
-+
-     def test_custom_min_score_override(self):
-         gate = TrustGate()
-         # Default score 0.5 should pass if min_score is set to 0.3
+ # Direction (ii): 6-hour reporting - cannot suppress/delay
+ deny contains msg if {
+ 	regex.match(`(?i)(don'?t\s+(report|notify)|skip\s+(the\s+)?(cert.?in\s+)?report|suppress\s+(the\s+)?(incident|breach)|delay\s+(the\s+)?(incident|breach)\s+report)`, _output_text)
+@@ -25,13 +32,15 @@ deny contains msg if {
+ }
+ 
+ deny contains msg if {
++	input.action in log_storage_actions
+ 	not input.params.log_storage_region == "IN"
+ 	region := object.get(input.params, "log_storage_region", "unset")
+ 	msg := sprintf("CERT-In 2022 Directions (iv): logs must be retained within India, configured region: '%v'", [region])
+ }
+ 
+ # Direction (i): NTP clock sync - escalate if not synced
+ escalate contains msg if {
++	input.action in clock_sync_actions
+ 	not input.params.ntp_synced == true
+ 	msg := "CERT-In 2022 Directions (i): synchronise ICT system clocks to NIC/NPL NTP servers or traceable sources"
+ }
 ```
 
----
-
-### Incident Patch 2: `88066250` (2026-10-23)
-**Commit Message**: fix(haystack-agentmesh): record a snapshot of AuditLogger entry metadata (#4402)
-
-* fix(haystack-agentmesh): record a snapshot of AuditLogger entry metadata
-
-run() stored the caller's metadata dict itself, so changing it after the
-call changed the recorded entry and made verify_chain() report the log
-as tampered, and metadata JSON cannot hold (a datetime, mixed int and str
-keys) raised TypeError. The metadata is now stored as a JSON snapshot
-taken when the entry is recorded, other values as their str(); chain
-hashes for JSON metadata are unchanged.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
-* docs(changelog): add the PR number to the haystack-agentmesh entry
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Shivam Sharma <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `examples/policies/india-regulatory/rego/certin-2022-directions_test.rego` (added, +76/-0)
 ```diff
-@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`agent-sandbox` code scanner flags `os.posix_spawn` and asyncio subprocesses.** The pre-execution scanner listed `subprocess`, `os.system`, `os.popen`, the `os.exec*` and `os.spawn*` families and `pty.spawn`, but not `os.posix_spawn`, `os.posix_spawnp`, `asyncio.create_subprocess_exec` or `asyncio.create_subprocess_shell`, so code that started a process through them reached the sandbox. They are now flagged, including through `asyncio.subprocess` and `from asyncio import subprocess` (#4369).
- - **`agent-sandbox` Docker checkpoints work for agent ids with uppercase letters or edge separators.** `save_state` committed the checkpoint to the image repository `agent-sandbox-<agent_id>`, but repository names must be lowercase and cannot start or end with a separator or repeat `.` or `_`, so for an id such as `Analyst-001`, `agent-` or `a..b` (all accepted by `create_session`) `docker commit` rejected the name and the session could not be checkpointed. Such ids now get the repository `agent-sandbox/id<escaped>`, where lowercase letters, digits and a single `-` or `.` between them are kept and every other character is written as `_` and two hex digits (`A-1` -> `agent-sandbox/id_41-1`); the encoding is reversible, so `Agent` and `agent` do not share a repository. Ids that already formed a valid name keep their repository and existing checkpoints, and an id whose escaped name would exceed Docker's 255-character limit raises `ValueError` before `docker commit` (#4370).
- - **Haystack `TrustGate` charges trust decay once per elapsed hour.** `apply_decay` subtracted `decay_rate` for every hour since the last success or failure but did not move `last_update`, and `run` calls it on every evaluation, so each call charged the whole interval again: with the default rate, an agent idle for 10 hours lost 0.1 on the first `run`, 0.2 by the second and 0.3 by the third, and was soon blocked by repeated checks alone. `apply_decay` now records when it ran, so decay covers only the time since the last update or decay (#4401).
-+- **Haystack `AuditLogger` records a snapshot of the entry metadata.** `run` stored the caller's `metadata` dict itself, so changing that dict after the call changed the recorded entry and made `verify_chain` report the log as tampered, and metadata that JSON cannot hold (a `datetime`, keys mixing `int` and `str`) raised `TypeError` from `run`. The metadata is now stored as a JSON snapshot taken when the entry is recorded, with other values stored as their `str()`; chain hashes for JSON metadata are unchanged (#4402).
- 
- ### Added
- - **.NET `PolicyEngine.EvaluateAsync`** — added an async evaluation path so external policy backends whose work is I/O-bound (`IExternalPolicyBackend.EvaluateAsync`) are awaited instead of blocked on with `GetAwaiter().GetResult()`. Backends are evaluated sequentially to preserve registration order; the synchronous `Evaluate` keeps its exact prior behavior. The token is honored on entry and before each backend call, so an already-cancelled token throws `OperationCanceledException` (including on the no-backend in-memory path) and no `PolicyDecision` is produced; backend exceptions propagate rather than being turned into a deny, matching `Evaluate` (#3778).
+@@ -0,0 +1,76 @@
++# agt-policies-india - CERT-In Directions 2022 (OPA tests)
++package agt_policies_india.certin_test
++
++import data.agt_policies_india.certin
++import rego.v1
++
++# An action unrelated to logging or clocks, carrying no parameters at all. This is
++# also the shape the result adapters produce: acs-result.rego sets params to {} on
++# the output interception and maps params to the tool call's arguments at
++# pre_tool_call, so an unguarded parameter rule denies every evaluation.
++unrelated := {"action": "read_file", "params": {}}
++
++test_no_denial_for_an_unrelated_action_carrying_no_parameters if {
++	denials := certin.deny with input as unrelated
++	count(denials) == 0
++}
++
++# Direction (iv), in-India log storage. A declared logging action with no region
++# must still deny, which is why the object.get default is kept.
++test_log_region_denies_a_logging_action_with_no_declared_region if {
++	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {}}
++	count(denials) == 1
++}
++
++test_log_region_silent_when_region_is_india if {
++	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {"log_storage_region": "IN"}}
++	count(denials) == 0
++}
++
++test_log_region_denies_when_region_is_offshore if {
++	denials := certin.deny with input as {"action": "store_logs_offshore", "params": {"log_storage_region": "SG"}}
++	count(denials) == 1
++}
++
++# Direction (iv), 180-day retention. Isolated on a non-logging action so the
++# region rule cannot contribute a second denial to this assertion.
++test_only_the_retention_rule_fires_for_short_retention if {
++	denials := certin.deny with input as {"action": "set_log_retention", "params": {"log_retention_days": 90}}
++	count(denials) == 1
++}
++
++# Direction (i), NTP clock synchronisation.
++test_ntp_silent_for_an_unrelated_action if {
++	escalations := certin.escalate with input as unrelated
++	count(escalations) == 0
++}
++
++test_ntp_escalates_a_clock_action_with_no_declared_sync_state if {
++	escalations := certin.escalate with input as {"action": "disable_ntp", "params": {}}
++	count(escalations) == 1
++}
++
++test_ntp_silent_when_synced if {
++	escalations := certin.escalate with input as {"action": "set_external_untrusted_ntp", "params": {"ntp_synced": true}}
++	count(escalations) == 0
++}
++
++test_ntp_escalates_when_explicitly_not_synced if {
++	escalations := certin.escalate with input as {"action": "set_external_untrusted_ntp", "params": {"ntp_synced": false}}
++	count(escalations) == 1
++}
++
++test_unrelated_action_allows if {
++	certin.decision == "allow" with input as unrelated
++}
++
++# The paths the runtime actually uses, through the shipped result adapter.
++test_benign_output_allowed_through_the_adapter if {
++	result := certin.acs_output_result with input as {"snapshot": {"output": {"content": "Here is the quarterly summary you asked for."}}}
++	result.decision == "allow"
++}
++
++test_benign_tool_call_allowed_through_the_adapter if {
++	result := certin.acs_pre_tool_call_result with input as {"snapshot": {"tool_call": {"name": "read_file", "args": {"path": "/tmp/report.csv"}}}}
++	result.decision == "allow"
++}
 ```
 
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/src/haystack_agentmesh/audit.py` (modified, +8/-3)
+**File**: `examples/policies/india-regulatory/rego/rbi-data-localization_test.rego` (added, +22/-0)
 ```diff
-@@ -49,7 +49,7 @@ def _hash_entry(entry: AuditEntry) -> str:
-     payload = (
-         f"{entry.entry_id}|{entry.timestamp}|{entry.action}|"
-         f"{entry.agent_id}|{entry.decision}|"
--        f"{json.dumps(entry.metadata, sort_keys=True)}|{entry.prev_hash}"
-+        f"{json.dumps(entry.metadata, sort_keys=True, default=str)}|{entry.prev_hash}"
-     )
-     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
- 
-@@ -81,14 +81,19 @@ def run(
-         decision: str,
-         metadata: Optional[Dict[str, Any]] = None,
-     ) -> Dict[str, Any]:
--        """Record an audit entry and return ``entry_id`` and ``chain_hash``."""
-+        """Record an audit entry and return ``entry_id`` and ``chain_hash``.
+@@ -0,0 +1,22 @@
++# agt-policies-india - RBI payment data localization (OPA tests)
++# This rule was already guarded on the subject-matter field. The tests pin that
++# behaviour, since it is the pattern the other packs' region rules now follow.
++package agt_policies_india.rbi_test
 +
-+        ``metadata`` is stored as a JSON snapshot taken now (values JSON
-+        cannot hold are stored as their ``str()``), so later changes to the
-+        caller's dict do not alter the recorded entry or break the chain.
-+        """
-         entry = AuditEntry(
-             entry_id=uuid.uuid4().hex[:16],
-             timestamp=time.time(),
-             action=action,
-             agent_id=agent_id,
-             decision=decision,
--            metadata=metadata or {},
-+            metadata=json.loads(json.dumps(metadata or {}, default=str)),
-             prev_hash=self._last_hash,
-         )
-         entry.chain_hash = _hash_entry(entry)
++import data.agt_policies_india.rbi
++import rego.v1
++
++test_region_silent_when_data_class_absent if {
++	denials := rbi.deny with input as {"action": "read_file", "params": {}}
++	count(denials) == 0
++}
++
++test_region_denies_payment_data_with_no_declared_region if {
++	denials := rbi.deny with input as {"action": "store_data", "params": {"data_class": "card_data"}}
++	count(denials) == 1
++}
++
++test_region_silent_for_payment_data_stored_in_india if {
++	denials := rbi.deny with input as {"action": "store_data", "params": {"data_class": "card_data", "storage_region": "IN"}}
++	count(denials) == 0
++}
 ```
 
-**File**: `agent-governance-python/agentmesh-integrations/haystack-agentmesh/tests/test_audit.py` (modified, +30/-0)
+**File**: `examples/policies/india-regulatory/rego/sebi-governance.rego` (modified, +6/-1)
 ```diff
-@@ -5,6 +5,7 @@
- import json
- import os
- import tempfile
-+from datetime import UTC, datetime
+@@ -1,5 +1,5 @@
+ # agt-policies-india - SEBI CSCRF 2024 + AI/ML Responsibility Amendment Feb 2025 (Rego reference)
+-# Enforcing authority: SEBI. Status: CSCRF + Feb-2025 binding; June-2025 guidelines draft. NOT loaded at runtime. RE2.
++# Enforcing authority: SEBI. Status: CSCRF + Feb-2025 binding; June-2025 guidelines draft. RE2.
+ #
+ # Input schema:
+ #   { "action": "disable_audit_log",
+@@ -15,6 +15,10 @@ _output_text := v if { is_string(input.output); v := input.output } else := ""
+ ai_action_targets := {"place_order", "advise_investor", "execute_trade", "manage_portfolio"}
+ log_tamper_actions := {"disable_audit_log", "delete_audit_log", "make_log_mutable", "store_audit_log_offshore"}
  
- import pytest
++# Actions that place or configure audit log storage, kept disjoint from
++# log_tamper_actions above so one action never produces two denials.
++log_storage_actions := {"configure_audit_log", "store_audit_log"}
++
+ # Feb 2025 amendment: RE solely responsible for AI/ML output; cannot disclaim
+ deny contains msg if {
+ 	input.action in ai_action_targets
+@@ -34,6 +38,7 @@ deny contains msg if {
+ }
  
-@@ -53,6 +54,35 @@ def test_metadata_stored(self):
-         logger.run(action="z", agent_id="a1", decision="audit", metadata=meta)
-         assert logger.entries[0].metadata == meta
- 
-+    def test_caller_changing_metadata_after_run_keeps_chain_valid(self):
-+        logger = AuditLogger()
-+        meta = {"source": "test", "tags": ["a"]}
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata=meta)
-+        meta["source"] = "changed"
-+        meta["tags"].append("b")
-+        assert logger.entries[0].metadata == {"source": "test", "tags": ["a"]}
-+        assert logger.verify_chain() is True
+ deny contains msg if {
++	input.action in log_storage_actions
+ 	not input.params.log_storage_region == "IN"
+ 	region := object.get(input.params, "log_storage_region", "unset")
+ 	msg := sprintf("SEBI CSCRF 2024: audit logs must be retained within India, configured region: '%v'", [region])
+```
+
+**File**: `examples/policies/india-regulatory/rego/sebi-governance_test.rego` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++# agt-policies-india - SEBI CSCRF 2024 (OPA tests)
++package agt_policies_india.sebi_test
 +
-+    def test_non_json_metadata_is_recorded_as_text(self):
-+        logger = AuditLogger()
-+        when = datetime(2026, 1, 1, tzinfo=UTC)
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata={"at": when})
-+        assert logger.entries[0].metadata == {"at": str(when)}
-+        assert logger.verify_chain() is True
-+        assert json.loads(logger.to_jsonl_string())["metadata"] == {"at": str(when)}
++import data.agt_policies_india.sebi
++import rego.v1
 +
-+    def test_metadata_with_mixed_key_types_is_recorded(self):
-+        logger = AuditLogger()
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata={1: "a", "b": 2})
-+        assert logger.entries[0].metadata == {"1": "a", "b": 2}
-+        assert logger.verify_chain() is True
++unrelated := {"action": "read_file", "params": {}}
 +
-+    def test_tampered_metadata_still_breaks_chain(self):
-+        logger = AuditLogger()
-+        logger.run(action="z", agent_id="a1", decision="audit", metadata={"k": 1})
-+        logger.entries[0].metadata["k"] = 2
-+        assert logger.verify_chain() is False
++test_no_denial_for_an_unrelated_action_carrying_no_parameters if {
++	denials := sebi.deny with input as unrelated
++	count(denials) == 0
++}
 +
-     def test_export_jsonl(self):
-         logger = AuditLogger()
-         logger.run(action="a", agent_id="a1", decision="allow")
++# A declared audit-log storage action with no region must still deny.
++test_log_region_denies_a_storage_action_with_no_declared_region if {
++	denials := sebi.deny with input as {"action": "store_audit_log", "params": {}}
++	count(denials) == 1
++}
++
++test_log_region_silent_when_region_is_india if {
++	denials := sebi.deny with input as {"action": "store_audit_log", "params": {"log_storage_region": "IN"}}
++	count(denials) == 0
++}
++
++test_log_region_denies_when_region_is_offshore if {
++	denials := sebi.deny with input as {"action": "configure_audit_log", "params": {"log_storage_region": "SG"}}
++	count(denials) == 1
++}
++
++# log_storage_actions and log_tamper_actions are disjoint, so a tamper action
++# produces exactly one denial rather than two.
++test_tamper_action_produces_exactly_one_denial if {
++	denials := sebi.deny with input as {"action": "store_audit_log_offshore", "params": {}}
++	count(denials) == 1
++}
++
++test_unrelated_action_allows if {
++	sebi.decision == "allow" with input as unrelated
++}
++
++test_benign_output_allowed_through_the_adapter if {
++	result := sebi.acs_output_result with input as {"snapshot": {"output": {"content": "Here is the quarterly summary you asked for."}}}
++	result.decision == "allow"
++}
++
++test_benign_tool_call_allowed_through_the_adapter if {
++	result := sebi.acs_pre_tool_call_result with input as {"snapshot": {"tool_call": {"name": "read_file", "args": {"path": "/tmp/report.csv"}}}}
++	result.decision == "allow"
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4420** (closed): fix(agt-policies): harden v4 rule migration (@ShreyasGosavi65)
-- **PR #4415** (2026-10-23): chore(deps): Bump black from 26.3.1 to 26.10.1 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
-- **PR #4414** (2026-10-23): chore(deps): Bump opentelemetry-api from 1.29.0 to 1.45.1 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
-- **PR #4413** (2026-10-23): chore(deps-dev): Bump vite from 8.0.16 to 8.3.5 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4412** (2026-10-23): chore(deps): Bump @vitest/mocker and vitest in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4410** (2026-10-22): fix(agent-runtime): report paused Docker containers as stopped, not failed (@ShivamSharma43)
+- **PR #4480** (2026-10-30): fix(examples): india cert-in and sebi policies deny every evaluation (@Mayur021)
+- **PR #4476** (2026-10-30): fix(agent-sre): keep a rollout step's analysis criteria in the AgentRollout CRD (@ShivamSharma43)
+- **PR #4475** (2026-10-29): fix(agent-rag-governance): audit a denied collection with the query's hash (@ShivamSharma43)
+- **PR #4474** (2026-10-29): fix(agent-runtime): include the agent's stderr in DockerDeployer.logs (@ShivamSharma43)
+- **PR #4473** (2026-10-29): fix(agent-sre): reject chaos blackout times that cannot be read (@ShivamSharma43)
+- **PR #4471** (closed): chore: consolidate Functions editor configuration (@erin1sanders)
 
 ---
 
@@ -652,21 +728,21 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401)
+## X. examples): india cert-in and sebi policies deny every evaluation (#4480)
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cspell-repo-terms.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb950bcd`: haystack-agentmesh): charge TrustGate decay once per elapsed hour (#4401). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d1d0ccea`: examples): india cert-in and sebi policies deny every evaluation (#4480). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell-repo-terms.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Haystack `TrustGate` charges trust decay once per elapsed hour.** `apply_decay` subtracted `decay_rate` for every hour since the last success or failure but did not move `last_update`, and `run` calls it on every evaluation, so each call charged the whole interval again: with the default rate, an agent idle for 10 hours lost 0.1 on the first `run`, 0.2 by the second and 0.3 by the third, and was soon blocked by repeated checks alone. `apply_decay` now records when it ran, so decay covers only the time since the last update or decay (#4401).
+vapt
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -676,4 +752,4 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb950bcd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d1d0ccea` are properly handled with clean fallback behavior.

@@ -4478,3 +4478,287 @@ https://huggingface.co/briaai/Fibo-2.0-dev
 # --- Automatically Discovered by AI Scout Engine [2026-10-26T13:11:15.497Z] ---
 # [AI-AGENTS] Vincentwei1021/video-shotcraft (7518 score) - AI video skill for Claude Code & Codex — cinematic product videos with Remotion:
 https://github.com/Vincentwei1021/video-shotcraft
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T07:10:17.883Z] ---
+# [AI-AGENTS] ollaya-dev/ollaya (982 score) - Jev-compatible API server for open decision models. Ollama for decision models: 
+https://github.com/ollaya-dev/ollaya
+# [AI-AGENTS] thetahealth/mirobody (934 score) - Turn scattered health data into answers you can trace. Self-hosted AI health dat
+https://github.com/thetahealth/mirobody
+# [AI-AGENTS] sourcey/sourcey (1060 score) - Precision documentation from OpenAPI, MCP, Doxygen, and Markdown guides. Static 
+https://github.com/sourcey/sourcey
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T08:08:13.939Z] ---
+# [HUGGINGFACE-AI-MODELS] XHToken/Spark-X2.6-4B-GGUF (3700 score) - Verified Hugging Face Model: XHToken/Spark-X2.6-4B-GGUF (170 likes, 69669 downlo
+https://huggingface.co/XHToken/Spark-X2.6-4B-GGUF
+# [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (3600 score) - Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (160 likes,
+https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T10:54:04.415Z] ---
+# [AI-AGENTS] Gaurav-Gosain/tuios (3509 score) - A terminal window manager that knows what your agents are doing. Tiling panes, w
+https://github.com/Gaurav-Gosain/tuios
+# [AI-AGENTS] liyupi/mianshiya (3688 score) - 持续维护的企业面试题库网站，帮你拿到满意 offer！⭐️ 2026年最新Java面试题、前端面试题、AI大模型面试题、AI Agent面试题、RAG面试题、C
+https://github.com/liyupi/mianshiya
+# [AI-AGENTS] ScrapeCreators/social-media-research-skills (2745 score) - AI agent skills for social media research. Outlier posts, comment mining, compet
+https://github.com/ScrapeCreators/social-media-research-skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T11:49:18.483Z] ---
+# [HUGGINGFACE-AI-MODELS] FastVideo/FastH3-Omni-Comfy (3650 score) - Verified Hugging Face Model: FastVideo/FastH3-Omni-Comfy (165 likes, 324335 down
+https://huggingface.co/FastVideo/FastH3-Omni-Comfy
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T12:29:56.803Z] ---
+# [AI-AGENTS] marmotdata/marmot (652 score) - The open-source context layer for your AI. Catalog your tables, topics, queues a
+https://github.com/marmotdata/marmot
+# [AI-AGENTS] YoanWai/agent-manager (784 score) - The fastest developer workflow for every AI coding agent. Live status, quick pro
+https://github.com/YoanWai/agent-manager
+# [AI-AGENTS] 7onez/cti-expert (591 score) - CTI Expert — Cyber Threat Intelligence & OSINT analysis skill for Claude Code / 
+https://github.com/7onez/cti-expert
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T12:50:03.651Z] ---
+# [AI-AGENTS] papersgpt/papersgpt-for-zotero (1776 score) - Professional AI research tool for Zotero: chat with PDFs, whole-library search, 
+https://github.com/papersgpt/papersgpt-for-zotero
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T12:56:35.414Z] ---
+# [HUGGINGFACE-AI-MODELS] baidu/Unlimited-OCR-2 (2143 score) - Verified Hugging Face Model: baidu/Unlimited-OCR-2 (163 likes, 513 downloads)
+https://huggingface.co/baidu/Unlimited-OCR-2
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:00:06.463Z] ---
+# [AI-AGENTS] Joooook/12306-mcp (1579 score) - This is a 12306 ticket search server based on the Model Context Protocol (MCP).
+https://github.com/Joooook/12306-mcp
+# [AI-AGENTS] 0xMassi/webclaw (1528 score) - Fast, local-first web content extraction for LLMs. Scrape, crawl, extract struct
+https://github.com/0xMassi/webclaw
+# [AI-AGENTS] AmoyLab/Unla (1529 score) - 🧩 MCP Gateway - A lightweight gateway service that instantly transforms existin
+https://github.com/AmoyLab/Unla
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:03:29.870Z] ---
+# [AI-AGENTS] afrise/MCPSharp (477 score) - MCPSharp is a .NET library that helps you build Model Context Protocol (MCP) ser
+https://github.com/afrise/MCPSharp
+# [AI-AGENTS] hookdeck/hookdeck-cli (617 score) - CLI for Hookdeck: forward webhooks to localhost (ngrok alternative), manage and 
+https://github.com/hookdeck/hookdeck-cli
+# [AI-AGENTS] Alex2Yang97/yahoo-finance-mcp (507 score) - This is a Model Context Protocol (MCP) server that provides comprehensive financ
+https://github.com/Alex2Yang97/yahoo-finance-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:28:10.610Z] ---
+# [AI-AGENTS] nexu-io/html-anything (5263 score) - ✨ The agentic HTML editor — your local AI agent writes the HTML, you ship it. 🚀
+https://github.com/nexu-io/html-anything
+# [AI-AGENTS] lemomo-ai/lemo-opuscar (4785 score) - A toolbox of film styles made in code for Claude Code: 59 ready to use, and your
+https://github.com/lemomo-ai/lemo-opuscar
+# [AI-AGENTS] automazeio/ccpm (4724 score) - Project management skill system for Agents that uses GitHub Issues and Git workt
+https://github.com/automazeio/ccpm
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T13:57:42.120Z] ---
+# [AI-AGENTS] frankbria/ralph-claude-code (5363 score) - Autonomous AI development loop for Claude Code with intelligent exit detection
+https://github.com/frankbria/ralph-claude-code
+# [AI-AGENTS] ntegrals/openbrowser (5336 score) - Let AI agents browse the web. An autonomous toolkit for browser-based AI agents.
+https://github.com/ntegrals/openbrowser
+# [AI-AGENTS] lastmile-ai/mcp-agent (4901 score) - Build effective agents using Model Context Protocol and simple workflow patterns
+https://github.com/lastmile-ai/mcp-agent
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:00:51.088Z] ---
+# [AI-AGENTS] smol-machines/smolvm (3932 score) - An embeddable, portable, branchable virtual machine to safely run Agents locally
+https://github.com/smol-machines/smolvm
+# [AI-AGENTS] BlockRunAI/ClawRouter (3665 score) - The agent-native LLM router for autonomous agents. Every frontier model behind o
+https://github.com/BlockRunAI/ClawRouter
+# [AI-AGENTS] czlonkowski/n8n-skills (3879 score) - n8n skillset for Claude Code to build flawless n8n workflows
+https://github.com/czlonkowski/n8n-skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:13:58.681Z] ---
+# [AI-AGENTS] martin-ger/esp32_nat_router (1572 score) - An AI-enabled NAT Router/Firewall for the ESP32
+https://github.com/martin-ger/esp32_nat_router
+# [AI-AGENTS] atomicstrata/llm-wiki-compiler (1448 score) - The knowledge compiler. Raw sources in, interlinked wiki out. Inspired by Karpat
+https://github.com/atomicstrata/llm-wiki-compiler
+# [AI-AGENTS] alpic-ai/skybridge (1472 score) - Skybridge is a full-stack TypeScript framework for MCP Apps and ChatGPT Apps. Ty
+https://github.com/alpic-ai/skybridge
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:22:02.394Z] ---
+# [AI-AGENTS] ooples/token-optimizer-mcp (555 score) - Measure token savings per AI coding agent, optimize context, and share a live lo
+https://github.com/ooples/token-optimizer-mcp
+# [AI-AGENTS] subnetmarco/pgmcp (543 score) - An MCP server to query any Postgres database in natural language.
+https://github.com/subnetmarco/pgmcp
+# [AI-AGENTS] concierge-hq/concierge (553 score) - 🚀 Universal SDK for building next-gen MCP servers
+https://github.com/concierge-hq/concierge
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:33:03.098Z] ---
+# [AI-AGENTS] TokenRhythm/opensquilla (4069 score) - OpenSquilla — Token-Efficient AI Agent with same budget, higher intelligence den
+https://github.com/TokenRhythm/opensquilla
+# [AI-AGENTS] eracle/OpenOutreach (2149 score) - Open-source AI agent for B2B lead generation — describe your product, it finds t
+https://github.com/eracle/OpenOutreach
+# [AI-AGENTS] lackeyjb/playwright-skill (1868 score) - General-purpose Playwright automation for coding agents
+https://github.com/lackeyjb/playwright-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:43:01.010Z] ---
+# [AI-AGENTS] apioo/fusio (1487 score) - Self-Hosted API Management for Builders
+https://github.com/apioo/fusio
+# [AI-AGENTS] A9T9/RPA (1442 score) - Browser and desktop automation with an MCP server for AI assistants. Record macr
+https://github.com/A9T9/RPA
+# [AI-AGENTS] CYB3RMX/Qu1cksc0pe (1378 score) - All-in-One malware analysis tool.
+https://github.com/CYB3RMX/Qu1cksc0pe
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T14:53:40.869Z] ---
+# [AI-AGENTS] patrickchugh/terravision (1169 score) - Cloud architecture diagrams in both directions: AI prompt or JSON to diagram, di
+https://github.com/patrickchugh/terravision
+# [AI-AGENTS] modelcontextprotocol/php-sdk (1278 score) - The official PHP SDK for Model Context Protocol servers and clients. Maintained 
+https://github.com/modelcontextprotocol/php-sdk
+# [AI-AGENTS] svnscha/mcp-windbg (1118 score) - Model Context Protocol for WinDbg.
+https://github.com/svnscha/mcp-windbg
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T15:04:26.019Z] ---
+# [AI-AGENTS] zereight/gitlab-mcp (1423 score) - MCP server for GitLab: 277 tools for projects, MRs, issues, pipelines, wikis and
+https://github.com/zereight/gitlab-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T16:18:04.689Z] ---
+# [AI-AGENTS] datagouv/datagouv-mcp (1112 score) - Official data.gouv.fr Model Context Protocol (MCP) server that allows AI chatbot
+https://github.com/datagouv/datagouv-mcp
+# [AI-AGENTS] BlackSnufkin/LitterBox (1080 score) - A self-hosted sandbox for red teams to test payloads against modern detection be
+https://github.com/BlackSnufkin/LitterBox
+# [AI-AGENTS] PaperDebugger/paperdebugger (979 score) - A Plugin-Based Multi-Agent System for In-Editor Academic Writing, Review, and Ed
+https://github.com/PaperDebugger/paperdebugger
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T17:16:35.404Z] ---
+# [AI-AGENTS] MCPJam/inspector (1583 score) - Testing and evaluation platform to chat, inspect, and debug MCP servers, MCP app
+https://github.com/MCPJam/inspector
+# [AI-AGENTS] cjo4m06/mcp-shrimp-task-manager (1497 score) - Shrimp Task Manager is a task tool built for AI Agents, emphasizing chain-of-tho
+https://github.com/cjo4m06/mcp-shrimp-task-manager
+# [AI-AGENTS] chongdashu/unreal-mcp (1240 score) - Enable AI assistant clients like Cursor, Windsurf and Claude Desktop to control 
+https://github.com/chongdashu/unreal-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T18:59:25.755Z] ---
+# [HUGGINGFACE-AI-MODELS] ccore/Qwen3.5-4B-3D-Coder (3520 score) - Verified Hugging Face Model: ccore/Qwen3.5-4B-3D-Coder (152 likes, 3544 download
+https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T20:01:02.968Z] ---
+# [AI-AGENTS] AgileRL/AgileRL (771 score) - The complete post-training stack for LLMs, plus RL for any problem. SFT, DPO and
+https://github.com/AgileRL/AgileRL
+# [AI-AGENTS] alikon-art/DeterminFlow (796 score) - A production-oriented AI workflow runtime for building, validating, recovering, 
+https://github.com/alikon-art/DeterminFlow
+# [AI-AGENTS] sunbigfly/ppt-agent-skills (742 score) - A code-driven presentation generation framework. 像构建软件工程一样生成演示文稿。
+https://github.com/sunbigfly/ppt-agent-skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T21:28:45.508Z] ---
+# [MOBILE-CROSS-PLATFORM] margelo/react-native-blur (2560 score) - React Native Blur component
+https://github.com/margelo/react-native-blur
+# [MOBILE-CROSS-PLATFORM] xotahal/react-native-material-ui (2519 score) - Highly customizable material design components for React Native
+https://github.com/xotahal/react-native-material-ui
+# [MOBILE-CROSS-PLATFORM] kirillzyusko/react-native-keyboard-controller (2391 score) - ⌨️ Keyboard manager which works in identical way on both iOS and Android
+https://github.com/kirillzyusko/react-native-keyboard-controller
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T23:43:48.845Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-1.7B (3540 score) - Verified Hugging Face Model: LiquidAI/LFM3-1.7B (154 likes, 6311 downloads)
+https://huggingface.co/LiquidAI/LFM3-1.7B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-27T23:52:19.968Z] ---
+# [AI-AGENTS] michael-denyer/pstack-claude (2123 score) - Claude Code, Codex, Copilot, Pi, OpenCode, Muse, Gemini, and Prime Agent version
+https://github.com/michael-denyer/pstack-claude
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-28T03:37:49.082Z] ---
+# [HUGGINGFACE-AI-MODELS] tencent/Hy-SimulMT-30B-A3B-FP8 (1713 score) - Verified Hugging Face Model: tencent/Hy-SimulMT-30B-A3B-FP8 (162 likes, 93 downl
+https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-28T08:43:52.463Z] ---
+# [HUGGINGFACE-AI-MODELS] prithivMLmods/Gender-Classifier-Mini (2180 score) - Verified Hugging Face Model: prithivMLmods/Gender-Classifier-Mini (18 likes, 908
+https://huggingface.co/prithivMLmods/Gender-Classifier-Mini
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-28T15:43:00.348Z] ---
+# [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-OCR-1.0 (2961 score) - Verified Hugging Face Model: openbmb/MiniCPM-OCR-1.0 (217 likes, 791 downloads)
+https://huggingface.co/openbmb/MiniCPM-OCR-1.0
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-28T20:57:26.323Z] ---
+# [HUGGINGFACE-AI-MODELS] nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B (1808 score) - Verified Hugging Face Model: nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B (147 
+https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T01:08:44.092Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-Omni-2B (2154 score) - Verified Hugging Face Model: LiquidAI/LFM3-Omni-2B (144 likes, 714 downloads)
+https://huggingface.co/LiquidAI/LFM3-Omni-2B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T10:58:47.581Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] fabio-rovai/open-ontologies (1232 score) - Plan, apply and roll back changes to a production ontology, with a blast radius 
+https://github.com/fabio-rovai/open-ontologies
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T11:28:52.326Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-VL-2B (3490 score) - Verified Hugging Face Model: LiquidAI/LFM3-VL-2B (149 likes, 4193 downloads)
+https://huggingface.co/LiquidAI/LFM3-VL-2B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T12:19:27.372Z] ---
+# [HUGGINGFACE-AI-MODELS] unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF (3450 score) - Verified Hugging Face Model: unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF (145 like
+https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T16:36:27.902Z] ---
+# [AI-AGENTS] liketrek/TREK (8306 score) - The most complete open-source travel planner: real-time collaboration, bookings,
+https://github.com/liketrek/TREK
+# [HUGGINGFACE-AI-MODELS] mistralai/Mistral-Large-4-1T-A52B (11478 score) - Verified Hugging Face Model: mistralai/Mistral-Large-4-1T-A52B (1120 likes, 278 
+https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T16:47:59.130Z] ---
+# [AI-AGENTS] Jakeschincariol/arena-skill (866 score) - When Claude keeps giving you bad answers, make 100 versions of it fight to the d
+https://github.com/Jakeschincariol/arena-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T22:06:47.383Z] ---
+# [HUGGINGFACE-AI-MODELS] Diffuspace/Clover-35B-A3B-Preview (2420 score) - Verified Hugging Face Model: Diffuspace/Clover-35B-A3B-Preview (139 likes, 1030 
+https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-29T22:19:00.511Z] ---
+# [AI-AGENTS] CherryHQ/cherry-studio (28436 score) - Your AI workspace for models, agents, and productivity.
+https://github.com/CherryHQ/cherry-studio
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T03:18:35.258Z] ---
+# [HUGGINGFACE-AI-MODELS] LiconStudio/Minimax-H3-VBVR (3400 score) - Verified Hugging Face Model: LiconStudio/Minimax-H3-VBVR (140 likes, 6189 downlo
+https://huggingface.co/LiconStudio/Minimax-H3-VBVR
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T03:34:50.942Z] ---
+# [AI-AGENTS] yuezhiai/jonex (1059 score) - All-in-One Multimodal Parsing Engine + Ontology-Powered, LLM Wiki-Driven AI-Read
+https://github.com/yuezhiai/jonex
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T05:39:05.670Z] ---
+# [AI-AGENTS] reason-machines/reason-network (1001 score) - Reason Network: your team's coding agents, talking to each other. The engine beh
+https://github.com/reason-machines/reason-network
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T08:01:41.559Z] ---
+# [HUGGINGFACE-AI-MODELS] Pika-Labs/Pika-H3-Flex (1420 score) - Verified Hugging Face Model: Pika-Labs/Pika-H3-Flex (142 likes, 0 downloads)
+https://huggingface.co/Pika-Labs/Pika-H3-Flex
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T10:40:37.357Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-Audio-2B (3400 score) - Verified Hugging Face Model: LiquidAI/LFM3-Audio-2B (140 likes, 3550 downloads)
+https://huggingface.co/LiquidAI/LFM3-Audio-2B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T16:12:24.310Z] ---
+# [AI-AGENTS] mobile-next/mobile-mcp (5727 score) - Model Context Protocol Server for Mobile Automation and Scraping (iOS, Android, 
+https://github.com/mobile-next/mobile-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T17:20:42.851Z] ---
+# [HUGGINGFACE-AI-MODELS] OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM (3390 score) - Verified Hugging Face Model: OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRI
+https://huggingface.co/OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T19:19:01.576Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM3-1.7B-GGUF (3420 score) - Verified Hugging Face Model: LiquidAI/LFM3-1.7B-GGUF (142 likes, 97184 downloads
+https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-30T22:34:14.734Z] ---
+# [HUGGINGFACE-AI-MODELS] speridlabs/idol (1641 score) - Verified Hugging Face Model: speridlabs/idol (142 likes, 221 downloads)
+https://huggingface.co/speridlabs/idol
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T00:52:42.387Z] ---
+# [MOBILE-CROSS-PLATFORM] krishhgg/Insomnia (1359 score) - A macOS menu bar app that safely keeps your MacBook awake with the lid closed, f
+https://github.com/krishhgg/Insomnia
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T08:44:58.520Z] ---
+# [HUGGINGFACE-AI-MODELS] Comfy-Org/Wan-2.2 (11820 score) - Verified Hugging Face Model: Comfy-Org/Wan-2.2 (982 likes, 9084568 downloads)
+https://huggingface.co/Comfy-Org/Wan-2.2
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T10:18:07.274Z] ---
+# [HIGH-PERF-SYSTEMS] vercel-labs/agent-desktop (1870 score) - Agent Desktop gives any agent reliable computer use on the desktop. Built with R
+https://github.com/vercel-labs/agent-desktop
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T10:40:12.115Z] ---
+# [HUGGINGFACE-AI-MODELS] Efficient-Large-Model/Open-H3-Regenerate-2K (1400 score) - Verified Hugging Face Model: Efficient-Large-Model/Open-H3-Regenerate-2K (140 li
+https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T14:01:04.726Z] ---
+# [HUGGINGFACE-AI-MODELS] AtomicChat/LFM3-1.7B-Uncensored-GGUF (3470 score) - Verified Hugging Face Model: AtomicChat/LFM3-1.7B-Uncensored-GGUF (147 likes, 38
+https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-31T16:03:27.759Z] ---
+# [HUGGINGFACE-AI-MODELS] Edge0/Audio8-TTS-Realistic-0.6b (3440 score) - Verified Hugging Face Model: Edge0/Audio8-TTS-Realistic-0.6b (144 likes, 2755 do
+https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-01T00:49:17.557Z] ---
+# [AI-AGENTS] dagoSte/squadra (854 score) - Coordinate Claude, Codex and Cursor windows with shared tasks, acknowledgements,
+https://github.com/dagoSte/squadra

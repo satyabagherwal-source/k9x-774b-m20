@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `67e7cf4c`  
+> **Source Version**: `6c1466ab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T19:51:49.628Z  
+> **Timestamp**: 2026-10-31T17:37:10.727Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T19:51:49.416Z  
+> **Harvest Timestamp**: 2026-10-31T17:37:10.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13365 stars
+- **Stars / Engagement**: 13388 stars
 
 ---
 
@@ -1862,482 +1862,160 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d51219a` (2026-10-25)
-**Commit Message**: Fix test code flagged by error-prone 2.51.0
+### Incident Patch 1: `a81ce638` (2026-10-31)
+**Commit Message**: Size array value builders from entry counts
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java` (modified, +1/-1)
+**File**: `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java` (modified, +1/-1)
 ```diff
-@@ -79,7 +79,7 @@ private void testInvalidAggregation(Double[] x, int n)
- 
-     private void testCustomAggregation(Double[] values, int n)
+@@ -20,7 +20,7 @@ public interface ArrayValueBuilder<E extends Throwable>
+     static <E extends Throwable> Block buildArrayValue(ArrayType arrayType, int entryCount, ArrayValueBuilder<E> builder)
+             throws E
      {
--        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> -Double.compare(x, y));
-+        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> Double.compare(y, x));
-         Arrays.stream(values).filter(Objects::nonNull).forEach(heap::add);
-         Double[] expected = new Double[heap.size()];
-         for (int i = heap.size() - 1; i >= 0; i--) {
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/server/ui/TestMultipartUiCookie.java` (modified, +1/-2)
-```diff
-@@ -19,7 +19,6 @@
- import org.junit.jupiter.api.Test;
- 
- import java.time.Instant;
--import java.util.Date;
- import java.util.List;
- import java.util.Map;
- 
-@@ -65,7 +64,7 @@ public void testLongValueRoundTrip()
-                 .allMatch(NewCookie::isSecure)
-                 .allMatch(NewCookie::isHttpOnly)
-                 .allMatch(cookie -> cookie.getMaxAge() == DEFAULT_MAX_AGE)
--                .allMatch(cookie -> cookie.getExpiry().equals(Date.from(Instant.EPOCH)))
-+                .allMatch(cookie -> cookie.getExpiry().toInstant().equals(Instant.EPOCH))
-                 .allMatch(cookie -> (cookie.getName().length() + cookie.getValue().length()) <= MAXIMUM_COOKIE_SIZE);
- 
-         assertThat(newCookies)
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/util/DynamicFiltersTestUtil.java` (modified, +1/-1)
-```diff
-@@ -176,7 +176,7 @@ public boolean equals(Object o)
-             }
-             TestingDynamicFilter that = (TestingDynamicFilter) o;
-             return futuresLeft == that.futuresLeft
--                    && Objects.equals(isBlocked, that.isBlocked)
-+                    && isBlocked == that.isBlocked
-                     && Objects.equals(currentPredicate, that.currentPredicate);
-         }
- 
-```
-
----
-
-### Incident Patch 2: `4b915171` (2026-10-25)
-**Commit Message**: Remove impossible null check in ProtobufValueProvider
-
-DynamicMessage.getField never returns null, so the check is always true.
-
-**File**: `lib/trino-record-decoder/src/main/java/io/trino/decoder/protobuf/ProtobufValueProvider.java` (modified, +2/-4)
-```diff
-@@ -273,10 +273,8 @@ private SqlMap serializeMap(BlockBuilder parentBlockBuilder, @Nullable Object va
-     private void buildMap(String columnName, Collection<DynamicMessage> dynamicMessages, Type keyType, Type valueType, BlockBuilder keyBuilder, BlockBuilder valueBuilder)
-     {
-         for (DynamicMessage dynamicMessage : dynamicMessages) {
--            if (dynamicMessage.getField(dynamicMessage.getDescriptorForType().findFieldByNumber(1)) != null) {
--                serializeObject(keyBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 1)), keyType, columnName);
--                serializeObject(valueBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 2)), valueType, columnName);
--            }
-+            serializeObject(keyBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 1)), keyType, columnName);
-+            serializeObject(valueBuilder, dynamicMessage.getField(getFieldDescriptor(dynamicMessage, 2)), valueType, columnName);
-         }
+-        return new BufferedArrayValueBuilder(arrayType, 1)
++        return new BufferedArrayValueBuilder(arrayType, entryCount)
+                 .build(entryCount, builder);
      }
  
 ```
 
 ---
 
-### Incident Patch 3: `aab079cf` (2026-10-23)
-**Commit Message**: Migrate RecordPageSource to MemoryContext
+### Incident Patch 2: `9e64fa37` (2026-10-31)
+**Commit Message**: Size projection builders from selected positions
 
-Report cursor and page builder memory through a required MemoryContext
-and update callers to pass it.
-
-**File**: `core/trino-main/src/main/java/io/trino/connector/system/SystemPageSourceProvider.java` (modified, +12/-10)
+**File**: `core/trino-main/src/main/java/io/trino/operator/project/GeneratedPageProjection.java` (modified, +8/-2)
 ```diff
-@@ -160,16 +160,18 @@ public ConnectorPageSource createPageSource(
-                     userToSystemFieldIndex.build());
-         }
-         catch (UnsupportedOperationException e) {
--            return new RecordPageSource(new MappedRecordSet(
--                    toRecordSet(
--                            systemTransaction.getConnectorTransactionHandle(),
--                            systemTable,
--                            session,
--                            newConstraint,
--                            requiredColumns.build(),
--                            systemSplit,
--                            accessControl),
--                    userToSystemFieldIndex.build()));
-+            return new RecordPageSource(
-+                    new MappedRecordSet(
-+                            toRecordSet(
-+                                    systemTransaction.getConnectorTransactionHandle(),
-+                                    systemTable,
-+                                    session,
-+                                    newConstraint,
-+                                    requiredColumns.build(),
-+                                    systemSplit,
-+                                    accessControl),
-+                            userToSystemFieldIndex.build()),
-+                    memoryContext);
-         }
+@@ -19,6 +19,7 @@
+ import io.trino.spi.connector.SourcePage;
+ import io.trino.sql.gen.PageProjectionWork;
+ import io.trino.sql.ir.Expression;
++import jakarta.annotation.Nullable;
+ 
+ import java.lang.invoke.MethodHandle;
+ 
+@@ -34,6 +35,7 @@ public class GeneratedPageProjection
+     private final InputChannels inputChannels;
+     private final MethodHandle pageProjectionWorkFactory;
+ 
++    @Nullable
+     private BlockBuilder blockBuilder;
+ 
+     public GeneratedPageProjection(Expression projection, boolean isDeterministic, InputChannels inputChannels, MethodHandle pageProjectionWorkFactory)
+@@ -42,7 +44,6 @@ public GeneratedPageProjection(Expression projection, boolean isDeterministic, I
+         this.isDeterministic = isDeterministic;
+         this.inputChannels = requireNonNull(inputChannels, "inputChannels is null");
+         this.pageProjectionWorkFactory = requireNonNull(pageProjectionWorkFactory, "pageProjectionWorkFactory is null");
+-        this.blockBuilder = projection.type().createBlockBuilder(null, 1);
      }
  
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/split/RecordPageSourceProvider.java` (modified, +4/-2)
-```diff
-@@ -23,6 +23,7 @@
- import io.trino.spi.connector.ConnectorTableHandle;
- import io.trino.spi.connector.ConnectorTransactionHandle;
- import io.trino.spi.connector.DynamicFilter;
-+import io.trino.spi.connector.MemoryContext;
- import io.trino.spi.connector.RecordPageSource;
- 
- import java.util.List;
-@@ -48,8 +49,9 @@ public ConnectorPageSource createPageSource(
-             ConnectorTableHandle table,
-             Optional<ConnectorTableCredentials> tableCredentials,
-             List<ColumnHandle> columns,
--            DynamicFilter dynamicFilter)
-+            DynamicFilter dynamicFilter,
-+            MemoryContext memoryContext)
+     @Override
+@@ -60,7 +61,12 @@ public InputChannels getInputChannels()
+     @Override
+     public Block project(ConnectorSession session, SourcePage page, SelectedPositions selectedPositions)
      {
--        return new RecordPageSource(recordSetProvider.getRecordSet(transaction, session, split, table, columns));
-+        return new RecordPageSource(recordSetProvider.getRecordSet(transaction, session, split, table, columns), memoryContext);
-     }
- }
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/connector/MockConnector.java` (modified, +3/-2)
-```diff
-@@ -1127,7 +1127,8 @@ public ConnectorPageSource createPageSource(
-                 ConnectorTableHandle table,
-                 Optional<ConnectorTableCredentials> tableCredentials,
-                 List<ColumnHandle> columns,
--                DynamicFilter dynamicFilter)
-+                DynamicFilter dynamicFilter,
-+                MemoryContext memoryContext)
-         {
-             MockConnectorTableHandle handle = (MockConnectorTableHandle) table;
-             SchemaTableName tableName = handle.getTableName();
-@@ -1155,7 +1156,7 @@ public ConnectorPageSource createPageSource(
-                         return projectedRow.build();
-                     })
-                     .collect(toImmutableList());
--            return new MockConnectorPageSource(new RecordPageSource(new InMemoryRecordSet(types, records)), metrics.apply(tableName));
-+            return new MockConnectorPageSource(new RecordPageSource(new InMemoryRecordSet(types, records), memoryContext), metrics.apply(tableName));
+-        blockBuilder = blockBuilder.newBlockBuilderLike(selectedPositions.size(), null);
++        if (blockBuilder == null) {
++            blockBuilder = projection.type().createBlockBuilder(null, selectedPositions.size());
++        }
++        else {
++            blockBuilder = blockBuilder.newBlockBuilderLike(selectedPositions.size(), null);
++        }
+         try {
+             return ((PageProjectionWork) pageProjectionWorkFactory.invoke(blockBuilder, session, page, selectedPositions)).process();
          }
- 
-         private Map<String, Integer> getColumnIndexes(SchemaTableName tableName)
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/operator/TestScanFilterAndProjectOperator.java` (modified, +1/-1)
-```diff
-@@ -313,7 +313,7 @@ public void testRecordCursorSource()
-                 0,
-                 new PlanNodeId("test"),
-                 new PlanNodeId("0"),
--                (_, _) -> (_, _, _, _, _, _, _) -> new RecordPageSource(new PageRecordSet(ImmutableList.of(VARCHAR), input)),
-+                (_, _) -> (_, _, _, _, _, _, memoryContext) -> new RecordPageSource(new PageRecordSet(ImmutableList.of(VARCHAR), input), memoryContext),
-                 _ -> pageProcessor.get(),
-                 TEST_TABLE_HANDLE,
-                 Optional.empty(),
-```
+---
 
-**File**: `core/trino-main/src/test/java/io/trino/split/TestRecordPageSourceProvider.java` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.split;
-+
-+import io.trino.memory.context.AggregatedMemoryContext;
-+import io.trino.memory.context.LocalMemoryContext;
-+import io.trino.spi.connector.ColumnHandle;
-+import io.trino.spi.connector.ConnectorPageSource;
-+import io.trino.spi.connector.ConnectorRecordSetProvider;
-+import io.trino.spi.connector.ConnectorSession;
-+import io.trino.spi.connector.ConnectorSplit;
-+import io.trino.spi.connector.ConnectorTableHandle;
-+import io.trino.spi.connector.ConnectorTransactionHandle;
-+import io.trino.spi.connector.DynamicFilter;
-+import io.trino.spi.connector.InMemoryRecordSet;
-+import io.trino.spi.connector.RecordPageSource;
-+import io.trino.spi.connector.RecordSet;
-+import org.junit.jupiter.api.Test;
-+
-+import java.io.IOException;
-+import java.util.List;
-+import java.util.Optional;
-+
-+import static io.trino.memory.context.AggregatedMemoryContext.newSimpleAggregatedMemoryContext;
-+import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.testing.TestingConnectorSession.SESSION;
-+import static io.trino.testing.TestingHandles.TEST_TABLE_HANDLE;
-+import static org.assertj.core.api.Assertions.assertThat;
-+
-+class TestRecordPageSourceProvider
-+{
-+    @Test
-+    public void testMemoryContextLifecycle()
-+            throws IOException
-+    {
-+        InMemoryRecordSet recordSet = new InMemoryRecordSet(List.of(BIGINT), List.of(List.of(42L)));
-+        RecordPageSourceProvider provider = new RecordPageSourceProvider(new ConnectorRecordSetProvider()
-+        {
-+            @Override
-+            public RecordSet getRecordSet(ConnectorTransactionHandle transaction, ConnectorSession session, ConnectorSplit split, ConnectorTableHandle table, List<? extends ColumnHandle> columns)
-+            {
-+                return recordSet;
-+            }
-+        });
-+
-+        AggregatedMemoryContext memoryContext = newSimpleAggregatedMemoryContext();
-+        LocalMemoryContext sourceMemoryContext = memoryContext.newLocalMemoryContext("test");
-+        try (ConnectorPageSource source = provider.createPageSource(
-+                TEST_TABLE_HANDLE.transaction(),
-+                SESSION,
-+                new ConnectorSplit() {},
-+                TEST_TABLE_HANDLE.connectorHandle(),
-+                Optional.empty(),
-+                List.of(),
-+                DynamicFilter.EMPTY,
-+                sourceMemoryContext::setBytes)) {
-+            assertThat(source).isInstanceOf(RecordPageSource.class);
-+            assertThat(source.getMemoryUsage()).isZero();
-+            assertThat(memoryContext.getBytes()).isPositive();
-+            assertThat(source.getNextSourcePage().getPositionCount()).isEqualTo(1);
-+            assertThat(source.isFinished()).isTrue();
-+        }
-+        // Closing the source preserves accounting for the retained builder buffers.
-+        assertThat(memoryContext.getBytes()).isPositive();
-+        sourceMemoryContext.close();
-+        assertThat(memoryContext.getBytes()).isZero();
-+    }
-+}
-```
+### Incident Patch 3: `bd932a1f` (2026-10-31)
+**Commit Message**: Size split builders for the exact output
 
-**File**: `core/trino-spi/pom.xml` (modified, +12/-0)
+**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/StringFunctions.java` (modified, +13/-17)
 ```diff
-@@ -240,6 +240,18 @@
-                                     </old>
-                                 </item>
-                                 <!-- Backwards incompatible changes since the previous release -->
-+                                <item>
-+                                    <code>java.method.numberOfParametersChanged</code>
-+                                    <old>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(io.trino.spi.connector.RecordSet)</old>
-+                                    <new>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(io.trino.spi.connector.RecordSet, io.trino.spi.connector.MemoryContext)</new>
-+                                    <justification>Require a MemoryContext to replace polling through ConnectorPageSource.getMemoryUsage</justification>
-+                                </item>
-+                                <item>
-+                                    <code>java.method.numberOfParametersChanged</code>
-+                                    <old>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(java.util.List&lt;io.trino.spi.type.Type&gt;, io.trino.spi.connector.RecordCursor)</old>
-+                                    <new>method void io.trino.spi.connector.RecordPageSource::&lt;init&gt;(java.util.List&lt;io.trino.spi.type.Type&gt;, io.trino.spi.connector.RecordCursor, io.trino.spi.connector.MemoryContext)</new>
-+                                    <justification>Require a MemoryContext to replace polling through ConnectorPageSource.getMemoryUsage</justification>
-+                                </item>
-                                 <item>
-                                     <ignore>true</ignore>
-                                     <code>java.method.removed</code>
-```
-
-**File**: `core/trino-spi/src/main/java/io/trino/spi/connector/RecordPageSource.java` (modified, +22/-9)
-```diff
-@@ -30,18 +30,28 @@ public class RecordPageSource
-     private final RecordCursor cursor;
-     private final List<Type> types;
-     private final PageBuilder pageBuilder;
-+    private final MemoryContext memoryContext;
-     private boolean closed;
- 
--    public RecordPageSource(RecordSet recordSet)
-+    public RecordPageSource(RecordSet recordSet, MemoryContext memoryContext)
-     {
--        this(recordSet.getColumnTypes(), recordSet.cursor());
-+        this(recordSet.getColumnTypes(), recordSet.cursor(), memoryContext);
-     }
- 
--    public RecordPageSource(List<Type> types, RecordCursor cursor)
-+    public RecordPageSource(List<Type> types, RecordCursor cursor, MemoryContext memoryContext)
-     {
-         this.cursor = requireNonNull(cursor, "cursor is null");
-         this.types = List.copyOf(requireNonNull(types, "types is null"));
-         this.pageBuilder = new PageBuilder(this.types);
-+        this.memoryContext = requireNonNull(memoryContext, "memoryContext is null");
-+        try {
-+            updateMemoryUsage();
-+        }
-+        catch (Throwable throwable) {
-+            try (cursor) {
-+                throw throwable;
-+            }
-+        }
-     }
- 
-     public RecordCursor getCursor()
-@@ -61,17 +71,13 @@ public long getReadTimeNanos()
-         return cursor.getReadTimeNanos();
-     }
- 
--    @Override
--    public long getMemoryUsage()
--    {
--        return cursor.getMemoryUsage() + pageBuilder.getRetainedSizeInBytes();
--    }
+@@ -22,6 +22,7 @@
+ import io.trino.spi.TrinoException;
+ import io.trino.spi.block.Block;
+ import io.trino.spi.block.BlockBuilder;
++import io.trino.spi.block.VariableWidthBlockBuilder;
+ import io.trino.spi.function.Constraint;
+ import io.trino.spi.function.Description;
+ import io.trino.spi.function.LiteralParameter;
+@@ -439,32 +440,27 @@ public static Block split(@SqlType("varchar(x)") Slice string, @SqlType("varchar
+         checkCondition(limit > 0, INVALID_FUNCTION_ARGUMENT, "Limit must be positive");
+         checkCondition(limit <= Integer.MAX_VALUE, INVALID_FUNCTION_ARGUMENT, "Limit is too large");
+         checkCondition(delimiter.length() > 0, INVALID_FUNCTION_ARGUMENT, "The delimiter may not be the empty string");
+-        BlockBuilder parts = VARCHAR.createBlockBuilder(null, 1, string.length());
+-        // If limit is one, the last and only element is the complete string
+-        if (limit == 1) {
+-            VARCHAR.writeSlice(parts, string);
+-            return parts.build();
+-        }
 -
-     @Override
-     public void close()
-     {
-         closed = true;
-         cursor.close();
-+        // The builder remains retained; its reservation is released by the context's owner.
-+        updateMemoryUsage();
-     }
- 
-     @Override
-@@ -124,9 +130,16 @@ else if (javaType == Slice.class) {
-         if ((closed && !pageBuilder.isEmpty()) || pageBuilder.isFull()) {
-             Page page = pageBuilder.build();
-             pageBuilder.reset();
-+            updateMemoryUsage();
-             return SourcePage.create(page);
-         }
- 
-+        updateMemoryUsage();
-         return null;
-     }
++        int expectedEntries = 1;
+         int index = 0;
+-        while (index < string.length()) {
++        while (expectedEntries < limit && index < string.length()) {
+             int splitIndex = string.indexOf(delimiter, index);
+-            // Found split?
+             if (splitIndex < 0) {
+                 break;
+             }
+-            // Add the part from current index to found split
++            expectedEntries++;
++            index = splitIndex + delimiter.length();
++        }
 +
-+    private void updateMemoryUsage()
-+    {
-+        memoryContext.setBytes(cursor.getMemoryUsage() + pageBuilder.getRetainedSizeInBytes());
-+    }
- }
++        int expectedBytes = string.length() - (expectedEntries - 1) * delimiter.length();
++        BlockBuilder parts = new VariableWidthBlockBuilder(null, expectedEntries, expectedBytes);
++        index = 0;
++        for (int part = 1; part < expectedEntries; part++) {
++            int splitIndex = string.indexOf(delimiter, index);
+             VARCHAR.writeSlice(parts, string, index, splitIndex - index);
+-            // Continue searching after delimiter
+             index = splitIndex + delimiter.length();
+-            // Reached limit-1 parts so we can stop
+-            if (parts.getPositionCount() == limit - 1) {
+-                break;
+-            }
+         }
+-        // Rest of string
++        // The last part includes any remaining delimiters when the limit is reached.
+         VARCHAR.writeSlice(parts, string, index, string.length() - index);
+-
+         return parts.build();
+     }
+ 
 ```
 
-**File**: `core/trino-spi/src/test/java/io/trino/spi/connector/TestRecordPageSource.java` (added, +158/-0)
+**File**: `core/trino-main/src/test/java/io/trino/operator/scalar/TestStringFunctions.java` (modified, +11/-0)
 ```diff
-@@ -0,0 +1,158 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.spi.connector;
+@@ -1259,6 +1259,17 @@ public void testCharSubstring()
+     @Test
+     public void testSplit()
+     {
++        assertThat(assertions.function("split", "''", "'.'"))
++                .isEqualTo(ImmutableList.of(""));
++        assertThat(assertions.function("split", "'abc'", "'abcdef'", "2147483647"))
++                .isEqualTo(ImmutableList.of("abc"));
++        assertThat(assertions.function("split", "'aaaaa'", "'aa'"))
++                .isEqualTo(ImmutableList.of("", "", "a"));
++        assertThat(assertions.function("split", "'" + "a.".repeat(1000) + "'", "'.'"))
++                .isEqualTo(ImmutableList.builder().addAll(nCopies(1000, "a")).add("").build());
++        assertThat(assertions.function("split", "'" + "a.".repeat(1000) + "'", "'.'", "2"))
++                .isEqualTo(ImmutableList.of("a", "a.".repeat(999)));
 +
-+import io.trino.spi.PageBuilder;
-+import io.trino.spi.connector.InMemoryRecordSet.InMemoryRecordCursor;
-+import io.trino.spi.type.Type;
-+import org.junit.jupiter.api.Test;
-+
-+import java.util.List;
-+import java.util.concurrent.atomic.AtomicLong;
-+import java.util.stream.LongStream;
-+
-+import static io.trino.spi.type.BigintType.BIGINT;
-+import static io.trino.spi.type.VarcharType.VARCHAR;
-+import static java.util.Collections.nCopies;
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.assertj.core.api.Assertions.assertThatThrownBy;
-+
-+class TestRecordPageSource
-+{
-+    @Test
-+    public void testCloseOnInitialMemoryReservationFailure()
-+    {
-+        RuntimeException reservationFailure = new RuntimeException("reservation failed");
-+        RuntimeException closeFailure = new RuntimeException("close failed");
-+        MemoryTrackingRecordCursor cursor = new MemoryTrackingRecordCursor(List.of(BIGINT), List.of())
-+        {
-+            @Override
-+            public void close()
-+            {
-+                super.close();
-+                throw closeFailure;
-+            }
-+        };
-+
-+        assertThatThrownBy(() -> new RecordPageSource(List.of(BIGINT), cursor, _ -> {
-+            throw reservationFailure;
-+        })).isSameAs(reservationFailure);
-+        assertThat(cursor.closed).isTrue();
-+        assertThat(reservationFailure).hasSuppressedException(closeFailure);
-+    }
-+
-+    @Test
-+    public void testMemoryUsageUpdates()
-+    {
-+        List<List<Object>> records = LongStream.range(0, 5000)
-+                .mapToObj(value -> List.<Object>of(value))
-+                .toList();
-+        MemoryTrackingRecordCursor cursor = new MemoryTrackingRecordCursor(List.of(BIGINT), records);
-+        AtomicLong reportedBytes = new AtomicLong(-1);
-+        long emptyBuilderBytes = new PageBuilder(List.of(BIGINT)).getRetainedSizeInBytes();
-+        try (RecordPageSource source = new RecordPageSource(List.of(BIGINT), cursor, reportedBytes::set)) {
-+            assertThat(reportedBytes).hasValue(cursor.getMemoryUsage() + emptyBuilderBytes);
-+            assertThat(source.getMemoryUsage()).isZero();
-+
-+            // A request can grow both the cursor and the builder without returning a page.
-+            assertThat(source.getNextSourcePage()).isNull();
-+            assertThat(reportedBytes.get()).isGreaterThan(cursor.getMemoryUsage() + 4096L * Long.BYTES);
-+            assertThat(source.isFinished()).isFalse();
-+
-+            SourcePage page = source.getNextSourcePage();
-+            assertThat(page.getPositionCount()).isEqualTo(5000);
-+            assertThat(BIGINT.getLong(page.getBlock(0), 0)).isZero();
-+            assertThat(BIGINT.getLong(page.getBlock(0), 4999)).isEqualTo(4999);
-+            assertThat(source.isFinished()).isTrue();
-+            assertThat(reportedBytes).hasValue(cursor.getMemoryUsage() + emptyBuilderBytes);
-+            assertThat(source.getMemoryUsage()).isZero();
-+            long beforeClose = reportedBytes.get();
-+            long cursorBytes = cursor.getMemoryUsage();
-+
-+            source.close();
-+            assertThat(reportedBytes).hasValue(beforeClose - cursorBytes);
-+        }
-+        // The builder is still retained. Its reservation is released by the context's owner.
-+        assertThat(reportedBytes).hasValue(emptyBuilderBytes);
-+        assertThat(reportedBytes.get()).isPositive();
-+    }
-+
-+    @Test
-+    public void testFullPages()
-+    {
-+        InMemoryRecordSet recordSet = new InMemoryRecordSet(List.of(VARCHAR), nCopies(3000, List.of("x".repeat(1024))));
-+        AtomicLong reportedBytes = new AtomicLong(-1);
-+        long emptyBuilderBytes = new PageBuilder(List.of(VARCHAR)).getRetainedSizeInBytes();
-+        try (RecordPageSource source = new RecordPageSource(recordSet, reportedBytes::set)) {
-+            assertThat(reportedBytes).hasValue(emptyBuilderBytes);
-+            int positions = 0;
-+            int pages = 0;
-+            while (!source.isFinished()) {
-+                SourcePage page = source.getNextSourcePage();
-+                assertThat(page).isNotNull();
-+                assertThat(reportedBytes).hasValue(emptyBuilderBytes);
-+                assertThat(source.getMemoryUsage()).isZero();
-+                positions += page.getPositionCount();
-+                pages++;
-+            }
-+            assertThat(po
+         assertThat(assertions.function("split", "'a.b.c'", "'.'"))
+                 .hasType(new ArrayType(createVarcharType(5)))
+                 .isEqualTo(ImmutableList.of("a", "b", "c"));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31778** (2026-10-24): Remove duplicated words in messages (@chenjian2664)
-- **PR #31767** (2026-10-25): Bump dep.airlift.version from 453 to 454 (@dependabot[bot])
-- **PR #31764** (2026-10-24): Update Hadoop to 3.3.5-4 (@electrum)
-- **PR #31763** (2026-10-23): Remove Hadoop dependency from trino-tests (@electrum)
-- **PR #31761** (2026-10-23): Support query parameters in MV properties (@findepi)
-- **PR #31760** (2026-10-23): Disable NameNode load check in HDFS test container (@findepi)
+- **PR #31933** (2026-10-31): Use known counts to size block builders (@wendigo)
+- **PR #31924** (2026-10-31): Reduce initial variable-width block allocation (@wendigo)
+- **PR #31923** (2026-10-31): Write row projections directly to output blocks (@wendigo)
+- **PR #31915** (2026-10-30): Bind CHAR parameters as char in JDBC setObject  (@findepi)
+- **PR #31912** (2026-10-30): Fix type of CHAR literal with non-BMP characters (@findepi)
+- **PR #31910** (2026-10-30): Resolve Faker functions only in the default schema (@chenjian2664)
 
 ---
 
@@ -2357,28 +2035,28 @@ and update callers to pass it.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test code flagged by error-prone 2.51.0
+## X. Size array value builders from entry counts
 
 **RULE**:
-When implementing operations in `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d51219a`: test code flagged by error-prone 2.51.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a81ce638`: Size array value builders from entry counts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/test/java/io/trino/operator/aggregation/minmaxn/TestDoubleMinNAggregation.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-spi/src/main/java/io/trino/spi/block/ArrayValueBuilder.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> Double.compare(y, x));
+        return new BufferedArrayValueBuilder(arrayType, entryCount)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Anti-pattern to NEVER write (induced failure mode):
-        PriorityQueue<Double> heap = new PriorityQueue<>(n, (x, y) -> -Double.compare(x, y));
+        return new BufferedArrayValueBuilder(arrayType, 1)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d51219a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a81ce638` are properly handled with clean fallback behavior.

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `2b1ee50a`  
+> **Source Version**: `646103a4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T12:05:59.222Z  
+> **Timestamp**: 2026-10-31T14:32:35.773Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T12:05:58.983Z  
+> **Harvest Timestamp**: 2026-10-31T14:32:35.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22154 stars
+- **Stars / Engagement**: 22158 stars
 
 ---
 
@@ -541,14 +541,14 @@ export default TextInputState;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2929** (2026-10-28): **useWindowDimensions and useColorScheme cause a hydration mismatch on server-rendered pages**
+  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  This issue is a follow-up to #2799. It is one specific SSR problem, with a repro.  The problem is old (#566 added `Dimensions.set` as a best guess for it in 2017, and #1688 describes it with Next.js), but it is more common now: since SDK 58, new Expo projects render their web pages on the server by default (the default template's `web.output` went from `'static'` to `'server'`, expo/expo#50129).  ### Describe the issue  A page renders on the server and then hydrates in the browser. Its render uses `useWindowDimensions()` or `useColorScheme()`.  - The server has no window. It renders with `0x0` and `"light"`, or with the values given to `Dimensions.set`. - In the browser, the first render reads the real window and color scheme, for example `1024x768` and `"dark"`.  Thus the first client render does not match the server HTML. React shows error #418 ("Hydration failed because the server rendered text didn't match the client"). React then renders the root again on the client and discards the server HTML.  ### Expected behavior  The first client render matches the server HTML, so hydration succeeds. After hydration, the hooks change to the real values.  ### Steps to reproduce  1. Clone the repro and run `bun install`. 2. Run `bun run build`. The app uses Expo Router with `web.output: 'server'`. 3. Run `bun run serve`. 4. Open http://localhost:8081 with the console open. Use a window that is not 0x
+
 - **Issue #2925** (2026-10-22): **Scroll not working on the example app home**
   *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Describe the issue  Yesterday while running the example app saw the scroll is notworking on the homescreen  ### Expected behavior  Scroll should work  ### Steps to reproduce  1. cd into packages/react-native-web-examples 2. try scroll, not working on brave browser  ### Test case  https://github.com/necolas/react-native-web/tree/master/packages/react-native-web-examples  ### Additional comments  _No response_
   **Post-Mortem & Fix Analysis**:
   > @zoontek, also, the demo apps should not be in the packages folder. Are we planning for migrations?  I heavily rely on react native web infact I was planning to take a fork and start work on it as per my project requirements, great I saw you guys took up the task and maintain it again  I have a good list of things that can be improved in the repo, which I found during my recent audit on few of my projects
   > @raajnadar Yes, it's planned. We have a roadmap, I will do it when needed.
-
-- **Issue #2914** (2026-10-21): **`preprocess.js`: broken `if` queries**
-  *Symptoms*: ### Is there an existing issue for this?  - [x] I have searched the existing issues  ### Describe the issue  In next `if` queries there are errors leading to wrong code, instead of `&&` there are present `,` (commas)  https://github.com/necolas/react-native-web/blob/e5534a137952f2ecd78e96f05e2bfd80dfc5861b/packages/react-native-web/src/exports/StyleSheet/preprocess.js#L143  https://github.com/necolas/react-native-web/blob/e5534a137952f2ecd78e96f05e2bfd80dfc5861b/packages/react-native-web/src/exports/StyleSheet/preprocess.js#L157   ### Expected behavior  must be `&&`  ### Steps to reproduce  Use direct links from description  ### Test case  https://github.com/necolas/react-native-web/blob/e5534a137952f2ecd78e96f05e2bfd80dfc5861b/packages/react-native-web/src/exports/StyleSheet/preprocess.js#L143  ### Additional comments  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -565,188 +565,619 @@ export default TextInputState;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `84ed1d9f` (2026-10-22)
-**Commit Message**: Fix #2925
+### Incident Patch 1: `646103a4` (2026-10-30)
+**Commit Message**: [fix] Text: shrink below the longest word in a flex row, as View does (#2922)
 
-**File**: `packages/react-native-web-examples/pages/index.js` (modified, +3/-4)
+**File**: `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js` (modified, +6/-6)
 ```diff
-@@ -1,6 +1,5 @@
- import NextLink from 'next/link';
--import React from 'react';
--import { Image, StyleSheet, Text, View } from 'react-native';
-+import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
- 
- const logoUri =
-   'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 841.9 595.3"><g fill="#1977f2"><path d="M666.3 296.5c0-32.5-40.7-63.3-103.1-82.4 14.4-63.6 8-114.2-20.2-130.4-6.5-3.8-14.1-5.6-22.4-5.6v22.3c4.6 0 8.3.9 11.4 2.6 13.6 7.8 19.5 37.5 14.9 75.7-1.1 9.4-2.9 19.3-5.1 29.4-19.6-4.8-41-8.5-63.5-10.9-13.5-18.5-27.5-35.3-41.6-50 32.6-30.3 63.2-46.9 84-46.9V78c-27.5 0-63.5 19.6-99.9 53.6-36.4-33.8-72.4-53.2-99.9-53.2v22.3c20.7 0 51.4 16.5 84 46.6-14 14.7-28 31.4-41.3 49.9-22.6 2.4-44 6.1-63.6 11-2.3-10-4-19.7-5.2-29-4.7-38.2 1.1-67.9 14.6-75.8 3-1.8 6.9-2.6 11.5-2.6V78.5c-8.4 0-16 1.8-22.6 5.6-28.1 16.2-34.4 66.7-19.9 130.1-62.2 19.2-102.7 49.9-102.7 82.3 0 32.5 40.7 63.3 103.1 82.4-14.4 63.6-8 114.2 20.2 130.4 6.5 3.8 14.1 5.6 22.5 5.6 27.5 0 63.5-19.6 99.9-53.6 36.4 33.8 72.4 53.2 99.9 53.2 8.4 0 16-1.8 22.6-5.6 28.1-16.2 34.4-66.7 19.9-130.1 62-19.1 102.5-49.9 102.5-82.3zm-130.2-66.7c-3.7 12.9-8.3 26.2-13.5 39.5-4.1-8-8.4-16-13.1-24-4.6-8-9.5-15.8-14.4-23.4 14.2 2.1 27.9 4.7 41 7.9zm-45.8 106.5c-7.8 13.5-15.8 26.3-24.1 38.2-14.9 1.3-30 2-45.2 2-15.1 0-30.2-.7-45-1.9-8.3-11.9-16.4-24.6-24.2-38-7.6-13.1-14.5-26.4-20.8-39.8 6.2-13.4 13.2-26.8 20.7-39.9 7.8-13.5 15.8-26.3 24.1-38.2 14.9-1.3 30-2 45.2-2 15.1 0 30.2.7 45 1.9 8.3 11.9 16.4 24.6 24.2 38 7.6 13.1 14.5 26.4 20.8 39.8-6.3 13.4-13.2 26.8-20.7 39.9zm32.3-13c5.4 13.4 10 26.8 13.8 39.8-13.1 3.2-26.9 5.9-41.2 8 4.9-7.7 9.8-15.6 14.4-23.7 4.6-8 8.9-16.1 13-24.1zM421.2 430c-9.3-9.6-18.6-20.3-27.8-32 9 .4 18.2.7 27.5.7 9.4 0 18.7-.2 27.8-.7-9 11.7-18.3 22.4-27.5 32zm-74.4-58.9c-14.2-2.1-27.9-4.7-41-7.9 3.7-12.9 8.3-26.2 13.5-39.5 4.1 8 8.4 16 13.1 24 4.7 8 9.5 15.8 14.4 23.4zM420.7 163c9.3 9.6 18.6 20.3 27.8 32-9-.4-18.2-.7-27.5-.7-9.4 0-18.7.2-27.8.7 9-11.7 18.3-22.4 27.5-32zm-74 58.9c-4.9 7.7-9.8 15.6-14.4 23.7-4.6 8-8.9 16-13 24-5.4-13.4-10-26.8-13.8-39.8 13.1-3.1 26.9-5.8 41.2-7.9zm-90.5 125.2c-35.4-15.1-58.3-34.9-58.3-50.6 0-15.7 22.9-35.6 58.3-50.6 8.6-3.7 18-7 27.7-10.1 5.7 19.6 13.2 40 22.5 60.9-9.2 20.8-16.6 41.1-22.2 60.6-9.9-3.1-19.3-6.5-28-10.2zM310 490c-13.6-7.8-19.5-37.5-14.9-75.7 1.1-9.4 2.9-19.3 5.1-29.4 19.6 4.8 41 8.5 63.5 10.9 13.5 18.5 27.5 35.3 41.6 50-32.6 30.3-63.2 46.9-84 46.9-4.5-.1-8.3-1-11.3-2.7zm237.2-76.2c4.7 38.2-1.1 67.9-14.6 75.8-3 1.8-6.9 2.6-11.5 2.6-20.7 0-51.4-16.5-84-46.6 14-14.7 28-31.4 41.3-49.9 22.6-2.4 44-6.1 63.6-11 2.3 10.1 4.1 19.8 5.2 29.1zm38.5-66.7c-8.6 3.7-18 7-27.7 10.1-5.7-19.6-13.2-40-22.5-60.9 9.2-20.8 16.6-41.1 22.2-60.6 9.9 3.1 19.3 6.5 28.1 10.2 35.4 15.1 58.3 34.9 58.3 50.6-.1 15.7-23 35.6-58.4 50.6zM320.8 78.4z" /><circle cx="420.9" cy="296.5" r="45.7" /><path d="M520.5 78.1z" /></g></svg>';
-@@ -15,7 +14,7 @@ function Link(props) {
- 
- export default function IndexPage() {
-   return (
--    <View style={styles.app}>
-+    <ScrollView contentContainerStyle={styles.app}>
-       <View style={styles.header}>
-         <Image
-           aria-label="React logo"
-@@ -41,7 +40,7 @@ export default function IndexPage() {
-           </View>
-         ))}
-       </View>
--    </View>
-+    </ScrollView>
-   );
- }
- 
+@@ -52,8 +52,8 @@ describe('AppRegistry', () => {
+        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+        [stylesheet-group="1"]{}
+-       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+-       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
++       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
++       .css-textHasAncestor-1ejxjx6{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
+        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
+        [stylesheet-group="2"]{}
+        .r-display-krxsd3{display:-webkit-box;}
+@@ -118,8 +118,8 @@ describe('AppRegistry', () => {
+        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+        [stylesheet-group="1"]{}
+-       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+-       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
++       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
++       .css-textHasAncestor-1ejxjx6{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
+        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
+        [stylesheet-group="2"]{}
+        .r-display-krxsd3{display:-webkit-box;}
+@@ -175,8 +175,8 @@ describe('AppRegistry', () => {
+        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+        [stylesheet-group="1"]{}
+-       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;
 ```
 
-**File**: `packages/react-native-web-examples/shared/example.js` (modified, +4/-2)
+**File**: `packages/react-native-web/src/exports/Text/__tests__/__snapshots__/index-test.js.snap` (modified, +28/-28)
 ```diff
-@@ -1,4 +1,4 @@
--import { StyleSheet, Text, View } from 'react-native';
-+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+@@ -2,18 +2,18 @@
  
- export default function Example(props) {
-   return (
-@@ -21,7 +21,9 @@ export default function Example(props) {
-           {props.title}
-         </Text>
-       </View>
--      <View style={styles.container}>{props.children}</View>
-+      <ScrollView contentContainerStyle={styles.container}>
-+        {props.children}
-+      </ScrollView>
-     </View>
-   );
- }
+ exports[`components/Text default 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text nested 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+ >
+   <span
+-    class="css-textHasAncestor-vzhqwr"
++    class="css-textHasAncestor-1ejxjx6"
+     data-testid="child"
+   />
+ </div>
+@@ -22,44 +22,44 @@ exports[`components/Text nested 1`] = `
+ exports[`components/Text prop "aria-label" value is set 1`] = `
+ <div
+   aria-label="accessibility label"
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "aria-labelledby" value is set 1`] = `
+ <div
+   aria-labelledby="123"
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "aria-live" value is set 1`] = `
+ <div
+   aria-live="polite"
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "dir" value is "ltr" 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="ltr"
+ />
+ `;
+ 
+ exports[`components/Text prop "dir" value is "rtl" 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="rtl"
+ />
+ `;
+ 
+ exports[`components/Text prop "href" href with accessibilityRole 1`] = `
+ <a
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   href="https://example.com"
+   role="presentation"
+@@ -68,30 +68,30 @@ exports[`components/Text prop "href" href with accessibilityRole 1`] = `
+ 
+ exports[`components/Text prop "href" value is set 1`] = `
+ <a
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   href="https://example.com"
+ />
+ `;
+ 
+ exports[`components/Text prop "hrefAttrs" null values are excluded 1`] = `
+ <a
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   href="https://example.com"
+ />
+ `;
+ 
+ exports[`components/Text prop "hrefAttrs" requires "href" 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
+ <a
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   href="https://example.com"
+   target="_blank"
+@@ -100,7 +100,7 @@ exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
+ 
+ exports[`components/Text prop "hrefAttrs" value is set 1`] = `
+ <a
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   download="filename.jpg"
+   href="https://example.com"
+@@ -111,69 +111,69 @@ exports[`components/Text prop "hrefAttrs" value is set 1`] = `
+ 
+ exports[`components/Text prop "lang" ar 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="rtl"
+   lang="ar"
+ />
+ `;
+ 
+ exports[`components/Text prop "lang" fr 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="ltr"
+   lang="fr"
+ />
+ `;
+ 
+ exports[`components/Text prop "lang" undefined 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "lang" with dir 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="ltr"
+   lang="ar"
+ />
+ `;
+ 
+ exports[`components/Text prop "nativeID" value is set 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   id="nativeID"
+ />
+ `;
+ 
+ exports[`components/Text prop "numberOfLines" value is set 1`] = `
+ <div
+-  class="css-text-1omw8j8 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
++  class="css-text-1kstuq4 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
+   dir="auto"
+   style="-webkit-line-clamp: 3;"
+ />
+ `;
+ 
+ exports[`components/Text prop "numberOfLines" value is set to one 1`] = `
+ <div
+-  class="css-text-1omw8j8 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
++  class="css-text-1kstuq4 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "role" value alters HTML element 1`] = `
+ <article
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   role="article"
+ />
+ `;
+ 
+ exports[`components/Text prop "role" value is "button" 1`] = `
+ <button
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   role="button"
+   type="button"
+@@ -182,37 +182,37 @@ exports[`components/Text prop "role" value is "button" 1`] = `
+ 
+ exports[`components/Text prop "role" value is set 1`] = `
+ <div
+-  class="css-text-1omw8j8"
++  class="css-text-1kstuq4"
+   dir="auto"
+   role="presentation"
+ />
+ `;
+ 
+ exports[`components/Text prop "selectable" value of false 1`] = `
+ <div
+-  class="css-text-1omw8j8 r-userSelect-lrvibr"
++  class="css-text-1kstuq4 r-userSelect-lrvibr"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`componen
+```
+
+**File**: `packages/react-native-web/src/exports/Text/index.js` (modified, +2/-0)
+```diff
+@@ -186,6 +186,8 @@ const textStyle = {
+   font: '14px System',
+   listStyle: 'none',
+   margin: 0,
++  minHeight: 0,
++  minWidth: 0,
+   padding: 0,
+   position: 'relative',
+   textAlign: 'start',
 ```
 
 ---
 
-### Incident Patch 2: `70e4ea74` (2026-10-21)
-**Commit Message**: Remove the "compile" script (a "build" alias)
+### Incident Patch 2: `8ff7b3b0` (2026-10-30)
+**Commit Message**: fix: add `flexShrink: 0` to Text styles (#2819)
 
-**File**: `.github/workflows/performance.yml` (modified, +0/-1)
+**File**: `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js` (modified, +6/-6)
 ```diff
-@@ -11,7 +11,6 @@ jobs:
-         env:
-           MINIFY: 'true'
-         with:
--          build-script: 'compile'
-           omit-unchanged: 'true'
-           pattern: './packages/react-native-web/dist/{index.js,**/*.js}'
-           repo-token: '${{ secrets.GITHUB_TOKEN }}'
+@@ -52,8 +52,8 @@ describe('AppRegistry', () => {
+        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+        [stylesheet-group="1"]{}
+-       .css-text-146c3p1{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+-       .css-textHasAncestor-1jxf684{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
++       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
++       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
+        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
+        [stylesheet-group="2"]{}
+        .r-display-krxsd3{display:-webkit-box;}
+@@ -118,8 +118,8 @@ describe('AppRegistry', () => {
+        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+        [stylesheet-group="1"]{}
+-       .css-text-146c3p1{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+-       .css-textHasAncestor-1jxf684{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
++       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
++       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
+        .css-view-g5y9jx{align-content:flex-start;align-items:stretch;background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;display:flex;flex-basis:auto;flex-direction:column;flex-shrink:0;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-decoration:none;z-index:0;}
+        [stylesheet-group="2"]{}
+        .r-display-krxsd3{display:-webkit-box;}
+@@ -175,8 +175,8 @@ describe('AppRegistry', () => {
+        html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+        input::-webkit-search-cancel-button,input::-webkit-search-decoration,input::-webkit-search-results-button,input::-webkit-search-results-decoration{display:none;}
+        [stylesheet-group="1"]{}
+-       .css-text-146c3p1{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+-       .css-textHasAncestor-1jxf684{background-color:rgba(0,0,0,0.00);bor
 ```
 
-**File**: `package.json` (modified, +0/-1)
+**File**: `packages/react-native-web/src/exports/Text/__tests__/__snapshots__/index-test.js.snap` (modified, +28/-28)
 ```diff
-@@ -6,7 +6,6 @@
-   "scripts": {
-     "clean": "del-cli ./packages/*/dist",
-     "build": "npm run clean && npm run build --workspaces --if-present",
--    "compile": "npm run build",
-     "dev": "npm run dev --workspaces --if-present",
-     "flow": "flow",
-     "format": "prettier --check --ignore-unknown .",
+@@ -2,18 +2,18 @@
+ 
+ exports[`components/Text default 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text nested 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+ >
+   <span
+-    class="css-textHasAncestor-1jxf684"
++    class="css-textHasAncestor-vzhqwr"
+     data-testid="child"
+   />
+ </div>
+@@ -22,44 +22,44 @@ exports[`components/Text nested 1`] = `
+ exports[`components/Text prop "aria-label" value is set 1`] = `
+ <div
+   aria-label="accessibility label"
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "aria-labelledby" value is set 1`] = `
+ <div
+   aria-labelledby="123"
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "aria-live" value is set 1`] = `
+ <div
+   aria-live="polite"
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "dir" value is "ltr" 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="ltr"
+ />
+ `;
+ 
+ exports[`components/Text prop "dir" value is "rtl" 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="rtl"
+ />
+ `;
+ 
+ exports[`components/Text prop "href" href with accessibilityRole 1`] = `
+ <a
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   href="https://example.com"
+   role="presentation"
+@@ -68,30 +68,30 @@ exports[`components/Text prop "href" href with accessibilityRole 1`] = `
+ 
+ exports[`components/Text prop "href" value is set 1`] = `
+ <a
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   href="https://example.com"
+ />
+ `;
+ 
+ exports[`components/Text prop "hrefAttrs" null values are excluded 1`] = `
+ <a
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   href="https://example.com"
+ />
+ `;
+ 
+ exports[`components/Text prop "hrefAttrs" requires "href" 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
+ <a
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   href="https://example.com"
+   target="_blank"
+@@ -100,7 +100,7 @@ exports[`components/Text prop "hrefAttrs" target variant is set 1`] = `
+ 
+ exports[`components/Text prop "hrefAttrs" value is set 1`] = `
+ <a
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   download="filename.jpg"
+   href="https://example.com"
+@@ -111,69 +111,69 @@ exports[`components/Text prop "hrefAttrs" value is set 1`] = `
+ 
+ exports[`components/Text prop "lang" ar 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="rtl"
+   lang="ar"
+ />
+ `;
+ 
+ exports[`components/Text prop "lang" fr 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="ltr"
+   lang="fr"
+ />
+ `;
+ 
+ exports[`components/Text prop "lang" undefined 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "lang" with dir 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="ltr"
+   lang="ar"
+ />
+ `;
+ 
+ exports[`components/Text prop "nativeID" value is set 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   id="nativeID"
+ />
+ `;
+ 
+ exports[`components/Text prop "numberOfLines" value is set 1`] = `
+ <div
+-  class="css-text-146c3p1 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
++  class="css-text-1omw8j8 r-WebkitBoxOrient-8akbws r-display-krxsd3 r-maxWidth-dnmrzs r-overflow-1qsk4np r-textOverflow-1udbk01"
+   dir="auto"
+   style="-webkit-line-clamp: 3;"
+ />
+ `;
+ 
+ exports[`components/Text prop "numberOfLines" value is set to one 1`] = `
+ <div
+-  class="css-text-146c3p1 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
++  class="css-text-1omw8j8 r-maxWidth-dnmrzs r-overflow-1udh08x r-textOverflow-1udbk01 r-whiteSpace-3s2u2q r-wordWrap-1iln25a"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`components/Text prop "role" value alters HTML element 1`] = `
+ <article
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   role="article"
+ />
+ `;
+ 
+ exports[`components/Text prop "role" value is "button" 1`] = `
+ <button
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   role="button"
+   type="button"
+@@ -182,37 +182,37 @@ exports[`components/Text prop "role" value is "button" 1`] = `
+ 
+ exports[`components/Text prop "role" value is set 1`] = `
+ <div
+-  class="css-text-146c3p1"
++  class="css-text-1omw8j8"
+   dir="auto"
+   role="presentation"
+ />
+ `;
+ 
+ exports[`components/Text prop "selectable" value of false 1`] = `
+ <div
+-  class="css-text-146c3p1 r-userSelect-lrvibr"
++  class="css-text-1omw8j8 r-userSelect-lrvibr"
+   dir="auto"
+ />
+ `;
+ 
+ exports[`componen
+```
+
+**File**: `packages/react-native-web/src/exports/Text/index.js` (modified, +1/-0)
+```diff
+@@ -182,6 +182,7 @@ const textStyle = {
+   boxSizing: 'border-box',
+   color: 'black',
+   display: 'inline',
++  flexShrink: 0,
+   font: '14px System',
+   listStyle: 'none',
+   margin: 0,
 ```
 
 ---
 
-### Incident Patch 3: `043858ce` (2026-10-21)
-**Commit Message**: Minify build output in compressed-size check
+### Incident Patch 3: `b6ce26fe` (2026-10-29)
+**Commit Message**: [fix] useHover: resume hover on the nearest ancestor only (#2920)
 
-**File**: `.github/workflows/performance.yml` (modified, +2/-0)
+**File**: `packages/react-native-web/src/modules/useHover/__tests__/index-test.js` (modified, +34/-0)
 ```diff
-@@ -8,6 +8,8 @@ jobs:
-     steps:
-       - uses: actions/checkout@v7
-       - uses: preactjs/compressed-size-action@v2
-+        env:
-+          MINIFY: 'true'
-         with:
-           build-script: 'compile'
-           omit-unchanged: 'true'
-```
-
-**File**: `package-lock.json` (modified, +2/-1)
-```diff
-@@ -35,7 +35,8 @@
-         "jest-environment-jsdom": "^30.5.2",
-         "lint-staged": "^17.6.0",
-         "prettier": "^3.9.10",
--        "prettier-plugin-hermes-parser": "0.37.0"
-+        "prettier-plugin-hermes-parser": "0.37.0",
-+        "terser": "^5.51.2"
-       }
-     },
-     "node_modules/@-xun/debug": {
-```
-
-**File**: `package.json` (modified, +2/-1)
-```diff
-@@ -54,7 +54,8 @@
-     "jest-environment-jsdom": "^30.5.2",
-     "lint-staged": "^17.6.0",
-     "prettier": "^3.9.10",
--    "prettier-plugin-hermes-parser": "0.37.0"
-+    "prettier-plugin-hermes-parser": "0.37.0",
-+    "terser": "^5.51.2"
-   },
-   "workspaces": [
-     "packages/react-native-web",
-```
-
-**File**: `packages/react-native-web/package.json` (modified, +3/-2)
-```diff
-@@ -28,8 +28,9 @@
-   ],
-   "scripts": {
-     "clean": "del-cli ./dist",
--    "build": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\"",
--    "dev": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\" --watch"
-+    "build": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\" && npm run minify",
-+    "dev": "npm run clean && babel src --root-mode upward --out-dir dist --ignore \"**/__tests__\" --watch",
-+    "minify": "node ../../scripts/minifyDist.js dist"
-   },
-   "dependencies": {
-     "@react-native/normalize-colors": "^0.88.0",
-```
-
-**File**: `scripts/minifyDist.js` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+/**
-+ * Minifies the JS files in a directory in place. Used by CI to measure the
-+ * compressed size of the build. Does nothing unless MINIFY=true.
-+ */
-+import fs from 'node:fs';
-+import path from 'node:path';
-+import { minify } from 'terser';
+@@ -56,6 +56,40 @@ describe('useHover', () => {
+       });
+       expect(onHoverStart).toHaveBeenCalled();
+     });
 +
-+async function minifyDir(dir) {
-+  for (const file of fs.globSync('**/*.js', { cwd: dir })) {
-+    const filePath = path.join(dir, file);
-+    const code = fs.readFileSync(filePath, 'utf-8');
-+
-+    const result = await minify(code, {
-+      compress: { directives: false },
-+      module: true
++    test('only changes the nearest ancestor', () => {
++      onHoverStart = jest.fn();
++      onHoverEnd = jest.fn();
++      ref = React.createRef();
++      childRef = React.createRef();
++      const grandchildRef = React.createRef();
++      const Component = () => {
++        useHover(ref, { onHoverStart, onHoverEnd });
++        useHover(childRef, {});
++        useHover(grandchildRef, {});
++        return (
++          <div ref={ref}>
++            <div ref={childRef}>
++              <div ref={grandchildRef} />
++            </div>
++          </div>
++        );
++      };
++      render(<Component />);
++      const target = createEventTarget(ref.current);
++      const child = createEventTarget(childRef.current);
++      const grandchild = createEventTarget(grandchildRef.current);
++      act(() => {
++        target.pointerover();
++        target.pointerout({ relatedTarget: child.node });
++        child.pointerover();
++        child.pointerout({ relatedTarget: grandchild.node });
++        grandchild.pointerover();
++        grandchild.pointerout({ relatedTarget: child.node });
++      });
++      expect(onHoverStart).toHaveBeenCalledTimes(1);
++      expect(onHoverEnd).toHaveBeenCalledTimes(1);
 +    });
-+
-+    fs.writeFileSync(filePath, result.code);
-+  }
-+}
-+
-+if (process.env.MINIFY === 'true') {
-+  minifyDir(path.resolve(process.argv[2]));
-+}
+   });
+ 
+   describe('disabled', () => {
+```
+
+**File**: `packages/react-native-web/src/modules/useHover/index.js` (modified, +4/-0)
+```diff
+@@ -109,11 +109,15 @@ export default function useHover(
+           const lockListener = function (lockEvent: Event) {
+             if (lockEvent.target !== target) {
+               hoverEnd(e);
++              // Ancestors further out are already locked.
++              lockEvent.stopPropagation();
+             }
+           };
+           const unlockListener = function (lockEvent: Event) {
+             if (lockEvent.target !== target) {
+               hoverStart(e);
++              // Ancestors further out stay locked.
++              lockEvent.stopPropagation();
+             }
+           };
+           addLockListener(target, !disabled ? lockListener : null);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2923** (2026-10-22): Update AccessibilityInfo to match the React Native API (@zoontek)
-- **PR #2919** (2026-10-21): [fix] Linking: register listeners once and remove by subscription (@zoontek)
-- **PR #2918** (2026-10-20): Replace CodeSandbox embeds with self-hosted examples (@zoontek)
-- **PR #2915** (2026-10-21): Fix comma operator discarding shadow/textShadow options in preprocess (@charan-rathore)
-- **PR #2913** (2026-10-19): [0.22] Add TypeScript types (@zoontek)
-- **PR #2912** (2026-10-19): [0.22] Test that rgb() with a slash alpha survives StyleSheet (@YevheniiKotyrlo)
+- **PR #2940** (2026-10-30): Simplify ScrollView responder logic (@zoontek)
+- **PR #2939** (closed): [fix] Text: shrink below the longest word in a flex row (@bencripps)
+- **PR #2937** (2026-10-28): [feat] Support fontVariant stylistic sets (@zoontek)
+- **PR #2936** (2026-10-28): [feat] Add PlatformColor (@zoontek)
+- **PR #2935** (2026-10-28): [fix] Inverted list with onRefresh renders cells upside-down (@zoontek)
+- **PR #2934** (2026-10-28): [fix] Animated.loop blocks FlatList onEndReached (@zoontek)
 
 ---
 
@@ -766,33 +1197,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in index.js
+## X. [fix] Text: shrink below the longest word in a flex row, as View does (#2922)
 
 **RULE**:
-When implementing operations in `packages/react-native-web-examples/pages/index.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `84ed1d9f`: #2925. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `646103a4`: [fix] Text: shrink below the longest word in a flex row, as View does (#2922). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-examples/pages/index.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web/src/exports/AppRegistry/__tests__/index-test.node.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
-    <ScrollView contentContainerStyle={styles.app}>
-    </ScrollView>
+       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+       .css-textHasAncestor-1ejxjx6{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
+       .css-text-1kstuq4{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;min-height:0px;min-width:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+       .css-textHasAncestor-1ejxjx6{backgr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Anti-pattern to NEVER write (induced failure mode):
-import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-    <View style={styles.app}>
-    </View>
+       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;display:inline;flex-shrink:0;font:inherit;list-style:none;margin:0px;padding:0px;position:relative;text-align:inherit;text-decoration:none;white-space:inherit;word-wrap:break-word;}
+       .css-text-1omw8j8{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:rgba(0,0,0,1.00);display:inline;flex-shrink:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;list-style:none;margin:0px;padding:0px;position:relative;text-align:start;text-decoration:none;white-space:pre-wrap;word-wrap:break-word;}
+       .css-textHasAncestor-vzhqwr{background-color:rgba(0,0,0,0.00);border:0 solid black;box-sizing:border-box;color:inherit;disp
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `84ed1d9f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `646103a4` are properly handled with clean fallback behavior.

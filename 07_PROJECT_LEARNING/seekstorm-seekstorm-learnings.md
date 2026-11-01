@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source**: github ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
-> **Source Version**: `a20c7c3f`  
+> **Source Version**: `8602a9e3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T16:09:09.745Z  
+> **Timestamp**: 2026-10-31T13:06:49.018Z  
 > **Learning ID**: `learn-github-seekstorm-seekstorm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/SeekStorm/SeekStorm](https://github.com/SeekStorm/SeekStorm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T16:09:09.736Z  
+> **Harvest Timestamp**: 2026-10-31T13:06:49.011Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SeekStorm: vector & lexical search - in-process library & multi-tenancy server, in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 1924 stars
+- **Stars / Engagement**: 1932 stars
 
 ---
 
@@ -441,6 +441,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                 return Ok(());
             }
 
+            let start_time = Instant::now();
+
             let wikipedia_schema_json = r#"
                 [{"field":"title","field_type":"Text","store":false,"index_lexical":false},
                 {"field":"body","field_type":"Text","store":false,"index_lexical":true,"longest":true},
@@ -469,15 +471,18 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
                 query_completion: None,
                 clustering: Clustering::None,
                 inference: Inference::None,
+                segment_number_bits: 11,
             };
 
-            let mut index_arc =
-                create_index(&index_path, meta, &schema, &Vec::new(), 11, false, None)
-                    .await
-                    .unwrap();
+            let mut index_arc = create_index(&index_path, meta, &schema, &Vec::new(), false, None)
+                .await
+                .unwrap();
 
             // ingest data
             index_arc.ingest_json(&ingest_path).await;
+
+            let index_time = start_time.elapsed().as_secs();
+            println!("Indexing time: {} s", index_time);
 
             index_arc
         }
@@ -526,12 +531,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
 
     thread::sleep(cool_time);
 
-    // query and result_type loops
-
-    let query_count = query_vec.len() as i64;
-    let permits = Arc::new(Semaphore::new(thread_number));
-
-    let result_list: Vec<ResultEntry> = 
+    
 ```
 
 ### Core Architecture Module: `seekstorm/src/add_result.rs`
@@ -1131,7 +1131,7 @@ use crate::{
         AccessType, BlockObjectIndex, CompressionType, DOCUMENT_LENGTH_COMPRESSION,
         FACET_VALUES_FILENAME, IndexArc, LevelIndex, MAX_POSITIONS_PER_TERM, NgramType,
         NonUniquePostingListObjectQuery, POSTING_BUFFER_SIZE, PostingListObjectIndex,
-        PostingListObjectQuery, ROARING_BLOCK_SIZE, Shard, TermObject,
+        PostingListObjectQuery, ROARING_BLOCK_SIZE, SEGMENT_BLOCK_CAPACITY, Shard, TermObject,
         update_list_max_impact_score, warmup,
     },
     utils::{
@@ -1251,7 +1251,7 @@ impl Commit for IndexArc {
                     shard_stats
                 {
                     {
-                        let mut s = shard.write().awa
+                        let m
 ```
 
 ### Core Architecture Module: `seekstorm/src/compatible.rs`
@@ -1325,7 +1325,7 @@ pub(crate) fn compress_postinglist(
                     plo.posting_count_ngram_1_compressed
                 } else {
                     let term_bytes_1 = plo.term_ngram1.as_bytes();
-                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask1;
+                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask;
                     let key_hash_1 = hash64(term_bytes_1);
                     let mut posting_count_ngram1 = if shard.meta.access_type == AccessType::Mmap {
                         decode_posting_list_count(
@@ -1357,7 +1357,7 @@ pub(crate) fn compress_postinglist(
                     plo.posting_count_ngram_2_compressed
                 } else {
                     let term_bytes_2 = plo.term_ngram2.as_bytes();
-                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask1;
+                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask;
                     let key_hash_2 = hash64(term_bytes_2);
 
                     let mut posting_count_ngram2 = if shard.meta.access_type == AccessType::Mmap {
@@ -1396,7 +1396,7 @@ pub(crate) fn compress_postinglist(
                     plo.posting_count_ngram_1_compressed
                 } else {
                     let term_bytes_1 = plo.term_ngram1.as_bytes();
-                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask1;
+                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask;
                     let key_hash_1 = hash64(term_bytes_1);
                     let mut posting_count_ngram1 = if shard.meta.access_type == AccessType::Mmap {
                         decode_posting_list_count(
@@ -1428,7 +1428,7 @@ pub(crate) fn compress_postinglist(
                     plo.posting_count_ngram_2_compressed
                 } else {
                     let term_bytes_2 = plo.term_ngram2.as_bytes();
-                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask1;
+                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask;
                     let key_hash_2 = hash64(term_bytes_2);
 
                     let mut posting_count_ngram2 = if shard.meta.access_type == AccessType::Mmap {
@@ -1461,7 +1461,7 @@ pub(crate) fn compress_postinglist(
                     plo.posting_count_ngram_3_compressed
                 } else {
                     let term_bytes_3 = plo.term_ngram3.as_bytes();
-                    let key0_3 = hash32(term_bytes_3) & shard.segment_number_mask1;
+                    let key0_3 = hash32(term_bytes_3) & shard.segment_number_mask;
                     let key_hash_3 = hash64(term_bytes_3);
 
                     let mut posting_count_ngram3 = if shard.meta.access_type == AccessType::Mmap {
@@ -1522,7 +1522,7 @@ pub(crate) fn compress_postinglist(
     let mut size_compressed_docid_key: usize = 0;
 
     let enable_rle_compression: bool = true;
-    let en
+    let enable_
 ```
 
 ### Core Architecture Module: `seekstorm/src/doc_store.rs`
@@ -2225,28 +2225,170 @@ pub(crate) fn top_fragments_from_field(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a20c7c3f` (2026-10-24)
-**Commit Message**: Fixed panic with facet filters and empty query facets
+### Incident Patch 1: `8602a9e3` (2026-10-31)
+**Commit Message**: index segment number is now persistent
 
-### Fixed
+### Changed
 
-- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
+- Parameter segment_number_bits1 renamed to segment_number_bits and moved from create_index to IndexMetaObject.
+  - It is now persistent after index reload (via index.json).
+  - Backward compatibility: Existing indices (with segment_number_bits1=11) can still be loaded.
+  - The segment_number_bits value is clamped in create_index to a safe range (8..=12).
+  - The size of compressed_index_segment_block_buffer and segment HashMap capacity is set inverse proportional to segment_number_bits (fewer segments mean more keys per segment).
 
-**File**: `CHANGELOG.md` (modified, +6/-0)
+**File**: `CHANGELOG.md` (modified, +10/-0)
 ```diff
-@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
+@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
  The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
  and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  
-+## [3.4.3] - 2026-10-24
++## [4.0.0] - 2026-10-31
 +
-+### Fixed
++### Changed
 +
-+- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
++- Parameter segment_number_bits1 renamed to segment_number_bits and moved from create_index to IndexMetaObject. 
++  - It is now persistent after index reload (via index.json).
++  - Backward compatibility: Existing indices (with segment_number_bits1=11) can still be loaded.
++  - The segment_number_bits value is clamped in create_index to a safe range (8..=12). 
++  - The size of compressed_index_segment_block_buffer and segment HashMap capacity is set inverse proportional to segment_number_bits (fewer segments mean more keys per segment).
 +
- ## [3.4.2] - 2026-10-23
+ ## [3.4.5] - 2026-10-27
  
- ### Added
+ ### Fixed
+```
+
+**File**: `FACETED_SEARCH.md` (modified, +2/-2)
+```diff
+@@ -148,12 +148,12 @@ let meta = IndexMetaObject {
+     query_completion: None,
+     clustering: Clustering::None,
+     inference: Inference::None,
++    segment_number_bits:11
+ };
+ 
+ let synonyms=Vec::new();
+ 
+-let segment_number_bits1=11;
+-let index_arc=create_index(index_path,meta,&schema,&synonyms,segment_number_bits1,false,None).await.unwrap();
++let index_arc=create_index(index_path,meta,&schema,&synonyms,false,None).await.unwrap();
+ 
+ # });
+ ```
+```
+
+**File**: `README.md` (modified, +17/-17)
+```diff
+@@ -237,8 +237,9 @@ async fn main() {
+         query_completion: None,
+         clustering: Clustering::None,
+         inference: Inference::None,
++        segment_number_bits:11
+     };
+-    let mut index_arc = create_index(Path::new("./seekstorm_index"), meta, &schema, &Vec::new(), 11, false, None).await.unwrap();
++    let mut index_arc = create_index(Path::new("./seekstorm_index"), meta, &schema, &Vec::new(), false, None).await.unwrap();
+ 
+     // 3. Index documents
+     let docs = r#"[{"title":"title1 test","body":"body1"}, {"title":"title2","body":"body2 test"}]"#;
+@@ -924,10 +925,10 @@ let meta = IndexMetaObject {
+     query_completion: Some(QueryCompletion{max_completion_entries:10_000_000}),
+     clustering: Clustering::None,
+     inference: Inference::None,
++    segment_number_bits:11
+ };
+ 
+-let segment_number_bits1=11;
+-let index_arc=create_index(index_path,meta,&schema,&Vec::new(),segment_number_bits1,false,None).await.unwrap();
++let index_arc=create_index(index_path,meta,&schema,&Vec::new(),false,None).await.unwrap();
+ 
+ # });
+ ```
+@@ -1232,10 +1233,10 @@ let meta = IndexMetaObject {
+     query_completion: Some(QueryCompletion{max_completion_entries:10_000_000}),
+     clustering: Clustering::None,
+     inference: Inference::None,
++    segment_number_bits:11
+ };
+ 
+-let segment_number_bits1=11;
+-let index_arc=create_index(index_path,meta,&schema,&Vec::new(),segment_number_bits1,false,None).await.unwrap();
++let index_arc=create_index(index_path,meta,&schema,&Vec::new(),false,None).await.unwrap();
+ 
+ # });
+ ```
+@@ -1297,10 +1298,10 @@ let meta = IndexMetaObject {
+     query_completion: Some(QueryCompletion{max_completion_entries:10_000_000}),
+     clustering: Clustering::None,
+     inference: Inference::None,
++    segment_number_bits:11
+ };
+ 
+-let segment_number_bits1=11;
+-let index_arc=create_index(index_path,meta,&schema,&Vec::new(),segment_number_bits1,false,None).await.unwrap();
++let index_arc=create_index(index_path,meta,&schema,&Vec::new(),false,None).await.unwrap();
+ 
+ # });
+ ```
+@@ -1544,12 +1545,12 @@ let meta = IndexMetaObject {
+     query_completion: None,
+     clustering: Clustering::None,
+     inference: Inference::None,
++    segment_number_bits:11
+ };
+ 
+ let synonyms=Vec::new();
+ 
+-let segment_number_bits1=11;
+-let index_arc=create_index(index_path,meta,&schema,&synonyms,segment_number_bits1,false,None).await.unwrap();
++let index_arc=create_index(index_path,meta,&schema,&synonyms,false,None).await.unwrap();
+ 
+ # });
+ ```
+@@ -1679,10 +1680,10 @@ create index
+         query_completion: None,
+         clustering: Clustering::None,
+         inference: Inference::Model2Vec { model: Model::PotionBase2M, chunk_size: 1000, quantization: Quantization::ScalarQuantizationI8 },
++        segment_number_bits:11
+     };
+     
+-    let segment_number_bits1=11;
+-    let index_arc=create_index(index_path,meta,&schema,&Vec::new(),segment_number_bits1,false,None).await.unwrap();
++    let index_arc=create_index(index_path,meta,&schema,&Vec::new(),false,None).await.unwrap();
+     let index=index_arc.read().await;
+ 
+     let result=index.meta.id;
+@@ -1807,10 +1808,10 @@ create index
+         query_completion: None,
+         clustering: Clustering::None,
+         inference: Inference::External { dimensions: 128, precision: Precision::F32,  quantization: Quantization::None,similarity:VectorSimilarity::Euclidean },
++        segment_number_bits:11
+     };
+     
+-    let segment_number_bits1=11;
+-    let index_arc=create_index(index_path,meta,&schema,&Vec::new(),segment_number_bits1,false,None).await.unwrap();
++    let index_arc=create_index(index_path,meta,&schema,&Vec::new(),false,None).await.unwrap();
+     let index=index_arc.read().await;
+ 
+     let result=index.meta.id;
+@@ -1947,10 +1948,10 @@ create index
+         query_completion: None,
+         clustering: Clustering::Auto,
+         inference: Inference::External { dimensions: 128, precision: Precision::F32, quantization: Quantization::ScalarQuantizationI8, similarity:VectorSimilarity::Euclidean },
++        segment_number_bits:11
+     };
+     
+-    let segment_number_bits1=11;
+-    let index_arc=create_index(index_path,meta,&schema,&Vec::new(),segment_number_bits1,false,None).await.unwrap();
++    let index_arc=create_index(index_path,meta,&schema,&Vec::new(),false,None).await.unwrap();
+     let index=index_arc.read().await;
+ 
+     let result=index.meta.id;
+@@ -2106,10 +2107,8 @@ query documents/vectors
+ 
+ - Search
+   - [Introducing the SeekStorm MCP server](https://seekstorm.com/blog/seekstorm-mcp-server/)
+-  - [symspell_rs v7 - 3x faster lookup, 40% less memory consumption, 11x faster Damerau-Levenshtein edit distance](https://seekstorm.com/blog/symspell_rs-3x-faster-lookup-40-less-memory-11x-faster-levenshtein)
+   - [SeekStorm 3.0 adds vector search & hybrid search](https://seekstorm.com/blog/seekstorm-adds-vector_search-hybrid-search)
+   - [Document iterator and search with empty query string](https://seekstorm.com/blog/document-iterator-search-with-em
 ```
 
 **File**: `seekstorm/Cargo.toml` (modified, +2/-2)
@@ -2254,123 +2396,315 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  [package]
  name = "seekstorm"
--version = "3.4.2"
-+version = "3.4.3"
+-version = "3.4.5"
++version = "4.0.0"
  authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
  license = "Apache-2.0"
  categories = ["database-implementations", "data-structures"]
-@@ -54,7 +54,7 @@ async-recursion = "1.2.0"
- zstd = "0.14.2"
- rayon = "1.12.0"
- aho-corasick = "1.1.5"
--smallvec = "1.16.3"
-+smallvec = "1.16.4"
- memmap2 = "0.9.12"
- regex-syntax = "0.8.11"
- indexmap = { version = "2.14.2", features = ["serde"]}
+@@ -71,7 +71,7 @@ tokio-test = "0.4.6"
+ snap = "1.1.2"
+ lz4_flex = "0.14.0"
+ bytemuck = { version = "1.25.2", features = ["derive","extern_crate_alloc"] }
+-model2vec-rs = "0.3.0"
++model2vec-rs = "0.4.0"
+ chunk = "0.10.2"
+ snowball_stemmers_rs = "1.0.1"
+ half = { version = "2.7.1", features = ["bytemuck","serde"] }
 ```
 
-**File**: `seekstorm/src/union.rs` (modified, +3/-0)
+**File**: `seekstorm/benches/basic.rs` (modified, +9/-4)
 ```diff
-@@ -980,6 +980,9 @@ pub(crate) async fn union_count<'a>(
-                     continue 'next;
+@@ -192,6 +192,8 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+                 return Ok(());
+             }
+ 
++            let start_time = Instant::now();
++
+             let wikipedia_schema_json = r#"
+                 [{"field":"title","field_type":"Text","store":false,"index_lexical":false},
+                 {"field":"body","field_type":"Text","store":false,"index_lexical":true,"longest":true},
+@@ -220,16 +222,19 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync>> {
+                 query_completion: None,
+                 clustering: Clustering::None,
+                 inference: Inference::None,
++                segment_number_bits: 11,
+             };
+ 
+-            let mut index_arc =
+-                create_index(&index_path, meta, &schema, &Vec::new(), 11, false, None)
+-                    .await
+-                    .unwrap();
++            let mut index_arc = create_index(&index_path, meta, &schema, &Vec::new(), false, None)
++                .await
++                .unwrap();
+ 
+             // ingest data
+             index_arc.ingest_json(&ingest_path).await;
+ 
++            let index_time = start_time.elapsed().as_secs();
++            println!("Indexing time: {} s", index_time);
++
+             index_arc
+         }
+     };
+```
+
+**File**: `seekstorm/src/commit.rs` (modified, +12/-10)
+```diff
+@@ -19,7 +19,7 @@ use crate::{
+         AccessType, BlockObjectIndex, CompressionType, DOCUMENT_LENGTH_COMPRESSION,
+         FACET_VALUES_FILENAME, IndexArc, LevelIndex, MAX_POSITIONS_PER_TERM, NgramType,
+         NonUniquePostingListObjectQuery, POSTING_BUFFER_SIZE, PostingListObjectIndex,
+-        PostingListObjectQuery, ROARING_BLOCK_SIZE, Shard, TermObject,
++        PostingListObjectQuery, ROARING_BLOCK_SIZE, SEGMENT_BLOCK_CAPACITY, Shard, TermObject,
+         update_list_max_impact_score, warmup,
+     },
+     utils::{
+@@ -242,7 +242,7 @@ impl Shard {
+                     }
                  }
  
-+                if search_result.query_facets.is_empty() {
-+                    continue 'next;
-+                }
-                 for (i, facet) in shard.facets.iter().enumerate() {
-                     if search_result.query_facets[i].length == 0 {
-                         continue;
-```
-
-**File**: `seekstorm_client/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "seekstorm_client_rs"
--version = "3.4.2"
-+version = "3.4.3"
- authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
- license = "Apache-2.0"
- categories = ["database-implementations", "data-structures"]
-@@ -20,7 +20,7 @@ path = "src/lib.rs"
- chrono = "0.4.45"
- base64 = "0.23.1"
- reqwest = { version = "0.13.5", features = ["json"] }
--seekstorm =  { version = "3.4.2", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
-+seekstorm =  { version = "3.4.3", path = "../seekstorm", default-features = false , features = ["zh", "vb"] }
- serde_json = "1.0.154"
- tokio = "1.54.1"
- tokio-test = "0.4.6"
-```
-
-**File**: `seekstorm_mcp_server/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "seekstorm_mcp_server"
--version = "3.4.2"
-+version = "3.4.3"
- authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
- license = "Apache-2.0"
- categories = ["database-implementations", "data-structures"]
-@@ -21,7 +21,7 @@ chrono = "0.4.45"
- base64 = "0.23.1"
- # reqwest = { version = "0.13.5", features = ["json"] }
- rmcp = { version = "3.5.0", features = ["transport-io"] }
--seekstorm =  { version = "3.4.2", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
-+seekstorm =  { version = "3.4.3", path = "../seekstorm", default-features = false , features = ["zh", "vb", "pdf"] }
- serde = { version = "1.0.151", features = ["derive"] }
- serde_json = "1.0.154"
- tokio = { version = "1.54.1", features = ["full"] }
-```
-
-**File**: `seekstorm_server/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "seekstorm_server"
--version = "3.4.2"
-+version = "3.4.3"
- authors = ["Wolf Garbe <wolf.garbe@seekstorm.com>"]
- license = "Apache-2.0"
- categories = ["database-implementations", "data-structures"]
-@@ -24,7 +24,7 @@ path = "src/main.rs"
+-                for key0 in 0..self.segment_number1 {
++                for key0 in 0..self.segment_number {
+                     for item in self.segments_index[key0].segment.iter_mut() {
+                         if let Some(block) = item.1.blocks.last()
+                             && block.block_id as usize == idx
+@@ -312,7 +312,7 @@ impl Shard {
  
- [dependencies]
- # This forces the library to compile WITH gxhash when building the server binary
--seekstorm = { version = "3.4.2", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
-+seekstorm = { version = "3.4.3", path = "../seekstorm" , features = ["gxhash"], default-features = false} 
- ahash ={ version = "0.8.12", features = ["serde"]}
- base64 = "0.23.1"
- chrono = "0.4.45"
+         let segment_head_position = self.index_file.stream_position().unwrap() as usize;
+         self.index_file
+-            .seek(SeekFrom::Current((self.segment_number1 * 8) as i64))
++            .seek(SeekFrom::Current((self.segment_number * 8) as i64))
+             .unwrap();
+ 
+         self.document_length_normalized_average =
+@@ -324,7 +324,7 @@ impl Shard {
+             *component = K * (1.0 - B + B * document_length_quotient);
+         }
+ 
+-        for k0 in 0..self.segment_number1 {
++        for k0 in 0..self.segment_number {
+             let strip_compressed = self.commit_segment(k0);
+             self.strip_compressed_sum += strip_compressed as u64;
+             self.key_count_sum += self.segments_level0[k0].segment.len() as u64;
+@@ -357,7 +357,7 @@ impl Shard {
+             .seek(SeekFrom::Start(segment_head_position as u64))
+             .unwrap();
+         let segment_head_position3 =
+-            self.compressed_index_segment_block_buffer.len() - (self.segment_number1 * 8);
++            self.compressed_index_segment_block_buffer.len() - (self.segment_number * 8);
+         let _ = self
+             .index_file
+             .write(&self.compressed_index_segment_block_buffer[segment_head_position3..]);
+@@ -427,7 +427,7 @@ impl Shard {
+ 
+             if let Some(symspell) = root_index.symspell_option.as_ref() {
+                 if symspell.read().await.get_dictionary_size() < root_index.max_dictionary_entries {
+-                    for key0 in 0..self.segment_number1 {
++                    for key0 in 0..self.segment_number {
+                         for key in self.segments_level0[key0].segment.keys() {
+                             let plo = self.segments_level0[key0].segment.get(key).unwrap();
+ 
+@@ -448,7 +448,8 @@ impl Shard {
+             };
+         };
+ 
+-        self.compressed_index_segment_block_buffer = vec![0; 10_000_000];
++        self.compressed_index_segment_block_buffer =
++            vec![0; SEGMENT_BLOCK_CAPACITY[self.meta.segment_number_bits - 8]];
+         self.postings_buffer = vec![0; POSTING_BUFFER_SIZE];
+ 
+         self.postings_buffer_pointer = 0;
+@@ -457,6 +458,7 @@ impl Shard {
+         for segment in self.segments_level0.iter_mut() {
+             segment.segment.clear();
+         }
++        self.key_count_sum = 0;
+ 
+         self.modified = true;
+ 
+@@ -469,7 +471,7 @@ impl Shard {
+ 
+         let mut key_head_pointer_w: usize = 0;
+         let segment_head_position = self.compressed_index_segment_block_buffer.len()
+-            - (self.segment_number1 * 8)
++            - (self.segment_number * 8)
+             + (key0 * 8)
+             + 4;
+         write_u32(
+@@ -529,7 +531,7 @@ impl Shard {
+         let compressed_segment_block_size = key_body_pointer_w;
+ 
+         let segment_head_position = self.compressed_index_segment_block_buffer.len()
+-            - (self.segment_number1 * 8)
++            - (self.segment_number * 8)
+             + (key0 * 8);
+ 
+         write_u32(
+@@ -1013,7 +1015,7 @@ impl Shard {
+             }
+         }
+ 
+-        for key0 in 0..self.segment_number1 {
++        for key0 in 0..self.segment_number {
+             if self.meta.access_type == AccessType::Mmap {
+                 let pointer = self.segments_index[key0].byte_array_blocks_pointer[block_id];
+ 
 ```
 
-**File**: `seekstorm_server/openapi/openapi.json` (modified, +1/-1)
+**File**: `seekstorm/src/compress_postinglist.rs` (modified, +5/-5)
 ```diff
-@@ -11,7 +11,7 @@
-       "name": "Apache-2.0",
-       "identifier": "Apache-2.0"
-     },
--    "version": "3.4.2"
-+    "version": "3.4.3"
-   },
-   "servers": [
-     {
+@@ -41,7 +41,7 @@ pub(crate) fn compress_postinglist(
+                     plo.posting_count_ngram_1_compressed
+                 } else {
+                     let term_bytes_1 = plo.term_ngram1.as_bytes();
+-                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask1;
++                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask;
+                     let key_hash_1 = hash64(term_bytes_1);
+                     let mut posting_count_ngram1 = if shard.meta.access_type == AccessType::Mmap {
+                         decode_posting_list_count(
+@@ -73,7 +73,7 @@ pub(crate) fn compress_postinglist(
+                     plo.posting_count_ngram_2_compressed
+                 } else {
+                     let term_bytes_2 = plo.term_ngram2.as_bytes();
+-                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask1;
++                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask;
+                     let key_hash_2 = hash64(term_bytes_2);
+ 
+                     let mut posting_count_ngram2 = if shard.meta.access_type == AccessType::Mmap {
+@@ -112,7 +112,7 @@ pub(crate) fn compress_postinglist(
+                     plo.posting_count_ngram_1_compressed
+                 } else {
+                     let term_bytes_1 = plo.term_ngram1.as_bytes();
+-                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask1;
++                    let key0_1 = hash32(term_bytes_1) & shard.segment_number_mask;
+                     let key_hash_1 = hash64(term_bytes_1);
+                     let mut posting_count_ngram1 = if shard.meta.access_type == AccessType::Mmap {
+                         decode_posting_list_count(
+@@ -144,7 +144,7 @@ pub(crate) fn compress_postinglist(
+                     plo.posting_count_ngram_2_compressed
+                 } else {
+                     let term_bytes_2 = plo.term_ngram2.as_bytes();
+-                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask1;
++                    let key0_2 = hash32(term_bytes_2) & shard.segment_number_mask;
+                     let key_hash_2 = hash64(term_bytes_2);
+ 
+                     let mut posting_count_ngram2 = if shard.meta.access_type == AccessType::Mmap {
+@@ -177,7 +177,7 @@ pub(crate) fn compress_postinglist(
+                     plo.posting_count_ngram_3_compressed
+                 } else {
+                     let term_bytes_3 = plo.term_ngram3.as_bytes();
+-                    let key0_3 = hash32(term_bytes_3) & shard.segment_number_mask1;
++                    let key0_3 = hash32(term_bytes_3) & shard.segment_number_mask;
+                     let key_hash_3 = hash64(term_bytes_3);
+ 
+                     let mut posting_count_ngram3 = if shard.meta.access_type == AccessType::Mmap {
 ```
 
-**File**: `seekstorm_server/openapi/openapi.yml` (modified, +1/-1)
+**File**: `seekstorm/src/index.rs` (modified, +65/-47)
 ```diff
-@@ -8,7 +8,7 @@ info:
-   license:
-     name: Apache-2.0
-     identifier: Apache-2.0
--  version: 3.4.2
-+  version: 3.4.3
- servers:
- - url: http://127.0.0.1
-   description: Local SeekStorm server
+@@ -119,7 +119,9 @@ pub(crate) const SORT_FLAG: bool = true;
+ 
+ pub(crate) const POSTING_BUFFER_SIZE: usize = 400_000_000;
+ pub(crate) const MAX_QUERY_TERM_NUMBER: usize = 100;
+-pub(crate) const SEGMENT_KEY_CAPACITY: usize = 1000;
++pub(crate) const SEGMENT_KEY_CAPACITY: [usize; 5] = [8192, 4096, 2048, 1024, 512];
++pub(crate) const SEGMENT_BLOCK_CAPACITY: [usize; 5] =
++    [67_108_864, 33_554_432, 16_777_216, 8_388_608, 4_194_304];
+ 
+ use tabled::Tabled;
+ 
+@@ -538,7 +540,7 @@ impl fmt::Display for DocumentCompression {
+ /// - Mmap (the index is accessed via memory-mapped files). See architecture.md for details.
+ /// - At commit the data is serialized to disk for persistence both in Ram and Mmap mode.
+ /// - The serialization format is identical for Ram and Mmap mode, allowing to change it retrospectively.
+-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
++#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, ToSchema)]
+ pub enum AccessType {
+     /// Ram (the complete index is preloaded to Ram when opening the index).
+     /// - Index size is limited by available RAM size.
+@@ -594,7 +596,7 @@ impl fmt::Display for LexicalSimilarity {
+ /// UnicodeAlphanumericZH
+ /// - Implements Chinese word segmentation to segment continuous Chinese text into tokens for indexing and search.
+ /// - Supports mixed Latin and Chinese texts
+-/// - Supports Chinese sentence boundary chars for KWIC snippets ahd highlighting.
++/// - Supports Chinese sentence boundary chars for KWIC snippets and highlighting.
+ /// - Requires feature #[cfg(feature = "zh")]
+ #[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq, Copy, Default, ToSchema)]
+ pub enum TokenizerType {
+@@ -1335,7 +1337,7 @@ impl fmt::Display for Clustering {
+ }
+ 
+ /// Specifies LexicalSimilarity, TokenizerType and AccessType when creating an new index
+-#[derive(Debug, Clone, Deserialize, Serialize)]
++#[derive(Debug, Clone, Deserialize, Serialize, ToSchema)]
+ pub struct IndexMetaObject {
+     /// unique index ID
+     /// Only used in SeekStorm server, not by the SeekStorm library itself.
+@@ -1417,6 +1419,18 @@ pub struct IndexMetaObject {
+     /// vector source: External vectors field (Json array field or Base64 encoded text field) or internal vector generation from text field via model2vec
+     #[serde(default)]
+     pub inference: Inference,
++
++    /// segment_number_bits determines the number of index segments, which are uniformely partitioned by term hash: Default is 11 bits = 2048 segments.
++    /// segment_number_bits is clamped in create_index to a safe range (8..=12).
++    /// The number of segments is always a power of two (segment_number = 2^segment_number_bits = 1<<segment_number_bits).
++    /// The size of compressed_index_segment_block_buffer and segment HashMap capacity is set inverse proportional to segment_number_bits (fewer segments mean more keys per segment).
++    ///
++    /// Why is the index partitioned into segments:
++    /// - Partitioned read/write locks increase the read/write concurrency for real-time search during indexing.
++    /// - By combining segment hashes and key hashes per segment, we effectively increase the number of bits per hash without additional RAM consumption of the hashtable, while reducing hash collisons for large index sizes.
++    #[schema(ignore)]
++    #[serde(default = "segment_number_bits_default")]
++    pub segment_number_bits: usize,
+ }
+ 
+ fn ngram_indexing_default() -> u8 {
+@@ -1427,6 +1441,10 @@ fn doc_store_compression_default() -> DocumentCompression {
+     DocumentCompression::Snappy
+ }
+ 
++fn segment_number_bits_default() -> usize {
++    11
++}
++
+ #[derive(Debug, Clone, Default)]
+ pub(crate) struct ResultFacet {
+     pub field: String,
+@@ -1600,8 +1618,8 @@ pub struct Shard {
+     pub(crate) compressed_index_segment_block_buffer: Vec<u8>,
+     pub(crate) compressed_docstore_segment_block_buffer: Vec<u8>,
+ 
+-    pub(crate) segment_number1: usize,
+-    pub(crate) segment_number_bits1: usize,
++    pub(crate) segment_number: usize,
++    pub(crate) segment_number_bits: usize,
+ 
+     pub(crate) document_length_normalized_average: f32,
+     pub(crate) positions_sum_normalized: u64,
+@@ -1616,7 +1634,7 @@ pub struct Shard {
+     pub(crate) enable_inter_query_threading: bool,
+     pub(crate) enable_inter_query_threading_auto: bool,
+ 
+-    pub(crate) segment_number_mask1: u32,
++    pub(crate) segment_number_mask: u32,
+ 
+     pub(crate) indexed_field_vec: Vec<IndexedField>,
+     pub(crate) indexed_field_id_bits: usize,
+@@ -1668,7 +1686,6 @@ pub struct Shard {
+     pub(crate) level_terms: AHashMap<u32, String>,
+     pub(crate) level_completions: Arc<RwLock<AHashMap<Vec<String>, usize>>>,
+ 
+-    /// AVX2 (x86_64) support enabled.
+     pub(crate) is_avx2: bool,
+     /// NEON (aarch64) support enabled.
+     pub(crate) is_neon: bool,
+@@ -1725,8 +1742,8 @@ pub struct Index {
+ 
+     pub(crate) compressed_index_segment_block_buffer: Vec<u8>,
+ 
+-    pub(crate) segment_number1: usize,
+-    pub(crate) segment_number
 ```
 
 #### Recent Merged Pull Requests:
@@ -2399,13 +2733,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixed panic with facet filters and empty query facets
+## X. index segment number is now persistent
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in SeekStorm/SeekStorm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a20c7c3f`: Fixed panic with facet filters and empty query facets. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8602a9e3`: index segment number is now persistent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2413,11 +2747,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [3.4.3] - 2026-10-24
+## [4.0.0] - 2026-10-31
 
-### Fixed
+### Changed
 
-- Fixed panic that occurred, if facet fields and facet filters, but no query facets existed.
+- Parameter segment_number_bits1 renamed to segment_number_bits and moved from create_index to IndexMetaObject. 
+  - It is now persistent after index reload (via index.json).
+  - Backward compatibility: Existing indices (with segment_number_bits1=11) can still be loaded.
+  - The segment_number_bits value is clamped in create_index to a safe range (8..=12). 
+  - The size of compressed_index_segment_block_buffer and segment HashMap capacity is set inverse proportional to segment_number_bits (fewer segments mean more keys per segment).
 
 ```
 
@@ -2428,4 +2766,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a20c7c3f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8602a9e3` are properly handled with clean fallback behavior.
