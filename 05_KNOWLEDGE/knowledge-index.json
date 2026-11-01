@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T00:04:15.688Z",
+  "last_updated": "2026-11-01T00:10:33.968Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -51860,8 +51860,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "63fe6c7f",
-      "content_hash": "1da5762bc01d8cc88f6c7c59bee9fe082c7bb7c196e8cb0278554b1867872d94",
+      "source_version": "d9e73f40",
+      "content_hash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -51929,6 +51929,11 @@
           "number": 6157,
           "title": "Prerelease tags publish only the Docker image and Helm chart",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6376,
+          "title": "Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -51936,7 +51941,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T09:54:02.535Z",
+      "verified_at": "2026-11-01T00:10:33.954Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68567,7 +68572,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
+      "content_hash": "06051c5fad56cd373c3e51956780991b7102b879fe76a67a7151d90b92ad3703",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [
@@ -68627,7 +68632,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:39:28.907Z",
+      "verified_at": "2026-11-01T00:10:25.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165468,6 +165473,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T00:04:15.675Z"
+    },
+    "rule-6376": {
+      "learning_id": "rule-6376",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6376,
+      "title": "Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "d9e73f40",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:10:33.954Z"
     }
   },
   "aliases": {

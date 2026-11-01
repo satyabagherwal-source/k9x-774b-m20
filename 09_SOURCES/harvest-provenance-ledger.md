@@ -6772,3 +6772,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-31T23:56:35.726Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `a3add88d` | Multi-dimensional audit evidence | 2026-11-01T00:03:04.470Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-01T00:04:15.776Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-01T00:10:25.274Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `d9e73f40` | Multi-dimensional audit evidence | 2026-11-01T00:10:34.020Z |

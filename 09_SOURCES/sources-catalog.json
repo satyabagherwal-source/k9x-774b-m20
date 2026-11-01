@@ -1425,8 +1425,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
-    "lastHarvestedAt": "2026-10-28T22:39:28.994Z",
+    "contentHash": "06051c5fad56cd373c3e51956780991b7102b879fe76a67a7151d90b92ad3703",
+    "lastHarvestedAt": "2026-11-01T00:10:25.274Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "63fe6c7f",
+    "sourceVersion": "d9e73f40",
     "license": "Apache-2.0",
-    "contentHash": "1da5762bc01d8cc88f6c7c59bee9fe082c7bb7c196e8cb0278554b1867872d94",
-    "lastHarvestedAt": "2026-10-31T09:54:02.644Z",
+    "contentHash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
+    "lastHarvestedAt": "2026-11-01T00:10:34.020Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `63fe6c7f`  
+> **Source Version**: `d9e73f40`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T09:54:01.890Z  
+> **Timestamp**: 2026-11-01T00:10:33.549Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T09:54:01.684Z  
+> **Harvest Timestamp**: 2026-11-01T00:10:33.544Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3992 stars
+- **Stars / Engagement**: 4000 stars
 
 ---
 
@@ -2228,81 +2228,342 @@ export function AWSMachineRenderer({ data }: Props) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `63fe6c7f` (2026-10-29)
-**Commit Message**: Prerelease tags publish only the Docker image and Helm chart
+### Incident Patch 1: `d9e73f40` (2026-10-31)
+**Commit Message**: Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state (#2060)
 
-GoReleaser still builds the binaries the Docker job needs but publishes
-nothing for a prerelease, so an rc tag creates no GitHub release and no
-Homebrew or Scoop update. The desktop workflow no longer runs for
-prerelease tags.
+## Why
 
-**File**: `.github/workflows/release-desktop.yml` (modified, +2/-0)
+**Argo CD rollback in Radar is broken today.** Radar writes
+`operation.rollback` to the Application, a field the Application CRD
+doesn't have, so the API server drops it. Radar reports success, then
+Argo fails with *"Invalid operation request: no operation specified."*
+History entry #0 is also rejected outright, and Argo numbers history
+from 0.
+
+Two related problems:
+- **Auto-sync state is misread.** Argo CD 3 can switch auto-sync off in
+place with `automated.enabled: false`. Radar sees an `automated` block
+and treats the Application as auto-syncing.
+- **Rollback has no follow-up.** After a rollback, nothing tells you
+what was deployed. Nothing warns you that pressing Sync will undo it.
+
+## What changes
+
+**1. Rollback works the way argocd-server does it.** argocd-server
+implements rollback as a sync pinned to the history entry. Radar now
+writes the same `operation.sync`, carrying that entry's recorded source
+and revision (or its sources and revisions, for a multi-source app).
+Hooks don't run, the Application's current sync options apply, and prune
+stays off unless you ask for it. Histo
+
+**File**: `docs/gitops.md` (modified, +11/-5)
 ```diff
-@@ -4,6 +4,8 @@ on:
-   push:
-     tags:
-       - "v*.*.*"
-+      # Prereleases (v1.2.3-rc.1) ship no desktop build.
-+      - "!v*.*.*-*"
+@@ -50,19 +50,21 @@ Per managed resource, in one row:
+ - **Recent events** (5 most recent, namespace-RBAC-filtered) so `ImagePullBackOff`, `FailedScheduling`, webhook denials, PVC pending, etc. show up next to the resource that caused them
+ - **Open** button — drops into the standard resource drawer
  
- permissions:
-   contents: write
++Resource guidance helpers accept named `{ hazard?, rolledBack? }` context. A supplied sync hazard takes precedence over rollback advice for non-Synced Missing rows and OutOfSync/Missing status explanations, deferring to the sync warning above. A Missing row still reported Synced asks for a refresh.
++
+ OutOfSync alerts in the Issues band at the top of the page are clickable — they jump to the affected row and highlight it for ~4 seconds.
+ 
+ ### Activity tab
+ 
+-Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline.
++Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
+ 
+ ## Diagnosis pipeline
+ 
+ The Issues band at the top of the detail page surfaces seven classes of problems:
+ 
+ - **Operation failures** (Argo) — the parser recognizes known controller failures (annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.) and rewrites each into a plain-English cause
+-- **Stuck-drift loop** — when sync succeeded but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration)
+-- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below)
++- **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync window. Missing apply/comparison evidence does not establish a loop
++- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below). A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its delayed manual-drift warning after a successful rollback, with guidance to fix or revert Git before syncing again, or keep auto-sync off. Dry runs and failed or pending operations do not qualify. A later operation, including a dry-run, replaces the rollback evidence even if it does not move the app; Radar then returns to ordinary diagnosis. Argo's native rollback and a sync to an older revision have indistinguishable durable operation records, so Radar does not infer a rollback fr
 ```
 
-**File**: `.github/workflows/release.yml` (modified, +5/-2)
+**File**: `docs/integrations.md` (modified, +1/-1)
 ```diff
-@@ -65,11 +65,14 @@ jobs:
-           cache: 'npm'
-           cache-dependency-path: package-lock.json
+@@ -751,7 +751,7 @@ permits the reference or has produced an artifact.
+ **Diagnosis**:
+ - **Per-resource field diff** computed from each resource's `kubectl.kubernetes.io/last-applied-configuration` annotation vs live spec — works for any Argo client-side-applied resource without calling the Argo API
+ - **Recent events** surfaced inline per managed resource (5 most recent, namespace-RBAC-filtered)
+-- **Stuck-drift-loop detector** — flags `sync=OutOfSync ∧ opPhase=Succeeded ∧ auto-sync on ∧ reconciledAt<30min` with the likely cause (mutating webhook, sibling controller, schema migration)
++- **Stuck-drift-loop detector** — flags `sync=OutOfSync ∧ opPhase=Succeeded ∧ applied sources/revisions match the desired comparison ∧ auto-sync on ∧ reconciledAt<30min` with the likely cause (mutating webhook, sibling controller, schema migration)
+ - **Manual-drift detector** — calls out OutOfSync apps with auto-sync disabled
+ - **Argo Application conditions** extracted to issues (ComparisonError, OrphanedResourceWarning, etc.) with type-aware severity and per-condition action text
+ - **Operation-failure parser** recognizes 11 patterns: annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.
+```
+
+**File**: `docs/mcp.md` (modified, +1/-1)
+```diff
+@@ -1281,7 +1281,7 @@ selector change.
+ | `manage_workload` | Restart, scale, or rollback a Deployment, StatefulSet, DaemonSet, or Argo Rollout. Note: `scale` is not supported for DaemonSets. On a Rollout, `rollback` rewrites the pod template and therefore starts a **new** rollout that re-runs every canary step, pause, and analysis — use `manage_rollout` `abort` to revert traffic immediately, or follow the rollback with `promote-full`. | `action` (required: `restart`, `scale`, `rollback`), `kind` (required), `namespace` (required), `name` (required), `replicas` (for scale), `revision` (for rollback — enumerate with `get_resource include=revisions`) |
+ | `manage_rollout` | Drive an Argo Rollout's progressive delivery — the verbs with no Deployment equivalent. `abort` reverts traffic to the last stable version at once without touching spec and stays aborted until retried (the incident-response verb); `retry` clears an abort; `promote` clears the current pause to advance one step; `promote-full` skips all remaining steps, pauses, and analysis (emergency hotfix) — it waits for the controller to observe the current pod template first, so straight after a rollback it may report that the controller has not caught up, which is safe to retry; `skip-step` advances exactly one canary step (canary only). Rollback / restart / scale go through `manage_workload` with `kind=rollout`. | `action` (required: `abort`, `retry`, `promote`, `promote-full`, `skip-step`), `namespace` (required), `name` (required) |
+ | `manage_cronjob` | Trigger, suspend, or resume a CronJob | `action` (required: `trigger`, `suspend`, `resume`), `namespace` (required), `name` (required) |
+-| `manage_gitops` | Manage ArgoCD and FluxCD resources — sync, refresh, terminate, suspend, resume, rollback (Argo), reconcile (Flux), reconcile-with-source (Flux) | `action` (required), `tool` (required: `argocd` or `fluxcd`), `namespace` (required), `name` (required), `kind` (FluxCD only). For `sync`: `revision`, `prune`, `dry_run`, `force`, `apply_only`, `sync_options`. For `rollback` (Argo only): `history_id` (required), `prune`, `dry_run`. Per-action input validation rejects flags that don't apply to the action (e.g. `force` on `suspend`) so callers fail loudly instead of silently. |
++| `manage_gitops` | Manage ArgoCD and FluxCD resources — sync, refresh, terminate, suspend, resume, rollback (Argo), reconcile (Flux), reconcile-with-source (Flux) | `action` (required), `tool` (required: `argocd` or `fluxcd`), `namespace` (required), `name` (required), `kind` (FluxCD only). For `sync`: `revision`, `prune`, `dry_run`, `force`, `apply_only`, `sync_options`. For `rollback` (Argo only): `history_id` (required; the first history entry is 0), `prune`, `dry_run`; refused while the Application has auto-sync enabled; before Argo CD 2.12, rollback across a single-source/multi-source change or of a multi-source entry can deploy the wrong revisions or render nothing; with prune, it can delete resources. This warning applies when the current Application uses `spec.sources` too; Radar does not refuse on controller-version grounds. Per-action input validation rejects flags that don't apply to the action (e.g. `force` on `suspend`) so callers fail loudly instead of silently. |
+ | `manage_node` | Cordon, uncordon, or drain a Kubernetes node. A drain waits by default until the evicted pods are deleted, and reports `outcome` as `complete`, `incomplete`, `unconfirmed` or `started`. Incomplete/unconfirmed results return `partial`: check `errors`, observed `pendingPods`, `unconfirmedPods` and `verificationError`. Expected DaemonSet, static and terminal exclusions are listed in `skippedPods` with `expectedSkip: true`; they do not prevent completion. Completion confirms required workload removal, not overall shutdown safety | `action` (required: `cordon`, `uncordon`, `drain`), `name` (required), `delete_empty_dir_data` (optional, default true), `force` (optional), `wait_for_deletion` (optional, default true), `timeout` (optional, seconds; default 2 minutes when waiting, 60 otherwise) |
  
-+      # A prerelease ships only its Docker image and Helm chart: GoReleaser still
-+      # builds the binaries the Docker job needs, but publishes nothing (no
-+      # GitHub release, no Homebrew or Scoop).
-       - name: GoReleaser
-         uses: goreleaser/goreleaser-action@v7
-         with:
-           version: latest
--          args: release --clean
-+          args: ${{ steps.version.outputs.is_prerelease == 'true' && 'release --clean --skip=publish' || 'release --clean' }}
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-           HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-@@ -100,7 +103,7 @@ jobs:
-             echo "## CLI Release ${VERSION}"
-             echo ""
-             if [[ "$VERSION" == *-* ]]; then
--              echo "> **Pre-release** — not published to Homebrew/Scoop/Krew; the Helm chart is published as a prerelease (helm --devel)"
-+              echo "> **Pre-release** — binaries built but not published (no GitHub release, Homebrew, Scoop or Krew); only the Docker image and the Helm chart (helm --devel) are published"
-               echo ""
-             fi
-             echo "### Assets"
+ Optional write tool (off by default):
+```
+
+**File**: `internal/issues/category.go` (modified, +1/-1)
+```diff
+@@ -407,7 +407,7 @@ func classifyGitOpsReason(reason string, fallback issuesapi.Category) issuesapi.
+ 		return issuesapi.CategoryGitOpsRenderFailed
+ 	case "InvalidSpecError":
+ 		return issuesapi.CategoryGitOpsSpecInvalid
+-	case "OperationFailed", "SyncError", "StuckDriftLoop":
++	case "OperationFailed", "SyncError", "StuckDriftLoop", "RollbackRevisionMismatch":
+ 		return issuesapi.CategoryGitOpsOperationFailed
+ 	case "AutoSyncBlockedEmpty":
+ 		return issuesapi.CategoryGitOpsSyncFailed
+```
+
+**File**: `internal/issues/category_test.go` (modified, +1/-0)
+```diff
+@@ -65,6 +65,7 @@ func TestClassify(t *testing.T) {
+ 		{"argo controller stalled is gitops_stale", classifyInput{Source: SourceProblem, Kind: "StatefulSet", APIGroup: "apps", Reason: "GitOpsControllerStalled"}, issuesapi.CategoryGitOpsStale},
+ 		{"argo comparisons stale rollup is gitops_stale", classifyInput{Source: SourceProblem, Kind: "StatefulSet", APIGroup: "apps", Reason: "GitOpsComparisonsStale"}, issuesapi.CategoryGitOpsStale},
+ 		{"argo comparison stale per-app is gitops_stale", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "ComparisonStale"}, issuesapi.CategoryGitOpsStale},
++		{"argo rollback mismatch", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "RollbackRevisionMismatch"}, issuesapi.CategoryGitOpsOperationFailed},
+ 		{"argo operation failed", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "OperationFailed"}, issuesapi.CategoryGitOpsOperationFailed},
+ 		{"argo comparison error is render", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "ComparisonError"}, issuesapi.CategoryGitOpsRenderFailed},
+ 		{"argo invalid spec", classifyInput{Source: SourceProblem, Kind: "Application", APIGroup: "argoproj.io", Reason: "InvalidSpecError"}, issuesapi.CategoryGitOpsSpecInvalid},
+```
+
+**File**: `internal/issues/identity_test.go` (modified, +72/-0)
+```diff
+@@ -2,9 +2,15 @@ package issues
+ 
+ import (
+ 	"testing"
++	"time"
+ 
++	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/pkg/issuesapi"
+ 	"github.com/skyhook-io/radar/pkg/subject"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	dynamicfake "k8s.io/client-go/dynamic/fake"
+ )
+ 
+ // ScopeForKind + IssueID determinism/keying now live in (and are tested by)
+@@ -37,6 +43,72 @@ func TestEnrichIdentity_SubjectIsOwnerElseSelf(t *testing.T) {
+ 	}
+ }
+ 
++func TestRollbackOutcomeKeepsDistinctIdentity(t *testing.T) {
++	t.Cleanup(k8s.ResetTestDynamicState)
++	now := time.Now().UTC().Truncate(time.Second)
++	app := &unstructured.Unstructured{Object: map[string]any{
++		"apiVersion": "argoproj.io/v1alpha1", "kind": "Application",
++		"metadata": map[string]any{"name": "demo", "namespace": "argocd"},
++		"status": map[string]any{
++			"health": map[string]any{"status": "Healthy"},
++			"sync":   map[string]any{"status": "Synced"},
++			"operationState": map[string]any{
++				"phase": "Succeeded", "finishedAt": now.Add(-time.Minute).Format(time.RFC3339),
++				"operation": map[string]any{
++					"info": []any{map[string]any{"name": "radarhq.io/rollback", "value": "true"}},
++					"sync": map[string]any{"revision": "requested"},
++				},
++				"syncResult": map[string]any{"revision": "applied"},
++			},
++		},
++	}}
++	gvr := schema.GroupVersionResource{Group: "argoproj.io", Version: "v1alpha1", Resource: "applications"}
++	client := dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), map[schema.GroupVersionResource]string{gvr: "ApplicationList"}, app)
++	if err := k8s.InitTestDynamicResourceCache(client, []k8s.APIResource{{Group: gvr.Group, Version: gvr.Version, Kind: "Application", Name: gvr.Resource, Namespaced: true, Verbs: []string{"list", "watch"}}}); err != nil {
++		t.Fatal(err)
++	}
++	cache := k8s.GetDynamicResourceCache()
++	if err := cache.EnsureWatching(gvr); err != nil || !cache.WaitForSync(gvr, 2*time.Second) {
++		t.Fatalf("Application cache did not sync: %v", err)
++	}
++	detections := k8s.DetectGitOpsProblems(cache, k8s.GetResourceDiscovery(), "argocd")
++	if len(detections) != 1 || detections[0].Reason != "RollbackRevisionMismatch" {
++		t.Fatalf("want rollback mismatch detection, got %+v", detections)
++	}
++	rollback := fromProblem(detections[0], now, SourceProblem)
++	if rollback.Category != issuesapi.CategoryGitOpsOperationFailed || rollback.Cause == "" || rollback.Action == "" {
++		t.Fatalf("rollback category or diagnosis missing: %+v", rollback)
++	}
++	for _, reason := range []string{"SyncError", "StuckDriftLoop", "OperationFailed"} {
++		t.Run(reason, func(t *testing.T) {
++			current := fromProblem(k8s.Detection{
++				Kind: "Application", Group: gvr.Group, Namespace: "argocd", Name: "demo",
++				Reason: reason, Severity: "critical", Cause: "current failure", Action: "fix current failure",
++			}, now, SourceProblem)
++			if current.Category != rollback.Category {
++				t.Fatalf("want same category, got %q / %q", current.Category, rollback.Category)
++			}
++			if current.ID == rollback.ID {
++				t.Errorf("rollback and %s share issue ID %q", reason, rollback.ID)
++			}
++			grouped := GroupIssues([]Issue{rollback, current})
++			if len(grouped) != 2 {
++				t.Fatalf("rollback and %s collapsed into %d groups: %+v", reason, len(grouped), grouped)
++			}
++			for _, issue := range grouped {
++				if issue.ID == rollback.ID && (issue.Reason != rollback.Reason || issue.Severity != SeverityWarning || issue.Cause != rollback.Cause || issue.Action != rollback.Action) {
++					t.Errorf("grouping changed rollback warning or recovery advice: %+v", issue)
++				}
++			}
++		})
++	}
++	later := k8s.DetectGitOpsProblems(cache, k8s.GetResourceDiscovery(), "argocd")
++	if len(later) != 1 {
++		t.Fatalf("want one rollback detection on next poll, got %+v", later)
++	}
++	assertSameID(t, rollback, fromProblem(later[0], now.Add(time.Hour), SourceProblem))
++}
++
+ // TestEnrichIdentity_DistinctCausesDoNotCollapse pins that two distinct causes
+ // on the same subject+category (a workload missing both a ConfigMap and a
+ // Secret — both missing_config_ref) get DISTINCT ids via the stable
+```
+
+**File**: `internal/k8s/capabilities.go` (modified, +5/-0)
+```diff
+@@ -180,6 +180,11 @@ type FeatureCapabilities struct {
+ 	TrafficRecords        bool `json:"trafficRecords"`        // GET /api/traffic/flows/records
+ 	GitOpsWriteEvidence   bool `json:"gitopsWriteEvidence"`   // POST /api/gitops/write-evidence
+ 	AgentSigninCheck      bool `json:"agentSigninCheck"`      // GET /api/agents/signin
++	// POST /api/argo/applications/{namespace}/{name}/rollback starts a sync to
++	// the history entry (id 0 included), and .../resume also clears
++	// spec.syncPolicy.automated.enabled: false. An older Radar writes an
++	// operation.rollback the API server prunes, and leaves enabled: false set.
++	ArgoRollbackSync bool `json:"argoRollbackSync"`
+ 	// PUT/DELETE /api/resources/{kind}/_/{name} and GET /api/audit/resource/{kind}/_/{name}
+ 	// read "_" as a cluster-scoped resource.
+ 	ClusterScopedPlaceholder bool `json:"clusterScopedPlaceholder"`
+```
+
+**File**: `internal/k8s/detect_gitops.go` (modified, +19/-19)
+```diff
+@@ -11,6 +11,7 @@ import (
+ 	"github.com/skyhook-io/radar/pkg/conditions"
+ 	"github.com/skyhook-io/radar/pkg/gitops"
+ 	"github.com/skyhook-io/radar/pkg/gitops/diagnose"
++	gitopsinsights "github.com/skyhook-io/radar/pkg/gitops/insights"
+ 	"github.com/skyhook-io/radar/pkg/timeutil"
+ 	corev1 "k8s.io/api/core/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -206,6 +207,7 @@ func gitopsProblem(now time.Time, kind, group, ns, name, severity, reason, messa
+ // Failed operations with a message suppress only their parallel failed-attempt
+ // condition. Independent errors and resource warnings retain their own rows;
+ // Degraded health retains Argo's health message alongside error conditions.
++// The latest rollback outcome is independent of the current health/drift row.
+ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDriftTracker, now time.Time) []Detection {
+ 	var out []Detection
+ 	for _, app := range apps {
+@@ -225,7 +227,9 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 			return fallback
+ 		}
+ 
+-		automated := argoIsAutomated(app)
++		// An automated app is expected to self-heal, so OutOfSync/Missing is a
++		// real failure rather than an operator who hasn't synced a manual app yet.
++		automated := gitops.ArgoAutoSyncEnabled(app)
+ 		outOfSync := strings.EqualFold(sync, "OutOfSync")
+ 		// Track drift continuity for every app before any gate short-circuits the
+ 		// loop, so a suspended-then-resumed or mid-degraded app that stays
+@@ -282,6 +286,15 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 			}
+ 			out = append(out, d)
+ 		}
++		if mismatch := gitopsinsights.DetectArgoRollbackRevisionMismatch(app); mismatch != nil {
++			d := gitopsProblem(now, "Application", argoGroup, ns, name, "warning", mismatch.Reason, mismatch.Message, createdAt)
++			d.Fingerprint = "argo:rollback-revision-mismatch"
++			d.Cause, d.Action = mismatch.Cause, mismatch.Action
++			if transitionAt, ok := argoOperationIssueTime(app, now); ok {
++				setDetectionOnset(&d, now, transitionAt)
++			}
++			out = append(out, d)
++		}
+ 		if strings.EqualFold(health, "Suspended") && !operationFailed {
+ 			continue
+ 		}
+@@ -376,6 +389,10 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
+ 				fmt.Sprintf("Application has been out of sync for %s and auto-sync is not enabled", timeutil.FormatAgeShort(manualDriftFor)), createdAt)
+ 			setDetectionOnset(&dd, now, outOfSyncAt)
+ 			dd.Action = "Review the drift in Changes, then Sync the application (or enable auto-sync) if the drift is unintended."
++			if revision, _ := gitops.ArgoSuccessfulRollback(app); revision != "" {
++				dd.Message = "Last rollback deployed " + revision + "; the live state differs from the desired state and auto-sync is off."
++				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits."
++			}
+ 			if hazard := argoSyncHazardAction(app); hazard != "" {
+ 				dd.Action = hazard
+ 				dd.Hazard = hazard
+@@ -564,7 +581,7 @@ func durationFromTimestamp(now time.Time, ts string) (time.Duration, bool) {
+ // shouldn't-happen guard, not a swallowed error.
+ func isArgoStuckDriftLoop(app *unstructured.Unstructured, now time.Time) bool {
+ 	phase, _, _ := unstructured.NestedString(app.Object, "status", "operationState", "phase")
+-	if !strings.EqualFold(phase, "Succeeded") {
++	if !strings.EqualFold(phase, "Succeeded") || !gitops.ArgoAppliedCurrentComparison(app) {
+ 		return false
+ 	}
+ 	reconciledAt, _, _ := unstructured.NestedString(app.Object, "status", "reconciledAt")
+@@ -581,23 +598,6 @@ func isArgoStuckDriftLoop(app *unstructured.Unstructured, now time.Time) bool {
+ 	return now.Sub(t) <= 30*time.Minute
+ }
+ 
+-// argoIsAutomated reports whether spec.syncPolicy.automated is present — i.e. the
+-// app is expected to self-heal, so OutOfSync/Missing is a real failure rather
+-// than an operator who simply hasn't synced a manual app yet.
+-func argoIsAutomated(app *unstructured.Unstructured) bool {
+-	automated, found, _ := unstructured.NestedMap(app.Object, "spec", "syncPolicy", "automated")
+-	if !found {
+-		return false
+-	}
+-	// Newer Argo CD can disable auto-sync without removing the block, via
+-	// spec.syncPolicy.automated.enabled: false — treat that as manual so an
+-	// intentionally-unsynced app isn't flagged for OutOfSync/Missing.
+-	if enabled, ok, _ := unstructured.NestedBool(automated, "enabled"); ok && !enabled {
+-		return false
+-	}
+-	return true
+-}
+-
+ // argoErrorCondition returns the first status.conditions entry whose type names
+ // an error (ComparisonError / InvalidSpecError / SyncError). Argo writes these
+ // as {type, message} without a status field, so FindFalseCondition can't match
 ```
 
 ---
 
-### Incident Patch 2: `491e15de` (2026-10-29)
-**Commit Message**: Auth docs: strip whichever identity headers Radar is configured to read
+### Incident Patch 2: `7ba9c400` (2026-10-31)
+**Commit Message**: README: restore the top-post Product Hunt badge (#2460)
 
-**File**: `docs/authentication.md` (modified, +1/-1)
+The Oct 29 launch is over (finished #8 of the day). Removes the "on
+Product Hunt today" line and puts back the #3 Product of the Day badge
+from the May launch, reverting #2421.
+
+**File**: `README.md` (modified, +1/-3)
 ```diff
-@@ -157,7 +157,7 @@ radar --auth-mode=proxy \
+@@ -7,9 +7,7 @@
  
- Groups can arrive as one comma-separated header or as one header per group, as proxies that forward Kubernetes impersonation headers send them (`groupsHeader: Impersonate-Group`). Radar refuses Kubernetes-reserved `system:` users and groups, except the group `system:authenticated`, which every signed-in user has.
+ Radar shows you what's broken in a Kubernetes cluster, why, and what changed: issues, topology, a timeline of events and resource changes, Helm, GitOps, traffic, audit, and upgrade impact. Your AI agent reads the same cluster data and relationships through Radar's MCP server, and Radar can run an AI investigation for you with the agent CLI you already use. It runs on your laptop as a `kubectl` plugin or desktop app, or in-cluster with Helm.
  
--> **Security:** Your ingress must strip `X-Forwarded-User` and `X-Forwarded-Groups` headers from external requests to prevent spoofing. The auth proxy should be the **only** path to Radar. Radar logs a warning at startup as a reminder.
-+> **Security:** Your ingress must strip the user and groups headers Radar reads (`X-Forwarded-User` and `X-Forwarded-Groups` unless you set `userHeader` / `groupsHeader`) from external requests, and the auth proxy must replace them with its own values, to prevent spoofing. The auth proxy should be the **only** path to Radar. Radar logs a warning at startup as a reminder.
+-<a href="https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=badge&utm_campaign=ph-launch-2026-10" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1295110&theme=neutral" alt="Radar - You don't need an AI SRE. Give your agent Radar. | Product Hunt" width="250" height="54" /></a>
+-
+-🚀 **We're on Product Hunt today** with Radar's upgraded MCP server and AI investigations. [Come say hi and drop us a comment](https://www.producthunt.com/products/radar-7?launch=radar-101&utm_source=github-readme&utm_medium=text&utm_campaign=ph-launch-2026-10).
++<a href="https://www.producthunt.com/products/radar-7?embed=true&utm_source=badge-top-post-badge&utm_medium=badge&utm_campaign=badge-radar-42edb7b0-e388-4fa8-9ba5-4876c2c0d638" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/top-post-badge.svg?post_id=1130618&theme=neutral&period=daily" alt="Radar - The missing open-source Kubernetes UI | Product Hunt" width="250" height="54" /></a>
  
- > **Proxies:** Preserve the browser-facing `Host` header when proxying Radar. Radar accepts changes and pod exec sessions only from its own page, and it recognizes that page by comparing the browser's `Origin` with `Host` (or by `Sec-Fetch-Site`, which browsers send over HTTPS). If your proxy must rewrite `Host`, list the address users open Radar at in `trustedOrigins` (Helm) or `RADAR_TRUSTED_ORIGINS`. See [Changes fail with "Radar refused this request"](in-cluster.md#changes-fail-with-radar-refused-this-request).
- 
+ [![CI](https://github.com/skyhook-io/radar/actions/workflows/ci.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/ci.yml)
+ [![CodeQL](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml/badge.svg)](https://github.com/skyhook-io/radar/actions/workflows/codeql.yml)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2460** (2026-10-31): README: restore the top-post Product Hunt badge (@nadaverell)
 - **PR #2442** (2026-10-30): Accept groups sent as repeated headers in proxy mode (@hisco)
 - **PR #2441** (2026-10-30): Prerelease tags publish only the Docker image and Helm chart (@hisco)
 - **PR #2436** (2026-10-29): What's New: Radar v1.19.0 release notes (@nadaverell)
 - **PR #2433** (2026-10-29): README: give MCP and AI investigations equal footing with the UI (@nadaverell)
 - **PR #2432** (2026-10-29): Start an investigation from the Home cluster card (@nadaverell)
-- **PR #2431** (2026-10-29): Lead the assessment with its verdict, and show it when a turn finishes (@nadaverell)
 
 ---
 
@@ -2322,29 +2583,33 @@ prerelease tags.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prerelease tags publish only the Docker image and Helm chart
+## X. Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state
 
 **RULE**:
-When implementing operations in `.github/workflows/release-desktop.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/gitops.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `63fe6c7f`: Prerelease tags publish only the Docker image and Helm chart. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9e73f40`: Argo CD: working rollback, rollback outcome insights, and Argo 3 auto-sync state (#2060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-desktop.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/gitops.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      # Prereleases (v1.2.3-rc.1) ship no desktop build.
-      - "!v*.*.*-*"
+Resource guidance helpers accept named `{ hazard?, rolledBack? }` context. A supplied sync hazard takes precedence over rollback advice for non-Synced Missing rows and OutOfSync/Missing status explanations, deferring to the sync warning above. A Missing row still reported Synced asks for a refresh.
+
+Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline. History `rollbackable` only reports whether an entry has an ID and recorded source(s); auto-sync, lifecycle, in-flight operations and RBAC are separate checks.
+- **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync w
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Operation history with deploy timestamps, the git revision deployed, who initiated the sync (human user or automation), an outcome chip per row, and per-revision **Rollback** buttons for Argo. In-progress operations pin to the top of the timeline.
+- **Stuck-drift loop** — when sync succeeded but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration)
+- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `63fe6c7f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9e73f40` are properly handled with clean fallback behavior.

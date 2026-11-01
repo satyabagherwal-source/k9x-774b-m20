@@ -6763,3 +6763,5 @@
 | `CYCLE-20261031-8D1N` | `2026-10-31T23:56:35.723Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6370, Rule 1995, Rule 6371` | Yes (`37467317...`) |
 | `CYCLE-20261101-GP03` | `2026-11-01T00:03:04.467Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6372` | Yes (`5f7aff6d...`) |
 | `CYCLE-20261101-I80T` | `2026-11-01T00:04:15.773Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6373, Rule 6374, Rule 6375` | Yes (`8c73979b...`) |
+| `CYCLE-20261101-Q54I` | `2026-11-01T00:10:25.266Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`06051c5f...`) |
+| `CYCLE-20261101-QBVM` | `2026-11-01T00:10:34.018Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6376` | Yes (`b6ad4a57...`) |

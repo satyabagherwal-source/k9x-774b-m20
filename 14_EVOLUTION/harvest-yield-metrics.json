@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T00:04:15.780Z",
-  "total_cycles_completed": 6740,
-  "total_learnings_persisted": 6740,
-  "total_rules_promoted": 6383,
+  "last_updated": "2026-11-01T00:10:34.024Z",
+  "total_cycles_completed": 6742,
+  "total_learnings_persisted": 6742,
+  "total_rules_promoted": 6384,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:46:45.603Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T12:46:56.446Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:47:00.058Z",
       "repository": "matrixorigin/matrixone",
@@ -1403,6 +1389,20 @@
       "repository": "openbmb/MiniCPM-V-4.7-1B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:10:25.278Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:10:34.024Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

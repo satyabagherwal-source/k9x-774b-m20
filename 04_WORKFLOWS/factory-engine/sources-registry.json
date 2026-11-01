@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T00:04:18.336Z",
-    "lastVerified": "2026-11-01T00:04:18.336Z",
+    "lastChecked": "2026-11-01T00:10:36.725Z",
+    "lastVerified": "2026-11-01T00:10:36.725Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,12 +141,12 @@
     "revisionIdentifier": "9caf2b4c"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T23:42:51.243Z",
-    "lastVerified": "2026-10-31T23:42:51.243Z",
+    "lastChecked": "2026-11-01T00:10:36.716Z",
+    "lastVerified": "2026-11-01T00:10:36.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -155,7 +155,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "c9dd9650"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1562,12 +1563,12 @@
     "lastVerified": "2026-10-31T23:08:28.740Z"
   },
   "valeriansaliou-sonic": {
-    "name": "valeriansaliou/sonic",
+    "name": "sonic",
     "officialUrl": "https://github.com/valeriansaliou/sonic",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T08:26:24.962Z",
-    "lastVerified": "2026-10-31T08:26:24.962Z",
+    "lastChecked": "2026-11-01T00:10:34.184Z",
+    "lastVerified": "2026-11-01T00:10:34.184Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-valeriansaliou-sonic",
@@ -1576,7 +1577,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f16560b6"
   },
   "cachix-devenv": {
     "name": "devenv",
@@ -2251,8 +2253,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T20:32:00.151Z",
-    "lastVerified": "2026-10-31T20:32:00.151Z",
+    "lastChecked": "2026-11-01T00:10:31.787Z",
+    "lastVerified": "2026-11-01T00:10:31.787Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3382,12 +3384,12 @@
     "officialUrl": "https://github.com/skyhook-io/radar",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T09:54:01.684Z",
-    "lastVerified": "2026-10-31T09:54:01.684Z",
+    "lastChecked": "2026-11-01T00:10:33.544Z",
+    "lastVerified": "2026-11-01T00:10:33.544Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "1da5762bc01d8cc88f6c7c59bee9fe082c7bb7c196e8cb0278554b1867872d94",
+    "contentHash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3679,9 +3681,9 @@
   "vi-websocat": {
     "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-10-31T04:22:10.779Z",
+    "lastChecked": "2026-11-01T00:10:21.700Z",
     "revisionIdentifier": "3a3574cd",
-    "lastVerified": "2026-10-31T04:22:10.779Z"
+    "lastVerified": "2026-11-01T00:10:21.700Z"
   },
   "hf-google-bert-bert-base-uncased": {
     "name": "google-bert/bert-base-uncased",
@@ -8267,12 +8269,12 @@
     "officialUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T22:39:28.190Z",
-    "lastVerified": "2026-10-28T22:39:28.190Z",
+    "lastChecked": "2026-11-01T00:10:24.418Z",
+    "lastVerified": "2026-11-01T00:10:24.418Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
+    "contentHash": "06051c5fad56cd373c3e51956780991b7102b879fe76a67a7151d90b92ad3703",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9383,9 +9385,9 @@
   "emergetools-pow": {
     "name": "Pow",
     "officialUrl": "https://github.com/EmergeTools/Pow",
-    "lastChecked": "2026-10-29T23:28:28.959Z",
+    "lastChecked": "2026-11-01T00:10:26.731Z",
     "revisionIdentifier": "1b4b1dda",
-    "lastVerified": "2026-10-29T23:28:28.959Z"
+    "lastVerified": "2026-11-01T00:10:26.731Z"
   },
   "codetot-web-schema-test": {
     "name": "schema-test",

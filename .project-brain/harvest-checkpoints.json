@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-01T00:04:15.783Z",
+  "last_updated": "2026-11-01T00:10:34.027Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2213,14 +2213,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "cde24f79f6d3ea673638c51a3c9380c2b812a680580b4deab345d6aea04ce65a",
-      "verified_at": "2026-10-28T22:39:29.004Z",
+      "content_hash": "06051c5fad56cd373c3e51956780991b7102b879fe76a67a7151d90b92ad3703",
+      "verified_at": "2026-11-01T00:10:25.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:39:29.004Z"
+      "last_updated": "2026-11-01T00:10:25.282Z"
     },
     "Leonxlnx/taste-skill": {
       "repository": "Leonxlnx/taste-skill",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "1da5762bc01d8cc88f6c7c59bee9fe082c7bb7c196e8cb0278554b1867872d94",
-      "verified_at": "2026-10-31T09:54:02.654Z",
+      "content_hash": "b6ad4a57d5b9efffb339fd80ee09f09f1699ba97f80ce93d2d5b733ed3339864",
+      "verified_at": "2026-11-01T00:10:34.026Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T09:54:02.654Z"
+      "last_updated": "2026-11-01T00:10:34.026Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
