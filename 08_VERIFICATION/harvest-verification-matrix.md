@@ -6767,3 +6767,5 @@
 | `CYCLE-20261101-QBVM` | `2026-11-01T00:10:34.018Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6376` | Yes (`b6ad4a57...`) |
 | `CYCLE-20261101-1BF5` | `2026-11-01T00:19:06.641Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6377, Rule 6378, Rule 6379` | Yes (`d3d3d5df...`) |
 | `CYCLE-20261101-FG02` | `2026-11-01T00:30:05.762Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6380, Rule 6381, Rule 6382` | Yes (`76fc6e6d...`) |
+| `CYCLE-20261101-NCVB` | `2026-11-01T00:36:14.951Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`5bc1cd55...`) |
+| `CYCLE-20261101-NH3V` | `2026-11-01T00:36:20.443Z` | `jellyfin/Swiftfin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md` | Yes (`0cd327c1...`) |

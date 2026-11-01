@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-01T00:30:05.774Z",
+  "last_updated": "2026-11-01T00:36:20.451Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2272,14 +2272,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
-      "verified_at": "2026-10-28T22:58:57.157Z",
+      "content_hash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
+      "verified_at": "2026-11-01T00:36:14.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:58:57.157Z"
+      "last_updated": "2026-11-01T00:36:14.964Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",
@@ -12531,14 +12531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jellyfin-swiftfin",
-      "content_hash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
-      "verified_at": "2026-10-29T23:59:03.527Z",
+      "content_hash": "0cd327c1d5ba31ade2a63badd2d60294f6f3b2be4f5caed6d29e700403d8a964",
+      "verified_at": "2026-11-01T00:36:20.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T23:59:03.527Z"
+      "last_updated": "2026-11-01T00:36:20.450Z"
     },
     "sergdort/ModernCleanArchitectureSwiftUI": {
       "repository": "sergdort/ModernCleanArchitectureSwiftUI",

@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
-    "lastHarvestedAt": "2026-10-28T22:58:57.143Z",
+    "contentHash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
+    "lastHarvestedAt": "2026-11-01T00:36:14.959Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
@@ -8333,10 +8333,10 @@
     "repository": "jellyfin/Swiftfin",
     "platform": "github",
     "sourceUrl": "https://github.com/jellyfin/Swiftfin",
-    "sourceVersion": "10629aba",
+    "sourceVersion": "8ac23970",
     "license": "MPL-2.0",
-    "contentHash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
-    "lastHarvestedAt": "2026-10-29T23:59:03.519Z",
+    "contentHash": "0cd327c1d5ba31ade2a63badd2d60294f6f3b2be4f5caed6d29e700403d8a964",
+    "lastHarvestedAt": "2026-11-01T00:36:20.445Z",
     "learningId": "learn-github-jellyfin-swiftfin"
   },
   "sergdort-moderncleanarchitectureswiftui": {

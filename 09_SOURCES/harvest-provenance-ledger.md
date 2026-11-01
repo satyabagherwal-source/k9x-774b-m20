@@ -6776,3 +6776,5 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `d9e73f40` | Multi-dimensional audit evidence | 2026-11-01T00:10:34.020Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-01T00:19:06.644Z |
 | `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-01T00:30:05.766Z |
+| `learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-11-01T00:36:14.959Z |
+| `learn-github-jellyfin-swiftfin` | `https://github.com/jellyfin/Swiftfin` | `8ac23970` | Multi-dimensional audit evidence | 2026-11-01T00:36:20.445Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T00:30:05.679Z",
+  "last_updated": "2026-11-01T00:36:20.372Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -33465,8 +33465,8 @@
       "slug": "jellyfin-swiftfin",
       "platform": "github",
       "source_url": "https://github.com/jellyfin/Swiftfin",
-      "source_version": "10629aba",
-      "content_hash": "469f802562c4b637b809153c2f1a66263880d15ea4a4ecc712cc3791992b2268",
+      "source_version": "8ac23970",
+      "content_hash": "0cd327c1d5ba31ade2a63badd2d60294f6f3b2be4f5caed6d29e700403d8a964",
       "dossier_path": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jellyfin-swiftfin-learnings.md",
       "promoted_rules": [
@@ -33491,7 +33491,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T23:59:03.415Z",
+      "verified_at": "2026-11-01T00:36:20.355Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69094,7 +69094,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
-      "content_hash": "17e709faa90a7e313ab28b35a730513eca3da84637e07acde4d2174add79ea58",
+      "content_hash": "5bc1cd555243b2cb54edd61280edd8322f54e3075a8f114d1991c8984560416f",
       "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
       "promoted_rules": [],
@@ -69103,7 +69103,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:58:57.015Z",
+      "verified_at": "2026-11-01T00:36:14.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T00:30:05.771Z",
-  "total_cycles_completed": 6744,
-  "total_learnings_persisted": 6744,
+  "last_updated": "2026-11-01T00:36:20.448Z",
+  "total_cycles_completed": 6746,
+  "total_learnings_persisted": 6746,
   "total_rules_promoted": 6390,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:53:41.980Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T12:53:46.823Z",
-      "repository": "amir1376/ab-download-manager",
-      "learningId": "learn-github-amir1376-ab-download-manager",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:59:56.588Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1403,6 +1389,20 @@
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-fishaudio-drama-3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:36:14.962Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:36:20.448Z",
+      "repository": "jellyfin/Swiftfin",
+      "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
