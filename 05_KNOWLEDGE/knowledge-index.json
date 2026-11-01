@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T01:06:07.184Z",
+  "last_updated": "2026-11-01T01:16:36.432Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -68421,7 +68421,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "03502bd94cfee37a4fb9fa9cdbc86af7fd2671b9e92fdf7b29137e982079fab9",
+      "content_hash": "bdf88a0b14d4f7db083962bac9190d5498ba733edf3da9753bf8fff4e673f836",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -68484,6 +68484,16 @@
           "number": 5464,
           "title": "Distributed Manifest Integrity and Zero-Allocation Stub Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6391,
+          "title": "Pre-Allocation Model Hub Manifest & Checkpoint Integrity Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6392,
+          "title": "Numerically Stable Dynamic Top-k Router with Renormalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68491,7 +68501,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:56:15.269Z",
+      "verified_at": "2026-11-01T01:16:36.411Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165781,6 +165791,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T01:06:07.164Z"
+    },
+    "rule-6391": {
+      "learning_id": "rule-6391",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6391,
+      "title": "Pre-Allocation Model Hub Manifest & Checkpoint Integrity Validation",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T01:16:36.411Z"
+    },
+    "rule-6392": {
+      "learning_id": "rule-6392",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6392,
+      "title": "Numerically Stable Dynamic Top-k Router with Renormalization Invariant",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T01:16:36.411Z"
     }
   },
   "aliases": {
