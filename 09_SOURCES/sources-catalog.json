@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "6f0a7f13",
+    "sourceVersion": "dd302470",
     "license": "NOASSERTION",
-    "contentHash": "2912bb75c716e35497f8293f907add2c2d1e2a8e00dc406e79b3647a4161d783",
-    "lastHarvestedAt": "2026-10-31T22:40:01.995Z",
+    "contentHash": "28842e716e537c1749da4fea1c10527717e5bd0d522a5f6a12f132f4d87d2e3e",
+    "lastHarvestedAt": "2026-11-01T02:07:49.036Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -11435,8 +11435,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
     "sourceVersion": "hf-liquidai-lfm3-omni-2b",
     "license": "Open-Source",
-    "contentHash": "bd786a3e6aa6e87e506424a43277e5eda85a1b8b7a668d6377386a83855c7cec",
-    "lastHarvestedAt": "2026-10-29T01:11:08.566Z",
+    "contentHash": "a792dfa263842069c19d096702b8fd857fd71216c69d934b4fe3408dfd14c398",
+    "lastHarvestedAt": "2026-11-01T02:07:37.826Z",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b"
   },
   "fabio-rovai-open-ontologies": {

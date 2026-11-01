@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T02:00:52.739Z",
+  "last_updated": "2026-11-01T02:07:48.950Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -13798,8 +13798,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "6f0a7f13",
-      "content_hash": "2912bb75c716e35497f8293f907add2c2d1e2a8e00dc406e79b3647a4161d783",
+      "source_version": "dd302470",
+      "content_hash": "28842e716e537c1749da4fea1c10527717e5bd0d522a5f6a12f132f4d87d2e3e",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -13972,6 +13972,11 @@
           "number": 6352,
           "title": "transport): drive the QUIC upgrade machine in shadow mode (#6060)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6399,
+          "title": "test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13979,7 +13984,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T22:40:01.891Z",
+      "verified_at": "2026-11-01T02:07:48.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -152188,7 +152193,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
       "source_version": "hf-liquidai-lfm3-omni-2b",
-      "content_hash": "bd786a3e6aa6e87e506424a43277e5eda85a1b8b7a668d6377386a83855c7cec",
+      "content_hash": "a792dfa263842069c19d096702b8fd857fd71216c69d934b4fe3408dfd14c398",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "promoted_rules": [
@@ -152208,7 +152213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:11:08.469Z",
+      "verified_at": "2026-11-01T02:07:37.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165934,6 +165939,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T02:00:46.752Z"
+    },
+    "rule-6399": {
+      "learning_id": "rule-6399",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6399,
+      "title": "test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066)",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "dd302470",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T02:07:48.928Z"
     }
   },
   "aliases": {

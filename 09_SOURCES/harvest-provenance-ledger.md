@@ -6796,3 +6796,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-01T02:00:43.670Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `067b1b93` | Multi-dimensional audit evidence | 2026-11-01T02:00:46.835Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `d4c963ba` | Multi-dimensional audit evidence | 2026-11-01T02:00:52.818Z |
+| `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-01T02:07:37.826Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dd302470` | Multi-dimensional audit evidence | 2026-11-01T02:07:49.036Z |

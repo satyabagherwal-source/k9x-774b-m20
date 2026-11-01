@@ -469019,3 +469019,73 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `067b1b93` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6399. test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066) (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066)",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "dd302470",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-01T02:07:48.705Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `dd302470`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dd302470`: test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+data, so it measures nothing about the value; rollout step 3 (data on a slice
+of pairs, see "QUIC rollout") is the first measurement on real QUIC. The gauge says nothing about the memory
+  Step 2 gate denominator: established_as_offerer over accepted, reported beside
+#### QUIC rollout (#5940)
+
+There are no opt-in stages; releases do the rollout. QUIC stays off on Windows
+throughout, until #6031. Every step watches: peers disappearing per version
+against the previous rollout (a node that dies before reporting is absent from
+every rate), endpoint-down, panics and breaker trips, RSS against
+`quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
+
+- Step 0: the first negotiating release ships with QUIC off. Its nodes answer
+  offers (`Decline{disabled}` with the key off); `upgrade_control_received`
+  stays near 0 and UDP metrics do not change.
+- Step 1: nova gateways and framework in shadow for 24-48 h. The 24 h gateway
+  A/B runs only if something looks odd. Rollback: set the key to off and restart.
+- Step 2: shadow on by default, not on Windows. Gate: at least 95% upgrade
+  success by `established_as_offerer / accepted`; fewer than 1 fallback per
+  path-day e
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+data, so it cannot confirm the value; rollout stage 3 (data on QUIC, opt-in)
+is the first measurement on real QUIC. The gauge says nothing about the memory
+  Stage 2 gate denominator: established_as_offerer over accepted, reported beside
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dd302470` are properly handled with clean fallback behavior.

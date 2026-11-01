@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `6f0a7f13`  
+> **Source Version**: `dd302470`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T22:40:01.291Z  
+> **Timestamp**: 2026-11-01T02:07:48.320Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T22:40:01.283Z  
+> **Harvest Timestamp**: 2026-11-01T02:07:48.312Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1738,13 +1738,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6064** (2026-10-31): **test: pick node ports the OS cannot assign to other tests**
-  *Symptoms*: ## Problem  `graceful_shutdown_on_sigterm_exits_zero` failed on #6060 with exit 42: `Failed to bind UDP socket to 127.0.0.1:41849: Address already in use`. `reserve_port` probed TCP on an OS-assigned port and freed it, and the node bound it as UDP later (about 0.7 s in that run), so another test's OS-assigned socket could take it first. A TCP probe says nothing about UDP. The failure reads like a shutdown exit-code regression and is not one.  ## Approach  Ports now come from 20000-29999, below Linux's default ephemeral range (32768-60999), so an OS-assigned socket cannot take one. Each candidate is probed in both TCP and UDP. The start is spread by pid, since each test is its own process under nextest. `persistence_roundtrip.rs` has the same helper and gets the same change. `post_update_probation_commit.rs` already retries on a collision, so it is unchanged.  A port can still be taken by another test using this helper between the probe and the bind, which needs the same one of 10,000 ports in that window.  ## Testing  `cargo test -p freenet --test graceful_shutdown_exit_code --test persistence_roundtrip` passes. No repeat run at scale: the failure is rare, so a clean run does not show the race is gone; the argument is that OS-assigned sockets cannot reach these ports.  [AI-assisted - Claude]  https://claude.ai/code/session_01XxpwzuZmYWNt3bRUjeipBq
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Claude Rule Review: Failed to run  The Claude rule review step failed (likely an authentication or API issue). Check the [workflow logs](https://github.com/freenet/freenet-core/actions/runs/41231709899) for details.  --- *Advisory review against `.claude/rules/`. Critical patterns are enforced by the Rule Lint CI job.*
+- **Issue #6066** (2026-11-01): **test(transport): add QUIC shadow scenarios and correct the rollout docs**
+  *Symptoms*: ## Problem  The shadow sims so far cover two or a few nodes, with one condition at a time. Before shadow can ship, the plan needs three scenarios on a larger or harder network: mixed modes in one mesh, a node at its path limit, and a restart. Docs also still say shadow would confirm `MAX_UNI_STREAMS` (shadow carries no data) and describe opt-in stages, which the rollout plan no longer has.  Tests and docs only. No production behaviour changes; `SimNetwork::with_quic_max_paths` is a testing-only helper.  ## Approach  - **`test_quic_mixed_modes_form_paths_only_between_shadow_nodes`:** 4 shadow, 1 off, and 1 off advertising the below-floor 0.2.149. The mesh joins the same peers as the all-off run, paths exist only between shadow pairs, the off node declines, and the below-floor node gets no offer and receives nothing. - **`test_quic_max_paths_one_declines_busy_and_retries`:** `DeclineSent(Busy)` at the client, an uncharged `Declined{Busy}` at the offerer, permits never above 1, and a pair declined `Busy` later establishes once a slot frees. - **`test_quic_restart_while_shadowed_returns_the_path_and_frees_the_permit`:** the survivor's session end shows 0 permits, the path returns on both sides with one permit, and the carried backoff holds: a server waits at least 48 s before its first new offer, a client declines with `Backoff`. Both roles, by looping seeds. - **`test_quic_mixed_modes_are_deterministic`:** same seed, same records and mesh. - **Docs:** `MAX_UNI_STREAMS` claims co
 
-- **Issue #6063** (2026-10-31): **build: release 0.2.153**
-  *Symptoms*: **Automated release PR**  - freenet: → **0.2.153** - fdev: → **0.3.315**  This PR will auto-merge once GitHub CI passes. Generated by: `.github/workflows/release.yml` 
+- **Issue #6065** (2026-10-31): **feat(transport): report QUIC shadow-mode telemetry**
+  *Symptoms*: ## Problem  Rollout stages 1 and 2 of #5940 have to judge shadow mode from field data: upgrade success, fallbacks, path counts and their memory, with nothing else to go on. Shadow's outcomes reached only a test hook until now, so nodes report nothing.  No behaviour change: counters and gauges only, and all of them read zero with QUIC off.  ## Approach  - **Outcome counters:** every machine `Outcome` reaches a `quic_upgrade_*` counter through `Session::count` in `driver.rs`, a match over each variant, so a new outcome fails to compile until it is counted. Counts happen where the decision is made. Also `inbox_overflow` (a full inbox only), `attempt_unrouted` and `task_panicked`; driver and pump panics are counted and then re-raised. - **Gate denominator:** offers repeat every 60 s while a peer answers Busy, NotReady or Backoff, so a per-offer rate is meaningless. The report gives `established_as_offerer` over `accepted`. `accepted` is also recorded when the peer's connection arrives before its Accept (a lost or late Accept), so the numerator cannot exceed the denominator. The report gives both, beside `offered` and `declined_uncharged`. To make this one-sided, `Outcome::Established` now carries a role, `Declined` carries the machine's uncharged decision, and the client's Accept is renamed `AcceptSent`. - **Fallbacks:** `quic_fallback_{idle,reset,protocol,downgrade_rx,endpoint_down}`, for paths that had been active only. An attempt that ends before it is active has its own count
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1761,394 +1759,938 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fccbb13c` (2026-10-31)
-**Commit Message**: feat(transport): drive the QUIC upgrade machine in shadow mode (#6060)
+### Incident Patch 1: `dd302470` (2026-11-01)
+**Commit Message**: test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066)
 
-**File**: `.claude/rules/transport.md` (modified, +83/-18)
+**File**: `.claude/rules/transport.md` (modified, +46/-3)
 ```diff
-@@ -364,8 +364,9 @@ plus `egress_bytes`, `egress_bytes_waited`, `egress_wait_us_sum` / `_max`,
- `egress_long_waits_<cause>`, `egress_streams_abandoned_<cause>`,
- `egress_streams_refused_<cause>`, `egress_debt_hwm_bytes`,
- `egress_debt_forgiven_bytes`; all zero without
--`total-bandwidth-limit`), QUIC upgrade control messages received and
--ignored (`upgrade_control_received`) and hole-punch handshake packets dropped,
-+`total-bandwidth-limit`), QUIC upgrade control messages received
-+(`upgrade_control_received`), Decline replies held back
-+(`upgrade_decline_suppressed`) and hole-punch handshake packets dropped,
- one count per packet, because they were not encrypted under the attempt's
- inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
- (`quic_endpoint_down`), panics the QUIC socket adapter caught
-@@ -638,11 +639,24 @@ SymmetricMessagePayload::Upgrade(UpgradeControl) is bincode index 7,
- appended after AckConnectionV2. UpgradeControl is Offer { attempt, caps },
- Accept { attempt } or Decline { attempt, reason }.
+@@ -407,8 +407,8 @@ arrivals older than the horizon or past the 1024 cap, streams the 1024-stream
+ budget refused) are listed in the module doc. So `ge_T / conns_sampled` can
+ support LOWERING `MAX_UNI_STREAMS` (`quic/config.rs`), never raising it; a
+ limit that is too low costs only sender back-pressure. Shadow mode carries no
+-data, so it cannot confirm the value; rollout stage 3 (data on QUIC, opt-in)
+-is the first measurement on real QUIC. The gauge says nothing about the memory
++data, so it measures nothing about the value; rollout step 3 (data on a slice
++of pairs, see "QUIC rollout") is the first measurement on real QUIC. The gauge says nothing about the memory
+ a peer opening streams on purpose can hold (the per-path ceiling's job). `inbound_concurrency_max` is diagnostic
+ only (one peer can drive it to the cap with a burst or an inflated RTT). The
+ counts sit under one mutex taken only on a connection's first sample of a
+@@ -1014,7 +1014,7 @@ snapshot except the two gauges.
+   task_panicked (a driver or pump panic, re-raised after counting).
+   `identity_mismatch` counts on both ends: a peer's close with code 2 ends this
+   node's attempt as `identity_mismatch` too.
+-  Stage 2 gate denominator: established_as_offerer over accepted, reported beside
++  Step 2 gate denominator: established_as_offerer over accepted, reported beside
+   offered and declined_uncharged. Both sides count `established`; only the
+   offerer's is the numerator. Counts are node-wide; there is no per-pair series.
+   `quic_fallback_<label>` (`QuicFallback`): idle, reset, protocol, downgrade_rx,
+@@ -1236,6 +1236,49 @@ time; `simulation::QuicDatagramDrop`, kept across `with_fault_injection`).
+ `quic/test_tls.rs` holds only a plain Ed25519 identity for tests where a
+ peer presents a key that is not its transport key.
  
--Decode-only until step e5a-5b wires quic/upgrade/machine.rs in: nothing sends
--it. A node that receives one acks
--it like a ShortMessage, counts it (upgrade_control_received in
--transport_snapshot) and ignores it. It never replies and never closes the
--connection.
-+A node that receives one acks it like a ShortMessage, counts it
-+(upgrade_control_received in transport_snapshot) and never closes the
-+connection over it. With upgrades (see "Upgrade driver") it goes to the
-+session's driver. Without them an Offer gets Decline{Disabled} and an Accept
-+or a Decline is dropped.
++#### QUIC rollout (#5940)
 +
-+At most one Decline per connection per DECLINE_INTERVAL (45 s, below the shortest uncharged retry of 48 s), on the
-+connection's clock (quic/upgrade/driver.rs DeclineGate; the same type on
-+PeerConnection with QUIC off and in the driver with QUIC on). A Decline is
-+tracked and retransmitted, and each Offer under a new packet id would otherwise
-+get its own. One held back is counted by the gate (upgrade_decline_suppressed)
-+and costs the offerer NoReply after OFFER_TIMEOUT, which takes a normal backoff,
-+including where the reason would have been uncharged (Busy, NotReady, Backoff).
-+With QUIC off the reply is not sent in process_inbound: the Offer is already in
-+the dedup window, so a cancelled send would lose it. pending_decline holds the
-+attempt, the top of recv's loop sends it, and it is cleared only once that send
-+has finished, so a cancelled recv sends it on its next call. A failed send is
-+not tried again.
- 
- Version gate: send it only when may_send_upgrade(remote_version) is true,
- i.e. the remote is at or above QUIC_UPGRADE_MIN_VERSION (0.2.149). None
-@@ -654,9 +668,10 @@ gate. The floor follows the wire-gated-floor rule in docs/RELEASING.md
- 
- An Offer also needs may_offer_upgrade(remote_version): the remote is at or
- above QUIC_UPGRADE_NEGOTIATES_IN, the first release that answers one (a peer
--below it decodes an Offer and ignores it). Parked at (0, 3, 0), above every
--release, until e5a-5b sets it to the release that first ships the negotiation
--and records it in QUIC_UPGRADE_NEGOTIATES_SHIPPED_IN.
-+below it decodes an Offer and ignores it). It is (0, 2, 154), a prediction until
-+the release bump records it in QUIC_UPGRADE_NEGOTIATES_SHIPPED_IN. Until the
-+crate reaches it, nodes of this tree report a version below the floor and do not
-+offer to each other.
- 
- Decline reasons (DeclineReason, wire values): 1 Disabled, 2 Backoff, 3 Busy,
- 4 NotReady (no peer key from a promotion yet, or an attempt in progress). Any
-@@ -877,11 +892,10 @@ breaker works there (#6031). Shadow or prefer: the endpoint is built
- with the node's QUIC identity (below) and an EMPTY allow-set, so nothing
- reaches it and it sends nothing; the listener holds it, with the queue of
- its accept loop (below), which hands on no attempt while the allow-set is
--empty. Upgrading a UDP session to QUIC comes later, so only tests open
--QUIC connections.
-+empty. An upgrade adds a peer to the allow-set ("Upgrade driver" below).
- 
--Upgrade state machine (`quic/upgrade/machine.rs`, #5940 step e5a-5a, not yet
--wired in): UpgradeMachine::step(Inputs { now, sample, policy }, Event) returns
-+Upgrade state machine (`quic/upgrade/machine.rs`, #5940 step e5a-5a):
-+UpgradeMachine::step(Inputs { now, sample, policy }, Event) returns
- the Actions for the caller to carry out. It does no I/O and reads no clock:
- now comes from the connection's TimeSource, sample is a GlobalRng draw in
- 0..1. The caller sends Event::Tick at UpgradeMachine::deadline(). The module
-@@ -975,9 +989,51 @@ doc has the transition table.
-   negotiation_floor_stays_above_every_release_that_ignores_an_offer stops
-   QUIC_UPGRADE_NEGOTIATES_IN going down to 0.2.152 or below.
- 
--Upgrade policy (`quic/upgrade/policy.rs`, not yet wired in):
--`QuicPolicy::new(network_api, breaker, availability)` takes the config, the
--breaker's decision (`breaker::gate` returns it beside the sett
-```
-
-**File**: `crates/core/src/client_events.rs` (modified, +8/-1)
-```diff
-@@ -299,6 +299,10 @@ where
-     op_manager.set_request_router(request_router.clone());
-     let request_router = Some(request_router);
-     let mut results = FuturesUnordered::new();
-+    // Cleared when every response sender is gone: a closed channel is always
-+    // ready, so polling it again would spin this task and starve the runtime
-+    // (under paused time, stop the clock).
-+    let mut responses_open = true;
-     loop {
-         // Uses deterministic_select! for DST - guards are evaluated BEFORE futures are created
-         crate::deterministic_select! {
-@@ -372,7 +376,10 @@ where
-                     }
-                 });
-             },
--            res = client_responses.recv() => {
-+            res = client_responses.recv(), if responses_open => {
-+                if res.is_none() {
-+                    responses_open = false;
-+                }
-                 if let Some((cli_id, request_id, res)) = res {
-                     if let Ok(result) = &res {
-                         tracing::debug!(
-```
-
-**File**: `crates/core/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -108,6 +108,8 @@ pub mod dev_tool {
-         ensure_kek_loaded, load_from_backend, read_backend_marker, replace_backend_marker,
-         write_backend_marker,
-     };
-+    #[cfg(any(test, feature = "testing"))]
-+    pub use crate::transport::quic::upgrade::sim_trace::{QuicUpgradeRecord, QuicUpgradeTrace};
-     // Backend constructors live in the `kek` submodule rather than the
-     // top-level `config` re-export to keep `Config`'s public surface
-     // free of platform-specific concrete types.
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +23/-11)
-```diff
-@@ -737,6 +737,8 @@ pub(in crate::node) struct P2pConnManager {
-     /// breaker decided (for the upgrade policy, from e5a-3). The settings are
-     /// used to open the transport.
-     quic: crate::transport::quic::breaker::Gated<crate::transport::quic::QuicSettings>,
-+    /// What the upgrade policy reads from the configuration and the breaker.
-+    quic_policy: crate::transport::quic::upgrade::policy::QuicPolicyConfig,
-     /// Test-only override for the #5161 version-carrying-ack floor, threaded
-     /// into the transport handler. `None` in production.
-     /// See `NodeConfig::ack_version_floor_override`.
-@@ -1297,6 +1299,22 @@ impl P2pConnManager {
-         // that is ignored or lowered (#5940).
-         crate::transport::quic::upgrade::policy::log_startup(&config.config.network_api);
- 
-+        // The crash-loop breaker may keep QUIC off after a run with QUIC
-+        // enabled ended abnormally (#5940); inert outside the binary. It
-+        // gates this node's settings, simulation overrides included.
-+        let quic = crate::transport::quic::breaker::gate(
-+            config.quic_settings(),
-+            &config.config.data_dir(),
-+            config.config.network_api.quic_ignore_crash_breaker,
-+            config.config.shutdown_drain_secs,
-+            quic_breaker_now,
-+        )
-+        .await;
-+        let quic_policy = crate::transport::quic::upgrade::policy::QuicPolicyConfig::new(
-+            &config.config.network_api,
-+            quic.breaker,
-+        );
++There are no opt-in stages; releases do the rollout. QUIC stays off on Windows
++throughout, until #6031. Every step watches: peers disappearing per version
++against the previous rollout (a node that dies before reporting is absent from
++every rate), endpoint-down, panics and breaker trips, RSS against
++`quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
 +
-         Ok(P2pConnManager {
-             gateways,
-             bridge,
-@@ -1352,17 +1370,8 @@ impl P2pConnManager {
-                 }),
-             ledbat_min_ssthresh: config.config.network_api.ledbat_min_ssthresh,
-             congestion_config: config.config.network_api.build_congestion_config(),
--            // The crash-loop breaker may keep QUIC off after a run with QUIC
--            // enabled ended abnormally (#5940); inert outside the binary. It
--            // gates this node's settings, simulation overrides included.
--            quic: crate::transport::quic::breaker::gate(
--                config.quic_settings(),
--                &config.config.data_dir(),
--                config.config.network_api.quic_ignore_crash_breaker,
--                config.config.shutdown_drain_secs,
--                quic_breaker_now,
--            )
--            .await,
-+            quic,
-+            quic_policy,
-             blocked_addresses: config.blocked_addresses.clone(),
-             broadcast_retries: HashMap::new(),
-             broadcast_no_target_streak: HashMap::new(),
-@@ -1423,6 +1432,7 @@ impl P2pConnManager {
-                 congestion_config: Some(self.congestion_config.clone()),
-                 ack_version_floor_override: self.ack_version_floor_override,
-                 quic: self.quic.settings,
-+                quic_policy: Some(self.quic_policy),
-                 advertised_version_override: self.advertised_version_override,
-                 task_registrar: Some(self.task_registrar.clone()),
-             },
-@@ -1471,6 +1481,7 @@ impl P2pConnManager {
-             congestion_config,
-             ack_version_floor_override,
-             quic,
-+            quic_policy,
-             advertised_version_override,
-             task_registrar,
-             transport_has_quic: _,
-@@ -1572,6 +1583,7 @@ impl P2pConnManager {
-             ack_version_floor_override,
-             // Used by open_udp_transport like the fields above.
-             quic,
-+            quic_policy,
-             advertised_version_override,
-             task_registrar,
-             transport_has_quic,
++- Step 0: the first negotiating release ships with QUIC off. Its nodes answer
++  offers (`Decline{disabled}` with the key off); `upgrade_control_received`
++  stays near 0 and UDP metrics do not change.
++- Step 1: nova gateways and framework in shadow for 24-48 h. The 24 h gateway
++  A/B runs only if something looks odd. Rollback: set the key to off and restart.
++- Step 2: shadow on by default, not on Windows. Gate: at least 95% upgrade
++  success by `established_as_offerer / accepted`; fewer than 1 fallback per
++  path-day excluding endpoint and restart causes; memory within the measured
++  terms (about 0.3 to 0.5 MiB per idle path). An abort spike stops the step.
++  Shadow carries no data, so it does not measure `MAX_UNI_STREAMS`.
++- Step 3 (e5b): data on a slice of pairs chosen by a hash of their two keys, so
++  both sides agree with no extra message: about 5%, then 25%, then 100%, one
++  release each. Pairs outside the slice are the control. Needs identity PR3, the
++  quinn pin decision and #6027. Keep the stream limits if permit waits plus
++  `quic_open_uni_waited` stay below 0.5% of sends and ge_48 below 0.2% of
++  path-windows.
++- Going to 100% is default-on. Per slice against its control: fewer transfers
++  that hit an RTO; p90 queueing at 1 MiB or more no worse than 262 ms; timeout
++  disconnects no worse; CPU per byte at most 1.5x; OS egress at most cap + 5%;
++  memory no worse than UDP; zero panics or endpoint-downs attributable to QUIC;
++  over the slice's release; and the kill switch rehearsed once (a default-off
++  release through the stagger). The stream-limit bars are re-derived from real
++  data, not loosened.
++- Rollback at any step is a default-off release through auto-update's 0-4 h
++  stagger. Per-path fallback to UDP and the breaker work without a release. A
++  node in a broken state may not self-update.
++
++Simulation scenarios (`tests/simulation_integration.rs`, `test_quic_*`): two
++nodes established with traffic on UDP; QUIC-off peers decline `Disabled`; peers
++below the version floor are never offered; blackholed and idle paths fall back
++and are re-offered; a wrong key closes with IDENTITY_MISMATCH; endpoint-down
++closes every path; a replaced or restarted session closes its path and keeps the
++backoff; a mixed shadow / off / below-floor network forms paths only between
++shadow nodes; `quic-max-paths` = 1 declines `Busy` without a charge.
++
+ #### QUIC identity (`transport/quic/identity.rs`, #5940 step c3)
+ 
+ ```
 ```
 
-**File**: `crates/core/src/node/testing_impl.rs` (modified, +17/-2)
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +11/-0)
 ```diff
-@@ -2066,6 +2066,16 @@ impl SimNetwork {
+@@ -2087,6 +2087,17 @@ impl SimNetwork {
          self
      }
  
-+    /// A record of what every node's QUIC upgrades do in this network, and the
-+    /// faults a test can inject into them. Call it before the nodes start. The
-+    /// handle stays readable after the run has consumed the network.
++    /// Sets `quic-max-paths` to `limit` on every node, as `config.toml` would.
++    /// Call before the simulation starts. No effect on a node with QUIC off.
 +    #[cfg(any(test, feature = "testing"))]
-+    pub fn quic_upgrade_trace(
-+        &self,
-+    ) -> crate::transport::quic::upgrade::sim_trace::QuicUpgradeTrace {
-+        crate::transport::in_memory_socket::quic_upgrade_trace(&self.name)
++    pub fn with_quic_max_paths(&mut self, limit: usize) -> &mut Self {
++        for label in self.pending_labels() {
++            let config = self.node_config_mut(&label);
++            Arc::make_mut(&mut config.config).network_api.quic_max_paths = Some(limit.to_string());
++        }
++        self
 +    }
 +
-     /// Gives every node's QUIC endpoint the idle timeout `timeout` instead
-     /// of its clock's (24 h on `VirtualTime`), so a silent QUIC path times
-     /// out within a simulation. No effect on a node with QUIC off.
-@@ -8208,16 +8218,21 @@ mod tests {
-             })
-             .collect();
-         // Directly, or through the QUIC crash-loop breaker's `gate` (#5940),
--        // which takes these settings as its first argument.
-+        // which takes these settings as its first argument and whose result
-+        // the upgrade policy also reads.
-         let flat: String = code.concat().split_whitespace().collect();
-         let assigned = flat.matches("quic:config.quic_settings(),").count()
-             + flat
--                .matches("quic:crate::transport::quic::breaker::gate(config.quic_settings(),")
-+                .matches("letquic=crate::transport::quic::breaker::gate(config.quic_settings(),")
-                 .count();
-         assert_eq!(
-             assigned, 1,
-             "`build` sets `quic` from `config.quic_settings()`"
-         );
-+        assert!(
-+            flat.contains("quic,quic_policy,"),
-+            "`build` keeps that value"
-+        );
-         assert!(
-             code.iter()
-                 .all(|line| !line.contains("network_api.quic_settings()")),
+     /// Drops every QUIC-class datagram between the nodes `a` and `b`, both
+     /// directions, from virtual time `from` on (the network's clock starts
+     /// at zero). Every other datagram between them is delivered as before,
 ```
 
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +4/-0)
+**File**: `crates/core/src/transport/quic/config.rs` (modified, +4/-3)
 ```diff
-@@ -3027,6 +3027,10 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
-                 "upgrade_control_received".into(),
-                 serde_json::json!(snapshot.upgrade_control_received),
-             );
-+            m.insert(
-+                "upgrade_decline_suppressed".into(),
-+                serde_json::json!(snapshot.upgrade_decline_suppressed),
-+            );
-             m.insert(
-                 "handshake_unauthenticated_dropped".into(),
-                 serde_json::json!(snapshot.handshake_unauthenticated_dropped),
+@@ -102,9 +102,10 @@ pub(crate) const KEEPALIVE_INTERVAL: Duration = Duration::from_secs(15);
+ ///
+ /// The estimate is built to err high (see
+ /// `peer_connection::inbound_concurrency`), so it can justify lowering
+-/// this value, never raising it. Shadow mode carries no data, so it cannot
+-/// confirm or justify the value either. Rollout stage 3 (#5940: data on
+-/// QUIC, opt-in) is the first measurement on real QUIC that can.
++/// this value, never raising it. Shadow mode carries no data, so it
++/// measures nothing about this value. The first measurement on real QUIC is
++/// step 3 of the rollout (#5940: data on a slice of pairs, chosen by a hash
++/// of the two keys).
+ pub(crate) const MAX_UNI_STREAMS: u32 = 64;
+ 
+ /// Uni stream slots left for short messages and control frames when every
 ```
 
-**File**: `crates/core/src/transport/connection_handler.rs` (modified, +92/-12)
+**File**: `crates/core/tests/simulation_integration.rs` (modified, +247/-1)
 ```diff
-@@ -170,6 +170,7 @@ pub async fn create_connection_handler<S: Socket>(
-             // `create_connection_handler` is the test and tool entry point;
-             // the node opens the transport through `open_udp_transport`.
-             quic: None,
-+            quic_policy: None,
-             advertised_version_override: None,
-             task_registrar: None,
-         },
-@@ -194,6 +195,10 @@ pub(crate) struct UdpTransportConfig {
-     /// QUIC endpoint settings when `transport-quic` is on, `None` (no
-     /// endpoint, no QUIC ingress) when it is off. See `transport::quic`.
-     pub(crate) quic: Option<super::quic::QuicSettings>,
-+    /// What the node's upgrade policy reads from its configuration. Without it,
-+    /// or without [`Self::task_registrar`], the node never upgrades a session,
-+    /// whatever `quic` says, as for tools and tests that open only an endpoint.
-+    pub(crate) quic_policy: Option<super::quic::upgrade::policy::QuicPolicyConfig>,
-     /// Simulation-only: the version this node advertises in its handshakes
-     /// (the intro packet and `AckConnectionV2`), so a simulation can emulate
-     /// an older peer. Only what the node TELLS its peers changes; the node
-@@ -326,6 +331,45 @@ pub(super) async fn bind_udp_listener<S: Socket>(
-     ))
+@@ -20734,6 +20734,8 @@ struct QuicShadowRun {
+     /// Gateways first.
+     nodes: Vec<SocketAddr>,
+     logs_events: usize,
++    /// Each pair of nodes that connected, ordered.
++    mesh: std::collections::BTreeSet<(SocketAddr, SocketAddr)>,
  }
  
-+/// The node's QUIC upgrades, when it has what they need: an endpoint, a policy
-+/// and a registrar for the attempt router.
-+fn build_quic_upgrades(
-+    endpoint: Option<&super::quic::QuicEndpoint>,
-+    policy: Option<super::quic::upgrade::policy::QuicPolicyConfig>,
-+    registrar: Option<&crate::node::background_task_monitor::LateRegistrar>,
-+    local_key: TransportPublicKey,
-+    socket_addr: SocketAddr,
-+    time_source: &RealTime,
-+) -> Option<Arc<super::quic::upgrade::driver::QuicUpgrades>> {
-+    use super::quic::upgrade::driver::{PathClock, QuicUpgrades};
-+    let (endpoint, policy, _registrar) = (endpoint?, policy?, registrar?);
-+    let policy =
-+        super::quic::upgrade::policy::QuicPolicy::from_config(policy, endpoint.availability());
-+    // The clock quinn runs on (`bind_udp_listener`).
-+    let path_clock = get_socket_virtual_time(&socket_addr)
-+        .map_or_else(|| PathClock::Real(time_source.clone()), PathClock::Virtual);
-+    #[cfg(any(test, feature = "testing"))]
-+    let trace = super::in_memory_socket::quic_upgrade_trace_at(socket_addr);
-+    #[cfg(any(test, feature = "testing"))]
-+    if let Some(at) = trace.as_ref().and_then(|trace| trace.down_at()) {
-+        let failing = endpoint.clone();
-+        let clock = path_clock.clone();
-+        // Bounded by `at`, and holds an endpoint share only until then.
-+        drop(GlobalExecutor::spawn(async move {
-+            clock.sleep(at).await;
-+            failing.fail_driver();
-+        }));
-+    }
-+    Some(QuicUpgrades::new(
-+        endpoint.clone(),
-+        policy,
-+        local_key,
-+        path_clock,
-+        #[cfg(any(test, feature = "testing"))]
-+        trace,
-+    ))
+ impl QuicShadowRun {
+@@ -20795,11 +20797,20 @@ fn run_quic_shadow_sim(
+     sim.run_simulation_direct::<rand::rngs::SmallRng>(seed, 1, steps, QUIC_EVENT_WAIT)
+         .expect("direct simulation should succeed");
+     let rt = create_runtime();
+-    let logs_events = rt.block_on(async { logs_handle.lock().await.len() });
++    let (logs_events, mesh) = rt.block_on(async {
++        let logs = logs_handle.lock().await;
++        let mesh = logs
++            .iter()
++            .filter_map(|log| log.kind.connect_connected_addrs())
++            .map(|(a, b)| if a <= b { (a, b) } else { (b, a) })
++            .collect();
++        (logs.len(), mesh)
++    });
+     QuicShadowRun {
+         trace,
+         nodes: addresses,
+         logs_events,
++        mesh,
+     }
+ }
+ 
+@@ -21289,3 +21300,238 @@ fn run_quic_restart_sim(
+         (trace, labels[&gateway], replaced_at)
+     })
+ }
++
++// =============================================================================
++// QUIC shadow scenarios (#5940 step e5a-7)
++// =============================================================================
++
++/// The peers in `mesh`.
++fn quic_mesh_peers(
++    mesh: &std::collections::BTreeSet<(SocketAddr, SocketAddr)>,
++) -> std::collections::BTreeSet<SocketAddr> {
++    quic_mesh_peers_and_connected(mesh).0
 +}
 +
- /// A `GlobalRng` side-stream id for `addr`: the same address gives the same
- /// id in every run (FNV-1a over its text form).
- fn side_stream_of(addr: SocketAddr) -> u64 {
-@@ -440,6 +484,8 @@ pub struct OutboundConnectionHandler<S = UdpSocket, TS: TimeSource = RealTime> {
-     /// Whether this transport's QUIC endpoint is alive; `Disabled` when it
-     /// has none (`transport-quic` off).
-     quic_availability: super::quic::QuicAvailabilityWatch,
-+    /// How a new connection joins the node's QUIC upgrades.
-+    upgrade_site: super::quic::upgrade::driver::UpgradeSite,
-     /// The listener's QUIC endpoint, so tests can fail its driver.
-     #[cfg(test)]
-     quic_endpoint: Option<super::quic::QuicEndpoint>,
-@@ -451,6 +497,7 @@ impl<S, TS: TimeSource> Clone for OutboundConnectionHandler<S, TS> {
-             send_queue: self.send_queue.clone(),
-             expected_non_gateway: self.expected_non_gateway.clone(),
-             quic_availability: self.quic_availability.clone(),
-+            upgrade_site: self.upgrade_site.clone(),
-             #[cfg(test)]
-             quic_endpoint: self.quic_endpoint.clone(),
-         }
-@@ -537,6 +584,7 @@ impl<S: Socket> OutboundConnectionHandler<S> {
-             ack_version_floor_override,
-             // Used by `bind_udp_listener`, which built `quic_endpoint` from it.
-             quic: _,
-+            quic_policy,
-             advertised_version_override,
-             task_registrar,
-         } = config;
-@@ -549,10 +597,10 @@ impl<S: Socket> OutboundConnectionHandler<S> {
-         );
-         #[cfg(test)]
-         let test_quic_endpoint = quic_endpoint.clone();
-+        let local_key = keypair.public().clone();
-         // The endpoint's accept loop runs from the start, registered with
-         // the node's monitor. Its allow-set is empty until an upgrade allows
--        // a peer, so it hands on no attempts yet; the queue is held by the
--        // listener, which will consume it once upgrades are wired in.
-+        // a peer. The upgrades' r
++/// Six nodes: four in shadow, one with QUIC off and one with QUIC off that
++/// advertises a release below the floor. The mesh joins the same peers as with
++/// QUIC off everywhere, paths exist only between shadow nodes, a node with QUIC
++/// off is offered and declines, and the node below the floor is neither offered
++/// nor sent a single upgrade message.
++#[test_log::test]
++fn test_quic_mixed_modes_form_paths_only_between_shadow_nodes() {
++    const SEED: u64 = 0x5940_E5C0_1003;
++    const ANSWER_FLOOR: (u8, u8, u16) = (0, 2, 149);
++    let baseline = run_quic_shadow_sim("quic-mixed-off", SEED, (2, 4), 8, |_, _, _| {});
++    let mixed = run_quic_shadow_sim("quic-mixed", SEED, (2, 4), 8, |sim, trace, labels| {
++        for label in &labels[..4] {
++            sim.with_node_transport_quic(label, "shadow");
++        }
++        sim.with_node_advertised_version(&labels[5], ANSWER_FLOOR);
++        run_as_first_negotiating_release(trace);
++    });
++    let (shadow, off, below) = (&mixed.nodes[..4], mixed.nodes[4], mixed.nodes[5]);
++
++    // Premises: the mesh formed, and offers, answers and paths all happened.
++    let baseline_peers = quic_mesh_peers(&baseline.mesh);
++    assert_eq!(
++        baseline_peers.len(),
++        6,
++        "every node joined: {:?}",
++        baseline.mesh
++    );
++    for node in &mixed.nodes {
++        assert!(
++            mixed.trace.connections_opened(*node) > 0,
++            "{node} connected"
++        );
++    }
++    assert!(mixed.total("Offered") >= 1, "{}", mixed.dump());
++    assert!(
++        mixed.total("Established") >= 2,
++        "a path formed between shadow nodes: {}",
++        mixed.dump()
++    );
++    assert!(
++        mixed.whats(off, "received Offer") >= 1,
++        "a shadow node offered to the node with QUIC off: {}",
++        mixed.dump()
++    );
++    // Who it declined to depends on the keys, so this reads the whole run.
++    assert!(
++        mixed.total("Declined { reason: Some(Disabled)") >= 1,
++        "the node with QUIC off answers Disabled: {}",
++        mixed.dump()
++    );
++    assert!(
++        mixed.total("IneligibleVersion") >= 1,
++        "a shadow node met the node below the floor: {}",
++        mixed.dump()
++    );
++
++    // The mesh joins the same peers, and is connected.
++    let (peers, connected) = quic_mesh_peers_and_connected(&mixed.mesh);
++    assert_eq!(peers, baseline_peers, "the same peers join");
++    assert!(connected, "{:?}", mixed.mesh);
++
++    // Paths exist only between shadow nodes.
++    for record in mixed.trace.records() {
++        if record.what.starts_with("Established") {
++            assert!(
++                shadow.contains(&record.node) && shadow.contains(&record.peer),
++                "{record:?} is not between shadow nodes"
++            );
++        }
++    }
++    for node in [off, below] {
++        assert_eq!(mixed.whats(node, "Established"), 0, "{}", mixed.dump());
++        assert_eq!(mixed.trace.permits_in_use(node), None, "it has no upgrades");
++    }
++    // Nothing is offered to, or sent to, the node below the floor.
++    assert_eq!(mixed.whats(below, "received"), 0, "{}", mixed.dump());
++    assert!(
++        mixed
++            .trace
++            .records()
++            .iter()
++            .all(|r| r.peer != below || !r.what.starts_with("Offered")),
++        "{}",
++        mixed.dump()
++    );
++}
++
++/// With `quic-max-paths` = 1 a node holds one path at a time. An offer that finds
++//
 ```
 
-**File**: `crates/core/src/transport/connection_handler/tests/outbound_connector.rs` (modified, +1/-0)
+---
+
+### Incident Patch 2: `465a3a3b` (2026-10-31)
+**Commit Message**: feat(transport): report QUIC shadow-mode telemetry (#6065)
+
+**File**: `.claude/rules/transport.md` (modified, +53/-1)
 ```diff
-@@ -10,6 +10,7 @@ fn handler() -> (OutboundConnectionHandler<MockSocket>, Queue) {
-         send_queue,
-         expected_non_gateway: Arc::new(DashSet::new()),
-         quic_availability: crate::transport::quic::QuicAvailabilityWatch::disabled(),
-+        upgrade_site: Default::default(),
-         quic_endpoint: None,
-     };
-     (handler, queue)
+@@ -376,7 +376,8 @@ and no breaker state is left), QUIC crash-loop breaker trips at startup
+ only a QUIC fault; see `quic/breaker.rs`) and whether the breaker keeps QUIC
+ off in this process (`quic_breaker_suppressed`, a state that is never reset and
+ is not activity by itself) and QUIC connections this node closed, by close code
+-(`quic_close_sent_<label>`, one per `QuicCloseCode`). Each label set is declared once in a
++(`quic_close_sent_<label>`, one per `QuicCloseCode`) and the shadow-mode upgrade
++telemetry (below, "Upgrade telemetry"). Each label set is declared once in a
+ `labelled_counters!` list, so a new variant needs a snapshot field. Hot
+ path writes are single relaxed atomics; `SentPacketTracker` keeps an
+ `rto_expiries` count and a bounded per-stream final-ACK watch, both
+@@ -958,17 +959,20 @@ doc has the transition table.
+   once with CONTROL_REFUSED and a normal backoff, so the sender does not wait
+   for its setup timeout. WrongLength and Empty wait for the deadline. Once
+   active, a refused frame leaves the path alone.
++
+   Off is final for the session, also for a policy that later clears (endpoint
+   Down, Released or Disabled, session ended, policy refusing, below the version
+   floor, equal keys): no re-offer, and no charge to the peer except from a
+   session end (above). A client or a machine with no role answers an Offer in
+   Off with Disabled; a server records role_conflict and does not reply. A later
+   Promoted changes and records nothing.
++
+   An Offer repeating or older than the highest seen gets no reply. An Offer
+   while an attempt is in progress gets NotReady; a client never tears a path
+   down because of an Offer, so offers cannot make it dial faster than its
+   attempts finish. A server that receives an Offer records role_conflict and
+   does not reply.
++
+   Caller contracts (e5a-5b): report OfferSent before stepping any reply to that
+   Offer; drop an Offer still deferred behind allow_peer once a TearDown names
+   its attempt; read backoff_seed after stepping SessionEnded (None when the machine took no seed: file nothing); end and file any older session for the peer key BEFORE stepping Promoted on the new one, and never let an older session's seed replace a newer one's (a max merge undoes a stable path's clear, so track session order); give every session the listener's clock clone (RealTime::new() starts its own epoch); give the client
+@@ -989,6 +993,54 @@ doc has the transition table.
+   negotiation_floor_stays_above_every_release_that_ignores_an_offer stops
+   QUIC_UPGRADE_NEGOTIATES_IN going down to 0.2.152 or below.
+ 
++Upgrade telemetry (#5940 e5a-6). The driver turns each machine `Outcome` into a
++counter at `Session::count`, which matches every `Outcome` variant, so a new
++outcome does not compile until it has one. All are per-period and reset with the
++snapshot except the two gauges.
++  `quic_upgrade_<label>` (`QuicUpgradeOutcome`): offered, accepted (the peer
++  accepted this node's Offer, by its Accept or, if that was lost, by its
++  connection, counted once either way), accept_sent, established (either role),
++  established_as_offerer, no_reply, timeout, handshake_failed, identity_mismatch,
++  role_conflict, allow_set_full, key_conflict, control_refused,
++  ineligible_version, declined_<reason> (the peer's Decline), declined_uncharged
++  (the same Decline when the machine spared the peer the penalty; the flag comes
++  from `on_decline`), decline_sent_<reason> (counted after the decline rate gate;
++  `upgrade_decline_suppressed` counts the held-back ones), setup_downgrade_rx and
++  setup_endpoint_down (the same causes as the fallbacks below, before the path
++  was active), session_ended_setup and session_ended_active (the UDP session
++  ended under an attempt or a path), inbox_overflow (a full inbox only),
++  attempt_unrouted (attempts that reached this node and found no session or no
++  attempt waiting; a client's retransmitted Initial can count again), and
++  task_panicked (a driver or pump panic, re-raised after counting).
++  `identity_mismatch` counts on both ends: a peer's close with code 2 ends this
++  node's attempt as `identity_mismatch` too.
++  Stage 2 gate denominator: established_as_offerer over accepted, reported beside
++  offered and declined_uncharged. Both sides count `established`; only the
++  offerer's is the numerator. Counts are node-wide; there is no per-pair series.
++  `quic_fallback_<label>` (`QuicFallback`): idle, reset, protocol, downgrade_rx,
++  endpoint_down. Paths that had been active only; an attempt that ends in setup
++  is counted in `quic_upgrade_*`. A close this node sent for send_abort_limit or
++  peer_not_acknowledging reaches the machine as a lost connection, so it counts
++  as `reset`; its count is `quic_close_sent_*`. A key mismatch is
++  `quic_upgrade_identity_mismatch`.
++  `quic_close_received_<label>`: one per QUIC connection quinn reports as closed
++  by a peer application close, by raw code (counted in `QuicConnection::
+```
+
+**File**: `crates/core/src/node/resource_metrics.rs` (modified, +25/-2)
+```diff
+@@ -49,6 +49,9 @@ pub(crate) struct ResourceUtilization {
+     /// Cumulative bytes received at the UDP socket layer since start (never
+     /// reset).
+     pub cumulative_bytes_received: u64,
++    /// QUIC upgrade paths active now (shadow mode), sampled with the RSS so
++    /// the two can be regressed against each other for a per-path cost.
++    pub quic_paths_active: u64,
+ }
+ 
+ impl ResourceUtilization {
+@@ -67,12 +70,17 @@ impl ResourceUtilization {
+ /// in-process [`TRANSPORT_METRICS`] cumulative byte counters. Never blocks on
+ /// the network and never panics.
+ pub(crate) fn sample() -> ResourceUtilization {
++    sample_from(&TRANSPORT_METRICS)
++}
++
++fn sample_from(transport: &crate::transport::metrics::TransportMetrics) -> ResourceUtilization {
+     ResourceUtilization {
+         memory_rss_bytes: rss_bytes(),
+         memory_limit_bytes: crate::wasm_runtime::read_total_ram_bytes().map(|v| v as u64),
+         cpu_time_seconds: cpu_time_seconds(),
+-        cumulative_bytes_sent: TRANSPORT_METRICS.cumulative_bytes_sent(),
+-        cumulative_bytes_received: TRANSPORT_METRICS.cumulative_bytes_received(),
++        cumulative_bytes_sent: transport.cumulative_bytes_sent(),
++        cumulative_bytes_received: transport.cumulative_bytes_received(),
++        quic_paths_active: transport.quic_paths_active(),
+     }
+ }
+ 
+@@ -162,6 +170,20 @@ mod tests {
+         }
+     }
+ 
++    /// The sample reports the transport's active QUIC path count. Uses its own
++    /// metrics, since the process-wide ones are shared with other tests.
++    #[test]
++    fn sample_reports_the_active_quic_path_count() {
++        let metrics = crate::transport::metrics::TransportMetrics::new();
++        let remote: std::net::SocketAddr = "10.0.0.1:1".parse().unwrap();
++        assert_eq!(sample_from(&metrics).quic_paths_active, 0);
++        metrics.quic_path_attempting(remote);
++        metrics.quic_path_activated(remote);
++        assert_eq!(sample_from(&metrics).quic_paths_active, 1);
++        metrics.quic_path_left(true, remote);
++        assert_eq!(sample_from(&metrics).quic_paths_active, 0);
++    }
++
+     /// The telemetry JSON carries every axis as a populated key, so the
+     /// dashboard sees non-absent fields it can chart. Guards against the field
+     /// silently dropping out of the serialized event.
+@@ -178,6 +200,7 @@ mod tests {
+             "cpu_time_seconds",
+             "cumulative_bytes_sent",
+             "cumulative_bytes_received",
++            "quic_paths_active",
+         ] {
+             assert!(obj.contains_key(key), "telemetry value missing key `{key}`");
+         }
+```
+
+**File**: `crates/core/src/tracing/telemetry.rs` (modified, +145/-0)
+```diff
+@@ -3075,6 +3075,49 @@ fn event_kind_to_json(kind: &EventKind) -> serde_json::Value {
+                 "quic_close_sent_control_refused".into(),
+                 serde_json::json!(snapshot.quic_close_sent_control_refused),
+             );
++            {
++                use crate::transport::metrics::{
++                    QuicCloseCode, QuicFallback, QuicPathAge, QuicUpgradeOutcome,
++                };
++                for (i, count) in snapshot.quic_close_received.iter().enumerate() {
++                    let label = QuicCloseCode::ALL
++                        .get(i)
++                        .map_or("unknown_code", |code| code.label());
++                    m.insert(format!("quic_close_received_{label}"), (*count).into());
++                }
++                for (outcome, count) in QuicUpgradeOutcome::ALL.iter().zip(snapshot.quic_upgrade) {
++                    m.insert(format!("quic_upgrade_{}", outcome.label()), count.into());
++                }
++                for (cause, count) in QuicFallback::ALL.iter().zip(snapshot.quic_fallback) {
++                    m.insert(format!("quic_fallback_{}", cause.label()), count.into());
++                }
++                for (age, count) in QuicPathAge::ALL.iter().zip(snapshot.quic_path_age_at_close) {
++                    m.insert(
++                        format!("quic_path_age_at_close_{}", age.label()),
++                        count.into(),
++                    );
++                }
++            }
++            m.insert(
++                "quic_establish_ms_p50".into(),
++                serde_json::json!(snapshot.quic_establish_ms_p50),
++            );
++            m.insert(
++                "quic_establish_ms_p90".into(),
++                serde_json::json!(snapshot.quic_establish_ms_p90),
++            );
++            m.insert(
++                "quic_establish_samples".into(),
++                serde_json::json!(snapshot.quic_establish_samples),
++            );
++            m.insert(
++                "quic_paths_offered_or_dialing".into(),
++                serde_json::json!(snapshot.quic_paths_offered_or_dialing),
++            );
++            m.insert(
++                "quic_paths_active".into(),
++                serde_json::json!(snapshot.quic_paths_active),
++            );
+             m.insert(
+                 "nat_fail_samples".into(),
+                 serde_json::json!(snapshot.nat_fail_samples),
+@@ -5862,6 +5905,7 @@ mod tests {
+             "cpu_time_seconds",
+             "cumulative_bytes_sent",
+             "cumulative_bytes_received",
++            "quic_paths_active",
+         ] {
+             assert!(obj.contains_key(key), "event_data missing key `{key}`");
+         }
+@@ -7542,6 +7586,41 @@ mod tests {
+             .cloned()
+             .collect();
+         expected.insert("type".to_string());
++        // The QUIC families are arrays in the snapshot and one key per label in
++        // the event.
++        use crate::transport::metrics::{
++            QuicCloseCode, QuicFallback, QuicPathAge, QuicUpgradeOutcome,
++        };
++        for family in [
++            "quic_close_received",
++            "quic_upgrade",
++            "quic_fallback",
++            "quic_path_age_at_close",
++        ] {
++            assert!(expected.remove(family), "{family} is in the snapshot");
++        }
++        expected.extend(
++            QuicCloseCode::ALL
++                .iter()
++                .map(|code| code.label())
++                .chain(["unknown_code"])
++                .map(|label| format!("quic_close_received_{label}")),
++        );
++        expected.extend(
++            QuicUpgradeOutcome::ALL
++                .iter()
++                .map(|outcome| format!("quic_upgrade_{}", outcome.label())),
++        );
++        expected.extend(
++            QuicFallback::ALL
++                .iter()
++                .map(|cause| format!("quic_fallback_{}", cause.label())),
++        );
++        expected.extend(
++            QuicPathAge::ALL
++                .iter()
++                .map(|age| format!("quic_path_age_at_close_{}", age.label())),
++        );
+         let actual: std::collections::BTreeSet<String> = event_kind_to_json(
+             &super::super::EventKind::TransportSnapshot(Box::new(snapshot)),
+         )
+@@ -7811,6 +7890,72 @@ mod tests {
+         );
+     }
+ 
++    /// Every QUIC upgrade family reaches the event-log JSON under its flat
++    /// `<prefix>_<label>` key with the value the snapshot holds.
++    #[test]
++    fn transport_snapshot_json_carries_quic_upgrade_telemetry() {
++        use crate::transport::metrics::{
++            QuicCloseCode, QuicFallback, QuicPathAge, QuicUpgradeOutcome,
++        };
++        let mut snapshot = crate::transport::metrics::TransportSnapshot::default();
++        let mut next = 0u64;
++        let mut fill = |slots: &mut [u64]| {
++            for slot in slots {
++                next += 1;
++                *slot = next;
++            }
++        };
++        fill(&mut snapshot.quic_close_received);
++        fill(&mut snaps
+```
+
+**File**: `crates/core/src/transport/metrics.rs` (modified, +532/-0)
+```diff
+@@ -374,6 +374,155 @@ labelled_counters! {
+     }
+ }
+ 
++labelled_counters! {
++    /// What a QUIC upgrade negotiation decided, counted by the code making
++    /// the decision (`quic::upgrade::machine::Outcome`, recorded by the
++    /// driver) or, for the last three, where the event is seen. Exported per
++    /// period as `quic_upgrade_<label>`.
++    ///
++    /// Success rate on eligible pairs: `established_as_offerer` over
++    /// `accepted` (attempts the peer accepted, by its Accept or, if that was
++    /// lost, by its connection), reported beside `offered` and
++    /// `declined_uncharged`. Offers repeat every 60 s while a peer
++    /// answers Busy, NotReady or Backoff, so a per-offer rate is not
++    /// meaningful. `accept_sent` and `established` also count the client
++    /// side. Zero while QUIC is off.
++    pub(crate) enum QuicUpgradeOutcome {
++        /// This node sent an Offer.
++        Offered => "offered",
++        /// The peer accepted this node's Offer.
++        Accepted => "accepted",
++        /// This node accepted the peer's Offer.
++        AcceptSent => "accept_sent",
++        /// A path became active on this node's evidence (either role).
++        Established => "established",
++        /// As `established`, for a path this node offered (the server).
++        EstablishedAsOfferer => "established_as_offerer",
++        /// An Offer got no reply in time.
++        NoReply => "no_reply",
++        /// A setup stage ran out of time.
++        Timeout => "timeout",
++        /// The connection failed during setup, or a send of setup failed.
++        HandshakeFailed => "handshake_failed",
++        /// The key proved on the path is not the key on record. Counted on
++        /// both ends: a peer's close with the identity-mismatch code ends
++        /// this node's attempt as `identity_mismatch` too, so a sum across
++        /// the fleet counts one mismatch up to twice.
++        IdentityMismatch => "identity_mismatch",
++        /// Both sides acted as server, or the keys were equal.
++        RoleConflict => "role_conflict",
++        /// The `allow_peer` set was full.
++        AllowSetFull => "allow_set_full",
++        /// The key was already allowed for another address.
++        KeyConflict => "key_conflict",
++        /// A control frame this node cannot read ended the setup.
++        ControlRefused => "control_refused",
++        /// A peer below the version floor was not offered.
++        IneligibleVersion => "ineligible_version",
++        /// The peer declined this node's Offer, by reason.
++        DeclinedDisabled => "declined_disabled",
++        DeclinedBackoff => "declined_backoff",
++        DeclinedBusy => "declined_busy",
++        DeclinedNotReady => "declined_not_ready",
++        /// A reason this node does not know.
++        DeclinedUnknown => "declined_unknown",
++        /// A decline of any reason that the machine did not charge to the
++        /// peer's backoff (Busy, NotReady, Backoff).
++        DeclinedUncharged => "declined_uncharged",
++        /// This node declined the peer's Offer, by reason. Counted when the
++        /// decline passes the rate gate; one the gate holds back is not.
++        DeclineSentDisabled => "decline_sent_disabled",
++        DeclineSentBackoff => "decline_sent_backoff",
++        DeclineSentBusy => "decline_sent_busy",
++        DeclineSentNotReady => "decline_sent_not_ready",
++        /// A peer's upgrade message was dropped because the session's inbox
++        /// was full. A closed inbox (the session is ending) is not counted.
++        InboxOverflow => "inbox_overflow",
++        /// A QUIC connection attempt reached no session, a full or closed
++        /// session inbox, or no attempt waiting for it, and was ignored. It
++        /// counts attempts that reached this node, not dials: a client
++        /// retransmits its Initial, and each one that arrives can count.
++        AttemptUnrouted => "attempt_unrouted",
++        /// A session's driver or a path's pump panicked.
++        TaskPanicked => "task_panicked",
++        /// The peer closed the connection of an attempt that was not yet
++        /// active with a downgrade-class code. After activation the same
++        /// close is `quic_fallback_downgrade_rx`.
++        SetupDowngraded => "setup_downgrade_rx",
++        /// The QUIC endpoint went down under an attempt that was not yet
++        /// active. After activation it is `quic_fallback_endpoint_down`.
++        SetupEndpointDown => "setup_endpoint_down",
++        /// The UDP session ended under an attempt that was not yet active
++        /// (a peer restart or a dropped connection). Together with the
++        /// setup outcomes above it accounts for an `accepted` that never
++        /// reached `established_as_offerer`.
++        SessionEndedSetup => "session_ended_setup",
++        /// The UDP session ended under a path that was active, or one
++        /// waiting out a protocol recheck after it was. Not a `quic_fallback`.
++        SessionEndedActiv
+```
+
+**File**: `crates/core/src/transport/quic.rs` (modified, +6/-0)
+```diff
+@@ -1013,6 +1013,12 @@ impl QuicConnection {
+                 }
+             }
+             let reason = watched.closed().await;
++            if let quinn::ConnectionError::ApplicationClosed(close) = &reason {
++                TRANSPORT_METRICS.record_quic_close_received(
++                    close.error_code.into_inner(),
++                    watched.remote_address(),
++                );
++            }
+             tracing::debug!(%reason, remote = %watched.remote_address(), "QUIC connection ended");
+             drop(hold);
+             drop(permit);
+```
+
+**File**: `crates/core/src/transport/quic/tests.rs` (modified, +23/-0)
+```diff
+@@ -2637,6 +2637,29 @@ fn close_codes_reach_the_peer() {
+                 drop((closer, peer));
+             }
+         }
++        // The side that did not close counts the raw code it received, once
++        // per connection (`quic_close_received_*`). The closer's own watcher
++        // sees a local close and counts nothing.
++        let time = pair.time.clone();
++        drive(&pair.time, Duration::from_secs(5), async move {
++            time.sleep(Duration::from_secs(1)).await
++        })
++        .await;
++        let received = |remote| -> Vec<String> {
++            TRANSPORT_METRICS
++                .quic_events_of(remote)
++                .into_iter()
++                .filter(|event| event.starts_with("(\"close_received\""))
++                .collect()
++        };
++        let want = |codes: &[QuicCloseCode]| -> Vec<String> {
++            codes
++                .iter()
++                .map(|code| format!("(\"close_received\", Some({code:?}), {})", code.code()))
++                .collect()
++        };
++        assert_eq!(received(pair.a_addr), want(&sent_by_a));
++        assert_eq!(received(pair.b_addr), want(&sent_by_b));
+         assert_eq!(TRANSPORT_METRICS.quic_close_sent_to(pair.b_addr), sent_by_a);
+         assert_eq!(TRANSPORT_METRICS.quic_close_sent_to(pair.a_addr), sent_by_b);
+ 
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/driver.rs` (modified, +174/-14)
+```diff
+@@ -64,19 +64,23 @@ use parking_lot::Mutex;
+ use tokio::sync::mpsc;
+ use tokio::task::JoinHandle;
+ 
+-use super::machine::{Action, BackoffSeed, CONTROL_SEND_TIMEOUT, Event, Inputs, UpgradeMachine};
++use super::machine::{
++    Action, BackoffSeed, CONTROL_SEND_TIMEOUT, Event, FallbackCause, Inputs, Outcome, Role,
++    UpgradeMachine,
++};
+ use super::policy::QuicPolicy;
+ use crate::config::{GlobalExecutor, GlobalRng};
+ use crate::node::background_task_monitor::LateRegistrar;
+ use crate::simulation::{RealTime, TimeSource, VirtualTime};
+ use crate::transport::crypto::TransportPublicKey;
+-use crate::transport::metrics::QuicCloseCode;
++use crate::transport::metrics::{QuicCloseCode, QuicFallback, QuicUpgradeOutcome};
+ use crate::transport::peer_connection::UpgradeSender;
+ use crate::transport::peer_connection::inbound_budget::SharedInboundBudget;
+ use crate::transport::quic::control::ControlError;
+ use crate::transport::quic::identity::PeerKey;
+ use crate::transport::quic::path::{BoundedSend, QuicInbound, QuicPath, QuicPathLimits};
+ use crate::transport::quic::{QuicConnection, QuicEndpoint, QuicIncoming, QuicPeerPermit};
++use crate::transport::symmetric_message::DeclineReason;
+ use crate::transport::symmetric_message::UpgradeControl;
+ use crate::transport::{
+     QuicErrorKind, QuicRefusal, Socket, TRANSPORT_METRICS, normalize_mapped_addr,
+@@ -271,9 +275,43 @@ struct LivePath {
+     _streams: mpsc::Receiver<crate::transport::quic::path::InboundStreamArrival>,
+ }
+ 
++/// An attempt's place in the `quic_paths_*` gauges: counted as offered or
++/// dialing from creation, as active once the machine reports the path
++/// established, and out again when the attempt is dropped. A guard, so no
++/// way of ending an attempt leaves a gauge high.
++struct PathGauge {
++    remote: SocketAddr,
++    /// When the path became active, on the session clock.
++    active_since: Option<Duration>,
++}
++
++impl PathGauge {
++    fn new(remote: SocketAddr) -> Self {
++        TRANSPORT_METRICS.quic_path_attempting(remote);
++        Self {
++            remote,
++            active_since: None,
++        }
++    }
++
++    fn activate(&mut self, now: Duration) {
++        if self.active_since.is_none() {
++            self.active_since = Some(now);
++            TRANSPORT_METRICS.quic_path_activated(self.remote);
++        }
++    }
++}
++
++impl Drop for PathGauge {
++    fn drop(&mut self) {
++        TRANSPORT_METRICS.quic_path_left(self.active_since.is_some(), self.remote);
++    }
++}
++
+ /// What one attempt holds. Dropping it drops all of it.
+ struct Attempt {
+     id: u32,
++    gauge: PathGauge,
+     /// The server's `allow_peer` permit.
+     allow: Option<QuicPeerPermit>,
+     /// A routed connection attempt is finishing its handshake.
+@@ -284,9 +322,10 @@ struct Attempt {
+ }
+ 
+ impl Attempt {
+-    fn new(id: u32) -> Self {
++    fn new(id: u32, remote: SocketAddr) -> Self {
+         Self {
+             id,
++            gauge: PathGauge::new(remote),
+             allow: None,
+             establishing: false,
+             path: None,
+@@ -309,6 +348,9 @@ struct SessionState {
+     /// The key the node promoted the session under.
+     peer_key: Option<TransportPublicKey>,
+     ended: bool,
++    /// When this node sent its Offer or Accept, on the session clock, until
++    /// the path is established.
++    setup_started: Option<Duration>,
+ }
+ 
+ /// One UDP session's upgrade. The driver, the connection and a newer session of
+@@ -341,10 +383,10 @@ pub(in crate::transport) struct QuicUpgrades {
+     by_key: DashMap<TransportPublicKey, Weak<Session>>,
+     seeds: Mutex<SeedStore>,
+     next_session: AtomicU64,
+-    /// Peer-sent upgrade messages dropped because the inbox was full.
++    /// Peer-sent upgrade messages dropped because an inbox was full. Only
++    /// throttles the warning; the exported count is
++    /// `quic_upgrade_inbox_overflow`.
+     inbox_overflow: AtomicU64,
+-    /// Attempts dropped because no session wanted them.
+-    attempts_unrouted: AtomicU64,
+     #[cfg(any(test, feature = "testing"))]
+     trace: Option<super::sim_trace::NodeTrace>,
+ }
+@@ -371,7 +413,6 @@ impl QuicUpgrades {
+             seeds: Mutex::new(SeedStore::new(SEED_STORE_ENTRIES)),
+             next_session: AtomicU64::new(1),
+             inbox_overflow: AtomicU64::new(0),
+-            attempts_unrouted: AtomicU64::new(0),
+             #[cfg(any(test, feature = "testing"))]
+             trace,
+         })
+@@ -427,7 +468,7 @@ impl QuicUpgrades {
+             },
+         };
+         if let Some(incoming) = unrouted {
+-            self.attempts_unrouted.fetch_add(1, Ordering::Relaxed);
++            TRANSPORT_METRICS.record_quic_upgrade(QuicUpgradeOutcome::AttemptUnrouted, addr);
+             tracing::debug!(%addr, "Ignoring a QUIC connection attempt no session wanted");
+             incoming.ignore();
+         }
+@@ -462,9 +503,13 @@ impl QuicUpgrades {
+                 attempt: None,
+                 peer_key: None,
+                 ended: false,
++                setup_started: 
+```
+
+**File**: `crates/core/src/transport/quic/upgrade/driver/tests.rs` (modified, +254/-0)
+```diff
+@@ -130,6 +130,7 @@ impl Harness {
+                 attempt: None,
+                 peer_key: None,
+                 ended: false,
++                setup_started: None,
+             }),
+         });
+         (session, inbox_rx)
+@@ -555,3 +556,256 @@ fn a_full_inbox_drops_peer_messages_and_still_delivers_a_path_end() {
+         assert!(matches!(last, Some(SessionEvent::PathClosed { .. })));
+     });
+ }
++
++/// The machine's decisions reach the telemetry counters through the driver, and the
++/// path gauges follow the attempt: an offer is counted, an attempt is in the
++/// offered-or-dialing gauge until it ends, and a timeout is counted once.
++#[test]
++fn offer_outcomes_and_the_path_gauge_reach_telemetry() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let h = Harness::server("quic-driver-telemetry", 11).await;
++        let (session, _rx) = h.session();
++        session.promote(h.peer.clone());
++        let events = || TRANSPORT_METRICS.quic_events_of(h.remote);
++        let at = Duration::from_nanos(session.deadline_nanos().unwrap());
++        h.set_now(at);
++        let sends = session.take(Event::Tick);
++        let [UdpSend::Offer { attempt, .. }] = sends[..] else {
++            panic!("{sends:?}");
++        };
++        session.take(Event::OfferSent { attempt });
++        assert_eq!(events(), ["\"path_attempting\"", "Offered"]);
++        h.set_now(at + OFFER_TIMEOUT);
++        assert!(session.take(Event::Tick).is_empty());
++        assert_eq!(
++            events(),
++            [
++                "\"path_attempting\"",
++                "Offered",
++                "(\"path_left\", false)",
++                "NoReply"
++            ]
++        );
++    });
++}
++
++/// A decline reaches the counters under its reason and, when the machine spared
++/// the peer the penalty, as an uncharged decline; the one the node sends is counted
++/// by reason.
++#[test]
++fn declines_are_counted_by_reason_and_penalty() {
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let h = Harness::server("quic-driver-declines", 12).await;
++        let (session, _rx) = h.session();
++        session.promote(h.peer.clone());
++        let events = || TRANSPORT_METRICS.quic_events_of(h.remote);
++        for (reason, counted) in [
++            (
++                DeclineReason::Busy.wire(),
++                vec!["DeclinedBusy", "DeclinedUncharged"],
++            ),
++            (DeclineReason::Disabled.wire(), vec!["DeclinedDisabled"]),
++            (0xEE, vec!["DeclinedUnknown"]),
++        ] {
++            h.set_now(Duration::from_nanos(session.deadline_nanos().unwrap()));
++            let sends = session.take(Event::Tick);
++            let [UdpSend::Offer { attempt, .. }] = sends[..] else {
++                panic!("{sends:?}");
++            };
++            session.take(Event::OfferSent { attempt });
++            let before = events().len();
++            session.handle(SessionEvent::Upgrade(UpgradeControl::Decline {
++                attempt,
++                reason,
++            }));
++            let after = events();
++            let counted: Vec<_> = counted.into_iter().map(String::from).collect();
++            assert_eq!(after[before], "(\"path_left\", false)", "reason {reason}");
++            assert_eq!(after[before + 1..], counted[..], "reason {reason}");
++        }
++    });
++}
++
++/// A panic in a task the driver spawns is counted, and the same panic goes on.
++#[test]
++fn a_panicking_task_is_counted_and_still_panics() {
++    let remote: SocketAddr = "10.204.13.1:5000".parse().unwrap();
++    let runtime = tokio::runtime::Builder::new_current_thread()
++        .build()
++        .unwrap();
++    runtime.block_on(async {
++        let task = tokio::spawn(report_panics(remote, async { panic!("task failed") }));
++        let error = task.await.expect_err("the panic goes on");
++        assert!(error.is_panic());
++    });
++    assert_eq!(TRANSPORT_METRICS.quic_events_of(remote), ["TaskPanicked"]);
++}
++
++/// An established path is counted under both its role counters, its latency runs
++/// from the offer, the gauge moves from offered-or-dialing to active, and tearing
++/// the path down records its age and leaves the active gauge.
++#[test]
++fn an_established_path_is_counted_timed_and_aged() {
++    use crate::transport::quic::upgrade::machine::{Outcome, Role};
++    bounded(|| async move {
++        let _seed = GlobalRng::seed_guard(SEED);
++        let h = Harness::server("quic-driver-established", 14).await;
++        let (session, _rx) = h.session();
++        session.promote(h.peer.clone());
++        h.set_now(Duration::from_secs(100));
++        let mut state = session.state.lock();
++        session.apply(
++            &mut state,
++            vec![
++                Action::AllowPeerThenOffer {
++                    attempt: 1,
++                    caps: 0,
++                },
++                Action::Record(Outcome::Offered),
++            ],
++        );
++        h.set_now(Durat
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6066** (2026-11-01): test(transport): add QUIC shadow scenarios and correct the rollout docs (@sanity)
+- **PR #6065** (2026-10-31): feat(transport): report QUIC shadow-mode telemetry (@sanity)
 - **PR #6064** (2026-10-31): test: pick node ports the OS cannot assign to other tests (@sanity)
 - **PR #6063** (2026-10-31): build: release 0.2.153 (@sanity)
 - **PR #6061** (2026-10-31): ci: build Linux x86_64 release for baseline x86-64 (@sanity)
 - **PR #6060** (2026-10-31): feat(transport): drive the QUIC upgrade machine in shadow mode (@sanity)
-- **PR #6058** (2026-10-30): feat(transport): add the QUIC upgrade state machine as pure logic (@sanity)
-- **PR #6057** (2026-10-30): feat(transport): add QUIC control frames, bounded sends and stream-slot reservation (@sanity)
 
 ---
 
@@ -2168,13 +2710,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. transport): drive the QUIC upgrade machine in shadow mode (#6060)
+## X. test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066)
 
 **RULE**:
 When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fccbb13c`: transport): drive the QUIC upgrade machine in shadow mode (#6060). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dd302470`: test(transport): add QUIC shadow scenarios and correct the rollout docs (#6066). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
@@ -2182,47 +2724,34 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`total-bandwidth-limit`), QUIC upgrade control messages received
-(`upgrade_control_received`), Decline replies held back
-(`upgrade_decline_suppressed`) and hole-punch handshake packets dropped,
-A node that receives one acks it like a ShortMessage, counts it
-(upgrade_control_received in transport_snapshot) and never closes the
-connection over it. With upgrades (see "Upgrade driver") it goes to the
-session's driver. Without them an Offer gets Decline{Disabled} and an Accept
-or a Decline is dropped.
+data, so it measures nothing about the value; rollout step 3 (data on a slice
+of pairs, see "QUIC rollout") is the first measurement on real QUIC. The gauge says nothing about the memory
+  Step 2 gate denominator: established_as_offerer over accepted, reported beside
+#### QUIC rollout (#5940)
 
-At most one Decline per connection per DECLINE_INTERVAL (45 s, below the shortest uncharged retry of 48 s), on the
-connection's clock (quic/upgrade/driver.rs DeclineGate; the same type on
-PeerConnection with QUIC off and in the driver with QUIC on). A Decline is
-tracked and retransmitted, and each Offer under a new packet id would otherwise
-get its own. One held back is counted by the gate (upgrade_decline_suppressed)
-and costs the offerer NoReply after OFFER_TIMEOUT, which takes a normal backoff,
-including where the reason would have been uncharged (Busy, NotReady, Backoff).
-With QUIC off the reply is not sent in process_inbound: the Offer is already in
-the dedup window, so a cancelled s
+There are no opt-in stages; releases do the rollout. QUIC stays off on Windows
+throughout, until #6031. Every step watches: peers disappearing per version
+against the previous rollout (a node that dies before reporting is absent from
+every rate), endpoint-down, panics and breaker trips, RSS against
+`quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
+
+- Step 0: the first negotiating release ships with QUIC off. Its nodes answer
+  offers (`Decline{disabled}` with the key off); `upgrade_control_received`
+  stays near 0 and UDP metrics do not change.
+- Step 1: nova gateways and framework in shadow for 24-48 h. The 24 h gateway
+  A/B runs only if something looks odd. Rollback: set the key to off and restart.
+- Step 2: shadow on by default, not on Windows. Gate: at least 95% upgrade
+  success by `established_as_offerer / accepted`; fewer than 1 fallback per
+  path-day e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-`total-bandwidth-limit`), QUIC upgrade control messages received and
-ignored (`upgrade_control_received`) and hole-punch handshake packets dropped,
-Decode-only until step e5a-5b wires quic/upgrade/machine.rs in: nothing sends
-it. A node that receives one acks
-it like a ShortMessage, counts it (upgrade_control_received in
-transport_snapshot) and ignores it. It never replies and never closes the
-connection.
-below it decodes an Offer and ignores it). Parked at (0, 3, 0), above every
-release, until e5a-5b sets it to the release that first ships the negotiation
-and records it in QUIC_UPGRADE_NEGOTIATES_SHIPPED_IN.
-empty. Upgrading a UDP session to QUIC comes later, so only tests open
-QUIC connections.
-Upgrade state machine (`quic/upgrade/machine.rs`, #5940 step e5a-5a, not yet
-wired in): UpgradeMachine::step(Inputs { now, sample, policy }, Event) returns
-Upgrade policy (`quic/upgrade/policy.rs`, not yet wired in):
-`QuicPolicy::new(network_api, breaker, availability)` takes the config, the
-breaker's decision (`breaker::gate` returns it beside the sett
+data, so it cannot confirm the value; rollout stage 3 (data on QUIC, opt-in)
+is the first measurement on real QUIC. The gauge says nothing about the memory
+  Stage 2 gate denominator: established_as_offerer over accepted, reported beside
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fccbb13c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dd302470` are properly handled with clean fallback behavior.

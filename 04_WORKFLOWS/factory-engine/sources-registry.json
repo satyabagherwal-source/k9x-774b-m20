@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T02:00:55.353Z",
-    "lastVerified": "2026-11-01T02:00:55.353Z",
+    "lastChecked": "2026-11-01T02:07:51.599Z",
+    "lastVerified": "2026-11-01T02:07:51.599Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -432,8 +432,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T01:40:29.968Z",
-    "lastVerified": "2026-11-01T01:40:29.968Z",
+    "lastChecked": "2026-11-01T02:07:49.251Z",
+    "lastVerified": "2026-11-01T02:07:49.251Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1219,14 +1219,14 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T22:40:01.283Z",
-    "lastVerified": "2026-10-31T22:40:01.283Z",
+    "lastChecked": "2026-11-01T02:07:48.312Z",
+    "lastVerified": "2026-11-01T02:07:48.312Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "2912bb75c716e35497f8293f907add2c2d1e2a8e00dc406e79b3647a4161d783",
+    "contentHash": "28842e716e537c1749da4fea1c10527717e5bd0d522a5f6a12f132f4d87d2e3e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2752,12 +2752,12 @@
     "lastVerified": "2026-10-31T22:46:48.791Z"
   },
   "ontos-ai-knowhere": {
-    "name": "Ontos-AI/knowhere",
+    "name": "knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-10-31T11:09:36.880Z",
-    "lastVerified": "2026-10-31T11:09:36.880Z",
+    "lastChecked": "2026-11-01T02:07:46.729Z",
+    "lastVerified": "2026-11-01T02:07:46.729Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
@@ -2766,7 +2766,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "07cd00d1"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -4246,9 +4247,9 @@
   "go-eagle-eagle": {
     "name": "eagle",
     "officialUrl": "https://github.com/go-eagle/eagle",
-    "lastChecked": "2026-10-31T11:53:33.516Z",
+    "lastChecked": "2026-11-01T02:07:41.730Z",
     "revisionIdentifier": "b1301b09",
-    "lastVerified": "2026-10-31T11:53:33.516Z"
+    "lastVerified": "2026-11-01T02:07:41.730Z"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -4503,9 +4504,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-10-31T06:31:54.582Z",
+    "lastChecked": "2026-11-01T02:07:34.311Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-10-31T06:31:54.582Z"
+    "lastVerified": "2026-11-01T02:07:34.311Z"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "name": "deepseek-ai/DeepSeek-V4-Pro",
@@ -8775,13 +8776,13 @@
     "officialUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-29T01:08:49.561Z",
-    "lastVerified": "2026-10-29T01:08:49.561Z",
+    "lastChecked": "2026-11-01T02:07:36.888Z",
+    "lastVerified": "2026-11-01T02:07:36.888Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-    "contentHash": "bd786a3e6aa6e87e506424a43277e5eda85a1b8b7a668d6377386a83855c7cec",
-    "promotedRulesCount": 2,
+    "contentHash": "a792dfa263842069c19d096702b8fd857fd71216c69d934b4fe3408dfd14c398",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -9677,9 +9678,9 @@
   "obytes-react-native-template-obytes": {
     "name": "react-native-template-obytes",
     "officialUrl": "https://github.com/obytes/react-native-template-obytes",
-    "lastChecked": "2026-10-30T04:25:11.240Z",
+    "lastChecked": "2026-11-01T02:07:39.265Z",
     "revisionIdentifier": "fd9b358e",
-    "lastVerified": "2026-10-30T04:25:11.240Z"
+    "lastVerified": "2026-11-01T02:07:39.265Z"
   },
   "crawlcove-crawlcove-hreflang-checker": {
     "name": "crawlcove-hreflang-checker",
