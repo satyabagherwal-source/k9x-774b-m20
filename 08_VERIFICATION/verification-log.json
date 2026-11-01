@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-93YT",
-    "timestamp": "2026-10-30T19:29:34.037Z",
-    "repository": "krakend/krakend-ce",
-    "learningId": "learn-github-krakend-krakend-ce",
-    "contentHash": "34b41002de85351349299f42743474017bf1e4e1468047db997ff928670a4615",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-H6P4",
     "timestamp": "2026-10-30T19:35:50.824Z",
     "repository": "TanStack/query",
@@ -7492,6 +7477,21 @@
     "contentHash": "bdf88a0b14d4f7db083962bac9190d5498ba733edf3da9753bf8fff4e673f836",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-GAXD",
+    "timestamp": "2026-11-01T01:26:45.073Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "da0c0287161954f3b934b140ff470452d7358e83c3d064fcaddbf9f0913d5bbf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
