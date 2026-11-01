@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T00:56:10.719Z",
-    "lastVerified": "2026-11-01T00:56:10.719Z",
+    "lastChecked": "2026-11-01T01:06:09.831Z",
+    "lastVerified": "2026-11-01T01:06:09.831Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -431,8 +431,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T00:36:26.361Z",
-    "lastVerified": "2026-11-01T00:36:26.361Z",
+    "lastChecked": "2026-11-01T01:05:19.296Z",
+    "lastVerified": "2026-11-01T01:05:19.296Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -508,8 +508,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T21:26:49.430Z",
-    "lastVerified": "2026-10-31T21:26:49.430Z",
+    "lastChecked": "2026-11-01T01:05:14.298Z",
+    "lastVerified": "2026-11-01T01:05:14.298Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -2196,9 +2196,9 @@
   "oramasearch-orama": {
     "name": "orama",
     "officialUrl": "https://github.com/oramasearch/orama",
-    "lastChecked": "2026-10-31T10:00:36.763Z",
+    "lastChecked": "2026-11-01T01:05:16.797Z",
     "revisionIdentifier": "b030e1bd",
-    "lastVerified": "2026-10-31T10:00:36.763Z"
+    "lastVerified": "2026-11-01T01:05:16.797Z"
   },
   "sayanarijit-xplr": {
     "name": "xplr",
@@ -3780,9 +3780,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-10-31T10:47:15.999Z",
+    "lastChecked": "2026-11-01T01:05:11.783Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-10-31T10:47:15.999Z"
+    "lastVerified": "2026-11-01T01:05:11.783Z"
   },
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
@@ -3994,9 +3994,9 @@
   "chmln-sd": {
     "name": "sd",
     "officialUrl": "https://github.com/chmln/sd",
-    "lastChecked": "2026-10-31T05:21:00.918Z",
+    "lastChecked": "2026-11-01T01:05:04.287Z",
     "revisionIdentifier": "44febdf8",
-    "lastVerified": "2026-10-31T05:21:00.918Z"
+    "lastVerified": "2026-11-01T01:05:04.287Z"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "name": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -8536,12 +8536,12 @@
     "officialUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T23:42:56.842Z",
-    "lastVerified": "2026-10-28T23:42:56.842Z",
+    "lastChecked": "2026-11-01T01:05:06.800Z",
+    "lastVerified": "2026-11-01T01:05:06.800Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "8aa69fbaeb95bf32ab00355df9e4a458bb9be8684560b9d749799e6c81998026",
+    "contentHash": "c28c4797fe4939bd06010a3e5df0a96966373e2601db1cd1c8c9c6c131746021",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9497,9 +9497,9 @@
   "touchlab-xcode-kotlin": {
     "name": "xcode-kotlin",
     "officialUrl": "https://github.com/touchlab/xcode-kotlin",
-    "lastChecked": "2026-10-30T00:33:12.114Z",
+    "lastChecked": "2026-11-01T01:05:09.275Z",
     "revisionIdentifier": "56560d20",
-    "lastVerified": "2026-10-30T00:33:12.114Z"
+    "lastVerified": "2026-11-01T01:05:09.275Z"
   },
   "ilamaaa-hreflang-checker": {
     "name": "hreflang-checker",

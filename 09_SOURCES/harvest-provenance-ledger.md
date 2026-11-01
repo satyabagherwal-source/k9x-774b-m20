@@ -6784,3 +6784,4 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `cc94be6a` | Multi-dimensional audit evidence | 2026-11-01T00:49:42.733Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-01T00:56:06.799Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `e9b2f7e6` | Multi-dimensional audit evidence | 2026-11-01T00:56:08.185Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-01T01:06:07.268Z |

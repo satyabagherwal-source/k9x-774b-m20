@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T00:56:08.189Z",
-  "total_cycles_completed": 6752,
-  "total_learnings_persisted": 6752,
-  "total_rules_promoted": 6396,
+  "last_updated": "2026-11-01T01:06:07.273Z",
+  "total_cycles_completed": 6753,
+  "total_learnings_persisted": 6753,
+  "total_rules_promoted": 6399,
   "history": [
-    {
-      "timestamp": "2026-10-31T13:06:48.519Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T13:06:49.269Z",
       "repository": "SeekStorm/SeekStorm",
@@ -1403,6 +1396,13 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:06:07.273Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

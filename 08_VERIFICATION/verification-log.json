@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-VUZW",
-    "timestamp": "2026-10-30T19:19:15.884Z",
-    "repository": "LiquidAI/LFM3-1.7B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-    "contentHash": "597e75a3071d298547c699dac400461746d6c23d699552659160c59791f75e33",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-W311",
     "timestamp": "2026-10-30T19:19:26.293Z",
     "repository": "lioensky/VCPToolBox",
@@ -7492,6 +7477,21 @@
     "contentHash": "db52434f09e6aefdf9e82c55d9ace4a808034d8c59a0737dca809165761b8668",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-PRTS",
+    "timestamp": "2026-11-01T01:06:07.264Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "c28c4797fe4939bd06010a3e5df0a96966373e2601db1cd1c8c9c6c131746021",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
