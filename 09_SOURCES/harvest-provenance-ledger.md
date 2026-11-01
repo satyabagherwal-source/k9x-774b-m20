@@ -6775,3 +6775,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-01T00:10:25.274Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `d9e73f40` | Multi-dimensional audit evidence | 2026-11-01T00:10:34.020Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-01T00:19:06.644Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-01T00:30:05.766Z |

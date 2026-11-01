@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T00:19:06.558Z",
+  "last_updated": "2026-11-01T00:30:05.679Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -69262,7 +69262,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fishaudio/drama-3",
       "source_version": "hf-fishaudio-drama-3",
-      "content_hash": "3a711a92eca89a128886e84499bc4e62f7130c3a1987a1d8ca3c7962b1c952e8",
+      "content_hash": "76fc6e6dc2dd22d56262ad0b7917bf978d20e4326a9069b947b839f0ab20e13f",
       "dossier_path": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "promoted_rules": [
@@ -69280,6 +69280,21 @@
           "number": 1590,
           "title": "Partial Rotary Embedding (RoPE) Interleaved Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6380,
+          "title": "Hybrid Attention for Long-Context Audio Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6381,
+          "title": "Codebook-MTP for Parallel Audio Decoding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6382,
+          "title": "Mixed Precision for MoE Experts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69287,7 +69302,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:52:11.460Z",
+      "verified_at": "2026-11-01T00:30:05.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165544,6 +165559,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T00:19:06.538Z"
+    },
+    "rule-6380": {
+      "learning_id": "rule-6380",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6380,
+      "title": "Hybrid Attention for Long-Context Audio Generation",
+      "source_url": "https://huggingface.co/fishaudio/drama-3",
+      "source_version": "hf-fishaudio-drama-3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:30:05.650Z"
+    },
+    "rule-6381": {
+      "learning_id": "rule-6381",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6381,
+      "title": "Codebook-MTP for Parallel Audio Decoding",
+      "source_url": "https://huggingface.co/fishaudio/drama-3",
+      "source_version": "hf-fishaudio-drama-3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:30:05.650Z"
+    },
+    "rule-6382": {
+      "learning_id": "rule-6382",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6382,
+      "title": "Mixed Precision for MoE Experts",
+      "source_url": "https://huggingface.co/fishaudio/drama-3",
+      "source_version": "hf-fishaudio-drama-3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:30:05.650Z"
     }
   },
   "aliases": {

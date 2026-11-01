@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-GTM2",
-    "timestamp": "2026-10-30T18:39:34.634Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "208e3afe876b454101aab0dd30cf6252abde007d442714c833654e88dc6a5cf8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-GWAE",
     "timestamp": "2026-10-30T18:39:38.102Z",
     "repository": "solidjs/solid",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
     "contentHash": "d3d3d5df2f49cfe6542274ca05855dc8a6c8e997497f2b1be33eae0b027f7677",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-FG02",
+    "timestamp": "2026-11-01T00:30:05.762Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "76fc6e6dc2dd22d56262ad0b7917bf978d20e4326a9069b947b839f0ab20e13f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

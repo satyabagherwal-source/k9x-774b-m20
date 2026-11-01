@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-01T00:19:06.654Z",
+  "last_updated": "2026-11-01T00:30:05.774Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2257,14 +2257,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fishaudio-drama-3",
-      "content_hash": "3a711a92eca89a128886e84499bc4e62f7130c3a1987a1d8ca3c7962b1c952e8",
-      "verified_at": "2026-10-28T22:52:11.565Z",
+      "content_hash": "76fc6e6dc2dd22d56262ad0b7917bf978d20e4326a9069b947b839f0ab20e13f",
+      "verified_at": "2026-11-01T00:30:05.774Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-28T22:52:11.565Z"
+      "last_updated": "2026-11-01T00:30:05.774Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",

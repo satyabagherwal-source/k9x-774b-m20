@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T00:19:06.650Z",
-  "total_cycles_completed": 6743,
-  "total_learnings_persisted": 6743,
-  "total_rules_promoted": 6387,
+  "last_updated": "2026-11-01T00:30:05.771Z",
+  "total_cycles_completed": 6744,
+  "total_learnings_persisted": 6744,
+  "total_rules_promoted": 6390,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:53:41.926Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:53:41.980Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-01T00:19:06.650Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:30:05.771Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

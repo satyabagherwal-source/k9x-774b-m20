@@ -1,11 +1,11 @@
 {
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T20:46:48.667Z",
-    "lastVerified": "2026-10-31T20:46:48.667Z",
+    "lastChecked": "2026-11-01T00:30:02.650Z",
+    "lastVerified": "2026-11-01T00:30:02.650Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -14,7 +14,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8dca43ed"
   },
   "tanstack-router": {
     "name": "router",
@@ -39,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T00:19:09.211Z",
-    "lastVerified": "2026-11-01T00:19:09.211Z",
+    "lastChecked": "2026-11-01T00:30:08.312Z",
+    "lastVerified": "2026-11-01T00:30:08.312Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -348,9 +349,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-10-31T23:56:41.912Z",
+    "lastChecked": "2026-11-01T00:30:07.577Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-10-31T23:56:41.912Z"
+    "lastVerified": "2026-11-01T00:30:07.577Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1735,9 +1736,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-10-31T09:20:10.502Z",
+    "lastChecked": "2026-11-01T00:30:04.979Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-10-31T09:20:10.502Z"
+    "lastVerified": "2026-11-01T00:30:04.979Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB",
@@ -3516,9 +3517,9 @@
   "dragonflyoss-dragonfly": {
     "name": "dragonfly",
     "officialUrl": "https://github.com/dragonflyoss/dragonfly",
-    "lastChecked": "2026-10-31T10:07:25.424Z",
+    "lastChecked": "2026-11-01T00:30:00.206Z",
     "revisionIdentifier": "fce3dc25",
-    "lastVerified": "2026-10-31T10:07:25.424Z"
+    "lastVerified": "2026-11-01T00:30:00.206Z"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -3793,9 +3794,9 @@
   "fujiapple852-trippy": {
     "name": "trippy",
     "officialUrl": "https://github.com/fujiapple852/trippy",
-    "lastChecked": "2026-10-31T04:50:23.389Z",
+    "lastChecked": "2026-11-01T00:29:52.628Z",
     "revisionIdentifier": "54c8f399",
-    "lastVerified": "2026-10-31T04:50:23.389Z"
+    "lastVerified": "2026-11-01T00:29:52.628Z"
   },
   "hf-qwen-qwen3-0.6b": {
     "name": "Qwen/Qwen3-0.6B",
@@ -8363,13 +8364,13 @@
     "officialUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T22:52:10.293Z",
-    "lastVerified": "2026-10-28T22:52:10.293Z",
+    "lastChecked": "2026-11-01T00:29:55.130Z",
+    "lastVerified": "2026-11-01T00:29:55.130Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "3a711a92eca89a128886e84499bc4e62f7130c3a1987a1d8ca3c7962b1c952e8",
-    "promotedRulesCount": 0,
+    "contentHash": "76fc6e6dc2dd22d56262ad0b7917bf978d20e4326a9069b947b839f0ab20e13f",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -9415,9 +9416,9 @@
   "leetcode-mafia-cheetah": {
     "name": "cheetah",
     "officialUrl": "https://github.com/leetcode-mafia/cheetah",
-    "lastChecked": "2026-10-29T23:41:26.400Z",
+    "lastChecked": "2026-11-01T00:29:57.472Z",
     "revisionIdentifier": "e66db5be",
-    "lastVerified": "2026-10-29T23:41:26.400Z"
+    "lastVerified": "2026-11-01T00:29:57.472Z"
   },
   "janreges-siteone-crawler": {
     "name": "siteone-crawler",

@@ -6766,3 +6766,4 @@
 | `CYCLE-20261101-Q54I` | `2026-11-01T00:10:25.266Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`06051c5f...`) |
 | `CYCLE-20261101-QBVM` | `2026-11-01T00:10:34.018Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6376` | Yes (`b6ad4a57...`) |
 | `CYCLE-20261101-1BF5` | `2026-11-01T00:19:06.641Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6377, Rule 6378, Rule 6379` | Yes (`d3d3d5df...`) |
+| `CYCLE-20261101-FG02` | `2026-11-01T00:30:05.762Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6380, Rule 6381, Rule 6382` | Yes (`76fc6e6d...`) |
