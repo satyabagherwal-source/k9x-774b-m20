@@ -6778,3 +6778,4 @@
 | `CYCLE-20261101-PRTS` | `2026-11-01T01:06:07.264Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6388, Rule 6389, Rule 6390` | Yes (`c28c4797...`) |
 | `CYCLE-20261101-39D0` | `2026-11-01T01:16:36.516Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6391, Rule 6392` | Yes (`bdf88a0b...`) |
 | `CYCLE-20261101-GAXD` | `2026-11-01T01:26:45.073Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`da0c0287...`) |
+| `CYCLE-20261101-P4PB` | `2026-11-01T01:33:36.911Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`19cc97c7...`) |

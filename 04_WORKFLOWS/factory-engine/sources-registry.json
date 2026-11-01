@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T01:26:54.798Z",
-    "lastVerified": "2026-11-01T01:26:54.798Z",
+    "lastChecked": "2026-11-01T01:33:48.257Z",
+    "lastVerified": "2026-11-01T01:33:48.257Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -349,9 +349,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-01T00:56:05.300Z",
+    "lastChecked": "2026-11-01T01:33:48.245Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-01T00:56:05.300Z"
+    "lastVerified": "2026-11-01T01:33:48.245Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -761,8 +761,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T21:54:15.361Z",
-    "lastVerified": "2026-10-31T21:54:15.361Z",
+    "lastChecked": "2026-11-01T01:33:43.237Z",
+    "lastVerified": "2026-11-01T01:33:43.237Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -2421,12 +2421,12 @@
     "lastVerified": "2026-10-31T22:03:50.794Z"
   },
   "paradedb-paradedb": {
-    "name": "paradedb/paradedb",
+    "name": "paradedb",
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T10:27:16.223Z",
-    "lastVerified": "2026-10-31T10:27:16.223Z",
+    "lastChecked": "2026-11-01T01:33:45.775Z",
+    "lastVerified": "2026-11-01T01:33:45.775Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
@@ -2435,7 +2435,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6e3efd5a"
   },
   "kuddev-pebrel": {
     "name": "Kuddev/pebrel",
@@ -3926,9 +3927,9 @@
   "go-chassis-go-chassis": {
     "name": "go-chassis",
     "officialUrl": "https://github.com/go-chassis/go-chassis",
-    "lastChecked": "2026-10-31T11:19:16.762Z",
+    "lastChecked": "2026-11-01T01:33:40.725Z",
     "revisionIdentifier": "6bcf5150",
-    "lastVerified": "2026-10-31T11:19:16.762Z"
+    "lastVerified": "2026-11-01T01:33:40.725Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -4204,9 +4205,9 @@
   "aome510-spotify-player": {
     "name": "spotify-player",
     "officialUrl": "https://github.com/aome510/spotify-player",
-    "lastChecked": "2026-10-31T05:42:36.058Z",
+    "lastChecked": "2026-11-01T01:33:33.223Z",
     "revisionIdentifier": "7dc9d17a",
-    "lastVerified": "2026-10-31T05:42:36.058Z"
+    "lastVerified": "2026-11-01T01:33:33.223Z"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "name": "meta-llama/Meta-Llama-3-8B",
@@ -8610,12 +8611,12 @@
     "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-29T00:09:07.372Z",
-    "lastVerified": "2026-10-29T00:09:07.372Z",
+    "lastChecked": "2026-11-01T01:33:35.806Z",
+    "lastVerified": "2026-11-01T01:33:35.806Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-    "contentHash": "fcb0563f9b22bce7ee765c7fd479ad864e1bfeac70a899629b13e640c8c67f91",
+    "contentHash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9541,9 +9542,9 @@
   "ehpanda-team-ehpanda": {
     "name": "EhPanda",
     "officialUrl": "https://github.com/EhPanda-Team/EhPanda",
-    "lastChecked": "2026-10-30T03:18:45.603Z",
+    "lastChecked": "2026-11-01T01:33:38.290Z",
     "revisionIdentifier": "37b97996",
-    "lastVerified": "2026-10-30T03:18:45.603Z"
+    "lastVerified": "2026-11-01T01:33:38.290Z"
   },
   "hf-liconstudio-minimax-h3-vbvr": {
     "name": "LiconStudio/Minimax-H3-VBVR",

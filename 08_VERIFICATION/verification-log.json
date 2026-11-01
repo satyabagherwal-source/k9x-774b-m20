@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-H6P4",
-    "timestamp": "2026-10-30T19:35:50.824Z",
-    "repository": "TanStack/query",
-    "learningId": "learn-github-tanstack-query",
-    "contentHash": "8f82e3069b037701e60c7644e0849731e6f7f2a0cac16626510ddb92f2061032",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-HBYD",
     "timestamp": "2026-10-30T19:35:57.637Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/flux-3-image-klein-comfy",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
     "contentHash": "da0c0287161954f3b934b140ff470452d7358e83c3d064fcaddbf9f0913d5bbf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-P4PB",
+    "timestamp": "2026-11-01T01:33:36.911Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "19cc97c72da98ab24881835b846e7d1049931411335996cabec6b8f786a2dd3d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T01:26:45.088Z",
-  "total_cycles_completed": 6755,
-  "total_learnings_persisted": 6755,
+  "last_updated": "2026-11-01T01:33:36.927Z",
+  "total_cycles_completed": 6756,
+  "total_learnings_persisted": 6756,
   "total_rules_promoted": 6401,
   "history": [
-    {
-      "timestamp": "2026-10-31T13:13:57.778Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T13:14:06.218Z",
       "repository": "pulumi/pulumi",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-01T01:26:45.088Z",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:33:36.927Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
