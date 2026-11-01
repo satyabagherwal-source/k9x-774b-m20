@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T23:56:35.731Z",
-  "total_cycles_completed": 6738,
-  "total_learnings_persisted": 6738,
-  "total_rules_promoted": 6379,
+  "last_updated": "2026-11-01T00:04:15.780Z",
+  "total_cycles_completed": 6740,
+  "total_learnings_persisted": 6740,
+  "total_rules_promoted": 6383,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:39:27.583Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T12:39:42.175Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:46:45.603Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-10-31T23:56:35.731Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:03:04.473Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:04:15.780Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

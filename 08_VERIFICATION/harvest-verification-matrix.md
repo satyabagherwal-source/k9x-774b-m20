@@ -6761,3 +6761,5 @@
 | `CYCLE-20261031-ZV8I` | `2026-10-31T23:49:59.394Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6368` | Yes (`cfdc22f1...`) |
 | `CYCLE-20261031-ZWGC` | `2026-10-31T23:50:00.972Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6369` | Yes (`fbb9e0bb...`) |
 | `CYCLE-20261031-8D1N` | `2026-10-31T23:56:35.723Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6370, Rule 1995, Rule 6371` | Yes (`37467317...`) |
+| `CYCLE-20261101-GP03` | `2026-11-01T00:03:04.467Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6372` | Yes (`5f7aff6d...`) |
+| `CYCLE-20261101-I80T` | `2026-11-01T00:04:15.773Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6373, Rule 6374, Rule 6375` | Yes (`8c73979b...`) |

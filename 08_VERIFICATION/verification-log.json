@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-YQ6G",
-    "timestamp": "2026-10-30T18:25:30.376Z",
-    "repository": "google/closure-compiler",
-    "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "401679b9af3b6f6a719476779521aec7c6c78dec8099280410ba29146b3a72d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-YZD6",
-    "timestamp": "2026-10-30T18:25:42.282Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "42dad306398d544dc60be5d926dc714fbc50a1451ef0aafc93f59f2211712a5e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-7PNR",
     "timestamp": "2026-10-30T18:32:29.607Z",
     "repository": "sveltejs/svelte",
@@ -7490,6 +7460,36 @@
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
     "contentHash": "374673176bfd8f21261fb16582e44d74cf5a5056d35e99737da9ed2170f978c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-GP03",
+    "timestamp": "2026-11-01T00:03:04.467Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "5f7aff6d7eedbbcbe13cf0809db55609d100a4d578f7b343f8d0c8aa39e46612",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-I80T",
+    "timestamp": "2026-11-01T00:04:15.773Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+    "contentHash": "8c73979b3b3a79ae19118dbb23d799992320cd1a428adc04fecb6c32652934e6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

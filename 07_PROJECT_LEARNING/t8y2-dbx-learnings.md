@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `3cdf8de9`  
+> **Source Version**: `a3add88d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T08:14:02.944Z  
+> **Timestamp**: 2026-11-01T00:03:04.017Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T08:13:54.643Z  
+> **Harvest Timestamp**: 2026-11-01T00:03:03.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 28280 stars
+- **Stars / Engagement**: 28372 stars
 
 ---
 
@@ -2012,1022 +2012,411 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `446f5b74` (2026-10-30)
-**Commit Message**: fix(updates): load changelog versions lazily instead of the full feed
+### Incident Patch 1: `708a2d3f` (2026-10-31)
+**Commit Message**: fix: refresh sidebar columns after saving table structure (#13850)
 
-Closes #13966
-
-**File**: `apps/desktop/src/components/layout/UpdateDialog.spec.ts` (modified, +20/-11)
+**File**: `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts` (modified, +22/-0)
 ```diff
-@@ -8,7 +8,8 @@ import UpdateDialog from "@/components/layout/UpdateDialog.vue";
- const runtimeState = vi.hoisted(() => ({ tauri: true }));
- 
- const updateMocks = vi.hoisted(() => ({
--  fetchChangelog: vi.fn(),
-+  fetchChangelogIndex: vi.fn(),
-+  fetchChangelogRelease: vi.fn(),
-   getAppVersion: vi.fn(),
-   openExternal: vi.fn(),
+@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
+   executeTabSql: vi.fn(),
+   getColumns: vi.fn(),
+   invalidateCompletionTableCache: vi.fn(),
++  refreshTableColumnsTree: vi.fn(),
+   listIndexes: vi.fn(),
+   setErrorResult: vi.fn(),
+   setTableMeta: vi.fn(),
+@@ -34,6 +35,7 @@ vi.mock("@/stores/connectionStore", () => ({
+     connectionIdentifierQuote: () => undefined,
+     metadataGenerationFor: () => 0,
+     refreshObjectListTreeNode: vi.fn(),
++    refreshTableColumnsTree: mocks.refreshTableColumnsTree,
+     invalidateCompletionTableCache: mocks.invalidateCompletionTableCache,
+   }),
  }));
-@@ -19,7 +20,7 @@ vi.mock("@/lib/backend/tauriRuntime", () => ({
- 
- vi.mock("@/lib/app/changelog", async (importOriginal) => {
-   const actual = await importOriginal<typeof import("@/lib/app/changelog")>();
--  return { ...actual, fetchChangelog: updateMocks.fetchChangelog };
-+  return { ...actual, fetchChangelogIndex: updateMocks.fetchChangelogIndex, fetchChangelogRelease: updateMocks.fetchChangelogRelease };
- });
- 
- vi.mock("@/lib/backend/api", async (importOriginal) => {
-@@ -156,7 +157,8 @@ async function clickOutside() {
- 
- beforeEach(() => {
-   // 默认没有历史版本：只有专门的历史版本用例才提供发布记录
--  updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "", releases: [] });
-+  updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "", releases: [] });
-+  updateMocks.fetchChangelogRelease.mockResolvedValue({ tag: "", name: "", date: "", sections: [] });
-   updateMocks.getAppVersion.mockResolvedValue("0.5.60");
-   updateMocks.openExternal.mockClear();
- });
-@@ -450,9 +452,15 @@ describe("UpdateDialog release notes safety", () => {
- describe("UpdateDialog changelog", () => {
-   it("shows the shared changelog even when the current version has no update", async () => {
-     const checkUpdates = vi.fn();
--    updateMocks.fetchChangelog.mockResolvedValue({
-+    updateMocks.fetchChangelogIndex.mockResolvedValue({
-       updatedAt: "2026-10-28",
--      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28", sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }] }],
-+      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28" }],
-+    });
-+    updateMocks.fetchChangelogRelease.mockResolvedValue({
-+      tag: "v0.5.60",
-+      name: "DBX v0.5.60",
-+      date: "2026-10-28",
-+      sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }],
+@@ -219,11 +221,31 @@ describe("useNavigationTargets openTableTarget", () => {
+       tableName: target.tableName,
      });
-     await mountDialog(0, {}, undefined, { updateInfo: null, "onCheck-updates": checkUpdates });
  
-@@ -485,7 +493,8 @@ describe("UpdateDialog changelog", () => {
- });
- 
- describe("UpdateDialog older versions", () => {
--  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date, sections: [] });
-+  // The rollback list only needs index entries (tag/date); release bodies stay unloaded.
-+  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date });
-   const upToDateInfo = {
-     current_version: "0.5.60",
-     latest_version: "0.5.60",
-@@ -500,7 +509,7 @@ describe("UpdateDialog older versions", () => {
-   const historyButton = (text: string) => Array.from(historyRegion()?.querySelectorAll("button") ?? []).find((button) => button.textContent?.includes(text));
- 
-   it("lists only versions older than the current build and opens their release page", async () => {
--    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
-+    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
- 
-     await mountDialog(0, {}, undefined, { updateInfo: upToDateInfo, updateCheckMessage: "DBX is up to date (0.5.60)." });
-     await flushDialog();
-@@ -524,7 +533,7 @@ describe("UpdateDialog older versions", () => {
++    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
+     expect(mocks.invalidateCompletionTableCache).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
+     expect(mocks.getColumns).toHaveBeenCalledTimes(2);
+     expect(mocks.tabs.map((tab) => tab.tableMeta?.primaryKeys)).toEqual([["fresh_id"], ["fresh_id"]]);
    });
  
-   it("keeps the history collapsed until the user expands it", async () => {
--    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
-+    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
- 
-     await mountDialog(0);
-     await flushDialog();
-@@ -539,7 +548,7 @@ describe("UpdateDialog older versions", () => {
-   });
- 
-   it("starts collapsed again after the dialog is reopened", async () => {
--    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
-+    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
- 
-     const { state } = await mountDialog(0, {}, undefined, { updateInfo: upToDateInfo, updateCheckMessage: "DBX is up to date (0.5.60)." });
-     await flushDialog();
-@@ -558,7 +567,7 @@ describe("UpdateDialog older versions", () => {
-   });
- 
-   it("hides the history section when no release i
-```
-
-**File**: `apps/desktop/src/components/layout/UpdateDialog.vue` (modified, +4/-3)
-```diff
-@@ -15,7 +15,7 @@ import { isUpdatePreviewMockEnabled } from "@/lib/updates/updatePreviewMock";
- import { canDownloadAndInstallUpdate, isNewerRemoteVersion, resolveReleaseTagUrl } from "@/composables/useAppUpdater";
- import type { ComponentUpdateCategory } from "@/composables/useComponentUpdates";
- import { currentLocale } from "@/i18n";
--import { changelogLangFromLocale, createLatestRequestGuard, fetchChangelog, type ChangelogRelease } from "@/lib/app/changelog";
-+import { changelogLangFromLocale, createLatestRequestGuard, fetchChangelogIndex, type ChangelogReleaseSummary } from "@/lib/app/changelog";
- import DriverInstallProgressCircle from "@/components/config/DriverInstallProgressCircle.vue";
- import ChangelogPanel from "@/components/settings/ChangelogPanel.vue";
- import { driverInstallProgressPercent, formatDriverInstallProgressText, type DriverInstallProgress } from "@/lib/connection/driverInstallProgressUi";
-@@ -102,7 +102,8 @@ const mcpAvailable = computed(() => (props.mcpUpdate ? mcpUpdateAvailability(pro
- const HISTORY_PAGE_SIZE = 10;
- const historyLoading = ref(false);
- const historyError = ref("");
--const historyReleases = ref<ChangelogRelease[]>([]);
-+/** 只需要版本号与日期，因此读轻量索引而不是整份更新日志正文 */
-+const historyReleases = ref<ChangelogReleaseSummary[]>([]);
- const historyVisibleCount = ref(HISTORY_PAGE_SIZE);
- const historyRequest = createLatestRequestGuard();
- /** 弹窗可能在“检查更新”完成前打开，这里保存单独取到的应用版本用于比较 */
-@@ -229,7 +230,7 @@ async function loadOlderReleases() {
-     if (!props.updateInfo?.current_version && !fallbackVersion.value) {
-       fallbackVersion.value = await getAppVersion().catch(() => "");
-     }
--    const data = await fetchChangelog(changelogLang.value);
-+    const data = await fetchChangelogIndex(changelogLang.value);
-     if (!historyRequest.isCurrent(requestId)) return;
-     historyReleases.value = data.releases;
-   } catch (error) {
-```
-
-**File**: `apps/desktop/src/components/settings/ChangelogPanel.spec.ts` (added, +139/-0)
-```diff
-@@ -0,0 +1,139 @@
-+// @vitest-environment happy-dom
-+
-+import { createApp, defineComponent, h, nextTick, type App } from "vue";
-+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-+import i18n from "@/i18n";
-+import ChangelogPanel from "@/components/settings/ChangelogPanel.vue";
-+
-+const changelogMocks = vi.hoisted(() => ({
-+  fetchChangelogIndex: vi.fn(),
-+  fetchChangelogRelease: vi.fn(),
-+}));
-+
-+vi.mock("@/lib/app/changelog", async (importOriginal) => {
-+  const actual = await importOriginal<typeof import("@/lib/app/changelog")>();
-+  return { ...actual, fetchChangelogIndex: changelogMocks.fetchChangelogIndex, fetchChangelogRelease: changelogMocks.fetchChangelogRelease };
-+});
-+
-+vi.mock("@tauri-apps/plugin-shell", () => ({ open: vi.fn() }));
-+
-+const mountedApps: App[] = [];
-+
-+async function flushPanel() {
-+  await nextTick();
-+  await new Promise((resolve) => setTimeout(resolve, 0));
-+  await nextTick();
-+}
-+
-+function entry(tag: string) {
-+  return { tag, name: `DBX ${tag}`, date: "2026-10-30" };
-+}
-+
-+function entries(count: number) {
-+  return Array.from({ length: count }, (_, index) => entry(`v0.6.${count - index}`));
-+}
-+
-+function release(tag: string) {
-+  return {
-+    tag,
-+    name: `DBX ${tag}`,
-+    date: "2026-10-30",
-+    sections: [{ type: "fixed", title: "Fixed", items: [{ title: `${tag} fix note`, desc: "" }] }],
-+  };
-+}
-+
-+function releaseRows(container: HTMLElement) {
-+  return Array.from(container.querySelectorAll<HTMLButtonElement>("button[aria-expanded]"));
-+}
-+
-+function buttonWithText(container: HTMLElement, text: string) {
-+  return Array.from(container.querySelectorAll<HTMLButtonElement>("button")).find((button) => button.textContent?.includes(text));
-+}
-+
-+async function mountPanel(): Promise<HTMLElement> {
-+  const container = document.createElement("div");
-+  document.body.append(container);
-+  const app = createApp(defineComponent({ setup: () => () => h(ChangelogPanel) }));
-+  mountedApps.push(app);
-+  app.use(i18n);
-+  app.mount(container);
-+  await flushPanel();
-+  return container;
-+}
-+
-+beforeEach(() => {
-+  changelogMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-10-30", releases: entries(8) });
-+  changelogMocks.fetchChangelogRelease.mockImplementation(async (_lang: string, tag: string) => release(tag));
-+});
-+
-+afterEach(() => {
-+  for (const app of mountedApps.splice(0)) app.unmount();
-+  document.body.innerHTML = "";
-+  vi.clearAllMocks();
-+});
-+
-+describe("ChangelogPanel lazy release bodies", () => {
-+  it("loads only the version index up front and pulls a body when a version is expanded", async () => {
-+    const container = await mountPanel();
-+
-+    expect(changelogMocks.fetchChangelogIndex).toHaveBeenCalledTimes(1);
-+    expect(changelogMocks.fetchChangelogRelease).not.toHaveBeenCalled();
-+    // The first page is list metadata only: no release notes travel with it.
-+    expect(releaseRows(container)).toHaveLength(5);
-+    expect(container.textContent).not.toContain("v0.6.8 fix note");
-+
-+    releaseRows(container)[0].click();
-+    await flushPanel();
-+
-+    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
-+    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledWith(expect.any(String), "v0.6.8");
-+    expect(container.textContent).toContain("v0.6.8 fix note");
-+    // Untouched versions stay unfetched.
-+    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
++  it("refreshes sidebar columns even without a data tab", async () => {
++    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
++    await useNavigationTargets(dialogs).onStructureEditorSaved(vi.fn(), vi.fn(), target);
++    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", undefined);
++    expect(mocks.getColumns).not.toHaveBeenCalled();
 +  });
 +
-+  it("reveals more versions on load more without downloading their notes", async () => {
-+    const container = await mountPanel();
-+    expect(releaseRows(container)).toHaveLength(5);
-+
-+    buttonWithText(container, i18n.global.t("settings.changelogLoadMore"))?.click();
-+    await flushPanel();
-+
-+    expect(releaseRows(container)).toHaveLength(8);
-+    expect(changelogMocks.fetchChangelogRelease).not.toHaveBeenCalled();
-+    expect(buttonWithText(container, i18n.global.t("settings.changelogLoadMore"))).toBeUndefined();
++  it("still refreshes data tab metadata if the sidebar reload fails", async () => {
++    const navigation = useNavigationTargets(dialogs);
++    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
++    await navigation.openLineageTarget(target);
++    mocks.refreshTableColumnsTree.mockRejectedValueOnce(new Error("sidebar unavailable"));
++    mocks.getColumns.mockResolvedValueOnce([column("fresh_id")]);
++    const toast = vi.fn();
++    await navigation.onStructureEditorSaved(vi.fn(), toast, target);
++    expect(toast).toHaveBeenCalledWith("sidebar unavailable", 5000);
++    expect(mocks.tabs[0]?.tableMeta?.primaryKeys).toEqual(["fresh_id"]);
 +  });
 +
-+  it("keeps a loaded body in memory when the version is collapsed and expanded again", async () => {
-+    const container = await mountPanel();
-+
-+    releaseRows(container)[0].click();
-+    await flushPanel();
-+    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
-+
-+    releaseRows(container)[0].click();
-+    await flushPanel();
-+    releaseRows(container)[0].click();
-+    await flushPanel();
-+
-+    expect(changelogMocks.fetchChangelogRelease).toHaveBeenCalledTimes(1);
-+    expect(container.textContent).toContain("v0.6.8 fix note");
-+  });
-+
-+  it("surfaces a body load failure with a retry that renders the notes", async () => {
-+    changelogMocks.fetchChangelogRelease.mockRejectedValueOnce(new Error("offline"));
-+    const container = await mountPanel();
-+
-+    releaseRows(container)[0].click();
-+    await flushPanel();
-+
-+    expect(container.textContent).toContain(i18n.global.t("settings.changelogLoadFailed"));
-+
-+    buttonWithText(container, i18n.glob
+   it("keeps row identity pending when shared metadata loading fails", async () => {
+     mocks.getColumns.mockRejectedValue(new Error("metadata unavailable"));
+ 
 ```
 
-**File**: `apps/desktop/src/components/settings/ChangelogPanel.vue` (modified, +97/-24)
+**File**: `apps/desktop/src/composables/__tests__/useNavigationTargets.store.spec.ts` (modified, +1/-0)
 ```diff
-@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
- import { currentLocale } from "@/i18n";
- import { isTauriRuntime } from "@/lib/backend/tauriRuntime";
- import { formatAiInlineMarkdownFragment, handleAiMarkdownLinkClick } from "@/lib/ai/aiMarkdown";
--import { changelogLangFromLocale, changelogReleaseUrl, changelogWebsiteUrl, createLatestRequestGuard, fetchChangelog, type ChangelogItem, type ChangelogLang, type ChangelogRelease } from "@/lib/app/changelog";
-+import { changelogLangFromLocale, changelogReleaseUrl, changelogWebsiteUrl, clearChangelogCache, createLatestRequestGuard, fetchChangelogIndex, fetchChangelogRelease, type ChangelogItem, type ChangelogLang, type ChangelogRelease, type ChangelogReleaseSummary } from "@/lib/app/changelog";
- 
- const PAGE_SIZE = 5;
- 
-@@ -29,16 +29,20 @@ const emit = defineEmits<{
- 
- const loading = ref(false);
- const error = ref("");
--const releases = ref<ChangelogRelease[]>([]);
-+/** Version rows only; release bodies are fetched per version when expanded. */
-+const entries = ref<ChangelogReleaseSummary[]>([]);
- const visibleCount = ref(PAGE_SIZE);
- const expandedTags = ref<Set<string>>(new Set());
-+const releaseDetails = ref<Record<string, ChangelogRelease>>({});
-+const releaseLoading = ref<Set<string>>(new Set());
-+const releaseErrors = ref<Record<string, string>>({});
- const loadedLang = ref<ChangelogLang | null>(null);
- const loadRequest = createLatestRequestGuard();
- 
- const changelogLang = computed(() => changelogLangFromLocale(locale.value || currentLocale()));
--const visibleReleases = computed(() => releases.value.slice(0, visibleCount.value));
--const hasMore = computed(() => visibleCount.value < releases.value.length);
--const latestTag = computed(() => releases.value[0]?.tag ?? "");
-+const visibleReleases = computed(() => entries.value.slice(0, visibleCount.value));
-+const hasMore = computed(() => visibleCount.value < entries.value.length);
-+const latestTag = computed(() => entries.value[0]?.tag ?? "");
- 
- function isLatestRelease(tag: string) {
-   return !!latestTag.value && tag === latestTag.value;
-@@ -90,33 +94,88 @@ function isExpanded(tag: string) {
-   return expandedTags.value.has(tag);
- }
- 
-+function releaseFor(tag: string): ChangelogRelease | null {
-+  return releaseDetails.value[tag] ?? null;
-+}
-+
-+function releaseSections(tag: string) {
-+  return releaseDetails.value[tag]?.sections ?? [];
-+}
-+
-+function isReleaseLoading(tag: string) {
-+  return releaseLoading.value.has(tag);
-+}
-+
-+function releaseErrorFor(tag: string) {
-+  return releaseErrors.value[tag] ?? "";
-+}
-+
- function toggleRelease(tag: string) {
-   const next = new Set(expandedTags.value);
-   if (next.has(tag)) next.delete(tag);
-   else next.add(tag);
-   expandedTags.value = next;
-+  // Bodies are lazy: opening a version is what pulls its notes.
-+  if (next.has(tag)) void loadReleaseDetails(tag);
-+}
-+
-+async function loadReleaseDetails(tag: string) {
-+  if (releaseDetails.value[tag] || releaseLoading.value.has(tag)) return;
-+
-+  const lang = changelogLang.value;
-+  releaseLoading.value = new Set(releaseLoading.value).add(tag);
-+  if (releaseErrors.value[tag]) {
-+    const nextErrors = { ...releaseErrors.value };
-+    delete nextErrors[tag];
-+    releaseErrors.value = nextErrors;
-+  }
-+
-+  try {
-+    const release = await fetchChangelogRelease(lang, tag);
-+    if (loadedLang.value !== lang) return;
-+    releaseDetails.value = { ...releaseDetails.value, [tag]: release };
-+  } catch (e: any) {
-+    if (loadedLang.value !== lang) return;
-+    releaseErrors.value = { ...releaseErrors.value, [tag]: e?.message || String(e) };
-+  } finally {
-+    // A language switch already reset every body slot; do not touch the new set.
-+    if (loadedLang.value === lang && releaseLoading.value.has(tag)) {
-+      const nextLoading = new Set(releaseLoading.value);
-+      nextLoading.delete(tag);
-+      releaseLoading.value = nextLoading;
+@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
+     // 与真实 store 一致：setTableMeta 记录连接元数据代次
+     metadataGenerationFor: vi.fn(() => 0),
+     refreshObjectListTreeNode: vi.fn(),
++    refreshTableColumnsTree: vi.fn(),
+     invalidateCompletionTableCache: vi.fn(),
+   },
+   settingsStore: {
+```
+
+**File**: `apps/desktop/src/composables/useNavigationTargets.ts` (modified, +5/-0)
+```diff
+@@ -437,6 +437,11 @@ export function useNavigationTargets(dialogs: { showFieldLineageDialog: { value:
+     // 其它 loadTableMetadata 消费者最长 30 秒拿到旧列。不带 schema/catalog
+     // 维度（宁可多废，schema 形态在各消费点可能不同）
+     invalidateTableMetadataCache({ connectionId: context.connectionId, database: context.database, tableName: context.tableName, ...(context.exactIdentity ? { schema: context.schema } : {}) });
++    try {
++      await connectionStore.refreshTableColumnsTree(context.connectionId, context.database, context.tableName, context.schema, context.catalog);
++    } catch (e) {
++      toast(e instanceof Error ? e.message : String(e), 5000);
 +    }
-+  }
- }
- 
- function loadMore() {
--  visibleCount.value = Math.min(visibleCount.value + PAGE_SIZE, releases.value.length);
-+  visibleCount.value = Math.min(visibleCount.value + PAGE_SIZE, entries.value.length);
-+}
-+
-+function resetReleaseBodies() {
-+  expandedTags.value = new Set();
-+  releaseDetails.value = {};
-+  releaseLoading.value = new Set();
-+  releaseErrors.value = {};
- }
- 
- async function load(force = false) {
-   const lang = changelogLang.value;
-   const requestId = loadRequest.begin();
-   loading.value = true;
-   error.value = "";
-+  if (force) clearChangelogCache(lang);
-   try {
--    const data = await fetchChangelog(lang, { force });
-+    const data = await fetchChangelogIndex(lang);
-     if (!loadRequest.isCurrent(requestId)) return;
--    releases.value = data.releases;
-+    entries.value = data.releases;
-     loadedLang.value = lang;
-     visibleCount.value = PAGE_SIZE;
--    expandedTags.value = new Set();
-+    resetReleaseBodies();
-   } catch (e: any) {
-     if (!loadRequest.isCurrent(requestId)) return;
--    releases.value = [];
-+    entries.value = 
+     const matchingDataTabs = queryStore.tabs.filter((tab) => tab.mode === "data" && tab.connectionId === context.connectionId && tab.database === context.database && tab.tableMeta?.tableName === context.tableName && (tab.schema || tab.tableMeta.schema || "") === (context.schema || ""));
+     // 同一 catalog 只强制加载一次，结果分发给全部匹配 tab
+     const loadedByCatalog = new Map<string, { columns: ColumnInfo[]; primaryKeys: string[] }>();
 ```
 
-**File**: `apps/desktop/src/lib/app/changelog.ts` (modified, +92/-11)
+**File**: `apps/desktop/src/stores/__tests__/connectionStore.refresh.spec.ts` (modified, +80/-1)
 ```diff
-@@ -16,14 +16,52 @@ export type ChangelogRelease = {
-   sections: ChangelogSection[];
- };
+@@ -1,7 +1,8 @@
+ import { createPinia, setActivePinia } from "pinia";
+ import { beforeEach, describe, expect, it, vi } from "vitest";
+ import { isObjectCacheInvalidationError } from "@/lib/metadata/objectCacheInvalidationError";
+-import type { ConnectionConfig, TreeNode } from "@/types/database";
++import { createColumnDrafts } from "@/lib/table/tableStructureEditorState";
++import type { ColumnInfo, ConnectionConfig, TreeNode } from "@/types/database";
  
-+/** One row of the published changelog index: no release body. */
-+export type ChangelogReleaseSummary = {
-+  tag: string;
-+  name: string;
-+  date: string;
-+};
-+
-+export type ChangelogIndexData = {
-+  updatedAt: string;
-+  releases: ChangelogReleaseSummary[];
-+};
-+
- export type ChangelogData = {
-   updatedAt: string;
-   releases: ChangelogRelease[];
- };
- 
- export type ChangelogLang = "en" | "cn";
- 
--const cache = new Map<ChangelogLang, Promise<ChangelogData>>();
-+const feedCache = new Map<ChangelogLang, Promise<ChangelogData>>();
-+const indexCache = new Map<ChangelogLang, Promise<ChangelogIndexData>>();
-+const releaseCache = new Map<string, Promise<ChangelogRelease>>();
-+
-+function releaseCacheKey(lang: ChangelogLang, tag: string) {
-+  return `${lang}\u0000${tag}`;
-+}
-+
-+/**
-+ * Drop cached changelog payloads so the next read goes back to R2. A release
-+ * body is cached per tag, so clearing one language has to clear each of its tags.
-+ */
-+export function clearChangelogCache(lang?: ChangelogLang) {
-+  if (!lang) {
-+    feedCache.clear();
-+    indexCache.clear();
-+    releaseCache.clear();
-+    return;
-+  }
-+  feedCache.delete(lang);
-+  indexCache.delete(lang);
-+  const prefix = `${lang}\u0000`;
-+  // Map iterators tolerate deleting the entry being visited.
-+  for (const key of releaseCache.keys()) {
-+    if (key.startsWith(prefix)) releaseCache.delete(key);
-+  }
-+}
- 
- export function createLatestRequestGuard() {
-   let latestRequestId = 0;
-@@ -45,23 +83,66 @@ export function changelogReleaseUrl(tag: string): string {
-   return `https://github.com/t8y2/dbx/releases/tag/${encodeURIComponent(tag)}`;
- }
- 
--export async function fetchChangelog(lang: ChangelogLang, options: { force?: boolean } = {}): Promise<ChangelogData> {
--  if (options.force) {
--    cache.delete(lang);
--  }
--
--  let pending = cache.get(lang);
-+function cached<T>(cache: Map<string, Promise<T>>, key: string, load: () => Promise<T>, force: boolean): Promise<T> {
-+  if (force) cache.delete(key);
-+  let pending = cache.get(key);
-   if (!pending) {
--    pending = loadChangelog(lang).catch((error) => {
--      cache.delete(lang);
-+    pending = load().catch((error) => {
-+      cache.delete(key);
-       throw error;
-     });
--    cache.set(lang, pending);
-+    cache.set(key, pending);
-   }
--
-   return pending;
- }
- 
-+/**
-+ * Version list only (`changelog/index-<lang>.json`, a few kilobytes). The full
-+ * feed carries every release body and is megabytes, so any UI that only lists
-+ * versions reads the index instead of downloading all release notes.
-+ */
-+export async function fetchChangelogIndex(lang: ChangelogLang, options: { force?: boolean } = {}): Promise<ChangelogIndexData> {
-+  return cached(indexCache, lang, () => loadChangelogIndex(lang), options.force === true);
-+}
-+
-+/** Release body for one version (`changelog/releases-<lang>/<tag>.json`). */
-+export async function fetchChangelogRelease(lang: ChangelogLang, tag: string, options: { force?: boolean } = {}): Promise<ChangelogRelease> {
-+  return cached(releaseCache, releaseCacheKey(lang, tag), () => loadChangelogRelease(lang, tag), options.force === true);
-+}
-+
-+/** Full feed in one request; kept for callers that need every release body at once. */
-+export async function fetchChangelog(lang: ChangelogLang, options: { force?: boolean } = {}): Promise<ChangelogData> {
-+  return cached(feedCache, lang, () => loadChangelog(lang), options.force === true);
-+}
-+
-+async function loadChangelogIndex(lang: ChangelogLang): Promise<ChangelogIndexData> {
-+  const { fetchChangelogIndex: fetchIndexViaBackend } = await import("@/lib/backend/api");
-+  const data = await fetchIndexViaBackend(lang);
-+  if (!data || !Array.isArray(data.releases)) {
-+    throw new Error("Invalid changelog index payload");
-+  }
-+
-+  return {
-+    updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : "",
-+    releases: data.releases.filter((release) => release && typeof release.tag === "string"),
-+  };
-+}
-+
-+async function loadChangelogRelease(lang: ChangelogLang, tag: string): Promise<ChangelogRelease> {
-+  const { fetchChangelogRelease: fetchReleaseViaBackend } = await import("@/lib/backend/api");
-+  const data = await fetchReleaseViaBackend(lang, tag);
-+  if (!data || typeof data.tag !== "string") {
-+    throw new Error("Invalid changelog release payload");
-+  }
-+
-+  return {
-+    tag: data.tag,
-+    name: typeof data.name === "string" ? data.name : "",
-+    date: typeof data.date === "string" ? data.date : "",
-+    sections: Array.isArray(data.sections) ? data.sections.filter((section) => section && Array.isArray(section.items)) : [],
-+  };
-+}
-+
- async function loadChangelog(lang: ChangelogLang): Promise<ChangelogData> {
-   const { fetchChangelog: fetchChangelogViaBackend } = await import("@/lib/backend/api");
-   const data = await fetchChangelogViaBackend(lang);
-```
-
-**File**: `apps/desktop/src/lib/backend/api.ts` (modified, +2/-0)
-```diff
-@@ -1041,6 +1041,8 @@ export const rotateWebMcpToken = forward("rotateWebMcpToken");
- export const loadWebCapabilities = forward("loadWebCapabilities");
- export const checkForUpdates = forward("checkForUpdates");
- export const fetchChangelog = forward("fetchChangelog");
-+export const fetchChangelogIndex = forward("fetchChangelogIndex");
-+export const fetchChangelogRelease = forward("fetchChangelogRelease");
- export const getSystemProxyUrl = forward("getSystemProxyUrl");
- export const downloadUpdate = forward("downloadUpdate");
- export const cancelUpdateDownload = forward("cancelUpdateDownload");
-```
-
-**File**: `apps/desktop/src/lib/backend/http.ts` (modified, +10/-0)
-```diff
-@@ -5850,6 +5850,16 @@ export async function fetchChangelog(lang?: string): Promise<import("@/lib/app/c
-   return get(`/api/changelog${query}`);
- }
- 
-+export async function fetchChangelogIndex(lang?: string): Promise<import("@/lib/app/changelog").ChangelogIndexData> {
-+  const query = lang ? `?lang=${encodeURIComponent(lang)}` : "";
-+  return get(`/api/changelog/index${query}`);
-+}
-+
-+export async function fetchChangelogRelease(lang: string | undefined, tag: string): Promise<import("@/lib/app/changelog").ChangelogRelease> {
-+  const query = lang ? `?lang=${encodeURIComponent(lang)}` : "";
-+  return get(`/api/changelog/releases/${encodeURIComponent(tag)}${query}`);
-+}
-+
- export async function checkMcpServerStatus(): Promise<import("@/lib/backend/tauri").McpServerStatus> {
-   return {
-     installed: false,
-```
-
-**File**: `apps/desktop/src/lib/backend/tauri.ts` (modified, +8/-0)
-```diff
-@@ -3718,6 +3718,14 @@ export async function fetchChangelog(lang?: string): Promise<import("@/lib/app/c
-   return invoke("fetch_changelog", { lang });
- }
- 
-+export async function fetchChangelogIndex(lang?: string): Promise<import("@/lib/app/changelog").ChangelogIndexData> {
-+  return invoke("fetch_changelog_index", { lang });
-+}
-+
-+export async function fetchChangelogRelease(lang: string | undefined, tag: string): Promise<import("@/lib/app/changelog").ChangelogRelease> {
-+  return invoke("fetch_changelog_release", { lang, tag });
-+}
-+
- export async function getSystemProxyUrl(): Promise<string | null> {
-   return invoke("get_system_proxy_url");
- }
-```
-
----
-
-### Incident Patch 2: `df4aa4d8` (2026-10-31)
-**Commit Message**: fix(transfer): make data transfer cancel responsive before the first table
-
-**File**: `apps/desktop/src/composables/__tests__/useExportTracker.spec.ts` (modified, +25/-0)
-```diff
-@@ -214,6 +214,31 @@ describe("data transfer task duration", () => {
-     expect(task.status).toBe(expectedStatus);
+ function installLocalStorage() {
+   const data = new Map<string, string>();
+@@ -104,6 +105,84 @@ describe("connectionStore tree refresh state", () => {
+     setActivePinia(createPinia());
    });
  
-+  it("shows cancelling immediately and keeps it until the backend reports the terminal state", async () => {
-+    const tracker = useExportTracker();
-+    const task = tracker.addDataTransferTask("cancel-pending", "many tables", 1693);
++  it.each([
++    [true, "old"],
++    [false, "old"],
++    [true, "renamed"],
++    [false, "renamed"],
++  ] as const)("refreshes saved table columns without changing expansion (%s, %s)", async (expanded, name) => {
++    const getColumns = vi.fn().mockResolvedValue([column("old"), column("removed")]);
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
++    const otherSchema = { ...group, id: "other-schema", schema: "other", isExpanded: true, children: [] };
++    const otherCatalog = { ...group, id: "other-catalog", catalog: "external", isExpanded: true, children: [] };
++    const store = await createStore(schemaNode([group, otherSchema, otherCatalog]));
++    await store.loadColumns("pg-1", "app", "users", "public", group.id);
++    group.isExpanded = expanded;
++    const updated = { ...column(name), data_type: "character varying", character_maximum_length: 512, comment: "updated comment", is_nullable: false };
++    getColumns.mockResolvedValue([updated]);
 +
-+    await tracker.cancelTask(task.exportId);
-+    expect(api.cancelTransfer).toHaveBeenCalledWith("cancel-pending");
-+    expect(task.status).toBe("Cancelling");
++    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
 +
-+    tracker.updateDataTransferTask(task.exportId, transferProgress(task.exportId, "running", false));
-+    expect(task.status).toBe("Cancelling");
-+
-+    tracker.updateDataTransferTask(task.exportId, transferProgress(task.exportId, "cancelled"));
-+    expect(task.status).toBe("Cancelled");
++    expect(getColumns).toHaveBeenCalledTimes(2);
++    expect(getColumns).toHaveBeenLastCalledWith("pg-1", "app", "public", "users", undefined);
++    expect(group.children).toHaveLength(1);
++    expect(group.children![0]).toMatchObject({ label: `${name} (character varying)`, meta: updated });
++    expect(createColumnDrafts([group.children![0]!.meta as ColumnInfo], "postgres")[0]).toMatchObject({ dataType: "character varying(512)", comment: "updated comment", isNullable: false });
++    expect(group.objectCount).toBe(1);
++    expect(group.isExpanded).toBe(expanded);
++    expect(otherSchema.children).toEqual([]);
++    expect(otherCatalog.children).toEqual([]);
 +  });
 +
-+  it("returns to running when the cancel request itself fails", async () => {
-+    vi.mocked(api.cancelTransfer).mockRejectedValueOnce(new Error("unreachable"));
-+    const tracker = useExportTracker();
-+    const task = tracker.addDataTransferTask("cancel-failed", "users", 1);
-+
-+    await tracker.cancelTask(task.exportId);
-+
-+    expect(task.status).toBe("Running");
++  it("preserves old columns on a failed reload and retries an empty loaded group", async () => {
++    const getColumns = vi.fn().mockResolvedValue([]);
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
++    const store = await createStore(schemaNode([group]));
++    await store.loadColumns("pg-1", "app", "users", "public", group.id);
++    group.isExpanded = false;
++    getColumns.mockResolvedValueOnce([column("added")]);
++    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
++    expect(group.children![0]!.meta).toEqual(column("added"));
++    getColumns.mockRejectedValueOnce(new Error("metadata denied"));
++    await expect(store.refreshTableColumnsTree("pg-1", "app", "users", "public")).rejects.toThrow("metadata denied");
++    expect(group.children![0]!.meta).toEqual(column("added"));
++    expect(group.isExpanded).toBe(false);
++    expect(group.isLoading).toBe(false);
 +  });
 +
-   it("tracks concurrent transfer durations independently", () => {
-     const tracker = useExportTracker();
-     now = 1_000;
++  it("ignores an older column request that finishes after the saved structure reload", async () => {
++    let finishOld!: (value: ReturnType<typeof column>[]) => void;
++    const getColumns = vi
++      .fn()
++      .mockImplementationOnce(
++        () =>
++          new Promise((resolve) => {
++            finishOld = resolve;
++          }),
++      )
++      .mockResolvedValue([column("fresh")]);
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users", children: [] };
++    const store = await createStore(schemaNode([group]));
++    const oldLoad = store.loadColumns("pg-1", "app", "users", "public", group.id);
++    await store.refreshTableColumnsTree("pg-1", "app", "users", "public");
++    finishOld([column("stale")]);
++    await oldLoad;
++    expect(group.children![0]!.meta).toEqual(column("fresh"));
++  });
++
++  it("does not load unopened column groups after a structure save", async () => {
++    const getColumns = vi.fn();
++    installApiMocks({ getColumns });
++    const group: TreeNode = { id: "pg-1:app:public:users:__columns", label: "Columns", type: "group-columns", connectionId: "pg-1", database: "app", schema: "public", tableName: "users"
 ```
 
-**File**: `apps/desktop/src/composables/useExportTracker.ts` (modified, +22/-2)
+**File**: `apps/desktop/src/stores/connectionStore.ts` (modified, +24/-3)
 ```diff
-@@ -874,6 +874,17 @@ export function useExportTracker() {
-     task.status = "Cancelling";
+@@ -8335,7 +8335,7 @@ export const useConnectionStore = defineStore("connection", () => {
+     }
    }
  
-+  function markDataTransferTaskCancelling(transferId: string) {
-+    const task = taskMap.get(transferId);
-+    if (!task || task.kind !== "data-transfer" || task.status !== "Running") return;
-+    task.status = "Cancelling";
+-  async function loadColumns(connectionId: string, database: string, table: string, schema?: string, nodeId?: string, catalog?: string) {
++  async function loadColumns(connectionId: string, database: string, table: string, schema?: string, nodeId?: string, catalog?: string, options?: { preserveExpansion?: boolean }) {
+     const parentId = nodeId ?? (schema ? `${connectionId}:${database}:${schema}:${table}:__columns` : `${connectionId}:${database}:${table}:__columns`);
+     const node = findNode(treeNodes.value, parentId);
+     if (!node) return;
+@@ -8368,7 +8368,7 @@ export const useConnectionStore = defineStore("connection", () => {
+             };
+           }),
+         );
+-        targetNode.isExpanded = true;
++        if (!options?.preserveExpansion) targetNode.isExpanded = true;
+         return;
+       }
+       const querySchema = metadataQuerySchema(connectionId, database, schema);
+@@ -8391,7 +8391,7 @@ export const useConnectionStore = defineStore("connection", () => {
+           meta: col,
+         })),
+       );
+-      targetNode.isExpanded = true;
++      if (!options?.preserveExpansion) targetNode.isExpanded = true;
+     } catch (e) {
+       recordMetadataLoadError(connectionId, e, load);
+       throw e;
+@@ -8913,6 +8913,26 @@ export const useConnectionStore = defineStore("connection", () => {
+     void loadSidebarTableStorage({ connectionId, database, schema: schema || "" }, { force: true });
+   }
+ 
++  // Saving structure does not replace existing sidebar column nodes. Reload only
++  // materialized groups so their labels and DDL metadata stay current, including
++  // groups the user has since collapsed, without opening new branches.
++  async function refreshTableColumnsTree(connectionId: string, database: string, table: string, schema?: string, catalog?: string) {
++    if (!connectedIds.value.has(connectionId)) return;
++    const querySchema = metadataQuerySchema(connectionId, database, schema);
++    const groups = findTreeNodes(
++      treeNodes.value,
++      (node) =>
++        node.type === "group-columns" &&
++        node.connectionId === connectionId &&
++        node.database === database &&
++        node.tableName === table &&
++        metadataQuerySchema(connectionId, database, node.schema) === querySchema &&
++        (node.catalog || "") === (catalog || "") &&
++        !!(node.isExpanded || node.isLoading || node.children?.length || isTreeNodeChildrenLoaded(node.id)),
++    );
++    await Promise.all(groups.map((node) => loadColumns(connectionId, database, table, node.schema, node.id, node.catalog, { preserveExpansion: true })));
 +  }
 +
-+  function restoreDataTransferTaskRunning(transferId: string) {
-+    const task = taskMap.get(transferId);
-+    if (task?.kind === "data-transfer" && task.status === "Cancelling") task.status = "Running";
-+  }
-+
-   function restoreDatabaseExportTaskRunning(exportId: string) {
-     const task = taskMap.get(exportId);
-     if (task?.kind === "database-export" && task.status === "Cancelling") task.status = "Running";
-@@ -921,7 +932,10 @@ export function useExportTracker() {
-     }
-     const nextStatus = normalizeTransferStatus(progress.status, progress.terminal);
-     const hadError = task.status === "Error";
--    task.status = hadError && nextStatus === "Done" ? "Error" : nextStatus;
-+    // A cancel request is only acknowledged by the backend at its next checkpoint (between
-+    // metadata reads or tables); keep showing "Cancelling" until a terminal event arrives.
-+    if (task.status === "Cancelling" && nextStatus === "Running") task.status = "Cancelling";
-+    else task.status = hadError && nextStatus === "Done" ? "Error" : nextStatus;
-     task.errorMessage = progress.error || task.errorMessage || null;
-     task.tableIndex = progress.tableIndex;
-     task.totalTables = progress.totalTables;
-@@ -1050,7 +1064,13 @@ export function useExportTracker() {
-       } else if (task?.kind === "sql-file") {
-         await api.cancelSqlFileExecution(exportId);
-       } else if (task?.kind === "data-transfer") {
--        await api.cancelTransfer(exportId);
-+        markDataTransferTaskCancelling(exportId);
-+        try {
-+          await api.cancelTransfer(exportId);
-+        } catch (error) {
-+          restoreDataTransferTaskRunning(exportId);
-+          throw error;
-+        }
-       } else {
-         markTableExportTaskCancelling(exportId);
-         await api.cancelTableExport(exportId);
-```
-
-**File**: `crates/dbx-core/src/data/transfer.rs` (modified, +23/-1)
-```diff
-@@ -11592,9 +11592,17 @@ async fn fetch_foreign_keys_for_tables(
-     database: &str,
-     schema: &str,
-     tables: &[String],
-+    cancel_transfer_id: Option<&str>,
- ) -> Result<HashMap<String, Vec<db::ForeignKeyInfo>>, String> {
-     let mut result = HashMap::new();
-     for table in tables {
-+        // One metadata round trip per table: on a large schema this phase can run for
-+        // minutes, so a cancel request must be honoured between tables.
-+        if let Some(transfer_id) = cancel_transfer_id {
-+            if is_cancelled(transfer_id).await {
-+                return Err("Cancelled".to_string());
-+            }
-+        }
-         let fks = crate::schema::list_foreign_keys_core(state, connection_id, database, schema, table).await?;
-         result.insert(table.clone(), fks);
-     }
-@@ -11626,6 +11634,20 @@ pub async fn sort_tables_by_fk_dependency_with_foreign_keys(
-     schema: &str,
-     tables: &[String],
-     parents_first: bool,
-+) -> Result<(Vec<String>, HashMap<String, Vec<db::ForeignKeyInfo>>), String> {
-+    sort_tables_by_fk_dependency_cancellable(state, connection_id, database, schema, tables, parents_first, None).await
-+}
-+
-+/// Same as `sort_tables_by_fk_dependency_with_foreign_keys`, but stops with `Err("Cancelled")`
-+/// as soon as `cancel_transfer_id` is flagged cancelled while foreign keys are being fetched.
-+pub async fn sort_tables_by_fk_dependency_cancellable(
-+    state: &AppState,
-+    connection_id: &str,
-+    database: &str,
-+    schema: &str,
-+    tables: &[String],
-+    parents_first: bool,
-+    cancel_transfer_id: Option<&str>,
- ) -> Result<(Vec<String>, HashMap<String, Vec<db::ForeignKeyInfo>>), String> {
-     if tables.len() <= 1 {
-         return Ok((tables.to_vec(), HashMap::new()));
-@@ -11651,7 +11673,7 @@ pub async fn sort_tables_by_fk_dependency_with_foreign_keys(
-         (db::postgres::list_table_dependencies(&pool, schema).await?, HashMap::new())
-     } else {
-         let foreign_keys_by_table =
--            fetch_foreign_keys_for_tables(state, connection_id, database, schema, tables).await?;
-+            fetch_foreign_keys_for_tables(state, connection_id, database, schema, tables, cancel_transfer_id).await?;
-         let dependencies = foreign_keys_by_table
-             .iter()
-             .flat_map(|(table, fks)| fks.iter().map(move |fk| (table.clone(), fk.ref_table.clone())))
-```
-
-**File**: `crates/dbx-core/src/data/transfer/overwrite_clear.rs` (modified, +8/-1)
-```diff
-@@ -15,7 +15,8 @@ use super::*;
- /// Tables referenced by another selected table are cleared with `DELETE`, the rest with the
- /// usual per-database clear statement. Returns the source names of the tables that were
- /// cleared; the caller passes `target_cleared = true` to `transfer_table_with_result` for
--/// those so they are not cleared a second time.
-+/// those so they are not cleared a second time. Returns `Err("Cancelled")` when the transfer
-+/// is cancelled while the metadata is still being read; once clearing starts it runs through.
- ///
- /// Returns an empty set, leaving every table to the per-table clear, when the request is not
- /// an overwrite, when no selected target references another, when the foreign key metadata
-@@ -35,6 +36,9 @@ pub async fn clear_foreign_key_linked_overwrite_targets(
- 
-     let mut targets: Vec<(String, String)> = Vec::new();
-     for table in tables {
-+        if is_cancelled(&request.transfer_id).await {
-+            return Err("Cancelled".to_string());
-+        }
-         let ResolvedTransferTargetTable { name, preexisting } = resolve_transfer_target_table_name(
-             state,
-             request,
-@@ -52,6 +56,9 @@ pub async fn clear_foreign_key_linked_overwrite_targets(
- 
-     let mut edges: Vec<(String, String)> = Vec::new();
-     for (_, target_table) in &targets {
-+        if is_cancelled(&request.transfer_id).await {
-+            return Err("Cancelled".to_string());
-+        }
-         let foreign_keys = match crate::schema::list_foreign_keys_core(
-             state,
-             &request.target_connection_id,
-```
-
-**File**: `crates/dbx-core/src/data/transfer_runner.rs` (modified, +145/-12)
-```diff
-@@ -191,19 +191,46 @@ where
-             if skip_fk_sort {
-                 (request.tables.clone(), std::collections::HashMap::new())
-             } else {
--                super::transfer::sort_tables_by_fk_dependency_with_foreign_keys(
-+                match super::transfer::sort_tables_by_fk_dependency_cancellable(
-                     &state,
-                     &request.source_connection_id,
-                     &request.source_database,
-                     &request.source_schema,
-                     &request.tables,
-                     true,
-+                    Some(&transfer_id),
-                 )
-                 .await
--                .unwrap_or_else(|e| {
--                    log::warn!("[transfer] failed to sort tables by FK dependency, using original order: {e}");
--                    (request.tables.clone(), std::collections::HashMap::new())
--                })
-+                {
-+                    Ok(sorted) => sorted,
-+                    Err(e) if e == "Cancelled" => {
-+                        emit_terminal_progress(
-+                            &app,
-+                            history.as_ref(),
-+                            TransferProgress {
-+                                oracle_package_approval: None,
-+                                oracle_package_preflight: None,
-+                                oracle_routine_operation: None,
-+                                transfer_id: transfer_id.clone(),
-+                                table: String::new(),
-+                                table_index: 0,
-+                                total_tables,
-+                                rows_transferred: 0,
-+                                total_rows: None,
-+                                status: TransferStatus::Cancelled,
-+                                error: None,
-+                                terminal: true,
-+                            },
-+                        )
-+                        .await;
-+                        super::transfer::clear_cancelled(&transfer_id).await;
-+                        return;
-+                    }
-+                    Err(e) => {
-+                        log::warn!("[transfer] failed to sort tables by FK dependency, using original order: {e}");
-+                        (request.tables.clone(), std::collections::HashMap::new())
-+                    }
-+                }
-             }
-         };
- 
-@@ -272,19 +299,46 @@ where
-         let mut backup_drop_order: Vec<String> = Vec::new();
-         let backup_names = if request.drop_target_before_create {
-             // Re-sort tables in children-first order for the rename pre-pass
--            let (tables_for_rename, _) = super::transfer::sort_tables_by_fk_dependency_with_foreign_keys(
-+            let tables_for_rename = match super::transfer::sort_tables_by_fk_dependency_cancellable(
-                 &state,
-                 &request.target_connection_id,
-                 &request.target_database,
-                 &request.target_schema,
-                 &sorted_tables,
-                 false, // parents_first=false: children first
-+                Some(&transfer_id),
-             )
-             .await
--            .unwrap_or_else(|e| {
--                log::warn!("[transfer] failed to sort tables for rename pre-pass, using original order: {e}");
--                (sorted_tables.clone(), std::collections::HashMap::new())
--            });
-+            {
-+                Ok((sorted, _)) => sorted,
-+                Err(e) if e == "Cancelled" => {
-+                    emit_terminal_progress(
-+                        &app,
-+                        history.as_ref(),
-+                        TransferProgress {
-+                            oracle_package_approval: None,
-+                            oracle_package_preflight: None,
-+                            oracle_routine_operation: None,
-+                            transfer_id: transfer_id.clone(),
-+                            table: "rename pre-pass".to_string(),
-+                            table_index: 0,
-+                            total_tables,
-+                            rows_transferred: 0,
-+                            total_rows: None,
-+                            status: TransferStatus::Cancelled,
-+                            error: None,
-+                            terminal: true,
-+                        },
-+                    )
-+                    .await;
-+                    super::transfer::clear_cancelled(&transfer_id).await;
-+                    return;
-+                }
-+                Err(e) => {
-+                    log::warn!("[transfer] failed to sort tables for rename pre-pass, using original order: {e}");
-+                    sorted_tables.clone()
-+                }
-+            };
-             backup_drop_order = tables_for_rename.clone();
- 
-             match super::transfer::rename_tables_to_backup(
-@@ -429,6 +483,7 @@ where
-         {
-             Ok(cleared) => cleared,
-             Err(e) => {
-+                let ca
+   function isSchemaAwareDatabase(connectionId: string): boolean {
+     return isSchemaAware(getConfig(connectionId)?.db_type);
+   }
+@@ -11424,6 +11444,7 @@ export const useConnectionStore = defineStore("connection", () => {
+     refreshConnectionTreeNode,
+     refreshDatabaseTreeNode,
+     refreshObjectListTreeNode,
++    refreshTableColumnsTree,
+     connectedIds,
+     connectingIds,
+     isConnectionClosedByUser,
 ```
 
 ---
 
-### Incident Patch 3: `53c4d244` (2026-10-31)
-**Commit Message**: fix(connection): keep literal # in pasted connection URLs
+### Incident Patch 2: `4013855f` (2026-10-31)
+**Commit Message**: Revert "perf(window): lower the WebView2 memory target while the main window is hidden"
 
-**File**: `apps/desktop/src/lib/__tests__/connection/connectionUrl.fragment.spec.ts` (added, +54/-0)
-```diff
-@@ -0,0 +1,54 @@
-+import { describe, expect, it } from "vitest";
-+import { parseConnectionUrl } from "@/lib/connection/connectionUrl";
-+
-+// A `#` in a connection URL is data: database clients read the query to the end,
-+// and credentials or database names may legitimately contain it. WHATWG `URL`
-+// stops at the first `#` instead, which used to import a truncated password and
-+// drop the remainder of the URL without any warning.
-+describe("connection URL fragment handling", () => {
-+  it("keeps a `#` inside JDBC credential properties", () => {
-+    const parsed = parseConnectionUrl("jdbc:mysql://db.example.com:3306/appdb?user=root&password=Jxc#2026@n1&useSSL=false");
-+
-+    expect(parsed.dbType).toBe("mysql");
-+    expect(parsed.host).toBe("db.example.com");
-+    expect(parsed.username).toBe("root");
-+    expect(parsed.password).toBe("Jxc#2026@n1");
-+    expect(parsed.database).toBe("appdb");
-+    expect(parsed.urlParams).toBe("useSSL=false");
-+  });
-+
-+  it("keeps a `#` inside standard URL userinfo credentials", () => {
-+    expect(parseConnectionUrl("mysql://root:Jxc#2026@n1@db.example.com:3306/appdb")).toMatchObject({
-+      host: "db.example.com",
-+      port: 3306,
-+      username: "root",
-+      password: "Jxc#2026@n1",
-+      database: "appdb",
-+    });
-+    expect(parseConnectionUrl("postgres://root:Jxc#2026@n1@db.example.com:5432/appdb").password).toBe("Jxc#2026@n1");
-+  });
-+
-+  it("keeps a `#` in the database name", () => {
-+    expect(parseConnectionUrl("postgres://db.example.com:5432/app#db").database).toBe("app#db");
-+  });
-+
-+  it("escapes `#` inside forwarded query parameters instead of dropping the tail", () => {
-+    expect(parseConnectionUrl("mysql://db.example.com:3306/appdb?options=--flag#value").urlParams).toBe("options=--flag%23value");
-+  });
-+
-+  it("still maps the Redis #insecure alias to the insecure parameter", () => {
-+    const parsed = parseConnectionUrl("rediss://cache.example.com:6379/0#insecure");
-+
-+    expect(parsed.database).toBe("0");
-+    expect(parsed.urlParams).toBe("insecure=true");
-+    expect(parsed.ssl).toBe(true);
-+  });
-+
-+  it("keeps a `#` inside Redis credentials", () => {
-+    expect(parseConnectionUrl("redis://:p#ss@cache.example.com:6379/0").password).toBe("p#ss");
-+  });
-+
-+  it("keeps standard fragment semantics for web endpoints", () => {
-+    expect(parseConnectionUrl("https://search.example.com:7700/gateway/meili#section", "meilisearch").basePath).toBe("/gateway/meili");
-+  });
-+});
-```
+This reverts commit 118f86ca3e74a370a88414a925140b58f20058c9.
 
-**File**: `apps/desktop/src/lib/connection/connectionUrl.ts` (modified, +36/-4)
+**File**: `src-tauri/src/lib.rs` (modified, +0/-8)
 ```diff
-@@ -668,12 +668,44 @@ function parseJdbcDremioUrl(source: string): ParsedConnectionUrl | null {
-   };
+@@ -23,7 +23,6 @@ mod webview2_legacy_css;
+ mod webview2_preflight;
+ #[cfg(any(target_os = "windows", test))]
+ mod webview2_recovery;
+-mod webview_memory;
+ mod window_geometry;
+ mod window_state_guard;
+ #[cfg(target_os = "windows")]
+@@ -766,7 +765,6 @@ pub(crate) fn hide_main_window_for_close<R: tauri::Runtime>(app: &tauri::AppHand
+     }
+ 
+     let _ = window.hide();
+-    webview_memory::sync(app);
  }
  
-+/** Schemes that address a web endpoint, where `#` really does start a fragment. */
-+const WEB_URL_SCHEMES = new Set(["http", "https"]);
-+
-+/**
-+ * Database connection URLs are DSNs, not web pages: the query is a parameter
-+ * list that is read to the end (PgJDBC, and DBX's own Hive/Oracle JDBC
-+ * importers), and a `#` inside a credential, database name or parameter value
-+ * is literal text. WHATWG `URL` stops at the first `#` instead, which imported
-+ * `…?password=Jxc#2026@n` as the password `Jxc` and dropped the rest without a
-+ * warning, and rejected `user:p#ss@host` as an invalid URL.
-+ *
-+ * Escaping the literal `#` before parsing fixes both: `decodeUrlPart` restores
-+ * the original character for credentials, and DBX re-encodes credentials when it
-+ * builds the driver URL, so the value reaches the driver unchanged. Only Redis
-+ * documents a fragment of its own (`#insecure`), so that suffix stays an alias;
-+ * `http`/`https` endpoints keep standard fragment behaviour.
-+ */
-+function normalizeConnectionUrlFragment(source: string): { source: string; redisInsecure: boolean } {
-+  const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(source)?.[1]?.toLowerCase() ?? "";
-+  if (WEB_URL_SCHEMES.has(scheme)) return { source, redisInsecure: false };
-+
-+  const fragmentStart = source.indexOf("#");
-+  if (fragmentStart < 0) return { source, redisInsecure: false };
-+
-+  const fragment = source.slice(fragmentStart + 1);
-+  if ((scheme === "redis" || scheme === "rediss") && decodeUrlPart(fragment).trim().toLowerCase() === "insecure") {
-+    return { source: source.slice(0, fragmentStart), redisInsecure: true };
-+  }
-+
-+  return { source: source.replace(/#/g, "%23"), redisInsecure: false };
-+}
-+
- function parseJdbcDremioArrowFlightSqlUrl(source: string): ParsedConnectionUrl | null {
-   if (!/^jdbc:arrow-flight-sql:\/\//i.test(source)) return null;
+ pub(crate) fn request_app_close<R: tauri::Runtime>(app: &tauri::AppHandle<R>, target: &str) {
+@@ -2281,12 +2279,6 @@ pub fn run() {
+                 }
+                 return;
+             }
+-            if window.label() == "main"
+-                && matches!(event, tauri::WindowEvent::Focused(_) | tauri::WindowEvent::Resized(_))
+-            {
+-                // Minimize / hide-to-tray / restore all surface as a focus or size change.
+-                webview_memory::sync(window.app_handle());
+-            }
+             if let tauri::WindowEvent::Destroyed = event {
+                 // A webview that no longer exists must not leave drop grants
+                 // behind for a future renderer to claim.
+```
+
+**File**: `src-tauri/src/webview_memory.rs` (removed, +0/-91)
+```diff
+@@ -1,91 +0,0 @@
+-//! Lowers the main WebView2's memory target while the window is not on screen.
+-//!
+-//! The app can sit in the tray or minimized for hours. WebView2 documents that setting
+-//! `MemoryUsageTargetLevel = Low` on an inactive WebView lets the engine drop cached data and
+-//! page memory to disk, and restoring `Normal` on return keeps full performance. See
+-//! <https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/performance#use-memory-management-apis>.
+-//!
+-//! Only a window the user cannot see qualifies. Merely losing focus (alt-tab to documentation)
+-//! keeps `Normal`: trimming a page the user is about to look at again makes the return sluggish.
+-//!
+-//! WKWebView and WebKitGTK expose no equivalent, so everything except the pure decision is
+-//! Windows-only.
+-
+-/// A window that is minimized or hidden to the tray cannot be seen.
+-#[cfg(any(target_os = "windows", test))]
+-fn wants_low_memory(minimized: bool, visible: bool) -> bool {
+-    minimized || !visible
+-}
+-
+-#[cfg(target_os = "windows")]
+-mod windows_impl {
+-    use super::wants_low_memory;
+-    use std::sync::atomic::{AtomicBool, Ordering};
+-    use tauri::{Manager, Runtime};
+-    use webview2_com::Microsoft::Web::WebView2::Win32::{ICoreWebView2_19, COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL};
+-    use windows_core::Interface;
+-
+-    const MAIN_WINDOW_LABEL: &str = "main";
+-    // COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL_NORMAL / _LOW
+-    const LEVEL_NORMAL: i32 = 0;
+-    const LEVEL_LOW: i32 = 1;
+-
+-    static LOW_APPLIED: AtomicBool = AtomicBool::new(false);
+-
+-    fn apply(webview: &tauri::webview::PlatformWebview, low: bool) -> Result<(), String> {
+-        // SAFETY: `with_webview` runs this closure on the WebView2 UI thread, which the COM
+-        // contract requires. `ICoreWebView2_19` needs runtime >= 114; older runtimes fail the
+-        // cast and the caller only logs, leaving the default memory behavior unchanged.
+-        unsafe {
+-            let core = webview.controller().CoreWebView2().map_err(|error| error.to_string())?;
+-            let core19 = core.cast::<ICoreWebView2_19>().map_err(|error| error.to_string())?;
+-            let level = COREWEBVIEW2_MEMORY_USAGE_TARGET_LEVEL(if low { LEVEL_LOW } else { LEVEL_NORMAL });
+-            core19.SetMemoryUsageTargetLevel(level).map_err(|error| error.to_string())
+-        }
+-    }
+-
+-    /// Re-evaluates the target level from the main window's current visibility.
+-    /// Cheap and idempotent: the WebView is only touched when the desired level changes.
+-    pub fn sync<R: Runtime>(app: &tauri::AppHandle<R>) {
+-        let Some(window) = app.get_webview_window(MAIN_WINDOW_LABEL) else {
+-            return;
+-        };
+-        let minimized = window.is_minimized().unwrap_or(false);
+-        let visible = window.is_visible().unwrap_or(true);
+-        let low = wants_low_memory(minimized, visible);
+-        if LOW_APPLIED.swap(low, Ordering::SeqCst) == low {
+-            return;
+-        }
+-        let result = window.with_webview(move |webview| {
+-            if let Err(error) = apply(&webview, low) {
+-                eprintln!("[WARN] failed to set WebView2 memory usage target: {error}");
+-            }
+-        });
+-        if let Err(error) = result {
+-            LOW_APPLIED.store(!low, Ordering::SeqCst);
+-            eprintln!("[WARN] failed to dispatch WebView2 memory usage target: {error}");
+-        }
+-    }
+-}
+-
+-/// Called after anything that can change whether the main window is on screen.
+-#[cfg(target_os = "windows")]
+-pub fn sync<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
+-    windows_impl::sync(app);
+-}
+-
+-#[cfg(not(target_os = "windows"))]
+-pub fn sync<R: tauri::Runtime>(_app: &tauri::AppHandle<R>) {}
+-
+-#[cfg(test)]
+-mod tests {
+-    use super::wants_low_memory;
+-
+-    #[test]
+-    fn only_an_invisible_window_gets_the_low_target() {
+-        assert!(!wants_low_memory(false, true));
+-        assert!(wants_low_memory(true, true));
+-        assert!(wants_low_memory(false, false));
+-        assert!(wants_low_memory(true, false));
+-    }
+-}
+```
+
+---
+
+### Incident Patch 3: `0b11c05e` (2026-10-31)
+**Commit Message**: Revert "docs(window): correct the WebView2 memory target version note"
+
+This reverts commit 10fe0dc0a2cd1ae8f1293336224ea6e3619b82c3.
+
+**File**: `src-tauri/src/webview_memory.rs` (modified, +2/-3)
+```diff
+@@ -34,9 +34,8 @@ mod windows_impl {
  
-   let parsed: URL;
-   try {
--    parsed = new URL(source.replace(/^jdbc:/i, ""));
-+    parsed = new URL(normalizeConnectionUrlFragment(source.replace(/^jdbc:/i, "")).source);
-   } catch {
-     return null;
-   }
-@@ -731,9 +763,10 @@ export function parseConnectionUrl(value: string, preferredProfile?: string): Pa
-   const zooKeeperResult = parseZooKeeperUrl(source);
-   if (zooKeeperResult) return zooKeeperResult;
- 
-+  const normalizedSource = normalizeConnectionUrlFragment(source);
-   let parsed: URL;
-   try {
--    parsed = new URL(source);
-+    parsed = new URL(normalizedSource.source);
-   } catch {
-     throw new Error("Invalid connection URL");
-   }
-@@ -747,11 +780,10 @@ export function parseConnectionUrl(value: string, preferredProfile?: string): Pa
-   const urlParams = parsed.search.replace(/^\?/, "");
-   const name = connectionNameParam(parsed);
-   const urlParamsWithoutName = stripConnectionNameParam(urlParams);
--  const normalizedFragment = decodeUrlPart(parsed.hash.replace(/^#/, "")).trim().toLowerCase();
-   // A Redis path can carry pasted redis-cli flags ("…/0 --tls --insecure");
-   // salvage the db index plus the TLS/insecure intent before they are dropped.
-   const redisPath = profile.type === "redis" ? parseRedisUrlPath(databaseFromPath(parsed.pathname) || "") : null;
--  const redisInsecure = redisPath?.insecure || normalizedFragment === "insecure";
-+  const redisInsecure = redisPath?.insecure || normalizedSource.redisInsecure;
-   const parsedUrlParams = profile.type === "redis" && redisInsecure && !/(^|&)insecure=/i.test(urlParamsWithoutName) ? [urlParamsWithoutName, "insecure=true"].filter(Boolean).join("&") : urlParamsWithoutName;
-   const jdbcCredentials = isJdbcUrl && (profile.type === "mysql" || profile.profile === "oceanbase-oracle") ? extractMysqlCredentialParams(parsedUrlParams) : undefined;
-   const effectiveUrlParams = jdbcCredentials?.urlParams ?? parsedUrlParams;
+     fn apply(webview: &tauri::webview::PlatformWebview, low: bool) -> Result<(), String> {
+         // SAFETY: `with_webview` runs this closure on the WebView2 UI thread, which the COM
+-        // contract requires. `ICoreWebView2_19` ships with newer WebView2 runtimes (the SDK
+-        // introduced it in 1.0.1823.32); on a runtime without it the cast fails and the caller only
+-        // logs, leaving the default memory behavior unchanged.
++        // contract requires. `ICoreWebView2_19` needs runtime >= 114; older runtimes fail the
++        // cast and the caller only logs, leaving the default memory behavior unchanged.
+         unsafe {
+             let core = webview.controller().CoreWebView2().map_err(|error| error.to_string())?;
+             let core19 = core.cast::<ICoreWebView2_19>().map_err(|error| error.to_string())?;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14022** (closed): fix(mysql): 索引元数据查询对 MySQL 5.0 逐层降级列集，修复比较架构 1054 (@dienaso)
+- **PR #14014** (2026-10-31): docs(import): 记录表数据导入的「失败继续」选项 (@dienaso)
+- **PR #13961** (2026-10-31): Codex/issue 13888 mysql comment (@imcman)
+- **PR #13957** (2026-10-31): fix(ai): wrap composer context controls without squeezing icons (@khalil-shao)
 - **PR #13953** (2026-10-30): fix(sidebar): clear the collapsed marker when expanding a search result (@yiqiui)
 - **PR #13951** (2026-10-30): fix(grid): 精简选区统计并记住底栏显示指标 (@zipg)
-- **PR #13950** (2026-10-30): fix(settings): let Apply and Close close when nothing is staged (@yiqiui)
-- **PR #13949** (2026-10-30): fix(driver-store): hide managed JRE rows when a custom or system Java is selected (@yiqiui)
-- **PR #13948** (2026-10-30): fix(generate): default the foreign key schema to the current database (@yiqiui)
-- **PR #13946** (2026-10-30): Fix/mysql sql file emoji (@MomentarySixthSense)
 
 ---
 
@@ -3047,52 +2436,45 @@ Closes #13966
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. updates): load changelog versions lazily instead of the full feed
+## X. refresh sidebar columns after saving table structure (#13850)
 
 **RULE**:
-When implementing operations in `apps/desktop/src/components/layout/UpdateDialog.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `446f5b74`: updates): load changelog versions lazily instead of the full feed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `708a2d3f`: refresh sidebar columns after saving table structure (#13850). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/layout/UpdateDialog.spec.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/composables/__tests__/useNavigationTargets.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  fetchChangelogIndex: vi.fn(),
-  fetchChangelogRelease: vi.fn(),
-  return { ...actual, fetchChangelogIndex: updateMocks.fetchChangelogIndex, fetchChangelogRelease: updateMocks.fetchChangelogRelease };
-  updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "", releases: [] });
-  updateMocks.fetchChangelogRelease.mockResolvedValue({ tag: "", name: "", date: "", sections: [] });
-    updateMocks.fetchChangelogIndex.mockResolvedValue({
-      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28" }],
-    });
-    updateMocks.fetchChangelogRelease.mockResolvedValue({
-      tag: "v0.5.60",
-      name: "DBX v0.5.60",
-      date: "2026-10-28",
-      sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }],
-  // The rollback list only needs index entries (tag/date); release bodies stay unloaded.
-  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date });
-    updateMocks.fetchChangelogIndex.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
-    updateMocks.fetchChangelogIndex.mockRes
+  refreshTableColumnsTree: vi.fn(),
+    refreshTableColumnsTree: mocks.refreshTableColumnsTree,
+    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", "catalog-1");
+  it("refreshes sidebar columns even without a data tab", async () => {
+    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
+    await useNavigationTargets(dialogs).onStructureEditorSaved(vi.fn(), vi.fn(), target);
+    expect(mocks.refreshTableColumnsTree).toHaveBeenCalledWith("connection-1", "app", "users", "public", undefined);
+    expect(mocks.getColumns).not.toHaveBeenCalled();
+  });
+
+  it("still refreshes data tab metadata if the sidebar reload fails", async () => {
+    const navigation = useNavigationTargets(dialogs);
+    const target = { connectionId: "connection-1", database: "app", schema: "public", tableName: "users" };
+    await navigation.openLineageTarget(target);
+    mocks.refreshTableColumnsTree.mockRejectedValueOnce(new Error("sidebar unavailable"));
+    mocks.getColumns.mockResolvedValueOnce([column("fresh_id")]);
+    const toast = vi.fn();
+    await navigation.onStructureEditorSaved(vi.fn(), toast, 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-  fetchChangelog: vi.fn(),
-  return { ...actual, fetchChangelog: updateMocks.fetchChangelog };
-  updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "", releases: [] });
-    updateMocks.fetchChangelog.mockResolvedValue({
-      releases: [{ tag: "v0.5.60", name: "DBX v0.5.60", date: "2026-10-28", sections: [{ type: "fixed", title: "Fixed", items: [{ title: "A useful fix", desc: "Details of the fix" }] }] }],
-  const release = (tag: string, date: string) => ({ tag, name: `DBX ${tag}`, date, sections: [] });
-    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.60", "2026-09-01"), release("v0.5.59", "2026-08-20")] });
-    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
-    updateMocks.fetchChangelog.mockResolvedValue({ updatedAt: "2026-09-10", releases: [release("v0.5.61", "2026-09-10"), release("v0.5.59", "2026-08-20")] });
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `446f5b74` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `708a2d3f` are properly handled with clean fallback behavior.

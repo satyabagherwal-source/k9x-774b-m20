@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-31T23:56:35.657Z",
+  "last_updated": "2026-11-01T00:04:15.688Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -53946,8 +53946,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "3cdf8de9",
-      "content_hash": "6ebd2dd81b6d674a2d77f697a4177636613812a649581938beb42e5cc8115f54",
+      "source_version": "a3add88d",
+      "content_hash": "5f7aff6d7eedbbcbe13cf0809db55609d100a4d578f7b343f8d0c8aa39e46612",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -54020,6 +54020,11 @@
           "number": 6132,
           "title": "updates): load changelog versions lazily instead of the full feed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6372,
+          "title": "refresh sidebar columns after saving table structure (#13850)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -54027,7 +54032,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T08:14:03.582Z",
+      "verified_at": "2026-11-01T00:03:04.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68640,7 +68645,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "b49aa4d4787a9aecc5cd2c23972ef7435e72c61fd0f50e4e8542d5c58dadda61",
+      "content_hash": "8c73979b3b3a79ae19118dbb23d799992320cd1a428adc04fecb6c32652934e6",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -68778,6 +68783,21 @@
           "number": 5434,
           "title": "Enforce Full Attention at Specified Intervals",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6373,
+          "title": "Mixed-Precision Recurrent State Boundary Protection Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6374,
+          "title": "Multi-Axis MRoPE Sectional Invariant Preservation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6375,
+          "title": "Early ViT Token Pruning and Stride Continuity Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68785,7 +68805,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:32:59.323Z",
+      "verified_at": "2026-11-01T00:04:15.675Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165392,6 +165412,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-10-31T23:56:35.640Z"
+    },
+    "rule-6372": {
+      "learning_id": "rule-6372",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6372,
+      "title": "refresh sidebar columns after saving table structure (#13850)",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "a3add88d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:03:04.404Z"
+    },
+    "rule-6373": {
+      "learning_id": "rule-6373",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6373,
+      "title": "Mixed-Precision Recurrent State Boundary Protection Rule",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:04:15.675Z"
+    },
+    "rule-6374": {
+      "learning_id": "rule-6374",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6374,
+      "title": "Multi-Axis MRoPE Sectional Invariant Preservation Rule",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:04:15.675Z"
+    },
+    "rule-6375": {
+      "learning_id": "rule-6375",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6375,
+      "title": "Early ViT Token Pruning and Stride Continuity Guard",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:04:15.675Z"
     }
   },
   "aliases": {

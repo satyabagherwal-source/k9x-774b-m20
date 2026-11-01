@@ -6770,3 +6770,5 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `31315b3d` | Multi-dimensional audit evidence | 2026-10-31T23:49:59.398Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `1a886517` | Multi-dimensional audit evidence | 2026-10-31T23:50:00.976Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-31T23:56:35.726Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `a3add88d` | Multi-dimensional audit evidence | 2026-11-01T00:03:04.470Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-01T00:04:15.776Z |

@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "b49aa4d4787a9aecc5cd2c23972ef7435e72c61fd0f50e4e8542d5c58dadda61",
-    "lastHarvestedAt": "2026-10-28T22:32:59.377Z",
+    "contentHash": "8c73979b3b3a79ae19118dbb23d799992320cd1a428adc04fecb6c32652934e6",
+    "lastHarvestedAt": "2026-11-01T00:04:15.776Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "3cdf8de9",
+    "sourceVersion": "a3add88d",
     "license": "Apache-2.0",
-    "contentHash": "6ebd2dd81b6d674a2d77f697a4177636613812a649581938beb42e5cc8115f54",
-    "lastHarvestedAt": "2026-10-31T08:14:03.687Z",
+    "contentHash": "5f7aff6d7eedbbcbe13cf0809db55609d100a4d578f7b343f8d0c8aa39e46612",
+    "lastHarvestedAt": "2026-11-01T00:03:04.470Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
