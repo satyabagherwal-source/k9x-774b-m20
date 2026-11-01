@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T00:36:20.448Z",
-  "total_cycles_completed": 6746,
-  "total_learnings_persisted": 6746,
+  "last_updated": "2026-11-01T00:42:32.674Z",
+  "total_cycles_completed": 6747,
+  "total_learnings_persisted": 6747,
   "total_rules_promoted": 6390,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:59:56.588Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:59:57.592Z",
       "repository": "topgrade-rs/topgrade",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-01T00:36:20.448Z",
       "repository": "jellyfin/Swiftfin",
       "learningId": "learn-github-jellyfin-swiftfin",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:42:32.674Z",
+      "repository": "vllm-sr/d3",
+      "learningId": "learn-huggingface-vllm-sr-d3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

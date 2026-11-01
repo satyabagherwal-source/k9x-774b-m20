@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T00:36:26.369Z",
-    "lastVerified": "2026-11-01T00:36:26.369Z",
+    "lastChecked": "2026-11-01T00:42:44.153Z",
+    "lastVerified": "2026-11-01T00:42:44.153Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -146,8 +146,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-01T00:10:36.716Z",
-    "lastVerified": "2026-11-01T00:10:36.716Z",
+    "lastChecked": "2026-11-01T00:42:44.144Z",
+    "lastVerified": "2026-11-01T00:42:44.144Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -222,9 +222,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-10-31T20:59:38.254Z",
+    "lastChecked": "2026-11-01T00:42:39.082Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-10-31T20:59:38.254Z"
+    "lastVerified": "2026-11-01T00:42:39.082Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -1917,8 +1917,8 @@
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-31T09:36:54.317Z",
-    "lastVerified": "2026-10-31T09:36:54.317Z",
+    "lastChecked": "2026-11-01T00:42:41.808Z",
+    "lastVerified": "2026-11-01T00:42:41.808Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
@@ -3651,8 +3651,8 @@
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T10:27:06.925Z",
-    "lastVerified": "2026-10-31T10:27:06.925Z",
+    "lastChecked": "2026-11-01T00:42:36.796Z",
+    "lastVerified": "2026-11-01T00:42:36.796Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
@@ -3894,9 +3894,9 @@
   "mufeedvh-code2prompt": {
     "name": "code2prompt",
     "officialUrl": "https://github.com/mufeedvh/code2prompt",
-    "lastChecked": "2026-10-31T05:07:06.595Z",
+    "lastChecked": "2026-11-01T00:42:29.146Z",
     "revisionIdentifier": "66585136",
-    "lastVerified": "2026-10-31T05:07:06.595Z"
+    "lastVerified": "2026-11-01T00:42:29.146Z"
   },
   "hf-amazon-chronos-2": {
     "name": "amazon/chronos-2",
@@ -8457,12 +8457,12 @@
     "officialUrl": "https://huggingface.co/vllm-sr/d3",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-28T23:05:17.004Z",
-    "lastVerified": "2026-10-28T23:05:17.004Z",
+    "lastChecked": "2026-11-01T00:42:31.753Z",
+    "lastVerified": "2026-11-01T00:42:31.753Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "a66eaa9c2df71756c11813f608558ebb0048f6127286a20456f527a0091f0d22",
+    "contentHash": "92016b53d3eb07d10c23eb4a9da284a5ce7d4321520a523da71c8bac28fbd46b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9454,9 +9454,9 @@
   "sergdort-moderncleanarchitectureswiftui": {
     "name": "ModernCleanArchitectureSwiftUI",
     "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
-    "lastChecked": "2026-10-30T00:07:53.688Z",
+    "lastChecked": "2026-11-01T00:42:34.136Z",
     "revisionIdentifier": "4fd07daa",
-    "lastVerified": "2026-10-30T00:07:53.688Z"
+    "lastVerified": "2026-11-01T00:42:34.136Z"
   },
   "searchsolved-search-solved-public-seo": {
     "name": "search-solved-public-seo",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-54JJ",
-    "timestamp": "2026-10-30T18:58:28.543Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "711fddc7256f6cc859b35022e90b734b553b32418cb33844cc099bd6872fafa7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-55XN",
     "timestamp": "2026-10-30T18:58:30.347Z",
     "repository": "vitejs/vite",
@@ -7490,6 +7475,21 @@
     "repository": "jellyfin/Swiftfin",
     "learningId": "learn-github-jellyfin-swiftfin",
     "contentHash": "0cd327c1d5ba31ade2a63badd2d60294f6f3b2be4f5caed6d29e700403d8a964",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-VGBB",
+    "timestamp": "2026-11-01T00:42:32.663Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "92016b53d3eb07d10c23eb4a9da284a5ce7d4321520a523da71c8bac28fbd46b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
