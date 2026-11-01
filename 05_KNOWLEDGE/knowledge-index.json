@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T02:07:48.950Z",
+  "last_updated": "2026-11-01T02:16:04.722Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -56222,8 +56222,8 @@
       "slug": "transact-rs-sqlx",
       "platform": "github",
       "source_url": "https://github.com/transact-rs/sqlx",
-      "source_version": "e5cbd61a",
-      "content_hash": "cf7866b9014ade9ca67cccca0508b4f2b6353f442c87371593d7ae3b09b669be",
+      "source_version": "7908fe79",
+      "content_hash": "e7d5560d8b762c5edba9438d0ae4b46b77575a2d5a56ab3bfb971483783b716e",
       "dossier_path": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md",
       "promoted_rules": [
@@ -56241,6 +56241,11 @@
           "number": 5301,
           "title": "postgres): Bind encodes result-format count from the wrong field (#4477)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6400,
+          "title": "mysql): handle empty passwords during authentication switches. (#4493)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56248,7 +56253,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T14:08:37.241Z",
+      "verified_at": "2026-11-01T02:15:55.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70321,7 +70326,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "9c0ec0ee282c320c3274c74db69e22318ae58917d27e676018ecbe1ea829365c",
+      "content_hash": "1617373b21e5dab951dd534cca85ce65699f4463157c84ead14a45f9dd7945ef",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [
@@ -70349,6 +70354,21 @@
           "number": 5479,
           "title": "The N-Gram Post-Processing Correction Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6401,
+          "title": "Script-Isolated Recognition Routing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6402,
+          "title": "Hybrid Neural-Symbolic Confidence Gating",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6403,
+          "title": "CPU-Optimized ONNX Pipeline Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -70356,7 +70376,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T01:09:04.843Z",
+      "verified_at": "2026-11-01T02:16:04.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165953,6 +165973,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T02:07:48.928Z"
+    },
+    "rule-6400": {
+      "learning_id": "rule-6400",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6400,
+      "title": "mysql): handle empty passwords during authentication switches. (#4493)",
+      "source_url": "https://github.com/transact-rs/sqlx",
+      "source_version": "7908fe79",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T02:15:55.233Z"
+    },
+    "rule-6401": {
+      "learning_id": "rule-6401",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6401,
+      "title": "Script-Isolated Recognition Routing",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T02:16:04.701Z"
+    },
+    "rule-6402": {
+      "learning_id": "rule-6402",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6402,
+      "title": "Hybrid Neural-Symbolic Confidence Gating",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T02:16:04.701Z"
+    },
+    "rule-6403": {
+      "learning_id": "rule-6403",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6403,
+      "title": "CPU-Optimized ONNX Pipeline Isolation",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T02:16:04.701Z"
     }
   },
   "aliases": {

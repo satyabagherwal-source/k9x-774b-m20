@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "9c0ec0ee282c320c3274c74db69e22318ae58917d27e676018ecbe1ea829365c",
-    "lastHarvestedAt": "2026-10-29T01:09:04.943Z",
+    "contentHash": "1617373b21e5dab951dd534cca85ce65699f4463157c84ead14a45f9dd7945ef",
+    "lastHarvestedAt": "2026-11-01T02:16:04.806Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -5283,10 +5283,10 @@
     "repository": "transact-rs/sqlx",
     "platform": "github",
     "sourceUrl": "https://github.com/transact-rs/sqlx",
-    "sourceVersion": "e5cbd61a",
+    "sourceVersion": "7908fe79",
     "license": "Apache-2.0",
-    "contentHash": "cf7866b9014ade9ca67cccca0508b4f2b6353f442c87371593d7ae3b09b669be",
-    "lastHarvestedAt": "2026-10-28T14:08:37.322Z",
+    "contentHash": "e7d5560d8b762c5edba9438d0ae4b46b77575a2d5a56ab3bfb971483783b716e",
+    "lastHarvestedAt": "2026-11-01T02:15:55.337Z",
     "learningId": "learn-github-transact-rs-sqlx"
   },
   "bergside-typeui": {

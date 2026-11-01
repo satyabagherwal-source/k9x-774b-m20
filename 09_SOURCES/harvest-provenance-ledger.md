@@ -6798,3 +6798,5 @@ Every entry in this ledger must capture:
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `d4c963ba` | Multi-dimensional audit evidence | 2026-11-01T02:00:52.818Z |
 | `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-01T02:07:37.826Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dd302470` | Multi-dimensional audit evidence | 2026-11-01T02:07:49.036Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `7908fe79` | Multi-dimensional audit evidence | 2026-11-01T02:15:55.337Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-01T02:16:04.806Z |

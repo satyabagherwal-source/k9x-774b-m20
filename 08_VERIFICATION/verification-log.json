@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-IVVM",
-    "timestamp": "2026-10-30T20:05:09.730Z",
-    "repository": "vitest-dev/vitest",
-    "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "da9d0efad6726bb1ecd4b8ac8756a4dac86cb169902548abd92445d99b32b417",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-J0X2",
-    "timestamp": "2026-10-30T20:05:16.262Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-J49X",
     "timestamp": "2026-10-30T20:05:20.613Z",
     "repository": "matrixorigin/matrixone",
@@ -7492,6 +7462,36 @@
     "contentHash": "28842e716e537c1749da4fea1c10527717e5bd0d522a5f6a12f132f4d87d2e3e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-7JD1",
+    "timestamp": "2026-11-01T02:15:55.333Z",
+    "repository": "transact-rs/sqlx",
+    "learningId": "learn-github-transact-rs-sqlx",
+    "contentHash": "e7d5560d8b762c5edba9438d0ae4b46b77575a2d5a56ab3bfb971483783b716e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-7QO2",
+    "timestamp": "2026-11-01T02:16:04.802Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "1617373b21e5dab951dd534cca85ce65699f4463157c84ead14a45f9dd7945ef",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

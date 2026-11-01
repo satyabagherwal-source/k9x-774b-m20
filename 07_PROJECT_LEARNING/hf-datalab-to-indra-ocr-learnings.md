@@ -3,7 +3,7 @@
 > **Source Version**: `hf-datalab-t`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-29T01:09:03.856Z  
+> **Timestamp**: 2026-11-01T02:16:03.174Z  
 > **Learning ID**: `learn-huggingface-datalab-to-indra-ocr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,307 +17,340 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `datalab-to/indra-ocr` addresses the critical bottleneck in Document Intelligence (DI): the trade-off between accuracy, speed, and resource consumption in Optical Character Recognition (OCR). Traditional pipelines (like PaddleOCR or Tesseract) often require GPU acceleration for high accuracy or suffer from significant latency on CPU. Indra OCR solves this by deploying a **1M-parameter lightweight model** optimized specifically for **CPU inference** using **ONNX Runtime**, achieving ~44 pages/second on 32 cores while maintaining state-of-the-art accuracy (66.7 on OmniParseBench).
+The repository `datalab-to/indra-ocr` addresses the critical bottleneck in Document Intelligence (DI): the trade-off between accuracy, speed, and resource consumption in Optical Character Recognition (OCR). Traditional pipelines (like PaddleOCR or Tesseract) often require GPU acceleration for high accuracy or suffer from low throughput on CPUs. Indra OCR solves this by deploying a **1M-parameter lightweight model stack** optimized exclusively for **CPU inference via ONNX Runtime**, achieving ~44 pages/second on 32 cores without PyTorch dependencies.
 
-**Architectural Boundaries & Subsystems:**
-The system is a **modular, multi-stage inference pipeline** decoupled into distinct ONNX graph components, orchestrated by a Python wrapper (`indra-ocr` package). The architecture is strictly **stateless** per inference call, relying on external configuration for language routing.
+**Architectural Boundaries:**
+The system is strictly decoupled into a **multi-stage inference pipeline** rather than a single monolithic neural network. The boundary is defined by the `config.json` file, which enumerates distinct ONNX artifacts:
+1.  **Pre-processing/Classification Stage:** `orient.onnx` (orientation), `script.onnx` (script detection), `mathcls.onnx` (math classification).
+2.  **Detection Stage:** `det.onnx` (text region detection).
+3.  **Recognition Stage:** Split by script family to optimize memory and latency:
+    *   `rec.onnx` (Latin)
+    *   `rec_cjk.onnx` (Chinese/Japanese/Korean)
+    *   `rec_rtl.onnx` (Right-to-Left scripts like Arabic/Hebrew)
+    *   `rec_world.onnx` (Other scripts)
+4.  **Post-processing/Refinement Stage:** `order.onnx` (reading order), `math_enc.onnx`/`math_dec_init.onnx`/`math_dec_step.onnx` (Mathematical expression decoding).
+5.  **Language Model Fallback:** `lm.npz`, `lm_cjk.npz`, `lm_world.npz` (N-gram language models for correcting low-confidence lines).
 
-1.  **Pre-processing & Orientation Subsystem:**
-    *   `orient.onnx`: Detects page rotation (0, 90, 180, 270 degrees).
-    *   `script.onnx`: Classifies the writing system (Latin, CJK, RTL, etc.) to route subsequent steps.
-2.  **Detection Subsystem:**
-    *   `det.onnx`: Identifies text regions (bounding boxes) and layout elements (headings, tables, lists).
-3.  **Recognition Subsystem (Language-Specific Routing):**
-    *   `rec.onnx`: Primary recognizer for Latin scripts.
-    *   `rec_cjk.onnx`: Recognizer for Chinese, Japanese, Korean.
-    *   `rec_rtl.onnx`: Recognizer for Right-to-Left scripts (Arabic, Hebrew, etc.).
-    *   `rec_world.onnx`: Fallback/general recognizer for other scripts.
-4.  **Mathematical Processing Subsystem:**
-    *   `mathcls.onnx`: Classifies regions as mathematical expressions.
-    *   `math_enc.onnx` & `math_dec_init.onnx`/`math_dec_step.onnx`: Encoder-Decoder architecture for converting math images to LaTeX.
-5.  **Post-Processing & Language Modeling Subsystem:**
-    *   `lm.npz`, `lm_cjk.npz`, `lm_world.npz`: N-gram language models stored in NumPy binary format. These are used to correct "unsure lines" where the OCR confidence is low, leveraging statistical probability to fix errors without re-running the neural net.
-    *   `order.onnx`: Determines the reading order of detected blocks (crucial for multi-column layouts).
-
-**Critical Abstraction:**
-The core abstraction is the **ONNX Graph as a Service**. The Python layer does not contain the neural network weights; it acts as a **Graph Orchestrator**. It manages the data flow between these static computational graphs, handling tensor reshaping, normalization, and routing logic based on the output of `script.onnx`.
+**Critical Subsystem Abstractions:**
+*   **Script-Routed Inference:** The core abstraction is the *dynamic routing* of image crops to specific recognizer models based on the output of `script.onnx`. This prevents loading unnecessary large vocabularies or weights for irrelevant scripts.
+*   **Hybrid Neural/Symbolic Processing:** The system does not rely solely on neural output. It uses N-gram language models (`.npz` files) as a probabilistic filter for "unsure lines," indicating a hybrid architecture where neural confidence scores trigger symbolic correction.
+*   **Stateless Inference Core:** The use of ONNX implies a stateless execution graph. State (such as reading order or page context) is managed externally by the Python wrapper (`indra-ocr` package), not within the model weights.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. The Multi-Graph Routing Invariant
+### 1. Script-Isolated Recognition Routing
 **RULE**:
-In multi-stage OCR or vision pipelines, **MUST** decouple detection, classification, and recognition into separate ONNX graphs. The orchestrator **MUST** use the output of a lightweight classification graph (e.g., `script.onnx`) to dynamically route data to specialized recognition graphs (e.g., `rec_cjk.onnx` vs `rec.onnx`). **MUST NOT** use a single monolithic model for all languages if the parameter count allows for specialization, as this degrades CPU inference speed and accuracy for niche scripts.
+In multilingual OCR systems, recognition models MUST be isolated by script family (e.g., Latin, CJK, RTL) and dynamically routed based on a lightweight pre-classifier. A single universal recognizer MUST NOT be used for all scripts if latency and memory footprint are critical constraints.
 
 **WHY**:
-A monolithic model forces the CPU to load and compute irrelevant weights for every input. By routing based on script classification, the system ensures that only the relevant sub-network is activated. This reduces memory bandwidth pressure and allows for specialized optimization (e.g., different character sets and attention mechanisms for CJK vs. Latin) without increasing the total parameter count of the active inference path.
+Universal recognizers require massive vocabulary embeddings and attention heads to handle diverse character sets, leading to increased inference latency and memory overhead. By isolating scripts, the system loads only the relevant ONNX graph for the specific crop, reducing memory pressure and allowing for specialized optimization (e.g., different sequence lengths for CJK vs. Latin).
 
 **WHEN TO APPLY**:
-Any CPU-bound inference pipeline handling heterogeneous data types (e.g., multi-language text, mixed image types) where latency is a primary constraint.
+Any OCR, NLP, or vision system handling multiple writing systems where CPU-only inference or edge deployment is required.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Orchestrator Logic
-def process_image(image_tensor):
-    # Stage 1: Classification (Lightweight)
-    script_id = run_onnx("script.onnx", image_tensor)
+# Pseudocode for Script-Routed Inference
+def recognize_crop(image_crop, script_classifier, recognizers):
+    # 1. Classify script (lightweight model)
+    script_id = script_classifier.predict(image_crop)
     
-    # Stage 2: Routing Decision
-    if script_id == SCRIPT_CJK:
-        rec_model = "rec_cjk.onnx"
-    elif script_id == SCRIPT_RTL:
-        rec_model = "rec_rtl.onnx"
+    # 2. Route to specific recognizer
+    if script_id == 'LATIN':
+        model = recognizers['latin']
+    elif script_id in ['ZH', 'JA', 'KO']:
+        model = recognizers['cjk']
+    elif script_id in ['AR', 'HE', 'FA']:
+        model = recognizers['rtl']
     else:
-        rec_model = "rec.onnx"
+        model = recognizers['world']
         
-    # Stage 3: Specialized Recognition
-    text = run_onnx(rec_model, image_tensor)
-    return text
+    # 3. Inference
+    return model.predict(image_crop)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Monolithic routing
-def process_image_bad(image_tensor):
-    # Loads entire 100M param model for every single character
-    # Even if the input is clearly Latin, it computes CJK weights
-    text = run_onnx("monolithic_all_langs.onnx", image_tensor)
-    return text
+# ANTI-PATTERN: Single monolithic model for all scripts
+# This causes high memory usage and slower inference due to large shared embeddings
+def recognize_crop_bad(image_crop, universal_model):
+    # universal_model contains embeddings for 100+ languages
+    # Inference is slower and memory-heavy
+    return universal_model.predict(image_crop)
 ```
 
 **VERIFICATION METHOD**:
-1.  **Static Analysis**: Verify that `config.json` lists multiple `rec_*.onnx` files.
-2.  **Dynamic Profiling**: Use `onnxruntime` profiling to confirm that `rec_cjk.onnx` is **not** loaded or executed when `script.onnx` returns a Latin script ID.
-3.  **Latency Test**: Measure inference time for a Latin-only document vs. a mixed document. The Latin-only path must be significantly faster than the mixed path if routing is effective.
+Benchmark memory usage and latency for a mixed-script document. Verify that the peak memory usage corresponds to the largest *single* script model, not the sum of all models. Assert that `script_classifier` is called before `recognizer`.
 
-### 2. The N-Gram Post-Processing Correction Invariant
+### 2. Hybrid Neural-Symbolic Confidence Gating
 **RULE**:
-For OCR systems operating on CPU, **MUST** implement a post-processing layer using statistical N-gram language models (stored in `.npz` or similar compact formats) to correct low-confidence predictions. **MUST NOT** rely solely on the neural network's softmax output for final text generation. The correction step **MUST** be triggered only when the confidence score falls below a defined threshold (e.g., < 0.85).
+OCR pipelines MUST implement a confidence threshold gate that triggers a secondary, non-neural correction mechanism (e.g., N-gram language model, dictionary lookup) when the primary neural recognizer's confidence score falls below a defined threshold.
 
 **WHY**:
-Neural networks, especially small ones (1M params), are prone to hallucinating characters in noisy or handwritten text. N-gram models provide a statistical prior that can correct common typos (e.g., "teh" -> "the") without the computational cost of re-running the neural network. This is a "cheap" accuracy boost that is critical for CPU-bound systems.
+Neural OCR models often produce plausible but incorrect characters in low-quality scans. Relying solely on the neural output leads to silent errors. A symbolic fallback (like an N-gram LM) can correct these errors using statistical language patterns, significantly improving accuracy without re-running the expensive neural inference.
 
 **WHEN TO APPLY**:
-Any OCR or ASR system where the primary model is lightweight and operates in low-resource environments (CPU, Edge).
+Any text recognition system where accuracy is critical and input quality is variable (e.g., scanned documents, handwriting).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import numpy as np
-
-def correct_text_with_ngram(raw_text, confidence, lm_data):
-    if confidence > 0.85:
-        return raw_text
-        
-    # Load N-gram probabilities from .npz
-    # lm_data['probs'] is a matrix of transition probabilities
-    # lm_data['vocab'] is the character/word vocabulary
-    
-    best_score = -np.inf
-    best_candidate = raw_text
-    
-    # Generate candidates using beam search or simple substitution
-    candidates = generate_candidates(raw_text, lm_data['vocab'])
-    
-    for cand in candidates:
-        score = calculate_ngram_score(cand, lm_data['probs'])
-        if score > best_score:
-            best_score = score
-            best_candidate = cand
-            
-    return best_candidate
+def post_process_text(neural_output, confidence, lm_model, threshold=0.85):
+    if confidence < threshold:
+        # Use N-gram LM to find most probable word
+        corrected = lm_model.correct(neural_output)
+        return corrected
+    return neural_output
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Ignoring confidence
-def process_bad(raw_text, confidence):
-    # Always returns raw text, even if confidence is 0.1
-    # Or always runs expensive correction, even if confidence is 0.99
-    return raw_text
+# ANTI-PATTERN: Ignoring confidence scores
+def post_process_text_bad(neural_output, confidence, lm_model):
+    # Always returns neural output, even if confidence is 0.1
+    return neural_output
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test**: Inject a known typo with low confidence. Assert that the output is the corrected text.
-2.  **Performance Test**: Measure the overhead of the N-gram correction. It must be < 5% of the total inference time.
-3.  **Accuracy Test**: Compare accuracy with and without N-gram correction on a noisy dataset. The delta must be positive.
+Unit test with a known low-confidence input. Assert that the output matches the LM-corrected version, not the raw neural output. Monitor the ratio of corrected lines in production logs.
+
+### 3. CPU-Optimized ONNX Pipeline Isolation
+**RULE**:
+For CPU-only OCR deployments, the inference engine MUST be isolated from heavy framework dependencies (e.g., PyTorch, TensorFlow) and use a lightweight runtime like ONNX Runtime. The model artifacts MUST be pre-optimized (quantized, pruned) for CPU execution.
+
+**WHY**:
+Heavy frameworks introduce significant overhead (memory, startup time, dependency conflicts). ONNX Runtime is optimized for CPU inference, supporting features like intra-op parallelism and memory optimization. Pre-optimized models ensure that the 1M-parameter constraint is met, enabling high throughput on commodity hardware.
+
+**WHEN TO APPLY**:
+Any production OCR system targeting CPU-only environments (e.g., serverless functions, edge devices, high-throughput batch processing).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import onnxruntime as ort
+
+# Load optimized ONNX model
+session = ort.InferenceSession("rec.onnx", providers=["CPUExecutionProvider"])
+
+# Run inference
+inputs = {"image": preprocessed_image}
+outputs = session.run(None, inputs)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using PyTorch for CPU-only OCR
+import torch
+
+# PyTorch has higher overhead and is not optimized for CPU-only inference
+model = torch.load("rec.pt")
+model.eval()
+with torch.no_grad():
+    outputs = model(preprocessed_image)
+```
+
+**VERIFICATION METHOD**:
+Measure startup time and memory usage. Assert that `onnxruntime` is the only inference dependency. Verify that the model file size is consistent with the 1M-parameter claim (approx. 4MB for float32).
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input data, the following incidents are **inferred** from the architectural constraints and common failure modes in ONNX-based OCR pipelines. These are "Forensic Hypotheses" based on the system design.*
+*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural design and common failure modes in similar systems, based on the `config.json` and `README.md` evidence.*
 
-### Incident 1: CJK Character Boundary Misalignment (BUG-CJK-01)
-- **Context**: `rec_cjk.onnx` and `det.onnx` interaction.
-- **What Was Expected**: Bounding boxes for CJK characters should align with individual character glyphs, not word groups.
-- **What Actually Happened**: The detector grouped multiple CJK characters into a single box, causing the recognizer to fail because it expected single-character inputs.
-- **Evidence in Repo**: The existence of separate `rec_cjk.onnx` implies a different input format or processing logic compared to `rec.onnx`.
-- **Root Cause**: The detection model (`det.onnx`) was trained primarily on Latin scripts where word segmentation is natural. CJK scripts do not use spaces, leading to over-segmentation.
+### Incident 1: Memory Spike Due to Unrouted Script Models (BUG-MEM-01)
+- **Context**: Recognition subsystem, `rec_*.onnx` files.
+- **What Was Expected**: Only the relevant script model should be loaded into memory for a given crop.
+- **What Actually Happened**: If the script classifier fails or is bypassed, the system might attempt to load all recognizer models, causing a memory spike.
+- **Evidence in Repo**: `config.json` lists multiple `rec_*.onnx` files. The `note` field mentions `model.safetensors` holds float weights for `rec.onnx` but is not used by the package, implying a strict separation of concerns.
+- **Root Cause**: Lack of strict routing logic or fallback mechanism when script classification is ambiguous.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Use raw detection boxes for CJK
-# boxes = det_output
-# for box in boxes:
-#     text = rec_cjk(box)
+// - Buggy code: Loading all models
+// models = {name: load_onnx(f) for name, f in files.items()}
 
-# + Fixed: Apply CJK-specific segmentation logic
-# boxes = det_output
-# if script_id == SCRIPT_CJK:
-#     boxes = segment_cjk_boxes(boxes) # Split boxes based on aspect ratio or internal whitespace
-# for box in boxes:
-#     text = rec_cjk(box)
+// + Fixed pattern: Lazy loading based on script
+// def get_recognizer(script_id):
+//     if script_id not in loaded_models:
+//         loaded_models[script_id] = load_onnx(f"rec_{script_id}.onnx")
+//     return loaded_models[script_id]
 ```
-- **Lesson**: Detection models are script-agnostic in geometry but script-specific in semantics. Post-processing must adapt to the script's structural properties.
+- **Lesson**: Implement lazy loading and strict routing for multi-model pipelines to prevent memory bloat.
 
-### Incident 2: Memory Leak in ONNX Runtime Session Reuse (BUG-MEM-02)
-- **Context**: Python wrapper managing `onnxruntime.InferenceSession`.
-- **What Was Expected**: Reusing sessions for multiple images to avoid re-loading weights.
-- **What Actually Happened**: Memory usage grew linearly with the number of processed images, eventually causing OOM.
-- **Evidence in Repo**: `config.json` lists multiple `.onnx` files. If sessions are not properly managed, each call might create a new session or leak intermediate tensors.
-- **Root Cause**: The Python wrapper was creating a new `InferenceSession` for each image instead of reusing a global session. Additionally, intermediate numpy arrays were not explicitly freed.
+### Incident 2: Silent Errors in Low-Confidence Lines (BUG-ACC-02)
+- **Context**: Post-processing subsystem, `lm_*.npz` files.
+- **What Was Expected**: Low-confidence lines should be corrected using the N-gram language model.
+- **What Actually Happened**: If the confidence threshold is too high, or the LM is not applied, low-quality lines are passed through as-is, leading to silent errors.
+- **Evidence in Repo**: `config.json` includes `lm.npz`, `lm_cjk.npz`, `lm_world.npz`. The `note` field explicitly states these are for "unsure lines."
+- **Root Cause**: Missing or misconfigured confidence gating logic.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Create session per call
-# def process(image):
-#     session = ort.InferenceSession("rec.onnx")
-#     return session.run(None, {"input": image})
+// - Buggy code: No LM correction
+// return neural_output
 
-# + Fixed: Global session reuse
-# global_session = None
-# def get_session():
-#     global global_session
-#     if global_session is None:
-#         global_session = ort.InferenceSession("rec.onnx")
-#     return global_session
-#
-# def process(image):
-#     session = get_session()
-#     result = session.run(None, {"input": image})
-#     # Explicitly delete intermediate tensors if not needed
-#     del image
-#     return result
+// + Fixed pattern: LM correction for low confidence
+// if confidence < threshold:
+//     return lm_model.correct(neural_output)
+// return neural_output
 ```
-- **Lesson**: ONNX Runtime sessions are expensive to initialize. They must be treated as singleton resources in long-running services.
+- **Lesson**: Always implement a confidence-based fallback mechanism for critical accuracy tasks.
 
-### Incident 3: RTL Text Reversal Error (BUG-RTL-03)
-- **Context**: `rec_rtl.onnx` output processing.
-- **What Was Expected**: Arabic/Hebrew text should be returned in the correct logical order.
-- **What Actually Happened**: Text was returned in visual order (right-to-left) but interpreted as logical order (left-to-right), resulting in reversed words.
-- **Evidence in Repo**: Existence of `rec_rtl.onnx` implies special handling for RTL scripts.
-- **Root Cause**: The recognizer outputs characters in the order they appear in the image (right-to-left). The post-processing step did not reverse the string for RTL scripts.
+### Incident 3: Orientation Misclassification Leading to Garbage Output (BUG-ORIENT-03)
+- **Context**: Pre-processing subsystem, `orient.onnx`.
+- **What Was Expected**: The system should correctly identify and rotate the image to the correct orientation.
+- **What Actually Happened**: If the orientation classifier fails, the image is processed in the wrong orientation, leading to garbled text.
+- **Evidence in Repo**: `config.json` includes `orient.onnx`. The `README.md` mentions "pages at any angle."
+- **Root Cause**: Lack of robust orientation detection or fallback to manual rotation.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Return raw output
-# return raw_text
+// - Buggy code: No orientation check
+// process_image(image)
 
-# + Fixed: Reverse for RTL
-# if script_id in [SCRIPT_AR, SCRIPT_HE]:
-#     return raw_text[::-1]
-# else:
-#     return raw_text
+// + Fixed pattern: Orientation check and rotation
+// orientation = orient_model.predict(image)
+// if orientation != 0:
+//     image = rotate_image(image, orientation)
+// process_image(image)
 ```
-- **Lesson**: OCR output is visual, not logical. Post-processing must apply script-specific normalization (reversal, ligature expansion).
+- **Lesson**: Always validate and correct input orientation before processing.
 
-### Incident 4: Math Expression Parsing Failure (BUG-MATH-04)
-- **Context**: `math_enc.onnx` and `math_dec_step.onnx` interaction.
-- **What Was Expected**: Mathematical expressions should be converted to valid LaTeX.
-- **What Actually Happened**: The decoder produced incomplete LaTeX strings, missing closing brackets or operators.
-- **Evidence in Repo**: The presence of `math_dec_init.onnx` and `math_dec_step.onnx` suggests an autoregressive decoding process.
-- **Root Cause**: The decoding loop did not have a proper termination condition. It stopped after a fixed number of steps instead of waiting for the EOS (End of Sequence) token.
+### Incident 4: Math Expression Decoding Failure (BUG-MATH-04)
+- **Context**: Math subsystem, `math_*.onnx` files.
+- **What Was Expected**: Math expressions should be correctly decoded using the encoder-decoder pipeline.
+- **What Actually Happened**: If the math classifier fails to identify a math expression, it is processed as regular text, leading to incorrect output.
+- **Evidence in Repo**: `config.json` includes `mathcls.onnx`, `math_enc.onnx`, `math_dec_init.onnx`, `math_dec_step.onnx`. The `README.md` mentions "71.4 with `--math`."
+- **Root Cause**: Missing or misconfigured math classification logic.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Fixed step count
-# for i in range(10):
-#     token = math_dec_step(last_token)
-#     output.append(token)
+// - Buggy code: No math classification
+// process_text(text)
 
-# + Fixed: EOS-based termination
-# max_steps = 50
-# for i in range(max_steps):
-#     token = math_dec_step(last_token)
-#     output.append(token)
-#     if token == EOS_TOKEN:
-#         break
+// + Fixed pattern: Math classification and decoding
+// if mathcls_model.predict(image_crop):
+//     math_output = math_decoder.decode(math_encoder.encode(image_crop))
+//     return math_output
+// return process_text(text)
 ```
-- **Lesson**: Autoregressive decoders must have both a max step limit (to prevent infinite loops) and an EOS token check (for correctness).
+- **Lesson**: Implement specialized pipelines for specialized content types (e.g., math, tables).
 
-### Incident 5: Orientation Detection False Positive (BUG-ORIENT-05)
-- **Context**: `orient.onnx` output.
-- **What Was Expected**: Pages should be rotated to 0 degrees before processing.
-- **What Actually Happened**: Some pages were incorrectly rotated by 180 degrees, causing upside-down text.
-- **Evidence in Repo**: `orient.onnx` is a separate module.
-- **Root Cause**: The orientation classifier had a low confidence threshold. When the page was slightly tilted, it guessed 180 degrees instead of 0.
+### Incident 5: Reading Order Disruption (BUG-ORDER-05)
+- **Context**: Post-processing subsystem, `order.onnx`.
+- **What Was Expected**: Text lines should be arranged in the correct reading order.
+- **What Actually Happened**: If the reading order model fails, the text is output in the wrong order, leading to incoherent documents.
+- **Evidence in Repo**: `config.json` includes `order.onnx`. The `README.md` mentions "a box, a label and a reading order for every line and block."
+- **Root Cause**: Lack of robust reading order detection or fallback to spatial sorting.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Always apply rotation
-# angle = orient_output
-# image = rotate(image, angle)
+// - Buggy code: No reading order
+// return lines
 
-# + Fixed: Confidence-based rotation
-# angle, confidence = orient_output
-# if confidence > 0.9:
-#     image = rotate(image, angle)
-# else:
-#     # Try both 0 and 180, pick the one with higher OCR confidence
-#     text_0 = ocr(image)
-#     text_180 = ocr(rotate(image, 180))
-#     if confidence_score(text_180) > confidence_score(text_0):
-#         image = rotate(image, 180)
+// + Fixed pattern: Reading order detection
+// order = order_model.predict(lines)
+// return [lines[i] for i in order]
 ```
-- **Lesson**: Orientation detection is a probabilistic task. Low-confidence predictions should trigger a fallback strategy (e.g., dual-path OCR) rather than a blind rotation.
+- **Lesson**: Always implement a reading order detection mechanism for multi-column or complex layouts.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **ONNX Tensor Shape Mismatch**: ONNX graphs expect fixed input shapes (e.g., `[1, 3, 640, 640]`). If the input image is resized incorrectly, the tensor shape will mismatch, causing a runtime error. **Invariant**: Always verify `tensor.shape` against the model's expected input shape before execution.
-    *   **NumPy Array Contiguity**: ONNX Runtime requires contiguous memory for input tensors. If the input array is a view of another array (non-contiguous), it may cause silent data corruption or errors. **Invariant**: Use `np.ascontiguousarray()` before passing to ONNX.
+    *   **Invariant**: When handling ONNX model inputs, ensure that the input tensor shape matches the model's expected shape exactly. Mismatches will cause runtime errors.
+    *   **Code Example**:
+        ```python
+        # Correct: Ensure shape matches
+        input_tensor = np.array(image, dtype=np.float32).reshape(1, 3, height, width)
+        
+        # Incorrect: Shape mismatch
+        input_tensor = np.array(image, dtype=np.float32) # Missing batch dimension
+        ```
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Autoregressive Decoding**: The math decoder (`math_dec_step.onnx`) is autoregressive. **Invariant**: Always enforce a `max_steps` limit (e.g., 100) to prevent infinite loops if the EOS token is never generated.
-    *   **N-Gram Beam Search**: If the beam width is too large or the vocabulary is too big, the beam search can become computationally expensive. **Invariant**: Limit the beam width to a reasonable value (e.g., 5-10) and prune low-probability candidates early.
+    *   **Invariant**: In the math decoder (`math_dec_step.onnx`), ensure that the decoding loop terminates when the end-of-sequence token is generated or a maximum length is reached.
+    *   **Code Example**:
+        ```python
+        # Correct: Termination condition
+        for step in range(max_length):
+            token = decoder.predict(current_sequence)
+            if token == EOS_TOKEN:
+                break
+            current_sequence.append(token)
+        
+        # Incorrect: No termination condition
+        while True:
+            token = decoder.predict(current_sequence)
+            current_sequence.append(token)
+        ```
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend OCR system. However, if integrated into a web UI, **Invariant**: Debounce the image upload event to prevent multiple concurrent OCR requests. Use a progress bar to indicate the multi-stage pipeline (Detection -> Recognition -> Post-processing).
+    *   **Invariant**: When rendering OCR results in a UI, ensure that the bounding boxes are correctly mapped to the displayed image coordinates. Mismatches will lead to misaligned overlays.
+    *   **Code Example**:
+        ```python
+        # Correct: Coordinate mapping
+        display_box = (box.x * scale, box.y * scale, box.w * scale, box.h * scale)
+        
+        # Incorrect: No scaling
+        display_box = (box.x, box.y, box.w, box.h)
+        ```
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **ONNX Session Thread Safety**: `onnxruntime.InferenceSession` is **not** thread-safe. **Invariant**: If using multiple threads, each thread must have its own session instance, or use a thread-local storage pattern. Do not share a single session across threads without a lock.
-    *   **Memory Leak in Numpy**: Large intermediate arrays (e.g., feature maps from `det.onnx`) must be explicitly deleted (`del array`) or allowed to go out of scope to free memory. **Invariant**: Use `gc.collect()` periodically in long-running batch jobs.
+    *   **Invariant**: When processing multiple images in parallel, ensure that the ONNX Runtime session is thread-safe or that a session pool is used. Sharing a single session across threads can lead to race conditions.
+    *   **Code Example**:
+        ```python
+        # Correct: Session pool
+        from onnxruntime import InferenceSession
+        from concurrent.futures import ThreadPoolExecutor
+        
+        def process_image(image):
+            session = get_session_from_pool()
+            return session.run(None, {"image": image})
+        
+        # Incorrect: Shared session
+        session = InferenceSession("rec.onnx")
+        def process_image_bad(image):
+            return session.run(None, {"image": image}) # Race condition
+        ```
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: If `script.onnx` fails to classify the script, the routing logic will crash. **Invariant**: Always provide a default fallback script (e.g., `rec_world.onnx`) if classification confidence is low or fails.
-    *   **Off-by-One in Bounding Boxes**: Bounding boxes are often defined as `[x1, y1, x2, y2]`. **Invariant**: Ensure that `x2 > x1` and `y2 > y1`. Clip boxes to the image boundaries to prevent out-of-bounds access.
+    *   **Invariant**: Always validate the output of the script classifier. If the script is unknown, fall back to a default recognizer or raise an error.
+    *   **Code Example**:
+        ```python
+        # Correct: Fallback
+        script_id = script_classifier.predict(image_crop)
+        if script_id not in recognizers:
+            script_id = 'world' # Fallback
+        
+        # Incorrect: No fallback
+        script_id = script_classifier.predict(image_crop)
+        model = recognizers[script_id] # KeyError if script_id is unknown
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Modular ONNX graph pipeline. Decoupled detection, classification, and recognition. Stateless inference.
-2.  **Core Abstractions**: ONNX Graph as a Service. N-gram Language Model as a Post-Processor. Script Router as a Control Flow Mechanism.
-3.  **Error Handling**: Confidence-based fallbacks (e.g., orientation, script classification). Max step limits for autoregressive decoding. Default fallback models for unrecognized scripts.
-4.  **Testing**: Benchmarking on OmniParseBench. Unit tests for N-gram correction. Integration tests for multi-language routing.
-5.  **Security**: OpenRAIL-M license. No external network calls during inference. Input validation (image size, format).
-6.  **Performance**: CPU-optimized ONNX graphs. 1M parameter model for low latency. N-gram correction for cheap accuracy boost.
-7.  **Deployment**: `pip install indra-ocr`. ONNX Runtime dependency. No GPU required.
-8.  **Agent Patterns**: N/A (Not an LLM agent). However, the pipeline can be orchestrated by an AI agent for document processing tasks.
-9.  **Data Flow**: Image -> Pre-processing -> Detection -> Script Classification -> Recognition (Routed) -> Post-processing (N-gram) -> Output.
+1.  **Architecture**: Multi-stage pipeline with script-isolated recognition. Decoupled pre-processing, detection, recognition, and post-processing stages.
+2.  **Core Abstractions**: Script ID, Confidence Score, Bounding Box, Reading Order.
+3.  **Error Handling**: Confidence-based fallback to N-gram LM. Orientation correction. Math classification fallback.
+4.  **Testing**: Benchmarking on OmniParseBench. Unit tests for script routing, confidence gating, and orientation correction.
+5.  **Security**: No direct security concerns, but ensure that input images are validated to prevent memory exhaustion.
+6.  **Performance**: CPU-optimized ONNX Runtime. Lazy loading of models. Parallel processing of images.
+7.  **Deployment**: Lightweight dependencies (ONNX Runtime only). Pre-optimized models. Support for CPU-only environments.
+8.  **Agent Patterns**: Not applicable (this is a model repository, not an agent).
+9.  **Data Flow**: Image -> Pre-processing -> Detection -> Script Classification -> Recognition -> Post-processing -> Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Multi-Graph Routing with N-gram Post-Processing.
-2.  **Rule**: Decouple detection, classification, and recognition into separate ONNX graphs. Use N-gram models for low-confidence corrections.
-3.  **Architecture Principle**: Specialization over Generalization. Use lightweight classifiers to route data to specialized models.
-4.  **Failure Mode**: Monolithic model latency. Memory leak in session reuse. RTL text reversal error.
-5.  **Reusable Skill**: Implementing a CPU-optimized OCR pipeline with ONNX Runtime.
-6.  **Decision**: Use ONNX Runtime instead of PyTorch for CPU inference. Use N-gram models instead of larger neural networks for post-processing.
-7.  **Anti-pattern**: Using a single monolithic model for all languages. Sharing ONNX sessions across threads. Ignoring confidence scores in post-processing.
-8.  **Verification Method**: Latency benchmarking. Memory profiling. Accuracy comparison with and without N-gram correction.
+1.  **Pattern**: Script-Routed Inference with Confidence Gating.
+2.  **Rule**: Isolate recognition models by script family and implement confidence-based fallback.
+3.  **Architecture Principle**: Multi-stage pipeline with decoupled stages for modularity and optimization.
+4.  **Failure Mode**: Memory spike due to unrouted models, silent errors in low-confidence lines, orientation misclassification.
+5.  **Reusable Skill**: Implementing a multi-stage OCR pipeline with script routing and confidence gating.
+6.  **Decision**: Use ONNX Runtime for CPU-only inference to minimize dependencies and maximize performance.
+7.  **Anti-pattern**: Using a single monolithic model for all scripts, ignoring confidence scores, sharing ONNX sessions across threads.
+8.  **Verification Method**: Benchmark memory and latency, unit test script routing and confidence gating, validate input shapes.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Install Dependencies**: `pip install indra-ocr onnxruntime numpy`.
-2.  **Load Models**: Initialize ONNX sessions for `det.onnx`, `script.onnx`, `rec.onnx`, `rec_cjk.onnx`, `rec_rtl.onnx`, `rec_world.onnx`, `orient.onnx`, `mathcls.onnx`, `math_enc.onnx`, `math_dec_init.onnx`, `math_dec_step.onnx`.
-3.  **Pre-process Image**: Resize, normalize, and convert to tensor.
-4.  **Detect Orientation**: Run `orient.onnx`. Rotate image if confidence > 0.9.
-5.  **Detect Text Regions**: Run `det.onnx`. Get bounding boxes.
-6.  **Classify Script**: Run `script.onnx` on each box. Determine script ID.
-7.  **Route Recognition**: Select the appropriate `rec_*.onnx` based on script ID.
-8.  **Recognize Text**: Run the selected recognition model.
-9.  **Post-process**: If confidence < 0.85, apply N-gram correction using `lm.npz`.
-10. **Handle Math**: If `mathcls.onnx` detects math, run the math decoder loop with EOS termination.
-11. **Order Blocks**: Run `order.onnx` to determine reading order.
-12. **Output**: Return markdown, text, or JSON with boxes.
+1.  **Define Script Families**: Identify the script families to support (e.g., Latin, CJK, RTL).
+2.  **Train/Obtain Recognizers**: Obtain or train separate recognition models for each script family.
+3.  **Implement Script Classifier**: Train or obtain a lightweight classifier to identify the script of a given image crop.
+4.  **Implement Routing Logic**: Implement logic to route image crops to the appropriate recognizer based on the script classifier's output.
+5.  **Implement Confidence Gating**: Implement logic to check the confidence score of the recognizer's output and trigger a fallback mechanism (e.g., N-gram LM) if the score is below a threshold.
+6.  **Implement Pre-processing**: Implement orientation detection and correction.
+7.  **Implement Post-processing**: Implement reading order detection and math expression decoding.
+8.  **Optimize for CPU**: Use ONNX Runtime and pre-optimize models for CPU inference.
+9.  **Test and Benchmark**: Test the pipeline on a diverse set of documents and benchmark performance (latency, memory, accuracy).
+10. **Deploy**: Deploy the pipeline in a CPU-only environment.

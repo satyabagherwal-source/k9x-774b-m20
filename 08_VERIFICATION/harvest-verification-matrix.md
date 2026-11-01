@@ -6789,3 +6789,5 @@
 | `CYCLE-20261101-O6YY` | `2026-11-01T02:00:52.810Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | Yes (`cf2b22fd...`) |
 | `CYCLE-20261101-WVH4` | `2026-11-01T02:07:37.816Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | Yes (`a792dfa2...`) |
 | `CYCLE-20261101-X44O` | `2026-11-01T02:07:49.032Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6399` | Yes (`28842e71...`) |
+| `CYCLE-20261101-7JD1` | `2026-11-01T02:15:55.333Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6400` | Yes (`e7d5560d...`) |
+| `CYCLE-20261101-7QO2` | `2026-11-01T02:16:04.802Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6401, Rule 6402, Rule 6403` | Yes (`1617373b...`) |

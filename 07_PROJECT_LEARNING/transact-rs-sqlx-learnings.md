@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source**: github ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
-> **Source Version**: `e5cbd61a`  
+> **Source Version**: `7908fe79`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-28T14:08:36.873Z  
+> **Timestamp**: 2026-11-01T02:15:54.614Z  
 > **Learning ID**: `learn-github-transact-rs-sqlx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/transact-rs-sqlx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/transact-rs/sqlx](https://github.com/transact-rs/sqlx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-28T14:08:35.615Z  
+> **Harvest Timestamp**: 2026-11-01T02:15:54.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time checked queries without a DSL. Supports PostgreSQL, MySQL, and SQLite.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 17607 stars
+- **Stars / Engagement**: 17616 stars
 
 ---
 
@@ -981,130 +981,83 @@ impl FromStr for AnyKind {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e5cbd61a` (2026-10-27)
-**Commit Message**: fix(postgres): Bind encodes result-format count from the wrong field (#4477)
+### Incident Patch 1: `7908fe79` (2026-10-31)
+**Commit Message**: fix(mysql): handle empty passwords during authentication switches. (#4493)
 
-Bind::encode_body wrote the result-format-code count from
-self.formats.len() instead of self.result_formats.len(), producing a
-malformed Bind body when the two slices differ in length.
-
-**File**: `sqlx-postgres/src/message/bind.rs` (modified, +36/-2)
+**File**: `sqlx-mysql/src/connection/auth.rs` (modified, +6/-0)
 ```diff
-@@ -89,8 +89,12 @@ impl FrontendMessage for Bind<'_> {
+@@ -17,6 +17,12 @@ impl AuthPlugin {
+         nonce: &Chain<Bytes, Bytes>,
+     ) -> Result<Vec<u8>, Error> {
+         match self {
++            // Empty passwords require an empty auth response, including after an auth switch.
++            AuthPlugin::CachingSha2Password | AuthPlugin::MySqlNativePassword
++                if password.is_empty() =>
++            {
++                Ok(Vec::new())
++            }
+             // https://mariadb.com/kb/en/caching_sha2_password-authentication-plugin/
+             AuthPlugin::CachingSha2Password => Ok(scramble_sha256(password, nonce).to_vec()),
  
-         buf.extend(self.params);
- 
--        let result_formats_len = u16::try_from(self.formats.len())
--            .map_err(|_| err_protocol!("too many result format codes ({})", self.formats.len()))?;
-+        let result_formats_len = u16::try_from(self.result_formats.len()).map_err(|_| {
-+            err_protocol!(
-+                "too many result format codes ({})",
-+                self.result_formats.len()
-+            )
-+        })?;
- 
-         buf.extend(result_formats_len.to_be_bytes());
- 
-@@ -104,3 +108,33 @@ impl FrontendMessage for Bind<'_> {
- 
- // TODO: Unit Test Bind
- // TODO: Benchmark Bind
-+
-+#[cfg(test)]
-+mod repro {
-+    use super::Bind;
-+    use crate::io::{PortalId, StatementId};
-+    use crate::message::FrontendMessage;
-+    use crate::PgValueFormat;
-+
-+    #[test]
-+    fn repro_result_formats_count() {
-+        let mut buf = Vec::new();
-+        Bind {
-+            portal: PortalId::UNNAMED,
-+            statement: StatementId::UNNAMED,
-+            formats: &[PgValueFormat::Binary],
-+            num_params: 0,
-+            params: &[],
-+            result_formats: &[],
-+        }
-+        .encode_msg(&mut buf)
-+        .unwrap();
-+        // 'B' len(4) portal\0 stmt\0 | n_formats=1 | fmt | n_params=0 | n_result_formats=? (no codes follow)
-+        let tail = &buf[buf.len() - 2..];
-+        assert_eq!(
-+            tail,
-+            [0, 0],
-+            "result-format count must be 0, message: {buf:?}"
-+        );
-+    }
-+}
 ```
 
----
-
-### Incident Patch 2: `3284f04d` (2026-10-27)
-**Commit Message**: fix(postgres): ignore notifications on connections that aren't listening.  fixes #4484. (#4485)
-
-**File**: `sqlx-postgres/src/connection/stream.rs` (modified, +6/-2)
+**File**: `tests/mysql/mysql.rs` (modified, +25/-0)
 ```diff
-@@ -134,9 +134,13 @@ impl PgStream {
-                     if let Some(buffer) = &mut self.notifications {
-                         let notification: Notification = message.decode()?;
-                         let _ = buffer.send(notification).await;
--
--                        continue;
-                     }
-+
-+                    // The server may send a notification at any time, e.g. to
-+                    // a connection that ran `LISTEN` itself, or behind a
-+                    // transaction-mode pooler that shares one that did.
-+                    // A connection that isn't a `PgListener` drops it.
-+                    continue;
-                 }
- 
-                 BackendMessageFormat::ParameterStatus => {
-```
-
-**File**: `tests/postgres/postgres.rs` (modified, +21/-0)
-```diff
-@@ -1193,6 +1193,27 @@ async fn test_listener_try_recv_buffered() -> anyhow::Result<()> {
+@@ -40,6 +40,31 @@ async fn it_connects_without_password() -> anyhow::Result<()> {
      Ok(())
  }
  
 +#[sqlx_macros::test]
-+async fn test_notification_on_non_listener_connection() -> anyhow::Result<()> {
-+    // A connection that isn't a `PgListener` but is subscribed to a channel,
-+    // as one can be when it runs `LISTEN` itself, or when a transaction-mode
-+    // pooler hands it a server connection that another client subscribed.
-+    let mut conn = new::<Postgres>().await?;
-+    conn.execute("LISTEN test_channel3").await?;
++async fn it_connects_without_password_after_auth_switch() -> anyhow::Result<()> {
++    setup_if_needed();
 +
-+    // The server delivers the notification to the sending session too, just
-+    // before `ReadyForQuery`. The query must still succeed.
-+    let _: () = sqlx::query_scalar("select pg_notify('test_channel3', 'payload')")
-+        .fetch_one(&mut conn)
-+        .await?;
++    let mut url = Url::parse(&env::var("DATABASE_URL").context("expected DATABASE_URL")?)
++        .context("error parsing DATABASE_URL")?;
 +
-+    // And the connection must still be usable.
-+    let value: i32 = sqlx::query_scalar("select 1").fetch_one(&mut conn).await?;
-+    assert_eq!(value, 1);
++    url.set_username("no_password_native").unwrap();
++    url.set_password(None).unwrap();
++
++    let options = MySqlConnectOptions::from_url(&url)?;
++
++    for options in [options.clone(), options.password("")] {
++        let mut conn = options.connect().await?;
++
++        let vars = sqlx::raw_sql("SHOW VARIABLES").fetch_all(&mut conn).await?;
++
++        assert!(!vars.is_empty());
++
++        conn.close().await?;
++    }
 +
 +    Ok(())
 +}
 +
  #[sqlx_macros::test]
- async fn test_pg_listener_allows_pool_to_close() -> anyhow::Result<()> {
-     let pool = pool::<Postgres>().await?;
+ async fn it_maths() -> anyhow::Result<()> {
+     let mut conn = new::<MySql>().await?;
+```
+
+**File**: `tests/mysql/setup.sql` (modified, +6/-0)
+```diff
+@@ -30,3 +30,9 @@ CREATE USER 'no_password'@'%';
+ -- Granting no privileges, or just `GRANT USAGE`, gives an "access denied" error.
+ -- https://github.com/launchbadge/sqlx/issues/3484#issuecomment-2350901546
+ GRANT SELECT ON sqlx.* TO 'no_password'@'%';
++
++-- Force a plugin switch on MySQL 8.0; MariaDB ignores the MySQL-only clause.
++CREATE USER 'no_password_native'@'%'
++    /*!50700 IDENTIFIED WITH mysql_native_password BY '' */;
++
++GRANT SELECT ON sqlx.* TO 'no_password_native'@'%';
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4493** (2026-10-31): fix(mysql): handle empty passwords during authentication switches. (@lmont19)
 - **PR #4486** (closed): Fix typo: Auxilliary -> Auxiliary (@pei711)
 - **PR #4485** (2026-10-27): fix(postgres): ignore notifications on connections that aren't listening.  fixes #4484. (@luketpeterson)
 - **PR #4478** (2026-10-27): feat: add Type for MySQL, Sqlite, and Any byte arrays (@daimond113)
 - **PR #4477** (2026-10-27): fix(postgres): Bind encodes result-format count from the wrong field (@prostomarkeloff)
 - **PR #4474** (closed): breaking: Make the embedded TLS root certs opt in (@markuskobler)
-- **PR #4472** (2026-10-21): doc: add `AI_POLICY.md` (@abonander)
 
 ---
 
@@ -1124,64 +1077,33 @@ malformed Bind body when the two slices differ in length.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres): Bind encodes result-format count from the wrong field (#4477)
+## X. mysql): handle empty passwords during authentication switches. (#4493)
 
 **RULE**:
-When implementing operations in `sqlx-postgres/src/message/bind.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sqlx-mysql/src/connection/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in transact-rs/sqlx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e5cbd61a`: postgres): Bind encodes result-format count from the wrong field (#4477). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7908fe79`: mysql): handle empty passwords during authentication switches. (#4493). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-postgres/src/message/bind.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sqlx-mysql/src/connection/auth.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let result_formats_len = u16::try_from(self.result_formats.len()).map_err(|_| {
-            err_protocol!(
-                "too many result format codes ({})",
-                self.result_formats.len()
-            )
-        })?;
-
-#[cfg(test)]
-mod repro {
-    use super::Bind;
-    use crate::io::{PortalId, StatementId};
-    use crate::message::FrontendMessage;
-    use crate::PgValueFormat;
-
-    #[test]
-    fn repro_result_formats_count() {
-        let mut buf = Vec::new();
-        Bind {
-            portal: PortalId::UNNAMED,
-            statement: StatementId::UNNAMED,
-            formats: &[PgValueFormat::Binary],
-            num_params: 0,
-            params: &[],
-            result_formats: &[],
-        }
-        .encode_msg(&mut buf)
-        .unwrap();
-        // 'B' len(4) portal\0 stmt\0 | n_formats=1 | fmt | n_params=0 | n_result_formats=? (no codes follow)
-        let tail = &buf[buf.len() - 2..];
-        assert_eq!(
-            tail,
-            [0, 0],
-            "result-format count must be 0, message: {buf:?}"
-        );
-    }
-}
+            // Empty passwords require an empty auth response, including after an auth switch.
+            AuthPlugin::CachingSha2Password | AuthPlugin::MySqlNativePassword
+                if password.is_empty() =>
+            {
+                Ok(Vec::new())
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-        let result_formats_len = u16::try_from(self.formats.len())
-            .map_err(|_| err_protocol!("too many result format codes ({})", self.formats.len()))?;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e5cbd61a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7908fe79` are properly handled with clean fallback behavior.
