@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source**: github ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
-> **Source Version**: `9fe15519`  
+> **Source Version**: `d4c963ba`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T19:42:45.439Z  
+> **Timestamp**: 2026-11-01T02:00:52.582Z  
 > **Learning ID**: `learn-github-agent-field-agentfield`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T19:42:45.432Z  
+> **Harvest Timestamp**: 2026-11-01T02:00:52.576Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2634 stars
+- **Stars / Engagement**: 2635 stars
 
 ---
 
@@ -1418,543 +1418,819 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe6f9cb9` (2026-10-30)
-**Commit Message**: fix(python): URL-encode memory subscription filters (#1137)
+### Incident Patch 1: `d4c963ba` (2026-10-31)
+**Commit Message**: chore(release): v0.1.146-rc.10 [skip ci]
 
-* fix(python): encode memory event subscription query parameters
-
-* test(control-plane): drain MCP jobs before replacing shared state
-
-* fix(build): format Go packages without recursive overlap
-
-* chore: move validation fixes to focused pull requests
-
-**File**: `sdk/python/agentfield/memory_events.py` (modified, +6/-5)
+**File**: `CHANGELOG.md` (modified, +166/-0)
 ```diff
-@@ -4,6 +4,7 @@
- from datetime import datetime
- from functools import wraps
- from typing import Any, Callable, Dict, List, Optional, Union
-+from urllib.parse import urlencode
+@@ -6,6 +6,172 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
  
- import websockets
+ <!-- changelog:entries -->
  
-@@ -152,16 +153,16 @@ async def connect(
-                 ws_url = f"{self.base_url}/api/v1/memory/events/ws"
- 
-                 # Add query parameters for server-side filtering
--                query_params = []
-+                query_params = {}
-                 if patterns:
--                    query_params.append(f"patterns={','.join(patterns)}")
-+                    query_params["patterns"] = ",".join(patterns)
-                 if scope:
--                    query_params.append(f"scope={scope}")
-+                    query_params["scope"] = scope
-                 if scope_id:
--                    query_params.append(f"scope_id={scope_id}")
-+                    query_params["scope_id"] = scope_id
- 
-                 if query_params:
--                    ws_url += "?" + "&".join(query_params)
-+                    ws_url += "?" + urlencode(query_params)
- 
-                 self.websocket = await asyncio.wait_for(
-                     websockets.connect(ws_url, **{_HEADERS_KWARG: headers}),
++## [0.1.146-rc.10] - 2026-10-31
++
++
++### Chores
++
++- Chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (#1139)
++
++* chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates
++
++Bumps the npm_and_yarn group with 2 updates in the /control-plane/web/client directory: [zod](https://github.com/colinhacks/zod) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
++Bumps the npm_and_yarn group with 3 updates in the /desktop directory: [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [@vitest/mocker](https://github.com/vitest-dev/vitest/tree/HEAD/packages/mocker) and [electron](https://github.com/electron/electron).
++Bumps the npm_and_yarn group with 3 updates in the /examples/benchmarks/100k-scale/mastra-bench directory: [zod](https://github.com/colinhacks/zod), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
++Bumps the npm_and_yarn group with 1 update in the /examples/python_agent_nodes/rag_evaluation/ui directory: [next](https://github.com/vercel/next.js).
++Bumps the npm_and_yarn group with 1 update in the /examples/ts-node-examples/init-example directory: [zod](https://github.com/colinhacks/zod).
++Bumps the npm_and_yarn group with 4 updates in the /sdk/typescript directory: [zod](https://github.com/colinhacks/zod), [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
++
++
++Updates `zod` from 4.1.12 to 4.6.6
++- [Release notes](https://github.com/colinhacks/zod/releases)
++- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
++
++Updates `vite` from 8.0.16 to 8.3.5
++- [Release notes](https://github.com/vitejs/vite/releases)
++- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
++- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
++
++Updates `vite` from 6.4.3 to 6.4.5
++- [Release notes](https://github.com/vitejs/vite/releases)
++- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
++- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
++
++Updates `@vitest/mocker` from 4.1.11 to 4.1.12
++- [Release notes](https://github.com/vitest-dev/vitest/releases)
++- [Changelog](https://github.com/vitest-dev/vitest/blob/main/docs/releases.md)
++- [Commits](https://github.com/vitest-dev/vitest/commits/v4.1.12/packages/mocker)
++
++Updates `electron` from 42.10.0 to 42.11.16
++- [Release notes](https://github.com/electron/electron/releases)
++- [Commits](https://github.com/electron/electron/compare/v42.10.0...v42.11.16)
++
++Updates `zod` from 3.25.76 to 4.6.7
++- [Release notes](https://github.com/colinhacks/zod/releases)
++- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
++
++Updates `zod` from 4.4.3 to 4.6.7
++- [Release notes](https://github.com/colinhacks/zod/releases)
++- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
++
++Updates `undici` from 6.29.0 to 6.29.1
++- [Release notes](https://github.com/nodejs/undici/releases)
++- [Commits](https://github.com/nodejs/undici/compare/v6.29.0...v6.29.1)
++
++Updates `ip-address` from 10.7.2 to 10.7.5
++- [Release notes](https://github.com/beaugunderson/ip-address/releases)
++- [Commits](https://github.com/beaugunderson/ip-address/compare/v10.7.2...v10.7.5)
++
++Updates `next` from 15.5.27 to 15.5.28
++- [Release notes](https://github.com/vercel/next.js/releases)
++- [Commits](https://github.com/vercel/next.js/compare/v15.5.27...v15.5.28)
++
++Updates `zod` from 3.25.76 to 4.6.7
++- [Release notes](https://github.com/colinhacks/zod/releases)
++- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
++
++Updates `zod` from 3.25.76 to 4.6.7
++- [Release notes](https://github.com/colinhacks/zod/releases)
++- [Commits](https://github.com/colinhacks/zod/compare/v4.1.12...v4.6.6)
++
++Updates `vite` from 8.0.16 to 8.3.5
++- [Release notes](https://github.com/vitejs/vite/releases)
++- [Changelog](https://github.com/vitejs/vite/blob/main/packages/vite/CHANGELOG.md)
++- [Commits](https://github.com/vitejs/vite/commits/v8.3.5/packages/vite)
++
++Updates `undici` from 6.29.0 to 6.29.1
++- [Release notes](https://github.com/nodejs/undici/releases)
++- [Commits](https://github.com/nodejs/undici/compare/v6.29.0...v6.29.1)
++
++Updates `ip-address` from 10.7.2 to 10.7.5
++- [Release notes](https://github.com/beaugunderson/ip-address/releases)
++- [Commits](https://github.com/beaugunderson/ip-address/compare/v10.7.2...v10.7.5)
++
++---
++updated-dependencies:
++- dependency-name: zod
++  dependency-version: 4.6.6
++  dependency-type: direct:production
++  dependency-group: npm_and_yarn
++- dependency-name: vite
++  dependency-version: 8.3.5
++  dependency-type: direct:development
++  dependency-group: npm_and_y
 ```
 
-**File**: `sdk/python/tests/test_memory_events.py` (modified, +32/-10)
+**File**: `VERSION` (modified, +1/-1)
 ```diff
-@@ -1,6 +1,7 @@
- import asyncio
- import json
- from types import SimpleNamespace
-+from urllib.parse import parse_qs, urlsplit
- 
- import websockets
- 
-@@ -161,7 +162,18 @@ async def get(self, url, params=None, headers=None, timeout=None):
- 
- 
- @pytest.mark.asyncio
--async def test_memory_event_client_connect_builds_ws_url(monkeypatch):
-+@pytest.mark.parametrize(
-+    ("patterns", "scope", "scope_id"),
-+    [
-+        (["cart.*", "order.*"], "session", "abc"),
-+        (["user+plan.*"], "actor", "alice+trial@example.com"),
-+        (["cart&total.*", "issue#*"], "session", "team&env=prod#1"),
-+        (["user preferences.*", "用户.*"], "workflow", "会话 + 1"),
-+    ],
-+)
-+async def test_memory_event_client_connect_builds_ws_url(
-+    monkeypatch, patterns, scope, scope_id
-+):
-     ctx = SimpleNamespace(to_headers=lambda: {"Authorization": "token"})
-     client = MemoryEventClient("http://agentfield", ctx)
- 
-@@ -174,7 +186,9 @@ def __init__(self):
- 
-     async def fake_connect(url, **kwargs):
-         record["url"] = url
--        record["headers"] = kwargs.get("additional_headers") or kwargs.get("extra_headers")
-+        record["headers"] = kwargs.get("additional_headers") or kwargs.get(
-+            "extra_headers"
-+        )
-         return DummyWebSocket()
- 
-     async def fake_listen(self):
-@@ -183,15 +197,19 @@ async def fake_listen(self):
-     monkeypatch.setattr("agentfield.memory_events.websockets.connect", fake_connect)
-     monkeypatch.setattr(MemoryEventClient, "_listen", fake_listen, raising=False)
- 
--    await client.connect(
--        patterns=["cart.*", "order.*"], scope="session", scope_id="abc"
--    )
-+    await client.connect(patterns=patterns, scope=scope, scope_id=scope_id)
-     await asyncio.sleep(0)
- 
--    assert record["url"].startswith("ws://agentfield")
--    assert "patterns=cart.*,order.*" in record["url"]
--    assert "scope=session" in record["url"]
--    assert "scope_id=abc" in record["url"]
-+    parsed_url = urlsplit(record["url"])
-+    assert parsed_url.scheme == "ws"
-+    assert parsed_url.netloc == "agentfield"
-+    assert parsed_url.path == "/api/v1/memory/events/ws"
-+    assert parsed_url.fragment == ""
-+    assert parse_qs(parsed_url.query) == {
-+        "patterns": [",".join(patterns)],
-+        "scope": [scope],
-+        "scope_id": [scope_id],
-+    }
-     assert record["headers"] == {"Authorization": "token"}
-     assert listener_called.get("run") is True
- 
-@@ -225,6 +243,7 @@ def __init__(self):
- 
-     async def fake_connect(url, **kwargs):
-         called_with.update(kwargs)
-+        called_with["url"] = url
-         return DummyWebSocket()
- 
-     monkeypatch.setattr("agentfield.memory_events.websockets.connect", fake_connect)
-@@ -235,6 +254,7 @@ async def fake_connect(url, **kwargs):
- 
-     assert _HEADERS_KWARG in called_with
-     assert called_with[_HEADERS_KWARG] == {"Authorization": "token"}
-+    assert called_with["url"] == "ws://agentfield/api/v1/memory/events/ws"
- 
- 
- @pytest.mark.asyncio
-@@ -260,7 +280,9 @@ async def fake_reconnect(self):
-     # Give the background task a chance to start
-     await asyncio.sleep(0.05)
- 
--    assert reconnect_started.is_set(), "reconnect should have been started in background"
-+    assert reconnect_started.is_set(), (
-+        "reconnect should have been started in background"
-+    )
-     assert not client.is_listening
- 
- 
+@@ -1 +1 @@
+-0.1.146-rc.9
++0.1.146-rc.10
 ```
 
----
-
-### Incident Patch 2: `db7d3dea` (2026-10-30)
-**Commit Message**: fix(sdk/python): honor numeric Retry-After minimum waits (#1129)
-
-* fix(sdk/python): honor numeric Retry-After waits
-
-* style(sdk/python): normalize config field wrapping
-
-* fix(sdk/python): cap honoured Retry-After waits at five minutes
-
-Treating every finite Retry-After as a minimum let a provider
-suspend each retry indefinitely: a 86400s hint made the default
-five retries sleep five days, with no outer deadline on direct
-Agent.ai calls. Honour hints up to max(rate_limit_max_delay, 300s)
-and clamp anything larger to that ceiling, so jitter still never
-retries before the (capped) cooldown.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Abir Abbas <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `sdk/python/agentfield/rate_limiter.py` (modified, +12/-5)
+**File**: `control-plane/internal/templates/go/go.mod.tmpl` (modified, +1/-1)
 ```diff
-@@ -1,12 +1,16 @@
- import asyncio
- import hashlib
-+import math
- import os
- import random
- import time
- from typing import Any, Optional
- from agentfield.logger import log_debug
+@@ -2,4 +2,4 @@ module {{.GoModule}}
  
+ go 1.23
  
-+_MAX_RETRY_AFTER_SECONDS = 300.0
-+
-+
- class RateLimitError(Exception):
-     """Custom exception for rate limit errors"""
- 
-@@ -138,9 +142,12 @@ def _calculate_backoff_delay(
-         Returns:
-             float: Delay in seconds
-         """
--        # Use server-suggested delay if available and reasonable
--        if retry_after and retry_after <= self.max_delay:
--            base_delay = retry_after
-+        # Honour server cooldowns up to the ceiling, even above the local
-+        # exponential-backoff cap. Invalid hints use the normal backoff.
-+        minimum_delay = 0.0
-+        if retry_after is not None and math.isfinite(retry_after) and retry_after > 0:
-+            base_delay = min(retry_after, max(self.max_delay, _MAX_RETRY_AFTER_SECONDS))
-+            minimum_delay = base_delay
-         else:
-             # Exponential backoff: base_delay * (2 ^ attempt)
-             base_delay = min(self.base_delay * (2**attempt), self.max_delay)
-@@ -154,8 +161,8 @@ def _calculate_backoff_delay(
-         jitter_range = base_delay * self.jitter_factor
-         jitter = rng.uniform(-jitter_range, jitter_range)
- 
--        # Ensure minimum delay and apply jitter
--        delay = max(0.1, base_delay + jitter)
-+        # Negative jitter must not end the server's cooldown early.
-+        delay = max(0.1, minimum_delay, base_delay + jitter)
- 
-         log_debug(
-             f"Rate limit backoff: attempt={attempt}, base_delay={base_delay:.2f}s, jitter={jitter:.2f}s, total_delay={delay:.2f}s"
+-require github.com/Agent-Field/agentfield/sdk/go v0.1.146-rc.9
++require github.com/Agent-Field/agentfield/sdk/go v0.1.146-rc.10
 ```
 
-**File**: `sdk/python/agentfield/types.py` (modified, +7/-4)
+**File**: `sdk/python/agentfield/__init__.py` (modified, +1/-1)
 ```diff
-@@ -349,10 +349,10 @@ class HarnessConfig(BaseModel):
-     pi_bin: str = Field(default="pi", description="Path to Pi binary.")
-     omp_bin: str = Field(default="omp", description="Path to OMP binary.")
-     aforge_bin: str = Field(default="aforge", description="Path to aforge binary.")
--    codeaf_bin: Optional[str] = Field(default=None, description="Path to CodeAF binary.")
--    grok_bin: str = Field(
--        default="grok", description="Path to Grok Build CLI binary."
-+    codeaf_bin: Optional[str] = Field(
-+        default=None, description="Path to CodeAF binary."
-     )
-+    grok_bin: str = Field(default="grok", description="Path to Grok Build CLI binary.")
-     schema_mode: str = Field(
-         default="single",
-         description=(
-@@ -483,7 +483,10 @@ def image_model(self) -> str:
-     )
-     rate_limit_max_delay: float = Field(
-         default=30.0,
--        description="Maximum delay for rate limit backoff in seconds.",
-+        description=(
-+            "Maximum base exponential backoff delay in seconds. A valid Retry-After "
-+            "can require a longer wait, up to 5 minutes or this value if larger."
-+        ),
-     )
-     rate_limit_jitter_factor: float = Field(
-         default=0.25,
+@@ -197,4 +197,4 @@
+     "reasoner",
+ ]
+ 
+-__version__ = "0.1.146-rc.9"
++__version__ = "0.1.146-rc.10"
 ```
 
-**File**: `sdk/python/tests/test_rate_limiter_core.py` (modified, +92/-0)
+**File**: `sdk/python/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -65,6 +65,98 @@ async def flaky_call():
-     assert attempts["sleeps"][0] == pytest.approx(0.2)
+@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
  
+ [project]
+ name = "agentfield"
+-version = "0.1.146-rc.9"
++version = "0.1.146-rc.10"
+ description = "Python SDK for the AgentField control plane"
+ readme = "README.md"
+ license = {text = "Apache-2.0"}
+```
+
+**File**: `sdk/python/uv.lock` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@ resolution-markers = [
  
-+@pytest.mark.unit
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("retry_after", [10.0, 60.0])
-+async def test_execute_with_retry_respects_server_wait(monkeypatch, retry_after):
-+    limiter = StatelessRateLimiter(max_retries=1, max_delay=30.0, jitter_factor=0.25)
-+    elapsed = 0.0
-+    attempts = []
-+
-+    async def fake_sleep(delay):
-+        nonlocal elapsed
-+        elapsed += delay
-+
-+    async def rate_limited_call():
-+        attempts.append(elapsed)
-+        if len(attempts) == 1:
-+            raise DummyHTTPError(retry_after=retry_after)
-+        return "ok"
-+
-+    monkeypatch.setattr("agentfield.rate_limiter.asyncio.sleep", fake_sleep)
-+    # Exercise the earliest retry the configured jitter can produce.
-+    monkeypatch.setattr(random.Random, "uniform", lambda self, low, high: low)
-+
-+    assert await limiter.execute_with_retry(rate_limited_call) == "ok"
-+    assert len(attempts) == 2
-+    assert attempts[1] >= retry_after
-+
-+
-+@pytest.mark.unit
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize(
-+    "max_delay, retry_after, jitter_end, expected_wait",
-+    [
-+        (30.0, 3600.0, "low", 300.0),
-+        (30.0, 3600.0, "high", 375.0),
-+        (600.0, 500.0, "low", 500.0),
-+        (600.0, 3600.0, "low", 600.0),
-+    ],
-+)
-+async def test_execute_with_retry_bounds_server_wait(
-+    monkeypatch, max_delay, retry_after, jitter_end, expected_wait
-+):
-+    limiter = StatelessRateLimiter(
-+        max_retries=1, max_delay=max_delay, jitter_factor=0.25
-+    )
-+    attempts = 0
-+    sleeps = []
-+
-+    async def fake_sleep(delay):
-+        sleeps.append(delay)
-+
-+    async def rate_limited_call():
-+        nonlocal attempts
-+        attempts += 1
-+        if attempts == 1:
-+            raise DummyHTTPError(retry_after=retry_after)
-+        return "ok"
-+
-+    monkeypatch.setattr("agentfield.rate_limiter.asyncio.sleep", fake_sleep)
-+    monkeypatch.setattr(
-+        random.Random,
-+        "uniform",
-+        lambda self, low, high: low if jitter_end == "low" else high,
-+    )
-+
-+    assert await limiter.execute_with_retry(rate_limited_call) == "ok"
-+    assert sleeps == [pytest.approx(expected_wait)]
-+
-+
-+@pytest.mark.unit
-+@pytest.mark.asyncio
-+@pytest.mark.parametrize("retry_after", [-1.0, float("nan"), float("inf")])
-+async def test_execute_with_retry_ignores_invalid_server_wait(monkeypatch, retry_after):
-+    limiter = StatelessRateLimiter(max_retries=1, base_delay=0.5, jitter_factor=0.0)
-+    attempts = 0
-+    sleeps = []
-+
-+    async def fake_sleep(delay):
-+        sleeps.append(delay)
-+
-+    async def rate_limited_call():
-+        nonlocal attempts
-+        attempts += 1
-+        if attempts == 1:
-+            raise DummyHTTPError(retry_after=retry_after)
-+        return "ok"
-+
-+    monkeypatch.setattr("agentfield.rate_limiter.asyncio.sleep", fake_sleep)
-+
-+    assert await limiter.execute_with_retry(rate_limited_call) == "ok"
-+    assert sleeps == [0.5]
-+
-+
- @pytest.mark.unit
- @pytest.mark.asyncio
- async def test_execute_with_retry_gives_up(monkeypatch):
+ [[package]]
+ name = "agentfield"
+-version = "0.1.146rc9"
++version = "0.1.146rc10"
+ source = { editable = "." }
+ dependencies = [
+     { name = "aiohttp" },
+```
+
+**File**: `sdk/typescript/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@agentfield/sdk",
+-  "version": "0.1.146-rc.9",
++  "version": "0.1.146-rc.10",
+   "description": "AgentField TypeScript SDK",
+   "type": "module",
+   "main": "dist/index.js",
 ```
 
 ---
 
-### Incident Patch 3: `72a32885` (2026-10-30)
-**Commit Message**: fix(sdk/go): request usage on streamed completions from OpenAI endpoints (#1134)
+### Incident Patch 2: `799ffc09` (2026-10-31)
+**Commit Message**: chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (#1139)
 
-* fix(sdk/go): request usage on streamed completions from OpenAI endpoints
+* chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates
 
-StreamComplete never sent stream_options.include_usage, so against OpenAI
-(and Azure OpenAI) the final chunk carried no usage and streamed calls
-reported no token counts, even though StreamChunk.Usage documents that
-field. Send include_usage on streaming requests to the endpoints that
-already get the max_completion_tokens rewrite (OpenAI, Azure OpenAI,
-OpenRouter); self-hosted servers keep the plain body.
+Bumps the npm_and_yarn group with 2 updates in the /control-plane/web/client directory: [zod](https://github.com/colinhacks/zod) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
+Bumps the npm_and_yarn group with 3 updates in the /desktop directory: [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [@vitest/mocker](https://github.com/vitest-dev/vitest/tree/HEAD/packages/mocker) and [electron](https://github.com/electron/electron).
+Bumps the npm_and_yarn group with 3 updates in the /examples/benchmarks/100k-scale/mastra-bench directory: [zod](https://github.com/colinhacks/zod), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
+Bumps the npm_and_yarn group with 1 update in the /examples/python_agent_nodes/rag_evaluation/ui directory: [next](https://github.com/vercel/next.js).
+Bumps the npm_and_yarn group with 1 update in the /examples/ts-node-examples/init-example directory: [zod](https://github.com/colinhacks/zod).
+Bumps the npm_and_
 
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-* docs(sdk/go): guard the AIStream example against the usage-only final chunk
-
-Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
-
-**File**: `sdk/go/agent/agent.go` (modified, +3/-1)
+**File**: `control-plane/web/client/package-lock.json` (modified, +175/-211)
 ```diff
-@@ -2780,7 +2780,9 @@ func agentToolNameToInvocationTarget(name string) string {
- //
- //	chunks, errs := agent.AIStream(ctx, "Tell me a story")
- //	for chunk := range chunks {
--//	    fmt.Print(chunk.Choices[0].Delta.Content)
-+//	    if len(chunk.Choices) > 0 {
-+//	        fmt.Print(chunk.Choices[0].Delta.Content)
-+//	    }
- //	}
- //	if err := <-errs; err != nil {
- //	    log.Fatal(err)
+@@ -53,7 +53,7 @@
+                 "tailwind-merge": "^3.3.1",
+                 "tailwindcss-animate": "^1.0.7",
+                 "vaul": "^1.1.2",
+-                "zod": "^4.1.12"
++                "zod": "^4.6.6"
+             },
+             "devDependencies": {
+                 "@eslint/js": "^9.25.0",
+@@ -76,7 +76,7 @@
+                 "tailwindcss-cli": "^0.1.2",
+                 "typescript": "~5.8.3",
+                 "typescript-eslint": "^8.30.1",
+-                "vite": "^8.0.16",
++                "vite": "^8.3.5",
+                 "vitest": "^4.1.11"
+             }
+         },
+@@ -495,40 +495,6 @@
+                 "@luma.gl/core": "~9.2.6"
+             }
+         },
+-        "node_modules/@emnapi/core": {
+-            "version": "1.10.0",
+-            "resolved": "https://registry.npmjs.org/@emnapi/core/-/core-1.10.0.tgz",
+-            "integrity": "sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==",
+-            "dev": true,
+-            "license": "MIT",
+-            "optional": true,
+-            "dependencies": {
+-                "@emnapi/wasi-threads": "1.2.1",
+-                "tslib": "^2.4.0"
+-            }
+-        },
+-        "node_modules/@emnapi/runtime": {
+-            "version": "1.10.0",
+-            "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.10.0.tgz",
+-            "integrity": "sha512-ewvYlk86xUoGI0zQRNq/mC+16R1QeDlKQy21Ki3oSYXNgLb45GV1P6A0M+/s6nyCuNDqe5VpaY84BzXGwVbwFA==",
+-            "dev": true,
+-            "license": "MIT",
+-            "optional": true,
+-            "dependencies": {
+-                "tslib": "^2.4.0"
+-            }
+-        },
+-        "node_modules/@emnapi/wasi-threads": {
+-            "version": "1.2.1",
+-            "resolved": "https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.2.1.tgz",
+-            "integrity": "sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==",
+-            "dev": true,
+-            "license": "MIT",
+-            "optional": true,
+-            "dependencies": {
+-                "tslib": "^2.4.0"
+-            }
+-        },
+         "node_modules/@esbuild/aix-ppc64": {
+             "version": "0.28.1",
+             "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.28.1.tgz",
+@@ -1467,25 +1433,6 @@
+                 "@math.gl/core": "4.1.0"
+             }
+         },
+-        "node_modules/@napi-rs/wasm-runtime": {
+-            "version": "1.1.5",
+-            "resolved": "https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-1.1.5.tgz",
+-            "integrity": "sha512-AWPoBRJ9tsnVhor4sjO7rkni+7p+2IAEFj6cx06UgP10jkQHqay/36uRV/bFkgrh18D9vb4cr8Q0Pthskgzy+Q==",
+-            "dev": true,
+-            "license": "MIT",
+-            "optional": true,
+-            "dependencies": {
+-                "@tybys/wasm-util": "^0.10.2"
+-            },
+-            "funding": {
+-                "type": "github",
+-                "url": "https://github.com/sponsors/Brooooooklyn"
+-            },
+-            "peerDependencies": {
+-                "@emnapi/core": "^1.7.1",
+-                "@emnapi/runtime": "^1.7.1"
+-            }
+-        },
+         "node_modules/@nodelib/fs.scandir": {
+             "version": "2.1.5",
+             "resolved": "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz",
+@@ -1522,13 +1469,13 @@
+             }
+         },
+         "node_modules/@oxc-project/types": {
+-            "version": "0.133.0",
+-            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.133.0.tgz",
+-            "integrity": "sha512-KzkdCd6Uxqnf6l3HOw1xfatAlUURA0g14cvBYFyJ5SaNOQbOUvBr9PKArcPcrNIeRsBdgcUzOGrhKveVpvOIGA==",
++            "version": "0.155.0",
++            "resolved": "https://registry.npmjs.org/@oxc-project/types/-/types-0.155.0.tgz",
++            "integrity": "sha512-SeE8JPwW1xs1tHeNycjUtUBdhorRa8o4jlvjwk49R7/Z291i+4DQa7JJIgOm/TaYQZx+QrPQbVJ/9c8dMIZN8Q==",
+             "dev": true,
+             "license": "MIT",
+             "funding": {
+-                "url": "https://github.com/sponsors/Boshen"
++                "url": "https://github.com/sponsors/oxc-project"
+             }
+         },
+         "node_modules/@phosphor-icons/react": {
+@@ -2849,10 +2796,27 @@
+             "integrity": "sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==",
+             "license": "MIT"
+         },
++        "node_modules/@rolldown/binding-android-arm-eabi": {
++            "version": "1.2.15",
++            "resolved": "https://registry.npmjs.org/@rolldown/binding-android-arm-eabi/-/binding-android-arm-eabi-1.2.15.tgz",
++            "integrity": "sha512-aLcgK9gIJ3YRvrrtfSBbRa27F5WrpiTaPulnFpsHPxpUHgFlSgnU4854MHwoRGEBhfRJDWCS2WQ7lIjskE9Olw==",
++            "cpu": [
++                "arm"
++            ],
++            "dev": true,
++            "license": "MIT",
++            "optional": true,
++            "os": [
++
 ```
 
-**File**: `sdk/go/ai/model_params.go` (modified, +9/-0)
+**File**: `control-plane/web/client/package.json` (modified, +2/-2)
 ```diff
-@@ -99,6 +99,15 @@ func (c *Client) marshalRequest(req *Request) ([]byte, error) {
- 		req.Usage = &RequestUsage{Include: true}
- 	}
+@@ -58,7 +58,7 @@
+         "tailwind-merge": "^3.3.1",
+         "tailwindcss-animate": "^1.0.7",
+         "vaul": "^1.1.2",
+-        "zod": "^4.1.12"
++        "zod": "^4.6.6"
+     },
+     "devDependencies": {
+         "@eslint/js": "^9.25.0",
+@@ -81,7 +81,7 @@
+         "tailwindcss-cli": "^0.1.2",
+         "typescript": "~5.8.3",
+         "typescript-eslint": "^8.30.1",
+-        "vite": "^8.0.16",
++        "vite": "^8.3.5",
+         "vitest": "^4.1.11"
+     },
+     "overrides": {
+```
+
+**File**: `control-plane/web/client/pnpm-lock.yaml` (modified, +460/-515)
+```diff
+@@ -4,20 +4,6 @@ settings:
+   autoInstallPeers: true
+   excludeLinksFromLockfile: false
  
-+	// OpenAI (and Azure OpenAI, OpenRouter) only report token usage on a
-+	// stream when the request opts in with stream_options.include_usage.
-+	// Self-hosted OpenAI-compatible servers may reject or drop the field, so
-+	// it is limited to the same endpoints as the max_completion_tokens
-+	// rewrite. Requests that already set StreamOptions are left alone.
-+	if req.Stream && req.StreamOptions == nil && isVouchedRewriteEndpoint(c.config.BaseURL) {
-+		req.StreamOptions = &StreamOptions{IncludeUsage: true}
-+	}
-+
- 	model := req.Model
- 	if model == "" {
- 		model = c.config.Model
-```
-
-**File**: `sdk/go/ai/model_params_test.go` (modified, +94/-0)
-```diff
-@@ -607,3 +607,97 @@ func TestComplete_WireBody_UnknownHostKeepsMaxTokens(t *testing.T) {
- 		t.Errorf("expected max_tokens=654, got %v", val)
- 	}
- }
-+
-+func TestStreamComplete_WireBody_VouchedEndpointRequestsUsage(t *testing.T) {
-+	// OpenAI only reports token usage on a stream when the request carries
-+	// stream_options.include_usage; without it the final chunk has no usage.
-+	cfg := &Config{
-+		APIKey:  "test-key",
-+		BaseURL: "https://api.openai.com/v1",
-+		Model:   "gpt-5",
-+	}
-+
-+	client, err := NewClient(cfg)
-+	if err != nil {
-+		t.Fatalf("NewClient error: %v", err)
-+	}
-+	rt := &recordingTransport{}
-+	client.httpClient.Transport = rt
-+
-+	chunks, errs := client.StreamComplete(context.Background(), "hello")
-+	for range chunks {
-+	}
-+	<-errs
-+
-+	var raw map[string]interface{}
-+	if err := json.Unmarshal(rt.body, &raw); err != nil {
-+		t.Fatalf("unmarshal captured body: %v", err)
-+	}
-+
-+	opts, ok := raw["stream_options"].(map[string]interface{})
-+	if !ok {
-+		t.Fatalf("expected stream_options in the wire body for api.openai.com, got %s", rt.body)
-+	}
-+	if opts["include_usage"] != true {
-+		t.Errorf("expected stream_options.include_usage=true, got %v", opts["include_usage"])
-+	}
-+}
-+
-+func TestStreamComplete_WireBody_UnknownHostOmitsStreamOptions(t *testing.T) {
-+	// Self-hosted OpenAI-compatible servers (Ollama, LM Studio, llama.cpp)
-+	// may reject or ignore unknown fields: they keep the plain stream body.
-+	var captured []byte
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		b, err := io.ReadAll(r.Body)
-+		if err != nil {
-+			http.Error(w, err.Error(), http.StatusInternalServerError)
-+			return
-+		}
-+		captured = b
-+		w.Header().Set("Content-Type", "text/event-stream")
-+		_, _ = io.WriteString(w, "data: [DONE]\n\n")
-+	}))
-+	defer server.Close()
-+
-+	client, err := NewClient(&Config{APIKey: "test-key", BaseURL: server.URL, Model: "llama3"})
-+	if err != nil {
-+		t.Fatalf("NewClient error: %v", err)
-+	}
-+
-+	chunks, errs := client.StreamComplete(context.Background(), "hello")
-+	for range chunks {
-+	}
-+	if err := <-errs; err != nil {
-+		t.Fatalf("StreamComplete error: %v", err)
-+	}
-+
-+	var raw map[string]interface{}
-+	if err := json.Unmarshal(captured, &raw); err != nil {
-+		t.Fatalf("unmarshal captured body: %v", err)
-+	}
-+	if _, ok := raw["stream_options"]; ok {
-+		t.Errorf("expected no stream_options for a self-hosted endpoint, got %s", captured)
-+	}
-+}
-+
-+func TestComplete_WireBody_NoStreamOptions(t *testing.T) {
-+	// stream_options is only valid on a streaming request.
-+	cfg := &Config{APIKey: "test-key", BaseURL: "https://api.openai.com/v1", Model: "gpt-5"}
-+	client, err := NewClient(cfg)
-+	if err != nil {
-+		t.Fatalf("NewClient error: %v", err)
-+	}
-+	rt := &recordingTransport{}
-+	client.httpClient.Transport = rt
-+
-+	if _, err := client.Complete(context.Background(), "hello"); err != nil {
-+		t.Fatalf("Complete error: %v", err)
-+	}
-+	var raw map[string]interface{}
-+	if err := json.Unmarshal(rt.body, &raw); err != nil {
-+		t.Fatalf("unmarshal captured body: %v", err)
-+	}
-+	if _, ok := raw["stream_options"]; ok {
-+		t.Errorf("expected no stream_options on a non-streaming request, got %s", rt.body)
-+	}
-+}
-```
-
-**File**: `sdk/go/ai/request.go` (modified, +10/-0)
-```diff
-@@ -46,6 +46,16 @@ type Request struct {
- 	// object carry the native cost of the call; the client sets it
- 	// automatically for OpenRouter requests.
- 	Usage *RequestUsage `json:"usage,omitempty"`
-+
-+	// StreamOptions carries streaming-only options. The client sets
-+	// include_usage for streaming requests to endpoints known to accept it
-+	// (see isVouchedRewriteEndpoint), so the final chunk reports token usage.
-+	StreamOptions *StreamOptions `json:"stream_options,omitempty"`
-+}
-+
-+// StreamOptions is the request-body stream_options object (OpenAI shape).
-+type StreamOptions struct {
-+	IncludeUsage bool `json:"include_usage"`
- }
+-overrides:
+-  js-yaml: 4.3.2
+-  browserslist: 4.28.9
+-  baseline-browser-mapping: 2.11.23
+-  nanoid: 3.3.18
+-  esbuild: 0.28.1
+-  ws: 8.21.0
+-  brace-expansion@1: 1.1.21
+-  brace-expansion@2: 2.1.7
+-  postcss: 8.5.25
+-  '@humanfs/node': 0.16.8
+-  postcss-selector-parser: 7.1.6
+-  source-map-js: 1.2.2
+-
+ importers:
  
- // RequestUsage is the request-body usage accounting opt-in (OpenRouter shape).
+   .:
+@@ -27,10 +13,10 @@ importers:
+         version: 4.0.0(@hookform/resolvers@3.10.0(react-hook-form@7.72.1(react@19.2.8)))(react-hook-form@7.72.1(react@19.2.8))(react@19.2.8)
+       '@autoform/shadcn':
+         specifier: ^1.0.1
+-        version: 1.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(jiti@1.21.7)(postcss@8.5.25)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tailwindcss@3.4.17)(typescript@5.8.3)(yaml@2.8.3)
++        version: 1.0.1(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(jiti@1.21.7)(postcss@8.5.32)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@7.2.0)(tailwindcss@3.4.17)(typescript@5.8.3)(yaml@2.8.3)
+       '@autoform/zod':
+         specifier: ^5.0.0
+-        version: 5.0.0(zod@4.3.6)
++        version: 5.0.0(zod@4.6.6)
+       '@deck.gl/core':
+         specifier: ^9.2.0
+         version: 9.2.11
+@@ -135,7 +121,7 @@ importers:
+         version: 5.6.0(react@19.2.8)
+       react-markdown:
+         specifier: ^10.1.0
+-        version: 10.1.0(@types/react@19.1.13)(react@19.2.8)
++        version: 10.1.0(@types/react@19.1.13)(react@19.2.8)(supports-color@7.2.0)
+       react-router:
+         specifier: ^8.3.0
+         version: 8.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+@@ -144,7 +130,7 @@ importers:
+         version: 2.15.4(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+       remark-gfm:
+         specifier: ^4.0.1
+-        version: 4.0.1
++        version: 4.0.1(supports-color@7.2.0)
+       sonner:
+         specifier: ^2.0.7
+         version: 2.0.7(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+@@ -158,8 +144,8 @@ importers:
+         specifier: ^1.1.2
+         version: 1.1.2(@types/react-dom@19.1.9(@types/react@19.1.13))(@types/react@19.1.13)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+       zod:
+-        specifier: ^4.1.12
+-        version: 4.3.6
++        specifier: ^4.6.6
++        version: 4.6.6
+     devDependencies:
+       '@eslint/js':
+         specifier: ^9.25.0
+@@ -184,31 +170,31 @@ importers:
+         version: 19.1.9(@types/react@19.1.13)
+       '@vitejs/plugin-react':
+         specifier: ^6.0.1
+-        version: 6.0.1(vite@8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3))
++        version: 6.0.1(vite@8.3.5(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3))
+       '@vitest/coverage-v8':
+         specifier: ^4.1.11
+         version: 4.1.11(vitest@4.1.11)
+       autoprefixer:
+         specifier: ^10.4.21
+-        version: 10.4.21(postcss@8.5.25)
++        version: 10.4.21(postcss@8.5.32)
+       eslint:
+         specifier: ^9.25.0
+-        version: 9.36.0(jiti@1.21.7)
++        version: 9.36.0(jiti@1.21.7)(supports-color@7.2.0)
+       eslint-plugin-react-hooks:
+         specifier: ^5.2.0
+-        version: 5.2.0(eslint@9.36.0(jiti@1.21.7))
++        version: 5.2.0(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))
+       eslint-plugin-react-refresh:
+         specifier: ^0.4.19
+-        version: 0.4.20(eslint@9.36.0(jiti@1.21.7))
++        version: 0.4.20(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))
+       globals:
+         specifier: ^16.0.0
+         version: 16.4.0
+       jsdom:
+         specifier: ^26.1.0
+-        version: 26.1.0
++        version: 26.1.0(supports-color@7.2.0)
+       postcss:
+-        specifier: 8.5.25
+-        version: 8.5.25
++        specifier: ^8.5.25
++        version: 8.5.32
+       tailwindcss:
+         specifier: ^3.4.17
+         version: 3.4.17
+@@ -220,13 +206,13 @@ importers:
+         version: 5.8.3
+       typescript-eslint:
+         specifier: ^8.30.1
+-        version: 8.44.0(eslint@9.36.0(jiti@1.21.7))(typescript@5.8.3)
++        version: 8.44.0(eslint@9.36.0(jiti@1.21.7)(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.8.3)
+       vite:
+-        specifier: ^8.0.16
+-        version: 8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3)
++        specifier: ^8.3.5
++        version: 8.3.5(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3)
+       vitest:
+         specifier: ^4.1.11
+-        version: 4.1.11(@types/node@24.5.2)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0)(vite@8.0.16(@types/node@24.5.2)(esbuild@0.28.1)(jiti@1.21.7)(yaml@2.8.3))
++        version: 4.1.11(@types/node@24.5.2)(@vitest/coverage-v8@4.1.11)(jsdom@26.1.0(supports-color@7.2.0))(vite@8.3.5(@types/node@24.5.2)(esbuild@0.27.7)(jiti@1.21.7)(yaml@2.8.3))
+ 
+ packages:
+ 
+@@ -350,167 +336,158 @@ packages:
+       '@deck.gl/core': ~9.2.0
+       '@luma.gl/core': ~9.2.6
+ 
+-  '@emnapi/core@1.10.0':
+-    resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8
+```
+
+**File**: `desktop/package-lock.json` (modified, +59/-59)
+```diff
+@@ -18,14 +18,14 @@
+         "@types/react": "^18.3.12",
+         "@types/react-dom": "^18.3.1",
+         "@vitejs/plugin-react": "^4.3.4",
+-        "electron": "^42.10.0",
++        "electron": "^42.11.16",
+         "electron-builder": "^26.15.3",
+         "electron-vite": "^3.1.0",
+         "react": "^18.3.1",
+         "react-dom": "^18.3.1",
+         "typescript": "^5.7.2",
+-        "vite": "^6.0.5",
+-        "vitest": "4.1.11"
++        "vite": "^6.4.5",
++        "vitest": "4.1.12"
+       }
+     },
+     "node_modules/@babel/code-frame": {
+@@ -2036,16 +2036,16 @@
+       }
+     },
+     "node_modules/@vitest/expect": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.11.tgz",
+-      "integrity": "sha512-VX2x5vNJXET47KAFzwERI+KRMtTTCSWTfSMKsW7JsUsXV4psq++e3DvZpuTDOpHcxytiDs6p2nhVb2tVDiiUYw==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/expect/-/expect-4.1.12.tgz",
++      "integrity": "sha512-vFlTt+YEu9WBpNjdGayNmlMVzrWPi1+sv853/7t2FU7hpO5gAFBKHzQmkCq5Xjpr+evegF2994LQT3hF3mRlqQ==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+         "@standard-schema/spec": "^1.1.0",
+         "@types/chai": "^5.2.2",
+-        "@vitest/spy": "4.1.11",
+-        "@vitest/utils": "4.1.11",
++        "@vitest/spy": "4.1.12",
++        "@vitest/utils": "4.1.12",
+         "chai": "^6.2.2",
+         "tinyrainbow": "^3.1.0"
+       },
+@@ -2054,13 +2054,13 @@
+       }
+     },
+     "node_modules/@vitest/mocker": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.11.tgz",
+-      "integrity": "sha512-2XJVD55d1o5AZous5CCGKS74g/riOj9odEt2bQpCVZeblHyHdnMeFl4jl0XjU21stf4mbjUkew2eXQZt65g5CQ==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/mocker/-/mocker-4.1.12.tgz",
++      "integrity": "sha512-fKShNpKZzupWZuY0z7egydvL0sqW4INEZBEExMBMAa6izlENEVHwoXgdaTCaBZ5fwlr4xf2o1wXC83n9RpO+NA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@vitest/spy": "4.1.11",
++        "@vitest/spy": "4.1.12",
+         "estree-walker": "^3.0.3",
+         "magic-string": "^0.30.21"
+       },
+@@ -2081,9 +2081,9 @@
+       }
+     },
+     "node_modules/@vitest/pretty-format": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.11.tgz",
+-      "integrity": "sha512-yiZzPbGTS9Sr/JpFl8zHrcIkAofNbFV6k21vIgQN/cY/oxZeXhJv5sc/MBJ5jFKWmWs+oJHw0UXLZjmf931+Vw==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/pretty-format/-/pretty-format-4.1.12.tgz",
++      "integrity": "sha512-XW9O8+Mxx4VpCtkYdMJLZQQwsVryP9wk7cPKDxtXFfwSak6yRh5+2fep/Y0XF/ElBvJHq8bcYdi6aeuai0opZA==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+@@ -2094,28 +2094,28 @@
+       }
+     },
+     "node_modules/@vitest/runner": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.11.tgz",
+-      "integrity": "sha512-LztvUgdwMNJMIkj3hQnnxiC2Xy1zNxq928W/xhjCLaNCzqTZOudjwbQf6v9IntZGPw132i2Lq2rgTRZHD3JHNw==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/runner/-/runner-4.1.12.tgz",
++      "integrity": "sha512-NKlVKCr5QnCe8jijdMnmkpHHU+WTqiLFR6G0pHji9uRjXK9xJl1k1nTw6F3pOOj2PDcsDt2GKQMI7wIsaT491w==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@vitest/utils": "4.1.11",
++        "@vitest/utils": "4.1.12",
+         "pathe": "^2.0.3"
+       },
+       "funding": {
+         "url": "https://opencollective.com/vitest"
+       }
+     },
+     "node_modules/@vitest/snapshot": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.11.tgz",
+-      "integrity": "sha512-pN7ikn1ON7h8ee4gIAp4AzyK+zBtJPzVbqOgu5LCEh4VaJVbPQcgYQYJIMGQPXVeJJq1fnfazis7a5pFNPahog==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/snapshot/-/snapshot-4.1.12.tgz",
++      "integrity": "sha512-ko1y1Qgb/slzQ9mr+b89Cuqud8WG1TKtsPD8r7ZUBdvVOGt85Af2HwCqHujrhwJq95hs/9RM7fcAPg57o1vlzw==",
+       "dev": true,
+       "license": "MIT",
+       "dependencies": {
+-        "@vitest/pretty-format": "4.1.11",
+-        "@vitest/utils": "4.1.11",
++        "@vitest/pretty-format": "4.1.12",
++        "@vitest/utils": "4.1.12",
+         "magic-string": "^0.30.21",
+         "pathe": "^2.0.3"
+       },
+@@ -2124,23 +2124,23 @@
+       }
+     },
+     "node_modules/@vitest/spy": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-4.1.11.tgz",
+-      "integrity": "sha512-apNa/prQy2qCeywhnixOHPRCgGNhvg7T4Dapfl1GahLp/R+uhBm5cPyFoNVyqsNd2h1nJxL6BqqdIjiABL60YA==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@vitest/spy/-/spy-4.1.12.tgz",
++      "integrity": "sha512-RGq9x4JNGNTZHEJxvN0oSiJjeSCExm0n2gZKKJZHY9cX5AVA6M7VJILBT3ZJ/tJ/0J9uWT7fETV9/btoi//vSg==",
+
+```
+
+**File**: `desktop/package.json` (modified, +3/-3)
+```diff
+@@ -84,14 +84,14 @@
+     "@types/react": "^18.3.12",
+     "@types/react-dom": "^18.3.1",
+     "@vitejs/plugin-react": "^4.3.4",
+-    "electron": "^42.10.0",
++    "electron": "^42.11.16",
+     "electron-builder": "^26.15.3",
+     "electron-vite": "^3.1.0",
+     "react": "^18.3.1",
+     "react-dom": "^18.3.1",
+     "typescript": "^5.7.2",
+-    "vite": "^6.0.5",
+-    "vitest": "4.1.11"
++    "vite": "^6.4.5",
++    "vitest": "4.1.12"
+   },
+   "overrides": {
+     "fast-uri": "3.1.8",
+```
+
+**File**: `examples/benchmarks/100k-scale/mastra-bench/package-lock.json` (modified, +14/-14)
+```diff
+@@ -9,7 +9,7 @@
+       "version": "1.0.0",
+       "dependencies": {
+         "@mastra/core": "^1.23.0",
+-        "zod": "^3.22.0"
++        "zod": "^4.6.7"
+       },
+       "devDependencies": {
+         "@types/node": "^20.0.0",
+@@ -1707,9 +1707,9 @@
+       "license": "ISC"
+     },
+     "node_modules/ip-address": {
+-      "version": "10.7.2",
+-      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.2.tgz",
+-      "integrity": "sha512-7H/2gFSIitxc0hG3nOI1glS8QLo/EHBFFLk8vEUjXY/xu0AdL8jZ9U1IzO2PUm0d2D/ofQcAifb0g6OBkt8U7w==",
++      "version": "10.7.5",
++      "resolved": "https://registry.npmjs.org/ip-address/-/ip-address-10.7.5.tgz",
++      "integrity": "sha512-t2v0rkILYv9WXmSL7TpAaU3HXgaFYOPUcH3QHgwQ++gpJuH3bqyMy4Fvt/DJCTKwzH3Cf+bAp5W/mFL39KPLzA==",
+       "license": "MIT",
+       "engines": {
+         "node": ">= 12"
+@@ -3332,9 +3332,9 @@
+       }
+     },
+     "node_modules/undici": {
+-      "version": "6.29.0",
+-      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.0.tgz",
+-      "integrity": "sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==",
++      "version": "6.29.1",
++      "resolved": "https://registry.npmjs.org/undici/-/undici-6.29.1.tgz",
++      "integrity": "sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==",
+       "license": "MIT",
+       "engines": {
+         "node": ">=18.17"
+@@ -3553,9 +3553,9 @@
+       }
+     },
+     "node_modules/zod": {
+-      "version": "3.25.76",
+-      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
+-      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
++      "version": "4.6.7",
++      "resolved": "https://registry.npmjs.org/zod/-/zod-4.6.7.tgz",
++      "integrity": "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg==",
+       "license": "MIT",
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
+@@ -3580,10 +3580,10 @@
+         "zod": "^3.24.2"
+       }
+     },
+-    "node_modules/zod-from-json-schema/node_modules/zod": {
+-      "version": "4.4.3",
+-      "resolved": "https://registry.npmjs.org/zod/-/zod-4.4.3.tgz",
+-      "integrity": "sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==",
++    "node_modules/zod-from-json-schema-v3/node_modules/zod": {
++      "version": "3.25.76",
++      "resolved": "https://registry.npmjs.org/zod/-/zod-3.25.76.tgz",
++      "integrity": "sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==",
+       "license": "MIT",
+       "funding": {
+         "url": "https://github.com/sponsors/colinhacks"
+```
+
+**File**: `examples/benchmarks/100k-scale/mastra-bench/package.json` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@
+   },
+   "dependencies": {
+     "@mastra/core": "^1.23.0",
+-    "zod": "^3.22.0"
++    "zod": "^4.6.7"
+   },
+   "devDependencies": {
+     "tsx": "^4.7.0",
+```
+
+**File**: `examples/python_agent_nodes/rag_evaluation/ui/package-lock.json` (modified, +53/-41)
+```diff
+@@ -22,7 +22,7 @@
+         "clsx": "^2.1.1",
+         "framer-motion": "^11.11.9",
+         "lucide-react": "^0.453.0",
+-        "next": "15.5.27",
++        "next": "15.5.28",
+         "react": "^18.3.1",
+         "react-dom": "^18.3.1",
+         "react-markdown": "^10.1.0",
+@@ -637,15 +637,15 @@
+       }
+     },
+     "node_modules/@next/env": {
+-      "version": "15.5.27",
+-      "resolved": "https://registry.npmjs.org/@next/env/-/env-15.5.27.tgz",
+-      "integrity": "sha512-WC5hvVqiuFOcRyz6gKPeJkiVvSMf3scNeAV49CdWtVqxmUlzh8UKR6YHt9yiNkh8LngtzqSlVz07/Ma3ZAzchA==",
++      "version": "15.5.28",
++      "resolved": "https://registry.npmjs.org/@next/env/-/env-15.5.28.tgz",
++      "integrity": "sha512-xxW5EBI8fMPuVTPBW7LL980IRbuDXlbkUAwp9DDhtb4Lnich3nJ13uYpvrX4VE74hWPf6AvHHAMmGCidcHjbfg==",
+       "license": "MIT"
+     },
+     "node_modules/@next/swc-darwin-arm64": {
+-      "version": "15.5.27",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.27.tgz",
+-      "integrity": "sha512-fBA9QurmK4+uj4wNhmRTuO5zMVRaBHCvp6H93zTG/5i6Yi6TewbvbesXB8YQNj8T99Cwrow87hHiFV6wL/hyMA==",
++      "version": "15.5.28",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.28.tgz",
++      "integrity": "sha512-dPoQYXcfSIqx5o+TOXVXO7kONK5qbtNRDeiTfII0bT3puGIT6VF5e0QwmxNZfEZ5Zety5f3m9P/p4xqwfiLlPg==",
+       "cpu": [
+         "arm64"
+       ],
+@@ -659,9 +659,9 @@
+       }
+     },
+     "node_modules/@next/swc-darwin-x64": {
+-      "version": "15.5.27",
+-      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-15.5.27.tgz",
+-      "integrity": "sha512-FGZwJwry8qZNHxD/nfwrCwCHHrqx6epqItkkxbYcBQEQ2uw5S43bY83fQB5zbAsZE7TELMjoYkbhsQ4oKM7wwg==",
++      "version": "15.5.28",
++      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-15.5.28.tgz",
++      "integrity": "sha512-RgCJ7buBivTH+6sddqaVm+/v8kwMHlFkobvdt3DfETutws5HrxnToMIWSN9X3MZ3aAi7BbKrGZZWUDQLEycXqw==",
+       "cpu": [
+         "x64"
+       ],
+@@ -675,12 +675,15 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-gnu": {
+-      "version": "15.5.27",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-15.5.27.tgz",
+-      "integrity": "sha512-GQulAaJYNF1RYuatlsw9/uzbKz4if2V7Ic9nVO+P0ljYPm4yBRTFIl6g5YkKTw40lMLbpy9edLoH44g3jSHMYA==",
++      "version": "15.5.28",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-15.5.28.tgz",
++      "integrity": "sha512-OHXQe13olE59aKe++zHavGcJPh5SLHXi6Anret3BBeq1+qhSuOJDNAli/EDDfxs6UTqA4Qddo4uyYry2slyjiQ==",
+       "cpu": [
+         "arm64"
+       ],
++      "libc": [
++        "glibc"
++      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -691,12 +694,15 @@
+       }
+     },
+     "node_modules/@next/swc-linux-arm64-musl": {
+-      "version": "15.5.27",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-15.5.27.tgz",
+-      "integrity": "sha512-URFFsUmu8Pi0/1qdnUI7tx7keZw1Mt5zHfrIX1RfDG9Nih8DYxK54WZsDJUX2ZTlii1jgotL7qcbwKnSAES6xQ==",
++      "version": "15.5.28",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-15.5.28.tgz",
++      "integrity": "sha512-nTB7bB6vfn4ezCJNYP43ukt2o8L3+WxKF/sTcTxepdXsJh3SM9RhlU7wrZYbH7L4HO5M87dqDTwm8587vAkCiw==",
+       "cpu": [
+         "arm64"
+       ],
++      "libc": [
++        "musl"
++      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -707,12 +713,15 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-gnu": {
+-      "version": "15.5.27",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-15.5.27.tgz",
+-      "integrity": "sha512-aJp74z7uvU5jQhyH7lyk+4qSRcTdKbKT9NQE3jiO9kWYkoHZjKi0zzHDbCoZ+v2sJDEiJ/z58R0UlWMGWNF3HA==",
++      "version": "15.5.28",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-15.5.28.tgz",
++      "integrity": "sha512-WXCfVI32rW3xCusoUX1RpZKtyChWU2Zwe27JUDmM3KrXwcDNc9vV4zEq0GKFAURnuQ/Ouo/XqPvB0yh445XZCg==",
+       "cpu": [
+         "x64"
+       ],
++      "libc": [
++        "glibc"
++      ],
+       "license": "MIT",
+       "optional": true,
+       "os": [
+@@ -723,12 +732,15 @@
+       }
+     },
+     "node_modules/@next/swc-linux-x64-musl": {
+-      "version": "15.5.27",
+-      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-15.5.27.tgz",
+-      "integrity": "sha512-ILl2bQ8MbpvyMpY8AXljb3BXs0MJSC8HXZ6QV5AWpVS7ZELqNPtrHvhUk+SNarvjvICXX8bCS287TCi+gUFVYg==",
++      "version": "15.5.28",
++      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-15.5.28.tgz",
++      "integrity": "sha512-Miq+NDb/HWsXuxseYxMM6fuEOQXgTziarkKIRpVKCn8W69cEfhQaQr+90pO+u4q2CbJR2wzXmUuCFyZaJs/Nng==",
+       "cpu": [
+         "x64"
+       ],
++      "libc": [
++        "musl"
++      ],
+       "license": "MIT",
+   
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1141** (2026-10-30): fix(build): format Go packages without recursive overlap (@remote-controlled-man)
 - **PR #1140** (2026-10-30): test(control-plane): drain accepted MCP work between tests (@remote-controlled-man)
+- **PR #1139** (2026-10-31): chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (@dependabot[bot])
 - **PR #1138** (2026-10-30): chore(deps): bump msgpack from 1.2.1 to 1.2.3 in /sdk/python in the uv group across 1 directory (@dependabot[bot])
 - **PR #1137** (2026-10-30): fix(python): URL-encode memory subscription filters (@remote-controlled-man)
 - **PR #1136** (2026-10-29): fix(python): match memory subscription keys literally (@remote-controlled-man)
-- **PR #1135** (2026-10-29): docs(readme): announce CodeAF with its DeepSWE benchmark (@oktaygoktas)
 
 ---
 
@@ -1974,37 +2250,41 @@ Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python): URL-encode memory subscription filters (#1137)
+## X. release): v0.1.146-rc.10 [skip ci]
 
 **RULE**:
-When implementing operations in `sdk/python/agentfield/memory_events.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe6f9cb9`: python): URL-encode memory subscription filters (#1137). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d4c963ba`: release): v0.1.146-rc.10 [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/python/agentfield/memory_events.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-from urllib.parse import urlencode
-                query_params = {}
-                    query_params["patterns"] = ",".join(patterns)
-                    query_params["scope"] = scope
-                    query_params["scope_id"] = scope_id
-                    ws_url += "?" + urlencode(query_params)
+## [0.1.146-rc.10] - 2026-10-31
+
+
+### Chores
+
+- Chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates (#1139)
+
+* chore(deps): bump the npm_and_yarn group across 6 directories with 7 updates
+
+Bumps the npm_and_yarn group with 2 updates in the /control-plane/web/client directory: [zod](https://github.com/colinhacks/zod) and [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite).
+Bumps the npm_and_yarn group with 3 updates in the /desktop directory: [vite](https://github.com/vitejs/vite/tree/HEAD/packages/vite), [@vitest/mocker](https://github.com/vitest-dev/vitest/tree/HEAD/packages/mocker) and [electron](https://github.com/electron/electron).
+Bumps the npm_and_yarn group with 3 updates in the /examples/benchmarks/100k-scale/mastra-bench directory: [zod](https://github.com/colinhacks/zod), [undici](https://github.com/nodejs/undici) and [ip-address](https://github.com/beaugunderson/ip-address).
+Bumps the npm_and_yarn group with 1 update in the /examples/python_agent_nodes/rag_evaluation/ui directory: [next](https://github.com/vercel/next.js).
+Bumps the npm_and_yarn group with 1 update in the /examples/ts-node-examples/init-example directory: [zod](https:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-                query_params = []
-                    query_params.append(f"patterns={','.join(patterns)}")
-                    query_params.append(f"scope={scope}")
-                    query_params.append(f"scope_id={scope_id}")
-                    ws_url += "?" + "&".join(query_params)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe6f9cb9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d4c963ba` are properly handled with clean fallback behavior.

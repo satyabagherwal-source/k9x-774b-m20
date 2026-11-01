@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T01:54:10.076Z",
-    "lastVerified": "2026-11-01T01:54:10.076Z",
+    "lastChecked": "2026-11-01T02:00:55.353Z",
+    "lastVerified": "2026-11-01T02:00:55.353Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -349,9 +349,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-01T01:33:48.245Z",
+    "lastChecked": "2026-11-01T02:00:55.134Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-01T01:33:48.245Z"
+    "lastVerified": "2026-11-01T02:00:55.134Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1130,12 +1130,12 @@
     "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
-    "name": "aleo-labs-protocol/snarkOS",
+    "name": "snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T22:31:24.258Z",
-    "lastVerified": "2026-10-31T22:31:24.258Z",
+    "lastChecked": "2026-11-01T02:00:50.284Z",
+    "lastVerified": "2026-11-01T02:00:50.284Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
@@ -1144,7 +1144,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0c3f87a5"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2689,8 +2690,8 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-10-31T10:58:50.069Z",
-    "lastVerified": "2026-10-31T10:58:50.069Z",
+    "lastChecked": "2026-11-01T02:00:52.902Z",
+    "lastVerified": "2026-11-01T02:00:52.902Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
@@ -4188,22 +4189,21 @@
     "lastVerified": "2026-10-31T06:52:23.186Z"
   },
   "agent-field-agentfield": {
-    "name": "agentfield",
+    "name": "Agent-Field/agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T11:46:43.019Z",
-    "lastVerified": "2026-10-31T11:46:43.019Z",
+    "lastChecked": "2026-11-01T02:00:52.576Z",
+    "lastVerified": "2026-11-01T02:00:52.576Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "cf2b22fd692cbcac14b19e129d5e164a89cbd878dcb6357bcb1a45c5bc81339a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9fe15519"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "spacejam-sled": {
     "name": "sled",
@@ -4446,22 +4446,21 @@
     "revisionIdentifier": "05238c02"
   },
   "actix-actix-web": {
-    "name": "actix-web",
+    "name": "actix/actix-web",
     "officialUrl": "https://github.com/actix/actix-web",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:24:40.278Z",
-    "lastVerified": "2026-10-31T06:24:40.278Z",
+    "lastChecked": "2026-11-01T02:00:46.207Z",
+    "lastVerified": "2026-11-01T02:00:46.207Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-actix-actix-web",
-    "contentHash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
+    "contentHash": "40dc1d21ca01cc5ce8cbb05343175cdef379896591a7d5ef43737d792779559b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5f4d2090"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "name": "Qwen/Qwen3.8-Flash-Next",
@@ -8718,12 +8717,12 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-29T00:41:22.148Z",
-    "lastVerified": "2026-10-29T00:41:22.148Z",
+    "lastChecked": "2026-11-01T02:00:42.765Z",
+    "lastVerified": "2026-11-01T02:00:42.765Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
+    "contentHash": "ce03f604a79a7c17f236101a76f82840f6b61ec0fc98a8bf644df3da675a8f9c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9664,9 +9663,9 @@
   "zoontek-react-native-permissions": {
     "name": "react-native-permissions",
     "officialUrl": "https://github.com/zoontek/react-native-permissions",
-    "lastChecked": "2026-10-30T04:15:19.454Z",
+    "lastChecked": "2026-11-01T02:00:45.172Z",
     "revisionIdentifier": "4f9f820e",
-    "lastVerified": "2026-10-30T04:15:19.454Z"
+    "lastVerified": "2026-11-01T02:00:45.172Z"
   },
   "a4csi-schema-org-validate": {
     "name": "schema-org-validate",

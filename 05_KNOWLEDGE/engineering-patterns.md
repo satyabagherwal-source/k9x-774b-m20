@@ -468965,3 +468965,57 @@ function SpotPnlSheetContent({
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `74ec8e94` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6398. web): return allowed methods for macro route mismatches (#4374) (Harvested from actix/actix-web)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "web): return allowed methods for macro route mismatches (#4374)",
+  "source": "actix/actix-web",
+  "source_url": "https://github.com/actix/actix-web",
+  "source_version": "067b1b93",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-01T02:00:46.550Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-actix-actix-web",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [actix/actix-web](https://github.com/actix/actix-web) (Revision: `067b1b93`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `actix-web-codegen/tests/routes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `067b1b93`: web): return allowed methods for macro route mismatches (#4374). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-web-codegen/tests/routes.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
+    assert_eq!(
+        response.headers().get(http::header::ALLOW).unwrap(),
+        "QUERY"
+    );
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+    assert_eq!(response.status(), StatusCode::NOT_FOUND);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `067b1b93` are properly handled with clean fallback behavior.

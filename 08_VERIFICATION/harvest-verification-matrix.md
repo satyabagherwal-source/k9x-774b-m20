@@ -6784,3 +6784,6 @@
 | `CYCLE-20261101-6ENC` | `2026-11-01T01:47:02.952Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`9ab25aac...`) |
 | `CYCLE-20261101-FBSA` | `2026-11-01T01:53:59.146Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`b0267677...`) |
 | `CYCLE-20261101-FHFD` | `2026-11-01T01:54:06.457Z` | `rainbow-me/rainbow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6397` | Yes (`3479eb61...`) |
+| `CYCLE-20261101-NZWU` | `2026-11-01T02:00:43.662Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`ce03f604...`) |
+| `CYCLE-20261101-O2CW` | `2026-11-01T02:00:46.832Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6398` | Yes (`40dc1d21...`) |
+| `CYCLE-20261101-O6YY` | `2026-11-01T02:00:52.810Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | Yes (`cf2b22fd...`) |

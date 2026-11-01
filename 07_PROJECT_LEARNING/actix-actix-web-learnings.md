@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source**: github ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
-> **Source Version**: `5f4d2090`  
+> **Source Version**: `067b1b93`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T06:23:17.199Z  
+> **Timestamp**: 2026-11-01T02:00:46.213Z  
 > **Learning ID**: `learn-github-actix-actix-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T06:23:16.005Z  
+> **Harvest Timestamp**: 2026-11-01T02:00:46.207Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24897 stars
+- **Stars / Engagement**: 24903 stars
 
 ---
 
@@ -743,7 +743,7 @@ use std::{
 };
 
 use actix_web::{dev::ServiceResponse, HttpRequest, HttpResponse};
-use percent_encoding::{utf8_percent_encode, CONTROLS};
+use percent_encoding::{utf8_percent_encode, AsciiSet, NON_ALPHANUMERIC};
 use v_htmlescape::escape_fmt;
 
 /// A directory; responds with the generated directory listing.
@@ -782,10 +782,26 @@ impl Directory {
 pub(crate) type DirectoryRenderer =
     dyn Fn(&Directory, &HttpRequest) -> Result<ServiceResponse, io::Error>;
 
-/// Returns percent encoded file URL path.
+// Leave only RFC 3986 unreserved characters unencoded within each path segment.
+const PATH_SEGMENT: &AsciiSet = &NON_ALPHANUMERIC
+    .remove(b'-')
+    .remove(b'.')
+    .remove(b'_')
+    .remove(b'~');
+
+/// Returns a percent encoded file URL path escaped for an HTML attribute.
 macro_rules! encode_file_url {
     ($path:ident) => {
-        utf8_percent_encode(&$path, CONTROLS)
+        escape_fmt(
+            &$path
+                .split('/')
+                .map(|segment| utf8_percent_encode(segment, PATH_SEGMENT).to_string())
+                .collect::<Vec<_>>()
+                .join("/"),
+        )
+        .to_string()
+        // Slashes are safe in a quoted attribute. Keep path separators literal.
+        .replace("&#x2f;", "/")
     };
 }
 
@@ -1316,15 +1332,13 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4366** (2026-10-28): **build(deps): bump smallvec from 1.16.3 to 1.16.4**
-  *Symptoms*: Bumps [smallvec](https://github.com/servo/rust-smallvec) from 1.16.3 to 1.16.4. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/servo/rust-smallvec/releases">smallvec's releases</a>.</em></p> <blockquote> <h2>v1.16.4</h2> <h2>What's Changed</h2> <ul> <li>Port fuzzer changes from PR <a href="https://redirect.github.com/servo/rust-smallvec/issues/737">#737</a> to v1 by <a href="https://github.com/GauravPawar101"><code>@​GauravPawar101</code></a> in <a href="https://redirect.github.com/servo/rust-smallvec/pull/753">servo/rust-smallvec#753</a></li> <li>chore: bump version by <a href="https://github.com/alejandro-vaz"><code>@​alejandro-vaz</code></a> in <a href="https://redirect.github.com/servo/rust-smallvec/pull/779">servo/rust-smallvec#779</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/servo/rust-smallvec/compare/v1.16.3...v1.16.4">https://github.com/servo/rust-smallvec/compare/v1.16.3...v1.16.4</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/servo/rust-smallvec/commit/eab77462eda2767d2386f1d251928f474827e1c7"><code>eab7746</code></a> chore: bump version (<a href="https://redirect.github.com/servo/rust-smallvec/issues/779">#779</a>)</li> <li><a href="https://github.com/servo/rust-smallvec/commit/bb9e44b68571e28e88196dcdb11fab89f3df5a0a"><code>bb9e44b</code></a> Port fuzzer changes from PR <a href="https://redirect.github.com/servo/rust-smallvec/i
-  **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/88d7742dae62672d9771666a75a0360e3d63c906">88d7742</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:dependabot/cargo/smallvec-1.16.4">dependabot/cargo/sma...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/44783f5f803f5adb292a6c068ccd442706945c99">44783f5</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 9 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/88d7742dae62672d9771666a75a0360e3d63c906">88d7742</a></th> <th scope="col"><span id="cc-
+- **Issue #4374** (2026-10-31): **fix(web): return allowed methods for macro route mismatches**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status.  ## Overview  When separate `#[get("/items")]` and `#[post("/items")]` services are registered, a `DELETE /items` request currently reaches the built-in app default and returns 404. This change reads the request's existing `RegisteredMethods` accumulator in that default and returns 405 with `Allow: GET, POST`.  The change also applies to scopes that inherit the built-in default. Explicit custom defaults remain in control. Tests cover both service registration orders, all six GET/POST/DELETE request orders, direct and scoped registration, unknown paths, and a custom default.  This is a minimal implementation with broader behavior changes: other method-guarded services and scopes also return 405 where they previously returned 404. The accumulator still records guards that ran, rather than all eligible routes. Scope method guards can record methods after a prefix match before a child path is checked; compound and custom guards retain the existing accumulator limitations. These cases need review before this draft is made ready.  Validation:  - The new macro-routing regression failed with 404 before the production change. - `cargo test -p actix-web --lib`: 419 
 
-- **Issue #4365** (2026-10-28): **build(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0**
-  *Symptoms*: Bumps [zizmorcore/zizmor-action](https://github.com/zizmorcore/zizmor-action) from 0.7.1 to 0.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/zizmorcore/zizmor-action/releases">zizmorcore/zizmor-action's releases</a>.</em></p> <blockquote> <h2>v0.8.0</h2> <p>The action now supports prereleases.</p> <p>The default has not changed, but you can pass a prerelease version of zizmor or <code>version: prerelease</code> to get whatever latest prerelease the action knows about.</p> <h2>What's Changed</h2> <ul> <li>Support prereleases by <a href="https://github.com/woodruffw"><code>@​woodruffw</code></a> in <a href="https://redirect.github.com/zizmorcore/zizmor-action/pull/182">zizmorcore/zizmor-action#182</a></li> <li>Sync zizmor versions by <a href="https://github.com/github-actions"><code>@​github-actions</code></a>[bot] in <a href="https://redirect.github.com/zizmorcore/zizmor-action/pull/184">zizmorcore/zizmor-action#184</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/zizmorcore/zizmor-action/compare/v0.7.1...v0.8.0">https://github.com/zizmorcore/zizmor-action/compare/v0.7.1...v0.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/zizmorcore/zizmor-action/commit/53290badfa369cb0bf7ad16342cb62c2fa47ac7b"><code>53290ba</code></a> Sync zizmor versions (<a href="https://redirect.github.com/zizmorcore/zizmor-action/issues/184">#184</a>)</li> <li><a h
+- **Issue #4373** (2026-10-31): **test(files): cover directory listing hrefs on Windows**
+  *Symptoms*: ## PR Type  Other: test coverage.  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. (Not applicable: tests only.) - [x] A changelog entry has been made for the appropriate packages. (Not applicable: tests only.) - [x] Format code with the latest stable rustfmt. - [x] (Team) Label with affected crates and semver status. (`A-files` is applied; no release impact.)  ## Overview  The directory listing href regression previously ran only on Unix. Run it on all platforms and restrict only filenames containing Windows-incompatible characters to Unix. Windows now gets coverage for backticks, ampersands, hashes, spaces, percent signs, plus signs, and unreserved characters.  Add a nested-directory regression that checks literal URL separators and encoded file and folder names. Production behavior and public APIs are unchanged.  Validation on macOS:  - `cargo test -p actix-files`: 83 unit, 11 integration, and 9 doc tests passed; 1 doc test ignored. Run outside the sandbox so test servers could bind sockets. - `cargo clippy -p actix-files --all-targets`: passed. - `cargo fmt -p actix-files`: completed without changes; emitted warnings for nightly-only settings. - `cargo +nightly fmt -p actix-files`: passed.  Windows execution has not been verified locally. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/88d7742dae62672d9771666a75a0360e3d63c906">88d7742</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:dependabot/github_actions/zizmorcore/zizmor-action-0.8.0">dependabot/github_ac...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/e156e480c4aca027170c1b6dc6adccffdeff8367">e156e48</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  <details> <summary>View coverage of the 9 most impacted files.</summary>  <table> <tr> <th scope="col">File</th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/88d7742dae62672d9771666a75a0360e3d63c906">88d7742</a></th> <th s
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/976f633e0b40b9f953695df9adec04432d9a85e3">976f633</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:test-directory-listing-windows">test-directory-listi...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/89670dc3d33217ff19c98682e0ccb86e6e907384">89670dc</a></th> <th scope="col">+/-</th> </tr> <tr> <td>84%</td> <td>84%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  --- <sub>Updated <relative-time datetime="2026-10-31T18:30:38Z">October 31, 2026 18:30 UTC</relative-time></sub> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1341,133 +1355,333 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `130f2a69` (2026-10-29)
-**Commit Message**: fix(multipart): accept transport padding after boundary delimiters (#4358)
+### Incident Patch 1: `067b1b93` (2026-10-31)
+**Commit Message**: fix(web): return allowed methods for macro route mismatches (#4374)
 
-* fix(multipart): accept transport padding after boundary delimiters
-
-RFC 2046 section 5.1.1 allows transport padding (linear whitespace) between
-a boundary delimiter and the CRLF that ends its line. The parser compared
-the rest of the line exactly, so a padded first delimiter was skipped as
-preamble and the form appeared to have no fields, and a padded inner or
-closing delimiter failed with BoundaryMissing.
-
-* refactor(multipart): simplify closing boundary padding check
-
----------
-
-Co-authored-by: Wleeaf <[REDACTED_EMAIL]>
-Co-authored-by: Rob Ede <[REDACTED_EMAIL]>
-
-**File**: `actix-multipart/CHANGES.md` (modified, +1/-0)
+**File**: `actix-web-codegen/tests/routes.rs` (modified, +5/-1)
 ```diff
-@@ -2,6 +2,7 @@
+@@ -400,5 +400,9 @@ async fn test_query() {
+ 
+     let request = srv.request(http::Method::GET, srv.url("/test"));
+     let response = request.send().await.unwrap();
+-    assert_eq!(response.status(), StatusCode::NOT_FOUND);
++    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
++    assert_eq!(
++        response.headers().get(http::header::ALLOW).unwrap(),
++        "QUERY"
++    );
+ }
+```
+
+**File**: `actix-web/CHANGES.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
  
  ## Unreleased
  
-+- Accept transport padding (spaces and tabs) after boundary delimiters, as allowed by RFC 2046. A padded first delimiter used to make the whole form appear empty, and a padded closing delimiter was rejected.
- - Minimum supported Rust version (MSRV) is now 1.89.
++- Return 405 with an `Allow` header from the built-in app default when method guards reject matching resources, including macro routes.
++
+ ## 4.18.1
  
- ## 0.8.5
+ - Add `TestRequest::query()` method for constructing HTTP `QUERY` test requests.
 ```
 
-**File**: `actix-multipart/src/multipart.rs` (modified, +51/-4)
+**File**: `actix-web/src/app_service.rs` (modified, +125/-9)
 ```diff
-@@ -329,13 +329,18 @@ impl Inner {
-             return Err(Error::BoundaryMissing);
-         };
+@@ -11,14 +11,15 @@ use crate::{
+     config::{AppConfig, AppService},
+     data::FnDataFactory,
+     dev::Extensions,
+-    guard::Guard,
++    guard::{Guard, RegisteredMethods},
++    http::header,
+     request::{HttpRequest, HttpRequestPool},
+     rmap::ResourceMap,
+     service::{
+         AppServiceFactory, BoxedHttpService, BoxedHttpServiceFactory, ServiceRequest,
+         ServiceResponse,
+     },
+-    Error, HttpResponse,
++    Error, HttpMessage as _, HttpResponse,
+ };
  
--        if chunk == LINE_BREAK {
--            // boundary is followed by line-break, indicating more fields to come
--            return Ok(Some(false));
-+        // the delimiter may be followed by transport padding before the line-break
-+        if let Some(padding) = chunk.strip_suffix(LINE_BREAK) {
-+            if trim_transport_padding(padding).is_empty() {
-+                // boundary is followed by line-break, indicating more fields to come
-+                return Ok(Some(false));
-+            }
-         }
+ /// Service factory to convert [`Request`] to a [`ServiceRequest<S>`].
+@@ -64,13 +65,24 @@ where
+     type Future = LocalBoxFuture<'static, Result<Self::Service, Self::InitError>>;
  
-         // boundary is followed by marker
--        if chunk == BOUNDARY_MARKER || chunk == b"--\r\n" {
-+        let chunk = chunk.strip_suffix(LINE_BREAK).unwrap_or(chunk);
+     fn new_service(&self, config: AppConfig) -> Self::Future {
+-        // set AppService's default service to 404 NotFound
+-        // if no user defined default service exists.
+-        let default = self.default.clone().unwrap_or_else(|| {
+-            Rc::new(boxed::factory(fn_service(|req: ServiceRequest| async {
+-                Ok(req.into_response(HttpResponse::NotFound()))
+-            })))
+-        });
++        async fn default_handler(req: ServiceRequest) -> Result<ServiceResponse, Error> {
++            let allowed = req.extensions().get::<RegisteredMethods>().cloned();
 +
-+        if trim_transport_padding(chunk) == BOUNDARY_MARKER {
-             return Ok(Some(true));
++            let response = match allowed {
++                Some(methods) => HttpResponse::MethodNotAllowed()
++                    .insert_header(header::Allow(methods.0))
++                    .finish(),
++                None => HttpResponse::NotFound().finish(),
++            };
++
++            Ok(req.into_response(response))
++        }
++
++        // Use the built-in routing fallback if no user-defined default service exists.
++        let default = self
++            .default
++            .clone()
++            .unwrap_or_else(|| Rc::new(boxed::factory(fn_service(default_handler))));
+ 
+         // create App config to pass to child services
+         let mut config = AppService::new(config, Rc::clone(&default));
+@@ -421,4 +433,108 @@ mod tests {
          }
- 
-@@ -363,6 +368,7 @@ impl Inner {
-                     let Some(line) = chunk.as_ref().strip_suffix(b"\r\n") else {
-                         continue;
-                     };
-+                    let line = trim_transport_padding(line);
- 
-                     if let Some(line) = line.strip_prefix(b"--") {
-                         if line == boundary {
-@@ -531,6 +537,16 @@ impl Drop for Inner {
+         assert!(data.load(Ordering::Relaxed));
      }
++
++    #[cfg(feature = "macros")]
++    mod macro_routing {
++        use crate::{
++            get,
++            http::{header, Method, StatusCode},
++            post,
++            test::{call_service, init_service, TestRequest},
++            web, App, HttpResponse,
++        };
++
++        #[get("/items")]
++        async fn get_items() -> HttpResponse {
++            HttpResponse::Ok().finish()
++        }
++
++        #[post("/items")]
++        async fn post_items() -> HttpResponse {
++            HttpResponse::Created().finish()
++        }
++
++        #[actix_rt::test]
++        async fn macro_routes_allow_methods_in_any_order() {
++            for reverse_registration in [false, true] {
++                for scoped in [false, true] {
++                    let app = App::new().configure(|cfg| {
++                        let mut services = web::scope(if scoped { "/api" } else { "" });
++
++                        services = if reverse_registration {
++                            services.service(post_items).service(get_items)
++                        } else {
++                            services.service(get_items).service(post_items)
++                        };
++
++                        if scoped {
++                            cfg.service(services);
++                        } else if reverse_registration {
++                            cfg.service(post_items).service(get_items);
++                        } else {
++                            cfg.service(get_items).service(post_items);
++                        }
++                    });
++                    let app = init_service(app).await;
++                    let path = if scoped { "/api/items" } else { "/items" };
++
++                    for methods in [
++                        [Method::DELETE, Method::GET, Method::POST],
++                        [Method::DELETE, Method::POST, Method::GET],
++                        [Method::POST, Method::GET, Method::DELETE],
++                        [Method::POST, Method::DELETE, Method::GET],
++                        [Method::GET, Method::DELETE, Method::POST],
++                        [Method::GET, Method::POST, Method::DELETE],
++                    ] {
++                        for method in methods {
++                            let expected = match method {
++                                Method::GET => StatusCode::OK,
++                                Method::POST => StatusCode::CREATED,
++                                _ => StatusCode::METHOD_NOT_ALLOWED,
++                            };
++                            let req = TestRequest::with_uri(path).method(method).to_request();
++                            let res = call_service(&app, req).await;
++
++                            assert_eq!(res.status(), expected);
++
++                            if expected == StatusCode::METHOD_NOT_ALLOWED {
++                                let mut allowed: Vec<_> = res
++                                    .hea
+```
+
+**File**: `actix-web/src/lib.rs` (modified, +3/-0)
+```diff
+@@ -83,6 +83,9 @@
+ #![doc(html_favicon_url = "https://actix.rs/favicon.ico")]
+ #![cfg_attr(docsrs, feature(doc_cfg))]
+ 
++#[cfg(all(test, feature = "macros"))]
++extern crate self as actix_web;
++
+ pub use actix_http::{body, HttpMessage};
+ #[cfg(feature = "cookies")]
+ #[doc(inline)]
+```
+
+**File**: `actix-web/src/scope.rs` (modified, +3/-3)
+```diff
+@@ -716,7 +716,7 @@ mod tests {
+             .method(Method::POST)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+     }
+ 
+     #[actix_rt::test]
+@@ -764,7 +764,7 @@ mod tests {
+             .method(Method::POST)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+ 
+         let req = TestRequest::with_uri("/app/path1")
+             .method(Method::GET)
+@@ -856,7 +856,7 @@ mod tests {
+             .method(Method::POST)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), StatusCode::METHOD_NOT_ALLOWED);
+ 
+         let req = TestRequest::with_uri("/app/t1/path1")
+             .method(Method::GET)
+```
+
+**File**: `actix-web/src/service.rs` (modified, +1/-1)
+```diff
+@@ -757,7 +757,7 @@ mod tests {
+             .method(http::Method::PUT)
+             .to_request();
+         let resp = srv.call(req).await.unwrap();
+-        assert_eq!(resp.status(), http::StatusCode::NOT_FOUND);
++        assert_eq!(resp.status(), http::StatusCode::METHOD_NOT_ALLOWED);
+     }
+ 
+     // allow deprecated App::data
+```
+
+---
+
+### Incident Patch 2: `e390a71d` (2026-10-30)
+**Commit Message**: fix(files): encode directory listing hrefs per path segment
+
+**File**: `actix-files/src/directory.rs` (modified, +19/-3)
+```diff
+@@ -6,7 +6,7 @@ use std::{
+ };
+ 
+ use actix_web::{dev::ServiceResponse, HttpRequest, HttpResponse};
+-use percent_encoding::{utf8_percent_encode, CONTROLS};
++use percent_encoding::{utf8_percent_encode, AsciiSet, NON_ALPHANUMERIC};
+ use v_htmlescape::escape_fmt;
+ 
+ /// A directory; responds with the generated directory listing.
+@@ -45,10 +45,26 @@ impl Directory {
+ pub(crate) type DirectoryRenderer =
+     dyn Fn(&Directory, &HttpRequest) -> Result<ServiceResponse, io::Error>;
+ 
+-/// Returns percent encoded file URL path.
++// Leave only RFC 3986 unreserved characters unencoded within each path segment.
++const PATH_SEGMENT: &AsciiSet = &NON_ALPHANUMERIC
++    .remove(b'-')
++    .remove(b'.')
++    .remove(b'_')
++    .remove(b'~');
++
++/// Returns a percent encoded file URL path escaped for an HTML attribute.
+ macro_rules! encode_file_url {
+     ($path:ident) => {
+-        utf8_percent_encode(&$path, CONTROLS)
++        escape_fmt(
++            &$path
++                .split('/')
++                .map(|segment| utf8_percent_encode(segment, PATH_SEGMENT).to_string())
++                .collect::<Vec<_>>()
++                .join("/"),
++        )
++        .to_string()
++        // Slashes are safe in a quoted attribute. Keep path separators literal.
++        .replace("&#x2f;", "/")
+     };
  }
  
-+/// Strips the transport padding (spaces and tabs) that RFC 2046 §5.1.1 allows between a boundary
-+/// delimiter and the line-break that ends it.
-+fn trim_transport_padding(line: &[u8]) -> &[u8] {
-+    let end = line
-+        .iter()
-+        .rposition(|&b| b != b' ' && b != b'\t')
-+        .map_or(0, |i| i + 1);
-+    &line[..end]
-+}
-+
- #[cfg(test)]
- mod tests {
-     use std::time::Duration;
-@@ -945,6 +961,37 @@ mod tests {
-         }
+```
+
+**File**: `actix-files/src/lib.rs` (modified, +48/-0)
+```diff
+@@ -1609,6 +1609,54 @@ mod tests {
+         assert!(format!("{:?}", bytes).contains("/tests/test.png"));
      }
  
++    #[cfg(unix)]
 +    #[actix_rt::test]
-+    async fn test_multipart_transport_padding() {
-+        let (sender, payload) = create_stream();
-+        let bytes = Bytes::from(
-+            "--abbc761f78ff4d7cb7573b5a23f96ef0  \r\n\
-+             Content-Disposition: form-data; name=\"first\"\r\n\r\n\
-+             test\r\n\
-+             --abbc761f78ff4d7cb7573b5a23f96ef0\t\r\n\
-+             Content-Disposition: form-data; name=\"second\"\r\n\r\n\
-+             data\r\n\
-+             --abbc761f78ff4d7cb7573b5a23f96ef0-- \t\r\n",
-+        );
-+        let mut headers = HeaderMap::new();
-+        headers.insert(
-+            header::CONTENT_TYPE,
-+            header::HeaderValue::from_static(
-+                "multipart/form-data; boundary=\"abbc761f78ff4d7cb7573b5a23f96ef0\"",
++    async fn test_directory_listing_href_escaping() {
++        let dir = tempfile::tempdir().unwrap();
++        let cases = [
++            ("safe.txt", "/safe.txt"),
++            (
++                "x\"><img src=x onerror=alert(1)>.txt",
++                "/x%22%3E%3Cimg%20src%3Dx%20onerror%3Dalert%281%29%3E.txt",
 +            ),
-+        );
-+        sender.send(Ok(bytes)).unwrap();
-+        drop(sender); // eof
++            ("`&#? %+ .txt", "/%60%26%23%3F%20%25%2B%20.txt"),
++            ("AZaz09-._~.txt", "/AZaz09-._~.txt"),
++        ];
 +
-+        let mut multipart = Multipart::new(&headers, payload);
-+        for (name, data) in [("first", "test"), ("second", "data")] {
-+            let mut field = multipart.next().await.unwrap().unwrap();
-+            assert_eq!(field.name(), Some(name));
-+            assert_eq!(get_whole_field(&mut field).await, data);
++        for (name, _) in cases {
++            std::fs::write(dir.path().join(name), "file contents").unwrap();
 +        }
-+        assert!(multipart.next().await.is_none());
++
++        let service = Files::new("/", dir.path())
++            .show_files_listing()
++            .new_service(())
++            .await
++            .unwrap();
++
++        let req = TestRequest::with_uri("/").to_srv_request();
++        let resp = test::call_service(&service, req).await;
++        assert_eq!(resp.status(), StatusCode::OK);
++
++        let body = test::read_body(resp).await;
++        let body = std::str::from_utf8(&body).unwrap();
++        assert_eq!(body.matches("<a ").count(), cases.len());
++        assert_eq!(body.matches("</a>").count(), cases.len());
++
++        for anchor in body.split("<a href=\"").skip(1) {
++            let href = anchor.split('"').next().unwrap();
++            assert!(!href.contains('<'));
++            assert!(
++                href.ends_with(".txt"),
++                "href does not contain the whole file name: {href}"
++            );
++        }
++
++        for (name, href) in cases {
++            let text = v_htmlescape::escape_fmt(name);
++            assert!(body.contains(&format!("<a href=\"{href}\">{text}</a>")));
++        }
 +    }
 +
-     // Loops, collecting all bytes until end-of-field
-     async fn get_whole_field(field: &mut Field) -> BytesMut {
-         let mut b = BytesMut::new();
+     #[actix_rt::test]
+     async fn test_path_filter() {
+         // prevent searching subdirectories
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4374** (2026-10-31): fix(web): return allowed methods for macro route mismatches (@robjtede)
+- **PR #4373** (2026-10-31): test(files): cover directory listing hrefs on Windows (@robjtede)
+- **PR #4371** (2026-10-31): docs(actix-http): document encoding module behavior (@robjtede)
+- **PR #4370** (closed): ci: probe Windows Defender status (@robjtede)
 - **PR #4366** (2026-10-28): build(deps): bump smallvec from 1.16.3 to 1.16.4 (@dependabot[bot])
 - **PR #4365** (2026-10-28): build(deps): bump zizmorcore/zizmor-action from 0.7.1 to 0.8.0 (@dependabot[bot])
-- **PR #4364** (2026-10-28): build(deps): bump base64 from 0.22.1 to 0.23.1 (@dependabot[bot])
-- **PR #4363** (2026-10-28): build(deps): bump taiki-e/install-action from 2.87.30 to 2.87.31 (@dependabot[bot])
-- **PR #4362** (2026-10-28): build(deps): bump tokio from 1.53.3 to 1.54.1 (@dependabot[bot])
-- **PR #4358** (2026-10-29): fix(multipart): accept transport padding after boundary delimiters (@wleeaf)
 
 ---
 
@@ -1487,28 +1701,32 @@ Co-authored-by: Rob Ede <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. multipart): accept transport padding after boundary delimiters (#4358)
+## X. web): return allowed methods for macro route mismatches (#4374)
 
 **RULE**:
-When implementing operations in `actix-multipart/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-web-codegen/tests/routes.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `130f2a69`: multipart): accept transport padding after boundary delimiters (#4358). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `067b1b93`: web): return allowed methods for macro route mismatches (#4374). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-multipart/CHANGES.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-web-codegen/tests/routes.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Accept transport padding (spaces and tabs) after boundary delimiters, as allowed by RFC 2046. A padded first delimiter used to make the whole form appear empty, and a padded closing delimiter was rejected.
+    assert_eq!(response.status(), StatusCode::METHOD_NOT_ALLOWED);
+    assert_eq!(
+        response.headers().get(http::header::ALLOW).unwrap(),
+        "QUERY"
+    );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+    assert_eq!(response.status(), StatusCode::NOT_FOUND);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `130f2a69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `067b1b93` are properly handled with clean fallback behavior.

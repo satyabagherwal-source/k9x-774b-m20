@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T01:54:06.377Z",
+  "last_updated": "2026-11-01T02:00:52.739Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -497,8 +497,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "5f4d2090",
-      "content_hash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
+      "source_version": "067b1b93",
+      "content_hash": "40dc1d21ca01cc5ce8cbb05343175cdef379896591a7d5ef43737d792779559b",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -536,6 +536,11 @@
           "number": 5625,
           "title": "multipart): accept transport padding after boundary delimiters (#4358)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6398,
+          "title": "web): return allowed methods for macro route mismatches (#4374)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -543,7 +548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:23:17.745Z",
+      "verified_at": "2026-11-01T02:00:46.752Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -776,8 +781,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "9fe15519",
-      "content_hash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
+      "source_version": "d4c963ba",
+      "content_hash": "cf2b22fd692cbcac14b19e129d5e164a89cbd878dcb6357bcb1a45c5bc81339a",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -812,7 +817,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:42:46.006Z",
+      "verified_at": "2026-11-01T02:00:52.721Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70190,7 +70195,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
-      "content_hash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
+      "content_hash": "ce03f604a79a7c17f236101a76f82840f6b61ec0fc98a8bf644df3da675a8f9c",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md",
       "promoted_rules": [
@@ -70215,7 +70220,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:41:22.961Z",
+      "verified_at": "2026-11-01T02:00:43.574Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165915,6 +165920,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T01:54:06.356Z"
+    },
+    "rule-6398": {
+      "learning_id": "rule-6398",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6398,
+      "title": "web): return allowed methods for macro route mismatches (#4374)",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "067b1b93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T02:00:46.752Z"
     }
   },
   "aliases": {

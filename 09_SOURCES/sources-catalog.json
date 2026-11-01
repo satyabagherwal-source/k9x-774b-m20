@@ -1695,8 +1695,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash-1017",
     "license": "Open-Source",
-    "contentHash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
-    "lastHarvestedAt": "2026-10-29T00:41:23.062Z",
+    "contentHash": "ce03f604a79a7c17f236101a76f82840f6b61ec0fc98a8bf644df3da675a8f9c",
+    "lastHarvestedAt": "2026-11-01T02:00:43.670Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
   },
   "tw93-pake": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "9fe15519",
+    "sourceVersion": "d4c963ba",
     "license": "Apache-2.0",
-    "contentHash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
-    "lastHarvestedAt": "2026-10-30T19:42:46.104Z",
+    "contentHash": "cf2b22fd692cbcac14b19e129d5e164a89cbd878dcb6357bcb1a45c5bc81339a",
+    "lastHarvestedAt": "2026-11-01T02:00:52.818Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "5f4d2090",
+    "sourceVersion": "067b1b93",
     "license": "Apache-2.0",
-    "contentHash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
-    "lastHarvestedAt": "2026-10-30T06:23:17.845Z",
+    "contentHash": "40dc1d21ca01cc5ce8cbb05343175cdef379896591a7d5ef43737d792779559b",
+    "lastHarvestedAt": "2026-11-01T02:00:46.835Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {

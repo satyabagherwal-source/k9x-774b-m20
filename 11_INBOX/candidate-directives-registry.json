@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-31T23:42:51.790Z",
+  "last_updated": "2026-11-01T02:00:52.823Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3577,6 +3577,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
+    },
+    {
+      "id": "CD-O6ZB",
+      "directive_title": "release): v0.1.146-rc.10 [skip ci]",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Agent-Field/agentfield",
+      "source_commit": "d4c963ba",
+      "date_staged": "2026-11-01",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-agent-field-agentfield"
     }
   ]
 }

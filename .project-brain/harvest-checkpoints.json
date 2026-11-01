@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-01T01:54:06.470Z",
+  "last_updated": "2026-11-01T02:00:52.829Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2676,14 +2676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "d7d19825ef8ad4c7e1902b368cde8c3c5565937c3563efa7b0d3283f7414fdc8",
-      "verified_at": "2026-10-29T00:41:23.076Z",
+      "content_hash": "ce03f604a79a7c17f236101a76f82840f6b61ec0fc98a8bf644df3da675a8f9c",
+      "verified_at": "2026-11-01T02:00:43.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T00:41:23.076Z"
+      "last_updated": "2026-11-01T02:00:43.678Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
-      "verified_at": "2026-10-30T19:42:46.113Z",
+      "content_hash": "cf2b22fd692cbcac14b19e129d5e164a89cbd878dcb6357bcb1a45c5bc81339a",
+      "verified_at": "2026-11-01T02:00:52.828Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:42:46.113Z"
+      "last_updated": "2026-11-01T02:00:52.828Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "61d059842e91ed8cf88445978cf05c32293e69c1d85f02698a835d22d8fffc87",
-      "verified_at": "2026-10-30T06:23:17.854Z",
+      "content_hash": "40dc1d21ca01cc5ce8cbb05343175cdef379896591a7d5ef43737d792779559b",
+      "verified_at": "2026-11-01T02:00:46.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:23:17.854Z"
+      "last_updated": "2026-11-01T02:00:46.842Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

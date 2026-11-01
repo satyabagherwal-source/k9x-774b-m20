@@ -6793,3 +6793,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-01T01:47:02.961Z |
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-01T01:53:59.156Z |
 | `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `242bfe58` | Multi-dimensional audit evidence | 2026-11-01T01:54:06.461Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-01T02:00:43.670Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `067b1b93` | Multi-dimensional audit evidence | 2026-11-01T02:00:46.835Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `d4c963ba` | Multi-dimensional audit evidence | 2026-11-01T02:00:52.818Z |

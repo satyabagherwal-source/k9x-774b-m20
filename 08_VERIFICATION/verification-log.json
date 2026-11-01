@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-4Q6Q",
-    "timestamp": "2026-10-30T19:54:09.170Z",
-    "repository": "QwikDev/qwik",
-    "learningId": "learn-github-qwikdev-qwik",
-    "contentHash": "014d69b0a05d898ddf2ed7b37bfc06a291a21dcd26de8a9a4a0f2b060a9c6ba0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-4W9I",
-    "timestamp": "2026-10-30T19:54:17.046Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "6f3ca87601b4e811a46e3c11182a162638aa547000ec232e8fc6647775b3019b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-4X6F",
-    "timestamp": "2026-10-30T19:54:18.231Z",
-    "repository": "neuron-core/neuron-ai",
-    "learningId": "learn-github-neuron-core-neuron-ai",
-    "contentHash": "0df439740602db0c32babad338abe30bb4cda26d65b4a0a2ab10bebc8ce78f49",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-A8V4",
     "timestamp": "2026-10-30T19:58:26.656Z",
     "repository": "biomejs/biome",
@@ -7492,6 +7447,51 @@
     "contentHash": "3479eb61aad2de310926a24aa5fdd8acaa6655e27ece6a02defeea2efa7c5491",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-NZWU",
+    "timestamp": "2026-11-01T02:00:43.662Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "ce03f604a79a7c17f236101a76f82840f6b61ec0fc98a8bf644df3da675a8f9c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-O2CW",
+    "timestamp": "2026-11-01T02:00:46.832Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "40dc1d21ca01cc5ce8cbb05343175cdef379896591a7d5ef43737d792779559b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-O6YY",
+    "timestamp": "2026-11-01T02:00:52.810Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "cf2b22fd692cbcac14b19e129d5e164a89cbd878dcb6357bcb1a45c5bc81339a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
