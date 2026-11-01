@@ -6790,3 +6790,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-01T01:33:36.922Z |
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-01T01:40:30.178Z |
 | `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `7265166e` | Multi-dimensional audit evidence | 2026-11-01T01:40:30.577Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-01T01:47:02.961Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T01:40:30.510Z",
+  "last_updated": "2026-11-01T01:47:02.881Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -70034,7 +70034,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
       "source_version": "hf-openmoss-team-moss-image-base",
-      "content_hash": "4993d4b620a80d3cfa8353fd8c07310161784aadd09198cde9a6386b41655d50",
+      "content_hash": "9ab25aac1190cace183c6d93be6aadfc266c70749858227f56e21a7666771f1c",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
       "promoted_rules": [
@@ -70084,7 +70084,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:22:50.422Z",
+      "verified_at": "2026-11-01T01:47:02.864Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

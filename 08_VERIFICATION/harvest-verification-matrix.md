@@ -6781,3 +6781,4 @@
 | `CYCLE-20261101-P4PB` | `2026-11-01T01:33:36.911Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`19cc97c7...`) |
 | `CYCLE-20261101-XZKU` | `2026-11-01T01:40:30.174Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6393, Rule 6394, Rule 6395` | Yes (`0c324206...`) |
 | `CYCLE-20261101-XZVY` | `2026-11-01T01:40:30.574Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6396` | Yes (`37a32afa...`) |
+| `CYCLE-20261101-6ENC` | `2026-11-01T01:47:02.952Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`9ab25aac...`) |

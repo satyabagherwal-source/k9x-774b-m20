@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T01:40:30.581Z",
-  "total_cycles_completed": 6758,
-  "total_learnings_persisted": 6758,
+  "last_updated": "2026-11-01T01:47:02.966Z",
+  "total_cycles_completed": 6759,
+  "total_learnings_persisted": 6759,
   "total_rules_promoted": 6405,
   "history": [
-    {
-      "timestamp": "2026-10-31T13:20:59.408Z",
-      "repository": "saltstack/salt",
-      "learningId": "learn-github-saltstack-salt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T13:27:07.135Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1403,6 +1396,13 @@
       "repository": "argoproj/argo-events",
       "learningId": "learn-github-argoproj-argo-events",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:47:02.966Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

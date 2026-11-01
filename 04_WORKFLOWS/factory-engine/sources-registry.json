@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T01:40:33.123Z",
-    "lastVerified": "2026-11-01T01:40:33.123Z",
+    "lastChecked": "2026-11-01T01:47:14.134Z",
+    "lastVerified": "2026-11-01T01:47:14.134Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -146,8 +146,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-01T01:14:37.977Z",
-    "lastVerified": "2026-11-01T01:14:37.977Z",
+    "lastChecked": "2026-11-01T01:47:14.124Z",
+    "lastVerified": "2026-11-01T01:47:14.124Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -955,8 +955,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T22:12:11.344Z",
-    "lastVerified": "2026-10-31T22:12:11.344Z",
+    "lastChecked": "2026-11-01T01:47:09.163Z",
+    "lastVerified": "2026-11-01T01:47:09.163Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -2576,9 +2576,9 @@
   "infiniflow-infinity": {
     "name": "infinity",
     "officialUrl": "https://github.com/infiniflow/infinity",
-    "lastChecked": "2026-10-31T10:40:30.061Z",
+    "lastChecked": "2026-11-01T01:47:11.763Z",
     "revisionIdentifier": "6e4ce04b",
-    "lastVerified": "2026-10-31T10:40:30.061Z"
+    "lastVerified": "2026-11-01T01:47:11.763Z"
   },
   "sharkdp-hyperfine": {
     "name": "hyperfine",
@@ -4039,8 +4039,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T11:32:55.793Z",
-    "lastVerified": "2026-10-31T11:32:55.793Z",
+    "lastChecked": "2026-11-01T01:47:06.619Z",
+    "lastVerified": "2026-11-01T01:47:06.619Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -4315,9 +4315,9 @@
   "mtkennerly-ludusavi": {
     "name": "ludusavi",
     "officialUrl": "https://github.com/mtkennerly/ludusavi",
-    "lastChecked": "2026-10-31T06:03:57.679Z",
+    "lastChecked": "2026-11-01T01:46:59.077Z",
     "revisionIdentifier": "95b651aa",
-    "lastVerified": "2026-10-31T06:03:57.679Z"
+    "lastVerified": "2026-11-01T01:46:59.077Z"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "name": "black-forest-labs/FLUX.1-schnell",
@@ -8669,12 +8669,12 @@
     "officialUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-29T00:22:49.423Z",
-    "lastVerified": "2026-10-29T00:22:49.423Z",
+    "lastChecked": "2026-11-01T01:47:01.879Z",
+    "lastVerified": "2026-11-01T01:47:01.879Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-    "contentHash": "4993d4b620a80d3cfa8353fd8c07310161784aadd09198cde9a6386b41655d50",
+    "contentHash": "9ab25aac1190cace183c6d93be6aadfc266c70749858227f56e21a7666771f1c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9625,9 +9625,9 @@
   "oliviertassinari-react-swipeable-views": {
     "name": "react-swipeable-views",
     "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
-    "lastChecked": "2026-10-30T03:46:46.739Z",
+    "lastChecked": "2026-11-01T01:47:04.170Z",
     "revisionIdentifier": "c637ad7d",
-    "lastVerified": "2026-10-30T03:46:46.739Z"
+    "lastVerified": "2026-11-01T01:47:04.170Z"
   },
   "adobe-structured-data-validator": {
     "name": "structured-data-validator",
