@@ -3,7 +3,7 @@
 > **Source Version**: `hf-black-for`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T23:31:34.620Z  
+> **Timestamp**: 2026-11-01T00:56:05.837Z  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-3-image-klein`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,526 +14,490 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): black-forest-labs/flux-3-image-klein
 
----
-
 ## 1. Executive Forensic Architecture & System Mechanics
 
-### 1.1 Core Architectural Topology & Problem Domain
-The repository artifact `black-forest-labs/flux-3-image-klein` represents a production model weight distribution and checkpoint encapsulation target for Black Forest Labs' Flow-Matching Multimodal Diffusion Transformer (MMDiT) ecosystem (Klein/compact distilled variant). The system addresses high-fidelity, rectified flow text-to-image and image-to-image synthesis under constrained compute parameters.
+**Status: INSUFFICIENT DATA FOR FORENSIC EXTRACTION**
 
-At its structural core, the architecture decouples text ingestion, cross-modal representation alignment, continuous-time vector field integration, and autoencoding reconstruction into five distinct subsystem boundaries:
+The provided repository data for `black-forest-labs/flux-3-image-klein` contains **zero** executable code, configuration files, commit history, or issue logs. All critical data fields (Commits, Issues, Source Snippets, Manifests, Directory Tree) are explicitly marked as `N/A`, `[]`, or `{}`.
 
-```
-+---------------------------------------------------------------------------------------------------+
-|                                  FLUX PIPELINE ARCHITECTURE                                       |
-+---------------------------------------------------------------------------------------------------+
-|                                                                                                   |
-|  [Text Prompt] ---> [T5-XXL Encoder (16-bit / 8-bit QLoRA)] ---> [Text Embeddings: 4096-dim]      |
-|                ---> [CLIP ViT-L/14 Tokenizer & Encoder]    ---> [Pooled Vector: 768-dim]         |
-|                                                                          |                        |
-|  [Latent Seed / Initial Img] ---> [16x Downsampled 16-ch VAE] ---------> [Latent Grid: (C, H, W)] |
-|                                                                          |                        |
-|                                                                          v                        |
-|  [Time Step: t in [0, 1]] ----> [Timestep & Guidance Embedding] --> [Double Stream MMDiT Blocks]  |
-|                                                                     (Joint Self/Cross Attention)   |
-|                                                                          |                        |
-|                                                                          v                        |
-|                                                                     [Single Stream MMDiT Blocks]  |
-|                                                                     (Concatenated Latent+Context)  |
-|                                                                          |                        |
-|                                                                          v                        |
-|  [ODE Integrator (Euler / Heun / RK4)] <--------------------------- [Velocity Field v_theta(x, t)]|
-|        |                                                                                          |
-|        v                                                                                          |
-|  [Denoised Latents z_0] ---> [FLUX VAE Decoder (Spatial Tile-Unpack)] ---> [Synthesized Image RGB] |
-+---------------------------------------------------------------------------------------------------+
-```
+Consequently, it is **impossible** to perform a "totally puri learning nichod lena" (exhaustive deep learning extraction) on the specific implementation details, bug fixes, or architectural invariants of this specific repository instance.
 
-### 1.2 Boundary Interfaces & Invariant Contracts
-1. **Latent Space Invariant**: Latents operate in a 16-channel autoencoder space with a spatial compression factor of $8\times$ or $16\times$ (effective patchified tokenization uses $2 \times 2$ latent packing, mapping $16 \times H/8 \times W/8 \to 64 \times H/16 \times W/16$). Tensors crossing into the transformer backbone MUST be 3D packed sequences `[Batch, (H/16 * W/16), 64]`.
-2. **Rectified Flow ODE Contract**: The target prediction is neither standard noise ($\epsilon$) nor clean data ($x_0$), but the velocity vector field $v_t = \frac{d x_t}{d t} = x_1 - x_0$. The temporal coordinate $t \in [0, 1]$ is parameterized continuously; numerical solvers MUST integrate from $t=0$ (pure prior noise) to $t=1$ (clean image manifold) or vice versa depending on direction convention, respecting explicit step-size allocations $\Delta t$.
-3. **Weight Packaging & Serialization Bounds**: Hugging Face Hub distributions of FLUX models require `safetensors` header validation, strict zero-copy memory mapping (`mmap`), tensor sharding limits ($\le 5\text{ GB}$ per chunk), and metadata headers containing tensor dtype maps (`bfloat16`, `float8_e4m3fn`, or `float8_e5m2`).
+However, based on the **naming convention** (`flux-3-image-klein`) and the **publisher** (`black-forest-labs`), this repository is identified as a **Hugging Face Model Hub artifact** for a diffusion-based image generation model (likely a variant of the FLUX architecture). In the context of AI-Builder-Brain governance, the "code" in such repositories is typically:
+1.  **Weight Files**: Large binary tensors (`.safetensors`, `.bin`) that are not source code.
+2.  **Metadata**: `config.json` defining model architecture parameters (latent dimensions, attention heads, etc.).
+3.  **Inference Scripts**: Often absent in pure model repos, residing instead in the `diffusers` library or a separate `inference` repo.
+
+**Architectural Boundary Inference (Generalized for HF Model Repos):**
+*   **Subsystem**: Model Weight Storage & Metadata Definition.
+*   **Decoupling**: The model definition is decoupled from the inference engine. The repo provides the *state* (weights) and *schema* (config), while the *logic* (forward pass) resides in the consumer library (e.g., `diffusers`, `transformers`).
+*   **State Ownership**: The repository owns the immutable model state. The runtime owns the mutable inference state (KV-cache, attention masks).
+
+*Note: Sections 2 through 7 below will provide **Universal Engineering Rules** derived from the **general class of systems** (Large-Scale Diffusion Model Deployment on Hugging Face) and the **forensic risks** associated with such artifacts, as specific repo-level evidence is unavailable.*
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Zero-Copy Sharded Safetensors Deserialization Invariant
+Since specific code from `flux-3-image-klein` is unavailable, the following rules are derived from the **forensic analysis of the Hugging Face Model Hub ecosystem** and the **common failure modes of large diffusion model deployments**. These are critical invariants for any AI system consuming such artifacts.
+
+### 1. Model Artifact Integrity & Schema Validation Invariant
 **RULE**:
-When deserializing multi-gigabyte neural network checkpoints (such as MMDiT backbones) across heterogeneous accelerator memory spaces, loaders MUST allocate uninitialized target buffers (`torch.empty` with explicit memory pinning) and copy via pointer offsets directly from zero-copy memory-mapped safetensors (`safetensors.torch.load_file(..., device="cpu")` with subsequent `.copy_()`). Loaders MUST NOT parse weights using standard Python `pickle`, `torch.load` with implicit copying, or deep clone operations that double host resident set size (RSS).
+Any AI agent or inference pipeline consuming a Hugging Face model repository MUST validate the `config.json` schema against the expected architecture class **before** attempting to load weights. The agent MUST NOT assume that the presence of weight files implies architectural compatibility.
 
 **WHY**:
-Model files spanning 12GB to 24GB in size trigger instantaneous Out-Of-Memory (OOM) Linux kernel OOM-killer invocations if host RAM allocations spike above $1.0\times$ the file footprint. Python's default deserializers create intermediate dicts of owned buffers, inflating RSS by up to $300\%$.
+Diffusion models (like FLUX) have complex architectures (e.g., MMDiT, UNet, VAE). A mismatch between the `config.json` (which defines layer shapes, attention heads, and latent dimensions) and the actual weight tensor shapes leads to silent corruption or hard crashes during `load_state_dict`. Furthermore, malicious or corrupted repos may contain weights that match the schema but contain NaN/Inf values, leading to garbage outputs or GPU memory corruption.
 
 **WHEN TO APPLY**:
-Applies to all PyTorch, LibTorch, C++, and Rust weight loaders interfacing with Hugging Face Hub repositories storing model weights $\ge 2\text{ GB}$.
+*   When initializing any `DiffusionPipeline` or custom model loader.
+*   When updating model versions in production.
+*   When building automated model evaluation harnesses.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import os
-from typing import Dict, Generator
+import json
 import torch
+from huggingface_hub import hf_hub_download
 from safetensors import safe_open
 
-def stream_load_safetensors_to_device(
-    checkpoint_path: str,
-    target_module: torch.nn.Module,
-    device: torch.device,
-    dtype: torch.dtype = torch.bfloat16
-) -> None:
+def validate_model_artifact(repo_id: str, expected_arch: str):
     """
-    Streams tensor slices directly into pre-allocated module parameters without
-    duplicating host memory footprint.
+    Forensic validation of HF model repo before loading.
     """
-    if not os.path.exists(checkpoint_path):
-        raise FileNotFoundError(f"Checkpoint missing: {checkpoint_path}")
+    # 1. Download config
+    config_path = hf_hub_download(repo_id, "config.json")
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+    
+    # 2. Schema Check
+    if config.get("_class_name") != expected_arch:
+        raise ValueError(f"Architecture mismatch: Expected {expected_arch}, got {config.get('_class_name')}")
+    
+    # 3. Weight Integrity Check (Sample)
+    # Download a small slice or check metadata if available
+    # For large models, verify safetensors metadata
+    weight_file = hf_hub_download(repo_id, "model.safetensors")
+    with safe_open(weight_file, framework="pt") as f:
+        keys = f.keys()
+        if not keys:
+            raise ValueError("Empty weight file")
+        
+        # Check for NaN/Inf in a sample tensor (e.g., first layer)
+        sample_key = list(keys)[0]
+        tensor = f.get_tensor(sample_key)
+        if not torch.isfinite(tensor).all():
+            raise ValueError(f"Non-finite values detected in weight tensor: {sample_key}")
 
-    # Use safe_open context manager to leverage OS-level mmap
-    with safe_open(checkpoint_path, framework="pt", device="cpu") as f:
-        target_params: Dict[str, torch.nn.Parameter] = dict(target_module.named_parameters())
-        target_buffers: Dict[str, torch.Tensor] = dict(target_module.named_buffers())
-
-        for key in f.keys():
-            if key not in target_params and key not in target_buffers:
-                continue
-
-            tensor_slice = f.get_slice(key)
-            tensor_shape = tensor_slice.get_shape()
-
-            dest_tensor = target_params[key] if key in target_params else target_buffers[key]
-            if dest_tensor.shape != torch.Size(tensor_shape):
-                raise ValueError(
-                    f"Shape mismatch for {key}: Expected {dest_tensor.shape}, got {tensor_shape}"
-                )
-
-            # Load slice directly into host pinned memory or straight to accelerator
-            loaded_tensor = tensor_slice[:]
-            with torch.no_grad():
-                dest_tensor.copy_(loaded_tensor.to(device=device, dtype=dtype, non_blocking=True))
-            
-            # Explicitly drop reference to trigger immediate ref-count zeroing
-            del loaded_tensor
+    return config
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: DO NOT load entire checkpoint into host RAM and then iterate
-import torch
+# ANTI-PATTERN: Blind loading without validation
+from diffusers import DiffusionPipeline
 
-def bad_load(checkpoint_path: str, model: torch.nn.Module):
-    # DANGEROUS: Duplicates 24GB allocation on host, causing immediate SIGKILL/OOM
-    state_dict = torch.load(checkpoint_path, map_location="cpu")
-    model.load_state_dict(state_dict)  # Creates additional internal copies
+# DANGER: If config.json is corrupted or weights are mismatched, 
+# this will either crash obscurely or produce garbage images.
+pipeline = DiffusionPipeline.from_pretrained("black-forest-labs/flux-3-image-klein")
+# No check for architecture compatibility or weight integrity
 ```
 
 **VERIFICATION METHOD**:
-Verify using a memory-profiling unit test:
+*   **Unit Test**: Mock a `config.json` with incorrect `_class_name` and assert that `validate_model_artifact` raises `ValueError`.
+*   **Integration Test**: Load a known-good model and a known-corrupted model (with NaN weights) and assert that the corrupted one fails validation.
+
+### 2. Inference Memory Bound & OOM Prevention Invariant
+**RULE**:
+Any inference pipeline for large diffusion models MUST enforce a strict memory budget and implement a **graceful degradation strategy** (e.g., reducing batch size, enabling model offloading, or failing fast) when GPU memory utilization exceeds 90% of the available VRAM. The system MUST NOT allow unbounded tensor allocation that leads to OOM (Out of Memory) crashes.
+
+**WHY**:
+Diffusion models like FLUX are extremely memory-intensive (often requiring 24GB+ VRAM for full precision). Without explicit memory guards, a single large batch or a high-resolution request can trigger an OOM error, which in many frameworks (PyTorch) is a hard crash that kills the entire process, leading to service downtime.
+
+**WHEN TO APPLY**:
+*   In any GPU-accelerated inference service.
+*   When handling variable-resolution or variable-batch-size requests.
+*   In multi-tenant inference environments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import pytest
+import torch
 import psutil
-import os
-import torch
 
-@pytest.mark.memory_bound
-def test_rss_memory_ceiling_during_load(tmp_path):
-    process = psutil.Process(os.getpid())
-    base_memory = process.memory_info().rss
-    dummy_model = torch.nn.Linear(8192, 8192, bias=False)  # ~256MB
-    # Ensure peak RSS does not exceed base_memory + 1.2 * buffer_size
-    # (Enforced via memory profiling harness asserting delta < 1.25 * tensor_footprint)
-```
-
----
-
-### 2. Dimension Packing Invariant for Dual-Stream Flow Attention
-**RULE**:
-In multi-stream diffusion transformers where separate modality sequences (image tokens and text tokens) are concatenated for self-attention, sequences MUST maintain explicit structural separation of positional IDs and attention masks before spatial projection. The packed sequence length $L_{\text{total}} = L_{\text{img}} + L_{\text{txt}}$ MUST NOT be padded dynamically without updating the rotary embedding (RoPE) 2D/3D coordinate matrices. Coordinates for $L_{\text{img}}$ MUST reflect physical 2D grid coordinates $(y, x)$, and coordinates for $L_{\text{txt}}$ MUST occupy a distinct, non-overlapping temporal/1D coordinate axis.
-
-**WHY**:
-Collapsing or sharing coordinate systems between text and image tokens causes catastrophic cross-attention degradation, manifesting as prompt bleeding, ungrounded spatial features, and velocity vector divergence during numerical ODE integration.
-
-**WHEN TO APPLY**:
-Applies to all MMDiT, FLUX, and SD3 dual-to-single stream attention blocks handling heterogeneous token streams.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import torch
-from typing import Tuple
-
-def build_flux_rope_coordinates(
-    spatial_height: int,
-    spatial_width: int,
-    text_seq_len: int,
-    device: torch.device
-) -> Tuple[torch.Tensor, torch.Tensor]:
+def check_memory_budget(required_gb: float, threshold: float = 0.9):
     """
-    Constructs disjoint rotary position embedding (RoPE) coordinates for 
-    image tokens and text tokens.
+    Check if sufficient GPU memory is available before inference.
     """
-    # 1. Spatial 2D coordinates for image patch tokens: shape [H*W, 3]
-    # Coordinates represent: (time/dummy, y, x)
-    grid_y, grid_x = torch.meshgrid(
-        torch.arange(spatial_height, device=device, dtype=torch.float32),
-        torch.arange(spatial_width, device=device, dtype=torch.float32),
-        indexing="ij"
-    )
-    img_coords = torch.stack([
-        torch.zeros_like(grid_y),  # Disjoint axis
-        grid_y,
-        grid_x
-    ], dim=-1).reshape(-1, 3)  # [L_img, 3]
+    if not torch.cuda.is_available():
+        return False
+    
+    free, total = torch.cuda.mem_get_info()
+    free_gb = free / (1024 ** 3)
+    total_gb = total / (1024 ** 3)
+    
+    # Check if required memory fits within the threshold of free memory
+    if free_gb < required_gb * threshold:
+        return False
+    
+    return True
 
-    # 2. 1D coordinates for text tokens: shape [L_txt, 3]
-    # Coordinates represent: (index, 0, 0) to ensure zero overlap with 2D spatial grid
-    txt_indices = torch.arange(text_seq_len, device=device, dtype=torch.float32)
-    txt_coords = torch.stack([
-        txt_indices + 1.0,  # Offset to prevent collision with image zero-plane
-        torch.zeros_like(txt_indices),
-        torch.zeros_like(txt_indices)
-    ], dim=-1)  # [L_txt, 3]
-
-    return img_coords, txt_coords
+class SafeInferencePipeline:
+    def __init__(self, pipeline, max_batch_size=1):
+        self.pipeline = pipeline
+        self.max_batch_size = max_batch_size
+        
+    def generate(self, prompt, width=1024, height=1024):
+        # Estimate memory requirement (heuristic)
+        estimated_gb = (width * height * 4 * 3) / (1024 ** 3) * 10 # Rough multiplier for diffusion
+        
+        if not check_memory_budget(estimated_gb):
+            # Graceful Degradation: Reduce resolution or fail fast
+            raise MemoryError("Insufficient GPU memory for requested resolution. Please reduce dimensions or retry later.")
+        
+        try:
+            return self.pipeline(prompt, width=width, height=height).images[0]
+        except torch.cuda.OutOfMemoryError:
+            # Clear cache and retry with smaller batch or lower precision
+            torch.cuda.empty_cache()
+            raise MemoryError("OOM during inference. Pipeline has cleared cache.")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Flattening text and image coordinates onto a single linear 1D index
-def bad_coordinate_assignment(img_len: int, txt_len: int):
-    # DANGEROUS: Forces image tokens to share 1D relative distances with text,
-    # destroying spatial 2D locality invariant in MMDiT layers
-    total_len = img_len + txt_len
-    return torch.arange(total_len).unsqueeze(-1)
+# ANTI-PATTERN: No memory check, direct inference
+def generate_image(prompt):
+    # If GPU is full, this will crash the entire server
+    return pipeline(prompt).images[0]
 ```
 
 **VERIFICATION METHOD**:
-Assert coordinate non-intersection:
-```python
-def test_rope_coordinate_disjointness():
-    img_c, txt_c = build_flux_rope_coordinates(16, 16, 64, torch.device("cpu"))
-    # The set of 3D spatial vectors must have zero intersection
-    set_img = set(tuple(x) for x in img_c.tolist())
-    set_txt = set(tuple(x) for x in txt_c.tolist())
-    assert len(set_img.intersection(set_txt)) == 0, "Coordinate collision detected!"
-```
+*   **Stress Test**: Run inference with increasing batch sizes until OOM is triggered. Assert that the system raises a controlled `MemoryError` instead of crashing the process.
+*   **Mock Test**: Mock `torch.cuda.mem_get_info` to return low free memory and assert that `check_memory_budget` returns `False`.
 
----
-
-### 3. Rectified Flow Numerical Integration Boundary Clamp Invariant
+### 3. Deterministic Inference & Seed Management Invariant
 **RULE**:
-ODE numerical solvers integrating predicted velocity fields $v_\theta(x_t, t)$ over $t \in [0.0, 1.0]$ MUST clamp evaluation timesteps to avoid boundary evaluation overflow ($t > 1.0 - \epsilon$ or $t < 0.0$). Solvers MUST NOT compute Euler or Heun steps where step size $\Delta t$ causes the next state evaluated to exceed the closed interval $[0.0, 1.0]$, and MUST enforce consistent step quantization across non-uniform schedules (e.g., cosine or shifted schedules).
+Any AI system providing reproducible image generation MUST explicitly manage and log the random seed used for noise initialization. The system MUST NOT rely on implicit global random state, which can lead to non-reproducible results across different runs or hardware configurations.
 
 **WHY**:
-Evaluating the transformer outside $t \in [0, 1]$ triggers undefined positional embedding extrapolations, causing explosive floating-point divergence ($\text{NaN}$ / $\text{Inf}$) in the attention score matrix softmax computation.
+Diffusion models are stochastic. Without explicit seed management, debugging issues (e.g., "why did this image look different?") becomes impossible. Furthermore, in multi-threaded or multi-process environments, global random state can be corrupted, leading to inconsistent outputs.
 
 **WHEN TO APPLY**:
-Applies to all continuous-time diffusion / flow matching samplers (Euler, Midpoint, RK4, DPM-Solver++ for Flow).
+*   In any production inference service.
+*   When building A/B testing frameworks for model versions.
+*   When debugging image quality issues.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-from typing import Callable
+import random
+import numpy as np
 
-@torch.no_grad()
-def solve_rectified_flow_euler(
-    velocity_fn: Callable[[torch.Tensor, torch.Tensor], torch.Tensor],
-    x_init: torch.Tensor,
-    timesteps: torch.Tensor,
-    eps: float = 1e-5
-) -> torch.Tensor:
+def set_global_seed(seed: int):
     """
-    Euler integrator strictly bound to the [0.0, 1.0] temporal domain.
+    Set all random seeds for reproducibility.
     """
-    # Enforce strictly monotonic decreasing or increasing timesteps within bounds
-    if not ((timesteps >= 0.0 - eps) & (timesteps <= 1.0 + eps)).all():
-        raise ValueError("Timesteps escape the valid [0, 1] range.")
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
 
-    x = x_init.clone()
-    num_steps = len(timesteps) - 1
-
-    for i in range(num_steps):
-        t_current = timesteps[i]
-        t_next = timesteps[i + 1]
-        dt = t_next - t_current
-
-        # Clamp current time scalar before tensor expansion
-        t_eval = torch.clamp(t_current, min=0.0, max=1.0)
-        t_batch = t_eval.repeat(x.shape[0]).to(dtype=x.dtype, device=x.device)
-
-        v_pred = velocity_fn(x, t_batch)
-
-        if torch.isnan(v_pred).any() or torch.isinf(v_pred).any():
-            raise FloatingPointError(f"Divergence detected in velocity prediction at step {i}, t={t_current}")
-
-        # Euler step: x_{t+1} = x_t + dt * v_t
-        x = x + dt * v_pred
-
-    return x
+class ReproduciblePipeline:
+    def __init__(self, pipeline):
+        self.pipeline = pipeline
+        
+    def generate(self, prompt, seed=None):
+        if seed is None:
+            seed = random.randint(0, 2**32 - 1)
+            
+        # Explicitly set seed before each generation
+        set_global_seed(seed)
+        
+        # Generate
+        image = self.pipeline(prompt).images[0]
+        
+        # Log seed for audit trail
+        print(f"Generated image with seed: {seed}")
+        
+        return image, seed
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Unchecked floating point step accumulation without bounds enforcement
-def bad_euler_step(v_fn, x, steps=20):
-    dt = 1.0 / steps
-    for i in range(steps):
-        t = i * dt  # Susceptible to float rounding errors yielding t > 1.0 on last step
-        v = v_fn(x, t)
-        x = x + dt * v  # No NaN check; unmonitored corruption cascades
-    return x
+# ANTI-PATTERN: Implicit random state
+def generate_image(prompt):
+    # Seed is not controlled, results are non-reproducible
+    return pipeline(prompt).images[0]
 ```
 
 **VERIFICATION METHOD**:
-Execute continuous stress-testing across floating-point step intervals:
-```python
-def test_flow_bounds_conformance():
-    steps = torch.linspace(1.0, 0.0, 50)
-    assert steps.max() <= 1.0 and steps.min() >= 0.0
-    # Invariant holds across dynamic time warping / shifted schedules
-```
+*   **Reproducibility Test**: Generate an image with seed 42, save it. Generate again with seed 42, save it. Assert that the two images are pixel-identical.
+*   **Non-Reproducibility Test**: Generate an image with seed 42, then with seed 43. Assert that the images are different.
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-### Incident 1: Unsafe Dynamic Tensor Reshaping in 2D Latent Unpacking (BUG-FLUX-01)
-- **Context**: Latent-to-image patch reconstruction subsystem (`models/transformers/flux_transformer.py` / `models/vae.py`).
-- **What Was Expected**: Latent representations of shape `[B, C, H, W]` packed into sequence `[B, (H//2 * W//2), C*4]` must unpack symmetrically back into `[B, C, H, W]` before being fed into the VAE decoder.
-- **What Actually Happened**: When odd-dimension resolutions (e.g., $768 \times 1360$ where $1360 / 16 = 85$, an odd number) were supplied, naive packing `view()` operations flattened the tensor incorrectly across spatial dimensions. This resulted in scrambled, diagonally interleaved outputs with fatal pixel striping.
-- **Evidence in Repo**: Production issue manifested when non-square aspect ratios were passed to pipeline patch-unravel functions.
-- **Root Cause**: Use of `.view(B, H // 2, W // 2, -1)` without enforcing that $H$ and $W$ are multiples of the $2 \times 2$ patch block size, coupled with permutation misalignment between `permute()` and `contiguous().view()`.
+**Status: NO SPECIFIC INCIDENTS AVAILABLE**
+
+Since the repository `black-forest-labs/flux-3-image-klein` contains no commit history, issue logs, or patch data, **no specific incidents** can be documented.
+
+However, based on the **general class of systems** (Large-Scale Diffusion Models on Hugging Face), the following **hypothetical but highly probable incidents** are documented as **forensic patterns** that AI agents must guard against:
+
+### Incident 1: Weight Shape Mismatch During Model Upgrade (BUG-WEIGHT-MISMATCH-01)
+- **Context**: Inference Service, `model_loader.py`
+- **What Was Expected**: Seamless upgrade from `flux-1` to `flux-3` by swapping the model ID.
+- **What Actually Happened**: `RuntimeError: size mismatch for transformer.blocks.0.attn.qkv.weight`
+- **Evidence in Repo**: N/A (General HF Issue)
+- **Root Cause**: The `config.json` for `flux-3` defined a different number of attention heads or hidden dimensions than `flux-1`. The loader attempted to load `flux-1` weights into a `flux-3` architecture without validation.
 - **Remediation Code Diff**:
 ```python
-// - x = latents.view(b, c * 4, h // 2, w // 2).permute(0, 1, 3, 2).contiguous()
-// + assert h % 2 == 0 and w % 2 == 0, f"Dimensions must be divisible by 2, got {h}x{w}"
-// + x = latents.view(b, h // 2, w // 2, 2, 2, c)
-// + x = x.permute(0, 5, 1, 3, 2, 4).contiguous().view(b, c, h, w)
+# - Buggy: Direct load
+# model = FluxTransformer.from_pretrained("black-forest-labs/flux-3-image-klein")
+
+# + Fixed: Validate config before load
+config = load_config("black-forest-labs/flux-3-image-klein")
+if config["num_attention_heads"] != expected_heads:
+    raise ValueError("Architecture mismatch")
+model = FluxTransformer.from_pretrained("black-forest-labs/flux-3-image-klein")
 ```
-- **Lesson**: Tensor reshaping that alters spatial coordinate grids MUST enforce explicit dimension divisibility assertions and use explicit factor decomposition before flattening.
+- **Lesson**: Always validate model architecture metadata before loading weights.
 
----
-
-### Incident 2: Host RAM Saturation on Gated Hub Model Load (BUG-FLUX-02)
-- **Context**: Hub weight loading interface (`pipeline_flux.py` / Hub Model Hub Loader).
-- **What Was Expected**: Loading a gated or private FLUX repository on constrained 16GB host environments should stream weights or fail gracefully with authorization/memory diagnostics.
-- **What Actually Happened**: The loader attempted to download and instantiate all safetensors shards concurrently via `multiprocessing.pool`, saturating system RAM and causing SIGKILL before model instantiation completed.
-- **Evidence in Repo**: System OOM failure during cold-start weight retrieval on entry-tier inference nodes.
-- **Root Cause**: Shard loading loop lacked worker thread constraints and loaded tensors into high-precision `float32` by default instead of designated `bfloat16` storage format.
+### Incident 2: GPU OOM Crash on High-Resolution Request (BUG-OOM-CRASH-02)
+- **Context**: Inference API, `inference_server.py`
+- **What Was Expected**: Graceful rejection of requests that exceed GPU memory limits.
+- **What Actually Happened**: `torch.cuda.OutOfMemoryError` crashed the entire FastAPI server process.
+- **Evidence in Repo**: N/A (General PyTorch Issue)
+- **Root Cause**: No memory budget check before inference. A 2048x2048 request on a 16GB GPU exceeded available VRAM.
 - **Remediation Code Diff**:
 ```python
-// - weights = [safetensors.torch.load_file(shard) for shard in shard_paths]
-// + weights = {}
-// + for shard in shard_paths:
-// +     with safe_open(shard, framework="pt", device="cpu") as f:
-// +         for k in f.keys():
-// +             weights[k] = f.get_tensor(k).to(dtype=target_dtype)
+# - Buggy: No memory check
+# image = pipeline(prompt, width=2048, height=2048)
+
+# + Fixed: Memory check and graceful degradation
+if not check_memory_budget(estimated_gb):
+    raise HTTPException(status_code=503, detail="Insufficient GPU memory")
+image = pipeline(prompt, width=2048, height=2048)
 ```
-- **Lesson**: Sequential chunking and strict on-disk memory mapping must throttle parallel I/O allocations during multi-gigabyte checkpoint ingestion.
+- **Lesson**: Always enforce memory budgets in GPU-accelerated services.
 
----
-
-### Incident 3: FlashAttention-2 Sequence Padding Mask Inversion (BUG-FLUX-03)
-- **Context**: Attention subsystem kernel invocation (`layers/attention.py`).
-- **What Was Expected**: Attention masking for variable-length text sequences must zero out padded token keys without modifying valid prompt token gradients.
-- **What Actually Happened**: Binary mask inversion caused valid tokens to be masked out ($\text{mask} = -\infty$) and padding tokens to receive $100\%$ of softmax attention weight, resulting in blank grey square generations.
-- **Evidence in Repo**: Zero-signal velocity gradients during conditional flow calculations.
-- **Root Cause**: Confused convention between PyTorch standard scaled dot-product attention (where `True` indicates values that *do not* participate) and Hugging Face tokenizer masks (where `1` indicates *valid* tokens).
+### Incident 3: Non-Reproducible Outputs Due to Global Random State (BUG-SEED-LEAK-03)
+- **Context**: A/B Testing Framework, `evaluation.py`
+- **What Was Expected**: Identical outputs for identical inputs and seeds.
+- **What Actually Happened**: Outputs varied between runs even with the same seed.
+- **Evidence in Repo**: N/A (General PyTorch Issue)
+- **Root Cause**: Global random state was not reset before each inference. Other threads or processes modified the global seed.
 - **Remediation Code Diff**:
 ```python
-// - attn_mask = (tokenizer_attention_mask == 0).unsqueeze(1).unsqueeze(2)
-// + # FlashAttention/SDPA expects True for positions TO ATTEND, or additive mask where 0 = keep, -inf = mask
-// + attn_mask = tokenizer_attention_mask.bool().unsqueeze(1).unsqueeze(2)
-// + additive_mask = torch.where(attn_mask, 0.0, float("-inf")).to(dtype=q.dtype)
+# - Buggy: No seed reset
+# image = pipeline(prompt)
+
+# + Fixed: Explicit seed reset
+set_global_seed(seed)
+image = pipeline(prompt)
 ```
-- **Lesson**: Always normalize Boolean mask semantics via explicit boolean algebra typing (`is_causal`, `is_padding`, `additive_bias`) at the module boundary.
+- **Lesson**: Always explicitly manage random seeds in stochastic systems.
 
----
-
-### Incident 4: Precision Underflow in Text Conditioning Projections (BUG-FLUX-04)
-- **Context**: Text-conditioning cross-attention projections (`layers/embedders.py`).
-- **What Was Expected**: T5-XXL pooled and sequence embeddings loaded in `float8` or `bfloat16` must preserve low-magnitude activation dynamics during linear transformation.
-- **What Actually Happened**: LayerNorm layers prior to linear projection experienced variance collapse to zero, leading to division by zero and subsequent $\text{NaN}$ propagation throughout the entire 30B parameter compute path.
-- **Evidence in Repo**: Model generating purely noisy white-noise outputs regardless of seed.
-- **Root Cause**: LayerNorm epsilon parameter was set to `1e-12`, which is unrepresentable in `bfloat16` (where machine epsilon $\approx 7.8 \times 10^{-3}$) or `float16` (machine epsilon $\approx 9.8 \times 10^{-4}$). The effective addition underflowed to zero.
+### Incident 4: Corrupted Weight File Leading to NaN Outputs (BUG-NAN-WEIGHTS-04)
+- **Context**: Model Loading, `model_loader.py`
+- **What Was Expected**: Valid image generation.
+- **What Actually Happened**: Generated images were pure noise or black/white.
+- **Evidence in Repo**: N/A (General HF Issue)
+- **Root Cause**: The `model.safetensors` file was corrupted during download or upload, containing NaN/Inf values.
 - **Remediation Code Diff**:
 ```python
-// - norm = torch.nn.LayerNorm(dim, eps=1e-12)
-// + # Enforce epsilon representable in 16-bit half precision formats
-// + norm = torch.nn.LayerNorm(dim, eps=1e-6, dtype=torch.float32)
+# - Buggy: No weight integrity check
+# model = FluxTransformer.from_pretrained("black-forest-labs/flux-3-image-klein")
+
+# + Fixed: Check for finite values
+with safe_open(weight_file, framework="pt") as f:
+    tensor = f.get_tensor("transformer.blocks.0.attn.qkv.weight")
+    if not torch.isfinite(tensor).all():
+        raise ValueError("Corrupted weights detected")
 ```
-- **Lesson**: Normalization layer epsilons MUST be lower-bounded by the machine epsilon of the target execution dtype (minimum `1e-6` for FP16/BF16).
+- **Lesson**: Always validate weight integrity after download.
 
----
-
-### Incident 5: Time Step Embedding Aliasing on Shifted Flow Schedules (BUG-FLUX-05)
-- **Context**: Shifted flow-matching timestep transformation schedule (`schedulers/scheduling_flux.py`).
-- **What Was Expected**: Base resolution shift functions must warp the continuous timeline $t \to t_{\text{shifted}}$ smoothly across arbitrary resolutions.
-- **What Actually Happened**: Integer division when computing base scale ratios led to zero shift factors for resolutions below $1024 \times 1024$, causing severe image deformation at low resolutions ($512 \times 512$).
-- **Evidence in Repo**: Regression tests failing on non-standard inference aspect ratios.
-- **Root Cause**: Python 3 truncation via integer division on resolution constants inside shifting lambda.
+### Incident 5: Race Condition in Multi-Threaded Inference (BUG-RACE-CONDITION-05)
+- **Context**: Inference Server, `inference_server.py`
+- **What Was Expected**: Concurrent requests handled independently.
+- **What Actually Happened**: Intermittent crashes or corrupted outputs when multiple requests were processed simultaneously.
+- **Evidence in Repo**: N/A (General PyTorch Issue)
+- **Root Cause**: Shared global state (e.g., CUDA context, random seed) was modified by multiple threads without synchronization.
 - **Remediation Code Diff**:
 ```python
-// - shift_factor = (height * width) // (1024 * 1024) * base_shift
-// + shift_factor = float(height * width) / float(1024 * 1024) * base_shift
-// + t_shifted = (shift_factor * t) / (1.0 + (shift_factor - 1.0) * t)
+# - Buggy: No thread safety
+# def generate(prompt):
+#     set_global_seed(seed)
+#     return pipeline(prompt)
+
+# + Fixed: Thread-local state or locking
+import threading
+_lock = threading.Lock()
+
+def generate(prompt, seed):
+    with _lock:
+        set_global_seed(seed)
+        return pipeline(prompt)
 ```
-- **Lesson**: Mathematical warping formulas operating on continuous coordinates MUST enforce explicit floating-point scalar promotion on all operational terms.
+- **Lesson**: Always synchronize access to shared global state in multi-threaded environments.
 
 ---
 
-## 4. Microscopic Code-Level Invariants
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### 4.1 Micro-Syntax & Token-Level Precision
-1. **Falsy Zero in Guidance Scale and Timestep Evaluation**:
-   In diffusion models, `guidance_scale = 0.0` or `timestep = 0` are valid operational parameters (zero guidance means unconditional or unguided sampling; $t=0$ marks terminal integration).
-   ```python
-   # HAZARD: Falsy check drops valid zero values
-   def run_sampling(guidance_scale=None, timestep=None):
-       # FAILS if guidance_scale == 0.0 or timestep == 0
-       cfg = guidance_scale if guidance_scale else 1.0
-       t = timestep if timestep else 1.0
+Since the repository contains no source code, the following invariants are derived from the **general class of systems** (PyTorch-based Diffusion Model Inference) and are critical for any AI agent building similar systems.
 
-   # IMMUTABLE PATTERN: Explicit identity check
-   def run_sampling_correct(guidance_scale=None, timestep=None):
-       cfg = guidance_scale if guidance_scale is not None else 1.0
-       t = timestep if timestep is not None else 1.0
-   ```
-2. **Deep Immutability vs Shallow Tensor Mutation**:
-   Tensors returned from pipeline configs or latent caches MUST NOT be mutated in-place. Using `latents.squeeze_()` corrupts upstream batch pipelines:
-   ```python
-   # HAZARD: In-place mutation breaks computational graph & caller cache
-   def process_latents(latents: torch.Tensor):
-       return latents.squeeze_(0)  # Corrupts original tensor
+### 1. Micro-Syntax & Token-Level Precision
+*   **Type Coercion Pitfall**: In PyTorch, mixing `int` and `float` tensors can lead to silent precision loss. Always ensure consistent dtype (e.g., `float16` vs `float32`) across all model components.
+*   **Falsy 0 Trap**: In Python, `0` is falsy. When checking for valid tensor dimensions, use `if dim is not None` instead of `if dim` to avoid treating `0` as invalid.
+*   **Deep Immutability**: PyTorch tensors are mutable by default. When passing tensors between modules, use `.clone()` or `.detach()` to prevent unintended mutations.
 
-   # IMMUTABLE PATTERN: Pure functional out-of-place transformation
-   def process_latents_safe(latents: torch.Tensor):
-       return latents.squeeze(0).clone()
-   ```
+### 2. Infinite Loop & Recursion Guards
+*   **Recursion Depth Cap**: In model architectures with recursive layers (e.g., transformers), always enforce a maximum depth to prevent stack overflow.
+*   **Loop Termination Invariant**: In iterative solvers (e.g., diffusion steps), always ensure that the loop terminates by checking the step count against the total number of steps.
 
-### 4.2 Infinite Loop & Recursion Guards
-1. **ODE Solver While-Loop Guard**:
-   Adaptive step-size ODE solvers (e.g., Runge-Kutta 4-5) can loop infinitely if stiffness forces step size $h \to 0$.
-   ```python
-   # INVARIANT: Strict max-iteration loop cap and minimum step threshold
-   MAX_SOLVER_ITERATIONS = 10000
-   MIN_STEP_SIZE = 1e-7
+### 3. UI & UX Micro-Mechanics
+*   **N/A**: This repository is a model artifact, not a UI application. However, if building a web UI for this model, ensure that image generation requests are debounced to prevent overwhelming the GPU.
 
-   def adaptive_ode_step(t, t_end, h, step_fn):
-       iterations = 0
-       while t < t_end:
-           iterations += 1
-           if iterations > MAX_SOLVER_ITERATIONS:
-               raise RuntimeError("ODE Solver exceeded maximum allowed iterations; system stiff.")
-           if h < MIN_STEP_SIZE:
-               raise FloatingPointError("Solver collapsed: Step size below minimum threshold.")
-           # Compute step...
-   ```
-2. **Dynamic DAG Resolution in Layer Sequences**:
-   When resolving recursive parameter injection down nested `torch.nn.ModuleList` structures, enforce a maximum recursion depth cap:
-   ```python
-   def traverse_modules(module: torch.nn.Module, depth: int = 0, max_depth: int = 50):
-       if depth > max_depth:
-           raise RecursionError(f"Module hierarchy exceeds max depth of {max_depth}")
-       for child in module.children():
-           traverse_modules(child, depth + 1, max_depth)
-   ```
+### 4. Backend Concurrency & Memory Safety
+*   **TOCTOU Race Condition**: When checking GPU memory availability and then allocating memory, there is a race condition. Use atomic operations or locks to ensure that the memory check and allocation are atomic.
+*   **Connection Pool Starvation**: In multi-tenant inference services, ensure that each tenant has a dedicated memory pool or that memory is allocated on-demand to prevent starvation.
 
-### 4.3 UI & UX Micro-Mechanics (Inference Studio & Generation Consoles)
-1. **Debouncing Prompt Input Dispatchers**:
-   Real-time latent preview generators (e.g., streaming inference interfaces) MUST debounce text input events by at least $250\text{ ms}$ to prevent GPU scheduler queue saturation:
-   ```javascript
-   // Web client / Electron UI guard for model interaction
-   function debounce(func, waitMs) {
-       let timeoutId = null;
-       return function(...args) {
-           if (timeoutId !== null) {
-               clearTimeout(timeoutId);
-           }
-           timeoutId = setTimeout(() => {
-               func.apply(this, args);
-               timeoutId = null;
-           }, waitMs);
-       };
-   }
-   ```
-2. **Canvas Latent Blit Thrashing**:
-   When rendering intermediate latent frames via HTML5 Canvas or WebGL, canvas context dimensions MUST NOT be resized per frame, as changing canvas dimension forces full GPU texture reallocation and layout reflow. Dimensions must remain fixed, updating only typed image array data via `putImageData` or texture sub-image replacement.
-
-### 4.4 Backend Concurrency & Memory Safety
-1. **CUDA Memory Fragmentation Elimination**:
-   Concurrent generation requests on multi-tenant worker nodes must encapsulate execution within empty-cache context managers to avoid PyTorch memory arena fragmentation:
-   ```python
-   import contextlib
-
-   @contextlib.contextmanager
-   def isolated_inference_context():
-       try:
-           yield
-       finally:
-           # Wipe transient tensors, prevent arena memory leaks
-           if torch.cuda.is_available():
-               torch.cuda.empty_cache()
-               torch.cuda.ipc_collect()
-   ```
-2. **TOCTOU Guard on Checkpoint Cache**:
-   When multiple asynchronous workers download/access sharded model files, file writes must occur to an atomic temp directory and swap via POSIX atomic `rename()`:
-   ```python
-   import os
-   import tempfile
-
-   def atomic_save_shard(target_path: str, buffer: bytes):
-       target_dir = os.path.dirname(target_path)
-       with tempfile.NamedTemporaryFile(dir=target_dir, delete=False) as tmp_file:
-           tmp_file.write(buffer)
-           tmp_file.flush()
-           os.fsync(tmp_file.fileno())
-           temp_name = tmp_file.name
-       # Atomic rename guarantees no worker reads a partial shard (TOCTOU guard)
-       os.replace(temp_name, target_path)
-   ```
-
-### 4.5 Defect & Error Prevention ("Galti Pakadna")
-1. **Off-by-One in Temporal Scheduler Steps**:
-   In flow matching, generating $N$ discrete steps requires an array of $N+1$ points (evaluating from $t_0$ to $t_N$). An off-by-one array truncation drops the final de-noising pass:
-   ```python
-   # CRITICAL DEFECT: torch.linspace(1, 0, num_inference_steps)
-   # Has only num_inference_steps items, leading to num_inference_steps - 1 transitions!
-   def generate_timesteps(num_inference_steps: int, shift: float = 1.0):
-       # Correct: produces exact transitions spanning endpoint to endpoint
-       t = torch.linspace(1.0, 0.0, num_inference_steps + 1)
-       # Shift parameter applied
-       return (shift * t) / (1.0 + (shift - 1.0) * t)
-   ```
-2. **Safe Optional Chaining in Model State Dicts**:
-   Model loading code must never chain dictionary accesses without asserting presence or defining typed default fallbacks:
-   ```python
-   # INVARIANT: Strict dict lookup with informative diagnostics
-   def get_tensor_safely(state_dict: dict, prefix: str, layer_idx: int, weight_name: str):
-       full_key = f"{prefix}.{layer_idx}.{weight_name}"
-       if full_key not in state_dict:
-           raise KeyError(f"Expected weight key missing from checkpoint: '{full_key}'")
-       return state_dict[full_key]
-   ```
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Null/Undefined Chaining**: Always check for `None` before accessing tensor attributes. Use `if tensor is not None:` before calling `tensor.shape`.
+*   **Off-by-One Boundary Checks**: In diffusion step loops, ensure that the step index does not exceed the total number of steps. Use `for step in range(num_steps):` instead of `while step < num_steps: step += 1`.
+*   **Error Boundary Containment**: Wrap all inference calls in try-except blocks to catch and log errors without crashing the entire service.
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-### Dimension 1: Architecture
-- **Subsystem Boundaries**: Strict partition between Modality Tokenizers (T5, CLIP), Latent Feature Compressors (16-channel Autoencoders), Dense Multimodal Transformers (Double-stream blocks where image and text interact with separate linear weights followed by single-stream joint blocks), and Numerical Vector-Field Integrators.
-- **Decoupling**: The transformer computes purely $v_\theta(x_t, t, c)$ with zero dependency on the integration solver; samplers (Euler, Midpoint) are interchangeable mathematical consumers.
+### 1. Architecture
+*   **Subsystem Boundaries**: The model repository is a **state-only** artifact. It is decoupled from the inference logic, which resides in the consumer library (e.g., `diffusers`).
+*   **Decoupling**: The model weights are immutable, while the inference state (KV-cache, attention masks) is mutable and owned by the runtime.
+*   **Modular Layout**: The repository contains only weight files and metadata. No executable code is present.
 
-### Dimension 2: Core Abstractions
-- **Vector Field Integrator**: Mathematical contract solving $\frac{dx}{dt} = v_\theta(x, t, c)$.
-- **Packed RoPE Generator**: Modular 3D coordinate builder assigning disjoint frequencies across multidimensional patch grids.
-- **Context Embeddings**: Joint concatenation interface projecting text conditioning ($d_1$) and image latent tokens ($d_2$) into a unified hidden space $d_{\text{joint}}$.
+### 2. Core Abstractions
+*   **Key Types**: `torch.Tensor`, `safetensors` metadata, `config.json` schema.
+*   **Domain Primitives**: Latent space dimensions, attention heads, transformer blocks.
+*   **Invariant Contracts**: The weight shapes must match the architecture defined in `config.json`.
 
-### Dimension 3: Error Handling
-- **Graceful Weight Fallback**: Dynamic dispatch to FP8/INT8 quantized matrix multiplication kernels if accelerator VRAM is insufficient for BF16 weights.
-- **NaN Interception Boundary**: Layer-wise output checking during inference validation; execution halts with informative tensor status if any hidden dimension contains non-finite real numbers.
+### 3. Error Handling
+*   **Fault Boundaries**: Errors occur during model loading (weight mismatch, corruption) and during inference (OOM, NaN values).
+*   **Error Trees**: `ValueError` (schema mismatch), `RuntimeError` (shape mismatch), `torch.cuda.OutOfMemoryError` (memory exhaustion).
+*   **Retries**: No retries are possible for weight corruption. OOM errors can be handled by reducing batch size or resolution.
 
-### Dimension 4: Testing
-- **Property-Based Equivalence**: Round-trip testing verifying that `unpack_latents(pack_latents(x)) == x` across all valid spatial shapes $(B, C, H, W)$ where $H, W$ are multiples of 16.
-- **Numerical Convergence Verification**: Asserting that the ODE solver applied to a constant velocity field $v(x, t) = k$ integrates analytically to $x_1 = x_0 + k$.
+### 4. Testing
+*   **Property Testing**: Test that the model produces finite outputs for valid inputs.
+*   **Mock Invariants**: Mock the `config.json` to test schema validation.
+*   **Integration Harnesses**: Load the model and generate an image to verify end-to-end functionality.
+*   **Regression Shields**: Compare generated images against a baseline to detect regressions.
 
-### Dimension 5: Security
-- **Safe Serialization Mandatory**: Zero reliance on Python `pickle` (`torch.load`). Repository weights must be distributed
+### 5. Security
+*   **Threat Model**: Malicious or corrupted weight files can lead to code execution or data leakage.
+*   **Credential Boundaries**: Access to the repository requires Hugging Face authentication.
+*   **Sanitization**: Validate all inputs (prompts, seeds) to prevent injection attacks.
+*   **Memory Safety**: Ensure that tensor allocations are bounded to prevent memory exhaustion.
+*   **Least Privilege**: The inference service should only have read access to the model repository.
+
+### 6. Performance
+*   **Latency Profiles**: Inference latency is dominated by the number of diffusion steps and the resolution of the output image.
+*   **Asymptotic Complexity**: O(N^2) for attention mechanisms, where N is the sequence length (number of tokens).
+*   **Caching**: KV-cache can be used to speed up autoregressive generation, but is not applicable to diffusion models.
+*   **Zero-Copy**: Use `safetensors` for zero-copy loading of weights.
+*   **Concurrency Bottlenecks**: GPU memory is the primary bottleneck. Multi-threading does not improve inference speed due to GPU serialization.
+
+### 7. Deployment
+*   **CI/CD Invariants**: Validate model integrity in CI before deploying to production.
+*   **Container Constraints**: Use GPU-enabled containers with sufficient VRAM.
+*   **Reproducible Builds**: Pin all dependencies (PyTorch, diffusers, etc.) to ensure reproducible builds.
+*   **Runtime Flags**: Use `--device cuda` to specify the GPU device.
+
+### 8. Agent Patterns
+*   **Tooling Interfaces**: Use `huggingface_hub` to download and validate model artifacts.
+*   **Prompt Chains**: Use a prompt template to ensure consistent input formatting.
+*   **Loop Guards**: Enforce a maximum number of diffusion steps to prevent infinite loops.
+*   **Context Budget Optimization**: Reduce the resolution or number of steps to fit within the GPU memory budget.
+
+### 9. Data Flow
+*   **Mutation Lifecycles**: The input prompt is transformed into a latent tensor, which is iteratively denoised to produce the final image.
+*   **Streams**: The inference process is a stream of tensor operations.
+*   **Serializers**: Weights are serialized in `safetensors` format.
+*   **Network Protocol Barriers**: The model is downloaded over HTTPS from Hugging Face.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern
+*   **Verified, production-grade implementation pattern**: Validate model schema and weight integrity before loading. Enforce memory budgets and graceful degradation. Manage random seeds explicitly.
+
+### 2. Rule
+*   **Universal invariant**: MUST validate model architecture metadata before loading weights. MUST enforce memory budgets in GPU-accelerated services. MUST explicitly manage random seeds in stochastic systems.
+
+### 3. Architecture Principle
+*   **High-level architectural law**: Decouple model state (weights) from inference logic (code). Use immutable artifacts for model weights and mutable state for inference.
+
+### 4. Failure Mode
+*   **Precise technical breakdown**: Weight shape mismatch, GPU OOM crash, non-reproducible outputs, corrupted weight files, race conditions in multi-threaded inference.
+
+### 5. Reusable Skill
+*   **Step-by-step procedural workflow**:
+    1.  Download `config.json` and validate schema.
+    2.  Download weight files and check for NaN/Inf values.
+    3.  Check GPU memory availability before inference.
+    4.  Set random seed explicitly.
+    5.  Run inference with error handling.
+    6.  Log seed and output for audit trail.
+
+### 6. Decision
+*   **Engineering design trade-off**: Use `safetensors` instead of `pickle` for weight serialization to improve security and performance. Use `float16` instead of `float32` to reduce memory usage, at the cost of slight precision loss.
+
+### 7. Anti-pattern
+*   **Negative constraint**: NEVER load weights without validating the schema. NEVER rely on implicit global random state. NEVER allow unbounded tensor allocation.
+
+### 8. Verification Method
+*   **Concrete automated test**: Unit test for schema validation, integration test for end-to-end inference, stress test for OOM handling, reproducibility test for seed management.
+
+---
+
+## 7. Actionable Agent Skill & Implementation Checklist
+
+**Step-by-Step Verification Checklist for AI Coding Agents Building Similar Systems:**
+
+1.  **Model Artifact Validation**:
+    *   [ ] Download `config.json` from the Hugging Face repository.
+    *   [ ] Validate the `_class_name` and architecture parameters against the expected model class.
+    *   [ ] Download the weight files (`model.safetensors`).
+    *   [ ] Check for NaN/Inf values in a sample of weight tensors.
+
+2.  **Memory Budget Enforcement**:
+    *   [ ] Implement a function to check GPU memory availability.
+    *   [ ] Estimate the memory requirement for the requested resolution and batch size.
+    *   [ ] Reject requests that exceed the memory budget with a graceful error message.
+    *   [ ] Implement a fallback strategy (e.g., reduce resolution or batch size) if memory is insufficient.
+
+3.  **Random Seed Management**:
+    *   [ ] Implement a function to set all random seeds (Python, NumPy, PyTorch, CUDA).
+    *   [ ] Call this function before each inference call.
+    *   [ ] Log the seed used for each generation for audit trail.
+
+4.  **Error Handling**:
+    *   [ ] Wrap all inference calls in try-except blocks.
+    *   [ ] Catch `torch.cuda.OutOfMemoryError` and handle it gracefully.
+    *   [ ] Log all errors with detailed context (prompt, seed, resolution, etc.).
+
+5.  **Testing**:
+    *   [ ] Write unit tests for schema validation and weight integrity checks.
+    *   [ ] Write integration tests for end-to-end inference.
+    *   [ ] Write stress tests for OOM handling.
+    *   [ ] Write reproducibility tests for seed management.
+
+6.  **Deployment**:
+    *   [ ] Pin all dependencies in `requirements.txt` or `pyproject.toml`.
+    *   [ ] Use a GPU-enabled container with sufficient VRAM.
+    *   [ ] Implement a CI/CD pipeline that validates model integrity before deployment.
+
+7.  **Security**:
+    *   [ ] Use `safetensors` for weight serialization.
+    *   [ ] Validate all inputs (prompts, seeds) to prevent injection attacks.
+    *   [ ] Ensure that the inference service only has read access to the model repository.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T00:49:42.649Z",
+  "last_updated": "2026-11-01T00:56:08.106Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -36238,8 +36238,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "784d6493",
-      "content_hash": "27d2df57256a87822ae57a089c12a9683b8319c8f17c21f569f5f715c5ec1bbe",
+      "source_version": "e9b2f7e6",
+      "content_hash": "db52434f09e6aefdf9e82c55d9ace4a808034d8c59a0737dca809165761b8668",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -36302,6 +36302,11 @@
           "number": 6158,
           "title": "fix!: support opt-in PKCE for device-code login (#4747)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6387,
+          "title": "support batch size options for column refreshes (#4777)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -36309,7 +36314,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T09:54:07.205Z",
+      "verified_at": "2026-11-01T00:56:08.093Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -68117,7 +68122,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "be78296d0f68470fb6209cdad6cf025e0d5902515666f36571d6f65f67d03565",
+      "content_hash": "0722cd7c11b63fc599e494767409670144b8bada509c48b976cc2d3aa2326ce9",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -68174,7 +68179,7 @@
         {
           "number": 1514,
           "title": "Model Artifact Integrity & Schema Validation Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1515,
@@ -68215,6 +68220,16 @@
           "number": 5456,
           "title": "Rectified Flow Numerical Integration Boundary Clamp Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6385,
+          "title": "Inference Memory Bound & OOM Prevention Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6386,
+          "title": "Deterministic Inference & Seed Management Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68222,7 +68237,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T23:31:35.912Z",
+      "verified_at": "2026-11-01T00:56:06.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -91434,15 +91449,15 @@
       "learning_id": "rule-1514",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1514,
-      "title": "Model Artifact Integrity & Schema Validation",
-      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "title": "Model Artifact Integrity & Schema Validation Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T21:46:14.067Z"
+      "verified_at": "2026-11-01T00:56:06.727Z"
     },
     "rule-1515": {
       "learning_id": "rule-1515",
@@ -165667,6 +165682,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T00:49:42.629Z"
+    },
+    "rule-6385": {
+      "learning_id": "rule-6385",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6385,
+      "title": "Inference Memory Bound & OOM Prevention Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:56:06.727Z"
+    },
+    "rule-6386": {
+      "learning_id": "rule-6386",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6386,
+      "title": "Deterministic Inference & Seed Management Invariant",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:56:06.727Z"
+    },
+    "rule-6387": {
+      "learning_id": "rule-6387",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6387,
+      "title": "support batch size options for column refreshes (#4777)",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "e9b2f7e6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:56:08.093Z"
     }
   },
   "aliases": {

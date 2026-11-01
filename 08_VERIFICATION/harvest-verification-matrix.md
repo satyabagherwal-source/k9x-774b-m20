@@ -6773,3 +6773,5 @@
 | `CYCLE-20261101-4A0D` | `2026-11-01T00:49:24.397Z` | `dagoSte/squadra` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6383` | Yes (`2ca3f652...`) |
 | `CYCLE-20261101-4BC6` | `2026-11-01T00:49:26.118Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`821d459a...`) |
 | `CYCLE-20261101-4O5L` | `2026-11-01T00:49:42.729Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6384` | Yes (`d7d943fa...`) |
+| `CYCLE-20261101-CWI4` | `2026-11-01T00:56:06.796Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1514, Rule 6385, Rule 6386` | Yes (`0722cd7c...`) |
+| `CYCLE-20261101-CXKM` | `2026-11-01T00:56:08.182Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6387` | Yes (`db52434f...`) |

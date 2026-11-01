@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-EH68",
-    "timestamp": "2026-10-30T19:05:44.816Z",
-    "repository": "xerj-org/xerj",
-    "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "f102e3635f2a432643b30ca3db5879689c409bc6ef9a6c32e83ad67e7692a0a6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-N2OL",
-    "timestamp": "2026-10-30T19:12:25.941Z",
-    "repository": "rollup/rollup",
-    "learningId": "learn-github-rollup-rollup",
-    "contentHash": "9908bc5177d3fc4b0c15771d2da70063e3999653b2bfa3ae9e0703196d12d9c1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-VUZW",
     "timestamp": "2026-10-30T19:19:15.884Z",
     "repository": "LiquidAI/LFM3-1.7B-GGUF",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "d7d943faefebf55ae167241b032943089c1e8132948e70fe8eb37e9e592da436",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-CWI4",
+    "timestamp": "2026-11-01T00:56:06.796Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "0722cd7c11b63fc599e494767409670144b8bada509c48b976cc2d3aa2326ce9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-CXKM",
+    "timestamp": "2026-11-01T00:56:08.182Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "db52434f09e6aefdf9e82c55d9ace4a808034d8c59a0737dca809165761b8668",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

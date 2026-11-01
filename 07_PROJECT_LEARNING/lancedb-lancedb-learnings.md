@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source**: github ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
-> **Source Version**: `784d6493`  
+> **Source Version**: `e9b2f7e6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T09:54:06.607Z  
+> **Timestamp**: 2026-11-01T00:56:07.682Z  
 > **Learning ID**: `learn-github-lancedb-lancedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T09:54:06.599Z  
+> **Harvest Timestamp**: 2026-11-01T00:56:07.105Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11822 stars
+- **Stars / Engagement**: 11821 stars
 
 ---
 
@@ -1208,11 +1208,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4769** (2026-10-30): **fix(ci): replace retiring macos-14 runners**
-  *Symptoms*: The affected jobs were cancelled before runner assignment with GitHub's scheduled macOS 14 brownout annotation. macOS 14 runner images retire on November 2, 2026: https://github.com/actions/runner-images/issues/13518.  This moves the Python and CLI workflows to `macos-15` and keeps two distinct Rust macOS legs with `macos-15` and `macos-26`. All selected labels are public ARM64 runners, preserving the architecture of the previous plain `macos-14` jobs.  Validation: `git diff --check` and Ruby YAML parsing passed for all three changed workflows. A targeted `actionlint` check also passed; existing repository-wide custom-runner, reusable-workflow input, and shellcheck findings are outside this diff. 
+- **Issue #4779** (2026-10-31): **fix: allow hidden function assignment columns**
+  *Symptoms*: A second flattened Function declaration fails when the remote describe schema omits an existing binding's internal assignment field. The client incorrectly requires that server-owned field and compares it as a physical user output.  Exclude assignment fields from binding/schema validation and the output-schema comparison. Filter declared assignment fields from remote schemas, including seeded caches and snapshot handles, while retaining schema metadata.  The regression tests declare two all-nullable flattened bindings consecutively with no assignment declaration, a hidden assignment field, or a returned assignment field. They also cover cached and snapshot schemas and server-owned assignment types and metadata. All four regression cases failed before the fix.  Validation:  - `cargo fmt --all` - `cargo test --quiet --profile ci --features remote -p lancedb --lib -- table::computed_columns::tests remote::table::tests` — 379 passed, 30 ignored. - `cargo clippy --quiet --profile ci --features remote -p lancedb --tests --examples`  Fixes #4778  <!-- lance-gatekeeper-fix:v1 agent=c55eff66e22d736a6b954a9eeec88898 generation=1 --> 
 
-- **Issue #4755** (2026-10-30): **fix(python): pin an available pylance wheel on macOS**
-  *Symptoms*: ## Problem  The Python test extra pins `pylance==15.0.0b7` for every platform. On macOS, pip cannot resolve that pin: the configured `lance-format` index publishes b7 wheels for Linux and Windows but not macOS, while public PyPI returns HTTP 404 for the version and the `lancedb` index contains no 15.x release. The macOS Python dependency installation consequently cannot resolve the pin.  ## Change  - Keep the exact `pylance==15.0.0b7` test pin on non-macOS platforms. - Use `pylance==15.0.0b4` on macOS. This is the newest release in this range with a macOS wheel (`cp310-abi3-macosx_11_0_arm64`). - Refresh `python/uv.lock` for the platform-specific resolutions.  The production Rust/Lance inputs are unchanged: `Cargo.lock` is byte-identical to `main` and remains on Lance `15.0.0-beta.7`. No tests, assertions, coverage, or CI checks are removed or weakened.  ## Validation  - Confirmed the wheel identity from the configured index and matched its published SHA-256 to `uv.lock`; wheel metadata reports `Name: pylance`, `Version: 15.0.0b4`. - Verified the b4 APIs used by the Python tests (`blob_field`, `blob_array`, `BlobType`, `Blob`, `dataset`, `write_dataset`, `FFILanceTableProvider`, and `DirectoryNamespace`). The Python test suite does not reference the b7-only `mark_sstables_as_compacted`, `mem_wal_dir_id`, `mem_wal_index_details`, `clustering_id`, `LanceFragment`, `IndexSegment`, `UpdateConfig`, or `max_source_fragments` changes. - Verified scalar read/write interoperability in
+- **Issue #4778** (2026-10-31): **Function bindings require the internal assignment column in the remote table schema**
+  *Symptoms*: On a remote table, `add_columns` with a second Function fails if the server doesn't return a flattened binding's internal `__function_assignment_<binding_id>` field in the table schema:  ```python table.add_columns(fn_a(...).rename(columns={"a1": "a1", "a2": "a2"}))  # flattened, all-nullable outputs table.add_columns(fn_b(...)) # Function binding 'fb_...' assignment column '__function_assignment_fb_...' is missing ```  The assignment field is server-owned bookkeeping: it records which rows a flattened binding has computed. The server should be able to hide it from describe, the same way it is hidden from `SELECT *` and default query projections, so that `table.schema` shows only user columns. Today the client blocks that. `ensure_binding_matches_schema` (`rust/lancedb/src/table/computed_columns.rs`) requires the field to be in the described schema and checks its type and metadata. It also rejects an all-nullable flattened binding with no assignment.  **Expected:** the client doesn't validate the assignment field against the table schema. That means:  1. Remove the "assignment column '...' is missing", "assignment column no longer matches its declaration" and "has no flattened-result assignment column" checks. 2. Leave the assignment field out of the output-schema comparison in that function. 3. Accept a binding whether or not the server includes the field in the schema, and leave the field out of `table.schema` if it is present.  A test should add two flattened bindings in a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1229,544 +1229,859 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d316cbbe` (2026-10-30)
-**Commit Message**: fix!: support opt-in PKCE for device-code login (#4747)
+### Incident Patch 1: `9804f26b` (2026-10-31)
+**Commit Message**: fix: support batch size options for column refreshes (#4777)
 
-## Problem and change
-Some Keycloak client policies require S256 PKCE during device-code
-login. Sending those parameters unconditionally breaks interoperability
-with providers that expect standard RFC 8628 requests.
+Python column refresh methods rejected `batch_size`, and the Rust remote
+backend never included it in the backfill request. Callers could not
+reduce the rows passed to a slow Function to stay within the executor's
+per-call deadline.
 
-Configure device login with `OAuthFlow::DeviceCode(DeviceCodeOptions)`,
-following the existing authorization-code options pattern.
-`DeviceCodeOptions::new()` keeps PKCE disabled; `.use_pkce(true)` sends
-an S256 challenge during device authorization and its matching verifier
-during token polling. There is no automatic downgrade, and enabling PKCE
-preserves the existing token-cache identity. Python, Node, and CLI
-conversions retain ordinary device login without PKCE.
+Add optional, keyword-only `batch_size` arguments throughout the
+synchronous and asynchronous Python APIs and bindings. Add compatible
+Rust `RefreshColumnOptions` APIs while preserving existing Rust method
+signatures. Reject non-positive sizes before submitting a job, send
+positive sizes in `backfill_column`, and omit the field when unset while
+retaining branch scoping.
 
-OIDC discovery and token requests now include a versioned User-Agent.
-`env!("CARGO_PKG_VERSION")` is expanded at compile time and embeds the
-version in the binary; no Cargo environment variable is needed when
-running an installed binary or native binding.
+Batch size controls remote Function calls. Embedded expression refreshes
+accept and validate the option without changing execution, and blocking
+remote refreshes retain their existing unsupported behavior; remote
+callers use `refresh_column_async` and wait on the returned job.
 
-The supported-flows guide documents the Rust-only device PKCE option and
-its default.
+Validation:
 
-## Rust API migration
-BREAKING CHANGE: `OAuthFlow::DeviceCode` now carries
-`DeviceCodeOptions`. Replace constru
+- Reproduced the original Python `TypeError` from the committed method.
+- Five focused Rust tests passed, covering request contents, omission,
+branch scoping, and rejection before any request.
+- `cargo check --quiet --features remote --te
 
-**File**: `docs/web/enterprise/authentication.mdx` (modified, +12/-4)
+**File**: `python/python/lancedb/_lancedb.pyi` (modified, +6/-2)
 ```diff
-@@ -98,7 +98,7 @@ client acquires tokens:
- | --- | --- | --- | --- | --- |
- | Client Credentials | `OAuthFlowType.CLIENT_CREDENTIALS` | `OAuthFlowType.ClientCredentials` | `OAuthFlow::ClientCredentials` | Service-to-service / machine-to-machine. Requires a client ID and client secret registered with your identity provider. |
- | Authorization Code | `OAuthFlowType.AUTHORIZATION_CODE` | `OAuthFlowType.AuthorizationCode` | `OAuthFlow::AuthorizationCode(AuthorizationCodeOptions::new())` | Interactive user sign-in through a browser and local callback server. Uses S256 PKCE by default. |
--| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
-+| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode(DeviceCodeOptions::new())` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
- | Azure Managed Identity | `OAuthFlowType.AZURE_MANAGED_IDENTITY` | `OAuthFlowType.AzureManagedIdentity` | `OAuthFlow::AzureManagedIdentity { client_id: None }` | Azure workloads with access to the IMDS endpoint. Tokens are fetched from IMDS, so no client secret is stored on the client. |
+@@ -557,8 +557,12 @@ class Table:
+         auto_refresh_enabled: Optional[bool] = None,
+         auto_refresh_interval_seconds: Optional[int] = None,
+     ) -> AddColumnsResult: ...
+-    async def refresh_column(self, column: str) -> RefreshColumnResult: ...
+-    async def refresh_column_async(self, column: str) -> Job: ...
++    async def refresh_column(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> RefreshColumnResult: ...
++    async def refresh_column_async(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> Job: ...
+     async def function_errors(
+         self,
+         job_id: Optional[str] = None,
+```
+
+**File**: `python/python/lancedb/remote/table.py` (modified, +8/-4)
+```diff
+@@ -1108,11 +1108,15 @@ def add_columns(
+             )
+         )
  
- ### Configure OAuth {#configure-oauth}
-@@ -290,7 +290,7 @@ const db = await lancedb.connect("db://your-database-uri", {
- ```rust Rust icon="rust"
- use lancedb::remote::{AuthorizationCodeOptions, OAuthConfig, OAuthFlow, TokenCacheOptions};
+-    def refresh_column(self, column: str):
+-        return LOOP.run(self._table.refresh_column(column))
++    def refresh_column(self, column: str, *, batch_size: Optional[int] = None):
++        return LOOP.run(self._table.refresh_column(column, batch_size=batch_size))
  
--// Use OAuthFlow::DeviceCode for a CLI without a local browser or callback server.
-+// Use OAuthFlow::DeviceCode(Default::default()) for a CLI without a local browser or callback server.
- let oauth_config = OAuthConfig {
-     issuer_url: "https://your-issuer.example.com".into(),
-     client_id: "your-public-client-id".into(),
-@@ -317,9 +317,16 @@ let db = lancedb::connect("db://your-database-uri")
- ```
- </CodeGroup>
+-    def refresh_column_async(self, column: str) -> Job[RefreshColumnResult]:
+-        return Job(LOOP.run(self._table.refresh_column_async(column)))
++    def refresh_column_async(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> Job[RefreshColumnResult]:
++        return Job(
++            LOOP.run(self._table.refresh_column_async(column, batch_size=batch_size))
++        )
  
--With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode`, the same
-+With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode(DeviceCodeOptions::new())`, the same
- configuration and connection calls apply; only the `flow` value changes.
+     def function_errors(
+         self,
+```
+
+**File**: `python/python/lancedb/table.py` (modified, +62/-25)
+```diff
+@@ -3075,7 +3075,9 @@ def add_columns(
+         """
  
-+Device Code sends no PKCE parameters by default. For a provider that requires
-+S256 PKCE on device grants, Rust callers can select
-+`OAuthFlow::DeviceCode(DeviceCodeOptions::new().use_pkce(true))` (import
-+`DeviceCodeOptions` from `lancedb::remote`). This option is currently Rust-only.
-+Enable it only when the provider supports the extension; a failed PKCE request
-+is not retried without PKCE.
+     @abstractmethod
+-    def refresh_column(self, column: str) -> "RefreshColumnResult":
++    def refresh_column(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> "RefreshColumnResult":
+         """
+         Fill the rows of a computed column that hold no value yet.
+ 
+@@ -3087,14 +3089,18 @@ def refresh_column(self, column: str) -> "RefreshColumnResult":
+         by the next one, and rows whose inputs changed since they were computed
+         are recomputed; everything else is left as it is.
+ 
+-        LanceDB Embedded only. In LanceDB Distributed, a refresh runs as a
+-        server job, through
++        Supported for local tables only. For remote tables, a refresh runs as
++        a server job, through
+         [`refresh_column_async`][lancedb.table.Table.refresh_column_async].
+ 
+         Parameters
+         ----------
+         column: str
+             The name of the computed column to fill.
++        batch_size: int, optional
++            Maximum rows per Function call on the remote server. Must be
++            greater than zero. None uses the server default. Has no effect on
++            local expression-backed columns.
+ 
+         Returns
+         -------
+@@ -3104,20 +3110,31 @@ def refresh_column(self, column: str) -> "RefreshColumnResult":
+         """
+ 
+     @abstractmethod
+-    def refresh_column_async(self, column: str) -> Job[RefreshColumnJobResult]:
++    def refresh_column_async(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> Job[RefreshColumnJobResult]:
+         """
+         Like :meth:`refresh_column`, but returns a handle to the refresh job
+         instead of blocking until it completes.
+ 
+-        LanceDB Embedded refresh requires a source build with
+-        ``experimental-functions``.
+-        LanceDB Distributed jobs do not require this feature.
++        Local refresh requires a source build with ``experimental-functions``.
++        Remote jobs do not require this feature.
+ 
+         The job may already be complete when returned; callers must not assume
+         the column is filled until :meth:`Job.wait` returns. Invalid input --
+         an unknown column, or one that is not computed -- raises here rather
+-        than failing the job. In LanceDB Embedded the job runs in-process; in
+-        LanceDB Distributed it is the server's backfill job.
++        than failing the job. For local tables, the job runs in-process; for
++        remote tables, it is the server's backfill job.
 +
- ### Reuse an interactive session {#reuse-an-interactive-session}
++        Parameters
++        ----------
++        column: str
++            The name of the computed column to fill.
++        batch_size: int, optional
++            Maximum rows per Function call on the remote server. Must be
++            greater than zero. None uses the server default. Lower this for
++            slow Functions to stay within the executor's per-call deadline.
++            Has no effect on local expression-backed columns.
  
- By default, tokens stay in process memory. Set `token_cache` / `tokenCache`
-@@ -379,7 +386,8 @@ Credentials and rejected for Azure Managed Identity.
+         Returns
+         -------
+@@ -5156,18 +5173,24 @@ def add_columns(
+             )
+         )
  
- ### Configuration reference {#configuration-reference}
+-    def refresh_column(self, column: str) -> "RefreshColumnResult":
++    def refresh_column(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> "RefreshColumnResult":
+         """Fill a computed column's unfilled rows and recompute those whose
+         inputs changed. See
+         [`AsyncTable.refresh_column`][lancedb.AsyncTable.refresh_column]."""
+-        return LOOP.run(self._table.refresh_column(column))
++        return LOOP.run(self._table.refresh_column(column, batch_size=batch_size))
  
--The same configuration is available in all three SDKs. Python and Rust use
-+The shared configuration below is available in all three SDKs; device-code PKCE
-+is a Rust-only option through `DeviceCodeOptions`. Python and Rust use
- `snake_case` field names; TypeScript uses `camelCase`. In Rust, set optional
- `OAuthConfig` fields to `Some(value)` or `None`. Configure `redirect_uri`,
- `callback_port`, and `use_pkce` through the builder methods on
+-    def refresh_column_async(self, column: str) -> Job[RefreshColumnJobResult]:
++    def refresh_column_async(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> Job[RefreshColumnJobResult]:
+         """Fill a computed column's unfilled rows and recompute those whose
+         inputs changed, returning a handle to the refresh job. See
+         [`Table.refresh_column_async`][lancedb.table.Table.refresh_column_async].
+         """
+-        return Job(LOOP.run(self._table.refresh_column_async(column)))
++        return Job(
++            LOOP.run(self._table.refresh_column_async(column, batch_size=batch_size))
++        )
+ 
+     def function_errors(
+         self,
+@@ -7422,7 +7445,9 @@ async def add_columns(
+         else:
+             return await self._inner.add_columns(list(transforms.items()))
+ 
+-    async def refresh_column(self, column: str) -> RefreshColumnResult:
++    async def refresh_column(
++        self, column: str, *, batch_size: Optional[int] = None
++    ) -> RefreshColumnResult:
+         """
+         Fill the rows of a computed column that hold no value yet.
+ 
+@@ -7434,21 +7459,25 @@ async def refresh_column(self, column: str) -> RefreshColumnResult:
+         by the next one, and rows whose inputs changed since they were computed
+         are recomputed; everything else is left as it is.
+ 
+-        LanceDB Embedded only. In Lanc
 ```
 
-**File**: `nodejs/src/remote.rs` (modified, +2/-2)
+**File**: `python/python/tests/test_remote_db.py` (modified, +24/-7)
 ```diff
-@@ -276,7 +276,7 @@ impl TryFrom<OAuthConfig> for lancedb::remote::oauth::OAuthConfig {
-                 }
-                 OAuthFlow::AuthorizationCode(options)
-             }
--            "device_code" => OAuthFlow::DeviceCode,
-+            "device_code" => OAuthFlow::DeviceCode(Default::default()),
-             "azure_managed_identity" => OAuthFlow::AzureManagedIdentity {
-                 client_id: config.managed_identity_client_id,
-             },
-@@ -560,7 +560,7 @@ mod tests {
-         let converted = lancedb::remote::oauth::OAuthConfig::try_from(config).unwrap();
-         assert!(matches!(
-             converted.flow,
--            lancedb::remote::oauth::OAuthFlow::DeviceCode
-+            lancedb::remote::oauth::OAuthFlow::DeviceCode(options) if !options.use_pkce
-         ));
-     }
+@@ -1520,7 +1520,14 @@ def handler(request):
+         job.cancel()
  
-```
-
-**File**: `python/src/oauth.rs` (modified, +2/-2)
-```diff
-@@ -67,7 +67,7 @@ impl TryFrom<PyOAuthConfig> for OAuthConfig {
-                 }
-                 OAuthFlow::AuthorizationCode(options)
-             }
--            "device_code" => OAuthFlow::DeviceCode,
-+            "device_code" => OAuthFlow::DeviceCode(Default::default()),
-             "azure_managed_identity" => OAuthFlow::AzureManagedIdentity {
-                 client_id: py.managed_identity_client_id,
-             },
-@@ -327,7 +327,7 @@ mod tests {
-     fn test_device_code_conversion() {
-         let config = base_config();
-         let converted = OAuthConfig::try_from(config).unwrap();
--        assert!(matches!(converted.flow, OAuthFlow::DeviceCode));
-+        assert!(matches!(converted.flow, OAuthFlow::DeviceCode(options) if !options.use_pkce));
-     }
  
-     #[test]
+-def test_remote_refresh_async_returns_typed_terminal_result():
++@pytest.mark.asyncio
++@pytest.mark.parametrize("async_table", [False, True])
++@pytest.mark.parametrize(
++    "refresh_kwargs", [{}, {"batch_size": None}, {"batch_size": 1}, {"batch_size": 8}]
++)
++async def test_remote_refresh_async_returns_typed_terminal_result(
++    async_table, refresh_kwargs
++):
+     terminal_result = {
+         "rows_assigned": 12,
+         "rows_failed": 0,
+@@ -1533,7 +1540,10 @@ def handler(request):
+         content_len = int(request.headers.get("Content-Length", 0))
+         body = request.rfile.read(content_len) if content_len > 0 else b""
+         if request.path == "/v1/table/test/backfill_column":
+-            assert json.loads(body)["column"] == "derived"
++            expected = {"column": "derived"}
++            if refresh_kwargs.get("batch_size") is not None:
++                expected["batch_size"] = refresh_kwargs["batch_size"]
++            assert json.loads(body) == expected
+             request.send_response(202)
+             request.send_header("Content-Type", "application/json")
+             request.end_headers()
+@@ -1582,11 +1592,18 @@ def handler(request):
+             request.send_response(404)
+             request.end_headers()
+ 
+-    with mock_lancedb_connection(handler) as db:
+-        table = db.create_table("test", [{"id": 1}])
+-        job = table.refresh_column_async("derived")
+-        assert job.id == "refresh-1"
+-        result = job.wait(timeout=timedelta(seconds=30))
++    if async_table:
++        async with mock_lancedb_connection_async(handler) as db:
++            table = await db.create_table("test", [{"id": 1}])
++            job = await table.refresh_column_async("derived", **refresh_kwargs)
++            assert job.id == "refresh-1"
++            result = await job.wait(timeout=timedelta(seconds=30))
++    else:
++        with mock_lancedb_connection(handler) as db:
++            table = db.create_table("test", [{"id": 1}])
++            job = table.refresh_column_async("derived", **refresh_kwargs)
++            assert job.id == "refresh-1"
++            result = job.wait(timeout=timedelta(seconds=30))
+ 
+     assert isinstance(result, lancedb.RefreshColumnResult)
+     assert result.model_dump() == terminal_result
 ```
 
-**File**: `rust/lancedb/cli/src/auth.rs` (modified, +1/-1)
+**File**: `python/python/tests/test_table.py` (modified, +33/-8)
 ```diff
-@@ -221,7 +221,7 @@ impl ManagedOidc {
-     async fn sdk_config(&self) -> Result<OAuthConfig> {
-         let flow = match self.config.flow {
-             OidcFlow::ClientCredentials => OAuthFlow::ClientCredentials,
--            OidcFlow::DeviceCode => OAuthFlow::DeviceCode,
-+            OidcFlow::DeviceCode => OAuthFlow::DeviceCode(Default::default()),
-             OidcFlow::AuthorizationCode => {
-                 let mut options = AuthorizationCodeOptions::new();
-                 if let Some(uri) = &self.config.redirect_uri {
+@@ -5551,14 +5551,15 @@ def record_thread(self, texts):
+ 
+ 
+ @pytest.mark.experimental_functions
+-def test_computed_column_declare_and_refresh(tmp_path):
++@pytest.mark.parametrize("batch_size", [None, 8])
++def test_computed_column_declare_and_refresh(tmp_path, batch_size):
+     db = lancedb.connect(tmp_path)
+     table = db.create_table("computed", [{"x": 1}, {"x": 2}])
+ 
+     table.add_columns(computed={"doubled": "x * 2"})
+     assert table.to_arrow()["doubled"].to_pylist() == [None, None]
+ 
+-    result = table.refresh_column("doubled")
++    result = table.refresh_column("doubled", batch_size=batch_size)
+     assert result.rows_filled == 2
+     assert sorted(table.to_arrow()["doubled"].to_pylist()) == [2, 4]
+ 
+@@ -5600,16 +5601,38 @@ def test_computed_column_blob_projection_inherits_semantics(tmp_path):
+ 
+ @pytest.mark.experimental_functions
+ @pytest.mark.asyncio
+-async def test_computed_column_async(tmp_path):
++@pytest.mark.parametrize("batch_size", [None, 8])
++async def test_computed_column_async(tmp_path, batch_size):
+     db = await lancedb.connect_async(tmp_path)
+     table = await db.create_table("computed_async", [{"x": 3}])
+ 
+     await table.add_columns(computed={"tripled": "x * 3"})
+-    await table.refresh_column("tripled")
++    await table.refresh_column("tripled", batch_size=batch_size)
+ 
+     assert (await table.to_arrow())["tripled"].to_pylist() == [9]
+ 
+ 
++@pytest.mark.parametrize("method", ["refresh_column", "refresh_column_async"])
++@pytest.mark.parametrize("batch_size", [0, -1])
++def test_refresh_column_rejects_invalid_batch_size(tmp_path, method, batch_size):
++    db = lancedb.connect(tmp_path)
++    table = db.create_table("invalid_refresh_batch", [{"x": 1}])
++    with pytest.raises(ValueError, match="batch_size must be greater than zero"):
++        getattr(table, method)("x", batch_size=batch_size)
++
++
++@pytest.mark.asyncio
++@pytest.mark.parametrize("method", ["refresh_column", "refresh_column_async"])
++@pytest.mark.parametrize("batch_size", [0, -1])
++async def test_async_refresh_column_rejects_invalid_batch_size(
++    tmp_path, method, batch_size
++):
++    db = await lancedb.connect_async(tmp_path)
++    table = await db.create_table("invalid_refresh_batch", [{"x": 1}])
++    with pytest.raises(ValueError, match="batch_size must be greater than zero"):
++        await getattr(table, method)("x", batch_size=batch_size)
++
++
+ def test_function_errors_are_remote_only(tmp_path):
+     db = lancedb.connect(tmp_path)
+     table = db.create_table("t", [{"x": 1}])
+@@ -5620,12 +5643,13 @@ def test_function_errors_are_remote_only(tmp_path):
+ 
+ 
+ @pytest.mark.experimental_functions
+-def test_refresh_column_async_returns_job(tmp_path):
++@pytest.mark.parametrize("batch_size", [None, 8])
++def test_refresh_column_async_returns_job(tmp_path, batch_size):
+     db = lancedb.connect(tmp_path)
+     table = db.create_table("computed_job", [{"x": 1}, {"x": 2}])
+     table.add_columns(computed={"doubled": "x * 2"})
+ 
+-    job = table.refresh_column_async("doubled")
++    job = table.refresh_column_async("doubled", batch_size=batch_size)
+     assert job.id is None  # in-process jobs have no server id
+     result = job.wait()
+     assert isinstance(result, lancedb.RefreshColumnResult)
+@@ -5650,12 +5674,13 @@ def test_refresh_column_async_returns_job(tmp_path):
+ 
+ @pytest.mark.experimental_functions
+ @pytest.mark.asyncio
+-async def test_refresh_column_async_job_async_table(tmp_path):
++@pytest.mark.parametrize("batch_size", [None, 8])
++async def test_refresh_column_async_job_async_table(tmp_path, batch_size):
+     db = await lancedb.connect_async(tmp_path)
+     table = await db.create_table("computed_job_async", [{"x": 3}])
+     await table.add_columns(computed={"tripled": "x * 3"})
+ 
+-    job = await table.refresh_column_async("tripled")
++    job = await table.refresh_column_async("tripled", batch_size=batch_size)
+     result = await job.wait()
+     assert isinstance(result, lancedb.RefreshColumnResult)
+     assert result.rows_assigned == 1
 ```
 
-**File**: `rust/lancedb/src/remote.rs` (modified, +2/-1)
+**File**: `python/src/table.rs` (modified, +28/-4)
 ```diff
-@@ -36,7 +36,8 @@ fn extract_job_id(body: &str) -> Option<String> {
- pub use client::{ClientConfig, HeaderProvider, RetryConfig, TimeoutConfig, TlsConfig};
- pub use db::{RemoteDatabaseOptions, RemoteDatabaseOptionsBuilder};
- pub use oauth::{
--    AuthorizationCodeOptions, ClientAuthMethod, OAuthConfig, OAuthFlow, OAuthHeaderProvider,
-+    AuthorizationCodeOptions, ClientAuthMethod, DeviceCodeOptions, OAuthConfig, OAuthFlow,
-+    OAuthHeaderProvider,
+@@ -30,7 +30,7 @@ use lancedb::index::scalar::FtsIndexBuilder;
+ use lancedb::table::{
+     AddDataMode, ColumnAlteration, CompactionMode, CompactionOptions, Duration,
+     FieldMetadataUpdate, FtsToken as LanceDbFtsToken, IndexRemapMode, NewColumnTransform,
+-    OptimizeAction, OptimizeOptions, Ref, Table as LanceDbTable,
++    OptimizeAction, OptimizeOptions, Ref, RefreshColumnOptions, Table as LanceDbTable,
  };
- pub use token_cache::{OAuthSession, SessionLogout, SessionStatus, TokenCacheOptions};
+ use lancedb::tokenize as lancedb_tokenize;
+ use pyo3::{
+@@ -42,6 +42,15 @@ use pyo3::{
  
-```
-
-**File**: `rust/lancedb/src/remote/oauth.rs` (modified, +168/-50)
-```diff
-@@ -157,6 +157,41 @@ impl AuthorizationCodeOptions {
-     }
- }
+ mod scannable;
  
-+/// Options for the OAuth Device Authorization flow.
-+///
-+/// PKCE is disabled by default because it is a provider extension to the device
-+/// grant. Enable it only when the provider supports and requires S256 PKCE,
-+/// such as a Keycloak client with a PKCE requirement. There is no automatic
-+/// fallback to a device request without PKCE.
-+///
-+/// # Example
-+///
-+/// ```
-+/// use lancedb::remote::{DeviceCodeOptions, OAuthFlow};
-+///
-+/// let flow = OAuthFlow::DeviceCode(DeviceCodeOptions::new().use_pkce(true));
-+/// ```
-+#[derive(Debug, Clone, Default)]
-+#[non_exhaustive]
-+pub struct DeviceCodeOptions {
-+    /// Whether to protect the device authorization exchange with S256 PKCE.
-+    /// Defaults to `false`.
-+    pub use_pkce: bool,
++fn refresh_column_options(batch_size: Option<i64>) -> PyResult<RefreshColumnOptions> {
++    let mut options = RefreshColumnOptions::default();
++    options.batch_size = batch_size
++        .map(usize::try_from)
++        .transpose()
++        .map_err(|_| PyValueError::new_err("batch_size must be greater than zero"))?;
++    Ok(options)
 +}
 +
-+impl DeviceCodeOptions {
-+    /// Create device-code options with PKCE disabled.
-+    pub fn new() -> Self {
-+        Self::default()
-+    }
-+
-+    /// Enable or disable the provider-specific S256 PKCE extension.
-+    pub fn use_pkce(mut self, use_pkce: bool) -> Self {
-+        self.use_pkce = use_pkce;
-+        self
-+    }
-+}
-+
- /// OAuth authentication flow configuration.
- #[derive(Debug, Clone)]
- pub enum OAuthFlow {
-@@ -170,8 +205,9 @@ pub enum OAuthFlow {
-     AuthorizationCode(AuthorizationCodeOptions),
- 
-     /// Device Authorization grant for CLI and headless environments. The
--    /// verification URI and user code are written to stderr.
--    DeviceCode,
-+    /// verification URI and user code are written to stderr. PKCE is disabled
-+    /// by default; see [`DeviceCodeOptions`] for provider-specific options.
-+    DeviceCode(DeviceCodeOptions),
- 
-     /// Azure Managed Identity via IMDS.
-     /// Works on Azure VMs, AKS, App Service, and Azure Functions.
-@@ -763,7 +799,9 @@ impl OidcClient {
-     ) -> Result<Self> {
-         Self::validate_issuer_transport(&issuer_url)?;
- 
-+        // Cargo embeds the package version at compile time; no runtime variable is needed.
-         let http_client = Client::builder()
-+            .user_agent(concat!("LanceDB-Rust-Client/", env!("CARGO_PKG_VERSION")))
-             .timeout(Duration::from_secs(30))
-             .redirect(reqwest::redirect::Policy::custom(|attempt| {
-                 if oauth_url_uses_secure_transport(attempt.url()) {
-@@ -1244,17 +1282,29 @@ struct OAuthErrorResponse {
- 
- struct DeviceCodeSource {
-     oidc: OidcClient,
-+    use_pkce: bool,
-+}
-+
-+struct DeviceAuthorization {
-+    response: StandardDeviceAuthorizationResponse,
-+    verifier: Option<PkceCodeVerifier>,
- }
- 
- impl std::fmt::Debug for DeviceCodeSource {
-     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-         f.debug_struct("DeviceCodeSource")
-             .field("oidc", &self.oidc)
-+            .field("use_pkce", &self.use_pkce)
-             .finish()
-     }
- }
- 
- impl DeviceCodeSource {
-+    fn with_pkce(mut self, use_pkce: bool) -> Self {
-+        self.use_pkce = use_pkce;
-+        self
-+    }
-+
-     fn new(
-         issuer_url: String,
-         client_id: String,
-@@ -1274,10 +1324,11 @@ impl DeviceCodeSource {
-                 resource,
-                 audience,
-             )?,
-+            use_pkce: false,
+ /// Convert `RTEStats` to a Python dict, preserving the per-table-shard list.
+ ///
+ /// Deliberately not flattened to a table-level summary: a table is N
+@@ -2062,21 +2071,36 @@ impl Table {
          })
      }
  
--    async fn request_device_authorization(&self) -> Result<StandardDeviceAuthorizationResponse> {
-+    async fn request_device_authorization(&self) -> Result<DeviceAuthorization> {
-         let endpoint = self
-             .oidc
-             .get_discovery()
-@@ -1295,7 +1346,14 @@ impl DeviceCodeSource {
-             .oidc
-             .base_client()
-             .set_device_authorization_url(device_url);
-+        // Device-flow PKCE is a provider extension; send it only when selected.
-+        let pkce = self.use_pkce.then(PkceCodeChallenge::new_random_sha256);
-         let mut request = client.exchange_device_code();
-+        if let Some((challenge, _)) = &pkce {
-+            request = request
-+                .add_extra_param("code_challenge", challenge.as_str())
-+                .add_extra_param("code_challenge_method", "S256");
-+        }
-         for scope in &self.oidc.scopes {
-             request = request.add_scope(Scope::new(scope.clone()));
-         }
-@@ -1313,17 +1371,20 @@ impl DeviceCodeSource {
-         if let Some(uri) = device.verification_uri_complete() {
-             validate_oauth_url(uri.secret(), "verification_uri_complete")?;
-         }
--        Ok(device)
-+        Ok(DeviceAuthorization {
-+            response: device,
-+            verifier: pkce.map(|(_, verifier)| verifier),
-+        })
+-    pub fn refresh_column(self_: PyRef<'_, Self>, column: String) -> PyResult<Bound<'_, PyAny>> {
++    #[pyo3(signature = (column, *, batch_size=None))]
++    pub fn refresh_column(
++        self_: PyRef<'_, Self>,
++        column: String,
++        batch_size: Option<i64>,
++    ) -> PyResult<Bound<'_, PyAny>> {
++        let options = refresh_column_options(batch_size)?;
+         let inner = self_.inner_ref()?.clone();
+         future_into_py(self_.py(), async move {
+-            let result = inner.refresh_column(column).await.infer_error()?;
++            let result = inner
++                .refresh_column_with_options(column, options)
++                .await
++                .infer_error()?;
+             Ok(RefreshColumnResult::from(result))
+         })
      }
  
--    async fn poll_for_token(
--        &self,
--        device: &StandardDeviceAuthorizationResponse,
--    ) -> Result<TokenResponse> {
-+    async fn poll_for_token(&self, device: &DeviceAuthorization) -> Result<TokenResponse> {
-         let (client, _) = self.oidc.token_client().await?;
-         let mut request = client
--            .exchange_device_access_token(device)
-+            .exchange_device_acce
++    #[pyo3(signature = (column, *, batch_size=None))]
+     pub fn refresh_column_async(
+         self_: PyRef<'_, Self>,
+         column: String,
++        batch_size: Option<i64>,
+     ) -> PyResult<Bound<'_, PyAny>> {
++        let options = refresh_column_options(batch_size)?;
+         let inner = self_.inner_ref()?.clone();
+         future_into_py(self_.py(), async move {
+-            let job = inner.refresh_column_async(column).await.infer_error()?;
++            let job = inner
++                .refresh_column_async_with_options(column, options)
++                .await
++                .infer_error()?;
+             Ok(crate::job::Job::new_typed(job))
+         })
+     }
 ```
 
-**File**: `rust/lancedb/src/remote/token_cache.rs` (modified, +16/-4)
+**File**: `rust/lancedb/src/remote/table.rs` (modified, +74/-1)
 ```diff
-@@ -43,7 +43,7 @@
- //!     client_id: "my-app".to_string(),
- //!     client_secret: None,
- //!     scopes: vec!["openid".to_string()],
--//!     flow: OAuthFlow::DeviceCode,
-+//!     flow: OAuthFlow::DeviceCode(Default::default()),
- //!     client_auth_method: None,
- //!     refresh_buffer_secs: None,
- //!     resource: Some("https://api.example.com".to_string()),
-@@ -237,7 +237,7 @@ fn canonicalize_scopes(scopes: &[String]) -> Vec<String> {
- fn flow_key(flow: &OAuthFlow) -> Option<&'static str> {
-     match flow {
-         OAuthFlow::AuthorizationCode(_) => Some("authorization_code"),
--        OAuthFlow::DeviceCode => Some("device_code"),
-+        OAuthFlow::DeviceCode(_) => Some("device_code"),
-         OAuthFlow::ClientCredentials | OAuthFlow::AzureManagedIdentity { .. } => None,
-     }
- }
-@@ -845,7 +845,7 @@ pub struct SessionLogout {
- ///     client_id: "my-app".to_string(),
- ///     client_secret: None,
- ///     scopes: vec!["openid".to_string()],
--///     flow: OAuthFlow::DeviceCode,
-+///     flow: OAuthFlow::DeviceCode(Default::default()),
- ///     client_auth_method: None,
- ///     refresh_buffer_secs: None,
- ///     resource: None,
-@@ -1012,7 +1012,7 @@ mod tests {
-             client_secret: None,
-             client_auth_method: None,
-             scopes: vec!["openid".to_string()],
--            flow: OAuthFlow::DeviceCode,
-+            flow: OAuthFlow::DeviceCode(Default::default()),
-             refresh_buffer_secs: None,
-             resource: None,
-             audience: None,
-@@ -1546,6 +1546,18 @@ mod tests {
-         assert_eq!(canonical.file_stem, key.file_stem);
-     }
- 
-+    #[test]
-+    fn test_device_pkce_preserves_cache_identity() {
-+        let dir = cache_tempdir();
-+        let mut config = device_config(dir.path());
-+        let standard = CacheKey::new(&config).unwrap();
-+        config.flow = OAuthFlow::DeviceCode(crate::remote::DeviceCodeOptions::new().use_pkce(true));
-+        assert_eq!(
-+            CacheKey::new(&config).unwrap().file_stem,
-+            standard.file_stem
-+        );
+@@ -3779,8 +3779,21 @@ impl<S: HttpSend> BaseTable for RemoteTable<S> {
+         &self,
+         column: &str,
+     ) -> Result<Job<crate::function::RefreshColumnResult>> {
++        self.refresh_column_async_with_options(column, Default::default())
++            .await
 +    }
 +
-     #[test]
-     fn test_cache_key_separates_identity_dimensions() {
-         let base = device_config(Path::new("/tmp/cache"));
++    async fn refresh_column_async_with_options(
++        &self,
++        column: &str,
++        options: crate::table::RefreshColumnOptions,
++    ) -> Result<Job<crate::function::RefreshColumnResult>> {
++        options.validate()?;
+         self.check_mutable().await?;
+         let mut body = serde_json::json!({ "column": column });
++        if let Some(batch_size) = options.batch_size {
++            body["batch_size"] = serde_json::json!(batch_size);
++        }
+         self.apply_branch_body(&mut body);
+         let request = self
+             .client
+@@ -10495,7 +10508,7 @@ mod tests {
+             assert_eq!(request.url().path(), "/v1/table/my_table/backfill_column");
+             let body = request.body().unwrap().as_bytes().unwrap();
+             let value: serde_json::Value = serde_json::from_slice(body).unwrap();
+-            assert_eq!(value["column"], "doubled");
++            assert_eq!(value, serde_json::json!({"column": "doubled"}));
+             http::Response::builder()
+                 .status(202)
+                 .body(r#"{"job_id": "j-42"}"#)
+@@ -10513,6 +10526,66 @@ mod tests {
+         );
+     }
+ 
++    #[rstest]
++    #[case(None)]
++    #[case(Some(1))]
++    #[case(Some(8))]
++    #[tokio::test]
++    async fn test_refresh_column_async_batch_size(#[case] batch_size: Option<usize>) {
++        use crate::table::{Ref, RefreshColumnOptions};
++
++        let table =
++            Table::new_with_handler("my_table", move |request| match request.url().path() {
++                "/v1/table/my_table/branches/create/" => http::Response::builder()
++                    .status(200)
++                    .body("{}".to_string())
++                    .unwrap(),
++                "/v1/table/my_table/describe/" => simple_describe_response(),
++                "/v1/table/my_table/backfill_column" => {
++                    let mut expected = serde_json::json!({"column": "quality", "branch": "exp"});
++                    if let Some(batch_size) = batch_size {
++                        expected["batch_size"] = serde_json::json!(batch_size);
++                    }
++                    assert_eq!(request_body_json(&request), expected);
++                    http::Response::builder()
++                        .status(202)
++                        .body(r#"{"job_id": "j-42"}"#.to_string())
++                        .unwrap()
++                }
++                path => panic!("unexpected request: {path}"),
++            });
++        let branch = table
++            .create_branch("exp", Ref::Version(None, None))
++            .await
++            .unwrap();
++        let options = RefreshColumnOptions { batch_size };
++        let job = branch
++            .refresh_column_async_with_options("quality", options)
++            .await
++            .unwrap();
++        assert_eq!(job.id(), Some("j-42"));
++    }
++
++    #[tokio::test]
++    async fn test_refresh_column_rejects_zero_batch_size_before_request() {
++        use crate::table::RefreshColumnOptions;
++
++        let table = Table::new_with_handler("my_table", |_| -> http::Response<String> {
++            panic!("invalid batch size must not send a request")
++        });
++        let options = RefreshColumnOptions::default().batch_size(0);
++        let error = table
++            .refresh_column_with_options("quality", options.clone())
++            .await
++            .unwrap_err();
++        assert!(matches!(error, Error::InvalidInput { message } if message.contains("batch_size")));
++        let error = table
++            .refresh_column_async_with_options("quality", options)
++            .await
++            .unwrap_err();
++        assert!(matches!(error, Error::InvalidInput { message } if message.contains("batch_size")));
++    }
++
+     #[rstest]
+     #[case(false, "Function is unavailable")]
+     #[case(true, "Function name was not found")]
+```
+
+**File**: `rust/lancedb/src/table.rs` (modified, +75/-1)
+```diff
+@@ -111,7 +111,7 @@ pub use lance_index::optimize::OptimizeOptions;
+ pub use optimize::{
+     CompactionMode, CompactionOptions, IndexRemapMode, OptimizeAction, OptimizeStats,
+ };
+-pub use refresh::RefreshColumnResult;
++pub use refresh::{RefreshColumnOptions, RefreshColumnResult};
+ pub use rte_stats::{MemtableStats, RTEStats, SsTableStats, TableShardStats};
+ pub use schema_evolution::{
+     AddColumnsResult, AlterColumnsResult, DropColumnsResult, FieldMetadataUpdate,
+@@ -879,6 +879,16 @@ pub trait BaseTable: std::fmt::Display + std::fmt::Debug + Send + Sync {
+             message: "this operation is only supported on LanceDB Embedded".into(),
+         })
+     }
++    /// Refresh with options; expression-backed local refreshes ignore the
++    /// Function batch size.
++    async fn refresh_column_with_options(
++        &self,
++        column: &str,
++        options: RefreshColumnOptions,
++    ) -> Result<RefreshColumnResult> {
++        options.validate()?;
++        self.refresh_column(column).await
++    }
+     /// Fill a computed column's unfilled rows and recompute those whose
+     /// inputs changed, returning a [`Job`] tracking the operation.
+     async fn refresh_column_async(
+@@ -889,6 +899,15 @@ pub trait BaseTable: std::fmt::Display + std::fmt::Debug + Send + Sync {
+             message: "this operation is only supported on LanceDB Embedded".into(),
+         })
+     }
++    /// Start a refresh job with options.
++    async fn refresh_column_async_with_options(
++        &self,
++        column: &str,
++        options: RefreshColumnOptions,
++    ) -> Result<Job<crate::function::RefreshColumnResult>> {
++        options.validate()?;
++        self.refresh_column_async(column).await
++    }
+     /// The per-row errors Function refreshes recorded on this table; see
+     /// [`Table::function_errors`]. The default returns `NotSupported`.
+     async fn function_errors(
+@@ -1936,6 +1955,33 @@ impl Table {
+         self.inner.refresh_column(column.as_ref()).await
+     }
+ 
++    /// Like [`Table::refresh_column`], with explicit refresh options.
++    ///
++    /// [`RefreshColumnOptions::batch_size()`] caps rows per Function call in
++    /// LanceDB Distributed and must be greater than zero when set. It has no
++    /// effect on expression-backed columns in LanceDB Embedded. Remote refreshes
++    /// require [`Table::refresh_column_async_with_options`].
++    ///
++    /// ```
++    /// # use lancedb::{Table, table::RefreshColumnOptions};
++    /// # async fn refresh(table: &Table) -> Result<(), Box<dyn std::error::Error>> {
++    /// let result = table.refresh_column_with_options(
++    ///     "doubled", RefreshColumnOptions::default(),
++    /// ).await?;
++    /// println!("filled {} rows", result.rows_filled);
++    /// # Ok(())
++    /// # }
++    /// ```
++    pub async fn refresh_column_with_options(
++        &self,
++        column: impl AsRef<str>,
++        options: RefreshColumnOptions,
++    ) -> Result<RefreshColumnResult> {
++        self.inner
++            .refresh_column_with_options(column.as_ref(), options)
++            .await
++    }
++
+     /// Like [`Table::refresh_column`], but returns a [`Job`] tracking the
+     /// operation instead of blocking until it completes.
+     ///
+@@ -1965,6 +2011,34 @@ impl Table {
+         self.inner.refresh_column_async(column.as_ref()).await
+     }
+ 
++    /// Like [`Table::refresh_column_async`], with explicit refresh options.
++    ///
++    /// Set [`RefreshColumnOptions::batch_size()`] to cap the rows each remote
++    /// Function call receives, for example to keep slow Functions within the
++    /// executor's per-call deadline. An unset batch size uses the server default;
++    /// zero is rejected before submitting a job. Embedded expression refreshes
++    /// ignore the batch size.
++    ///
++    /// ```
++    /// # use lancedb::{Table, table::RefreshColumnOptions};
++    /// # async fn refresh(table: &Table) -> Result<(), Box<dyn std::error::Error>> {
++    /// let job = table.refresh_column_async_with_options(
++    ///     "quality", RefreshColumnOptions::default().batch_size(8),
++    /// ).await?;
++    /// let result = job.wait().await?;
++    /// # Ok(())
++    /// # }
++    /// ```
++    pub async fn refresh_column_async_with_options(
++        &self,
++        column: impl AsRef<str>,
++        options: RefreshColumnOptions,
++    ) -> Result<Job<crate::function::RefreshColumnResult>> {
++        self.inner
++            .refresh_column_async_with_options(column.as_ref(), options)
++            .await
++    }
++
+     /// The per-row errors Function refreshes recorded on this table: the
+     /// rows a refresh skipped under its skip policy, with the failing input
+     /// and the error, plus a summary for any fragment whose detail was
 ```
 
 ---
 
-### Incident Patch 2: `6063229d` (2026-10-30)
-**Commit Message**: fix(ci): replace retiring macos-14 runners
+### Incident Patch 2: `e9b2f7e6` (2026-11-01)
+**Commit Message**: fix(python): use dim as the embedding size for OpenAI-compatible models
 
-The affected jobs were cancelled before runner assignment with GitHub's scheduled macOS 14 brownout annotation. macOS 14 runner images retire on November 2, 2026: https://github.com/actions/runner-images/issues/13518.
+Allow OpenAIEmbeddings.ndims() to use an explicitly configured dim for model
+names outside the three built-in OpenAI names, so schemas can be built for
+compatible models.
 
-This moves the Python and CLI workflows to `macos-15` and keeps two distinct Rust macOS legs with `macos-15` and `macos-26`. All selected labels are public ARM64 runners, preserving the architecture of the previous plain `macos-14` jobs.
+Preserve existing model defaults and request behavior. Add regression coverage
+for the resulting Arrow schema dimensions and for all known OpenAI model
+dimensions.
 
-Validation: `git diff --check` and Ruby YAML parsing passed for all three changed workflows. A targeted `actionlint` check also passed; existing repository-wide custom-runner, reusable-workflow input, and shellcheck findings are outside this diff.
-
-**File**: `.github/workflows/cli.yml` (modified, +1/-1)
+**File**: `docs/web/integrations/embedding/openai.mdx` (modified, +1/-1)
 ```diff
-@@ -14,7 +14,7 @@ jobs:
-   test:
-     strategy:
-       matrix:
--        os: [ubuntu-24.04, macos-14]
-+        os: [ubuntu-24.04, macos-15]
-     runs-on: ${{ matrix.os }}
-     steps:
-       - uses: actions/checkout@v6
+@@ -10,7 +10,7 @@ LanceDB registers the OpenAI embeddings function in the registry by default, as
+ | Parameter | Type | Default Value | Description |
+ |---|---|---|---|
+ | `name` | `str` | `"text-embedding-ada-002"` | The name of the model. |
+-| `dim` | `int` |  Model default   | Requested output dimensions for models that support shortening embeddings. Use `func.ndims()` when defining the vector field. |
++| `dim` | `int` |  Model default   | Requested output dimensions for models that support shortening embeddings. Required for model names other than the OpenAI ones listed by `model_names()` (for example a model served behind an OpenAI-compatible `base_url`), where it is the model's embedding dimension. Use `func.ndims()` when defining the vector field. |
+ | `use_azure` | bool | `False` | Set true to use Azure OpenAI SDK |
+ 
+ Set your OpenAI API key before running the example:
 ```
 
-**File**: `.github/workflows/python.yml` (modified, +1/-1)
+**File**: `python/python/lancedb/embeddings/openai.py` (modified, +9/-1)
 ```diff
-@@ -171,7 +171,7 @@ jobs:
-       matrix:
-         features: ["default", "experimental-functions"]
-     timeout-minutes: 30
--    runs-on: macos-14
-+    runs-on: macos-15
-     defaults:
-       run:
-         shell: bash
-```
-
-**File**: `.github/workflows/rust.yml` (modified, +1/-1)
-```diff
-@@ -271,7 +271,7 @@ jobs:
-     timeout-minutes: 60
-     strategy:
-       matrix:
--        mac-runner: ["macos-14", "macos-15"]
-+        mac-runner: ["macos-15", "macos-26"]
-     runs-on: "${{ matrix.mac-runner }}"
-     defaults:
-       run:
-```
-
----
-
-### Incident Patch 3: `9b543c38` (2026-10-30)
-**Commit Message**: feat(python): build a Function on a user-specified image (#4768)
-
-Adds `image` to `@udf`, setting `runtime.environment.image` so a
-Function can be built on a digest-pinned registry image instead of the
-default base, for dependencies pip, conda and apt cannot express. The
-client refuses references that are not pinned by digest; the server
-validates the rest. The field is omitted when unset, so existing
-Function identities are unchanged.
-
-**File**: `python/python/lancedb/functions.py` (modified, +19/-1)
-```diff
-@@ -683,6 +683,8 @@ def version(self) -> Optional[int]:
- 
- 
- _FUNCTION_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
-+# Digest-pinned only; the server checks the host and repository grammar.
-+_IMAGE_REFERENCE = re.compile(r"^[^/@\s]+/[^@\s]+@sha256:[0-9a-f]{64}$")
- 
- _FUNCTION_BLOB_V2_TYPE = "blob_v2"
- _ARROW_EXTENSION_NAME_KEY = "ARROW:extension:name"
-@@ -1860,6 +1862,7 @@ def __init__(
-         conda: tuple[str, ...] = (),
-         conda_channels: tuple[str, ...] = (),
-         apt: tuple[str, ...] = (),
-+        image: Optional[str] = None,
-         code: tuple[types.ModuleType, ...] = (),
-     ):
-         is_class = inspect.isclass(function)
-@@ -1881,16 +1884,24 @@ def __init__(
-             for package in packages + system_packages
-         ):
-             raise ValueError("package requirements must be non-empty and trimmed")
-+        if image is not None and not _IMAGE_REFERENCE.fullmatch(image):
-+            raise ValueError(
-+                f"Function image {image!r} must be host/repository@sha256:<digest>"
-+            )
-         if conda:
-             environment_spec = PythonEnvironmentSpec(
-                 kind="conda",
-                 packages=packages,
-                 channels=tuple(conda_channels),
-+                image=image,
-                 system_packages=system_packages,
-             )
-         else:
-             environment_spec = PythonEnvironmentSpec(
--                kind="pip", packages=packages, system_packages=system_packages
-+                kind="pip",
-+                packages=packages,
-+                image=image,
-+                system_packages=system_packages,
-             )
-         environment = dict(env)
-         if any(
-@@ -2061,6 +2072,7 @@ def udf(
-     conda: tuple[str, ...] | list[str] = (),
-     conda_channels: tuple[str, ...] | list[str] = (),
-     apt: tuple[str, ...] | list[str] = (),
-+    image: Optional[str] = None,
-     code: Sequence[types.ModuleType] = (),
- ) -> Callable[[Callable[..., Any]], UdfDefinition]: ...
- 
-@@ -2078,6 +2090,7 @@ def udf(
-     conda: tuple[str, ...] | list[str] = (),
-     conda_channels: tuple[str, ...] | list[str] = (),
-     apt: tuple[str, ...] | list[str] = (),
-+    image: Optional[str] = None,
-     code: Sequence[types.ModuleType] = (),
- ):
-     """Prepare a Python function or class for remote Function registration.
-@@ -2176,6 +2189,10 @@ def udf(
-         conda cannot provide, such as FFmpeg's for ``torchcodec``. Packages
-         are unpacked without running their maintainer scripts. Works with
-         ``pip`` or ``conda``; requires image execution.
-+    image : str, optional
-+        A digest-pinned registry image (``"host/repository@sha256:<digest>"``)
-+        the remote environment is built on instead of the default base. Pip
-+        requirements install only what the image lacks.
-     env : mapping of str to str, optional
-         Environment variables included in the Function definition. Not for
-         credentials -- these are ordinary configuration, stored with the
-@@ -2258,6 +2275,7 @@ def decorate(target: Any) -> UdfDefinition:
-             conda=tuple(conda),
-             conda_channels=tuple(conda_channels),
-             apt=tuple(apt),
-+            image=image,
-             code=tuple(code),
+@@ -36,6 +36,7 @@ class OpenAIEmbeddings(TextEmbeddingFunction):
+     embedding_function = openai.create(
+         name="<ollama-embedding-model-name>",
+         base_url="http://localhost:11434",
++        dim=768,  # the model's embedding dimension; required for unlisted names
          )
+     ```
  
+@@ -77,8 +78,15 @@ def _ndims(self):
+             return self.dim or 3072
+         elif self.name == "text-embedding-3-small":
+             return self.dim or 1536
++        elif self.dim:
++            # A name not listed above, e.g. a model served behind an
++            # OpenAI-compatible `base_url`: `dim` is its embedding size
++            return self.dim
+         else:
+-            raise ValueError(f"Unknown model name {self.name}")
++            raise ValueError(
++                f"Unknown model name {self.name}: set `dim` to the model's "
++                "embedding dimension"
++            )
+ 
+     def generate_embeddings(
+         self, texts: Union[List[str], "np.ndarray"]
 ```
 
-**File**: `python/python/tests/test_first_class_function_slice2.py` (modified, +22/-0)
+**File**: `python/python/tests/test_embeddings.py` (modified, +45/-0)
 ```diff
-@@ -511,6 +511,28 @@ def conda_decode(value: float) -> float:
-         udf(name="padded", apt=[" libsndfile1"])(lambda value: value)
+@@ -602,6 +602,51 @@ class Words(LanceModel):
+     assert len(actual.text) > 0
  
  
-+@pytest.mark.parametrize("packages", [{"pip": ["numpy"]}, {"conda": ["numpy"]}])
-+def test_udf_image(packages):
-+    image = "ghcr.io/acme/embedder@sha256:" + "a" * 64
++@pytest.mark.parametrize("base_url", [None, "http://localhost:11434/v1"])
++def test_openai_compatible_model_uses_dim_for_ndims(base_url):
++    # Unlisted model names use the explicit dimension independently of base_url.
++    openai = get_registry().get("openai")
++    func = openai.create(
++        name="nomic-embed-text",
++        base_url=base_url,
++        dim=768,
++    )
++    assert func.ndims() == 768
 +
-+    @udf(image=image, **packages)
-+    def embed(value: float) -> float:
-+        return value
++    class Schema(LanceModel):
++        text: str = func.SourceField()
++        vector: Vector(func.ndims()) = func.VectorField()
 +
-+    request = json.loads(embed.registration_request.to_canonical_json())
-+    assert request["runtime"]["environment"]["image"] == image
-+    pip_request = json.loads(normalize_score.registration_request.to_canonical_json())
-+    assert "image" not in pip_request["runtime"]["environment"]
++    schema = Schema.to_arrow_schema()
++    assert schema.field("vector").type == pa.list_(pa.float32(), 768)
++
++
++def test_openai_unknown_model_without_dim_raises_clear_error():
++    openai = get_registry().get("openai")
++    func = openai.create(
++        name="nomic-embed-text",
++        base_url="http://localhost:11434/v1",
++    )
++    with pytest.raises(ValueError, match="dim"):
++        func.ndims()
 +
 +
 +@pytest.mark.parametrize(
-+    "image", ["ghcr.io/acme/embedder:latest", "embedder@sha256:" + "a" * 64, ""]
++    ("name", "dim", "expected_dim"),
++    [
++        ("text-embedding-ada-002", None, 1536),
++        ("text-embedding-ada-002", 512, 1536),
++        ("text-embedding-3-large", None, 3072),
++        ("text-embedding-3-large", 1024, 1024),
++        ("text-embedding-3-small", None, 1536),
++        ("text-embedding-3-small", 512, 512),
++    ],
 +)
-+def test_udf_image_requires_digest_reference(image):
-+    with pytest.raises(ValueError, match="sha256"):
-+        udf(name="pinned", image=image)(lambda value: value)
++def test_openai_known_model_ndims(name, dim, expected_dim):
++    func = get_registry().get("openai").create(name=name, dim=dim)
++    assert func.ndims() == expected_dim
 +
 +
- def test_udf_gpu_marker_uses_gpu_runtime():
-     @udf(pip=["cupy-cuda12x"], gpu=True)
-     def double_on_gpu(value: int) -> int:
+ @patch("time.sleep")
+ def test_openai_no_retry_on_401(mock_sleep):
+     """
+```
+
+---
+
+### Incident Patch 3: `faa8953d` (2026-11-01)
+**Commit Message**: fix(python): allow attribute access on namespace request dicts
+
+Allows Python namespace implementations to read request dictionary entries as attributes while preserving mapping and `model_dump()` behavior. Missing dunder attributes continue to raise `AttributeError`.
+
+Adds a real namespace connection regression covering list/open operations and omitted optional fields.
+
+**File**: `python/python/tests/test_namespace.py` (modified, +61/-1)
+```diff
+@@ -11,13 +11,20 @@
+ import json
+ from urllib.parse import parse_qs, unquote, urlparse
+ import pytest
++import builtins
++import copy
+ import pyarrow as pa
+ import lancedb
++from lance.namespace import DirectoryNamespace, LanceNamespace
+ from lance_namespace.errors import NamespaceNotEmptyError, TableNotFoundError
+ from utils import start_server_thread
+ from lancedb.listing import AsyncListing, Listing
+ from lancedb.materialized_view import DEFINITION_FORMAT, DEFINITION_META_KEY
+-from lancedb.namespace import _MAX_QUERY_K, _query_to_namespace_request
++from lancedb.namespace import (
++    _MAX_QUERY_K,
++    LanceNamespaceDBConnection,
++    _query_to_namespace_request,
++)
+ from lancedb.query import Query
+ from lancedb.table import AsyncTable, LanceTable
+ 
+@@ -1360,3 +1367,56 @@ def test_namespace_request_rejects_search_effort(effort):
+         _query_to_namespace_request(
+             ["test"], Query(vector=[1.0, 0.0], search_effort=effort)
+         )
++
++
++class AttributeAccessNamespace(LanceNamespace):
++    """A Python namespace that reads request fields as attributes.
++
++    Python implementations such as ``lance_namespace_impls.glue.GlueNamespace``
++    read requests like pydantic models (``request.id``), and expect omitted
++    optional fields to be ``None``. This fake records what it read and then
++    delegates to ``DirectoryNamespace`` so the test runs locally.
++    """
++
++    def __init__(self, root: str):
++        self._inner = DirectoryNamespace(root=root)
++        self.seen = {}
++
++    def namespace_id(self) -> str:
++        return f"AttributeAccessNamespace[{self._inner.namespace_id()}]"
++
++    def list_tables(self, request):
++        self.seen["list_tables"] = request
++        _ = request.id
++        _ = request.page_token
++        return self._inner.list_tables(request)
++
++    def describe_table(self, request):
++        self.seen["describe_table"] = request
++        _ = request.id
++        # Optional field omitted by the Rust side; must read as None.
++        assert request.load_detailed_metadata is None
++        return self._inner.describe_table(request)
++
++
++def test_python_namespace_attribute_access(tmp_path):
++    root = str(tmp_path)
++    data = pa.table({"id": [1, 2, 3], "text": ["alpha", "beta", "gamma"]})
++    lancedb.connect_namespace("dir", {"root": root}).create_table("t", data)
++
++    ns = AttributeAccessNamespace(root)
++    db = LanceNamespaceDBConnection(ns)
++
++    assert list(db.list_tables()) == ["t"]
++    assert db.open_table("t").to_arrow().to_pylist() == data.to_pylist()
++
++    # Mapping access and model_dump() keep working.
++    request = ns.seen["describe_table"]
++    assert isinstance(request, builtins._DictWithModelDump)
++    assert request["id"] == request.id == ["t"]
++    assert request.model_dump() == dict(request)
++    assert "load_detailed_metadata" not in request
++
++    # Missing dunder lookups still raise, so copy/hasattr probes work.
++    assert not hasattr(request, "__missing_dunder__")
++    assert copy.deepcopy(request) == request
+```
+
+**File**: `python/src/namespace.rs` (modified, +5/-1)
+```diff
+@@ -70,7 +70,11 @@ fn get_dict_with_model_dump_class(py: Python<'_>) -> PyResult<Bound<'_, PyAny>>
+     py.run(
+         c"class DictWithModelDump(dict):
+     def model_dump(self):
+-        return dict(self)",
++        return dict(self)
++    def __getattr__(self, name):
++        if name.startswith('__'):
++            raise AttributeError(name)
++        return self.get(name)",
+         None,
+         Some(&locals),
+     )?;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4779** (2026-10-31): fix: allow hidden function assignment columns (@lancedb-gatefixer[bot])
+- **PR #4777** (2026-10-31): fix: support batch size options for column refreshes (@lancedb-gatefixer[bot])
 - **PR #4775** (2026-10-31): feat: support Hugging Face storage integrations with optional token Secrets (@jackye1995)
 - **PR #4771** (2026-10-31): feat: accept GCP credentials Secret in storage integration clients (@jackye1995)
 - **PR #4769** (2026-10-30): fix(ci): replace retiring macos-14 runners (@Xuanwo)
 - **PR #4768** (2026-10-30): feat(python): build a Function on a user-specified image (@wkalt)
-- **PR #4766** (2026-10-30): test(python): use a threaded mock server for remote tests (@Xuanwo)
-- **PR #4759** (2026-10-31): feat: accept Azure inputs in storage integration clients (@jackye1995)
 
 ---
 
@@ -1786,42 +2101,34 @@ Function identities are unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix!: support opt-in PKCE for device-code login (#4747)
+## X. support batch size options for column refreshes (#4777)
 
 **RULE**:
-When implementing operations in `docs/web/enterprise/authentication.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `python/python/lancedb/_lancedb.pyi`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d316cbbe`: fix!: support opt-in PKCE for device-code login (#4747). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9804f26b`: support batch size options for column refreshes (#4777). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/web/enterprise/authentication.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/python/lancedb/_lancedb.pyi`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode(DeviceCodeOptions::new())` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
-// Use OAuthFlow::DeviceCode(Default::default()) for a CLI without a local browser or callback server.
-With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode(DeviceCodeOptions::new())`, the same
-Device Code sends no PKCE parameters by default. For a provider that requires
-S256 PKCE on device grants, Rust callers can select
-`OAuthFlow::DeviceCode(DeviceCodeOptions::new().use_pkce(true))` (import
-`DeviceCodeOptions` from `lancedb::remote`). This option is currently Rust-only.
-Enable it only when the provider supports the extension; a failed PKCE request
-is not retried without PKCE.
-
-The shared configuration below is available in all three SDKs; device-code PKCE
-is a Rust-only option through `DeviceCodeOptions`. Python and Rust use
+    async def refresh_column(
+        self, column: str, *, batch_size: Optional[int] = None
+    ) -> RefreshColumnResult: ...
+    async def refresh_column_async(
+        self, column: str, *, batch_size: Optional[int] = None
+    ) -> Job: ...
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| Device Code | `OAuthFlowType.DEVICE_CODE` | `OAuthFlowType.DeviceCode` | `OAuthFlow::DeviceCode` | CLI or headless sign-in. The client displays a verification URL and user code for the user to enter on another device. |
-// Use OAuthFlow::DeviceCode for a CLI without a local browser or callback server.
-With `DEVICE_CODE` / `DeviceCode` / `OAuthFlow::DeviceCode`, the same
-The same configuration is available in all three SDKs. Python and Rust use
+    async def refresh_column(self, column: str) -> RefreshColumnResult: ...
+    async def refresh_column_async(self, column: str) -> Job: ...
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d316cbbe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9804f26b` are properly handled with clean fallback behavior.
