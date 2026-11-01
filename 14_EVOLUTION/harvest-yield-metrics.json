@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T00:10:34.024Z",
-  "total_cycles_completed": 6742,
-  "total_learnings_persisted": 6742,
-  "total_rules_promoted": 6384,
+  "last_updated": "2026-11-01T00:19:06.650Z",
+  "total_cycles_completed": 6743,
+  "total_learnings_persisted": 6743,
+  "total_rules_promoted": 6387,
   "history": [
-    {
-      "timestamp": "2026-10-31T12:47:00.058Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T12:53:41.926Z",
       "repository": "domcyrus/rustnet",
@@ -1403,6 +1396,13 @@
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T00:19:06.650Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

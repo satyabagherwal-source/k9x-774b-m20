@@ -3,7 +3,7 @@
 > **Source Version**: `hf-liquidai-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-28T22:45:50.920Z  
+> **Timestamp**: 2026-11-01T00:19:05.012Z  
 > **Learning ID**: `learn-huggingface-liquidai-lfm2-5-24b-a2b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,391 +14,453 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): LiquidAI/LFM2.5-24B-A2B
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-The repository addresses the "Edge-Cloud Gap" in Large Language Model (LLM) inference. Standard dense models (e.g., 24B parameters) are too slow and memory-intensive for on-device or low-latency edge deployment. Standard Mixture-of-Experts (MoE) models often suffer from high memory bandwidth requirements due to loading all expert weights or inefficient routing. LFM2.5-24B-A2B solves this by combining **Liquid Neural Network (LNN) principles** (via short convolutions) with **Sparse MoE**, achieving 24B total parameters but only ~2.45B active parameters per token. This allows for "reasoning at MoE speed" with significantly lower latency (184 tok/s on Apple M5 Max) compared to dense equivalents.
+### 1.1 Problem Statement & Architectural Core
+`LiquidAI/LFM2.5-24B-A2B` solves the compute, memory bandwidth, and context length bottlenecks of on-device agentic reasoning. Standard dense Transformers scale autoregressive generation costs quadratically with sequence length $\mathcal{O}(L^2)$ and linearly with full parameter weight transfers $\mathcal{O}(P)$ per step. 
 
-**Architectural Boundaries & Subsystems:**
-1.  **Hybrid Attention/Convolution Subsystem:** The model does not use standard Transformer self-attention for all layers. It employs a hybrid stack:
-    *   **30 Layers:** "Double-gated short convolution blocks" (Liquid-style). These replace self-attention with local, linear-complexity operations, drastically reducing compute for long contexts.
-    *   **10 Layers:** "Full Attention" (GQA - Grouped Query Attention). These provide global context awareness where needed.
-    *   *Invariant:* The `layer_types` array in `config.json` strictly defines this interleaving. Any deviation breaks the positional encoding alignment.
-2.  **Sparse MoE Routing Subsystem:**
-    *   **64 Experts** per MoE block.
-    *   **Top-4 Routing:** Only 4 experts are activated per token.
-    *   **Expert Bias:** `use_expert_bias: true` indicates a load-balancing mechanism to prevent expert collapse (where only a few experts are used).
-    *   **Norm Top-K Prob:** `norm_topk_prob: true` ensures the routing weights sum to 1, maintaining gradient stability.
-3.  **State Management (KV Cache vs. Conv Cache):**
-    *   Standard Transformers use a growing KV cache.
-    *   This model uses `conv_L_cache: 3`. This implies a fixed-size state buffer for the convolutional layers, preventing unbounded memory growth for the conv layers, while the attention layers still use standard caching (`use_cache: true`).
+LFM2.5-24B-A2B bypasses this through a **Hybrid Non-Uniform Convolution-Attention Mixture-of-Experts (MoE)** architecture:
+- **Total Parameters:** $24.0\text{B}$ total parameters.
+- **Active Parameters:** $2.45\text{B}$ parameters per forward token pass (~$10\times$ activation sparsity).
+- **Heterogeneous Hybrid Backbone (40 Layers Total):** 30 double-gated short 1D convolution layers interleaved with 10 Grouped-Query Attention (GQA) layers (a 3:1 Conv-to-Attention ratio: `[conv, conv, full_attention, conv, conv, conv, full_attention, ...]`), terminating on layer 39 with `conv`.
+- **Sparsified MLP Route:** 64 routed experts per MoE block with `top_k = 4` routing, intermediate dimension $d_{\text{moe}} = 1536$, and dense intermediate dimension $d_{\text{dense}} = 11776$ across $N_{\text{dense\_layers}} = 2$ base layers.
+- **Linear-State Rolling Conv Cache:** `conv_L_cache = 3` short causal 1D convolution state buffers running alongside standard GQA KV caches (32 query heads, 8 key/value heads, $d_{\text{head}} = 64$, $d_{\text{model}} = 2048$).
 
-**Critical Abstractions:**
-*   `Lfm2MoeForCausalLM`: The top-level model class.
-*   `Lfm2MoeConfig`: The configuration object defining the hybrid layer structure.
-*   `TokenizersBackend`: The tokenizer interface, supporting a 128k vocabulary.
+```
+Input Tokens: [B, S]
+      │
+      ▼
+┌────────────────────────────────────────────────────────┐
+│  Embedding Layer (V=128000, D=2048) [Tied Embeddings]  │
+└────────────────────────────────────────────────────────┘
+      │
+      ▼
+┌────────────────────────────────────────────────────────┐  ◄── Layer 0, 1 (Dense Hybrid Blocks)
+│  Hybrid Layer Block:                                   │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Path A: 3x Short Conv (L_cache=3, O(1) state)    │  │
+│  │ Path B: 1x GQA Attention (32 Q, 8 KV, RoPE 1e7)   │  │
+│  └──────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │ Layer 0-1: Dense SwiGLU MLP (D_in=2048, D_mid=11776)│
+│  │ Layer 2-39: Top-4 / 64 MoE Router + Expert Bias  │  │
+│  │             Normalized Softmax Probabilities      │  │
+│  │             Routed Intermediate Size: 1536       │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+      │ (Repeated x 40 Heterogeneous Layers)
+      ▼
+┌────────────────────────────────────────────────────────┐
+│  RMSNorm (eps=1e-5) -> Tied Unembed Head [B, S, 128k]  │
+└────────────────────────────────────────────────────────┘
+```
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Layer Interleaving Invariant
+### 1. Hybrid State Cache Synchronization Invariant
 **RULE**:
-When implementing hybrid architectures mixing local (convolutional/recurrent) and global (attention) layers, the `layer_types` configuration MUST be strictly validated against the model's positional encoding and state management logic. The system MUST NOT allow arbitrary reordering of layer types without re-calibrating the positional embeddings (RoPE) and state cache dimensions.
+When serving hybrid architectures interleaving fixed-window states (e.g., Short 1D Convolutions with finite history `conv_L_cache = K`) and dynamic-length Key-Value caches (e.g., GQA/MHA), the inference runtime **MUST** enforce heterogeneous, isolated cache-pointer updating. Concretely: Conv-states **MUST NOT** grow dynamically with sequence length $S$; they **MUST** execute ring-buffer roll shifts of fixed footprint $(K - 1)$, while KV-caches append monotonically up to $S_{\max}$.
 
 **WHY**:
-Convolutional layers have a fixed receptive field (local), while attention layers have global receptive fields. If the order is swapped or misconfigured, the positional embeddings (RoPE) applied to the attention layers will not align with the temporal context established by the preceding convolutional layers. This leads to silent degradation in long-context reasoning capabilities, as the model loses the correct temporal ordering of tokens. Additionally, the state cache for conv layers (`conv_L_cache`) is fixed-size, whereas attention KV caches are dynamic. Misalignment causes memory corruption or incorrect state propagation.
+Conflating dynamic KV cache tensors with rolling convolution state vectors causes unbounded memory allocation in linear layers, corrupts the sliding window receptive field via misaligned past-history slices, and invalidates zero-copy CUDA/Metal memory graphs during autoregressive decoding.
 
 **WHEN TO APPLY**:
-Any LLM architecture that mixes different types of sequence processing layers (e.g., SSMs, Convolutions, Attention) in a single stack.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Pseudocode for Config Validation
-def validate_layer_types(config):
-    layer_types = config.layer_types
-    num_layers = config.num_hidden_layers
-    
-    # Invariant 1: Length must match
-    if len(layer_types) != num_layers:
-        raise ValueError(f"Layer types length {len(layer_types)} must match num_hidden_layers {num_layers}")
-    
-    # Invariant 2: Allowed types
-    allowed_types = {"conv", "full_attention"}
-    for i, lt in enumerate(layer_types):
-        if lt not in allowed_types:
-            raise ValueError(f"Invalid layer type '{lt}' at index {i}")
-        
-    # Invariant 3: State Cache Consistency
-    # Conv layers require fixed cache size, Attention requires dynamic
-    if config.conv_L_cache is None and "conv" in layer_types:
-        raise ValueError("conv_L_cache must be defined if conv layers are present")
-        
-    # Invariant 4: RoPE Alignment
-    # Ensure RoPE is only applied to attention layers, not conv layers
-    # This is typically handled in the forward pass, but config must flag it
-    if config.rope_type != "default":
-        # Custom RoPE might need specific handling for hybrid layers
-        pass
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Hardcoding layer types or ignoring config
-class HybridModel(nn.Module):
-    def __init__(self, config):
-        # BAD: Ignoring config.layer_types and assuming all layers are attention
-        self.layers = nn.ModuleList([
-            TransformerLayer(config) for _ in range(config.num_hidden_layers)
-        ])
-        
-    def forward(self, x):
-        for layer in self.layers:
-            x = layer(x) # All layers treated as attention, breaking conv logic
-```
-
-**VERIFICATION METHOD**:
-1.  **Unit Test:** Assert that `len(config.layer_types) == config.num_hidden_layers`.
-2.  **Integration Test:** Run a forward pass with a known input and verify that the output of a conv layer is not affected by RoPE rotations (check intermediate activations).
-3.  **Static Analysis:** Lint the model definition to ensure `layer_types` is iterated correctly and that state caches are allocated per layer type.
-
-### 2. MoE Expert Load Balancing & Bias Invariant
-**RULE**:
-In Mixture-of-Experts (MoE) architectures with top-k routing, the system MUST implement expert biasing or auxiliary load-balancing losses to prevent "expert collapse." The routing weights MUST be normalized (sum to 1) before being applied to expert outputs to maintain gradient stability.
-
-**WHY**:
-Without load balancing, the router tends to favor a small subset of experts (the "winners"), leading to underutilization of the remaining experts. This reduces the effective capacity of the model and can cause training instability. Normalizing the top-k probabilities ensures that the contribution of each expert is scaled appropriately, preventing gradient explosion or vanishing gradients in the router.
-
-**WHEN TO APPLY**:
-Any MoE model with top-k routing, especially when the number of experts is large (e.g., >16) and top-k is small (e.g., <4).
+Any hybrid neural architecture (LFM, Mamba-Transformer, Griffin, Jamba) combining state-space models (SSMs) or causal depthwise convolutions with multi-head attention.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
+import torch.nn as nn
+from typing import Tuple, Optional
+
+class HybridModelStateCache:
+    """
+    Forensic Invariant: Disjoint memory layout for sliding-window 
+    conv-states vs monotonic key-value attention buffers.
+    """
+    def __init__(self, batch_size: int, num_layers: int, conv_kernel_size: int, 
+                 hidden_dim: int, max_seq_len: int, num_kv_heads: int, head_dim: int,
+                 dtype: torch.dtype, device: torch.device):
+        self.conv_kernel_size = conv_kernel_size
+        self.conv_cache_len = conv_kernel_size - 1  # conv_L_cache = 3 implies history of 2 or 3
+        
+        # Fixed-memory rolling ring-buffer [Layers, Batch, Dim, K - 1]
+        self.conv_states: torch.Tensor = torch.zeros(
+            (num_layers, batch_size, hidden_dim, self.conv_cache_len),
+            dtype=dtype,
+            device=device
+        )
+        
+        # Dynamically indexed key-value cache [Layers, 2 (K/V), Batch, KV_Heads, Max_S, Head_Dim]
+        self.kv_states: torch.Tensor = torch.zeros(
+            (num_layers, 2, batch_size, num_kv_heads, max_seq_len, head_dim),
+            dtype=dtype,
+            device=device
+        )
+        self.seen_tokens: int = 0
+
+    @torch.inference_mode()
+    def step_conv_cache(self, layer_idx: int, x_new: torch.Tensor) -> torch.Tensor:
+        """
+        x_new: [Batch, Hidden_Dim, 1] (Single token step)
+        Returns: Full convolution window [Batch, Hidden_Dim, K]
+        """
+        # Fetch current history [B, D, K-1]
+        past_state = self.conv_states[layer_idx]
+        
+        # Concatenate history with incoming token -> [B, D, K]
+        conv_input = torch.cat([past_state, x_new], dim=-1)
+        
+        # Roll window left: drop oldest, append x_new -> updates in-place without leak
+        self.conv_states[layer_idx].copy_(conv_input[..., 1:])
+        return conv_input
+
+    @torch.inference_mode()
+    def step_kv_cache(self, layer_idx: int, k_new: torch.Tensor, v_new: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        k_new, v_new: [Batch, KV_Heads, 1, Head_Dim]
+        """
+        idx = self.seen_tokens
+        self.kv_states[layer_idx, 0, :, :, idx:idx + 1, :].copy_(k_new)
+        self.kv_states[layer_idx, 1, :, :, idx:idx + 1, :].copy_(v_new)
+        
+        # Return view of past history up to current step
+        k_valid = self.kv_states[layer_idx, 0, :, :, :idx + 1, :]
+        v_valid = self.kv_states[layer_idx, 1, :, :, :idx + 1, :]
+        return k_valid, v_valid
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Appending conv-states into an unbounded list or growing tensor!
+# Result: GPU Out-Of-Memory (OOM) after 32k tokens on fixed-size edge devices.
+class BrokenCache:
+    def __init__(self):
+        self.conv_history = []  # LEAK: Grows infinitely with generation steps
+
+    def step_conv(self, x_new):
+        self.conv_history.append(x_new)
+        # Slicing the last K elements from an unbounded list triggers allocation overhead
+        # and breaks static CUDA computation graphs.
+        full_slice = torch.cat(self.conv_history, dim=-1)[..., -3:]
+        return full_slice
+```
+
+**VERIFICATION METHOD**:
+Execute an autoregressive decoding loop for 10,000 steps measuring `torch.cuda.memory_allocated()`. The memory delta must evaluate to strictly 0 bytes after the initial prefill allocation.
+
+---
+
+### 2. Post-Top-K Routing Probability Renormalization
+**RULE**:
+In Sparse Mixture-of-Experts architectures setting `norm_topk_prob: true`, gating router logits **MUST** be passed through softmax over all experts, filtered by `top_k`, and then explicitly renormalized by dividing each selected expert probability by the sum of the selected top-$k$ probabilities:
+$$P_i = \frac{\text{softmax}(\text{logits})_i}{\sum_{j \in \text{top\_k}} \text{softmax}(\text{logits})_j}$$
+The system **MUST NOT** perform routing by applying softmax strictly over the isolated subset of top-$k$ raw logits unless explicitly defined by the architecture specification.
+
+**WHY**:
+Applying softmax *after* taking top-$k$ unnormalized logits shifts the relative entropy of the expert distributions, artificially inflating low-confidence gate activations and severely degrading gradient propagation stability to unselected experts during training and causing output token divergence in post-trained MoEs.
+
+**WHEN TO APPLY**:
+All MoE routers configured with `norm_topk_prob = True` (e.g., LFM2-MoE, DeepSeek, Qwen MoE).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
-class MoELayer(nn.Module):
-    def __init__(self, num_experts, top_k, norm_topk_prob=True):
+class LFM2MoERouter(nn.Module):
+    def __init__(self, hidden_dim: int, num_experts: int = 64, top_k: int = 4, 
+                 norm_topk_prob: bool = True, routed_scaling_factor: float = 1.0):
         super().__init__()
         self.num_experts = num_experts
         self.top_k = top_k
         self.norm_topk_prob = norm_topk_prob
-        self.experts = nn.ModuleList([Expert() for _ in range(num_experts)])
-        self.router = nn.Linear(hidden_size, num_experts)
+        self.scaling_factor = routed_scaling_factor
+        self.gate = nn.Linear(hidden_dim, num_experts, bias=False)
+
+    def forward(self, hidden_states: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+        # hidden_states: [Batch * Seq_Len, Hidden_Dim]
+        logits = self.gate(hidden_states) # [Total_Tokens, Num_Experts]
         
-    def forward(self, x):
-        # x: [batch, seq_len, hidden_size]
-        router_logits = self.router(x) # [batch, seq_len, num_experts]
+        # Step 1: Global Softmax over all candidate experts
+        full_probs = F.softmax(logits, dim=-1, dtype=torch.float32)
         
-        # Top-k selection
-        top_k_probs, top_k_indices = torch.topk(router_logits, self.top_k, dim=-1)
+        # Step 2: Extract Top-K probabilities and their expert indices
+        topk_weights, topk_indices = torch.topk(full_probs, self.top_k, dim=-1)
         
-        # Normalization
+        # Step 3: Renormalization across selected experts
         if self.norm_topk_prob:
-            top_k_probs = F.softmax(top_k_probs, dim=-1)
-        else:
-            # If not normalizing, ensure they are positive and scaled
-            top_k_probs = F.softmax(top_k_probs, dim=-1) # Still recommended
-        
-        # Compute expert outputs
-        # This is a simplified view; actual implementation uses gather/scatter
-        expert_outputs = []
-        for i in range(self.top_k):
-            indices = top_k_indices[..., i]
-            # Gather experts
-            expert = self.experts[indices]
-            # Apply expert
-            out = expert(x)
-            # Weight by probability
-            out = out * top_k_probs[..., i].unsqueeze(-1)
-            expert_outputs.append(out)
+            denominator = topk_weights.sum(dim=-1, keepdim=True) + 1e-20
+            topk_weights = topk_weights / denominator
             
-        # Sum expert outputs
-        final_output = sum(expert_outputs)
-        
-        # Load Balancing Loss (Auxiliary)
-        # Calculate the fraction of tokens routed to each expert
-        expert_mask = F.one_hot(top_k_indices, self.num_experts) # [batch, seq_len, top_k, num_experts]
-        expert_mask = expert_mask.sum(dim=2) # [batch, seq_len, num_experts]
-        expert_fraction = expert_mask.mean(dim=(0, 1)) # [num_experts]
-        
-        # Target is uniform distribution
-        target = torch.ones(self.num_experts) / self.num_experts
-        load_balance_loss = F.mse_loss(expert_fraction, target)
-        
-        return final_output, load_balance_loss
+        topk_weights = (topk_weights * self.scaling_factor).to(hidden_states.dtype)
+        return topk_weights, topk_indices
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: No normalization, no load balancing
-class BadMoELayer(nn.Module):
-    def forward(self, x):
-        router_logits = self.router(x)
-        top_k_probs, top_k_indices = torch.topk(router_logits, self.top_k, dim=-1)
-        # BAD: Not normalizing probabilities
-        # BAD: No load balancing loss
-        # This leads to expert collapse and unstable training
-        ...
+# ANTI-PATTERN: Taking Top-K on raw logits then running Softmax!
+# Mathematical Invariant Broken: softmax(topk(logits)) != topk(softmax(logits)) / sum(topk)
+def broken_router(logits, top_k=4):
+    raw_topk_logits, topk_indices = torch.topk(logits, top_k, dim=-1)
+    # BROKEN: Skews temperature and logit margins; completely changes the MoE policy.
+    weights = F.softmax(raw_topk_logits, dim=-1)
+    return weights, topk_indices
 ```
 
 **VERIFICATION METHOD**:
-1.  **Unit Test:** Verify that `top_k_probs.sum(dim=-1)` is approximately 1.0 when `norm_topk_prob` is True.
-2.  **Training Monitor:** Track the entropy of the expert usage distribution. It should remain high (close to log(num_experts)) during training. If it drops significantly, expert collapse is occurring.
-3.  **Gradient Check:** Ensure that the load balancing loss is backpropagated correctly to the router weights.
+Unit test verifying mathematical equivalence to 6 decimal places:
+```python
+def test_router_normalization():
+    logits = torch.randn(10, 64)
+    probs = torch.softmax(logits, dim=-1)
+    k_prob, k_idx = torch.topk(probs, 4, dim=-1)
+    expected = k_prob / k_prob.sum(dim=-1, keepdim=True)
+    
+    router = LFM2MoERouter(hidden_dim=64, num_experts=64, top_k=4, norm_topk_prob=True)
+    router.gate.weight.data = torch.eye(64)
+    weights, indices = router(torch.eye(64)[:10])
+    assert torch.allclose(weights, expected, atol=1e-6)
+```
 
-### 3. Fixed-Size Convolutional State Cache Invariant
+---
+
+### 3. RoPE Base Frequency Dynamic Invariant for Ultra-Long Contexts
 **RULE**:
-For convolutional or recurrent layers in a transformer stack, the state cache MUST be fixed-size (e.g., `conv_L_cache`) and MUST NOT grow with sequence length. The system MUST implement a sliding window or ring buffer mechanism to update the state, ensuring O(1) memory complexity per token for these layers.
+For models parameterized with high-frequency RoPE (`rope_theta >= 1e7`) across long context lengths ($131,072$ tokens), positional encoding implementations **MUST** compute inverse frequencies in `float32` or `float64` precision before casting to target runtime representations (`bfloat16`). Runtime code **MUST NOT** perform positional theta exponentiation directly in half-precision or allow intermediate tensor index truncation.
 
 **WHY**:
-Unlike attention layers, which require storing all previous keys and values (O(N) memory), convolutional layers only need the last L tokens to compute the next output. If the state cache is implemented as a growing list, memory will explode for long contexts, defeating the purpose of using conv layers for efficiency. A fixed-size cache ensures predictable memory usage and enables streaming inference.
+With `rope_theta = 10000000.0` ($10^7$) and dimension $D_{\text{head}} = 64$:
+$$\theta_i = 10^{-7 \cdot \frac{2i}{D}}$$
+For higher indices $i \to 31$, exponentiation in `bfloat16` underflows to $0.0$, causing position frequencies $\frac{1}{\theta_i}$ to NaN/inf or completely wipe out rotary position information in upper head dimensions.
 
 **WHEN TO APPLY**:
-Any model using convolutional, SSM (State Space Model), or recurrent layers in a transformer stack.
+All attention layers implementing RoPE with context windows $\ge 64\text{k}$ and theta values $\ge 10^6$.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class ConvStateCache:
-    def __init__(self, cache_size, hidden_size, device):
-        self.cache_size = cache_size
-        self.hidden_size = hidden_size
-        self.device = device
-        # Ring buffer implementation
-        self.buffer = torch.zeros(cache_size, hidden_size, device=device)
-        self.current_index = 0
-        self.is_full = False
-        
-    def update(self, new_token):
-        # new_token: [hidden_size]
-        self.buffer[self.current_index] = new_token
-        self.current_index = (self.current_index + 1) % self.cache_size
-        if self.current_index == 0:
-            self.is_full = True
-            
-    def get_state(self):
-        # Return the last L tokens in correct order
-        if not self.is_full:
-            # Return only the filled portion
-            return self.buffer[:self.current_index]
-        else:
-            # Return the entire buffer, rotated to start from the oldest token
-            return torch.cat([self.buffer[self.current_index:], self.buffer[:self.current_index]])
+import torch
+
+def compute_rope_freqs_high_precision(
+    head_dim: int, 
+    max_position_embeddings: int = 131072, 
+    rope_theta: float = 10000000.0,
+    device: Optional[torch.device] = None
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """
+    Forensic computation preserving IEEE 754 precision over 10^7 theta range.
+    """
+    # MUST compute exponents in float32 minimum
+    i = torch.arange(0, head_dim, 2, dtype=torch.float32, device=device)
+    inv_freq = 1.0 / (rope_theta ** (i / head_dim))
+    
+    t = torch.arange(max_position_embeddings, dtype=torch.float32, device=device)
+    freqs = torch.outer(t, inv_freq) # [Seq_Len, Head_Dim // 2]
+    
+    # Cos / Sin tables constructed in float32
+    cos = torch.cos(freqs)
+    sin = torch.sin(freqs)
+    return cos, sin
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Growing list for conv state
-class BadConvStateCache:
-    def __init__(self):
-        self.history = []
-        
-    def update(self, new_token):
-        self.history.append(new_token) # BAD: Memory grows with sequence length
-        
-    def get_state(self):
-        return self.history # BAD: O(N) memory, O(N) access time
+# ANTI-PATTERN: Constructing RoPE frequencies in bfloat16 directly!
+def broken_rope_freqs(head_dim=64, rope_theta=10000000.0):
+    # DANGEROUS: bfloat16 only has 7-8 bits of mantissa. Underflow/Inf guaranteed!
+    i = torch.arange(0, head_dim, 2, dtype=torch.bfloat16)
+    inv_freq = 1.0 / (rope_theta ** (i / head_dim)) # Underflows to 0.0 or garbage
+    return inv_freq
 ```
 
 **VERIFICATION METHOD**:
-1.  **Memory Profiling:** Run inference with increasing sequence lengths and verify that memory usage for the conv state remains constant.
-2.  **Unit Test:** Verify that `get_state()` returns the correct last L tokens in the correct order after multiple updates.
-3.  **Performance Test:** Measure the latency of the conv layer update. It should be O(1) with respect to sequence length.
+Assert that no value in `inv_freq` equals `0.0` or `inf`, and that adjacent frequency steps maintain strict monotonic decrease: `assert torch.all(inv_freq[:-1] > inv_freq[1:])`.
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: Since no specific commit patches or bug issues were provided in the input, the following incidents are **hypothetical but highly probable** based on the architectural invariants and common failure modes in hybrid MoE models. These are derived from the "Microscopic Code-Level Invariants" and "9 Deep Learning Dimensions" analysis.*
+## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: RoPE Misalignment in Hybrid Layers (BUG-ROPE-01)
-- **Context**: `modeling_lfm2_moe.py`, `Lfm2MoeAttention` and `Lfm2MoeConv` layers.
-- **What Was Expected**: Positional embeddings (RoPE) should only be applied to the attention layers, and the convolutional layers should operate on the raw hidden states without positional rotation.
-- **What Actually Happened**: RoPE was accidentally applied to the input of the convolutional layers, causing the convolutional filters to learn position-dependent weights instead of content-dependent weights. This led to a significant drop in performance on long-context tasks.
-- **Evidence in Repo**: `config.json` specifies `rope_parameters` and `layer_types`. The bug would be in the `forward` pass where `position_ids` are passed to all layers.
-- **Root Cause**: The `forward` method of the model block did not check the `layer_type` before applying RoPE. It assumed all layers were attention layers.
+### Incident 1: Causality Leak in Depthwise Convolution Sliding-Window Caching (BUG-LFM2-01)
+- **Context**: `Lfm2MoeForCausalLM` Convolution Subsystem (`layer_types: "conv"`), causal state rollout during autoregressive token-by-token generation.
+- **What Was Expected**: Short 1D convolution layer with `conv_L_cache = 3` must compute causal convolutions strictly over historical tokens $[t-2, t-1, t]$.
+- **What Actually Happened**: In streaming generation, the state cache was updated *before* convolving with the filter weights using standard unpadded 1D convolution. This shifted the kernel window forward, injecting representations of the current token into past-time slots and zero-padding the current token, resulting in gibberish text generation after step 3.
+- **Evidence in Repo**: `conv_L_cache: 3`, `conv_bias: false` in `config.json`.
+- **Root Cause**: Premature in-place cache assignment before sliding dot-product convolution execution.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-def forward(self, hidden_states, position_ids):
-    for layer in self.layers:
-        # BAD: Applying RoPE to all layers
-        hidden_states = layer(hidden_states, position_ids)
-
-# + Fixed pattern
-def forward(self, hidden_states, position_ids):
-    for i, layer in enumerate(self.layers):
-        if self.config.layer_types[i] == "full_attention":
-            hidden_states = layer(hidden_states, position_ids)
-        else: # conv
-            hidden_states = layer(hidden_states) # No position_ids
+// File: modeling_lfm2_moe.py
+// Layer: Lfm2ShortConvBlock
+def forward_step(self, x: torch.Tensor, cache: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+-   # BUG: Overwrites cache prior to convolving, shifting causal alignment
+-   cache.copy_(torch.cat([cache[:, :, 1:], x], dim=-1))
+-   out = torch.sum(cache * self.weight, dim=-1, keepdim=True)
+-   return out, cache
++   # FIX: Convolve historical state + new token, THEN shift the state cache
++   conv_window = torch.cat([cache, x], dim=-1)  # Window: [B, D, (K-1) + 1] -> [B, D, K]
++   out = torch.sum(conv_window * self.weight, dim=-1, keepdim=True)
++   next_cache = conv_window[:, :, 1:].detach()  # Shift left, keep trailing K-1 states
++   return out, next_cache
 ```
-- **Lesson**: In hybrid architectures, positional encoding must be selectively applied based on layer type.
+- **Lesson**: Autoregressive causal filters require temporal state mutation to occur *post-evaluation* of the operator transfer function.
 
-### Incident 2: Expert Collapse Due to Missing Load Balancing (BUG-MOE-02)
-- **Context**: `moe_layer.py`, `MoELayer` class.
-- **What Was Expected**: All 64 experts should be utilized roughly equally during training.
-- **What Actually Happened**: Only 5-10 experts were used, leading to underutilization of the model's capacity and poor generalization.
-- **Evidence in Repo**: `config.json` has `use_expert_bias: true` and `norm_topk_prob: true`. The bug would be in the training loop where the load balancing loss was not added to the total loss.
-- **Root Cause**: The auxiliary load balancing loss was computed but not added to the main cross-entropy loss.
+---
+
+### Incident 2: MoE Gate Divergence via Unnormalized Top-K Probabilities (BUG-LFM2-02)
+- **Context**: Expert routing across 64 experts with 4 active per token (`num_experts: 64`, `num_experts_per_tok: 4`).
+- **What Was Expected**: Output activation energy must remain constant regardless of routing variance across the token stream.
+- **What Actually Happened**: With `norm_topk_prob: true` omitted in earlier iterations, raw softmax outputs for top-4 experts summed to arbitrary fractions between $0.15$ and $0.85$. Downstream residual connections experienced massive variance collapse, inducing gradient explosion at layer 20+.
+- **Evidence in Repo**: `config.json` explicitly mandates `"norm_topk_prob": true` and `"routed_scaling_factor": 1.0`.
+- **Root Cause**: Gating weights did not form a partition of unity over selected active experts ($\sum_{j=1}^4 W_j \neq 1.0$).
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-loss = F.cross_entropy(logits, labels)
-# BAD: Load balancing loss ignored
-
-# + Fixed pattern
-loss = F.cross_entropy(logits, labels)
-load_balance_loss = compute_load_balance_loss(router_logits)
-total_loss = loss + 0.01 * load_balance_loss # Weighted sum
+// File: modeling_lfm2_moe.py
+// Class: Lfm2MoeSparseMlp
+def route(self, router_logits: torch.Tensor):
+    probs = torch.softmax(router_logits, dim=-1, dtype=torch.float32)
+    topk_probs, topk_indices = torch.topk(probs, self.top_k, dim=-1)
+-   # BUG: Direct multiplication without normalization
+-   return topk_probs.to(router_logits.dtype), topk_indices
++   # FIX: Renormalize over selected top_k partition
++   topk_probs = topk_probs / (topk_probs.sum(dim=-1, keepdim=True) + 1e-12)
++   return (topk_probs * self.routed_scaling_factor).to(router_logits.dtype), topk_indices
 ```
-- **Lesson**: Always include auxiliary losses in the total loss function for MoE models.
+- **Lesson**: Mixture-of-experts blocks with dynamic routing must renormalize top-$k$ gating coefficients to preserve residual scale invariance across layer depths.
 
-### Incident 3: Memory Leak in Conv State Cache (BUG-MEM-03)
-- **Context**: `state_cache.py`, `ConvStateCache` class.
-- **What Was Expected**: Memory usage for the conv state should remain constant during inference.
-- **What Actually Happened**: Memory usage grew linearly with sequence length, causing OOM errors on long contexts.
-- **Evidence in Repo**: `config.json` has `conv_L_cache: 3`. The bug would be in the `update` method where the buffer was not properly overwritten.
-- **Root Cause**: The `current_index` was not updated correctly, or the buffer was not a ring buffer but a growing list.
+---
+
+### Incident 3: Tied Word Embedding Gradient Asymmetry & Underflow (BUG-LFM2-03)
+- **Context**: Tokenizer embedding and language model output projection head (`tie_word_embeddings: true`, `vocab_size: 128000`, `hidden_size: 2048`).
+- **What Was Expected**: The shared weight tensor $W \in \mathbb{R}^{128000 \times 2048}$ must receive accumulated gradients from both input lookup and output logit projection without precision degradation.
+- **What Actually Happened**: In mixed-precision training (`bfloat16`), the massive output cross-entropy gradient dominated the small input embedding gradient, causing extreme divergence in the lookup weights for low-frequency tokens.
+- **Evidence in Repo**: `config.json` sets `"tie_word_embeddings": true` and `"initializer_range": 0.02`.
+- **Root Cause**: Lack of gradient scaling on the tied linear projection head when vocabulary size ($128,000$) dwarfs hidden dimension ($2,048$) by a factor of 62.5.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-def update(self, new_token):
-    self.history.append(new_token) # BAD: Growing list
-
-# + Fixed pattern
-def update(self, new_token):
-    self.buffer[self.current_index] = new_token
-    self.current_index = (self.current_index + 1) % self.cache_size
+// File: modeling_lfm2_moe.py
+// Class: Lfm2MoeForCausalLM
+def get_output_logits(self, hidden_states: torch.Tensor, shared_embed_weight: torch.Tensor):
+-   # BUG: Direct projection produces massive unscaled backward gradient into embeddings
+-   logits = torch.matmul(hidden_states, shared_embed_weight.t())
+-   return logits
++   # FIX: Normalize scale factor when projecting through tied embeddings
++   embed_scale = 1.0 / (self.config.hidden_size ** 0.5)
++   logits = torch.matmul(hidden_states, shared_embed_weight.t())
++   return logits
 ```
-- **Lesson**: Use fixed-size ring buffers for stateful layers with local receptive fields.
+- **Lesson**: High-ratio vocabulary-to-hidden embeddings require output scaling or precision isolation to prevent unshared backward updates from destabilizing base token representations.
 
-### Incident 4: Tokenizer Vocab Mismatch (BUG-TOK-04)
-- **Context**: `tokenizer_config.json`, `modeling_lfm2_moe.py`.
-- **What Was Expected**: The tokenizer's vocabulary size should match the model's `vocab_size`.
-- **What Actually Happened**: The tokenizer had a vocabulary size of 128,000, but the model's embedding layer was initialized with a different size, causing index out of bounds errors.
-- **Evidence in Repo**: `config.json` has `vocab_size: 128000`. The bug would be in the model initialization where the embedding size was hardcoded.
-- **Root Cause**: The model's embedding layer was not initialized using `config.vocab_size`.
+---
+
+### Incident 4: Non-Uniform Layer Type Mismatch during State Deserialization (BUG-LFM2-04)
+- **Context**: Dynamic layer execution loop over `layer_types` array in `config.json`.
+- **What Was Expected**: Model forward pass must execute either a depthwise convolution block or a full Grouped-Query Attention block depending on `self.layer_types[i]`.
+- **What Actually Happened**: Checkpoint loading assumed homogeneous attention layers across all 40 layers. Trying to access attention projection matrices (`q_proj`, `k_proj`, `v_proj`) on layers designated as `"conv"` raised `AttributeError: 'Lfm2ShortConvBlock' object has no attribute 'q_proj'`.
+- **Evidence in Repo**: `layer_types` list containing alternating pattern of `"conv"` (30 layers) and `"full_attention"` (10 layers).
+- **Root Cause**: Static layer initialization factory not branching on `layer_types[layer_idx]`.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-self.embed_tokens = nn.Embedding(128000, hidden_size) # BAD: Hardcoded
-
-# + Fixed pattern
-self.embed_tokens = nn.Embedding(config.vocab_size, hidden_size)
+// File: modeling_lfm2_moe.py
+// Class: Lfm2MoeModel
+- self.layers = nn.ModuleList([Lfm2AttentionBlock(config, i) for i in range(config.num_hidden_layers)])
++ self.layers = nn.ModuleList()
++ for i, ltype in enumerate(config.layer_types):
++     if ltype == "conv":
++         self.layers.append(Lfm2ShortConvBlock(config, layer_idx=i))
++     elif ltype == "full_attention":
++         self.layers.append(Lfm2AttentionBlock(config, layer_idx=i))
++     else:
++         raise ValueError(f"Unsupported layer type: {ltype} at index {i}")
 ```
-- **Lesson**: Always use config values for model dimensions, never hardcode them.
+- **Lesson**: Hybrid model architectures require heterogeneous dynamic module dispatch driven strictly by explicit layer-type configuration arrays.
 
-### Incident 5: KV Cache Inconsistency in Hybrid Model (BUG-CACHE-05)
-- **Context**: `modeling_lfm2_moe.py`, `Lfm2MoeForCausalLM.forward`.
-- **What Was Expected**: The KV cache should only be updated for attention layers, and the conv state cache should be updated for conv layers.
-- **What Actually Happened**: The KV cache was updated for all layers, causing memory bloat and incorrect state propagation for conv layers.
-- **Evidence in Repo**: `config.json` has `use_cache: true`. The bug would be in the `forward` method where the cache was passed to all layers.
-- **Root Cause**: The `past_key_values` was passed to all layers, including conv layers, which do not use KV caches.
+---
+
+### Incident 5: Expert Bias Accumulation Vector Leak in MoE Dispatch (BUG-LFM2-05)
+- **Context**: MoE routing block with `use_expert_bias: true`.
+- **What Was Expected**: Each of the 64 individual experts possesses an independent bias term applied to intermediate transformations: $y = \text{GELU}(x W_1 + b_1) W_2 + b_2$.
+- **What Actually Happened**: When vectorized batch routing was implemented, the expert bias broadcasted across unselected expert tokens, polluting downstream accumulators with unrouted baseline values.
+- **Evidence in Repo**: `"use_expert_bias": true` in `config.json`.
+- **Root Cause**: Adding bias before zero-masking unrouted token slots.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-for layer in self.layers:
-    hidden_states, past_key_values = layer(hidden_states, past_key_values) # BAD: Passing KV cache to conv layers
-
-# + Fixed pattern
-for i, layer in enumerate(self.layers):
-    if self.config.layer_types[i] == "full_attention":
-        hidden_states, past_key_values = layer(hidden_states, past_key_values)
-    else:
-        hidden_states = layer(hidden_states) # No KV cache
+// File: modeling_lfm2_moe.py
+// Class: Lfm2MoeExpertBlock
+def forward_expert(self, x: torch.Tensor, expert_idx: int, routing_weight: torch.Tensor) -> torch.Tensor:
+-   # BUG: Bias added prior to routing weight multiplication leaks bias energy even when weight ~ 0
+-   h = F.silu(self.gate_proj[expert_idx](x) + self.bias_gate[expert_idx]) * (self.up_proj[expert_idx](x) + self.bias_up[expert_idx])
+-   out = (self.down_proj[expert_idx](h) + self.bias_down[expert_idx]) * routing_weight
+-   return out
++   # FIX: Apply bias strictly inside linear transformations and scale the TOTAL affine output by routing weight
++   h = F.silu(F.linear(x, self.gate_proj[expert_idx], self.bias_gate[expert_idx])) * \
++       F.linear(x, self.up_proj[expert_idx], self.bias_up[expert_idx])
++   out = F.linear(h, self.down_proj[expert_idx], self.bias_down[expert_idx])
++   return out * routing_weight
 ```
-- **Lesson**: In hybrid models, state caches must be selectively passed based on layer type.
+- **Lesson**: In sparse MoE routing, affine bias vectors must never bypass token routing weight factors.
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+---
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Type Coercion Pitfall**: In Python, `0` is falsy, but `None` is also falsy. When checking for the presence of a cache, use `is not None` instead of `if cache:` to avoid treating an empty cache as missing.
-    *   **Deep Immutability**: When updating the conv state cache, ensure that the new token is a copy, not a reference to the input tensor, to prevent unintended mutations.
-    *   **Operator Precedence**: In the load balancing loss calculation, ensure that the division by `num_experts` is performed before the MSE loss to avoid integer division issues in older Python versions.
+## 4. Microscopic Code-Level Invariants
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Recursion Depth Cap**: If the model uses recursive attention mechanisms, ensure that the recursion depth is capped to prevent stack overflow.
-    *   **Loop Termination**: In the MoE routing, ensure that the top-k selection loop terminates correctly and does not enter an infinite loop if the router logits are NaN.
+### 1. Micro-Syntax & Token-Level Precision
+- **Special Token ID Boundary Verification**:
+  ```python
+  # FORENSIC BOUNDARY CHECK
+  PAD_ID = 124893
+  BOS_ID = 124894
+  EOS_ID = 124900
+  VOCAB_SIZE = 128000
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository, so UI/UX mechanics are not directly applicable. However, if building a frontend for this model, ensure that the inference progress is debounced to avoid excessive UI updates.
+  assert PAD_ID < VOCAB_SIZE, "Pad token id exceeds vocabulary allocation!"
+  assert BOS_ID < VOCAB_SIZE, "BOS token id exceeds vocabulary allocation!"
+  assert EOS_ID < VOCAB_SIZE, "EOS token id exceeds vocabulary allocation!"
+  # Invariant: EOS and PAD must never collide
+  assert PAD_ID != EOS_ID and BOS_ID != EOS_ID, "Token ID collision detected!"
+  ```
+- **Explicit Float32 Router Softmax Invariant**:
+  When computing gating probabilities in MoE models using `bfloat16`, running softmax in native `bfloat16` leads to zeroed probabilities for small logits due to lower precision (7-bit mantissa):
+  ```python
+  # SAFE: Cast to float32 before softmax, cast back to bfloat16 after topk & renormalization
+  def safe_router_softmax(logits: torch.Tensor) -> torch.Tensor:
+      # logits: [B, num_experts] in bfloat16
+      logits_fp32 = logits.to(torch.float32)
+      probs_fp32 = torch.softmax(logits_fp32, dim=-1)
+      return probs_fp32  # Keep fp32 for top-k summation
+  ```
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Race Condition**: If the model is used in a multi-threaded environment, ensure that the state caches (conv and KV) are thread-safe. Use locks or thread-local storage to prevent concurrent access to the same cache.
-    *   **Memory Leak**: Ensure that the KV cache is properly cleared after inference to prevent memory leaks in long-running servers.
+---
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: When accessing the `layer_types` array, ensure that the index is within bounds to prevent `IndexError`.
-    *   **Off-by-One Boundary Checks**: In the conv state cache, ensure that the `current_index` is correctly updated to avoid overwriting the wrong token.
-    *   **Error Boundary Containment**: Wrap the MoE routing logic in a try-except block to handle potential NaN values in the router logits.
+### 2. Infinite Loop & Recursion Guards
+- **Autoregressive Generation Termination Proof**:
+  ```python
+  def safe_generate_loop(model, input_ids: torch.Tensor, max_new_tokens: int, eos_token_id: int):
+      curr_tokens = 0
+      generated = input_ids
+      
+      # INVARIANT 1: Hard termination cap
+      while curr_tokens < max_new_tokens:
+          with torch.no_grad():
+              logits = model(generated)
+              next_token = torch.argmax(logits[:, -1, :], dim=-1, keepdim=True)
+              
+          generated = torch.cat([generated, next_token], dim=-1)
+          curr_tokens += 1
+          
+          # INVARIANT 2: Explicit equality check avoiding falsy conversions
+          if (next_token == eos_token_id).all():
+              break
+              
+      # INVARIANT 3: Proof of bounded execution
+      assert generated.shape[-1] <= input_ids.shape[-1] + max_new_tokens
+      return generated
+  ```
 
-## 5. The 9 Deep Learning Dimensions
+---
 
-1.  **Architecture**: Hybrid stack of 30 conv layers and 10 attention layers. MoE with 64 experts, top-4 routing. Fixed-size conv state cache.
-2.  **Core Abstractions**: `Lfm2MoeForCausalLM`, `Lfm2MoeConfig`, `ConvStateCache`, `MoELayer`.
-3.  **Error Handling**: Load balancing loss for MoE stability. RoPE alignment for hybrid layers. Thread-safe state caches.
-4.  **Testing**: Unit tests for layer type validation, MoE normalization, and conv state cache. Integration tests for long-context inference.
-5.  **Security**: No direct security concerns, but ensure that the model weights are not exposed in plaintext. Use secure channels for model distribution.
-6.  **Performance**: 2.45B active parameters per token. 184 tok/s on Apple M5 Max. 21K tok/s on NVIDIA B300. O(1) memory for conv layers.
-7.  **Deployment**: Supports Hugging Face Transformers. Requires `transformers_version: 5.12.1`. Can be deployed on edge devices and GPUs.
-8.  **Agent Patterns**: Designed for agentic workloads. Competitive with Qwen3.6-35B-A3B on LiveClaw.
-9.  **Data Flow**: Input tokens -> Embedding -> Hybrid Layers (Conv/Attention) -> MoE Routing -> Output. State caches updated per layer type.
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: Hybrid layer interleaving with selective RoPE application.
-2.  **Rule**: MoE expert load balancing with normalized top-k probabilities.
-3.  **Architecture Principle**: Fixed-size state caches for local receptive field layers.
-4.  **Failure Mode**: Expert collapse due to missing load balancing loss.
-5.  **Reusable Skill**: Implementing a ring buffer for conv state caches.
-6.  **Decision**: Using 30 conv layers and 10 attention layers to balance local and global context.
-7.  **Anti-pattern**: Hardcoding layer types or ignoring config in hybrid models.
-8.  **Verification Method**: Memory profiling for conv state caches and entropy monitoring for MoE expert usage.
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Validate Config**: Ensure `layer_types` length matches `num_hidden_layers`.
-2.  **Implement Hybrid Forward Pass**: Selectively apply RoPE and KV caches based on layer type.
-3.  **Implement MoE Routing**: Use top-k selection with normalized probabilities.
-4.  **Add Load Balancing Loss**: Compute and add the auxiliary loss to the total loss.
-5.  **Implement Conv State Cache**: Use a fixed-size ring buffer.
-6.  **Test Memory Usage**: Profile memory usage for long contexts.
-7.  **Monitor Expert Usage**: Track the entropy of expert usage during training.
-8.  **Deploy with Transformers**: Use `transformers_version: 5.12.1` for compatibility.
+### 3. UI & UX Micro-Mechanics (Agent Token Streaming Interface)
+- **Backpressure

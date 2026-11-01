@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T00:10:33.968Z",
+  "last_updated": "2026-11-01T00:19:06.558Z",
   "total_verified_learnings": 1185,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -68298,7 +68298,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "d3a7e2ee09e363efd68166336f0f723c7953e25465e3b19a04dd0e1b15af3c5a",
+      "content_hash": "d3d3d5df2f49cfe6542274ca05855dc8a6c8e997497f2b1be33eae0b027f7677",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "promoted_rules": [
@@ -68346,6 +68346,21 @@
           "number": 5441,
           "title": "Fixed-Size Convolutional State Cache Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6377,
+          "title": "Hybrid State Cache Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6378,
+          "title": "Post-Top-K Routing Probability Renormalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6379,
+          "title": "RoPE Base Frequency Dynamic Invariant for Ultra-Long Contexts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -68353,7 +68368,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-28T22:45:51.712Z",
+      "verified_at": "2026-11-01T00:19:06.538Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165487,6 +165502,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T00:10:33.954Z"
+    },
+    "rule-6377": {
+      "learning_id": "rule-6377",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6377,
+      "title": "Hybrid State Cache Synchronization Invariant",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:19:06.538Z"
+    },
+    "rule-6378": {
+      "learning_id": "rule-6378",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6378,
+      "title": "Post-Top-K Routing Probability Renormalization",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:19:06.538Z"
+    },
+    "rule-6379": {
+      "learning_id": "rule-6379",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6379,
+      "title": "RoPE Base Frequency Dynamic Invariant for Ultra-Long Contexts",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T00:19:06.538Z"
     }
   },
   "aliases": {
