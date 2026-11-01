@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-01T01:47:02.881Z",
+  "last_updated": "2026-11-01T01:54:06.377Z",
   "total_verified_learnings": 1186,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -47772,8 +47772,8 @@
       "slug": "rainbow-me-rainbow",
       "platform": "github",
       "source_url": "https://github.com/rainbow-me/rainbow",
-      "source_version": "11a07420",
-      "content_hash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
+      "source_version": "242bfe58",
+      "content_hash": "3479eb61aad2de310926a24aa5fdd8acaa6655e27ece6a02defeea2efa7c5491",
       "dossier_path": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rainbow-me-rainbow-learnings.md",
       "promoted_rules": [
@@ -47796,6 +47796,11 @@
           "number": 5595,
           "title": "Font Metrics-Compensated Spacing Invariant for Native Typography",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6397,
+          "title": "spot-pnl): open the P&L sheet from Top Holders with the row's trades (#7906)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47803,7 +47808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:00:39.193Z",
+      "verified_at": "2026-11-01T01:54:06.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -70102,7 +70107,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "6aeef3881ecb283bbc6ba1234f37192bd8b965c94bbcd301b2478e604875c103",
+      "content_hash": "b02676773209cec99dee330199cb4c2c76f912a982ed56308f246430b2352503",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "promoted_rules": [
@@ -70167,7 +70172,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T00:34:50.091Z",
+      "verified_at": "2026-11-01T01:53:59.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -165896,6 +165901,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-01T01:40:30.493Z"
+    },
+    "rule-6397": {
+      "learning_id": "rule-6397",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6397,
+      "title": "spot-pnl): open the P&L sheet from Top Holders with the row's trades (#7906)",
+      "source_url": "https://github.com/rainbow-me/rainbow",
+      "source_version": "242bfe58",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-01T01:54:06.356Z"
     }
   },
   "aliases": {

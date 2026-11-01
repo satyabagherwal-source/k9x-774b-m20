@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "6aeef3881ecb283bbc6ba1234f37192bd8b965c94bbcd301b2478e604875c103",
-    "lastHarvestedAt": "2026-10-29T00:34:50.183Z",
+    "contentHash": "b02676773209cec99dee330199cb4c2c76f912a982ed56308f246430b2352503",
+    "lastHarvestedAt": "2026-11-01T01:53:59.156Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
@@ -8503,10 +8503,10 @@
     "repository": "rainbow-me/rainbow",
     "platform": "github",
     "sourceUrl": "https://github.com/rainbow-me/rainbow",
-    "sourceVersion": "11a07420",
+    "sourceVersion": "242bfe58",
     "license": "GPL-3.0",
-    "contentHash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
-    "lastHarvestedAt": "2026-10-30T04:00:39.293Z",
+    "contentHash": "3479eb61aad2de310926a24aa5fdd8acaa6655e27ece6a02defeea2efa7c5491",
+    "lastHarvestedAt": "2026-11-01T01:54:06.461Z",
     "learningId": "learn-github-rainbow-me-rainbow"
   },
   "zoontek-react-native-permissions": {

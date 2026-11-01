@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-01T01:47:02.966Z",
-  "total_cycles_completed": 6759,
-  "total_learnings_persisted": 6759,
-  "total_rules_promoted": 6405,
+  "last_updated": "2026-11-01T01:54:06.466Z",
+  "total_cycles_completed": 6761,
+  "total_learnings_persisted": 6761,
+  "total_rules_promoted": 6406,
   "history": [
-    {
-      "timestamp": "2026-10-31T13:27:07.135Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T13:27:12.575Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T13:34:06.660Z",
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -1403,6 +1389,20 @@
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
       "learningId": "learn-huggingface-openmoss-team-moss-image-base",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:53:59.162Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-01T01:54:06.466Z",
+      "repository": "rainbow-me/rainbow",
+      "learningId": "learn-github-rainbow-me-rainbow",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

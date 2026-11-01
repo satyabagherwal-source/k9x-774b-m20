@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-01T01:47:14.134Z",
-    "lastVerified": "2026-11-01T01:47:14.134Z",
+    "lastChecked": "2026-11-01T01:54:10.076Z",
+    "lastVerified": "2026-11-01T01:54:10.076Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,8 +249,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T01:26:54.786Z",
-    "lastVerified": "2026-11-01T01:26:54.786Z",
+    "lastChecked": "2026-11-01T01:54:10.064Z",
+    "lastVerified": "2026-11-01T01:54:10.064Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1059,9 +1059,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-10-31T22:23:49.944Z",
+    "lastChecked": "2026-11-01T01:54:05.055Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-10-31T22:23:49.944Z"
+    "lastVerified": "2026-11-01T01:54:05.055Z"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -2632,9 +2632,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-10-31T10:47:20.899Z",
+    "lastChecked": "2026-11-01T01:54:07.561Z",
     "revisionIdentifier": "8badf44d48d0d72a07e1ea3daf1ecbd76ae1a357",
-    "lastVerified": "2026-10-31T10:47:20.899Z"
+    "lastVerified": "2026-11-01T01:54:07.561Z"
   },
   "ratatui-ratatui": {
     "name": "ratatui/ratatui",
@@ -4124,9 +4124,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-10-31T11:39:51.326Z",
+    "lastChecked": "2026-11-01T01:54:02.561Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-10-31T11:39:51.326Z"
+    "lastVerified": "2026-11-01T01:54:02.561Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -4369,12 +4369,12 @@
     "revisionIdentifier": "6f2a6965"
   },
   "kucherenko-jscpd": {
-    "name": "kucherenko/jscpd",
+    "name": "jscpd",
     "officialUrl": "https://github.com/kucherenko/jscpd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:17:57.171Z",
-    "lastVerified": "2026-10-31T06:17:57.171Z",
+    "lastChecked": "2026-11-01T01:53:55.045Z",
+    "lastVerified": "2026-11-01T01:53:55.045Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kucherenko-jscpd",
@@ -4383,7 +4383,8 @@
     "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0b519608"
   },
   "hf-minimaxai-minimax-h3": {
     "name": "MiniMaxAI/MiniMax-H3",
@@ -8693,13 +8694,13 @@
     "officialUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-29T00:29:40.308Z",
-    "lastVerified": "2026-10-29T00:29:40.308Z",
+    "lastChecked": "2026-11-01T01:53:57.803Z",
+    "lastVerified": "2026-11-01T01:53:57.803Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "6aeef3881ecb283bbc6ba1234f37192bd8b965c94bbcd301b2478e604875c103",
-    "promotedRulesCount": 2,
+    "contentHash": "b02676773209cec99dee330199cb4c2c76f912a982ed56308f246430b2352503",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -9641,14 +9642,14 @@
     "officialUrl": "https://github.com/rainbow-me/rainbow",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-30T03:59:34.448Z",
-    "lastVerified": "2026-10-30T03:59:34.448Z",
+    "lastChecked": "2026-11-01T01:54:05.745Z",
+    "lastVerified": "2026-11-01T01:54:05.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rainbow-me-rainbow",
-    "contentHash": "13b88e1a75b7042d385f6300e10828d9d5fbb2a4dc701df37672339c3f0e8733",
-    "promotedRulesCount": 3,
-    "recentFixesCount": 7,
+    "contentHash": "3479eb61aad2de310926a24aa5fdd8acaa6655e27ece6a02defeea2efa7c5491",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

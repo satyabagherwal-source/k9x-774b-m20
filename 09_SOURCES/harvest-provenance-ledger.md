@@ -6791,3 +6791,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-01T01:40:30.178Z |
 | `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `7265166e` | Multi-dimensional audit evidence | 2026-11-01T01:40:30.577Z |
 | `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-01T01:47:02.961Z |
+| `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-01T01:53:59.156Z |
+| `learn-github-rainbow-me-rainbow` | `https://github.com/rainbow-me/rainbow` | `242bfe58` | Multi-dimensional audit evidence | 2026-11-01T01:54:06.461Z |

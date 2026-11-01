@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-Q34L",
-    "timestamp": "2026-10-30T19:42:46.101Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "16fc755f3b81d233756d21a59db147707359660ef21b2388081e3cf393d663f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-WFN0",
-    "timestamp": "2026-10-30T19:47:42.252Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "cfedc6d9f729ce7a7409caf41731783b593248ed90bc740c73dd5b7d58bc39cb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-4Q6Q",
     "timestamp": "2026-10-30T19:54:09.170Z",
     "repository": "QwikDev/qwik",
@@ -7492,6 +7462,36 @@
     "contentHash": "9ab25aac1190cace183c6d93be6aadfc266c70749858227f56e21a7666771f1c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-FBSA",
+    "timestamp": "2026-11-01T01:53:59.146Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+    "contentHash": "b02676773209cec99dee330199cb4c2c76f912a982ed56308f246430b2352503",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261101-FHFD",
+    "timestamp": "2026-11-01T01:54:06.457Z",
+    "repository": "rainbow-me/rainbow",
+    "learningId": "learn-github-rainbow-me-rainbow",
+    "contentHash": "3479eb61aad2de310926a24aa5fdd8acaa6655e27ece6a02defeea2efa7c5491",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
