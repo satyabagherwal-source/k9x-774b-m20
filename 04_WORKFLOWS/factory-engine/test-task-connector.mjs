@@ -75,6 +75,69 @@ try {
 assert(invalidRejected === true, 'Short objective (< 10 chars) is rejected by validator');
 
 // ---------------------------------------------------------------------------
+// TEST 1b: Optional required_capabilities Validation (Milestone D1)
+// ---------------------------------------------------------------------------
+console.log('\n[TEST 1b] Testing Optional required_capabilities Validation (Milestone D1)...');
+
+// 1. Legacy Contract without required_capabilities remains valid
+assert(validContract.required_capabilities === undefined, 'Legacy contract without required_capabilities has undefined field');
+assert(validateTaskContract(validContract).valid === true, 'Legacy contract remains 100% valid');
+
+// 2. Valid required_capabilities accepted
+const contractWithCaps = createTaskContract({
+  task_type: 'FEATURE',
+  objective: 'Implement encrypted secrets vault backup workflow',
+  required_capabilities: ['CAP-DISASTER-RECOVERY-VAULT', 'CAP-AUTHENTICATED-SECRETS-VAULT']
+});
+assert(Array.isArray(contractWithCaps.required_capabilities), 'required_capabilities is attached as array');
+assert(contractWithCaps.required_capabilities.length === 2, 'Contract has 2 required capabilities');
+assert(validateTaskContract(contractWithCaps).valid === true, 'Contract with valid capability IDs passes validation');
+
+// 3. Empty array is valid
+const contractWithEmptyCaps = createTaskContract({
+  task_type: 'FEATURE',
+  objective: 'General maintenance task without specific capabilities',
+  required_capabilities: []
+});
+assert(validateTaskContract(contractWithEmptyCaps).valid === true, 'Contract with empty required_capabilities array passes');
+
+// 4. Non-array type rejected
+const nonArrayContract = { ...validContract, required_capabilities: 'CAP-DISASTER-RECOVERY-VAULT' };
+const nonArrayResult = validateTaskContract(nonArrayContract);
+assert(!nonArrayResult.valid, 'String type instead of array is rejected');
+assert(nonArrayResult.errors.some(e => e.includes('must be an array')), 'Rejection error specifies array requirement');
+
+// 5. Null type rejected
+const nullTypeContract = { ...validContract, required_capabilities: null };
+const nullTypeResult = validateTaskContract(nullTypeContract);
+assert(!nullTypeResult.valid, 'Null type for required_capabilities is rejected');
+
+// 6. Invalid capability ID format rejected (lowercase)
+const invalidFormatContract = { ...validContract, required_capabilities: ['invalid_lowercase_cap'] };
+const invalidFormatResult = validateTaskContract(invalidFormatContract);
+assert(!invalidFormatResult.valid, 'Invalid capability ID pattern (lowercase) is rejected');
+assert(invalidFormatResult.errors.some(e => e.includes('^CAP-[A-Z0-9-]+$')), 'Rejection error notes pattern requirement');
+
+// 7. Non-string element rejected
+const nonStringElementContract = { ...validContract, required_capabilities: [42] };
+const nonStringResult = validateTaskContract(nonStringElementContract);
+assert(!nonStringResult.valid, 'Non-string element in required_capabilities is rejected');
+
+// 8. Empty string element rejected
+const emptyStringContract = { ...validContract, required_capabilities: ['   '] };
+const emptyStringResult = validateTaskContract(emptyStringContract);
+assert(!emptyStringResult.valid, 'Whitespace-only capability ID is rejected');
+
+// 9. Duplicate capability IDs rejected
+const duplicateCapContract = {
+  ...validContract,
+  required_capabilities: ['CAP-DISASTER-RECOVERY-VAULT', 'CAP-DISASTER-RECOVERY-VAULT']
+};
+const duplicateResult = validateTaskContract(duplicateCapContract);
+assert(!duplicateResult.valid, 'Duplicate capability IDs are rejected');
+assert(duplicateResult.errors.some(e => e.includes('duplicate capability ID')), 'Rejection error notes duplicate ID');
+
+// ---------------------------------------------------------------------------
 // TEST 2: Knowledge Context Resolution via Milestone 1 Engine
 // ---------------------------------------------------------------------------
 console.log('\n[TEST 2] Testing Context Resolution via Hybrid Retrieval...');

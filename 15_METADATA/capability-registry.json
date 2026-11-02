@@ -1,0 +1,1379 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-11-02T01:33:00.000Z",
+  "description": "AI-Builder-Brain Canonical Capability Registry — Construction Intelligence Universe",
+  "governingDocument": "AI-Builder-Brain: Final Unified Expansion Plan (TEMP_EXPANSION_MASTER_PLAN.md)",
+  "capabilities": [
+    {
+      "id": "CAP-DISASTER-RECOVERY-VAULT",
+      "name": "Multi-Part Chunked Private Vault Backup & 1-Click Disaster Recovery",
+      "domain": "operations_monitoring_sre",
+      "secondaryDomains": [
+        "testing_reliability",
+        "security_threat_modeling"
+      ],
+      "purpose": "Provides deterministic, multi-part chunked Git bundle snapshots, encrypted secrets, and auxiliary cache archiving to a private GitHub vault with 100% pure remote isolated restore capability.",
+      "scope": {
+        "inScope": [
+          "Atomic Git bundle creation capturing complete commit history and all branches",
+          "Automatic 45MB chunk splitting to strictly comply with GitHub 100MB blob limit",
+          "AES-256-GCM authenticated secrets encryption with PBKDF2-SHA512 KDF",
+          "Auxiliary non-git state packaging (pre-indexed 50MB retrieval cache, circuit breakers, logs)",
+          "Pure remote-to-isolated disaster recovery with 100% SHA-256 manifest parity",
+          "7-Daily, 4-Weekly, 12-Monthly retention management with sole survivor invariant"
+        ],
+        "nonGoals": [
+          "Modifying or rewriting the original main repository history",
+          "Distributing plaintext secrets to remote repositories",
+          "Overwriting active live directories without explicit safety flags"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Local repository root path",
+        "Target GitHub private vault remote URL",
+        "GitHub CLI (gh) authenticated session",
+        "Optional master vault passphrase"
+      ],
+      "requiredKnowledge": [
+        "01_CORE/rules/system-rules.md",
+        "08_VERIFICATION/phase-b-independent-backup-verification.md",
+        "08_VERIFICATION/phase-b-vault-backup-checkpoint.md",
+        "LEARNINGS.md (Rules 1687, 1688, 1689)"
+      ],
+      "relatedCapabilities": [
+        "CAP-AUTHENTICATED-SECRETS-VAULT",
+        "CAP-PROCESS-MUTEX-CONCURRENCY"
+      ],
+      "dependencies": [
+        {
+          "capabilityId": "CAP-AUTHENTICATED-SECRETS-VAULT",
+          "relationship": "REQUIRES",
+          "rationale": "Requires authenticated AES-256-GCM encryption for secrets.enc"
+        },
+        {
+          "capabilityId": "CAP-PROCESS-MUTEX-CONCURRENCY",
+          "relationship": "REQUIRES",
+          "rationale": "Requires process PID mutex locking to prevent race conditions during backup"
+        }
+      ],
+      "rulesConstraints": [
+        "Master Brain origin remote (k9x-774b-m20.git) must remain strictly untouched",
+        "Chunk sizes must not exceed 90MB to guarantee compliance with GitHub 100MB limit",
+        "Must verify all SHA-256 digests before bundle reassembly and git checkout",
+        "Retention engine must never delete the sole surviving snapshot (PRESERVE_SOLE_SURVIVOR)"
+      ],
+      "proceduresWorkflows": [
+        "node 04_WORKFLOWS/factory-engine/vault-backup-engine.mjs",
+        "node scripts/disaster-recovery.mjs --target-dir <isolated_dir>"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0",
+        "git >= 2.40.0",
+        "gh >= 2.30.0",
+        "tar"
+      ],
+      "expectedOutputs": [
+        "snapshots/<snapshot_id>/backup-manifest.json",
+        "snapshots/<snapshot_id>/bundle-parts.json",
+        "snapshots/<snapshot_id>/brain-history.bundle.part*",
+        "snapshots/<snapshot_id>/auxiliary-state.tar.gz",
+        "snapshots/<snapshot_id>/secrets.enc"
+      ],
+      "acceptanceCriteria": [
+        "Git bundle verify passes cleanly on reassembled parts",
+        "Clone from bundle reproduces exact Git HEAD commit",
+        "Restored files match backup-manifest.json with 100% substantive parity",
+        "Zero modifications to live working tree"
+      ],
+      "verificationMethods": [
+        "Automated regression suite: node 04_WORKFLOWS/factory-engine/test-vault-backup-suite.mjs",
+        "Pure remote isolated recovery test: node 04_WORKFLOWS/factory-engine/test-remote-to-isolated-restore.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-vault-backup-suite.mjs",
+          "status": "PASS",
+          "assertionsPassed": 35
+        },
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-remote-to-isolated-restore.mjs",
+          "status": "PASS",
+          "assertionsPassed": 24
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "GitHub HTTPS chunk timeout on slow uplinks (HTTP 408)",
+          "mitigation": "git config http.postBuffer 524288000 (500 MB) configured in vault cache"
+        },
+        {
+          "mode": "execSync ENOBUFS buffer overflow on status check",
+          "mitigation": "maxBuffer: 64 * 1024 * 1024 (64 MB) explicitly set on child process runners"
+        }
+      ],
+      "recoveryProcedures": [
+        "node scripts/disaster-recovery.mjs --restore-to-original --confirm-destructive-overwrite (creates automatic pre-restore safety copy first)"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "04_WORKFLOWS/factory-engine/vault-backup-engine.mjs",
+          "04_WORKFLOWS/factory-engine/vault-restore-verifier.mjs",
+          "08_VERIFICATION/phase-b-independent-backup-verification.md",
+          "08_VERIFICATION/phase-b-vault-backup-checkpoint.md"
+        ],
+        "gitCommit": "ae87da4d3ac0b579d1565369e624e35761f2a5fd",
+        "notes": "Verified in Phase B.12, B.13, and B.14 with 74/74 assertions passing"
+      },
+      "version": "1.3.0",
+      "applicableConditions": [
+        "Windows / Linux / macOS",
+        "Requires authenticated gh CLI access to private vault repo"
+      ],
+      "lastVerificationDate": "2026-11-02T01:03:00.000Z",
+      "relatedLearnings": [
+        "Rule 1687 (Vault Disaster Recovery & Air-Gapped Purity Invariant)",
+        "Rule 1688 (Disaster Recovery Purity & Auxiliary State Dual Verification)",
+        "Rule 1689 (Buffer Overflow Prevention & Concurrency Mutex Defense)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Daily recurring run at 02:00:30 AM is pending natural confirmation on Task Scheduler",
+        "Restore to live directory requires manual --confirm-destructive-overwrite flag"
+      ]
+    },
+    {
+      "id": "CAP-AUTHENTICATED-SECRETS-VAULT",
+      "name": "Authenticated Cryptographic Secrets Encryption & Key Hierarchy",
+      "domain": "security_threat_modeling",
+      "secondaryDomains": [
+        "operations_monitoring_sre"
+      ],
+      "purpose": "Protects sensitive credentials and API keys via authenticated AES-256-GCM encryption with PBKDF2-SHA512 key derivation, eliminating plaintext leakage in repositories.",
+      "scope": {
+        "inScope": [
+          "AES-256-GCM encryption with 12-byte IV and 16-byte authentication tag",
+          "PBKDF2-SHA512 key derivation with 100,000 iterations and 32-byte salt",
+          "Strict verification of authentication tag before returning decrypted buffer",
+          "Hierarchical passphrase resolution (CLI flag, env var, machine entropy fallback)"
+        ],
+        "nonGoals": [
+          "Hardware Security Module (HSM) physical key storage",
+          "Cloud KMS vendor lock-in dependencies"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Plaintext .brain-secrets.json file or string",
+        "Optional custom passphrase or master environment secret"
+      ],
+      "requiredKnowledge": [
+        "04_WORKFLOWS/factory-engine/vault-crypto.mjs",
+        "LEARNINGS.md (Rule 1687)"
+      ],
+      "relatedCapabilities": [
+        "CAP-DISASTER-RECOVERY-VAULT"
+      ],
+      "dependencies": [],
+      "rulesConstraints": [
+        "Plaintext secrets must NEVER be committed to Git or pushed to remote repositories",
+        "Decryption must throw an explicit error on wrong passphrase or tampered ciphertext",
+        "Zero plaintext leakage into console logs or terminal reports"
+      ],
+      "proceduresWorkflows": [
+        "import { encryptSecretsFile, decryptSecretsFile } from './vault-crypto.mjs'"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0 (native crypto module)"
+      ],
+      "expectedOutputs": [
+        "secrets.enc binary payload with 32-byte salt, 12-byte IV, 16-byte tag, and ciphertext"
+      ],
+      "acceptanceCriteria": [
+        "Decrypted data strictly matches original plaintext bytes",
+        "Tampered ciphertext or IV fails AES-256-GCM authentication check",
+        "Wrong passphrase produces explicit authentication failure"
+      ],
+      "verificationMethods": [
+        "Automated cryptographic unit test: test-vault-backup-suite.mjs (Tests 1-3)",
+        "Failure recovery tamper test: test-vault-failure-recovery.mjs (Scenarios 6-7)"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-vault-backup-suite.mjs",
+          "status": "PASS",
+          "assertionsPassed": 7
+        },
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-vault-failure-recovery.mjs",
+          "status": "PASS",
+          "assertionsPassed": 2
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Ciphertext bit tampering or corrupted transmission",
+          "mitigation": "AES-256-GCM 16-byte authentication tag fails, blocking partial corruption"
+        },
+        {
+          "mode": "Missing passphrase in headless environment",
+          "mitigation": "Machine entropy fallback resolves deterministic local key when configured"
+        }
+      ],
+      "recoveryProcedures": [
+        "Provide explicit --passphrase parameter or set BRAIN_VAULT_PASSPHRASE environment variable"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "04_WORKFLOWS/factory-engine/vault-crypto.mjs",
+          "08_VERIFICATION/phase-b-independent-backup-verification.md"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Verified AES-256-GCM roundtrip and auth tag enforcement"
+      },
+      "version": "1.1.0",
+      "applicableConditions": [
+        "All Node.js platforms supporting native node:crypto"
+      ],
+      "lastVerificationDate": "2026-11-02T01:03:00.000Z",
+      "relatedLearnings": [
+        "Rule 1687 (Vault Disaster Recovery & Air-Gapped Purity Invariant)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Passphrase cannot be recovered if master environment secret and passphrase are both lost"
+      ]
+    },
+    {
+      "id": "CAP-PROCESS-MUTEX-CONCURRENCY",
+      "name": "Process PID Mutex Locking with Stale Crash Recovery",
+      "domain": "operating_systems_system_interfaces",
+      "secondaryDomains": [
+        "testing_reliability",
+        "operations_monitoring_sre"
+      ],
+      "purpose": "Guarantees race-free mutual exclusion for long-running batch operations, background daemons, and scheduled tasks using PID tracking and automatic crash-lock eviction.",
+      "scope": {
+        "inScope": [
+          "File-based mutex lock with active PID and ISO-8601 start timestamp",
+          "Detection of stale locks from crashed processes (> 2 hours old or non-existent PID)",
+          "Rejection of secondary concurrent processes with explicit exit code 1",
+          "Automatic clean release of lock in process finally block"
+        ],
+        "nonGoals": [
+          "Distributed multi-datacenter consensus (e.g. Raft, Paxos)",
+          "Replacing database transaction isolation"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Lock file path (e.g. .project-brain/backups/vault-backup.lock)",
+        "Stale lock threshold (default 2 hours)"
+      ],
+      "requiredKnowledge": [
+        "04_WORKFLOWS/factory-engine/vault-backup-engine.mjs",
+        "LEARNINGS.md (Rule 1689)"
+      ],
+      "relatedCapabilities": [
+        "CAP-DISASTER-RECOVERY-VAULT"
+      ],
+      "dependencies": [],
+      "rulesConstraints": [
+        "Only one backup or heavy sync process may execute concurrently",
+        "Active locks must block new processes immediately without corrupting state",
+        "Stale locks from dead PIDs must be automatically purged"
+      ],
+      "proceduresWorkflows": [
+        "acquireProcessLock(lockPath)",
+        "releaseProcessLock(lockPath)"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0 (fs, process)"
+      ],
+      "expectedOutputs": [
+        "Temporary lock file containing { pid, startedAt }",
+        "Clean deletion upon normal exit or graceful termination"
+      ],
+      "acceptanceCriteria": [
+        "Active PID blocks second concurrent process",
+        "Dead PID or expired lock (> 2h) is cleaned up automatically",
+        "Finally block cleans lock file on normal or error exit"
+      ],
+      "verificationMethods": [
+        "Failure recovery test suite: test-vault-failure-recovery.mjs (Scenarios 8-9)"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-vault-failure-recovery.mjs",
+          "status": "PASS",
+          "assertionsPassed": 4
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Hard power cut / OS kill leaving abandoned lock file",
+          "mitigation": "Stale lock eviction checks process.kill(pid, 0) and 2-hour timeout"
+        }
+      ],
+      "recoveryProcedures": [
+        "Manually remove lock file if operator confirms no process is active"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "04_WORKFLOWS/factory-engine/vault-backup-engine.mjs",
+          "04_WORKFLOWS/factory-engine/test-vault-failure-recovery.mjs"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Verified against dead PID 999999 and live process.pid"
+      },
+      "version": "1.0.0",
+      "applicableConditions": [
+        "All operating systems supporting process signal 0 checks"
+      ],
+      "lastVerificationDate": "2026-11-02T01:03:00.000Z",
+      "relatedLearnings": [
+        "Rule 1689 (Buffer Overflow Prevention & Concurrency Mutex Defense)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Stale lock threshold is set to 2 hours; tasks running longer than 2h require lock heartbeating"
+      ]
+    },
+    {
+      "id": "CAP-HYBRID-KNOWLEDGE-RETRIEVAL",
+      "name": "Sub-15ms BM25 Hybrid Knowledge Retrieval & Token Budgeting",
+      "domain": "developer_tools_ides",
+      "secondaryDomains": [
+        "software_architecture",
+        "performance_optimization"
+      ],
+      "purpose": "Enables compatible AI agents to rapidly search, rank, and target verified engineering patterns, core rules, and skills with sub-15ms latency and strict token budgets.",
+      "scope": {
+        "inScope": [
+          "BM25 ranking with customizable k1 and b parameters",
+          "Exact rule targeting (e.g. 'Rule 15', 'Rule 24')",
+          "Strict token budgeting preventing context window overflow",
+          "Pre-computed persistent inverted index in .project-brain/cache/retrieval-index.json",
+          "Inverted index cache invalidation based on source file hash changes"
+        ],
+        "nonGoals": [
+          "Full-text search over arbitrary external non-brain directories",
+          "Heavy remote vector database dependencies (e.g. Pinecone, Weaviate)"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Search query string",
+        "Optional options { maxTokens, domain, exactRuleOnly, customRoot }"
+      ],
+      "requiredKnowledge": [
+        "05_KNOWLEDGE/engineering-patterns.md",
+        "01_CORE/operating-rules.md",
+        "03_SKILLS/",
+        "05_KNOWLEDGE/knowledge-index.json"
+      ],
+      "relatedCapabilities": [
+        "CAP-CANONICAL-TAXONOMY-ROUTING",
+        "CAP-UNIVERSAL-TASK-CONTRACT"
+      ],
+      "dependencies": [
+        {
+          "capabilityId": "CAP-CANONICAL-TAXONOMY-ROUTING",
+          "relationship": "REQUIRES",
+          "rationale": "Requires locked 16-folder taxonomy paths to discover source knowledge"
+        }
+      ],
+      "rulesConstraints": [
+        "Query latency must remain sub-15ms on cached index",
+        "Token budget must strictly truncate responses to prevent LLM context exhaustion",
+        "Cache must re-index automatically when source knowledge files are modified"
+      ],
+      "proceduresWorkflows": [
+        "import { searchBrain, retrieveKnowledge } from './retrieval-engine.mjs'",
+        "const results = searchBrain('Rule 15')"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "{ results: [{ id, title, score, snippet, path }], totalDocuments, latencyMs }"
+      ],
+      "acceptanceCriteria": [
+        "Exact rule lookups rank target rule at position #1",
+        "Corpus covers > 250 engineering rules and skills",
+        "Index building completes in < 2000ms; cached queries execute in < 15ms"
+      ],
+      "verificationMethods": [
+        "Automated retrieval test suite: node 04_WORKFLOWS/factory-engine/test-retrieval-engine.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-retrieval-engine.mjs",
+          "status": "PASS",
+          "assertionsPassed": 14
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Cache index out of sync after manual file edits",
+          "mitigation": "SHA-256 hash comparison against source files triggers auto-rebuild"
+        }
+      ],
+      "recoveryProcedures": [
+        "buildSearchIndex(true) forces complete fresh index regeneration"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "04_WORKFLOWS/factory-engine/retrieval-engine.mjs",
+          "04_WORKFLOWS/factory-engine/test-retrieval-engine.mjs",
+          ".project-brain/cache/retrieval-index.json"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Verified in test-retrieval-engine.mjs and isolated restore tests (8,237 documents healthy)"
+      },
+      "version": "1.2.0",
+      "applicableConditions": [
+        "All Node.js environments with file system access"
+      ],
+      "lastVerificationDate": "2026-11-02T01:03:00.000Z",
+      "relatedLearnings": [
+        "Rule 15 (Trailing slash canonical routing)",
+        "Rule 24 (Multilingual hreflang parity)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Corpus size of 8,251 documents takes ~2.2s on initial cold rebuild from disk before warm cache is established"
+      ]
+    },
+    {
+      "id": "CAP-UNIVERSAL-TASK-CONTRACT",
+      "name": "Universal Task Contract & Pre-Flight Context Enforcement",
+      "domain": "software_architecture",
+      "secondaryDomains": [
+        "evolution_continuous_improvement",
+        "developer_tools_ides"
+      ],
+      "purpose": "Structures, bounds, and verifies coding tasks through pre-flight context checks, risk classification, explicit constraints, and observable completion evidence.",
+      "scope": {
+        "inScope": [
+          "Task Contract generation and validation",
+          "Binding target objectives to specific acceptance criteria",
+          "Pre-flight dependency and environment checks before execution",
+          "Verification proof collection before marking tasks completed"
+        ],
+        "nonGoals": [
+          "Replacing human project management systems (Jira, Linear)",
+          "Executing unvetted shell commands autonomously without safety barriers"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Task objective string",
+        "Target files list",
+        "Acceptance criteria array"
+      ],
+      "requiredKnowledge": [
+        "04_WORKFLOWS/factory-engine/task-contract.mjs",
+        "01_CORE/operating-rules.md"
+      ],
+      "relatedCapabilities": [
+        "CAP-HYBRID-KNOWLEDGE-RETRIEVAL",
+        "CAP-PROJECT-FACTORY-BOOTSTRAP"
+      ],
+      "dependencies": [],
+      "rulesConstraints": [
+        "No task may be marked completed without passing empirical verification tests",
+        "High-risk or destructive actions require explicit human authorization",
+        "Surgical fix principle: change only minimal necessary lines"
+      ],
+      "proceduresWorkflows": [
+        "import { createTaskContract, validateTaskContract } from './task-contract.mjs'"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "Validated Task Contract object and checkpoint record"
+      ],
+      "acceptanceCriteria": [
+        "Valid contracts pass validation schema",
+        "Contracts missing objectives or criteria are rejected",
+        "Execution output matches declared acceptance criteria"
+      ],
+      "verificationMethods": [
+        "Automated task connector test: node 04_WORKFLOWS/factory-engine/test-task-connector.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-task-connector.mjs",
+          "status": "PASS",
+          "assertionsPassed": 29
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Task scope creep or goal drift during multi-step execution",
+          "mitigation": "Strict acceptance criteria enforcement prevents completing until all criteria pass"
+        }
+      ],
+      "recoveryProcedures": [
+        "Roll back to pre-task git checkpoint and re-scope contract"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "04_WORKFLOWS/factory-engine/task-contract.mjs",
+          "04_WORKFLOWS/factory-engine/test-task-connector.mjs"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Verified with 29/29 assertions in isolated sandbox"
+      },
+      "version": "1.1.0",
+      "applicableConditions": [
+        "Any pair-programming or autonomous agent workflow"
+      ],
+      "lastVerificationDate": "2026-11-02T01:03:00.000Z",
+      "relatedLearnings": [
+        "Rule 1670 (Factory Boundary Invariant)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Multi-day asynchronous workflows require external session resumption tokens"
+      ]
+    },
+    {
+      "id": "CAP-PROJECT-FACTORY-BOOTSTRAP",
+      "name": "Project Factory Zero-Copy Environment Scaffolding",
+      "domain": "infrastructure_deployment",
+      "secondaryDomains": [
+        "developer_tools_ides",
+        "software_architecture"
+      ],
+      "purpose": "Initializes certified development environments for new projects by generating 11 mandatory governance files and zero-copy Master Brain bridges without polluting business logic.",
+      "scope": {
+        "inScope": [
+          "Generation of 11 mandatory project-local brain files (PROJECT_CONTEXT.md, etc.)",
+          "Creation of .project-brain/brain-bridge.json zero-copy bridge",
+          "Strict adherence to Rule 1670: Environment bootstrap ONLY, zero product logic generation",
+          "Certification of ENVIRONMENT READY : CERTIFIED status"
+        ],
+        "nonGoals": [
+          "Generating web application pages, UI components, or calculators",
+          "Duplicating Master Brain knowledge files into child repos"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Project directory path",
+        "Project name",
+        "Project architectural profile (Astro, Next.js, Node, etc.)"
+      ],
+      "requiredKnowledge": [
+        "04_WORKFLOWS/factory-engine/project-brain-schemas.mjs",
+        "04_WORKFLOWS/factory-engine/bootstrap.mjs",
+        "LEARNINGS.md (Rule 1670)"
+      ],
+      "relatedCapabilities": [
+        "CAP-CANONICAL-TAXONOMY-ROUTING",
+        "CAP-UNIVERSAL-TASK-CONTRACT"
+      ],
+      "dependencies": [
+        {
+          "capabilityId": "CAP-CANONICAL-TAXONOMY-ROUTING",
+          "relationship": "REQUIRES",
+          "rationale": "Requires knowledge taxonomy to establish proper brain bridge configuration"
+        }
+      ],
+      "rulesConstraints": [
+        "Rule 1670: Project Factory = Environment Initialization Only. Never generate product components.",
+        "Child projects connect via read-only zero-copy bridge",
+        "Bootstrap must stop at ENVIRONMENT READY : CERTIFIED"
+      ],
+      "proceduresWorkflows": [
+        "node 04_WORKFLOWS/factory-engine/bootstrap.mjs --project-dir <path> --profile <id>"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0",
+        "git >= 2.40.0"
+      ],
+      "expectedOutputs": [
+        "11 mandatory project-local brain files",
+        ".project-brain/brain-bridge.json"
+      ],
+      "acceptanceCriteria": [
+        "All 11 mandatory files exist and pass schema checks",
+        "Zero product components generated during bootstrap",
+        "Child repo connects to Master Brain without file duplication"
+      ],
+      "verificationMethods": [
+        "node 04_WORKFLOWS/factory-engine/test-e2e-integration.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-e2e-integration.mjs",
+          "status": "PASS",
+          "assertionsPassed": 18
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Attempting to generate product features during scaffolding",
+          "mitigation": "Schema validator strictly rejects any non-governance component files"
+        }
+      ],
+      "recoveryProcedures": [
+        "Purge non-governance files and re-run bootstrap in strict environment mode"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "04_WORKFLOWS/factory-engine/project-brain-schemas.mjs",
+          "04_WORKFLOWS/factory-engine/bootstrap.mjs"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Verified across onlinefreeprotractor.com and test harness projects"
+      },
+      "version": "1.2.0",
+      "applicableConditions": [
+        "Any fresh or existing child project connecting to AI-Builder-Brain"
+      ],
+      "lastVerificationDate": "2026-11-02T01:03:00.000Z",
+      "relatedLearnings": [
+        "Rule 1670 (Project Factory Boundary Invariant)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Astro and Next.js project profiles supported; mobile frameworks (React Native/Flutter) profiles pending"
+      ]
+    },
+    {
+      "id": "CAP-CANONICAL-TAXONOMY-ROUTING",
+      "name": "16-Folder Canonical Knowledge Taxonomy & Routing",
+      "domain": "content_intelligence_information_architecture",
+      "secondaryDomains": [
+        "legal_compliance",
+        "software_architecture"
+      ],
+      "purpose": "Governs the durable classification, routing, and access policies for all construction intelligence across the 16 locked canonical folders (00_START_HERE through 15_METADATA).",
+      "scope": {
+        "inScope": [
+          "Enforcement of 16 locked canonical folders (00_ to 15_)",
+          "Machine-readable routing destination registry in 15_METADATA/knowledge-taxonomy.json",
+          "Schema format and harvester destination validation",
+          "Prevention of arbitrary root folder proliferation"
+        ],
+        "nonGoals": [
+          "Allowing arbitrary renaming or deletion of canonical folders",
+          "Storing temporary build artifacts in canonical knowledge folders"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "File path and incoming knowledge category"
+      ],
+      "requiredKnowledge": [
+        "15_METADATA/knowledge-taxonomy.json",
+        "01_CORE/rules/system-rules.md"
+      ],
+      "relatedCapabilities": [
+        "CAP-HYBRID-KNOWLEDGE-RETRIEVAL",
+        "CAP-PROJECT-FACTORY-BOOTSTRAP"
+      ],
+      "dependencies": [],
+      "rulesConstraints": [
+        "Canonical 16-folder architecture is permanent and immutable",
+        "Incoming knowledge must route to designated folder per routing_policy",
+        "Untrusted external content must route to 11_INBOX staging first"
+      ],
+      "proceduresWorkflows": [
+        "15_METADATA/knowledge-taxonomy.json inspection and validation"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "Valid routing destination path matching canonical folder schema"
+      ],
+      "acceptanceCriteria": [
+        "All 16 canonical folders exist and contain valid schema files",
+        "Taxonomy JSON validates with 16 distinct folder keys"
+      ],
+      "verificationMethods": [
+        "Automated governance audit: node 04_WORKFLOWS/factory-engine/test-governance-audit.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-governance-audit.mjs",
+          "status": "PASS",
+          "assertionsPassed": 16
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Subagent or script creates arbitrary folder at root (e.g. 'temp/', 'data/')",
+          "mitigation": "Pre-commit and audit hooks flag and reject non-canonical root directories"
+        }
+      ],
+      "recoveryProcedures": [
+        "Re-route files into appropriate canonical folder (e.g. 11_INBOX or .project-brain/cache)"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "15_METADATA/knowledge-taxonomy.json",
+          "08_VERIFICATION/phase-b-independent-backup-verification.md"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Verified across Phase A, B, B.12, B.13, and B.14 audits"
+      },
+      "version": "2.0.0",
+      "applicableConditions": [
+        "Universal across all AI-Builder-Brain operations"
+      ],
+      "lastVerificationDate": "2026-11-02T01:18:00.000Z",
+      "relatedLearnings": [
+        "Rule 1670 (Core Preservation & Knowledge Invariants)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "External repositories containing deep nested non-standard directories must be flattened into canonical taxonomy"
+      ]
+    },
+    {
+      "id": "CAP-PERSISTENT-LEARNING-HARVESTING",
+      "name": "Persistent Engineering Pattern Extraction & Promotion",
+      "domain": "evolution_continuous_improvement",
+      "secondaryDomains": [
+        "software_architecture",
+        "testing_reliability"
+      ],
+      "purpose": "Harvests proven engineering patterns, bug fixes, and architectural invariants from development sessions into persistent dossiers and promotes them to universal rules.",
+      "scope": {
+        "inScope": [
+          "Extraction of verified engineering patterns from forensic autopsies",
+          "Recording in 07_PROJECT_LEARNING/ dossiers with full provenance",
+          "Promotion to 05_KNOWLEDGE/engineering-patterns.md (Rules 1-259+)",
+          "Persistent ledger updates in LEARNINGS.md"
+        ],
+        "nonGoals": [
+          "Promoting unverified guesses or theoretical opinions to universal rules",
+          "Overwriting existing rules without backwards compatibility"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Verified bug fix or architectural implementation",
+        "Empirical test results and evidence logs"
+      ],
+      "requiredKnowledge": [
+        "LEARNINGS.md",
+        "05_KNOWLEDGE/engineering-patterns.md",
+        "07_PROJECT_LEARNING/"
+      ],
+      "relatedCapabilities": [
+        "CAP-CANONICAL-TAXONOMY-ROUTING",
+        "CAP-HYBRID-KNOWLEDGE-RETRIEVAL"
+      ],
+      "dependencies": [
+        {
+          "capabilityId": "CAP-CANONICAL-TAXONOMY-ROUTING",
+          "relationship": "REQUIRES",
+          "rationale": "Requires taxonomy routing to store dossiers in 07_PROJECT_LEARNING"
+        }
+      ],
+      "rulesConstraints": [
+        "Promotion requires empirical test proof and provenance citation",
+        "Rules must be formulated as actionable, testable invariants",
+        "Candidate learnings must not automatically become canonical without verification"
+      ],
+      "proceduresWorkflows": [
+        "node 04_WORKFLOWS/factory-engine/promote-harvested-rules.mjs"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "Dossier in 07_PROJECT_LEARNING/",
+        "Numbered rule in 05_KNOWLEDGE/engineering-patterns.md",
+        "Entry in LEARNINGS.md"
+      ],
+      "acceptanceCriteria": [
+        "Pattern has verified problem, solution, test evidence, and provenance",
+        "Rule is indexed by retrieval engine and searchable"
+      ],
+      "verificationMethods": [
+        "node 04_WORKFLOWS/factory-engine/test-persistent-learning.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-persistent-learning.mjs",
+          "status": "PASS",
+          "assertionsPassed": 12
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Duplicate rule creation for existing known pattern",
+          "mitigation": "Retrieval engine similarity check against existing patterns before promotion"
+        }
+      ],
+      "recoveryProcedures": [
+        "Merge duplicate rules into unified pattern referencing both incident sources"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "LEARNINGS.md",
+          "05_KNOWLEDGE/engineering-patterns.md",
+          "07_PROJECT_LEARNING/"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Rules 1-259+ and Rules 1669-1689 codified with full provenance"
+      },
+      "version": "2.1.0",
+      "applicableConditions": [
+        "All development and bug-fixing sessions"
+      ],
+      "lastVerificationDate": "2026-11-02T01:08:00.000Z",
+      "relatedLearnings": [
+        "Rules 1-259+",
+        "Rules 1669-1689"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Automated de-duplication across similar rules relies on BM25 similarity; semantic embeddings pending Phase F"
+      ]
+    },
+    {
+      "id": "CAP-MULTILINGUAL-SEO-INTELLIGENCE",
+      "name": "54-Locale Multilingual SEO & Trailing-Slash Parity Engine",
+      "domain": "seo_intelligence",
+      "secondaryDomains": [
+        "content_intelligence_information_architecture",
+        "frontend_engineering"
+      ],
+      "purpose": "Guides autonomous construction of high-performance internationalized web products with strict hreflang bidirectional parity, automated sitemaps, and canonical routing invariants.",
+      "scope": {
+        "inScope": [
+          "54-locale internationalization matrix and hreflang reciprocal linking",
+          "Rule 15: Strict canonical trailing-slash parity in SSG edge routing",
+          "Rule 24: Bidirectional hreflang self-referencing alternate link tags",
+          "Rules 79-88: Forensic technical SEO crawlability and indexation verification"
+        ],
+        "nonGoals": [
+          "Black-hat keyword stuffing or cloaking techniques",
+          "Machine translation without human-grade linguistic validation"
+        ]
+      },
+      "status": "VERIFIED WORKING",
+      "inputsPrerequisites": [
+        "Target domain URL",
+        "Supported locale codes array (e.g. en, es, hi, de, ja, fr)"
+      ],
+      "requiredKnowledge": [
+        "03_SKILLS/multilingual-seo-54-locales.md",
+        "03_SKILLS/universal-seo-engineering-and-auditing.md",
+        "05_KNOWLEDGE/engineering-patterns.md (Rules 15, 24, 79-88)"
+      ],
+      "relatedCapabilities": [
+        "CAP-HYBRID-KNOWLEDGE-RETRIEVAL",
+        "CAP-CANONICAL-TAXONOMY-ROUTING"
+      ],
+      "dependencies": [
+        {
+          "capabilityId": "CAP-HYBRID-KNOWLEDGE-RETRIEVAL",
+          "relationship": "REQUIRES",
+          "rationale": "Requires retrieval engine to extract locale-specific SEO patterns"
+        }
+      ],
+      "rulesConstraints": [
+        "Rule 15: Every internal link and canonical tag must match edge server trailing-slash behavior exactly",
+        "Rule 24: Every hreflang annotation must have reciprocal backlink from the target locale page",
+        "Decouple technical 200 OK HTTP readiness from search engine indexability"
+      ],
+      "proceduresWorkflows": [
+        "03_SKILLS/multilingual-seo-54-locales.md playbook",
+        "03_SKILLS/universal-seo-engineering-and-auditing.md audit checklist"
+      ],
+      "requiredToolsInterfaces": [
+        "curl / fetch",
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "Valid sitemap-index.xml and locale sitemaps",
+        "Bidirectional hreflang link tags on all pages",
+        "Zero 301 redirect hops on internal canonical links"
+      ],
+      "acceptanceCriteria": [
+        "All hreflang links resolve to 200 OK without redirects",
+        "x-default fallback tag is correctly assigned",
+        "Trailing slash configuration matches SSG build output"
+      ],
+      "verificationMethods": [
+        "Automated SEO audit: node 04_WORKFLOWS/factory-engine/test-knowledge-application.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-knowledge-application.mjs",
+          "status": "PASS",
+          "assertionsPassed": 8
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Trailing slash mismatch causing 301 redirect chains on internal links",
+          "mitigation": "Enforce Rule 15: append/strip trailing slash globally at build config"
+        },
+        {
+          "mode": "Orphaned locale pages missing reciprocal hreflang alternate tags",
+          "mitigation": "Automated matrix test verifies all 54 locales link to each other"
+        }
+      ],
+      "recoveryProcedures": [
+        "Run hreflang parity validator and update canonical component template"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "03_SKILLS/multilingual-seo-54-locales.md",
+          "05_KNOWLEDGE/engineering-patterns.md",
+          "LEARNINGS.md (Rules 15, 24, 79-88)"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Verified in production on onlinefreeprotractor.com and knowledge tests"
+      },
+      "version": "1.4.0",
+      "applicableConditions": [
+        "All multilingual web applications and Astro SSG projects"
+      ],
+      "lastVerificationDate": "2026-11-02T01:03:00.000Z",
+      "relatedLearnings": [
+        "Rules 15, 24, 79-88"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "54 locales currently verified; right-to-left (RTL) locales (Arabic/Hebrew) styling checklist pending Phase G"
+      ]
+    },
+    {
+      "id": "CAP-CONTINUOUS-CLOUD-HARVESTING",
+      "name": "24/7 Autonomous Background Cloud Harvester",
+      "domain": "evolution_continuous_improvement",
+      "secondaryDomains": [
+        "operations_monitoring_sre"
+      ],
+      "purpose": "Continuously mines open-source software patterns, commits, and releases from GitHub repositories via GitHub Actions on a 20-minute cron schedule.",
+      "scope": {
+        "inScope": [
+          "GitHub Actions autonomous workflow on */20 * * * * cron",
+          "Mining candidate repositories listed in repos.txt",
+          "Circuit breaker rate limit protection (.harvest-locks/ai-key-circuit.json)",
+          "Execution logs in daemon-harvester.log"
+        ],
+        "nonGoals": [
+          "DDoS or abusing GitHub API quotas",
+          "Promoting raw harvested code directly without validation"
+        ]
+      },
+      "status": "PARTIALLY IMPLEMENTED",
+      "inputsPrerequisites": [
+        "repos.txt repository list",
+        "GitHub Actions workflow dispatcher token or cron trigger"
+      ],
+      "requiredKnowledge": [
+        ".github/workflows/24-7-cloud-harvester.yml",
+        "04_WORKFLOWS/factory-engine/local-daemon-harvester.mjs"
+      ],
+      "relatedCapabilities": [
+        "CAP-PERSISTENT-LEARNING-HARVESTING",
+        "CAP-CANONICAL-TAXONOMY-ROUTING"
+      ],
+      "dependencies": [
+        {
+          "capabilityId": "CAP-CANONICAL-TAXONOMY-ROUTING",
+          "relationship": "REQUIRES",
+          "rationale": "Requires taxonomy to route harvested findings into 11_INBOX and 07_PROJECT_LEARNING"
+        }
+      ],
+      "rulesConstraints": [
+        "Must obey GitHub API rate limits and backoff upon receiving 403/429",
+        "Must record harvest locks to avoid concurrent duplicate clones",
+        "Raw harvest data must stage in 11_INBOX before validation"
+      ],
+      "proceduresWorkflows": [
+        "gh workflow run 24-7-cloud-harvester.yml",
+        "node 04_WORKFLOWS/factory-engine/local-daemon-harvester.mjs"
+      ],
+      "requiredToolsInterfaces": [
+        "GitHub Actions",
+        "node >= 18.0.0",
+        "git"
+      ],
+      "expectedOutputs": [
+        "Harvest checkpoints in .project-brain/harvest-checkpoints.json",
+        "Candidate dossiers in 07_PROJECT_LEARNING/"
+      ],
+      "acceptanceCriteria": [
+        "Workflow triggers automatically every 20 minutes",
+        "Checkpoints record last processed commit SHA"
+      ],
+      "verificationMethods": [
+        "node 04_WORKFLOWS/factory-engine/test-end-to-end-harvest.mjs"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-end-to-end-harvest.mjs",
+          "status": "PARTIAL",
+          "assertionsPassed": 6
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "GitHub API secondary rate limit reached",
+          "mitigation": "Master circuit breaker pauses harvesting until window resets"
+        }
+      ],
+      "recoveryProcedures": [
+        "Check .harvest-locks/master-circuit-breaker.json and restart daemon"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          ".github/workflows/24-7-cloud-harvester.yml",
+          "04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Cron schedule intact and active; full 10,000 repo scaling planned for Phase E"
+      },
+      "version": "1.0.0",
+      "applicableConditions": [
+        "GitHub Actions environment with network access"
+      ],
+      "lastVerificationDate": "2026-11-02T01:18:00.000Z",
+      "relatedLearnings": [
+        "Rules 1679-1686 (Cloud Harvesting Verification)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "Scaling to 10,000 repositories requires prioritized queue and multi-token rotation (planned for Phase E)"
+      ]
+    },
+    {
+      "id": "CAP-ACCESSIBILITY-COMPLIANCE-AUDIT",
+      "name": "Automated WCAG 2.1 AA Accessibility & Contrast Auditing",
+      "domain": "accessibility_a11y",
+      "secondaryDomains": [
+        "frontend_engineering",
+        "testing_reliability"
+      ],
+      "purpose": "Audits digital construction components for WCAG 2.1 AA compliance, including 4.5:1 text contrast ratios, ARIA role hierarchies, and keyboard navigation.",
+      "scope": {
+        "inScope": [
+          "Color contrast verification (4.5:1 for normal text, 3:1 for large text)",
+          "ARIA landmark and label hierarchy checking",
+          "Keyboard focus indicator and tabindex validation"
+        ],
+        "nonGoals": [
+          "Manual human screen-reader usability testing"
+        ]
+      },
+      "status": "PRESENT BUT UNVERIFIED",
+      "inputsPrerequisites": [
+        "Component HTML/CSS markup or rendered page URL"
+      ],
+      "requiredKnowledge": [
+        "03_SKILLS/beginner-coder-pair-programming.md"
+      ],
+      "relatedCapabilities": [
+        "CAP-HEADLESS-BROWSER-VERIFICATION"
+      ],
+      "dependencies": [],
+      "rulesConstraints": [
+        "All interactive controls must have accessible names and focus rings"
+      ],
+      "proceduresWorkflows": [
+        "03_SKILLS a11y checklist execution"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "Accessibility audit report with pass/fail per WCAG criterion"
+      ],
+      "acceptanceCriteria": [
+        "Zero contrast ratio violations < 4.5:1",
+        "All buttons and links have visible focus states"
+      ],
+      "verificationMethods": [
+        "Automated a11y audit suite (scheduled for Phase G)"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-a11y-audit.mjs",
+          "status": "NOT RUN",
+          "assertionsPassed": 0
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Low contrast placeholder text or subtle disabled states",
+          "mitigation": "Automated contrast formula flags colors below threshold"
+        }
+      ],
+      "recoveryProcedures": [
+        "Adjust color hex code to compliant contrast value"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "03_SKILLS/beginner-coder-pair-programming.md"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Skill documentation present; formal automated runtime test suite pending Phase G"
+      },
+      "version": "0.5.0",
+      "applicableConditions": [
+        "Frontend applications with HTML/CSS interfaces"
+      ],
+      "lastVerificationDate": "2026-11-02T01:30:00.000Z",
+      "relatedLearnings": [],
+      "knownGapsUnresolvedQuestions": [
+        "Automated test runner in factory-engine pending implementation in Phase G"
+      ]
+    },
+    {
+      "id": "CAP-HEADLESS-BROWSER-VERIFICATION",
+      "name": "Zero-Dependency Headless Layout & Performance Verification",
+      "domain": "testing_reliability",
+      "secondaryDomains": [
+        "frontend_engineering",
+        "performance_optimization"
+      ],
+      "purpose": "Verifies layout stability, Cumulative Layout Shift (CLS), and DOM integrity without external browser automation bloat.",
+      "scope": {
+        "inScope": [
+          "HTML/CSS layout dimension validation",
+          "Prevention of layout shifts during font and asset loading"
+        ],
+        "nonGoals": [
+          "Full cross-browser Selenium/Puppeteer matrix execution"
+        ]
+      },
+      "status": "PRESENT BUT UNVERIFIED",
+      "inputsPrerequisites": [
+        "Rendered HTML markup and viewport dimensions"
+      ],
+      "requiredKnowledge": [
+        "03_SKILLS/zero-dependency-headless-renderer.md"
+      ],
+      "relatedCapabilities": [
+        "CAP-ACCESSIBILITY-COMPLIANCE-AUDIT"
+      ],
+      "dependencies": [],
+      "rulesConstraints": [
+        "Zero external binary dependencies where lightweight Node checks suffice"
+      ],
+      "proceduresWorkflows": [
+        "03_SKILLS/zero-dependency-headless-renderer.md"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "Layout shift and DOM tree verification report"
+      ],
+      "acceptanceCriteria": [
+        "CLS < 0.1 on initial load",
+        "DOM elements render within viewport boundaries"
+      ],
+      "verificationMethods": [
+        "Automated headless layout test (scheduled for Phase G)"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-headless-renderer.mjs",
+          "status": "NOT RUN",
+          "assertionsPassed": 0
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Images missing width/height attributes causing layout shifts",
+          "mitigation": "Automated HTML parser enforces explicit dimension attributes"
+        }
+      ],
+      "recoveryProcedures": [
+        "Inject explicit width and height attributes on img/svg tags"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "03_SKILLS/zero-dependency-headless-renderer.md"
+        ],
+        "gitCommit": "a208fdbb93ef8bc27d3ecbd73e2eeab9bb02a1ac",
+        "notes": "Specification present in 03_SKILLS; automated test harness planned for Phase G"
+      },
+      "version": "0.5.0",
+      "applicableConditions": [
+        "Frontend web applications"
+      ],
+      "lastVerificationDate": "2026-11-02T01:30:00.000Z",
+      "relatedLearnings": [],
+      "knownGapsUnresolvedQuestions": [
+        "Headless browser layout harness pending Phase G"
+      ]
+    },
+    {
+      "id": "CAP-INTERNET-SCALE-REPO-DISCOVERY",
+      "name": "10,000 GitHub Repository Multi-Dimensional Catalog & Scoring",
+      "domain": "evolution_continuous_improvement",
+      "secondaryDomains": [
+        "developer_tools_ides",
+        "software_architecture"
+      ],
+      "purpose": "Maintains an indexed catalog of 10,000 top open-source repositories classified by domain, architecture, testing rigor, and documentation quality to guide autonomous knowledge harvesting.",
+      "scope": {
+        "inScope": [
+          "Structured multi-dimensional catalog (ID, URL, domain, architecture, license)",
+          "Health scoring based on test suites, documentation, and active maintenance",
+          "Prioritization queue feeding the batch harvesting pipeline"
+        ],
+        "nonGoals": [
+          "Harvesting uncurated spam or abandoned low-quality repositories"
+        ]
+      },
+      "status": "MISSING",
+      "inputsPrerequisites": [
+        "Curated list of 10,000 candidate repository URLs"
+      ],
+      "requiredKnowledge": [
+        "TEMP_EXPANSION_MASTER_PLAN.md (भाग 5 — 10,000 GitHub Repositories Program)"
+      ],
+      "relatedCapabilities": [
+        "CAP-CONTINUOUS-CLOUD-HARVESTING"
+      ],
+      "dependencies": [
+        {
+          "capabilityId": "CAP-CONTINUOUS-CLOUD-HARVESTING",
+          "relationship": "EXTENDS",
+          "rationale": "Scales single-repo harvesting into a 10,000 repository prioritized fleet"
+        }
+      ],
+      "rulesConstraints": [
+        "Selection based on code quality and architectural clarity, not stars alone"
+      ],
+      "proceduresWorkflows": [
+        "Pipeline implementation planned for Phase E"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0",
+        "GitHub GraphQL API"
+      ],
+      "expectedOutputs": [
+        "15_METADATA/repository-discovery-catalog.json"
+      ],
+      "acceptanceCriteria": [
+        "10,000 repositories tagged across all 20 construction intelligence domains"
+      ],
+      "verificationMethods": [
+        "Catalog validation test suite (Phase E)"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-repo-catalog.mjs",
+          "status": "NOT RUN",
+          "assertionsPassed": 0
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Repository deleted, made private, or renamed",
+          "mitigation": "Automated 404 detector quarantines dead repos (Rule 1669)"
+        }
+      ],
+      "recoveryProcedures": [
+        "Replace dead repository with alternative reference implementation in same domain"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "TEMP_EXPANSION_MASTER_PLAN.md"
+        ],
+        "notes": "Formally defined in Master Plan Phase E; not yet implemented"
+      },
+      "version": "0.1.0",
+      "applicableConditions": [
+        "Planned for Phase E"
+      ],
+      "lastVerificationDate": "2026-11-02T01:30:00.000Z",
+      "relatedLearnings": [
+        "Rule 1669 (Quarantine terminal 404 targets to prevent fleet starvation)"
+      ],
+      "knownGapsUnresolvedQuestions": [
+        "10,000 repository catalog generation and scoring engine planned for Phase E"
+      ]
+    },
+    {
+      "id": "CAP-AUTOMATED-LEGAL-LICENSE-AUDIT",
+      "name": "Autonomous Open-Source License Compatibility & Compliance Checker",
+      "domain": "legal_compliance",
+      "secondaryDomains": [
+        "software_architecture",
+        "governance_compliance"
+      ],
+      "purpose": "Audits open-source licenses (GPL, AGPL, MIT, Apache 2.0, BSD) of candidate dependencies and harvested code to prevent viral licensing contamination or copyright infringement.",
+      "scope": {
+        "inScope": [
+          "SPDX identifier parsing and classification",
+          "Matrix check for compatibility with permissive commercial distribution",
+          "Rejection of viral copyleft licenses (GPLv3/AGPL) in commercial project contexts"
+        ],
+        "nonGoals": [
+          "Providing formal legal counsel or legal advice"
+        ]
+      },
+      "status": "MISSING",
+      "inputsPrerequisites": [
+        "Repository or package LICENSE file text",
+        "Target product commercial license policy"
+      ],
+      "requiredKnowledge": [
+        "TEMP_EXPANSION_MASTER_PLAN.md (भाग 10 — Universal Quality & Compliance Registry)"
+      ],
+      "relatedCapabilities": [
+        "CAP-CANONICAL-TAXONOMY-ROUTING"
+      ],
+      "dependencies": [],
+      "rulesConstraints": [
+        "External code under viral copyleft must never be incorporated into proprietary child repos"
+      ],
+      "proceduresWorkflows": [
+        "Compliance auditor pipeline planned for Phase J"
+      ],
+      "requiredToolsInterfaces": [
+        "node >= 18.0.0"
+      ],
+      "expectedOutputs": [
+        "License compatibility audit report with clear APPROVE/REJECT status"
+      ],
+      "acceptanceCriteria": [
+        "Correctly flags license incompatibilities and copyright risks"
+      ],
+      "verificationMethods": [
+        "License compliance test suite (Phase J)"
+      ],
+      "testReferences": [
+        {
+          "testPath": "04_WORKFLOWS/factory-engine/test-license-audit.mjs",
+          "status": "NOT RUN",
+          "assertionsPassed": 0
+        }
+      ],
+      "knownFailureModes": [
+        {
+          "mode": "Dual-licensed or ambiguous license terms",
+          "mitigation": "Flag as UNRESOLVED and require human compliance review"
+        }
+      ],
+      "recoveryProcedures": [
+        "Exclude package and replace with clean MIT/Apache-2.0 alternative"
+      ],
+      "evidenceProvenance": {
+        "verifiedArtifacts": [
+          "TEMP_EXPANSION_MASTER_PLAN.md"
+        ],
+        "notes": "Formally defined in Master Plan Phase J; not yet implemented"
+      },
+      "version": "0.1.0",
+      "applicableConditions": [
+        "Planned for Phase J"
+      ],
+      "lastVerificationDate": "2026-11-02T01:30:00.000Z",
+      "relatedLearnings": [],
+      "knownGapsUnresolvedQuestions": [
+        "SPDX license compatibility matrix engine planned for Phase J"
+      ]
+    }
+  ]
+}

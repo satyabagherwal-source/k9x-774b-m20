@@ -1,0 +1,206 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "AI-Builder-Brain Capability Schema",
+  "description": "Canonical schema governing capabilities in the AI-Builder-Brain Construction Intelligence System",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "domain",
+    "purpose",
+    "scope",
+    "status",
+    "inputsPrerequisites",
+    "requiredKnowledge",
+    "dependencies",
+    "rulesConstraints",
+    "proceduresWorkflows",
+    "requiredToolsInterfaces",
+    "expectedOutputs",
+    "acceptanceCriteria",
+    "verificationMethods",
+    "testReferences",
+    "knownFailureModes",
+    "recoveryProcedures",
+    "evidenceProvenance",
+    "version",
+    "lastVerificationDate",
+    "knownGapsUnresolvedQuestions"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^CAP-[A-Z0-9-]+$",
+      "description": "Unique, stable capability identifier (e.g. CAP-DISASTER-RECOVERY-VAULT)"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Descriptive human-readable name of the capability"
+    },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "programming_languages",
+        "software_architecture",
+        "frontend_engineering",
+        "backend_engineering",
+        "databases",
+        "infrastructure_deployment",
+        "operating_systems_system_interfaces",
+        "developer_tools_ides",
+        "testing_reliability",
+        "security_threat_modeling",
+        "product_intelligence_ux",
+        "design_art_typography_design_systems",
+        "creative_intelligence_originality",
+        "content_intelligence_information_architecture",
+        "seo_intelligence",
+        "accessibility_a11y",
+        "performance_optimization",
+        "legal_compliance",
+        "operations_monitoring_sre",
+        "evolution_continuous_improvement",
+        "future_versioned_domains"
+      ],
+      "description": "Primary domain from the 20 Construction Intelligence Universe domains"
+    },
+    "secondaryDomains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Secondary related domains"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 10,
+      "description": "Clear statement of what this capability helps a compatible AI accomplish"
+    },
+    "scope": {
+      "type": "object",
+      "required": ["inScope", "nonGoals"],
+      "properties": {
+        "inScope": { "type": "array", "items": { "type": "string" } },
+        "nonGoals": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "VERIFIED WORKING",
+        "PARTIALLY IMPLEMENTED",
+        "PRESENT BUT UNVERIFIED",
+        "MISSING"
+      ],
+      "description": "Rigorous implementation and verification state"
+    },
+    "inputsPrerequisites": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requiredKnowledge": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "relatedCapabilities": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["capabilityId", "relationship"],
+        "properties": {
+          "capabilityId": { "type": "string" },
+          "relationship": {
+            "type": "string",
+            "enum": ["REQUIRES", "RECOMMENDS", "CONFLICTS_WITH", "SUPERSEDES", "EXTENDS"]
+          },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+    "rulesConstraints": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "proceduresWorkflows": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "requiredToolsInterfaces": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "expectedOutputs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "acceptanceCriteria": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "verificationMethods": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "testReferences": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["testPath", "status"],
+        "properties": {
+          "testPath": { "type": "string" },
+          "status": { "type": "string", "enum": ["PASS", "FAIL", "NOT RUN", "PARTIAL"] },
+          "assertionsPassed": { "type": "integer" }
+        }
+      }
+    },
+    "knownFailureModes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["mode", "mitigation"],
+        "properties": {
+          "mode": { "type": "string" },
+          "mitigation": { "type": "string" }
+        }
+      }
+    },
+    "recoveryProcedures": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "evidenceProvenance": {
+      "type": "object",
+      "required": ["verifiedArtifacts"],
+      "properties": {
+        "verifiedArtifacts": { "type": "array", "items": { "type": "string" } },
+        "gitCommit": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "applicableConditions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "lastVerificationDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "relatedLearnings": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "knownGapsUnresolvedQuestions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Explicit list of known gaps, limitations, and unresolved questions"
+    }
+  }
+}
+

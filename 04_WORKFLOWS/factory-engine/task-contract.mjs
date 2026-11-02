@@ -11,6 +11,8 @@
 
 import crypto from 'crypto';
 
+export const CAPABILITY_ID_REGEX = /^CAP-[A-Z0-9-]+$/;
+
 export const TASK_TYPES = [
   'MICRO_FIX',
   'FEATURE',
@@ -181,6 +183,26 @@ export function validateTaskContract(contract) {
     errors.push('task_profile must be an object representing task dimensions.');
   }
 
+  // 10. Required Capabilities (if specified — Milestone D1)
+  if (contract.required_capabilities !== undefined) {
+    if (!Array.isArray(contract.required_capabilities)) {
+      errors.push('required_capabilities must be an array of capability ID strings.');
+    } else {
+      const seenCapIds = new Set();
+      contract.required_capabilities.forEach((capId, idx) => {
+        if (typeof capId !== 'string' || capId.trim() === '') {
+          errors.push(`required_capabilities[${idx}] must be a non-empty string.`);
+        } else if (!CAPABILITY_ID_REGEX.test(capId)) {
+          errors.push(`required_capabilities[${idx}] '${capId}' is invalid. Must match pattern ^CAP-[A-Z0-9-]+$`);
+        } else if (seenCapIds.has(capId)) {
+          errors.push(`required_capabilities contains duplicate capability ID: '${capId}'.`);
+        } else {
+          seenCapIds.add(capId);
+        }
+      });
+    }
+  }
+
   return {
     valid: errors.length === 0,
     errors
@@ -265,6 +287,8 @@ export function createTaskContract(options = {}) {
     },
 
     knowledge_applications: options.knowledge_applications || [],
+
+    ...(options.required_capabilities !== undefined ? { required_capabilities: options.required_capabilities } : {}),
 
     verification_results: {
       verified: false,

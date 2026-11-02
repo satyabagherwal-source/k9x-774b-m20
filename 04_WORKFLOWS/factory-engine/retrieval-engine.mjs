@@ -36,6 +36,7 @@ export function getRetrievalPaths(customRoot = null) {
     skillsDir: path.join(root, '03_SKILLS'),
     knowledgeIndexFile: path.join(root, '05_KNOWLEDGE', 'knowledge-index.json'),
     learningDir: path.join(root, '07_PROJECT_LEARNING'),
+    capabilityRegistryFile: path.join(root, '15_METADATA', 'capability-registry.json'),
     cacheDir: path.join(root, '.project-brain', 'cache'),
     cacheIndexFile: path.join(root, '.project-brain', 'cache', 'retrieval-index.json')
   };
@@ -81,6 +82,7 @@ export function computeSourceFilesHash(customRoot = null) {
   if (fs.existsSync(p.patternsFile)) hash.update(fs.statSync(p.patternsFile).mtimeMs.toString());
   if (fs.existsSync(p.coreRulesFile)) hash.update(fs.statSync(p.coreRulesFile).mtimeMs.toString());
   if (fs.existsSync(p.knowledgeIndexFile)) hash.update(fs.statSync(p.knowledgeIndexFile).mtimeMs.toString());
+  if (p.capabilityRegistryFile && fs.existsSync(p.capabilityRegistryFile)) hash.update(fs.statSync(p.capabilityRegistryFile).mtimeMs.toString());
   if (fs.existsSync(p.skillsDir)) {
     try {
       const skills = fs.readdirSync(p.skillsDir).filter(f => f.endsWith('.md'));
@@ -388,6 +390,38 @@ export function parseKnowledgeIndex(customPathsOrRoot = null) {
 /**
  * Resolves a historical or canonical knowledge ID through the aliases dictionary
  */
+/**
+ * Parses 15_METADATA/capability-registry.json into discrete capability documents
+ */
+export function parseCapabilities(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const regPath = p.capabilityRegistryFile || path.join(p.brainRoot, '15_METADATA', 'capability-registry.json');
+  if (!fs.existsSync(regPath)) return [];
+  try {
+    const raw = fs.readFileSync(regPath, 'utf-8');
+    const data = JSON.parse(raw);
+    const caps = data.capabilities || [];
+    const docs = [];
+    for (const c of caps) {
+      const summary = `[${c.status}] ${c.name} (${c.domain}): ${c.purpose}`;
+      const fullContent = `## ${c.id} — ${c.name}\n\n- Domain: ${c.domain}\n- Status: ${c.status}\n- Purpose: ${c.purpose}\n- Scope: ${(c.scope?.inScope || []).join('; ')}\n- Rules: ${(c.rulesConstraints || []).join('; ')}\n- Tests: ${(c.testReferences || []).map(t => t.testPath + ' (' + t.status + ')').join(', ')}`;
+      docs.push({
+        id: c.id,
+        title: `${c.id}: ${c.name}`,
+        category: 'CAPABILITY',
+        filePath: '15_METADATA/capability-registry.json',
+        lineRange: [1, 100],
+        summary,
+        fullContent,
+        tokens: tokenize(`${c.id} ${c.name} ${c.domain} ${c.purpose} ${(c.scope?.inScope || []).join(' ')} ${c.status} capability`)
+      });
+    }
+    return docs;
+  } catch (e) {
+    return [];
+  }
+}
+
 export function resolveAlias(id, maxHops = 3) {
   if (!fs.existsSync(KNOWLEDGE_INDEX_FILE)) return id;
   try {
@@ -445,7 +479,8 @@ export function buildSearchIndex(forceRebuild = false, customRoot = null) {
   const skillDocs = parseSkills(customRoot);
   const indexDocs = parseKnowledgeIndex(p);
 
-  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs];
+  const capabilityDocs = parseCapabilities(customRoot);
+  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs, ...capabilityDocs];
   const N = documents.length;
 
   let totalDocLength = 0;
