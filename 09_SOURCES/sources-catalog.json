@@ -3353,10 +3353,10 @@
     "repository": "SeekStorm/SeekStorm",
     "platform": "github",
     "sourceUrl": "https://github.com/SeekStorm/SeekStorm",
-    "sourceVersion": "8602a9e3",
+    "sourceVersion": "2b0847bf",
     "license": "Apache-2.0",
-    "contentHash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
-    "lastHarvestedAt": "2026-10-31T13:06:49.262Z",
+    "contentHash": "d011de825f3a8dc068ef6a9640c07b9fb10a73cac2ddb22536bb050e7f467964",
+    "lastHarvestedAt": "2026-11-02T16:04:59.411Z",
     "learningId": "learn-github-seekstorm-seekstorm"
   },
   "serafimcloud-21st": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "504c487e",
+    "sourceVersion": "9d35eddd",
     "license": "Apache-2.0",
-    "contentHash": "c7f94d8303f0310ce5aacfafee72a8ab5b3e72fadf9db30623daba3f76f991bf",
-    "lastHarvestedAt": "2026-10-30T22:27:32.020Z",
+    "contentHash": "9ab95497d4829ed545580fec4d61593aa5d0da0d660df09d0c5e3a556b2d8c43",
+    "lastHarvestedAt": "2026-11-02T16:04:55.854Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {

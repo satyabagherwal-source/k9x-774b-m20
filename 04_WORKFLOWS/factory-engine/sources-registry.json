@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T15:57:32.452Z",
-    "lastVerified": "2026-11-02T15:57:32.452Z",
+    "lastChecked": "2026-11-02T16:05:01.942Z",
+    "lastVerified": "2026-11-02T16:05:01.942Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -221,9 +221,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-01T00:42:39.082Z",
+    "lastChecked": "2026-11-02T16:04:51.841Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-01T00:42:39.082Z"
+    "lastVerified": "2026-11-02T16:04:51.841Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -431,8 +431,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T15:29:43.478Z",
-    "lastVerified": "2026-11-02T15:29:43.478Z",
+    "lastChecked": "2026-11-02T16:04:57.131Z",
+    "lastVerified": "2026-11-02T16:04:57.131Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -3729,14 +3729,14 @@
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T13:06:49.011Z",
-    "lastVerified": "2026-10-31T13:06:49.011Z",
+    "lastChecked": "2026-11-02T16:04:58.458Z",
+    "lastVerified": "2026-11-02T16:04:58.458Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
+    "contentHash": "d011de825f3a8dc068ef6a9640c07b9fb10a73cac2ddb22536bb050e7f467964",
     "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5214,22 +5214,21 @@
     "lastVerified": "2026-10-31T10:33:50.283Z"
   },
   "crossplane-crossplane": {
-    "name": "crossplane",
+    "name": "crossplane/crossplane",
     "officialUrl": "https://github.com/crossplane/crossplane",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T13:47:14.855Z",
-    "lastVerified": "2026-10-31T13:47:14.855Z",
+    "lastChecked": "2026-11-02T16:04:53.990Z",
+    "lastVerified": "2026-11-02T16:04:53.990Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "c7f94d8303f0310ce5aacfafee72a8ab5b3e72fadf9db30623daba3f76f991bf",
+    "contentHash": "9ab95497d4829ed545580fec4d61593aa5d0da0d660df09d0c5e3a556b2d8c43",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "504c487e"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sfu-db-connector-x": {
     "name": "sfu-db/connector-x",
@@ -5326,9 +5325,9 @@
   "mlua-rs-mlua": {
     "name": "mlua",
     "officialUrl": "https://github.com/mlua-rs/mlua",
-    "lastChecked": "2026-10-31T09:46:52.357Z",
+    "lastChecked": "2026-11-02T16:04:42.909Z",
     "revisionIdentifier": "ff96ed78",
-    "lastVerified": "2026-10-31T09:46:52.357Z"
+    "lastVerified": "2026-11-02T16:04:42.909Z"
   },
   "hf-aleph-alpha-kolibri-1": {
     "name": "Aleph-Alpha/Kolibri-1",
@@ -9008,9 +9007,9 @@
   "seo-skills-seo-audit-skill": {
     "name": "seo-audit-skill",
     "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
-    "lastChecked": "2026-10-29T11:56:16.781Z",
+    "lastChecked": "2026-11-02T16:04:44.389Z",
     "revisionIdentifier": "fac4b75f20",
-    "lastVerified": "2026-10-29T11:56:16.781Z"
+    "lastVerified": "2026-11-02T16:04:44.389Z"
   },
   "vanniktech-gradle-maven-publish-plugin": {
     "name": "vanniktech/gradle-maven-publish-plugin",
@@ -9929,9 +9928,9 @@
   "touchlab-droidconkotlin": {
     "name": "DroidconKotlin",
     "officialUrl": "https://github.com/touchlab/DroidconKotlin",
-    "lastChecked": "2026-10-30T06:16:30.300Z",
+    "lastChecked": "2026-11-02T16:04:46.858Z",
     "revisionIdentifier": "27f3e87c",
-    "lastVerified": "2026-10-30T06:16:30.300Z"
+    "lastVerified": "2026-11-02T16:04:46.858Z"
   },
   "m0ntydad0n-pseo-engine-oss": {
     "name": "pseo-engine-oss",

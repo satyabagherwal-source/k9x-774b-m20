@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T15:57:29.849Z",
+  "last_updated": "2026-11-02T16:04:59.319Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -8447,8 +8447,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "504c487e",
-      "content_hash": "c7f94d8303f0310ce5aacfafee72a8ab5b3e72fadf9db30623daba3f76f991bf",
+      "source_version": "9d35eddd",
+      "content_hash": "9ab95497d4829ed545580fec4d61593aa5d0da0d660df09d0c5e3a556b2d8c43",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -8466,6 +8466,11 @@
           "number": 5921,
           "title": "apis): migrate to apimachinery's SchemeBuilder",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6448,
+          "title": "Merge pull request #8006 from haarchri/feature/add-drc-shortname",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -8473,7 +8478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T22:27:31.916Z",
+      "verified_at": "2026-11-02T16:04:55.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -50619,8 +50624,8 @@
       "slug": "seekstorm-seekstorm",
       "platform": "github",
       "source_url": "https://github.com/SeekStorm/SeekStorm",
-      "source_version": "8602a9e3",
-      "content_hash": "3dbafd230c17e5d530b8da2698c640584b667cdf197caa186af75ebe15d4aa67",
+      "source_version": "2b0847bf",
+      "content_hash": "d011de825f3a8dc068ef6a9640c07b9fb10a73cac2ddb22536bb050e7f467964",
       "dossier_path": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md",
       "promoted_rules": [
@@ -50640,7 +50645,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:06:49.165Z",
+      "verified_at": "2026-11-02T16:04:59.291Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167064,6 +167069,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T15:57:29.836Z"
+    },
+    "rule-6448": {
+      "learning_id": "rule-6448",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6448,
+      "title": "Merge pull request #8006 from haarchri/feature/add-drc-shortname",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "9d35eddd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:04:55.757Z"
     }
   },
   "aliases": {

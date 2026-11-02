@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T15:57:29.923Z",
-  "total_cycles_completed": 6808,
-  "total_learnings_persisted": 6808,
-  "total_rules_promoted": 6457,
+  "last_updated": "2026-11-02T16:04:59.417Z",
+  "total_cycles_completed": 6810,
+  "total_learnings_persisted": 6810,
+  "total_rules_promoted": 6458,
   "history": [
-    {
-      "timestamp": "2026-10-31T16:20:24.598Z",
-      "repository": "microsoft/react-native-windows",
-      "learningId": "learn-github-microsoft-react-native-windows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:27:11.612Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T16:27:15.177Z",
       "repository": "CrossPaste/crosspaste-desktop",
@@ -1403,6 +1389,20 @@
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:04:55.859Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:04:59.417Z",
+      "repository": "SeekStorm/SeekStorm",
+      "learningId": "learn-github-seekstorm-seekstorm",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

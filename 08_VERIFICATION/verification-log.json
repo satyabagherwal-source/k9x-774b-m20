@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-HBLP",
-    "timestamp": "2026-10-30T21:55:55.261Z",
-    "repository": "electron/electron",
-    "learningId": "learn-github-electron-electron",
-    "contentHash": "1ecda6003c472b79564e8ade8d3d85336024165e2ab7dfb79f4586a33a94a518",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-QWNQ",
-    "timestamp": "2026-10-30T22:03:22.454Z",
-    "repository": "aws/aws-cdk",
-    "learningId": "learn-github-aws-aws-cdk",
-    "contentHash": "ccfbf5c92491151f57a4675b4469ad7836ea90ef73b6c5db6e7e43634e50402a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-R2TC",
     "timestamp": "2026-10-30T22:03:30.432Z",
     "repository": "rmax/scrapy-redis",
@@ -7492,6 +7462,36 @@
     "contentHash": "945915574a586c0415708e1ec810ee849677f908e4e7b9af84002f19098b47cf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-9I23",
+    "timestamp": "2026-11-02T16:04:55.851Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "9ab95497d4829ed545580fec4d61593aa5d0da0d660df09d0c5e3a556b2d8c43",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-9KSW",
+    "timestamp": "2026-11-02T16:04:59.408Z",
+    "repository": "SeekStorm/SeekStorm",
+    "learningId": "learn-github-seekstorm-seekstorm",
+    "contentHash": "d011de825f3a8dc068ef6a9640c07b9fb10a73cac2ddb22536bb050e7f467964",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

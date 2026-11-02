@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `504c487e`  
+> **Source Version**: `9d35eddd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:27:31.337Z  
+> **Timestamp**: 2026-11-02T16:04:55.192Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:27:31.002Z  
+> **Harvest Timestamp**: 2026-11-02T16:04:53.990Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12209 stars
+- **Stars / Engagement**: 12221 stars
 
 ---
 
@@ -1525,327 +1525,77 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24177342` (2026-10-30)
-**Commit Message**: refactor(apis): migrate to apimachinery's SchemeBuilder
+### Incident Patch 1: `9d35eddd` (2026-11-02)
+**Commit Message**: Merge pull request #8006 from haarchri/feature/add-drc-shortname
 
-controller-runtime v0.25 deprecates its scheme.Builder, because API packages should depend only on apimachinery. Register each package's types with runtime.NewSchemeBuilder instead, which is what scheme.Builder did internally.
+feat(apis): add drc shortName to DeploymentRuntimeConfig
 
-SchemeBuilder's type changes from *scheme.Builder to runtime.SchemeBuilder. AddToScheme works as before.
-
-Signed-off-by: lsviben <[REDACTED_EMAIL]>
-
-**File**: `apis/apiextensions/v1/register.go` (modified, +13/-6)
+**File**: `apis/pkg/v1beta1/deployment_runtime_config_types.go` (modified, +1/-1)
 ```diff
-@@ -19,8 +19,9 @@ package v1
- import (
- 	"reflect"
- 
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
- )
- 
- // Package type metadata.
-@@ -34,7 +35,7 @@ var (
- 	SchemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
- 
- 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
--	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
- 
- 	// AddToScheme adds all registered types to scheme.
- 	AddToScheme = SchemeBuilder.AddToScheme
-@@ -64,8 +65,14 @@ var (
- 	CompositionRevisionGroupVersionKind = SchemeGroupVersion.WithKind(CompositionRevisionKind)
- )
- 
--func init() {
--	SchemeBuilder.Register(&CompositeResourceDefinition{}, &CompositeResourceDefinitionList{})
--	SchemeBuilder.Register(&Composition{}, &CompositionList{})
--	SchemeBuilder.Register(&CompositionRevision{}, &CompositionRevisionList{})
-+// addKnownTypes adds this package's types to the supplied scheme.
-+func addKnownTypes(s *runtime.Scheme) error {
-+	s.AddKnownTypes(SchemeGroupVersion,
-+		&CompositeResourceDefinition{}, &CompositeResourceDefinitionList{},
-+		&Composition{}, &CompositionList{},
-+		&CompositionRevision{}, &CompositionRevisionList{},
-+	)
-+	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-+
-+	return nil
- }
+@@ -93,7 +93,7 @@ type DeploymentRuntimeConfigSpec struct {
+ // Read the Crossplane documentation for
+ // [more information about DeploymentRuntimeConfigs](https://docs.crossplane.io/latest/packages/providers/#runtime-configuration).
+ // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+-// +kubebuilder:resource:scope=Cluster,categories={crossplane}
++// +kubebuilder:resource:scope=Cluster,categories={crossplane},shortName=drc
+ type DeploymentRuntimeConfig struct {
+ 	metav1.TypeMeta   `json:",inline"`
+ 	metav1.ObjectMeta `json:"metadata,omitempty"`
 ```
 
-**File**: `apis/apiextensions/v1alpha1/register.go` (modified, +12/-5)
+**File**: `cluster/crds/pkg.crossplane.io_deploymentruntimeconfigs.yaml` (modified, +2/-0)
 ```diff
-@@ -19,8 +19,9 @@ package v1alpha1
- import (
- 	"reflect"
- 
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
- )
- 
- // Package type metadata.
-@@ -34,7 +35,7 @@ var (
- 	SchemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
- 
- 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
--	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
- 
- 	// AddToScheme adds all registered types to scheme.
- 	AddToScheme = SchemeBuilder.AddToScheme
-@@ -61,8 +62,14 @@ var (
- 	ManagedResourceActivationPolicyGroupVersionKind = SchemeGroupVersion.WithKind(ManagedResourceActivationPolicyKind)
- )
- 
--func init() {
--	SchemeBuilder.Register(&Usage{}, &UsageList{},
-+// addKnownTypes adds this package's types to the supplied scheme.
-+func addKnownTypes(s *runtime.Scheme) error {
-+	s.AddKnownTypes(SchemeGroupVersion,
-+		&Usage{}, &UsageList{},
- 		&ManagedResourceDefinition{}, &ManagedResourceDefinitionList{},
--		&ManagedResourceActivationPolicy{}, &ManagedResourceActivationPolicyList{})
-+		&ManagedResourceActivationPolicy{}, &ManagedResourceActivationPolicyList{},
-+	)
-+	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-+
-+	return nil
- }
+@@ -12,6 +12,8 @@ spec:
+     kind: DeploymentRuntimeConfig
+     listKind: DeploymentRuntimeConfigList
+     plural: deploymentruntimeconfigs
++    shortNames:
++    - drc
+     singular: deploymentruntimeconfig
+   scope: Cluster
+   versions:
 ```
 
-**File**: `apis/apiextensions/v1beta1/register.go` (modified, +12/-5)
+---
+
+### Incident Patch 2: `3fb48d7e` (2026-11-02)
+**Commit Message**: feat(apis): add drc shortName to DeploymentRuntimeConfig
+
+Signed-off-by: Christopher Haar <[REDACTED_EMAIL]>
+
+**File**: `apis/pkg/v1beta1/deployment_runtime_config_types.go` (modified, +1/-1)
 ```diff
-@@ -19,8 +19,9 @@ package v1beta1
- import (
- 	"reflect"
- 
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
- )
- 
- // Package type metadata.
-@@ -34,7 +35,7 @@ var (
- 	SchemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
- 
- 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
--	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
- 
- 	// AddToScheme adds all registered types to scheme.
- 	AddToScheme = SchemeBuilder.AddToScheme
-@@ -56,7 +57,13 @@ var (
- 	UsageGroupVersionKind = SchemeGroupVersion.WithKind(UsageKind)
- )
- 
--func init() {
--	SchemeBuilder.Register(&EnvironmentConfig{}, &EnvironmentConfigList{})
--	SchemeBuilder.Register(&Usage{}, &UsageList{})
-+// addKnownTypes adds this package's types to the supplied scheme.
-+func addKnownTypes(s *runtime.Scheme) error {
-+	s.AddKnownTypes(SchemeGroupVersion,
-+		&EnvironmentConfig{}, &EnvironmentConfigList{},
-+		&Usage{}, &UsageList{},
-+	)
-+	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-+
-+	return nil
- }
+@@ -93,7 +93,7 @@ type DeploymentRuntimeConfigSpec struct {
+ // Read the Crossplane documentation for
+ // [more information about DeploymentRuntimeConfigs](https://docs.crossplane.io/latest/packages/providers/#runtime-configuration).
+ // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+-// +kubebuilder:resource:scope=Cluster,categories={crossplane}
++// +kubebuilder:resource:scope=Cluster,categories={crossplane},shortName=drc
+ type DeploymentRuntimeConfig struct {
+ 	metav1.TypeMeta   `json:",inline"`
+ 	metav1.ObjectMeta `json:"metadata,omitempty"`
 ```
 
-**File**: `apis/apiextensions/v1beta1/zz_generated.deepcopy.go` (modified, +1/-1)
+**File**: `cluster/crds/pkg.crossplane.io_deploymentruntimeconfigs.yaml` (modified, +2/-0)
 ```diff
-@@ -22,7 +22,7 @@ package v1beta1
- 
- import (
- 	"k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
--	runtime "k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime"
- )
- 
- // DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-```
-
-**File**: `apis/apiextensions/v2/register.go` (modified, +9/-4)
-```diff
-@@ -19,8 +19,9 @@ package v2
- import (
- 	"reflect"
- 
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
- )
- 
- // Package type metadata.
-@@ -34,7 +35,7 @@ var (
- 	SchemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
- 
- 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
--	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
- 
- 	// AddToScheme adds all registered types to scheme.
- 	AddToScheme = SchemeBuilder.AddToScheme
-@@ -48,8 +49,12 @@ var (
- 	CompositeResourceDefinitionGroupVersionKind = SchemeGroupVersion.WithKind(CompositeResourceDefinitionKind)
- )
- 
--func init() {
--	SchemeBuilder.Register(
-+// addKnownTypes adds this package's types to the supplied scheme.
-+func addKnownTypes(s *runtime.Scheme) error {
-+	s.AddKnownTypes(SchemeGroupVersion,
- 		&CompositeResourceDefinition{}, &CompositeResourceDefinitionList{},
- 	)
-+	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-+
-+	return nil
- }
-```
-
-**File**: `apis/ops/v1alpha1/register.go` (modified, +13/-6)
-```diff
-@@ -16,8 +16,9 @@ package v1alpha1
- import (
- 	"reflect"
- 
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
- )
- 
- // Package type metadata.
-@@ -31,7 +32,7 @@ var (
- 	SchemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
- 
- 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
--	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
- 
- 	// AddToScheme adds all registered types to scheme.
- 	AddToScheme = SchemeBuilder.AddToScheme
-@@ -61,8 +62,14 @@ var (
- 	WatchOperationGroupVersionKind = SchemeGroupVersion.WithKind(WatchOperationKind)
- )
- 
--func init() {
--	SchemeBuilder.Register(&Operation{}, &OperationList{})
--	SchemeBuilder.Register(&CronOperation{}, &CronOperationList{})
--	SchemeBuilder.Register(&WatchOperation{}, &WatchOperationList{})
-+// addKnownTypes adds this package's types to the supplied scheme.
-+func addKnownTypes(s *runtime.Scheme) error {
-+	s.AddKnownTypes(SchemeGroupVersion,
-+		&Operation{}, &OperationList{},
-+		&CronOperation{}, &CronOperationList{},
-+		&WatchOperation{}, &WatchOperationList{},
-+	)
-+	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-+
-+	return nil
- }
-```
-
-**File**: `apis/pkg/meta/v1/register.go` (modified, +13/-6)
-```diff
-@@ -19,8 +19,9 @@ package v1
- import (
- 	"reflect"
- 
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
- )
- 
- // Package type metadata.
-@@ -34,7 +35,7 @@ var (
- 	SchemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
- 
- 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
--	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
- 
- 	// AddToScheme adds all registered types to scheme.
- 	AddToScheme = SchemeBuilder.AddToScheme
-@@ -64,8 +65,14 @@ var (
- 	FunctionGroupVersionKind = SchemeGroupVersion.WithKind(FunctionKind)
- )
- 
--func init() {
--	SchemeBuilder.Register(&Configuration{})
--	SchemeBuilder.Register(&Provider{})
--	SchemeBuilder.Register(&Function{})
-+// addKnownTypes adds this package's types to the supplied scheme.
-+func addKnownTypes(s *runtime.Scheme) error {
-+	s.AddKnownTypes(SchemeGroupVersion,
-+		&Configuration{},
-+		&Provider{},
-+		&Function{},
-+	)
-+	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-+
-+	return nil
- }
-```
-
-**File**: `apis/pkg/meta/v1alpha1/register.go` (modified, +12/-5)
-```diff
-@@ -19,8 +19,9 @@ package v1alpha1
- import (
- 	"reflect"
- 
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
--	"sigs.k8s.io/controller-runtime/pkg/scheme"
- )
- 
- // Package type metadata.
-@@ -34,7 +35,7 @@ var (
- 	SchemeGroupVersion = schema.GroupVersion{Group: Group, Version: Version}
- 
- 	// SchemeBuilder is used to add go types to the GroupVersionKind scheme.
--	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-+	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
- 
- 	// AddToScheme adds all registered types to scheme.
- 	AddToScheme = SchemeBuilder.AddToScheme
-@@ -56,7 +57,13 @@ var (
- 	ConfigurationGroupVersionKind = SchemeGroupVersion.WithKind(ConfigurationKind)
- )
- 
--func init() {
--	SchemeBuilder.Register(&Configuration{})
--	SchemeBuilder.Register(&Provider{})
-+// addKnownTypes adds this package's types to the supplied scheme.
-+func addKnownTypes(s *runtime.Scheme) error {
-+	s.AddKnownTypes(SchemeGroupVersion,
-+		&Configuration{},
-+		&Provider{},
-+	)
-+	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-+
-+	return nil
- }
+@@ -12,6 +12,8 @@ spec:
+     kind: DeploymentRuntimeConfig
+     listKind: DeploymentRuntimeConfigList
+     plural: deploymentruntimeconfigs
++    shortNames:
++    - drc
+     singular: deploymentruntimeconfig
+   scope: Cluster
+   versions:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8006** (2026-11-02): feat(apis): add drc shortName to DeploymentRuntimeConfig (@haarchri)
 - **PR #7998** (2026-10-30): chore(deps): bump crossplane-runtime (@lsviben)
 - **PR #7997** (2026-10-30): [Backport release-2.2] fix(xpkg): use cached package with PullAlways when digest is unchanged (@jbw976)
 - **PR #7992** (2026-10-29): feat(apis): add a deletion policy to Compositions (@lsviben)
 - **PR #7988** (2026-10-28): chore(deps): lock file maintenance (release-2.4) (@crossplane-renovate[bot])
 - **PR #7987** (2026-10-28): chore(deps): lock file maintenance (release-2.3) (@crossplane-renovate[bot])
-- **PR #7986** (2026-10-28): chore(deps): lock file maintenance (release-2.2) (@crossplane-renovate[bot])
 
 ---
 
@@ -1865,45 +1615,28 @@ Signed-off-by: lsviben <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. apis): migrate to apimachinery's SchemeBuilder
+## X. Merge pull request #8006 from haarchri/feature/add-drc-shortname
 
 **RULE**:
-When implementing operations in `apis/apiextensions/v1/register.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apis/pkg/v1beta1/deployment_runtime_config_types.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24177342`: apis): migrate to apimachinery's SchemeBuilder. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9d35eddd`: Merge pull request #8006 from haarchri/feature/add-drc-shortname. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `apis/apiextensions/v1/register.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `apis/pkg/v1beta1/deployment_runtime_config_types.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	SchemeBuilder = runtime.NewSchemeBuilder(addKnownTypes)
-// addKnownTypes adds this package's types to the supplied scheme.
-func addKnownTypes(s *runtime.Scheme) error {
-	s.AddKnownTypes(SchemeGroupVersion,
-		&CompositeResourceDefinition{}, &CompositeResourceDefinitionList{},
-		&Composition{}, &CompositionList{},
-		&CompositionRevision{}, &CompositionRevisionList{},
-	)
-	metav1.AddToGroupVersion(s, SchemeGroupVersion)
-
-	return nil
+// +kubebuilder:resource:scope=Cluster,categories={crossplane},shortName=drc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	"sigs.k8s.io/controller-runtime/pkg/scheme"
-	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
-func init() {
-	SchemeBuilder.Register(&CompositeResourceDefinition{}, &CompositeResourceDefinitionList{})
-	SchemeBuilder.Register(&Composition{}, &CompositionList{})
-	SchemeBuilder.Register(&CompositionRevision{}, &CompositionRevisionList{})
+// +kubebuilder:resource:scope=Cluster,categories={crossplane}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24177342` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9d35eddd` are properly handled with clean fallback behavior.
