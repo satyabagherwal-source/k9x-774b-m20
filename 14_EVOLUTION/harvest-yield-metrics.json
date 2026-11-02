@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T21:22:51.972Z",
-  "total_cycles_completed": 6841,
-  "total_learnings_persisted": 6841,
-  "total_rules_promoted": 6495,
+  "last_updated": "2026-11-02T21:30:10.549Z",
+  "total_cycles_completed": 6843,
+  "total_learnings_persisted": 6843,
+  "total_rules_promoted": 6498,
   "history": [
-    {
-      "timestamp": "2026-10-31T18:01:42.413Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T18:01:47.350Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T18:08:40.443Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1403,6 +1389,20 @@
       "repository": "pyannote/speaker-diarization-3.1",
       "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T21:30:10.184Z",
+      "repository": "kcl-lang/kcl",
+      "learningId": "learn-github-kcl-lang-kcl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T21:30:10.549Z",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

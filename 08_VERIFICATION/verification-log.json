@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-M6FG",
-    "timestamp": "2026-10-30T23:51:40.300Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "c5989e2e012ae28423aef3a03fdf2b9db14a95e16dfcad96fb2e1ba6498a414f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-MAHX",
-    "timestamp": "2026-10-30T23:51:45.573Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-V7XQ",
     "timestamp": "2026-10-30T23:58:42.158Z",
     "repository": "expo/expo",
@@ -7492,6 +7462,36 @@
     "contentHash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-VREK",
+    "timestamp": "2026-11-02T21:30:10.172Z",
+    "repository": "kcl-lang/kcl",
+    "learningId": "learn-github-kcl-lang-kcl",
+    "contentHash": "a4d3b761c6ed3ea40083d774d158861f65f29e8baf5605a14c1c3dbcf30cf5e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-VROR",
+    "timestamp": "2026-11-02T21:30:10.539Z",
+    "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+    "contentHash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

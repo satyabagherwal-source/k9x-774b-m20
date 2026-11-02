@@ -20101,5 +20101,17 @@
     "downloads": 6918404,
     "qualityScore": 50450,
     "discoveredAt": "2026-11-02T21:20:36.746Z"
+  },
+  {
+    "name": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "fullName": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF (192 likes, 30284 downloads)",
+    "likes": 192,
+    "downloads": 30284,
+    "qualityScore": 3920,
+    "discoveredAt": "2026-11-02T21:27:43.825Z"
   }
 ]

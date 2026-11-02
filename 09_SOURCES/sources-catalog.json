@@ -5713,10 +5713,10 @@
     "repository": "kcl-lang/kcl",
     "platform": "github",
     "sourceUrl": "https://github.com/kcl-lang/kcl",
-    "sourceVersion": "971eca90",
+    "sourceVersion": "77411c1c",
     "license": "Apache-2.0",
-    "contentHash": "d7fe7a18bd73f366966dc376ebfc1e03c62564636052180f9ac9707ddd53aaed",
-    "lastHarvestedAt": "2026-10-30T04:54:32.615Z",
+    "contentHash": "a4d3b761c6ed3ea40083d774d158861f65f29e8baf5605a14c1c3dbcf30cf5e1",
+    "lastHarvestedAt": "2026-11-02T21:30:10.177Z",
     "learningId": "learn-github-kcl-lang-kcl"
   },
   "apache-incubator-pegasus": {
@@ -11758,5 +11758,15 @@
     "contentHash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
     "lastHarvestedAt": "2026-11-02T21:22:51.967Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1"
+  },
+  "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {
+    "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "sourceVersion": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+    "license": "Open-Source",
+    "contentHash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
+    "lastHarvestedAt": "2026-11-02T21:30:10.543Z",
+    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf"
   }
 }

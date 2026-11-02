@@ -4786,3 +4786,7 @@ https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview
 # --- Automatically Discovered by AI Scout Engine [2026-11-02T21:22:44.943Z] ---
 # [HUGGINGFACE-AI-MODELS] pyannote/speaker-diarization-3.1 (50450 score) - Verified Hugging Face Model: pyannote/speaker-diarization-3.1 (4845 likes, 69184
 https://huggingface.co/pyannote/speaker-diarization-3.1
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-02T21:29:52.182Z] ---
+# [HUGGINGFACE-AI-MODELS] AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF (3920 score) - Verified Hugging Face Model: AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-
+https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF

@@ -6873,3 +6873,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-02T17:54:17.062Z |
 | `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `43925140` | Multi-dimensional audit evidence | 2026-11-02T17:58:27.011Z |
 | `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-02T21:22:51.967Z |
+| `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `77411c1c` | Multi-dimensional audit evidence | 2026-11-02T21:30:10.177Z |
+| `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-02T21:30:10.543Z |

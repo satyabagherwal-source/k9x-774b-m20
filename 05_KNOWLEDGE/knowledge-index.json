@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T21:22:51.848Z",
-  "total_verified_learnings": 1194,
+  "last_updated": "2026-11-02T21:30:10.441Z",
+  "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -34717,8 +34717,8 @@
       "slug": "kcl-lang-kcl",
       "platform": "github",
       "source_url": "https://github.com/kcl-lang/kcl",
-      "source_version": "971eca90",
-      "content_hash": "d7fe7a18bd73f366966dc376ebfc1e03c62564636052180f9ac9707ddd53aaed",
+      "source_version": "77411c1c",
+      "content_hash": "a4d3b761c6ed3ea40083d774d158861f65f29e8baf5605a14c1c3dbcf30cf5e1",
       "dossier_path": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kcl-lang-kcl-learnings.md",
       "promoted_rules": [
@@ -34756,6 +34756,11 @@
           "number": 5603,
           "title": "runtime): parse base 10 int() strings exactly and report invalid input (#2247)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6486,
+          "title": "runtime): split and rsplit on unicode whitespace when no separator is given (#22",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34763,7 +34768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T04:54:32.553Z",
+      "verified_at": "2026-11-02T21:30:10.044Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167794,6 +167799,86 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "rule-6486": {
+      "learning_id": "rule-6486",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6486,
+      "title": "runtime): split and rsplit on unicode whitespace when no separator is given (#22",
+      "source_url": "https://github.com/kcl-lang/kcl",
+      "source_version": "77411c1c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T21:30:10.044Z"
+    },
+    "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf": {
+      "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "slug": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "content_hash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
+      "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6485,
+          "title": "Surgical Tensor Replacement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6487,
+          "title": "MoE Expert Immutability Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T21:30:10.412Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6485": {
+      "learning_id": "rule-6485",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6485,
+      "title": "Surgical Tensor Replacement Invariant",
+      "source_url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T21:30:10.412Z"
+    },
+    "rule-6487": {
+      "learning_id": "rule-6487",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6487,
+      "title": "MoE Expert Immutability Rule",
+      "source_url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T21:30:10.412Z"
     }
   },
   "aliases": {

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T21:23:05.381Z",
-    "lastVerified": "2026-11-02T21:23:05.381Z",
+    "lastChecked": "2026-11-02T21:30:13.083Z",
+    "lastVerified": "2026-11-02T21:30:13.083Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -348,9 +348,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-02T17:39:15.141Z",
+    "lastChecked": "2026-11-02T21:30:12.681Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-02T17:39:15.141Z"
+    "lastVerified": "2026-11-02T21:30:12.681Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1557,9 +1557,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-02T14:31:59.057Z",
+    "lastChecked": "2026-11-02T21:30:07.625Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-02T14:31:59.057Z"
+    "lastVerified": "2026-11-02T21:30:07.625Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -4617,9 +4617,9 @@
   "qovery-replibyte": {
     "name": "Replibyte",
     "officialUrl": "https://github.com/Qovery/Replibyte",
-    "lastChecked": "2026-10-31T14:52:40.737Z",
+    "lastChecked": "2026-11-02T21:30:10.172Z",
     "revisionIdentifier": "5504db91",
-    "lastVerified": "2026-10-31T14:52:40.737Z"
+    "lastVerified": "2026-11-02T21:30:10.172Z"
   },
   "grpc-grpc-rust": {
     "name": "grpc/grpc-rust",
@@ -6224,22 +6224,21 @@
     "lastVerified": "2026-10-31T12:29:39.908Z"
   },
   "kcl-lang-kcl": {
-    "name": "kcl",
+    "name": "kcl-lang/kcl",
     "officialUrl": "https://github.com/kcl-lang/kcl",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T15:49:42.261Z",
-    "lastVerified": "2026-10-31T15:49:42.261Z",
+    "lastChecked": "2026-11-02T21:30:09.232Z",
+    "lastVerified": "2026-11-02T21:30:09.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "d7fe7a18bd73f366966dc376ebfc1e03c62564636052180f9ac9707ddd53aaed",
+    "contentHash": "a4d3b761c6ed3ea40083d774d158861f65f29e8baf5605a14c1c3dbcf30cf5e1",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "971eca90"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "ydb-platform-ydb": {
     "name": "ydb-platform/ydb",
@@ -9339,9 +9338,9 @@
   "seobserver-crawlobserver": {
     "name": "crawlobserver",
     "officialUrl": "https://github.com/SEObserver/crawlobserver",
-    "lastChecked": "2026-10-29T22:19:08.415Z",
+    "lastChecked": "2026-11-02T21:30:00.226Z",
     "revisionIdentifier": "64b6a78344",
-    "lastVerified": "2026-10-29T22:19:08.415Z"
+    "lastVerified": "2026-11-02T21:30:00.226Z"
   },
   "productdevbook-port-killer": {
     "name": "port-killer",
@@ -10238,9 +10237,9 @@
   "shubham0812-swiftui-animations": {
     "name": "SwiftUI-Animations",
     "officialUrl": "https://github.com/Shubham0812/SwiftUI-Animations",
-    "lastChecked": "2026-10-30T09:12:31.449Z",
+    "lastChecked": "2026-11-02T21:30:02.611Z",
     "revisionIdentifier": "494a3635",
-    "lastVerified": "2026-10-30T09:12:31.449Z"
+    "lastVerified": "2026-11-02T21:30:02.611Z"
   },
   "scrapy-plugins-scrapy-zyte-api": {
     "name": "scrapy-zyte-api",
@@ -12726,6 +12725,23 @@
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
     "contentHash": "0c1f564c10b9a0e1f9dca1d7f1922a114d2ffe1616611cab820ad3a4b23c38c4",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {
+    "name": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-02T21:29:57.961Z",
+    "lastVerified": "2026-11-02T21:29:57.961Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+    "contentHash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

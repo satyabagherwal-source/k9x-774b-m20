@@ -6864,3 +6864,5 @@
 | `CYCLE-20261102-64PU` | `2026-11-02T17:54:17.058Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6479, Rule 6480, Rule 6481` | Yes (`72c4831c...`) |
 | `CYCLE-20261102-BHKV` | `2026-11-02T17:58:27.007Z` | `Ataraxy-Labs/sem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6482, Rule 6483, Rule 6484` | Yes (`51a20ce3...`) |
 | `CYCLE-20261102-MDA3` | `2026-11-02T21:22:51.963Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | Yes (`0c1f564c...`) |
+| `CYCLE-20261102-VREK` | `2026-11-02T21:30:10.172Z` | `kcl-lang/kcl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6486` | Yes (`a4d3b761...`) |
+| `CYCLE-20261102-VROR` | `2026-11-02T21:30:10.539Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6485, Rule 6487` | Yes (`827d51af...`) |
