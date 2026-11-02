@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T17:47:03.014Z",
-    "lastVerified": "2026-11-02T17:47:03.014Z",
+    "lastChecked": "2026-11-02T17:58:29.581Z",
+    "lastVerified": "2026-11-02T17:58:29.581Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,12 +141,12 @@
     "revisionIdentifier": "9caf2b4c"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-02T17:24:38.550Z",
-    "lastVerified": "2026-11-02T17:24:38.550Z",
+    "lastChecked": "2026-11-02T17:54:14.949Z",
+    "lastVerified": "2026-11-02T17:54:14.949Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -155,7 +155,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "595167cf"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1410,9 +1411,9 @@
   "rustcrypto-hashes": {
     "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-01T02:22:51.009Z",
+    "lastChecked": "2026-11-02T17:54:09.943Z",
     "revisionIdentifier": "23d8e40e",
-    "lastVerified": "2026-11-01T02:22:51.009Z"
+    "lastVerified": "2026-11-02T17:54:09.943Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4483,9 +4484,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-10-31T14:39:33.133Z",
+    "lastChecked": "2026-11-02T17:54:12.455Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-10-31T14:39:33.133Z"
+    "lastVerified": "2026-11-02T17:54:12.455Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -6105,9 +6106,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-10-31T15:36:27.713Z",
+    "lastChecked": "2026-11-02T17:54:07.489Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-10-31T15:36:27.713Z"
+    "lastVerified": "2026-11-02T17:54:07.489Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -6182,22 +6183,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ataraxy-labs-sem": {
-    "name": "sem",
+    "name": "Ataraxy-Labs/sem",
     "officialUrl": "https://github.com/Ataraxy-Labs/sem",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T11:39:43.740Z",
-    "lastVerified": "2026-10-31T11:39:43.740Z",
+    "lastChecked": "2026-11-02T17:54:03.598Z",
+    "lastVerified": "2026-11-02T17:54:03.598Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "2b6717636ecc4dd311ee40205208a4084cdbaabf4bbc9637ae6979915b1a969b",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "51a20ce30b3f2aabfe7d120beabd115c57deee91b621cacf0a12bd2d02ea8f01",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fee69d96"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
     "name": "nomic-ai/nomic-embed-text-v1.5",
@@ -9307,12 +9307,12 @@
     "officialUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-10-29T22:06:52.793Z",
-    "lastVerified": "2026-10-29T22:06:52.793Z",
+    "lastChecked": "2026-11-02T17:54:02.597Z",
+    "lastVerified": "2026-11-02T17:54:02.597Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
-    "contentHash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
+    "contentHash": "72c4831c27d25acea0c5f624ba885931b7ee7e55fc379bea3fbbc2666a67d420",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -10210,9 +10210,9 @@
   "oblador-hush": {
     "name": "hush",
     "officialUrl": "https://github.com/oblador/hush",
-    "lastChecked": "2026-10-30T08:36:21.917Z",
+    "lastChecked": "2026-11-02T17:54:04.957Z",
     "revisionIdentifier": "2e96f4f7",
-    "lastVerified": "2026-10-30T08:36:21.917Z"
+    "lastVerified": "2026-11-02T17:54:04.957Z"
   },
   "scrapy-plugins-scrapy-selenium": {
     "name": "scrapy-selenium",

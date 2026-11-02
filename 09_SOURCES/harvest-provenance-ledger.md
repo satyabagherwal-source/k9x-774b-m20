@@ -6870,3 +6870,5 @@ Every entry in this ledger must capture:
 | `learn-github-yattee-yattee` | `https://github.com/yattee/yattee` | `10ea2798` | Multi-dimensional audit evidence | 2026-11-02T17:46:46.597Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `f7015b3d` | Multi-dimensional audit evidence | 2026-11-02T17:46:53.158Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0ceace07` | Multi-dimensional audit evidence | 2026-11-02T17:47:00.464Z |
+| `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-02T17:54:17.062Z |
+| `learn-github-ataraxy-labs-sem` | `https://github.com/Ataraxy-Labs/sem` | `43925140` | Multi-dimensional audit evidence | 2026-11-02T17:58:27.011Z |

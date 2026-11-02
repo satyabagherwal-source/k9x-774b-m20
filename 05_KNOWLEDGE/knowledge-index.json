@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T17:47:00.376Z",
+  "last_updated": "2026-11-02T17:58:26.922Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -3886,8 +3886,8 @@
       "slug": "ataraxy-labs-sem",
       "platform": "github",
       "source_url": "https://github.com/Ataraxy-Labs/sem",
-      "source_version": "fee69d96",
-      "content_hash": "2b6717636ecc4dd311ee40205208a4084cdbaabf4bbc9637ae6979915b1a969b",
+      "source_version": "43925140",
+      "content_hash": "51a20ce30b3f2aabfe7d120beabd115c57deee91b621cacf0a12bd2d02ea8f01",
       "dossier_path": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ataraxy-labs-sem-learnings.md",
       "promoted_rules": [
@@ -3920,6 +3920,21 @@
           "number": 5769,
           "title": "core): extract definitions sem used to miss across 7 languages (#538)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6482,
+          "title": "Robust Child Subprocess Group Termination Under Strict Deadlines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6483,
+          "title": "Lexical Path Boundary Containment for Agent Workdir Operations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6484,
+          "title": "Dual-Path Differential Oracle Invariant for Performance Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -3927,7 +3942,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T13:46:21.370Z",
+      "verified_at": "2026-11-02T17:58:26.901Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153591,7 +153606,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
       "source_version": "hf-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
+      "content_hash": "72c4831c27d25acea0c5f624ba885931b7ee7e55fc379bea3fbbc2666a67d420",
       "dossier_path": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "promoted_rules": [
@@ -153609,6 +153624,21 @@
           "number": 5539,
           "title": "Asymmetric Hybrid Linear-Attention / GQA State Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6479,
+          "title": "Parallel Decoding Progress Guarantee Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6480,
+          "title": "Hybrid Attention State Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6481,
+          "title": "MoE Routing Stability Under Block Diffusion",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -153616,7 +153646,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T22:11:49.777Z",
+      "verified_at": "2026-11-02T17:54:16.955Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167653,6 +167683,90 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T17:47:00.347Z"
+    },
+    "rule-6479": {
+      "learning_id": "rule-6479",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6479,
+      "title": "Parallel Decoding Progress Guarantee Invariant",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:54:16.955Z"
+    },
+    "rule-6480": {
+      "learning_id": "rule-6480",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6480,
+      "title": "Hybrid Attention State Isolation Invariant",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:54:16.955Z"
+    },
+    "rule-6481": {
+      "learning_id": "rule-6481",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6481,
+      "title": "MoE Routing Stability Under Block Diffusion",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:54:16.955Z"
+    },
+    "rule-6482": {
+      "learning_id": "rule-6482",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6482,
+      "title": "Robust Child Subprocess Group Termination Under Strict Deadlines",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "43925140",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:58:26.901Z"
+    },
+    "rule-6483": {
+      "learning_id": "rule-6483",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6483,
+      "title": "Lexical Path Boundary Containment for Agent Workdir Operations",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "43925140",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:58:26.901Z"
+    },
+    "rule-6484": {
+      "learning_id": "rule-6484",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6484,
+      "title": "Dual-Path Differential Oracle Invariant for Performance Optimization",
+      "source_url": "https://github.com/Ataraxy-Labs/sem",
+      "source_version": "43925140",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:58:26.901Z"
     }
   },
   "aliases": {

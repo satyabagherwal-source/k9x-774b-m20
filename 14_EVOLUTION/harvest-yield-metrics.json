@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T17:47:00.469Z",
-  "total_cycles_completed": 6838,
-  "total_learnings_persisted": 6838,
-  "total_rules_promoted": 6489,
+  "last_updated": "2026-11-02T17:58:27.017Z",
+  "total_cycles_completed": 6840,
+  "total_learnings_persisted": 6840,
+  "total_rules_promoted": 6495,
   "history": [
-    {
-      "timestamp": "2026-10-31T17:50:10.916Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:50:25.223Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T18:01:39.404Z",
       "repository": "meshtastic/Meshtastic-Android",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:54:17.067Z",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:58:27.017Z",
+      "repository": "Ataraxy-Labs/sem",
+      "learningId": "learn-github-ataraxy-labs-sem",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

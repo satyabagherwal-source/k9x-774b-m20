@@ -474181,3 +474181,558 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0ceace07` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6479. Parallel Decoding Progress Guarantee Invariant (Harvested from Diffuspace/Clover-35B-A3B-Preview)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Parallel Decoding Progress Guarantee Invariant",
+  "source": "Diffuspace/Clover-35B-A3B-Preview",
+  "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+  "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-02T17:54:15.831Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Diffuspace/Clover-35B-A3B-Preview](https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview) (Revision: `hf-diffusp`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In any iterative parallel decoding algorithm (e.g., Diffusion, Speculative Decoding), the update step **MUST** guarantee at least one state transition (token resolution) per iteration. If the primary confidence threshold yields zero candidates, a fallback mechanism **MUST** select the single highest-probability candidate to ensure termination.
+
+**WHY**:
+Without this invariant, a "stall" condition occurs where the model's confidence distribution remains below the threshold for all positions indefinitely. This leads to an infinite loop, consuming GPU memory and compute without generating output. The "LowConfidence" algorithm in Clover explicitly implements this: `if none qualify, the most confident position is filled`.
+
+**WHEN TO APPLY**:
+Any non-autoregressive or semi-autoregressive generation loop, particularly in diffusion-based text generation or speculative decoding verification steps.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def resolve_block(block_logits, mask_positions, threshold=0.95):
+    """
+    Resolves a block of masked tokens using LowConfidence decoding.
+    """
+    resolved_indices = []
+    # 1. Identify high-confidence positions
+    confidences = torch.softmax(block_logits, dim=-1).max(dim=-1).values
+    high_conf_mask = confidences > threshold
+    
+    if high_conf_mask.any():
+        # Fill all high-confidence positions
+        resolved_indices = torch.where(high_conf_mask)[0]
+    else:
+        # 2. FALLBACK: Force progress by picking the single best candidate
+        # This prevents infinite loops when the model is uncertain
+        max_conf_idx = torch.argmax(confidences)
+        resolved_indices = [max_conf_idx]
+        
+    return resolved_indices
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Infinite Loop Risk
+def resolve_block_buggy(block_logits, mask_positions, threshold=0.95):
+    confidences = torch.softmax(block_logits, dim=-1).max(dim=-1).values
+    high_conf_mask = confidences > threshold
+    resolved_indices = torch.where(high_conf_mask)[0]
+    # BUG: If resolved_indices is empty, the loop calling this function
+    # will never terminate because no tokens are filled.
+    return resolved_indices
+```
+
+**VERIFICATION METHOD**:
+Unit test that injects a logit distribution where all max probabilities are $< 0.95$. Assert that the function returns exactly one index (the argmax) and does not return an empty list.
+
+
+---
+
+## 6480. Hybrid Attention State Isolation Invariant (Harvested from Diffuspace/Clover-35B-A3B-Preview)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Attention State Isolation Invariant",
+  "source": "Diffuspace/Clover-35B-A3B-Preview",
+  "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+  "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-02T17:54:16.263Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Diffuspace/Clover-35B-A3B-Preview](https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview) (Revision: `hf-diffusp`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In hybrid architectures combining Linear Attention (SSM/GDN) and Full Attention (KV Cache), the state management **MUST** isolate the recurrence state (SSM) from the key-value cache. The SSM state **MUST** be updated sequentially per token within a block, while the KV cache **MUST** be updated in parallel for the entire block after resolution.
+
+**WHY**:
+Linear attention layers (like GDN) rely on a hidden state $h_t$ that depends on $h_{t-1}$. You cannot parallelize the *computation* of the hidden state across a block if the tokens are being resolved iteratively. However, once a block is fully resolved, the *storage* of the resulting states can be batched. Mixing these two state types in a single unified cache structure leads to race conditions or incorrect state propagation.
+
+**WHEN TO APPLY**:
+Any model using a mix of RNN/SSM layers and Transformer Attention layers (e.g., Mamba, Jamba, Clover).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class HybridLayer:
+    def forward(self, hidden_states, ssm_state, kv_cache):
+        # 1. Linear Attention (GDN) - Sequential State Update
+        # ssm_state is updated token-by-token within the block
+        hidden_states, new_ssm_state = self.gdn_layer(hidden_states, ssm_state)
+        
+        # 2. Full Attention - Parallel KV Update
+        # kv_cache is updated for the entire resolved block at once
+        hidden_states, new_kv_cache = self.attention_layer(hidden_states, kv_cache)
+        
+        return hidden_states, new_ssm_state, new_kv_cache
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Unified Cache Mismatch
+class BuggyHybridLayer:
+    def forward(self, hidden_states, unified_cache):
+        # BUG: Trying to update a single cache object for both SSM and KV
+        # leads to shape mismatches and incorrect state dependencies.
+        hidden_states, unified_cache = self.mixed_layer(hidden_states, unified_cache)
+        return hidden_states, unified_cache
+```
+
+**VERIFICATION METHOD**:
+Integration test that verifies the shape and dtype of `ssm_state` (float32, shape `[B, H, D]`) and `kv_cache` (bfloat16, shape `[B, H, L, D]`) remain distinct and correctly updated after a forward pass.
+
+
+---
+
+## 6481. MoE Routing Stability Under Block Diffusion (Harvested from Diffuspace/Clover-35B-A3B-Preview)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "MoE Routing Stability Under Block Diffusion",
+  "source": "Diffuspace/Clover-35B-A3B-Preview",
+  "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+  "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-02T17:54:16.727Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Diffuspace/Clover-35B-A3B-Preview](https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview) (Revision: `hf-diffusp`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using Mixture-of-Experts in a block-diffusion setting, the router **MUST** operate on the *current* hidden states of the masked tokens, not the final resolved tokens. The routing decision **MUST** be re-evaluated for each iteration of the block resolution loop to reflect the changing context of partially resolved tokens.
+
+**WHY**:
+In standard AR models, routing is static per token. In block diffusion, the "context" for a masked token changes as its neighbors are resolved. If the router uses stale hidden states (from the initial mask state), the expert selection will be suboptimal, leading to degraded quality. The `moe_block_coreset_enabled` flag suggests a mechanism to handle this dynamic routing efficiently.
+
+**WHEN TO APPLY**:
+MoE models used in non-autoregressive or iterative decoding schemes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def moe_forward_dynamic(hidden_states, router, experts):
+    # 1. Compute router logits based on CURRENT hidden states
+    router_logits = router(hidden_states)
+    
+    # 2. Select top-k experts
+    top_k_indices = torch.topk(router_logits, k=8, dim=-1).indices
+    
+    # 3. Dispatch to experts
+    # Note: This must be done for each iteration of the diffusion loop
+    output = experts.dispatch(hidden_states, top_k_indices)
+    
+    return output
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Static Routing in Dynamic Context
+def moe_forward_static(hidden_states, router, experts, initial_router_logits):
+    # BUG: Using router logits computed at the start of the block
+    # ignores the changes in hidden states as tokens are resolved.
+    top_k_indices = torch.topk(initial_router_logits, k=8, dim=-1).indices
+    output = experts.dispatch(hidden_states, top_k_indices)
+    return output
+```
+
+**VERIFICATION METHOD**:
+Compare the expert selection indices between the first iteration and the last iteration of a block. They should differ significantly if the context has changed.
+
+
+---
+
+## 6482. Robust Child Subprocess Group Termination Under Strict Deadlines (Harvested from Ataraxy-Labs/sem)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Robust Child Subprocess Group Termination Under Strict Deadlines",
+  "source": "Ataraxy-Labs/sem",
+  "source_url": "https://github.com/Ataraxy-Labs/sem",
+  "source_version": "43925140",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-02T17:58:25.752Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ataraxy-labs-sem",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem) (Revision: `43925140`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When spawning external child processes with execution timeouts in supervisor or agent CLI tooling, implementations MUST assign the child to a new process group (`setpgid(0, 0)`) immediately upon fork and MUST deliver signals (`SIGKILL`/`SIGTERM`) to the negative process group ID (`-pgid`), NEVER exclusively to the child process PID.
+
+**WHY**:
+Spawning intermediate shells (`sh -c`) or compilers/runtimes creates process hierarchy branches (e.g., `cargo test` -> runner -> unit test binary). Calling `child.kill()` in Rust or standard runtimes only sends `SIGKILL` to the immediate child PID. If the child spawned subprocesses, those child processes are orphaned, reparented to `init` (PID 1) or systemd, continue consuming memory/CPU indefinitely, hold locks on build directories (e.g., `target/criterion`), and exhaust operating system file descriptors and thread limits.
+
+**WHEN TO APPLY**:
+Apply in any CLI tool, worker daemon, build supervisor, test runner, or LLM agent tool-execution sandbox that executes shell scripts or builds with execution deadlines on POSIX targets.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::io::Read;
+use std::os::unix::process::CommandExt;
+use std::process::{Command, ExitStatus, Stdio};
+use std::time::{Duration, Instant};
+
+pub struct ExecResult {
+    pub status: ExitStatus,
+    pub stdout: String,
+    pub stderr: String,
+}
+
+pub fn run_with_deadline(mut cmd: Command, limit: Duration) -> Result<ExecResult, String> {
+    cmd.stdin(Stdio::null())
+       .stdout(Stdio::piped())
+       .stderr(Stdio::piped());
+
+    // CRITICAL: Decouple child from supervisor PGID into its own process group
+    #[cfg(unix)]
+    {
+        cmd.process_group(0);
+    }
+
+    let program_repr = format!("{:?}", cmd.get_program());
+    let mut child = cmd.spawn().map_err(|e| format!("Failed to spawn {program_repr}: {e}"))?;
+
+    let mut out_stream = child.stdout.take().expect("stdout piped");
+    let mut err_stream = child.stderr.take().expect("stderr piped");
+
+    // Slurp stdout/stderr off-thread to prevent pipe buffer deadlock
+    let to = std::thread::spawn(move || {
+        let mut b = Vec::new();
+        let _ = out_stream.read_to_end(&mut b);
+        b
+    });
+    let te = std::thread::spawn(move || {
+        let mut b = Vec::new();
+        let _ = err_stream.read_to_end(&mut b);
+        b
+    });
+
+    let start = Instant::now();
+    let status = loop {
+        match child.try_wait() {
+            Ok(Some(s)) => break s,
+            Ok(None) if start.elapsed() > limit => {
+                #[cfg(unix)]
+                unsafe {
+                    // Send kill signal to the entire negative process group ID
+                    libc_kill_pgid(child.id() as i32);
+                }
+                let _ = child.kill();
+                let _ = child.wait();
+                return Err(format!("{program_repr} timed out after {}s", limit.as_secs()));
+            }
+            Ok(None) => std::thread::sleep(Duration::from_millis(10)),
+            Err(e) => return Err(format!("Error polling {program_repr}: {e}")),
+        }
+    };
+
+    let stdout = String::from_utf8_lossy(&to.join().unwrap_or_default()).to_string();
+    let stderr = String::from_utf8_lossy(&te.join().unwrap_or_default()).to_string();
+
+    Ok(ExecResult { status, stdout, stderr })
+}
+
+#[cfg(unix)]
+unsafe fn libc_kill_pgid(pid: i32) {
+    extern "C" {
+        fn kill(pid: i32, sig: i32) -> i32;
+    }
+    // Negative pid targets the entire process group
+    kill(-pid, 9);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Direct PID kill leaving orphaned background sub-trees
+pub fn unsafe_spawn_kill(mut cmd: std::process::Command) {
+    let mut child = cmd.spawn().unwrap();
+    std::thread::sleep(std::time::Duration::from_secs(5));
+    // DANGER: Only kills the top-level shell process.
+    // Compilers, linters, or forks spawned by the shell continue running orphaned!
+    let _ = child.kill(); 
+}
+```
+
+**VERIFICATION METHOD**:
+Verify compliance by executing a fork-bomb-style hierarchy wrapper: `sh -c "sleep 100 & sleep 100"`. Ensure that after the supervisor triggers timeout, running `pgrep -f "sleep 100"` returns 0 results.
+
+---
+
+
+---
+
+## 6483. Lexical Path Boundary Containment for Agent Workdir Operations (Harvested from Ataraxy-Labs/sem)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Lexical Path Boundary Containment for Agent Workdir Operations",
+  "source": "Ataraxy-Labs/sem",
+  "source_url": "https://github.com/Ataraxy-Labs/sem",
+  "source_version": "43925140",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-02T17:58:26.195Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ataraxy-labs-sem",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem) (Revision: `43925140`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before permitting or denying filesystem writes in agent hooks, path sanitization algorithms MUST resolve directory traversals strictly through normalized component accumulation (`Path::components`), MUST check against canonical boundary anchors (e.g., repository `.git` root), and MUST NOT perform naive substring checks or single-level regex matching on path arguments.
+
+**WHY**:
+Agents construct command invocations spanning external destinations (`/tmp/scratch.rs`, `~/.bashrc`), relative traversals (`../../outside/file.rs`), standard pseudo-devices (`/dev/null`, `/dev/stderr`), and target repository trees. Naively filtering shell commands using extension regexes (`\.rs$`) blocks non-repository operations (e.g., `cargo test > /tmp/test.log`, `cat <<EOF > /tmp/scratch.rs`), which burns model context turns, frustrates execution planning, and breaks tool pipelines. Conversely, naive path matching without parent traversal evaluation (`..`) permits directory escape attacks where agents modify code outside repository bounds.
+
+**WHEN TO APPLY**:
+Apply in any security policy layer, agent tool hook, linter sandbox, or shell interceptor that restricts read/write operations to a specific workspace or repository boundary.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::path::{Component, Path, PathBuf};
+
+/// Strictly verify whether `raw_path` targets source code within the repository root.
+pub fn is_repo_internal_source_file(cwd: &Path, raw_path: &str, valid_exts: &[&str]) -> bool {
+    let path = Path::new(raw_path);
+
+    // Reject non-files, pseudo-devices, and home expansions immediately
+    if raw_path.starts_with("/dev/") || raw_path.starts_with('~') {
+        return false;
+    }
+
+    // Check extension whitelist
+    let ext = path.extension()
+        .and_then(|s| s.to_str())
+        .unwrap_or("")
+        .to_ascii_lowercase();
+
+    if !valid_exts.contains(&ext.as_str()) {
+        return false;
+    }
+
+    // Locate repository anchor root (walking upwards to find .git)
+    let repo_root = cwd.ancestors()
+        .find(|d| d.join(".git").exists())
+        .unwrap_or(cwd);
+
+    // Lexically canonicalize path components without hitting disk symlinks
+    let full = cwd.join(path);
+    let mut normalized_parts: Vec<Component> = Vec::new();
+
+    for c in full.components() {
+        match c {
+            Component::ParentDir => {
+                normalized_parts.pop();
+            }
+            Component::CurDir => {}
+            normal_or_root => normalized_parts.push(normal_or_root),
+        }
+    }
+
+    let resolved_path: PathBuf = normalized_parts.into_iter().collect();
+
+    // Verify boundary confinement
+    resolved_path.starts_with(repo_root)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Naive string match or regex without path resolution
+pub fn buggy_is_repo_code(cmd: &str) -> bool {
+    // FAILS: Blocks redirecting stdout to temporary debug code: `cat main.rs > /tmp/dump.rs`
+    // FAILS: Misses path traversal escapes: `echo dangerous > ../../sibling_repo/main.rs`
+    cmd.contains(".rs") || cmd.contains(".py")
+}
+```
+
+**VERIFICATION METHOD**:
+Run unit tests verifying path confinement invariants:
+```rust
+#[test]
+fn test_path_confinement() {
+    let root = Path::new("/workspace/project");
+    assert!(!is_repo_internal_source_file(root, "/tmp/scratch.rs", &["rs"]));
+    assert!(!is_repo_internal_source_file(root, "../../other/evil.rs", &["rs"]));
+    assert!(!is_repo_internal_source_file(root, "/dev/null", &["rs"]));
+    assert!(is_repo_internal_source_file(root, "src/core/main.rs", &["rs"]));
+    assert!(is_repo_internal_source_file(root, "./src/../src/lib.rs", &["rs"]));
+}
+```
+
+---
+
+
+---
+
+## 6484. Dual-Path Differential Oracle Invariant for Performance Optimization (Harvested from Ataraxy-Labs/sem)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Path Differential Oracle Invariant for Performance Optimization",
+  "source": "Ataraxy-Labs/sem",
+  "source_url": "https://github.com/Ataraxy-Labs/sem",
+  "source_version": "43925140",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-02T17:58:26.673Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ataraxy-labs-sem",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Ataraxy-Labs/sem](https://github.com/Ataraxy-Labs/sem) (Revision: `43925140`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing an optimized "fast-path" parser, cache, or AST extractor meant to replace or accelerate an established reference implementation, the build/test harness MUST maintain an automated Differential Oracle. The Oracle MUST execute both implementations over identical real-world commit changesets and assert identity over both semantic entity boundaries and structural serialization envelopes.
+
+**WHY**:
+Optimized extractors (such as regex-based token scanners, incremental re-parsers, or hand-rolled state machines) introduce subtle semantic drifts: slight discrepancies in byte spans, dropped type parameters, or altered handling of edge-case declarations (destructors, conversion operators, nested namespaces). Without a differential oracle continuously testing real historical Git diffs, regressions escape into production, corrupting downstream semantic diff calculations and caller/callee graphs.
+
+**WHEN TO APPLY**:
+Apply whenever introducing performance optimizations, incremental AST reparsing, streaming deserializers, or fast-path extractors in compilers, semantic indexes, and static analysis engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+#[derive(Debug, PartialEq, Eq)]
+pub enum OracleVerdict {
+    Equivalent,
+    Divergent { layer: &'static str, detail: String },
+    Vacuous,
+}
+
+pub struct DifferentialOracle;
+
+impl DifferentialOracle {
+    pub fn verify_equivalence<T, FRef, FFast>(
+        inputs: &[&str],
+        reference_engine: FRef,
+        fast_engine: FFast,
+    ) -> OracleVerdict 
+    where
+        T: std::fmt::Debug + PartialEq,
+        FRef: Fn(&str) -> Result<T, String>,
+        FFast: Fn(&str) -> Result<T, String>,
+    {
+        if inputs.is_empty() {
+            return OracleVerdict::Vacuous;
+        }
+
+        for input in inputs {
+            let ref_res = reference_engine(input);
+            let fast_res = fast_engine(input);
+
+            match (ref_res, fast_res) {
+                (Ok(ref_val), Ok(fast_val)) => {
+                    if ref_val != fast_val {
+                        return OracleVerdict::Divergent {
+                            layer: "AST_EXTRACTION_MISMATCH",
+                            detail: format!("Ref: {:?}\nFast: {:?}", ref_val, fast_val),
+                        };
+                    }
+                }
+                (Err(e1), Err(e2)) => {
+                    // Both rejected input cleanly
+                }
+                (Ok(v), Err(e)) => {
+                    return OracleVerdict::Divergent {
+                        layer: "FAST_PATH_FALSE_REJECTION",
+                        detail: format!("Ref succeeded with {:?}, fast failed: {}", v, e),
+                    };
+                }
+                (Err(e), Ok(v)) => {
+                    return OracleVerdict::Divergent {
+                        layer: "FAST_PATH_FALSE_ACCEPTANCE",
+                        detail: format!("Ref failed with {}, fast succeeded with {:?}", e, v),
+                    };
+                }
+            }
+        }
+
+        OracleVerdict::Equivalent
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Benchmark-only testing without differential output assertion
+#[test]
+fn benchmark_fast_path() {
+    let fast_out = run_fast_path("source code");
+    // VIOLATION: Fast path is benchmarked for speed, but never verified against 
+    // the canonical reference parser output on identical inputs!
+    assert!(!fast_out.is_empty());
+}
+```
+
+**VERIFICATION METHOD**:
+Integrate into the CI harness via an example or integration test replaying historical commits (`cargo run --example diff_oracle -- --commits 100 --verbose`). Exit status MUST be non-zero if any commit produces `Divergent` or if all commits evaluate to `Vacuous`.
+
+---

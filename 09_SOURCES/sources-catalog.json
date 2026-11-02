@@ -6343,10 +6343,10 @@
     "repository": "Ataraxy-Labs/sem",
     "platform": "github",
     "sourceUrl": "https://github.com/Ataraxy-Labs/sem",
-    "sourceVersion": "fee69d96",
+    "sourceVersion": "43925140",
     "license": "Apache-2.0",
-    "contentHash": "2b6717636ecc4dd311ee40205208a4084cdbaabf4bbc9637ae6979915b1a969b",
-    "lastHarvestedAt": "2026-10-30T13:46:21.473Z",
+    "contentHash": "51a20ce30b3f2aabfe7d120beabd115c57deee91b621cacf0a12bd2d02ea8f01",
+    "lastHarvestedAt": "2026-11-02T17:58:27.011Z",
     "learningId": "learn-github-ataraxy-labs-sem"
   },
   "komi-store-komi-store": {
@@ -11505,8 +11505,8 @@
     "sourceUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceVersion": "hf-diffuspace-clover-35b-a3b-preview",
     "license": "Open-Source",
-    "contentHash": "0ae39dc48e2bf53608c737e88651bf7651662320a18cff731dcab3a06b044855",
-    "lastHarvestedAt": "2026-10-29T22:11:49.875Z",
+    "contentHash": "72c4831c27d25acea0c5f624ba885931b7ee7e55fc379bea3fbbc2666a67d420",
+    "lastHarvestedAt": "2026-11-02T17:54:17.062Z",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
   },
   "cherryhq-cherry-studio": {
