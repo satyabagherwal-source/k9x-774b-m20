@@ -6858,3 +6858,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-02T16:54:57.907Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `4b2dbfab` | Multi-dimensional audit evidence | 2026-11-02T16:55:02.141Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ec8b1b9b` | Multi-dimensional audit evidence | 2026-11-02T17:12:23.489Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `27a6ff0c` | Multi-dimensional audit evidence | 2026-11-02T17:24:26.045Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `6badb1c8` | Multi-dimensional audit evidence | 2026-11-02T17:24:33.341Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `595167cf` | Multi-dimensional audit evidence | 2026-11-02T17:24:40.328Z |

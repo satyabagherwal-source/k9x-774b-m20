@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T17:12:23.422Z",
+  "last_updated": "2026-11-02T17:24:40.243Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4960,8 +4960,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "93a5f683",
-      "content_hash": "8fca4bcfc0a4141c1a3610a960dd963015ed1151c757cc487c0f94af0c580b21",
+      "source_version": "595167cf",
+      "content_hash": "c180f60d27b42f294c3dc96f86544e3968e0526d9f0cb5c8405ae5e992e74b41",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5154,6 +5154,11 @@
           "number": 6411,
           "title": "docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6470,
+          "title": "a2a): accept XNO payments on the A2A payment gate (#348)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5161,7 +5166,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:39:28.274Z",
+      "verified_at": "2026-11-02T17:24:40.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -9875,8 +9880,8 @@
       "slug": "dicklesworthstone-destructive_command_guard",
       "platform": "github",
       "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
-      "source_version": "e4e06296",
-      "content_hash": "256acb5b405462630b67dc79f4e5e649c1728b85e783070faee0a7986a9e599c",
+      "source_version": "27a6ff0c",
+      "content_hash": "f6497804385efd450fcf8a045fa2ed491a9c673c4334b89cec149fedd4f0e7e3",
       "dossier_path": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
       "promoted_rules": [
@@ -9929,6 +9934,11 @@
           "number": 6177,
           "title": "core): preserve shell field and execution boundaries in indirect writes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6468,
+          "title": "python): revoke path proofs after opaque coercions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9936,7 +9946,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T11:09:23.914Z",
+      "verified_at": "2026-11-02T17:24:25.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -10228,8 +10238,8 @@
       "slug": "dnscontrol-dnscontrol",
       "platform": "github",
       "source_url": "https://github.com/DNSControl/dnscontrol",
-      "source_version": "81a6eab8",
-      "content_hash": "48c1e4a4633c303daafdf0b4926d37239ad92314ac26f88acdc142fa8219cded",
+      "source_version": "6badb1c8",
+      "content_hash": "39a0ca62a2e340dc38d364749d67f4cd79e735b99081bac2c7670173ee4ec216",
       "dossier_path": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md",
       "promoted_rules": [
@@ -10262,6 +10272,11 @@
           "number": 5589,
           "title": "build(deps): bump step-security/harden-runner from 2.22.1 to 2.22.2 (#5049)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6469,
+          "title": "build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (#5061)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10269,7 +10284,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T03:59:37.711Z",
+      "verified_at": "2026-11-02T17:24:33.237Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167444,6 +167459,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T17:12:23.404Z"
+    },
+    "rule-6468": {
+      "learning_id": "rule-6468",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6468,
+      "title": "python): revoke path proofs after opaque coercions",
+      "source_url": "https://github.com/Dicklesworthstone/destructive_command_guard",
+      "source_version": "27a6ff0c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:24:25.939Z"
+    },
+    "rule-6469": {
+      "learning_id": "rule-6469",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6469,
+      "title": "build(deps-dev): bump prettier from 3.9.9 to 3.9.10 (#5061)",
+      "source_url": "https://github.com/DNSControl/dnscontrol",
+      "source_version": "6badb1c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:24:33.237Z"
+    },
+    "rule-6470": {
+      "learning_id": "rule-6470",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6470,
+      "title": "a2a): accept XNO payments on the A2A payment gate (#348)",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "595167cf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:24:40.223Z"
     }
   },
   "aliases": {

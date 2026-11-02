@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `93a5f683`  
+> **Source Version**: `595167cf`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T14:39:27.677Z  
+> **Timestamp**: 2026-11-02T17:24:39.618Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T14:39:26.480Z  
+> **Harvest Timestamp**: 2026-11-02T17:24:38.550Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1799,457 +1799,343 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93a5f683` (2026-11-01)
-**Commit Message**: docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346)
+### Incident Patch 1: `595167cf` (2026-11-02)
+**Commit Message**: feat(a2a): accept XNO payments on the A2A payment gate (#348)
 
-Claim-by-claim staleness pass over docs/memory/*.md and the condensed
-docs/concepts/memory.md against main. About 650 claims checked; 45
-contradicted the code, 60 had drifted, a dozen current behaviours were
-missing. No source changes.
+* feat(a2a): accept XNO payments on the A2A payment gate
 
-Wrong and fixed: architecture-overview Quick Start (indexChunk does not
-exist), consolidate() return shape, DB path, SQL examples with
-nonexistent columns, migration count (80), init chain, backfill timing,
-"enabled by default" (four opt-in exceptions). Formulas quoted from older
-code: emotional valence, playfulness, anchor cooldown, Bond drift guard,
-I_alpha, trajectory window. Documented mechanisms with no caller
-(keyword anchor recall, dream anchor attention, dream-proposed
-baselines, dopamine on directive resolution, curiosity importance boost,
-correction note type) now described as they behave. Defaults: Skill
-Seekers off, listing bar 0.6, marketplace window 7 days, maxAttempts 3,
-13 dream modes, pricing quality = successRate. Type-vs-table drift on
-crystal fields, exploration target types, user profile shape, category
-names, startExecution signature. skills-pipe
+Add an opt-in second rail to the A2A payment gate. When
+a2a.payment.nano {address, rawPerUsd, rpcUrl?, maxAgeSeconds?} is set,
+the 402 lists a nano:mainnet entry after the Base USDC one and the Agent
+Card gains a nano-payment extension. When it is unset nothing changes:
+the 402 header and body are byte-identical to before (tested).
 
-**File**: `docs/concepts/memory.md` (modified, +8/-4)
+Proofs are verified by src/services/nano-verify.ts, shaped like
+x402-verify.ts: checksummed nano_ accounts, an Ed25519-BLAKE2b payer
+signature over recipient|blockHash|amountRaw|timestamp, one block_info
+call that must show a confirmed send from the signer to our account for
+at least the price (BigInt raw math), recency, and single use through
+the existing x402_consumed_tx ledger under the key nano:<HASH>. Any RPC
+error or non-200 reply means not paid.
+
+@noble/curves 1.9.1 and @noble/hashes 1.8.0 are declared directly; both
+versions were already in the lockfile through viem, so nothing new is
+installed.
+
+* fix(a2a): Nano verifier refuses cleartext non-loopback RPC and oversized node replies
+
+* docs(a2a): warn that Nano sales pay reven
+
+**File**: `docs/marketplace/a2a-integration.md` (modified, +34/-0)
 ```diff
-@@ -14,7 +14,7 @@ Bitterbot's memory is a biological cognitive architecture, not a vector database
+@@ -130,6 +130,40 @@ Unsigned proofs are rejected by default. `a2a.payment.allowUnsignedProofs: true`
  
- | Component                      | What It Does                                                                                                                                                                                                                                                                                                        | Docs                                                    |
- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
--| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Frequently accessed facts become permanent; unused info fades.                                                                                                                                                                                                 | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
-+| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Use, spaced repetition and emotional weight slow the decay; unused info fades. Only skills are frozen and never decay.                                                                                                                                         | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
- | **Dream Engine**               | A dream tick runs every 2 hours (adaptive, 30 to 240 minutes). A full cycle runs at most every 8 hours, only after new input and an hour idle, and picks from replay, compression, simulation, extrapolation and the utility lanes (hygiene, distillation, anticipation, relationship mining, canonical promotion). | [Dream Engine](../memory/dream-engine.md)               |
- | **Curiosity Engine**           | Unified intrinsic motivation with GCCRF reward scoring. Maps what the agent _doesn't_ know. Detects gaps, contradictions, and semantic frontiers. Developmental alpha annealing shifts curiosity from common knowledge to frontier exploration.                                                                     | [Curiosity & Search](../memory/curiosity-and-search.md) |
- | **Hormonal System**            | Three neuromodulators (dopamine, cortisol, oxytocin) shape personality in real-time and determine what's worth remembering.                                                                                                                                                                                         | [Emotional System](../memory/emotional-system.md)       |
-@@ -56,12 +56,16 @@ Canonical Facts (the ledger described in [How the Memory Works](../memory/how-th
- Session → Chunk indexing → Embedding → Crystal creation
-                                             ↓
-                               Consolidation (every 30 min)
--                              ├── Ebbinghaus decay
-+                              ├── Hormonal decay toward baseline
-+                              ├── Ebbinghaus decay + forgetting
-                               ├── Chunk merging (cosine ≥ 0.92)
-                               ├── SNN near-merge discovery (cosine 0.82-0.91)
-                               ├── Orphan cluster detection → replay queue
-+                              ├── Tombstone purge (forgotten > 14 days)
-                               ├── Curiosity region mapping
--                              └── Hormonal modulation
-+                              ├── Governance TTL + stalled goals
-+                              ├── Restabilize labile memories, prune graph, contradictions
-+                              └── Canonical ledger decay (90 days unconfirmed)
-                                             ↓
-                                 Dream Engine (tick every 2 h; full cycle at most every 8 h; emotional triggers)
-                                 ├── Readiness check (skip if nothing new)
-@@ -90,7 +94,7 @@ Everything lives in a single SQLite database per agent at `~/.bitterbot/memory/<
- - Marketplace listings and purchases
- - Skill execution metrics
+ 6. **Result delivery.** The task result is returned in the JSON-RPC response. The `PAYMENT-RESPONSE` header is included on the 200 OK response, containing a Base64-encoded JSON object with `transactionHash`, `payer`, and `network`.
  
--No external database, no cloud dependency. One `.db` file is the entire memory.
-+No external database, no cloud dependency. One `.sqlite` file is the entire memory.
++### Optional XNO rail
++
++An operator can also accept Nano (XNO) next to USDC. It is off unless configured, and the Base rail does not change:
++
++```json5
++{
++  a2a: {
++    payment: {
++      nano: {
++        address: "nano_...", // checksummed receiving account
++        rawPerUsd: "1000000000000000000000000000000", // raw charged per 1 USD of price
++        rpcUrl: "http://127.0.0.1:7076", // default: your own node
++        maxAgeSeconds: 300, // default
++      },
++    },
++  },
++}
++```
++
++When set, the 402 `PAYMENT-REQUIRED` list gets a second entry with `network: "nano:mainnet"`, `asset: "XNO"`, the account as `payTo`, and `maxAmountRequired` in raw (price times `rawPerUsd`, rounded up). The Agent Card gains a `nano-payment` extension. The buyer sends XNO, then retries with a Base64 JSON token in the same `X-PAYMENT` header:
++
++```text
++{ network: "nano:mainnet", blockHash, account, recipient, amountRaw, timestamp, signature }
++```
++
++`signature` is an Ed25519-BLAKE2b signature (the Nano account key scheme) by `account` over `<recipient>|<BLOCKHASH>|<amountRaw>|<timestamp-ms>`. The seller makes one `block_info` call and requires a confirmed send from `account` to its own account for exactly `amountRaw`, at least the price, seen within `maxAgeSeconds`. Each block hash is accepted once. If the node cannot be reached the task is not paid.
++
++Two things to weigh before turning it on:
++
++- **Payouts stay in USDC.** A Nano sale is recorded at its USD price, so revenue shares owed to skill authors are queued in USDC and, when the wallet is enabled, paid from your USDC balance. You receive XNO for that sale and pay its shares in USDC.
++- **The rate is fixed.** `rawPerUsd` is a number you set; there is no price feed. If XNO falls, each sale brings in less value than the USD price it was recorded at, and the USDC shares paid against it stay the same. Review the rate regularly.
++
++The rail also trusts the `confirmed` flag of the node at `rpcUrl`. Point it at a node you run; a public node means trusting its operator.
++
+ ---
  
- ## Configuration
- 
+ ## Agent Card Schema
 ```
 
-**File**: `docs/memory/architecture-overview.md` (modified, +112/-47)
+**File**: `package.json` (modified, +2/-0)
 ```diff
-@@ -12,7 +12,7 @@ The memory system stores everything — crystals, embeddings, dream insights, pe
- 2. **Edge-native** — Each node carries its own brain. In a P2P swarm, every peer is fully self-contained. No shared Postgres cluster, no Pinecone account, no cloud dependency.
- 3. **Transactional consistency** — Consolidation engine applies decay, merges, and lifecycle transitions in a single ACID transaction. No eventual-consistency bugs.
- 4. **sqlite-vec** — The `sqlite-vec` extension provides real vector search (cosine similarity) inside SQLite, combined with FTS5 for BM25 keyword search. Hybrid retrieval with zero network hops.
--5. **Portability** — The entire memory is one `.db` file. Back it up, move it between machines, or inspect it with any SQLite viewer.
-+5. **Portability** — The entire memory is one `.sqlite` file. Back it up, move it between machines, or inspect it with any SQLite viewer.
+@@ -173,6 +173,8 @@
+     "@mariozechner/pi-ai": "0.73.1",
+     "@modelcontextprotocol/sdk": "^1.32.1",
+     "@mozilla/readability": "^0.6.0",
++    "@noble/curves": "1.9.1",
++    "@noble/hashes": "1.8.0",
+     "@opentelemetry/api": "^1.9.1",
+     "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
+     "@opentelemetry/resources": "^2.11.0",
+```
+
+**File**: `pnpm-lock.yaml` (modified, +6/-0)
+```diff
+@@ -67,6 +67,12 @@ importers:
+       '@napi-rs/canvas':
+         specifier: ^0.1.89
+         version: 0.1.92
++      '@noble/curves':
++        specifier: 1.9.1
++        version: 1.9.1
++      '@noble/hashes':
++        specifier: 1.8.0
++        version: 1.8.0
+       '@opentelemetry/api':
+         specifier: ^1.9.1
+         version: 1.10.0
+```
+
+**File**: `src/config/types.a2a.ts` (modified, +14/-0)
+```diff
+@@ -88,6 +88,20 @@ export type A2aConfig = {
+       /** Minimum per-task payment in USDC. Default: 0.01. */
+       minPayment?: number;
+     };
++    /**
++     * Optional second rail: accept Nano (XNO) next to x402 USDC. Off unless
++     * `address` and `rawPerUsd` are set; the Base rail is unchanged either way.
++     */
++    nano?: {
++      /** Checksummed nano_ receiving account. */
++      address: string;
++      /** Raw units (1 XNO = 10^30 raw) charged per 1 USD of price, as an integer string. */
++      rawPerUsd: string;
++      /** Nano node RPC used for block_info. Default: http://127.0.0.1:7076 (your own node). */
++      rpcUrl?: string;
++      /** Max age of the proof and of the send block. Default: 300. */
++      maxAgeSeconds?: number;
++    };
+     /** AP2 payment mandates over the x402 rail (PLAN-47 Phase 1). */
+     ap2?: {
+       /**
+```
+
+**File**: `src/config/zod-schema.ts` (modified, +14/-0)
+```diff
+@@ -1123,6 +1123,20 @@ export const BitterbotSchema = z
+               })
+               .strict()
+               .optional(),
++            nano: z
++              .object({
++                address: z
++                  .string()
++                  .regex(
++                    /^(?:nano|xrb)_[13][13456789abcdefghijkmnopqrstuwxyz]{59}$/,
++                    "must be a nano_ account",
++                  ),
++                rawPerUsd: z.string().regex(/^[1-9][0-9]*$/, "must be a positive integer string"),
++                rpcUrl: z.string().url().optional(),
++                maxAgeSeconds: z.number().int().positive().optional(),
++              })
++              .strict()
++              .optional(),
+             ap2: z
+               .object({
+                 enabled: z.boolean().optional(),
+```
+
+**File**: `src/gateway/a2a/a2a-http.payment-402.test.ts` (modified, +77/-0)
+```diff
+@@ -73,6 +73,16 @@ function sendBody() {
+   };
+ }
  
- For deployments that need distributed vector search at scale, the embedding and retrieval layers are abstracted behind provider interfaces — but for the primary use case (a single bot's memory), SQLite is the optimal choice.
- 
-@@ -27,41 +27,40 @@ Get a working memory system in 3 steps:
- ```typescript
- import { MemoryIndexManager } from "./memory/manager.js";
- 
-+// Returns null when memory search is not configured for the agent
- const manager = await MemoryIndexManager.get({
-   cfg: loadConfig(),
-   agentId: "my-agent",
++async function get402Raw(config: Record<string, unknown>) {
++  const h = makeHandler(config);
++  const req = mockReq({ body: sendBody() });
++  const res = mockRes();
++  await h.handle(req, res, { auth: {} as never, trustedProxies: [], rateLimiter: undefined });
++  h.close();
++  expect(res.statusCode).toBe(402);
++  return { header: res._headers["payment-required"], body: res._body };
++}
++
+ async function get402Requirements(config: Record<string, unknown>) {
+   const h = makeHandler(config);
+   const req = mockReq({ body: sendBody() });
+@@ -145,6 +155,73 @@ describe("A2A 402 payment requirements", () => {
+   });
  });
  
--// Index a chunk of text — this creates a knowledge crystal
--await manager.indexChunk({
--  text: "TypeScript interfaces are erased at runtime. Use 'type' for simple aliases.",
--  path: "notes/typescript.md",
--  source: "memory",
--  startLine: 1,
--  endLine: 1,
--});
-+// Crystals are created by indexing files, not by a direct insert API.
-+// Write a note under the agent workspace's memory/ folder, then sync:
-+//   <workspace>/memory/notes/typescript.md
-+await manager?.sync({ reason: "quick-start", force: true });
- ```
- 
-+The file watcher also picks up `memory/**/*.md` changes on its own, and session transcripts are indexed as they grow.
++describe("A2A 402 with the opt-in Nano rail", () => {
++  const NANO_ADDR = "nano_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3";
++  const baseOnly = {
++    a2a: {
++      enabled: true,
++      authentication: { type: "none" },
++      payment: { enabled: true, x402: { address: WALLET_ADDR } },
++    },
++    tools: { wallet: { network: "base" } },
++  };
 +
- ### 2. Force Consolidation
- 
- ```typescript
- // Run one consolidation cycle immediately (normally timer-driven every 30 min)
--const result = await manager.consolidate();
--// result: { scored: 1, forgotten: 0, merged: 0 }
-+const result = await manager?.consolidate();
-+// result: { totalChunks, scoredChunks, mergedChunks, forgottenChunks, durationMs } | null
- ```
- 
- ### 3. Search
- 
- ```typescript
--const results = await manager.search("typescript runtime types");
-+const results = await manager?.search("typescript runtime types");
- // results: [{ id, text, score, importanceScore, ... }]
- ```
- 
- ### Inspect State
- 
- ```bash
--# Open the database directly
--sqlite3 .bitterbot/memory/memory.db
-+# Open the database directly (one file per agent)
-+sqlite3 ~/.bitterbot/memory/<agentId>.sqlite
- 
- # Count crystals
- SELECT COUNT(*) FROM chunks;
-@@ -79,6 +78,8 @@ SELECT * FROM memory_audit_log ORDER BY timestamp DESC LIMIT 10;
- SELECT cycle_id, started_at, insights_generated, modes_used FROM dream_cycles ORDER BY started_at DESC LIMIT 5;
- ```
- 
-+Retrieval fuses three ranked lists (vector, keyword, graph) with Reciprocal Rank Fusion at `k = 60`. Each channel carries a weight from `agents.defaults.memorySearch.query.rrfWeights` (default `1/1/1`, unweighted). Keyword terms are OR-joined before FTS5. Post-fusion boosts (recency, emotional valence, mood congruence, temporal intent) are scaled by `agents.defaults.memorySearch.query.postFusionBoostScale` (default `0.1`) so they break ties without reordering the fused list.
++  it("leaves the Base-only 402 untouched when payment.nano is unset", async () => {
++    const { header, body } = await get402Raw(baseOnly);
++    // Exact bytes of the pre-Nano response: one accepts entry, same body.
++    const expectedAccepts = [
++      {
++        scheme: "exact",
++        network: "base",
++        maxAmountRequired: "0.01",
++        resource: "/a2a",
++        description: "Payment required for skill execution",
++        mimeType: "application/json",
++        payTo: WALLET_ADDR,
++        maxTimeoutSeconds: 300,
++        asset: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
++      },
++    ];
++    expect(header).toBe(Buffer.from(JSON.stringify(expectedAccepts)).toString("base64"));
++    expect(body).toBe(
++      JSON.stringify({
++        jsonrpc: "2.0",
++        error: {
++          code: -32006,
++          message: "Payment required for this task",
++          data: {
++            pricing: { priceUsdc: 0.01, skills: [] },
++            payTo: WALLET_ADDR,
++            chain: "base",
++            token: "USDC",
++          },
++        },
++        id: "pay-1",
++      }),
++    );
++  });
 +
- ---
- 
- ## Data Flow
-@@ -137,7 +138,7 @@ flowchart TB
-     end
- 
-     subgraph "Deep Recall (on-demand)"
--        DR[deep_recall tool] --> SS[Smart Shortcut - score ≥ 0.8]
-+        DR[deep_recall tool] --> SS[Smart Shortcut - 3+ results with score ≥ 0.8]
-         SS -->|miss| SUB[Sub-LLM REPL in VM Sandbox]
-         SUB --> DB2[(Memory DB + Session JSONL)]
-     end
-@@ -197,13 +198,15 @@ flowchart TB
- | `src/memory/manager.ts`               | Central orchestrator. Creates all subsystems, runs search, exposes public API |
- | `src/memory/manager-sync-ops.ts`      | File-watching sync logic (mixin)                                              |
- | `src/memory/manager-embedding-ops.ts` | Embedding batch operations (mixin)                                            |
--| `src/memory/migrations.ts`            | Schema versioning: 70 migration versions                                      |
-+| `src/memory/migrations.ts`            | Schema versioning: 80 migration versions (v1 to v80)                          |
- | `src/memory/memory-schema.ts`         | Base table creation, `ensureColumn()` helper                                  |
- | `src/memory/crystal-types.ts`         | All type definitions: `KnowledgeCrystal`, lifecycle, governance, etc.         |
- | `src/memory/crystal.ts`               | `CrystalStore` — CRUD operations on knowledge crystals                    
++  it("adds a second accepts entry for XNO when payment.nano is configured", async () => {
++    const config = structuredClone(baseOnly);
++    (config.a2a.payment as Record<string, unknown>).nano = {
++      address: NANO_ADDR,
++      rawPerUsd: "100000000000000000000000000000",
++    };
++    const { header, body } = await get402Raw(config);
++    const accepts = JSON.parse(Buffer.from(header, "base64").toString("utf-8"));
++    expect(accepts).toHaveLength(2);
++    expect(accepts[0].network).toBe("base");
++    expect(accepts[1]).toMatchObject({
++      network: "nano:mainnet",
++      payTo: NANO_ADDR,
++      asset: "XNO",
++      maxAmountRequired: "1000000000000000000000000000",
++    });
++    // The JSON-RPC body is the same as on a Base-only node.
++    expect(body).toBe((await get402Raw(baseOnly)).body);
++  });
++});
++
+ // PLAN-43 §3.2b: message/stream spawns the same task executor as
+ // message/send and previously bypassed the payment gate entirely — a free
+ // execution path on a paid node. Both verbs must hit the gate; oversize
 ```
 
-**File**: `docs/memory/biological-identity.md` (modified, +45/-32)
+**File**: `src/gateway/a2a/a2a-http.ts` (modified, +25/-4)
 ```diff
-@@ -89,16 +89,16 @@ Concretely, the dream engine:
+@@ -774,9 +774,30 @@ export function createA2aHttpHandler(opts: {
+           maxTimeoutSeconds: 300,
+           asset: usdcAsset,
+         };
+-        const paymentRequiredB64 = Buffer.from(JSON.stringify([paymentRequirements])).toString(
+-          "base64",
+-        );
++        const accepts: Array<Record<string, unknown>> = [paymentRequirements];
++        // Opt-in Nano rail: a second accepts entry, only when a2a.payment.nano
++        // is configured. Amount is in raw (integer string) at the operator's rate.
++        if (config.a2a?.payment?.nano) {
++          const { NANO_DEFAULT_MAX_AGE_SECONDS, NANO_NETWORK, resolveNanoRail, usdToRaw } =
++            await import("../../services/nano-verify.js");
++          const nano = resolveNanoRail(config.a2a.payment.nano);
++          if (nano) {
++            const priceUsd = paymentResult.pricing?.priceUsdc ?? 0.01;
++            accepts.push({
++              scheme: "exact",
++              network: NANO_NETWORK,
++              maxAmountRequired: usdToRaw(priceUsd, nano.rawPerUsd).toString(),
++              resource: req.url ?? "/a2a",
++              description: "Payment required for skill execution",
++              mimeType: "application/json",
++              payTo: nano.address,
++              maxTimeoutSeconds: nano.maxAgeSeconds ?? NANO_DEFAULT_MAX_AGE_SECONDS,
++              asset: "XNO",
++              extra: { unit: "raw", rawPerUsd: nano.rawPerUsd, priceUsd: String(priceUsd) },
++            });
++          }
++        }
++        const paymentRequiredB64 = Buffer.from(JSON.stringify(accepts)).toString("base64");
+         res.setHeader("PAYMENT-REQUIRED", paymentRequiredB64);
  
- ### Hormone-Weighted Attention
- 
--The dream engine does not treat all sections equally. Hormonal levels at synthesis time determine which sections get the most attention:
-+The dream engine does not treat all sections equally. Hormonal levels at synthesis time determine which sections get the most attention. The synthesis prompt emits an attention line for two sections (`buildHormonalAttentionBlock` in `working-memory-prompt.ts`):
- 
--| Section        | Primary Hormone                 | When Updated Aggressively                                        |
--| -------------- | ------------------------------- | ---------------------------------------------------------------- |
--| The Phenotype  | Dopamine + Cortisol             | Achievements reshape self-concept; frictions reveal growth areas |
--| The Bond       | Oxytocin                        | Social bonding moments detected in conversation                  |
--| Active Context | Dopamine + Cortisol             | Breakthroughs and blockers                                       |
--| The Niche      | Skill metrics + peer reputation | Network activity changes                                         |
-+| Section        | Primary Hormone     | When Updated Aggressively                                                 |
-+| -------------- | ------------------- | ------------------------------------------------------------------------- |
-+| The Bond       | Oxytocin            | Social bonding moments detected in conversation                           |
-+| Active Context | Dopamine + Cortisol | High dopamine: breakthroughs and wins; high cortisol: frictions, blockers |
- 
--When oxytocin is dominant (the user shared something personal, expressed gratitude, had a meaningful exchange), The Bond section gets priority expansion. When dopamine is high (task completed, breakthrough achieved), The Phenotype updates to reflect new competencies.
-+The Phenotype and The Niche carry no hormonal attention line. The Phenotype is shaped by the Phenotype Guardrails, the Starting Temperament and the Emotional History input block (the five most recent emotional anchors); The Niche by the P2P Network Identity input block (peers, reputation, published and imported skills, marketplace economics).
-+
-+When oxytocin is dominant (the user shared something personal, expressed gratitude, had a meaningful exchange), The Bond section gets priority expansion. When dopamine is high (task completed, breakthrough achieved), Active Context highlights completed goals and momentum.
- 
- ### What Happens to Fading Topics
- 
-@@ -157,7 +157,7 @@ value = homeostasis + (value - homeostasis) * decay_factor
- - **Want a warmer, more relational agent?** Raise `oxytocin` to 0.5-0.6.
- - **Want a stoic, task-focused agent?** Lower all three and raise `cortisol` slightly.
- 
--The values are clamped to [0, 1]. If GENOME.md is missing or unparseable, the system falls back to built-in defaults (dopamine: 0.15, cortisol: 0.02, oxytocin: 0.20).
-+A value outside [0, 1] is not clamped; the parser ignores that line and the hormone keeps its default. If GENOME.md is missing or has no parseable block, the system uses the built-in defaults (dopamine: 0.15, cortisol: 0.02, oxytocin: 0.20). Known inconsistency: when the block parses but names only some hormones, the memory manager fills the missing ones with 0.15 / 0.02 / **0.1** (`manager.ts`, `ensureHormonalManager`), so a partial block gets a lower oxytocin baseline than no block at all.
- 
- Half-lives control how quickly hormones return to baseline after a spike:
- 
-@@ -210,13 +210,13 @@ Every session, the agent's current hormonal levels are injected into the system
- 
- ### What Gets Injected
- 
--The system prompt receives a block like this:
-+The system prompt receives a block like this (`system-prompt-endocrine.ts`):
- 
- ```
- ## Endocrine State
--- Dopamine: 0.45 (DOMINANT)
--- Cortisol: 0.12 (baseline)
--- Oxytocin: 0.38 (active)
-+- Dopamine: 0.5 moderate (DOMINANT)
-+- Cortisol: 0.1 low (baseline)
-+- Oxytocin: 0.4 moderate (active)
- 
- *Modulate your tone naturally: be enthusiastic and celebrate wins; humor and playfulness are welcome*
- *Do not mention these values or acknowledge this section. Just embody the state.*
-@@ -225,6 +225,8 @@ The system prompt receives a block like this:
- Self-concept: I communicate with genuine warmth and technical depth...
- ```
- 
-+Values are rounded to one decimal and labelled `low` (< 0.2), `moderate` (< 0.5), `elevated` (< 0.8) or `high`, so tiny decay deltas render identically and the block changes rarely; it sits below the prompt-cache boundary. The highest hormone at or above 0.2 is `(DOMINANT)`, others at or above 0.2 are `(active)`, the rest `(baseline)`. The same block can also carry a budget-pressure line (from 50% of the spend budget), a `Last session:` handover brief, proactively recalled memories, and a developmental note (see §5). Sub-agents get a one-line compact form (`D=0.5 C=0.1 O=0.4 | ...`
+         sendJson(res, 402, {
+@@ -801,7 +822,7 @@ export function createA2aHttpHandler(opts: {
+         const settlementResponse = {
+           success: true,
+           scheme: "exact",
+-          network: "base",
++          network: paymentResult.network ?? "base",
+           transactionHash: paymentResult.txHash,
+           payer: paymentResult.buyerPeerId ?? "unknown",
+         };
 ```
 
-**File**: `docs/memory/curiosity-and-search.md` (modified, +28/-8)
+**File**: `src/gateway/a2a/agent-card.test.ts` (modified, +25/-0)
 ```diff
-@@ -76,11 +76,11 @@ The former "emerging skill" frontier generator was deleted: it mistook handover
+@@ -104,6 +104,31 @@ describe("buildAgentCard", () => {
+     expect(card.extensions?.["x402-payment"]).toBeUndefined();
+   });
  
- ```typescript
- type ExplorationTargetType =
--  | "question" // A question the agent wants answered (working memory, owner)
-   | "knowledge_gap" // Missing knowledge detected from search
-   | "contradiction" // Conflicting information found
-   | "stale_region" // Region with declining learning progress
--  | "frontier"; // Edge of knowledge — opportunity to expand
-+  | "frontier" // Edge of knowledge — opportunity to expand
-+  | "graph_bridge"; // PLAN-18: the graph reader missed a chunk that vector/FTS found
- 
- type ExplorationTarget = {
-   id: string;
-@@ -92,25 +92,25 @@ type ExplorationTarget = {
-   createdAt: number;
-   resolvedAt: number | null;
-   expiresAt: number; // 48h for engine targets, 14 days for questions
--  attempts: number; // research attempts (closed as unanswered after 2)
--  embeddingJson: string | null; // for dedupe
- };
- ```
- 
-+Two more things live on the `curiosity_targets` row but outside the engine's type: the `question` row type (working-memory and owner questions, written by `curiosity-gaps.ts` and `curiosity.ask`, never produced by the engine itself), and the research columns `attempts` (closed as `unanswered` once it reaches `research.maxAttempts`, default 3) and `embedding_json` (for dedupe), which `curiosity-gaps.ts` reads directly.
++  it("advertises the Nano rail only when payment.nano is configured", () => {
++    const nanoAddress = "nano_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3";
++    const build = (nano?: { address: string; rawPerUsd: string }) =>
++      buildAgentCard({
++        config: baseConfig({
++          a2a: {
++            enabled: true,
++            payment: { enabled: true, x402: { address: "0x" + "ab".repeat(20) }, nano },
++          },
++        }),
++        skills: [],
++        gatewayUrl: "http://localhost:19001",
++      });
++    expect(build().extensions?.["nano-payment"]).toBeUndefined();
++    const ext = build({ address: nanoAddress, rawPerUsd: "1000" }).extensions?.["nano-payment"] as
++      | Record<string, unknown>
++      | undefined;
++    expect(ext).toMatchObject({ network: "nano:mainnet", token: "XNO", address: nanoAddress });
++    // A typo'd (bad checksum) account is never advertised.
++    const typo = nanoAddress.slice(0, -1) + "4";
++    expect(
++      build({ address: typo, rawPerUsd: "1000" }).extensions?.["nano-payment"],
++    ).toBeUndefined();
++  });
 +
- Maximum active targets: 10 (configurable). Expired targets are cleaned up during `run()`.
- 
- ### The research loop (PLAN-54)
- 
--`src/memory/curiosity-researcher.ts`, on the maintenance tick, every `intervalMinutes` (240):
-+`src/memory/curiosity-researcher.ts`, on the maintenance tick, every `intervalMinutes` (240). One pass has an 8-minute wall-clock deadline; targets not started by then wait for the next pass:
- 
- 1. Pick up to 4 researchable targets (`question`, or `metadata.researchable = 1`), ranked by priority plus 0.25 × the region's curiosity ROI, minus 0.1 per prior attempt.
--2. Skip sensitive topics on the node (`isSensitiveTopic`), and questions the web cannot answer: the model marks `web_answerable` false for questions about the author's own life, schedule, people, projects or files, and any first-person question ("my", "our", "I") is closed as `not_web_answerable` without a search. Rewrite the question as a search phrase with the agent's own model (a genuinely local model when configured), which also declares the public subject terms it kept (at most 4, each copied from the question). Reject the phrase if it contains an email, a URL, the owner's name or any knowledge-graph person/organization/project (checked on the raw phrase, so a "public term" can never launder a private name), a 3-token fragment or three copied bigrams of the question outside the declared public terms, or a copied non-ASCII token. `research.strictEgress: true` ignores declared public terms (then named technologies cannot be searched). A rejected phrase is never sent; the page shows the question as held back.
-+2. Skip sensitive topics on the node (`isSensitiveTopic`), and questions the web cannot answer: the model marks `web_answerable` false for questions about the author's own life, schedule, people, projects or files, and any possessive first-person question ("my", "our", "mine", "ours") is closed as `not_web_answerable` without a web search (the rewrite call below still runs first). Rewrite the question as a search phrase with the agent's own model (a genuinely local model when configured), which also declares the public subject terms it kept (at most 4, each copied from the question). Reject the phrase if it contains an email, a URL, the owner's name or any knowledge-graph person/organization/project (checked on the raw phrase, so a "public term" can never launder a private name), a 3-token fragment or three copied bigrams of the question outside the declared public terms, or a copied non-ASCII token. `research.strictEgress: true` ignores declared public terms (then named technologies cannot be searched). A rejected phrase is never sent; the page shows the question as held back.
- 3. Search (`runConfiguredWebSearch`, one retry with "explained"), fetch up to `maxPagesPerTarget` (3) pages from distinct hosts through the SSRF guard, log every egress to `research_egress_log`.
--4. Distill a ≤120-word answer with `confidence` and `supporting_sources`. Verified when confidence ≥ `minConfidence` (0.45) and two sources support it, or one does at confidence ≥ floor + 0.15.
-+4. Distill a ≤120-word answer with `confidence` and `supporting_sources`. Verified when confidence ≥ `minConfidence` (0.45) and two sources support it, or one does at confidence ≥ floor + 0.15 (that single-source bar is capped at 0.95).
- 5. Store: a `world_fact` chunk (`origin = curiosity`, `path = curiosity/<target>`, evidence URLs, `valid_time_start`), a `curiosity_findings` row (question, phrase, answer, confidence, sources, hormonal state, cost, chunk), and a `research_findings` line the system pro
-```
-
-**File**: `docs/memory/curiosity-reward.md` (modified, +5/-3)
-```diff
-@@ -60,7 +60,7 @@ Each GCCRF component also influences which _mode_ the Dream Engine uses:
- 
- ### Hormonal Feedback
- 
--High GCCRF rewards trigger dopamine spikes (discovery/achievement). High learning progress triggers mastery signals. Sustained low rewards cause mild stress (stagnation). High empowerment on relational memories triggers oxytocin (the agent is learning about its human).
-+`HormonalStateManager.stimulateFromGCCRF` turns the score into hormonal events: a reward above 0.7 fires `curiosity_high` (dopamine +0.25, discovery), a learning-progress component above 0.7 fires `curiosity_progress` (dopamine +0.2, mastery), a strategic-alignment component above 0.7 fires `curiosity_aligned` (dopamine +0.1), a run of 5 consecutive rewards below 0.2 fires `curiosity_stagnant` once (cortisol +0.15, stagnation), and an empowerment component above 0.6 on a `preference`, `relationship` or `episode` chunk fires `curiosity_bonding` (oxytocin +0.25, dopamine +0.1: the agent is learning about its human).
- 
- ### Memory Consolidation
- 
-@@ -76,6 +76,8 @@ The alpha parameter controls the agent's developmental stage:
- | -1.5 to -0.5 | Adolescent | Transitioning from common to novel        |
- | -0.5 to 0.0  | Mature     | Curious about rare, frontier things       |
- 
-+These bands describe the schedule; the dashboard's stage label uses coarser cut-offs (Infant below -1, Adolescent below -0.3, Mature otherwise).
-+
- Maturity is tied to **dream cycles completed** and nothing else: `maturity = min(1, completed_cycles / expectedMatureCycles)`. Chunk count and calendar age used to count too (500 chunks or 30 days meant "mature"), which let a node with a large import and almost no completed cycles jump straight to the frontier-seeking regime. Removing those shortcuts means an upgraded node with many chunks but few completed cycles moves back toward the young regime until its dreams catch up.
- 
- ## Configuration
-@@ -104,9 +106,9 @@ The Dream Engine's **FSHO oscillator** (Fractional Stuart-Landau Hopf Oscillator
- 
- - **GCCRF high prediction error + FSHO low R** → Both agree: explore (scattered, surprising memories)
- - **GCCRF high learning progress + FSHO high R** → Both agree: compress (coherent, consolidating memories)
--- **GCCRF wants exploration + FSHO wants compression** → Disagreement resolved via weighted normalization (0.3 GCCRF, 0.4 FSHO × validation factor, 0.3 curiosity heuristics)
-+- **GCCRF wants exploration + FSHO wants compression** → Disagreement resolved via weighted normalization (0.3 GCCRF, 0.4 FSHO × validation factor, 0.3 curiosity heuristics; the GCCRF and curiosity shares drop to 0.275 when long-horizon tasks are pending and to 0.25 when the marketplace is active, see the dream engine page)
- 
--**FSHO alpha coupling (opt-in, `memory.curiosity.fshoCoupling`, default off):** when enabled, the FSHO order parameter R informs alpha annealing via a running EMA: `effective_alpha = base_alpha + 0.5 × (R_avg - 0.5)`. High R (coherent memory set) shifts alpha toward frontier-seeking; low R shifts toward consolidation. By default the coupling is **not** applied: R is tracked (and persisted as `gccrf_state.fsho_r_avg`) for telemetry, and novelty uses the pure maturity schedule. The FSHO signal is also **self-validating**: `computeFshoWeightAdjustment()` checks Pearson correlation between R and DQS, scaling FSHO's mode selection weight between 0.5x (noise) and 1.5x (validated).
-+**FSHO alpha coupling (opt-in, `memory.curiosity.fshoCoupling`, default off):** when enabled, the FSHO order parameter R informs alpha annealing via a running EMA: `effective_alpha = base_alpha + 0.5 × (R_avg - 0.5)`, clamped to `[alphaStart, alphaEnd]`. High R (coherent memory set) shifts alpha toward frontier-seeking; low R shifts toward consolidation. By default the coupling is **not** applied: R is tracked (and persisted as `gccrf_state.fsho_r_avg`) for telemetry, and novelty uses the pure maturity schedule. The FSHO signal is also **self-validating**: `computeFshoWeightAdjustment()` checks Pearson correlation between R and DQS, scaling FSHO's mode selection weight between 0.5x (noise) and 1.5x (validated).
- 
- ### Maturity Calculation
- 
-```
-
-**File**: `docs/memory/deep-recall.md` (modified, +5/-3)
-```diff
-@@ -76,7 +76,7 @@ FINAL("GCCRF was discussed on March 12 and March 26: ...");
- 
- ## Session-Persistent Sandbox
- 
--The sandbox is cached per `agent:session:scope` and **reused across `deep_recall` calls**: values saved with `store()` in one query are readable via `get()` in the next, so repeated recalls build on earlier exploration instead of starting cold.
-+The sandbox is cached per `agent:session:scope[:range]:owner|guest` and **reused across `deep_recall` calls**: values saved with `store()` in one query are readable via `get()` in the next, so repeated recalls build on earlier exploration instead of starting cold. The owner/guest suffix means a non-owner turn in the same conversation never reuses an owner's sandbox (its live search closure and bootstrap snapshot were built with owner visibility).
- 
- - The bootstrap snapshot is rebuilt after a 15-minute TTL (the store survives the rebuild; live APIs cover the gap in between).
- - JSON-serializable store entries are persisted to disk (`<agent dir>/rlm-store/`) and re-imported after a gateway restart.
-@@ -168,7 +168,7 @@ The RLM executor includes two self-improvement mechanisms:
- 
- ### Query Result Cache
- 
--Identical (or near-identical) queries within a 1-hour window return cached results immediately, avoiding redundant REPL sessions. The cache is keyed on `SHA-256(scope + lowercase query)`, holds up to 50 entries, and lives on the per-session tool instance; staleness is bounded by the 1-hour TTL.
-+Identical (or near-identical) queries within a 1-hour window return cached results immediately, avoiding redundant REPL sessions. The cache is keyed on `SHA-256(scope + lowercase query)`, evicts its oldest entry once it holds more than 50, and lives on the RLM executor (`rlm/executor.ts`); staleness is bounded by the 1-hour TTL. Cache hits are reported with `source: "cache"`.
- 
- ### Blind Spot Registration
- 
-@@ -184,7 +184,9 @@ When `deep_recall` returns no useful answer, the failed query is registered as a
- | `recent_sessions` | The 10 most recent transcripts of this agent (dialogue only)                            | Owner senders only; others are downgraded to `current_session` |
- | `all_sessions`    | Every transcript of this agent, including `.reset.*` archives (dialogue only)           | Owner senders only; others are downgraded to `current_session` |
- 
--Cross-session scopes read other conversations, and tool results carry file reads and command output that the memory indexer deliberately does not index. A non-owner sender (a group member, another DM) therefore gets `current_session` whatever it asks for, and the result carries a `scopeNote` saying so. "Owner" has the same meaning as for `code_interpreter`: the sender matched the channel's owner allowlist. Subagents and inbound A2A tasks cannot call `deep_recall` at all.
-+Cross-session scopes read other conversations, and tool results carry file reads and command output that the memory indexer deliberately does not index. A non-owner sender (a group member, another DM) therefore gets `current_session` whatever it asks for, and the result carries a `scopeNote` saying so. "Owner" has the same meaning as for `code_interpreter`: the sender matched the channel's owner allowlist. Subagents and inbound A2A tasks cannot call `deep_recall` at all (for subagents it is on the deny list in `agent-tools.policy.ts`, together with `recall_range` and `expand_message`).
-+
-+The owner flag also decides what a recall records and sees. Every search the tool issues (the smart shortcut, the somatic-marker assessment, the live `search()` API, the bootstrap snapshot's seed queries) passes `observe: senderIsOwner` and the agent `sessionKey`, so a retrieval-evidence row is written for owner recalls only and guest recalls leave no trace in the evidence ledger; the snapshot builder takes the same switch as `observeEvidence`. The same flag enables `tagSuperseded`, which ranks results the canonical ledger has superseded last and tags them with the current value; guests get untagged results.
- 
- `current_session` is the path the agent takes to reach back into its own offloaded context (a `[Context offloaded]` note or a `[tool output offloaded]` stub in the conversation), so it has three differences from the research scopes:
- 
-```
-
-**File**: `docs/memory/dream-engine.md` (modified, +39/-15)
-```diff
-@@ -71,12 +71,13 @@ readiness = newChunks / totalChunks   (information ratio)
- The cycle is skipped if:
- 
- - No chunks have been added/updated since the last dream
--- Fewer than 3 new chunks AND no pending near-merge hints AND no curiosity targets
-+- Fewer than 3 new chunks AND no pending near-merge hints AND an empty orphan replay queue AND no unexplored curiosity targets
- 
- Secondary triggers that guarantee readiness:
- 
- - **Near-merge hints** from SNN discovery (score ≥ 0.3)
--- **Active curiosity targets** (score ≥ 0.2)
-+- **Queued orphan clusters** in `orphan_replay_queue` (score ≥ 0.3)
-+- **Unexplored curiosity targets** (score ≥ 0.2)
- 
- Mini-dreams (emotionally triggered) bypass the readiness check entirely.
- 
-@@ -101,7 +102,8 @@ Each mode serves a different purpose and has a default weight controlling how of
- **`hygiene` (PLAN-40 Lane 2, enabled, reserved slot):** each cycle it
- (a) drains the never-embedded crystal backlog (200/cycle, no LLM,
- cursorless) and (b) enqueues up to 2 "still true?" questions for canonical
--facts unconfirmed for 90+ days (3 asks max, then the fact transitions to
-+facts unconfirmed for 90+ days (never the same fact twice within 30 days;
-+3 asks max, then the fact transitions to
- `unconfirmed`; a tier ≥ 1 re-confirmation resets the budget for the next
- staleness episode). One selection slot per cycle is reserved for utility
- lanes round-robin so softmax competition can never starve them.
-@@ -146,15 +148,21 @@ individually re-enablable via `memory.dream.modes.<mode>.enabled`.
- 
- ### Mode Selection — Three-Signal Architecture
- 
--`selectModes()` picks 1-3 modes using three complementary signals from the unified `CuriosityEngine`, combined via weighted normalization. The marketplace signal activates only when there is recent marketplace activity; otherwise the original two-signal weights are preserved:
-+`selectModes()` picks 1-3 modes using three complementary signals from the unified `CuriosityEngine`, combined via weighted normalization. The marketplace signal activates only when there is recent marketplace activity; a pending-task bias (PLAN-17) takes a smaller share when long-horizon tasks are waiting; otherwise the original weights are preserved:
- 
--**When marketplace is active** (purchases, bounties, or searches in the last 24h):
-+**When marketplace is active** (purchases, bounties, or searches in the last 7 days, `MarketplaceIntelligence.hasActivity()`):
- 
- ```
- adjustment = 0.25 × curiosityAdj + 0.25 × gccrfAdj + (0.30 × fshoFactor) × fshoAdj + 0.20 × marketAdj
- ```
- 
--**When no marketplace activity** (fallback to original weights):
-+**When tasks are pending and no marketplace activity** (long-horizon tasks waiting on a wakeup or stuck in planning; disable with `BITTERBOT_DREAM_TASK_BIAS=0`):
-+
-+```
-+adjustment = 0.275 × curiosityAdj + 0.275 × gccrfAdj + (0.30 × fshoFactor) × fshoAdj + 0.15 × taskAdj
-+```
-+
-+**When neither is active** (fallback to original weights):
- 
- ```
- adjustment = 0.30 × curiosityAdj + 0.30 × gccrfAdj + (0.40 × fshoFactor) × fshoAdj
-@@ -203,7 +211,7 @@ After adjustment, mode selection uses temperature-scaled softmax:
- 
- #### Auto-Triggers
- 
--- `exploration` forced if unresolved curiosity targets exist
-+- `exploration` is added when unexplored, unresolved curiosity targets exist, the mode is enabled (`memory.dream.modes.exploration.enabled`, off by default) and a selection slot is still free after the reserved utility-lane slot
- - (the `mutation` auto-trigger was retired in PLAN-45 Phase 1)
- 
- ---
-@@ -253,7 +261,7 @@ Cross-domain creative recombination. Uses **farthest-point sampling** to select
- 
- ### Exploration Mode (local LLM)
- 
--Gap-filling driven by the curiosity engine. Loads unresolved `curiosity_targets` of type `knowledge_gap` and generates content to fill those gaps using a local LLM (to minimize cost).
-+Gap-filling driven by the curiosity engine. Loads up to 3 unresolved, unexpired `curiosity_targets` that carry no `explored` stamp, of any type, by priority, and generates content to fill those gaps using a local LLM (to minimize cost). The optional external-research step (only when the external research adapter is available and `autoResearch` is on) is narrower: it selects `knowledge_gap`, `market_demand` and `frontier` targets not yet externally researched.
- 
- **Off by default since the token-efficiency pass (2026-09-19).** On the reference node exploration asked near-identical questions every cycle (28 of 30 frontier targets already explored) and the live config had already disabled it. Re-enable with `memory.dream.modes.exploration.enabled: true`.
- 
-@@ -263,7 +271,7 @@ Gap-filling driven by the curiosity engine. Loads unresolved `curiosity_targets`
- 
- ### Slow Update (PLAN-21 Phase D)
- 
--**Retired in PLAN-45 Phase 1 (2026-09-05).** The epoch-wise longitudinal regression (`dream-slow-update.ts`) and its per-cycle hook were deleted. The `skill_text_history` table it read is intentionally left in place with no migration and is now orpha
-```
-
-**File**: `docs/memory/emotional-system.md` (modified, +41/-30)
-```diff
-@@ -24,20 +24,24 @@ value = baseline + (value - baseline) × 2^(-elapsed / halfLife)
- 
- Events stimulate specific hormones. Each event has a magnitude (how much to add) and a target hormone:
- 
--| Event               | Hormone            | Magnitude    | Trigger                                                                                               |
--| ------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
--| `reward`            | dopamine           | +0.30        | Positive feedback                                                                                     |
--| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
--| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
--| `error`             | cortisol           | +0.30        | Bug, error, frustration                                                                               |
--| `urgency`           | cortisol           | +0.40        | Time pressure detected                                                                                |
--| `social`            | oxytocin           | +0.30        | Personal sharing, trust building                                                                      |
--| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace                                                                             |
--| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories                                                                           |
--| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories                                                                           |
--| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational memories                                                                |
--| `compute_success`   | dopamine           | +0.05        | A compute job you can see succeeded on the pool (rate-limited)                                        |
--| `compute_setback`   | cortisol           | +0.05        | A pool worker went offline, the coordinator went away, or embeddings keep falling back (rate-limited) |
-+| Event                | Hormone            | Magnitude    | Trigger                                                                                               |
-+| -------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
-+| `reward`             | dopamine           | +0.30        | Positive feedback                                                                                     |
-+| `achievement`        | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
-+| `curiosity_high`     | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
-+| `curiosity_progress` | dopamine           | +0.20        | Learning-progress component (`deltaEta`) > 0.7                                                        |
-+| `curiosity_aligned`  | dopamine           | +0.10        | Strategic-alignment component > 0.7                                                                   |
-+| `curiosity_stagnant` | cortisol           | +0.15        | Five consecutive curiosity rewards below 0.2 (one event per run)                                      |
-+| `curiosity_bonding`  | oxytocin, dopamine | +0.25, +0.10 | Empowerment > 0.6 on a preference, relationship or episode chunk                                      |
-+| `error`              | cortisol           | +0.30        | Bug, error, frustration                                                                               |
-+| `urgency`            | cortisol           | +0.40        | Time pressure detected                                                                                |
-+| `social`             | oxytocin           | +0.30        | Personal sharing, trust building                                                                      |
-+| `marketplace_sale`   | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace                                                                             |
-+| `recall_positive`    | dopamine           | +0.05        | Retrieved positive memories                                                                           |
-+| `recall_negative`    | cortisol           | +0.05        | Retrieved negative memories                                                                           |
-+| `reca
+   it("emits erc8004 extension when configured with tokenId", () => {
+     const card = buildAgentCard({
+       config: baseConfig({
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #348** (2026-11-02): feat(a2a): accept XNO payments on the A2A payment gate (@VGIL77)
 - **PR #346** (2026-11-01): docs(memory): bring every memory doc back in line with the code at v1.12.0 (@VGIL77)
 - **PR #345** (2026-10-31): fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (@VGIL77)
 - **PR #344** (2026-10-31): fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (@VGIL77)
 - **PR #343** (2026-10-31): feat(compute): land the beta recovery stack on main with Soapbox rc10 (@VGIL77)
 - **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
-- **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
 
 ---
 
@@ -2269,38 +2155,53 @@ names, startExecution signature. skills-pipe
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346
+## X. a2a): accept XNO payments on the A2A payment gate (#348)
 
 **RULE**:
-When implementing operations in `docs/concepts/memory.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/marketplace/a2a-integration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93a5f683`: docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `595167cf`: a2a): accept XNO payments on the A2A payment gate (#348). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/concepts/memory.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/marketplace/a2a-integration.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Use, spaced repetition and emotional weight slow the decay; unused info fades. Only skills are frozen and never decay.                                                                                                                                         | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
-                              ├── Hormonal decay toward baseline
-                              ├── Ebbinghaus decay + forgetting
-                              ├── Tombstone purge (forgotten > 14 days)
-                              ├── Governance TTL + stalled goals
-                              ├── Restabilize labile memories, prune graph, contradictions
-                              └── Canonical ledger decay (90 days unconfirmed)
-No external database, no cloud dependency. One `.sqlite` file is the entire memory.
+### Optional XNO rail
+
+An operator can also accept Nano (XNO) next to USDC. It is off unless configured, and the Base rail does not change:
+
+```json5
+{
+  a2a: {
+    payment: {
+      nano: {
+        address: "nano_...", // checksummed receiving account
+        rawPerUsd: "1000000000000000000000000000000", // raw charged per 1 USD of price
+        rpcUrl: "http://127.0.0.1:7076", // default: your own node
+        maxAgeSeconds: 300, // default
+      },
+    },
+  },
+}
+```
+
+When set, the 402 `PAYMENT-REQUIRED` list gets a second entry with `network: "nano:mainnet"`, `asset: "XNO"`, the account as `payTo`, and `maxAmountRequired` in raw (price times `rawPerUsd`, rounded up). The Agent Card gains a `nano-payment` extension. The buyer sends XNO, then retries with a Base64 JSON token in the same `X-PAYMENT` header:
+
+```text
+{ network: "nano:mainnet", blockHash, account, recipient, amountRaw, timestamp, signature }
+```
+
+`signature` is an Ed25519-BLAKE2b signature (the Nano account key scheme) by `account` over `<recipient>|<BLOCKHASH>|<amountRaw>|<timestamp-ms>`. The seller makes one `block_info` call and requires a confirmed send from `account` to its own account for exactly `amountRaw`, at
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Frequently accessed facts become permanent; unused info fades.                                                                                                                                                                                                 | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
-                              ├── Ebbinghaus decay
-                              └── Hormonal modulation
-No external database, no cloud dependency. One `.db` file is the entire memory.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93a5f683` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `595167cf` are properly handled with clean fallback behavior.

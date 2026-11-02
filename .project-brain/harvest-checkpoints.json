@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T17:12:23.497Z",
+  "last_updated": "2026-11-02T17:24:40.337Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "8fca4bcfc0a4141c1a3610a960dd963015ed1151c757cc487c0f94af0c580b21",
-      "verified_at": "2026-11-02T14:39:28.388Z",
+      "content_hash": "c180f60d27b42f294c3dc96f86544e3968e0526d9f0cb5c8405ae5e992e74b41",
+      "verified_at": "2026-11-02T17:24:40.337Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T14:39:28.388Z"
+      "last_updated": "2026-11-02T17:24:40.337Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "48c1e4a4633c303daafdf0b4926d37239ad92314ac26f88acdc142fa8219cded",
-      "verified_at": "2026-10-30T03:59:37.849Z",
+      "content_hash": "39a0ca62a2e340dc38d364749d67f4cd79e735b99081bac2c7670173ee4ec216",
+      "verified_at": "2026-11-02T17:24:33.351Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T03:59:37.849Z"
+      "last_updated": "2026-11-02T17:24:33.351Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "256acb5b405462630b67dc79f4e5e649c1728b85e783070faee0a7986a9e599c",
-      "verified_at": "2026-10-31T11:09:24.031Z",
+      "content_hash": "f6497804385efd450fcf8a045fa2ed491a9c673c4334b89cec149fedd4f0e7e3",
+      "verified_at": "2026-11-02T17:24:26.054Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T11:09:24.031Z"
+      "last_updated": "2026-11-02T17:24:26.054Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",
