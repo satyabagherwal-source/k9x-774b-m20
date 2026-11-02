@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `0ceace07`  
+> **Source Version**: `521c2fe2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:46:59.674Z  
+> **Timestamp**: 2026-11-02T21:36:44.120Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:46:59.211Z  
+> **Harvest Timestamp**: 2026-11-02T21:36:43.008Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -966,119 +966,395 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ceace07` (2026-11-02)
-**Commit Message**: NUC 57 Thin Arrows and Python-Style Lambdas
+### Incident Patch 1: `521c2fe2` (2026-11-02)
+**Commit Message**: NUC 74 Final Rest Parameters
 
-Accepted: user-requested classification revision to Language compatibility,
-following the independently accepted NUC 1 registry revision.
-Preserve Standards Track, Accepted status, implemented behavior and all
-historical evaluations; synchronize both NUC indexes.
+Accepted. Independent policy and core evaluation both Accepted; all three hard criteria passed on the frozen candidate and again on the integrated tree. All-target build, warning-denied Clippy and formatting passed. The full suite passed 2173 tests with zero failures and 25 existing ignored; every one of the 2182 accepted test identities is retained. All 853 pinned accepted programs replayed; 861 candidate cases and 421 independent differential probes preserve behavior and compatibility.
 
-Independent evaluation accepted the unchanged frozen candidate with no
-findings or blockers. Integrated hard criteria passed: all-target build,
-warning-denied Clippy, formatting, 2,157 tests, exact preservation of all
-2,182 test identities, and 853 accepted replays. No runtime, test,
-normative-case, export, dependency or version change.
-
-Single-mode token comparison was skipped as single_proposal.
-Advisory usefulness is unscored and learning is not_configured.
-All 72 proposal headers agree with both complete indexes.
+Continuous Runtime features, new_feature. Token comparison skipped as new_runtime_feature, not a passing token gate. No policy failures. Advisory usefulness unscored (missing_rubric); strategy learning not_configured. Public Parameter.rest needs human SemVer review before publication; no version changed.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `README.md` (modified, +18/-0)
 ```diff
-@@ -52,7 +52,6 @@ Created: 31-Jul-2026
- | [45](nuc-0045.md) | Colon-Led Assertion Statements | Accepted |
- | [46](nuc-0046.md) | Colon-Free Indented Exception Suites | Accepted |
- | [49](nuc-0049.md) | Colon-Free Indented Conditional Suites | Accepted |
--| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
- | [64](nuc-0064.md) | Exponentiation Operator and Compound Exponentiation | Accepted |
- | [67](nuc-0067.md) | Destructuring Declarations | Automatic-Accepted: independent evaluation rejected it because values copied into every target make nested destructurings render exponentially; a 1,013-byte block of 48-target destructurings nested four deep exceeded 1.5 GB despite the 128-target bound |
+@@ -1496,6 +1496,24 @@ assert: pending, 1
+   remains unchanged. See the
+   [root contract](nucleoid.spec.md#list-and-population-predicate-counts).
  
-@@ -117,6 +116,7 @@ Created: 31-Jul-2026
++## Final rest parameters
++
++**Final rest parameters collect positional extras without changing fixed defaults**
++
++```nuc
++def collect(head = 1, ...tail) => [head, tail]
++assert(collect(), [1, []])
++assert(collect(2, 3, 4), [2, [3, 4]])
++assert(collect(5, [6, 7]), [5, [[6, 7]]])
++```
++
++- A final `...name` in a parenthesized user signature receives a fresh list,
++  including `[]` when there are no extras. Functions, methods and
++  constructors share binding; a constructor label may fill a fixed slot,
++  not its rest slot. No bare rest form or call-site spread is introduced.
++  See [NUC 74](docs/nuc-0074.md) and the
++  [root contract](nucleoid.spec.md#final-rest-parameters).
++
+ ## Benchmark
  
- | NUC | Title | Status |
- | --- | --- | --- |
-+| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
- 
- ### Documentation
- 
-@@ -184,7 +184,7 @@ Created: 31-Jul-2026
- | [54](nuc-0054.md) | Literal Parameter Defaults | Standards Track | Runtime features | Accepted |
- | [55](nuc-0055.md) | Class-Level State Version Anchors | Standards Track | Runtime features | Accepted |
- | [56](nuc-0056.md) | Reactive Base Two Exponentiation | Standards Track | Utility enhancement | Accepted |
--| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Syntax enhancement | Accepted |
-+| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Language compatibility | Accepted |
- | [58](nuc-0058.md) | In-Place List Sorting | Standards Track | Utility enhancement | Accepted |
- | [59](nuc-0059.md) | Conditional Expressions | Standards Track | Runtime features | Accepted |
- | [60](nuc-0060.md) | Nullish Coalescing | Standards Track | Runtime features | Accepted |
+ This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
 ```
 
-**File**: `docs/nuc-0057.md` (modified, +47/-1)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +5/-0)
 ```diff
-@@ -6,7 +6,7 @@ Title: Thin Arrows and Python-Style Lambdas
- Author: Claude <noreply@anthropic.com>
- Status: Accepted
- Type: Standards Track
--Category: Syntax enhancement
-+Category: Language compatibility
- Created: 28-Oct-2026
- Requires: 8, 12, 18, 20, 27, 29, 32, 37, 44, 45, 54
- ```
-@@ -423,6 +423,52 @@ assert(alias, 2)
-   `09de2a3dcc295236fea8ee7c7ccf530cf954bb97`; baseline, report and probe
-   artifacts remain in the session workspace, outside the repository.
+@@ -581,3 +581,8 @@
+ {"id":"spec-0581","description":"Nucleoid counts matching class instances","code":"class Ticket(open, priority):\n    this.open = open\n    this.priority = priority\npending = Ticket.count(ticket -> ticket.open)\nassert: pending, 0\nfirst = Ticket(true, 2)\nsecond = Ticket(false, 5)\nthird = Ticket(true, 9)\nimportant = Ticket.count(ticket -> ticket.open and ticket.priority >= 5)\nassert: pending, 2\nassert: important, 1\nsecond.open = true\nassert: pending, 3\nassert: important, 2\nthird.priority = 1\nassert: important, 1\ndelete first.open\ndelete first.priority\ndelete first\nassert: pending, 2\nthird.open = false\nassert: pending, 1\nassert: important, 1","return":null}
+ {"id":"spec-0582","description":"Nucleoid keeps predicate counts live in class level rules","code":"class Team(name): this.name = name\nclass Task(team, done):\n    this.team = team\n    this.done = done\n$Team.pending = Task.count(task -> task.team == $Team and not task.done)\nalpha = Team(\"alpha\")\nbeta = Team(\"beta\")\nassert: alpha.pending, 0\nassert: beta.pending, 0\nfirst = Task(alpha, false)\nsecond = Task(alpha, true)\nthird = Task(beta, false)\nassert: alpha.pending, 1\nassert: beta.pending, 1\nfirst.team = beta\nassert: alpha.pending, 0\nassert: beta.pending, 2\nsecond.done = false\nassert: alpha.pending, 1\ndelete third.team\ndelete third.done\ndelete third\nassert: beta.pending, 1","return":null}
+ {"id":"spec-0583","description":"Nucleoid uses predicate counts beside ordinary count names","code":"cutoff = 3\ncount = 7\nreport = {count: 9}\nclass Bag(items):\n    this.items = items\n    def count(): return this.items.count(item -> item > cutoff)\nbag = Bag([1, 4, 8])\ndef matching(items) => items.count(item -> item > cutoff)\nassert: bag.count(), 2\nassert: matching([2, 5, 9]), 2\nassert: Bag.filter(each -> each.count() > 1).length, 1\nkind = Bag\nassert: kind.filter(each -> each.count() > 1).length, 1\nassert: [count, report.count], [7, 9]\ncutoff = 6\nassert: bag.count(), 1\nassert: matching([2, 5, 9]), 1\nassert: Bag.filter(each -> each.count() > 1).length, 0","return":null}
++{"id":"spec-0584","description":"Nucleoid collects surplus positional arguments in fresh rest lists","code":"def collect(head = 1, ...tail) => [head, tail]\nempty = collect()\none = collect(0)\nmany = collect(2, 3, 4)\nnested = collect(false, \"\", [5, 6])\nassert(empty, [1, []])\nassert(one, [0, []])\nassert(many, [2, [3, 4]])\nassert(nested, [false, [\"\", [5, 6]]])\nassert(collect(null).value, [null, []])\nmany","return":"[2,[3,4]]"}
++{"id":"spec-0585","description":"Nucleoid shares rest binding across anonymous functions callbacks and methods","code":"arrow = (...items) -> items\nblocked = function(head, ...tail) { return [head, tail] }\ndef collect(...items) => items\nalias = collect\nrecord = {call: collect}\ncallbacks = [collect]\nassert(arrow(1, 2), [1, 2])\nassert(blocked(1, 2, 3), [1, [2, 3]])\nassert(alias(), [])\nassert(record.call(3, 4), [3, 4])\nassert(callbacks[0](5), [5])\nassert([2, 3].map((item, ...extras) => [item, extras]), [[2, []], [3, []]])\nclass Meter(seed):\n    this.seed = seed\n    def read(...items) => [self.seed, items]\nmeter = Meter(7)\nassert(meter.read(8, 9), [7, [8, 9]])\nassert(meter.read(), [7, []])","return":null}
++{"id":"spec-0586","description":"Nucleoid keeps fixed constructor labels separate from positional rest values","code":"class Packet(head = 1, ...tail):\n    this.head = head\n    this.tail = tail\nempty = Packet()\nmany = Packet(2, 3, 4)\nnamed = Packet(head=5)\nnested = Packet(6, [7, 8])\nassert(empty.tail, [])\nassert(many.tail, [3, 4])\nassert(named.head, 5)\nassert(named.tail, [])\nassert(nested.tail, [[7, 8]])\nclass Pair(first = 1, second = 2, ...tail):\n    this.values = [first, second, tail]\nmixed = Pair(4, second=7)\nassert(mixed.values, [4, 7, []])\ntry:\n    rejected = Packet(tail=[9])\ncatch error:\n    assert(error, TypeError(\"Rest parameter 'tail' cannot be a named constructor argument for Packet\"))\nclass Base:\n    def init(...items):\n        this.items = items\nclass Inherited: Base\n    pass\nclass Child: Base\n    def init(...items):\n        super(1, 2)\n        this.own = items\ninherited = Inherited(3, 4)\nchild = Child(5, 6)\nassert(inherited.items, [3, 4])\nassert(child.items, [1, 2])\nassert(child.own, [5, 6])","return":null}
++{"id":"spec-0587","description":"Nucleoid initializes rest histories without capture or shared list mutation","code":"tail = [100]\ndef history(...tail):\n    tail.push(9)\n    return [tail@0, tail@last]\none = history(1, 2)\ntwo = history()\nthree = history()\nassert(one, [[1, 2], [1, 2, 9]])\nassert(two, [[], [9]])\nassert(three, [[], [9]])\nassert(tail, [100])\ndef factory(...tail) => () => tail\ncallback = factory(7, 8)\nassert(callback(), [100])\nstate = 1\ndef attempt(...tail):\n    try:\n        tail.push(8)\n        state = 2\n        throw \"LOCAL_REST\"\n    catch error:\n        state = state\n    return [tail@0, tail
+```
+
+**File**: `dataset/nucleoid.synth.34.jsonl` (modified, +2/-0)
+```diff
+@@ -2,3 +2,5 @@
+ {"id":"synth-34-0002","description":"Typed functions and parenthesized arrows bind signed finite literal defaults","code":"def scale(value: Number, factor: Number = 0.5) => value * factor\nadjust = (value, offset = -2) => value + offset\nassert(scale(6), 3)\nassert(adjust(5), 3)\n[scale(6), adjust(5)]","return":"[3,3]"}
+ {"id":"synth-34-0003","description":"Constructor and method defaults create independent effective values for each instance","code":"class Counter(seed = 1):\n    this.count = seed\n    def advance(delta = 2):\n        this.count += delta\n        return this.count\nfirst = Counter()\nsecond = Counter()\none = first.advance().value\ntwo = second.advance(4).value\nassert(first.count, 3)\nassert(second.count, 5)\nassert(one, 3)\nassert(two, 5)\n[one, two]","return":"[3,5]"}
+ {"id":"synth-34-0004","description":"Defaulted parameter version zero is the effective literal in each fresh invocation frame","code":"step = 100\ndef sample(step = 4) => [step = step + 1, step@first, step@last]\none = sample()\ntwo = sample(9)\nassert(one, [5, 4, 5])\nassert(two, [10, 9, 10])\nassert(step, 100)\n[one, two]","return":"[[5,4,5],[10,9,10]]"}
++{"id":"synth-34-0005","description":"Final rest lists keep fixed defaults and positional argument dependencies","code":"def total(head = 0, ...tail) => head + tail.sum()\nreading = 2\namount = total(1, reading, 3)\nassert(amount, 6)\nassert(total(), 0)\nreading = 5\nassert(amount, 9)\nassert(total(4), 4)\namount","return":"9"}
++{"id":"synth-34-0006","description":"Constructor labels bind fixed slots while positional extras form one rest list","code":"class Packet(head = 1, ...tail):\n    this.head = head\n    this.tail = tail\nnamed = Packet(head=5)\npositional = Packet(2, 3, 4)\nassert(named.head, 5)\nassert(named.tail, [])\nassert(positional.tail, [3, 4])\n[named.tail, positional.tail]","return":"[[],[3,4]]"}
+```
+
+**File**: `docs/README.md` (modified, +46/-2)
+```diff
+@@ -1280,7 +1280,7 @@ Normative detail: [while loops](../nucleoid.spec.md#while-loops).
+ - For the single-parameter untyped forms, a bare identifier must be immediately followed by `=>`, or by `:` whose body starts with a logical newline/indent and supplies a real `Indent` after normal newline/semicolon layout. The colon guard only looks ahead; the existing suite parser consumes the body.
+ - No logical newline, semicolon or comment-induced logical break is skipped within a bare header. Blank/comment lines before an indented body retain the existing layout rules.
+ - All parenthesized definitions remain available, including `def add(left, right) => left + right`, `def add(left: int, right: int) => left + right` and typed/untyped `def add(left, right):` alternatives with the same indented body. Nullary, multiline-parameter, inline and brace-suite definitions keep their parentheses, as do calls; typed single/multiple-parameter indented blocks have the optional spellings below.
+-- Bare inline/braced or missing-indent blocks, trailing bare commas, bare defaults, destructured/variadic parameters, dotted/union/generic/nullable/keyword/dollar/literal annotations, anonymous colon blocks, return annotations and call-parenthesis omissions are not added. Parenthesized scalar defaults are specified separately below.
++- Bare inline/braced or missing-indent blocks, trailing bare commas, bare defaults, destructured or bare variadic parameters, dotted/union/generic/nullable/keyword/dollar/literal annotations, anonymous colon blocks, return annotations and call-parenthesis omissions are not added. Parenthesized scalar defaults and final rest parameters are specified separately below.
+ - NUC18/20 single-parameter arrows and NUC19/24's exact untyped/typed indented-colon guards are unchanged; named return-block lowering, parameter metadata/order, argument binding, runtime behavior and canonical rendering remain those of the parenthesized counterparts.
+ - Braces after a named arrow are object literals, not statement blocks. Parenthesized expressions may span physical lines, starting either on the header line or in the optional NUC32 real-indented body.
+ - A call in an assignment depends on the function and its arguments.
+@@ -1307,7 +1307,7 @@ Normative detail: [while loops](../nucleoid.spec.md#while-loops).
+   Undefined, false, zero, empty Strings and other supplied values retain their
+   existing evaluation/value semantics; missing nondefaulted slots still bind
+   Null. Required slots may follow defaults, annotations remain non-enforcing,
+-  and extra arguments keep their ordinary behavior.
++  and fixed-only signatures still evaluate and ignore extra arguments.
+ - Allowed data are finite numeric literals with one optional sign (including
+   exact `-0`), quoted Strings, Booleans and null with its existing aliases.
+   Arrays, objects, regexes, templates, references, calls, grouped/compound
+@@ -1335,6 +1335,45 @@ Normative detail: [while loops](../nucleoid.spec.md#while-loops).
+   contract and `Literal parameter defaults preserve supplied names` in
+   `tests/reference.md`.
  
-+### Current classification revision
++### Final rest parameters
 +
-+- Language compatibility describes this NUC's primary purpose: admitting
-+  familiar thin-arrow and Python-style lambda equivalents of already
-+  supported function forms, not token minimization or new runtime semantics.
-+- This metadata-only revision preserves all implemented behavior and
-+  historical evaluation evidence. The existing feature remains Accepted;
-+  its Type remains Standards Track.
-+- The classification revision is Accepted as a user-requested single-mode
-+  revision against `ec8b1b9bc27f3b6faf5a0cffd950c0e3d3246dbc`. Its fresh
-+  independent evaluator returned Accepted, with no findings or blockers.
-+- The evaluated proposal's plain and raw Git blob was
-+  `3b35addd52411dbbbdc0589f912d6c18cccfc374`, before this outcome metadata.
-+  Both frozen paths were integrated byte-for-byte, including the matching
-+  category and numerical index metadata.
-+- This single-proposal revision skips token comparison as `single_proposal`.
-+  Future continuous Language compatibility proposals skip as
-+  `language_compatibility`; baseline, behavior/integrity, syntax-compatibility
-+  and development safeguards still apply. No token measurements were made;
-+  a skip is not a passing token gate.
-+- Every hard criterion passed independently: all-target build,
-+  warning-denied Clippy and formatting succeeded; the full `cargo test
-+  --no-fail-fast` passed 2,157 tests with zero failures and the 25 existing
-+  ignored tests. All 2,182 test identities and multiplicities are unchanged;
-+  no tests were added, removed or weakened.
-+- The deterministic evaluator passed all 853 accepted replays and all 853
-+  candidate cases with their canonical assertions, explicit returns and
-+  executed coverage. Production/parser/runtime, tests, diagnostics,
-+  normative sources, exports, dependencies and versions remain unchanged,
-+  preserving every accepted parse and behavior, including runtime failures.
-+- No additional Rust improvement pass applies to this documentation-only
-+  revision; the code-changing pass completed in the accepted NUC 1 revision.
-+- The caller rechecked the integrated tree before committing: build, Clippy,
-+  formatting, all 2,157 tests and the 853-case replay passed. All 2,182 test
-+  identities are unchanged, and all 72 headers agree with both indexes.
-+- Advisory usefulness is unscored (`missing_rubric`), not zero. Deterministic
-+  evaluator work took 2.9990329 seconds, excluding compilation, external
-+  checks, proposal/model time and report writing. Strategy learning was
-+  `not_configured` and unattributed, with no update.
-+- External core report `compat-nuc57-evaluation.json` has raw blob
-+  `32f9178bf13eb0bc5bb42556de550385ba43fe13`; complete independent outcome
-+  `compat-nuc57-independent-outcome.json` has raw blob
-+  `da756bc26661733585fa6ff74bba734f90524b6d`. The immutable 853-case baseline
-+  has raw blob `86556f9b955fe114d381ec8a96bbbf57d3b7dcfa`. These artifacts
-+  remain outside the repository in the session workspace.
++- [NUC 74](nuc-0074.md) adds an optional final `...name` or
++  `...name: Type` to explicitly parenthesized user-defined signatures:
++  named functions, function expressions, arrows, methods, class headers
++  and adopted `init` methods. Bare signatures and lambdas gain no rest form.
++- Fixed slots retain their defaults, omissions, annotations and behavior.
++  The rest slot starts at version zero with a fresh list of surplus
++  positional values, in source order, or `[]`. A list argument remains one
++  element; no call-site spread, deep copy, closure or new callback argument
++  is introduced. Receivers never enter the list.
++- Require one final rest slot, without a default and with a name distinct
++  from fixed formals. A trailing comma is allowed. Other fixed-name
++  duplication retains its accepted behavior.
++- Constructor labels still address fixed slots only; named-only calls bind
++  an empty rest list, and mixed calls keep the ordinary fixed-prefix binding.
++  A named rest argument raises
++  `TypeError("Rest parameter '<name>' cannot be a named constructor argument for <class>")`
++  before any values run. Other label errors and inherited/`super` selection,
++  `init` adoption, named pinning and delayed positional selection are unchanged.
++- Arguments still run once, left to right, per invocation. Fresh local
++  lists shadow state without becoming graph nodes or captures; contained
++  objects retain identity. Live callers, frozen/historical Function Values,
++  `.value` settlement, nontransactional locals and State/graph rollback keep
++  their existing boundaries. Fixed-only signatures and their canonical
++  rendering remain unchanged.
++- Invalid rest signatures raise `SyntaxError("Rest parameter must be last")`,
++  `SyntaxError("Rest parameter cannot have a default")` or
++  `SyntaxError("Rest parameter '<name>' duplicates a fixed 
+```
+
+**File**: `docs/examples.md` (modified, +24/-0)
+```diff
+@@ -3065,6 +3065,30 @@ assert: south.pending, 2
+ - See [NUC 73](nuc-0073.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-predicate-counts).
+ 
++## Final rest parameters
++
++**Variadic totals keep ordinary argument dependencies live**
++
++```nuc
++def total(head = 0, ...tail) => head + tail.sum()
++reading = 2
++amount = total(1, reading, 3)
++assert(amount, 6)
++assert(total(), 0)
++reading = 5
++assert(amount, 9)
++assert(total(4), 4)
++amount
++# return: 9
++```
++
++- Each invocation starts a fresh tail list and keeps ordinary fixed defaults
++  and argument dependencies. Changing the supplied reading re-evaluates the
++  standing call; it does not mutate a retained parameter frame.
++- Only the final parenthesized formal may use `...`; rest defaults and
++  call-site spread are not supported. See [NUC 74](nuc-0074.md) and the
++  [root contract](../nucleoid.spec.md#final-rest-parameters).
 +
  ## Copyright
  
  Copyright 2020 Nucleoid
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
+```diff
+@@ -77,6 +77,7 @@ Created: 31-Jul-2026
+ | [66](nuc-0066.md) | Imperative Value Assignment | Accepted |
+ | [70](nuc-0070.md) | Object Entry Loops | Automatic-Accepted: independent evaluation rejected it because a rolled-back `delete` re-appended the key; its loops ship through NUC 72, which fixed that |
+ | [72](nuc-0072.md) | Object Entry Loops with Ordered Rollback | Accepted |
++| [74](nuc-0074.md) | Final Rest Parameters | Accepted |
+ 
+ ### Utility enhancement
+ 
+@@ -201,6 +202,7 @@ Created: 31-Jul-2026
+ | [71](nuc-0071.md) | List and Population Distinct Values | Standards Track | Utility enhancement | Accepted |
+ | [72](nuc-0072.md) | Object Entry Loops with Ordered Rollback | Standards Track | Runtime features | Accepted |
+ | [73](nuc-0073.md) | List and Population Predicate Counts | Standards Track | Utility enhancement | Accepted |
++| [74](nuc-0074.md) | Final Rest Parameters | Standards Track | Runtime features | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0074.md` (added, +377/-0)
+```diff
+@@ -0,0 +1,377 @@
++# NUC 74 -- Final Rest Parameters
++
++```
++NUC: 74
++Title: Final Rest Parameters
++Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
++Status: Accepted
++Type: Standards Track
++Category: Runtime features
++Created: 02-Nov-2026
++```
++
++## Abstract
++
++- Adds an optional final `...name` formal to explicitly parenthesized
++  user-defined signatures.
++- Binds surplus positional arguments, in source order, to a fresh List;
++  no surplus values produce `[]`.
++- Reuses fixed/default binding for functions, methods, function Values,
++  explicit constructors, adopted `init` signatures and `super`.
++- Preserves all accepted fixed-only syntax, AST Debug/display, canonical
++  graph keys, diagnostics and behavior, including runtime-failing inputs.
++- Adds no call-site spread, bare rest signatures, closures, keywords,
++  dependencies, project version change or built-in calling convention.
++- Accepted after independent policy evaluation and the caller's integrated
++  hard-criteria recheck; no policy check failed.
++
++## Motivation
++
++- A user-defined operation may need any number of positional operands:
++  measurements, records, events or items to collect.
++- Accepted calls evaluate surplus arguments but cannot bind a variable
++  number of those values. Passing one explicit list changes the calling
++  convention instead of providing variadic positional binding.
++- A final rest list makes that binding available without changing fixed
++  arguments or making callers construct wrapper lists.
++
++## Rationale
++
++- **Confirmed category.** The caller made one unbiased `Get-Random` draw
++  over NUC 1's five eligible categories and selected zero-based index 1,
++  Runtime features. New core argument-binding semantics fit that category;
++  this worker has not redrawn or changed it.
++- **Preserved mode.** The caller's invocation is continuous. This worker
++  prepares exactly this one revision; continuation belongs to the caller.
++- **Runtime applicability.** `new_feature`: accepted binding takes one
++  supplied value per fixed formal and ignores surplus values after evaluating
++  them. It has no variadic binder. Passing a list explicitly is not a
++  behavior-equivalent counterpart with the same calling convention.
++- **Accepted evidence.** At accepted revision
++  `0ceace07bbb977740e9a7be4f2ffed5d6e18bc3e`,
++  `def collect(head, ...tail) => [head, tail]` followed by
++  `collect(1, 2, 3)` exits 1 with
++  `SyntaxError: Expected a parameter but found '.' (line 1, column 20)`.
++  The caller preserved this in external `nuc-0074-accepted-probe.log`.
++  Inspection of the accepted invocation and constructor loops independently
++  confirms the missing variadic binding.
++- **Token policy.** Continuous Runtime features with `new_feature` skips
++  token comparison entirely as `new_runtime_feature`. This is not a
++  measured zero-case comparison or a passing token gate. The immutable
++  accepted corpus, behavior/integrity, compatibility and development checks
++  remain mandatory; no before-counts or extra baselines are invented.
++- **Minimal syntax.** Recognize three adjacent existing Dot tokens only in
++  the parenthesized formal parser. Do not globally retokenize dots or
++  alter bare-header lookahead, lambdas, expressions or call parsing.
++- **Constructor labels.** Labels continue to name fixed slots, not the
++  collected list. Named-only calls therefore get an empty rest list.
++  Reject naming a rest formal before any argument values run, rather than
++  choosing between nesting an explicit list, flattening it or dropping it.
++  Valid mixed calls retain the existing leading-positional/fixed-label
++  convention.
++- **Distinct rest name.** A rest name may not duplicate a fixed name.
++  Otherwise a later declaration would overwrite that fixed slot and its
++  initial history instead of giving the rest list its own version zero.
++  Duplicate fixed names retain their accepted semantics.
++- **Not added.** Rest defaults, multiple/nonfinal rest formals, destructured
++  formals, call-site spread, rest-specific arity/type enforcement, closures,
++  deep-copy semantics and receiver/callback argument changes are out of scope.
++- **Optional evidence.** No hint or rubric was supplied. Advisory scoring is
++  unconfigured (`missing_rubric`), not zero. Strategy learning is
++  `not_configured`; this revision is explicitly unattributed, without a
++  policy, receipt, trial, selected strategy, assessment or learner update.
++
++## Specification
++
++- The authoritative contract is
++  [Final rest parameters](../nucleoid.spec.md#final-rest-parameters).
++
++### Signatures and fixed binding
++
++- Allow `...name` or `...name: Type` at the end of an explicitly
++  parenthesized user signature, with the existing optional trailing comma.
++  The dots must be adjacent; ordinary spacing before the name is permitted.
++- The same parser serves named block/arrow functions, anonymous
++  `function(...)` expressions, parenthesized arrows with either arrow
++  spel
+```
+
+**File**: `nucleoid.spec.md` (modified, +188/-2)
+```diff
+@@ -2198,8 +2198,9 @@ statement positions; caught values and transaction recovery are unchanged.
+   default. A supplied Null, Undefined, false, zero, empty String or any other
+   value retains its existing evaluation and value semantics, including
+   deferred/null propagation and `.value` snapshot boundaries. There is no
+-  nullish/falsy substitution. Missing arguments without defaults still bind
+-  Null; extra arguments and non-enforcing annotations keep their behavior.
++  nullish/falsy substitution. Missing fixed arguments without defaults still
++  bind Null; fixed-only signatures still evaluate and ignore extras, and
++  annotations remain non-enforcing. Final rest binding is specified below.
+ - Defaults may occupy any formal slot, including one before a required slot.
+   The effective scalar is chosen before declaring the fresh Scope binding:
+   version zero is that value, not a synthetic Null followed by another write.
+@@ -2224,6 +2225,66 @@ statement positions; caught values and transaction recovery are unchanged.
+   through `Nucleoid restores defaulted function callers after failed
+   redefinitions` specify the measured behavior.
+ 
++## Final rest parameters
++
++- An explicitly parenthesized user-defined signature may end in `...name`
++  or `...name: Type`, optionally followed by its ordinary trailing comma.
++  The three dots must be adjacent; no lexer token or keyword is added.
++  Named block/arrow functions, function expressions, parenthesized arrows,
++  methods, class headers and adopted `init` signatures share this syntax.
++- There is at most one rest formal, and it must be last. A following formal
++  raises `SyntaxError("Rest parameter must be last")`. A rest default raises
++  `SyntaxError("Rest parameter cannot have a default")`. Its name must differ
++  from each fixed formal, otherwise
++  `SyntaxError("Rest parameter '<name>' duplicates a fixed parameter")` is
++  raised. Duplicate fixed names retain their accepted binding/history
++  semantics, including in a new rest-bearing signature.
++- Bind the fixed prefix exactly as before: absence uses its scalar default
++  or Null, supplied Null/Undefined/falsy values remain supplied, required
++  fixed slots may follow defaults, and annotations remain non-enforcing.
++  Bind every remaining positional value, in source order, to a fresh List
++  under the rest name. With no remaining values bind `[]`, never Null.
++- List arguments remain single elements; there is no flattening or call-site
++  spread. The fresh outer list has ordinary Value semantics: local mutation
++  does not mutate a caller's list binding, while contained Object references
++  retain their ordinary shared identity. No deep-copy boundary is added.
++- Evaluate each argument once, left to right, per actual invocation, before
++  binding. A method's receiver is not an argument and never enters its rest
++  list. Existing higher-order operations pass exactly their existing
++  arguments; no hidden index or receiver arguments are added.
++- Constructor labels may address fixed formals only. Named-only calls leave
++  an empty rest list; mixed calls fill leading fixed positions, then fixed
++  labels, with positional extras collected only after the fixed prefix is
++  full. Naming the rest formal raises
++  `TypeError("Rest parameter '<name>' cannot be a named constructor argument for <class>")`.
++  Validate every label, duplicate and positional-after-named restriction
++  before evaluating any value, with existing diagnostics otherwise unchanged.
++- Inherited constructor selection, `init` adoption, bodyless headers and
++  `super` retain their existing rules. A bodyless rest header does not create
++  properties or displace a parent's nearest nonempty constructor. Purely
++  positional calls still select that constructor after argument evaluation;
++  calls with labels pin its signature/body first. A named-rest diagnostic
++  names the effective constructor class, not a bypassed subclass.
++- Functions, aliases, callbacks, callable properties/list items, methods and
++  stored Function Values share binding. Function/method argument assignments
++  remain positional expressions, not labels. Bare signatures and Python-style
++  lambdas gain no rest syntax; call-site spread, closures, built-in changes
++  and new arity/type enforcement are not introduced.
++- Initialize the local rest binding once: its version zero is the complete
++  collected list, including `[]`. Parameter shadowing, fresh invocation
++  frames, noncapture and nontransactional locals are unchanged. Caught
++  failures restore State/graph, not edits to an enclosing local binding.
++- Ordinary dependencies, standing re-evaluation, `.value` settlement and
++  snapshots are unchanged. Live callers observe redefinitions; frozen and
++  historical Function Values keep their own signature/body but continue to
++  read ordinary live state. Failed updates restore stored definitions,
++  class metadata, instances, histories and the graph through existing rollback.
++- 
+```
+
+---
+
+### Incident Patch 2: `677e8e05` (2026-11-02)
+**Commit Message**: Document derived-bar ranking check
+
+Record that ranking bars by `bar_height` produces the same snapshots as ranking by `cell_count` across all five pairs, including reordered instance creation and rule declaration. Clarify that the updated rule has not yet been solver-tested.
+
+**File**: `arc/docs/ARC-NUC-9af7a82c.md` (modified, +15/-2)
+```diff
+@@ -38,11 +38,21 @@ Unconditional class rules derive the bar:
+ ```nuc
+ $Obj.tag = 'l6953'
+ $Obj.bar_height = $Obj.cell_count
+-$Obj.x = Obj.filter(other => other.cell_count > $Obj.cell_count).length
++$Obj.x = Obj.filter(other => other.bar_height > $Obj.bar_height).length
+ $Obj.y = 0
+ ```
+ 
+-`x` is the region's rank: the number of other regions with a larger cell count.
++`x` is the bar's rank: the number of other bars taller than it. At the user's
++request, the rank compares `bar_height`, the output bar's own property, instead
++of `cell_count`, the input measurement it is derived from, so the rule states
++the histogram's order in the histogram's own terms. Because `bar_height`
++equals `cell_count`, both rules give the same ranks and every snapshot is
++unchanged. On 2-Nov-2026 the accepted runtime at `feef5f8` replayed the
++output snapshots of all five pairs offline with each rule: with the instances
++created in source, reversed, and rotated order, and with the rank rule declared
++before `bar_height`, every `x`, `y`, `bar_height`, and `tag` matched its
++recorded value. Ranking by a derived property therefore needs no NUC. This
++offline check is not a solver run.
+ 
+ Each `input_instance_matrix` matches its pair's complete `input_matrix`
+ dimensions, and each `output_instance_matrix` matches its pair's complete
+@@ -75,6 +85,9 @@ debug runtime and a 30-minute limit. The exit status is the difference score;
+ seconds are the workflow's wall time for the puzzle, from each run's
+ `arc-puzzle-report` artifact. Both non-zero exits were mismatches with those
+ differences, not failed runs. No local `bun start 9af7a82c` run is recorded.
++Every recorded run used the earlier `cell_count` rank rule. The `bar_height`
++rank, committed in `0bf1b0f` after these runs, has no run yet, so its
++difference is unknown, not zero.
+ 
+ ## Open items
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -1107,30 +1383,45 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 57 Thin Arrows and Python-Style Lambdas
+## X. NUC 74 Final Rest Parameters
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ceace07`: NUC 57 Thin Arrows and Python-Style Lambdas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `521c2fe2`: NUC 74 Final Rest Parameters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
-| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Language compatibility | Accepted |
+## Final rest parameters
+
+**Final rest parameters collect positional extras without changing fixed defaults**
+
+```nuc
+def collect(head = 1, ...tail) => [head, tail]
+assert(collect(), [1, []])
+assert(collect(2, 3, 4), [2, [3, 4]])
+assert(collect(5, [6, 7]), [5, [[6, 7]]])
+```
+
+- A final `...name` in a parenthesized user signature receives a fresh list,
+  including `[]` when there are no extras. Functions, methods and
+  constructors share binding; a constructor label may fill a fixed slot,
+  not its rest slot. No bare rest form or call-site spread is introduced.
+  See [NUC 74](docs/nuc-0074.md) and the
+  [root contract](nucleoid.spec.md#final-rest-parameters).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Accepted |
-| [57](nuc-0057.md) | Thin Arrows and Python-Style Lambdas | Standards Track | Syntax enhancement | Accepted |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ceace07` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `521c2fe2` are properly handled with clean fallback behavior.

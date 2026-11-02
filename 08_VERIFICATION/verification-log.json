@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-V7XQ",
-    "timestamp": "2026-10-30T23:58:42.158Z",
-    "repository": "expo/expo",
-    "learningId": "learn-github-expo-expo",
-    "contentHash": "56331f858777dcdb4117d81bc292c2fd262346af323c3e3c472b2550b05d4b01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-VBZ2",
     "timestamp": "2026-10-30T23:58:47.390Z",
     "repository": "autogluon/chronos-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "827d51af1d8937c4b90dbe1a9ca7eef4bda905aec3eb111497f66e42010fd520",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-47IJ",
+    "timestamp": "2026-11-02T21:36:44.299Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "9055963795fd6f7c6e342fb190e1e956bac5545fdbcc2b14b5ff4786b69c6257",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T21:30:10.441Z",
+  "last_updated": "2026-11-02T21:36:44.247Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43337,8 +43337,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "0ceace07",
-      "content_hash": "6a2c105004327a134943c39b1c88371e1f11e19d8ac24f3124488cd5dc6340be",
+      "source_version": "521c2fe2",
+      "content_hash": "9055963795fd6f7c6e342fb190e1e956bac5545fdbcc2b14b5ff4786b69c6257",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -43548,7 +43548,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:47:00.347Z",
+      "verified_at": "2026-11-02T21:36:44.235Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

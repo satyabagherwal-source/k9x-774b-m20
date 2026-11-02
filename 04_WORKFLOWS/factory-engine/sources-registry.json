@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T21:30:13.083Z",
-    "lastVerified": "2026-11-02T21:30:13.083Z",
+    "lastChecked": "2026-11-02T21:36:46.835Z",
+    "lastVerified": "2026-11-02T21:36:46.835Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -431,13 +431,13 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T17:46:59.211Z",
-    "lastVerified": "2026-11-02T17:46:59.211Z",
+    "lastChecked": "2026-11-02T21:36:43.008Z",
+    "lastVerified": "2026-11-02T21:36:43.008Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "6a2c105004327a134943c39b1c88371e1f11e19d8ac24f3124488cd5dc6340be",
-    "promotedRulesCount": 1,
+    "contentHash": "9055963795fd6f7c6e342fb190e1e956bac5545fdbcc2b14b5ff4786b69c6257",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -1642,9 +1642,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-02T14:39:17.852Z",
+    "lastChecked": "2026-11-02T21:36:32.933Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-02T14:39:17.852Z"
+    "lastVerified": "2026-11-02T21:36:32.933Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4672,9 +4672,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-10-31T14:59:38.491Z",
+    "lastChecked": "2026-11-02T21:36:35.357Z",
     "revisionIdentifier": "2f7ce315",
-    "lastVerified": "2026-10-31T14:59:38.491Z"
+    "lastVerified": "2026-11-02T21:36:35.357Z"
   },
   "embassy-rs-embassy": {
     "name": "embassy-rs/embassy",
@@ -6260,9 +6260,9 @@
   "sentrux-sentrux": {
     "name": "sentrux",
     "officialUrl": "https://github.com/sentrux/sentrux",
-    "lastChecked": "2026-10-31T11:46:35.417Z",
+    "lastChecked": "2026-11-02T21:36:22.875Z",
     "revisionIdentifier": "6f8ff3c1",
-    "lastVerified": "2026-10-31T11:46:35.417Z"
+    "lastVerified": "2026-11-02T21:36:22.875Z"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "name": "google/gemma-4-26B-A4B-it",
@@ -6291,9 +6291,9 @@
   "cycloidio-terracognita": {
     "name": "terracognita",
     "officialUrl": "https://github.com/cycloidio/terracognita",
-    "lastChecked": "2026-10-31T15:56:43.309Z",
+    "lastChecked": "2026-11-02T21:36:30.389Z",
     "revisionIdentifier": "802bd4b5",
-    "lastVerified": "2026-10-31T15:56:43.309Z"
+    "lastVerified": "2026-11-02T21:36:30.389Z"
   },
   "netflix-dynomite": {
     "name": "dynomite",
@@ -9352,9 +9352,9 @@
   "lokoe-mehdi-scouter": {
     "name": "scouter",
     "officialUrl": "https://github.com/lokoe-mehdi/scouter",
-    "lastChecked": "2026-10-29T22:25:57.809Z",
+    "lastChecked": "2026-11-02T21:36:25.398Z",
     "revisionIdentifier": "e8edc3c5",
-    "lastVerified": "2026-10-29T22:25:57.809Z"
+    "lastVerified": "2026-11-02T21:36:25.398Z"
   },
   "buresdv-cork": {
     "name": "Cork",
@@ -10251,9 +10251,9 @@
   "krzysztofzablocki-inject": {
     "name": "Inject",
     "officialUrl": "https://github.com/krzysztofzablocki/Inject",
-    "lastChecked": "2026-10-30T09:27:07.530Z",
+    "lastChecked": "2026-11-02T21:36:27.862Z",
     "revisionIdentifier": "67e3ee9a",
-    "lastVerified": "2026-10-30T09:27:07.530Z"
+    "lastVerified": "2026-11-02T21:36:27.862Z"
   },
   "jina-ai-reader": {
     "name": "reader",

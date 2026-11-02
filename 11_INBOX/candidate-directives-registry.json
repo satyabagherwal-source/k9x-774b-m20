@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:47:50.700Z",
+  "last_updated": "2026-11-02T21:36:44.310Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3632,6 +3632,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-pixeltable-pixeltable"
+    },
+    {
+      "id": "CD-47IU",
+      "directive_title": "NUC 74 Final Rest Parameters",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "521c2fe2",
+      "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-nucleoidai-nucleoid"
     }
   ]
 }

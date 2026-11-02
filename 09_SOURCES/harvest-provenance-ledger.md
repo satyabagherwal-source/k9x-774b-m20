@@ -6875,3 +6875,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-02T21:22:51.967Z |
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `77411c1c` | Multi-dimensional audit evidence | 2026-11-02T21:30:10.177Z |
 | `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-02T21:30:10.543Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `521c2fe2` | Multi-dimensional audit evidence | 2026-11-02T21:36:44.306Z |
