@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T15:00:58.086Z",
+  "last_updated": "2026-11-02T15:08:22.224Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
-      "verified_at": "2026-10-30T20:05:16.273Z",
+      "content_hash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
+      "verified_at": "2026-11-02T15:08:22.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T20:05:16.273Z"
+      "last_updated": "2026-11-02T15:08:22.223Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
-      "verified_at": "2026-10-30T21:19:29.588Z",
+      "content_hash": "c17f866742e49054d53b83e2f47e6675f8387fc5a8ba49f520a039dd3cf63c98",
+      "verified_at": "2026-11-02T15:08:18.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:19:29.588Z"
+      "last_updated": "2026-11-02T15:08:18.925Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `df57ae6d`  
+> **Source Version**: `515b22a3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T20:05:15.617Z  
+> **Timestamp**: 2026-11-02T15:08:21.590Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T20:05:14.330Z  
+> **Harvest Timestamp**: 2026-11-02T15:08:20.667Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 32473 stars
+- **Stars / Engagement**: 32539 stars
 
 ---
 
@@ -1445,867 +1445,955 @@ func isEmptyDir(dir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `266593d7` (2026-10-23)
-**Commit Message**: fix(openapi,swagger): skip null spec entries instead of panicking
+### Incident Patch 1: `cd0122aa` (2026-11-02)
+**Commit Message**: chore: refresh security context (#7996)
 
-A null value in an OpenAPI or Swagger document (an empty list item, or a
-map key with no value) decodes to a nil pointer. Several of these were
-dereferenced without a check, so loading such a spec with -im openapi or
--im swagger crashed nuclei with SIGSEGV.
+Co-authored-by: ehsandeep <[REDACTED_EMAIL]>
 
-openapi (generator.go):
-- a null entry under `servers:` -> nil *Server
-- a null media type under `content:` -> nil *MediaType
-
-swagger (dereferenced inside kin-openapi's openapi2conv.ToV3):
-- a null path item under `paths:` -> nil *PathItem
-- a null item under path/operation `parameters:` or a null top-level
-  parameter -> nil *Parameter
-- a null operation or top-level response -> nil *Response
-
-Skip the nil entries in the generator, and drop them from the decoded
-Swagger document before converting it. Other null entries are already
-rejected by kin-openapi with an error and are left alone.
-
-Also add a go-fuzz harness for the OpenAPI parser with a seed corpus, so
-the weekly fuzz workflow picks it up, and regression tests that panic on
-the pre-fix code.
-
-**File**: `pkg/input/formats/openapi/fuzz.go` (added, +20/-0)
+**File**: `SECURITY_CONTEXT.md` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,20 @@
-+//go:build gofuzz
-+// +build gofuzz
-+
-+package openapi
-+
-+// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
-+// bytes are treated as a raw schema document (YAML or JSON) and fed through the
-+// format's Parse, which loads the schema and generates requests from it.
-+func Fuzz(data []byte) int {
-+	if len(data) == 0 {
-+		return 0
-+	}
-+	if len(data) > fuzzMaxInputSize {
-+		return -1
-+	}
-+	if !fuzzOpenAPIParsing(data) {
-+		return 0
-+	}
-+	return 1
-+}
-```
-
-**File**: `pkg/input/formats/openapi/fuzz_harness.go` (added, +32/-0)
-```diff
-@@ -0,0 +1,32 @@
-+package openapi
-+
-+import (
-+	"bytes"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+)
-+
-+const fuzzMaxInputSize = 64 << 10
-+
-+// fuzzOpenAPIParsing feeds data to the OpenAPI format parser as a raw schema
-+// document and drives request generation. It must never panic for any input;
-+// it returns true when the schema parsed and at least one request was produced.
-+func fuzzOpenAPIParsing(data []byte) bool {
-+	if len(data) == 0 || len(data) > fuzzMaxInputSize {
-+		return false
-+	}
-+
-+	format := New()
-+	format.SetOptions(formats.InputFormatOptions{})
-+
-+	produced := false
-+	cb := func(rr *types.RequestResponse) bool {
-+		produced = true
-+		return true
-+	}
-+	if err := format.Parse(bytes.NewReader(data), cb, "fuzz.openapi"); err != nil {
-+		return false
-+	}
-+	return produced
-+}
-```
-
-**File**: `pkg/input/formats/openapi/fuzz_harness_test.go` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
-+package openapi
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestFuzzOpenAPIParsingSeedCorpus(t *testing.T) {
-+	entries, err := os.ReadDir("testdata/gofuzz-corpus")
-+	require.NoError(t, err)
-+	require.NotEmpty(t, entries)
-+
-+	for _, entry := range entries {
-+		if entry.IsDir() {
-+			continue
-+		}
-+
-+		data, err := os.ReadFile(filepath.Join("testdata/gofuzz-corpus", entry.Name()))
-+		require.NoError(t, err)
-+		require.Truef(t, fuzzOpenAPIParsing(data), "seed %s should produce at least one request", entry.Name())
-+	}
-+}
-+
-+func TestFuzzOpenAPIParsingRejectsOversizeInput(t *testing.T) {
-+	require.False(t, fuzzOpenAPIParsing(make([]byte, fuzzMaxInputSize+1)))
-+}
-+
-+// Null entries decode to nil pointers and used to panic during request
-+// generation. The remaining valid entries must still produce requests.
-+func TestFuzzOpenAPIParsingNullEntries(t *testing.T) {
-+	specs := map[string]string{
-+		"null server": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-+`,
-+		"null media type": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-+`,
-+	}
-+
-+	for name, spec := range specs {
-+		t.Run(name, func(t *testing.T) {
-+			require.True(t, fuzzOpenAPIParsing([]byte(spec)))
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/input/formats/openapi/generator.go` (modified, +10/-0)
-```diff
-@@ -49,6 +49,11 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
- 	}
+@@ -1,9 +1,9 @@
+-<!-- Generated by securitycontext.dev. Source HEAD: 263bc134120af1548023c23a9b55ec14f9217295. -->
++<!-- Generated by securitycontext.dev. Source HEAD: df57ae6d2955864fd92a1bd2565fe9e4e9a7592b. -->
+ # Security Context: projectdiscovery/nuclei @ dev
  
- 	for _, serverURL := range schema.Servers {
-+		// A null entry in the `servers:` list decodes to a nil *Server, so skip
-+		// it rather than dereferencing it.
-+		if serverURL == nil {
-+			continue
-+		}
- 		pathURL := serverURL.URL
- 		// Split the server URL into baseURL and serverPath
- 		u, err := url.Parse(pathURL)
-@@ -268,6 +273,11 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
+ > Reference context for editing projectdiscovery/nuclei. Before changing any component below, **preserve the listed guards and do not reintroduce these fixed issues**. Each fingerprint is a regression check, and each shared attack surface is a guard that must keep holding on every path.
  
- 	if opts.op.RequestBody != nil {
- 		for content, value := range opts.op.RequestBody.Value.Content {
-+			// A null media-type entry (e.g. `content: {application/json: }`)
-+			// decodes to a nil *MediaType, so skip it before dereferencing.
-+			if value == nil {
-+				continue
-+			}
- 			cloned := req.Clone(req.Context())
+-_Analyzed [263bc13412][c-263bc13412] on `dev` · 5134 commits, 527 security-relevant examined · generated 2026-10-26_
++_Analyzed [df57ae6d29][c-df57ae6d29] on `dev` · 5174 commits, 548 security-relevant examined · generated 2026-11-02_
  
- 			var val interface{}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/json-spec.seed` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"openapi":"3.0.0","info":{"title":"t","version":"1"},"servers":[{"url":"http://example.com"}],"paths":{"/a":{"post":{"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"k":{"type":"string"}}}}}},"responses":{"200":{"description":"ok"}}}}}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/minimal.seed` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-media-type.seed` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-server.seed` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
+ ## Recurring Security Patterns
+ 
+@@ -100,7 +100,7 @@ Published elsewhere, fixed before the history window, or not yet linked; full de
+ | CVE-2024-40641 / GHSA-c3q9-c27p-cw9h | high 7.4 | 2024-07-17 | CWE-78 | Unsigned code template execution through workflows in projectdiscovery/nuclei. ### Summary... |
+ | CVE-2024-27920 / GHSA-w5wx-6g2r-r78q | high 7.4 | 2024-03-15 | CWE-78 | Unsigned code template execution through workflows in projectdiscovery/nuclei. ### Overvie... |
+ 
+-[c-263bc13412]: https://github.com/projectdiscovery/nuclei/commit/263bc134120af1548023c23a9b55ec14f9217295
++[c-df57ae6d29]: https://github.com/projectdiscovery/nuclei/commit/df57ae6d2955864fd92a1bd2565fe9e4e9a7592b
+ [c-d43c1f547f]: https://github.com/projectdiscovery/nuclei/commit/d43c1f547f98ac56654f4335ad20af0cca4c229c
+ [c-d9dabbb4a1]: https://github.com/projectdiscovery/nuclei/commit/d9dabbb4a19e897a6bc12334a030a43035b27b73
+ [c-e5154d362a]: https://github.com/projectdiscovery/nuclei/commit/e5154d362af900e83b30fb79028bfab1a7f0c648
 ```
 
 ---
 
-### Incident Patch 2: `bdf7e983` (2026-10-30)
-**Commit Message**: Merge pull request #7990 from IBazsecI/fix/openapi-swagger-nil-panics
+### Incident Patch 2: `aec0b6ee` (2026-11-02)
+**Commit Message**: fix(workflow)!: load tags steps when a subtemplate passes the filters
 
-fix(openapi,swagger): skip null spec entries instead of panicking
+With a template filter set, a workflow step selected by tags loaded only
+the templates that had its tags and passed the filter. When the filter
+selected one of the step's subtemplates instead, the step loaded
+nothing, and since subtemplates run only after their step matches, the
+selected subtemplate never ran. Steps selected by template already load
+for a loaded subtemplate (#7965), but the tag lookup never got that
+signal, and it matched the step's tags and the filters in a single call,
+so it could not skip the filters without also dropping the tags.
 
-**File**: `pkg/input/formats/openapi/fuzz.go` (added, +20/-0)
+The tag lookup now selects templates by the step's tags first and then
+filters them. A step loaded for its subtemplate used to skip every
+filter that rejected a template without an error, so -eid, -es and -ept
+did not apply to it while -etags and -et did. Both lookups now apply
+only the exclusion filters to such a step, so every exclusion holds, as
+it does against -itags since #7536.
+
+The tag filter also let -id lift -eid for the same template, so a
+workflow ran a template that a scan with the same flags skips. -eid now
+wins, as in the metadata index filter.
+
+BREA
+
+**File**: `DESIGN.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,20 @@
-+//go:build gofuzz
-+// +build gofuzz
+@@ -36,7 +36,7 @@ It also specifies a `WorkflowLoader` interface that is used during workflow load
+ 
+ ```go
+ type WorkflowLoader interface {
+-	GetTemplatePathsByTags(tags []string) []string
++	GetTemplatePathsByTags(tags []string, noValidate bool) []string
+ 	GetTemplatePaths(templatesList []string, noValidate bool) []string
+ }
+ ```
+```
+
+**File**: `pkg/loader/workflow/workflow_loader.go` (modified, +51/-6)
+```diff
+@@ -16,6 +16,8 @@ import (
+ type workflowLoader struct {
+ 	pathFilter *filter.PathFilter
+ 	tagFilter  *templates.TagFilter
++	// the exclusions of tagFilter alone, see filters
++	exclusions *templates.TagFilter
+ 	options    *protocols.ExecutorOptions
+ 
+ 	// every workflow step that selects templates by tag searches the whole
+@@ -45,12 +47,30 @@ func NewLoader(options *protocols.ExecutorOptions) (model.WorkflowLoader, error)
+ 	if err != nil {
+ 		return nil, err
+ 	}
++	// IncludeTags is not an inclusion filter: it lifts the exclusion of the
++	// same tags
++	exclusions, err := templates.NewTagFilter(&templates.TagFilterConfig{
++		ExcludeTags:       options.Options.ExcludeTags,
++		IncludeTags:       options.Options.IncludeTags,
++		ExcludeIds:        options.Options.ExcludeIds,
++		ExcludeSeverities: options.Options.ExcludeSeverities,
++		ExcludeProtocols:  options.Options.ExcludeProtocols,
++	})
++	if err != nil {
++		return nil, err
++	}
+ 	pathFilter := filter.NewPathFilter(&filter.PathFilterConfig{
+ 		IncludedTemplates: options.Options.IncludeTemplates,
+ 		ExcludedTemplates: options.Options.ExcludedTemplates,
+ 	}, options.Catalog)
+ 
+-	loader := &workflowLoader{pathFilter: pathFilter, tagFilter: tagFilter, options: options, parsed: make(map[string]*templates.Template)}
++	loader := &workflowLoader{
++		pathFilter: pathFilter,
++		tagFilter:  tagFilter,
++		exclusions: exclusions,
++		options:    options,
++		parsed:     make(map[string]*templates.Template),
++	}
+ 	loader.templatesDirectoryPaths = sync.OnceValue(loader.listTemplatesDirectory)
+ 	return loader, nil
+ }
+@@ -85,20 +105,34 @@ func (w *workflowLoader) parseTemplate(path string) *templates.Template {
+ 	return template
+ }
+ 
+-func (w *workflowLoader) GetTemplatePathsByTags(templateTags []string) []string {
++func (w *workflowLoader) GetTemplatePathsByTags(templateTags []string, noValidate bool) []string {
+ 	var loadedTemplates []string
+ 	for _, path := range w.templatesDirectoryPaths() {
++		// the step's tags select the templates and the filters then decide
++		// which of them load, as for the templates of a template step
+ 		template := w.parseTemplate(path)
+-		if template == nil {
++		if template == nil || !selectedByTags(template, templateTags) {
+ 			continue
+ 		}
+-		if loaded, _ := templates.MatchLoadFilters(template, path, w.tagFilter, templateTags); loaded {
++		if matched, _ := templates.MatchLoadFilters(template, path, w.filters(noValidate), nil); matched {
+ 			loadedTemplates = append(loadedTemplates, path)
+ 		}
+ 	}
+ 	return loadedTemplates
+ }
+ 
++// selectedByTags reports whether a workflow step that selects templates by
++// tags selects template, which it does when template has one of tags.
++// Workflows are never selected, as a workflow cannot run as a step.
++func selectedByTags(template *templates.Template, tags []string) bool {
++	if len(template.Workflows) > 0 {
++		return false
++	}
++	return slices.ContainsFunc(template.Info.Tags.ToSlice(), func(tag string) bool {
++		return slices.Contains(tags, tag)
++	})
++}
 +
-+package openapi
+ func (w *workflowLoader) GetTemplatePaths(templatesList []string, noValidate bool) []string {
+ 	includedTemplates, errs := w.options.Catalog.GetTemplatesPath(templatesList)
+ 	for template, err := range errs {
+@@ -108,12 +142,23 @@ func (w *workflowLoader) GetTemplatePaths(templatesList []string, noValidate boo
+ 
+ 	loadedTemplates := make([]string, 0, len(templatesPathMap))
+ 	for templatePath := range templatesPathMap {
+-		matched, err := w.options.Parser.LoadTemplate(templatePath, w.tagFilter, nil, w.options.Catalog)
++		matched, err := w.options.Parser.LoadTemplate(templatePath, w.filters(noValidate), nil, w.options.Catalog)
+ 		if err != nil && !matched {
+ 			gologger.Warning().Msg(err.Error())
+-		} else if matched || noValidate {
++		} else if matched {
+ 			loadedTemplates = append(loadedTemplates, templatePath)
+ 		}
+ 	}
+ 	return loadedTemplates
+ }
 +
-+// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
-+// bytes are treated as a raw schema document (YAML or JSON) and fed through the
-+// format's Parse, which loads the schema and generates requests from it.
-+func Fuzz(data []byte) int {
-+	if len(data) == 0 {
-+		return 0
++// filters returns the filters that decide which templates a workflow step
++// loads. With noValidate, set for a step whose subtemplates loaded, only the
++// exclusions apply: the step must load for its subtemplates to run, but an
++// excluded template never runs.
++func (w *workflowLoader) filters(noValidate bool) *templates.TagFilter {
++	if noValidate {
++		return w.exclusions
 +	}
-+	if len(data) > fuzzMaxInputSize {
-+		return -1
-+	}
-+	if !fuzzOpenAPIParsing(data) {
-+		return 0
-+	}
-+	return 1
++	return w.tagFilter
 +}
 ```
 
-**File**: `pkg/input/formats/openapi/fuzz_harness.go` (added, +32/-0)
+**File**: `pkg/loader/workflow/workflow_loader_test.go` (modified, +86/-2)
 ```diff
-@@ -0,0 +1,32 @@
-+package openapi
+@@ -1,15 +1,21 @@
+ package workflow
+ 
+ import (
++	"maps"
++	"slices"
+ 	"testing"
+ 
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/dns"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
++	templateTypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/nuclei/v3/pkg/utils/stats"
++	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -63,9 +69,87 @@ func TestGetTemplatePathsByTagsReadsTemplatesDirectoryOnce(t *testing.T) {
+ 	require.NoError(t, err)
+ 	walksBeforeLookups := cat.walks
+ 
+-	require.Equal(t, []string{"wordpress.yaml"}, loader.GetTemplatePathsByTags([]string{"wordpress"}))
+-	require.Equal(t, []string{"jira.yaml"}, loader.GetTemplatePathsByTags([]string{"jira"}))
++	require.Equal(t, []string{"wordpress.yaml"}, loader.GetTemplatePathsByTags([]string{"wordpress"}, false))
++	require.Equal(t, []string{"jira.yaml"}, loader.GetTemplatePathsByTags([]string{"jira"}, false))
+ 
+ 	require.Equal(t, 1, cat.walks-walksBeforeLookups, "templates directory walked per lookup")
+ 	require.Equal(t, map[string]int{"wordpress.yaml": 1, "jira.yaml": 1}, parser.parses, "templates parsed per lookup")
+ }
 +
-+import (
-+	"bytes"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/formats"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+)
-+
-+const fuzzMaxInputSize = 64 << 10
-+
-+// fuzzOpenAPIParsing feeds data to the OpenAPI format parser as a raw schema
-+// document and drives request generation. It must never panic for any input;
-+// it returns true when the schema parsed and at least one request was produced.
-+func fuzzOpenAPIParsing(data []byte) bool {
-+	if len(data) == 0 || len(data) > fuzzMaxInputSize {
-+		return false
++func TestGetTemplatePathsByTagsNoValidateAppliesOnlyExclusions(t *testing.T) {
++	template := func(id string, tags ...string) *templates.Template {
++		return &templates.Template{ID: id, Info: model.Info{
++			Name:           id,
++			Authors:        stringslice.StringSlice{Value: "author"},
++			Tags:           stringslice.StringSlice{Value: tags},
++			SeverityHolder: severity.Holder{Severity: severity.Info},
++		}}
 +	}
-+
-+	format := New()
-+	format.SetOptions(formats.InputFormatOptions{})
-+
-+	produced := false
-+	cb := func(rr *types.RequestResponse) bool {
-+		produced = true
-+		return true
++	excludedSeverity := template("excluded-severity", "step")
++	excludedSeverity.Info.SeverityHolder.Severity = severity.Low
++	excludedProtocol := template("excluded-protocol", "step")
++	excludedProtocol.RequestsDNS = []*dns.Request{{}}
++	workflow := template("workflow", "step")
++	workflow.Workflows = []*workflows.WorkflowTemplate{{Template: "selected.yaml"}}
++	parser := &countingParser{
++		templates: map[string]*templates.Template{
++			"selected.yaml":          template("selected", "step"),
++			"included.yaml":          template("included", "step", "included"),
++			"excluded-tag.yaml":      template("excluded-tag", "step", "excluded"),
++			"excluded-id.yaml":       template("excluded-id", "step"),
++			"excluded-severity.yaml": excludedSeverity,
++			"excluded-protocol.yaml": excludedProtocol,
++			"untagged.yaml":          template("untagged", "other"),
++			"workflow.yaml":          workflow,
++		},
++		parses: make(map[string]int),
 +	}
-+	if err := format.Parse(bytes.NewReader(data), cb, "fuzz.openapi"); err != nil {
-+		return false
-+	}
-+	return produced
-+}
-```
-
-**File**: `pkg/input/formats/openapi/fuzz_harness_test.go` (added, +84/-0)
-```diff
-@@ -0,0 +1,84 @@
-+package openapi
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"strings"
-+	"testing"
-+
-+	"github.com/projectdiscovery/nuclei/v3/pkg/input/types"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestFuzzOpenAPIParsingSeedCorpus(t *testing.T) {
-+	entries, err := os.ReadDir("testdata/gofuzz-corpus")
++	options := types.DefaultOptions()
++	options.IncludeIds = []string{"untagged"}
++	options.ExcludeTags = []string{"excluded", "included"}
++	options.IncludeTags = []string{"included"}
++	options.ExcludeIds = []string{"excluded-id"}
++	options.ExcludeSeverities = severity.Severities{severity.Low}
++	options.ExcludeProtocols = templateTypes.ProtocolTypes{templateTypes.DNSProtocol}
++	cat := &countingCatalog{paths: slices.Collect(maps.Keys(parser.templates))}
++	loader, err := NewLoader(&protocols.ExecutorOptions{Options: options, Catalog: cat, Parser: parser})
 +	require.NoError(t, err)
-+	require.NotEmpty(t, entries)
 +
-+	for _, entry := range entries {
-+		if entry.IsDir() {
-+			continue
-+		}
++	require.Empty(t, loader.GetTemplatePathsByTags([]string{"step"}, false))
++	loaded := loader.GetTemplatePathsByTags([]string{"step"}, true)
++	require.ElementsMatch(t, []string{"selected.yaml", "included.yaml"}, loaded)
++}
 +
-+		data, err := os.ReadFile(filepath.Join("testdata/gofuzz-corpus", entry.Name()))
++func TestGetTemplatePathsByTagsCountsSyntaxWarningsOfLoadedTemplates(t *testing.T) {
++	// a template without severity has a syntax warning
++	unrated := &templates.Template{ID: "unrated", Info: model.Info{
++		Name:    "unrated",
++		Authors: stringslice.StringSlice{Value: "author"},
++		Tags:    stringslice.StringSlice{Value: "step"},
++	}}
++	tests := []struct {
++		name     string
++		ids      []string
++		warnings int64
++	}{
++		{name: "loaded", warnings: 1},
++		{name: "filtered out", ids: []string{"other"}, warnings: 0},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			parser := &countingParser{
++				templates: map[string]*templates.Template{"unrated.yaml": unrated},
++				parses:    make(map[string]int),
++			}
++			options := types.DefaultOptions()
++			options.IncludeIds = tc.ids
++			cat := &countingCatalog{paths: []string{"unrated.yaml"}}
++			loader, err := NewLoader(&protocols.ExecutorOptions{Options: options, Catalog: cat, Parser: parser})
++			require.NoError(t, err)
++
++			before := stats.GetValue(templates.TemplateSyntaxWarningStats)
++			loader.GetTemplatePathsByTags([]string{"step"}, false)
++			require.Equal(t, tc.warnings, stats.GetValue(templates.TemplateSyntaxWarningStats)-before)
++		})
++	}
++}
+```
+
+**File**: `pkg/model/workflow_loader.go` (modified, +7/-3)
+```diff
+@@ -4,9 +4,13 @@ package model
+ 
+ // WorkflowLoader is a loader interface required for workflow initialization.
+ type WorkflowLoader interface {
+-	// GetTemplatePathsByTags returns a list of template paths based on the provided tags from the templates directory
+-	GetTemplatePathsByTags(tags []string) []string
++	// GetTemplatePathsByTags returns the paths of the templates in the
++	// templates directory that have one of tags. noValidate is as in
++	// GetTemplatePaths.
++	GetTemplatePathsByTags(tags []string, noValidate bool) []string
+ 
+-	// GetTemplatePaths takes a list of templates and returns paths for them
++	// GetTemplatePaths takes a list of templates and returns paths for them.
++	// With noValidate, only the exclusion filters apply, such as excluded
++	// tags, IDs, severities, protocols and paths.
+ 	GetTemplatePaths(templatesList []string, noValidate bool) []string
+ }
+```
+
+**File**: `pkg/templates/compile_test.go` (modified, +114/-0)
+```diff
+@@ -36,6 +36,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
+ 	templatesigner "github.com/projectdiscovery/nuclei/v3/pkg/templates/signer"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/stats"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
+ 	"github.com/projectdiscovery/ratelimit"
+@@ -439,6 +440,119 @@ workflows:
+ 	}
+ }
+ 
++func Test_ParseWorkflowLoadsStepsOfFilteredSubtemplatesUnlessExcluded(t *testing.T) {
++	// tags steps search the templates directory
++	templatesDir := t.TempDir()
++	cfg := config.DefaultConfig
++	previousTemplatesDir := cfg.TemplatesDirectory
++	t.Cleanup(func() { cfg.SetTemplatesDir(previousTemplatesDir) })
++	cfg.SetTemplatesDir(templatesDir)
++
++	path := func(id string) string { return filepath.Join(templatesDir, id+".yaml") }
++	for _, tpl := range []struct{ id, severity, tag string }{
++		{"BA", "low", "ba-tag"},
++		{"L1", "info", "l1-tag"},
++		{"other", "info", "other-tag"},
++	} {
++		err := os.WriteFile(path(tpl.id), fmt.Appendf(nil, `id: %s
++
++info:
++  name: %s
++  author: pdteam
++  severity: %s
++  tags: %s
++
++http:
++  - method: GET
++    path:
++      - "{{BaseURL}}/%s"
++`, tpl.id, tpl.id, tpl.severity, tpl.tag, tpl.id), 0o600)
 +		require.NoError(t, err)
-+		require.Truef(t, fuzzOpenAPIParsing(data), "seed %s should produce at least one request", entry.Name())
 +	}
-+}
++	workflowPath := filepath.Join(t.TempDir(), "workflow.yaml")
++	err := os.WriteFile(workflowPath, fmt.Appendf(nil, `id: workflow-step-filters
 +
-+func TestFuzzOpenAPIParsingRejectsOversizeInput(t *testing.T) {
-+	require.False(t, fuzzOpenAPIParsing(make([]byte, fuzzMaxInputSize+1)))
-+}
++info:
++  name: Workflow Step Filters
++  author: pdteam
++  severity: info
 +
-+// Null entries decode to nil pointers and used to panic during request
-+// generation. The remaining valid entries must still produce requests.
-+func TestFuzzOpenAPIParsingNullEntries(t *testing.T) {
-+	specs := map[string]string{
-+		"null server": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-+`,
-+		"null media type": `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-+`,
++workflows:
++  - tags: ba-tag
++    subtemplates:
++      - template: %q
++  - template: %q
++    subtemplates:
++      - template: %q
++`, path("L1"), path("BA"), path("L1")), 0o600)
++	require.NoError(t, err)
++
++	tests := []struct {
++		name   string
++		filter func(options *types.Options)
++		// executers of the tags step, its subtemplate, the template step and
++		// its subtemplate
++		loaded []int
++	}{
++		{name: "no filters", loaded: []int{1, 1, 1, 1}},
++		{name: "id of the subtemplate", filter: func(o *types.Options) {
++			o.IncludeIds = []string{"L1"}
++		}, loaded: []int{1, 1, 1, 1}},
++		{name: "tag of the subtemplate", filter: func(o *types.Options) {
++			o.Tags = []string{"l1-tag"}
++		}, loaded: []int{1, 1, 1, 1}},
++		{name: "id of the step template", filter: func(o *types.Options) {
++			o.IncludeIds = []string{"BA"}
++		}, loaded: []int{1, 0, 1, 0}},
++		{name: "excluded tag of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeTags = []string{"L1"}, []string{"ba-tag"}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "included excluded tag of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeTags, o.IncludeTags = []string{"L1"}, []string{"ba-tag"}, []string{"ba-tag"}
++		}, loaded: []int{1, 1, 1, 1}},
++		{name: "excluded id of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeIds = []string{"L1"}, []string{"BA"}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "excluded id of the step template and its subtemplate", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeIds = []string{"BA", "L1"}, []string{"BA"}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "excluded id of the included step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeIds = []string{"BA"}, []string{"BA"}
++		}, loaded: []int{0, 0, 0, 0}},
++		{name: "excluded severity of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeSeverities = []string{"L1"}, severity.Severities{severity.Low}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "excluded path of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludedTemplates = []string{"L1"}, []string{path("BA")}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "author of no template", filter: func(o *types.Options) {
++			o.Authors = []string{"nobody"}
++		}, loaded: []int{0, 0, 0, 0}},
 +	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			setup()
++			options := executerOpts.Options.Copy()
++			if tc.filter != nil {
++				tc.filter(options)
++			}
++			executerOpts.Options = options
++			workflowLoader, err := workflow.NewLoader(executerOpts)
++			require.NoError(t, err)
++			executerOpts.WorkflowLoader = workflowLoader
 +
-+	for name, spec := range specs {
-+		t.Run(name, func(t *testing.T) {
-+			require.True(t, fuzzOpenAPIParsing([]byte(spec)))
++			got, err := templates.Parse(workflowPath, nil, executerOpts)
++			require.NoError(t, err)
++			require.NotNil(t, got.CompiledWorkflow)
++			loaded := make([]int, 0, 2*len(got.CompiledWorkflow.Workflows))
++			for _, step := range got.CompiledWorkflow.Workflows {
++				loaded = append(loaded, len(step.Executers), len(step.Subtemplates[0].Executers))
++			}
++			require.Equal(t, tc.loaded, loaded)
 +		})
 +	}
 +}
 +
-+func TestGenerateRequestsOnlyNullServers(t *testing.T) {
-+	spec := `
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-+`
-+	err := New().Parse(strings.NewReader(spec), func(*types.RequestResponse) bool { return false }, "spec.yaml")
-+	require.ErrorContains(t, err, "no servers found in openapi schema")
+ func Test_ParseWorkflowLoadsTemplateWithUnknownMatcherCondition(t *testing.T) {
+ 	setup()
+ 	dir := t.TempDir()
+```
+
+**File**: `pkg/templates/tag_filter.go` (modified, +2/-1)
+```diff
+@@ -436,12 +436,13 @@ func NewTagFilter(config *TagFilterConfig) (*TagFilter, error) {
+ 			}
+ 		}
+ 	}
++	// an included id does not lift its exclusion: exclusions apply however a
++	// template is selected
+ 	for _, id := range config.IncludeIds {
+ 		for _, val := range splitCommaTrim(id) {
+ 			if _, ok := filter.allowedIds[val]; !ok {
+ 				filter.allowedIds[val] = struct{}{}
+ 			}
+-			delete(filter.excludeIds, val)
+ 		}
+ 	}
+ 	for _, includeCondition := range config.IncludeConditions {
+```
+
+**File**: `pkg/templates/tag_filter_test.go` (modified, +10/-0)
+```diff
+@@ -185,6 +185,16 @@ func TestTagBasedFilter(t *testing.T) {
+ 		matched, _ = filter.Match(dummyTemplate, nil)
+ 		require.False(t, matched, "could not get correct match")
+ 	})
++	t.Run("match-exclude-id-over-include-id", func(t *testing.T) {
++		filter, err := NewTagFilter(&TagFilterConfig{
++			IncludeIds: []string{"cve-test"},
++			ExcludeIds: []string{"cve-test"},
++		})
++		require.NoError(t, err)
++		dummyTemplate := newDummyTemplate("cve-test", nil, nil, severity.Low, types.HTTPProtocol)
++		matched, _ := filter.Match(dummyTemplate, nil)
++		require.False(t, matched, "an excluded id must not match when it is also included")
++	})
+ 	t.Run("match-exclude-type", func(t *testing.T) {
+ 		filter, err := NewTagFilter(&TagFilterConfig{
+ 			ExcludeProtocols: []types.ProtocolType{types.HTTPProtocol},
+```
+
+**File**: `pkg/templates/workflows.go` (modified, +1/-1)
+```diff
+@@ -66,7 +66,7 @@ func parseWorkflowTemplate(workflow *workflows.WorkflowTemplate, preprocessor Pr
+ 
+ 	subTemplateTags := workflow.Tags
+ 	if !subTemplateTags.IsEmpty() {
+-		paths = loader.GetTemplatePathsByTags(subTemplateTags.ToSlice())
++		paths = loader.GetTemplatePathsByTags(subTemplateTags.ToSlice(), noValidate)
+ 	} else {
+ 		paths = loader.GetTemplatePaths([]string{workflow.Template}, noValidate)
+ 	}
+```
+
+---
+
+### Incident Patch 3: `515b22a3` (2026-11-02)
+**Commit Message**: Merge pull request #8006 from projectdiscovery/dwisiswant0/fix/workflow/keep-exclusions-from-silently-emptying-workflows
+
+fix(workflow): keep exclusions from silently emptying workflows
+
+**File**: `DESIGN.md` (modified, +1/-1)
+```diff
+@@ -36,7 +36,7 @@ It also specifies a `WorkflowLoader` interface that is used during workflow load
+ 
+ ```go
+ type WorkflowLoader interface {
+-	GetTemplatePathsByTags(tags []string) []string
++	GetTemplatePathsByTags(tags []string, noValidate bool) []string
+ 	GetTemplatePaths(templatesList []string, noValidate bool) []string
+ }
+ ```
+```
+
+**File**: `internal/runner/runner.go` (modified, +1/-0)
+```diff
+@@ -1076,6 +1076,7 @@ func (r *Runner) displayExecutionInfo(store *loader.Store) {
+ 	stats.DisplayAsWarning(httpProtocol.SetThreadToCountZero)
+ 	stats.ForceDisplayWarning(templates.SkippedUnverifiedTemplateStats)
+ 	stats.ForceDisplayWarning(templates.SkippedRequestSignatureTemplateStats)
++	stats.ForceDisplayWarning(templates.SkippedWorkflowStepStats)
+ 
+ 	cfg := config.DefaultConfig
+ 
+```
+
+**File**: `pkg/loader/workflow/workflow_loader.go` (modified, +54/-6)
+```diff
+@@ -16,6 +16,8 @@ import (
+ type workflowLoader struct {
+ 	pathFilter *filter.PathFilter
+ 	tagFilter  *templates.TagFilter
++	// the exclusions of tagFilter other than severities, see filters
++	exclusions *templates.TagFilter
+ 	options    *protocols.ExecutorOptions
+ 
+ 	// every workflow step that selects templates by tag searches the whole
+@@ -45,12 +47,29 @@ func NewLoader(options *protocols.ExecutorOptions) (model.WorkflowLoader, error)
+ 	if err != nil {
+ 		return nil, err
+ 	}
++	// IncludeTags is not an inclusion filter: it lifts the exclusion of the
++	// same tags
++	exclusions, err := templates.NewTagFilter(&templates.TagFilterConfig{
++		ExcludeTags:      options.Options.ExcludeTags,
++		IncludeTags:      options.Options.IncludeTags,
++		ExcludeIds:       options.Options.ExcludeIds,
++		ExcludeProtocols: options.Options.ExcludeProtocols,
++	})
++	if err != nil {
++		return nil, err
++	}
+ 	pathFilter := filter.NewPathFilter(&filter.PathFilterConfig{
+ 		IncludedTemplates: options.Options.IncludeTemplates,
+ 		ExcludedTemplates: options.Options.ExcludedTemplates,
+ 	}, options.Catalog)
+ 
+-	loader := &workflowLoader{pathFilter: pathFilter, tagFilter: tagFilter, options: options, parsed: make(map[string]*templates.Template)}
++	loader := &workflowLoader{
++		pathFilter: pathFilter,
++		tagFilter:  tagFilter,
++		exclusions: exclusions,
++		options:    options,
++		parsed:     make(map[string]*templates.Template),
++	}
+ 	loader.templatesDirectoryPaths = sync.OnceValue(loader.listTemplatesDirectory)
+ 	return loader, nil
+ }
+@@ -85,20 +104,34 @@ func (w *workflowLoader) parseTemplate(path string) *templates.Template {
+ 	return template
+ }
+ 
+-func (w *workflowLoader) GetTemplatePathsByTags(templateTags []string) []string {
++func (w *workflowLoader) GetTemplatePathsByTags(templateTags []string, noValidate bool) []string {
+ 	var loadedTemplates []string
+ 	for _, path := range w.templatesDirectoryPaths() {
++		// the step's tags select the templates and the filters then decide
++		// which of them load, as for the templates of a template step
+ 		template := w.parseTemplate(path)
+-		if template == nil {
++		if template == nil || !selectedByTags(template, templateTags) {
+ 			continue
+ 		}
+-		if loaded, _ := templates.MatchLoadFilters(template, path, w.tagFilter, templateTags); loaded {
++		if matched, _ := templates.MatchLoadFilters(template, path, w.filters(noValidate), nil); matched {
+ 			loadedTemplates = append(loadedTemplates, path)
+ 		}
+ 	}
+ 	return loadedTemplates
+ }
+ 
++// selectedByTags reports whether a workflow step that selects templates by
++// tags selects template, which it does when template has one of tags.
++// Workflows are never selected, as a workflow cannot run as a step.
++func selectedByTags(template *templates.Template, tags []string) bool {
++	if len(template.Workflows) > 0 {
++		return false
++	}
++	return slices.ContainsFunc(template.Info.Tags.ToSlice(), func(tag string) bool {
++		return slices.Contains(tags, tag)
++	})
++}
++
+ func (w *workflowLoader) GetTemplatePaths(templatesList []string, noValidate bool) []string {
+ 	includedTemplates, errs := w.options.Catalog.GetTemplatesPath(templatesList)
+ 	for template, err := range errs {
+@@ -108,12 +141,27 @@ func (w *workflowLoader) GetTemplatePaths(templatesList []string, noValidate boo
+ 
+ 	loadedTemplates := make([]string, 0, len(templatesPathMap))
+ 	for templatePath := range templatesPathMap {
+-		matched, err := w.options.Parser.LoadTemplate(templatePath, w.tagFilter, nil, w.options.Catalog)
++		matched, err := w.options.Parser.LoadTemplate(templatePath, w.filters(noValidate), nil, w.options.Catalog)
+ 		if err != nil && !matched {
+ 			gologger.Warning().Msg(err.Error())
+-		} else if matched || noValidate {
++		} else if matched {
+ 			loadedTemplates = append(loadedTemplates, templatePath)
+ 		}
+ 	}
+ 	return loadedTemplates
+ }
++
++// filters returns the filters that decide which templates a workflow step
++// loads. With noValidate, set for a step whose subtemplates loaded, only the
++// exclusions apply: the step must load for its subtemplates to run, but an
++// excluded template never runs. Excluded severities do not apply either: a
++// step with subtemplates does not report its own results, so excluding its
++// severity would only keep its subtemplates from running. A late
++// out-of-band (interactsh) match of the step is the exception: it is
++// reported whatever its severity, as with -s.
++func (w *workflowLoader) filters(noValidate bool) *templates.TagFilter {
++	if noValidate {
++		return w.exclusions
++	}
++	return w.tagFilter
 +}
 ```
 
-**File**: `pkg/input/formats/openapi/generator.go` (modified, +14/-1)
+**File**: `pkg/loader/workflow/workflow_loader_test.go` (modified, +86/-2)
 ```diff
-@@ -9,6 +9,7 @@ import (
- 	"net/http/httputil"
- 	"net/url"
+@@ -1,15 +1,21 @@
+ package workflow
+ 
+ import (
++	"maps"
++	"slices"
+ 	"testing"
+ 
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/severity"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/model/types/stringslice"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/dns"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
++	templateTypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/nuclei/v3/pkg/utils/stats"
++	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -63,9 +69,87 @@ func TestGetTemplatePathsByTagsReadsTemplatesDirectoryOnce(t *testing.T) {
+ 	require.NoError(t, err)
+ 	walksBeforeLookups := cat.walks
+ 
+-	require.Equal(t, []string{"wordpress.yaml"}, loader.GetTemplatePathsByTags([]string{"wordpress"}))
+-	require.Equal(t, []string{"jira.yaml"}, loader.GetTemplatePathsByTags([]string{"jira"}))
++	require.Equal(t, []string{"wordpress.yaml"}, loader.GetTemplatePathsByTags([]string{"wordpress"}, false))
++	require.Equal(t, []string{"jira.yaml"}, loader.GetTemplatePathsByTags([]string{"jira"}, false))
+ 
+ 	require.Equal(t, 1, cat.walks-walksBeforeLookups, "templates directory walked per lookup")
+ 	require.Equal(t, map[string]int{"wordpress.yaml": 1, "jira.yaml": 1}, parser.parses, "templates parsed per lookup")
+ }
++
++func TestGetTemplatePathsByTagsNoValidateAppliesExclusionsButSeverity(t *testing.T) {
++	template := func(id string, tags ...string) *templates.Template {
++		return &templates.Template{ID: id, Info: model.Info{
++			Name:           id,
++			Authors:        stringslice.StringSlice{Value: "author"},
++			Tags:           stringslice.StringSlice{Value: tags},
++			SeverityHolder: severity.Holder{Severity: severity.Info},
++		}}
++	}
++	excludedSeverity := template("excluded-severity", "step")
++	excludedSeverity.Info.SeverityHolder.Severity = severity.Low
++	excludedProtocol := template("excluded-protocol", "step")
++	excludedProtocol.RequestsDNS = []*dns.Request{{}}
++	workflow := template("workflow", "step")
++	workflow.Workflows = []*workflows.WorkflowTemplate{{Template: "selected.yaml"}}
++	parser := &countingParser{
++		templates: map[string]*templates.Template{
++			"selected.yaml":          template("selected", "step"),
++			"included.yaml":          template("included", "step", "included"),
++			"excluded-tag.yaml":      template("excluded-tag", "step", "excluded"),
++			"excluded-id.yaml":       template("excluded-id", "step"),
++			"excluded-severity.yaml": excludedSeverity,
++			"excluded-protocol.yaml": excludedProtocol,
++			"untagged.yaml":          template("untagged", "other"),
++			"workflow.yaml":          workflow,
++		},
++		parses: make(map[string]int),
++	}
++	options := types.DefaultOptions()
++	options.IncludeIds = []string{"untagged"}
++	options.ExcludeTags = []string{"excluded", "included"}
++	options.IncludeTags = []string{"included"}
++	options.ExcludeIds = []string{"excluded-id"}
++	options.ExcludeSeverities = severity.Severities{severity.Low}
++	options.ExcludeProtocols = templateTypes.ProtocolTypes{templateTypes.DNSProtocol}
++	cat := &countingCatalog{paths: slices.Collect(maps.Keys(parser.templates))}
++	loader, err := NewLoader(&protocols.ExecutorOptions{Options: options, Catalog: cat, Parser: parser})
++	require.NoError(t, err)
++
++	require.Empty(t, loader.GetTemplatePathsByTags([]string{"step"}, false))
++	loaded := loader.GetTemplatePathsByTags([]string{"step"}, true)
++	require.ElementsMatch(t, []string{"selected.yaml", "included.yaml", "excluded-severity.yaml"}, loaded)
++}
++
++func TestGetTemplatePathsByTagsCountsSyntaxWarningsOfLoadedTemplates(t *testing.T) {
++	// a template without severity has a syntax warning
++	unrated := &templates.Template{ID: "unrated", Info: model.Info{
++		Name:    "unrated",
++		Authors: stringslice.StringSlice{Value: "author"},
++		Tags:    stringslice.StringSlice{Value: "step"},
++	}}
++	tests := []struct {
++		name     string
++		ids      []string
++		warnings int64
++	}{
++		{name: "loaded", warnings: 1},
++		{name: "filtered out", ids: []string{"other"}, warnings: 0},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			parser := &countingParser{
++				templates: map[string]*templates.Template{"unrated.yaml": unrated},
++				parses:    make(map[string]int),
++			}
++			options := types.DefaultOptions()
++			options.IncludeIds = tc.ids
++			cat := &countingCatalog{paths: []string{"unrated.yaml"}}
++			loader, err := NewLoader(&protocols.ExecutorOptions{Options: options, Catalog: cat, Parser: parser})
++			require.NoError(t, err)
++
++			before := stats.GetValue(templates.TemplateSyntaxWarningStats)
++			loader.GetTemplatePathsByTags([]string{"step"}, false)
++			require.Equal(t, tc.warnings, stats.GetValue(templates.TemplateSyntaxWarningStats)-before)
++		}
+```
+
+**File**: `pkg/model/workflow_loader.go` (modified, +7/-3)
+```diff
+@@ -4,9 +4,13 @@ package model
+ 
+ // WorkflowLoader is a loader interface required for workflow initialization.
+ type WorkflowLoader interface {
+-	// GetTemplatePathsByTags returns a list of template paths based on the provided tags from the templates directory
+-	GetTemplatePathsByTags(tags []string) []string
++	// GetTemplatePathsByTags returns the paths of the templates in the
++	// templates directory that have one of tags. noValidate is as in
++	// GetTemplatePaths.
++	GetTemplatePathsByTags(tags []string, noValidate bool) []string
+ 
+-	// GetTemplatePaths takes a list of templates and returns paths for them
++	// GetTemplatePaths takes a list of templates and returns paths for them.
++	// With noValidate, only the exclusion filters apply, except excluded
++	// severities: excluded tags, IDs, protocols and paths.
+ 	GetTemplatePaths(templatesList []string, noValidate bool) []string
+ }
+```
+
+**File**: `pkg/templates/compile_test.go` (modified, +178/-0)
+```diff
+@@ -10,13 +10,17 @@ import (
+ 	"net/http/httptest"
  	"os"
+ 	"path/filepath"
 +	"slices"
  	"strings"
- 
- 	"github.com/clbanning/mxj/v2"
-@@ -33,7 +34,9 @@ const (
- 
- // GenerateRequestsFromSchema generates http requests from an OpenAPI 3.0 document object
- func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOptions, callback formats.ParseReqRespCallback) error {
--	if len(schema.Servers) == 0 {
-+	// Null entries in `servers:` are skipped below, so a list of only null
-+	// entries has no usable server, the same as an empty list.
-+	if !slices.ContainsFunc(schema.Servers, func(s *openapi3.Server) bool { return s != nil }) {
- 		return errors.New("no servers found in openapi schema")
- 	}
- 	globalParams, globalSecurityErr := selectSecurityParameters(schema, &schema.Security, opts.Variables)
-@@ -49,6 +52,11 @@ func GenerateRequestsFromSchema(schema *openapi3.T, opts formats.InputFormatOpti
- 	}
- 
- 	for _, serverURL := range schema.Servers {
-+		// A null entry in the `servers:` list decodes to a nil *Server, so skip
-+		// it rather than dereferencing it.
-+		if serverURL == nil {
-+			continue
-+		}
- 		pathURL := serverURL.URL
- 		// Split the server URL into baseURL and serverPath
- 		u, err := url.Parse(pathURL)
-@@ -268,6 +276,11 @@ func generateRequestsFromOp(opts *generateReqOptions) error {
- 
- 	if opts.op.RequestBody != nil {
- 		for content, value := range opts.op.RequestBody.Value.Content {
-+			// A null media-type entry (e.g. `content: {application/json: }`)
-+			// decodes to a nil *MediaType, so skip it before dereferencing.
-+			if value == nil {
-+				continue
-+			}
- 			cloned := req.Clone(req.Context())
- 
- 			var val interface{}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/json-spec.seed` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"openapi":"3.0.0","info":{"title":"t","version":"1"},"servers":[{"url":"http://example.com"}],"paths":{"/a":{"post":{"requestBody":{"content":{"application/json":{"schema":{"type":"object","properties":{"k":{"type":"string"}}}}}},"responses":{"200":{"description":"ok"}}}}}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/minimal.seed` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-media-type.seed` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers: [{url: "http://example.com"}]
-+paths:
-+  /users:
-+    post:
-+      requestBody:
-+        content:
-+          application/xml:
-+          application/json:
-+            schema: {type: object, properties: {name: {type: string}}}
-+      responses: {"200": {description: ok}}
-```
-
-**File**: `pkg/input/formats/openapi/testdata/gofuzz-corpus/nil-server.seed` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+openapi: 3.0.0
-+info: {title: t, version: "1"}
-+servers:
-+  -
-+  - {url: "http://example.com"}
-+paths:
-+  /users:
-+    get:
-+      responses: {"200": {description: ok}}
-```
-
----
-
-### Incident Patch 3: `7b0ca00f` (2026-10-30)
-**Commit Message**: fix(js): check redis reply headers in linear time, skip payloads
-
-The read cap scanned a reply line by line and copied what was left of
-its buffer for every line, so a 1 MiB bulk reply of newlines allocated
-17 GiB. It also checked lines inside bulk payloads as if they were
-headers, so a Lua script returning "a\n*abc" failed with "reply exceeds
-16777216 bytes".
-
-Follow the RESP framing as bytes pass instead: skip a bulk payload by
-its declared length and check only header lines. A rejected header's
-read now ends before its "\n", so go-redis never gets a line to
-allocate from, and nothing is buffered or copied.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `pkg/js/libs/redis/redis.go` (modified, +80/-103)
-```diff
-@@ -3,9 +3,7 @@ package redis
- import (
- 	"bytes"
- 	"context"
--	"errors"
- 	"fmt"
--	"io"
- 	"net"
- 	"strconv"
+ 	"sync"
+ 	"sync/atomic"
+ 	"testing"
  	"time"
-@@ -287,140 +285,119 @@ func newClient(addr, password string) *redis.Client {
- 	return redis.NewClient(opts)
+ 
+ 	"github.com/julienschmidt/httprouter"
++	"github.com/projectdiscovery/gologger"
++	"github.com/projectdiscovery/gologger/levels"
++	"github.com/projectdiscovery/gologger/writer"
+ 	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/catalog/config"
+@@ -36,6 +40,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/http"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
+ 	templatesigner "github.com/projectdiscovery/nuclei/v3/pkg/templates/signer"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/stats"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
+ 	"github.com/projectdiscovery/ratelimit"
+@@ -439,6 +444,179 @@ workflows:
+ 	}
  }
  
--// limitedConn fails a read once remaining is spent, and withholds a RESP length line whose
--// declared size is over the cap so go-redis never allocates it.
-+// maxHeaderLen fits a type byte, any int64, and "\r". Redis never sends a longer length header.
-+const maxHeaderLen = 32
++func Test_ParseWorkflowLoadsStepsOfFilteredSubtemplatesUnlessExcluded(t *testing.T) {
++	// tags steps search the templates directory
++	templatesDir := t.TempDir()
++	cfg := config.DefaultConfig
++	previousTemplatesDir := cfg.TemplatesDirectory
++	t.Cleanup(func() { cfg.SetTemplatesDir(previousTemplatesDir) })
++	cfg.SetTemplatesDir(templatesDir)
 +
-+// limitedConn fails a read once remaining is spent, and ends a read before the "\n" of a RESP
-+// length header whose declared size is over the cap, so go-redis never gets the line to allocate
-+// from.
-+//
-+// It follows the reply's framing as the bytes pass: a bulk payload is skipped by its declared
-+// length, so only header lines are checked. A payload line such as "*abc" is data.
- type limitedConn struct {
- 	net.Conn
- 	remaining int64
--	pending   []byte
--	partial   []byte
--	err       error
--	scratch   [32 << 10]byte
-+	// payload is how many bytes of the current bulk payload, "\r\n" included, are still to come.
-+	payload int64
-+	// header is the start of the current header line, without its "\n".
-+	header   []byte
-+	overlong bool
-+	err      error
- }
- 
- func (c *limitedConn) Read(b []byte) (int, error) {
--	if len(b) == 0 {
--		return 0, nil
-+	if c.err != nil {
-+		return 0, c.err
- 	}
--	if len(c.pending) == 0 {
--		if err := c.fill(); err != nil {
--			return 0, err
--		}
-+	if c.remaining <= 0 {
-+		return 0, errReadLimit
- 	}
--	n := copy(b, c.pending)
--	c.pending = c.pending[n:]
--	return n, nil
--}
--
--func (c *limitedConn) fill() error {
--	if len(c.pending) > 0 {
--		return nil
-+	if int64(len(b)) > c.remaining {
-+		b = b[:c.remaining]
- 	}
--	if c.err != nil {
--		return c.err
-+	n, err := c.Conn.Read(b)
-+	c.remaining -= int64(n)
-+	// Errors from the connection, deadlines included, are returned as they come and not kept: a
-+	// read deadline belongs to one call. go-redis peeks for push notifications with a few
-+	// microseconds of deadline, and keeping that timeout would fail the command that follows.
-+	kept, scanErr := c.scan(b[:n])
-+	if scanErr == nil {
-+		return n, err
- 	}
--	for len(c.pending) == 0 {
--		if c.remaining <= 0 {
--			c.err = errReadLimit
--			return c.err
--		}
--		want := int64(len(c.scratch))
--		if want > c.remaining {
--			want = c.remaining
-+	c.err = scanErr
-+	if kept == 0 {
-+		return 0, scanErr
++	path := func(id string) string { return filepath.Join(templatesDir, id+".yaml") }
++	for _, tpl := range []struct{ id, severity, tag string }{
++		{"BA", "low", "ba-tag"},
++		{"L1", "info", "l1-tag"},
++		{"other", "info", "other-tag"},
++	} {
++		err := os.WriteFile(path(tpl.id), fmt.Appendf(nil, `id: %s
++
++info:
++  name: %s
++  author: pdteam
++  severity: %s
++  tags: %s
++
++http:
++  - method: GET
++    path:
++      - "{{BaseURL}}/%s"
++`, tpl.id, tpl.id, tpl.severity, tpl.tag, tpl.id), 0o600)
++		require.NoError(t, err)
 +	}
-+	return kept, nil
-+}
++	workflowPath := filepath.Join(t.TempDir(), "workflow.yaml")
++	err := os.WriteFile(workflowPath, fmt.Appendf(nil, `id: workflow-step-filters
 +
-+// scan follows the RESP framing of p and returns how many of its bytes may be returned.
-+func (c *limitedConn) scan(p []byte) (int, error) {
-+	for i := 0; i < len(p); {
-+		if c.payload > 0 {
-+			skip := min(c.payload, int64(len(p)-i))
-+			c.payload -= skip
-+			i += int(skip)
-+			continue
- 		}
--		n, err := c.Conn.Read(c.scratch[:want])
--		if n > 0 {
--			c.remaining -= int64(n)
--			if aerr := c.accept(c.scratch[:n]); aerr != nil {
--				c.err = aerr
--				if len(c.pending) > 0 {
--					return nil
--				}
--				return aerr
--			}
-+		end := bytes.IndexByte(p[i:], '\n')
-+		if end < 0 {
-+			c.keepHeader(p[i:])
-+			return len(p), nil
- 		}
-+		c.keepHeader(p[i : i+end])
-+		payload, err := declaredPayload(c.header, c.overlong)
-+		c.header, c.overlong = c.header[:0], false
- 		if err != nil {
--			// A read deadline belongs to one call. go-redis peeks for push notifications
--			// with a few microseconds of deadline, and on Windows that peek always runs.
--			// Keeping the timeout fails the command that follows.
--			if timeoutErr(err) {
--				if len(c.pending) > 0 {
--					return nil
--				}
--				return err
--			}
--			c.err = err
--			if len(c.pending) > 0 {
--				return nil
--			}
--			return err
--		}
--		if n == 0 {
--			c.err = io.ErrUnexpectedEOF
--			return c.err
-+			return i + end, err
- 		}
-+		c.payload = payload
-+		i += end + 1
- 	}
--	return nil
-+	return len(p), nil
- }
- 
--func (c *limitedConn) accept(p []byte) error {
--	c.partial = append(c.partial, p...)
--	for {
--		i := bytes.IndexByte(c.partial, '\n')
--		if i < 0 {
--			if int64(len(c.partial)) > maxReadBytes {
--				c.partial = nil
--				return errReadLimit
--			}
--			return nil
--		}
--		line := c.partial[:i+1]
--		if lengthTooLarge(line) {
--			c.partial = nil
--			return errReadLimit
--		}
--		copied := make([]byte, len(line))
--		copy(copied, line)
--		c.pending = append(c.pending, copied...)
--		rest := make([]byte, len(c.partial)-(i+1))
--		copy(rest, c.partial[i+1:])
--		c.partial = rest
-+func (c *limitedConn) keepHeader(p []byte) {
-+	if room := maxHeaderLen - len(c.header); len(p) > room {
-+		p = p[:room]
-+		c.overlong = true
- 	}
-+	c.header = append(c.header, p...)
- }
- 
--// lengthTooLarge reports whether line is a RESP length header go-redis would allocate from.
--// Bulk strings allocate the declared byte length. Arrays, sets, maps, attributes, and pushes
--// allocate one interface per declared element.
--func lengthTooLarge(line []byte) bool {
--	if len(line) < 3 {
--		return false
-+// declaredPayload returns how many payload bytes, "\r\n" included, follo
++info:
++  name: Workflow Step Filters
++  author: pdteam
++  severity: info
++
++workflows:
++  - tags: ba-tag
++    subtemplates:
++      - template: %q
++  - template: %q
++    subtemplates:
++      - template: %q
++`, path("L1"), path("BA"), path("L1")), 0o600)
++	require.NoError(t, err)
++
++	tests := []struct {
++		name   string
++		filter func(options *types.Options)
++		// executers of the tags step, its subtemplate, the template step and
++		// its subtemplate
++		loaded []int
++	}{
++		{name: "no filters", loaded: []int{1, 1, 1, 1}},
++		{name: "id of the subtemplate", filter: func(o *types.Options) {
++			o.IncludeIds = []string{"L1"}
++		}, loaded: []int{1, 1, 1, 1}},
++		{name: "tag of the subtemplate", filter: func(o *types.Options) {
++			o.Tags = []string{"l1-tag"}
++		}, loaded: []int{1, 1, 1, 1}},
++		{name: "id of the step template", filter: func(o *types.Options) {
++			o.IncludeIds = []string{"BA"}
++		}, loaded: []int{1, 0, 1, 0}},
++		{name: "excluded tag of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeTags = []string{"L1"}, []string{"ba-tag"}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "included excluded tag of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeTags, o.IncludeTags = []string{"L1"}, []string{"ba-tag"}, []string{"ba-tag"}
++		}, loaded: []int{1, 1, 1, 1}},
++		{name: "excluded id of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeIds = []string{"L1"}, []string{"BA"}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "excluded id of the step template and its subtemplate", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeIds = []string{"BA", "L1"}, []string{"BA"}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "excluded id of the included step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludeIds = []string{"BA"}, []string{"BA"}
++		}, loaded: []int{0, 0, 0, 0}},
++		// a step does not report its own results, so its severity only
++		// matters when no subtemplate loaded
++		{name: "excluded severity of the step template", filter: func(o *types.Options) {
++			o.ExcludeSeverities = severity.Severities{severity.Low}
++		}, loaded: []int{1, 1, 1, 1}},
++		{name: "excluded severity of the subtemplate", filter: func(o *types.Options) {
++			o.ExcludeSeverities = severity.Severities{severity.Info}
++		}, loaded: []int{1, 0, 1, 0}},
++		{name: "excluded severity of the step template and its subtemplate", filter: func(o *types.Options) {
++			o.ExcludeSeverities = severity.Severities{severity.Low, severity.Info}
++		}, loaded: []int{0, 0, 0, 0}},
++		{name: "excluded path of the step template", filter: func(o *types.Options) {
++			o.IncludeIds, o.ExcludedTemplates = []string{"L1"}, []string{path("BA")}
++		}, loaded: []int{0, 1, 0, 1}},
++		{name: "author of no template", filter: func(o *types.Options) {
++			o.Authors = []string{"nobody"}
++		}, loaded: []int{0, 0, 0, 0}},
++	}
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			setup()
++	
 ```
 
-**File**: `pkg/js/libs/redis/redis_test.go` (modified, +119/-38)
+**File**: `pkg/templates/parser_stats.go` (modified, +1/-0)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"bytes"
- 	"context"
- 	"fmt"
-+	"io"
- 	"net"
- 	"runtime"
- 	"strconv"
-@@ -90,37 +91,58 @@ func TestGetServerInfoAuthBoundsAReplyWithoutNewline(t *testing.T) {
+@@ -9,6 +9,7 @@ const (
+ 	SkippedUnverifiedCodeTemplateStats       = "skipped-unverified-code-templates"
+ 	SkippedUnverifiedJavascriptTemplateStats = "skipped-unverified-javascript-templates"
+ 	SkippedUnverifiedTemplateStats           = "skipped-unverified-templates"
++	SkippedWorkflowStepStats                 = "skipped-workflow-steps"
+ 
+ 	ExcludedCodeTemplateStats           = "excluded-code-templates"
+ 	ExcludedDASTTemplateStats           = "excluded-dast-templates"
+```
+
+**File**: `pkg/templates/stats.go` (modified, +4/-0)
+```diff
+@@ -68,6 +68,10 @@ var templateStatEntries = []templateStatEntry{
+ 		name:        SkippedRequestSignatureTemplateStats,
+ 		description: "Skipping %d templates, HTTP Request signatures can only be used in Signed & Verified templates.",
+ 	},
++	{
++		name:        SkippedWorkflowStepStats,
++		description: "Skipping %d workflow step[s] that loaded no templates, so their subtemplates will not run (use -v for details)",
++	},
  }
  
- func TestGetServerInfoAuthReadsAnInfoReply(t *testing.T) {
--	listener, err := net.Listen("tcp", "127.0.0.1:0")
--	require.NoError(t, err)
--	t.Cleanup(func() {
--		_ = listener.Close()
--	})
-+	tests := []struct {
-+		name string
-+		info string
-+	}{
-+		{name: "info", info: "# Server\r\nredis_version:7.2.4\r\n"},
-+		// A bulk payload's lines are data, even when they start like a RESP length header.
-+		{name: "header-like lines", info: "# Server\r\n*abc\r\n$ 5 dollars\r\n%x\r\n$99999999999\r\n"},
-+		// Each line used to cost a copy of what was left of the read buffer.
-+		{name: "many short lines", info: strings.Repeat("\n", 1<<20)},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			listener, err := net.Listen("tcp", "127.0.0.1:0")
-+			require.NoError(t, err)
-+			t.Cleanup(func() {
-+				_ = listener.Close()
-+			})
- 
--	const info = "# Server\r\nredis_version:7.2.4\r\n"
--	go func() {
--		for {
--			conn, err := listener.Accept()
--			if err != nil {
--				return
--			}
--			go serveRESP(conn, info)
--		}
--	}()
-+			go func() {
-+				for {
-+					conn, err := listener.Accept()
-+					if err != nil {
-+						return
-+					}
-+					go serveRESP(conn, tt.info)
-+				}
-+			}()
- 
--	executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
--	require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
--	t.Cleanup(func() {
--		protocolstate.Close(executionID)
--	})
-+			executionID := "redis-" + strings.ReplaceAll(t.Name(), "/", "-")
-+			require.NoError(t, protocolstate.Init(&types.Options{ExecutionId: executionID}))
-+			t.Cleanup(func() {
-+				protocolstate.Close(executionID)
-+			})
- 
--	addr, ok := listener.Addr().(*net.TCPAddr)
--	require.True(t, ok)
-+			addr, ok := listener.Addr().(*net.TCPAddr)
-+			require.True(t, ok)
- 
--	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
--	defer cancel()
--	got, err := getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
--	require.NoError(t, err)
--	require.Equal(t, info, got)
-+			var before runtime.MemStats
-+			runtime.ReadMemStats(&before)
-+
-+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+			defer cancel()
-+			got, err := getServerInfoAuth(ctx, executionID, "127.0.0.1", addr.Port, "")
-+
-+			var after runtime.MemStats
-+			runtime.ReadMemStats(&after)
-+			require.NoError(t, err)
-+			require.Equal(t, tt.info, got)
-+			growth := int64(after.TotalAlloc - before.TotalAlloc)
-+			require.Less(t, growth, int64(64<<20), "allocated %d MiB reading one reply", growth>>20)
-+		})
-+	}
- }
- 
- // serveRESP answers HELLO as a Redis without RESP3 does, so the client falls back to RESP2, and
-@@ -182,26 +204,85 @@ func readRESPCommand(rd *bufio.Reader) (string, error) {
- 	return command, nil
- }
- 
--func TestLengthTooLarge(t *testing.T) {
-+func TestDeclaredPayload(t *testing.T) {
- 	tests := []struct {
--		line string
--		want bool
-+		line     string
-+		overlong bool
-+		payload  int64
-+		tooLarge bool
- 	}{
--		{line: fmt.Sprintf("$%d\r\n", maxReadBytes), want: false},
--		{line: fmt.Sprintf("$%d\r\n", maxReadBytes+1), want: true},
--		{line: "$-1\r\n", want: false},
--		{line: "+OK\r\n", want: false},
--		{line: fmt.Sprintf("*%d\r\n", maxAggregate), want: false},
--		{line: fmt.Sprintf("*%d\r\n", maxAggregate+1), want: true},
--		{line: "$999999999999999999999\r\n", want: true},
-+		{line: fmt.Sprintf("$%d\r", maxReadBytes), payload: maxReadBytes + 2},
-+		{line: fmt.Sprintf("$%d\r", maxReadBytes+1), tooLarge: true},
-+		{line: "=10\r", payload: 12},
-+		{line: "$-1\r"},
-+		{line: "+OK\r"},
-+		{line: "+OK\r", overlong: true},
-+		{line: fmt.Sprintf("*%d\r", maxAggregate)},
-+		{line: fmt.Sprintf("*%d\r", maxAggregate+1), tooLarge: true},
-+		{line: "$999999999999999999999\r", tooLarge: true},
-+		{line: "*abc\r", tooLarge: true},
-+		{line: "$000000000000000000000000000000", overlong: true, tooLarge: true},
- 	}
- 	for _, tt := range tests {
- 		t.Run(tt.line, func(t *testing.T) {
--			require.Equal(t, tt.want, lengthTooLarge([]byte(tt.line)))
-+			payload, err := declaredPayload([]byte(tt.line), tt.overlong)
-+			if tt.tooLarge {
-+				require.ErrorIs(t, err, errReadLimit)
-+				return
-+			}
-+			require.NoError(t, err)
-+			require.Equal(t, tt.payload, payload)
- 		})
- 	}
- }
- 
-+// The check that rejects a length header has to land on the "\n" when the header arrives over
-+// several reads, and payload bytes have to pass whatever they contain.
-+func TestLimitedConnFollowsFramingAcrossReads(t *testing.T) {
-+	const ok = "*2\r\n$5\r\n*abc\n\r\n$-1\r\n+OK\r\n"
-+	tooLarge := fmt.Sprintf("$%d\r\n", maxReadBytes+1)
-+
-+	tests := []struct {
-+		name    string
-+		stream  string
-+		want    string
-+		wantErr error
-+	}{
-+		{name: "payload passes", stream: ok, want: ok},
-+		{name: "header rejected", stream: ok + tooLarge + "x", want: ok + tooLarge[:len(tooLarge)-1], wantErr:
+ func init() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7990** (2026-10-30): fix(openapi,swagger): skip null spec entries instead of panicking (@IBazsecI)
-- **PR #7988** (2026-10-30): fix(js): check redis reply headers in linear time, skip payloads (@gnuletik)
-- **PR #7981** (2026-10-29): Add JS modules for streaming hash and decompression (@kamilikamil)
-- **PR #7975** (2026-10-29): fix(cmd): ignore comments in -exclude-hosts values (@antcybersec)
-- **PR #7972** (2026-10-29): fix(output): encode nested template maps in JSON output (@arththebird)
-- **PR #7970** (2026-10-29): fix(runner): use -resolvers for the httpx probe of non-URL inputs (#7969) (@Eren-Akdag)
+- **PR #8006** (2026-11-02): fix(workflow): keep exclusions from silently emptying workflows (@dwisiswant0)
+- **PR #8005** (2026-11-02): fix(workflow)!: load tags steps when a subtemplate passes the filters (@dwisiswant0)
+- **PR #8003** (2026-11-02): add har input mode (@dogancanbakir)
+- **PR #8000** (2026-11-02): honour -jsonl in -tl and drop the listing banner from json output (@dogancanbakir)
+- **PR #7996** (2026-11-02): chore: refresh security context (@github-actions[bot])
+- **PR #7994** (2026-11-02): drop HTTP matches on a host's catch-all page with -auto-calibrate (@dogancanbakir)
 
 ---
 
@@ -2325,47 +2413,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. openapi,swagger): skip null spec entries instead of panicking
+## X. refresh security context (#7996)
 
 **RULE**:
-When implementing operations in `pkg/input/formats/openapi/fuzz.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `SECURITY_CONTEXT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `266593d7`: openapi,swagger): skip null spec entries instead of panicking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd0122aa`: refresh security context (#7996). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/input/formats/openapi/fuzz.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY_CONTEXT.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//go:build gofuzz
-// +build gofuzz
-
-package openapi
-
-// Fuzz exercises OpenAPI 3.0 schema parsing and request generation. The input
-// bytes are treated as a raw schema document (YAML or JSON) and fed through the
-// format's Parse, which loads the schema and generates requests from it.
-func Fuzz(data []byte) int {
-	if len(data) == 0 {
-		return 0
-	}
-	if len(data) > fuzzMaxInputSize {
-		return -1
-	}
-	if !fuzzOpenAPIParsing(data) {
-		return 0
-	}
-	return 1
-}
+<!-- Generated by securitycontext.dev. Source HEAD: df57ae6d2955864fd92a1bd2565fe9e4e9a7592b. -->
+_Analyzed [df57ae6d29][c-df57ae6d29] on `dev` · 5174 commits, 548 security-relevant examined · generated 2026-11-02_
+[c-df57ae6d29]: https://github.com/projectdiscovery/nuclei/commit/df57ae6d2955864fd92a1bd2565fe9e4e9a7592b
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+<!-- Generated by securitycontext.dev. Source HEAD: 263bc134120af1548023c23a9b55ec14f9217295. -->
+_Analyzed [263bc13412][c-263bc13412] on `dev` · 5134 commits, 527 security-relevant examined · generated 2026-10-26_
+[c-263bc13412]: https://github.com/projectdiscovery/nuclei/commit/263bc134120af1548023c23a9b55ec14f9217295
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `266593d7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd0122aa` are properly handled with clean fallback behavior.

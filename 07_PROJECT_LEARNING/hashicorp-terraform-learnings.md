@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source**: github ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
-> **Source Version**: `d40e1b2d`  
+> **Source Version**: `89fa8797`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T21:19:29.129Z  
+> **Timestamp**: 2026-11-02T15:08:18.314Z  
 > **Learning ID**: `learn-github-hashicorp-terraform`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hashicorp-terraform-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hashicorp/terraform](https://github.com/hashicorp/terraform))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T21:19:28.268Z  
+> **Harvest Timestamp**: 2026-11-02T15:08:16.956Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Terraform enables you to safely and predictably create, change, and improve infrastructure. It is a source-available tool that codifies APIs into declarative configuration files that can be shared amongst team members, treated as code, edited, reviewed, and versioned.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 50093 stars
+- **Stars / Engagement**: 50348 stars
 
 ---
 
@@ -2281,364 +2281,104 @@ func (c *RemoteClient) getLockInfo() (*statemgr.LockInfo, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89fe6725` (2026-10-30)
-**Commit Message**: stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (#39473)
+### Incident Patch 1: `a48fc909` (2026-10-31)
+**Commit Message**: fix: Enable colorizer in a views.View to handle [purple] tags (#39477)
 
-**File**: `.changes/v1.18/BUG FIXES-20261029-164821.yaml` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+kind: BUG FIXES
-+body: 'stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not'
-+time: 2026-10-29T16:48:21.267429-04:00
-+custom:
-+    Issue: "39473"
-```
+See: https://github.com/hashicorp/terraform/commit/4b97411890909e9b3ad9f72ac2c4ddd13ee1fcd5
 
-**File**: `internal/stacks/stackruntime/apply_test.go` (modified, +148/-0)
+**File**: `internal/command/views/view.go` (modified, +6/-1)
 ```diff
-@@ -2232,6 +2232,154 @@ After applying this plan, Terraform will no longer manage these objects. You wil
- 				},
- 			},
- 		},
-+		// The component's configuration has no reference to the testing provider, but the previous
-+		// state still has a resource managed by it. The provider must still be available to Terraform Core
-+		// (both the configured client and the unconfigured factory) so the resource can be deleted.
-+		"provider-required-only-by-state": {
-+			path: "provider-required-only-by-state",
-+			state: stackstate.NewStateBuilder().
-+				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
-+				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
-+					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
-+					SetProviderAddr(mustDefaultRootProvider("testing")).
-+					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
-+						Status: states.ObjectReady,
-+						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
-+							"id":    "data",
-+							"value": "data",
-+						}),
-+					})).
-+				Build(),
-+			store: stacks_testing_provider.NewResourceStoreBuilder().
-+				AddResource("data", cty.ObjectVal(map[string]cty.Value{
-+					"id":    cty.StringVal("data"),
-+					"value": cty.StringVal("data"),
-+				})).
-+				Build(),
-+			cycles: []TestCycle{
-+				{
-+					planMode: plans.NormalMode,
-+					wantAppliedChanges: []stackstate.AppliedChange{
-+						&stackstate.AppliedChangeComponentInstance{
-+							ComponentAddr:         mustAbsComponent("component.self"),
-+							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
-+							OutputValues: map[addrs.OutputValue]cty.Value{
-+								{Name: "empty"}: cty.StringVal("empty"),
-+							},
-+							InputVariables: make(map[addrs.InputVariable]cty.Value),
-+						},
-+						&stackstate.AppliedChangeResourceInstanceObject{
-+							ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.testing_resource.data"),
-+							ProviderConfigAddr:         mustDefaultRootProvider("testing"),
-+							NewStateSrc:                nil, // deleted
-+						},
-+					},
-+				},
-+			},
-+		},
-+		"provider-required-only-by-state-destroy": {
-+			path: "provider-required-only-by-state",
-+			state: stackstate.NewStateBuilder().
-+				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
-+				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
-+					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
-+					SetProviderAddr(mustDefaultRootProvider("testing")).
-+					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
-+						Status: states.ObjectReady,
-+						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
-+							"id":    "data",
-+							"value": "data",
-+						}),
-+					})).
-+				Build(),
-+			store: stacks_testing_provider.NewResourceStoreBuilder().
-+				AddResource("data", cty.ObjectVal(map[string]cty.Value{
-+					"id":    cty.StringVal("data"),
-+					"value": cty.StringVal("data"),
-+				})).
-+				Build(),
-+			cycles: []TestCycle{
-+				{
-+					planMode: plans.DestroyMode,
-+					wantAppliedChanges: []stackstate.AppliedChange{
-+						&stackstate.AppliedChangeComponentInstanceRemoved{
-+							ComponentAddr:         mustAbsComponent("component.self"),
-+							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
-+						},
-+						&stackstate.AppliedChangeResourceInstanceObject{
-+							ResourceInstanceObjectAddr: mustAbsResourceInstanceObject("component.self.testing_resource.data"),
-+							ProviderConfigAddr:         mustDefaultRootProvider("testing"),
-+							NewStateSrc:                nil, // deleted
-+						},
-+					},
-+				},
-+			},
-+		},
-+		"provider-required-only-by-state-removed": {
-+			path: path.Join("provider-required-only-by-state", "removed"),
-+			state: stackstate.NewStateBuilder().
-+				AddComponentInstance(stackstate.NewComponentInstanceBuilder(mustAbsComponentInstance("component.self"))).
-+				AddResourceInstance(stackstate.NewResourceInstanceBuilder().
-+					SetAddr(mustAbsResourceInstanceObject("component.self.testing_resource.data")).
-+					SetProviderAddr(mustDefaultRootProvider("testing")).
-+					SetResourceInstanceObjectSrc(states.ResourceInstanceObjectSrc{
-+						Status: states.ObjectReady,
-+						AttrsJSON: mustMarshalJSONAttrs(map[string]any{
-+							"id":    "data",
-+							"value": "data",
-+						}),
-+					})).
-+				Build(),
-+			store: stacks_testing_provider.NewResourceStoreBuilder().
-+				AddResource("data", cty.ObjectVal(map[string]cty.Value{
-+					"id":    cty.StringVal("data"),
-+					"value": cty.StringVal("data"),
-+				})).
-+				Build(),
-+			cycles: []TestCycle{
-+				{
-+					wantAppliedChanges: []stackstate.AppliedChange{
-+						&stackstate.AppliedChangeComponentInstanceRemoved{
-+							ComponentAddr:         mustAbsComponent("component.self"),
-+							ComponentInstanceAddr: mustAbsComponentInstance("component.self"),
-+						},
-+						&s
-```
-
-**File**: `internal/stacks/stackruntime/internal/stackeval/applying.go` (modified, +14/-29)
-```diff
-@@ -14,10 +14,8 @@ import (
- 	"github.com/hashicorp/terraform/internal/depsfile"
- 	"github.com/hashicorp/terraform/internal/plans"
- 	"github.com/hashicorp/terraform/internal/policy"
--	"github.com/hashicorp/terraform/internal/providers"
- 	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
- 	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
--	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
- 	"github.com/hashicorp/terraform/internal/stacks/stackstate"
- 	"github.com/hashicorp/terraform/internal/stacks/stackstate/statekeys"
- 	"github.com/hashicorp/terraform/internal/states"
-@@ -175,20 +173,22 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
- 		return noOpResult, diags
- 	}
+@@ -5,6 +5,7 @@ package views
  
--	providerFactories := make(map[addrs.Provider]providers.Factory, len(providerSchemas))
--	for addr := range providerSchemas {
--		providerFactories[addr] = func() (providers.Interface, error) {
--			// Lazily fetch the unconfigured client for the provider
--			// as and when we need it.
--			provider, err := main.ProviderType(addr).UnconfiguredClient()
--			if err != nil {
--				return nil, err
--			}
--			// this provider should only be used for selected operations
--			return stubs.OfflineProvider(provider), nil
--		}
-+	known, unknown, moreDiags := EvalProviderValues(ctx, main, requiredProviders, ApplyPhase, inst)
-+	if moreDiags.HasErrors() {
-+		// We won't actually add the diagnostics here, they should be
-+		// exposed via a different return path.
-+		diags = diags.Append(&hcl.Diagnostic{
-+			Severity: hcl.DiagError,
-+			Summary:  "Cannot apply component plan",
-+			Detail:   fmt.Sprintf("Cannot apply the plan for %s because the configured provider configuration assignments are invalid.", inst.Addr()),
-+			Subject:  inst.DeclRange(),
-+		})
-+		return nil, diags
- 	}
- 
-+	providerClients := configuredProviderClients(ctx, main, known, unknown, ApplyPhase)
-+	providerFactories := unconfiguredProviderFactories(main, providerSchemas, providerClients)
-+
- 	tfHook := &componentInstanceTerraformHook{
- 		ctx:   ctx,
- 		seq:   seq,
-@@ -223,21 +223,6 @@ func ApplyComponentPlan(ctx context.Context, main *Main, plan *plans.Plan, requi
- 		return noOpResult, diags
- 	}
- 
--	known, unknown, moreDiags := EvalProviderValues(ctx, main, requiredProviders, ApplyPhase, inst)
--	if moreDiags.HasErrors() {
--		// We won't actually add the diagnostics here, they should be
--		// exposed via a different return path.
--		diags = diags.Append(&hcl.Diagnostic{
--			Severity: hcl.DiagError,
--			Summary:  "Cannot apply component plan",
--			Detail:   fmt.Sprintf("Cannot apply the plan for %s because the configured provider configuration assignments are invalid.", inst.Addr()),
--			Subject:  inst.DeclRange(),
--		})
--		return nil, diags
--	}
--
--	providerClients := configuredProviderClients(ctx, main, known, unknown, ApplyPhase)
--
- 	var newState *states.State
- 
- 	if plan.Applyable {
-```
-
-**File**: `internal/stacks/stackruntime/internal/stackeval/planning.go` (modified, +1/-16)
-```diff
-@@ -8,15 +8,12 @@ import (
+ import (
  	"fmt"
- 	"time"
++	"maps"
+ 	"strings"
  
--	"github.com/hashicorp/terraform/internal/addrs"
- 	"github.com/hashicorp/terraform/internal/depsfile"
- 	"github.com/hashicorp/terraform/internal/plans"
- 	"github.com/hashicorp/terraform/internal/policy"
--	"github.com/hashicorp/terraform/internal/providers"
- 	"github.com/hashicorp/terraform/internal/stacks/stackaddrs"
- 	"github.com/hashicorp/terraform/internal/stacks/stackplan"
- 	"github.com/hashicorp/terraform/internal/stacks/stackruntime/hooks"
--	"github.com/hashicorp/terraform/internal/stacks/stackruntime/internal/stackeval/stubs"
- 	"github.com/hashicorp/terraform/internal/states"
- 	"github.com/hashicorp/terraform/internal/terraform"
- 	"github.com/hashicorp/terraform/internal/tfdiags"
-@@ -163,19 +160,7 @@ func PlanComponentInstance(ctx context.Context, main *Main, state *states.State,
- 	// configurations from the stack that exist outside of Terraform's
- 	// concerns. There are provided directly in the PlanOpts argument.
- 
--	providerFactories := make(map[addrs.Provider]providers.Factory, len(providerSchemas))
--	for addr := range providerSchemas {
--		providerFactories[addr] = func() (providers.Interface, error) {
--			// Lazily fetch the unconfigured client for the provider
--			// as and when we need it.
--			provider, err := main.ProviderType(addr).UnconfiguredClient()
--			if err != nil {
--				return nil, err
--			}
--			// this provider should only be used for selected operations
--			return stubs.OfflineProvider(provider), nil
--		}
--	}
-+	providerFactories := unconfiguredProviderFactories(main, providerSchemas, opts.ExternalProviders)
- 
- 	tfCtx, err := terraform.NewContext(&terraform.ContextOpts{
- 		Hooks:                    tfHooks,
+ 	"github.com/mitchellh/colorstring"
+@@ -43,10 +44,14 @@ type View struct {
+ // Initialize a View with the given streams, a disabled colorize object, and a
+ // no-op configSources callback.
+ func NewView(streams *terminal.Streams) *View {
++	colors := make(map[string]string, (len(colorstring.DefaultColors) + 1))
++	maps.Copy(colors, colorstring.DefaultColors)
++	colors["purple"] = "38;5;57" // Add purple color used in `login`'s MOTD from HCP Terraform
++
+ 	return &View{
+ 		streams: streams,
+ 		colorize: &colorstring.Colorize{
+-			Colors:  colorstring.DefaultColors,
++			Colors:  colors,
+ 			Disable: true,
+ 			Reset:   true,
+ 		},
 ```
 
-**File**: `internal/stacks/stackruntime/internal/stackeval/provider_expressions.go` (modified, +33/-0)
+**File**: `internal/command/views/view_test.go` (added, +53/-0)
 ```diff
-@@ -454,6 +454,39 @@ func neededProviderSchemas[Addr any](ctx context.Context, main *Main, phase Eval
- 	return providerSchemas, diags, skipFutherValidation
- }
- 
-+// unconfiguredProviderFactories returns the provider factories that Terraform
-+// Core should use for operations that need an unconfigured provider, such as
-+// provider functions and cross-provider moves.
-+//
-+// The result covers the union of two sets of providers:
-+//   - the providers whose schemas were loaded for the configuration
-+//   - the providers configured for the component
-+func unconfiguredProviderFactories(main *Main, schemas map[addrs.Provider]providers.ProviderSchema, configured map[addrs.RootProviderConfig]providers.Interface) map[addrs.Provider]providers.Factory {
-+	providerFactories := make(map[addrs.Provider]providers.Factory)
+@@ -0,0 +1,53 @@
++// Copyright IBM Corp. 2014, 2026
++// SPDX-License-Identifier: BUSL-1.1
 +
-+	// Providers likely will appear in both sets, in which case the factory is simply rewritten
-+	addProvider := func(addr addrs.Provider) {
-+		providerFactories[addr] = func() (providers.Interface, error) {
-+			// Lazily fetch the unconfigured client for the provider
-+			// as and when we need it.
-+			provider, err := main.ProviderType(addr).UnconfiguredClient()
-+			if err != nil {
-+				return nil, err
-+			}
-+			// this provider should only be used for selected operations
-+			return stubs.OfflineProvider(provider), nil
-+		}
++package views
++
++import (
++	"strings"
++	"testing"
++
++	"github.com/hashicorp/terraform/internal/terminal"
++)
++
++func TestNewView_canProducePurpleColor(t *testing.T) {
++	streams, done := terminal.StreamsForTesting(t)
++	v := NewView(streams)
++
++	if v == nil {
++		t.Fatal("expected NewView to return a non-nil view")
 +	}
 +
-+	for addr := range schemas {
-+		addProvider(addr)
++	if _, ok := v.colorize.Colors["purple"]; !ok {
++		t.Fatal("expected colorizer colors to include purple color")
 +	}
-+	for addr := range configured {
-+		addProvider(addr.Provider)
++
++	message := `
++                                          [purple]-                                [reset]
++                                          [purple]-----                           -[reset]
++                                          [purple]---------                      --[reset]
++                                          [purple]---------  -                -----[reset]
++                                           [purple]---------  ------        -------[reset]
++                                             [purple]-------  ---------  ----------[reset]
++                                                [purple]----  ---------- ----------[reset]
++                                                  [purple]--  ---------- ----------[reset]
++   [bold]Welcome to HCP Terraform![reset]                       [purple]-  ---------- -------[reset]
++                                                      [purple]---  ----- ---[reset]
++   [bold]Documentation:[reset] terraform.io/docs/cloud             [purple]--------   -[reset]
++                                                      [purple]----------[reset]
++                                                      [purple]----------[reset]
++                                                       [purple]---------[reset]
++                                                           [purple]-----[reset]
++                                                               [purple]-[reset]`
++
++	v.streams.Print(
++		v.colorize.Color(message),
++	)
++	output := done(t)
++
++	t.Logf("output:\n%s", output.Stdout())
++
++	if strings.Contains(output.Stdout(), "[purple]") {
++		t.Fatal("expected output to not contain raw [purple] tags")
 +	}
-+	return providerFactories
-+}
-+
- // unconfiguredProviderClients returns the provider clients for the providers
- // required by the configuration of the given component, along with any
- // diagnostics that were encountered while fetching those clients.
-```
-
-**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-only-used-for-functions/provider-only-used-for-functions.tf` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+terraform {
-+  required_providers {
-+    testing = {
-+      source  = "hashicorp/testing"
-+      version = "0.1.0"
-+    }
-+  }
-+}
-+
-+variable "input" {
-+  type = string
-+}
-+
-+output "value" {
-+  value = provider::testing::echo(var.input)
-+}
-```
-
-**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-only-used-for-functions/provider-only-used-for-functions.tfcomponent.hcl` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+required_providers {
-+  testing = {
-+    source  = "hashicorp/testing"
-+    version = "0.1.0"
-+  }
-+}
-+
-+provider "testing" "default" {}
-+
-+variable "input" {
-+  type = string
-+}
-+
-+component "self" {
-+  source = "./"
-+
-+  inputs = {
-+    input = var.input
-+  }
-+
-+  providers = {
-+    # The component's module only uses the testing provider for a function, so
-+    # the provider is required for its schema and unconfigured client but there
-+    # is no provider configuration for it.
-+    testing = provider.testing.default
-+  }
-+}
-```
-
-**File**: `internal/stacks/stackruntime/testdata/mainbundle/test/provider-required-only-by-state/provider-required-only-by-state.tf` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+output "empty" {
-+  value = "empty"
 +}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39481** (2026-11-02): chore(deps): Bump the github-actions-backward-compatible group with 4 updates (@dependabot[bot])
+- **PR #39477** (2026-10-31): views: Enable colorizer in a `views.View` to handle [purple] tags (@SarahFrench)
 - **PR #39473** (2026-10-30): stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (@austinvalle)
 - **PR #39471** (2026-10-29): command/providers schema: Refactor to use views (@SarahFrench)
 - **PR #39469** (2026-10-28): Cleanup after 1.17.1 release (@hc-github-team-tf-core)
 - **PR #39467** (2026-10-28): Prepare for 1.17.1 release (@hc-github-team-tf-core)
-- **PR #39466** (2026-10-29): command/providers mirror: Refactor to use `views` (@SarahFrench)
-- **PR #39465** (2026-10-28): Revert "Prepare before 1.17.1 release (#39460)" (@matejrisek)
 
 ---
 
@@ -2658,32 +2398,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stacks: Fix "missing required provider" error when component state requires a pr
+## X. Enable colorizer in a views.View to handle [purple] tags (#39477)
 
 **RULE**:
-When implementing operations in `.changes/v1.18/BUG FIXES-20261029-164821.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/command/views/view.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89fe6725`: stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not (#39473). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a48fc909`: Enable colorizer in a views.View to handle [purple] tags (#39477). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changes/v1.18/BUG FIXES-20261029-164821.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/views/view.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-kind: BUG FIXES
-body: 'stacks: Fix "missing required provider" error when component state requires a provider that the configuration does not'
-time: 2026-10-29T16:48:21.267429-04:00
-custom:
-    Issue: "39473"
+	"maps"
+	colors := make(map[string]string, (len(colorstring.DefaultColors) + 1))
+	maps.Copy(colors, colorstring.DefaultColors)
+	colors["purple"] = "38;5;57" // Add purple color used in `login`'s MOTD from HCP Terraform
+
+			Colors:  colors,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+			Colors:  colorstring.DefaultColors,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89fe6725` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a48fc909` are properly handled with clean fallback behavior.

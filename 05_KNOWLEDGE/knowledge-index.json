@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T15:00:57.902Z",
+  "last_updated": "2026-11-02T15:08:22.147Z",
   "total_verified_learnings": 1192,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -16672,8 +16672,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "d40e1b2d",
-      "content_hash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
+      "source_version": "89fa8797",
+      "content_hash": "c17f866742e49054d53b83e2f47e6675f8387fc5a8ba49f520a039dd3cf63c98",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -16731,6 +16731,11 @@
           "number": 5881,
           "title": "stacks: Fix \"missing required provider\" error when component state requires a pr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6424,
+          "title": "Enable colorizer in a views.View to handle [purple] tags (#39477)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16738,7 +16743,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:19:29.520Z",
+      "verified_at": "2026-11-02T15:08:18.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -47052,8 +47057,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "df57ae6d",
-      "content_hash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
+      "source_version": "515b22a3",
+      "content_hash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -47146,6 +47151,11 @@
           "number": 5855,
           "title": "openapi,swagger): skip null spec entries instead of panicking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6425,
+          "title": "refresh security context (#7996)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -47153,7 +47163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T20:05:16.166Z",
+      "verified_at": "2026-11-02T15:08:22.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166580,6 +166590,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T15:00:56.072Z"
+    },
+    "rule-6424": {
+      "learning_id": "rule-6424",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6424,
+      "title": "Enable colorizer in a views.View to handle [purple] tags (#39477)",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "89fa8797",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:08:18.828Z"
+    },
+    "rule-6425": {
+      "learning_id": "rule-6425",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6425,
+      "title": "refresh security context (#7996)",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "515b22a3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:08:22.130Z"
     }
   },
   "aliases": {

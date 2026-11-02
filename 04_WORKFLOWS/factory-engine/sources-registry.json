@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T15:01:00.609Z",
-    "lastVerified": "2026-11-02T15:01:00.609Z",
+    "lastChecked": "2026-11-02T15:08:24.753Z",
+    "lastVerified": "2026-11-02T15:08:24.753Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -142,12 +142,12 @@
     "revisionIdentifier": "9caf2b4c"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-02T14:39:26.480Z",
-    "lastVerified": "2026-11-02T14:39:26.480Z",
+    "lastChecked": "2026-11-02T15:08:20.500Z",
+    "lastVerified": "2026-11-02T15:08:20.500Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -156,7 +156,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "93a5f683"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1996,22 +1997,21 @@
     "revisionIdentifier": "c1cfdbd3"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T23:49:50.807Z",
-    "lastVerified": "2026-10-31T23:49:50.807Z",
+    "lastChecked": "2026-11-02T15:08:20.667Z",
+    "lastVerified": "2026-11-02T15:08:20.667Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
+    "contentHash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 6,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "df57ae6d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -3288,9 +3288,9 @@
   "vearch-vearch": {
     "name": "vearch",
     "officialUrl": "https://github.com/vearch/vearch",
-    "lastChecked": "2026-10-31T12:15:49.252Z",
+    "lastChecked": "2026-11-02T15:08:17.023Z",
     "revisionIdentifier": "bae78b18",
-    "lastVerified": "2026-10-31T12:15:49.252Z"
+    "lastVerified": "2026-11-02T15:08:17.023Z"
   },
   "imsnif-bandwhich": {
     "name": "bandwhich",
@@ -4801,22 +4801,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "hashicorp-terraform": {
-    "name": "terraform",
+    "name": "hashicorp/terraform",
     "officialUrl": "https://github.com/hashicorp/terraform",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T13:00:00.697Z",
-    "lastVerified": "2026-10-31T13:00:00.697Z",
+    "lastChecked": "2026-11-02T15:08:16.956Z",
+    "lastVerified": "2026-11-02T15:08:16.956Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
+    "contentHash": "c17f866742e49054d53b83e2f47e6675f8387fc5a8ba49f520a039dd3cf63c98",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d40e1b2d"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
@@ -4959,9 +4958,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-10-31T08:03:01.695Z",
+    "lastChecked": "2026-11-02T15:08:04.456Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-10-31T08:03:01.695Z"
+    "lastVerified": "2026-11-02T15:08:04.456Z"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "name": "stabilityai/stable-diffusion-3-medium",
@@ -8885,9 +8884,9 @@
   "hartemyaakoub-seo-toolkit": {
     "name": "seo-toolkit",
     "officialUrl": "https://github.com/hartemyaakoub/seo-toolkit",
-    "lastChecked": "2026-10-29T02:03:21.509Z",
+    "lastChecked": "2026-11-02T15:08:06.897Z",
     "revisionIdentifier": "e1126c75",
-    "lastVerified": "2026-10-29T02:03:21.509Z"
+    "lastVerified": "2026-11-02T15:08:06.897Z"
   },
   "jacklandrin-onlyswitch": {
     "name": "jacklandrin/OnlySwitch",
@@ -9790,9 +9789,9 @@
   "simonschubert-kai": {
     "name": "Kai",
     "officialUrl": "https://github.com/SimonSchubert/Kai",
-    "lastChecked": "2026-10-30T05:19:24.239Z",
+    "lastChecked": "2026-11-02T15:08:09.395Z",
     "revisionIdentifier": "bd774d32",
-    "lastVerified": "2026-10-30T05:19:24.239Z"
+    "lastVerified": "2026-11-02T15:08:09.395Z"
   },
   "berkaycubuk-kitsune": {
     "name": "kitsune",

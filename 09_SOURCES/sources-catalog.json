@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "df57ae6d",
+    "sourceVersion": "515b22a3",
     "license": "MIT",
-    "contentHash": "c5ec86e0489df88cbfb5bb272258f0c7d25b75441e3e0cb8545ac37fafe9f9a1",
-    "lastHarvestedAt": "2026-10-30T20:05:16.265Z",
+    "contentHash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
+    "lastHarvestedAt": "2026-11-02T15:08:22.215Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4613,10 +4613,10 @@
     "repository": "hashicorp/terraform",
     "platform": "github",
     "sourceUrl": "https://github.com/hashicorp/terraform",
-    "sourceVersion": "d40e1b2d",
+    "sourceVersion": "89fa8797",
     "license": "NOASSERTION",
-    "contentHash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
-    "lastHarvestedAt": "2026-10-30T21:19:29.582Z",
+    "contentHash": "c17f866742e49054d53b83e2f47e6675f8387fc5a8ba49f520a039dd3cf63c98",
+    "lastHarvestedAt": "2026-11-02T15:08:18.917Z",
     "learningId": "learn-github-hashicorp-terraform"
   },
   "tako8ki-gobang": {

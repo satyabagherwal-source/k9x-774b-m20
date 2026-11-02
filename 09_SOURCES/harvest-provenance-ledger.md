@@ -6820,3 +6820,5 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `9b0aad96` | Multi-dimensional audit evidence | 2026-11-02T15:00:56.194Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `13944b95` | Multi-dimensional audit evidence | 2026-11-02T15:00:58.021Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `77aa5579` | Multi-dimensional audit evidence | 2026-11-02T15:00:58.072Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `89fa8797` | Multi-dimensional audit evidence | 2026-11-02T15:08:18.917Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `515b22a3` | Multi-dimensional audit evidence | 2026-11-02T15:08:22.215Z |

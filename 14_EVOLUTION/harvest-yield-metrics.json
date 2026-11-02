@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T15:00:58.081Z",
-  "total_cycles_completed": 6788,
-  "total_learnings_persisted": 6788,
-  "total_rules_promoted": 6433,
+  "last_updated": "2026-11-02T15:08:22.220Z",
+  "total_cycles_completed": 6790,
+  "total_learnings_persisted": 6790,
+  "total_rules_promoted": 6435,
   "history": [
-    {
-      "timestamp": "2026-10-31T14:52:32.011Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T14:59:29.615Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-openai-gpt-oss-20b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T15:14:42.221Z",
       "repository": "bigscience/bloom",
@@ -1403,6 +1389,20 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:08:18.922Z",
+      "repository": "hashicorp/terraform",
+      "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:08:22.220Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
