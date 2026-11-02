@@ -6810,3 +6810,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bd27ded7` | Multi-dimensional audit evidence | 2026-11-02T14:32:11.000Z |
 | `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `84e5b827` | Multi-dimensional audit evidence | 2026-11-02T14:39:14.869Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `93a5f683` | Multi-dimensional audit evidence | 2026-11-02T14:39:28.379Z |
+| `learn-github-webrtc-rs-webrtc` | `https://github.com/webrtc-rs/webrtc` | `8ea6e2a6` | Multi-dimensional audit evidence | 2026-11-02T14:46:22.550Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `a834a81e` | Multi-dimensional audit evidence | 2026-11-02T14:46:31.751Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `b003bd83` | Multi-dimensional audit evidence | 2026-11-02T14:46:34.328Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8be1e442` | Multi-dimensional audit evidence | 2026-11-02T14:46:37.742Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T14:39:28.295Z",
+  "last_updated": "2026-11-02T14:46:37.660Z",
   "total_verified_learnings": 1189,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -9097,8 +9097,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "cc94be6a",
-      "content_hash": "d7d943faefebf55ae167241b032943089c1e8132948e70fe8eb37e9e592da436",
+      "source_version": "8be1e442",
+      "content_hash": "f54b10af8044ea5ae0af167e37bf176f12d5fe6e05f6d36cf492f0a3e7e6f1a7",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -9426,6 +9426,11 @@
           "number": 6384,
           "title": "profile): --locate names the places a dataset covers (GeoNames, US Census) (#496",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6415,
+          "title": "fix nightly clippy::perf warnings (#4990)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9433,7 +9438,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-01T00:49:42.629Z",
+      "verified_at": "2026-11-02T14:46:37.636Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -58792,8 +58797,8 @@
       "slug": "webrtc-rs-webrtc",
       "platform": "github",
       "source_url": "https://github.com/webrtc-rs/webrtc",
-      "source_version": "1c07e9f0",
-      "content_hash": "f0fda1bbcc2e63941496d6388dcbed2ff9cdd4440b9bb61c974f769a43b42da8",
+      "source_version": "8ea6e2a6",
+      "content_hash": "97038f63f1bdec12cc22c28534bed71b7b5503540db836a204e2cb4da3eebac8",
       "dossier_path": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md",
       "promoted_rules": [
@@ -58806,6 +58811,11 @@
           "number": 4395,
           "title": "webrtc): multiplex peer connections over a single UDP socket (UDPMux) (#918)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6412,
+          "title": "driver): send TURN-relayed packets in the same poll_writes pass (#946)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -58813,7 +58823,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T11:34:17.780Z",
+      "verified_at": "2026-11-02T14:46:22.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -59191,8 +59201,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "c7abfced",
-      "content_hash": "db230c468ae415d4dbdabbed3be2ff0d44d03f1e3be33bd5df082790ad7f3c98",
+      "source_version": "b003bd83",
+      "content_hash": "44521c83b21af06fcc29d2104af52dcc6abddeb7c41f26b96f8cf52d1bbfcd18",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -59265,6 +59275,11 @@
           "number": 6185,
           "title": "aggs): bound hdr number_of_significant_value_digits; one request hung a search t",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6414,
+          "title": "autoindex): return from a parked bulk submit once another worker shipped its byt",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -59272,7 +59287,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T11:53:43.227Z",
+      "verified_at": "2026-11-02T14:46:34.223Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -60247,8 +60262,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "68dbde41",
-      "content_hash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
+      "source_version": "a834a81e",
+      "content_hash": "4c4018304db74767e9f07f3893b8c5c92a57d8b474140ad60700e73cc85d2faa",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -60331,6 +60346,11 @@
           "number": 5842,
           "title": "add some missing dependency tracking in dependabot (#4125)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6413,
+          "title": "bench): migrate zk benchmark to the spec",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -60338,7 +60358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:35:57.550Z",
+      "verified_at": "2026-11-02T14:46:31.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166268,6 +166288,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T14:39:28.274Z"
+    },
+    "rule-6412": {
+      "learning_id": "rule-6412",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6412,
+      "title": "driver): send TURN-relayed packets in the same poll_writes pass (#946)",
+      "source_url": "https://github.com/webrtc-rs/webrtc",
+      "source_version": "8ea6e2a6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:46:22.439Z"
+    },
+    "rule-6413": {
+      "learning_id": "rule-6413",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6413,
+      "title": "bench): migrate zk benchmark to the spec",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "a834a81e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:46:31.641Z"
+    },
+    "rule-6414": {
+      "learning_id": "rule-6414",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6414,
+      "title": "autoindex): return from a parked bulk submit once another worker shipped its byt",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "b003bd83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:46:34.223Z"
+    },
+    "rule-6415": {
+      "learning_id": "rule-6415",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6415,
+      "title": "fix nightly clippy::perf warnings (#4990)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "8be1e442",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:46:37.636Z"
     }
   },
   "aliases": {

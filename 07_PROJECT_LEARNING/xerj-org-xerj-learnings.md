@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `c7abfced`  
+> **Source Version**: `b003bd83`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T11:53:42.646Z  
+> **Timestamp**: 2026-11-02T14:46:33.597Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T11:53:42.637Z  
+> **Harvest Timestamp**: 2026-11-02T14:46:33.190Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17836 stars
+- **Stars / Engagement**: 18783 stars
 
 ---
 
@@ -463,6 +463,70 @@ def one_pass(name, corpus):
 if WARMUP:
     one_pass("wc_warmup", docs[:WARMUP])  # pays model download + load
 one_pass("wc_measure", docs)
+
+```
+
+### Core Architecture Module: `benchmarks/skills-intent/score.py`
+```
+"""Rank the expected skill for each labelled query.
+
+    python3 -I score.py XERJ_BIN URL QUERIES.tsv RESULTS.tsv
+
+Runs `xerj search --url URL --prefix skills -k 50 --json QUERY` for each
+`query<TAB>expected` line, folds the passages into skills (a hit's path starts
+with its skill folder), and records the expected skill's rank among the first
+10 distinct skills, or `miss`. Every row is kept, misses included. Prints the
+top-1, top-3 and top-10 counts. Standard library only.
+"""
+
+import json
+import os
+import subprocess
+import sys
+
+TOP = 10
+
+
+def skills_for(binary, url, query):
+    out = subprocess.run(
+        [binary, "search", "--url", url, "--prefix", "skills", "-k", "50", "--json", query],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    ranked = []
+    for hit in json.loads(out)["hits"]["hits"]:
+        src = hit.get("_source", {})
+        path = (src.get("ax_path") or src.get("path") or "").replace("\\", "/")
+        skill = path.split("/", 1)[0]
+        if skill and skill not in ranked:
+            ranked.append(skill)
+    return ranked[:TOP]
+
+
+def main(binary, url, queries, results):
+    with open(queries, encoding="utf-8") as fh:
+        lines = fh.read().splitlines()
+    assert lines[0] == "query\texpected", "queries file needs a `query<TAB>expected` header"
+    ranks = []
+    # Written aside and moved into place at the end, so a run that fails
+    # halfway never replaces a committed results file with a partial one.
+    with open(results + ".tmp", "w", encoding="utf-8") as out:
+        out.write("rank\texpected\tquery\ttop3\n")
+        for line in lines[1:]:
+            query, expected = line.split("\t")
+            ranked = skills_for(binary, url, query)
+            rank = ranked.index(expected) + 1 if expected in ranked else None
+            ranks.append(rank)
+            out.write(f"{rank or 'miss'}\t{expected}\t{query}\t{', '.join(ranked[:3])}\n")
+    os.replace(results + ".tmp", results)
+    n = len(ranks)
+    at = lambda k: sum(1 for r in ranks if r and r <= k)
+    print(f"queries {n}  top1 {at(1)}/{n}  top3 {at(3)}/{n}  top10 {at(TOP)}/{n}  miss {ranks.count(None)}/{n}")
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 5:
+        sys.exit(__doc__)
+    main(*sys.argv[1:])
 
 ```
 
@@ -1826,70 +1890,17 @@ impl Embedder {
     /// failed down
 ```
 
-### Core Architecture Module: `engine/crates/xerj-ai/src/lib.rs`
-```
-//! # xerj-ai
-//!
-//! AI-native features for the xerj search engine.
-//!
-//! Provides:
-//! - [`embedder`] — Unified backend handle (lexical / proxy / Candle neural /
-//!   experimental ONNX) used by the engine
-//! - [`embed`]   — Embedding proxy: async HTTP client for OpenAI-compatible embedding APIs
-//! - [`local`]   — Built-in zero-config deterministic text embedder (feature hashing)
-//! - [`neural`]  — Built-in neural BERT sentence embedder via candle (feature `neural`)
-//! - [`decide`]  — Built-in zero-shot decision head: a ModernBERT-class candle
-//!   classifier answering noul/choice with no history index (feature `decide-local`)
-//! - `microbatch` — Length-aware batching shared by the in-process encoders,
-//!   so one long passage cannot pad a whole window up to its length
-//! - `onnx`      — Experimental MiniLM-compatible FP32 ONNX backend
-//!   (feature `onnx-experimental`; server feature + explicit runtime selection required)
-//! - [`chunker`] — Text chunking with sentence-aware splitting and overlap
-//!
-//! Agent memory does NOT live here. The real memory store is index-backed
-//! (`/_memory/*` in xerj-api over ordinary XERJ indices — durable, WAL-replayed,
-//! kNN/BM25-searchable). An earlier in-RAM `AgentMemory` (O(N²) dedup scan, no
-//! durability, process-lifetime only) was deleted once it reached zero callers:
-//! keeping it around shadowed the real API and invited accidental use.
-
-pub mod chunker;
-#[cfg(feature = "decide-local")]
-pub mod decide;
-pub mod embed;
-pub mod embedder;
-pub mod local;
-#[cfg(any(
-    feature = "neural",
-    feature = "onnx-experimental",
-    feature = "decide-local"
-))]
-pub mod microbatch;
-#[cfg(feature = "neural")]
-pub mod neural;
-#[cfg(feature = "onnx-experimental")]
-pub mod onnx;
-pub mod semantic_lexical;
-
-pub use chunker::{Chunk, TextChunker};
-pub use embed::{EmbeddingProxy, EmbeddingProxyConfig};
-pub use embedder::Embedder;
-pub use local::{local_embed, DEFAULT_DIMS};
-
-pub use xerj_common::Result;
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2841** (2026-11-02): **[bug]: autoindex stalls on 26-file scientific CSV corpus at 16–32 workers; completes at 4 workers (rc.100)**
+  *Symptoms*: ### XERJ version  v1.0.0-rc.100  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Ubuntu 26.04 LTS / WSL2 / x86_64  ### Steps to reproduce  ```shell Steps to reproduce Generate the approximately 27 MB, 26-file input directory from .csv / .csv.gz-named files in the SCTransform repo (note: XERJ classified 18 as CSV and 8 as txt-lines; the latter is the reader's content-based classification): git clone https://github.com/Zikun-Yang/SCTransform.git cd SCTransform git checkout 8ade6eded351689ff53e37958a8190d70279fe31 mkdir -p /tmp/xerj-sct-csv-files find "$PWD" -type f \( -name '*.csv' -o -name '*.csv.gz' \) -printf '%P\0' | \   rsync -a --from0 --files-from=- "$PWD/" /tmp/xerj-sct-csv-files/ Start a local XERJ server with an empty data directory and an ES-compatible REST endpoint (the measured runs used port 19200). Then, on one server, run the variants separately, with distinct prefixes and journal paths: # Variant 1: 32 workers, 420-second external cutoff mkdir -p /tmp/xerj-states set -o pipefail timeout --signal=INT --kill-after=30s 420s \   xerj autoindex /tmp/xerj-sct-csv-files \     --url http://127.0.0.1:19200 \     --prefix sct-repro-w32 \     --state-dir /tmp/xerj-states/w32 \     --workers 32 --progress plain --progress-interval 5 # Repeat with a NEW prefix and NEW state-dir for --workers 16 and 4. The input construction command above is derived from the original snapshot preparation, not yet independently rerun from a p
+
 - **Issue #2754** (2026-10-30): **[bug]: Corpus Hub: loicngr/Kobo recorded with an MIT grant the author never gave**
   *Symptoms*: ### XERJ version  N/A - Corpus Hub registry (corpus-hub branch, commit e4fd50a, #2526), not the engine  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  N/A  ### Steps to reproduce  ```shell 1. Open tools/xerj-code/hub/candidates/authors/loicngr--kobo.json on the corpus-hub branch (added in e4fd50a, #2526). 2. Open the loicngr/Kobo line in tools/xerj-code/hub/candidates/authors/CONTRIBUTORS-2.jsonl. 3. Both carry: "author_grant": { "terms": "MIT", ..., "receipt": "bff64177cf4d" } ```  ### Expected behavior  I am the author of loicngr/Kobo. My reply to the Corpus Hub outreach email (receipt bff64177cf4d, 2026-10-27T18:07Z) allowed inclusion under GPL-3.0 only and explicitly refused MIT or any other licence. It also asked that the latest state of the repository be indexed, not a single commit.  The record should carry no author_grant, and Kobo should be pinned to the latest state of the repository, or removed from the hub entirely (including the CONTRIBUTORS files).  ### Actual behavior  The record carries an MIT author_grant I never gave, and Kobo is pinned to the single commit c2c8d4a with "to": "selected commit".  If the outreach pipeline turns any "yes" into an MIT grant, other authors who replied "GPL only" or "under the repository's licence" may be affected too.  ### Is this an Elasticsearch wire-compatibility divergence?  Unknown / not sure  ### Elasticsearch reference (if a compat divergence)  _No response_  ### Relevant
-
-- **Issue #2654** (2026-10-29): **[bug]: constant_score inside a bool should loses its score after a flush**
-  *Symptoms*: Written by an AI coding agent (Claude Code), run by @jelbirt, who has reviewed this change.  ### XERJ version  xerj v1.0.0-rc.100 (code unchanged on `main` 2c1609d18)  ### How did you install / run XERJ?  Prebuilt release binary  ### Operating system & architecture  Ubuntu 24.04.3 x86_64 (WSL2)  ### Steps to reproduce  ```shell xerj --insecure --port 9390 -d ./data & U=http://localhost:9390; J='content-type: application/json' curl -s -XPUT "$U/cs" -H "$J" -d '{"mappings":{"properties":{"t":{"type":"text"}}}}' curl -s -XPUT "$U/cs/_doc/1?refresh=true" -H "$J" -d '{"t":"alpha beta"}' curl -s -XPUT "$U/cs/_doc/2?refresh=true" -H "$J" -d '{"t":"alpha"}' Q='{"query":{"bool":{"must":[{"match":{"t":"alpha"}}],"should":[{"constant_score":{"filter":{"match":{"t":"beta"}},"boost":1000}}]}}}' curl -s "$U/cs/_search?filter_path=hits.hits._id,hits.hits._score" -H "$J" -d "$Q" curl -s -XPOST "$U/cs/_flush" curl -s "$U/cs/_search?filter_path=hits.hits._id,hits.hits._score" -H "$J" -d "$Q" ```  ### Expected behavior  Before and after the flush, doc 1 scores its `must` score plus 1000 and doc 2 its `must` score (the bare `must` gives 0.16044301 and 0.2111092). A `constant_score` scores every match exactly `boost`, and `bool` adds matching `should` scores.  ### Actual behavior  ``` before flush: {"hits":{"hits":[{"_id":"1","_score":1001.6932},{"_id":"2","_score":1.6931472}]}} after flush:  {"hits":{"hits":[{"_id":"1","_score":0.7704125},{"_id":"2","_score":0.2111092}]}} ```  After the flush th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1906,639 +1917,263 @@ pub use xerj_common::Result;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6236eccb` (2026-10-31)
-**Commit Message**: fix(aggs): bound hdr number_of_significant_value_digits; one request hung a search thread (#2651)
+### Incident Patch 1: `284cf78e` (2026-11-02)
+**Commit Message**: fix(autoindex): return from a parked bulk submit once another worker shipped its bytes (#2841) (#2863)
 
-`percentiles` / `percentile_ranks` with `hdr` size their histogram as the
-next power of two at or above `2 * 10^digits`:
+* fix(autoindex): return from a parked bulk submit once another worker shipped its bytes (#2841)
 
-    let target = 2u64 * 10u64.pow(hdr_digits);
-    let mut p = 1u64;
-    while p < target { p <<= 1; }
+When all 8 wire slots were busy, a worker whose chunk crossed the flush
+size parked inside BulkPipe::submit. If another worker (or a settler)
+then took the whole shared buffer, this worker's chunk with it, the
+parked worker woke to an empty buffer: take_job returned None, it parked
+again, and it could never leave, because a job of its own was its only
+exit. Its file never settled and the run hung near the end, node idle.
+It takes more than 8 concurrent senders, so --workers 4 finishes and 16
+or 32 do not.
 
-Nothing bounded `digits`. Release builds have overflow checks off, so from
-digits = 19 the product wraps. When the wrapped `target` is above 2^63
-(digits 20, 26, 29-31, 39, ... and any u64 that truncates to one of them
-through `as u32`), `p` shifts past 2^63 to 0 and the loop never ends. A
-single request
+submit now returns once its token is neither pending nor in flight: the
+job that carried its bytes was its flush. Waiting for that job to land,
+not just leave, keeps per-file order (a cut chunk is accepted before the
+same worker submits the next), and failures still settle through
+deliver as before.
 
-  POST /idx/_search
-  {"size":0,"aggs":{"p":{"percentiles":{"field":"n",
-     "hdr":{"number_of_significant_value_digits":20}}}}}
+Evidence, SCTransform CSVs at 8ade6ed (26 files, 28,357,362 bytes):
+- rc.100, --workers 32: stalled at 21/26 for 255 s; --workers 16:
+  stalled at 19/26. Node idle, probe _bulk 0.068 s
 
-pins a search thread at 100% CPU forever. Repeated, it exhausts the
-search/blocking pool. The API validator routed `percentiles` to the
-tdigest checks only, and the columnar fast path bails to this code
-whenever `hdr` is present, so the loop is reached before any document is
-read. The same loop is duplicated in `hdr_percentiles_values`
-(xerj-api).
-
-ES accepts 0..=5 significant digits and returns 400
-"[numberOfSignificantValueDigits] 
-
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +91/-2)
+**File**: `CHANGELOG.md` (modified, +12/-0)
 ```diff
-@@ -8088,6 +8088,29 @@ fn find_invalid_agg_params(aggs: Option<&Value>) -> Option<String> {
-             _ => None,
+@@ -101,6 +101,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- `xerj autoindex` no longer stalls near the end of a run at high
++  `--workers`. When all 8 bulk slots were busy, a worker whose chunk crossed
++  the flush size parked; if another worker then shipped the shared buffer,
++  that chunk included, the first one woke to an empty buffer and parked again
++  every 30 s for good, so the run never finished. It now returns once the
++  bulk carrying its chunk has landed. The same loop could also return while
++  that bulk was still on the wire, so a file could be journaled complete
++  before, or even though, one of its bulks failed; it now waits. On a
++  26-file, 28 MB scientific CSV folder, rc.100 stalled at 21 of 26 files with
++  `--workers 32` and 19 of 26 with `--workers 16`; both now finish all 26
++  files and 179,374 records (#2841).
++
+ - `weighted_avg` now executes field-based requests (`value` / `weight`, each
+   with a `field` and optional numeric `missing`) instead of returning HTTP 200
+   with an `unsupported aggregation type` error in the aggregations body. A
+```
+
+**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +225/-29)
+```diff
+@@ -3498,9 +3498,10 @@ struct PipeState {
+     /// Workers that may still call [`BulkPipe::submit`]. Decremented by
+     /// [`BulkPipe::retire`] as each worker drains its queue.
+     live_workers: usize,
+-    /// Live workers currently parked inside `settle` (or waiting for an
+-    /// in-flight slot in `submit`). `live == parked` is the "no more bytes
+-    /// are coming" signal that flushes a residual buffer.
++    /// Live workers currently parked inside `settle`, or inside `submit`
++    /// waiting for an in-flight slot or for the bulk carrying their chunk to
++    /// land (that worker submits again once it does). `live == parked` is
++    /// the "no more bytes are coming" signal that flushes a residual buffer.
+     parked_workers: usize,
+     /// Bulk bodies currently on the wire. Capped at [`MAX_IN_FLIGHT`].
+     in_flight: usize,
+@@ -3543,10 +3544,11 @@ const MAX_IN_FLIGHT: usize = 8;
+ /// The pipe lock is NOT held across the wire: a flush detaches the buffer as
+ /// a job, drops the lock, sends, and resolves tokens on return, so up to
+ /// [`MAX_IN_FLIGHT`] bulks are on the wire at once. Per-file order still
+-/// holds — a file's cut chunks are sent synchronously by its own worker
+-/// inside `submit`, so any later job carrying its tail ships after those
+-/// completed; files interleave arbitrarily, exactly as the 32 parallel
+-/// per-file buffers always did.
++/// holds: a file's cut chunk has landed before its worker's `submit`
++/// returns (sent by that worker, or by another that took the buffer while
++/// it was parked on a full wire), so any later job carrying its tail ships
++/// after those completed; files interleave arbitrarily, exactly as the 32
++/// parallel per-file buffers always did.
+ ///
+ /// Durability semantics are the per-file code's, unchanged: a token settles
+ /// `Ok` only after EVERY bulk carrying its records was accepted (server_errors
+@@ -3632,24 +3634,15 @@ where
+         if st.buf.len() < self.bulk_cut && st.docs < self.doc_cap {
+             return;
          }
-     }
-+    /// `hdr` options shared by `percentiles` and `percentile_ranks`. ES
-+    /// accepts 0..=5 significant digits; anything else is a 400. The engine
-+    /// sizes its histogram as `2 * 10^digits` rounded up to a power of two,
-+    /// so an unchecked value such as 20 overflowed that `u64` and spun the
-+    /// rounding loop forever on the search thread.
-+    fn check_hdr(name: &str, params: &Value) -> Option<String> {
-+        let digits = params
-+            .get("hdr")?
-+            .get("number_of_significant_value_digits")?;
-+        if digits.as_u64().is_some_and(|d| d <= 5) {
-+            return None;
-+        }
-+        if digits.is_null() {
-+            return Some(
-+                "[hdr] number_of_significant_value_digits doesn't support values of type: \
-+                 VALUE_NULL"
-+                    .to_string(),
-+            );
-+        }
-+        Some(format!(
-+            "[numberOfSignificantValueDigits] must be between 0 and 5: [{name}]"
-+        ))
-+    }
-     /// Every descendant definition below `def`, as `(type, name)`.
-     fn descendants<'a>(def: &'a Value, out: &mut Vec<(&'a str, &'a str)>) {
-         for (name, child) in sub_aggs(def).into_iter().flatten() {
-@@ -8178,11 +8201,33 @@ fn find_invalid_agg_params(aggs: Option<&Value>) -> Option<String> {
-                     }
-                 }
-             }
--            "percentiles" => return check_tdigest(params),
-+            "percentiles" => {
-+                if let Some(e) = check_tdigest(params) {
-+                    return Some(e);
-+                }
-+                if let Some(e) = check_hdr(name, params) {
-+                    return Some(e);
-+                }
-+                match params.get("percents") {
-+                    Some(Value::Null) => {
-+                        return Some(format!("[percents] must not be null: [{name}]"))
-+                    }
-+                    Some(Value::Array(a)) if a.is_empty() => {
-+                        return Some(format!("[percents] must not be empty: [{name}]"))
-+                    }
-+                    Some(Value::Array(a)) if !a.iter().all(Value::is_number) => {
-+                        return Some(format!("[percents] must be numbers: [{name}]"))
-+                    }
-+                    _ => {}
-+                }
-+            }
-             "percentile_ranks" => {
-                 if let Some(e) = check_tdigest(params) {
-                     return Some(e);
-                 }
-+                if let Some(e) = check_hdr(name, params) {
-+                    return Some(e);
-+                }
-                 match params.get("values") {
-                     None | Some(Value::Null) => {
-                         return Some(format!("[values] must not be null: [{name}]"))
-@@ -8331,6 +8376,47 @@ mod agg_param_validation_tests {
-         }
-     }
- 
-+    /// FAIL-BEFORE: none of these were refused. `hdr` digits of 20 (or any
-+    /// value whose `2 * 10^digits` wraps `u64` past 2^63) also hung the search
-+    /// thread in the engine's histogram sizing loop instead of erroring.
-+    #[test]
-+    fn percentiles_hdr_and_percents_are_validated() {
-+        for digits in [
-+            json!(-1),
-+            json!(6),
-+            json!(10),
-+            json!(20),
-+            json!(4294967316u64),
-+        ] {
-+            for kind in ["percentiles", "percentile_ranks"] {
-+                let aggs = json!({"p": {kind: {"field": "f", "values": [1],
-+                    "hdr": {"number_of_significant_value_digits": digits}}}});
-+                assert_eq!(
-+                    check(aggs.clone()).as_deref(),
-+                    Some("[numberOfSignificantValueDigits] must be between 0 and 5: [p]"),
-+                    "{aggs}"
-+                );
-+            }
-+        }
-+        let null_digits = json!({"p": {"percentiles": {"field": "f",
-+            "hdr": {"number_of_significant_value_digits": null}}}});
-+        assert!(check(null_digits).is_some_and(|e| e.contains("VALUE_NULL")));
-+        for (percents, reason) in [
-+            (json!([]), "[percents] must not be empty: [p]"),
-+            (json!(null), "[percents] must not be null: [p]"),
-+            (json!(["foo"]), "[percents] must be numbers: [p]"),
-+        ] {
-+            let aggs = json!({"p": {"percentiles": {"field": "f", "hdr": {},
-+                                                    "percents": percents}}});
-+            assert_eq!(check(aggs.clone()).as_deref(), Some(reason), "{aggs}");
-+        }
-+        for digits in 0..=5 {
-+            let aggs = json!({"p": {"percentiles": {"field": "f", "percents": [50],
-+                "hdr": {"number_of_significant_value_digits": digits}}}});
-+            assert_eq!(check(aggs.clone()), None, "{aggs}");
-+        }
-+    }
-+
-     #[test]
-     fn invalid_parameters_are_refused_with_es_messages() {
-         let cases = [
-@@ -92
-```
-
-**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +24/-1)
-```diff
-@@ -8146,7 +8146,12 @@ fn run_percentiles(params: &Value, docs: &[Value]) -> Value {
-         .get("hdr")
-         .and_then(|v| v.get("number_of_significant_value_digits"))
-         .and_then(Value::as_u64)
--        .unwrap_or(3) as u32;
-+        .unwrap_or(3)
-+        // ES bounds this to 0..=5. Past 18 `10^digits` overflows `u64` (it
-+        // wraps in release) and the power-of-two loop below never ends, so
-+        // clamp here too: agg definitions also reach the engine without the
-+        // HTTP validator (MCP, msearch, async search, watchers).
-+        .min(5) as u32;
-     // subBucketCount = 2^ceil(log2(2 * 10^digits)). For digits=3 that's 2048.
-     let sub_bucket_count: u64 = {
-         let target = 2u64 * 10u64.pow(hdr_digits);
-@@ -14322,6 +14327,24 @@ mod tests {
-     use super::*;
-     use serde_json::json;
- 
-+    /// FAIL-BEFORE: `2 * 10^20` wraps `u64` to a value above 2^63, so the
-+    /// power-of-two rounding loop shifted `p` to 0 and spun forever. Run on a
-+    /// side thread so a regression fails on the timeout instead of hanging.
-+    #[test]
-+    fn hdr_out_of_range_digits_terminate() {
-+        let (tx, rx) = std::sync::mpsc::channel();
-+        std::thread::spawn(move || {
-+            let docs = vec![json!({ "n": 1 }), json!({ "n": 51 }), json!({ "n": 151 })];
-+            let params = json!({"field": "n", "percents": [50],
-+                                "hdr": {"number_of_significant_value_digits": 20}});
-+            let _ = tx.send(run_percentiles(&params, &docs));
-+        });
-+        let out = rx
-+            .recv_timeout(std::time::Duration::from_secs(10))
-+            .expect("run_percentiles must return for out-of-range hdr digits");
-+        assert!(out.get("values").is_some(), "{out}");
-+    }
-+
-     #[test]
-     fn multivalued_numeric_metric_aggs_use_all_values() {
-         // ES aggregates over EVERY value of a multi-valued field; the old path
-```
-
----
-
-### Incident Patch 2: `f0409d2f` (2026-10-31)
-**Commit Message**: fix(engine): run at most one background cold stored warm per index (refs #2427) (#2715)
-
-* fix(engine): run at most one background cold stored warm per index
-
-Refs #2427.
-
-Motivation: on the 1 GB gate (seed 2421, cap 3072 MB) the node's anon
-RSS peaked well above the cap during the search phase. The peak is not
-index open (version map + HNSW reload is ~1.0 GB anon) but the first
-cold full-text queries.
-
-Root cause: hydrating FTS hits on a cold segment calls
-schedule_cold_stored_warm, which spawned one spawn_blocking task per cold
-segment, all concurrently (54 on pg-docs). Each runs stored_slices_for:
-a whole stored-section decode plus brace_walk_offsets. The only gate was
-memory_breaker_engaged() at schedule time, so one query started dozens of
-whole-section decodes at once; most results were then refused at publish
-by the SegmentHydrationBudget and dropped.
-
-Evidence (variant.py, fresh node on the gate's data, RssAnon every 20 ms):
-match title "opentelemetry" size 5: anon +3.4 GB; the query returns at
-1.67 s, anon peaks at 4.75 GB at 2.5 s and falls back to 1.4 GB at 4.1 s.
-
-Fix: an AtomicBool lets one warm run per index; a schedule while one is
-running is skipped (counted in cold
-
-**File**: `CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -126,6 +126,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   200-580 MB of warmed stored slices between 40 breaker engages. Queries
-   still hydrate a segment on first read. (Refs #2427)
- 
-+- A cold full-text query no longer starts one background whole-section
-+  stored decode per cold segment at once (refs #2427). On the 1 GB gate's
-+  `pg-docs` (54 cold segments) one 5-hit query drove anon RSS from ~1.0 to
-+  ~4.7 GB after it had returned, with most decodes refused by the hydration
-+  budget at publish and thrown away. One background warm per index now runs
-+  at a time and the others are skipped. Query answers are unchanged.
-+
- - `simple_query_string` with `"fields": ["*"]` is answered from the inverted
-   index instead of a stored-document scan of every segment (refs #2427). The
-   bare `*` pattern lowered to a literal `"*"` field that has no index
-```
-
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +157/-5)
-```diff
-@@ -2431,6 +2431,108 @@ mod flush_publication_recovery_tests {
-         drop(engine);
+-        // Cut crossed: ship inline. If every wire slot is busy, park until a
+-        // delivery frees one — backpressure, exactly like the per-file code
+-        // blocking inside its own bulk send.
+-        let job = loop {
+-            if let Some(job) = self.take_job(&mut st) {
+-                break job;
+-            }
+-            st.parked_workers += 1;
+-            let (guard, _) = self
+-                .ready
+-                .wait_timeout(st, std::time::Duration::from_secs(30))
+-                .unwrap_or_else(|p| p.into_inner());
+-            st = guard;
+-            st.parked_workers -= 1;
+-        };
+-        drop(st);
+-        let outcome = (self.send)(job.0);
+-        self.deliver(job.1, job.2, outcome);
++        // Cut crossed: ship inline, and return only once these bytes have
++        // landed. If every wire slot is busy, park until a delivery frees
++        // one: backpressure, exactly like the per-file code blocking inside
++        // its own bulk send. If another worker ships the buffer meanwhile,
++        // these bytes with it, that job was this worker's flush. Waiting for
++        // a job of its own instead parked on an empty buffer for good
++        // (#2841), and shipping someone else's bytes in its place returned
++        // while this worker's own chunk was still on the wire.
++        self.quiesce_locked(st, token);
      }
  
-+    /// #2427: a cold query over a many-segment index must not start one
-+    /// whole-section stored decode per segment at once. Before the fix every
-+    /// cold segment the query hydrated from its winning rows spawned its own
-+    /// background warm, all concurrently (54 on the 1 GB gate's pg-docs:
-+    /// anon RSS ~1.0 -> ~4.7 GB after the query returned, cap 3 GiB). Now one
-+    /// warm per index runs at a time and the rest are skipped, so one query
-+    /// warms at most one segment; the answer is unchanged.
-+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+    async fn cold_query_runs_at_most_one_stored_warm_2427() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let engine = crate::Engine::new(topk_projection_config(dir.path())).unwrap();
-+        engine
-+            .create_index("warm-bound", topk_projection_schema())
-+            .unwrap();
-+        let idx = engine.get_index("warm-bound").unwrap();
-+        idx.abort_background_tasks();
-+        let blob = "0.125 33.9 -118.4 ".repeat(50);
-+        for batch in 0..6u64 {
-+            for i in 0..400u64 {
-+                let n = batch * 400 + i;
-+                // Later segments score higher, so every segment holds
-+                // candidates for the page and is hydrated from its rows.
-+                let body = if n % 7 == 0 {
-+                    format!("{}report {n}", "needle ".repeat(batch as usize + 1))
-+                } else {
-+                    format!("hay stack {n}")
-+                };
-+                idx.index_document(
-+                    Some(format!("doc-{n}")),
-+                    json!({"title": format!("title {n}"), "body": body, "blob": blob}),
-+                )
-+                .await
-+                .unwrap();
-+            }
-+            idx.flush().await.unwrap();
-+        }
-+        drop(idx);
-+        drop(engine);
-+
-+        let engine = crate::Engine::new(topk_projection_config(dir.path())).unwrap();
-+        let idx = engine.get_index("warm-bound").unwrap();
-+        idx.abort_background_tasks();
-+        let segs: Vec<String> = {
-+            let snapshot = idx.store.snapshot();
-+            snapshot.segments.iter().map(|s| s.id.to_string()).collect()
-+        };
-+        assert!(
-+            segs.len() >= 4,
-+            "precondition: many segments, got {}",
-+            segs.len()
-+        );
-+        let warmed = |idx: &Index| {
-+            segs.iter()
-+                .filter(|id| {
-+                    idx.stored_slices_cache.contains_key(id.as_str())
-+                        || idx.decoded_stored_cache.contains_key(id.as_str())
-+                })
-+                .count()
-+        };
-+        assert_eq!(warmed(&idx), 0, "precondition: stored caches cold");
-+
-+        let request = xerj_query::parse_request(&json!({
-+            "query": {"match": {"body": "needle"}},
-+            "size": 5,
-+            "_source": ["title"]
-+        }))
-+        .unwrap();
-+        let cold = idx.search(&request).await.unwrap();
-+        assert_eq!(cold.hits.len(), 5);
-+        let hydrated = idx.cold_row_hydrations.load(Ordering::Relaxed);
-+        assert!(
-+            hydrated >= 3,
-+            "precondition: the query hydrates several cold segments, got {hydrated}"
-+        );
-+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
-+        while !idx.cold_stored_warms.is_empty() {
-+            assert!(std::time::Instant::now() < deadline, "warm never settled");
-+            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
-+        }
-+        // Let any (pre-fix) straggler publish before counting.
-+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
-+        // The bound is on warms running at once. A warm that finishes while
-+        // the query is still hydrating lets the next cold segment start
-+        // one, so the total warmed can exceed one on a fast runner (CI saw
-+        // 2 of 6); the number in flight never does.
-+        let peak = idx.cold_stored_warm_peak.load(Ordering::Acquire);
-+        assert!(
-+            peak <= 1,
-+            "one cold query ran {peak} stored warms at once over {} segments",
-+            segs.len()
-+        );
-+
-+        // The warm answer equals the cold answer.
-+        let warm = idx.search(&request).await.unwrap();
-+        let ids = |r: &xerj_query::executor::SearchResult| {
-+            r.hits.iter().map(|h| h.id.clone()).collect::<Vec<_>>()
-+        };
-+        assert_eq!(ids(&cold), ids(&warm));
-+        drop(idx);
-+        drop(engine);
+     /// The server's reason when this token failed only on records over the
+@@ -3659,11 +3652,18 @@ where
+     }
+ 
+     /// Block until no bulk holding this file's records is buffered or in
+-    /// flight. A failed token settles at its first refusal, while its later
+-    /// chunks may still be on the wire; a purge before they land would leave
+-    /// a junk file half searchable.
++    /// flight, shipping the buffer while they are still in it. `submit`
++    /// flushes through this. A failed token settles at its first refusal,
++    /// while its later chunks may still be on the wire; a purge before they
++    /// land would leave a junk file half searchable.
+     fn quiesce(&self, token: u64) {
+-        let mut st = self.lock();
++        self.quiesce_locked(self.lock(), token);
 +    }
 +
-     /// #2422/#2423: on a cold segment (after a restart, or evicted under the
-     /// cache budget) a top-k query that names its `_source` fields must read
-     /// only the winning rows and only the needed columns. Before the fix the
-@@ -10858,8 +10960,17 @@ pub struct Index {
-     self_ref: std::sync::OnceLock<std::sync:
-```
-
----
-
-### Incident Patch 3: `e5675dec` (2026-10-31)
-**Commit Message**: fix(engine): flush one shard at a time when draining for memory pressure (#2753)
-
-Motivation: in the #2427 A/B at a 1,536 MB cap, one breaker drain took
-RSS from 1,460 MB to 2,323 MB in about a second (node log 19:10:25Z,
-off arm). The drain that is meant to release memory was the largest
-single RSS spike of the run.
-
-Root cause: Engine::pressure_drain and release_rebuildable_memory call
-Index::flush, which since M5.15 spawns one task per non-empty memtable
-shard and runs them in parallel (about four building at once under the
-finalize gate). Each shard's segment build holds its parsed documents,
-columns, postings and stored blocks, none of which is charged to the
-memtable budget, so the working set of a parallel drain is several
-times the charged memtable bytes it frees.
-
-Fix: Index::flush becomes flush_with(FlushFanout::Parallel); a new
-Index::flush_one_shard_at_a_time (FlushFanout::Serial) awaits each
-shard task before starting the next, folding the results through the
-same fold_shard_flush. The two memory-release paths use the serial
-variant; ordinary flushes (refresh, interval, explicit _flush) keep the
-parallel fan-out.
-
-Evidence: serial_pressure_flush_tests::a_pressure_drain
-
-**File**: `CHANGELOG.md` (modified, +8/-0)
-```diff
-@@ -68,6 +68,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   longer take a node from below the watermark into the parent breaker band and
-   turn ingest into HTTP 429s. The relief for a search node resting between the
-   merge-pool ceiling and the watermark is kept (#2427).
-+- **A memory-pressure drain no longer spikes RSS past the cap while it
-+  flushes** (#2427). The breaker drain and the cache-release path
-+  flushed each index with every non-empty memtable shard building its
-+  segment at once, and that working set (parsed documents, columns,
-+  postings, stored blocks) is not charged to the memtable budget. On a
-+  1,536 MB-capped node one drain took RSS from 1,460 MB to 2,323 MB in
-+  about a second. Memory-release flushes now build one shard at a time;
-+  ordinary flushes still run in parallel.
- 
- - The per-index document version map is smaller and now visible in the
-   ingest memory trace. Its keys are `Box<str>` instead of `String`, which
-```
-
-**File**: `engine/crates/xerj-engine/src/engine.rs` (modified, +79/-2)
-```diff
-@@ -4566,8 +4566,11 @@ impl Engine {
-         if release_caches {
-             return self.release_rebuildable_memory(&loaded).await;
-         }
-+        // One shard at a time (#2427): the flush working set is uncharged,
-+        // and building every shard at once is what pushed RSS past the cap
-+        // in the middle of the drain meant to bring it down.
-         for idx in &loaded {
--            if idx.memtable_bytes() > 0 && idx.flush().await.is_err() {
-+            if idx.memtable_bytes() > 0 && idx.flush_one_shard_at_a_time().await.is_err() {
-                 tracing::warn!("memory pressure drain: flush failed");
-             }
-         }
-@@ -4641,7 +4644,9 @@ impl Engine {
-     /// released.
-     pub async fn release_rebuildable_memory(&self, indices: &[Arc<Index>]) -> usize {
-         for idx in indices {
--            if idx.memtable_bytes() > 0 && idx.flush().await.is_err() {
-+            // Serial for the same reason as `pressure_drain` (#2427): a
-+            // release must not spike RSS on its way down.
-+            if idx.memtable_bytes() > 0 && idx.flush_one_shard_at_a_time().await.is_err() {
-                 tracing::warn!("memory release: flush failed, releasing caches anyway");
-             }
-             idx.release_memory();
-@@ -6616,3 +6621,75 @@ mod pressure_drain_tests {
++    /// [`Self::quiesce`] under a lock the caller already holds, so `submit`
++    /// ships the buffer it just crossed the cut with before any other
++    /// worker can add to it.
++    fn quiesce_locked<'s>(&'s self, mut st: std::sync::MutexGuard<'s, PipeState>, token: u64) {
+         loop {
+             let buffered = st.pending.contains(&token);
+             if !buffered && !st.in_flight_tokens.contains_key(&token) {
+@@ -17273,6 +17273,202 @@ mod bulk_pipe_tests {
+             "{WORKERS}x{FILES_PER_WORKER} files left as {n} bodies — no coalescing happened"
          );
      }
- }
 +
-+#[cfg(test)]
-+mod serial_pressure_flush_tests {
-+    use super::Engine;
-+    use crate::index::FlushShardProbe;
-+    use serde_json::json;
-+    use tempfile::TempDir;
-+    use xerj_common::config::Config;
-+    use xerj_common::types::{FieldConfig, FieldType, Schema};
-+
-+    async fn seed(engine: &Engine, name: &str, n: usize) {
-+        let mut schema = Schema::empty();
-+        schema
-+            .fields
-+            .push(FieldConfig::new("body", FieldType::Text));
-+        engine.create_index(name, schema).expect("create");
-+        let idx = engine.get_index(name).expect("get");
-+        for i in 0..n {
-+            idx.index_document(
-+                Some(format!("d{i}")),
-+                json!({ "body": format!("document number {i}") }),
-+            )
-+            .await
-+            .expect("index");
-+        }
-+    }
-+
-+    async fn count_all(engine: &Engine, name: &str) -> u64 {
-+        let idx = engine.get_index(name).expect("get index");
-+        let req = xerj_query::parse_request(
-+            &json!({ "query": { "match_all": {} }, "size": 0, "from": 0 }),
-+        )
-+        .expect("parse_request");
-+        idx.search(&req).await.expect("search").total.value
-+    }
-+
-+    /// #2427: a breaker drain builds one shard segment at a time. The flush
-+    /// working set (parsed docs, columns, postings, stored blocks) is not
-+    /// charged to the memtable budget, and a drain that built every shard at
-+    /// once took RSS from 1,460 MB to 2,323 MB on a 1,536 MB-capped node.
-+    /// The control index shows the ordinary flush still fans out, so the
-+    /// probe does see concurrency when there is some. FAIL-BEFORE:
-+    /// `pressure_drain` called `Index::flush`, which runs every non-empty
-+    /// shard at once (peak > 1 here).
-+    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
-+    async fn a_pressure_drain_flushes_one_shard_at_a_time() {
-+        let dir = TempDir::new().unwrap();
-+        let mut config = Config::default();
-+        config.server.data_dir = dir.path().to_str().unwrap().to_string();
-+        let engine = Engine::new(config).expect("engine::new");
-+
-+        seed(&engine, "serial-drain-control", 400).await;
-+        let control = engine.get_index("serial-drain-control").unwrap();
-+        control.flush().await.expect("flush");
-+        assert!(
-+            FlushShardProbe::peak("serial-drain-control") > 1,
-+            "the ordinary flush runs shards concurrently"
-+        );
-+
-+        seed(&engine, "serial-drain", 400).await;
-+        let idx = engine.get_index("serial-drain").unwrap();
-+        assert!(idx.memtable_bytes() > 0);
-+        engine.pressure_drain(false).await;
-+        assert_eq!(idx.memtable_bytes(), 0, "the drain published the memtable");
-+        assert_eq!(
-+            FlushShardProbe::peak("serial-drain"),
-+            1,
-+            "a pressure drain must build one shard at a time"
-+        );
-+        assert_eq!(count_all(&engine, "serial-drain").await, 400);
-+    }
-+}
++    /// #2841: with every wire slot busy, two workers cross the cut and park.
++    /// When a slot frees, the first one awake ships the whole buffer, the
++    /// other's bytes with it. The other wakes
 ```
 
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +102/-12)
+---
+
+### Incident Patch 2: `efb431bd` (2026-11-02)
+**Commit Message**: feedback: agent field report for agentic-security-ietf-corpus (2026-11-01) (#2856)
+
+Signed-off-by: Raghuvar Karthik Durga <[REDACTED_EMAIL]>
+Co-authored-by: Raghuvar Karthik Durga <[REDACTED_EMAIL]>
+
+**File**: `user-feedback/16-agent-field-reports/2026-11-01-agentic-security-ietf-corpus.md` (added, +15/-0)
 ```diff
-@@ -28693,6 +28693,25 @@ impl Index {
+@@ -0,0 +1,15 @@
++> Written by an AI agent and sent automatically by that agent after using xerj.
++
++# corpus add + lexical index + 5 G7 queries on agentic-security-ietf-corpus (Windows x86_64) (2026-11-01)
++
++**Agent:** GitHub Copilot CLI (run by @drk-ram)  ·  **XERJ:** xerj v1.0.0-rc.100  ·  **Platform:** windows x86_64
++
++**Pointed at:** https://github.com/drk-ram/agentic-security-ietf-corpus (13 files, 155,300 bytes: 4 IETF XML/TXT drafts, 100-scenario OWASP ASI JSONL benchmark, 4 Python verifiers/tests)
++
++**Used it for:** reference coding + corpus indexing (xerj corpus add, xerj corpus index --include-data, xerj code, xerj gain)
++
++**Verdict:** xerj corpus add and xerj corpus index indexed all 12 eligible files into 2 datasets / 150 records cleanly, and all 5 G7 queries (xerj code) hit relevant passages with p50=2ms / p95=10ms. One friction point on Windows: the first xerj corpus index run spent ~20s in segment merges, and when killed at 20s and re-run, journal replay (utoindex-state/.../b1793546447) resumed cleanly without re-hashing and finished in 7.8s.
++
++**Numbers:** xerj corpus index agentic-security-ietf-corpus -> 12 files, 2 datasets, 150 records (py=4, xml=4, jsonl=1, md=1, noext=1, txt=1); xerj gain -> 5/5 searches with hits (100%), p50 2ms, p95 10ms
++
++**Filed alongside:** PR #2850 (CLA) + corpus-hub PR for agentic-security-ietf-corpus
+```
+
+---
+
+### Incident Patch 3: `2761a7f2` (2026-11-02)
+**Commit Message**: fix(lead): reject non-string email inputs (#2854)
+
+The lead form coerced email values before validating them. Address arrays passed the at-sign check and were stored, while objects with non-callable toString raised TypeError and produced HTTP 500. Require a string before normalization and preserve the existing 400 invalid-email path.
+
+Add four cases to .github/scripts/functions-lead-test.mjs and document the boundary in functions/README.md and CHANGELOG.md. Identical final suite on Windows/Node 24.22.1: 11 pass/4 fail before, 15 pass/0 fail after, independently rerun. Existing Node 20 CI already invokes the script. Syntax, whitespace, and the workflow timeout guard pass. No Rust/engine change; no Cargo/ES-YAML or live Cloudflare/R2 execution claimed.
+
+Written with Codex. The account owner reviewed the complete patch and confirmed understanding and responsibility before public push.
+
+Co-authored-by: xerj-org <[REDACTED_EMAIL]>
+
+**File**: `.github/scripts/functions-lead-test.mjs` (modified, +4/-0)
+```diff
+@@ -44,6 +44,10 @@ const invalid = [
+   ['boolean email', '{"email":true}'],
+   ['object email', '{"email":{}}'],
+   ['empty email array', '{"email":[]}'],
++  ['single-address email array', '{"email":["person@example.com"]}'],
++  ['multiple-address email array', '{"email":["first@example.com","second@example.com"]}'],
++  ['email object with null toString', '{"email":{"toString":null}}'],
++  ['email object with string toString', '{"email":{"toString":"person@example.com"}}'],
+ ];
+ for (const [name, raw] of invalid) {
+   test(`${name} returns 400 without writing`, async () => {
+```
+
+**File**: `CHANGELOG.md` (modified, +4/-0)
+```diff
+@@ -116,6 +116,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
-     /// Flush the memtable to a new segment on disk, then build the FTS index.
-     pub async fn flush(self: &Arc<Self>) -> Result<()> {
-+        self.flush_with(FlushFanout::Parallel).await
-+    }
-+
-+    /// [`Self::flush`] with one shard building at a time (#2427).
-+    ///
-+    /// A shard flush parses the drained documents, builds columns, postings
-+    /// and the stored blocks, and none of that working set is charged to the
-+    /// memtable budget. The parallel flush builds every non-empty shard at
-+    /// once (bounded only by the finalize gate), so a breaker drain on a
-+    /// 1,536 MB-capped node took RSS from 1,460 MB to 2,323 MB in about a
-+    /// second while four shards built together. A memory-release caller
-+    /// wants the peak bounded more than it wants the drain short: each
-+    /// shard's segment publishes and its working set is freed before the
-+    /// next shard starts.
-+    pub async fn flush_one_shard_at_a_time(self: &Arc<Self>) -> Result<()> {
-+        self.flush_with(FlushFanout::Serial).await
-+    }
-+
-+    async fn flush_with(self: &Arc<Self>, fanout: FlushFanout) -> Result<()> {
-         // #873: this flush is about to take whatever the memtable holds, so
-         // every idle-probe observation about it is stale from here on. Clear
-         // the pair at the ONE coordinator every flush path runs through
-@@ -28756,6 +28775,7 @@ impl Index {
-         // coordinator is not aborted (#1015).
-         let coordinator = tokio::spawn(async move {
-             let mut shard_futures = Vec::with_capacity(n_shards);
-+            let mut result: Result<()> = Ok(());
-             for shard_idx in 0..n_shards {
-                 // #1226 — do not fan a finalize out for an EMPTY shard.
-                 //
-@@ -28789,7 +28809,9 @@ impl Index {
-                 let shard_index_name = coordinator_name.clone();
-                 #[cfg(test)]
-                 let test_hook = flush_test_hook.clone();
--                shard_futures.push(tokio::spawn(async move {
-+                let shard_task = tokio::spawn(async move {
-+                    #[cfg(test)]
-+                    let _in_flight = FlushShardProbe::enter(&shard_index_name).await;
-                     let permit = match wait_for_flush_permit(
-                         &shard_index_name,
-                         "the flush semaphore",
-@@ -28831,19 +28853,14 @@ impl Index {
-                         let _ = guard.take();
-                     }
-                     result
--                }));
-+                });
-+                match fanout {
-+                    FlushFanout::Parallel => shard_futures.push(shard_task),
-+                    FlushFanout::Serial => fold_shard_flush(&mut result, shard_task.await),
-+                }
-             }
--            let mut result: Result<()> = Ok(());
-             for fut in shard_futures {
--                match fut.await {
--                    Ok(Ok(())) => {}
--                    Ok(Err(e)) => result = Err(e),
--                    Err(error) => {
--                        result = Err(EngineError::Common(xerj_common::XerjError::internal(
--                            format!("flush shard task failed: {error}"),
--                        )));
--                    }
--                }
-+                fold_shard_flush(&mut result, fut.await);
-             }
-             // Publication completion must invalidate results even when the
-             // request that initiated the flush was cancelled. The coordinator
-@@ -36686,6 +36703,79 @@ tokio::task_local! {
-     static FLUSH_PUBLISHER_TEST_HOOK: FlushPublisherTestHook;
- }
+ ### Fixed
  
-+/// How [`Index::flush_with`] runs its shard flushes.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+enum FlushFanout {
-+    /// Every non-empty shard at once (M5.15): the shortest flush.
-+    Parallel,
-+    /// One shard after another: the smallest uncharged working set (#2427).
-+    Serial,
-+}
++- `/lead` rejects non-string email values with HTTP 400 before storage.
++  Arrays no longer become accepted addresses through string coercion, and
++  objects with a non-callable `toString` no longer cause HTTP 500.
 +
-+/// Keep the last shard error, as the parallel join always has.
-+fn fold_shard_flush(
-+    result: &mut Result<()>,
-+    joined: std::result::Result<Result<()>, tokio::task::JoinError>,
-+) {
-+    match joined {
-+        Ok(Ok(())) => {}
-+        Ok(Err(e)) => *result = Err(e),
-+        Err(error) => {
-+            *result = Err(EngineError::Common(xerj_common::XerjError::internal(
-+                format!("flush shard task failed: {error}"),
-+            )));
-+        }
-+    }
-+}
+ - `xerj autoindex` now records Dart `extension` and `extension type`
+   declarations as `class` definitions, so `xerj def <ExtensionName>` finds
+   them. Methods inside an extension were already indexed; the extension's own
+```
+
+**File**: `functions/README.md` (modified, +7/-0)
+```diff
+@@ -12,6 +12,13 @@ asset handler shadows it. Bindings live in [`../wrangler.toml`](../wrangler.toml
+ | `lead.js` | `/lead` | capture a work email | R2 `LEADS` |
+ | `api/field-report.js` | `/api/field-report` | **fallback** agent field-report intake | KV `FIELD_REPORTS` |
+ 
++## `/lead` — email validation
 +
-+/// Test-only count of shard-flush tasks in flight per index, with the peak.
-+#[cfg(test)]
-+static FLUSH_SHARD_PROBE: std::sync::LazyLock<
-+    dashmap::DashMap<
-+        String,
-+        (
-+            Arc<std::sync::atomic::AtomicUsize>,
-+            Arc<std::sync::atomic::AtomicUsize>,
-+        ),
-+    >,
-+> = std::sync::LazyLock::new(dashmap::DashMap::new);
++`POST /lead` requires a string `email`, trimmed and lowercased before
++validation and storage. Non-string values, including arrays and objects,
++return `400 { ok:false, error:"invalid email" }` without writing to R2.
++An R2 write failure for a valid email still returns `500`.
 +
-+#[cfg(test)]
-+pub(crate) struct FlushShardProbe(Arc<std::sync::atomic::AtomicUsize>);
-+
-+#[cfg(test)]
-+impl FlushShardProbe {
-+    /// Count this shard task in, then yield so sibling tasks of a parallel
-+   
+ ## `/api/field-report` — agent field-report fallback
+ 
+ **The canonical path to file a field report is a GitHub PR** (`xerj feedback
+```
+
+**File**: `functions/lead.js` (modified, +3/-1)
+```diff
+@@ -10,7 +10,9 @@ const JSON_HEADERS = { 'content-type': 'application/json', 'cache-control': 'no-
+ export async function onRequestPost({ request, env }) {
+   try {
+     const body = (await request.json().catch(() => ({}))) ?? {};
+-    const email = String(body.email || '').trim().toLowerCase();
++    const email = typeof body.email === 'string'
++      ? body.email.trim().toLowerCase()
++      : '';
+     if (!email || !email.includes('@') || email.length > 254) {
+       return new Response(JSON.stringify({ ok: false, error: 'invalid email' }), { status: 400, headers: JSON_HEADERS });
+     }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2798** (2026-10-31): hub: author-approved contribution candidates (8953 repos) (@xerj-org)
-- **PR #2797** (2026-10-31): CLA: add xobotyi to .contributors (@xobotyi)
-- **PR #2795** (2026-10-31): docs: sign contributor license agreement (@mammaddrik)
-- **PR #2792** (2026-10-31): hub: author-approved contribution candidates (8923 repos) (@xerj-org)
-- **PR #2790** (2026-10-31): docs(feedback): report code size-boundary experience (@Jarvis636431)
-- **PR #2789** (2026-10-31): fix(autoindex): report exact code size-limit skips (@Jarvis636431)
+- **PR #2873** (2026-11-02): corpus-hub: pin ntumbah02-lang/ntumba-ia to its main head (#2864) (@xerj-org)
+- **PR #2870** (closed): docs(feedback): report advisory search hint verification (@Jarvis636431)
+- **PR #2869** (2026-11-02): feat(cli): add opt-in Claude Code search hints (@Jarvis636431)
+- **PR #2868** (2026-11-02): corpus-hub: owner overrides that survive the hourly refresh (#2831, #2836, #2793, #2583, #2573, #2518) (@xerj-org)
+- **PR #2867** (2026-11-02): docs(feedback): report session queue recovery verification (@Jarvis636431)
+- **PR #2866** (2026-11-02): Add ChandraChaan to contributors list (@ChandraChaan)
 
 ---
 
@@ -2558,56 +2193,39 @@ Evidence: serial_pressure_flush_tests::a_pressure_drain
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. aggs): bound hdr number_of_significant_value_digits; one request hung a search t
+## X. autoindex): return from a parked bulk submit once another worker shipped its byt
 
 **RULE**:
-When implementing operations in `engine/crates/xerj-api/src/es_compat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6236eccb`: aggs): bound hdr number_of_significant_value_digits; one request hung a search thread (#2651). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `284cf78e`: autoindex): return from a parked bulk submit once another worker shipped its bytes (#2841) (#2863). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/crates/xerj-api/src/es_compat.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// `hdr` options shared by `percentiles` and `percentile_ranks`. ES
-    /// accepts 0..=5 significant digits; anything else is a 400. The engine
-    /// sizes its histogram as `2 * 10^digits` rounded up to a power of two,
-    /// so an unchecked value such as 20 overflowed that `u64` and spun the
-    /// rounding loop forever on the search thread.
-    fn check_hdr(name: &str, params: &Value) -> Option<String> {
-        let digits = params
-            .get("hdr")?
-            .get("number_of_significant_value_digits")?;
-        if digits.as_u64().is_some_and(|d| d <= 5) {
-            return None;
-        }
-        if digits.is_null() {
-            return Some(
-                "[hdr] number_of_significant_value_digits doesn't support values of type: \
-                 VALUE_NULL"
-                    .to_string(),
-            );
-        }
-        Some(format!(
-            "[numberOfSignificantValueDigits] must be between 0 and 5: [{name}]"
-        ))
-    }
-            "percentiles" => {
-                if let Some(e) = check_tdigest(params) {
-                    return Some(e);
-                }
-                if let Some(e) = check_hdr(name, params) {
-                    return
+- `xerj autoindex` no longer stalls near the end of a run at high
+  `--workers`. When all 8 bulk slots were busy, a worker whose chunk crossed
+  the flush size parked; if another worker then shipped the shared buffer,
+  that chunk included, the first one woke to an empty buffer and parked again
+  every 30 s for good, so the run never finished. It now returns once the
+  bulk carrying its chunk has landed. The same loop could also return while
+  that bulk was still on the wire, so a file could be journaled complete
+  before, or even though, one of its bulks failed; it now waits. On a
+  26-file, 28 MB scientific CSV folder, rc.100 stalled at 21 of 26 files with
+  `--workers 32` and 19 of 26 with `--workers 16`; both now finish all 26
+  files and 179,374 records (#2841).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-            "percentiles" => return check_tdigest(params),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6236eccb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `284cf78e` are properly handled with clean fallback behavior.

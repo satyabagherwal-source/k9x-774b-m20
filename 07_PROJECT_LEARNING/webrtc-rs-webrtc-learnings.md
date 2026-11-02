@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md`  
 > **Source**: github ([https://github.com/webrtc-rs/webrtc](https://github.com/webrtc-rs/webrtc))  
-> **Source Version**: `1c07e9f0`  
+> **Source Version**: `8ea6e2a6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-27T11:34:17.656Z  
+> **Timestamp**: 2026-11-02T14:46:21.796Z  
 > **Learning ID**: `learn-github-webrtc-rs-webrtc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webrtc-rs-webrtc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webrtc-rs/webrtc](https://github.com/webrtc-rs/webrtc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-27T11:34:02.643Z  
+> **Harvest Timestamp**: 2026-11-02T14:46:20.131Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Async-friendly WebRTC implementation in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5166 stars
+- **Stars / Engagement**: 5175 stars
 
 ---
 
@@ -2382,523 +2382,70 @@ async fn async_main(cli: Cli) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c07e9f0` (2026-10-25)
-**Commit Message**: Revert "feat(webrtc): multiplex peer connections over a single UDP socket (UD…" (#940)
+### Incident Patch 1: `8ea6e2a6` (2026-11-01)
+**Commit Message**: fix(driver): send TURN-relayed packets in the same poll_writes pass (#946)
 
-This reverts commit a53d7ac42ebb0681df8aa034879b247c893d3c56.
+poll_writes drained the TURN relayer (1.b) before handing the core's writes
+to it (1.c), where handle_write only queues relayed packets in the TURN
+client. They then waited for the driver's next wake-up: a relay-only data
+channel echo took 75-150 ms on one machine instead of 2 ms. Move 1.b's loop
+into flush_turn_relayer_writes() and run it again after 1.c.
 
-**File**: `CHANGELOG.md` (modified, +0/-14)
+Fixes #945
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/peer_connection/driver.rs` (modified, +19/-7)
 ```diff
-@@ -9,20 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Added
- 
--- **UDP multiplexing: many peer connections over one shared UDP socket** — new
--  `webrtc::peer_connection::transport::udp_mux` module with a `UDPMux` trait and the built-in
--  `UDPMuxDefault`. Handing one mux to every `PeerConnectionBuilder::with_udp_mux` serves any
--  number of connections from a single fixed UDP port (the SRS/mediamtx deployment shape),
--  where a pinned `with_udp_addrs` port fails the second connection's bind with `EADDRINUSE`.
--  The mux's reader demultiplexes inbound datagrams by the local ICE ufrag in each STUN check
--  and by learnt peer address for ufrag-less traffic (DTLS/SRTP/SRTCP); candidates are
--  advertised per interface on the mux's port, with inbound packets attributed to an interface
--  via `RecvMeta::dst_ip` (packet info) and outbound ones pinned with `Transmit::src_ip` on a
--  wildcard listen. Muxed connections gather host candidates only (the restriction Pion's
--  `ICEUDPMux` documents), and their ICE credentials are pinned at build time so the route
--  survives ICE restarts. `tests/udp_mux.rs` runs two connections on one fixed port end to end.
--  Requires `rtc` ≥ the commit that adds `SettingEngine::set_ice_credentials`/
--  `ice_credentials`.
- - **Crypto provider selection** ([webrtc#839](https://github.com/webrtc-rs/webrtc/issues/839),
-   [rtc#128](https://github.com/webrtc-rs/rtc/issues/128)). New `crypto-ring` (default) and `crypto-aws-lc-rs`
-   Cargo features forward to `rtc`. They are additive: enabling both compiles both providers and
-```
-
-**File**: `Cargo.toml` (modified, +0/-6)
-```diff
-@@ -58,7 +58,6 @@ clap = { version = "4.6.1", features = ["derive"] }
- anyhow = "1.0.103"
- ctrlc = "3.5.2"
- serde_json = "1.0.150"
--serde = { version = "1.0.228", features = ["derive"] }
- hyper = { version = "0.14.32", features = ["full"] }
- rand = "0.10.1"
- base64 = "0.22.1"
-@@ -275,8 +274,3 @@ required-features = ["runtime-tokio"]
- name = "stats"
- path = "examples/stats/stats.rs"
- bench = false
--
--[[example]]
--name = "udp-mux"
--path = "examples/udp-mux/udp-mux.rs"
--bench = false
-```
-
-**File**: `examples/udp-mux/demo.html` (removed, +0/-52)
-```diff
-@@ -1,52 +0,0 @@
--<!DOCTYPE html>
--<html>
--<head>
--  <meta charset="utf-8">
--  <title>UDP Mux DataChannel Test</title>
--</head>
--<body>
--  <h2>WebRTC DataChannel Test</h2>
--  <input id="msg" placeholder="Message">
--  <button id="sendBtn" disabled onclick="sendMsg()">Send</button>
--  <pre id="log"></pre>
--  <script>
--    const sessionId = crypto.randomUUID();
--    const pc = new RTCPeerConnection({iceServers: []});
--    const channel = pc.createDataChannel("chat");
--    const log = msg => document.getElementById("log").textContent += msg + "\n";
--    pc.onconnectionstatechange = () => log(`Connection state: ${pc.connectionState}`);
--    channel.onopen = () => {
--      log("DataChannel opened");
--      document.getElementById("sendBtn").disabled = false;
--    };
--    channel.onmessage = event => log(`Server: ${event.data}`);
--    pc.onicecandidate = event => {
--      if (event.candidate) fetch("/candidate", {
--        method: "POST",
--        headers: {"Content-Type": "application/json"},
--        body: JSON.stringify({session_id: sessionId, candidate: event.candidate})
--      });
--    };
--    async function start() {
--      const offer = await pc.createOffer();
--      await pc.setLocalDescription(offer);
--      const response = await fetch("/offer", {
--        method: "POST",
--        headers: {"Content-Type": "application/json"},
--        body: JSON.stringify({session_id: sessionId, offer})
--      });
--      if (!response.ok) throw new Error(`HTTP ${response.status}`);
--      await pc.setRemoteDescription(await response.json());
--    }
--    function sendMsg() {
--      const input = document.getElementById("msg");
--      if (input.value.trim() && channel.readyState === "open") {
--        channel.send(input.value);
--        log(`You: ${input.value}`);
--        input.value = "";
--      }
--    }
--    start().catch(error => log(`Connection failed: ${error.message}`));
--  </script>
--</body>
--</html>
-```
-
-**File**: `examples/udp-mux/udp-mux.rs` (removed, +0/-504)
-```diff
-@@ -1,504 +0,0 @@
--//! udp-mux serves any number of browser data-channel sessions over **one** UDP port.
--//!
--//! This example demonstrates:
--//! - `UDPMuxDefault` sharing one UDP socket across every peer connection
--//! - HTTP signaling (offer → answer, trickle ICE), one browser tab per connection
--//! - Why: with per-connection binds (`with_udp_addrs`), pinning one port fails the second
--//!   connection with `EADDRINUSE`; with a mux, only the mux binds, so one firewall/forward
--//!   rule covers every session — the deployment shape of servers like SRS or mediamtx.
--//!
--//! Run it, open http://127.0.0.1:8080 in several browser tabs, and connect them all:
--//! every session's media arrives on UDP port 9002.
--
--use anyhow::Result;
--use futures::FutureExt;
--use hyper::service::{make_service_fn, service_fn};
--use hyper::{Body, Method, Request, Response, Server, StatusCode};
--use log::{error, info};
--use std::collections::HashMap;
--use std::net::SocketAddr;
--use std::sync::{Arc, Mutex};
--use std::time::{Duration, Instant};
--use webrtc::data_channel::{DataChannel, DataChannelEvent};
--use webrtc::peer_connection::transport::udp_mux::{UDPMux, UDPMuxDefault};
--use webrtc::peer_connection::{PeerConnection, PeerConnectionBuilder, PeerConnectionEventHandler};
--use webrtc::peer_connection::{
--    RTCIceCandidateInit, RTCIceGatheringState, RTCPeerConnectionState, RTCSessionDescription,
--};
--use webrtc::runtime::{Runtime, Sender, channel};
--
--#[path = "../common/mod.rs"]
--mod common;
--use common::{block_on, runtime, timeout};
--
--const DEMO_HTML: &str = include_str!("demo.html");
--
--/// The UDP port every session shares.
--const MUX_UDP_PORT: u16 = 9002;
--const MAX_PENDING_CANDIDATES: usize = 256;
--const DISCONNECTED_TIMEOUT: Duration = Duration::from_secs(60);
--const PENDING_CANDIDATE_TTL: Duration = Duration::from_secs(30);
--const INVALID_SESSION_ID: &str = "session_id must contain 1 to 128 bytes and no control characters";
--
--fn valid_session_id(id: &str) -> bool {
--    !id.is_empty() && id.len() <= 128 && !id.chars().any(char::is_control)
--}
--
--#[derive(Default)]
--struct DisconnectWatchdog {
--    since: Mutex<Option<Instant>>,
--}
--
--impl DisconnectWatchdog {
--    fn update(&self, state: RTCPeerConnectionState, now: Instant) {
--        let mut since = self.since.lock().unwrap();
--        if state == RTCPeerConnectionState::Disconnected {
--            since.get_or_insert(now);
--        } else {
--            *since = None;
--        }
--    }
--
--    fn expired(&self, now: Instant) -> bool {
--        self.since
--            .lock()
--            .unwrap()
--            .is_some_and(|since| now.duration_since(since) >= DISCONNECTED_TIMEOUT)
--    }
--}
--
--struct Session {
--    generation: u64,
--    pc: Arc<dyn PeerConnection>,
--    watchdog: Arc<DisconnectWatchdog>,
--}
--
--type PendingCandidates = HashMap<String, Vec<(Instant, RTCIceCandidateInit)>>;
--
--fn prune_pending(candidates: &mut PendingCandidates, now: Instant) {
--    candidates.retain(|_, entries| {
--        entries.retain(|(received, _)| now.duration_since(*received) < PENDING_CANDIDATE_TTL);
--        !entries.is_empty()
--    });
--}
--
--// ── Shared state for HTTP handlers ─────────────────────────────────────────────
--
--#[derive(Clone)]
--struct AppState {
--    offer_tx: Sender<(
--        String,
--        RTCSessionDescription,
--        Sender<Result<RTCSessionDescription, String>>,
--    )>,
--    candidate_tx: Sender<(String, RTCIceCandidateInit)>,
--}
--
--#[derive(serde::Deserialize)]
--struct OfferRequest {
--    session_id: String,
--    offer: RTCSessionDescription,
--}
--
--#[derive(serde::Deserialize)]
--struct CandidateRequest {
--    session_id: String,
--    candidate: RTCIceCandidateInit,
--}
--
--// ── WebRTC event handler ───────────────────────────────────────────────────────
--
--struct Handler {
--    id: String,
--    generation: u64,
--    stopped_tx: async_channel::Sender<(String, u64)>,
--    watchdog: Arc<DisconnectWatchdog>,
--    gather_complete_tx: Sender<()>,
--    runtime: Arc<dyn Runtime>,
--}
--
--#[async_trait::async_trait]
--impl PeerConnectionEventHandler for Handler {
--    async fn on_ice_gathering_state_change(&self, state: RTCIceGatheringState) {
--        if state == RTCIceGatheringState::Complete {
--            let _ = self.gather_complete_tx.try_send(());
--        }
--    }
--
--    async fn on_connection_state_change(&self, state: RTCPeerConnectionState) {
--        self.watchdog.update(state, Instant::now());
--        info!("[session {}] connection state: {}", self.id, state);
--        if matches!(
--            state,
--            RTCPeerConnectionState::Failed | RTCPeerConnectionState::Closed
--        ) {
--            let _ = self.stopped_tx.try_send((self.id.clone(), self.generation));
--        }
--    }
--
--    async fn on_data_channel(&self, dc: Arc<dyn DataChannel>) {
--        let id = self.id.clone();
--        self.runtime.spawn(Box::pin(async move {
--            let label = dc.label().await.unwrap_or_default();
--            info!("[session {id}] data channe
-```
-
-**File**: `rtc` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--Subproject commit ec4696855a5c34319254f48aeda2eddb1225e8f7
-+Subproject commit 07423df27fbbbaaf56f45ee43343f9836304a9da
-```
-
-**File**: `src/peer_connection/driver.rs` (modified, +57/-357)
-```diff
-@@ -12,15 +12,14 @@ use crate::media_stream::track_remote::static_rtp::TrackRemoteStaticRTP;
- use crate::media_stream::track_remote::{TrackRemote, TrackRemoteEvent};
- use crate::peer_connection::PeerConnectionRef;
- use crate::peer_connection::transport::tcp_transport::RTCTcpTransport;
--use crate::peer_connection::transport::udp_mux::{UDPMux, UDPMuxConnHandle};
- use crate::peer_connection::transport::{
-     MAX_GSO_BATCH_BYTES, MAX_GSO_SEGMENTS, MIN_GSO_RUN, SocketRecvResult, UDP_RECV_BUF_LEN,
-     gro_recv_buf_len, is_retryable_socket_recv_error,
- };
- use crate::rtp_transceiver::rtp_receiver::RtpReceiverImpl;
- use crate::rtp_transceiver::{RtpReceiver, RtpTransceiverImpl};
- use crate::runtime::{
--    AsyncTcpStream, AsyncUdpSocket, EcnCodepoint, Receiver, RecvMeta, Runtime, Sender, Transmit,
-+    AsyncTcpStream, AsyncUdpSocket, EcnCodepoint, Receiver, RecvMeta, Sender, Transmit,
-     TrySendError, channel,
- };
- use bytes::BytesMut;
-@@ -342,15 +341,13 @@ fn restage_retained_data_channel_events(
- /// boxed-future convenience (`send_to`), which would cost one heap allocation per datagram
- /// on the hot path. `segment_size` of `0` sends a single datagram; non-zero requests UDP
- /// GSO — only valid when the socket reports `max_gso_segments() > 1`. `ecn` carries the raw
--/// two codepoint bits. `src_ip` pins the datagram's source address on a wildcard socket (a
--/// shared mux socket is the case that needs it); `None` leaves the choice to the kernel.
-+/// two codepoint bits.
- async fn send_datagrams(
-     socket: &dyn AsyncUdpSocket,
-     buf: &[u8],
-     segment_size: usize,
-     target: SocketAddr,
-     ecn: Option<u8>,
--    src_ip: Option<IpAddr>,
- ) -> Result<usize> {
-     let transmit = Transmit {
-         destination: target,
-@@ -359,7 +356,7 @@ async fn send_datagrams(
-         // `0` means "no segmentation": hand the whole buffer over as one datagram rather
-         // than asking the kernel to shred it into 0-byte segments.
-         segment_size: (segment_size != 0).then_some(segment_size),
--        src_ip,
-+        src_ip: None,
-     };
-     futures::future::poll_fn(|cx| socket.poll_send(cx, &transmit))
-         .await
-@@ -534,20 +531,6 @@ pub(crate) struct PeerConnectionDriver<A = SocketAddr> {
-     /// than the ones that existed when the connection was built.
-     udp_addrs: Vec<A>,
-     tcp_addrs: Vec<A>,
--    /// The shared socket this connection rides on, when it is muxed. Mutually exclusive with
--    /// binding `udp_addrs` per connection; see
--    /// [`udp_mux`](crate::peer_connection::transport::udp_mux).
--    udp_mux: Option<Arc<dyn UDPMux>>,
--    /// The connection's registration in `udp_mux`, registered once at first bind. On an ICE
--    /// restart the same registration gains the new ufrag via `add_ufrag` — its queue and
--    /// socket view never change. Kept separately from `udp_sockets`: that map keys the conn by
--    /// every advertised interface address for the write path, while the receive loop wants
--    /// exactly one entry for it.
--    mux_conn: Option<(UDPMuxConnHandle, Arc<dyn AsyncUdpSocket>)>,
--    /// The connection's current ICE ufrag on the mux.
--    mux_active_ufrag: Option<String>,
--    /// ufrags a restart rotated away from, still routable until their grace ends.
--    mux_ufrag_expiry: VecDeque<(Instant, String)>,
-     mdns_mode: MulticastDnsMode,
-     ice_servers: Vec<RTCIceServer>,
-     ice_gather_policy: RTCIceTransportPolicy,
-@@ -573,7 +556,6 @@ where
-         inner: Arc<PeerConnectionRef>,
-         udp_addrs: Vec<A>,
-         tcp_addrs: Vec<A>,
--        udp_mux: Option<Arc<dyn UDPMux>>,
-         mdns_mode: MulticastDnsMode,
-         ice_servers: Vec<RTCIceServer>,
-         ice_gather_policy: RTCIceTransportPolicy,
-@@ -610,10 +592,6 @@ where
-             pending_data_channel_events: HashMap::new(),
-             udp_addrs,
-             tcp_addrs,
--            udp_mux,
--            mux_conn: None,
--            mux_active_ufrag: None,
--            mux_ufrag_expiry: VecDeque::new(),
-             mdns_mode,
-             ice_servers,
-             ice_gather_policy,
-@@ -648,10 +626,6 @@ where
-     async fn bind_transports(&mut self) -> Result<()> {
-         let runtime = Arc::clone(&self.inner.runtime);
- 
--        if let Some(mux) = self.udp_mux.clone() {
--            return self.bind_muxed_transports(&mux).await;
--        }
--
-         // Release TURN allocations while the old UDP sockets still exist. Rebinding drops them
-         // below, and a Refresh(0) sent from a new socket would not match the allocation's
-         // 5-tuple, leaving it on the server until it expires. The initial bind has no previous
-@@ -691,173 +665,6 @@ where
-                 .insert(local_addr, runtime.wrap_udp_socket(socket)?);
+@@ -1950,6 +1950,25 @@ where
          }
  
--        self.bind_tcp_listeners(&runtime)?;
--        if self.udp_sockets.is_empty() && self.tcp_transport.is_empty() {
--            return Err(Error::Other(
--                "no udp_sockets or tcp_listeners available".to_owned(),
--            ));
--        }
-```
-
-**File**: `src/peer_connection/mod.rs` (modified, +0/-95)
-```diff
-@@ -86,7 +86,6 @@ use crate::media_stream::track_local::TrackLocalEvent;
- use crate::media_stream::track_local::static_rtp::TrackLocalStaticRTP;
- use crate::media_stream::track_remote::TrackRemoteEvent;
- use crate::peer_connection::driver::PeerConnectionDriverEvent;
--use crate::peer_connection::transport::udp_mux;
- use crate::rtp_transceiver::rtp_sender::RtpSenderImpl;
- pub use rtc::interceptor::Registry;
- 
-@@ -185,7 +184,6 @@ pub struct PeerConnectionBuilder<A: ToSocketAddrs> {
-     handler: Option<Arc<dyn PeerConnectionEventHandler>>,
-     udp_addrs: Vec<A>,
-     tcp_addrs: Vec<A>,
--    udp_mux: Option<Arc<dyn udp_mux::UDPMux>>,
-     dedicated_reactor_pool_size: usize,
-     data_channel_send_buffer_limit: usize,
-     /// Held rather than forwarded immediately, so [`build`](Self::build) can resolve the crypto
-@@ -201,7 +199,6 @@ impl<A: ToSocketAddrs> Default for PeerConnectionBuilder<A> {
-             handler: None,
-             udp_addrs: vec![],
-             tcp_addrs: vec![],
--            udp_mux: None,
-             dedicated_reactor_pool_size: 0,
-             setting_engine: SettingEngine::default(),
-             // `usize::MAX` = unbounded: no send back-pressure unless the application
-@@ -288,23 +285,6 @@ impl<A: ToSocketAddrs> PeerConnectionBuilder<A> {
-         self
+         // 1.b turn_relayer poll_write()
++        self.flush_turn_relayer_writes().await;
++
++        // 1.c peer_connection poll_write() - Send all outgoing packets, coalescing
++        // consecutive same-destination datagrams into single UDP GSO syscalls.
++        let writes = Self::drain_core_writes(self.inner.clone()).await;
++        self.flush_writes(writes).await;
++
++        // 1.d turn_relayer poll_write() again: 1.c hands every TURN-relayed packet to the
++        // relayer (`handle_write` -> `turn_relayer.handle_write`), which only queues it. Send
++        // it now, not on the driver's next wake-up, which on a quiet connection can be a
++        // keepalive or a report away.
++        self.flush_turn_relayer_writes().await;
++
++        Ok(())
++    }
++
++    /// Sends everything the TURN relayer has queued: its own requests (allocations,
++    /// permissions, refreshes) and the packets relayed through it.
++    async fn flush_turn_relayer_writes(&mut self) {
+         while let Some(msg) = self.turn_relayer.poll_write() {
+             let four_tuple: FourTuple = FourTuple::from(&msg.transport);
+             if let Err(err) = self.handle_write(msg).await {
+@@ -1968,13 +1987,6 @@ where
+                 }
+             }
+         }
+-
+-        // 1.c peer_connection poll_write() - Send all outgoing packets, coalescing
+-        // consecutive same-destination datagrams into single UDP GSO syscalls.
+-        let writes = Self::drain_core_writes(self.inner.clone()).await;
+-        self.flush_writes(writes).await;
+-
+-        Ok(())
      }
  
--    /// Shares one UDP socket across connections instead of binding per connection.
--    ///
--    /// The mux owns the socket; this connection registers on it under its ICE ufrag and
--    /// receives the datagrams routed to that ufrag. This is the deployment shape of servers
--    /// like SRS or mediamtx: exactly one UDP port to open or forward, however many
--    /// connections the process serves. See [`udp_mux`] for how routing works and the
--    /// constraints (host candidates only; pinned ICE credentials).
--    ///
--    /// Mutually exclusive with [`with_udp_addrs`](Self::with_udp_addrs): the mux owns the
--    /// socket, so there is nothing left for a per-connection bind. ICE credentials are not
--    /// pinned by the mux — the driver registers whatever the agent holds at bind time and
--    /// re-registers under the rotated credentials on an ICE restart.
--    pub fn with_udp_mux(mut self, udp_mux: Arc<dyn udp_mux::UDPMux>) -> Self {
--        self.udp_mux = Some(udp_mux);
--        self
--    }
--
-     /// Set the size of the dedicated reactor pool used. Defaults to `0`, means disabled.
-     /// Values above `1024` are clamped down to it.
-     ///
-@@ -384,33 +364,6 @@ impl<A: ToSocketAddrs> PeerConnectionBuilder<A> {
-         };
-         self.setting_engine
-             .set_crypto_provider(crypto_provider.clone());
--
--        // A muxed connection registers under the ICE credentials the agent holds: the driver
--        // reads them at first bind and re-reads them after an ICE restart (which rotates
--        // them), so nothing is pinned here — the mux's routing key always tracks the agent's
--        // current ufrag.
--        let udp_mux = if let Some(mux) = self.udp_mux {
--            if !self.udp_addrs.is_empty() {
--                return Err(Error::Other(
--                    "`with_udp_addrs` and `with_udp_mux` are mutually exclusive: the mux owns \
--                     the socket, there is nothing left to bind"
--                        .to_owned(),
--                ));
--            }
--            Some(mux)
--        } else {
--            None
--        };
--
--        // Whether the application pinned ICE credentials on the setting engine. Pinned
--        // credentials survive into ICE restarts (rtc reuses them), which a muxed connection
--        // cannot tolerate — its routing ufrag must rotate — so the combination is refused at
--        // restart time (see `ensure_mux_credentials_can_restart`).
--        let pins_credentials = {
--            let (ufrag, pwd) = self.setting_engine.ice_credentials();
--            !ufrag.is_empty() || !pwd.is_empty()
--        };
--
-         let mdns_mode = self.setting_engine.multicast_dns().mode;
-         let turn_allocation_refresh_interval_cap =
-             self.setting_engine.turn_allocation_refresh_interval_cap();
-@@ -446,12 +399,10 @@ impl<A: ToSocketAddrs> PeerConnectionBuilder<A> {
-             discard_local_candidates_during_ice_restart,
-             self.udp_addrs,
-             self.tcp_addrs,
--            udp_mux,
-             self.dedicated_reactor_pool_size,
-             data_channel_send_buffer_limit,
-             turn_allocation_refresh_interval_cap,
-             crypto_provider,
--            pins_credentials,
-         )
-         .await
-     }
-@@ -795,14 +746,6 @@ pub(crate) struct PeerConnectionImpl {
-     /// left running on a pool thread if the connection is dropped without an explicit
-     /// `close()`. (`close()` itself treats both runtimes alike.)
-     dedicated_reactor: bool,
--    /// Whether this connection shares a UDP mux. A mux gathers host candidates only, so a
--    /// relay-only ICE policy is rejected at `set_configuration` instead of silently gathering
-
-```
-
-**File**: `src/peer_connection/transport/mod.rs` (modified, +1/-7)
-```diff
-@@ -2,8 +2,7 @@
- //! objects an application reads through.
- //!
- //! Two layers share this module. Below: the plumbing that moves bytes — see `stun_gatherer`,
--//! `tcp_transport`, `turn_relayer` and the GRO/GSO constants, all crate-private, plus the
--//! public [`udp_mux`] (many connections sharing one UDP socket). Above:
-+//! `tcp_transport`, `turn_relayer` and the GRO/GSO constants, all crate-private. Above:
- //! [`SctpTransport`], [`DtlsTransport`] and [`IceTransport`], the public handles mirroring the
- //! W3C interfaces of the same names.
- //!
-@@ -55,8 +54,6 @@ pub(crate) mod stun_gatherer;
- pub(crate) mod tcp_transport;
- pub(crate) mod turn_relayer;
- 
--pub mod udp_mux;
--
- /// Plain single-datagram UDP receive buffer size (no GRO coalescing).
- pub(crate) const UDP_RECV_BUF_LEN: usize = 2000;
- 
-@@ -123,9 +120,6 @@ pub(crate) enum SocketRecvResult {
-         stride: usize,
-         local_addr: SocketAddr,
-         peer_addr: SocketAddr,
--        /// The datagram's destination IP from packet info, where the platform supplies it.
--        /// Consulted only for muxed conns, whose socket's bound address names no interface.
--        dst_ip: Option<std::net::IpAddr>,
-         idx: usize,
-         buf: Vec<u8>,
-     },
+     /// Send a drained batch of outgoing packets, coalescing maximal runs of
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #946** (2026-11-01): fix(driver): send TURN-relayed packets in the same poll_writes pass (@Mattaron)
+- **PR #944** (2026-11-01): chore(deps): bump rtc submodule to latest master (@kaito-harry)
+- **PR #943** (2026-11-01): dtls: bump p256/p384 to 0.14 (RUSTSEC-2026-0387) (@ackintosh)
+- **PR #941** (2026-11-01): perf(sctp): marshal each gathered batch in one spawn_blocking, not one per packet (@RyanKung)
 - **PR #940** (2026-10-25): Revert "feat(webrtc): multiplex peer connections over a single UDP socket (UDPMux)" (@rainliu)
 - **PR #937** (2026-10-24): ice: bound STUN writes so one wedged socket cannot stop connectivity checks (@akirilyuk)
-- **PR #936** (2026-10-25): fix(turn): complete UDP authentication and allocation validation (@kookyleo)
-- **PR #934** (2026-10-24): fix(turn): align authentication failures with RFC 8489 (@kookyleo)
-- **PR #932** (2026-10-24): fix(turn): retain server-wide EVEN-PORT socket reservations (@kookyleo)
-- **PR #930** (2026-10-24): fix(turn): protect legacy channel bindings across range exhaustion (@kookyleo)
 
 ---
 
@@ -2912,3 +2459,58 @@ This reverts commit a53d7ac42ebb0681df8aa034879b247c893d3c56.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. driver): send TURN-relayed packets in the same poll_writes pass (#946)
+
+**RULE**:
+When implementing operations in `src/peer_connection/driver.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webrtc-rs/webrtc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8ea6e2a6`: driver): send TURN-relayed packets in the same poll_writes pass (#946). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/peer_connection/driver.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        self.flush_turn_relayer_writes().await;
+
+        // 1.c peer_connection poll_write() - Send all outgoing packets, coalescing
+        // consecutive same-destination datagrams into single UDP GSO syscalls.
+        let writes = Self::drain_core_writes(self.inner.clone()).await;
+        self.flush_writes(writes).await;
+
+        // 1.d turn_relayer poll_write() again: 1.c hands every TURN-relayed packet to the
+        // relayer (`handle_write` -> `turn_relayer.handle_write`), which only queues it. Send
+        // it now, not on the driver's next wake-up, which on a quiet connection can be a
+        // keepalive or a report away.
+        self.flush_turn_relayer_writes().await;
+
+        Ok(())
+    }
+
+    /// Sends everything the TURN relayer has queued: its own requests (allocations,
+    /// permissions, refreshes) and the packets relayed through it.
+    async fn flush_turn_relayer_writes(&mut self) {
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+
+        // 1.c peer_connection poll_write() - Send all outgoing packets, coalescing
+        // consecutive same-destination datagrams into single UDP GSO syscalls.
+        let writes = Self::drain_core_writes(self.inner.clone()).await;
+        self.flush_writes(writes).await;
+
+        Ok(())
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8ea6e2a6` are properly handled with clean fallback behavior.

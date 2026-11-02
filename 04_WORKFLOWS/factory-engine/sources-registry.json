@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T14:39:30.939Z",
-    "lastVerified": "2026-11-02T14:39:30.939Z",
+    "lastChecked": "2026-11-02T14:46:40.284Z",
+    "lastVerified": "2026-11-02T14:46:40.284Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -244,22 +244,21 @@
     "revisionIdentifier": "3a8f3f35"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T02:22:55.983Z",
-    "lastVerified": "2026-11-01T02:22:55.983Z",
+    "lastChecked": "2026-11-02T14:46:35.953Z",
+    "lastVerified": "2026-11-02T14:46:35.953Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "d7d943faefebf55ae167241b032943089c1e8132948e70fe8eb37e9e592da436",
+    "contentHash": "f54b10af8044ea5ae0af167e37bf176f12d5fe6e05f6d36cf492f0a3e7e6f1a7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "cc94be6a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1715,22 +1714,21 @@
     "lastVerified": "2026-10-31T20:53:12.962Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "tfhe-rs",
+    "name": "zama-ai/tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T23:22:26.597Z",
-    "lastVerified": "2026-10-31T23:22:26.597Z",
+    "lastChecked": "2026-11-02T14:46:30.071Z",
+    "lastVerified": "2026-11-02T14:46:30.071Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
+    "contentHash": "4c4018304db74767e9f07f3893b8c5c92a57d8b474140ad60700e73cc85d2faa",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "68dbde41"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -3118,14 +3116,14 @@
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T11:53:42.637Z",
-    "lastVerified": "2026-10-31T11:53:42.637Z",
+    "lastChecked": "2026-11-02T14:46:33.190Z",
+    "lastVerified": "2026-11-02T14:46:33.190Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "db230c468ae415d4dbdabbed3be2ff0d44d03f1e3be33bd5df082790ad7f3c98",
+    "contentHash": "44521c83b21af06fcc29d2104af52dcc6abddeb7c41f26b96f8cf52d1bbfcd18",
     "promotedRulesCount": 1,
-    "recentFixesCount": 21,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4622,9 +4620,9 @@
   "nitrictech-nitric": {
     "name": "nitric",
     "officialUrl": "https://github.com/nitrictech/nitric",
-    "lastChecked": "2026-10-31T12:39:31.439Z",
+    "lastChecked": "2026-11-02T14:46:23.253Z",
     "revisionIdentifier": "8b1be250",
-    "lastVerified": "2026-10-31T12:39:31.439Z"
+    "lastVerified": "2026-11-02T14:46:23.253Z"
   },
   "qovery-replibyte": {
     "name": "Replibyte",
@@ -4830,11 +4828,21 @@
     "lastVerified": "2026-10-31T15:29:49.572Z"
   },
   "webrtc-rs-webrtc": {
-    "name": "webrtc",
+    "name": "webrtc-rs/webrtc",
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
-    "lastChecked": "2026-10-31T07:27:47.535Z",
-    "revisionIdentifier": "1c07e9f0",
-    "lastVerified": "2026-10-31T07:27:47.535Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-02T14:46:20.131Z",
+    "lastVerified": "2026-11-02T14:46:20.131Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-webrtc-rs-webrtc",
+    "contentHash": "97038f63f1bdec12cc22c28534bed71b7b5503540db836a204e2cb4da3eebac8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-openai-gpt-oss-20b": {
     "name": "openai/gpt-oss-20b",
@@ -8841,9 +8849,9 @@
   "istifano-seo-auditor": {
     "name": "seo-auditor",
     "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
-    "lastChecked": "2026-10-29T01:49:50.059Z",
+    "lastChecked": "2026-11-02T14:46:18.108Z",
     "revisionIdentifier": "87ba51e6",
-    "lastVerified": "2026-10-29T01:49:50.059Z"
+    "lastVerified": "2026-11-02T14:46:18.108Z"
   },
   "tableproapp-tablepro": {
     "name": "TableProApp/TablePro",
@@ -9756,9 +9764,9 @@
   "hi-manshu-charty": {
     "name": "charty",
     "officialUrl": "https://github.com/hi-manshu/charty",
-    "lastChecked": "2026-10-30T05:01:14.072Z",
+    "lastChecked": "2026-11-02T14:46:20.645Z",
     "revisionIdentifier": "c7ba0b05",
-    "lastVerified": "2026-10-30T05:01:14.072Z"
+    "lastVerified": "2026-11-02T14:46:20.645Z"
   },
   "crawlcove-crawlcove-robots-txt-tester": {
     "name": "crawlcove-robots-txt-tester",

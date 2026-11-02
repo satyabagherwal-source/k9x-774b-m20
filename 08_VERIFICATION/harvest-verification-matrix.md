@@ -6801,3 +6801,7 @@
 | `CYCLE-20261102-Y86S` | `2026-11-02T14:32:10.996Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6409` | Yes (`236fbd79...`) |
 | `CYCLE-20261102-7B8X` | `2026-11-02T14:39:14.865Z` | `telemt/telemt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6410` | Yes (`0ec52901...`) |
 | `CYCLE-20261102-7LO7` | `2026-11-02T14:39:28.375Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6411` | Yes (`8fca4bcf...`) |
+| `CYCLE-20261102-GH8Y` | `2026-11-02T14:46:22.546Z` | `webrtc-rs/webrtc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6412` | Yes (`97038f63...`) |
+| `CYCLE-20261102-GOCJ` | `2026-11-02T14:46:31.747Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6413` | Yes (`4c401830...`) |
+| `CYCLE-20261102-GQC5` | `2026-11-02T14:46:34.325Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6414` | Yes (`44521c83...`) |
+| `CYCLE-20261102-GSYY` | `2026-11-02T14:46:37.738Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6415` | Yes (`f54b10af...`) |

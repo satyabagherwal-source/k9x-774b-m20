@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "cc94be6a",
+    "sourceVersion": "8be1e442",
     "license": "NOASSERTION",
-    "contentHash": "d7d943faefebf55ae167241b032943089c1e8132948e70fe8eb37e9e592da436",
-    "lastHarvestedAt": "2026-11-01T00:49:42.733Z",
+    "contentHash": "f54b10af8044ea5ae0af167e37bf176f12d5fe6e05f6d36cf492f0a3e7e6f1a7",
+    "lastHarvestedAt": "2026-11-02T14:46:37.742Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "c7abfced",
+    "sourceVersion": "b003bd83",
     "license": "Apache-2.0",
-    "contentHash": "db230c468ae415d4dbdabbed3be2ff0d44d03f1e3be33bd5df082790ad7f3c98",
-    "lastHarvestedAt": "2026-10-31T11:53:43.330Z",
+    "contentHash": "44521c83b21af06fcc29d2104af52dcc6abddeb7c41f26b96f8cf52d1bbfcd18",
+    "lastHarvestedAt": "2026-11-02T14:46:34.328Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "68dbde41",
+    "sourceVersion": "a834a81e",
     "license": "NOASSERTION",
-    "contentHash": "1ae424e8c203d5f170ec97d6bc148551fa6641638c846a5cf41b37f22d45abf4",
-    "lastHarvestedAt": "2026-10-30T19:35:57.639Z",
+    "contentHash": "4c4018304db74767e9f07f3893b8c5c92a57d8b474140ad60700e73cc85d2faa",
+    "lastHarvestedAt": "2026-11-02T14:46:31.751Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -5043,10 +5043,10 @@
     "repository": "webrtc-rs/webrtc",
     "platform": "github",
     "sourceUrl": "https://github.com/webrtc-rs/webrtc",
-    "sourceVersion": "1c07e9f0",
+    "sourceVersion": "8ea6e2a6",
     "license": "Apache-2.0",
-    "contentHash": "f0fda1bbcc2e63941496d6388dcbed2ff9cdd4440b9bb61c974f769a43b42da8",
-    "lastHarvestedAt": "2026-10-27T11:34:17.870Z",
+    "contentHash": "97038f63f1bdec12cc22c28534bed71b7b5503540db836a204e2cb4da3eebac8",
+    "lastHarvestedAt": "2026-11-02T14:46:22.550Z",
     "learningId": "learn-github-webrtc-rs-webrtc"
   },
   "midudev-preguntas-entrevista-react": {
