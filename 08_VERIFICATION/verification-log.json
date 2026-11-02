@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-GQW4",
-    "timestamp": "2026-10-30T20:59:29.188Z",
-    "repository": "rustls/rustls",
-    "learningId": "learn-github-rustls-rustls",
-    "contentHash": "f9b56a9b6bd5094f606e8687fd216fa392f1b4d94b9101f999a19981544126cd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-PMFC",
-    "timestamp": "2026-10-30T21:06:23.304Z",
-    "repository": "sweetpad-dev/sweetpad",
-    "learningId": "learn-github-sweetpad-dev-sweetpad",
-    "contentHash": "cf3a7556cc3d45c0608119c8b270dbea523da7aeb8290dddae94f72705834f7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-PONU",
-    "timestamp": "2026-10-30T21:06:26.202Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "f648c2a9c4d820451af43bc75f61667ef0a2e8ea4498dcdb95d8987fed81bfd8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-Y7ZO",
     "timestamp": "2026-10-30T21:13:04.500Z",
     "repository": "apache/arrow",
@@ -7492,6 +7447,51 @@
     "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-Z7CU",
+    "timestamp": "2026-11-02T15:00:56.190Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-Z8RI",
+    "timestamp": "2026-11-02T15:00:58.014Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "85b804010015fb460a60bd03a061c3c6ee99f0ef8693fe2e893bb428d317efa8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-Z8SU",
+    "timestamp": "2026-11-02T15:00:58.062Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

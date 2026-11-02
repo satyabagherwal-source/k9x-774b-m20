@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "bd27ded7",
+    "sourceVersion": "13944b95",
     "license": "Apache-2.0",
-    "contentHash": "236fbd790b8681a1ffc30049ad96da9ce1bede306f73dccd7e3c055d3cdd86bd",
-    "lastHarvestedAt": "2026-11-02T14:32:11.000Z",
+    "contentHash": "85b804010015fb460a60bd03a061c3c6ee99f0ef8693fe2e893bb428d317efa8",
+    "lastHarvestedAt": "2026-11-02T15:00:58.021Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "2299d94b",
+    "sourceVersion": "77aa5579",
     "license": "NOASSERTION",
-    "contentHash": "195442d205a7b20ef092c423fe5094c984884bd08d6fffa5680394128c6caf2f",
-    "lastHarvestedAt": "2026-10-30T19:19:26.297Z",
+    "contentHash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
+    "lastHarvestedAt": "2026-11-02T15:00:58.072Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "ef31e883",
+    "sourceVersion": "9b0aad96",
     "license": "Apache-2.0",
-    "contentHash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
-    "lastHarvestedAt": "2026-10-30T23:51:45.576Z",
+    "contentHash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
+    "lastHarvestedAt": "2026-11-02T15:00:56.194Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

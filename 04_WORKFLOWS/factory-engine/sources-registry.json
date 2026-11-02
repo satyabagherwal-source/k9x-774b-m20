@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T14:53:49.453Z",
-    "lastVerified": "2026-11-02T14:53:49.453Z",
+    "lastChecked": "2026-11-02T15:01:00.609Z",
+    "lastVerified": "2026-11-02T15:01:00.609Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -430,14 +430,14 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T14:32:09.922Z",
-    "lastVerified": "2026-11-02T14:32:09.922Z",
+    "lastChecked": "2026-11-02T15:00:57.667Z",
+    "lastVerified": "2026-11-02T15:00:57.667Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "236fbd790b8681a1ffc30049ad96da9ce1bede306f73dccd7e3c055d3cdd86bd",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "contentHash": "85b804010015fb460a60bd03a061c3c6ee99f0ef8693fe2e893bb428d317efa8",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1892,22 +1892,21 @@
     "revisionIdentifier": "a1920121"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T23:42:41.989Z",
-    "lastVerified": "2026-10-31T23:42:41.989Z",
+    "lastChecked": "2026-11-02T15:00:54.597Z",
+    "lastVerified": "2026-11-02T15:00:54.597Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
+    "contentHash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 14,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ef31e883"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j",
@@ -3222,22 +3221,21 @@
     "lastVerified": "2026-10-31T23:49:48.181Z"
   },
   "lioensky-vcptoolbox": {
-    "name": "VCPToolBox",
+    "name": "lioensky/VCPToolBox",
     "officialUrl": "https://github.com/lioensky/VCPToolBox",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-10-31T12:09:00.202Z",
-    "lastVerified": "2026-10-31T12:09:00.202Z",
+    "lastChecked": "2026-11-02T15:00:57.676Z",
+    "lastVerified": "2026-11-02T15:00:57.676Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "195442d205a7b20ef092c423fe5094c984884bd08d6fffa5680394128c6caf2f",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "contentHash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2299d94b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -4740,9 +4738,9 @@
   "openyurtio-openyurt": {
     "name": "openyurt",
     "officialUrl": "https://github.com/openyurtio/openyurt",
-    "lastChecked": "2026-10-31T12:53:45.203Z",
+    "lastChecked": "2026-11-02T15:00:45.566Z",
     "revisionIdentifier": "83ce3925",
-    "lastVerified": "2026-10-31T12:53:45.203Z"
+    "lastVerified": "2026-11-02T15:00:45.566Z"
   },
   "cozodb-cozo": {
     "name": "cozo",
@@ -4896,9 +4894,9 @@
   "smol-rs-smol": {
     "name": "smol",
     "officialUrl": "https://github.com/smol-rs/smol",
-    "lastChecked": "2026-10-31T07:53:33.711Z",
+    "lastChecked": "2026-11-02T15:00:38.058Z",
     "revisionIdentifier": "41579301",
-    "lastVerified": "2026-10-31T07:53:33.711Z"
+    "lastVerified": "2026-11-02T15:00:38.058Z"
   },
   "hf-bigscience-bloom": {
     "name": "bigscience/bloom",
@@ -8873,9 +8871,9 @@
   "code-forge-io-seo-tools": {
     "name": "seo-tools",
     "officialUrl": "https://github.com/code-forge-io/seo-tools",
-    "lastChecked": "2026-10-29T02:00:05.148Z",
+    "lastChecked": "2026-11-02T15:00:40.470Z",
     "revisionIdentifier": "e1e672b3",
-    "lastVerified": "2026-10-29T02:00:05.148Z"
+    "lastVerified": "2026-11-02T15:00:40.470Z"
   },
   "twostraws-controlroom": {
     "name": "ControlRoom",
@@ -9778,9 +9776,9 @@
   "shifthackz-stable-diffusion-kmp": {
     "name": "Stable-Diffusion-KMP",
     "officialUrl": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
-    "lastChecked": "2026-10-30T05:09:48.832Z",
+    "lastChecked": "2026-11-02T15:00:42.951Z",
     "revisionIdentifier": "4b060c7e",
-    "lastVerified": "2026-10-30T05:09:48.832Z"
+    "lastVerified": "2026-11-02T15:00:42.951Z"
   },
   "crawlcove-crawlcove-sitemap-validator": {
     "name": "crawlcove-sitemap-validator",

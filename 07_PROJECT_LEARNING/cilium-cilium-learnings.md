@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `ef31e883`  
+> **Source Version**: `9b0aad96`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T23:51:44.943Z  
+> **Timestamp**: 2026-11-02T15:00:55.423Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T23:51:44.936Z  
+> **Harvest Timestamp**: 2026-11-02T15:00:54.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25740 stars
+- **Stars / Engagement**: 25759 stars
 
 ---
 
@@ -297,7 +297,7 @@ func (m *BgpRoutePolicyStatement) contextValidateMatchFamilies(ctx context.Conte
 		if m.MatchFamilies[i] != nil {
 
 			if typeutils.IsZero(m.MatchFamilies[i]) { // not required
-				return nil
+				continue
 			}
 
 			if err := m.MatchFamilies[i].ContextValidate(ctx, formats); err != nil {
@@ -1259,14 +1259,13 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #49715** (2026-10-30): **bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity**
-  *Symptoms*: CIDR_IDENTITY_RANGE_END evaluated to 0x100FFFF, while the allocator can hand out CIDR identities up to identity.MaxLocalIdentity (0x1FFFFFF). Identities above the BPF limit would not be recognized by identity_is_cidr_range() and, as a consequence, by identity_is_world().  Align the constant with identity.MaxLocalIdentity.  Fixes: #49613.
+- **Issue #49771** (2026-11-02): **[Test, do not merge] Verify concurrent ready-PR limit [skip ci]**
+  *Symptoms*: Temporary verification of the repository's concurrent open-PR limit, requested by lexfrei. This PR is not intended for review or merge and will be closed immediately if creation succeeds.  AI disclosure: the test branch and this PR were prepared by an AI assistant under my explicit instruction.  No functional change.
   **Post-Mortem & Fix Analysis**:
-  > /test
-  > > I did a small proof-of-concept doing the above that a while ago. Let me try and see whether I can dust it of and bring it into a PR-ready state.  Let me know when/if you manage to open it, I'm curious! I don't know if what you've been working on would tackle only a subset of BPF macros, but yeah, there are a lot of things that would be lovely to have auto-generated/synced so that they won't drift anymore.  Thanks so much for the review btw 🙏🏼  
+  > Failed to retrieve pull request: pull request is not open
 
-- **Issue #49713** (2026-10-30): **cni-chaining: extend Documentation and warn when lacking route MTU**
-  *Symptoms*: Aligned with what has been done previously for WireGuard, here we:  1. Extend documentation specific for egress gateway. 2. Extend general cni-chaining documentation mentioning features (so far explicitly supported) that would require this to be enabled. 3. Add an Agent warning in case the parameter is not provided.  I've considered making it default and not opt-in, but in chaining mode the other plugin creates the pod's netns, veth and routes, and Cilium rewriting routes there can conflict with the plugin's own MTU management. Other minor reasons are that we've limited testing of chaining in CI (only awscni).  Fixes: #34493.
+- **Issue #49770** (2026-11-02): **renovate: Hold the docs-builder Python minor version**
+  *Symptoms*: The docs-builder image runs the Python release that Read the Docs uses to build the documentation, cf. Documentation/.readthedocs.yaml. Since the Dockerfile moved under images/, Renovate tracks its Python base image and bumped it to 3.15 in #49744 [1], while Read the Docs still lists 3.14 as its newest Python. Renovate puts that bump in the auto-merge-trusted-deps group, which merges on its own once the checks pass.  This commit disables major and minor updates of that image. Digest updates still flow, and we bump Python by hand together with .readthedocs.yaml and Documentation/runtime.txt.  This PR was prepared with AIL:3. I personally checked a Renovate lookup dry run before and after the change.  Fixes: 76cc4f5dec09 ("images: Move docs-builder into images/ directory") 1: https://github.com/cilium/cilium/pull/49744 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1283,267 +1282,1113 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ef31e883` (2026-10-29)
-**Commit Message**: hubble: fix deleted-pod metrics cleanup with dynamic configuration
+### Incident Patch 1: `d9cf8713` (2026-11-02)
+**Commit Message**: docs-builder: Find the versionwarning directory at build time
 
-Signed-off-by: Alex Castilio dos Santos <[REDACTED_EMAIL]>
+The sphinx-version-warning extension writes its data file into its own
+package directory when Sphinx loads the configuration, so the Dockerfile
+makes that directory writable for the non-root docs containers. The
+path names the Python minor version, so the bump to Python 3.15 left it
+at python3.14 and the docs check failed at update-redirects:
 
-**File**: `pkg/hubble/metrics/dynamic_flow_processor.go` (modified, +9/-0)
+  sphinx.errors.ExtensionError: Handler <function generate_versionwarning_data_json at 0x707586a3ceb0> for event 'config-inited' threw an exception (exception: [Errno 13] Permission denied: '/usr/local/lib/python3.15/site-packages/versionwarning/_static/data')
+
+This commit takes the directory from the installed versionwarning
+package, so a Python bump only has to change the FROM line.
+
+This commit was prepared with AIL:3. I personally checked
+update-redirects against docs-builder images built on Python 3.14 and
+3.15.
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `images/docs-builder/Dockerfile` (modified, +2/-1)
 ```diff
-@@ -13,6 +13,7 @@ import (
- 
- 	flowpb "github.com/cilium/cilium/api/v1/flow"
- 	"github.com/cilium/cilium/pkg/hubble/metrics/api"
-+	"github.com/cilium/cilium/pkg/k8s/types"
- 	"github.com/cilium/cilium/pkg/lock"
- 	"github.com/cilium/cilium/pkg/logging/logfields"
- )
-@@ -88,9 +89,17 @@ func NewDynamicFlowProcessor(reg *prometheus.Registry, logger *slog.Logger, conf
- 	}
- 	watcher := NewMetricConfigWatcher(logger, configFilePath, dynamicFlowProcessor.onConfigReload)
- 	dynamicFlowProcessor.watcher = watcher
-+	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
- 	return dynamicFlowProcessor
- }
- 
-+func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
-+	d.mutex.RLock()
-+	defer d.mutex.RUnlock()
-+
-+	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
-+}
-+
- func (d *DynamicFlowProcessor) onConfigReload(ctx context.Context, hash uint64, config api.Config) {
- 	d.mutex.Lock()
- 	defer d.mutex.Unlock()
+@@ -35,4 +35,5 @@ ENV MAKE_GIT_REPO_SAFE=1
+ ## Workaround odd behaviour of sphinx versionwarning extension. It wants to
+ ## write runtime data inside a system directory.
+ ## We do rely on this extension, so we cannot just drop it.
+-RUN install -m 0777 -d /usr/local/lib/python3.14/site-packages/versionwarning/_static/data
++RUN dir="$(python3 -c 'import versionwarning; print(versionwarning.__path__[0])')" \
++    && install -m 0777 -d "${dir}/_static/data"
 ```
 
-**File**: `pkg/hubble/metrics/metrics.go` (modified, +11/-9)
+---
+
+### Incident Patch 2: `9b0aad96` (2026-11-02)
+**Commit Message**: Revert "routing/reconciler: Add script-based tests"
+
+This reverts commit db4c861c34bba61b9b6cca48d0228a358745f4e3.
+
+Since these script tests merged on 2026-10-29, Runtime Test
+(privileged) has failed in 22 jobs, 5 of them among the 43 push and
+scheduled runs on main. In each failure, link/set gives the dummy ENI
+link the MAC 02:ca:fe:00:00:01 but link/list later shows
+da:75:58:ec:cf:a7, the same address every time. The ENI device
+configurator never finds the link, the scenario waits 636 s for its
+address, and the cleanup leaves the link behind for the next scenario:
+
+  refusing to delete link "cilium-rr-test" with unexpected MAC da:75:58:ec:cf:a7
+
+This commit reverts the tests until the dummy link keeps its MAC. The
+unit tests of the routing package still cover the individual netlink
+operations and reconciler transitions in the meantime.
+
+This commit was prepared with AIL:3. I personally checked the logs of
+the failing CI jobs.
+
+Signed-off-by: André Martins <[REDACTED_EMAIL]>
+
+**File**: `pkg/datapath/linux/routing/reconciler/script_test.go` (removed, +0/-543)
 ```diff
-@@ -32,6 +32,7 @@ import (
- type CiliumEndpointDeletionHandler struct {
- 	gracefulPeriod time.Duration
- 	queue          workqueue.TypedDelayingInterface[*types.CiliumEndpoint]
-+	cleanup        func(*types.CiliumEndpoint)
- }
- 
- var (
-@@ -66,26 +67,27 @@ var (
- )
- 
- func ProcessCiliumEndpointDeletion(pod *types.CiliumEndpoint) error {
--	if endpointDeletionHandler != nil && EnabledMetrics != nil {
-+	if endpointDeletionHandler != nil {
- 		endpointDeletionHandler.queue.AddAfter(pod, endpointDeletionHandler.gracefulPeriod)
- 	}
- 	return nil
- }
- 
--func initEndpointDeletionHandler() {
-+func initEndpointDeletionHandler(cleanup func(*types.CiliumEndpoint)) {
- 	endpointDeletionHandler = &CiliumEndpointDeletionHandler{
- 		gracefulPeriod: time.Minute,
- 		queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
-+		cleanup:        cleanup,
- 	}
+@@ -1,543 +0,0 @@
+-// SPDX-License-Identifier: Apache-2.0
+-// Copyright Authors of Cilium
 -
-+	handler := endpointDeletionHandler
- 	go func() {
- 		for {
--			endpoint, quit := endpointDeletionHandler.queue.Get()
-+			endpoint, quit := handler.queue.Get()
- 			if quit {
- 				return
- 			}
--			api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
--			endpointDeletionHandler.queue.Done(endpoint)
-+			handler.cleanup(endpoint)
-+			handler.queue.Done(endpoint)
- 		}
- 	}()
- }
-@@ -103,7 +105,9 @@ func InitMetrics(logger *slog.Logger, reg *prometheus.Registry, enabled *api.Con
- 	reg.MustRegister(RequestsTotal)
- 	reg.MustRegister(RequestDuration)
- 
--	initEndpointDeletionHandler()
-+	initEndpointDeletionHandler(func(endpoint *types.CiliumEndpoint) {
-+		api.ProcessCiliumEndpointDeletion(endpoint, EnabledMetrics)
-+	})
- 
- 	return nil
- }
-@@ -114,8 +118,6 @@ func InitHubbleInternalMetrics(reg *prometheus.Registry, grpcMetrics *grpc_prome
- 	reg.MustRegister(RequestsTotal)
- 	reg.MustRegister(RequestDuration)
- 
--	initEndpointDeletionHandler()
+-package reconciler_test
 -
- 	return nil
- }
- 
+-import (
+-	"context"
+-	"errors"
+-	"fmt"
+-	"log/slog"
+-	"maps"
+-	"net/netip"
+-	"os"
+-	"strings"
+-	"testing"
+-
+-	"github.com/cilium/hive/cell"
+-	"github.com/cilium/hive/hivetest"
+-	"github.com/cilium/hive/script"
+-	"github.com/cilium/hive/script/scripttest"
+-	"github.com/cilium/statedb"
+-	"github.com/spf13/pflag"
+-	"github.com/stretchr/testify/assert"
+-	"github.com/stretchr/testify/require"
+-	"github.com/vishvananda/netlink"
+-	"golang.org/x/sys/unix"
+-
+-	"github.com/cilium/cilium/api/v1/models"
+-	agentK8s "github.com/cilium/cilium/daemon/k8s"
+-	awsAgent "github.com/cilium/cilium/pkg/aws/agent"
+-	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
+-	fakeipsec "github.com/cilium/cilium/pkg/datapath/linux/ipsec/fake"
+-	linuxrouting "github.com/cilium/cilium/pkg/datapath/linux/routing"
+-	routingReconciler "github.com/cilium/cilium/pkg/datapath/linux/routing/reconciler"
+-	"github.com/cilium/cilium/pkg/datapath/linux/safenetlink"
+-	"github.com/cilium/cilium/pkg/datapath/linux/sysctl"
+-	sysctlFake "github.com/cilium/cilium/pkg/datapath/linux/sysctl/fake"
+-	fakeloader "github.com/cilium/cilium/pkg/datapath/loader/fake"
+-	datapathTables "github.com/cilium/cilium/pkg/datapath/tables"
+-	"github.com/cilium/cilium/pkg/endpoint"
+-	fakeendpoint "github.com/cilium/cilium/pkg/endpoint/fake"
+-	"github.com/cilium/cilium/pkg/endpointmanager"
+-	"github.com/cilium/cilium/pkg/endpointstate"
+-	fqdnRules "github.com/cilium/cilium/pkg/fqdn/rules"
+-	"github.com/cilium/cilium/pkg/hive"
+-	"github.com/cilium/cilium/pkg/identity/identitymanager"
+-	"github.com/cilium/cilium/pkg/ipam"
+-	ipamcell "github.com/cilium/cilium/pkg/ipam/cell"
+-	ipamOption "github.com/cilium/cilium/pkg/ipam/option"
+-	"github.com/cilium/cilium/pkg/ipmasq"
+-	k8sClientTest "github.com/cilium/cilium/pkg/k8s/client/testutils"
+-	k8sTables "github.com/cilium/cilium/pkg/k8s/tables"
+-	"github.com/cilium/cilium/pkg/k8s/watchers"
+-	"github.com/cilium/cilium/pkg/maps/ctmap"
+-	"github.com/cilium/cilium/pkg/maps/lxcmap"
+-	"github.com/cilium/cilium/pkg/metrics"
+-	monitorAgent "github.com/cilium/cilium/pkg/monitor/agent"
+-	"github.com/cilium/cilium/pkg/mtu"
+-	mtuFake "github.com/cilium/cilium/pkg/mtu/fake"
+-	"github.com/cilium/cilium/pkg/node"
+-	nodeFake "github.com/cilium/cilium/pkg/node/fake"
+-	nodeTypes "github.com/cilium/cilium/pkg/node/types"
+-	"github.com/cilium/cilium/pkg/nodediscovery"
+-	"github.com/cilium/cilium/pkg/option"
+-	"github.com/cilium/cilium/pkg/policy"
+-	"github.com/cilium/cilium/pkg/promise"
+-	"github.com/cilium/cilium/pkg/testutils"
+-	testidentity "github.com/cilium/cilium/pkg/testutils/identity"
+-	testmonitor "github.com/cilium/cilium/pkg/testutils/monitor"
+-	testpolicy "github.com/cilium/cilium/pkg/testutils/policy"
+-	"github.com/cilium/cilium/pkg/testutils/scriptnet"
+-	"github.com/cilium/cilium/pkg/time"
+-	fakewireguard "github.com/cilium/cilium/pkg/wireguard/fake"
+-)
+-
+-const (
+-	testENILinkName = "cilium-rr-test"
+-	testENILinkMAC  = "02:ca:fe:00:00:01"
+-)
+-
+-func TestPrivilegedScript(t *testing.T) {
+-	testutils.PrivilegedTest(t)
+-
+-	defer testutils.GoleakVerifyNone(t,
+-		// Endpoint-manager policy-map pressure triggers live for the process lifetime.
+-		// Disable them to avoid a false negative from Goleak.
+-		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/trigger.(*Trigger).waiter"),
+-		// ENI setup workers are not managed by Hive via Jobs and can still be
+-		// sleeping between device lookups when the test ends.
+-		testutils.GoleakIgnoreAnyFunction("github.com/cilium/cilium/pkg/aws/agent.setupENIDevices"),
+-	)
+-
+-	nodeTypes.SetName("test-node")
+-
+-	scripttest.Test(t,
+-		t.Context(),
+-		func(t testing.TB, args []string) *script.Engine {
+-			daemonCfg := daemonConfig(t, args)
+-			daemonCfg.StateDir = t.TempDir()
+-
+-			nsManager, err := scriptnet.NewNSManager(t)
+-			require.NoError(t, err, "NewNSManager")
+-
+-			// Keep the test in the process network namespace so asynchronous ENI
+-			// provider jobs operate on the links created by the script.
+-			require.NoError(t, nsManager.LockThreadAndInitialize(t, false), "LockThreadAndInitialize")
+-
+-			// Remove state left by an interrupted prior run, and register the same
+-			// cleanup in case this scenario fails before removing its state.
+-			registerTestCleanup(t)
+-
+-			restorerResolver, restorerPromise := promise.New[endpointstate.Restorer]()
+-			restorerResolver.Resolve(fakeRestorer{})
+-
+-			var (
+-				initializer   *ipamcell.IPAMInitializer
+-				ipamManager   *ipam.IPAM
+-				epManager     endpointmanager.EndpointManager
+-				routingWaiter endpointmanager.EndpointRoutingWaiter
+-			)
+-
+-			h := hive.New(
+-				k8sClientTest.FakeClientCell(),
+-				agentK8s.ResourcesCell,
+-				k8sTables.TablesCell,
+-				datapathTables.DirectRoutingDeviceCell,
+-				endpointmanager.TestCell,
+-
+-				// Exercise the production ENI pool accessor, device configurator,
+-				// native-routing-CIDR ob
 ```
 
-**File**: `pkg/hubble/metrics/metrics_test.go` (modified, +202/-1)
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/dual-stack-endpoint-lifecycle.txtar` (removed, +0/-88)
 ```diff
-@@ -10,6 +10,8 @@ import (
- 	"log/slog"
- 	"net/http"
- 	"net/http/httptest"
-+	"os"
-+	"path/filepath"
- 	"sort"
- 	"testing"
- 	"time"
-@@ -34,25 +36,223 @@ import (
+@@ -1,88 +0,0 @@
+-#! --family=ipv4 --family=ipv6
+-
+-# Configure one dual-stack ENI as the operator would report it to the agent.
+-k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
+-
+-hive start
+-ipam/start
+-
+-# Wait for the production ENI device configurator before reconciling routing.
+-link/list
+-* stdout 'addr: 192[.]0[.]2[.]5/24'
+-stdout 'cilium-rr-test dummy <up[|>]'
+-stdout 'mtu: 1500'
+-
+-# Endpoint creation waits for both address families to be reconciled.
+-endpoint/add pod-a 192.0.2.10 2001:db8:1::/80
+-stdout --count=1 '^192[.]0[.]2[.]10$'
+-stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
+-
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
+-
+-rule/list --family=ipv6 --priority=20 --protocol=kernel
+-stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
+-
+-rule/list --family=ipv6 --priority=111 --protocol=kernel
+-stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
+-
+-route/list --table=11
+-stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
+-stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
+-stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
+-stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
+-
+-# Endpoint deletion removes both rule families but leaves the shared routes.
+-endpoint/del pod-a
+-
+-# Wait for asynchronous rule deletion without replaying endpoint/del.
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-* empty stdout
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-* empty stdout
+-
+-rule/list --family=ipv6 --priority=20 --protocol=kernel
+-* empty stdout
+-
+-rule/list --family=ipv6 --priority=111 --protocol=kernel
+-* empty stdout
+-
+-route/list --table=11
+-stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
+-stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
+-stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
+-stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
+-
+-hive stop
+-
+--- cilium-node.yaml --
+-apiVersion: cilium.io/v2
+-kind: CiliumNode
+-metadata:
+-  name: test-node
+-spec:
+-  eni: {}
+-status:
+-  eni:
+-    enis:
+-      eni-1:
+-        id: eni-1
+-        ip: 192.0.2.5
+-        mac: 02:ca:fe:00:00:01
+-        number: 1
+-        addresses:
+-        - 192.0.2.10
+-        ipv6-prefixes:
+-        - 2001:db8:1::/80
+-        subnet:
+-          id: subnet-1
+-          cidr: 192.0.2.0/24
+-        vpc:
+-          id: vpc-1
+-          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv4-endpoint-lifecycle.txtar` (removed, +0/-69)
+```diff
+@@ -1,69 +0,0 @@
+-#! --family=ipv4
+-
+-# Configure one ENI as the operator would report it to the agent.
+-k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
+-
+-hive start
+-ipam/start
+-
+-# Wait for the production ENI device configurator before reconciling routing.
+-link/list
+-* stdout 'addr: 192[.]0[.]2[.]5/24'
+-stdout 'cilium-rr-test dummy <up[|>]'
+-stdout 'mtu: 1500'
+-
+-# Endpoint creation installs both endpoint rules and the shared ENI routes.
+-endpoint/add pod-a 192.0.2.10
+-stdout '^192.0.2.10$'
+-
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
+-
+-route/list --table=11
+-stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
+-stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
+-
+-# Endpoint deletion removes its rules but leaves routes shared by the ENI.
+-endpoint/del pod-a
+-
+-# Wait for asynchronous rule deletion without replaying endpoint/del.
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-* empty stdout
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-* empty stdout
+-
+-route/list --table=11
+-stdout '192.0.2.1/32.*dev cilium-rr-test.*scope link.*table 11'
+-stdout '0.0.0.0/0.*via 192.0.2.1.*table 11'
+-
+-hive stop
+-
+--- cilium-node.yaml --
+-apiVersion: cilium.io/v2
+-kind: CiliumNode
+-metadata:
+-  name: test-node
+-spec:
+-  eni: {}
+-status:
+-  eni:
+-    enis:
+-      eni-1:
+-        id: eni-1
+-        ip: 192.0.2.5
+-        mac: 02:ca:fe:00:00:01
+-        number: 1
+-        addresses:
+-        - 192.0.2.10
+-        subnet:
+-          id: subnet-1
+-          cidr: 192.0.2.0/24
+-        vpc:
+-          id: vpc-1
+-          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/ipv6-endpoint-lifecycle.txtar` (removed, +0/-70)
+```diff
+@@ -1,70 +0,0 @@
+-#! --family=ipv6
+-
+-# Configure one ENI with an IPv6 delegated prefix as the operator would report it.
+-k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
+-
+-hive start
+-ipam/start
+-
+-# Wait for the production ENI device configurator before reconciling routing.
+-link/list
+-* stdout 'addr: 192[.]0[.]2[.]5/24'
+-stdout 'cilium-rr-test dummy <up[|>]'
+-stdout 'mtu: 1500'
+-
+-# Endpoint creation installs IPv6 endpoint rules and routes through the AWS
+-# link-local gateway.
+-endpoint/add pod-a 2001:db8:1::/80
+-stdout --count=1 '^2001:db8:1:[0-9a-f:]+$'
+-
+-rule/list --family=ipv6 --priority=20 --protocol=kernel
+-stdout --count=1 '^priority 20 from all to 2001:db8:1:[0-9a-f:]+/128 table main protocol kernel$'
+-
+-rule/list --family=ipv6 --priority=111 --protocol=kernel
+-stdout --count=1 '^priority 111 from 2001:db8:1:[0-9a-f:]+/128 to all table 11 protocol kernel$'
+-
+-route/list --table=11
+-stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
+-stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
+-
+-# Endpoint deletion removes its rules but leaves routes shared by the ENI.
+-endpoint/del pod-a
+-
+-# Wait for asynchronous rule deletion without replaying endpoint/del.
+-rule/list --family=ipv6 --priority=20 --protocol=kernel
+-* empty stdout
+-
+-rule/list --family=ipv6 --priority=111 --protocol=kernel
+-* empty stdout
+-
+-route/list --table=11
+-stdout 'fe80:ec2::1/128.*dev cilium-rr-test.*scope universe.*table 11'
+-stdout '::/0.*via fe80:ec2::1.*dev cilium-rr-test.*table 11'
+-
+-hive stop
+-
+--- cilium-node.yaml --
+-apiVersion: cilium.io/v2
+-kind: CiliumNode
+-metadata:
+-  name: test-node
+-spec:
+-  eni: {}
+-status:
+-  eni:
+-    enis:
+-      eni-1:
+-        id: eni-1
+-        ip: 192.0.2.5
+-        mac: 02:ca:fe:00:00:01
+-        number: 1
+-        ipv6-prefixes:
+-        - 2001:db8:1::/80
+-        subnet:
+-          id: subnet-1
+-          cidr: 192.0.2.0/24
+-        vpc:
+-          id: vpc-1
+-          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/reconciliation-failure.txtar` (removed, +0/-53)
+```diff
+@@ -1,53 +0,0 @@
+-#! --family=ipv4
+-
+-# Configure one ENI as the operator would report it to the agent.
+-k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
+-
+-hive start
+-ipam/start
+-
+-# Wait for the production ENI device configurator before reconciling routing.
+-link/list
+-* stdout 'addr: 192[.]0[.]2[.]5/24'
+-stdout 'cilium-rr-test dummy <up[|>]'
+-stdout 'mtu: 1500'
+-
+-# Losing the parent ENI keeps reconciliation failing. Bound the simulated
+-# request and assert its routing error without expiring the script context,
+-# so the following commands can still verify endpoint cleanup.
+-link/del cilium-rr-test
+-endpoint/add --timeout=5s --expect-error='interface with MAC 02:ca:fe:00:00:01 not found' pod-a 192.0.2.10
+-
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-empty stdout
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-empty stdout
+-
+-hive stop
+-
+--- cilium-node.yaml --
+-apiVersion: cilium.io/v2
+-kind: CiliumNode
+-metadata:
+-  name: test-node
+-spec:
+-  eni: {}
+-status:
+-  eni:
+-    enis:
+-      eni-1:
+-        id: eni-1
+-        ip: 192.0.2.5
+-        mac: 02:ca:fe:00:00:01
+-        number: 1
+-        addresses:
+-        - 192.0.2.10
+-        subnet:
+-          id: subnet-1
+-          cidr: 192.0.2.0/24
+-        vpc:
+-          id: vpc-1
+-          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/stale-rule-migration.txtar` (removed, +0/-66)
+```diff
+@@ -1,66 +0,0 @@
+-#! --family=ipv4
+-
+-# Configure one ENI as the operator would report it to the agent.
+-k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
+-
+-hive start
+-ipam/start
+-
+-# Wait for the production ENI device configurator before reconciling routing.
+-link/list
+-* stdout 'addr: 192[.]0[.]2[.]5/24'
+-stdout 'cilium-rr-test dummy <up[|>]'
+-stdout 'mtu: 1500'
+-
+-# Simulate an upgrade with an old destination-scoped egress rule. Endpoint
+-# creation replaces it with the desired unconditional rule.
+-rule/add --family=ipv4 --from=192.0.2.10/32 --to=192.0.2.0/24 --priority=111 --table=11 --protocol=kernel
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to 192[.]0[.]2[.]0/24 table 11 protocol kernel$'
+-
+-endpoint/add pod-a 192.0.2.10
+-stdout '^192.0.2.10$'
+-
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]10/32 table main protocol kernel$'
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-stdout --count=1 '^priority 111 from 192[.]0[.]2[.]10/32 to all table 11 protocol kernel$'
+-
+-endpoint/del pod-a
+-
+-# Wait for asynchronous rule deletion without replaying endpoint/del.
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-* empty stdout
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-* empty stdout
+-
+-hive stop
+-
+--- cilium-node.yaml --
+-apiVersion: cilium.io/v2
+-kind: CiliumNode
+-metadata:
+-  name: test-node
+-spec:
+-  eni: {}
+-status:
+-  eni:
+-    enis:
+-      eni-1:
+-        id: eni-1
+-        ip: 192.0.2.5
+-        mac: 02:ca:fe:00:00:01
+-        number: 1
+-        addresses:
+-        - 192.0.2.10
+-        subnet:
+-          id: subnet-1
+-          cidr: 192.0.2.0/24
+-        vpc:
+-          id: vpc-1
+-          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/datapath/linux/routing/reconciler/testdata/startup-garbage-collection.txtar` (removed, +0/-58)
+```diff
+@@ -1,58 +0,0 @@
+-#! --family=ipv4
+-
+-# Configure one ENI as the operator would report it to the agent.
+-k8s/add cilium-node.yaml
+-link/add cilium-rr-test dummy
+-link/set cilium-rr-test hwaddr=02:ca:fe:00:00:01 mtu=1400
+-
+-# Seed orphan rules before starting the reconciler.
+-rule/add --family=ipv4 --to=192.0.2.99/32 --priority=20 --table=main --protocol=kernel
+-rule/add --family=ipv4 --from=192.0.2.99/32 --priority=111 --table=11 --protocol=kernel
+-
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-stdout --count=1 '^priority 20 from all to 192[.]0[.]2[.]99/32 table main protocol kernel$'
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-stdout --count=1 '^priority 111 from 192[.]0[.]2[.]99/32 to all table 11 protocol kernel$'
+-
+-hive start
+-ipam/start
+-
+-# Wait for the production ENI device configurator before reconciling routing.
+-link/list
+-* stdout 'addr: 192[.]0[.]2[.]5/24'
+-stdout 'cilium-rr-test dummy <up[|>]'
+-stdout 'mtu: 1500'
+-
+-# Wait for the initial reconciler prune without replaying the rule additions.
+-rule/list --family=ipv4 --priority=20 --protocol=kernel
+-* empty stdout
+-
+-rule/list --family=ipv4 --priority=111 --protocol=kernel
+-* empty stdout
+-
+-hive stop
+-
+--- cilium-node.yaml --
+-apiVersion: cilium.io/v2
+-kind: CiliumNode
+-metadata:
+-  name: test-node
+-spec:
+-  eni: {}
+-status:
+-  eni:
+-    enis:
+-      eni-1:
+-        id: eni-1
+-        ip: 192.0.2.5
+-        mac: 02:ca:fe:00:00:01
+-        number: 1
+-        addresses:
+-        - 192.0.2.10
+-        subnet:
+-          id: subnet-1
+-          cidr: 192.0.2.0/24
+-        vpc:
+-          id: vpc-1
+-          primary-cidr: 192.0.2.0/24
+```
+
+**File**: `pkg/testutils/scriptnet/scriptnet.go` (modified, +0/-330)
+```diff
+@@ -123,9 +123,6 @@ func (nsm *NetNSManager) Commands() map[string]script.Cmd {
+ 		"route/add":     routeAddCmd(nsm),
+ 		"route/replace": routeReplaceCmd(nsm),
+ 		"route/del":     routeDelCmd(nsm),
+-		"rule/list":     ruleListCmd(nsm),
+-		"rule/add":      ruleAddCmd(nsm),
+-		"rule/del":      ruleDelCmd(nsm),
+ 		"sysctl/get":    sysctlGetCmd(nsm),
+ 		"sysctl/set":    sysctlSetCmd(nsm),
+ 	}
+@@ -593,333 +590,6 @@ func addAddCmd(nsm *NetNSManager) script.Cmd {
+ 	)
+ }
  
- func TestInitializedMetrics(t *testing.T) {
- 	t.Run("Should send pod removal to delayed delivery queue", func(t *testing.T) {
-+		previousEnabledMetrics := EnabledMetrics
-+		previousEndpointDeletionHandler := endpointDeletionHandler
-+		t.Cleanup(func() {
-+			endpointDeletionHandler.queue.ShutDown()
-+			EnabledMetrics = previousEnabledMetrics
-+			endpointDeletionHandler = previousEndpointDeletionHandler
-+		})
-+
- 		deletedEndpoint := &types.CiliumEndpoint{
- 			ObjectMeta: slim_metav1.ObjectMeta{
- 				Name: "name",
- 			},
- 		}
--		EnabledMetrics = []api.NamedHandler{}
-+		EnabledMetrics = nil
- 		endpointDeletionHandler = &CiliumEndpointDeletionHandler{
- 			gracefulPeriod: 10 * time.Millisecond,
- 			queue:          workqueue.NewTypedDelayingQueue[*types.CiliumEndpoint](),
- 		}
+-func ruleFamily(value string, allowAll bool) (int, error) {
+-	switch value {
+-	case "ipv4":
+-		return netlink.FAMILY_V4, nil
+-	case "ipv6":
+-		return netlink.FAMILY_V6, nil
+-	case "all":
+-		if allowAll {
+-			return netlink.FAMILY_ALL, nil
+-		}
+-	}
+-	valid := "'ipv4', 'ipv6'"
+-	if allowAll {
+-		valid += ", 'all'"
+-	}
+-	return 0, fmt.Errorf("invalid family %q: must be one of %s", value, valid)
+-}
+-
+-func ruleTable(value string, allowAll bool) (int, error) {
+-	switch value {
+-	case "main":
+-		return unix.RT_TABLE_MAIN, nil
+-	case "local":
+-		return unix.RT_TABLE_LOCAL, nil
+-	case "default":
+-		return unix.RT_TABLE_DEFAULT, nil
+-	case "all":
+-		if allowAll {
+-			return unix.RT_TABLE_UNSPEC, nil
+-		}
+-	}
+-
+-	table, err := strconv.Atoi(value)
+-	if err != nil {
+-		valid := "'main', 'local', 'default'"
+-		if allowAll {
+-			valid += ", 'all'"
+-		}
+-		return 0, fmt.Errorf("invalid table %q: must be an integer or one of %s", value, valid)
+-	}
+-	return table, nil
+-}
+-
+-func ruleProtocol(value string) (uint8, error) {
+-	switch value {
+-	case "kernel":
+-		return unix.RTPROT_KERNEL, nil
+-	case "static":
+-		return unix.RTPROT_STATIC, nil
+-	case "unspec":
+-		return unix.RTPROT_UNSPEC, nil
+-	}
+-
+-	protocol, err := strconv.ParseUint(value, 10, 8)
+-	if err != nil {
+-		return 0, fmt.Errorf("invalid protocol %q: must be an integer or one of 'kernel', 'static', 'unspec'", value)
+-	}
+-	return uint8(protocol), nil
+-}
+-
+-func rulePrefix(value string) (*net.IPNet, error) {
+-	if value == "all" {
+-		return nil, nil
+-	}
+-
+-	prefix, err := netlink.ParseIPNet(value)
+-	if err != nil {
+-		return nil, fmt.Errorf("invalid rule prefix %q: %w", value, err)
+-	}
+-	return prefix, nil
+-}
+-
+-func ruleFlags(fs *pflag.FlagSet, family, table string) {
+-	fs.String("netns", "", "Execute in the specified network namespace")
+-	fs.String("family", family, "Address family: ipv4, ipv6, or all")
+-	fs.String("from", "all", "Source prefix")
+-	fs.String("to", "all", "Destination prefix")
+-	fs.Int("priority", -1, "Rule priority")
+-	fs.String("table", table, "Routing table")
+-	fs.String("protocol", "unspec", "Rule protocol")
+-}
+-
+-func ruleFromFlags(fs *pflag.FlagSet, allowAll bool) (*netlink.Rule, error) {
+-	rule := netlink.NewRule()
+-
+-	family, err := fs.GetString("family")
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to get family flag: %w", err)
+-	}
+-	rule.Family, err = ruleFamily(family, allowAll)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	from, err := fs.GetString("from")
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to get from flag: %w", err)
+-	}
+-	rule.Src, err = rulePrefix(from)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	to, err := fs.GetString("to")
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to get to flag: %w", err)
+-	}
+-	rule.Dst, err = rulePrefix(to)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	rule.Priority, err = fs.GetInt("priority")
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to get priority flag: %w", err)
+-	}
+-
+-	table, err := fs.GetString("table")
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to get table flag: %w", err)
+-	}
+-	rule.Table, err = ruleTable(table, allowAll)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	protocol, err := fs.GetString("protocol")
+-	if err != nil {
+-		return nil, fmt.Errorf("failed to get protocol flag: %w", err)
+-	}
+-	rule.Protocol, err = ruleProtocol(protocol)
+-	if err != nil {
+-		return nil, err
+-	}
+-
+-	return rule, nil
+-}
+-
+-func ruleAddCmd(nsm *NetNSManager) script.Cmd {
+-	return script.Command(
+-		script.CmdUsage{
+-			Summary: "Add a policy routing rule",
+-			Args:    "",
+-			Flags: func(fs *pflag.FlagSet) {
+-				ruleFlags(fs, "ipv4", "main")
+-			},
+-		},
+-		func(s *script.State, args ...string) (script.WaitFunc, error) {
+-			if len(args) != 0 {
+-				return nil, script.ErrUsage
+-			}
+-
+-			rule, err := ruleFromFlags(s.Flags, false)
+-			if err != nil {
+-				return nil, err
+-			}
+-
+-			nsName, err := s.Flags.GetString("netns")
+-			if err != nil {
+-				return nil, fmt.Errorf("failed to get netns flag: %w", err)
+-			}
+-			if nsName == "" {
+-				nsName = nsm.currentNamespaceName()
+-			}
+-
+-			err = nsm.exec(nsName, func() error {
+-				if err := netlink.RuleAdd(rule); err != nil {
+-					return fmt.Errorf("failed to add rule: %w", err)
+-				}
+-				return nil
+-			})
+-			return nil, err
+-		},
+-	)
+-}
+-
+-func ruleDelCmd(nsm *NetNSManager) script.Cmd {
+-	return script.Command(
+-		script.CmdUsage{
+-			Summary: "Delete a policy routing rule",
+-			Args:    "",
+-			Flags: func(fs *pflag.FlagSet) {
+-				ruleFlags(fs, "ipv4", "ma
+```
+
+---
+
+### Incident Patch 3: `f8d6e37e` (2026-11-02)
+**Commit Message**: fix(deps): update module golang.org/x/net to v0.62.0 [security]
+
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -116,7 +116,7 @@ require (
+ 	golang.org/x/crypto v0.58.0
+ 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e
+ 	golang.org/x/mod v0.42.0
+-	golang.org/x/net v0.61.0
++	golang.org/x/net v0.62.0
+ 	golang.org/x/sync v0.24.0
+ 	golang.org/x/sys v0.49.0
+ 	golang.org/x/term v0.47.0
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -867,8 +867,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
+ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.7.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.8.0/go.mod h1:QVkue5JL9kW//ek3r6jTKnTFis1tRmNAW2P1shuFdJc=
+-golang.org/x/net v0.61.0 h1:RR+6j/BTBCrggOLugxa+66R8FvoN6MHlzDlZIbN9YFw=
+-golang.org/x/net v0.61.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+ golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod h1:N/0e6XlmueqKjAGxoOufVs8QHGRruUQn6yWY3a++T0U=
+ golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+ golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+```
+
+**File**: `vendor/golang.org/x/net/html/parse.go` (modified, +21/-2)
+```diff
+@@ -51,6 +51,9 @@ type parser struct {
+ 	// context is the context element when parsing an HTML fragment
+ 	// (section 12.4).
+ 	context *Node
++	// textNodes holds buffers for TextNodes that have had multiple text
++	// tokens coalesced into them.
++	textNodes map[*Node][]byte
+ }
  
- 		ProcessCiliumEndpointDeletion(deletedEndpoint)
+ func (p *parser) top() *Node {
+@@ -292,7 +295,7 @@ func (p *parser) fosterParent(n *Node) {
+ 		prev = parent.LastChild
+ 	}
+ 	if prev != nil && prev.Type == TextNode && n.Type == TextNode {
+-		prev.Data += n.Data
++		p.appendText(prev, n.Data)
+ 		return
+ 	}
  
-+		require.Eventually(t, func() bool {
-+			return endpointDeletionHandler.queue.Len() == 1
-+		}, time.Second, 10*time.Millisecond)
- 		received, _ := endpointDeletionHandler.queue.Get()
- 		assert.Equal(t, deletedEndpoint, received)
-+	})
-+
-+}
-+
-+func TestDynamicMetricsCleanupOnEndpointDeletion(t *testing.T) {
-+	dfp, reg := newTestDynamicFlowProcessor(t)
-+
-+	processDropFlow(t, dfp, "deleted-source", "live-destination")
-+	processDropFlow(t, dfp, "live-source", "deleted-destination")
-+	processDropFlow(t, dfp, "live-source", "live-destination")
-+	processDropFlow(t, dfp, "live-source", "live-destination")
-+
-+	require.Equal(t, map[string]float64{
-+		"test/deleted-source->test/live-destination": 1,
-+		"test/live-source->test/deleted-destination": 1,
-+		"test/live-source->test/live-destination":    2,
-+	}, gatheredDropMetrics(t, reg))
-+
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
-+	}))
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-destination", Namespace: "test"},
-+	}))
-+
-+	require.EventuallyWithT(t, func(c *assert.CollectT) {
-+		assert.Equal(c, map[string]float64{
-+			"test/live-source->test/live-destination": 2,
-+		}, gatheredDropMetrics(c, reg))
-+	}, time.Second, 10*time.Millisecond)
-+}
+@@ -316,7 +319,7 @@ func (p *parser) addText(text string) {
  
-+func TestStaticMetricsCleanupOnEndpointDeletion(t *testing.T) {
-+	previousEnabledMetrics := EnabledMetrics
-+	previousEndpointDeletionHandler := endpointDeletionHandler
-+	t.Cleanup(func() {
- 		endpointDeletionHandler.queue.ShutDown()
-+		EnabledMetrics = previousEnabledMetrics
-+		endpointDeletionHandler = previousEndpointDeletionHandler
+ 	t := p.top()
+ 	if n := t.LastChild; n != nil && n.Type == TextNode {
+-		n.Data += text
++		p.appendText(n, text)
+ 		return
+ 	}
+ 	p.addChild(&Node{
+@@ -325,6 +328,18 @@ func (p *parser) addText(text string) {
  	})
+ }
  
-+	reg := prometheus.NewPedanticRegistry()
-+	require.NoError(t, InitMetrics(
-+		hivetest.Logger(t),
-+		reg,
-+		api.ParseStaticMetricsConfig([]string{"drop:sourceContext=pod;destinationContext=pod"}),
-+		grpc_prometheus.NewServerMetrics(),
-+	))
-+	endpointDeletionHandler.gracefulPeriod = 0
-+
-+	processor := NewStaticFlowProcessor(hivetest.Logger(t), EnabledMetrics)
-+	processDropFlow(t, processor, "deleted-source", "live-destination")
-+	processDropFlow(t, processor, "live-source", "live-destination")
-+	require.Equal(t, map[string]float64{
-+		"test/deleted-source->test/live-destination": 1,
-+		"test/live-source->test/live-destination":    1,
-+	}, gatheredDropMetrics(t, reg))
-+
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
-+	}))
-+	require.EventuallyWithT(t, func(c *assert.CollectT) {
-+		assert.Equal(c, map[string]float64{
-+			"test/live-source->test/live-destination": 1,
-+		}, gatheredDropMetrics(c, reg))
-+	}, time.Second, 10*time.Millisecond)
++func (p *parser) appendText(n *Node, text string) {
++	if p.textNodes == nil {
++		p.textNodes = make(map[*Node][]byte)
++	}
++	b, ok := p.textNodes[n]
++	if !ok {
++		b = []byte(n.Data)
++		n.Data = ""
++	}
++	p.textNodes[n] = append(b, text...)
 +}
 +
-+func TestDynamicMetricsCleanupUsesReplacementHandlers(t *testing.T) {
-+	dfp, reg := newTestDynamicFlowProcessor(t)
-+
-+	cleanup := endpointDeletionHandler.cleanup
-+	dequeued := make(chan struct{})
-+	release := make(chan struct{})
-+	released := false
-+	releaseCleanup := func() {
-+		if !released {
-+			close(release)
-+			released = true
-+		}
+ func attrCompare(a, b Attribute) int {
+ 	return cmp.Or(
+ 		cmp.Compare(a.Namespace, b.Namespace),
+@@ -2242,6 +2257,10 @@ func (p *parser) parse() (err error) {
+ 		}
+ 		p.parseCurrentToken()
+ 	}
++	for n, b := range p.textNodes {
++		n.Data = string(b)
 +	}
-+	t.Cleanup(releaseCleanup)
-+	endpointDeletionHandler.cleanup = func(endpoint *types.CiliumEndpoint) {
-+		close(dequeued)
-+		<-release
-+		cleanup(endpoint)
++	p.textNodes = nil
+ 	return nil
+ }
+ 
+```
+
+**File**: `vendor/golang.org/x/net/html/render.go` (modified, +11/-12)
+```diff
+@@ -246,18 +246,17 @@ func childTextNodesAreLiteral(n *Node) bool {
+ 
+ 	switch n.Data {
+ 	case "iframe", "noembed", "noframes", "noscript", "plaintext", "script", "style", "xmp":
+-		// We need to check if n is a node that was fostered from a HTML namespace
+-		// into a non-HTML namespace (in which case, different rules apply to it).
+-		// We do this by walking up the tree until we find a node with a non-empty
+-		// namespace. If we find such a node, we also have to check if it's
+-		// an HTML integration point. If it isn't, then the node we're currently
+-		// looking at is foster-parented and we should return false.
+-		for p := n.Parent; p != nil; p = p.Parent {
+-			if p.Namespace != "" {
+-				if !htmlIntegrationPoint(p) {
+-					return false
+-				}
+-				break
++		// n's text is literal only if the parser would keep n in the HTML
++		// namespace when the output is re-parsed. An ancestor may have been
++		// fostered under a foreign element (such as an HTML <mglyph> under
++		// <mtext>) where the parser would instead create it, and its
++		// descendants, in that element's namespace. We walk up the whole tree
++		// and check that every transition out of a non-HTML namespace happens
++		// at an HTML integration point. This is stricter than the parser, so
++		// some text that would be safe literally is escaped.
++		for c, p := n, n.Parent; p != nil; c, p = p, p.Parent {
++			if p.Namespace != "" && p.Namespace != c.Namespace && !htmlIntegrationPoint(p) {
++				return false
+ 			}
+ 		}
+ 
+```
+
+**File**: `vendor/golang.org/x/net/internal/socket/socket.go` (modified, +7/-3)
+```diff
+@@ -129,7 +129,8 @@ func (m ControlMessage) Next(dataLen int) ControlMessage {
+ // MarshalHeader marshals the header fields of the control message at
+ // the head on m.
+ func (m ControlMessage) MarshalHeader(lvl, typ, dataLen int) error {
+-	if len(m) < controlHeaderLen() {
++	l := controlHeaderLen()
++	if l <= 0 || len(m) < l {
+ 		return errors.New("short message")
+ 	}
+ 	h := (*cmsghdr)(unsafe.Pointer(&m[0]))
+@@ -141,7 +142,7 @@ func (m ControlMessage) MarshalHeader(lvl, typ, dataLen int) error {
+ // message at the head on m.
+ func (m ControlMessage) ParseHeader() (lvl, typ, dataLen int, err error) {
+ 	l := controlHeaderLen()
+-	if len(m) < l {
++	if l <= 0 || len(m) < l {
+ 		return 0, 0, 0, errors.New("short message")
+ 	}
+ 	h := (*cmsghdr)(unsafe.Pointer(&m[0]))
+@@ -152,7 +153,7 @@ func (m ControlMessage) ParseHeader() (lvl, typ, dataLen int, err error) {
+ // the next control message.
+ func (m ControlMessage) Marshal(lvl, typ int, data []byte) (ControlMessage, error) {
+ 	l := len(data)
+-	if len(m) < ControlMessageSpace(l) {
++	if controlHeaderLen() <= 0 || len(m) < ControlMessageSpace(l) {
+ 		return nil, errors.New("short message")
+ 	}
+ 	h := (*cmsghdr)(unsafe.Pointer(&m[0]))
+@@ -167,6 +168,9 @@ func (m ControlMessage) Marshal(lvl, typ int, data []byte) (ControlMessage, erro
+ //
+ // Parse works for both standard and compatible messages.
+ func (m ControlMessage) Parse() ([]ControlMessage, error) {
++	if controlHeaderLen() <= 0 {
++		return nil, nil
 +	}
-+
-+	require.NoError(t, ProcessCiliumEndpointDeletion(&types.CiliumEndpoint{
-+		ObjectMeta: slim_metav1.ObjectMeta{Name: "deleted-source", Namespace: "test"},
-+	}))
-+	select {
-+	case <-dequeued:
-+	case <-time.After(time.Second):
-+		releaseCleanup()
-+		t.Fatal("endpoint deletion was not dequeued")
+ 	var ms []ControlMessage
+ 	for len(m) >= controlHeaderLen() {
+ 		h := (*cmsghdr)(unsafe.Pointer(&m[0]))
+```
+
+**File**: `vendor/golang.org/x/net/ipv4/batch.go` (modified, +12/-0)
+```diff
+@@ -75,6 +75,9 @@ func (c *payloadHandler) ReadBatch(ms []Message, flags int) (int, error) {
+ 	if !c.ok() {
+ 		return 0, errInvalidConn
+ 	}
++	if len(ms) == 0 {
++		return 0, nil
 +	}
-+
-+	config := api.Config{Metrics: []*api.MetricConfig{{
-+		Name: "drop",
-+		ContextOptionConfigs: []*api.ContextOptionConfig{
-+			{Name: "sourceContext", Values: []string{"pod"}},
-+			{Name: "destinationContext", Values: []string{"pod"}},
-+		},
-+	}}}
-+	dfp.onConfigReload(t.Context(), 0, api.Config{})
-+	dfp.onConfigReload(t.Context(), 0, config)
-+
-+	processDropFlow(t, dfp, "deleted-source"
+ 	switch runtime.GOOS {
+ 	case "linux":
+ 		n, err := c.RecvMsgs([]socket.Message(ms), flags)
+@@ -109,6 +112,9 @@ func (c *payloadHandler) WriteBatch(ms []Message, flags int) (int, error) {
+ 	if !c.ok() {
+ 		return 0, errInvalidConn
+ 	}
++	if len(ms) == 0 {
++		return 0, nil
++	}
+ 	switch runtime.GOOS {
+ 	case "linux":
+ 		n, err := c.SendMsgs([]socket.Message(ms), flags)
+@@ -141,6 +147,9 @@ func (c *packetHandler) ReadBatch(ms []Message, flags int) (int, error) {
+ 	if !c.ok() {
+ 		return 0, errInvalidConn
+ 	}
++	if len(ms) == 0 {
++		return 0, nil
++	}
+ 	switch runtime.GOOS {
+ 	case "linux":
+ 		n, err := c.RecvMsgs([]socket.Message(ms), flags)
+@@ -175,6 +184,9 @@ func (c *packetHandler) WriteBatch(ms []Message, flags int) (int, error) {
+ 	if !c.ok() {
+ 		return 0, errInvalidConn
+ 	}
++	if len(ms) == 0 {
++		return 0, nil
++	}
+ 	switch runtime.GOOS {
+ 	case "linux":
+ 		n, err := c.SendMsgs([]socket.Message(ms), flags)
+```
+
+**File**: `vendor/golang.org/x/net/ipv4/control.go` (modified, +4/-4)
+```diff
+@@ -84,13 +84,13 @@ func (cm *ControlMessage) Parse(b []byte) error {
+ 			continue
+ 		}
+ 		switch {
+-		case typ == ctlOpts[ctlTTL].name && l >= ctlOpts[ctlTTL].length:
++		case ctlOpts[ctlTTL].name > 0 && typ == ctlOpts[ctlTTL].name && l >= ctlOpts[ctlTTL].length:
+ 			ctlOpts[ctlTTL].parse(cm, m.Data(l))
+-		case typ == ctlOpts[ctlDst].name && l >= ctlOpts[ctlDst].length:
++		case ctlOpts[ctlDst].name > 0 && typ == ctlOpts[ctlDst].name && l >= ctlOpts[ctlDst].length:
+ 			ctlOpts[ctlDst].parse(cm, m.Data(l))
+-		case typ == ctlOpts[ctlInterface].name && l >= ctlOpts[ctlInterface].length:
++		case ctlOpts[ctlInterface].name > 0 && typ == ctlOpts[ctlInterface].name && l >= ctlOpts[ctlInterface].length:
+ 			ctlOpts[ctlInterface].parse(cm, m.Data(l))
+-		case typ == ctlOpts[ctlPacketInfo].name && l >= ctlOpts[ctlPacketInfo].length:
++		case ctlOpts[ctlPacketInfo].name > 0 && typ == ctlOpts[ctlPacketInfo].name && l >= ctlOpts[ctlPacketInfo].length:
+ 			ctlOpts[ctlPacketInfo].parse(cm, m.Data(l))
+ 		}
+ 	}
+```
+
+**File**: `vendor/golang.org/x/net/ipv4/control_unix.go` (modified, +11/-2)
+```diff
+@@ -7,7 +7,8 @@
+ package ipv4
+ 
+ import (
+-	"unsafe"
++	"encoding/binary"
++	"runtime"
+ 
+ 	"golang.org/x/net/internal/iana"
+ 	"golang.org/x/net/internal/socket"
+@@ -66,10 +67,18 @@ func setControlMessage(c *socket.Conn, opt *rawOpt, cf ControlFlags, on bool) er
+ 
+ func marshalTTL(b []byte, cm *ControlMessage) []byte {
+ 	m := socket.ControlMessage(b)
++	if runtime.GOOS == "linux" {
++		m.MarshalHeader(iana.ProtocolIP, unix.IP_TTL, 4)
++		return m.Next(4)
++	}
+ 	m.MarshalHeader(iana.ProtocolIP, unix.IP_RECVTTL, 1)
+ 	return m.Next(1)
+ }
+ 
+ func parseTTL(cm *ControlMessage, b []byte) {
+-	cm.TTL = int(*(*byte)(unsafe.Pointer(&b[:1][0])))
++	if runtime.GOOS == "linux" {
++		cm.TTL = int(binary.NativeEndian.Uint32(b[:4]))
++		return
++	}
++	cm.TTL = int(b[0])
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49715** (2026-10-30): bpf: fix CIDR_IDENTITY_RANGE_END out of sync with MaxLocalIdentity (@smagnani96)
-- **PR #49713** (2026-10-30): cni-chaining: extend Documentation and warn when lacking route MTU (@smagnani96)
-- **PR #49712** (2026-10-30): hubble: fix deleted-pod metrics cleanup with dynamic configuration (@alexcastilio)
-- **PR #49709** (2026-10-30): ipsec: improve invalid key format error in loadIPSecKeys (@smagnani96)
-- **PR #49707** (2026-10-29): [v1.19] Backports 2026-10-29 (@aanm)
-- **PR #49706** (2026-10-30): [v1.20] Backports 2026-10-29 (@aanm)
+- **PR #49771** (closed): [Test, do not merge] Verify concurrent ready-PR limit [skip ci] (@lexfrei)
+- **PR #49770** (2026-11-02): renovate: Hold the docs-builder Python minor version (@aanm)
+- **PR #49765** (2026-11-02): Revert "routing/reconciler: Add script-based tests" (@aanm)
+- **PR #49760** (2026-11-02): fix(deps): update module k8s.io/apimachinery to v0.35.10 (v1.19) (@cilium-renovate[bot])
+- **PR #49759** (2026-11-02): chore(deps): update quay.io/cilium/image-tester docker tag to v1793531520 (v1.20) (@cilium-renovate[bot])
+- **PR #49758** (2026-11-02): fix(deps): update module google.golang.org/grpc to v1.85.0 (main) (@cilium-renovate[bot])
 
 ---
 
@@ -1563,36 +2408,29 @@ Signed-off-by: Alex Castilio dos Santos <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hubble: fix deleted-pod metrics cleanup with dynamic configuration
+## X. docs-builder: Find the versionwarning directory at build time
 
 **RULE**:
-When implementing operations in `pkg/hubble/metrics/dynamic_flow_processor.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `images/docs-builder/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ef31e883`: hubble: fix deleted-pod metrics cleanup with dynamic configuration. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9cf8713`: docs-builder: Find the versionwarning directory at build time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/hubble/metrics/dynamic_flow_processor.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `images/docs-builder/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/cilium/cilium/pkg/k8s/types"
-	initEndpointDeletionHandler(dynamicFlowProcessor.processCiliumEndpointDeletion)
-func (d *DynamicFlowProcessor) processCiliumEndpointDeletion(endpoint *types.CiliumEndpoint) {
-	d.mutex.RLock()
-	defer d.mutex.RUnlock()
-
-	api.ProcessCiliumEndpointDeletion(endpoint, d.Metrics)
-}
-
+RUN dir="$(python3 -c 'import versionwarning; print(versionwarning.__path__[0])')" \
+    && install -m 0777 -d "${dir}/_static/data"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+RUN install -m 0777 -d /usr/local/lib/python3.14/site-packages/versionwarning/_static/data
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ef31e883` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9cf8713` are properly handled with clean fallback behavior.

@@ -6817,3 +6817,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-02T14:53:41.078Z |
 | `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-02T14:53:43.970Z |
 | `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-02T14:53:46.888Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `9b0aad96` | Multi-dimensional audit evidence | 2026-11-02T15:00:56.194Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `13944b95` | Multi-dimensional audit evidence | 2026-11-02T15:00:58.021Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `77aa5579` | Multi-dimensional audit evidence | 2026-11-02T15:00:58.072Z |

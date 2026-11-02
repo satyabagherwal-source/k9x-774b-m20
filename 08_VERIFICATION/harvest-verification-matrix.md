@@ -6808,3 +6808,6 @@
 | `CYCLE-20261102-PVMA` | `2026-11-02T14:53:41.074Z` | `FusionCow/Sulphur-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6416` | Yes (`a87c9974...`) |
 | `CYCLE-20261102-PXUM` | `2026-11-02T14:53:43.966Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6417, Rule 6418, Rule 6419` | Yes (`3a31b4d8...`) |
 | `CYCLE-20261102-Q03P` | `2026-11-02T14:53:46.885Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6420, Rule 6421, Rule 6422` | Yes (`0bab2319...`) |
+| `CYCLE-20261102-Z7CU` | `2026-11-02T15:00:56.190Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6423` | Yes (`b31818fa...`) |
+| `CYCLE-20261102-Z8RI` | `2026-11-02T15:00:58.014Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`85b80401...`) |
+| `CYCLE-20261102-Z8SU` | `2026-11-02T15:00:58.062Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md` | Yes (`33d92ebc...`) |

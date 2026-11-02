@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T14:53:46.803Z",
+  "last_updated": "2026-11-02T15:00:57.902Z",
   "total_verified_learnings": 1192,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6879,8 +6879,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "ef31e883",
-      "content_hash": "4a39912ee49d8786b39759b9d4b68c9eb3eb09aadb5dfc52e13e8dd532cea64d",
+      "source_version": "9b0aad96",
+      "content_hash": "b31818fa435f7c77fed1d5ba6be49fdca85c60db969b5c1f48b743686193dcf6",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -7068,6 +7068,11 @@
           "number": 5944,
           "title": "hubble: fix deleted-pod metrics cleanup with dynamic configuration",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6423,
+          "title": "docs-builder: Find the versionwarning directory at build time",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -7075,7 +7080,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T23:51:45.482Z",
+      "verified_at": "2026-11-02T15:00:56.072Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -37220,8 +37225,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "2299d94b",
-      "content_hash": "195442d205a7b20ef092c423fe5094c984884bd08d6fffa5680394128c6caf2f",
+      "source_version": "77aa5579",
+      "content_hash": "33d92ebc9531f8adccc66de78f93723fc18ff76fad25d25cc69413b52aff7fcd",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -37261,7 +37266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T19:19:26.196Z",
+      "verified_at": "2026-11-02T15:00:57.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166561,6 +166566,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T14:53:46.783Z"
+    },
+    "rule-6423": {
+      "learning_id": "rule-6423",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6423,
+      "title": "docs-builder: Find the versionwarning directory at build time",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "9b0aad96",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:00:56.072Z"
     }
   },
   "aliases": {
