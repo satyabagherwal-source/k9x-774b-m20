@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-4AVF",
-    "timestamp": "2026-10-30T22:13:47.403Z",
-    "repository": "rtk-ai/rtk",
-    "learningId": "learn-github-rtk-ai-rtk",
-    "contentHash": "9775cb8e7eadd4bec1e4b47ab9756b2535a79d7278e36a3cbb3e1ca85a964f01",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-CQU8",
     "timestamp": "2026-10-30T22:20:21.344Z",
     "repository": "Saffsanity/sill",
@@ -7492,6 +7477,21 @@
     "contentHash": "cb3216681b0965127d149c1ce6dcc555fa38a6a253edd02211865638bd303928",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-0W2B",
+    "timestamp": "2026-11-02T16:26:13.715Z",
+    "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+    "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+    "contentHash": "a1c39e0e870feed7f071d29fcd4768118066922c0ef06804d125d804990a66e3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

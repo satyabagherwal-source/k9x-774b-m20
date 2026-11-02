@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:18:49.729Z",
-  "total_cycles_completed": 6814,
-  "total_learnings_persisted": 6814,
-  "total_rules_promoted": 6461,
+  "last_updated": "2026-11-02T16:26:13.724Z",
+  "total_cycles_completed": 6815,
+  "total_learnings_persisted": 6815,
+  "total_rules_promoted": 6463,
   "history": [
-    {
-      "timestamp": "2026-10-31T16:39:39.745Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T16:39:50.060Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1396,13 @@
       "repository": "bridgecrewio/checkov",
       "learningId": "learn-github-bridgecrewio-checkov",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:26:13.724Z",
+      "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
+      "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

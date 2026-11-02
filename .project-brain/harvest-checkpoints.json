@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T16:18:49.734Z",
+  "last_updated": "2026-11-02T16:26:13.729Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17241,14 +17241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
-      "content_hash": "7eee584774bb7ea48f050275e3d282ce7ec65ca9ec48bf238fc979bec4bb25ae",
-      "verified_at": "2026-10-29T12:19:43.271Z",
+      "content_hash": "a1c39e0e870feed7f071d29fcd4768118066922c0ef06804d125d804990a66e3",
+      "verified_at": "2026-11-02T16:26:13.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T12:19:43.271Z"
+      "last_updated": "2026-11-02T16:26:13.728Z"
     },
     "liketrek/TREK": {
       "repository": "liketrek/TREK",

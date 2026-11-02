@@ -6846,3 +6846,4 @@ Every entry in this ledger must capture:
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `4a00b916` | Multi-dimensional audit evidence | 2026-11-02T16:18:41.507Z |
 | `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `4e7e4b1d` | Multi-dimensional audit evidence | 2026-11-02T16:18:45.707Z |
 | `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `6a64fae9` | Multi-dimensional audit evidence | 2026-11-02T16:18:49.723Z |
+| `learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf` | `https://huggingface.co/unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-02T16:26:13.719Z |
