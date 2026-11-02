@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T16:55:04.711Z",
-    "lastVerified": "2026-11-02T16:55:04.711Z",
+    "lastChecked": "2026-11-02T17:12:26.026Z",
+    "lastVerified": "2026-11-02T17:12:26.026Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -427,22 +427,21 @@
     "lastVerified": "2026-10-31T22:23:52.482Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T16:33:31.951Z",
-    "lastVerified": "2026-11-02T16:33:31.951Z",
+    "lastChecked": "2026-11-02T17:12:21.427Z",
+    "lastVerified": "2026-11-02T17:12:21.427Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "85b804010015fb460a60bd03a061c3c6ee99f0ef8693fe2e893bb428d317efa8",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "f0667d95e2a463dbe8134b32499d68db963b8f8db56025e128af469a2f814bf0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "13944b95"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -953,8 +952,8 @@
     "officialUrl": "https://github.com/bee-san/Ciphey",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T01:47:09.163Z",
-    "lastVerified": "2026-11-01T01:47:09.163Z",
+    "lastChecked": "2026-11-02T17:12:11.584Z",
+    "lastVerified": "2026-11-02T17:12:11.584Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bee-san-ciphey",
@@ -4199,9 +4198,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-10-31T14:01:22.724Z",
+    "lastChecked": "2026-11-02T17:12:14.071Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-10-31T14:01:22.724Z"
+    "lastVerified": "2026-11-02T17:12:14.071Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -5762,9 +5761,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-10-31T14:45:49.869Z",
+    "lastChecked": "2026-11-02T17:12:09.028Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-10-31T14:45:49.869Z"
+    "lastVerified": "2026-11-02T17:12:09.028Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -5865,8 +5864,8 @@
     "officialUrl": "https://github.com/kubearmor/KubeArmor",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T10:58:37.437Z",
-    "lastVerified": "2026-10-31T10:58:37.437Z",
+    "lastChecked": "2026-11-02T17:12:01.638Z",
+    "lastVerified": "2026-11-02T17:12:01.638Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubearmor-kubearmor",
@@ -9179,9 +9178,9 @@
   "ildrm-northstar-seo": {
     "name": "northstar-seo",
     "officialUrl": "https://github.com/ildrm/northstar-seo",
-    "lastChecked": "2026-10-29T16:48:07.301Z",
+    "lastChecked": "2026-11-02T17:12:04.008Z",
     "revisionIdentifier": "5ec9c7dc23",
-    "lastVerified": "2026-10-29T16:48:07.301Z"
+    "lastVerified": "2026-11-02T17:12:04.008Z"
   },
   "nsh07-tomato": {
     "name": "Tomato",
@@ -10099,9 +10098,9 @@
   "kevinnzou-compose-webview-multiplatform": {
     "name": "compose-webview-multiplatform",
     "officialUrl": "https://github.com/KevinnZou/compose-webview-multiplatform",
-    "lastChecked": "2026-10-30T07:15:33.974Z",
+    "lastChecked": "2026-11-02T17:12:06.531Z",
     "revisionIdentifier": "68e76907",
-    "lastVerified": "2026-10-30T07:15:33.974Z"
+    "lastVerified": "2026-11-02T17:12:06.531Z"
   },
   "agamm-pseo-next": {
     "name": "pseo-next",

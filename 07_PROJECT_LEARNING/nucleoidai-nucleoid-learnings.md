@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `13944b95`  
+> **Source Version**: `ec8b1b9b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T15:00:57.674Z  
+> **Timestamp**: 2026-11-02T17:12:22.865Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T15:00:57.667Z  
+> **Harvest Timestamp**: 2026-11-02T17:12:21.427Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -966,458 +966,405 @@ export function enlarge(matrix, rows: number, cols: number) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `13944b95` (2026-11-02)
-**Commit Message**: NUC 73 List and Population Predicate Counts
+### Incident Patch 1: `ec8b1b9b` (2026-11-02)
+**Commit Message**: NUC 1 NUC Purpose and Guidelines
 
-Accepted.
+Accepted: user-requested Language compatibility category/process revision.
+Register additive cross-language aliases as automatically selectable,
+currently one of five equally likely eligible categories. Skip their
+continuous token comparison without relaxing mandatory safeguards.
 
-Add count(predicate) to the shared list and class-population queries,
-preserving filter(predicate).length behavior without its filtered result.
-Synchronize completion, specification, reference, examples and datasets.
+Independent evaluation accepted the unchanged frozen candidate with no
+policy failures. Integrated hard criteria passed: all-target build,
+warning-denied Clippy, formatting, 2,157 tests, all 2,179 accepted test
+identities retained, three new tests passing, and 853 accepted replays.
+Runtime/parser, protected cases, versions and dependencies are unchanged.
 
-All hard criteria passed independently and on the unchanged integrated
-candidate: all-target build, warning-denied Clippy and formatting passed;
-the full suite passed 2,154 tests with 25 existing ignored; 853 pinned
-accepted programs replayed with protected assertions, returns and coverage.
-All 2,168 accepted test identities remain, with eleven additions.
-
-The independent evaluator decided Accepted with no issues. Required
-continuous-mode token comparison ran: seven lower, 846 unchanged, no
-increases or missing pairs. No policy check failed. Advisory usefulness is
-unscored without a rubric; strategy learning is not configured.
+This single revision skipped token comparison as single_proposal.
+Advisory usefulness is unscored and strategy learning is not_configured.
+NUC 1 remains Active/Documentation. NUC 57's classification follows in
+its own separately prepared and independently evaluated revision.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `README.md` (modified, +25/-0)
+**File**: `.claude/rules/project.instructions.md` (modified, +10/-3)
 ```diff
-@@ -1471,6 +1471,31 @@ assert: [x, y], [0, 7]
-   `x = corner[0]`, so every name stays live: changing `size` or `corner`
-   updates it. See the [root contract](nucleoid.spec.md#destructuring-declarations).
+@@ -13,9 +13,16 @@ placeholders instead.
  
-+## Predicate counts
-+
-+**Predicate counts keep the number of open tickets live as tickets change**
-+
-+```nuc
-+class Ticket(open): this.open = open
-+pending = Ticket.count(ticket -> ticket.open)
-+first = Ticket(true)
-+second = Ticket(false)
-+assert: pending, 1
-+second.open = true
-+assert: pending, 2
-+first.open = false
-+assert: pending, 1
-+```
-+
-+- [NUC 73](docs/nuc-0073.md) adds `count(predicate)` to lists and class
-+  populations. It returns `filter(predicate).length` without allocating the
-+  filtered result, and calls the predicate once per item in receiver order.
-+- Counts remain live in declarations and class-level rules. A valid empty
-+  receiver gives `0`; a missing or non-function predicate raises
-+  `TypeError("count expects a function")`. The accepted `filter` spelling
-+  remains unchanged. See the
-+  [root contract](nucleoid.spec.md#list-and-population-predicate-counts).
-+
- ## Benchmark
+ ## Goals
  
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
+-Design a new grammar with minimum tokenized syntax — a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
+-
+-However, new syntax may be introduced where it is needed to achieve that goal. The superset is a starting point, not a hard constraint.
++Design a minimal core grammar with minimum tokenized syntax, while aspiring to
++be a superset of programming languages, including Python, JavaScript/TypeScript,
++Kotlin, Go, Rust, Java, C# and C/C++. These are examples, not a fixed boundary.
++This is a goal, not a claim of full compatibility with every language.
++
++Welcome additive cross-language aliases and equivalent familiar source forms,
++such as the already accepted `this`/`self` and `=>`/`->`, under the Language
++compatibility category. They need not reduce or preserve lexer-token counts;
++new syntax and token kinds may be introduced when appropriate. Keep every
++accepted form and meaning. The superset aspiration is not a hard constraint.
+ 
+ Build a Rust implementation of Nucleoid. The crate is at the repository root (`Cargo.toml`, `src/`), and `nucleoid.spec.md` defines the behaviour it must implement.
+ 
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +4/-0)
+**File**: `.claude/rules/proposals.instructions.md` (modified, +14/-2)
 ```diff
-@@ -577,3 +577,7 @@
- {"id":"spec-0577","description":"Nucleoid explains destructured names as their declarations","code":"point = {x: 3, y: 4}\npair = [5, 6]\n{x, y} = point\nfirst, second = pair\nassert: (affects point).map(step -> step.rule), [\"x = point.x\", \"y = point.y\"]\nassert: (affects pair).map(step -> step.rule), [\"first = pair[0]\", \"second = pair[1]\"]\nassert: (why second)[0].from, [\"pair\"]\nclass Point(x, y):\n    this.x = x\n    this.y = y\n{x, y} = Point(1, 2)\nassert: [x, y, Point.length], [1, 2, 2]\nassert: (why y)[0].rule, \"y = Point(1,2).y\"\nassert: (affects point).length, 0","return":null}
- {"id":"spec-0578","description":"Nucleoid keeps block object and list readings beside destructuring","code":"point = {x: 1, y: 2}\n{x, y} = point\n{ total = x + y }\nbox = {x, y}\nrecord = {left: x right: y}\npair = [3, 4]\nlow, high = pair\nadd = lambda a, b: a + b\npositive = all v in pair: v > 0\nfailure = \"\"\ntry:\n    [a, b] = pair\ncatch error:\n    failure = error\nassert: failure, SyntaxError(\"Cannot assign to [a,b]\")\nassert: [total, box, record], [3, {x: 1, y: 2}, {left: 1, right: 2}]\nassert: [add(low, high), positive], [7, true]\npoint.x = 5\npair = [-1, 6]\nassert: [total, box.x, record.left, low, high, positive], [7, 5, 5, -1, 6, false]\n{ x }","return":"5"}
- {"id":"spec-0579","description":"Nucleoid rolls back failed destructuring","code":"limits = [4, 50]\nlow, high = limits\nif high - low > 100: throw \"WIDE\"\nwidened = \"\"\ntry: limits = [0, 500]\ncatch error: widened = error\nwide = [9, 300]\nmoved = \"\"\ntry: low, high = wide\ncatch error: moved = error\nassert: [widened, moved], [\"WIDE\", \"WIDE\"]\nassert: [low, high, limits], [4, 50, [4, 50]]\norder = {qty: 2, price: 5}\n{qty, price} = order\nif qty * price > 50: throw \"COSTLY\"\ncostly = \"\"\ntry: order.price = 40\ncatch error: costly = error\nassert: [costly, order.price, qty, price], [\"COSTLY\", 5, 2, 5]\norder.qty = 3\norder.price = 7\nlimits = [3, 60]\nassert: [low, high, qty, price], [3, 60, 3, 7]","return":null}
-+{"id":"spec-0580","description":"Nucleoid counts matching list items","code":"readings = [2, 5, 8, 11]\nthreshold = 6\nhigh = readings.count(reading -> reading > threshold)\nassert: high, 2\nreadings.push(14)\nassert: high, 3\nthreshold = 10\nassert: high, 2\nreadings.shift()\nassert: high, 2\nreadings = []\nassert: high, 0\ncart = {items: [0, 1, 2, 0, 3]}\nnonzero = cart.items.count(item -> item != 0)\nassert: nonzero, 3\ncart.items.push(4)\nassert: nonzero, 4","return":null}
-+{"id":"spec-0581","description":"Nucleoid counts matching class instances","code":"class Ticket(open, priority):\n    this.open = open\n    this.priority = priority\npending = Ticket.count(ticket -> ticket.open)\nassert: pending, 0\nfirst = Ticket(true, 2)\nsecond = Ticket(false, 5)\nthird = Ticket(true, 9)\nimportant = Ticket.count(ticket -> ticket.open and ticket.priority >= 5)\nassert: pending, 2\nassert: important, 1\nsecond.open = true\nassert: pending, 3\nassert: important, 2\nthird.priority = 1\nassert: important, 1\ndelete first.open\ndelete first.priority\ndelete first\nassert: pending, 2\nthird.open = false\nassert: pending, 1\nassert: important, 1","return":null}
-+{"id":"spec-0582","description":"Nucleoid keeps predicate counts live in class level rules","code":"class Team(name): this.name = name\nclass Task(team, done):\n    this.team = team\n    this.done = done\n$Team.pending = Task.count(task -> task.team == $Team and not task.done)\nalpha = Team(\"alpha\")\nbeta = Team(\"beta\")\nassert: alpha.pending, 0\nassert: beta.pending, 0\nfirst = Task(alpha, false)\nsecond = Task(alpha, true)\nthird = Task(beta, false)\nassert: alpha.pending, 1\nassert: beta.pending, 1\nfirst.team = beta\nassert: alpha.pending, 0\nassert: beta.pending, 2\nsecond.done = false\nassert: alpha.pending, 1\ndelete third.team\ndelete third.done\ndelete third\nassert: beta.pending, 1","return":null}
-+{"id":"spec-0583","description":"Nucleoid uses predicate counts beside ordinary count names","code":"cutoff = 3\ncount = 7\nreport = {count: 9}\nclass Bag(items):\n    this.items = items\n    def count(): return this.items.count(item -> item > cutoff)\nbag = Bag([1, 4, 8])\ndef matching(items) => items.count(item -> item > cutoff)\nassert: bag.count(), 2\nassert: matching([2, 5, 9]), 2\nassert: Bag.filter(each -> each.count() > 1).length, 1\nkind = Bag\nassert: kind.filter(each -> each.count() > 1).length, 1\nassert: [count, report.count], [7, 9]\ncutoff = 6\nassert: bag.count(), 1\nassert: matching([2, 5, 9]), 1\nassert: Bag.filter(each -> each.count() > 1).length, 0","return":null}
-```
-
-**File**: `dataset/nucleoid.synth.48.jsonl` (modified, +1/-0)
-```diff
-@@ -6,3 +6,4 @@
- {"id":"synth-48-0006","description":"The distinct tags of every post stay live as posts and tags change","code":"class Post(tags):\n    this.tags = tags\nfirst = Post([\"rust\", \"logic\"])\nPost([\"logic\", \"go\"])\ninuse = Post.flatMap(post -> post.tags).distinct()\nfirst.tags.push(\"go\")\nPost([\"sql\"])\ninuse","return":"[\"rust\",\"logic\",\"go\",\"sql\"]"}
- {"id":"synth-48-0007","description":"Every NaN is kept because NaN matches no value","code":"readings = [0 / 0, 1, 0 / 0, 1]\nkept = readings.distinct()\n[kept.length, String(kept[0]), String(kept[2])]","return":"[3,\"NaN\",\"NaN\"]"}
- {"id":"synth-48-0008","description":"A distinct selector that is not a function raises a TypeError","code":"failure = \"\"\ntry:\n    [1, 2].distinct(5)\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: distinct expects a function\""}
-+{"id":"synth-48-0009","description":"Predicate counts keep each team's open jobs and matching list items live","code":"class Team(name): this.name = name\nclass Job(team, done):\n    this.team = team\n    this.done = done\n$Team.open = Job.count(job -> job.team == $Team and not job.done)\nteam = Team(\"north\")\nfirst = Job(team, false)\nJob(team, true)\nvalues = [1, 4, 7]\nlarge = values.count(value -> value > 3)\nassert(team.open, 1)\nfirst.done = true\nvalues.push(9)\n[team.open, large]","return":"[0,3]"}
-```
-
-**File**: `docs/README.md` (modified, +50/-1)
-```diff
-@@ -1778,7 +1778,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split` |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), and `distinct` ([NUC 71](nuc-0071.md)) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), and `count(predicate)` ([NUC 73](nuc-0073.md)) |
- | `Class` | the global list of declared types; `Class.length` |
+@@ -194,8 +194,18 @@ Only continuous cycles apply the
+ - Runtime features: required for an existing comparable feature; skipped entirely
+   for a brand-new feature; skipped for a genuinely uncomparable existing feature
+   only with explicit reason and evidence.
++- Language compatibility: skipped entirely; additive cross-language aliases and
++  equivalent familiar forms may add lexer tokens or new token kinds.
+ - Documentation: skipped.
  
++Language compatibility advances the language-superset aspiration, not a claim
++of full compatibility with every language. Preserve every accepted form and
++meaning. Its skip is not advisory token scoring, a zero-case comparison, or a
++passing token gate; single mode still takes precedence. Every category/mode
++retains valid immutable baselines, accepted-source replay, behavior/integrity,
++syntax compatibility, the full `cargo test`, `cargo build --all-targets`,
++warning-denied Clippy, and formatting.
++
+ Read the proposal's actual registered Category header. Runtime proposals require
+ explicit new/existing-comparable/existing-uncomparable applicability, including
+ in single mode; validate uncomparable reason/evidence independently.
+@@ -226,8 +236,10 @@ Follow the caller-owned
+ [selection rule](../skills/nuc-proposal/SKILL.md#select-an-unspecified-enhancement).
+ Unspecified enhancements use equal random selection across the registry's
+ eligible categories, currently Syntax enhancement, Runtime features, Utility
+-enhancement, and Reasoning enhancement. Documentation is classified but is
+-not automatically selected for a language enhancement.
++enhancement, Reasoning enhancement, and Language compatibility. Derive the
++eligible set and count from the live registry; the current five categories
++each have a 20% chance, not a hard-coded five-way draw. Documentation is
++classified but is not automatically selected for a language enhancement.
+ Explicit feature/category requests still take precedence.
+ 
+ ## Detailed proposal workflow
+```
+
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +10/-0)
+```diff
+@@ -128,8 +128,18 @@ Only continuous cycles apply the
+ - Runtime features: required for an existing comparable feature; skipped
+   entirely for a brand-new feature; skipped for a genuinely uncomparable existing
+   feature with explicit reason and evidence.
++- Language compatibility: skipped entirely; additive cross-language aliases and
++  equivalent familiar forms may add lexer tokens or new token kinds while
++  preserving every accepted form and meaning.
+ - Documentation: skipped.
+ 
++Language compatibility advances a language-superset goal, not an assertion of
++existing full compatibility. Its `language_compatibility` skip is not advisory
++token scoring, a zero-case comparison, or a passing token gate. Single mode
++still takes precedence with `single_proposal`, regardless of category.
++Every category/mode retains accepted-source replay, the full `cargo test`,
++build, warning-denied Clippy, formatting, and the other independent checks.
++
+ Every mode still requires valid immutable accepted-corpus inputs, behavior,
+ case integrity, syntax compatibility, development checks, and outcome recording.
+ When tokens are skipped, genuinely new behavior cases may lack accepted-syntax
+```
+
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +15/-1)
+```diff
+@@ -62,8 +62,16 @@ Only continuous cycles apply the
+ - Runtime features: run for an existing comparable feature; do not run at all
+   for a brand-new feature; explicitly skip a genuinely uncomparable existing
+   feature with a reason and supporting evidence.
++- Language compatibility: do not run; additive cross-language aliases and
++  equivalent familiar source forms may add lexer tokens or new token kinds.
+ - Documentation: do not run.
+ 
++Language compatibility is a categorical skip, not advisory token scoring,
++a zero-case comparison, or a passing token gate. Single mode takes precedence
++over every category's continuous policy. Every category/mode retains valid
++immutable baselines, accepted-source replay, behavior/integrity, compatibility,
++the full `cargo test`, build, warning-denied Clippy, and formatting checks.
++
+ Supply explicit runtime applicability for Runtime features even in single mode.
+ The independent evaluator verifies any uncomparable rationale and evidence;
+ missing comparison artifacts are not evidence of impossibility. No skip may
+@@ -78,6 +86,12 @@ including Draft, Accepted, Rejected, Active, and Superseded documents.
+ Category describes the proposal's purpose; it does not replace `Type` or
+ change its status.
+ 
++Language compatibility covers proposals primarily intended to add optional
++cross-language aliases or equivalent familiar forms while preserving every
++accepted form and meaning. The language-superset aspiration is a goal, not
++existing full compatibility; familiar prior art alone does not reclassify
++other grammar, runtime, utility, or reasoning proposals.
++
+ Use the user's explicit classification when supplied. Whenever a category is
+ added, selected, or updated, the coordinating caller must ask the user for
+ confirmation if anything is uncertain, including its meaning, automatic-selection
+@@ -98,7 +112,7 @@ do not invent categories or retain stale classifications without review.
+ When asked to choose a language enhancement without a specific feature or
+ category, the coordinating caller makes one unbiased random draw with equal
+ probability across the registry's automatically selectable enhancement
+-categories. The current four enhancement categories each have a 25% chance;
++categories. The current five enhancement categories each have a 20% chance;
+ `Documentation` is not part of this automatic language-enhancement draw.
+ 
+ Read the current registry before drawing; do not hard-code its size or retain
+```
+
+**File**: `CONTRIBUTING.md` (modified, +27/-6)
+```diff
+@@ -135,7 +135,18 @@ or proposal assignments are uncertain. Every category addition requires
+ reviewing all existing proposals and updating those that fit the new category
+ more accurately, with synchronized category and numerical indexes. Unspecified
+ enhancements use an equal random draw across the currently eligible categories;
+-Documentation is not part of that draw.
++derive eligibility and count from the live registry, not a fixed list or size.
++The current five eligible categories each have a 20% chance; Documentation is
++not part of that draw.
++
++Language compatibility advances Nucleoid's aspiration to be a superset of
++programming languages, not a claim of full compatibility with every language.
++It welcomes additive aliases and equivalent familiar source forms, such as
++the already accepted `this`/`self` and `=>`/`->`, without requiring reduced or
++unchanged lexer-token counts. New token kinds are allowed when appropriate;
++every accepted form and meaning remains protected. Classify by primary
++purpose, not familiar prior art alone. NUC 1 remains Process/Active with
++Category Documentation; registering this category adds no language behavior.
+ 
+ The **token non-regression gate** requires each compared case to use the same
+ or fewer lexer tokens than its accepted baseline. `/nuc-proposal`
+@@ -152,11 +163,17 @@ Only continuous cycles use this matrix:
+ | Runtime features | Required for existing comparable features; skipped for brand-new features or genuinely uncomparable existing features with explicit reason and evidence |
+ | Utility enhancement | Required |
+ | Reasoning enhancement | Required |
++| Language compatibility | Skipped entirely; additive aliases and equivalent familiar forms may use more lexer tokens |
+ | Documentation | Skipped |
+ 
+-All modes retain immutable accepted-corpus baselines, pre-existing case
+-integrity, assertion execution/coverage, explicit return checks, backward
+-syntax compatibility, development checks, and independent evaluation.
++This categorical skip is not advisory token scoring or a passing/zero-case
++token gate. Single mode still skips first for every category.
++All categories and modes retain immutable accepted-corpus baselines,
++accepted-source replay, pre-existing case integrity, assertion execution/coverage,
++explicit return checks, backward
++syntax compatibility, the full `cargo test`, `cargo build --all-targets`,
++`cargo clippy --all-targets -- -D warnings`, `cargo fmt --check`, and independent
++evaluation.
+ An invalid baseline, bad input, or behavior/compatibility failure never becomes
+ a successful skip. Missing comparisons still fail a required token gate;
+ missing artifacts do not establish that a feature is uncomparable.
+@@ -217,6 +234,8 @@ applicability and rationale, behavior checks, and `token_check.status`.
+ For `ran`, it includes the metric and each paired case's `before`, `after`,
+ and token change. For `skipped`, it includes the skip reason, not measured cases
+ or zero placeholder counts; this is not a passing token gate.
++Language compatibility reports `language_compatibility` in continuous mode;
++single mode reports `single_proposal` instead.
+ The evaluator does not fix failures or regenerate exports. A repaired,
+ substantively revised, or rebased candidate needs a fresh agent pair and report.
+ 
+@@ -453,8 +472,10 @@ brackets describe values, not actual observations):
+ }
  ```
-@@ -2578,6 +2578,53 @@ palette.length
-   [list and population distinct values](../nucleoid.spec.md#list-and-population-distinct-values)
-   section.
  
-+### List and population predicate counts
-+
-+```
-+numbers = [1, 4, 7, 10]
-+limit = 5
-+large = numbers.count(number -> number > limit)
-+assert: large, 2
-+numbers.push(12)
-+assert: large, 3
-+class Job(done): this.done = done
-+pending = Job.count(job -> not job.done)
-+first = Job(false)
-+second = Job(true)
-+assert: pending, 1
-+second.done = false
-+assert: pending, 2
-+delete first.done
-+delete first
-+assert: pending, 1
-+limit = 9
-+assert: large, 2
-+```
-+
-+- This is the complete `Nucleoid counts matching items and instances`
-+  program in `tests/reference.md`, without its title.
-+- [NUC 73](nuc-0073.md) adds `count(predicate)` to every list or class
-+  population receiver supported by `filter`, including class aliases. It
-+  returns the Number from `filter(predicate).length` without allocating the
-+  filtered result list; a valid empty receiver gives `0`.
-+- The predicate is called once per item, in receiver order, with only the
-+  item and the truthiness rules of `filter`. It visits every item without
-+  short-circuiting. A missing or non-function predicate, including `null`,
-+  raises `TypeError("count expects a function")`, even on an empty receiver;
-+  there is no no-argument overload.
-+- The receiver snapshot precedes argument evaluation. All supplied arguments,
-+  including ignored extras, run once, left to right. Counts inherit `filter`'s
-+  dependencies, nullish reads, deferred declarations, `.value`, state versions,
-+  callback errors and rollback; a null or undefined receiver skips arguments
-+  and yields undefined.
-+- Counts stay live in declarations and class-level rules. Bindings, properties
-+  and instance methods named `count` keep their behavior, while
-+  `Name.count(predicate)` on a class or class alias queries its population.
-+  All accepted `filter(predicate).length` forms remain unchanged.
-+- The authoritative contract is the
-+  [list and population predicate counts](../nucleoid.spec.md#list-and-population-predicate-counts)
-+  section.
-+
- ---
- 
- ## 12. Reasoning Operations
-@@ -2822,6 +2869,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | A supplied `sum` selector that is not a function, including `null`, even on an empty receiver | `sum expects a function` |
- | A supplied `max` or `min` selector that is not a function, including `null`, even on an empty receiver | `max expects a function` or `min expects a function` |
- | A supplied `distinct` selector that is not a function, including `null`, even on an empty receiver | `distinct expects a function` |
-+| Missing or non-function `count` predicate, including `null`, even on an empty receiver | `count expects a function` |
- | An `all` or `any` quantifier over a value that is neither null nor a list or a declared class's instances | `<collection> is not a collection` |
- | A two-name `for key, value of source` loop over a value that is not an object | `<source> is not an object` |
- | Assigning a `suppose` block whose last statement is not an expression | `suppose has no value` |
-@@ -2996,6 +3044,7 @@ items.at(-1)  items.findLast(callback) read or
+-All five registered categories and both modes are typed; strategy order is
+-stable. Each category first explores unobserved arms in that order. Thereafter
++All registered categories, including Language compatibility, and both modes
++are typed; old policy histories retain their schema and category spellings.
++Each category's history is isolated, and strategy order is stable. Each category
++first explores unobserved arms in that order. Thereafter
+ it maximizes `mean + sqrt(2 * ln(category_trials) / arm_trials)` with
+ registry-order ties. Raw `r` in `[-1, 1]` is normalized to `(r + 1) / 2`.
+ Neutral `0` is observed as `0.5`; missing evidence is never a zero observation.
 ```
 
-**File**: `docs/examples.md` (modified, +32/-0)
+**File**: `docs/nuc-0000.md` (modified, +5/-0)
 ```diff
-@@ -3033,6 +3033,38 @@ ahead
-   together. See [NUC 67](nuc-0067.md) and the
-   [root contract](../nucleoid.spec.md#destructuring-declarations).
+@@ -113,6 +113,11 @@ Created: 31-Jul-2026
+ | [62](nuc-0062.md) | Universal and Existential Quantifiers | Accepted |
+ | [65](nuc-0065.md) | Hypothetical Suppose Blocks | Accepted |
  
-+## Predicate counts
++### Language compatibility
 +
-+**Predicate counts keep the unfinished tasks of each team live**
++| NUC | Title | Status |
++| --- | --- | --- |
 +
-+```nuc
-+class Team(name): this.name = name
-+class Task(team, done):
-+    this.team = team
-+    this.done = done
-+$Team.pending = Task.count(task -> task.team == $Team and not task.done)
-+north = Team("north")
-+south = Team("south")
-+first = Task(north, false)
-+second = Task(north, true)
-+Task(south, false)
-+assert: north.pending, 1
-+assert: south.pending, 1
-+second.done = false
-+assert: north.pending, 2
-+first.team = south
-+assert: north.pending, 1
-+assert: south.pending, 2
-+```
-+
-+- The one class-level rule counts each team's unfinished tasks. Completing
-+  or transferring a task updates every affected team's count.
-+- `count(predicate)` keeps the invocation, dependency and missing-value
-+  behavior of `filter(predicate).length` without allocating its result list.
-+  It does not replace instance methods named `count`.
-+- See [NUC 73](nuc-0073.md) and the
-+  [root contract](../nucleoid.spec.md#list-and-population-predicate-counts).
-+
- ## Copyright
+ ### Documentation
  
- Copyright 2020 Nucleoid
+ | NUC | Title | Status |
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `docs/nuc-0001.md` (modified, +57/-1)
 ```diff
-@@ -101,6 +101,7 @@ Created: 31-Jul-2026
- | [68](nuc-0068.md) | List and Population Sums | Accepted |
- | [69](nuc-0069.md) | List and Population Extremes | Accepted |
- | [71](nuc-0071.md) | List and Population Distinct Values | Accepted |
-+| [73](nuc-0073.md) | List and Population Predicate Counts | Accepted |
+@@ -47,11 +47,16 @@ Created: 31-Jul-2026
+ | Runtime features | Core execution, data modeling, scope, control flow, and transactions. | Yes |
+ | Utility enhancement | Standard built-in helpers, including math, collections, and strings. | Yes |
+ | Reasoning enhancement | Logic rules, inference, graph queries, and explanations. | Yes |
++| Language compatibility | Additive cross-language aliases and equivalent familiar source forms, without a token-count constraint. | Yes |
+ | Documentation | Indexes, guidelines, reference documentation, and development processes. | No |
  
- ### Reasoning enhancement
+ - Every existing and future NUC must have exactly one registered `Category` header, including Draft, Accepted, Rejected, Active, and Superseded proposals.
+ - Classify the NUC's overall primary purpose, not merely its latest edit; a metadata-only revision does not make a language proposal Documentation.
+ - NUC 0 and NUC 1 use Documentation.
++- Language compatibility advances Nucleoid's aspiration to be a superset of programming languages; this is a goal, not a claim that full compatibility with every language already exists.
++- Welcome optional aliases and equivalent familiar source forms, such as the already accepted `this`/`self` and `=>`/`->`, while preserving every accepted form and meaning. The category itself introduces no new aliases or runtime behavior.
++- Language compatibility proposals need not reduce or preserve lexer-token counts and may introduce new token kinds when appropriate; a minimal core syntax remains a separate language goal.
++- Classify by primary purpose: familiar prior art alone does not move a grammar, runtime, utility, or reasoning proposal into Language compatibility.
+ - Only the user may add categories and specify their automatic-selection eligibility; keep this registry, affected proposal headers, and both category and numerical indexes synchronized.
+ - Every category addition requires the coordinating caller to review all existing NUCs across every status and update proposals that fit the new category more accurately.
+ - Each NUC changed by that review requires its own revision under the ordinary independent proposal/evaluation process; preserve unaffected categories and every proposal's `Type`, `Status`, and historical evaluation outcomes.
+@@ -64,7 +69,7 @@ Created: 31-Jul-2026
+ - Explicit feature or category requests take precedence; documentation and process work are not randomly selected as language enhancements.
+ - When no feature or category is specified for a language enhancement, the caller reads the current registry and makes one tool-backed, unbiased random draw with equal probability across all currently eligible categories.
+ - Derive the eligible set and its size from the registry, without a hard-coded category count; future user-added eligible categories join the same uniform draw.
+-- With the current four eligible categories, each has a 25% chance; do not retain the former 50/50 syntax/runtime split.
++- With the current five eligible categories, each has a 20% chance; do not retain earlier fixed category sets or probabilities.
+ - For example, populate `$categories` from the registry's Yes entries and select one index with `Get-Random -Minimum 0 -Maximum $categories.Count`.
+ - Draw before recording baselines or delegating preparation, then choose one bounded enhancement within the selected category; do not redraw to favor a category or substitute deterministic alternation for randomness.
+ - The caller supplies the selected category, requested change, and selection rationale to the proposal worker; the worker uses that selection without redrawing.
+@@ -94,8 +99,11 @@ Created: 31-Jul-2026
+ | Runtime features | Skipped for a genuinely uncomparable existing feature, with an explicit reason and evidence. |
+ | Utility enhancement | Required. |
+ | Reasoning enhancement | Required. |
++| Language compatibility | Skipped entirely; additive aliases and equivalent familiar forms may use more lexer tokens. |
+ | Documentation | Skipped. |
  
-@@ -194,6 +195,7 @@ Created: 31-Jul-2026
- | [70](nuc-0070.md) | Object Entry Loops | Standards Track | Runtime features | Automatic-Accepted: independent evaluation rejected it because a rolled-back `delete` re-appended the key; its loops ship through NUC 72, which fixed that |
- | [71](nuc-0071.md) | List and Population Distinct Values | Standards Track | Utility enhancement | Accepted |
- | [72](nuc-0072.md) | Object Entry Loops with Ordered Rollback | Standards Track | Runtime features | Accepted |
-+| [73](nuc-0073.md) | List and Population Predicate Counts | Standards Track | Utility enhancement | Accepted |
- 
- ## Copyright
- 
++- The Language compatibility policy is a categorical skip, not advisory token scoring, a zero-case comparison, or a passing token gate; single mode still takes precedence with its single-proposal skip reason.
++- In every category and mode, retain valid immutable accepted-corpus baselines, accepted-source replay, behavior/integrity, syntax compatibility, the full `cargo test`, `cargo build --all-targets`, `cargo clippy --all-targets -- -D warnings`, and `cargo fmt --check`.
+ - Read the proposal's actual `Category` header and validate it against the registry; an unknown or missing category blocks evaluation, never selects a skip.
+ - Runtime proposals require explicit applicability (`new_feature`, `existing_comparable`, or `existing_uncomparable`), including in single mode; uncomparable existing features require nonblank reason and evidence, independently verified by the evaluator.
+ - A missing comparison artifact is not evidence that an existing feature is uncomparable; missing
 ```
 
-**File**: `docs/nuc-0073.md` (added, +323/-0)
+**File**: `tests/proposals.rs` (modified, +104/-26)
 ```diff
-@@ -0,0 +1,323 @@
-+# NUC 73 -- List and Population Predicate Counts
-+
-+```
-+NUC: 73
-+Title: List and Population Predicate Counts
-+Author: GitHub Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Accepted
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 02-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Adds the read-only shared query `RECEIVER.count(predicate)` to every list
-+  and class population receiver supported by `filter`.
-+- Returns the Number from `RECEIVER.filter(predicate).length`, without
-+  allocating the filtered-result list, and returns `0` for a valid empty
-+  receiver.
-+- Preserves `filter`'s predicate invocation, truthiness, dependencies,
-+  missing-value behavior, receiver snapshot, argument evaluation and rollback.
-+- Adds no grammar, keyword, alias, no-argument overload, dependency or public
-+  Rust API.
-+- **Outcome: Accepted.** The independent evaluation and the caller's
-+  integrated-tree checks passed all three hard criteria. Every required
-+  token comparison passed; no policy check failed.
-+
-+## Motivation
-+
-+- A declarative model often needs how many items satisfy a rule, not a
-+  collection of those items: open tickets, high readings or a team's
-+  unfinished tasks.
-+- Accepted syntax expresses that query as `filter(predicate).length`, which
-+  constructs a result list only to read its length.
-+- A direct predicate count states the same query without the intermediate
-+  collection and keeps the dependencies that make the count live.
-+
-+## Rationale
-+
-+- **Category.** The caller made one uniform tool-backed draw over the current
-+  registry's four automatically selectable categories: index 2/4, Utility
-+  enhancement, without a redraw. A standard collection helper fits that
-+  confirmed category; this revision does not alter the registry or other NUCs.
-+- **Mode and token policy.** This is one preparation stage in an authorized
-+  continuous invocation. Runtime applicability is `not_applicable` because
-+  the category is Utility enhancement; runtime reason/evidence inputs are
-+  unset. Independent per-case lexer-token comparison is required, with each
-+  case using the same or fewer tokens than its accepted counterpart.
-+- **One required predicate.** `count(predicate)` counts matches, not all
-+  items. `length` already gives the receiver's size; a no-argument overload
-+  would introduce a second operation unnecessarily.
-+- **Reuse shared dispatch.** One additive `list_query` arm uses the exact
-+  invocation and truthiness path of `filter`, with a `usize` counter instead
-+  of a filtered-result `Vec`. Existing receiver and argument handling remains
-+  untouched.
-+- **Full traversal.** No match count permits early termination; every
-+  predicate invocation contributes its existing reads and side effects.
-+- **Ordinary names.** `count` is a member spelling, not a keyword or global
-+  function. Existing bindings, object properties, property reads and instance
-+  methods keep their behavior.
-+- **Counterparts.** The caller recorded all seven behavior-equivalent
-+  accepted-syntax counterparts before any edits. Only query calculations
-+  outside assertions change to `count`; the three protected population
-+  `filter(...).length` assertions and all instance `bag.count()` assertions
-+  remain verbatim.
-+- **Not added.** Aliases, optional predicates, numeric selectors, string
-+  counts, short-circuiting, new callback arguments or changes to the accepted
-+  `filter` query.
-+- **Optional evidence.** No hint or scoring rubric was supplied. Strategy
-+  learning is `not_configured`; this trial is unattributed and legitimately
-+  unscored. No strategy, assessment or reward is inferred.
-+
-+## Specification
-+
-+- The authoritative contract is
-+  [List and population predicate counts](../nucleoid.spec.md#list-and-population-predicate-counts).
-+- `RECEIVER` is any list receiver accepted by `filter`, or a declared class's
-+  population, reached through its class name or a class-valued alias.
-+- Resolve and snapshot the receiver before evaluating arguments. Evaluate
-+  every supplied argument once, left to right; use the first as the
-+  predicate and ignore the values of extras.
-+- Require a function predicate before iterating, including for an empty
-+  receiver. Invoke it once for each snapshot item, in receiver order, with
-+  only that item; normal missing-argument/default rules handle its remaining
-+  parameters.
-+- Increment the match count whenever the invocation result is truthy under
-+  the rules used by `filter`. Visit all items unless an invocation raises an
-+  error, and return the Number of matches, including `0` for an empty
-+  receiver.
-+- The query does not write the receiver or allocate a filtered-result list.
-+  Existing receiver snapshots and function invocation may still allocate;
-+  this is not an allocation-free execution claim.
-+- Dependencies, nullish reads and deferred declarations are exactly those of
-+  `filter(predicate).length`, including reads made by predicate
-```
-
-**File**: `nucleoid.spec.md` (modified, +132/-0)
-```diff
-@@ -3165,6 +3165,45 @@ statement positions; caught values and transaction recovery are unchanged.
-   `Nucleoid rolls back failed distinct updates` specify the executable
-   behavior.
+@@ -46,6 +46,8 @@ enum Category {
+     Utility,
+     #[serde(rename = "Reasoning enhancement")]
+     Reasoning,
++    #[serde(rename = "Language compatibility")]
++    LanguageCompatibility,
+     Documentation,
+ }
  
-+## List and population predicate counts
-+
-+- [NUC 73](docs/nuc-0073.md) adds the read-only shared query
-+  `RECEIVER.count(predicate)` to every list and class population receiver
-+  supported by `filter`, including class aliases. No syntax, keyword, alias,
-+  no-argument overload or public Rust API is added.
-+- For a function predicate, the query returns the Number that
-+  `RECEIVER.filter(predicate).length` returns, without allocating a filtered
-+  result list. A valid empty receiver returns `0`.
-+- The predicate is invoked once per item, in receiver order, with only the
-+  item, through the same invocation and truthiness rules as `filter`.
-+  Remaining parameters follow the normal missing-argument/default rules.
-+  Every item is visited unless an invocation fails; a truthy or falsy result
-+  never short-circuits the query.
-+- A missing or non-function first argument, including `null` or undefined,
-+  raises `TypeError("count expects a function")`, even on an empty list or
-+  population. There is no `count()` form for the receiver's length.
-+- The receiver is snapshotted before the arguments, and every supplied
-+  argument is evaluated once, left to right, including evaluated-and-ignored
-+  extras. The query never writes the receiver; callback side effects and
-+  errors keep their existing behavior. A null or undefined receiver yields
-+  undefined without evaluating the arguments, as for `filter`.
-+- A declaration follows its receiver, argument expressions and the reads
-+  made by every predicate invocation. List changes, population additions
-+  and removals, and changes to those reads re-evaluate it, including in
-+  class-level rules. `.value`, state-version receivers, nullish reads and
-+  deferred declarations work exactly as in `filter(predicate).length`;
-+  a numeric query result does not suppress missing-value settlement.
-+  Failures use the existing transaction and rollback behavior.
-+- Bindings, properties and instance methods named `count` are unchanged,
-+  as are property reads such as `items.count`. On a class or class alias,
-+  `Name.count(predicate)` queries the population even when its instances
-+  have a method named `count`; calls on an instance still invoke that method.
-+  All accepted `filter(predicate).length` forms remain available unchanged.
-+- The four appended entries beginning `Nucleoid counts matching list items`
-+  through `Nucleoid uses predicate counts beside ordinary count names`
-+  specify the executable behavior. Their original assertions, including the
-+  population `filter(...).length` assertions, are preserved.
-+
- ## Object entry loops with ordered rollback
+@@ -56,6 +58,7 @@ impl Category {
+             "Runtime features" => Ok(Self::Runtime),
+             "Utility enhancement" => Ok(Self::Utility),
+             "Reasoning enhancement" => Ok(Self::Reasoning),
++            "Language compatibility" => Ok(Self::LanguageCompatibility),
+             "Documentation" => Ok(Self::Documentation),
+             _ => Err(GateError::Proposal(format!(
+                 "unsupported Category {label:?}; confirm its registry and policy before evaluation"
+@@ -144,6 +147,7 @@ impl EvaluationPolicy {
+             return Some(TokenSkipReason::SingleProposal);
+         }
+         match self.category {
++            Category::LanguageCompatibility => Some(TokenSkipReason::LanguageCompatibility),
+             Category::Documentation => Some(TokenSkipReason::Documentation),
+             Category::Runtime => match self.runtime {
+                 RuntimeApplicability::NewFeature => Some(TokenSkipReason::NewRuntimeFeature),
+@@ -171,6 +175,7 @@ fn required_rationale(variable: &str, value: Option<&str>) -> Result<String, Gat
+ #[serde(rename_all = "snake_case")]
+ enum TokenSkipReason {
+     SingleProposal,
++    LanguageCompatibility,
+     Documentation,
+     NewRuntimeFeature,
+     UncomparableRuntimeFeature,
+@@ -1850,6 +1855,11 @@ fn policy_matrix() -> Vec<(EvaluationPolicy, Option<TokenSkipReason>)> {
+         (Category::Syntax, None, None),
+         (Category::Utility, None, None),
+         (Category::Reasoning, None, None),
++        (
++            Category::LanguageCompatibility,
++            None,
++            Some(TokenSkipReason::LanguageCompatibility),
++        ),
+         (
+             Category::Documentation,
+             None,
+@@ -1936,6 +1946,44 @@ fn complete_mode_category_matrix_enforces_required_token_increases() {
+     }
+ }
  
- - [NUC 72](docs/nuc-0072.md) adds loops over an object's entries:
-@@ -18063,4 +18102,97 @@ order.qty = 3
- order.price = 7
- limits = [3, 60]
- assert: [low, high, qty, price], [3, 60, 3, 7]
-+---
-+# Nucleoid counts matching list items
++#[test]
++fn language_compatibility_reports_a_skip_without_measurements_or_token_limits() {
++    let before = [fixture("paired", "a = 1\nassert(a, 1)")];
++    let after = [fixture("paired", "a = (1)\nassert(a, 1)")];
++    assert!(count_tokens(&after[0]).unwrap() > count_tokens(&before[0]).unwrap());
++    for (mode, reason) in [
++        ("continuous", "language_compatibility"),
++        ("single", "single_proposal"),
++    ] {
++        let policy = EvaluationPolicy::from_inputs(
++            Category::LanguageCompatibility,
++            PolicyInputs {
++                mode: Some(mode),
++                ..PolicyInputs::default()
++            },
++        )
++        .unwrap();
++        let report = verdict_with_policy(&before, &after, policy.clone());
++        assert_eq!(report.decision, Decision::Accepted);
++        assert!(report.issues.is_empty());
++        assert_eq!(report.behavior.legacy_cases_passed, 1);
++        assert_eq!(report.behavior.candidate_cases_passed, 1);
++        let json = serde_json::to_value(&report).unwrap();
++        assert_eq!(json["proposal"]["category"], "Language compatibility");
++        assert_eq!(json["policy"]["category"], "Language compatibility");
++        assert_eq!(json["policy"]["mode"], mode);
++        assert_eq!(json["policy"]["runtime"]["kind"], "not_applicable");
++        assert_eq!(
++            serde_json::from_value::<EvaluationPolicy>(json["policy"].clone()).unwrap(),
++            policy
++        );
++        let skipped = serde_json::json!({"status": "skipped", "reason": reason});
++        assert_eq!(json["token_check"], skipped);
++        let restored: TokenCheck = serde_json::from_value(skipped.clone()).unwrap();
++        assert_eq!(serde_json::to_value(restored).unwrap(), skipped);
++    }
++}
 +
-+readings = [2, 5, 8, 11]
-+threshold = 6
-+high = readings.count(reading -> reading > threshold)
-+assert: high, 2
-+readings.push(14)
-+assert: high, 3
-+threshold = 10
-+assert: high, 2
-+readings.shift()
-+assert: high, 2
-+readings = []
-+assert: high, 0
-+cart = {items: [0, 1, 2, 0, 3]}
-+nonzero = cart.items.count(item -> item != 0)
-+assert: nonzero, 3
-+cart.items.push(4)
-+assert: nonzero, 4
-+---
-+# Nucleoid counts matching class instances
-+
-+class Ticket(open, priority):
-+    this.open = open
-+    this.priority = priority
-+pending = Ticket.count(ticket -> ticket.open)
-+assert: pending, 0
-+first = Ticket(true, 2)
-+second = Ticket(false, 5)
-+third = Ticket(true, 9)
-+important = Ticket.count(ticket -> ticket.open and ticket.priority >= 5)
-+assert: pending, 2
-+assert: important, 1
-+second.open = true
-+assert: pending, 3
-+assert: important, 2
-+third.priority = 1
-+assert: important, 1
-+delete first.open
-+delete first.priority
-+delete first
-+assert: pending, 2
-+third.open = false
-+assert: pending, 1
-+assert: important, 1
-+---
-+# Nucleoid keeps predicate counts live in class level rules
-+
-+class Team(name): this.name = name
-+class Task(team, done):
-+    this.team = team
-+    this.done = done
-+$Team.pending = Task.count(task -> task.team == $Team and not task.done)
-+alpha = Team("alpha")
-+beta = Team("beta")
-+assert: alpha.pending, 0
-+assert: beta.pending, 0
-+first = Task(alpha, false)
-+second = Task(alpha, true)
-+third = Task(beta, false)
-+assert: alpha.pending, 1
-+assert: beta.pending, 1
-+first.team = beta
-+assert: alpha.pending, 0
-+assert: beta.pending, 2
-+second.done = false
-+assert: alpha.pending, 1
-+delete third.team
-+delete third.done
-+delete third
-+assert: beta.pending, 1
-+---
-+# Nucleoid uses predicate counts beside ordinary count names
-+
-+cutoff = 3
-+count = 7
-+report = {count: 9}
-+class Bag(items):
-+    this.items = items
-+    def count(): return this.items.count(item -> item > cutoff)
-+bag = Bag([1, 4, 8])
-+
+ #[test]
+ fn new_behavior_needs_a_comparison_only_when_the_matrix_requires_it() {
+     let before = [fixture("paired", "assert(1, 1)")];
+@@ -1995,41 +2043,30 @@ fn runtime_noncomparison_requires_validated_reason_and_evidence() {
+ 
+ #[test]
+ fn invalid_policy_inputs_never_select_a_skip() {
+-    for mode in [
+-        Some(""),
+-        Some("Single"),
+-        Some("ignore"),
+-        Some(" continuous "),
+-    ] {
+-        assert!(
+-            EvaluationPolicy::from_inputs(
+-                Category::Documentation,
+-                PolicyInputs {
+-                    mode,
+-                    ..PolicyInputs::default()
+-                },
+-            )
+-            .is_err()
+-        );
+-    }
+-    for mode in [None, Some("single")] {
+-        for runtime in [None, Some(""), Some("new"), Some("not_applicable")] {
++    for category in [Category::Documentation, Category::LanguageCompatibility] {
++        for mode in [
++            Some(""),
++            Some("Single"),
++            Some("ignore"),
++            Some(" continuous "),
++        ] {
+             assert!(
+                 EvaluationPolicy::from_inputs(
+-                    Category::Runtime,
++                    category,
+                     PolicyI
 ```
 
 #### Recent Merged Pull Requests:
@@ -1446,52 +1393,39 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 73 List and Population Predicate Counts
+## X. NUC 1 NUC Purpose and Guidelines
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/project.instructions.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `13944b95`: NUC 73 List and Population Predicate Counts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ec8b1b9b`: NUC 1 NUC Purpose and Guidelines. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/project.instructions.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Predicate counts
+Design a minimal core grammar with minimum tokenized syntax, while aspiring to
+be a superset of programming languages, including Python, JavaScript/TypeScript,
+Kotlin, Go, Rust, Java, C# and C/C++. These are examples, not a fixed boundary.
+This is a goal, not a claim of full compatibility with every language.
 
-**Predicate counts keep the number of open tickets live as tickets change**
-
-```nuc
-class Ticket(open): this.open = open
-pending = Ticket.count(ticket -> ticket.open)
-first = Ticket(true)
-second = Ticket(false)
-assert: pending, 1
-second.open = true
-assert: pending, 2
-first.open = false
-assert: pending, 1
-```
-
-- [NUC 73](docs/nuc-0073.md) adds `count(predicate)` to lists and class
-  populations. It returns `filter(predicate).length` without allocating the
-  filtered result, and calls the predicate once per item in receiver order.
-- Counts remain live in declarations and class-level rules. A valid empty
-  receiver gives `0`; a missing or non-function predicate raises
-  `TypeError("count expects a function")`. The accepted `filter` spelling
-  remains unchanged. See the
-  [root contract](nucleoid.spec.md#list-and-population-predicate-counts).
-
+Welcome additive cross-language aliases and equivalent familiar source forms,
+such as the already accepted `this`/`self` and `=>`/`->`, under the Language
+compatibility category. They need not reduce or preserve lexer-token counts;
+new syntax and token kinds may be introduced when appropriate. Keep every
+accepted form and meaning. The superset aspiration is not a hard constraint.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+Design a new grammar with minimum tokenized syntax — a superset of Python, JavaScript/TypeScript, Kotlin, Go, Rust, Java, C# and C/C++.
+
+However, new syntax may be introduced where it is needed to achieve that goal. The superset is a starting point, not a hard constraint.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `13944b95` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ec8b1b9b` are properly handled with clean fallback behavior.

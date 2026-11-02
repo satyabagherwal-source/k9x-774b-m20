@@ -6857,3 +6857,4 @@ Every entry in this ledger must capture:
 | `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `b97d2070` | Multi-dimensional audit evidence | 2026-11-02T16:47:54.838Z |
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-02T16:54:57.907Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `4b2dbfab` | Multi-dimensional audit evidence | 2026-11-02T16:55:02.141Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ec8b1b9b` | Multi-dimensional audit evidence | 2026-11-02T17:12:23.489Z |

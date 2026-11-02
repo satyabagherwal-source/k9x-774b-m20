@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T16:55:02.053Z",
+  "last_updated": "2026-11-02T17:12:23.422Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -43282,8 +43282,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "bd27ded7",
-      "content_hash": "236fbd790b8681a1ffc30049ad96da9ce1bede306f73dccd7e3c055d3cdd86bd",
+      "source_version": "ec8b1b9b",
+      "content_hash": "f0667d95e2a463dbe8134b32499d68db963b8f8db56025e128af469a2f814bf0",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -43476,6 +43476,11 @@
           "number": 6409,
           "title": "NUC 15 Parenthesis-Free Nullary Function Definitions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6467,
+          "title": "NUC 1 NUC Purpose and Guidelines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43483,7 +43488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T14:32:10.892Z",
+      "verified_at": "2026-11-02T17:12:23.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167425,6 +167430,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T16:55:02.031Z"
+    },
+    "rule-6467": {
+      "learning_id": "rule-6467",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6467,
+      "title": "NUC 1 NUC Purpose and Guidelines",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "ec8b1b9b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:12:23.404Z"
     }
   },
   "aliases": {
