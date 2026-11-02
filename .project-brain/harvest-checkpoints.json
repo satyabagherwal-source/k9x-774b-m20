@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T15:36:53.073Z",
+  "last_updated": "2026-11-02T15:50:58.600Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "1c31cb7861569a3690fd1673be117cf16af43bde3a5e0540ef3296bcd3b2475b",
-      "verified_at": "2026-10-31T20:46:49.396Z",
+      "content_hash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
+      "verified_at": "2026-11-02T15:50:58.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T20:46:49.396Z"
+      "last_updated": "2026-11-02T15:50:58.599Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",

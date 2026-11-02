@@ -6836,3 +6836,4 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `395f7978` | Multi-dimensional audit evidence | 2026-11-02T15:36:48.245Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `05fb8aef` | Multi-dimensional audit evidence | 2026-11-02T15:36:49.391Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `035356d9` | Multi-dimensional audit evidence | 2026-11-02T15:36:53.065Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e61e01c7` | Multi-dimensional audit evidence | 2026-11-02T15:50:58.591Z |

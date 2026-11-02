@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T15:36:52.998Z",
+  "last_updated": "2026-11-02T15:50:58.446Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49829,8 +49829,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "8dca43ed",
-      "content_hash": "1c31cb7861569a3690fd1673be117cf16af43bde3a5e0540ef3296bcd3b2475b",
+      "source_version": "e61e01c7",
+      "content_hash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -49903,6 +49903,21 @@
           "number": 6313,
           "title": "clippy `redundant_clone` case",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6442,
+          "title": "The Corrupted Transport Drain Defense Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6443,
+          "title": "State-Machine Driven Transport Backpressure Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6444,
+          "title": "File Creation Mode Sanitization for Key Material Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49910,7 +49925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T20:46:49.283Z",
+      "verified_at": "2026-11-02T15:50:58.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166950,6 +166965,48 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T15:36:52.981Z"
+    },
+    "rule-6442": {
+      "learning_id": "rule-6442",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6442,
+      "title": "The Corrupted Transport Drain Defense Rule",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "e61e01c7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:50:58.428Z"
+    },
+    "rule-6443": {
+      "learning_id": "rule-6443",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6443,
+      "title": "State-Machine Driven Transport Backpressure Rule",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "e61e01c7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:50:58.428Z"
+    },
+    "rule-6444": {
+      "learning_id": "rule-6444",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6444,
+      "title": "File Creation Mode Sanitization for Key Material Rule",
+      "source_url": "https://github.com/rustls/rustls",
+      "source_version": "e61e01c7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:50:58.428Z"
     }
   },
   "aliases": {

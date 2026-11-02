@@ -1,21 +1,20 @@
 {
   "rustls-rustls": {
-    "name": "rustls",
+    "name": "rustls/rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T00:30:02.650Z",
-    "lastVerified": "2026-11-01T00:30:02.650Z",
+    "lastChecked": "2026-11-02T15:49:52.880Z",
+    "lastVerified": "2026-11-02T15:49:52.880Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
-    "contentHash": "1c31cb7861569a3690fd1673be117cf16af43bde3a5e0540ef3296bcd3b2475b",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8dca43ed"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tanstack-router": {
     "name": "router",
@@ -40,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T15:36:55.614Z",
-    "lastVerified": "2026-11-02T15:36:55.614Z",
+    "lastChecked": "2026-11-02T15:51:01.149Z",
+    "lastVerified": "2026-11-02T15:51:01.149Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -249,8 +248,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T15:15:30.591Z",
-    "lastVerified": "2026-11-02T15:15:30.591Z",
+    "lastChecked": "2026-11-02T15:49:51.578Z",
+    "lastVerified": "2026-11-02T15:49:51.578Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -3585,9 +3584,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-10-31T12:53:50.187Z",
+    "lastChecked": "2026-11-02T15:49:49.033Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-10-31T12:53:50.187Z"
+    "lastVerified": "2026-11-02T15:49:49.033Z"
   },
   "mfontanini-presenterm": {
     "name": "presenterm",
@@ -5116,9 +5115,9 @@
   "infracost-infracost": {
     "name": "infracost",
     "officialUrl": "https://github.com/infracost/infracost",
-    "lastChecked": "2026-10-31T13:34:01.410Z",
+    "lastChecked": "2026-11-02T15:49:44.008Z",
     "revisionIdentifier": "98c9711f",
-    "lastVerified": "2026-10-31T13:34:01.410Z"
+    "lastVerified": "2026-11-02T15:49:44.008Z"
   },
   "orbitinghail-sqlsync": {
     "name": "sqlsync",
@@ -5186,9 +5185,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-10-31T09:29:26.397Z",
+    "lastChecked": "2026-11-02T15:49:36.443Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-10-31T09:29:26.397Z"
+    "lastVerified": "2026-11-02T15:49:36.443Z"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "name": "deepseek-ai/DeepSeek-V3",
@@ -8981,9 +8980,9 @@
   "serpapi-google-search-results-python": {
     "name": "google-search-results-python",
     "officialUrl": "https://github.com/serpapi/google-search-results-python",
-    "lastChecked": "2026-10-29T11:43:45.536Z",
+    "lastChecked": "2026-11-02T15:49:38.928Z",
     "revisionIdentifier": "345d31a9",
-    "lastVerified": "2026-10-29T11:43:45.536Z"
+    "lastVerified": "2026-11-02T15:49:38.928Z"
   },
   "lottie-react-native-lottie-react-native": {
     "name": "lottie-react-native",
@@ -9892,9 +9891,9 @@
   "seabdulbasit-musicapp-kmp": {
     "name": "MusicApp-KMP",
     "officialUrl": "https://github.com/SEAbdulbasit/MusicApp-KMP",
-    "lastChecked": "2026-10-30T06:01:43.550Z",
+    "lastChecked": "2026-11-02T15:49:41.441Z",
     "revisionIdentifier": "3048f024",
-    "lastVerified": "2026-10-30T06:01:43.550Z"
+    "lastVerified": "2026-11-02T15:49:41.441Z"
   },
   "ugolbck-seofordev": {
     "name": "seofordev",

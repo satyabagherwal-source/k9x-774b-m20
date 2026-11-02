@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "8dca43ed",
+    "sourceVersion": "e61e01c7",
     "license": "NOASSERTION",
-    "contentHash": "1c31cb7861569a3690fd1673be117cf16af43bde3a5e0540ef3296bcd3b2475b",
-    "lastHarvestedAt": "2026-10-31T20:46:49.386Z",
+    "contentHash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
+    "lastHarvestedAt": "2026-11-02T15:50:58.591Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {

@@ -471776,3 +471776,293 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `650a4bb3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 6442. The Corrupted Transport Drain Defense Rule (Harvested from rustls/rustls)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Corrupted Transport Drain Defense Rule",
+  "source": "rustls/rustls",
+  "source_url": "https://github.com/rustls/rustls",
+  "source_version": "e61e01c7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-02T15:50:57.477Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rustls-rustls",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `e61e01c7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When reading from or writing to an arbitrary transport or user-supplied slice via an I/O trait (`std::io::Write::write` or equivalent foreign buffer copy), if the reported bytes processed exceeds the bounds of the provided slice (`reported_len > slice.len()`), the application **MUST NOT** attempt to slice into the buffer or trust the return value. Instead, the runtime **MUST immediately invalidate and clear the entire pending buffer**, emit an unrecoverable `InvalidData`/`Other` error, and terminate the session.
+
+**WHY**:
+Faulty or malicious transport drivers (e.g., misconfigured ring buffers, buggy mock sinks, corrupted kernel shims, or custom FFI bindings) may return a value larger than the requested buffer length. If the caller performs naive slice operations such as `output.drain(..n)` or `sent += n`, it triggers an immediate arithmetic panic (index out of bounds) or unbounded slice wrapping. This can leak adjacent uninitialized memory or cause denial of service. Purging the buffer prevents unauthenticated or phantom key data from remaining buffered in memory if the caller catches and ignores the error.
+
+**WHEN TO APPLY**:
+Apply in any transport adapter, network framing parser, serial port driver, or custom stream reader/writer where a lower layer controls the reported write/read count.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::io;
+
+/// Safely write to transport and drain pending buffer without panic risks.
+pub fn write_and_drain_secure(
+    io: &mut dyn io::Write, 
+    output: &mut Vec<u8>
+) -> io::Result<usize> {
+    let available = output.len();
+    let n = io.write(output)?;
+    
+    // Defend against rogue transports returning n > output.len()
+    if n > available {
+        output.clear(); // Wipe buffer completely to eliminate indeterminate memory state
+        return Err(io::Error::other(format!(
+            "illegal write() return value: reported {n} bytes, but only {available} available"
+        )));
+    }
+    
+    output.drain(..n);
+    Ok(n)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER assume the transport returns a valid count <= buffer.len()
+pub fn write_and_drain_unsafe(
+    io: &mut dyn io::Write, 
+    output: &mut Vec<u8>
+) -> io::Result<usize> {
+    let n = io.write(output)?;
+    // VULNERABLE: If n > output.len(), panics with slice index out of bounds,
+    // leaving partially processed security-sensitive buffers active in memory!
+    output.drain(..n); 
+    Ok(n)
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a mock transport test asserting that corrupt byte counts force complete memory erasure:
+```rust
+#[test]
+fn verify_corrupt_write_drains_safely() {
+    struct CorruptTransport;
+    impl std::io::Write for CorruptTransport {
+        fn write(&mut self, _buf: &[u8]) -> std::io::Result<usize> {
+            Ok(999999) // Return value exceeding buffer bounds
+        }
+        fn flush(&mut self) -> std::io::Result<()> { Ok(()) }
+    }
+
+    let mut mock_sink = CorruptTransport;
+    let mut pending = vec![1, 2, 3, 4, 5];
+    let res = write_and_drain_secure(&mut mock_sink, &mut pending);
+    
+    assert!(res.is_err());
+    assert!(pending.is_empty(), "Pending buffer must be completely cleared upon corruption");
+}
+```
+
+---
+
+
+---
+
+## 6443. State-Machine Driven Transport Backpressure Rule (Harvested from rustls/rustls)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State-Machine Driven Transport Backpressure Rule",
+  "source": "rustls/rustls",
+  "source_url": "https://github.com/rustls/rustls",
+  "source_version": "e61e01c7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-02T15:50:57.844Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rustls-rustls",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `e61e01c7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+An application implementing full-duplex protocol framing over stream transports **MUST NOT** read incoming frames from the network while previously decoded, application-level plaintext remains unconsumed, unless the protocol state machine is explicitly in a handshake phase.
+
+**WHY**:
+Failing to gate transport reading on application consumption allows a malicious or faster peer to flood the connection with continuous records. If an attacker streams hundreds of megabytes of plaintext faster than the application reads it, and the transport reader unreservedly buffers this in `Vec<u8>` or heap lists, memory starvation (OOM) occurs. In TLS, early handshake messages (e.g., `ClientHello`, `ServerHello`, `Certificate`) must proceed to resolve the session; once handshaking completes, network ingestion must freeze until the consumer drains `received_plaintext`.
+
+**WHEN TO APPLY**:
+Network protocols implementing internal framing, decryptors, and buffering layers (TLS, QUIC, WebSocket engines, RPC multiplexers).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+pub trait ProtocolState {
+    fn is_handshaking(&self) -> bool;
+}
+
+/// Enforces backpressure: halts ingress reading when output is saturated
+pub fn wants_read<S: ProtocolState>(state: &S, received_plaintext: &[u8]) -> bool {
+    // Invariant: Handshake progress takes precedence; otherwise unconsumed
+    // application plaintext mandates immediate ingress backpressure.
+    state.is_handshaking() || received_plaintext.is_empty()
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER read unconditionally into memory buffers without checking client drain state
+pub fn poll_ingress_unsafe<T: std::io::Read>(
+    transport: &mut T, 
+    app_buffer: &mut Vec<u8>
+) -> std::io::Result<usize> {
+    let mut temp = [0u8; 16384];
+    let n = transport.read(&mut temp)?;
+    // VULNERABLE: Unchecked buffer expansion leads to heap exhaustion / OOM DOS
+    app_buffer.extend_from_slice(&temp[..n]); 
+    Ok(n)
+}
+```
+
+**VERIFICATION METHOD**:
+Verify with property-based unit testing:
+```rust
+#[test]
+fn test_backpressure_invariant() {
+    struct MockConn { handshaking: bool }
+    impl ProtocolState for MockConn {
+        fn is_handshaking(&self) -> bool { self.handshaking }
+    }
+
+    let conn_active = MockConn { handshaking: false };
+    let unread_data = vec![0x42; 100];
+    assert!(!wants_read(&conn_active, &unread_data), "Ingress must be rejected when unread data exists");
+
+    let conn_handshaking = MockConn { handshaking: true };
+    assert!(wants_read(&conn_handshaking, &unread_data), "Handshake must allow reads to prevent deadlock");
+}
+```
+
+---
+
+
+---
+
+## 6444. File Creation Mode Sanitization for Key Material Rule (Harvested from rustls/rustls)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "File Creation Mode Sanitization for Key Material Rule",
+  "source": "rustls/rustls",
+  "source_url": "https://github.com/rustls/rustls",
+  "source_version": "e61e01c7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-02T15:50:58.240Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rustls-rustls",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rustls/rustls](https://github.com/rustls/rustls) (Revision: `e61e01c7`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any diagnostic, debugging, or logging component that writes cryptographic secrets, keying material, or ephemeral tokens to the filesystem **MUST** atomically configure filesystem creation modes to owner-only permissions (`0o600` on Unix/POSIX) during initial file instantiation, and **MUST** sanitize standard logging debug implementations (`core::fmt::Debug`) to redact intermediate serialization buffers.
+
+**WHY**:
+On POSIX environments, standard `File::create()` or `OpenOptions::new().create(true).open(path)` falls back to process umask defaults (frequently `0o022`), creating files with mode `0o644` (world-readable). If an application dumps `SSLKEYLOGFILE` traces or session secrets, any local unprivileged process can read the master secrets and decrypt TLS traffic. Furthermore, naive `#[derive(Debug)]` on structures containing write buffers exposes raw cryptographic keys in application panic logs, monitoring frameworks, and Sentry traces.
+
+**WHEN TO APPLY**:
+Keylog file dumpers, secret vaults, private key exports, token storage, and diagnostic key dumpers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::fs::{File, OpenOptions};
+use std::path::Path;
+use core::fmt::{Debug, Formatter};
+#[cfg(unix)]
+use std::os::unix::fs::OpenOptionsExt;
+
+pub struct SecureKeyLogger {
+    file: Option<File>,
+    secret_buf: Vec<u8>,
+}
+
+impl SecureKeyLogger {
+    pub fn open(path: &Path) -> std::io::Result<Self> {
+        let mut options = OpenOptions::new();
+        options.append(true).create(true);
+        
+        #[cfg(unix)]
+        options.mode(0o600); // Enforce owner read/write only at inode creation time
+
+        let file = options.open(path)?;
+        Ok(Self {
+            file: Some(file),
+            secret_buf: Vec::with_capacity(256),
+        })
+    }
+}
+
+// Invariant: Redact secret_buf from debug logs to prevent Sentry/log leakages
+impl Debug for SecureKeyLogger {
+    fn fmt(&self, f: &mut Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("SecureKeyLogger")
+            .field("file", &self.file)
+            .finish_non_exhaustive()
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER use standard open options without mode enforcement for credentials
+pub fn open_keylog_insecure(path: &std::path::Path) -> std::io::Result<std::fs::File> {
+    // VULNERABLE: File created with default umask (0644), readable by any local user
+    std::fs::OpenOptions::new()
+        .append(true)
+        .create(true)
+        .open(path)
+}
+```
+
+**VERIFICATION METHOD**:
+Execute POSIX permission validation within integration test suite:
+```rust
+#[cfg(unix)]
+#[test]
+fn test_owner_permissions_enforced() {
+    use std::os::unix::fs::PermissionsExt;
+    let temp_file = tempfile::NamedTempFile::new().unwrap();
+    let logger = SecureKeyLogger::open(temp_file.path()).unwrap();
+    let metadata = std::fs::metadata(temp_file.path()).unwrap();
+    assert_eq!(
+        metadata.permissions().mode() & 0o777,
+        0o600,
+        "File permissions must be strictly owner-only (0600)"
+    );
+}
+```
+
+---

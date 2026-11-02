@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-4UXW",
-    "timestamp": "2026-10-30T21:46:13.796Z",
-    "repository": "tauri-apps/tauri",
-    "learningId": "learn-github-tauri-apps-tauri",
-    "contentHash": "4501b065de175e3857aa6afd1c9d335f3101f364fe6a8fa7558e36eb54a16740",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-DNUM",
     "timestamp": "2026-10-30T21:53:04.510Z",
     "repository": "saltstack/salt",
@@ -7492,6 +7477,21 @@
     "contentHash": "ce478062ea22f21a2317e412e2cdd4f6a6d267aa9f06488c69bc45d5a3a88330",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-RK0S",
+    "timestamp": "2026-11-02T15:50:58.588Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
