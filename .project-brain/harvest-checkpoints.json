@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T15:50:58.600Z",
+  "last_updated": "2026-11-02T15:57:29.926Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "f06a6ccd607b7b9675487bb68f45214b511e2e11b6491616479da87c78c5e4e3",
-      "verified_at": "2026-10-31T13:00:10.317Z",
+      "content_hash": "945915574a586c0415708e1ec810ee849677f908e4e7b9af84002f19098b47cf",
+      "verified_at": "2026-11-02T15:57:29.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:00:10.317Z"
+      "last_updated": "2026-11-02T15:57:29.925Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "f529436a7cf808d7e8fb7a1c03d6fc8355fcb2142c554bbda1d468f5c7ed321b",
-      "verified_at": "2026-10-31T09:36:49.476Z",
+      "content_hash": "5a3f09292806a2b885f07218c2b38aadd7647cb37e4ccba871191ee68e804fbc",
+      "verified_at": "2026-11-02T15:57:17.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T09:36:49.476Z"
+      "last_updated": "2026-11-02T15:57:17.300Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",
@@ -13206,14 +13206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-juullabs-kable",
-      "content_hash": "2bfc7acbc77bf7a1eee8d0b75eef6d3a01b164922e9182bc82b810dac78df42b",
-      "verified_at": "2026-10-30T06:10:21.278Z",
+      "content_hash": "d7494d75e857f1bf392d0d9708e1624d4a3a6f6a75e61ad8a0b21348dd3eb319",
+      "verified_at": "2026-11-02T15:57:21.187Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:10:21.278Z"
+      "last_updated": "2026-11-02T15:57:21.187Z"
     },
     "tmolavi/siteprobe": {
       "repository": "tmolavi/siteprobe",

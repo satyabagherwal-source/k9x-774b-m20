@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T15:50:58.596Z",
-  "total_cycles_completed": 6805,
-  "total_learnings_persisted": 6805,
-  "total_rules_promoted": 6454,
+  "last_updated": "2026-11-02T15:57:29.923Z",
+  "total_cycles_completed": 6808,
+  "total_learnings_persisted": 6808,
+  "total_rules_promoted": 6457,
   "history": [
-    {
-      "timestamp": "2026-10-31T16:08:35.139Z",
-      "repository": "Edge0/Audio8-TTS-Realistic-0.6b",
-      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:20:20.272Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:20:20.789Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T16:20:24.598Z",
       "repository": "microsoft/react-native-windows",
@@ -1403,6 +1382,27 @@
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:57:17.298Z",
+      "repository": "NVIDIA/cuda-rust",
+      "learningId": "learn-github-nvidia-cuda-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:57:21.185Z",
+      "repository": "JuulLabs/kable",
+      "learningId": "learn-github-juullabs-kable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:57:29.923Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

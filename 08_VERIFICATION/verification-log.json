@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-DNUM",
-    "timestamp": "2026-10-30T21:53:04.510Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "ddb16c5671bfc910e3eaf25cdb2e7bd258c6ec111a444b80c6baaf22a578b225",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-H1DY",
-    "timestamp": "2026-10-30T21:55:42.022Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "3cb07140d99d444c5d74a83e6e333ec8e44c02d2e21a42453fd3d1c45a6ba5c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-H6RP",
-    "timestamp": "2026-10-30T21:55:48.997Z",
-    "repository": "faker-js/faker",
-    "learningId": "learn-github-faker-js-faker",
-    "contentHash": "f777c3db089bf17aebf6809c64b9b3ad4bf61f7d5933db2d9ab3928c4f428131",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-HBLP",
     "timestamp": "2026-10-30T21:55:55.261Z",
     "repository": "electron/electron",
@@ -7492,6 +7447,51 @@
     "contentHash": "e3470a51903ccfefb4b4d7c421edc7c44ed71453cb9f4da47de3238d6b85817f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-ZO8C",
+    "timestamp": "2026-11-02T15:57:17.292Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "5a3f09292806a2b885f07218c2b38aadd7647cb37e4ccba871191ee68e804fbc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-ZR8B",
+    "timestamp": "2026-11-02T15:57:21.179Z",
+    "repository": "JuulLabs/kable",
+    "learningId": "learn-github-juullabs-kable",
+    "contentHash": "d7494d75e857f1bf392d0d9708e1624d4a3a6f6a75e61ad8a0b21348dd3eb319",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-ZXZ1",
+    "timestamp": "2026-11-02T15:57:29.917Z",
+    "repository": "doobidoo/mcp-memory-service",
+    "learningId": "learn-github-doobidoo-mcp-memory-service",
+    "contentHash": "945915574a586c0415708e1ec810ee849677f908e4e7b9af84002f19098b47cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

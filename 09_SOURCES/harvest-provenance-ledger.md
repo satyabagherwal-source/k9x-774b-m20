@@ -6837,3 +6837,6 @@ Every entry in this ledger must capture:
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `05fb8aef` | Multi-dimensional audit evidence | 2026-11-02T15:36:49.391Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `035356d9` | Multi-dimensional audit evidence | 2026-11-02T15:36:53.065Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `e61e01c7` | Multi-dimensional audit evidence | 2026-11-02T15:50:58.591Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `cced2a35` | Multi-dimensional audit evidence | 2026-11-02T15:57:17.294Z |
+| `learn-github-juullabs-kable` | `https://github.com/JuulLabs/kable` | `e9a39099` | Multi-dimensional audit evidence | 2026-11-02T15:57:21.181Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `e0f224ec` | Multi-dimensional audit evidence | 2026-11-02T15:57:29.919Z |

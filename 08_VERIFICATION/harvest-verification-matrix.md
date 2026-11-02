@@ -6828,3 +6828,6 @@
 | `CYCLE-20261102-9CRW` | `2026-11-02T15:36:49.388Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6440` | Yes (`22427a89...`) |
 | `CYCLE-20261102-9FLY` | `2026-11-02T15:36:53.062Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6441` | Yes (`ce478062...`) |
 | `CYCLE-20261102-RK0S` | `2026-11-02T15:50:58.588Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6442, Rule 6443, Rule 6444` | Yes (`e3470a51...`) |
+| `CYCLE-20261102-ZO8C` | `2026-11-02T15:57:17.292Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6445` | Yes (`5a3f0929...`) |
+| `CYCLE-20261102-ZR8B` | `2026-11-02T15:57:21.179Z` | `JuulLabs/kable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6446` | Yes (`d7494d75...`) |
+| `CYCLE-20261102-ZXZ1` | `2026-11-02T15:57:29.917Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6447` | Yes (`94591557...`) |
