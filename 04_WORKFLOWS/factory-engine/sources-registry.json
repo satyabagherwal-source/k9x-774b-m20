@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T14:32:13.549Z",
-    "lastVerified": "2026-11-02T14:32:13.549Z",
+    "lastChecked": "2026-11-02T14:39:30.939Z",
+    "lastVerified": "2026-11-02T14:39:30.939Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -142,22 +142,21 @@
     "revisionIdentifier": "9caf2b4c"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-01T02:16:05.492Z",
-    "lastVerified": "2026-11-01T02:16:05.492Z",
+    "lastChecked": "2026-11-02T14:39:26.480Z",
+    "lastVerified": "2026-11-02T14:39:26.480Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "8fca4bcfc0a4141c1a3610a960dd963015ed1151c757cc487c0f94af0c580b21",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c9dd9650"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1645,9 +1644,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-10-31T23:16:05.824Z",
+    "lastChecked": "2026-11-02T14:39:17.852Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-10-31T23:16:05.824Z"
+    "lastVerified": "2026-11-02T14:39:17.852Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -3062,9 +3061,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-10-31T11:46:47.968Z",
+    "lastChecked": "2026-11-02T14:39:20.344Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-10-31T11:46:47.968Z"
+    "lastVerified": "2026-11-02T14:39:20.344Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -4544,12 +4543,12 @@
     "revisionIdentifier": "b19e2331"
   },
   "clastix-kamaji": {
-    "name": "clastix/kamaji",
+    "name": "kamaji",
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T12:29:45.617Z",
-    "lastVerified": "2026-10-31T12:29:45.617Z",
+    "lastChecked": "2026-11-02T14:39:15.392Z",
+    "lastVerified": "2026-11-02T14:39:15.392Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
@@ -4558,7 +4557,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "31fed7a6"
   },
   "typedb-typedb": {
     "name": "typedb",
@@ -4758,14 +4758,14 @@
     "officialUrl": "https://github.com/telemt/telemt",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T06:59:11.629Z",
-    "lastVerified": "2026-10-31T06:59:11.629Z",
+    "lastChecked": "2026-11-02T14:39:11.526Z",
+    "lastVerified": "2026-11-02T14:39:11.526Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-telemt-telemt",
-    "contentHash": "8f86d2ca985d36f6775b6db6404ce16663d415aeed2998f39ee403141c007eff",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "contentHash": "0ec5290150c22cc6ecc0597025b15366669e3bdb6a919689f3b6ffe349de873e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8827,9 +8827,9 @@
   "melnixdev-seo-crawl-audit": {
     "name": "seo-crawl-audit",
     "officialUrl": "https://github.com/MelnixDev/seo-crawl-audit",
-    "lastChecked": "2026-10-29T01:43:07.451Z",
+    "lastChecked": "2026-11-02T14:39:10.381Z",
     "revisionIdentifier": "082076c",
-    "lastVerified": "2026-10-29T01:43:07.451Z"
+    "lastVerified": "2026-11-02T14:39:10.381Z"
   },
   "github-copilotforxcode": {
     "name": "CopilotForXcode",
@@ -9742,9 +9742,9 @@
   "android-kotlin-multiplatform-samples": {
     "name": "kotlin-multiplatform-samples",
     "officialUrl": "https://github.com/android/kotlin-multiplatform-samples",
-    "lastChecked": "2026-10-30T04:54:24.255Z",
+    "lastChecked": "2026-11-02T14:39:12.820Z",
     "revisionIdentifier": "7844c733",
-    "lastVerified": "2026-10-30T04:54:24.256Z"
+    "lastVerified": "2026-11-02T14:39:12.820Z"
   },
   "samvelik-sitemap-checker": {
     "name": "sitemap-checker",

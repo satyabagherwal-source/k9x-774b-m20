@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T14:32:10.913Z",
+  "last_updated": "2026-11-02T14:39:28.295Z",
   "total_verified_learnings": 1189,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4950,8 +4950,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "c9dd9650",
-      "content_hash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
+      "source_version": "93a5f683",
+      "content_hash": "8fca4bcfc0a4141c1a3610a960dd963015ed1151c757cc487c0f94af0c580b21",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5139,6 +5139,11 @@
           "number": 6357,
           "title": "infra): make batch lanes reach the Batches API and offer beta nodes the stable r",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6411,
+          "title": "docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5146,7 +5151,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T23:42:51.631Z",
+      "verified_at": "2026-11-02T14:39:28.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -54912,14 +54917,19 @@
       "slug": "telemt-telemt",
       "platform": "github",
       "source_url": "https://github.com/telemt/telemt",
-      "source_version": "61afd6c7",
-      "content_hash": "8f86d2ca985d36f6775b6db6404ce16663d415aeed2998f39ee403141c007eff",
+      "source_version": "84e5b827",
+      "content_hash": "0ec5290150c22cc6ecc0597025b15366669e3bdb6a919689f3b6ffe349de873e",
       "dossier_path": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/telemt-telemt-learnings.md",
       "promoted_rules": [
         {
           "number": 2086,
           "title": "Bridge JS semicolon warnings fixed",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6410,
+          "title": "Memraid fixes",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -54928,7 +54938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T06:59:11.819Z",
+      "verified_at": "2026-11-02T14:39:14.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166230,6 +166240,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T14:32:10.892Z"
+    },
+    "rule-6410": {
+      "learning_id": "rule-6410",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6410,
+      "title": "Memraid fixes",
+      "source_url": "https://github.com/telemt/telemt",
+      "source_version": "84e5b827",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:39:14.735Z"
+    },
+    "rule-6411": {
+      "learning_id": "rule-6411",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6411,
+      "title": "docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "93a5f683",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:39:28.274Z"
     }
   },
   "aliases": {

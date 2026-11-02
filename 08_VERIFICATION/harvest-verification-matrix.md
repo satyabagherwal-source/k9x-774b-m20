@@ -6799,3 +6799,5 @@
 | `CYCLE-20261102-XUZV` | `2026-11-02T14:31:53.899Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`59cc8257...`) |
 | `CYCLE-20261102-Y3ZS` | `2026-11-02T14:32:05.560Z` | `burner22/numbat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6406, Rule 6407, Rule 6408` | Yes (`a16bbad1...`) |
 | `CYCLE-20261102-Y86S` | `2026-11-02T14:32:10.996Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6409` | Yes (`236fbd79...`) |
+| `CYCLE-20261102-7B8X` | `2026-11-02T14:39:14.865Z` | `telemt/telemt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6410` | Yes (`0ec52901...`) |
+| `CYCLE-20261102-7LO7` | `2026-11-02T14:39:28.375Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6411` | Yes (`8fca4bcf...`) |

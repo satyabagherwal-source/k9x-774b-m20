@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-4PWO",
-    "timestamp": "2026-10-30T20:22:08.424Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "955f469ab0b2fc08a9903f7c5c0ed527ca8ab5ca7447f72482c8e8f56c72e421",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-4RT7",
-    "timestamp": "2026-10-30T20:22:10.891Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "91e4b23f7c8972b7a35ccdb0ecb3b272a07b3dd2b21f7a5185a9aac6c39106fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-MWJ5",
     "timestamp": "2026-10-30T20:36:16.817Z",
     "repository": "tokio-rs/tokio",
@@ -7490,6 +7460,36 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "236fbd790b8681a1ffc30049ad96da9ce1bede306f73dccd7e3c055d3cdd86bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-7B8X",
+    "timestamp": "2026-11-02T14:39:14.865Z",
+    "repository": "telemt/telemt",
+    "learningId": "learn-github-telemt-telemt",
+    "contentHash": "0ec5290150c22cc6ecc0597025b15366669e3bdb6a919689f3b6ffe349de873e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-7LO7",
+    "timestamp": "2026-11-02T14:39:28.375Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "8fca4bcfc0a4141c1a3610a960dd963015ed1151c757cc487c0f94af0c580b21",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

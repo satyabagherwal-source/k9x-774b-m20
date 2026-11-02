@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "c9dd9650",
+    "sourceVersion": "93a5f683",
     "license": "MIT",
-    "contentHash": "01a647e54d91d9994aa85363722dc3ce94e1970dabb723b57b5cdac71c4e64d2",
-    "lastHarvestedAt": "2026-10-31T23:42:51.784Z",
+    "contentHash": "8fca4bcfc0a4141c1a3610a960dd963015ed1151c757cc487c0f94af0c580b21",
+    "lastHarvestedAt": "2026-11-02T14:39:28.379Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -5443,10 +5443,10 @@
     "repository": "telemt/telemt",
     "platform": "github",
     "sourceUrl": "https://github.com/telemt/telemt",
-    "sourceVersion": "61afd6c7",
+    "sourceVersion": "84e5b827",
     "license": "NOASSERTION",
-    "contentHash": "8f86d2ca985d36f6775b6db6404ce16663d415aeed2998f39ee403141c007eff",
-    "lastHarvestedAt": "2026-10-31T06:59:11.940Z",
+    "contentHash": "0ec5290150c22cc6ecc0597025b15366669e3bdb6a919689f3b6ffe349de873e",
+    "lastHarvestedAt": "2026-11-02T14:39:14.869Z",
     "learningId": "learn-github-telemt-telemt"
   },
   "react-native-modal-react-native-modal": {

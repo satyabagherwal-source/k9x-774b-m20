@@ -6808,3 +6808,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-02T14:31:53.907Z |
 | `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-02T14:32:05.564Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bd27ded7` | Multi-dimensional audit evidence | 2026-11-02T14:32:11.000Z |
+| `learn-github-telemt-telemt` | `https://github.com/telemt/telemt` | `84e5b827` | Multi-dimensional audit evidence | 2026-11-02T14:39:14.869Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `93a5f683` | Multi-dimensional audit evidence | 2026-11-02T14:39:28.379Z |

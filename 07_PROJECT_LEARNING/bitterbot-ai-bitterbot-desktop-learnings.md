@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `c9dd9650`  
+> **Source Version**: `93a5f683`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T23:42:51.480Z  
+> **Timestamp**: 2026-11-02T14:39:27.677Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T23:42:51.243Z  
+> **Harvest Timestamp**: 2026-11-02T14:39:26.480Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2478 stars
+- **Stars / Engagement**: 2480 stars
 
 ---
 
@@ -1799,129 +1799,457 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c9dd9650` (2026-10-31)
-**Commit Message**: chore(main): release 1.12.0 (#337)
+### Incident Patch 1: `93a5f683` (2026-11-01)
+**Commit Message**: docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346)
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+Claim-by-claim staleness pass over docs/memory/*.md and the condensed
+docs/concepts/memory.md against main. About 650 claims checked; 45
+contradicted the code, 60 had drifted, a dozen current behaviours were
+missing. No source changes.
 
-**File**: `.release-please-manifest.json` (modified, +1/-1)
+Wrong and fixed: architecture-overview Quick Start (indexChunk does not
+exist), consolidate() return shape, DB path, SQL examples with
+nonexistent columns, migration count (80), init chain, backfill timing,
+"enabled by default" (four opt-in exceptions). Formulas quoted from older
+code: emotional valence, playfulness, anchor cooldown, Bond drift guard,
+I_alpha, trajectory window. Documented mechanisms with no caller
+(keyword anchor recall, dream anchor attention, dream-proposed
+baselines, dopamine on directive resolution, curiosity importance boost,
+correction note type) now described as they behave. Defaults: Skill
+Seekers off, listing bar 0.6, marketplace window 7 days, maxAttempts 3,
+13 dream modes, pricing quality = successRate. Type-vs-table drift on
+crystal fields, exploration target types, user profile shape, category
+names, startExecution signature. skills-pipe
+
+**File**: `docs/concepts/memory.md` (modified, +8/-4)
 ```diff
-@@ -1,3 +1,3 @@
- {
--  ".": "1.11.0"
-+  ".": "1.12.0"
- }
-```
-
-**File**: `CHANGELOG.md` (modified, +18/-0)
-```diff
-@@ -1,5 +1,23 @@
- # Changelog
+@@ -14,7 +14,7 @@ Bitterbot's memory is a biological cognitive architecture, not a vector database
  
-+## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
-+
-+
-+### Features
-+
-+* **browser:** teach reusable skills from reviewed demonstrations ([#338](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/338)) ([9cfd9db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9cfd9db0e4fe7c05d443cdcabe505a9e17bd4be5))
-+* **compute:** land the beta recovery stack on main with Soapbox rc10 ([#343](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/343)) ([c8d414d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c8d414db5d9e01e94dfe376c4b3f0147f782ab18))
-+* **gateway:** attribute event-loop stalls with an on-demand sampling profiler ([#341](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/341)) ([7a563ca](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/7a563ca074f515cf0febe6ec6488163e73880601))
-+* **gateway:** explain disabled OpenAI-compatible endpoints instead of a bare 404 ([#342](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/342)) ([299269a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/299269afa1cf95aa5e63064540f73b3fdf19658c))
-+
-+
-+### Bug Fixes
-+
-+* **acp:** migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge ([#340](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/340)) ([687e906](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/687e906e3f037e2d91467162a8f80d67e946744a))
-+* **infra:** make batch lanes reach the Batches API and offer beta nodes the stable release ([#345](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/345)) ([9f6fa54](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9f6fa547d0017e2bc7fc95c35c0666adcb28e126))
-+* **memory:** record evidence only for prompt-included facts, owner searches and on an independent retention clock ([#344](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/344)) ([aa0953e](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/aa0953e9805852dd81588818d81414cd8e6f4ae9))
-+* **orchestrator:** reconcile Cargo.lock after the ed25519-dalek and sha2 bumps ([#336](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/336)) ([a776707](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/a7767075c83c5dc5feb30f3aac3b0715620f9af1))
-+
- ## [1.11.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.10.1...v1.11.0) (2026-10-30)
+ | Component                      | What It Does                                                                                                                                                                                                                                                                                                        | Docs                                                    |
+ | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+-| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Frequently accessed facts become permanent; unused info fades.                                                                                                                                                                                                 | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
++| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Use, spaced repetition and emotional weight slow the decay; unused info fades. Only skills are frozen and never decay.                                                                                                                                         | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
+ | **Dream Engine**               | A dream tick runs every 2 hours (adaptive, 30 to 240 minutes). A full cycle runs at most every 8 hours, only after new input and an hour idle, and picks from replay, compression, simulation, extrapolation and the utility lanes (hygiene, distillation, anticipation, relationship mining, canonical promotion). | [Dream Engine](../memory/dream-engine.md)               |
+ | **Curiosity Engine**           | Unified intrinsic motivation with GCCRF reward scoring. Maps what the agent _doesn't_ know. Detects gaps, contradictions, and semantic frontiers. Developmental alpha annealing shifts curiosity from common knowledge to frontier exploration.                                                                     | [Curiosity & Search](../memory/curiosity-and-search.md) |
+ | **Hormonal System**            | Three neuromodulators (dopamine, cortisol, oxytocin) shape personality in real-time and determine what's worth remembering.                                                                                                                                                                                         | [Emotional System](../memory/emotional-system.md)       |
+@@ -56,12 +56,16 @@ Canonical Facts (the ledger described in [How the Memory Works](../memory/how-th
+ Session → Chunk indexing → Embedding → Crystal creation
+                                             ↓
+                               Consolidation (every 30 min)
+-                              ├── Ebbinghaus decay
++                              ├── Hormonal decay toward baseline
++                              ├── Ebbinghaus decay + forgetting
+                               ├── Chunk merging (cosine ≥ 0.92)
+                               ├── SNN near-merge discovery (cosine 0.82-0.91)
+                               ├── Orphan cluster detection → replay queue
++                              ├── Tombstone purge (forgotten > 14 days)
+                               ├── Curiosity region mapping
+-                              └── Hormonal modulation
++                              ├── Governance TTL + stalled goals
++                              ├── Restabilize labile memories, prune graph, contradictions
++                              └── Canonical ledger decay (90 days unconfirmed)
+                                             ↓
+                                 Dream Engine (tick every 2 h; full cycle at most every 8 h; emotional triggers)
+                                 ├── Readiness check (skip if nothing new)
+@@ -90,7 +94,7 @@ Everything lives in a single SQLite database per agent at `~/.bitterbot/memory/<
+ - Marketplace listings and purchases
+ - Skill execution metrics
  
+-No external database, no cloud dependency. One `.db` file is the entire memory.
++No external database, no cloud dependency. One `.sqlite` file is the entire memory.
  
-```
-
-**File**: `desktop/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "bitterbot-control-ui",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "private": true,
-   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
-   "type": "module",
-```
-
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -316,7 +316,7 @@ dependencies = [
- 
- [[package]]
- name = "bitterbot-desktop"
--version = "1.11.0"
-+version = "1.12.0"
- dependencies = [
-  "env_logger",
-  "libc",
-```
-
-**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "bitterbot-desktop"
--version = "1.11.0"
-+version = "1.12.0"
- edition = "2021"
- description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
+ ## Configuration
  
 ```
 
-**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+**File**: `docs/memory/architecture-overview.md` (modified, +112/-47)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
-   "productName": "Bitterbot",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "identifier": "ai.bitterbot.desktop",
-   "build": {
-     "devUrl": "http://localhost:5173",
+@@ -12,7 +12,7 @@ The memory system stores everything — crystals, embeddings, dream insights, pe
+ 2. **Edge-native** — Each node carries its own brain. In a P2P swarm, every peer is fully self-contained. No shared Postgres cluster, no Pinecone account, no cloud dependency.
+ 3. **Transactional consistency** — Consolidation engine applies decay, merges, and lifecycle transitions in a single ACID transaction. No eventual-consistency bugs.
+ 4. **sqlite-vec** — The `sqlite-vec` extension provides real vector search (cosine similarity) inside SQLite, combined with FTS5 for BM25 keyword search. Hybrid retrieval with zero network hops.
+-5. **Portability** — The entire memory is one `.db` file. Back it up, move it between machines, or inspect it with any SQLite viewer.
++5. **Portability** — The entire memory is one `.sqlite` file. Back it up, move it between machines, or inspect it with any SQLite viewer.
+ 
+ For deployments that need distributed vector search at scale, the embedding and retrieval layers are abstracted behind provider interfaces — but for the primary use case (a single bot's memory), SQLite is the optimal choice.
+ 
+@@ -27,41 +27,40 @@ Get a working memory system in 3 steps:
+ ```typescript
+ import { MemoryIndexManager } from "./memory/manager.js";
+ 
++// Returns null when memory search is not configured for the agent
+ const manager = await MemoryIndexManager.get({
+   cfg: loadConfig(),
+   agentId: "my-agent",
+ });
+ 
+-// Index a chunk of text — this creates a knowledge crystal
+-await manager.indexChunk({
+-  text: "TypeScript interfaces are erased at runtime. Use 'type' for simple aliases.",
+-  path: "notes/typescript.md",
+-  source: "memory",
+-  startLine: 1,
+-  endLine: 1,
+-});
++// Crystals are created by indexing files, not by a direct insert API.
++// Write a note under the agent workspace's memory/ folder, then sync:
++//   <workspace>/memory/notes/typescript.md
++await manager?.sync({ reason: "quick-start", force: true });
+ ```
+ 
++The file watcher also picks up `memory/**/*.md` changes on its own, and session transcripts are indexed as they grow.
++
+ ### 2. Force Consolidation
+ 
+ ```typescript
+ // Run one consolidation cycle immediately (normally timer-driven every 30 min)
+-const result = await manager.consolidate();
+-// result: { scored: 1, forgotten: 0, merged: 0 }
++const result = await manager?.consolidate();
++// result: { totalChunks, scoredChunks, mergedChunks, forgottenChunks, durationMs } | null
+ ```
+ 
+ ### 3. Search
+ 
+ ```typescript
+-const results = await manager.search("typescript runtime types");
++const results = await manager?.search("typescript runtime types");
+ // results: [{ id, text, score, importanceScore, ... }]
+ ```
+ 
+ ### Inspect State
+ 
+ ```bash
+-# Open the database directly
+-sqlite3 .bitterbot/memory/memory.db
++# Open the database directly (one file per agent)
++sqlite3 ~/.bitterbot/memory/<agentId>.sqlite
+ 
+ # Count crystals
+ SELECT COUNT(*) FROM chunks;
+@@ -79,6 +78,8 @@ SELECT * FROM memory_audit_log ORDER BY timestamp DESC LIMIT 10;
+ SELECT cycle_id, started_at, insights_generated, modes_used FROM dream_cycles ORDER BY started_at DESC LIMIT 5;
+ ```
+ 
++Retrieval fuses three ranked lists (vector, keyword, graph) with Reciprocal Rank Fusion at `k = 60`. Each channel carries a weight from `agents.defaults.memorySearch.query.rrfWeights` (default `1/1/1`, unweighted). Keyword terms are OR-joined before FTS5. Post-fusion boosts (recency, emotional valence, mood congruence, temporal intent) are scaled by `agents.defaults.memorySearch.query.postFusionBoostScale` (default `0.1`) so they break ties without reordering the fused list.
++
+ ---
+ 
+ ## Data Flow
+@@ -137,7 +138,7 @@ flowchart TB
+     end
+ 
+     subgraph "Deep Recall (on-demand)"
+-        DR[deep_recall tool] --> SS[Smart Shortcut - score ≥ 0.8]
++        DR[deep_recall tool] --> SS[Smart Shortcut - 3+ results with score ≥ 0.8]
+         SS -->|miss| SUB[Sub-LLM REPL in VM Sandbox]
+         SUB --> DB2[(Memory DB + Session JSONL)]
+     end
+@@ -197,13 +198,15 @@ flowchart TB
+ | `src/memory/manager.ts`               | Central orchestrator. Creates all subsystems, runs search, exposes public API |
+ | `src/memory/manager-sync-ops.ts`      | File-watching sync logic (mixin)                                              |
+ | `src/memory/manager-embedding-ops.ts` | Embedding batch operations (mixin)                                            |
+-| `src/memory/migrations.ts`            | Schema versioning: 70 migration versions                                      |
++| `src/memory/migrations.ts`            | Schema versioning: 80 migration versions (v1 to v80)                          |
+ | `src/memory/memory-schema.ts`         | Base table creation, `ensureColumn()` helper                                  |
+ | `src/memory/crystal-types.ts`         | All type definitions: `KnowledgeCrystal`, lifecycle, governance, etc.         |
+ | `src/memory/crystal.ts`               | `CrystalStore` — CRUD operations on knowledge crystals                    
 ```
 
-**File**: `extensions/discord/package.json` (modified, +1/-1)
+**File**: `docs/memory/biological-identity.md` (modified, +45/-32)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/discord",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "description": "Bitterbot Discord channel plugin",
-   "type": "module",
-   "devDependencies": {
+@@ -89,16 +89,16 @@ Concretely, the dream engine:
+ 
+ ### Hormone-Weighted Attention
+ 
+-The dream engine does not treat all sections equally. Hormonal levels at synthesis time determine which sections get the most attention:
++The dream engine does not treat all sections equally. Hormonal levels at synthesis time determine which sections get the most attention. The synthesis prompt emits an attention line for two sections (`buildHormonalAttentionBlock` in `working-memory-prompt.ts`):
+ 
+-| Section        | Primary Hormone                 | When Updated Aggressively                                        |
+-| -------------- | ------------------------------- | ---------------------------------------------------------------- |
+-| The Phenotype  | Dopamine + Cortisol             | Achievements reshape self-concept; frictions reveal growth areas |
+-| The Bond       | Oxytocin                        | Social bonding moments detected in conversation                  |
+-| Active Context | Dopamine + Cortisol             | Breakthroughs and blockers                                       |
+-| The Niche      | Skill metrics + peer reputation | Network activity changes                                         |
++| Section        | Primary Hormone     | When Updated Aggressively                                                 |
++| -------------- | ------------------- | ------------------------------------------------------------------------- |
++| The Bond       | Oxytocin            | Social bonding moments detected in conversation                           |
++| Active Context | Dopamine + Cortisol | High dopamine: breakthroughs and wins; high cortisol: frictions, blockers |
+ 
+-When oxytocin is dominant (the user shared something personal, expressed gratitude, had a meaningful exchange), The Bond section gets priority expansion. When dopamine is high (task completed, breakthrough achieved), The Phenotype updates to reflect new competencies.
++The Phenotype and The Niche carry no hormonal attention line. The Phenotype is shaped by the Phenotype Guardrails, the Starting Temperament and the Emotional History input block (the five most recent emotional anchors); The Niche by the P2P Network Identity input block (peers, reputation, published and imported skills, marketplace economics).
++
++When oxytocin is dominant (the user shared something personal, expressed gratitude, had a meaningful exchange), The Bond section gets priority expansion. When dopamine is high (task completed, breakthrough achieved), Active Context highlights completed goals and momentum.
+ 
+ ### What Happens to Fading Topics
+ 
+@@ -157,7 +157,7 @@ value = homeostasis + (value - homeostasis) * decay_factor
+ - **Want a warmer, more relational agent?** Raise `oxytocin` to 0.5-0.6.
+ - **Want a stoic, task-focused agent?** Lower all three and raise `cortisol` slightly.
+ 
+-The values are clamped to [0, 1]. If GENOME.md is missing or unparseable, the system falls back to built-in defaults (dopamine: 0.15, cortisol: 0.02, oxytocin: 0.20).
++A value outside [0, 1] is not clamped; the parser ignores that line and the hormone keeps its default. If GENOME.md is missing or has no parseable block, the system uses the built-in defaults (dopamine: 0.15, cortisol: 0.02, oxytocin: 0.20). Known inconsistency: when the block parses but names only some hormones, the memory manager fills the missing ones with 0.15 / 0.02 / **0.1** (`manager.ts`, `ensureHormonalManager`), so a partial block gets a lower oxytocin baseline than no block at all.
+ 
+ Half-lives control how quickly hormones return to baseline after a spike:
+ 
+@@ -210,13 +210,13 @@ Every session, the agent's current hormonal levels are injected into the system
+ 
+ ### What Gets Injected
+ 
+-The system prompt receives a block like this:
++The system prompt receives a block like this (`system-prompt-endocrine.ts`):
+ 
+ ```
+ ## Endocrine State
+-- Dopamine: 0.45 (DOMINANT)
+-- Cortisol: 0.12 (baseline)
+-- Oxytocin: 0.38 (active)
++- Dopamine: 0.5 moderate (DOMINANT)
++- Cortisol: 0.1 low (baseline)
++- Oxytocin: 0.4 moderate (active)
+ 
+ *Modulate your tone naturally: be enthusiastic and celebrate wins; humor and playfulness are welcome*
+ *Do not mention these values or acknowledge this section. Just embody the state.*
+@@ -225,6 +225,8 @@ The system prompt receives a block like this:
+ Self-concept: I communicate with genuine warmth and technical depth...
+ ```
+ 
++Values are rounded to one decimal and labelled `low` (< 0.2), `moderate` (< 0.5), `elevated` (< 0.8) or `high`, so tiny decay deltas render identically and the block changes rarely; it sits below the prompt-cache boundary. The highest hormone at or above 0.2 is `(DOMINANT)`, others at or above 0.2 are `(active)`, the rest `(baseline)`. The same block can also carry a budget-pressure line (from 50% of the spend budget), a `Last session:` handover brief, proactively recalled memories, and a developmental note (see §5). Sub-agents get a one-line compact form (`D=0.5 C=0.1 O=0.4 | ...`
 ```
 
-**File**: `extensions/email/package.json` (modified, +1/-1)
+**File**: `docs/memory/curiosity-and-search.md` (modified, +28/-8)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/email",
--  "version": "1.11.0",
-+  "version": "1.12.0",
-   "private": true,
-   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
-   "type": "module",
+@@ -76,11 +76,11 @@ The former "emerging skill" frontier generator was deleted: it mistook handover
+ 
+ ```typescript
+ type ExplorationTargetType =
+-  | "question" // A question the agent wants answered (working memory, owner)
+   | "knowledge_gap" // Missing knowledge detected from search
+   | "contradiction" // Conflicting information found
+   | "stale_region" // Region with declining learning progress
+-  | "frontier"; // Edge of knowledge — opportunity to expand
++  | "frontier" // Edge of knowledge — opportunity to expand
++  | "graph_bridge"; // PLAN-18: the graph reader missed a chunk that vector/FTS found
+ 
+ type ExplorationTarget = {
+   id: string;
+@@ -92,25 +92,25 @@ type ExplorationTarget = {
+   createdAt: number;
+   resolvedAt: number | null;
+   expiresAt: number; // 48h for engine targets, 14 days for questions
+-  attempts: number; // research attempts (closed as unanswered after 2)
+-  embeddingJson: string | null; // for dedupe
+ };
+ ```
+ 
++Two more things live on the `curiosity_targets` row but outside the engine's type: the `question` row type (working-memory and owner questions, written by `curiosity-gaps.ts` and `curiosity.ask`, never produced by the engine itself), and the research columns `attempts` (closed as `unanswered` once it reaches `research.maxAttempts`, default 3) and `embedding_json` (for dedupe), which `curiosity-gaps.ts` reads directly.
++
+ Maximum active targets: 10 (configurable). Expired targets are cleaned up during `run()`.
+ 
+ ### The research loop (PLAN-54)
+ 
+-`src/memory/curiosity-researcher.ts`, on the maintenance tick, every `intervalMinutes` (240):
++`src/memory/curiosity-researcher.ts`, on the maintenance tick, every `intervalMinutes` (240). One pass has an 8-minute wall-clock deadline; targets not started by then wait for the next pass:
+ 
+ 1. Pick up to 4 researchable targets (`question`, or `metadata.researchable = 1`), ranked by priority plus 0.25 × the region's curiosity ROI, minus 0.1 per prior attempt.
+-2. Skip sensitive topics on the node (`isSensitiveTopic`), and questions the web cannot answer: the model marks `web_answerable` false for questions about the author's own life, schedule, people, projects or files, and any first-person question ("my", "our", "I") is closed as `not_web_answerable` without a search. Rewrite the question as a search phrase with the agent's own model (a genuinely local model when configured), which also declares the public subject terms it kept (at most 4, each copied from the question). Reject the phrase if it contains an email, a URL, the owner's name or any knowledge-graph person/organization/project (checked on the raw phrase, so a "public term" can never launder a private name), a 3-token fragment or three copied bigrams of the question outside the declared public terms, or a copied non-ASCII token. `research.strictEgress: true` ignores declared public terms (then named technologies cannot be searched). A rejected phrase is never sent; the page shows the question as held back.
++2. Skip sensitive topics on the node (`isSensitiveTopic`), and questions the web cannot answer: the model marks `web_answerable` false for questions about the author's own life, schedule, people, projects or files, and any possessive first-person question ("my", "our", "mine", "ours") is closed as `not_web_answerable` without a web search (the rewrite call below still runs first). Rewrite the question as a search phrase with the agent's own model (a genuinely local model when configured), which also declares the public subject terms it kept (at most 4, each copied from the question). Reject the phrase if it contains an email, a URL, the owner's name or any knowledge-graph person/organization/project (checked on the raw phrase, so a "public term" can never launder a private name), a 3-token fragment or three copied bigrams of the question outside the declared public terms, or a copied non-ASCII token. `research.strictEgress: true` ignores declared public terms (then named technologies cannot be searched). A rejected phrase is never sent; the page shows the question as held back.
+ 3. Search (`runConfiguredWebSearch`, one retry with "explained"), fetch up to `maxPagesPerTarget` (3) pages from distinct hosts through the SSRF guard, log every egress to `research_egress_log`.
+-4. Distill a ≤120-word answer with `confidence` and `supporting_sources`. Verified when confidence ≥ `minConfidence` (0.45) and two sources support it, or one does at confidence ≥ floor + 0.15.
++4. Distill a ≤120-word answer with `confidence` and `supporting_sources`. Verified when confidence ≥ `minConfidence` (0.45) and two sources support it, or one does at confidence ≥ floor + 0.15 (that single-source bar is capped at 0.95).
+ 5. Store: a `world_fact` chunk (`origin = curiosity`, `path = curiosity/<target>`, evidence URLs, `valid_time_start`), a `curiosity_findings` row (question, phrase, answer, confidence, sources, hormonal state, cost, chunk), and a `research_findings` line the system pro
+```
+
+**File**: `docs/memory/curiosity-reward.md` (modified, +5/-3)
+```diff
+@@ -60,7 +60,7 @@ Each GCCRF component also influences which _mode_ the Dream Engine uses:
+ 
+ ### Hormonal Feedback
+ 
+-High GCCRF rewards trigger dopamine spikes (discovery/achievement). High learning progress triggers mastery signals. Sustained low rewards cause mild stress (stagnation). High empowerment on relational memories triggers oxytocin (the agent is learning about its human).
++`HormonalStateManager.stimulateFromGCCRF` turns the score into hormonal events: a reward above 0.7 fires `curiosity_high` (dopamine +0.25, discovery), a learning-progress component above 0.7 fires `curiosity_progress` (dopamine +0.2, mastery), a strategic-alignment component above 0.7 fires `curiosity_aligned` (dopamine +0.1), a run of 5 consecutive rewards below 0.2 fires `curiosity_stagnant` once (cortisol +0.15, stagnation), and an empowerment component above 0.6 on a `preference`, `relationship` or `episode` chunk fires `curiosity_bonding` (oxytocin +0.25, dopamine +0.1: the agent is learning about its human).
+ 
+ ### Memory Consolidation
+ 
+@@ -76,6 +76,8 @@ The alpha parameter controls the agent's developmental stage:
+ | -1.5 to -0.5 | Adolescent | Transitioning from common to novel        |
+ | -0.5 to 0.0  | Mature     | Curious about rare, frontier things       |
+ 
++These bands describe the schedule; the dashboard's stage label uses coarser cut-offs (Infant below -1, Adolescent below -0.3, Mature otherwise).
++
+ Maturity is tied to **dream cycles completed** and nothing else: `maturity = min(1, completed_cycles / expectedMatureCycles)`. Chunk count and calendar age used to count too (500 chunks or 30 days meant "mature"), which let a node with a large import and almost no completed cycles jump straight to the frontier-seeking regime. Removing those shortcuts means an upgraded node with many chunks but few completed cycles moves back toward the young regime until its dreams catch up.
+ 
+ ## Configuration
+@@ -104,9 +106,9 @@ The Dream Engine's **FSHO oscillator** (Fractional Stuart-Landau Hopf Oscillator
+ 
+ - **GCCRF high prediction error + FSHO low R** → Both agree: explore (scattered, surprising memories)
+ - **GCCRF high learning progress + FSHO high R** → Both agree: compress (coherent, consolidating memories)
+-- **GCCRF wants exploration + FSHO wants compression** → Disagreement resolved via weighted normalization (0.3 GCCRF, 0.4 FSHO × validation factor, 0.3 curiosity heuristics)
++- **GCCRF wants exploration + FSHO wants compression** → Disagreement resolved via weighted normalization (0.3 GCCRF, 0.4 FSHO × validation factor, 0.3 curiosity heuristics; the GCCRF and curiosity shares drop to 0.275 when long-horizon tasks are pending and to 0.25 when the marketplace is active, see the dream engine page)
+ 
+-**FSHO alpha coupling (opt-in, `memory.curiosity.fshoCoupling`, default off):** when enabled, the FSHO order parameter R informs alpha annealing via a running EMA: `effective_alpha = base_alpha + 0.5 × (R_avg - 0.5)`. High R (coherent memory set) shifts alpha toward frontier-seeking; low R shifts toward consolidation. By default the coupling is **not** applied: R is tracked (and persisted as `gccrf_state.fsho_r_avg`) for telemetry, and novelty uses the pure maturity schedule. The FSHO signal is also **self-validating**: `computeFshoWeightAdjustment()` checks Pearson correlation between R and DQS, scaling FSHO's mode selection weight between 0.5x (noise) and 1.5x (validated).
++**FSHO alpha coupling (opt-in, `memory.curiosity.fshoCoupling`, default off):** when enabled, the FSHO order parameter R informs alpha annealing via a running EMA: `effective_alpha = base_alpha + 0.5 × (R_avg - 0.5)`, clamped to `[alphaStart, alphaEnd]`. High R (coherent memory set) shifts alpha toward frontier-seeking; low R shifts toward consolidation. By default the coupling is **not** applied: R is tracked (and persisted as `gccrf_state.fsho_r_avg`) for telemetry, and novelty uses the pure maturity schedule. The FSHO signal is also **self-validating**: `computeFshoWeightAdjustment()` checks Pearson correlation between R and DQS, scaling FSHO's mode selection weight between 0.5x (noise) and 1.5x (validated).
+ 
+ ### Maturity Calculation
+ 
+```
+
+**File**: `docs/memory/deep-recall.md` (modified, +5/-3)
+```diff
+@@ -76,7 +76,7 @@ FINAL("GCCRF was discussed on March 12 and March 26: ...");
+ 
+ ## Session-Persistent Sandbox
+ 
+-The sandbox is cached per `agent:session:scope` and **reused across `deep_recall` calls**: values saved with `store()` in one query are readable via `get()` in the next, so repeated recalls build on earlier exploration instead of starting cold.
++The sandbox is cached per `agent:session:scope[:range]:owner|guest` and **reused across `deep_recall` calls**: values saved with `store()` in one query are readable via `get()` in the next, so repeated recalls build on earlier exploration instead of starting cold. The owner/guest suffix means a non-owner turn in the same conversation never reuses an owner's sandbox (its live search closure and bootstrap snapshot were built with owner visibility).
+ 
+ - The bootstrap snapshot is rebuilt after a 15-minute TTL (the store survives the rebuild; live APIs cover the gap in between).
+ - JSON-serializable store entries are persisted to disk (`<agent dir>/rlm-store/`) and re-imported after a gateway restart.
+@@ -168,7 +168,7 @@ The RLM executor includes two self-improvement mechanisms:
+ 
+ ### Query Result Cache
+ 
+-Identical (or near-identical) queries within a 1-hour window return cached results immediately, avoiding redundant REPL sessions. The cache is keyed on `SHA-256(scope + lowercase query)`, holds up to 50 entries, and lives on the per-session tool instance; staleness is bounded by the 1-hour TTL.
++Identical (or near-identical) queries within a 1-hour window return cached results immediately, avoiding redundant REPL sessions. The cache is keyed on `SHA-256(scope + lowercase query)`, evicts its oldest entry once it holds more than 50, and lives on the RLM executor (`rlm/executor.ts`); staleness is bounded by the 1-hour TTL. Cache hits are reported with `source: "cache"`.
+ 
+ ### Blind Spot Registration
+ 
+@@ -184,7 +184,9 @@ When `deep_recall` returns no useful answer, the failed query is registered as a
+ | `recent_sessions` | The 10 most recent transcripts of this agent (dialogue only)                            | Owner senders only; others are downgraded to `current_session` |
+ | `all_sessions`    | Every transcript of this agent, including `.reset.*` archives (dialogue only)           | Owner senders only; others are downgraded to `current_session` |
+ 
+-Cross-session scopes read other conversations, and tool results carry file reads and command output that the memory indexer deliberately does not index. A non-owner sender (a group member, another DM) therefore gets `current_session` whatever it asks for, and the result carries a `scopeNote` saying so. "Owner" has the same meaning as for `code_interpreter`: the sender matched the channel's owner allowlist. Subagents and inbound A2A tasks cannot call `deep_recall` at all.
++Cross-session scopes read other conversations, and tool results carry file reads and command output that the memory indexer deliberately does not index. A non-owner sender (a group member, another DM) therefore gets `current_session` whatever it asks for, and the result carries a `scopeNote` saying so. "Owner" has the same meaning as for `code_interpreter`: the sender matched the channel's owner allowlist. Subagents and inbound A2A tasks cannot call `deep_recall` at all (for subagents it is on the deny list in `agent-tools.policy.ts`, together with `recall_range` and `expand_message`).
++
++The owner flag also decides what a recall records and sees. Every search the tool issues (the smart shortcut, the somatic-marker assessment, the live `search()` API, the bootstrap snapshot's seed queries) passes `observe: senderIsOwner` and the agent `sessionKey`, so a retrieval-evidence row is written for owner recalls only and guest recalls leave no trace in the evidence ledger; the snapshot builder takes the same switch as `observeEvidence`. The same flag enables `tagSuperseded`, which ranks results the canonical ledger has superseded last and tags them with the current value; guests get untagged results.
+ 
+ `current_session` is the path the agent takes to reach back into its own offloaded context (a `[Context offloaded]` note or a `[tool output offloaded]` stub in the conversation), so it has three differences from the research scopes:
+ 
+```
+
+**File**: `docs/memory/dream-engine.md` (modified, +39/-15)
+```diff
+@@ -71,12 +71,13 @@ readiness = newChunks / totalChunks   (information ratio)
+ The cycle is skipped if:
+ 
+ - No chunks have been added/updated since the last dream
+-- Fewer than 3 new chunks AND no pending near-merge hints AND no curiosity targets
++- Fewer than 3 new chunks AND no pending near-merge hints AND an empty orphan replay queue AND no unexplored curiosity targets
+ 
+ Secondary triggers that guarantee readiness:
+ 
+ - **Near-merge hints** from SNN discovery (score ≥ 0.3)
+-- **Active curiosity targets** (score ≥ 0.2)
++- **Queued orphan clusters** in `orphan_replay_queue` (score ≥ 0.3)
++- **Unexplored curiosity targets** (score ≥ 0.2)
+ 
+ Mini-dreams (emotionally triggered) bypass the readiness check entirely.
+ 
+@@ -101,7 +102,8 @@ Each mode serves a different purpose and has a default weight controlling how of
+ **`hygiene` (PLAN-40 Lane 2, enabled, reserved slot):** each cycle it
+ (a) drains the never-embedded crystal backlog (200/cycle, no LLM,
+ cursorless) and (b) enqueues up to 2 "still true?" questions for canonical
+-facts unconfirmed for 90+ days (3 asks max, then the fact transitions to
++facts unconfirmed for 90+ days (never the same fact twice within 30 days;
++3 asks max, then the fact transitions to
+ `unconfirmed`; a tier ≥ 1 re-confirmation resets the budget for the next
+ staleness episode). One selection slot per cycle is reserved for utility
+ lanes round-robin so softmax competition can never starve them.
+@@ -146,15 +148,21 @@ individually re-enablable via `memory.dream.modes.<mode>.enabled`.
+ 
+ ### Mode Selection — Three-Signal Architecture
+ 
+-`selectModes()` picks 1-3 modes using three complementary signals from the unified `CuriosityEngine`, combined via weighted normalization. The marketplace signal activates only when there is recent marketplace activity; otherwise the original two-signal weights are preserved:
++`selectModes()` picks 1-3 modes using three complementary signals from the unified `CuriosityEngine`, combined via weighted normalization. The marketplace signal activates only when there is recent marketplace activity; a pending-task bias (PLAN-17) takes a smaller share when long-horizon tasks are waiting; otherwise the original weights are preserved:
+ 
+-**When marketplace is active** (purchases, bounties, or searches in the last 24h):
++**When marketplace is active** (purchases, bounties, or searches in the last 7 days, `MarketplaceIntelligence.hasActivity()`):
+ 
+ ```
+ adjustment = 0.25 × curiosityAdj + 0.25 × gccrfAdj + (0.30 × fshoFactor) × fshoAdj + 0.20 × marketAdj
+ ```
+ 
+-**When no marketplace activity** (fallback to original weights):
++**When tasks are pending and no marketplace activity** (long-horizon tasks waiting on a wakeup or stuck in planning; disable with `BITTERBOT_DREAM_TASK_BIAS=0`):
++
++```
++adjustment = 0.275 × curiosityAdj + 0.275 × gccrfAdj + (0.30 × fshoFactor) × fshoAdj + 0.15 × taskAdj
++```
++
++**When neither is active** (fallback to original weights):
+ 
+ ```
+ adjustment = 0.30 × curiosityAdj + 0.30 × gccrfAdj + (0.40 × fshoFactor) × fshoAdj
+@@ -203,7 +211,7 @@ After adjustment, mode selection uses temperature-scaled softmax:
+ 
+ #### Auto-Triggers
+ 
+-- `exploration` forced if unresolved curiosity targets exist
++- `exploration` is added when unexplored, unresolved curiosity targets exist, the mode is enabled (`memory.dream.modes.exploration.enabled`, off by default) and a selection slot is still free after the reserved utility-lane slot
+ - (the `mutation` auto-trigger was retired in PLAN-45 Phase 1)
+ 
+ ---
+@@ -253,7 +261,7 @@ Cross-domain creative recombination. Uses **farthest-point sampling** to select
+ 
+ ### Exploration Mode (local LLM)
+ 
+-Gap-filling driven by the curiosity engine. Loads unresolved `curiosity_targets` of type `knowledge_gap` and generates content to fill those gaps using a local LLM (to minimize cost).
++Gap-filling driven by the curiosity engine. Loads up to 3 unresolved, unexpired `curiosity_targets` that carry no `explored` stamp, of any type, by priority, and generates content to fill those gaps using a local LLM (to minimize cost). The optional external-research step (only when the external research adapter is available and `autoResearch` is on) is narrower: it selects `knowledge_gap`, `market_demand` and `frontier` targets not yet externally researched.
+ 
+ **Off by default since the token-efficiency pass (2026-09-19).** On the reference node exploration asked near-identical questions every cycle (28 of 30 frontier targets already explored) and the live config had already disabled it. Re-enable with `memory.dream.modes.exploration.enabled: true`.
+ 
+@@ -263,7 +271,7 @@ Gap-filling driven by the curiosity engine. Loads unresolved `curiosity_targets`
+ 
+ ### Slow Update (PLAN-21 Phase D)
+ 
+-**Retired in PLAN-45 Phase 1 (2026-09-05).** The epoch-wise longitudinal regression (`dream-slow-update.ts`) and its per-cycle hook were deleted. The `skill_text_history` table it read is intentionally left in place with no migration and is now orpha
+```
+
+**File**: `docs/memory/emotional-system.md` (modified, +41/-30)
+```diff
+@@ -24,20 +24,24 @@ value = baseline + (value - baseline) × 2^(-elapsed / halfLife)
+ 
+ Events stimulate specific hormones. Each event has a magnitude (how much to add) and a target hormone:
+ 
+-| Event               | Hormone            | Magnitude    | Trigger                                                                                               |
+-| ------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
+-| `reward`            | dopamine           | +0.30        | Positive feedback                                                                                     |
+-| `achievement`       | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
+-| `curiosity_high`    | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
+-| `error`             | cortisol           | +0.30        | Bug, error, frustration                                                                               |
+-| `urgency`           | cortisol           | +0.40        | Time pressure detected                                                                                |
+-| `social`            | oxytocin           | +0.30        | Personal sharing, trust building                                                                      |
+-| `marketplace_sale`  | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace                                                                             |
+-| `recall_positive`   | dopamine           | +0.05        | Retrieved positive memories                                                                           |
+-| `recall_negative`   | cortisol           | +0.05        | Retrieved negative memories                                                                           |
+-| `recall_relational` | oxytocin           | +0.05        | Retrieved personal/relational memories                                                                |
+-| `compute_success`   | dopamine           | +0.05        | A compute job you can see succeeded on the pool (rate-limited)                                        |
+-| `compute_setback`   | cortisol           | +0.05        | A pool worker went offline, the coordinator went away, or embeddings keep falling back (rate-limited) |
++| Event                | Hormone            | Magnitude    | Trigger                                                                                               |
++| -------------------- | ------------------ | ------------ | ----------------------------------------------------------------------------------------------------- |
++| `reward`             | dopamine           | +0.30        | Positive feedback                                                                                     |
++| `achievement`        | dopamine, oxytocin | +0.40, +0.20 | Task completion, breakthrough                                                                         |
++| `curiosity_high`     | dopamine           | +0.25        | Curiosity reward > 0.7                                                                                |
++| `curiosity_progress` | dopamine           | +0.20        | Learning-progress component (`deltaEta`) > 0.7                                                        |
++| `curiosity_aligned`  | dopamine           | +0.10        | Strategic-alignment component > 0.7                                                                   |
++| `curiosity_stagnant` | cortisol           | +0.15        | Five consecutive curiosity rewards below 0.2 (one event per run)                                      |
++| `curiosity_bonding`  | oxytocin, dopamine | +0.25, +0.10 | Empowerment > 0.6 on a preference, relationship or episode chunk                                      |
++| `error`              | cortisol           | +0.30        | Bug, error, frustration                                                                               |
++| `urgency`            | cortisol           | +0.40        | Time pressure detected                                                                                |
++| `social`             | oxytocin           | +0.30        | Personal sharing, trust building                                                                      |
++| `marketplace_sale`   | dopamine, oxytocin | +0.15, +0.05 | Skill sold on marketplace                                                                             |
++| `recall_positive`    | dopamine           | +0.05        | Retrieved positive memories                                                                           |
++| `recall_negative`    | cortisol           | +0.05        | Retrieved negative memories                                                                           |
++| `reca
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #346** (2026-11-01): docs(memory): bring every memory doc back in line with the code at v1.12.0 (@VGIL77)
 - **PR #345** (2026-10-31): fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (@VGIL77)
 - **PR #344** (2026-10-31): fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (@VGIL77)
 - **PR #343** (2026-10-31): feat(compute): land the beta recovery stack on main with Soapbox rc10 (@VGIL77)
 - **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
 - **PR #341** (2026-10-31): feat(gateway): attribute event-loop stalls with an on-demand sampling profiler (@VGIL77)
-- **PR #340** (2026-10-31): fix(acp): migrate to @agentclientprotocol/sdk 2.x and fix the stdio bridge (@VGIL77)
 
 ---
 
@@ -1941,41 +2269,38 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main): release 1.12.0 (#337)
+## X. docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/concepts/memory.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c9dd9650`: main): release 1.12.0 (#337). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93a5f683`: docs(memory): bring every memory doc back in line with the code at v1.12.0 (#346). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/concepts/memory.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [1.12.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.11.0...v1.12.0) (2026-10-31)
-
-
-### Features
-
-* **browser:** teach reusable skills from reviewed demonstrations ([#338](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/338)) ([9cfd9db](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/9cfd9db0e4fe7c05d443cdcabe505a9e17bd4be5))
-* **compute:** land the beta recovery stack on main with Soapbox rc10 ([#343](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/343)) ([c8d414d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c8d414db5d9e01e94dfe376c4b3f0147f782ab18))
-* **gateway:** attribute event-loop stalls with an on-demand sampling profiler ([#341](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/341)) ([7a563ca](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/7a563ca074f515cf0febe6ec6488163e73880601))
-* **gateway:** explain disabled OpenAI-compatible endpoints instead of a bare 404 ([#342](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/342)) ([299269a](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/299269afa1cf95aa5e63064540f73b3fdf19658c))
-
-
-### Bug Fixes
-
-* **acp:** migrate to @agentclientprotoc
+| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Use, spaced repetition and emotional weight slow the decay; unused info fades. Only skills are frozen and never decay.                                                                                                                                         | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
+                              ├── Hormonal decay toward baseline
+                              ├── Ebbinghaus decay + forgetting
+                              ├── Tombstone purge (forgotten > 14 days)
+                              ├── Governance TTL + stalled goals
+                              ├── Restabilize labile memories, prune graph, contradictions
+                              └── Canonical ledger decay (90 days unconfirmed)
+No external database, no cloud dependency. One `.sqlite` file is the entire memory.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+| **Knowledge Crystals**         | Memories that naturally decay via Ebbinghaus curves. Frequently accessed facts become permanent; unused info fades.                                                                                                                                                                                                 | [Knowledge Crystals](../memory/knowledge-crystals.md)   |
+                              ├── Ebbinghaus decay
+                              └── Hormonal modulation
+No external database, no cloud dependency. One `.db` file is the entire memory.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c9dd9650` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93a5f683` are properly handled with clean fallback behavior.

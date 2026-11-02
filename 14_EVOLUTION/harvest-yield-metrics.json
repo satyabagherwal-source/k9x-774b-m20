@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T14:32:11.006Z",
-  "total_cycles_completed": 6776,
-  "total_learnings_persisted": 6776,
-  "total_rules_promoted": 6419,
+  "last_updated": "2026-11-02T14:39:28.384Z",
+  "total_cycles_completed": 6778,
+  "total_learnings_persisted": 6778,
+  "total_rules_promoted": 6421,
   "history": [
-    {
-      "timestamp": "2026-10-31T14:19:42.364Z",
-      "repository": "MaterializeInc/materialize",
-      "learningId": "learn-github-materializeinc-materialize",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T14:19:44.477Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T14:25:54.192Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-02T14:32:11.006Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T14:39:14.874Z",
+      "repository": "telemt/telemt",
+      "learningId": "learn-github-telemt-telemt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T14:39:28.384Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
