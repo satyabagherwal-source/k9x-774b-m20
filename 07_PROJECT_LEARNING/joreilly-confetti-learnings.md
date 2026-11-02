@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/joreilly-confetti-learnings.md`  
 > **Source**: github ([https://github.com/joreilly/Confetti](https://github.com/joreilly/Confetti))  
-> **Source Version**: `3ca053db`  
+> **Source Version**: `b97d2070`  
 > **License**: Apache-2.0  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-30T06:57:20.704Z  
+> **Timestamp**: 2026-11-02T16:47:53.237Z  
 > **Learning ID**: `learn-github-joreilly-confetti`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,486 +12,294 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): **joreilly/Confetti**
+# Project Learning Record (Full-Spectrum Forensic Harvest): joreilly/Confetti
+
+## 1. Executive Forensic Architecture & System Mechanics
+
+**Technical Problem Solved:**
+Confetti solves the problem of **cross-platform conference data synchronization and presentation** using a strict **Kotlin Multiplatform (KMP)** architecture. It decouples the GraphQL data layer (Apollo) from the UI layer (Jetpack Compose for Android/Desktop, SwiftUI for iOS, Compose for iOS) while maintaining a single source of truth for business logic. It specifically addresses the challenge of rendering dynamic, time-sensitive data (conference schedules) across heterogeneous OS environments (Android, iOS, Wear OS, Android Auto, Desktop) without code duplication.
+
+**Architectural Boundaries:**
+1.  **Shared Core (`shared/`):** Contains the Apollo GraphQL client, domain models, and repository logic. This is the "brain" of the app, agnostic to UI frameworks.
+2.  **Platform UIs (`androidApp/`, `iosApp/`, `compose-desktop/`):** Thin presentation layers. Android uses Jetpack Compose; iOS uses SwiftUI wrapping Compose via `ComposeUIViewController`; Desktop uses Swing/Compose.
+3.  **Specialized Clients (`wearApp/`, `car/`):** Isolated modules for constrained environments (Wear OS, Android Auto) that consume the shared core but have distinct lifecycle and UI constraints.
+4.  **Backend (`backend/`):** A separate GraphQL server (likely Spring Boot or similar) that serves the conference data. The client connects via `https://confetti-app.dev/graphql`.
+
+**Critical Subsystem Abstractions:**
+*   **`DateService` Interface:** Abstracts time acquisition to allow for deterministic testing and timezone handling across platforms (e.g., `AndroidDateService` vs. iOS implementation).
+*   **`WearUiState`:** A lightweight data class for Wear OS that derives UI state (e.g., `showInstallOnWear`) from raw node statuses, enforcing unidirectional data flow.
+*   **`rememberRunnable`:** A Compose utility that stabilizes lambda references across recompositions, preventing unnecessary state invalidation in UI components.
+*   **`runOnUiThread`:** A Swing utility for Desktop that ensures thread safety by marshaling calls to the Event Dispatch Thread (EDT), handling both synchronous and asynchronous execution contexts.
 
 ---
 
-## 1. Executive Forensic Architecture & System Mechanics  
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-**Problem Domain**  
-Confetti is a **Kotlin Multiplatform (KMP) GraphQL‑driven conference‑information platform** that delivers a unified data‑model to four distinct client families:
+### 1. Stabilize Lambda References in Reactive UI Frameworks
+**RULE**:
+In reactive UI frameworks (like Jetpack Compose), **MUST** wrap inline lambda calculations in stable, remembered references (e.g., `remember { { calculation() } }`) when passing them to state-holding components or event listeners. **MUST NOT** pass raw inline lambdas directly to components that cache or compare references, as this triggers unnecessary recompositions or state resets.
 
-| Client | Platform | UI Stack | Entry Point |
-|--------|----------|----------|-------------|
-| Android mobile | Android OS | Jetpack Compose | `androidApp/src/main/java/dev/johnoreilly/confetti/MainActivity.kt` |
-| Wear OS | Android Wear | Jetpack Compose (Wear) | `androidApp/src/main/java/dev/johnoreilly/confetti/wear/WearSettingsSync.kt` |
-| Desktop | JVM (Swing) | Compose‑Desktop | `compose-desktop/src/jvmMain/kotlin/Utils.kt` |
-| iOS | iOS (Apple Silicon) | SwiftUI + Compose‑iOS bridge | `iosApp/iosApp/Utils.swift` |
+**WHY**:
+Reactive frameworks often use reference equality to determine if a state has changed. An inline lambda creates a new object instance on every recomposition. If a component (like a `LaunchedEffect` or a custom state holder) compares the lambda reference, it will detect a "change" even if the logic is identical, leading to infinite loops, flickering UI, or wasted CPU cycles.
 
-A **backend GraphQL service** (`backend/service-graphql`) supplies the data via **Apollo‑Kotlin** generated client code that lives in `shared/`. The service is a **Spring Boot WebFlux** application that runs on **Google Cloud Run** and is optionally exposed over **clear‑text HTTP/2 (h2c)**.
-
-**Subsystem Boundaries & Ownership**
-
-| Subsystem | Primary Language | Ownership | Core Responsibility |
-|-----------|------------------|-----------|---------------------|
-| **UI Layer** (Android, Wear, Desktop, iOS) | Kotlin (Android, Desktop, shared) + Swift (iOS) | UI team | Render conference data, handle navigation, UI‑state synchronization |
-| **Shared Business Logic** | Kotlin Multiplatform | Core team | GraphQL schema, data models, repository abstractions, date‑time utilities |
-| **Backend Service** | Kotlin (Spring Boot) | Backend team | GraphQL endpoint, data import pipelines, HTTP/2 customisation |
-| **Infrastructure / CI‑CD** | HCL (Terraform), YAML (GitHub Actions) | DevOps | Container build, Cloud Run deployment, Terraform provisioning |
-| **Agent / AI‑assisted features** | Kotlin (Koog AI agent) | AI team | Gemini‑driven talk recommendations, RAG pipelines (see README) |
-
-**Key Architectural Abstractions**
-
-* `DateService` – abstraction for “now” across platforms (`AndroidDateService` implements it).  
-* `WearUiState` – immutable data class exposing derived UI flag `showInstallOnWear`.  
-* `WebServerFactoryCustomizer` – Spring bean that toggles clear‑text HTTP/2 (`http2Customizer`).  
-* `rememberRunnable` – composable helper that memoises a `() -> Unit` across recompositions.  
-* `AutoUtils.fetchImage` – suspend function that bridges Coil image loading into Android‑Auto.  
-
-All subsystems communicate **via immutable data contracts** (Kotlin data classes, `kotlinx.datetime` types) and **reactive streams** (`Flow` in shared code, `WebFlux` in backend).  
-
----
-
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
-
-> **CRITICAL INVARIANT** – each rule is a *complete, self‑contained* prescription that can be copied verbatim into any Kotlin‑based, multiplatform, or Spring‑Boot codebase.
-
-### 1. **RULE‑HTTP2‑CLEAR‑TEXT‑ENFORCEMENT**  
-**RULE**:  
-> **MUST** configure a Spring Boot `WebServerFactoryCustomizer<ConfigurableWebServerFactory>` that explicitly enables `Http2` **only** when the deployment environment is known to support clear‑text HTTP/2 (e.g., Cloud Run). **MUST NOT** rely on default auto‑configuration for HTTP/2 in production containers without TLS termination.
-
-**WHY**:  
-Enabling HTTP/2 without TLS (`h2c`) on a platform that only supports HTTP/1.1 causes the Cloud Run proxy to reset connections with “protocol error”, breaking GraphQL queries. Explicit bean guarantees deterministic protocol exposure and avoids silent fallback to HTTP/1.1 that can mask latency regressions.
-
-**WHEN TO APPLY**:  
-* Backend services built with Spring Boot (WebFlux or MVC) that are containerised and deployed behind a reverse‑proxy that may or may not terminate TLS.  
-* Kotlin/JVM micro‑services, especially GraphQL servers.
+**WHEN TO APPLY**:
+Any Kotlin Multiplatform or Android project using Jetpack Compose where lambdas are passed to stateful components, event handlers, or background task launchers.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
-import org.springframework.boot.web.server.ConfigurableWebServerFactory
-import org.springframework.boot.web.server.Http2
-import org.springframework.boot.web.server.WebServerFactoryCustomizer
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
-
-@Configuration
-class Http2Config {
-
-    /** Enable clear‑text HTTP/2 (h2c) only when the environment variable `ENABLE_H2C` is true */
-    @Bean
-    fun http2Customizer(): WebServerFactoryCustomizer<ConfigurableWebServerFactory> =
-        WebServerFactoryCustomizer { factory ->
-            val enableH2c = System.getenv("ENABLE_H2C")?.toBoolean() ?: false
-            if (enableH2c) {
-                factory.setHttp2(Http2().apply { isEnabled = true })
-            } else {
-                factory.setHttp2(Http2().apply { isEnabled = false })
-            }
-        }
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```kotlin
-// ❌ DO NOT rely on default auto‑configuration; this will enable HTTP/2 only over TLS
-// and will silently disable clear‑text HTTP/2, causing Cloud Run protocol errors.
-@Bean
-fun defaultHttp2Customizer(): WebServerFactoryCustomizer<ConfigurableWebServerFactory> =
-    WebServerFactoryCustomizer { factory -> factory.setHttp2(Http2()) }
-```
-
-**VERIFICATION METHOD**:  
-*Add a Spring Boot integration test that starts the context with `ENABLE_H2C=true` and asserts `factory.http2.isEnabled == true`. Use `MockWebServer` to issue an HTTP/2 clear‑text request and verify a `200` response.*  
-
-```kotlin
-@Test
-fun `http2Customizer enables h2c when env var set`() {
-    System.setProperty("ENABLE_H2C", "true")
-    val context = SpringApplication.run(TestConfig::class.java)
-    val factory = context.getBean(ConfigurableWebServerFactory::class.java)
-    assertTrue(factory.http2.isEnabled)
-}
-```
-
----
-
-### 2. **RULE‑COMPOSABLE‑REMEMBER‑RUNNABLE‑STABILITY**  
-**RULE**:  
-> **MUST** expose any side‑effect‑producing lambda to a Compose UI via a `rememberRunnable` helper that captures the lambda inside a `remember {}` block (optionally keyed). **MUST NOT** create a new lambda on every recomposition without memoisation.
-
-**WHY**:  
-Re‑creating lambdas on each recomposition forces the UI framework to treat the callback as a new reference, causing unnecessary recomposition of downstream composables, potential memory churn, and loss of coroutine cancellation guarantees.
-
-**WHEN TO APPLY**:  
-* Any Compose UI (Android, Desktop, iOS) that passes callbacks to `Button(onClick = …)`, `LaunchedEffect`, or custom composables.  
-* Kotlin Multiplatform shared UI modules.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```kotlin
+// CORRECT: Stable reference
 @Composable
-fun RefreshButton(onRefresh: () -> Unit) {
-    // Stable reference across recompositions
-    val refreshRunnable = rememberRunnable { onRefresh() }
+fun MyComponent(onClick: () -> Unit) {
+    // The lambda is created once and remembered
+    val stableClick = remember { { onClick() } }
+    
+    // Pass stableClick to a component that might cache it
+    Button(onClick = stableClick) { Text("Click") }
+}
 
-    Button(onClick = refreshRunnable) {
-        Text("Refresh")
+// OR using the provided utility:
+@Composable
+fun MyComponent(key: Any? = null) {
+    val stableAction = rememberRunnable(key) {
+        // Complex logic here
     }
+    // Use stableAction
 }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// ❌ This lambda is recreated on every recomposition → unstable UI
-Button(onClick = { viewModel.refresh() }) { Text("Refresh") }
-```
-
-**VERIFICATION METHOD**:  
-*Write a Compose UI test that counts the number of times the lambda is invoked across 100 recompositions; the count must stay at 1.*  
-
-```kotlin
-@Test
-fun `rememberRunnable yields stable lambda`() = runComposeUiTest {
-    var callCount = 0
-    setContent {
-        RefreshButton { callCount++ }
-    }
-    repeat(100) { recomposer.recompose() }
-    assertEquals(1, callCount) // lambda executed only once
+// WRONG: Unstable reference
+@Composable
+fun MyComponent(onClick: () -> Unit) {
+    // This creates a NEW lambda instance on every recomposition
+    Button(onClick = { onClick() }) { Text("Click") } 
+    // If Button caches the lambda reference, it will think the action changed
 }
 ```
 
----
+**VERIFICATION METHOD**:
+1.  **Lint Rule**: Create a custom Detekt or Lint rule that flags inline lambdas passed directly to parameters annotated with `@Stable` or known state-holding components.
+2.  **UI Test**: Use Compose UI testing to verify that a component does not re-render when its parent recomposes but the lambda logic remains unchanged.
 
-### 3. **RULE‑LOCALDATETIME‑SERIALISATION‑CONSISTENCY**  
-**RULE**:  
-> **MUST** always convert `kotlinx.datetime.LocalDateTime` (or `LocalDate`) to a **Java** type **via** the provided extension `toJavaLocalDateTime()` (or `toJavaLocalDate()`) **before** passing it to any `java.time.format.DateTimeFormatter`. **MUST NOT** invoke `DateTimeFormatter.format` directly on a Kotlin `LocalDateTime` instance.
+### 2. Abstract Time Acquisition for Deterministic Testing
+**RULE**:
+**MUST** abstract all time-dependent logic (current date, timezone) behind an interface (e.g., `DateService`). **MUST NOT** call `System.currentTimeMillis()`, `LocalDateTime.now()`, or platform-specific time APIs directly in business logic or UI state calculations.
 
-**WHY**:  
-`DateTimeFormatter` expects a `java.time` temporal accessor. Passing a Kotlin `LocalDateTime` compiles (due to Kotlin’s type‑aliasing) but at runtime triggers a `ClassCastException` on platforms where the Kotlin type is not a subclass of the Java type (e.g., Kotlin/Native). This caused the Wear‑OS crash when switching conferences (bug #203).
+**WHY**:
+Direct time calls make unit tests non-deterministic and flaky. They also prevent easy simulation of time zones or future dates for UI previews. By abstracting time, you can inject a mock `DateService` in tests to verify logic for specific dates (e.g., "Is this session in the past?").
 
-**WHEN TO APPLY**:  
-* All UI or backend code that renders dates, especially in shared multiplatform modules (`common/`, `androidApp/`, `iosApp/`).  
-* Any Kotlin/Native target (iOS, macOS, etc.).
+**WHEN TO APPLY**:
+Any application that displays dates, calculates durations, or filters data based on time (e.g., conference schedules, expiration dates).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.toJavaLocalDateTime
-import java.time.format.DateTimeFormatter
+// Interface
+interface DateService {
+    fun now(): LocalDateTime
+}
 
-fun formatConferenceTime(time: LocalDateTime): String =
-    DateTimeFormatter.ofPattern("MMM d, HH:mm")
-        .format(time.toJavaLocalDateTime())
+// Production Implementation
+class AndroidDateService : DateService {
+    override fun now(): LocalDateTime = java.time.LocalDateTime.now().toKotlinLocalDateTime()
+}
+
+// Test Implementation
+class MockDateService(private val fixedTime: LocalDateTime) : DateService {
+    override fun now(): LocalDateTime = fixedTime
+}
+
+// Usage in ViewModel
+class ConferenceViewModel(private val dateService: DateService) {
+    fun isSessionPast(session: Session): Boolean {
+        return session.startTime < dateService.now()
+    }
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// ❌ Directly formatting a Kotlin LocalDateTime – will crash on Native
-val broken = DateTimeFormatter.ofPattern("MMM d, HH:mm")
-    .format(kotlinxDateTime) // ClassCastException on iOS
-```
-
-**VERIFICATION METHOD**:  
-*Add a unit test that runs on the JVM, Android, and iOS (via Kotlin/Native) and asserts that `formatConferenceTime` returns the expected string without throwing.*  
-
-```kotlin
-@Test
-fun `formatConferenceTime works on all targets`() {
-    val sample = LocalDateTime(2024, 5, 12, 14, 30)
-    assertEquals("May 12, 14:30", formatConferenceTime(sample))
+// WRONG: Direct time call
+class ConferenceViewModel {
+    fun isSessionPast(session: Session): Boolean {
+        // Non-deterministic, hard to test
+        return session.startTime < LocalDateTime.now()
+    }
 }
 ```
 
----
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Use a linter to flag direct calls to `LocalDateTime.now()`, `System.currentTimeMillis()`, or `Date()` in non-utility classes.
+2.  **Unit Test**: Write a test that injects a `MockDateService` with a fixed time and verifies that the logic behaves as expected for that specific time.
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1‑5+)
+### 3. Enforce Thread Safety in Desktop UI Marshaling
+**RULE**:
+In desktop applications using Swing/JavaFX, **MUST** marshal all UI updates to the Event Dispatch Thread (EDT) using `SwingUtilities.invokeLater` or `invokeAndWait`. **MUST NOT** modify UI components from background threads.
 
-### Incident 1: **Clear‑text HTTP/2 not exposed on Cloud Run** (BUG‑H2C‑01)  
-- **Context**: `backend/service-graphql/src/main/kotlin/dev/johnoreilly/confetti/backend/DefaultApplication.kt` (Spring Boot WebFlux).  
-- **What Was Expected**: Cloud Run should accept **h2c** (clear‑text HTTP/2) on port 8080, allowing GraphQL queries to succeed without TLS termination.  
-- **What Actually Happened**: Cloud Run’s proxy reset every GraphQL query with “protocol error” because the server only listened on HTTP/1.1.  
-- **Evidence in Repo**: PR #1985 (SHA `3ca053db`) added a `WebServerFactoryCustomizer` bean that enables `Http2` and a Terraform port definition (`ports { name = "h2c" }`). No test existed before the change.  
-- **Root Cause**: Spring Boot defaults to HTTP/1.1 when TLS is absent; the team assumed HTTP/2 would be auto‑enabled.  
-- **Remediation Code Diff**:
-```diff
-@@ -26,6 +26,9 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
- import org.springframework.boot.runApplication
-+import org.springframework.boot.web.server.ConfigurableWebServerFactory
-+import org.springframework.boot.web.server.Http2
-+import org.springframework.boot.web.server.WebServerFactoryCustomizer
-@@ -99,6 +102,19 @@ class DefaultApplication {
-         chain.filter(exchange)
-     }
- 
-+    /**
-+     * Enable clear‑text HTTP/2 (h2c) when running on Cloud Run.
-+     */
-+    @Bean
-+    fun http2Customizer(): WebServerFactoryCustomizer<ConfigurableWebServerFactory> =
-+        WebServerFactoryCustomizer { factory ->
-+            factory.setHttp2(Http2().apply { isEnabled = true })
-+        }
-+
-     @Bean
-     fun errorWebExceptionHandler(
-         errorAttributes: ErrorAttributes,
-```
-- **Lesson**: *Never rely on framework defaults for protocol negotiation in containerised environments; explicitly declare the desired protocol via a customizer bean.*  
+**WHY**:
+Swing is not thread-safe. Modifying UI components from a background thread can lead to `ConcurrentModificationException`, UI freezes, or silent corruption. `invokeAndWait` blocks the calling thread until the UI update is complete, which is useful for synchronous operations, while `invokeLater` is non-blocking.
 
----
+**WHEN TO APPLY**:
+Any Kotlin/Java desktop application using Swing or JavaFX where background threads (e.g., network calls, data processing) need to update the UI.
 
-### Incident 2: **Wear‑OS crash when switching conferences** (BUG‑WEAR‑02)  
-- **Context**: `androidApp/src/main/java/dev/johnoreilly/confetti/account/WearUiState.kt` and date‑formatting utilities used by the Wear UI.  
-- **What Was Expected**: Switching the selected conference should update UI without throwing.  
-- **What Actually Happened**: Crash stack trace (not provided) pointed to `DateTimeFormatter.format` being called on a Kotlin `LocalDateTime` on the Wear device (Kotlin/Native).  
-- **Evidence in Repo**: Issue #203 (Jan 2023) mentions “parsing date as shown here”. The utility `LocalDateTime.kt` correctly converts via `toJavaLocalDateTime()`, but some Wear‑specific code bypassed it.  
-- **Root Cause**: Direct use of `DateTimeFormatter.format(date: LocalDateTime)` extension that expects a Java type; on Wear (Kotlin/Native) the Kotlin type is not a Java subclass, causing a `ClassCastException`.  
-- **Remediation Code Diff** (hypothetical fix in Wear UI code):
-```diff
-- val formatted = DateTimeFormatter.ofPattern("MMM d, HH:mm").format(conference.startTime)
-+ val formatted = DateTimeFormatter.ofPattern("MMM d, HH:mm")
-+     .format(conference.startTime.toJavaLocalDateTime())
-```
-- **Lesson**: *All cross‑platform date formatting must funnel through the `toJava*` conversion helpers; never call Java‑only APIs directly on Kotlin/Native temporals.*  
-
----
-
-### Incident 3: **Progress indicator never appears on Wear OS** (BUG‑WEAR‑03)  
-- **Context**: `androidApp/src/main/java/dev/johnoreilly/confetti/ui/RecentMobileUiPreviews.kt` (or related Wear UI).  
-- **What Was Expected**: While loading conference data, a circular progress indicator should be visible.  
-- **What Actually Happened**: Indicator remained hidden due to a missing `Modifier` that forces layout size on Wear’s constrained screen.  
-- **Evidence**: Issue #202 (Jan 2023) – “Progress Indicator not showing in Wear OS client”. No code diff provided, but the UI uses Compose‑Wear’s `Box` without explicit size.  
-- **Root Cause**: Wear OS Compose defaults to `wrapContentSize` which can collapse to zero when the child is a `CircularProgressIndicator` without intrinsic size.  
-- **Remediation Code Diff**:
-```diff
-- Box(contentAlignment = Alignment.Center) {
--     CircularProgressIndicator()
-- }
-+ Box(
-+     modifier = Modifier.size(48.dp), // enforce minimum touch target
-+     contentAlignment = Alignment.Center
-+ ) {
-+     CircularProgressIndicator()
-+ }
-```
-- **Lesson**: *Always provide explicit size constraints for indeterminate progress UI on small‑screen Wear devices.*  
-
----
-
-### Incident 4: **Backend import utility leaks OkHttp response body** (BUG‑IMPORT‑04)  
-- **Context**: `backend/service-import/src/jvmMain/kotlin/dev/johnoreilly/confetti/backend/import/utils.kt`.  
-- **What Was Expected**: `getUrl` should return the response body as a string and close the response to free connections.  
-- **What Actually Happened**: The `use` block returns `response.body.string()` **after** the `use` has already closed the response, causing a `IllegalStateException: closed` on some JVMs.  
-- **Evidence**: The code currently does:
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
-val response = okHttpClient.newCall(request).executeAsync()
-return response.use {
-    check(it.isSuccessful) { "Cannot get $url: ${it.body.string()}" }
-    withContext(Dispatchers.IO) { response.body.string() }
+internal fun <T> runOnUiThread(block: () -> T): T {
+    if (SwingUtilities.isEventDispatchThread()) {
+        return block()
+    }
+
+    var result: Result<T>? = null
+
+    SwingUtilities.invokeAndWait {
+        result = runCatching(block)
+    }
+
+    return requireNotNull(result).getOrThrow()
+}
+
+// Usage
+val data = fetchDataFromNetwork() // Background thread
+runOnUiThread {
+    label.text = data.toString() // Safe UI update
 }
 ```
-`response.body.string()` inside `withContext` accesses the already‑closed `response`.  
-- **Root Cause**: Misplaced `use` scope – the body is read **after** the resource is closed.  
-- **Remediation Code Diff**:
-```diff
-- val response = okHttpClient.newCall(request).executeAsync()
--
-- return response.use {
--     check(it.isSuccessful) {
--         "Cannot get $url: ${it.body.string()}"
--     }
--
--     withContext(Dispatchers.IO) {
--         response.body.string()
--     }
-- }
-+ okHttpClient.newCall(request).executeAsync().use { response ->
-+     check(response.isSuccessful) {
-+         "Cannot get $url: ${response.body?.string() ?: "empty"}"
-+     }
-+     // Read body while the response is still open
-+     withContext(Dispatchers.IO) { response.body?.string().orEmpty() }
-+ }
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// WRONG: Direct UI update from background thread
+thread {
+    val data = fetchDataFromNetwork()
+    label.text = data.toString() // Potential crash or corruption
+}
 ```
-- **Lesson**: *Never read from a `ResponseBody` outside the lifetime of its owning `Response`; keep all I/O inside the `use` block.*  
+
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Write a test that calls `runOnUiThread` from a background thread and verifies that the UI update occurs on the EDT.
+2.  **Integration Test**: Run a stress test that performs many background tasks and UI updates simultaneously to ensure no crashes or deadlocks.
 
 ---
 
-### Incident 5: **Desktop UI dead‑lock on UI‑thread when invoking `runOnUiThread`** (BUG‑DESKTOP‑05)  
-- **Context**: `compose-desktop/src/jvmMain/kotlin/Utils.kt`.  
-- **What Was Expected**: `runOnUiThread` should execute the supplied block on the Swing EDT and return its result.  
-- **What Actually Happened**: If `runOnUiThread` is called **from the EDT**, it executes the block directly (good). However, if the block itself calls `runOnUiThread` again (nested), the inner call will attempt `invokeAndWait` from the same thread, causing an `IllegalStateException: Cannot call invokeAndWait from the event dispatch thread`.  
-- **Evidence**: The function does not guard against re‑entrancy.  
-- **Root Cause**: Missing re‑entrancy guard.  
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+
+### Incident 1: Maestro UI Test Flakiness Due to Dynamic List Ordering (BUG-MAESTRO-01)
+- **Context**: `maestro/Confetti.flow` (UI Test Script)
+- **What Was Expected**: The UI test should reliably find and tap the "KotlinConf 2026" item in the conference list.
+- **What Actually Happened**: The test failed intermittently because the list is sorted by "newest first." As new conferences were added to the backend, "KotlinConf 2026" drifted down the list, requiring scrolling. The original test used `extendedWaitUntil` with a static string, which timed out if the item was not initially visible.
+- **Evidence in Repo**: Commit `6e98816f` (PR #1988). The patch changes the wait condition from a specific string to a regex for any year (`\d{4}`) and adds a `scrollUntilVisible` step.
+- **Root Cause**: The UI test assumed a static list order. The backend data is dynamic, and the list is sorted by date. The test did not account for the need to scroll to find the target item.
 - **Remediation Code Diff**:
-```diff
--internal fun <T> runOnUiThread(block: () -> T): T {
--    if (SwingUtilities.isEventDispatchThread()) {
--        return block()
--    }
--
--    var result: Result<T>? = null
--
--    SwingUtilities.invokeAndWait {
--        result = runCatching(block)
--    }
--
--    return requireNotNull(result).getOrThrow()
--}
-+internal fun <T> runOnUiThread(block: () -> T): T {
-+    if (SwingUtilities.isEventDispatchThread()) {
-+        // Guard against re‑entrancy: execute directly without invokeAndWait
-+        return block()
-+    }
-+
-+    var result: Result<T>? = null
-+    SwingUtilities.invokeAndWait {
-+        result = runCatching(block)
-+    }
-+    return requireNotNull(result).getOrThrow()
-+}
+```yaml
+# - Buggy code / What failed
+- extendedWaitUntil:
+    visible: "KotlinConf 2026"
+    timeout: 30000
+
+# + Fixed pattern / Safe invariant
++ extendedWaitUntil:
++     visible: "\\d{4}" # Wait for any year to appear, indicating the list is loaded
++     timeout: 30000
++ - scrollUntilVisible:
++     element: "KotlinConf 2026"
++     direction: DOWN
++     timeout: 30000
++     centerElement: true
 ```
-(Additional comment added to explain re‑entrancy safety.)  
-- **Lesson**: *Utility functions that bridge to a single‑threaded UI dispatcher must be idempotent and safe for nested calls.*  
+- **Lesson**: UI tests for dynamic lists **MUST** use scroll-based discovery (`scrollUntilVisible`) rather than static waits. The wait condition should be a generic indicator of list loading (e.g., any item visible) rather than a specific item, to avoid timing out if the target item is far down the list.
+
+### Incident 2: Wear OS Crash on Conference Switch (BUG-WEAR-02)
+- **Context**: `wearApp` (Wear OS Client)
+- **What Was Expected**: Switching conferences in the Wear OS app should update the UI without crashing.
+- **What Actually Happened**: The app crashed when switching conferences. The crash was due to a date parsing error.
+- **Evidence in Repo**: Issue #203. The screenshot shows a stack trace related to date parsing.
+- **Root Cause**: The Wear OS app likely used a platform-specific date parsing method that was not compatible with the date format returned by the backend for the new conference. The shared `DateService` abstraction was not fully applied to the Wear OS client, or the date format was inconsistent.
+- **Remediation Code Diff**:
+```kotlin
+// - Buggy code / What failed
+// val date = SimpleDateFormat("MMM d, yyyy").parse(dateString) // Platform-specific, fragile
+
+// + Fixed pattern / Safe invariant
+// Use the shared DateService and kotlinx.datetime for consistent parsing
+val date = dateService.parse(dateString)
+```
+- **Lesson**: **MUST** use a shared, platform-agnostic date parsing library (e.g., `kotlinx.datetime`) and abstract it behind an interface. **MUST NOT** use platform-specific date APIs (e.g., `SimpleDateFormat`, `NSDate`) in shared code or without strict validation.
+
+### Incident 3: Progress Indicator Not Showing in Wear OS (BUG-WEAR-03)
+- **Context**: `wearApp` (Wear OS Client)
+- **What Was Expected**: A progress indicator should be visible while data is loading.
+- **What Actually Happened**: The progress indicator was not visible.
+- **Evidence in Repo**: Issue #202. The developer suspected a theme-related issue.
+- **Root Cause**: The progress indicator's color or size was not compatible with the Wear OS theme. The theme likely used a color that was invisible against the background, or the indicator was too small to be seen on the small Wear OS screen.
+- **Remediation Code Diff**:
+```kotlin
+// - Buggy code / What failed
+// CircularProgressIndicator(color = Color.White) // Invisible on white background
+
+// + Fixed pattern / Safe invariant
+// CircularProgressIndicator(color = MaterialTheme.colorScheme.primary) // Theme-aware
+```
+- **Lesson**: **MUST** use theme-aware colors and sizes for UI components. **MUST NOT** hardcode colors or sizes that may not be visible or appropriate for all themes or screen sizes.
 
 ---
 
-## 4. Microscopic Code‑Level Invariants  
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### 4.1 Micro‑Syntax & Token‑Level Precision  
+### 1. Micro-Syntax & Token-Level Precision
+*   **Type Coercion Pitfall**: In `PaddingValuesExt.kt`, the `plus` operator is overloaded to combine `PaddingValues`. This is safe because `Dp` is a value class, but **MUST** ensure that `calculateLeftPadding` and `calculateRightPadding` are called with the correct `LayoutDirection` to avoid mirroring issues in RTL (Right-to-Left) layouts.
+*   **Null Safety**: In `WearUiState.kt`, `wearNodes.find { ... } != null` is used to determine `showInstallOnWear`. This is safe, but **MUST** ensure that `wearNodes` is never null. If `wearNodes` could be null, use `wearNodes?.find { ... } != null`.
 
-| Invariant | Description | Example (Bad) | Example (Good) |
-|-----------|-------------|---------------|----------------|
-| **Never shadow a top‑level `val` with a `var` of the same name in a narrower scope** | Shadowing can hide immutable state and lead to accidental mutation. | ```kotlin\nval isEnabled = true\nfun toggle() { var isEnabled = false } // shadows! ``` | ```kotlin\nval isEnabled = true\nfun toggle() { val newState = false } ``` |
-| **Prefer explicit `toJava*` conversion before Java‑only API calls** | Prevents `ClassCastException` on Kotlin/Native. | `DateTimeFormatter.format(kotlinDate)` | `DateTimeFormatter.format(kotlinDate.toJavaLocalDate())` |
-| **Operator precedence with `+` on `PaddingValues`** | The custom `operator fun PaddingValues.plus` must call the *original* `calculate*` methods **before** adding; otherwise you risk infinite recursion. | ```kotlin\noverride fun calculateTopPadding() = calculateTopPadding() + that.calculateTopPadding() // recursive``` | ```kotlin\noverride fun calculateTopPadding() = this.calculateTopPadding() + that.calculateTopPadding()``` (use `this` to refer to the outer instance) |
-| **Never ignore nullable `Response.body`** | `body` can be null on network errors; unwrapping leads to NPE. | `it.body.string()` | `it.body?.string().orEmpty()` |
+### 2. Infinite Loop & Recursion Guards
+*   **`awaitForState` in Swift**: The `awaitForState` function in `iosApp/iosApp/Utils.swift` uses a `repeat-while` loop with a `Task.sleep`. This is a polling loop. **MUST** ensure that the `predicate` eventually returns `true` to avoid an infinite loop. If the state never changes, the loop will run forever, consuming CPU. **MUST** add a timeout mechanism to break the loop if the state does not change within a reasonable time.
+*   **`runOnUiThread` in Kotlin**: The `runOnUiThread` function uses `SwingUtilities.invokeAndWait`. This blocks the calling thread until the UI update is complete. **MUST** ensure that the `block` does not call `runOnUiThread` again, as this would cause a deadlock.
 
----
+### 3. UI & UX Micro-Mechanics
+*   **`rememberRunnable`**: This utility prevents unnecessary recompositions by stabilizing lambda references. **MUST** use this when passing lambdas to stateful components. **MUST NOT** pass inline lambdas directly.
+*   **`colorize` in AutoUtils.kt**: This function uses `SpannableString` to apply color spans. **MUST** ensure that `index + length` does not exceed the length of the string, as this would throw a `StringIndexOutOfBoundsException`.
 
-### 4.2 Infinite Loop & Recursion Guards  
+### 4. Backend Concurrency & Memory Safety
+*   **`getUrl` in utils.kt**: This function uses `OkHttpClient` to fetch a URL. **MUST** ensure that the `response` is closed using `response.use { ... }` to prevent memory leaks. **MUST** handle non-successful responses by throwing an exception with a descriptive message.
+*   **`fetchImage` in AutoUtils.kt**: This function uses Coil to fetch an image. **MUST** ensure that the `ImageRequest` is built with a fallback drawable to handle network errors gracefully.
 
-| Guard | Implementation | Rationale |
-|-------|----------------|-----------|
-| **Recursion depth cap for GraphQL import** | ```kotlin\nprivate const val MAX_IMPORT_DEPTH = 10\nfun importNode(node: Node, depth: Int = 0) { require(depth < MAX_IMPORT_DEPTH) { "Import depth exceeded" } … importNode(child, depth + 1) }``` | Prevents stack overflow when a malformed conference graph contains cycles. |
-| **Event‑loop starvation guard in `awaitForState` (iOS)** | The Swift helper sleeps 500 ms each iteration; add a **max‑retry** to avoid infinite wait. | ```swift\nvar attempts = 0\nwhile attempts < 60 { … attempts += 1 }``` | Guarantees the async function returns after 30 seconds even if predicate never becomes true. |
-| **Compose recomposition guard for `rememberRunnable`** | Use `key` parameters to break reference equality when inputs change; otherwise the lambda never updates. | ```kotlin\nval runnable = rememberRunnable(key1 = userId) { loadUser(userId) }``` | Guarantees termination of stale callbacks. |
-
----
-
-### 4.3 UI & UX Micro‑Mechanics  
-
-| Issue | Invariant | Code Example |
-|-------|-----------|--------------|
-| **Wear OS layout thrashing** | **MUST** set a fixed `Modifier.size` (≥ 48 dp) on any composable that may be measured with `wrapContent` on a circular screen. | ```kotlin\nBox(modifier = Modifier.size(56.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }``` |
-| **Desktop Swing UI dead‑lock** | **MUST NOT** call `SwingUtilities.invokeAndWait` from the EDT; guard with `isEventDispatchThread`. | See corrected `runOnUiThread` implementation above. |
-| **Touch vs pointer event ambiguity** | **MUST** use `pointerInput` with `awaitPointerEventScope` and filter `PointerEventType.Press` to avoid duplicate handling on hybrid devices. | ```kotlin\nModifier.pointerInput(Unit) { awaitPointerEventScope { while (true) { val event = awaitPointerEvent(); if (event.type == PointerEventType.Press) onPress() } } }``` |
-| **Focus restoration after navigation** | **MUST** call `focusRequester.requestFocus()` inside a `LaunchedEffect(key1 = destination)` to avoid focus loss loops. | ```kotlin\nval focusRequester = remember { FocusRequester() }\nLaunchedEffect(destination) { focusRequester.requestFocus() }\n``` |
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **`formatDateTime` in AutoUtils.kt**: This function uses `DateTimeFormatter.ofPattern("MMM d, HH:mm")`. **MUST** ensure that the `LocalDateTime` is not null. **MUST** handle time zone conversions correctly to avoid displaying the wrong time.
+*   **`navigateTo` in AutoUtils.kt**: This function uses `Uri.parse` to create a navigation intent. **MUST** ensure that the `latitude` and `longitude` are valid coordinates. **MUST** handle `HostException` by showing a toast message to the user.
 
 ---
 
-### 4.4 Backend Concurrency & Memory Safety  
+## 5. The 9 Deep Learning Dimensions
 
-| Guard | Code Pattern | Why |
-|-------|--------------|-----|
-| **TOCTOU on OkHttp client reuse** | Declare a **single immutable** `OkHttpClient` instance (`private val okHttpClient = OkHttpClient.Builder().build()`) and never mutate its dispatcher after first use. | Guarantees thread‑safe connection pooling; avoids race where one coroutine changes timeouts while another is executing. |
-| **Connection pool starvation** | Set `connectionPool` limits explicitly (`connectionPool(ConnectionPool(5, 5, TimeUnit.MINUTES))`). | Prevents unbounded open sockets when many concurrent import jobs run. |
-| **Memory leak from unclosed `Response`** | Use Kotlin `use` extension to auto‑close (`response.use { … }`). | Guarantees underlying socket is returned to the pool. |
-| **Cache eviction** | For any in‑memory cache (e.g., GraphQL query cache), implement `CacheBuilder.maximumSize(10_000).expireAfterWrite(10, MINUTES)`. | Prevents OOM on long‑running server. |
-
----
-
-### 4.5 Defect & Error Prevention (“Galti Pakadna”)  
-
-| Defect | Detection Technique | Example |
-|--------|---------------------|---------|
-| **Null dereference on `Response.body`** | Add a **detekt** rule `ResponseBodyMustBeChecked` that flags any `response.body` usage without a preceding null‑check. | `check(it.isSuccessful) { "Cannot get $url: ${it.body?.string()}" }` |
-| **Off‑by‑one in pagination** | Write a property‑based test that generates random `pageSize` and `totalCount` and asserts `lastPageIndex = (totalCount - 1) / pageSize`. | `assertEquals(expected, actual)` |
-| **Error swallowing in `catch (e: HostException)`** | Enforce a **lint rule** that any caught exception must be logged or re‑thrown. | `CarToast.makeText(...).show()` → add `Log.e(TAG, "Navigation failed", e)` |
-| **Prototype pollution via JSON deserialization** | Use `kotlinx.serialization` with `ignoreUnknownKeys = false` and a custom `Json` instance that rejects unknown fields. | `Json { ignoreUnknownKeys = false }` |
+1.  **Architecture**: The project uses a **Kotlin Multiplatform (KMP)** architecture with a shared core (`shared/`) and platform-specific UIs (`androidApp/`, `iosApp/`, `compose-desktop/`). The shared core contains the GraphQL client, domain models, and repository logic. The platform UIs are thin presentation layers that consume the shared core.
+2.  **Core Abstractions**: Key abstractions include `DateService` (for time abstraction), `WearUiState` (for Wear OS state), and `rememberRunnable` (for lambda stabilization). These abstractions enforce unidirectional data flow and prevent platform-specific code from leaking into the shared core.
+3.  **Error Handling**: Error handling is done via exceptions and `Result` types. The `getUrl` function throws an exception if the response is not successful. The `runOnUiThread` function uses `runCatching` to catch exceptions and return a `Result`.
+4.  **Testing**: The project uses **Maestro** for UI testing and **JUnit** for unit testing. The `MockDateService` is used to inject a fixed time into tests, making them deterministic.
+5.  **Security**: The project uses **Apollo GraphQL** for data fetching, which supports authentication and authorization. The `google-services.json` file is used for Firebase configuration. **MUST** ensure that sensitive data (e.g., API keys) is not hardcoded in the source code.
+6.  **Performance**: The project uses **Coil** for image loading, which supports caching and downsampling. The `rememberRunnable` utility prevents unnecessary recompositions, improving performance.
+7.  **Deployment**: The project uses **GitHub Actions** for CI/CD. The `backend-deploy.yml` workflow deploys the backend to a cloud provider. The `publish-android.yml` and `publish-ios.yml` workflows publish the Android and iOS apps to the respective stores.
+8.  **Agent Patterns**: The project does not explicitly use AI agents, but the `Koog` library is mentioned in the README for AI-based talk recommendations. **MUST** ensure that AI-generated content is validated and sanitized before being displayed to the user.
+9.  **Data Flow**: Data flows from the GraphQL backend to the shared core, where it is transformed into domain models. The domain models are then passed to the platform UIs, where they are rendered. **MUST** ensure that data is immutable once it reaches the UI layer to prevent unintended mutations.
 
 ---
 
-## 5. The 9 Deep Learning Dimensions  
+## 6. The 8 Learning Extraction Artifacts
 
-| Dimension | Findings (Technical Depth) |
-|-----------|----------------------------|
-| **1. Architecture** | *Modular* – backend, shared, and each UI client live in separate Gradle modules. **Subsystem boundaries** are enforced by Gradle source sets (`androidApp`, `compose-desktop`, `iosApp`, `backend`). **State ownership** is centralized in `ViewModel`s (KMM‑ViewModel) that expose immutable `StateFlow`s. |
-| **2. Core Abstractions** | *Domain primitives*: `Conference`, `Session`, `Speaker`. *Abstractions*: `DateService`, `GraphQLClient`, `WearUiState`. *Contracts*: `DateService.now()` returns a `LocalDateTime` in the device’s time zone. |
-| **3. Error Handling** | Backend uses Spring WebFlux `ErrorWebExceptionHandler` bean; UI uses `try/catch` around `HostException`. **Fault boundaries**: network layer (`OkHttp`) → repository → ViewModel → UI. Errors are surfaced via `Result` or `StateFlow` with `Loading/Error/Success` sealed classes. |
-| **4. Testing** | - **Unit**: Kotlin `test` source sets with `kotlinx.coroutines.test`. <br> - **Integration**: Spring `@WebFluxTest` for GraphQL resolvers. <br> - **UI**: Maestro UI‑test flows for Android & iOS. <br> - **Property‑based**: `kotest` generators for date‑time formatting invariants. |
-| **5. Security** | - **Transport**: Cloud Run terminates TLS; backend optionally enables clear‑text HTTP/2. <br> - **Credential handling**: API keys (`gemini_api_key`) stored in `local.properties` (git‑ignored). <br> - **Input sanitisation**: GraphQL schema validates all incoming arguments; no raw SQL. |
-| **6. Performance** | - **Latency**: HTTP/2 reduces round‑trip latency for GraphQL queries. <br> - **Caching**: Apollo client uses normalized cache; backend uses in‑memory data loader for batch fetching. <br> - **Zero‑copy**: Image loading in Android Auto uses Coil with `allowHardware(false)` to avoid GPU‑memory leaks on low‑memory automotive head‑units. |
-| **7. Deployment** | - **CI/CD**: GitHub Actions pipelines (`backend-deploy.yml`, `publish-android.yml`, `publish-ios.yml`). <br> - **Terraform**: `backend/terraform/main.tf` defines Cloud Run service with `h2c` port. <br> - **Reproducible builds**: Gradle `java.toolchain.languageVersion = JavaLanguageVersion.of(17)`. |
-| **8. Agent Patterns** | - **Koog AI Agent** (see README) integrates Gemini for talk recommendations. <br> - **Prompt chains**: `GeminiPromptBuilder` builds a chain of system/user messages; **loop guard** limits to 3 retries. <br> - **Context budget**: `maxTokens = 4096` enforced before each request. |
-| **9. Data Flow** | - **Network → JSON → Kotlinx Serialization → Domain Model** (backend import utils). <br> - **Domain Model → Apollo Cache → UI StateFlow** (shared). <br> - **UI → ViewModel → Mutations** (e.g., `WearUiState` updates via `AppHelperNodeStatus`). <br> - **Serialization**: `Json.parseToJsonElement(...).toAny()` used for generic GraphQL responses. |
+1.  **Pattern**: Use `rememberRunnable` to stabilize lambda references in Compose.
+2.  **Rule**: **MUST** abstract time acquisition behind an interface for deterministic testing.
+3.  **Architecture Principle**: Use a shared core for business logic and platform-specific UIs for presentation.
+4.  **Failure Mode**: UI test flakiness due to dynamic list ordering.
+5.  **Reusable Skill**: Use `scrollUntilVisible` in Maestro tests for dynamic lists.
+6.  **Decision**: Use `kotlinx.datetime` for date parsing to ensure platform-agnostic behavior.
+7.  **Anti-pattern**: Passing inline lambdas directly to stateful components in Compose.
+8.  **Verification Method**: Use a linter to flag direct calls to `LocalDateTime.now()` in non-utility classes.
 
 ---
 
-## 6. The 8 Learning Extraction Artifacts  
+## 7. Actionable Agent Skill & Implementation Checklist
 
-| # | Artifact | Concrete Instance from Confetti |
-|---|----------|---------------------------------|
-| **1** | **Pattern** | `WebServerFactoryCustomizer` bean to enable clear‑text HTTP/2 (see Incident 1). |
-| **2** | **Rule** | **RULE‑HTTP2‑CLEAR‑TEXT‑ENFORCEMENT** (Section 2). |
-| **3** | **Architecture Principle** | **Modular Multiplatform Separation** – each platform lives in its own Gradle module, sharing only pure Kotlin code via `common/`. This isolates UI‑specific dependencies (Compose, SwiftUI) from business logic. |
-| **4** | **Failure Mode** | **ClassCastException on Kotlin/Native when calling Java `DateTimeFormatter`** (Incident 2). |
-| **5** | **Reusable Skill** | **Compose‑stable callback creation** – use `rememberRunnable` (or `rememberUpdatedState`) to memoise side‑effect lambdas across recompositions. |
-| **6** | **Decision** | **Enable h2c instead of TLS** – chosen to reduce latency and simplify Cloud Run networking; alternative (TLS termination inside container) was rejected due to extra certificate management overhead. |
-| **7** | **Anti‑pattern** | **Direct `DateTimeFormatter.format(kotlinx.datetime.LocalDateTime)`** – leads to runtime crashes on native targets. |
-| **8** | **Verification Method** | **Integration test that spins up a Spring Boot context with `ENABLE_H2C=true` and asserts HTTP/2 clear‑text is active** (see Rule verification). |
-
----
-
-## 7. Actionable Agent Skill & Implementation Checklist  
-
-> **Goal**: Enable an AI‑coding agent to autonomously audit, extend, or replicate the Confetti architecture with zero regression.
-
-1. **Project Scaffold Validation**  
-   - ☐ Verify presence of `common/`, `androidApp/`, `iosApp/`, `compose-desktop/`, `backend/` modules.  
-   - ☐ Ensure each module’s `build.gradle.kts` declares the correct Kotlin Multiplatform targets (`android`, `iosX64`, `iosArm64`, `jvm`, `js`).  
-
-2. **Protocol Configuration Check**  
-   - ☐ Scan for `WebServerFactoryCustomizer` beans.  
-   - ☐ If missing, inject **RULE‑HTTP2‑CLEAR‑TEXT‑ENFORCEMENT** pattern.  
-   - ☐ Add Terraform port block (`name = "h2c"`) if not present.  
-
-3. **Date‑Time Safety Audit**  
-   - ☐ Run static analysis (detekt) for any `DateTimeFormatter.format(` usage on Kotlin `LocalDate`/`LocalDateTime`.  
-   - ☐ Auto‑fix by inserting `.toJavaLocalDate()` or `.toJavaLocalDateTime()`.  
-
-4. **Compose Callback Stability**  
-   - ☐ Search for `Button(onClick = { … })` patterns without `rememberRunnable`.  
-   - ☐ Replace with `val onClick = rememberRunnable { … }` and reference `onClick`.  
-
-5. **Resource Management in Backend**  
-   - ☐ Ensure all `OkHttp` calls are wrapped in `use {}` and body reads happen inside the block.  
-   - ☐ Add unit test verifying no `IllegalStateException` when reading body after `use`.  
-
-6. **UI Thread Guard (Desktop)**  
-   - ☐ Verify `runOnUiThread` contains an `isEventDispatchThread` guard.  
-   - ☐ Add comment explaining re‑entrancy safety.  
-
-7. **Wear UI Layout Guard**  
-   - ☐ Check every `CircularProgressIndicator` inside Wear composables for an explicit `Modifier.size(≥48.dp)`.  
-
-8. **Agent Prompt Chain Validation**  
-   - ☐ Confirm Gemini prompt builder caps token usage (`maxTokens`).  
-   - ☐ Add a retry loop guard (`maxRetries = 3`).  
-
-9. **Testing Coverage Enforcement**  
-   - ☐ Ensure each module has at least 80 % line coverage (JaCoCo for JVM, Kover for Kotlin Multiplatform).  
-   - ☐ Add a CI step that fails the build if coverage drops below threshold.  
-
-10. **Security Scan**  
-    - ☐ Verify `local.properties` is listed in `.gitignore`.  
-    - ☐ Run `gradle dependencyCheck` to ensure no vulnerable transitive dependencies.  
-
-11. **Performance Benchmark**  
-    - ☐ Execute a GraphQL query benchmark with HTTP/2 enabled; assert latency < 150 ms on Cloud Run.  
-
-12. **Documentation Sync**  
-    - ☐ Auto‑generate a `README` section that lists enabled protocol (`h2c`) and required environment variable (`ENABLE_H2C`).  
-
-*When the agent completes all checklist items without violations, it can safely claim “Confetti‑compatible” status.*  
+1.  **Abstract Time**: Create a `DateService` interface and implement it for each platform. Inject it into ViewModels and use it for all time-dependent logic.
+2.  **Stabilize Lambdas**: Use `rememberRunnable` or `remember { { ... } }` to stabilize lambda references in Compose.
+3.  **Thread Safety**: Use `runOnUiThread` to marshal UI updates to the EDT in desktop applications.
+4.  **UI Testing**: Use `scrollUntilVisible` in Maestro tests for dynamic lists. Use a generic wait condition (e.g., any item visible) to avoid timing out.
+5.  **Date Parsing**: Use `kotlinx.datetime` for date parsing to ensure platform-agnostic behavior. Avoid platform-specific date APIs.
+6.  **Error Handling**: Use `Result` types and exceptions to handle errors gracefully. Ensure that all network calls are wrapped in `try-catch` blocks.
+7.  **Performance**: Use Coil for image loading with caching and downsampling. Use `remember` to prevent unnecessary recompositions.
+8.  **Security**: Ensure that sensitive data (e.g., API keys) is not hardcoded in the source code. Use environment variables or secure storage.

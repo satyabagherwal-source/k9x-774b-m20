@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T16:40:25.466Z",
+  "last_updated": "2026-11-02T16:47:54.848Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "864ffa72f40a269d175c8c13645c0994b4857a076a2df2ba2dcc25ce71474c57",
-      "verified_at": "2026-10-31T13:47:25.265Z",
+      "content_hash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
+      "verified_at": "2026-11-02T16:47:50.706Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:47:25.265Z"
+      "last_updated": "2026-11-02T16:47:50.706Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -7941,14 +7941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goss-org-goss",
-      "content_hash": "b73e696f4da1c3ded64002ad86149b70ea9aa52d3d78db4db5525240effcd5a0",
-      "verified_at": "2026-10-25T15:09:53.924Z",
+      "content_hash": "1144e7f3e407024341eec1da2cbb1c493a084dc7a13118eb5875782339c92bf7",
+      "verified_at": "2026-11-02T16:47:46.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T15:09:53.924Z"
+      "last_updated": "2026-11-02T16:47:46.816Z"
     },
     "StarRocks/starrocks": {
       "repository": "StarRocks/starrocks",
@@ -13371,14 +13371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-joreilly-confetti",
-      "content_hash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
-      "verified_at": "2026-10-30T06:57:22.143Z",
+      "content_hash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
+      "verified_at": "2026-11-02T16:47:54.847Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:57:22.143Z"
+      "last_updated": "2026-11-02T16:47:54.847Z"
     },
     "m0ntydad0n/pseo-engine-oss": {
       "repository": "m0ntydad0n/pseo-engine-oss",

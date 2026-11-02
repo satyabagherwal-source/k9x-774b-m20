@@ -6852,3 +6852,6 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cb2b27a7` | Multi-dimensional audit evidence | 2026-11-02T16:33:32.300Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `ab16bef9` | Multi-dimensional audit evidence | 2026-11-02T16:33:33.552Z |
 | `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `484264e9` | Multi-dimensional audit evidence | 2026-11-02T16:40:25.456Z |
+| `learn-github-goss-org-goss` | `https://github.com/goss-org/goss` | `dcd065d9` | Multi-dimensional audit evidence | 2026-11-02T16:47:46.807Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `2eca8e44` | Multi-dimensional audit evidence | 2026-11-02T16:47:50.693Z |
+| `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `b97d2070` | Multi-dimensional audit evidence | 2026-11-02T16:47:54.838Z |

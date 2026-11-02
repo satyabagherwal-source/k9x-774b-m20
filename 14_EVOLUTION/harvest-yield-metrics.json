@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:40:25.461Z",
-  "total_cycles_completed": 6820,
-  "total_learnings_persisted": 6820,
-  "total_rules_promoted": 6468,
+  "last_updated": "2026-11-02T16:47:54.843Z",
+  "total_cycles_completed": 6823,
+  "total_learnings_persisted": 6823,
+  "total_rules_promoted": 6472,
   "history": [
-    {
-      "timestamp": "2026-10-31T16:57:11.323Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:57:19.346Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:03:45.623Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T17:03:58.140Z",
       "repository": "apache/shardingsphere",
@@ -1403,6 +1382,27 @@
       "repository": "kamgurgul/cpu-info",
       "learningId": "learn-github-kamgurgul-cpu-info",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:47:46.812Z",
+      "repository": "goss-org/goss",
+      "learningId": "learn-github-goss-org-goss",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:47:50.702Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:47:54.843Z",
+      "repository": "joreilly/Confetti",
+      "learningId": "learn-github-joreilly-confetti",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

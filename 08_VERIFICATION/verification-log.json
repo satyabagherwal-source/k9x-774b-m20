@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-M2KM",
-    "timestamp": "2026-10-30T22:27:36.454Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "e5db2a879fcaea974d278a46f03f6c72ff69fa56b10dbd2bc19c5996d3076f9a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-UYVO",
-    "timestamp": "2026-10-30T22:34:31.572Z",
-    "repository": "speridlabs/idol",
-    "learningId": "learn-huggingface-speridlabs-idol",
-    "contentHash": "d6a086941e54d2fa3a0bbd586fa187814e902650e76a052ec19cdc48e8550c3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-V0YN",
-    "timestamp": "2026-10-30T22:34:34.271Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "839a6ac8a62e4b59d0b79dd4da9f1b29cfd85a015fc05184bcc8f30440965519",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-V76Q",
     "timestamp": "2026-10-30T22:34:42.338Z",
     "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -7492,6 +7447,51 @@
     "contentHash": "406c57f1c99f0f60edc5b1af13e48af931888235bcb44ae3c74e07e043a4b081",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-SLTF",
+    "timestamp": "2026-11-02T16:47:46.803Z",
+    "repository": "goss-org/goss",
+    "learningId": "learn-github-goss-org-goss",
+    "contentHash": "1144e7f3e407024341eec1da2cbb1c493a084dc7a13118eb5875782339c92bf7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-SOT9",
+    "timestamp": "2026-11-02T16:47:50.685Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-SS0I",
+    "timestamp": "2026-11-02T16:47:54.834Z",
+    "repository": "joreilly/Confetti",
+    "learningId": "learn-github-joreilly-confetti",
+    "contentHash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

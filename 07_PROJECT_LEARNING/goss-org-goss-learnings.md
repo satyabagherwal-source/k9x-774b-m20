@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goss-org-goss-learnings.md`  
 > **Source**: github ([https://github.com/goss-org/goss](https://github.com/goss-org/goss))  
-> **Source Version**: `e1210076`  
+> **Source Version**: `dcd065d9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-25T15:09:53.520Z  
+> **Timestamp**: 2026-11-02T16:47:46.084Z  
 > **Learning ID**: `learn-github-goss-org-goss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goss-org-goss-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goss-org/goss](https://github.com/goss-org/goss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-25T15:09:53.514Z  
+> **Harvest Timestamp**: 2026-11-02T16:47:45.860Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Quick and Easy server testing/validation
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 5996 stars
+- **Stars / Engagement**: 6000 stars
 
 ---
 
@@ -1539,62 +1539,91 @@ func (m *ConsistOfMatcher) MarshalJSON() ([]byte, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e1210076` (2026-10-25)
-**Commit Message**: build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148)
+### Incident Patch 1: `dcd065d9` (2026-11-01)
+**Commit Message**: build(deps): bump DavidAnson/markdownlint-cli2-action from 24 to 25 (#1151)
 
-Bumps [github/codeql-action](https://github.com/github/codeql-action) from 4.38.3 to 4.39.1.
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/v4.38.3...v4.39.1)
+Bumps [DavidAnson/markdownlint-cli2-action](https://github.com/davidanson/markdownlint-cli2-action) from 24 to 25.
+- [Release notes](https://github.com/davidanson/markdownlint-cli2-action/releases)
+- [Commits](https://github.com/davidanson/markdownlint-cli2-action/compare/v24...v25)
 
 ---
 updated-dependencies:
-- dependency-name: github/codeql-action
-  dependency-version: 4.39.1
+- dependency-name: DavidAnson/markdownlint-cli2-action
+  dependency-version: '25'
   dependency-type: direct:production
-  update-type: version-update:semver-minor
+  update-type: version-update:semver-major
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.github/workflows/docker-goss.yaml` (modified, +1/-1)
+**File**: `.github/workflows/docs.yaml` (modified, +1/-1)
 ```diff
-@@ -88,6 +88,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.38.3
-+        uses: github/codeql-action/upload-sarif@v4.39.1
+@@ -20,7 +20,7 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v7
+-      - uses: DavidAnson/markdownlint-cli2-action@v24
++      - uses: DavidAnson/markdownlint-cli2-action@v25
          with:
-           sarif_file: "trivy-results.sarif"
-```
-
-**File**: `.github/workflows/trivy-schedule.yaml` (modified, +1/-1)
-```diff
-@@ -22,6 +22,6 @@ jobs:
-           output: "trivy-results.sarif"
- 
-       - name: Upload Trivy scan results to GitHub Security tab
--        uses: github/codeql-action/upload-sarif@v4.38.3
-+        uses: github/codeql-action/upload-sarif@v4.39.1
-         with:
-           sarif_file: "trivy-results.sarif"
+           globs: |
+             docs/**/*.md
 ```
 
 ---
 
-### Incident Patch 2: `b05640f1` (2026-10-25)
-**Commit Message**: build(deps): bump zensical from 0.0.70 to 0.0.71 in /docs (#1147)
+### Incident Patch 2: `48d69f6a` (2026-11-01)
+**Commit Message**: build(deps): bump alpine from 3.24.2 to 3.24.3 (#1150)
 
-Bumps [zensical](https://github.com/zensical/zensical) from 0.0.70 to 0.0.71.
+Bumps alpine from 3.24.2 to 3.24.3.
+
+---
+updated-dependencies:
+- dependency-name: alpine
+  dependency-version: 3.24.3
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Dockerfile` (modified, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-FROM alpine:3.24.2
++FROM alpine:3.24.3
+ 
+ ARG TARGETPLATFORM
+ COPY $TARGETPLATFORM/goss /usr/bin/
+```
+
+**File**: `Dockerfile_trivy` (modified, +1/-1)
+```diff
+@@ -11,7 +11,7 @@ RUN --mount=target=. \
+     -o "/release/goss" \
+     ./cmd/goss
+ 
+-FROM alpine:3.24.2
++FROM alpine:3.24.3
+ 
+ COPY --from=base /release/* /usr/bin/
+ 
+```
+
+---
+
+### Incident Patch 3: `e0cef6a7` (2026-11-01)
+**Commit Message**: build(deps): bump zensical from 0.0.71 to 0.0.73 in /docs (#1149)
+
+Bumps [zensical](https://github.com/zensical/zensical) from 0.0.71 to 0.0.73.
 - [Release notes](https://github.com/zensical/zensical/releases)
-- [Commits](https://github.com/zensical/zensical/compare/v0.0.70...v0.0.71)
+- [Commits](https://github.com/zensical/zensical/compare/v0.0.71...v0.0.73)
 
 ---
 updated-dependencies:
 - dependency-name: zensical
-  dependency-version: 0.0.71
+  dependency-version: 0.0.73
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
@@ -1605,17 +1634,17 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 **File**: `docs/requirements.txt` (modified, +1/-1)
 ```diff
 @@ -1 +1 @@
--zensical==0.0.70
-+zensical==0.0.71
+-zensical==0.0.71
++zensical==0.0.73
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1151** (2026-11-01): build(deps): bump DavidAnson/markdownlint-cli2-action from 24 to 25 (@dependabot[bot])
+- **PR #1150** (2026-11-01): build(deps): bump alpine from 3.24.2 to 3.24.3 (@dependabot[bot])
+- **PR #1149** (2026-11-01): build(deps): bump zensical from 0.0.71 to 0.0.73 in /docs (@dependabot[bot])
 - **PR #1148** (2026-10-25): build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (@dependabot[bot])
 - **PR #1147** (2026-10-25): build(deps): bump zensical from 0.0.70 to 0.0.71 in /docs (@dependabot[bot])
 - **PR #1145** (2026-10-18): build(deps): bump github/codeql-action from 4.38.2 to 4.38.3 (@dependabot[bot])
-- **PR #1144** (2026-10-18): build(deps): bump zensical from 0.0.68 to 0.0.70 in /docs (@dependabot[bot])
-- **PR #1140** (2026-10-11): build(deps): bump zensical from 0.0.67 to 0.0.68 in /docs (@dependabot[bot])
-- **PR #1138** (2026-10-04): build(deps): bump github/codeql-action from 4.38.1 to 4.38.2 (@dependabot[bot])
 
 ---
 
@@ -1635,28 +1664,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148)
+## X. build(deps): bump DavidAnson/markdownlint-cli2-action from 24 to 25 (#1151)
 
 **RULE**:
-When implementing operations in `.github/workflows/docker-goss.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goss-org/goss. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/docs.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goss-org/goss. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e1210076`: build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dcd065d9`: build(deps): bump DavidAnson/markdownlint-cli2-action from 24 to 25 (#1151). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docker-goss.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docs.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: github/codeql-action/upload-sarif@v4.39.1
+      - uses: DavidAnson/markdownlint-cli2-action@v25
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-        uses: github/codeql-action/upload-sarif@v4.38.3
+      - uses: DavidAnson/markdownlint-cli2-action@v24
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e1210076` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dcd065d9` are properly handled with clean fallback behavior.

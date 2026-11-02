@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "7822c1b1",
+    "sourceVersion": "2eca8e44",
     "license": "Apache-2.0",
-    "contentHash": "864ffa72f40a269d175c8c13645c0994b4857a076a2df2ba2dcc25ce71474c57",
-    "lastHarvestedAt": "2026-10-31T13:47:25.258Z",
+    "contentHash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
+    "lastHarvestedAt": "2026-11-02T16:47:50.693Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -5213,10 +5213,10 @@
     "repository": "goss-org/goss",
     "platform": "github",
     "sourceUrl": "https://github.com/goss-org/goss",
-    "sourceVersion": "e1210076",
+    "sourceVersion": "dcd065d9",
     "license": "Apache-2.0",
-    "contentHash": "b73e696f4da1c3ded64002ad86149b70ea9aa52d3d78db4db5525240effcd5a0",
-    "lastHarvestedAt": "2026-10-25T15:09:53.916Z",
+    "contentHash": "1144e7f3e407024341eec1da2cbb1c493a084dc7a13118eb5875782339c92bf7",
+    "lastHarvestedAt": "2026-11-02T16:47:46.807Z",
     "learningId": "learn-github-goss-org-goss"
   },
   "starrocks-starrocks": {
@@ -8883,10 +8883,10 @@
     "repository": "joreilly/Confetti",
     "platform": "github",
     "sourceUrl": "https://github.com/joreilly/Confetti",
-    "sourceVersion": "3ca053db",
+    "sourceVersion": "b97d2070",
     "license": "Apache-2.0",
-    "contentHash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
-    "lastHarvestedAt": "2026-10-30T06:57:22.133Z",
+    "contentHash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
+    "lastHarvestedAt": "2026-11-02T16:47:54.838Z",
     "learningId": "learn-github-joreilly-confetti"
   },
   "m0ntydad0n-pseo-engine-oss": {

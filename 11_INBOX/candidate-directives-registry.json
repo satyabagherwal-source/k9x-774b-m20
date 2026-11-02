@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:04:59.415Z",
+  "last_updated": "2026-11-02T16:47:50.700Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3621,6 +3621,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-seekstorm-seekstorm"
+    },
+    {
+      "id": "CD-SOTO",
+      "directive_title": "[PXT-1278] New Catalog locking (#1573)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "pixeltable/pixeltable",
+      "source_commit": "2eca8e44",
+      "date_staged": "2026-11-02",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-pixeltable-pixeltable"
     }
   ]
 }

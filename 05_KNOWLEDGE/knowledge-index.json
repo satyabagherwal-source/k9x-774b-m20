@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T16:40:25.377Z",
+  "last_updated": "2026-11-02T16:47:54.750Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -15687,8 +15687,8 @@
       "slug": "goss-org-goss",
       "platform": "github",
       "source_url": "https://github.com/goss-org/goss",
-      "source_version": "e1210076",
-      "content_hash": "b73e696f4da1c3ded64002ad86149b70ea9aa52d3d78db4db5525240effcd5a0",
+      "source_version": "dcd065d9",
+      "content_hash": "1144e7f3e407024341eec1da2cbb1c493a084dc7a13118eb5875782339c92bf7",
       "dossier_path": "07_PROJECT_LEARNING/goss-org-goss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goss-org-goss-learnings.md",
       "promoted_rules": [
@@ -15701,6 +15701,11 @@
           "number": 4361,
           "title": "build(deps): bump github/codeql-action from 4.38.3 to 4.39.1 (#1148)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6459,
+          "title": "build(deps): bump DavidAnson/markdownlint-cli2-action from 24 to 25 (#1151)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15708,7 +15713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-25T15:09:53.832Z",
+      "verified_at": "2026-11-02T16:47:46.701Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -33978,8 +33983,8 @@
       "slug": "joreilly-confetti",
       "platform": "github",
       "source_url": "https://github.com/joreilly/Confetti",
-      "source_version": "3ca053db",
-      "content_hash": "0b0ba83c3d77dc76dcd731851614d8f5aeb561eac9d5c9ad0d12fc8a41c5f496",
+      "source_version": "b97d2070",
+      "content_hash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
       "dossier_path": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/joreilly-confetti-learnings.md",
       "promoted_rules": [
@@ -34002,6 +34007,21 @@
           "number": 5643,
           "title": "**RULE‑LOCALDATETIME‑SERIALISATION‑CONSISTENCY**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6460,
+          "title": "Stabilize Lambda References in Reactive UI Frameworks",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6461,
+          "title": "Abstract Time Acquisition for Deterministic Testing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6462,
+          "title": "Enforce Thread Safety in Desktop UI Marshaling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34009,7 +34029,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:57:22.035Z",
+      "verified_at": "2026-11-02T16:47:54.729Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -46519,8 +46539,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "7822c1b1",
-      "content_hash": "864ffa72f40a269d175c8c13645c0994b4857a076a2df2ba2dcc25ce71474c57",
+      "source_version": "2eca8e44",
+      "content_hash": "47436eb40635e8d9e0d10a4588b6055c2a3f815765e09224e12d0ec63428a0ef",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -46565,7 +46585,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:47:25.172Z",
+      "verified_at": "2026-11-02T16:47:50.565Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167273,6 +167293,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T16:40:25.358Z"
+    },
+    "rule-6459": {
+      "learning_id": "rule-6459",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6459,
+      "title": "build(deps): bump DavidAnson/markdownlint-cli2-action from 24 to 25 (#1151)",
+      "source_url": "https://github.com/goss-org/goss",
+      "source_version": "dcd065d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:47:46.701Z"
+    },
+    "rule-6460": {
+      "learning_id": "rule-6460",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6460,
+      "title": "Stabilize Lambda References in Reactive UI Frameworks",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "b97d2070",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:47:54.729Z"
+    },
+    "rule-6461": {
+      "learning_id": "rule-6461",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6461,
+      "title": "Abstract Time Acquisition for Deterministic Testing",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "b97d2070",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:47:54.729Z"
+    },
+    "rule-6462": {
+      "learning_id": "rule-6462",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6462,
+      "title": "Enforce Thread Safety in Desktop UI Marshaling",
+      "source_url": "https://github.com/joreilly/Confetti",
+      "source_version": "b97d2070",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:47:54.729Z"
     }
   },
   "aliases": {

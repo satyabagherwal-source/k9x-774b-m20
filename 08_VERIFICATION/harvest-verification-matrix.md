@@ -6843,3 +6843,6 @@
 | `CYCLE-20261102-AAH5` | `2026-11-02T16:33:32.297Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6456` | Yes (`e46a053b...`) |
 | `CYCLE-20261102-ABFW` | `2026-11-02T16:33:33.548Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6457` | Yes (`c802f727...`) |
 | `CYCLE-20261102-J59P` | `2026-11-02T16:40:25.453Z` | `kamgurgul/cpu-info` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6458` | Yes (`406c57f1...`) |
+| `CYCLE-20261102-SLTF` | `2026-11-02T16:47:46.803Z` | `goss-org/goss` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6459` | Yes (`1144e7f3...`) |
+| `CYCLE-20261102-SOT9` | `2026-11-02T16:47:50.685Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md` | Yes (`47436eb4...`) |
+| `CYCLE-20261102-SS0I` | `2026-11-02T16:47:54.834Z` | `joreilly/Confetti` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6460, Rule 6461, Rule 6462` | Yes (`824491f0...`) |
