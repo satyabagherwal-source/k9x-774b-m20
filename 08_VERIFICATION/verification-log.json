@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-V76Q",
-    "timestamp": "2026-10-30T22:34:42.338Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "9b69cb0843be714d525993b309c800a5af7951c25d4722c23968bb7849e2da99",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-3BQ8",
-    "timestamp": "2026-10-30T22:41:01.472Z",
-    "repository": "makecindy/cindy",
-    "learningId": "learn-github-makecindy-cindy",
-    "contentHash": "d289841d161fd825ac18ce126a1abd145e191ac9ed0d66e5b9e58cc2155183a5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-EXZR",
     "timestamp": "2026-10-30T22:50:03.543Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7462,36 @@
     "contentHash": "824491f06b835c9118d54fa560295d44b00819d1a17cd75cbe806e8426968391",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-1UGF",
+    "timestamp": "2026-11-02T16:54:57.903Z",
+    "repository": "mistralai/Mistral-Large-4-1T-A52B",
+    "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+    "contentHash": "a05e619062fef58671a5c78548ab9a485d4e650319811ebef9517a5e93818403",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-1XQ1",
+    "timestamp": "2026-11-02T16:55:02.137Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

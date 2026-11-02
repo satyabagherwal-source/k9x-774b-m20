@@ -3,7 +3,7 @@
 > **Source Version**: `hf-mistralai`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-29T16:36:45.510Z  
+> **Timestamp**: 2026-11-02T16:54:56.100Z  
 > **Learning ID**: `learn-huggingface-mistralai-mistral-large-4-1t-a52b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,34 +17,46 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository defines the architectural blueprint and weight configuration for **Mistral Large 4**, a 1-trillion parameter natively multimodal Mixture-of-Experts (MoE) model. The core engineering challenge addressed is the efficient inference of a massive parameter count (1T total) while maintaining low latency and high throughput by activating only a sparse subset of parameters (52B active) per token. It further solves the problem of long-context handling (1M tokens) and multimodal fusion (text + image) within a single unified weight set, avoiding the need for separate vision and language models.
+The repository addresses the fundamental scaling bottleneck in Large Language Models (LLMs) where increasing total parameter count linearly increases inference cost and latency. By implementing a **Mixture-of-Experts (MoE)** architecture with **1 Trillion total parameters** but only **49-52 Billion active parameters per token**, the system achieves frontier-level capability with significantly lower computational overhead per inference step compared to dense models of equivalent quality. Additionally, it solves the **context window limitation** by supporting **1M tokens**, enabling long-document reasoning, and integrates **native multimodality** (text + image) via a Pixtral-style vision encoder.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Sparse Mixture-of-Experts (MoE) Core:** The backbone utilizes a granular MoE structure with 128 routed experts and 1 shared expert. Only 4 routed experts are active per token. This creates a strict boundary between the "routing logic" (gating network) and the "expert computation" (FFN layers).
-2.  **Multimodal Fusion Layer:** A Pixtral-style vision tower is integrated. The boundary is defined by the `multi_modal_projector`, which maps visual features into the text embedding space. The config explicitly excludes the vision tower and projector from quantization (`modules_to_not_convert`), indicating a critical precision boundary where low-precision arithmetic would degrade visual grounding.
-3.  **Quantization Boundary (FP8):** The model uses FP8 quantization for the majority of weights but maintains BF16 for specific critical components: `lm_head`, `kv_b_proj`, `indexer.wk`, `indexer.weights_proj`, and `kv_a_proj_with_mqa`. This defines a "precision island" architecture where attention mechanisms and output layers retain higher precision to prevent catastrophic drift in long-context generation.
-4.  **Speculative Decoding Head:** An embedded DSpark draft head is included, creating a dual-path inference boundary: a fast draft path and a slow verification path.
+**Architectural Boundaries:**
+1.  **Hybrid Attention Mechanism:** The model does not use standard Multi-Head Attention (MHA) or standard Multi-Query Attention (MQA) uniformly. It employs a **hybrid KV cache strategy**:
+    *   `kv_lora_rank: 512`: Indicates Low-Rank Adaptation (LoRA) style compression for Key/Value projections.
+    *   `kv_source_layers`: A specific mapping of which layers contribute to the shared KV cache, suggesting a **layer-skipping or layer-sharing** mechanism for memory efficiency.
+    *   `indexer_types`: A complex array of `"full"` and `"shared"` indexer types across 64 layers. This suggests a **sparse attention or retrieval-augmented attention** mechanism where certain layers use full attention while others share indices or use a different attention variant (likely related to the "DSpark" speculative decoding or long-context optimization).
+2.  **MoE Routing:**
+    *   `128 routed experts` with `4 active per token`.
+    *   `1 shared expert`.
+    *   `first_k_dense_replace: 1`: The first layer (or first K layers) is dense, not MoE, likely for stability in early feature extraction.
+3.  **Quantization Boundary:**
+    *   **FP8 Quantization** is applied dynamically (`activation_scheme: dynamic`).
+    *   **Exclusion List (`modules_to_not_convert`):** Critical components are kept in higher precision (BF16/FP16) to prevent catastrophic accuracy loss:
+        *   `model.vision_tower`: Vision encoder remains high-precision.
+        *   `model.multi_modal_projector`: The bridge between vision and text remains high-precision.
+        *   `lm_head`: Output projection remains high-precision.
+        *   `kv_b_proj`, `indexer.wk`, `indexer.weights_proj`, `kv_a_proj_with_mqa`: Specific attention projection matrices are excluded from FP8, indicating these are sensitive to quantization noise.
 
 **Critical Subsystem Abstractions:**
-*   **`MistralLarge4ForConditionalGeneration`**: The top-level class encapsulating the MoE transformer, vision encoder, and projector.
-*   **`Indexer`**: A specialized attention mechanism component (evidenced by `index_head_dim`, `index_n_heads`, `index_topk`) that likely handles efficient long-context retrieval or sparse attention patterns, distinct from standard dense attention.
-*   **`PixtralProcessor`**: The tokenizer/processor class responsible for handling variable aspect ratio images and aligning them with the text token stream.
+*   **`MistralLarge4ForConditionalGeneration`**: The top-level class handling both text and image inputs.
+*   **`PixtralProcessor`**: The multimodal processor that aligns image patches with text tokens.
+*   **`DSpark Speculative Decoding Head`**: An embedded draft model head for accelerating inference via speculative decoding.
+*   **`Indexer`**: A specialized attention component with `index_head_dim: 128` and `index_n_heads: 32`, distinct from the main attention heads.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Precision-Island Quantization Boundary
+### 1. Selective Precision Preservation in Quantized MoE Architectures
 **RULE**:
-When deploying large-scale MoE models with FP8/INT8 quantization, you MUST explicitly exclude attention projection matrices (`kv_a_proj`, `kv_b_proj`), the output head (`lm_head`), and any sparse indexing/routing weights from quantization, keeping them in BF16/FP16. You MUST NOT apply uniform quantization across all linear layers.
+When applying low-bit quantization (e.g., FP8, INT4) to Mixture-of-Experts (MoE) or hybrid attention models, you **MUST** explicitly exclude attention projection matrices (`kv_proj`, `q_proj`), output heads (`lm_head`), and multimodal projectors from quantization. You **MUST NOT** apply uniform quantization across all linear layers.
 
 **WHY**:
-Uniform quantization of attention projections and the language model head introduces cumulative numerical drift. In long-context scenarios (1M tokens), small errors in the Key/Value projections compound over the sequence length, leading to "attention sink" failures or hallucinations. The `lm_head` requires high precision to distinguish between similar high-probability tokens. The `indexer` weights are critical for sparse attention routing; quantizing them can cause the model to select incorrect experts or attention heads, breaking the sparse computation invariant.
+Attention projections and output heads are highly sensitive to numerical precision. Quantizing these layers introduces significant noise in the attention scores and final logits, leading to catastrophic degradation in reasoning, hallucination, and multimodal alignment. MoE expert weights are more robust to quantization due to their sparsity and redundancy, but the routing and attention mechanisms require higher fidelity.
 
 **WHEN TO APPLY**:
-Any LLM inference pipeline using mixed-precision quantization (FP8, INT8, NVFP4) for models with context lengths > 32k tokens or MoE architectures.
+Any LLM inference pipeline using quantization (FP8, INT8, INT4) on models with MoE, MQA, GQA, or multimodal components.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json snippet
+# config.json
 "quantization_config": {
     "quant_method": "fp8",
     "activation_scheme": "dynamic",
@@ -62,227 +74,196 @@ Any LLM inference pipeline using mixed-precision quantization (FP8, INT8, NVFP4)
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Uniform quantization
+# BAD: Uniform quantization
 "quantization_config": {
     "quant_method": "fp8",
-    "modules_to_not_convert": [] # Empty list leads to precision loss in attention
+    "modules_to_not_convert": [] # Empty list leads to accuracy collapse
 }
 ```
 
 **VERIFICATION METHOD**:
-Assert that `config.quantization_config.modules_to_not_convert` contains all attention projection layers and the `lm_head`. Run a perplexity regression test on a 128k token sequence; if perplexity degrades by >5% compared to BF16, the precision islands are insufficient.
+1.  **Perplexity Check**: Compare perplexity on a validation set (e.g., WikiText-103) between the quantized and original model. If perplexity increases by >5%, the exclusion list is insufficient.
+2.  **Multimodal Alignment Test**: Run a set of image-text pairs. If the model fails to describe basic visual elements (e.g., "What color is the car?"), the `multi_modal_projector` or `vision_tower` was likely quantized incorrectly.
+3.  **Logit Stability**: Monitor the variance of logits in the final layer. High variance indicates quantization noise in `lm_head`.
 
-### 2. Sparse Expert Routing Isolation
+### 2. Hybrid KV Cache Layer Mapping for Long-Context Efficiency
 **RULE**:
-In MoE architectures, the gating network (router) MUST be computed in higher precision than the expert FFNs. The routing decision MUST be deterministic and isolated from the expert computation to prevent "expert collapse" where all tokens route to the same few experts.
+For models supporting >100K context windows, you **MUST** implement a layer-specific KV cache strategy where not all layers store full KV pairs. You **MUST** define a `kv_source_layers` mapping that identifies which layers contribute to the shared/compressed KV cache. You **MUST NOT** assume a uniform KV cache structure across all transformer layers.
 
 **WHY**:
-The router determines which experts process a token. If the router weights are quantized or if the computation is fused with expert computation in a way that introduces non-determinism, the model may fail to activate diverse experts. This leads to "expert collapse," where the effective model size drops significantly, and performance degrades to that of a dense model with fewer parameters. The `index_topk` parameter (2048) suggests a complex routing mechanism that requires precise probability distribution calculation.
+Storing full KV pairs for all layers in a 1M context window is memory-prohibitive (e.g., 64 layers * 1M tokens * 128 heads * 128 dim * 2 bytes * 2 (K+V) ≈ 4TB). By sharing KV caches across layers or using low-rank projections (`kv_lora_rank`), memory usage is reduced by an order of magnitude, enabling long-context inference on consumer or single-node hardware.
 
 **WHEN TO APPLY**:
-Designing or deploying any Mixture-of-Experts model, especially those with >100 experts.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Pseudocode for MoE Layer
-def moe_forward(x, router, experts):
-    # 1. Compute router logits in BF16
-    router_logits = router(x)  # BF16
-    # 2. Select top-k experts
-    top_k_indices = torch.topk(router_logits, k=4).indices
-    # 3. Compute expert outputs in FP8 (if quantized)
-    expert_outputs = [experts[i](x) for i in top_k_indices]
-    # 4. Weighted sum in BF16
-    return weighted_sum(expert_outputs, router_logits)
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Fusing router and expert computation in low precision
-def moe_forward_bad(x, router, experts):
-    # Router computed in FP8, leading to unstable top-k selection
-    router_logits = router(x).to(torch.float8_e4m3fn)
-    top_k_indices = torch.topk(router_logits, k=4).indices
-    ...
-```
-
-**VERIFICATION METHOD**:
-Monitor the distribution of expert activations during inference. If >90% of tokens route to the same 2 experts, the routing precision is insufficient. Use a "expert utilization" metric that must remain balanced across all 128 experts.
-
-### 3. Multimodal Projector Precision Preservation
-**RULE**:
-The multimodal projector (vision-to-text embedding mapper) MUST NOT be quantized. It MUST operate in the same precision as the text embeddings (BF16/FP16) to ensure that visual features are correctly aligned with the language model's embedding space.
-
-**WHY**:
-The projector bridges two different modalities. Quantizing it introduces a "modality gap" where visual features are not correctly mapped to the text embedding space. This leads to poor visual grounding, where the model fails to associate visual elements with the correct text tokens. The config explicitly excludes `model.multi_modal_projector` from quantization, confirming this invariant.
-
-**WHEN TO APPLY**:
-Any multimodal LLM with a separate vision encoder and projector.
+Any LLM implementation targeting context windows >32K tokens, especially with limited VRAM.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 # config.json
-"modules_to_not_convert": [
-    "model.vision_tower",
-    "model.multi_modal_projector"
-]
+"text_config": {
+    "kv_lora_rank": 512,
+    "kv_source_layers": [0, 1, 2, ..., 63] # Explicit mapping
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Quantizing the projector
-"modules_to_not_convert": [
-    "model.vision_tower"
-    # Missing "model.multi_modal_projector"
-]
+# BAD: Assuming uniform KV cache
+class TransformerBlock(nn.Module):
+    def forward(self, hidden_states, past_key_values):
+        # Incorrectly assumes all layers have independent KV caches
+        k, v = self.kv_proj(hidden_states)
+        past_key_values.append((k, v)) # Memory explosion for long contexts
 ```
 
 **VERIFICATION METHOD**:
-Run a visual grounding benchmark (e.g., RefCOCO). If the model's ability to locate objects in images degrades significantly compared to the BF16 baseline, the projector precision is compromised.
+1.  **Memory Profiling**: Measure peak VRAM usage at 1M context length. If it exceeds the theoretical limit of the shared KV strategy, the mapping is incorrect.
+2.  **Accuracy Degradation Test**: Compare accuracy on long-context benchmarks (e.g., Needle-in-a-Haystack) between the full-KV model and the shared-KV model. If accuracy drops significantly, the `kv_source_layers` mapping is suboptimal.
+
+### 3. Speculative Decoding Head Integration for Inference Latency
+**RULE**:
+To reduce inference latency for autoregressive generation, you **MUST** integrate a lightweight draft model head (e.g., DSpark) that predicts multiple tokens in parallel. You **MUST** ensure the draft head shares the same tokenizer and embedding space as the main model. You **MUST NOT** use a separate, independent draft model that requires additional memory overhead.
+
+**WHY**:
+Autoregressive generation is inherently sequential, leading to high latency. Speculative decoding allows the draft model to propose K tokens, which are then verified in parallel by the main model. This reduces the number of main model forward passes, significantly improving throughput and reducing latency.
+
+**WHEN TO APPLY**:
+Any LLM inference pipeline where latency is a critical constraint (e.g., real-time chat, agentic workflows).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Embedded DSpark head in the model architecture
+class MistralLarge4ForConditionalGeneration(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.model = MistralLarge4Model(config)
+        self.lm_head = nn.Linear(config.hidden_size, config.vocab_size)
+        self.dspark_head = DSparkHead(config) # Lightweight draft head
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Separate draft model
+class InferencePipeline:
+    def __init__(self):
+        self.main_model = load_model("mistral-large-4")
+        self.draft_model = load_model("small-draft-model") # Extra memory overhead
+```
+
+**VERIFICATION METHOD**:
+1.  **Latency Benchmark**: Measure time-to-first-token (TTFT) and time-per-output-token (TPOT) with and without speculative decoding. If TPOT does not decrease, the draft head is not effective.
+2.  **Acceptance Rate**: Monitor the acceptance rate of draft tokens. If the acceptance rate is <50%, the draft head is too weak or misaligned.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural invariants and common failure modes in similar large-scale MoE models.*
-
-### Incident 1: Attention Sink Failure in Long-Context Inference (BUG-ATTN-SINK-01)
-- **Context**: `model.layers.*.self_attn.kv_a_proj`, `kv_b_proj`
-- **What Was Expected**: Stable attention scores over 1M token context.
-- **What Actually Happened**: In early FP8 deployments, attention scores drifted, causing the model to "forget" early context and hallucinate.
-- **Evidence in Repo**: `config.json` explicitly lists `kv_a_proj` and `kv_b_proj` in `modules_to_not_convert`.
-- **Root Cause**: FP8 quantization of KV projections introduced small errors that compounded over the 1M token sequence, leading to numerical instability in the attention mechanism.
-- **Remediation Code Diff**:
-```python
-# - Buggy: kv_a_proj = Linear(..., dtype=torch.float8_e4m3fn)
-# + Fixed: kv_a_proj = Linear(..., dtype=torch.bfloat16)
-```
-- **Lesson**: Attention projections are precision-critical in long-context models.
-
-### Incident 2: Expert Collapse in MoE Routing (BUG-MOE-COLLAPSE-02)
-- **Context**: `model.layers.*.mlp.gate`
-- **What Was Expected**: Balanced activation of all 128 experts.
-- **What Actually Happened**: Only 5-10 experts were activated, leading to performance degradation.
-- **Evidence in Repo**: `index_topk: 2048` and `index_n_heads: 32` suggest a complex routing mechanism that requires high precision.
-- **Root Cause**: Quantization of the gating network weights led to unstable top-k selection, causing the model to converge on a few "safe" experts.
-- **Remediation Code Diff**:
-```python
-# - Buggy: gate = Linear(..., dtype=torch.float8_e4m3fn)
-# + Fixed: gate = Linear(..., dtype=torch.bfloat16)
-```
-- **Lesson**: MoE gating networks must be computed in higher precision than expert FFNs.
-
-### Incident 3: Visual Grounding Degradation (BUG-VIS-GROUND-03)
-- **Context**: `model.multi_modal_projector`
-- **What Was Expected**: Accurate mapping of visual features to text embeddings.
-- **What Actually Happened**: The model failed to associate visual elements with the correct text tokens.
-- **Evidence in Repo**: `model.multi_modal_projector` is in `modules_to_not_convert`.
-- **Root Cause**: Quantization of the projector introduced a "modality gap," where visual features were not correctly mapped to the text embedding space.
-- **Remediation Code Diff**:
-```python
-# - Buggy: projector = Linear(..., dtype=torch.float8_e4m3fn)
-# + Fixed: projector = Linear(..., dtype=torch.bfloat16)
-```
-- **Lesson**: Multimodal projectors must operate in the same precision as the text embeddings.
+*Note: The provided repository data does not include specific commit SHAs, PR links, or bug issue details. Therefore, no specific "Real Incidents" can be documented with evidence. The following section is omitted as per the instruction to only document incidents with evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **FP8 E4M3 vs E5M2**: The config uses `fp8` with `dynamic` activation scheme. The specific FP8 format (E4M3 or E5M2) is critical. E4M3 has a smaller range but higher precision, suitable for weights. E5M2 has a larger range but lower precision, suitable for activations. The `dynamic` scheme implies that the activation range is computed at runtime, which requires careful handling of overflow/underflow.
-    *   **Indexer Weights**: `indexer.wk` and `indexer.weights_proj` are excluded from quantization. This suggests that the indexer uses a sparse attention mechanism that requires precise weight values to correctly identify relevant tokens in the 1M context.
+### 1. Micro-Syntax & Token-Level Precision
+*   **FP8 Quantization Boundary**: The `modules_to_not_convert` list is a critical invariant. Any code that dynamically loads weights must check this list before applying quantization. Failure to do so will result in silent accuracy degradation.
+*   **Indexer Type Mapping**: The `indexer_types` array has 64 elements. Any code that iterates over layers must ensure it accesses the correct indexer type for each layer. Off-by-one errors here will cause attention mechanism failures.
+*   **KV Source Layer Mapping**: The `kv_source_layers` array is not a simple range. It contains specific indices (e.g., `35` appears multiple times). Code that assumes a linear mapping will fail to correctly share KV caches.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Speculative Decoding**: The DSpark draft head must have a strict termination condition. If the draft head generates a sequence that is not accepted by the main model, the process must terminate and fall back to standard decoding. A loop guard is essential to prevent infinite speculation.
-    *   **MoE Routing**: The top-k selection must be deterministic. If the router logits are close, the selection must be stable to prevent oscillation between experts.
+### 2. Infinite Loop & Recursion Guards
+*   **Speculative Decoding Loop**: The speculative decoding loop must have a maximum number of draft tokens (K) and a maximum number of iterations. Without these guards, the loop could run indefinitely if the draft model consistently fails to produce valid tokens.
+*   **MoE Routing**: The routing mechanism must ensure that exactly 4 experts are selected per token. If the routing logic has a bug, it could select 0 or >4 experts, leading to incorrect computations or infinite loops in the expert selection process.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. However, the `PixtralProcessor` must handle variable image sizes and aspect ratios without introducing latency spikes. The processor should resize images to a fixed resolution (e.g., 224x224) to ensure consistent tokenization.
+### 3. UI & UX Micro-Mechanics
+*   **N/A**: This is a backend model repository. No UI/UX components are present.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **KV Cache Management**: With a 1M context, the KV cache can be extremely large. The system must implement a sliding window or eviction policy to prevent OOM. The `kv_lora_rank: 512` suggests that the KV cache is compressed using LoRA, which reduces memory usage but requires careful handling of the low-rank matrices.
-    *   **Expert Parallelism**: In a distributed setting, experts must be sharded across GPUs. The routing logic must be aware of the expert placement to avoid cross-GPU communication for every token.
+### 4. Backend Concurrency & Memory Safety
+*   **KV Cache Memory Management**: The KV cache must be properly managed to prevent memory leaks. When a new sequence is started, the old KV cache must be freed. If not, memory will grow unbounded, leading to OOM errors.
+*   **Thread Safety in Inference**: If the model is served in a multi-threaded environment, the KV cache and other mutable state must be protected by locks or managed in a thread-safe manner.
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: The `modules_to_not_convert` list must be validated against the actual model architecture. If a module name is misspelled, it will be silently quantized, leading to the bugs described in Section 3.
-    *   **Off-by-One Boundary Checks**: The `index_topk: 2048` must be less than or equal to the total number of experts (128 routed + 1 shared = 129). If `topk` is greater than the number of experts, the selection will fail.
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **Null/Undefined Chaining**: When loading the model, ensure that all required configuration fields are present. If a field is missing, the model should fail fast with a clear error message, rather than crashing later during inference.
+*   **Off-by-One Boundary Checks**: When processing the `indexer_types` and `kv_source_layers` arrays, ensure that the indices are within the valid range of the number of layers.
 
 ## 5. The 9 Deep Learning Dimensions
 
 1.  **Architecture**:
-    *   **MoE Structure**: 128 routed experts, 1 shared expert, 4 active per token.
-    *   **Multimodal**: Pixtral-style vision encoder, `multi_modal_projector`.
-    *   **Long Context**: 1M tokens, `kv_lora_rank: 512` for KV cache compression.
-    *   **Speculative Decoding**: Embedded DSpark draft head.
+    *   **MoE with 128 Experts**: 4 active per token, 1 shared expert.
+    *   **Hybrid Attention**: Combines full attention and shared indexer types.
+    *   **Multimodal**: Pixtral-style vision encoder.
+    *   **1M Context**: Enabled by hybrid KV cache and efficient attention.
 
 2.  **Core Abstractions**:
     *   `MistralLarge4ForConditionalGeneration`: Top-level model class.
-    *   `Indexer`: Sparse attention mechanism.
-    *   `PixtralProcessor`: Multimodal tokenizer.
+    *   `PixtralProcessor`: Multimodal processor.
+    *   `DSparkHead`: Speculative decoding head.
+    *   `Indexer`: Specialized attention component.
 
 3.  **Error Handling**:
-    *   **Quantization Errors**: Handled by `modules_to_not_convert`.
-    *   **Routing Errors**: Handled by deterministic top-k selection.
-    *   **Speculative Decoding Errors**: Handled by fallback to standard decoding.
+    *   **Quantization Exclusions**: Prevents accuracy degradation.
+    *   **Layer Mapping Validation**: Ensures correct KV cache sharing.
+    *   **Speculative Decoding Guards**: Prevents infinite loops.
 
 4.  **Testing**:
-    *   **Perplexity Regression**: Test on 128k token sequences.
-    *   **Expert Utilization**: Monitor expert activation distribution.
-    *   **Visual Grounding**: Benchmark on RefCOCO.
+    *   **Perplexity Benchmarks**: Validates quantization accuracy.
+    *   **Long-Context Benchmarks**: Validates KV cache efficiency.
+    *   **Multimodal Alignment Tests**: Validates vision encoder.
 
 5.  **Security**:
-    *   **Prompt Injection**: The model is trained to refuse malicious requests.
-    *   **Data Privacy**: The model is open-weight, but the training data is not public.
+    *   **License**: Mistral Ecosystem Open-Weight License.
+    *   **Data Privacy**: No specific security features mentioned, but standard LLM security practices apply.
 
 6.  **Performance**:
-    *   **Latency**: 52B active parameters per token, low latency.
-    *   **Throughput**: MoE structure allows high throughput.
-    *   **Memory**: FP8 quantization reduces memory usage.
+    *   **FP8 Quantization**: Reduces memory footprint and increases inference speed.
+    *   **Speculative Decoding**: Reduces latency.
+    *   **Hybrid KV Cache**: Reduces memory usage for long contexts.
 
 7.  **Deployment**:
-    *   **vLLM/SGLang**: Supported inference engines.
-    *   **Blackwell GPUs**: Optimized for NVIDIA Grace Blackwell.
-    *   **NVFP4**: Alternative quantization for smaller memory footprint.
+    *   **Supported Frameworks**: vLLM, SGLang, transformers, llama.cpp.
+    *   **Hardware**: Optimized for NVIDIA Grace Blackwell GPUs.
+    *   **Quantized Checkpoint**: NVFP4 available for smaller memory footprint.
 
 8.  **Agent Patterns**:
-    *   **Function Calling**: Native support for function calls.
+    *   **Function Calling**: Native support.
     *   **JSON Output**: Strict JSON schema enforcement.
     *   **Reasoning Effort**: Configurable per request (`low`, `medium`, `high`).
 
 9.  **Data Flow**:
-    *   **Text Input**: Tokenized by `TokenizersBackend`.
-    *   **Image Input**: Processed by `PixtralProcessor`.
-    *   **Fusion**: `multi_modal_projector` maps visual features to text embeddings.
-    *   **Output**: Text tokens generated by `lm_head`.
+    *   **Input**: Text and image tokens.
+    *   **Processing**: Vision encoder -> Multimodal projector -> Transformer layers (MoE + Hybrid Attention) -> LM Head.
+    *   **Output**: Text tokens.
+    *   **Speculative Decoding**: Draft head proposes tokens -> Main model verifies -> Output.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Precision-Island Quantization.
-2.  **Rule**: Exclude attention projections and `lm_head` from quantization.
-3.  **Architecture Principle**: Sparse MoE with high-precision routing.
-4.  **Failure Mode**: Attention sink failure in long-context inference.
-5.  **Reusable Skill**: Validate `modules_to_not_convert` against model architecture.
-6.  **Decision**: Use FP8 for weights, BF16 for attention and output.
-7.  **Anti-pattern**: Uniform quantization across all layers.
-8.  **Verification Method**: Perplexity regression test on 128k token sequences.
+1.  **Pattern**: Selective FP8 quantization with explicit exclusion of sensitive layers.
+2.  **Rule**: MUST exclude attention projections and output heads from quantization.
+3.  **Architecture Principle**: Hybrid KV cache for long-context efficiency.
+4.  **Failure Mode**: Accuracy collapse due to uniform quantization.
+5.  **Reusable Skill**: Implementing a layer-specific KV cache mapping.
+6.  **Decision**: Using an embedded DSpark head for speculative decoding instead of a separate model.
+7.  **Anti-pattern**: Assuming uniform KV cache structure across all layers.
+8.  **Verification Method**: Perplexity and multimodal alignment tests.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Validate Quantization Config**:
-    *   Check `config.json` for `modules_to_not_convert`.
-    *   Ensure `kv_a_proj`, `kv_b_proj`, `lm_head`, and `indexer` weights are excluded.
-2.  **Monitor Expert Utilization**:
-    *   Implement a metric to track the distribution of expert activations.
-    *   Alert if >90% of tokens route to the same 2 experts.
-3.  **Test Long-Context Stability**:
-    *   Run a perplexity regression test on a 128k token sequence.
-    *   Compare with BF16 baseline; alert if perplexity degrades by >5%.
-4.  **Validate Multimodal Projector**:
-    *   Ensure `model.multi_modal_projector` is excluded from quantization.
-    *   Run a visual grounding benchmark (e.g., RefCOCO).
-5.  **Implement Speculative Decoding Guard**:
-    *   Add a termination condition to the DSpark draft head.
-    *   Ensure fallback to standard decoding if speculation fails.
-6.  **Manage KV Cache Memory**:
-    *   Implement a sliding window or eviction policy for the 1M token context.
-    *   Use `kv_lora_rank: 512` to compress the KV cache.
-7.  **Validate Expert Parallelism**:
-    *   Ensure the routing logic is aware of expert placement in distributed settings.
-    *   Avoid cross-GPU communication for every token.
+1.  **Load Configuration**:
+    *   Parse `config.json` and `generation_config.json`.
+    *   Validate the presence of `modules_to_not_convert`, `kv_source_layers`, and `indexer_types`.
+
+2.  **Initialize Model**:
+    *   Instantiate `MistralLarge4ForConditionalGeneration`.
+    *   Apply FP8 quantization, excluding the specified modules.
+    *   Initialize the DSpark head.
+
+3.  **Set Up KV Cache**:
+    *   Implement the hybrid KV cache strategy based on `kv_source_layers`.
+    *   Ensure memory management for long contexts.
+
+4.  **Implement Speculative Decoding**:
+    *   Integrate the DSpark head into the inference loop.
+    *   Add guards for maximum draft tokens and iterations.
+
+5.  **Test and Validate**:
+    *   Run perplexity benchmarks.
+    *   Run long-context benchmarks.
+    *   Run multimodal alignment tests.
+    *   Measure latency and throughput.
+
+6.  **Deploy**:
+    *   Use vLLM or SGLang for serving.
+    *   Monitor memory usage and accuracy.

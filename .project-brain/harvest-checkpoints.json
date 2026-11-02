@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T16:47:54.848Z",
+  "last_updated": "2026-11-02T16:55:02.151Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
-      "verified_at": "2026-10-31T13:54:28.744Z",
+      "content_hash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
+      "verified_at": "2026-11-02T16:55:02.150Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:54:28.744Z"
+      "last_updated": "2026-11-02T16:55:02.150Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -17271,14 +17271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
-      "verified_at": "2026-10-29T16:36:47.147Z",
+      "content_hash": "a05e619062fef58671a5c78548ab9a485d4e650319811ebef9517a5e93818403",
+      "verified_at": "2026-11-02T16:54:57.916Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T16:36:47.147Z"
+      "last_updated": "2026-11-02T16:54:57.916Z"
     },
     "Jakeschincariol/arena-skill": {
       "repository": "Jakeschincariol/arena-skill",

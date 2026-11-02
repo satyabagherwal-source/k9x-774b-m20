@@ -6855,3 +6855,5 @@ Every entry in this ledger must capture:
 | `learn-github-goss-org-goss` | `https://github.com/goss-org/goss` | `dcd065d9` | Multi-dimensional audit evidence | 2026-11-02T16:47:46.807Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `2eca8e44` | Multi-dimensional audit evidence | 2026-11-02T16:47:50.693Z |
 | `learn-github-joreilly-confetti` | `https://github.com/joreilly/Confetti` | `b97d2070` | Multi-dimensional audit evidence | 2026-11-02T16:47:54.838Z |
+| `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-02T16:54:57.907Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `4b2dbfab` | Multi-dimensional audit evidence | 2026-11-02T16:55:02.141Z |

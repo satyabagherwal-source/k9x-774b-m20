@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:47:54.843Z",
-  "total_cycles_completed": 6823,
-  "total_learnings_persisted": 6823,
-  "total_rules_promoted": 6472,
+  "last_updated": "2026-11-02T16:55:02.147Z",
+  "total_cycles_completed": 6825,
+  "total_learnings_persisted": 6825,
+  "total_rules_promoted": 6476,
   "history": [
-    {
-      "timestamp": "2026-10-31T17:03:58.140Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:08:00.154Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T17:14:09.190Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1403,6 +1389,20 @@
       "repository": "joreilly/Confetti",
       "learningId": "learn-github-joreilly-confetti",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:54:57.912Z",
+      "repository": "mistralai/Mistral-Large-4-1T-A52B",
+      "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:55:02.147Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

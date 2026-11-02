@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "f572af7e",
+    "sourceVersion": "4b2dbfab",
     "license": "Apache-2.0",
-    "contentHash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
-    "lastHarvestedAt": "2026-10-31T13:54:28.735Z",
+    "contentHash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
+    "lastHarvestedAt": "2026-11-02T16:55:02.141Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -11485,8 +11485,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
     "sourceVersion": "hf-mistralai-mistral-large-4-1t-a52b",
     "license": "Open-Source",
-    "contentHash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
-    "lastHarvestedAt": "2026-10-29T16:36:47.138Z",
+    "contentHash": "a05e619062fef58671a5c78548ab9a485d4e650319811ebef9517a5e93818403",
+    "lastHarvestedAt": "2026-11-02T16:54:57.907Z",
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b"
   },
   "jakeschincariol-arena-skill": {

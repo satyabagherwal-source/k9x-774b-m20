@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T16:47:54.750Z",
+  "last_updated": "2026-11-02T16:55:02.053Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -49256,8 +49256,8 @@
       "slug": "risingwavelabs-risingwave",
       "platform": "github",
       "source_url": "https://github.com/risingwavelabs/risingwave",
-      "source_version": "f572af7e",
-      "content_hash": "b61c90fe42c6c3e70cf940cf07f8384f7261a675f0dbf4884046bc52fe784b6c",
+      "source_version": "4b2dbfab",
+      "content_hash": "205af126e86f4097dc7e7e5706ad94cff7bb34da3892cfe57194cd9ebb6d52ff",
       "dossier_path": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md",
       "promoted_rules": [
@@ -49320,6 +49320,11 @@
           "number": 6215,
           "title": "box AWS SDK config loading since its futures are large (#27741)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6466,
+          "title": "optimizer): only count equality predicates toward unique-key cardinality (#27665",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -49327,7 +49332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:54:28.617Z",
+      "verified_at": "2026-11-02T16:55:02.031Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -153131,7 +153136,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
       "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
-      "content_hash": "cbd4bc23066f9da24561958bad582c88a3e9ceb1f2bf0a9eda39ea9409285ce4",
+      "content_hash": "a05e619062fef58671a5c78548ab9a485d4e650319811ebef9517a5e93818403",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md",
       "promoted_rules": [
@@ -153149,6 +153154,21 @@
           "number": 5518,
           "title": "Multimodal Projector Precision Preservation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6463,
+          "title": "Selective Precision Preservation in Quantized MoE Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6464,
+          "title": "Hybrid KV Cache Layer Mapping for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6465,
+          "title": "Speculative Decoding Head Integration for Inference Latency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -153156,7 +153176,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-29T16:36:47.025Z",
+      "verified_at": "2026-11-02T16:54:57.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167349,6 +167369,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T16:47:54.729Z"
+    },
+    "rule-6463": {
+      "learning_id": "rule-6463",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6463,
+      "title": "Selective Precision Preservation in Quantized MoE Architectures",
+      "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+      "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:54:57.796Z"
+    },
+    "rule-6464": {
+      "learning_id": "rule-6464",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6464,
+      "title": "Hybrid KV Cache Layer Mapping for Long-Context Efficiency",
+      "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+      "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:54:57.796Z"
+    },
+    "rule-6465": {
+      "learning_id": "rule-6465",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6465,
+      "title": "Speculative Decoding Head Integration for Inference Latency",
+      "source_url": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+      "source_version": "hf-mistralai-mistral-large-4-1t-a52b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:54:57.796Z"
+    },
+    "rule-6466": {
+      "learning_id": "rule-6466",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6466,
+      "title": "optimizer): only count equality predicates toward unique-key cardinality (#27665",
+      "source_url": "https://github.com/risingwavelabs/risingwave",
+      "source_version": "4b2dbfab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:55:02.031Z"
     }
   },
   "aliases": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `f572af7e`  
+> **Source Version**: `4b2dbfab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:54:27.977Z  
+> **Timestamp**: 2026-11-02T16:55:01.384Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:54:27.970Z  
+> **Harvest Timestamp**: 2026-11-02T16:55:01.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9395 stars
+- **Stars / Engagement**: 9398 stars
 
 ---
 
@@ -1077,96 +1077,366 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f572af7e` (2026-10-30)
-**Commit Message**: refactor: box AWS SDK config loading since its futures are large (#27741)
+### Incident Patch 1: `e536bf08` (2026-11-02)
+**Commit Message**: fix(optimizer): only count equality predicates toward unique-key cardinality (#27665)
 
-**File**: `src/connector/src/connector_common/common.rs` (modified, +3/-3)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `e2e_test/batch/subquery/scalar_subquery.slt.part` (modified, +62/-0)
 ```diff
-@@ -153,7 +153,7 @@ impl AwsAuthProps {
-             ))
-         } else if !env_var_is_true(DISABLE_DEFAULT_CREDENTIAL) {
-             Ok(SharedCredentialsProvider::new(
--                aws_config::default_provider::credentials::default_provider().await,
-+                Box::pin(aws_config::default_provider::credentials::default_provider()).await,
-             ))
-         } else {
-             bail!("Both `access_key` and `secret_key` must be provided")
-@@ -172,7 +172,7 @@ impl AwsAuthProps {
-             if let Some(id) = &self.external_id {
-                 role = role.external_id(id);
-             }
--            let provider = role.build_from_provider(credential).await;
-+            let provider = Box::pin(role.build_from_provider(credential)).await;
-             Ok(SharedCredentialsProvider::new(provider))
-         } else {
-             Ok(credential)
-@@ -192,7 +192,7 @@ impl AwsAuthProps {
-             config_loader = config_loader.endpoint_url(endpoint);
-         }
+@@ -32,3 +32,65 @@ select (select x from t) x, 1 one;
  
--        Ok(config_loader.load().await)
-+        Ok(Box::pin(config_loader.load()).await)
-     }
- }
- 
+ statement ok
+ drop table t;
++
++# Only equality on every primary key column bounds a scalar subquery to one row. Other predicates
++# on the primary key can match several rows and must keep the runtime check.
++statement ok
++create table t_pk (pk int primary key, v int);
++
++statement ok
++insert into t_pk values (1, 10), (2, 20), (3, 30);
++
++query I
++select (select v from t_pk where pk = 2);
++----
++20
++
++query error Scalar subquery produced more than one row
++select (select v from t_pk where pk > 1);
++
++query error Scalar subquery produced more than one row
++select (select v from t_pk where pk = 1 or pk = 2);
++
++statement error Scalar subquery might produce more than one row
++create materialized view mv_pk_range as select (select v from t_pk where pk > 1) v;
++
++# A lossless cast of the primary key and a row equality still fix the primary key.
++statement ok
++create table t_outer (a bigint);
++
++statement ok
++insert into t_outer values (1), (3), (4);
++
++query II
++select a, (select v from t_pk where pk::bigint = t_outer.a) from t_outer order by a;
++----
++1 10
++3 30
++4 NULL
++
++query I
++select (select v from t_pk where (pk, v) = (2, 20));
++----
++20
++
++statement ok
++drop table t_outer;
++
++statement ok
++drop table t_pk;
++
++# A boolean primary key used as a predicate fixes it to true or false.
++statement ok
++create table t_flag (pk boolean primary key, v int);
++
++statement ok
++insert into t_flag values (true, 1), (false, 0);
++
++query II
++select (select v from t_flag where pk), (select v from t_flag where not pk);
++----
++1 0
++
++statement ok
++drop table t_flag;
 ```
 
-**File**: `src/object_store/src/object/s3.rs` (modified, +13/-11)
+**File**: `src/frontend/planner_test/tests/testdata/input/subquery.yaml` (modified, +67/-0)
 ```diff
-@@ -695,7 +695,7 @@ impl S3ObjectStore {
-                     Err(_) => false,
-                 };
+@@ -281,6 +281,73 @@
+     select *, (select 1 from (select 1 from t2) where t1.i = 1) from t1;
+   expected_outputs:
+     - optimizer_error
++- name: a range predicate on the primary key does not bound a scalar subquery to one row
++  sql: |
++    CREATE TABLE t1(a INT);
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select a, (select v from t2 where t2.pk > t1.a) from t1;
++  expected_outputs:
++    - optimizer_error
++- name: a disjunction on the primary key does not bound a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select (select v from t2 where pk = 1 or pk = 2);
++  expected_outputs:
++    - batch_plan
++- name: an equality between the primary key and another column does not bound a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select (select v from t2 where pk = v);
++  expected_outputs:
++    - batch_plan
++- name: a correlated equality on the primary key bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t1(a INT);
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select a, (select v from t2 where t2.pk = t1.a) as v from t1;
++  expected_outputs:
++    - batch_plan
++    - stream_plan
++- name: an equality on a primary key cast to decimal bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select (select v from t2 where pk = 1.5);
++  expected_outputs:
++    - batch_plan
++- name: an equality on a primary key widened to bigint bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t1(a BIGINT);
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select a, (select v from t2 where pk::bigint = t1.a) as v from t1;
++  expected_outputs:
++    - batch_plan
++    - stream_plan
++- name: a row equality on every primary key column bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t1(a INT, b INT);
++    CREATE TABLE t2(a INT, b INT, v INT, PRIMARY KEY(a, b));
++    select t1.a, (select v from t2 where (t2.a, t2.b) = (t1.a, t1.b)) as v from t1;
++  expected_outputs:
++    - batch_plan
++    - stream_plan
++- name: a row equality with a constant on every primary key column bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(a INT, b INT, v INT, PRIMARY KEY(a, b));
++    select (select v from t2 where (a, b) = (1, 2));
++  expected_outputs:
++    - batch_plan
++- name: a single-item IN list on the primary key bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select (select v from t2 where pk in (2));
++  expected_outputs:
++    - batch_plan
++- name: a boolean primary key used as a predicate bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk BOOLEAN PRIMARY KEY, v INT);
++    select (select v from t2 where pk), (select v from t2 where not pk);
++  expected_outputs:
++    - batch_plan
  
--                let sdk_config = sdk_config_loader.load().await;
-+                let sdk_config = Box::pin(sdk_config_loader.load()).await;
-                 #[cfg(madsim)]
-                 let client = Client::new(&sdk_config);
-                 #[cfg(not(madsim))]
-@@ -719,7 +719,7 @@ impl S3ObjectStore {
-             }
-             Err(_) => {
-                 // s3
--                let sdk_config = sdk_config_loader.load().await;
-+                let sdk_config = Box::pin(sdk_config_loader.load()).await;
-                 #[cfg(madsim)]
-                 let client = Client::new(&sdk_config);
-                 #[cfg(not(madsim))]
-@@ -776,15 +776,17 @@ impl S3ObjectStore {
-         );
-         #[cfg(not(madsim))]
-         let builder = aws_sdk_s3::config::Builder::from(
--            &aws_config::ConfigLoader::default()
--                // FIXME: https://github.com/awslabs/aws-sdk-rust/issues/973
--                .credentials_provider(Credentials::from_keys(
--                    access_key_id,
--                    secret_access_key,
--                    None,
--                ))
--                .load()
--                .await,
-+            &Box::pin(
-+                aws_config::ConfigLoader::default()
-+                    // FIXME: https://github.com/awslabs/aws-sdk-rust/issues/973
-+                    .credentials_provider(Credentials::from_keys(
-+                        access_key_id,
-+                        secret_access_key,
-+                        None,
-+                    ))
-+                    .load(),
-+            )
-+            .await,
-         )
-         .force_path_style(true)
-         .identity_cache(
+ - name: test grouping sets subquery 1
+   sql: |
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/subquery.yaml` (modified, +161/-0)
+```diff
+@@ -726,6 +726,167 @@
+     CREATE TABLE t2(j INT);
+     select *, (select 1 from (select 1 from t2) where t1.i = 1) from t1;
+   optimizer_error: 'internal error: Scalar subquery might produce more than one row.'
++- name: a range predicate on the primary key does not bound a scalar subquery to one row
++  sql: |
++    CREATE TABLE t1(a INT);
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select a, (select v from t2 where t2.pk > t1.a) from t1;
++  optimizer_error: 'internal error: Scalar subquery might produce more than one row.'
++- name: a disjunction on the primary key does not bound a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select (select v from t2 where pk = 1 or pk = 2);
++  batch_plan: |-
++    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
++    ├─BatchValues { rows: [[]] }
++    └─BatchMaxOneRow
++      └─BatchExchange { order: [], dist: Single }
++        └─BatchScan { table: t2, columns: [t2.v], scan_ranges: [t2.pk = Int32(1), t2.pk = Int32(2)], distribution: SomeShard }
++- name: an equality between the primary key and another column does not bound a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select (select v from t2 where pk = v);
++  batch_plan: |-
++    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
++    ├─BatchValues { rows: [[]] }
++    └─BatchMaxOneRow
++      └─BatchExchange { order: [], dist: Single }
++        └─BatchProject { exprs: [t2.v] }
++          └─BatchFilter { predicate: (t2.pk = t2.v) }
++            └─BatchScan { table: t2, columns: [t2.v, t2.pk], distribution: UpstreamHashShard(t2.pk) }
++- name: a correlated equality on the primary key bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t1(a INT);
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select a, (select v from t2 where t2.pk = t1.a) as v from t1;
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchLookupJoin { type: LeftOuter, predicate: t1.a IS NOT DISTINCT FROM t2.pk AND IsNotNull(t2.pk), output: [t1.a, t2.v], lookup table: t2 }
++      └─BatchExchange { order: [], dist: UpstreamHashShard(t1.a) }
++        └─BatchScan { table: t1, columns: [t1.a], distribution: SomeShard }
++  stream_plan: |-
++    StreamMaterialize { columns: [a, v, t1._row_id(hidden), t2.pk(hidden)], stream_key: [t1._row_id, a], pk_columns: [t1._row_id, a], pk_conflict: NoCheck }
++    └─StreamExchange { dist: HashShard(t1.a, t1._row_id) }
++      └─StreamHashJoin { type: LeftOuter, predicate: t1.a IS NOT DISTINCT FROM t2.pk, output: [t1.a, t2.v, t1._row_id, t2.pk] }
++        ├─StreamExchange { dist: HashShard(t1.a) }
++        │ └─StreamTableScan { table: t1, columns: [t1.a, t1._row_id], stream_scan_type: SnapshotBackfill, stream_key: [t1._row_id], pk: [_row_id], dist: UpstreamHashShard(t1._row_id) }
++        └─StreamExchange { dist: HashShard(t2.pk) }
++          └─StreamFilter { predicate: IsNotNull(t2.pk) }
++            └─StreamTableScan { table: t2, columns: [t2.pk, t2.v], stream_scan_type: SnapshotBackfill, stream_key: [t2.pk], pk: [pk], dist: UpstreamHashShard(t2.pk) }
++- name: an equality on a primary key cast to decimal bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select (select v from t2 where pk = 1.5);
++  batch_plan: |-
++    BatchNestedLoopJoin { type: LeftOuter, predicate: true, output: all }
++    ├─BatchValues { rows: [[]] }
++    └─BatchExchange { order: [], dist: Single }
++      └─BatchProject { exprs: [t2.v] }
++        └─BatchFilter { predicate: (t2.pk::Decimal = 1.5:Decimal) }
++          └─BatchScan { table: t2, columns: [t2.v, t2.pk], distribution: UpstreamHashShard(t2.pk) }
++- name: an equality on a primary key widened to bigint bounds a scalar subquery to one row
++  sql: |
++    CREATE TABLE t1(a BIGINT);
++    CREATE TABLE t2(pk INT PRIMARY KEY, v INT);
++    select a, (select v from t2 where pk::bigint = t1.a) as v from t1;
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchHashJoin { type: LeftOuter, predicate: t1.a IS NOT DISTINCT FROM t1.a, output: [t1.a, t2.v] }
++      ├─BatchExchange { order: [], dist: HashShard(t1.a) }
++      │ └─BatchScan { table: t1, columns: [t1.a], distribution: SomeShard }
++      └─BatchHashJoin { type: Inner, predicate: t1.a = $expr1, output: [t1.a, t2.v] }
++        ├─BatchHashAgg { group_key: [t1.a], aggs: [] }
++        │ └─BatchExchange { order: [], dist: HashShard(t1.a) }
++        │   └─BatchScan { table: t1, columns: [t1.a], distribution: SomeShard }
++        └─BatchExchange { order: [], dist: HashShard($expr1) }
++          └─BatchProject { exprs: [t2.v, t2.pk::Int64 as $expr1] }
++            └─BatchScan { table: t2, columns: [t2.pk, t2.v], distribution: UpstreamHashShard(t2.pk) }
++  stream_plan: |-
++    StreamMaterialize { columns: [a, v, t1._row_id(hidden), t1.a(hidden), t2.pk(hidden)], stream_key: [t1._row_id, t2.pk, a], pk_columns: [t1._row_id, 
+```
+
+**File**: `src/frontend/src/optimizer/plan_visitor/cardinality_visitor.rs` (modified, +122/-8)
+```diff
+@@ -15,15 +15,20 @@
+ use std::collections::HashSet;
+ use std::ops::{Mul, Sub};
+ 
++use itertools::Itertools;
++use risingwave_common::types::DataType;
++use risingwave_common::util::iter_util::ZipEqFast;
+ use risingwave_pb::plan_common::JoinType;
+ 
+ use super::{DefaultBehavior, DefaultValue, LogicalPlanVisitor, PlanVisitor};
++use crate::expr::{Expr, ExprImpl, ExprType};
+ use crate::optimizer::plan_node::generic::TopNLimit;
+ use crate::optimizer::plan_node::{
+     self, LogicalPlanRef as PlanRef, PlanTreeNode, PlanTreeNodeBinary, PlanTreeNodeUnary,
+ };
+ use crate::optimizer::plan_visitor::LogicalPlanNode;
+ use crate::optimizer::property::Cardinality;
++use crate::utils::Condition;
+ 
+ /// A visitor that computes the cardinality of a plan node.
+ pub struct CardinalityVisitor;
+@@ -51,6 +56,117 @@ impl CardinalityVisitor {
+             input_card.min(0..)
+         }
+     }
++
++    /// Returns the columns that `predicate` fixes to a single value:
++    /// - columns compared by `=`, `IS NOT DISTINCT FROM`, or a single-item `IN` with a pure
++    ///   expression that references no input column, such as a constant, a parameter, or a
++    ///   correlated input ref. A row comparison such as `(a, b) = (1, 2)` fixes its columns field
++    ///   by field.
++    /// - boolean columns used as a conjunction directly or through `NOT`, `IS TRUE`, or
++    ///   `IS FALSE`, such as `WHERE flag`.
++    ///
++    /// Other conjunctions, such as `pk > 1`, `pk = other_col`, or `pk = 1 OR pk = 2`, can keep
++    /// several rows even when they reference every unique key column, so they are ignored.
++    fn fixed_columns(predicate: &Condition) -> HashSet<usize> {
++        let mut fixed = HashSet::new();
++        for conjunction in &predicate.conjunctions {
++            match conjunction {
++                ExprImpl::InputRef(input_ref) => {
++                    fixed.insert(input_ref.index());
++                }
++                ExprImpl::FunctionCall(call) => match (call.func_type(), call.inputs()) {
++                    (
++                        ExprType::Not | ExprType::IsTrue | ExprType::IsFalse,
++                        [ExprImpl::InputRef(input_ref)],
++                    ) => {
++                        fixed.insert(input_ref.index());
++                    }
++                    // `In` with two inputs is `lhs IN (rhs)`.
++                    (ExprType::Equal | ExprType::IsNotDistinctFrom | ExprType::In, [lhs, rhs]) => {
++                        Self::collect_equality_fixed_columns(lhs, rhs, &mut fixed);
++                    }
++                    _ => {}
++                },
++                _ => {}
++            }
++        }
++        fixed
++    }
++
++    /// Collects the columns that `lhs = rhs` fixes. When both sides are rows, each pair of
++    /// fields is compared on its own.
++    fn collect_equality_fixed_columns(lhs: &ExprImpl, rhs: &ExprImpl, fixed: &mut HashSet<usize>) {
++        if let (Some(lhs_fields), Some(rhs_fields)) = (Self::row_fields(lhs), Self::row_fields(rhs))
++            && lhs_fields.len() == rhs_fields.len()
++        {
++            for (lhs, rhs) in lhs_fields.iter().zip_eq_fast(rhs_fields) {
++                Self::collect_equality_fixed_columns(lhs, rhs, fixed);
++            }
++            return;
++        }
++        let is_fixed_value = |e: &ExprImpl| !e.has_input_ref() && !e.has_subquery() && e.is_pure();
++        if is_fixed_value(rhs) {
++            Self::collect_operand_columns(lhs, fixed);
++        } else if is_fixed_value(lhs) {
++            Self::collect_operand_columns(rhs, fixed);
++        }
++    }
++
++    /// Collects the columns of an operand that is equal to a fixed value: the column itself, a
++    /// lossless cast of it, or each such field of a row, as in `ROW(a, b) = '(1,2)'`.
++    fn collect_operand_columns(expr: &ExprImpl, fixed: &mut HashSet<usize>) {
++        if let Some(fields) = Self::row_fields(expr) {
++            for field in fields {
++                Self::collect_operand_columns(field, fixed);
++            }
++        } else if let Some(index) = Self::as_injective_input_ref(expr) {
++            fixed.insert(index);
++        }
++    }
++
++    fn row_fields(expr: &ExprImpl) -> Option<&[ExprImpl]> {
++        match expr {
++            ExprImpl::FunctionCall(call) if call.func_type() == ExprType::Row => {
++                Some(call.inputs())
++            }
++            _ => None,
++        }
++    }
++
++    /// Returns the column referenced by `expr` if `expr` is the column itself or a lossless cast
++    /// of it, so that equal results imply equal column values. Such casts come from comparing
++    /// columns of different numeric types, e.g. `CAST(int_pk AS DECIMAL) = 1.5` or
++    /// `CAST(int_pk AS BIGINT) = bigint_col`.
++    fn as_injective_input_ref(expr: &ExprImpl) -> Option<usize> {
++        match expr {
++            ExprImpl::InputRef(input_ref) => Some(input_ref.index()),
++            ExprImpl::FunctionCall(call) if call.func_type() == ExprType::Cast => {
++                let [input] = call
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #27757** (closed): test(batch): add randomized differential tests for hash join (@chenzl25)
+- **PR #27755** (2026-11-02): perf(storage): deserialize SST metadata bytes in bulk (@Li0k)
+- **PR #27753** (2026-11-02): perf(storage): omit unused fields from serverless compaction reports (#27751) (@risingwave-ci)
+- **PR #27751** (2026-10-31): perf(storage): omit unused fields from serverless compaction reports (@Li0k)
+- **PR #27750** (closed): fix(compactor): bound multipart uploads in shared mode (@Ad-Bean)
 - **PR #27741** (2026-10-31): refactor: box AWS SDK config loading since its futures are large (@maybe-vibe)
-- **PR #27738** (2026-10-30): fix(meta): reject pending inputs in manual L0 compaction (@Li0k)
-- **PR #27737** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.0 (@howenyap)
-- **PR #27736** (closed): cherry-pick fix(frontend): reject iceberg pk-index sink with auto schema change (#27729) to branch release-3.1 (@howenyap)
-- **PR #27733** (closed): perf(meta): simplify Hummock TTL and task-status queries (@Li0k)
-- **PR #27729** (2026-10-30): fix(frontend): reject iceberg pk-index sink with auto schema change (@howenyap)
 
 ---
 
@@ -1186,32 +1456,76 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. box AWS SDK config loading since its futures are large (#27741)
+## X. optimizer): only count equality predicates toward unique-key cardinality (#27665
 
 **RULE**:
-When implementing operations in `src/connector/src/connector_common/common.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e_test/batch/subquery/scalar_subquery.slt.part`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f572af7e`: box AWS SDK config loading since its futures are large (#27741). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e536bf08`: optimizer): only count equality predicates toward unique-key cardinality (#27665). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/connector_common/common.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/batch/subquery/scalar_subquery.slt.part`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                Box::pin(aws_config::default_provider::credentials::default_provider()).await,
-            let provider = Box::pin(role.build_from_provider(credential)).await;
-        Ok(Box::pin(config_loader.load()).await)
+
+# Only equality on every primary key column bounds a scalar subquery to one row. Other predicates
+# on the primary key can match several rows and must keep the runtime check.
+statement ok
+create table t_pk (pk int primary key, v int);
+
+statement ok
+insert into t_pk values (1, 10), (2, 20), (3, 30);
+
+query I
+select (select v from t_pk where pk = 2);
+----
+20
+
+query error Scalar subquery produced more than one row
+select (select v from t_pk where pk > 1);
+
+query error Scalar subquery produced more than one row
+select (select v from t_pk where pk = 1 or pk = 2);
+
+statement error Scalar subquery might produce more than one row
+create materialized view mv_pk_range as select (select v from t_pk where pk > 1) v;
+
+# A lossless cast of the primary key and a row equality still fix the primary key.
+statement ok
+create table t_outer (a bigint);
+
+statement ok
+insert into t_outer values (1), (3), (4);
+
+query II
+select a, (select v from t_pk where pk::bigint = t_outer.a) from t_outer order by a;
+----
+1 10
+3 30
+4 NULL
+
+query I
+select (select v from t_pk where (pk, v) = (2, 20));
+----
+20
+
+statement ok
+drop table t_outer;
+
+statement ok
+drop table t_pk;
+
+# A boolean primary key used as a predicate fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-                aws_config::default_provider::credentials::default_provider().await,
-            let provider = role.build_from_provider(credential).await;
-        Ok(config_loader.load().await)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f572af7e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e536bf08` are properly handled with clean fallback behavior.
