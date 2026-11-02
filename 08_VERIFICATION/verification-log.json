@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-R2TC",
-    "timestamp": "2026-10-30T22:03:30.432Z",
-    "repository": "rmax/scrapy-redis",
-    "learningId": "learn-github-rmax-scrapy-redis",
-    "contentHash": "b6e85171d03852811fce958ae625c1df125ae85ae9b6927e675aa8b34ef68c71",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-R7HN",
     "timestamp": "2026-10-30T22:03:36.491Z",
     "repository": "maxrave-dev/kotlin-footguns",
@@ -7492,6 +7477,21 @@
     "contentHash": "d011de825f3a8dc068ef6a9640c07b9fb10a73cac2ddb22536bb050e7f467964",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-I8OU",
+    "timestamp": "2026-11-02T16:11:43.614Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "39ac189288fde2ac02e2dee3f181e83294f948e900ea8b77cbec897355f6a2f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

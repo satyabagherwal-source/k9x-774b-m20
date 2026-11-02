@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T16:05:01.942Z",
-    "lastVerified": "2026-11-02T16:05:01.942Z",
+    "lastChecked": "2026-11-02T16:11:46.157Z",
+    "lastVerified": "2026-11-02T16:11:46.157Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -145,8 +145,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-02T15:36:45.271Z",
-    "lastVerified": "2026-11-02T15:36:45.271Z",
+    "lastChecked": "2026-11-02T16:11:43.609Z",
+    "lastVerified": "2026-11-02T16:11:43.609Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -325,8 +325,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-01T00:49:33.204Z",
-    "lastVerified": "2026-11-01T00:49:33.204Z",
+    "lastChecked": "2026-11-02T16:11:38.651Z",
+    "lastVerified": "2026-11-02T16:11:38.651Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -3782,9 +3782,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-10-31T13:14:03.315Z",
+    "lastChecked": "2026-11-02T16:11:41.116Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-10-31T13:14:03.315Z"
+    "lastVerified": "2026-11-02T16:11:41.116Z"
   },
   "fujiapple852-trippy": {
     "name": "trippy",
@@ -5293,14 +5293,14 @@
     "officialUrl": "https://github.com/meshery/meshery",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-10-31T13:54:24.339Z",
-    "lastVerified": "2026-10-31T13:54:24.339Z",
+    "lastChecked": "2026-11-02T16:11:41.630Z",
+    "lastVerified": "2026-11-02T16:11:41.630Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meshery-meshery",
-    "contentHash": "a22f19ff8d8fb88ecb7829c058f77a44a8377e7d6595eff8cf34a8a0754169dc",
+    "contentHash": "39ac189288fde2ac02e2dee3f181e83294f948e900ea8b77cbec897355f6a2f6",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 23,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5394,8 +5394,8 @@
     "officialUrl": "https://github.com/cloudwego/volo",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T09:53:49.848Z",
-    "lastVerified": "2026-10-31T09:53:49.848Z",
+    "lastChecked": "2026-11-02T16:11:28.612Z",
+    "lastVerified": "2026-11-02T16:11:28.612Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cloudwego-volo",
@@ -9031,9 +9031,9 @@
   "bourd-dev-seo-skills": {
     "name": "seo-skills",
     "officialUrl": "https://github.com/bourd-dev/seo-skills",
-    "lastChecked": "2026-10-29T12:08:38.097Z",
+    "lastChecked": "2026-11-02T16:11:31.102Z",
     "revisionIdentifier": "4b0005f6e6",
-    "lastVerified": "2026-10-29T12:08:38.097Z"
+    "lastVerified": "2026-11-02T16:11:31.102Z"
   },
   "gitliveapp-firebase-kotlin-sdk": {
     "name": "firebase-kotlin-sdk",
@@ -9942,9 +9942,9 @@
   "realm-realm-kotlin": {
     "name": "realm-kotlin",
     "officialUrl": "https://github.com/realm/realm-kotlin",
-    "lastChecked": "2026-10-30T06:23:16.651Z",
+    "lastChecked": "2026-11-02T16:11:33.651Z",
     "revisionIdentifier": "9cdc4556",
-    "lastVerified": "2026-10-30T06:23:16.651Z"
+    "lastVerified": "2026-11-02T16:11:33.651Z"
   },
   "sundios-seo-dashboard": {
     "name": "SEO-Dashboard",

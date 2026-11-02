@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T16:04:59.319Z",
+  "last_updated": "2026-11-02T16:11:43.563Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -39232,8 +39232,8 @@
       "slug": "meshery-meshery",
       "platform": "github",
       "source_url": "https://github.com/meshery/meshery",
-      "source_version": "ae3f91c1",
-      "content_hash": "a22f19ff8d8fb88ecb7829c058f77a44a8377e7d6595eff8cf34a8a0754169dc",
+      "source_version": "640a546d",
+      "content_hash": "39ac189288fde2ac02e2dee3f181e83294f948e900ea8b77cbec897355f6a2f6",
       "dossier_path": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meshery-meshery-learnings.md",
       "promoted_rules": [
@@ -39296,6 +39296,11 @@
           "number": 6214,
           "title": "Merge pull request #22441 from ayanasarkar/docs/fix-broken-anchor-links",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6449,
+          "title": "Merge pull request #22705 from Supersaiyan101/bug/SuperSaiyan101/fix-design-expo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -39303,7 +39308,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T13:54:24.971Z",
+      "verified_at": "2026-11-02T16:11:43.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167083,6 +167088,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T16:04:55.757Z"
+    },
+    "rule-6449": {
+      "learning_id": "rule-6449",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6449,
+      "title": "Merge pull request #22705 from Supersaiyan101/bug/SuperSaiyan101/fix-design-expo",
+      "source_url": "https://github.com/meshery/meshery",
+      "source_version": "640a546d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:11:43.550Z"
     }
   },
   "aliases": {

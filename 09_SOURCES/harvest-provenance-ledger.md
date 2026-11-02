@@ -6842,3 +6842,4 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `e0f224ec` | Multi-dimensional audit evidence | 2026-11-02T15:57:29.919Z |
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `9d35eddd` | Multi-dimensional audit evidence | 2026-11-02T16:04:55.854Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `2b0847bf` | Multi-dimensional audit evidence | 2026-11-02T16:04:59.411Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `640a546d` | Multi-dimensional audit evidence | 2026-11-02T16:11:43.617Z |
