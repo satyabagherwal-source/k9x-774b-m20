@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T15:22:30.392Z",
+  "last_updated": "2026-11-02T15:29:48.983Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "0df439740602db0c32babad338abe30bb4cda26d65b4a0a2ab10bebc8ce78f49",
-      "verified_at": "2026-10-30T19:54:18.240Z",
+      "content_hash": "b569ef425e695dd457914cd0a898911ae103527e7c122a35072e41e4e11bc6be",
+      "verified_at": "2026-11-02T15:29:45.406Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T19:54:18.240Z"
+      "last_updated": "2026-11-02T15:29:45.406Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",
@@ -7266,14 +7266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saltstack-salt",
-      "content_hash": "2fced27f956a1ae7e7685d29c6107d21720720c35dd370b103b9f7348eab202b",
-      "verified_at": "2026-10-31T13:20:59.411Z",
+      "content_hash": "6c59ba95ccdb218355797e001dc0beac6380e337e89b3470f47b7deb64bc505d",
+      "verified_at": "2026-11-02T15:29:41.101Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T13:20:59.411Z"
+      "last_updated": "2026-11-02T15:29:41.101Z"
     },
     "etcd-io/etcd": {
       "repository": "etcd-io/etcd",
@@ -13101,14 +13101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yshrsmz-buildkonfig",
-      "content_hash": "affa0eed135cc972052ef4340eae536a782c4025b8b6d40438b47edcefc8e073",
-      "verified_at": "2026-10-30T05:47:05.221Z",
+      "content_hash": "09ca74908b2702a5aeeffa66aae4725c8af956058fa8182e92a225a115255e13",
+      "verified_at": "2026-11-02T15:29:48.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T05:47:05.221Z"
+      "last_updated": "2026-11-02T15:29:48.982Z"
     },
     "aliarifsoydas/sitemap-checker": {
       "repository": "aliarifsoydas/sitemap-checker",
@@ -17226,14 +17226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "content_hash": "a6733be8c58afaae5e9654d0e141c44e0b76842c84f7eae57b344e5c676d81a7",
-      "verified_at": "2026-10-29T11:29:28.131Z",
+      "content_hash": "562a38083d163e79584c84e02eacd1919cc087a3729a7680fb8fb46c63576140",
+      "verified_at": "2026-11-02T15:29:37.082Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-29T11:29:28.131Z"
+      "last_updated": "2026-11-02T15:29:37.082Z"
     },
     "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF": {
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",

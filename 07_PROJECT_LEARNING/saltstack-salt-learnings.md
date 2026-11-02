@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `0fa7bec6`  
+> **Source Version**: `6335271b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T13:20:58.693Z  
+> **Timestamp**: 2026-11-02T15:29:40.377Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T13:20:58.685Z  
+> **Harvest Timestamp**: 2026-11-02T15:29:40.369Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15728 stars
+- **Stars / Engagement**: 15729 stars
 
 ---
 
@@ -1978,212 +1978,149 @@ def start(grains=False, grain_keys=None, pillar=False, pillar_keys=None):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0fa7bec6` (2026-10-30)
-**Commit Message**: Do not crash at start on NetBSD and OpenBSD (#68773)
+### Incident Patch 1: `d88ec2f6` (2026-11-02)
+**Commit Message**: [master] Fixed issue with add_store and del_store  (#64659)
 
-* salt.grain.core: do not crash at start on NetBSD and OpenBSD
+* Add missing saltenv tag which was causing file not found error in the module
 
-This avoids accessing an undefined element of the grains dictionary, on
-both NetBSD and OpenBSD. This matches the corresponding code for
-FreeBSD.
+State was only looking into the base saltenv for certificate file when add_store or del_store was called.
 
-Tested on NetBSD/amd64.
+* Fixed module not loading when called from its respective state
 
-* salt.utils.network: do not crash at start on NetBSD
+FIX: SyntaxError positional argument follows keyword argument
 
-This patch restricts the OS version test to the part before "_" on
-NetBSD; this could raise an exception if py-packaging wasn't aware of
-the suffix (e.g., "BETA" would work but "STABLE" not).
+* Address review feedback: use saltenv kwarg, fix del_store, add tests
 
-Tested on NetBSD/amd64.
-
-* Add changelog and tests for NetBSD/OpenBSD startup crash fixes
-
-Add changelog entry 68773 and unit tests covering:
-- netbsd_interfaces() tolerating OS version strings with underscore
-  suffixes (e.g. 10.1_STABLE) without raising InvalidVersion
-- os_data() correctly setting osfullname on NetBSD and OpenBSD
-
-* test: skip os.uname test on Windows
-
-The new test_netbsd_interfaces_version_with_suffix patches os.uname,
-which does not exist on Windows and causes the Windows unit zeromq
-job to fail. Add skip_on_windows mark to match the sibling grains
-test.
+- Revert the parameter-order swap in win_certutil module (keep
+  retcode before saltenv to avoid breaking callers using positional
+  arguments) per twangboy/Ch3LL review feedback
+- Pass saltenv=saltenv as a keyword argument in all four state-to-module
+  calls so non-base saltenvs are honoured during cert resolution
+- Fix the previously-missed get_cert_serial call in del_store (it was
+  still hardcoded to saltenv="base")
+- Add regression tests verifying saltenv propagation in both
+  add_store and del_store state functions
+- Add changelog fragment (64659.fixed.md)
 
 ---------
 
 Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
 
-**File**: `changelog/68773.fixed.md` (added, +1/-0)
+**File**: `changelog/64659.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Fix salt-master startup crashes on NetBSD and OpenBSD: strip version suffix (e.g. `_STABLE`) before passing the OS release string to `packaging.version.Version` in `netbsd_interfaces()`, and ensure `osfullname` is initialised early in the OpenBSD/NetBSD branch of `os_data()`.
++Fix ``certutil.add_store`` and ``certutil.del_store`` states ignoring ``saltenv`` when resolving the certificate serial, causing "Invalid certificate file" errors when the certificate lives in a non-``base`` saltenv.
 ```
 
-**File**: `salt/grains/core.py` (modified, +1/-1)
+**File**: `salt/states/win_certutil.py` (modified, +4/-4)
 ```diff
-@@ -2874,7 +2874,7 @@ def os_data():
-         grains["osfullname"] = "{} {}".format(grains["kernel"], grains["osrelease"])
-         grains.update(_bsd_cpudata(grains))
-     elif grains["kernel"] in ("OpenBSD", "NetBSD"):
--        grains["os_family"] = grains["os"] = grains["kernel"]
-+        grains["os_family"] = grains["osfullname"] = grains["os"] = grains["kernel"]
-         grains.update(_bsd_cpudata(grains))
-         grains["osrelease"] = grains["kernelrelease"].split("-")[0]
-         grains["osfullname"] = "{} {}".format(grains["kernel"], grains["osrelease"])
+@@ -65,7 +65,7 @@ def add_store(name, store, saltenv="base"):
+         ret["result"] = False
+         return ret
+ 
+-    cert_serial = __salt__["certutil.get_cert_serial"](name)
++    cert_serial = __salt__["certutil.get_cert_serial"](name, saltenv=saltenv)
+     if cert_serial is None:
+         ret["comment"] = f"Invalid certificate file: {name}"
+         ret["result"] = False
+@@ -81,7 +81,7 @@ def add_store(name, store, saltenv="base"):
+         ret["result"] = None
+         return ret
+ 
+-    retcode = __salt__["certutil.add_store"](name, store, retcode=True)
++    retcode = __salt__["certutil.add_store"](name, store, saltenv=saltenv, retcode=True)
+     if retcode != 0:
+         ret["comment"] = f"Error adding certificate: {name}"
+         ret["result"] = False
+@@ -135,7 +135,7 @@ def del_store(name, store, saltenv="base"):
+         ret["result"] = False
+         return ret
+ 
+-    cert_serial = __salt__["certutil.get_cert_serial"](name)
++    cert_serial = __salt__["certutil.get_cert_serial"](name, saltenv=saltenv)
+     if cert_serial is None:
+         ret["comment"] = f"Invalid certificate file: {name}"
+         ret["result"] = False
+@@ -151,7 +151,7 @@ def del_store(name, store, saltenv="base"):
+         ret["result"] = None
+         return ret
+ 
+-    retcode = __salt__["certutil.del_store"](name, store, retcode=True)
++    retcode = __salt__["certutil.del_store"](name, store, saltenv=saltenv, retcode=True)
+     if retcode != 0:
+         ret["comment"] = f"Error removing certificate: {name}"
+         ret["result"] = False
 ```
 
-**File**: `salt/utils/network.py` (modified, +1/-1)
+**File**: `tests/pytests/unit/states/test_win_certutil.py` (modified, +54/-0)
 ```diff
-@@ -1114,7 +1114,7 @@ def netbsd_interfaces():
-     address)
-     """
-     # NetBSD versions prior to 8.0 can still use linux_interfaces()
--    if Version(os.uname()[2]) < Version("8.0"):
-+    if Version(os.uname()[2].split("_")[0]) < Version("8.0"):
-         return linux_interfaces()
- 
-     ifconfig_path = salt.utils.path.which("ifconfig")
-```
-
-**File**: `tests/pytests/unit/grains/test_core.py` (modified, +68/-0)
-```diff
-@@ -3488,6 +3488,74 @@ def test_bsd_osfullname():
-     assert os_grains.get("osfullname") == "FreeBSD 10.3"
- 
- 
-+@pytest.mark.skip_on_windows
-+@pytest.mark.parametrize(
-+    "kernel,kernelrelease,expected_osfullname",
-+    [
-+        # kernelrelease.split("-")[0] strips the -RELEASE suffix but not _STABLE
-+        ("NetBSD", "10.1_STABLE", "NetBSD 10.1_STABLE"),
-+        ("OpenBSD", "7.4-RELEASE", "OpenBSD 7.4"),
-+    ],
-+)
-+def test_netbsd_openbsd_osfullname(kernel, kernelrelease, expected_osfullname):
-+    """
-+    Test that os_data() sets osfullname for NetBSD and OpenBSD without crashing.
-+    The OpenBSD/NetBSD branch must set osfullname so that _osrelease_data() can
-+    use it later.
-+    """
-+    nt_uname = namedtuple(
-+        "nt_uname", ["system", "node", "release", "version", "machine", "processor"]
-+    )
-+    mock_uname = MagicMock(
-+        return_value=nt_uname(
-+            kernel,
-+            "hostname",
-+            kernelrelease,
-+            f"{kernel} {kernelrelease}",
-+            "amd64",
-+            "amd64",
-+        )
-+    )
-+    empty_mock = MagicMock(return_value={})
+@@ -119,3 +119,57 @@ def test_del_store_fail_check():
+     ):
+         out = certutil.del_store("/path/to/cert.cer", "TrustedPublisher")
+         assert expected == out
 +
-+    _cmd_run_map = {
-+        "/sbin/sysctl -n hw.physmem": "2121781248",
-+        "/sbin/sysctl -n vm.swap_total": "419430400",
-+    }
-+    cmd_run_mock = MagicMock(side_effect=lambda x: _cmd_run_map.get(x, ""))
 +
-+    with patch.object(platform, "uname", mock_uname), patch.object(
-+        salt.utils.platform, "is_linux", MagicMock(return_value=False)
-+    ), patch.object(
-+        salt.utils.platform, "is_proxy", MagicMock(return_value=False)
-+    ), patch.object(
-+        salt.utils.platform, "is_windows", MagicMock(return_value=False)
-+    ), patch.object(
-+        salt.utils.platform, "is_freebsd", MagicMock(return_value=False)
-+    ), patch(
-+        "salt.utils.path.which", return_value="/sbin/sysctl"
++def test_add_store_saltenv_passed_to_get_cert_serial():
++    """
++    Test that saltenv is forwarded to certutil.get_cert_serial in add_store
++    so that certificates in non-base saltenvs can be found.
++    """
++    cache_mock = MagicMock(return_value="/tmp/cert.cer")
++    get_cert_serial_mock = MagicMock(return_value="ABCDEF")
++    get_store_serials_mock = MagicMock(return_value=["123456"])
++    add_mock = MagicMock(return_value=0)
++    with patch.dict(
++        certutil.__salt__,
++        {
++            "cp.cache_file": cache_mock,
++            "certutil.get_cert_serial": get_cert_serial_mock,
++            "certutil.get_stored_cert_serials": get_store_serials_mock,
++            "certutil.add_store": add_mock,
++        },
 +    ):
-+        with patch.object(core, "_bsd_cpudata", empty_mock), patch.object(
-+            core, "_hw_data", empty_mock
-+        ), patch.object(core, "_virtual", empty_mock), patch.object(
-+            core, "_virtual_hv", empty_mock
-+        ), patch.object(
-+            core, "_ps", empty_mock
-+        ), patch.object(
-+            core, "_memdata", empty_mock
-+        ), patch.object(
-+            core, "_netbsd_gpu_data", empty_mock
-+        ), patch.dict(
-+            core.__salt__, {"cmd.run": cmd_run_mock}
-+        ):
-+            os_grains = core.os_data()
-+
-+    assert "osfullname" in os_grains
-+    assert os_grains.get("osfullname") == expected_osfullname
-+    assert os_grains.get("os") == kernel
-+    assert os_grains.get("os_family") == kernel
++        certutil.add_store("/path/to/cert.cer", "TrustedPublisher", saltenv="test")
++        get_cert_serial_mock.assert_called_once_with(
++            "/path/to/cert.cer", saltenv="test"
++        )
++        add_mock.assert_called_once_with(
++            "/path/to/cert.cer", "TrustedPublisher", saltenv="test", retcode=True
++        )
 +
 +
- def test_saltversioninfo():
-     """
-     test saltversioninfo core grain.
-```
-
-**File**: `tests/pytests/unit/utils/test_network.py` (modified, +43/-0)
-```diff
-@@ -1803,3 +1803,46 @@ def test_neigh_expand_warning_none_warns_and_returns_false():
-     with pytest.warns(DeprecationWarning, match="network.arp"):
-         result = network.neigh_expand_warning("network.arp", None)
-     assert result is False
-+
-+
-+@pytest.mark.skip_on_windows
-+@pytest.mark.parametrize(
-+    "uname_release",
-+    [
-+        "10.1_STABLE",
-+        "10.1_BETA",
-+        "9.3_STABLE",
-+    ],
-+)
-+def test_netbsd_interfaces_version_with_suffix(uname_release):
++def test_del_store_saltenv_passed_to_get_cert_serial():
 +    """
-+    netbsd_interfaces() must not raise InvalidVersion when os.uname()[2]
-+    contains a suffix separated by underscore (e.g. '10.1_STABLE').
++    Test that saltenv is forwarded to certutil.get_cert_serial in del_store
++    so that certificates in non-base saltenvs can be found.
 +    """
-+    from packaging.version import Version
-+
-+    # Build a fake uname result where index 2 (release) has the given value.
-+    # os.uname() is accessed as os.uname()[2] in netbsd_interfaces().
-+    fake_uname = ("NetBSD", "hostname", uname_release, "", "amd64")
-+    uname_mock = MagicMock(return_value=fake_uname)
-+
-+    version_part = uname_release.split("_")[0]
-+    is_old = Version(version_part) < Version("8.0")
-+
-+    with patch("os.uname", uname_mock):
-+        if is_old:
-+            with patch.object(network, "linux_interfaces", MagicMock(return_value={})):
-+                result = network.netbsd_interfaces()
-+                assert result == {}
-+        else:
-+            with patch("salt.utils.path.which", return_value="/sbin/ifconfig"), patch(
-+                "subprocess.Popen"
-+            ) as mock_popen:
-+                mock_popen.return_value.communicate.return_value = (b"", None)
-+                with patch.object(
-+                    network,
-+                    "_netbsd_interfaces_ifconfig",
-+                    MagicMock(return_value={}),
-+                ):
-+                    result = network.netbsd_interfaces()
-+                    assert isinstance(result, dict)
++    cache_mock = MagicMock(return_value="/tmp/cert.cer")
++    get_cert_serial_mock = MagicMock(return_value="ABCDEF")
++    get_store_serials_mock = MagicMock(return_value=["123456", "ABCDEF"])
++    del_mock = MagicMock(return_value=0)
++    with patch.dict(
++        certutil.__salt__,
++        {
++            "cp.cache_file": cache_mock,
++            "certutil.get_cert_serial": get_cert_serial_mock,
++            "certutil.get_stored_cert_serials": get_store_serials_mock,
++            "certutil.del_store": del_mock,
++        },
++    ):
++        certutil.del_store("/path/to/cert.cer", "TrustedPublisher", saltenv="test")
++        get_cert_serial_mock.assert_called_once_with(
++            "/path/to/cert.cer", saltenv="test"
++        )
++        del_mock.assert_called_once_with(
++            "/path/to/cert.cer", "TrustedPublisher", saltenv="test", retcode=True
++        )
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #70629** (2026-11-01): Bulk floor bump for Dependabot security alerts (3008.x) (@dwoz)
+- **PR #70617** (closed): Bulk floor bump for Dependabot security alerts (@dwoz)
 - **PR #70601** (2026-10-30): Fix unit tests failing on macOS (@sudipto674)
 - **PR #70600** (2026-10-30): Fix nox docs sessions requirements file names (@sudipto674)
 - **PR #70597** (2026-10-29): Wait for SSH banner in test_ssh_setup to kill kex_exchange_identification race (@dwoz)
 - **PR #70596** (2026-10-29): Stabilize minion blackout scenario tests (@dwoz)
-- **PR #70595** (2026-10-29): Re-enable ssh tests skipped for old Python compat (#66545) (@dwoz)
-- **PR #70594** (2026-10-29): Re-enable tests/pytests/functional/utils/test_process.py (#66551) (@dwoz)
 
 ---
 
@@ -2203,21 +2140,21 @@ Co-authored-by: Daniel A. Wozniak <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Do not crash at start on NetBSD and OpenBSD (#68773)
+## X. [master] Fixed issue with add_store and del_store  (#64659)
 
 **RULE**:
-When implementing operations in `changelog/68773.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/64659.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0fa7bec6`: Do not crash at start on NetBSD and OpenBSD (#68773). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d88ec2f6`: [master] Fixed issue with add_store and del_store  (#64659). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/68773.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/64659.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Fix salt-master startup crashes on NetBSD and OpenBSD: strip version suffix (e.g. `_STABLE`) before passing the OS release string to `packaging.version.Version` in `netbsd_interfaces()`, and ensure `osfullname` is initialised early in the OpenBSD/NetBSD branch of `os_data()`.
+Fix ``certutil.add_store`` and ``certutil.del_store`` states ignoring ``saltenv`` when resolving the certificate serial, causing "Invalid certificate file" errors when the certificate lives in a non-``base`` saltenv.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2227,4 +2164,4 @@ Fix salt-master startup crashes on NetBSD and OpenBSD: strip version suffix (e.g
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0fa7bec6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d88ec2f6` are properly handled with clean fallback behavior.

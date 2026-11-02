@@ -6820,3 +6820,7 @@
 | `CYCLE-20261102-QTX1` | `2026-11-02T15:22:25.141Z` | `prof18/feed-flow` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/prof18-feed-flow-learnings.md` | Yes (`e0555e30...`) |
 | `CYCLE-20261102-QXBV` | `2026-11-02T15:22:29.563Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6432` | Yes (`361f6e60...`) |
 | `CYCLE-20261102-QXYK` | `2026-11-02T15:22:30.380Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6433` | Yes (`57300554...`) |
+| `CYCLE-20261102-036X` | `2026-11-02T15:29:37.065Z` | `LiquidAI/LFM3-VL-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-vl-2b-learnings.md` | Yes (`562a3808...`) |
+| `CYCLE-20261102-06AN` | `2026-11-02T15:29:41.087Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6434` | Yes (`6c59ba95...`) |
+| `CYCLE-20261102-09M9` | `2026-11-02T15:29:45.393Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6435` | Yes (`b569ef42...`) |
+| `CYCLE-20261102-0CDM` | `2026-11-02T15:29:48.970Z` | `yshrsmz/BuildKonfig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6436, Rule 6437, Rule 6438` | Yes (`09ca7490...`) |

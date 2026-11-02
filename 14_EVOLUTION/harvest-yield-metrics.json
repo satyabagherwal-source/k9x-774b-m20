@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T15:22:30.388Z",
-  "total_cycles_completed": 6797,
-  "total_learnings_persisted": 6797,
-  "total_rules_promoted": 6443,
+  "last_updated": "2026-11-02T15:29:48.979Z",
+  "total_cycles_completed": 6801,
+  "total_learnings_persisted": 6801,
+  "total_rules_promoted": 6448,
   "history": [
-    {
-      "timestamp": "2026-10-31T15:42:43.273Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:42:53.845Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:49:41.599Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:49:45.474Z",
-      "repository": "NativeScript/NativeScript",
-      "learningId": "learn-github-nativescript-nativescript",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T15:49:48.816Z",
       "repository": "meta-llama/Llama-2-7b",
@@ -1403,6 +1375,34 @@
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:29:37.078Z",
+      "repository": "LiquidAI/LFM3-VL-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:29:41.097Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:29:45.402Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:29:48.979Z",
+      "repository": "yshrsmz/BuildKonfig",
+      "learningId": "learn-github-yshrsmz-buildkonfig",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

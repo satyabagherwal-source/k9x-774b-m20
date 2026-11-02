@@ -6829,3 +6829,7 @@ Every entry in this ledger must capture:
 | `learn-github-prof18-feed-flow` | `https://github.com/prof18/feed-flow` | `c2f17694` | Multi-dimensional audit evidence | 2026-11-02T15:22:25.144Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `ea169d03` | Multi-dimensional audit evidence | 2026-11-02T15:22:29.567Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `57ca6e1e` | Multi-dimensional audit evidence | 2026-11-02T15:22:30.383Z |
+| `learn-huggingface-liquidai-lfm3-vl-2b` | `https://huggingface.co/LiquidAI/LFM3-VL-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-02T15:29:37.073Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `6335271b` | Multi-dimensional audit evidence | 2026-11-02T15:29:41.091Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `f63ad4ae` | Multi-dimensional audit evidence | 2026-11-02T15:29:45.396Z |
+| `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `ef37d507` | Multi-dimensional audit evidence | 2026-11-02T15:29:48.973Z |

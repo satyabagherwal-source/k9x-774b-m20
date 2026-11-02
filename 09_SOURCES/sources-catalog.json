@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "514f09ca",
+    "sourceVersion": "f63ad4ae",
     "license": "MIT",
-    "contentHash": "0df439740602db0c32babad338abe30bb4cda26d65b4a0a2ab10bebc8ce78f49",
-    "lastHarvestedAt": "2026-10-30T19:54:18.234Z",
+    "contentHash": "b569ef425e695dd457914cd0a898911ae103527e7c122a35072e41e4e11bc6be",
+    "lastHarvestedAt": "2026-11-02T15:29:45.396Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {
@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "0fa7bec6",
+    "sourceVersion": "6335271b",
     "license": "Apache-2.0",
-    "contentHash": "2fced27f956a1ae7e7685d29c6107d21720720c35dd370b103b9f7348eab202b",
-    "lastHarvestedAt": "2026-10-31T13:20:59.398Z",
+    "contentHash": "6c59ba95ccdb218355797e001dc0beac6380e337e89b3470f47b7deb64bc505d",
+    "lastHarvestedAt": "2026-11-02T15:29:41.091Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -8703,10 +8703,10 @@
     "repository": "yshrsmz/BuildKonfig",
     "platform": "github",
     "sourceUrl": "https://github.com/yshrsmz/BuildKonfig",
-    "sourceVersion": "73f8c406",
+    "sourceVersion": "ef37d507",
     "license": "Apache-2.0",
-    "contentHash": "affa0eed135cc972052ef4340eae536a782c4025b8b6d40438b47edcefc8e073",
-    "lastHarvestedAt": "2026-10-30T05:47:05.213Z",
+    "contentHash": "09ca74908b2702a5aeeffa66aae4725c8af956058fa8182e92a225a115255e13",
+    "lastHarvestedAt": "2026-11-02T15:29:48.973Z",
     "learningId": "learn-github-yshrsmz-buildkonfig"
   },
   "aliarifsoydas-sitemap-checker": {
@@ -11455,8 +11455,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-VL-2B",
     "sourceVersion": "hf-liquidai-lfm3-vl-2b",
     "license": "Open-Source",
-    "contentHash": "a6733be8c58afaae5e9654d0e141c44e0b76842c84f7eae57b344e5c676d81a7",
-    "lastHarvestedAt": "2026-10-29T11:29:28.117Z",
+    "contentHash": "562a38083d163e79584c84e02eacd1919cc087a3729a7680fb8fb46c63576140",
+    "lastHarvestedAt": "2026-11-02T15:29:37.073Z",
     "learningId": "learn-huggingface-liquidai-lfm3-vl-2b"
   },
   "hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf": {
