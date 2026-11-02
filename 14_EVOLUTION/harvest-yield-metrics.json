@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T17:31:51.565Z",
-  "total_cycles_completed": 6831,
-  "total_learnings_persisted": 6831,
-  "total_rules_promoted": 6482,
+  "last_updated": "2026-11-02T17:39:23.912Z",
+  "total_cycles_completed": 6835,
+  "total_learnings_persisted": 6835,
+  "total_rules_promoted": 6486,
   "history": [
-    {
-      "timestamp": "2026-10-31T17:36:58.363Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:36:59.130Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:37:05.841Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T17:37:11.413Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T17:43:51.269Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-02T17:31:51.565Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:39:15.865Z",
+      "repository": "Checkmarx/kics",
+      "learningId": "learn-github-checkmarx-kics",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:39:17.699Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:39:19.483Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T17:39:23.912Z",
+      "repository": "yvgude/lean-ctx",
+      "learningId": "learn-github-yvgude-lean-ctx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

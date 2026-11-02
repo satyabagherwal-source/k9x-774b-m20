@@ -6863,3 +6863,7 @@ Every entry in this ledger must capture:
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `595167cf` | Multi-dimensional audit evidence | 2026-11-02T17:24:40.328Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `395f7978` | Multi-dimensional audit evidence | 2026-11-02T17:31:49.904Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `0da844b2` | Multi-dimensional audit evidence | 2026-11-02T17:31:51.560Z |
+| `learn-github-checkmarx-kics` | `https://github.com/Checkmarx/kics` | `d9c53b01` | Multi-dimensional audit evidence | 2026-11-02T17:39:15.860Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `4fffec7d` | Multi-dimensional audit evidence | 2026-11-02T17:39:17.694Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `bacc207f` | Multi-dimensional audit evidence | 2026-11-02T17:39:19.477Z |
+| `learn-github-yvgude-lean-ctx` | `https://github.com/yvgude/lean-ctx` | `7c9025c4` | Multi-dimensional audit evidence | 2026-11-02T17:39:23.907Z |

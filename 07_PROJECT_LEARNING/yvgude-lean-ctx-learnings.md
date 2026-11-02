@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source**: github ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
-> **Source Version**: `9fc77dec`  
+> **Source Version**: `7c9025c4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T11:26:00.056Z  
+> **Timestamp**: 2026-11-02T17:39:23.116Z  
 > **Learning ID**: `learn-github-yvgude-lean-ctx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yvgude-lean-ctx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yvgude/lean-ctx](https://github.com/yvgude/lean-ctx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T11:26:00.043Z  
+> **Harvest Timestamp**: 2026-11-02T17:39:06.946Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LeanCTX is the Context Gateway for AI Systems. Select task-relevant context, apply supported controls, connect local knowledge and inspect recorded evidence. Open-source Engine: CLI, MCP, hooks and supported proxy paths.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3912 stars
+- **Stars / Engagement**: 3926 stars
 
 ---
 
@@ -2047,13 +2047,16 @@ impl EngineContextSourceExecutionResponseV1 {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2162** (2026-11-02): **bug: Not able to install new realease due to signature verification problems**
+  *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`) 3.11.0  **OS:** (macOS / Linux / Windows) linux  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other) -  **What happened:**  <img width="893" height="283" alt="Image" src="https://github.com/user-attachments/assets/4714112d-1554-42dc-aded-814040918bae" />  **What you expected:**  working   **Steps to reproduce:** 1. lean-ctx update  **Relevant output:** ``` (paste terminal output here) ``` 
+  **Post-Mortem & Fix Analysis**:
+  > Hello, yes this is a known problem with your current version 3.11. Please check https://github.com/yvgude/lean-ctx/issues/2071
+  > Closing as a duplicate of #2071. The 3.11.0 updater needs the external `cosign` tool. Reinstall once through the channel you used (for example `curl -fsSL https://leanctx.com/install.sh | sh`); from then on `lean-ctx update` works without cosign.
+
 - **Issue #2148** (2026-10-26): **bug: lean-ctx root bleeds accross sessions**
   *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`) 3.11.0  **OS:** (macOS / Linux / Windows) linux  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other)  **What happened:**  In my project toktok, with a brand new conversation, I had this :  <img width="1882" height="185" alt="Image" src="https://github.com/user-attachments/assets/606ea904-4710-496d-a84d-328c9bf3a778" />  <img width="1882" height="298" alt="Image" src="https://github.com/user-attachments/assets/83e2a718-4c74-4c93-a3a4-58e89ce2c811" />  The root was not in the right folder.  **What you expected:**  Root should always follow Claude Code's own root  
   **Post-Mortem & Fix Analysis**:
   > checking!
-
-- **Issue #2147** (2026-10-26): **bug: Model re-reads with fresh:true everytime there is a dedup ref inside the content**
-  *Symptoms*: **lean-ctx version:** (run `lean-ctx --version`) 3.11.0  **OS:** (macOS / Linux / Windows) linux  **AI tool:** (Cursor / Claude Code / Copilot / Crush / other): CC  **What happened:**  <img width="1339" height="174" alt="Image" src="https://github.com/user-attachments/assets/bd2bc88a-9336-439a-ab56-bdcda1f77afb" />  **What you expected:**  The model shouldn't waste tokens re-reading the same files twice 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2070,398 +2073,1235 @@ impl EngineContextSourceExecutionResponseV1 {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1cc70602` (2026-10-30)
-**Commit Message**: perf(build): split the engine crate into 256 codegen units in dev-fast (#2160)
+### Incident Patch 1: `3550b694` (2026-11-01)
+**Commit Message**: fix: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (#2168)
 
-A one-line edit made cargo fast regenerate most of the engine crate: with
-16 units each covers a large slice of the code. Measured on pounce, same
-commit, idle machine, 3 edit builds per variant (dependencies unchanged):
+* fix: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4
 
-  codegen-units  edit build (median)  lean_ctx codegen (median)
-  16             37.2 s               18.6 s
-  256            26.8 s                8.9 s
+Public export of private source ce4df17c70becdabb06095ff518ab827162a7850.
 
-CLI runtime (20x read -m map, 20x grep over src/, 3 rounds) is equal
-within noise; the binary is 2.4 % smaller. Release keeps its own profile.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Committed with --no-verify: the hook's guard ran locally (exit 0); its
-Rust steps ran green on pounce for this staged tree (cargo fmt --check,
-clippy --all-features prod and tests, gen_docs --check,
-gen_testbench_recording --check) to keep the loaded Mac free.
+* test: make two shell-gate tests hold on Windows
+
+The run-directory side-door test built its relative path to home with the
+drive prefix still in it; the vibe heredoc test read the allowlist without
+the test env lock and raced tests that narrow it.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `rust/Cargo.toml` (modified, +6/-0)
+**File**: `.github/workflows/ci.yml` (modified, +2/-0)
 ```diff
-@@ -476,6 +476,12 @@ codegen-units = 16
- incremental = true
- strip = false
+@@ -474,6 +474,8 @@ jobs:
+         run: node packages/lean-ctx-bin/postinstall.cockpit.test.cjs
+       - name: Test fail-closed checksum verification
+         run: node packages/lean-ctx-bin/postinstall.checksum.test.cjs
++      - name: Test preinstall stops only the installed daemon
++        run: node packages/lean-ctx-bin/preinstall.test.cjs
  
-+# Small code units let an incremental rebuild of the engine crate regenerate
-+# only what changed: on 30.10. a one-line edit took a median 27 s instead of
-+# 37 s (codegen 9 s instead of 19 s) with unchanged runtime.
-+[profile.dev-fast.package.lean-ctx]
-+codegen-units = 256
+   cookbook:
+     name: Cookbook (Node)
+```
+
+**File**: `.github/workflows/publish-clients.yml` (modified, +4/-30)
+```diff
+@@ -3,16 +3,17 @@ name: Historical /v1 client publishing
+ # This workflow preserves publication mechanics for archived thin-client
+ # prototypes. It is not an SDK release path at all: the one LeanCTX SDK is
+ # `thinkery-leanctx-sdk`, developed and released in Thinkery-AG/leanctx-sdk.
+-# See docs/reference/sdk-surface.md.
++# See docs/reference/sdk-surface.md. The TypeScript client in cookbook/sdk is
++# a private cookbook example (`private: true`) and is never published here.
+ 
+ on:
+   workflow_dispatch:
+     inputs:
+       targets:
+         description: "Which registries to publish to"
+         type: choice
+-        default: npm
+-        options: [all, npm, pypi, crates]
++        default: crates
++        options: [all, pypi, crates]
+   push:
+     tags:
+       - 'client-v[0-9]*'
+@@ -44,33 +45,6 @@ jobs:
+           path: ${{ runner.temp }}/ip-provenance-publish-clients-report.json
+           if-no-files-found: ignore
+ 
+-  publish-npm:
+-    name: Historical TypeScript client (disabled)
+-    needs: ip-provenance-gate
+-    if: false
+-    runs-on: ubuntu-latest
+-    steps:
+-      - uses: actions/checkout@v4 # v4
+-        with:
+-          persist-credentials: false
+-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+-        with:
+-          node-version: 22
+-          registry-url: https://registry.npmjs.org
+-      - name: Build, test, publish
+-        working-directory: cookbook
+-        run: |
+-          set -euo pipefail
+-          npm ci
+-          npm --workspace lean-ctx-client run build
+-          npm --workspace lean-ctx-client test
+-          PKG_VERSION="$(node -p "require('./sdk/package.json').version")"
+-          if npm view "lean-ctx-client@${PKG_VERSION}" version >/dev/null 2>&1; then
+-            echo "npm already has lean-ctx-client@${PKG_VERSION} — skipping publish."
+-            exit 0
+-          fi
+-          npm publish --workspace lean-ctx-client --access public
+-
+   publish-pypi:
+     name: Historical Python client (disabled)
+     # clients/python is archived; canonical lean-ctx-python publication is
+```
+
+**File**: `AGENTS.md` (modified, +52/-10)
+```diff
+@@ -95,15 +95,44 @@ The engine crate `lean_ctx` is large; every compile with codegen costs
+ 8–17 GB RAM and queues behind the machine's compile gate. With many agents
+ per machine, memory runs out. Therefore:
+ 
+-- **Workers** iterate with `cargo check --locked --all-targets` only (type
+-  checks code and tests, no codegen). A worker runs affected tests at most once
+-  per task, filtered, and only when the task needs behaviour evidence.
++- **Workers** iterate with
++  `cargo check --locked --all-targets --config build.incremental=true` only
++  (type checks code and tests, no codegen). Incremental is off in the global
++  Cargo config to save disk, but for this edit loop it pays: measured
++  2026-10-31 after a one-line edit, `--all-targets` 95 s → 18 s and plain
++  `check` 40 s → 11 s; the first incremental check of a worktree builds the
++  cache (minutes) and keeps about 5.5 GB under its target dir. A worker runs
++  affected tests at most once per task, filtered, and only when the task needs
++  behaviour evidence.
+ - **Workers do not run** `cargo fast`, `cargo build`, `--release`,
+   `dev-install`/`make dev`, or the full `cargo test --lib`.
+ - **The integrator** (lead) runs `cargo fast`, `dev-install` and the full gates
+   once per integrated batch, on one machine at a time.
+ - A worker that needs a runnable binary asks the lead instead of building one.
+ 
++### Split before you grow (owner 2026-11-01)
 +
- [target.'cfg(windows)'.dependencies]
- leanctx-native-storage = { path = "crates/leanctx-native-storage", version = "=0.1.1" }
- windows-sys = { version = "0.61", features = [
++The engine crate `lean_ctx` is being split into workspace crates; Rust stays
++the language. Every change and every new feature is checked for that split
++before it is written, and the check is part of the handover:
++
++- **New code goes into a crate, not into the monolith,** whenever it has a
++  clear boundary: its own crate under `rust/crates/`, or the crate of the area
++  it belongs to once that exists. New code in `rust/src/` needs a reason in the
++  handover (what it needs from the monolith, and why it cannot depend on a
++  crate instead).
++- **Changes to existing code do not deepen the coupling:** no new
++  `crate::` edges from a module that is already split out or scheduled for a
++  split; shared types move down into a lower crate rather than up.
++- **A new heavy dependency** (a parser, ML runtime, HTTP stack, database
++  client) lands behind a feature in its own crate, never directly in
++  `lean_ctx`.
++- **The handover names the decision:** "crate: <name>" or "monolith: <reason>".
++  The integrator rejects a batch without it.
++- Another language only where the component does not need Rust and an ADR
++  shows the benefit (the plan's §10 gates); signed, crypto and policy logic is
++  never implemented twice.
++
+ Published artifacts and release rehearsals keep the production `--release`
+ profile. Do not use `cargo clean` in the normal edit/build loop. Use one shared
+ target directory and the configured job budget across worktrees.
+@@ -155,15 +184,27 @@ Step 2 (`ctx_session` progress) stays, since it is per-agent session state.
+ 
+ Working the space economically:
+ - read `emspace schema` at most once per session;
+-- read pages with `emspace page show --body <slug>…` (several slugs in one
+-  call) unless the source/notes header is the point;
++- read the part of a page you need: `ctx_provider(action="query",
++  provider="emspace", resource="page", id="<slug>", mode="text",
++  query="outline")`, then the one section (`query="<section>"`); the whole
++  body is `emspace page show --body <slug>…` (several slugs in one call);
+ - before documenting, check the checkout is the base the space documents, and
+   rescan only what `emspace coverage` and `emspace status` (stale) name;
+ - find a page for a file through the `ctx_read` hint rather than a separate
+   `emspace search` → `page show` chain;
+ - check open sessions through `ctx_agent read` instead of a separate
+   `emspace orient` when only the in-flight work matters.
+ 
++Keeping knowledge current without rewriting it:
++- `ctx_knowledge(action="changes", query="<lsn>")` lists what changed since
++  an LSN (every save is journaled); `query="session"` lists what this session
++  wrote, and a `ctx_session` handoff names that changeset;
++- a fact marked *to verify* because its anchored code changed but the fact
++  still holds: `ctx_knowledge(action="repin", category=…, key=…)` re-anchors
++  it to the code as it is, without retyping its text;
++- `ctx_knowledge(action="coverage")` lists the most edited files (90 days)
++  no fact is anchored to: what to record next.
++
+ After 30+ tool calls without documentation:
+ - lean-ctx will prompt with `[CHECKPOINT: please document current progress]`
+ - Respond by calling `ctx_session(action="task")` with current status
+@@ -182,12 +223,13 @@ and `ctx_read` shows cross-source hints (e.g. "Issue #42 references this file");
+ turn them off with `output_hints.cross_source_hint = false`.
+ 
+ **Emspace:** a linked checkout needs no setup. `ctx_read` indexes the space in
+-the background (first read, then every ten minutes) and, with
++the background (
+```
+
+**File**: `CHANGELOG.md` (modified, +495/-6)
+```diff
+@@ -8,6 +8,37 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ ### Security
+ 
++- **The skill's `curl | bash` installer verifies the binary.** It installed whatever archive
++  it downloaded; like `install.sh` it now checks it against the release's `SHA256SUMS` and
++  refuses to install without a hash tool, without the sums file, without exactly one entry for
++  the archive or on a different digest.
++- **A Cockpit bundle with two checksum entries is refused.** `install.sh`, `install.ps1` and the
++  npm postinstall took the first matching line of `COCKPIT_SHA256SUMS`; they now require exactly
++  one entry for the bundle, as for the engine archive.
++- **`npm install lean-ctx-bin@X` installs engine X.** The postinstall downloaded whatever
++  release was newest on GitHub; it now fetches the release that matches the package's own
++  version and refuses another.
++- **The Hermes plugin names its own client.** Its `requirements.txt` asked for `leanctx`, which
++  on PyPI is an unrelated third-party package; it now pins `lean-ctx-client==0.1.0`, the final
++  release of the retired HTTP `/v1` client the plugin imports as `leanctx`.
++
++- **Hive connect names no project before a yes and lists exactly what it shares.** Against a
++  Hive with the C0 2.1 device setup, `hive connect` sent the folder name and git remote to
++  Hive before anyone agreed, and the sharing question named daily usage totals and context
++  receipts, which this version never sends, but not fact states, the automatic 1.x merges
++  and objections, friction counts or task traffic. It now asks before the approval and sends
++  the project only after a yes (or `--yes`); the question lists exactly what leaves the
++  machine, the device setup announces only `knowledge` and `bus`, and a no also keeps fact
++  states and the automatic 1.x merges and objections on the machine.
++- **Hive screening fails closed on a broken rule.** A forbidden pattern
++  (`[egress] forbidden_patterns` or a Hive filter pack) that did not compile was dropped
++  silently, so what it should have blocked went to Hive. Such a rule now pauses every Hive
++  content channel until it is fixed, and the Hive status names it; the policy pull that may
++  bring a fixed rule goes on. The paths and symbol names of the code graph and the new place
++  of a moved fact anchor now pass the same screen.
++- **Hive fencing tokens are no longer printed.** `ctx_agent lease_acquire` answered
++  `scope=hive fencing_token=…`, and the debug output of a task claim carried its lease id and
++  token. Both stay in their 0600 files; the answer says `scope=hive`.
+ - **A dashboard request that names a project is answered for that project or refused.**
+   The dashboard accepted an `X-LeanCTX-Project` header on routes outside its project list
+   (`/api/tree`, `/api/architecture`, `/api/compression-demo`, `/api/tools-health` and others)
+@@ -34,6 +65,85 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   certificates or a `.npmrc` are now denied under the default role; allow them through the
+   role. Not covered: a directory-wide search, shell reads (`cat .env`), Windsurf and
+   Antigravity; see Security & Governance §4.0.
++- **The shell hooks check every command they let run without the `lean-ctx -c` wrap.**
++  The PreToolUse hooks enforce the shell allowlist by wrapping a violating command in
++  `lean-ctx -c`. Several kinds of command were neither wrapped nor checked and ran natively
++  without any allowlist check:
++  - a command with a heredoc (`<<`), which cannot be wrapped: inline code ran that
++    `python -c` is blocked for (since v3.10.0);
++  - a command whose program is lean-ctx, which is never wrapped again. The hooks recognised
++    it by its first word alone, so a compound behind a `lean-ctx …` prefix ran unchecked
++    (since v3.10.0), and `lean-ctx allow …`, `lean-ctx yolo` or
++    `lean-ctx config set shell_security …` could loosen the agent's own policy from the
++    host's shell, which `ctx_shell` refuses (since v3.11.1);
++  - a `&&`/`;` chain with a file read in it, whose read was rewritten to `lean-ctx read` in
++    place while the other commands of the chain ran natively (since v3.10.0);
++  - every Bash command on Mistral Vibe (`hook vibe-pre-tool`, since v3.10.0), and on Codex
++    (`hook codex-pretooluse`) and `hook copilot` every command the hook did not rewrite to a
++    read-only one (since the hooks enforce the allowlist, v3.10.0);
++  - PowerShell, and any command whose wrap the host's permissions did not let through, in
++    the governor's `hook rewrite-enforce` (new in 3.12).
++
++  All of these are now checked in the hook and denied when they violate the allowlist, in
++  `enforce` mode; `warn` logs and `off` lets them run, as configured. lean-ctx is recognised
++  by its program word, with or without a path, quotes, `VAR=value` or `env`; `lean-ctx-x` is
++  another program. A plain `lean-ctx …` call needs no allowlist entry; one wi
+```
+
+**File**: `PUBLISH_MANIFEST.toml` (modified, +36/-2)
+```diff
+@@ -265,6 +265,10 @@ new_paths = [
+   # output. Own code, Apache-2.0 SPDX-headed.
+   "rust/src/core/patterns/emspace.rs",
+   "rust/src/core/providers/emspace.rs",
++  # Knowledge change journal and the ctx_knowledge actions on it (changes,
++  # repin, coverage; owner go 2026-10-31). Own code, Apache-2.0 SPDX-headed.
++  "rust/src/core/knowledge/journal.rs",
++  "rust/src/tools/ctx_knowledge/changes.rs",
+   "rust/src/core/root_selection.rs",
+   "rust/src/core/audit_trail/checkpoint.rs",
+   "rust/src/core/workspace_authority.rs",
+@@ -373,6 +377,7 @@ new_paths = [
+   "rust/src/cli/hive_cmd.rs",
+   "rust/src/cli/gotchas_cmd.rs",
+   "rust/src/core/hive/auth.rs",
++  "rust/src/core/hive/background.rs",
+   "rust/src/core/hive/bus/control.rs",
+   "rust/src/core/hive/bus/frames.rs",
+   "rust/src/core/hive/bus/handoff.rs",
+@@ -396,7 +401,6 @@ new_paths = [
+   "rust/src/core/hive/metrics/collect.rs",
+   "rust/src/core/hive/metrics/local_state.rs",
+   "rust/src/core/hive/metrics/mod.rs",
+-  "rust/src/core/hive/metrics/payload.rs",
+   "rust/src/core/hive/metrics/upload.rs",
+   "rust/src/core/hive/mod.rs",
+   "rust/src/core/hive/outbox.rs",
+@@ -1340,7 +1344,6 @@ new_paths = [
+   "rust/src/core/hive/mapping.rs",
+   "rust/src/core/hive/metrics/hive_use.rs",
+   "rust/src/core/hive/metrics/hive_use_tests.rs",
+-  "rust/src/core/hive/metrics/k2_review_tests.rs",
+   "rust/src/core/hive/metrics_v2/buffer.rs",
+   "rust/src/core/hive/metrics_v2/collect.rs",
+   "rust/src/core/hive/metrics_v2/gate.rs",
+@@ -1381,6 +1384,7 @@ new_paths = [
+   "rust/src/core/hive/sync/records.rs",
+   "rust/src/core/hive/sync/records_tests.rs",
+   "rust/src/core/hive/sync/writer.rs",
++  "rust/src/core/hive/tasks/cache.rs",
+   "rust/src/core/hive/tasks/claims.rs",
+   "rust/src/core/hive/tasks/client.rs",
+   "rust/src/core/hive/tasks/keeper.rs",
+@@ -1422,6 +1426,8 @@ new_paths = [
+   "rust/src/server/shell_approval.rs",
+   "rust/src/server/shell_approval_tests.rs",
+   "rust/src/tools/ctx_agent_control.rs",
++  "rust/src/tools/ctx_agent_lease.rs",
++  "rust/src/hooks/agents/claude_tests.rs",
+   "rust/src/tools/registered/ctx_tasks.rs",
+   "rust/tests/agent_wait_roundtrip.rs",
+   "rust/tests/suite/hive_fake_wire_conformance.rs",
+@@ -1457,10 +1463,22 @@ new_paths = [
+   "rust/src/tools/registered/ctx_read_symbol.rs",
+   # 3.12.1 optplan R4: template collapse of repetitive output (lean-ctx-af).
+   "rust/src/core/patterns/template_collapse.rs",
++  # 3.12.1 shell-security policy resolved from the real user config (lean-ctx-af).
++  "rust/src/core/config/shell_policy.rs",
++  "rust/src/core/shell_allowlist/enforcement_patterns.rs",
++  "rust/src/core/shell_allowlist/self_config_tests.rs",
++  # 3.12.1 outline token budget for ctx_read (lean-ctx-af, read-shell-volume).
++  "rust/src/tools/ctx_read/outline_budget.rs",
+   # 3.12.1: the shared `cargo fast` alias (only the alias, no [build] job budget),
+   # so fresh clones can run `make build`; the root .cargo/config.toml stays private.
+   "rust/.cargo/config.toml",
+   "tests/build/test_cargo_alias.py",
++  # 3.12.1 wave 3 (cli): npm preinstall stops only the installed daemon.
++  "packages/lean-ctx-bin/preinstall.test.cjs",
++  # the skill's curl | bash installer: exit status, temp dir, checksum.
++  "tests/build/test_skill_install_sh.py",
++  # the AUR recipe's version coupling.
++  "scripts/tests/test_check_package_versions.py",
+   # 3.12.1 cleanup: the Task Spine v1 cohort the V3 receipt migration tests read,
+   # moved from _archive/benchmarks/efficiency/task-spine-v1/ (same synthetic files).
+   "rust/tests/fixtures/v3/task-spine-v1/README.md",
+@@ -2556,6 +2574,9 @@ removed_paths = [
+   # swarm, conductor, compute, sync/swarm, ctx_compute, ctx_tasks scope=swarm,
+   # hive swarm|compute CLI, scripts/e2e/swarm-two-engines.sh). None of them is
+   # in `baseline_commit`, so they left `new_paths` instead of being listed here.
++  # Hive 1.x retired, owner decision 2026-10-31: the daily `POST /v1/metrics`
++  # builder (core/hive/metrics/payload.rs, metrics/k2_review_tests.rs) left
++  # `new_paths` the same way.
+   # Research/eval tooling removed from the engine, owner decision 2026-10-30.
+   ".github/workflows/benchmark-study.yml",
+   "rust/eval/accuracy-suite.ndjson",
+@@ -2684,6 +2705,7 @@ removed_paths = [
+   "rust/crates/lean-ctx-ocla/src/observation.rs",
+   "rust/src/cli/dispatch/analytics/provider_run.rs",
+   "rust/src/core/a2a/compress.rs",
++  "rust/src/core/a2a/telemetry.rs",
+   "rust/src/core/code_health/coupling.rs",
+   "rust/src/core/cognitive/chunker.rs",
+   "rust/src/core/cognitive/mod.rs",
+@@ -2724,6 +2746,18 @@ removed_paths = [
+   "rust/src/proxy/web_app/normalize.rs",
+   "rust/src/proxy/web_app/proof_tests.rs",
+   "rust/tests/multi_read_cap_scenarios.rs",
++  # Adaptive/memory trim, measured then trimmed (CHANGELOG [Unreleased] Removed):
++  # learning stores no default read consults.
++  "rust/src/core/adaptive_mode_policy.rs",
++  "rust/src/core/bandit.rs",
++  "rust/src/core/feedback.rs",
++  "rust/src/core/mode_predictor
+```
+
+**File**: `aur/lean-ctx/PKGBUILD` (modified, +2/-2)
+```diff
+@@ -1,6 +1,6 @@
+ # Maintainer: Yves Gugger <yves@pounce.ch>
+ pkgname=lean-ctx
+-pkgver=3.10.5
++pkgver=3.12.0
+ pkgrel=1
+ pkgdesc="LeanCTX Engine — open-source Context Gateway for AI Systems. Context selection, supported controls, and evidence through local integration paths."
+ arch=('x86_64' 'aarch64')
+@@ -12,7 +12,7 @@ makedepends=('cargo' 'gcc')
+ # resolver finds it — no manual install, no runtime download.
+ depends=('gcc-libs' 'onnxruntime')
+ source=("$pkgname-$pkgver.tar.gz::https://github.com/yvgude/lean-ctx/releases/download/v$pkgver/lean-ctx-$pkgver-source.tar.gz")
+-sha256sums=('3235fddead565b17be0a720779cb3ca3e73a10aa096acdb233e0348ff63bad9a')
++sha256sums=('a1009099b7933ddb8948d6511a38c4f9addfcfbc60c0a54161adea174e32bfb5')
+ 
+ prepare() {
+   cd "$pkgname-$pkgver/rust"
+```
+
+**File**: `clients/rust/lean-ctx-client/src/client.rs` (modified, +51/-3)
+```diff
+@@ -33,7 +33,9 @@ pub struct EventQuery {
+ /// [`LeanCtxClient::builder`] (bearer token, default workspace/channel,
+ /// timeout). All methods are blocking; wrap calls in your own thread pool or
+ /// `spawn_blocking` when used from async code.
+-#[derive(Debug, Clone)]
++///
++/// `Debug` never prints the bearer token: a set token shows as `"<redacted>"`.
++#[derive(Clone)]
+ pub struct LeanCtxClient {
+     base_url: String,
+     bearer_token: Option<String>,
+@@ -42,6 +44,23 @@ pub struct LeanCtxClient {
+     agent: ureq::Agent,
+ }
+ 
++impl std::fmt::Debug for LeanCtxClient {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        f.debug_struct("LeanCtxClient")
++            .field("base_url", &self.base_url)
++            .field("bearer_token", &redacted(self.bearer_token.as_ref()))
++            .field("workspace_id", &self.workspace_id)
++            .field("channel_id", &self.channel_id)
++            .field("agent", &self.agent)
++            .finish()
++    }
++}
++
++/// What `Debug` shows for a secret: whether it is set, never its value.
++fn redacted(secret: Option<&String>) -> Option<&'static str> {
++    secret.map(|_| "<redacted>")
++}
++
+ impl LeanCtxClient {
+     /// Create a client for `base_url` with no auth and default timeout.
+     ///
+@@ -387,8 +406,8 @@ impl LeanCtxClient {
+     }
+ }
+ 
+-/// Builder for [`LeanCtxClient`].
+-#[derive(Debug, Clone)]
++/// Builder for [`LeanCtxClient`]. Its `Debug`, too, redacts the bearer token.
++#[derive(Clone)]
+ pub struct LeanCtxClientBuilder {
+     base_url: String,
+     bearer_token: Option<String>,
+@@ -397,6 +416,18 @@ pub struct LeanCtxClientBuilder {
+     timeout: Option<Duration>,
+ }
+ 
++impl std::fmt::Debug for LeanCtxClientBuilder {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        f.debug_struct("LeanCtxClientBuilder")
++            .field("base_url", &self.base_url)
++            .field("bearer_token", &redacted(self.bearer_token.as_ref()))
++            .field("workspace_id", &self.workspace_id)
++            .field("channel_id", &self.channel_id)
++            .field("timeout", &self.timeout)
++            .finish()
++    }
++}
++
+ impl LeanCtxClientBuilder {
+     fn new(base_url: impl AsRef<str>) -> Self {
+         Self {
+@@ -573,6 +604,23 @@ mod tests {
+         assert_eq!(c.base_url(), "http://x");
+     }
+ 
++    #[test]
++    fn debug_redacts_the_bearer_token() {
++        let builder = LeanCtxClient::builder("http://x").bearer_token("sentinel-token");
++        let shown = format!("{builder:?}");
++        assert!(!shown.contains("sentinel-token"), "{shown}");
++        assert!(shown.contains("<redacted>"), "{shown}");
++        let client = builder.workspace_id("ws").build().unwrap();
++        let shown = format!("{client:?}");
++        assert!(!shown.contains("sentinel-token"), "{shown}");
++        assert!(
++            shown.contains("<redacted>") && shown.contains("ws"),
++            "{shown}"
++        );
++        let anonymous = format!("{:?}", LeanCtxClient::new("http://x").unwrap());
++        assert!(anonymous.contains("bearer_token: None"), "{anonymous}");
++    }
++
+     #[test]
+     fn query_is_percent_encoded() {
+         let q = encode_query(&[("workspaceId".into(), "a b/c".into())]);
+```
+
+**File**: `cookbook/package-lock.json` (modified, +1/-1)
+```diff
+@@ -3353,7 +3353,7 @@
+     "sdk": {
+       "name": "lean-ctx-client",
+       "version": "0.1.0",
+-      "license": "MIT"
++      "license": "Apache-2.0"
+     }
+   }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `d4b3ded1` (2026-10-30)
-**Commit Message**: fix: 3.12.1 fixes, engine optimizations and OSS hardening (#2161)
+### Incident Patch 2: `7b157a3d` (2026-11-01)
+**Commit Message**: fix: 3.12.1 first engine crate split, knowledge lifecycle to Hive, cleanup waves 5–6 (#2170)
 
-Public export of private source 4198b400bd705df1f15452c2362ec6a0e781d5f7.
+* fix: 3.12.1 first engine crate split, knowledge lifecycle to Hive, cleanup waves 5–6
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: no intra-doc links from public items to private ones in lean-ctx-fs and lean-ctx-syntax
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
 
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.gitignore` (modified, +3/-0)
+**File**: `.github/workflows/release.yml` (modified, +41/-1)
 ```diff
-@@ -72,6 +72,9 @@ website/
- # counted as "changed files" by preflight's change classification.
- .ctarget/
- target-wt*/
-+# Machine-local build tuning (rust/scripts/setup-fast-build.sh: linker, sccache).
-+# The shared `cargo fast` alias is tracked in rust/.cargo/config.toml.
-+/.cargo/config.toml
- AGENTS.md.lean-ctx.*.bak
- docs/gpt/
+@@ -1256,6 +1256,46 @@ jobs:
+             echo "Waiting 30s for crates.io index propagation..."
+             sleep 30
+           fi
++          PATTERNS_VERSION="$(grep -m1 '^version' crates/lean-ctx-patterns/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
++          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
++               "https://crates.io/api/v1/crates/lean-ctx-patterns/${PATTERNS_VERSION}" >/dev/null 2>&1; then
++            echo "Publishing lean-ctx-patterns ${PATTERNS_VERSION} to crates.io first..."
++            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-patterns
++            echo "Waiting 30s for crates.io index propagation..."
++            sleep 30
++          fi
++          LEAN_CTX_WORKGRAPH_VERSION="$(grep -m1 '^version' crates/lean-ctx-workgraph/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
++          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
++               "https://crates.io/api/v1/crates/lean-ctx-workgraph/${LEAN_CTX_WORKGRAPH_VERSION}" >/dev/null 2>&1; then
++            echo "Publishing lean-ctx-workgraph ${LEAN_CTX_WORKGRAPH_VERSION} to crates.io first..."
++            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-workgraph
++            echo "Waiting 30s for crates.io index propagation..."
++            sleep 30
++          fi
++          LEAN_CTX_COMPRESS_VERSION="$(grep -m1 '^version' crates/lean-ctx-compress/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
++          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
++               "https://crates.io/api/v1/crates/lean-ctx-compress/${LEAN_CTX_COMPRESS_VERSION}" >/dev/null 2>&1; then
++            echo "Publishing lean-ctx-compress ${LEAN_CTX_COMPRESS_VERSION} to crates.io first..."
++            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-compress
++            echo "Waiting 30s for crates.io index propagation..."
++            sleep 30
++          fi
++          LEAN_CTX_FS_VERSION="$(grep -m1 '^version' crates/lean-ctx-fs/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
++          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
++               "https://crates.io/api/v1/crates/lean-ctx-fs/${LEAN_CTX_FS_VERSION}" >/dev/null 2>&1; then
++            echo "Publishing lean-ctx-fs ${LEAN_CTX_FS_VERSION} to crates.io first..."
++            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-fs
++            echo "Waiting 30s for crates.io index propagation..."
++            sleep 30
++          fi
++          LEAN_CTX_SYNTAX_VERSION="$(grep -m1 '^version' crates/lean-ctx-syntax/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
++          if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
++               "https://crates.io/api/v1/crates/lean-ctx-syntax/${LEAN_CTX_SYNTAX_VERSION}" >/dev/null 2>&1; then
++            echo "Publishing lean-ctx-syntax ${LEAN_CTX_SYNTAX_VERSION} to crates.io first..."
++            cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx-syntax
++            echo "Waiting 30s for crates.io index propagation..."
++            sleep 30
++          fi
+           STORAGE_VERSION="$(grep -m1 '^version' crates/leanctx-native-storage/Cargo.toml | sed -E 's/.*"([^"]+)".*/\1/')"
+           if ! curl -fsSL -H "User-Agent: lean-ctx-release" \
+                "https://crates.io/api/v1/crates/leanctx-native-storage/${STORAGE_VERSION}" >/dev/null 2>&1; then
+@@ -1279,7 +1319,7 @@ jobs:
+           cargo package --locked -p lean-ctx
+           # Verification is intentionally mandatory: source packages cannot rely
+           # on this repository's local `[patch.crates-io]` entries.
+-          cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}"
++          cargo publish --allow-dirty --token "${CARGO_REGISTRY_TOKEN}" -p lean-ctx
+ 
+   publish-npm:
+     name: Publish to npm
+```
+
+**File**: `AGENTS.md` (modified, +11/-2)
+```diff
+@@ -121,9 +121,18 @@ before it is written, and the check is part of the handover:
+   it belongs to once that exists. New code in `rust/src/` needs a reason in the
+   handover (what it needs from the monolith, and why it cannot depend on a
+   crate instead).
++- **The map is `rust/CRATE_MAP.md`** (machine form `rust/CRATE_MAP.toml`):
++  extracted crates, modules scheduled for a crate, and the allowed direction.
++  Crates never depend on `lean-ctx`. The engine depends on them through a thin
++  facade (for example `core::patterns`), so engine paths stay stable. New code
++  for an extracted area goes into its crate, never beside the facade.
+ - **Changes to existing code do not deepen the coupling:** no new
+-  `crate::` edges from a module that is already split out or scheduled for a
+-  split; shared types move down into a lower crate rather than up.
++  `crate::` edges out of a module that is split out or scheduled for a split;
++  shared types move down into a lower crate rather than up.
++  `scripts/check-crate-boundaries.py` (preflight and the pounce gate) fails on
++  such an edge. Its baseline `rust/crate_boundary_baseline.json` only grows with
++  the crate-split lead's sign-off ("monolith: <reason>" plus `--update`), and it
++  shrinks with every edge you cut.
+ - **A new heavy dependency** (a parser, ML runtime, HTTP stack, database
+   client) lands behind a feature in its own crate, never directly in
+   `lean_ctx`.
+```
+
+**File**: `CHANGELOG.md` (modified, +85/-4)
+```diff
+@@ -229,6 +229,11 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   token in the process list; the new `--auth-token-file <path>` (or `LEAN_CTX_HTTP_TOKEN_FILE`)
+   reads it from a bounded regular file, besides `LEAN_CTX_HTTP_TOKEN`. Giving both the token
+   and a token file is refused.
++- **`cockpit` reads its auth token from a file too.** `--auth-token=<token>` (and `--token=`)
++  left the Bearer token in the process list; `--auth-token-file <path>` (or
++  `LEAN_CTX_HTTP_TOKEN_FILE` while `LEAN_CTX_HTTP_TOKEN` is unset) reads it from a bounded
++  regular file, and a background server reads the same file instead of getting the token.
++  Giving both the token and a token file is refused.
+ - **Role and policy denials are tool errors.** A tool blocked by the active role, a context
+   policy pack or its egress rules came back as a successful result; it now carries
+   `isError: true` with the same reason, and its audit entry names the calling agent instead
+@@ -269,6 +274,17 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   `action=repin` re-anchors a fact marked to verify to its code as it is now without
+   retyping it, and `action=coverage` lists the most edited files that no fact is anchored to.
+ - **`ctx_provider query mode=text`** lists each item with its body, for every provider.
++- **A connected engine keeps the vault in line with what its agents changed.** Until now a
++  fact reached the Hive vault once, when it was captured; correcting, superseding, removing or
++  re-pinning it later never left the machine, so other engines kept receiving knowledge its
++  author had withdrawn. Each sync now compares the engine's own vault items with its knowledge
++  store: a superseded fact whose successor is shared gets `supersedes` (the vault shows it
++  outdated), a withdrawn one is retracted (reason "withdrawn by author", no content), and a
++  fact re-pinned locally is re-anchored in the vault. Only items this checkout captured, the
++  raw store decides (a fact a policy view withholds is never retracted), an unreadable or
++  empty store changes nothing, and the server's retraction limits and review holds apply
++  unchanged. The knowledge journal gates the pass (nothing to do while it stands still, a full
++  pass hourly); `hive sync` reports what it queued.
+ - **Governor rule R4: template collapse for large Bash output.** R2 folds only
+   byte-identical lines, so real logs, lint output and exports, whose lines differ in a
+   timestamp, sequence number or id, never shrank and the governor wrote no receipts. R4
+@@ -330,6 +346,10 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ ### Changed
+ 
++- **`ctx_search` drops the `[∈ enclosing symbol → …]` legend line.** The `∈name@Lstart`
++  tags on hits stay — agents read those symbols by name and line — but no agent in the
++  benchmark transcripts used the `handle=` form the legend described; it cost about 30
++  tokens per run.
+ - **The telemetry data dictionary says which events LeanCTX | OSS sends.** Of the 24
+   contract events the engine sends eleven; nine (trial, subscription, team and
+   orchestration) belong to the hosted service and are never built by the engine, and four
+@@ -499,6 +519,20 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+ 
+ ### Removed
+ 
++- **Episodic and procedural memory** (owner decision 2026-11-01, measured on 126 real
++  tasks: procedures were never selected into a kernel plan, and episodes, tool/file run
++  logs, never reached the delivered kernel trailer for code queries; decisions, findings
++  and gotchas already live in project knowledge). Gone are `core::episodic_memory`,
++  `core::procedural_memory`, the `memory.episodic` / `memory.procedural` kernel
++  providers, the episode recorded at MCP shutdown and on a completed `ctx_session` task
++  (the `Episode auto-recorded` note), the procedure capacity reclaim and its
++  `Procedures:` line in the consolidation report, the `episodic`/`procedural` lines of
++  `ctx_knowledge action=lifecycle_report` and of the effective-config summary, the doctor
++  capacity checks for both stores, and the `episodes`, `procedures` and `existing_paths`
++  inputs of the dashboard's work analysis (its work view now reports `available: false`).
++  Existing files under `memory/episodes`, `memory/procedures` and
++  `memory/archive/procedures` stay on disk; nothing reads them, and only the existing
++  orphaned-project prune still removes a removed project's episode file.
+ - **Dormant Context Kernel code without a caller:** `enforce_plan` (the mode never reached
+   filtering), `activation::should_suppress_in_mode`, `health::format_health` and
+   `health_api::one_line_status`. No command, route or tool output changes.
+@@ -569,9 +603,27 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   always uses the static layout. `ctx_metrics` no longer prints the cali
+```
+
+**File**: `CONTRACTS.md` (modified, +1/-1)
+```diff
+@@ -306,7 +306,7 @@ Interfaces for external integrations and future plugin system.
+ 
+ ### CompressionPattern (planned v1)
+ 
+-- **Status**: Interface extracted from `rust/src/core/patterns/mod.rs`
++- **Status**: Interface extracted from the `lean-ctx-patterns` crate (`rust/crates/lean-ctx-patterns/src/lib.rs`)
+ - **Future**: Plugin-loadable compression patterns for proprietary CLI tools
+ 
+ ### LcpTool (planned v1)
+```
+
+**File**: `CONTRIBUTING.md` (modified, +2/-2)
+```diff
+@@ -190,14 +190,14 @@ lean-ctx/
+ 
+ ### Add a shell compression pattern
+ 
+-1. Add a new module in `rust/src/core/patterns/<tool>.rs`
++1. Add a new module in `rust/crates/lean-ctx-patterns/src/<tool>.rs` (the `lean-ctx-patterns` crate)
+ 2. Implement:
+ 
+ ```rust
+ pub fn compress(command: &str, output: &str) -> Option<String>
+ ```
+ 
+-3. Register the module + routing in `rust/src/core/patterns/mod.rs` (`try_specific_pattern`)
++3. Register the module + routing in `rust/crates/lean-ctx-patterns/src/lib.rs` (`PATTERNS`, routed by `try_specific_pattern_with`)
+ 4. Add tests (unit tests in the module or integration tests in `rust/tests/`)
+ 5. Run the quality checks above
  
 ```
 
-**File**: `AGENTS.md` (modified, +7/-19)
+**File**: `PUBLISH_MANIFEST.toml` (modified, +334/-4)
 ```diff
-@@ -110,10 +110,11 @@ lean-ctx automatically persists session context across restarts:
- - **Files**: Touched files with summaries and modification status
- - **Progress**: Task completion state and next steps
- 
--This data is delivered through the first tool call's `--- AUTO CONTEXT ---`
--briefing (default `minimal_overhead = true`: initialize instructions stay
--byte-stable for provider prompt caching, #498). With `minimal_overhead = false`
--it is additionally injected at session start via the `ACTIVE SESSION` LITM block.
-+This data is delivered as a `--- AUTO CONTEXT ---` briefing on the first
-+`ctx_session` call with `action="load"`, `"status"` or `"show"` — never
-+prepended to other tool results, which stay deterministic for provider prompt
-+caching (#498). With `minimal_overhead = false` it is additionally injected at
-+session start via the `ACTIVE SESSION` LITM block.
- 
- Continuity is per agent: the briefing (last task, recent decisions), session
- findings in `ctx_knowledge search` and every other session-continuity read come
-@@ -247,28 +248,15 @@ change-aware fast gate (the pre-push hook runs it too).
- ## Output Determinism (#498)
- 
- Tool outputs MUST be deterministic functions of (file content, mode, CRP mode, task).
--Provider-side prompt caching (Anthropic 90%, OpenAI 50% discount) rewards byte-stable text;
-+Provider-side prompt caching (a cache hit bills at 0.1× input on Anthropic and OpenAI GPT-5.6+,
-+a miss rewrites the prefix at 1.25× or more) rewards byte-stable text;
- any timestamp, counter or random element in tool output bodies defeats it.
- 
- - No timestamps/counters in output bodies. Artifact paths are content-addressed
-   (see `save_tee`: `{cmd_slug}_{blake3(cmd)[..8]}.log`).
- - Dynamic additions (hints, checkpoints) only as state-triggered suffixes with stable headers.
- - Regression guard: determinism tests in `ctx_read/tests.rs`, `ctx_search.rs`, `shell/redact.rs`.
- 
--<!-- lean-ctx -->
--## lean-ctx
--
--lean-ctx is active — the MCP tools replace native equivalents.
--Full rules: LEAN-CTX.md (open on demand — do not auto-load).
--<!-- /lean-ctx -->
--<!-- lean-ctx-compression -->
--OUTPUT STYLE: concise
--- Bullet points over paragraphs
--- Skip filler words and hedging ("I think", "probably", "it seems")
--- 1-sentence explanations max, then code/action
--- No repeating what the user said
--<!-- /lean-ctx-compression -->
--
- ## LeanCTX Context Gateway product-scope, source-security and IP guard — REQUIRED FOR ALL AGENTS
- 
- Before **any** LeanCTX code, docs, connectors, SDK, EE, CI, packaging, refactor or release work, read `.agents/skills/leanctx-ip-governance/SKILL.md` and its **PRODUCT_SCOPE**, **CONNECTOR_AND_DECISION_SECURITY**, IP/licensing and release references. The product is the **Context Gateway for AI Systems** (Select → Control → Prove), not a general model router, agent orchestration framework or Thinkery OS; team coordination context (presence, leases, workspace bus, shared work graph) is in scope, agent execution and scheduling are not. New features must serve authorized source→ContextDecision→ContextBundle/Receipt, with current ACL/freshness/revocation checks; out-of-scope proposals require founder approval. Classify every affected file by product scope AND source rights. Preserve existing Apache functionality unless a separately approved reversible deprecation plan exists. New proprietary EE remains private; no public push, bulk deletion, history rewriting, relicense, CLA change or IP transfer claim without documented owner/legal/release authority. Respect stronger repository rules, preserve other agents' worktrees, record evidence and test security/compatibility. No public release credentials in agent workspaces.
+@@ -148,7 +148,6 @@ new_paths = [
+   "rust/src/shell/containment/tests.rs",
+   "rust/src/shell/containment/wire.rs",
+   "rust/src/tools/admitted_sources.rs",
+-  "rust/src/tools/ctx_knowledge/consolidate_admission_tests.rs",
+   "rust/src/tools/ctx_read/file_io_admission_tests.rs",
+   "rust/src/tools/ctx_session/tests.rs",
+   "scripts/agent_tools_compatibility.py",
+@@ -159,6 +158,8 @@ new_paths = [
+   "rust/tests/local_free_invariant.rs",
+   "scripts/check-local-free.py",
+   "tests/delivery/test_check_local_free.py",
++  "tests/hive-e2e/lifecycle.cjs",
++  "tests/hive-e2e/lifecycle.sh",
+   "scripts/check-source-layout.py",
+   "scripts/export-offline-build.py",
+   "scripts/export-secret-gate.py",
+@@ -263,12 +264,16 @@ new_paths = [
+   # Emspace provider (owner go 2026-10-31): read-only connector for the space
+   # a project is linked to via `.emspace`, and the compressor of its CLI
+   # output. Own code, Apache-2.0 SPDX-headed.
+-  "rust/src/core/patterns/emspace.rs",
+   "rust/src/core/providers/emspace.rs",
+   # Knowledge change journal and the ctx_knowledge actions on it (changes,
+   # repin, coverage; owner go 2026-10-31). Own code, Apache-2.0 SPDX-headed.
+   "rust/src/core/knowledge/journal.rs",
+   "rust/src/tools/ctx_knowledge/changes.rs",
++  # Hive capture lifecycle: supersede, withdraw and re-anchor own vault items
++  # after local knowledge changes (owner go 2026-11-01). Own code,
++  # Apache-2.0 SPDX-headed.
++  "rust/src/core/hive/capture/lifecycle.rs",
++  "rust/src/core/hive/capture/lifecycle_tests.rs",
+   "rust/src/core/root_selection.rs",
+   "rust/src/core/audit_trail/checkpoint.rs",
+   "rust/src/core/workspace_authority.rs",
+@@ -1451,7 +1456,6 @@ new_paths = [
+   "rust/src/tools/ctx_edit/applied_edits.rs",
+   # 3.12.1 optplan: governor hook, partial shell runs, lossless collapse,
+   # secret gate, ctx_read symbol (lean-ctx-af, integration/optplan).
+-  "rust/src/core/patterns/lossless_collapse.rs",
+   "rust/src/core/shell_allowlist/partial.rs",
+   "rust/src/hook_handlers/govern/bash.rs",
+   "rust/src/hook_handlers/govern/diagnostics.rs",
+@@ -1462,7 +1466,6 @@ new_paths = [
+   "rust/src/hooks/agents/claude_governor.rs",
+   "rust/src/tools/registered/ctx_read_symbol.rs",
+   # 3.12.1 optplan R4: template collapse of repetitive output (lean-ctx-af).
+-  "rust/src/core/patterns/template_collapse.rs",
+   # 3.12.1 shell-security policy resolved from the real user config (lean-ctx-af).
+   "rust/src/core/config/shell_policy.rs",
+   "rust/src/core/shell_allowlist/enforcement_patterns.rs",
+@@ -1532,6 +1535,193 @@ new_paths = [
+   "rust/tests/fixtures/v3/task-spine-v1/tasks/task-010-database-migration/execution_receipt.json",
+   "rust/tests/fixtures/v3/task-spine-v1/tasks/task-010-database-migration/outcome.json",
+   "rust/tests/fixtures/v3/task-spine-v1/tasks/task-010-database-migration/task_envelope.json",
++  "rust/crates/lean-ctx-patterns/Cargo.toml",
++  "rust/crates/lean-ctx-patterns/README.md",
++  "rust/crates/lean-ctx-patterns/src/alembic.rs",
++  "rust/crates/lean-ctx-patterns/src/ansi.rs",
++  "rust/crates/lean-ctx-patterns/src/ansible.rs",
++  "rust/crates/lean-ctx-patterns/src/argocd.rs",
++  "rust/crates/lean-ctx-patterns/src/artisan.rs",
++  "rust/crates/lean-ctx-patterns/src/aws.rs",
++  "rust/crates/lean-ctx-patterns/src/bazel.rs",
++  "rust/crates/lean-ctx-patterns/src/buf.rs",
++  "rust/crates/lean-ctx-patterns/src/bun.rs",
++  "rust/crates/lean-ctx-patterns/src/cargo.rs",
++  "rust/crates/lean-ctx-patterns/src/clang.rs",
++  "rust/crates/lean-ctx-patterns/src/cmake.rs",
++  "rust/crates/lean-ctx-patterns/src/composer.rs",
++  "rust/crates/lean-ctx-patterns/src/cosign.rs",
++  "rust/crates/lean-ctx-patterns/src/curl.rs",
++  "rust/crates/lean-ctx-patterns/src/dbt.rs",
++  "rust/crates/lean-ctx-patterns/src/deno.rs",
++  "rust/crates/lean-ctx-patterns/src/deploy.rs",
++  "rust/crates/lean-ctx-patterns/src/deps_cmd.rs",
++  "rust/crates/lean-ctx-patterns/src/docker.rs",
++  "rust/crates/lean-ctx-patterns/src/dotnet.rs",
++  "rust/crates/lean-ctx-patterns/src/emspace.rs",
++  "rust/crates/lean-ctx-patterns/src/env_filter.rs",
++  "rust/crates/lean-ctx-patterns/src/eslint.rs",
++  "rust/crates/lean-ctx-patterns/src/fd.rs",
++  "rust/crates/lean-ctx-patterns/src/find.rs",
++  "rust/crates/lean-ctx-patterns/src/flutter.rs",
++  "rust/crates/lean-ctx-patterns/src/flyway.rs",
++  "rust/crates/lean-ctx-patterns/src/gem.rs",
++  "rust/crates/lean-ctx-patterns/src/gh.rs",
++  "rust/crates/lean-ctx-patterns/src/git/commit.rs",
++  "rust/crates/lean-ctx-patterns/src/git/diff.rs",
++  "rust/crates/lean-ctx-patterns/src/git/log.rs",
++  "rust/crates/lean-ctx-patterns/src/git/mod.rs",
++  "rust/crates/lean-ctx-patterns/src/git/parser.rs",
++  "rust/crates/lean-ctx-patterns/src/git/status.rs",
++  "rust/crates/lean-ctx-patterns/src/glab.rs",
++  "rust/crates/lean-ctx-patterns/src/golang.rs",
++  "rust/crates/lean-ctx-patterns/src/grep.rs",
++  "rust/crates/lean-ctx-patterns/src/grype.rs",
++  "rust/crates/lean-ctx-patterns/src/helm.rs",
++  "rust/crates/l
 ```
 
-**File**: `CHANGELOG.md` (modified, +304/-1)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -6,8 +6,119 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+@@ -170,7 +170,7 @@ Keep useful task records and discover relationships between code and local
+ knowledge. Learning here means context continuity; it does not train your model.
  
- ## [Unreleased]
- 
-+### Security
-+
-+- **Native Read and Grep now follow the secret-path rule.** `ctx_read` and `ctx_search`
-+  refused `.env`, keys and credential files, but the host's own Read and Grep did not:
-+  Claude Code keeps the Read redirect off and the redirect hook passed `.env` straight to
-+  the native tool. The PreToolUse `hook redirect` now denies a native read or search whose
-+  file, search root, file glob or symlink target is secret-like, with the same detector,
-+  role switch (`io.allow_secret_paths`), warn/enforce mode and policy event as `ctx_read`,
-+  in Hybrid mode and on the shadow surface too, on Claude Code, CodeBuddy, Cursor, Copilot
-+  CLI and Gemini CLI. Behaviour change: native reads of files such as `*.pem` test
-+  certificates or a `.npmrc` are now denied under the default role; allow them through the
-+  role. Not covered: a directory-wide search, shell reads (`cat .env`), Windsurf and
-+  Antigravity; see Security & Governance §4.0.
-+
-+- **LeanCTX approves a shell command only when your AI tool would have run it without
-+  asking.** The shell and file hooks answered "allow" for every call they passed through or
-+  wrapped, which skipped the AI tool's permission prompt for any command. They now mirror the
-+  AI tool's own decision instead of granting one. Claude Code gets every rewrite, with "allow"
-+  only when its permission settings (allow rules, its built-in read-only commands,
-+  `bypassPermissions`) would have run the original command without a prompt; a command that a
-+  deny or ask rule names, or may name, is left unchanged so the rule still applies. Cursor,
-+  Copilot CLI and Codex, which take a rewrite only as an approval, get one only for a fixed set
-+  of side-effect-free commands (`git status`/`log`/`diff`/`show`, `cat`, `ls`, `grep`, `rg`,
-+  `find` without actions, …); builds, tests and every other command run unchanged under their
-+  own approval. Gemini CLI never gets an approval, and a command its settings allow or
-+  restrict by name is left unchanged. Unhandled calls and the timeout fallback carry no
-+  decision.
-+- **`report-issue` redacts secrets before a report can become a public issue.** The whole
-+  report body, including the raw tee excerpt that `--include-tee` attaches, now goes through
-+  the engine's secret redaction (tokens, keys, credentials become `[REDACTED:…]`), whatever
-+  the role or `[secret_detection]` settings; before, only home paths and the user name were
-+  masked. The GitHub token it asks for when `gh` is missing is read without echo.
-+- **PathJail writes stay in the active project by default.** The default `path_jail_scope`
-+  is `projects` again instead of `home`: every project below `~` stays readable, but tools
-+  write only in the session's project, host-declared roots and allowed paths, so an agent
-+  working in one repository can no longer plant `~/code/other/.git/hooks/pre-commit`.
-+  `lean-ctx config set path_jail_scope home` (or `LEAN_CTX_PATH_JAIL_SCOPE=home`) restores
-+  the 3.11.3 behaviour, and `lean-ctx doctor` and the server's startup warning now list it as
-+  a jail relaxation. The Claude Code and CodeBuddy auto-memory exception
-+  (`.claude/projects/<slug>/memory/`) now applies only under your own home directory (or
-+  `CLAUDE_CONFIG_DIR`), not to a look-alike directory anywhere on disk. Upgrade note: see the
-+  upgrade guide.
-+- **`ctx_multi_repo add_root` passes PathJail.** The root was taken from the raw `path`
-+  argument, so an agent could register `/` or `~` and then search and read it through
-+  `repo=<alias>`. The root is now resolved through the jail like every other path argument,
-+  and a root the jail refuses is not registered; `allow-path` and the other allow entries
-+  still admit one.
-+- **Project policies cannot drop the security defaults.** A project's
-+  `.lean-ctx/policies.json` replaced the built-in exclusions for `.env*`, private keys and
-+  credentials, and a later `Pin` or `Include` overrode them. The security defaults are now
-+  always loaded ahead of the project's policies (a project policy reusing their names is
-+  ignored), and their `Exclude` wins over any later action.
-+- **`ctx_patch op="replace_all"` writes through the shared edit boundary.** It now takes the
-+  per-file lock before reading, reads with the edit size cap and symlink refusal, refuses to
-+  write when the file changed since it was read (TOCTOU guard), keeps the file's permissions
-+  and invalidates the read dedup state, like every other `ctx_edit` and `ctx_patch` write.
-+- **No approximate edit after a lossy read.** When the last read of a file was a compressed or
-+  reduced view (`map`, `signatures`, `aggressive`, `entropy`, `task`, density or reference
-+  modes), `ctx_edit` applies only an exact match against the file on disk; the
-+  whitespace-tolerant and re-indent matchers are skipped, and a miss asks for a re-read with
+ - **Session memory (CCP)**: persist task/facts/decisions across chats — structured recovery queries survive compaction
+-- **Knowledge graph**: temporal facts with validity windows, episodic + procedural memory
++- **Knowledge graph**: temporal facts with validity windows, relations and lifecycle
+ - **Property Graph**: multi-edge code graph (imports, calls, exports, type_ref) powers impact analysis and search ranking
+ - **Permission-bound reuse:** access and retention rules still apply when stored
+   context is retrieved. Experimental `.ctxpkg` export is described under Research below.
 ```
 
-**File**: `LEAN-CTX.md` (modified, +9/-14)
+**File**: `SBOM.cdx.json` (modified, +204/-24)
 ```diff
-@@ -1,29 +1,24 @@
- <!-- lean-ctx-owned: PROJECT-LEAN-CTX.md v1 -->
- <!-- lean-ctx-rules -->
--<!-- version: 12 -->
--
--CRITICAL: ALWAYS use lean-ctx ctx_* tools as mapped below.
-+<!-- version: 13 -->
- 
- LeanCTX (lean-ctx) — Context Gateway for AI Systems.
- 
--ACTUALLY EMIT the ctx_* tool call (ctx_compose first) — describing a tool is not calling it.
--
--MANDATORY MAPPING:
-+lean-ctx routing — the host's built-in tools map to:
- • Read/cat -> ctx_read(path, mode)
- • Grep -> ctx_search(pattern, path)
- • Shell/bash -> ctx_shell(command)
- • Glob/find -> ctx_glob(pattern)
- • ls/find -> ctx_tree(path, depth)
-+This covers built-in file/search/shell tools only; other MCP servers keep their own jobs.
- 
--NEVER use built-in Read/Grep/Shell/Glob for these jobs. SELF-CORRECT: the moment you reach for one, stop and call the ctx_* tool instead. Other MCP servers keep their own jobs.
-+Call the tool; describing a call does not run it.
- 
--Tool selection by intent:
--• Orient / understand code (call FIRST) -> ctx_compose
--• Read a file -> ctx_read(path, mode=signatures|map|full); edit after reading -> ctx_patch
--• Exact symbol -> ctx_search(action=symbol); pattern -> ctx_search; by meaning -> ctx_search(action=semantic)
--• Files by glob -> ctx_glob; structure -> ctx_tree; callers/impact -> ctx_callgraph
--• Verify after edits -> ctx_shell(test/build); memory -> ctx_session / ctx_knowledge
--Semantic questions -> search tools, not whole-file reads: reading more ≠ understanding more.
-+By task:
-+• Unfamiliar code -> ctx_compose (search + read + symbols in one call)
-+• Read -> ctx_read(mode=signatures|map|full); edit -> ctx_patch
-+• Symbol -> ctx_search(action=symbol); meaning -> ctx_search(action=semantic)
-+• Callers/impact -> ctx_callgraph; memory -> ctx_session / ctx_knowledge
- 
- AGENT LOOP (phase -> tool):
- • Orient — understand before acting -> ctx_compose
+@@ -1,6 +1,54 @@
+ {
+   "bomFormat": "CycloneDX",
+   "components": [
++    {
++      "bom-ref": "path+file://./rust/crates/lean-ctx-compress#0.1.0",
++      "description": "Deterministic text compressors (Markdown, JSON, CSV/TSV, YAML, HTML) for the LeanCTX Engine.",
++      "externalReferences": [
++        {
++          "type": "website",
++          "url": "https://leanctx.com"
++        },
++        {
++          "type": "vcs",
++          "url": "https://github.com/yvgude/lean-ctx"
++        }
++      ],
++      "licenses": [
++        {
++          "expression": "Apache-2.0"
++        }
++      ],
++      "name": "lean-ctx-compress",
++      "purl": "pkg:cargo/lean-ctx-compress@0.1.0?download_url=file://crates/lean-ctx-compress",
++      "scope": "required",
++      "type": "library",
++      "version": "0.1.0"
++    },
++    {
++      "bom-ref": "path+file://./rust/crates/lean-ctx-fs#0.1.0",
++      "description": "Filesystem and environment foundation for the LeanCTX Engine: atomic writes, file locks, hashing, JSONC, home resolution.",
++      "externalReferences": [
++        {
++          "type": "website",
++          "url": "https://leanctx.com"
++        },
++        {
++          "type": "vcs",
++          "url": "https://github.com/yvgude/lean-ctx"
++        }
++      ],
++      "licenses": [
++        {
++          "expression": "Apache-2.0"
++        }
++      ],
++      "name": "lean-ctx-fs",
++      "purl": "pkg:cargo/lean-ctx-fs@0.1.0?download_url=file://crates/lean-ctx-fs",
++      "scope": "required",
++      "type": "library",
++      "version": "0.1.0"
++    },
+     {
+       "bom-ref": "path+file://./rust/crates/lean-ctx-ocla#4.0.0",
+       "description": "Open Context & Token Lifecycle Architecture \u2014 the provider-neutral contract boundary (capability traits, canonical types, token envelopes) shared between lean-ctx-core (OSS) and lean-ctx-enterprise (proprietary).",
+@@ -21,6 +69,30 @@
+       "type": "library",
+       "version": "4.0.0"
+     },
++    {
++      "bom-ref": "path+file://./rust/crates/lean-ctx-patterns#0.1.0",
++      "description": "Deterministic shell-output compression patterns and token counting for the LeanCTX Engine.",
++      "externalReferences": [
++        {
++          "type": "website",
++          "url": "https://leanctx.com"
++        },
++        {
++          "type": "vcs",
++          "url": "https://github.com/yvgude/lean-ctx"
++        }
++      ],
++      "licenses": [
++        {
++          "expression": "Apache-2.0"
++        }
++      ],
++      "name": "lean-ctx-patterns",
++      "purl": "pkg:cargo/lean-ctx-patterns@0.1.0?download_url=file://crates/lean-ctx-patterns",
++      "scope": "required",
++      "type": "library",
++      "version": "0.1.0"
++    },
+     {
+       "bom-ref": "path+file://./rust/crates/lean-ctx-protocol#0.4.0",
+       "description": "Open wire contracts for lean-ctx: events, observations, assignments, evidence gaps.",
+@@ -41,6 +113,54 @@
+       "type": "library",
+       "version": "0.4.0"
+     },
++    {
++      "bom-ref": "path+file://./rust/crates/lean-ctx-syntax#0.1.0",
++      "description": "Tree-sitter based code structure for the LeanCTX Engine: signatures, deep AST queries, import resolution and the post-edit syntax gate.",
++      "externalReferences": [
++        {
++          "type": "website",
++          "url": "https://leanctx.com"
++        },
++        {
++          "type": "vcs",
++          "url": "https://github.com/yvgude/lean-ctx"
++        }
++      ],
++      "licenses": [
++        {
++          "expression": "Apache-2.0"
++        }
++      ],
++      "name": "lean-ctx-syntax",
++      "purl": "pkg:cargo/lean-ctx-syntax@0.1.0?download_url=file://crates/lean-ctx-syntax",
++      "scope": "required",
++      "type": "library",
++      "version": "0.1.0"
++    },
++    {
++      "bom-ref": "path+file://./rust/crates/lean-ctx-workgraph#0.1.0",
++      "description": "Bounded multi-agent work graph, budget cascade and outcome evaluation model for the LeanCTX Engine.",
++      "externalReferences": [
++        {
++          "type": "website",
++          "url": "https://leanctx.com"
++        },
++        {
++          "type": "vcs",
++          "url": "https://github.com/yvgude/lean-ctx"
++        }
++      ],
++      "licenses": [
++        {
++          "expression": "Apache-2.0"
++        }
++      ],
++      "name": "lean-ctx-workgraph",
++      "purl": "pkg:cargo/lean-ctx-workgraph@0.1.0?download_url=file://crates/lean-ctx-workgraph",
++      "scope": "required",
++      "type": "library",
++      "version": "0.1.0"
++    },
+     {
+       "bom-ref": "path+file://./rust/crates/leanctx-native-storage#0.1.1",
+       "description": "Handle-bound native storage primitives shared by LeanCTX components",
+@@ -16749,8 +16869,13 @@
+         "registry+https://github.com/rust-lang/crates.io-index#http@1.5.0",
+         "registry+https://github.com/rust-lang/crates.io-index#ignore@0.4.30",
+         "registry+https://github.com/rust-lang/crates.io-index#keyring@3.6.3",
++        "path+file://./rust/crates/lean-ctx-compress#0.1
 ```
 
-**File**: `PUBLISH_MANIFEST.toml` (modified, +42/-3)
+---
+
+### Incident Patch 3: `7c9025c4` (2026-11-02)
+**Commit Message**: fix: 3.12.1 Hive C0 2.1/2.2, agents talk to agents, humans observe (#2173)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +103/-12)
 ```diff
-@@ -436,7 +436,6 @@ new_paths = [
-   # protocol types and C0 hive/hive-v2 fixtures, engine metrics v2, consent helper,
-   # shell approval, tasks, knowledge import and their tests: own work under Apache-2.0.
-   # PROPOSED by the release rehearsal: the owner confirms this list before the export.
--  "docs/architecture/gateway-no-lockout.md",
-   "rust/crates/lean-ctx-protocol/src/hive/anchor.rs",
-   "rust/crates/lean-ctx-protocol/src/hive/automerge.rs",
-   "rust/crates/lean-ctx-protocol/src/hive/codegraph.rs",
-@@ -1457,6 +1456,34 @@ new_paths = [
-   "rust/src/cli/dispatch/cockpit_hint.rs",
-   "rust/src/cli/dispatch/network/cockpit_start.rs",
-   "rust/src/dashboard/launch.rs",
-+  # 3.12.1: failure-template scrubber, ctx_edit repeats, withheld audit and
-+  # report export, hook permission mirroring (engine/engine-fix).
-+  "rust/examples/retemplate_failure_messages.rs",
-+  "rust/src/cli/report_export.rs",
-+  "rust/src/core/failure_template_tests.rs",
-+  "rust/src/core/failure_vocabulary.rs",
-+  "rust/src/hook_handlers/claude_permissions.rs",
-+  "rust/src/hook_handlers/claude_permissions_tests.rs",
-+  "rust/src/hook_handlers/gemini_permissions.rs",
-+  "rust/src/hook_handlers/safe_commands.rs",
-+  "rust/src/hook_handlers/safe_commands_tests.rs",
-+  "rust/src/tools/ctx_edit/applied_edits.rs",
-+  # 3.12.1 optplan: governor hook, partial shell runs, lossless collapse,
-+  # secret gate, ctx_read symbol (lean-ctx-af, integration/optplan).
-+  "rust/src/core/patterns/lossless_collapse.rs",
-+  "rust/src/core/shell_allowlist/partial.rs",
-+  "rust/src/hook_handlers/govern/bash.rs",
-+  "rust/src/hook_handlers/govern/diagnostics.rs",
-+  "rust/src/hook_handlers/govern/enforce.rs",
-+  "rust/src/hook_handlers/govern/mod.rs",
-+  "rust/src/hook_handlers/govern/tests.rs",
-+  "rust/src/hook_handlers/secret_gate.rs",
-+  "rust/src/hooks/agents/claude_governor.rs",
-+  "rust/src/tools/registered/ctx_read_symbol.rs",
-+  # 3.12.1: the shared `cargo fast` alias (only the alias, no [build] job budget),
-+  # so fresh clones can run `make build`; the root .cargo/config.toml stays private.
-+  "rust/.cargo/config.toml",
-+  "tests/build/test_cargo_alias.py",
- ]
+@@ -346,6 +346,33 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
  
- # Public paths the export no longer carries: each one is a feature sunset with
-@@ -1879,6 +1906,18 @@ removed_paths = [
-   "rust/src/setup/agent_select.rs",
-   # 3.12.0 PROPOSED (owner confirms): the proxy /dashboard page now points to `lean-ctx cockpit`.
-   "rust/src/proxy/web_app/dashboard.html",
-+  # 3.12.1: the Visualizer page, unused since `visualize` was removed in 3.12.0;
-+  # `cockpit --export` writes the Cockpit report (cli/report_export.rs).
-+  "rust/src/assets/visualizer.html",
-+  "rust/src/cli/visualize_cmd.rs",
-+  "rust/src/core/visualizer.rs",
-+  # 3.12.1 optplan: no Pro paths in the open engine; context ranking, memory
-+  # selection and read strategy are local and free (2c38e03e05, 4f3ecaa5f1).
-+  "rust/src/core/context_store/policy_store.rs",
-+  "rust/src/core/intelligence_runtime/context_policy.rs",
-+  "rust/src/core/intelligence_runtime/context_selection.rs",
-+  "rust/src/core/intelligence_runtime/memory_curation.rs",
-+  "rust/src/tools/ctx_compose_selection.rs",
- ]
+ ### Changed
  
- include = [
-@@ -1957,7 +1996,7 @@ forbidden_prefixes = [
- # the canonical registry changes (scripts/check-capabilities.py checks the pin).
- [[generated]]
- path = "product/capabilities.toml"
--sha256 = "c241ccc39d56dd29db7c70805d73912052ff9b2cd32286a8e2e714f06135db0b"
-+sha256 = "1fed7ac3a656c34351259279ef22897c47ae5fd88efd92956e9140be0cfdae38"
- required = true
- 
- # The public source layout: `scripts/check-source-layout.py --project
-@@ -1966,7 +2005,7 @@ required = true
- # product/source-layout.json changes.
- [[generated]]
- path = "docs/reference/generated/product-capabilities.md"
--sha256 = "aabdc717811e7d8ed694d6b471cff5b9e7a92befcc0f2602e9ccfc2f2c3df7f3"
-+sha256 = "64b36affde791d759d115766fdd93433994cc03a366ffad4865757b8806f30c0"
- required = true
- 
- [[generated]]
++- **The engine speaks Hive-Protocol 2.2: agents check each other's task results.** Every
++  Hive request sends `Hive-Protocol: 2.2`; the engine records the minor Hive answers (2.0,
++  2.1 or 2.2) at engine start and writes the 2.2 shapes only to a 2.2 Hive: a captured
++  decision now carries its anchors there. A task result leaves the task `submitted` until
++  another agent checks it: `ctx_tasks action=verify verdict=accept|reject` (a reject names
++  its reason and opens the task again; Hive refuses the agent that did the work). Hive's
++  new `task.event` bus frame reaches every engine of the vault: the engine refreshes its
++  task list and tells its own agents on the local bus, every agent of the project when a
++  task is open (again), and every agent but the one that did the work when a result waits
++  for its check. The vault bus knows six message types (`question`, `offer`, `handoff`,
++  `finding`, `answer` and `progress` as a status line); `need`, `claim`, `result`, the
++  progress `goal` and `~` swarm addresses are gone. The consent kinds `procedure_confirm`
++  and `reviewer_enable` are gone with Hive's review gates; the engine never runs a shared
++  procedure's commands (delivery shows its title and steps). A delivered vault item no longer has an `[unconfirmed]` bucket, and the
++  knowledge state follows the 2.2 vectors (no `unconfirmed` reason).
++- **The engine speaks Hive-Protocol 2.1.** Every Hive request, the enrollment included,
++  sends `Hive-Protocol: 2.1`. Hive answers a 2.1 enrollment with key set v3; the engine
++  accepts it and checks it, and the lease it signs, as it checks every stored v3 set (the
++  lease key is the v3 key of purpose `policy`). Enrollments with key set v1 keep working.
++- **Hive's TOML org policy is no longer read.** Hive-Protocol 2.1 has none: the engine
++  ignores `org_policy`, `unpin` and `policy_version` in the policy bundle and the lease's
++  `policy_signer_keys`, installs no org policy from Hive and no longer refuses a bundle that
++  drops one ("drops the org policy without a signed unpin"). Org-policy state an older
++  engine kept in `<data_dir>/hive/policy/` is ignored and dropped on the next save, so it can
++  never refuse a bundle. Hive filter packs are verified and applied as before. `hive status`
++  no longer prints a "Company policy" or "Required" line, `hive status --json` has no
++  `policy` field, and `hive sync` reports "Policy bundle verified (N filter packs)".
+ - **`ctx_search` drops the `[∈ enclosing symbol → …]` legend line.** The `∈name@Lstart`
+   tags on hits stay — agents read those symbols by name and line — but no agent in the
+   benchmark transcripts used the `handle=` form the legend described; it cost about 30
+@@ -439,13 +466,43 @@ Current positioning: [LeanCTX Engine — Context Gateway for AI Systems](docs/PO
+   have no effect (see Deprecated); `autopilot evidence` still shows the local evidence. The config key
+   `intelligence_runtime.context_policy_apply` is still accepted but has no effect, and a
+   previously promoted policy file under `context-policy/` in the data directory is ignored.
+-- lean-ctx-protocol: `HiveStatusPolicyV1` gains `required_filter_packs` (breaking for
+-  struct literals) → 0.5.0. The version bump, its pins and lockfiles, the SBOM and the
+-  notices follow in the next release preparation. With the same bump, the status output
+-  types (`HiveCliStatusV1`, `HiveStatusPolicyV1` and their siblings) drop
+-  `deny_unknown_fields` (or become `#[non_exhaustive]`), as the contract's convention for
+-  response types says, so later additive fields are not breaking for typed readers.
+-  The same bump removes `hive::compute` (Hive Task Compute was retired).
++- lean-ctx-protocol → 0.5.0 (breaking). The version bump, its pins and lockfiles, the SBOM
++  and the notices follow in the next release preparation. The status output types
++  (`HiveCliStatusV1` and its siblings) drop `deny_unknown_fields` (or become
++  `#[non_exhaustive]`), as the contract's convention for response types says, so later
++  additive fields are not breaking for typed readers. The same bump removes
++  `hive::compute` (Hive Task Compute), and with Hive Protocol 2.1 also
++  `hive::swarm`, the swarm network and sender (`NetworkV1::Swarm`, `SenderV1::Swarm`,
++  `NetworkKind`; `MessageBodyV1::validate` takes no network), swarm handles and limits
++  (`profiles::HandleV1`, `HANDLE_SCHEMA`, `SWARM_LIMITS`, `handle_ok`),
++  `EngineOptinV1.topics` and `TaskOriginKind::QuarantineTimeout` (a task naming it parses
++  as `Unknown`). `EnrollmentV1.keys` becomes `EnrollmentKeySet`: key set v1 (`kid`) or v3
++  (`HiveKeySetV3`, `key_id` and `purposes`, told apart by `schema`), and `validate()`
++  checks that the lease `kid` names a lease key of the set. The TOML org policy is gone:
++  `PolicyBundleV1` loses `org_policy`, `unpin` and `policy_version`, `HiveLeaseV1` 
 ```
 
-**File**: `SECURITY.md` (modified, +9/-9)
+**File**: `PUBLISH_MANIFEST.toml` (modified, +59/-315)
 ```diff
-@@ -44,16 +44,16 @@ lean-ctx enforces a **filesystem boundary** for tool I/O:
- 
- - **PathJail**: all tool path inputs are resolved (symlinks and `..` included) and checked
-   against the jail scope (`path_jail_scope`, global-only):
--  - `home` (default since v3.11.1; read **and write** below `~` since v3.11.3): every path
--    below the user's home directory, except the protected zones — every top-level dot entry (`~/.ssh`, `~/.aws`, `~/.gnupg`,
-+  - `projects` (default; also the default of v3.11.1–v3.11.2): only paths inside a project
-+    below `~` (a folder between it and `~` holds `.git`, `Cargo.toml`, `package.json` or another
-+    project marker) are readable; loose personal files stay jailed, and writes stay limited to
-+    the session's project, host-declared roots and explicit allow entries.
-+  - `home` (opt-in; the default of v3.11.3–v3.12.0, reported as a jail relaxation): every path
-+    below the user's home directory, read **and write**, except the protected zones — every top-level dot entry (`~/.ssh`, `~/.aws`, `~/.gnupg`,
-     `~/.config`, shell rc files, other agents' `~/.claude` / `~/.codex` / `~/.cursor`),
-     `~/Library`, `~/AppData` / `NTUSER.DAT*` and `~/snap`. Everything outside `~` stays jailed.
-     Zones are a hard deny: a root or allow entry that merely contains a zone does not open it.
-     An implausible `$HOME` (`/`, `/root`, `/tmp`, not owned by the user) disables the scope.
--  - `projects` (the default of v3.11.1–v3.11.2): only paths inside a project below `~` (a folder
--    between it and `~` holds `.git`, `Cargo.toml`, `package.json` or another project marker) are
--    readable; loose personal files stay jailed, and writes stay limited to the session's project,
--    host-declared roots and explicit allow entries.
-   - `project`: only the current `project_root` plus the explicit allow roots below.
-   - If a path would escape, the call fails naming the single command that admits it
-     (`lean-ctx allow-path <dir>`) and asks the agent to defer to the user.
-@@ -285,11 +285,11 @@ proof of OS isolation. Inspect `rust/src/core/sandbox.rs` for the release in use
- - **interpreter inline-code blocking**: `bash -c`, `sh -c`, `python -c`, `node -e`, … are rejected (including via delegation wrappers like `env`, `timeout`, `xargs`) — quoting a payload inside `bash -c '…'` does not bypass the file-write or allowlist checks because the interpreter call itself is refused,
- - file-write detection (`>`, `>>`, `tee`, heredoc-to-file, `dd of=`, `curl -o/-O`, `wget` to file) — output capture (`>`, `>>`, `tee`) may go to the session's project, `allow_paths` / `extra_roots`, `write_allow_paths` or a scratch path (never `/`, `~`, an ancestor of `~` or a `read_only_roots` entry); downloads only to scratch paths and `write_allow_paths`; everything else belongs to the editor's native Write/Edit tools where the agent's permission UI governs them,
- - dangerous-flag blocking (`git --upload-pack`, `tar --to-command`, `find -exec`, `awk system()`), inline env hijack blocking (`PATH=`, `LD_PRELOAD=`, `GIT_SSH_COMMAND=`, …), and dangerous env-key filtering on the MCP `env` parameter,
--- **no self-loosening** (allowlist mode, the default): lean-ctx subcommands that widen its own guardrails — `yolo`, `allow <cmd>`, `allow-path <dir>`, `trust`, `security open`, `security secrets off`, `config set` of a security or path/allowlist key — are refused, so an agent cannot undo a refusal it just received. Listing, `--remove`, `secure`, `untrust` and `security secrets on` still run. The user runs the blocked commands in their own terminal (warn-only there, see below). `ctx_execute` is not covered — see the next paragraph.
-+- **no self-loosening** (allowlist mode, the default): lean-ctx subcommands that widen its own guardrails — `yolo`, `allow <cmd>`, `allow-path <dir>`, `trust`, `security open`, `security secrets off`, `config set` of a security or path/allowlist key — are refused, so an agent cannot undo a refusal it just received. Listing, `--remove`, `secure`, `untrust` and `security secrets on` still run. The user runs the blocked commands in their own terminal (warn-only there, see below). Shell code in `ctx_execute` is covered as well — see the next paragraph.
- 
- Enforcement applies to the MCP path, hook-child mode and every non-interactive CLI invocation; an interactive human terminal gets a warning instead (`LEAN_CTX_ALLOWLIST_WARN_ONLY=1` opts out explicitly). Cloud/infra mutation CLIs (terraform, kubectl, aws, …) are excluded from the default allowlist and require per-tool opt-in (`lean-ctx allow <cmd>`). Commands inside a substitution in an argument (`$(…)`, backticks, `<(…)`/`>(…)`) are gated like top-level commands in every enforce-mode call. `shell_strict_mode = true` upgrades the remaining warn-only heuristic (pipe to a bare interpreter) to a hard block.
- 
--**`ctx_execute(language=shell)` is deliberately NOT allowlisted (GH #905).** The checks above gate `ctx_shell` and `lean-ctx -c` only. `ctx_execut
+@@ -160,6 +160,10 @@ new_paths = [
+   "tests/delivery/test_check_local_free.py",
+   "tests/hive-e2e/lifecycle.cjs",
+   "tests/hive-e2e/lifecycle.sh",
++  "tests/hive-e2e/bus.cjs",
++  "tests/hive-e2e/bus.sh",
++  "tests/hive-e2e/tasks.cjs",
++  "tests/hive-e2e/tasks.sh",
+   "scripts/check-source-layout.py",
+   "scripts/export-offline-build.py",
+   "scripts/export-secret-gate.py",
+@@ -274,6 +278,8 @@ new_paths = [
+   # Apache-2.0 SPDX-headed.
+   "rust/src/core/hive/capture/lifecycle.rs",
+   "rust/src/core/hive/capture/lifecycle_tests.rs",
++  "rust/src/core/hive/bus/messages_v2.rs",
++  "rust/src/core/hive/bus/task_events.rs",
+   "rust/src/core/root_selection.rs",
+   "rust/src/core/audit_trail/checkpoint.rs",
+   "rust/src/core/workspace_authority.rs",
+@@ -312,7 +318,6 @@ new_paths = [
+   "rust/crates/lean-ctx-protocol/src/hive/lease.rs",
+   "rust/crates/lean-ctx-protocol/src/hive/mod.rs",
+   "rust/crates/lean-ctx-protocol/src/hive/policy.rs",
+-  "rust/crates/lean-ctx-protocol/src/hive/sealed.rs",
+   "rust/crates/lean-ctx-protocol/src/hive/status.rs",
+   "rust/crates/lean-ctx-protocol/src/hive/telemetry.rs",
+   "rust/crates/lean-ctx-protocol/tests/hive_fixtures.rs",
+@@ -344,36 +349,26 @@ new_paths = [
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.forbidden_right.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.instance_limit.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.invalid_state.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.key_exists.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.plan_required.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.proposal_state.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.rate_limited.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.revision_conflict.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.sealed_plaintext.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.upgrade_required.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/error.upload_disabled.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/keyset.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_put.request.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_put.sealed.request.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_revision.response.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/knowledge_revision.sealed.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/lease_envelope.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/metrics.request.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/metrics_ack.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/org_salt.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/policy_bundle.response.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/policy_bundle.signed.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal.request.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal.sealed.request.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal_ack.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal_list.response.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/proposal_view.sealed.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/receipts.request.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/receipts_ack.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/revision_list.response.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/sealed_grant.request.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/sealed_key.response.json",
+-  "rust/crates/lean-ctx-protocol/tests/fixtures/hive/sealed_pending.response.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/status.connected.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/status.lapsed.json",
+   "rust/crates/lean-ctx-protocol/tests/fixtures/hive/status.not_connected.json",
+@@ -399,21 +394,17 @@ new_paths = [
+   "rust/src/core/hive/knowledge/learn.rs",
+   "rust/src/core/hive/knowledge/mod.rs",
+   "rust/src/core/hive/knowledge/pull.rs",
+-  "rust/src/core/hive/knowledge/review.rs",
+   "rust/src/core/hive/knowledge/screening.rs",
+   "rust/src/core/hive/lease.rs",
+   "rust/src/core/hive/link.rs",
+   "rust/src/core/hive/metrics/collect.rs",
+-  "rust/src/core/hive/metrics/local_state.rs",
+   "rust/src/core/hive/metrics/mod.rs",
+-  "rust/src/core/hive/metrics/upload.rs",
+   "rust/src/core/hive/mod.rs",
+   "rust/src/core/hive/outbox.rs",
+   "rust/src/core/hive/policy.rs",
+   "rust/src/core/hive/receipts.rs",
+   "rust/src/core/hive/runtime_lease.rs",
+   "rust/src/core/hive/scheduler.rs",
+-  "rust/src/core/hive/sealed.rs",
+   "rust/src/core/hive/state.rs",
+   "rust/src/c
 ```
 
-**File**: `discord-faq.md` (modified, +1/-1)
+**File**: `SBOM.cdx.json` (modified, +1/-2)
 ```diff
-@@ -136,7 +136,7 @@ If you're using `pi-lean-ctx` (Pi editor), make sure you're on the latest versio
- 3. Check that your project root is correct: `lean-ctx doctor`
- 
- **Q: "path escapes project root" error!**
--Since v3.11.3 everything below your home directory is readable and writable out of the box (`path_jail_scope = "home"`), except protected locations like `~/.ssh`, `~/.aws`, `~/.config` and `~/Library`. If you still see it:
-+Out of the box (`path_jail_scope = "projects"`) every project below your home directory is readable and the active project is writable; protected locations like `~/.ssh`, `~/.aws`, `~/.config` and `~/Library` stay closed. `lean-ctx config set path_jail_scope home` makes all of `~` readable and writable. If you still see it:
- - The error names the fix — usually `lean-ctx allow-path <dir>` for a directory outside `~`, a non-project folder, a sibling project you want to edit, or a protected one like `~/.config/...` (takes effect immediately)
- - Session bound to the wrong project? Run `lean-ctx doctor` — "Project binding" shows a `LEAN_CTX_PROJECT_ROOT` pinned in a global agent config (older setups wrote it); `lean-ctx doctor --fix` removes it, then restart the agent once
- - On an older version: `lean-ctx update`
+@@ -16853,7 +16853,6 @@
+         "registry+https://github.com/rust-lang/crates.io-index#chacha20poly1305@0.10.1",
+         "registry+https://github.com/rust-lang/crates.io-index#chrono@0.4.45",
+         "registry+https://github.com/rust-lang/crates.io-index#clap@4.6.6",
+-        "registry+https://github.com/rust-lang/crates.io-index#curve25519-dalek@4.1.3",
+         "registry+https://github.com/rust-lang/crates.io-index#dashmap@6.2.1",
+         "registry+https://github.com/rust-lang/crates.io-index#dirs@6.0.0",
+         "registry+https://github.com/rust-lang/crates.io-index#ed25519-dalek@2.2.0",
+@@ -20850,7 +20849,7 @@
+       },
+       {
+         "name": "leanctx:cargo-lock-sha256",
+-        "value": "8446a84ff552675ec7d0b9593857c170f8054c3ab03ab9db063d682009a1a73a"
++        "value": "b22136d62dce29b3cfdf7d21b0e9dde9139a6669a17fc3d9c5623476ec59a1a6"
+       }
+     ],
+     "tools": [
 ```
 
-**File**: `docs/POSITIONING_CANONICAL.md` (modified, +5/-5)
+**File**: `THIRD_PARTY_NOTICES` (modified, +4/-4)
 ```diff
-@@ -40,9 +40,8 @@ inside the product. Other deeper lifecycles must not replace the primary story.
- | **LeanCTX Engine** | The runtime implementing context capabilities |
- | **LeanCTX SDK** | The integration surface for embedding supported Engine capabilities |
- | **Context Intelligence** | Context selection and preparation capabilities inside LeanCTX |
--| **Community** | The open-source Engine and its supported local paths, under Apache-2.0 |
--| **Pro** | The released personal hosted-services plan, including Personal Cloud sync/backup and hosted index capacity within the selected plan's limits |
--| **Enterprise** | Commercial organization controls and deployment, scoped to the licensed release and agreement |
-+| **LeanCTX OSS** | The open-source Engine, free and complete on its supported local paths, under Apache-2.0 (formerly "Community") |
-+| **LeanCTX Hive** | The paid version (Personal · Team · Enterprise): control and proof on top of OSS — filter packs, org policy, compliance, Cockpit across engines, shared context and team coordination — scoped to the licensed release and agreement |
- | **SDK / OEM** | Embedding and distribution scope under the applicable SDK/runtime licenses and commercial agreement |
+@@ -2,15 +2,15 @@
+ Schema: leanctx.third-party-notices/v1
+ Status: GENERATED AND APPROVED
+ Content-Digest-Scope: SHA-256 of this file with the Content-Digest value zeroed
+-Content-Digest: sha256:f36be4c688183b9b0ae18ab1bd6ef724d9a0087ea59be850305651a1ba4e5986
++Content-Digest: sha256:0a8eb7cee574a2ea1d964a9b3765d757de915540c97eb8d40722a1b9fd6eb0cf
+ Source inventory: rust/Cargo.lock + cargo metadata --locked --offline --all-features + SBOM.cdx.json + legal/third-party-assets.toml + packages/pi-lean-ctx/package-lock.json
+ Generation command: cargo metadata --locked --offline --all-features --manifest-path rust/Cargo.toml --format-version 1
+ Approval contract: legal/third-party-notices-approval.toml binds approved_content_sha256 to this file's exact SHA-256
+-Cargo.lock SHA-256: 8446a84ff552675ec7d0b9593857c170f8054c3ab03ab9db063d682009a1a73a
++Cargo.lock SHA-256: b22136d62dce29b3cfdf7d21b0e9dde9139a6669a17fc3d9c5623476ec59a1a6
+ Cargo metadata inventory SHA-256: ab36d895ace61e75409e9eac896dbdcaae6444c04d19fbb424fdbd2824c519bd
+-SBOM.cdx.json SHA-256: ce7b7c770e0ffdd063e5ec37b3a8b872600989912b10ee58003d12b1216bc7c9
++SBOM.cdx.json SHA-256: 90512513e60f32345486863ac4cdeb5b79b286d042bfac6834b52bc134bcdcca
+ SBOM components: 557
+-Asset manifest SHA-256: 494baa053be258854e8ec70ab7e1ae02ad053f78370a188274b656275a3bc886
++Asset manifest SHA-256: e0d4a666f1c4a31ff5a925d3bce62623e1d5c6b4b11871b5ff9ec65452db91ba
+ npm package-lock.json SHA-256: 2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1
+ Bundled MCP SDK: @modelcontextprotocol/sdk 1.32.1 (sha512-2DdE+SJDtzLEEWzY1ZjY7Q+VcPhcV1KisD3zI4u0XZyktsjHum1mwbMI+JaulUBi2OZk+KJAi2uPXzxichPkdw==)
+ Cargo graph packages: 612
+```
+
+**File**: `docs/reference/generated/config-keys.md` (modified, +0/-1)
+```diff
+@@ -268,7 +268,6 @@ LeanCTX Hive: workspace knowledge, policies and the shared agent bus.
+ - `receipts_upload` (bool, default `true`) — Upload context receipts to Hive.
+ - `root_key` (string, default `null`) — Root public key (base64 Ed25519) of a self-hosted Hive.
+ - `runtime_consent` (bool, default `false`) — You agreed to install the proprietary Intelligence runtime your plan licenses (set by `hive connect` or `hive runtime install`).
+-- `sealed_grants` (string: confirm | auto, default `confirm`) — Sealed vaults: grant the vault key to a newly approved instance only after you confirmed its fingerprint (confirm), or to every instance Hive lists (auto).
+ - `url` (string, default `https://hive.leanctx.com`) — Hive origin (https; a self-hosted Hive may use any https URL).
+ - `vault_labels` (bool, default `true`) — Send checkout folder names as vault labels.
+ - `worker.max_tasks_per_day` (integer, default `null`) — Worker mode: at most this many claimed tasks per day on this machine; only tightens the opt-in budget set on the web.
+```
+
+**File**: `legal/third-party-assets.toml` (modified, +2/-2)
+```diff
+@@ -4,9 +4,9 @@ authority = "THIRD_PARTY_NOTICES"
  
- Keep the customer's application, agent loop, model choice and UI. Coding agents
-@@ -67,8 +66,9 @@ Local context-only use does not require hosted services. Provider/execution
- controls apply only to supported calls routed through the configured runtime.
- Enterprise identity, organization policy, retention, connector coverage and
- operations must be described against that edition's supported release.
--Pro availability does not establish that every newer adaptive-context or
--intelligence feature is included in the current public release.
-+No local context behaviour (ranking, memory selection, read strategy, planning)
-+has a paid-better variant; LeanCTX Hive adds governance, not better local
-+results.
+ [inputs]
+ cargo_lock = "rust/Cargo.lock"
+-cargo_lock_sha256 = "8446a84ff552675ec7d0b9593857c170f8054c3ab03ab9db063d682009a1a73a"
++cargo_lock_sha256 = "b22136d62dce29b3cfdf7d21b0e9dde9139a6669a17fc3d9c5623476ec59a1a6"
+ sbom = "SBOM.cdx.json"
+-sbom_sha256 = "ce7b7c770e0ffdd063e5ec37b3a8b872600989912b10ee58003d12b1216bc7c9"
++sbom_sha256 = "90512513e60f32345486863ac4cdeb5b79b286d042bfac6834b52bc134bcdcca"
+ npm_lock = "packages/pi-lean-ctx/package-lock.json"
+ npm_lock_sha256 = "2698eb8bcaf09c3ff275826b3be2e28e5fb6044b3245cd6ec23475e06d1744a1"
  
- ## Evidence and security claims
- 
+```
+
+**File**: `legal/third-party-notices-approval.toml` (modified, +3/-3)
+```diff
+@@ -1,5 +1,5 @@
+ schema = "leanctx.third-party-notices-approval/v1"
+-approved_content_sha256 = "d32e30dcf0641129515ceb236617649d297dadd9ca27b320a5011bff24961d18"
++approved_content_sha256 = "22938c1bafeab558ce8db4b830a233f7a32e2554e1a4549c83cb8908fcd59f15"
+ approving_owner = "Yves Gugger"
+-approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.1 after the first engine crate split; third-party Cargo packages unchanged (599), the only notice changes are the input digests, the Cargo graph 607 -> 612 (the own workspace crates lean-ctx-patterns, -workgraph, -compress, -fs, -syntax) and SBOM components 552 -> 557. Owner okay in the 3.12.1 integration lead session on 2026-11-01 (answer \"Freigeben\" to the notices question naming old a3b2e085 and new pending 39fd5a61)."
+-approved_at = "2026-11-01"
++approval_evidence = "Copyright owner approval of the generated THIRD_PARTY_NOTICES (GENERATED AND APPROVED variant of scripts/generate-third-party-notices.py) for 3.12.1 after the Hive C0 2.1/2.2 engine sync; notice content unchanged (599 third-party Cargo packages, Cargo graph 612, same SBOM components), only the Cargo.lock and SBOM input digests change because curve25519-dalek is no longer a direct dependency. Owner okay in the 3.12.1 integration lead session on 2026-11-02 (answer \"Freigeben\" to the notices question naming old d32e30dc and new pending c10143a0)."
++approved_at = "2026-11-02"
+```
+
+**File**: `rust/Cargo.lock` (modified, +0/-3)
+```diff
+@@ -2180,7 +2180,6 @@ dependencies = [
+  "chrono",
+  "clap",
+  "criterion",
+- "curve25519-dalek",
+  "dashmap",
+  "dirs",
+  "ed25519-dalek",
+@@ -2342,9 +2341,7 @@ dependencies = [
+  "base64 0.22.1",
+  "chacha20poly1305",
+  "chrono",
+- "curve25519-dalek",
+  "ed25519-dalek",
+- "hkdf",
+  "hmac",
+  "regex",
+  "serde",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2173** (2026-11-02): fix: 3.12.1 Hive C0 2.1/2.2, agents talk to agents, humans observe (@yvgude)
+- **PR #2170** (2026-11-01): fix: 3.12.1 first engine crate split, knowledge lifecycle to Hive, cleanup waves 5–6 (@yvgude)
+- **PR #2168** (2026-11-01): fix: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (@yvgude)
+- **PR #2167** (2026-10-31): fix: emspace follow-up, background job output (#2164), semantic scan bound (#2063) (@yvgude)
 - **PR #2163** (2026-10-31): chore: 3.12.1 cleanup, emspace provider, read outline and template collapse (@yvgude)
 - **PR #2161** (2026-10-30): fix: 3.12.1 fixes, engine optimizations and OSS hardening (@yvgude)
-- **PR #2160** (2026-10-30): perf(build): 256 codegen units for the engine crate in dev-fast (@yvgude)
-- **PR #2159** (2026-10-29): ci(release): build once on main, reuse the verified build on the tag (@yvgude)
-- **PR #2158** (2026-10-29): Release 3.12.0: the Cockpit installs itself, faster release (@yvgude)
-- **PR #2157** (2026-10-29): Release 3.12.0: release pipeline fix and security alerts (@yvgude)
 
 ---
 
@@ -2481,26 +3321,22 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): split the engine crate into 256 codegen units in dev-fast (#2160)
+## X. 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (
 
 **RULE**:
-When implementing operations in `rust/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yvgude/lean-ctx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1cc70602`: build): split the engine crate into 256 codegen units in dev-fast (#2160). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3550b694`: 3.12.1 shell security, knowledge journal, Hive-ready engine, cleanup waves 3–4 (#2168). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Small code units let an incremental rebuild of the engine crate regenerate
-# only what changed: on 30.10. a one-line edit took a median 27 s instead of
-# 37 s (codegen 9 s instead of 19 s) with unchanged runtime.
-[profile.dev-fast.package.lean-ctx]
-codegen-units = 256
-
+      - name: Test preinstall stops only the installed daemon
+        run: node packages/lean-ctx-bin/preinstall.test.cjs
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2510,4 +3346,4 @@ codegen-units = 256
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1cc70602` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3550b694` are properly handled with clean fallback behavior.

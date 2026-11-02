@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T17:31:51.569Z",
+  "last_updated": "2026-11-02T17:39:23.916Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "28842e716e537c1749da4fea1c10527717e5bd0d522a5f6a12f132f4d87d2e3e",
-      "verified_at": "2026-11-01T02:07:49.046Z",
+      "content_hash": "9002ed4cc273e4af6a4e021d1a651cf86a6a3ae61a1b51f3d150cf171386334e",
+      "verified_at": "2026-11-02T17:39:17.702Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-01T02:07:49.046Z"
+      "last_updated": "2026-11-02T17:39:17.702Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "641a65b18416823e697e4023e92b78cc6414eaf767ca3f89cee64c62a5c7012c",
-      "verified_at": "2026-10-30T22:20:27.534Z",
+      "content_hash": "e5b93a5638f51940158d04abaa0e0b60872a0f52e6a8a4c2b0e7f22594c0cf04",
+      "verified_at": "2026-11-02T17:39:19.486Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:20:27.534Z"
+      "last_updated": "2026-11-02T17:39:19.486Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -8376,14 +8376,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-checkmarx-kics",
-      "content_hash": "0e2d17346b970164c56e8d00dfbe10d246dc2b60ad38acceb7939d5519b80c3c",
-      "verified_at": "2026-10-27T17:23:41.172Z",
+      "content_hash": "8360bc9a832feb375402b5487460d2f5c42b617a8a9e853699c0a98abe12c985",
+      "verified_at": "2026-11-02T17:39:15.868Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T17:23:41.172Z"
+      "last_updated": "2026-11-02T17:39:15.868Z"
     },
     "olric-data/olric": {
       "repository": "olric-data/olric",
@@ -9471,14 +9471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yvgude-lean-ctx",
-      "content_hash": "5e6328f438e084bc8a9bfc99cbf4748ad31d1977dd207f2fd6002b705eab3e77",
-      "verified_at": "2026-10-31T11:26:00.759Z",
+      "content_hash": "cad98c51ef05bb9cac4395ce044e6285002236ffaedb6240908d7ae2733318a9",
+      "verified_at": "2026-11-02T17:39:23.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T11:26:00.759Z"
+      "last_updated": "2026-11-02T17:39:23.915Z"
     },
     "gkd-kit/gkd": {
       "repository": "gkd-kit/gkd",

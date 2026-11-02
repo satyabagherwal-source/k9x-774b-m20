@@ -6854,3 +6854,7 @@
 | `CYCLE-20261102-41S4` | `2026-11-02T17:24:40.324Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6470` | Yes (`c180f60d...`) |
 | `CYCLE-20261102-D98T` | `2026-11-02T17:31:49.901Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6439` | Yes (`8c3b8a7c...`) |
 | `CYCLE-20261102-DAIS` | `2026-11-02T17:31:51.556Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6471` | Yes (`b39ea2ca...`) |
+| `CYCLE-20261102-MTCG` | `2026-11-02T17:39:15.856Z` | `Checkmarx/kics` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6472` | Yes (`8360bc9a...`) |
+| `CYCLE-20261102-MURF` | `2026-11-02T17:39:17.691Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6473` | Yes (`9002ed4c...`) |
+| `CYCLE-20261102-MW4Y` | `2026-11-02T17:39:19.474Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6474` | Yes (`e5b93a56...`) |
+| `CYCLE-20261102-MZJZ` | `2026-11-02T17:39:23.903Z` | `yvgude/lean-ctx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6475` | Yes (`cad98c51...`) |

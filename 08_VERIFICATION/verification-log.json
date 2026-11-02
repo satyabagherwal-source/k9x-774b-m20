@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-B6KJ",
-    "timestamp": "2026-10-30T23:15:07.651Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "748f72c2e393413d2d6e3f1ae3ad537257e5e4408f3299062e386c78d9624a8d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-JW13",
-    "timestamp": "2026-10-30T23:21:53.895Z",
-    "repository": "ducaale/xh",
-    "learningId": "learn-github-ducaale-xh",
-    "contentHash": "ca0eb72308150ae53f4533e36a059ea7caaca3dc7df11b5f6f4f9de5c9d67eb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-JY5O",
-    "timestamp": "2026-10-30T23:21:56.652Z",
-    "repository": "nitrojs/nitro",
-    "learningId": "learn-github-nitrojs-nitro",
-    "contentHash": "991ecc11f734d4f197fcc1f385eefa9dae27d7aa95678968e55e6acf75e6a701",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-SM2V",
-    "timestamp": "2026-10-30T23:28:40.903Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "fdf53d19988400a5e1eb7e432b82ad7d58e2383005f0022547970f610bc1811a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-SQRG",
     "timestamp": "2026-10-30T23:28:46.972Z",
     "repository": "slatedb/slatedb",
@@ -7490,6 +7430,66 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-MTCG",
+    "timestamp": "2026-11-02T17:39:15.856Z",
+    "repository": "Checkmarx/kics",
+    "learningId": "learn-github-checkmarx-kics",
+    "contentHash": "8360bc9a832feb375402b5487460d2f5c42b617a8a9e853699c0a98abe12c985",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-MURF",
+    "timestamp": "2026-11-02T17:39:17.691Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "9002ed4cc273e4af6a4e021d1a651cf86a6a3ae61a1b51f3d150cf171386334e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-MW4Y",
+    "timestamp": "2026-11-02T17:39:19.474Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "e5b93a5638f51940158d04abaa0e0b60872a0f52e6a8a4c2b0e7f22594c0cf04",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-MZJZ",
+    "timestamp": "2026-11-02T17:39:23.903Z",
+    "repository": "yvgude/lean-ctx",
+    "learningId": "learn-github-yvgude-lean-ctx",
+    "contentHash": "cad98c51ef05bb9cac4395ce044e6285002236ffaedb6240908d7ae2733318a9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
