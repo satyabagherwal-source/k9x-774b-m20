@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T14:24:45.153Z",
-  "total_verified_learnings": 1186,
+  "last_updated": "2026-11-02T14:32:10.913Z",
+  "total_verified_learnings": 1189,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -43172,8 +43172,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "229950e6",
-      "content_hash": "ab550f3bbe59c22c0693cb05fbdd71278855e412f04ca2e689e417545494626a",
+      "source_version": "bd27ded7",
+      "content_hash": "236fbd790b8681a1ffc30049ad96da9ce1bede306f73dccd7e3c055d3cdd86bd",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -43361,6 +43361,11 @@
           "number": 6263,
           "title": "Reset default ARC puzzle to genesis",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6409,
+          "title": "NUC 15 Parenthesis-Free Nullary Function Definitions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43368,7 +43373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T17:14:24.930Z",
+      "verified_at": "2026-11-02T14:32:10.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166072,6 +166077,159 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T14:24:45.139Z"
+    },
+    "learn-huggingface-edge0-audio8-tts-realistic-air": {
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Edge0/Audio8-TTS-Realistic-Air",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "slug": "hf-edge0-audio8-tts-realistic-air",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+      "source_version": "hf-edge0-audio8-tts-realistic-air",
+      "content_hash": "35f2f2392c4d702a0aee8d7bee7b9dc3acc69ec13445547a2bd6415a333154a9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T14:31:51.324Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
+      "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "slug": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "source_version": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
+      "content_hash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T14:31:53.777Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-burner22-numbat": {
+      "learning_id": "learn-huggingface-burner22-numbat",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "burner22/numbat",
+      "repository": "burner22/numbat",
+      "slug": "hf-burner22-numbat",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/burner22/numbat",
+      "source_version": "hf-burner22-numbat",
+      "content_hash": "a16bbad1406a25a461c25711fbb5c7dd44ab861e4d9b6d23adb2a89260d4acd2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-burner22-numbat-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6406,
+          "title": "Hybrid Attention Layer Dispatch Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6407,
+          "title": "FP4 Block-Wise Quantization Scale Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6408,
+          "title": "MoE Router Load Balancing Freeze Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T14:32:05.456Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6406": {
+      "learning_id": "rule-6406",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6406,
+      "title": "Hybrid Attention Layer Dispatch Invariant",
+      "source_url": "https://huggingface.co/burner22/numbat",
+      "source_version": "hf-burner22-numbat",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:32:05.456Z"
+    },
+    "rule-6407": {
+      "learning_id": "rule-6407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6407,
+      "title": "FP4 Block-Wise Quantization Scale Invariant",
+      "source_url": "https://huggingface.co/burner22/numbat",
+      "source_version": "hf-burner22-numbat",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:32:05.456Z"
+    },
+    "rule-6408": {
+      "learning_id": "rule-6408",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6408,
+      "title": "MoE Router Load Balancing Freeze Invariant",
+      "source_url": "https://huggingface.co/burner22/numbat",
+      "source_version": "hf-burner22-numbat",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:32:05.456Z"
+    },
+    "rule-6409": {
+      "learning_id": "rule-6409",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6409,
+      "title": "NUC 15 Parenthesis-Free Nullary Function Definitions",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "bd27ded7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:32:10.892Z"
     }
   },
   "aliases": {

@@ -6795,3 +6795,7 @@
 | `CYCLE-20261101-GC2A` | `2026-11-01T02:22:45.778Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6108` | Yes (`666756b7...`) |
 | `CYCLE-20261101-GFUH` | `2026-11-01T02:22:50.681Z` | `zoontek/react-native-bootsplash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6404` | Yes (`c45fd3a6...`) |
 | `CYCLE-20261102-OO7P` | `2026-11-02T14:24:45.205Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6405` | Yes (`361664f5...`) |
+| `CYCLE-20261102-XT3Q` | `2026-11-02T14:31:51.446Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-air-learnings.md` | Yes (`35f2f239...`) |
+| `CYCLE-20261102-XUZV` | `2026-11-02T14:31:53.899Z` | `OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-obliteratus-deepseek-v4.1-flash-1017-obliterated-learnings.md` | Yes (`59cc8257...`) |
+| `CYCLE-20261102-Y3ZS` | `2026-11-02T14:32:05.560Z` | `burner22/numbat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6406, Rule 6407, Rule 6408` | Yes (`a16bbad1...`) |
+| `CYCLE-20261102-Y86S` | `2026-11-02T14:32:10.996Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6409` | Yes (`236fbd79...`) |

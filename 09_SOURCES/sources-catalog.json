@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "229950e6",
+    "sourceVersion": "bd27ded7",
     "license": "Apache-2.0",
-    "contentHash": "ab550f3bbe59c22c0693cb05fbdd71278855e412f04ca2e689e417545494626a",
-    "lastHarvestedAt": "2026-10-31T17:14:24.998Z",
+    "contentHash": "236fbd790b8681a1ffc30049ad96da9ce1bede306f73dccd7e3c055d3cdd86bd",
+    "lastHarvestedAt": "2026-11-02T14:32:11.000Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -11678,5 +11678,35 @@
     "contentHash": "2ca3f652960752c0063604313f89d4b180cfb02ff53deae9ec5e1e8784c5f400",
     "lastHarvestedAt": "2026-11-01T00:49:24.401Z",
     "learningId": "learn-github-dagoste-squadra"
+  },
+  "hf-edge0-audio8-tts-realistic-air": {
+    "repository": "Edge0/Audio8-TTS-Realistic-Air",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+    "sourceVersion": "hf-edge0-audio8-tts-realistic-air",
+    "license": "Open-Source",
+    "contentHash": "35f2f2392c4d702a0aee8d7bee7b9dc3acc69ec13445547a2bd6415a333154a9",
+    "lastHarvestedAt": "2026-11-02T14:31:51.455Z",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air"
+  },
+  "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated": {
+    "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "sourceVersion": "hf-obliteratus-deepseek-v4.1-flash-1017-obliterated",
+    "license": "Open-Source",
+    "contentHash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
+    "lastHarvestedAt": "2026-11-02T14:31:53.907Z",
+    "learningId": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated"
+  },
+  "hf-burner22-numbat": {
+    "repository": "burner22/numbat",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/burner22/numbat",
+    "sourceVersion": "hf-burner22-numbat",
+    "license": "Open-Source",
+    "contentHash": "a16bbad1406a25a461c25711fbb5c7dd44ab861e4d9b6d23adb2a89260d4acd2",
+    "lastHarvestedAt": "2026-11-02T14:32:05.564Z",
+    "learningId": "learn-huggingface-burner22-numbat"
   }
 }

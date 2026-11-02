@@ -20005,5 +20005,41 @@
     "qualityScore": 854,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-01T00:45:34.692Z"
+  },
+  {
+    "name": "burner22/numbat",
+    "fullName": "burner22/numbat",
+    "url": "https://huggingface.co/burner22/numbat",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: burner22/numbat (273 likes, 7108 downloads)",
+    "likes": 273,
+    "downloads": 7108,
+    "qualityScore": 4730,
+    "discoveredAt": "2026-11-02T14:29:34.672Z"
+  },
+  {
+    "name": "Edge0/Audio8-TTS-Realistic-Air",
+    "fullName": "Edge0/Audio8-TTS-Realistic-Air",
+    "url": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Edge0/Audio8-TTS-Realistic-Air (235 likes, 7259 downloads)",
+    "likes": 235,
+    "downloads": 7259,
+    "qualityScore": 4350,
+    "discoveredAt": "2026-11-02T14:29:34.672Z"
+  },
+  {
+    "name": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "fullName": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "url": "https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated (204 likes, 1095 downloads)",
+    "likes": 204,
+    "downloads": 1095,
+    "qualityScore": 3135,
+    "discoveredAt": "2026-11-02T14:29:34.673Z"
   }
 ]

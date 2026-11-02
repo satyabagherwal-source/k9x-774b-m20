@@ -6804,3 +6804,7 @@ Every entry in this ledger must capture:
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `53d5d706` | Multi-dimensional audit evidence | 2026-11-01T02:22:45.781Z |
 | `learn-github-zoontek-react-native-bootsplash` | `https://github.com/zoontek/react-native-bootsplash` | `3dcb8e91` | Multi-dimensional audit evidence | 2026-11-01T02:22:50.684Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `d5f3406c` | Multi-dimensional audit evidence | 2026-11-02T14:24:45.208Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-air` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-02T14:31:51.455Z |
+| `learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated` | `https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated` | `hf-obliter` | Multi-dimensional audit evidence | 2026-11-02T14:31:53.907Z |
+| `learn-huggingface-burner22-numbat` | `https://huggingface.co/burner22/numbat` | `hf-burner2` | Multi-dimensional audit evidence | 2026-11-02T14:32:05.564Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bd27ded7` | Multi-dimensional audit evidence | 2026-11-02T14:32:11.000Z |

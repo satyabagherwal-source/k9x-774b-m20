@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T14:24:45.215Z",
+  "last_updated": "2026-11-02T14:32:11.010Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ab550f3bbe59c22c0693cb05fbdd71278855e412f04ca2e689e417545494626a",
-      "verified_at": "2026-10-31T17:14:25.004Z",
+      "content_hash": "236fbd790b8681a1ffc30049ad96da9ce1bede306f73dccd7e3c055d3cdd86bd",
+      "verified_at": "2026-11-02T14:32:11.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T17:14:25.004Z"
+      "last_updated": "2026-11-02T14:32:11.010Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -17579,6 +17579,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-01T00:49:24.410Z"
+    },
+    "Edge0/Audio8-TTS-Realistic-Air": {
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
+      "content_hash": "35f2f2392c4d702a0aee8d7bee7b9dc3acc69ec13445547a2bd6415a333154a9",
+      "verified_at": "2026-11-02T14:31:51.465Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T14:31:51.465Z"
+    },
+    "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
+      "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
+      "content_hash": "59cc82578ce49d479f0e2dbde33ade3edb4a7f1fdc9b102cf3aa7c8490bc265f",
+      "verified_at": "2026-11-02T14:31:53.917Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T14:31:53.917Z"
+    },
+    "burner22/numbat": {
+      "repository": "burner22/numbat",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-burner22-numbat",
+      "content_hash": "a16bbad1406a25a461c25711fbb5c7dd44ab861e4d9b6d23adb2a89260d4acd2",
+      "verified_at": "2026-11-02T14:32:05.573Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T14:32:05.573Z"
     }
   },
   "repos": {

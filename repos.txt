@@ -4762,3 +4762,11 @@ https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b
 # --- Automatically Discovered by AI Scout Engine [2026-11-01T00:49:17.557Z] ---
 # [AI-AGENTS] dagoSte/squadra (854 score) - Coordinate Claude, Codex and Cursor windows with shared tasks, acknowledgements,
 https://github.com/dagoSte/squadra
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-02T14:31:42.902Z] ---
+# [HUGGINGFACE-AI-MODELS] burner22/numbat (4730 score) - Verified Hugging Face Model: burner22/numbat (273 likes, 7108 downloads)
+https://huggingface.co/burner22/numbat
+# [HUGGINGFACE-AI-MODELS] Edge0/Audio8-TTS-Realistic-Air (4350 score) - Verified Hugging Face Model: Edge0/Audio8-TTS-Realistic-Air (235 likes, 7259 dow
+https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air
+# [HUGGINGFACE-AI-MODELS] OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated (3135 score) - Verified Hugging Face Model: OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated (2
+https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated
