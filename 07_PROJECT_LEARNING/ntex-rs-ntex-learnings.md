@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `e680c0af`  
+> **Source Version**: `4a00b916`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T10:00:28.434Z  
+> **Timestamp**: 2026-11-02T16:18:41.212Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T10:00:28.204Z  
+> **Harvest Timestamp**: 2026-11-02T16:18:39.682Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2547 stars
+- **Stars / Engagement**: 2548 stars
 
 ---
 
@@ -1315,7 +1315,7 @@ where
 /// A service that substitutes fixed state for the outer pipeline state.
 ///
 /// Readiness and lifecycle subscriptions retain the wrapped service's scope.
-/// Cloning follows the wrapped service: a [`crate::ServiceBinding`] clone gets
+/// Cloning follows the wrapped service: a [`crate::ReadyBinding`] clone gets
 /// fresh readiness, while an explicitly shared handle keeps its existing gate.
 pub struct MapState<S, St> {
     s: S,
@@ -1386,7 +1386,9 @@ mod tests;
 ```
 use std::{fmt, marker::PhantomPinned, ptr, rc::Rc, task::Context, task::Poll};
 
-use crate::{BindCtx, Ctx, IntoService, ReadyCallback, Service, ctx::WaitersRef, util::BoxFuture};
+use crate::{
+    BindCtx, Ctx, IntoService, ReadyCallback, ReadyLink, Service, ctx::WaitersRef, util::BoxFuture,
+};
 
 use crate::pipeline::PipelineBinding;
 use crate::pl_inner::{PipelineApi, PipelineInternalApi, PipelineReadiness};
@@ -1482,6 +1484,8 @@ where
     /// readiness. A pending check is retained by the pipeline, even if this
     /// task stops polling; other callers can continue driving it.
     /// The retained check and its wake sources run on this pipeline's thread.
+    /// Its checker wakers must also be finally dropped on that thread, even
+    /// after the pipeline is dropped; foreign wakes or final drops panic.
     ///
     /// # Panics
     ///
@@ -1533,7 +1537,8 @@ where
     ///
     /// Registration is shared by all bindings, regardless of their state, and
     /// persists until the scope is dropped. Repeated registration of the same
-    /// handle is idempotent. See [`ReadyCallback`] for notification semantics.
+    /// handle is idempotent. The callback receives `0` for this root scope.
+    /// See [`ReadyCallback`] for notification semantics.
     pub fn on_notify(&self, callback: &ReadyCallback) {
         self.api.scope().on_notify(callback);
     }
@@ -1545,7 +1550,15 @@ where
     /// invalidate the enclosing scope. Repeated registration is idempotent and
     /// does not rebind the inner service or create another runtime handle.
     pub fn bind_to(&self, ctx: &BindCtx<'_>) {
-        ctx.depend_on(self.api.scope());
+        ctx.subscribe_pipeline(&self.readiness_link());
+    }
+
+    /// Returns this pipeline's readiness endpoint, shared by all state bindings.
+    ///
+    /// Register with [`BindCtx::subscribe_pipeline`]. The link propagates
+    /// invalidation without checking readiness or retaining the pipeline.
+    pub fn readiness_link(&self) -> ReadyLink {
+        self.api.scope().readiness_link()
     }
 }
 
@@ -1615,6 +1628,7 @@ where
     #[inline]
     /// Registers a callback on the shared pipeline scope, independently of state.
     ///
+    /// The callback receives `0` for this root scope.
     /// Dropping this binding does not remove the registration.
     /// See [`PipelineState::on_notify`] and [`ReadyCallback`] for details.
     pub fn on_notify(&self, callback: &ReadyCallback) {
@@ -1626,7 +1640,14 @@ where
     ///
     /// Call from [`Service::bind`]. See [`PipelineState::bind_to`] for details.
     pub fn bind_to(&self, ctx: &BindCtx<'_>) {
-        ctx.depend_on(self.api.scope());
+        ctx.subscribe_pipeline(&self.readiness_link());
+    }
+
+    /// Returns the shared pipeline's readiness endpoint.
+    ///
+    /// See [`PipelineState::readiness_link`] and [`ReadyLink`].
+    pub fn readiness_link(&self) -> ReadyLink {
+        self.api.scope().readiness_link()
     }
 }
 
@@ -1675,36 +1696,7 @@ impl<St, Req, Res, Err> PipelineInternalApi<Req, Res, Err> for PipelineInternal<
 
 struct PipelineInner<S, E> {
     s: S,
-    waiters: WaitersRef,
-    readiness: PipelineReadiness<E>,
-    // The pending readiness future borrows the other fields. `!Unpin` keeps
-    // `&mut self` in `Drop` from invalidating those borrows.
-    _pinned: PhantomPinned,
-}
-
-impl<S, E> Drop for PipelineInner<S, E> {
-    fn drop(&mut self) {
-        // The readiness future borrows `s` and `waiters`, so it must be dropped
-        // before the fields it references
-        self.readiness.cancel();
-    }
-}
-
-trait PipelineStateApi<St, Req, Res, Err> {
-    fn scope(&self) -> &ReadyScope;
-
-    fn reg(&self) -> u32;
-    fn unreg(&self, idx: u32);
-
-    fn call<'a>(&'a self, idx: u32, req: Req, st: &'a St) -> BoxFuture<'a, Result<Res, Err>>
-    where
-        Req: 'a;
-
-    fn ready<'a>(&'a self, idx: u32, st: &'a St) -> BoxFuture<'a, Result<(), Err>>
-    where
-        Req: 'a;
-
-    fn poll_ready(&self, cx: &mut Context<'_
+    w
 ```
 
 ### Core Architecture Module: `ntex-service/src/state.rs`
@@ -1881,7 +1873,7 @@ pub(crate) mod tests;
 
 ### Core Architecture Module: `ntex-tls/src/utils.rs`
 ```
-//! Helpers shared by the tls filters.
+//! Handshake driving, timeout mapping, and metadata normalization shared by TLS backends.
 #![allow(dead_code)]
 use std::{future::Future, io};
 
@@ -1893,7 +1885,10 @@ use ntex_util::time::{Millis, timeout_checked};
 
 use crate::TlsConfig;
 
-/// Runs a handshake with timeout, zero timeout disables it.
+/// Runs a handshake with a deadline, preserving its original result.
+///
+/// Zero disables the deadline. Expiration drops the handshake future and returns
+/// `TimedOut`; no separate background handshake is left running.
 pub(crate) async fn with_timeout<R>(
     timeout: Millis,
     fut: impl Future<Output = io::Result<R>>,
@@ -1906,7 +1901,10 @@ pub(crate) async fn with_timeout<R>(
     })
 }
 
-/// Runs a client handshake with the configured timeout.
+/// Runs a client handshake with timeout and configuration-scoped diagnostics.
+///
+/// Maps TLS and timeout errors into `ConnectError` and attaches the TLS service
+/// identity. Transport establishment must already have completed.
 pub(crate) async fn connect<R>(
     cfg: &Cfg<TlsConfig>,
     host: &str,
@@ -1928,7 +1926,13 @@ pub(crate) async fn connect<R>(
 /// Drives a handshake performed by the filter.
 ///
 /// The filter processes handshake records as they are read and written,
-/// `state` reports whether the handshake is still in progress.
+/// `state` returns `true` while negotiation is in progress and `false` on success.
+/// The callback must release backend state borrows before returning.
+///
+/// Flushes pending output before checking state, and attempts a full alert flush
+/// before returning a reported handshake error. A read carrying EOF gets one
+/// final state check because it may also contain the last handshake flight.
+/// This helper imposes neither a timeout nor a handshake-capacity limit.
 pub(crate) async fn handshake<F>(
     io: &Io<F>,
     state: impl Fn() -> io::Result<bool>,
@@ -1955,7 +1959,7 @@ pub(crate) async fn handshake<F>(
     }
 }
 
-/// Http protocol of the negotiated alpn protocol.
+/// Maps exactly `h2` to HTTP/2; absent or other ALPN values fall back to HTTP/1.
 pub(crate) fn http_protocol(alpn: Option<&[u8]>) -> HttpProtocol {
     if alpn == Some(b"h2") {
         HttpProtocol::Http2
@@ -1967,6 +1971,7 @@ pub(crate) fn http_protocol(alpn: Option<&[u8]>) -> HttpProtocol {
 /// Strips the port and IPv6 brackets from a connect host.
 ///
 /// Accepts `host`, `host:port`, `[v6]`, `[v6]:port` and a bare `v6` address.
+/// This is syntactic normalization, not hostname, port, or certificate validation.
 pub(crate) fn server_name(host: &str) -> &str {
     if let Some(rest) = host.strip_prefix('[') {
         rest.split_once(']').map_or(host, |(ip, _)| ip)
@@ -2156,30 +2161,17 @@ pub(crate) mod testing {
 
 #[cfg(test)]
 mod tests {
+    use std::{cell::Cell, pin::pin, task::Poll};
+
+    use ntex_util::future::lazy;
+
     use super::*;
 
-    #[test]
-    fn test_http_protocol() {
-        assert_eq!(http_protocol(Some(b"h2")), HttpProtocol::Http2);
-        assert_eq!(http_protocol(Some(b"http/1.1")), HttpProtocol::Http1);
-        assert_eq!(http_protocol(Some(b"h2c")), HttpProtocol::Http1);
-        assert_eq!(http_protocol(None), HttpProtocol::Http1);
-    }
-
-    #[test]
-    fn test_server_name() {
-        assert_eq!(server_name("example.com"), "example.com");
-        assert_eq!(server_name("example.com:443"), "example.com");
-        assert_eq!(server_name("127.0.0.1:8080"), "127.0.0.1");
-        assert_eq!(server_name("[::1]"), "::1");
-        assert_eq!(server_name("[::1]:443"), "::1");
-        assert_eq!(server_name("[fe80::1%25eth0]:443"), "fe80::1%25eth0");
-        assert_eq!(server_name("::1"), "::1");
-        assert_eq!(server_name("2001:db8::1"), "2001:db8::1");
-        assert_eq!(server_name(""), "");
-    }
-}
-
+    /// STATEMENT: Clean transport EOF succeeds only if the final handshake state is complete.
+    ///
+    /// HOW:
+    /// - Poll a handshake until it waits for input, then report EOF with completed or pending state.
+    /// - Check completed negotiation succeeds and incomplete negotiati
 ```
 
 
@@ -2209,89 +2201,670 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e680c0af` (2026-10-30)
-**Commit Message**: Attempt to fix docs.rs build
+### Incident Patch 1: `4a00b916` (2026-11-02)
+**Commit Message**: Add test cert gen utility, update tests
 
-**File**: `.github/workflows/docs.yml` (modified, +24/-0)
+**File**: `.github/workflows/cov.yml` (modified, +0/-2)
 ```diff
-@@ -69,6 +69,30 @@ jobs:
-         with:
-           path: _site
+@@ -4,8 +4,6 @@ on:
+   push:
+     branches:
+       - main
+-    tags:
+-      - '**'
+   pull_request:
  
-+  docsrs:
-+    name: Build docs.rs docs
-+    runs-on: ubuntu-latest
-+    steps:
-+      - uses: actions/checkout@v6
-+
-+      - name: Install Rust
-+        uses: actions-rust-lang/setup-rust-toolchain@v1
-+        with:
-+          toolchain: nightly
-+
-+      - name: Cache cargo registry
-+        uses: Swatinem/rust-cache@v2.8.2
-+        with:
-+          cache-on-failure: true
-+
-+      - name: Build docs.rs docs
-+        env:
-+          DOCS_RS: "1"
-+        run: >
-+          cargo rustdoc --lib -p ntex
-+          --features="tokio,openssl,rustls,compress,cookie,ws,tracker,ntex-tls/rustls-ring"
-+          -- --cfg docsrs --cfg docsrs_dep
-+
-   deploy:
-     name: Deploy to GitHub Pages
-     needs: build
+ jobs:
 ```
 
-**File**: `ntex/CHANGES.md` (modified, +4/-0)
+**File**: `.github/workflows/docs.yml` (modified, +0/-2)
 ```diff
-@@ -1,5 +1,9 @@
+@@ -4,8 +4,6 @@ on:
+   push:
+     branches:
+       - main
+-    tags:
+-      - '**'
+   pull_request:
+ 
+ permissions:
+```
+
+**File**: `.github/workflows/miri.yml` (modified, +0/-2)
+```diff
+@@ -4,8 +4,6 @@ on:
+   push:
+     branches:
+       - main
+-    tags:
+-      - '**'
+   pull_request:
+ 
+ jobs:
+```
+
+**File**: `.github/workflows/windows.yml` (modified, +15/-0)
+```diff
+@@ -80,6 +80,21 @@ jobs:
+           Get-ChildItem C:\vcpkg\installed\x64-windows\bin
+           Get-ChildItem C:\vcpkg\installed\x64-windows\lib
+ 
++      - name: Install SymCrypt
++        shell: pwsh
++        run: |
++          $archive = Join-Path $env:RUNNER_TEMP "symcrypt.zip"
++          $symcrypt = Join-Path $env:RUNNER_TEMP "symcrypt"
++          Invoke-WebRequest -Uri "https://github.com/microsoft/SymCrypt/releases/download/v103.13.0/symcrypt-windows-amd64-release-103.13.0-286762b7.zip" -OutFile $archive
++          $expected = "90ea7631331d23a43e0abc7f7af89b44bda67cfa183a70a8b76d988d9d3036b8"
++          if ((Get-FileHash -Path $archive -Algorithm SHA256).Hash -ne $expected) {
++            throw "SymCrypt archive checksum mismatch"
++          }
++          Expand-Archive -Path $archive -DestinationPath $symcrypt
++          $lib = Join-Path $symcrypt "dll"
++          "SYMCRYPT_LIB_PATH=$lib" >> $env:GITHUB_ENV
++          $lib >> $env:GITHUB_PATH
++
+       - name: Clippy (neon)
+         if: matrix.version == 'stable'
+         run: |
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -77,11 +77,11 @@ atoi_simd = "0.18.1"
+ backtrace = "0.3.76"
+ bytes = "1.11.0"
+ bincode = "1.3.3"
+-base64 = "0.22"
+-base64-simd = "0.8"
++base64 = "0.23"
+ hex = "0.4"
+ symcrypt = { version = "0.5", features = ["sha1"] }
+ x509-parser = "0.18"
++rcgen = { version = "0.14", default-features = false }
+ zeroize = "1"
+ coo-kie = { version = "0.18", package = "cookie" }
+ bitflags = "2"
+```
+
+**File**: `ntex-rt/tests/unit/pool.rs` (modified, +2/-2)
+```diff
+@@ -192,7 +192,7 @@ fn metrics() {
+ #[test]
+ fn dropped_pool_releases_workers() {
+     // the idle timeout is never reached, workers exit on disconnection
+-    let pool = ThreadPool::new("test", 1, Duration::from_secs(60));
++    let pool = ThreadPool::new("test", 1, Duration::from_mins(1));
+     let counter = pool.counter.clone();
+     let (start_tx, start_rx) = std::sync::mpsc::channel();
+     let (release_tx, release_rx) = std::sync::mpsc::channel::<()>();
+@@ -228,7 +228,7 @@ fn result_drop_panic_keeps_worker() {
+         }
+     }
+ 
+-    let pool = ThreadPool::new("test", 1, Duration::from_secs(60));
++    let pool = ThreadPool::new("test", 1, Duration::from_mins(1));
+     let (start_tx, start_rx) = std::sync::mpsc::channel();
+     let (release_tx, release_rx) = std::sync::mpsc::channel::<()>();
+     let first = pool.execute(move || {
+```
+
+**File**: `ntex-tls/CHANGES.md` (modified, +4/-0)
+```diff
+@@ -14,6 +14,10 @@
+   adapters. PKCS#12 uses native Windows import or requires `openssl` on Unix,
+   even when rustls handles trust. Native keys remain non-exportable.
+ 
++* Add `testgen` feature with public `x509::testgen` test certificate generators
++  (CNG/Crypt32 on Windows, OpenSSL on Unix), and `testgen-rcgen` feature with an
++  `rcgen` backend for rustls-only builds
++
+ * Rustls X.509 uses an installed crypto provider (or the explicit `rustls-ring`
+   fallback), with independent SHA-1/SHA-256 thumbprint hashing. WebPKI enforces
+   client-auth EKU and rejects verification times before 1970; anchor validity,
+```
+
+**File**: `ntex-tls/Cargo.toml` (modified, +11/-2)
+```diff
+@@ -32,6 +32,13 @@ rustls-ring = ["rustls", "tls_rustls/ring"]
+ # Requires OpenSSL, rustls, or the native Windows backend.
+ x509 = []
+ 
++# Public test certificate generators (`x509::testgen`) using the native Windows backend
++# or OpenSSL on Unix.
++testgen = ["x509"]
++
++# `rcgen` backend for `testgen`, required on Unix builds without `openssl`.
++testgen-rcgen = ["testgen", "dep:rcgen"]
++
+ # Windows Schannel support (always compiled on Windows, kept for compatibility)
+ schannel = []
+ 
+@@ -57,14 +64,15 @@ tls_rustls = { workspace = true, optional = true }
+ rustls-webpki = { workspace = true, optional = true }
+ 
+ # x509
+-base64-simd = { workspace = true }
++base64 = { workspace = true }
+ hex = { workspace = true }
+ x509-parser = { workspace = true }
+ zeroize = { workspace = true }
+ 
+ [target.'cfg(not(windows))'.dependencies]
+ sha1 = { workspace = true, optional = true }
+ sha2 = { workspace = true, optional = true }
++rcgen = { workspace = true, optional = true, features = ["ring"] }
+ 
+ [target.'cfg(windows)'.dependencies]
+ symcrypt = { workspace = true }
+@@ -82,9 +90,10 @@ ntex = { workspace = true }
+ env_logger = { workspace = true }
+ rustls-pemfile = { workspace = true }
+ webpki-roots = { workspace = true }
++tls_rustls = { workspace = true, features = ["ring", "std", "tls12"] }
+ 
+ [target.'cfg(not(windows))'.dev-dependencies]
+-tls_rustls = { workspace = true, features = ["ring", "std", "tls12"] }
++rcgen = { workspace = true, features = ["ring"] }
+ 
+ [[example]]
+ name = "server"
+```
+
+---
+
+### Incident Patch 2: `84b4d782` (2026-11-02)
+**Commit Message**: Add public `x509` module: certificate parsing, thumbprints, peer certificates, CA trust verification (`CaCerts`), identity loading
+
+**File**: `Cargo.toml` (modified, +9/-1)
+```diff
+@@ -62,7 +62,7 @@ ntex-router = "2.1.0"
+ ntex-rt = "4.5.1"
+ ntex-server = "4.3.2"
+ ntex-service = "5.5.0"
+-ntex-tls = "4.6.0"
++ntex-tls = "4.7.0"
+ ntex-util = "4.5.1"
+ urly = "1.2.0"
+ 
+@@ -78,6 +78,11 @@ backtrace = "0.3.76"
+ bytes = "1.11.0"
+ bincode = "1.3.3"
+ base64 = "0.22"
++base64-simd = "0.8"
++hex = "0.4"
++symcrypt = { version = "0.5", features = ["sha1"] }
++x509-parser = "0.18"
++zeroize = "1"
+ coo-kie = { version = "0.18", package = "cookie" }
+ bitflags = "2"
+ cfg-if = "1.0.0"
+@@ -114,6 +119,7 @@ quote = "1.0.43"
+ rand = "0.9"
+ regex = { version = "1.11", default-features = false, features = ["std"] }
+ rustls-pemfile = "2"
++rustls-webpki = { version = "0.103", default-features = false, features = ["std"] }
+ tls_rustls = { version = "0.23", package = "rustls", default-features = false }
+ scoped-tls = "1.0.1"
+ serde = { version = "1", features = ["derive"] }
+@@ -122,6 +128,8 @@ serde_test = "1.0"
+ serde_derive = "1.0"
+ serde_urlencoded = "0.7"
+ signal-hook = "0.4.4"
++sha1 = "0.10"
++sha2 = "0.10"
+ simdutf8 = "0.1.5"
+ slab = "0.4.9"
+ socket2 = "0.6.1"
+```
+
+**File**: `ntex-tls/CHANGES.md` (modified, +22/-0)
+```diff
+@@ -1,5 +1,27 @@
  # Changes
  
-+## [4.4.2] - 2026-10-30
++## [4.7.0] - Unreleased
 +
-+* Attempt to fix docs.rs build
++* Add public `x509` module: certificate parsing, thumbprints,
++  peer certificates, CA trust verification (`CaCerts`), identity loading and
++  client identities, backed by Crypt32/CNG/SymCrypt on Windows and otherwise
++  rustls/WebPKI or OpenSSL according to enabled features
 +
- ## [4.4.1] - 2026-10-27
++* Enable `x509` automatically with either TLS backend or on Windows; explicit
++  `x509` without a backend is an error.
++
++* Add portable PEM/DER PKCS#8 identity loading, opaque signing keys and TLS
++  adapters. PKCS#12 uses native Windows import or requires `openssl` on Unix,
++  even when rustls handles trust. Native keys remain non-exportable.
++
++* Rustls X.509 uses an installed crypto provider (or the explicit `rustls-ring`
++  fallback), with independent SHA-1/SHA-256 thumbprint hashing. WebPKI enforces
++  client-auth EKU and rejects verification times before 1970; anchor validity,
++  exact leaf pinning and verified-path expiry are preserved.
++
++* `schannel` module is always compiled on Windows, the `schannel` feature is
++  kept for compatibility
++
+ ## [4.6.0] - 2026-11-01
  
- * Fix builds with the ws feature disabled - #1153
+ * `PeerCertDer` and `PskIdentity` hold `Bytes`, `PeerCertChainDer` holds
 ```
 
-**File**: `ntex/Cargo.toml` (modified, +1/-1)
+**File**: `ntex-tls/Cargo.toml` (modified, +51/-9)
 ```diff
 @@ -1,6 +1,6 @@
  [package]
- name = "ntex"
--version = "4.4.1"
-+version = "4.4.2"
+ name = "ntex-tls"
+-version = "4.6.0"
++version = "4.7.0"
  authors = ["ntex contributors <team@ntex.rs>"]
- description = "Framework for composable network services"
- readme = "README.md"
+ description = "An implementation of SSL streams for ntex backed by OpenSSL"
+ keywords = ["network", "framework", "async", "futures"]
+@@ -23,14 +23,17 @@ workspace = true
+ default = []
+ 
+ # openssl
+-openssl = ["tls_openssl", "openssl-sys", "foreign-types-shared"]
++openssl = ["x509", "dep:tls_openssl", "dep:openssl-sys", "dep:foreign-types-shared", "dep:libc", "ntex/openssl"]
+ 
+ # rustls support
+-rustls = ["tls_rustls", "tls_rustls/std"]
+-rustls-ring = ["tls_rustls", "tls_rustls/ring", "tls_rustls/std"]
++rustls = ["x509", "dep:tls_rustls", "tls_rustls/std", "dep:rustls-webpki", "dep:sha1", "dep:sha2", "ntex/rustls"]
++rustls-ring = ["rustls", "tls_rustls/ring"]
+ 
+-# Windows Schannel support
+-schannel = ["windows-sys"]
++# Requires OpenSSL, rustls, or the native Windows backend.
++x509 = []
++
++# Windows Schannel support (always compiled on Windows, kept for compatibility)
++schannel = []
+ 
+ [dependencies]
+ ntex-bytes = { workspace = true }
+@@ -47,12 +50,25 @@ thiserror = { workspace = true }
+ tls_openssl = { workspace = true, optional = true }
+ openssl-sys = { workspace = true, optional = true }
+ foreign-types-shared = { workspace = true, optional = true }
++libc = { workspace = true, optional = true }
+ 
+ # rustls
+ tls_rustls = { workspace = true, optional = true }
++rustls-webpki = { workspace = true, optional = true }
++
++# x509
++base64-simd = { workspace = true }
++hex = { workspace = true }
++x509-parser = { workspace = true }
++zeroize = { workspace = true }
+ 
+-# Windows Schannel
+-windows-sys = { workspace = true, optional = true, features = [
++[target.'cfg(not(windows))'.dependencies]
++sha1 = { workspace = true, optional = true }
++sha2 = { workspace = true, optional = true }
++
++[target.'cfg(windows)'.dependencies]
++symcrypt = { workspace = true }
++windows-sys = { workspace = true, features = [
+     "Win32_Foundation",
+     "Win32_Security_Authentication_Identity",
+     "Win32_Security_Credentials",
+@@ -62,12 +78,38 @@ windows-sys = { workspace = true, optional = true, features = [
+ ] }
+ 
+ [dev-dependencies]
+-ntex = { workspace = true, features = ["openssl", "rustls"] }
++ntex = { workspace = true }
+ env_logger = { workspace = true }
+ rustls-pemfile = { workspace = true }
+ webpki-roots = { workspace = true }
++
++[target.'cfg(not(windows))'.dev-dependencies]
+ tls_rustls = { workspace = true, features = ["ring", "std", "tls12"] }
+ 
++[[example]]
++name = "server"
++required-features = ["openssl"]
++
++[[example]]
++name = "simple-client"
++required-features = ["openssl"]
++
++[[example]]
++name = "webserver"
++required-features = ["openssl"]
++
++[[example]]
++name = "webclient"
++required-features = ["openssl"]
++
++[[example]]
++name = "rustls-server"
++required-features = ["rustls"]
++
++[[example]]
++name = "rustls-client"
++required-features = ["rustls"]
++
+ [[example]]
+ name = "schannel-client"
+ required-features = ["schannel"]
 ```
 
-**File**: `ntex/src/lib.rs` (modified, +1/-0)
+**File**: `ntex-tls/src/lib.rs` (modified, +19/-4)
 ```diff
-@@ -46,6 +46,7 @@
-     clippy::unused_async_trait_impl
- )]
- // Used for fake variadics
-+#![cfg_attr(any(docsrs, docsrs_dep), allow(internal_features))]
- #![cfg_attr(any(docsrs, docsrs_dep), feature(rustdoc_internals))]
+@@ -11,9 +11,15 @@
+ //! - `openssl` exposes OpenSSL acceptors, connectors, and a bidirectional filter.
+ //! - `rustls` exposes rustls acceptors, connectors, and client/server filters.
+ //!   Supply a crypto provider through rustls configuration; `rustls-ring` enables
+-//!   its ring provider and is intended to be used together with `rustls`.
+-//! - `schannel` exposes Windows Schannel support on Windows. Protocols, cipher
+-//!   suites, and trust defaults depend on the operating system.
++//!   its ring provider and also enables `rustls`.
++//! - `schannel` is kept for compatibility; Windows Schannel support is always
++//!   compiled on Windows (required by `x509`). Protocols, cipher suites, and
++//!   trust defaults depend on the operating system.
++//!
++//! The `x509` module (certificate parsing, trust verification, identities) is
++//! enabled by either TLS feature and always available on Windows. Windows uses
++//! Crypt32/CNG/SymCrypt; elsewhere rustls takes precedence over OpenSSL.
++//! Explicitly enabling `x509` without a backend is an error.
+ //!
+ //! Certificate verification, identities, and ALPN are configured through the
+ //! selected backend. [`TlsConfig`] controls service handshake timeouts, while
+@@ -59,9 +65,18 @@ pub mod openssl;
+ #[cfg(feature = "rustls")]
+ pub mod rustls;
  
- #[cfg(not(test))] // Work around for rust-lang/rust#62127
+-#[cfg(all(windows, feature = "schannel"))]
++#[cfg(windows)]
+ pub mod schannel;
+ 
++#[cfg(all(
++    feature = "x509",
++    not(any(windows, feature = "openssl", feature = "rustls"))
++))]
++compile_error!("ntex-tls x509 requires the openssl or rustls feature outside Windows");
++
++#[cfg(any(windows, feature = "openssl", feature = "rustls"))]
++pub mod x509;
++
+ use ntex_util::services::Counter;
+ 
+ /// Shared timeout configuration for TLS services.
+```
+
+**File**: `ntex-tls/src/openssl/mod.rs` (modified, +30/-0)
+```diff
+@@ -30,6 +30,36 @@ pub use self::accept::SslAcceptor;
+ mod alloc;
+ pub use self::alloc::use_global_allocator;
+ 
++/// Configures a fresh OpenSSL context with a portable identity and ordered intermediates.
++///
++/// This does not change peer verification policy or include the self-signed root.
++///
++/// # Errors
++/// Native non-exportable keys are unsupported. Other errors report chain ordering,
++/// key/certificate decoding, or OpenSSL configuration failures.
++pub fn set_identity(
++    context: &mut ssl::SslContextBuilder,
++    identity: &crate::x509::Identity,
++) -> Result<(), crate::x509::Error> {
++    use crate::x509::Error;
++    let invalid = |e: tls_openssl::error::ErrorStack| Error::InvalidIdentity(e.to_string());
++    let key =
++        tls_openssl::pkey::PKey::private_key_from_pkcs8(identity.private_key().export_pkcs8_der()?)
++            .map_err(invalid)?;
++    let cert = X509::from_der(identity.cert().der()).map_err(invalid)?;
++    let chain = identity
++        .ordered_chain(false)?
++        .iter()
++        .map(|cert| X509::from_der(cert.der()).map_err(invalid))
++        .collect::<Result<Vec<_>, _>>()?;
++    context.set_certificate(&cert).map_err(invalid)?;
++    context.set_private_key(&key).map_err(invalid)?;
++    for cert in chain {
++        context.add_extra_chain_cert(cert).map_err(invalid)?;
++    }
++    context.check_private_key().map_err(invalid)
++}
++
+ /// The peer's end-entity certificate as an owned OpenSSL reference.
+ ///
+ /// The query returns no value if the peer did not supply a certificate.
+```
+
+**File**: `ntex-tls/src/rustls/identity.rs` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++//! Adapters from portable identities to rustls signing keys, including opaque CNG keys.
++use tls_rustls::pki_types::CertificateDer;
++use tls_rustls::sign::CertifiedKey;
++
++use crate::x509::{ClientIdentity, Error, Identity};
++
++/// Packages an identity for a rustls client/server certificate resolver.
++///
++/// The chain is ordered and excludes the self-signed root. Native keys sign in place.
++///
++/// # Errors
++/// See [`Identity::ordered_chain`].
++pub fn certified_key(identity: &Identity) -> Result<CertifiedKey, Error> {
++    let client = ClientIdentity::from_identity(identity.clone())?;
++    Ok(client_certified_key(&client))
++}
++
++/// Packages an already ordered client identity for a rustls certificate resolver.
++///
++/// On Windows the adapter retains the native key owner; no private key is exported.
++#[must_use]
++pub fn client_certified_key(identity: &ClientIdentity) -> CertifiedKey {
++    let chain = identity
++        .chain()
++        .iter()
++        .map(|cert| CertificateDer::from(cert.der().to_vec()))
++        .collect();
++    #[cfg(not(windows))]
++    let key = identity.private_key().signing_key.clone();
++    #[cfg(windows)]
++    let key = std::sync::Arc::new(NativeKey(identity.private_key().clone()));
++    CertifiedKey::new(chain, key)
++}
++
++#[cfg(windows)]
++#[derive(Debug)]
++struct NativeKey(crate::x509::PrivateKey);
++
++#[cfg(windows)]
++impl tls_rustls::sign::SigningKey for NativeKey {
++    fn choose_scheme(
++        &self,
++        offered: &[tls_rustls::SignatureScheme],
++    ) -> Option<Box<dyn tls_rustls::sign::Signer>> {
++        use crate::x509::{HashAlg as H, KeyType as K, SignScheme as S};
++        let schemes: &[S] = match self.0.key_type()? {
++            K::Rsa => &[
++                S::RsaPss(H::Sha256),
++                S::RsaPss(H::Sha384),
++                S::RsaPss(H::Sha512),
++                S::RsaPkcs1(H::Sha256),
++                S::RsaPkcs1(H::Sha384),
++                S::RsaPkcs1(H::Sha512),
++            ],
++            K::EcP256 => &[S::Ecdsa(H::Sha256)],
++            K::EcP384 => &[S::Ecdsa(H::Sha384)],
++            K::EcP521 => &[S::Ecdsa(H::Sha512)],
++        };
++        let scheme = schemes
++            .iter()
++            .find(|scheme| offered.contains(&scheme.rustls()))?;
++        Some(Box::new(NativeSigner {
++            key: self.0.clone(),
++            scheme: *scheme,
++        }))
++    }
++
++    fn public_key(&self) -> Option<tls_rustls::pki_types::SubjectPublicKeyInfoDer<'_>> {
++        Some(self.0.public_key_der().into())
++    }
++
++    fn algorithm(&self) -> tls_rustls::SignatureAlgorithm {
++        if self.0.key_type() == Some(crate::x509::KeyType::Rsa) {
++            tls_rustls::SignatureAlgorithm::RSA
++        } else {
++            tls_rustls::SignatureAlgorithm::ECDSA
++        }
++    }
++}
++
++#[cfg(windows)]
++#[derive(Debug)]
++struct NativeSigner {
++    key: crate::x509::PrivateKey,
++    scheme: crate::x509::SignScheme,
++}
++
++#[cfg(windows)]
++impl tls_rustls::sign::Signer for NativeSigner {
++    fn sign(&self, message: &[u8]) -> Result<Vec<u8>, tls_rustls::Error> {
++        self.key
++            .sign(self.scheme, message)
++            .map_err(|e| tls_rustls::Error::General(e.to_string()))
++    }
++
++    fn scheme(&self) -> tls_rustls::SignatureScheme {
++        self.scheme.rustls()
++    }
++}
+```
+
+**File**: `ntex-tls/src/rustls/mod.rs` (modified, +2/-0)
+```diff
+@@ -19,12 +19,14 @@ use tls_rustls::pki_types::CertificateDer;
+ mod accept;
+ mod client;
+ mod connect;
++mod identity;
+ mod server;
+ mod stream;
+ 
+ pub use self::accept::TlsAcceptor;
+ pub use self::client::TlsClientFilter;
+ pub use self::connect::TlsConnector;
++pub use self::identity::{certified_key, client_certified_key};
+ pub use self::server::TlsServerFilter;
+ 
+ use self::stream::Stream;
+```
+
+**File**: `ntex-tls/src/schannel/cert.rs` (modified, +62/-3)
+```diff
+@@ -230,7 +230,7 @@ impl Certificate {
+     /// Borrows the context pointer without transferring a Windows reference.
+     ///
+     /// Callers must keep an owning certificate alive while using the pointer.
+-    pub(super) fn as_ptr(&self) -> *const CERT_CONTEXT {
++    pub(crate) fn as_ptr(&self) -> *const CERT_CONTEXT {
+         self.0.cert
+     }
+ 
+@@ -239,6 +239,61 @@ impl Certificate {
+     pub(super) fn from_context(cert: *const CERT_CONTEXT) -> Self {
+         Self(Arc::new(CertContext::new(cert)))
+     }
++
++    /// Imports a previously matched PKCS#8 key and leaf-first certificates for Schannel.
++    ///
++    /// The caller checks certificate/key correspondence before this creates a persisted key.
++    pub(crate) fn from_pkcs8(
++        certificates: &[crate::x509::Certificate],
++        key: &[u8],
++    ) -> io::Result<Self> {
++        use windows_sys::Win32::Security::Cryptography::{
++            CERT_STORE_ADD_ALWAYS, CERT_STORE_CREATE_NEW_FLAG, CERT_STORE_PROV_MEMORY,
++            CertAddEncodedCertificateToStore,
++        };
++        // SAFETY: the memory-store provider takes no additional parameters.
++        let store = unsafe {
++            CertOpenStore(
++                CERT_STORE_PROV_MEMORY,
++                0,
++                0,
++                CERT_STORE_CREATE_NEW_FLAG,
++                ptr::null(),
++            )
++        };
++        if store.is_null() {
++            return Err(io::Error::last_os_error());
++        }
++        let store = Store(store);
++        let mut leaf = None;
++        for cert in certificates {
++            let mut context = ptr::null_mut();
++            let len = u32::try_from(cert.der().len())
++                .map_err(|_| io::Error::other("certificate is too large"))?;
++            // SAFETY: the input is readable; the returned context owns a store reference.
++            if unsafe {
++                CertAddEncodedCertificateToStore(
++                    store.0,
++                    X509_ASN_ENCODING,
++                    cert.der().as_ptr(),
++                    len,
++                    CERT_STORE_ADD_ALWAYS,
++                    &raw mut context,
++                )
++            } == 0
++            {
++                return Err(io::Error::last_os_error());
++            }
++            let context = CertContext::new(context);
++            if leaf.is_none() {
++                leaf = Some(context);
++            }
++        }
++        let mut cert = leaf.ok_or_else(|| io::Error::other("certificate is missing"))?;
++        persist_pkcs8(cert.cert, key)?;
++        cert.temp_key = true;
++        Ok(Self(Arc::new(cert)))
++    }
+ }
+ 
+ impl fmt::Debug for Certificate {
+@@ -291,7 +346,11 @@ impl Drop for CertContext {
+ /// deletion of the new key is attempted before returning the original error.
+ fn persist_key(cert: *const CERT_CONTEXT) -> io::Result<()> {
+     let pkcs8 = export_key(cert)?;
++    persist_pkcs8(cert, &pkcs8.0)
++}
+ 
++/// Persists supplied PKCS#8 bytes under an isolated name and attaches the key to `cert`.
++fn persist_pkcs8(cert: *const CERT_CONTEXT, pkcs8: &[u8]) -> io::Result<()> {
+     let mut id = [0u8; 16];
+     let status =
+         unsafe { BCryptGenRandom(0 as _, id.as_mut_ptr(), 16, BCRYPT_USE_SYSTEM_PREFERRED_RNG) };
+@@ -324,8 +383,8 @@ fn persist_key(cert: *const CERT_CONTEXT) -> io::Result<()> {
+             NCRYPT_PKCS8_PRIVATE_KEY_BLOB,
+             &raw const params,
+             &raw mut key,
+-            pkcs8.0.as_ptr(),
+-            u32::try_from(pkcs8.0.len()).expect("key blob fits u32"),
++            pkcs8.as_ptr(),
++            u32::try_from(pkcs8.len()).map_err(|_| io::Error::other("private key is too large"))?,
+             NCRYPT_SILENT_FLAG,
+         )
+     })?;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1163** (2026-10-30): Attempt to fix docs.rs build (@fafhrd91)
-- **PR #1162** (2026-10-30): Update api docs (@fafhrd91)
-- **PR #1161** (2026-10-30): Allow to use 'self.' for service forward macros (@fafhrd91)
-- **PR #1160** (2026-10-29): Native tasks cleanups (@fafhrd91)
-- **PR #1159** (2026-10-28): Add SendableJoinHandle type (@fafhrd91)
-- **PR #1158** (2026-10-28): Various spawn related improvements (@fafhrd91)
+- **PR #1171** (2026-11-02): Add public `x509` module: certificate parsing, thumbprints, peer certificates, CA trust verification (`CaCerts`), identity loading (@fafhrd91)
+- **PR #1170** (2026-11-01): Add QueryItem::into_inner() to take ownership of the query result (@fafhrd91)
+- **PR #1169** (2026-11-01): Update tls api docs (@fafhrd91)
+- **PR #1168** (2026-11-01): Add TlsVersion and TlsCipher queries (@fafhrd91)
+- **PR #1167** (2026-10-31): web: Make request-target validation and normalization opt-in (@fafhrd91)
+- **PR #1166** (2026-10-31): Http readiness (@fafhrd91)
 
 ---
 
@@ -2305,57 +2878,3 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Attempt to fix docs.rs build
-
-**RULE**:
-When implementing operations in `.github/workflows/docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `e680c0af`: Attempt to fix docs.rs build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docs.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-  docsrs:
-    name: Build docs.rs docs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Install Rust
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: nightly
-
-      - name: Cache cargo registry
-        uses: Swatinem/rust-cache@v2.8.2
-        with:
-          cache-on-failure: true
-
-      - name: Build docs.rs docs
-        env:
-          DOCS_RS: "1"
-        run: >
-          cargo rustdoc --lib -p ntex
-          --features="tokio,openssl,rustls,compress,cookie,ws,tracker,ntex-tls/rustls-ring"
-          -- --cfg docsrs --cfg docsrs_dep
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e680c0af` are properly handled with clean fallback behavior.

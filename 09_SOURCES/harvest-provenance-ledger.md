@@ -6843,3 +6843,6 @@ Every entry in this ledger must capture:
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `9d35eddd` | Multi-dimensional audit evidence | 2026-11-02T16:04:55.854Z |
 | `learn-github-seekstorm-seekstorm` | `https://github.com/SeekStorm/SeekStorm` | `2b0847bf` | Multi-dimensional audit evidence | 2026-11-02T16:04:59.411Z |
 | `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `640a546d` | Multi-dimensional audit evidence | 2026-11-02T16:11:43.617Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `4a00b916` | Multi-dimensional audit evidence | 2026-11-02T16:18:41.507Z |
+| `learn-github-mikepenz-multiplatform-markdown-renderer` | `https://github.com/mikepenz/multiplatform-markdown-renderer` | `4e7e4b1d` | Multi-dimensional audit evidence | 2026-11-02T16:18:45.707Z |
+| `learn-github-bridgecrewio-checkov` | `https://github.com/bridgecrewio/checkov` | `6a64fae9` | Multi-dimensional audit evidence | 2026-11-02T16:18:49.723Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T16:11:43.563Z",
+  "last_updated": "2026-11-02T16:18:49.634Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -5372,8 +5372,8 @@
       "slug": "bridgecrewio-checkov",
       "platform": "github",
       "source_url": "https://github.com/bridgecrewio/checkov",
-      "source_version": "3bdc054c",
-      "content_hash": "5b8f6dac4410cf4243469129f8cfdd48716f702cab1870c7b06b629aa3f90c2b",
+      "source_version": "6a64fae9",
+      "content_hash": "cb3216681b0965127d149c1ce6dcc555fa38a6a253edd02211865638bd303928",
       "dossier_path": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bridgecrewio-checkov-learnings.md",
       "promoted_rules": [
@@ -5386,6 +5386,11 @@
           "number": 3325,
           "title": "secrets): load platform-provided detectors in spawn-mode secrets … (#7757)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6451,
+          "title": "general): harden network and credential handling defaults (#7701)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5393,7 +5398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T00:25:48.073Z",
+      "verified_at": "2026-11-02T16:18:49.611Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -40223,8 +40228,8 @@
       "slug": "mikepenz-multiplatform-markdown-renderer",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-      "source_version": "09b21ae4",
-      "content_hash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
+      "source_version": "4e7e4b1d",
+      "content_hash": "331c93b12984607508161ecca9e0f1b9107577183727b5a0c9d97c84558d728e",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-multiplatform-markdown-renderer-learnings.md",
       "promoted_rules": [
@@ -40237,6 +40242,11 @@
           "number": 5629,
           "title": "deps): update dependency com.mikepenz:version-catalog to v0.23.2 (#657)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6450,
+          "title": "deps): update dependency org.jetbrains:markdown to v0.7.18 (#660)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40244,7 +40254,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:29:45.100Z",
+      "verified_at": "2026-11-02T16:18:45.598Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -43144,8 +43154,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "e680c0af",
-      "content_hash": "2e67c8358688f9240ca83ce5ad57b4c54a60bced1b7c026624f243d47fdf507b",
+      "source_version": "4a00b916",
+      "content_hash": "d0dad18a545da7143f48a0ba451ed813093909e8b2de130df766b1548aea7686",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -43215,7 +43225,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:00:28.935Z",
+      "verified_at": "2026-11-02T16:18:41.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167102,6 +167112,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T16:11:43.550Z"
+    },
+    "rule-6450": {
+      "learning_id": "rule-6450",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6450,
+      "title": "deps): update dependency org.jetbrains:markdown to v0.7.18 (#660)",
+      "source_url": "https://github.com/mikepenz/multiplatform-markdown-renderer",
+      "source_version": "4e7e4b1d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:18:45.598Z"
+    },
+    "rule-6451": {
+      "learning_id": "rule-6451",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6451,
+      "title": "general): harden network and credential handling defaults (#7701)",
+      "source_url": "https://github.com/bridgecrewio/checkov",
+      "source_version": "6a64fae9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:18:49.611Z"
     }
   },
   "aliases": {

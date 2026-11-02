@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:11:43.621Z",
-  "total_cycles_completed": 6811,
-  "total_learnings_persisted": 6811,
-  "total_rules_promoted": 6459,
+  "last_updated": "2026-11-02T16:18:49.729Z",
+  "total_cycles_completed": 6814,
+  "total_learnings_persisted": 6814,
+  "total_rules_promoted": 6461,
   "history": [
-    {
-      "timestamp": "2026-10-31T16:27:22.401Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:32:25.182Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:39:38.596Z",
-      "repository": "openbmb/MiniCPM-OCR-1.0",
-      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T16:39:39.745Z",
       "repository": "oven-sh/bun",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-02T16:11:43.621Z",
       "repository": "meshery/meshery",
       "learningId": "learn-github-meshery-meshery",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:18:41.513Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:18:45.714Z",
+      "repository": "mikepenz/multiplatform-markdown-renderer",
+      "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:18:49.729Z",
+      "repository": "bridgecrewio/checkov",
+      "learningId": "learn-github-bridgecrewio-checkov",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

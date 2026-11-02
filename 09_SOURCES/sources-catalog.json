@@ -5113,10 +5113,10 @@
     "repository": "bridgecrewio/checkov",
     "platform": "github",
     "sourceUrl": "https://github.com/bridgecrewio/checkov",
-    "sourceVersion": "3bdc054c",
+    "sourceVersion": "6a64fae9",
     "license": "Apache-2.0",
-    "contentHash": "5b8f6dac4410cf4243469129f8cfdd48716f702cab1870c7b06b629aa3f90c2b",
-    "lastHarvestedAt": "2026-10-30T00:25:48.188Z",
+    "contentHash": "cb3216681b0965127d149c1ce6dcc555fa38a6a253edd02211865638bd303928",
+    "lastHarvestedAt": "2026-11-02T16:18:49.723Z",
     "learningId": "learn-github-bridgecrewio-checkov"
   },
   "apache-zookeeper": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "e680c0af",
+    "sourceVersion": "4a00b916",
     "license": "Apache-2.0",
-    "contentHash": "2e67c8358688f9240ca83ce5ad57b4c54a60bced1b7c026624f243d47fdf507b",
-    "lastHarvestedAt": "2026-10-31T10:00:29.038Z",
+    "contentHash": "d0dad18a545da7143f48a0ba451ed813093909e8b2de130df766b1548aea7686",
+    "lastHarvestedAt": "2026-11-02T16:18:41.507Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -8833,10 +8833,10 @@
     "repository": "mikepenz/multiplatform-markdown-renderer",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/multiplatform-markdown-renderer",
-    "sourceVersion": "09b21ae4",
+    "sourceVersion": "4e7e4b1d",
     "license": "Apache-2.0",
-    "contentHash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
-    "lastHarvestedAt": "2026-10-30T06:29:45.159Z",
+    "contentHash": "331c93b12984607508161ecca9e0f1b9107577183727b5a0c9d97c84558d728e",
+    "lastHarvestedAt": "2026-11-02T16:18:45.707Z",
     "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer"
   },
   "kamgurgul-cpu-info": {

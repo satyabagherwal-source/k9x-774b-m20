@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-R7HN",
-    "timestamp": "2026-10-30T22:03:36.491Z",
-    "repository": "maxrave-dev/kotlin-footguns",
-    "learningId": "learn-github-maxrave-dev-kotlin-footguns",
-    "contentHash": "2d0bcbab0f80caa742ce4706cc21389b383c83d1a14fdc3829ee4d6a8afd9e82",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-ZYNS",
-    "timestamp": "2026-10-30T22:10:24.952Z",
-    "repository": "iliyami/MacSai",
-    "learningId": "learn-github-iliyami-macsai",
-    "contentHash": "228d2f55f4a8ab1f2ce689e07e885ff22afdd2777e846697b064684a075fedf1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-055T",
-    "timestamp": "2026-10-30T22:10:33.377Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "c76bc9bf010169a14f1c5906d076e561aa5d2afe32fbc4b25b583e03d06ffb1e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-4AVF",
     "timestamp": "2026-10-30T22:13:47.403Z",
     "repository": "rtk-ai/rtk",
@@ -7490,6 +7445,51 @@
     "repository": "meshery/meshery",
     "learningId": "learn-github-meshery-meshery",
     "contentHash": "39ac189288fde2ac02e2dee3f181e83294f948e900ea8b77cbec897355f6a2f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-R74Q",
+    "timestamp": "2026-11-02T16:18:41.498Z",
+    "repository": "ntex-rs/ntex",
+    "learningId": "learn-github-ntex-rs-ntex",
+    "contentHash": "d0dad18a545da7143f48a0ba451ed813093909e8b2de130df766b1548aea7686",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-RADJ",
+    "timestamp": "2026-11-02T16:18:45.703Z",
+    "repository": "mikepenz/multiplatform-markdown-renderer",
+    "learningId": "learn-github-mikepenz-multiplatform-markdown-renderer",
+    "contentHash": "331c93b12984607508161ecca9e0f1b9107577183727b5a0c9d97c84558d728e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-RDH3",
+    "timestamp": "2026-11-02T16:18:49.719Z",
+    "repository": "bridgecrewio/checkov",
+    "learningId": "learn-github-bridgecrewio-checkov",
+    "contentHash": "cb3216681b0965127d149c1ce6dcc555fa38a6a253edd02211865638bd303928",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

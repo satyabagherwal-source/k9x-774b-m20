@@ -6834,3 +6834,6 @@
 | `CYCLE-20261102-9I23` | `2026-11-02T16:04:55.851Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6448` | Yes (`9ab95497...`) |
 | `CYCLE-20261102-9KSW` | `2026-11-02T16:04:59.408Z` | `SeekStorm/SeekStorm` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/seekstorm-seekstorm-learnings.md` | Yes (`d011de82...`) |
 | `CYCLE-20261102-I8OU` | `2026-11-02T16:11:43.614Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6449` | Yes (`39ac1892...`) |
+| `CYCLE-20261102-R74Q` | `2026-11-02T16:18:41.498Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`d0dad18a...`) |
+| `CYCLE-20261102-RADJ` | `2026-11-02T16:18:45.703Z` | `mikepenz/multiplatform-markdown-renderer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6450` | Yes (`331c93b1...`) |
+| `CYCLE-20261102-RDH3` | `2026-11-02T16:18:49.719Z` | `bridgecrewio/checkov` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6451` | Yes (`cb321668...`) |

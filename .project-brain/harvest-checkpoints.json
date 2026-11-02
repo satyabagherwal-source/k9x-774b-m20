@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T16:11:43.624Z",
+  "last_updated": "2026-11-02T16:18:49.734Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7791,14 +7791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bridgecrewio-checkov",
-      "content_hash": "5b8f6dac4410cf4243469129f8cfdd48716f702cab1870c7b06b629aa3f90c2b",
-      "verified_at": "2026-10-30T00:25:48.202Z",
+      "content_hash": "cb3216681b0965127d149c1ce6dcc555fa38a6a253edd02211865638bd303928",
+      "verified_at": "2026-11-02T16:18:49.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T00:25:48.202Z"
+      "last_updated": "2026-11-02T16:18:49.733Z"
     },
     "apache/zookeeper": {
       "repository": "apache/zookeeper",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "2e67c8358688f9240ca83ce5ad57b4c54a60bced1b7c026624f243d47fdf507b",
-      "verified_at": "2026-10-31T10:00:29.045Z",
+      "content_hash": "d0dad18a545da7143f48a0ba451ed813093909e8b2de130df766b1548aea7686",
+      "verified_at": "2026-11-02T16:18:41.517Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:00:29.045Z"
+      "last_updated": "2026-11-02T16:18:41.517Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -13296,14 +13296,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-multiplatform-markdown-renderer",
-      "content_hash": "0c85086e990db0e15c72bd0bca6f68663aa7b1a64b9aed9474455e5fafe4b6a4",
-      "verified_at": "2026-10-30T06:29:45.165Z",
+      "content_hash": "331c93b12984607508161ecca9e0f1b9107577183727b5a0c9d97c84558d728e",
+      "verified_at": "2026-11-02T16:18:45.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:29:45.165Z"
+      "last_updated": "2026-11-02T16:18:45.719Z"
     },
     "kamgurgul/cpu-info": {
       "repository": "kamgurgul/cpu-info",
