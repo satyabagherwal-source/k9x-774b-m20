@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `ae40f12a`  
+> **Source Version**: `035356d9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T12:46:59.382Z  
+> **Timestamp**: 2026-11-02T15:36:52.471Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T12:46:59.374Z  
+> **Harvest Timestamp**: 2026-11-02T15:36:52.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -947,7 +947,7 @@ def _read_word(sql: str, pos: int) -> tuple:
 
 
 def is_non_transactional_statement(sql: Optional[str]) -> bool:
-    """True when a string statement is DATA BRANCH MERGE or DATA BRANCH PICK.
+    """True for client-level branch operations and table DDL requiring autocommit.
 
     Leading and inter-keyword whitespace/comments are consumed with the
     server's lexical rules, so "data /* trace */ branch merge ...",
@@ -956,6 +956,16 @@ def is_non_transactional_statement(sql: Optional[str]) -> bool:
     them, while a MERGE/PICK-shaped phrase sitting only inside an inert
     comment (e.g. "-- data branch merge a into b\\nSELECT 1") does not.
     """
+    if not isinstance(sql, str):
+        from sqlalchemy.sql.elements import TextClause
+        from sqlalchemy.sql.ddl import DDL
+
+        if isinstance(sql, TextClause):
+            sql = sql.text
+        elif isinstance(sql, DDL):
+            sql = sql.statement
+        else:
+            return False
     if not sql:
         return False
     pos = 0
@@ -964,9 +974,17 @@ def is_non_transactional_statement(sql: Optional[str]) -> bool:
         pos = _skip_space_and_comments(sql, pos)
         word, pos = _read_word(sql, pos)
         if not word:
-            return False
+            break
         words.append(word.lower())
-    return words[0] == "data" and words[1] == "branch" and words[2] in ("merge", "pick")
+    return (
+        bool(words)
+        and words[0] == 'truncate'
+        or len(words) >= 2
+        and words[:2] == ['alter', 'table']
+        or len(words) >= 3
+        and words[:2] == ['data', 'branch']
+        and words[2] in ('merge', 'pick')
+    )
 
 
 def discard_unrestored_connection(conn):
@@ -2331,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #31947** (2026-10-31): **fix(frontend): allow the MySQL wait_timeout range**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #31510  ## What this PR does / why we need it:  `wait_timeout` is documented as an integer-seconds variable with a range up to one year, but the frontend admission bound rejected every configured/SET value above 86400 (one day), so `SET GLOBAL/SESSION wait_timeout = 86401` failed with the default-range error even though MySQL accepts it.  - Admission range raised to `1..31536000` seconds (one year); values are validated once by a shared `validateTimeoutLimits` consumed by both SESSION and GLOBAL before write/persistence. - Default stays `86400`; the server-configured min/max bounds remain a hard policy, and the interactive-handshake wait_timeout rule is unchanged. - The real idle consumer now applies the full int64 seconds value into `time.Duration` without overflow, so a long GLOBAL value actually reaches the connection idle deadline (verified for live GLOBAL change and new logins). - The stale 86401 error rows in the system_variables golden are updated for the lifted bound.  Verification (build on a fresh linear rebase of upstream main, CGO + in-tree thirdparties):  - New focused frontend tests plus existing timeout/variable guards: 18/18 PASS (includes the 5 new `TestWaitTimeout*` admission, DEFAULT forward-control, rejection, idle-consumer and live GLOBAL/new-login tests). - Distribute
+- **Issue #32031** (2026-11-02): **perf(tae): index logtail append ranges on demand**
+  *Symptoms*: ## What type of PR is this?  - [x] Improvement  ## Which issue(s) this PR fixes:  Related to #31374. Addresses the measured append-range scanning regression, while leaving the HNSW resource-admission incident open for matched combined-load validation.  The earlier source-level report is in [#31350](https://github.com/matrixorigin/matrixone/issues/31350#issuecomment-6486498238).  ## What this PR does / why we need it:  Incremental logtail collection currently scans all retained AppendNodes to find transactions to wait for, construct the physical selection, and build commit/abort vectors. Small intervals therefore become expensive as an object's history grows, and visits to older objects with unknown append bounds amplify that work.  Keep physical rows authoritative and admit a reader-owned timestamp index for repeated large-history reads with stable history or small changes. Completed nodes have immutable timestamp keys; unfinished nodes retain the transaction prepare-window check. Commit/rollback only record membership changes after index activation, with no change to PrepareCommit or the AppendNode layout. Readers build and refresh the index, then emit selection and commit/abort vectors in physical row order.  Use the physical scan for small histories, dense intervals and large completion batches. This avoids transferring the read improvement into writer overhead or batched-write regressions. Empty and single-node selections need no pointer scratch; sparse multi-node selecti
 
-- **Issue #31946** (2026-10-31): **fix(colexec): release block-info batch when pipeline sinker close fails (#31626)**
-  *Symptoms*: ## Summary  Fixes the memory leak described in #31626. `CNS3Writer.Close` previously returned immediately if `sinker.Close()` failed, leaving `blockInfoBat` allocated in the process mpool. The updated method preserves the sinker error but always releases the block-info batch and clears references.  由LW授权的ChatGPT  Business智能体提交。  ## Changes  - `pkg/sql/colexec/s3util.go`: retain the underlying Close error while performing unconditional block-info cleanup. - `pkg/sql/colexec/loom_test_cns3_close_blockinfo_leak_test.go`: add the complete real-worker regression test supplied in #31626, including failure-injected pipeline flush and healthy close control. - Scope: 2 files, approximately +183/-4 lines; no changes to gates, schema, protocol or output format.  ## Testing and evidence  - Source verified against upstream `main`; feature branch created from the current upstream main commit and is exactly two commits ahead. - **Isolated extracted-method Go behavior harness, not the repository package:** original Close failed `TestCNS3WriterCloseCleansOnSinkFailure` while success control passed. The revised Close passed both tests (`GO111MODULE=off go test -count=1 -v .`). - The regression attached in #31626 documents the *actual package* failure on upstream original main and provides detailed mpool accounting. The complete test is now committed here, but **the actual `go test ./pkg/sql/colexec -run TestLoomCNS3WriterCloseReleasesBlockInfoBat`, cgo/native build, and CI have not been run by
+- **Issue #32022** (2026-11-02): **fix(disttae): release subscription state locks before diagnostics**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [x] Test and CI - [x] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32021  ## What this PR does / why we need it:  A slow subscription diagnostic sink holds the cross-table subscription state lock and stalls unrelated subscribed-table reads. Move the state owner's response, explicit-unsubscribe and GC-rollback diagnostics after lock release, carrying immutable scalar fields. Remove the common send-success diagnostic, nested cleanup Debug log and mutable subscription-map dump. State transitions, transport sends and cleanup retain their original synchronization and failure semantics.  The removed send-success event is an intentional observability tradeoff: final subscription success remains logged, but it is not a one-to-one replacement for every successful send. Retained transition logs describe the committed event and may appear after a later concurrent transition.  Validation on Go 1.27.1 / macOS arm64:  - Same deterministic reporter-backpressure regressions on clean main: 13 lock-retention failures and eight passing error/cancellation controls. All 21 scenarios pass after the fix, including a real unrelated-table partition lookup while diagnostics remain blocked, Debug cleanup, retained scalar fields, and actual-only GC rollback logging. - Complete owning package on the published head: 629 test roots and 829 subcases passed in normal and race modes, wit
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2352,588 +2370,1283 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae40f12a` (2026-10-31)
-**Commit Message**: Fix daemon claim races and reduce redundant race-test work (#31942)
+### Incident Patch 1: `650a4bb3` (2026-11-02)
+**Commit Message**: fix(function): clamp temporal casts to DECIMAL on overflow (#31999)
 
 ## What type of PR is this?
 
+- [ ] API-change
+- [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #31930
+
+## What this PR does / why we need it:
+
+Clamp explicit DATE, DATETIME, TIME, and TIMESTAMP casts to the signed
+DECIMAL64/128 target bounds instead of failing on insufficient
+precision. Reuse the existing numeric CAST range handling,
+NULL/selection handling, and DATETIME arithmetic fast path.
+
+Quantize TIME at the final target scale before checking precision,
+avoiding premature intermediate overflow and missed final overflow.
+Preserve normal parser errors in the underlying TIME helpers rather than
+wrapping them as internal errors. Implicit and strict assignment
+conversions retain their existing range rejection.
+
+Add UT coverage for positive/negative overflow, rounding boundaries,
+scale changes, NULLs, skipped rows, session time zones, and non-explicit
+mode controls. Add a focused SQL regression for constant and column
+inputs, including DECIMAL128 and result metadata. Broader warning
+text/count compatibility is outside th
+
+**File**: `pkg/container/types/time.go` (modified, +2/-14)
+```diff
+@@ -426,23 +426,11 @@ func (t Time) TruncateToScaleWithoutRounding(scale int32) Time {
+ }
+ 
+ func (t Time) ToDecimal64(ctx context.Context, width, scale int32) (Decimal64, error) {
+-	tToStr := t.NumericString(scale)
+-	ret, err := ParseDecimal64(tToStr, width, scale)
+-	if err != nil {
+-		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal64")
+-	}
+-
+-	return ret, nil
++	return ParseDecimal64WithContext(ctx, t.NumericString(scale), width, scale)
+ }
+ 
+ func (t Time) ToDecimal128(ctx context.Context, width, scale int32) (Decimal128, error) {
+-	tToStr := t.NumericString(scale)
+-	ret, err := ParseDecimal128(tToStr, width, scale)
+-	if err != nil {
+-		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal128")
+-	}
+-
+-	return ret, nil
++	return ParseDecimal128WithContext(ctx, t.NumericString(scale), width, scale)
+ }
+ 
+ func TimeFromClock(isNegative bool, hour uint64, minute, sec uint8, msec uint32) Time {
+```
+
+**File**: `pkg/container/types/time_test.go` (modified, +27/-0)
+```diff
+@@ -22,6 +22,33 @@ import (
+ 	"github.com/stretchr/testify/require"
+ )
+ 
++func TestTimeToDecimalPreservesRangeError(t *testing.T) {
++	for _, negative := range []bool{false, true} {
++		value := TimeFromClock(negative, 12, 34, 56, 123456)
++		for _, target := range []struct{ width, scale int32 }{{5, 1}, {8, 6}, {18, 6}} {
++			text := value.NumericString(target.scale)
++			want64, wantErr64 := ParseDecimal64(text, target.width, target.scale)
++			got64, err64 := value.ToDecimal64(context.Background(), target.width, target.scale)
++			want128, wantErr128 := ParseDecimal128(text, target.width, target.scale)
++			got128, err128 := value.ToDecimal128(context.Background(), target.width, target.scale)
++			if wantErr64 != nil {
++				require.EqualError(t, err64, wantErr64.Error())
++				require.False(t, moerr.IsMoErrCode(err64, moerr.ErrInternal))
++			} else {
++				require.NoError(t, err64)
++				require.Equal(t, want64, got64)
++			}
++			if wantErr128 != nil {
++				require.EqualError(t, err128, wantErr128.Error())
++				require.False(t, moerr.IsMoErrCode(err128, moerr.ErrInternal))
++			} else {
++				require.NoError(t, err128)
++				require.Equal(t, want128, got128)
++			}
++		}
++	}
++}
++
+ func TestTime_StringAndString2(t *testing.T) {
+ 	testCases := []struct {
+ 		name       string
+```
+
+**File**: `pkg/sql/plan/function/func_cast.go` (modified, +36/-2)
+```diff
+@@ -192,10 +192,41 @@ func numericToDecimalExplicit[S, D types.FixedSizeTExceptStrType](
+ func explicitNumericToDecimalTarget[D types.FixedSizeTExceptStrType](
+ 	from *vector.Vector, to *vector.FunctionResult[D], length int, proc *process.Process, selectList *FunctionSelectList,
+ 	parseString func(string) (D, error), fromFloat func(float64) (D, error),
+-	clamp func(bool) (D, error),
++	fromDatetime func(types.Datetime) (D, error), clamp func(bool) (D, error),
+ ) (bool, error) {
++	// Temporal DECIMAL256 casts are not part of the supported cast overloads.
++	if fromDatetime == nil {
++		switch from.GetType().Oid {
++		case types.T_date, types.T_datetime, types.T_timestamp, types.T_time:
++			return false, nil
++		}
++	}
+ 	finite := func(value float64) bool { return !math.IsNaN(value) && !math.IsInf(value, 0) }
+ 	switch from.GetType().Oid {
++	case types.T_date:
++		return true, numericToDecimalExplicit(
++			vector.GenerateFunctionFixedTypeParameter[types.Date](from), to, length, proc, selectList,
++			func(value types.Date) (D, error) { return parseString(strconv.FormatInt(packedDateInt64(value), 10)) },
++			func(types.Date) bool { return false }, nil, clamp)
++	case types.T_datetime:
++		return true, numericToDecimalExplicit(
++			vector.GenerateFunctionFixedTypeParameter[types.Datetime](from), to, length, proc, selectList,
++			fromDatetime, func(types.Datetime) bool { return false }, nil, clamp)
++	case types.T_timestamp:
++		zone := time.Local
++		if proc != nil && proc.GetSessionInfo().TimeZone != nil {
++			zone = proc.GetSessionInfo().TimeZone
++		}
++		return true, numericToDecimalExplicit(
++			vector.GenerateFunctionFixedTypeParameter[types.Timestamp](from), to, length, proc, selectList,
++			func(value types.Timestamp) (D, error) { return fromDatetime(value.ToDatetime(zone)) },
++			func(types.Timestamp) bool { return false }, nil, clamp)
++	case types.T_time:
++		return true, numericToDecimalExplicit(
++			vector.GenerateFunctionFixedTypeParameter[types.Time](from), to, length, proc, selectList,
++			// Quantize once at the final scale, before checking the target width.
++			func(value types.Time) (D, error) { return parseString(value.NumericString(6)) },
++			func(value types.Time) bool { return value < 0 }, nil, clamp)
+ 	case types.T_bool:
+ 		// TRUE is exactly 1 and FALSE exactly 0, so the explicit cast reuses
+ 		// the integer parse path, including the out-of-range clamp that
+@@ -300,6 +331,7 @@ func explicitNumericToDecimal(
+ 				}
+ 				return result, err
+ 			},
++			func(value types.Datetime) (types.Decimal64, error) { return packedDatetimeDecimal64(value, toType) },
+ 			func(negative bool) (types.Decimal64, error) {
+ 				return clampDecimal64Value(negative, toType.Width, toType.Scale)
+ 			})
+@@ -317,6 +349,7 @@ func explicitNumericToDecimal(
+ 				}
+ 				return result, err
+ 			},
++			func(value types.Datetime) (types.Decimal128, error) { return packedDatetimeDecimal128(value, toType) },
+ 			func(negative bool) (types.Decimal128, error) {
+ 				return clampDecimal128Value(negative, toType.Width, toType.Scale)
+ 			})
+@@ -334,6 +367,7 @@ func explicitNumericToDecimal(
+ 				}
+ 				return result, err
+ 			},
++			nil,
+ 			func(negative bool) (types.Decimal256, error) {
+ 				return clampDecimal256Value(negative, toType.Width, toType.Scale)
+ 			})
+@@ -1202,7 +1236,7 @@ func newCastWithoutMediumIntBounds(parameters []*vector.Vector, result vector.Fu
+ 			return decimalToUnsignedAssignment(proc.Ctx, vector.GenerateFunctionFixedTypeParameter[types.Decimal256](from), toType.Oid, result, length, selectList, decimal256RoundedIntegerString)
+ 		}
+ 	}
+-	if mode == castModeExplicit && toType.IsDecimal() && (fromType.IsNumeric() || fromType.Oid == types.T_bool) {
++	if mode == castModeExplicit && toType.IsDecimal() {
+ 		if handled, err := explicitNumericToDecimal(from, *toType, result, length, proc, selectList); handled {
+ 			return err
+ 		}
+```
+
+**File**: `pkg/sql/plan/function/func_cast_temporal_numeric_test.go` (modified, +92/-0)
+```diff
+@@ -26,6 +26,98 @@ import (
+ 	"github.com/stretchr/testify/require"
+ )
+ 
++func TestExplicitCastTemporalDecimalRange(t *testing.T) {
++	for _, oid := range []types.T{types.T_decimal64, types.T_decimal128} {
++		for _, tc := range []struct {
++			name   string
++			source types.T
++			input  string
++			width  int32
++			scale  int32
++			want   string
++		}{
++			{"date overflow", types.T_date, "2024-01-02", 6, 2, "9999.99"},
++			{"datetime overflow", types.T_datetime, "2024-01-02 03:04:05", 12, 2, "9999999999.99"},
++			{"timestamp overflow", types.T_timestamp, "2024-01-02 03:04:05", 12, 2, "9999999999.99"},
++			{"time overflow", types.T_time, "12:34:56", 5, 1, "9999.9"},
++			{"negative time overflow", types.T_time, "-12:34:56", 5, 1, "-9999.9"},
++			{"time final scale overflow", types.T_time, "12:34:56", 6, 2, "9999.99"},
++			{"time source scale fits final scale", types.T_time, "12:34:56.123456", 8, 2, "123456.12"},
++			{"time rounding overflow", types.T_time, "00:00:09.999999", 3, 2, "9.99"},
++			{"negative time rounding overflow", types.T_time, "-00:00:09.999999", 3, 2, "-9.99"},
++			{"time exact boundary", types.T_time, "00:00:09.990000", 3, 2, "9.99"},
++			{"time rounding control", types.T_time, "00:00:09.994999", 3, 2, "9.99"},
++			{"time zero integral width", types.T_time, "-00:00:01", 2, 2, "-0.99"},
++			{"time wide target", types.T_time, "-12:34:56.123456", 18, 6, "-123456.123456"},
++			{"date wide target", types.T_date, "2024-01-02", 10, 2, "20240102.00"},
++			{"datetime wide target", types.T_datetime, "2024-01-02 03:04:05.123456", 18, 4, "20240102030405.1235"},
++			{"timestamp session zone", types.T_timestamp, "2024-01-02 03:04:05.123456", 18, 4, "20240102110405.1235"},
++			{"zero time", types.T_time, "00:00:00", 1, 1, "0.0"},
++		} {
++			t.Run(fmt.Sprintf("%s/%s", oid, tc.name), func(t *testing.T) {
++				proc := testutil.NewProcess(t)
++				proc.GetSessionInfo().TimeZone = time.FixedZone("UTC+8", 8*60*60)
++				nulls := []bool{false, true, false}
++				var input FunctionTestInput
++				switch tc.source {
++				case types.T_date:
++					v, err := types.ParseDateCast(tc.input)
++					require.NoError(t, err)
++					input = NewFunctionTestInput(tc.source.ToType(), []types.Date{v, v, v}, nulls)
++				case types.T_datetime, types.T_timestamp:
++					v, err := types.ParseDatetime(tc.input, 6)
++					require.NoError(t, err)
++					if tc.source == types.T_timestamp {
++						ts := v.ToTimestamp(time.UTC)
++						input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Timestamp{ts, ts, ts}, nulls)
++					} else {
++						input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Datetime{v, v, v}, nulls)
++					}
++				case types.T_time:
++					v, err := types.ParseTime(tc.input, 6)
++					require.NoError(t, err)
++					input = NewFunctionTestInput(types.New(tc.source, 0, 6), []types.Time{v, v, v}, nulls)
++				}
++				target := types.New(oid, tc.width, tc.scale)
++				fc := NewFunctionTestCase(proc, []FunctionTestInput{input, NewFunctionTestInput(target, emptyCastTargetValues(target), nil)},
++					NewFunctionTestResult(target, false, nil, nil), NewExplicitCast).
++					WithSelectList(&FunctionSelectList{AnyNull: true, SelectList: []bool{true, true, false}})
++				t.Cleanup(fc.Free)
++				got, err := fc.DebugRun()
++				require.NoError(t, err)
++				require.Equal(t, tc.want, explicitCastDecimalTestValue(got, 0))
++				require.True(t, got.IsNull(1))
++				require.True(t, got.IsNull(2), "unselected temporal operands must not be evaluated")
++			})
++		}
++	}
++}
++
++func TestTemporalDecimalOverflowModes(t *testing.T) {
++	for _, oid := range []types.T{types.T_decimal64, types.T_decimal128} {
++		for _, tc := range []struct {
++			name string
++			fn   executeLogicOfOverload
++		}{
++			{"implicit", NewCast},
++			{"assignment", NewAssignCast},
++			{"strict", NewStrictCast},
++		} {
++			t.Run(fmt.Sprintf("%s/%s", oid, tc.name), func(t *testing.T) {
++				proc := testutil.NewProcess(t)
++				target := types.New(oid, 6, 2)
++				fc := NewFunctionTestCase(proc, []FunctionTestInput{
++					NewFunctionTestInput(types.T_date.ToType(), []types.Date{types.DateFromCalendar(2024, 1, 2)}, nil),
++					NewFunctionTestInput(target, emptyCastTargetValues(target), nil),
++				}, NewFunctionTestResult(target, true, nil, nil), tc.fn)
++				t.Cleanup(fc.Free)
++				_, err := fc.DebugRun()
++				require.Error(t, err, "only explicit CAST may clamp a temporal range overflow")
++			})
++		}
++	}
++}
++
+ func TestPackedDatetimeDecimal128MatchesParser(t *testing.T) {
+ 	// Keep the old text conversion as an independent oracle for width, scale,
+ 	// rounding, overflow, zero values, and the exact public error text.
+```
+
+**File**: `test/distributed/cases/dtype/TimeToInt.result` (modified, +32/-8)
+```diff
+@@ -16,7 +16,10 @@ null
+ select cast(col1 as int) from test01;
+ Data truncation: data out of range: data type int32, value '20200113122059'
+ select cast(col1 as decimal(20,10)) from test01;
+-invalid input: 20200113122059.000000 beyond the range, can't be converted to Decimal128(20,10).
++➤ cast(col1 as decimal(20, 10))[3,20,10]  𝄀
++9999999999.9999999999  𝄀
++9999999999.9999999999  𝄀
++null
+ drop table test01;
+ drop table if exists test01;
+ create table test01(col1 datetime(3));
+@@ -31,7 +34,10 @@ null
+ select cast(col1 as int) from test01;
+ Data truncation: data out of range: data type int32, value '20200113122059'
+ select cast(col1 as decimal(20,10)) from test01;
+-invalid input: 20200113122059.123000 beyond the range, can't be converted to Decimal128(20,10).
++➤ cast(col1 as decimal(20, 10))[3,20,10]  𝄀
++9999999999.9999999999  𝄀
++9999999999.9999999999  𝄀
++null
+ drop table test01;
+ drop table if exists test02;
+ create table test02(col1 date);
+@@ -77,7 +83,10 @@ insert into test06 values(NULL);
+ insert into test05 select * from test06;
+ Data truncation: data out of range: data type int32, value '20200113122059'
+ select cast(col1 as decimal(20,18)) from test06;
+-invalid input: 20200113122059.000000 beyond the range, can't be converted to Decimal128(20,18).
++➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
++99.999999999999999999  𝄀
++99.999999999999999999  𝄀
++null
+ insert into test07 select * from test06;
+ select * from test05;
+ ➤ col1[4,32,0]
+@@ -101,7 +110,10 @@ insert into test06 values(NULL);
+ insert into test05 select * from test06;
+ Data truncation: data out of range: data type int32, value '20200113122059'
+ select cast(col1 as decimal(20,18)) from test06;
+-invalid input: 20200113122059.123000 beyond the range, can't be converted to Decimal128(20,18).
++➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
++99.999999999999999999  𝄀
++99.999999999999999999  𝄀
++null
+ insert into test07 select * from test06;
+ select * from test05;
+ ➤ col1[4,32,0]
+@@ -394,7 +406,10 @@ null
+ select cast(col1 as int) from test03;
+ Data truncation: data out of range: data type int32, value '19970113122100'
+ select cast(col1 as decimal(20,18)) from test03;
+-invalid input: 19970113122100.000000 beyond the range, can't be converted to Decimal128(20,18).
++➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
++99.999999999999999999  𝄀
++99.999999999999999999  𝄀
++null
+ drop table test03;
+ drop table if exists test03;
+ create table test03(col1 timestamp(5));
+@@ -409,7 +424,10 @@ null
+ select cast(col1 as int) from test03;
+ Data truncation: data out of range: data type int32, value '19970113122059'
+ select cast(col1 as decimal(20,18)) from test03;
+-invalid input: 19970113122059.898610 beyond the range, can't be converted to Decimal128(20,18).
++➤ cast(col1 as decimal(20, 18))[3,20,18]  𝄀
++99.999999999999999999  𝄀
++99.999999999999999999  𝄀
++null
+ drop table test03;
+ drop table if exists test09;
+ drop table if exists test10;
+@@ -423,7 +441,10 @@ insert into test10 values(NULL);
+ insert into test09 select * from test10;
+ Data truncation: data out of range: data type int32, value '20221213122059'
+ select cast(col1 as decimal(10,5)) from test10;
+-invalid input: 20221213122059.000000 beyond the range, can't be converted to Decimal64(10,5).
++➤ cast(col1 as decimal(10, 5))[3,10,5]  𝄀
++99999.99999  𝄀
++99999.99999  𝄀
++null
+ insert into test11 select * from test10;
+ select * from test09;
+ ➤ col1[4,32,0]
+@@ -446,7 +467,10 @@ insert into test10 values(NULL);
+ insert into test09 select * from test10;
+ Data truncation: data out of range: data type int32, value '20221213122059'
+ select cast(col1 as decimal(10,5)) from test10;
+-invalid input: 20221213122059.213213 beyond the range, can't be converted to Decimal64(10,5).
++➤ cast(col1 as decimal(10, 5))[3,10,5]  𝄀
++99999.99999  𝄀
++99999.99999  𝄀
++null
+ insert into test11 select * from test10;
+ select * from test09;
+ ➤ col1[4,32,0]
+```
+
+**File**: `test/distributed/cases/dtype/temporal_decimal_cast_range.result` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++select cast(cast('2024-01-02 03:04:05' as datetime) as decimal(12,2)) as datetime_clamped,
++cast(cast('2024-01-02' as date) as decimal(6,2)) as date_clamped,
++cast(cast('12:34:56' as time) as decimal(5,1)) as time_clamped;
++➤ datetime_clamped[3,12,2]  ¦  date_clamped[3,6,2]  ¦  time_clamped[3,5,1]  𝄀
++9999999999.99  ¦  9999.99  ¦  9999.9
++select cast(cast('-12:34:56' as time) as decimal(5,1)) as negative_time_clamped,
++cast(cast('12:34:56' as time) as decimal(6,2)) as time_final_scale_clamped,
++cast(cast('12:34:56.123456' as time(6)) as decimal(8,2)) as time_final_scale_fits;
++➤ negative_time_clamped[3,5,1]  ¦  time_final_scale_clamped[3,6,2]  ¦  time_final_scale_fits[3,8,2]  𝄀
++-9999.9  ¦  9999.99  ¦  123456.12
++select cast(cast('00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_time_clamped,
++cast(cast('-00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_negative_time_clamped,
++cast(cast('00:00:09.990000' as time(6)) as decimal(3,2)) as time_boundary;
++➤ rounded_time_clamped[3,3,2]  ¦  rounded_negative_time_clamped[3,3,2]  ¦  time_boundary[3,3,2]  𝄀
++9.99  ¦  -9.99  ¦  9.99
++select cast(cast('2024-01-02 03:04:05.123456' as datetime(6)) as decimal(20,2)) as datetime_wide,
++cast(cast('-12:34:56.123456' as time(6)) as decimal(20,6)) as negative_time_wide;
++➤ datetime_wide[3,20,2]  ¦  negative_time_wide[3,20,6]  𝄀
++20240102030405.12  ¦  -123456.123456
++set @temporal_decimal_saved_time_zone = @@session.time_zone;
++set time_zone = '+00:00';
++drop table if exists temporal_decimal_cast_range_t;
++create table temporal_decimal_cast_range_t(id int, d date, dt datetime(6), tm time(6), ts timestamp(6));
++insert into temporal_decimal_cast_range_t values
++(1, '2024-01-02', '2024-01-02 03:04:05.123456', '-12:34:56.123456', '2024-01-02 03:04:05.123456'),
++(2, null, null, null, null);
++select id, cast(d as decimal(6,2)) as d64, cast(dt as decimal(12,2)) as dt64,
++cast(tm as decimal(5,1)) as tm64, cast(ts as decimal(12,2)) as ts64
++from temporal_decimal_cast_range_t order by id;
++➤ id[4,32,0]  ¦  d64[3,6,2]  ¦  dt64[3,12,2]  ¦  tm64[3,5,1]  ¦  ts64[3,12,2]  𝄀
++1  ¦  9999.99  ¦  9999999999.99  ¦  -9999.9  ¦  9999999999.99  𝄀
++2  ¦  null  ¦  null  ¦  null  ¦  null
++select id, cast(d as decimal(20,16)) as d128, cast(dt as decimal(20,16)) as dt128,
++cast(tm as decimal(20,16)) as tm128, cast(ts as decimal(20,16)) as ts128
++from temporal_decimal_cast_range_t order by id;
++➤ id[4,32,0]  ¦  d128[3,20,16]  ¦  dt128[3,20,16]  ¦  tm128[3,20,16]  ¦  ts128[3,20,16]  𝄀
++1  ¦  9999.9999999999999999  ¦  9999.9999999999999999  ¦  -9999.9999999999999999  ¦  9999.9999999999999999  𝄀
++2  ¦  null  ¦  null  ¦  null  ¦  null
++set time_zone = '+08:00';
++select cast(ts as decimal(20,6)) as timestamp_session_zone
++from temporal_decimal_cast_range_t where id = 1;
++➤ timestamp_session_zone[3,20,6]  𝄀
++20240102110405.123456
++drop table temporal_decimal_cast_range_t;
++set time_zone = @temporal_decimal_saved_time_zone;
+```
+
+**File**: `test/distributed/cases/dtype/temporal_decimal_cast_range.test` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++-- @bvt:parallel
++
++-- Constant temporal casts clamp at the final DECIMAL precision and scale.
++select cast(cast('2024-01-02 03:04:05' as datetime) as decimal(12,2)) as datetime_clamped,
++       cast(cast('2024-01-02' as date) as decimal(6,2)) as date_clamped,
++       cast(cast('12:34:56' as time) as decimal(5,1)) as time_clamped;
++select cast(cast('-12:34:56' as time) as decimal(5,1)) as negative_time_clamped,
++       cast(cast('12:34:56' as time) as decimal(6,2)) as time_final_scale_clamped,
++       cast(cast('12:34:56.123456' as time(6)) as decimal(8,2)) as time_final_scale_fits;
++select cast(cast('00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_time_clamped,
++       cast(cast('-00:00:09.999999' as time(6)) as decimal(3,2)) as rounded_negative_time_clamped,
++       cast(cast('00:00:09.990000' as time(6)) as decimal(3,2)) as time_boundary;
++select cast(cast('2024-01-02 03:04:05.123456' as datetime(6)) as decimal(20,2)) as datetime_wide,
++       cast(cast('-12:34:56.123456' as time(6)) as decimal(20,6)) as negative_time_wide;
++
++-- Column inputs exercise both DECIMAL64 and DECIMAL128, including NULLs.
++set @temporal_decimal_saved_time_zone = @@session.time_zone;
++set time_zone = '+00:00';
++drop table if exists temporal_decimal_cast_range_t;
++create table temporal_decimal_cast_range_t(id int, d date, dt datetime(6), tm time(6), ts timestamp(6));
++insert into temporal_decimal_cast_range_t values
++    (1, '2024-01-02', '2024-01-02 03:04:05.123456', '-12:34:56.123456', '2024-01-02 03:04:05.123456'),
++    (2, null, null, null, null);
++select id, cast(d as decimal(6,2)) as d64, cast(dt as decimal(12,2)) as dt64,
++       cast(tm as decimal(5,1)) as tm64, cast(ts as decimal(12,2)) as ts64
++from temporal_decimal_cast_range_t order by id;
++select id, cast(d as decimal(20,16)) as d128, cast(dt as decimal(20,16)) as dt128,
++       cast(tm as decimal(20,16)) as tm128, cast(ts as decimal(20,16)) as ts128
++from temporal_decimal_cast_range_t order by id;
++set time_zone = '+08:00';
++select cast(ts as decimal(20,6)) as timestamp_session_zone
++from temporal_decimal_cast_range_t where id = 1;
++drop table temporal_decimal_cast_range_t;
++set time_zone = @temporal_decimal_saved_time_zone;
+```
+
+**File**: `test/distributed/cases/function/func_cast.result` (modified, +2/-1)
+```diff
+@@ -722,7 +722,8 @@ set time_zone="+00:00";
+ create table t1(s1 timestamp);
+ insert into t1 values ('2020-12-03 11:11:11');
+ select cast(s1 as decimal(7,2)) from t1;
+-invalid input: 20201203111111.000000 beyond the range, can't be converted to Decimal64(7,2).
++➤ cast(s1 as decimal(7, 2))[3,7,2]  𝄀
++99999.99
+ drop table t1;
+ set time_zone="+00:00";
+ create table ts_cast_time(id int primary key, event_ts timestamp(6));
+```
+
+---
+
+### Incident Patch 2: `b4d1a674` (2026-11-02)
+**Commit Message**: fix(disttae): release subscription state locks before diagnostics (#32022)
+
+## What type of PR is this?
+
+- [ ] API-change
 - [x] BUG
 - [x] Improvement
+- [ ] Documentation
+- [ ] Feature
 - [x] Test and CI
 - [x] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Refs #29249
+Fixes #32021
 
 ## What this PR does / why we need it:
 
-Scope: the owner explicitly requested one PR for the related UT-racing
-fixes and meaningful test optimizations (rather than separate small
-PRs). #29249 is referenced as the ongoing quality tracker; this combined
-scope follows that task-specific request.
+A slow subscription diagnostic sink holds the cross-table subscription
+state lock and stalls unrelated subscribed-table reads. Move the state
+owner's response, explicit-unsubscribe and GC-rollback diagnostics after
+lock release, carrying immutable scalar fields. Remove the common
+send-success diagnostic, nested cleanup Debug log and mutable
+subscription-map dump. State transitions, transport sends and cleanup
+retain their original synchronization and failure semantics.
 
-The combined scope is an owner-approved exception to #29249's usual
-focused daily-cleanup PR rule. The independent test-only changes have
-these retained coverage boundaries:
+The removed send-success event is an intentional observability tradeoff:
+final subscription success remains logged, but it is not a one-to-one
+replacement for every successful send. Retained transition logs describe
+the committed event and may appear after a later concurrent transition.
 
-| Test optimization | Retained contracts |
-| --- | --- |
-| DIV | Full first-pass CTAS/view matrix, NULL and warning/error cases,
-integer boundaries and ODKU; a representative second pass with
-`NO_UNSIGNED_SUBTRACTION`, database recreation and teardown checks. |
-| Planner witnesses | All precisions 0–30 retain ALTER, candidate
-searches and exact-result checks; representative precisions retain
-cross-zone searches and the more expensive proofs. |
-| Snapshot/publication | Quoted database and publication names shar
+Validation on Go 1.27.1 / macOS arm64:
 
-**File**: `pkg/cnservice/server_task_test.go` (modified, +4/-0)
+- Same deterministic reporter-backpressure regressions on clean main: 13
+lock-rete
+
+**File**: `pkg/vm/engine/disttae/engine.go` (modified, +0/-1)
 ```diff
-@@ -385,6 +385,10 @@ func (ts *testTS) UpdateDaemonTaskError(context.Context, task.DaemonTask, bool)
- 	panic("unexpected UpdateDaemonTaskError")
+@@ -1388,7 +1388,6 @@ func (e *Engine) cleanMemoryTableWithTable(dbId, tblId uint64) {
+ 	// deadlock: cleanMemoryTableWithTable holds Engine.mu→GlobalStats.mu,
+ 	// while GlobalStats.Get holds GlobalStats.mu→Engine.mu (via GetOrCreateLatestPart).
+ 	e.globalStats.RemoveTid(tblId)
+-	logutil.Debugf("clean memory table of tbl[dbId: %d, tblId: %d]", dbId, tblId)
  }
  
-+func (ts *testTS) RequestDaemonTaskStatus(context.Context, task.DaemonTask, task.TaskStatus) (int, error) {
-+	panic("unexpected RequestDaemonTaskStatus")
-+}
-+
- func (ts *testTS) UpdateDaemonTaskStatus(
- 	ctx context.Context,
- 	taskID uint64,
+ func (e *Engine) PushClient() *PushClient {
 ```
 
-**File**: `pkg/embed/cdc_control_status_test.go` (added, +286/-0)
+**File**: `pkg/vm/engine/disttae/logtail_consumer.go` (modified, +62/-54)
 ```diff
-@@ -0,0 +1,286 @@
+@@ -766,11 +766,6 @@ func (c *PushClient) subscribeTable(
+ 		if err != nil {
+ 			return err
+ 		}
+-		logutil.Info(
+-			fmt.Sprintf("%s-send-subscribe-ok", logTag),
+-			zap.Uint64("table-id", tblId.TbId),
+-			zap.Uint64("db-id", tblId.DbId),
+-		)
+ 		return nil
+ 	}
+ }
+@@ -1309,24 +1304,25 @@ func (c *PushClient) UnsubscribeTable(ctx context.Context, accId, dbID, tbID uin
+ 	if ifShouldNotDistribute(dbID, tbID) {
+ 		return moerr.NewInternalErrorf(ctx, "%s cannot unsubscribe table %d-%d as table ID is not allowed", logTag, dbID, tbID)
+ 	}
+-	c.subscribed.rw.Lock()
+-	defer c.subscribed.rw.Unlock()
+-	k := tbID
+-	ent, ok := c.subscribed.m[k]
+-	if !ok || ent.state != Subscribed {
++	attempted, err := func() (bool, error) {
++		c.subscribed.rw.Lock()
++		defer c.subscribed.rw.Unlock()
++		ent, ok := c.subscribed.m[tbID]
++		if !ok || ent.state != Subscribed {
++			return false, nil
++		}
++		dbID = ent.dbID
++		ent.state = Unsubscribing
++		return true, c.subscriber.sendUnSubscribe(ctx, api.TableID{DbId: dbID, TbId: tbID})
++	}()
++	if !attempted {
+ 		logutil.Infof("%s table %d-%d is not subscribed yet", logTag, dbID, tbID)
+-		return nil
+-	}
+-
+-	dbID = ent.dbID
+-	ent.state = Unsubscribing
+-
+-	if err := c.subscriber.sendUnSubscribe(ctx, api.TableID{DbId: dbID, TbId: tbID}); err != nil {
++	} else if err != nil {
+ 		logutil.Errorf("%s cannot unsubscribe table %d-%d, err: %v", logTag, dbID, tbID, err)
+-		return err
++	} else {
++		logutil.Infof("%s send unsubscribe table %d-%d request succeed", logTag, dbID, tbID)
+ 	}
+-	logutil.Infof("%s send unsubscribe table %d-%d request succeed", logTag, dbID, tbID)
+-	return nil
++	return err
+ }
+ 
+ func (c *PushClient) doGCUnusedTable(ctx context.Context) {
+@@ -1398,18 +1394,22 @@ func (c *PushClient) doGCUnusedTable(ctx context.Context) {
+ 	// retried after one GC cycle (20 min) instead of waiting full unsubscribeTimer (1 hour)
+ 	if len(failedJobs) > 0 {
+ 		backoffTs := time.Now().Add(-unsubscribeTimer + unsubscribeProcessTicker).UnixNano()
++		rolledBack := failedJobs[:0]
+ 		c.subscribed.rw.Lock()
+ 		for _, job := range failedJobs {
+ 			if ent, ok := c.subscribed.m[job.tId]; ok && ent.state == Unsubscribing {
+ 				ent.state = Subscribed
+ 				ent.lastTs.Store(backoffTs)
+-				logutil.Infof("%s reverted tbl[db: %d, tbl: %d] to Subscribed for retry (backoff ~20min)",
+-					logTag,
+-					job.dbID,
+-					job.tId)
++				rolledBack = append(rolledBack, job)
+ 			}
+ 		}
+ 		c.subscribed.rw.Unlock()
++		for _, job := range rolledBack {
++			logutil.Infof("%s reverted tbl[db: %d, tbl: %d] to Subscribed for retry (backoff ~20min)",
++				logTag,
++				job.dbID,
++				job.tId)
++		}
+ 	}
+ }
+ 
+@@ -1957,14 +1957,16 @@ func (c *PushClient) Close() error {
+ }
+ 
+ func (s *subscribedTable) setTableSubNotExist(dbId, tblId uint64) {
+-	s.rw.Lock()
+-	defer s.rw.Unlock()
+-	ent := &subEntry{
+-		dbID:  dbId,
+-		state: SubRspTableNotExist,
+-	}
+-	ent.lastTs.Store(time.Now().UnixNano())
+-	s.m[tblId] = ent
++	func() {
++		s.rw.Lock()
++		defer s.rw.Unlock()
++		ent := &subEntry{
++			dbID:  dbId,
++			state: SubRspTableNotExist,
++		}
++		ent.lastTs.Store(time.Now().UnixNano())
++		s.m[tblId] = ent
++	}()
+ 	logutil.Error(
+ 		"logtail.consumer.set.table.sub.not.exist",
+ 		zap.Uint64("db-id", dbId),
+@@ -1979,14 +1981,16 @@ func (s *subscribedTable) clearTable(dbId, tblId uint64) {
+ }
+ 
+ func (s *subscribedTable) setTableSubscribed(dbId, tblId uint64) {
+-	s.rw.Lock()
+-	defer s.rw.Unlock()
+-	ent := &subEntry{
+-		dbID:  dbId,
+-		state: Subscribed,
+-	}
+-	ent.lastTs.Store(time.Now().UnixNano())
+-	s.m[tblId] = ent
++	func() {
++		s.rw.Lock()
++		defer s.rw.Unlock()
++		ent := &subEntry{
++			dbID:  dbId,
++			state: Subscribed,
++		}
++		ent.lastTs.Store(time.Now().UnixNano())
++		s.m[tblId] = ent
++	}()
+ 	logutil.Info(
+ 		"logtail.consumer.set.table.subscribed",
+ 		zap.Uint64("db-id", dbId),
+@@ -1995,28 +1999,32 @@ func (s *subscribedTable) setTableSubscribed(dbId, tblId uint64) {
+ }
+ 
+ func (s *subscribedTable) setTableSubRspReceived(dbId, tblId uint64) {
+-	s.rw.Lock()
+-	defer s.rw.Unlock()
+-	ent := &subEntry{
+-		dbID:  dbId,
+-		state: SubRspReceived,
+-	}
+-	ent.lastTs.Store(time.Now().UnixNano())
+-	s.m[tblId] = ent
++	service := func() string {
++		s.rw.Lock()
++		defer s.rw.Unlock()
++		ent := &subEntry{
++			dbID:  dbId,
++			state: SubRspReceived,
++		}
++		ent.lastTs.Store(time.Now().UnixNano())
++		s.m[tblId] = ent
++		return s.eng.service
++	}()
+ 	logutil.Info(
+ 		"logtail.consumer.set.table.sub.rsp.received",
+-		zap.String("service", s.eng.service),
++		zap.String("service", service),
+ 		zap.Uint64("db-id", dbId),
+ 		zap.Uint64("tbl-id", tblId),
+-		zap.Any("subscribed-table", s),
+ 	)
+ }
+ 
+ func (s *subscribedTable) setTableUnsubscribe(dbId, tblId uint64) {
+-	s.rw.Lock()
+-	defer s.rw.Unlock()
+-	s.eng.cleanMemoryTableWithTable(dbId, tblId)
+-	delete(s.m, tblId)
++	func() {
++		s.rw.Lock()
++		defer s.rw.Unlock()
++		s.eng.cleanMemoryTableWithTable(dbId, tblId)
++		delete(s.m, tblId)
++	}()
+ 	logutil.Info(
+ 		"logtail.consumer.set.table.unsubscribe",
+ 		zap.Uint64("db-id", dbId)
+```
+
+**File**: `pkg/vm/engine/disttae/subscription_diagnostics_test.go` (added, +415/-0)
+```diff
+@@ -0,0 +1,415 @@
++// Copyright 2026 Matrix Origin
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++// http://www.apache.org/licenses/LICENSE-2.0
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package disttae
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"strings"
++	"sync"
++	"sync/atomic"
++	"testing"
++	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/logutil"
++	"github.com/matrixorigin/matrixone/pkg/pb/api"
++	"github.com/matrixorigin/matrixone/pkg/pb/statsinfo"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae/logtailreplay"
++	"github.com/stretchr/testify/require"
++	"go.uber.org/zap"
++	"go.uber.org/zap/buffer"
++	"go.uber.org/zap/zapcore"
++)
++
++const diagnosticDB, diagnosticCold, diagnosticWarm = uint64(1000), uint64(100), uint64(200)
++
++func subscriptionDiagnosticsFixture(t *testing.T) *PushClient {
++	t.Helper()
++	e := &Engine{service: "subscription-diagnostics", partitions: make(map[[2]uint64]*logtailreplay.Partition), globalStats: &GlobalStats{}}
++	c := &PushClient{eng: e, subscriber: newLogTailSubscriber()}
++	c.subscriber.setReady()
++	c.receivedLogTailTime.ready.Store(true)
++	c.subscribed.eng = e
++	c.subscribed.m = map[uint64]*subEntry{diagnosticWarm: {dbID: diagnosticDB, state: Subscribed}}
++	c.subscribed.m[diagnosticWarm].lastTs.Store(time.Now().UnixNano())
++	e.GetOrCreateLatestPart(t.Context(), 0, diagnosticDB, diagnosticWarm)
++	return c
++}
++
++type subscriptionDiagnosticEvent struct {
++	entry  zapcore.Entry
++	fields []zapcore.Field
++}
++
++func (e subscriptionDiagnosticEvent) table(dbID, tableID uint64) bool {
++	var db, table uint64
++	var hasDB, hasTable bool
++	for _, field := range e.fields {
++		switch field.Key {
++		case "db-id":
++			db, hasDB = uint64(field.Integer), true
++		case "table-id", "tbl-id":
++			table, hasTable = uint64(field.Integer), true
++		}
++	}
++	if hasDB || hasTable {
++		return hasDB && hasTable && db == dbID && table == tableID
++	}
++	for _, target := range []string{
++		fmt.Sprintf("%d-%d", dbID, tableID),
++		fmt.Sprintf("[db: %d, tbl: %d]", dbID, tableID),
++		fmt.Sprintf("[dbId: %d, tblId: %d]", dbID, tableID),
++	} {
++		if strings.Contains(e.entry.Message, target) {
++			return true
++		}
++	}
++	return false
++}
++
++// A blocked diagnostic must not retain the subscription lock or stop another
++// table's real partition lookup. The optional terminal path also checks removal
++// of the old send-only diagnostic without using a timeout as an absence oracle.
++func checkSubscriptionDiagnosticBackpressure(t *testing.T, c *PushClient, optional bool,
++	matches func(subscriptionDiagnosticEvent) bool, action func(context.Context) error,
++	check func(subscriptionDiagnosticEvent),
++) ([]subscriptionDiagnosticEvent, error) {
++	t.Helper()
++	ctx, cancel := context.WithTimeout(t.Context(), 5*time.Second)
++	entered := make(chan subscriptionDiagnosticEvent, 1)
++	release := make(chan struct{})
++	var releaseOnce, blockOnce sync.Once
++	unblock := func() { releaseOnce.Do(func() { close(release) }) }
++	previous := logutil.GetReportZapFunc()
++	var probe atomic.Bool
++	var recordsMu sync.Mutex
++	var records []subscriptionDiagnosticEvent
++	logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: func(enc zapcore.Encoder, entry zapcore.Entry, fields []zapcore.Field) (*buffer.Buffer, error) {
++		if entry.Message == "subscription-diagnostics-probe" {
++			probe.Store(true)
++		}
++		event := subscriptionDiagnosticEvent{entry: entry, fields: fields}
++		if matches(event) {
++			event.fields = append([]zapcore.Field(nil), fields...)
++			recordsMu.Lock()
++			records = append(records, event)
++			recordsMu.Unlock()
++			blockOnce.Do(func() { entered <- event; <-release })
++		}
++		return previous(enc, entry, fields)
++	}})
++	done := make(chan error, 1)
++	joined := false
++	started := false
++	t.Cleanup(func() {
++		cancel()
++		unblock()
++		if started && !joined {
++			select {
++			case <-done:
++			case <-time.After(5 * time.Second):
++				t.Error("subscription operation did not terminate")
++			}
++		}
++		logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: previous})
++	})
++	logutil.Info("subscription-diagnostics-probe")
++	require.True(t, probe.Load(), "the real synchronous reporter must be enabled")
++	started = true
++	go func() { done <- action(ctx) }()
++	var result error
++	select {
++	case event := <-entered:
++		unlocked := c.subscribed.rw.TryRLock()
++		if unlocked {
++			c.subscribed.rw.RUnlock()
++		}
++		require.True(t, unlocked, "diagnostic backpressure retained the cross-table subscription lock")
++		want := c.eng.partitions[[2]uint64{diagnosticDB, diagnosticWarm}].Snapshot()
++		part, ok, state, pending := c.isSubscr
+```
+
+---
+
+### Incident Patch 3: `ea184ad9` (2026-11-02)
+**Commit Message**: fix: authorize exclusive SELECT lock targets (#31978)
+
+## What type of PR is this?
+
+- [ ] API-change
+- [x] BUG
+- [x] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
+
+## Which issue(s) this PR fixes:
+
+Fixes #31916
+
+## What this PR does / why we need it:
+
+A SELECT-only user could execute SELECT ... FOR UPDATE, acquire
+exclusive locks, and block writers. Require SELECT plus UPDATE or DELETE
+for each exclusive locking-read target; existing ALL/ownership grants
+also qualify. Ordinary SELECT and shared locking reads retain their
+SELECT-only requirements. MatrixOne does not currently support granting
+LOCK TABLES. See the [MySQL 8.4 locking-read privilege
+contract](https://dev.mysql.com/doc/refman/8.4/en/innodb-locking-reads.html).
+
+Capture logical lock targets and view paths during binding, preserve
+them across rewrites and prepared execution, and reauthorize rebuilt
+plans before compilation, including CTAS retry sources. Preserve
+inherited roles and DEFINER account boundaries.
+
+For eligible multi-target view checks, reuse the caller role closure and
+one last-definer closure within one authorization transaction at the
+statement's admitted catalog sna
+
+**File**: `pkg/frontend/authenticate.go` (modified, +321/-30)
+```diff
+@@ -2468,6 +2468,8 @@ const (
+ 
+ // privilegeItem is the item for in the compound entry
+ type privilegeItem struct {
++	// SELECT is checked separately; this item requires a locking-read alternative.
++	selectLock            bool
+ 	privilegeTyp          PrivilegeType
+ 	objType               objectType
+ 	viewPath              []*plan.ViewStep
+@@ -5673,6 +5675,9 @@ func resolveViewChainPrivilegeContext(
+ 	privType PrivilegeType,
+ 	viewPath []*plan.ViewStep,
+ 	enableCache bool,
++	selectLock bool,
++	lockRoles *btree.Set[int64],
++	definerRoles ...*selectLockDefinerRoles,
+ ) (viewPrivilegePrincipal, bool, bool, error) {
+ 	accountID, err := defines.GetAccountId(ctx)
+ 	if err != nil {
+@@ -5686,7 +5691,7 @@ func resolveViewChainPrivilegeContext(
+ 		return caller, false, false, err
+ 	}
+ 	if isSystemViewDatabase(viewPath[0].DatabaseName) {
+-		return caller, true, true, nil
++		return caller, true, !selectLock, nil
+ 	}
+ 
+ 	principal := caller
+@@ -5703,7 +5708,12 @@ func resolveViewChainPrivilegeContext(
+ 			cacheToUse = nil
+ 		}
+ 		grantCtx := defines.AttachAccountId(ctx, principal.accountID)
+-		viewAllowed, err := verifyViewPrivilegeForRole(grantCtx, bh, ses, cacheToUse, principal.roleID, privType, grantDb, viewName, useCache)
++		var viewAllowed bool
++		if lockRoles != nil {
++			viewAllowed, err = verifySelectLockPrivilegeForRoles(grantCtx, bh, ses, lockRoles, objectTypeView, grantDb, viewName)
++		} else {
++			viewAllowed, err = verifyViewPrivilegeForRole(grantCtx, bh, ses, cacheToUse, principal.roleID, privType, grantDb, viewName, useCache, selectLock)
++		}
+ 		if err != nil {
+ 			return principal, false, false, err
+ 		}
+@@ -5729,6 +5739,21 @@ func resolveViewChainPrivilegeContext(
+ 		}
+ 		if viewInfo.securityType == viewSecurityDefiner {
+ 			principal = viewPrivilegePrincipal{accountID: snapshot.Tenant.TenantID, roleID: viewInfo.definerRoleId}
++			if lockRoles != nil {
++				// The caller owns this temporary set. A definer transition replaces
++				// the complete role namespace, even when numeric IDs collide.
++				lockRoles.Clear()
++				lockRoles.Insert(principal.roleID)
++				definerCtx := defines.AttachAccountId(ctx, principal.accountID)
++				if len(definerRoles) > 0 {
++					err = definerRoles[0].load(definerCtx, bh, principal, lockRoles)
++				} else {
++					err = expandRoleSetWithInheritedRoles(definerCtx, bh, lockRoles)
++				}
++				if err != nil {
++					return principal, false, false, err
++				}
++			}
+ 		}
+ 	}
+ 
+@@ -7542,6 +7567,11 @@ func extractPrivilegeTipsFromPlan(p *plan2.Plan) (privilegeTipsArray, error) {
+ 			})
+ 		}
+ 	}
++	lockTips, err := selectLockPrivilegeTips(p.GetQuery())
++	if err != nil {
++		return nil, err
++	}
++	pts = append(pts, lockTips...)
+ 	return appendLogicalViewPrivilegeTips(pts, p.GetQuery())
+ }
+ 
+@@ -7856,6 +7886,198 @@ func replaceFunctionPreservesNull(fn *plan.Function) bool {
+ 	return strings.Contains(fnName, "cast")
+ }
+ 
++// privilegeAlternatives keeps a locking read distinct from a data modification.
++// The SELECT requirement is checked independently of these alternatives.
++func privilegeAlternatives(typ PrivilegeType, selectLock bool) []PrivilegeType {
++	if selectLock {
++		return []PrivilegeType{PrivilegeTypeUpdate, PrivilegeTypeDelete, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership}
++	}
++	return []PrivilegeType{typ, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership}
++}
++
++// selectLockPrivilegeTips uses binding identities rather than an outer AST or
++// physical table IDs: nested blocks and different view paths retain their own
++// requirements even when optimization removes their scan nodes.
++func selectLockPrivilegeTips(q *plan.Query) (privilegeTipsArray, error) {
++	if q == nil || len(q.SelectLockReferences) == 0 {
++		return nil, nil
++	}
++	var tips privilegeTipsArray
++	seen := make(map[string]struct{}, len(q.SelectLockReferences))
++	for _, reference := range q.SelectLockReferences {
++		obj := reference.GetObjectRef()
++		if obj == nil || obj.SchemaName == "" || obj.ObjName == "" {
++			return nil, moerr.NewInternalErrorNoCtx("invalid SELECT lock authorization target")
++		}
++		if err := validateViewPath(reference.ViewPath); err != nil {
++			return nil, err
++		}
++		identity, err := reference.Marshal()
++		if err != nil {
++			return nil, err
++		}
++		key := string(identity)
++		if _, exists := seen[key]; exists {
++			continue
++		}
++		seen[key] = struct{}{}
++		tips = append(tips, privilegeTips{
++			typ: PrivilegeTypeSelect, objType: objectTypeTable,
++			databaseName: getDbNameForPrivilege(obj), tableName: obj.ObjName,
++			objectRef: obj, viewPath: reference.ViewPath,
++			isClusterTable:        reference.IsClusterTable || isClusterTable(obj.SchemaName, obj.ObjName),
++			clusterTableOperation: clusterTableSelect,
++		})
++	}
++	return tips, nil
++}
++
++// This check consumes one already-validated, statement-local role closure.
++// It deliberately bypasses the session cache, which has no account/role key.
++func verifySelectLockPrivilegeForRoles(ctx context.Context, bh BackgroundExec, ses *Session,
+```
+
+**File**: `pkg/frontend/authenticate2.go` (modified, +1/-1)
+```diff
+@@ -184,7 +184,7 @@ var checkPrivilegeInCache = func(ctx context.Context, ses *Session, priv *privil
+ 							if yes2 {
+ 								//At least there is one success
+ 								yes = false
+-								for i, typ := range [3]PrivilegeType{mi.privilegeTyp, PrivilegeTypeTableAll, PrivilegeTypeTableOwnership} {
++								for i, typ := range privilegeAlternatives(mi.privilegeTyp, mi.selectLock) {
+ 									if i > 0 && mi.objType != objectTypeTable {
+ 										break
+ 									}
+```
+
+**File**: `pkg/frontend/authenticate_test.go` (modified, +23/-9)
+```diff
+@@ -7608,6 +7608,7 @@ func addTablePrivilegeResultsForRole(
+ 	privTypes := []PrivilegeType{
+ 		PrivilegeTypeSelect,
+ 		PrivilegeTypeInsert,
++		PrivilegeTypeUpdate,
+ 		PrivilegeTypeDelete,
+ 		PrivilegeTypeTableAll,
+ 		PrivilegeTypeTableOwnership,
+@@ -14386,9 +14387,12 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantOnlyAfterCommit(t *testin
+ 			defer backgroundExecStub.Reset()
+ 
+ 			priv := determinePrivilegeSetOfStatement(&tree.ShowDatabases{})
+-			_, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
++			valid, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
+ 			require.ErrorIs(t, err, commitErr)
+-			require.Contains(t, bh.executedSQLs, "rollback;")
++			require.Equal(t, []string{"begin;", roleGrantSQL, "commit;", "rollback;"}, bh.executedSQLs)
++			if tc.rows == nil {
++				require.False(t, valid)
++			}
+ 			_, cached := cache.getActiveRoleGrant(2, 3)
+ 			require.False(t, cached)
+ 		})
+@@ -14406,13 +14410,16 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
+ 	defer cacheHitStub.Reset()
+ 
+ 	for _, tc := range []struct {
+-		name      string
+-		rows      [][]interface{}
+-		wantValid bool
+-		wantError bool
++		name       string
++		rows       [][]interface{}
++		wantValid  bool
++		wantError  bool
++		invalidate bool
+ 	}{
+ 		{name: "granted", rows: [][]interface{}{{int64(3), int64(2), false}}, wantValid: true},
+ 		{name: "revoked", wantError: true},
++		{name: "granted invalidated during commit", rows: [][]interface{}{{int64(3), int64(2), false}}, wantValid: true, invalidate: true},
++		{name: "revoked invalidated during commit", wantError: true, invalidate: true},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			cache := &privilegeCache{}
+@@ -14433,6 +14440,9 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
+ 				if sql == "commit;" {
+ 					_, cached := cache.getActiveRoleGrant(2, 3)
+ 					require.False(t, cached)
++					if tc.invalidate {
++						cache.invalidate()
++					}
+ 				}
+ 			}
+ 			backgroundExecStub := gostub.StubFunc(&NewBackgroundExec, bh)
+@@ -14441,14 +14451,18 @@ func TestDetermineUserHasPrivilegeSetPublishesRoleGrantAfterSuccessfulCommit(t *
+ 			priv := determinePrivilegeSetOfStatement(&tree.ShowDatabases{})
+ 			valid, _, err := determineUserHasPrivilegeSet(context.Background(), ses, priv)
+ 			if tc.wantError {
+-				require.Error(t, err)
++				require.True(t, moerr.IsMoErrCode(err, moerr.ErrInternal))
++				require.EqualError(t, err, "internal error: do not have privilege to execute the statement")
+ 			} else {
+ 				require.NoError(t, err)
+ 			}
+ 			require.Equal(t, tc.wantValid, valid)
+ 			cachedValid, cached := cache.getActiveRoleGrant(2, 3)
+-			require.True(t, cached)
+-			require.Equal(t, tc.wantValid, cachedValid)
++			require.Equal(t, []string{"begin;", roleGrantSQL, "commit;"}, bh.executedSQLs)
++			require.Equal(t, !tc.invalidate, cached)
++			if cached {
++				require.Equal(t, tc.wantValid, cachedValid)
++			}
+ 		})
+ 	}
+ }
+```
+
+**File**: `pkg/frontend/computation_wrapper.go` (modified, +19/-2)
+```diff
+@@ -3137,11 +3137,28 @@ func preparedExecutionBuildPlanFunc(
+ 			// let an EXECUTE-time USE leak into that retry, and always restore the
+ 			// session context even when planning fails.
+ 			currentDatabase := compilerCtx.GetDatabase()
++			if session, ok := ses.(*Session); ok {
++				restoreDatabase := bindSessionDatabaseForStatement(session, bindingDatabase)
++				defer restoreDatabase()
++			}
+ 			compilerCtx.SetDatabase(bindingDatabase)
+ 			defer compilerCtx.SetDatabase(currentDatabase)
+ 		}
+-		return buildPlanForCompileRetry(
+-			ctx, ses, compilerCtx, stmt, forcePrepare, preparedRetry)
++		p, err := buildPlanForCompileRetry(ctx, ses, compilerCtx, stmt, forcePrepare, preparedRetry)
++		if err != nil {
++			return nil, err
++		}
++		// A retry can bind a different view body. CTAS discards its source Query
++		// in ordinary plans, so it must use the source authorization/replanning
++		// path even when the rebuilt plan has no top-level lock references.
++		ctas, isCTAS := stmt.(*tree.CreateTable)
++		needsAuthorization := len(p.GetQuery().GetSelectLockReferences()) > 0 || (isCTAS && ctas.IsAsSelect)
++		if session, ok := ses.(*Session); ok && !session.IsBackgroundSession() && session.GetTenantInfo() != nil && needsAuthorization {
++			if _, err = authenticateCanExecuteStatementAndPlan(ctx, session, stmt, p); err != nil {
++				return nil, err
++			}
++		}
++		return p, nil
+ 	}
+ }
+ 
+```
+
+**File**: `pkg/frontend/select_lock_ctas_retry_integration_test.go` (added, +261/-0)
+```diff
+@@ -0,0 +1,261 @@
++//go:build integration
++
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
 +//
-+//	http://www.apache.org/licenses/LICENSE-2.0
++//     http://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
 +// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
-+package embed
++
++package frontend_test
 +
 +import (
-+	"bytes"
 +	"context"
-+	"fmt"
-+	"sync"
 +	"testing"
 +	"time"
 +
-+	"github.com/google/uuid"
-+	"github.com/matrixorigin/matrixone/pkg/catalog"
 +	"github.com/matrixorigin/matrixone/pkg/cnservice"
-+	"github.com/matrixorigin/matrixone/pkg/common/runtime"
-+	"github.com/matrixorigin/matrixone/pkg/lockservice"
-+	"github.com/matrixorigin/matrixone/pkg/logservice"
-+	logservicepb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
-+	"github.com/matrixorigin/matrixone/pkg/pb/task"
-+	"github.com/matrixorigin/matrixone/pkg/pb/txn"
-+	"github.com/matrixorigin/matrixone/pkg/queryservice"
-+	"github.com/matrixorigin/matrixone/pkg/taskservice"
-+	"github.com/matrixorigin/matrixone/pkg/util/executor"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/embed"
++	"github.com/matrixorigin/matrixone/pkg/frontend"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect/mysql"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
++	"github.com/matrixorigin/matrixone/pkg/sql/plan"
++	"github.com/matrixorigin/matrixone/pkg/txn/client"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+type cdcControlResult struct {
-+	n   int
-+	err error
-+}
-+
-+func testCDCControlConcurrentClaims(t *testing.T, c Cluster) {
-+	cn0, err := c.GetCNService(0)
-+	require.NoError(t, err)
-+	cn1, err := c.GetCNService(1)
-+	require.NoError(t, err)
-+	ctx, cancel := context.WithTimeout(t.Context(), 2*time.Minute)
-+	defer cancel()
-+	hakeeper, err := logservice.NewCNHAKeeperClient(ctx, cn0.GetServiceConfig().CN.UUID, cn0.GetServiceConfig().HAKeeperClient)
-+	require.NoError(t, err)
-+	t.Cleanup(func() { require.NoError(t, hakeeper.Close()) })
-+	state, err := hakeeper.GetClusterState(ctx)
-+	require.NoError(t, err)
-+	// The regular task-service address resolver can select either CN. Pin this
-+	// test's storage to CN0 so the competing transaction is definitely on CN1.
-+	holder := taskservice.NewTaskServiceHolder(runtime.ServiceRuntime(cn0.ServiceID()), func(context.Context, bool) (string, error) {
-+		return fmt.Sprintf("127.0.0.1:%d", cn0.GetServiceConfig().CN.Frontend.Port), nil
-+	})
-+	t.Cleanup(func() { require.NoError(t, holder.Close()) })
-+	require.NoError(t, holder.Create(logservicepb.CreateTaskService{
-+		User: state.TaskTableUser, TaskDatabase: "mo_task",
-+	}))
-+	svc, ok := holder.Get()
-+	require.True(t, ok)
-+	store := svc.GetStorage()
-+	exec0 := cn0.RawService().(cnservice.Service).GetSQLExecutor()
-+	exec1 := cn1.RawService().(cnservice.Service).GetSQLExecutor()
-+	localLS := lockservice.GetLockServiceByServiceID(cn0.ServiceID())
-+	require.NotNil(t, localLS)
-+	ls := lockservice.GetLockServiceByServiceID(cn1.ServiceID())
-+	require.NotNil(t, ls)
-+	for _, kind := range []string{"owner_change", "heartbeat"} {
-+		if !t.Run(kind, func(t *testing.T) {
-+			ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
-+			defer cancel()
-+			cdcID := uuid.NewString()
-+			t.Cleanup(func() {
-+				clean, done := context.WithTimeout(context.Background(), 10*time.Second)
-+				defer done()
-+				result, e := exec0.Exec(clean, fmt.Sprintf("delete from mo_catalog.mo_cdc_task where account_id=0 and task_id='%s'", cdcID), executor.Options{}.WithAccountID(catalog.System_Account))
-+				if e == nil {
-+					result.Close()
-+				}
-+				require.NoError(t, e)
-+			})
-+			setup := fmt.Sprintf("insert into mo_catalog.mo_cdc_task (account_id,task_id,task_name,source_uri,sink_uri,tables,state) values (0,'%s','probe-%s','source','sink','db.table','running')", cdcID, cdcID)
-+			result, e := exec0.Exec(ctx, setup, executor.Options{}.WithAccountID(catalog.System_Account).WithWaitCommittedLogApplied())
-+			require.NoError(t, e)
-+			result.Close()
-+			dt := task.DaemonTask{Metadata: task.TaskMetadata{ID: cdcID}, TaskStatus: task.TaskStatus_Running, CreateAt: time.Now(), UpdateAt: time.Now(), Details: &task.Details{AccountID: 0, Account: "sys", Details: &task.Details_CreateCdc{CreateCdc: &task.CreateCdcDetails{TaskId: cdcID, TaskName: "probe-" + cdcID, Accounts: []*task.Account{{Id: 0, Name: "sys"}}}}}}
-+			var id uint64
-+			t.Cleanup(func() {
-+				clean, done := context.WithTimeout(context.Background(), 10*time.Second)
-+				defer done()
-+				if id != 0 {
-+					_, e := store.DeleteDaemonTask(clean, taskservice.WithTaskIDCond(taskservice.EQ, id))
-+					require.NoError(t, e)
-+				} else {
-+					query := fmt.Sprintf("delete from mo_task.sys_daemon_task where account_id=0 and task_metadata_executor=%d and task_metadata_id='%s'", task.TaskCode_TestOnly, cdcID)
-+					result, e := exec0.Exec(clean, query, executor.Options{}.WithAccountID(catalog.System_Account))
-+					if e == nil {
-+						result.Close()
-+					}
-+					require.NoError(t, e)
-+				}
-+			})
-+			n, e := store.AddDaemonTask(ctx, dt)
-+			require.NoError(t, e)
-+
-```
-
-**File**: `pkg/embed/cdc_target_generation_verification_test.go` (modified, +9/-2)
-```diff
-@@ -47,8 +47,15 @@ func TestCDCTargetGenerationContractsOnMO(t *testing.T) {
- }
- 
- func TestCDCSourceGenerationGuardAcrossCN(t *testing.T) {
--	runCDCGenerationContracts(t, 2, "TestCDCTenantCatalogGuardBlocksOtherCNDrop", testCDCTenantCatalogGuardBlocksOtherCNDrop,
--		"TestCDCFirstAckHoldsSourceGenerationAcrossCN", testCDCFirstAckHoldsSourceGenerationAcrossCN)
-+	runCDCGenerationContract(t, 2, func(cluster Cluster) {
-+		if !t.Run("TestCDCTenantCatalogGuardBlocksOtherCNDrop", func(t *testing.T) { testCDCTenantCatalogGuardBlocksOtherCNDrop(t, cluster) }) {
-+			return
++func TestSelectLockCTASRetry(t *testing.T) {
++	t.Cleanup(frontend.InstallNativeSelectLockFailureExecForTest())
++	runNativeViewSchemaCluster(t, func(cn embed.ServiceOperator, svc cnservice.Service) {
++		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
++		defer cancel()
++		admin := openNativeViewSchemaSQL(t, ctx, cn, "dump:111", "")
++		admin.SetMaxOpenConns(1)
++		exec := func(query string) {
++			t.Helper()
++			_, err := admin.ExecContext(ctx, query)
++			require.NoError(t, err, query)
 +		}
-+		if !t.Run("TestCDCControlConcurrentClaims", func(t *testing.T) { testCDCControlConcurrentClaims(t, cluster) }) {
-+			return
++		const database = "select_lock_ctas_retry"
++		exec("create database " + database)
++		defer exec("drop database " + database)
++		exec("create database select_lock_ctas_other")
++		defer exec("drop database select_lock_ctas_other")
++		exec("create role select_lock_retry_role")
++		defer exec("drop role select_lock_retry_role")
++		exec("create user select_lock_retry_reader identified by 'test123' default role select_lock_retry_role")
++		defer exec("drop user select_lock_retry_reader")
++		for _, query := range []string{
++			"grant select_lock_retry_role to select_lock_retry_reader",
++			"create table " + database + ".a(id int primary key)",
++			"create table " + database + ".b(id int primary key)",
++			"insert into " + database + ".a values(1)",
++			"insert into " + database + ".b values(1)",
++			"set view_security_type='INVOKER'",
++			"create view " + database + ".v as select id from " + database + ".a",
++			"grant select on table " + database + ".* to select_lock_retry_role",
++			"grant select, update on view " + database + ".v to select_lock_retry_role",
++			"grant update on table " + database + ".a to select_lock_retry_role",
++			"grant create table on database " + database + " to select_lock_retry_role",
++		} {
++			exec(query)
 +		}
-+		t.Run("TestCDCFirstAckHoldsSourceGenerationAcrossCN", func(t *testing.T) { testCDCFirstAckHoldsSourceGenerationAcrossCN(t, cluster) })
-+	})
- }
- 
- func runCDCGenerationContracts(t *testing.T, cnCount int, passiveName string, passive func(*testing.T, Cluster), activeName string, active func(*testing.T, Cluster)) {
-```
-
-**File**: `pkg/embed/daemon_claim_test.go` (modified, +115/-1)
-```diff
-@@ -16,6 +16,8 @@ package embed
- 
- import (
- 	"context"
-+	"fmt"
-+	"strings"
- 	"testing"
- 	"time"
- 
-@@ -62,6 +64,62 @@ func TestDaemonClaimSQLRoundTrip(t *testing.T) {
- 		claim = rows[0]
- 		require.Equal(t, t.Name(), claim.Metadata.ID)
- 		cond = taskservice.WithTaskIDCond(taskservice.EQ, claim.ID)
-+		t.Run("account condition", func(t *testing.T) {
-+			matching, err := storage.QueryDaemonTask(ctx, cond, taskservice.WithAccount(taskservice.EQ, "sys"))
++		reader := frontend.GetBackgroundTenant()
++		reader.User = "select_lock_retry_reader"
++		reader.DefaultRole = "select_lock_retry_role"
++		require.NoError(t, admin.QueryRowContext(ctx, "select user_id from mo_catalog.mo_user where user_name='select_lock_retry_reader'").Scan(&reader.UserID))
++		require.NoError(t, admin.QueryRowContext(ctx, "select role_id from mo_catalog.mo_role where role_name='select_lock_retry_role'").Scan(&reader.DefaultRoleID))
++		readerCtx := defines.AttachAccount(ctx, reader.TenantID, reader.UserID, reader.DefaultRoleID)
++		noLocks := func(t *testing.T) {
++			t.Helper()
++			tx, err := admin.BeginTx(ctx, nil)
 +			require.NoError(t, err)
-+			require.Len(t, matching, 1)
-+			other, err := storage.QueryDaemonTask(ctx, cond, taskservice.WithAccount(taskservice.EQ, "other"))
-+			require.NoError(t, err)
-+			require.Empty(t, other)
-+		})
-+		t.Run("account value is matched literally", func(t *testing.T) {
-+			unique := time.Now().UnixNano()
-+			account := fmt.Sprintf("tenant'quoted-%d", unique)
-+			other := task.DaemonTask{
-+				Metadata: task.TaskMetadata{ID: fmt.Sprintf("account-probe-%d", unique)}, TaskStatus: task.TaskStatus_Paused,
-+				CreateAt: time.Now(), UpdateAt: time.Now(),
-+				Details: &task.Details{AccountID: 17, Account: account},
-+			}
-+			byAccount := taskservice.WithAccount(taskservice.EQ, other.Details.Account)
-+			var ownedID uint64
-+			t.Cleanup(func() {
-+				cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 5*time.Second)
-+				defer cleanupCancel()
-+				conditions := []taskservice.Condition{byAccount, taskservice.WithAccountID(taskservice.EQ, 17), taskservice.WithTaskExecutorCond(taskservice.EQ, task.TaskCode_TestOnly)}
-+				if ownedID != 0 {
-+					conditions = append(conditions, taskservice.WithTaskIDCond(taskservice.EQ, ownedID))
-+				}
-+				_, cleanupErr := storage.DeleteDaemonTask(cleanupCtx, conditions...)
-+				require.NoError(t, cleanupErr)
-+			})
-+			n, err := storage.AddDaemonTask(ctx, other)
-+			require.NoError(t, err)
-+			require.Equal(t, 1, n)
-+			matching, err := storage.QueryDaemonTask(ctx, byAccount, taskservice.WithAccountID(taskservice.EQ, 17), taskservice.WithLastRun(time.Time{}))
-+			require.NoError(t, err)
-+			require.Len(t, matching, 1)
-+			ownedID = matching[0].ID
-+			require.Equal(t, other.Metadata.ID, matching[0].Metadata.ID)
-+			otherRows, err := storage.QueryDaemonTask(ctx, byAccount, taskservice.WithAccountID(taskservice.EQ, 18))
-+			require.NoError(t, err)
-+			require.Empty(t, otherRows)
-+		})
-+		t.Run("unassigned null claim", func(t *testing.T) {
-+			require.Empty(t, claim.TaskRunner)
-+			require.True(t, claim.LastRun.IsZero())
-+			n, err := storage.RequestDaemonTaskStatus(ctx, claim, task.TaskStatus_PauseRequested)
-+			require.NoError(t, err)
-+			require.Equal(t, 1, n)
-+			current, err := storage.QueryDaemonTask(ctx, cond)
-+			require.NoError(t, err)
-+			require.Len(t, current, 1)
-+			n, err = storage.UpdateDaemonTask(ctx, current, cond, taskservice.WithLastRun(time.Time{}), taskservice.WithTaskRunnerCond(taskservice.EQ, ""))
-+			require.NoError(t, err)
-+			require.Equal(t, 1, n, "NULL claim must match initial admission")
-+			n, err = storage.RequestDaemonTaskStatus(ctx, current[0], task.TaskStatus_Paused)
-+			require.NoError(t, err)
-+			require.Equal(t, 1, n)
-+		})
- 		claim.TaskRunner = "claim-test-cn"
- 		claim.LastRun = time.Date(2026, 8, 1, 12, 0, 0, 123456000, time.UTC)
- 		claim.LastHeartbeat = claim.LastRun.Truncate(time.Second)
-@@ -80,6 +138,39 @@ func TestDaemonClaimSQLRoundTrip(t *testing.T) {
- 				require.Equal(t, 1, n)
- 			}
- 		})
-+		t.Run("status request preserves renewed heartbeat", func(t *testing.T) {
-+			observed := rows[0]
-+			renewed := observed
-+			renewed.LastHeartbeat = time.Now().UTC().Truncate(time.Second)
-+			n, err := storage.HeartbeatDaemonTask(ctx, []task.DaemonTask{renewed})
-+			require.NoError(t, err)
-+			require.Equal(t, 1, n)
-+			for _, stale := range []task.DaemonTask{
-+				func() task.DaemonTask { v := observed; v.AccountID++; return v }(),
-+				func() task.DaemonTask { v := observed; v.TaskStatus = task.TaskStatus_Running; return v }(),
-+				func() task.DaemonTask { v := observed; v.TaskRunner = "other-cn"; return v }(),
-+				func() task.DaemonTask { v := observed; v.TaskRunner = strings.ToUpper(v.TaskRunner); return v }(),
-+				func() task.DaemonTask { v := observed; v.LastRun = v.LastRun.Add(time.Microsecond); return v }(),
-+			} {
-+				n, err = storage.RequestDaemonTaskStatus(ctx, stale, task.TaskStatus_PauseRequested)
++			defer func() { require.NoError(t, tx.Rollback()) }()
++			var id int
++			require.NoError(t, tx.QueryRowContext(ctx, "select id from "+database+".b for update nowait").Scan(&id))
++			require.Equal(t, 1, id)
++		}
++		for _, prepared := range []bool{false, true} {
++			t.Run(map[bool]string{false: "ordinary", true: "prepared with changed USE"}[prepared], func(t *testing.T) {
++				exec("alter view " + database + ".v as select id from " + database + ".a")
++				statement, err := mysql.ParseOne(readerCtx, "create table retry_result as select id from v for update", 1)
 +				require.NoError(t, err)
-+				require.Zero(t, n)
-+			}
-+			n, err = storage.RequestDaemonTaskStatus(ctx, observed, task.TaskStatus_PauseRequested)
-+			require.NoError(t, err)
-+			require.Equal(t, 1, n)
-+			current, err := storage.QueryDaemonTask(ctx, cond)
-+			require.NoError(t, err)
-+			require.Len(t, current, 1)
-+			require.True(t, renewed.LastHeartbeat.Equal(current[0].LastHeartbeat))
-+			require.Equal(t, task.TaskStatus_PauseRequested, current[0].TaskStatus)
-+			n, err = storage.RequestDaemonTaskStatus(ctx, current[0], current[0].TaskStatus)
-+			require.NoError(t, err)
-+			require.Equal(t, 1, n, "same-status CAS must report a matched row")
-+			n, e
++				defer statement.Free()
++				// Establish the original authorized binding before the catalog transition.
++				withNativeViewSchemaRead(t, readerCtx, cn, svc, database, reader, func(compiler *frontend.TxnCompilerContext, _ client.TxnOperator, _ *process.Process) {
++					p, err := plan.BuildPlan(compiler, statement, prepared)
++					require.NoError(t, err)
++					require.Nil(t, p.GetQuery())
++					require.Equal(t, prepared, p.GetDdl().GetQuery() != nil)
++					require.NoError(t, frontend.AuthorizeNativeViewSchemaPlanForTest(readerCtx, compiler, statement, p))
++				})
++				exec("alter view " + database + ".v as select id from " + database + ".b")
++				retr
 ```
 
-**File**: `pkg/embed/snapshot_publication_replay_test.go` (modified, +1/-3)
+**File**: `pkg/frontend/select_lock_privilege_test.go` (added, +576/-0)
 ```diff
-@@ -54,9 +54,7 @@ func TestSnapshotDatabasePublicationReplayBoundaries(t *testing.T) {
- 			{name: "quoted_comment", comment: "owner's copy"},
- 			{name: "backslash_comment", comment: `owner's C:\new\table\`},
- 			{name: "external_fk", comment: "live publication", externalFK: true},
--			{name: "quoted_publication", publication: "review-pub"},
--			{name: "quoted_database", database: "review-db"},
--			{name: "quoted_table", table: "review-items", explicitTables: true},
-+			{name: "quoted_database_and_publication", database: "review-db", publication: "review-pub"},
- 			{name: "quoted_identifiers", database: "review-db", publication: "review-pub", table: "review-items", explicitTables: true},
- 			{name: "empty_accounts", comment: "owner's empty authorization", emptyAccounts: true},
- 			{name: "empty_quoted_tables", database: "review-empty-db", publication: "review-empty-pub", table: "review-items", explicitTables: true, emptyAccounts: true},
-```
-
-**File**: `pkg/frontend/cdc_dao.go` (modified, +2/-2)
-```diff
-@@ -75,7 +75,7 @@ func NewCDCDao(
- 
- func (t *CDCDao) MustGetTaskService() taskservice.TaskService {
- 	if t.ts == nil && t.ses != nil {
--		t.ts = getPu(t.ses.GetService()).TaskService
-+		t.ts = getPu(t.ses.GetService()).GetTaskService()
- 	}
- 	if t.ts == nil {
- 		panic("taskService is nil")
-@@ -125,7 +125,7 @@ func (t *CDCDao) CreateTask(
- 
- 	// Get TaskService - handle nil case gracefully instead of panicking
- 	if t.ts == nil && t.ses != nil {
--		t.ts = getPu(t.ses.GetService()).TaskService
-+		t.ts = getPu(t.ses.GetService()).GetTaskService()
- 	}
- 	if t.ts == nil {
- 		return moerr.NewInternalError(ctx, "TaskService is not available. CDC task creation requires TaskService to be initialized.")
-```
-
-**File**: `pkg/frontend/cdc_exector.go` (modified, +8/-3)
-```diff
-@@ -1848,9 +1848,14 @@ func (exec *CDCTaskExecutor) Pause() error {
- 			return moerr.NewInternalErrorNoCtx("CDC pause timed out waiting for table detector callbacks")
- 		}
- 
--		// Synchronously wait for all readers to stop before proceeding
--		// This ensures no goroutine leaks and clean pause state
--		exec.stopAllReaders()
-+		// Do not publish Paused while a reader can still produce work. The
-+		// completion owner survives a timeout and the next pause can retry.
-+		if stopped, _ := exec.stopAllReaders(); !stopped {
-+			if wasRunning {
-+				v2.CdcTaskTotalGauge.WithLabelValues("running").Dec()
-+			}
-+			return moerr.NewInternalErrorNoCtx("pause timed out waiting for readers to stop")
-+		}
- 
- 		// Note: task was marked as paused earlier (before ClosePause) to maximize blocking window
- 		// This may cause some watermark updates during stopAllReaders to be blocked,
-```
-
-**File**: `pkg/frontend/cdc_handle.go` (modified, +1/-1)
-```diff
-@@ -260,7 +260,7 @@ func doUpdateCDCTask(
- 		)
- 	}
- 
--	ts := getPu(service).TaskService
-+	ts := getPu(service).GetTaskService()
- 	if ts == nil {
- 		if isCDCRestart(targetTaskStatus) {
- 			eventCDCRestartTaskServiceUnavailable.WarnLazy(func() []zap.Field {
-```
-
----
-
-### Incident Patch 2: `dd762803` (2026-10-31)
-**Commit Message**: Revert long-scan reader cache admission change (#31943)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #31868
-
-## What this PR does / why we need it:
-
-Revert #31767's reader cache-admission change following the reported
-25.7% TPCH 1T slowdown. Restore the previous per-reader cache-write
-cutoff and its ordinary, delegated and sharded constructor callers,
-preserving later unrelated changes.
-
-Keep immediate test cleanup and the independent FIFO working-set
-control. The persisted-reader regression checks the threshold transition
-and explicit cache-write suppression using two reads of one small block.
-
-Validation: affected owning-package UT and race, ordinary/sharded reader
-consumer tests in both modes, formatting, go vet, pinned molint and
-incremental golangci-lint.
-
-The reported 1T workload was not rerun locally. This rollback restores
-the prior admission tradeoff and may relinquish the warm-cache gains of
-#31767; it does not establish the precise mechanism of the reported
-slowdown.
-
-**File**: `pkg/fileservice/fifocache/fifo_test.go` (modified, +1/-2)
-```diff
-@@ -989,8 +989,7 @@ func TestPostEvictPanicDoesNotBlockDone(t *testing.T) {
- 	}
- }
- 
--// Long scans should compete through the cache policy instead of preventing
--// every admission after a fixed reader position.
-+// Admitted scan entries must not displace a frequently reused working set.
- func TestCacheScanRetainsReusedWorkingSet(t *testing.T) {
- 	ctx := t.Context()
- 	cache := New[int, int](fscache.ConstCapacity(10), ShardInt[int], nil, nil, nil)
-```
-
-**File**: `pkg/vm/engine/disttae/cluster_by_real_logtail_test.go` (modified, +1/-1)
-```diff
-@@ -792,7 +792,7 @@ func readClusterTaeRange(
- 	reader, err := readutil.NewReader(
- 		qryCtx, mp, pool, fs, tableDef,
- 		timestamp.Timestamp{PhysicalTime: time.Now().UnixNano()},
--		expr, ls, engine.FilterHint{})
-+		expr, ls, 0, engine.FilterHint{})
- 	require.NoError(t, err)
- 
- 	attrs := []string{"tenant_id", "device_id", "metric_id", "event_ts", "value"}
-```
-
-**File**: `pkg/vm/engine/disttae/cluster_replay_test.go` (modified, +1/-1)
-```diff
-@@ -328,7 +328,7 @@ func readClusterReplay(
- 	reader, err := readutil.NewReader(
- 		qryCtx, mp, pool, nil, tableDef,
- 		timestamp.Timestamp{PhysicalTime: time.Now().UnixNano()},
--		expr, ls, engine.FilterHint{},
-+		expr, ls, 0, engine.FilterHint{},
- 	)
- 	require.NoError(t, err)
- 
-```
-
-**File**: `pkg/vm/engine/disttae/engine.go` (modified, +1/-0)
-```diff
-@@ -1327,6 +1327,7 @@ func (e *Engine) BuildBlockReaders(
- 			ts,
- 			expr,
- 			ds,
-+			readutil.GetThresholdForReader(newNum),
- 			readerHint,
- 		)
- 		if err != nil {
-```
-
-**File**: `pkg/vm/engine/disttae/local_disttae_datasource_test.go` (modified, +1/-1)
-```diff
-@@ -440,7 +440,7 @@ func TestIvfWorkspaceReaderPreservesPhysicalPK(t *testing.T) {
- 			}
- 			// NewReader consumes source and the membership filter on all paths.
- 			r, err := readutil.NewReader(ctx, mp, pool, nil, tableDef,
--				types.MaxTs().ToTimestamp(), expr, source, hint)
-+				types.MaxTs().ToTimestamp(), expr, source, 0, hint)
- 			require.NoError(t, err)
- 			defer r.Close()
- 			end, err := r.Read(ctx, cols, nil, mp, out)
-```
-
-**File**: `pkg/vm/engine/disttae/txn_table.go` (modified, +1/-0)
-```diff
-@@ -2774,6 +2774,7 @@ func (tbl *txnTable) BuildReaders(
- 			tbl.db.op.SnapshotTS(),
- 			expr,
- 			ds,
-+			readutil.GetThresholdForReader(newNum),
- 			hint,
- 		)
- 		if err != nil {
-```
-
-**File**: `pkg/vm/engine/disttae/txn_table_delegate.go` (modified, +1/-0)
-```diff
-@@ -706,6 +706,7 @@ func (tbl *txnTableDelegate) BuildShardingReaders(
- 				tbl.origin.db.op.SnapshotTS(),
- 				expr,
- 				ds,
-+				readutil.GetThresholdForReader(newNum),
- 				engine.FilterHint{},
- 			)
- 			if err != nil {
-```
-
-**File**: `pkg/vm/engine/disttae/txn_table_sharding_handle.go` (modified, +1/-0)
-```diff
-@@ -325,6 +325,7 @@ func HandleShardingReadBuildReader(
- 		tbl.db.op.SnapshotTS(),
- 		param.ReaderBuildParam.Expr,
- 		ds,
-+		readutil.GetThresholdForReader(1),
- 		engine.FilterHint{},
- 	)
- 	if err != nil {
-```
-
----
-
-### Incident Patch 3: `630d74c8` (2026-10-31)
-**Commit Message**: fix(frontend): allow the MySQL wait_timeout range (#31947)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #31510
-
-## What this PR does / why we need it:
-
-`wait_timeout` is documented as an integer-seconds variable with a range
-up to one year, but the frontend admission bound rejected every
-configured/SET value above 86400 (one day), so `SET GLOBAL/SESSION
-wait_timeout = 86401` failed with the default-range error even though
-MySQL accepts it.
-
-- Admission range raised to `1..31536000` seconds (one year); values are
-validated once by a shared `validateTimeoutLimits` consumed by both
-SESSION and GLOBAL before write/persistence.
-- Default stays `86400`; the server-configured min/max bounds remain a
-hard policy, and the interactive-handshake wait_timeout rule is
-unchanged.
-- The real idle consumer now applies the full int64 seconds value into
-`time.Duration` without overflow, so a long GLOBAL value actually
-reaches the connection idle deadline (verified for live GLOBAL change
-and new logins).
-- The stale 86401 error rows in the system_variables 
-
-**File**: `pkg/config/configuration.go` (modified, +3/-2)
-```diff
-@@ -131,8 +131,9 @@ var (
- 
- 	// defaultWaitTimeoutMin default: 1 second
- 	defaultWaitTimeoutMin int64 = 1
--	// defaultWaitTimeoutMax default: 24 hours (in seconds)
--	defaultWaitTimeoutMax int64 = 24 * 60 * 60
-+	// defaultWaitTimeoutMax default: 1 year (31536000 seconds), matching the
-+	// MySQL documented non-Windows wait_timeout ceiling.
-+	defaultWaitTimeoutMax int64 = 365 * 24 * 60 * 60
- 
- 	// defaultInteractiveTimeoutMin default: 1 second
- 	defaultInteractiveTimeoutMin int64 = 1
-```
-
-**File**: `pkg/frontend/variables.go` (modified, +1/-1)
-```diff
-@@ -1586,7 +1586,7 @@ var gSysVarsDefs = map[string]SystemVariable{
- 		Scope:             ScopeBoth,
- 		Dynamic:           true,
- 		SetVarHintApplies: false,
--		Type:              InitSystemVariableIntType("wait_timeout", 1, 2147483, false),
-+		Type:              InitSystemVariableIntType("wait_timeout", 1, 31536000, false),
- 		Default:           int64(86400),
- 	},
- 	warningCountSystemVariable: {
-```
-
-**File**: `pkg/frontend/wait_timeout_range_test.go` (added, +275/-0)
-```diff
-@@ -0,0 +1,275 @@
-+// Copyright 2026 Matrix Origin
+@@ -0,0 +1,576 @@
++// Copyright 2021 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
@@ -2951,251 +3664,199 @@ and new logins).
 +
 +import (
 +	"context"
++	"fmt"
++	"strings"
 +	"testing"
-+	"time"
 +
++	"github.com/golang/mock/gomock"
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/defines"
++	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
++	lockpb "github.com/matrixorigin/matrixone/pkg/pb/lock"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
++	plan2 "github.com/matrixorigin/matrixone/pkg/sql/plan"
++	"github.com/matrixorigin/matrixone/pkg/util/trace/impl/motrace/statistic"
++	"github.com/prashantv/gostub"
 +	"github.com/stretchr/testify/require"
-+
-+	"github.com/matrixorigin/matrixone/pkg/config"
++	"github.com/tidwall/btree"
 +)
 +
-+// newDefaultLimitsTestServerWithRoutine mirrors newTestServerWithRoutine, but
-+// keeps the real production limits filled by FrontendParameters.SetDefaultValues
-+// instead of the 1..100 test overrides. Default wait_timeout ceiling changes are
-+// only observable this way.
-+func newDefaultLimitsTestServerWithRoutine(t *testing.T, cap uint32) (*MOServer, *Conn, *Session, *MysqlProtocolImpl) {
-+	t.Helper()
++// Pair a real parser/planner witness with typed lock identities and independent
++// catalog grants. A SELECT-only user must never acquire an exclusive SELECT lock.
++func TestSelectLockPrivilege(t *testing.T) {
++	for _, tc := range []struct {
++		name, sql  string
++		targets    []string
++		grants     map[string]PrivilegeType
++		denySelect bool
++		allowed    bool
++	}{
++		{name: "ordinary read", sql: "select n_nationkey from nation", allowed: true},
++		{name: "shared read", sql: "select n_nationkey from nation for share", allowed: true},
++		{name: "legacy shared read", sql: "select n_nationkey from nation lock in share mode", allowed: true},
++		{name: "read only exclusive", sql: "select n_nationkey from nation for update", targets: []string{"nation"}},
++		{name: "nowait exclusive", sql: "select n_nationkey from nation for update nowait", targets: []string{"nation"}},
++		{name: "constant false", sql: "select n_nationkey from nation where 1=0 for update", targets: []string{"nation"}},
++		{name: "update alternative", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
++		{name: "delete alternative", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeDelete}, allowed: true},
++		{name: "write alone lacks select", sql: "select n_nationkey from nation for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, denySelect: true},
++		{name: "nested exclusive", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update)", targets: []string{"region"}},
++		{name: "derived exclusive", sql: "select * from (select n_nationkey from nation for update) d", targets: []string{"nation"}},
++		{name: "cte exclusive", sql: "with d as (select n_nationkey from nation for update) select * from d", targets: []string{"nation"}},
++		{name: "unlocked source needs no write", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region) for update", targets: []string{"nation"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
++		{name: "outer grant cannot authorize inner lock", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update)", targets: []string{"region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}},
++		{name: "mixed alternatives", sql: "select n_nationkey from nation join region on n_regionkey=r_regionkey for update", targets: []string{"nation", "region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate, "region": PrivilegeTypeDelete}, allowed: true},
++		{name: "sibling lacks write", sql: "select n_nationkey from nation join region on n_regionkey=r_regionkey for update", targets: []string{"nation", "region"}, grants: map[string]PrivilegeType{"nation": PrivilegeTypeTableOwnership}},
++		{name: "shared outer exclusive inner", sql: "select n_nationkey from nation where n_regionkey in (select r_regionkey from region for update) for share", targets: []string{"region"}},
++		{name: "dml own locks", sql: "update nation set n_name='new' where n_nationkey=1", grants: map[string]PrivilegeType{"nation": PrivilegeTypeUpdate}, allowed: true},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			stmt, err := parsers.ParseOne(t.Context(), dialect.MYSQL, tc.sql, 1)
++			require.NoError(t, err)
++			p, err := plan2.BuildPlan(plan2.NewMockCompilerContext(true, newPlanTestProcess(t)), stmt, false)
++	
+```
+
+**File**: `pkg/frontend/view_privilege_principal_test.go` (modified, +1/-1)
+```diff
+@@ -119,7 +119,7 @@ func TestViewAdminRoleIsAccountQualified(t *testing.T) {
+ 		bh := &backgroundExecTest{}
+ 		bh.init()
+ 		bh.resultSets = []interface{}{&MysqlResultSet{}}
+-		allowed, err := verifyViewPrivilegeForRole(ctx, bh, nil, nil, tc.role, PrivilegeTypeSelect, "db", "v", false)
++		allowed, err := verifyViewPrivilegeForRole(ctx, bh, nil, nil, tc.role, PrivilegeTypeSelect, "db", "v", false, false)
+ 		require.NoError(t, err)
+ 		require.Equal(t, tc.allowed, allowed)
+ 	}
+```
+
+**File**: `pkg/frontend/view_schema_native_support_test.go` (modified, +304/-1)
+```diff
+@@ -19,13 +19,21 @@ package frontend
+ import (
+ 	"context"
+ 	"fmt"
++	"math"
++	goruntime "runtime"
++	"strings"
+ 	"sync/atomic"
++	"testing"
 +
-+	ctx := context.Background()
-+	sv := &config.FrontendParameters{}
-+	sv.SetDefaultValues()
-+	sv.KillRountinesInterval = 0
-+
-+	pu := config.NewParameterUnit(sv, nil, nil, nil)
-+	setSessionAlloc("", NewLeakCheckAllocator())
-+	setPu("", pu)
-+
-+	rm, err := NewRoutineManager(ctx, "")
-+	require.NoError(t, err)
-+
-+	server := &MOServer{rm: rm}
-+	tConn := &testConn{}
-+	ioses, err := NewIOSession(tConn, pu, "")
-+	require.NoError(t, err)
-+
-+	proto := NewMysqlClientProtocol("", 0, ioses, 1024, sv)
-+	proto.SetCapability(cap)
-+
-+	ses := NewSession(ctx, "", proto, nil)
-+	proto.ses = ses
-+	ses.SetTenantInfo(getDefaultAccount())
-+	initTestSessionSysVars(ses)
-+
-+	rt := &Routine{}
-+	rt.protocol.Store(&holder[MysqlRrWr]{value: proto})
-+	rt.ses = ses
-+
-+	rm.setRoutine(ioses, 0, rt)
-+
-+	return server, ioses, ses, proto
-+}
-+
-+// newInheritedSession builds a fresh session whose global snapshot comes from the
-+// current one, mirroring how production sessions inherit the live global values
-+// at connection time (not the boot-time defaults).
-+func newInheritedSession(t *testing.T, ses *Session, pu *config.ParameterUnit) *Session {
-+	t.Helper()
-+
-+	ctx := context.Background()
-+	tConn := &testConn{}
-+	ioses, err := NewIOSession(tConn, pu, "")
-+	require.NoError(t, err)
-+
-+	proto := NewMysqlClientProtocol("", 0, ioses, 1024, pu.SV)
-+	fresh := NewSession(ctx, "", proto, nil)
-+	proto.ses = fresh
-+	fresh.SetTenantInfo(getDefaultAccount())
-+	initTestSessionSysVars(fresh)
-+	fresh.gSysVars = ses.gSysVars
-+	fresh.sesSysVars = ses.gSysVars.Clone()
-+	return fresh
-+}
-+
-+// MySQL documents wait_timeout as 1..31536000 on non-Windows servers. With nothing
-+// configured, the default policy admission gate and the system-variable type must
-+// both accept that range on both setter scopes, while the default value stays
-+// 86400.
-+func TestWaitTimeoutDefaultSessionRange(t *testing.T) {
-+	server, rs, ses, _ := newDefaultLimitsTestServerWithRoutine(t, 0)
-+	ctx := context.Background()
-+
-+	// Default value is unchanged.
-+	val, err := ses.GetSessionSysVar("wait_timeout")
-+	require.NoError(t, err)
-+	require.Equal(t, int64(86400), val)
-+
-+	for _, v := range []int64{86401, 1209600, 31536000} {
-+		require.NoError(t, ses.SetSessionSysVar(ctx, "wait_timeout", v))
-+		val, err = ses.GetSessionSysVar("wait_timeout")
-+		require.NoError(t, err)
-+		require.Equal(t, v, val, "wait_timeout=%d must be accepted by the session setter", v)
-+
-+		// The idle-deadline consumer receives the full duration without overflow.
-+		server.applyIdleTimeout(rs)
-+		require.Equal(t, time.Duration(v)*time.Second, rs.timeout,
-+			"wait_timeout=%d must reach Conn.SetTimeout untruncated", v)
++	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+ 	"github.com/matrixorigin/matrixone/pkg/defines"
++	"github.com/matrixorigin/matrixone/pkg/pb/timestamp"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
+ 	"github.com/matrixorigin/matrixone/pkg/sql/plan"
+ 	"github.com/matrixorigin/matrixone/pkg/txn/client"
++	"github.com/matrixorigin/matrixone/pkg/util/fault"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/disttae"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/process"
+ )
+@@ -164,13 +172,25 @@ func AuthorizeNativeViewSchemaPlanForTest(ctx context.Context, compiler *TxnComp
+ 	return err
+ }
+ 
++// Invoke the actual compile-retry callback with the fixture-owned session.
++// The caller controls the catalog transition between initial admission and retry.
++func RebuildNativeSelectLockCTASForTest(ctx context.Context, compiler *TxnCompilerContext, statement tree.Statement, prepared bool, bindingDatabase string) (*plan.Plan, error) {
++	ses := compiler.GetSession().(*Session)
++	var retry *preparedExecutionRetry
++	if prepared {
++		ses.SetSql("execute select_lock_ctas")
++		retry = &preparedExecutionRetry{}
 +	}
-+
-+	// Over the documented ceiling, malformed values and negatives are rejected
-+	// and leave the previous value intact.
-+	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(31536001)))
-+	val, err = ses.GetSessionSysVar("wait_timeout")
-+	require.NoError(t, err)
-+	require.Equal(t, int64(31536000), val)
-+
-+	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(-1)))
-+	require.Error(t, ses.SetSessionSysVar(ctx, "wait_timeout", "not-a-number"))
-+	val, err = ses.GetSessionSysVar("wait_timeout")
-+	require.NoError(t, err)
-+	require.Equal(t, int64(31536000), val)
-+
-+	// The session stays usable after rejected assignments.
-+	require.NoError(t, ses.SetSessionSysVar(ctx, "wait_timeout", int64(86401)))
-+	val, err = ses.GetSessionSysVar("wait_timeout")
-+	require.NoError(t, err)
-+	require.Equal(t, int64(86401), val)
++	return preparedExecutionBuildPlanFunc(ses, statement, false, retry, bindingDatabase, prepared)(ctx)
 +}
 +
-+func TestWaitTimeoutDefaultGlobalRange(t *testing.T) {
-+	_, _, ses, _ := newDefaultLimitsTestServerWithRoutine(t, 0)
-+	ctx := context.Background()
-+	pu := getPu("")
+ // 测试角色只具有一个明确的 active role，直接复用既有 view privilege 查询。
+ // 此 helper 不把它推广为生产 SHOW/查询权限策略。
+ func NativeViewSchemaRoleAuthorizerForTest(compiler *TxnCompilerContext) ViewSchemaAuthorizer {
+ 	return func(ctx context.Context, database, name string, _ *plan.Snapshot) error {
+ 		ses := compiler.GetSession().(*Session)
+ 		allowed, err := verifyViewPrivilegeForRole(ctx, compiler.getOrCreateBackExec(ctx), ses,
+-			nil, int64(ses.GetTenantInfo().GetDefaultRoleID()), PrivilegeTypeSelect, database, name, false)
++			nil, int64(ses.GetTenantInfo().GetDefaultRoleID()), PrivilegeTypeSelect, database, name, false, false)
+ 		if err != nil {
+ 			return err
+ 		}
+@@ -180,3 +200,286 @@ func NativeViewSchemaRoleAuthorizerForTest(compiler *TxnCompilerContext) ViewSch
+ 		return nil
+ 	}
+ }
 +
-+	stubGlobalSysVarPersistence(t,
-+		sysVarSet{"wait_timeout", int64(86401)},
-+		sysVarSet{"wait_timeout", int64(1209600)},
-+		sysVarS
-```
-
-**File**: `test/distributed/cases/system_variable/system_variables.result` (modified, +1/-2)
-```diff
-@@ -148,10 +148,9 @@ show variables like 'wait_timeout';
- ➤ Variable_name[12,0,0]  ¦  Value[12,0,0]  𝄀
- wait_timeout  ¦  86400
- set wait_timeout = 86401;
--invalid input: wait_timeout must be <= 86400
- show variables like 'wait_timeout';
- ➤ Variable_name[12,0,0]  ¦  Value[12,0,0]  𝄀
--wait_timeout  ¦  86400
-+wait_timeout  ¦  86401
- set wait_timeout = 10;
- drop table if exists t;
- create table t(
-```
-
-**File**: `test/distributed/cases/system_variable/wait_timeout_range.result` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+set @sav_wt_global = @@global.wait_timeout;
-+set @sav_wt_session = @@wait_timeout;
-+set wait_timeout = 86401;
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+86401
-+set wait_timeout = 1209600;
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+1209600
-+set wait_timeout = 31536000;
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+31536000
-+set wait_timeout = 31536001;
-+internal error: convert to the system variable int type failed
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+31536000
-+set wait_timeout = -1;
-+internal error: convert to the system variable int type failed
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+31536000
-+set wait_timeout = 'abc';
-+internal error: convert to the system variable int type failed
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+31536000
-+select 1;
-+➤ 1[-5,64,0]  𝄀
-+1
-+set wait_timeout = 1209600;
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+1209600
-+set global wait_timeout = 1209600;
-+select @@global.wait_timeout;
-+➤ @@global.wait_timeout[-1,16383,0]  𝄀
-+1209600
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+1209600
-+set global wait_timeout = default;
-+select @@global.wait_timeout;
-+➤ @@global.wait_timeout[-1,16383,0]  𝄀
-+86400
-+select @@wait_timeout;
-+➤ @@wait_timeout[-1,16383,0]  𝄀
-+1209600
-+set global wait_timeout = @sav_wt_global;
-+select @sav_wt_global = @@global.wait_timeout;
-+➤ @sav_wt_global = @@global.wait_timeout[-6,8,0]  𝄀
-+1
-+set wait_timeout = @sav_wt_session;
-+select @@wait_timeout = @sav_wt_session;
-+➤ @@wait_timeout = @sav_wt_session[-6,8,0]  𝄀
-+1
-```
-
-**File**: `test/distributed/cases/system_variable/wait_timeout_range.sql` (added, +28/-0)
-```diff
-@@ -0,0 +1,28 @@
-+-- issue 31510: wait_timeout accepts the MySQL documented non-Windows range (1..31536000)
-+set @sav_wt_global = @@global.wait_timeout;
-+set @sav_wt_session = @@wait_timeout;
-+set wait_timeout = 86401;
-+select @@wait_timeout;
-+set wait_timeout = 1209600;
-+select @@wait_timeout;
-+set wait_timeout = 31536000;
-+select @@wait_timeout;
-+set wait_timeout = 31536001;
-+select @@wait_timeout;
-+set wait_timeout = -1;
-+select @@wait_timeout;
-+set wait_timeout = 'abc';
-+select @@wait_timeout;
-+select 1;
-+set wait_timeout = 1209600;
-+select @@wait_timeout;
-+set global wait_timeout = 1209600;
-+select @@global.wait_timeout;
-+select @@wait_timeout;
-+set global wait_timeout = default;
-+select @@global.wait_timeout;
-+select @@wait_timeout;
-+set global wait_timeout = @sav_wt_global;
-+select @sav_wt_global = @@global.wait_timeout;
-+set wait_timeout = @sav_wt_session;
-+select @@wait_timeout = @sav_wt_session;
++// Exercise the real batch admission and transaction owner using the fixture's
++// engine. Warm membership in this epoch, then count targets consumed together.
++func AuthorizeNativeSelectLockBatchForTest(ctx context.Context, compiler *TxnCompilerContext, q *plan.Query) (int, bool, error) {
++	ses := compiler.GetSession().(*Session)
++	ctx, epoch := beginAuthorizationEpoch(ctx, ses, &ExecCtx{})
++	defer epoch.end()
++	tips, err := selectLockPrivilegeTips(q)
++	if err != nil {
++		return 0, false, err
++	}
++	batch := &selectLockAuthorizationBatch{}
++	for _, tip := range tips {
++		batch.items = append(batch.items, privilegeItem{privilegeTyp: PrivilegeTypeSelect, selectLock: true,
++			objType: objectTypeTable, dbName: tip.databaseName, tableName: tip.tableName,
++			objectRef: tip.objectRef, viewPath: tip.viewPath,
++			isClusterTable: tip.isClusterTable, clusterTableOperation: clusterTableSelect})
++	}
++	priv := &privilege{objType: objectTypeTable, entries: []privilegeEntry{{privilegeEntryTyp: privilegeEntryTypeCompound,
++		compound: &compoundEntry{items: batch.items[:1]}}}}
++	if ok, _, err := determineUserHasPrivilegeSet(ctx, ses, priv); err != nil || !ok {
++		return 0, ok, err
++	}
++	ok, _, err := determineUserHasPrivilegeSetWithSelectLockBatch(ctx, ses, priv, batch)
++	return batch.checked, ok, err
++}
++
++// Pause the real second-target boundary, then change one reuse precondition.
++// The existing frontend fault point supplies the barrier; production has no
++// test hook. The count distinguishes legacy resumption from skipping a target.
++func AuthorizeNativeSelectLockBoundaryForTest(ctx context.Context, compiler *TxnCompilerContext, q *plan.Query, change string) (int64, bool, error) {
++	ses := compiler.GetSession().(*Session)
++	runCtx, cancel := context.WithCancel(ctx)
++	defer cancel()
++	runCtx, epoch := beginAuthorizationEpoch(runCtx, ses, &ExecCtx{})
++	defer epoch.end()
++	if ok, _, err := authenticateSelectLockReferences(runCtx, ses, q); err != nil || !ok {
++		return 0, ok, err
++	}
++	if fault.EnableDomain(fault.DomainFrontend) {
++		defer fault.DisableDomain(fault.DomainFrontend)
++	}
++	const target = "authorization_before_grant_read"
++	for _, point := range []struct{ name, frequency, action string }{
++		{target, "2:2::", "wait"},
++		{"select_lock_batch_waiters", ":::", "getwaiters"},
++		{"select_lock_batch_notify", ":::", "notifyall"},
++		{"select_lock_batch_count", ":::", "getcount"},
++	} {
++		if err := fault.AddFaultPointInDomain(ctx, fault.DomainFrontend, point.name, point.frequency, point.action, 0, target, false); err != nil {
++			return 0, false, err
++		}
++		defer fault.RemoveFaultPointFromDomain(ctx, fault.DomainFrontend, point.name)
++	}
++	type result struct {
++		ok  bool
++		err error
++	}
++	done := make(chan result, 1)
++	go func() {
++		ok, _, err := authent
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #31947** (2026-10-31): fix(frontend): allow the MySQL wait_timeout range (@aptend)
-- **PR #31946** (closed): fix(colexec): release block-info batch when pipeline sinker close fails (#31626) (@MatrixAdventurer)
-- **PR #31943** (2026-10-31): Revert long-scan reader cache admission change (@XuPeng-SH)
-- **PR #31942** (2026-10-31): Fix daemon claim races and reduce redundant race-test work (@XuPeng-SH)
-- **PR #31941** (2026-10-31): feat(sql): add ewmMean/ewmVar/ewmStd/ewmCov/ewmCorr window functions (@gouhongshen)
-- **PR #31939** (2026-10-30): fix(tae): propagate forced flush queue admission errors (@XuPeng-SH)
+- **PR #32031** (2026-11-02): perf(tae): index logtail append ranges on demand (@aunjgr)
+- **PR #32022** (2026-11-02): fix(disttae): release subscription state locks before diagnostics (@XuPeng-SH)
+- **PR #32019** (2026-11-02): fix(python): group additional fulltext WHERE predicates (@MatrixAdventurer)
+- **PR #32012** (2026-11-02): fix(plan): decouple simple zone-map filter admission from estimates (@ck89119)
+- **PR #32009** (2026-11-02): fix(function): preserve 64-bit complement of unsigned zero (@aptend)
+- **PR #32007** (2026-11-02): fix(fileservice): report anonymous file unlink failures (@XuPeng-SH)
 
 ---
 
@@ -3215,31 +3876,42 @@ and new logins).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. daemon claim races and reduce redundant race-test work (#31942)
+## X. function): clamp temporal casts to DECIMAL on overflow (#31999)
 
 **RULE**:
-When implementing operations in `pkg/cnservice/server_task_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/container/types/time.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae40f12a`: daemon claim races and reduce redundant race-test work (#31942). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `650a4bb3`: function): clamp temporal casts to DECIMAL on overflow (#31999). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/cnservice/server_task_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/container/types/time.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (ts *testTS) RequestDaemonTaskStatus(context.Context, task.DaemonTask, task.TaskStatus) (int, error) {
-	panic("unexpected RequestDaemonTaskStatus")
-}
-
+	return ParseDecimal64WithContext(ctx, t.NumericString(scale), width, scale)
+	return ParseDecimal128WithContext(ctx, t.NumericString(scale), width, scale)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+	tToStr := t.NumericString(scale)
+	ret, err := ParseDecimal64(tToStr, width, scale)
+	if err != nil {
+		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal64")
+	}
+
+	return ret, nil
+	tToStr := t.NumericString(scale)
+	ret, err := ParseDecimal128(tToStr, width, scale)
+	if err != nil {
+		return ret, moerr.NewInternalError(ctx, "exist time cant't cast to decimal128")
+	}
+
+	return ret, nil
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae40f12a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `650a4bb3` are properly handled with clean fallback behavior.

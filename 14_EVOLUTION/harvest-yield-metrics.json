@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T15:29:48.979Z",
-  "total_cycles_completed": 6801,
-  "total_learnings_persisted": 6801,
-  "total_rules_promoted": 6448,
+  "last_updated": "2026-11-02T15:36:53.070Z",
+  "total_cycles_completed": 6804,
+  "total_learnings_persisted": 6804,
+  "total_rules_promoted": 6451,
   "history": [
-    {
-      "timestamp": "2026-10-31T15:49:48.816Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:56:41.566Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:56:42.115Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T16:03:37.101Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1382,27 @@
       "repository": "yshrsmz/BuildKonfig",
       "learningId": "learn-github-yshrsmz-buildkonfig",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:36:48.250Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:36:49.396Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:36:53.070Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -6833,3 +6833,6 @@ Every entry in this ledger must capture:
 | `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `6335271b` | Multi-dimensional audit evidence | 2026-11-02T15:29:41.091Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `f63ad4ae` | Multi-dimensional audit evidence | 2026-11-02T15:29:45.396Z |
 | `learn-github-yshrsmz-buildkonfig` | `https://github.com/yshrsmz/BuildKonfig` | `ef37d507` | Multi-dimensional audit evidence | 2026-11-02T15:29:48.973Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `395f7978` | Multi-dimensional audit evidence | 2026-11-02T15:36:48.245Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `05fb8aef` | Multi-dimensional audit evidence | 2026-11-02T15:36:49.391Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `035356d9` | Multi-dimensional audit evidence | 2026-11-02T15:36:53.065Z |

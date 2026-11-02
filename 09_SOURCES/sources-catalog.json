@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "0c3f87a5",
+    "sourceVersion": "395f7978",
     "license": "Apache-2.0",
-    "contentHash": "12ed42b3e0e7b252eb382bf5f0464b66c8015bf206d7dfb778876ef6d90ab67b",
-    "lastHarvestedAt": "2026-10-31T20:38:56.696Z",
+    "contentHash": "c129acbb3b6fdcb261491ed27f696195643e467b7686b32cdc0415e43d5097f0",
+    "lastHarvestedAt": "2026-11-02T15:36:48.245Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "ae40f12a",
+    "sourceVersion": "035356d9",
     "license": "Apache-2.0",
-    "contentHash": "e3c5f3aec9edf3050592f6b279d62e1d53121fa0e127e4ee961e7b291859afa5",
-    "lastHarvestedAt": "2026-10-31T12:47:00.052Z",
+    "contentHash": "ce478062ea22f21a2317e412e2cdd4f6a6d267aa9f06488c69bc45d5a3a88330",
+    "lastHarvestedAt": "2026-11-02T15:36:53.065Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "7a257031",
+    "sourceVersion": "05fb8aef",
     "license": "Apache-2.0",
-    "contentHash": "ccfbf5c92491151f57a4675b4469ad7836ea90ef73b6c5db6e7e43634e50402a",
-    "lastHarvestedAt": "2026-10-30T22:03:22.458Z",
+    "contentHash": "22427a890648730721eec9a9f427c01533f7ffabf94455f73ee8d0063d84c989",
+    "lastHarvestedAt": "2026-11-02T15:36:49.391Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T15:29:48.983Z",
+  "last_updated": "2026-11-02T15:36:53.073Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "36105e6866924f7eac356fa4601b2c8385d50944dc2da92ab82fab97a122f0f1",
-      "verified_at": "2026-10-31T22:31:27.912Z",
+      "content_hash": "c129acbb3b6fdcb261491ed27f696195643e467b7686b32cdc0415e43d5097f0",
+      "verified_at": "2026-11-02T15:36:48.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T22:31:27.912Z"
+      "last_updated": "2026-11-02T15:36:48.253Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "e3c5f3aec9edf3050592f6b279d62e1d53121fa0e127e4ee961e7b291859afa5",
-      "verified_at": "2026-10-31T12:47:00.061Z",
+      "content_hash": "ce478062ea22f21a2317e412e2cdd4f6a6d267aa9f06488c69bc45d5a3a88330",
+      "verified_at": "2026-11-02T15:36:53.073Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T12:47:00.061Z"
+      "last_updated": "2026-11-02T15:36:53.073Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "ccfbf5c92491151f57a4675b4469ad7836ea90ef73b6c5db6e7e43634e50402a",
-      "verified_at": "2026-10-30T22:03:22.466Z",
+      "content_hash": "22427a890648730721eec9a9f427c01533f7ffabf94455f73ee8d0063d84c989",
+      "verified_at": "2026-11-02T15:36:49.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:03:22.466Z"
+      "last_updated": "2026-11-02T15:36:49.399Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
