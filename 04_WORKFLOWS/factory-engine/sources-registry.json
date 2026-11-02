@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T17:24:42.888Z",
-    "lastVerified": "2026-11-02T17:24:42.888Z",
+    "lastChecked": "2026-11-02T17:31:54.101Z",
+    "lastVerified": "2026-11-02T17:31:54.101Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,8 +247,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T16:47:47.392Z",
-    "lastVerified": "2026-11-02T16:47:47.392Z",
+    "lastChecked": "2026-11-02T17:31:45.433Z",
+    "lastVerified": "2026-11-02T17:31:45.433Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1126,22 +1126,21 @@
     "revisionIdentifier": "e2db61bd"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-01T02:00:50.284Z",
-    "lastVerified": "2026-11-01T02:00:50.284Z",
+    "lastChecked": "2026-11-02T17:31:48.046Z",
+    "lastVerified": "2026-11-02T17:31:48.046Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "36105e6866924f7eac356fa4601b2c8385d50944dc2da92ab82fab97a122f0f1",
-    "promotedRulesCount": 0,
+    "contentHash": "8c3b8a7c0ed222e8737670140e99aa03425cd3eb157c0968e6efc2cdadb8b62b",
+    "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "0c3f87a5"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -4289,14 +4288,14 @@
     "officialUrl": "https://github.com/MaterializeInc/materialize",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-10-31T14:19:41.648Z",
-    "lastVerified": "2026-10-31T14:19:41.648Z",
+    "lastChecked": "2026-11-02T17:31:50.031Z",
+    "lastVerified": "2026-11-02T17:31:50.031Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "99c5d9c99f76bb1074c2baa0438a78ac5fbd0daa99e595ad794149a4fe4dafa6",
+    "contentHash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5902,9 +5901,9 @@
   "octodns-octodns": {
     "name": "octodns",
     "officialUrl": "https://github.com/octodns/octodns",
-    "lastChecked": "2026-10-31T14:59:33.541Z",
+    "lastChecked": "2026-11-02T17:31:37.875Z",
     "revisionIdentifier": "d3d4a37a",
-    "lastVerified": "2026-10-31T14:59:33.541Z"
+    "lastVerified": "2026-11-02T17:31:37.875Z"
   },
   "citusdata-citus": {
     "name": "citus",
@@ -5992,9 +5991,9 @@
   "golutra-golutra": {
     "name": "golutra",
     "officialUrl": "https://github.com/golutra/golutra",
-    "lastChecked": "2026-10-31T11:19:09.289Z",
+    "lastChecked": "2026-11-02T17:31:30.338Z",
     "revisionIdentifier": "8b68a141",
-    "lastVerified": "2026-10-31T11:19:09.290Z"
+    "lastVerified": "2026-11-02T17:31:30.338Z"
   },
   "hf-facebookai-xlm-roberta-base": {
     "name": "FacebookAI/xlm-roberta-base",
@@ -9232,9 +9231,9 @@
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",
     "officialUrl": "https://github.com/TurboPress-X/seo-auditing-software",
-    "lastChecked": "2026-10-29T17:16:33.322Z",
+    "lastChecked": "2026-11-02T17:31:32.868Z",
     "revisionIdentifier": "68d4a606db",
-    "lastVerified": "2026-10-29T17:16:33.322Z"
+    "lastVerified": "2026-11-02T17:31:32.868Z"
   },
   "ivanvorobei-swiftui": {
     "name": "SwiftUI",
@@ -10124,9 +10123,9 @@
   "damascenorafael-reminders-menubar": {
     "name": "reminders-menubar",
     "officialUrl": "https://github.com/DamascenoRafael/reminders-menubar",
-    "lastChecked": "2026-10-30T07:45:57.370Z",
+    "lastChecked": "2026-11-02T17:31:35.320Z",
     "revisionIdentifier": "3ee6f0ac",
-    "lastVerified": "2026-10-30T07:45:57.370Z"
+    "lastVerified": "2026-11-02T17:31:35.320Z"
   },
   "scrapy-scrapy": {
     "name": "scrapy/scrapy",

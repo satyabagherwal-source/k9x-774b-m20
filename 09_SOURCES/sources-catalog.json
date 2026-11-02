@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "0c3f87a5",
+    "sourceVersion": "395f7978",
     "license": "Apache-2.0",
-    "contentHash": "36105e6866924f7eac356fa4601b2c8385d50944dc2da92ab82fab97a122f0f1",
-    "lastHarvestedAt": "2026-10-31T22:31:27.903Z",
+    "contentHash": "8c3b8a7c0ed222e8737670140e99aa03425cd3eb157c0968e6efc2cdadb8b62b",
+    "lastHarvestedAt": "2026-11-02T17:31:49.904Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "07eda4c6",
+    "sourceVersion": "0da844b2",
     "license": "NOASSERTION",
-    "contentHash": "99c5d9c99f76bb1074c2baa0438a78ac5fbd0daa99e595ad794149a4fe4dafa6",
-    "lastHarvestedAt": "2026-10-31T14:19:42.358Z",
+    "contentHash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
+    "lastHarvestedAt": "2026-11-02T17:31:51.560Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

@@ -6861,3 +6861,5 @@ Every entry in this ledger must capture:
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `27a6ff0c` | Multi-dimensional audit evidence | 2026-11-02T17:24:26.045Z |
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `6badb1c8` | Multi-dimensional audit evidence | 2026-11-02T17:24:33.341Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `595167cf` | Multi-dimensional audit evidence | 2026-11-02T17:24:40.328Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `395f7978` | Multi-dimensional audit evidence | 2026-11-02T17:31:49.904Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `0da844b2` | Multi-dimensional audit evidence | 2026-11-02T17:31:51.560Z |

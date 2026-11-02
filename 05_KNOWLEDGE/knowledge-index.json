@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T17:24:40.243Z",
+  "last_updated": "2026-11-02T17:31:51.480Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -38376,8 +38376,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "07eda4c6",
-      "content_hash": "99c5d9c99f76bb1074c2baa0438a78ac5fbd0daa99e595ad794149a4fe4dafa6",
+      "source_version": "0da844b2",
+      "content_hash": "b39ea2cafb739992cba5384d90cab420b03d554aa2b51aad31c3f6c2cf2f7648",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -38445,6 +38445,11 @@
           "number": 6220,
           "title": "cargo-bench: Only create one CI annotation (#40383)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6471,
+          "title": "build(deps): bump the simple group across 1 directory with 13 updates (#40399)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -38452,7 +38457,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:19:42.252Z",
+      "verified_at": "2026-11-02T17:31:51.455Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -69799,13 +69804,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "395f7978",
-      "content_hash": "c129acbb3b6fdcb261491ed27f696195643e467b7686b32cdc0415e43d5097f0",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "8c3b8a7c0ed222e8737670140e99aa03425cd3eb157c0968e6efc2cdadb8b62b",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 1114,
@@ -69895,7 +69900,7 @@
         {
           "number": 6439,
           "title": "Merge pull request #4613 from aleo-labs-protocol/dependabot/cargo/staging/sha2-0",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -69903,7 +69908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T15:36:48.160Z",
+      "verified_at": "2026-11-02T17:31:49.795Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167059,14 +167064,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6439,
       "title": "Merge pull request #4613 from aleo-labs-protocol/dependabot/cargo/staging/sha2-0",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "395f7978",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-02T15:36:48.160Z"
+      "verified_at": "2026-11-02T17:31:49.795Z"
     },
     "rule-6440": {
       "learning_id": "rule-6440",
@@ -167501,6 +167506,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T17:24:40.223Z"
+    },
+    "rule-6471": {
+      "learning_id": "rule-6471",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6471,
+      "title": "build(deps): bump the simple group across 1 directory with 13 updates (#40399)",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "0da844b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T17:31:51.455Z"
     }
   },
   "aliases": {

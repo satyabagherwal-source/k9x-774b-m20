@@ -6852,3 +6852,5 @@
 | `CYCLE-20261102-3QRD` | `2026-11-02T17:24:26.041Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6468` | Yes (`f6497804...`) |
 | `CYCLE-20261102-3WE2` | `2026-11-02T17:24:33.338Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6469` | Yes (`39a0ca62...`) |
 | `CYCLE-20261102-41S4` | `2026-11-02T17:24:40.324Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6470` | Yes (`c180f60d...`) |
+| `CYCLE-20261102-D98T` | `2026-11-02T17:31:49.901Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6439` | Yes (`8c3b8a7c...`) |
+| `CYCLE-20261102-DAIS` | `2026-11-02T17:31:51.556Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6471` | Yes (`b39ea2ca...`) |

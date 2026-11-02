@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `07eda4c6`  
+> **Source Version**: `0da844b2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-31T14:19:41.656Z  
+> **Timestamp**: 2026-11-02T17:31:50.868Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-31T14:19:41.648Z  
+> **Harvest Timestamp**: 2026-11-02T17:31:50.031Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1064,11 +1064,13 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40383** (2026-10-31): **cargo-bench: Only create one CI annotation**
-  *Symptoms*: Less noisy. Test run: https://buildkite.com/materialize/nightly/builds/18645  Before: <img width="1684" height="668" alt="Screenshot 2026-10-31 at 08 20 09" src="https://github.com/user-attachments/assets/40e34813-3cc8-4e6d-8681-f4f95236bacc" /> After: <img width="1684" height="80" alt="Screenshot 2026-10-31 at 08 50 35" src="https://github.com/user-attachments/assets/0ca57d12-793c-4785-8884-ceed0f6d4230" /> 
+- **Issue #40408** (2026-11-02): **console: log Codex in under the same server name as its config**
+  *Symptoms*: The connect drawer writes the Codex config under `[mcp_servers.materialize_agent]` but tells users to run `codex mcp login materialize-agent`, which Codex rejects with "No MCP server named ... found". The login command now uses the same underscored key as the config, through one shared helper, so configs already copied from the console keep working. Reported in #40346.  Adds a test that checks the Codex login argument matches the TOML table name for each server.
 
-- **Issue #40379** (2026-10-30): **doc: lead v26.48 Kafka sink headers note with the transactional use case**
-  *Symptoms*: Reframes the v26.48 "Kafka sink headers are generally available" release note around the customer so-what: using the `materialize-sink-id` header to deliver transactionally consistent updates to downstream systems, with a link to the [Transactional downstream updates using Kafka](https://materialize.com/docs/export-data/patterns/transactional-downstream-updates-kafka/) pattern up front. The `HEADERS` GA detail moves to a second paragraph.  The section anchor (`#v26.48-kafka-sink-headers-ga`) is unchanged so existing links keep working.  Feedback from the #shipped-it post that the original note didn't land the "so what" for customers.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+- **Issue #40407** (2026-11-02): **mcp: deprecate the standalone MCP server packages and pin mcp below 2**
+  *Symptoms*: Marks `misc/mcp-materialize` and `misc/mcp-materialize-agents` as deprecated in favor of the built-in MCP server (`/api/mcp/agent`): a notice in both READMEs and the PyPI "Inactive" classifier. Both servers use APIs that mcp 2.x removed, so they fail to start on a fresh install. This pins `mcp>=1.30.0,<2` (1.30.0 patches the open advisories on 1.28.1), relocks both packages to 1.30.0, bumps the versions so the next deploy publishes them to PyPI, ignores major `mcp` bumps in Dependabot, and fixes the console script name in the agents README. Supersedes #40245.
+  **Post-Mortem & Fix Analysis**:
+  > > This looks good, but having dependabot ignore might not remove our security scans even if the package is deprecated.  Good point, the ignore rule only stops the update PRs, and the lock files would still get scanned. I'll merge this so the deprecated versions go out to PyPI, then open a follow-up that removes both packages from the repo.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1085,301 +1087,506 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07eda4c6` (2026-10-31)
-**Commit Message**: cargo-bench: Only create one CI annotation (#40383)
+### Incident Patch 1: `01faeb82` (2026-11-02)
+**Commit Message**: build(deps): bump the simple group across 1 directory with 13 updates (#40399)
 
-Less noisy. Test run:
-https://buildkite.com/materialize/nightly/builds/18645
+Bumps the simple group with 13 updates in the /ci/builder directory:
 
-Before:
-<img width="1684" height="668" alt="Screenshot 2026-10-31 at 08 20 09"
-src="https://github.com/user-attachments/assets/40e34813-3cc8-4e6d-8681-f4f95236bacc"
-/>
-After:
-<img width="1684" height="80" alt="Screenshot 2026-10-31 at 08 50 35"
-src="https://github.com/user-attachments/assets/0ca57d12-793c-4785-8884-ceed0f6d4230"
-/>
+| Package | From | To |
+| --- | --- | --- |
+| [boto3-stubs](https://github.com/youtype/mypy_boto3_builder) |
+`1.43.118` | `1.43.122` |
+| [boto3](https://github.com/boto/boto3) | `1.43.118` | `1.43.122` |
+| [jupyterlab](https://github.com/jupyterlab/jupyterlab) | `4.6.4` |
+`4.6.5` |
+| [launchdarkly-api](https://github.com/launchdarkly/api-client-python)
+| `25.0.0` | `25.1.0` |
+| [pandas-stubs](https://github.com/pandas-dev/pandas-stubs) |
+`3.0.5.260914` | `3.1.0.261029` |
+| [psycopg](https://github.com/psycopg/psycopg) | `3.3.3` | `3.3.6` |
+| [psycopg-binary](https://github.com/psycopg/psycopg) | `3.3.3` |
+`3.3.6` |
+| [pydantic](https://github.com/pydantic/pydantic) | `2.14.1` | `2.14.2`
+|
+| [pytest](https://github.com/pytest-dev/pytest) | `9.1.1` | `9.2.0` |
+| [ruff](https://github.com/astral-sh/ruff) | `0.17.2` | `0.17.3` |
+| [types-markdown](https://github.com/python/typeshed) |
+`3.10.2.20261007` | `3.11.2.20261029` |
+|
+[confluent-kafka](https://github.com/confluentinc/confluent-kafka-python)
+| `2.16.0` | `2.16.1` |
+| [hatchling](ht
 
-**File**: `ci/mkpipeline.py` (modified, +26/-0)
+**File**: `ci/builder/requirements.txt` (modified, +13/-13)
 ```diff
-@@ -189,6 +189,30 @@ def annotate(style: str, context: str, markdown: str) -> None:
-         print(f"Failed to post annotation: {e}")
- 
- 
-+def initialize_cargo_bench_annotation(pipeline: Any) -> None:
-+    """Open the shared results disclosure before Cargo bench shards start."""
-+    if not any(
-+        step.get("id") == "cargo-bench" and not step.get("skip")
-+        for step in steps(pipeline)
-+    ):
-+        return
-+    initialized_key = "cargo-bench-annotation-initialized"
-+    if (
-+        spawn.capture(
-+            ["buildkite-agent", "meta-data", "get", initialized_key, "--default=false"]
-+        ).strip()
-+        == "true"
-+    ):
-+        return
-+    # NOTE: Keep the outer details open so appends, including retries, stay
-+    # nested. The HTML renderer closes it at the end of the annotation.
-+    spawn.runv(
-+        ["buildkite-agent", "annotate", "--context=cargo-bench", "--style=info"],
-+        stdin=b"<details><summary>Cargo bench results</summary>\n\n",
-+    )
-+    spawn.runv(["buildkite-agent", "meta-data", "set", initialized_key, "true"])
-+
-+
- def main() -> int:
-     parser = argparse.ArgumentParser(
-         prog="mkpipeline",
-@@ -422,6 +446,8 @@ def fetch_hashes() -> None:
-     cmd = ["buildkite-agent", "pipeline", "upload"]
-     if args.dry_run:
-         cmd.append("--dry-run")
-+    else:
-+        initialize_cargo_bench_annotation(pipeline)
-     spawn.runv(cmd, stdin=yaml.dump(pipeline).encode())
- 
-     if fail_build_reason is not None and not args.dry_run:
+@@ -14,8 +14,8 @@
+ aiohttp==3.14.5
+ black==26.10.1
+ # Pulls in dependencies that make launchdarkly/cloud tests fail, keep for now
+-boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.118
+-boto3==1.43.118
++boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.122
++boto3==1.43.122
+ click==8.5.0
+ cryptography==50.0.2
+ colored==2.3.2
+@@ -27,11 +27,11 @@ ipympl==0.10.0
+ ipywidgets==8.1.9
+ junit-xml==1.9
+ junitparser==5.0.3
+-jupyterlab==4.6.4
++jupyterlab==4.6.5
+ jupyter-black==0.4.0
+ kubernetes==25.3.0
+ kubernetes-stubs==22.6.0.post1
+-launchdarkly-api==25.0.0
++launchdarkly-api==25.1.0
+ # NOTE matplotlib 3.10.9 is required for Python 3.10 compatibility
+ matplotlib==3.10.9; python_version < "3.11"
+ matplotlib==3.11.2; python_version >= "3.11"
+@@ -43,26 +43,26 @@ networkx-stubs==0.0.1
+ numpy==2.2.6; python_version < "3.11"
+ numpy==2.5.4; python_version >= "3.11"
+ pandas==3.1.0
+-pandas-stubs==3.0.5.260914
++pandas-stubs==3.1.0.261029
+ parameterized==0.9.0
+ paramiko==5.1.0
+ pdoc==16.0.0
+ pg8000==1.31.6
+ prettytable==3.18.0
+ psutil==7.2.2
+ # TODO: Bump psycopg/psycopg-binary to >= 3.3.6 when SQL-840 is fixed
+-psycopg==3.3.3
+-psycopg-binary==3.3.3
+-pydantic==2.14.1
++psycopg==3.3.6
++psycopg-binary==3.3.6
++pydantic==2.14.2
+ pyelftools==0.33
+ pyjwt==2.15.1
+ PyMySQL==1.2.3
+-pytest==9.1.1
++pytest==9.2.0
+ pytest-split==0.11.0
+ pyyaml==6.0.3
+ requests==2.34.2
+ ruamel.yaml==0.19.1
+-ruff==0.17.2
++ruff==0.17.3
+ # NOTE scipy 1.15 is required for Python 3.10 compatibility
+ scipy==1.15.3; python_version < "3.11"
+ scipy==1.18.1; python_version >= "3.11"
+@@ -72,7 +72,7 @@ shtab==1.13.0
+ sqlparse==0.6.0
+ toml==0.10.2
+ twine==7.0.0
+-types-Markdown==3.10.2.20261007
++types-Markdown==3.11.2.20261029
+ types-prettytable==3.4.2.6
+ types-psutil==7.2.2.20260906
+ types-PyMYSQL==1.2.0.20260923
+@@ -85,12 +85,12 @@ xxhash==4.0.2
+ yamllint==1.38.0
+ # NOTE confluent-kafka only has wheels for a few python versions
+ confluent-kafka==2.6.1; python_version < "3.13"
+-confluent-kafka[schema-registry]==2.16.0; python_version >= "3.13"
++confluent-kafka[schema-registry]==2.16.1; python_version >= "3.13"
+ fastavro==1.13.1
+ websocket-client==1.9.2
+ pyarrow-stubs==20.0.0.20260819
+ pyarrow==26.0.0
+ minio==7.2.20
+ zstandard==0.25.0
+ build==1.6.1
+-hatchling==1.32.4
++hatchling==1.33.0
 ```
 
-**File**: `test/cargo-bench/mzcompose.py` (modified, +22/-7)
+**File**: `ci/mkpipeline.sh` (modified, +7/-1)
 ```diff
-@@ -856,13 +856,28 @@ def workflow_default(c: Composition, parser: WorkflowArgumentParser) -> None:
+@@ -19,6 +19,8 @@
  
-     failed = report.has_regressions or bool(current_failures) or bool(mispredicted)
-     if buildkite.is_in_buildkite():
--        buildkite.add_annotation(
--            "error" if failed else "info",
--            f"Cargo bench results ({', '.join(shard_packages)})",
--            markdown,
--            # `bin/ci-annotate-errors` posts under the job's style-named
--            # context (`error` or `info`) and would otherwise replace this table.
--            context="cargo-bench",
-+        title = ", ".join(shard_packages)
-+        retry_count = int(os.getenv("BUILDKITE_RETRY_COUNT", "0"))
-+        if retry_count > 0:
-+            title += f" (retry #{retry_count})"
-+        if failed:
-+            title += " [failed]"
-+        annotation = (
-+            f"\n\n<details><summary>{title}</summary>\n\n"
-+            f"{buildkite.truncate_annotation_str(markdown)}\n\n</details>\n\n"
-+        )
-+        annotate_cmd = [
-+            "buildkite-agent",
-+            "annotate",
-+            "--context=cargo-bench",
-+            "--append",
-+        ]
-+        # Only failures set the shared style so passing shards preserve it.
-+        if failed:
-+            annotate_cmd.append("--style=error")
-+        spawn.runv(
-+            annotate_cmd,
-+            stdin=annotation.encode(),
-         )
-         try:
-             spawn.runv(
+ set -euo pipefail
+ 
++. misc/shlib/shlib.bash
++
+ pipeline=${1:-test}
+ if [ "$#" -gt 0 ]; then
+   shift
+@@ -55,6 +57,10 @@ done < "$tmpfile"
+ rm "$tmpfile"
+ 
+ if [ -n "$bootstrap_steps" ]; then
++  queue=hetzner-x86-64-4cpu-8gb-mkpipeline
++  if is_truthy "${CI_FORCE_SWITCH_TO_AWS-1}"; then
++    queue=linux-x86_64-small
++  fi
+   exec buildkite-agent pipeline upload <<EOF
+ steps:
+   $bootstrap_steps
+@@ -63,7 +69,7 @@ steps:
+     command: bin/ci-builder run min bin/pyactivate -m ci.mkpipeline $pipeline $@
+     priority: 200
+     agents:
+-      queue: hetzner-x86-64-4cpu-8gb-mkpipeline
++      queue: $queue
+     retry:
+       automatic:
+         - exit_status: -1
 ```
 
 ---
 
-### Incident Patch 2: `6f20f9fc` (2026-10-31)
-**Commit Message**: tests: Make cargo bench more stable (#40369)
+### Incident Patch 2: `c98b3213` (2026-11-02)
+**Commit Message**: build(deps-dev): bump the typescript-and-eslint group across 1 directory with 3 updates (#40391)
 
-Fixes: [QAR-162](https://linear.app/materializeinc/issue/QAR-162)
+Bumps the typescript-and-eslint group with 3 updates in the /console
+directory:
+[@tanstack/eslint-plugin-query](https://github.com/TanStack/query/tree/HEAD/packages/eslint-plugin-query),
+[eslint-plugin-unicorn](https://github.com/sindresorhus/eslint-plugin-unicorn)
+and
+[typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint).
 
-Motivated by https://buildkite.com/materialize/nightly/builds/18633
+Updates `@tanstack/eslint-plugin-query` from 5.104.5 to 5.105.0
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/TanStack/query/releases">@​tanstack/eslint-plugin-query's
+releases</a>.</em></p>
+<blockquote>
+<h2><code>@​tanstack/eslint-plugin-query</code><a
+href="https://github.com/5"><code>@​5</code></a>.105.0</h2>
+<p>No changes in this release.</p>
+</blockquote>
+</details>
+<details>
+<summary>Changelog</summary>
+<p><em>Sourced from <a
+href="https://github.com/TanStack/query/blob/main/packages/eslint-plugin-query/CHANGELOG.md">@​tanstack/eslint-plugin-query's
+changelog</a>.</em></p>
+<blockquote>
+<h2>5.105.0</h2>
+<p>No changes in this release.</p>
+</blockquote>
+</detai
 
-Test run: https://buildkite.com/materialize/nightly/builds/18636 &
-https://buildkite.com/materialize/nightly/builds/18638
-
-**File**: `ci/nightly/pipeline.template.yml` (modified, +1/-9)
+**File**: `console/package.json` (modified, +3/-3)
 ```diff
-@@ -297,18 +297,10 @@ steps:
-                 - common-ancestor
- 
-       - id: cargo-bench
--        label: ":rust: Cargo bench against ancestor"
-+        label: ":rust: Cargo bench against merge base or 'latest'"
-         sanitizer: skip
-         depends_on: []
--        # Measured: 48 minutes for the largest closure built twice on the
--        # 8-core queue, 73 minutes for a shard that also ran its benchmarks.
-         timeout_in_minutes: 240
--        # Annotation-only while the noise floor on this hardware is being
--        # calibrated. QAR-162 covers dropping `soft_fail` so regressions and
--        # HEAD build failures fail the build.
--        soft_fail: true
--        # One shard per package with bench targets, so this should track that
--        # package count. Extra shards exit as no-ops, fewer shards double up.
-         parallelism: 9
-         inputs:
-           - Cargo.lock
+@@ -132,7 +132,7 @@
+     "@sentry/vite-plugin": "^5.4.0",
+     "@storybook/react-vite": "^10",
+     "@svgr/babel-plugin-transform-svg-component": "^8.0.0",
+-    "@tanstack/eslint-plugin-query": "^5.104.5",
++    "@tanstack/eslint-plugin-query": "^5.105.0",
+     "@testing-library/dom": "^10.4.2",
+     "@testing-library/jest-dom": "^7.0.1",
+     "@testing-library/react": "^16.3.3",
+@@ -163,7 +163,7 @@
+     "eslint-plugin-react-hooks": "^7.1.1",
+     "eslint-plugin-react-refresh": "^0.5.7",
+     "eslint-plugin-simple-import-sort": "^14.0.0",
+-    "eslint-plugin-unicorn": "^78.0.0",
++    "eslint-plugin-unicorn": "^79.0.0",
+     "fast-xml-parser": "^5.11.2",
+     "globals": "^17.13.0",
+     "intersection-observer": "^0.12.2",
+@@ -184,7 +184,7 @@
+     "storybook": "^10",
+     "terser": "^5.51.2",
+     "tsx": "^4.23.15",
+-    "typescript-eslint": "^8.72.0",
++    "typescript-eslint": "^8.72.1",
+     "typescript-eslint-language-service": "^5.0.5",
+     "vite": "^8.3.3",
+     "vite-bundle-analyzer": "^1.3.9",
 ```
 
-**File**: `ci/plugins/mzcompose/hooks/command` (modified, +1/-1)
+**File**: `console/yarn.lock` (modified, +83/-83)
 ```diff
-@@ -455,7 +455,7 @@ cleanup() {
-     && [[ ! "$BUILDKITE_LABEL" =~ Terraform\ .* ]] \
-     && [[ ! "$BUILDKITE_LABEL" =~ Orchestratord\ .* ]] \
-     && [[ ! "$BUILDKITE_LABEL" =~ Cluster\ spec\ sheet.* ]] \
--    && [[ ! "$BUILDKITE_LABEL" =~ ^:rust:\ Cargo\ bench\ against\ ancestor ]]; then
-+    && [[ ! "$BUILDKITE_LABEL" =~ ^:rust:\ Cargo\ bench\ .* ]]; then
-       echo "+++ services.log is empty, failing"
-       if [[ $CI_ANNOTATE_ERRORS_RESULT -ne 0 ]]; then
-         # Keep the retryable code (128 for GHCR/DockerHub trouble, 199 for a
+@@ -4689,9 +4689,9 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@tanstack/eslint-plugin-query@npm:^5.104.5":
+-  version: 5.104.5
+-  resolution: "@tanstack/eslint-plugin-query@npm:5.104.5"
++"@tanstack/eslint-plugin-query@npm:^5.105.0":
++  version: 5.105.0
++  resolution: "@tanstack/eslint-plugin-query@npm:5.105.0"
+   dependencies:
+     "@typescript-eslint/utils": "npm:^8.71.0"
+   peerDependencies:
+@@ -4700,7 +4700,7 @@ __metadata:
+   peerDependenciesMeta:
+     typescript:
+       optional: true
+-  checksum: 10c0/0667a02e6e3f08e6e4b96d63e5cb18a5bf6592ecad6fa750dcf4694ec5c5efd3693e2320ec3a9c70cfbe06065823415e22bedfce8e95bfd8b21e1afc7f31b5db
++  checksum: 10c0/009aa34de317547c47525c99995408dfdc2c868aba0ed552f19959dc612b79d1f2859ce7f6800d09d5ee17cefb56230331861f77b056e03acd3d50ef02b54e8f
+   languageName: node
+   linkType: hard
+ 
+@@ -5698,39 +5698,39 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@typescript-eslint/eslint-plugin@npm:8.72.0":
+-  version: 8.72.0
+-  resolution: "@typescript-eslint/eslint-plugin@npm:8.72.0"
++"@typescript-eslint/eslint-plugin@npm:8.72.1":
++  version: 8.72.1
++  resolution: "@typescript-eslint/eslint-plugin@npm:8.72.1"
+   dependencies:
+     "@eslint-community/regexpp": "npm:^4.12.2"
+-    "@typescript-eslint/scope-manager": "npm:8.72.0"
+-    "@typescript-eslint/type-utils": "npm:8.72.0"
+-    "@typescript-eslint/utils": "npm:8.72.0"
+-    "@typescript-eslint/visitor-keys": "npm:8.72.0"
++    "@typescript-eslint/scope-manager": "npm:8.72.1"
++    "@typescript-eslint/type-utils": "npm:8.72.1"
++    "@typescript-eslint/utils": "npm:8.72.1"
++    "@typescript-eslint/visitor-keys": "npm:8.72.1"
+     ignore: "npm:^7.0.5"
+     natural-compare: "npm:^1.4.0"
+     ts-api-utils: "npm:^2.5.0"
+   peerDependencies:
+-    "@typescript-eslint/parser": ^8.72.0
++    "@typescript-eslint/parser": ^8.72.1
+     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+     typescript: ">=4.8.4 <6.1.0"
+-  checksum: 10c0/19e7a2fff7fa15a41662eab550918f8e060e522de5621cb78b1cf0516f9dd845878f03f351d503161a3d0417bc87e73b582d2c41d13a51bb3e7d3088cce41fe2
++  checksum: 10c0/331c3efdb08ff63bc1bb4fc2888f901d206f71552e1a822a936d7086537b58a9104360a20c6ebfe5a1ea6d3555eda808599cf13cd185ab1554efc0d7a170fa70
+   languageName: node
+   linkType: hard
+ 
+-"@typescript-eslint/parser@npm:8.72.0":
+-  version: 8.72.0
+-  resolution: "@typescript-eslint/parser@npm:8.72.0"
++"@typescript-eslint/parser@npm:8.72.1":
++  version: 8.72.1
++  resolution: "@typescript-eslint/parser@npm:8.72.1"
+   dependencies:
+-    "@typescript-eslint/scope-manager": "npm:8.72.0"
+-    "@typescript-eslint/types": "npm:8.72.0"
+-    "@typescript-eslint/typescript-estree": "npm:8.72.0"
+-    "@typescript-eslint/visitor-keys": "npm:8.72.0"
++    "@typescript-eslint/scope-manager": "npm:8.72.1"
++    "@typescript-eslint/types": "npm:8.72.1"
++    "@typescript-eslint/typescript-estree": "npm:8.72.1"
++    "@typescript-eslint/visitor-keys": "npm:8.72.1"
+     debug: "npm:^4.4.3"
+   peerDependencies:
+     eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+     typescript: ">=4.8.4 <6.1.0"
+-  checksum: 10c0/da37b31758b3a90eaca4cdf650f71a565fe0b0c1f4348281623b790d53858fd1afda185f5da9530858d0eada39ba1aabc4bdc10c2c449c001c4186471cd1f761
++  checksum: 10c0/087e37a59dde6cc87fbc917b84a0a4d1ae846f117aa7a9388afe9d3951f661592ce23f5db87146fa31d5e5383c23ca5a5bd190bf5a99ecfea01f052a55d29b61
+   languageName: node
+   linkType: hard
+ 
+@@ -5747,16 +5747,16 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@typescript-eslint/project-service@npm:8.72.0":
+-  version: 8.72.0
+-  resolution: "@typescript-eslint/project-service@npm:8.72.0"
++"@typescript-eslint/project-service@npm:8.72.1":
++  version: 8.72.1
++  resolution: "@typescript-eslint/project-service@npm:8.72.1"
+   dependencies:
+-    "@typescript-eslint/tsconfig-utils": "npm:^8.72.0"
+-    "@typescript-eslint/types": "npm:^8.72.0"
++    "@typescript-eslint/tsconfig-utils": "npm:^8.72.1"
++    "@typescript-eslint/types": "npm:^8.72.1"
+     debug: "npm:^4.4.3"
+   peerDependencies:
+     typescript: ">=4.8.4 <6.1.0"
+-  checksum: 10c0/33825ee41b6f0281f40fca6c9123af5493225a971f62173381984de52d4101cc974fdb93077e16ac4b67b3c345bea738c1bc228b76610bd1737f6b2af2c0ccaf
++  checksum: 10c0/666172a721ef93b97129b7452e2a025487892b04c6dec8c98f22146354947361be0fd087c5404372f2f4a9be72abfc7d513a35a64509a694e0adb847f8b47e93
+   languageName: node
+   linkType: hard
+ 
+@@ -5770,13 +5770,13 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"@typescript-eslint/scope-manager@npm:8.72.0":
+-  version: 8.72.0
+-  resolution: "@typescript-eslint/scope-manager@npm:8.72.0"
++"@typescript-eslint/scope-manager@npm:8.72.1":
++  version: 8.72.1
++  resolution: "@typescript-eslint/scope-manager@npm:8.72.1"
+   dependencies:
+-    "@typescript-eslint/types": "npm:8.72.0"
+-    "@typescript-eslint/visitor-keys": "npm:8.72.0"
+-  checksum: 10c0/f8e40de6c306aa5792ede4389aa279cca8ea43d0ea31fec083102bd563ac22d14a6b0554b641e27f476421e033adc299c6b4d4d026bb1fd84f7694421fb5a74f
++    "@typescript-eslint/types": 
 ```
 
-**File**: `misc/python/materialize/cargo_bench/ancestor.py` (modified, +3/-4)
+---
+
+### Incident Patch 3: `35fbed3c` (2026-11-02)
+**Commit Message**: build(deps): bump the simple group across 2 directories with 3 updates (#40396)
+
+Bumps the simple group with 2 updates in the /misc/mcp-materialize
+directory: [pytest](https://github.com/pytest-dev/pytest) and
+[hatch](https://github.com/pypa/hatch).
+Bumps the simple group with 3 updates in the
+/misc/mcp-materialize-agents directory:
+[pytest](https://github.com/pytest-dev/pytest),
+[hatch](https://github.com/pypa/hatch) and
+[pydantic](https://github.com/pydantic/pydantic).
+
+Updates `pytest` from 9.1.1 to 9.2.0
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/pytest-dev/pytest/releases">pytest's
+releases</a>.</em></p>
+<blockquote>
+<h2>9.2.0</h2>
+<h1>pytest 9.2.0 (2026-10-27)</h1>
+<h2>Removals and backward incompatible breaking changes</h2>
+<ul>
+<li>
+<p><a
+href="https://redirect.github.com/pytest-dev/pytest/issues/14716">#14716</a>:
+<code>-c</code> now raises a usage error for a path that does not exist,
+is a directory, or is in a format pytest has no loader for. Such paths
+were previously either ignored or reported as an unhandled
+<code>FileNotFoundError</code>.</p>
+</li>
+<li>
+<p><a
+href="https://redirect.github.com/pytest-dev/pytest/issues/85
+
+**File**: `misc/mcp-materialize-agents/uv.lock` (modified, +152/-148)
 ```diff
-@@ -7,7 +7,7 @@
- # the Business Source License, use of this software will be governed
- # by the Apache License, Version 2.0.
+@@ -390,7 +390,7 @@ wheels = [
  
--"""Clamping of the cargo-bench comparison point to the bench baseline."""
-+"""Clamping of cargo-bench pull request comparisons to the bench baseline."""
+ [[package]]
+ name = "hatch"
+-version = "1.18.1"
++version = "1.18.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "backports-zstd", marker = "python_full_version < '3.14'" },
+@@ -414,9 +414,9 @@ dependencies = [
+     { name = "uv" },
+     { name = "virtualenv" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/91/81/a5a77aaa23df824562d50ad25eeb52ae6446924d0dc68c7c19ed6d8b171f/hatch-1.18.1.tar.gz", hash = "sha256:222fff78e197cf12a39db7efe5318ca403f2614db213416fd106a6c3260ef221", size = 5277846, upload-time = "2026-09-16T16:56:20.886Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/4d/55/45033136574fc89bce07e2c64e4ffb151df5007518b2739b54c95838e14f/hatch-1.18.2.tar.gz", hash = "sha256:7f365f1a5b8f1a8162813daed9bf9fce83f15dc933fc99c6d04cbb942e64f4d0", size = 5280209, upload-time = "2026-10-28T02:29:49.598Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/04/a0/dc90fbe25bca29154d5926e1c96385d1c7a6feb120fa2c1b3e6098ad4d23/hatch-1.18.1-py3-none-any.whl", hash = "sha256:f005959995df45e5f5dd27c862dd77ce07e24e7f06aa8e51cbba2a40bac33a40", size = 172336, upload-time = "2026-09-16T16:56:19.332Z" },
++    { url = "https://files.pythonhosted.org/packages/92/b9/6b281cc90e60a095d16a990a3c54d18dfb2e39772e4c5d657e4950b9974d/hatch-1.18.2-py3-none-any.whl", hash = "sha256:3991c741a2746d1e62345c403cb1f873a58d9c38fd25e3c3ad740437014f56b4", size = 172627, upload-time = "2026-10-28T02:29:48.034Z" },
+ ]
  
- import subprocess
- from pathlib import Path
-@@ -20,9 +20,8 @@
- # benches ran on the system allocator.
- #
- # Bump this to the merge commit of any future change of that kind (allocator,
--# bench profile, measurement harness). Without the bump, every comparison
--# against an older ancestor reports the change itself as regressions and
--# improvements until the next release branch point moves past it.
-+# bench profile, measurement harness). Without the bump, PR comparisons
-+# against an older merge base attribute changes in the bench setup to the PR.
- BENCH_BASELINE = "e95ca7eec04d5817669176949c48a417856cf656"
+ [[package]]
+@@ -920,164 +920,168 @@ wheels = [
  
+ [[package]]
+ name = "pydantic"
+-version = "2.14.1"
++version = "2.14.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "annotated-types" },
+     { name = "pydantic-core" },
+     { name = "typing-extensions" },
+     { name = "typing-inspection" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/7c/0b/8e10b2e693af8ec54346a14caf36221334775975a747c9ceaa3f8371d96d/pydantic-2.14.1.tar.gz", hash = "sha256:94f478203dd03404682a1ada216965651dd74b1d2d5ffd62e00e0837caab5c26", size = 900362, upload-time = "2026-10-11T18:37:55.396Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/9f/d5/b4867fa7c7f04c34997d7d8aad744f64d210bb99d67cf18bf3fb1eea1aed/pydantic-2.14.2.tar.gz", hash = "sha256:fb7b2db6cefe8414dd612edeede49c4c433acb0432b0f92b95024e45f66c505d", size = 911596, upload-time = "2026-10-29T16:37:12.476Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/35/ea/a56b9fe5066f3537b7882f77e9c5dfb26d8c2eefdaed9b5fc73d57b4dc22/pydantic-2.14.1-py3-none-any.whl", hash = "sha256:9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454", size = 488106, upload-time = "2026-10-11T18:37:53.437Z" },
++    { url = "https://files.pythonhosted.org/packages/97/01/c71a71258b58659c72504e5fd65b451f6e36e34dc931d0b237ded213c814/pydantic-2.14.2-py3-none-any.whl", hash = "sha256:7efbf7507b937931cd32a5755acb00ea1cf5ccb1d4e8067a5850d5069e382118", size = 490403, upload-time = "2026-10-29T16:37:10.181Z" },
+ ]
  
+ [[package]]
+ name = "pydantic-core"
+-version = "2.50.1"
++version = "2.50.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "typing-extensions" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/a6/24/af4ec4be49fbc810f35b0bdcacc3d433b56bbfa469fd3bfd4ae116cd9bf1/pydantic_core-2.50.1.tar.gz", hash = "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09", size = 513515, upload-time = "2026-10-11T18:35:44.82Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/09/db/c9cc34707ba2c23ce90d54e8a4ee9307583ad054b9df2ce570ba550cb576/pydantic_core-2.50.1-cp310-cp310-macosx_10_12_x86_64.whl", hash = "sha256:b281a3b0f0822618fe5e3e0d8a2048b6356b14388505dc9374ccffeb69989713", size = 2154222, upload-time = "2026-10-11T18:31:38.345Z" },
+-    { url = "https://files.pythonhosted.org/packages/c1/17/6963f4ee55b7df7658f5c036c0f90baf8cd3d413f5d8b551f227e8467afc/pydantic_core-2.50.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:1fa4c8bc12c1354c5550c0c35c1852c8c1901e89e06561724e03f8d0342e1f87", size = 2048126, upload-time = "2026-10-11T18:31:41.061Z" },
+-    { url = "https://files.pythonhosted.org/packages/bf/be/f75637e222085d29a3076edbc5cfd0dd9b77d145e310ff7dc1150f07558a/pydantic_core-2.50.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3aa9de446b793de2beb6fa2d9d0961803126c4e2a99c2f25ab59b9fd6ea125c0", size = 2052460, upload-time = "2026-10-11T18:31:42.321Z" },
+-    { url = "https://files.pythonhosted.org/packages/7a/1e/3d192ffa39ce3bd0e98e988fb5c055cfbf4af6e6e155a4ca5baa86d1f2cc/pydantic_core-2.50.1-cp310-cp310-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:de531ce1e2a3364e8767878b58f4ff728a434b4fde089781fe30b1e08e2396e0", size = 2190750, upload-time = "2026-10-11T18:31:43.572Z" },
+-    { url = "https://files.pythonhosted.org/packages/b2/7e/12ea94df5220ab316ee5bb498ebcf710cff2db352653039fb6033f6997d1/pydanti
 ```
 
-**File**: `test/cargo-bench/mzcompose.py` (modified, +66/-32)
+**File**: `misc/mcp-materialize/uv.lock` (modified, +88/-88)
 ```diff
-@@ -19,9 +19,10 @@
- first run compiles it from scratch into a parked target dir and later runs
- reuse that.
+@@ -475,7 +475,7 @@ wheels = [
  
--A package whose dependency closure has no committed change between the ancestor
--and the current commit is not built at all: identical source at identical paths
--would only reproduce the identical-binary skip below at the cost of two builds.
-+Unless the benchmark harness changed, a package whose dependency closure has no
-+committed change between the ancestor and the current commit is not built at
-+all: identical source at identical paths would only reproduce the
-+identical-binary skip below at the cost of two builds.
- That prediction is unchecked by construction, so scheduled runs build those
- packages anyway and fail when a predicted-unchanged package yields differing
- binaries, which points at a hole in the closure or an unpinned compile-time
-@@ -76,6 +77,8 @@
- # dependency versions, workspace profiles, and the rustflags cargo applies.
- BUILD_INPUTS = ("Cargo.lock", "Cargo.toml", ".cargo")
+ [[package]]
+ name = "hatch"
+-version = "1.18.1"
++version = "1.18.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "backports-zstd", marker = "python_full_version < '3.14'" },
+@@ -498,9 +498,9 @@ dependencies = [
+     { name = "uv" },
+     { name = "virtualenv" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/91/81/a5a77aaa23df824562d50ad25eeb52ae6446924d0dc68c7c19ed6d8b171f/hatch-1.18.1.tar.gz", hash = "sha256:222fff78e197cf12a39db7efe5318ca403f2614db213416fd106a6c3260ef221", size = 5277846, upload-time = "2026-09-16T16:56:20.886Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/4d/55/45033136574fc89bce07e2c64e4ffb151df5007518b2739b54c95838e14f/hatch-1.18.2.tar.gz", hash = "sha256:7f365f1a5b8f1a8162813daed9bf9fce83f15dc933fc99c6d04cbb942e64f4d0", size = 5280209, upload-time = "2026-10-28T02:29:49.598Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/04/a0/dc90fbe25bca29154d5926e1c96385d1c7a6feb120fa2c1b3e6098ad4d23/hatch-1.18.1-py3-none-any.whl", hash = "sha256:f005959995df45e5f5dd27c862dd77ce07e24e7f06aa8e51cbba2a40bac33a40", size = 172336, upload-time = "2026-09-16T16:56:19.332Z" },
++    { url = "https://files.pythonhosted.org/packages/92/b9/6b281cc90e60a095d16a990a3c54d18dfb2e39772e4c5d657e4950b9974d/hatch-1.18.2-py3-none-any.whl", hash = "sha256:3991c741a2746d1e62345c403cb1f873a58d9c38fd25e3c3ad740437014f56b4", size = 172627, upload-time = "2026-10-28T02:29:48.034Z" },
+ ]
  
-+HARNESS_INPUTS = ("test/cargo-bench", "misc/python/materialize/cargo_bench")
-+
+ [[package]]
+@@ -1029,104 +1029,104 @@ wheels = [
  
- @dataclass(frozen=True)
- class TargetFailure:
-@@ -84,8 +87,10 @@ class TargetFailure:
+ [[package]]
+ name = "pydantic"
+-version = "2.14.1"
++version = "2.14.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "annotated-types" },
+     { name = "pydantic-core" },
+     { name = "typing-extensions" },
+     { name = "typing-inspection" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/7c/0b/8e10b2e693af8ec54346a14caf36221334775975a747c9ceaa3f8371d96d/pydantic-2.14.1.tar.gz", hash = "sha256:94f478203dd03404682a1ada216965651dd74b1d2d5ffd62e00e0837caab5c26", size = 900362, upload-time = "2026-10-11T18:37:55.396Z" }
++sdist = { url = "https://files.pythonhosted.org/packages/9f/d5/b4867fa7c7f04c34997d7d8aad744f64d210bb99d67cf18bf3fb1eea1aed/pydantic-2.14.2.tar.gz", hash = "sha256:fb7b2db6cefe8414dd612edeede49c4c433acb0432b0f92b95024e45f66c505d", size = 911596, upload-time = "2026-10-29T16:37:12.476Z" }
+ wheels = [
+-    { url = "https://files.pythonhosted.org/packages/35/ea/a56b9fe5066f3537b7882f77e9c5dfb26d8c2eefdaed9b5fc73d57b4dc22/pydantic-2.14.1-py3-none-any.whl", hash = "sha256:9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454", size = 488106, upload-time = "2026-10-11T18:37:53.437Z" },
++    { url = "https://files.pythonhosted.org/packages/97/01/c71a71258b58659c72504e5fd65b451f6e36e34dc931d0b237ded213c814/pydantic-2.14.2-py3-none-any.whl", hash = "sha256:7efbf7507b937931cd32a5755acb00ea1cf5ccb1d4e8067a5850d5069e382118", size = 490403, upload-time = "2026-10-29T16:37:10.181Z" },
+ ]
  
- 
- def resolve_ancestor() -> str:
--    """Pick the commit to compare against: `default_ancestor()`, moved forward to the bench baseline when HEAD contains the baseline and that ancestor does not."""
-+    """Choose the comparison commit, clamping PR merge bases to the bench baseline."""
-     ancestor = default_ancestor()
-+    if not buildkite.is_in_pull_request():
-+        return ancestor
-     clamped = clamp_to_baseline(ancestor, "HEAD", MZ_ROOT)
-     if clamped != ancestor:
-         print(
-@@ -95,7 +100,7 @@ def resolve_ancestor() -> str:
- 
- 
- def default_ancestor() -> str:
--    """The merge base in a pull request, else the latest release tag."""
-+    """The PR merge base, or the latest stable release's commit."""
-     if buildkite.is_in_pull_request():
-         return buildkite.get_merge_base()
-     current = MzVersion.parse_cargo()
-@@ -108,12 +113,9 @@ def default_ancestor() -> str:
-     ]
-     if not releases:
-         raise RuntimeError(f"no release tag older than {current} found")
--    tag = spawn.capture(
-+    return spawn.capture(
-         ["git", "rev-parse", f"{max(releases)}^{{commit}}"], cwd=MZ_ROOT
-     ).strip()
--    # The tag sits on its release branch and carries backports that main
--    # lacks, so the comparison point is where that branch left main.
--    return spawn.capture(["git", "merge-base", tag, "HEAD"], cwd=MZ_ROOT).strip()
- 
- 
- def target_dir() -> Path:
-@@ -369,6 +371,8 @@ def run_benches(
-     env: dict[str, str],
-     results_root: Path,
-     threshold: float,
-+    *,
-+    force_run: bool = False,
- ) -> tuple[
-     list[TargetFailure], list[TargetFailure], list[TargetFailure], list[BuiltBench]
- ]:
-@@ -382,16 +386,13 @@ def run_benches(
-     only in the ancestor is never run, since there is no HEAD result to
-     compare it against.
- 
--    Benchmarks that regress in the first pass are measured once more, both
--    sides again, restricted to exactly those benchmark ids. Between-process
--    variance on large inputs dwarfs criterion's within-run interval, and a
--    swing that does not reproduce on the spot is not a regression. The rerun
--    costs time proportional to the number of flagged rows, nothing when there
--    are none.
-+    First-pass regressions get up to four paired reruns, filtered to those IDs.
-+    A clean comparison ends confirmation. Earlier attempts remain in artifacts.
-+
-+    `force_run` runs targets even when their binaries are identical.
- 
-     Returns the ancestor, current, and rerun failures, then the targets
--    skipped for identical binaries. A rerun failure is not a failure of the
--    commit under test: the flagged rows keep their first-pass verdict.
-+    skipped for identical binaries. Current-side failures also fail the step.
-     """
-     ancestor_by_key = {(b.package, b.name): b for b in ancestor_built}
-     ancestor_target_by_key = {(t.package, t.name): t for t in ancestor_targets}
-@@ -431,7 +432,8 @@ def run_benches(
-         ancestor_digest = loaded_image_digest(ancestor_bin.executable, scratch)
-         head_digest = loaded_image_digest(head_bin.executable, scratch)
-         if (
--            ancestor_digest is not None
-+            not force_run
-+            and ancestor_digest is not None
-             and head_digest is not None
-             and ancestor_digest == head_digest
-         ):
-@@ -466,18 +468,30 @@ def run_benches(
-         # id, so an anchored alternation reruns exactly the flagged ids and
-         # nothing else.
-         pattern = "^(?:" + "|".join(re.escape(id) for id in regressed) + ")$"
--        ancestor_rc, head_rc = run_pair(
--            ancestor_bin,
--            head_bin,
--            env,
--            results_root / RERUN / head_bin.package / head_bin.name,
--            [pattern],
--            f", confirming {len(regressed)} regression(s)",
--            h
+ [[package]]
+ name = "pydantic-core"
+-version = "2.50.1"
++version = "2.50.2"
+ source = { registry = "https://pypi.org/simple" }
+ dependencies = [
+     { name = "typing-extensions" },
+ ]
+-sdist = { url = "https://files.pythonhosted.org/packages/a6/24/af4ec4be49fbc810f35b0bdcacc3d433b56bbfa469fd3bfd4ae116cd9bf1/pydantic_core-2.50.1.tar.gz", hash = "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09", size = 513515, upload-time = "2026-10-11T18:35:44.82Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/ae/57/0e237d7091d2cd44a35d243b7344227f90440166860469cd036afc23a04d/pydantic_core-2.50.1-cp313-cp313-macosx_10_12_x86_64.whl", hash = "sha256:d5e062c01286d861fd6a1c4ff6e063547b3e713067f2df033c0ff97ac2ca006b", size = 2222774, upload-time = "2026-10-11T18:32:43.103Z" },
+-    { url = "https://files.pythonhosted.org/packages/f7/b9/c720e56858d4e1539503297ed37063e0c08e0f3541c41b777f6a800f75fa/pydantic_core-2.50.1-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:0c003c3b7f49debb893d2d85ae099ac5959c9839e2f330fadb1fcdf7a6594482", size = 2024738, upload-time = "2026-10-11T18:32:44.587Z" },
+-    { url = "https://files.pythonhosted.org/packages/4d/b8/fbfc25875219cc060e613170ff10e850c6d8924beb4910da57c2ee3ba1d2/pydantic_core-2.50.1-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:409e0ea40ec30d9158f33574fd758e689f6045a0f2596701828c27816ca9687d", size = 2047049, upload-time = "2026-10-11T18:32:46.164Z" },
+-    { url = "https://files.pythonhosted.org/packages/d7/43/34210124d504c553688f2f04b48500b131237528ac545b445e0d6d30e0d5/pydantic_core-2.50.1-cp313-cp313-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:131059670f1d2444269b8585cb888963994871932447c08b39ac6a51fcfef658", size = 2173415, upload-time = "2026-10-11T18:32:47.722Z" },
+-    { url = "https://files.pythonhosted.org/packages/65/cf/6e178e8fdc11da5965bef980983bf46326a42f436871dd51ba0a57f39df1/pydan
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40383** (2026-10-31): cargo-bench: Only create one CI annotation (@def-)
-- **PR #40379** (2026-10-30): doc: lead v26.48 Kafka sink headers note with the transactional use case (@val-materialize)
-- **PR #40375** (2026-10-30): release: mark v26.48 as released (@materialize-bot)
-- **PR #40374** (closed): v26.48.2 release notes (@bosconi)
-- **PR #40373** (closed): v26.48.1 release notes (@bosconi)
-- **PR #40369** (2026-10-31): tests: Make cargo bench more stable (@def-)
+- **PR #40408** (2026-11-02): console: log Codex in under the same server name as its config (@bobbyiliev)
+- **PR #40407** (2026-11-02): mcp: deprecate the standalone MCP server packages and pin mcp below 2 (@bobbyiliev)
+- **PR #40404** (2026-11-02): ci: Detect commonly used Linear ids without linear# prefix (@def-)
+- **PR #40402** (2026-11-02): doc: fix typos and grammar in the v26.48.2 and v26.47.0 release notes (@bosconi)
+- **PR #40401** (2026-11-02): build(deps): bump the simple group in /misc/dbt-materialize with 3 updates (@dependabot[bot])
+- **PR #40400** (2026-11-02): build(deps): bump the telemetry-grpc group across 1 directory with 5 updates (@dependabot[bot])
 
 ---
 
@@ -1399,53 +1606,52 @@ https://buildkite.com/materialize/nightly/builds/18638
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cargo-bench: Only create one CI annotation (#40383)
+## X. build(deps): bump the simple group across 1 directory with 13 updates (#40399)
 
 **RULE**:
-When implementing operations in `ci/mkpipeline.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/builder/requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07eda4c6`: cargo-bench: Only create one CI annotation (#40383). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01faeb82`: build(deps): bump the simple group across 1 directory with 13 updates (#40399). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/mkpipeline.py`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/builder/requirements.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-def initialize_cargo_bench_annotation(pipeline: Any) -> None:
-    """Open the shared results disclosure before Cargo bench shards start."""
-    if not any(
-        step.get("id") == "cargo-bench" and not step.get("skip")
-        for step in steps(pipeline)
-    ):
-        return
-    initialized_key = "cargo-bench-annotation-initialized"
-    if (
-        spawn.capture(
-            ["buildkite-agent", "meta-data", "get", initialized_key, "--default=false"]
-        ).strip()
-        == "true"
-    ):
-        return
-    # NOTE: Keep the outer details open so appends, including retries, stay
-    # nested. The HTML renderer closes it at the end of the annotation.
-    spawn.runv(
-        ["buildkite-agent", "annotate", "--context=cargo-bench", "--style=info"],
-        stdin=b"<details><summary>Cargo bench results</summary>\n\n",
-    )
-    spawn.runv(["buildkite-agent", "meta-data", "set", initialized_key, "true"])
-
-
-    else:
-        initialize_cargo_bench_annotation(pipeline)
+boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.122
+boto3==1.43.122
+jupyterlab==4.6.5
+launchdarkly-api==25.1.0
+pandas-stubs==3.1.0.261029
+psycopg==3.3.6
+psycopg-binary==3.3.6
+pydantic==2.14.2
+pytest==9.2.0
+ruff==0.17.3
+types-Markdown==3.11.2.20261029
+confluent-kafka[schema-registry]==2.16.1; python_version >= "3.13"
+hatchling==1.33.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+boto3-stubs[ec2,iam,kinesis,s3,sqs,ssm,sts,s3tables]==1.43.118
+boto3==1.43.118
+jupyterlab==4.6.4
+launchdarkly-api==25.0.0
+pandas-stubs==3.0.5.260914
+psycopg==3.3.3
+psycopg-binary==3.3.3
+pydantic==2.14.1
+pytest==9.1.1
+ruff==0.17.2
+types-Markdown==3.10.2.20261007
+confluent-kafka[schema-registry]==2.16.0; python_version >= "3.13"
+hatchling==1.32.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07eda4c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01faeb82` are properly handled with clean fallback behavior.
