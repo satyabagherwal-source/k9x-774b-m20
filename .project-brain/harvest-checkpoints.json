@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T16:26:13.729Z",
+  "last_updated": "2026-11-02T16:33:33.562Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "ee7885bd641c72dfaf8968611ba64e53f9dfc4f63e8962ed115f1f6579ee9d04",
-      "verified_at": "2026-10-30T17:43:08.803Z",
+      "content_hash": "c802f72799f6ddcac22870aeb9a9ecce3b14abcb558483756be7d061f821d29c",
+      "verified_at": "2026-11-02T16:33:33.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T17:43:08.803Z"
+      "last_updated": "2026-11-02T16:33:33.562Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "be3893a377d5dba0826225080d12bdaf4432aa84d514b215dfad9fea0f87dd48",
-      "verified_at": "2026-10-31T14:19:37.038Z",
+      "content_hash": "e46a053bbe634297b585e81261e2f00a31b1455a9f6cf7270ff4528ef0a7a48d",
+      "verified_at": "2026-11-02T16:33:32.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T14:19:37.038Z"
+      "last_updated": "2026-11-02T16:33:32.310Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -13356,14 +13356,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chrisbanes-skills",
-      "content_hash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
-      "verified_at": "2026-10-30T06:43:18.368Z",
+      "content_hash": "2a9609efd2aad963066d76ae63c7e18fd7f39f5aab571ea37bc04e67e62fb042",
+      "verified_at": "2026-11-02T16:33:27.879Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T06:43:18.368Z"
+      "last_updated": "2026-11-02T16:33:27.879Z"
     },
     "joreilly/Confetti": {
       "repository": "joreilly/Confetti",
@@ -17511,14 +17511,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vercel-labs-agent-desktop",
-      "content_hash": "5f1874c46599a5f2a559999d74f691f58ff9b3513c9d08eb0a2ca794aef24288",
-      "verified_at": "2026-10-31T10:18:22.083Z",
+      "content_hash": "e9b20050a8a768e23d4c47a6e8376a7966e1e0166ef1dbc5b0f2592db94c0912",
+      "verified_at": "2026-11-02T16:33:24.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-31T10:18:22.083Z"
+      "last_updated": "2026-11-02T16:33:24.876Z"
     },
     "Efficient-Large-Model/Open-H3-Regenerate-2K": {
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",

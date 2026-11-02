@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:26:13.724Z",
-  "total_cycles_completed": 6815,
-  "total_learnings_persisted": 6815,
-  "total_rules_promoted": 6463,
+  "last_updated": "2026-11-02T16:33:33.558Z",
+  "total_cycles_completed": 6819,
+  "total_learnings_persisted": 6819,
+  "total_rules_promoted": 6467,
   "history": [
-    {
-      "timestamp": "2026-10-31T16:39:50.060Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:39:50.272Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:50:25.609Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T16:50:26.535Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T16:50:40.231Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1403,6 +1375,34 @@
       "repository": "unsloth/NVIDIA-Nemotron-3.5-Bolt-E4B-GGUF",
       "learningId": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:33:24.873Z",
+      "repository": "vercel-labs/agent-desktop",
+      "learningId": "learn-github-vercel-labs-agent-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:33:27.875Z",
+      "repository": "chrisbanes/skills",
+      "learningId": "learn-github-chrisbanes-skills",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:33:32.306Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:33:33.558Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

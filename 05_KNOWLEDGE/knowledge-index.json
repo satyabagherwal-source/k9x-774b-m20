@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T16:26:13.636Z",
+  "last_updated": "2026-11-02T16:33:33.467Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -6725,8 +6725,8 @@
       "slug": "chrisbanes-skills",
       "platform": "github",
       "source_url": "https://github.com/chrisbanes/skills",
-      "source_version": "8fc8836c",
-      "content_hash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
+      "source_version": "d83f6e28",
+      "content_hash": "2a9609efd2aad963066d76ae63c7e18fd7f39f5aab571ea37bc04e67e62fb042",
       "dossier_path": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chrisbanes-skills-learnings.md",
       "promoted_rules": [
@@ -6749,6 +6749,11 @@
           "number": 5635,
           "title": "Reject impossible CalVer dates (#120)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6455,
+          "title": "Drop the ready-for-agent label requirement from to-plan (#138)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -6756,7 +6761,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T06:43:18.264Z",
+      "verified_at": "2026-11-02T16:33:27.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -15101,8 +15106,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "758c46de",
-      "content_hash": "be3893a377d5dba0826225080d12bdaf4432aa84d514b215dfad9fea0f87dd48",
+      "source_version": "cb2b27a7",
+      "content_hash": "e46a053bbe634297b585e81261e2f00a31b1455a9f6cf7270ff4528ef0a7a48d",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -15150,6 +15155,11 @@
           "number": 6219,
           "title": "build(deps-ui-dev): bump sass-embedded (#14705)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6456,
+          "title": "build(deps-ui-dev): bump rack (#14711)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15157,7 +15167,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T14:19:36.923Z",
+      "verified_at": "2026-11-02T16:33:32.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -42925,8 +42935,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "f9f58b77",
-      "content_hash": "ee7885bd641c72dfaf8968611ba64e53f9dfc4f63e8962ed115f1f6579ee9d04",
+      "source_version": "ab16bef9",
+      "content_hash": "c802f72799f6ddcac22870aeb9a9ecce3b14abcb558483756be7d061f821d29c",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -43004,6 +43014,11 @@
           "number": 5815,
           "title": "RAII Ephemeral Credential & Hook Environment Cleansing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6457,
+          "title": "cli): support kitty release and repeat events in detach matcher (#2239)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -43011,7 +43026,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T17:43:08.696Z",
+      "verified_at": "2026-11-02T16:33:33.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -162694,14 +162709,19 @@
       "slug": "vercel-labs-agent-desktop",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/agent-desktop",
-      "source_version": "893a4140",
-      "content_hash": "5f1874c46599a5f2a559999d74f691f58ff9b3513c9d08eb0a2ca794aef24288",
+      "source_version": "9eb9b296",
+      "content_hash": "e9b20050a8a768e23d4c47a6e8376a7966e1e0166ef1dbc5b0f2592db94c0912",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "promoted_rules": [
         {
           "number": 6163,
           "title": "windows): stop commands crashing at exit (#342)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6454,
+          "title": "macos): stop clipping the click highlight's glow and pop (#352)",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -162710,7 +162730,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-31T10:18:21.973Z",
+      "verified_at": "2026-11-02T16:33:24.754Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167178,6 +167198,62 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T16:26:13.615Z"
+    },
+    "rule-6454": {
+      "learning_id": "rule-6454",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6454,
+      "title": "macos): stop clipping the click highlight's glow and pop (#352)",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "9eb9b296",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:33:24.754Z"
+    },
+    "rule-6455": {
+      "learning_id": "rule-6455",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6455,
+      "title": "Drop the ready-for-agent label requirement from to-plan (#138)",
+      "source_url": "https://github.com/chrisbanes/skills",
+      "source_version": "d83f6e28",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:33:27.761Z"
+    },
+    "rule-6456": {
+      "learning_id": "rule-6456",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6456,
+      "title": "build(deps-ui-dev): bump rack (#14711)",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "cb2b27a7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:33:32.195Z"
+    },
+    "rule-6457": {
+      "learning_id": "rule-6457",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6457,
+      "title": "cli): support kitty release and repeat events in detach matcher (#2239)",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "ab16bef9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:33:33.445Z"
     }
   },
   "aliases": {

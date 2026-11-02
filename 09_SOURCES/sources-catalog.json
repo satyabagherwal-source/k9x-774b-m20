@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "f9f58b77",
+    "sourceVersion": "ab16bef9",
     "license": "Apache-2.0",
-    "contentHash": "ee7885bd641c72dfaf8968611ba64e53f9dfc4f63e8962ed115f1f6579ee9d04",
-    "lastHarvestedAt": "2026-10-30T17:43:08.794Z",
+    "contentHash": "c802f72799f6ddcac22870aeb9a9ecce3b14abcb558483756be7d061f821d29c",
+    "lastHarvestedAt": "2026-11-02T16:33:33.552Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "758c46de",
+    "sourceVersion": "cb2b27a7",
     "license": "Apache-2.0",
-    "contentHash": "be3893a377d5dba0826225080d12bdaf4432aa84d514b215dfad9fea0f87dd48",
-    "lastHarvestedAt": "2026-10-31T14:19:37.029Z",
+    "contentHash": "e46a053bbe634297b585e81261e2f00a31b1455a9f6cf7270ff4528ef0a7a48d",
+    "lastHarvestedAt": "2026-11-02T16:33:32.300Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -8873,10 +8873,10 @@
     "repository": "chrisbanes/skills",
     "platform": "github",
     "sourceUrl": "https://github.com/chrisbanes/skills",
-    "sourceVersion": "8fc8836c",
+    "sourceVersion": "d83f6e28",
     "license": "Apache-2.0",
-    "contentHash": "a3db5c8fa7ad3a09694f1f95dfbc85c4d6fece4a0f472851ccd13a1841303f87",
-    "lastHarvestedAt": "2026-10-30T06:43:18.359Z",
+    "contentHash": "2a9609efd2aad963066d76ae63c7e18fd7f39f5aab571ea37bc04e67e62fb042",
+    "lastHarvestedAt": "2026-11-02T16:33:27.869Z",
     "learningId": "learn-github-chrisbanes-skills"
   },
   "joreilly-confetti": {
@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "893a4140",
+    "sourceVersion": "9eb9b296",
     "license": "Apache-2.0",
-    "contentHash": "5f1874c46599a5f2a559999d74f691f58ff9b3513c9d08eb0a2ca794aef24288",
-    "lastHarvestedAt": "2026-10-31T10:18:22.075Z",
+    "contentHash": "e9b20050a8a768e23d4c47a6e8376a7966e1e0166ef1dbc5b0f2592db94c0912",
+    "lastHarvestedAt": "2026-11-02T16:33:24.867Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-CQU8",
-    "timestamp": "2026-10-30T22:20:21.344Z",
-    "repository": "Saffsanity/sill",
-    "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "8c90633bfe82cd004cdb2c2766f7c372a40212ccade23c094d2197428b331179",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-CVLV",
-    "timestamp": "2026-10-30T22:20:27.523Z",
-    "repository": "HelixDB/helix-db",
-    "learningId": "learn-github-helixdb-helix-db",
-    "contentHash": "641a65b18416823e697e4023e92b78cc6414eaf767ca3f89cee64c62a5c7012c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-LVOA",
-    "timestamp": "2026-10-30T22:27:27.514Z",
-    "repository": "herdrdev/herdr",
-    "learningId": "learn-github-herdrdev-herdr",
-    "contentHash": "807dfe4fdc33d156532c1594ba75123a7ce67556ae32e2dad17b850ee1c8e3cf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-LXQC",
-    "timestamp": "2026-10-30T22:27:30.180Z",
-    "repository": "gauthierpiarrette/highball",
-    "learningId": "learn-github-gauthierpiarrette-highball",
-    "contentHash": "aa64cc5480a02ea096add31ca8a552b93c3f0ca71dcd67f8deb666531ccad475",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-LZ5C",
     "timestamp": "2026-10-30T22:27:32.016Z",
     "repository": "crossplane/crossplane",
@@ -7492,6 +7432,66 @@
     "contentHash": "a1c39e0e870feed7f071d29fcd4768118066922c0ef06804d125d804990a66e3",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-A4QN",
+    "timestamp": "2026-11-02T16:33:24.863Z",
+    "repository": "vercel-labs/agent-desktop",
+    "learningId": "learn-github-vercel-labs-agent-desktop",
+    "contentHash": "e9b20050a8a768e23d4c47a6e8376a7966e1e0166ef1dbc5b0f2592db94c0912",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-A722",
+    "timestamp": "2026-11-02T16:33:27.866Z",
+    "repository": "chrisbanes/skills",
+    "learningId": "learn-github-chrisbanes-skills",
+    "contentHash": "2a9609efd2aad963066d76ae63c7e18fd7f39f5aab571ea37bc04e67e62fb042",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-AAH5",
+    "timestamp": "2026-11-02T16:33:32.297Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "e46a053bbe634297b585e81261e2f00a31b1455a9f6cf7270ff4528ef0a7a48d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-ABFW",
+    "timestamp": "2026-11-02T16:33:33.548Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "c802f72799f6ddcac22870aeb9a9ecce3b14abcb558483756be7d061f821d29c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
