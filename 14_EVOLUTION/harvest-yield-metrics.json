@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T16:33:33.558Z",
-  "total_cycles_completed": 6819,
-  "total_learnings_persisted": 6819,
-  "total_rules_promoted": 6467,
+  "last_updated": "2026-11-02T16:40:25.461Z",
+  "total_cycles_completed": 6820,
+  "total_learnings_persisted": 6820,
+  "total_rules_promoted": 6468,
   "history": [
-    {
-      "timestamp": "2026-10-31T16:50:40.231Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T16:57:11.323Z",
       "repository": "pola-rs/polars",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-02T16:33:33.558Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T16:40:25.461Z",
+      "repository": "kamgurgul/cpu-info",
+      "learningId": "learn-github-kamgurgul-cpu-info",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

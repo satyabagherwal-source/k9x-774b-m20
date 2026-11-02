@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-LZ5C",
-    "timestamp": "2026-10-30T22:27:32.016Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "c7f94d8303f0310ce5aacfafee72a8ab5b3e72fadf9db30623daba3f76f991bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-M2KM",
     "timestamp": "2026-10-30T22:27:36.454Z",
     "repository": "trailbaseio/trailbase",
@@ -7490,6 +7475,21 @@
     "repository": "nolabs-ai/nono",
     "learningId": "learn-github-nolabs-ai-nono",
     "contentHash": "c802f72799f6ddcac22870aeb9a9ecce3b14abcb558483756be7d061f821d29c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-J59P",
+    "timestamp": "2026-11-02T16:40:25.453Z",
+    "repository": "kamgurgul/cpu-info",
+    "learningId": "learn-github-kamgurgul-cpu-info",
+    "contentHash": "406c57f1c99f0f60edc5b1af13e48af931888235bcb44ae3c74e07e043a4b081",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

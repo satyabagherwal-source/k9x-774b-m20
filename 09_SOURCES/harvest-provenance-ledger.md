@@ -6851,3 +6851,4 @@ Every entry in this ledger must capture:
 | `learn-github-chrisbanes-skills` | `https://github.com/chrisbanes/skills` | `d83f6e28` | Multi-dimensional audit evidence | 2026-11-02T16:33:27.869Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `cb2b27a7` | Multi-dimensional audit evidence | 2026-11-02T16:33:32.300Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `ab16bef9` | Multi-dimensional audit evidence | 2026-11-02T16:33:33.552Z |
+| `learn-github-kamgurgul-cpu-info` | `https://github.com/kamgurgul/cpu-info` | `484264e9` | Multi-dimensional audit evidence | 2026-11-02T16:40:25.456Z |

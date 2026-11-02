@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T16:33:33.467Z",
+  "last_updated": "2026-11-02T16:40:25.377Z",
   "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -34425,8 +34425,8 @@
       "slug": "kamgurgul-cpu-info",
       "platform": "github",
       "source_url": "https://github.com/kamgurgul/cpu-info",
-      "source_version": "eca52f48",
-      "content_hash": "470112a05500432bcac49c0444cecfc7d3eb51902c0cfef65cc91b223cc4f5a4",
+      "source_version": "484264e9",
+      "content_hash": "406c57f1c99f0f60edc5b1af13e48af931888235bcb44ae3c74e07e043a4b081",
       "dossier_path": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kamgurgul-cpu-info-learnings.md",
       "promoted_rules": [
@@ -34439,6 +34439,11 @@
           "number": 4517,
           "title": "[CAR] Support both android auto platforms",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6458,
+          "title": "[SHARED] Enable incremental native builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -34446,7 +34451,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-26T01:10:18.247Z",
+      "verified_at": "2026-11-02T16:40:25.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167254,6 +167259,20 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T16:33:33.445Z"
+    },
+    "rule-6458": {
+      "learning_id": "rule-6458",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6458,
+      "title": "[SHARED] Enable incremental native builds",
+      "source_url": "https://github.com/kamgurgul/cpu-info",
+      "source_version": "484264e9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T16:40:25.358Z"
     }
   },
   "aliases": {
