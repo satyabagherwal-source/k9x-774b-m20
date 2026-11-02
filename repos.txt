@@ -4770,3 +4770,11 @@ https://huggingface.co/burner22/numbat
 https://huggingface.co/Edge0/Audio8-TTS-Realistic-Air
 # [HUGGINGFACE-AI-MODELS] OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated (3135 score) - Verified Hugging Face Model: OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated (2
 https://huggingface.co/OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-02T14:53:27.394Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/d1-2B (3810 score) - Verified Hugging Face Model: LiquidAI/d1-2B (181 likes, 5047 downloads)
+https://huggingface.co/LiquidAI/d1-2B
+# [HUGGINGFACE-AI-MODELS] FusionCow/Sulphur-3 (2135 score) - Verified Hugging Face Model: FusionCow/Sulphur-3 (194 likes, 195 downloads)
+https://huggingface.co/FusionCow/Sulphur-3
+# [HUGGINGFACE-AI-MODELS] xiaomi-research/Xiaomi-OCR-0 (4340 score) - Verified Hugging Face Model: xiaomi-research/Xiaomi-OCR-0 (234 likes, 18472 down
+https://huggingface.co/xiaomi-research/Xiaomi-OCR-0

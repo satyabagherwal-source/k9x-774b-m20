@@ -20041,5 +20041,41 @@
     "downloads": 1095,
     "qualityScore": 3135,
     "discoveredAt": "2026-11-02T14:29:34.673Z"
+  },
+  {
+    "name": "LiquidAI/d1-2B",
+    "fullName": "LiquidAI/d1-2B",
+    "url": "https://huggingface.co/LiquidAI/d1-2B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/d1-2B (181 likes, 5047 downloads)",
+    "likes": 181,
+    "downloads": 5047,
+    "qualityScore": 3810,
+    "discoveredAt": "2026-11-02T14:51:18.953Z"
+  },
+  {
+    "name": "FusionCow/Sulphur-3",
+    "fullName": "FusionCow/Sulphur-3",
+    "url": "https://huggingface.co/FusionCow/Sulphur-3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: FusionCow/Sulphur-3 (194 likes, 195 downloads)",
+    "likes": 194,
+    "downloads": 195,
+    "qualityScore": 2135,
+    "discoveredAt": "2026-11-02T14:51:18.954Z"
+  },
+  {
+    "name": "xiaomi-research/Xiaomi-OCR-0",
+    "fullName": "xiaomi-research/Xiaomi-OCR-0",
+    "url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: xiaomi-research/Xiaomi-OCR-0 (234 likes, 18472 downloads)",
+    "likes": 234,
+    "downloads": 18472,
+    "qualityScore": 4340,
+    "discoveredAt": "2026-11-02T14:51:18.954Z"
   }
 ]

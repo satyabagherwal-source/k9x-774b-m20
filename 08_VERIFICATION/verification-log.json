@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-7B6J",
-    "timestamp": "2026-10-30T20:52:08.923Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "324ee7b14f8c8b4a67dcb36c614c94a48c08c9b9aa2e74dee3f0d6424a255dbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-7Y5L",
-    "timestamp": "2026-10-30T20:52:38.697Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "f96d68a8b5990cce6dace8fa31bda3221bd1a6c276148578ac72b3047b524d23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-GJYM",
-    "timestamp": "2026-10-30T20:59:20.206Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "63f4f402e5ab4430e3b3cb415c385e660983dcce86a004fff05926d2d13e3ddd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-GQW4",
     "timestamp": "2026-10-30T20:59:29.188Z",
     "repository": "rustls/rustls",
@@ -7492,6 +7447,51 @@
     "contentHash": "f54b10af8044ea5ae0af167e37bf176f12d5fe6e05f6d36cf492f0a3e7e6f1a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-PVMA",
+    "timestamp": "2026-11-02T14:53:41.074Z",
+    "repository": "FusionCow/Sulphur-3",
+    "learningId": "learn-huggingface-fusioncow-sulphur-3",
+    "contentHash": "a87c997452935295b79bff41cc0991b4edf6f7cf2cdade8ff3b108a6a14e9418",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-PXUM",
+    "timestamp": "2026-11-02T14:53:43.966Z",
+    "repository": "xiaomi-research/Xiaomi-OCR-0",
+    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+    "contentHash": "3a31b4d83060d8afdd699c28110fc957ff36ae601dcbd1999b73ca327f84c90d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-Q03P",
+    "timestamp": "2026-11-02T14:53:46.885Z",
+    "repository": "LiquidAI/d1-2B",
+    "learningId": "learn-huggingface-liquidai-d1-2b",
+    "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

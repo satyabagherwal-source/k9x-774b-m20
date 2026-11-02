@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T14:46:40.284Z",
-    "lastVerified": "2026-11-02T14:46:40.284Z",
+    "lastChecked": "2026-11-02T14:53:49.453Z",
+    "lastVerified": "2026-11-02T14:53:49.453Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -347,9 +347,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-02T14:24:53.560Z",
+    "lastChecked": "2026-11-02T14:53:48.151Z",
     "revisionIdentifier": "092970a5",
-    "lastVerified": "2026-11-02T14:24:53.560Z"
+    "lastVerified": "2026-11-02T14:53:48.151Z"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1799,9 +1799,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-10-31T23:33:23.021Z",
+    "lastChecked": "2026-11-02T14:53:42.983Z",
     "revisionIdentifier": "ef56e699",
-    "lastVerified": "2026-10-31T23:33:23.021Z"
+    "lastVerified": "2026-11-02T14:53:42.983Z"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -3169,9 +3169,9 @@
   "milvus-io-bootcamp": {
     "name": "bootcamp",
     "officialUrl": "https://github.com/milvus-io/bootcamp",
-    "lastChecked": "2026-10-31T12:00:34.024Z",
+    "lastChecked": "2026-11-02T14:53:45.443Z",
     "revisionIdentifier": "b2be8cc8",
-    "lastVerified": "2026-10-31T12:00:34.024Z"
+    "lastVerified": "2026-11-02T14:53:45.443Z"
   },
   "o2sh-onefetch": {
     "name": "o2sh/onefetch",
@@ -4675,9 +4675,9 @@
   "vinceanalytics-vince": {
     "name": "vince",
     "officialUrl": "https://github.com/vinceanalytics/vince",
-    "lastChecked": "2026-10-31T12:46:49.366Z",
+    "lastChecked": "2026-11-02T14:53:40.325Z",
     "revisionIdentifier": "fc06f7a2",
-    "lastVerified": "2026-10-31T12:46:49.366Z"
+    "lastVerified": "2026-11-02T14:53:40.325Z"
   },
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
@@ -12626,6 +12626,57 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-burner22-numbat",
     "contentHash": "a16bbad1406a25a461c25711fbb5c7dd44ab861e4d9b6d23adb2a89260d4acd2",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-fusioncow-sulphur-3": {
+    "name": "FusionCow/Sulphur-3",
+    "officialUrl": "https://huggingface.co/FusionCow/Sulphur-3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-02T14:53:35.436Z",
+    "lastVerified": "2026-11-02T14:53:35.436Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-fusioncow-sulphur-3",
+    "contentHash": "a87c997452935295b79bff41cc0991b4edf6f7cf2cdade8ff3b108a6a14e9418",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-xiaomi-research-xiaomi-ocr-0": {
+    "name": "xiaomi-research/Xiaomi-OCR-0",
+    "officialUrl": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-02T14:53:37.927Z",
+    "lastVerified": "2026-11-02T14:53:37.927Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+    "contentHash": "3a31b4d83060d8afdd699c28110fc957ff36ae601dcbd1999b73ca327f84c90d",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-d1-2b": {
+    "name": "LiquidAI/d1-2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/d1-2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-02T14:53:32.927Z",
+    "lastVerified": "2026-11-02T14:53:32.927Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-d1-2b",
+    "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

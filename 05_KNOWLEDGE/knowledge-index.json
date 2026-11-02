@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T14:46:37.660Z",
-  "total_verified_learnings": 1189,
+  "last_updated": "2026-11-02T14:53:46.803Z",
+  "total_verified_learnings": 1192,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -166344,6 +166344,223 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T14:46:37.636Z"
+    },
+    "learn-huggingface-fusioncow-sulphur-3": {
+      "learning_id": "learn-huggingface-fusioncow-sulphur-3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "FusionCow/Sulphur-3",
+      "repository": "FusionCow/Sulphur-3",
+      "slug": "hf-fusioncow-sulphur-3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FusionCow/Sulphur-3",
+      "source_version": "hf-fusioncow-sulphur-3",
+      "content_hash": "a87c997452935295b79bff41cc0991b4edf6f7cf2cdade8ff3b108a6a14e9418",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fusioncow-sulphur-3-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6416,
+          "title": "Repository Metadata Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T14:53:40.970Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6416": {
+      "learning_id": "rule-6416",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6416,
+      "title": "Repository Metadata Consistency Invariant",
+      "source_url": "https://huggingface.co/FusionCow/Sulphur-3",
+      "source_version": "hf-fusioncow-sulphur-3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:53:40.970Z"
+    },
+    "learn-huggingface-xiaomi-research-xiaomi-ocr-0": {
+      "learning_id": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "xiaomi-research/Xiaomi-OCR-0",
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "slug": "hf-xiaomi-research-xiaomi-ocr-0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+      "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
+      "content_hash": "3a31b4d83060d8afdd699c28110fc957ff36ae601dcbd1999b73ca327f84c90d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomi-research-xiaomi-ocr-0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6417,
+          "title": "Consistent Tensor Precision Across All Sub‑Modules",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6418,
+          "title": "Unique Special Token IDs Across Modalities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6419,
+          "title": "Interleaved Full‑Attention Layers for Global Context",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T14:53:43.865Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6417": {
+      "learning_id": "rule-6417",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6417,
+      "title": "Consistent Tensor Precision Across All Sub‑Modules",
+      "source_url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+      "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:53:43.865Z"
+    },
+    "rule-6418": {
+      "learning_id": "rule-6418",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6418,
+      "title": "Unique Special Token IDs Across Modalities",
+      "source_url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+      "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:53:43.865Z"
+    },
+    "rule-6419": {
+      "learning_id": "rule-6419",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6419,
+      "title": "Interleaved Full‑Attention Layers for Global Context",
+      "source_url": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+      "source_version": "hf-xiaomi-research-xiaomi-ocr-0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:53:43.865Z"
+    },
+    "learn-huggingface-liquidai-d1-2b": {
+      "learning_id": "learn-huggingface-liquidai-d1-2b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/d1-2B",
+      "repository": "LiquidAI/d1-2B",
+      "slug": "hf-liquidai-d1-2b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/d1-2B",
+      "source_version": "hf-liquidai-d1-2b",
+      "content_hash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-2b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6420,
+          "title": "Hybrid Attention Layer Interleaving for Latency-Cost Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6421,
+          "title": "Axial RoPE for 2D Spatial Vision Encoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6422,
+          "title": "Single-Forward-Pass Decision Head Design",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T14:53:46.783Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6420": {
+      "learning_id": "rule-6420",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6420,
+      "title": "Hybrid Attention Layer Interleaving for Latency-Cost Optimization",
+      "source_url": "https://huggingface.co/LiquidAI/d1-2B",
+      "source_version": "hf-liquidai-d1-2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:53:46.783Z"
+    },
+    "rule-6421": {
+      "learning_id": "rule-6421",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6421,
+      "title": "Axial RoPE for 2D Spatial Vision Encoders",
+      "source_url": "https://huggingface.co/LiquidAI/d1-2B",
+      "source_version": "hf-liquidai-d1-2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:53:46.783Z"
+    },
+    "rule-6422": {
+      "learning_id": "rule-6422",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6422,
+      "title": "Single-Forward-Pass Decision Head Design",
+      "source_url": "https://huggingface.co/LiquidAI/d1-2B",
+      "source_version": "hf-liquidai-d1-2b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T14:53:46.783Z"
     }
   },
   "aliases": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T14:46:37.747Z",
-  "total_cycles_completed": 6782,
-  "total_learnings_persisted": 6782,
-  "total_rules_promoted": 6425,
+  "last_updated": "2026-11-02T14:53:46.894Z",
+  "total_cycles_completed": 6785,
+  "total_learnings_persisted": 6785,
+  "total_rules_promoted": 6432,
   "history": [
-    {
-      "timestamp": "2026-10-31T14:39:24.484Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-openai-gpt-oss-120b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T14:39:25.841Z",
-      "repository": "bahdotsh/wrkflw",
-      "learningId": "learn-github-bahdotsh-wrkflw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T14:39:35.850Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T14:45:46.353Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1403,6 +1382,27 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T14:53:41.084Z",
+      "repository": "FusionCow/Sulphur-3",
+      "learningId": "learn-huggingface-fusioncow-sulphur-3",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T14:53:43.976Z",
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T14:53:46.894Z",
+      "repository": "LiquidAI/d1-2B",
+      "learningId": "learn-huggingface-liquidai-d1-2b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

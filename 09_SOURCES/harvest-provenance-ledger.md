@@ -6814,3 +6814,6 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `a834a81e` | Multi-dimensional audit evidence | 2026-11-02T14:46:31.751Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `b003bd83` | Multi-dimensional audit evidence | 2026-11-02T14:46:34.328Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `8be1e442` | Multi-dimensional audit evidence | 2026-11-02T14:46:37.742Z |
+| `learn-huggingface-fusioncow-sulphur-3` | `https://huggingface.co/FusionCow/Sulphur-3` | `hf-fusionc` | Multi-dimensional audit evidence | 2026-11-02T14:53:41.078Z |
+| `learn-huggingface-xiaomi-research-xiaomi-ocr-0` | `https://huggingface.co/xiaomi-research/Xiaomi-OCR-0` | `hf-xiaomi-` | Multi-dimensional audit evidence | 2026-11-02T14:53:43.970Z |
+| `learn-huggingface-liquidai-d1-2b` | `https://huggingface.co/LiquidAI/d1-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-02T14:53:46.888Z |

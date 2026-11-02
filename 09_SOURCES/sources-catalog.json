@@ -11708,5 +11708,35 @@
     "contentHash": "a16bbad1406a25a461c25711fbb5c7dd44ab861e4d9b6d23adb2a89260d4acd2",
     "lastHarvestedAt": "2026-11-02T14:32:05.564Z",
     "learningId": "learn-huggingface-burner22-numbat"
+  },
+  "hf-fusioncow-sulphur-3": {
+    "repository": "FusionCow/Sulphur-3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/FusionCow/Sulphur-3",
+    "sourceVersion": "hf-fusioncow-sulphur-3",
+    "license": "Open-Source",
+    "contentHash": "a87c997452935295b79bff41cc0991b4edf6f7cf2cdade8ff3b108a6a14e9418",
+    "lastHarvestedAt": "2026-11-02T14:53:41.078Z",
+    "learningId": "learn-huggingface-fusioncow-sulphur-3"
+  },
+  "hf-xiaomi-research-xiaomi-ocr-0": {
+    "repository": "xiaomi-research/Xiaomi-OCR-0",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/xiaomi-research/Xiaomi-OCR-0",
+    "sourceVersion": "hf-xiaomi-research-xiaomi-ocr-0",
+    "license": "Open-Source",
+    "contentHash": "3a31b4d83060d8afdd699c28110fc957ff36ae601dcbd1999b73ca327f84c90d",
+    "lastHarvestedAt": "2026-11-02T14:53:43.970Z",
+    "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0"
+  },
+  "hf-liquidai-d1-2b": {
+    "repository": "LiquidAI/d1-2B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/d1-2B",
+    "sourceVersion": "hf-liquidai-d1-2b",
+    "license": "Open-Source",
+    "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
+    "lastHarvestedAt": "2026-11-02T14:53:46.888Z",
+    "learningId": "learn-huggingface-liquidai-d1-2b"
   }
 }

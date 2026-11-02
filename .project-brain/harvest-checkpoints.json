@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T14:46:37.751Z",
+  "last_updated": "2026-11-02T14:53:46.898Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17624,6 +17624,51 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-02T14:32:05.573Z"
+    },
+    "FusionCow/Sulphur-3": {
+      "repository": "FusionCow/Sulphur-3",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-fusioncow-sulphur-3",
+      "content_hash": "a87c997452935295b79bff41cc0991b4edf6f7cf2cdade8ff3b108a6a14e9418",
+      "verified_at": "2026-11-02T14:53:41.087Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T14:53:41.087Z"
+    },
+    "xiaomi-research/Xiaomi-OCR-0": {
+      "repository": "xiaomi-research/Xiaomi-OCR-0",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
+      "content_hash": "3a31b4d83060d8afdd699c28110fc957ff36ae601dcbd1999b73ca327f84c90d",
+      "verified_at": "2026-11-02T14:53:43.979Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T14:53:43.979Z"
+    },
+    "LiquidAI/d1-2B": {
+      "repository": "LiquidAI/d1-2B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-liquidai-d1-2b",
+      "content_hash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
+      "verified_at": "2026-11-02T14:53:46.897Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T14:53:46.897Z"
     }
   },
   "repos": {

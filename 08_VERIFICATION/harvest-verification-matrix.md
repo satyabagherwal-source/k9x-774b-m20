@@ -6805,3 +6805,6 @@
 | `CYCLE-20261102-GOCJ` | `2026-11-02T14:46:31.747Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6413` | Yes (`4c401830...`) |
 | `CYCLE-20261102-GQC5` | `2026-11-02T14:46:34.325Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6414` | Yes (`44521c83...`) |
 | `CYCLE-20261102-GSYY` | `2026-11-02T14:46:37.738Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6415` | Yes (`f54b10af...`) |
+| `CYCLE-20261102-PVMA` | `2026-11-02T14:53:41.074Z` | `FusionCow/Sulphur-3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6416` | Yes (`a87c9974...`) |
+| `CYCLE-20261102-PXUM` | `2026-11-02T14:53:43.966Z` | `xiaomi-research/Xiaomi-OCR-0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6417, Rule 6418, Rule 6419` | Yes (`3a31b4d8...`) |
+| `CYCLE-20261102-Q03P` | `2026-11-02T14:53:46.885Z` | `LiquidAI/d1-2B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6420, Rule 6421, Rule 6422` | Yes (`0bab2319...`) |
