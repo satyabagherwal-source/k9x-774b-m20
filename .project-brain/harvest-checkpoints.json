@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T21:36:44.314Z",
+  "last_updated": "2026-11-02T21:48:31.301Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3411,14 +3411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crawlseo-crawlseo",
-      "content_hash": "25beda912f70da0c8146d06d572b1aa95fc9de76714cd98b393681ba62cb7216",
-      "verified_at": "2026-10-27T22:00:15.424Z",
+      "content_hash": "22e56de16fa8b7ba25b043499258193e78f05bdb222a1bb9b74bcbbdd89a4d8b",
+      "verified_at": "2026-11-02T21:48:31.300Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-27T22:00:15.424Z"
+      "last_updated": "2026-11-02T21:48:31.300Z"
     },
     "react-hook-form/react-hook-form": {
       "repository": "react-hook-form/react-hook-form",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "c180f60d27b42f294c3dc96f86544e3968e0526d9f0cb5c8405ae5e992e74b41",
-      "verified_at": "2026-11-02T17:24:40.337Z",
+      "content_hash": "67cdcc23e38250e1b214b8576268fc7ea4b9971bf32f4556e62111fd15205e5e",
+      "verified_at": "2026-11-02T21:43:42.116Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-02T17:24:40.337Z"
+      "last_updated": "2026-11-02T21:43:42.116Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",

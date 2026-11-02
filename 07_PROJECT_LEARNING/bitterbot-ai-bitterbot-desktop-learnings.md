@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `595167cf`  
+> **Source Version**: `eca2269a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-02T17:24:39.618Z  
+> **Timestamp**: 2026-11-02T21:43:41.493Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-02T17:24:38.550Z  
+> **Harvest Timestamp**: 2026-11-02T21:43:40.788Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2480 stars
+- **Stars / Engagement**: 2479 stars
 
 ---
 
@@ -1799,343 +1799,385 @@ export function ChannelSetupDrawer({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `595167cf` (2026-11-02)
-**Commit Message**: feat(a2a): accept XNO payments on the A2A payment gate (#348)
+### Incident Patch 1: `eca2269a` (2026-11-02)
+**Commit Message**: fix(skills): skills index compactor no longer merges a block into the next one (#351)
 
-* feat(a2a): accept XNO payments on the A2A payment gate
+The compactor's block regex matched the description lazily with [\s\S]*?,
+so a <skill> block with any child line beyond name/description/location
+failed at its own </skill>, backtracked, and swallowed the following block:
+the model saw one skill's name with the next skill's location, and the next
+skill disappeared from the index. Descriptions are XML-escaped, so the
+description now matches [^<]*; extra child lines are captured and kept.
 
-Add an opt-in second rail to the A2A payment gate. When
-a2a.payment.nano {address, rawPerUsd, rpcUrl?, maxAgeSeconds?} is set,
-the 402 lists a nano:mainnet entry after the Base USDC one and the Agent
-Card gains a nano-payment extension. When it is unset nothing changes:
-the 402 header and body are byte-identical to before (tested).
+Found when per-skill <evidence> lines in the skill-prior harness pointed the
+model at the decoy's SKILL.md on every annotated entry.
 
-Proofs are verified by src/services/nano-verify.ts, shaped like
-x402-verify.ts: checksummed nano_ accounts, an Ed25519-BLAKE2b payer
-signature over recipient|blockHash|amountRaw|timestamp, one block_info
-call that must show a confirmed send from the signer to our account for
-at least the price (BigInt raw math), recency, and single use through
-the existing x402_consumed_tx ledger under the key nano:<HASH>. Any RPC
-error or non-200 reply means not paid.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-@noble/curves 1.9.1 and @noble/hashes 1.8.0 are declared directly; both
-versions were already in the lockfile through viem, so nothing new is
-installed.
-
-* fix(a2a): Nano verifier refuses cleartext non-loopback RPC and oversized node replies
-
-* docs(a2a): warn that Nano sales pay reven
-
-**File**: `docs/marketplace/a2a-integration.md` (modified, +34/-0)
+**File**: `src/agents/system-prompt-skills.test.ts` (modified, +29/-0)
 ```diff
-@@ -130,6 +130,40 @@ Unsigned proofs are rejected by default. `a2a.payment.allowUnsignedProofs: true`
+@@ -117,6 +117,35 @@ describe("compactSkillsPrompt", () => {
+     expect(out.length).toBeLessThan(4_000);
+   });
  
- 6. **Result delivery.** The task result is returned in the JSON-RPC response. The `PAYMENT-RESPONSE` header is included on the 200 OK response, containing a Base64-encoded JSON object with `transactionHash`, `payer`, and `network`.
++  it("keeps a block with an extra child line intact and never merges it with the next block", () => {
++    const annotated = [
++      "  <skill>",
++      "    <name>alpha</name>",
++      "    <description>Use for alpha. Not for beta.</description>",
++      "    <location>/skills/alpha/SKILL.md</location>",
++      "    <evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
++      "  </skill>",
++    ].join("\n");
++    const out = compactSkillsPrompt(
++      index([annotated, skill("beta", "Use for beta."), skill("gamma", "Use for gamma.")]),
++    );
++    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta", "gamma"]);
++    const alpha = out.slice(out.indexOf("<name>alpha</name>"), out.indexOf("<name>beta</name>"));
++    expect(alpha).toContain(
++      "<evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
++    );
++    expect(alpha).not.toContain("beta/SKILL.md");
++    expect(alpha).toContain("<description>Use for alpha.</description>");
++    expect(compactSkillsPrompt(out)).toBe(out);
++  });
++
++  it("leaves a block with an unescaped < in its description alone rather than merging", () => {
++    const raw = skill("alpha", "Use when x < y.");
++    const out = compactSkillsPrompt(index([raw, skill("beta", "Use for beta.")]));
++    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta"]);
++    expect(out).toContain("<location>/skills/alpha/SKILL.md</location>");
++  });
++
+   it("is a no-op without skill blocks", () => {
+     expect(compactSkillsPrompt("no skills here")).toBe("no skills here");
+   });
+```
+
+**File**: `src/agents/system-prompt-skills.ts` (modified, +20/-2)
+```diff
+@@ -10,8 +10,16 @@
+ export const SKILLS_PROMPT_BUDGET_CHARS = 4_000;
+ const DESCRIPTION_STEPS = [160, 80, 40];
  
-+### Optional XNO rail
-+
-+An operator can also accept Nano (XNO) next to USDC. It is off unless configured, and the Base rail does not change:
-+
-+```json5
-+{
-+  a2a: {
-+    payment: {
-+      nano: {
-+        address: "nano_...", // checksummed receiving account
-+        rawPerUsd: "1000000000000000000000000000000", // raw charged per 1 USD of price
-+        rpcUrl: "http://127.0.0.1:7076", // default: your own node
-+        maxAgeSeconds: 300, // default
-+      },
-+    },
-+  },
-+}
-+```
-+
-+When set, the 402 `PAYMENT-REQUIRED` list gets a second entry with `network: "nano:mainnet"`, `asset: "XNO"`, the account as `payTo`, and `maxAmountRequired` in raw (price times `rawPerUsd`, rounded up). The Agent Card gains a `nano-payment` extension. The buyer sends XNO, then retries with a Base64 JSON token in the same `X-PAYMENT` header:
-+
-+```text
-+{ network: "nano:mainnet", blockHash, account, recipient, amountRaw, timestamp, signature }
-+```
-+
-+`signature` is an Ed25519-BLAKE2b signature (the Nano account key scheme) by `account` over `<recipient>|<BLOCKHASH>|<amountRaw>|<timestamp-ms>`. The seller makes one `block_info` call and requires a confirmed send from `account` to its own account for exactly `amountRaw`, at least the price, seen within `maxAgeSeconds`. Each block hash is accepted once. If the node cannot be reached the task is not paid.
-+
-+Two things to weigh before turning it on:
-+
-+- **Payouts stay in USDC.** A Nano sale is recorded at its USD price, so revenue shares owed to skill authors are queued in USDC and, when the wallet is enabled, paid from your USDC balance. You receive XNO for that sale and pay its shares in USDC.
-+- **The rate is fixed.** `rawPerUsd` is a number you set; there is no price feed. If XNO falls, each sale brings in less value than the USD price it was recorded at, and the USDC shares paid against it stay the same. Review the rate regularly.
-+
-+The rail also trusts the `confirmed` flag of the node at `rpcUrl`. Point it at a node you run; a public node means trusting its operator.
-+
- ---
++/**
++ * One `<skill>` block. The description is XML-escaped, so it holds no `<` and
++ * cannot run past its own closing tag into the next block. Any further child
++ * lines (an `<evidence>` note, say) are captured and kept as they are; the
++ * old lazy `[\s\S]*?` description let a block with an extra line swallow
++ * the next block whole, pairing one skill's name with the next one's
++ * location.
++ */
+ const SKILL_BLOCK_RE =
+-  /^([ \t]*)<skill>\n[ \t]*<name>([^<\n]*)<\/name>\n(?:[ \t]*<description>([\s\S]*?)<\/description>\n)?(?:[ \t]*<location>([^<\n]*)<\/location>\n)?[ \t]*<\/skill>/gm;
++  /^([ \t]*)<skill>\n[ \t]*<name>([^<\n]*)<\/name>\n(?:[ \t]*<description>([^<]*)<\/description>\n)?(?:[ \t]*<location>([^<\n]*)<\/location>\n)?((?:[ \t]*<(?!\/?skill>)[^\n]*\n)*)[ \t]*<\/skill>/gm;
  
- ## Agent Card Schema
+ function unescapeXml(text: string): string {
+   return text
+@@ -88,7 +96,14 @@ function renderCompact(prompt: string, maxDescriptionChars: number | null): stri
+   const defaultRoot = resolveDefaultSkillsRoot(prompt);
+   const rendered = prompt.replace(
+     SKILL_BLOCK_RE,
+-    (_block, indent: string, name: string, description: string | undefined, location) => {
++    (
++      _block,
++      indent: string,
++      name: string,
++      description: string | undefined,
++      location: string | undefined,
++      extra: string | undefined,
++    ) => {
+       const inner = `${indent}  `;
+       const lines = [`${indent}<skill>`, `${inner}<name>${name}</name>`];
+       if (maxDescriptionChars !== null && description) {
+@@ -104,6 +119,9 @@ function renderCompact(prompt: string, maxDescriptionChars: number | null): stri
+       ) {
+         lines.push(`${inner}<location>${location}</location>`);
+       }
++      if (extra) {
++        lines.push(extra.replace(/\n$/, ""));
++      }
+       lines.push(`${indent}</skill>`);
+       return lines.join("\n");
+     },
 ```
 
-**File**: `package.json` (modified, +2/-0)
-```diff
-@@ -173,6 +173,8 @@
-     "@mariozechner/pi-ai": "0.73.1",
-     "@modelcontextprotocol/sdk": "^1.32.1",
-     "@mozilla/readability": "^0.6.0",
-+    "@noble/curves": "1.9.1",
-+    "@noble/hashes": "1.8.0",
-     "@opentelemetry/api": "^1.9.1",
-     "@opentelemetry/exporter-trace-otlp-http": "^0.300.0",
-     "@opentelemetry/resources": "^2.11.0",
-```
+---
 
-**File**: `pnpm-lock.yaml` (modified, +6/-0)
-```diff
-@@ -67,6 +67,12 @@ importers:
-       '@napi-rs/canvas':
-         specifier: ^0.1.89
-         version: 0.1.92
-+      '@noble/curves':
-+        specifier: 1.9.1
-+        version: 1.9.1
-+      '@noble/hashes':
-+        specifier: 1.8.0
-+        version: 1.8.0
-       '@opentelemetry/api':
-         specifier: ^1.9.1
-         version: 1.10.0
-```
+### Incident Patch 2: `41241db2` (2026-11-02)
+**Commit Message**: fix(skills): record skill executions when the agent reads a skill's SKILL.md (#350)
 
-**File**: `src/config/types.a2a.ts` (modified, +14/-0)
-```diff
-@@ -88,6 +88,20 @@ export type A2aConfig = {
-       /** Minimum per-task payment in USDC. Default: 0.01. */
-       minPayment?: number;
-     };
-+    /**
-+     * Optional second rail: accept Nano (XNO) next to x402 USDC. Off unless
-+     * `address` and `rawPerUsd` are set; the Base rail is unchanged either way.
-+     */
-+    nano?: {
-+      /** Checksummed nano_ receiving account. */
-+      address: string;
-+      /** Raw units (1 XNO = 10^30 raw) charged per 1 USD of price, as an integer string. */
-+      rawPerUsd: string;
-+      /** Nano node RPC used for block_info. Default: http://127.0.0.1:7076 (your own node). */
-+      rpcUrl?: string;
-+      /** Max age of the proof and of the send block. Default: 300. */
-+      maxAgeSeconds?: number;
-+    };
-     /** AP2 payment mandates over the x402 rail (PLAN-47 Phase 1). */
-     ap2?: {
-       /**
-```
+The execution-tracking hook matched skill crystals only when skill_category
+equalled the tool name. Since migration v63 removed the tool-name-keyed
+crystals, nothing matched and skill_executions stayed empty, so the bridge
+maturity gate could never pass and run outcomes had nothing to stamp.
 
-**File**: `src/config/zod-schema.ts` (modified, +14/-0)
-```diff
-@@ -1123,6 +1123,20 @@ export const BitterbotSchema = z
-               })
-               .strict()
-               .optional(),
-+            nano: z
-+              .object({
-+                address: z
-+                  .string()
-+                  .regex(
-+                    /^(?:nano|xrb)_[13][13456789abcdefghijkmnopqrstuwxyz]{59}$/,
-+                    "must be a nano_ account",
-+                  ),
-+                rawPerUsd: z.string().regex(/^[1-9][0-9]*$/, "must be a positive integer string"),
-+                rpcUrl: z.string().url().optional(),
-+                maxAgeSeconds: z.number().int().positive().optional(),
-+              })
-+              .strict()
-+              .optional(),
-             ap2: z
-               .object({
-                 enabled: z.boolean().optional(),
-```
+A read of <skill>/SKILL.md now credits that skill's crystal (by folder name
+or crystal path), once per run. The tool-name match is kept.
 
-**File**: `src/gateway/a2a/a2a-http.payment-402.test.ts` (modified, +77/-0)
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `docs/memory/skills-pipeline.md` (modified, +26/-17)
 ```diff
-@@ -73,6 +73,16 @@ function sendBody() {
-   };
- }
+@@ -36,18 +36,28 @@ below for each module.
  
-+async function get402Raw(config: Record<string, unknown>) {
-+  const h = makeHandler(config);
-+  const req = mockReq({ body: sendBody() });
-+  const res = mockRes();
-+  await h.handle(req, res, { auth: {} as never, trustedProxies: [], rateLimiter: undefined });
-+  h.close();
-+  expect(res.statusCode).toBe(402);
-+  return { header: res._headers["payment-required"], body: res._body };
-+}
+ ### What an execution row means (PLAN-45 Phase 1)
+ 
+-`skill_executions` receives one row per tool call that matched a skill
+-crystal by name (`recorded_by = 'after_tool_call'`). The match
+-(`execution-tracking-hook.ts`) requires a chunk with `semantic_type` or
+-`memory_type` of `skill`, a lifecycle of `generated`/`activated`/`frozen`, an
+-origin other than `dream`, and a `skill_category` equal to the normalized
+-tool name (`read`, `exec`, `web-fetch`, ...). `skill_category` is the
+-SKILL.md frontmatter name or folder name (`skill-category.ts`), and the only
+-chunks ever keyed on tool names were the retired crystallizer's, which
+-migration v63 purged. On a post-v63 node the hook therefore never matches:
+-the table stays empty, and the bridge maturity gate below (three run-level
+-executions at a success rate of 0.7 or better) cannot pass, so no crystal
+-auto-publishes. The hook also skips A2A and validation sessions. When a row
++`skill_executions` receives one row per skill a run loaded
++(`recorded_by = 'after_tool_call'`). The hook (`execution-tracking-hook.ts`)
++matches a chunk with `semantic_type` or `memory_type` of `skill`, a lifecycle
++of `generated`/`activated`/`frozen` and an origin other than `dream`, in one
++of two ways:
 +
- async function get402Requirements(config: Record<string, unknown>) {
-   const h = makeHandler(config);
-   const req = mockReq({ body: sendBody() });
-@@ -145,6 +155,73 @@ describe("A2A 402 payment requirements", () => {
++- **SKILL.md read** (the match that fires in practice): a `read` call whose
++  path ends in `SKILL.md` credits the crystal whose `skill_category` equals
++  the skill's folder name, or whose `path` is that folder. A second read of
++  the same SKILL.md in the same run adds no row, so a run is counted once.
++- **Tool name**: a crystal whose `skill_category` equals the normalized tool
++  name (`read`, `exec`, `web-fetch`, ...). `skill_category` is the SKILL.md
++  frontmatter name or folder name (`skill-category.ts`), and the only chunks
++  ever keyed on tool names were the retired crystallizer's, which migration
++  v63 purged, so on a post-v63 node this match finds nothing. Before the
++  SKILL.md match was added (2026-11-02) the table therefore stayed empty and
++  the bridge maturity gate below could not pass.
++
++Only skills that have a crystal get rows. File-based skills without one
++(bundled skills, most workspace skills) are credited by the SKILL.md read
++crediting pass instead (see "SKILL.md read crediting" below). The hook also
++skips A2A and validation sessions. When a row
+ is written it carries the journal run it happened in (`run_id`,
+ `tool_call_id`) and an `evidence` class:
+ 
+@@ -638,8 +648,8 @@ consolidation cycle (default factor: 0.95).
+ 
+ ### SKILL.md read crediting (PLAN-44 Phase 5a)
+ 
+-The tracker above matches tool names against memory crystals; it never
+-saw a file-based skill. `src/memory/skill-evolution/skill-reads.ts` closes
++The tracker above records only skills that have a memory crystal; most
++file-based skills have none. `src/memory/skill-evolution/skill-reads.ts` closes
+ that: on every housekeeping pass it scans journal runs since a cursor,
+ finds `read` (or exec) tool calls whose path is a live skill's SKILL.md,
+ and records one event per (run, skill) with the run's outcome (ended
+@@ -1080,9 +1090,8 @@ responses (same gate, wire name `response-<query>-<skill>`), and the manual
+    passes AND the `SkillExecutionTracker` reports at least 3 run-level
+    executions with a success rate in `[0.7, 1]`. If either dependency is not
+    wired on the bridge, or a metric is non-finite or above 1, the answer is
+-   "no": missing evidence is never permission to publish. On a post-v63 node
+-   no crystal reaches 3 executions (see "What an execution row means"), so
+-   this leg is currently closed.
++   "no": missing evidence is never permission to publish. Executions count
++   only once the run outcome is stamped (see "What an execution row means").
+ 5. Generates a SKILL.md format with frontmatter
+ 6. Sends to the Rust orchestrator via `orchestratorBridge.publishSkill()`
+ 
+```
+
+**File**: `src/memory/execution-tracking-hook.test.ts` (modified, +65/-0)
+```diff
+@@ -175,3 +175,68 @@ describe("createExecutionTrackingHook evidence semantics (PLAN-45 Phase 0)", ()
+     expect(rows.map((r) => r.success)).toEqual([1, 0]);
    });
  });
- 
-+describe("A2A 402 with the opt-in Nano rail", () => {
-+  const NANO_ADDR = "nano_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3";
-+  const baseOnly = {
-+    a2a: {
-+      enabled: true,
-+      authentication: { type: "none" },
-+      payment: { enabled: true, x402: { address: WALLET_ADDR } },
-+    },
-+    tools: { wallet: { network: "base" } },
-+  };
 +
-+  it("leaves the Base-only 402 untouched when payment.nano is unset", async () => {
-+    const { header, body } = await get402Raw(baseOnly);
-+    // Exact bytes of the pre-Nano response: one accepts entry, same body.
-+    const expectedAccepts = [
-+      {
-+        scheme: "exact",
-+        network: "base",
-+        maxAmountRequired: "0.01",
-+        resource: "/a2a",
-+        description: "Payment required for skill execution",
-+        mimeType: "application/json",
-+        payTo: WALLET_ADDR,
-+        maxTimeoutSeconds: 300,
-+        asset: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-+      },
-+    ];
-+    expect(header).toBe(Buffer.from(JSON.stringify(expectedAccepts)).toString("base64"));
-+    expect(body).toBe(
-+      JSON.stringify({
-+        jsonrpc: "2.0",
-+        error: {
-+          code: -32006,
-+          message: "Payment required for this task",
-+          data: {
-+            pricing: { priceUsdc: 0.01, skills: [] },
-+            payTo: WALLET_ADDR,
-+            chain: "base",
-+            token: "USDC",
-+          },
-+        },
-+        id: "pay-1",
-+      }),
-+    );
++describe("createExecutionTrackingHook SKILL.md attribution", () => {
++  function readSetup() {
++    const { db } = setup();
++    db.prepare(
++      `INSERT INTO chunks (
++        id, path, source, start_line, end_line, text, hash, model, embedding,
++        updated_at, created_at, lifecycle, semantic_type, skill_category, origin
++      ) VALUES ('sk2', '/home/u/.bitterbot/skills/public-apis', 'skills', 0, 0, 'skill body', 'h2',
++        'local', '[]', ?, ?, 'frozen', 'skill', 'public-apis', 'indexed')`,
++    ).run(NOW, NOW);
++    const tracker = new SkillExecutionTracker(db);
++    const hook = createExecutionTrackingHook(tracker, db, null);
++    const read = (path: string, runId = "r1", key = "path") =>
++      hook(
++        { toolName: "read", params: { [key]: path }, result: "ok", durationMs: 3 },
++        { toolName: "read", sessionKey: "s1", runId, toolCallId: `tc-${runId}-${path}` },
++      );
++    const rows = () =>
++      db
++        .prepare(`SELECT skill_crystal_id AS id, run_id, tool_name FROM skill_executions`)
++        .all() as Array<{ id: string; run_id: string; tool_name: string }>;
++    return { db, read, rows };
++  }
++
++  it("credits the skill whose SKILL.md the agent read, by folder name", () => {
++    const { read, rows } = readSetup();
++    read("/opt/elsewhere/public-apis/SKILL.md");
++    expect(rows()).toEqual([{ id: "sk2", run_id: "r1", tool_name: "read" }]);
 +  });
 +
-+  it("adds a second accepts entry for XNO when payment.nano is configured", async () => {
-+    const config = structuredClone(baseOnly);
-+    (config.a2a.payment as Record<string, unknown>).nano = {
-+      address: NANO_ADDR,
-+      rawPerUsd: "100000000000000000000000000000",
-+    };
-+    const { header, body } = await get402Raw(config);
-+    const accepts = JSON.parse(Buffer.from(header, "base64").toString("utf-8"));
-+    expect(accepts).toHaveLength(2);
-+    expect(accepts[0].network).toBe("base");
-+    expect(accepts[1]).toMatchObject({
-+      network: "nano:mainnet",
-+      payTo: NANO_ADDR,
-+      asset: "XNO",
-+      maxAmountRequired: "1000000000000000000000000000",
-+    });
-+    // The JSON-RPC body is the same as on a Base-only node.
-+    expect(body).toBe((await get402Raw(baseOnly)).body);
++  it("matches by crystal path and accepts file_path and Windows separators", () => {
++    const { read, rows } = readSetup();
++    read("C:\\Users\\u\\skills\\public-apis\\SKILL.md", "r1", "file_path");
++    read("/home/u/.bitterbot/skills/public-apis/skill.md", "r2");
++    expect(rows().map((r) => r.run_id)).toEqual(["r1", "r2"]);
++  });
++
++  it("records one row per skill per run when the SKILL.md is read again", () => {
++    const { read, rows } = readSetup();
++    read("/s/public-apis/SKILL.md", "r1");
++    read("/s/public-apis/SKILL.md", "r1");
++    read("/s/public-apis/SKILL.md", "r2");
++    expect(rows().map((r) => r.run_id)).toEqual(["r1", "r2"]);
++  });
++
++  it("ignores reads of other files and SKILL.md files with no crystal", () => {
++    const { read, rows } = readSetup();
++    read("/s/public-apis/README.md");
++    read("/s/unknown-skill/SKILL.md");
++    read("SKILL.md");
++    expect(rows()).toEqual([]);
++  });
++
++  it("lets the run-outcome back-fill stamp the row", () => {
++    const { db, read } = readSetup();
++    read("/s/public-apis/SKILL.md", "r9");
++    expect(stampExecutionRunOutcome(db, "r9", { label: "pass", level: 1 })).toBe(1);
++    const row = db
++      .prepare(`SELECT run_outcome_label, evidence FROM skill_executions WHERE run_id = 'r9'`)
++      .get() as { run_outcome_label: string; evidence: string };
++    expect(row.run_outcome_label).toBe("pass");
++    expect(row.evidence).not.toBe("tool");
 +  });
 +});
-+
- // PLAN-43 §3.2b: message/stream spawns the same task executor as
- // message/send and previously bypassed the payment gate entirely — a free
- // execution path on a paid node. Both verbs must hit the gate; oversize
 ```
 
-**File**: `src/gateway/a2a/a2a-http.ts` (modified, +25/-4)
+**File**: `src/memory/execution-tracking-hook.ts` (modified, +79/-6)
 ```diff
-@@ -774,9 +774,30 @@ export function createA2aHttpHandler(opts: {
-           maxTimeoutSeconds: 300,
-           asset: usdcAsset,
-         };
--        const paymentRequiredB64 = Buffer.from(JSON.stringify([paymentRequirements])).toString(
--          "base64",
--        );
-+        const accepts: Array<Record<string, unknown>> = [paymentRequirements];
-+        // Opt-in Nano rail: a second accepts entry, only when a2a.payment.nano
-+        // is configured. Amount is in raw (integer string) at the operator's rate.
-+        if (config.a2a?.payment?.nano) {
-+          const { NANO_DEFAULT_MAX_AGE_SECONDS, NANO_NETWORK, resolveNanoRail, usdToRaw } =
-+            await import("../../services/nano-verify.js");
-+          const nano = resolveNanoRail(config.a2a.payment.nano);
-+          if (nano) {
-+            const priceUsd = paymentResult.pricing?.priceUsdc ?? 0.01;
-+            accepts.push({
-+              scheme: "exact",
-+              network: NANO_NETWORK,
-+              maxAmountRequired: usdToRaw(priceUsd, nano.rawPerUsd).toString(),
-+              resource: req.url ?? "/a2a",
-+              description: "Payment required for skill execution",
-+              mimeType: "application/json",
-+              payTo: nano.address,
-+              maxTimeoutSeconds: nano.maxAgeSeconds ?? NANO_DEFAULT_MAX_AGE_SECONDS,
-+              asset: "XNO",
-+              extra: { unit: "raw", rawPerUsd: nano.rawPerUsd, priceUsd: String(priceUsd) },
-+            });
-+          }
-+        }
-+        const paymentRequiredB64 = Buffer.from(JSON.stringify(accepts)).toString("base64");
-         res.setHeader("PAYMENT-REQUIRED", paymentRequiredB64);
+@@ -2,11 +2,17 @@
+  * Execution Tracking Hook: an `after_tool_call` plugin hook that feeds
+  * tool execution outcomes into the SkillExecutionTracker.
+  *
+- * What a row here MEANS (PLAN-45 Phase 0): "a tool whose name matches a
+- * skill crystal's category ran and did not report an error". That is
+- * tool-level evidence (`recorded_by = 'after_tool_call'`), never a judgment
+- * that the user's task succeeded. Competence consumers must not read it as
+- * such; Phase 1 back-fills run-level outcomes from the event journal.
++ * What a row here MEANS (PLAN-45 Phase 0): "the agent loaded a skill in this
++ * run" (it read the skill's SKILL.md), or "a tool whose name matches a skill
++ * crystal's category ran". Either way the row is tool-level evidence
++ * (`recorded_by = 'after_tool_call'`), never a judgment that the user's task
++ * succeeded. Competence consumers must not read it as such; Phase 1
++ * back-fills run-level outcomes from the event journal by run id.
++ *
++ * The SKILL.md match is the one that fires in practice. Skill crystals carry
++ * the skill's folder or frontmatter name as `skill_category`, not a tool
++ * name, so after migration v63 removed the tool-name-keyed crystals the
++ * tool-name match found nothing and the table stayed empty.
+  *
+  * `reward_score` is written as NULL. The previous value was a bucket of the
+  * result's character count (0.5-0.8), which also fired the hormonal "reward"
+@@ -68,6 +74,65 @@ function findMatchingSkill(db: DatabaseSync, toolName: string): string | null {
+   }
+ }
  
-         sendJson(res, 402, {
-@@ -801,7 +822,7 @@ export function createA2aHttpHandler(opts: {
-         const settlementResponse = {
-           success: true,
-           scheme: "exact",
--          network: "base",
-+          network: paymentResult.network ?? "base",
-           transactionHash: paymentResult.txHash,
-           payer: paymentResult.buyerPeerId ?? "unknown",
-         };
-```
-
-**File**: `src/gateway/a2a/agent-card.test.ts` (modified, +25/-0)
-```diff
-@@ -104,6 +104,31 @@ describe("buildAgentCard", () => {
-     expect(card.extensions?.["x402-payment"]).toBeUndefined();
-   });
- 
-+  it("advertises the Nano rail only when payment.nano is configured", () => {
-+    const nanoAddress = "nano_3t6k35gi95xu6tergt6p69ck76ogmitsa8mnijtpxm9fkcm736xtoncuohr3";
-+    const build = (nano?: { address: string; rawPerUsd: string }) =>
-+      buildAgentCard({
-+        config: baseConfig({
-+          a2a: {
-+            enabled: true,
-+            payment: { enabled: true, x402: { address: "0x" + "ab".repeat(20) }, nano },
-+          },
-+        }),
-+        skills: [],
-+        gatewayUrl: "http://localhost:19001",
-+      });
-+    expect(build().extensions?.["nano-payment"]).toBeUndefined();
-+    const ext = build({ address: nanoAddress, rawPerUsd: "1000" }).extensions?.["nano-payment"] as
-+      | Record<string, unknown>
-+      | undefined;
-+    expect(ext).toMatchObject({ network: "nano:mainnet", token: "XNO", address: nanoAddress });
-+    // A typo'd (bad checksum) account is never advertised.
-+    const typo = nanoAddress.slice(0, -1) + "4";
-+    expect(
-+      build({ address: typo, rawPerUsd: "1000" }).extensions?.["nano-payment"],
-+    ).toBeUndefined();
-+  });
++/**
++ * The skill a `read` call loaded, when it read a SKILL.md: the skill key (its
++ * folder name) and folder. Null for any other call.
++ */
++export function skillReadTarget(
++  toolName: string,
++  params: Record<string, unknown> | undefined,
++): { key: string; dir: string } | null {
++  if (normalizeToolName(toolName) !== "read" || !params) {
++    return null;
++  }
++  const raw = [params.path, params.file_path, params.filePath].find(
++    (v): v is string => typeof v === "string",
++  );
++  if (!raw) {
++    return null;
++  }
++  const parts = raw.replace(/\\/g, "/").split("/");
++  if (parts.length < 2 || parts.at(-1)?.toLowerCase() !== "skill.md") {
++    return null;
++  }
++  const key = parts.at(-2);
++  return key ? { key, dir: parts.slice(0, -1).join("/") } : null;
++}
 +
-   it("emits erc8004 extension when configured with tokenId", () => {
-     const card = buildAgentCard({
-       config: baseConfig({
++/** The skill crystal for a SKILL.md read, by skill key or crystal path. */
++function findSkillForRead(db: DatabaseSync, target: { key: string; dir: string }): string | null {
++  try {
++    const row = db
++      .prepare(
++        `SELECT id FROM chunks
++         WHERE (COALESCE(semantic_type, 'general') = 'skill'
++                OR COALESCE(memory_type, 'plaintext') = 'skill')
++           AND COALESCE(lifecycle, 'generated') IN ('generated', 'activated', 'frozen')
++           AND COALESCE(origin, '') != 'dream'
++           AND (skill_category = ? OR path = ?)
++         ORDER BY created_at DESC
++         LIMIT 1`,
++      )
++      .get(target.key, target.dir) as { id: string } | undefined;
++    return row?.id ?? null;
++  } catch {
++    return null;
++  }
++}
++
++/** True when this run already has a row for this skill (a re-read). */
++function alreadyRecordedForRun(db: DatabaseSync, skillId: string, runId: string): boolean {
++  try {
++    return (
++      db
++        .prepare(`SELECT 1 FROM skill_executions WHERE skill_crystal_id = ? AND run_id = ? LIMIT 1`)
++        .get(skillId, runId) !== undefined
++    );
++  } catch {
++    return false;
++  }
++}
++
+ /**
+  * Publish maturity gate (mirrors checkBountyClaimQuality's execution floor in
+  * skill-network-bridge.ts): re-attempt network publish once a skill has this
+@@ -113,10 +178,18 @@ export function createExecutionTrackingHook(
+         hormonalManager.stimulate("error");
+       }
+ 
+-      const skillId = findMatchingSkill(db, event.toolName);
++      const readTarget = skillReadTarget(event.toolName, event.params);
++      const skillId = readTarget
++        ? findSkillForRead(db, readTarget)
++        : findMatchingSkill(db, event.toolName);
+       if (!skillId) {
+         return;
+       }
++      // One row per skill per run: the run outcome is stamped by run id, so
++      // a second read of the same SKILL.md would count the run twice.
++      if (readTarget && ctx.runId && alreadyRecordedForRun(db, skillId, ctx.runId)) {
++        return;
++      }
+ 
+       const execId = tracker.startExecution(skillId, ctx.sessionKey, {
+         toolName: event.toolName,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #351** (2026-11-02): fix(skills): skills index compactor no longer merges a block into the next one (@VGIL77)
+- **PR #350** (2026-11-02): fix(skills): record skill executions when the agent reads a skill's SKILL.md (@VGIL77)
 - **PR #348** (2026-11-02): feat(a2a): accept XNO payments on the A2A payment gate (@VGIL77)
 - **PR #346** (2026-11-01): docs(memory): bring every memory doc back in line with the code at v1.12.0 (@VGIL77)
 - **PR #345** (2026-10-31): fix(infra): make batch lanes reach the Batches API and offer beta nodes the stable release (@VGIL77)
 - **PR #344** (2026-10-31): fix(memory): record evidence only for prompt-included facts, owner searches and on an independent retention clock (@VGIL77)
-- **PR #343** (2026-10-31): feat(compute): land the beta recovery stack on main with Soapbox rc10 (@VGIL77)
-- **PR #342** (2026-10-31): feat(gateway): explain disabled OpenAI-compatible endpoints instead of a bare 404 (@VGIL77)
 
 ---
 
@@ -2155,46 +2197,44 @@ installed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. a2a): accept XNO payments on the A2A payment gate (#348)
+## X. skills): skills index compactor no longer merges a block into the next one (#351
 
 **RULE**:
-When implementing operations in `docs/marketplace/a2a-integration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/agents/system-prompt-skills.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `595167cf`: a2a): accept XNO payments on the A2A payment gate (#348). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eca2269a`: skills): skills index compactor no longer merges a block into the next one (#351). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/marketplace/a2a-integration.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/agents/system-prompt-skills.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-### Optional XNO rail
+  it("keeps a block with an extra child line intact and never merges it with the next block", () => {
+    const annotated = [
+      "  <skill>",
+      "    <name>alpha</name>",
+      "    <description>Use for alpha. Not for beta.</description>",
+      "    <location>/skills/alpha/SKILL.md</location>",
+      "    <evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
+      "  </skill>",
+    ].join("\n");
+    const out = compactSkillsPrompt(
+      index([annotated, skill("beta", "Use for beta."), skill("gamma", "Use for gamma.")]),
+    );
+    expect([...skillNamesInPrompt(out)]).toEqual(["alpha", "beta", "gamma"]);
+    const alpha = out.slice(out.indexOf("<name>alpha</name>"), out.indexOf("<name>beta</name>"));
+    expect(alpha).toContain(
+      "<evidence>Verified record in past tasks like this one: 5 of 5 runs passed.</evidence>",
+    );
+    expect(alpha).not.toContain("beta/SKILL.md");
+    expect(alpha).toContain("<description>Use for alpha.</description>");
+    expect(compactSkillsPrompt(out)).toBe(out);
+  });
 
-An operator can also accept Nano (XNO) next to USDC. It is off unless configured, and the Base rail does not change:
-
-```json5
-{
-  a2a: {
-    payment: {
-      nano: {
-        address: "nano_...", // checksummed receiving account
-        rawPerUsd: "1000000000000000000000000000000", // raw charged per 1 USD of price
-        rpcUrl: "http://127.0.0.1:7076", // default: your own node
-        maxAgeSeconds: 300, // default
-      },
-    },
-  },
-}
-```
-
-When set, the 402 `PAYMENT-REQUIRED` list gets a second entry with `network: "nano:mainnet"`, `asset: "XNO"`, the account as `payTo`, and `maxAmountRequired` in raw (price times `rawPerUsd`, rounded up). The Agent Card gains a `nano-payment` extension. The buyer sends XNO, then retries with a Base64 JSON token in the same `X-PAYMENT` header:
-
-```text
-{ network: "nano:mainnet", blockHash, account, recipient, amountRaw, timestamp, signature }
-```
-
-`signature` is an Ed25519-BLAKE2b signature (the Nano account key scheme) by `account` over `<recipient>|<BLOCKHASH>|<amountRaw>|<timestamp-ms>`. The seller makes one `block_info` call and requires a confirmed send from `account` to its own account for exactly `amountRaw`, at
+  it("leaves a block with an unescaped < in its description alone rather than merging", () => {
+    const raw = skill("alpha", "Use when x
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2204,4 +2244,4 @@ When set, the 402 `PAYMENT-REQUIRED` list gets a second entry with `network: "na
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `595167cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eca2269a` are properly handled with clean fallback behavior.

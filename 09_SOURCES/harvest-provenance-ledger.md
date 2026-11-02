@@ -6876,3 +6876,5 @@ Every entry in this ledger must capture:
 | `learn-github-kcl-lang-kcl` | `https://github.com/kcl-lang/kcl` | `77411c1c` | Multi-dimensional audit evidence | 2026-11-02T21:30:10.177Z |
 | `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-02T21:30:10.543Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `521c2fe2` | Multi-dimensional audit evidence | 2026-11-02T21:36:44.306Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `eca2269a` | Multi-dimensional audit evidence | 2026-11-02T21:43:42.109Z |
+| `learn-github-crawlseo-crawlseo` | `https://github.com/crawlseo/crawlseo` | `25e3c312` | Multi-dimensional audit evidence | 2026-11-02T21:48:31.293Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T21:36:44.247Z",
+  "last_updated": "2026-11-02T21:48:31.225Z",
   "total_verified_learnings": 1195,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -4975,8 +4975,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "595167cf",
-      "content_hash": "c180f60d27b42f294c3dc96f86544e3968e0526d9f0cb5c8405ae5e992e74b41",
+      "source_version": "eca2269a",
+      "content_hash": "67cdcc23e38250e1b214b8576268fc7ea4b9971bf32f4556e62111fd15205e5e",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -5174,6 +5174,11 @@
           "number": 6470,
           "title": "a2a): accept XNO payments on the A2A payment gate (#348)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6488,
+          "title": "skills): skills index compactor no longer merges a block into the next one (#351",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -5181,7 +5186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-02T17:24:40.223Z",
+      "verified_at": "2026-11-02T21:43:41.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -71495,8 +71500,8 @@
       "slug": "crawlseo-crawlseo",
       "platform": "github",
       "source_url": "https://github.com/crawlseo/crawlseo",
-      "source_version": "77e3c644",
-      "content_hash": "25beda912f70da0c8146d06d572b1aa95fc9de76714cd98b393681ba62cb7216",
+      "source_version": "25e3c312",
+      "content_hash": "22e56de16fa8b7ba25b043499258193e78f05bdb222a1bb9b74bcbbdd89a4d8b",
       "dossier_path": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crawlseo-crawlseo-learnings.md",
       "promoted_rules": [
@@ -71534,6 +71539,11 @@
           "number": 5036,
           "title": "Fenced Heartbeat Leasing Invariant for Long-Running Mutations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6489,
+          "title": "Release v0.3.6: version bump, CHANGELOG and chat relay docs (#111)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -71541,7 +71551,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-27T22:00:15.324Z",
+      "verified_at": "2026-11-02T21:48:31.207Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -167879,6 +167889,34 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T21:30:10.412Z"
+    },
+    "rule-6488": {
+      "learning_id": "rule-6488",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6488,
+      "title": "skills): skills index compactor no longer merges a block into the next one (#351",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "eca2269a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T21:43:41.999Z"
+    },
+    "rule-6489": {
+      "learning_id": "rule-6489",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6489,
+      "title": "Release v0.3.6: version bump, CHANGELOG and chat relay docs (#111)",
+      "source_url": "https://github.com/crawlseo/crawlseo",
+      "source_version": "25e3c312",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T21:48:31.207Z"
     }
   },
   "aliases": {

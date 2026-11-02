@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T21:36:46.835Z",
-    "lastVerified": "2026-11-02T21:36:46.835Z",
+    "lastChecked": "2026-11-02T21:48:33.838Z",
+    "lastVerified": "2026-11-02T21:48:33.838Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -141,22 +141,21 @@
     "revisionIdentifier": "9caf2b4c"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-02T17:54:14.949Z",
-    "lastVerified": "2026-11-02T17:54:14.949Z",
+    "lastChecked": "2026-11-02T21:43:40.788Z",
+    "lastVerified": "2026-11-02T21:43:40.788Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "c180f60d27b42f294c3dc96f86544e3968e0526d9f0cb5c8405ae5e992e74b41",
+    "contentHash": "67cdcc23e38250e1b214b8576268fc7ea4b9971bf32f4556e62111fd15205e5e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "595167cf"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1713,12 +1712,12 @@
     "lastVerified": "2026-10-31T20:53:12.962Z"
   },
   "zama-ai-tfhe-rs": {
-    "name": "zama-ai/tfhe-rs",
+    "name": "tfhe-rs",
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T14:46:30.071Z",
-    "lastVerified": "2026-11-02T14:46:30.071Z",
+    "lastChecked": "2026-11-02T21:43:31.197Z",
+    "lastVerified": "2026-11-02T21:43:31.197Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -1727,7 +1726,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a834a81e"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -4737,9 +4737,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-10-31T15:14:40.063Z",
+    "lastChecked": "2026-11-02T21:43:33.573Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-10-31T15:14:40.063Z"
+    "lastVerified": "2026-11-02T21:43:33.573Z"
   },
   "telemt-telemt": {
     "name": "telemt/telemt",
@@ -6305,9 +6305,9 @@
   "silasmarvin-lsp-ai": {
     "name": "lsp-ai",
     "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
-    "lastChecked": "2026-10-31T11:53:26.030Z",
+    "lastChecked": "2026-11-02T21:43:21.046Z",
     "revisionIdentifier": "1e910a8c",
-    "lastVerified": "2026-10-31T11:53:26.030Z"
+    "lastVerified": "2026-11-02T21:43:21.046Z"
   },
   "hf-intfloat-multilingual-e5-small": {
     "name": "intfloat/multilingual-e5-small",
@@ -6336,9 +6336,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-10-31T16:03:40.868Z",
+    "lastChecked": "2026-11-02T21:43:28.654Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-10-31T16:03:40.868Z"
+    "lastVerified": "2026-11-02T21:43:28.654Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -9375,11 +9375,21 @@
     "revisionIdentifier": "01177307"
   },
   "crawlseo-crawlseo": {
-    "name": "crawlseo",
+    "name": "crawlseo/crawlseo",
     "officialUrl": "https://github.com/crawlseo/crawlseo",
-    "lastChecked": "2026-10-29T22:48:42.584Z",
-    "revisionIdentifier": "77e3c644",
-    "lastVerified": "2026-10-29T22:48:42.584Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-02T21:43:28.331Z",
+    "lastVerified": "2026-11-02T21:43:28.331Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crawlseo-crawlseo",
+    "contentHash": "22e56de16fa8b7ba25b043499258193e78f05bdb222a1bb9b74bcbbdd89a4d8b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sventiigi-whatsnewkit": {
     "name": "WhatsNewKit",
@@ -10265,9 +10275,9 @@
   "rechsteiner-parchment": {
     "name": "Parchment",
     "officialUrl": "https://github.com/rechsteiner/Parchment",
-    "lastChecked": "2026-10-30T09:44:25.626Z",
+    "lastChecked": "2026-11-02T21:43:26.284Z",
     "revisionIdentifier": "dfb23ea5",
-    "lastVerified": "2026-10-30T09:44:25.626Z"
+    "lastVerified": "2026-11-02T21:43:26.284Z"
   },
   "webrecorder-pywb": {
     "name": "webrecorder/pywb",

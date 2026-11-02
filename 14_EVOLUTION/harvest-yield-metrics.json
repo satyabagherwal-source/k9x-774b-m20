@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T21:36:44.311Z",
-  "total_cycles_completed": 6844,
-  "total_learnings_persisted": 6844,
-  "total_rules_promoted": 6498,
+  "last_updated": "2026-11-02T21:48:31.298Z",
+  "total_cycles_completed": 6846,
+  "total_learnings_persisted": 6846,
+  "total_rules_promoted": 6500,
   "history": [
-    {
-      "timestamp": "2026-10-31T18:08:48.612Z",
-      "repository": "thaw-app/Thaw",
-      "learningId": "learn-github-thaw-app-thaw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T18:15:20.893Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T18:15:38.725Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T21:43:42.114Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T21:48:31.298Z",
+      "repository": "crawlseo/crawlseo",
+      "learningId": "learn-github-crawlseo-crawlseo",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
