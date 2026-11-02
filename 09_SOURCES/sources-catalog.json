@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "421026a6",
+    "sourceVersion": "5a3176fc",
     "license": "AGPL-3.0",
-    "contentHash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
-    "lastHarvestedAt": "2026-10-30T15:37:11.627Z",
+    "contentHash": "91e906b220a1b28ec740b43d9857b3557a5c6bbc53d8716a554f2af1c078ac93",
+    "lastHarvestedAt": "2026-11-02T15:15:31.453Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "e2c05f7a",
+    "sourceVersion": "1d1ab074",
     "license": "Apache-2.0",
-    "contentHash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
-    "lastHarvestedAt": "2026-10-30T21:30:01.176Z",
+    "contentHash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
+    "lastHarvestedAt": "2026-11-02T15:15:29.076Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -11738,5 +11738,15 @@
     "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
     "lastHarvestedAt": "2026-11-02T14:53:46.888Z",
     "learningId": "learn-huggingface-liquidai-d1-2b"
+  },
+  "hf-sensenova-sensenova-loop-9b-preview": {
+    "repository": "sensenova/SenseNova-Loop-9B-Preview",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+    "sourceVersion": "hf-sensenova-sensenova-loop-9b-preview",
+    "license": "Open-Source",
+    "contentHash": "b0a53c34bd98d0a41ef2319fddb1782d9d8e61e1626872534b27c4120b9e7dd4",
+    "lastHarvestedAt": "2026-11-02T15:15:27.626Z",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview"
   }
 }

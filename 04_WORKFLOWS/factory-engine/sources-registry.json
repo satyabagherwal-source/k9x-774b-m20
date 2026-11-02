@@ -40,8 +40,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-02T15:08:24.753Z",
-    "lastVerified": "2026-11-02T15:08:24.753Z",
+    "lastChecked": "2026-11-02T15:15:34.013Z",
+    "lastVerified": "2026-11-02T15:15:34.013Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -245,12 +245,12 @@
     "revisionIdentifier": "3a8f3f35"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-02T14:46:35.953Z",
-    "lastVerified": "2026-11-02T14:46:35.953Z",
+    "lastChecked": "2026-11-02T15:15:30.591Z",
+    "lastVerified": "2026-11-02T15:15:30.591Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -259,7 +259,8 @@
     "recentFixesCount": 8,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8be1e442"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -2090,22 +2091,21 @@
     "revisionIdentifier": "b9b06661"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T23:56:37.138Z",
-    "lastVerified": "2026-10-31T23:56:37.138Z",
+    "lastChecked": "2026-11-02T15:15:30.742Z",
+    "lastVerified": "2026-11-02T15:15:30.742Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
+    "contentHash": "91e906b220a1b28ec740b43d9857b3557a5c6bbc53d8716a554f2af1c078ac93",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "421026a6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -3344,9 +3344,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-10-31T12:22:47.104Z",
+    "lastChecked": "2026-11-02T15:15:27.960Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-10-31T12:22:47.104Z"
+    "lastVerified": "2026-11-02T15:15:27.960Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -4866,22 +4866,21 @@
     "lastVerified": "2026-10-31T09:46:57.373Z"
   },
   "aquasecurity-trivy": {
-    "name": "trivy",
+    "name": "aquasecurity/trivy",
     "officialUrl": "https://github.com/aquasecurity/trivy",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-10-31T13:06:41.034Z",
-    "lastVerified": "2026-10-31T13:06:41.034Z",
+    "lastChecked": "2026-11-02T15:15:28.064Z",
+    "lastVerified": "2026-11-02T15:15:28.064Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
+    "contentHash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "e2c05f7a"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "amrdeveloper-gql": {
     "name": "GQL",
@@ -8908,9 +8907,9 @@
   "maatify-seo": {
     "name": "seo",
     "officialUrl": "https://github.com/Maatify/seo",
-    "lastChecked": "2026-10-29T02:07:16.678Z",
+    "lastChecked": "2026-11-02T15:15:17.931Z",
     "revisionIdentifier": "47d17d7d",
-    "lastVerified": "2026-10-29T02:07:16.678Z"
+    "lastVerified": "2026-11-02T15:15:17.931Z"
   },
   "alin23-lunar": {
     "name": "Lunar",
@@ -9803,9 +9802,9 @@
   "michaelbull-kotlin-result": {
     "name": "kotlin-result",
     "officialUrl": "https://github.com/michaelbull/kotlin-result",
-    "lastChecked": "2026-10-30T05:31:53.297Z",
+    "lastChecked": "2026-11-02T15:15:20.433Z",
     "revisionIdentifier": "aed7438b",
-    "lastVerified": "2026-10-30T05:31:53.297Z"
+    "lastVerified": "2026-11-02T15:15:20.433Z"
   },
   "reason-machines-reason-network": {
     "name": "reason-machines/reason-network",
@@ -12674,6 +12673,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-liquidai-d1-2b",
     "contentHash": "0bab23197211b644907fdf958f1c45472ab43ea3c41889b74ccce81a5e046b1e",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-sensenova-sensenova-loop-9b-preview": {
+    "name": "sensenova/SenseNova-Loop-9B-Preview",
+    "officialUrl": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-02T15:15:15.624Z",
+    "lastVerified": "2026-11-02T15:15:15.624Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+    "contentHash": "b0a53c34bd98d0a41ef2319fddb1782d9d8e61e1626872534b27c4120b9e7dd4",
     "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-11-02T15:08:22.147Z",
-  "total_verified_learnings": 1192,
+  "last_updated": "2026-11-02T15:15:31.369Z",
+  "total_verified_learnings": 1193,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
   "items": {
@@ -2866,8 +2866,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "e2c05f7a",
-      "content_hash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
+      "source_version": "1d1ab074",
+      "content_hash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -2925,6 +2925,11 @@
           "number": 5884,
           "title": "containerd): export image by its stored name (#11511)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6429,
+          "title": "crypto): clean up crypto code and docs (#11485)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -2932,7 +2937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T21:30:01.073Z",
+      "verified_at": "2026-11-02T15:15:28.970Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -56559,8 +56564,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "421026a6",
-      "content_hash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
+      "source_version": "5a3176fc",
+      "content_hash": "91e906b220a1b28ec740b43d9857b3557a5c6bbc53d8716a554f2af1c078ac93",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -56638,6 +56643,11 @@
           "number": 5789,
           "title": "Recover from detector panics in the verification overlap worker (#5495)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6430,
+          "title": "Update module github.com/mattn/go-isatty to v0.0.24 (#5366)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -56645,7 +56655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-30T15:37:11.524Z",
+      "verified_at": "2026-11-02T15:15:31.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -166618,6 +166628,119 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-02T15:08:22.130Z"
+    },
+    "learn-huggingface-sensenova-sensenova-loop-9b-preview": {
+      "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sensenova/SenseNova-Loop-9B-Preview",
+      "repository": "sensenova/SenseNova-Loop-9B-Preview",
+      "slug": "hf-sensenova-sensenova-loop-9b-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+      "source_version": "hf-sensenova-sensenova-loop-9b-preview",
+      "content_hash": "b0a53c34bd98d0a41ef2319fddb1782d9d8e61e1626872534b27c4120b9e7dd4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-preview-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6426,
+          "title": "Shared‑Weight Looped Block Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6427,
+          "title": "mHC Residual Stream Mapping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 6428,
+          "title": "Token Specialization Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-02T15:15:27.509Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-6426": {
+      "learning_id": "rule-6426",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6426,
+      "title": "Shared‑Weight Looped Block Invariant",
+      "source_url": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+      "source_version": "hf-sensenova-sensenova-loop-9b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:15:27.509Z"
+    },
+    "rule-6427": {
+      "learning_id": "rule-6427",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6427,
+      "title": "mHC Residual Stream Mapping Invariant",
+      "source_url": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+      "source_version": "hf-sensenova-sensenova-loop-9b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:15:27.509Z"
+    },
+    "rule-6428": {
+      "learning_id": "rule-6428",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6428,
+      "title": "Token Specialization Consistency Invariant",
+      "source_url": "https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview",
+      "source_version": "hf-sensenova-sensenova-loop-9b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:15:27.509Z"
+    },
+    "rule-6429": {
+      "learning_id": "rule-6429",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6429,
+      "title": "crypto): clean up crypto code and docs (#11485)",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "1d1ab074",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:15:28.970Z"
+    },
+    "rule-6430": {
+      "learning_id": "rule-6430",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 6430,
+      "title": "Update module github.com/mattn/go-isatty to v0.0.24 (#5366)",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "5a3176fc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-02T15:15:31.348Z"
     }
   },
   "aliases": {

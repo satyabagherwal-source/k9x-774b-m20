@@ -6822,3 +6822,6 @@ Every entry in this ledger must capture:
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `77aa5579` | Multi-dimensional audit evidence | 2026-11-02T15:00:58.072Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `89fa8797` | Multi-dimensional audit evidence | 2026-11-02T15:08:18.917Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `515b22a3` | Multi-dimensional audit evidence | 2026-11-02T15:08:22.215Z |
+| `learn-huggingface-sensenova-sensenova-loop-9b-preview` | `https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-02T15:15:27.626Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `1d1ab074` | Multi-dimensional audit evidence | 2026-11-02T15:15:29.076Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `5a3176fc` | Multi-dimensional audit evidence | 2026-11-02T15:15:31.453Z |

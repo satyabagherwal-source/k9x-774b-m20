@@ -4778,3 +4778,7 @@ https://huggingface.co/LiquidAI/d1-2B
 https://huggingface.co/FusionCow/Sulphur-3
 # [HUGGINGFACE-AI-MODELS] xiaomi-research/Xiaomi-OCR-0 (4340 score) - Verified Hugging Face Model: xiaomi-research/Xiaomi-OCR-0 (234 likes, 18472 down
 https://huggingface.co/xiaomi-research/Xiaomi-OCR-0
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-02T15:15:09.960Z] ---
+# [HUGGINGFACE-AI-MODELS] sensenova/SenseNova-Loop-9B-Preview (3226 score) - Verified Hugging Face Model: sensenova/SenseNova-Loop-9B-Preview (169 likes, 153
+https://huggingface.co/sensenova/SenseNova-Loop-9B-Preview

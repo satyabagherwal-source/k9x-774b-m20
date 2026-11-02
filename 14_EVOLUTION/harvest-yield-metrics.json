@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-02T15:08:22.220Z",
-  "total_cycles_completed": 6790,
-  "total_learnings_persisted": 6790,
-  "total_rules_promoted": 6435,
+  "last_updated": "2026-11-02T15:15:31.458Z",
+  "total_cycles_completed": 6793,
+  "total_learnings_persisted": 6793,
+  "total_rules_promoted": 6440,
   "history": [
-    {
-      "timestamp": "2026-10-31T15:14:42.221Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:29:40.547Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-31T15:29:56.749Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-31T15:36:23.737Z",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-02T15:08:22.220Z",
       "repository": "projectdiscovery/nuclei",
       "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:15:27.632Z",
+      "repository": "sensenova/SenseNova-Loop-9B-Preview",
+      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:15:29.082Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-02T15:15:31.458Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

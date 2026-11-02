@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-02T15:08:22.224Z",
+  "last_updated": "2026-11-02T15:15:31.462Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "438de66fab45cf0209a697502c4e92cab88f128d143c84640e866e67db809dfa",
-      "verified_at": "2026-10-30T15:37:11.636Z",
+      "content_hash": "91e906b220a1b28ec740b43d9857b3557a5c6bbc53d8716a554f2af1c078ac93",
+      "verified_at": "2026-11-02T15:15:31.462Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T15:37:11.636Z"
+      "last_updated": "2026-11-02T15:15:31.462Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "bd7d3e1acde156f8e2cf1623d1f76a0b5f0572817de99884e34b44aea01cdc9c",
-      "verified_at": "2026-10-30T21:30:01.183Z",
+      "content_hash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
+      "verified_at": "2026-11-02T15:15:29.085Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T21:30:01.183Z"
+      "last_updated": "2026-11-02T15:15:29.085Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -17669,6 +17669,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-02T14:53:46.897Z"
+    },
+    "sensenova/SenseNova-Loop-9B-Preview": {
+      "repository": "sensenova/SenseNova-Loop-9B-Preview",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+      "content_hash": "b0a53c34bd98d0a41ef2319fddb1782d9d8e61e1626872534b27c4120b9e7dd4",
+      "verified_at": "2026-11-02T15:15:27.635Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-02T15:15:27.635Z"
     }
   },
   "repos": {

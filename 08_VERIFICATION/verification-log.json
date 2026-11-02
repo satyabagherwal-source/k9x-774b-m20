@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261030-6DV1",
-    "timestamp": "2026-10-30T21:19:25.357Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "c989cc34c2eb1faa8036804327f348d54463b0cf413b3e8e23ff728492216bf4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-6EVV",
-    "timestamp": "2026-10-30T21:19:26.683Z",
-    "repository": "avajs/ava",
-    "learningId": "learn-github-avajs-ava",
-    "contentHash": "3daaf96fb8e7461efb8473afba1c6e07224a95563e1318ff5106f1ce1b21c7bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261030-6H4C",
-    "timestamp": "2026-10-30T21:19:29.580Z",
-    "repository": "hashicorp/terraform",
-    "learningId": "learn-github-hashicorp-terraform",
-    "contentHash": "54b45c8536f4cf36da45a433abdbbf6ec956b893f4c57b1b44de4836dcd1ea4c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261030-6IJV",
     "timestamp": "2026-10-30T21:19:31.435Z",
     "repository": "microsoft/agent-governance-toolkit",
@@ -7490,6 +7445,51 @@
     "repository": "projectdiscovery/nuclei",
     "learningId": "learn-github-projectdiscovery-nuclei",
     "contentHash": "fc7d607f3095d69f141148e541864d59b195400325999378f13357c720e75ff0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-HVR9",
+    "timestamp": "2026-11-02T15:15:27.621Z",
+    "repository": "sensenova/SenseNova-Loop-9B-Preview",
+    "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
+    "contentHash": "b0a53c34bd98d0a41ef2319fddb1782d9d8e61e1626872534b27c4120b9e7dd4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-HWVL",
+    "timestamp": "2026-11-02T15:15:29.073Z",
+    "repository": "aquasecurity/trivy",
+    "learningId": "learn-github-aquasecurity-trivy",
+    "contentHash": "1cb133f4244e087bdc6fe12238e49bac01137c5de6933fd8a8f0f45d2776858e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261102-HYPL",
+    "timestamp": "2026-11-02T15:15:31.449Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "91e906b220a1b28ec740b43d9857b3557a5c6bbc53d8716a554f2af1c078ac93",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

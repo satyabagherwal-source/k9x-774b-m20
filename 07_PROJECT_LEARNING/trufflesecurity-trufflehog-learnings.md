@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `421026a6`  
+> **Source Version**: `5a3176fc`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T15:37:10.932Z  
+> **Timestamp**: 2026-11-02T15:15:30.748Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T15:37:10.195Z  
+> **Harvest Timestamp**: 2026-11-02T15:15:30.742Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 28779 stars
+- **Stars / Engagement**: 28819 stars
 
 ---
 
@@ -1140,223 +1140,98 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `421026a6` (2026-10-30)
-**Commit Message**: Recover from detector panics in the verification overlap worker (#5495)
+### Incident Patch 1: `5a3176fc` (2026-11-01)
+**Commit Message**: Update module github.com/mattn/go-isatty to v0.0.24 (#5366)
 
-A detector panic in FromData during verification overlap killed the
-worker goroutine. Once every overlap worker had died, scanning stalled
-with no error.
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-The worker now recovers detector panics, logs them, counts the chunk as
-dropped, and keeps processing.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `pkg/engine/engine.go` (modified, +110/-94)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -45,6 +45,8 @@ var errOverlap = errors.New(
- 		"You can override this behavior by using the --allow-verification-overlap flag",
- )
- 
-+var errDetectorPanic = errors.New("detector panicked")
-+
- // Metrics for the scan engine for external consumption.
- type Metrics struct {
- 	BytesScanned           uint64
-@@ -1075,119 +1077,133 @@ func likelyDuplicate(ctx context.Context, val chunkSecretKey, dupes map[chunkSec
- func (e *Engine) verificationOverlapWorker(ctx context.Context) {
- 	var wgDetect sync.WaitGroup
- 
--	// Reuse the same map and slice to avoid allocations.
-+	for chunk := range e.verificationOverlapChunksChan {
-+		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
-+	}
-+
-+	wgDetect.Wait()
-+}
-+
-+func (e *Engine) processVerificationOverlapChunk(
-+	ctx context.Context,
-+	chunk verificationOverlapChunk,
-+	wgDetect *sync.WaitGroup,
-+) {
-+	sourceTypeStr := chunk.chunk.SourceType.String()
-+
-+	defer chunk.verificationOverlapWgDoneFn()
-+	defer common.RecoverWithHandler(ctx, func(error) {
-+		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
-+	})
-+
- 	const avgSecretsPerDetector = 8
- 	detectorKeysWithResults := make(map[ahocorasick.DetectorKey]*ahocorasick.DetectorMatch, avgSecretsPerDetector)
- 	chunkSecrets := make(map[chunkSecretKey]struct{}, avgSecretsPerDetector)
- 
--	for chunk := range e.verificationOverlapChunksChan {
--		sourceTypeStr := chunk.chunk.SourceType.String()
--		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
--		for _, detector := range chunk.detectors {
--			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
--			detectorNameStr := detector.Key.Type().String()
--
--			// DO NOT VERIFY at this stage of the pipeline.
--			matchedBytes := detector.Matches()
--			for _, match := range matchedBytes {
--				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
--				results, err := detector.FromData(ctx, false, match)
--				cancel()
--				if err != nil {
--					ctx.Logger().Error(
--						err, "error finding results in chunk during verification overlap",
--						"detector", detectorNameStr,
--					)
--					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
-+	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
-+	for _, detector := range chunk.detectors {
-+		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
-+		detectorNameStr := detector.Key.Type().String()
-+
-+		// DO NOT VERIFY at this stage of the pipeline.
-+		matchedBytes := detector.Matches()
-+		for _, match := range matchedBytes {
-+			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
-+			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
-+			cancel()
-+			if err != nil {
-+				if !errors.Is(err, errDetectorPanic) {
-+					ctx.Logger().Error(err, "error finding results in chunk during verification overlap")
- 				}
-+				chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
-+			}
- 
--				if len(results) == 0 {
--					continue
--				}
--				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
--					detectorKeysWithResults[detector.Key] = detector
--				}
-+			if len(results) == 0 {
-+				continue
-+			}
-+			if _, ok := detectorKeysWithResults[detector.Key]; !ok {
-+				detectorKeysWithResults[detector.Key] = detector
-+			}
- 
--				// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
--				// problem can theoretically occur for any scan, but we've only actually seen it in practice during
--				// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
--				// disable filtration for targeted scans, but if you're here because this problem surfaced for a
--				// non-targeted scan then we'll have to solve it correctly.
--				if chunk.chunk.SecretID == 0 {
--					results = e.filterResults(ctx, "verification_overlap", detector, results)
-+			// If results filtration eliminates a rotated secret, then that rotation will never be reported. This
-+			// problem can theoretically occur for any scan, but we've only actually seen it in practice during
-+			// targeted scans. (The reason for this discrepancy is unclear.) The simplest fix is therefore to
-+			// disable filtration for targeted scans, but if you're here because this problem surfaced for a
-+			// non-targeted scan then we'll have to solve it correctly.
-+			if chunk.chunk.SecretID == 0 {
-+				results = e.filterResults(ctx, "verification_overlap", detector, results)
-+			}
-+
-+			for _, res := range results {
-+				var val []byte
-+				if res.RawV2 != nil {
-+					val = res.RawV2
-+				} else {
-+					val = res.Raw
- 				}
- 
--				for _, res := range results {
--					var val []byte
--					if res.RawV2 != nil {
--						val = res.RawV2
--					} else {
--						val = res.Raw
--					}
-+				// Use levenstein distance to determine if the secret is likely the same.
-+				// Ex
+@@ -70,7 +70,7 @@ require (
+ 	github.com/lib/pq v1.10.9
+ 	github.com/lrstanley/bubblezone v0.0.0-20250404061050-e13639e27357
+ 	github.com/marusama/semaphore/v2 v2.5.0
+-	github.com/mattn/go-isatty v0.0.20
++	github.com/mattn/go-isatty v0.0.24
+ 	github.com/maypok86/otter/v2 v2.3.0
+ 	github.com/mholt/archives v0.0.0-20241216060121-23e0af8fe73d
+ 	github.com/microsoft/go-mssqldb v1.8.2
 ```
 
-**File**: `pkg/engine/engine_test.go` (modified, +65/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -1852,6 +1852,14 @@ func (p passthroughDetector) Keywords() []string                 { return p.keyw
- func (p passthroughDetector) Type() detector_typepb.DetectorType { return p.detectorType }
- func (p passthroughDetector) Description() string                { return "fake detector for testing" }
- 
-+// panicDetector panics on every FromData call, so tests can check that the verification overlap worker keeps running
-+// and still releases chunk wait groups.
-+type panicDetector struct{ passthroughDetector }
-+
-+func (panicDetector) FromData(aCtx.Context, bool, []byte) ([]detectors.Result, error) {
-+	panic("panicDetector always panics")
-+}
-+
- // fixedVerdictDetector reports the same verdict whether or not verification was requested, so tests can confirm the
- // engine passes verdicts through untouched while recording whether verification was attempted.
- type fixedVerdictDetector struct {
-@@ -2218,6 +2226,63 @@ func TestEngine_VerificationOverlapWorker_DetectableChunkHasCorrectVerifyFlag(t
- 	})
- }
- 
-+// TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic checks that a detector panicking in FromData neither kills
-+// the verification overlap worker nor leaves the sender's wait group unreleased, and that the other detectors on the
-+// same chunk are still forwarded for verification.
-+func TestEngine_VerificationOverlapWorker_SurvivesFromDataPanic(t *testing.T) {
-+	ctx := context.Background()
-+	data := []byte("keyword ;oahpow8heg;blaisd")
-+
-+	e := &Engine{
-+		detectableChunksChan:          make(chan detectableChunk, 4),
-+		results:                       make(chan detectors.ResultWithMetadata, 4),
-+		retainFalsePositives:          true,
-+		verificationOverlapChunksChan: make(chan verificationOverlapChunk, 2),
-+	}
-+
-+	// Stand in for the detector workers: record what was forwarded and release the overlap worker's wgDetect so its
-+	// final Wait returns.
-+	forwarded := make(chan detector_typepb.DetectorType, 4)
-+	go func() {
-+		for c := range e.detectableChunksChan {
-+			forwarded <- c.detector.Type()
-+			c.wgDoneFn()
-+		}
-+		close(forwarded)
-+	}()
-+
-+	// Queue two chunks so the test also shows the worker keeps going after the first panic.
-+	ahcore := ahocorasick.NewAhoCorasickCore([]detectors.Detector{
-+		panicDetector{passthroughDetector{detectorType: detector_typepb.DetectorType(-1), keywords: []string{"keyw"}}},
-+		passthroughDetector{detectorType: detector_typepb.DetectorType(-2), keywords: []string{"keyword"}},
-+	})
-+	var chunksDone atomic.Int32
-+	for range 2 {
-+		matches := ahcore.FindDetectorMatches(data)
-+		require.Len(t, matches, 2)
-+		e.verificationOverlapChunksChan <- verificationOverlapChunk{
-+			chunk:                       sources.Chunk{Data: data},
-+			detectors:                   matches,
-+			verificationOverlapWgDoneFn: func() { chunksDone.Add(1) },
-+		}
-+	}
-+	close(e.verificationOverlapChunksChan)
-+
-+	e.verificationOverlapWorker(ctx)
-+	close(e.detectableChunksChan)
-+
-+	var forwardedTypes []detector_typepb.DetectorType
-+	for typ := range forwarded {
-+		forwardedTypes = append(forwardedTypes, typ)
-+	}
-+
-+	assert.EqualValues(t, 2, chunksDone.Load(), "every chunk must release its wait group")
-+	assert.Equal(t,
-+		[]detector_typepb.DetectorType{-2, -2}, forwardedTypes,
-+		"the non-panicking detector should still be forwarded for both chunks",
-+	)
-+}
-+
- func TestEngine_IterativeDecoding(t *testing.T) {
- 	t.Parallel()
- 
+@@ -485,8 +485,8 @@ github.com/marusama/semaphore/v2 v2.5.0/go.mod h1:z9nMiNUekt/LTpTUQdpp+4sJeYqUGp
+ github.com/mattn/go-colorable v0.1.13 h1:fFA4WZxdEF4tXPZVKMLwD8oUnCTTo08duU7wxecdEvA=
+ github.com/mattn/go-colorable v0.1.13/go.mod h1:7S9/ev0klgBDR4GtXTXX8a3vIGJpMovkB8vQcUbaXHg=
+ github.com/mattn/go-isatty v0.0.16/go.mod h1:kYGgaQfpe5nmfYZH+SKPsOc2e4SrIfOl2e/yFXSvRLM=
+-github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
+-github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
++github.com/mattn/go-isatty v0.0.24 h1:tGZZoVgT/KiqK1c8ocVLeDS8BSWMRd47J3Lbz7vsReI=
++github.com/mattn/go-isatty v0.0.24/go.mod h1:nMCL3Zebbrt45jsMDgnfIwz6ydEQApk5oEI3HqDio6A=
+ github.com/mattn/go-localereader v0.0.1 h1:ygSAOl7ZXTx4RdPYinUpg6W99U8jWvWi9Ye2JC/oIi4=
+ github.com/mattn/go-localereader v0.0.1/go.mod h1:8fBrzywKY7BI3czFoHkuzRoWE9C+EiG4R1k4Cjx5p88=
+ github.com/mattn/go-runewidth v0.0.12/go.mod h1:RAqKPSqVFrSLVXbA8x7dzmKdmGzieGRCM46jaSJTDAk=
+```
+
+---
+
+### Incident Patch 2: `a74daf6c` (2026-11-01)
+**Commit Message**: Update module github.com/jlaffaye/ftp to v0.2.4 (#5365)
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-3)
+```diff
+@@ -59,7 +59,7 @@ require (
+ 	github.com/hashicorp/golang-lru/v2 v2.0.7
+ 	github.com/jackc/pgx/v5 v5.9.2
+ 	github.com/jedib0t/go-pretty/v6 v6.6.8
+-	github.com/jlaffaye/ftp v0.2.0
++	github.com/jlaffaye/ftp v0.2.4
+ 	github.com/joho/godotenv v1.5.1
+ 	github.com/jpillora/overseer v1.1.6
+ 	github.com/k0kubun/go-ansi v0.0.0-20180517002512-3bf9e2903213
+@@ -223,9 +223,7 @@ require (
+ 	github.com/gorilla/websocket v1.5.3 // indirect
+ 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
+ 	github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 // indirect
+-	github.com/hashicorp/errwrap v1.1.0 // indirect
+ 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+-	github.com/hashicorp/go-multierror v1.1.1 // indirect
+ 	github.com/jackc/pgpassfile v1.0.0 // indirect
+ 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-7)
+```diff
+@@ -397,15 +397,10 @@ github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 h1:5VipnvEpbqr2gA2VbM+nYVbkIF2
+ github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0/go.mod h1:Hyl3n6Twe1hvtd9XUXDec4pTvgMSEixRuQKPTMH2bNs=
+ github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542 h1:2VTzZjLZBgl62/EtslCrtky5vbi9dd7HrQPQIx6wqiw=
+ github.com/h2non/parth v0.0.0-20190131123155-b4df798d6542/go.mod h1:Ow0tF8D4Kplbc8s8sSb3V2oUCygFHVp8gC3Dn6U4MNI=
+-github.com/hashicorp/errwrap v1.0.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
+-github.com/hashicorp/errwrap v1.1.0 h1:OxrOeh75EUXMY8TBjag2fzXGZ40LB6IKw45YeGUDY2I=
+-github.com/hashicorp/errwrap v1.1.0/go.mod h1:YH+1FKiLXxHSkmPseP+kNlulaMuP3n2brvKWEqk/Jc4=
+ github.com/hashicorp/go-cleanhttp v0.5.2 h1:035FKYIWjmULyFRBKPs8TBQoi0x6d9G4xc9neXJWAZQ=
+ github.com/hashicorp/go-cleanhttp v0.5.2/go.mod h1:kO/YDlP8L1346E6Sodw+PrpBSV4/SoxCXGY6BqNFT48=
+ github.com/hashicorp/go-hclog v1.6.3 h1:Qr2kF+eVWjTiYmU7Y31tYlP1h0q/X3Nl3tPGdaB11/k=
+ github.com/hashicorp/go-hclog v1.6.3/go.mod h1:W4Qnvbt70Wk/zYJryRzDRU/4r0kIg0PVHBcfoyhpF5M=
+-github.com/hashicorp/go-multierror v1.1.1 h1:H5DkEtf6CXdFp0N0Em5UCwQpXMWke8IA0+lD48awMYo=
+-github.com/hashicorp/go-multierror v1.1.1/go.mod h1:iw975J/qwKPdAO1clOe2L8331t/9/fmwbPZ6JB6eMoM=
+ github.com/hashicorp/go-retryablehttp v0.7.8 h1:ylXZWnqa7Lhqpk0L1P1LzDtGcCR0rPVUrx/c8Unxc48=
+ github.com/hashicorp/go-retryablehttp v0.7.8/go.mod h1:rjiScheydd+CxvumBsIrFKlx3iS0jrZ7LvzFGFmuKbw=
+ github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
+@@ -426,8 +421,8 @@ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOl
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
+ github.com/jedib0t/go-pretty/v6 v6.6.8 h1:JnnzQeRz2bACBobIaa/r+nqjvws4yEhcmaZ4n1QzsEc=
+ github.com/jedib0t/go-pretty/v6 v6.6.8/go.mod h1:YwC5CE4fJ1HFUDeivSV1r//AmANFHyqczZk+U6BDALU=
+-github.com/jlaffaye/ftp v0.2.0 h1:lXNvW7cBu7R/68bknOX3MrRIIqZ61zELs1P2RAiA3lg=
+-github.com/jlaffaye/ftp v0.2.0/go.mod h1:is2Ds5qkhceAPy2xD6RLI6hmp/qysSoymZ+Z2uTnspI=
++github.com/jlaffaye/ftp v0.2.4 h1:JqI85DdkfZj8ntaHk8W9U2SC3jNfiPUU70+wtIWmlfE=
++github.com/jlaffaye/ftp v0.2.4/go.mod h1:Y1ZnkzxownGIuX7xQ1mQzzkZ21+DbjVIyeKL/V+IIz4=
+ github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
+ github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
+ github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=
 ```
 
 #### Recent Merged Pull Requests:
@@ -1364,8 +1239,8 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 - **PR #5494** (2026-10-29): Clean up Docker source logging for per-source debug (@kashifkhan0771)
 - **PR #5489** (2026-10-29): Close Couchbase clusters after verification and honor the context (@unsmith)
 - **PR #5487** (closed): Ignore. Fat fingered  (@markcunninghamgit)
+- **PR #5483** (2026-11-01): Cap 7z LZMA and LZMA2 dictionary sizes and keep scanning past refused entries (@bryanbeverly)
 - **PR #5481** (2026-10-27): Clean up S3 source logging for per-source debug (@kashifkhan0771)
-- **PR #5474** (2026-10-24): Fix 7z and rar panics in the archive handler and log recovered panic stacks (@dustin-decker)
 
 ---
 
@@ -1385,87 +1260,28 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Recover from detector panics in the verification overlap worker (#5495)
+## X. Update module github.com/mattn/go-isatty to v0.0.24 (#5366)
 
 **RULE**:
-When implementing operations in `pkg/engine/engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `421026a6`: Recover from detector panics in the verification overlap worker (#5495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a3176fc`: Update module github.com/mattn/go-isatty to v0.0.24 (#5366). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/engine/engine.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var errDetectorPanic = errors.New("detector panicked")
-
-	for chunk := range e.verificationOverlapChunksChan {
-		e.processVerificationOverlapChunk(ctx, chunk, &wgDetect)
-	}
-
-	wgDetect.Wait()
-}
-
-func (e *Engine) processVerificationOverlapChunk(
-	ctx context.Context,
-	chunk verificationOverlapChunk,
-	wgDetect *sync.WaitGroup,
-) {
-	sourceTypeStr := chunk.chunk.SourceType.String()
-
-	defer chunk.verificationOverlapWgDoneFn()
-	defer common.RecoverWithHandler(ctx, func(error) {
-		chunksDropped.WithLabelValues("verification_overlap", "panic", sourceTypeStr).Inc()
-	})
-
-	chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
-	for _, detector := range chunk.detectors {
-		isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
-		detectorNameStr := detector.Key.Type().String()
-
-		// DO NOT VERIFY at this stage of the pipeline.
-		matchedBytes := detector.Matches()
-		for _, match := range matchedBytes {
-			ctx, cancel := context.WithTimeout(context.WithValue(ctx, "detector", detectorNameStr), time.Second*2)
-			results, err := fromDataWithoutVerifyRecoveringPanic(ctx, detector.Detector, match)
-			cancel()
-			if err != nil {
-				if !errors.Is(err, errDetectorPa
+	github.com/mattn/go-isatty v0.0.24
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Anti-pattern to NEVER write (induced failure mode):
-	// Reuse the same map and slice to avoid allocations.
-	for chunk := range e.verificationOverlapChunksChan {
-		sourceTypeStr := chunk.chunk.SourceType.String()
-		chunksEnteredStage.WithLabelValues("verification_overlap", sourceTypeStr).Inc()
-		for _, detector := range chunk.detectors {
-			isFalsePositive := detectors.GetFalsePositiveCheck(detector.Detector)
-			detectorNameStr := detector.Key.Type().String()
-
-			// DO NOT VERIFY at this stage of the pipeline.
-			matchedBytes := detector.Matches()
-			for _, match := range matchedBytes {
-				ctx, cancel := context.WithTimeout(ctx, time.Second*2)
-				results, err := detector.FromData(ctx, false, match)
-				cancel()
-				if err != nil {
-					ctx.Logger().Error(
-						err, "error finding results in chunk during verification overlap",
-						"detector", detectorNameStr,
-					)
-					chunksDropped.WithLabelValues("verification_overlap", "detector_error", sourceTypeStr).Inc()
-				if len(results) == 0 {
-					continue
-				}
-				if _, ok := detectorKeysWithResults[detector.Key]; !ok {
-					detectorKeysWithResults[detector.Key] = detector
-				}
-				// If results filtration eliminates a rotated secret, then that rotation will never be reported. Thi
+	github.com/mattn/go-isatty v0.0.20
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `421026a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a3176fc` are properly handled with clean fallback behavior.
